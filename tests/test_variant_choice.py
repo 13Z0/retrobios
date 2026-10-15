@@ -10,7 +10,9 @@ never swapped in. Both sides now read find_validated_variant.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -85,6 +87,46 @@ class OneImplementation(unittest.TestCase):
                 # picks the variant a destination ships.
                 calls = re.findall(r"(?:find_validated_variant|validated_choice)\(", source)
                 self.assertGreaterEqual(len(calls), 2 if name == "generate_pack.py" else 3)
+
+
+_SEEDED = """
+import hashlib, sys, tempfile
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from validation import _build_validation_index, find_validated_variant
+root = Path(sys.argv[2])
+paths = [root / f"ctrl_{i}.rom" for i in range(8)]
+files = {}
+for i, path in enumerate(paths):
+    data = bytes([i]) * 16
+    path.write_bytes(data)
+    files[hashlib.sha1(data).hexdigest()] = {"path": str(path), "name": path.name}
+bad = root / "MT32_CONTROL.ROM"
+bad.write_bytes(b"x" * 16)
+index = _build_validation_index({"emu": {"files": [
+    {"name": "MT32_CONTROL.ROM", "validation": ["sha1"], "sha1": sha1} for sha1 in files]}})
+db = {"files": files, "indexes": {"by_name": {}}}
+print(find_validated_variant({"name": "MT32_CONTROL.ROM"}, db, str(bad), index))
+"""
+
+
+class TheChoiceDoesNotDependOnTheRun(unittest.TestCase):
+    """Eight MT-32 control ROMs pass dosbox_pure's sha1 check. The candidates
+    were walked in set order, which follows the per-process string hash: the
+    manifest named ctrl_mt32_2_07.rom in one run and ctrl_mt32_2_06.rom in
+    the next."""
+
+    def test_the_same_variant_under_every_hash_seed(self):
+        chosen = set()
+        for seed in ("1", "2", "3", "4", "5", "6"):
+            with tempfile.TemporaryDirectory() as tmp:
+                out = subprocess.run(
+                    [sys.executable, "-c", _SEEDED, str(REPO_ROOT / "scripts"), tmp],
+                    env={**os.environ, "PYTHONHASHSEED": seed},
+                    capture_output=True, text=True, check=True,
+                ).stdout.strip()
+                chosen.add(Path(out).name)
+        self.assertEqual(len(chosen), 1, chosen)
 
 
 if __name__ == "__main__":

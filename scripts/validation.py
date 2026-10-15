@@ -512,11 +512,13 @@ def find_validated_variant(
     seen: set[str] = set()
 
     def candidates():
+        # Sorted: the index holds sets, whose order follows the per-process
+        # string hash, and the first passing candidate is the one shipped.
         expected = validation_index[fname]
         for hash_type, index_key in (
             ("sha1", None), ("md5", "by_md5"), ("crc32", "by_crc32"), ("sha256", "by_sha256"),
         ):
-            for value in expected.get(hash_type) or []:
+            for value in sorted(expected.get(hash_type) or []):
                 if index_key is None:
                     yield value
                     continue
