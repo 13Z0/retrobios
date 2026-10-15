@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import hashlib
+import io
 import json
 import os
 import platform
@@ -25,6 +26,7 @@ import shutil
 import sys
 import tempfile
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -190,6 +192,156 @@ _stop = threading.Event()
 
 class _Interrupted(Exception):
     """Raised inside a worker once the run has been stopped."""
+
+
+# A file this size or larger keeps its partial download when a transfer
+# stops, and the next run asks the server for the rest: the release assets
+# run to hundreds of megabytes. Smaller files simply start over.
+RESUME_FROM_SIZE = 16 * 1024 * 1024
+
+
+def _enable_ansi() -> bool:
+    """Whether escape sequences reach the terminal as colour and redraws.
+
+    Windows 10 consoles interpret them once virtual terminal processing is
+    switched on; older ones print them raw, so the answer is then no.
+    """
+    if os.name != "nt":
+        return True
+    try:
+        import ctypes  # noqa: PLC0415
+
+        kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+        handle = kernel32.GetStdHandle(-11)
+        mode = ctypes.c_uint32()
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError):
+        return False
+
+
+class Terminal:
+    """What the output stream can show: a live line, colour, or neither.
+
+    A pipe or a log gets plain lines; NO_COLOR and TERM=dumb are honoured.
+    """
+
+    def __init__(self, stream=None, quiet: bool = False) -> None:
+        self.stream = stream or sys.stdout
+        self.quiet = quiet
+        isatty = getattr(self.stream, "isatty", None)
+        self.live = bool(isatty and isatty()) and os.environ.get("TERM") != "dumb"
+        self.colour = (
+            self.live and "NO_COLOR" not in os.environ and _enable_ansi()
+        )
+        if not self.colour:
+            self.live = self.live and os.name != "nt"
+
+    def paint(self, text: str, code: str) -> str:
+        return f"\033[{code}m{text}\033[0m" if self.colour else text
+
+    def ok(self, text: str) -> str:
+        return self.paint(text, "32")
+
+    def bad(self, text: str) -> str:
+        return self.paint(text, "31")
+
+    def dim(self, text: str) -> str:
+        return self.paint(text, "2")
+
+    def bold(self, text: str) -> str:
+        return self.paint(text, "1")
+
+
+def format_duration(seconds: float) -> str:
+    """0:42, 3:05 or 1:02:09."""
+    seconds = max(0, int(seconds + 0.5))
+    hours, rest = divmod(seconds, 3600)
+    minutes, secs = divmod(rest, 60)
+    return f"{hours}:{minutes:02}:{secs:02}" if hours else f"{minutes}:{secs:02}"
+
+
+class Progress:
+    """Bytes and files across the parallel downloads, shown as they move.
+
+    On a terminal one line redraws in place: a bar, the bytes, the speed and
+    the time left. Elsewhere each finished file gets its line, as a log
+    wants it. Failures are always printed, quiet or not.
+    """
+
+    BAR = 24
+
+    def __init__(self, total_files: int, total_bytes: int, term: Terminal) -> None:
+        self.total_files = total_files
+        self.total_bytes = max(total_bytes, 1)
+        self.term = term
+        self.files = 0
+        self.bytes = 0
+        self.resumed = 0
+        self.start = time.monotonic()
+        self._drawn = 0.0
+        self._lock = threading.Lock()
+
+    def add(self, count: int, resumed: bool = False) -> None:
+        with self._lock:
+            self.bytes += count
+            if resumed:
+                self.resumed += count
+            now = time.monotonic()
+            if self.term.live and not self.term.quiet and now - self._drawn >= 0.1:
+                self._drawn = now
+                self._draw()
+
+    def forget_resumed(self, count: int) -> None:
+        with self._lock:
+            self.resumed -= count
+
+    def transferred(self) -> int:
+        """Bytes fetched by this run, a resumed partial copy excluded."""
+        return self.bytes - self.resumed
+
+    def done(self, dest: str, ok: bool, reason: str = "") -> None:
+        with self._lock:
+            self.files += 1
+            line = None
+            if not ok and not self.term.quiet:
+                why = f" ({reason})" if reason else ""
+                line = f"  {self.term.bad('FAILED')} {dest}{why}"
+            elif not self.term.live and not self.term.quiet:
+                line = f"  [{self.files}/{self.total_files}] {dest} {self.term.ok('ok')}"
+            if line is not None:
+                self._clear()
+                print(line, file=self.term.stream, flush=True)
+            if self.term.live and not self.term.quiet:
+                self._draw()
+
+    def finish(self) -> None:
+        with self._lock:
+            self._clear()
+
+    def elapsed(self) -> float:
+        return time.monotonic() - self.start
+
+    def _clear(self) -> None:
+        if self.term.live and not self.term.quiet:
+            print("\r\033[K", end="", file=self.term.stream, flush=True)
+
+    def _draw(self) -> None:
+        share = min(self.bytes / self.total_bytes, 1.0)
+        filled = int(share * self.BAR)
+        bar = "#" * filled + "-" * (self.BAR - filled)
+        elapsed = self.elapsed()
+        speed = self.bytes / elapsed if elapsed > 0 else 0
+        left = (self.total_bytes - self.bytes) / speed if speed > 0 else 0
+        text = (
+            f"  [{bar}] {share * 100:5.1f}%  "
+            f"{format_size(self.bytes)} / {format_size(self.total_bytes)}  "
+            f"{format_size(int(speed))}/s  "
+            f"{format_duration(left)} left  "
+            f"({self.files}/{self.total_files} files)"
+        )
+        print(f"\r\033[K{text}", end="", file=self.term.stream, flush=True)
 
 
 # The three RetroArch packages published for Android, newest ABI first.
@@ -1397,15 +1549,16 @@ def check_local(
 
 
 def _download_one(
-    f: dict, bios_path: Path, verbose: bool = False
-) -> tuple[str, bool]:
-    """Download a single file. Returns (dest, success)."""
+    f: dict, bios_path: Path, verbose: bool = False,
+    progress: Progress | None = None,
+) -> tuple[str, bool, str]:
+    """Download a single file. Returns (dest, success, reason it failed)."""
     if _stop.is_set():
-        return str(f.get("dest", "?")), False
+        return str(f.get("dest", "?")), False, "stopped"
     try:
         dest = _destination_path(bios_path, f["dest"])
     except ValueError:
-        return str(f.get("dest", "?")), False
+        return str(f.get("dest", "?")), False, "unsafe destination"
     dest.parent.mkdir(parents=True, exist_ok=True)
 
     if f.get("release_asset"):
@@ -1413,25 +1566,48 @@ def _download_one(
     else:
         url = RAW_FILE_URL.format(path=urllib.parse.quote(f["repo_path"], safe="/"))
 
+    expected_size = f["size"]
+    # A large file keeps a fixed partial name so the next attempt, or the
+    # next run, asks only for what is missing.
+    resumable = expected_size >= RESUME_FROM_SIZE
+    reason = "download failed"
     for attempt in range(1, MAX_RETRIES + 1):
         tmp_path: Path | None = None
+        counted = 0
+        resumed_count = 0
         try:
-            with urllib.request.urlopen(url, timeout=60) as resp:
-                expected_size = f["size"]
+            offset = 0
+            if resumable:
+                tmp_path = dest.parent / f".{dest.name}.part"
+                offset = tmp_path.stat().st_size if tmp_path.exists() else 0
+                if offset >= expected_size:
+                    tmp_path.unlink()
+                    offset = 0
+            request = urllib.request.Request(url)
+            if offset:
+                request.add_header("Range", f"bytes={offset}-")
+            with urllib.request.urlopen(request, timeout=60) as resp:
+                if offset and getattr(resp, "status", 200) != 206:
+                    offset = 0  # the server sent the whole file again
                 raw_length = resp.headers.get("Content-Length") if resp.headers else None
-                if raw_length and int(raw_length) != expected_size:
+                if raw_length and int(raw_length) != expected_size - offset:
                     raise ValueError(
-                        f"Content-Length {raw_length} != expected {expected_size}"
+                        f"Content-Length {raw_length} != expected {expected_size - offset}"
                     )
-                with tempfile.NamedTemporaryFile(
-                    mode="wb",
-                    dir=dest.parent,
-                    prefix=f".{dest.name}.",
-                    suffix=".part",
-                    delete=False,
-                ) as out:
+                if resumable:
+                    out = open(tmp_path, "ab" if offset else "wb")
+                else:
+                    out = tempfile.NamedTemporaryFile(
+                        mode="wb", dir=dest.parent, prefix=f".{dest.name}.",
+                        suffix=".part", delete=False,
+                    )
                     tmp_path = Path(out.name)
-                    downloaded = 0
+                with out:
+                    downloaded = offset
+                    if progress is not None and offset:
+                        progress.add(offset, resumed=True)
+                        counted += offset
+                        resumed_count = offset
                     while True:
                         if _stop.is_set():
                             raise _Interrupted()
@@ -1442,6 +1618,9 @@ def _download_one(
                         if downloaded > expected_size or downloaded > MAX_DOWNLOAD_SIZE:
                             raise ValueError("download exceeded declared size")
                         out.write(chunk)
+                        if progress is not None:
+                            progress.add(len(chunk))
+                            counted += len(chunk)
                 if downloaded != expected_size:
                     raise ValueError(
                         f"downloaded {downloaded} bytes; expected {expected_size}"
@@ -1450,40 +1629,72 @@ def _download_one(
             expected_sha256 = f.get("sha256", "")
             expected_sha1 = f.get("sha1", "")
             if expected_sha256 and _sha256_file(tmp_path) != expected_sha256.lower():
-                if verbose:
-                    print(f"    SHA256 mismatch on attempt {attempt}", file=sys.stderr)
-                tmp_path.unlink(missing_ok=True)
-                continue
-            if expected_sha1:
-                actual = _sha1_file(tmp_path)
-                if actual != expected_sha1.lower():
-                    if verbose:
-                        print(f"    SHA1 mismatch on attempt {attempt}", file=sys.stderr)
-                    tmp_path.unlink(missing_ok=True)
-                    continue
+                reason = "SHA-256 mismatch"
+                raise _Corrupt()
+            if expected_sha1 and _sha1_file(tmp_path) != expected_sha1.lower():
+                reason = "SHA-1 mismatch"
+                raise _Corrupt()
 
             os.replace(tmp_path, dest)
-            return f["dest"], True
+            return f["dest"], True, ""
 
         except _Interrupted:
-            # Stopped mid-transfer: drop the scratch file rather than leaving
-            # it beside the destination, and do not retry.
-            if tmp_path is not None:
-                tmp_path.unlink(missing_ok=True)
-            return f["dest"], False
+            # Stopped mid-transfer: a large file keeps its partial copy for
+            # the next run; a small one is dropped rather than left beside
+            # the destination.
+            if tmp_path is not None and not resumable and tmp_path.exists():
+                tmp_path.unlink()
+            return f["dest"], False, "stopped"
 
-        except (
-            urllib.error.URLError,
-            urllib.error.HTTPError,
-            OSError,
-            ValueError,
-        ) as exc:
+        except _Corrupt:
+            if verbose:
+                print(f"    {reason} on attempt {attempt}", file=sys.stderr)
+            if tmp_path is not None and tmp_path.exists():
+                tmp_path.unlink()
+            delay = 0.0
+
+        except urllib.error.HTTPError as exc:
+            reason = f"HTTP {exc.code}"
+            if exc.code in (403, 429):
+                reason += " (GitHub rate limit or access refused)"
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
-            if tmp_path is not None:
-                tmp_path.unlink(missing_ok=True)
+            if tmp_path is not None and not resumable and tmp_path.exists():
+                tmp_path.unlink()
+            if exc.code == 416 and tmp_path is not None and tmp_path.exists():
+                tmp_path.unlink()  # the partial copy no longer fits the file
+            delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
 
-    return f["dest"], False
+        except (urllib.error.URLError, OSError, ValueError) as exc:
+            reason = str(getattr(exc, "reason", "") or exc)
+            if verbose:
+                print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
+            if tmp_path is not None and not resumable and tmp_path.exists():
+                tmp_path.unlink()
+            delay = _retry_delay(attempt, None)
+
+        if progress is not None and counted:
+            progress.add(-counted)
+            if resumed_count:
+                progress.forget_resumed(resumed_count)
+        if attempt < MAX_RETRIES and delay and _stop.wait(delay):
+            return f["dest"], False, "stopped"
+
+    return f["dest"], False, reason
+
+
+class _Corrupt(Exception):
+    """The bytes arrived but are not the file the manifest names."""
+
+
+def _retry_delay(attempt: int, retry_after: str | None) -> float:
+    """Seconds before the next attempt: what the server asks, else 1, 2, 4."""
+    if retry_after:
+        try:
+            return min(max(float(retry_after), 0.0), 60.0)
+        except ValueError:
+            pass
+    return float(min(2 ** (attempt - 1), 8))
 
 
 def _locations(paths: list[Path]) -> str:
@@ -1503,12 +1714,28 @@ def _report_outcome(
     errors: int,
     omitted: int,
     interrupted: bool,
+    failures: list[tuple[str, str]] | None = None,
+    transferred: int = 0,
+    seconds: float = 0.0,
+    declined: int = 0,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
     A run that installed nothing used to end on the word Done and a zero exit,
     which reads as success to a person and to a script alike.
     """
+    if transferred and seconds > 0:
+        print(f"\n{format_size(transferred)} downloaded in "
+              f"{format_duration(seconds)} ({format_size(int(transferred / seconds))}/s).")
+    for dest, reason in (failures or [])[:10]:
+        print(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
+    if failures and len(failures) > 10:
+        print(f"  ... and {len(failures) - 10} more")
+    if declined and not downloaded and not errors and not interrupted:
+        print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, "
+              "as answered.")
+        print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
+        return
     if interrupted:
         print(f"\nStopped. {_plural(downloaded, 'file')} installed.")
         print("Run the same command again to carry on from here. Nothing is lost.")
@@ -1537,6 +1764,45 @@ def _report_outcome(
     print("To check this later, run the same command with --check.")
 
 
+# Asked before, in an interactive run: past this size a download is worth a
+# second thought, and --system, --core or --region can make it smaller.
+CONFIRM_FROM_BYTES = 1024 * 1024 * 1024
+
+
+def installer_id() -> str:
+    """The first twelve hex digits of this file's SHA-256, as the bootstraps pin it."""
+    try:
+        return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12]
+    except (OSError, NameError):
+        return "unknown"
+
+
+def _confirm(prompt: str) -> bool:
+    """Yes unless the answer starts with n."""
+    return not _ask(prompt).lower().startswith("n")
+
+
+def _print_plan(to_download: list[dict], bios_path: Path, term: Terminal) -> None:
+    """What a real run would fetch, by system, and nothing written."""
+    total = sum(f.get("size", 0) for f in to_download)
+    if not to_download:
+        print("\n  All files up to date. A real run would download nothing.")
+        return
+    print(f"\nWould download {_plural(len(to_download), 'file')} "
+          f"({format_size(total)}) to {bios_path}:")
+    by_system: dict[str, list[dict]] = {}
+    for entry in to_download:
+        system = ", ".join(entry_systems(entry)) or "other"
+        by_system.setdefault(system, []).append(entry)
+    for system in sorted(by_system):
+        print(f"  {term.bold(system)}  {_sized(by_system[system])}")
+        for entry in sorted(by_system[system], key=lambda e: e["dest"])[:8]:
+            print(f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}")
+        if len(by_system[system]) > 8:
+            print(f"    ... and {len(by_system[system]) - 8} more")
+    print("\n  Nothing was written. Run without --dry-run to install.")
+
+
 def _check_free_space(bios_path: Path, needed: int) -> None:
     """Stop before writing when the volume cannot hold the download.
 
@@ -1561,39 +1827,43 @@ def _check_free_space(bios_path: Path, needed: int) -> None:
 
 
 def download_files(
-    files: list[dict], bios_path: Path, jobs: int = 8, verbose: bool = False
-) -> tuple[list[str], bool]:
+    files: list[dict], bios_path: Path, jobs: int = 8, verbose: bool = False,
+    term: Terminal | None = None, progress: Progress | None = None,
+) -> tuple[list[tuple[str, str]], bool]:
     """Download files in parallel.
 
-    Returns the destinations that failed and whether the run was interrupted.
-    Every future is submitted up front, so a bare KeyboardInterrupt would let
-    the pool drain the queue in full: the stop flag is what makes Ctrl+C end
-    the run rather than only stop the reporting.
+    Returns the destinations that failed, each with its reason, and whether
+    the run was interrupted. Every future is submitted up front, so a bare
+    KeyboardInterrupt would let the pool drain the queue in full: the stop
+    flag is what makes Ctrl+C end the run rather than only stop the
+    reporting.
     """
-    failed: list[str] = []
-    total = len(files)
+    failed: list[tuple[str, str]] = []
     interrupted = False
     _stop.clear()
+    term = term or Terminal()
+    if progress is None:
+        progress = Progress(len(files), sum(f.get("size", 0) for f in files), term)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
         future_map = {
-            pool.submit(_download_one, f, bios_path, verbose): f
+            pool.submit(_download_one, f, bios_path, verbose, progress): f
             for f in files
         }
-        done_count = 0
         try:
             for future in concurrent.futures.as_completed(future_map):
-                done_count += 1
-                dest, success = future.result()
-                status = "ok" if success else "FAILED"
-                print(f"  [{done_count}/{total}] {dest} {status}")
+                dest, success, reason = future.result()
+                if _stop.is_set():
+                    continue
+                progress.done(dest, success, reason)
                 if not success:
-                    failed.append(dest)
+                    failed.append((dest, reason))
         except KeyboardInterrupt:
             interrupted = True
             _stop.set()
+            progress.finish()
             print("\n  Stopping. Files already installed are kept.")
-
+    progress.finish()
     return failed, interrupted
 
 
@@ -2029,6 +2299,26 @@ def main() -> None:
         action="store_true",
         help="never ask a question; fail where an answer is needed",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="show what would be downloaded, and how much, without writing anything",
+    )
+    parser.add_argument(
+        "--yes", "-y",
+        action="store_true",
+        help="do not ask before a large download",
+    )
+    parser.add_argument(
+        "--quiet", "-q",
+        action="store_true",
+        help="print only errors and the final summary (implies --no-input)",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
+    )
 
     args = parser.parse_args()
     if not 1 <= args.jobs <= 32:
@@ -2043,9 +2333,38 @@ def main() -> None:
             token.strip() for value in values for token in value.split(",")
         ):
             parser.error(f"{option} needs at least one name")
-    interactive = sys.stdin.isatty() and not args.no_input
+    if args.quiet and (
+        args.check or args.dry_run or args.list_platforms or args.list_targets
+        or args.list_systems or args.list_cores
+    ):
+        parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
+    if not args.quiet:
+        _install(args, sys.stdout)
+        return
+    # Quiet: what a run prints is kept, and shown on stderr if the run fails,
+    # so an error printed on stdout is never lost.
+    captured = io.StringIO()
+    real_stdout = sys.stdout
+    sys.stdout = captured
+    try:
+        _install(args, real_stdout)
+    except SystemExit as exc:
+        if sys.stdout is captured:
+            sys.stdout = real_stdout
+            if exc.code not in (0, None):
+                sys.stderr.write(captured.getvalue())
+        raise
+    finally:
+        if sys.stdout is captured:
+            sys.stdout = real_stdout
+
+
+def _install(args: argparse.Namespace, real_stdout) -> None:
+    """One run of the installer, once the options are read."""
+    term = Terminal(real_stdout, quiet=args.quiet)
+    interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
     listing = args.list_targets or args.list_systems or args.list_cores
-    print("RetroBIOS\n")
+    print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
 
@@ -2108,6 +2427,10 @@ def main() -> None:
     total_errors = 0
     total_omitted = 0
     total_interrupted = False
+    total_bytes = 0
+    total_seconds = 0.0
+    total_declined = 0
+    failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
 
     for plat_name, bios_path in platforms:
@@ -2217,6 +2540,17 @@ def main() -> None:
             f"({len(up_to_date)} verified, {len(mismatched)} wrong hash)"
         )
 
+        # A partial copy left by an interrupted run is useless once the file
+        # is in place: it goes.
+        for entry in up_to_date:
+            try:
+                stale = _destination_path(bios_path, entry["dest"])
+            except ValueError:
+                continue
+            stale = stale.parent / f".{stale.name}.part"
+            if stale.is_file():
+                stale.unlink()
+
         # Mismatched files need re-download
         to_download.extend(mismatched)
 
@@ -2227,8 +2561,25 @@ def main() -> None:
                 print("\n  All files up to date.")
             continue
 
+        if args.dry_run:
+            _print_plan(to_download, bios_path, term)
+            continue
+
         if to_download:
             dl_size = sum(f.get("size", 0) for f in to_download)
+            if (
+                interactive
+                and not args.yes
+                and dl_size >= CONFIRM_FROM_BYTES
+                and not _confirm(
+                    f"\nDownload {format_size(dl_size)} to {bios_path}? [Y/n] "
+                )
+            ):
+                print("  Nothing downloaded. --system, --core and --region "
+                      "install less (see --help).")
+                total_up_to_date += len(up_to_date)
+                total_declined += len(to_download)
+                continue
             print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
                   "carries on from here.")
@@ -2242,11 +2593,16 @@ def main() -> None:
                       file=sys.stderr)
                 sys.exit(1)
             _check_free_space(bios_path, dl_size)
+            progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
-                to_download, bios_path, jobs=args.jobs, verbose=args.verbose
+                to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
+                term=term, progress=progress,
             )
             total_downloaded += len(to_download) - len(failed)
             total_errors += len(failed)
+            failures.extend(failed)
+            total_bytes += progress.transferred()
+            total_seconds += progress.elapsed()
             if interrupted:
                 total_interrupted = True
                 break
@@ -2279,7 +2635,8 @@ def main() -> None:
                 "(use --standalone-copies to opt in)."
             )
 
-    if not args.check and not listing:
+    sys.stdout = real_stdout
+    if not args.check and not listing and not args.dry_run:
         _report_outcome(
             installed_paths,
             total_downloaded,
@@ -2287,6 +2644,10 @@ def main() -> None:
             total_errors,
             total_omitted,
             total_interrupted,
+            failures=failures,
+            transferred=total_bytes,
+            seconds=total_seconds,
+            declined=total_declined,
         )
 
 

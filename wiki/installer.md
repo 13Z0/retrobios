@@ -84,10 +84,17 @@ macOS.
    to choose systems, cores and regions (see below).
 4. Hashes what is already in the destination and reports how many entries are
    present, verified, or present with the wrong contents.
-5. Downloads what is missing or wrong, up to 8 files at a time.
+5. Downloads what is missing or wrong, up to 8 files at a time. At a
+   terminal one line shows the progress, the speed and the time left; in a
+   log each finished file gets its own line. In an interactive run, a
+   download of 1 GB or more is confirmed first (`--yes` skips the question).
 6. Verifies each download against the declared size, SHA-256 and SHA-1 before
-   it touches the destination, retrying up to three times, then moves it into
-   place with `os.replace` so a partial file is never visible.
+   it touches the destination, then moves it into place with `os.replace` so
+   a partial file is never visible. A failed attempt is retried up to three
+   times, after 1, 2 then 4 seconds or the delay a `Retry-After` header asks.
+   A file of 16 MB or more keeps its partial copy (`.<name>.part`) when a
+   transfer stops, and the next attempt or the next run requests only the
+   rest.
 7. Copies into standalone emulator directories, only with `--standalone-copies`.
 
 A run looks like this:
@@ -174,6 +181,10 @@ what the options name, everything by default.
 | `--list-cores` | Print the cores whose extra files a platform installs |
 | `--no-input` | Never ask a question, even at a terminal |
 | `--check` | Report and exit without writing |
+| `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
+| `--yes`, `-y` | Do not ask before a download of 1 GB or more |
+| `--quiet`, `-q` | Print only failures and the final summary; implies `--no-input` |
+| `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
 | `--jobs N`, `-j N` | Parallel downloads, 1 to 32, default 8 |
@@ -196,6 +207,7 @@ Files the list does not name are never read, moved or deleted.
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters |
+| `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## Platform detection

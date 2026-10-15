@@ -372,8 +372,8 @@ class TestStopFlag(unittest.TestCase):
 
     def test_worker_returns_immediately_once_stopped(self):
         install._stop.set()
-        dest, ok = install._download_one({"dest": "x.bin"}, Path("/nowhere"))
-        self.assertEqual((dest, ok), ("x.bin", False))
+        dest, ok, reason = install._download_one({"dest": "x.bin"}, Path("/nowhere"))
+        self.assertEqual((dest, ok, reason), ("x.bin", False, "stopped"))
 
     def test_download_files_reports_no_interruption_normally(self):
         failed, interrupted = install.download_files([], Path("/nowhere"))
