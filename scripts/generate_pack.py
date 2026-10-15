@@ -1363,6 +1363,8 @@ def generate_emulator_pack(
     missing_files = []
     rejected_files: list[str] = []
     discrepancies: list[str] = []
+    unsourceable_files: list[str] = []
+    instruction_files: list[str] = []
     seen_destinations: set[str] = set()
     seen_lower: set[str] = set()
     seen_parents: set[str] = (
@@ -1461,49 +1463,107 @@ def generate_emulator_pack(
                 else:
                     missing_files.append(archive_name)
 
-            # Pack individual files (skip archived ones)
+            # Pack individual files (skip archived ones). The entries of one
+            # profile on one destination are the releases the code accepts
+            # there (raze's seven SW.GRP): the first one the core accepts
+            # fills the slot, as verify --emulator credits it, and the slot
+            # has one outcome however many alternatives it lists.
+            slots: dict[str, list[dict]] = {}
             for fe in files:
                 if required_only and fe.get("required") is False:
                     continue
                 if fe.get("archive"):
                     continue
-
                 dest = _resolve_destination(fe, pack_structure, standalone)
                 if not dest:
                     continue
                 if region_drops and dest in region_drops:
                     continue
+                slots.setdefault(dest, []).append(fe)
 
+            for dest, alternatives in slots.items():
                 if dest.lower() in seen_lower:
                     continue
                 if _has_path_conflict(dest, seen_destinations, seen_parents):
                     continue
 
-                storage = fe.get("storage", "embedded")
-                if storage == "user_provided":
+                provided = next(
+                    (fe for fe in alternatives if fe.get("storage") == "user_provided"),
+                    None,
+                )
+                if provided is not None:
+                    # Instructions, not a file: written beside the slot the
+                    # user fills, and counted apart from what the pack holds.
                     seen_destinations.add(dest)
                     _register_path(dest, seen_destinations, seen_parents)
                     seen_lower.add(dest.lower())
-                    instr = fe.get("instructions", "Please provide this file manually.")
-                    instr_name = f"INSTRUCTIONS_{fe['name']}.txt"
+                    instr = provided.get("instructions", "Please provide this file manually.")
+                    folder = dest.rsplit("/", 1)[0] + "/" if "/" in dest else ""
                     _write_generated_member(
-                        zf, instr_name, f"File needed: {fe['name']}\n\n{instr}\n"
+                        zf,
+                        f"{folder}INSTRUCTIONS_{provided['name']}.txt",
+                        f"File needed: {provided['name']}\n\n{instr}\n",
                     )
-                    total_files += 1
+                    # verify --emulator counts an unsourceable one as such.
+                    (unsourceable_files if provided.get("unsourceable") else instruction_files).append(
+                        provided["name"]
+                    )
                     continue
 
-                dest_hint = fe.get("path", "")
-                local_path, status = resolve_file(
-                    {**fe, "source_profile": emu_name},
-                    db,
-                    bios_dir,
-                    zip_contents,
-                    dest_hint=dest_hint,
-                    data_dir_registry=data_registry,
-                    offline=offline,
-                )
+                chosen: tuple[dict, str, str | None] | None = None
+                fallback: tuple[dict, str, str | None] | None = None
+                refusal: str | None = None
+                for fe in alternatives:
+                    local_path, status = resolve_file(
+                        {**fe, "source_profile": emu_name},
+                        db,
+                        bios_dir,
+                        zip_contents,
+                        dest_hint=fe.get("path", ""),
+                        data_dir_registry=data_registry,
+                        offline=offline,
+                    )
+                    if status == "external":
+                        chosen = (fe, "", "external")
+                        break
+                    if status in ("not_found", "user_provided") or not local_path:
+                        continue
+                    # The file verify --emulator credits is the one shipped:
+                    # a dump the core's own check rejects gives way to a held
+                    # one it accepts (azahar's otp.bin, dolphin's dsp_rom.bin).
+                    refused = check_file_validation(
+                        local_path, fe["name"], validation_index, bios_dir, {emu_name}
+                    )
+                    if refused:
+                        better = find_validated_variant(
+                            fe, db, local_path, validation_index, bios_dir,
+                            emulators={emu_name},
+                        )
+                        if not better:
+                            refusal = refusal or f"{fe['name']} -{refused[0]}"
+                            continue
+                        chosen = (fe, better, None)
+                        break
+                    if status == "hash_mismatch":
+                        # Not a check the core runs, so the file still serves;
+                        # it is not the dump the profile documents.
+                        fallback = fallback or (fe, local_path, "mismatch")
+                        continue
+                    chosen = (fe, local_path, None)
+                    break
+                chosen = chosen or fallback
 
-                if status == "external":
+                if chosen is None:
+                    if refusal:
+                        rejected_files.append(refusal)
+                    elif all(fe.get("unsourceable") for fe in alternatives):
+                        unsourceable_files.append(alternatives[0]["name"])
+                    else:
+                        missing_files.append(alternatives[0]["name"])
+                    continue
+
+                fe, local_path, how = chosen
+                if how == "external":
                     file_ext = os.path.splitext(fe["name"])[1] or ""
                     with tempfile.NamedTemporaryFile(
                         delete=False, suffix=file_ext
@@ -1522,31 +1582,7 @@ def generate_emulator_pack(
                         if os.path.exists(tmp_path):
                             os.unlink(tmp_path)
                     continue
-
-                if status in ("not_found", "user_provided") or not local_path:
-                    missing_files.append(fe["name"])
-                    continue
-
-                # The file verify --emulator credits is the one shipped: a
-                # dump the core's own check rejects gives way to a held one
-                # it accepts (azahar's otp.bin, dolphin's dsp_rom.bin). With
-                # none, the core would refuse what the pack ships: it is named
-                # and left out, as verify reports it.
-                refused = check_file_validation(
-                    local_path, fe["name"], validation_index, bios_dir
-                )
-                if refused:
-                    better = find_validated_variant(
-                        fe, db, local_path, validation_index, bios_dir
-                    )
-                    if not better:
-                        reason, _owners = refused
-                        rejected_files.append(f"{fe['name']} -{reason}")
-                        continue
-                    local_path = better
-                elif status == "hash_mismatch":
-                    # Not a check the core runs, so the file still serves;
-                    # it is not the dump the profile documents, and says so.
+                if how == "mismatch":
                     discrepancies.append(
                         f"{fe['name']} -not the dump the {emu_name} profile declares"
                     )
@@ -1554,12 +1590,10 @@ def generate_emulator_pack(
                 # SHA1 dedup: skip if same physical file AND same destination
                 # (but allow same file to be packed under different destinations,
                 # e.g., IPL.bin in GC/USA/ and GC/EUR/ from same source)
-                if local_path:
-                    real = os.path.realpath(local_path)
-                    dedup_key_hash = f"{real}:{dest}"
-                    if dedup_key_hash in seen_hashes:
-                        continue
-                    seen_hashes.add(dedup_key_hash)
+                dedup_key_hash = f"{os.path.realpath(local_path)}:{dest}"
+                if dedup_key_hash in seen_hashes:
+                    continue
+                seen_hashes.add(dedup_key_hash)
 
                 if local_path.endswith(".zip"):
                     _add_zip_to_pack(local_path, dest, zf, fe)
@@ -1571,7 +1605,7 @@ def generate_emulator_pack(
                 total_files += 1
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)
-    if total_files == 0 and not missing_files and not rejected_files:
+    if total_files == 0 and not (missing_files or rejected_files or instruction_files or unsourceable_files):
         os.unlink(zip_path)
 
     # Report
@@ -1583,9 +1617,17 @@ def generate_emulator_pack(
         parts.append(f"{missing_count} missing")
     if rejected_files:
         parts.append(f"{len(rejected_files)} refused by the core")
+    if unsourceable_files:
+        parts.append(f"{len(unsourceable_files)} unsourceable")
+    if instruction_files:
+        parts.append(f"{len(instruction_files)} to provide")
     print(f"  {zip_path}: {', '.join(parts)}")
     for name in missing_files:
         print(f"  MISSING: {name}")
+    for name in unsourceable_files:
+        print(f"  UNSOURCEABLE: {name}")
+    for name in instruction_files:
+        print(f"  TO PROVIDE: {name} (instructions in the pack)")
     for line in rejected_files:
         print(f"  REFUSED: {line}")
     for line in discrepancies:
@@ -1595,7 +1637,12 @@ def generate_emulator_pack(
             f"  Note: data directory '{ref}' required but not included (use refresh_data_dirs.py)"
         )
 
-    return zip_path if total_files > 0 or missing_files or rejected_files else None
+    return (
+        zip_path
+        if total_files > 0 or missing_files or rejected_files or instruction_files
+        or unsourceable_files
+        else None
+    )
 
 
 def generate_system_pack(

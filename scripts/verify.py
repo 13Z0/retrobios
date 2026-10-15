@@ -1585,11 +1585,15 @@ def verify_emulator(
                     )
             else:
                 # Apply emulator validation
-                check = check_file_validation(local_path, name, validation_index)
+                # Judged by this emulator's own entries, as it runs its check.
+                check = check_file_validation(
+                    local_path, name, validation_index, emulators={emu_name}
+                )
                 if check:
                     reason, _emus = check
                     better = find_validated_variant(
                         file_entry, db, local_path, validation_index,
+                        emulators={emu_name},
                     )
                     if better:
                         result = {
@@ -1644,6 +1648,7 @@ def verify_emulator(
             if held and len(alternatives) > 1:
                 alternatives = held[:1]
             for result, required, hle in alternatives:
+                result["destination"] = dest
                 details.append(result)
 
                 # Aggregate by destination (path if available, else name)
@@ -1745,12 +1750,14 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
     sc = result.get("status_counts", {})
     untested = sc.get(Status.UNTESTED, 0)
     missing = sc.get(Status.MISSING, 0)
-    unsourceable_names = {
-        d["name"]
-        for d in result["details"]
-        if d["status"] == Status.MISSING and "unsourceable" in d
-    }
-    unsourceable = len(unsourceable_names)
+    # Counted by slot, as missing is: xash3d's thirteen unsourceable
+    # pak0.pak and liblist.gam were three names and ten "missing".
+    missing_slots: dict[str, bool] = {}
+    for d in result["details"]:
+        if d["status"] == Status.MISSING:
+            slot = d.get("destination") or d["name"]
+            missing_slots[slot] = missing_slots.get(slot, True) and "unsourceable" in d
+    unsourceable = sum(missing_slots.values())
     parts = [f"{ok_count}/{total} OK"]
     if untested:
         parts.append(f"{untested} untested")
