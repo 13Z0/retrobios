@@ -102,6 +102,23 @@ class LargeFilesResume(unittest.TestCase):
             self.assertTrue(ok)
             self.assertEqual(_RangeHandler.ranges, [""])
 
+    @unittest.skipUnless(hasattr(os, "symlink"), "needs symlinks")
+    def test_a_link_at_the_partial_name_is_never_written_through(self):
+        with _Server(), tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(install, "RESUME_FROM_SIZE", 1024):
+            victim = Path(tmp) / "victim.txt"
+            victim.write_bytes(b"keep me")
+            part = Path(tmp) / "bios" / ".big.bin.part"
+            part.parent.mkdir()
+            part.symlink_to(victim)
+            dest, ok, _ = install._download_one(dict(ENTRY), Path(tmp) / "bios")
+            self.assertTrue(ok)
+            self.assertEqual(victim.read_bytes(), b"keep me")
+            final = Path(tmp) / "bios" / "big.bin"
+            self.assertFalse(final.is_symlink())
+            self.assertEqual(final.read_bytes(), PAYLOAD)
+            self.assertEqual(_RangeHandler.ranges, [""])
+
 
 class RetriesWait(unittest.TestCase):
     def test_a_server_error_is_retried_after_the_delay_it_asks(self):

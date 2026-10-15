@@ -23,6 +23,7 @@ import os
 import platform
 import re
 import shutil
+import stat
 import sys
 import tempfile
 import threading
@@ -1579,7 +1580,7 @@ def _download_one(
             offset = 0
             if resumable:
                 tmp_path = dest.parent / f".{dest.name}.part"
-                offset = tmp_path.stat().st_size if tmp_path.exists() else 0
+                offset = _partial_size(tmp_path)
                 if offset >= expected_size:
                     tmp_path.unlink()
                     offset = 0
@@ -1595,7 +1596,7 @@ def _download_one(
                         f"Content-Length {raw_length} != expected {expected_size - offset}"
                     )
                 if resumable:
-                    out = open(tmp_path, "ab" if offset else "wb")
+                    out = _open_partial(tmp_path, append=bool(offset))
                 else:
                     out = tempfile.NamedTemporaryFile(
                         mode="wb", dir=dest.parent, prefix=f".{dest.name}.",
@@ -1681,6 +1682,25 @@ def _download_one(
             return f["dest"], False, "stopped"
 
     return f["dest"], False, reason
+
+
+def _partial_size(path: Path) -> int:
+    """Bytes already held by a partial copy; anything but a plain file is dropped."""
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return 0
+    if stat.S_ISREG(info.st_mode):
+        return info.st_size
+    path.unlink()
+    return 0
+
+
+def _open_partial(path: Path, append: bool):
+    """Open the partial copy without following a link planted at its name."""
+    flags = os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    flags |= os.O_APPEND if append else os.O_TRUNC
+    return os.fdopen(os.open(path, flags, 0o644), "ab" if append else "wb")
 
 
 class _Corrupt(Exception):
