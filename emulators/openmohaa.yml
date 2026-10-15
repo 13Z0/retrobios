@@ -145,7 +145,6 @@ files:
     required: false
     source_ref: "code/qcommon/files.cpp:339 (fs_originalPaks_mainta[2])"
     note: "Added by the 2.11 patch."
-    unsourceable: "patch data the collection does not hold yet; a same-named file of another game must not stand in"
 
   - name: "pak4.pk3"
     category: game_data

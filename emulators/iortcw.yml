@@ -177,7 +177,6 @@ files:
     required: false
     source_ref: "SP/code/qcommon/files.c:181, 3858-3863, 3933-3946, 3969-3970"
     note: "Single-player build: a pak0 under demomain/ with checksum 2985661941 stands in for main/pak0.pk3 with a warning, and the point-release check is skipped."
-    unsourceable: "demo data the collection does not hold yet; a same-named file of another game must not stand in"
 
   - name: "pak0.pk3"
     description: "Multiplayer demo"
@@ -187,4 +186,3 @@ files:
     required: false
     source_ref: "MP/code/qcommon/files.c:192, 3852-3857, 3927-3940, 3963-3964"
     note: "Multiplayer build: a pak0 under demomain/ with checksum 2031778175 stands in for main/pak0.pk3 with a warning, and the point-release check is skipped."
-    unsourceable: "demo data the collection does not hold yet; a same-named file of another game must not stand in"

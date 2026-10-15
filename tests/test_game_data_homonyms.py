@@ -374,5 +374,36 @@ class BundledFilesComeFromTheirOwnTree(unittest.TestCase):
                 self.assertIn(f"/{owner}/", path or "")
 
 
+class HeldFilesAreNotUnsourceable(unittest.TestCase):
+    """`unsourceable:` says the collection cannot hold a file; once its bytes
+    sit at the path the entry names, the flag hides them.
+
+    The RTCW demo paks and the Spearhead 2.11 pak3 were collected the night
+    their entries were flagged "does not hold yet" and the flags stayed: they
+    reached two packs only through another game's same-named file, and left
+    them when that path closed.
+    """
+
+    def test_no_flagged_entry_has_a_file_at_its_path(self):
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            self.skipTest("database.json is not built")
+        by_suffix = load_database(str(db_path))["indexes"]["by_path_suffix"]
+        stale = []
+        for name, profile in load_emulator_profiles(str(REPO_ROOT / "emulators")).items():
+            for entry in profile.get("files", []):
+                if not entry.get("unsourceable"):
+                    continue
+                for key in ("path", "standalone_path"):
+                    dest = entry.get(key)
+                    if not isinstance(dest, str) or "/" not in dest:
+                        continue
+                    if dest.endswith("/"):
+                        dest += entry.get("name", "")
+                    if dest in by_suffix:
+                        stale.append((name, dest))
+        self.assertEqual(stale, [])
+
+
 if __name__ == "__main__":
     unittest.main()
