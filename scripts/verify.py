@@ -81,7 +81,6 @@ from validation import (
     build_ground_truth,
     check_file_validation,
     filter_files_by_mode,
-    find_validated_variant,
     outside_gap_scope,
 )
 
@@ -1585,31 +1584,27 @@ def verify_emulator(
                     )
             else:
                 # Apply emulator validation
-                # Judged by this emulator's own entries, as it runs its check.
-                check = check_file_validation(
-                    local_path, name, validation_index, emulators={emu_name}
+                # Judged by this emulator's own entries, as it runs its check,
+                # through the selection the emulator pack makes.
+                chosen, disagreement = validated_choice(
+                    file_entry, local_path, db, validation_index, DEFAULT_BIOS_DIR,
+                    None, emulators={emu_name},
                 )
-                if check:
-                    reason, _emus = check
-                    better = find_validated_variant(
-                        file_entry, db, local_path, validation_index,
-                        emulators={emu_name},
-                    )
-                    if better:
-                        result = {
-                            "name": name,
-                            "status": Status.OK,
-                            "required": required,
-                            "path": better,
-                        }
-                    else:
-                        result = {
-                            "name": name,
-                            "status": Status.UNTESTED,
-                            "required": required,
-                            "path": local_path,
-                            "reason": reason,
-                        }
+                if disagreement:
+                    result = {
+                        "name": name,
+                        "status": Status.UNTESTED,
+                        "required": required,
+                        "path": local_path,
+                        "reason": disagreement.split(" says ", 1)[-1],
+                    }
+                elif chosen != local_path:
+                    result = {
+                        "name": name,
+                        "status": Status.OK,
+                        "required": required,
+                        "path": chosen,
+                    }
                 elif resolve_status == "hash_mismatch":
                     # Nothing in validation: caught it, but the name matched
                     # while the bytes contradict the hash the profile

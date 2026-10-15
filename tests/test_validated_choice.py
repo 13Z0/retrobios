@@ -215,5 +215,52 @@ class DolphinForksJudgeTheirOwnDspTable(unittest.TestCase):
                     )
                     self.assertEqual(verdict is None, label == accepted, label)
 
+
+class AWarningRejectsNothing(unittest.TestCase):
+    """BeebEm warns about a short ROM and runs it; Azahar warns about a bad
+    signature and runs the file. A warn-level check never refuses a file, yet
+    a held file that passes it is preferred."""
+
+    def _setup(self, tmp, held_good: bool):
+        short = Path(tmp) / "a" / "OS12.rom"
+        good = Path(tmp) / "b" / "OS12.rom"
+        short.parent.mkdir()
+        good.parent.mkdir()
+        short.write_bytes(b"s" * 8192)
+        good.write_bytes(b"g" * 16384)
+        files = [short] + ([good] if held_good else [])
+        db = {"files": {}, "indexes": {"by_name": {"OS12.rom": []}, "by_md5": {}}}
+        for f in files:
+            sha1 = hashlib.sha1(f.read_bytes()).hexdigest()
+            db["files"][sha1] = {"path": str(f), "name": "OS12.rom", "size": f.stat().st_size}
+            db["indexes"]["by_name"]["OS12.rom"].append(sha1)
+        index = _build_validation_index({"beebem": {"files": [
+            {"name": "OS12.rom", "size": 16384, "validation": ["size"], "on_mismatch": "warn"},
+        ]}})
+        return short, good, db, index
+
+    def test_the_core_runs_a_file_that_only_warns(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            short, _good, db, index = self._setup(tmp, held_good=False)
+            chosen, disagreement = validated_choice(
+                {"name": "OS12.rom"}, str(short), db, index, tmp, None, emulators={"beebem"}
+            )
+            self.assertEqual((chosen, disagreement), (str(short), None))
+
+    def test_a_file_passing_the_warned_check_is_preferred(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            short, good, db, index = self._setup(tmp, held_good=True)
+            chosen, disagreement = validated_choice(
+                {"name": "OS12.rom"}, str(short), db, index, tmp, None, emulators={"beebem"}
+            )
+            self.assertEqual((chosen, disagreement), (str(good), None))
+
+    def test_the_merged_view_rejects_nothing_for_it(self):
+        from validation import check_file_validation  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            short, _good, _db, index = self._setup(tmp, held_good=False)
+            self.assertIsNone(check_file_validation(str(short), "OS12.rom", index, tmp))
+
 if __name__ == "__main__":
     unittest.main()

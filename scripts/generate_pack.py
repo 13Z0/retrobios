@@ -85,9 +85,7 @@ from validation import (
     agnostic_substitute,
     frontend_digest_matches,
     _build_validation_index,
-    check_file_validation,
     filter_files_by_mode,
-    find_validated_variant,
 )
 
 yaml = require_yaml()
@@ -1531,17 +1529,15 @@ def generate_emulator_pack(
                     # The file verify --emulator credits is the one shipped:
                     # a dump the core's own check rejects gives way to a held
                     # one it accepts (azahar's otp.bin, dolphin's dsp_rom.bin).
-                    refused = check_file_validation(
-                        local_path, fe["name"], validation_index, bios_dir, {emu_name}
+                    better, disagreement = validated_choice(
+                        fe, local_path, db, validation_index, bios_dir, None,
+                        emulators={emu_name},
                     )
-                    if refused:
-                        better = find_validated_variant(
-                            fe, db, local_path, validation_index, bios_dir,
-                            emulators={emu_name},
-                        )
-                        if not better:
-                            refusal = refusal or f"{fe['name']} -{refused[0]}"
-                            continue
+                    if disagreement:
+                        reason = disagreement.split(" says ", 1)[-1]
+                        refusal = refusal or f"{fe['name']} -{reason}"
+                        continue
+                    if better != local_path:
                         chosen = (fe, better, None)
                         break
                     if status == "hash_mismatch":

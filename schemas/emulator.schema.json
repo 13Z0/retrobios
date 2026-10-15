@@ -642,6 +642,13 @@
           },
           "unsourceable": {
             "type": "string"
+          },
+          "on_mismatch": {
+            "description": "What the code does when a declared check fails: reject the file (default) or warn and run with it.",
+            "enum": [
+              "reject",
+              "warn"
+            ]
           }
         },
         "allOf": [

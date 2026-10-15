@@ -95,6 +95,8 @@ def _entry_rule(emu_name: str, f: dict, checks: set[str]) -> dict:
         },
         "adler32_byteswap": bool(f.get("adler32_byteswap")),
         "crypto": {c for c in checks if c in _CRYPTO_CHECKS},
+        # A failed check the code only warns about: the file still runs.
+        "warn": f.get("on_mismatch") == "warn",
     }
 
 
@@ -180,6 +182,9 @@ def _build_validation_index(profiles: dict) -> dict[str, dict]:
                 }
             index[fname]["rules"].append(_entry_rule(emu_name, f, checks))
             index[fname]["emulators"].add(emu_name)
+            if f.get("on_mismatch") == "warn":
+                # Never a rejection, so not part of the merged rejection rules.
+                continue
             index[fname]["checks"].update(checks)
             # Track non-reproducible crypto checks
             index[fname]["crypto_only"].update(c for c in checks if c in _CRYPTO_CHECKS)
@@ -314,6 +319,7 @@ def check_file_validation(
     validation_index: dict[str, dict],
     bios_dir: str = "bios",
     emulators: set[str] | None = None,
+    strict: bool = False,
 ) -> tuple[str, list[str]] | None:
     """Check emulator-level validation on a resolved file.
 
@@ -323,7 +329,9 @@ def check_file_validation(
     With ``emulators``, the cores that read the file's destination, each of
     them must accept it through one of its own entries for the name, the
     way each runs its own check. Without, the checks of every core naming
-    the file are merged.
+    the file are merged. A check declared `on_mismatch: warn` rejects
+    nothing, since the core runs with the file; ``strict`` counts it, to
+    prefer a file that passes it too.
 
     Returns None if all checks pass or no validation applies.
     Returns (reason, emulators) tuple on failure, where *emulators*
@@ -340,7 +348,8 @@ def check_file_validation(
             if not rules:
                 continue
             reasons = [
-                _rule_failure(rule, local_path, filename, bios_dir, hashes)
+                None if rule["warn"] and not strict
+                else _rule_failure(rule, local_path, filename, bios_dir, hashes)
                 for rule in rules
             ]
             if all(reasons):
@@ -470,6 +479,7 @@ def find_validated_variant(
     bios_dir: str = "bios",
     platform_digest: str | None = None,
     emulators: set[str] | None = None,
+    strict: bool = False,
 ) -> str | None:
     """A held file the emulator's own checks accept, in place of current_path.
 
@@ -529,7 +539,7 @@ def find_validated_variant(
         if accepted and str(entry.get(platform_digest, "")).lower() not in accepted:
             continue
         if check_file_validation(
-            path, fname, validation_index, bios_dir, emulators
+            path, fname, validation_index, bios_dir, emulators, strict
         ) is None:
             return path
     return None
@@ -668,6 +678,7 @@ def validated_choice(
     platform_digest: str | None,
     destination: str = "",
     owners: dict | None = None,
+    emulators: set[str] | None = None,
 ) -> tuple[str | None, str | None]:
     """The file a platform destination ships, and the disagreement if any.
 
@@ -681,8 +692,8 @@ def validated_choice(
         return local_path, None
     name = file_entry.get("name", "")
     rules = validation_index.get(name)
-    judges: set[str] | None = None
-    if rules and owners and destination:
+    judges: set[str] | None = emulators
+    if rules and judges is None and owners and destination:
         owning = _owners_of(destination, name, owners)
         if not owning & set(rules["emulators"]):
             # No core that checks this name reads this destination: PC-98's
@@ -691,19 +702,31 @@ def validated_choice(
         # The cores that read this destination judge it, each by its own
         # entries.
         judges = owning & set(rules["emulators"])
-    check = check_file_validation(
-        local_path, file_entry.get("name", ""), validation_index, bios_dir, judges
-    )
-    if not check:
+    def check(path: str, strict: bool):
+        return check_file_validation(path, name, validation_index, bios_dir, judges, strict)
+
+    def variant(strict: bool):
+        return find_validated_variant(
+            file_entry, db, local_path, validation_index, bios_dir,
+            platform_digest=platform_digest, emulators=judges, strict=strict,
+        )
+
+    if not check(local_path, True):
         return local_path, None
-    better = find_validated_variant(
-        file_entry, db, local_path, validation_index, bios_dir,
-        platform_digest=platform_digest, emulators=judges,
-    )
+    # A held file every check passes, warn-level ones included, comes first;
+    # then the file itself when only a warning fails (the core runs it);
+    # then a held file the core at least runs.
+    better = variant(True)
     if better:
         return better, None
-    reason, emulators = check
-    return local_path, f"{', '.join(emulators)} says {reason}"
+    failed = check(local_path, False)
+    if not failed:
+        return local_path, None
+    better = variant(False)
+    if better:
+        return better, None
+    reason, failing = failed
+    return local_path, f"{', '.join(failing)} says {reason}"
 
 
 def existence_discrepancy(file_entry: dict, local_path: str, platform_display: str) -> str:
