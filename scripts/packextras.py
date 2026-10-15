@@ -604,8 +604,10 @@ def _collect_emulator_extras(
             fname = f.get("name", "")
             if not fname:
                 continue
-            # Only duplicate files already covered at another destination
-            if fname not in covered_names:
+            # Only duplicate files already covered at another destination.
+            # An unsourceable entry is a file no collection holds: the name
+            # covered elsewhere belongs to another program's file.
+            if fname not in covered_names or f.get("unsourceable"):
                 continue
             file_mode = f.get("mode")
             if file_mode == "standalone" and not is_standalone:

@@ -153,7 +153,8 @@ class SecondPassKeepsIdentity(unittest.TestCase):
     The second extras pass copied a name the baseline already covers to the
     profile's own path, without its hashes or its `unsourceable:` flag, so
     the copy resolved on the name: RetroBat's pack carried Quake III's
-    baseq3/pak1.pk3 as MOHAA's mainta/pak1.pk3.
+    baseq3/pak1.pk3 as MOHAA's mainta/pak1.pk3. An unsourceable entry is
+    settled, as the first pass treats it, and gets no copy.
     """
 
     def test_flag_and_hashes_reach_the_alternative_destination(self):
@@ -182,7 +183,8 @@ class SecondPassKeepsIdentity(unittest.TestCase):
         }}
         extras = {e["destination"]: e for e in _collect_emulator_extras(
             config, "emulators", db, set(), "", profiles)}
-        self.assertEqual(extras["mainta/pak1.pk3"].get("unsourceable"), "retail")
+        # Unsourceable is settled, as in the first pass: no copy at all.
+        self.assertNotIn("mainta/pak1.pk3", extras)
         self.assertEqual(extras["maintt/pak1.pk3"].get("sha1"), "c" * 40)
 
 

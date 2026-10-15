@@ -62,5 +62,40 @@ class IdentityTravels(unittest.TestCase):
         self.assertIn("validation", PROFILE_IDENTITY_FIELDS)
 
 
+class UnsourceableIsNoCopy(unittest.TestCase):
+    """The second pass copies a covered file to another core's path by name.
+
+    zc210 ships its own default.sf2; dosbox-staging reads a default.sf2 that
+    the operating system links to its SoundFont, which no collection holds.
+    The name was enough to give dosbox-staging a slot, recorded as missing
+    while zc210 was in the pack and absent once it was not, so a pack built
+    for a target disagreed with the installer narrowing the full list.
+    """
+
+    def test_an_unsourceable_entry_gets_no_copy(self):
+        profiles = {
+            "zc210": {"emulator": "ZC", "type": "libretro", "systems": ["zc"],
+                      "files": [{"name": "default.sf2", "path": "zc210/sf2/default.sf2"}]},
+            "dosbox-staging": {
+                "emulator": "DOSBox Staging", "type": "libretro", "systems": ["dos"],
+                "files": [{"name": "default.sf2", "path": "soundfonts/default.sf2",
+                           "required": False, "unsourceable": "the system's own link"}],
+            },
+        }
+        config = {"cores": ["zc210", "dosbox-staging"], "systems": {}}
+        db = {
+            "files": {"s1": {"name": "default.sf2", "path": "bios/ZC/default.sf2",
+                             "size": 10, "sha1": "s1", "md5": "m1", "crc32": "c1"}},
+            "indexes": {"by_name": {"default.sf2": ["s1"]}, "by_md5": {"m1": "s1"},
+                        "by_crc32": {"c1": "s1"},
+                        "by_path_suffix": {"zc210/sf2/default.sf2": ["s1"]}},
+        }
+        extras = _collect_emulator_extras(config, "emulators", db, set(), "", profiles)
+        self.assertEqual(
+            [(e["source_profile"], e["destination"]) for e in extras],
+            [("zc210", "zc210/sf2/default.sf2")],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
