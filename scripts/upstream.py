@@ -208,10 +208,27 @@ def _host_is_unresolvable(exc: BaseException) -> bool:
         if seen is None:
             break
         if isinstance(seen, socket.gaierror):
-            return True
+            # A resolver that answers nothing at all is the local network:
+            # every profile would read as gone, and the sweep would report
+            # nothing to review while it reviewed nothing.
+            return seen.errno == socket.EAI_NONAME and _resolver_answers()
         nested = getattr(seen, "reason", None)
         seen = nested if isinstance(nested, BaseException) else seen.__cause__
     return False
+
+
+# A name every forge call depends on: if it does not resolve, the fault is
+# local and no host can be declared gone.
+RESOLVER_PROBE = "github.com"
+
+
+def _resolver_answers() -> bool:
+    """Whether name resolution works here at all. Replaced in tests."""
+    try:
+        socket.getaddrinfo(RESOLVER_PROBE, 443)
+    except OSError:
+        return False
+    return True
 
 
 def _fetch(url: str, accept_json: bool = False) -> bytes | None:

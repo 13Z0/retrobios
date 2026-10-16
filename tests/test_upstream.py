@@ -9,6 +9,7 @@ import sys
 import tempfile
 import socket
 import unittest
+from unittest import mock
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -291,13 +292,25 @@ class TestGoneUpstream(unittest.TestCase):
         self.assertEqual(self.calls, 1)
 
     def test_unresolvable_host_is_gone_and_not_retried(self):
-        self._serve(
-            urllib.error.URLError(socket.gaierror(-2, "Name or service not known"))
-        )
-        with self.assertRaises(upstream.GoneError):
-            upstream._fetch("https://host/x")
+        self._serve(urllib.error.URLError(
+            socket.gaierror(socket.EAI_NONAME, "Name or service not known")
+        ))
+        with mock.patch.object(upstream, "_resolver_answers", return_value=True):
+            with self.assertRaises(upstream.GoneError):
+                upstream._fetch("https://host/x")
         self.assertEqual(self.calls, 1)
         self.assertEqual(self.slept, [])
+
+    def test_a_local_resolver_outage_is_not_gone(self):
+        """With DNS down here, every forge looked gone and profile_sync
+        listed nothing to review, exiting 0."""
+        for errno, resolver in ((socket.EAI_NONAME, False), (socket.EAI_AGAIN, True)):
+            with self.subTest(errno=errno, resolver=resolver):
+                self._serve(urllib.error.URLError(socket.gaierror(errno, "no")))
+                with mock.patch.object(upstream, "_resolver_answers", return_value=resolver):
+                    with self.assertRaises(upstream.UpstreamError) as caught:
+                        upstream._fetch("https://host/x")
+                self.assertNotIsInstance(caught.exception, upstream.GoneError)
 
     def test_a_gone_error_is_still_an_upstream_error(self):
         self._serve(_http_error(451))
