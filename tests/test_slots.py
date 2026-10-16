@@ -715,6 +715,21 @@ class AnArchiveIsClaimedByItsMembers(unittest.TestCase):
         config["verification_mode"] = "md5"
         self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])
 
+    def test_a_target_without_the_core_keeps_the_pin(self):
+        """DuckStation exists on no RetroArch target and still replaced the
+        scph5000.bin System.dat pins in every --target pack."""
+        config = self._config("existence", "short")
+        self.assertTrue(slots.pack_overrides(config, self.profiles, self.db))
+        self.assertEqual(
+            slots.pack_overrides(config, self.profiles, self.db, target_cores={"other"}), {}
+        )
+
+    def test_a_baseline_pack_serves_the_baseline(self):
+        config = self._config("existence", "short")
+        self.assertEqual(
+            slots.pack_overrides(config, self.profiles, self.db, source="platform"), {}
+        )
+
     def test_a_pin_holding_the_members_is_agreement(self):
         config = self._config("md5", "full")
         self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])

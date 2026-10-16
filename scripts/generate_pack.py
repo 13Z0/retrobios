@@ -610,7 +610,8 @@ def generate_pack(
         validation_index = _build_validation_index(platform_profiles)
     validation_owners = destination_owners(platform_profiles)
     slot_overrides = slots.pack_overrides(
-        config, emu_profiles or {}, db, zip_contents, data_registry
+        config, emu_profiles or {}, db, zip_contents, data_registry,
+        target_cores=target_cores, source=source,
     )
 
     # Filter systems by target if specified
@@ -3437,7 +3438,8 @@ def generate_manifest(
     if data_registry is None:
         data_registry = load_data_dir_registry(platforms_dir)
     slot_overrides = slots.pack_overrides(
-        config, emu_profiles, db, zip_contents, data_registry
+        config, emu_profiles, db, zip_contents, data_registry,
+        target_cores=target_cores, source=source,
     )
 
     def manifest_destination(full_destination: str) -> str:

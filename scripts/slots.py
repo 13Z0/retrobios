@@ -416,6 +416,8 @@ def pack_overrides(
     db: dict,
     zip_contents: dict | None = None,
     data_dir_registry: dict | None = None,
+    target_cores: set[str] | None = None,
+    source: str = "full",
 ) -> dict[str, str]:
     """Full pack destination -> the file a platform pack serves there instead.
 
@@ -428,10 +430,14 @@ def pack_overrides(
     """
     from common import resolve_platform_cores
 
-    if not profiles:
+    # A baseline-only pack serves what the platform declares, and a target's
+    # pack answers to the cores that hardware builds: DuckStation does not
+    # exist on any RetroArch target and still replaced its scph5000.bin.
+    if not profiles or source == "platform":
         return {}
     platform_profiles = {
-        name: profiles[name] for name in resolve_platform_cores(config, profiles)
+        name: profiles[name]
+        for name in resolve_platform_cores(config, profiles, target_cores=target_cores)
     }
     mode = config.get("verification_mode", "existence")
     overrides: dict[str, str] = {}

@@ -912,7 +912,8 @@ def verify_platform(
     slot_overrides = {
         (key[len(base_dest) + 1:] if base_dest and key.startswith(f"{base_dest}/") else key): path
         for key, path in slots.pack_overrides(
-            config, emu_profiles or {}, db, zip_contents, data_dir_registry
+            config, emu_profiles or {}, db, zip_contents, data_dir_registry,
+            target_cores=target_cores,
         ).items()
     }
 
