@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-from common import write_text_atomic, yaml_load
+from common import PROFILE_BACKUP_SUFFIX, write_text_atomic, yaml_load
 
 
 _MAME_RELEASE_RE = re.compile(r"^0\.\d+")
@@ -381,7 +381,7 @@ def _backup_and_write(path: str, data: dict) -> None:
     (core_version, contents, source_ref), and appends new entries.
     """
     p = Path(path)
-    backup = p.with_suffix(".old.yml")
+    backup = p.with_suffix(PROFILE_BACKUP_SUFFIX)
     shutil.copy2(p, backup)
 
     original = p.read_text(encoding="utf-8")
@@ -572,7 +572,7 @@ def _backup_and_write_fbneo(path: str, data: dict, hashes: dict) -> None:
     Existing entries are left untouched (CRC32 changes are rare).
     """
     p = Path(path)
-    backup = p.with_suffix(".old.yml")
+    backup = p.with_suffix(PROFILE_BACKUP_SUFFIX)
     shutil.copy2(p, backup)
 
     original = p.read_text(encoding="utf-8")

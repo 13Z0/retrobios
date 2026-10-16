@@ -1172,6 +1172,18 @@ def select_emulator_profiles(
     return selected
 
 
+PROFILE_BACKUP_SUFFIX = ".old.yml"
+
+
+def source_yaml_paths(directory: str | Path) -> list[Path]:
+    """YAML sources in a directory, without the copies the hash merge keeps."""
+    return [
+        path
+        for path in sorted(Path(directory).glob("*.yml"))
+        if not path.name.endswith(PROFILE_BACKUP_SUFFIX)
+    ]
+
+
 def load_emulator_profiles(
     emulators_dir: str,
     skip_aliases: bool = True,
@@ -1199,9 +1211,7 @@ def load_emulator_profiles(
             file=sys.stderr,
         )
         return profiles
-    for f in sorted(emu_path.glob("*.yml")):
-        if f.name.endswith(".old.yml"):
-            continue
+    for f in source_yaml_paths(emu_path):
         with open(f) as fh:
             profile = yaml_load(fh) or {}
         if "emulator" not in profile:

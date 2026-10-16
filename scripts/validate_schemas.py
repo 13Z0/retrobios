@@ -12,7 +12,7 @@ from pathlib import Path, PurePosixPath
 
 import yaml
 
-from common import yaml_load
+from common import source_yaml_paths, yaml_load
 from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,7 +46,7 @@ def _validate_yaml_directory(
 ) -> list[str]:
     validator = _validator(schema_name)
     out: list[str] = []
-    for path in sorted(directory.glob("*.yml")):
+    for path in source_yaml_paths(directory):
         if skip_private and path.name.startswith("_"):
             continue
         try:
@@ -214,7 +214,7 @@ def _unknown_data_dir_refs() -> list[str]:
         registered = set((yaml_load(handle) or {}).get("data_directories", {}))
     out: list[str] = []
     for directory in (ROOT / "emulators", ROOT / "platforms"):
-        for path in sorted(directory.glob("*.yml")):
+        for path in source_yaml_paths(directory):
             if path.name.startswith("_"):
                 continue
             with path.open(encoding="utf-8") as handle:

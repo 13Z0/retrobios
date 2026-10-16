@@ -27,6 +27,7 @@ from common import (
     list_registered_platforms,
     load_provenance_snapshots,
     require_yaml,
+    source_yaml_paths,
     write_if_changed,
     yaml_load,
 )
@@ -507,9 +508,7 @@ def _collect_all_aliases(files: dict) -> dict:
     # Collect aliases from emulator YAMLs (aliases field on file entries)
     emulators_dir = Path("emulators")
     if emulators_dir.is_dir():
-        for emu_file in emulators_dir.glob("*.yml"):
-            if emu_file.name.endswith(".old.yml"):
-                continue
+        for emu_file in source_yaml_paths(emulators_dir):
             try:
                 with open(emu_file) as f:
                     emu_config = yaml_load(f) or {}

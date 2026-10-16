@@ -2126,5 +2126,31 @@ class ModuleConstantsDeclaredOnce(unittest.TestCase):
         self.assertEqual(offenders, {})
 
 
+class HashMergeBackupsAreNotSources(unittest.TestCase):
+    """The hash merge copies a profile to <name>.old.yml before rewriting it.
+
+    Every loader skipped the copy except validate_schemas, which then failed
+    on a stale MAME profile nobody would ever ship.
+    """
+
+    def test_the_validator_skips_a_backup(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from validate_schemas import _validate_yaml_directory
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            (Path(directory) / "mame.old.yml").write_text("emulator: [\n")
+            self.assertEqual(
+                _validate_yaml_directory(Path(directory), "emulator.schema.json"), []
+            )
+
+    def test_the_backup_suffix_is_written_once(self):
+        offenders = [
+            str(path.relative_to(ROOT))
+            for path in sorted(ROOT.glob("scripts/**/*.py"))
+            if path.name != "common.py" and '".old.yml"' in path.read_text()
+        ]
+        self.assertEqual(offenders, [])
+
+
 if __name__ == "__main__":
     unittest.main()

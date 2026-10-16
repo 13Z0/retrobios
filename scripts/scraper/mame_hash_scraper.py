@@ -22,7 +22,7 @@ from typing import Any
 
 import yaml
 
-from common import write_text_atomic, yaml_load
+from common import source_yaml_paths, write_text_atomic, yaml_load
 
 from ._hash_merge import compute_diff, merge_mame_profile
 from .mame_parser import parse_mame_source_tree
@@ -181,9 +181,7 @@ _MAME_TREES = frozenset({
 
 def _find_mame_profiles() -> list[Path]:
     profiles: list[Path] = []
-    for path in sorted(_EMULATORS_DIR.glob("*.yml")):
-        if path.name.endswith(".old.yml"):
-            continue
+    for path in source_yaml_paths(_EMULATORS_DIR):
         try:
             with open(path, encoding="utf-8") as f:
                 data = yaml_load(f)

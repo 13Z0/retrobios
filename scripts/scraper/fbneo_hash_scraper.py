@@ -20,7 +20,7 @@ from typing import Any
 
 import yaml
 
-from common import write_text_atomic, yaml_load
+from common import source_yaml_paths, write_text_atomic, yaml_load
 
 from scripts.scraper._hash_merge import compute_diff, merge_fbneo_profile
 from scripts.scraper.fbneo_parser import parse_fbneo_source_tree
@@ -200,9 +200,7 @@ def fetch_and_cache(force: bool = False) -> dict[str, Any]:
 def _find_fbneo_profiles() -> list[Path]:
     """Find emulator profiles whose upstream references finalburnneo/FBNeo."""
     profiles: list[Path] = []
-    for path in sorted(EMULATORS_DIR.glob("*.yml")):
-        if path.name.endswith(".old.yml"):
-            continue
+    for path in source_yaml_paths(EMULATORS_DIR):
         try:
             data = yaml_load(path.read_text(encoding="utf-8"))
         except (yaml.YAMLError, OSError):
