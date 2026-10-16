@@ -1414,6 +1414,28 @@ class CheckoutCompletenessRegressions(unittest.TestCase):
             finally:
                 os.chdir(cwd)
 
+    def test_restore_without_a_cache_names_what_is_missing(self):
+        """A job that skipped `mkdir .cache/large` exited 0 with every
+        gitignored file absent: the early return ran before the check."""
+        from scripts.restore_large_files import restore
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            (root / ".gitignore").write_text("bios/big.bin\n", encoding="utf-8")
+            (root / "database.json").write_text(
+                json.dumps({"files": {"a" * 40: {"path": "bios/big.bin"}}}),
+                encoding="utf-8",
+            )
+            cwd = os.getcwd()
+            os.chdir(root)
+            try:
+                self.assertEqual(
+                    restore("no-cache", "database.json", ".gitignore"),
+                    (0, ["bios/big.bin"]),
+                )
+            finally:
+                os.chdir(cwd)
+
 
 class EveryManifestEntryIsFetchable(unittest.TestCase):
     """An install manifest may not list a file the installer cannot get.

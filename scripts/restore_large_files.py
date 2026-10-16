@@ -54,11 +54,14 @@ def index_cache(cache_dir: str) -> dict[str, str]:
 def restore(
     cache_dir: str, db_path: str, gitignore: str
 ) -> tuple[int, list[str]]:
-    if not os.path.isdir(cache_dir):
-        print(f"No cache at {cache_dir}, nothing to restore")
-        return 0, []
     ignored = gitignored_paths(gitignore)
-    index = index_cache(cache_dir)
+    # No cache is not nothing to do: the paths it would have supplied are
+    # still missing, and the check below is the one that must say so.
+    if os.path.isdir(cache_dir):
+        index = index_cache(cache_dir)
+    else:
+        print(f"No cache at {cache_dir}")
+        index = {}
     db = load_database(db_path)
     restored = 0
     unsatisfied: list[str] = []
