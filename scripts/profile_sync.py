@@ -723,22 +723,28 @@ def _map_index(opcodes, index: int) -> int | None:
     return None
 
 
-_OPCODE_CACHE: dict[tuple[int, int], list] = {}
+_OPCODE_CACHE: dict[tuple[tuple[str, ...], tuple[str, ...]], list] = {}
+_OPCODE_CACHE_SIZE = 8
 
 
 def _opcodes(pin: list[str], head: list[str]) -> list:
     """Opcodes for one pair of revisions, computed once per run.
 
     Every ref citing the same file would otherwise redo the same diff, and a
-    driver of thirty thousand lines takes seconds each time.
+    driver of thirty thousand lines takes seconds each time. Keyed by the
+    lines themselves: anchor_block hands over lists it builds and frees, and
+    an id() key served one file's opcodes to the next pair at the same
+    addresses.
     """
-    key = (id(pin), id(head))
-    cached = _OPCODE_CACHE.get(key)
+    key = (tuple(pin), tuple(head))
+    cached = _OPCODE_CACHE.pop(key, None)
     if cached is None:
         cached = difflib.SequenceMatcher(
             None, pin, head, autojunk=False
         ).get_opcodes()
-        _OPCODE_CACHE[key] = cached
+    _OPCODE_CACHE[key] = cached
+    while len(_OPCODE_CACHE) > _OPCODE_CACHE_SIZE:
+        del _OPCODE_CACHE[next(iter(_OPCODE_CACHE))]
     return cached
 
 

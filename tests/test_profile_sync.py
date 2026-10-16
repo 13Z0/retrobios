@@ -3397,6 +3397,23 @@ class TestWrappedProse(unittest.TestCase):
         self.assertEqual(self.path.read_text(), self.TEXT)
 
 
+class TestOpcodeCache(unittest.TestCase):
+    """The diff cache was keyed by id() of lists anchor_block builds and frees
+    on return: a later pair at the same addresses read another file's
+    opcodes, and a CHANGED ref could be mapped onto the wrong line."""
+
+    def test_each_pair_gets_its_own_diff(self):
+        import difflib
+
+        for n in range(200):
+            pin = [f"line {n} {i}" for i in range(n % 7 + 2)]
+            head = [f"line {n} {i}" for i in range(n % 5 + 1)] + [f"new {n}"]
+            expected = difflib.SequenceMatcher(
+                None, pin, head, autojunk=False
+            ).get_opcodes()
+            self.assertEqual(profile_sync._opcodes(list(pin), list(head)), expected)
+
+
 class TestCommentCitations(unittest.TestCase):
     """The loader drops comments: zesarux's `# rom_load switch,
     src/cpu.c:3212-3451` stayed on the old lines under a new pin."""
