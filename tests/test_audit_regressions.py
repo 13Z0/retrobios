@@ -2187,6 +2187,26 @@ class ContributorsSurviveAFailedRequest(unittest.TestCase):
         )
 
 
+class APackNameFitsAFileName(unittest.TestCase):
+    """--system snes joined 23 emulator names and died on ENAMETOOLONG
+    before writing anything, while verify --system snes reported."""
+
+    def test_a_long_selection_is_bounded_and_told_apart(self):
+        from scripts.generate_pack import MAX_PACK_NAME_BYTES, _bounded_pack_name
+
+        names = [f"Emulator_Number_{i}" for i in range(23)]
+        long_name = _bounded_pack_name(names, names, "_BIOS_Pack.zip")
+        self.assertLessEqual(len(long_name.encode()), MAX_PACK_NAME_BYTES)
+        self.assertTrue(long_name.startswith("Emulator_Number_0_and_22_more_"))
+        other = _bounded_pack_name(names, names[:-1] + ["x"], "_BIOS_Pack.zip")
+        self.assertNotEqual(long_name, other)
+        self.assertEqual(_bounded_pack_name(["A", "B"], ["a", "b"], ".zip"), "A_B.zip")
+
+    def test_the_system_pack_names_itself(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertIn("pack_name=final_name", source)
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

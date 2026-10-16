@@ -1209,6 +1209,25 @@ def _same_bytes(path: str, other: str | None) -> bool:
     return compute_hashes(path)["sha1"] == compute_hashes(other)["sha1"]
 
 
+# A file name holds 255 bytes on every filesystem a pack is written to;
+# the margin leaves room for the split part suffix and a scratch prefix.
+MAX_PACK_NAME_BYTES = 200
+
+
+def _bounded_pack_name(display_names: list[str], keys: list[str], suffix: str) -> str:
+    """The emulator pack's file name, its emulators joined while they fit.
+
+    Past the limit the name keeps the first emulator, says how many more the
+    pack holds, and carries a digest of the selection so two different
+    selections never share a file.
+    """
+    joined = "_".join(display_names) + suffix
+    if len(joined.encode("utf-8")) <= MAX_PACK_NAME_BYTES:
+        return joined
+    digest = hashlib.sha1("\n".join(sorted(keys)).encode("utf-8")).hexdigest()[:8]
+    return f"{display_names[0]}_and_{len(display_names) - 1}_more_{digest}{suffix}"
+
+
 def generate_emulator_pack(
     profile_names: list[str],
     emulators_dir: str,
@@ -1221,8 +1240,14 @@ def generate_emulator_pack(
     regions: list[str] | None = None,
     offline: bool | None = None,
     platforms_dir: str | None = None,
+    pack_name: str | None = None,
 ) -> str | None:
-    """Generate a ZIP pack for specific emulator profiles."""
+    """Generate a ZIP pack for specific emulator profiles.
+
+    `pack_name` is the caller's own file name: the system pack names its
+    archive after the system, and joining 23 SNES emulator names went past
+    the 255 bytes a file name may hold.
+    """
     all_profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
     if zip_contents is None:
         zip_contents = build_zip_contents_index(db)
@@ -1242,7 +1267,9 @@ def generate_emulator_pack(
             "full", regions, None, False, required_only, standalone
         )
     )
-    zip_name = "_".join(display_names) + f"{narrow_tags}_BIOS_Pack.zip"
+    zip_name = pack_name or _bounded_pack_name(
+        display_names, [n for n, _p in selected], f"{narrow_tags}_BIOS_Pack.zip"
+    )
     zip_path = os.path.join(output_dir, zip_name)
     os.makedirs(output_dir, exist_ok=True)
 
@@ -1595,6 +1622,18 @@ def generate_system_pack(
     # Built in a scratch directory: under its emulator name in output_dir it
     # overwrote, then carried away, an --emulator pack already there.
     os.makedirs(output_dir, exist_ok=True)
+    # Every dimension goes through the one list: keeping only the region
+    # tag made --system X --required-only overwrite the pack built without it.
+    tags = "".join(
+        tag
+        for tag, _label in _narrowings(
+            "full", regions, None, False, required_only, standalone=standalone
+        )
+    )
+    # The selection mode is part of the name: `--system sega-triforce`
+    # and `--emulator triforce` both wrote Triforce_BIOS_Pack.zip, and
+    # the second run replaced the first without a word.
+    final_name = f"{sys_display}_System{tags}_BIOS_Pack.zip"
     scratch = tempfile.mkdtemp(prefix=".system-", dir=output_dir)
     try:
         result = generate_emulator_pack(
@@ -1609,23 +1648,11 @@ def generate_system_pack(
             regions=regions,
             offline=offline,
             platforms_dir=platforms_dir,
+            pack_name=final_name,
         )
         if not result:
             return None
-        # Every dimension goes through the one list: keeping only the region
-        # tag made --system X --required-only overwrite the pack built without it.
-        tags = "".join(
-            tag
-            for tag, _label in _narrowings(
-                "full", regions, None, False, required_only, standalone=standalone
-            )
-        )
-        # The selection mode is part of the name: `--system sega-triforce`
-        # and `--emulator triforce` both wrote Triforce_BIOS_Pack.zip, and
-        # the second run replaced the first without a word.
-        new_path = os.path.join(
-            output_dir, f"{sys_display}_System{tags}_BIOS_Pack.zip"
-        )
+        new_path = os.path.join(output_dir, final_name)
         os.replace(result, new_path)
         return new_path
     finally:
