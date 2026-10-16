@@ -131,7 +131,7 @@ python scripts/verify.py --emulator flycast
 python scripts/verify.py --platform retroarch --verbose  # emulator ground truth
 ```
 
-Only dependency: Python 3 + `pyyaml`.
+Requires Python 3.12 and `pyyaml`. The one-line installer alone runs on Python 3.8.
 
 ## Documentation site
 

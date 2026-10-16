@@ -33,6 +33,12 @@ import sys
 import time
 from pathlib import Path
 
+# The build scripts use syntax CPython 3.12 introduced (generate_readme's
+# f-strings, generate_pack's parenthesized context managers). On an older
+# interpreter the run got through the packs and failed hours in, at step 7.
+if sys.version_info < (3, 12):
+    sys.exit(f"pipeline.py needs Python 3.12 or newer, this is {sys.version.split()[0]}")
+
 sys.path.insert(0, str(Path(__file__).parent))
 from common import ArtifactLockBusy, artifact_lock, hold_artifact_lock
 

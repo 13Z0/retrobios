@@ -76,6 +76,39 @@ class ReadmeRegressions(unittest.TestCase):
         unknown = advertised - supported
         self.assertEqual(unknown, set(), f"README advertises unknown flags: {unknown}")
 
+    def test_the_build_version_is_the_one_the_pipeline_requires(self):
+        """"Python 3 + pyyaml" sent a 3.8 user to a SyntaxError in
+        generate_pack, and a 3.10 one through six steps to fail at step 7."""
+        floor = re.search(
+            r"sys\.version_info < \((\d+), (\d+)\)",
+            (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8"),
+        )
+        self.assertIsNotNone(floor, "pipeline.py checks no interpreter version")
+        version = f"Python {floor.group(1)}.{floor.group(2)}"
+        for page in ("README.md", "wiki/tools.md", "wiki/testing-guide.md"):
+            with self.subTest(page=page):
+                self.assertIn(version, (ROOT / page).read_text(encoding="utf-8"))
+        self.assertIn(
+            version, (ROOT / "scripts" / "generate_readme.py").read_text(encoding="utf-8")
+        )
+
+    def test_an_older_interpreter_is_refused_before_the_first_step(self):
+        import shutil  # noqa: PLC0415
+
+        python38 = shutil.which("python3.8")
+        if python38 is None:
+            if os.environ.get("CI"):
+                self.fail("CI must provide python3.8")
+            self.skipTest("no python3.8 on PATH")
+        # --help: without the guard the run must stop at argparse, not
+        # rebuild database.json under an interpreter missing pyyaml.
+        proc = subprocess.run(
+            [python38, "-I", "scripts/pipeline.py", "--help"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
+        )
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("needs Python 3.12", proc.stderr)
+
 
 class ReleaseSigningRegressions(unittest.TestCase):
     """A checksum list published beside its own artifacts proves nothing.

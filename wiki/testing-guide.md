@@ -38,7 +38,7 @@ python -m unittest tests.test_site_exports -v
 python -m unittest tests.test_site_validation -v
 ```
 
-Running the build needs `pyyaml` alone, and so does most of the suite. The
+Running the build needs Python 3.12 and `pyyaml` alone, and so does most of the suite. The
 schema contract tests also need `jsonschema[format-nongpl]`, which the CI
 installs: without it they are reported as skipped, so install it before a pull
 request that touches a profile, a platform file or a schema
