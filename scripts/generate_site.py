@@ -2028,7 +2028,8 @@ def _render_emulator_file(
     if fmd5:
         details.append(f"MD5: {_hash_spans(fmd5)}")
     if fcrc32:
-        details.append(f"CRC32: `{fcrc32}`")
+        crcs = fcrc32 if isinstance(fcrc32, list) else [fcrc32]
+        details.append("CRC32: " + ", ".join(f"`{crc}`" for crc in crcs))
     if fsha256:
         details.append(f"SHA256: {_hash_spans(fsha256)}")
     if fadler32:

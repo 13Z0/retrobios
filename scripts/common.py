@@ -408,7 +408,7 @@ def declared_hash_verdict(
     sha1_candidates: set,
     sha256_candidates: set,
     md5_list: list,
-    crc_raw: str,
+    crc_candidates: set,
     zipped_file: str | None,
     declared_size,
 ) -> str:
@@ -427,7 +427,7 @@ def declared_hash_verdict(
         algorithms.add("sha256")
     if md5_list and not zipped_file:
         algorithms.add("md5")
-    if crc_raw:
+    if crc_candidates:
         algorithms.add("crc32")
     actual = compute_hashes(candidate, frozenset(algorithms)) if algorithms else {}
     if sha1_candidates and actual.get("sha1", "").lower() not in sha1_candidates:
@@ -438,9 +438,9 @@ def declared_hash_verdict(
         actual.get("md5", "").lower().startswith(expected) for expected in md5_list
     ):
         return "hash_mismatch"
-    if crc_raw and actual.get("crc32", "").lower() != crc_raw:
+    if crc_candidates and actual.get("crc32", "").lower() not in crc_candidates:
         return "hash_mismatch"
-    if crc_raw and declared_size is not None:
+    if crc_candidates and declared_size is not None:
         allowed_sizes = declared_size if isinstance(declared_size, list) else [declared_size]
         if os.path.getsize(candidate) not in allowed_sizes:
             return "hash_mismatch"
@@ -664,10 +664,17 @@ def resolve_local_file(
         for candidate in str(value).split(",")
         if len(candidate.strip()) == 64
     ]
-    crc_raw = str(file_entry.get("crc32", "") or "").strip().lower()
+    # One value, a list, or a comma-separated string, like the other hashes.
+    crc_values = file_entry.get("crc32") or []
+    crc_candidates = {
+        candidate.strip().lower().removeprefix("0x")
+        for value in (crc_values if isinstance(crc_values, list) else [crc_values])
+        for candidate in str(value).split(",")
+        if candidate.strip()
+    }
     declared_size = file_entry.get("size")
     has_strong_hash = bool(
-        sha1_candidates or sha256_candidates or md5_list or crc_raw
+        sha1_candidates or sha256_candidates or md5_list or crc_candidates
     )
     files_db = db.get("files", {})
     by_md5 = db.get("indexes", {}).get("by_md5", {})
@@ -694,8 +701,8 @@ def resolve_local_file(
             if not any(actual_md5.startswith(expected) for expected in md5_list):
                 return None
             statuses.append("md5_exact")
-        if crc_raw:
-            if str(entry.get("crc32", "")).lower() != crc_raw:
+        if crc_candidates:
+            if str(entry.get("crc32", "")).lower() not in crc_candidates:
                 return None
             if declared_size is not None:
                 allowed_sizes = (
@@ -730,20 +737,21 @@ def resolve_local_file(
     # size confirms it when available; a handful of emulators validate CRC32
     # alone, so those entries retain the same (weaker) evidence as the core.
     if (
-        crc_raw
+        crc_candidates
         and not zipped_file
         and not md5_list
         and not sha1_candidates
         and not sha256_candidates
     ):
         by_crc32 = db.get("indexes", {}).get("by_crc32", {})
-        match = by_crc32.get(crc_raw)
-        if match and match in files_db:
-            entry = files_db[match]
-            path = entry["path"]
-            status = _record_match_status(match)
-            if status and os.path.exists(path):
-                return path, status
+        for crc in sorted(crc_candidates):
+            match = by_crc32.get(crc)
+            if match and match in files_db:
+                entry = files_db[match]
+                path = entry["path"]
+                status = _record_match_status(match)
+                if status and os.path.exists(path):
+                    return path, status
 
     # 2. MD5 direct lookup (skip for zipped_file: md5 is inner ROM, not container)
     # Guard: only accept if the found file's name matches the requested name
@@ -900,7 +908,7 @@ def resolve_local_file(
         candidates = sized
 
     if candidates:
-        if md5_set and not (sha1_candidates or sha256_candidates or crc_raw):
+        if md5_set and not (sha1_candidates or sha256_candidates or crc_candidates):
             for path, db_md5, _size in candidates:
                 if ".zip" in os.path.basename(path):
                     try:
@@ -938,7 +946,7 @@ def resolve_local_file(
         zipped_file
         and md5_list
         and zip_contents
-        and not (sha1_candidates or sha256_candidates or crc_raw)
+        and not (sha1_candidates or sha256_candidates or crc_candidates)
     ):
         for md5_candidate in md5_list:
             if md5_candidate in zip_contents:
@@ -978,7 +986,7 @@ def resolve_local_file(
             sha1_candidates=sha1_candidates,
             sha256_candidates=sha256_candidates,
             md5_list=md5_list,
-            crc_raw=crc_raw,
+            crc_candidates=crc_candidates,
             zipped_file=zipped_file,
             declared_size=declared_size,
         )

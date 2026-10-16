@@ -235,5 +235,20 @@ class HypseusArchives(unittest.TestCase):
                     self.assertFalse(entry.get("validation"))
 
 
+class DolphinForksIplDumps(_Probe):
+    """Load_BS2 compares the IPL's CRC32 with six Redump dumps and only
+    raises "The IPL file is not a known good dump" before booting it
+    (Source/Core/Core/Boot/Boot.cpp:296-337 at Dolphin-MMJR 1b095b6,
+    408-449 at Dolphin-MMJR2 4d0fdb8). The profiles declared the check with
+    no value, so nothing told a known dump from any other."""
+
+    def test_an_unknown_ipl_only_warns(self):
+        for emulator in ("dolphin-mmjr", "dolphin-mmjr2"):
+            with self.subTest(emulator=emulator):
+                data = b"\0" * 2097152
+                self.assertTrue(self.accepts(emulator, "IPL.bin", data))
+                self.assertFalse(self.accepts(emulator, "IPL.bin", data, strict=True))
+
+
 if __name__ == "__main__":
     unittest.main()

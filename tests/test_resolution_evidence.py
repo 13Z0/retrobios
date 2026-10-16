@@ -52,7 +52,7 @@ class DeclaredHashVerdict(unittest.TestCase):
     def verdict(self, path, **declared):
         base = dict(
             has_strong_hash=True, sha1_candidates=set(), sha256_candidates=set(),
-            md5_list=[], crc_raw="", zipped_file=None, declared_size=None,
+            md5_list=[], crc_candidates=set(), zipped_file=None, declared_size=None,
         )
         base.update(declared)
         return common.declared_hash_verdict(str(path), **base)
@@ -82,7 +82,7 @@ class DeclaredHashVerdict(unittest.TestCase):
 
     def test_crc32_is_checked(self):
         self.assertEqual(
-            self.verdict(self.wrong, crc_raw=self.d["crc32"]), "hash_mismatch"
+            self.verdict(self.wrong, crc_candidates={self.d["crc32"]}), "hash_mismatch"
         )
 
     def test_a_truncated_md5_still_decides(self):
@@ -102,7 +102,7 @@ class DeclaredHashVerdict(unittest.TestCase):
             self.verdict(
                 self.right,
                 sha1_candidates={self.d["sha1"]},
-                crc_raw="deadbeef",
+                crc_candidates={"deadbeef"},
             ),
             "hash_mismatch",
         )
@@ -110,13 +110,13 @@ class DeclaredHashVerdict(unittest.TestCase):
     def test_a_size_beside_a_crc32_is_enforced(self):
         self.assertEqual(
             self.verdict(
-                self.right, crc_raw=self.d["crc32"], declared_size=len(PAYLOAD)
+                self.right, crc_candidates={self.d["crc32"]}, declared_size=len(PAYLOAD)
             ),
             "data_dir_hash_exact",
         )
         self.assertEqual(
             self.verdict(
-                self.right, crc_raw=self.d["crc32"], declared_size=len(PAYLOAD) + 1
+                self.right, crc_candidates={self.d["crc32"]}, declared_size=len(PAYLOAD) + 1
             ),
             "hash_mismatch",
         )
@@ -125,7 +125,7 @@ class DeclaredHashVerdict(unittest.TestCase):
         self.assertEqual(
             self.verdict(
                 self.right,
-                crc_raw=self.d["crc32"],
+                crc_candidates={self.d["crc32"]},
                 declared_size=[1, len(PAYLOAD)],
             ),
             "data_dir_hash_exact",

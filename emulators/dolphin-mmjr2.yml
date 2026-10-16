@@ -121,7 +121,9 @@ files:
     hle_fallback: true
     region: [north-america]
     size: 2097152
+    crc32: ["6dac1f2a", "d5e6feea", "86573808", "667d0b64"]
     validation: [crc32]
+    on_mismatch: warn
     description: "GameCube boot ROM, NTSC-U directory"
     note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns; the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint."
     source_ref: "Source/Core/Core/Config/MainSettings.cpp:594-600, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105-113, Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, Source/Core/Core/Boot/Boot.cpp:408-442, Source/Core/Core/Boot/Boot.cpp:444-449"
@@ -133,7 +135,9 @@ files:
     hle_fallback: true
     region: [europe]
     size: 2097152
+    crc32: ["4f319f43", "ad1b7f16"]
     validation: [crc32]
+    on_mismatch: warn
     description: "GameCube boot ROM, PAL directory"
     note: "The two PAL dumps are the ones this directory takes without a mismatch warning."
     source_ref: "Source/Core/Core/Config/MainSettings.cpp:580-581, Source/Core/Core/Boot/Boot.cpp:444-449"
@@ -145,7 +149,9 @@ files:
     hle_fallback: true
     region: [japan]
     size: 2097152
+    crc32: ["6dac1f2a", "d5e6feea", "86573808", "667d0b64"]
     validation: [crc32]
+    on_mismatch: warn
     description: "GameCube boot ROM, NTSC-J directory"
     note: "JPN is defined alongside JAP but the boot ROM callers use the legacy default, so JAP is the directory read. FindIPLDump, which serves the font path, scans USA then EUR then JAP and stops at the first hit."
     source_ref: "Source/Core/Common/CommonPaths.h:34-35, Source/Core/Core/Config/MainSettings.cpp:574-575, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:175-187"

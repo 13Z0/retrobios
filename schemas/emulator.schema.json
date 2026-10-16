@@ -511,8 +511,21 @@
             "pattern": "^[a-fA-F0-9]{64}(,[a-fA-F0-9]{64})*$"
           },
           "crc32": {
-            "type": "string",
-            "pattern": "^[a-fA-F0-9]{8}$"
+            "description": "CRC32 the code accepts; a list when several dumps pass.",
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{8}$"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-fA-F0-9]{8}$"
+                },
+                "minItems": 1
+              }
+            ]
           },
           "known_hash_adler32": {
             "description": "Adler-32 values the code accepts; a list when several revisions pass.",
