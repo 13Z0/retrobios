@@ -694,26 +694,6 @@ def inner_rom_check(file_entry: dict, local_path: str) -> str:
     return result
 
 
-def settle_mismatch(
-    file_entry: dict, local_path: str | None, status: str, verification_mode: str
-) -> str:
-    """Upgrade a hash mismatch the frontend itself would accept.
-
-    Batocera pins the md5 of a ROM inside the archive (zipped_file), and a
-    frontend that hashes one digest accepts a file whose other declared
-    hashes disagree.
-    """
-    if status != "hash_mismatch" or not local_path:
-        return status
-    if file_entry.get("zipped_file"):
-        return "zip_exact" if inner_rom_check(file_entry, local_path) == "ok" else status
-    if hash_mismatch_excludes_file(verification_mode) and frontend_digest_matches(
-        file_entry, local_path, digest_algorithm(verification_mode)
-    ):
-        return "frontend_digest_exact"
-    return status
-
-
 def baseline_verdict(
     file_entry: dict, local_path: str | None, status: str, verification_mode: str
 ) -> tuple[str, str | None]:

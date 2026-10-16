@@ -738,6 +738,26 @@ class OneBaselineVerdict(unittest.TestCase):
                 ("name_exact", None),
             )
 
+    def test_the_pack_check_reads_the_same_verdict(self):
+        """--verify-packs called the archive missing: its own rule looked
+        inside only after a hash_mismatch, and an archive found by name
+        without d32.rom is one the builder left out on purpose."""
+        import hashlib
+
+        from scripts.packverify import _intentional_hash_exclusion
+
+        entry = {"name": "dragon32.zip", "zipped_file": "d32.rom", "md5": ""}
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = self._archive(Path(directory), "other.rom")
+            sha1 = hashlib.sha1(Path(path).read_bytes()).hexdigest()
+            db = {"files": {sha1: {"path": path, "name": "dragon32.zip", "sha1": sha1}},
+                  "indexes": {"by_name": {"dragon32.zip": [sha1]}, "by_md5": {},
+                              "by_path_suffix": {}, "by_crc32": {}}}
+            self.assertTrue(_intentional_hash_exclusion([entry], db, verification_mode="md5"))
+            self.assertFalse(
+                _intentional_hash_exclusion([entry], db, verification_mode="existence")
+            )
+
     def test_a_release_asset_keeps_its_answer(self):
         from scripts.slots import apply_override
 

@@ -17,7 +17,7 @@ from packpaths import _register_path
 from ziptools import build_zip_contents_index
 from ziptools import check_inside_zip
 from nativemode import digest_algorithm
-from validation import settle_mismatch
+from validation import baseline_verdict
 from nativemode import hash_mismatch_excludes_file
 import functools
 import hashlib
@@ -482,9 +482,11 @@ def _intentional_hash_exclusion(
             data_dir_registry=data_dir_registry,
             offline=True,
         )
-        # The builder ships what the frontend would accept: the exact inner
-        # ROM of a zipped_file entry, or a file its own digest matches.
-        if settle_mismatch(entry, local_path, status, verification_mode) != "hash_mismatch":
+        # The builder's own verdict: a zipped_file archive is refused when the
+        # member is missing whatever the outer resolution said, a hash
+        # mismatch when the frontend's digest disagrees too.
+        _status, refusal = baseline_verdict(entry, local_path, status, verification_mode)
+        if refusal is None:
             return False
     return True
 
