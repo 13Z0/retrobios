@@ -97,5 +97,30 @@ class UnsourceableIsNoCopy(unittest.TestCase):
         )
 
 
+class BareNameIsADestination(unittest.TestCase):
+    """geargrafx reads syscard1.pce at the root of the system directory;
+    Recalbox declares it only under pcenginecd/. The declaration settles the
+    core's need on the promise that the builder copies the file to the
+    core's path, and the second pass skipped every entry with no path."""
+
+    def test_a_root_copy_of_a_file_declared_in_a_subdirectory(self):
+        profiles = {"geargrafx": {
+            "emulator": "Geargrafx", "type": "libretro", "systems": ["pce"],
+            "files": [{"name": "syscard1.pce"}],
+        }}
+        config = {"cores": ["geargrafx"], "systems": {"pcenginecd": {"files": [
+            {"name": "syscard1.pce", "destination": "pcenginecd/syscard1.pce"}]}}}
+        db = {
+            "files": {"s1": {"name": "syscard1.pce", "path": "bios/NEC/syscard1.pce",
+                             "size": 10, "sha1": "s1", "md5": "m1", "crc32": "c1"}},
+            "indexes": {"by_name": {"syscard1.pce": ["s1"]}, "by_md5": {"m1": "s1"},
+                        "by_crc32": {"c1": "s1"}, "by_path_suffix": {}},
+        }
+        extras = _collect_emulator_extras(
+            config, "emulators", db, {"pcenginecd/syscard1.pce"}, "", profiles
+        )
+        self.assertIn("syscard1.pce", [e["destination"] for e in extras])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -609,8 +609,10 @@ def _collect_emulator_extras(
             else:
                 raw = f.get("path") or fname
             dest = f"{raw}{fname}" if raw.endswith("/") else raw
-            if dest == fname:
-                continue  # no alternative destination
+            # A bare name is a destination too: the core reads it at the root
+            # of the directory core files go to, which the platform may not
+            # declare (Recalbox has its System Cards under pcenginecd/ only,
+            # geargrafx reads them from the root).
             full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
             if full_dest in seen_dests and full_dest not in taken:
                 continue
