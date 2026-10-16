@@ -96,6 +96,9 @@ Two additional functions in `base_scraper.py`:
 - `fetch_github_latest_tag(repo, prefix)` - fetches the most recent tag matching
   an optional prefix.
 
+Both send `GITHUB_TOKEN` when it is set and raise `RuntimeError` when the tag
+cannot be read, rather than letting a scraper fall back to a branch.
+
 ## Creating a BIOS scraper
 
 ### Minimal example

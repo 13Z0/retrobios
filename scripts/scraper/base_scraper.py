@@ -390,24 +390,20 @@ def scraper_cli(
     print(f"Scraped {len(reqs)} requirements. Use --dry-run, --json, or --output.")
 
 
-def fetch_github_latest_tag(repo: str, prefix: str = "") -> str | None:
-    """Fetch the most recent matching tag from a GitHub repo."""
+def fetch_github_latest_tag(repo: str, prefix: str = "") -> str:
+    """Return the most recent tag of a GitHub repo, matching `prefix` if given.
+
+    Raises like fetch_github_latest_version: a tag that cannot be read is not
+    a reason to scrape a branch under it.
+    """
     url = f"https://api.github.com/repos/{repo}/tags?per_page=50"
     try:
-        req = urllib.request.Request(
-            url,
-            headers={
-                "User-Agent": "retrobios-scraper/1.0",
-                "Accept": "application/vnd.github.v3+json",
-            },
-        )
+        req = urllib.request.Request(url, headers=github_headers())
         with urllib.request.urlopen(req, timeout=15) as resp:
             tags = json.loads(resp.read())
-            for tag in tags:
-                name = tag["name"]
-                if prefix and not name.startswith(prefix):
-                    continue
-                return name
-            return tags[0]["name"] if tags else None
-    except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError):
-        return None
+    except (urllib.error.URLError, json.JSONDecodeError) as e:
+        raise RuntimeError(f"cannot read the tags of {repo}: {e}") from e
+    names = [tag["name"] for tag in tags if tag["name"].startswith(prefix)]
+    if not names:
+        raise RuntimeError(f"{repo} has no tag starting with {prefix!r}")
+    return names[0]

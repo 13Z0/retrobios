@@ -315,5 +315,48 @@ class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):
         )
         self.assertEqual(silent, [])
 
+    def test_each_function_building_an_api_request_reads_the_token(self):
+        """Per module, one call of github_headers anywhere covered them all:
+        fetch_github_latest_tag sent no token beside a helper that did."""
+        import ast  # noqa: PLC0415
+
+        scripts = Path(__file__).resolve().parent.parent / "scripts"
+        silent = []
+        for path in sorted(scripts.rglob("*.py")):
+            source = path.read_text(encoding="utf-8")
+            for node in ast.walk(ast.parse(source)):
+                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                body = ast.get_source_segment(source, node) or ""
+                requests = any(
+                    isinstance(call, ast.Call)
+                    and getattr(call.func, "attr", getattr(call.func, "id", ""))
+                    in ("Request", "urlopen")
+                    for call in ast.walk(node)
+                )
+                if (
+                    requests
+                    and "api.github.com" in body
+                    and "github_headers(" not in body
+                    and "GITHUB_TOKEN" not in body
+                ):
+                    silent.append(f"{path.relative_to(scripts)}:{node.name}")
+        self.assertEqual(silent, [])
+
+    def test_the_tag_helper_sends_the_token_and_raises(self):
+        from scraper import base_scraper  # noqa: PLC0415
+
+        seen = {}
+
+        def answer(request, timeout=None):
+            seen.update(request.headers)
+            raise urllib.error.HTTPError(request.full_url, 403, "rate limited", {}, None)
+
+        with mock.patch.dict("os.environ", {"GITHUB_TOKEN": "t0k"}), mock.patch(
+            "urllib.request.urlopen", answer
+        ), self.assertRaises(RuntimeError):
+            base_scraper.fetch_github_latest_tag("o/r")
+        self.assertEqual(seen.get("Authorization"), "Bearer t0k")
+
 if __name__ == "__main__":
     unittest.main()
