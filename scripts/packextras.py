@@ -278,11 +278,20 @@ def _agnostic_scan_extras(
                 agnostic_votes.get(directory + "/", 0) + 1
             )
 
+        standalone = runs_standalone(emu_name, profile, standalone_set or set())
         for f in profile.get("files", []):
             if not is_profile_agnostic and not f.get("agnostic"):
                 continue
             fname = f.get("name", "")
             if not fname:
+                continue
+            # A file of the build the platform does not run seeds nothing:
+            # armsx2's proverb.zip is fetched by the Android app into its own
+            # arcade/ folder, and the libretro packs carried it at system/.
+            mode = f.get("mode")
+            if (mode == "standalone" and not standalone) or (
+                mode == "libretro" and standalone
+            ):
                 continue
             # An agnostic BIOS mode says the BIOS filename is free, not that
             # every file the emulator loads is.  A free filename still has a
@@ -325,7 +334,7 @@ def _agnostic_scan_extras(
                 # Into the directory the seed entry names, not the root:
                 # yaps2 reads its BIOS from pcsx2/bios/.
                 seed = f.get("path") or ""
-                if runs_standalone(emu_name, profile, standalone_set or set()):
+                if standalone:
                     seed = f.get("standalone_path") or seed
                 folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
                 dest = f"{folder}/{scan_name}" if folder else scan_name
