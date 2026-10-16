@@ -25,7 +25,7 @@ notes: |
   sgb2_boot in libretro.c:129-130). These are SameBoy-authored
   replacements, not Nintendo originals.
 
-  The libretro port (boot_rom_load, libretro.c:512-588) tries to load
+  The libretro port (boot_rom_load, libretro/libretro.c:513-589) tries to load
   an external boot ROM from the system directory first. Filename is
   constructed as "{model}_boot.bin". If missing, the embedded boot ROM
   is used as fallback.
