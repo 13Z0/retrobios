@@ -15,10 +15,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 9923,
-  "total_size": 8770603894,
-  "pack_files": 12566,
-  "pack_size": 8811136421,
+  "total_files": 9922,
+  "total_size": 8769408134,
+  "pack_files": 12565,
+  "pack_size": 8809940661,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -109577,19 +109577,6 @@
         "pcee2",
         "pcsx2",
         "yaps2"
-      ],
-      "systems": [
-        "sony-playstation-2"
-      ]
-    },
-    {
-      "dest": "proverb.zip",
-      "sha1": "65ae93ae9308be0f4a36fb401a82ebab57af531b",
-      "sha256": "ca1a6eaae507a09c0d8737a05ecfd9365f2622059d870f9e663dd8a8f44a7ed2",
-      "size": 1195760,
-      "repo_path": "bios/Other/armsx2/arcade/proverb.zip",
-      "cores": [
-        "armsx2"
       ],
       "systems": [
         "sony-playstation-2"
