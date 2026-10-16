@@ -223,5 +223,17 @@ class MameMemberChecksOnlyWarn(unittest.TestCase):
                     self.assertFalse(entries[name].get("validation"))
 
 
+class HypseusArchives(unittest.TestCase):
+    """Hypseus checks each member's size and CRC32, never the archive
+    (game.cpp:636-906 at cda8796); its 71 archives declared archive-level
+    checks with no archive value."""
+
+    def test_no_archive_level_check(self):
+        for entry in _profile("hypseus-singe")["files"]:
+            if entry.get("category") == "bios_zip":
+                with self.subTest(name=entry["name"]):
+                    self.assertFalse(entry.get("validation"))
+
+
 if __name__ == "__main__":
     unittest.main()

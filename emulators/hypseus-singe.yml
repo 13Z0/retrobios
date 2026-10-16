@@ -91,7 +91,6 @@ files:
     required: true
     note: "Space Ace rev A3. Loaded by ace, ace_a, ace_a2"
     source_ref: "src/game/lair.cpp:292"
-    validation: [size, crc32]
     contents:
       - name: "sa_a3_u1.bin"
         size: 8192
@@ -115,7 +114,6 @@ files:
     required: true
     note: "Space Ace '91"
     source_ref: "src/game/lair2.cpp:154"
-    validation: [size, crc32]
     contents:
       - name: "ace91.bin"
         size: 65536
@@ -127,7 +125,6 @@ files:
     required: true
     note: "Space Ace '91 Euro"
     source_ref: "src/game/lair2.cpp:157"
-    validation: [size, crc32]
     contents:
       - name: "sa91euro1.3.bin"
         size: 65536
@@ -139,7 +136,6 @@ files:
     required: true
     note: "Space Ace rev A"
     source_ref: "src/game/lair.cpp:323"
-    validation: [size, crc32]
     contents:
       - name: "sa_a_u1.bin"
         size: 8192
@@ -151,7 +147,6 @@ files:
     required: true
     note: "Space Ace rev A2"
     source_ref: "src/game/lair.cpp:312"
-    validation: [size, crc32]
     contents:
       - name: "sa_a2_u1.bin"
         size: 8192
@@ -163,7 +158,6 @@ files:
     required: true
     note: "Space Ace PAL"
     source_ref: "src/game/laireuro.cpp:106"
-    validation: [size, crc32]
     contents:
       - name: "sa_u33a.bin"
         size: 8192
@@ -190,7 +184,6 @@ files:
     required: true
     note: "Astron Belt. Loaded by astron, astronp, blazer, cobraab, galaxy, galaxyp"
     source_ref: "src/game/astron.cpp:97"
-    validation: [size, crc32]
     contents:
       - name: "5279"
         size: 512
@@ -238,7 +231,6 @@ files:
     required: true
     note: "Astron Belt, alternate program ROMs"
     source_ref: "src/game/astron.cpp:97"
-    validation: [size, crc32]
     contents:
       - name: "abp-ic03.bin"
         size: 16384
@@ -253,7 +245,6 @@ files:
     required: true
     note: "Badlands, prototype board"
     source_ref: "src/game/badlands.cpp:125"
-    validation: [size, crc32]
     contents:
       - name: "bl_hit_4f.bin"
         size: 32
@@ -274,7 +265,6 @@ files:
     required: true
     note: "Badlands"
     source_ref: "src/game/badlands.cpp:94"
-    validation: [size, crc32]
     contents:
       - name: "badlands.a13"
         size: 8192
@@ -295,7 +285,6 @@ files:
     required: true
     note: "Bega's Battle ver. 3. Loaded by bega, begar1"
     source_ref: "src/game/bega.cpp:121"
-    validation: [size, crc32]
     contents:
       - name: "an00-3"
         size: 8192
@@ -343,7 +332,6 @@ files:
     required: true
     note: "Bega's Battle rev 1"
     source_ref: "src/game/bega.cpp:156"
-    validation: [size, crc32]
     contents:
       - name: "an00"
         size: 8192
@@ -367,7 +355,6 @@ files:
     required: true
     note: "Star Blazer"
     source_ref: "src/game/astron.cpp:143"
-    validation: [size, crc32]
     contents:
       - name: "epr-5590.bin"
         size: 16384
@@ -382,7 +369,6 @@ files:
     required: true
     note: "Cliff Hanger"
     source_ref: "src/game/cliff.cpp:107"
-    validation: [size, crc32]
     contents:
       - name: "cliff_u1.bin"
         size: 8192
@@ -406,7 +392,6 @@ files:
     required: true
     note: "Cliff Hanger, 0X set"
     source_ref: "src/game/cliff.cpp:193"
-    validation: [size, crc32]
     contents:
       - name: "cliff-0X_u0.bin"
         size: 8192
@@ -430,7 +415,6 @@ files:
     required: true
     note: "Cliff Hanger, alternate set"
     source_ref: "src/game/cliff.cpp:152"
-    validation: [size, crc32]
     contents:
       - name: "cliff_alt_0.bin"
         size: 8192
@@ -451,7 +435,6 @@ files:
     required: true
     note: "Cliff Hanger, second alternate set"
     source_ref: "src/game/cliff.cpp:172"
-    validation: [size, crc32]
     contents:
       - name: "cliff_alt2_0.bin"
         size: 8192
@@ -472,7 +455,6 @@ files:
     required: true
     note: "Cobra Command"
     source_ref: "src/game/bega.cpp:189"
-    validation: [size, crc32]
     contents:
       - name: "au00-2"
         size: 8192
@@ -514,7 +496,6 @@ files:
     required: true
     note: "Cobra Command on Astron Belt hardware"
     source_ref: "src/game/astron.cpp:318"
-    validation: [size, crc32]
     contents:
       - name: "ic-1.bin"
         size: 16384
@@ -544,7 +525,6 @@ files:
     required: true
     note: "Cobra Command conversion board"
     source_ref: "src/game/cobraconv.cpp:106"
-    validation: [size, crc32]
     contents:
       - name: "bd00"
         size: 8192
@@ -586,7 +566,6 @@ files:
     required: true
     note: "Cobra Command on M.A.C.H. 3 hardware"
     source_ref: "src/game/mach3.cpp:303"
-    validation: [size, crc32]
     contents:
       - name: "bh00"
         size: 8192
@@ -625,7 +604,6 @@ files:
     required: true
     note: "Z80 CPU test programs, shipped under roms/cputest/ in the emulator source. Loaded by cputest, mcputest"
     source_ref: "src/game/multicputest.cpp:61"
-    validation: [size, crc32]
     contents:
       - name: "branchtest.bin"
         size: 106
@@ -649,7 +627,6 @@ files:
     required: true
     note: "Dragon's Lair Enhancement v1.1"
     source_ref: "src/game/lair.cpp:178"
-    validation: [size, crc32]
     contents:
       - name: "dle11u1l.bin"
         size: 8192
@@ -673,7 +650,6 @@ files:
     required: true
     note: "Dragon's Lair Enhancement v2.0"
     source_ref: "src/game/lair.cpp:242"
-    validation: [size, crc32]
     contents:
       - name: "DLE20_U1.bin"
         size: 8192
@@ -697,7 +673,6 @@ files:
     required: true
     note: "Dragon's Lair Enhancement v2.1"
     source_ref: "src/game/lair.cpp:224"
-    validation: [size, crc32]
     contents:
       - name: "DLE21_U1.bin"
         size: 8192
@@ -718,7 +693,6 @@ files:
     required: true
     note: "Esh's Aurunmilla. Loaded by esh, eshalt, eshalt2, eshfix7, eshfix7alt, eshfix7alt2"
     source_ref: "src/game/esh.cpp:96"
-    validation: [size, crc32]
     contents:
       - name: "c5_h.bin"
         size: 256
@@ -751,7 +725,6 @@ files:
     required: true
     note: "Esh's Aurunmilla, alternate set 1"
     source_ref: "src/game/esh.cpp:124"
-    validation: [size, crc32]
     contents:
       - name: "f8_alt1.bin"
         size: 8192
@@ -763,7 +736,6 @@ files:
     required: true
     note: "Esh's Aurunmilla, alternate set 2. Loaded by eshalt2, eshfix7alt2"
     source_ref: "src/game/esh.cpp:146"
-    validation: [size, crc32]
     contents:
       - name: "h8_alt2.bin"
         size: 8192
@@ -775,7 +747,6 @@ files:
     required: true
     note: "Esh's Aurunmilla, stage 7 fix"
     source_ref: "src/game/esh.cpp:168-183"
-    validation: [size, crc32]
     contents:
       - name: "f8_is2-fixed.bin"
         size: 8192
@@ -787,7 +758,6 @@ files:
     required: true
     note: "Esh's Aurunmilla, stage 7 fix for alternate set 1"
     source_ref: "src/game/esh.cpp:190"
-    validation: [size, crc32]
     contents:
       - name: "f8_is2-fixed-alt.bin"
         size: 8192
@@ -799,7 +769,6 @@ files:
     required: true
     note: "Esh's Aurunmilla, stage 7 fix for alternate set 2"
     source_ref: "src/game/esh.cpp:212-227"
-    validation: [size, crc32]
     contents:
       - name: "f8_is2-fixed.bin"
         size: 8192
@@ -811,7 +780,6 @@ files:
     required: true
     note: "Firefox. Main program, four ROM banks and character graphics. Loaded by firefox, firefoxa"
     source_ref: "src/game/firefox.cpp:142"
-    validation: [size, crc32]
     contents:
       - name: "136026.101"
         size: 16384
@@ -844,7 +812,6 @@ files:
     required: true
     note: "Firefox alternate program and banks. Driver passes crc32 0, so no CRC check"
     source_ref: "src/game/firefox.cpp:170"
-    validation: [size]
     contents:
       - name: "136026.127"
         size: 8192
@@ -865,7 +832,6 @@ files:
     required: true
     note: "Galaxy Ranger. Loaded by blazer, galaxy, galaxyp"
     source_ref: "src/game/astron.cpp:143"
-    validation: [size, crc32]
     contents:
       - name: "gr5592.bin"
         size: 16384
@@ -898,7 +864,6 @@ files:
     required: true
     note: "Galaxy Ranger, alternate program ROMs"
     source_ref: "src/game/astron.cpp:191"
-    validation: [size, crc32]
     contents:
       - name: "epr-5613.bin"
         size: 16384
@@ -913,7 +878,6 @@ files:
     required: true
     note: "GP World. Driver passes crc32 0, so no CRC check"
     source_ref: "src/game/gpworld.cpp:101"
-    validation: [size]
     contents:
       - name: "gpw_5501.bin"
         size: 256
@@ -956,7 +920,6 @@ files:
     required: true
     note: "Goal to Go"
     source_ref: "src/game/cliff.cpp:131"
-    validation: [size, crc32]
     contents:
       - name: "gtg.rm0"
         size: 8192
@@ -980,7 +943,6 @@ files:
     required: true
     note: "Interstellar"
     source_ref: "src/game/interstellar.cpp:165"
-    validation: [size, crc32]
     contents:
       - name: "blue6d.bot"
         size: 256
@@ -1028,7 +990,6 @@ files:
     required: true
     note: "Dragon's Lair rev F2. Loaded by lair, lair_f"
     source_ref: "src/game/lair.cpp:117"
-    validation: [size, crc32]
     contents:
       - name: "dl_f2_u1.bin"
         size: 8192
@@ -1049,7 +1010,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.19"
     source_ref: "src/game/lair2.cpp:138"
-    validation: [size, crc32]
     contents:
       - name: "dl2_319.bin"
         size: 65536
@@ -1061,7 +1021,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v2.11"
     source_ref: "src/game/lair2.cpp:109"
-    validation: [size, crc32]
     contents:
       - name: "dl2_211.bin"
         size: 65536
@@ -1073,7 +1032,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.00"
     source_ref: "src/game/lair2.cpp:113"
-    validation: [size, crc32]
     contents:
       - name: "dl2_300.bin"
         size: 65536
@@ -1085,7 +1043,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.14"
     source_ref: "src/game/lair2.cpp:117"
-    validation: [size, crc32]
     contents:
       - name: "dl2_314.bin"
         size: 65536
@@ -1097,7 +1054,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.15"
     source_ref: "src/game/lair2.cpp:121"
-    validation: [size, crc32]
     contents:
       - name: "dl2_315.bin"
         size: 65536
@@ -1109,7 +1065,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.16 Euro"
     source_ref: "src/game/lair2.cpp:142"
-    validation: [size, crc32]
     contents:
       - name: "lair2_316_euro.bin"
         size: 65536
@@ -1121,7 +1076,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.18"
     source_ref: "src/game/lair2.cpp:134"
-    validation: [size, crc32]
     contents:
       - name: "dl2_318.bin"
         size: 65536
@@ -1133,7 +1087,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.19 Euro"
     source_ref: "src/game/lair2.cpp:146"
-    validation: [size, crc32]
     contents:
       - name: "dl2euro3.19.bin"
         size: 65536
@@ -1145,7 +1098,6 @@ files:
     required: true
     note: "Dragon's Lair 2 v3.19 Spanish"
     source_ref: "src/game/lair2.cpp:150"
-    validation: [size, crc32]
     contents:
       - name: "lair2_319_span.bin"
         size: 65536
@@ -1157,7 +1109,6 @@ files:
     required: true
     note: "Dragon's Lair rev A. Loaded by lair_a, lair_b, lair_c"
     source_ref: "src/game/lair.cpp:399"
-    validation: [size, crc32]
     contents:
       - name: "dl_a_u1.bin"
         size: 8192
@@ -1181,7 +1132,6 @@ files:
     required: true
     note: "Dragon's Lair rev B. Loaded by lair_b, lair_c"
     source_ref: "src/game/lair.cpp:425"
-    validation: [size, crc32]
     contents:
       - name: "dl_b_u2.bin"
         size: 8192
@@ -1193,7 +1143,6 @@ files:
     required: true
     note: "Dragon's Lair rev C"
     source_ref: "src/game/lair.cpp:437"
-    validation: [size, crc32]
     contents:
       - name: "dl_c_u1.bin"
         size: 8192
@@ -1205,7 +1154,6 @@ files:
     required: true
     note: "Dragon's Lair rev D"
     source_ref: "src/game/lair.cpp:450"
-    validation: [size, crc32]
     contents:
       - name: "dl_d_u1.bin"
         size: 8192
@@ -1229,7 +1177,6 @@ files:
     required: true
     note: "Dragon's Lair PAL, third set"
     source_ref: "src/game/laireuro.cpp:672"
-    validation: [size, crc32]
     contents:
       - name: "elu45_d2.bin"
         size: 8192
@@ -1241,7 +1188,6 @@ files:
     required: true
     note: "Dragon's Lair rev E"
     source_ref: "src/game/lair.cpp:149"
-    validation: [size, crc32]
     contents:
       - name: "dl_e_u1.bin"
         size: 8192
@@ -1262,7 +1208,6 @@ files:
     required: true
     note: "Dragon's Lair rev F"
     source_ref: "src/game/lair.cpp:139"
-    validation: [size, crc32]
     contents:
       - name: "dl_f_u1.bin"
         size: 8192
@@ -1277,7 +1222,6 @@ files:
     required: true
     note: "Dragon's Lair PAL, Italian version"
     source_ref: "src/game/laireuro.cpp:655"
-    validation: [size, crc32]
     contents:
       - name: "lair_ita_45.bin"
         size: 8192
@@ -1292,7 +1236,6 @@ files:
     required: true
     note: "Dragon's Lair NTSC prototype, machine serial number 1"
     source_ref: "src/game/lair.cpp:462"
-    validation: [size, crc32]
     contents:
       - name: "dl_n1_u1.bin"
         size: 8192
@@ -1316,7 +1259,6 @@ files:
     required: true
     note: "Dragon's Lair NTSC, early set of unknown revision"
     source_ref: "src/game/lair.cpp:475"
-    validation: [size, crc32]
     contents:
       - name: "dl_x_u1.bin"
         size: 8192
@@ -1340,7 +1282,6 @@ files:
     required: true
     note: "Dragon's Lair PAL. Loaded by lair_d2, lair_ita, laireuro"
     source_ref: "src/game/laireuro.cpp:84"
-    validation: [size, crc32]
     contents:
       - name: "elu33.bin"
         size: 8192
@@ -1364,7 +1305,6 @@ files:
     required: true
     note: "Program and character ROMs. Driver passes crc32 0, so no CRC check"
     source_ref: "src/game/lgp.cpp:93"
-    validation: [size]
     contents:
       - name: "A02_29.bin"
         size: 8192
@@ -1391,7 +1331,6 @@ files:
     required: true
     note: "M.A.C.H. 3"
     source_ref: "src/game/mach3.cpp:229"
-    validation: [size, crc32]
     contents:
       - name: "m3drom1.bin"
         size: 4096
@@ -1442,7 +1381,6 @@ files:
     required: true
     note: "Road Blaster"
     source_ref: "src/game/bega.cpp:223"
-    validation: [size, crc32]
     contents:
       - name: "00.bin"
         size: 8192
@@ -1469,7 +1407,6 @@ files:
     required: true
     note: "Space Ace Enhancement"
     source_ref: "src/game/lair.cpp:345"
-    validation: [size, crc32]
     contents:
       - name: "sae10_u1.bin"
         size: 8192
@@ -1496,7 +1433,6 @@ files:
     required: true
     note: "Super Don Quix-ote. Loaded by sdq, sdqshort, sdqshortalt"
     source_ref: "src/game/superd.cpp:196"
-    validation: [size, crc32]
     contents:
       - name: "sdq-char.bin"
         size: 8192
@@ -1514,7 +1450,6 @@ files:
     required: true
     note: "Super Don Quix-ote, short scenes set"
     source_ref: "src/game/superd.cpp:214"
-    validation: [size, crc32]
     contents:
       - name: "sdq_c45.rom"
         size: 16384
@@ -1526,7 +1461,6 @@ files:
     required: true
     note: "Super Don Quix-ote, alternate short scenes set"
     source_ref: "src/game/superd.cpp:234"
-    validation: [size, crc32]
     contents:
       - name: "sdq_c45alt.rom"
         size: 16384
@@ -1538,7 +1472,6 @@ files:
     required: true
     note: "Single 256 KB program ROM. Driver passes crc32 0, so no CRC check"
     source_ref: "src/game/timetrav.cpp:64"
-    validation: [size]
     contents:
       - name: "TT061891.BIN"
         size: 262144
@@ -1549,7 +1482,6 @@ files:
     required: true
     note: "Thayer's Quest. Loaded by tq, tq_alt, tq_swear"
     source_ref: "src/game/thayers.cpp:97"
-    validation: [size, crc32]
     contents:
       - name: "tq_cop.bin"
         size: 1024
@@ -1567,7 +1499,6 @@ files:
     required: true
     note: "Thayer's Quest, alternate program ROM"
     source_ref: "src/game/thayers.cpp:253"
-    validation: [size, crc32]
     contents:
       - name: "tq_u1.bin"
         size: 8192
@@ -1579,7 +1510,6 @@ files:
     required: true
     note: "Thayer's Quest, JnK's swearing hack"
     source_ref: "src/game/thayers.cpp:264"
-    validation: [size, crc32]
     contents:
       - name: "tq_u33_mod.bin"
         size: 32768
@@ -1591,7 +1521,6 @@ files:
     required: true
     note: "Us vs Them"
     source_ref: "src/game/mach3.cpp:261"
-    validation: [size, crc32]
     contents:
       - name: "usvs.bg0"
         size: 4096
