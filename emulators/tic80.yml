@@ -5,6 +5,7 @@ source: "https://github.com/libretro/TIC-80"
 upstream: "https://github.com/nesbox/TIC-80"
 profiled_date: "2026-03-25"
 source_commit: "14fd99edc29962778bc88d81773288ffc6e8aa53"
+upstream_commit: "ae1195a9d0fbda243bf0ebd861d6876d072a979e"
 core_version: "0.80.0"
 display_name: "TIC-80"
 cores:
@@ -18,7 +19,7 @@ notes: |
   wrapper (tic80_libretro.c) lives in the upstream repo itself.
 
   Content loaded entirely via libretro data buffer (need_fullpath = false,
-  src/system/libretro/tic80_libretro.c:346). No call to RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
+  src/system/libretro/tic80_libretro.c:340). No call to RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
   No code path reads any file from the system directory. All VM resources
   (sprites, palette, font, sound engine) are compiled into the binary.
 
@@ -30,7 +31,7 @@ files: []
 platform_details:
   cartridge_format:
     extensions: "tic, png"
-    source_ref: "src/system/libretro/tic80_libretro.c:345"
+    source_ref: "src/system/libretro/tic80_libretro.c:339"
     note: |
       .tic is the native cartridge format. .png loads cartridges
       encoded as cover images (code stored in PNG metadata).
@@ -40,4 +41,4 @@ platform_details:
     note: |
       Entire runtime compiled into the binary. No external dependencies.
       State serialization uses TIC_PERSISTENT_SIZE * 4 bytes of pmem()
-      data (src/system/libretro/tic80_libretro.c:1227-1267).
+      data (src/system/libretro/tic80_libretro.c:1203-1243).
