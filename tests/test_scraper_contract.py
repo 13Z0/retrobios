@@ -11,7 +11,9 @@ exercised is a promise to contributors backed by nothing.
 from __future__ import annotations
 
 import importlib
+import subprocess
 import sys
+import tempfile
 import unittest
 import urllib.error
 from pathlib import Path
@@ -357,6 +359,61 @@ class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):
         ), self.assertRaises(RuntimeError):
             base_scraper.fetch_github_latest_tag("o/r")
         self.assertEqual(seen.get("Authorization"), "Bearer t0k")
+
+
+_IMPORT_WITHOUT_NETWORK = """
+import importlib, socket, sys
+from pathlib import Path
+root, package = Path(sys.argv[1]), sys.argv[2]
+sys.path[:0] = [str(root), str(root / "scripts")]
+def refuse(*_args, **_kwargs):
+    raise OSError("network refused at import")
+socket.socket.connect = refuse
+socket.create_connection = refuse
+socket.getaddrinfo = refuse
+for path in sorted((root / package.replace(".", "/")).rglob("*.py")):
+    if path.name == "__init__.py":
+        continue
+    name = ".".join(path.relative_to(root).with_suffix("").parts)
+    try:
+        importlib.import_module(name)
+    except Exception as exc:
+        print(f"{name}: {type(exc).__name__}: {exc}")
+"""
+
+
+class ImportingAScraperFetchesNothing(unittest.TestCase):
+    """A tag resolved at module load made a refused API call fall back to
+    master before any scraper ran; the rule since is no network at import.
+    Each module is imported in a fresh interpreter with sockets refused, so
+    nothing already cached hides an import-time fetch."""
+
+    @staticmethod
+    def _offenders(root: Path, package: str) -> str:
+        return subprocess.run(
+            [sys.executable, "-I", "-c", _IMPORT_WITHOUT_NETWORK, str(root), package],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=300,
+        ).stdout.strip()
+
+    def test_every_scraper_imports_offline(self):
+        self.assertEqual(self._offenders(REPO_ROOT, "scripts.scraper"), "")
+
+    def test_an_import_time_fetch_is_caught(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as directory:
+            package = Path(directory) / "planted"
+            package.mkdir()
+            (package / "__init__.py").write_text("")
+            (package / "eager_scraper.py").write_text(
+                "import urllib.request\n"
+                "urllib.request.urlopen('https://api.github.com/repos/o/r/tags')\n"
+            )
+            self.assertIn(
+                "planted.eager_scraper", self._offenders(Path(directory), "planted")
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
