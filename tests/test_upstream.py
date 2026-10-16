@@ -648,5 +648,46 @@ class TestGitlabTree(unittest.TestCase):
         self.assertTrue(truncated)
 
 
+class TestGiteaCommitAt(unittest.TestCase):
+    """Gitea and Forgejo ignore `until` and answer with the tip: the date
+    pin of a Codeberg view was the tip of the day of the first fetch."""
+
+    PAGES = {
+        1: [{"sha": f"t{i}", "commit": {"committer": {"date": "2026-07-04T10:00:00+02:00"}}}
+            for i in range(50)],
+        2: [
+            {"sha": "late", "commit": {"committer": {"date": "2026-03-24T05:00:00+02:00"}}},
+            {"sha": "pin", "commit": {"committer": {"date": "2026-03-17T19:49:15+08:00"}}},
+        ],
+    }
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.urls: list[str] = []
+        original = upstream._http_json
+
+        def fake(url):
+            self.urls.append(url)
+            self.assertNotIn("until=", url)
+            page = int(url.rsplit("page=", 1)[1])
+            return self.PAGES.get(page, [])
+
+        upstream._http_json = fake
+        self.addCleanup(setattr, upstream, "_http_json", original)
+
+    def test_the_first_commit_by_the_cutoff(self):
+        repo = parse_repo("https://codeberg.org/iyzsong/gam4980")
+        sha = upstream.resolve_commit_at(repo, "2026-03-23", self.tmp.name)
+        self.assertEqual(sha, "pin")
+        self.assertEqual(len(self.urls), 2)
+
+    def test_a_date_before_the_history_resolves_nothing(self):
+        repo = parse_repo("https://codeberg.org/iyzsong/gam4980")
+        self.assertIsNone(
+            upstream.resolve_commit_at(repo, "2020-01-01", self.tmp.name)
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

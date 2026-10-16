@@ -18,6 +18,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 USER_AGENT = "retrobios-profile-sync/1.0"
@@ -388,7 +389,56 @@ def resolve_commit_at(
     branch: str | None = None,
 ) -> str | None:
     """Last commit on or before a date, on the default branch or a named one."""
-    return _first_sha(_api(_commits_url(repo, date, branch), cache_dir, offline))
+    if repo.family in ("github", "gitlab"):
+        return _first_sha(_api(_commits_url(repo, date, branch), cache_dir, offline))
+    return _gitea_commit_at(repo, date, cache_dir, offline, branch)
+
+
+# Gitea and Forgejo serve 50 commits a page at most.
+GITEA_PAGE = 50
+
+
+def _gitea_commit_at(
+    repo: Repo, date: str, cache_dir: str, offline: bool,
+    branch: str | None,
+) -> str | None:
+    """Walk the history newest first to the first commit dated by the cutoff.
+
+    The Gitea and Forgejo commits API ignores ``until`` and answers with the
+    tip: gam4980's profiled_date of 2026-03-23 resolved to a commit of July,
+    a revision the profile never read.
+    """
+    cutoff = datetime.fromisoformat(f"{date}T23:59:59+00:00")
+    base = (
+        f"{repo.api_base}/repos/{repo.slug}/commits?limit={GITEA_PAGE}"
+        "&stat=false&verification=false&files=false"
+    )
+    if branch:
+        base += f"&sha={urllib.parse.quote(branch, safe='')}"
+    page = 1
+    while True:
+        payload = _api(f"{base}&page={page}", cache_dir, offline, MOVING_TTL)
+        if not isinstance(payload, list) or not payload:
+            return None
+        for entry in payload:
+            stamp = _gitea_commit_date(entry)
+            if stamp is not None and stamp <= cutoff:
+                return entry.get("sha")
+        page += 1
+
+
+def _gitea_commit_date(entry: object) -> datetime | None:
+    if not isinstance(entry, dict):
+        return None
+    commit = entry.get("commit")
+    committer = commit.get("committer") if isinstance(commit, dict) else None
+    raw = committer.get("date") if isinstance(committer, dict) else None
+    if not isinstance(raw, str):
+        return None
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def _tags_url(repo: Repo) -> str:
