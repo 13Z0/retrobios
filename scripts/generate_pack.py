@@ -60,6 +60,8 @@ from common import (
     resolve_local_file,
     sanitize_pack_path,
     select_emulator_profiles,
+    system_core_reach,
+    upstream_profile_index,
     yaml_load,
 )
 import packresolve
@@ -3236,6 +3238,46 @@ def _manifest_core_entries(
                 pack_only_sizes.append(file_size)
             continue
 
+        # Every other core that reads this destination, in the order the
+        # builder meets them: a pack built without the earlier cores carries
+        # the first remaining one's copy. A claim joins the copy just before
+        # it when the bytes agree, and starts an alternative otherwise; it
+        # never joins an earlier copy, which would let it win over a core
+        # the builder tries first. Only a core's first claim can win: its
+        # later ones are reached only when that one is.
+        claimed = set(entry["cores"])
+        for claim in fe.get("other_claims", []):
+            claim_emu = claim.get("source_profile") or claim.get("source_emulator", "")
+            if not claim_emu or claim_emu in claimed:
+                continue
+            claimed.add(claim_emu)
+            if required_only and claim.get("required") is False:
+                continue
+            claim_path, claim_status = resolve_file(
+                claim, db, bios_dir, zip_contents,
+                dest_hint=claim.get("destination", ""), offline=offline,
+            )
+            if claim_status in ("not_found", "external", "user_provided") or not claim_path:
+                continue
+            claim_path, _ = validated_choice(
+                claim, claim_path, db, validation_index or {}, bios_dir, None, dest, owners,
+            )
+            copy, _size = _manifest_entry(
+                claim_path, manifest_dest, [claim_emu], db, repo_root, {}
+            )
+            if copy is None:
+                continue
+            alternatives = entry.setdefault("alternatives", [])
+            last = alternatives[-1] if alternatives else entry
+            if copy["sha1"] == last["sha1"]:
+                if claim_emu not in last["cores"]:
+                    last["cores"].append(claim_emu)
+                continue
+            del copy["dest"]
+            alternatives.append(copy)
+        if not entry.get("alternatives"):
+            entry.pop("alternatives", None)
+
         manifest_files.append(entry)
         omitted_by_destination.pop(full_dest, None)
         total_size += file_size
@@ -3553,6 +3595,9 @@ def generate_manifest(
     ]
 
     now = _build_timestamp(db)
+    core_names, system_cores = _manifest_core_index(
+        config, emu_profiles, manifest_files, omitted_by_destination.values()
+    )
 
     result: dict = {
         "manifest_version": 2,
@@ -3581,9 +3626,48 @@ def generate_manifest(
         "omitted_files": sorted(
             omitted_by_destination.values(), key=lambda entry: entry["dest"]
         ),
+        "core_names": core_names,
+        "system_cores": system_cores,
         "files": manifest_files,
     }
     return result
+
+
+def _manifest_core_index(
+    config: dict,
+    profiles: dict[str, dict],
+    files: list[dict],
+    omitted,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    """What the installer needs to narrow by a list of core names.
+
+    A target list, or the cores found installed, names cores the way the
+    buildbot does, and a file names the profile that reads it: `core_names`
+    gives each profile the other names it goes by. `system_cores` gives each
+    platform system the cores whose presence keeps it, as
+    `filter_systems_by_target` decides; a system absent from it is kept
+    whatever is available.
+    """
+    reach = system_core_reach(
+        config.get("systems", {}), profiles, _platform_cores(config, profiles)
+    )
+    system_cores = {
+        sys_id: sorted(cores) for sys_id, cores in sorted(reach.items())
+        if cores is not None
+    }
+    named = {
+        c for entry in [*files, *omitted]
+        for copy in [entry, *entry.get("alternatives", [])]
+        for c in copy.get("cores") or []
+    }
+    named |= {c for cores in system_cores.values() for c in cores}
+    aliases: dict[str, set[str]] = {}
+    for name, claimants in upstream_profile_index(profiles, include_aliases=True).items():
+        for profile in claimants & named:
+            if name != profile:
+                aliases.setdefault(profile, set()).add(name)
+    core_names = {profile: sorted(names) for profile, names in sorted(aliases.items())}
+    return core_names, system_cores
 
 
 # Post-generation pack verification + manifest + SHA256SUMS

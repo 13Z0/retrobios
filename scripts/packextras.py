@@ -158,6 +158,7 @@ def _agnostic_scan_extras(
     seen_dests: set,
     extras_prefix: str,
     standalone_set: set[str] | None = None,
+    taken: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Every interchangeable candidate a filename-agnostic core accepts.
 
@@ -261,33 +262,34 @@ def _agnostic_scan_extras(
                 folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
                 dest = f"{folder}/{scan_name}" if folder else scan_name
                 full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-                if full_dest in seen_dests:
+                if full_dest in seen_dests and (taken is None or full_dest not in taken):
                     continue
-                seen_dests.add(full_dest)
-                extras.append(
-                    {
-                        "name": scan_name,
-                        "destination": dest,
-                        # The scan already holds the entry it selected, so it
-                        # names it by content.  Emitting the filename alone
-                        # sent the packing step back to a by-name lookup, and
-                        # three PS2 resources came back from another
-                        # emulator's copy of the same filename.
-                        "sha1": sha1,
-                        "required": False,
-                        "hle_fallback": False,
-                        "source_emulator": profile.get("emulator", emu_name),
-                        "source_profile": emu_name,
-                        "source_system": f.get("system"),
-                        "source_systems": list(profile.get("systems", [])),
-                        "region": f.get("region"),
-                        "variant_group": f.get("variant_group"),
-                        "agnostic_scan": True,
-                    }
-                )
+                extra = {
+                    "name": scan_name,
+                    "destination": dest,
+                    # The scan already holds the entry it selected, so it
+                    # names it by content.  Emitting the filename alone
+                    # sent the packing step back to a by-name lookup, and
+                    # three PS2 resources came back from another
+                    # emulator's copy of the same filename.
+                    "sha1": sha1,
+                    "required": False,
+                    "hle_fallback": False,
+                    "source_emulator": profile.get("emulator", emu_name),
+                    "source_profile": emu_name,
+                    "source_system": f.get("system"),
+                    "source_systems": list(profile.get("systems", [])),
+                    "region": f.get("region"),
+                    "variant_group": f.get("variant_group"),
+                    "agnostic_scan": True,
+                }
+                extra["claim_order"] = (4, 0, emu_name)
+                if not _take(extra, full_dest, seen_dests, taken):
+                    continue
+                extras.append(extra)
                 extras.extend(_companion_extras(
                     _companions(path, scan_name, _companion_extensions(profile, fname), files_db),
-                    folder, extras_prefix, seen_dests, profile, emu_name, f,
+                    folder, extras_prefix, seen_dests, profile, emu_name, f, taken,
                 ))
     return extras
 
@@ -300,16 +302,16 @@ def _companion_extras(
     profile: dict,
     emu_name: str,
     seed: dict,
+    taken: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Extras for the companions of one scanned image, placed beside it."""
     extras: list[dict] = []
     for companion_sha1, companion in companions:
         companion_dest = f"{folder}/{companion['name']}" if folder else companion["name"]
         companion_full = f"{extras_prefix}/{companion_dest}" if extras_prefix else companion_dest
-        if companion_full in seen_dests:
+        if companion_full in seen_dests and (taken is None or companion_full not in taken):
             continue
-        seen_dests.add(companion_full)
-        extras.append({
+        extra = {
             "name": companion["name"],
             "destination": companion_dest,
             "sha1": companion_sha1,
@@ -322,7 +324,10 @@ def _companion_extras(
             "region": seed.get("region"),
             "variant_group": seed.get("variant_group"),
             "agnostic_scan": True,
-        })
+        }
+        extra["claim_order"] = (4, 0, emu_name)
+        if _take(extra, companion_full, seen_dests, taken):
+            extras.append(extra)
     return extras
 
 
@@ -368,6 +373,7 @@ def _archive_prefix_extras(
     seen_dests: set,
     extras_prefix: str,
     by_name: dict,
+    taken: dict[str, dict] | None = None,
 ) -> list[dict]:
     """A second copy of an archive under the subdirectory a core reads.
 
@@ -398,25 +404,25 @@ def _archive_prefix_extras(
                 continue
             dest = f"{prefix}/{archive_name}"
             full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-            if full_dest in seen_dests:
+            if full_dest in seen_dests and (taken is None or full_dest not in taken):
                 continue
             if not by_name.get(archive_name):
                 continue
-            seen_dests.add(full_dest)
-            extras.append(
-                {
-                    "name": archive_name,
-                    "destination": dest,
-                    "required": True,
-                    "hle_fallback": False,
-                    "source_emulator": profile.get("emulator", emu_name),
-                    "source_profile": emu_name,
-                    "source_system": archive_entry.get("system"),
-                    "source_systems": list(profile.get("systems", [])),
-                    "region": archive_entry.get("region"),
-                    "variant_group": archive_entry.get("variant_group"),
-                }
-            )
+            extra = {
+                "name": archive_name,
+                "destination": dest,
+                "required": True,
+                "hle_fallback": False,
+                "source_emulator": profile.get("emulator", emu_name),
+                "source_profile": emu_name,
+                "source_system": archive_entry.get("system"),
+                "source_systems": list(profile.get("systems", [])),
+                "region": archive_entry.get("region"),
+                "variant_group": archive_entry.get("variant_group"),
+            }
+            extra["claim_order"] = (3, 0, emu_name)
+            if _take(extra, full_dest, seen_dests, taken):
+                extras.append(extra)
 
     return extras
 
@@ -517,6 +523,8 @@ def _collect_emulator_extras(
     )
     extras = []
     seen_dests: set[str] = set(seen)
+    # Destination -> the extra that took it, to record later claimants on.
+    taken: dict[str, dict] = {}
     for u in undeclared:
         if not u["in_repo"]:
             continue
@@ -538,38 +546,18 @@ def _collect_emulator_extras(
             claimants[(u.get("emulator", ""), u.get("name", ""), u.get("path") or "")] = (
                 sanitize_pack_path(dest)
             )
-        if full_dest in seen_dests:
+        extra = _report_extra(u, name, dest)
+        claims = [_report_extra(c, name, dest) for c in u.get("other_claims", [])]
+        # Where the builder meets each claim: the report lists the profiles in
+        # order, archives after the loose files.
+        for item in (extra, *claims):
+            item["claim_order"] = (1, 1 if u.get("archive") else 0, item["source_profile"])
+        if not _take(extra, full_dest, seen_dests, taken):
+            for claim in claims:
+                _another_claim(taken.get(full_dest), claim)
             continue
-        seen_dests.add(full_dest)
-        extra = {
-            "name": name,
-            "destination": dest,
-            "required": u.get("required", False),
-            "hle_fallback": u.get("hle_fallback", False),
-            "source_emulator": u.get("emulator", ""),
-            "source_profile": u.get("profile", ""),
-            # Identity of the report entry this extra came from.  The name
-            # alone does not identify it: Dolphin declares three IPL.bin that
-            # differ only by path, and collapsing them onto one key withdraws
-            # the wrong regional variant from the report.
-            "source_name": u.get("name", ""),
-            "source_path": u.get("path") or "",
-            "source_system": u.get("system"),
-            "source_systems": u.get("systems", []),
-            "region": u.get("region"),
-            "variant_group": u.get("variant_group"),
-        }
-        # Keep every reproducible identity constraint carried by the source
-        # profile.  Some profiles expose CRC32/SHA-256 only through their
-        # validation block; dropping those fields here would let a same-named
-        # but different payload enter a generated pack.
-        expected = u.get("expected") or {}
-        for identity in PROFILE_IDENTITY_FIELDS:
-            declared = u.get(identity)
-            if declared in (None, "", []):
-                declared = expected.get(identity)
-            if declared not in (None, "", []):
-                extra[identity] = declared
+        for claim in claims:
+            _another_claim(extra, claim)
         extras.append(extra)
 
     # Second pass: find alternative destinations for files already in the pack.
@@ -624,7 +612,7 @@ def _collect_emulator_extras(
             if dest == fname:
                 continue  # no alternative destination
             full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-            if full_dest in seen_dests:
+            if full_dest in seen_dests and full_dest not in taken:
                 continue
             # Check file exists in repo or data dirs
             if not (
@@ -633,7 +621,6 @@ def _collect_emulator_extras(
                 or by_path_suffix.get(dest)
             ):
                 continue
-            seen_dests.add(full_dest)
             extra = {
                 "name": fname,
                 "destination": dest,
@@ -652,23 +639,88 @@ def _collect_emulator_extras(
             for identity in PROFILE_IDENTITY_FIELDS:
                 if f.get(identity) not in (None, "", []):
                     extra[identity] = f[identity]
-            extras.append(extra)
+            extra["claim_order"] = (2, 0, emu_name)
+            if _take(extra, full_dest, seen_dests, taken):
+                extras.append(extra)
 
     extras.extend(
         _archive_prefix_extras(
             profiles, relevant, covered_names, seen_dests, extras_prefix,
-            by_name,
+            by_name, taken,
         )
     )
 
     extras.extend(
         _agnostic_scan_extras(
             profiles, relevant, db, by_name, seen_dests, extras_prefix,
-            standalone_set,
+            standalone_set, taken,
         )
     )
 
     return extras
+
+def _report_extra(u: dict, name: str, dest: str) -> dict:
+    """The extra a cross-reference entry asks for at its destination."""
+    extra = {
+        "name": name,
+        "destination": dest,
+        "required": u.get("required", False),
+        "hle_fallback": u.get("hle_fallback", False),
+        "source_emulator": u.get("emulator", ""),
+        "source_profile": u.get("profile", ""),
+        # Identity of the report entry this extra came from.  The name
+        # alone does not identify it: Dolphin declares three IPL.bin that
+        # differ only by path, and collapsing them onto one key withdraws
+        # the wrong regional variant from the report.
+        "source_name": u.get("name", ""),
+        "source_path": u.get("path") or "",
+        "source_system": u.get("system"),
+        "source_systems": u.get("systems", []),
+        "region": u.get("region"),
+        "variant_group": u.get("variant_group"),
+    }
+    # Keep every reproducible identity constraint carried by the source
+    # profile.  Some profiles expose CRC32/SHA-256 only through their
+    # validation block; dropping those fields here would let a same-named
+    # but different payload enter a generated pack.
+    expected = u.get("expected") or {}
+    for identity in PROFILE_IDENTITY_FIELDS:
+        declared = u.get(identity)
+        if declared in (None, "", []):
+            declared = expected.get(identity)
+        if declared not in (None, "", []):
+            extra[identity] = declared
+    return extra
+
+
+def _take(
+    extra: dict, full_dest: str, seen_dests: set[str], taken: dict[str, dict] | None
+) -> bool:
+    """Whether an extra takes its destination; a taken one records the claim."""
+    if full_dest in seen_dests:
+        if taken is not None:
+            _another_claim(taken.get(full_dest), extra)
+        return False
+    seen_dests.add(full_dest)
+    if taken is not None:
+        taken[full_dest] = extra
+    return True
+
+
+def _another_claim(extra: dict | None, claim: dict) -> None:
+    """Record a core that reads a destination another core's extra took.
+
+    The pack ships one file per destination, so the first claimant's extra
+    stands; the others are kept on it so the manifest can name every core
+    the file serves. A pack built for a target without the first core packs
+    the next one's copy, and an installer narrowing by core must keep it.
+    """
+    if extra is None or claim.get("source_profile") == extra.get("source_profile"):
+        return
+    claims = extra.setdefault("other_claims", [])
+    claims.append(claim)
+    claims.sort(key=lambda c: c["claim_order"])
+
 
 def _extra_system_ids(extra: dict) -> list[str]:
     """Return the narrowest system ownership preserved on a core extra."""

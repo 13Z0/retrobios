@@ -5,7 +5,7 @@
   "platform": "misterfpga",
   "display_name": "MiSTer FPGA",
   "version": "1.0",
-  "generated": "2026-10-10T05:24:26Z",
+  "generated": "2026-10-15T21:45:48Z",
   "base_destination": "games",
   "detect": [
     {
@@ -22,6 +22,8 @@
   "pack_size": 29969609,
   "total_omitted": 0,
   "omitted_files": [],
+  "core_names": {},
+  "system_cores": {},
   "files": [
     {
       "dest": "3DO/boot.rom",

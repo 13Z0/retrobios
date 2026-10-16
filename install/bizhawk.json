@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-10T05:24:26Z",
+  "generated": "2026-10-15T21:45:48Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -26,6 +26,620 @@
   "pack_size": 2585299183,
   "total_omitted": 0,
   "omitted_files": [],
+  "core_names": {
+    "3dsen": [
+      "3dsen-windows"
+    ],
+    "beetle_gba": [
+      "mednafen_gba"
+    ],
+    "beetle_lynx": [
+      "mednafen_lynx"
+    ],
+    "beetle_pce": [
+      "mednafen_pce"
+    ],
+    "beetle_pcfx": [
+      "mednafen_pcfx",
+      "pcfx"
+    ],
+    "beetle_psx": [
+      "mednafen_psx",
+      "mednafen_psx_hw"
+    ],
+    "beetle_saturn": [
+      "beetle-saturn",
+      "mednafen_saturn"
+    ],
+    "bsnes2014": [
+      "bsnes2014_accuracy",
+      "bsnes2014_balanced",
+      "bsnes2014_performance"
+    ],
+    "bsnes_hd_beta": [
+      "bsnes_hd",
+      "bsneshd"
+    ],
+    "bsnes_mercury": [
+      "bsnes_mercury_accuracy",
+      "bsnes_mercury_balanced",
+      "bsnes_mercury_performance"
+    ],
+    "c64-emu": [
+      "C64-EMU",
+      "C64.emu"
+    ],
+    "doublecherrygb": [
+      "DoubleCherryGB"
+    ],
+    "ep128emu": [
+      "ep128emu_core"
+    ],
+    "ep128emu_core": [
+      "ep128emu-core"
+    ],
+    "fpse-ng": [
+      "fpse64",
+      "fpseng"
+    ],
+    "gba-emu": [
+      "GBA-EMU",
+      "GBA.emu"
+    ],
+    "gbc-emu": [
+      "GBC-EMU",
+      "GBC.emu"
+    ],
+    "genesis_plus_gx": [
+      "genesisplusgx",
+      "genesisplusgx-expanded",
+      "genplus"
+    ],
+    "genesis_plus_gx_wide": [
+      "genesisplusgx-wide",
+      "genesisplusgxwide"
+    ],
+    "higan_sfc_balanced": [
+      "nside_sfc_balanced"
+    ],
+    "idtech4a++": [
+      "diii4a",
+      "idtech4amm"
+    ],
+    "lime3ds": [
+      "lime-qt",
+      "lime3ds-gui"
+    ],
+    "linkboy": [
+      "LINKBOY",
+      "Linkboy"
+    ],
+    "lynx-emu": [
+      "LYNX-EMU",
+      "Lynx.emu"
+    ],
+    "m64plus-fz": [
+      "M64PLUS-FZ",
+      "org.mupen64plusae.v3.fzurita",
+      "org.mupen64plusae.v3.fzurita.amazon",
+      "org.mupen64plusae.v3.fzurita.pro"
+    ],
+    "mame": [
+      "imame4all"
+    ],
+    "mame2016": [
+      "mess2016"
+    ],
+    "mame4droid-2024": [
+      "MAME4DROID-2024",
+      "MAME4DROID-CURRENT",
+      "com.seleuco.mame4d2024"
+    ],
+    "mandarine": [
+      "mandarine-qt"
+    ],
+    "mastergear": [
+      "MASTERGEAR",
+      "com.fms.mg"
+    ],
+    "md-emu": [
+      "MD-EMU",
+      "MD.emu"
+    ],
+    "mednafen_snes": [
+      "beetle-bsnes",
+      "beetle_bsnes"
+    ],
+    "mednafen_supafaust": [
+      "supafaust"
+    ],
+    "melonds_ds": [
+      "melondsds"
+    ],
+    "mesen": [
+      "mesens"
+    ],
+    "mesen-s": [
+      "mesen_s"
+    ],
+    "mesence": [
+      "mesen2"
+    ],
+    "msx-emu": [
+      "MSX-EMU",
+      "MSX.emu"
+    ],
+    "mupen64plus-ae": [
+      "MUPEN64PLUS-AE",
+      "org.mupen64plusae.v3.alpha"
+    ],
+    "mupen64plus_next": [
+      "mupen64plus",
+      "mupen64plus-next",
+      "mupen64plus_next_develop",
+      "mupen64plus_next_gles2",
+      "mupen64plus_next_gles3"
+    ],
+    "my-boy": [
+      "MY-BOY",
+      "My Boy!"
+    ],
+    "my-oldboy": [
+      "MY-OLDBOY",
+      "My OldBoy!"
+    ],
+    "nes-emu": [
+      "NES-EMU",
+      "NES.emu"
+    ],
+    "nesoid": [
+      "NESOID",
+      "Nesoid"
+    ],
+    "o2em": [
+      "o2em_libretro"
+    ],
+    "parallel-launcher": [
+      "ca.parallel_launcher.ParallelLauncher"
+    ],
+    "parallel_n64": [
+      "parallel_n64_debug"
+    ],
+    "pce-emu": [
+      "PCE-EMU",
+      "PCE.emu",
+      "com.PceEmu",
+      "pceemu"
+    ],
+    "pcsx_rearmed": [
+      "pcsx_rearmed_interpreter",
+      "pcsx_rearmed_neon"
+    ],
+    "pizza-boy-gba": [
+      "PIZZA-BOY-GBA",
+      "Pizza Boy GBA"
+    ],
+    "pizza-boy-gbc": [
+      "PIZZA-BOY-GBC",
+      "Pizza Boy GBC"
+    ],
+    "pizza-boy-sc": [
+      "PIZZA-BOY-SC",
+      "Pizza Boy SC",
+      "it.dbtecno.pizzaboyscbasic",
+      "it.dbtecno.pizzaboyscpro"
+    ],
+    "puae": [
+      "uae"
+    ],
+    "real3doplayer": [
+      "REAL3DOPLAYER",
+      "Real3DOPlayer"
+    ],
+    "rosalies-mupen-gui": [
+      "RMG",
+      "com.github.Rosalie241.RMG"
+    ],
+    "saturn-emu": [
+      "SATURN-EMU",
+      "Saturn.emu",
+      "saturnemu"
+    ],
+    "smsplus": [
+      "smsplus_gx"
+    ],
+    "snes9x": [
+      "pocketsnes",
+      "snes9x_next"
+    ],
+    "snes9x-explus": [
+      "SNES9X-EXPLUS",
+      "Snes9x EX+",
+      "Snes9xEXPlus"
+    ],
+    "speccy": [
+      "SPECCY",
+      "com.fms.speccy",
+      "com.fms.speccy.deluxe"
+    ],
+    "stella2023": [
+      "stella"
+    ],
+    "superzsnes": [
+      "SUPERZSNES"
+    ],
+    "tgbdual": [
+      "TGB Dual"
+    ],
+    "vbam": [
+      "vba-m"
+    ],
+    "vice": [
+      "vice_x128",
+      "vice_x64",
+      "vice_x64dtv",
+      "vice_x64sc",
+      "vice_xcbm2",
+      "vice_xcbm5x0",
+      "vice_xpet",
+      "vice_xplus4",
+      "vice_xscpu64",
+      "vice_xvic"
+    ],
+    "vice_x64": [
+      "x64"
+    ],
+    "yabasanshiro": [
+      "yabasanshiro-2"
+    ]
+  },
+  "system_cores": {
+    "3do": [
+      "groovymame",
+      "mame",
+      "mame2015",
+      "mame2016",
+      "mame4droid-2024",
+      "opera",
+      "real3doplayer",
+      "ume2015"
+    ],
+    "apple-ii": [
+      "applewin",
+      "clk",
+      "izapple2",
+      "kegs",
+      "linapple",
+      "mariani",
+      "mednafen",
+      "pom2"
+    ],
+    "atari-7800": [
+      "a7800",
+      "prosystem"
+    ],
+    "atari-lynx": [
+      "beetle_lynx",
+      "gearlynx",
+      "handy",
+      "holani",
+      "lynx-emu",
+      "mednafen"
+    ],
+    "coleco-colecovision": [
+      "ares",
+      "bluemsx",
+      "clk",
+      "colem",
+      "fbneo",
+      "gearcoleco",
+      "jollycv",
+      "mesence",
+      "msx-emu",
+      "openmsx",
+      "smsplus",
+      "zesarux"
+    ],
+    "commodore-amiga": [
+      "amiberry",
+      "clk",
+      "fsuae",
+      "puae",
+      "puae2021",
+      "uae4arm"
+    ],
+    "commodore-c64": [
+      "c64-emu",
+      "frodo",
+      "vice",
+      "vice_x64",
+      "vice_x64sc",
+      "x64sdl"
+    ],
+    "doom": [
+      "gzdoom",
+      "idtech4a++",
+      "prboom",
+      "prboom-plus"
+    ],
+    "fairchild-channel-f": [
+      "fbneo",
+      "freechaf"
+    ],
+    "gce-vectrex": [
+      "vecx"
+    ],
+    "mattel-intellivision": [
+      "freeintv"
+    ],
+    "microsoft-msx": [
+      "ares",
+      "bluemsx",
+      "clk",
+      "fbneo",
+      "fmsx",
+      "msx-emu",
+      "openmsx",
+      "zesarux"
+    ],
+    "nec-pc-engine-cd": [
+      "ares",
+      "geargrafx",
+      "mednafen",
+      "mesence",
+      "pce-emu"
+    ],
+    "nec-pc-fx": [
+      "beetle_pcfx",
+      "mednafen"
+    ],
+    "nintendo-3ds": [
+      "azahar",
+      "azaharplus",
+      "citra",
+      "citra-mmj",
+      "citra2018",
+      "citra_canary",
+      "lime3ds",
+      "mandarine",
+      "panda3ds",
+      "trident"
+    ],
+    "nintendo-64dd": [
+      "ares",
+      "m64plus-fz",
+      "mupen64plus-ae",
+      "mupen64plus_next",
+      "parallel-launcher",
+      "parallel_n64",
+      "project64",
+      "rosalies-mupen-gui",
+      "sixtyforce"
+    ],
+    "nintendo-ds": [
+      "desmume",
+      "desmume2015",
+      "drastic",
+      "melonds",
+      "melonds-nightly",
+      "melonds_ds",
+      "noods",
+      "skyemu"
+    ],
+    "nintendo-gb": [
+      "boytacean",
+      "doublecherrygb",
+      "emux_gb",
+      "gambatte",
+      "gbc-emu",
+      "gearboy",
+      "irogb",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mesen-s",
+      "mesence",
+      "mgba",
+      "my-oldboy",
+      "pizza-boy-gbc",
+      "sameboy",
+      "skyemu",
+      "tgbdual",
+      "vbam"
+    ],
+    "nintendo-gba": [
+      "beetle_gba",
+      "gba-emu",
+      "gpsp",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mednafen_gba",
+      "mesence",
+      "meteor",
+      "mgba",
+      "mgba_splitscreen",
+      "my-boy",
+      "noods",
+      "pizza-boy-gba",
+      "skyemu",
+      "tempgba",
+      "vba_next",
+      "vbam"
+    ],
+    "nintendo-gbc": [
+      "boytacean",
+      "doublecherrygb",
+      "fixgb",
+      "gambatte",
+      "gbc-emu",
+      "gearboy",
+      "irogb",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mesen-s",
+      "mesence",
+      "mgba",
+      "my-oldboy",
+      "pizza-boy-gbc",
+      "sameboy",
+      "skyemu",
+      "tgbdual",
+      "vbam"
+    ],
+    "nintendo-nes": [
+      "3dsen",
+      "bnes",
+      "emux_nes",
+      "fceumm",
+      "fixnes",
+      "ines",
+      "jgenesis",
+      "mednafen",
+      "mesen",
+      "mesence",
+      "nes",
+      "nes-emu",
+      "nesoid",
+      "nestopia",
+      "plastic",
+      "punes",
+      "quicknes",
+      "rustynes"
+    ],
+    "nintendo-satellaview": [
+      "bsnes",
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "mesen-s",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010"
+    ],
+    "nintendo-snes": [
+      "bsnes",
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "fbneo",
+      "higan_sfc",
+      "higan_sfc_balanced",
+      "jgenesis",
+      "mednafen",
+      "mednafen_snes",
+      "mednafen_supafaust",
+      "mesen-s",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010",
+      "superzsnes"
+    ],
+    "philips-videopac": [
+      "o2em"
+    ],
+    "sega-32x": [
+      "ares",
+      "jgenesis",
+      "picodrive"
+    ],
+    "sega-game-gear": [
+      "ares",
+      "gearsystem",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "mastergear",
+      "mednafen",
+      "mesence",
+      "picodrive",
+      "pizza-boy-sc",
+      "smsplus"
+    ],
+    "sega-master-system": [
+      "ares",
+      "blastem",
+      "clk",
+      "gearsystem",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "mastergear",
+      "md-emu",
+      "mednafen",
+      "mesence",
+      "picodrive",
+      "pizza-boy-sc",
+      "smsplus",
+      "zesarux"
+    ],
+    "sega-mega-drive": [
+      "ares",
+      "blastem",
+      "clownmdemu",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "md-emu",
+      "mednafen",
+      "picodrive",
+      "pizza-boy-sc"
+    ],
+    "sega-saturn": [
+      "ares",
+      "beetle_saturn",
+      "kronos",
+      "mednafen",
+      "saturn-emu",
+      "ssf",
+      "yabasanshiro",
+      "yabause",
+      "ymir"
+    ],
+    "sinclair-zx-spectrum": [
+      "81",
+      "ares",
+      "clk",
+      "cspect",
+      "ep128emu",
+      "ep128emu_core",
+      "fuse",
+      "speccy",
+      "zesarux"
+    ],
+    "sony-playstation": [
+      "ares",
+      "armsx1",
+      "beetle_psx",
+      "duckstation",
+      "epsxe",
+      "fpse",
+      "fpse-ng",
+      "mednafen",
+      "pcsx1",
+      "pcsx_rearmed",
+      "rustation",
+      "swanstation"
+    ],
+    "texas-instruments-ti-83": [
+      "numero"
+    ]
+  },
   "files": [
     {
       "dest": "panafz1.bin",
@@ -1379,7 +1993,8 @@
       "size": 16384,
       "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
       "cores": [
-        "ares"
+        "ares",
+        "mgba"
       ]
     },
     {
@@ -1389,7 +2004,8 @@
       "size": 1024,
       "repo_path": "bios/Sega/Game Gear/GG_majesco.gg",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx"
       ],
       "systems": [
         "sega-game-gear"
@@ -1402,7 +2018,8 @@
       "size": 8192,
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx"
       ],
       "systems": [
         "sega-master-system"
@@ -1415,7 +2032,8 @@
       "size": 8192,
       "repo_path": "bios/Sega/Master System/MasterSystem/japanese-bios.sms",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx"
       ],
       "systems": [
         "sega-master-system"
@@ -1428,7 +2046,8 @@
       "size": 8192,
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx"
       ],
       "systems": [
         "sega-master-system"
@@ -1441,7 +2060,9 @@
       "size": 131072,
       "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx",
+        "picodrive"
       ]
     },
     {
@@ -1451,7 +2072,9 @@
       "size": 131072,
       "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx",
+        "picodrive"
       ]
     },
     {
@@ -1461,7 +2084,9 @@
       "size": 131072,
       "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
       "cores": [
-        "ares"
+        "ares",
+        "genesis_plus_gx",
+        "picodrive"
       ]
     },
     {
@@ -1601,7 +2226,8 @@
       "size": 262144,
       "repo_path": "bios/NEC/PC Engine/syscard1.pce",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_pce"
       ],
       "systems": [
         "nec-pc-engine-cd"
@@ -1614,7 +2240,8 @@
       "size": 262144,
       "repo_path": "bios/NEC/PC Engine/syscard3.pce",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_pce"
       ],
       "systems": [
         "nec-pc-engine-cd"
@@ -1627,7 +2254,8 @@
       "size": 262144,
       "repo_path": "bios/NEC/PC Engine/syscard3u.pce",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_pce"
       ],
       "systems": [
         "nec-pc-engine-cd"
@@ -1683,7 +2311,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5501.bin",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_psx"
       ],
       "systems": [
         "sony-playstation"
@@ -1696,7 +2325,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5500.bin",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_psx"
       ],
       "systems": [
         "sony-playstation"
@@ -1709,7 +2339,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5502.bin",
       "cores": [
-        "ares"
+        "ares",
+        "beetle_psx"
       ],
       "systems": [
         "sony-playstation"
@@ -1779,7 +2410,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
       "cores": [
-        "ares"
+        "ares",
+        "bsnes"
       ]
     },
     {
@@ -1789,7 +2421,8 @@
       "size": 524288,
       "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
       "cores": [
-        "ares"
+        "ares",
+        "bsnes"
       ]
     },
     {
@@ -1799,7 +2432,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
       "cores": [
-        "ares"
+        "ares",
+        "snes9x"
       ]
     },
     {
@@ -1809,7 +2443,9 @@
       "size": 1048576,
       "repo_path": "bios/Nintendo/SNES/BS-X.bin",
       "cores": [
-        "ares"
+        "ares",
+        "bsnes",
+        "snes9x"
       ]
     },
     {
@@ -2099,6 +2735,17 @@
       "repo_path": "bios/Arcade/Arcade/stvbios.zip",
       "cores": [
         "beetle_saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "7783ab663bb1a8d62ff60d583674355c2af556b1",
+          "sha256": "38ceb2792c72770f56aadb1865cf66dc33a3017db1ee05e11c2b2dff397ad39e",
+          "size": 2955630,
+          "repo_path": "bios/Arcade/MAME/stvbios.zip",
+          "cores": [
+            "mame"
+          ]
+        }
       ]
     },
     {
@@ -2368,7 +3015,9 @@
       "size": 3145728,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
       "cores": [
-        "citra"
+        "citra",
+        "citra2018",
+        "citra_canary"
       ],
       "systems": [
         "nintendo-3ds"
@@ -3989,7 +4638,8 @@
       "size": 256,
       "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
       "cores": [
-        "gambatte"
+        "gambatte",
+        "mgba"
       ],
       "systems": [
         "nintendo-gb"
@@ -4002,7 +4652,8 @@
       "size": 2304,
       "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
       "cores": [
-        "gambatte"
+        "gambatte",
+        "mgba"
       ],
       "systems": [
         "nintendo-gbc"
@@ -4107,6 +4758,17 @@
       "repo_path": "bios/Arcade/MAME/neogeo.zip",
       "cores": [
         "mame"
+      ],
+      "alternatives": [
+        {
+          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
+          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
+          "size": 1859335,
+          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -4116,7 +4778,8 @@
       "size": 2094636,
       "repo_path": "bios/Arcade/MAME/pgm.zip",
       "cores": [
-        "mame"
+        "mame",
+        "fbneo"
       ]
     },
     {
@@ -4321,6 +4984,17 @@
       ],
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f590ccf688b4c05fa1da5c5dd92c224545170c3b",
+          "sha256": "c481bfde0ae68e5fbe70a406af1698fcba5b76d7e23c860c2715cacf019efad4",
+          "size": 10207,
+          "repo_path": "bios/Arcade/Arcade/isgsm.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -4344,6 +5018,17 @@
       "repo_path": "bios/Arcade/MAME/decocass.zip",
       "cores": [
         "mame"
+      ],
+      "alternatives": [
+        {
+          "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
+          "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
+          "size": 22379,
+          "repo_path": "bios/Arcade/Arcade/decocass.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -4492,7 +5177,8 @@
       "size": 7950,
       "repo_path": "bios/Arcade/Arcade/bubsys.zip",
       "cores": [
-        "mame"
+        "mame",
+        "fbneo"
       ],
       "systems": [
         "3do"
@@ -4695,6 +5381,17 @@
       "repo_path": "bios/Arcade/MAME/skns.zip",
       "cores": [
         "mame"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4257bd14b541fafbd555cb98ba079a3416a45934",
+          "sha256": "6edf22c68e70be06c9b32741e0d1df1aa38cf6fc162c1027c15d6c1d882f621b",
+          "size": 924762,
+          "repo_path": "bios/Arcade/Arcade/skns.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -4796,6 +5493,17 @@
       ],
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
+          "sha256": "1cf61e6b54589ed9bf2b5f319c2b56de205384d6726b7a0fae79213071f3cfb5",
+          "size": 49385,
+          "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -5052,7 +5760,8 @@
       "size": 6800,
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
-        "mame"
+        "mame",
+        "fbneo"
       ]
     },
     {
@@ -5672,6 +6381,17 @@
       ],
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "06fc753d015b43ca1787f4cfd9331b1674202e64",
+          "sha256": "187ede0f57d1439092a7ac50ea923533871ab7ee65e29baabc4dcdfa7ad4823f",
+          "size": 7609,
+          "repo_path": "bios/Arcade/Arcade/ym2608.zip",
+          "cores": [
+            "fbneo"
+          ]
+        }
       ]
     },
     {
@@ -10869,7 +11589,9 @@
       "size": 7357,
       "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
       "cores": [
-        "citra"
+        "citra",
+        "citra2018",
+        "citra_canary"
       ],
       "systems": [
         "nintendo-3ds"

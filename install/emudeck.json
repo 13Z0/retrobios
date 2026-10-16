@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-10T05:24:26Z",
+  "generated": "2026-10-15T21:45:48Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -256,6 +256,324 @@
   "pack_size": 3472458179,
   "total_omitted": 0,
   "omitted_files": [],
+  "core_names": {
+    "aethersx2": [
+      "aethersx2-sa"
+    ],
+    "armsx2": [
+      "armsx2_libretro"
+    ],
+    "beetle_psx": [
+      "mednafen_psx",
+      "mednafen_psx_hw"
+    ],
+    "beetle_saturn": [
+      "beetle-saturn",
+      "mednafen_saturn"
+    ],
+    "cxbx-reloaded": [
+      "cxbx"
+    ],
+    "fbalpha2012": [
+      "fbalpha"
+    ],
+    "flycast": [
+      "flycast_dev",
+      "flycastvl"
+    ],
+    "fpse-ng": [
+      "fpse64",
+      "fpseng"
+    ],
+    "genesis_plus_gx": [
+      "genesisplusgx",
+      "genesisplusgx-expanded",
+      "genplus"
+    ],
+    "genesis_plus_gx_wide": [
+      "genesisplusgx-wide",
+      "genesisplusgxwide"
+    ],
+    "kenji-nx": [
+      "KENJI-NX",
+      "kenjinx"
+    ],
+    "lime3ds": [
+      "lime-qt",
+      "lime3ds-gui"
+    ],
+    "lrps2": [
+      "pcsx2"
+    ],
+    "m64plus-fz": [
+      "M64PLUS-FZ",
+      "org.mupen64plusae.v3.fzurita",
+      "org.mupen64plusae.v3.fzurita.amazon",
+      "org.mupen64plusae.v3.fzurita.pro"
+    ],
+    "mame": [
+      "imame4all"
+    ],
+    "mame2016": [
+      "mess2016"
+    ],
+    "mame4droid-2024": [
+      "MAME4DROID-2024",
+      "MAME4DROID-CURRENT",
+      "com.seleuco.mame4d2024"
+    ],
+    "mandarine": [
+      "mandarine-qt"
+    ],
+    "md-emu": [
+      "MD-EMU",
+      "MD.emu"
+    ],
+    "melonds_ds": [
+      "melondsds"
+    ],
+    "mesence": [
+      "mesen2"
+    ],
+    "msx-emu": [
+      "MSX-EMU",
+      "MSX.emu"
+    ],
+    "mupen64plus-ae": [
+      "MUPEN64PLUS-AE",
+      "org.mupen64plusae.v3.alpha"
+    ],
+    "mupen64plus_next": [
+      "mupen64plus",
+      "mupen64plus-next",
+      "mupen64plus_next_develop",
+      "mupen64plus_next_gles2",
+      "mupen64plus_next_gles3"
+    ],
+    "nethersx2": [
+      "NETHERSX2",
+      "NetherSX2"
+    ],
+    "nethersx2-turnip": [
+      "NETHERSX2-TURNIP",
+      "NetherSX2-Turnip"
+    ],
+    "nethersx2-turnip-classic": [
+      "NETHERSX2-TURNIP-CLASSIC",
+      "NetherSX2-Turnip-Classic"
+    ],
+    "parallel-launcher": [
+      "ca.parallel_launcher.ParallelLauncher"
+    ],
+    "parallel_n64": [
+      "parallel_n64_debug"
+    ],
+    "pcsx2-legacy": [
+      "PCSX2-LEGACY"
+    ],
+    "pcsx_rearmed": [
+      "pcsx_rearmed_interpreter",
+      "pcsx_rearmed_neon"
+    ],
+    "pizza-boy-sc": [
+      "PIZZA-BOY-SC",
+      "Pizza Boy SC",
+      "it.dbtecno.pizzaboyscbasic",
+      "it.dbtecno.pizzaboyscpro"
+    ],
+    "play": [
+      "play!"
+    ],
+    "real3doplayer": [
+      "REAL3DOPLAYER",
+      "Real3DOPlayer"
+    ],
+    "rosalies-mupen-gui": [
+      "RMG",
+      "com.github.Rosalie241.RMG"
+    ],
+    "saturn-emu": [
+      "SATURN-EMU",
+      "Saturn.emu",
+      "saturnemu"
+    ],
+    "shadps4": [
+      "shadps4-gui"
+    ],
+    "simple64": [
+      "io.github.simple64.simple64",
+      "simple64-gui"
+    ],
+    "skyline": [
+      "SKYLINE"
+    ],
+    "smsplus": [
+      "smsplus_gx"
+    ],
+    "triforce": [
+      "dolphin-triforce"
+    ],
+    "x1-box": [
+      "x1box"
+    ],
+    "yabasanshiro": [
+      "yabasanshiro-2"
+    ]
+  },
+  "system_cores": {
+    "coleco-colecovision": [
+      "ares",
+      "bluemsx",
+      "clk",
+      "colem",
+      "fbneo",
+      "gearcoleco",
+      "jollycv",
+      "mesence",
+      "msx-emu",
+      "openmsx",
+      "smsplus",
+      "zesarux"
+    ],
+    "nintendo-3ds": [
+      "azahar",
+      "azaharplus",
+      "citra",
+      "citra-mmj",
+      "citra2018",
+      "citra_canary",
+      "lime3ds",
+      "mandarine",
+      "panda3ds",
+      "trident"
+    ],
+    "nintendo-64": [
+      "ares",
+      "gopher64",
+      "m64plus-fz",
+      "mupen64plus-ae",
+      "mupen64plus_next",
+      "parallel-launcher",
+      "parallel_n64",
+      "project64",
+      "rosalies-mupen-gui",
+      "simple64",
+      "sixtyforce"
+    ],
+    "nintendo-ds": [
+      "desmume",
+      "desmume2015",
+      "drastic",
+      "melonds",
+      "melonds-nightly",
+      "melonds_ds",
+      "noods",
+      "skyemu"
+    ],
+    "nintendo-gamecube": [
+      "dolphin",
+      "dolphin-mmjr",
+      "dolphin-mmjr2",
+      "dolphin_launcher",
+      "ishiiruka",
+      "primehack",
+      "triforce"
+    ],
+    "nintendo-switch": [
+      "citron",
+      "eden",
+      "kenji-nx",
+      "ryujinx",
+      "skyline",
+      "suyu",
+      "yuzu"
+    ],
+    "nintendo-wii-u": [
+      "cemu"
+    ],
+    "panasonic-3do": [
+      "groovymame",
+      "mame",
+      "mame2015",
+      "mame2016",
+      "mame4droid-2024",
+      "opera",
+      "real3doplayer",
+      "ume2015"
+    ],
+    "sega-dreamcast": [
+      "demul",
+      "flycast",
+      "flycast-dojo",
+      "redream",
+      "retrodream"
+    ],
+    "sega-mega-cd": [
+      "ares",
+      "clownmdemu",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "md-emu",
+      "mednafen",
+      "picodrive",
+      "pizza-boy-sc"
+    ],
+    "sega-saturn": [
+      "ares",
+      "beetle_saturn",
+      "kronos",
+      "mednafen",
+      "saturn-emu",
+      "ssf",
+      "yabasanshiro",
+      "yabause",
+      "ymir"
+    ],
+    "snk-neogeo": [
+      "ares",
+      "fbalpha2012",
+      "fbalpha2012_neogeo"
+    ],
+    "sony-playstation": [
+      "ares",
+      "armsx1",
+      "beetle_psx",
+      "duckstation",
+      "epsxe",
+      "fpse",
+      "fpse-ng",
+      "mednafen",
+      "pcsx1",
+      "pcsx_rearmed",
+      "rustation",
+      "swanstation"
+    ],
+    "sony-playstation-2": [
+      "aethersx2",
+      "armsx2",
+      "emucorex",
+      "lrps2",
+      "nethersx2",
+      "nethersx2-turnip",
+      "nethersx2-turnip-classic",
+      "pcee2",
+      "pcsx2",
+      "pcsx2-legacy",
+      "play",
+      "yaps2"
+    ],
+    "sony-psp": [
+      "ppsspp"
+    ],
+    "xbox": [
+      "cxbx-reloaded",
+      "directxbox",
+      "hakux",
+      "x1-box",
+      "xemu"
+    ]
+  },
   "files": [
     {
       "dest": "colecovision.rom",
@@ -648,7 +966,8 @@
       "size": 16384,
       "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
       "cores": [
-        "ares"
+        "ares",
+        "mgba"
       ]
     },
     {
@@ -1236,7 +1555,11 @@
       "size": 1224,
       "repo_path": "bios/Nintendo/Switch/title.keys",
       "cores": [
-        "citron"
+        "citron",
+        "eden",
+        "ryujinx",
+        "suyu",
+        "yuzu"
       ],
       "systems": [
         "nintendo-switch"
@@ -1249,7 +1572,11 @@
       "size": 451,
       "repo_path": "bios/Other/citron/switch/console.keys",
       "cores": [
-        "citron"
+        "citron",
+        "eden",
+        "ryujinx",
+        "suyu",
+        "yuzu"
       ],
       "systems": [
         "nintendo-switch"
@@ -1262,7 +1589,10 @@
       "size": 160,
       "repo_path": "bios/Other/citron/switch/key_retail.bin",
       "cores": [
-        "citron"
+        "citron",
+        "eden",
+        "suyu",
+        "yuzu"
       ],
       "systems": [
         "nintendo-switch"
@@ -1275,7 +1605,8 @@
       "size": 8192,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1288,7 +1619,8 @@
       "size": 4096,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1301,7 +1633,8 @@
       "size": 6478,
       "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1314,7 +1647,8 @@
       "size": 259626,
       "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1337,7 +1671,8 @@
       "size": 16384,
       "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1350,7 +1685,8 @@
       "size": 16384,
       "repo_path": "bios/Nintendo/Wii/SYSCONF",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1363,7 +1699,8 @@
       "size": 256,
       "repo_path": "bios/Nintendo/Wii/setting.txt",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1376,7 +1713,8 @@
       "size": 134217728,
       "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1391,7 +1729,8 @@
       "size": 1005,
       "repo_path": "bios/Nintendo/Wii/clientca.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1404,7 +1743,8 @@
       "size": 609,
       "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -1417,7 +1757,8 @@
       "size": 897,
       "repo_path": "bios/Nintendo/Wii/rootca.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -2636,7 +2977,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50006.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation"
@@ -2676,7 +3018,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50008.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation"
@@ -6534,7 +6877,11 @@
       "size": 16025,
       "repo_path": "bios/Nintendo/Switch/prod.keys",
       "cores": [
-        "citron"
+        "citron",
+        "eden",
+        "ryujinx",
+        "suyu",
+        "yuzu"
       ],
       "systems": [
         "nintendo-switch"
@@ -6547,7 +6894,8 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6566,7 +6914,8 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6585,7 +6934,8 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6604,7 +6954,8 @@
       "size": 64,
       "repo_path": "bios/Sony/PlayStation 2/eeprom.dat",
       "cores": [
-        "armsx2"
+        "armsx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"

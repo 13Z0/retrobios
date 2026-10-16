@@ -1,0 +1,297 @@
+"""The one-liner narrows to the cores a RetroArch already has.
+
+RetroArch keeps its cores in libretro_directory, named the buildbot's way
+(`mednafen_psx_libretro.so`), while a file in the manifest names the profile
+that reads it (`beetle_psx`). The manifest maps one to the other and says
+which cores keep each system, the rule a pack built for a target follows.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import io
+import json
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "tests"))
+
+import install  # noqa: E402
+from test_install_selection import FakeRepository  # noqa: E402
+
+
+class CoreDirectories(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.tmp, ignore_errors=True))
+
+    def test_the_config_detection_read_names_the_cores(self):
+        cfg = self.tmp / "retroarch.cfg"
+        cfg.write_text(
+            f'system_directory = "{self.tmp / "sys"}"\n'
+            f'libretro_directory = "{self.tmp / "my cores"}"\n'
+        )
+        system_dir = install._parse_retroarch_system_dir(cfg)
+        self.assertEqual(
+            install.core_dirs("retroarch", system_dir), [self.tmp / "my cores"]
+        )
+
+    def test_a_portable_layout_defaults_to_cores_beside_the_config(self):
+        (self.tmp / "retroarch.cfg").write_text('libretro_directory = "default"\n')
+        self.assertEqual(
+            install.core_dirs("retroarch", self.tmp / "system"), [self.tmp / "cores"]
+        )
+        (self.tmp / "retroarch.cfg").write_text('video_driver = "gl"\n')
+        self.assertEqual(
+            install.core_dirs("retroarch", self.tmp / "system"), [self.tmp / "cores"]
+        )
+
+    def test_retropie_and_lakka_keep_their_own_folders(self):
+        self.assertIn(
+            Path("/opt/retropie/libretrocores"),
+            install.core_dirs("retropie", self.tmp / "none"),
+        )
+        self.assertIn(Path("/storage/cores"), install.core_dirs("lakka", self.tmp / "none"))
+
+    def test_core_files_of_every_system_and_retropie_folders(self):
+        cores = self.tmp / "cores"
+        (cores / "lr-fceumm").mkdir(parents=True)
+        for name in (
+            "mednafen_psx_libretro.so", "snes9x_libretro.dll",
+            "mgba_libretro.dylib", "genesis_plus_gx_libretro_android.so",
+            "lr-fceumm/fceumm_libretro.so", "mgba_libretro.info", "readme.txt",
+        ):
+            (cores / name).write_bytes(b"")
+        self.assertEqual(
+            install.installed_cores([cores, self.tmp / "missing"]),
+            ["fceumm", "genesis_plus_gx", "mednafen_psx", "mgba", "snes9x"],
+        )
+
+
+MANIFEST = {
+    "core_names": {"beetle_psx": ["mednafen_psx"]},
+    "system_cores": {"sony-playstation": ["beetle_psx", "pcsx_rearmed"],
+                     "nintendo-gba": ["mgba"]},
+    "files": [
+        {"dest": "scph5501.bin", "cores": None, "systems": ["sony-playstation"]},
+        {"dest": "gba_bios.bin", "cores": None, "systems": ["nintendo-gba"]},
+        {"dest": "unlisted.bin", "cores": None, "systems": ["arcade"]},
+        {"dest": "psx/extra.bin", "cores": ["beetle_psx"], "systems": ["sony-playstation"]},
+        {"dest": "mgba/extra.bin", "cores": ["mgba"], "systems": ["nintendo-gba"]},
+    ],
+    "omitted_files": [
+        {"dest": "gone.bin", "cores": ["mgba"], "systems": ["nintendo-gba"]},
+    ],
+}
+
+
+class NarrowToCores(unittest.TestCase):
+    def test_a_buildbot_name_keeps_its_profile_and_its_systems(self):
+        files, omitted = install.narrow_to_cores(MANIFEST, ["mednafen_psx"])
+        self.assertEqual(
+            [f["dest"] for f in files],
+            ["scph5501.bin", "unlisted.bin", "psx/extra.bin"],
+        )
+        self.assertEqual(omitted, [])
+
+    def test_an_older_list_keeps_the_platform_files(self):
+        older = {k: v for k, v in MANIFEST.items() if k in ("files", "omitted_files")}
+        files, _ = install.narrow_to_cores(older, ["mgba"])
+        self.assertEqual(
+            [f["dest"] for f in files],
+            ["scph5501.bin", "gba_bios.bin", "unlisted.bin", "mgba/extra.bin"],
+        )
+
+
+class TheBuildersOrder(unittest.TestCase):
+    """RetroPie reads megaplay.zip as advancemame (copy A), mame (copy B),
+    then mame2003 (copy A). Without advancemame the builder ships mame's
+    copy; merging mame2003 into the first copy gave it A."""
+
+    ENTRY = {
+        "dest": "megaplay.zip", "sha1": "a" * 40, "size": 1,
+        "repo_path": "bios/a.zip", "cores": ["advancemame"], "systems": ["arcade"],
+        "alternatives": [
+            {"sha1": "b" * 40, "sha256": "", "size": 2, "repo_path": "bios/b.zip",
+             "cores": ["mame"]},
+            {"sha1": "a" * 40, "sha256": "", "size": 1, "repo_path": "bios/a.zip",
+             "cores": ["mame2003"]},
+        ],
+    }
+
+    def test_the_first_chosen_claim_wins(self):
+        manifest = {"files": [self.ENTRY], "omitted_files": []}
+        for names, sha in ((["mame", "mame2003"], "b"), (["mame2003"], "a"),
+                           (["advancemame", "mame"], "a")):
+            with self.subTest(names=names):
+                files, _ = install.narrow_to_cores(manifest, names)
+                self.assertEqual(files[0]["sha1"], sha * 40)
+                self.assertNotIn("alternatives", files[0] if sha == "b" else {})
+
+    def test_the_parity_covers_a_core_set(self):
+        """A real build for mame and mame2003 on RetroPie, the shape
+        --installed-cores produces there."""
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            self.skipTest("database.json is not built")
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack as gp
+        from common import load_emulator_profiles
+
+        db = json.loads(db_path.read_text(encoding="utf-8"))
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+
+        def manifest(cores):
+            return gp.generate_manifest(
+                "retropie", str(REPO_ROOT / "platforms"), db, str(REPO_ROOT / "bios"),
+                str(REPO_ROOT / "platforms" / "_registry.yml"),
+                emulators_dir=str(REPO_ROOT / "emulators"), emu_profiles=profiles,
+                target_cores=cores, offline=True,
+            )
+
+        names = ["mame", "mame2003"]
+        files, _ = install.narrow_to_cores(manifest(None), names)
+        built = manifest(set(names))
+        self.assertEqual(
+            {(f["dest"], f["sha1"]) for f in files},
+            {(f["dest"], f["sha1"]) for f in built["files"]},
+        )
+
+
+class TheBoundaryBoundsAlternatives(unittest.TestCase):
+    def _manifest(self, alternative: dict) -> dict:
+        entry = {"dest": "a.bin", "sha1": "a" * 40, "size": 1,
+                 "repo_path": "bios/a.bin", "cores": ["x"],
+                 "alternatives": [alternative]}
+        return {"manifest_version": 2, "platform": "retroarch", "files": [entry]}
+
+    def test_an_alternative_carries_only_a_copy(self):
+        good = {"sha1": "b" * 40, "size": 1, "repo_path": "bios/b.bin", "cores": ["y"]}
+        install._validate_manifest(self._manifest(good), "retroarch")
+        for extra in ({"dest": "../../evil"}, {"regions": 5}, {"cores": []},
+                      {"repo_path": "../x"}):
+            with self.subTest(extra=extra), self.assertRaises(ValueError):
+                install._validate_manifest(self._manifest({**good, **extra}), "retroarch")
+
+    def test_the_cap_counts_the_largest_copy(self):
+        big = {"sha1": "b" * 40, "size": install.MAX_DOWNLOAD_SIZE,
+               "repo_path": "bios/b.bin", "cores": ["y"]}
+        manifest = self._manifest(big)
+        manifest["files"] = [
+            {**manifest["files"][0], "dest": f"f{i}.bin"} for i in range(70)
+        ]
+        with self.assertRaises(ValueError):
+            install._validate_manifest(manifest, "retroarch")
+
+
+class RefusedBeforeAnyInstall(unittest.TestCase):
+    def test_a_platform_shipping_its_cores_stops_the_run_first(self):
+        tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, tmp, True)
+        detected = [("retroarch", tmp / "system"), ("batocera", tmp / "bios")]
+        (tmp / "retroarch.cfg").write_text("")
+        (tmp / "cores").mkdir()
+        (tmp / "cores" / "mgba_libretro.so").write_bytes(b"")
+        with mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "detect_platforms", return_value=detected), \
+                mock.patch.object(install, "fetch_manifest") as fetch, \
+                mock.patch.object(sys, "argv", ["install.py", "--installed-cores", "--no-input"]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            with self.assertRaises(SystemExit) as stop:
+                install.main()
+        self.assertEqual(stop.exception.code, 1)
+        self.assertIn("batocera ships its cores", err.getvalue())
+        fetch.assert_not_called()
+
+
+class _CoreRepository(FakeRepository):
+    """The fake repository with the two maps and a portable RetroArch."""
+
+    def __enter__(self):
+        super().__enter__()
+        path = self.root / "install" / "retroarch.json"
+        manifest = json.loads(path.read_text())
+        manifest["core_names"] = {"pcsx_rearmed": ["pcsx_rearmed_neon"]}
+        manifest["system_cores"] = {
+            "sony-playstation": ["pcsx_rearmed"], "nintendo-gba": ["mgba"],
+        }
+        path.write_text(json.dumps(manifest))
+        (self.root / "retroarch.cfg").write_text('libretro_directory = ":/cores"\n')
+        (self.root / "cores").mkdir()
+        return self
+
+    def install_core(self, name: str) -> None:
+        (self.root / "cores" / f"{name}_libretro.so").write_bytes(b"")
+
+
+class TheOneLinerReadsInstalledCores(unittest.TestCase):
+    def test_only_what_the_installed_cores_read(self):
+        with _CoreRepository() as repo:
+            repo.install_core("pcsx_rearmed_neon")
+            proc = repo.run("--installed-cores")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("1 core installed", proc.stdout)
+            self.assertEqual(
+                repo.installed(), ["pcsx/extra.bin", "scph5500.bin", "scph5501.bin"]
+            )
+
+    def test_no_core_found_is_an_error_not_everything(self):
+        with _CoreRepository() as repo:
+            proc = repo.run("--installed-cores")
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("no installed core found", proc.stderr)
+            self.assertEqual(repo.installed(), [])
+
+    def test_an_older_file_list_is_refused(self):
+        with FakeRepository() as repo:
+            (repo.root / "retroarch.cfg").write_text("")
+            (repo.root / "cores").mkdir()
+            (repo.root / "cores" / "mgba_libretro.so").write_bytes(b"")
+            proc = repo.run("--installed-cores")
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("needs a newer one", proc.stderr)
+
+    def test_a_platform_that_ships_its_cores_refuses_the_flag(self):
+        with _CoreRepository() as repo:
+            batocera = repo.root / "install" / "batocera.json"
+            manifest = json.loads((repo.root / "install" / "retroarch.json").read_text())
+            manifest["platform"] = "batocera"
+            batocera.write_text(json.dumps(manifest))
+            command = repo.command("--installed-cores")
+            command[command.index("retroarch")] = "batocera"
+            proc = subprocess.run(
+                command, env=repo.env(), capture_output=True, text=True,
+                timeout=60, check=False, stdin=subprocess.DEVNULL,
+            )
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("ships its cores with the system", proc.stderr)
+
+
+    @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
+    def test_the_prompt_offers_the_installed_cores(self):
+        with _CoreRepository() as repo:
+            repo.install_core("mgba")
+            command = " ".join(shlex.quote(part) for part in repo.command())
+            proc = subprocess.run(
+                ["script", "-qec", command, "/dev/null"],
+                input="i\n", env=repo.env(), capture_output=True,
+                text=True, timeout=60, check=False,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("i) only what the installed cores read: 2 files", proc.stdout)
+            self.assertIn("--platform retroarch --installed-cores", proc.stdout)
+            self.assertEqual(repo.installed(), ["gba_bios.bin", "mgba/extra.bin"])
+
+
+if __name__ == "__main__":
+    unittest.main()

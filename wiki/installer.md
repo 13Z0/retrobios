@@ -118,9 +118,16 @@ after detection, it asks:
 ```
 Retroarch: 5861 files, 6.0 GB.
   Enter) install everything
+  i) only what the installed cores read: 102 files, 44.5 MB
   c) choose systems, cores and regions
   q) quit
 ```
+
+`i` appears for RetroArch, Lakka and RetroPie when cores are found installed;
+the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX
+and FCEUmm.
+It keeps what those cores read and drops the systems none of them emulates,
+the rule `--installed-cores` applies.
 
 `c` walks through three numbered lists, each answered with numbers such as
 `1,4,7-9`, or Enter to keep everything on that axis.
@@ -149,6 +156,30 @@ python install.py --platform retroarch --system sony-playstation --core pcsx_rea
 python install.py --platform recalbox --region us,eu,jp
 ```
 
+### Installed cores
+
+`--installed-cores` reads the cores a RetroArch already has and installs what
+they need. The cores are the `<name>_libretro.so` (`.dll`, `.dylib`,
+`_libretro_android.so`) files in the `libretro_directory` of the
+`retroarch.cfg` detection found, `cores/` beside RetroArch when the setting is
+unset, a `retroarch.cfg` next to the system directory for a portable install
+given with `--dest`, and the folders RetroPie (`/opt/retropie/libretrocores`)
+and Lakka (`/usr/lib/libretro`, `/storage/cores`) install into. A core file
+is named the buildbot's way (`mednafen_psx`); the manifest maps each name to
+the profile its files are filed under (`beetle_psx`).
+
+What stays is what a pack built for exactly those cores carries, the rule
+`--target` follows too: a platform system stays when an installed core
+emulates it or reads its files, or when no core of the platform does; a
+file a core loads stays when that core is installed. Where two cores read
+one path and want different bytes, the copy of the first installed core in
+the builder's order is the one installed.
+
+Batocera, Recalbox and the other distributions ship their cores with the
+system, so the option is refused there, as it is when no core is found or
+when the file list predates the mapping: carrying on would install
+everything while the option asked for less.
+
 A name the platform does not have is refused with the list of the ones it
 has, before anything is downloaded: carrying on would install something other
 than what was asked. A system name that itself contains commas, as Recalbox's
@@ -173,7 +204,8 @@ what the options name, everything by default.
 |--------|--------|
 | `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
 | `--dest PATH` | Destination directory, overriding detection. With `--dest` alone the file list is RetroArch's |
-| `--target NAME` | Keep only the files the cores of that hardware target need. An unknown target is refused rather than ignored, since carrying on would install everything |
+| `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything |
+| `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie); see [Installed cores](#installed-cores) |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated; `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load; `--list-cores` prints the names |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
@@ -379,7 +411,7 @@ followed.
 ## Exit status
 
 `0` on success, `1` on failure: an unusable base URL, an unknown platform or
-target, a manifest that fails validation, a fetch that never succeeded, or no
+target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, or no
 platform to install for in a non-interactive run.
 
 Failures that are per-file, such as a download exhausting its three attempts,

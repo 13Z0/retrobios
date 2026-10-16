@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-10T05:24:26Z",
+  "generated": "2026-10-15T21:45:48Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -602,6 +602,793 @@
       ]
     }
   ],
+  "core_names": {
+    "3dsen": [
+      "3dsen-windows"
+    ],
+    "ace-dl": [
+      "acedl"
+    ],
+    "aethersx2": [
+      "aethersx2-sa"
+    ],
+    "armsx2": [
+      "armsx2_libretro"
+    ],
+    "beetle_gba": [
+      "mednafen_gba"
+    ],
+    "beetle_lynx": [
+      "mednafen_lynx"
+    ],
+    "beetle_pce": [
+      "mednafen_pce"
+    ],
+    "beetle_pcfx": [
+      "mednafen_pcfx",
+      "pcfx"
+    ],
+    "beetle_psx": [
+      "mednafen_psx",
+      "mednafen_psx_hw"
+    ],
+    "beetle_saturn": [
+      "beetle-saturn",
+      "mednafen_saturn"
+    ],
+    "bsnes2014": [
+      "bsnes2014_accuracy",
+      "bsnes2014_balanced",
+      "bsnes2014_performance"
+    ],
+    "bsnes_hd_beta": [
+      "bsnes_hd",
+      "bsneshd"
+    ],
+    "bsnes_mercury": [
+      "bsnes_mercury_accuracy",
+      "bsnes_mercury_balanced",
+      "bsnes_mercury_performance"
+    ],
+    "cap32": [
+      "caprice32"
+    ],
+    "cxbx-reloaded": [
+      "cxbx"
+    ],
+    "dosbox-x": [
+      "dosboxx"
+    ],
+    "doublecherrygb": [
+      "DoubleCherryGB"
+    ],
+    "ep128emu": [
+      "ep128emu_core"
+    ],
+    "ep128emu_core": [
+      "ep128emu-core"
+    ],
+    "fpse-ng": [
+      "fpse64",
+      "fpseng"
+    ],
+    "gba-emu": [
+      "GBA-EMU",
+      "GBA.emu"
+    ],
+    "gbc-emu": [
+      "GBC-EMU",
+      "GBC.emu"
+    ],
+    "genesis_plus_gx": [
+      "genesisplusgx",
+      "genesisplusgx-expanded",
+      "genplus"
+    ],
+    "genesis_plus_gx_wide": [
+      "genesisplusgx-wide",
+      "genesisplusgxwide"
+    ],
+    "higan_sfc_balanced": [
+      "nside_sfc_balanced"
+    ],
+    "idtech4a++": [
+      "diii4a",
+      "idtech4amm"
+    ],
+    "j2me-loader": [
+      "J2ME-LOADER"
+    ],
+    "jl-mod": [
+      "JL-MOD"
+    ],
+    "kemulator": [
+      "KEMULATOR"
+    ],
+    "linkboy": [
+      "LINKBOY",
+      "Linkboy"
+    ],
+    "lrps2": [
+      "pcsx2"
+    ],
+    "lynx-emu": [
+      "LYNX-EMU",
+      "Lynx.emu"
+    ],
+    "m64plus-fz": [
+      "M64PLUS-FZ",
+      "org.mupen64plusae.v3.fzurita",
+      "org.mupen64plusae.v3.fzurita.amazon",
+      "org.mupen64plusae.v3.fzurita.pro"
+    ],
+    "mame": [
+      "imame4all"
+    ],
+    "mame2016": [
+      "mess2016"
+    ],
+    "mame4droid-2024": [
+      "MAME4DROID-2024",
+      "MAME4DROID-CURRENT",
+      "com.seleuco.mame4d2024"
+    ],
+    "mastergear": [
+      "MASTERGEAR",
+      "com.fms.mg"
+    ],
+    "md-emu": [
+      "MD-EMU",
+      "MD.emu"
+    ],
+    "mednafen_pce": [
+      "pce"
+    ],
+    "mednafen_pce_fast": [
+      "beetle_pce_fast",
+      "pce_fast"
+    ],
+    "mednafen_snes": [
+      "beetle-bsnes",
+      "beetle_bsnes"
+    ],
+    "mednafen_supafaust": [
+      "supafaust"
+    ],
+    "mednafen_supergrafx": [
+      "beetle_supergrafx"
+    ],
+    "melonds_ds": [
+      "melondsds"
+    ],
+    "mesen": [
+      "mesens"
+    ],
+    "mesen-s": [
+      "mesen_s"
+    ],
+    "mesence": [
+      "mesen2"
+    ],
+    "msx-emu": [
+      "MSX-EMU",
+      "MSX.emu"
+    ],
+    "mupen64plus-ae": [
+      "MUPEN64PLUS-AE",
+      "org.mupen64plusae.v3.alpha"
+    ],
+    "mupen64plus_next": [
+      "mupen64plus",
+      "mupen64plus-next",
+      "mupen64plus_next_develop",
+      "mupen64plus_next_gles2",
+      "mupen64plus_next_gles3"
+    ],
+    "my-boy": [
+      "MY-BOY",
+      "My Boy!"
+    ],
+    "my-oldboy": [
+      "MY-OLDBOY",
+      "My OldBoy!"
+    ],
+    "nes-emu": [
+      "NES-EMU",
+      "NES.emu"
+    ],
+    "nesoid": [
+      "NESOID",
+      "Nesoid"
+    ],
+    "nethersx2": [
+      "NETHERSX2",
+      "NetherSX2"
+    ],
+    "nethersx2-turnip": [
+      "NETHERSX2-TURNIP",
+      "NetherSX2-Turnip"
+    ],
+    "nethersx2-turnip-classic": [
+      "NETHERSX2-TURNIP-CLASSIC",
+      "NetherSX2-Turnip-Classic"
+    ],
+    "o2em": [
+      "o2em_libretro"
+    ],
+    "parallel-launcher": [
+      "ca.parallel_launcher.ParallelLauncher"
+    ],
+    "parallel_n64": [
+      "parallel_n64_debug"
+    ],
+    "pce-emu": [
+      "PCE-EMU",
+      "PCE.emu",
+      "com.PceEmu",
+      "pceemu"
+    ],
+    "pcsx2-legacy": [
+      "PCSX2-LEGACY"
+    ],
+    "pcsx_rearmed": [
+      "pcsx_rearmed_interpreter",
+      "pcsx_rearmed_neon"
+    ],
+    "pizza-boy-gba": [
+      "PIZZA-BOY-GBA",
+      "Pizza Boy GBA"
+    ],
+    "pizza-boy-gbc": [
+      "PIZZA-BOY-GBC",
+      "Pizza Boy GBC"
+    ],
+    "pizza-boy-sc": [
+      "PIZZA-BOY-SC",
+      "Pizza Boy SC",
+      "it.dbtecno.pizzaboyscbasic",
+      "it.dbtecno.pizzaboyscpro"
+    ],
+    "play": [
+      "play!"
+    ],
+    "puae": [
+      "uae"
+    ],
+    "real3doplayer": [
+      "REAL3DOPLAYER",
+      "Real3DOPlayer"
+    ],
+    "rosalies-mupen-gui": [
+      "RMG",
+      "com.github.Rosalie241.RMG"
+    ],
+    "saturn-emu": [
+      "SATURN-EMU",
+      "Saturn.emu",
+      "saturnemu"
+    ],
+    "smsplus": [
+      "smsplus_gx"
+    ],
+    "snes9x": [
+      "pocketsnes",
+      "snes9x_next"
+    ],
+    "snes9x-explus": [
+      "SNES9X-EXPLUS",
+      "Snes9x EX+",
+      "Snes9xEXPlus"
+    ],
+    "speccy": [
+      "SPECCY",
+      "com.fms.speccy",
+      "com.fms.speccy.deluxe"
+    ],
+    "superzsnes": [
+      "SUPERZSNES"
+    ],
+    "tgbdual": [
+      "TGB Dual"
+    ],
+    "triforce": [
+      "dolphin-triforce"
+    ],
+    "vbam": [
+      "vba-m"
+    ],
+    "x1-box": [
+      "x1box"
+    ],
+    "xm6pro68k": [
+      "XM6PRO68K",
+      "XM6PRO68K-WINDOWS",
+      "xm6pro"
+    ],
+    "xm6typeg": [
+      "XM6TYPEG",
+      "XM6TYPEG-WINDOWS"
+    ],
+    "yabasanshiro": [
+      "yabasanshiro-2"
+    ]
+  },
+  "system_cores": {
+    "3do": [
+      "groovymame",
+      "mame",
+      "mame2015",
+      "mame2016",
+      "mame4droid-2024",
+      "opera",
+      "real3doplayer",
+      "ume2015"
+    ],
+    "amstrad-cpc": [
+      "ace-dl",
+      "cap32",
+      "clk",
+      "cpcemu",
+      "crocods",
+      "ep128emu",
+      "ep128emu_core",
+      "zesarux"
+    ],
+    "apple-macintosh-ii": [
+      "basiliskii",
+      "minivmac"
+    ],
+    "atari-400-800": [
+      "altirra",
+      "atari800"
+    ],
+    "atari-5200": [
+      "a5200",
+      "altirra",
+      "atari800"
+    ],
+    "atari-7800": [
+      "a7800",
+      "prosystem"
+    ],
+    "atari-lynx": [
+      "beetle_lynx",
+      "gearlynx",
+      "handy",
+      "holani",
+      "lynx-emu",
+      "mednafen"
+    ],
+    "atari-st": [
+      "clk",
+      "hatari",
+      "hatari2014",
+      "hatarib"
+    ],
+    "coleco-colecovision": [
+      "ares",
+      "bluemsx",
+      "clk",
+      "colem",
+      "fbneo",
+      "gearcoleco",
+      "jollycv",
+      "mesence",
+      "msx-emu",
+      "openmsx",
+      "smsplus",
+      "zesarux"
+    ],
+    "commodore-amiga": [
+      "amiberry",
+      "clk",
+      "fsuae",
+      "puae",
+      "puae2021",
+      "uae4arm"
+    ],
+    "doom": [
+      "gzdoom",
+      "idtech4a++",
+      "prboom",
+      "prboom-plus"
+    ],
+    "enterprise-64-128": [
+      "clk"
+    ],
+    "fairchild-channel-f": [
+      "fbneo",
+      "freechaf"
+    ],
+    "j2me": [
+      "freej2me",
+      "freej2me_plus",
+      "j2me-loader",
+      "jl-mod",
+      "kemulator",
+      "squirreljme"
+    ],
+    "magnavox-odyssey2": [
+      "o2em"
+    ],
+    "mattel-intellivision": [
+      "freeintv"
+    ],
+    "microsoft-msx": [
+      "ares",
+      "bluemsx",
+      "clk",
+      "fbneo",
+      "fmsx",
+      "msx-emu",
+      "openmsx",
+      "zesarux"
+    ],
+    "microsoft-xbox": [
+      "cxbx-reloaded",
+      "directxbox",
+      "hakux",
+      "x1-box",
+      "xemu"
+    ],
+    "nec-pc-98": [
+      "dosbox-x",
+      "nekop2",
+      "np2kai"
+    ],
+    "nec-pc-engine": [
+      "ares",
+      "beetle_pce",
+      "geargrafx",
+      "jgenesis",
+      "mednafen",
+      "mednafen_pce",
+      "mednafen_pce_fast",
+      "mednafen_supergrafx",
+      "mesence",
+      "pce-emu"
+    ],
+    "nec-pc-fx": [
+      "beetle_pcfx",
+      "mednafen"
+    ],
+    "nintendo-64dd": [
+      "ares",
+      "m64plus-fz",
+      "mupen64plus-ae",
+      "mupen64plus_next",
+      "parallel-launcher",
+      "parallel_n64",
+      "project64",
+      "rosalies-mupen-gui",
+      "sixtyforce"
+    ],
+    "nintendo-ds": [
+      "desmume",
+      "desmume2015",
+      "drastic",
+      "melonds",
+      "melonds-nightly",
+      "melonds_ds",
+      "noods",
+      "skyemu"
+    ],
+    "nintendo-fds": [
+      "fbneo",
+      "fceumm",
+      "fixnes",
+      "ines",
+      "mednafen",
+      "mesen",
+      "mesence",
+      "nes-emu",
+      "nesoid",
+      "nestopia",
+      "punes",
+      "rustynes"
+    ],
+    "nintendo-gamecube": [
+      "dolphin",
+      "dolphin-mmjr",
+      "dolphin-mmjr2",
+      "dolphin_launcher",
+      "ishiiruka",
+      "primehack",
+      "triforce"
+    ],
+    "nintendo-gb": [
+      "boytacean",
+      "doublecherrygb",
+      "emux_gb",
+      "gambatte",
+      "gbc-emu",
+      "gearboy",
+      "irogb",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mesen-s",
+      "mesence",
+      "mgba",
+      "my-oldboy",
+      "pizza-boy-gbc",
+      "sameboy",
+      "skyemu",
+      "tgbdual",
+      "vbam"
+    ],
+    "nintendo-gba": [
+      "beetle_gba",
+      "dolphin",
+      "gba-emu",
+      "gpsp",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mednafen_gba",
+      "mesence",
+      "meteor",
+      "mgba",
+      "mgba_splitscreen",
+      "my-boy",
+      "noods",
+      "pizza-boy-gba",
+      "primehack",
+      "skyemu",
+      "tempgba",
+      "triforce",
+      "vba_next",
+      "vbam"
+    ],
+    "nintendo-gbc": [
+      "boytacean",
+      "doublecherrygb",
+      "fixgb",
+      "gambatte",
+      "gbc-emu",
+      "gearboy",
+      "irogb",
+      "jgenesis",
+      "linkboy",
+      "mednafen",
+      "mesen-s",
+      "mesence",
+      "mgba",
+      "my-oldboy",
+      "pizza-boy-gbc",
+      "sameboy",
+      "skyemu",
+      "tgbdual",
+      "vbam"
+    ],
+    "nintendo-nes": [
+      "3dsen",
+      "bnes",
+      "emux_nes",
+      "fceumm",
+      "fixnes",
+      "ines",
+      "jgenesis",
+      "mednafen",
+      "mesen",
+      "mesence",
+      "nes",
+      "nes-emu",
+      "nesoid",
+      "nestopia",
+      "plastic",
+      "punes",
+      "quicknes",
+      "rustynes"
+    ],
+    "nintendo-pokemon-mini": [
+      "pokemini"
+    ],
+    "nintendo-satellaview": [
+      "bsnes",
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "mesen-s",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010"
+    ],
+    "nintendo-sgb": [
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "higan_sfc",
+      "higan_sfc_balanced",
+      "linkboy",
+      "mgba",
+      "my-oldboy",
+      "pizza-boy-gbc",
+      "sameboy"
+    ],
+    "nintendo-snes": [
+      "bsnes",
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "fbneo",
+      "higan_sfc",
+      "higan_sfc_balanced",
+      "jgenesis",
+      "mednafen",
+      "mednafen_snes",
+      "mednafen_supafaust",
+      "mesen-s",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010",
+      "superzsnes"
+    ],
+    "nintendo-sufami-turbo": [
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010"
+    ],
+    "philips-videopac": [
+      "o2em"
+    ],
+    "scummvm": [
+      "scummvm"
+    ],
+    "sega-game-gear": [
+      "ares",
+      "gearsystem",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "mastergear",
+      "mednafen",
+      "mesence",
+      "picodrive",
+      "pizza-boy-sc",
+      "smsplus"
+    ],
+    "sega-master-system": [
+      "ares",
+      "blastem",
+      "clk",
+      "gearsystem",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "mastergear",
+      "md-emu",
+      "mednafen",
+      "mesence",
+      "picodrive",
+      "pizza-boy-sc",
+      "smsplus",
+      "zesarux"
+    ],
+    "sega-mega-cd": [
+      "ares",
+      "clownmdemu",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "md-emu",
+      "mednafen",
+      "picodrive",
+      "pizza-boy-sc"
+    ],
+    "sega-mega-drive": [
+      "ares",
+      "blastem",
+      "clownmdemu",
+      "genesis_plus_gx",
+      "genesis_plus_gx_wide",
+      "jgenesis",
+      "md-emu",
+      "mednafen",
+      "picodrive",
+      "pizza-boy-sc"
+    ],
+    "sega-saturn": [
+      "ares",
+      "beetle_saturn",
+      "kronos",
+      "mednafen",
+      "saturn-emu",
+      "ssf",
+      "yabasanshiro",
+      "yabause",
+      "ymir"
+    ],
+    "sharp-x1": [
+      "x1"
+    ],
+    "sharp-x68000": [
+      "px68k",
+      "xm6pro68k",
+      "xm6typeg"
+    ],
+    "sinclair-zx-spectrum": [
+      "81",
+      "ares",
+      "clk",
+      "cspect",
+      "ep128emu",
+      "ep128emu_core",
+      "fuse",
+      "speccy",
+      "zesarux"
+    ],
+    "snk-neogeo-cd": [
+      "fbneo",
+      "fbneo_neogeo",
+      "geolith",
+      "neocd"
+    ],
+    "sony-playstation": [
+      "ares",
+      "armsx1",
+      "beetle_psx",
+      "duckstation",
+      "epsxe",
+      "fpse",
+      "fpse-ng",
+      "mednafen",
+      "pcsx1",
+      "pcsx_rearmed",
+      "rustation",
+      "swanstation"
+    ],
+    "sony-playstation-2": [
+      "aethersx2",
+      "armsx2",
+      "emucorex",
+      "lrps2",
+      "nethersx2",
+      "nethersx2-turnip",
+      "nethersx2-turnip-classic",
+      "pcee2",
+      "pcsx2",
+      "pcsx2-legacy",
+      "play",
+      "yaps2"
+    ],
+    "sony-psp": [
+      "ppsspp"
+    ],
+    "videoton-tvc": [
+      "ep128emu",
+      "ep128emu_core"
+    ],
+    "wolfenstein-3d": [
+      "ecwolf",
+      "idtech4a++"
+    ]
+  },
   "files": [
     {
       "dest": "3do/3do_arcade_saot.bin",
@@ -4892,7 +5679,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/psxonpsp660.bin",
       "cores": [
-        "beetle_psx"
+        "beetle_psx",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -6420,7 +7208,9 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6439,7 +7229,9 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6458,7 +7250,9 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6477,7 +7271,9 @@
       "size": 8192,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6490,7 +7286,9 @@
       "size": 4096,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6503,7 +7301,9 @@
       "size": 6478,
       "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6516,7 +7316,9 @@
       "size": 259626,
       "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6539,7 +7341,9 @@
       "size": 16384,
       "repo_path": "bios/Nintendo/Wii/SYSCONF",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6552,7 +7356,9 @@
       "size": 256,
       "repo_path": "bios/Nintendo/Wii/setting.txt",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6565,7 +7371,8 @@
       "size": 134217728,
       "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6580,7 +7387,8 @@
       "size": 1005,
       "repo_path": "bios/Nintendo/Wii/clientca.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6593,7 +7401,8 @@
       "size": 609,
       "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6606,7 +7415,8 @@
       "size": 897,
       "repo_path": "bios/Nintendo/Wii/rootca.pem",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -6619,7 +7429,8 @@
       "size": 32768,
       "repo_path": "bios/Enterprise/64-128/exdos14isdos10uk.rom",
       "cores": [
-        "ep128emu"
+        "ep128emu",
+        "ep128emu_core"
       ]
     },
     {
@@ -6629,7 +7440,8 @@
       "size": 32768,
       "repo_path": "bios/Enterprise/64-128/epdos16f.rom",
       "cores": [
-        "ep128emu"
+        "ep128emu",
+        "ep128emu_core"
       ]
     },
     {

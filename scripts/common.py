@@ -1518,15 +1518,7 @@ def resolve_platform_cores(
         }
 
     if target_cores is not None:
-        # Build reverse index: upstream name -> profile key
-        # Upstream sources (buildbot, es_systems) may use different names
-        # than our profile keys (e.g., mednafen_psx vs beetle_psx).
-        # The profiles' cores: field lists these alternate names.
-        index = upstream_profile_index(profiles, include_aliases=True)
-        expanded = {
-            profile for c in target_cores for profile in index.get(c, {c})
-        }
-        result = result & expanded
+        result = result & designated_profiles(profiles, target_cores)
     return result
 
 
@@ -1617,40 +1609,39 @@ def _norm_system_id(sid: str) -> str:
     return s.replace("-", "")
 
 
-def filter_systems_by_target(
+def designated_profiles(profiles: dict[str, dict], names: set[str]) -> set[str]:
+    """The profiles a list of upstream core names designates.
+
+    The buildbot and es_systems name cores their own way (`mednafen_psx` for
+    beetle_psx); a profile's `cores:` lists those names. A name no profile
+    claims stands for itself.
+    """
+    index = upstream_profile_index(profiles, include_aliases=True)
+    return {profile for c in names for profile in index.get(c, {c})}
+
+
+def system_core_reach(
     systems: dict[str, dict],
     profiles: dict[str, dict],
-    target_cores: set[str] | None,
-    platform_cores: set[str] | None = None,
-) -> dict[str, dict]:
-    """Filter platform systems to only those reachable by target cores.
+    platform_cores: set[str] | None,
+) -> dict[str, set[str] | None]:
+    """For each platform system, the cores whose presence keeps it.
 
-    A system is reachable if at least one core that emulates it is available
-    on the target. Only considers cores relevant to the platform (from
-    platform_cores). Systems whose cores are all outside the platform's
-    scope are kept (no information to exclude them).
-
-    Returns the filtered systems dict (or all if no target).
+    A system is reachable if at least one core that emulates it is available.
+    Only cores relevant to the platform (platform_cores) can rule a system
+    out: a system whose cores are all outside the platform's scope maps to
+    None, kept whatever is available, there being no information to exclude
+    it.
     """
-    if target_cores is None:
-        return systems
-
-    # Build reverse index for target core name resolution
-    index = upstream_profile_index(profiles, include_aliases=True)
-    expanded_target = {
-        profile for c in target_cores for profile in index.get(c, {c})
-    }
-
     _norm_sid = _norm_system_id
 
-    # Build normalized system -> cores from ALL profiles
+    # Normalized system -> cores, from ALL profiles
     norm_system_cores: dict[str, set[str]] = {}
     for name, p in profiles.items():
         if p.get("type") == "alias":
             continue
         for sid in p.get("systems", []):
-            norm_key = _norm_sid(sid)
-            norm_system_cores.setdefault(norm_key, set()).add(name)
+            norm_system_cores.setdefault(_norm_sid(sid), set()).add(name)
 
     # Platform-scoped mapping (for distinguishing "no info" from "known but off-target")
     norm_plat_system_cores: dict[str, set[str]] = {}
@@ -1658,14 +1649,16 @@ def filter_systems_by_target(
         for name in platform_cores:
             p = profiles.get(name, {})
             for sid in p.get("systems", []):
-                norm_key = _norm_sid(sid)
-                norm_plat_system_cores.setdefault(norm_key, set()).add(name)
+                norm_plat_system_cores.setdefault(_norm_sid(sid), set()).add(name)
 
     # A platform can file a system under an id no profile uses: Batocera's
     # enterprise-64-128 is ep128emu's enterprise-64 and enterprise-128, and
     # only CLK, off most targets, carries the joined id. The destinations a
     # system declares name the cores that read its files. A bare name proves
     # nothing (bios.bin belongs to many systems), so only a path counts.
+    # The evidence only keeps: a path shared with an off-target core says
+    # nothing of the other files, and Batocera's bbc runs on MAME, which no
+    # profile ties to bbcb.zip, while CLK reads two of its ROMs.
     dest_cores: dict[str, set[str]] = {}
     for name, p in profiles.items():
         if p.get("type") == "alias":
@@ -1681,9 +1674,12 @@ def filter_systems_by_target(
                 if "/" in dest:
                     dest_cores.setdefault(dest, set()).add(name)
 
-    filtered = {}
+    reach: dict[str, set[str] | None] = {}
     for sys_id, sys_data in systems.items():
         norm_key = _norm_sid(sys_id)
+        if not norm_plat_system_cores.get(norm_key):
+            reach[sys_id] = None
+            continue
         file_cores = {
             core
             for fe in sys_data.get("files", [])
@@ -1692,26 +1688,29 @@ def filter_systems_by_target(
                 (),
             )
         }
-        all_cores = norm_system_cores.get(norm_key, set())
-        plat_cores_here = norm_plat_system_cores.get(norm_key, set())
+        reach[sys_id] = file_cores | norm_system_cores.get(norm_key, set())
+    return reach
 
-        if file_cores & expanded_target:
-            # An on-target core reads the system's files. The evidence only
-            # keeps: a path shared with an off-target core says nothing of the
-            # other files, and Batocera's bbc runs on MAME, which no profile
-            # ties to bbcb.zip, while CLK reads two of its ROMs.
-            filtered[sys_id] = sys_data
-        elif not all_cores and not plat_cores_here:
-            # No profile maps to this system -keep it
-            filtered[sys_id] = sys_data
-        elif all_cores & expanded_target:
-            # At least one core is on the target
-            filtered[sys_id] = sys_data
-        elif not plat_cores_here:
-            # Platform resolution didn't find cores for this system -keep it
-            filtered[sys_id] = sys_data
-        # else: known cores exist but none are on the target -exclude
-    return filtered
+
+def filter_systems_by_target(
+    systems: dict[str, dict],
+    profiles: dict[str, dict],
+    target_cores: set[str] | None,
+    platform_cores: set[str] | None = None,
+) -> dict[str, dict]:
+    """Filter platform systems to only those reachable by target cores.
+
+    Returns the filtered systems dict (or all if no target).
+    """
+    if target_cores is None:
+        return systems
+    available = designated_profiles(profiles, target_cores)
+    reach = system_core_reach(systems, profiles, platform_cores)
+    return {
+        sys_id: sys_data
+        for sys_id, sys_data in systems.items()
+        if reach[sys_id] is None or reach[sys_id] & available
+    }
 
 
 def platform_declarations(

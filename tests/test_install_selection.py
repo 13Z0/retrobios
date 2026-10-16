@@ -257,6 +257,19 @@ class TheBoundaryChecksTheNewFields(unittest.TestCase):
             with self.subTest(field=bad), self.assertRaises(ValueError):
                 install._validate_manifest(self._manifest(**bad), "retroarch")
 
+    def test_the_core_maps(self):
+        good = self._manifest()
+        good.update(core_names={"beetle_psx": ["mednafen_psx"]},
+                    system_cores={"sony-playstation": ["beetle_psx"]})
+        install._validate_manifest(good, "retroarch")
+        for field, bad in (("core_names", ["x"]), ("core_names", {"a": "b"}),
+                           ("system_cores", {"s": None}), ("system_cores", {"": ["a"]}),
+                           ("system_cores", {"s": [1]})):
+            manifest = self._manifest()
+            manifest[field] = bad
+            with self.subTest(field=field, value=bad), self.assertRaises(ValueError):
+                install._validate_manifest(manifest, "retroarch")
+
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):  # noqa: A002 - stdlib signature
@@ -552,6 +565,68 @@ class InstallMatchesASystemPack(unittest.TestCase):
                 )
                 self.assertEqual(
                     {f["dest"] for f in files}, self._packed(systems, regions) & known
+                )
+
+
+class InstallMatchesATargetManifest(unittest.TestCase):
+    """`install.py --target T` against the manifest the builder writes for T.
+
+    A target list names cores the way the buildbot does (`mednafen_psx`)
+    while a file names the profile that reads it (`beetle_psx`), and the
+    builder drops a platform system no available core reads. The installer
+    did neither: on RetroArch desktop it kept every system and lost the
+    extras of five cores. A destination two cores read was also filed under
+    the first alone, so a target without that core lost it, or got the
+    first core's copy where the other core wants different bytes
+    (megaplay.zip for mame and mame2003 on Switch).
+    """
+
+    CASES = (
+        ("retroarch", "desktop"),
+        ("retroarch", "switch"),
+        ("batocera", "x86_64"),
+        ("batocera", "bcm2711"),
+        ("retropie", "rpi4"),
+        ("emudeck", "steamos"),
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            raise unittest.SkipTest("database.json is not built")
+        import generate_pack as gp
+        from common import load_emulator_profiles, load_target_config
+
+        cls.gp = gp
+        cls.load_target_config = staticmethod(load_target_config)
+        cls.db = json.loads(db_path.read_text(encoding="utf-8"))
+        cls.profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+
+    def _manifest(self, platform, target_cores=None, target=None):
+        return self.gp.generate_manifest(
+            platform, str(REPO_ROOT / "platforms"), self.db,
+            str(REPO_ROOT / "bios"), str(REPO_ROOT / "platforms" / "_registry.yml"),
+            emulators_dir=str(REPO_ROOT / "emulators"), emu_profiles=self.profiles,
+            target_cores=target_cores, target_name=target, offline=True,
+        )
+
+    def test_each_target(self):
+        for platform, target in self.CASES:
+            with self.subTest(platform=platform, target=target):
+                cores = sorted(self.load_target_config(
+                    platform, target, str(REPO_ROOT / "platforms")
+                ))
+                full = self._manifest(platform)
+                built = self._manifest(platform, set(cores), target)
+                files, omitted = install.narrow_to_cores(full, cores)
+                self.assertEqual(
+                    {(f["dest"], f["sha1"]) for f in files},
+                    {(f["dest"], f["sha1"]) for f in built["files"]},
+                )
+                self.assertEqual(
+                    {o["dest"] for o in omitted},
+                    {o["dest"] for o in built["omitted_files"]},
                 )
 
 

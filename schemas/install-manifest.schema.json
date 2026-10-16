@@ -96,6 +96,30 @@
       "type": "integer",
       "minimum": 0
     },
+    "core_names": {
+      "description": "Each core a file names, with the other names it goes by upstream (the buildbot's mednafen_psx for beetle_psx).",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uniqueItems": true
+      }
+    },
+    "system_cores": {
+      "description": "Each platform system with the cores whose presence keeps it; a system absent here is kept whatever cores are available.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uniqueItems": true
+      }
+    },
     "omitted_files": {
       "type": "array",
       "items": {
@@ -377,6 +401,53 @@
           "priority": {
             "description": "The rank the code searches the file at, lower first: a world file withdraws an unmatched regional one only when it ranks no worse.",
             "type": "integer"
+          },
+          "alternatives": {
+            "description": "Copies other cores read at this destination when they disagree on its content, in the order the pack builder tries them; a narrowing that drops the entry's cores takes the first whose cores remain.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha1",
+                "sha256",
+                "size",
+                "repo_path",
+                "cores"
+              ],
+              "properties": {
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "repo_path": {
+                  "type": "string"
+                },
+                "storage": {
+                  "const": "release"
+                },
+                "release_asset": {
+                  "type": "string",
+                  "pattern": "^[^/\\\\]+$"
+                },
+                "cores": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              }
+            }
           }
         },
         "oneOf": [

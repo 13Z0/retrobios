@@ -505,6 +505,10 @@ def find_undeclared_files(
     standalone_set = set(str(c) for c in config.get("standalone_cores", []))
     undeclared = []
     seen_files: set[tuple] = set()
+    # Key -> the entry reported for it. A later profile reading the same
+    # requirement is kept on that entry rather than counted again: a pack
+    # built without the first profile still has to name the file.
+    reported: dict[tuple, dict] = {}
     # Track archives: archive_name -> {in_repo, emulator, files: [...], ...}
     archive_entries: dict[tuple, dict] = {}
 
@@ -549,7 +553,11 @@ def find_undeclared_files(
                 f.get("variant_group"),
                 region_key,
             )
-            if not fname or seen_key in seen_files:
+            if not fname:
+                continue
+            first = reported.get(seen_key)
+            duplicate = seen_key in seen_files
+            if duplicate and (first is None or first["profile"] == emu_name):
                 continue
             verdict = _candidate_verdict(
                 f, fname, is_standalone, include_all, declared_names, dest
@@ -644,29 +652,32 @@ def find_undeclared_files(
                         in_repo = False
 
             checks = _parse_validation(f.get("validation"))
-            undeclared.append(
-                {
-                    "profile": emu_name,
-                    "emulator": profile.get("emulator", emu_name),
-                    "systems": list(profile.get("systems", [])),
-                    "system": f.get("system"),
-                    "region": f.get("region"),
-                    "variant_group": f.get("variant_group"),
-                    "name": fname,
-                    "path": dest,
-                    "required": f.get("required", False),
-                    "hle_fallback": f.get("hle_fallback", False),
-                    "category": f.get("category", "bios"),
-                    "in_repo": in_repo,
-                    "note": f.get("note", ""),
-                    "checks": sorted(checks) if checks else [],
-                    "source_ref": f.get("source_ref"),
-                    "expected": _build_expected(f, checks),
-                    **_identity_of(f),
-                    "sha1": f.get("sha1"),
-                    "md5": f.get("md5"),
-                }
-            )
+            entry = {
+                "profile": emu_name,
+                "emulator": profile.get("emulator", emu_name),
+                "systems": list(profile.get("systems", [])),
+                "system": f.get("system"),
+                "region": f.get("region"),
+                "variant_group": f.get("variant_group"),
+                "name": fname,
+                "path": dest,
+                "required": f.get("required", False),
+                "hle_fallback": f.get("hle_fallback", False),
+                "category": f.get("category", "bios"),
+                "in_repo": in_repo,
+                "note": f.get("note", ""),
+                "checks": sorted(checks) if checks else [],
+                "source_ref": f.get("source_ref"),
+                "expected": _build_expected(f, checks),
+                **_identity_of(f),
+                "sha1": f.get("sha1"),
+                "md5": f.get("md5"),
+            }
+            if duplicate:
+                first.setdefault("other_claims", []).append(entry)
+                continue
+            reported[seen_key] = entry
+            undeclared.append(entry)
 
     # Append grouped archive entries
     for entry in sorted(archive_entries.values(), key=lambda e: e["name"]):

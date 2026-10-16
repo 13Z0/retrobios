@@ -427,6 +427,35 @@ def _expand_retroarch_path(value: str, app_dir: Path) -> Path:
     return Path(os.path.expandvars(os.path.expanduser(value)))
 
 
+def _retroarch_cfg_dir(
+    cfg_path: Path, key: str, app_dir: Path, default: str
+) -> Path | None:
+    """A directory setting of retroarch.cfg, as RetroArch expands it.
+
+    A value left empty or at `default` is the directory RetroArch falls back
+    on, `default` under app_dir. None when the config is unreadable or does
+    not set the key.
+    """
+    try:
+        lines = cfg_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    for line in lines:
+        line = line.strip()
+        name, sep, value = line.partition("=")
+        if sep and name.strip() == key:
+            value = value.strip().strip('"').strip("'")
+            if not value or value == "default":
+                return app_dir / default
+            return _expand_retroarch_path(value, app_dir)
+    return None
+
+
+# System directory -> the retroarch.cfg it was read from and the directory
+# ':' expands to there, for finding the cores of the same installation.
+_RETROARCH_CONFIGS: dict[Path, tuple[Path, Path]] = {}
+
+
 def _parse_retroarch_system_dir(
     cfg_path: Path, app_dir: Path | None = None
 ) -> Path | None:
@@ -439,18 +468,10 @@ def _parse_retroarch_system_dir(
     if not cfg_path.exists():
         return None
     app_dir = app_dir or cfg_path.parent
-    try:
-        for line in cfg_path.read_text(encoding="utf-8", errors="replace").splitlines():
-            line = line.strip()
-            if line.startswith("system_directory"):
-                _, _, value = line.partition("=")
-                value = value.strip().strip('"').strip("'")
-                if not value or value == "default":
-                    return app_dir / "system"
-                return _expand_retroarch_path(value, app_dir)
-    except OSError:
-        pass
-    return None
+    system_dir = _retroarch_cfg_dir(cfg_path, "system_directory", app_dir, "system")
+    if system_dir is not None:
+        _RETROARCH_CONFIGS.setdefault(system_dir, (cfg_path, app_dir))
+    return system_dir
 
 
 def _shell_unquote(value: str) -> str:
@@ -920,6 +941,69 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
     return found
 
 
+# A libretro core as RetroArch loads it: <name>_libretro.so|dll|dylib, and
+# <name>_libretro_android.so on Android.
+_CORE_FILE_RE = re.compile(
+    r"^(?P<name>.+?)_libretro(?:_android)?\.(?:so|dll|dylib)$", re.IGNORECASE
+)
+CORE_PLATFORMS = ("retroarch", "lakka", "retropie")
+# Where these systems install cores whatever retroarch.cfg says: RetroPie
+# gives each package its own folder, Lakka keeps the image's cores and the
+# ones the online updater fetches apart.
+_FIXED_CORE_DIRS = {
+    "retropie": (Path("/opt/retropie/libretrocores"),),
+    "lakka": (Path("/usr/lib/libretro"), Path("/storage/cores"), Path("/tmp/cores")),
+}
+
+
+def core_dirs(plat: str, bios_path: Path) -> list[Path]:
+    """The directories the RetroArch writing to bios_path loads cores from.
+
+    The config detection read for this system directory names them in
+    libretro_directory; without one, a retroarch.cfg beside the system
+    directory is the portable layout. Unset, the setting is cores/ under
+    RetroArch's own directory.
+    """
+    found = _RETROARCH_CONFIGS.get(bios_path)
+    if found is None and (bios_path.parent / "retroarch.cfg").is_file():
+        found = (bios_path.parent / "retroarch.cfg", bios_path.parent)
+    dirs: list[Path] = []
+    if found is not None:
+        cfg, app_dir = found
+        dirs.append(
+            _retroarch_cfg_dir(cfg, "libretro_directory", app_dir, "cores")
+            or app_dir / "cores"
+        )
+    dirs.extend(_FIXED_CORE_DIRS.get(plat, ()))
+    return list(dict.fromkeys(dirs))
+
+
+def installed_cores(dirs: list[Path]) -> list[str]:
+    """The cores present in these directories, by the name the buildbot uses.
+
+    A folder inside is looked into once, which is how RetroPie installs
+    each package. An unreadable directory holds nothing that can be seen.
+    """
+    names: set[str] = set()
+    for directory in dirs:
+        try:
+            children = list(directory.iterdir())
+        except OSError:
+            continue
+        for child in children:
+            candidates = [child]
+            if child.is_dir():
+                try:
+                    candidates = list(child.iterdir())
+                except OSError:
+                    continue
+            for path in candidates:
+                match = _CORE_FILE_RE.match(path.name)
+                if match and path.is_file():
+                    names.add(match.group("name"))
+    return sorted(names)
+
+
 def normalize_platform(name: str) -> str:
     """Return the canonical platform id for user-supplied input."""
     plat = name.strip().lower()
@@ -1021,6 +1105,48 @@ def _check_tags(entry: dict, field: str, where: str) -> None:
         raise ValueError(f"invalid {field} for {where}")
 
 
+# What an alternative replaces on the entry it stands in for.
+_COPY_FIELDS = ("sha1", "sha256", "size", "repo_path", "release_asset", "storage", "cores")
+
+
+def _check_download(entry: dict, where: str, dest: str) -> int:
+    """The size, hashes, source and cores of one downloadable copy; its size."""
+    size = entry.get("size")
+    if isinstance(size, bool) or not isinstance(size, int) or not (0 <= size <= MAX_DOWNLOAD_SIZE):
+        raise ValueError(f"invalid size for {dest}")
+
+    sha1 = entry.get("sha1", "")
+    sha256 = entry.get("sha256", "")
+    if sha1 and (not isinstance(sha1, str) or not _SHA1_RE.fullmatch(sha1)):
+        raise ValueError(f"invalid SHA1 for {dest}")
+    if sha256 and (
+        not isinstance(sha256, str) or not _SHA256_RE.fullmatch(sha256)
+    ):
+        raise ValueError(f"invalid SHA256 for {dest}")
+    if not sha1 and not sha256:
+        raise ValueError(f"missing content hash for {dest}")
+
+    release_asset = entry.get("release_asset")
+    repo_path = entry.get("repo_path")
+    if release_asset:
+        asset = _safe_relative_path(release_asset, f"{where}.release_asset")
+        if len(asset.parts) != 1:
+            raise ValueError(f"release asset must be a basename: {release_asset}")
+    elif repo_path:
+        source = _safe_relative_path(repo_path, f"{where}.repo_path")
+        if source.parts[0] != "bios":
+            raise ValueError(f"repo_path outside bios/: {repo_path}")
+    else:
+        raise ValueError(f"no download source for {dest}")
+
+    cores = entry.get("cores")
+    if cores is not None and (
+        not isinstance(cores, list) or not all(isinstance(core, str) for core in cores)
+    ):
+        raise ValueError(f"invalid cores list for {dest}")
+    return size
+
+
 def _validate_manifest(data: object, plat: str) -> dict:
     """Validate the untrusted install-manifest boundary using stdlib only."""
     if not isinstance(data, dict):
@@ -1035,6 +1161,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
 
     seen_destinations: set[str] = set()
     total_size = 0
+    largest_total = 0
     for index, entry in enumerate(files):
         if not isinstance(entry, dict):
             raise ValueError(f"files[{index}] must be an object")
@@ -1043,42 +1170,24 @@ def _validate_manifest(data: object, plat: str) -> dict:
             raise ValueError(f"duplicate manifest destination: {dest}")
         seen_destinations.add(dest)
 
-        size = entry.get("size")
-        if isinstance(size, bool) or not isinstance(size, int) or not (0 <= size <= MAX_DOWNLOAD_SIZE):
-            raise ValueError(f"invalid size for {dest}")
+        size = _check_download(entry, f"files[{index}]", dest)
         total_size += size
-        if total_size > MAX_TOTAL_DOWNLOAD_SIZE:
+        alternatives = entry.get("alternatives", [])
+        if not isinstance(alternatives, list) or len(alternatives) > MAX_SELECTION_TAGS:
+            raise ValueError(f"invalid alternatives for {dest}")
+        for alt_index, alternative in enumerate(alternatives):
+            where = f"files[{index}].alternatives[{alt_index}]"
+            if (
+                not isinstance(alternative, dict)
+                or not alternative.get("cores")
+                or not set(alternative) <= set(_COPY_FIELDS)
+            ):
+                raise ValueError(f"invalid alternative for {dest}")
+            # Narrowing can swap in any copy: the cap holds for the largest.
+            size = max(size, _check_download(alternative, where, dest))
+        largest_total += size
+        if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
-
-        sha1 = entry.get("sha1", "")
-        sha256 = entry.get("sha256", "")
-        if sha1 and (not isinstance(sha1, str) or not _SHA1_RE.fullmatch(sha1)):
-            raise ValueError(f"invalid SHA1 for {dest}")
-        if sha256 and (
-            not isinstance(sha256, str) or not _SHA256_RE.fullmatch(sha256)
-        ):
-            raise ValueError(f"invalid SHA256 for {dest}")
-        if not sha1 and not sha256:
-            raise ValueError(f"missing content hash for {dest}")
-
-        release_asset = entry.get("release_asset")
-        repo_path = entry.get("repo_path")
-        if release_asset:
-            asset = _safe_relative_path(release_asset, f"files[{index}].release_asset")
-            if len(asset.parts) != 1:
-                raise ValueError(f"release asset must be a basename: {release_asset}")
-        elif repo_path:
-            source = _safe_relative_path(repo_path, f"files[{index}].repo_path")
-            if source.parts[0] != "bios":
-                raise ValueError(f"repo_path outside bios/: {repo_path}")
-        else:
-            raise ValueError(f"no download source for {dest}")
-
-        cores = entry.get("cores")
-        if cores is not None and (
-            not isinstance(cores, list) or not all(isinstance(core, str) for core in cores)
-        ):
-            raise ValueError(f"invalid cores list for {dest}")
         for field in SELECTION_FIELDS:
             _check_tags(entry, field, dest)
 
@@ -1126,6 +1235,19 @@ def _validate_manifest(data: object, plat: str) -> dict:
         and declared_total_omitted != len(omitted)
     ):
         raise ValueError("manifest total_omitted does not match omitted_files")
+
+    for field in ("core_names", "system_cores"):
+        mapping = data.get(field)
+        if mapping is None:
+            continue
+        if not isinstance(mapping, dict) or len(mapping) > MAX_MANIFEST_FILES:
+            raise ValueError(f"invalid {field}")
+        for key in mapping:
+            if not isinstance(key, str) or not 0 < len(key) <= 256:
+                raise ValueError(f"invalid {field} key")
+            _check_tags(mapping, key, field)
+            if mapping[key] is None:
+                raise ValueError(f"invalid {field} for {key}")
 
     copies = data.get("standalone_copies", [])
     if not isinstance(copies, list) or len(copies) > 10_000:
@@ -1241,17 +1363,93 @@ def fetch_targets(plat: str) -> "dict | None":
         return None
 
 
+def _for_cores(entry: dict, chosen: set[str]) -> dict | None:
+    """The copy of a core file the chosen cores read, or None.
+
+    A destination holds one file. When several cores read it and disagree
+    on its content, the manifest carries the first core's copy and the
+    others as alternatives, in the order the pack builder tries them: a
+    pack built without the first core carries the next one's copy.
+    """
+    if chosen.intersection(entry.get("cores") or []):
+        return entry
+    for alternative in entry.get("alternatives", []):
+        if chosen.intersection(alternative["cores"]):
+            kept = {
+                k: v for k, v in entry.items()
+                if k not in _COPY_FIELDS and k != "alternatives"
+            }
+            kept.update((k, alternative[k]) for k in _COPY_FIELDS if k in alternative)
+            return kept
+    return None
+
+
 def _filter_by_target(
     files: list[dict], target_cores: list[str]
 ) -> list[dict]:
-    """Keep files where cores is None or overlaps with target_cores."""
+    """Keep the platform's files, and the core files the given cores read."""
+    chosen = set(target_cores)
     result: list[dict] = []
-    target_set = set(target_cores)
     for f in files:
-        cores = f.get("cores")
-        if cores is None or any(c in target_set for c in cores):
+        if f.get("cores") is None:
             result.append(f)
+            continue
+        kept = _for_cores(f, chosen)
+        if kept is not None:
+            result.append(kept)
     return result
+
+
+def designated_cores(manifest: dict, names: list[str]) -> set[str]:
+    """The cores a list of names designates, the way the pack builder reads it.
+
+    A target list, or a core found installed, names a core the buildbot's
+    way (`mednafen_psx`); a file names the profile that reads it
+    (`beetle_psx`). `core_names` gives each profile its other names.
+    """
+    wanted = set(names)
+    chosen = set(wanted)
+    for profile, aliases in (manifest.get("core_names") or {}).items():
+        if wanted.intersection(aliases):
+            chosen.add(profile)
+    return chosen
+
+
+def narrow_to_cores(
+    manifest: dict,
+    names: list[str],
+    files: list[dict] | None = None,
+    omitted: list[dict] | None = None,
+) -> tuple[list[dict], list[dict]]:
+    """Keep what the named cores read, as a pack built for them carries.
+
+    A file a core loads stays when that core is named. A file of the
+    platform's own list stays when one of its systems does: a system goes
+    when none of the cores `system_cores` gives it is named, and a system
+    it does not list stays whatever is named. A manifest without the two
+    maps keeps the platform's list whole and matches cores by name.
+    """
+    cores = designated_cores(manifest, names)
+    reach = manifest.get("system_cores") or {}
+
+    def kept(entries: list[dict]) -> list[dict]:
+        result: list[dict] = []
+        for entry in entries:
+            if entry.get("cores") is not None:
+                copy = _for_cores(entry, cores)
+                if copy is not None:
+                    result.append(copy)
+                continue
+            systems = entry_systems(entry)
+            if not systems or any(
+                s not in reach or cores.intersection(reach[s]) for s in systems
+            ):
+                result.append(entry)
+        return result
+
+    files = manifest.get("files", []) if files is None else files
+    omitted = manifest.get("omitted_files", []) if omitted is None else omitted
+    return kept(files), kept(omitted)
 
 
 def canonical_region(raw: str) -> str:
@@ -1393,7 +1591,11 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
     ordered = sorted(systems)
     if any(not entry_systems(f) for f in files):
         ordered.append(OTHER_SYSTEMS)
-    cores = {c for f in files for c in (f.get("cores") or [])}
+    cores = {
+        c for f in files
+        for copy in [f, *f.get("alternatives", [])]
+        for c in (copy.get("cores") or [])
+    }
     regions = {
         r for e in files + omitted for r in (e.get("regions") or [])
         if r != WORLD_REGION
@@ -2124,16 +2326,24 @@ def _pick(title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False)
             return [rows[number - 1][0] for number in chosen]
 
 
+INSTALLED_ONLY = "installed"
+
+
 def _prompt_custom_selection(
-    plat: str, files: list[dict], omitted: list[dict]
-) -> tuple[list[str], list[str], list[str]] | None:
+    plat: str, files: list[dict], omitted: list[dict],
+    installed: tuple[list[dict], list[dict]] | None = None,
+) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
     Enter installs everything, the default most runs want. Returns None
-    then, or the three choices; each empty list keeps everything on its axis.
+    then, INSTALLED_ONLY for what `installed` (the files the cores found
+    installed read) holds, or the three choices; each empty list keeps
+    everything on its axis.
     """
     print(f"\n{plat.capitalize()}: {_sized(files)}.")
     print("  Enter) install everything")
+    if installed is not None:
+        print(f"  i) only what the installed cores read: {_sized(installed[0])}")
     print("  c) choose systems, cores and regions")
     print("  q) quit")
     while True:
@@ -2142,6 +2352,8 @@ def _prompt_custom_selection(
             return None
         if answer == "q":
             sys.exit(0)
+        if answer == "i" and installed is not None:
+            return INSTALLED_ONLY
         if answer == "c":
             break
 
@@ -2161,7 +2373,8 @@ def _prompt_custom_selection(
         print("\nThe platform's own files for these systems are always kept;")
         print("the extra files each core loads can be narrowed.")
         cores = _pick("Cores:", [
-            (name, [f for f in kept if name in (f.get("cores") or [])])
+            (name, _filter_by_target(
+                [f for f in kept if f.get("cores") is not None], [name]))
             for name in core_names
         ])
         kept, kept_omitted = narrow(kept, kept_omitted, [], cores, [])
@@ -2205,7 +2418,7 @@ def _print_choices(
         held = (
             [f for f in files if _chosen(f, {name})]
             if systems
-            else [f for f in files if name in (f.get("cores") or [])]
+            else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
         print(f"  {name:<{width}}  {_sized(held)}")
 
@@ -2284,6 +2497,12 @@ def main() -> None:
         "--standalone-copies",
         action="store_true",
         help="opt in to copies into detected standalone-emulator directories",
+    )
+    parser.add_argument(
+        "--installed-cores",
+        action="store_true",
+        help="install only what the cores already installed read "
+             "(RetroArch, Lakka, RetroPie)",
     )
     parser.add_argument(
         "--system",
@@ -2453,6 +2672,28 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
 
+    # Every check --installed-cores makes before anything is written: a
+    # refusal for the second platform must not follow an install of the first.
+    cores_found: dict[tuple[str, Path], list[str]] = {}
+    for plat_name, bios_path in platforms:
+        if plat_name in CORE_PLATFORMS:
+            searched = core_dirs(plat_name, bios_path)
+            cores_found[(plat_name, bios_path)] = installed_cores(searched)
+        elif args.installed_cores:
+            print(
+                f"Error: {plat_name} ships its cores with the system; "
+                f"--installed-cores applies to {', '.join(CORE_PLATFORMS)}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        if args.installed_cores and not cores_found[(plat_name, bios_path)]:
+            print(
+                f"Error: no installed core found for {plat_name} in: "
+                f"{', '.join(map(str, searched)) or 'no known directory'}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
     for plat_name, bios_path in platforms:
         if bios_path not in installed_paths:
             installed_paths.append(bios_path)
@@ -2503,11 +2744,30 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
                     "installing every file"
                 )
             else:
-                target_cores = target_info["cores"]
                 before = len(files)
-                files = _filter_by_target(files, target_cores)
-                omitted_files = _filter_by_target(omitted_files, target_cores)
+                files, omitted_files = narrow_to_cores(
+                    manifest, target_info["cores"], files, omitted_files
+                )
                 print(f"  Filtered {before} -> {len(files)} files for target {args.target}")
+
+        found_cores = cores_found.get((plat_name, bios_path), [])
+        if "system_cores" not in manifest:
+            found_cores = []
+        elif found_cores:
+            print(f"  {_plural(len(found_cores), 'core')} installed")
+        if args.installed_cores:
+            if "system_cores" not in manifest:
+                print(
+                    f"Error: the {plat_name} file list does not say which cores "
+                    "read which systems; --installed-cores needs a newer one",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            before = len(files)
+            files, omitted_files = narrow_to_cores(
+                manifest, found_cores, files, omitted_files
+            )
+            print(f"  Narrowed {before} -> {len(files)} files to the installed cores")
 
         selection = _requested_narrowing(args, plat_name, files, omitted_files)
         if (
@@ -2517,8 +2777,19 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
             and not listing
             and records_selection(files)
         ):
-            selection = _prompt_custom_selection(plat_name, files, omitted_files)
-            if selection is not None:
+            installed = (
+                narrow_to_cores(manifest, found_cores, files, omitted_files)
+                if found_cores and not args.installed_cores else None
+            )
+            selection = _prompt_custom_selection(
+                plat_name, files, omitted_files, installed
+            )
+            if selection == INSTALLED_ONLY:
+                files, omitted_files = installed
+                print("\n  Same choice without questions: "
+                      f"--platform {plat_name} --installed-cores")
+                selection = None
+            elif selection is not None:
                 print("\n  Same choice without questions: "
                       + _same_choice_hint(plat_name, *selection))
         if selection is not None:
