@@ -474,7 +474,9 @@ def _select_variants(
             required_only=required_only,
         )
     if regions:
-        region_index = region_mod.build_region_index(emu_profiles or {})
+        region_index = region_mod.platform_region_index(
+            config, emu_profiles or {}, target_cores
+        )
         region_drops = region_mod.resolve_region_drops(
             region_groups, region_index, regions
         )
@@ -3366,7 +3368,9 @@ def _manifest_selection(
         required_only=required_only,
         extras_out=extras,
     )
-    region_index = region_mod.build_region_index(emu_profiles)
+    region_index = region_mod.platform_region_index(
+        config, emu_profiles, target_cores
+    )
     drops = (
         region_mod.resolve_region_drops(region_groups, region_index, regions)
         if regions

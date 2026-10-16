@@ -572,7 +572,9 @@ def verify_pack_against_platform(
 
     region_drops: set[str] = set()
     if regions:
-        region_index = region_mod.build_region_index(emu_profiles)
+        region_index = region_mod.platform_region_index(
+            config, emu_profiles, target_cores
+        )
         region_groups, _extra_dests = platform_region_groups(
             config,
             expected_systems,

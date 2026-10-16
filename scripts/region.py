@@ -125,6 +125,22 @@ def region_tag(requested: list[str]) -> str:
     )
 
 
+def platform_region_index(
+    config: dict, profiles: dict, target_cores: set[str] | None = None
+) -> dict[str, dict]:
+    """The region index of the emulators a platform runs, nothing else.
+
+    Built over every profile, an emulator foreign to the platform voided the
+    filter: Pizza Boy SC, an Android app, declares bios_CD_E.bin without a
+    region, so the Genesis Plus GX and PicoDrive tags never counted and
+    `--region us` kept both CD BIOSes in the RetroArch pack.
+    """
+    from common import resolve_platform_cores
+
+    cores = resolve_platform_cores(config, profiles, target_cores=target_cores)
+    return build_region_index({n: profiles[n] for n in cores if n in profiles})
+
+
 def build_region_index(profiles: dict) -> dict[str, dict]:
     """Build a region lookup from emulator profiles.
 

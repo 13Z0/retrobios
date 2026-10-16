@@ -973,7 +973,9 @@ def verify_platform(
             target_cores=target_cores,
         )
         region_drops = region_mod.resolve_region_drops(
-            region_groups, region_mod.build_region_index(profiles), regions
+            region_groups,
+            region_mod.platform_region_index(config, profiles, target_cores),
+            regions,
         )
 
     # A destination two systems declare with two hashes ships one file, the
