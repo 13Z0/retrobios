@@ -2153,8 +2153,8 @@ class ContributorsSurviveAFailedRequest(unittest.TestCase):
     def test_the_committed_readme_still_carries_its_contributors(self):
         """Regenerating offline must never be the reason this disappears."""
         text = (ROOT / "README.md").read_text()
-        if "## Contributors" not in text:
-            self.skipTest("README carries no contributors section")
+        # Missing is the failure this guards, never a reason to skip.
+        self.assertIn("## Contributors", text)
         self.assertGreater(
             text.count('<a href="https://github.com/'), 0,
             "the section is present but empty",
