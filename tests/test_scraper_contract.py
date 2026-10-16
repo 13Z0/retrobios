@@ -366,7 +366,9 @@ import importlib, socket, sys
 from pathlib import Path
 root, package = Path(sys.argv[1]), sys.argv[2]
 sys.path[:0] = [str(root), str(root / "scripts")]
+attempts = []
 def refuse(*_args, **_kwargs):
+    attempts.append(1)
     raise OSError("network refused at import")
 socket.socket.connect = refuse
 socket.create_connection = refuse
@@ -375,10 +377,15 @@ for path in sorted((root / package.replace(".", "/")).rglob("*.py")):
     if path.name == "__init__.py":
         continue
     name = ".".join(path.relative_to(root).with_suffix("").parts)
+    before = len(attempts)
     try:
         importlib.import_module(name)
     except Exception as exc:
         print(f"{name}: {type(exc).__name__}: {exc}")
+        continue
+    # A fetch whose error the module swallows ("or 'master'") still tried.
+    if len(attempts) > before:
+        print(f"{name}: reached for the network")
 """
 
 
@@ -400,6 +407,25 @@ class ImportingAScraperFetchesNothing(unittest.TestCase):
 
     def test_every_scraper_imports_offline(self):
         self.assertEqual(self._offenders(REPO_ROOT, "scripts.scraper"), "")
+
+    def test_a_swallowed_import_time_fetch_is_caught(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as directory:
+            package = Path(directory) / "planted"
+            package.mkdir()
+            (package / "__init__.py").write_text("")
+            (package / "quiet_scraper.py").write_text(
+                "import urllib.request\n"
+                "def _tag():\n"
+                "    try:\n"
+                "        return urllib.request.urlopen('https://api.github.com/x').read()\n"
+                "    except OSError:\n"
+                "        return None\n"
+                "TAG = _tag() or 'master'\n"
+            )
+            self.assertIn(
+                "planted.quiet_scraper: reached for the network",
+                self._offenders(Path(directory), "planted"),
+            )
 
     def test_an_import_time_fetch_is_caught(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as directory:
