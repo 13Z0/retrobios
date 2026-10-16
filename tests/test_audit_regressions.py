@@ -986,6 +986,30 @@ class ArchiveSecurityRegressions(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "members"):
                 safe_extract_zip(str(archive), str(root / "out"), max_members=1)
 
+    def test_member_modes_follow_the_archive_and_the_umask(self):
+        """Every member came out 0600, the mode of its temporary file: the
+        pico8 and vox launchers the RetroDECK pack keeps 0755 lost their
+        execute bit once download.py extracted them."""
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            archive = self._zip_path(root)
+            program = zipfile.ZipInfo("pico8")
+            program.create_system = 3
+            program.external_attr = (stat.S_IFREG | 0o755) << 16
+            plain = zipfile.ZipInfo("bios.bin")
+            plain.create_system = 0
+            plain.external_attr = 0x20  # MS-DOS archive bit, no Unix mode
+            with zipfile.ZipFile(archive, "w") as handle:
+                handle.writestr(program, b"\x7fELF")
+                handle.writestr(plain, b"data")
+            umask = os.umask(0o022)
+            try:
+                safe_extract_zip(str(archive), str(root / "out"))
+            finally:
+                os.umask(umask)
+            self.assertEqual((root / "out" / "pico8").stat().st_mode & 0o777, 0o755)
+            self.assertEqual((root / "out" / "bios.bin").stat().st_mode & 0o777, 0o644)
+
     def test_symlink_member_is_rejected(self):
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
             root = Path(directory)

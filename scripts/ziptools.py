@@ -107,6 +107,9 @@ def safe_extract_zip(
     """
     dest = os.path.realpath(dest_dir)
     os.makedirs(dest, exist_ok=True)
+    # Reading the umask sets it; it is put back at once.
+    umask = os.umask(0)
+    os.umask(umask)
     with zipfile.ZipFile(zip_path, "r") as zf:
         members = zf.infolist()
         if len(members) > max_members:
@@ -186,6 +189,9 @@ def safe_extract_zip(
                         f"ZIP member size mismatch for {name}: "
                         f"{actual_size} != {member.file_size}"
                     )
+                # The member's own mode, else what a plain open() gives; the
+                # temporary file is private and would keep 0600 otherwise.
+                os.chmod(tmp_path, ((mode & 0o777) or 0o666) & ~umask)
                 os.replace(tmp_path, target)
                 tmp_path = ""
             finally:
