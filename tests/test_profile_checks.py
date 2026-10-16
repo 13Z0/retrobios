@@ -344,5 +344,21 @@ class AzaharConsoleUniqueData(_Probe):
                 self.assertFalse(self.accepts("azahar", name, b"\0" * (size + 7)))
 
 
+class ClkMasterSystemBios(unittest.TestCase):
+    """CLK loads the western Master System BIOS for every region but Japan,
+    Brazil included (Machines/MasterSystem/MasterSystem.cpp:137-140,
+    Analyser/Static/Sega/Target.hpp:24-29 at 53a1ee7). Tagged north-america
+    and europe only, a Brazilian pack dropped it for the Japanese one."""
+
+    def test_brazil_keeps_the_western_bios(self):
+        import region
+
+        index = region.build_region_index({"clk": _profile("clk")})
+        group = {"sms": [("MasterSystem/bios.sms", "bios.sms"),
+                         ("MasterSystem/japanese-bios.sms", "japanese-bios.sms")]}
+        drops = region.resolve_region_drops(group, index, ["brazil"])
+        self.assertEqual(drops, {"MasterSystem/japanese-bios.sms"})
+
+
 if __name__ == "__main__":
     unittest.main()
