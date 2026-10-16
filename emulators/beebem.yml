@@ -561,14 +561,15 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 3456
+    min_size: 3456
+    validation: [size]
     md5: 007ba0c023740666e56f879f5d0d4461
     sha1: 7d1d2a7321b21a237ad2c52afb21a432ce674967
     note: >
       Read from the program directory. The only file whose absence stops the
       emulator: BuildMode7Font failure makes Initialise return false and Main.cpp
       then exits with status 1.
-    source_ref: "Src/BeebWin.cpp:491-502, Src/Main.cpp:62-66"
+    source_ref: "Src/Video.cpp:167-215, Src/BeebWin.cpp:491-502, Src/Main.cpp:62-66"
 
   - name: RelayOn.snd
     description: "Cassette relay engage sample"
