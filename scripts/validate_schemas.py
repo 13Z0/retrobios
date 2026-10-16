@@ -57,6 +57,43 @@ def _validate_yaml_directory(
             continue
         out.extend(_errors(validator, data, str(path.relative_to(ROOT))))
         out.extend(_unreachable_citations(path, data))
+        if schema_name == "emulator.schema.json":
+            out.extend(_checks_without_values(path, data))
+    return out
+
+
+_CHECK_FIELDS = {
+    "crc32": ("crc32",),
+    "md5": ("md5",),
+    "sha1": ("sha1",),
+    "sha256": ("sha256",),
+    "size": ("size", "min_size", "max_size"),
+}
+
+
+def _checks_without_values(path: Path, document: object) -> list[str]:
+    """A check an entry declares with nothing to compare against.
+
+    validation: [crc32] with no crc32 runs nothing: the file passes whatever
+    it holds, and the report reads as checked. Fourteen profiles carried
+    one, the code they describe either refusing or warning on a value the
+    entry never wrote down.
+    """
+    out: list[str] = []
+    files = document.get("files") if isinstance(document, dict) else None
+    for index, entry in enumerate(files or []):
+        if not isinstance(entry, dict):
+            continue
+        declared = entry.get("validation") or []
+        if isinstance(declared, dict):
+            declared = [check for checks in declared.values() for check in checks or []]
+        for check in declared:
+            fields = _CHECK_FIELDS.get(check)
+            if fields and not any(entry.get(field) not in (None, "", []) for field in fields):
+                out.append(
+                    f"{path.relative_to(ROOT)}: files[{index}] ({entry.get('name')}) "
+                    f"declares a {check} check with no {'/'.join(fields)} value"
+                )
     return out
 
 
