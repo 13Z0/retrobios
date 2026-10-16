@@ -95,31 +95,52 @@ def _entry_rule(emu_name: str, f: dict, checks: set[str]) -> dict:
         },
         "adler32_byteswap": bool(f.get("adler32_byteswap")),
         "crypto": {c for c in checks if c in _CRYPTO_CHECKS},
-        # A failed check the code only warns about: the file still runs.
-        "warn": f.get("on_mismatch") == "warn",
+        # The checks whose failure the code only warns about: the file runs.
+        "warn": warned_checks(f, checks),
     }
+
+
+def warned_checks(f: dict, checks: set[str]) -> set[str]:
+    """The checks of an entry the code warns about instead of refusing.
+
+    `on_mismatch: warn` covers every check; a map names them one by one, as
+    Azahar refuses a SecureInfo_A of the wrong size and only logs a bad
+    signature.
+    """
+    level = f.get("on_mismatch")
+    if level == "warn":
+        return set(checks)
+    if isinstance(level, dict):
+        return {check for check, value in level.items() if value == "warn"} & set(checks)
+    return set()
 
 
 def _rule_failure(
     rule: dict, local_path: str, filename: str, bios_dir: str, hashes: dict,
+    strict: bool = False,
 ) -> str | None:
-    """Why one entry's checks reject a file, or None when they accept it."""
-    actual_size = os.path.getsize(local_path)
-    if rule["sizes"] and actual_size not in rule["sizes"]:
-        accepted = ",".join(str(s) for s in sorted(rule["sizes"]))
-        return f"size mismatch: got {actual_size}, accepted [{accepted}]"
-    if rule["min_size"] is not None and actual_size < rule["min_size"]:
-        return f"size too small: min {rule['min_size']}, got {actual_size}"
-    if rule["max_size"] is not None and actual_size > rule["max_size"]:
-        return f"size too large: max {rule['max_size']}, got {actual_size}"
+    """Why one entry's checks reject a file, or None when they accept it.
+
+    A check the code only warns about counts under ``strict`` alone.
+    """
+    skip = set() if strict else rule["warn"]
+    if "size" not in skip:
+        actual_size = os.path.getsize(local_path)
+        if rule["sizes"] and actual_size not in rule["sizes"]:
+            accepted = ",".join(str(s) for s in sorted(rule["sizes"]))
+            return f"size mismatch: got {actual_size}, accepted [{accepted}]"
+        if rule["min_size"] is not None and actual_size < rule["min_size"]:
+            return f"size too small: min {rule['min_size']}, got {actual_size}"
+        if rule["max_size"] is not None and actual_size > rule["max_size"]:
+            return f"size too large: max {rule['max_size']}, got {actual_size}"
     for hash_type in ("crc32", "md5", "sha1", "sha256"):
-        if rule[hash_type]:
+        if rule[hash_type] and hash_type not in skip:
             if not hashes:
                 hashes.update(compute_hashes(local_path))
             if hashes[hash_type].lower() not in rule[hash_type]:
                 accepted = ",".join(sorted(rule[hash_type]))
                 return f"{hash_type} mismatch: got {hashes[hash_type]}, accepted [{accepted}]"
-    if rule["adler32"]:
+    if rule["adler32"] and "adler32" not in skip:
         if rule["adler32_byteswap"]:
             actual = _adler32_byteswapped(local_path)
         else:
@@ -129,7 +150,7 @@ def _rule_failure(
         if actual not in rule["adler32"]:
             accepted = ",".join(sorted(rule["adler32"]))
             return f"adler32 mismatch: got 0x{actual}, accepted [{accepted}]"
-    if rule["crypto"]:
+    if rule["crypto"] - skip:
         from crypto_verify import check_crypto_validation
 
         return check_crypto_validation(local_path, filename, bios_dir)
@@ -182,8 +203,11 @@ def _build_validation_index(profiles: dict) -> dict[str, dict]:
                 }
             index[fname]["rules"].append(_entry_rule(emu_name, f, checks))
             index[fname]["emulators"].add(emu_name)
-            if f.get("on_mismatch") == "warn":
-                # Never a rejection, so not part of the merged rejection rules.
+            # A warned check is never a rejection, so it stays out of the
+            # merged rejection rules.
+            warned = warned_checks(f, set(checks))
+            checks = [check for check in checks if check not in warned]
+            if not checks:
                 continue
             index[fname]["checks"].update(checks)
             # Track non-reproducible crypto checks
@@ -348,8 +372,7 @@ def check_file_validation(
             if not rules:
                 continue
             reasons = [
-                None if rule["warn"] and not strict
-                else _rule_failure(rule, local_path, filename, bios_dir, hashes)
+                _rule_failure(rule, local_path, filename, bios_dir, hashes, strict)
                 for rule in rules
             ]
             if all(reasons):

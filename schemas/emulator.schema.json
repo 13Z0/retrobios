@@ -657,10 +657,27 @@
             "type": "string"
           },
           "on_mismatch": {
-            "description": "What the code does when a declared check fails: reject the file (default) or warn and run with it.",
-            "enum": [
-              "reject",
-              "warn"
+            "description": "What the code does when a declared check fails: reject the file (default) or warn and run with it, for every check or check by check.",
+            "oneOf": [
+              {
+                "enum": [
+                  "reject",
+                  "warn"
+                ]
+              },
+              {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": false,
+                "patternProperties": {
+                  "^(size|crc32|md5|sha1|sha256|adler32|signature|crypto)$": {
+                    "enum": [
+                      "reject",
+                      "warn"
+                    ]
+                  }
+                }
+              }
             ]
           }
         },

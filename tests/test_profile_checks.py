@@ -329,5 +329,20 @@ class AltirraHappy810(_Probe):
         self.assertTrue(self.accepts("altirra", "happy-810-prev7-4k.rom", b"\5" * 5000))
 
 
+class AzaharConsoleUniqueData(_Probe):
+    """LoadSecureInfoA, LoadLocalFriendCodeSeedB and LoadMovable refuse a
+    file of the wrong size, and only log a failed signature: the data is
+    loaded and used (src/core/hw/unique_data.cpp:43-123, 165-202,
+    src/core/hle/service/cfg/cfg.cpp:405-410 at 9dd12da)."""
+
+    def test_size_refuses_and_signature_only_warns(self):
+        for name, size in (("SecureInfo_A", 273), ("LocalFriendCodeSeed_B", 272),
+                           ("movable.sed", 288)):
+            with self.subTest(name=name):
+                self.assertTrue(self.accepts("azahar", name, b"\0" * size))
+                self.assertFalse(self.accepts("azahar", name, b"\0" * size, strict=True))
+                self.assertFalse(self.accepts("azahar", name, b"\0" * (size + 7)))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -73,6 +73,7 @@ files:
     required: false
     size: [288, 320]
     validation: [size, signature]
+    on_mismatch: {signature: warn}
     note: "console-unique key seed; 288 bytes without the AES MAC block, 320 with it"
     source_ref: "src/core/hw/unique_data.cpp:170-200, src/core/hw/unique_data.cpp:217, src/core/hw/unique_data.h:103-133"
 
@@ -82,6 +83,7 @@ files:
     required: false
     size: 273
     validation: [size, signature]
+    on_mismatch: {signature: warn}
     note: "console serial and region data"
     source_ref: "src/core/hw/unique_data.cpp:43-92, src/core/hw/unique_data.cpp:205"
 
@@ -91,5 +93,6 @@ files:
     required: false
     size: 272
     validation: [size, signature]
+    on_mismatch: {signature: warn}
     note: "friend code generation seed"
     source_ref: "src/core/hw/unique_data.cpp:94-123, src/core/hw/unique_data.cpp:209, src/core/hw/unique_data.h:76"
