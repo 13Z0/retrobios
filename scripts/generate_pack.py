@@ -1224,6 +1224,14 @@ def _pack_data_tree(
     return added
 
 
+def _same_bytes(path: str, other: str | None) -> bool:
+    if not other:
+        return False
+    if os.path.realpath(path) == os.path.realpath(other):
+        return True
+    return compute_hashes(path)["sha1"] == compute_hashes(other)["sha1"]
+
+
 def generate_emulator_pack(
     profile_names: list[str],
     emulators_dir: str,
@@ -1279,6 +1287,9 @@ def generate_emulator_pack(
         set()
     )  # parent dirs of added files (path conflict detection)
     seen_hashes: set[str] = set()  # SHA1 dedup for same file, different path
+    # Loose file packed at each folded destination, to tell a profile asking
+    # for the same file there from one asking for other bytes.
+    packed_at: dict[str, str] = {}
     data_dir_notices: list[str] = []
     data_registry = load_data_dir_registry(
         platforms_dir or os.path.join(os.path.dirname(__file__), "..", "platforms")
@@ -1390,15 +1401,18 @@ def generate_emulator_pack(
                 slots.setdefault(dest, []).append(fe)
 
             for dest, alternatives in slots.items():
-                if dest.lower() in seen_lower:
-                    continue
-                if _has_path_conflict(dest, seen_destinations, seen_parents):
-                    continue
+                # Name order, first file wins, case folded: verify replays
+                # the rule and reports a later profile's file as missing.
+                block = placement_block(
+                    dest, seen_destinations, seen_lower, seen_parents, True
+                )
 
                 provided = next(
                     (fe for fe in alternatives if fe.get("storage") == "user_provided"),
                     None,
                 )
+                if provided is not None and block:
+                    continue
                 if provided is not None:
                     # Instructions, not a file: written beside the slot the
                     # user fills, and counted apart from what the pack holds.
@@ -1421,6 +1435,7 @@ def generate_emulator_pack(
                 chosen: tuple[dict, str, str | None] | None = None
                 fallback: tuple[dict, str, str | None] | None = None
                 refusal: str | None = None
+                refused_path: str | None = None
                 for fe in alternatives:
                     local_path, status = resolve_file(
                         {**fe, "source_profile": emu_name},
@@ -1446,6 +1461,7 @@ def generate_emulator_pack(
                     if disagreement:
                         reason = disagreement.split(" says ", 1)[-1]
                         refusal = refusal or f"{fe['name']} -{reason}"
+                        refused_path = refused_path or local_path
                         continue
                     if better != local_path:
                         chosen = (fe, better, None)
@@ -1458,6 +1474,20 @@ def generate_emulator_pack(
                     chosen = (fe, local_path, None)
                     break
                 chosen = chosen or fallback
+
+                if block:
+                    held = (
+                        chosen[1] if chosen is not None and chosen[2] != "external"
+                        else None if chosen is not None else refused_path
+                    )
+                    if chosen is not None or held is not None:
+                        if block == "taken" and held and _same_bytes(
+                            held, packed_at.get(dest.lower())
+                        ):
+                            # The file already at this path, asked for twice.
+                            continue
+                        missing_files.append(alternatives[0]["name"])
+                        continue
 
                 if chosen is None:
                     if refusal:
@@ -1508,6 +1538,7 @@ def generate_emulator_pack(
                 seen_destinations.add(dest)
                 _register_path(dest, seen_destinations, seen_parents)
                 seen_lower.add(dest.lower())
+                packed_at[dest.lower()] = local_path
                 total_files += 1
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)

@@ -1463,7 +1463,12 @@ def verify_emulator(
     A region priority list narrows the report the same way a pack built with the
     same list would be narrowed, through the emulator pack's own drop set.
     """
-    from packpaths import _archive_destination, _resolve_destination
+    from packpaths import (
+        _archive_destination,
+        _register_path,
+        _resolve_destination,
+        placement_block,
+    )
 
     load_emulator_profiles(emulators_dir)
     zip_contents = build_zip_contents_index(db)
@@ -1491,7 +1496,16 @@ def verify_emulator(
 
         region_drops = emulator_region_drops(selected, standalone, regions)
 
-    for emu_name, profile in selected:
+    # The emulator pack walks profiles in name order and keeps the first
+    # file at a path, folding case: a later profile's different file there
+    # (zesarux pentagon.rom after speccy's PENTAGON.ROM) is not in the pack.
+    sha1_by_path = {
+        entry.get("path"): sha1 for sha1, entry in db.get("files", {}).items()
+    }
+    placed: dict[str, tuple[str | None, str, str]] = {}
+    placed_files: set[str] = set()
+    placed_parents: set[str] = set()
+    for emu_name, profile in sorted(selected):
         files = expand_directory_entries(
             filter_files_by_mode(profile.get("files", []), standalone),
             db,
@@ -1701,7 +1715,48 @@ def verify_emulator(
             held = [a for a in alternatives if a[0]["status"] == Status.OK]
             if held and len(alternatives) > 1:
                 alternatives = held[:1]
+            # What the emulator pack places here: an accepted file, else a
+            # file whose hash the profile contradicts. A refused copy is held
+            # but never packed.
+            fallback_reason = "declared hash contradicted by the local file"
+            packed = next(
+                (a[0].get("path") for a in alternatives
+                 if a[0]["status"] == Status.OK and a[0].get("path")),
+                None,
+            ) or next(
+                (a[0].get("path") for a in alternatives
+                 if a[0]["status"] == Status.UNTESTED
+                 and a[0].get("reason") == fallback_reason and a[0].get("path")),
+                None,
+            )
+            held = packed or next(
+                (a[0].get("path") for a in alternatives
+                 if a[0]["status"] != Status.MISSING and a[0].get("path")),
+                None,
+            )
+            block = placement_block(
+                dest, placed_files, set(placed), placed_parents, True
+            )
+            block_reason = ""
+            if block and held is not None:
+                other_sha1, owner, other_dest = placed.get(dest.lower(), (None, "", ""))
+                if block == "path_conflict":
+                    block_reason = "a packed file occupies its directory"
+                elif block == "case_twin":
+                    block_reason = (
+                        f"packed only as {other_dest}, from {owner}"
+                        if sha1_by_path.get(held) == other_sha1
+                        else f"the pack holds {owner}'s {other_dest} at this path"
+                    )
+                elif sha1_by_path.get(held) != other_sha1:
+                    block_reason = f"the pack holds {owner}'s {other_dest} at this path"
+            elif not block and packed is not None:
+                placed[dest.lower()] = (sha1_by_path.get(packed), emu_name, dest)
+                _register_path(dest, placed_files, placed_parents)
             for result, required, hle in alternatives:
+                if block_reason and result["status"] != Status.MISSING:
+                    result["status"] = Status.MISSING
+                    result["reason"] = block_reason
                 result["destination"] = dest
                 details.append(result)
 

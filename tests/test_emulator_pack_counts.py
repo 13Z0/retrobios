@@ -19,9 +19,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # kronos: an archive unit under its archive_prefix and a loose same-named file.
+# speccy,zesarux: the pack keeps speccy's PENTAGON.ROM and drops zesarux's
+# 32 KB pentagon.rom, which verify called covered.
 CASES = (
     "raze", "rust_dos", "hatari", "xash3d_fwgs", "catacombgl", "openjk", "sonic2013",
-    "kronos",
+    "kronos", "speccy,zesarux",
 )
 
 
@@ -49,7 +51,8 @@ class PackAndReportAgree(unittest.TestCase):
                     cwd=REPO_ROOT, capture_output=True, text=True, timeout=900, check=False,
                 ).stdout
                 summary = next(line for line in pack.splitlines() if "_BIOS_Pack.zip:" in line)
-                verdict = next(line for line in report.splitlines() if line.startswith(f"{emulator}:"))
+                label = emulator.replace(",", " + ")
+                verdict = next(line for line in report.splitlines() if line.startswith(f"{label}:"))
                 ok = int(re.search(r"(\d+)/\d+ OK", verdict).group(1))
                 self.assertEqual(_count(summary, "files packed"), ok, (summary, verdict))
                 self.assertEqual(_count(summary, "missing"), _count(verdict, "missing"))
