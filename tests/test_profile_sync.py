@@ -3321,6 +3321,56 @@ class TestPendingProse(unittest.TestCase):
         self.assertFalse(bump_commit(self.path, report))
 
 
+class TestWrappedProse(unittest.TestCase):
+    """A literal block keeps its breaks: gearcoleco wrote `(libretro.cpp:`
+    and put its four ranges on the next line, which the scan never read."""
+
+    TEXT = PROSE_SAMPLE.replace(
+        "files:",
+        "adam: |\n  Loaded by the ADAM entry points (libretro.cpp:\n"
+        "  2372-2373, 2429-2433) and by c.c:5-6,\n  40-41 at boot.\n"
+        "  The data root is set in s.cpp:\n    1. -datadir\nfiles:",
+    )
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self.tmp.name) / "p.yml"
+        self.path.write_text(self.TEXT, encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_both_wraps_are_read_whole(self):
+        runs = {
+            c.ref: c.wrapped
+            for c in profile_sync.collect_citations(yaml.safe_load(self.TEXT))
+            if c.field == "adam"
+        }
+        self.assertEqual(
+            runs,
+            {"libretro.cpp:2372-2373, 2429-2433": True, "c.c:5-6, 40-41": True},
+        )
+
+    def test_a_wrapped_run_that_moves_holds_the_pin(self):
+        parts = [
+            PartResult(RefPart("libretro.cpp", 2372, 2373, "2372-2373"),
+                       "SHIFTED", None, 2381, 2382, []),
+            PartResult(RefPart("libretro.cpp", 2429, 2433, "2429-2433"),
+                       "SHIFTED", None, 2438, 2442, []),
+        ]
+        entry = EntryReport(
+            "adam", "libretro.cpp:2372-2373, 2429-2433", "SHIFTED", parts,
+            "prose", "adam",
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[entry], counts={"SHIFTED": 1},
+        )
+        self.assertEqual(rebase_refs(self.path, report), [])
+        self.assertFalse(bump_commit(self.path, report))
+        self.assertEqual(self.path.read_text(), self.TEXT)
+
+
 class TestRealignProse(unittest.TestCase):
     """A prose scalar written under an older pin realigns from that pin."""
 

@@ -391,6 +391,7 @@ PROSE_CITE_RE = re.compile(
     r"|(?:[\w./+-]*/)?(?:" + "|".join(PROSE_EXTENSIONLESS) + r"))"
     r":(?P<range>\d+(?:-\d+)?)"
 )
+PROSE_LIST_ITEM_RE = re.compile(r"\d+[.)](?:\s|$)")
 PROSE_CONT_RE = re.compile(r",(?P<range>\d+(?:-\d+)?)(?![\w-])(?!\.\d)")
 # A spaced continuation is accepted only for a range: `x.c:55-71, 80-147`
 # follows the source_ref convention, while `x.c:100, 200 files` is prose.
@@ -430,6 +431,9 @@ class Citation:
     path_span: tuple[int, int] = (0, 0)
     spans: tuple = ()
     parts: tuple = ()
+    # Broken across two lines of a literal block: compared like any run,
+    # never rewritten, since no single line carries it.
+    wrapped: bool = False
 
 
 def _walk_document(node, where: str = ""):
@@ -520,9 +524,27 @@ def _prose_runs(text: str, known=frozenset()):
     is a citation followed by prose. A token carrying :// is a URL, whose
     host:port shape would otherwise pass for a citation.
     """
-    for number, line in enumerate(text.splitlines()):
+    lines = text.splitlines()
+    for number, own in enumerate(lines):
+        # A literal block keeps its line breaks, so a citation wrapped after
+        # `file:` or after a range's comma lost the ranges on the next line
+        # (gearcoleco `libretro.cpp:` then four ranges). The next line is
+        # read as the run's continuation; a run reaching into it is wrapped.
+        line = own.rstrip()
+        boundary = len(line)
+        following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
+        # A numbered list after a colon (abuse: `setup.cpp:` then `1. -datadir`)
+        # is not a range.
+        if not following[:1].isdigit() or PROSE_LIST_ITEM_RE.match(following):
+            following = ""
+        if following and line.endswith(":"):
+            line += following
+        elif following and line.endswith(","):
+            line += " " + following
         consumed = 0
         for match in PROSE_CITE_RE.finditer(line):
+            if match.start() >= boundary:
+                break
             if match.start() < consumed:
                 continue
             token_start = max(line.rfind(" ", 0, match.start()),
@@ -570,7 +592,7 @@ def _prose_runs(text: str, known=frozenset()):
                 parts.append(RefPart(path, int(a), int(b or a), rng))
             yield (
                 number, path_span, tuple(spans), tuple(parts),
-                line[path_start:end],
+                line[path_start:end], end > boundary,
             )
 
 
@@ -597,10 +619,13 @@ def collect_citations(document: dict) -> list[Citation]:
                     holder=holder, key=key, label=label,
                 ))
             continue
-        for line, path_span, spans, parts, run in _prose_runs(value, known):
+        for line, path_span, spans, parts, run, wrapped in _prose_runs(
+            value, known
+        ):
             citations.append(Citation(
                 field=field, kind="prose", ref=run, holder=holder, key=key,
                 line=line, path_span=path_span, spans=spans, parts=parts,
+                wrapped=wrapped,
             ))
     return citations
 
@@ -2249,6 +2274,9 @@ def _apply_prose_edits(
     left: list[str] = []
 
     for citation, moves in jobs:
+        if citation.wrapped:
+            left.append(f"{citation.field}: {citation.ref} (wrapped across lines)")
+            continue
         value = str(citation.holder[citation.key])
         value_lines = value.splitlines()
         if citation.line >= len(value_lines):
