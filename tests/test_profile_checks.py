@@ -148,5 +148,16 @@ class AresAtari5200Bios(unittest.TestCase):
         )
 
 
+class A5200Bios(_Probe):
+    """The core reads 0x800 bytes and falls back to the Altirra OS on a short
+    read; bytes past them are never read (libretro/libretro.c:456-468 at
+    40c6f2f)."""
+
+    def test_short_falls_back_and_longer_is_read(self):
+        self.assertFalse(self.accepts("a5200", "5200.rom", b"\0" * 1024))
+        self.assertTrue(self.accepts("a5200", "5200.rom", b"\0" * 2048))
+        self.assertTrue(self.accepts("a5200", "5200.rom", b"\0" * 4096))
+
+
 if __name__ == "__main__":
     unittest.main()
