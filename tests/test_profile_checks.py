@@ -250,5 +250,18 @@ class DolphinForksIplDumps(_Probe):
                 self.assertFalse(self.accepts(emulator, "IPL.bin", data, strict=True))
 
 
+class GambatteBootRoms(_Probe):
+    """get_bootloader_from_file reads 0x100 or 0x900 bytes and gives up on a
+    short read; it never reads past them (libgambatte/libretro/libretro.cpp
+    1426-1486 at d9d6cd0). The upstream crc32 check the profile claimed has
+    no code behind it: sinamas/gambatte was reset to a README in 2021."""
+
+    def test_short_is_refused_and_longer_is_read(self):
+        for name, size in (("gb_bios.bin", 256), ("gbc_bios.bin", 2304)):
+            with self.subTest(name=name):
+                self.assertFalse(self.accepts("gambatte", name, b"\0" * (size - 1)))
+                self.assertTrue(self.accepts("gambatte", name, b"\0" * (size + 512)))
+
+
 if __name__ == "__main__":
     unittest.main()
