@@ -244,6 +244,74 @@ class APlatformOmissionKeepsItsClaim(unittest.TestCase):
                 )
 
 
+class APlatformFileSettledByCoresAndSystems(unittest.TestCase):
+    """RetroArch's dsi_bios9.bin ships melonds' copy where melonds runs; on
+    a target without it the pack serves the platform's answer, and the
+    pinned nintendo-dsi declaration gives way to the bare nintendo-ds one
+    once its system drops. The installer kept melonds' copy on rpi4."""
+
+    def copy(self, letter: str) -> dict:
+        return {"sha1": letter * 40, "size": 1, "repo_path": f"bios/{letter}.bin"}
+
+    def manifest(self) -> dict:
+        entry = {
+            "dest": "dsi_bios9.bin", **self.copy("a"), "cores": None,
+            "systems": ["nintendo-ds", "nintendo-dsi"],
+            "slot_choices": [{"cores": ["desmume"]}, {**self.copy("a"), "cores": ["melonds"]}],
+            "declared_choices": [
+                {**self.copy("c"), "systems": ["nintendo-dsi"]},
+                {**self.copy("b"), "systems": ["nintendo-ds"]},
+            ],
+        }
+        return {
+            "manifest_version": 2, "platform": "retroarch",
+            "files": [entry], "omitted_files": [],
+            "core_names": {},
+            "system_cores": {"nintendo-ds": ["desmume", "melonds", "nds"],
+                             "nintendo-dsi": ["melonds", "dsi"]},
+        }
+
+    def served(self, names: list[str]) -> str:
+        files, _ = install.narrow_to_cores(self.manifest(), names)
+        self.assertEqual(len(files), 1)
+        self.assertNotIn("declared_choices", files[0])
+        return files[0]["sha1"][0]
+
+    def test_the_first_chosen_core_decides(self):
+        self.assertEqual(self.served(["melonds"]), "a")
+
+    def test_a_core_agreeing_with_the_platform_leaves_its_answer(self):
+        self.assertEqual(self.served(["desmume", "melonds"]), "c")
+        self.assertEqual(self.served(["desmume"]), "b")
+
+    def test_the_remaining_system_answers_without_the_cores(self):
+        self.assertEqual(self.served(["dsi"]), "c")
+        self.assertEqual(self.served(["nds"]), "b")
+
+    def test_the_boundary_checks_every_copy(self):
+        install._validate_manifest(self.manifest(), "retroarch")
+        bad_choices = (
+            [{"cores": []}],
+            [{"cores": ["x"], "repo_path": "../x", "sha1": "a" * 40, "size": 1}],
+            [{"cores": ["x"], "dest": "../evil"}],
+        )
+        for choices in bad_choices:
+            manifest = self.manifest()
+            manifest["files"][0]["slot_choices"] = choices
+            with self.subTest(choices=choices), self.assertRaises(ValueError):
+                install._validate_manifest(manifest, "retroarch")
+        for declared in ([], [self.copy("c")], [{**self.copy("c"), "systems": []}],
+                         [{**self.copy("c"), "systems": ["s"], "cores": ["x"]}]):
+            manifest = self.manifest()
+            manifest["files"][0]["declared_choices"] = declared
+            with self.subTest(declared=declared), self.assertRaises(ValueError):
+                install._validate_manifest(manifest, "retroarch")
+        manifest = self.manifest()
+        del manifest["files"][0]["declared_choices"]
+        with self.assertRaises(ValueError):
+            install._validate_manifest(manifest, "retroarch")
+
+
 class RefusedBeforeAnyInstall(unittest.TestCase):
     def test_a_platform_shipping_its_cores_stops_the_run_first(self):
         tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))

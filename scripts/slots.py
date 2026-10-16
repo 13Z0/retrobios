@@ -28,6 +28,7 @@ from common import (
     parse_md5_list,
     resolution_is_hash_exact,
     resolve_local_file,
+    resolve_platform_cores,
     runs_standalone,
 )
 from packresolve import preferred_entries
@@ -302,20 +303,16 @@ def _claim_rank(claim: Claim) -> int:
     return 1 if claim.is_proven else 0
 
 
-def find_conflicts(
+def _slot_claims(
     config: dict,
     profiles: dict,
     db: dict,
-    base_dest: str = "",
-    standalone_cores: set[str] | None = None,
-    zip_contents: dict | None = None,
-    data_dir_registry: dict | None = None,
-) -> list[Conflict]:
-    """Destinations where a proven profile claim contradicts what ships.
-
-    Only proven claims are compared. A claim resolved by filename alone
-    asserts nothing about content and cannot contradict anything.
-    """
+    base_dest: str,
+    standalone_cores: set[str] | None,
+    zip_contents: dict | None,
+    data_dir_registry: dict | None,
+) -> tuple[dict[str, Claim], dict[str, list[Claim]]]:
+    """The platform claim and the proven profile claims at each destination."""
     fold = bool(config.get("case_insensitive_fs", False))
     # The builder's own choice among declarations sharing a destination,
     # read from the same function: the most accepting archive for zipped_file
@@ -369,6 +366,27 @@ def find_conflicts(
             continue
         by_slot.setdefault(key, []).append(claim)
 
+    return by_dest, by_slot
+
+
+def find_conflicts(
+    config: dict,
+    profiles: dict,
+    db: dict,
+    base_dest: str = "",
+    standalone_cores: set[str] | None = None,
+    zip_contents: dict | None = None,
+    data_dir_registry: dict | None = None,
+) -> list[Conflict]:
+    """Destinations where a proven profile claim contradicts what ships.
+
+    Only proven claims are compared. A claim resolved by filename alone
+    asserts nothing about content and cannot contradict anything.
+    """
+    by_dest, by_slot = _slot_claims(
+        config, profiles, db, base_dest, standalone_cores, zip_contents,
+        data_dir_registry,
+    )
     # A declaration that lists several accepted hashes is satisfied by any of
     # them: Recalbox names both scph1001.bin revisions, and mesence names
     # four BS-X dumps among which System.dat pins one. The resolver stops on
@@ -428,20 +446,45 @@ def pack_overrides(
     verify all read this: two of them deciding alone gave the one-line
     installer different bytes than the ZIP.
     """
-    from common import resolve_platform_cores
-
     # A baseline-only pack serves what the platform declares, and a target's
     # pack answers to the cores that hardware builds: DuckStation does not
     # exist on any RetroArch target and still replaced its scph5000.bin.
     if not profiles or source == "platform":
         return {}
-    platform_profiles = {
-        name: profiles[name]
-        for name in resolve_platform_cores(config, profiles, target_cores=target_cores)
-    }
-    mode = config.get("verification_mode", "existence")
+    cores = set(resolve_platform_cores(config, profiles, target_cores=target_cores))
     overrides: dict[str, str] = {}
-    for conflict in find_conflicts(
+    for destination, choices in slot_choices(
+        config, profiles, db, zip_contents, data_dir_registry
+    ).items():
+        path = next((path for emulator, path in choices if emulator in cores), None)
+        if path:
+            overrides[destination] = path
+    return overrides
+
+
+def slot_choices(
+    config: dict,
+    profiles: dict,
+    db: dict,
+    zip_contents: dict | None = None,
+    data_dir_registry: dict | None = None,
+) -> dict[str, list[tuple[str, str | None]]]:
+    """Destination -> (core, the file it has served there) in decision order.
+
+    A pack built for a set of cores serves the first choice whose core is in
+    it, None standing for the platform's own answer; no core in it leaves
+    the platform's answer too. The order is arbitrate's: a core agreeing with
+    the platform settles the slot whatever else is present, then the
+    strongest proof decides. Read for one core set by pack_overrides and
+    recorded whole in the install manifest, so a target narrowed from the
+    full manifest gets the bytes the target's own pack carries.
+    """
+    if nativemode.reads_file_contents(config.get("verification_mode", "existence")):
+        return {}
+    platform_profiles = {
+        name: profiles[name] for name in resolve_platform_cores(config, profiles)
+    }
+    by_dest, by_slot = _slot_claims(
         config,
         platform_profiles,
         db,
@@ -449,11 +492,23 @@ def pack_overrides(
         {str(c) for c in config.get("standalone_cores", [])},
         zip_contents,
         data_dir_registry,
-    ):
-        decision = arbitrate(conflict, mode)
-        if decision.serves_both and decision.winner.local_path:
-            overrides[conflict.destination] = decision.winner.local_path
-    return overrides
+    )
+    choices: dict[str, list[tuple[str, str | None]]] = {}
+    for key, claims in sorted(by_slot.items()):
+        platform = by_dest[key]
+        agree = [_satisfies(c, platform, db) for c in claims]
+        agreeing = [c for c, ok in zip(claims, agree) if ok]
+        others = sorted(
+            (c for c, ok in zip(claims, agree) if not ok),
+            key=lambda claim: (-_claim_rank(claim), claims.index(claim)),
+        )
+        if not others:
+            continue
+        choices[platform.destination] = [
+            *((c.emulator, None) for c in agreeing),
+            *((c.emulator, c.local_path) for c in others),
+        ]
+    return choices
 
 
 def apply_override(

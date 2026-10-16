@@ -1154,6 +1154,47 @@ def _check_download(entry: dict, where: str, dest: str) -> int:
     return size
 
 
+def _check_slot(entry: dict, where: str, dest: str) -> int:
+    """The copies a platform file takes as cores and systems drop; the largest size."""
+    choices = entry.get("slot_choices", [])
+    declared = entry.get("declared_choices")
+    if declared is None and not choices:
+        return 0
+    if (
+        entry.get("cores") is not None
+        or not isinstance(choices, list)
+        or not isinstance(declared, list)
+        or not declared
+        or len(choices) > MAX_SELECTION_TAGS
+        or len(declared) > MAX_SELECTION_TAGS
+    ):
+        raise ValueError(f"invalid slot choices for {dest}")
+    size = 0
+    for index, choice in enumerate(declared):
+        systems = choice.get("systems") if isinstance(choice, dict) else None
+        if (
+            not isinstance(systems, list)
+            or not systems
+            or not all(isinstance(s, str) for s in systems)
+            or not set(choice) <= (set(_COPY_FIELDS) - {"cores"}) | {"systems"}
+        ):
+            raise ValueError(f"invalid declared choice for {dest}")
+        size = max(size, _check_download(choice, f"{where}.declared_choices[{index}]", dest))
+    for index, choice in enumerate(choices):
+        if (
+            not isinstance(choice, dict)
+            or not choice.get("cores")
+            or not set(choice) <= set(_COPY_FIELDS)
+        ):
+            raise ValueError(f"invalid slot choice for {dest}")
+        # A choice naming only cores leaves the platform's own answer.
+        if set(choice) != {"cores"}:
+            size = max(size, _check_download(
+                choice, f"{where}.slot_choices[{index}]", dest
+            ))
+    return size
+
+
 def _validate_manifest(data: object, plat: str) -> dict:
     """Validate the untrusted install-manifest boundary using stdlib only."""
     if not isinstance(data, dict):
@@ -1192,6 +1233,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
                 raise ValueError(f"invalid alternative for {dest}")
             # Narrowing can swap in any copy: the cap holds for the largest.
             size = max(size, _check_download(alternative, where, dest))
+        size = max(size, _check_slot(entry, f"files[{index}]", dest))
         largest_total += size
         if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
@@ -1397,11 +1439,42 @@ def _for_cores(entry: dict, chosen: set[str]) -> dict | None:
         if chosen.intersection(alternative["cores"]):
             kept = {
                 k: v for k, v in entry.items()
-                if k not in _COPY_FIELDS and k != "alternatives"
+                if k not in _COPY_FIELDS
+                and k not in ("alternatives", "slot_choices", "declared_choices")
             }
             kept.update((k, alternative[k]) for k in _COPY_FIELDS if k in alternative)
             return kept
     return None
+
+
+def _settle_slot(entry: dict, chosen: set[str], kept_system=None) -> dict:
+    """A platform file as a pack built for the chosen cores carries it.
+
+    Where a core's own source contradicts the platform and the frontend only
+    checks the path, the pack serves the core's copy: the first of
+    `slot_choices` naming a chosen core decides. Otherwise the platform
+    answers, through the first of `declared_choices` whose systems remain.
+    """
+    declared = entry.get("declared_choices")
+    if declared is None:
+        return entry
+    copy = next(
+        (c for c in entry.get("slot_choices", []) if chosen.intersection(c["cores"])),
+        None,
+    )
+    if copy is None or "sha1" not in copy:
+        copy = next(
+            (c for c in declared
+             if kept_system is None or any(kept_system(s) for s in c["systems"])),
+            declared[0],
+        )
+    kept = {
+        k: v for k, v in entry.items()
+        if k not in _COPY_FIELDS and k not in ("slot_choices", "declared_choices")
+    }
+    kept.update((k, copy[k]) for k in _COPY_FIELDS if k in copy and k != "cores")
+    kept["cores"] = None
+    return kept
 
 
 def _filter_by_target(
@@ -1412,7 +1485,7 @@ def _filter_by_target(
     result: list[dict] = []
     for f in files:
         if f.get("cores") is None:
-            result.append(f)
+            result.append(_settle_slot(f, chosen))
             continue
         kept = _for_cores(f, chosen)
         if kept is not None:
@@ -1453,6 +1526,9 @@ def narrow_to_cores(
     cores = designated_cores(manifest, names)
     reach = manifest.get("system_cores") or {}
 
+    def kept_system(system: str) -> bool:
+        return system not in reach or bool(cores.intersection(reach[system]))
+
     def kept(entries: list[dict]) -> list[dict]:
         result: list[dict] = []
         for entry in entries:
@@ -1464,10 +1540,8 @@ def narrow_to_cores(
             # The systems declaring the file, where they are fewer than the
             # ones reading it.
             systems = entry.get("declared_in") or entry_systems(entry)
-            if not systems or any(
-                s not in reach or cores.intersection(reach[s]) for s in systems
-            ):
-                result.append(entry)
+            if not systems or any(kept_system(s) for s in systems):
+                result.append(_settle_slot(entry, cores, kept_system))
                 continue
             # The system is dropped, which frees its destination for the
             # first named core claiming it, as in a pack built for them.
@@ -1622,7 +1696,7 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
         ordered.append(OTHER_SYSTEMS)
     cores = {
         c for f in files
-        for copy in [f, *f.get("alternatives", [])]
+        for copy in [f, *f.get("alternatives", []), *f.get("slot_choices", [])]
         for c in (copy.get("cores") or [])
     }
     regions = {

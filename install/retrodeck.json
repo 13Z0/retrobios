@@ -6570,6 +6570,26 @@
         "arcade",
         "philips-cdi"
       ],
+      "declared_choices": [
+        {
+          "sha1": "e7d2a0dad62d6f75bc10f48a376da0a99b764571",
+          "sha256": "aa8a33813531795de9739b06b65960e0f86cdec504c8452a956d184eac3cdcd4",
+          "size": 468660,
+          "repo_path": "bios/Arcade/Arcade/.variants/cdibios.zip.e7d2a0da",
+          "systems": [
+            "arcade"
+          ]
+        },
+        {
+          "sha1": "16072afaa65d1b059346616ac5b5a600c63ff1d1",
+          "sha256": "b53d206ae81607bf6866411b720ad82ce75122423058ce08c6df84cdc1ca3496",
+          "size": 472798,
+          "repo_path": "bios/Philips/CD-i/cdibios.zip",
+          "systems": [
+            "philips-cdi"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "16072afaa65d1b059346616ac5b5a600c63ff1d1",
@@ -17884,6 +17904,26 @@
         "arcade",
         "sega-saturn"
       ],
+      "declared_choices": [
+        {
+          "sha1": "330a2ab5ce2e2c29987b2086e021de7aa04aa102",
+          "sha256": "bbdf6a9ef4bad6bd9ad16f9f7669071dd4ee3bb2387d49124f024ea8dd750f88",
+          "size": 2699375,
+          "repo_path": "bios/Arcade/MAME/.variants/stvbios.zip.330a2ab5",
+          "systems": [
+            "arcade"
+          ]
+        },
+        {
+          "sha1": "7783ab663bb1a8d62ff60d583674355c2af556b1",
+          "sha256": "38ceb2792c72770f56aadb1865cf66dc33a3017db1ee05e11c2b2dff397ad39e",
+          "size": 2955630,
+          "repo_path": "bios/Arcade/MAME/stvbios.zip",
+          "systems": [
+            "sega-saturn"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "b14bbed4bf459439cf7e96d2f79d7adea5d31448",
@@ -20259,6 +20299,26 @@
       "systems": [
         "atari-400-800",
         "atari-5200"
+      ],
+      "declared_choices": [
+        {
+          "sha1": "f1f0741b1d34fb4350cf7cb8ab3b6ea11cdd8174",
+          "sha256": "bc6012f8ca2f7dde21ae895899b1d2af572ffaa28f819b84911ddb6a0bd8a5c7",
+          "size": 10240,
+          "repo_path": "bios/Atari/400-800/ATARIOSB.ROM",
+          "systems": [
+            "atari-400-800"
+          ]
+        },
+        {
+          "sha1": "db1031585968cfc6ec2ecda5c9a5a52f61444a3b",
+          "sha256": "63973d5e86b1ae5b6fca5b119a7f7589e817e19acc3ca54e54462c9dfb619e73",
+          "size": 10240,
+          "repo_path": "bios/Atari/400-800/ROM_OS_B_NTSC",
+          "systems": [
+            "atari-5200"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -23088,6 +23148,26 @@
       "systems": [
         "nec-pc-88",
         "tandy-coco"
+      ],
+      "declared_choices": [
+        {
+          "sha1": "bb7103a0818850a039c67ff666a31ce49a8d516f",
+          "sha256": "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456",
+          "size": 2048,
+          "repo_path": "bios/NEC/PC-88/N88SUB.ROM",
+          "systems": [
+            "nec-pc-88"
+          ]
+        },
+        {
+          "sha1": "892b85cc96f0ff31cae8ad8d409b9f6c04b32e5e",
+          "sha256": "b9b4bfe42b4957d4c6b532ceb5a1946c9e4d9d4f55a6e3eb600cc7f236e09ca9",
+          "size": 8194,
+          "repo_path": "bios/Tandy/CoCo/disk.rom",
+          "systems": [
+            "tandy-coco"
+          ]
+        }
       ]
     },
     {

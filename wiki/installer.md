@@ -173,7 +173,11 @@ What stays is what a pack built for exactly those cores carries, the rule
 emulates it or reads its files, or when no core of the platform does; a
 file a core loads stays when that core is installed. Where two cores read
 one path and want different bytes, the copy of the first installed core in
-the builder's order is the one installed.
+the builder's order is the one installed. The same holds for a file of the
+platform's own list: where a core's source contradicts the platform and the
+frontend only checks the path, the core's copy is installed while that core
+is, and otherwise the platform's answer, read from the first declaring
+system that stays.
 
 Batocera, Recalbox and the other distributions ship their cores with the
 system, so the option is refused there, as it is when no core is found or

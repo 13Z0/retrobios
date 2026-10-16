@@ -3160,6 +3160,66 @@ def _attach_claims(
         entry.pop("alternatives", None)
 
 
+def _record_slot_choices(
+    entry: dict,
+    choices: list[tuple[str, str | None]],
+    declarations: list[tuple[list[str], dict, str]],
+    settle,
+    dest: str,
+    db: dict,
+    repo_root: str,
+) -> None:
+    """Record what a pack built for fewer cores serves at a platform destination.
+
+    `slot_choices` lists, in the order slots decides, the cores whose claim
+    settles the slot and the copy it serves, a choice without a copy leaving
+    the platform's answer. `declared_choices` is the platform's answer by the
+    declaring systems that remain, in the order the builder takes them.
+    Nothing is recorded where every narrowing gets the entry's own copy.
+    """
+
+    def download(file_entry: dict, sys_id: str, override: str | None) -> dict | None:
+        local_path, _status = settle(file_entry, sys_id, dest, override)
+        if local_path is None:
+            return None
+        copy, _size = _manifest_entry(local_path, dest, None, db, repo_root, {})
+        if copy is None:
+            return None
+        return {k: v for k, v in copy.items() if k not in ("dest", "cores")}
+
+    declared: list[dict] = []
+    for systems, file_entry, sys_id in declarations:
+        copy = download(file_entry, sys_id, None)
+        if copy is None:
+            # An omission is not a copy the installer can switch to.
+            return
+        if declared and declared[-1]["sha1"] == copy["sha1"]:
+            declared[-1]["systems"].extend(systems)
+        else:
+            declared.append({**copy, "systems": list(systems)})
+    _systems, first, first_sys = declarations[0]
+    recorded: list[dict] = []
+    seen: set[str] = set()
+    for emulator, path in choices:
+        if emulator in seen:
+            continue
+        seen.add(emulator)
+        copy = {} if path is None else download(first, first_sys, path)
+        if copy is None:
+            return
+        if recorded and recorded[-1].get("sha1") == copy.get("sha1"):
+            recorded[-1]["cores"].append(emulator)
+        else:
+            recorded.append({**copy, "cores": [emulator]})
+    while recorded and "sha1" not in recorded[-1]:
+        recorded.pop()
+    if not recorded and len(declared) == 1:
+        return
+    if recorded:
+        entry["slot_choices"] = recorded
+    entry["declared_choices"] = declared
+
+
 def _manifest_core_entries(
     core_files: list,
     config: dict,
@@ -3441,6 +3501,13 @@ def generate_manifest(
         config, emu_profiles, db, zip_contents, data_registry,
         target_cores=target_cores, source=source,
     )
+    # The full manifest records every core's answer at a contested slot, so a
+    # target narrowed from it gets what that target's own pack serves.
+    slot_choices = (
+        slots.slot_choices(config, emu_profiles, db, zip_contents, data_registry)
+        if target_cores is None and source != "platform" and emu_profiles
+        else {}
+    )
 
     def manifest_destination(full_destination: str) -> str:
         if base_dest and full_destination.startswith(f"{base_dest}/"):
@@ -3489,6 +3556,80 @@ def generate_manifest(
             pack_systems, db, bios_dir, base_dest, required_only,
             zip_contents, offline,
         )
+        declarations: dict[str, dict[str, list[dict]]] = {}
+        for sys_id, system in sorted(pack_systems.items()):
+            for file_entry in system.get("files", []):
+                if required_only and file_entry.get("required") is False:
+                    continue
+                dest = sanitize_pack_path(file_entry.get("destination", file_entry["name"]))
+                if dest and not (region_drops and dest in region_drops):
+                    full_dest = f"{base_dest}/{dest}" if base_dest else dest
+                    declarations.setdefault(full_dest, {}).setdefault(sys_id, []).append(
+                        file_entry
+                    )
+
+        def declaration_order(full_dest: str) -> list[tuple[list[str], dict, str]]:
+            """The declarations answering a destination as its systems drop.
+
+            A pack built for a target loses the systems no available core
+            reads, and the next declaration takes the destination by the
+            same rule: RetroArch's bare nintendo-ds dsi_bios9.bin once the
+            pinned nintendo-dsi one is gone.
+            """
+            remaining = dict(declarations.get(full_dest, {}))
+            order: list[tuple[list[str], dict, str]] = []
+            while remaining:
+                winner = _preferred_entries(
+                    {sid: {"files": fes} for sid, fes in remaining.items()},
+                    db, bios_dir, base_dest, required_only, zip_contents, offline,
+                ).get(full_dest)
+                first_sys, first = next(
+                    (sid, fe) for sid, fes in sorted(remaining.items()) for fe in fes
+                    if winner is None or id(fe) == winner
+                )
+                systems = sorted(
+                    sid for sid, fes in remaining.items()
+                    if any(fe is first for fe in fes)
+                )
+                order.append((systems, first, first_sys))
+                for sid in systems:
+                    del remaining[sid]
+            return order
+
+        def settle(file_entry: dict, sys_id: str, dest: str, override: str | None):
+            """The file served once the slot is settled, or None and why not."""
+            local_path, status = slots.apply_override(override, *resolve_file(
+                file_entry,
+                db,
+                bios_dir,
+                zip_contents,
+                data_dir_registry=data_registry,
+                offline=offline,
+            ))
+            if status == "not_found" and not reads_file_contents(verification_mode):
+                found = agnostic_substitute(file_entry, sys_id, db, manifest_profiles)
+                if found:
+                    local_path, status = found[0], "agnostic_fallback"
+                    if os.path.basename(local_path) != file_entry.get("name", ""):
+                        # The pack explains the rename in a note of its own.
+                        rename_notes.add(file_entry.get("name", ""))
+            # The builder's verdict: a hash platform omits what its frontend
+            # would reject, a zipped_file archive included when the member is
+            # missing whatever the outer resolution said. An existence
+            # platform never reads the bytes.
+            status, refusal = baseline_verdict(
+                file_entry, local_path, status, verification_mode
+            )
+            if refusal or status in ("not_found", "external"):
+                return None, "hash_mismatch" if refusal else status
+            # The variant the pack ships when an emulator rejects the
+            # resolved file: the installer must place the same bytes.
+            local_path, _disagreement = validated_choice(
+                file_entry, local_path, db, manifest_validation, bios_dir,
+                digest_algorithm(verification_mode), dest, manifest_owners,
+            )
+            return local_path, status
+
         for sys_id, system in sorted(pack_systems.items()):
             for file_entry in system.get("files", []):
                 if required_only and file_entry.get("required") is False:
@@ -3524,48 +3665,24 @@ def generate_manifest(
                     )
                     continue
 
-                local_path, status = resolve_file(
-                    file_entry,
-                    db,
-                    bios_dir,
-                    zip_contents,
-                    data_dir_registry=data_registry,
-                    offline=offline,
+                local_path, status = settle(
+                    file_entry, sys_id, dest, slot_overrides.get(full_dest)
                 )
-                local_path, status = slots.apply_override(
-                    slot_overrides.get(full_dest), local_path, status
-                )
-                if status == "not_found" and not reads_file_contents(verification_mode):
-                    found = agnostic_substitute(file_entry, sys_id, db, manifest_profiles)
-                    if found:
-                        local_path, status = found[0], "agnostic_fallback"
-                        if os.path.basename(local_path) != file_entry.get("name", ""):
-                            # The pack explains the rename in a note of its own.
-                            rename_notes.add(file_entry.get("name", ""))
-                # The builder's verdict: a hash platform omits what its
-                # frontend would reject, a zipped_file archive included when
-                # the member is missing whatever the outer resolution said.
-                # An existence platform never reads the bytes.
-                status, refusal = baseline_verdict(
-                    file_entry, local_path, status, verification_mode
-                )
-                if refusal or status in ("not_found", "external"):
-                    record_omission(
-                        full_dest, file_entry, sys_id,
-                        "hash_mismatch" if refusal else status, None,
-                    )
+                if local_path is None:
+                    record_omission(full_dest, file_entry, sys_id, status, None)
                     continue
-                # The variant the pack ships when an emulator rejects the
-                # resolved file: the installer must place the same bytes.
-                local_path, _disagreement = validated_choice(
-                    file_entry, local_path, db, manifest_validation, bios_dir,
-                    digest_algorithm(verification_mode), dest, manifest_owners,
-                )
 
                 entry, file_size = _manifest_entry(
                     local_path, dest, None, db, repo_root,
                     selection.fields(dest, file_entry["name"]),
                 )
+                if entry is not None and target_cores is None:
+                    order = declaration_order(full_dest)
+                    if full_dest in slot_choices or len(order) > 1:
+                        _record_slot_choices(
+                            entry, slot_choices.get(full_dest, []), order,
+                            settle, dest, db, repo_root,
+                        )
                 if entry is None:
                     record_omission(full_dest, file_entry, sys_id, "not_found", None)
                     if file_size and full_dest not in seen_destinations:
@@ -3706,7 +3823,7 @@ def _manifest_core_index(
     }
     named = {
         c for entry in [*files, *omitted]
-        for copy in [entry, *entry.get("alternatives", [])]
+        for copy in [entry, *entry.get("alternatives", []), *entry.get("slot_choices", [])]
         for c in copy.get("cores") or []
     }
     named |= {c for cores in system_cores.values() for c in cores}

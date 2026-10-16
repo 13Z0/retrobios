@@ -1536,6 +1536,28 @@
       "systems": [
         "arcade"
       ],
+      "slot_choices": [
+        {
+          "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+          "sha256": "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a",
+          "size": 3556,
+          "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
+          "cores": [
+            "fbneo"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
+          "sha256": "6ca3142ebe127f5d2cb755c53740a92d9bf1574bde8daa32642de2991af89aaa",
+          "size": 3556,
+          "repo_path": "bios/Arcade/Arcade/nmk004.zip",
+          "systems": [
+            "arcade"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
@@ -1850,6 +1872,29 @@
         "arcade",
         "snk-neogeo-cd"
       ],
+      "slot_choices": [
+        {
+          "sha1": "985d935c06fe278ce39d7690aa6c53df88954cd6",
+          "sha256": "4919ba2a7650b24d1bf2c9107c89a80d93b50703a0a371fa5113c791bd03e114",
+          "size": 1184219,
+          "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.ba20a7be",
+          "cores": [
+            "fbneo",
+            "fbneo_neogeo"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "4f28af31ca0defdd73d80edec2fa296908e624dc",
+          "sha256": "6aa507a5dc33c45d2592bf2bc77eb3e497762221ddd9225f18583a5c55d38667",
+          "size": 214681,
+          "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.4f28af31",
+          "systems": [
+            "arcade"
+          ]
+        }
+      ],
       "declared_in": [
         "arcade"
       ],
@@ -2043,6 +2088,28 @@
       "systems": [
         "atari-400-800",
         "atari-5200"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "db1031585968cfc6ec2ecda5c9a5a52f61444a3b",
+          "sha256": "63973d5e86b1ae5b6fca5b119a7f7589e817e19acc3ca54e54462c9dfb619e73",
+          "size": 10240,
+          "repo_path": "bios/Atari/400-800/ROM_OS_B_NTSC",
+          "cores": [
+            "atari800"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "f1f0741b1d34fb4350cf7cb8ab3b6ea11cdd8174",
+          "sha256": "bc6012f8ca2f7dde21ae895899b1d2af572ffaa28f819b84911ddb6a0bd8a5c7",
+          "size": 10240,
+          "repo_path": "bios/Atari/400-800/ATARIOSB.ROM",
+          "systems": [
+            "atari-400-800"
+          ]
+        }
       ],
       "declared_in": [
         "atari-400-800"
@@ -5224,6 +5291,38 @@
         "nintendo-ds",
         "nintendo-dsi"
       ],
+      "slot_choices": [
+        {
+          "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
+          "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "a3aa751eb6bdaaf8a827ba9e03576a6f1ab0f547",
+          "sha256": "2946281e730e71f7cafdb125f5cb60fed944ca5d610ee1e082c441b602b5f4e2",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/Nintendo DS/biosdsi7.bin",
+          "systems": [
+            "nintendo-dsi"
+          ]
+        },
+        {
+          "sha1": "d2b17224e156ee5e55b5d8d9f323b1c9b86dd951",
+          "sha256": "28a13952901b4065ef3f08c3252b49a00b6525e301b7ddaa3a390b4c7cbef901",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/dsi_bios7.bin",
+          "systems": [
+            "nintendo-ds"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
@@ -5247,6 +5346,38 @@
       "systems": [
         "nintendo-ds",
         "nintendo-dsi"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
+          "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "7bf549b8be9e48ab0cdc9b0fdadd49a5131f97eb",
+          "sha256": "47538922a8e8a8e79b922ff1203863ef5c40d9c54656a8d2c89c56ece52029ce",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/Nintendo DS/biosdsi9.bin",
+          "systems": [
+            "nintendo-dsi"
+          ]
+        },
+        {
+          "sha1": "db61fa39ddbc5f5ed71fb19cda47609ef0201723",
+          "sha256": "664c608bd6ccfe583e87b3b924afa00f8697dc7ca92eeb6d206d68abb03d2e10",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/dsi_bios9.bin",
+          "systems": [
+            "nintendo-ds"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -9539,6 +9670,38 @@
       "systems": [
         "snk-neogeo-cd"
       ],
+      "slot_choices": [
+        {
+          "sha1": "712816a3c41baf4129e23d645305a536e03d69de",
+          "sha256": "f885f2cc79b5c0120ca316b0db360183c2b9a60bc727cbe211b7518e12bd5548",
+          "size": 955352,
+          "repo_path": "bios/SNK/Neo Geo CD/.variants/neocdz.zip.712816a3",
+          "cores": [
+            "geolith"
+          ]
+        },
+        {
+          "sha1": "985d935c06fe278ce39d7690aa6c53df88954cd6",
+          "sha256": "4919ba2a7650b24d1bf2c9107c89a80d93b50703a0a371fa5113c791bd03e114",
+          "size": 1184219,
+          "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.ba20a7be",
+          "cores": [
+            "fbneo",
+            "fbneo_neogeo"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "9cab31cfe7eacb6871d36cee105d87b90fd85b64",
+          "sha256": "d828241905d390c5de4867646296f615c95bca2f5d8f7e81d50e08717373a821",
+          "size": 1181333,
+          "repo_path": "bios/Arcade/Arcade/neocdz.zip",
+          "systems": [
+            "snk-neogeo-cd"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "712816a3c41baf4129e23d645305a536e03d69de",
@@ -9830,6 +9993,29 @@
       ],
       "region_system_groups": [
         "sony-playstation"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "ffa7f9a7fb19d773a0c3985a541c8e5623d2c30d",
+          "sha256": "0c8359870cbac0ea091f1c87f188cd332dcc709753b91cafd9fd44a4a6188197",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5000.bin",
+          "cores": [
+            "duckstation",
+            "rustation"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "ffa7f9a7fb19d773a0c3985a541c8e5623d2c30d",
+          "sha256": "0c8359870cbac0ea091f1c87f188cd332dcc709753b91cafd9fd44a4a6188197",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5000.bin",
+          "systems": [
+            "sony-playstation"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -11674,6 +11860,46 @@
       "cores": null,
       "systems": [
         "sony-playstation-2"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8",
+          "sha256": "61c77b789ccde856096f024e4a3eef6891e15ca59c127e0dd13e762a7d338a7e",
+          "size": 2690355,
+          "repo_path": "bios/Other/armsx2/pcsx2/resources/GameIndex.yaml",
+          "cores": [
+            "armsx2"
+          ]
+        },
+        {
+          "sha1": "7efb2ed721cf0c0f0677324e09be311a8337e793",
+          "sha256": "3bf3c54d6f16d88d3669be698179bb8c2fb981ee5ce71bcb952719429a838cc1",
+          "size": 2693579,
+          "repo_path": "bios/Other/yaps2/GameIndex.yaml",
+          "cores": [
+            "yaps2"
+          ]
+        },
+        {
+          "sha1": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8",
+          "sha256": "61c77b789ccde856096f024e4a3eef6891e15ca59c127e0dd13e762a7d338a7e",
+          "size": 2690355,
+          "repo_path": "bios/Other/armsx2/pcsx2/resources/GameIndex.yaml",
+          "cores": [
+            "lrps2"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "57369df9ca82a460e596cea7835c5a0797dee668",
+          "sha256": "efa94cb7b9208dc6812bb9407dc986560e523cce57f511eff30942f76b7288bf",
+          "size": 1737799,
+          "repo_path": "bios/Sony/PlayStation 2/.variants/GameIndex.yaml.57369df9",
+          "systems": [
+            "sony-playstation-2"
+          ]
+        }
       ],
       "alternatives": [
         {

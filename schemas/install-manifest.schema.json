@@ -482,6 +482,104 @@
               }
             }
           },
+          "slot_choices": {
+            "description": "On a platform file a core's own source contradicts while the frontend only checks the path: the copy each core's presence puts there, in the order the pack builder settles the slot. A narrowing serves the first whose cores remain; one naming only cores, or none remaining, leaves `declared_choices`.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "cores"
+              ],
+              "properties": {
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "repo_path": {
+                  "type": "string"
+                },
+                "storage": {
+                  "const": "release"
+                },
+                "release_asset": {
+                  "type": "string",
+                  "pattern": "^[^/\\\\]+$"
+                },
+                "cores": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "executable": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "declared_choices": {
+            "description": "The platform's own answer at the destination by the declaring systems that remain, in the order the pack builder takes the declarations; a narrowing serves the first whose systems remain.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha1",
+                "sha256",
+                "size",
+                "repo_path",
+                "systems"
+              ],
+              "properties": {
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "repo_path": {
+                  "type": "string"
+                },
+                "storage": {
+                  "const": "release"
+                },
+                "release_asset": {
+                  "type": "string",
+                  "pattern": "^[^/\\\\]+$"
+                },
+                "executable": {
+                  "type": "boolean"
+                },
+                "systems": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              }
+            }
+          },
           "executable": {
             "description": "The repository keeps the file executable; the installer gives it the execute bits the umask allows.",
             "type": "boolean"
