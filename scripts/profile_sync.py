@@ -9,6 +9,7 @@ recalable from what needs the code read again.
 from __future__ import annotations
 
 import argparse
+import bisect
 import contextlib
 import difflib
 import itertools
@@ -434,6 +435,9 @@ class Citation:
     # Broken across two lines of a literal block: compared like any run,
     # never rewritten, since no single line carries it.
     wrapped: bool = False
+    # Written in a YAML comment, which the loaded document drops: compared,
+    # never rewritten, since no scalar holds it.
+    in_comment: bool = False
 
 
 def _walk_document(node, where: str = ""):
@@ -596,7 +600,61 @@ def _prose_runs(text: str, known=frozenset()):
             )
 
 
-def collect_citations(document: dict) -> list[Citation]:
+def _scalar_spans(node, spans: list[tuple[int, int]]) -> None:
+    if isinstance(node, yaml.ScalarNode):
+        spans.append((node.start_mark.index, node.end_mark.index))
+    elif isinstance(node, yaml.MappingNode):
+        for key, value in node.value:
+            _scalar_spans(key, spans)
+            _scalar_spans(value, spans)
+    elif isinstance(node, yaml.SequenceNode):
+        for item in node.value:
+            _scalar_spans(item, spans)
+
+
+def comment_citations(text: str, known=frozenset()) -> list[Citation]:
+    """Citation runs written in the YAML comments of a profile.
+
+    The loader drops comments, so a pin moved without them: zesarux cites
+    src/start.c:4870-4874 in a comment written under a revision where those
+    lines now hold the --chroma81 branch. A `#` inside a scalar, quoted or in
+    a block, is content and not a comment.
+    """
+    try:
+        root = yaml.compose(text, Loader=yaml.SafeLoader)
+    except yaml.YAMLError:
+        return []
+    spans: list[tuple[int, int]] = []
+    if root is not None:
+        _scalar_spans(root, spans)
+    spans.sort()
+    starts = [lo for lo, _ in spans]
+
+    def inside_scalar(index: int) -> bool:
+        at = bisect.bisect_right(starts, index) - 1
+        return at >= 0 and spans[at][0] <= index < spans[at][1]
+
+    citations: list[Citation] = []
+    offset = 0
+    for number, line in enumerate(text.splitlines(keepends=True)):
+        for column, char in enumerate(line):
+            if char != "#" or (column and not line[column - 1].isspace()):
+                continue
+            if inside_scalar(offset + column):
+                continue
+            comment = line[column + 1:].rstrip("\r\n")
+            for _, path_span, run_spans, parts, run, _ in _prose_runs(comment, known):
+                citations.append(Citation(
+                    field=f"comment line {number + 1}", kind="prose", ref=run,
+                    path_span=path_span, spans=run_spans, parts=parts,
+                    in_comment=True,
+                ))
+            break
+        offset += len(line)
+    return citations
+
+
+def collect_citations(document: dict, text: str | None = None) -> list[Citation]:
     """Every citation the document carries, in document order.
 
     A source_ref key anywhere in the document is a structured citation:
@@ -627,6 +685,8 @@ def collect_citations(document: dict) -> list[Citation]:
                 line=line, path_span=path_span, spans=spans, parts=parts,
                 wrapped=wrapped,
             ))
+    if text is not None:
+        citations.extend(comment_citations(text, known))
     return citations
 
 
@@ -1355,7 +1415,8 @@ def _resolve_project_words(refs: list, tree_order) -> list:
 
 
 def build_report(
-    name: str, profile: dict, cache_dir: str, offline: bool = False
+    name: str, profile: dict, cache_dir: str, offline: bool = False,
+    text: str | None = None,
 ) -> ProfileReport:
     """Confront one profile with its upstream."""
     report = ProfileReport(name=name, entries=[], counts={})
@@ -1370,7 +1431,7 @@ def build_report(
         if (repo := upstream.parse_repo(url)) is not None
     )
     refs = []
-    for citation in collect_citations(profile):
+    for citation in collect_citations(profile, text):
         if citation.kind == "ref":
             entry = citation.entry
             display = str(entry.get("name") or "") or citation.field
@@ -2274,8 +2335,9 @@ def _apply_prose_edits(
     left: list[str] = []
 
     for citation, moves in jobs:
-        if citation.wrapped:
-            left.append(f"{citation.field}: {citation.ref} (wrapped across lines)")
+        if citation.wrapped or citation.in_comment:
+            where = "in a comment" if citation.in_comment else "wrapped across lines"
+            left.append(f"{citation.field}: {citation.ref} ({where})")
             continue
         value = str(citation.holder[citation.key])
         value_lines = value.splitlines()
@@ -2412,7 +2474,7 @@ def rebase_refs(
         return []
     text = path.read_text(encoding="utf-8")
     document = yaml.safe_load(text)
-    citations = collect_citations(document)
+    citations = collect_citations(document, text)
     applied: list[str] = []
     cursor = 0
     pos = 0
@@ -2520,7 +2582,7 @@ def pending_recale(
         return pending
 
     pool: dict[tuple[str, str], int] = {}
-    for citation in collect_citations(document):
+    for citation in collect_citations(document, text):
         if citation.kind == "prose":
             slot = (citation.field, _citation_key(citation.ref))
             pool[slot] = pool.get(slot, 0) + 1
@@ -3373,7 +3435,12 @@ def main() -> None:
     reports = []
     for name, profile in selected.items():
         try:
-            report = build_report(name, profile, args.cache_dir, args.offline)
+            profile_path = Path(args.emulators_dir) / f"{name}.yml"
+            report = build_report(
+                name, profile, args.cache_dir, args.offline,
+                profile_path.read_text(encoding="utf-8")
+                if profile_path.is_file() else None,
+            )
         except upstream.RateLimitError:
             raise
         except upstream.GoneError as exc:

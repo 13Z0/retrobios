@@ -3371,6 +3371,54 @@ class TestWrappedProse(unittest.TestCase):
         self.assertEqual(self.path.read_text(), self.TEXT)
 
 
+class TestCommentCitations(unittest.TestCase):
+    """The loader drops comments: zesarux's `# rom_load switch,
+    src/cpu.c:3212-3451` stayed on the old lines under a new pin."""
+
+    TEXT = PROSE_SAMPLE.replace(
+        "files:",
+        "# rom_load switch, src/cpu.c:3212-3451\n"
+        "quirk: |\n  # not a comment x.c:5 inside a block\n"
+        "label: \"quoted # y.c:7\"\n"
+        "files:",
+    ).replace('source_ref: "a.c:10-12"', 'source_ref: "a.c:10-12"  # see z.c:9')
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self.tmp.name) / "p.yml"
+        self.path.write_text(self.TEXT, encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_comments_only(self):
+        found = [c.ref for c in profile_sync.comment_citations(self.TEXT)]
+        self.assertEqual(found, ["src/cpu.c:3212-3451", "z.c:9"])
+        document = yaml.safe_load(self.TEXT)
+        self.assertNotIn(
+            "src/cpu.c:3212-3451",
+            [c.ref for c in profile_sync.collect_citations(document)],
+        )
+        self.assertIn(
+            "src/cpu.c:3212-3451",
+            [c.ref for c in profile_sync.collect_citations(document, self.TEXT)],
+        )
+
+    def test_a_comment_run_that_moves_holds_the_pin(self):
+        field = profile_sync.comment_citations(self.TEXT)[0].field
+        part = PartResult(RefPart("src/cpu.c", 3212, 3451, "3212-3451"),
+                          "SHIFTED", None, 3268, 3507, [])
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("comment", "src/cpu.c:3212-3451", "SHIFTED",
+                                 [part], "prose", field)],
+            counts={"SHIFTED": 1},
+        )
+        self.assertEqual(rebase_refs(self.path, report), [])
+        self.assertFalse(bump_commit(self.path, report))
+        self.assertEqual(self.path.read_text(), self.TEXT)
+
+
 class TestRealignProse(unittest.TestCase):
     """A prose scalar written under an older pin realigns from that pin."""
 
