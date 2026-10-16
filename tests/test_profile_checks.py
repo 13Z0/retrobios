@@ -291,5 +291,15 @@ class MgbaGameBoyBootRoms(_Probe):
                 self.assertFalse(self.accepts("mgba", name, b"\0" * size))
 
 
+class NestopiaFdsBios(_Probe):
+    """Fds::Bios logs "warning, unknown BIOS ROM!" for a CRC32 other than the
+    Famicom and Twin Famicom ones and uses the ROM (source/core/NstFds.cpp
+    57-127 at b9fdc9c). The profile declared the check with no value."""
+
+    def test_an_unknown_bios_only_warns(self):
+        self.assertTrue(self.accepts("nestopia", "disksys.rom", b"\0" * 8192))
+        self.assertFalse(self.accepts("nestopia", "disksys.rom", b"\0" * 8192, strict=True))
+
+
 if __name__ == "__main__":
     unittest.main()

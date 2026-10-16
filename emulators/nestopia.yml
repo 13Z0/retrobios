@@ -40,10 +40,12 @@ files:
     description: "FDS BIOS ROM"
     required: true
     size: 8192
+    crc32: ["5e607dcf", "4df24a6c"]
     validation: [crc32]
+    on_mismatch: warn
     md5: "ca30b50f880eb660a320674ed365ef7a"
     sha1: "57fe1bdee955bb48d357e463ccbf129496930b62"
-    source_ref: "libretro/libretro.cpp:2169-2197 (FDS load), source/core/NstFds.cpp:57-127 (Bios class, CRC32 validation)"
+    source_ref: "libretro/libretro.cpp:2169-2197 (FDS load), source/core/NstFds.cpp:57-127 (Bios class, CRC32 logged), source/core/api/NstApiFds.cpp:101-150 (iNES header skipped)"
     note: "Mapped at 0xE000-0xFFFF (8 KB). retro_load_game returns false if missing when loading .fds files. CRC32 checked: Famicom 0x5E607DCF, Twin Famicom 0x4DF24A6C."
 
   # --- NES game database (optional, overrides baked-in copy) ---
