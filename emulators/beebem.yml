@@ -95,10 +95,10 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
     md5: 2cc67be4624df4dc66617742571a8e3d
     sha1: 4a7393f3a45ea309f744441c16723e2ef447a281
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:44, Src/BeebMem.cpp:1322-1356"
 
   - name: DNFS.rom
@@ -107,10 +107,10 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
     md5: 5daed103918277e2065dd7e8d23e57a5
     sha1: 7e3c536baeae84d6498a14e8405319e01ee78232
     max_size: 131072
+    validation: [size]
     note: "Paged ROM slot, read by the BeebReadRoms bank loop (Src/BeebMem.cpp:1322-1356)."
     source_ref: "Src/RomConfigFile.cpp:45"
 
@@ -148,10 +148,10 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
     md5: 1b57c2ba920a00d5b4ef89be68aedc43
     sha1: d0153203802c8ec3e3270443be809e23d574280b
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:64"
 
   - name: BASIC2.rom
@@ -160,10 +160,10 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
     md5: 2cc67be4624df4dc66617742571a8e3d
     sha1: 4a7393f3a45ea309f744441c16723e2ef447a281
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:65"
 
   - name: DNFS.rom
@@ -172,10 +172,10 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
     md5: 5daed103918277e2065dd7e8d23e57a5
     sha1: 7e3c536baeae84d6498a14e8405319e01ee78232
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:66"
 
   - name: IBOS.rom
@@ -184,10 +184,10 @@ files:
     system: bbc-micro-b
     required: false
     bundled: true
-    size: 16384
     md5: 8882e50d5d98851a04f541c71bd25f31
     sha1: 0f5b2a5bee23808b34eab2f027f7c1e77395c782
     max_size: 131072
+    validation: [size]
     note: "Integra-B slot under the Torch configuration."
     source_ref: "UserData/Roms_Torch.cfg:24"
 
@@ -197,10 +197,10 @@ files:
     system: bbc-micro-b
     required: false
     bundled: true
-    size: 16384
     md5: 1d250b0242e447e9106e8bfd1f27ea84
     sha1: 387d2468c6e1360f5b531784ce95d5f71a50c2b5
     max_size: 131072
+    validation: [size]
     note: "Filing system slot under the Torch configuration."
     source_ref: "UserData/Roms_Torch.cfg:26"
 
@@ -210,10 +210,10 @@ files:
     system: bbc-micro-b
     required: false
     bundled: true
-    size: 16384
     md5: 42f92cb02602e903d7bdabb33bf30966
     sha1: 0edb0db70c9571540793e321f527e68188b6e4cd
     max_size: 131072
+    validation: [size]
     note: "Host tube support for the Torch Z80 co-processor on a Model B."
     source_ref: "UserData/Roms_Torch.cfg:5, Help/z80torch.html"
 
@@ -239,10 +239,10 @@ files:
     system: bbc-micro-bplus
     required: true
     bundled: true
-    size: 16384
     md5: 2cc67be4624df4dc66617742571a8e3d
     sha1: 4a7393f3a45ea309f744441c16723e2ef447a281
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:84"
 
   - name: DFS-2.26.rom
@@ -251,10 +251,10 @@ files:
     system: bbc-micro-bplus
     required: true
     bundled: true
-    size: 16384
     md5: f083f49d6fe66344c650d7e74249cb96
     sha1: cf2ebc422a8d24ec6f1a0320520c38a0e704109a
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:85"
 
   - name: ADFS-1.30.rom
@@ -263,10 +263,10 @@ files:
     system: bbc-micro-bplus
     required: false
     bundled: true
-    size: 16384
     md5: 831ee90ac5d49ba5507252faf0c12536
     sha1: 301fd05c475a629c4bec70510d4507256a5b00d8
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:86"
 
   - name: WDFS.rom
@@ -275,10 +275,10 @@ files:
     system: bbc-micro-bplus
     required: false
     bundled: true
-    size: 16384
     md5: 1d250b0242e447e9106e8bfd1f27ea84
     sha1: 387d2468c6e1360f5b531784ce95d5f71a50c2b5
     max_size: 131072
+    validation: [size]
     note: >
       Named as a Model B Plus essential ROM by the emulator help, which predates
       the current default configuration: the DefaultRoms table and the shipped
@@ -307,10 +307,10 @@ files:
     system: bbc-master-128
     required: true
     bundled: true
-    size: 16384
     md5: 7e053353b78b4631c274280931d96f02
     sha1: d990f41a3a0605127083a3cf7a3a676dd30423ef
     max_size: 131072
+    validation: [size]
     note: "A different dump from the Master ET Terminal.rom of the same name."
     source_ref: "Src/RomConfigFile.cpp:104"
 
@@ -320,10 +320,10 @@ files:
     system: bbc-master-128
     required: true
     bundled: true
-    size: 16384
     md5: 63a6f43cbf491533cb03ceca2d2728d4
     sha1: c45fd3c0abdcd32b78d2288addd2a777b19e9a1d
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:107"
 
   - name: DFS.rom
@@ -332,10 +332,10 @@ files:
     system: bbc-master-128
     required: true
     bundled: true
-    size: 16384
     md5: 865a0f7a5d6f10f48798801bf514d761
     sha1: cff80460954b3b9f75c83bd6a301c45d24d118a6
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:110"
 
   - name: ADFS.rom
@@ -344,10 +344,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: 10f08b255d6a6e3e888631946b628f1a
     sha1: 7557e99be10d81c0395df2dc6c2f8e2f95896c29
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:106"
 
   - name: View.rom
@@ -356,10 +356,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: 178d09285727d596f8863f94a2fc8dad
     sha1: 14820174e8ea802f1ae95186285a4592fd519699
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:105"
 
   - name: Edit.rom
@@ -368,10 +368,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: cb3d762eaab6130d1360e1ac575589de
     sha1: 96d209441f4cabacf3d4e8e9da68cce918ea923e
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:108"
 
   - name: ViewSheet.rom
@@ -380,10 +380,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: 7d5a80a8ce929d0a0f6ca8626cb9f436
     sha1: b7e85a55f517959912422b02248a03a4d32f6998
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:109"
 
   - name: ANFS-4.25-2201351.rom
@@ -392,10 +392,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: 306cb8ff6622dbfc79dc487ac4e407e1
     sha1: 14f75d36ffe9af14aaac42df55b4fe3729ba75cf
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:111"
 
   - name: MCP122-ABM.rom
@@ -404,10 +404,10 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
     md5: bf3d2b0a61ba36bd08d02f30e632e5ce
     sha1: 35843ace281494ab40463a69a263244d0cb0ecd6
     max_size: 131072
+    validation: [size]
     note: "Host tube support for the Torch Z80 co-processor on a Master."
     source_ref: "UserData/Roms_Torch.cfg:79, Help/z80torch.html"
 
@@ -433,10 +433,10 @@ files:
     system: bbc-master-et
     required: true
     bundled: true
-    size: 16384
     md5: 456cb9035fd3d6c9d4d98adcd65882d8
     sha1: 0b4425149ca93dddf8d03da3767635dc3f1eecb8
     max_size: 131072
+    validation: [size]
     note: "A different dump from the Master 128 Terminal.rom of the same name."
     source_ref: "Src/RomConfigFile.cpp:124"
 
@@ -446,10 +446,10 @@ files:
     system: bbc-master-et
     required: true
     bundled: true
-    size: 16384
     md5: 306cb8ff6622dbfc79dc487ac4e407e1
     sha1: 14f75d36ffe9af14aaac42df55b4fe3729ba75cf
     max_size: 131072
+    validation: [size]
     note: "Filing system of the Econet terminal, which has no disc filing system."
     source_ref: "Src/RomConfigFile.cpp:125"
 
@@ -459,10 +459,10 @@ files:
     system: bbc-master-et
     required: true
     bundled: true
-    size: 16384
     md5: 63a6f43cbf491533cb03ceca2d2728d4
     sha1: c45fd3c0abdcd32b78d2288addd2a777b19e9a1d
     max_size: 131072
+    validation: [size]
     source_ref: "Src/RomConfigFile.cpp:126"
 
   # -- Second processor ROMs --

@@ -76,5 +76,17 @@ class BeebEmSystemRoms(_Probe):
                 )
 
 
+class BeebEmSidewaysRoms(_Probe):
+    """ReadRom loads any file up to MAX_PALROM_SIZE (131072) into a bank and
+    refuses a larger one, leaving the bank empty (Src/BeebMem.cpp:1207-1262,
+    Src/PALRom.h:52 at a982ba6)."""
+
+    def test_up_to_128k_is_read_and_larger_refused(self):
+        for size in (8192, 16384, 32768, 131072):
+            with self.subTest(size=size):
+                self.assertTrue(self.accepts("beebem", "BASIC2.rom", b"\0" * size))
+        self.assertFalse(self.accepts("beebem", "BASIC2.rom", b"\0" * 200000))
+
+
 if __name__ == "__main__":
     unittest.main()
