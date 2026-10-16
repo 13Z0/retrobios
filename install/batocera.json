@@ -238,9 +238,9 @@
     }
   ],
   "total_files": 12860,
-  "total_size": 8104439067,
+  "total_size": 8104439093,
   "pack_files": 12862,
-  "pack_size": 8104439067,
+  "pack_size": 8104439093,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -1285,10 +1285,10 @@
     },
     {
       "dest": "advision.zip",
-      "sha1": "c13fa16800e5c7fb15fd74e8fece02d31dec345e",
-      "sha256": "1fa2384f56c29a7485e9755f8f1266b047f91e9428074b9d99aa75ca632c07ed",
-      "size": 1546,
-      "repo_path": "bios/Entex/Adventure Vision/advision.zip",
+      "sha1": "a9a7eef3c2f80b669e7421d2cf0a7a74f6088160",
+      "sha256": "8b9132570eaaf11983787f98d13fb7f23817d2375e92d8fe0d8508ca5db165cf",
+      "size": 1572,
+      "repo_path": "bios/Entex/Adventure Vision/.variants/advision.zip.1c086064",
       "cores": null,
       "systems": [
         "advision"
@@ -46154,6 +46154,7 @@
         "clk"
       ],
       "regions": [
+        "brazil",
         "europe",
         "north-america"
       ],
