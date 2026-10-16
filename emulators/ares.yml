@@ -11,6 +11,7 @@ mode: standalone
 systems:
   - arcade
   - atari-2600
+  - atari-5200
   - colecovision
   - myvision
   - famicom
@@ -51,7 +52,8 @@ systems:
 
 notes: |
   Multi-system emulator by Near (byuu), successor to higan/bsnes. Focuses on
-  accuracy and preservation. 38 systems emulated.
+  accuracy and preservation. 41 emulators registered at this pin
+  (desktop-ui/emulator/emulators.cpp).
 
   Firmware identification uses SHA256 hashes. Filenames are user-defined; ares
   scans a configured directory and matches by hash. EmuDeck installs ares as
@@ -89,6 +91,16 @@ notes: |
   SuperGrafx, SG-1000, SC-3000.
 
 files:
+  # --- Atari 5200 ---
+  - name: 5200.rom
+    system: atari-5200
+    required: true
+    size: 2048
+    sha256: "06b250f18983d058c0f156ce7ee88ae48b6eaf11e6f10f21dccf6ac7ffb6a6af"
+    validation: [size, sha256]
+    description: "Atari 5200 BIOS (NTSC-U four-port)"
+    source_ref: "desktop-ui/emulator/atari-5200.cpp:12-16, desktop-ui/emulator/atari-5200.cpp:82-88, mia/system/atari-5200.cpp:7-10"
+
   # --- ColecoVision ---
   - name: colecovision.rom
     system: colecovision

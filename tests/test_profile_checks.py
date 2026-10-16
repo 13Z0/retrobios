@@ -132,5 +132,21 @@ class Atari800SystemRoms(_Probe):
                 self.assertFalse(self.accepts("atari800", name, b"\1" * size))
 
 
+class AresAtari5200Bios(unittest.TestCase):
+    """ares registers an Atari 5200 firmware by sha256 and refuses to load a
+    game without it (desktop-ui/emulator/atari-5200.cpp:12-16, 82-88 at
+    4cb8d92); the profile left the system out, so no pack carried the BIOS."""
+
+    def test_the_profile_declares_it(self):
+        profile = _profile("ares")
+        self.assertIn("atari-5200", profile["systems"])
+        entry = next(f for f in profile["files"] if f.get("system") == "atari-5200")
+        self.assertTrue(entry["required"])
+        self.assertEqual(
+            entry["sha256"],
+            "06b250f18983d058c0f156ce7ee88ae48b6eaf11e6f10f21dccf6ac7ffb6a6af",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
