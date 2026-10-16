@@ -3089,6 +3089,44 @@ def _get_repo_path(sha1: str, db: dict) -> str:
     return entry.get("path", "")
 
 
+# The database the index was built from, held so its identity stays its own.
+_DB_SHA1_BY_PATH: list[tuple[dict, dict[str, str]]] = []
+
+
+def _db_sha1_by_path(db: dict) -> dict[str, str]:
+    """Path -> sha1 of the database, built once per database."""
+    if _DB_SHA1_BY_PATH and _DB_SHA1_BY_PATH[0][0] is db:
+        return _DB_SHA1_BY_PATH[0][1]
+    index = {
+        os.path.normpath(entry["path"]): sha1
+        for sha1, entry in db.get("files", {}).items()
+        if entry.get("path")
+    }
+    _DB_SHA1_BY_PATH[:] = [(db, index)]
+    return index
+
+
+def _stable_hashes(local_path: str, db: dict) -> dict:
+    """The file's hashes, held against the scan that built the database.
+
+    A manifest entry is what every installer downloads and checks against.
+    Under load this host has hashed a 252 MB DSi NAND to a sha1 no file
+    holds, twice and the same way, so recomputing alone proves nothing: the
+    database scanned the same path, and a manifest that disagrees with it is
+    refused rather than published.
+    """
+    expected = _db_sha1_by_path(db).get(os.path.normpath(local_path))
+    hashes = compute_hashes(local_path)
+    for _attempt in range(2):
+        if expected is None or hashes["sha1"] == expected:
+            return hashes
+        hashes = compute_hashes(local_path)
+    raise RuntimeError(
+        f"{local_path}: sha1 {hashes['sha1']} contradicts the database scan "
+        f"({expected}); rehash the file or regenerate database.json"
+    )
+
+
 def _manifest_entry(
     local_path: str | None,
     dest: str,
@@ -3113,7 +3151,7 @@ def _manifest_entry(
     file_size = 0
     if local_path and os.path.exists(local_path):
         file_size = os.path.getsize(local_path)
-        hashes = compute_hashes(local_path)
+        hashes = _stable_hashes(local_path, db)
         sha1 = hashes["sha1"]
         sha256 = hashes["sha256"]
     repo_path = _get_repo_path(sha1, db) if sha1 else ""

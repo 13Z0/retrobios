@@ -120,6 +120,27 @@ class LargeFilesResume(unittest.TestCase):
             self.assertEqual(_RangeHandler.ranges, [""])
 
 
+class ManifestHashesMatchTheScan(unittest.TestCase):
+    """A manifest entry's sha1 is checked against the database scan of the
+    same path: under load this host hashed a 252 MB DSi NAND to a sha1 no
+    file holds, the same wrong value in two runs."""
+
+    def test_a_contradicted_hash_is_refused(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "nand.bin"
+            path.write_bytes(b"real")
+            real = hashlib.sha1(b"real").hexdigest()
+            good = {"files": {real: {"path": str(path)}}}
+            self.assertEqual(generate_pack._stable_hashes(str(path), good)["sha1"], real)
+            bad = {"files": {"0" * 40: {"path": str(path)}}}
+            with self.assertRaises(RuntimeError):
+                generate_pack._stable_hashes(str(path), bad)
+            self.assertEqual(generate_pack._stable_hashes(str(path), {"files": {}})["sha1"], real)
+
+
 class RetriesWait(unittest.TestCase):
     def test_a_server_error_is_retried_after_the_delay_it_asks(self):
         with _Server(), tempfile.TemporaryDirectory() as tmp:
