@@ -238,9 +238,9 @@
     }
   ],
   "total_files": 3378,
-  "total_size": 4262186697,
+  "total_size": 4263070113,
   "pack_files": 3380,
-  "pack_size": 4262186697,
+  "pack_size": 4263070113,
   "total_omitted": 1,
   "omitted_files": [
     {
@@ -5318,10 +5318,10 @@
     },
     {
       "dest": "dc/hod2bios.zip",
-      "sha1": "0b5cc968644c936d4819c1eb5f623f5f3f83eda1",
-      "sha256": "8ae5a99e4ffc15b92e4d590c9e14558743e8f2068947a23e942dfc038ca326c6",
-      "size": 1465991,
-      "repo_path": "bios/Arcade/Arcade/.variants/hod2bios.zip.0b5cc968",
+      "sha1": "9b9c9f0af3de914de677ba8e19f4190673142c1b",
+      "sha256": "c90c754f36d4ab0c927da1f79883cb322a4f94b7cebe9cc7f401151a1b8f1a5a",
+      "size": 1057881,
+      "repo_path": "bios/Arcade/Arcade/hod2bios.zip",
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
@@ -5340,10 +5340,10 @@
     },
     {
       "dest": "dc/naomigd.zip",
-      "sha1": "f9ad4a4c6b0bbbe39ba358690a48f763ecbd98f0",
-      "sha256": "1280f4185ac4f7352ab85e49d71db1ca0b3e679c6430bd2c8545088042117eb1",
-      "size": 3371765,
-      "repo_path": "bios/Arcade/Arcade/.variants/naomigd.zip",
+      "sha1": "4b92936f396c8199f745d3ed0ff588a324b8dd70",
+      "sha256": "793db2a859be2d814d334ab511811c42c6727a16841e7627fa7c33171c3de441",
+      "size": 4972898,
+      "repo_path": "bios/Arcade/Arcade/naomigd.zip",
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
@@ -5892,10 +5892,10 @@
     },
     {
       "dest": "neocdz.zip",
-      "sha1": "7bb26d1e5d1e930515219cb18bcde5b7b23e2eda",
-      "sha256": "2e93af5848080ea04d17a7841b742f009330d30e4ff40c3410547581d921c892",
-      "size": 524288,
-      "repo_path": "bios/SNK/Neo Geo CD/neocd.bin",
+      "sha1": "4f28af31ca0defdd73d80edec2fa296908e624dc",
+      "sha256": "6aa507a5dc33c45d2592bf2bc77eb3e497762221ddd9225f18583a5c55d38667",
+      "size": 214681,
+      "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.4f28af31",
       "cores": null,
       "systems": [
         "snk-neogeo-cd"

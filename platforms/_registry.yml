@@ -415,6 +415,8 @@ platforms:
     source_url: https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay/recalbox/share_init/system/.emulationstation/es_bios.xml
     source_format: xml
     hash_type: md5
+    # Bios.cpp:64-68 hashes a .zip with Zip::Md5Composite, never its bytes
+    zip_digest: composite
     schedule: monthly
     target_scraper: null
     target_source: null

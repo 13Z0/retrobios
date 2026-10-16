@@ -197,6 +197,22 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
             if key != "cores" and key not in config:
                 config[key] = val
 
+    # Recalbox hashes a .zip by its members, so a plain md5 never answers one
+    # of its archive declarations: the resolver reads the mark per entry.
+    if config.get("zip_digest") == "composite":
+        config["systems"] = {
+            sys_id: {
+                **system,
+                "files": [
+                    {**f, "zip_digest": "composite"}
+                    if str(f.get("name", "")).lower().endswith(".zip")
+                    else f
+                    for f in system.get("files", [])
+                ],
+            }
+            for sys_id, system in config.get("systems", {}).items()
+        }
+
     _platform_config_cache[cache_key] = config
     return config
 
@@ -848,7 +864,12 @@ def resolve_local_file(
         # .variants/ pattern: filename like "neogeo.zip.fc398ab4"
         return any(bn.startswith(n + ".") for n in _name_set)
 
-    if md5_list and not zipped_file:
+    # A frontend that hashes an archive by its members (Recalbox) never reads
+    # the container's own md5: neocd.bin's md5 is also the composite of a
+    # one-member neocdz.zip, and the raw ROM shipped under the archive's name.
+    composite_only = file_entry.get("zip_digest") == "composite"
+
+    if md5_list and not zipped_file and not composite_only:
         for md5_candidate in md5_list:
             sha1_match = by_md5.get(md5_candidate)
             if sha1_match and sha1_match in files_db:
@@ -1014,6 +1035,8 @@ def resolve_local_file(
 
     if candidates:
         if md5_set and not (sha1_candidates or sha256_candidates or crc_candidates):
+            if composite_only:
+                candidates.sort(key=lambda c: "/.variants/" in c[0])
             for path, db_md5, _size in candidates:
                 if ".zip" in os.path.basename(path):
                     try:
@@ -1022,7 +1045,7 @@ def resolve_local_file(
                             return path, "md5_composite_exact"
                     except (zipfile.BadZipFile, OSError):
                         pass
-                if db_md5.lower() in md5_set:
+                if db_md5.lower() in md5_set and not composite_only:
                     return path, "md5_exact"
         # When zipped_file is set, only accept candidates that contain it
         if zipped_file:

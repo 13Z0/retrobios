@@ -218,5 +218,56 @@ class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
                 self.assertNotIn('{"name": archive', source)
 
 
+class AnArchiveHashedByItsMembers(unittest.TestCase):
+    """Recalbox hashes a .zip with Zip::Md5Composite (Bios.cpp:64-68). Its
+    neocdz.zip pin is neocd.bin's md5, which is also the composite of a
+    one-member archive, and the md5 step served the raw ROM under the
+    archive's name: Recalbox cannot open it and reports the BIOS red."""
+
+    def setUp(self):
+        directory = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, directory, True)
+        rom = b"bios" * 8
+        raw = directory / "bios/neocd.bin"
+        archive = directory / "bios/.variants/neocdz.zip.4f28af31"
+        archive.parent.mkdir(parents=True)
+        raw.write_bytes(rom)
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("neocd.bin", rom)
+        files, by_md5, by_name = {}, {}, {}
+        for path, name in ((raw, "neocd.bin"), (archive, "neocdz.zip")):
+            data = path.read_bytes()
+            sha1, md5 = hashlib.sha1(data).hexdigest(), hashlib.md5(data).hexdigest()
+            files[sha1] = {"path": str(path), "name": name, "sha1": sha1, "md5": md5}
+            by_md5[md5] = sha1
+            by_name.setdefault(name, []).append(sha1)
+        self.db = {"files": files, "indexes": {"by_name": by_name, "by_md5": by_md5,
+                                               "by_path_suffix": {}, "by_crc32": {}}}
+        self.entry = {"name": "neocdz.zip", "md5": hashlib.md5(rom).hexdigest()}
+        self.archive = str(archive)
+
+    def test_the_archive_answers_a_composite_frontend(self):
+        from common import resolve_local_file
+
+        path, status = resolve_local_file({**self.entry, "zip_digest": "composite"}, self.db)
+        self.assertEqual((path, status), (self.archive, "md5_composite_exact"))
+
+    def test_a_plain_digest_still_takes_the_md5_match(self):
+        from common import resolve_local_file
+
+        path, _status = resolve_local_file(self.entry, self.db)
+        self.assertTrue(path.endswith("neocd.bin"))
+
+    def test_the_registry_marks_recalbox_archives(self):
+        from common import load_platform_config
+
+        config = load_platform_config("recalbox", str(REPO_ROOT / "platforms"))
+        marks = {
+            (f["name"].lower().endswith(".zip"), f.get("zip_digest"))
+            for system in config["systems"].values() for f in system["files"]
+        }
+        self.assertEqual(marks, {(True, "composite"), (False, None)})
+
+
 if __name__ == "__main__":
     unittest.main()
