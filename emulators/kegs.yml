@@ -46,6 +46,7 @@ files:
     aliases: [ROM.01, ROM.03, APPLE2GS.ROM, APPLE2GS.ROM2, xgs.rom, XGS.ROM, Rom03gd, 342-0077-b]
     required: true
     description: "Apple IIGS system ROM"
+    size: [32768, 131072, 262144]
     validation: [size]
     source_ref: "config.c:135,407-410,1096-1161"
     note: >

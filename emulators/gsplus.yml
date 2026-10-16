@@ -33,6 +33,7 @@ files:
     description: "Apple IIGS system ROM"
     source_ref: "gsplus/src/config.c:136, gsplus/src/config.c:477-480, gsplus/src/config.c:1260-1317"
     note: "Accepted sizes: 32768 (Apple //e), 131072 (ROM 01), 262144 (ROM 03)"
+    size: [32768, 131072, 262144]
     validation: [size]
 
   - name: c600.rom

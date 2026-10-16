@@ -301,5 +301,19 @@ class NestopiaFdsBios(_Probe):
         self.assertFalse(self.accepts("nestopia", "disksys.rom", b"\0" * 8192, strict=True))
 
 
+class AppleIIgsRomSizes(_Probe):
+    """GSplus and KEGS read a 32, 128 or 256 KB ROM and refuse any other size
+    ("The ROM size should be 128K or 256K", gsplus/src/config.c:1297-1316 at
+    41e7103). The profiles declared the size check with no size."""
+
+    def test_three_sizes_and_nothing_else(self):
+        for emulator in ("gsplus", "kegs"):
+            for size in (32768, 131072, 262144):
+                with self.subTest(emulator=emulator, size=size):
+                    self.assertTrue(self.accepts(emulator, "ROM", b"\0" * size))
+            with self.subTest(emulator=emulator, size=65536):
+                self.assertFalse(self.accepts(emulator, "ROM", b"\0" * 65536))
+
+
 if __name__ == "__main__":
     unittest.main()
