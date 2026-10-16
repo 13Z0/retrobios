@@ -122,5 +122,29 @@ class BareNameIsADestination(unittest.TestCase):
         self.assertIn("syscard1.pce", [e["destination"] for e in extras])
 
 
+class ArchiveMembersStayInside(unittest.TestCase):
+    """fbneo reads msx.rom inside msx.zip. Once the second pass copied bare
+    names, it wrote that member loose at the root as soon as another core's
+    msx.rom covered the name, and 000-lo.lo landed beside neogeo.zip."""
+
+    def test_no_loose_copy_of_a_member(self):
+        profiles = {
+            "zesarux": {"emulator": "ZEsarUX", "type": "libretro", "systems": ["msx"],
+                        "files": [{"name": "msx.rom"}]},
+            "fbneo": {"emulator": "FBNeo", "type": "libretro", "systems": ["msx"],
+                      "files": [{"name": "msx.rom", "archive": "msx.zip"}]},
+        }
+        config = {"cores": ["zesarux", "fbneo"], "systems": {}}
+        db = {
+            "files": {"s1": {"name": "msx.rom", "path": "bios/MSX/msx.rom",
+                             "size": 10, "sha1": "s1", "md5": "m1", "crc32": "c1"}},
+            "indexes": {"by_name": {"msx.rom": ["s1"]}, "by_md5": {"m1": "s1"},
+                        "by_crc32": {"c1": "s1"}, "by_path_suffix": {}},
+        }
+        extras = _collect_emulator_extras(config, "emulators", db, set(), "", profiles)
+        loose = [e for e in extras if e["destination"] == "msx.rom"]
+        self.assertEqual([e["source_profile"] for e in loose], ["zesarux"])
+
+
 if __name__ == "__main__":
     unittest.main()

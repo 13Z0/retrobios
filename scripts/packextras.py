@@ -597,6 +597,10 @@ def _collect_emulator_extras(
             # covered elsewhere belongs to another program's file.
             if fname not in covered_names or f.get("unsourceable"):
                 continue
+            # A member of an archive is read inside it, never as a loose
+            # file; the archive itself is placed by the passes above.
+            if f.get("archive"):
+                continue
             file_mode = f.get("mode")
             if file_mode == "standalone" and not is_standalone:
                 continue
