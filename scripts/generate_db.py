@@ -26,9 +26,14 @@ from common import (
     DEFAULT_PROVENANCE_DIR,
     list_registered_platforms,
     load_provenance_snapshots,
+    require_yaml,
     write_if_changed,
     yaml_load,
 )
+
+# Platform and profile aliases are read from YAML: without pyyaml the
+# database lost every one of them and the run still exited 0.
+yaml = require_yaml()
 
 CACHE_DIR = ".cache"
 CACHE_FILE = os.path.join(CACHE_DIR, "db_cache.json")
@@ -459,45 +464,40 @@ def _collect_all_aliases(files: dict) -> dict:
 
     platforms_dir = Path("platforms")
     if platforms_dir.is_dir():
-        try:
-            import yaml
+        for platform_name in list_registered_platforms(
+            str(platforms_dir), include_archived=True
+        ):
+            config_file = platforms_dir / f"{platform_name}.yml"
+            try:
+                with open(config_file) as f:
+                    config = yaml_load(f) or {}
+            except (yaml.YAMLError, OSError) as e:
+                print(f"Warning: {config_file.name}: {e}", file=sys.stderr)
+                continue
 
-            for platform_name in list_registered_platforms(
-                str(platforms_dir), include_archived=True
-            ):
-                config_file = platforms_dir / f"{platform_name}.yml"
-                try:
-                    with open(config_file) as f:
-                        config = yaml_load(f) or {}
-                except (yaml.YAMLError, OSError) as e:
-                    print(f"Warning: {config_file.name}: {e}", file=sys.stderr)
-                    continue
+            for sys_id, system in config.get("systems", {}).items():
+                for file_entry in system.get("files", []):
+                    name = file_entry.get("name", "")
+                    sha1 = file_entry.get("sha1", "")
+                    md5 = file_entry.get("md5", "")
 
-                for sys_id, system in config.get("systems", {}).items():
-                    for file_entry in system.get("files", []):
-                        name = file_entry.get("name", "")
-                        sha1 = file_entry.get("sha1", "")
-                        md5 = file_entry.get("md5", "")
+                    # A zipped_file entry verifies a ROM INSIDE the
+                    # archive, so its hash describes the member and not
+                    # the file the name designates. Registering the name
+                    # against that hash made d2fdc.zip an alias of a
+                    # loose 256-byte state-machine-16.rom, which three
+                    # platforms were then served in place of the archive.
+                    if file_entry.get("zipped_file"):
+                        continue
 
-                        # A zipped_file entry verifies a ROM INSIDE the
-                        # archive, so its hash describes the member and not
-                        # the file the name designates. Registering the name
-                        # against that hash made d2fdc.zip an alias of a
-                        # loose 256-byte state-machine-16.rom, which three
-                        # platforms were then served in place of the archive.
-                        if file_entry.get("zipped_file"):
-                            continue
+                    matched = None
+                    if sha1 and sha1 in files:
+                        matched = sha1
+                    elif md5 and md5 in md5_to_sha1:
+                        matched = md5_to_sha1[md5]
 
-                        matched = None
-                        if sha1 and sha1 in files:
-                            matched = sha1
-                        elif md5 and md5 in md5_to_sha1:
-                            matched = md5_to_sha1[md5]
-
-                        if matched:
-                            _add_alias(name, matched)
-        except ImportError:
-            pass
+                    if matched:
+                        _add_alias(name, matched)
 
     # core-info is not read here: it was the only network call of a build
     # that must give the same database offline, and the one name it added
@@ -507,53 +507,48 @@ def _collect_all_aliases(files: dict) -> dict:
     # Collect aliases from emulator YAMLs (aliases field on file entries)
     emulators_dir = Path("emulators")
     if emulators_dir.is_dir():
-        try:
-            import yaml
-
-            for emu_file in emulators_dir.glob("*.yml"):
-                if emu_file.name.endswith(".old.yml"):
+        for emu_file in emulators_dir.glob("*.yml"):
+            if emu_file.name.endswith(".old.yml"):
+                continue
+            try:
+                with open(emu_file) as f:
+                    emu_config = yaml_load(f) or {}
+            except (yaml.YAMLError, OSError):
+                continue
+            # A profile whose entries name each other (dosbox-x opens
+            # MT32_CONTROL.ROM and CM32L_CONTROL.ROM alike, so each entry
+            # aliases the other) states that ITS slot takes either name.
+            # Indexed globally that became evidence for every emulator:
+            # ScummVM's MT-32 slot received the CM-32L ROMs.
+            primary_names = _primary_names(emu_config.get("files", []))
+            for file_entry in emu_config.get("files", []):
+                entry_name = file_entry.get("name", "")
+                entry_aliases = _own_aliases(file_entry, primary_names)
+                # A profile may accept several revisions: each held one
+                # is designated by the entry, none of them by guess.
+                matched: set[str] = {
+                    value for value in _as_list(file_entry.get("sha1"))
+                    if value in files
+                }
+                matched |= {
+                    md5_to_sha1[value]
+                    for value in _as_list(file_entry.get("md5"))
+                    if value in md5_to_sha1
+                }
+                if matched:
+                    # Proven by content, the profile's own name designates
+                    # the file whatever the collection calls it.
+                    entry_aliases.insert(0, entry_name)
+                if not entry_aliases:
                     continue
-                try:
-                    with open(emu_file) as f:
-                        emu_config = yaml_load(f) or {}
-                except (yaml.YAMLError, OSError):
-                    continue
-                # A profile whose entries name each other (dosbox-x opens
-                # MT32_CONTROL.ROM and CM32L_CONTROL.ROM alike, so each entry
-                # aliases the other) states that ITS slot takes either name.
-                # Indexed globally that became evidence for every emulator:
-                # ScummVM's MT-32 slot received the CM-32L ROMs.
-                primary_names = _primary_names(emu_config.get("files", []))
-                for file_entry in emu_config.get("files", []):
-                    entry_name = file_entry.get("name", "")
-                    entry_aliases = _own_aliases(file_entry, primary_names)
-                    # A profile may accept several revisions: each held one
-                    # is designated by the entry, none of them by guess.
-                    matched: set[str] = {
-                        value for value in _as_list(file_entry.get("sha1"))
-                        if value in files
-                    }
-                    matched |= {
-                        md5_to_sha1[value]
-                        for value in _as_list(file_entry.get("md5"))
-                        if value in md5_to_sha1
-                    }
-                    if matched:
-                        # Proven by content, the profile's own name designates
-                        # the file whatever the collection calls it.
-                        entry_aliases.insert(0, entry_name)
-                    if not entry_aliases:
-                        continue
-                    if not matched and entry_name and name_count.get(entry_name) == 1:
-                        # A name carried by several files names none of them:
-                        # quasi88's disk.rom aliases went to whichever
-                        # disk.rom the scan met last, a Tandy CoCo ROM.
-                        matched = {name_to_sha1[entry_name]}
-                    for sha in sorted(matched):
-                        for alias_name in entry_aliases:
-                            _add_alias(alias_name, sha)
-        except ImportError:
-            pass
+                if not matched and entry_name and name_count.get(entry_name) == 1:
+                    # A name carried by several files names none of them:
+                    # quasi88's disk.rom aliases went to whichever
+                    # disk.rom the scan met last, a Tandy CoCo ROM.
+                    matched = {name_to_sha1[entry_name]}
+                for sha in sorted(matched):
+                    for alias_name in entry_aliases:
+                        _add_alias(alias_name, sha)
 
     # Identical content named differently across platforms/cores
     KNOWN_ALIAS_GROUPS = [

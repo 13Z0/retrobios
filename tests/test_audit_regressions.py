@@ -1725,6 +1725,38 @@ class FreshnessGuardMechanics(unittest.TestCase):
 
 
 
+class AMissingDependencyStopsTheBuild(unittest.TestCase):
+    """generate_db read every alias inside `try: import yaml ... except
+    ImportError: pass`: on an interpreter without pyyaml the database lost
+    3186 alias lines and the run exited 0."""
+
+    def test_generate_db_without_pyyaml_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "database.json"
+            proc = subprocess.run(
+                [sys.executable, "-S", "scripts/generate_db.py", "--force",
+                 "--bios-dir", "bios", "--output", str(output)],
+                cwd=ROOT, capture_output=True, text=True, timeout=600, check=False,
+            )
+            self.assertNotEqual(proc.returncode, 0, proc.stdout)
+            self.assertIn("PyYAML required", proc.stderr)
+            self.assertFalse(output.exists())
+
+    def test_no_script_swallows_an_import_error(self):
+        offenders = []
+        for path in sorted((ROOT / "scripts").rglob("*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.ExceptHandler)
+                    and isinstance(node.type, ast.Name)
+                    and node.type.id in ("ImportError", "ModuleNotFoundError")
+                    and all(isinstance(stmt, ast.Pass) for stmt in node.body)
+                ):
+                    offenders.append(f"{path.relative_to(ROOT)}:{node.lineno}")
+        self.assertEqual(offenders, [])
+
+
 class PipelineReportsWhatItDid(unittest.TestCase):
     """A step that did not run must not be summarised as OK.
 
