@@ -153,5 +153,29 @@ def _as_file(test: unittest.TestCase, data: bytes) -> str:
     return path
 
 
+class CheckModeExitCode(unittest.TestCase):
+    """--check printed `conform: False` and exited 0, so no script could use it."""
+
+    def test_the_exit_code_follows_conformance(self):
+        import subprocess
+
+        with tempfile.TemporaryDirectory(dir=os.path.join(REPO_ROOT, "tmp")) as directory:
+            plain = os.path.join(directory, "plain.zip")
+            with zipfile.ZipFile(plain, "w") as zf:
+                zf.writestr("a.bin", b"rom")
+            torrent = os.path.join(directory, "torrent.zip")
+            with open(torrent, "wb") as handle:
+                handle.write(build_torrentzip([("a.bin", b"rom")]))
+            script = os.path.join(REPO_ROOT, "scripts", "torrentzip.py")
+            codes = [
+                subprocess.run(
+                    [sys.executable, script, "--check", path],
+                    capture_output=True, check=False, timeout=60,
+                ).returncode
+                for path in (plain, torrent)
+            ]
+        self.assertEqual(codes, [1, 0])
+
+
 if __name__ == "__main__":
     unittest.main()

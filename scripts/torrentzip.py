@@ -114,8 +114,8 @@ def identify_romset(
     return None
 
 
-def main() -> None:
-    """Entry point."""
+def main() -> int:
+    """Entry point: 1 when a checked archive is not TorrentZip."""
     parser = argparse.ArgumentParser(description="TorrentZip builder and checker")
     parser.add_argument("--check", metavar="ZIP", help="report TorrentZip conformance")
     parser.add_argument("--rebuild", metavar="ZIP", help="normalize an archive")
@@ -130,14 +130,14 @@ def main() -> None:
         print(f"  md5:       {hashlib.md5(data).hexdigest()}")
         print(f"  rebuilt:   {hashlib.md5(rebuilt).hexdigest()}")
         print(f"  conform:   {data == rebuilt}")
-        return
+        return 0 if data == rebuilt else 1
 
     if args.rebuild:
         data = rebuild_torrentzip(args.rebuild)
         dest = args.output or args.rebuild
         Path(dest).write_bytes(data)
         print(f"{dest}: {len(data)} bytes, md5 {hashlib.md5(data).hexdigest()}")
-        return
+        return 0
 
     parser.error("nothing to do: pass --check or --rebuild")
 
