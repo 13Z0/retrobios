@@ -886,7 +886,28 @@ def resolve_local_file(
             candidates = _by_affinity(candidates, file_entry, dest_hint)
             primary = [p for p in candidates if "/.variants/" not in p]
             if primary or candidates:
-                return (primary[0] if primary else candidates[0]), "name_exact"
+                chosen = primary[0] if primary else candidates[0]
+                # Even the best of them is another emulator's own copy: the
+                # name says nothing about this profile's file, and a data
+                # directory it reads may hold it. Dolphin got Dolphin-MMJR's
+                # codehandler.bin while data/dolphin-sys held its own.
+                if data_dir_registry and _foreign_tree(chosen, _owner_tokens(file_entry)):
+                    hit, _mismatch = _resolve_in_data_dirs(
+                        names_to_try, data_dir_registry,
+                        functools.partial(
+                            declared_hash_verdict,
+                            has_strong_hash=False,
+                            sha1_candidates=set(),
+                            sha256_candidates=set(),
+                            md5_list=[],
+                            crc_candidates=set(),
+                            zipped_file=zipped_file,
+                            declared_size=declared_size,
+                        ),
+                    )
+                    if hit:
+                        return hit
+                return chosen, "name_exact"
 
     # 4. Name + alias fallback with md5_composite + direct MD5 per candidate
     md5_set = set(md5_list)

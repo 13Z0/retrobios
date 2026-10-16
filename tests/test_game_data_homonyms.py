@@ -254,6 +254,44 @@ class ReleaseAssetAnswersEveryDeclaredHash(unittest.TestCase):
         self.assertEqual(self._resolve(entry, b"second"), ("big.bin", "release_asset"))
 
 
+class ForeignCopyYieldsToADataDirectory(unittest.TestCase):
+    """codehandler.bin is held by three Dolphin forks under bios/Other/, all
+    different; Dolphin, PrimeHack and Triforce got MMJR's by index order
+    while data/dolphin-sys, which Dolphin reads, held the upstream file."""
+
+    def test_the_data_directory_answers_before_another_emulators_copy(self):
+        import tempfile
+
+        from common import resolve_local_file
+
+        with tempfile.TemporaryDirectory() as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            self.addCleanup(os.chdir, previous)
+            fork = Path("bios/Other/dolphin-mmjr/codehandler.bin")
+            fork.parent.mkdir(parents=True)
+            fork.write_bytes(b"mmjr")
+            sys_dir = Path("data/dolphin-sys")
+            sys_dir.mkdir(parents=True)
+            (sys_dir / "codehandler.bin").write_bytes(b"upstream")
+            sha = hashlib.sha1(b"mmjr").hexdigest()
+            db = {"files": {sha: {"path": str(fork), "name": "codehandler.bin"}},
+                  "indexes": {"by_name": {"codehandler.bin": [sha]}, "by_md5": {},
+                              "by_crc32": {}, "by_path_suffix": {}}}
+            registry = {"dolphin-sys": {"local_cache": str(sys_dir)}}
+            entry = {"name": "codehandler.bin"}
+            self.assertEqual(
+                resolve_local_file({**entry, "source_profile": "dolphin"}, db,
+                                   data_dir_registry=registry),
+                (str(sys_dir / "codehandler.bin"), "data_dir"),
+            )
+            self.assertEqual(
+                resolve_local_file({**entry, "source_profile": "dolphin-mmjr"}, db,
+                                   data_dir_registry=registry),
+                (str(fork), "name_exact"),
+            )
+
+
 class NameStepPrefersTheOwnersCopy(unittest.TestCase):
     """Same-named files are ordered by where the asking profile keeps its own.
 
