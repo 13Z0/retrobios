@@ -646,5 +646,67 @@ class StrongestProfileClaimWins(unittest.TestCase):
         )
 
 
+class AnArchiveIsClaimedByItsMembers(unittest.TestCase):
+    """System.dat pins fbneo/neocdz.zip to a copy holding neocd.bin alone;
+    FBNeo also requires 000-lo.lo inside it. Members were skipped by the
+    claims, so nothing contested the pin and RetroArch shipped an archive
+    the core cannot boot from."""
+
+    def setUp(self):
+        import hashlib
+        import zipfile
+        import zlib
+
+        roms = {"neocd.bin": b"bios" * 8, "000-lo.lo": b"zoom" * 8}
+        entries = {}
+        self.paths = {}
+        for label, members in (("short", ["neocd.bin"]), ("full", list(roms))):
+            path = Path(f"bios/Arc/{label}/neocdz.zip")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(path, "w") as zf:
+                for member in members:
+                    zf.writestr(member, roms[member])
+            data = path.read_bytes()
+            entries[hashlib.sha1(data).hexdigest()] = {
+                "path": str(path), "md5": hashlib.md5(data).hexdigest(), "size": len(data),
+            }
+            self.paths[label] = (str(path), hashlib.md5(data).hexdigest())
+        self.addCleanup(shutil.rmtree, "bios/Arc", True)
+        self.db = _db(entries)
+        self.profiles = {"fbneo": {
+            "emulator": "FBNeo", "type": "libretro", "systems": ["snk-neogeo-cd"],
+            "archive_prefix": "fbneo",
+            "files": [
+                {"name": name, "archive": "neocdz.zip", "system": "snk-neogeo-cd",
+                 "required": True, "crc32": format(zlib.crc32(data), "08x")}
+                for name, data in roms.items()
+            ],
+        }}
+
+    def _config(self, mode: str, pinned: str) -> dict:
+        return {
+            "platform": "P", "verification_mode": mode, "base_destination": "system",
+            "cores": ["fbneo"],
+            "systems": {"snk-neogeo-cd": {"files": [{
+                "name": "neocdz.zip", "destination": "fbneo/neocdz.zip",
+                "md5": self.paths[pinned][1],
+            }]}},
+        }
+
+    def test_existence_serves_the_copy_the_core_boots_from(self):
+        overrides = slots.pack_overrides(self._config("existence", "short"), self.profiles, self.db)
+        self.assertEqual(overrides, {"system/fbneo/neocdz.zip": self.paths["full"][0]})
+
+    def test_a_content_check_keeps_the_pin_and_reports_it(self):
+        config = self._config("md5", "short")
+        self.assertEqual(slots.pack_overrides(config, self.profiles, self.db), {})
+        conflicts = slots.find_conflicts(config, self.profiles, self.db, "system")
+        self.assertEqual([c.destination for c in conflicts], ["system/fbneo/neocdz.zip"])
+
+    def test_a_pin_holding_the_members_is_agreement(self):
+        config = self._config("md5", "full")
+        self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])
+
+
 if __name__ == "__main__":
     unittest.main()

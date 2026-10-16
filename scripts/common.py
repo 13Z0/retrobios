@@ -623,6 +623,12 @@ def archive_entry(archive: str, files: list[dict]) -> dict:
     return {**own, "members": members} if members else own
 
 
+def holds_required_members(path: str, members: list[dict]) -> bool:
+    """Whether an archive holds every member a profile requires inside it."""
+    crcs = zip_member_crcs(path)
+    return all(m["crc32"] in crcs for m in members if m["required"])
+
+
 def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
     """The same-named archives holding the most required members, then the most members.
 

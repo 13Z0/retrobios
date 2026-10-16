@@ -20,8 +20,10 @@ from dataclasses import dataclass, field
 
 import nativemode
 from common import (
+    archive_entry,
     build_zip_contents_index,
     check_inside_zip,
+    holds_required_members,
     load_data_dir_registry,
     parse_md5_list,
     resolution_is_hash_exact,
@@ -34,7 +36,11 @@ from validation import outside_gap_scope
 # A profile entry can prove a slot without declaring a hash: Dolphin names no
 # checksum for the GameCube boot ROM because its source names none, and the
 # proof is then the path the repository stores the file at.
-PROVEN_STATUSES = frozenset({"path_exact"})
+PROVEN_STATUSES = frozenset({"path_exact", "members_held"})
+
+# A core that reads ROMs inside an archive proves the archive by its members:
+# FBNeo's neocdz.zip is any copy holding neocd.bin and 000-lo.lo by crc.
+MEMBERS_HELD = "members_held"
 
 
 @dataclass
@@ -169,6 +175,12 @@ def profile_claims(
         if profile.get("type") in ("launcher", "alias"):
             continue
         is_standalone = runs_standalone(emu_name, profile, standalone_cores)
+        claims.extend(
+            _archive_claims(
+                emu_name, profile, is_standalone, db, base_dest, placement,
+                zip_contents, data_dir_registry,
+            )
+        )
         for entry in profile.get("files") or []:
             if not isinstance(entry, dict):
                 continue
@@ -178,9 +190,8 @@ def profile_claims(
             if outside_gap_scope(entry, is_standalone):
                 continue
             # A member of a romset is not a file at the BIOS root: the archive
-            # holding it is what occupies a destination, and it is declared
-            # separately. Claiming the member put FBNeo's msx.zip contents
-            # loose at the platform's root.
+            # holding it occupies the destination (_archive_claims). Claiming
+            # the member put FBNeo's msx.zip contents loose at the root.
             if entry.get("archive"):
                 continue
             dest = (
@@ -212,6 +223,69 @@ def profile_claims(
                     origin="profile",
                     destination=full,
                     name=entry.get("name", ""),
+                    emulator=emu_name,
+                    entry=entry,
+                    local_path=local,
+                    status=status,
+                )
+            )
+    return claims
+
+
+def _archive_claims(
+    emu_name: str,
+    profile: dict,
+    is_standalone: bool,
+    db: dict,
+    base_dest: str,
+    placement,
+    zip_contents: dict | None,
+    data_dir_registry: dict | None,
+) -> list[Claim]:
+    """The archives a core reads its ROMs from, where the builder places them.
+
+    The archive sits at the root and, for a core that reads a directory of
+    its own (archive_prefix), under it as well. The claim is proven when the
+    copy holds every member the core requires.
+    """
+    files = [
+        entry for entry in profile.get("files") or []
+        if isinstance(entry, dict) and not outside_gap_scope(entry, is_standalone)
+    ]
+    prefix = profile.get("archive_prefix", "")
+    claims: list[Claim] = []
+    for archive in sorted({entry["archive"] for entry in files if entry.get("archive")}):
+        entry = archive_entry(archive, files)
+        members = entry.get("members")
+        if not members:
+            continue
+        system = next(f.get("system") for f in files if f.get("archive") == archive)
+        for dest in (archive, f"{prefix}/{archive}") if prefix else (archive,):
+            if placement is None:
+                full = f"{base_dest}/{dest}" if base_dest else dest
+            else:
+                placed = placement.place({"profile": emu_name, "system": system}, dest)
+                if placed is None:
+                    continue
+                full = placed[1]
+            local, status = resolve_local_file(
+                {**entry, "source_profile": emu_name},
+                db,
+                zip_contents,
+                dest_hint=dest,
+                data_dir_registry=data_dir_registry,
+            )
+            if (
+                local
+                and not resolution_is_hash_exact(status)
+                and holds_required_members(local, members)
+            ):
+                status = MEMBERS_HELD
+            claims.append(
+                Claim(
+                    origin="profile",
+                    destination=full,
+                    name=archive,
                     emulator=emu_name,
                     entry=entry,
                     local_path=local,
@@ -526,6 +600,9 @@ def _satisfies(profile: Claim, platform: Claim, db: dict) -> bool:
     """
     if profile.local_path == platform.local_path:
         return True
+    members = profile.entry.get("members")
+    if members and platform.local_path:
+        return holds_required_members(platform.local_path, members)
     if (
         profile.local_path
         and _lists_hashes(platform.entry)

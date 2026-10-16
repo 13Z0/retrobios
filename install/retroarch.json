@@ -256,9 +256,9 @@
     }
   ],
   "total_files": 5869,
-  "total_size": 6160101174,
+  "total_size": 6161070712,
   "pack_files": 8512,
-  "pack_size": 6200633701,
+  "pack_size": 6201603239,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -1767,10 +1767,10 @@
     },
     {
       "dest": "fbneo/nmk004.zip",
-      "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
-      "sha256": "6ca3142ebe127f5d2cb755c53740a92d9bf1574bde8daa32642de2991af89aaa",
+      "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+      "sha256": "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a",
       "size": 3556,
-      "repo_path": "bios/Arcade/Arcade/nmk004.zip",
+      "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
       "cores": null,
       "systems": [
         "arcade"
@@ -2080,10 +2080,10 @@
     },
     {
       "dest": "fbneo/neocdz.zip",
-      "sha1": "4f28af31ca0defdd73d80edec2fa296908e624dc",
-      "sha256": "6aa507a5dc33c45d2592bf2bc77eb3e497762221ddd9225f18583a5c55d38667",
-      "size": 214681,
-      "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.4f28af31",
+      "sha1": "985d935c06fe278ce39d7690aa6c53df88954cd6",
+      "sha256": "4919ba2a7650b24d1bf2c9107c89a80d93b50703a0a371fa5113c791bd03e114",
+      "size": 1184219,
+      "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.ba20a7be",
       "cores": null,
       "systems": [
         "arcade",
