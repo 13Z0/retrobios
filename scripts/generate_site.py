@@ -39,6 +39,8 @@ from common import (
     load_emulator_profiles,
     load_provenance_snapshots,
     require_yaml,
+    resolution_is_hash_exact,
+    resolve_local_file,
     resolve_platform_cores,
     unique_emulator_profiles,
     write_if_changed as _write_artifact,
@@ -121,6 +123,26 @@ CLS_LABELS = {
 }
 
 
+def _system_folder(
+    files: list[dict], db: dict, name_consoles: dict[str, set[tuple[str, str]]]
+) -> tuple[str, str] | None:
+    """The bios/<manufacturer>/<console> folder a system's files live in."""
+    votes: dict[tuple[str, str], int] = {}
+    for fe in files:
+        local, status = resolve_local_file(fe, db)
+        parts = (local or "").split("/")
+        if len(parts) >= 4 and parts[0] == "bios" and resolution_is_hash_exact(status):
+            place = (parts[1], parts[2])
+            votes[place] = votes.get(place, 0) + 1
+    if votes:
+        return max(sorted(votes), key=lambda place: votes[place])
+    for fe in files:
+        places = name_consoles.get(fe.get("name", ""), set())
+        if len(places) == 1:
+            return next(iter(places))
+    return None
+
+
 def _build_system_page_map_from_data(
     manufacturers: dict,
     coverages: dict,
@@ -130,15 +152,14 @@ def _build_system_page_map_from_data(
 
     Uses platform file paths to trace system_id -> bios directory -> manufacturer page.
     """
-    db.get("files", {})
-    db.get("indexes", {}).get("by_name", {})
-
-    # Build reverse index: filename -> (manufacturer, console) from bios/ structure
-    file_to_console: dict[str, tuple[str, str]] = {}
+    # Every console folder a filename sits in. A name in one folder only can
+    # place a system; a name in several says nothing (MiSTer's boot.rom lives
+    # under a dozen consoles, and the last one written used to win).
+    name_consoles: dict[str, set[tuple[str, str]]] = {}
     for mfr, consoles in manufacturers.items():
         for console, entries in consoles.items():
             for entry in entries:
-                file_to_console[entry["name"]] = (mfr, console)
+                name_consoles.setdefault(entry["name"], set()).add((mfr, console))
 
     # Build normalized console name index for fuzzy matching
     console_norm: dict[str, tuple[str, str]] = {}
@@ -170,15 +191,13 @@ def _build_system_page_map_from_data(
         for sys_id, system in config.get("systems", {}).items():
             if sys_id in _system_page_map:
                 continue
-            # Strategy 1: trace via file paths in DB
-            for fe in system.get("files", []):
-                fname = fe.get("name", "")
-                if fname in file_to_console:
-                    mfr, console = file_to_console[fname]
-                    slug = mfr.lower().replace(" ", "-")
-                    _system_page_map[sys_id] = (slug, console)
-                    break
-            if sys_id in _system_page_map:
+            # Strategy 1: the folder holding the files the system declares,
+            # found by content; most votes win. A bare name stands in only
+            # where the collection files it in a single console.
+            place = _system_folder(system.get("files", []), db, name_consoles)
+            if place is not None:
+                mfr, console = place
+                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
                 continue
             # Strategy 2: fuzzy match system_id against console directory names
             if sys_id in console_norm:
