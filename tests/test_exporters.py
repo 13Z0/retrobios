@@ -627,6 +627,78 @@ class RommExport(unittest.TestCase):
         self.assertTrue(all(k.startswith("psx:") for k in data))
 
 
+class RetrodeckExport(unittest.TestCase):
+    A, B, C = "a" * 32, "b" * 32, "c" * 32
+
+    def _render(self, declared, accepted):
+        """Export one file RetroDECK lists as an md5 array."""
+        truth = {
+            "systems": {
+                "atari-400-800": {
+                    "files": [
+                        {
+                            "name": "ATARIOSB.ROM",
+                            "path": "ATARIOSB.ROM",
+                            "md5": accepted,
+                            "required": True,
+                            "_cores": ["atari800"],
+                        }
+                    ]
+                }
+            }
+        }
+        scraped = {
+            "systems": {
+                "atari-400-800": {
+                    "native_id": "atari800",
+                    "files": [
+                        {
+                            "name": "ATARIOSB.ROM",
+                            "destination": "bios/ATARIOSB.ROM",
+                            "native_system": "atari800",
+                            "md5": ",".join(declared),
+                            "component": "retroarch",
+                            "required": True,
+                        }
+                    ],
+                }
+            }
+        }
+        original = json.dumps({
+            "retroarch": {
+                "bios": [
+                    {
+                        "filename": "ATARIOSB.ROM",
+                        "md5": declared,
+                        "system": "atari800",
+                        "required": "Required",
+                    }
+                ]
+            }
+        })
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["retrodeck"]()
+        produced = exporter.render(
+            systems, report, {"retroarch/component_manifest.json": original}, None
+        )
+        (entry,) = json.loads(produced["retroarch/component_manifest.json"])[
+            "retroarch"
+        ]["bios"]
+        return entry["md5"]
+
+    def test_an_unchanged_md5_array_is_left_as_written(self):
+        """The same dumps in another order are no correction."""
+        self.assertEqual(
+            self._render([self.A, self.B], [self.B, self.A]), [self.A, self.B]
+        )
+
+    def test_a_corrected_md5_array_stays_an_array(self):
+        """A comma-joined string reads back as one value that is no md5."""
+        written = self._render([self.A, self.B], [self.A, self.C])
+        self.assertIsInstance(written, list)
+        self.assertEqual(set(written), {self.A, self.B, self.C})
+
+
 class BatoceraExport(unittest.TestCase):
     def _render(self, originals):
         systems, report = model()

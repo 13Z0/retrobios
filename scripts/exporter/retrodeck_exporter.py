@@ -34,7 +34,8 @@ def _systems_of(entry: dict) -> list[str]:
 
 
 def _md5_set(value: object) -> set[str]:
-    return {m.strip().lower() for m in str(value or "").split(",") if m.strip()}
+    values = value if isinstance(value, list) else str(value or "").split(",")
+    return {str(m).strip().lower() for m in values if str(m).strip()}
 
 
 def _paths_key(entry: dict) -> tuple[str, ...]:
@@ -136,9 +137,11 @@ class Exporter(BaseExporter):
     def _entry(fe: NativeFile) -> OrderedDict:
         entry: OrderedDict[str, object] = OrderedDict()
         entry["filename"] = fe.name
-        md5 = ",".join(fe.hashes("md5"))
+        # Several accepted dumps stay a JSON array, as RetroDECK writes them:
+        # a comma-joined string reads back as one value that is no md5.
+        md5 = fe.hashes("md5")
         if md5:
-            entry["md5"] = md5
+            entry["md5"] = md5 if len(md5) > 1 else md5[0]
         sha256 = fe.hash("sha256")
         if sha256:
             entry["sha256"] = sha256
@@ -241,6 +244,10 @@ class Exporter(BaseExporter):
                 (field, value) for field, value in by_key[keys[0]].items()
                 if field in cls.carries() and not (field == "system" and declared)
             )
+            if _md5_set(entry.get("md5")) == _md5_set(combined.get("md5")):
+                combined["md5"] = entry.get("md5")
+            elif isinstance(entry.get("md5"), list) and isinstance(combined.get("md5"), str):
+                combined["md5"] = [combined["md5"]]
             merged.append(combined)
             corrected.update(keys)
 
