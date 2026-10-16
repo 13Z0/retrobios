@@ -3709,7 +3709,6 @@ files:
     system: vtech-vsmile
     source_ref: "src/mame/vtech/vsmile.cpp:364-394"
     note: "MACHINE_IMPERFECT_SOUND | MACHINE_IMPERFECT_GRAPHICS. Clone: vsmilem (V.Smile Motion)."
-    validation: [crc32]
     contents:
       - name: "vsmile_v103.bin"
         description: "System ROM v1.03 (default, also used on V.Smile Pocket)"
@@ -4340,7 +4339,6 @@ files:
     note: >-
       QSound DSP program ROM. Required by qsound_device and
       qsound_hle_device for Capcom QSound audio (CPS-2, CPS-3, ZN).
-    validation: [crc32]
     contents:
       - name: "dl-1425.bin"
         description: "QSound DSP microcode"
@@ -4354,7 +4352,6 @@ files:
     note: >-
       YM2413 (OPLL) instrument ROM table. Required by ym2413_device
       for FM synthesis preset instruments.
-    validation: [crc32]
     contents:
       - name: "ym2413_instruments.bin"
         description: "OPLL preset instrument table"
@@ -4369,7 +4366,6 @@ files:
       YM2608 (OPNA) ADPCM rhythm sample ROM. Required by ym2608_device
       for internal rhythm sound source (bass drum, snare, cymbal, hi-hat,
       tom, rim shot).
-    validation: [crc32]
     contents:
       - name: "ym2608_adpcm_rom.bin"
         description: "OPNA ADPCM rhythm samples"

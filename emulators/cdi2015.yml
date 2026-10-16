@@ -22,7 +22,6 @@ files:
     required: true
     category: bios_zip
     source_ref: "src/osd/retro/retromain.c:1989, src/mame/drivers/cdi.c:421"
-    validation: [crc32, sha1]
     contents:
       - name: cdi200.rom
         description: Magnavox CD-i 200 BIOS (default)

@@ -197,11 +197,30 @@ class AdvanceMameArchives(_Probe):
     archive values."""
 
     def test_no_archive_level_check(self):
-        for entry in _profile("advancemame")["files"]:
-            if entry.get("category") == "bios_zip":
-                with self.subTest(name=entry["name"]):
+        # a7800's MAME warns the same way (src/emu/romload.cpp:427-452 at 7a2afdc).
+        for emulator in ("advancemame", "a7800"):
+            for entry in _profile(emulator)["files"]:
+                if entry.get("category") != "bios_zip":
+                    continue
+                with self.subTest(emulator=emulator, name=entry["name"]):
                     self.assertFalse(entry.get("validation"))
                     self.assertTrue(entry.get("contents"))
+
+
+class MameMemberChecksOnlyWarn(unittest.TestCase):
+    """libretro MAME and mame2015 warn on a member's wrong length or checksums
+    and run (src/emu/romload.cpp:602-625 at 9069f39, src/emu/romload.c:501-519
+    at 7adbf44); an archive-level check with no archive value ran nothing."""
+
+    def test_no_valueless_archive_check(self):
+        for emulator, names in (
+            ("mame", ("vsmile.zip", "qsound.zip", "ym2413.zip", "ym2608.zip")),
+            ("cdi2015", ("cdimono1.zip",)),
+        ):
+            entries = {f["name"]: f for f in _profile(emulator)["files"]}
+            for name in names:
+                with self.subTest(emulator=emulator, name=name):
+                    self.assertFalse(entries[name].get("validation"))
 
 
 if __name__ == "__main__":

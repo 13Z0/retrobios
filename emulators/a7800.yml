@@ -67,7 +67,6 @@ files:
       Merged console BIOS archive documented by the manual at bios/a7800.zip.
       Serves all eight machines through the parent chain, since the PAL
       machines are clones of a7800 rather than of a7800p.
-    validation: [size, crc32, sha1]
     contents:
       - name: 7800.u7
         description: NTSC BIOS, default system BIOS "a7800", mapped at 0x3000
@@ -94,7 +93,6 @@ files:
       Software list set for the High Score Cartridge configuration (CX78HSC,
       slot a78_hsc). Fatal when that configuration is selected and the set is
       absent.
-    validation: [size, crc32, sha1]
     contents:
       - name: highscre.bin
         description: High Score Cartridge ROM, read through the pass-through cart
@@ -112,7 +110,6 @@ files:
       a78_xm), which reuses the High Score Cartridge ROM alongside 128KB RAM,
       POKEY and YM2151. Fatal when that configuration is selected and the set
       is absent.
-    validation: [size, crc32, sha1]
     contents:
       - name: highscre.bin
         description: High Score Cartridge ROM, gated by XM control register bit 3
