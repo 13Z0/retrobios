@@ -3,31 +3,31 @@ type: libretro
 core_classification: pure_libretro
 source: "https://codeberg.org/virtualxt/virtualxt"
 upstream: "https://codeberg.org/virtualxt/virtualxt"
-profiled_date: "2026-03-25"
+profiled_date: "2026-10-17"
 source_commit: "ed177f5fb4f54d099bc217281930265ae1de9eca"
-core_version: "2.1.0"
+core_version: "3.1.0"
 display_name: "VirtualXT"
 cores: [virtualxt]
 systems: [ibm-pc]
 
-# All BIOS ROMs are embedded at compile time via Odin's #load() directive.
-# No external files are loaded from system_dir in standard operation.
+# The BIOS ROMs are compiled in: core.c includes headers generated from
+# bios/vxtbios.bin, bios/vxtx.bin and bios/egabios.bin, and hands them to the
+# ROM peripherals with vxt_rom_set_data. The core never asks for the system
+# directory.
 #
-# Embedded ROMs (core.odin:323-394, edge branch):
-#   GLABIOS.ROM, pcxtbios.bin, vgabios.bin, vxtx.bin, GLaTICK_0.8.4_AT.ROM
-#
-# INI config files can reference external ROM paths via load_from_file
-# (rom.odin:42-68), but this is not the standard usage path.
-#
-# source_ref: src/frontend/core.odin:323-394 (setup_default_machine, #load)
-# source_ref: src/modules/rom/rom.odin:42-68 (load_from_file, INI only)
-# source_ref: src/frontend/options.odin:55 (core option virtualxt_bios)
+# source_ref: src/frontend/core.c:53-61 (embedded headers)
+# source_ref: src/frontend/core.c:358-375 (BIOS at 0xFE000, VXTX at 0xFD800)
+# source_ref: src/frontend/core.c:438-444 (EGA BIOS when the EGA adapter is chosen)
+# source_ref: src/frontend/core.c:1195-1232 (FreeDOS image written to the save directory)
+# source_ref: src/modules/rom/rom.c:81-96 (an INI "mem" key loads a ROM from the path it gives)
 
 files: []
 
 notes:
   bios_approach: >
-    All BIOS ROMs embedded at compile time via Odin #load() directive.
-    Open-source replacements: GLaBIOS (GPL), Turbo XT BIOS 3.1, vgabios.
-    No proprietary IBM PC/XT BIOS needed.
+    VXTBIOS, the VXTX disk extension and the EGA BIOS are embedded. A machine
+    described by an INI file can load a ROM from a path the INI names, read
+    through the frontend VFS as written. With no content the core writes its
+    embedded FreeDOS hard disk image to virtualxt_default.img in the save
+    directory and boots it.
   supported_extensions: "img, ini, exe, com"
