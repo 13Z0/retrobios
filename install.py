@@ -2702,6 +2702,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
     total_bytes = 0
     total_seconds = 0.0
     total_declined = 0
+    check_pending = 0
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
 
@@ -2881,6 +2882,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
         if args.check:
             if to_download:
                 print(f"\n  {len(to_download)} files need downloading.")
+                check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
             continue
@@ -2960,6 +2962,9 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
             )
 
     sys.stdout = real_stdout
+    # A check scripted as `--check && launch` reads the exit code only.
+    if args.check and check_pending:
+        sys.exit(1)
     if not args.check and not listing and not args.dry_run:
         _report_outcome(
             installed_paths,

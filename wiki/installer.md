@@ -224,7 +224,8 @@ what the options name, everything by default.
 | `--standalone-copies` | Also copy into detected standalone emulator directories |
 | `--help`, `-h` | Print the option list and exit |
 
-`--check` reads the same file list, hashes the destination and exits. Without
+`--check` reads the same file list, hashes the destination and exits, with
+code 1 when a file is missing or does not match and 0 when every one does. Without
 it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy.
 Files the list does not name are never read, moved or deleted.

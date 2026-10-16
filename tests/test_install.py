@@ -946,6 +946,14 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
                 self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
                 self.assertNotIn("Traceback", proc.stderr)
         self.assertTrue((dest / "lynxboot.img").is_file())
+        # A check is scripted as `--check && launch`: missing files fail it.
+        proc = subprocess.run(
+            base + ["--dest", str(home / "empty"), "--system", "atari-lynx", "--check"],
+            cwd=REPO_ROOT, env=env, capture_output=True, text=True, timeout=300,
+            check=False,
+        )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("need downloading", proc.stdout)
 
     def test_no_syntax_a_312_parser_lets_through(self):
         """Parenthesized context managers (3.9) and f-strings reusing their
