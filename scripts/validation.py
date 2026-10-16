@@ -10,7 +10,13 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 
-from common import compute_hashes, name_match_size_ok, sanitize_pack_path, size_fits
+from common import (
+    adler32_of,
+    compute_hashes,
+    name_match_size_ok,
+    sanitize_pack_path,
+    size_fits,
+)
 from hashing import parse_md5_list
 from nativemode import digest_algorithm, hash_mismatch_excludes_file
 from ziptools import check_inside_zip
@@ -21,22 +27,9 @@ _CRYPTO_CHECKS = frozenset({"signature", "crypto"})
 
 
 def _adler32_byteswapped(path: str) -> str:
-    """Compute adler32 on 16-bit byte-swapped data.
+    """Adler-32 over 16-bit byte-swapped data, as Dolphin hashes its DSP ROMs."""
+    return adler32_of(path, byteswap=True)
 
-    Dolphin's DSP loader swaps every 16-bit word before hashing
-    (Common::swap16 in DSPLLE.cpp:LoadDSPRom).  This reproduces that
-    transform so verify.py can match the expected adler32 values.
-    """
-    import struct
-    import zlib
-
-    with open(path, "rb") as f:
-        data = f.read()
-    # Pad to even length if necessary
-    if len(data) % 2:
-        data += b"\x00"
-    swapped = struct.pack(f">{len(data) // 2}H", *struct.unpack(f"<{len(data) // 2}H", data))
-    return format(zlib.adler32(swapped) & 0xFFFFFFFF, "08x")
 
 # All reproducible validation types.
 _HASH_CHECKS = frozenset({"crc32", "md5", "sha1", "adler32"})

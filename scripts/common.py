@@ -73,6 +73,47 @@ def name_match_size_ok(file_entry: dict, candidate_size: int | None) -> bool:
     return size_fits(file_entry, candidate_size)
 
 
+def adler32_of(path: str, byteswap: bool = False) -> str:
+    """The Adler-32 of a file, over its 16-bit words swapped when asked.
+
+    Dolphin swaps every 16-bit word of its DSP ROMs before hashing them
+    (Common::swap16 in DSPLLE.cpp:LoadDSPRom).
+    """
+    import struct  # noqa: PLC0415
+    import zlib  # noqa: PLC0415
+
+    with open(path, "rb") as f:
+        data = f.read()
+    if byteswap:
+        if len(data) % 2:
+            data += b"\x00"
+        count = len(data) // 2
+        data = struct.pack(f">{count}H", *struct.unpack(f"<{count}H", data))
+    return format(zlib.adler32(data) & 0xFFFFFFFF, "08x")
+
+
+def adler32_fits(file_entry: dict, path: str) -> bool:
+    """Whether a candidate carries an Adler-32 the entry's code accepts.
+
+    Dolphin hashes its DSP ROMs and warns on every pair it does not take
+    as current: the v0.3.1 free dsp_rom.bin is answered by its path, and
+    shipped beside the official dsp_coef.bin it is a pair Dolphin rejects.
+    A value declared without ``validation: [adler32]`` rejects nothing.
+    """
+    validation = file_entry.get("validation")
+    if isinstance(validation, dict):
+        validation = validation.get("core", [])
+    declared = file_entry.get("known_hash_adler32")
+    if "adler32" not in (validation or []) or not declared:
+        return True
+    values = declared if isinstance(declared, list) else [declared]
+    accepted = {str(v).lower().removeprefix("0x") for v in values}
+    try:
+        return adler32_of(path, bool(file_entry.get("adler32_byteswap"))) in accepted
+    except OSError:
+        return False
+
+
 def size_fits(file_entry: dict, candidate_size: int) -> bool:
     """Whether a size is one the entry declares.
 
@@ -950,6 +991,8 @@ def resolve_local_file(
                 if not os.path.exists(path):
                     continue
                 if not has_strong_hash:
+                    if not adler32_fits(file_entry, path):
+                        continue
                     return path, "path_exact"
                 status = _record_match_status(match_sha1)
                 if status:
@@ -957,8 +1000,9 @@ def resolve_local_file(
 
     # 3. No MD5 = any file with that name or alias (existence check)
     def _size_ok(match_sha1: str) -> bool:
-        return name_match_size_ok(
-            file_entry, files_db.get(match_sha1, {}).get("size")
+        record = files_db.get(match_sha1, {})
+        return name_match_size_ok(file_entry, record.get("size")) and adler32_fits(
+            file_entry, record.get("path", "")
         )
 
     # An entry the profile documents as unsourceable is one the collection
