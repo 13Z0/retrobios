@@ -1,0 +1,66 @@
+"""A platform that inherits another one.
+
+The child was merged over the parent's cached config: its overrides rewrote
+the parent's systems for the rest of the run, and the parent's registry
+fields hid the child's own, so RetroPie loaded as active with RetroArch's
+scraper and install block.
+"""
+
+from __future__ import annotations
+
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import yaml
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+import common  # noqa: E402
+
+
+class AChildLeavesItsParentAlone(unittest.TestCase):
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.dir, True)
+        self.addCleanup(common._platform_config_cache.clear)
+        self.addCleanup(common._shared_yml_cache.clear)
+        files = {
+            "parent.yml": {"platform": "Parent", "verification_mode": "existence",
+                           "systems": {"sys-a": {"files": [{"name": "a.bin"}]}}},
+            "child.yml": {"platform": "Child", "inherits": "parent", "overrides": {
+                "systems": {"sys-a": {"files": [{"name": "child.bin"}]},
+                            "sys-new": {"files": [{"name": "new.bin"}]}}}},
+            "_registry.yml": {"platforms": {
+                "parent": {"status": "active", "scraper": "parent", "hash_type": "md5",
+                           "cores": "all_libretro"},
+                "child": {"status": "archived", "scraper": "child"},
+            }},
+        }
+        for name, data in files.items():
+            (self.dir / name).write_text(yaml.safe_dump(data))
+
+    def load(self, name):
+        return common.load_platform_config(name, str(self.dir))
+
+    def test_the_parent_keeps_its_systems(self):
+        self.load("parent")
+        self.load("child")
+        parent = self.load("parent")
+        self.assertEqual(list(parent["systems"]), ["sys-a"])
+        self.assertEqual(parent["systems"]["sys-a"]["files"], [{"name": "a.bin"}])
+
+    def test_the_child_reads_its_own_registry_entry_first(self):
+        self.load("parent")
+        child = self.load("child")
+        self.assertEqual((child["status"], child["scraper"]), ("archived", "child"))
+        # What it does not say comes from its parent's entry.
+        self.assertEqual((child["hash_type"], child["cores"]), ("md5", "all_libretro"))
+        self.assertEqual(child["systems"]["sys-a"]["files"], [{"name": "child.bin"}])
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -96,6 +96,42 @@ _shared_yml_cache: dict[str, dict] = {}
 _platform_config_cache: dict[tuple[str, str], dict] = {}
 
 
+def _inherited_yaml(platform_name: str, platforms_dir: str) -> tuple[dict, list[str]]:
+    """The platform's YAML merged over its parents', and the chain of names.
+
+    Built from fresh copies: merging over the parent's cached config shared
+    its systems, so a child's overrides rewrote the parent for the rest of
+    the run.
+    """
+    if yaml is None:
+        raise ImportError("PyYAML required: pip install pyyaml")
+
+    config_file = os.path.join(platforms_dir, f"{platform_name}.yml")
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(f"Platform config not found: {config_file}")
+
+    with open(config_file) as f:
+        config = yaml_load(f) or {}
+    if "inherits" not in config:
+        return config, [platform_name]
+
+    merged, chain = _inherited_yaml(config["inherits"], platforms_dir)
+    merged.update(
+        {k: v for k, v in config.items() if k not in ("inherits", "overrides")}
+    )
+    if "overrides" in config and "systems" in config["overrides"]:
+        merged.setdefault("systems", {})
+        for sys_id, override in config["overrides"]["systems"].items():
+            if sys_id in merged["systems"]:
+                merged["systems"][sys_id] = {
+                    **merged["systems"][sys_id],
+                    **override,
+                }
+            else:
+                merged["systems"][sys_id] = override
+    return merged, [platform_name, *chain]
+
+
 def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -> dict:
     """Load a platform config with inheritance and shared group resolution.
 
@@ -106,34 +142,7 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
     if cache_key in _platform_config_cache:
         return _platform_config_cache[cache_key]
 
-    if yaml is None:
-        raise ImportError("PyYAML required: pip install pyyaml")
-
-    config_file = os.path.join(platforms_dir, f"{platform_name}.yml")
-    if not os.path.exists(config_file):
-        raise FileNotFoundError(f"Platform config not found: {config_file}")
-
-    with open(config_file) as f:
-        config = yaml_load(f) or {}
-
-    # Resolve inheritance
-    if "inherits" in config:
-        parent = load_platform_config(config["inherits"], platforms_dir)
-        merged = {**parent}
-        merged.update(
-            {k: v for k, v in config.items() if k not in ("inherits", "overrides")}
-        )
-        if "overrides" in config and "systems" in config["overrides"]:
-            merged.setdefault("systems", {})
-            for sys_id, override in config["overrides"]["systems"].items():
-                if sys_id in merged["systems"]:
-                    merged["systems"][sys_id] = {
-                        **merged["systems"][sys_id],
-                        **override,
-                    }
-                else:
-                    merged["systems"][sys_id] = override
-        config = merged
+    config, chain = _inherited_yaml(platform_name, platforms_dir)
 
     # Resolve shared group includes
     shared_path = os.path.join(platforms_dir, "_shared.yml")
@@ -176,26 +185,31 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
             with open(registry_path) as f:
                 _shared_yml_cache[reg_real] = yaml_load(f) or {}
         reg = _shared_yml_cache[reg_real]
-        reg_entry = reg.get("platforms", {}).get(platform_name, {})
+        # The platform's own entry first, then its parents' for what it does
+        # not say: RetroPie's status, scraper and install are its own, its
+        # verification mode is RetroArch's.
+        for depth, name in enumerate(chain):
+            reg_entry = reg.get("platforms", {}).get(name, {})
 
-        # Merge cores (union for lists, override for all_libretro)
-        reg_cores = reg_entry.get("cores")
-        if reg_cores is not None:
-            cfg_cores = config.get("cores")
-            if reg_cores == "all_libretro":
-                config["cores"] = "all_libretro"
-            elif isinstance(reg_cores, list) and isinstance(cfg_cores, list):
-                merged_set = {str(c) for c in cfg_cores} | {str(c) for c in reg_cores}
-                config["cores"] = sorted(merged_set)
-            elif isinstance(reg_cores, list) and cfg_cores is None:
-                config["cores"] = reg_cores
+            # Merge cores (union for lists, override for all_libretro); a
+            # parent's only where the platform names none.
+            reg_cores = reg_entry.get("cores")
+            if reg_cores is not None and (depth == 0 or "cores" not in config):
+                cfg_cores = config.get("cores")
+                if reg_cores == "all_libretro":
+                    config["cores"] = "all_libretro"
+                elif isinstance(reg_cores, list) and isinstance(cfg_cores, list):
+                    merged_set = {str(c) for c in cfg_cores} | {str(c) for c in reg_cores}
+                    config["cores"] = sorted(merged_set)
+                elif isinstance(reg_cores, list) and cfg_cores is None:
+                    config["cores"] = reg_cores
 
-        # Merge all registry fields absent from config (except cores,
-        # handled above with union logic). No hardcoded list: any field
-        # added to the registry is automatically available in the config.
-        for key, val in reg_entry.items():
-            if key != "cores" and key not in config:
-                config[key] = val
+            # Merge all registry fields absent from config (except cores,
+            # handled above with union logic). No hardcoded list: any field
+            # added to the registry is automatically available in the config.
+            for key, val in reg_entry.items():
+                if key != "cores" and key not in config:
+                    config[key] = val
 
     # Recalbox hashes a .zip by its members, so a plain md5 never answers one
     # of its archive declarations: the resolver reads the mark per entry.
