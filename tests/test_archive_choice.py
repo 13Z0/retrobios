@@ -181,6 +181,35 @@ class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
         )
         self.assertEqual(extra["members"], members)
 
+    def test_the_collection_holds_each_archive_a_core_requires(self):
+        """FBNeo's nmk004.zip wants nmk004.bin crc 8ae61a09; both copies held
+        MAME's 83b6f611 dump while the FBNeo dump sat loose in bios/."""
+        import json
+
+        from common import archive_members, load_emulator_profiles, zip_member_crcs
+
+        database = REPO_ROOT / "database.json"
+        if not database.exists():
+            self.skipTest("database.json is not generated")
+        db = json.loads(database.read_text())
+        by_name = db["indexes"]["by_name"]
+        short = []
+        for emu, profile in load_emulator_profiles(str(REPO_ROOT / "emulators")).items():
+            entries = [f for f in profile.get("files") or [] if not f.get("unsourceable")]
+            for archive in sorted({f["archive"] for f in entries if f.get("archive")}):
+                required = {
+                    m["crc32"] for m in archive_members(archive, entries) if m["required"]
+                }
+                copies = [
+                    REPO_ROOT / db["files"][sha1]["path"]
+                    for sha1 in by_name.get(archive, []) if sha1 in db["files"]
+                ]
+                if required and copies and not any(
+                    required <= zip_member_crcs(str(path)) for path in copies
+                ):
+                    short.append(f"{emu}: {archive}")
+        self.assertEqual(short, [])
+
     def test_verify_and_the_pack_read_one_entry(self):
         for module in ("verify.py", "generate_pack.py"):
             source = (REPO_ROOT / "scripts" / module).read_text()

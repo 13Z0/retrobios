@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-16T16:55:49Z",
-  "total_files": 19005,
-  "total_size": 17497729510,
+  "generated_at": "2026-10-16T17:23:53Z",
+  "total_files": 19006,
+  "total_size": 17497733066,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -2310,6 +2310,16 @@
       "sha256": "7eb6e948f095d669f4bcdd22dbb58f6e3da4f3cca5ffe92ea42ebca8396cadac",
       "crc32": "047aad03",
       "adler32": "e48aaf79"
+    },
+    "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83": {
+      "path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
+      "name": "nmk004.zip",
+      "size": 3556,
+      "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+      "md5": "f70b65623a99abd278f88707c3700b32",
+      "sha256": "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a",
+      "crc32": "5bacc201",
+      "adler32": "25c7b216"
     },
     "0783012b4eabca599e460988257ec37500501df6": {
       "path": "bios/Arcade/Arcade/.variants/pgm.zip.0783012b",
@@ -195448,6 +195458,7 @@
       "62d56b126e78f3d82faa4ee8a92c3e82": "4f28af31ca0defdd73d80edec2fa296908e624dc",
       "ba20a7be3cd2933d1982dc5d51a60fbd": "985d935c06fe278ce39d7690aa6c53df88954cd6",
       "9d7bbba34fa2e2e1a400b45f4c4d1410": "420194cc1171adb1920d2ff05e3b7b9ae2b73942",
+      "f70b65623a99abd278f88707c3700b32": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
       "68ef99a1f2847d08ff9242a90561d31b": "0783012b4eabca599e460988257ec37500501df6",
       "653e991a39e867354d090c3394157d1c": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
       "931a4971dc4f34554838e7761afbbff7": "74c1d76155ca9cdd660d0e82f6a1b4df330420e7",
@@ -214904,6 +214915,11 @@
         "fc398ab4e13ca6bfef3366ed3391b1050e0eb5e8",
         "df89ef91bbaf84f2a109377fd4b17b0050a163e8"
       ],
+      "nmk004.zip": [
+        "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+        "489256f5e2001070d2ad94c90d255282c71ed274",
+        "5ec203ff242f404f334a554282faaa262aaf076e"
+      ],
       "pgm.zip": [
         "0783012b4eabca599e460988257ec37500501df6",
         "6bbbce094422062bd178d6007bed06dcdd0d8b78",
@@ -216503,10 +216519,6 @@
       ],
       "nichidvd.zip": [
         "b3ac40491e08639f3cb7a926ec0de36f67b1c6ac"
-      ],
-      "nmk004.zip": [
-        "489256f5e2001070d2ad94c90d255282c71ed274",
-        "5ec203ff242f404f334a554282faaa262aaf076e"
       ],
       "nss.zip": [
         "68b780f40623e51a421faf374ae5a84a53a81279",
@@ -271272,6 +271284,7 @@
       "6fc3e0de": "4f28af31ca0defdd73d80edec2fa296908e624dc",
       "d2dccaa6": "985d935c06fe278ce39d7690aa6c53df88954cd6",
       "047aad03": "420194cc1171adb1920d2ff05e3b7b9ae2b73942",
+      "5bacc201": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
       "713d6657": "0783012b4eabca599e460988257ec37500501df6",
       "fefb84f1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
       "deade381": "74c1d76155ca9cdd660d0e82f6a1b4df330420e7",
@@ -290279,6 +290292,7 @@
       "6aa507a5dc33c45d2592bf2bc77eb3e497762221ddd9225f18583a5c55d38667": "4f28af31ca0defdd73d80edec2fa296908e624dc",
       "4919ba2a7650b24d1bf2c9107c89a80d93b50703a0a371fa5113c791bd03e114": "985d935c06fe278ce39d7690aa6c53df88954cd6",
       "7eb6e948f095d669f4bcdd22dbb58f6e3da4f3cca5ffe92ea42ebca8396cadac": "420194cc1171adb1920d2ff05e3b7b9ae2b73942",
+      "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
       "8196ecd9f7bdecf3dc4b79ec19a898fba65475a5db3ee39888719155a40346bc": "0783012b4eabca599e460988257ec37500501df6",
       "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
       "118eff18337f439ed5f8fb90098c8ea92c9bf7fbb09b0d6f776842af4b58e4f9": "74c1d76155ca9cdd660d0e82f6a1b4df330420e7",
@@ -310557,6 +310571,15 @@
       ],
       ".variants/neogeo.zip.9d7bbba3": [
         "420194cc1171adb1920d2ff05e3b7b9ae2b73942"
+      ],
+      "Arcade/Arcade/.variants/nmk004.zip.f70b6562": [
+        "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83"
+      ],
+      "Arcade/.variants/nmk004.zip.f70b6562": [
+        "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83"
+      ],
+      ".variants/nmk004.zip.f70b6562": [
+        "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83"
       ],
       "Arcade/Arcade/.variants/pgm.zip.0783012b": [
         "0783012b4eabca599e460988257ec37500501df6"

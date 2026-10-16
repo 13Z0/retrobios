@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-16T16:55:49Z",
+  "generated": "2026-10-16T17:23:53Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -135896,10 +135896,10 @@
     },
     {
       "dest": "nmk004.zip",
-      "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
-      "sha256": "6ca3142ebe127f5d2cb755c53740a92d9bf1574bde8daa32642de2991af89aaa",
+      "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+      "sha256": "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a",
       "size": 3556,
-      "repo_path": "bios/Arcade/Arcade/nmk004.zip",
+      "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
       "cores": [
         "fbneo"
       ]
@@ -137183,10 +137183,10 @@
     },
     {
       "dest": "fbneo/nmk004.zip",
-      "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
-      "sha256": "6ca3142ebe127f5d2cb755c53740a92d9bf1574bde8daa32642de2991af89aaa",
+      "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
+      "sha256": "13d503ea6c7e7b9a2249837cf915bff6df862b7035f5c99b18240088ec10854a",
       "size": 3556,
-      "repo_path": "bios/Arcade/Arcade/nmk004.zip",
+      "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
       "cores": [
         "fbneo"
       ]
