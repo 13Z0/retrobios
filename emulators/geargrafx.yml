@@ -82,9 +82,10 @@ notes: |
 files:
   - name: "syscard3.pce"
     description: "Super CD-ROM System Card 3.0"
-    size: 262144
+    size: [262144, 262656]
     required: true
-    validation: [size, crc32]
+    crc32: ["6d9a73ef", "0ecea1f3", "2b5b75fe"]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:714, platforms/libretro/libretro.cpp:726-731, platforms/libretro/libretro.cpp:736-746, src/media.cpp:662-705, src/defines.h:53, src/game_db.h:51-52, src/game_db.h:54"
     note: >
       Loaded for the default option value System Card 3 and for Force Game
@@ -95,9 +96,10 @@ files:
 
   - name: "syscard2.pce"
     description: "CD-ROM System Card 2.0 / 2.1"
-    size: 262144
+    size: [262144, 262656]
     required: false
-    validation: [size, crc32]
+    crc32: ["52520bc6", "283b74e0", "ff2a5ec3"]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:713, platforms/libretro/libretro.cpp:723-724, src/media.cpp:662-705, src/defines.h:53, src/game_db.h:49-50, src/game_db.h:53"
     note: >
       Loaded when geargrafx_cdrom_bios is System Card 2. game_db.h accepts
@@ -106,18 +108,19 @@ files:
 
   - name: "syscard1.pce"
     description: "CD-ROM System Card 1.0 (Japan)"
-    size: 262144
+    size: [262144, 262656]
     crc32: "3F9F95A4"
     required: false
-    validation: [size, crc32]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:712, platforms/libretro/libretro.cpp:720-721, src/media.cpp:662-705, src/defines.h:53, src/game_db.h:48"
     note: "Loaded when geargrafx_cdrom_bios is System Card 1."
 
   - name: "gexpress.pce"
     description: "Games Express CD Card"
-    size: 32768
+    size: [32768, 33280]
     required: false
-    validation: [size, crc32]
+    crc32: ["51a12d90", "16aaf05a"]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:715, platforms/libretro/libretro.cpp:748-749, src/media.cpp:662-705, src/media.cpp:821-823, src/media.cpp:835-839, src/media.cpp:993-997, src/defines.h:54, src/game_db.h:55-56"
     note: >
       Always attempted after the System Card, used for discs flagged
@@ -130,11 +133,11 @@ files:
 
   - name: "pac-n1.bin"
     description: "LaserActive NEC PAC-N1 v1.02 (Japan)"
-    size: 524288
+    size: [524288, 524800]
     crc32: "A8CB694C"
     region: [japan]
     required: true
-    validation: [size, crc32]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:780-784, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
     note: >
       Japanese PAC firmware, read for MMI content when
@@ -143,21 +146,21 @@ files:
 
   - name: "pce-lp1.bin"
     description: "LaserActive NEC PCE-LP1 v1.02 (Japan)"
-    size: 524288
+    size: [524288, 524800]
     crc32: "76116A02"
     region: [japan]
     required: false
-    validation: [size, crc32]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:785-789, src/media.cpp:570-632, src/defines.h:55"
     note: "Read only when pac-n1.bin did not load."
 
   - name: "pac-n10.bin"
     description: "LaserActive NEC PAC-N10 v1.02 (US)"
-    size: 524288
+    size: [524288, 524800]
     crc32: "01223DD5"
     region: [north-america]
     required: true
-    validation: [size, crc32]
+    validation: [size]
     source_ref: "platforms/libretro/libretro.cpp:792-796, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
     note: >
       US PAC firmware, read for MMI content when

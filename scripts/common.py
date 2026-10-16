@@ -666,12 +666,13 @@ def resolve_local_file(
     ]
     # One value, a list, or a comma-separated string, like the other hashes.
     crc_values = file_entry.get("crc32") or []
-    crc_candidates = {
+    # Kept in the order declared, which is the order a lookup tries them.
+    crc_candidates = dict.fromkeys(
         candidate.strip().lower().removeprefix("0x")
         for value in (crc_values if isinstance(crc_values, list) else [crc_values])
         for candidate in str(value).split(",")
         if candidate.strip()
-    }
+    )
     declared_size = file_entry.get("size")
     has_strong_hash = bool(
         sha1_candidates or sha256_candidates or md5_list or crc_candidates
@@ -744,14 +745,20 @@ def resolve_local_file(
         and not sha256_candidates
     ):
         by_crc32 = db.get("indexes", {}).get("by_crc32", {})
-        for crc in sorted(crc_candidates):
+        found: list[tuple[str, str]] = []
+        for crc in crc_candidates:
             match = by_crc32.get(crc)
             if match and match in files_db:
-                entry = files_db[match]
-                path = entry["path"]
+                path = files_db[match]["path"]
                 status = _record_match_status(match)
                 if status and os.path.exists(path):
-                    return path, status
+                    found.append((path, status))
+        # A primary copy over a .variants/ one, as everywhere else.
+        for path, status in found:
+            if "/.variants/" not in path:
+                return path, status
+        if found:
+            return found[0]
 
     # 2. MD5 direct lookup (skip for zipped_file: md5 is inner ROM, not container)
     # Guard: only accept if the found file's name matches the requested name
@@ -986,7 +993,7 @@ def resolve_local_file(
             sha1_candidates=sha1_candidates,
             sha256_candidates=sha256_candidates,
             md5_list=md5_list,
-            crc_candidates=crc_candidates,
+            crc_candidates=set(crc_candidates),
             zipped_file=zipped_file,
             declared_size=declared_size,
         )

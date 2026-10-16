@@ -246,5 +246,34 @@ class OneSpellingForAcceptedSizes(unittest.TestCase):
         self.assertEqual(file_entry["size"]["type"], ["integer", "array", "null"])
 
 
+class SeveralAcceptedCrc32(unittest.TestCase):
+    """A profile can list every CRC32 its code accepts (geargrafx's System
+    Card 3 table holds the Japanese card, a font hack and the US card).
+    Walking them in sorted order served the font hack, held in .variants/,
+    in place of the primary Japanese card."""
+
+    def test_declared_order_and_the_primary_first(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            primary = Path(tmp) / "syscard3.pce"
+            variant = Path(tmp) / ".variants" / "syscard3.pce.f82f5056"
+            variant.parent.mkdir()
+            primary.write_bytes(b"japan")
+            variant.write_bytes(b"hack")
+            crc = {p: format(zlib.crc32(p.read_bytes()), "08x") for p in (primary, variant)}
+            db = {
+                "files": {
+                    "s1": {"path": str(primary), "name": primary.name, "crc32": crc[primary], "size": 5},
+                    "s2": {"path": str(variant), "name": primary.name, "crc32": crc[variant], "size": 4},
+                },
+                "indexes": {"by_crc32": {crc[primary]: "s1", crc[variant]: "s2"},
+                            "by_name": {primary.name: ["s1", "s2"]}},
+            }
+            hack_first = sorted([crc[variant], crc[primary]])
+            entry = {"name": "syscard3.pce", "crc32": hack_first}
+            self.assertEqual(
+                common.resolve_local_file(entry, db), (str(primary), "crc32_exact")
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

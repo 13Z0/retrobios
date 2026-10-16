@@ -263,5 +263,20 @@ class GambatteBootRoms(_Probe):
                 self.assertTrue(self.accepts("gambatte", name, b"\0" * (size + 512)))
 
 
+class GeargrafxCards(_Probe):
+    """LoadBiosData strips a 512-byte header and refuses any other size; the
+    CRC32 only names the card in the log, and an unknown LaserActive CRC32
+    is logged and loaded (src/media.cpp:570-632, 662-705, 1028-1063 at
+    d0307bf). The profiles declared crc32 checks with no value."""
+
+    def test_size_decides_and_an_unknown_card_loads(self):
+        for name, size in (("syscard3.pce", 262144), ("gexpress.pce", 32768),
+                           ("pac-n10.bin", 524288)):
+            with self.subTest(name=name):
+                self.assertTrue(self.accepts("geargrafx", name, b"\1" * size, strict=True))
+                self.assertTrue(self.accepts("geargrafx", name, b"\1" * (size + 512)))
+                self.assertFalse(self.accepts("geargrafx", name, b"\1" * (size - 1)))
+
+
 if __name__ == "__main__":
     unittest.main()
