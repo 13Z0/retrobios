@@ -198,6 +198,7 @@ def _contents_disagree(a: dict, b: dict) -> bool:
 
 def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
     """Add one core's declaration to the entry that already stands for it."""
+    revision = emu_name in existing.get("_cores", ())
     existing["_cores"] = existing.get("_cores", set()) | {emu_name}
     sr = file_entry.get("source_ref")
     if sr is not None:
@@ -210,7 +211,7 @@ def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
         # Which cores need it: `required` above is the union, true when
         # any core needs it, and a package of one core must not read it.
         existing["_required_by"] = existing.get("_required_by", set()) | {emu_name}
-    _merge_hashes(existing, file_entry, emu_name)
+    _merge_hashes(existing, file_entry, emu_name, revision)
     # Merge non-hash data fields if existing lacks them.
     # A core that creates an entry without size/path/validation may be
     # enriched by a sibling core that has those fields.
@@ -220,7 +221,15 @@ def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
     _merge_priority(existing, file_entry.get("priority"))
 
 
-def _merge_hashes(existing: dict, file_entry: dict, emu_name: str) -> None:
+def _merge_hashes(
+    existing: dict, file_entry: dict, emu_name: str, revision: bool = False
+) -> None:
+    """Fold one declaration's hashes into the entry.
+
+    A core that lists several revisions under one name accepts each of them
+    (dosbox's MT-32 control ROMs, raze's GRP versions): ``revision`` keeps
+    the union. Two cores that disagree keep the first value and are reported.
+    """
     for h in _HASH_FIELDS:
         theirs = file_entry.get(h, "")
         ours = existing.get(h, "")
@@ -229,9 +238,14 @@ def _merge_hashes(existing: dict, file_entry: dict, emu_name: str) -> None:
         if not ours:
             existing[h] = theirs
             continue
-        # Normalize to sets for multi-hash comparison
         t_list = theirs if isinstance(theirs, list) else [theirs]
         o_list = ours if isinstance(ours, list) else [ours]
+        if revision:
+            known = {str(v).lower() for v in o_list}
+            added = [v for v in t_list if str(v).lower() not in known]
+            if added:
+                existing[h] = [*o_list, *added]
+            continue
         if not {str(v).lower() for v in t_list} & {str(v).lower() for v in o_list}:
             print(
                 f"WARNING: hash conflict for {file_entry['name']} "
@@ -618,7 +632,13 @@ def _pair_rank(truth_entry: dict, scraped_entry: dict) -> tuple[bool, bool, bool
 
 
 def _hash_mismatch(t_entry: dict, s_entry: dict) -> dict | None:
-    """The first hash both sides declare without a value in common."""
+    """The first hash both sides declare without a value in common.
+
+    A value shared on any field settles it: the truth holds every revision a
+    core accepts, and a profile may give one revision's sha1 without its md5.
+    """
+    if _hash_set(t_entry) & _hash_set(s_entry):
+        return None
     for h in ("sha1", "md5", "crc32"):
         t_hash = t_entry.get(h, "")
         s_hash = s_entry.get(h, "")

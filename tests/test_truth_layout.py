@@ -131,5 +131,47 @@ class AnUnattributedEntryIsNotGuessed(unittest.TestCase):
             ["apple2gs.rom", "zx81.rom"],
         )
 
+
+class EveryRevisionACoreAcceptsStays(unittest.TestCase):
+    """dosbox lists each MT-32 control ROM it accepts under one name. The
+    truth kept the first sha1 and dropped the others, so a frontend holding
+    1.07 read as a mismatch against a core that loads it."""
+
+    def truth(self, profiles):
+        config = {"cores": list(profiles), "systems": {}}
+        return generate_platform_truth("p", config, {}, profiles)
+
+    @staticmethod
+    def entry(name, sha1):
+        return {"name": name, "system": "dos", "sha1": sha1}
+
+    def test_one_core_keeps_the_union(self):
+        profile = {"emulator": "DOSBox", "type": "libretro", "systems": ["dos"],
+                   "files": [self.entry("MT32_CONTROL.ROM", "a" * 40),
+                             self.entry("MT32_CONTROL.ROM", "b" * 40)]}
+        files = self.truth({"dosbox": profile})["systems"]["dos"]["files"]
+        self.assertEqual([f["sha1"] for f in files], [["a" * 40, "b" * 40]])
+
+    def test_two_cores_that_disagree_keep_the_first(self):
+        first = {"emulator": "A", "type": "libretro", "systems": ["dos"],
+                 "files": [self.entry("x.rom", "a" * 40)]}
+        second = {"emulator": "B", "type": "libretro", "systems": ["dos"],
+                  "files": [{**self.entry("x.rom", "b" * 40), "path": "x.rom"}]}
+        files = self.truth({"a": first, "b": second})["systems"]["dos"]["files"]
+        self.assertEqual([f["sha1"] for f in files], ["a" * 40])
+
+    def test_a_revision_known_by_one_hash_is_no_mismatch(self):
+        """1.04 carries md5 and sha1, 1.07 only its sha1: a platform entry
+        giving 1.07's sha1 and md5 is that revision, not a mismatch."""
+        from truth import _hash_mismatch
+
+        truth = {"name": "MT32_CONTROL.ROM", "md5": "c" * 32, "sha1": ["a" * 40, "b" * 40]}
+        scraped = {"name": "MT32_CONTROL.ROM", "md5": "d" * 32, "sha1": "b" * 40}
+        self.assertIsNone(_hash_mismatch(truth, scraped))
+        self.assertEqual(
+            _hash_mismatch(truth, {**scraped, "sha1": "e" * 40})["hash_type"], "sha1"
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
