@@ -1734,9 +1734,35 @@ class ReleaseAssetsMatchTheCollection(unittest.TestCase):
         self.assertEqual(findings, [("notes", "release description", 0, None)])
 
     def test_pipeline_runs_the_check_online_and_marks_it_skipped_offline(self):
-        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
-        self.assertIn("check_release_assets.py", source)
-        self.assertIn('results["check_release_assets"] = SKIPPED', source)
+        """Run with each step recorded instead of executed: reading the
+        source for two strings stayed green with the guard inverted."""
+        import contextlib
+        import io
+        from unittest import mock
+
+        from scripts import pipeline
+
+        def steps(*flags: str) -> list[str]:
+            ran: list[str] = []
+
+            def record(cmd, label):
+                ran.append(label)
+                return True, ""
+
+            argv = ["pipeline.py", "--skip-packs", "--skip-docs", *flags]
+            with mock.patch.object(pipeline, "run", record), \
+                    mock.patch.object(sys, "argv", argv), \
+                    contextlib.redirect_stdout(io.StringIO()) as out, \
+                    self.assertRaises(SystemExit) as done:
+                pipeline.main()
+            self.assertEqual(done.exception.code, 0)
+            return ran, out.getvalue()
+
+        online, _ = steps()
+        self.assertIn("2b2 check release assets", online)
+        offline, printed = steps("--offline")
+        self.assertNotIn("2b2 check release assets", offline)
+        self.assertIn("check_release_assets.................... SKIPPED", printed)
 
 
 class PreservedBytesAreNeverNormalised(unittest.TestCase):
