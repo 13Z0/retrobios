@@ -9,6 +9,7 @@ from __future__ import annotations
 import sys
 
 from common import _norm_system_id, resolve_platform_cores, runs_standalone
+from hashing import parse_md5_list
 from validation import filter_files_by_mode, read_from_system_dir
 
 
@@ -535,6 +536,17 @@ def generate_platform_truth(
 # Platform truth diffing
 
 
+def _hash_values(entry: dict, field: str) -> set[str]:
+    """The values a diffed entry declares for a hash field.
+
+    A profile writes a list, a platform YAML one comma-separated string
+    (Recalbox's multi-hash): both are read the way the exporter reads them.
+    A number is a hash YAML coerced and no longer spells: it is ignored.
+    """
+    raw = entry.get(field)
+    return set(parse_md5_list(raw)) if isinstance(raw, (str, list)) else set()
+
+
 def _match_renames(
     unmatched_truth: list[dict], unmatched_scraped: dict
 ) -> tuple[set[int], set]:
@@ -560,31 +572,29 @@ def _match_renames(
         truth_hash_index: dict[str, int] = {}
         for position, fe in enumerate(unmatched_truth):
             for h in ("sha1", "md5", "crc32"):
-                val = fe.get(h)
-                if val and isinstance(val, str):
-                    truth_hash_index[val.lower()] = position
+                for val in _hash_values(fe, h):
+                    truth_hash_index[val] = position
 
         for s_key, s_entry in unmatched_scraped.items():
-            for h in ("sha1", "md5", "crc32"):
-                s_val = s_entry.get(h)
-                if not s_val or not isinstance(s_val, str):
-                    continue
-                position = truth_hash_index.get(s_val.lower())
-                if position is not None:
-                    # Rename detected. Count as matched
-                    rename_matched_truth.add(position)
-                    rename_matched_scraped.add(s_key)
-                    break
+            position = next(
+                (
+                    truth_hash_index[val]
+                    for h in ("sha1", "md5", "crc32")
+                    for val in sorted(_hash_values(s_entry, h))
+                    if val in truth_hash_index
+                ),
+                None,
+            )
+            if position is not None:
+                # Rename detected. Count as matched
+                rename_matched_truth.add(position)
+                rename_matched_scraped.add(s_key)
 
     return rename_matched_truth, rename_matched_scraped
 
 
 def _hash_set(entry: dict) -> set[str]:
-    values: set[str] = set()
-    for h in ("sha1", "md5", "crc32"):
-        value = entry.get(h) or []
-        values.update(str(v).lower() for v in (value if isinstance(value, list) else [value]))
-    return values
+    return {value for h in ("sha1", "md5", "crc32") for value in _hash_values(entry, h)}
 
 
 def _path_tail(value: object) -> str:
@@ -612,12 +622,8 @@ def _hash_mismatch(t_entry: dict, s_entry: dict) -> dict | None:
     for h in ("sha1", "md5", "crc32"):
         t_hash = t_entry.get(h, "")
         s_hash = s_entry.get(h, "")
-        if not t_hash or not s_hash:
-            continue
-        # Normalize to list for multi-hash support
-        t_list = t_hash if isinstance(t_hash, list) else [t_hash]
-        s_list = s_hash if isinstance(s_hash, list) else [s_hash]
-        if not {v.lower() for v in t_list} & {v.lower() for v in s_list}:
+        t_values, s_values = _hash_values(t_entry, h), _hash_values(s_entry, h)
+        if t_values and s_values and not t_values & s_values:
             return {
                 "name": s_entry["name"],
                 "hash_type": h,

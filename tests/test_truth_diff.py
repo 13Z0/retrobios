@@ -203,6 +203,28 @@ class RenameMatching(unittest.TestCase):
 
 
 
+class PlatformMultiHash(unittest.TestCase):
+    """Recalbox and RetroDECK write accepted md5s as one comma string.
+
+    Read as one value, scph1001.bin was a mismatch the export (which splits
+    them) never corrected: diff_truth reported 15 for Recalbox, 9 for
+    RetroDECK, against the 4 and 3 the content supports.
+    """
+
+    TRUTH = "924e392ed05558ffdb115408c263dccf"
+    SCRAPED = "dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf"
+
+    def test_a_shared_value_is_no_mismatch(self):
+        truth = {"files": [{"name": "scph1001.bin", "md5": self.TRUTH}]}
+        scraped = {"files": [{"name": "scph1001.bin", "md5": self.SCRAPED}]}
+        self.assertEqual(_diff_system(truth, scraped), {})
+
+    def test_a_rename_is_found_through_the_list(self):
+        truth = [_entry("scph1001.bin", md5=self.TRUTH)]
+        scraped = {"psx.bin": _entry("psx.bin", md5=self.SCRAPED)}
+        self.assertEqual(_match_renames(truth, scraped), ({0}, {"psx.bin"}))
+
+
 class OnlySystemDirectoryEntries(unittest.TestCase):
     """The truth kept files read from the save, content or working directory:
     diff_truth listed Cemu's mlc01 certificates, panda3ds's seeddb.bin and
