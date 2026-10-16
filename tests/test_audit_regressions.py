@@ -2168,7 +2168,10 @@ class HashMergeBackupsAreNotSources(unittest.TestCase):
 
     def test_the_validator_skips_a_backup(self):
         sys.path.insert(0, str(ROOT / "scripts"))
-        from validate_schemas import _validate_yaml_directory
+        try:
+            from validate_schemas import _validate_yaml_directory
+        except ImportError as exc:
+            self.skipTest(f"validate_schemas needs jsonschema: {exc}")
 
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
             (Path(directory) / "mame.old.yml").write_text("emulator: [\n")
