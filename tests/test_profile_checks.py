@@ -88,5 +88,16 @@ class BeebEmSidewaysRoms(_Probe):
         self.assertFalse(self.accepts("beebem", "BASIC2.rom", b"\0" * 200000))
 
 
+class BeetleLynxBootRom(_Probe):
+    """CRom drops a boot ROM under 512 bytes and keeps the 0x88 fill, so no
+    game boots; a longer one is read for its first 512 bytes
+    (mednafen/lynx/rom.cpp:61-75 at fcdefcf)."""
+
+    def test_short_is_refused_and_longer_is_read(self):
+        self.assertFalse(self.accepts("beetle_lynx", "lynxboot.img", b"\0" * 256))
+        self.assertTrue(self.accepts("beetle_lynx", "lynxboot.img", b"\0" * 512))
+        self.assertTrue(self.accepts("beetle_lynx", "lynxboot.img", b"\0" * 1024))
+
+
 if __name__ == "__main__":
     unittest.main()
