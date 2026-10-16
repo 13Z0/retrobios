@@ -40,7 +40,7 @@ files:
     size: 2048
     md5: 281f20ea4320404ec820fb7ec0693b38
     aliases: [atari5200.rom, atar5200.rom, 5200.bin, atari_5200.rom]
-    validation: [crc32]
+    validation: [size]
     note: >
       Atari 5200 BIOS (original). Mapped at $F800-$FFFF.
       Altirra 5200 OS is used when this file is absent.
@@ -60,7 +60,7 @@ files:
     size: 8192
     md5: 0bac0c6a50104045d902df4503a4c30b
     aliases: [ataribasic.rom, basic.rom, atari_basic.rom]
-    validation: [crc32]
+    validation: [size]
     note: >
       Atari BASIC Rev C. Required for 400/800 software that needs BASIC.
       Altirra BASIC is used as fallback. Enable via core option atari800_opt2.
@@ -78,7 +78,7 @@ files:
     size: 10240
     md5: eb1f32f5d9f382db1bbfb8d7f9cb343a
     aliases: [atari_osa.rom, atari_os_a.rom]
-    validation: [crc32]
+    validation: [size]
     note: >
       Atari 400/800 OS Rev A. Altirra OS 800 is used as fallback.
       Auto-select order: OS B NTSC, OS A NTSC, OS A PAL, custom, Altirra.
@@ -96,7 +96,7 @@ files:
     md5: 4177f386a3bac989a981d3fe3388cb6c
     crc32: 0e86d61d
     aliases: [atari_osb.rom, atari_os_b.rom]
-    validation: [crc32]
+    validation: [size]
     note: >
       Atari 400/800 OS Rev B (NTSC). CRC32 0x0e86d61d matches sysrom.c
       SYSROM_B_NTSC. Preferred over Rev A for 400/800 mode.
@@ -120,7 +120,7 @@ files:
     size: 16384
     md5: 06daac977823773a3eea3422fd26a703
     aliases: [atarixlxe.rom, atari_xlxe.rom, atari_xl_xe.rom]
-    validation: [crc32]
+    validation: [size]
     note: >
       Atari XL/XE OS. Used for 800XL, 130XE, and XEGS modes.
       Altirra XL OS is used as fallback.
@@ -136,7 +136,8 @@ files:
     hle_fallback: true
     size: 16384
     md5: b7a2a04677d34f069eeb643d5238bf86
-    validation: [crc32]
+    crc32: "1eaf4002"
+    validation: [size, crc32]
     note: >
       Atari XEGS OS Rev 4 (BB01R4). Preferred OS for XEGS machine mode.
     source_ref: "atari800/src/sysrom.c:100"
@@ -150,7 +151,8 @@ files:
     required: false
     size: 8192
     md5: d7eb37aec6960cba36bc500e0e5d00bc
-    validation: [crc32]
+    crc32: "bdca01fb"
+    validation: [size, crc32]
     note: >
       XEGS built-in Missile Command ROM. Only used in XEGS machine mode.
       No built-in replacement exists for this ROM.

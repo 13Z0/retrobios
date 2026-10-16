@@ -111,5 +111,26 @@ class BeetleGbaBios(_Probe):
                 self.assertFalse(self.accepts("beetle_gba", "gba_bios.bin", b"\0" * size))
 
 
+class Atari800SystemRoms(_Probe):
+    """SYSROM_FindInDir takes a file of an allowed length whose CRC32 is in
+    SYSROM_roms, else, by its lowercased name, any file of that length as a
+    custom ROM (atari800/src/sysrom.c:88-112, 281-315, 387-416 at 4e7fbc7).
+    BB01R4_OS.ROM and XEGAME.ROM are on no name list: only their CRC32 makes
+    them that ROM."""
+
+    def test_named_roms_need_only_the_length(self):
+        for name, size in (("ATARIOSA.ROM", 10240), ("ATARIOSB.ROM", 10240),
+                           ("ATARIXL.ROM", 16384), ("5200.rom", 2048),
+                           ("ATARIBAS.ROM", 8192)):
+            with self.subTest(name=name):
+                self.assertTrue(self.accepts("atari800", name, b"\1" * size))
+                self.assertFalse(self.accepts("atari800", name, b"\1" * (size + 1)))
+
+    def test_unlisted_names_need_their_crc(self):
+        for name, size in (("BB01R4_OS.ROM", 16384), ("XEGAME.ROM", 8192)):
+            with self.subTest(name=name):
+                self.assertFalse(self.accepts("atari800", name, b"\1" * size))
+
+
 if __name__ == "__main__":
     unittest.main()
