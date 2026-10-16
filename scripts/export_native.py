@@ -20,6 +20,7 @@ import json
 import sys
 import urllib.error
 import urllib.request
+from dataclasses import dataclass, field
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -27,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from artifacts import file_lock, write_bytes_atomic, write_text_atomic
 from common import list_registered_platforms, load_platform_config, yaml_load
 from exporter import discover_exporters
-from exporter.baseline import build_native_model
+from exporter.baseline import HASH_FIELDS, _hash_values, _single_size, build_native_model
 
 DEFAULT_CACHE = ".cache/upstream-native"
 SOURCES_INDEX = ".sources.json"
@@ -255,6 +256,65 @@ def refresh_cache(
     return True, [f"{len(wanted)} file(s) fetched"]
 
 
+@dataclass
+class LandedChanges:
+    """What an export changed in the platform's file, field by field."""
+
+    applied: list[str] = field(default_factory=list)
+    filled: list[str] = field(default_factory=list)
+    resized: list[str] = field(default_factory=list)
+    cleared: list[str] = field(default_factory=list)
+    requirements: int = 0
+
+
+def landed_changes(exporter: object, systems: dict) -> LandedChanges:
+    """The changes the written file carries.
+
+    Only what the format states: a correction to a field the file has no
+    place for, or one its render keeps out, is not a change the maintainer
+    will find in the diff, and counting it would announce work the export
+    did not do. A hash written where the platform left none changes the
+    check from existence to content, so it is counted too. The truth taking
+    over an entry also rewrites its size and drops the platform's hashes it
+    does not declare: both are in the diff.
+    """
+    changes = LandedChanges()
+    for system in systems.values():
+        for entry in system.files:
+            label = f"{entry.native_system}/{entry.name}"
+            for field_name in entry.corrections:
+                if not exporter.states(entry, field_name):
+                    continue
+                if field_name == "required":
+                    changes.requirements += 1
+                else:
+                    changes.applied.append(f"{label} {field_name}")
+            changes.filled.extend(
+                f"{label} {field_name}"
+                for field_name in entry.filled
+                if exporter.states(entry, field_name)
+            )
+            if entry.platform is None:
+                continue
+            theirs = entry.platform.get("size")
+            ours = entry.size()
+            if (
+                theirs
+                and ours
+                and _single_size(theirs) not in (None, ours)
+                and exporter.states(entry, "size")
+            ):
+                changes.resized.append(label)
+            changes.cleared.extend(
+                f"{label} {field_name}"
+                for field_name in HASH_FIELDS
+                if _hash_values(entry.platform, field_name)
+                and not entry.hashes(field_name)
+                and exporter.states(entry, field_name)
+            )
+    return changes
+
+
 def export_platform(
     platform: str,
     exporter_class: type,
@@ -302,28 +362,10 @@ def export_platform(
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
 
-    # Only what the format states: a correction to a field the file has no
-    # place for, or one its render keeps out, is not a change the maintainer
-    # will find in the diff, and counting it would announce work the export
-    # did not do. A hash written where the platform left none changes the
-    # check from existence to content, so it is counted too.
-    applied: list[str] = []
-    filled: list[str] = []
-    requirements = 0
-    for system in systems.values():
-        for entry in system.files:
-            for field_name in entry.corrections:
-                if not exporter.states(entry, field_name):
-                    continue
-                if field_name == "required":
-                    requirements += 1
-                else:
-                    applied.append(f"{entry.native_system}/{entry.name} {field_name}")
-            filled.extend(
-                f"{entry.native_system}/{entry.name} {field_name}"
-                for field_name in entry.filled
-                if exporter.states(entry, field_name)
-            )
+    changes = landed_changes(exporter, systems)
+    applied, filled = changes.applied, changes.filled
+    resized, cleared = changes.resized, changes.cleared
+    requirements = changes.requirements
 
     landed = 0
     refused = 0
@@ -349,6 +391,10 @@ def export_platform(
         )
         if filled:
             summary += f", {len(filled)} hashes filled"
+        if resized:
+            summary += f", {len(resized)} sizes corrected"
+        if cleared:
+            summary += f", {len(cleared)} hashes cleared"
         if refused:
             summary += f", {refused} the format cannot state"
         if lost:
@@ -362,6 +408,14 @@ def export_platform(
         messages.append(f"hash filled: {fill}")
     if len(filled) > 5:
         messages.append(f"and {len(filled) - 5} more hash fills")
+    for label in resized[:5]:
+        messages.append(f"size corrected: {label}")
+    if len(resized) > 5:
+        messages.append(f"and {len(resized) - 5} more size corrections")
+    for clear in cleared[:5]:
+        messages.append(f"hash cleared: {clear}")
+    if len(cleared) > 5:
+        messages.append(f"and {len(cleared) - 5} more hashes cleared")
 
     messages.extend(f"INVALID: {issue}" for issue in issues[:10])
     if len(issues) > 10:

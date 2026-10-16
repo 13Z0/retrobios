@@ -592,3 +592,34 @@ class BatoceraKeepsTheRunnerKeys(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SummaryCountsWhatTheTruthRewrites(unittest.TestCase):
+    """A size and a dropped hash are in the diff, so they are counted."""
+
+    def _entry(self):
+        # The sha1s contradict, so the truth describes the file alone: its
+        # size replaces the platform's and the platform's crc32 is dropped.
+        return NativeFile(
+            "neocdz.zip", "neocdz.zip", "neocd",
+            platform={"size": 953078, "crc32": "a034e470", "sha1": "2" * 40},
+            truth={"size": 955352, "sha1": "7" * 40},
+            corrections=["sha1"],
+        )
+
+    def test_a_format_with_the_fields_counts_them(self):
+        from export_native import landed_changes  # noqa: PLC0415
+
+        entry = self._entry()
+        changes = landed_changes(SystemDat(), {"neocd": NativeSystem("neocd", files=[entry])})
+        self.assertEqual(changes.resized, ["neocd/neocdz.zip"])
+        self.assertEqual(changes.cleared, ["neocd/neocdz.zip crc32"])
+        self.assertEqual(changes.applied, ["neocd/neocdz.zip sha1"])
+
+    def test_a_format_without_them_does_not(self):
+        from export_native import landed_changes  # noqa: PLC0415
+        from exporter.batocera_exporter import Exporter as Batocera  # noqa: PLC0415
+
+        entry = self._entry()
+        changes = landed_changes(Batocera(), {"neocd": NativeSystem("neocd", files=[entry])})
+        self.assertEqual((changes.resized, changes.cleared), ([], []))
