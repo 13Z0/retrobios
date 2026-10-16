@@ -378,31 +378,34 @@ files:
     description: "Happy 810 pre-v7 firmware, 4K original (serial $4490)"
     system: atari-400-800
     required: false
-    size: 4096
-    crc32: "942ec3d5"
-    validation: [size, crc32]
-    source_ref: "src/Altirra/source/uifirmware.cpp:528"
+    size: [4096, 8192]
+    validation: [size]
+    on_mismatch: warn
+    source_ref: "src/Altirra/source/uifirmware.cpp:528, src/Altirra/source/firmwaredetect.cpp:186-231"
 
   - name: happy-810-prev7-4k-nonoriginal.rom
     description: "Happy 810 pre-v7 firmware, 4K non-original (serial $1704)"
     system: atari-400-800
     required: false
-    size: 4096
-    crc32: "143b8538"
-    validation: [size, crc32]
-    source_ref: "src/Altirra/source/uifirmware.cpp:528"
+    size: [4096, 8192]
+    validation: [size]
+    on_mismatch: warn
+    source_ref: "src/Altirra/source/uifirmware.cpp:528, src/Altirra/source/firmwaredetect.cpp:186-231"
 
   - name: happy-810-prev7-3k.rom
     description: "Happy 810 pre-v7 firmware, functional 3K inside a 6K image (serial $4B9B)"
     note: >
       The image is 6144 bytes; Altirra identifies it by a checksum taken over
-      the functional 3K, which its firmware list reports as the size.
+      the functional 3K, which its firmware list reports as the size. The
+      checksum skips the hidden 1K of a 4K image and the 2-byte serial, so any
+      serial is recognised; a file it does not recognise can still be given
+      the Happy 810 type by hand.
     system: atari-400-800
     required: false
-    size: 6144
-    crc32: "f81b69cb"
-    validation: [size, crc32]
-    source_ref: "src/Altirra/source/uifirmware.cpp:528"
+    size: [3072, 6144]
+    validation: [size]
+    on_mismatch: warn
+    source_ref: "src/Altirra/source/uifirmware.cpp:528, src/Altirra/source/firmwaredetect.cpp:186-231"
 
   - name: happy-810-v7-6k-modified.rom
     description: "Happy 810 firmware (v7, 6K functional ROM, modified)"

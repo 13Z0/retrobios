@@ -315,5 +315,19 @@ class AppleIIgsRomSizes(_Probe):
                 self.assertFalse(self.accepts(emulator, "ROM", b"\0" * 65536))
 
 
+class AltirraHappy810(_Probe):
+    """ATFirmwareDetection recognises the pre-v7 Happy 810 ROM by its size
+    (3K, 4K or a doubled overdump) and a CRC32 that skips the hidden 1K and
+    the serial; the whole-file CRC32 the profile checked is never computed,
+    so a dump with another serial was refused (firmwaredetect.cpp:186-231 in
+    the 4.40 source)."""
+
+    def test_any_serial_passes_and_size_only_warns(self):
+        self.assertTrue(self.accepts("altirra", "happy-810-prev7-4k.rom", b"\5" * 4096, strict=True))
+        self.assertTrue(self.accepts("altirra", "happy-810-prev7-3k.rom", b"\5" * 3072, strict=True))
+        self.assertFalse(self.accepts("altirra", "happy-810-prev7-4k.rom", b"\5" * 5000, strict=True))
+        self.assertTrue(self.accepts("altirra", "happy-810-prev7-4k.rom", b"\5" * 5000))
+
+
 if __name__ == "__main__":
     unittest.main()
