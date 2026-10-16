@@ -181,28 +181,18 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
             if v_total != p_total:
                 print(f"  {v_label}: MISMATCH total verify {v_total} != pack {p_total}")
                 all_ok = False
-            elif p_ok + p_excluded < v_ok:
-                print(
-                    f"  {v_label}: MISMATCH pack accounts for "
-                    f"{p_ok} OK + {p_excluded} unsafe exclusions "
-                    f"< verify {v_ok} OK (/{v_total})"
-                )
-                all_ok = False
-            elif p_ok < v_ok:
-                print(
-                    f"  {v_label}: verify {v_ok}/{v_total} native; pack {p_ok} safe, "
-                    f"{p_excluded} unsafe excluded OK"
-                )
             elif p_ok == v_ok:
                 print(
                     f"  {v_label}: verify {v_ok}/{v_total} == pack {p_ok}/{p_total} OK"
                 )
             else:
-                # The invariant runs both ways: a builder more optimistic
-                # than the report ships files the report never vouched for.
+                # Both ways are a disagreement. A pack exclusion never covers
+                # a file verify counts OK: an existence platform ships a file
+                # whose hash disagrees, and a hash platform's verify reports
+                # it untested, so the counts can only differ by a defect.
                 print(
                     f"  {v_label}: MISMATCH pack {p_ok}/{p_total} OK "
-                    f"> verify {v_ok}/{v_total}"
+                    f"({p_excluded} unsafe excluded) != verify {v_ok}/{v_total}"
                 )
                 all_ok = False
         else:

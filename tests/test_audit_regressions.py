@@ -457,7 +457,10 @@ class PipelineRegressions(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertTrue(pipeline.check_consistency(verify, pack))
 
-    def test_native_existence_and_strict_pack_exclusions_are_consistent(self):
+    def test_an_exclusion_never_covers_a_file_verify_counts_ok(self):
+        """An existence platform packs a file whose hash disagrees and a hash
+        platform's verify reports it untested: exclusions that make up the
+        difference hid the very divergence this step exists to catch."""
         verify = "RetroArch: 3/3 present [existence]"
         pack = "\n".join(
             [
@@ -467,7 +470,7 @@ class PipelineRegressions(unittest.TestCase):
             ]
         )
         with contextlib.redirect_stdout(io.StringIO()):
-            self.assertTrue(pipeline.check_consistency(verify, pack))
+            self.assertFalse(pipeline.check_consistency(verify, pack))
         self.assertEqual(pipeline.parse_pack_exclusions(pack), {"RetroArch": 1})
 
     def test_unaccounted_pack_omission_is_a_consistency_failure(self):
