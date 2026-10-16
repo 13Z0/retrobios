@@ -66,33 +66,42 @@ class Exporter(BaseExporter):
         originals: dict[str, str],
         scraped: dict | None = None,
     ) -> dict[str, str]:
-        # Keep the platform's own key order when we have its file, so the
-        # diff a maintainer reads is the corrections and nothing else.
-        order: list[str] = []
+        # The platform's own file is the base: its key and entry order stay,
+        # so the diff a maintainer reads is the corrections and nothing else,
+        # and a system or file our transcription does not carry (RetroBat
+        # renamed ic10_g24lc64 after a scrape) is kept as RetroBat wrote it.
+        base: dict = {}
         original = originals.get(self.native_filename(), "")
         if original:
             try:
-                order = list(json.loads(original))
+                base = json.loads(original, object_pairs_hook=OrderedDict)
             except json.JSONDecodeError:
-                order = []
+                base = {}
 
         exportable = {
             system.native_id: (system, files)
             for system, files in self.exportable(systems, require="md5")
         }
-        keys = [k for k in order if k in exportable]
-        keys.extend(sorted(k for k in exportable if k not in keys))
+        keys = list(base)
+        keys.extend(sorted(k for k in exportable if k not in base))
 
         output: OrderedDict[str, object] = OrderedDict()
         for key in keys:
+            if key not in exportable:
+                output[key] = base[key]
+                continue
             system, files = exportable[key]
-            bios_files = []
+            ours: OrderedDict[str, OrderedDict[str, str]] = OrderedDict()
             for fe in files:
                 entry: OrderedDict[str, str] = OrderedDict()
                 entry["md5"] = self._md5(fe)
                 declared = fe.native("native_path", "")
                 entry["file"] = str(declared) if declared else f"bios/{fe.destination}"
-                bios_files.append(entry)
+                ours.setdefault(entry["file"], entry)
+            bios_files = []
+            for theirs in (base.get(key) or {}).get("biosFiles", []):
+                bios_files.append(ours.pop(theirs.get("file"), theirs))
+            bios_files.extend(ours.values())
             system_entry: OrderedDict[str, object] = OrderedDict()
             system_entry["name"] = self.display_name(system)
             system_entry["biosFiles"] = bios_files

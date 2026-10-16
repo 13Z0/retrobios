@@ -148,6 +148,39 @@ class HashesTheFormatCannotHold(unittest.TestCase):
         self.assertFalse(EmuDeck().states(unhashed, "md5"))
 
 
+class RetroBatKeepsWhatWeDoNotModel(unittest.TestCase):
+    """RetroBat renamed chihiro/ic10_g24lc64 to ic10_g24lc64.bin after our
+    scrape. The export was rebuilt from our model and read the original only
+    for its key order, so the renamed entry vanished from RetroBat's file,
+    and a system we do not carry would have vanished whole."""
+
+    def test_an_unmodelled_file_and_system_stay_as_written(self):
+        modelled = NativeFile(
+            "ic11_24lc024.bin", "chihiro/ic11_24lc024.bin", "chihiro",
+            platform={"md5": "", "native_path": "bios/chihiro/ic11_24lc024.bin"},
+            truth={"md5": A}, filled=["md5"],
+        )
+        systems = {"chihiro": NativeSystem("chihiro", files=[modelled])}
+        original = {
+            "chihiro": {"name": "Sega Chihiro", "biosFiles": [
+                {"md5": "", "file": "bios/chihiro/ic10_g24lc64.bin"},
+                {"md5": "", "file": "bios/chihiro/ic11_24lc024.bin"},
+            ]},
+            "newsys": {"name": "New", "biosFiles": [{"md5": B, "file": "bios/new.bin"}]},
+        }
+        from exporter.baseline import Report
+
+        produced = json.loads(RetroBat().render(
+            systems, Report(), {"batocera-systems.json": json.dumps(original)},
+        )["batocera-systems.json"])
+        self.assertEqual(list(produced), ["chihiro", "newsys"])
+        self.assertEqual(produced["newsys"], original["newsys"])
+        self.assertEqual(produced["chihiro"]["biosFiles"], [
+            {"md5": "", "file": "bios/chihiro/ic10_g24lc64.bin"},
+            {"md5": A, "file": "bios/chihiro/ic11_24lc024.bin"},
+        ])
+
+
 class EmuDeckWritesItsCorrections(unittest.TestCase):
     """A correction replaced nothing: every withdrawal was refused, the run
     counted the correction anyway and validate failed on it."""
