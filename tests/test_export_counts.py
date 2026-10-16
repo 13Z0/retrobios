@@ -590,10 +590,6 @@ class BatoceraKeepsTheRunnerKeys(unittest.TestCase):
         self.assertEqual(parsed["biosFiles"][0]["md5"], B)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class SummaryCountsWhatTheTruthRewrites(unittest.TestCase):
     """A size and a dropped hash are in the diff, so they are counted."""
 
@@ -623,3 +619,7 @@ class SummaryCountsWhatTheTruthRewrites(unittest.TestCase):
         entry = self._entry()
         changes = landed_changes(Batocera(), {"neocd": NativeSystem("neocd", files=[entry])})
         self.assertEqual((changes.resized, changes.cleared), ([], []))
+
+
+if __name__ == "__main__":
+    unittest.main()
