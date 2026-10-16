@@ -323,12 +323,16 @@ def fallback_groups(
     A world file, or one that declares no region at all, answers every
     region: the C64 kernal VICE loads by default is untagged, and a group
     holding it beside a Japanese and a Swedish kernal does have a BIOS for
-    North America.
+    North America. A file no system claims is a group of its own and keeps
+    nothing as a fallback: Dolphin's GC/EUR/IPL.bin named the GameCube as
+    lacking a North American BIOS the pack carries.
     """
     if not requested:
         return []
     out: list[str] = []
     for group_id, members in groups.items():
+        if ":file:" in group_id:
+            continue
         ranked = _competing_ranks(members, index, requested)
         served = any(
             not regions or WORLD in regions

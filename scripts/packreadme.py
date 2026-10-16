@@ -254,7 +254,7 @@ def _build_readme(
             "  Only the best-matching BIOS was kept for each system.\n"
         )
         if fallback_systems:
-            listed = "\n".join(f"    {s}" for s in fallback_systems)
+            listed = "\n".join(f"    {_group_label(s)}" for s in fallback_systems)
             region_info += (
                 "\n  These systems have no BIOS in those regions, so all\n"
                 "  of theirs were kept:\n"
@@ -324,3 +324,11 @@ def _build_agnostic_rename_readme(
         lines.append("")
         lines.append(f"To use a different variant, rename it to: {destination}")
     return "\n".join(lines) + "\n"
+
+
+def _group_label(group_id: str) -> str:
+    """A region group as a reader names it: the system, or one core's slot."""
+    emulator, kind, rest = (group_id.split(":", 2) + ["", ""])[:3]
+    if kind == "variant" and rest:
+        return f"{rest} ({emulator})"
+    return group_id

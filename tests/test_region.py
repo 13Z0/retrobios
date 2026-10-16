@@ -380,6 +380,22 @@ class TestFallbackGroups(unittest.TestCase):
         groups = {"fds": [("disksys.rom", "disksys.rom"), ("generic.rom", "generic.rom")]}
         self.assertEqual(region.fallback_groups(groups, self.index, ["north-america"]), [])
 
+    def test_a_file_no_system_claims_is_no_fallback(self):
+        """Dolphin's GC/EUR/IPL.bin, alone in its group, named the GameCube
+        in the pack README as lacking a North American BIOS it carries."""
+        groups = {"Dolphin:file:GC/EUR/IPL.bin": [("GC/EUR/IPL.bin", "IPL.bin")],
+                  "fds": [("disksys.rom", "disksys.rom")]}
+        self.assertEqual(
+            region.fallback_groups(groups, self.index, ["north-america"]), ["fds"]
+        )
+
+    def test_the_readme_names_a_slot_as_a_reader_does(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        from packreadme import _group_label
+
+        self.assertEqual(_group_label("PicoDrive:variant:megacd"), "megacd (PicoDrive)")
+        self.assertEqual(_group_label("sega-mega-cd"), "sega-mega-cd")
+
     def test_no_requested_regions_reports_nothing(self):
         groups = {"fds": [("disksys.rom", "disksys.rom")]}
         self.assertEqual(region.fallback_groups(groups, self.index, []), [])
