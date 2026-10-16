@@ -256,9 +256,9 @@
     }
   ],
   "total_files": 5869,
-  "total_size": 6161070712,
+  "total_size": 6160844731,
   "pack_files": 8512,
-  "pack_size": 6201603239,
+  "pack_size": 6201377258,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -9770,10 +9770,10 @@
     },
     {
       "dest": "neocdz.zip",
-      "sha1": "9cab31cfe7eacb6871d36cee105d87b90fd85b64",
-      "sha256": "d828241905d390c5de4867646296f615c95bca2f5d8f7e81d50e08717373a821",
-      "size": 1181333,
-      "repo_path": "bios/Arcade/Arcade/neocdz.zip",
+      "sha1": "712816a3c41baf4129e23d645305a536e03d69de",
+      "sha256": "f885f2cc79b5c0120ca316b0db360183c2b9a60bc727cbe211b7518e12bd5548",
+      "size": 955352,
+      "repo_path": "bios/SNK/Neo Geo CD/.variants/neocdz.zip.712816a3",
       "cores": null,
       "systems": [
         "snk-neogeo-cd"

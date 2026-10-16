@@ -348,6 +348,14 @@ def find_conflicts(
     # all acceptable at one destination, and the platform choosing one of them
     # is agreement, not contradiction. Only a destination where no profile
     # claim at all matches what ships is a disagreement.
+    # A platform claim resting on a bare name, or on a pin no local file
+    # matches, asserts nothing about content. Where the frontend never reads
+    # the bytes, a proven profile claim then decides: RetroArch's neocdz.zip
+    # pins an md5 nobody holds, and the primary shipped without the 000-lo.lo
+    # geolith and FBNeo read inside it.
+    path_only = not nativemode.reads_file_contents(
+        config.get("verification_mode", "existence")
+    )
     by_slot: dict[str, list[Claim]] = {}
     for claim in profile_claims(
         profiles, db, base_dest, standalone_cores, zip_contents, data_dir_registry,
@@ -355,7 +363,9 @@ def find_conflicts(
     ):
         key = _normalize(claim.destination, fold)
         platform = by_dest.get(key)
-        if platform is None or not platform.is_proven or not claim.is_proven:
+        if platform is None or not claim.is_proven:
+            continue
+        if not platform.is_proven and not (path_only and platform.local_path):
             continue
         by_slot.setdefault(key, []).append(claim)
 

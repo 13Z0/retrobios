@@ -703,6 +703,18 @@ class AnArchiveIsClaimedByItsMembers(unittest.TestCase):
         conflicts = slots.find_conflicts(config, self.profiles, self.db, "system")
         self.assertEqual([c.destination for c in conflicts], ["system/fbneo/neocdz.zip"])
 
+    def test_a_pin_nobody_holds_yields_where_only_the_path_is_checked(self):
+        """RetroArch's root neocdz.zip pins an md5 no local file has: the
+        name answered with the short copy, and no claim was ever compared."""
+        config = self._config("existence", "short")
+        config["systems"]["snk-neogeo-cd"]["files"][0].update(
+            destination="neocdz.zip", md5="f" * 32
+        )
+        overrides = slots.pack_overrides(config, self.profiles, self.db)
+        self.assertEqual(overrides, {"system/neocdz.zip": self.paths["full"][0]})
+        config["verification_mode"] = "md5"
+        self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])
+
     def test_a_pin_holding_the_members_is_agreement(self):
         config = self._config("md5", "full")
         self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])
