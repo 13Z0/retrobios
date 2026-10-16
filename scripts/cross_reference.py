@@ -32,7 +32,7 @@ from common import (
     resolve_local_file,
     runs_standalone,
 )
-from validation import outside_gap_scope
+from validation import declaration_settles, outside_gap_scope
 
 yaml = require_yaml()
 
@@ -70,23 +70,27 @@ def load_platform_files(
     return declared, platform_data_dirs
 
 
-def declared_names(platforms_dir: str, platforms: list[str] | None, db: dict) -> set[str]:
-    """Every name the platforms declare, under every spelling the database knows.
+def declared_names(
+    platforms_dir: str, platforms: list[str] | None, db: dict
+) -> dict[str, list[tuple[int | None, str]]]:
+    """Every name the platforms declare, with each declaration's size and slot.
 
     The report judged "undeclared" per normalized system id, which does not
     bring bk and elektronika-bk, or nintendo-sgb and nintendo-super-game-boy,
     together: 646 entries whose exact name a platform declares were counted
-    undeclared, while verify and the site read one flat set.
+    undeclared, while verify and the site read one flat index.
     """
-    from common import expand_platform_declared_names
+    from common import merged_platform_declarations
 
-    names: set[str] = set()
-    for platform_name in platforms or list_registered_platforms(
-        platforms_dir, include_archived=True
-    ):
-        config = load_platform_config(platform_name, platforms_dir)
-        names.update(expand_platform_declared_names(config, db))
-    return names
+    return merged_platform_declarations(
+        [
+            load_platform_config(platform_name, platforms_dir)
+            for platform_name in platforms or list_registered_platforms(
+                platforms_dir, include_archived=True
+            )
+        ],
+        db,
+    )
 
 
 def _build_supplemental_index(
@@ -405,10 +409,7 @@ def _cross_reference_profile(
         # Check platform declaration: by name, by an alias the core answers
         # to (RetroArch lists amiberry's cd32.rom as kick40060.CD32), or by
         # archive.
-        answers = {fname, *f.get("aliases", [])}
-        in_platform = bool(answers & platform_names)
-        if not in_platform and archive:
-            in_platform = archive in platform_names
+        in_platform = declaration_settles(f, fname, platform_names, effective_path)
 
         if in_platform:
             seen_files.add(seen_key)
@@ -506,7 +507,7 @@ def cross_reference(
     db: dict,
     platform_data_dirs: dict[str, set[str]] | None = None,
     data_names: set[str] | None = None,
-    all_declared: set[str] | None = None,
+    all_declared: dict[str, list[tuple[int | None, str]]] | None = None,
     standalone_cores: set[str] | None = None,
 ) -> dict:
     """Compare emulator profiles against platform declarations.
@@ -519,8 +520,8 @@ def cross_reference(
 
     The boolean ``in_repo`` is derived: ``source != "missing"``.
 
-    When *all_declared* is provided (flat set of every filename declared by
-    any platform for any system), it is used for the ``in_platform`` check
+    When *all_declared* is provided (every filename declared by any platform
+    for any system, with its sizes and slots), it is used for the ``in_platform`` check
     instead of the per-system lookup.  This is appropriate for the global
     gap analysis page where "undeclared" means "no platform declares it at all".
     """

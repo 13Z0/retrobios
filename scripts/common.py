@@ -1829,6 +1829,17 @@ def declared_root(config: dict) -> str:
     return root if count / len(roots) > 0.9 else ""
 
 
+def merged_platform_declarations(
+    configs: list[dict], db: dict
+) -> dict[str, list[tuple[int | None, str]]]:
+    """`platform_declarations` of several platforms, one index."""
+    merged: dict[str, list[tuple[int | None, str]]] = {}
+    for config in configs:
+        for name, places in platform_declarations(config, db).items():
+            merged.setdefault(name, []).extend(places)
+    return merged
+
+
 def expand_platform_declared_names(config: dict, db: dict) -> set[str]:
     """The names a platform declares, enriched as `platform_declarations`."""
     return set(platform_declarations(config, db))

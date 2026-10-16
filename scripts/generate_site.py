@@ -530,15 +530,17 @@ def build_emulator_gap_report(
     The gap analysis page and the published gaps export must not compute this
     twice and drift; both read this one report.
     """
-    from common import _norm_system_id, expand_platform_declared_names
+    from common import _norm_system_id, merged_platform_declarations
     from cross_reference import cross_reference as run_cross_reference
 
-    all_declared: set[str] = set()
+    # Enriched with alias resolution, with each declaration's size and slot:
+    # a name alone settled DOSBox's 32 KiB SC-55 ROM1.BIN on Galaksija's.
+    all_declared = merged_platform_declarations(
+        [cov["config"] for cov in coverages.values()], db
+    )
     declared: dict[str, set[str]] = {}
     for _name, cov in coverages.items():
         config = cov["config"]
-        # Enrich with alias resolution (MD5 -> SHA1 -> canonical name + aliases)
-        all_declared.update(expand_platform_declared_names(config, db))
         for sys_id, system in config.get("systems", {}).items():
             for fe in system.get("files", []):
                 fname = fe.get("name", "")

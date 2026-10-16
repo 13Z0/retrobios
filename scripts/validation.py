@@ -8,8 +8,9 @@ truth data for reporting.
 from __future__ import annotations
 
 import os
+from collections.abc import Mapping
 
-from common import compute_hashes, size_fits
+from common import compute_hashes, name_match_size_ok, sanitize_pack_path, size_fits
 from hashing import parse_md5_list
 from nativemode import digest_algorithm, hash_mismatch_excludes_file
 from ziptools import check_inside_zip
@@ -485,6 +486,54 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
     return not read_from_system_dir(file_entry, is_standalone) or bool(
         file_entry.get("agnostic")
     )
+
+
+def declaration_settles(
+    file_entry: dict,
+    fname: str,
+    declared_names: Mapping[str, list[tuple[int | None, str]]] | set[str],
+    dest: str = "",
+) -> bool:
+    """Whether a platform declaration meets a core's requirement.
+
+    A platform declaring the name the core reads has met the requirement
+    where the declaration fills the entry's own slot, whose content the slot
+    arbitration decides, or elsewhere at a size the core accepts: the builder
+    copies that file to the core's path. Galaksija's 4 KiB ROM1.BIN does not
+    stand for DOSBox's 32 KiB SC-55 one. The builder copies nothing for an
+    alias, so an alias answers only where the core reads it: quasi88 reads
+    n88sub.rom or disk.rom in quasi88/, and System.dat names quasi88/disk.rom.
+    RetroDECK's root MSX.ROM is not CLK's MSX/MSX.ROM, and RetroBat's 16 KiB
+    MSX DISK.ROM at the root is not the 256-byte Disk II ROM gsplus also
+    accepts as c600.rom. The archive answers by its name. A bare set of names
+    carries no slot or size and answers by name.
+
+    Read by verify and by the gap report, which settled on the name alone
+    and left DOSBox's SC-55 ROMs off the gaps page.
+    """
+    if file_entry.get("archive") in declared_names:
+        return True
+    slot = sanitize_pack_path(dest or fname).lower()
+    directory = slot if dest.endswith("/") else slot.rpartition("/")[0]
+    for name in (fname, *file_entry.get("aliases", [])):
+        if name not in declared_names:
+            continue
+        if not isinstance(declared_names, Mapping):
+            return True
+        if name == fname:
+            if any(
+                where == slot or name_match_size_ok(file_entry, size)
+                for size, where in declared_names[name]
+            ):
+                return True
+            continue
+        read_at = f"{directory}/{name}".lower() if directory else name.lower()
+        if any(
+            where == read_at and name_match_size_ok(file_entry, size)
+            for size, where in declared_names[name]
+        ):
+            return True
+    return False
 
 
 def filter_files_by_mode(files: list[dict], standalone: bool) -> list[dict]:
