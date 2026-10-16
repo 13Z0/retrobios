@@ -159,5 +159,21 @@ class A5200Bios(_Probe):
         self.assertTrue(self.accepts("a5200", "5200.rom", b"\0" * 4096))
 
 
+class BeetlePceSystemCards(_Probe):
+    """PCE_LoadCD hands the file to HuC_Load, which skips a 512-byte copier
+    header and checks no hash (mednafen/pce/pce.cpp:441-457,
+    mednafen/pce/huc.cpp:185-202 at b96c11e). The profile carried md5 and
+    sha1 values no code holds, and a headered card the core boots was
+    reported as a hash discrepancy."""
+
+    def test_a_headered_card_is_not_judged(self):
+        self.assertTrue(self.accepts("beetle_pce", "syscard3.pce", b"\0" * 262656))
+
+    def test_no_hash_the_code_does_not_hold(self):
+        for entry in _profile("beetle_pce")["files"]:
+            with self.subTest(name=entry["name"]):
+                self.assertFalse({"md5", "sha1", "crc32", "sha256"} & set(entry))
+
+
 if __name__ == "__main__":
     unittest.main()

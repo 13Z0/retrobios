@@ -24,48 +24,36 @@ files:
   - name: "syscard3.pce"
     description: "CD-ROM System Card 3.0 (Japan)"
     required: true
-    sha1: "79f5ff55dd10187c7fd7b8daab0b3ffbd1f56a2c"
-    md5: "38179df8f4ac870017db21ebcbf53114"
     source_ref: "libretro.cpp:1051-1052, mednafen/settings.cpp:40"
     note: "Default value for pce_cdbios option."
 
   - name: "syscard3u.pce"
     description: "CD-ROM System Card 3.0 (US / TurboGrafx-CD)"
     required: false
-    sha1: "d02611d99921986147c753df14c7349b31d71950"
-    md5: "0754f903b52e3b3342202bdafb13efa5"
     source_ref: "libretro.cpp:1059-1060"
     note: "pce_cdbios = 'System Card 3 US'"
 
   - name: "syscard2.pce"
     description: "CD-ROM System Card 2.0 (Japan)"
     required: false
-    sha1: "88da02e2503f7c32810f5d93a34849d470742b6d"
-    md5: "3cdd6614a918616bfc41c862e889dd79"
     source_ref: "libretro.cpp:1053-1054"
     note: "pce_cdbios = 'System Card 2'"
 
   - name: "syscard2u.pce"
     description: "CD-ROM System Card 2.0 (US / TurboGrafx-CD)"
     required: false
-    sha1: "2bea3dac98f84b2f2f469fa77ea720b8770d598d"
-    md5: "94279f315e8b52904f65ab3108542afe"
     source_ref: "libretro.cpp:1061-1062"
     note: "pce_cdbios = 'System Card 2 US'"
 
   - name: "syscard1.pce"
     description: "CD-ROM System Card 1.0 (Japan)"
     required: false
-    sha1: "a39a66da7de6ba94ab84d04eef7afeec7d4ee66a"
-    md5: "2b7ccb3d86baa18f6402c176f3065082"
     source_ref: "libretro.cpp:1055-1056"
     note: "pce_cdbios = 'System Card 1'"
 
   - name: "gexpress.pce"
     description: "Games Express CD Card"
     required: false
-    sha1: "014881a959e045e00f4db8f52955200865d40280"
-    md5: "6d2cb14fc3e1f65ceb135633d1694122"
     source_ref: "libretro.cpp:1057-1058, mednafen/settings.cpp:41, mednafen/pce/pce.cpp:374-411"
     aliases: ["gecard.pce"]
     note: "pce_cdbios = 'Games Express' or auto-detected via DetectGECD()."
