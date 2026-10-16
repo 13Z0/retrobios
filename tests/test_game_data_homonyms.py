@@ -12,6 +12,7 @@ carries `unsourceable:` until its own bytes are held.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import sys
@@ -210,6 +211,47 @@ class ReleaseAssetIsNotANameMatch(unittest.TestCase):
                 (None, "not_found"),
             )
             fetch.assert_not_called()
+
+
+class ReleaseAssetAnswersEveryDeclaredHash(unittest.TestCase):
+    """The fallback passed only the first sha1 or md5 to the asset store: an
+    entry declaring sha256 or crc32 alone got the same-named asset back
+    unchecked, and one accepting two sha1s lost a cached copy of the second."""
+
+    def _resolve(self, entry: dict, cached_bytes: bytes):
+        import tempfile
+        from unittest import mock
+
+        import packresolve
+
+        db = {"files": {}, "indexes": {"by_name": {}, "by_md5": {}, "by_path_suffix": {}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            cached = Path(tmp) / entry["name"]
+            cached.write_bytes(cached_bytes)
+
+            def fetch(name, expected_sha1="", expected_md5="", offline=True):
+                digest = hashlib.sha1(cached_bytes).hexdigest()
+                return str(cached) if expected_sha1 in ("", digest) else None
+
+            with mock.patch.object(packresolve, "fetch_large_file", side_effect=fetch):
+                path, status = packresolve.resolve_file(entry, db, "bios", {}, offline=True)
+            return (Path(path).name if path else None), status
+
+    def test_a_sha256_alone_is_checked(self):
+        wanted = hashlib.sha256(b"right").hexdigest()
+        self.assertEqual(
+            self._resolve({"name": "big.bin", "sha256": wanted}, b"wrong"),
+            (None, "not_found"),
+        )
+        self.assertEqual(
+            self._resolve({"name": "big.bin", "sha256": wanted}, b"right"),
+            ("big.bin", "release_asset"),
+        )
+
+    def test_the_second_accepted_sha1_is_found(self):
+        second = hashlib.sha1(b"second").hexdigest()
+        entry = {"name": "big.bin", "sha1": [hashlib.sha1(b"first").hexdigest(), second]}
+        self.assertEqual(self._resolve(entry, b"second"), ("big.bin", "release_asset"))
 
 
 class NameStepPrefersTheOwnersCopy(unittest.TestCase):

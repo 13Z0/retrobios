@@ -10,8 +10,7 @@ import re
 _HEX_RE = re.compile(r"\b([0-9a-fA-F]{8,40})\b")
 from largefiles import fetch_large_file
 import os
-from hashing import parse_md5_list
-from common import resolve_local_file
+from common import declared_hash_verdict, resolve_local_file
 # CLI-wide network policy.  Public helpers can override it explicitly, while
 # every CLI mode inherits --offline (including large-file release fallback).
 _OFFLINE = False
@@ -21,6 +20,59 @@ def set_offline(value: bool) -> None:
     """Forbid every network reach for the rest of the run."""
     global _OFFLINE
     _OFFLINE = value
+
+def _values(raw) -> list[str]:
+    """A hash field's values: one, a list, or a comma-separated string."""
+    items = raw if isinstance(raw, list) else [raw] if raw else []
+    return [
+        value.strip().lower().removeprefix("0x")
+        for item in items
+        for value in str(item).split(",")
+        if value.strip()
+    ]
+
+
+def _declared_hashes(file_entry: dict) -> dict[str, list[str]]:
+    return {
+        field: _values(file_entry.get(field))
+        for field in ("sha1", "md5", "sha256", "crc32")
+    }
+
+
+def _verified_asset(
+    name: str, declared: dict[str, list[str]], file_entry: dict, offline: bool
+) -> str | None:
+    """The release asset of that name, if it is a copy the entry accepts.
+
+    The store is asked once per accepted sha1 (or md5), since it keeps one
+    revision under a name; what it returns is held against every hash the
+    entry declares, sha256 and crc32 included.
+    """
+    attempts = (
+        [(sha1, "") for sha1 in declared["sha1"]]
+        or [("", md5) for md5 in declared["md5"]]
+        or [("", "")]
+    )
+    for sha1, md5 in attempts:
+        cached = fetch_large_file(
+            name, expected_sha1=sha1, expected_md5=md5, offline=offline,
+        )
+        if not cached:
+            continue
+        verdict = declared_hash_verdict(
+            cached,
+            has_strong_hash=any(declared.values()),
+            sha1_candidates=set(declared["sha1"]),
+            sha256_candidates=set(declared["sha256"]),
+            md5_list=declared["md5"],
+            crc_candidates=set(declared["crc32"]),
+            zipped_file=file_entry.get("zipped_file"),
+            declared_size=file_entry.get("size"),
+        )
+        if verdict != "hash_mismatch":
+            return cached
+    return None
+
 
 def _detect_hash_type(h: str) -> str:
     n = len(h)
@@ -151,20 +203,14 @@ def resolve_file(
     # Large files from GitHub release assets -tried when local file is
     # missing OR has a hash mismatch (wrong variant on disk)
     name = file_entry.get("name", "")
-    sha1 = file_entry.get("sha1")
-    first_sha1 = (sha1[0] if sha1 else "") if isinstance(sha1, list) else (sha1 or "")
-    md5_list = parse_md5_list(file_entry.get("md5"))
-    first_md5 = md5_list[0] if md5_list else ""
-    if file_entry.get("unsourceable") and not (first_sha1 or first_md5):
+    declared = _declared_hashes(file_entry)
+    if file_entry.get("unsourceable") and not any(declared.values()):
         # The asset store is addressed by file name: with no hash to check,
         # it would hand back the same-named file of another game, which is
         # exactly what the flag forbids.
         return (path, status) if path else (None, "not_found")
-    cached = fetch_large_file(
-        name,
-        expected_sha1=first_sha1,
-        expected_md5=first_md5,
-        offline=_OFFLINE if offline is None else offline,
+    cached = _verified_asset(
+        name, declared, file_entry, _OFFLINE if offline is None else offline,
     )
     if cached:
         return cached, "release_asset"
