@@ -18,7 +18,11 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-CASES = ("raze", "rust_dos", "hatari", "xash3d_fwgs", "catacombgl", "openjk", "sonic2013")
+# kronos: an archive unit under its archive_prefix and a loose same-named file.
+CASES = (
+    "raze", "rust_dos", "hatari", "xash3d_fwgs", "catacombgl", "openjk", "sonic2013",
+    "kronos",
+)
 
 
 def _count(text: str, word: str) -> int:

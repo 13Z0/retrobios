@@ -62,3 +62,14 @@ def _resolve_destination(
             rel = f"{prefix}/{rel}"
 
     return rel
+
+
+def _archive_destination(
+    archive_name: str, archive_prefix: str, pack_structure: dict | None, standalone: bool
+) -> str:
+    """Where an emulator pack places one of the profile's archives."""
+    archive_dest = sanitize_pack_path(archive_name)
+    if archive_prefix:
+        archive_dest = f"{archive_prefix}/{archive_dest}"
+    prefix = (pack_structure or {}).get("standalone" if standalone else "libretro", "")
+    return f"{prefix}/{archive_dest}" if prefix else archive_dest

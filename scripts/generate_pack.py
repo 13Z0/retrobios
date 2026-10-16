@@ -1261,17 +1261,6 @@ def _normalize_zip_for_pack(
 
 
 
-def _archive_destination(
-    archive_name: str, archive_prefix: str, pack_structure: dict | None, standalone: bool
-) -> str:
-    """Where an emulator pack places one of the profile's archives."""
-    archive_dest = sanitize_pack_path(archive_name)
-    if archive_prefix:
-        archive_dest = f"{archive_prefix}/{archive_dest}"
-    prefix = (pack_structure or {}).get("standalone" if standalone else "libretro", "")
-    return f"{prefix}/{archive_dest}" if prefix else archive_dest
-
-
 def _archive_is_optional(archive_entry: dict, archive_name: str, files: list[dict]) -> bool:
     """Optional as a whole: its own entry and every member it carries.
 
@@ -4036,6 +4025,7 @@ def verify_and_finalize_packs(
     return all_ok
 
 from packpaths import (  # noqa: E402,F401
+    _archive_destination,
     _path_parents,
     _has_path_conflict,
     _register_path,

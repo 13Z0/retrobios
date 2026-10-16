@@ -1420,7 +1420,7 @@ def verify_emulator(
     A region priority list narrows the report the same way a pack built with the
     same list would be narrowed, through the emulator pack's own drop set.
     """
-    from packpaths import _resolve_destination
+    from packpaths import _archive_destination, _resolve_destination
 
     load_emulator_profiles(emulators_dir)
     zip_contents = build_zip_contents_index(db)
@@ -1543,7 +1543,12 @@ def verify_emulator(
                 result["hle_fallback"] = False
                 result["ground_truth"] = build_ground_truth(archive, validation_index)
                 details.append(result)
-                dest = archive
+                # Where the pack puts it: an archive_prefix or pack_structure
+                # moves it, and a loose same-named entry is another file.
+                dest = _archive_destination(
+                    archive, profile.get("archive_prefix", ""),
+                    profile.get("pack_structure"), standalone,
+                )
                 dest_to_name[dest] = archive
                 cur = result["status"]
                 prev = file_status.get(dest)
