@@ -38,6 +38,7 @@ from common import (
     load_database,
     load_emulator_profiles,
     load_provenance_snapshots,
+    native_layer,
     require_yaml,
     resolution_is_hash_exact,
     resolve_local_file,
@@ -2742,7 +2743,7 @@ def generate_gap_analysis(
         truth_data = generate_platform_truth(
             pname, cov["config"], (registry or {}).get(pname, {}), profiles, db
         )
-        s = diff_platform_truth(truth_data, cov["config"])["summary"]
+        s = diff_platform_truth(truth_data, native_layer(cov["config"]))["summary"]
         if s["systems_compared"] == 0:
             div_rows.append(
                 f"| [{cov['platform']}](platforms/{pname}.md) | - | - | - | - |"

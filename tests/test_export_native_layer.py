@@ -64,5 +64,65 @@ class TheNativeLayerIsThePlatformsOwn(unittest.TestCase):
         self.assertEqual(native["systems"]["nintendo-gamecube"]["files"], [])
 
 
+class TheTruthDiffReadsTheSameLayer(unittest.TestCase):
+    """diff_truth credited libretro with the files our scraper adds.
+
+    Compared against the pack view, RetroArch's curated DSP ROMs, fonts and
+    DSi files counted as declared by System.dat: 1008 missing instead of
+    1016, while the export of the same input added them as missing.
+    """
+
+    def test_a_curated_file_is_missing_from_the_platform(self):
+        import json  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=str(REPO_ROOT / "tmp")) as tmp:
+            root = Path(tmp)
+            (root / "demo.yml").write_text(
+                "platform: Demo\nsystems:\n"
+                "  nintendo-gamecube:\n    files:\n"
+                "      - name: dsp_rom.bin\n        destination: dolphin-emu/Sys/GC/dsp_rom.bin\n"
+                "        curated: true\n"
+                "      - name: IPL.bin\n        destination: dolphin-emu/Sys/GC/USA/IPL.bin\n"
+            )
+            truth = root / "truth"
+            truth.mkdir()
+            (truth / "demo.yml").write_text(
+                "systems:\n  nintendo-gamecube:\n    files:\n"
+                "      - name: dsp_rom.bin\n        _cores: [dolphin]\n"
+                "      - name: IPL.bin\n        _cores: [dolphin]\n"
+            )
+            proc = subprocess.run(
+                [sys.executable, "scripts/diff_truth.py", "--platform", "demo", "--json",
+                 "--platforms-dir", str(root), "--truth-dir", str(truth)],
+                capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=300, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        (report,) = json.loads(proc.stdout)
+        missing = [
+            entry["name"]
+            for system in report["divergences"].values()
+            for entry in system.get("missing", [])
+        ]
+        self.assertEqual(missing, ["dsp_rom.bin"])
+
+    def test_every_truth_diff_caller_reads_the_native_layer(self):
+        """The site's platform-vs-source table answers the same question."""
+        import re  # noqa: PLC0415
+
+        for path in sorted((REPO_ROOT / "scripts").glob("*.py")):
+            text = path.read_text(encoding="utf-8")
+            for match in re.finditer(
+                r"(?<!def )diff_platform_truth\(\s*[^,()]+,\s*(native_layer\(|\w+)", text
+            ):
+                scraped = match.group(1)
+                with self.subTest(path=path.name):
+                    self.assertTrue(
+                        scraped == "native_layer("
+                        or re.search(rf"\b{scraped} = native_layer\(", text),
+                        f"{path.name}: diff_platform_truth reads {scraped}, the pack view",
+                    )
+
+
 if __name__ == "__main__":
     unittest.main()

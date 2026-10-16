@@ -16,7 +16,13 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import list_registered_platforms, load_platform_config, require_yaml, yaml_load
+from common import (
+    list_registered_platforms,
+    load_platform_config,
+    native_layer,
+    require_yaml,
+    yaml_load,
+)
 from truth import diff_platform_truth
 
 yaml = require_yaml()
@@ -188,7 +194,9 @@ def main() -> None:
             continue
 
         try:
-            scraped = load_platform_config(platform, args.platforms_dir)
+            # What the platform's own file declares: our shared groups,
+            # mirrors and curated additions are not theirs to be credited.
+            scraped = native_layer(load_platform_config(platform, args.platforms_dir))
         except FileNotFoundError:
             print(f"skip {platform}: no scraped config", file=sys.stderr)
             continue
