@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-15T21:45:48Z",
+  "generated_at": "2026-10-16T12:33:18Z",
   "total_files": 19005,
   "total_size": 17497729510,
   "bios_dir": "bios",
@@ -125290,6 +125290,101 @@
       "crc32": "84760465",
       "adler32": "e7a0fb2d"
     },
+    "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff": {
+      "path": "bios/NEC/PC-88/.variants/N88.ROM.3b31fc68",
+      "name": "N88.ROM",
+      "size": 32768,
+      "sha1": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
+      "md5": "4f984e04a99d56c4cfe36115415d6eb8",
+      "sha256": "cf0b48f5541f5efd54a006d1a6042dd7ce613ccc69e13f2f41ca678569b5d650",
+      "crc32": "a0fc0473",
+      "adler32": "5857f087",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 BASIC ROM].bin",
+          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 BASIC ROM]"
+        }
+      }
+    },
+    "7e6591cd465cbb35d6d3446c5a83b46d30fafe95": {
+      "path": "bios/NEC/PC-88/.variants/N88KNJ2.ROM.7e6591cd",
+      "name": "N88KNJ2.ROM",
+      "size": 131072,
+      "sha1": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
+      "md5": "41d2e2c0c0edfccf76fa1c3e38bc1cf2",
+      "sha256": "b5a41c3758763bbec72769fab4a2533bf2db0b6312d93d25a695f9e4b9e02260",
+      "crc32": "154803cc",
+      "adler32": "cf5c1de3"
+    },
+    "5b922ed9de07d2a729bdf1da7b57c50ddf08809a": {
+      "path": "bios/NEC/PC-88/.variants/N88N.ROM.5b922ed9",
+      "name": "N88N.ROM",
+      "size": 32768,
+      "sha1": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
+      "md5": "2ff07b8769367321128e03924af668a0",
+      "sha256": "11c3c727d7d12d0c7e044dd02ce154a5715bd7a2b8a9007132645962c7803881",
+      "crc32": "27e1857d",
+      "adler32": "6e0f0b5e",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N80 BASIC ROM].bin",
+          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N80 BASIC ROM]"
+        }
+      }
+    },
+    "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9": {
+      "path": "bios/NEC/PC-88/.variants/n88.rom.9b1346d4",
+      "name": "n88.rom",
+      "size": 32768,
+      "sha1": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
+      "md5": "f7cba6a308c2718dbe97e60e46ddd66a",
+      "sha256": "5705a031c35e48062146b9dbd1e76fa679aaa69e80135c587b38d06a3d6b36e1",
+      "crc32": "73573432",
+      "adler32": "a4521ec1",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 BASIC ROM].bin",
+          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 BASIC ROM]"
+        }
+      }
+    },
+    "5aedbc5916d67ef28767a2b942864765eea81bb8": {
+      "path": "bios/NEC/PC-88/.variants/n88_0.rom.5aedbc59",
+      "name": "n88_0.rom",
+      "size": 8192,
+      "sha1": "5aedbc5916d67ef28767a2b942864765eea81bb8",
+      "md5": "c254685f00ca9c31b97203d6ef19f5e2",
+      "sha256": "7377cde7eba4e55e78ac2a19104b7a713d5ede587406ffff042707bed7b63bd4",
+      "crc32": "a72697d7",
+      "adler32": "9b6c10f1",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E0 ROM].bin",
+          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E0 ROM]"
+        }
+      }
+    },
+    "06dae1db384aa29d81c5b6ed587877e7128fcb35": {
+      "path": "bios/NEC/PC-88/.variants/n88n.ROM.06dae1db",
+      "name": "n88n.ROM",
+      "size": 32768,
+      "sha1": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
+      "md5": "93cd1d78b7b9c50b80041ed330332ece",
+      "sha256": "049863abfae71799191ea07639f9de6a312606a8d11af9cacc1a6707fb0d4b5e",
+      "crc32": "8a2a1e17",
+      "adler32": "e87d0e81",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N80 BASIC ROM].bin",
+          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N80 BASIC ROM]"
+        }
+      }
+    },
     "82e11a177af6a5091dd67f50a2f4bafda84d6556": {
       "path": "bios/NEC/PC-88/KANJI1.ROM",
       "name": "KANJI1.ROM",
@@ -125307,6 +125402,84 @@
         }
       }
     },
+    "d239c26ad7ac5efac6e947b0e9549b1534aa970d": {
+      "path": "bios/NEC/PC-88/N88EXT0.ROM",
+      "name": "N88EXT0.ROM",
+      "size": 8192,
+      "sha1": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
+      "md5": "d675a2ca186c6efcd6277b835de4c7e5",
+      "sha256": "290286a513c39af02581481958b8f1291c0ee8409b3940ae808352e0c3a2e2f8",
+      "crc32": "710a63ec",
+      "adler32": "d9cd1756",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MR BIOS (1985)(NEC)[N88 E0 ROM].bin",
+          "description": "NEC PC-8801MR BIOS (1985)(NEC)[N88 E0 ROM]"
+        }
+      }
+    },
+    "8528eef7946edf6501a6ccb1f416b60c64efac7c": {
+      "path": "bios/NEC/PC-88/N88EXT1.ROM",
+      "name": "N88EXT1.ROM",
+      "size": 8192,
+      "sha1": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
+      "md5": "e844534dfe5744b381444dbe61ef1b66",
+      "sha256": "bbb6283a0810eb4468909a364ccbc6d9cec51024aa0a2afa2e72a7af6d23049b",
+      "crc32": "c0bd2aa6",
+      "adler32": "86e420bf",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E1 ROM].bin",
+          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E1 ROM]"
+        }
+      }
+    },
+    "b7c8bcea219b77d9cc3ee0efafe343cc307425d1": {
+      "path": "bios/NEC/PC-88/N88EXT2.ROM",
+      "name": "N88EXT2.ROM",
+      "size": 8192,
+      "sha1": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
+      "md5": "6548fa45061274dee1ea8ae1e9e93910",
+      "sha256": "ad0f26064f44718eedd0103fde3d41bd29e60317680611e784dc9c1943e7574b",
+      "crc32": "af2b6efa",
+      "adler32": "ff829c7e",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E2 ROM].bin",
+          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E2 ROM]"
+        }
+      }
+    },
+    "efce0b51cab9f0da6cf68507757f1245a2867a72": {
+      "path": "bios/NEC/PC-88/N88EXT3.ROM",
+      "name": "N88EXT3.ROM",
+      "size": 8192,
+      "sha1": "efce0b51cab9f0da6cf68507757f1245a2867a72",
+      "md5": "fc4b76a402ba501e6ba6de4b3e8b4273",
+      "sha256": "8580fecc6574b40a082aaf227afc3c1dbd06f333ba7549278ff73647b02b2303",
+      "crc32": "7713c519",
+      "adler32": "602868bb",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E3 ROM].bin",
+          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E3 ROM]"
+        }
+      }
+    },
+    "bb7103a0818850a039c67ff666a31ce49a8d516f": {
+      "path": "bios/NEC/PC-88/N88SUB.ROM",
+      "name": "N88SUB.ROM",
+      "size": 2048,
+      "sha1": "bb7103a0818850a039c67ff666a31ce49a8d516f",
+      "md5": "793f86784e5608352a5d7f03f03e0858",
+      "sha256": "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456",
+      "crc32": "2158d307",
+      "adler32": "ea9195c4"
+    },
     "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686": {
       "path": "bios/NEC/PC-88/PC8801 MKII SR BIOS.rom",
       "name": "PC8801 MKII SR BIOS.rom",
@@ -125316,6 +125489,16 @@
       "sha256": "0dc3fcf58c90c1f119a710babd54b57babf81ba8573c070b33f0cc21948b3086",
       "crc32": "6337409f",
       "adler32": "66d3f4d2"
+    },
+    "8063185d4dd653dd75a68855148c9ee15b71164c": {
+      "path": "bios/NEC/PC-88/disk.rom",
+      "name": "disk.rom",
+      "size": 8192,
+      "sha1": "8063185d4dd653dd75a68855148c9ee15b71164c",
+      "md5": "01b1af474fcabe93c40d779b234a3825",
+      "sha256": "a34304b73fb96aa9a3696669b6a124eeac43622888e64071b1d0866b0a0ab0d3",
+      "crc32": "f2cbe4ee",
+      "adler32": "b9bb1238"
     },
     "84b90f69671d4b72e8f219e1fe7cd667e976cf7f": {
       "path": "bios/NEC/PC-88/font.rom",
@@ -125353,6 +125536,145 @@
       "sha256": "4c5da1098f71dd9d8f7e1c4852b749766389571dbcddf7526a85f02f35440791",
       "crc32": "58c0c76f",
       "adler32": "69d457a9"
+    },
+    "3518193b8207bdebf22c1380c2db8c554baff329": {
+      "path": "bios/NEC/PC-88/n88.rom",
+      "name": "n88.rom",
+      "size": 32768,
+      "sha1": "3518193b8207bdebf22c1380c2db8c554baff329",
+      "md5": "22be239bc0c4298bc0561252eed98633",
+      "sha256": "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76",
+      "crc32": "ffd68be0",
+      "adler32": "2d902eb9",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801 BIOS (1981)(NEC)[N88 BASIC ROM].bin",
+          "description": "NEC PC-8801 BIOS (1981)(NEC)[N88 BASIC ROM]"
+        }
+      }
+    },
+    "d1ae642aed4f0584eeb81ff50180db694e5101d4": {
+      "path": "bios/NEC/PC-88/n88_0.rom",
+      "name": "n88_0.rom",
+      "size": 8192,
+      "sha1": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
+      "md5": "e28fe3f520bea594350ea8fb00395370",
+      "sha256": "8b584cd9143a670ddfce657ca65067c86f6be1db757a3085f48b1479ac6e8cf3",
+      "crc32": "61984bab",
+      "adler32": "49330e77",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801 BIOS (1981)(NEC)[4TH ROM].bin",
+          "description": "NEC PC-8801 BIOS (1981)(NEC)[4TH ROM]"
+        }
+      }
+    },
+    "4ae4d37409ff99411a623da9f6a44192170a854e": {
+      "path": "bios/NEC/PC-88/n88_1.rom",
+      "name": "n88_1.rom",
+      "size": 8192,
+      "sha1": "4ae4d37409ff99411a623da9f6a44192170a854e",
+      "md5": "a8e298da7ac947669bcb1ff25cee0a83",
+      "sha256": "810936574cdf68849822a1570046091f0bad0590dee3635dbc89a4cc4e099555",
+      "crc32": "7ad5d943",
+      "adler32": "0d8f425c",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E1 ROM].bin",
+          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E1 ROM]"
+        }
+      }
+    },
+    "e94278682ef9e9bbb82201f72c50382748dcea2a": {
+      "path": "bios/NEC/PC-88/n88_2.rom",
+      "name": "n88_2.rom",
+      "size": 8192,
+      "sha1": "e94278682ef9e9bbb82201f72c50382748dcea2a",
+      "md5": "9d03154fd9abfc28c4e6d4dc705e6e23",
+      "sha256": "7d361b1bfd8523cd580bd9ca73902154556fbf45f60f0f539beef397d9462646",
+      "crc32": "6aee9a4e",
+      "adler32": "b3c4bd47",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E2 ROM].bin",
+          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E2 ROM]"
+        }
+      }
+    },
+    "af452aed79b072c4d17985830b7c5dca64d4b412": {
+      "path": "bios/NEC/PC-88/n88_3.rom",
+      "name": "n88_3.rom",
+      "size": 8192,
+      "sha1": "af452aed79b072c4d17985830b7c5dca64d4b412",
+      "md5": "e1791f8154f1cdf22b576a1a365b6e1f",
+      "sha256": "3dc431af6e0c724582a3aa49e5c22cb9cc99d8298a4cce500e62bbaf1bc4bffb",
+      "crc32": "692cbcd8",
+      "adler32": "f2da8c1e",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E3 ROM].bin",
+          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E3 ROM]"
+        }
+      }
+    },
+    "deef0cc2a9734ba891a6d6c022aa70ffc66f783e": {
+      "path": "bios/NEC/PC-88/n88jisho.rom",
+      "name": "n88jisho.rom",
+      "size": 524288,
+      "sha1": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
+      "md5": "2e548679423370262f36cbde38a22789",
+      "sha256": "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c",
+      "crc32": "bd6eb062",
+      "adler32": "966d3dc6",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801MC BIOS (1989)(NEC)[Jisho ROM].bin",
+          "description": "NEC PC-8801MC BIOS (1989)(NEC)[Jisho ROM]"
+        }
+      }
+    },
+    "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53": {
+      "path": "bios/NEC/PC-88/n88knj2.rom",
+      "name": "n88knj2.rom",
+      "size": 131072,
+      "sha1": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
+      "md5": "898a3b7b6c3326e8b2069765bca2b944",
+      "sha256": "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe",
+      "crc32": "96d1ef44",
+      "adler32": "660d51f1"
+    },
+    "063609dd518c124a4fc9ba35d1bae35771666a34": {
+      "path": "bios/NEC/PC-88/n88n.rom",
+      "name": "n88n.rom",
+      "size": 32768,
+      "sha1": "063609dd518c124a4fc9ba35d1bae35771666a34",
+      "md5": "5d6854624dd01cd791f58727fc43a525",
+      "sha256": "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839",
+      "crc32": "5cb8b584",
+      "adler32": "7f707909",
+      "provenance": {
+        "tosec": {
+          "dat": "NEC PC-8801 - Firmware",
+          "name": "NEC PC-8801 BIOS (1981)(NEC)[N80 BASIC ROM].bin",
+          "description": "NEC PC-8801 BIOS (1981)(NEC)[N80 BASIC ROM]"
+        }
+      }
+    },
+    "d70660b4d67baecfc503f3777f56843b267c5960": {
+      "path": "bios/NEC/PC-88/pc88.rom",
+      "name": "pc88.rom",
+      "size": 90112,
+      "sha1": "d70660b4d67baecfc503f3777f56843b267c5960",
+      "md5": "05a16413b0a5343de158a3dfd2d035e2",
+      "sha256": "38fb777738b392642da6b186e83bada9bb957501b340d2e1081074788902be17",
+      "crc32": "0a650926",
+      "adler32": "dc4f3bb7"
     },
     "22fb2cd4412df057762c23dd22729ebcb922fe0e": {
       "path": "bios/NEC/PC-98/.variants/2608_BD.WAV.22fb2cd4",
@@ -125504,50 +125826,6 @@
       "crc32": "273e9e88",
       "adler32": "d0a7911d"
     },
-    "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff": {
-      "path": "bios/NEC/PC-98/.variants/N88.ROM.3b31fc68",
-      "name": "N88.ROM",
-      "size": 32768,
-      "sha1": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
-      "md5": "4f984e04a99d56c4cfe36115415d6eb8",
-      "sha256": "cf0b48f5541f5efd54a006d1a6042dd7ce613ccc69e13f2f41ca678569b5d650",
-      "crc32": "a0fc0473",
-      "adler32": "5857f087",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 BASIC ROM].bin",
-          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 BASIC ROM]"
-        }
-      }
-    },
-    "7e6591cd465cbb35d6d3446c5a83b46d30fafe95": {
-      "path": "bios/NEC/PC-98/.variants/N88KNJ2.ROM.7e6591cd",
-      "name": "N88KNJ2.ROM",
-      "size": 131072,
-      "sha1": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
-      "md5": "41d2e2c0c0edfccf76fa1c3e38bc1cf2",
-      "sha256": "b5a41c3758763bbec72769fab4a2533bf2db0b6312d93d25a695f9e4b9e02260",
-      "crc32": "154803cc",
-      "adler32": "cf5c1de3"
-    },
-    "5b922ed9de07d2a729bdf1da7b57c50ddf08809a": {
-      "path": "bios/NEC/PC-98/.variants/N88N.ROM.5b922ed9",
-      "name": "N88N.ROM",
-      "size": 32768,
-      "sha1": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
-      "md5": "2ff07b8769367321128e03924af668a0",
-      "sha256": "11c3c727d7d12d0c7e044dd02ce154a5715bd7a2b8a9007132645962c7803881",
-      "crc32": "27e1857d",
-      "adler32": "6e0f0b5e",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N80 BASIC ROM].bin",
-          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N80 BASIC ROM]"
-        }
-      }
-    },
     "34137c287c39c44300b04ee97c1e6459bb826b60": {
       "path": "bios/NEC/PC-98/.variants/SOUND.ROM.34137c28",
       "name": "SOUND.ROM",
@@ -125594,57 +125872,6 @@
       "sha256": "5d2fb807b28a18a95ee67234bf3b403b601497368b021dd27ebf3941fc4c5944",
       "crc32": "dd4c7bb8",
       "adler32": "eb68c559"
-    },
-    "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9": {
-      "path": "bios/NEC/PC-98/.variants/n88.rom.9b1346d4",
-      "name": "n88.rom",
-      "size": 32768,
-      "sha1": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
-      "md5": "f7cba6a308c2718dbe97e60e46ddd66a",
-      "sha256": "5705a031c35e48062146b9dbd1e76fa679aaa69e80135c587b38d06a3d6b36e1",
-      "crc32": "73573432",
-      "adler32": "a4521ec1",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 BASIC ROM].bin",
-          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 BASIC ROM]"
-        }
-      }
-    },
-    "5aedbc5916d67ef28767a2b942864765eea81bb8": {
-      "path": "bios/NEC/PC-98/.variants/n88_0.rom.5aedbc59",
-      "name": "n88_0.rom",
-      "size": 8192,
-      "sha1": "5aedbc5916d67ef28767a2b942864765eea81bb8",
-      "md5": "c254685f00ca9c31b97203d6ef19f5e2",
-      "sha256": "7377cde7eba4e55e78ac2a19104b7a713d5ede587406ffff042707bed7b63bd4",
-      "crc32": "a72697d7",
-      "adler32": "9b6c10f1",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E0 ROM].bin",
-          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E0 ROM]"
-        }
-      }
-    },
-    "06dae1db384aa29d81c5b6ed587877e7128fcb35": {
-      "path": "bios/NEC/PC-98/.variants/n88n.ROM.06dae1db",
-      "name": "n88n.ROM",
-      "size": 32768,
-      "sha1": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
-      "md5": "93cd1d78b7b9c50b80041ed330332ece",
-      "sha256": "049863abfae71799191ea07639f9de6a312606a8d11af9cacc1a6707fb0d4b5e",
-      "crc32": "8a2a1e17",
-      "adler32": "e87d0e81",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N80 BASIC ROM].bin",
-          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N80 BASIC ROM]"
-        }
-      }
     },
     "e09c54152c8093e1724842c711aed6417169db23": {
       "path": "bios/NEC/PC-98/.variants/sound.rom.e09c5415",
@@ -125716,84 +125943,6 @@
       "crc32": "ab73a296",
       "adler32": "81eb6fec"
     },
-    "d239c26ad7ac5efac6e947b0e9549b1534aa970d": {
-      "path": "bios/NEC/PC-98/N88EXT0.ROM",
-      "name": "N88EXT0.ROM",
-      "size": 8192,
-      "sha1": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
-      "md5": "d675a2ca186c6efcd6277b835de4c7e5",
-      "sha256": "290286a513c39af02581481958b8f1291c0ee8409b3940ae808352e0c3a2e2f8",
-      "crc32": "710a63ec",
-      "adler32": "d9cd1756",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MR BIOS (1985)(NEC)[N88 E0 ROM].bin",
-          "description": "NEC PC-8801MR BIOS (1985)(NEC)[N88 E0 ROM]"
-        }
-      }
-    },
-    "8528eef7946edf6501a6ccb1f416b60c64efac7c": {
-      "path": "bios/NEC/PC-98/N88EXT1.ROM",
-      "name": "N88EXT1.ROM",
-      "size": 8192,
-      "sha1": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
-      "md5": "e844534dfe5744b381444dbe61ef1b66",
-      "sha256": "bbb6283a0810eb4468909a364ccbc6d9cec51024aa0a2afa2e72a7af6d23049b",
-      "crc32": "c0bd2aa6",
-      "adler32": "86e420bf",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E1 ROM].bin",
-          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E1 ROM]"
-        }
-      }
-    },
-    "b7c8bcea219b77d9cc3ee0efafe343cc307425d1": {
-      "path": "bios/NEC/PC-98/N88EXT2.ROM",
-      "name": "N88EXT2.ROM",
-      "size": 8192,
-      "sha1": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
-      "md5": "6548fa45061274dee1ea8ae1e9e93910",
-      "sha256": "ad0f26064f44718eedd0103fde3d41bd29e60317680611e784dc9c1943e7574b",
-      "crc32": "af2b6efa",
-      "adler32": "ff829c7e",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E2 ROM].bin",
-          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E2 ROM]"
-        }
-      }
-    },
-    "efce0b51cab9f0da6cf68507757f1245a2867a72": {
-      "path": "bios/NEC/PC-98/N88EXT3.ROM",
-      "name": "N88EXT3.ROM",
-      "size": 8192,
-      "sha1": "efce0b51cab9f0da6cf68507757f1245a2867a72",
-      "md5": "fc4b76a402ba501e6ba6de4b3e8b4273",
-      "sha256": "8580fecc6574b40a082aaf227afc3c1dbd06f333ba7549278ff73647b02b2303",
-      "crc32": "7713c519",
-      "adler32": "602868bb",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E3 ROM].bin",
-          "description": "NEC PC-8801mkIISR BIOS (1985)(NEC)[N88 E3 ROM]"
-        }
-      }
-    },
-    "bb7103a0818850a039c67ff666a31ce49a8d516f": {
-      "path": "bios/NEC/PC-98/N88SUB.ROM",
-      "name": "N88SUB.ROM",
-      "size": 2048,
-      "sha1": "bb7103a0818850a039c67ff666a31ce49a8d516f",
-      "md5": "793f86784e5608352a5d7f03f03e0858",
-      "sha256": "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456",
-      "crc32": "2158d307",
-      "adler32": "ea9195c4"
-    },
     "76a7360502fa0296ea93b4c537174610a834d367": {
       "path": "bios/NEC/PC-98/bios.rom",
       "name": "bios.rom",
@@ -125823,16 +125972,6 @@
       "sha256": "76bd637fdeef6412955d204da3e79597886bda711869db4d01024ffe00481d20",
       "crc32": "5dda57cc",
       "adler32": "580c8c46"
-    },
-    "8063185d4dd653dd75a68855148c9ee15b71164c": {
-      "path": "bios/NEC/PC-98/disk.rom",
-      "name": "disk.rom",
-      "size": 8192,
-      "sha1": "8063185d4dd653dd75a68855148c9ee15b71164c",
-      "md5": "01b1af474fcabe93c40d779b234a3825",
-      "sha256": "a34304b73fb96aa9a3696669b6a124eeac43622888e64071b1d0866b0a0ab0d3",
-      "crc32": "f2cbe4ee",
-      "adler32": "b9bb1238"
     },
     "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5": {
       "path": "bios/NEC/PC-98/font.bmp",
@@ -125873,145 +126012,6 @@
       "sha256": "94b4f1bde239372cd691cc4a228677dad6dbc787b26c3f952a512139de6ed60e",
       "crc32": "c1815325",
       "adler32": "c48a690f"
-    },
-    "3518193b8207bdebf22c1380c2db8c554baff329": {
-      "path": "bios/NEC/PC-98/n88.rom",
-      "name": "n88.rom",
-      "size": 32768,
-      "sha1": "3518193b8207bdebf22c1380c2db8c554baff329",
-      "md5": "22be239bc0c4298bc0561252eed98633",
-      "sha256": "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76",
-      "crc32": "ffd68be0",
-      "adler32": "2d902eb9",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801 BIOS (1981)(NEC)[N88 BASIC ROM].bin",
-          "description": "NEC PC-8801 BIOS (1981)(NEC)[N88 BASIC ROM]"
-        }
-      }
-    },
-    "d1ae642aed4f0584eeb81ff50180db694e5101d4": {
-      "path": "bios/NEC/PC-98/n88_0.rom",
-      "name": "n88_0.rom",
-      "size": 8192,
-      "sha1": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
-      "md5": "e28fe3f520bea594350ea8fb00395370",
-      "sha256": "8b584cd9143a670ddfce657ca65067c86f6be1db757a3085f48b1479ac6e8cf3",
-      "crc32": "61984bab",
-      "adler32": "49330e77",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801 BIOS (1981)(NEC)[4TH ROM].bin",
-          "description": "NEC PC-8801 BIOS (1981)(NEC)[4TH ROM]"
-        }
-      }
-    },
-    "4ae4d37409ff99411a623da9f6a44192170a854e": {
-      "path": "bios/NEC/PC-98/n88_1.rom",
-      "name": "n88_1.rom",
-      "size": 8192,
-      "sha1": "4ae4d37409ff99411a623da9f6a44192170a854e",
-      "md5": "a8e298da7ac947669bcb1ff25cee0a83",
-      "sha256": "810936574cdf68849822a1570046091f0bad0590dee3635dbc89a4cc4e099555",
-      "crc32": "7ad5d943",
-      "adler32": "0d8f425c",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E1 ROM].bin",
-          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E1 ROM]"
-        }
-      }
-    },
-    "e94278682ef9e9bbb82201f72c50382748dcea2a": {
-      "path": "bios/NEC/PC-98/n88_2.rom",
-      "name": "n88_2.rom",
-      "size": 8192,
-      "sha1": "e94278682ef9e9bbb82201f72c50382748dcea2a",
-      "md5": "9d03154fd9abfc28c4e6d4dc705e6e23",
-      "sha256": "7d361b1bfd8523cd580bd9ca73902154556fbf45f60f0f539beef397d9462646",
-      "crc32": "6aee9a4e",
-      "adler32": "b3c4bd47",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E2 ROM].bin",
-          "description": "NEC PC-8801MA BIOS (1987)(NEC)[N88 E2 ROM]"
-        }
-      }
-    },
-    "af452aed79b072c4d17985830b7c5dca64d4b412": {
-      "path": "bios/NEC/PC-98/n88_3.rom",
-      "name": "n88_3.rom",
-      "size": 8192,
-      "sha1": "af452aed79b072c4d17985830b7c5dca64d4b412",
-      "md5": "e1791f8154f1cdf22b576a1a365b6e1f",
-      "sha256": "3dc431af6e0c724582a3aa49e5c22cb9cc99d8298a4cce500e62bbaf1bc4bffb",
-      "crc32": "692cbcd8",
-      "adler32": "f2da8c1e",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E3 ROM].bin",
-          "description": "NEC PC-8801MC BIOS (1989)(NEC)[N88 E3 ROM]"
-        }
-      }
-    },
-    "deef0cc2a9734ba891a6d6c022aa70ffc66f783e": {
-      "path": "bios/NEC/PC-98/n88jisho.rom",
-      "name": "n88jisho.rom",
-      "size": 524288,
-      "sha1": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
-      "md5": "2e548679423370262f36cbde38a22789",
-      "sha256": "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c",
-      "crc32": "bd6eb062",
-      "adler32": "966d3dc6",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801MC BIOS (1989)(NEC)[Jisho ROM].bin",
-          "description": "NEC PC-8801MC BIOS (1989)(NEC)[Jisho ROM]"
-        }
-      }
-    },
-    "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53": {
-      "path": "bios/NEC/PC-98/n88knj2.rom",
-      "name": "n88knj2.rom",
-      "size": 131072,
-      "sha1": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
-      "md5": "898a3b7b6c3326e8b2069765bca2b944",
-      "sha256": "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe",
-      "crc32": "96d1ef44",
-      "adler32": "660d51f1"
-    },
-    "063609dd518c124a4fc9ba35d1bae35771666a34": {
-      "path": "bios/NEC/PC-98/n88n.rom",
-      "name": "n88n.rom",
-      "size": 32768,
-      "sha1": "063609dd518c124a4fc9ba35d1bae35771666a34",
-      "md5": "5d6854624dd01cd791f58727fc43a525",
-      "sha256": "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839",
-      "crc32": "5cb8b584",
-      "adler32": "7f707909",
-      "provenance": {
-        "tosec": {
-          "dat": "NEC PC-8801 - Firmware",
-          "name": "NEC PC-8801 BIOS (1981)(NEC)[N80 BASIC ROM].bin",
-          "description": "NEC PC-8801 BIOS (1981)(NEC)[N80 BASIC ROM]"
-        }
-      }
-    },
-    "d70660b4d67baecfc503f3777f56843b267c5960": {
-      "path": "bios/NEC/PC-98/pc88.rom",
-      "name": "pc88.rom",
-      "size": 90112,
-      "sha1": "d70660b4d67baecfc503f3777f56843b267c5960",
-      "md5": "05a16413b0a5343de158a3dfd2d035e2",
-      "sha256": "38fb777738b392642da6b186e83bada9bb957501b340d2e1081074788902be17",
-      "crc32": "0a650926",
-      "adler32": "dc4f3bb7"
     },
     "1246203bebf9f04e3bac2df7fc64719304f9f1bd": {
       "path": "bios/NEC/PC-98/pci.rom",
@@ -207553,11 +207553,32 @@
       "9c940c993b87b0a31d87960c1dc68656": "5a943ee2f4ff781af2e5ac2274f3350c3cb15248",
       "a29b86c7ba159db7d8d016eddcd6b339": "007704fa0bc202851affae38f268487694bcae6e",
       "9e5edcd9c670533791034ba84afb4d73": "88ad52740cd0b8a0e927abbfb84601aa099bcfbc",
+      "4f984e04a99d56c4cfe36115415d6eb8": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
+      "41d2e2c0c0edfccf76fa1c3e38bc1cf2": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
+      "2ff07b8769367321128e03924af668a0": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
+      "f7cba6a308c2718dbe97e60e46ddd66a": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
+      "c254685f00ca9c31b97203d6ef19f5e2": "5aedbc5916d67ef28767a2b942864765eea81bb8",
+      "93cd1d78b7b9c50b80041ed330332ece": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "d81c6d5d7ad1a4bbbd6ae22a01257603": "82e11a177af6a5091dd67f50a2f4bafda84d6556",
+      "d675a2ca186c6efcd6277b835de4c7e5": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
+      "e844534dfe5744b381444dbe61ef1b66": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
+      "6548fa45061274dee1ea8ae1e9e93910": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
+      "fc4b76a402ba501e6ba6de4b3e8b4273": "efce0b51cab9f0da6cf68507757f1245a2867a72",
+      "793f86784e5608352a5d7f03f03e0858": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "f1ce4d5f83717093982e5f75516b8f3c": "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686",
+      "01b1af474fcabe93c40d779b234a3825": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "cd428f9ee8ff9f84c60beb7a8a0ef628": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
       "1711df0a52f76bd395fdbc8cada17d38": "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e",
       "b1f6e4d362ae0b443bcd3803c753c16d": "aff9959b402ae0ead377b87566cf0e7b889e3d9e",
+      "22be239bc0c4298bc0561252eed98633": "3518193b8207bdebf22c1380c2db8c554baff329",
+      "e28fe3f520bea594350ea8fb00395370": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
+      "a8e298da7ac947669bcb1ff25cee0a83": "4ae4d37409ff99411a623da9f6a44192170a854e",
+      "9d03154fd9abfc28c4e6d4dc705e6e23": "e94278682ef9e9bbb82201f72c50382748dcea2a",
+      "e1791f8154f1cdf22b576a1a365b6e1f": "af452aed79b072c4d17985830b7c5dca64d4b412",
+      "2e548679423370262f36cbde38a22789": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
+      "898a3b7b6c3326e8b2069765bca2b944": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
+      "5d6854624dd01cd791f58727fc43a525": "063609dd518c124a4fc9ba35d1bae35771666a34",
+      "05a16413b0a5343de158a3dfd2d035e2": "d70660b4d67baecfc503f3777f56843b267c5960",
       "29aad51cd243c8e449d311d14613f0b1": "22fb2cd4412df057762c23dd22729ebcb922fe0e",
       "59a009ee444318bd57d99a19068731e4": "ac7bc5f6849eb16087c04e88680ea477d553b436",
       "943290d1c5c6ae6295bd02be4411c7c0": "4ecf900db8d0f69d6154bde376206d727ddddaae",
@@ -207573,16 +207594,10 @@
       "2af6179d7de4893ea0b705c00e9a98d6": "541271ea46c5166a1e054379963b0dc663e9b60f",
       "ca87908a99ea423093f6d497fc367f7d": "554b87377d176830d21bd03964dc71f8e98676b1",
       "e9fc3890963b12cf15d0a2eea5815b72": "9bca7d5116788776ed0f297bccb4dfc485379b41",
-      "4f984e04a99d56c4cfe36115415d6eb8": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
-      "41d2e2c0c0edfccf76fa1c3e38bc1cf2": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
-      "2ff07b8769367321128e03924af668a0": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
       "caf90f22197aed6f14c471c21e64658d": "34137c287c39c44300b04ee97c1e6459bb826b60",
       "50274bb5dcb707e4450011b09accffcb": "2e92346727b0355bc1ec9a7ded1b444a4917f2b9",
       "14bc9e267cf0cb56d22d5c470f582d53": "425a896af83386c7bafac59f94211cdbb9cce18d",
       "a13d96da03a28af8418d7f86ab951f1a": "cf3aa193df2722899066246bccbed03f2e79a74a",
-      "f7cba6a308c2718dbe97e60e46ddd66a": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
-      "c254685f00ca9c31b97203d6ef19f5e2": "5aedbc5916d67ef28767a2b942864765eea81bb8",
-      "93cd1d78b7b9c50b80041ed330332ece": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "42c271f8b720e796a484cc1165ff4914": "e09c54152c8093e1724842c711aed6417169db23",
       "d94546e70f17fd899be8df3544ab6cbb": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
       "08c54a0c1f774a5538a848a6665a34b4": "12f676cef249b82480b6f19c454e234b435ca7b6",
@@ -207590,28 +207605,13 @@
       "d71004351c8bbfdad53b18222c061d49": "3c79663ef74c0b0439d13351326eb1c52a657008",
       "96a4ead13f364734f79b0c58af2f0e1f": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
       "593cff6597ab9380d822b8f824fd2c28": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
-      "d675a2ca186c6efcd6277b835de4c7e5": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
-      "e844534dfe5744b381444dbe61ef1b66": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
-      "6548fa45061274dee1ea8ae1e9e93910": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
-      "fc4b76a402ba501e6ba6de4b3e8b4273": "efce0b51cab9f0da6cf68507757f1245a2867a72",
-      "793f86784e5608352a5d7f03f03e0858": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "cd237e16e7e77c06bb58540e9e9fca68": "76a7360502fa0296ea93b4c537174610a834d367",
       "8de3b3e6e60626181f1aea44c80f2e4c": "48b35384cd148c0cc10ec52d308af50d33916c7c",
       "dc8e3222c6cfe24950a162467ad1a608": "d0dead41c5b763008a4d777aedddce651eb6dcbb",
-      "01b1af474fcabe93c40d779b234a3825": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "7da1e5b7c482d4108d22a5b09631d967": "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5",
       "38d32748ae49d1815b0614970849fd40": "78ba9960f135372825ab7244b5e4e73a810002ff",
       "8b52de9032ea62153dc783151306595f": "0877ffb4b4d1c18283468be3579b72ed8c22e3ac",
       "72ea51443070f0e9212bfc9b793ee28e": "a2fb11c000ed7c976520622cfb7940ed6ddc904e",
-      "22be239bc0c4298bc0561252eed98633": "3518193b8207bdebf22c1380c2db8c554baff329",
-      "e28fe3f520bea594350ea8fb00395370": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
-      "a8e298da7ac947669bcb1ff25cee0a83": "4ae4d37409ff99411a623da9f6a44192170a854e",
-      "9d03154fd9abfc28c4e6d4dc705e6e23": "e94278682ef9e9bbb82201f72c50382748dcea2a",
-      "e1791f8154f1cdf22b576a1a365b6e1f": "af452aed79b072c4d17985830b7c5dca64d4b412",
-      "2e548679423370262f36cbde38a22789": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
-      "898a3b7b6c3326e8b2069765bca2b944": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
-      "5d6854624dd01cd791f58727fc43a525": "063609dd518c124a4fc9ba35d1bae35771666a34",
-      "05a16413b0a5343de158a3dfd2d035e2": "d70660b4d67baecfc503f3777f56843b267c5960",
       "4019df2119cff4256fa0ec38a3ff4544": "1246203bebf9f04e3bac2df7fc64719304f9f1bd",
       "ea13696fe82e2416d03ecef1aee9c688": "b607707d74b5a7d3ba211825de31a8f32aec8146",
       "e31ad9d8553ed6bd4a646fbbeb9bbc6f": "3d7166f05daad1b022fa04c2569e788580158095",
@@ -245803,11 +245803,50 @@
       "Super CD 3.1.pce": [
         "7b3fa6c265d56687d6bff09da5d34caa92e8d2ce"
       ],
+      "N88.ROM": [
+        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
+      ],
+      "N88KNJ2.ROM": [
+        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
+      ],
+      "N88N.ROM": [
+        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
+      ],
+      "n88.rom": [
+        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
+        "3518193b8207bdebf22c1380c2db8c554baff329"
+      ],
+      "n88_0.rom": [
+        "5aedbc5916d67ef28767a2b942864765eea81bb8",
+        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
+      ],
+      "n88n.ROM": [
+        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
+      ],
       "KANJI1.ROM": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
+      "N88EXT0.ROM": [
+        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
+      ],
+      "N88EXT1.ROM": [
+        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
+      ],
+      "N88EXT2.ROM": [
+        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
+      ],
+      "N88EXT3.ROM": [
+        "efce0b51cab9f0da6cf68507757f1245a2867a72"
+      ],
+      "N88SUB.ROM": [
+        "bb7103a0818850a039c67ff666a31ce49a8d516f"
+      ],
       "PC8801 MKII SR BIOS.rom": [
         "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686"
+      ],
+      "disk.rom": [
+        "8063185d4dd653dd75a68855148c9ee15b71164c",
+        "892b85cc96f0ff31cae8ad8d409b9f6c04b32e5e"
       ],
       "font.rom": [
         "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
@@ -245819,6 +245858,27 @@
       ],
       "font3.rom": [
         "aff9959b402ae0ead377b87566cf0e7b889e3d9e"
+      ],
+      "n88_1.rom": [
+        "4ae4d37409ff99411a623da9f6a44192170a854e"
+      ],
+      "n88_2.rom": [
+        "e94278682ef9e9bbb82201f72c50382748dcea2a"
+      ],
+      "n88_3.rom": [
+        "af452aed79b072c4d17985830b7c5dca64d4b412"
+      ],
+      "n88jisho.rom": [
+        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
+      ],
+      "n88knj2.rom": [
+        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
+      ],
+      "n88n.rom": [
+        "063609dd518c124a4fc9ba35d1bae35771666a34"
+      ],
+      "pc88.rom": [
+        "d70660b4d67baecfc503f3777f56843b267c5960"
       ],
       "2608_BD.WAV": [
         "22fb2cd4412df057762c23dd22729ebcb922fe0e"
@@ -245868,32 +245928,12 @@
       "ITF.ROM": [
         "9bca7d5116788776ed0f297bccb4dfc485379b41"
       ],
-      "N88.ROM": [
-        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
-      ],
-      "N88KNJ2.ROM": [
-        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
-      ],
-      "N88N.ROM": [
-        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
-      ],
       "SOUND.ROM": [
         "34137c287c39c44300b04ee97c1e6459bb826b60"
       ],
       "itf.rom": [
         "cf3aa193df2722899066246bccbed03f2e79a74a",
         "a2fb11c000ed7c976520622cfb7940ed6ddc904e"
-      ],
-      "n88.rom": [
-        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
-        "3518193b8207bdebf22c1380c2db8c554baff329"
-      ],
-      "n88_0.rom": [
-        "5aedbc5916d67ef28767a2b942864765eea81bb8",
-        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
-      ],
-      "n88n.ROM": [
-        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
       ],
       "sound.rom": [
         "e09c54152c8093e1724842c711aed6417169db23",
@@ -245902,57 +245942,17 @@
       "2608_sd.wav": [
         "3c79663ef74c0b0439d13351326eb1c52a657008"
       ],
-      "N88EXT0.ROM": [
-        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
-      ],
-      "N88EXT1.ROM": [
-        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
-      ],
-      "N88EXT2.ROM": [
-        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
-      ],
-      "N88EXT3.ROM": [
-        "efce0b51cab9f0da6cf68507757f1245a2867a72"
-      ],
-      "N88SUB.ROM": [
-        "bb7103a0818850a039c67ff666a31ce49a8d516f"
-      ],
       "bios9821.rom": [
         "48b35384cd148c0cc10ec52d308af50d33916c7c"
       ],
       "d8000.rom": [
         "d0dead41c5b763008a4d777aedddce651eb6dcbb"
       ],
-      "disk.rom": [
-        "8063185d4dd653dd75a68855148c9ee15b71164c",
-        "892b85cc96f0ff31cae8ad8d409b9f6c04b32e5e"
-      ],
       "font.bmp": [
         "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5"
       ],
       "ide.rom": [
         "0877ffb4b4d1c18283468be3579b72ed8c22e3ac"
-      ],
-      "n88_1.rom": [
-        "4ae4d37409ff99411a623da9f6a44192170a854e"
-      ],
-      "n88_2.rom": [
-        "e94278682ef9e9bbb82201f72c50382748dcea2a"
-      ],
-      "n88_3.rom": [
-        "af452aed79b072c4d17985830b7c5dca64d4b412"
-      ],
-      "n88jisho.rom": [
-        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
-      ],
-      "n88knj2.rom": [
-        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
-      ],
-      "n88n.rom": [
-        "063609dd518c124a4fc9ba35d1bae35771666a34"
-      ],
-      "pc88.rom": [
-        "d70660b4d67baecfc503f3777f56843b267c5960"
       ],
       "pci.rom": [
         "1246203bebf9f04e3bac2df7fc64719304f9f1bd"
@@ -283377,11 +283377,32 @@
       "300be300": "5a943ee2f4ff781af2e5ac2274f3350c3cb15248",
       "f551e87b": "007704fa0bc202851affae38f268487694bcae6e",
       "84760465": "88ad52740cd0b8a0e927abbfb84601aa099bcfbc",
+      "a0fc0473": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
+      "154803cc": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
+      "27e1857d": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
+      "73573432": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
+      "a72697d7": "5aedbc5916d67ef28767a2b942864765eea81bb8",
+      "8a2a1e17": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "6178bd43": "82e11a177af6a5091dd67f50a2f4bafda84d6556",
+      "710a63ec": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
+      "c0bd2aa6": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
+      "af2b6efa": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
+      "7713c519": "efce0b51cab9f0da6cf68507757f1245a2867a72",
+      "2158d307": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "6337409f": "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686",
+      "f2cbe4ee": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "56653188": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
       "1a86221f": "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e",
       "58c0c76f": "aff9959b402ae0ead377b87566cf0e7b889e3d9e",
+      "ffd68be0": "3518193b8207bdebf22c1380c2db8c554baff329",
+      "61984bab": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
+      "7ad5d943": "4ae4d37409ff99411a623da9f6a44192170a854e",
+      "6aee9a4e": "e94278682ef9e9bbb82201f72c50382748dcea2a",
+      "692cbcd8": "af452aed79b072c4d17985830b7c5dca64d4b412",
+      "bd6eb062": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
+      "96d1ef44": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
+      "5cb8b584": "063609dd518c124a4fc9ba35d1bae35771666a34",
+      "0a650926": "d70660b4d67baecfc503f3777f56843b267c5960",
       "fcb60c01": "22fb2cd4412df057762c23dd22729ebcb922fe0e",
       "7d6d9c4e": "ac7bc5f6849eb16087c04e88680ea477d553b436",
       "8518a388": "4ecf900db8d0f69d6154bde376206d727ddddaae",
@@ -283397,16 +283418,10 @@
       "cd6dfabe": "541271ea46c5166a1e054379963b0dc663e9b60f",
       "a61c0649": "554b87377d176830d21bd03964dc71f8e98676b1",
       "273e9e88": "9bca7d5116788776ed0f297bccb4dfc485379b41",
-      "a0fc0473": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
-      "154803cc": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
-      "27e1857d": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
       "a21ef796": "34137c287c39c44300b04ee97c1e6459bb826b60",
       "34a19a59": "2e92346727b0355bc1ec9a7ded1b444a4917f2b9",
       "7a6edb47": "425a896af83386c7bafac59f94211cdbb9cce18d",
       "dd4c7bb8": "cf3aa193df2722899066246bccbed03f2e79a74a",
-      "73573432": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
-      "a72697d7": "5aedbc5916d67ef28767a2b942864765eea81bb8",
-      "8a2a1e17": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "80eabfde": "e09c54152c8093e1724842c711aed6417169db23",
       "bb038714": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
       "9898b372": "12f676cef249b82480b6f19c454e234b435ca7b6",
@@ -283414,28 +283429,13 @@
       "542cc58c": "3c79663ef74c0b0439d13351326eb1c52a657008",
       "93c57bba": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
       "ab73a296": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
-      "710a63ec": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
-      "c0bd2aa6": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
-      "af2b6efa": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
-      "7713c519": "efce0b51cab9f0da6cf68507757f1245a2867a72",
-      "2158d307": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "0a682b93": "76a7360502fa0296ea93b4c537174610a834d367",
       "f3464b9e": "48b35384cd148c0cc10ec52d308af50d33916c7c",
       "5dda57cc": "d0dead41c5b763008a4d777aedddce651eb6dcbb",
-      "f2cbe4ee": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "d271798b": "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5",
       "456d9fc7": "78ba9960f135372825ab7244b5e4e73a810002ff",
       "d402842f": "0877ffb4b4d1c18283468be3579b72ed8c22e3ac",
       "c1815325": "a2fb11c000ed7c976520622cfb7940ed6ddc904e",
-      "ffd68be0": "3518193b8207bdebf22c1380c2db8c554baff329",
-      "61984bab": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
-      "7ad5d943": "4ae4d37409ff99411a623da9f6a44192170a854e",
-      "6aee9a4e": "e94278682ef9e9bbb82201f72c50382748dcea2a",
-      "692cbcd8": "af452aed79b072c4d17985830b7c5dca64d4b412",
-      "bd6eb062": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
-      "96d1ef44": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
-      "5cb8b584": "063609dd518c124a4fc9ba35d1bae35771666a34",
-      "0a650926": "d70660b4d67baecfc503f3777f56843b267c5960",
       "bccc5233": "1246203bebf9f04e3bac2df7fc64719304f9f1bd",
       "9652011b": "b607707d74b5a7d3ba211825de31a8f32aec8146",
       "5db6773d": "3d7166f05daad1b022fa04c2569e788580158095",
@@ -302384,11 +302384,32 @@
       "1a074a63d95c97709032adb597fccf047f6397261fd977ba1fb24334a77e158e": "5a943ee2f4ff781af2e5ac2274f3350c3cb15248",
       "c2eceeb416956391a0e54b4a66850d5156919aa7c38dee9523a19489b9a39952": "007704fa0bc202851affae38f268487694bcae6e",
       "12689b8c462b9a6e56da31630c02d6d8a3d5a4183bfac2cbe47c5a4563fa4724": "88ad52740cd0b8a0e927abbfb84601aa099bcfbc",
+      "cf0b48f5541f5efd54a006d1a6042dd7ce613ccc69e13f2f41ca678569b5d650": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
+      "b5a41c3758763bbec72769fab4a2533bf2db0b6312d93d25a695f9e4b9e02260": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
+      "11c3c727d7d12d0c7e044dd02ce154a5715bd7a2b8a9007132645962c7803881": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
+      "5705a031c35e48062146b9dbd1e76fa679aaa69e80135c587b38d06a3d6b36e1": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
+      "7377cde7eba4e55e78ac2a19104b7a713d5ede587406ffff042707bed7b63bd4": "5aedbc5916d67ef28767a2b942864765eea81bb8",
+      "049863abfae71799191ea07639f9de6a312606a8d11af9cacc1a6707fb0d4b5e": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "7608040cffb1951e5cc567abb63f75b5746777a1ba96196c1b75606b793bb4bb": "82e11a177af6a5091dd67f50a2f4bafda84d6556",
+      "290286a513c39af02581481958b8f1291c0ee8409b3940ae808352e0c3a2e2f8": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
+      "bbb6283a0810eb4468909a364ccbc6d9cec51024aa0a2afa2e72a7af6d23049b": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
+      "ad0f26064f44718eedd0103fde3d41bd29e60317680611e784dc9c1943e7574b": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
+      "8580fecc6574b40a082aaf227afc3c1dbd06f333ba7549278ff73647b02b2303": "efce0b51cab9f0da6cf68507757f1245a2867a72",
+      "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "0dc3fcf58c90c1f119a710babd54b57babf81ba8573c070b33f0cc21948b3086": "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686",
+      "a34304b73fb96aa9a3696669b6a124eeac43622888e64071b1d0866b0a0ab0d3": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "3227087599afd9304f260cdeb3bf1533e39e425cf444ceb3c24f55f561e71a0c": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
       "d35d380c8a716c086cdee9f821c879a01196eeec4e52c94a93f79631248c11ba": "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e",
       "4c5da1098f71dd9d8f7e1c4852b749766389571dbcddf7526a85f02f35440791": "aff9959b402ae0ead377b87566cf0e7b889e3d9e",
+      "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76": "3518193b8207bdebf22c1380c2db8c554baff329",
+      "8b584cd9143a670ddfce657ca65067c86f6be1db757a3085f48b1479ac6e8cf3": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
+      "810936574cdf68849822a1570046091f0bad0590dee3635dbc89a4cc4e099555": "4ae4d37409ff99411a623da9f6a44192170a854e",
+      "7d361b1bfd8523cd580bd9ca73902154556fbf45f60f0f539beef397d9462646": "e94278682ef9e9bbb82201f72c50382748dcea2a",
+      "3dc431af6e0c724582a3aa49e5c22cb9cc99d8298a4cce500e62bbaf1bc4bffb": "af452aed79b072c4d17985830b7c5dca64d4b412",
+      "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
+      "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
+      "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839": "063609dd518c124a4fc9ba35d1bae35771666a34",
+      "38fb777738b392642da6b186e83bada9bb957501b340d2e1081074788902be17": "d70660b4d67baecfc503f3777f56843b267c5960",
       "083c383103948dc4f05ac2a4e1bd7f12c02924c7fcd81d98e0ae13f2b309ab2f": "22fb2cd4412df057762c23dd22729ebcb922fe0e",
       "6ebb6241bdb0542477feb2c6bb8af6eff5957cf4e3d9c6be46432cb6a4a44264": "ac7bc5f6849eb16087c04e88680ea477d553b436",
       "a888509403eea148155662ac3714509b62b408a0609e94835b2e2f2761f3b678": "4ecf900db8d0f69d6154bde376206d727ddddaae",
@@ -302404,16 +302425,10 @@
       "782690d89a4bd671151e4ba77f004d8f1ee6db3c304f2bccb4bddc145f1227a5": "541271ea46c5166a1e054379963b0dc663e9b60f",
       "83bf9825bf3fdce7a4c47d50455c579b11fc5333f6f46835bb1a33e5bae372c8": "554b87377d176830d21bd03964dc71f8e98676b1",
       "2ca3ee3c7d5a6b6304a0205fec3cd7eaeb4e1e197e5db740cff0665006498076": "9bca7d5116788776ed0f297bccb4dfc485379b41",
-      "cf0b48f5541f5efd54a006d1a6042dd7ce613ccc69e13f2f41ca678569b5d650": "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff",
-      "b5a41c3758763bbec72769fab4a2533bf2db0b6312d93d25a695f9e4b9e02260": "7e6591cd465cbb35d6d3446c5a83b46d30fafe95",
-      "11c3c727d7d12d0c7e044dd02ce154a5715bd7a2b8a9007132645962c7803881": "5b922ed9de07d2a729bdf1da7b57c50ddf08809a",
       "4db8274393f8267db83665bbb70be8efb83201818dff3ad76c11f451be96a803": "34137c287c39c44300b04ee97c1e6459bb826b60",
       "e76e0642e2edee9d395fa6ef3050cc51eebb21b7cfca2aa875dbd4b855e107b9": "2e92346727b0355bc1ec9a7ded1b444a4917f2b9",
       "bafebb50034ba7763030e51b6cd4aceee9462317f8e1e164c85e720a13c0f8f8": "425a896af83386c7bafac59f94211cdbb9cce18d",
       "5d2fb807b28a18a95ee67234bf3b403b601497368b021dd27ebf3941fc4c5944": "cf3aa193df2722899066246bccbed03f2e79a74a",
-      "5705a031c35e48062146b9dbd1e76fa679aaa69e80135c587b38d06a3d6b36e1": "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9",
-      "7377cde7eba4e55e78ac2a19104b7a713d5ede587406ffff042707bed7b63bd4": "5aedbc5916d67ef28767a2b942864765eea81bb8",
-      "049863abfae71799191ea07639f9de6a312606a8d11af9cacc1a6707fb0d4b5e": "06dae1db384aa29d81c5b6ed587877e7128fcb35",
       "f05b508d49f31f2a1a61724f013572592abc0833c09c45a72180e84247dc0d0d": "e09c54152c8093e1724842c711aed6417169db23",
       "802fb0ce40878e98335fc56d11eff6382982e9f09ebc83055b0a469df13f7900": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
       "216c81ff9a84af0dfbf21dd8df6827c25fca9fdeefe9bc8426f7a00d6ff2264e": "12f676cef249b82480b6f19c454e234b435ca7b6",
@@ -302421,28 +302436,13 @@
       "e5877cd1e4821cbbc9a450491a189032c82906c05f7fc9f2e48ee0d06b3ad18c": "3c79663ef74c0b0439d13351326eb1c52a657008",
       "8e2c9ccfa8caff03dbd0d945d7c1d4de15292817409fe6fabda07f008f97dbc6": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
       "d7bcf2da99a09589096e9bcee98da43303c588cca4e89b1a263adace52038cd3": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
-      "290286a513c39af02581481958b8f1291c0ee8409b3940ae808352e0c3a2e2f8": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
-      "bbb6283a0810eb4468909a364ccbc6d9cec51024aa0a2afa2e72a7af6d23049b": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
-      "ad0f26064f44718eedd0103fde3d41bd29e60317680611e784dc9c1943e7574b": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
-      "8580fecc6574b40a082aaf227afc3c1dbd06f333ba7549278ff73647b02b2303": "efce0b51cab9f0da6cf68507757f1245a2867a72",
-      "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "d0f5b6d96a01295ab5436d7852d2c9eea1faa87fcf016b7e6599cdd689266cd2": "76a7360502fa0296ea93b4c537174610a834d367",
       "cf0e73cb4072d14e15da5686a5bf2b7657570d592684e3d6b76f7ff610dc6e2d": "48b35384cd148c0cc10ec52d308af50d33916c7c",
       "76bd637fdeef6412955d204da3e79597886bda711869db4d01024ffe00481d20": "d0dead41c5b763008a4d777aedddce651eb6dcbb",
-      "a34304b73fb96aa9a3696669b6a124eeac43622888e64071b1d0866b0a0ab0d3": "8063185d4dd653dd75a68855148c9ee15b71164c",
       "41535bd7242c07d69ec5427584d31f068ca4eb996ca95246caed4e3573a494e6": "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5",
       "8db165d567e13bce3f50ee495975671faa5a0ff332dcb08e187aa91125c81ec6": "78ba9960f135372825ab7244b5e4e73a810002ff",
       "c15220d1c448bfd3aa268ef8de41dce14a9b3ba90171aaae539d6d94721ff4e0": "0877ffb4b4d1c18283468be3579b72ed8c22e3ac",
       "94b4f1bde239372cd691cc4a228677dad6dbc787b26c3f952a512139de6ed60e": "a2fb11c000ed7c976520622cfb7940ed6ddc904e",
-      "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76": "3518193b8207bdebf22c1380c2db8c554baff329",
-      "8b584cd9143a670ddfce657ca65067c86f6be1db757a3085f48b1479ac6e8cf3": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
-      "810936574cdf68849822a1570046091f0bad0590dee3635dbc89a4cc4e099555": "4ae4d37409ff99411a623da9f6a44192170a854e",
-      "7d361b1bfd8523cd580bd9ca73902154556fbf45f60f0f539beef397d9462646": "e94278682ef9e9bbb82201f72c50382748dcea2a",
-      "3dc431af6e0c724582a3aa49e5c22cb9cc99d8298a4cce500e62bbaf1bc4bffb": "af452aed79b072c4d17985830b7c5dca64d4b412",
-      "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
-      "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
-      "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839": "063609dd518c124a4fc9ba35d1bae35771666a34",
-      "38fb777738b392642da6b186e83bada9bb957501b340d2e1081074788902be17": "d70660b4d67baecfc503f3777f56843b267c5960",
       "349b0c8347766c1459faeca96c1c924370d977bc544b8701180716f343a85ae4": "1246203bebf9f04e3bac2df7fc64719304f9f1bd",
       "bd10f52cb7cb8abb838f51a8551529eaae1418b79020446acbb9a61b1e80830e": "b607707d74b5a7d3ba211825de31a8f32aec8146",
       "9809ed07796454d5524cce240c4f815496b82fae3644aba80778612c618d5cf7": "3d7166f05daad1b022fa04c2569e788580158095",
@@ -462831,17 +462831,107 @@
       "PC-8001/pc8001mk2sr.zip": [
         "88ad52740cd0b8a0e927abbfb84601aa099bcfbc"
       ],
+      "NEC/PC-88/.variants/N88.ROM.3b31fc68": [
+        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
+      ],
+      "PC-88/.variants/N88.ROM.3b31fc68": [
+        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
+      ],
+      ".variants/N88.ROM.3b31fc68": [
+        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
+      ],
+      "NEC/PC-88/.variants/N88KNJ2.ROM.7e6591cd": [
+        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
+      ],
+      "PC-88/.variants/N88KNJ2.ROM.7e6591cd": [
+        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
+      ],
+      ".variants/N88KNJ2.ROM.7e6591cd": [
+        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
+      ],
+      "NEC/PC-88/.variants/N88N.ROM.5b922ed9": [
+        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
+      ],
+      "PC-88/.variants/N88N.ROM.5b922ed9": [
+        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
+      ],
+      ".variants/N88N.ROM.5b922ed9": [
+        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
+      ],
+      "NEC/PC-88/.variants/n88.rom.9b1346d4": [
+        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
+      ],
+      "PC-88/.variants/n88.rom.9b1346d4": [
+        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
+      ],
+      ".variants/n88.rom.9b1346d4": [
+        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
+      ],
+      "NEC/PC-88/.variants/n88_0.rom.5aedbc59": [
+        "5aedbc5916d67ef28767a2b942864765eea81bb8"
+      ],
+      "PC-88/.variants/n88_0.rom.5aedbc59": [
+        "5aedbc5916d67ef28767a2b942864765eea81bb8"
+      ],
+      ".variants/n88_0.rom.5aedbc59": [
+        "5aedbc5916d67ef28767a2b942864765eea81bb8"
+      ],
+      "NEC/PC-88/.variants/n88n.ROM.06dae1db": [
+        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
+      ],
+      "PC-88/.variants/n88n.ROM.06dae1db": [
+        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
+      ],
+      ".variants/n88n.ROM.06dae1db": [
+        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
+      ],
       "NEC/PC-88/KANJI1.ROM": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
       "PC-88/KANJI1.ROM": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
+      "NEC/PC-88/N88EXT0.ROM": [
+        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
+      ],
+      "PC-88/N88EXT0.ROM": [
+        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
+      ],
+      "NEC/PC-88/N88EXT1.ROM": [
+        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
+      ],
+      "PC-88/N88EXT1.ROM": [
+        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
+      ],
+      "NEC/PC-88/N88EXT2.ROM": [
+        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
+      ],
+      "PC-88/N88EXT2.ROM": [
+        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
+      ],
+      "NEC/PC-88/N88EXT3.ROM": [
+        "efce0b51cab9f0da6cf68507757f1245a2867a72"
+      ],
+      "PC-88/N88EXT3.ROM": [
+        "efce0b51cab9f0da6cf68507757f1245a2867a72"
+      ],
+      "NEC/PC-88/N88SUB.ROM": [
+        "bb7103a0818850a039c67ff666a31ce49a8d516f"
+      ],
+      "PC-88/N88SUB.ROM": [
+        "bb7103a0818850a039c67ff666a31ce49a8d516f"
+      ],
       "NEC/PC-88/PC8801 MKII SR BIOS.rom": [
         "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686"
       ],
       "PC-88/PC8801 MKII SR BIOS.rom": [
         "7a6676e352c8d0eaf16e5863c1c98ac65d6f8686"
+      ],
+      "NEC/PC-88/disk.rom": [
+        "8063185d4dd653dd75a68855148c9ee15b71164c"
+      ],
+      "PC-88/disk.rom": [
+        "8063185d4dd653dd75a68855148c9ee15b71164c"
       ],
       "NEC/PC-88/font.rom": [
         "84b90f69671d4b72e8f219e1fe7cd667e976cf7f"
@@ -462860,6 +462950,60 @@
       ],
       "PC-88/font3.rom": [
         "aff9959b402ae0ead377b87566cf0e7b889e3d9e"
+      ],
+      "NEC/PC-88/n88.rom": [
+        "3518193b8207bdebf22c1380c2db8c554baff329"
+      ],
+      "PC-88/n88.rom": [
+        "3518193b8207bdebf22c1380c2db8c554baff329"
+      ],
+      "NEC/PC-88/n88_0.rom": [
+        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
+      ],
+      "PC-88/n88_0.rom": [
+        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
+      ],
+      "NEC/PC-88/n88_1.rom": [
+        "4ae4d37409ff99411a623da9f6a44192170a854e"
+      ],
+      "PC-88/n88_1.rom": [
+        "4ae4d37409ff99411a623da9f6a44192170a854e"
+      ],
+      "NEC/PC-88/n88_2.rom": [
+        "e94278682ef9e9bbb82201f72c50382748dcea2a"
+      ],
+      "PC-88/n88_2.rom": [
+        "e94278682ef9e9bbb82201f72c50382748dcea2a"
+      ],
+      "NEC/PC-88/n88_3.rom": [
+        "af452aed79b072c4d17985830b7c5dca64d4b412"
+      ],
+      "PC-88/n88_3.rom": [
+        "af452aed79b072c4d17985830b7c5dca64d4b412"
+      ],
+      "NEC/PC-88/n88jisho.rom": [
+        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
+      ],
+      "PC-88/n88jisho.rom": [
+        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
+      ],
+      "NEC/PC-88/n88knj2.rom": [
+        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
+      ],
+      "PC-88/n88knj2.rom": [
+        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
+      ],
+      "NEC/PC-88/n88n.rom": [
+        "063609dd518c124a4fc9ba35d1bae35771666a34"
+      ],
+      "PC-88/n88n.rom": [
+        "063609dd518c124a4fc9ba35d1bae35771666a34"
+      ],
+      "NEC/PC-88/pc88.rom": [
+        "d70660b4d67baecfc503f3777f56843b267c5960"
+      ],
+      "PC-88/pc88.rom": [
+        "d70660b4d67baecfc503f3777f56843b267c5960"
       ],
       "NEC/PC-98/.variants/2608_BD.WAV.22fb2cd4": [
         "22fb2cd4412df057762c23dd22729ebcb922fe0e"
@@ -462996,33 +463140,6 @@
       ".variants/ITF.ROM.9bca7d51": [
         "9bca7d5116788776ed0f297bccb4dfc485379b41"
       ],
-      "NEC/PC-98/.variants/N88.ROM.3b31fc68": [
-        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
-      ],
-      "PC-98/.variants/N88.ROM.3b31fc68": [
-        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
-      ],
-      ".variants/N88.ROM.3b31fc68": [
-        "3b31fc68fa7f47b21c1a1cb027b86b9e87afbfff"
-      ],
-      "NEC/PC-98/.variants/N88KNJ2.ROM.7e6591cd": [
-        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
-      ],
-      "PC-98/.variants/N88KNJ2.ROM.7e6591cd": [
-        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
-      ],
-      ".variants/N88KNJ2.ROM.7e6591cd": [
-        "7e6591cd465cbb35d6d3446c5a83b46d30fafe95"
-      ],
-      "NEC/PC-98/.variants/N88N.ROM.5b922ed9": [
-        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
-      ],
-      "PC-98/.variants/N88N.ROM.5b922ed9": [
-        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
-      ],
-      ".variants/N88N.ROM.5b922ed9": [
-        "5b922ed9de07d2a729bdf1da7b57c50ddf08809a"
-      ],
       "NEC/PC-98/.variants/SOUND.ROM.34137c28": [
         "34137c287c39c44300b04ee97c1e6459bb826b60"
       ],
@@ -463058,33 +463175,6 @@
       ],
       ".variants/itf.rom.cf3aa193": [
         "cf3aa193df2722899066246bccbed03f2e79a74a"
-      ],
-      "NEC/PC-98/.variants/n88.rom.9b1346d4": [
-        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
-      ],
-      "PC-98/.variants/n88.rom.9b1346d4": [
-        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
-      ],
-      ".variants/n88.rom.9b1346d4": [
-        "9b1346d44044eeea921c4cce69b5dc49dbc0b7e9"
-      ],
-      "NEC/PC-98/.variants/n88_0.rom.5aedbc59": [
-        "5aedbc5916d67ef28767a2b942864765eea81bb8"
-      ],
-      "PC-98/.variants/n88_0.rom.5aedbc59": [
-        "5aedbc5916d67ef28767a2b942864765eea81bb8"
-      ],
-      ".variants/n88_0.rom.5aedbc59": [
-        "5aedbc5916d67ef28767a2b942864765eea81bb8"
-      ],
-      "NEC/PC-98/.variants/n88n.ROM.06dae1db": [
-        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
-      ],
-      "PC-98/.variants/n88n.ROM.06dae1db": [
-        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
-      ],
-      ".variants/n88n.ROM.06dae1db": [
-        "06dae1db384aa29d81c5b6ed587877e7128fcb35"
       ],
       "NEC/PC-98/.variants/sound.rom.e09c5415": [
         "e09c54152c8093e1724842c711aed6417169db23"
@@ -463131,36 +463221,6 @@
       "PC-98/2608_top.wav": [
         "aa4a8f766a86b830687d5083fd3b9db0652f46fc"
       ],
-      "NEC/PC-98/N88EXT0.ROM": [
-        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
-      ],
-      "PC-98/N88EXT0.ROM": [
-        "d239c26ad7ac5efac6e947b0e9549b1534aa970d"
-      ],
-      "NEC/PC-98/N88EXT1.ROM": [
-        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
-      ],
-      "PC-98/N88EXT1.ROM": [
-        "8528eef7946edf6501a6ccb1f416b60c64efac7c"
-      ],
-      "NEC/PC-98/N88EXT2.ROM": [
-        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
-      ],
-      "PC-98/N88EXT2.ROM": [
-        "b7c8bcea219b77d9cc3ee0efafe343cc307425d1"
-      ],
-      "NEC/PC-98/N88EXT3.ROM": [
-        "efce0b51cab9f0da6cf68507757f1245a2867a72"
-      ],
-      "PC-98/N88EXT3.ROM": [
-        "efce0b51cab9f0da6cf68507757f1245a2867a72"
-      ],
-      "NEC/PC-98/N88SUB.ROM": [
-        "bb7103a0818850a039c67ff666a31ce49a8d516f"
-      ],
-      "PC-98/N88SUB.ROM": [
-        "bb7103a0818850a039c67ff666a31ce49a8d516f"
-      ],
       "NEC/PC-98/bios.rom": [
         "76a7360502fa0296ea93b4c537174610a834d367"
       ],
@@ -463178,12 +463238,6 @@
       ],
       "PC-98/d8000.rom": [
         "d0dead41c5b763008a4d777aedddce651eb6dcbb"
-      ],
-      "NEC/PC-98/disk.rom": [
-        "8063185d4dd653dd75a68855148c9ee15b71164c"
-      ],
-      "PC-98/disk.rom": [
-        "8063185d4dd653dd75a68855148c9ee15b71164c"
       ],
       "NEC/PC-98/font.bmp": [
         "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5"
@@ -463208,60 +463262,6 @@
       ],
       "PC-98/itf.rom": [
         "a2fb11c000ed7c976520622cfb7940ed6ddc904e"
-      ],
-      "NEC/PC-98/n88.rom": [
-        "3518193b8207bdebf22c1380c2db8c554baff329"
-      ],
-      "PC-98/n88.rom": [
-        "3518193b8207bdebf22c1380c2db8c554baff329"
-      ],
-      "NEC/PC-98/n88_0.rom": [
-        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
-      ],
-      "PC-98/n88_0.rom": [
-        "d1ae642aed4f0584eeb81ff50180db694e5101d4"
-      ],
-      "NEC/PC-98/n88_1.rom": [
-        "4ae4d37409ff99411a623da9f6a44192170a854e"
-      ],
-      "PC-98/n88_1.rom": [
-        "4ae4d37409ff99411a623da9f6a44192170a854e"
-      ],
-      "NEC/PC-98/n88_2.rom": [
-        "e94278682ef9e9bbb82201f72c50382748dcea2a"
-      ],
-      "PC-98/n88_2.rom": [
-        "e94278682ef9e9bbb82201f72c50382748dcea2a"
-      ],
-      "NEC/PC-98/n88_3.rom": [
-        "af452aed79b072c4d17985830b7c5dca64d4b412"
-      ],
-      "PC-98/n88_3.rom": [
-        "af452aed79b072c4d17985830b7c5dca64d4b412"
-      ],
-      "NEC/PC-98/n88jisho.rom": [
-        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
-      ],
-      "PC-98/n88jisho.rom": [
-        "deef0cc2a9734ba891a6d6c022aa70ffc66f783e"
-      ],
-      "NEC/PC-98/n88knj2.rom": [
-        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
-      ],
-      "PC-98/n88knj2.rom": [
-        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
-      ],
-      "NEC/PC-98/n88n.rom": [
-        "063609dd518c124a4fc9ba35d1bae35771666a34"
-      ],
-      "PC-98/n88n.rom": [
-        "063609dd518c124a4fc9ba35d1bae35771666a34"
-      ],
-      "NEC/PC-98/pc88.rom": [
-        "d70660b4d67baecfc503f3777f56843b267c5960"
-      ],
-      "PC-98/pc88.rom": [
-        "d70660b4d67baecfc503f3777f56843b267c5960"
       ],
       "NEC/PC-98/pci.rom": [
         "1246203bebf9f04e3bac2df7fc64719304f9f1bd"
@@ -563370,10 +563370,10 @@
       "PC Engine CD/PCECD_gecard.pce": [
         "014881a959e045e00f4db8f52955200865d40280"
       ],
-      "NEC/PC-98/N88KNJ1.ROM": [
+      "NEC/PC-88/N88KNJ1.ROM": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
-      "PC-98/N88KNJ1.ROM": [
+      "PC-88/N88KNJ1.ROM": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
       "NEC/PC-FX/fx-scsi.rom": [
