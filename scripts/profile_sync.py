@@ -3427,6 +3427,9 @@ def main() -> None:
     if writes and not args.dry_run and not args.force:
         _refuse_dirty_tree(args.emulators_dir)
 
+    # A profile that could not be compared or written is not a profile with
+    # nothing to review: it stays in every output and fails the run.
+    failed: set[str] = set()
     if args.realign_prose:
         for name in selected:
             profile_path = Path(args.emulators_dir) / f"{name}.yml"
@@ -3441,8 +3444,12 @@ def main() -> None:
                 raise
             except upstream.UpstreamError as exc:
                 print(f"{name}: {exc}", file=sys.stderr)
+                failed.add(name)
             except YamlWriteError as exc:
                 print(f"{name}: write refused: {exc}", file=sys.stderr)
+                failed.add(name)
+        if failed:
+            raise SystemExit(1)
         return
 
     reports = []
@@ -3470,6 +3477,7 @@ def main() -> None:
             report = ProfileReport(
                 name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
             )
+            failed.add(name)
         reports.append(report)
         if writes:
             try:
@@ -3477,13 +3485,26 @@ def main() -> None:
             except YamlWriteError as exc:
                 # The guard already left the file untouched; keep going.
                 print(f"{name}: write refused: {exc}", file=sys.stderr)
+                failed.add(name)
 
     # --changed-only narrows every output, not the text report alone: the
     # documented `--all --changed-only --json` listed every profile.
     shown = [
         report for report in reports
-        if not args.changed_only or report.needs_review()
+        if not args.changed_only or report.needs_review() or report.name in failed
     ]
+    _emit(args, selected, reports, shown)
+    if failed:
+        raise SystemExit(1)
+
+
+def _emit(
+    args: argparse.Namespace,
+    selected: dict,
+    reports: list[ProfileReport],
+    shown: list[ProfileReport],
+) -> None:
+    """Write the reports in the form the flags ask for."""
     if args.as_json:
         print(json.dumps([report_to_dict(r) for r in shown], indent=2))
         return
@@ -3501,23 +3522,21 @@ def main() -> None:
     if args.triage:
         _print_triage(args, selected, shown)
         return
-    printed = 0
-    for report in reports:
-        if args.changed_only and not report.needs_review():
-            continue
-        printed += 1
+    for report in shown:
         print(format_report(report, args.changed_only))
         _print_extras(args, selected[report.name], report)
         print()
     if args.changed_only:
-        _print_elided(reports, printed)
+        _print_elided(reports, len(shown), frozenset(report.name for report in shown))
 
 
-def _print_elided(reports: list[ProfileReport], printed: int) -> None:
+def _print_elided(
+    reports: list[ProfileReport], printed: int, listed: frozenset[str] = frozenset()
+) -> None:
     """Account for what --changed-only left out, grouped by reason."""
     reasons: dict[str, int] = {}
     for report in reports:
-        if report.needs_review():
+        if report.needs_review() or report.name in listed:
             continue
         key = report.skipped or "nothing to review"
         reasons[key] = reasons.get(key, 0) + 1

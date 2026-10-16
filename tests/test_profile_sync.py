@@ -3698,6 +3698,34 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("--check-version", err)
 
+    def test_a_profile_the_forge_failed_is_listed_and_fails_the_run(self):
+        """Dropped by --changed-only, a 502 read as nothing to review."""
+        from unittest import mock
+
+        def build(name, *args, **kwargs):
+            if name == "drift":
+                raise profile_sync.upstream.UpstreamError("https://x: HTTP 502")
+            return ProfileReport(name=name)
+
+        out = io.StringIO()
+        saved = sys.argv
+        try:
+            sys.argv = ["profile_sync.py", "--all", "--changed-only", "--json"]
+            with mock.patch.object(profile_sync, "load_emulator_profiles", return_value={}), \
+                    mock.patch.object(profile_sync, "select_profiles",
+                                      return_value={"clean": {}, "drift": {}}), \
+                    mock.patch.object(profile_sync, "_check_quota"), \
+                    mock.patch.object(profile_sync, "build_report", side_effect=build), \
+                    contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as caught:
+                    profile_sync.main()
+        finally:
+            sys.argv = saved
+        self.assertEqual(caught.exception.code, 1)
+        (row,) = json.loads(out.getvalue())
+        self.assertEqual(row["name"], "drift")
+        self.assertIn("upstream error", row["skipped"])
+
 
 class TestReconcilePerFile(unittest.TestCase):
     def test_an_anchored_part_settles_only_its_own_file(self):
