@@ -131,9 +131,9 @@ class HashesTheFormatCannotHold(unittest.TestCase):
                             truth={"md5": A}, filled=["md5"])
         several = NativeFile("m.bin", "m.bin", "nds", platform={"md5": ""},
                              truth={"md5": [A, B]}, filled=["md5"])
-        self.assertEqual(RetroBat._md5(single), A)
+        self.assertEqual(RetroBat.single_value(single, "md5"), A)
         self.assertTrue(exporter.states(single, "md5"))
-        self.assertEqual(RetroBat._md5(several), "")
+        self.assertEqual(RetroBat.single_value(several, "md5"), "")
         self.assertFalse(exporter.states(several, "md5"))
 
     def test_emudeck_never_grows_an_array(self):
