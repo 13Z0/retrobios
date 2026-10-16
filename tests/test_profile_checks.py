@@ -190,5 +190,19 @@ class EightyOneRoms(_Probe):
                 self.assertNotIn("crc32", entry.get("validation") or [])
 
 
+class AdvanceMameArchives(_Probe):
+    """verify_length_and_hash checks each member and only adds a warning; the
+    archive itself has no size or hash anyone checks (src/romload.c:327-363
+    at 21f8f6f). The 26 BIOS archives declared archive-level checks with no
+    archive values."""
+
+    def test_no_archive_level_check(self):
+        for entry in _profile("advancemame")["files"]:
+            if entry.get("category") == "bios_zip":
+                with self.subTest(name=entry["name"]):
+                    self.assertFalse(entry.get("validation"))
+                    self.assertTrue(entry.get("contents"))
+
+
 if __name__ == "__main__":
     unittest.main()
