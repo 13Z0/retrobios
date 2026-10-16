@@ -28,6 +28,7 @@ from common import (
     resolve_local_file,
     runs_standalone,
 )
+from packresolve import preferred_entries
 from validation import outside_gap_scope
 
 # A profile entry can prove a slot without declaring a hash: Dolphin names no
@@ -67,9 +68,14 @@ class Conflict:
         return sorted({c.emulator for c in self.profile_claims if c.emulator})
 
 
-def _normalize(destination: str) -> str:
-    """Comparable form of a destination, since layers write it differently."""
-    return destination.strip().strip("/").replace("\\", "/").casefold()
+def _normalize(destination: str, fold: bool = True) -> str:
+    """Comparable form of a destination, since layers write it differently.
+
+    Case is folded only where the platform's filesystem folds it: on Linux
+    RetroDECK ships bios/DISK.ROM and bios/disk.rom side by side.
+    """
+    cleaned = destination.strip().strip("/").replace("\\", "/")
+    return cleaned.casefold() if fold else cleaned
 
 
 def build_claim_index(claims: list[Claim]) -> dict[str, list[Claim]]:
@@ -236,16 +242,32 @@ def find_conflicts(
     Only proven claims are compared. A claim resolved by filename alone
     asserts nothing about content and cannot contradict anything.
     """
+    fold = bool(config.get("case_insensitive_fs", False))
+    # The builder's own choice among declarations sharing a destination,
+    # read from the same function: the most accepting archive for zipped_file
+    # members, then md5_exact. A rule of its own here compared profiles with
+    # a file the pack does not ship (Batocera adam_fdc.zip).
+    shipped = set(
+        preferred_entries(
+            config.get("systems") or {}, db, "bios", base_dest, False,
+            zip_contents, True,
+        ).values()
+    )
     by_dest: dict[str, Claim] = {}
     for claim in platform_claims(
         config, db, base_dest, zip_contents, data_dir_registry
     ):
-        key = _normalize(claim.destination)
+        key = _normalize(claim.destination, fold)
         held = by_dest.get(key)
-        # The pack ships the declaration a hash proves (_preferred_entries),
-        # so a bare sibling met first must not stand for the destination:
-        # it would hide the contradiction with the file actually shipped.
-        if held is None or _claim_rank(claim) > _claim_rank(held):
+        if held is not None and id(held.entry) in shipped:
+            continue
+        # A bare sibling met first must not stand for the destination: it
+        # would hide the contradiction with the file actually shipped.
+        if (
+            held is None
+            or id(claim.entry) in shipped
+            or _claim_rank(claim) > _claim_rank(held)
+        ):
             by_dest[key] = claim
 
     # Grouped before judging: a profile may declare several revisions that are
@@ -257,7 +279,7 @@ def find_conflicts(
         profiles, db, base_dest, standalone_cores, zip_contents, data_dir_registry,
         config=config,
     ):
-        key = _normalize(claim.destination)
+        key = _normalize(claim.destination, fold)
         platform = by_dest.get(key)
         if platform is None or not platform.is_proven or not claim.is_proven:
             continue
@@ -446,6 +468,7 @@ def find_collisions(
     upstream list carries. RetroDECK aims a PC-88 disk subsystem ROM and a
     CoCo disk ROM at one bios/disk.rom.
     """
+    fold = bool(config.get("case_insensitive_fs", False))
     by_dest: dict[str, list[dict]] = {}
     for system in (config.get("systems") or {}).values():
         for entry in system.get("files") or []:
@@ -453,7 +476,7 @@ def find_collisions(
                 continue
             dest = entry.get("destination") or entry.get("name") or ""
             if dest:
-                by_dest.setdefault(_normalize(dest), []).append(entry)
+                by_dest.setdefault(_normalize(dest, fold), []).append(entry)
 
     collisions = []
     for key, entries in sorted(by_dest.items()):

@@ -10,7 +10,13 @@ import re
 _HEX_RE = re.compile(r"\b([0-9a-fA-F]{8,40})\b")
 from largefiles import fetch_large_file
 import os
-from common import declared_hash_verdict, resolve_local_file
+from common import (
+    declared_hash_verdict,
+    resolution_is_hash_exact,
+    resolve_local_file,
+    sanitize_pack_path,
+)
+from validation import inner_rom_check
 # CLI-wide network policy.  Public helpers can override it explicitly, while
 # every CLI mode inherits --offline (including large-file release fallback).
 _OFFLINE = False
@@ -220,3 +226,83 @@ def resolve_file(
         return path, status
 
     return None, "not_found"
+
+
+def preferred_entries(
+    pack_systems: dict,
+    db: dict,
+    bios_dir: str,
+    base_dest: str,
+    required_only: bool,
+    zip_contents,
+    offline,
+) -> dict[str, int]:
+    """Which declaration wins when several claim the same destination.
+
+    A platform can declare one destination in more than one system, bare
+    in one and hash-constrained in another. First-come dedup would let
+    the bare entry pack whatever answers to the name, so a constrained
+    sibling that resolves by content claims the destination instead.
+    The choice is about the baseline and reads no data directory, for the
+    pack, the manifest and verify alike: verify alone passed the registry
+    and could crown a declaration only a data/ cache satisfies.
+    """
+    preferred_entries: dict[str, int] = {}
+    dest_entries: dict[str, list[dict]] = {}
+    for sys_id, system in sorted(pack_systems.items()):
+        for file_entry in system.get("files", []):
+            if required_only and file_entry.get("required") is False:
+                continue
+            dest = sanitize_pack_path(
+                file_entry.get("destination", file_entry.get("name", ""))
+            )
+            if not dest:
+                continue
+            full = f"{base_dest}/{dest}" if base_dest else dest
+            dest_entries.setdefault(full, []).append(file_entry)
+    for full, entries in dest_entries.items():
+        if len(entries) < 2:
+            continue
+        constrained = [
+            fe
+            for fe in entries
+            if fe.get("md5") or fe.get("sha1") or fe.get("zipped_file")
+        ]
+        if not constrained:
+            continue
+        resolved = [
+            (fe, *resolve_file(
+                fe,
+                db,
+                bios_dir,
+                zip_contents,
+                offline=offline,
+            ))
+            for fe in constrained
+        ]
+        members = [fe for fe in entries if fe.get("zipped_file")]
+        if members:
+            # One archive declared once per ROM it must hold: the archive
+            # to ship is the one the most declarations accept, not the first
+            # that answers one of them (adam_fdc.zip: a one-member MAME set
+            # answered first, the eight-member set sat beside it).
+            def accepted(path: str | None) -> int:
+                if not path or not path.endswith(".zip"):
+                    return -1
+                return sum(inner_rom_check(fe, path) == "ok" for fe in members)
+
+            fe, path, _st = max(resolved, key=lambda item: accepted(item[1]))
+            if accepted(path) > 0:
+                preferred_entries[full] = id(fe)
+                continue
+        best = None
+        for fe, _lp, _st in resolved:
+            if _lp and _st == "md5_exact":
+                best = fe
+                break
+            if best is None and _lp and resolution_is_hash_exact(_st):
+                best = fe
+        if best is not None:
+            preferred_entries[full] = id(best)
+
+    return preferred_entries
