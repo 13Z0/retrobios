@@ -2126,6 +2126,39 @@ class ModuleConstantsDeclaredOnce(unittest.TestCase):
         self.assertEqual(offenders, {})
 
 
+class OnlyTheSchemaValidatorNeedsJsonschema(unittest.TestCase):
+    """Build scripts and install.py run on stdlib plus pyyaml; jsonschema is
+    tooling for validate_schemas and CI. An import anywhere else turns a
+    contributor's pipeline run into an ImportError."""
+
+    @staticmethod
+    def _imports_jsonschema(source: str) -> bool:
+        for node in ast.walk(ast.parse(source)):
+            if isinstance(node, ast.Import):
+                names = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                names = [node.module or ""]
+            else:
+                continue
+            if any(name.split(".")[0] == "jsonschema" for name in names):
+                return True
+        return False
+
+    def test_no_other_module_imports_it(self):
+        offenders = [
+            str(path.relative_to(ROOT))
+            for path in sorted(ROOT.glob("scripts/**/*.py")) + [ROOT / "install.py"]
+            if path.name != "validate_schemas.py"
+            and self._imports_jsonschema(path.read_text())
+        ]
+        self.assertEqual(offenders, [])
+
+    def test_a_nested_import_is_seen(self):
+        self.assertTrue(
+            self._imports_jsonschema("def f():\n    from jsonschema import validate\n")
+        )
+
+
 class HashMergeBackupsAreNotSources(unittest.TestCase):
     """The hash merge copies a profile to <name>.old.yml before rewriting it.
 
