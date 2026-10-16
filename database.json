@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-16T12:33:18Z",
+  "generated_at": "2026-10-16T16:55:49Z",
   "total_files": 19005,
   "total_size": 17497729510,
   "bios_dir": "bios",
@@ -267604,10 +267604,10 @@
         "e17a3a6d265bf1fa150312061134293d2b58288c",
         "a553481f4e2794c10cfe597fef154eef0d8257de",
         "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92",
+        "5837064c9df4741a55f7c4d8787ac158dff2d3ce",
         "2c16432b6c73dd2a3947cba950a0f4c19d6180eb",
         "2869cf4c235d671668cfcb62415e2ce8323ad4ed",
-        "47b52adefedaec475c925e54340e37673c11707c",
-        "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
+        "47b52adefedaec475c925e54340e37673c11707c"
       ],
       "ctrl_mt32_1_07.rom": [
         "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
@@ -270019,275 +270019,59 @@
       "DBPATCH.wav": [
         "e0c98d00fe3004942c4a2842f06e2702dd2bd7c7"
       ],
-      "vice/C64/kernal-901227-01.bin": [
-        "87cc04d61fc748b82df09856847bb5c2754a2033"
+      "OS6128_UK.rom": [
+        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
       ],
-      "vice/C64/kernal-901227-02.bin": [
-        "0e2e4ee3f2d41f00bed72f9ab588b83e306fdb13"
+      "CPC6128.ROM": [
+        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
       ],
-      "vice/C64/kernal-390852-01.bin": [
-        "3ad6cc1837c679a11f551ad1cf1a32dd84ace719"
+      "CPC6128.ROM.UK": [
+        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
       ],
-      "vice/C128/kernal-318020-05.bin": [
-        "ceb6e1a1bf7e08eb9cbc651afa29e26adccf38ab"
+      "OS6128_FR.rom": [
+        "200d59076dfef36db061d6d7d21d80021cab1237"
       ],
-      "vice/C128/kernal-315078-03.bin": [
-        "3629b3fa28b6a30bcc027b647f26654929ed1b0f"
+      "OS6128_S.rom": [
+        "1acd01c2c03424a78b32c9440f4d890fb1104815"
       ],
-      "vice/C128/kernal-325172-01.bin": [
-        "98c34e0dec9f52d7862b56bb287d2573eb3f6364"
+      "OS6128_DK.rom": [
+        "a9e7ee6355730f319a37c95ca0a714212b88c3b1"
       ],
-      "vice/C128/kernal-318034-01.bin": [
-        "925177c99ee7e02870c32ad62a054db1327cf0c2"
+      "OS464_UK.rom": [
+        "56d39c463da60968d93e58b4ba0e675829412a20"
       ],
-      "vice/C128/kernalfi": [
-        "d08e7991a6df14a843e92daafaf6756337959ba4"
+      "CPC464.ROM": [
+        "56d39c463da60968d93e58b4ba0e675829412a20"
       ],
-      "vice/C128/kernalfr": [
-        "a0680d04db3232fa9f58598e5c9f09c4fe94f601"
+      "OS664_UK.rom": [
+        "073a7665527b5bd8a148747a3947dbd3328682c8"
       ],
-      "vice/C128/kernalit": [
-        "592a626eb2b5372596ac374d3505c3ce78dd040f"
+      "CPC664.ROM": [
+        "073a7665527b5bd8a148747a3947dbd3328682c8"
       ],
-      "vice/C128/kernalno": [
-        "00fe2fd610a812121befab1e7238fa882c0f8257"
+      "Amstrad_v4.cpr": [
+        "405e341437fab8db477606238af0c20eca2e39ee"
       ],
-      "vice/C128/basiclo-318018-04.bin": [
-        "d53a7884404f7d18ebd60dd3080c8f8d71067441"
+      "multiface2.rom": [
+        "1431ec628d38f000715545dd2186b684c5fe5a6f"
       ],
-      "vice/C128/basichi-318019-04.bin": [
-        "c4fb4a714e48a7bf6c28659de0302183a0e0d6c0"
+      "multface.rom": [
+        "1431ec628d38f000715545dd2186b684c5fe5a6f"
       ],
-      "vice/C128/kernal64-325179-01.bin": [
-        "b4862cac7b9319d8e912887c97fc270d4c239349"
+      "OS12.rom": [
+        "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
       ],
-      "vice/C128/kernal64-325182-01.bin": [
-        "e4f52d9b36c030eb94524eb49f6f0774c1d02e5e"
+      "BASIC2.rom": [
+        "4a7393f3a45ea309f744441c16723e2ef447a281"
       ],
-      "vice/C128/chargen-390059-01.bin": [
-        "29ed066d513f2d5c09ff26d9166ba23c2afb2b3f"
+      "DFS-2.26.rom": [
+        "cf2ebc422a8d24ec6f1a0320520c38a0e704109a"
       ],
-      "vice/C128/chargen-315079-01.bin": [
-        "638f8aff51c2ac4f99a55b12c4f8c985ef4bebd3"
+      "ADFS-1.30.rom": [
+        "301fd05c475a629c4bec70510d4507256a5b00d8"
       ],
-      "vice/C128/chargen-325167-02.bin": [
-        "9119b27a1bf885fa4c76fff5d858c74c194dd2b8"
-      ],
-      "vice/C128/chargen-325173-01D.bin": [
-        "70eccd8b944146f6b60f1519b830a4ee8928d4fa"
-      ],
-      "vice/C128/chargen-325078-02.bin": [
-        "5a87faa457979e7b6f434251a9e32f4483b337b3"
-      ],
-      "vice/C128/chargen-325181-01.bin": [
-        "aca3f7321ee7e6152f1f0afad646ae41964de4fb"
-      ],
-      "vice/C64DTV/dtvrom.bin": [
-        "72b4c8da075646cc9940e4377004c81192c7b0b1"
-      ],
-      "vice/PLUS4/kernal-318005-05.bin": [
-        "a3d9e5be091b98de39a046ab167fb7632d053682"
-      ],
-      "vice/PLUS4/kernal-318004-01.bin": [
-        "3c77caf72914c1c0a0875b3a7f6935cd30c54201"
-      ],
-      "vice/PLUS4/kernal-364.bin": [
-        "b9a5b5dacd57ca117ef0b3af29e91998bf4d7e5f"
-      ],
-      "vice/PLUS4/3plus1-317053-01.bin": [
-        "3b69f6e7cb4c18bb08e203fb18b7dabfa853390f"
-      ],
-      "vice/PLUS4/3plus1-317054-01.bin": [
-        "0ad7ac2db7da692d972e586ca0dfd747d82c7693"
-      ],
-      "vice/PLUS4/c2lo-364.bin": [
-        "59af401cbb2194f689898271c6e8aafa28a7af11"
-      ],
-      "vice/PET/basic-1.901439-09-05-02-06.bin": [
-        "3be9cd41b646fefa00d80f1c3433a06146e97c59"
-      ],
-      "vice/PET/basic-2.901465-01-02.bin": [
-        "9322a9f0354b9049847d98d3a045fbec860a6264"
-      ],
-      "vice/PET/basic-4.901465-23-20-21.bin": [
-        "d70bec479e1e3a0d0908a4897066e9959bbc11c8"
-      ],
-      "vice/PET/kernal-1.901439-04-07.bin": [
-        "32dc08828e88c74d6433156e64d402b564556308"
-      ],
-      "vice/PET/kernal-2.901465-03.bin": [
-        "38742bdf449f629bcba6276ef24d3daeb7da6e84"
-      ],
-      "vice/PET/kernal-4.901465-22.bin": [
-        "96a0fa56e0c937da92971d9c99d504e44e898806"
-      ],
-      "vice/PET/edit-1-n.901439-03.bin": [
-        "f02f5fb492ba93dbbd390f24c10f7a832dec432a"
-      ],
-      "vice/PET/edit-2-n.901447-24.bin": [
-        "5e5502ce32f5a7e387d65efe058916282041e54b"
-      ],
-      "vice/PET/edit-2-b.901474-01.bin": [
-        "174ace3a8c0348cd21d39cc864e2adc58b0101a9"
-      ],
-      "vice/PET/edit-4-40-n-50Hz.901498-01.bin": [
-        "05af284c914d53a52987b5f602466de75765f650"
-      ],
-      "vice/PET/edit-4-40-b-50Hz.ts.bin": [
-        "9f91fbabfdd532d003d2508f399574ba8ec6ee5f"
-      ],
-      "vice/PET/edit-4-80-b-50Hz.901474-04_.bin": [
-        "81975eab31a8f4f51ae2a20d099a567c7b3f2dd1"
-      ],
-      "vice/PET/characters-1.901447-08.bin": [
-        "3e067cc621e4beafca2b90cb8f6dba975df2855b"
-      ],
-      "vice/PET/characters-2.901447-10.bin": [
-        "0157a2d55b7ac4eaeb38475889ebeea52e2593db"
-      ],
-      "vice/PET/characters.901640-01.bin": [
-        "bf346f11595a3e65e55d6aeeaa2c0cec807b66c7"
-      ],
-      "vice/PET/waterloo-a000.901898-01.bin": [
-        "0414b3ab847c8977eb05c2fcc72efcf2f9d92871"
-      ],
-      "vice/PET/waterloo-b000.901898-02.bin": [
-        "df154939b934d0aeeb376813ec1ba0d43c2a3378"
-      ],
-      "vice/PET/waterloo-c000.901898-03.bin": [
-        "6c5b0cce97068f8841112ba6d5cd8e568b562fa3"
-      ],
-      "vice/PET/waterloo-d000.901898-04.bin": [
-        "b42a2050a319a1ffca7868a8d8d635fadd37ec37"
-      ],
-      "vice/PET/waterloo-e000.901897-01.bin": [
-        "e8ce8347451a001214a5e71a13081b38b4be23bc"
-      ],
-      "vice/PET/waterloo-f000.901898-05.bin": [
-        "9b4a5134d20345171e7303445f87c4e0b9addc96"
-      ],
-      "vice/CBM-II/basic-901242+3-04a.bin": [
-        "9409f92e167984096fe4d5913714bff6214c3b2d"
-      ],
-      "vice/CBM-II/basic-901240+1-03.bin": [
-        "53314b4d565cc405a67a0936b935e6e08955580d"
-      ],
-      "vice/CBM-II/basic-901235+6-02.bin": [
-        "e69531d45f5993f8e53c6bd9ab2a7bc10fe2d02f"
-      ],
-      "vice/CBM-II/kernal-901244-04a.bin": [
-        "abb26418b9e1614a8f52bdeee0822d4a96071439"
-      ],
-      "vice/CBM-II/kernal-901234-02.bin": [
-        "097197d4d08e0b82e0466a5f1fbd49a24f3d2523"
-      ],
-      "vice/CBM-II/chargen-901237-01.bin": [
-        "e63bf18da48e5a53c99ef127c1ae721333d1d102"
-      ],
-      "vice/CBM-II/chargen-901232-01.bin": [
-        "e7f3cbc8e282f79a00c3e95d75c8d725ee3c6287"
-      ],
-      "vice/SCPU64/scpu64": [
-        "f5b6da17ee8206ff0d2258e1d6e8b798147c2650"
-      ],
-      "vice/DRIVES/dos1551-318008-01.bin": [
-        "fae3c788ad9a6cc2dbdfbcf6c0264b2ca921d55e"
-      ],
-      "vice/DRIVES/dos1571cr-318047-01.bin": [
-        "14ee7a0fb7e1c59c51fbf781f944387037daa3ee"
-      ],
-      "vice/DRIVES/dos9000-300516+7-revC.bin": [
-        "c48df2cbb0eea656c3243df7ea8bfefcd171b8e8"
-      ],
-      "DMG_ROM.bin": [
-        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
-      ],
-      "dmg0_rom.bin": [
-        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
-      ],
-      "keen4.exe": [
-        "2a674822b9b5a3383114e3a3d97a98836e8e6cf1"
-      ],
-      "nespalette.pal": [
-        "37027d92e1015b82a7dc5c43e9f1649a961577ab"
-      ],
-      "Classic (FBX).pal": [
-        "37027d92e1015b82a7dc5c43e9f1649a961577ab"
-      ],
-      "usa_2slt.bin": [
-        "5c6bba07d2ec8ac95776aa3511109f5e1e2e92eb"
-      ],
-      "mt32_ctrl_1_04.rom": [
-        "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
-      ],
-      "mt32_ctrl_1_05.rom": [
-        "e17a3a6d265bf1fa150312061134293d2b58288c"
-      ],
-      "mt32_ctrl_1_06.rom": [
-        "a553481f4e2794c10cfe597fef154eef0d8257de"
-      ],
-      "mt32_ctrl_bluer.rom": [
-        "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92"
-      ],
-      "mt32_ctrl_2_04.rom": [
-        "2c16432b6c73dd2a3947cba950a0f4c19d6180eb"
-      ],
-      "mt32_ctrl_2_06.rom": [
-        "2869cf4c235d671668cfcb62415e2ce8323ad4ed"
-      ],
-      "mt32_ctrl_2_07.rom": [
-        "47b52adefedaec475c925e54340e37673c11707c"
-      ],
-      "cm32l_ctrl_1_00.rom": [
-        "73683d585cd6948cc19547942ca0e14a0319456d"
-      ],
-      "ctrl_cm32ln_1_00.rom": [
-        "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
-      ],
-      "cm32ln_ctrl_1_00.rom": [
-        "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
-      ],
-      "AUDIOHED.BS6": [
-        "e2c101f9fd4bc7e22ddbfa3f019c9303877de4e2"
-      ],
-      "AUDIOT.BS6": [
-        "b79e7afcb4e4b29e59660ec261f72ff1ab4d3a25"
-      ],
-      "IANIM.BS6": [
-        "ba1fa5b0bc34f148deffb4977a3cd1e718e91bbd"
-      ],
-      "IANIM.VSI": [
-        "ba1fa5b0bc34f148deffb4977a3cd1e718e91bbd"
-      ],
-      "SANIM.BS6": [
-        "22bf818465da0f32eef9611de936cba9966b14aa"
-      ],
-      "amiga-os-110-ntsc.rom": [
-        "4192c505d130f446b2ada6bdc91dae730acafb4c"
-      ],
-      "Kickstart v1.1 rev 31.34 (1985)(Commodore)(A1000)(NTSC).rom": [
-        "4192c505d130f446b2ada6bdc91dae730acafb4c"
-      ],
-      "amiga-os-110-pal.rom": [
-        "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
-      ],
-      "Kickstart v1.1 rev 32.34 (1986)(Commodore)(A1000)(PAL).rom": [
-        "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
-      ],
-      "amiga-os-300-a4000.rom": [
-        "f0b4e9e29e12218c2d5bd7020e4e785297d91fd7"
-      ],
-      "Kickstart v3.0 rev 39.106 (1992)(Commodore)(A4000)[!].rom": [
-        "f0b4e9e29e12218c2d5bd7020e4e785297d91fd7"
-      ],
-      "amiga-os-130-cdtv-ext.rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
+      "OPENBIOS.bin": [
+        "389df7981873d9e6e46c84c20cd43af0e4226cf8"
       ],
       "monit10.rom": [
         "4e83a94ae5155bbea14d7331a5a8db82457bd5ae"
@@ -270313,41 +270097,137 @@
       "terak.rom": [
         "273a9933b68a290c5aedcd6d69faa7b1d22c0344"
       ],
-      "FdsBios.bin": [
-        "af5af53f66982e749643fdf8b2acbb7d4d3ed229"
+      "arm6.program.rom": [
+        "388e3721b94cd074d6ba0eca8616523d2118a6c3"
       ],
-      "[BIOS] Atari Jaguar CD (World).rom": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "AUDIOHED.BS6": [
+        "e2c101f9fd4bc7e22ddbfa3f019c9303877de4e2"
       ],
-      "[BIOS] Atari Jaguar CD (World).bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "AUDIOT.BS6": [
+        "b79e7afcb4e4b29e59660ec261f72ff1ab4d3a25"
       ],
-      "jaguarcd_bios.bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "IANIM.BS6": [
+        "ba1fa5b0bc34f148deffb4977a3cd1e718e91bbd"
       ],
-      "jagcd_bios.bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "IANIM.VSI": [
+        "ba1fa5b0bc34f148deffb4977a3cd1e718e91bbd"
       ],
-      "jaguarcd.bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "SANIM.BS6": [
+        "22bf818465da0f32eef9611de936cba9966b14aa"
       ],
-      "jagcd.bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "keen4.exe": [
+        "2a674822b9b5a3383114e3a3d97a98836e8e6cf1"
       ],
-      "Jaguar CD BIOS.rom": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "Exos (198x)(Enterprise).bin": [
+        "dbe6ceeb5a5d7f2a3ef9777478b26a7fbc2ba0f6"
       ],
-      "Jaguar CD BIOS.bin": [
-        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      "Expandible OS v2.3 (1987)(Intelligent Software).bin": [
+        "c6241e1c248193108ce38b9a8e9dd33972cf47ba"
       ],
-      "[BIOS] Atari Jaguar Developer CD (World).rom": [
-        "d61b7b5912118f114ef00cf44966a5ef62e455a5"
+      "EPDOS v1.7 (19xx)(Haluska, Laszlo).bin": [
+        "08da5017cb95c9f5edf07a66903eef414621cd7d"
       ],
-      "[BIOS] Atari Jaguar Developer CD (World).bin": [
-        "d61b7b5912118f114ef00cf44966a5ef62e455a5"
+      "EX-DOS EPROM (198x)(Enterprise).bin": [
+        "05ba161aa8796c04f227eb2d52496943ada814f2"
       ],
-      "jagboot_m.rom": [
-        "af643900fea84234e08b616a6d27f03f0a61db96"
+      "enNextMF.rom": [
+        "cd3e231b0bbe5104e6879a739e7395f8418f302c"
+      ],
+      "titles.txt": [
+        "f6a0cbfda6838065065e830ff40f322e6a3b6b00"
+      ],
+      "mt32_ctrl_1_04.rom": [
+        "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
+      ],
+      "mt32_ctrl_1_05.rom": [
+        "e17a3a6d265bf1fa150312061134293d2b58288c"
+      ],
+      "mt32_ctrl_1_06.rom": [
+        "a553481f4e2794c10cfe597fef154eef0d8257de"
+      ],
+      "mt32_ctrl_bluer.rom": [
+        "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92"
+      ],
+      "mt32_ctrl_2_03.rom": [
+        "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
+      ],
+      "mt32_ctrl_2_04.rom": [
+        "2c16432b6c73dd2a3947cba950a0f4c19d6180eb"
+      ],
+      "mt32_ctrl_2_06.rom": [
+        "2869cf4c235d671668cfcb62415e2ce8323ad4ed"
+      ],
+      "mt32_ctrl_2_07.rom": [
+        "47b52adefedaec475c925e54340e37673c11707c"
+      ],
+      "cm32l_ctrl_1_00.rom": [
+        "73683d585cd6948cc19547942ca0e14a0319456d"
+      ],
+      "ctrl_cm32ln_1_00.rom": [
+        "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
+      ],
+      "cm32ln_ctrl_1_00.rom": [
+        "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
+      ],
+      "system.rom": [
+        "1f5f7013f18c08ff50d7942e76c4fbd782412414"
+      ],
+      "IBM PC Cassette BASIC ROM": [
+        "07449ebca18f979b9ab748582b736e402f2bf940"
+      ],
+      "IBMROMBASIC-F6000h-1982-10-27.ROM": [
+        "07449ebca18f979b9ab748582b736e402f2bf940"
+      ],
+      "wqy_12pt.pcf": [
+        "fefcb49cb13ea191d2c87b406c141a957020432c"
+      ],
+      "wqy_11pt.pcf": [
+        "723b0c61428321b0aca4c43fcd91406807d4f815"
+      ],
+      "TRIO64 (Ver. 1.5-07) [VGA] (S3 Incorporated).bin": [
+        "a308b15f93da34961c0141ec95b98c211557e2d5"
+      ],
+      "mt32_ctrl_1_04_a.rom": [
+        "9cd4858014c4e8a9dff96053f784bfaac1092a2e"
+      ],
+      "mt32_ctrl_1_04_b.rom": [
+        "fe8db469b5bfeb37edb269fd47e3ce6d91014652"
+      ],
+      "mt32_ctrl_1_05_a.rom": [
+        "57a09d80d2f7ca5b9734edbe9645e6e700f83701"
+      ],
+      "mt32_ctrl_1_05_b.rom": [
+        "52e3c6666db9ef962591a8ee99be0cde17f3a6b6"
+      ],
+      "mt32_ctrl_1_06_a.rom": [
+        "cc83bf23cee533097fb4c7e2c116e43b50ebacc8"
+      ],
+      "mt32_ctrl_1_06_b.rom": [
+        "bf4f15666bc46679579498386704893b630c1171"
+      ],
+      "mt32_ctrl_1_07_a.rom": [
+        "13f06b38f0d9e0fc050b6503ab777bb938603260"
+      ],
+      "mt32_ctrl_1_07_b.rom": [
+        "c55e165487d71fa88bd8c5e9c083bc456c1a89aa"
+      ],
+      "mt32_ctrl_bluer_a.rom": [
+        "11a6ae5d8b6ee328b371af7f1e40b82125aa6b4d"
+      ],
+      "mt32_ctrl_bluer_b.rom": [
+        "e0934320d7cbb5edfaa29e0d01ae835ef620085b"
+      ],
+      "mt32_pcm_l.rom": [
+        "3a1e19b0cd4036623fd1d1d11f5f25995585962b"
+      ],
+      "mt32_pcm_h.rom": [
+        "2cadb99d21a6a4a6f5b61b6218d16e9b43f61d01"
+      ],
+      "cm32l_pcm_h.rom": [
+        "3ad889fde5db5b6437cbc2eb6e305312fec3df93"
+      ],
+      "FluidR3_GM.sf2": [
+        "4fd467afcb45c8b4cfd1eadac9372a819e35d46d"
       ],
       "upd7801g.bin": [
         "6e89d1227581c76441a53d605f9e324185f1da33"
@@ -270355,17 +270235,35 @@
       "upd7801g.bios": [
         "6e89d1227581c76441a53d605f9e324185f1da33"
       ],
-      "mt32_ctrl_2_03.rom": [
-        "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
+      "DMG_ROM.bin": [
+        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
-      "Apple2_Plus.rom": [
-        "33a24f5489ba9195b44be77d9afb2252594cb5c7"
+      "dmg0_rom.bin": [
+        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
-      "Apple2_Video.rom": [
-        "f9d312f128c9557d9d6ac03bfad6c3ddf83e5659"
+      "EXOS21.ROM": [
+        "55315b20fecb4441a07ee4bc5dc7153f396e0a2e"
       ],
-      "apple2_char.rom": [
-        "f9d312f128c9557d9d6ac03bfad6c3ddf83e5659"
+      "EXDOS14.ROM": [
+        "cb43ab3676b93c279f1ed8ffcb0d4dcd4b34e631"
+      ],
+      "TVC22_D6_D4.64K": [
+        "f2572ee83d09fc08f4de4a62f101c8bb301a9505"
+      ],
+      "TVC22_D7.64K": [
+        "abf119cf947ea32defd08b29a8a25d75f6bd4987"
+      ],
+      "VT-DOS12-DISK.ROM": [
+        "072c6160d4e7d406f5d8f5b1b66066c797d35561"
+      ],
+      "scph5000_b.bin": [
+        "e340db2696274dda5fdc25e434a914db71e8b02b"
+      ],
+      "scph5502_b.bin": [
+        "f8de9325fc36fcfa4b29124d291c9251094f2e54"
+      ],
+      "usa_2slt.bin": [
+        "5c6bba07d2ec8ac95776aa3511109f5e1e2e92eb"
       ],
       "naomi_boot.bin.bin": [
         "6d27d71aec4dfba98f66316ae74a1426d567698a"
@@ -270387,186 +270285,6 @@
       ],
       "naomi2_bios.bin.bin": [
         "a8b7dce572b74e02e65cb949b2c366c87625157f"
-      ],
-      "wqy_12pt.pcf": [
-        "fefcb49cb13ea191d2c87b406c141a957020432c"
-      ],
-      "wqy_11pt.pcf": [
-        "723b0c61428321b0aca4c43fcd91406807d4f815"
-      ],
-      "TRIO64 (Ver. 1.5-07) [VGA] (S3 Incorporated).bin": [
-        "a308b15f93da34961c0141ec95b98c211557e2d5"
-      ],
-      "IBMROMBASIC-F6000h-1982-10-27.ROM": [
-        "07449ebca18f979b9ab748582b736e402f2bf940"
-      ],
-      "IBM PC Cassette BASIC ROM": [
-        "07449ebca18f979b9ab748582b736e402f2bf940"
-      ],
-      "system.rom": [
-        "1f5f7013f18c08ff50d7942e76c4fbd782412414"
-      ],
-      "d200e_rom1": [
-        "628543ee8b47a56df2b2175cfb763c0051517b90"
-      ],
-      "ic18_v1.4e.ic34": [
-        "628543ee8b47a56df2b2175cfb763c0051517b90"
-      ],
-      "d200e_rom2": [
-        "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d"
-      ],
-      "ic17_v1.4e.ic37": [
-        "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d"
-      ],
-      "rom26.ic1": [
-        "da5b756ba2a9c9ecebaa7daa8ba8bfd984d56a6f"
-      ],
-      "alpha_bt_10": [
-        "4a5851aa66eb426e9bb0bba196f1e02d48156068"
-      ],
-      "Dragon Data Ltd - Dragon Alpha Boot v1.0 150584": [
-        "4a5851aa66eb426e9bb0bba196f1e02d48156068"
-      ],
-      "alpha_bt_04": [
-        "69ea376dbc7418f69e9e809b448d22a4de012344"
-      ],
-      "Color Basic v1.2 (1982)(Tandy)": [
-        "0f14dc46c647510eb0b7bd3f53e33da07907d04f"
-      ],
-      "adv070_u24": [
-        "d89196292b9ebd787647cf91bbb83c63da2b4390"
-      ],
-      "adv073_u24": [
-        "c3aba0eb359f7f40d40d7947f72c9ecae6e0525d"
-      ],
-      "mx1600bas_zephyr": [
-        "70a464edf3a654ed4ffe687e6dee4f0d2acc758b"
-      ],
-      "PNP - SuperDOS E6": [
-        "ef157016386ed463374de6bac84d1f8ce654ed80"
-      ],
-      "CDOS20": [
-        "9513091f37adf330f66a0c08f4e200344ad2e082"
-      ],
-      "CumanaDOSv2.0": [
-        "9513091f37adf330f66a0c08f4e200344ad2e082"
-      ],
-      "MCX_Basic_21": [
-        "36c30d0f198a1bffee88ef29d92f2401447a91f4"
-      ],
-      "MCX_Basic_21_AZERTY": [
-        "c8fd92705fc42deb6a0ffac6274e27fd61ecd4cc"
-      ],
-      "d3_sabot_a7.pk4": [
-        "8179522bcd5abc4c5a3194bf49f6821738644500"
-      ],
-      "q4_sabot_a9.pk4": [
-        "a3af9251c6a2b4b8d02108bd7b91919aace929dd"
-      ],
-      "play_original_doom3_level.pk4": [
-        "de368e97ca86f489c1f10ea148e0812913c25c7d"
-      ],
-      "CPC6128.ROM": [
-        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
-      ],
-      "CPC6128.ROM.UK": [
-        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
-      ],
-      "OS6128_UK.rom": [
-        "5977adbad3f7c1e0e082cd02fe76a700d9860c30"
-      ],
-      "CPC464.ROM": [
-        "56d39c463da60968d93e58b4ba0e675829412a20"
-      ],
-      "OS464_UK.rom": [
-        "56d39c463da60968d93e58b4ba0e675829412a20"
-      ],
-      "CPC664.ROM": [
-        "073a7665527b5bd8a148747a3947dbd3328682c8"
-      ],
-      "OS664_UK.rom": [
-        "073a7665527b5bd8a148747a3947dbd3328682c8"
-      ],
-      "multface.rom": [
-        "1431ec628d38f000715545dd2186b684c5fe5a6f"
-      ],
-      "multiface2.rom": [
-        "1431ec628d38f000715545dd2186b684c5fe5a6f"
-      ],
-      "BioWorm.7z": [
-        "38e44c9868c0b8a5a99ec0b6e901a28f617d25bf"
-      ],
-      "OPENBIOS.bin": [
-        "389df7981873d9e6e46c84c20cd43af0e4226cf8"
-      ],
-      "2608_RYM.WAV": [
-        "4ecf900db8d0f69d6154bde376206d727ddddaae"
-      ],
-      "N88_1.ROM": [
-        "4ae4d37409ff99411a623da9f6a44192170a854e"
-      ],
-      "n88ext1.rom": [
-        "4ae4d37409ff99411a623da9f6a44192170a854e"
-      ],
-      "N88_2.ROM": [
-        "e94278682ef9e9bbb82201f72c50382748dcea2a"
-      ],
-      "n88ext2.rom": [
-        "e94278682ef9e9bbb82201f72c50382748dcea2a"
-      ],
-      "N88_3.ROM": [
-        "af452aed79b072c4d17985830b7c5dca64d4b412"
-      ],
-      "n88ext3.rom": [
-        "af452aed79b072c4d17985830b7c5dca64d4b412"
-      ],
-      "n80.rom": [
-        "063609dd518c124a4fc9ba35d1bae35771666a34"
-      ],
-      "KANJI2.ROM": [
-        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
-      ],
-      "kanji2.rom": [
-        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
-      ],
-      "FONT2.ROM": [
-        "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e"
-      ],
-      "FONT3.ROM": [
-        "aff9959b402ae0ead377b87566cf0e7b889e3d9e"
-      ],
-      "blasphemer.wad": [
-        "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb"
-      ],
-      "pif.ntsc.rom": [
-        "b7a0070cbe4b9bcaa08ec0b76b8c4955b2ae535a"
-      ],
-      "pif.pal.rom": [
-        "15c23c3b671a8828302603f30c81d464b24a7fb1"
-      ],
-      "Keyboard.cfg": [
-        "a80c28156b09ff2144d60424733416ca25593870"
-      ],
-      "titles.txt": [
-        "f6a0cbfda6838065065e830ff40f322e6a3b6b00"
-      ],
-      "Exos (198x)(Enterprise).bin": [
-        "dbe6ceeb5a5d7f2a3ef9777478b26a7fbc2ba0f6"
-      ],
-      "Expandible OS v2.3 (1987)(Intelligent Software).bin": [
-        "c6241e1c248193108ce38b9a8e9dd33972cf47ba"
-      ],
-      "EPDOS v1.7 (19xx)(Haluska, Laszlo).bin": [
-        "08da5017cb95c9f5edf07a66903eef414621cd7d"
-      ],
-      "EX-DOS EPROM (198x)(Enterprise).bin": [
-        "05ba161aa8796c04f227eb2d52496943ada814f2"
-      ],
-      "main_gm.sfx": [
-        "9de9423b6f12875b8d02dd783d5c1547f15e36fc"
-      ],
-      "title_gm.tr2": [
-        "b7dadcbaf38cefdc89a692e85b290caf6409b163"
       ],
       "fuse/plus2-0.rom": [
         "72703f9a3e734f3c23ec34c0727aae4ccbef9a91"
@@ -270616,29 +270334,29 @@
       "fuse/speccyboot-1.4.rom": [
         "16af6f052b38a027dd49ba6e96e3a59d16b62672"
       ],
+      "Keyboard.cfg": [
+        "a80c28156b09ff2144d60424733416ca25593870"
+      ],
+      "DevIL.dll": [
+        "313a23600a169adbe130b1ae1784d8de437ce7d9"
+      ],
+      "ILU.dll": [
+        "d3534cd62d312fe28988c6229c47ab81a3ae1f9e"
+      ],
+      "ILUT.dll": [
+        "30566eda672fef3036fbd3998af3cc9fdcef38e7"
+      ],
       "MotocrossChallenge.7z": [
         "d87747718c1aa06a9ddd8504b2581eb0034b754a"
       ],
-      "TS2068.ROM": [
-        "34cd8113bf75b65a4da6eea355f9d46ad635f7e4"
+      "writer.rom": [
+        "d4aec4efe1431e56fe52d83baf9118542c525255"
       ],
-      "TRDOS.ROM": [
-        "282eb7bc819aad2a12fd954e76f7838a4e1a7929"
+      "wp.rom": [
+        "d4aec4efe1431e56fe52d83baf9118542c525255"
       ],
-      "OS12.rom": [
-        "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
-      ],
-      "BASIC2.rom": [
-        "4a7393f3a45ea309f744441c16723e2ef447a281"
-      ],
-      "DFS-2.26.rom": [
-        "cf2ebc422a8d24ec6f1a0320520c38a0e704109a"
-      ],
-      "ADFS-1.30.rom": [
-        "301fd05c475a629c4bec70510d4507256a5b00d8"
-      ],
-      "pc1000.fls": [
-        "e8e418fc92d8846111719cb12a0584703c3bdd0b"
+      "wp_r80.rom": [
+        "d4aec4efe1431e56fe52d83baf9118542c525255"
       ],
       "Supercharger.BIOS.bin": [
         "cd9d030a59f5bdcc88f1f80a6cc9fc2cd932f7db"
@@ -270658,65 +270376,35 @@
       "SUPERCHARGER_BIOS_PAL.bin": [
         "41691d8f56bf2adb3c0f127e729563c9fba5d99d"
       ],
-      "rootfs.tar.gz": [
-        "66bc6b5ef62305cd2c18bf71c17a52326bbc6fb3"
+      "blasphemer.wad": [
+        "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb"
       ],
-      "arm6.program.rom": [
-        "388e3721b94cd074d6ba0eca8616523d2118a6c3"
+      "d3_sabot_a7.pk4": [
+        "8179522bcd5abc4c5a3194bf49f6821738644500"
       ],
-      "writer.rom": [
-        "d4aec4efe1431e56fe52d83baf9118542c525255"
+      "q4_sabot_a9.pk4": [
+        "a3af9251c6a2b4b8d02108bd7b91919aace929dd"
       ],
-      "wp.rom": [
-        "d4aec4efe1431e56fe52d83baf9118542c525255"
+      "play_original_doom3_level.pk4": [
+        "de368e97ca86f489c1f10ea148e0812913c25c7d"
       ],
-      "wp_r80.rom": [
-        "d4aec4efe1431e56fe52d83baf9118542c525255"
+      "nespalette.pal": [
+        "37027d92e1015b82a7dc5c43e9f1649a961577ab"
       ],
-      "OS6128_FR.rom": [
-        "200d59076dfef36db061d6d7d21d80021cab1237"
+      "Classic (FBX).pal": [
+        "37027d92e1015b82a7dc5c43e9f1649a961577ab"
       ],
-      "OS6128_S.rom": [
-        "1acd01c2c03424a78b32c9440f4d890fb1104815"
+      "Apple2_Plus.rom": [
+        "33a24f5489ba9195b44be77d9afb2252594cb5c7"
       ],
-      "OS6128_DK.rom": [
-        "a9e7ee6355730f319a37c95ca0a714212b88c3b1"
+      "Apple2_Video.rom": [
+        "f9d312f128c9557d9d6ac03bfad6c3ddf83e5659"
       ],
-      "Amstrad_v4.cpr": [
-        "405e341437fab8db477606238af0c20eca2e39ee"
+      "apple2_char.rom": [
+        "f9d312f128c9557d9d6ac03bfad6c3ddf83e5659"
       ],
-      "EXOS21.ROM": [
-        "55315b20fecb4441a07ee4bc5dc7153f396e0a2e"
-      ],
-      "EXDOS14.ROM": [
-        "cb43ab3676b93c279f1ed8ffcb0d4dcd4b34e631"
-      ],
-      "TVC22_D6_D4.64K": [
-        "f2572ee83d09fc08f4de4a62f101c8bb301a9505"
-      ],
-      "TVC22_D7.64K": [
-        "abf119cf947ea32defd08b29a8a25d75f6bd4987"
-      ],
-      "VT-DOS12-DISK.ROM": [
-        "072c6160d4e7d406f5d8f5b1b66066c797d35561"
-      ],
-      "xrick/data.zip": [
-        "ecfc092fe6371dbf38e238a8ba5f90785b5db52d"
-      ],
-      "enNextMF.rom": [
-        "cd3e231b0bbe5104e6879a739e7395f8418f302c"
-      ],
-      "jk1mpdemo.gob": [
-        "d2b6982051f2ed8887b824057903c9218fe75485"
-      ],
-      "outro.lvl": [
-        "6e1728edd9b634e04ecf72e59428eb783e1e545b"
-      ],
-      "scph5000_b.bin": [
-        "e340db2696274dda5fdc25e434a914db71e8b02b"
-      ],
-      "scph5502_b.bin": [
-        "f8de9325fc36fcfa4b29124d291c9251094f2e54"
+      "FdsBios.bin": [
+        "af5af53f66982e749643fdf8b2acbb7d4d3ed229"
       ],
       "FONT.BMP": [
         "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5"
@@ -270727,47 +270415,80 @@
       "bank0.bin": [
         "1246203bebf9f04e3bac2df7fc64719304f9f1bd"
       ],
-      "mt32_ctrl_1_04_a.rom": [
-        "9cd4858014c4e8a9dff96053f784bfaac1092a2e"
+      "jk1mpdemo.gob": [
+        "d2b6982051f2ed8887b824057903c9218fe75485"
       ],
-      "mt32_ctrl_1_04_b.rom": [
-        "fe8db469b5bfeb37edb269fd47e3ce6d91014652"
+      "apple2e_unenh.rom": [
+        "61fa9254628e5bb7236fb474006116d67684d747"
       ],
-      "mt32_ctrl_1_05_a.rom": [
-        "57a09d80d2f7ca5b9734edbe9645e6e700f83701"
+      "342-0135-b.64.rom": [
+        "61fa9254628e5bb7236fb474006116d67684d747"
       ],
-      "mt32_ctrl_1_05_b.rom": [
-        "52e3c6666db9ef962591a8ee99be0cde17f3a6b6"
+      "apple2c-plus.rom": [
+        "1a27ae26966bbafd825d08ad1a24742d3e33557c"
       ],
-      "mt32_ctrl_1_06_a.rom": [
-        "cc83bf23cee533097fb4c7e2c116e43b50ebacc8"
+      "apple2e_char_frca_unenh.rom": [
+        "42afb02aab4146f781ac52803a2733adc4da834e"
       ],
-      "mt32_ctrl_1_06_b.rom": [
-        "bf4f15666bc46679579498386704893b630c1171"
+      "diskii_p6_13.rom": [
+        "e3d6d1c30653572b49ecc2dc54ce073978411a04"
       ],
-      "mt32_ctrl_1_07_a.rom": [
-        "13f06b38f0d9e0fc050b6503ab777bb938603260"
+      "mouse_341-0270-c.bin": [
+        "3a9d881a8a8d30f55b9719aceebbcf717f829d6f"
       ],
-      "mt32_ctrl_1_07_b.rom": [
-        "c55e165487d71fa88bd8c5e9c083bc456c1a89aa"
+      "grappler+.bin": [
+        "829072cc19a58b24d36c2af972abaad6f9ba35d9"
       ],
-      "mt32_ctrl_bluer_a.rom": [
-        "11a6ae5d8b6ee328b371af7f1e40b82125aa6b4d"
+      "grappler.bin": [
+        "829072cc19a58b24d36c2af972abaad6f9ba35d9"
       ],
-      "mt32_ctrl_bluer_b.rom": [
-        "e0934320d7cbb5edfaa29e0d01ae835ef620085b"
+      "ae transwarp rom v1.4.bin": [
+        "7b75534e7895e04859a0b1337801c6eeb0cef52a"
       ],
-      "mt32_pcm_l.rom": [
-        "3a1e19b0cd4036623fd1d1d11f5f25995585962b"
+      "ssc_341-0065-a.bin": [
+        "6dab633470c6bc4cb3e81d09fda46597caf8ee57"
       ],
-      "mt32_pcm_h.rom": [
-        "2cadb99d21a6a4a6f5b61b6218d16e9b43f61d01"
+      "341-0065-a.bin": [
+        "6dab633470c6bc4cb3e81d09fda46597caf8ee57"
       ],
-      "cm32l_pcm_h.rom": [
-        "3ad889fde5db5b6437cbc2eb6e305312fec3df93"
+      "thunderclock_u9.bin": [
+        "60f434f5325899d7ea257a6e56e6f53eae65146a"
       ],
-      "IPLROM.DAT": [
-        "0ed038ed2133b9f78c6e37256807424e0d927560"
+      "thunderclock.rom": [
+        "60f434f5325899d7ea257a6e56e6f53eae65146a"
+      ],
+      "Thunderware_REV_1.3_ROM_U9.bin": [
+        "60f434f5325899d7ea257a6e56e6f53eae65146a"
+      ],
+      "341-0358-A.bin": [
+        "59c8e8c88bac5c31ada1306b412edfcf5912a720"
+      ],
+      "amiga-os-110-ntsc.rom": [
+        "4192c505d130f446b2ada6bdc91dae730acafb4c"
+      ],
+      "Kickstart v1.1 rev 31.34 (1985)(Commodore)(A1000)(NTSC).rom": [
+        "4192c505d130f446b2ada6bdc91dae730acafb4c"
+      ],
+      "amiga-os-110-pal.rom": [
+        "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
+      ],
+      "Kickstart v1.1 rev 32.34 (1986)(Commodore)(A1000)(PAL).rom": [
+        "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
+      ],
+      "amiga-os-300-a4000.rom": [
+        "f0b4e9e29e12218c2d5bd7020e4e785297d91fd7"
+      ],
+      "Kickstart v3.0 rev 39.106 (1992)(Commodore)(A4000)[!].rom": [
+        "f0b4e9e29e12218c2d5bd7020e4e785297d91fd7"
+      ],
+      "amiga-os-130-cdtv-ext.rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
+      ],
+      "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
+      ],
+      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
       ],
       "SeaBIOS (128 KB)": [
         "f402170ee4f374c304a7ce0b139d6cecb1732aff"
@@ -270970,65 +270691,344 @@
       "Petalogix S3ADSP1800 DTB (MicroBlaze)": [
         "976600e3f89ecc1f3564b7077f53c58e0b565280"
       ],
-      "DevIL.dll": [
-        "313a23600a169adbe130b1ae1784d8de437ce7d9"
+      "N88_1.ROM": [
+        "4ae4d37409ff99411a623da9f6a44192170a854e"
       ],
-      "ILU.dll": [
-        "d3534cd62d312fe28988c6229c47ab81a3ae1f9e"
+      "n88ext1.rom": [
+        "4ae4d37409ff99411a623da9f6a44192170a854e"
       ],
-      "ILUT.dll": [
-        "30566eda672fef3036fbd3998af3cc9fdcef38e7"
+      "N88_2.ROM": [
+        "e94278682ef9e9bbb82201f72c50382748dcea2a"
       ],
-      "FluidR3_GM.sf2": [
-        "4fd467afcb45c8b4cfd1eadac9372a819e35d46d"
+      "n88ext2.rom": [
+        "e94278682ef9e9bbb82201f72c50382748dcea2a"
+      ],
+      "N88_3.ROM": [
+        "af452aed79b072c4d17985830b7c5dca64d4b412"
+      ],
+      "n88ext3.rom": [
+        "af452aed79b072c4d17985830b7c5dca64d4b412"
+      ],
+      "n80.rom": [
+        "063609dd518c124a4fc9ba35d1bae35771666a34"
+      ],
+      "KANJI2.ROM": [
+        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
+      ],
+      "kanji2.rom": [
+        "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53"
+      ],
+      "FONT2.ROM": [
+        "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e"
+      ],
+      "FONT3.ROM": [
+        "aff9959b402ae0ead377b87566cf0e7b889e3d9e"
+      ],
+      "pif.ntsc.rom": [
+        "b7a0070cbe4b9bcaa08ec0b76b8c4955b2ae535a"
+      ],
+      "pif.pal.rom": [
+        "15c23c3b671a8828302603f30c81d464b24a7fb1"
+      ],
+      "BioWorm.7z": [
+        "38e44c9868c0b8a5a99ec0b6e901a28f617d25bf"
+      ],
+      "TS2068.ROM": [
+        "34cd8113bf75b65a4da6eea355f9d46ad635f7e4"
+      ],
+      "TRDOS.ROM": [
+        "282eb7bc819aad2a12fd954e76f7838a4e1a7929"
+      ],
+      "rootfs.tar.gz": [
+        "66bc6b5ef62305cd2c18bf71c17a52326bbc6fb3"
+      ],
+      "outro.lvl": [
+        "6e1728edd9b634e04ecf72e59428eb783e1e545b"
+      ],
+      "main_gm.sfx": [
+        "9de9423b6f12875b8d02dd783d5c1547f15e36fc"
+      ],
+      "title_gm.tr2": [
+        "b7dadcbaf38cefdc89a692e85b290caf6409b163"
+      ],
+      "vice/C64/kernal-901227-01.bin": [
+        "87cc04d61fc748b82df09856847bb5c2754a2033"
+      ],
+      "vice/C64/kernal-901227-02.bin": [
+        "0e2e4ee3f2d41f00bed72f9ab588b83e306fdb13"
+      ],
+      "vice/C64/kernal-390852-01.bin": [
+        "3ad6cc1837c679a11f551ad1cf1a32dd84ace719"
+      ],
+      "vice/C128/kernal-318020-05.bin": [
+        "ceb6e1a1bf7e08eb9cbc651afa29e26adccf38ab"
+      ],
+      "vice/C128/kernal-315078-03.bin": [
+        "3629b3fa28b6a30bcc027b647f26654929ed1b0f"
+      ],
+      "vice/C128/kernal-325172-01.bin": [
+        "98c34e0dec9f52d7862b56bb287d2573eb3f6364"
+      ],
+      "vice/C128/kernal-318034-01.bin": [
+        "925177c99ee7e02870c32ad62a054db1327cf0c2"
+      ],
+      "vice/C128/kernalfi": [
+        "d08e7991a6df14a843e92daafaf6756337959ba4"
+      ],
+      "vice/C128/kernalfr": [
+        "a0680d04db3232fa9f58598e5c9f09c4fe94f601"
+      ],
+      "vice/C128/kernalit": [
+        "592a626eb2b5372596ac374d3505c3ce78dd040f"
+      ],
+      "vice/C128/kernalno": [
+        "00fe2fd610a812121befab1e7238fa882c0f8257"
+      ],
+      "vice/C128/basiclo-318018-04.bin": [
+        "d53a7884404f7d18ebd60dd3080c8f8d71067441"
+      ],
+      "vice/C128/basichi-318019-04.bin": [
+        "c4fb4a714e48a7bf6c28659de0302183a0e0d6c0"
+      ],
+      "vice/C128/kernal64-325179-01.bin": [
+        "b4862cac7b9319d8e912887c97fc270d4c239349"
+      ],
+      "vice/C128/kernal64-325182-01.bin": [
+        "e4f52d9b36c030eb94524eb49f6f0774c1d02e5e"
+      ],
+      "vice/C128/chargen-390059-01.bin": [
+        "29ed066d513f2d5c09ff26d9166ba23c2afb2b3f"
+      ],
+      "vice/C128/chargen-315079-01.bin": [
+        "638f8aff51c2ac4f99a55b12c4f8c985ef4bebd3"
+      ],
+      "vice/C128/chargen-325167-02.bin": [
+        "9119b27a1bf885fa4c76fff5d858c74c194dd2b8"
+      ],
+      "vice/C128/chargen-325173-01D.bin": [
+        "70eccd8b944146f6b60f1519b830a4ee8928d4fa"
+      ],
+      "vice/C128/chargen-325078-02.bin": [
+        "5a87faa457979e7b6f434251a9e32f4483b337b3"
+      ],
+      "vice/C128/chargen-325181-01.bin": [
+        "aca3f7321ee7e6152f1f0afad646ae41964de4fb"
+      ],
+      "vice/C64DTV/dtvrom.bin": [
+        "72b4c8da075646cc9940e4377004c81192c7b0b1"
+      ],
+      "vice/PLUS4/kernal-318005-05.bin": [
+        "a3d9e5be091b98de39a046ab167fb7632d053682"
+      ],
+      "vice/PLUS4/kernal-318004-01.bin": [
+        "3c77caf72914c1c0a0875b3a7f6935cd30c54201"
+      ],
+      "vice/PLUS4/kernal-364.bin": [
+        "b9a5b5dacd57ca117ef0b3af29e91998bf4d7e5f"
+      ],
+      "vice/PLUS4/3plus1-317053-01.bin": [
+        "3b69f6e7cb4c18bb08e203fb18b7dabfa853390f"
+      ],
+      "vice/PLUS4/3plus1-317054-01.bin": [
+        "0ad7ac2db7da692d972e586ca0dfd747d82c7693"
+      ],
+      "vice/PLUS4/c2lo-364.bin": [
+        "59af401cbb2194f689898271c6e8aafa28a7af11"
+      ],
+      "vice/PET/basic-1.901439-09-05-02-06.bin": [
+        "3be9cd41b646fefa00d80f1c3433a06146e97c59"
+      ],
+      "vice/PET/basic-2.901465-01-02.bin": [
+        "9322a9f0354b9049847d98d3a045fbec860a6264"
+      ],
+      "vice/PET/basic-4.901465-23-20-21.bin": [
+        "d70bec479e1e3a0d0908a4897066e9959bbc11c8"
+      ],
+      "vice/PET/kernal-1.901439-04-07.bin": [
+        "32dc08828e88c74d6433156e64d402b564556308"
+      ],
+      "vice/PET/kernal-2.901465-03.bin": [
+        "38742bdf449f629bcba6276ef24d3daeb7da6e84"
+      ],
+      "vice/PET/kernal-4.901465-22.bin": [
+        "96a0fa56e0c937da92971d9c99d504e44e898806"
+      ],
+      "vice/PET/edit-1-n.901439-03.bin": [
+        "f02f5fb492ba93dbbd390f24c10f7a832dec432a"
+      ],
+      "vice/PET/edit-2-n.901447-24.bin": [
+        "5e5502ce32f5a7e387d65efe058916282041e54b"
+      ],
+      "vice/PET/edit-2-b.901474-01.bin": [
+        "174ace3a8c0348cd21d39cc864e2adc58b0101a9"
+      ],
+      "vice/PET/edit-4-40-n-50Hz.901498-01.bin": [
+        "05af284c914d53a52987b5f602466de75765f650"
+      ],
+      "vice/PET/edit-4-40-b-50Hz.ts.bin": [
+        "9f91fbabfdd532d003d2508f399574ba8ec6ee5f"
+      ],
+      "vice/PET/edit-4-80-b-50Hz.901474-04_.bin": [
+        "81975eab31a8f4f51ae2a20d099a567c7b3f2dd1"
+      ],
+      "vice/PET/characters-1.901447-08.bin": [
+        "3e067cc621e4beafca2b90cb8f6dba975df2855b"
+      ],
+      "vice/PET/characters-2.901447-10.bin": [
+        "0157a2d55b7ac4eaeb38475889ebeea52e2593db"
+      ],
+      "vice/PET/characters.901640-01.bin": [
+        "bf346f11595a3e65e55d6aeeaa2c0cec807b66c7"
+      ],
+      "vice/PET/waterloo-a000.901898-01.bin": [
+        "0414b3ab847c8977eb05c2fcc72efcf2f9d92871"
+      ],
+      "vice/PET/waterloo-b000.901898-02.bin": [
+        "df154939b934d0aeeb376813ec1ba0d43c2a3378"
+      ],
+      "vice/PET/waterloo-c000.901898-03.bin": [
+        "6c5b0cce97068f8841112ba6d5cd8e568b562fa3"
+      ],
+      "vice/PET/waterloo-d000.901898-04.bin": [
+        "b42a2050a319a1ffca7868a8d8d635fadd37ec37"
+      ],
+      "vice/PET/waterloo-e000.901897-01.bin": [
+        "e8ce8347451a001214a5e71a13081b38b4be23bc"
+      ],
+      "vice/PET/waterloo-f000.901898-05.bin": [
+        "9b4a5134d20345171e7303445f87c4e0b9addc96"
+      ],
+      "vice/CBM-II/basic-901242+3-04a.bin": [
+        "9409f92e167984096fe4d5913714bff6214c3b2d"
+      ],
+      "vice/CBM-II/basic-901240+1-03.bin": [
+        "53314b4d565cc405a67a0936b935e6e08955580d"
+      ],
+      "vice/CBM-II/basic-901235+6-02.bin": [
+        "e69531d45f5993f8e53c6bd9ab2a7bc10fe2d02f"
+      ],
+      "vice/CBM-II/kernal-901244-04a.bin": [
+        "abb26418b9e1614a8f52bdeee0822d4a96071439"
+      ],
+      "vice/CBM-II/kernal-901234-02.bin": [
+        "097197d4d08e0b82e0466a5f1fbd49a24f3d2523"
+      ],
+      "vice/CBM-II/chargen-901237-01.bin": [
+        "e63bf18da48e5a53c99ef127c1ae721333d1d102"
+      ],
+      "vice/CBM-II/chargen-901232-01.bin": [
+        "e7f3cbc8e282f79a00c3e95d75c8d725ee3c6287"
+      ],
+      "vice/SCPU64/scpu64": [
+        "f5b6da17ee8206ff0d2258e1d6e8b798147c2650"
+      ],
+      "vice/DRIVES/dos1551-318008-01.bin": [
+        "fae3c788ad9a6cc2dbdfbcf6c0264b2ca921d55e"
+      ],
+      "vice/DRIVES/dos1571cr-318047-01.bin": [
+        "14ee7a0fb7e1c59c51fbf781f944387037daa3ee"
+      ],
+      "vice/DRIVES/dos9000-300516+7-revC.bin": [
+        "c48df2cbb0eea656c3243df7ea8bfefcd171b8e8"
+      ],
+      "[BIOS] Atari Jaguar CD (World).rom": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "[BIOS] Atari Jaguar CD (World).bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "jaguarcd_bios.bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "jagcd_bios.bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "jaguarcd.bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "jagcd.bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "Jaguar CD BIOS.rom": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "Jaguar CD BIOS.bin": [
+        "73883e7a6e9b132452436f7ab1aeaeb0776428e5"
+      ],
+      "[BIOS] Atari Jaguar Developer CD (World).rom": [
+        "d61b7b5912118f114ef00cf44966a5ef62e455a5"
+      ],
+      "[BIOS] Atari Jaguar Developer CD (World).bin": [
+        "d61b7b5912118f114ef00cf44966a5ef62e455a5"
+      ],
+      "jagboot_m.rom": [
+        "af643900fea84234e08b616a6d27f03f0a61db96"
+      ],
+      "pc1000.fls": [
+        "e8e418fc92d8846111719cb12a0584703c3bdd0b"
+      ],
+      "IPLROM.DAT": [
+        "0ed038ed2133b9f78c6e37256807424e0d927560"
+      ],
+      "2608_RYM.WAV": [
+        "4ecf900db8d0f69d6154bde376206d727ddddaae"
+      ],
+      "xrick/data.zip": [
+        "ecfc092fe6371dbf38e238a8ba5f90785b5db52d"
+      ],
+      "d200e_rom1": [
+        "628543ee8b47a56df2b2175cfb763c0051517b90"
+      ],
+      "ic18_v1.4e.ic34": [
+        "628543ee8b47a56df2b2175cfb763c0051517b90"
+      ],
+      "d200e_rom2": [
+        "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d"
+      ],
+      "ic17_v1.4e.ic37": [
+        "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d"
+      ],
+      "rom26.ic1": [
+        "da5b756ba2a9c9ecebaa7daa8ba8bfd984d56a6f"
+      ],
+      "alpha_bt_10": [
+        "4a5851aa66eb426e9bb0bba196f1e02d48156068"
+      ],
+      "Dragon Data Ltd - Dragon Alpha Boot v1.0 150584": [
+        "4a5851aa66eb426e9bb0bba196f1e02d48156068"
+      ],
+      "alpha_bt_04": [
+        "69ea376dbc7418f69e9e809b448d22a4de012344"
+      ],
+      "Color Basic v1.2 (1982)(Tandy)": [
+        "0f14dc46c647510eb0b7bd3f53e33da07907d04f"
+      ],
+      "adv070_u24": [
+        "d89196292b9ebd787647cf91bbb83c63da2b4390"
+      ],
+      "adv073_u24": [
+        "c3aba0eb359f7f40d40d7947f72c9ecae6e0525d"
+      ],
+      "mx1600bas_zephyr": [
+        "70a464edf3a654ed4ffe687e6dee4f0d2acc758b"
+      ],
+      "PNP - SuperDOS E6": [
+        "ef157016386ed463374de6bac84d1f8ce654ed80"
+      ],
+      "CDOS20": [
+        "9513091f37adf330f66a0c08f4e200344ad2e082"
+      ],
+      "CumanaDOSv2.0": [
+        "9513091f37adf330f66a0c08f4e200344ad2e082"
+      ],
+      "MCX_Basic_21": [
+        "36c30d0f198a1bffee88ef29d92f2401447a91f4"
+      ],
+      "MCX_Basic_21_AZERTY": [
+        "c8fd92705fc42deb6a0ffac6274e27fd61ecd4cc"
       ],
       "Qsound_V1.94.rom": [
         "622a81dce98524148f067780c17eddbaf46e27f6"
-      ],
-      "apple2e_unenh.rom": [
-        "61fa9254628e5bb7236fb474006116d67684d747"
-      ],
-      "342-0135-b.64.rom": [
-        "61fa9254628e5bb7236fb474006116d67684d747"
-      ],
-      "apple2c-plus.rom": [
-        "1a27ae26966bbafd825d08ad1a24742d3e33557c"
-      ],
-      "apple2e_char_frca_unenh.rom": [
-        "42afb02aab4146f781ac52803a2733adc4da834e"
-      ],
-      "diskii_p6_13.rom": [
-        "e3d6d1c30653572b49ecc2dc54ce073978411a04"
-      ],
-      "mouse_341-0270-c.bin": [
-        "3a9d881a8a8d30f55b9719aceebbcf717f829d6f"
-      ],
-      "grappler+.bin": [
-        "829072cc19a58b24d36c2af972abaad6f9ba35d9"
-      ],
-      "grappler.bin": [
-        "829072cc19a58b24d36c2af972abaad6f9ba35d9"
-      ],
-      "ae transwarp rom v1.4.bin": [
-        "7b75534e7895e04859a0b1337801c6eeb0cef52a"
-      ],
-      "ssc_341-0065-a.bin": [
-        "6dab633470c6bc4cb3e81d09fda46597caf8ee57"
-      ],
-      "341-0065-a.bin": [
-        "6dab633470c6bc4cb3e81d09fda46597caf8ee57"
-      ],
-      "thunderclock_u9.bin": [
-        "60f434f5325899d7ea257a6e56e6f53eae65146a"
-      ],
-      "thunderclock.rom": [
-        "60f434f5325899d7ea257a6e56e6f53eae65146a"
-      ],
-      "Thunderware_REV_1.3_ROM_U9.bin": [
-        "60f434f5325899d7ea257a6e56e6f53eae65146a"
-      ],
-      "341-0358-A.bin": [
-        "59c8e8c88bac5c31ada1306b412edfcf5912a720"
       ],
       "cgb0_boot.bin": [
         "80e3ee82416c1a74827a5459fde32f04bf51a1f6"
