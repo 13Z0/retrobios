@@ -25,6 +25,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
@@ -5304,7 +5305,9 @@ struct BurnDriver BurnDrvneogeo = {
         original = largefiles.urllib.request.urlopen
         largefiles.urllib.request.urlopen = fake_urlopen
         try:
-            with tempfile.TemporaryDirectory() as tmpdir:
+            with tempfile.TemporaryDirectory() as tmpdir, mock.patch.dict(
+                os.environ, {"RETROBIOS_OFFLINE": ""}
+            ):
                 path = common.fetch_large_file(
                     "MAME 0.174 Arcade XML.dat", dest_dir=tmpdir
                 )

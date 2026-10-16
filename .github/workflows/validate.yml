@@ -138,6 +138,11 @@ jobs:
         run: python scripts/export_native.py --all --fetch --output-dir "$RUNNER_TEMP/native"
 
       - name: Run test suite
+        # No test downloads a release asset: 252 MB files fetched into the
+        # shared cache filled the runner's disk and changed what later tests
+        # resolved. The download tests mock the network and clear it.
+        env:
+          RETROBIOS_OFFLINE: "1"
         run: python -m unittest discover tests -v
 
   label-pr:

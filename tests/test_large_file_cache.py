@@ -32,6 +32,20 @@ PAYLOAD_A = b"A" * (256 * 1024)
 PAYLOAD_B = b"B" * (256 * 1024)
 
 
+# These tests download through a mocked urlopen into their own directory;
+# the CI test job sets RETROBIOS_OFFLINE to keep every other test off the
+# network, so it is cleared here.
+_ONLINE = mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""})
+
+
+def setUpModule():
+    _ONLINE.start()
+
+
+def tearDownModule():
+    _ONLINE.stop()
+
+
 class _SlowResponse(io.BytesIO):
     """Serve a payload in chunks, yielding between them."""
 
@@ -218,6 +232,19 @@ class LargeFileCacheTest(unittest.TestCase):
         self.assertIsNone(result)
         self.assertEqual(cached.read_bytes(), PAYLOAD_A)
         self.assertEqual(os.listdir(self.dir), ["asset.bin"])
+
+
+class TheOfflineSwitchHoldsEverywhere(unittest.TestCase):
+    """RETROBIOS_OFFLINE stops a download whatever the caller asked."""
+
+    def test_no_request_is_made(self):
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(
+            os.environ, {"RETROBIOS_OFFLINE": "1"}
+        ), mock.patch.object(largefiles.urllib.request, "urlopen") as urlopen:
+            self.assertIsNone(
+                largefiles.fetch_large_file("asset.bin", dest_dir=tmp, offline=False)
+            )
+            urlopen.assert_not_called()
 
 
 class HashCacheKeepsEveryDigest(unittest.TestCase):

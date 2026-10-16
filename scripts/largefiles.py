@@ -173,7 +173,10 @@ def _fetch_asset(
         # (gh release upload --clobber): only a download can answer, and
         # it replaces the copy only if it verifies.
 
-    if offline:
+    # RETROBIOS_OFFLINE forbids every download whatever a caller passes: the
+    # CI test job sets it, since tests fetching 252 MB assets into the shared
+    # cache filled the runner's disk and changed what later tests resolved.
+    if offline or os.environ.get("RETROBIOS_OFFLINE"):
         return None
 
     os.makedirs(dest_dir, exist_ok=True)
