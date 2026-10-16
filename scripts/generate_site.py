@@ -1270,11 +1270,16 @@ def _render_platform_systems(
             lines.append(f"{pad}Emulators: {emu_links}")
         lines.append("")
 
-        # File listing
+        # File listing. The sort is stable, so same-named entries keep the
+        # order verify reported them in, which is the declaration order.
+        seen_names: dict[str, int] = {}
         for f in sorted(files, key=lambda x: x["name"]):
             status = f["status"]
             fname = f["name"]
-            cfg_entry = config_files.get(fname, {})
+            declared = config_files.get((sys_id, fname), [])
+            nth = seen_names.get(fname, 0)
+            seen_names[fname] = nth + 1
+            cfg_entry = declared[nth] if nth < len(declared) else {}
             sha1 = cfg_entry.get("sha1", f.get("sha1", ""))
             md5 = cfg_entry.get("md5", f.get("expected_md5", ""))
             size = cfg_entry.get("size", f.get("size", 0))
@@ -1413,13 +1418,15 @@ def generate_platform_page(
         ]
     )
 
-    # Build lookup from config file entries (has hashes/sizes)
-    config_files: dict[str, dict] = {}
+    # The declaration behind each detail, by system and name in declaration
+    # order: keyed by name alone, the last of MiSTer's 23 boot.rom gave its
+    # MD5 to every system's row.
+    config_files: dict[tuple[str, str], list[dict]] = {}
     for sys_id, system in config.get("systems", {}).items():
         for fe in system.get("files", []):
             fname = fe.get("name", "")
             if fname:
-                config_files[fname] = fe
+                config_files.setdefault((sys_id, fname), []).append(fe)
 
     # Group details by system
     by_system: dict[str, list] = {}
