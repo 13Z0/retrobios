@@ -5,7 +5,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-15T21:45:48Z",
+  "generated": "2026-10-16T12:33:18Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5804,
-  "total_size": 6569086889,
-  "pack_files": 5806,
-  "pack_size": 6569086889,
+  "total_files": 5799,
+  "total_size": 6306907354,
+  "pack_files": 5801,
+  "pack_size": 6306907354,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -669,25 +669,12 @@
         "nintendo-gamecube"
       ],
       "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
+        "europe",
+        "japan",
+        "north-america"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
-      ],
-      "alternatives": [
-        {
-          "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
-          "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
-          "size": 2097152,
-          "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
-          "cores": [
-            "dolphin",
-            "ishiiruka"
-          ]
-        }
       ]
     },
     {
@@ -701,25 +688,12 @@
         "nintendo-gamecube"
       ],
       "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
+        "europe",
+        "japan",
+        "north-america"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
-      ],
-      "alternatives": [
-        {
-          "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
-          "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
-          "size": 2097152,
-          "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
-          "cores": [
-            "dolphin",
-            "ishiiruka"
-          ]
-        }
       ]
     },
     {
@@ -733,25 +707,12 @@
         "nintendo-gamecube"
       ],
       "regions": [
+        "europe",
+        "japan",
         "north-america"
-      ],
-      "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
-      ],
-      "alternatives": [
-        {
-          "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
-          "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
-          "size": 2097152,
-          "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
-          "cores": [
-            "dolphin",
-            "ishiiruka"
-          ]
-        }
       ]
     },
     {
@@ -949,6 +910,15 @@
       "systems": [
         "sega-mega-cd"
       ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
       "alternatives": [
         {
           "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
@@ -973,6 +943,15 @@
       "systems": [
         "sega-mega-cd"
       ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
       "alternatives": [
         {
           "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
@@ -995,6 +974,15 @@
       "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
       "cores": null,
       "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
         "sega-mega-cd"
       ],
       "alternatives": [
@@ -1224,6 +1212,15 @@
       "systems": [
         "sony-playstation"
       ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "region_system_groups": [
+        "sony-playstation"
+      ],
       "alternatives": [
         {
           "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
@@ -1275,6 +1272,16 @@
       "repo_path": "bios/Sony/PlayStation/scph5502.bin",
       "cores": null,
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "region_system_groups": [
         "sony-playstation"
       ],
       "alternatives": [
@@ -1913,6 +1920,13 @@
       "repo_path": "bios/Sega/ST-V/epr-20091.ic8",
       "cores": [
         "beetle_saturn"
+      ],
+      "regions": [
+        "asia-ntsc",
+        "japan"
+      ],
+      "region_groups": [
+        "sega-stv"
       ]
     },
     {
@@ -1925,11 +1939,9 @@
         "beetle_saturn"
       ],
       "regions": [
-        "asia-pal",
         "brazil",
         "latin-america",
-        "north-america",
-        "south-korea"
+        "north-america"
       ],
       "region_groups": [
         "sega-stv"
@@ -2135,6 +2147,12 @@
       "repo_path": "bios/Microsoft/MSX/MSX_4000bios.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2145,6 +2163,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXBR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "brazil"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2155,6 +2179,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXFR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "france"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2165,6 +2195,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXG.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "germany"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2175,6 +2211,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXKR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "south-korea"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2185,6 +2227,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "russia"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2195,6 +2243,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXSE.ROM",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "sweden"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2205,6 +2259,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXSP.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "spain"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2241,6 +2301,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXHAN.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "south-korea"
+      ],
+      "region_groups": [
+        "msx"
       ]
     },
     {
@@ -2271,6 +2337,12 @@
       "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/MSX2J.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2281,6 +2353,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2JEXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2291,6 +2369,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2BR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "brazil"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2301,6 +2385,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2BREXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "brazil"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2311,6 +2401,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2FR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "france"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2321,6 +2417,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2FREXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "france"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2331,6 +2433,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2G.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "germany"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2341,6 +2449,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2GEXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "germany"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2351,6 +2465,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2KR.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "south-korea"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2361,6 +2481,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2KREXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "south-korea"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2371,6 +2497,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2R.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "russia"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2381,6 +2513,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2REXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "russia"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2391,6 +2529,12 @@
       "repo_path": "bios/Microsoft/MSX/MSX2R2.ROM",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "russia"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2401,6 +2545,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SE.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "sweden"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2411,6 +2561,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SP.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "spain"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2421,6 +2577,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SPEXT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "spain"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2451,6 +2613,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2HAN.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "south-korea"
+      ],
+      "region_groups": [
+        "msx2"
       ]
     },
     {
@@ -2581,6 +2749,12 @@
       "repo_path": "bios/Microsoft/MSX/Shared Roms/PAINT.rom",
       "cores": [
         "bluemsx"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "blueMSX:file:Machines/Shared Roms/PAINT.rom"
       ]
     },
     {
@@ -3875,7 +4049,7 @@
       ]
     },
     {
-      "dest": "GC/dsp_rom.bin",
+      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
       "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
       "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
       "size": 8192,
@@ -3889,7 +4063,7 @@
       ]
     },
     {
-      "dest": "GC/dsp_coef.bin",
+      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
       "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
       "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
       "size": 4096,
@@ -3903,7 +4077,7 @@
       ]
     },
     {
-      "dest": "GC/font_western.bin",
+      "dest": "dolphin-emu/Sys/GC/font_western.bin",
       "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
       "size": 6478,
@@ -3917,7 +4091,7 @@
       ]
     },
     {
-      "dest": "GC/font_japanese.bin",
+      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
       "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
       "size": 259626,
@@ -3931,95 +4105,13 @@
       ]
     },
     {
-      "dest": "Triforce/segaboot.gcm",
+      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
       "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
       "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
       "size": 2097152,
       "repo_path": "bios/Sega/Triforce/segaboot.gcm",
       "cores": [
         "dolphin"
-      ]
-    },
-    {
-      "dest": "Wii/shared2/sys/SYSCONF",
-      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
-      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Wii/SYSCONF",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/title/00000001/00000002/data/setting.txt",
-      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
-      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
-      "size": 256,
-      "repo_path": "bios/Nintendo/Wii/setting.txt",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/WiiSD.raw",
-      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
-      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
-      "size": 134217728,
-      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "storage": "release",
-      "release_asset": "WiiSD.raw"
-    },
-    {
-      "dest": "Wii/clientca.pem",
-      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
-      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
-      "size": 1005,
-      "repo_path": "bios/Nintendo/Wii/clientca.pem",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/clientcakey.pem",
-      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
-      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
-      "size": 609,
-      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/rootca.pem",
-      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
-      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
-      "size": 897,
-      "repo_path": "bios/Nintendo/Wii/rootca.pem",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gamecube"
       ]
     },
     {
@@ -4237,6 +4329,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4250,7 +4348,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1002b.bin",
@@ -4263,6 +4369,13 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4278,6 +4391,13 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4291,6 +4411,12 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4306,6 +4432,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4319,6 +4451,12 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4334,6 +4472,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4347,6 +4491,12 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4362,6 +4512,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4375,6 +4531,12 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4410,6 +4572,13 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -4423,6 +4592,12 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -4457,7 +4632,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph102_v44.bin",
@@ -4470,7 +4652,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 20
     },
     {
       "dest": "scph102_v45.bin",
@@ -4483,6 +4673,13 @@
         "rustation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -19072,6 +19269,12 @@
       ],
       "systems": [
         "sega-master-system"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
       ]
     },
     {
@@ -19086,6 +19289,12 @@
       ],
       "systems": [
         "sega-master-system"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
       ]
     },
     {
@@ -19100,6 +19309,12 @@
       ],
       "systems": [
         "sega-master-system"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
       ]
     },
     {
@@ -19309,21 +19524,6 @@
       "cores": [
         "hatarib"
       ]
-    },
-    {
-      "dest": "Wii/sd.raw",
-      "sha1": "8c8134f08b2e3baa603206ede30d3935365009b8",
-      "sha256": "5709657d763f510f58792ca3ba080b0f663ec922149aa3ef5a0a4495ebabf8a6",
-      "size": 134217728,
-      "repo_path": "bios/Nintendo/Wii/sd.raw",
-      "cores": [
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "storage": "release",
-      "release_asset": "sd.raw"
     },
     {
       "dest": "jazz2/Content/Animations/Common/player_shield.aura",
@@ -54053,7 +54253,14 @@
       ],
       "systems": [
         "sega-mega-cd"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
     },
     {
       "dest": "eu_mcd2_9306.bin",
@@ -55253,7 +55460,7 @@
       "sha1": "3518193b8207bdebf22c1380c2db8c554baff329",
       "sha256": "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76",
       "size": 32768,
-      "repo_path": "bios/NEC/PC-98/n88.rom",
+      "repo_path": "bios/NEC/PC-88/n88.rom",
       "cores": [
         "quasi88"
       ]
@@ -55263,7 +55470,7 @@
       "sha1": "d1ae642aed4f0584eeb81ff50180db694e5101d4",
       "sha256": "8b584cd9143a670ddfce657ca65067c86f6be1db757a3085f48b1479ac6e8cf3",
       "size": 8192,
-      "repo_path": "bios/NEC/PC-98/n88_0.rom",
+      "repo_path": "bios/NEC/PC-88/n88_0.rom",
       "cores": [
         "quasi88"
       ]
@@ -55273,7 +55480,7 @@
       "sha1": "4ae4d37409ff99411a623da9f6a44192170a854e",
       "sha256": "810936574cdf68849822a1570046091f0bad0590dee3635dbc89a4cc4e099555",
       "size": 8192,
-      "repo_path": "bios/NEC/PC-98/n88_1.rom",
+      "repo_path": "bios/NEC/PC-88/n88_1.rom",
       "cores": [
         "quasi88"
       ]
@@ -55283,7 +55490,7 @@
       "sha1": "e94278682ef9e9bbb82201f72c50382748dcea2a",
       "sha256": "7d361b1bfd8523cd580bd9ca73902154556fbf45f60f0f539beef397d9462646",
       "size": 8192,
-      "repo_path": "bios/NEC/PC-98/n88_2.rom",
+      "repo_path": "bios/NEC/PC-88/n88_2.rom",
       "cores": [
         "quasi88"
       ]
@@ -55293,7 +55500,7 @@
       "sha1": "af452aed79b072c4d17985830b7c5dca64d4b412",
       "sha256": "3dc431af6e0c724582a3aa49e5c22cb9cc99d8298a4cce500e62bbaf1bc4bffb",
       "size": 8192,
-      "repo_path": "bios/NEC/PC-98/n88_3.rom",
+      "repo_path": "bios/NEC/PC-88/n88_3.rom",
       "cores": [
         "quasi88"
       ]
@@ -55303,7 +55510,7 @@
       "sha1": "063609dd518c124a4fc9ba35d1bae35771666a34",
       "sha256": "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839",
       "size": 32768,
-      "repo_path": "bios/NEC/PC-98/n88n.rom",
+      "repo_path": "bios/NEC/PC-88/n88n.rom",
       "cores": [
         "quasi88"
       ]
@@ -55313,7 +55520,7 @@
       "sha1": "bb7103a0818850a039c67ff666a31ce49a8d516f",
       "sha256": "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456",
       "size": 2048,
-      "repo_path": "bios/NEC/PC-98/N88SUB.ROM",
+      "repo_path": "bios/NEC/PC-88/N88SUB.ROM",
       "cores": [
         "quasi88"
       ]
@@ -55333,7 +55540,7 @@
       "sha1": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
       "sha256": "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe",
       "size": 131072,
-      "repo_path": "bios/NEC/PC-98/n88knj2.rom",
+      "repo_path": "bios/NEC/PC-88/n88knj2.rom",
       "cores": [
         "quasi88"
       ]
@@ -55343,7 +55550,7 @@
       "sha1": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
       "sha256": "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c",
       "size": 524288,
-      "repo_path": "bios/NEC/PC-98/n88jisho.rom",
+      "repo_path": "bios/NEC/PC-88/n88jisho.rom",
       "cores": [
         "quasi88"
       ]
@@ -59834,16 +60041,63 @@
       ]
     },
     {
-      "dest": "GBA/gba_bios.bin",
-      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
-      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
+      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "ishiiruka"
       ],
       "systems": [
         "nintendo-gamecube"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/EUR/IPL.bin",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/JAP/IPL.bin",
+      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
       ]
     },
     {
@@ -61865,14 +62119,7 @@
       ],
       "systems": [
         "sony-playstation-2"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "sony-playstation-2"
-      ],
-      "priority": 100
+      ]
     },
     {
       "dest": "pcsx2/bios/ps2_scph50008.bin",
@@ -61885,15 +62132,7 @@
       ],
       "systems": [
         "sony-playstation-2"
-      ],
-      "regions": [
-        "europe",
-        "oceania"
-      ],
-      "region_groups": [
-        "sony-playstation-2"
-      ],
-      "priority": 150
+      ]
     },
     {
       "dest": "pcsx2/bios/ps2-dvd-110u.bin",

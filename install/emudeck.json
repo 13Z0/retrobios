@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-15T21:45:48Z",
+  "generated": "2026-10-16T12:33:18Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -250,10 +250,10 @@
       }
     }
   ],
-  "total_files": 619,
-  "total_size": 3481684062,
-  "pack_files": 621,
-  "pack_size": 3481684062,
+  "total_files": 626,
+  "total_size": 3488253910,
+  "pack_files": 628,
+  "pack_size": 3488253910,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -846,6 +846,15 @@
       "systems": [
         "sega-mega-cd"
       ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "mega-cd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
       "alternatives": [
         {
           "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
@@ -868,6 +877,15 @@
       "systems": [
         "sega-mega-cd"
       ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "mega-cd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
       "alternatives": [
         {
           "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
@@ -888,6 +906,15 @@
       "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
       "cores": null,
       "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "mega-cd"
+      ],
+      "region_system_groups": [
         "sega-mega-cd"
       ],
       "alternatives": [
@@ -1166,6 +1193,12 @@
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
         "ares"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "master-system"
       ]
     },
     {
@@ -1176,6 +1209,12 @@
       "repo_path": "bios/Sega/Master System/MasterSystem/japanese-bios.sms",
       "cores": [
         "ares"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "master-system"
       ]
     },
     {
@@ -1186,6 +1225,12 @@
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
         "ares"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "master-system"
       ]
     },
     {
@@ -1781,169 +1826,65 @@
       ]
     },
     {
-      "dest": "GC/dsp_rom.bin",
+      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
       "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
       "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
       "size": 8192,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "GC/dsp_coef.bin",
+      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
       "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
       "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
       "size": 4096,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "GC/font_western.bin",
+      "dest": "dolphin-emu/Sys/GC/font_western.bin",
       "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
       "size": 6478,
       "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "GC/font_japanese.bin",
+      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
       "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
       "size": 259626,
       "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "Triforce/segaboot.gcm",
+      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
       "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
       "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
       "size": 2097152,
       "repo_path": "bios/Sega/Triforce/segaboot.gcm",
       "cores": [
         "dolphin"
-      ]
-    },
-    {
-      "dest": "GBA/gba_bios.bin",
-      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
-      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/shared2/sys/SYSCONF",
-      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
-      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Wii/SYSCONF",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/title/00000001/00000002/data/setting.txt",
-      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
-      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
-      "size": 256,
-      "repo_path": "bios/Nintendo/Wii/setting.txt",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/WiiSD.raw",
-      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
-      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
-      "size": 134217728,
-      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "storage": "release",
-      "release_asset": "WiiSD.raw"
-    },
-    {
-      "dest": "Wii/clientca.pem",
-      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
-      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
-      "size": 1005,
-      "repo_path": "bios/Nintendo/Wii/clientca.pem",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/clientcakey.pem",
-      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
-      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
-      "size": 609,
-      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/rootca.pem",
-      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
-      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
-      "size": 897,
-      "repo_path": "bios/Nintendo/Wii/rootca.pem",
-      "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
       ]
     },
     {
@@ -1957,7 +1898,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 50
     },
     {
       "dest": "scph1001.bin",
@@ -1970,7 +1918,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1002a.bin",
@@ -1983,7 +1938,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1002b.bin",
@@ -1996,7 +1959,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1002c.bin",
@@ -2009,7 +1980,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "dtlh1100.bin",
@@ -2022,7 +2001,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 20
     },
     {
       "dest": "scph3000.bin",
@@ -2035,7 +2021,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1001_v20.bin",
@@ -2048,7 +2041,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph3500.bin",
@@ -2061,7 +2061,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph1001_v21.bin",
@@ -2074,7 +2081,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph5000.bin",
@@ -2087,7 +2101,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 5
     },
     {
       "dest": "scph7000.bin",
@@ -2100,7 +2121,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph7000w.bin",
@@ -2119,7 +2147,8 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ]
+      ],
+      "priority": 10
     },
     {
       "dest": "scph7001.bin",
@@ -2132,7 +2161,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph7002.bin",
@@ -2145,7 +2181,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph100.bin",
@@ -2158,7 +2202,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph101_v44.bin",
@@ -2191,7 +2242,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 10
     },
     {
       "dest": "scph102_v44.bin",
@@ -2204,7 +2262,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 20
     },
     {
       "dest": "scph102_v45.bin",
@@ -2217,7 +2283,15 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 20
     },
     {
       "dest": "scph1000r.bin",
@@ -3875,7 +3949,14 @@
       ],
       "systems": [
         "sony-playstation"
-      ]
+      ],
+      "regions": [
+        "world"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ],
+      "priority": 200
     },
     {
       "dest": "switch/dev.keys",
@@ -5901,6 +5982,151 @@
       ]
     },
     {
+      "dest": "GC/dsp_rom.bin",
+      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
+      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "GC/dsp_coef.bin",
+      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
+      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "GC/font_western.bin",
+      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
+      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
+      "size": 6478,
+      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "GC/font_japanese.bin",
+      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
+      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
+      "size": 259626,
+      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/WiiSD.raw",
+      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
+      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "storage": "release",
+      "release_asset": "WiiSD.raw"
+    },
+    {
+      "dest": "Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
       "dest": "Load/Firmware/rtl_bt/rtl8723a_fw.bin",
       "sha1": "2937529b25c46e29429811829988f56f28142a41",
       "sha256": "756951ee36e417c0714b00547a6175d5d5decbe1e4cf7585f211019150c7cd10",
@@ -7096,14 +7322,13 @@
       ]
     },
     {
-      "dest": "GC/USA/IPL.bin",
+      "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
       "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
       "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7112,18 +7337,17 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
       ]
     },
     {
-      "dest": "GC/EUR/IPL.bin",
+      "dest": "dolphin-emu/Sys/GC/EUR/IPL.bin",
       "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
       "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7132,18 +7356,17 @@
         "europe"
       ],
       "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
       ]
     },
     {
-      "dest": "GC/JAP/IPL.bin",
+      "dest": "dolphin-emu/Sys/GC/JAP/IPL.bin",
       "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
       "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
       "cores": [
-        "dolphin",
-        "primehack"
+        "dolphin"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7152,7 +7375,7 @@
         "japan"
       ],
       "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
       ]
     },
     {
@@ -7176,6 +7399,63 @@
       ],
       "systems": [
         "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "GC/USA/IPL.bin",
+      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "PrimeHack:file:GC/USA/IPL.bin"
+      ]
+    },
+    {
+      "dest": "GC/EUR/IPL.bin",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "PrimeHack:file:GC/EUR/IPL.bin"
+      ]
+    },
+    {
+      "dest": "GC/JAP/IPL.bin",
+      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "cores": [
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PrimeHack:file:GC/JAP/IPL.bin"
       ]
     },
     {
