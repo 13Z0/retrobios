@@ -42,7 +42,6 @@ files:
     mode: standalone
     size: 8192
     md5: db398d4e4e93a6d4dee3bfe146918219
-    validation: [crc32]
     note: "ZX81 8K BASIC ROM (edition 3, default). Embedded in libretro core as zx81.rom."
     source_ref: "Source/zx81config.cpp:260, 81/zx81/snap.c:489"
   - name: zx81.edition1.rom
@@ -67,7 +66,6 @@ files:
     mode: standalone
     size: 4096
     md5: e03bd725f98be45aac39c85f7fd41ce4
-    validation: [crc32]
     source_ref: "Source/zx81config.cpp:259, Source/HW_.cpp:2741"
 
   # ZX97LE
@@ -86,7 +84,6 @@ files:
     mode: standalone
     size: 8192
     md5: db6efdfd82cebdfbb493d85b1a5efc3c
-    validation: [crc32]
     source_ref: "Source/zx81config.cpp:279, Source/HW_.cpp:2787"
 
   # Timex TS1500

@@ -175,5 +175,20 @@ class BeetlePceSystemCards(_Probe):
                 self.assertFalse({"md5", "sha1", "crc32", "sha256"} & set(entry))
 
 
+class EightyOneRoms(_Probe):
+    """memory_load reads the ROM and CRC32Block's value only picks the tape
+    patches in rompatch.c; a ROM the table does not know loads without them
+    (81/zx81/zx81.c:102-103, 81/Ace/ace.c:77-78, 81/zx81/rompatch.c at
+    fa70949). The profile declared a crc32 check with no value."""
+
+    def test_an_unknown_rom_is_not_refused(self):
+        for name, size in (("zx81.edition3.rom", 8192), ("zx80.rom", 4096),
+                           ("jupiterace.rom", 8192)):
+            with self.subTest(name=name):
+                self.assertTrue(self.accepts("81", name, b"\1" * size))
+                entry = next(f for f in _profile("81")["files"] if f["name"] == name)
+                self.assertNotIn("crc32", entry.get("validation") or [])
+
+
 if __name__ == "__main__":
     unittest.main()
