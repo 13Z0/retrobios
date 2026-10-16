@@ -250,6 +250,32 @@ class TestSourceMirror(unittest.TestCase):
             [("source_mirror", "", "https://codeberg.org/o/mirror")],
         )
 
+    def test_the_mirror_reads_the_source_pin(self):
+        """eden's mirror was judged from profiled_date while source_commit,
+        which bumps advance, named another revision."""
+        profile = {
+            "source": "https://git.eden-emu.dev/o/port",
+            "source_mirror": "https://codeberg.org/o/mirror",
+            "source_commit": "d16735f5",
+            "profiled_date": "2026-03-26",
+            "source_branch": "dev",
+        }
+        calls = []
+
+        def head(repo, cache_dir, offline, branch=None):
+            calls.append(("head", repo.host, branch))
+            return None if repo.host == "git.eden-emu.dev" else "tip"
+
+        def at(*args, **kwargs):
+            raise AssertionError("a declared pin needs no date lookup")
+
+        with mock.patch.object(profile_sync.upstream, "resolve_head", head), \
+                mock.patch.object(profile_sync.upstream, "resolve_commit_at", at):
+            views = profile_sync.select_views(profile, "unused", True)
+        self.assertEqual([(v.repo.host, v.pin) for v in views],
+                         [("codeberg.org", "d16735f5")])
+        self.assertIn(("head", "codeberg.org", "dev"), calls)
+
     def test_a_profile_without_a_mirror_is_unchanged(self):
         profile = {"source": "https://github.com/o/port"}
         self.assertEqual(

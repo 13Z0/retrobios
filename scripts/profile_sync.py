@@ -1196,9 +1196,16 @@ def select_views(
         repo = upstream.parse_repo(url)
         if repo is None or (repo.host, repo.slug) in seen:
             continue
-        branch = branch_in_url(url) or (declared if field == "source" else None)
+        # A mirror carries the source's history, commits and branches alike:
+        # its pin is source_commit. It read `source_mirror_commit`, a field
+        # no profile carries, and fell back to profiled_date, which a bump
+        # never moves (eden judged from f6e76860 while pinned on d16735f5).
+        pin_field = "source" if field == "source_mirror" else field
+        branch = branch_in_url(url) or (
+            declared if pin_field == "source" else None
+        )
         pin, origin = resolve_pin(
-            profile, repo, cache_dir, offline, field, mode, branch
+            profile, repo, cache_dir, offline, pin_field, mode, branch
         )
         if not pin:
             continue
