@@ -721,6 +721,37 @@ def settle_mismatch(
     return status
 
 
+def baseline_verdict(
+    file_entry: dict, local_path: str | None, status: str, verification_mode: str
+) -> tuple[str, str | None]:
+    """The status a platform entry ships under, or why a hash platform refuses it.
+
+    Batocera hashes the member, never the ZIP: a zipped_file entry is checked
+    inside the archive whatever the outer resolution said, as verify does. A
+    frontend that hashes one digest accepts a file whose other declared
+    hashes disagree. The pack builder and the install manifest both read
+    this, so the one-line installer never places a file the pack refused.
+    Existence platforms never read the bytes: nothing is refused here.
+    """
+    if not hash_mismatch_excludes_file(verification_mode):
+        return status, None
+    member = file_entry.get("zipped_file")
+    if member and local_path:
+        result = inner_rom_check(file_entry, local_path)
+        if result == "ok":
+            return "zip_exact", None
+        if result == "not_in_zip":
+            return status, f"{member} not found inside ZIP"
+        if result == "error":
+            return status, "cannot read ZIP"
+        return status, f"{member} MD5 mismatch inside ZIP"
+    if status != "hash_mismatch":
+        return status, None
+    if frontend_digest_matches(file_entry, local_path, digest_algorithm(verification_mode)):
+        return "frontend_digest_exact", None
+    return status, "hash mismatch"
+
+
 def destination_owners(profiles: dict) -> dict[str, list[tuple[str, str]]]:
     """For each file name, the path tail each emulator reads it under."""
     owners: dict[str, list[tuple[str, str]]] = {}

@@ -708,6 +708,63 @@ class ResolverRegressions(unittest.TestCase):
             self.assertEqual(status, "hash_mismatch")
 
 
+class OneBaselineVerdict(unittest.TestCase):
+    """The builder and the manifest each wrote the platform baseline.
+
+    The builder looked inside a zipped_file archive whatever the outer
+    resolution said; the manifest only after a hash_mismatch. An archive
+    found by name without the member Batocera checks left the pack and
+    stayed in the manifest. A slot override replaced a release asset in the
+    manifest and not in the pack.
+    """
+
+    def _archive(self, directory: Path, member: str) -> str:
+        path = directory / "dragon32.zip"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr(member, b"rom")
+        return str(path)
+
+    def test_a_missing_member_is_refused_whatever_the_outer_status(self):
+        from scripts.validation import baseline_verdict
+
+        entry = {"name": "dragon32.zip", "zipped_file": "d32.rom", "md5": ""}
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = self._archive(Path(directory), "other.rom")
+            status, refusal = baseline_verdict(entry, path, "name_exact", "md5")
+            self.assertEqual(refusal, "d32.rom not found inside ZIP")
+            # An existence frontend never opens it.
+            self.assertEqual(
+                baseline_verdict(entry, path, "name_exact", "existence"),
+                ("name_exact", None),
+            )
+
+    def test_a_release_asset_keeps_its_answer(self):
+        from scripts.slots import apply_override
+
+        self.assertEqual(
+            apply_override("bios/x.bin", "/cache/big.bin", "release_asset"),
+            ("/cache/big.bin", "release_asset"),
+        )
+        self.assertEqual(
+            apply_override("bios/x.bin", "bios/y.bin", "name_exact"),
+            ("bios/x.bin", "slot_arbitrated"),
+        )
+
+    def test_the_builder_and_the_manifest_read_the_same_rules(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        for name in ("generate_pack", "generate_manifest"):
+            function = next(
+                node for node in tree.body
+                if isinstance(node, ast.FunctionDef) and node.name == name
+            )
+            body = ast.get_source_segment(source, function) or ""
+            with self.subTest(function=name):
+                self.assertIn("baseline_verdict(", body)
+                self.assertIn("slots.apply_override(", body)
+                self.assertNotIn('"slot_arbitrated"', body)
+
+
 class PackExclusionRegressions(unittest.TestCase):
     def test_slug_platform_core_requirement_uses_the_generated_destination(self):
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:

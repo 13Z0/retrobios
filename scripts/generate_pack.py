@@ -78,13 +78,11 @@ from nativemode import (
     reads_file_contents,
 )
 from validation import (
+    baseline_verdict,
     existence_discrepancy,
     destination_owners,
     validated_choice,
-    inner_rom_check,
-    settle_mismatch,
     agnostic_substitute,
-    frontend_digest_matches,
     _build_validation_index,
     filter_files_by_mode,
 )
@@ -758,9 +756,9 @@ def generate_pack(
                     offline=offline,
                 )
 
-                override = slot_overrides.get(full_dest)
-                if override and status not in ("external", "release_asset"):
-                    local_path, status = override, "slot_arbitrated"
+                local_path, status = slots.apply_override(
+                    slot_overrides.get(full_dest), local_path, status
+                )
 
                 if status == "external":
                     file_ext = os.path.splitext(file_entry["name"])[1] or ""
@@ -840,52 +838,26 @@ def generate_pack(
                             file_reasons[dedup_key] = "not found"
                         continue
 
-                # Batocera hashes the member, never the ZIP: a zipped_file entry
-                # is checked inside the archive whatever the outer resolution
-                # said, as verify does. An archive without the member passed.
-                inner_checked = bool(file_entry.get("zipped_file") and local_path)
-                if hash_mismatch_excludes_file(verification_mode) and (
-                    status == "hash_mismatch" or inner_checked
+                # The verdict the install manifest reads too: a member missing
+                # from a zipped_file archive, or a hash the frontend rejects.
+                status, refusal = baseline_verdict(
+                    file_entry, local_path, status, verification_mode
+                )
+                if refusal:
+                    file_status[dedup_key] = "excluded"
+                    file_reasons[dedup_key] = refusal
+                    continue
+                if not hash_mismatch_excludes_file(verification_mode) and (
+                    status == "hash_mismatch" and local_path
                 ):
-                    zf_name = file_entry.get("zipped_file")
-                    if zf_name and local_path:
-                        last_result = inner_rom_check(file_entry, local_path)
-                        zip_ok = last_result == "ok"
-                        if zip_ok:
-                            status = "zip_exact"
-                            file_status.setdefault(dedup_key, "ok")
-                        elif last_result == "not_in_zip":
-                            file_status[dedup_key] = "excluded"
-                            file_reasons[dedup_key] = f"{zf_name} not found inside ZIP"
-                        elif last_result == "error":
-                            file_status[dedup_key] = "excluded"
-                            file_reasons[dedup_key] = "cannot read ZIP"
-                        else:
-                            file_status[dedup_key] = "excluded"
-                            file_reasons[dedup_key] = (
-                                f"{zf_name} MD5 mismatch inside ZIP"
-                            )
-                        if not zip_ok:
-                            continue
-                    elif frontend_digest_matches(
-                        file_entry, local_path, digest_algorithm(verification_mode)
-                    ):
-                        status = "frontend_digest_exact"
-                        file_status.setdefault(dedup_key, "ok")
-                    else:
-                        file_status[dedup_key] = "excluded"
-                        file_reasons[dedup_key] = "hash mismatch"
-                        continue
-                else:
                     # Existence platforms accept any file at the declared path:
                     # their code never reads the bytes. An upstream hash that
                     # contradicts a local dump is reported, not acted on.
-                    if status == "hash_mismatch" and local_path:
-                        file_reasons.setdefault(
-                            dedup_key,
-                            existence_discrepancy(file_entry, local_path, platform_display),
-                        )
-                    file_status.setdefault(dedup_key, "ok")
+                    file_reasons.setdefault(
+                        dedup_key,
+                        existence_discrepancy(file_entry, local_path, platform_display),
+                    )
+                file_status.setdefault(dedup_key, "ok")
 
                 # Emulator-level validation: informational only for platform packs.
                 # Platform verification (existence/md5) is the authority for pack status.
@@ -3558,18 +3530,17 @@ def generate_manifest(
                     )
                     continue
 
-                override = slot_overrides.get(full_dest)
-                if override:
-                    local_path, status = override, "slot_arbitrated"
-                else:
-                    local_path, status = resolve_file(
-                        file_entry,
-                        db,
-                        bios_dir,
-                        zip_contents,
-                        data_dir_registry=data_registry,
-                        offline=offline,
-                    )
+                local_path, status = resolve_file(
+                    file_entry,
+                    db,
+                    bios_dir,
+                    zip_contents,
+                    data_dir_registry=data_registry,
+                    offline=offline,
+                )
+                local_path, status = slots.apply_override(
+                    slot_overrides.get(full_dest), local_path, status
+                )
                 if status == "not_found" and not reads_file_contents(verification_mode):
                     found = agnostic_substitute(file_entry, sys_id, db, manifest_profiles)
                     if found:
@@ -3577,15 +3548,18 @@ def generate_manifest(
                         if os.path.basename(local_path) != file_entry.get("name", ""):
                             # The pack explains the rename in a note of its own.
                             rename_notes.add(file_entry.get("name", ""))
-                status = settle_mismatch(file_entry, local_path, status, verification_mode)
-                # An existence platform never reads the bytes, so a declared
-                # hash the local dump contradicts is not a reason to withhold
-                # the file. Hash platforms would reject it, so they omit it.
-                if status in ("not_found", "external") or (
-                    status == "hash_mismatch"
-                    and hash_mismatch_excludes_file(verification_mode)
-                ):
-                    record_omission(full_dest, file_entry, sys_id, status, None)
+                # The builder's verdict: a hash platform omits what its
+                # frontend would reject, a zipped_file archive included when
+                # the member is missing whatever the outer resolution said.
+                # An existence platform never reads the bytes.
+                status, refusal = baseline_verdict(
+                    file_entry, local_path, status, verification_mode
+                )
+                if refusal or status in ("not_found", "external"):
+                    record_omission(
+                        full_dest, file_entry, sys_id,
+                        "hash_mismatch" if refusal else status, None,
+                    )
                     continue
                 # The variant the pack ships when an emulator rejects the
                 # resolved file: the installer must place the same bytes.
