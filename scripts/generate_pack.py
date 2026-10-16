@@ -2427,6 +2427,30 @@ def _run_platform_packs(
                     )
                     print(f"  Split into {len(zip_paths)} packs")
                 else:
+                    # A group's pack is written under the group's name from
+                    # the start: built under the representative's and then
+                    # renamed, it overwrote and carried away a
+                    # `--platform retroarch` pack already in the directory,
+                    # and os.rename refused an existing target on Windows.
+                    group_name = None
+                    if aliases:
+                        narrow_tags = "".join(
+                            tag
+                            for tag, _label in _narrowings(
+                                source,
+                                getattr(args, "regions", None),
+                                args.target,
+                                args.one_per_slot,
+                                required_only,
+                            )
+                        )
+                        stem = _platform_pack_stem(
+                            group_platforms, representative, args.platforms_dir
+                        )
+                        group_name = (
+                            f"{stem}{narrow_tags}_BIOS_Pack"
+                            f"{_system_tag(system_filter)}.zip"
+                        )
                     zip_path = generate_pack(
                         representative,
                         args.platforms_dir,
@@ -2445,29 +2469,8 @@ def _run_platform_packs(
                         target_name=args.target,
                         one_per_slot=args.one_per_slot,
                         offline=args.offline,
+                        pack_name=group_name,
                     )
-                if not args.split and zip_path and aliases:
-                    narrow_tags = "".join(
-                        tag
-                        for tag, _label in _narrowings(
-                            source,
-                            getattr(args, "regions", None),
-                            args.target,
-                            args.one_per_slot,
-                            required_only,
-                        )
-                    )
-                    stem = _platform_pack_stem(
-                        group_platforms, representative, args.platforms_dir
-                    )
-                    combined = (
-                        f"{stem}{narrow_tags}_BIOS_Pack"
-                        f"{_system_tag(system_filter)}.zip"
-                    )
-                    new_path = os.path.join(os.path.dirname(zip_path), combined)
-                    if new_path != zip_path:
-                        os.rename(zip_path, new_path)
-                        print(f"  Renamed -> {os.path.basename(new_path)}")
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
                 print(f"  ERROR: {e}")
                 failed.append(representative)

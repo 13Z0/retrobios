@@ -2207,6 +2207,18 @@ class APackNameFitsAFileName(unittest.TestCase):
         self.assertIn("pack_name=final_name", source)
 
 
+class AGroupPackIsWrittenUnderItsOwnName(unittest.TestCase):
+    """The RetroArch + Lakka pack was written as RetroArch_..._BIOS_Pack.zip
+    and renamed: a `--platform retroarch` pack already in the directory was
+    overwritten then carried away, and os.rename refuses an existing target
+    on Windows."""
+
+    def test_no_pack_is_renamed_after_its_build(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertNotIn("os.rename(", source)
+        self.assertIn("pack_name=group_name", source)
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
