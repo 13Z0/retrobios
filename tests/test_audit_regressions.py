@@ -758,6 +758,32 @@ class OneBaselineVerdict(unittest.TestCase):
                 _intentional_hash_exclusion([entry], db, verification_mode="existence")
             )
 
+    def test_the_builder_accepts_what_verify_accepts(self):
+        """verify took a 29-character md5 by prefix and a ZIP by its
+        composite; the builder compared exact md5s and refused both when
+        another declared hash disagreed."""
+        import hashlib
+
+        from scripts.common import md5_composite
+        from scripts.validation import baseline_verdict
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            loose = Path(directory) / "abc.bin"
+            loose.write_bytes(b"abc")
+            truncated = {"name": "abc.bin", "md5": hashlib.md5(b"abc").hexdigest()[:29],
+                         "crc32": "deadbeef"}
+            self.assertEqual(
+                baseline_verdict(truncated, str(loose), "hash_mismatch", "md5"),
+                ("frontend_digest_exact", None),
+            )
+            archive = self._archive(Path(directory), "rom.bin")
+            composite = {"name": "dragon32.zip", "md5": md5_composite(archive),
+                         "crc32": "deadbeef"}
+            self.assertEqual(
+                baseline_verdict(composite, archive, "hash_mismatch", "md5"),
+                ("frontend_digest_exact", None),
+            )
+
     def test_a_release_asset_keeps_its_answer(self):
         from scripts.slots import apply_override
 

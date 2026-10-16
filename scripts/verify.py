@@ -28,7 +28,6 @@ import argparse
 import json
 import os
 import sys
-import zipfile
 from collections.abc import Mapping
 
 import slots
@@ -47,7 +46,6 @@ from common import (
     check_inside_zip,
     compute_hashes,
     expand_directory_entries,
-    name_match_size_ok,
     platform_declarations,
     filter_systems_by_target,
     group_identical_platforms,
@@ -56,7 +54,6 @@ from common import (
     load_data_dir_registry,
     load_emulator_profiles,
     load_platform_config,
-    md5_composite,
     md5sum,
     require_yaml,
     resolve_local_file,
@@ -76,6 +73,7 @@ from nativemode import (
 )
 from validation import (
     declaration_settles,
+    frontend_digest_matches,
     existence_discrepancy,
     destination_owners,
     validated_choice,
@@ -235,23 +233,10 @@ def verify_entry_md5(
     if resolve_status == "md5_exact":
         return {**base, "status": Status.OK, "path": local_path}
 
+    # The builder's comparison, so the two count the same files as held.
+    if frontend_digest_matches(file_entry, local_path, "md5"):
+        return {**base, "status": Status.OK, "path": local_path}
     actual_md5 = md5sum(local_path)
-    actual_lower = actual_md5.lower()
-    for expected in md5_list:
-        if actual_lower == expected.lower():
-            return {**base, "status": Status.OK, "path": local_path}
-        if len(expected) < 32 and actual_lower.startswith(expected.lower()):
-            return {**base, "status": Status.OK, "path": local_path}
-
-    if ".zip" in os.path.basename(local_path):
-        try:
-            composite = md5_composite(local_path)
-            for expected in md5_list:
-                if composite.lower() == expected.lower():
-                    return {**base, "status": Status.OK, "path": local_path}
-        except (zipfile.BadZipFile, OSError):
-            pass
-
     return {
         **base,
         "status": Status.UNTESTED,

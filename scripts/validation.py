@@ -8,6 +8,7 @@ truth data for reporting.
 from __future__ import annotations
 
 import os
+import zipfile
 from collections.abc import Mapping
 
 from common import (
@@ -17,7 +18,7 @@ from common import (
     sanitize_pack_path,
     size_fits,
 )
-from hashing import parse_md5_list
+from hashing import md5_composite, parse_md5_list
 from nativemode import digest_algorithm, hash_mismatch_excludes_file
 from ziptools import check_inside_zip
 
@@ -663,7 +664,8 @@ def frontend_digest_matches(file_entry: dict, local_path: str, algorithm: str) -
     resolve_local_file calls a file `hash_mismatch` when any declared hash
     disagrees, but a frontend compares one digest. RomM's list carries md5,
     sha1 and crc32: a mistyped crc32 next to the right md5 must not withhold
-    a file RomM accepts. Same comparison as verify_entry_md5/_sha1.
+    a file RomM accepts. verify_entry_md5 reads it too: Batocera compares a
+    truncated md5 by prefix and Recalbox hashes a ZIP by its members.
     """
     if algorithm == "md5":
         declared = parse_md5_list(file_entry.get("md5"))
@@ -673,7 +675,17 @@ def frontend_digest_matches(file_entry: dict, local_path: str, algorithm: str) -
         declared = [str(v).strip().lower() for v in values if v]
     if not declared or not local_path:
         return False
-    return compute_hashes(local_path)[algorithm].lower() in declared
+    actual = compute_hashes(local_path)[algorithm].lower()
+    if algorithm != "md5":
+        return actual in declared
+    if any(actual == d or (len(d) < 32 and actual.startswith(d)) for d in declared):
+        return True
+    if ".zip" not in os.path.basename(local_path):
+        return False
+    try:
+        return md5_composite(local_path).lower() in declared
+    except (zipfile.BadZipFile, OSError):
+        return False
 
 
 def inner_rom_check(file_entry: dict, local_path: str) -> str:
