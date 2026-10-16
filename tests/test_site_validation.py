@@ -64,13 +64,28 @@ class WikiSourceHeadings(unittest.TestCase):
             for number, line in enumerate(
                 page.read_text(encoding="utf-8").splitlines(), start=1
             ):
-                if line.lstrip().startswith("```"):
+                if line.lstrip().startswith(("```", "~~~")):
                     fenced = not fenced
                 elif not fenced and line.startswith("#") and not line.startswith(
                     ("# ", "## ", "### ", "#### ", "##### ", "###### ")
                 ):
                     offenders.append(f"{page.name}:{number}")
+                elif not fenced and line[:1].isspace() and line.lstrip().startswith("#"):
+                    # Inside a list item or an admonition an indented hash is
+                    # a heading too; code that needs one goes in a fence.
+                    offenders.append(f"{page.name}:{number}")
         self.assertEqual(offenders, [])
+
+    def test_an_indented_hash_renders_as_a_heading(self):
+        """What the check above guards: a wrapped `#79)` inside a list item."""
+        try:
+            import markdown
+        except ImportError:
+            self.skipTest("rendering needs markdown")
+        html = markdown.markdown(
+            "1. First paragraph.\n\n    Second paragraph (see issue\n    #79). More."
+        )
+        self.assertIn("<h1", html)
 
 
 class PlatformDetails(unittest.TestCase):
