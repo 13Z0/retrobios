@@ -881,6 +881,59 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
 
+    def test_a_python_38_interpreter_runs_it_end_to_end(self):
+        """An import proves the grammar, not the calls a function makes.
+
+        dict | dict, zip(strict=True) or functools.cache import cleanly on
+        3.8 and raise the first time their path runs: listing, narrowing by
+        system, region and target, installing and checking all run here, on
+        the repository's own manifests served over loopback. CI installs the
+        interpreter, so there it may not skip.
+        """
+        import shutil  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+
+        python38 = shutil.which("python3.8")
+        if python38 is None:
+            if os.environ.get("CI"):
+                self.fail("CI must provide python3.8 for the installer's floor")
+            self.skipTest("no python3.8 on PATH; the static checks below still run")
+        handler = functools.partial(
+            http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
+        )
+        handler.log_message = lambda *args: None
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        home = Path(tempfile.mkdtemp(dir=str(REPO_ROOT / "tmp")))
+        self.addCleanup(shutil.rmtree, home, True)
+        env = {
+            **os.environ,
+            "HOME": str(home),
+            "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+        dest = home / "system"
+        base = [python38, "-I", "install.py", "--platform", "retroarch", "--no-input"]
+        for extra in (
+            ["--list-systems"],
+            ["--list-cores"],
+            ["--list-targets"],
+            ["--dest", str(dest), "--system", "atari-lynx", "--region", "us",
+             "--target", "switch", "--yes"],
+            ["--dest", str(dest), "--system", "atari-lynx", "--check"],
+        ):
+            with self.subTest(args=extra):
+                proc = subprocess.run(
+                    base + extra, cwd=REPO_ROOT, env=env,
+                    capture_output=True, text=True, timeout=300, check=False,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+        self.assertTrue((dest / "lynxboot.img").is_file())
+
     def test_no_syntax_a_312_parser_lets_through(self):
         """Parenthesized context managers (3.9) and f-strings reusing their
         own quote or a backslash inside a replacement field (3.12)."""
