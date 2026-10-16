@@ -99,5 +99,17 @@ class BeetleLynxBootRom(_Probe):
         self.assertTrue(self.accepts("beetle_lynx", "lynxboot.img", b"\0" * 1024))
 
 
+class BeetleGbaBios(_Probe):
+    """CPUInit copies the BIOS only when it is exactly 0x4000 bytes and
+    otherwise falls back to HLE (mednafen/gba/GBA.cpp:2639-2673 at
+    b158166)."""
+
+    def test_only_16k_is_used(self):
+        self.assertTrue(self.accepts("beetle_gba", "gba_bios.bin", b"\0" * 16384))
+        for size in (1000, 32768):
+            with self.subTest(size=size):
+                self.assertFalse(self.accepts("beetle_gba", "gba_bios.bin", b"\0" * size))
+
+
 if __name__ == "__main__":
     unittest.main()
