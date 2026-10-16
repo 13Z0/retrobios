@@ -250,10 +250,10 @@
       }
     }
   ],
-  "total_files": 618,
-  "total_size": 3472458179,
-  "pack_files": 620,
-  "pack_size": 3472458179,
+  "total_files": 620,
+  "total_size": 3482879822,
+  "pack_files": 622,
+  "pack_size": 3482879822,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -584,6 +584,17 @@
       "cores": null,
       "systems": [
         "coleco-colecovision"
+      ],
+      "alternatives": [
+        {
+          "sha1": "45bedc4cbdeac66c7df59e9e599195c778d86a92",
+          "sha256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad",
+          "size": 8192,
+          "repo_path": "bios/Coleco/ColecoVision/BIOS.col",
+          "cores": [
+            "ares"
+          ]
+        }
       ]
     },
     {
@@ -639,6 +650,17 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
+          "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
+          "size": 16384,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+          "cores": [
+            "melonds"
+          ]
+        }
       ]
     },
     {
@@ -650,6 +672,17 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
+          "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
+          "size": 4096,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+          "cores": [
+            "melonds"
+          ]
+        }
       ]
     },
     {
@@ -661,6 +694,17 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "cfe072921ee3fb93f688743f8beef89043c3e9ad",
+          "sha256": "57a1d6b43c1399d219ea18644240c4d4c6787c829f0a67ded216472867857cd0",
+          "size": 262144,
+          "repo_path": "bios/Nintendo/Nintendo DS/firmware.bin",
+          "cores": [
+            "melonds"
+          ]
+        }
       ]
     },
     {
@@ -691,6 +735,17 @@
       "cores": null,
       "systems": [
         "nintendo-nes"
+      ],
+      "alternatives": [
+        {
+          "sha1": "af5af53f66982e749643fdf8b2acbb7d4d3ed229",
+          "sha256": "fdc1a76e654feea993fcb38366e05ee5f4eb641f86fe6bebaeefd412e112dd72",
+          "size": 8192,
+          "repo_path": "bios/Nintendo/Famicom Disk System/.variants/disksys.rom.af5af53f",
+          "cores": [
+            "ares"
+          ]
+        }
       ]
     },
     {
@@ -735,6 +790,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast"
+      ],
+      "alternatives": [
+        {
+          "sha1": "8951d1bb219ab2ff8583033d2119c899cc81f18c",
+          "sha256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
+          "size": 2097152,
+          "repo_path": "bios/Sega/Dreamcast/dc_bios.bin",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -757,6 +823,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "788aee0f30ee80ea54dcd705afe93944accafc31",
+          "sha256": "62a011c3a4dc5686ebced343987199bd7ccad1578ca8e2f2350b41204d87de65",
+          "size": 9651827,
+          "repo_path": "bios/Arcade/Arcade/naomi.zip",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -768,6 +845,17 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
+          "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+          "cores": [
+            "ares"
+          ]
+        }
       ]
     },
     {
@@ -779,6 +867,17 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
+          "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+          "cores": [
+            "ares"
+          ]
+        }
       ]
     },
     {
@@ -790,6 +889,17 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
+          "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+          "cores": [
+            "ares"
+          ]
+        }
       ]
     },
     {
@@ -835,6 +945,17 @@
       "systems": [
         "snk-neogeo",
         "snk-neogeo-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
+          "cores": [
+            "mame"
+          ]
+        }
       ]
     },
     {
@@ -858,6 +979,18 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
+          "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5500.bin",
+          "cores": [
+            "ares",
+            "duckstation"
+          ]
+        }
       ]
     },
     {
@@ -869,6 +1002,18 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
+          "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5501.bin",
+          "cores": [
+            "ares",
+            "duckstation"
+          ]
+        }
       ]
     },
     {
@@ -880,6 +1025,18 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0",
+          "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5502.bin",
+          "cores": [
+            "ares",
+            "duckstation"
+          ]
+        }
       ]
     },
     {
@@ -946,6 +1103,17 @@
       "cores": null,
       "systems": [
         "xbox"
+      ],
+      "alternatives": [
+        {
+          "sha1": "5d270675b54eb8071b480e42d22a3015ac211cef",
+          "sha256": "e99e3a772bf5f5d262786aee895664eb96136196e37732fe66e14ae062f20335",
+          "size": 512,
+          "repo_path": "bios/Microsoft/Xbox/mcpx_1.0.bin",
+          "cores": [
+            "xemu"
+          ]
+        }
       ]
     },
     {
@@ -957,6 +1125,16 @@
       "cores": null,
       "systems": [
         "xbox"
+      ]
+    },
+    {
+      "dest": "5200.rom",
+      "sha1": "6ad7a1e8c9fad486fbec9498cb48bf5bc3adc530",
+      "sha256": "06b250f18983d058c0f156ce7ee88ae48b6eaf11e6f10f21dccf6ac7ffb6a6af",
+      "size": 2048,
+      "repo_path": "bios/Atari/5200/5200.rom",
+      "cores": [
+        "ares"
       ]
     },
     {
@@ -1507,7 +1685,8 @@
       ],
       "systems": [
         "nintendo-wii-u"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/snduser2.rpl",
@@ -1520,7 +1699,8 @@
       ],
       "systems": [
         "nintendo-wii-u"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/swkbd.rpl",
@@ -1533,7 +1713,8 @@
       ],
       "systems": [
         "nintendo-wii-u"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/erreula.rpl",
@@ -1546,7 +1727,8 @@
       ],
       "systems": [
         "nintendo-wii-u"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "switch/title.keys",
@@ -6473,7 +6655,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceLibcInternal.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceNgs2.sprx",
@@ -6483,7 +6666,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceNgs2.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceUlt.sprx",
@@ -6493,7 +6677,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceUlt.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceRtc.sprx",
@@ -6503,7 +6688,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceRtc.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceJpegDec.sprx",
@@ -6513,7 +6699,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceJpegDec.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceJpegEnc.sprx",
@@ -6523,7 +6710,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceJpegEnc.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libScePngEnc.sprx",
@@ -6533,7 +6721,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libScePngEnc.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceJson.sprx",
@@ -6543,7 +6732,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceJson.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceJson2.sprx",
@@ -6553,7 +6743,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceJson2.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceCesCs.sprx",
@@ -6563,7 +6754,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceCesCs.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAt9Enc.sprx",
@@ -6573,7 +6765,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAt9Enc.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodec.sprx",
@@ -6583,7 +6776,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceAudiodec.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodecCpu.sprx",
@@ -6593,7 +6787,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAudiodecCpu.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodecCpuDdp.sprx",
@@ -6603,7 +6798,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAudiodecCpuDdp.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodecCpuM4aac.sprx",
@@ -6613,7 +6809,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAudiodecCpuM4aac.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodecCpuDtsHdLbr.sprx",
@@ -6623,7 +6820,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAudiodecCpuDtsHdLbr.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceAudiodecCpuHevag.sprx",
@@ -6633,7 +6831,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceAudiodecCpuHevag.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceFont.sprx",
@@ -6643,7 +6842,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceFont.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceFontFt.sprx",
@@ -6653,7 +6853,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceFontFt.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceFreeTypeOt.sprx",
@@ -6663,7 +6864,8 @@
       "repo_path": "bios/Sony/PlayStation 4/shadps4/sys_modules/libSceFreeTypeOt.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceFreeTypeOl.sprx",
@@ -6673,7 +6875,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceFreeTypeOl.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceFreeTypeOptOl.sprx",
@@ -6683,7 +6886,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceFreeTypeOptOl.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceRudp.sprx",
@@ -6693,7 +6897,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceRudp.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceWkFontConfig.sprx",
@@ -6703,7 +6908,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceWkFontConfig.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceSystemGesture.sprx",
@@ -6713,7 +6919,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceSystemGesture.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "shadps4/sys_modules/libSceXml.sprx",
@@ -6723,7 +6930,8 @@
       "repo_path": "bios/Other/shadps4/shadps4/sys_modules/libSceXml.sprx",
       "cores": [
         "shadps4"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "supermodel/Games.xml",
@@ -6945,6 +7153,29 @@
       ],
       "region_groups": [
         "Dolphin:file:GC/JAP/IPL.bin"
+      ]
+    },
+    {
+      "dest": "naomi.zip",
+      "sha1": "a39d7d17e52c26435ed1745503c7d6a68b36be1d",
+      "sha256": "9b85d2183bc3739efa2ebf1440c73abb252c6ca8944efcff3a7204645f7e03d4",
+      "size": 10419595,
+      "repo_path": "bios/Arcade/MAME/naomi.zip",
+      "cores": [
+        "mame"
+      ]
+    },
+    {
+      "dest": "ps2-0230a-20080220.bin",
+      "sha1": "f9229fe159d0353b9f0632f3fdc66819c9030458",
+      "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
+      "size": 4194304,
+      "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
       ]
     },
     {
@@ -8255,32 +8486,6 @@
       ]
     },
     {
-      "dest": "ps2-0230a-20080220.bin",
-      "sha1": "f9229fe159d0353b9f0632f3fdc66819c9030458",
-      "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
-      "size": 4194304,
-      "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
-      "cores": [
-        "pcsx2"
-      ],
-      "systems": [
-        "sony-playstation-2"
-      ]
-    },
-    {
-      "dest": "ps2-0230a-20080220.nvm",
-      "sha1": "258ad0f26b0b269462bbd9acbb5506d5dfbcc3d5",
-      "sha256": "e017efa804f1f7d4d3da82b67d7370c5be062b4860f1cff4f898f93437d691a0",
-      "size": 1024,
-      "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.nvm",
-      "cores": [
-        "pcsx2"
-      ],
-      "systems": [
-        "sony-playstation-2"
-      ]
-    },
-    {
       "dest": "ps2-0230e-20080220.bin",
       "sha1": "9915b5ba56798f4027ac1bd8d10abe0c1c9c326a",
       "sha256": "cb5a91fda0e8e2b2a012c0b4d7db5831281c32a89cd659c6e8f64df1fe204e69",
@@ -8585,6 +8790,19 @@
       "sha256": "1b7c68be427e6f571596ef6b444e8b86d1b4e2a226d62f6bfc86717a798f2317",
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-90006_BIOS_VX_HK _230.ROM1",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "ps2-0230a-20080220.nvm",
+      "sha1": "258ad0f26b0b269462bbd9acbb5506d5dfbcc3d5",
+      "sha256": "e017efa804f1f7d4d3da82b67d7370c5be062b4860f1cff4f898f93437d691a0",
+      "size": 1024,
+      "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.nvm",
       "cores": [
         "pcsx2"
       ],

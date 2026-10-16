@@ -445,9 +445,25 @@
                   },
                   "minItems": 1,
                   "uniqueItems": true
+                },
+                "executable": {
+                  "type": "boolean"
                 }
               }
             }
+          },
+          "executable": {
+            "description": "The repository keeps the file executable; the installer gives it the execute bits the umask allows.",
+            "type": "boolean"
+          },
+          "declared_in": {
+            "description": "The platform systems declaring the file, when fewer than `systems`, which also names the systems whose cores read it there.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
           }
         },
         "oneOf": [

@@ -11,6 +11,7 @@ import contextlib
 import hashlib
 import http.server
 import io
+import json
 import os
 import subprocess
 import sys
@@ -118,6 +119,53 @@ class LargeFilesResume(unittest.TestCase):
             self.assertFalse(final.is_symlink())
             self.assertEqual(final.read_bytes(), PAYLOAD)
             self.assertEqual(_RangeHandler.ranges, [""])
+
+
+class InstalledFileModes(unittest.TestCase):
+    """A file came out 0600, the mode of the temporary it was written to: run
+    with sudo for a root-owned BIOS folder, the emulator's own user could not
+    read it, and RetroDECK's pico8 and vox launchers were never executable."""
+
+    def _mode(self, entry: dict) -> int:
+        with _Server(), tempfile.TemporaryDirectory() as tmp:
+            dest, ok, _ = install._download_one(dict(entry), Path(tmp))
+            self.assertTrue(ok)
+            return (Path(tmp) / dest).stat().st_mode & 0o777
+
+    def test_the_umask_decides_as_for_any_new_file(self):
+        umask = os.umask(0o022)
+        try:
+            self.assertEqual(self._mode(ENTRY), 0o644)
+            self.assertEqual(self._mode({**ENTRY, "executable": True}), 0o755)
+        finally:
+            os.umask(umask)
+
+
+class ProgramsAreMarked(unittest.TestCase):
+    """The manifest says which files are programs, read from their header:
+    the git mode cannot, hundreds of MAME archives carrying an execute bit."""
+
+    def test_header_decides(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for data, expected in ((b"\x7fELF\x02", True), (b"#!/bin/sh\n", True),
+                                   (b"PK\x03\x04", False), (b"", False)):
+                path = Path(tmp) / "f"
+                path.write_bytes(data)
+                with self.subTest(head=data):
+                    self.assertEqual(generate_pack._is_program(str(path)), expected)
+
+    def test_retrodeck_launchers_are_executable(self):
+        manifest = json.loads((REPO_ROOT / "install" / "retrodeck.json").read_text())
+        launchers = [f for f in manifest["files"]
+                     if f["dest"].endswith(("pico-8/pico8", "voxatron/vox"))]
+        if not launchers:
+            self.skipTest("no launcher in the RetroDECK manifest")
+        for entry in launchers:
+            with self.subTest(dest=entry["dest"]):
+                self.assertIs(entry.get("executable"), True)
 
 
 class ManifestHashesMatchTheScan(unittest.TestCase):

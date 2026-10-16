@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5803,
-  "total_size": 6570151065,
-  "pack_files": 5805,
-  "pack_size": 6570151065,
+  "total_files": 5805,
+  "total_size": 6570282649,
+  "pack_files": 5807,
+  "pack_size": 6570282649,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -496,6 +496,20 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "cfe072921ee3fb93f688743f8beef89043c3e9ad",
+          "sha256": "57a1d6b43c1399d219ea18644240c4d4c6787c829f0a67ded216472867857cd0",
+          "size": 262144,
+          "repo_path": "bios/Nintendo/Nintendo DS/firmware.bin",
+          "cores": [
+            "desmume",
+            "melonds",
+            "melonds_ds",
+            "noods"
+          ]
+        }
       ]
     },
     {
@@ -507,6 +521,20 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
+          "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
+          "size": 16384,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+          "cores": [
+            "desmume",
+            "melonds",
+            "melonds_ds",
+            "noods"
+          ]
+        }
       ]
     },
     {
@@ -518,6 +546,20 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
+          "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
+          "size": 4096,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+          "cores": [
+            "desmume",
+            "melonds",
+            "melonds_ds",
+            "noods"
+          ]
+        }
       ]
     },
     {
@@ -529,6 +571,18 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
+          "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ]
+        }
       ]
     },
     {
@@ -540,6 +594,18 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
+          "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ]
+        }
       ]
     },
     {
@@ -551,6 +617,18 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
+          "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
+          "size": 131072,
+          "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ]
+        }
       ]
     },
     {
@@ -564,7 +642,21 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "dsi_nand.bin.8b79a73c"
+      "release_asset": "dsi_nand.bin.8b79a73c",
+      "alternatives": [
+        {
+          "sha1": "b48f44194fe918aaaec5298861479512b581d661",
+          "sha256": "f57d9bf00529bec35d58404faff029a193fd2ccda0a83403ec4e6cc32626721b",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/dsi_nand.bin",
+          "cores": [
+            "melonds",
+            "melonds_ds"
+          ],
+          "storage": "release",
+          "release_asset": "dsi_nand.bin"
+        }
+      ]
     },
     {
       "dest": "GC/EUR/IPL.bin",
@@ -584,6 +676,18 @@
       ],
       "region_system_groups": [
         "nintendo-gamecube"
+      ],
+      "alternatives": [
+        {
+          "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+          "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+          "size": 2097152,
+          "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+          "cores": [
+            "dolphin",
+            "ishiiruka"
+          ]
+        }
       ]
     },
     {
@@ -604,6 +708,18 @@
       ],
       "region_system_groups": [
         "nintendo-gamecube"
+      ],
+      "alternatives": [
+        {
+          "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+          "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+          "size": 2097152,
+          "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+          "cores": [
+            "dolphin",
+            "ishiiruka"
+          ]
+        }
       ]
     },
     {
@@ -624,6 +740,18 @@
       ],
       "region_system_groups": [
         "nintendo-gamecube"
+      ],
+      "alternatives": [
+        {
+          "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+          "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+          "size": 2097152,
+          "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+          "cores": [
+            "dolphin",
+            "ishiiruka"
+          ]
+        }
       ]
     },
     {
@@ -635,6 +763,19 @@
       "cores": null,
       "systems": [
         "nintendo-gb"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+          "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+          "size": 256,
+          "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+          "cores": [
+            "gambatte",
+            "mgba",
+            "vbam"
+          ]
+        }
       ]
     },
     {
@@ -646,6 +787,26 @@
       "cores": null,
       "systems": [
         "nintendo-gba"
+      ],
+      "alternatives": [
+        {
+          "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+          "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+          "size": 16384,
+          "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+          "cores": [
+            "beetle_gba",
+            "gpsp",
+            "mednafen_gba",
+            "mesence",
+            "mgba",
+            "mgba_splitscreen",
+            "noods",
+            "tempgba",
+            "vba_next",
+            "vbam"
+          ]
+        }
       ]
     },
     {
@@ -657,6 +818,20 @@
       "cores": null,
       "systems": [
         "nintendo-gbc"
+      ],
+      "alternatives": [
+        {
+          "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+          "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+          "size": 2304,
+          "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+          "cores": [
+            "fixgb",
+            "gambatte",
+            "mgba",
+            "vbam"
+          ]
+        }
       ]
     },
     {
@@ -668,6 +843,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast"
+      ],
+      "alternatives": [
+        {
+          "sha1": "8951d1bb219ab2ff8583033d2119c899cc81f18c",
+          "sha256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
+          "size": 2097152,
+          "repo_path": "bios/Sega/Dreamcast/dc_bios.bin",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -690,6 +876,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast"
+      ],
+      "alternatives": [
+        {
+          "sha1": "6d27d71aec4dfba98f66316ae74a1426d567698a",
+          "sha256": "d821817411834ea0e98ae48b1e2268b12e7d599630556fa5da1792c6e1a2c66f",
+          "size": 2097152,
+          "repo_path": "bios/Sega/Dreamcast/naomi_boot.bin",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -701,6 +898,20 @@
       "cores": null,
       "systems": [
         "sega-game-gear"
+      ],
+      "alternatives": [
+        {
+          "sha1": "914aa165e3d879f060be77870d345b60cfeb4ede",
+          "sha256": "8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2",
+          "size": 1024,
+          "repo_path": "bios/Sega/Game Gear/GG_majesco.gg",
+          "cores": [
+            "gearsystem",
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "mesence"
+          ]
+        }
       ]
     },
     {
@@ -712,6 +923,20 @@
       "cores": null,
       "systems": [
         "sega-master-system"
+      ],
+      "alternatives": [
+        {
+          "sha1": "c315672807d8ddb8d91443729405c766dd95cae7",
+          "sha256": "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50",
+          "size": 8192,
+          "repo_path": "bios/Other/zesarux/sms.rom",
+          "cores": [
+            "emux_sms",
+            "gearsystem",
+            "mesence",
+            "smsplus"
+          ]
+        }
       ]
     },
     {
@@ -723,6 +948,19 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+          "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -734,6 +972,19 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+          "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -745,6 +996,19 @@
       "cores": null,
       "systems": [
         "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+          "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -756,6 +1020,21 @@
       "cores": null,
       "systems": [
         "sega-saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "df94c5b4d47eb3cc404d88b33a8fda237eaf4720",
+          "sha256": "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac",
+          "size": 524288,
+          "repo_path": "bios/Sega/Saturn/SAT_1.01-(J).bin",
+          "cores": [
+            "beetle_saturn",
+            "kronos",
+            "yabasanshiro",
+            "yabause",
+            "ymir"
+          ]
+        }
       ]
     },
     {
@@ -767,6 +1046,20 @@
       "cores": null,
       "systems": [
         "sega-saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3",
+          "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
+          "size": 524288,
+          "repo_path": "bios/Sega/Saturn/SAT_1.00-(U+E).bin",
+          "cores": [
+            "beetle_saturn",
+            "kronos",
+            "yabasanshiro",
+            "yabause"
+          ]
+        }
       ]
     },
     {
@@ -778,6 +1071,19 @@
       "cores": null,
       "systems": [
         "sega-saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "a67cd4f550751f8b91de2b8b74528ab4e0c11c77",
+          "sha256": "1dd154a9fcee1816749502b5b2497bf4b1f2d973df38d0984905ee83b12d5e81",
+          "size": 2097152,
+          "repo_path": "bios/Sega/Saturn/SAT_KoF95.bin",
+          "cores": [
+            "beetle_saturn",
+            "kronos",
+            "ymir"
+          ]
+        }
       ]
     },
     {
@@ -789,6 +1095,19 @@
       "cores": null,
       "systems": [
         "sega-saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "56c1b93da6b660bf393fbf48ca47569000ef4047",
+          "sha256": "6e3b35af6e45d9005460cfe44e3907563bde7a4636926ebd316dc84913efdd1b",
+          "size": 2097152,
+          "repo_path": "bios/Sega/Saturn/SAT_Ultraman.bin",
+          "cores": [
+            "beetle_saturn",
+            "kronos",
+            "ymir"
+          ]
+        }
       ]
     },
     {
@@ -800,6 +1119,18 @@
       "cores": null,
       "systems": [
         "sega-saturn"
+      ],
+      "alternatives": [
+        {
+          "sha1": "2b8cb4f87580683eb4d760e4ed210813d667f0a2",
+          "sha256": "ae4058627bb5db9be6d8d83c6be95a4aa981acc8a89042e517e73317886c8bc2",
+          "size": 524288,
+          "repo_path": "bios/Sega/Saturn/sega_100.bin",
+          "cores": [
+            "yabasanshiro",
+            "yabause"
+          ]
+        }
       ]
     },
     {
@@ -811,6 +1142,19 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "96880d1ca92a016ff054be5159bb06fe03cb4e14",
+          "sha256": "cbe758e1c8ece593c8e14ce1e8b3436428a01c608032a02613b3a4b442b4d712",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/psxonpsp660.bin",
+          "cores": [
+            "beetle_psx",
+            "pcsx_rearmed",
+            "swanstation"
+          ]
+        }
       ]
     },
     {
@@ -826,8 +1170,23 @@
       "regions": [
         "north-america"
       ],
+      "region_groups": [
+        "sony-playstation"
+      ],
       "region_system_groups": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "dcffe16bd90a723499ad46c641424981338d8378",
+          "sha256": "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph101.bin",
+          "cores": [
+            "pcsx_rearmed",
+            "rustation"
+          ]
+        }
       ]
     },
     {
@@ -839,6 +1198,20 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "10155d8d6e6e832d6ea66db9bc098321fb5e8ebf",
+          "sha256": "71af94d1e47a68c11e8fdb9f8368040601514a42a5a399cda48c7d3bff1e99d3",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph1001.bin",
+          "cores": [
+            "duckstation",
+            "pcsx1",
+            "pcsx_rearmed",
+            "rustation"
+          ]
+        }
       ]
     },
     {
@@ -850,6 +1223,21 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
+          "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5500.bin",
+          "cores": [
+            "beetle_psx",
+            "duckstation",
+            "pcsx_rearmed",
+            "rustation",
+            "swanstation"
+          ]
+        }
       ]
     },
     {
@@ -861,6 +1249,22 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
+          "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5501.bin",
+          "cores": [
+            "beetle_psx",
+            "duckstation",
+            "pcsx1",
+            "pcsx_rearmed",
+            "rustation",
+            "swanstation"
+          ]
+        }
       ]
     },
     {
@@ -872,6 +1276,21 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0",
+          "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph5502.bin",
+          "cores": [
+            "beetle_psx",
+            "duckstation",
+            "pcsx_rearmed",
+            "rustation",
+            "swanstation"
+          ]
+        }
       ]
     },
     {
@@ -883,6 +1302,20 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "14df4f6c1e367ce097c11deae21566b4fe5647a9",
+          "sha256": "39dcc1a0717036c9b6ac52fefd1ee7a57d3808e8cfbc755879fa685a0a738278",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/scph7001.bin",
+          "cores": [
+            "duckstation",
+            "pcsx1",
+            "pcsx_rearmed",
+            "rustation"
+          ]
+        }
       ]
     },
     {
@@ -894,6 +1327,18 @@
       "cores": null,
       "systems": [
         "sony-playstation-2"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f9229fe159d0353b9f0632f3fdc66819c9030458",
+          "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
+          "size": 4194304,
+          "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
+          "cores": [
+            "armsx2",
+            "yaps2"
+          ]
+        }
       ]
     },
     {
@@ -3325,7 +3770,8 @@
       "repo_path": "bios/Nintendo/Wii U/cafeLibs/snd_user.rpl",
       "cores": [
         "cemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/snduser2.rpl",
@@ -3335,7 +3781,8 @@
       "repo_path": "bios/Nintendo/Wii U/cafeLibs/snduser2.rpl",
       "cores": [
         "cemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/swkbd.rpl",
@@ -3345,7 +3792,8 @@
       "repo_path": "bios/Nintendo/Wii U/cafeLibs/swkbd.rpl",
       "cores": [
         "cemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "Cemu/cafeLibs/erreula.rpl",
@@ -3355,7 +3803,8 @@
       "repo_path": "bios/Nintendo/Wii U/cafeLibs/erreula.rpl",
       "cores": [
         "cemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "STBIOS.bin",
@@ -3695,7 +4144,8 @@
       "cores": [
         "dosbox",
         "dosbox_core"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "libbassmidi.so",
@@ -3706,7 +4156,8 @@
       "cores": [
         "dosbox",
         "dosbox_core"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "bass.dll",
@@ -3739,7 +4190,8 @@
       "cores": [
         "dosbox",
         "dosbox_core"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "libbassmidi.dylib",
@@ -3750,7 +4202,8 @@
       "cores": [
         "dosbox",
         "dosbox_core"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "CM32LN_CONTROL.ROM",
@@ -17128,10 +17581,22 @@
         "emux_gb",
         "gearboy",
         "irogb",
-        "sameboy"
+        "sameboy",
+        "mesen-s"
       ],
       "systems": [
         "nintendo-gb"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+          "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+          "size": 256,
+          "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+          "cores": [
+            "mesence"
+          ]
+        }
       ]
     },
     {
@@ -18498,11 +18963,23 @@
       "cores": [
         "gearboy",
         "irogb",
-        "sameboy"
+        "sameboy",
+        "mesen-s"
       ],
       "systems": [
         "nintendo-gb",
         "nintendo-gbc"
+      ],
+      "alternatives": [
+        {
+          "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+          "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+          "size": 2304,
+          "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+          "cores": [
+            "mesence"
+          ]
+        }
       ]
     },
     {
@@ -54450,7 +54927,8 @@
       "repo_path": "bios/QEMU/openbios-ppc",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/slof.bin",
@@ -54500,7 +54978,8 @@
       "repo_path": "bios/QEMU/u-boot.e500",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/u-boot-sam460-20100605.bin",
@@ -54530,7 +55009,8 @@
       "repo_path": "bios/QEMU/openbios-sparc32",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/openbios-sparc64",
@@ -54540,7 +55020,8 @@
       "repo_path": "bios/QEMU/openbios-sparc64",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/QEMU,tcx.bin",
@@ -54580,7 +55061,8 @@
       "repo_path": "bios/QEMU/palcode-clipper",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/opensbi-riscv32-generic-fw_dynamic.bin",
@@ -54610,7 +55092,8 @@
       "repo_path": "bios/QEMU/s390-ccw.img",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/s390-netboot.img",
@@ -54620,7 +55103,8 @@
       "repo_path": "bios/QEMU/s390-netboot.img",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/hppa-firmware.img",
@@ -54630,7 +55114,8 @@
       "repo_path": "bios/QEMU/hppa-firmware.img",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/hppa-firmware64.img",
@@ -54640,7 +55125,8 @@
       "repo_path": "bios/QEMU/hppa-firmware64.img",
       "cores": [
         "qemu"
-      ]
+      ],
+      "executable": true
     },
     {
       "dest": "qemu/mips_bios.bin",
@@ -59334,6 +59820,20 @@
       ]
     },
     {
+      "dest": "mcpx_1.0.bin",
+      "sha1": "5d270675b54eb8071b480e42d22a3015ac211cef",
+      "sha256": "e99e3a772bf5f5d262786aee895664eb96136196e37732fe66e14ae062f20335",
+      "size": 512,
+      "repo_path": "bios/Microsoft/Xbox/mcpx_1.0.bin",
+      "cores": [
+        "directxbox",
+        "xemu"
+      ],
+      "systems": [
+        "microsoft-xbox"
+      ]
+    },
+    {
       "dest": "GBA/gba_bios.bin",
       "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
       "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
@@ -59357,6 +59857,19 @@
       ],
       "systems": [
         "sega-saturn"
+      ]
+    },
+    {
+      "dest": "dc_flash.bin",
+      "sha1": "94d44d7f9529ec1642ba3771ed3c5f756d5bc872",
+      "sha256": "dd8b365521a9c08bb4c170da3592212580f7251f35a45d6083774d1c030bc3e3",
+      "size": 131072,
+      "repo_path": "bios/Sega/Dreamcast/dc_flash.bin",
+      "cores": [
+        "redream"
+      ],
+      "systems": [
+        "sega-dreamcast"
       ]
     },
     {

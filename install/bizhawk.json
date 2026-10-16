@@ -20,10 +20,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 948,
-  "total_size": 2585299183,
-  "pack_files": 950,
-  "pack_size": 2585299183,
+  "total_files": 949,
+  "total_size": 2585301231,
+  "pack_files": 951,
+  "pack_size": 2585301231,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -650,6 +650,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "34bf189111295f74d7b7dfc1f304d98b8d36325a",
+          "sha256": "41b5b8e7c44e55eaf5cfd4f2a58df42f4a1bbc776723368fb25bf118dd631b1b",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/panafz1.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -672,6 +683,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "ec7ec62d60ec0459a14ed56ebc66761ef3c80efc",
+          "sha256": "f356b28b1b35ec27c8697f70d9e0118c4f20609ac5586b9ee4f9241aea96336b",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/panafz1j.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -683,6 +705,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "3c912300775d1ad730dc35757e279c274c0acaad",
+          "sha256": "8d72334395cfc98e44c89804eabf036cf95a23645353e7fe8ab886445a3b6354",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/panafz10.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -694,6 +727,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "a900371f0cdcdc03f79557f11d406fd71251a5fd",
+          "sha256": "bf83957563970804fa90d0fee02e25c3befe054209d9df488c019715a80b455a",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/panafz10e-anvil.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -716,6 +760,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "c4a2e5336f77fb5f743de1eea2cda43675ee2de7",
+          "sha256": "4162ec1bc0f0f449c0457413e8ae8d1e8e351e67e0ccca20d0ac86813e7cfe9b",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/goldstar.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -738,6 +793,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "b01c53da256dde43ffec4ad3fc3adfa8d635e943",
+          "sha256": "c1e6bf926afd48d5ea408871a23ba6b4a9b07da411246185ab3d7bb5e435b039",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/sanyotry.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -760,6 +826,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "520d3d1b5897800af47f92efd2444a26b7a7dead",
+          "sha256": "72a88b5b47b76bd5604b30c102c948fa7e0ee90ccbc83aba496c45cf90b5a0e7",
+          "size": 524288,
+          "repo_path": "bios/3DO Company/3DO/3do_arcade_saot.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -782,6 +859,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "acd39a8fee1b9d2950d5ab447846c11fb31af63e",
+          "sha256": "303cd0812f2d2f3e703fe901c5d54e1e94c5c78f7e6c9321c2ca66fafa4f9bc6",
+          "size": 933636,
+          "repo_path": "bios/3DO Company/3DO/panafz1-kanji.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -793,6 +881,17 @@
       "cores": null,
       "systems": [
         "3do"
+      ],
+      "alternatives": [
+        {
+          "sha1": "2e857b957803d0331fd229328df01f3ffab69eee",
+          "sha256": "4db281ad37c21ede8cbe343b349f4cd6c3ffc3c47ae2e0de8cedaf043faea97a",
+          "size": 1048576,
+          "repo_path": "bios/3DO Company/3DO/panafz10ja-anvil-kanji.bin",
+          "cores": [
+            "opera"
+          ]
+        }
       ]
     },
     {
@@ -1200,6 +1299,17 @@
       "cores": null,
       "systems": [
         "nintendo-3ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
+          "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
+          "size": 7357,
+          "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
+          "cores": [
+            "trident"
+          ]
+        }
       ]
     },
     {
@@ -1211,6 +1321,17 @@
       "cores": null,
       "systems": [
         "nintendo-3ds"
+      ],
+      "alternatives": [
+        {
+          "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
+          "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
+          "size": 53264,
+          "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
+          "cores": [
+            "trident"
+          ]
+        }
       ]
     },
     {
@@ -1324,7 +1445,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_JPN.bin"
+      "release_asset": "DSi_Nand_JPN.bin",
+      "alternatives": [
+        {
+          "sha1": "c82d60626ac05b49ccec0cfb30001d4a3f31c5b9",
+          "sha256": "6b4c33a189794cd04a7b1359cbf3db86a24ca2c69e1cbefda545d0b34f4b5743",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_JPN.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_JPN.bin"
+        }
+      ]
     },
     {
       "dest": "DSi_Nand_EUR.bin",
@@ -1337,7 +1471,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_EUR.bin"
+      "release_asset": "DSi_Nand_EUR.bin",
+      "alternatives": [
+        {
+          "sha1": "bc4091b6cab4feba3812ac0f23e23d0353481ecf",
+          "sha256": "e577488f582921bdbfaa12a6255832cf646f5ad9f29214d78404e6005714e8bc",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_EUR.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_EUR.bin"
+        }
+      ]
     },
     {
       "dest": "DSi_Nand_USA.bin",
@@ -1350,7 +1497,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_USA.bin"
+      "release_asset": "DSi_Nand_USA.bin",
+      "alternatives": [
+        {
+          "sha1": "ef08ae02c5fbe1a22a208c36e25607f5a9d5ae98",
+          "sha256": "42c2c2e4029a05b25a5d61054b29e8192f93d8a33d535d16b3ef128d5dfc83f4",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_USA.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_USA.bin"
+        }
+      ]
     },
     {
       "dest": "DSi_Nand_AUS.bin",
@@ -1363,7 +1523,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_AUS.bin"
+      "release_asset": "DSi_Nand_AUS.bin",
+      "alternatives": [
+        {
+          "sha1": "7d006f8943171a4d50ae89bf2fca12b764d27e8b",
+          "sha256": "4149fc5552f8932f28b7999de506f2b2a6cf3093140b7bfcdcc88ade51d970d2",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_AUS.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_AUS.bin"
+        }
+      ]
     },
     {
       "dest": "DSi_Nand_CHN.bin",
@@ -1376,7 +1549,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_CHN.bin"
+      "release_asset": "DSi_Nand_CHN.bin",
+      "alternatives": [
+        {
+          "sha1": "4b3b3de0cb2c2aef80daa68394d5b804b8706d9f",
+          "sha256": "f5ab272f9c62a63d059934f146bf66c2abbfe5e864d852ab7708f97b53ad0fcb",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_CHN.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_CHN.bin"
+        }
+      ]
     },
     {
       "dest": "DSi_Nand_KOR.bin",
@@ -1389,7 +1575,20 @@
         "nintendo-ds"
       ],
       "storage": "release",
-      "release_asset": "DSi_Nand_KOR.bin"
+      "release_asset": "DSi_Nand_KOR.bin",
+      "alternatives": [
+        {
+          "sha1": "4b061953d8f870bcda006ce86ce136f112cc1793",
+          "sha256": "9d5ec8ff568b0cde27b9817d9f4901437806265aca59557e69905ed571c120a7",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/DS/DSi_Nand_KOR.bin",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "DSi_Nand_KOR.bin"
+        }
+      ]
     },
     {
       "dest": "GB_dmg.bin",
@@ -1730,6 +1929,17 @@
       "cores": null,
       "systems": [
         "sega-32x"
+      ],
+      "alternatives": [
+        {
+          "sha1": "dbebd76a448447cb6e524ac3cb0fd19fc065d944",
+          "sha256": "a2d6b6e1544467e27d404634de6e6b0a54ed4b3babb6b71739a260e1be04ebfc",
+          "size": 256,
+          "repo_path": "bios/Sega/32X/32X_G_BIOS.BIN",
+          "cores": [
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -1741,6 +1951,17 @@
       "cores": null,
       "systems": [
         "sega-32x"
+      ],
+      "alternatives": [
+        {
+          "sha1": "1e5b0b2441a4979b6966d942b20cc76c413b8c5e",
+          "sha256": "4c6128229bd24dae5f11d3f569ca592665f141bef26cef937e2ce4d9b548cc3b",
+          "size": 2048,
+          "repo_path": "bios/Sega/32X/32X_M_BIOS.BIN",
+          "cores": [
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -1752,6 +1973,17 @@
       "cores": null,
       "systems": [
         "sega-32x"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4103668c1bbd66c5e24558e73d4f3f92061a109a",
+          "sha256": "7bde4245ce00c51a23a1ce73a881752e7b14dc12416e175352a3807338e04745",
+          "size": 1024,
+          "repo_path": "bios/Sega/32X/32X_S_BIOS.BIN",
+          "cores": [
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -1961,6 +2193,16 @@
       "cores": null,
       "systems": [
         "texas-instruments-ti-83"
+      ]
+    },
+    {
+      "dest": "5200.rom",
+      "sha1": "6ad7a1e8c9fad486fbec9498cb48bf5bc3adc530",
+      "sha256": "06b250f18983d058c0f156ce7ee88ae48b6eaf11e6f10f21dccf6ac7ffb6a6af",
+      "size": 2048,
+      "repo_path": "bios/Atari/5200/5200.rom",
+      "cores": [
+        "ares"
       ]
     },
     {

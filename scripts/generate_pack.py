@@ -3170,7 +3170,87 @@ def _manifest_entry(
     if is_release_asset:
         entry["storage"] = "release"
         entry["release_asset"] = _release_asset_name(local_path, repo_root)
+    # The installer writes what it downloads with the umask's mode; a program
+    # (RetroDECK's pico8, vox) has to stay runnable. The git mode cannot say:
+    # hundreds of MAME archives carry an execute bit nothing reads.
+    if local_path and _is_program(local_path):
+        entry["executable"] = True
     return entry, file_size
+
+
+_PROGRAM_MAGIC = (
+    b"\x7fELF",
+    b"#!",
+    b"\xcf\xfa\xed\xfe",
+    b"\xce\xfa\xed\xfe",
+    b"\xca\xfe\xba\xbe",
+)
+
+
+def _is_program(path: str) -> bool:
+    """An ELF or Mach-O binary, or a script with an interpreter line."""
+    with open(path, "rb") as handle:
+        head = handle.read(4)
+    return any(head.startswith(magic) for magic in _PROGRAM_MAGIC)
+
+
+def _attach_claims(
+    entry: dict,
+    claims: list[dict],
+    db: dict,
+    bios_dir: str,
+    zip_contents,
+    offline,
+    required_only: bool,
+    validation_index: dict | None,
+    owners: dict | None,
+    dest: str,
+    manifest_dest: str,
+    repo_root: str,
+) -> None:
+    """Every other core that reads this destination, in the order the builder
+    meets them: a pack built without the earlier cores, or without the
+    platform system that declares the file, carries the first remaining
+    one's copy.
+
+    A claim joins the copy just before it when the bytes agree and starts an
+    alternative otherwise; it never joins an earlier copy, which would let it
+    win over a core the builder tries first. Only a core's first claim can
+    win: its later ones are reached only when that one is. A platform entry
+    names no core, so its first claim always starts an alternative.
+    """
+    claimed = set(entry["cores"] or [])
+    for claim in claims:
+        claim_emu = claim.get("source_profile") or claim.get("source_emulator", "")
+        if not claim_emu or claim_emu in claimed:
+            continue
+        claimed.add(claim_emu)
+        if required_only and claim.get("required") is False:
+            continue
+        claim_path, claim_status = resolve_file(
+            claim, db, bios_dir, zip_contents,
+            dest_hint=claim.get("destination", ""), offline=offline,
+        )
+        if claim_status in ("not_found", "external", "user_provided") or not claim_path:
+            continue
+        claim_path, _ = validated_choice(
+            claim, claim_path, db, validation_index or {}, bios_dir, None, dest, owners,
+        )
+        copy, _size = _manifest_entry(
+            claim_path, manifest_dest, [claim_emu], db, repo_root, {}
+        )
+        if copy is None:
+            continue
+        alternatives = entry.setdefault("alternatives", [])
+        last = alternatives[-1] if alternatives else entry
+        if last["cores"] is not None and copy["sha1"] == last["sha1"]:
+            if claim_emu not in last["cores"]:
+                last["cores"].append(claim_emu)
+            continue
+        del copy["dest"]
+        alternatives.append(copy)
+    if not entry.get("alternatives"):
+        entry.pop("alternatives", None)
 
 
 def _manifest_core_entries(
@@ -3276,45 +3356,11 @@ def _manifest_core_entries(
                 pack_only_sizes.append(file_size)
             continue
 
-        # Every other core that reads this destination, in the order the
-        # builder meets them: a pack built without the earlier cores carries
-        # the first remaining one's copy. A claim joins the copy just before
-        # it when the bytes agree, and starts an alternative otherwise; it
-        # never joins an earlier copy, which would let it win over a core
-        # the builder tries first. Only a core's first claim can win: its
-        # later ones are reached only when that one is.
-        claimed = set(entry["cores"])
-        for claim in fe.get("other_claims", []):
-            claim_emu = claim.get("source_profile") or claim.get("source_emulator", "")
-            if not claim_emu or claim_emu in claimed:
-                continue
-            claimed.add(claim_emu)
-            if required_only and claim.get("required") is False:
-                continue
-            claim_path, claim_status = resolve_file(
-                claim, db, bios_dir, zip_contents,
-                dest_hint=claim.get("destination", ""), offline=offline,
-            )
-            if claim_status in ("not_found", "external", "user_provided") or not claim_path:
-                continue
-            claim_path, _ = validated_choice(
-                claim, claim_path, db, validation_index or {}, bios_dir, None, dest, owners,
-            )
-            copy, _size = _manifest_entry(
-                claim_path, manifest_dest, [claim_emu], db, repo_root, {}
-            )
-            if copy is None:
-                continue
-            alternatives = entry.setdefault("alternatives", [])
-            last = alternatives[-1] if alternatives else entry
-            if copy["sha1"] == last["sha1"]:
-                if claim_emu not in last["cores"]:
-                    last["cores"].append(claim_emu)
-                continue
-            del copy["dest"]
-            alternatives.append(copy)
-        if not entry.get("alternatives"):
-            entry.pop("alternatives", None)
+        _attach_claims(
+            entry, fe.get("other_claims", []), db, bios_dir, zip_contents,
+            offline, required_only, validation_index, owners, dest,
+            manifest_dest, repo_root,
+        )
 
         manifest_files.append(entry)
         omitted_by_destination.pop(full_dest, None)
@@ -3442,6 +3488,13 @@ def generate_manifest(
     )
 
     seen_destinations: set[str] = set()
+    # Destination -> (entry, full destination, manifest destination) of each
+    # platform file, for the core claims a target build would fall back on.
+    platform_entries: dict[str, tuple[dict, str, str]] = {}
+    # Full destination -> the platform systems declaring it. A file's
+    # `systems` also names the systems whose cores read it there; a pack built
+    # for a target keeps the file only while a declaring system stays.
+    declared_by: dict[str, set[str]] = {}
     seen_lower: set[str] = set()
     seen_parents: set[str] = set()
     manifest_files: list[dict] = []
@@ -3514,6 +3567,7 @@ def generate_manifest(
                 if region_drops and dest in region_drops:
                     continue
                 full_dest = f"{base_dest}/{dest}" if base_dest else dest
+                declared_by.setdefault(full_dest, set()).add(sys_id)
 
                 preferred = preferred_entries.get(full_dest)
                 if preferred is not None and id(file_entry) != preferred:
@@ -3589,6 +3643,7 @@ def generate_manifest(
                     continue
 
                 manifest_files.append(entry)
+                platform_entries[dedup_key] = (entry, full_dest, dest)
                 omitted_by_destination.pop(full_dest, None)
                 total_size += file_size
                 seen_destinations.add(dedup_key)
@@ -3598,6 +3653,7 @@ def generate_manifest(
 
     # Phase 2: core complement (emulator extras)
     unplaceable: list[dict] = []
+    baseline_claims: dict[str, dict] = {}
     if source != "platform":
         core_files = _collect_emulator_extras(
             config,
@@ -3609,6 +3665,7 @@ def generate_manifest(
             target_cores=target_cores,
             include_all=(source == "truth"),
             unplaceable=unplaceable,
+            baseline_claims=baseline_claims,
         )
     else:
         core_files = []
@@ -3620,6 +3677,16 @@ def generate_manifest(
         omitted_by_destination, record_omission, pack_only_sizes, selection,
         required_only, manifest_validation, manifest_owners,
     )
+    for key, (entry, full_dest, dest) in platform_entries.items():
+        declared = declared_by.get(full_dest, set())
+        if declared and declared != set(entry.get("systems") or []):
+            entry["declared_in"] = sorted(declared)
+        claims = baseline_claims.get(key, {}).get("other_claims")
+        if claims:
+            _attach_claims(
+                entry, claims, db, bios_dir, zip_contents, offline, required_only,
+                manifest_validation, manifest_owners, dest, dest, repo_root,
+            )
 
     # Phase 3: data directories. The installer does not fetch them, so they
     # stay out of the file list; the pack carries them, so they count toward

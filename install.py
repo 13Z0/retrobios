@@ -199,6 +199,9 @@ class _Interrupted(Exception):
 # stops, and the next run asks the server for the rest: the release assets
 # run to hundreds of megabytes. Smaller files simply start over.
 RESUME_FROM_SIZE = 16 * 1024 * 1024
+# Read once, before any download thread runs: reading the umask sets it.
+_UMASK = os.umask(0)
+os.umask(_UMASK)
 
 
 def _enable_ansi() -> bool:
@@ -1106,7 +1109,9 @@ def _check_tags(entry: dict, field: str, where: str) -> None:
 
 
 # What an alternative replaces on the entry it stands in for.
-_COPY_FIELDS = ("sha1", "sha256", "size", "repo_path", "release_asset", "storage", "cores")
+_COPY_FIELDS = (
+    "sha1", "sha256", "size", "repo_path", "release_asset", "storage", "cores", "executable",
+)
 
 
 def _check_download(entry: dict, where: str, dest: str) -> int:
@@ -1144,6 +1149,8 @@ def _check_download(entry: dict, where: str, dest: str) -> int:
         not isinstance(cores, list) or not all(isinstance(core, str) for core in cores)
     ):
         raise ValueError(f"invalid cores list for {dest}")
+    if not isinstance(entry.get("executable", False), bool):
+        raise ValueError(f"invalid executable flag for {dest}")
     return size
 
 
@@ -1188,7 +1195,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
         largest_total += size
         if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
-        for field in SELECTION_FIELDS:
+        for field in (*SELECTION_FIELDS, "declared_in"):
             _check_tags(entry, field, dest)
 
     declared_total_files = data.get("total_files")
@@ -1426,8 +1433,9 @@ def narrow_to_cores(
     A file a core loads stays when that core is named. A file of the
     platform's own list stays when one of its systems does: a system goes
     when none of the cores `system_cores` gives it is named, and a system
-    it does not list stays whatever is named. A manifest without the two
-    maps keeps the platform's list whole and matches cores by name.
+    it does not list stays whatever is named. A dropped system's file gives
+    way to the first named core claiming its destination. A manifest without
+    the two maps keeps the platform's list whole and matches cores by name.
     """
     cores = designated_cores(manifest, names)
     reach = manifest.get("system_cores") or {}
@@ -1440,11 +1448,19 @@ def narrow_to_cores(
                 if copy is not None:
                     result.append(copy)
                 continue
-            systems = entry_systems(entry)
+            # The systems declaring the file, where they are fewer than the
+            # ones reading it.
+            systems = entry.get("declared_in") or entry_systems(entry)
             if not systems or any(
                 s not in reach or cores.intersection(reach[s]) for s in systems
             ):
                 result.append(entry)
+                continue
+            # The system is dropped, which frees its destination for the
+            # first named core claiming it, as in a pack built for them.
+            copy = _for_cores(entry, cores)
+            if copy is not None:
+                result.append(copy)
         return result
 
     files = manifest.get("files", []) if files is None else files
@@ -1838,6 +1854,10 @@ def _download_one(
                 reason = "SHA-1 mismatch"
                 raise _Corrupt()
 
+            # The mode a plain open() gives, executable where the repository
+            # file is: the temporary file is private, and a BIOS folder
+            # written with sudo has to stay readable by the emulator's user.
+            os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
             os.replace(tmp_path, dest)
             return f["dest"], True, ""
 

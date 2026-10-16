@@ -477,8 +477,13 @@ def _collect_emulator_extras(
     include_all: bool = False,
     claimants: dict[tuple[str, str, str], str] | None = None,
     unplaceable: list[dict] | None = None,
+    baseline_claims: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Collect core requirement files from emulator profiles not in the platform pack.
+
+    ``baseline_claims`` receives, for each destination in ``seen``, the core
+    claims made on it: a pack built for a target that drops the platform's
+    system frees the destination, and the first core claiming it fills it.
 
     ``claimants`` receives the destination of every report entry that
     asked for one, the ones a sibling already took included: the region
@@ -525,6 +530,9 @@ def _collect_emulator_extras(
     seen_dests: set[str] = set(seen)
     # Destination -> the extra that took it, to record later claimants on.
     taken: dict[str, dict] = {}
+    if baseline_claims is not None:
+        for destination in seen:
+            taken[destination] = baseline_claims.setdefault(destination, {})
     for u in undeclared:
         if not u["in_repo"]:
             continue
