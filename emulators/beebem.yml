@@ -81,10 +81,11 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: 0a59a5ba15fe8557b5f7fee32bbd393a
     sha1: 0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d
     validation: [size]
+    on_mismatch: warn
     note: "OS ROM slot. Read into 0xc000; an error is reported unless 16384 bytes are read."
     source_ref: "Src/BeebMem.cpp:1291-1308, Src/RomConfigFile.cpp:43"
 
@@ -133,10 +134,11 @@ files:
     system: bbc-micro-b
     required: true
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: 0a59a5ba15fe8557b5f7fee32bbd393a
     sha1: 0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d
     validation: [size]
+    on_mismatch: warn
     note: "OS ROM slot for Model::IntegraB. Same dump as BeebFile/BBC/OS12.rom."
     source_ref: "Src/RomConfigFile.cpp:63, Src/BeebMem.cpp:1291-1308"
 
@@ -223,10 +225,11 @@ files:
     system: bbc-micro-bplus
     required: true
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: 978370cc7ab8589a137ada34388a6e32
     sha1: d9426dd7454ca199cdef9435daa332cdf405c965
     validation: [size]
+    on_mismatch: warn
     note: "OS ROM slot for Model::BPlus."
     source_ref: "Src/RomConfigFile.cpp:83, Src/BeebMem.cpp:1291-1308"
 
@@ -290,10 +293,11 @@ files:
     system: bbc-master-128
     required: true
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: 9087f772447038a00178488b3591347b
     sha1: 04d5876999f93fc61a18f172b1fbb3b75db733ac
     validation: [size]
+    on_mismatch: warn
     note: "OS ROM slot for Model::Master128, read into 0xC000 by BeebReadRoms (Src/BeebMem.cpp:1291-1308)."
     source_ref: "Src/RomConfigFile.cpp:103"
 
@@ -415,10 +419,11 @@ files:
     system: bbc-master-et
     required: true
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: 4d4afbf220abaa702026f42f98eb5807
     sha1: c9483ef3ebd66930e635674a3776d171785ae959
     validation: [size]
+    on_mismatch: warn
     note: "OS ROM slot for Model::MasterET."
     source_ref: "Src/RomConfigFile.cpp:123, Src/BeebMem.cpp:1291-1308"
 
@@ -468,10 +473,11 @@ files:
     system: bbc-micro-b
     required: false
     bundled: true
-    size: 2048
+    min_size: 2048
     md5: cd6ba85e22adec70b6d863de4c053db7
     sha1: 05980c296e1a7800c4aa21d6bed16323b6d859d5
     validation: [size]
+    on_mismatch: warn
     note: >
       Copied into tube RAM at 0xf800 on every 65C02 reset. An error is reported
       unless 2048 bytes are read.
@@ -483,10 +489,11 @@ files:
     system: bbc-micro-b
     required: false
     bundled: true
-    size: 4096
+    min_size: 4096
     md5: c4c72ceb73300253dc69c865af32f5ac
     sha1: d05de861922fed73041cc8ac2666886d95bae15b
     validation: [size]
+    on_mismatch: warn
     note: >
       Loaded for TubeDevice::AcornZ80. An error is reported unless 4096 bytes are
       read. Jonathan Harston's v1.21; the Acorn v1.20 ships as Z80-1.20.rom and is
@@ -514,10 +521,11 @@ files:
     system: bbc-master-128
     required: false
     bundled: true
-    size: 16384
+    min_size: 16384
     md5: de72efe184f74f1cb98f92b1fbf532bb
     sha1: eb2a043d139ae0f3d512b4f1afa32286510c886c
     validation: [size]
+    on_mismatch: warn
     note: >
       Loaded at 0xf0000 and mirrored three times to fill the top of the 1 MB space.
       An error is reported unless 0x4000 bytes are read.

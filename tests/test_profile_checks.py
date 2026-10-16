@@ -34,11 +34,14 @@ class _Probe(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
 
-    def accepts(self, emulator: str, name: str, data: bytes) -> bool:
+    def accepts(self, emulator: str, name: str, data: bytes, strict: bool = False) -> bool:
+        """strict counts a check the code only warns about."""
         index = _build_validation_index({emulator: _profile(emulator)})
         path = Path(self._tmp.name) / name
         path.write_bytes(data)
-        return check_file_validation(str(path), name, index, emulators={emulator}) is None
+        return check_file_validation(
+            str(path), name, index, emulators={emulator}, strict=strict
+        ) is None
 
 
 class BeebEmTeletextFont(_Probe):
@@ -50,6 +53,27 @@ class BeebEmTeletextFont(_Probe):
         self.assertFalse(self.accepts("beebem", "Teletext.fnt", b"\0" * 100))
         self.assertTrue(self.accepts("beebem", "Teletext.fnt", b"\0" * 3456))
         self.assertTrue(self.accepts("beebem", "Teletext.fnt", b"\0" * 4000))
+
+
+class BeebEmSystemRoms(_Probe):
+    """The OS, Tube, Z80 and Master 512 ROMs are read with one fread of the
+    slot's size. A short read reports an error and BeebEm runs with what it
+    read; bytes past the slot are never read (Src/BeebMem.cpp:1291-1308,
+    Src/Tube.cpp:1540-1553, Src/Z80Support.cpp:247-261,
+    Src/Master512CoPro.cpp:3777-3790 at a982ba6)."""
+
+    CASES = (("OS12.rom", 16384), ("B+MOS.rom", 16384), ("MOS.rom", 16384),
+             ("MOS400.rom", 16384), ("6502Tube.rom", 2048), ("Z80.rom", 4096),
+             ("BIOS.rom", 16384))
+
+    def test_longer_is_read_and_shorter_only_warns(self):
+        for name, size in self.CASES:
+            with self.subTest(name=name):
+                self.assertTrue(self.accepts("beebem", name, b"\0" * (size * 2)))
+                self.assertTrue(self.accepts("beebem", name, b"\0" * (size // 2)))
+                self.assertFalse(
+                    self.accepts("beebem", name, b"\0" * (size // 2), strict=True)
+                )
 
 
 if __name__ == "__main__":
