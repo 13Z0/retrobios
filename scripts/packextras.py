@@ -686,6 +686,10 @@ def _collect_emulator_extras(
             # file; the archive itself is placed by the passes above.
             if f.get("archive"):
                 continue
+            # No path: the core reads it from nowhere a pack reaches
+            # (Dolphin's codehandler.bin ships in its Sys tree).
+            if "path" in f and f["path"] is None:
+                continue
             file_mode = f.get("mode")
             if file_mode == "standalone" and not is_standalone:
                 continue
