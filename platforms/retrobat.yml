@@ -1,5 +1,5 @@
 platform: RetroBat
-version: 8.2.1
+version: 8.3.0
 homepage: "https://www.retrobat.org"
 source: "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/master/batocera-systems/Resources/batocera-systems.json"
 base_destination: bios
@@ -880,11 +880,11 @@ systems:
       native_system: chihiro
       native_path: bios/chihiro/fpr21042_m29w160et.bin
       native_name: Sega Chihiro
-    - name: ic10_g24lc64
-      destination: chihiro/ic10_g24lc64
+    - name: ic10_g24lc64.bin
+      destination: chihiro/ic10_g24lc64.bin
       required: true
       native_system: chihiro
-      native_path: bios/chihiro/ic10_g24lc64
+      native_path: bios/chihiro/ic10_g24lc64.bin
       native_name: Sega Chihiro
     - name: ic11_24lc024.bin
       destination: chihiro/ic11_24lc024.bin

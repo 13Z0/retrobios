@@ -2683,7 +2683,7 @@
       ]
     },
     {
-      "dest": "chihiro/ic10_g24lc64",
+      "dest": "chihiro/ic10_g24lc64.bin",
       "sha1": "3ababd4334d8d57abb22dd98bd2d347df39648d9",
       "sha256": "df9c57cc2ad43c4563609b75d3a3be40dd844fcc69e8b3a368616b9811dc776f",
       "size": 8192,
