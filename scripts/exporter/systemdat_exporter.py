@@ -36,6 +36,23 @@ def _quote(name: str, quoted: frozenset[str] = frozenset()) -> str:
     return f'"{name}"' if name in quoted or any(c in name for c in ' ()') else name
 
 
+_ROM_NAME = re.compile(r'^\trom \( name ("[^"]+"|\S+)')
+
+
+def _sections(original: str) -> list[tuple[str, list[str]]]:
+    """The system sections of a System.dat, each comment with its rom lines."""
+    _, sep, body = original.partition("\ngame (")
+    if not sep:
+        return []
+    sections: list[tuple[str, list[str]]] = []
+    for line in body.splitlines():
+        if line.startswith('\tcomment "') and line != '\tcomment "System"':
+            sections.append((line[len('\tcomment "'):].rstrip('"'), []))
+        elif line.startswith("\trom (") and sections:
+            sections[-1][1].append(line)
+    return sections
+
+
 class Exporter(BaseExporter):
     """Write libretro's System.dat, corrected."""
 
@@ -118,16 +135,17 @@ class Exporter(BaseExporter):
     ) -> dict[str, str]:
         lines = self._header(originals, scraped)
         lines.extend(["game (", '\tname "System"', '\tcomment "System"'])
-        quoted = frozenset(_QUOTED_NAME.findall(originals.get(self.native_filename(), "")))
+        original = originals.get(self.native_filename(), "")
+        quoted = frozenset(_QUOTED_NAME.findall(original))
 
-        for system, files in sorted(
-            self.exportable(systems), key=lambda pair: pair[0].native_id
-        ):
-            rendered: list[str] = []
+        ours: dict[str, dict[str, str]] = {}
+        for system, files in self.exportable(systems):
+            rendered: dict[str, str] = {}
             for fe in files:
                 if not any(fe.hash(h) for h in ("crc32", "md5", "sha1")):
                     continue
-                parts = [f"name {_quote(self._rom_name(fe), quoted)}"]
+                name = _quote(self._rom_name(fe), quoted)
+                parts = [f"name {name}"]
                 size = fe.size()
                 if size:
                     parts.append(f"size {size}")
@@ -140,15 +158,29 @@ class Exporter(BaseExporter):
                 sha1 = fe.hash("sha1")
                 if sha1:
                     parts.append(f"sha1 {sha1}")
-                rendered.append(f"\trom ( {' '.join(parts)} )")
+                rendered.setdefault(name, f"\trom ( {' '.join(parts)} )")
+            if rendered:
+                ours[system.native_id] = rendered
 
-            if not rendered:
-                continue
+        def section(comment: str, roms: list[str]) -> None:
             lines.append("")
             # libretro's comment is the system name as the DAT spells it,
             # "Atari - 400-800". Prettifying it drops the separator.
-            lines.append(f'\tcomment "{system.native_id}"')
-            lines.extend(rendered)
+            lines.append(f'\tcomment "{comment}"')
+            lines.extend(roms)
+
+        # libretro's own sections are the base: a rom line our transcription
+        # does not carry (added or renamed after a scrape) stays as written.
+        for comment, roms in _sections(original):
+            rendered = ours.pop(comment, {})
+            body = []
+            for line in roms:
+                match = _ROM_NAME.match(line)
+                body.append(rendered.pop(match.group(1), line) if match else line)
+            body.extend(rendered.values())
+            section(comment, body)
+        for comment in sorted(ours):
+            section(comment, list(ours[comment].values()))
 
         lines.append(")")
         lines.append("")

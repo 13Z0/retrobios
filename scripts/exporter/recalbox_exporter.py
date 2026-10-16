@@ -115,17 +115,55 @@ class Exporter(BaseExporter):
             '<biosList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
             ' xsi:noNamespaceSchemaLocation="es_bios.xsd">',
         ]
+        # Recalbox's own file is the base, so an element our transcription
+        # does not carry (added or renamed after a scrape) stays as written,
+        # and its system order with it.
+        theirs: list[tuple[str, str, list[dict[str, str]]]] = []
+        original = originals.get(self.native_filename(), "")
+        if original:
+            try:
+                root = parse_untrusted_xml(original, self.native_filename())
+            except (ParseError, ValueError):
+                root = None
+            if root is not None:
+                theirs = [
+                    (s.get("platform", ""), s.get("fullname", ""),
+                     [dict(b.attrib) for b in s.iter("bios")])
+                    for s in root.iter("system")
+                ]
 
-        for system in sorted(systems.values(), key=lambda s: s.native_id):
+        ours: dict[str, tuple[NativeSystem, dict[str, str]]] = {}
+        for system in systems.values():
             writable = [fe for fe in system.files if self.writable(fe)]
-            if not writable:
-                continue
-            fullname = quoteattr(self.display_name(system))
-            platform = quoteattr(system.native_id)
-            lines.append(f"  <system fullname={fullname} platform={platform}>")
-            for fe in writable:
-                lines.append(self._bios_element(fe, system.native_id))
+            if writable:
+                ours[system.native_id] = (system, {
+                    self._path(fe): self._bios_element(fe, system.native_id)
+                    for fe in writable
+                })
+
+        def element(attrs: dict[str, str]) -> str:
+            rendered = " ".join(f"{k}={quoteattr(v)}" for k, v in attrs.items())
+            return f"    <bios {rendered} />"
+
+        def emit(platform: str, fullname: str, body: list[str]) -> None:
+            lines.append(
+                f"  <system fullname={quoteattr(fullname)} platform={quoteattr(platform)}>"
+            )
+            lines.extend(body)
             lines.append("  </system>")
+
+        for platform, fullname, bios in theirs:
+            if platform not in ours:
+                emit(platform, fullname, [element(attrs) for attrs in bios])
+                continue
+            system, elements = ours.pop(platform)
+            body = [elements.pop(attrs.get("path", ""), None) or element(attrs)
+                    for attrs in bios]
+            body.extend(elements.values())
+            emit(platform, self.display_name(system), body)
+        for platform in sorted(ours):
+            system, elements = ours[platform]
+            emit(platform, self.display_name(system), list(elements.values()))
 
         lines.append("</biosList>")
         lines.append("")

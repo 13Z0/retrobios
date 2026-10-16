@@ -28,6 +28,7 @@ from exporter.retrobat_exporter import Exporter as RetroBat  # noqa: E402
 from exporter.retrodeck_exporter import Exporter as RetroDeck  # noqa: E402
 from exporter.recalbox_exporter import Exporter as Recalbox  # noqa: E402
 from exporter.retropie_exporter import Exporter as RetroPie  # noqa: E402
+from exporter.systemdat_exporter import Exporter as SystemDat  # noqa: E402
 
 A = "a" * 32
 B = "b" * 32
@@ -179,6 +180,66 @@ class RetroBatKeepsWhatWeDoNotModel(unittest.TestCase):
             {"md5": "", "file": "bios/chihiro/ic10_g24lc64.bin"},
             {"md5": A, "file": "bios/chihiro/ic11_24lc024.bin"},
         ])
+
+
+class PureDataExportsKeepWhatWeDoNotModel(unittest.TestCase):
+    """Recalbox's es_bios.xml and libretro's System.dat were rebuilt from our
+    model too: an entry the platform added or renamed after our scrape left
+    the platform's own file."""
+
+    @staticmethod
+    def _file(name, system, **platform):
+        return NativeFile(name, name, system, platform={"md5": A, **platform},
+                          truth={"md5": A, "crc32": "1234abcd", "sha1": "f" * 40,
+                                 "size": 4},
+                          filled=[])
+
+    def test_recalbox(self):
+        from exporter.baseline import Report
+        from exporter.recalbox_exporter import Exporter as Recalbox
+
+        fe = self._file("a.bin", "nes", destination="nes/a.bin", core="libretro:fceumm")
+        systems = {"nes": NativeSystem("nes", files=[fe])}
+        original = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n<biosList>\n'
+            '  <system fullname="NES" platform="nes">\n'
+            f'    <bios path="nes/new.bin" md5="{B}" core="libretro:fceumm" />\n'
+            f'    <bios path="nes/a.bin" md5="{C}" core="libretro:fceumm" />\n'
+            '  </system>\n'
+            '  <system fullname="New" platform="newsys">\n'
+            f'    <bios path="n.bin" md5="{B}" core="libretro:x" mandatory="false" />\n'
+            '  </system>\n</biosList>\n'
+        )
+        produced = Recalbox().render(systems, Report(), {"es_bios.xml": original})["es_bios.xml"]
+        from xml.etree import ElementTree
+
+        root = ElementTree.fromstring(produced)
+        found = [(s.get("platform"), b.get("path"), b.get("md5"))
+                 for s in root.iter("system") for b in s.iter("bios")]
+        self.assertEqual(found, [("nes", "nes/new.bin", B), ("nes", "nes/a.bin", A),
+                                 ("newsys", "n.bin", B)])
+        self.assertIn('mandatory="false"', produced)
+
+    def test_system_dat(self):
+        from exporter.baseline import Report
+
+        fe = self._file("a.bin", "Nintendo - NES")
+        systems = {"Nintendo - NES": NativeSystem("Nintendo - NES", files=[fe])}
+        original = "\n".join([
+            "clrmamepro (", '\tname "System"', ")", "", "game (", '\tname "System"',
+            '\tcomment "System"', "",
+            '\tcomment "Nintendo - NES"',
+            "\trom ( name new.bin size 2 crc 00000000 )",
+            "\trom ( name a.bin size 4 crc DEADBEEF )", "",
+            '\tcomment "New - System"',
+            "\trom ( name n.bin size 1 crc 11111111 )", ")", "",
+        ])
+        produced = SystemDat().render(systems, Report(), {"System.dat": original})["System.dat"]
+        roms = [line for line in produced.splitlines() if line.startswith("\trom")]
+        self.assertEqual(roms[0], "\trom ( name new.bin size 2 crc 00000000 )")
+        self.assertIn("name a.bin size 4 crc 1234ABCD", roms[1])
+        self.assertEqual(roms[2], "\trom ( name n.bin size 1 crc 11111111 )")
+        self.assertIn('\tcomment "New - System"', produced)
 
 
 class EmuDeckWritesItsCorrections(unittest.TestCase):
