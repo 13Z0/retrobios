@@ -2463,11 +2463,23 @@ def pending_recale(
     revision, whatever the reason it was not rewritten.
     """
     movable = REBASE_STATUSES + (("CHANGED",) if accept_changed else ())
+    document = yaml.safe_load(text) if text is not None else None
+    # A ref the writer regenerates is pending only while the file still
+    # carries it as written: a bump run without the recale left lrps2's
+    # SHIFTED refs on the old lines under the new pin.
+    refs_left = (
+        {c.ref for c in collect_citations(document) if c.kind == "ref"}
+        if document is not None else set()
+    )
     pending = 0
     for entry in report.entries or []:
         if entry.kind == "prose":
             continue
-        if _is_rewritable(entry.source_ref) and not entry.name.endswith("]"):
+        if (
+            _is_rewritable(entry.source_ref)
+            and not entry.name.endswith("]")
+            and entry.source_ref not in refs_left
+        ):
             continue
         pending += sum(
             1
@@ -2476,10 +2488,9 @@ def pending_recale(
             and part.start is not None
             and _rendered_part(part) != _original_part(part)
         )
-    if text is None:
+    if document is None:
         return pending
 
-    document = yaml.safe_load(text)
     pool: dict[tuple[str, str], int] = {}
     for citation in collect_citations(document):
         if citation.kind == "prose":

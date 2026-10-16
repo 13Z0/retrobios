@@ -2631,6 +2631,20 @@ class TestBumpCommit(unittest.TestCase):
         self.assertEqual(profile_sync.pending_recale(report), 0)
         self.assertTrue(bump_commit(self.path, report))
 
+    def test_a_bump_alone_waits_for_the_recale(self):
+        """lrps2 at 0 to review with two SHIFTED parts: --bump-commit run
+        alone wrote the new pin over refs still on the old lines."""
+        part = PartResult(RefPart("a.c", 10, 12, "a.c:10-12"), "SHIFTED", None, 30, 32, [])
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("a.bin", "a.c:10-12", "SHIFTED", [part])],
+            counts={"SHIFTED": 1},
+        )
+        self.assertFalse(bump_commit(self.path, report))
+        self.assertNotIn("newhead", self.path.read_text())
+        self.assertEqual(rebase_refs(self.path, report), ["a.c:10-12 -> a.c:30-32"])
+        self.assertTrue(bump_commit(self.path, report))
+
     def test_upstream_pin_moves_with_source_pin(self):
         """A recale onto upstream HEAD lines must advance upstream_commit too."""
         part = PartResult(
