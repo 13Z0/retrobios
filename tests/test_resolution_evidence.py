@@ -275,5 +275,29 @@ class SeveralAcceptedCrc32(unittest.TestCase):
             )
 
 
+class TheMatchingArchiveForAMember(unittest.TestCase):
+    """neogeo.zip is held twice with different sfix.sfix members. For an
+    entry pinning the second's member md5, the name step returned the first
+    as a mismatch and the md5 platform excluded a file the repo holds."""
+
+    def test_the_archive_whose_member_matches(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = []
+            for folder, member in (("a", b"first"), ("b", b"second")):
+                path = Path(tmp) / folder / "neogeo.zip"
+                path.parent.mkdir()
+                with zipfile.ZipFile(path, "w") as handle:
+                    handle.writestr("sfix.sfix", member)
+                    handle.writestr("000-lo.lo", b"lo")
+                paths.append(path)
+            files = {hashlib.sha1(p.read_bytes()).hexdigest(): {"path": str(p), "name": "neogeo.zip"}
+                     for p in paths}
+            db = {"files": files, "indexes": {"by_name": {"neogeo.zip": list(files)},
+                                              "by_md5": {}, "by_crc32": {}, "by_path_suffix": {}}}
+            entry = {"name": "neogeo.zip", "zipped_file": "sfix.sfix",
+                     "md5": hashlib.md5(b"second").hexdigest()}
+            self.assertEqual(common.resolve_local_file(entry, db), (str(paths[1]), "zip_exact"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -958,6 +958,12 @@ def resolve_local_file(
                             valid.append((path, m, size))
                 except (zipfile.BadZipFile, OSError):
                     pass
+            # The archive whose member carries the declared md5 is the one:
+            # neogeo.zip is held twice, each with its own sfix.sfix, and the
+            # first by name was returned as a mismatch while the other matched.
+            for path, _m, _size in sorted(valid, key=lambda c: "/.variants/" in c[0]):
+                if any(check_inside_zip(path, zipped_file, md5) == "ok" for md5 in md5_list):
+                    return path, "zip_exact"
             if valid:
                 primary = [c[0] for c in valid if "/.variants/" not in c[0]]
                 return (primary[0] if primary else valid[0][0]), "hash_mismatch"
