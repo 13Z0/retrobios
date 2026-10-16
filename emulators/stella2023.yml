@@ -41,35 +41,42 @@ files:
   - name: KVS1.WAV
     description: "KidVid Voice Module audio tape 1 (Smurfs Save the Day)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:245, src/emucore/KidVid.cxx:273"
   - name: KVS2.WAV
     description: "KidVid Voice Module audio tape 2 (Smurfs Save the Day)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:245, src/emucore/KidVid.cxx:273"
   - name: KVS3.WAV
     description: "KidVid Voice Module audio tape 3 (Smurfs Save the Day)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:245, src/emucore/KidVid.cxx:273"
   - name: KVB1.WAV
     description: "KidVid Voice Module audio tape 1 (Berenstain Bears)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:246, src/emucore/KidVid.cxx:273"
   - name: KVB2.WAV
     description: "KidVid Voice Module audio tape 2 (Berenstain Bears)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:246, src/emucore/KidVid.cxx:273"
   - name: KVB3.WAV
     description: "KidVid Voice Module audio tape 3 (Berenstain Bears)"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:246, src/emucore/KidVid.cxx:273"
   - name: KVSHARED.WAV
     description: "KidVid Voice Module shared audio samples"
     required: false
+    load_from: content_dir
     category: game_data
     source_ref: "src/emucore/KidVid.cxx:274"
