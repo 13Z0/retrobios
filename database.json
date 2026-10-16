@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-10T05:24:26Z",
+  "generated_at": "2026-10-15T21:45:48Z",
   "total_files": 19005,
   "total_size": 17497729510,
   "bios_dir": "bios",
@@ -270345,6 +270345,9 @@
       ],
       "[BIOS] Atari Jaguar Developer CD (World).bin": [
         "d61b7b5912118f114ef00cf44966a5ef62e455a5"
+      ],
+      "jagboot_m.rom": [
+        "af643900fea84234e08b616a6d27f03f0a61db96"
       ],
       "upd7801g.bin": [
         "6e89d1227581c76441a53d605f9e324185f1da33"
