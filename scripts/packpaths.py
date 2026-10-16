@@ -26,6 +26,27 @@ def _has_path_conflict(dest: str, seen_files: set[str], seen_parents: set[str]) 
         return True
     return False
 
+def placement_block(
+    dest: str,
+    seen_files: set[str],
+    seen_lower: set[str],
+    seen_parents: set[str],
+    case_insensitive: bool,
+) -> str | None:
+    """Why a destination cannot take a file in this pack, or None.
+
+    The one rule the builder applies to a core extra and the report replays:
+    counted apart, the report called a skipped file packed.
+    """
+    if dest in seen_files:
+        return "taken"
+    if case_insensitive and dest.lower() in seen_lower:
+        return "case_twin"
+    if _has_path_conflict(dest, seen_files, seen_parents):
+        return "path_conflict"
+    return None
+
+
 def _register_path(dest: str, seen_files: set[str], seen_parents: set[str]) -> None:
     """Track a file path and its parent directories."""
     seen_files.add(dest)

@@ -128,6 +128,74 @@ def _slug_for(
     return _map_emulator_to_slug(profile, platform_systems, norm_map, sys_to_slug)
 
 
+def hidden_extras(
+    config: dict,
+    emulators_dir: str,
+    db: dict,
+    profiles: dict,
+    shipped: dict[str, str],
+    target_cores: set[str] | None = None,
+) -> dict[tuple[str, str, str], str]:
+    """Report entries the builder holds and still leaves out, with the reason.
+
+    The builder walks the core extras after the platform's own files and
+    skips a destination that a case-insensitive filesystem folds onto one
+    already packed, or that a packed file blocks as a directory. RetroPie's
+    openmsx fmpac.rom gave way to the platform's FMPAC.ROM, other bytes,
+    while the report counted it in the pack. A twin carrying the same bytes
+    serves the core on the filesystem that folds the names, so it is not a
+    file left out. ``shipped`` maps the full destination of each platform
+    file the pack carries to its local copy.
+    """
+    from packpaths import _register_path, placement_block
+
+    sha1_by_path = {
+        entry.get("path"): sha1 for sha1, entry in db.get("files", {}).items()
+    }
+    base_dest = config.get("base_destination", "")
+    case_insensitive = bool(config.get("case_insensitive_fs", False))
+    seen: set[str] = set()
+    parents: set[str] = set()
+    content: dict[str, str | None] = {}
+    for dest, local in shipped.items():
+        _register_path(dest, seen, parents)
+        content[dest.lower()] = sha1_by_path.get(local)
+    lower = set(content) if case_insensitive else set()
+    prefix = _detect_extras_prefix(config, base_dest)
+    hidden: dict[tuple[str, str, str], str] = {}
+    for fe in _collect_emulator_extras(
+        config, emulators_dir, db, set(shipped), base_dest, profiles,
+        target_cores=target_cores,
+    ):
+        dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
+        if not dest:
+            continue
+        full = dest if not prefix or dest.startswith(f"{prefix}/") else f"{prefix}/{dest}"
+        reason = placement_block(full, seen, lower, parents, case_insensitive)
+        if reason == "taken":
+            # Another core's claim on the same path, settled by the claims
+            # the collector records: not a file left out.
+            continue
+        local, _status = resolve_local_file(
+            fe, db, dest_hint=fe.get("destination", "")
+        )
+        held = sha1_by_path.get(local) if local else None
+        if reason == "case_twin" and held and content.get(full.lower()) == held:
+            continue
+        if reason is not None:
+            key = (
+                fe.get("source_emulator", ""), fe.get("source_name", ""),
+                fe.get("source_path", ""),
+            )
+            hidden.setdefault(key, reason)
+            continue
+        _register_path(full, seen, parents)
+        content[full.lower()] = held
+        if case_insensitive:
+            lower.add(full.lower())
+    return hidden
+
+
 def unplaceable_extras(config: dict, undeclared: list[dict], profiles: dict) -> set:
     """Keys of the report entries a slug-based platform cannot place.
 

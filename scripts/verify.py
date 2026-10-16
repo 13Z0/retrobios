@@ -785,6 +785,39 @@ def _mark_unplaced(config: dict, undeclared: list[dict], profiles: dict) -> None
             u["omitted"] = "no platform slug for its system"
 
 
+_HIDDEN_REASONS = {
+    "case_twin": "a packed file of the same name in another case takes its place",
+    "path_conflict": "a packed file occupies its directory",
+}
+
+
+def _mark_hidden(
+    config: dict,
+    undeclared: list[dict],
+    emulators_dir: str,
+    db: dict,
+    emu_profiles: dict | None,
+    shipped: dict[str, str],
+    target_cores: set[str] | None,
+) -> None:
+    """What the builder holds but cannot place beside the files it packed."""
+    from packextras import hidden_extras
+
+    hidden = hidden_extras(
+        config, emulators_dir, db,
+        emu_profiles if emu_profiles is not None
+        else load_emulator_profiles(emulators_dir),
+        shipped, target_cores,
+    )
+    for u in undeclared:
+        reason = hidden.get(
+            (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
+        )
+        if reason and u.get("in_repo") and u.get("in_pack", True):
+            u["in_pack"] = False
+            u["omitted"] = _HIDDEN_REASONS[reason]
+
+
 def _twin_index(
     verify_systems: dict, db: dict, base_dest: str, zip_contents: dict,
 ) -> tuple[dict[str, int], dict[int, tuple[str, dict]]]:
@@ -981,6 +1014,7 @@ def verify_platform(
         verify_systems, db, base_dest, zip_contents
     )
 
+    shipped: dict[str, str] = {}
     for sys_id, system in verify_systems.items():
         for file_entry in system.get("files", []):
             if region_drops and (
@@ -1030,6 +1064,11 @@ def verify_platform(
                 validation_index,
             )
             details.append(result)
+            if local_path and result["status"] != Status.MISSING:
+                shipped.setdefault(
+                    f"{base_dest}/{destination}" if base_dest else destination,
+                    local_path,
+                )
             if _twin_unmet(result, held_by):
                 continue
 
@@ -1089,6 +1128,9 @@ def verify_platform(
             not in region_drops
         ]
     _mark_unplaced(config, undeclared, profiles)
+    _mark_hidden(
+        config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores
+    )
     exclusions = find_exclusion_notes(
         config, emulators_dir, emu_profiles, target_cores=target_cores
     )

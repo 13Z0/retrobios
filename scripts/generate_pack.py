@@ -966,13 +966,13 @@ def generate_pack(
                   full_dest = dest
           else:
               full_dest = dest
-          if full_dest in seen_destinations:
-              continue
-          # Skip case-insensitive duplicates (Windows/macOS FS safety)
-          if full_dest.lower() in seen_lower and case_insensitive:
-              continue
-          # Skip file/directory path conflicts (e.g., SGB1.sfc file vs SGB1.sfc/ dir)
-          if _has_path_conflict(full_dest, seen_destinations, seen_parents):
+          # Taken, a case twin on a case-insensitive filesystem, or a
+          # file/directory conflict (SGB1.sfc vs SGB1.sfc/): verify replays
+          # the same rule (packextras.hidden_extras).
+          if placement_block(
+              full_dest, seen_destinations, seen_lower, seen_parents,
+              case_insensitive,
+          ):
               continue
 
           dest_hint = fe.get("destination", "")
@@ -3213,11 +3213,10 @@ def _manifest_core_entries(
         else:
             full_dest = dest
 
-        if full_dest in seen_destinations:
-            continue
-        if case_insensitive and full_dest.lower() in seen_lower:
-            continue
-        if _has_path_conflict(full_dest, seen_destinations, seen_parents):
+        if placement_block(
+            full_dest, seen_destinations, seen_lower, seen_parents,
+            case_insensitive,
+        ):
             continue
 
         dest_hint = fe.get("destination", "")
@@ -3989,6 +3988,7 @@ from packpaths import (  # noqa: E402,F401
     _register_path,
     _flat,
     _resolve_destination,
+    placement_block,
 )
 from packextras import (  # noqa: E402,F401
     _detect_extras_prefix,
