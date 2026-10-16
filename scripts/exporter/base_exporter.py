@@ -81,9 +81,8 @@ class BaseExporter(ABC):
 
     # Shared helpers
 
-    @classmethod
     def exportable(
-        cls,
+        self,
         systems: dict[str, NativeSystem],
         require: str = "",
     ) -> list[tuple[NativeSystem, list[NativeFile]]]:
@@ -92,11 +91,12 @@ class BaseExporter(ABC):
         `require` names a hash the format cannot omit. An entry the format
         has no way to express is dropped here and counted by the caller,
         never written as a half entry the platform would read as a file that
-        can never verify.
+        can never verify. Read through the instance: RomM decides on the
+        keys its render has seen.
         """
         result: list[tuple[NativeSystem, list[NativeFile]]] = []
         for system in systems.values():
-            files = [fe for fe in system.files if fe.name and cls.writable(fe, require)]
+            files = [fe for fe in system.files if fe.name and self.writable(fe, require)]
             if files:
                 result.append((system, files))
         return result

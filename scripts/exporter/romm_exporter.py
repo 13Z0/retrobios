@@ -52,6 +52,12 @@ class Exporter(BaseExporter):
     def native_sources() -> dict[str, str]:
         return {"known_bios_files.json": SOURCE_URL}
 
+    def __init__(self) -> None:
+        super().__init__()
+        # Filled by render; empty until then, so writable() answers before it.
+        self._platform_keys: set[tuple[str, str]] = set()
+        self._first_addition: dict[tuple[str, str], int] = {}
+
     @staticmethod
     def _verifiable(fe: NativeFile) -> bool:
         return bool(fe.size()) and any(

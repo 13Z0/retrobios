@@ -425,6 +425,18 @@ class RommKeepsItsOwnKeys(unittest.TestCase):
         self.assertEqual(written["dc:boot.bin"]["size"], "2097152")
         self.assertFalse(exporter.writable(ours))
 
+    def test_the_shared_helper_reads_every_exporter_the_same_way(self):
+        """RomM's writable is per instance; the base helper bound fe as self."""
+        from exporter import discover_exporters  # noqa: PLC0415
+
+        theirs = NativeFile("boot.bin", "dc/boot.bin", "dc",
+                            platform={"size": 2097152, "md5": A, "core": "libretro/flycast"})
+        systems = {"dc": NativeSystem("dc", files=[theirs], from_platform=True)}
+        for name, cls in sorted(discover_exporters().items()):
+            with self.subTest(exporter=name):
+                pairs = cls().exportable(systems)
+                self.assertEqual([fe for _, files in pairs for fe in files], [theirs])
+
 class NamesInAnotherDirectory(unittest.TestCase):
     def test_a_truth_path_in_another_directory_does_not_match(self):
         scraped = {"systems": {"pc98": {"files": [
