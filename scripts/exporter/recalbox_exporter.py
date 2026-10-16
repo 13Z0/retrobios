@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from xml.etree.ElementTree import ParseError
+from xml.etree.ElementTree import Comment, ParseError
 from xml.sax.saxutils import quoteattr
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -123,27 +123,32 @@ class Exporter(BaseExporter):
         ]
         # Recalbox's own file is the base, so an element our transcription
         # does not carry (added or renamed after a scrape) stays as written,
-        # and its system order with it.
-        theirs: list[tuple[str, str, list[dict[str, str]]]] = []
+        # and its system order with it. A platform can hold several blocks
+        # (Pentagon and Scorpion are both zxspectrum), and an entry the
+        # maintainer commented out stays commented out.
+        theirs: list[tuple[str, str, list[dict[str, str] | str]]] = []
         original = originals.get(self.native_filename(), "")
         if original:
             try:
-                root = parse_untrusted_xml(original, self.native_filename())
+                root = parse_untrusted_xml(original, self.native_filename(), comments=True)
             except (ParseError, ValueError):
                 root = None
             if root is not None:
                 theirs = [
-                    (s.get("platform", ""), s.get("fullname", ""),
-                     [dict(b.attrib) for b in s.iter("bios")])
+                    (s.get("platform", ""), s.get("fullname", ""), [
+                        f"<!--{child.text}-->" if child.tag is Comment else dict(child.attrib)
+                        for child in s
+                        if child.tag is Comment or child.tag == "bios"
+                    ])
                     for s in root.iter("system")
                 ]
 
-        ours: dict[str, tuple[NativeSystem, dict[str, str]]] = {}
+        ours: dict[str, tuple[NativeSystem, dict[str, tuple[NativeFile, str]]]] = {}
         for system in systems.values():
             writable = [fe for fe in system.files if self.writable(fe)]
             if writable:
                 ours[system.native_id] = (system, {
-                    self._path(fe): self._bios_element(fe, system.native_id)
+                    self._path(fe): (fe, self._bios_element(fe, system.native_id))
                     for fe in writable
                 })
 
@@ -158,18 +163,37 @@ class Exporter(BaseExporter):
             lines.extend(body)
             lines.append("  </system>")
 
-        for platform, fullname, bios in theirs:
-            if platform not in ours:
-                emit(platform, fullname, [element(attrs) for attrs in bios])
-                continue
-            system, elements = ours.pop(platform)
-            body = [elements.pop(attrs.get("path", ""), None) or element(attrs)
-                    for attrs in bios]
-            body.extend(elements.values())
-            emit(platform, self.display_name(system), body)
+        # Each block of theirs corrects the entries it holds.
+        blocks: list[tuple[str, str, list[str]]] = []
+        for platform, fullname, children in theirs:
+            elements = ours.get(platform, (None, {}))[1]
+            body: list[str] = []
+            for child in children:
+                if isinstance(child, str):
+                    body.append(f"    {child}")
+                    continue
+                mine = elements.pop(child.get("path", ""), None)
+                body.append(mine[1] if mine else element(child))
+            blocks.append((platform, fullname, body))
+
+        # An addition joins the block named like its file, else the first
+        # block of its platform.
+        first: dict[str, int] = {}
+        named: dict[tuple[str, str], int] = {}
+        for index, (platform, fullname, _) in enumerate(blocks):
+            first.setdefault(platform, index)
+            named.setdefault((platform, fullname), index)
+        for platform in [p for p in ours if p in first]:
+            _, elements = ours.pop(platform)
+            for fe, rendered in elements.values():
+                key = (platform, str(fe.native("native_name", "")))
+                blocks[named.get(key, first[platform])][2].append(rendered)
+
+        for platform, fullname, body in blocks:
+            emit(platform, fullname, body)
         for platform in sorted(ours):
             system, elements = ours[platform]
-            emit(platform, self.display_name(system), list(elements.values()))
+            emit(platform, self.display_name(system), [r for _, r in elements.values()])
 
         lines.append("</biosList>")
         lines.append("")

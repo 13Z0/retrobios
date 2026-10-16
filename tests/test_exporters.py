@@ -590,6 +590,57 @@ class RecalboxExport(unittest.TestCase):
         self.assertIn("scph5000.bin", paths)
         self.assertNotIn("psx/scph5000.bin", paths)
 
+    def test_two_blocks_of_one_platform_stay_two(self):
+        """Recalbox files Pentagon and Scorpion under zxspectrum, apart.
+
+        Merged, the Scorpion ROMs sat under the Pentagon name and the BIOS
+        manager lost a section; the line the maintainer commented out went
+        with the rewrite.
+        """
+        old, new = "1" * 32, "2" * 32
+
+        def declared(name, label, md5):
+            return {
+                "name": name, "destination": f"fuse/{name}",
+                "native_system": "zxspectrum", "native_name": label,
+                "native_path": f"fuse/{name}", "md5": md5,
+                "core": "libretro/fuse", "required": False,
+            }
+
+        pentagon = "Pentagon 128/512/1024 (ZX Spectrum clone)"
+        scorpion = "Scorpion 256K (ZX Spectrum clone)"
+        scraped = {"systems": {"sinclair-zxspectrum": {
+            "native_id": "zxspectrum",
+            "files": [
+                declared("128p-0.rom", pentagon, "3" * 32),
+                declared("256s-0.rom", scorpion, old),
+            ],
+        }}}
+        truth = {"systems": {"sinclair-zxspectrum": {"files": [{
+            "name": "256s-0.rom", "path": "fuse/256s-0.rom", "md5": new,
+            "required": False, "_cores": ["fuse"],
+        }]}}}
+        original = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n<biosList>\n'
+            f'  <system fullname="{pentagon}" platform="zxspectrum">\n'
+            f'    <bios path="fuse/128p-0.rom" md5="{"3" * 32}" core="libretro/fuse" />\n'
+            '    <!--bios path="fuse/gluck.rom" md5="x" core="libretro/fuse" /-->\n'
+            "  </system>\n"
+            f'  <system fullname="{scorpion}" platform="zxspectrum">\n'
+            f'    <bios path="fuse/256s-0.rom" md5="{old}" core="libretro/fuse" />\n'
+            "  </system>\n</biosList>\n"
+        )
+        systems, report = build_native_model(truth, scraped)
+        produced = discover_exporters()["recalbox"]().render(
+            systems, report, {"es_bios.xml": original}, None
+        )["es_bios.xml"]
+        self.assertIn('<!--bios path="fuse/gluck.rom"', produced)
+        blocks = {
+            s.get("fullname"): [b.get("md5") for b in s.iter("bios")]
+            for s in ET.fromstring(produced).iter("system")
+        }
+        self.assertEqual(blocks, {pentagon: ["3" * 32], scorpion: [new]})
+
     def test_a_truncated_export_is_reported(self):
         exporter, systems, _ = self._render()
         empty = {

@@ -13,7 +13,9 @@ except ImportError:  # optional at import time
     yaml = None
 
 
-def parse_untrusted_xml(content: str | bytes, label: str = "XML") -> ET.Element:
+def parse_untrusted_xml(
+    content: str | bytes, label: str = "XML", comments: bool = False
+) -> ET.Element:
     """Parse XML fetched from a third party.
 
     ElementTree expands internal entities, so a document that declares them
@@ -25,10 +27,14 @@ def parse_untrusted_xml(content: str | bytes, label: str = "XML") -> ET.Element:
     The check targets <!ENTITY rather than <!DOCTYPE because Logiqx DATs
     legitimately carry a doctype pointing at logiqx.com, and ElementTree does
     not resolve external entities, so a doctype alone fetches nothing.
+    `comments` keeps comments in the tree, for a file rewritten in place.
     """
     text = content if isinstance(content, str) else content.decode("utf-8", "replace")
     if "<!ENTITY" in text.upper():
         raise ValueError(f"XML entity declarations are not allowed in {label}")
+    if comments:
+        parser = ET.XMLParser(target=ET.TreeBuilder(insert_comments=True))
+        return ET.fromstring(content, parser=parser)
     return ET.fromstring(content)
 
 def require_yaml():
