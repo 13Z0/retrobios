@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
     apply_target_overrides,
+    archive_entry,
     profiles_for_systems,
     write_text_atomic,
     artifact_lock,
@@ -1299,20 +1300,11 @@ def generate_emulator_pack(
                 if _has_path_conflict(archive_dest, seen_destinations, seen_parents):
                     continue
 
-                # Prefer the profile's own entry for the archive (carries
-                # hashes for exact resolution when several dumps share a name)
-                archive_entry = next(
-                    (
-                        f
-                        for f in files
-                        if f.get("name") == archive_name and not f.get("archive")
-                    ),
-                    {"name": archive_name},
-                )
-                if required_only and _archive_is_optional(archive_entry, archive_name, files):
+                own_entry = archive_entry(archive_name, files)
+                if required_only and _archive_is_optional(own_entry, archive_name, files):
                     continue
                 local_path, status = resolve_file(
-                    archive_entry,
+                    own_entry,
                     db,
                     bios_dir,
                     zip_contents,
@@ -1321,7 +1313,7 @@ def generate_emulator_pack(
                 )
                 if local_path and status not in ("not_found",):
                     if local_path.endswith(".zip"):
-                        _add_zip_to_pack(local_path, archive_dest, zf, archive_entry)
+                        _add_zip_to_pack(local_path, archive_dest, zf, own_entry)
                     else:
                         _add_pack_member(zf, local_path, archive_dest)
                     seen_destinations.add(archive_dest)

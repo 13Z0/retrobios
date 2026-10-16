@@ -5,6 +5,7 @@ capping a real romset: the largest pack is already several gigabytes."""
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import os
 import re
@@ -35,6 +36,26 @@ def check_inside_zip(container: str, file_name: str, expected_md5: str) -> str:
             return "not_in_zip"
     except (zipfile.BadZipFile, OSError, KeyError):
         return "error"
+
+@functools.lru_cache(maxsize=4096)
+def _member_crcs(path: str, mtime: float) -> frozenset[str]:
+    try:
+        with zipfile.ZipFile(path) as archive:
+            return frozenset(
+                format(info.CRC, "08x") for info in archive.infolist() if not info.is_dir()
+            )
+    except (zipfile.BadZipFile, OSError):
+        return frozenset()
+
+
+def zip_member_crcs(path: str) -> frozenset[str]:
+    """CRC-32 of each member, read from the central directory."""
+    try:
+        mtime = os.path.getmtime(path)
+    except OSError:
+        return frozenset()
+    return _member_crcs(path, mtime)
+
 
 _zip_contents_cache: tuple[frozenset[tuple[str, float]], dict] | None = None
 

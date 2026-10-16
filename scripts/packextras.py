@@ -7,6 +7,7 @@ this module builds so the report and the pack withdraw the same files."""
 from __future__ import annotations
 
 from common import PROFILE_IDENTITY_FIELDS
+from common import archive_members
 from common import declared_root, expand_platform_declared_names, platform_declarations
 from common import load_emulator_profiles
 from common import resolution_is_hash_exact
@@ -497,6 +498,9 @@ def _archive_prefix_extras(
                 "region": archive_entry.get("region"),
                 "variant_group": archive_entry.get("variant_group"),
             }
+            members = archive_members(archive_name, profile.get("files", []))
+            if members:
+                extra["members"] = members
             extra["claim_order"] = (3, 0, emu_name)
             if _take(extra, full_dest, seen_dests, taken):
                 extras.append(extra)
@@ -774,6 +778,8 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
         "region": u.get("region"),
         "variant_group": u.get("variant_group"),
     }
+    if u.get("members"):
+        extra["members"] = u["members"]
     # Keep every reproducible identity constraint carried by the source
     # profile.  Some profiles expose CRC32/SHA-256 only through their
     # validation block; dropping those fields here would let a same-named

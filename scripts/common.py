@@ -599,6 +599,48 @@ def _rank_tail_candidates(
     )
 
 
+def archive_members(archive: str, files: list[dict]) -> list[dict]:
+    """The members a profile reads inside *archive*, with what it requires."""
+    return [
+        {"crc32": str(f["crc32"]).lower(), "required": bool(f.get("required", True))}
+        for f in files
+        if f.get("archive") == archive and f.get("crc32")
+    ]
+
+
+def archive_entry(archive: str, files: list[dict]) -> dict:
+    """The entry a profile's archive resolves through.
+
+    Its own declaration when it has one (it carries the container's hashes),
+    and the members it reads inside, so a copy of the name that lacks a ROM
+    the core requires is not taken for the archive.
+    """
+    own = next(
+        (f for f in files if f.get("name") == archive and not f.get("archive")),
+        {"name": archive},
+    )
+    members = archive_members(archive, files)
+    return {**own, "members": members} if members else own
+
+
+def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
+    """The same-named archives holding the most required members, then the most members.
+
+    FBNeo reads neocd.bin and 000-lo.lo inside neocdz.zip; the primary copy,
+    a set without 000-lo.lo, won on the name while a variant held both.
+    """
+    def held(path: str) -> tuple[int, int]:
+        crcs = zip_member_crcs(path)
+        return (
+            sum(1 for m in members if m["required"] and m["crc32"] in crcs),
+            sum(1 for m in members if m["crc32"] in crcs),
+        )
+
+    scores = {path: held(path) for path in paths}
+    best = max(scores.values(), default=(0, 0))
+    return [path for path in paths if scores[path] == best]
+
+
 def _by_affinity(paths: list[str], file_entry: dict, dest_hint: str) -> list[str]:
     """Same-named candidates, the likeliest first.
 
@@ -910,6 +952,8 @@ def resolve_local_file(
         if candidates:
             if zipped_file:
                 candidates = [p for p in candidates if ".zip" in os.path.basename(p)]
+            if file_entry.get("members"):
+                candidates = _holding_members(candidates, file_entry["members"])
             candidates = _by_affinity(candidates, file_entry, dest_hint)
             primary = [p for p in candidates if "/.variants/" not in p]
             if primary or candidates:
@@ -2010,6 +2054,7 @@ from ziptools import (  # noqa: E402,F401
     safe_extract_zip,
     _zip_contents_cache,
     _BOUNDED_RATIO_METHODS,
+    zip_member_crcs,
 )
 from artifacts import (  # noqa: E402,F401
     write_if_changed,

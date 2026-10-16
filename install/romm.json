@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-16T12:33:18Z",
+  "generated": "2026-10-16T16:55:49Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -16,9 +16,9 @@
   ],
   "standalone_copies": [],
   "total_files": 1094,
-  "total_size": 1458687902,
+  "total_size": 1458695892,
   "pack_files": 1096,
-  "pack_size": 1458687902,
+  "pack_size": 1458695892,
   "total_omitted": 58,
   "omitted_files": [
     {
@@ -14710,10 +14710,10 @@
     },
     {
       "dest": "colecovision/atarisy1.zip",
-      "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
-      "sha256": "1cf61e6b54589ed9bf2b5f319c2b56de205384d6726b7a0fae79213071f3cfb5",
-      "size": 49385,
-      "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
+      "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
+      "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
+      "size": 57375,
+      "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
       ],

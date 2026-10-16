@@ -9,10 +9,12 @@ from __future__ import annotations
 
 import hashlib
 import os
+import shutil
 import sys
 import tempfile
 import unittest
 import zipfile
+import zlib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -121,6 +123,70 @@ class IntegrityChecksEveryMember(unittest.TestCase):
             self.assertFalse(ok)
             self.assertEqual(sorted(e.split(": ")[1] for e in errors),
                              ["r1.bin not found inside ZIP", "r2.bin not found inside ZIP"])
+
+
+class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
+    """FBNeo reads neocd.bin and 000-lo.lo inside neocdz.zip. The primary
+    copy has no 000-lo.lo; a variant holds both. Resolved by name, every
+    pack shipped the primary at fbneo/neocdz.zip and the core could not
+    start a Neo Geo CD game."""
+
+    def setUp(self):
+        directory = tempfile.mkdtemp(dir=REPO_ROOT / "tmp")
+        self.addCleanup(shutil.rmtree, directory, True)
+        root = Path(directory)
+        self.roms = {"neocd.bin": b"bios" * 8, "000-lo.lo": b"zoom" * 8}
+        files, by_name = {}, {}
+        for path, members in (
+            (root / "bios/neocdz.zip", ["neocd.bin"]),
+            (root / "bios/.variants/neocdz.zip.ba20a7be", ["neocd.bin", "000-lo.lo"]),
+        ):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(path, "w") as zf:
+                for member in members:
+                    zf.writestr(member, self.roms[member])
+            sha1 = hashlib.sha1(path.read_bytes()).hexdigest()
+            files[sha1] = {"path": str(path), "name": "neocdz.zip", "sha1": sha1}
+            by_name.setdefault("neocdz.zip", []).append(sha1)
+        self.db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                               "by_path_suffix": {}, "by_crc32": {}}}
+        self.profile_files = [
+            {"name": name, "archive": "neocdz.zip", "required": True,
+             "crc32": format(zlib.crc32(data), "08x")}
+            for name, data in self.roms.items()
+        ]
+
+    def test_the_copy_with_every_required_member_wins(self):
+        from common import archive_entry, resolve_local_file
+
+        path, status = resolve_local_file(
+            archive_entry("neocdz.zip", self.profile_files), self.db
+        )
+        self.assertTrue(path.endswith(".variants/neocdz.zip.ba20a7be"))
+        self.assertEqual(status, "name_exact")
+
+    def test_without_members_the_primary_stays(self):
+        from common import resolve_local_file
+
+        path, _status = resolve_local_file({"name": "neocdz.zip"}, self.db)
+        self.assertTrue(path.endswith("bios/neocdz.zip"))
+
+    def test_the_extras_carry_the_members(self):
+        from packextras import _report_extra
+
+        members = [{"crc32": "5a86cff2", "required": True}]
+        extra = _report_extra(
+            {"name": "neocdz.zip", "archive": "neocdz.zip", "members": members},
+            "neocdz.zip", "fbneo/neocdz.zip",
+        )
+        self.assertEqual(extra["members"], members)
+
+    def test_verify_and_the_pack_read_one_entry(self):
+        for module in ("verify.py", "generate_pack.py"):
+            source = (REPO_ROOT / "scripts" / module).read_text()
+            with self.subTest(module=module):
+                self.assertIn("archive_entry(", source)
+                self.assertNotIn('{"name": archive', source)
 
 
 if __name__ == "__main__":

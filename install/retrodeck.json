@@ -5,7 +5,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-16T12:33:18Z",
+  "generated": "2026-10-16T16:55:49Z",
   "base_destination": "",
   "detect": [
     {
@@ -238,9 +238,9 @@
     }
   ],
   "total_files": 7808,
-  "total_size": 8497729539,
+  "total_size": 8498465916,
   "pack_files": 7810,
-  "pack_size": 8497729539,
+  "pack_size": 8498465916,
   "total_omitted": 1,
   "omitted_files": [
     {
@@ -88515,10 +88515,10 @@
     },
     {
       "dest": "bios/fbneo/atarisy1.zip",
-      "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
-      "sha256": "1cf61e6b54589ed9bf2b5f319c2b56de205384d6726b7a0fae79213071f3cfb5",
-      "size": 49385,
-      "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
+      "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
+      "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
+      "size": 57375,
+      "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
       ],
@@ -88816,10 +88816,10 @@
     },
     {
       "dest": "bios/fbneo/neocdz.zip",
-      "sha1": "9cab31cfe7eacb6871d36cee105d87b90fd85b64",
-      "sha256": "d828241905d390c5de4867646296f615c95bca2f5d8f7e81d50e08717373a821",
-      "size": 1181333,
-      "repo_path": "bios/Arcade/Arcade/neocdz.zip",
+      "sha1": "985d935c06fe278ce39d7690aa6c53df88954cd6",
+      "sha256": "4919ba2a7650b24d1bf2c9107c89a80d93b50703a0a371fa5113c791bd03e114",
+      "size": 1184219,
+      "repo_path": "bios/Arcade/Arcade/.variants/neocdz.zip.ba20a7be",
       "cores": [
         "fbneo",
         "fbneo_neogeo"
@@ -88830,10 +88830,10 @@
     },
     {
       "dest": "bios/fbneo/neogeo.zip",
-      "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-      "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-      "size": 1859335,
-      "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+      "sha1": "420194cc1171adb1920d2ff05e3b7b9ae2b73942",
+      "sha256": "7eb6e948f095d669f4bcdd22dbb58f6e3da4f3cca5ffe92ea42ebca8396cadac",
+      "size": 2438734,
+      "repo_path": "bios/Arcade/Arcade/.variants/neogeo.zip.9d7bbba3",
       "cores": [
         "fbneo",
         "fbneo_neogeo"
@@ -88861,10 +88861,10 @@
     },
     {
       "dest": "bios/fbneo/pgm.zip",
-      "sha1": "c0c001ec80fa860857000f4cfc9844a28498a355",
-      "sha256": "b8603d9021cf9508152fe8ce23c411bb631b24b61d24a26fdd41e273ab925fe5",
-      "size": 2094636,
-      "repo_path": "bios/Arcade/MAME/pgm.zip",
+      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
+      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
+      "size": 2240738,
+      "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
       ]

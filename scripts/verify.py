@@ -35,6 +35,8 @@ import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    archive_entry,
+    archive_members,
     profiles_for_systems,
     PROFILE_IDENTITY_FIELDS,
     list_available_targets,
@@ -577,6 +579,7 @@ def find_undeclared_files(
                         "expected": {},
                         "archive_file_count": 0,
                         "archive_required_count": 0,
+                        "members": archive_members(archive, profile.get("files", [])),
                     }
                 entry = archive_entries[archive_key]
                 entry["archive_file_count"] += 1
@@ -1523,18 +1526,8 @@ def verify_emulator(
             archive = file_entry.get("archive")
             if archive and archive not in seen_archives:
                 seen_archives.add(archive)
-                # Prefer the profile's own entry for the archive (carries
-                # hashes for exact resolution when several dumps share a name)
-                archive_entry = next(
-                    (
-                        f
-                        for f in files
-                        if f.get("name") == archive and not f.get("archive")
-                    ),
-                    {"name": archive},
-                )
                 local_path, resolve_status = resolve_local_file(
-                    archive_entry,
+                    archive_entry(archive, files),
                     db,
                     zip_contents,
                     data_dir_registry=data_registry,
