@@ -435,10 +435,10 @@ files:
 
   - name: PAINT.rom
     path: "Machines/Shared Roms/PAINT.rom"
-    region: [japan]
     size: 65536
     required: false
-    note: "Paint utility ROM. Used by some MSX2 Japanese machine configs."
+    note: "Paint utility ROM. Loaded by the MSX2 - Arabic machine config."
+    source_ref: "system/bluemsx/Machines/MSX2 - Arabic/config.ini"
 
   - name: SWP.rom
     path: "Machines/Shared Roms/SWP.rom"
