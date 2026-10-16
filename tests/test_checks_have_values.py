@@ -51,5 +51,39 @@ class ChecksHaveValues(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+class SizeValuesAreNumbers(unittest.TestCase):
+    """size: ["16384"] or [] passed the schema and matched no file.
+
+    name_match_size_ok compares the candidate's byte count with the list, so
+    a quoted size refused every candidate and the entry fell to not_found in
+    verify, the pack and the manifest with nothing naming the cause.
+    """
+
+    def setUp(self):
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError as exc:
+            self.skipTest(f"validating a schema needs jsonschema: {exc}")
+        import json
+
+        schema = json.loads(
+            (REPO_ROOT / "schemas" / "emulator.schema.json").read_text(encoding="utf-8")
+        )
+        self.validator = Draft202012Validator(schema["properties"]["files"]["items"])
+
+    def _valid(self, size) -> bool:
+        entry = {"name": "bios.bin", "size": size, "validation": ["size"]}
+        return not list(self.validator.iter_errors(entry))
+
+    def test_a_list_of_numbers_is_accepted(self):
+        self.assertTrue(self._valid([16384, 32768]))
+        self.assertTrue(self._valid(16384))
+
+    def test_a_quoted_or_empty_list_is_refused(self):
+        self.assertFalse(self._valid(["16384"]))
+        self.assertFalse(self._valid([]))
+        self.assertFalse(self._valid([-1]))
+
+
 if __name__ == "__main__":
     unittest.main()

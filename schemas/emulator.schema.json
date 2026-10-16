@@ -483,7 +483,13 @@
               "integer",
               "array",
               "null"
-            ]
+            ],
+            "minimum": 0,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minItems": 1
           },
           "min_size": {
             "type": "integer"
