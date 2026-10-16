@@ -265,6 +265,16 @@ def build_native_model(
     norm_to_scraped: dict[str, str] = {
         _norm_system_id(key): key for key in scraped_systems
     }
+    # Every system the platform names, files or none: an addition elsewhere
+    # is filed under our own slug.
+    platform_ids = {
+        native_id
+        for key, sys_data in scraped_systems.items()
+        for native_id in (
+            sys_data.get("native_id") or key,
+            *(_native_id_of(key, sys_data, fe) for fe in sys_data.get("files", [])),
+        )
+    }
     native_by_norm: dict[str, str] = {}
     for system in systems.values():
         native_by_norm.setdefault(_norm_system_id(system.native_id), system.native_id)
@@ -431,7 +441,7 @@ def build_native_model(
                     destination=destination,
                     native_system=native_id,
                     truth=truth_entry,
-                    foreign_system=not system.from_platform,
+                    foreign_system=native_id not in platform_ids,
                 )
             )
             report.files_added += 1

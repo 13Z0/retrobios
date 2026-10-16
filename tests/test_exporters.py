@@ -917,6 +917,18 @@ class BatoceraExport(unittest.TestCase):
         )
         self.assertNotIn('"nintendo-snes"', produced["batocera-systems"])
 
+    def test_a_system_the_platform_names_without_files_is_its_own(self):
+        """A system the platform declares empty still has the platform's id."""
+        scraped = {"systems": {"nintendo-snes": {"native_id": "snes", "files": []}}}
+        truth = {"systems": {"nintendo-snes": {"files": [{
+            "name": "st010.zip", "path": "st010.zip", "md5": "2" * 32,
+            "required": False, "_cores": ["snes9x"],
+        }]}}}
+        systems, _ = build_native_model(truth, scraped)
+        (entry,) = systems["snes"].files
+        self.assertFalse(entry.foreign_system)
+        self.assertTrue(discover_exporters()["batocera"]().writable(entry))
+
     def test_writing_without_the_platform_file_is_refused(self):
         """A systems dict alone is not the script Batocera runs."""
         systems, report = model()
