@@ -133,6 +133,19 @@ class BaseExporter(ABC):
         require = require or cls.requires()
         return not require or bool(fe.hash(require))
 
+    @staticmethod
+    def single_value(fe: NativeFile, field_name: str) -> str:
+        """The one hash a single-value field is checked against.
+
+        A platform that leaves the field empty checks the file by existence.
+        Filling it turns that into a content check on one value: right when
+        the truth accepts exactly one image, wrong when the core takes several
+        and the field can hold only the first. Such a fill stays empty.
+        """
+        if field_name in fe.filled and len(set(fe.hashes(field_name))) != 1:
+            return ""
+        return fe.hash(field_name)
+
     def states(self, fe: NativeFile, field_name: str) -> bool:
         """Whether the written file carries this entry's corrected field.
 

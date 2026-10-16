@@ -663,6 +663,59 @@ class BatoceraExport(unittest.TestCase):
         )
         self.assertIn('"md5": ""', produced["batocera-systems"])
 
+    def test_a_blank_md5_is_not_filled_with_one_of_several_dumps(self):
+        """checkBios compares one md5: the first of two refuses the other.
+
+        The empty field checks by existence, so a user holding the second
+        dump the core accepts would turn from OK to UNTESTED.
+        """
+        first, second = "1" * 32, "2" * 32
+        truth = {
+            "systems": {
+                "nintendo-ds": {
+                    "files": [
+                        {
+                            "name": "firmware.bin",
+                            "path": "firmware.bin",
+                            "md5": [first, second],
+                            "required": True,
+                            "_cores": ["melonds"],
+                        }
+                    ]
+                }
+            }
+        }
+        scraped = {
+            "systems": {
+                "nintendo-ds": {
+                    "native_id": "nds",
+                    "files": [
+                        {
+                            "name": "firmware.bin",
+                            "destination": "firmware.bin",
+                            "native_system": "nds",
+                            "md5": "",
+                        }
+                    ],
+                }
+            }
+        }
+        for platform, filename in (
+            ("batocera", "batocera-systems"),
+            ("rocknix", "rocknix-systems"),
+        ):
+            with self.subTest(platform=platform):
+                systems, report = build_native_model(truth, scraped)
+                (entry,) = systems["nds"].files
+                self.assertIn("md5", entry.filled)
+                exporter = discover_exporters()[platform]()
+                produced = exporter.render(
+                    systems, report, {filename: self.SKELETON}, None
+                )
+                self.assertIn('"md5": ""', produced[filename])
+                self.assertNotIn(first, produced[filename])
+                self.assertFalse(exporter.states(entry, "md5"))
+
     def test_writing_without_the_platform_file_is_refused(self):
         """A systems dict alone is not the script Batocera runs."""
         systems, report = model()

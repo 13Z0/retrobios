@@ -53,6 +53,11 @@ class Exporter(BaseExporter):
             return False
         return super().writable(fe, require)
 
+    def states(self, fe: NativeFile, field_name: str) -> bool:
+        if field_name == "md5" and "md5" in fe.filled:
+            return bool(self.single_value(fe, "md5"))
+        return super().states(fe, field_name)
+
     @staticmethod
     def native_sources() -> dict[str, str]:
         return {"batocera-systems": SOURCE_URL}
@@ -89,7 +94,7 @@ class Exporter(BaseExporter):
         for fe in files:
             # The platform states an unhashed file as an empty md5 rather
             # than leaving it out, and so do we.
-            item = [f'"md5": "{fe.hash("md5")}"']
+            item = [f'"md5": "{self.single_value(fe, "md5")}"']
             alt = fe.native("alt_md5", "")
             if alt:
                 item.append(f'"altmd5": "{alt}"')
