@@ -65,13 +65,21 @@ class AnEntryWithoutSourceIsAnOmission(unittest.TestCase):
             )
         return files, omitted, pack_only
 
-    def test_a_hash_the_database_lacks_is_omitted(self):
-        files, omitted, pack_only = self._run_core_entries(
-            {"sha1": "0" * 40, "sha256": "0" * 64}
-        )
+    def test_a_copy_the_database_lacks_is_omitted(self):
+        """A copy the scan never indexed has no repo path: an omission."""
+        with mock.patch.object(gp, "_db_sha1_by_path", return_value={}):
+            files, omitted, pack_only = self._run_core_entries(
+                {"sha1": "0" * 40, "sha256": "0" * 64}
+            )
         self.assertEqual(files, [])
         self.assertEqual(list(omitted.values()), ["not_found"])
         self.assertEqual(pack_only, [self.record["size"]])
+
+    def test_a_hash_the_scan_contradicts_is_refused(self):
+        """The same path hashed otherwise by the scan is a miscompute: the
+        run stops instead of publishing a wrong entry."""
+        with self.assertRaises(RuntimeError):
+            self._run_core_entries({"sha1": "0" * 40, "sha256": "0" * 64})
 
     def test_a_held_file_is_an_entry_with_its_repo_path(self):
         files, omitted, _pack_only = self._run_core_entries(
