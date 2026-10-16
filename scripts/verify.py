@@ -39,6 +39,7 @@ from common import (
     PROFILE_IDENTITY_FIELDS,
     list_available_targets,
     list_platform_system_ids,
+    list_registered_platforms,
     build_target_cores_cache,
     build_zip_contents_index,
     check_inside_zip,
@@ -2021,9 +2022,9 @@ def main():
 
     # Platform mode (existing)
     if args.all:
-        from list_platforms import list_platforms as _list_platforms
-
-        platforms = _list_platforms(include_archived=args.include_archived)
+        platforms = list_registered_platforms(
+            args.platforms_dir, include_archived=args.include_archived
+        )
     elif args.platform:
         platforms = [args.platform]
     else:
