@@ -117,6 +117,16 @@ class BaseExporter(ABC):
         """
         return True
 
+    @staticmethod
+    def keys_by_system() -> bool:
+        """Whether the platform finds a file through its system's own name.
+
+        Batocera's checkBios walks only the systems es_systems declares, and
+        Recalbox lists a <system> by its platform name: a file filed under
+        one of our slugs (nintendo-snes beside their snes) is never read.
+        """
+        return False
+
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """Whether this format can carry the entry.
@@ -128,7 +138,7 @@ class BaseExporter(ABC):
         """
         if fe.platform is not None:
             return True
-        if not cls.can_add():
+        if not cls.can_add() or (cls.keys_by_system() and fe.foreign_system):
             return False
         require = require or cls.requires()
         return not require or bool(fe.hash(require))

@@ -45,6 +45,10 @@ class Exporter(BaseExporter):
         return "es_bios.xml"
 
     @staticmethod
+    def keys_by_system() -> bool:
+        return True
+
+    @staticmethod
     def carries() -> frozenset[str]:
         return frozenset({"md5", "required"})
 
@@ -101,6 +105,8 @@ class Exporter(BaseExporter):
         An entry Recalbox already ships has both, so this only ever gates
         what we would be adding.
         """
+        if fe.platform is None and fe.foreign_system:
+            return False
         return bool(fe.hashes("md5")) and bool(fe.cores())
 
     def render(

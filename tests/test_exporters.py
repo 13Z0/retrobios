@@ -788,6 +788,45 @@ class BatoceraExport(unittest.TestCase):
                 self.assertNotIn(first, produced[filename])
                 self.assertFalse(exporter.states(entry, "md5"))
 
+    def test_a_system_the_platform_does_not_name_gets_no_entry(self):
+        """checkBios walks the systems es_systems declares, not our slugs.
+
+        An addition filed under nintendo-snes beside Batocera's own snes is
+        never checked, so it is counted as one the format cannot state.
+        """
+        truth = {
+            "systems": {
+                **TRUTH["systems"],
+                "nintendo-snes": {
+                    "files": [
+                        {
+                            "name": "st010.zip",
+                            "path": "st010.zip",
+                            "md5": "2" * 32,
+                            "required": False,
+                            "_cores": ["snes9x"],
+                        }
+                    ]
+                },
+            }
+        }
+        systems, report = build_native_model(truth, SCRAPED)
+        (foreign,) = systems["nintendo-snes"].files
+        self.assertTrue(foreign.foreign_system)
+        own = next(fe for fe in systems["psx"].files if fe.name == "scph7001.bin")
+        self.assertFalse(own.foreign_system)
+        for platform in ("batocera", "rocknix", "retrobat", "recalbox"):
+            with self.subTest(platform=platform):
+                exporter = discover_exporters()[platform]
+                self.assertFalse(exporter().writable(foreign))
+                self.assertTrue(exporter().writable(own))
+        # A format that finds files by path has no system key to miss.
+        self.assertTrue(discover_exporters()["retroarch"]().writable(foreign))
+        produced = discover_exporters()["batocera"]().render(
+            systems, report, {"batocera-systems": self.SKELETON}, None
+        )
+        self.assertNotIn('"nintendo-snes"', produced["batocera-systems"])
+
     def test_writing_without_the_platform_file_is_refused(self):
         """A systems dict alone is not the script Batocera runs."""
         systems, report = model()

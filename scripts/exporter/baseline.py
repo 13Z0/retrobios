@@ -63,6 +63,8 @@ class NativeFile:
     corrections: list[str] = field(default_factory=list)
     # Hash fields the platform left empty and the truth fills.
     filled: list[str] = field(default_factory=list)
+    # An addition filed under our own slug: the platform names no such system.
+    foreign_system: bool = False
 
     @property
     def origin(self) -> str:
@@ -429,6 +431,7 @@ def build_native_model(
                     destination=destination,
                     native_system=native_id,
                     truth=truth_entry,
+                    foreign_system=not system.from_platform,
                 )
             )
             report.files_added += 1

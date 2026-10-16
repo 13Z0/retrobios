@@ -38,6 +38,10 @@ class Exporter(BaseExporter):
         return "md5"
 
     @staticmethod
+    def keys_by_system() -> bool:
+        return True
+
+    @staticmethod
     def carries() -> frozenset[str]:
         return frozenset({"md5"})
 
