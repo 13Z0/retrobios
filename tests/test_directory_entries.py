@@ -192,6 +192,29 @@ class CrossReferenceReadsADirectory(DirectoryFixture):
         self.assertEqual(paths.count("rtp/2000/Music/b.mid"), 1)
 
 
+class GapReportReadsADirectory(DirectoryFixture):
+    """The gap report looked a directory up by bare name in an index that
+    drops dot-names: cdogs' .wolf3d/, 695 files every pack carries, was
+    listed as a file to source."""
+
+    def test_a_held_hidden_directory_is_held(self):
+        from cross_reference import entry_source
+
+        self._add("Engine/cdogs/data/.wolf3d/N3D.cdogscpn/campaign.json", b"campaign")
+        db = self._db()
+        index = {
+            "by_name": db["indexes"]["by_name"], "by_name_lower": {},
+            "by_md5": {}, "by_crc32": {}, "by_sha256": {},
+            "by_path_suffix": db["indexes"]["by_path_suffix"],
+            "db_files": db["files"], "data_names": set(),
+        }
+        entry = {"name": ".wolf3d/", "path": "cdogs/data/.wolf3d/", "type": "directory"}
+        self.assertEqual(entry_source(entry, index), "bios")
+        self.assertIsNone(entry_source(
+            {"name": "Fonts", "path": "demo/Fonts/", "type": "directory"}, index
+        ))
+
+
 class PackCarriesADirectory(DirectoryFixture):
     EXPECTED = {"rtp/2000/Backdrop/a.png", "rtp/2000/Music/b.mid"}
 

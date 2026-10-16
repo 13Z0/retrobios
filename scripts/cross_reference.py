@@ -21,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     _norm_system_id,
+    directory_members,
     get_mame_clone_map,
     list_registered_platforms,
     load_database,
@@ -294,6 +295,13 @@ def entry_source(f: dict, index: dict) -> str | None:
     db_files = index["db_files"]
     fname = f.get("name", "")
     path_field = f.get("path") or ""
+    # A directory is held when the collection holds files under it, the rule
+    # the pack and verify --emulator expand it by: a bare-name lookup missed
+    # cdogs' .wolf3d/, whose 695 files every pack carries.
+    if f.get("type") == "directory" and directory_members(
+        {"indexes": {"by_path_suffix": by_path_suffix}}, path_field or fname
+    ):
+        return "bios"
     for candidate in [fname, *([path_field] if path_field != fname else []),
                       *(f.get("aliases") or [])]:
         if not candidate:
