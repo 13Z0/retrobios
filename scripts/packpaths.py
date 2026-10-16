@@ -59,10 +59,16 @@ def _flat(arcname: str, prefix: str, flatten: bool) -> str:
         return arcname[len(prefix) + 1:]
     return arcname
 
-def _resolve_destination(
-    file_entry: dict, pack_structure: dict | None, standalone: bool
-) -> str:
-    """Resolve the ZIP destination path for a file entry."""
+def _resolve_destination(file_entry: dict, standalone: bool) -> str:
+    """Resolve the ZIP destination path for a file entry.
+
+    ``path:`` is where the libretro build reads the file from the system
+    directory and ``standalone_path:`` where the standalone app reads it, so
+    a file's destination is written whole. ``pack_structure`` places a
+    profile's data directories and archives: prefixing files with it gave
+    PPSSPP/PPSSPP/ppge_atlas.zim, and the platform packs, which never read
+    it, put libretro Dolphin's IPL at the root of system/.
+    """
     # 1. standalone_path override
     if standalone and file_entry.get("standalone_path"):
         rel = file_entry["standalone_path"]
@@ -73,16 +79,7 @@ def _resolve_destination(
     else:
         rel = file_entry.get("name", "")
 
-    rel = sanitize_pack_path(rel)
-
-    # Prepend pack_structure prefix
-    if pack_structure:
-        mode_key = "standalone" if standalone else "libretro"
-        prefix = pack_structure.get(mode_key, "")
-        if prefix:
-            rel = f"{prefix}/{rel}"
-
-    return rel
+    return sanitize_pack_path(rel)
 
 
 def _archive_destination(

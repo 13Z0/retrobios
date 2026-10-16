@@ -1512,11 +1512,10 @@ def verify_emulator(
             standalone,
         )
         if region_drops:
-            structure = profile.get("pack_structure")
             files = [
                 fe
                 for fe in files
-                if _resolve_destination(fe, structure, standalone) not in region_drops
+                if _resolve_destination(fe, standalone) not in region_drops
             ]
 
         # Check data directories (only notice if not cached)
@@ -1705,10 +1704,8 @@ def verify_emulator(
             result["hle_fallback"] = hle
             result["ground_truth"] = build_ground_truth(name, validation_index)
             # The slot the emulator pack places this entry in: standalone_path
-            # under --standalone, the pack_structure prefix, the sanitised path.
-            dest = _resolve_destination(
-                file_entry, profile.get("pack_structure"), standalone
-            ) or name
+            # under --standalone, the sanitised path.
+            dest = _resolve_destination(file_entry, standalone) or name
             emu_results.setdefault(dest, []).append((result, required, hle))
 
         for dest, alternatives in emu_results.items():

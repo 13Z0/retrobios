@@ -448,14 +448,18 @@ def validate_cli_modes(args, mode_attrs: list[str]) -> None:
         raise SystemExit(f"Options are mutually exclusive: --{'  --'.join(mode_attrs)}")
 
 
-def read_from_system_dir(file_entry: dict) -> bool:
+def read_from_system_dir(file_entry: dict, standalone: bool = False) -> bool:
     """Whether the emulator reads this entry from the system directory.
 
     A file loaded from the save, content or working directory is not a BIOS:
     no platform lists it, no pack carries it, and the truth model must not
-    ask a platform to declare it.
+    ask a platform to declare it. Two builds can read one file from two
+    places: libretro Dolphin keeps its User tree in the save directory, the
+    standalone app in its own folder, so ``load_from`` can be keyed by build.
     """
     load_from = file_entry.get("load_from", "")
+    if isinstance(load_from, dict):
+        load_from = load_from.get("standalone" if standalone else "libretro", "")
     return not load_from or load_from == "system_dir"
 
 
@@ -478,7 +482,9 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
         mode == "libretro" and is_standalone
     ):
         return True
-    return not read_from_system_dir(file_entry) or bool(file_entry.get("agnostic"))
+    return not read_from_system_dir(file_entry, is_standalone) or bool(
+        file_entry.get("agnostic")
+    )
 
 
 def filter_files_by_mode(files: list[dict], standalone: bool) -> list[dict]:

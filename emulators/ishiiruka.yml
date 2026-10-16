@@ -13,7 +13,10 @@ systems: [nintendo-gamecube, nintendo-wii]
 
 # Ishiiruka is a performance-focused Dolphin fork (custom GPU backends, async shader compilation).
 # BIOS/firmware handling identical to Dolphin 5.0-era code.
-# Libretro core uses "dolphin-emu" subdirectory, not "ishiiruka".
+# Libretro: User is <save>/User, Sys is <system>/dolphin-emu/Sys
+#   (Source/Core/DolphinLibretro/Boot.cpp:43-49). path: is where the libretro
+#   core reads a file (the GC ROMs fall back to Sys), standalone_path: where
+#   the standalone app reads it under its User directory.
 # Core options use "ishiiruka_" prefix (ishiiruka_dsp_hle, ishiiruka_efb_scale, etc.)
 
 pack_structure:
@@ -30,7 +33,8 @@ files:
   # Region-specific, placed in GC/<region>/IPL.bin
   # Checked in User/GC/<region>/ then Sys/GC/<region>/
   - name: "IPL.bin"
-    path: "GC/USA/IPL.bin"
+    path: "dolphin-emu/Sys/GC/USA/IPL.bin"
+    standalone_path: "GC/USA/IPL.bin"
     region: [north-america]
     size: 2097152
     required: false
@@ -39,7 +43,8 @@ files:
     source_ref: "Source/Core/Core/ConfigManager.cpp:876-883, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105"
 
   - name: "IPL.bin"
-    path: "GC/EUR/IPL.bin"
+    path: "dolphin-emu/Sys/GC/EUR/IPL.bin"
+    standalone_path: "GC/EUR/IPL.bin"
     region: [europe]
     size: 2097152
     required: false
@@ -48,7 +53,8 @@ files:
     source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:185"
 
   - name: "IPL.bin"
-    path: "GC/JAP/IPL.bin"
+    path: "dolphin-emu/Sys/GC/JAP/IPL.bin"
+    standalone_path: "GC/JAP/IPL.bin"
     region: [japan]
     size: 2097152
     required: false
@@ -60,7 +66,8 @@ files:
   # Used by DSP LLE for accurate audio. dsp_coef.bin also used by HLE for polyphase resampling.
   # Searched in: User/GC/ then Sys/GC/
   - name: "dsp_rom.bin"
-    path: "GC/dsp_rom.bin"
+    path: "dolphin-emu/Sys/GC/dsp_rom.bin"
+    standalone_path: "GC/dsp_rom.bin"
     size: 8192
     required: false
     hle_fallback: true
@@ -71,7 +78,8 @@ files:
     source_ref: "Source/Core/Common/CommonPaths.h:112, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:142-150, Source/Core/Core/DSP/DSPCore.cpp:48,67, Source/Core/Core/DSP/DSPCore.cpp:38-105"
 
   - name: "dsp_coef.bin"
-    path: "GC/dsp_coef.bin"
+    path: "dolphin-emu/Sys/GC/dsp_coef.bin"
+    standalone_path: "GC/dsp_coef.bin"
     size: 4096
     required: false
     hle_fallback: true
@@ -86,7 +94,8 @@ files:
   # If IPL dump is present, fonts are extracted from it instead (preferred).
   # Loaded from: Sys/GC/
   - name: "font_western.bin"
-    path: "GC/font_western.bin"
+    path: "dolphin-emu/Sys/GC/font_western.bin"
+    standalone_path: "GC/font_western.bin"
     size: 9589
     required: false
     hle_fallback: true
@@ -94,7 +103,8 @@ files:
     source_ref: "Source/Core/Common/CommonPaths.h:109, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:123,193-227"
 
   - name: "font_japanese.bin"
-    path: "GC/font_japanese.bin"
+    path: "dolphin-emu/Sys/GC/font_japanese.bin"
+    standalone_path: "GC/font_japanese.bin"
     size: 303693
     required: false
     hle_fallback: true
@@ -113,6 +123,8 @@ files:
   # Auto-generated/managed by Dolphin's Wii emulation.
   - name: "SYSCONF"
     path: "Wii/shared2/sys/SYSCONF"
+    load_from:
+      libretro: save_dir
     required: false
     hle_fallback: true
     note: "Wii system configuration. Auto-generated, can be imported from NAND backup"
@@ -120,6 +132,8 @@ files:
 
   - name: "setting.txt"
     path: "Wii/title/00000001/00000002/data/setting.txt"
+    load_from:
+      libretro: save_dir
     size: 256
     required: false
     hle_fallback: true
@@ -129,6 +143,8 @@ files:
   # -- Wii SD Card Image --
   - name: "sd.raw"
     path: "Wii/sd.raw"
+    load_from:
+      libretro: save_dir
     required: false
     hle_fallback: true
     note: "Virtual SD card image for Wii homebrew. Auto-created (128MB) if not present"

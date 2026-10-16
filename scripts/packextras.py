@@ -695,7 +695,7 @@ def _collect_emulator_extras(
                 continue
             if file_mode == "libretro" and is_standalone:
                 continue
-            if not read_from_system_dir(f):
+            if not read_from_system_dir(f, is_standalone):
                 continue
             if is_standalone:
                 raw = f.get("standalone_path") or f.get("path") or fname
@@ -943,12 +943,11 @@ def emulator_region_drops(
     region_index = region_mod.build_region_index(dict(selected))
     region_groups: dict[str, list[tuple[str, str]]] = {}
     for emu_name, profile in sorted(selected):
-        structure = profile.get("pack_structure")
         # Decided over what the pack keeps, as on the platform side: an
         # optional winner removed afterwards left its slot empty.
         entries = filter_files_by_mode(profile.get("files", []), standalone)
         for fe in _kept(entries, required_only):
-            dest = _resolve_destination(fe, structure, standalone)
+            dest = _resolve_destination(fe, standalone)
             if dest:
                 group_id = _emulator_region_group(emu_name, profile, fe)
                 region_groups.setdefault(group_id, []).append(

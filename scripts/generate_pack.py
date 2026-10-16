@@ -1303,33 +1303,8 @@ def generate_emulator_pack(
                 db,
                 standalone,
             )
-            # A tree only one build reads follows that build, like a file.
-            for dd in filter_files_by_mode(
-                profile.get("data_directories", []), standalone
-            ):
-                ref_key = dd.get("ref", "")
-                if not ref_key or not data_registry or ref_key not in data_registry:
-                    if ref_key:
-                        data_dir_notices.append(ref_key)
-                    continue
-                entry = data_registry[ref_key]
-                local_cache = entry.get("local_cache", "")
-                if not local_cache or not os.path.isdir(local_cache):
-                    data_dir_notices.append(ref_key)
-                    continue
-                dd_dest = dd.get("destination", "")
-                if pack_structure:
-                    mode_key = "standalone" if standalone else "libretro"
-                    prefix = pack_structure.get(mode_key, "")
-                    if prefix:
-                        dd_dest = f"{prefix}/{dd_dest}" if dd_dest else prefix
-                total_files += _pack_data_tree(
-                    zf, local_cache, dd_dest, seen_destinations, seen_parents, seen_lower
-                )
-
             if not files:
                 print(f"  No files needed for {profile.get('emulator', emu_name)}")
-                continue
 
             # Collect archives as atomic units
             archives: set[str] = set()
@@ -1393,7 +1368,7 @@ def generate_emulator_pack(
                     continue
                 if fe.get("archive"):
                     continue
-                dest = _resolve_destination(fe, pack_structure, standalone)
+                dest = _resolve_destination(fe, standalone)
                 if not dest:
                     continue
                 if region_drops and dest in region_drops:
@@ -1540,6 +1515,33 @@ def generate_emulator_pack(
                 seen_lower.add(dest.lower())
                 packed_at[dest.lower()] = local_path
                 total_files += 1
+
+            # The trees after the files, as in a platform pack: a dump the
+            # profile declares wins over the copy a tree bundles at the same
+            # path (Dolphin's real dsp_rom.bin over Sys/GC's free one).
+            # A tree only one build reads follows that build, like a file.
+            for dd in filter_files_by_mode(
+                profile.get("data_directories", []), standalone
+            ):
+                ref_key = dd.get("ref", "")
+                if not ref_key or not data_registry or ref_key not in data_registry:
+                    if ref_key:
+                        data_dir_notices.append(ref_key)
+                    continue
+                entry = data_registry[ref_key]
+                local_cache = entry.get("local_cache", "")
+                if not local_cache or not os.path.isdir(local_cache):
+                    data_dir_notices.append(ref_key)
+                    continue
+                dd_dest = dd.get("destination", "")
+                if pack_structure:
+                    mode_key = "standalone" if standalone else "libretro"
+                    prefix = pack_structure.get(mode_key, "")
+                    if prefix:
+                        dd_dest = f"{prefix}/{dd_dest}" if dd_dest else prefix
+                total_files += _pack_data_tree(
+                    zf, local_cache, dd_dest, seen_destinations, seen_parents, seen_lower
+                )
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)
     if total_files == 0 and not (missing_files or rejected_files or instruction_files or unsourceable_files):
@@ -1884,7 +1886,6 @@ def generate_md5_pack(
             for fe in system.get("files", []):
                 plat_file_index.setdefault(fe.get("name", "").lower(), []).append(fe)
 
-    emu_pack_structure = None
     emu_display = ""
     if emulator_name and emulators_dir:
         profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
@@ -1899,7 +1900,6 @@ def generate_md5_pack(
             print(f"Error: {exc}", file=sys.stderr)
             return None
         emu_display = profile.get("emulator", emulator_name)
-        emu_pack_structure = profile.get("pack_structure")
         for fe in profile.get("files", []):
             plat_file_index.setdefault(fe.get("name", "").lower(), []).append(fe)
             for alias in fe.get("aliases", []):
@@ -1955,12 +1955,9 @@ def generate_md5_pack(
 
             if matched_fe:
                 if emulator_name:
-                    # Laid out as the emulator pack lays it out: a profile
-                    # without pack_structure still names its path and its
-                    # standalone_path, and --standalone has to reach them.
-                    dest = _resolve_destination(
-                        matched_fe, emu_pack_structure, standalone
-                    )
+                    # Laid out as the emulator pack lays it out: its path and
+                    # its standalone_path, which --standalone has to reach.
+                    dest = _resolve_destination(matched_fe, standalone)
                 else:
                     dest = matched_fe.get("destination", matched_fe.get("name", name))
             elif paths:
