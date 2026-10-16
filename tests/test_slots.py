@@ -598,8 +598,10 @@ class ManifestFollowsTheArbitration(unittest.TestCase):
             config, profiles, db, build_zip_contents_index(db),
             load_data_dir_registry(str(repo / "platforms")),
         )
-        if not overrides:
-            self.skipTest("no contested slot the pack settles on its own")
+        # RetroArch serves a core's own copy at contested slots (ATARIOSB.ROM,
+        # dsi_bios7/9.bin): an arbitration that settles nothing is the
+        # failure, not a reason to skip.
+        self.assertTrue(overrides, "pack_overrides settles no RetroArch slot")
         manifest = generate_pack.generate_manifest(
             "retroarch", str(repo / "platforms"), db, str(repo / "bios"),
             str(repo / "platforms" / "_registry.yml"),
