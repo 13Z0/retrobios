@@ -30,6 +30,21 @@ from __future__ import annotations
 BIOS_CATEGORY = "bios"
 
 
+def platform_slot_index(
+    config: dict, profiles: dict, target_cores: set[str] | None = None
+) -> dict[str, dict]:
+    """The slot index of the emulators a platform runs, nothing else.
+
+    Built over every profile, DuckStation, ePSXe and Rustation ranked the
+    PlayStation BIOS of RomM, whose cores rank none of them, and
+    `--one-per-slot` dropped four images RomM declares.
+    """
+    from common import resolve_platform_cores  # noqa: PLC0415
+
+    cores = resolve_platform_cores(config, profiles, target_cores=target_cores)
+    return build_slot_index({n: profiles[n] for n in cores if n in profiles})
+
+
 def build_slot_index(profiles: dict) -> dict[str, dict]:
     """Map a file key to its slot metadata, keyed by path then name."""
     index: dict[str, dict] = {}

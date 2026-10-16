@@ -40,5 +40,34 @@ class OnlyThePlatformsCores(unittest.TestCase):
             self.assertIn("platform_region_index(", source, module)
 
 
+
+class OnlyThePlatformsCoresRankASlot(unittest.TestCase):
+    """RomM runs beetle_psx and pcsx_rearmed, which rank no PlayStation
+    BIOS; DuckStation's ranks dropped four images RomM declares."""
+
+    PROFILES = {
+        "beetle_psx": {"emulator": "Beetle", "type": "libretro",
+                       "systems": ["sony-playstation"],
+                       "files": [{"name": "scph100.bin"}, {"name": "scph5501.bin"}]},
+        "duckstation": {"emulator": "DuckStation", "type": "standalone",
+                        "systems": ["sony-playstation"],
+                        "files": [{"name": "scph100.bin", "priority": 10},
+                                  {"name": "scph5501.bin", "priority": 5}]},
+    }
+
+    def test_a_foreign_rank_orders_nothing(self):
+        import slot as slot_mod  # noqa: PLC0415
+
+        config = {"cores": ["beetle_psx"], "systems": {"sony-playstation": {"files": []}}}
+        index = slot_mod.platform_slot_index(config, self.PROFILES)
+        self.assertIsNone(index["scph100.bin"]["rank"])
+        self.assertEqual(slot_mod.build_slot_index(self.PROFILES)["scph100.bin"]["rank"], 10)
+
+    def test_the_pack_reads_it(self):
+        source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertNotIn("build_slot_index(", source)
+        self.assertIn("platform_slot_index(", source)
+
+
 if __name__ == "__main__":
     unittest.main()

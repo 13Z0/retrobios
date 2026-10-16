@@ -490,7 +490,8 @@ def _select_variants(
             for sys_id, members in region_groups.items()
         }
         slot_drops, slot_undecidable = slot_mod.resolve_slot_drops(
-            slot_groups, slot_mod.build_slot_index(emu_profiles or {})
+            slot_groups,
+            slot_mod.platform_slot_index(config, emu_profiles or {}, target_cores),
         )
         region_drops = region_drops | slot_drops
         if slot_undecidable:
