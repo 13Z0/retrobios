@@ -284,6 +284,19 @@ class UnreadableReleaseStopsTheScrape(unittest.TestCase):
         ):
             libretro_scraper.Scraper()._fetch_core_metadata()
 
+    def test_a_core_info_file_the_forge_refuses_raises(self):
+        """Read as empty, the core left the result and --compare-db counted
+        none of its firmware missing."""
+        from scraper import coreinfo_scraper  # noqa: PLC0415
+
+        scraper = coreinfo_scraper.Scraper()
+        with mock.patch.object(
+            scraper, "_fetch_info_list", return_value=["mednafen_psx_libretro.info"]
+        ), mock.patch("urllib.request.urlopen", self._refuse), self.assertRaises(
+            ConnectionError
+        ):
+            scraper.fetch_requirements()
+
 
 
 class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):

@@ -228,7 +228,12 @@ class Scraper(BaseScraper):
             raise ConnectionError(f"Failed to list core-info files: {e}") from e
 
     def _fetch_info_file(self, filename: str) -> dict:
-        """Fetch and parse a single .info file."""
+        """Fetch and parse a single .info file.
+
+        A file the listing names and the fetch cannot read is an error: read
+        as empty, the core dropped out of the result and --compare-db
+        counted none of its firmware missing.
+        """
         url = f"{RAW_BASE}/{filename}"
         try:
             req = urllib.request.Request(
@@ -236,9 +241,9 @@ class Scraper(BaseScraper):
             )
             with urllib.request.urlopen(req, timeout=15) as resp:
                 content = resp.read().decode("utf-8")
-            return _parse_info_file(content)
-        except (urllib.error.URLError, urllib.error.HTTPError):
-            return {}
+        except (urllib.error.URLError, TimeoutError) as e:
+            raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+        return _parse_info_file(content)
 
     def fetch_requirements(self) -> list[BiosRequirement]:
         """Fetch firmware requirements from all core .info files."""
