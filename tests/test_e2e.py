@@ -6014,6 +6014,11 @@ struct BurnDriver BurnDrvneogeo = {
             (["--system", "sony-playstation"], ["--refresh-data"], "refuse"),
             (["--from-md5", "d8f1"], ["--refresh-data"], "refuse"),
             (["--platform", "retroarch", "--offline"], ["--refresh-data"], "refuse"),
+            (["--emulator", "dolphin"], ["--no-refresh-data"], "refuse"),
+            (["--system", "sony-playstation"], ["--no-refresh-data"], "refuse"),
+            (["--platform", "retroarch", "--offline"], ["--no-refresh-data"], "refuse"),
+            (["--platform", "retroarch", "--refresh-data"], ["--no-refresh-data"],
+             "refuse"),
             # Only --all chooses among platforms, as verify.py already says.
             (["--platform", "retroarch"], ["--include-archived"], "refuse"),
             (["--emulator", "handy"], ["--include-archived"], "refuse"),

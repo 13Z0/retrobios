@@ -196,6 +196,7 @@ would have loaded.
 - `--source {platform,truth,full}`: select file source (platform YAML only, emulator profiles only, or both)
 - `--all-variants`: generate all 6 combinations of source x required_only
 - `--refresh-data`: force re-download all data directories before packing
+- `--no-refresh-data`: pack the data directories as cached, still fetching release assets (what `pipeline.py` does after its own refresh step)
 
 How regions are ordered, what a slot is and what each narrowing adds to the
 pack name: [region filtering](advanced-usage.md#region-filtering).

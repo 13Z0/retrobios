@@ -1765,6 +1765,42 @@ class ReleaseAssetsMatchTheCollection(unittest.TestCase):
         self.assertIn("check_release_assets.................... SKIPPED", printed)
 
 
+class OneRefreshPerOnlineRun(unittest.TestCase):
+    """An online run refreshed the data trees at step 2, again in the pack
+    build and again in the manifest build: a moving tree (fbneo-cheats on
+    master) could change between the two, and the pack and the manifest
+    described different revisions."""
+
+    def test_the_builds_reuse_step_twos_trees(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        from scripts import pipeline
+
+        commands: dict[str, list[str]] = {}
+
+        def record(cmd, label):
+            commands[label] = cmd
+            return True, ""
+
+        # A scratch output directory: step 4 purges the ZIPs of the one it
+        # is given, and this run must never touch dist/.
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as out, \
+                mock.patch.object(pipeline, "run", record), \
+                mock.patch.object(
+                    sys, "argv", ["pipeline.py", "--skip-docs", "--output-dir", out]
+                ), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                self.assertRaises(SystemExit):
+            pipeline.main()
+        self.assertIn("2/8 refresh data directories", commands)
+        for label in ("4/8 generate packs", "4b/8 generate install manifests"):
+            with self.subTest(step=label):
+                self.assertIn("--no-refresh-data", commands[label])
+                self.assertNotIn("--offline", commands[label])
+
+
 class PreservedBytesAreNeverNormalised(unittest.TestCase):
     """git must not rewrite a preserved file's line endings.
 

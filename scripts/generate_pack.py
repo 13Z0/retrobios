@@ -2553,16 +2553,20 @@ def _refuse_refresh_data(args, parser) -> None:
     Elsewhere the cache on disk was packed as it stood, and --offline wins
     over the refresh without a word.
     """
-    if not args.refresh_data:
-        return
-    for flag, on in (
-        ("--offline", args.offline),
-        ("--emulator", args.emulator),
-        ("--system", args.system and not (args.platform or args.all)),
-        ("--from-md5", args.from_md5 or args.from_md5_file),
-    ):
-        if on:
-            parser.error(f"--refresh-data is incompatible with {flag}")
+    if args.refresh_data and args.no_refresh_data:
+        parser.error("--refresh-data is incompatible with --no-refresh-data")
+    for name, given in (("--refresh-data", args.refresh_data),
+                        ("--no-refresh-data", args.no_refresh_data)):
+        if not given:
+            continue
+        for flag, on in (
+            ("--offline", args.offline),
+            ("--emulator", args.emulator),
+            ("--system", args.system and not (args.platform or args.all)),
+            ("--from-md5", args.from_md5 or args.from_md5_file),
+        ):
+            if on:
+                parser.error(f"{name} is incompatible with {flag}")
 
 
 def _refuse_include_archived(args, parser) -> None:
@@ -2657,6 +2661,7 @@ def _given_flags(args) -> set[str]:
         "--list-targets": args.list_targets,
         "--include-archived": args.include_archived,
         "--refresh-data": args.refresh_data,
+        "--no-refresh-data": args.no_refresh_data,
     }
     return {flag for flag, on in flags.items() if on}
 
@@ -2696,6 +2701,11 @@ def main():
         "--refresh-data",
         action="store_true",
         help="Force re-download all data directories",
+    )
+    parser.add_argument(
+        "--no-refresh-data",
+        action="store_true",
+        help="Pack the data directories as cached, still fetching release assets",
     )
     parser.add_argument("--list", action="store_true", help="List available platforms")
     parser.add_argument(
@@ -2918,7 +2928,7 @@ def main():
         return
 
     data_registry = load_data_dir_registry(args.platforms_dir)
-    if data_registry and not args.offline:
+    if data_registry and not args.offline and not args.no_refresh_data:
         from refresh_data_dirs import load_registry, refresh_all
 
         registry = load_registry(os.path.join(args.platforms_dir, "_data_dirs.yml"))

@@ -523,6 +523,10 @@ def main():
             pack_cmd.append("--include-archived")
         if args.offline:
             pack_cmd.append("--offline")
+        else:
+            # Step 2 refreshed the trees once: refreshing again here let the
+            # pack and the manifest describe two revisions of a moving tree.
+            pack_cmd.append("--no-refresh-data")
         if args.target:
             pack_cmd.extend(["--target", args.target])
         if args.source != "full":
@@ -550,6 +554,10 @@ def main():
             manifest_cmd.append("--include-archived")
         if args.offline:
             manifest_cmd.append("--offline")
+        else:
+            # Step 2 refreshed the trees once: refreshing again here let the
+            # pack and the manifest describe two revisions of a moving tree.
+            manifest_cmd.append("--no-refresh-data")
         if args.target:
             manifest_cmd.extend(["--target", args.target])
         ok, _ = run(manifest_cmd, "4b/8 generate install manifests")
