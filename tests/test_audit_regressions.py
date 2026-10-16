@@ -2161,6 +2161,26 @@ class ContributorsSurviveAFailedRequest(unittest.TestCase):
         )
 
 
+class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
+    """A crash while serializing left a truncated db_cache.json behind, and
+    the next run rehashed the whole collection from scratch."""
+
+    def test_a_failed_save_keeps_the_previous_cache(self):
+        import json
+        from unittest import mock
+
+        from scripts import generate_db
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = os.path.join(directory, "cache", "db_cache.json")
+            generate_db.save_cache(path, {"a": 1})
+            with mock.patch.object(json, "dumps", side_effect=TypeError("miscomputed")):
+                with self.assertRaises(TypeError):
+                    generate_db.save_cache(path, {"a": 2})
+            self.assertEqual(generate_db.load_cache(path), {"a": 1})
+            self.assertEqual(os.listdir(os.path.dirname(path)), ["db_cache.json"])
+
+
 class KidVidTapesStayWithTheContent(unittest.TestCase):
     """Stella opens its KidVid tapes by bare name (stella2014, from the
     working directory) or from its base directory (stella2023, the content

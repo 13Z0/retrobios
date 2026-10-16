@@ -29,6 +29,7 @@ from common import (
     require_yaml,
     source_yaml_paths,
     write_if_changed,
+    write_text_atomic,
     yaml_load,
 )
 
@@ -258,11 +259,14 @@ def load_cache(cache_path: str) -> dict:
         return {}
 
 
-def save_cache(cache_path: str, cache: dict):
-    """Save cache to disk."""
+def save_cache(cache_path: str, cache: dict) -> None:
+    """Save the cache whole or not at all.
+
+    Written in place, a crash while serializing left a truncated file that
+    the next run read as empty and rehashed the collection from scratch.
+    """
     os.makedirs(os.path.dirname(cache_path), exist_ok=True)
-    with open(cache_path, "w") as f:
-        json.dump(cache, f)
+    write_text_atomic(cache_path, json.dumps(cache))
 
 
 def _load_gitignored_large_files() -> set[str]:
