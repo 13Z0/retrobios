@@ -893,7 +893,12 @@ def platform_region_groups(
                 extra.get("source_path", ""),
             )
         ] = dest
-        for group_id in extra_region_groups(extra):
+        # A file a filename-agnostic scan accepts by shape competes only if
+        # its seed names a region: PCSX2 picks no PS2 BIOS by territory, and
+        # looked up by name its scph50006 took DuckStation's [japan], which
+        # describes DuckStation's own PS1-on-PS2 choice.
+        competes = not extra.get("agnostic_scan") or extra.get("region")
+        for group_id in extra_region_groups(extra) if competes else ():
             groups.setdefault(group_id, []).append((dest, name))
         if extras_out is not None:
             extras_out.append(extra)
