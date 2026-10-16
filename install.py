@@ -1234,7 +1234,20 @@ def _validate_manifest(data: object, plat: str) -> dict:
             or not all(isinstance(core, str) for core in cores)
         ):
             raise ValueError(f"invalid omitted cores list for {dest}")
-        for field in SELECTION_FIELDS:
+        claims = entry.get("alternatives", [])
+        if not isinstance(claims, list) or len(claims) > MAX_SELECTION_TAGS:
+            raise ValueError(f"invalid omitted alternatives for {dest}")
+        for claim in claims:
+            claim_cores = claim.get("cores") if isinstance(claim, dict) else None
+            if (
+                not isinstance(claim, dict)
+                or set(claim) != {"cores"}
+                or not isinstance(claim_cores, list)
+                or not claim_cores
+                or not all(isinstance(core, str) for core in claim_cores)
+            ):
+                raise ValueError(f"invalid omitted alternative for {dest}")
+        for field in (*SELECTION_FIELDS, "declared_in"):
             _check_tags(entry, field, dest)
     declared_total_omitted = data.get("total_omitted")
     if (

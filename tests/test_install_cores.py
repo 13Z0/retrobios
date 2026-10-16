@@ -192,6 +192,58 @@ class TheBoundaryBoundsAlternatives(unittest.TestCase):
             install._validate_manifest(manifest, "retroarch")
 
 
+class APlatformOmissionKeepsItsClaim(unittest.TestCase):
+    """A file the platform declares and a core reads, absent from the
+    collection, was recorded under the core alone: RetroPie's dsi_nand.bin
+    went to melonds, and a target without melonds lost the omission its
+    pack reports for nintendo-ds."""
+
+    OMISSION = {
+        "dest": "dsi_nand.bin", "name": "dsi_nand.bin", "system": "nintendo-ds",
+        "required": True, "reason": "not_found", "cores": None,
+        "systems": ["nintendo-ds", "nintendo-dsi"], "declared_in": ["nintendo-ds"],
+        "alternatives": [{"cores": ["melonds"]}],
+    }
+    MANIFEST = {
+        "files": [], "omitted_files": [OMISSION],
+        "core_names": {"melonds": ["melonds"], "desmume": ["desmume"]},
+        "system_cores": {"nintendo-ds": ["desmume"], "nintendo-dsi": ["melonds"]},
+    }
+
+    def test_the_declaring_system_keeps_it(self):
+        _, omitted = install.narrow_to_cores(self.MANIFEST, ["desmume"])
+        self.assertEqual(omitted, [self.OMISSION])
+
+    def test_a_dropped_system_falls_to_the_claiming_core(self):
+        _, omitted = install.narrow_to_cores(self.MANIFEST, ["melonds"])
+        self.assertEqual([o["cores"] for o in omitted], [["melonds"]])
+        _, omitted = install.narrow_to_cores(self.MANIFEST, ["mgba"])
+        self.assertEqual(omitted, [])
+
+    def test_the_generator_files_the_core_behind_the_platform(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack as gp
+
+        held = {"cores": None}
+        self.assertTrue(gp._claim_platform_omission(held, "melonds"))
+        self.assertTrue(gp._claim_platform_omission(held, "melonds"))
+        self.assertEqual(held["alternatives"], [{"cores": ["melonds"]}])
+        self.assertFalse(gp._claim_platform_omission({"cores": ["x"]}, "melonds"))
+        self.assertFalse(gp._claim_platform_omission(None, "melonds"))
+
+    def test_the_boundary_takes_only_core_names(self):
+        manifest = {"manifest_version": 2, "platform": "retroarch", "files": [],
+                    "omitted_files": [self.OMISSION]}
+        install._validate_manifest(manifest, "retroarch")
+        for claims in ([{"cores": []}], [{"cores": ["x"], "sha1": "a" * 40}],
+                       ["melonds"], [5], {"cores": ["x"]}):
+            bad = {**self.OMISSION, "alternatives": claims}
+            with self.subTest(claims=claims), self.assertRaises(ValueError):
+                install._validate_manifest(
+                    {**manifest, "omitted_files": [bad]}, "retroarch"
+                )
+
+
 class RefusedBeforeAnyInstall(unittest.TestCase):
     def test_a_platform_shipping_its_cores_stops_the_run_first(self):
         tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))

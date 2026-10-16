@@ -257,6 +257,36 @@
           "priority": {
             "description": "The rank the code searches the file at, lower first: a world file withdraws an unmatched regional one only when it ranks no worse.",
             "type": "integer"
+          },
+          "declared_in": {
+            "description": "The platform systems declaring the file, when fewer than `systems`, which also names the systems whose cores read it there.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "alternatives": {
+            "description": "Cores claiming this destination behind the platform's own declaration, in the order the pack builder tries them; a narrowing that drops every declaring system takes the first whose cores remain.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "cores"
+              ],
+              "properties": {
+                "cores": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              }
+            }
           }
         }
       }

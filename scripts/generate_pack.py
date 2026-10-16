@@ -3231,14 +3231,17 @@ def _manifest_core_entries(
         )
         if status in ("not_found", "external", "user_provided") or not local_path:
             source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
-            systems = _extra_system_ids(fe)
-            record_omission(
-                full_dest,
-                fe,
-                systems[0] if systems else "",
-                status,
-                [source_emu] if source_emu else [],
-            )
+            if not _claim_platform_omission(
+                omitted_by_destination.get(full_dest), source_emu
+            ):
+                systems = _extra_system_ids(fe)
+                record_omission(
+                    full_dest,
+                    fe,
+                    systems[0] if systems else "",
+                    status,
+                    [source_emu] if source_emu else [],
+                )
             continue
         # The copy the emulator accepts, as the pack ships it.
         local_path, _disagreement = validated_choice(
@@ -3259,11 +3262,14 @@ def _manifest_core_entries(
             selection.fields(dest, fe.get("name", "")),
         )
         if entry is None:
-            systems = _extra_system_ids(fe)
-            record_omission(
-                full_dest, fe, systems[0] if systems else "", "not_found",
-                [source_emu] if source_emu else [],
-            )
+            if not _claim_platform_omission(
+                omitted_by_destination.get(full_dest), source_emu
+            ):
+                systems = _extra_system_ids(fe)
+                record_omission(
+                    full_dest, fe, systems[0] if systems else "", "not_found",
+                    [source_emu] if source_emu else [],
+                )
             if file_size:
                 pack_only_sizes.append(file_size)
             continue
@@ -3283,6 +3289,23 @@ def _manifest_core_entries(
             seen_lower.add(full_dest.lower())
 
     return total_size
+
+
+def _claim_platform_omission(held: dict | None, emulator: str) -> bool:
+    """Record a core's claim on a destination the platform already omits.
+
+    The platform's own omission stands while one of its declaring systems
+    does; a pack built without them falls to the first core claiming the
+    path, as for a file present. Overwriting the record lost the platform's
+    claim: a target without that core dropped an omission its pack reports.
+    """
+    if held is None or held.get("cores") is not None:
+        return False
+    if emulator:
+        claims = held.setdefault("alternatives", [])
+        if {"cores": [emulator]} not in claims:
+            claims.append({"cores": [emulator]})
+    return True
 
 
 def _manifest_selection(
@@ -3599,6 +3622,16 @@ def generate_manifest(
                 entry, claims, db, bios_dir, zip_contents, offline, required_only,
                 manifest_validation, manifest_owners, dest, dest, repo_root,
             )
+    # A platform omission narrows like a platform file: by the systems
+    # declaring it, which can be fewer than the ones whose cores read it.
+    for full_dest, omission in omitted_by_destination.items():
+        declared = declared_by.get(full_dest, set())
+        if (
+            omission.get("cores") is None
+            and declared
+            and declared != set(omission.get("systems") or [])
+        ):
+            omission["declared_in"] = sorted(declared)
 
     # Phase 3: data directories. The installer does not fetch them, so they
     # stay out of the file list; the pack carries them, so they count toward
