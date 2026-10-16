@@ -278,5 +278,18 @@ class GeargrafxCards(_Probe):
                 self.assertFalse(self.accepts("geargrafx", name, b"\1" * (size - 1)))
 
 
+class MgbaGameBoyBootRoms(_Probe):
+    """The libretro port hands the boot ROM to the core and GBReset drops one
+    whose CRC32 GBIsCompatibleBIOS does not list for the model
+    (src/gb/gb.c:50-63, 605-628, 661-665 at 7a12d6d). The profile declared
+    the crc32 check with no value."""
+
+    def test_an_unknown_boot_rom_is_dropped(self):
+        for name, size in (("gb_bios.bin", 256), ("sgb_bios.bin", 256),
+                           ("gbc_bios.bin", 2304)):
+            with self.subTest(name=name):
+                self.assertFalse(self.accepts("mgba", name, b"\0" * size))
+
+
 if __name__ == "__main__":
     unittest.main()

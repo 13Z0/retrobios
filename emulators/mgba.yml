@@ -66,9 +66,10 @@ files:
     system: nintendo-gb
     required: false
     size: 256  # 256 B (0x100)
+    crc32: ["59c8598e", "c2f5cc97", "e6920754", "ec8a83b9", "53d0dd63", "66cc6d94", "908ba8de", "783e69c2"]
     validation: [crc32]
     note: "DMG/MGB boot ROM. Scrolling Nintendo logo. Skipped if absent."
-    source_ref: "src/platform/libretro/libretro.c:2104"
+    source_ref: "src/platform/libretro/libretro.c:2104, src/platform/libretro/libretro.c:2111-2116, src/gb/gb.c:50-63, src/gb/gb.c:605-628, src/gb/gb.c:661-665"
 
   # -------------------------------------------------------
   # Game Boy Color - boot ROM (optional, skip fallback)
@@ -77,9 +78,10 @@ files:
     system: nintendo-gbc
     required: false
     size: 2304  # 2304 B (0x900)
+    crc32: ["41884e46", "e8ef5318", "e95dc95d", "ffd6b0f1", "570337ea", "69236128"]
     validation: [crc32]
     note: "CGB boot ROM. Used for CGB, AGB (GBA in GB mode), and SCGB models."
-    source_ref: "src/platform/libretro/libretro.c:2097"
+    source_ref: "src/platform/libretro/libretro.c:2097, src/platform/libretro/libretro.c:2111-2116, src/gb/gb.c:50-63, src/gb/gb.c:605-628, src/gb/gb.c:661-665"
 
   # -------------------------------------------------------
   # Super Game Boy - boot ROM (optional, skip fallback)
@@ -88,9 +90,10 @@ files:
     system: nintendo-sgb
     required: false
     size: 256  # 256 B (0x100)
+    crc32: ["ec8a83b9", "53d0dd63", "59c8598e", "c2f5cc97", "e6920754", "66cc6d94", "908ba8de", "783e69c2"]
     validation: [crc32]
     note: "SGB boot ROM. SGB2 maps here in standalone (src/gb/core.c:655) but falls to gb_bios.bin in libretro."
-    source_ref: "src/platform/libretro/libretro.c:2100"
+    source_ref: "src/platform/libretro/libretro.c:2100, src/platform/libretro/libretro.c:2111-2116, src/gb/gb.c:50-63, src/gb/gb.c:605-628, src/gb/gb.c:661-665"
 
 platform_details:
   gba:
