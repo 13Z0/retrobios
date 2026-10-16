@@ -142,6 +142,40 @@ class ManifestStatesWhatThePackHolds(PackCountFixture):
             ),
         )
 
+    def test_a_file_the_user_provides_counts_its_instructions(self):
+        """The pack writes INSTRUCTIONS_<name>.txt in a user_provided slot;
+        the manifest counted none, so the archive held one member more than
+        pack_files said and release_record refused it."""
+        platform = {**PLATFORM, "systems": {"demo-system": {
+            **PLATFORM["systems"]["demo-system"],
+            "files": PLATFORM["systems"]["demo-system"]["files"] + [
+                {"name": "keys.bin", "destination": "keys.bin",
+                 "storage": "user_provided", "instructions": "Dump your own."},
+            ],
+        }}}
+        (self.platforms / "demo.yml").write_text(yaml.dump(platform))
+        common._platform_config_cache.clear()
+        self.addCleanup(common._platform_config_cache.clear)
+        out = self.root / "dist"
+        out.mkdir()
+        zip_path = builder.generate_pack(
+            "demo", str(self.platforms), self.db, str(self.bios), str(out),
+            emulators_dir=str(self.emulators),
+            emu_profiles=self.profiles, data_registry=self.registry,
+            offline=True,
+        )
+        with zipfile.ZipFile(zip_path) as archive:
+            members = archive.infolist()
+        self.assertIn("INSTRUCTIONS_keys.bin.txt", {m.filename for m in members})
+        manifest = self._manifest()
+        self.assertEqual(
+            manifest["pack_files"], len({m.filename for m in members} | {"manifest.json"})
+        )
+        self.assertEqual(
+            manifest["pack_size"],
+            sum(m.file_size for m in members if m.filename not in builder.PACK_DOCUMENTS),
+        )
+
     def test_the_installer_count_is_left_alone(self):
         """install.py refuses a manifest whose total is not its list."""
         manifest = self._manifest()

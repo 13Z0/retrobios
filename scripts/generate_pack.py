@@ -3704,6 +3704,18 @@ def generate_manifest(
                         "user_provided",
                         None,
                     )
+                    # The pack writes the instructions in the slot's place
+                    # and holds it: one more member than the files listed.
+                    instructions = file_entry.get(
+                        "instructions", "Please provide this file manually."
+                    )
+                    pack_only_sizes.append(len(
+                        f"File needed: {file_entry['name']}\n\n{instructions}\n".encode()
+                    ))
+                    seen_destinations.add(dedup_key)
+                    _register_path(dedup_key, seen_destinations, seen_parents)
+                    if case_insensitive:
+                        seen_lower.add(dedup_key.lower())
                     continue
 
                 local_path, status = settle(
