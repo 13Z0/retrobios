@@ -678,6 +678,45 @@ class RommExport(unittest.TestCase):
         self.assertTrue(all(k.startswith("psx:") for k in data))
 
 
+class BizhawkExport(unittest.TestCase):
+    SHA1 = "a" * 40
+
+    def _export(self, name, call):
+        scraped = {"systems": {"nintendo-ds": {"native_id": "NDS", "files": [{
+            "name": name, "destination": name, "native_system": "NDS",
+        }]}}}
+        truth = {"systems": {"nintendo-ds": {"files": [{
+            "name": name, "path": name, "sha1": self.SHA1,
+            "required": True, "_cores": ["melonds"],
+        }]}}}
+        systems, report = build_native_model(truth, scraped)
+        (entry,) = systems["NDS"].files
+        self.assertIn("sha1", entry.filled)
+        exporter = discover_exporters()["bizhawk"]()
+        source = f"class FirmwareDatabase {{\n    {call}\n}}\n"
+        produced = exporter.render(
+            systems, report, {"FirmwareDatabase.cs": source}, None
+        )["FirmwareDatabase.cs"]
+        return exporter, entry, source, produced
+
+    def test_a_fill_a_dummy_call_cannot_hold_is_not_counted(self):
+        """BizHawk states DSi_Firmware.bin with SHA1Checksum.Dummy."""
+        exporter, entry, source, produced = self._export(
+            "DSi_Firmware.bin",
+            'FirmwareAndOption(SHA1Checksum.Dummy, 131072, "NDS", "firmwarei", '
+            '"DSi_Firmware.bin", "DSi Firmware");',
+        )
+        self.assertEqual(produced, source)
+        self.assertFalse(exporter.states(entry, "sha1"))
+
+    def test_a_fill_the_call_holds_is_counted(self):
+        exporter, entry, _, produced = self._export(
+            "bios.bin", f'File("{"0" * 40}", 4096, "bios.bin", "BIOS");'
+        )
+        self.assertIn(self.SHA1.upper(), produced)
+        self.assertTrue(exporter.states(entry, "sha1"))
+
+
 class RetrodeckExport(unittest.TestCase):
     A, B, C = "a" * 32, "b" * 32, "c" * 32
 

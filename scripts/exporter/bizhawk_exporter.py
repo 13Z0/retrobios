@@ -61,10 +61,14 @@ class Exporter(BaseExporter):
         return True
 
     def states(self, fe: NativeFile, field_name: str) -> bool:
-        """A name that resolves to several SHA1s is left alone, so its
-        correction is not a change the database receives."""
-        touchable = getattr(self, "_touchable", None)
-        if field_name == "sha1" and touchable is not None and fe.name.casefold() not in touchable:
+        """Only a call the render rewrote receives the change.
+
+        A name that resolves to several SHA1s is left alone, and the entries
+        BizHawk declares without a hash are FirmwareAndOption(SHA1Checksum
+        .Dummy, ...) calls, which hold no hash to replace.
+        """
+        written = getattr(self, "_written", None)
+        if field_name in ("sha1", "size") and written is not None and fe.name.casefold() not in written:
             return False
         return super().states(fe, field_name)
 
@@ -114,7 +118,7 @@ class Exporter(BaseExporter):
             )
 
         index = self._unambiguous(systems)
-        self._touchable = set(index)
+        self._written: set[str] = set()
 
         def commented_out(text: str, position: int) -> bool:
             """Whether the call sits on a line the compiler never sees.
@@ -137,6 +141,7 @@ class Exporter(BaseExporter):
             groups = list(match.groups())
             groups[1] = sha1
             groups[3] = str(size)
+            self._written.add(name.casefold())
             return "".join(groups)
 
         patched = _FILE_CALL.sub(lambda m: rewrite(m, 6), source)
