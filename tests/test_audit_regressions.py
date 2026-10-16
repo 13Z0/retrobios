@@ -1757,6 +1757,25 @@ class AMissingDependencyStopsTheBuild(unittest.TestCase):
         self.assertEqual(offenders, [])
 
 
+class TestsCleanUpTheirScratch(unittest.TestCase):
+    """Sixteen classes called mkdtemp() and kept the directory: each suite
+    run left about 400 of them on the RAM-backed /tmp."""
+
+    def test_every_class_that_makes_a_directory_removes_it(self):
+        offenders = []
+        for path in sorted((ROOT / "tests").glob("test_*.py")):
+            source = path.read_text(encoding="utf-8")
+            for node in ast.parse(source).body:
+                if not isinstance(node, ast.ClassDef):
+                    continue
+                body = ast.get_source_segment(source, node) or ""
+                if "mkdtemp(" in body and not any(
+                    word in body for word in ("rmtree", "addCleanup", "tearDown")
+                ):
+                    offenders.append(f"{path.name}:{node.name}")
+        self.assertEqual(offenders, [])
+
+
 class PipelineReportsWhatItDid(unittest.TestCase):
     """A step that did not run must not be summarised as OK.
 

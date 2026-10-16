@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -20,9 +21,22 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from common import ArtifactLockBusy, artifact_lock, hold_artifact_lock  # noqa: E402
 
 
+def _tempdir(test: unittest.TestCase) -> str:
+    """A scratch directory under the repository's tmp/, removed after the test.
+
+    The system temp directory is a RAM disk here, and directories left by
+    every run piled up on it.
+    """
+    scratch = REPO_ROOT / "tmp"
+    scratch.mkdir(exist_ok=True)
+    path = tempfile.mkdtemp(dir=str(scratch))
+    test.addCleanup(shutil.rmtree, path, True)
+    return path
+
+
 class ArtifactLockTest(unittest.TestCase):
     def setUp(self):
-        self.dir = tempfile.mkdtemp()
+        self.dir = _tempdir(self)
 
     def test_writer_excludes_writer(self):
         with artifact_lock(self.dir):
@@ -55,7 +69,7 @@ class ArtifactLockTest(unittest.TestCase):
             pass
 
     def test_separate_directories_do_not_contend(self):
-        other = tempfile.mkdtemp()
+        other = _tempdir(self)
         with artifact_lock(self.dir):
             with artifact_lock(other):
                 pass
@@ -70,7 +84,7 @@ class PackLockCliTest(unittest.TestCase):
     """generate_pack and pipeline must refuse a directory held elsewhere."""
 
     def setUp(self):
-        self.dir = tempfile.mkdtemp()
+        self.dir = _tempdir(self)
 
     def _run(self, argv: list[str]) -> subprocess.CompletedProcess:
         return subprocess.run(
@@ -162,7 +176,7 @@ class HeldLockTest(unittest.TestCase):
     check reported every platform SKIP and passed."""
 
     def setUp(self):
-        self.dir = tempfile.mkdtemp()
+        self.dir = _tempdir(self)
 
     def _child_locks(self, env: dict) -> subprocess.CompletedProcess:
         code = (

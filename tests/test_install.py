@@ -26,6 +26,19 @@ install = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(install)
 
 
+def _tempdir(test: unittest.TestCase) -> str:
+    """A scratch directory under the repository's tmp/, removed after the test.
+
+    The system temp directory is a RAM disk here, and directories left by
+    every run piled up on it.
+    """
+    scratch = REPO_ROOT / "tmp"
+    scratch.mkdir(exist_ok=True)
+    path = tempfile.mkdtemp(dir=str(scratch))
+    test.addCleanup(shutil.rmtree, path, True)
+    return path
+
+
 class TestShellUnquote(unittest.TestCase):
     def test_plain_value(self):
         self.assertEqual(install._shell_unquote("/userdata/bios"), "/userdata/bios")
@@ -329,7 +342,7 @@ class TestFreeSpaceGuard(unittest.TestCase):
     """The run refuses before writing when the volume cannot hold it."""
 
     def setUp(self):
-        self.root = Path(tempfile.mkdtemp())
+        self.root = Path(_tempdir(self))
         self.real = install.shutil.disk_usage
 
     def tearDown(self):
@@ -413,7 +426,7 @@ class TestAndroidDetection(unittest.TestCase):
         self.assertEqual(install.detect_os(), "android")
 
     def test_default_directory_found_without_a_config(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         (storage / "RetroArch" / "system").mkdir(parents=True)
         os.environ["EXTERNAL_STORAGE"] = str(storage)
         self.assertEqual(
@@ -423,7 +436,7 @@ class TestAndroidDetection(unittest.TestCase):
         shutil.rmtree(storage)
 
     def test_config_default_resolves_against_the_retroarch_root(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         files = storage / "Android" / "data" / "com.retroarch.aarch64" / "files"
         files.mkdir(parents=True)
         (files / "retroarch.cfg").write_text('system_directory = "default"\n')
@@ -435,7 +448,7 @@ class TestAndroidDetection(unittest.TestCase):
         shutil.rmtree(storage)
 
     def test_custom_system_directory_wins(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         files = storage / "Android" / "data" / "com.retroarch" / "files"
         files.mkdir(parents=True)
         custom = storage / "Emulation" / "bios"
@@ -445,13 +458,13 @@ class TestAndroidDetection(unittest.TestCase):
         shutil.rmtree(storage)
 
     def test_nothing_found_on_a_bare_device(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         os.environ["EXTERNAL_STORAGE"] = str(storage)
         self.assertEqual(install._detect_android(), [])
         shutil.rmtree(storage)
 
     def test_detect_platforms_routes_android(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         (storage / "RetroArch" / "system").mkdir(parents=True)
         os.environ["EXTERNAL_STORAGE"] = str(storage)
         self.assertEqual(
@@ -465,7 +478,7 @@ class TestAndroidDetection(unittest.TestCase):
         self.assertIn("/storage/emulated/0/RetroArch/system", hint)
 
     def test_named_platform_falls_back_to_shared_storage(self):
-        storage = Path(tempfile.mkdtemp())
+        storage = Path(_tempdir(self))
         os.environ["EXTERNAL_STORAGE"] = str(storage)
         self.assertEqual(
             install._default_dest("android", "retroarch"),
@@ -487,7 +500,7 @@ class TestLaunchboxDetection(unittest.TestCase):
     """LaunchBox references its emulators in Data/Emulators.xml."""
 
     def _make_launchbox(self, app_path: str, title: str = "Retroarch"):
-        root = Path(tempfile.mkdtemp())
+        root = Path(_tempdir(self))
         data = root / "LaunchBox" / "Data"
         data.mkdir(parents=True)
         xml = data / "Emulators.xml"
@@ -512,7 +525,7 @@ class TestLaunchboxDetection(unittest.TestCase):
         )
 
     def test_absolute_application_path(self):
-        emu_dir = Path(tempfile.mkdtemp()) / "RetroArch"
+        emu_dir = Path(_tempdir(self)) / "RetroArch"
         emu_dir.mkdir(parents=True)
         root, xml = self._make_launchbox(str(emu_dir / "retroarch.exe"))
         self.assertEqual(
@@ -528,7 +541,7 @@ class TestLaunchboxDetection(unittest.TestCase):
         self.assertIsNone(install._launchbox_retroarch_system_dir(xml))
 
     def test_stale_entry_before_installed_one(self):
-        root = Path(tempfile.mkdtemp())
+        root = Path(_tempdir(self))
         data = root / "LaunchBox" / "Data"
         data.mkdir(parents=True)
         ra_dir = root / "LaunchBox" / "Emulators" / "RetroArch"
@@ -555,7 +568,7 @@ class TestLaunchboxDetection(unittest.TestCase):
         self.assertIsNone(
             install._launchbox_retroarch_system_dir(Path("/nonexistent/Emulators.xml"))
         )
-        root = Path(tempfile.mkdtemp())
+        root = Path(_tempdir(self))
         bad = root / "Emulators.xml"
         bad.write_text("not xml at all <<<")
         self.assertIsNone(install._launchbox_retroarch_system_dir(bad))
@@ -565,7 +578,7 @@ class TestRetroarchPathExpansion(unittest.TestCase):
     """RetroArch abbreviates paths with '~' and ':' in its config."""
 
     def _cfg(self, value: str) -> Path:
-        app_dir = Path(tempfile.mkdtemp())
+        app_dir = Path(_tempdir(self))
         (app_dir / "retroarch.cfg").write_text(f'system_directory = "{value}"\n')
         return app_dir
 
@@ -592,7 +605,7 @@ class TestRetroarchPathExpansion(unittest.TestCase):
 
     def test_application_dir_overrides_config_dir(self):
         app_dir = self._cfg(":\\system")
-        elsewhere = Path(tempfile.mkdtemp())
+        elsewhere = Path(_tempdir(self))
         self.assertEqual(
             install._parse_retroarch_system_dir(
                 app_dir / "retroarch.cfg", elsewhere
@@ -601,7 +614,7 @@ class TestRetroarchPathExpansion(unittest.TestCase):
         )
 
     def test_absolute_path_untouched(self):
-        target = Path(tempfile.mkdtemp()) / "bios"
+        target = Path(_tempdir(self)) / "bios"
         app_dir = self._cfg(str(target))
         self.assertEqual(
             install._parse_retroarch_system_dir(app_dir / "retroarch.cfg"), target
@@ -620,7 +633,7 @@ class TestLaunchboxRoot(unittest.TestCase):
 
     def test_shortcut_target_is_read(self):
         # Byte layout of the shortcut a real install writes
-        lnk = Path(tempfile.mkdtemp()) / "LaunchBox.lnk"
+        lnk = Path(_tempdir(self)) / "LaunchBox.lnk"
         lnk.write_bytes(
             b"L\x00\x00\x00\x01\x14\x02\x00\x00\x00\x00\x00\xc0\x00\x00\x00"
             b"\x00\x00\x00\x46" + b"\x00" * 8
@@ -633,15 +646,15 @@ class TestLaunchboxRoot(unittest.TestCase):
         )
 
     def test_shortcut_without_target_is_ignored(self):
-        lnk = Path(tempfile.mkdtemp()) / "LaunchBox.lnk"
+        lnk = Path(_tempdir(self)) / "LaunchBox.lnk"
         lnk.write_bytes(b"L\x00\x00\x00 no target here ")
         self.assertIsNone(install._lnk_target(lnk, "LaunchBox.exe"))
 
     def test_shortcut_pointing_elsewhere_falls_back(self):
         # A stale shortcut must not win over a real installation
-        userprofile = Path(tempfile.mkdtemp())
+        userprofile = Path(_tempdir(self))
         root = self._make_root(userprofile / "LaunchBox")
-        appdata = Path(tempfile.mkdtemp())
+        appdata = Path(_tempdir(self))
         lnk_dir = (
             appdata / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "LaunchBox"
         )
@@ -654,9 +667,9 @@ class TestLaunchboxRoot(unittest.TestCase):
             self.assertEqual(install.launchbox_root("windows"), root)
 
     def test_falls_back_to_userprofile(self):
-        userprofile = Path(tempfile.mkdtemp())
+        userprofile = Path(_tempdir(self))
         root = self._make_root(userprofile / "LaunchBox")
-        env = {"APPDATA": str(Path(tempfile.mkdtemp())), "USERPROFILE": str(userprofile)}
+        env = {"APPDATA": str(Path(_tempdir(self))), "USERPROFILE": str(userprofile)}
         with unittest.mock.patch.dict(os.environ, env):
             self.assertEqual(install.launchbox_root("windows"), root)
 
@@ -665,8 +678,8 @@ class TestLaunchboxRoot(unittest.TestCase):
 
     def test_nothing_installed(self):
         env = {
-            "APPDATA": str(Path(tempfile.mkdtemp())),
-            "USERPROFILE": str(Path(tempfile.mkdtemp())),
+            "APPDATA": str(Path(_tempdir(self))),
+            "USERPROFILE": str(Path(_tempdir(self))),
         }
         with unittest.mock.patch.dict(os.environ, env):
             self.assertIsNone(install.launchbox_root("windows"))
@@ -676,7 +689,7 @@ class TestLaunchboxBiosDirs(unittest.TestCase):
     """LaunchBox computes where each emulator it manages keeps its BIOS."""
 
     def _make(self, entries: list[tuple[str, str]]) -> Path:
-        root = Path(tempfile.mkdtemp()) / "LaunchBox"
+        root = Path(_tempdir(self)) / "LaunchBox"
         (root / "Data").mkdir(parents=True)
         body = "".join(
             "  <Emulator>\n"
@@ -704,7 +717,7 @@ class TestLaunchboxBiosDirs(unittest.TestCase):
     def test_pcsx2_portable_absolute_bios(self):
         root = self._make([("PCSX2", "Emulators\\PCSX2\\pcsx2.exe")])
         emu = root / "Emulators" / "PCSX2"
-        elsewhere = Path(tempfile.mkdtemp()) / "ps2bios"
+        elsewhere = Path(_tempdir(self)) / "ps2bios"
         (emu / "portable.ini").write_text("")
         (emu / "inis").mkdir()
         (emu / "inis" / "PCSX2.ini").write_text(f"Bios = {elsewhere}\n")
@@ -726,7 +739,7 @@ class TestLaunchboxBiosDirs(unittest.TestCase):
 
     def test_pcsx2_without_config_uses_documents(self):
         root = self._make([("PCSX2", "Emulators\\PCSX2\\pcsx2.exe")])
-        userprofile = Path(tempfile.mkdtemp())
+        userprofile = Path(_tempdir(self))
         with unittest.mock.patch.dict(os.environ, {"USERPROFILE": str(userprofile)}):
             self.assertEqual(
                 install.launchbox_bios_dirs(root)["pcsx2"],
@@ -736,13 +749,13 @@ class TestLaunchboxBiosDirs(unittest.TestCase):
     def test_xemu_defaults_to_bios_folder(self):
         root = self._make([("Xemu", "Emulators\\Xemu\\xemu.exe")])
         emu = root / "Emulators" / "Xemu"
-        with unittest.mock.patch.dict(os.environ, {"APPDATA": str(Path(tempfile.mkdtemp()))}):
+        with unittest.mock.patch.dict(os.environ, {"APPDATA": str(Path(_tempdir(self)))}):
             self.assertEqual(install.launchbox_bios_dirs(root)["xemu"], emu / "bios")
 
     def test_xemu_honours_configured_bootrom(self):
         root = self._make([("Xemu", "Emulators\\Xemu\\xemu.exe")])
         emu = root / "Emulators" / "Xemu"
-        configured = Path(tempfile.mkdtemp()) / "xbox"
+        configured = Path(_tempdir(self)) / "xbox"
         configured.mkdir()
         (configured / "mcpx_1.0.bin").write_text("x")
         (emu / "xemu.toml").write_text(
@@ -767,7 +780,7 @@ class TestLaunchboxBiosDirs(unittest.TestCase):
         self.assertEqual(install.launchbox_bios_dirs(root), {})
 
     def test_doctype_is_rejected(self):
-        root = Path(tempfile.mkdtemp()) / "LaunchBox"
+        root = Path(_tempdir(self)) / "LaunchBox"
         (root / "Data").mkdir(parents=True)
         (root / "Data" / "Emulators.xml").write_text(
             "<!DOCTYPE LaunchBox [<!ENTITY a 'x'>]>\n<LaunchBox></LaunchBox>\n"
@@ -795,9 +808,9 @@ class TestStandaloneCopiesExtraDirs(unittest.TestCase):
         }
 
     def test_pattern_entry_copies_into_extra_dir(self):
-        bios = Path(tempfile.mkdtemp())
+        bios = Path(_tempdir(self))
         (bios / "ps2-0230a.bin").write_text("rom")
-        extra = Path(tempfile.mkdtemp()) / "bios"
+        extra = Path(_tempdir(self)) / "bios"
         extra.mkdir()
         copied, _, _ = install.do_standalone_copies(
             self._manifest(), bios, "windows", {"pcsx2": extra}
@@ -806,10 +819,10 @@ class TestStandaloneCopiesExtraDirs(unittest.TestCase):
         self.assertTrue((extra / "ps2-0230a.bin").exists())
 
     def test_file_entry_keeps_its_subdirectory(self):
-        bios = Path(tempfile.mkdtemp())
+        bios = Path(_tempdir(self))
         (bios / "GC" / "USA").mkdir(parents=True)
         (bios / "GC" / "USA" / "IPL.bin").write_text("ipl")
-        user = Path(tempfile.mkdtemp()) / "User"
+        user = Path(_tempdir(self)) / "User"
         (user / "GC" / "USA").mkdir(parents=True)
         copied, _, _ = install.do_standalone_copies(
             self._manifest(), bios, "windows", {"dolphin": user}
@@ -818,7 +831,7 @@ class TestStandaloneCopiesExtraDirs(unittest.TestCase):
         self.assertTrue((user / "GC" / "USA" / "IPL.bin").exists())
 
     def test_no_extra_dirs_is_unchanged(self):
-        bios = Path(tempfile.mkdtemp())
+        bios = Path(_tempdir(self))
         (bios / "ps2-0230a.bin").write_text("rom")
         self.assertEqual(
             install.do_standalone_copies(self._manifest(), bios, "windows"), (0, 0, 0)
@@ -1120,7 +1133,7 @@ class TestLocalCheckHashing(unittest.TestCase):
     """A file is read once, not once per declared digest."""
 
     def test_both_digests_come_from_one_read(self):
-        tmp = Path(tempfile.mkdtemp())
+        tmp = Path(_tempdir(self))
         payload = b"BIOS PAYLOAD"
         (tmp / "boot.bin").write_bytes(payload)
         entry = {
@@ -1145,7 +1158,7 @@ class TestLocalCheckHashing(unittest.TestCase):
         self.assertEqual(calls, [("sha1", "sha256")], "file must be read once")
 
     def test_a_wrong_digest_still_lands_in_mismatched(self):
-        tmp = Path(tempfile.mkdtemp())
+        tmp = Path(_tempdir(self))
         (tmp / "boot.bin").write_bytes(b"BIOS PAYLOAD")
         entry = {
             "dest": "boot.bin",
@@ -1216,10 +1229,10 @@ class TestStandaloneCopyTargetsAreUntrusted(unittest.TestCase):
         self.assertIsInstance(install._validate_manifest(manifest, "retroarch"), dict)
 
     def test_symlinked_destination_is_not_written_through(self):
-        bios = Path(tempfile.mkdtemp())
+        bios = Path(_tempdir(self))
         (bios / "boot.bin").write_text("rom")
-        target = Path(tempfile.mkdtemp())
-        outside = Path(tempfile.mkdtemp()) / "secret"
+        target = Path(_tempdir(self))
+        outside = Path(_tempdir(self)) / "secret"
         outside.write_text("untouched")
         (target / "boot.bin").symlink_to(outside)
 
@@ -1240,8 +1253,8 @@ class TestDestinationFollowsUserLinks(unittest.TestCase):
     """
 
     def test_symlinked_directory_under_root_is_followed(self):
-        bios = Path(tempfile.mkdtemp())
-        elsewhere = Path(tempfile.mkdtemp()) / "sys_modules"
+        bios = Path(_tempdir(self))
+        elsewhere = Path(_tempdir(self)) / "sys_modules"
         elsewhere.mkdir()
         (bios / "shadps4").mkdir()
         (bios / "shadps4" / "sys_modules").symlink_to(elsewhere)
@@ -1252,8 +1265,8 @@ class TestDestinationFollowsUserLinks(unittest.TestCase):
         self.assertEqual(dest.resolve().parent, elsewhere.resolve())
 
     def test_check_local_survives_a_linked_directory(self):
-        bios = Path(tempfile.mkdtemp())
-        elsewhere = Path(tempfile.mkdtemp()) / "sys_modules"
+        bios = Path(_tempdir(self))
+        elsewhere = Path(_tempdir(self)) / "sys_modules"
         elsewhere.mkdir()
         (bios / "shadps4").mkdir()
         (bios / "shadps4" / "sys_modules").symlink_to(elsewhere)
@@ -1265,7 +1278,7 @@ class TestDestinationFollowsUserLinks(unittest.TestCase):
         self.assertEqual((up_to_date, mismatched), ([], []))
 
     def test_climbing_is_still_refused(self):
-        bios = Path(tempfile.mkdtemp())
+        bios = Path(_tempdir(self))
         with self.assertRaises(ValueError):
             install._destination_path(bios, "../outside.bin")
         with self.assertRaises(ValueError):
@@ -1311,7 +1324,7 @@ class TestSteamRetroarchDetection(unittest.TestCase):
     """The Steam build is a portable install under the default library."""
 
     def test_steam_library_is_found_on_windows(self):
-        program_files = Path(tempfile.mkdtemp())
+        program_files = Path(_tempdir(self))
         ra_dir = program_files / "Steam" / "steamapps" / "common" / "RetroArch"
         ra_dir.mkdir(parents=True)
         (ra_dir / "retroarch.cfg").write_text('system_directory = ":\\system"\n')
@@ -1325,7 +1338,7 @@ class TestLaunchboxDetectionPowershell(unittest.TestCase):
     """install.ps1 must resolve LaunchBox's portable RetroArch on its own."""
 
     def _run(self, entries: str, seed=None, manifest: dict | None = None):
-        userprofile = Path(tempfile.mkdtemp())
+        userprofile = Path(_tempdir(self))
         ra_dir = userprofile / "LaunchBox" / "Emulators" / "RetroArch"
         ra_dir.mkdir(parents=True)
         data = userprofile / "LaunchBox" / "Data"
@@ -1338,7 +1351,7 @@ class TestLaunchboxDetectionPowershell(unittest.TestCase):
         )
         if seed is not None:
             seed(userprofile)
-        serve_root = Path(tempfile.mkdtemp())
+        serve_root = Path(_tempdir(self))
         (serve_root / "install").mkdir()
         payload = dict(manifest if manifest is not None else {"files": []})
         payload.setdefault("manifest_version", 2)
@@ -1354,7 +1367,7 @@ class TestLaunchboxDetectionPowershell(unittest.TestCase):
             env = dict(os.environ)
             env.update(
                 USERPROFILE=str(userprofile),
-                APPDATA=str(tempfile.mkdtemp()),
+                APPDATA=str(_tempdir(self)),
                 RETROBIOS_BASE_URL=f"http://127.0.0.1:{httpd.server_address[1]}",
                 # A LaunchBox layout is a Windows layout: the runner is Linux.
                 RETROBIOS_OS="wsl",
@@ -1475,7 +1488,7 @@ class TestDetectFrontends(unittest.TestCase):
     """Frontends have no BIOS directory of their own but hint at the setup."""
 
     def test_esde_from_home_directory(self):
-        home = Path(tempfile.mkdtemp())
+        home = Path(_tempdir(self))
         (home / "ES-DE").mkdir()
         old = os.environ.pop("ESDE_APPDATA_DIR", None)
         try:
@@ -1485,8 +1498,8 @@ class TestDetectFrontends(unittest.TestCase):
                 os.environ["ESDE_APPDATA_DIR"] = old
 
     def test_esde_from_env_dir(self):
-        home = Path(tempfile.mkdtemp())
-        appdata = Path(tempfile.mkdtemp())
+        home = Path(_tempdir(self))
+        appdata = Path(_tempdir(self))
         os.environ["ESDE_APPDATA_DIR"] = str(appdata)
         try:
             self.assertIn("esde", install.detect_frontends("linux", home=home))
@@ -1494,7 +1507,7 @@ class TestDetectFrontends(unittest.TestCase):
             del os.environ["ESDE_APPDATA_DIR"]
 
     def test_nothing_detected(self):
-        home = Path(tempfile.mkdtemp())
+        home = Path(_tempdir(self))
         old = os.environ.pop("ESDE_APPDATA_DIR", None)
         try:
             self.assertEqual(install.detect_frontends("linux", home=home), [])

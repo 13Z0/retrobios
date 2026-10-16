@@ -55,6 +55,19 @@ RELEASE_ASSETS = [
 ]
 
 
+def _tempdir(test: unittest.TestCase) -> str:
+    """A scratch directory under the repository's tmp/, removed after the test.
+
+    The system temp directory is a RAM disk here, and directories left by
+    every run piled up on it.
+    """
+    scratch = REPO_ROOT / "tmp"
+    scratch.mkdir(exist_ok=True)
+    path = tempfile.mkdtemp(dir=str(scratch))
+    test.addCleanup(shutil.rmtree, path, True)
+    return path
+
+
 def _closed_port() -> int:
     """A loopback port nothing listens on, so connecting is refused at once."""
     with socket.socket() as sock:
@@ -206,7 +219,7 @@ class TestPackGrouping(unittest.TestCase):
 
 class TestJoinVolumes(unittest.TestCase):
     def test_joined_volumes_reproduce_the_archive(self):
-        tmp = Path(tempfile.mkdtemp())
+        tmp = Path(_tempdir(self))
         archive = tmp / "pack.zip"
         with zipfile.ZipFile(archive, "w") as zf:
             zf.writestr("bios/scph5501.bin", b"\x01\x02" * 5000)
@@ -232,7 +245,7 @@ class TestStagingIsolation(unittest.TestCase):
     """Two downloads into one BIOS folder must not share a staging directory."""
 
     def setUp(self):
-        self.dest = Path(tempfile.mkdtemp())
+        self.dest = Path(_tempdir(self))
         self.addCleanup(shutil.rmtree, self.dest, True)
 
     def test_two_runs_stage_in_separate_directories(self):
@@ -267,7 +280,9 @@ class ReleaseServer:
         volumes: int,
         zip_parts: bool = False,
     ):
-        self.root = Path(tempfile.mkdtemp())
+        scratch = REPO_ROOT / "tmp"
+        scratch.mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=str(scratch)))
         (self.root / "assets").mkdir()
         archive = self.root / "assets" / pack_name
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -337,6 +352,7 @@ class ReleaseServer:
     def close(self) -> None:
         self.httpd.shutdown()
         self.httpd.server_close()
+        shutil.rmtree(self.root, ignore_errors=True)
 
 
 class DownloaderCase(unittest.TestCase):
@@ -358,10 +374,10 @@ class DownloaderCase(unittest.TestCase):
             self.pack_name, self.payload, self.volumes, self.zip_parts
         )
         self.addCleanup(self.server.close)
-        self.dest = Path(tempfile.mkdtemp()) / "bios"
+        self.dest = Path(_tempdir(self)) / "bios"
         # A pack is gigabytes: staging it in the system temp directory fills
         # the RAM disk that /tmp is on the appliances these packs target.
-        self.tmpdir = Path(tempfile.mkdtemp())
+        self.tmpdir = Path(_tempdir(self))
 
     def env(self) -> dict[str, str]:
         env = dict(os.environ)
