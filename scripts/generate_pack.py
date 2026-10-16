@@ -2541,6 +2541,8 @@ def _run_platform_packs(
     all_ok = verify_and_finalize_packs(
         args.output_dir,
         db,
+        platforms_dir=args.platforms_dir,
+        emulators_dir=args.emulators_dir,
         skip_conformance=skip_conf,
         data_registry=data_registry,
         regions=getattr(args, "regions", None),
@@ -2553,6 +2555,8 @@ def _run_platform_packs(
                 ok = verify_and_finalize_packs(
                     sub,
                     db,
+                    platforms_dir=args.platforms_dir,
+                    emulators_dir=args.emulators_dir,
                     skip_conformance=True,
                     data_registry=data_registry,
                     regions=getattr(args, "regions", None),
@@ -3940,6 +3944,7 @@ def verify_and_finalize_packs(
     data_registry: dict | None = None,
     regions: list[str] | None = None,
     target_name: str | None = None,
+    emulators_dir: str = "emulators",
 ) -> bool:
     """Verify all packs, inject manifests, generate SHA256SUMS.
 
@@ -4003,6 +4008,7 @@ def verify_and_finalize_packs(
                 pname,
                 platforms_dir,
                 db=db,
+                emulators_dir=emulators_dir,
                 regions=regions,
                 data_registry=data_registry,
                 target_cores=_target_cores_for(pname, target_name, platforms_dir),
