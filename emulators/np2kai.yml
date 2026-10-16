@@ -16,8 +16,8 @@ systems: [pc-98]
 # (sdl/libretro/libretro.c:1800-1815). All getbiospath() calls resolve
 # relative to that directory.
 #
-# BIOS_SIMULATE is unconditionally #define'd (bios/bios.c:78), so the core
-# always has a built-in BIOS simulator. itf.rom loading (bios.c:569) is dead
+# BIOS_SIMULATE is unconditionally #define'd (bios/bios.c:79), so the core
+# always has a built-in BIOS simulator. itf.rom loading (bios.c:579) is dead
 # code behind #else of this define and is never executed.
 #
 # .info declares firmware_count=11 but is incomplete: misses IDE, SCSI, SASI,
