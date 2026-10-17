@@ -13,9 +13,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
+import zipfile
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -220,11 +223,93 @@ def _data_hit(
     fname: str, basename: str | None, file_entry: dict | None, data_names: set[str]
 ) -> bool:
     """Whether data/ or a ZIP holds the name: a directory entry looks for a
-    directory, a file entry for a file."""
+    directory, a file entry for a file. A file entry that declares a hash is
+    held only by a copy carrying it: touchhle's LiberationMono-Regular.ttf
+    read as held because idtech4a++'s extras.zip has another font of that
+    name."""
     looked_up = [fname, fname.lower()] + ([basename, basename.lower()] if basename else [])
     if fname.endswith("/") or (file_entry or {}).get("type") == "directory":
         looked_up = [name.rstrip("/") + "/" for name in looked_up]
-    return any(name in data_names for name in looked_up)
+        return any(name in data_names for name in looked_up)
+    if not any(name in data_names for name in looked_up):
+        return False
+    declared = _declared_content(file_entry or {})
+    if not declared:
+        return True
+    return any(
+        _content_matches(location, declared)
+        for location in _supplemental_locations().get((basename or fname).lower(), ())
+    )
+
+
+_HASH_FIELDS = ("sha1", "md5", "sha256", "crc32")
+
+
+def _declared_content(file_entry: dict) -> dict[str, set[str]]:
+    """The hashes an entry declares, lowercased, by algorithm."""
+    declared: dict[str, set[str]] = {}
+    for field in _HASH_FIELDS:
+        raw = file_entry.get(field)
+        values = raw if isinstance(raw, list) else [raw]
+        found = {str(v).lower().removeprefix("0x") for v in values if v}
+        if found:
+            declared[field] = found
+    return declared
+
+
+_locations_cache: dict[tuple[str, str], dict[str, list[tuple[str, str]]]] = {}
+
+
+def _supplemental_locations(
+    data_root: str = "data", bios_root: str = "bios"
+) -> dict[str, list[tuple[str, str]]]:
+    """Where each name of the supplemental index sits: a data/ file, or a
+    member of a ZIP under bios/, keyed by lowercased basename."""
+    key = (data_root, bios_root)
+    if key in _locations_cache:
+        return _locations_cache[key]
+    found: dict[str, list[tuple[str, str]]] = {}
+    root = Path(data_root)
+    if root.is_dir():
+        for path in root.rglob("*"):
+            if path.is_file() and not path.name.startswith("."):
+                found.setdefault(path.name.lower(), []).append((str(path), ""))
+    for zpath in Path(bios_root).rglob("*.zip") if Path(bios_root).is_dir() else ():
+        try:
+            with zipfile.ZipFile(zpath) as zf:
+                members = [m for m in zf.namelist() if not m.endswith("/")]
+        except (zipfile.BadZipFile, OSError) as exc:
+            print(f"  WARNING: unreadable archive {zpath}: {exc}", file=sys.stderr)
+            continue
+        for member in members:
+            found.setdefault(member.rsplit("/", 1)[-1].lower(), []).append(
+                (str(zpath), member)
+            )
+    _locations_cache[key] = found
+    return found
+
+
+def _content_matches(location: tuple[str, str], declared: dict[str, set[str]]) -> bool:
+    """Whether the file or member at *location* carries a declared hash."""
+    path, member = location
+    try:
+        if member:
+            with zipfile.ZipFile(path) as zf:
+                if set(declared) == {"crc32"}:
+                    return f"{zf.getinfo(member).CRC:08x}" in declared["crc32"]
+                data = zf.read(member)
+        else:
+            data = Path(path).read_bytes()
+    except (zipfile.BadZipFile, KeyError, OSError) as exc:
+        print(f"  WARNING: cannot read {path} {member}: {exc}", file=sys.stderr)
+        return False
+    actual = {
+        "sha1": hashlib.sha1(data).hexdigest(),
+        "md5": hashlib.md5(data).hexdigest(),
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "crc32": f"{zlib.crc32(data) & 0xFFFFFFFF:08x}",
+    }
+    return any(actual[field] in values for field, values in declared.items())
 
 
 class FileConsumers:

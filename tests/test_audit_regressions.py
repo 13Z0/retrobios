@@ -3134,3 +3134,30 @@ class OpenMsxRomsSitInItsSystemroms(unittest.TestCase):
                     entry.get("path", "").lower(),
                     f"openmsx/share/systemroms/{entry['name']}".lower(),
                 )
+
+
+class ASameNamedMemberIsNotTheFile(unittest.TestCase):
+    """The gap report counted touchhle's LiberationMono-Regular.ttf as held
+    because idtech4a++'s extras.zip has a member of that name, another font;
+    verify --emulator said missing."""
+
+    def test_a_declared_hash_decides_a_member_or_data_hit(self):
+        from scripts import cross_reference as xr
+
+        tmp = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        self.addCleanup(lambda: __import__("shutil").rmtree(tmp, True))
+        (tmp / "data").mkdir()
+        (tmp / "data" / "font.ttf").write_bytes(b"DATA FONT")
+        (tmp / "bios").mkdir()
+        with zipfile.ZipFile(tmp / "bios" / "extras.zip", "w") as zf:
+            zf.writestr("files/other.ttf", b"MEMBER FONT")
+        names = xr._build_supplemental_index(str(tmp / "data"), str(tmp / "bios"))
+        locations = xr._supplemental_locations(str(tmp / "data"), str(tmp / "bios"))
+        with mock.patch.object(xr, "_supplemental_locations", lambda: locations):
+            for fname, data in (("font.ttf", b"DATA FONT"), ("other.ttf", b"MEMBER FONT")):
+                with self.subTest(name=fname):
+                    held = {"name": fname, "sha1": hashlib.sha1(data).hexdigest()}
+                    other = {"name": fname, "sha1": "0" * 40}
+                    self.assertTrue(xr._data_hit(fname, None, held, names))
+                    self.assertFalse(xr._data_hit(fname, None, other, names))
+                    self.assertTrue(xr._data_hit(fname, None, {"name": fname}, names))
