@@ -25,14 +25,18 @@ Pipeline steps:
 |------|-------------|------------|
 | 1/8 | Generate database | - |
 | 1b | Dump-catalog coverage report | - (offline, reads `provenance/`) |
+| 1c | Romset recipes: identify archives, list rebuild targets | - (offline, reads `recipes/`) |
 | 2/8 | Refresh data directories | `--offline` |
 | 2a | Refresh MAME BIOS hashes | `--offline` |
 | 2a2 | Refresh FBNeo BIOS hashes | `--offline` |
 | 2b | Check buildbot staleness | only with `--check-buildbot`, skipped by `--offline` |
+| 2b2 | Release assets against the gitignored files (size and sha256) | `--offline` |
 | 2c | Generate truth YAMLs | only with `--with-truth` / `--with-export` |
 | 2d | Diff truth vs scraped | only with `--with-truth` / `--with-export` |
 | 2e | Export native formats | only with `--with-export` |
-| 3/8 | Verify all platforms | - |
+| 3/8 | Verify all platforms (`--strict`) | - |
+| 3a | File identity: one content under two identities (`identity.py --strict`, gates the run) | - |
+| 3b | Slot arbitration: destinations both layers claim (`slots.py`, reports only) | - |
 | 4/8 | Generate packs | `--skip-packs` |
 | 4b | Generate install manifests | `--skip-packs` |
 | 4c | Generate target manifests | `--skip-packs` |
@@ -45,13 +49,13 @@ Pipeline flags:
 
 | Flag | Effect |
 |------|--------|
-| `--offline` | skip every step that needs the network (2, 2a, 2a2, 2b) |
+| `--offline` | skip every step that needs the network (2, 2a, 2a2, 2b, 2b2) |
 | `--skip-packs` | skip steps 4, 4b, 4c, 6 and the consistency check |
 | `--skip-docs` | skip steps 7 and 8 |
 | `--include-archived` | include archived platforms in verify, packs, truth and export |
 | `--target TARGET` | filter verify, packs and truth by hardware target |
-| `--source {platform,truth,full}` | pack file source, passed through to `generate_pack.py` |
-| `--all-variants` | build the 6 source x required combinations |
+| `--source {platform,truth,full}` | pack file source, passed through to `generate_pack.py`; refused with `--skip-packs` |
+| `--all-variants` | build the 6 source x required combinations; refused with `--skip-packs` and with `--source` |
 | `--check-buildbot` | run step 2b; additive, and ignored under `--offline` |
 | `--with-truth` | run steps 2c and 2d |
 | `--with-export` | run steps 2c, 2d and 2e |
@@ -536,7 +540,9 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | Script | Purpose |
 |--------|---------|
 | `common.py` | Shared library: hash computation, file resolution, platform config loading, emulator profiles, target filtering |
-| `dedup.py` | Deduplicate `bios/` (`--dry-run`, `--bios-dir`), move duplicates to `.variants/`. RPG Maker and ScummVM excluded (NODEDUP) |
+| `dedup.py` | Deduplicate `bios/` (`--dry-run`, `--bios-dir`): byte-identical copies are deleted and one kept; identical MAME sets under other names stay one file, named in `_mame_clones.json`. Trees addressed by path are left alone (`NODEDUP_DIRS`): BBK, C-Dogs SDL, Ikemen GO, PinMAME, RPG Maker, ScummVM, Softdisk, TheXTech, Theme Hospital, c64-emu, tzdata |
+| `identity.py` | One content filed under two identities: groups `bios/` by content and reports a group that crosses manufacturers outside `KNOWN_SHARED` (`--strict` exits 1, pipeline step 3a) |
+| `slots.py` | Destinations the platform and a core both claim, and how the pack settles each (`--platform`, `--json`, `--strict`; pipeline step 3b reports without gating) |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
 | `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline) |

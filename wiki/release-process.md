@@ -14,7 +14,7 @@ Budget target: ~175 minutes/month on the GitHub free tier.
 | Workflow | File | Trigger |
 |----------|------|---------|
 | Deploy Site | `deploy-site.yml` | Push to main (platforms, emulators, provenance, wiki, scripts, database.json, mkdocs.yml), manual |
-| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**` or `emulators/**` |
+| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`, `install.py`, `install.sh` or `install.ps1` |
 
 Upstream BIOS lists are not scraped on a schedule. A maintainer runs the
 scrapers by hand (see [adding a scraper](adding-a-scraper.md)), reviews the
@@ -82,9 +82,11 @@ so a major theme release cannot change the site without a deliberate bump.
 ## validate.yml - Validation
 
 **Trigger.** Pull requests and direct pushes to main that modify `bios/**`,
-`platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**` or
-`install.py`. The path lists are spelled out once per event because the
-workflow parser reads no YAML anchor.
+`platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`,
+`install.py`, `install.sh` or `install.ps1` (the bootstraps pin the
+installer's SHA-256, so editing one without the other fails the run). The
+path lists are spelled out once per event because the workflow parser reads
+no YAML anchor.
 
 **Concurrency.** Per-PR group on a pull request, per-ref on a push, cancel
 in-progress either way: a push series collapses to the tip.
@@ -124,13 +126,16 @@ data bundle, the EasyRPG soundfont, the Dolphin/Ishiiruka SD card images, and
 the arcade sets over 100 MB. `.gitignore` is the authoritative list: every
 `bios/` path listed there is a release asset.
 
-**Storage.** Listed in `.gitignore` so they stay out of git history. The
-`large-files` release is excluded from cleanup (the build workflow only
-deletes version-tagged releases).
+**Storage.** Listed in `.gitignore` so they stay out of git history. Old
+version-tagged releases are deleted by hand when a new one is published
+(see [cutting a release](#cutting-a-release)); `large-files` is never one of
+them.
 
-**Build-time restore.** The build workflow downloads all assets from
-`large-files` into `.cache/large/` and copies them to their expected paths
-before pack generation.
+**Restore.** No workflow builds a pack. `generate_pack.py` fetches an asset
+into `.cache/large/` when a pack needs it (`fetch_large_file()`), and
+`scripts/restore_large_files.py` puts every registered asset back at its
+`bios/` path by the SHA-1 of its content; `deploy-site.yml` runs it before
+generating anything, since the site's coverage reads the disk.
 
 **Asset name.** A gitignored path whose file name no other gitignored path
 shares is published under that file name. When two paths share one, each is

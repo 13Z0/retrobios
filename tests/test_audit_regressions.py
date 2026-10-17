@@ -3465,5 +3465,35 @@ class AReaderThatLeavesEarlyIsNoCrash(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+
+class TheToolsPageSaysWhatDedupDoes(unittest.TestCase):
+    """tools.md said duplicates move to .variants/ (they are deleted) and
+    named 2 of the 11 directories dedup leaves alone."""
+
+    def test_every_protected_tree_is_named(self):
+        from scripts import dedup
+
+        line = next(
+            l for l in (ROOT / "wiki" / "tools.md").read_text().splitlines()
+            if l.startswith("| `dedup.py`")
+        )
+        self.assertNotIn(".variants", line)
+        for name in dedup.NODEDUP_DIRS:
+            self.assertIn(name, line)
+
+
+
+class ThePipelineTableNamesEveryStep(unittest.TestCase):
+    """tools.md listed the steps without 1c, 2b2, 3a and 3b."""
+
+    def test_every_labelled_step_is_documented(self):
+        labels = set(re.findall(
+            r'"(\d[a-z]?\d?)(?:/8)? [a-z]', (ROOT / "scripts" / "pipeline.py").read_text()
+        ))
+        doc = (ROOT / "wiki" / "tools.md").read_text()
+        documented = set(re.findall(r"^\| (\d[a-z]?\d?)(?:/8)? \|", doc, re.MULTILINE))
+        self.assertEqual(labels - documented, set())
+
+
 if __name__ == "__main__":
     unittest.main()
