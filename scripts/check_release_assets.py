@@ -59,8 +59,14 @@ def compare(
     assets: dict[str, int],
     notes_current: bool = True,
     registered: Iterable[str] | None = None,
+    expected_digests: dict[str, str] | None = None,
+    asset_digests: dict[str, str] | None = None,
 ) -> list[Finding]:
     """Files the release lacks or serves at another size, sorted by kind.
+
+    At the same size, the sha256 the release lists for an asset is held
+    against the collection's: a dump rebuilt at its old size and never
+    re-uploaded was invisible to a size comparison.
 
     *registered* is every path .gitignore lists; an asset name depends on
     which other paths share its basename, so it defaults to *expected* only
@@ -73,15 +79,39 @@ def compare(
         findings.append(("notes", "release description", 0, None))
     names = asset_names([*(registered or ()), *expected])
     for path, size in sorted(expected.items()):
-        published = next(
-            (assets[name] for name in _spellings(names[path]) if name in assets),
-            None,
+        served = next(
+            (name for name in _spellings(names[path]) if name in assets), None
         )
+        published = assets[served] if served else None
         if published is None:
             findings.append(("missing", path, size, None))
         elif published != size:
             findings.append(("size", path, size, published))
+        else:
+            ours = (expected_digests or {}).get(path)
+            theirs = (asset_digests or {}).get(served)
+            if ours and theirs and ours != theirs:
+                findings.append(("content", path, size, published))
     return sorted(findings)
+
+
+def expected_digests(db: dict, gitignore_text: str) -> dict[str, str]:
+    """sha256 of each gitignored database path."""
+    ignored = set(registered_paths(gitignore_text))
+    return {
+        entry["path"]: entry["sha256"].lower()
+        for entry in db.get("files", {}).values()
+        if entry.get("path") in ignored and entry.get("sha256")
+    }
+
+
+def digests_of(assets_json: list[dict]) -> dict[str, str]:
+    """sha256 the release lists for each asset, by name."""
+    return {
+        a["name"]: str(a["digest"]).removeprefix("sha256:").lower()
+        for a in assets_json
+        if str(a.get("digest") or "").startswith("sha256:")
+    }
 
 
 ASSET_URL = f"https://github.com/{LARGE_FILES_REPO}/releases/download/{LARGE_FILES_RELEASE}/"
@@ -257,8 +287,9 @@ def cache_hashes(names: set[str], cache_dir: str = ".cache/large") -> dict[str, 
     return hashes
 
 
-def fetch_release() -> tuple[dict[str, int], str]:
-    """Name and size of every asset of the large-files release, and its page."""
+def fetch_release() -> tuple[dict[str, int], str, dict[str, str]]:
+    """Name and size of every asset of the large-files release, its page,
+    and the sha256 it lists per asset."""
     result = subprocess.run(
         [
             "gh", "release", "view", LARGE_FILES_RELEASE,
@@ -267,7 +298,11 @@ def fetch_release() -> tuple[dict[str, int], str]:
         capture_output=True, text=True, check=True,
     )
     data = json.loads(result.stdout)
-    return {a["name"]: a["size"] for a in data["assets"]}, data.get("body", "")
+    return (
+        {a["name"]: a["size"] for a in data["assets"]},
+        data.get("body", ""),
+        digests_of(data["assets"]),
+    )
 
 
 def fetch_assets() -> dict[str, int]:
@@ -298,7 +333,7 @@ def main() -> int:
     db = load_database(args.db)
     expected = expected_assets(db, gitignore_text)
     try:
-        assets, body = fetch_release()
+        assets, body, asset_digests = fetch_release()
     except (subprocess.CalledProcessError, FileNotFoundError, KeyError) as exc:
         print(f"ERROR: cannot list release assets: {exc}", file=sys.stderr)
         return 2
@@ -315,6 +350,8 @@ def main() -> int:
         assets,
         notes_current=rendered.strip() == body.strip(),
         registered=registered_paths(gitignore_text),
+        expected_digests=expected_digests(db, gitignore_text),
+        asset_digests=asset_digests,
     )
 
     if args.json:
@@ -332,6 +369,8 @@ def main() -> int:
                 print(f"  MISSING  {path} ({size} bytes)")
             elif kind == "size":
                 print(f"  SIZE     {path}: local {size} != release {published}")
+            elif kind == "content":
+                print(f"  CONTENT  {path}: same size, other sha256 on the release")
             else:
                 print("  NOTES    release description differs from the rendered page"
                       " (--notes FILE, then gh release edit large-files --notes-file FILE)")

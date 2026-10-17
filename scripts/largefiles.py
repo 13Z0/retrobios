@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import contextlib
 import http.client
+import json
 import os
 import sys
 import re
@@ -240,13 +241,56 @@ def _asset_urls(name: str) -> list[tuple[str, str]]:
 def _replaced_on_release(name: str, cached: str, offline: bool) -> bool:
     """Whether the release now serves other bytes than the cached copy.
 
-    Sizes are compared, as check_release_assets does: a request per asset,
-    no download. Offline or unreadable, the copy is assumed current.
+    The release lists a sha256 per asset: a dump rebuilt at the same size
+    (the eight 251658304-byte DSi NANDs) differs only there, and judged by
+    size the stale copy was kept for good. Without a digest the sizes are
+    compared, as check_release_assets does. No download either way;
+    offline or unreadable, the copy is assumed current.
     """
     if offline:
         return False
+    digest = next(
+        (d for candidate, _url in _asset_urls(name)
+         if (d := _served_digests().get(candidate))),
+        None,
+    )
+    if digest:
+        return compute_hashes(cached, frozenset({"sha256"}))["sha256"] != digest
     served = _served_size(name)
     return served is not None and served != os.path.getsize(cached)
+
+
+_digests_cache: dict[str, str] | None = None
+
+
+def _served_digests() -> dict[str, str]:
+    """sha256 of each asset the release serves, by asset name; empty when
+    the API cannot be read."""
+    global _digests_cache
+    if _digests_cache is not None:
+        return _digests_cache
+    url = (
+        f"https://api.github.com/repos/{LARGE_FILES_REPO}/releases/tags/"
+        f"{LARGE_FILES_RELEASE}"
+    )
+    headers = {"User-Agent": "retrobios/1.0", "Accept": "application/vnd.github+json"}
+    if os.environ.get("GITHUB_TOKEN"):
+        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+    digests: dict[str, str] = {}
+    try:
+        with urllib.request.urlopen(
+            urllib.request.Request(url, headers=headers), timeout=60
+        ) as resp:
+            release = json.load(resp)
+    except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as exc:
+        print(f"  large files release listing: {exc}", file=sys.stderr)
+        release = {}
+    for asset in release.get("assets") or []:
+        digest = str(asset.get("digest") or "")
+        if digest.startswith("sha256:"):
+            digests[asset.get("name", "")] = digest.removeprefix("sha256:").lower()
+    _digests_cache = digests
+    return digests
 
 
 def _served_size(name: str) -> int | None:

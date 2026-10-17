@@ -679,3 +679,54 @@ class GameDataHasOneDefinition(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ASameSizeReuploadIsSeen(unittest.TestCase):
+    """A DSi NAND rebuilt at the same 251658304 bytes and re-uploaded with
+    --clobber: judged by size, the stale cache copy was kept for good."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.dir, True)
+        self.cached = self.dir / "dsi_nand.bin"
+        self.cached.write_bytes(b"OLD NAND")
+
+    def replaced(self, digests: dict, size: int | None) -> bool:
+        with mock.patch.object(largefiles, "_served_digests", lambda: digests), \
+                mock.patch.object(largefiles, "_served_size", lambda name: size):
+            return largefiles._replaced_on_release("dsi_nand.bin", str(self.cached), False)
+
+    def test_the_digest_decides(self):
+        same = hashlib.sha256(b"OLD NAND").hexdigest()
+        other = hashlib.sha256(b"NEW NAND").hexdigest()
+        self.assertTrue(self.replaced({"dsi_nand.bin": other}, 8))
+        self.assertFalse(self.replaced({"dsi_nand.bin": same}, 8))
+
+    def test_without_a_digest_the_size_decides(self):
+        self.assertFalse(self.replaced({}, 8))
+        self.assertTrue(self.replaced({}, 9))
+
+    def test_the_release_check_compares_digests_at_equal_size(self):
+        expected = {"bios/Nintendo/DSi/dsi_nand.bin": 8}
+        assets = {"dsi_nand.bin": 8}
+        ours = {"bios/Nintendo/DSi/dsi_nand.bin": "a" * 64}
+        self.assertEqual(
+            [f[0] for f in check_release_assets.compare(
+                expected, assets, expected_digests=ours,
+                asset_digests={"dsi_nand.bin": "b" * 64},
+            )],
+            ["content"],
+        )
+        self.assertEqual(
+            check_release_assets.compare(
+                expected, assets, expected_digests=ours,
+                asset_digests={"dsi_nand.bin": "a" * 64},
+            ),
+            [],
+        )
+        self.assertEqual(
+            check_release_assets.digests_of(
+                [{"name": "x", "digest": "sha256:ABC"}, {"name": "y"}]
+            ),
+            {"x": "abc"},
+        )
