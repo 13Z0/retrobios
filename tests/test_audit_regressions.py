@@ -3569,5 +3569,20 @@ class TheGapReportKeepsItsShape(unittest.TestCase):
         self.assertIn("across the emulators batocera runs", text)
 
 
+
+class AFileToSourceIsAFileNotAName(unittest.TestCase):
+    """The gaps page keyed acquisition targets by name: Fallout 2's
+    master.dat disappeared behind Fallout 1's."""
+
+    def test_rows_are_keyed_by_name_and_hash(self):
+        source = (ROOT / "scripts" / "generate_site.py").read_text()
+        self.assertIn('key = (g["name"], g.get("identity") or f"emulator:{emu_name}")', source)
+        from scripts.cross_reference import _first_hash
+
+        self.assertEqual(_first_hash({"md5": ["AB", "cd"]}), "md5:ab")
+        self.assertEqual(_first_hash({"crc32": "1", "sha1": "F" * 40}), "sha1:" + "f" * 40)
+        self.assertEqual(_first_hash({}), "")
+
+
 if __name__ == "__main__":
     unittest.main()

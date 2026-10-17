@@ -2979,25 +2979,44 @@ def generate_gap_analysis(
             for emu_name in matched:
                 emu_to_platforms.setdefault(emu_name, set()).add(pname)
 
-        all_src_missing: set[str] = set()
+        # One row per file to find: a name two emulators share is one file
+        # only when both declare the same hash. Keyed by name alone, Fallout
+        # 2's master.dat vanished behind Fallout 1's, and the three Sonic
+        # decompilations' Data.rsdk showed as one.
         src_missing_details: list[dict] = []
+        by_identity: dict[tuple[str, str], dict] = {}
+        entries = 0
         for emu_name, data in emulator_gaps:
             for g in data["gap_details"]:
-                if g["source"] == "missing" and g["name"] not in all_src_missing:
-                    all_src_missing.add(g["name"])
-                    src_missing_details.append({
+                if g["source"] != "missing":
+                    continue
+                entries += 1
+                key = (g["name"], g.get("identity") or f"emulator:{emu_name}")
+                row = by_identity.get(key)
+                if row is None:
+                    row = by_identity[key] = {
                         "name": g["name"],
-                        "emulator": data["emulator"],
-                        "emu_key": emu_name,
+                        "emulators": [data["emulator"]],
+                        "emu_keys": [emu_name],
                         "required": g["required"],
                         "source_ref": g["source_ref"],
-                    })
+                    }
+                    src_missing_details.append(row)
+                elif emu_name not in row["emu_keys"]:
+                    row["emulators"].append(data["emulator"])
+                    row["emu_keys"].append(emu_name)
+                    row["required"] = row["required"] or g["required"]
 
         if src_missing_details:
             req_src = [m for m in src_missing_details if m["required"]]
             lines.extend([
-                f"### Files to Source ({len(src_missing_details)} unique, "
-                f"{len(req_src)} required)",
+                f"### Files to Source ({len(src_missing_details)} files, "
+                f"{len(req_src)} required"
+                + (
+                    f"; {entries} entries, a file declared with the same hash "
+                    "at several places is listed once)"
+                    if entries != len(src_missing_details) else ")"
+                ),
                 "",
                 "| File | Emulator | Required | Affects platforms | Source ref |",
                 "|------|----------|----------|------------------|-----------|",
@@ -3006,7 +3025,9 @@ def generate_gap_analysis(
                 src_missing_details,
                 key=lambda x: (not x["required"], x["name"]),
             ):
-                plats = sorted(emu_to_platforms.get(m["emu_key"], set()))
+                plats = sorted(set().union(
+                    *(emu_to_platforms.get(key, set()) for key in m["emu_keys"])
+                ))
                 plat_badges = (
                     " ".join(
                         f'<span class="rb-badge rb-badge-info">{p}</span>'
@@ -3017,9 +3038,9 @@ def generate_gap_analysis(
                 )
                 req = "yes" if m["required"] else "no"
                 lines.append(
-                    f"| `{m['name']}` | {m['emulator']} | {req} | "
+                    f"| `{m['name']}` | {', '.join(m['emulators'])} | {req} | "
                     f"{plat_badges} | "
-                    f"{_source_ref_markdown(profiles[m['emu_key']], m['source_ref'])} |"
+                    f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
             lines.append("")
 

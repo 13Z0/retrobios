@@ -427,6 +427,17 @@ def _resolve_archive_source(
     return result if result is not None else "missing"
 
 
+def _first_hash(entry: dict) -> str:
+    """The first hash an entry declares, strongest first, or ''."""
+    for field in ("sha1", "sha256", "md5", "crc32"):
+        value = entry.get(field)
+        if isinstance(value, list):
+            value = value[0] if value else ""
+        if value:
+            return f"{field}:{str(value).lower()}"
+    return ""
+
+
 def slot_key(f: dict) -> tuple:
     """The slot a profile entry fills: its entries on one slot are the
     versions its code accepts there, and holding any of them fills it."""
@@ -591,6 +602,8 @@ def _cross_reference_profile(
             "in_platform": False,
             "in_repo": in_repo,
             "source": source,
+            # What tells this file from a homonym another emulator wants.
+            "identity": _first_hash(f),
         }
         gaps.append(entry)
 
