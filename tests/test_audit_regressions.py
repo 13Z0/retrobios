@@ -3598,5 +3598,30 @@ class GeneratedArtifactsMeetTheirSchemas(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
 
+
+class AFileCardSaysAllItKnows(unittest.TestCase):
+    """Emulator pages cut a set at 10 members without their hashes, never
+    showed standalone_path, and gave no file an anchor to link to."""
+
+    def test_members_standalone_path_and_anchor(self):
+        from scripts.generate_site import _render_emulator_file
+
+        entry = {
+            "name": "neogeo.zip", "path": "neogeo.zip", "category": "bios_zip",
+            "standalone_path": "Firmware/neogeo.zip",
+            "contents": [{"name": f"m{i}.bin", "size": 1024, "crc32": f"{i:08x}"}
+                         for i in range(12)],
+        }
+        text = "\n".join(_render_emulator_file(
+            entry, {"files": [entry]}, None, [entry], lambda f: True, "file-neogeo-zip",
+        ))
+        self.assertIn('id="file-neogeo-zip"', text)
+        self.assertIn('href="#file-neogeo-zip"', text)
+        self.assertIn("Standalone path: `Firmware/neogeo.zip`", text)
+        self.assertIn("`m11.bin`", text)
+        self.assertIn("CRC32 `0000000b`", text)
+        self.assertNotIn("more", text)
+
+
 if __name__ == "__main__":
     unittest.main()

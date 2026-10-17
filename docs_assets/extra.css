@@ -684,3 +684,25 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* A file card can be cited by URL: its link shows on hover, and the card a
+   link lands on is marked. */
+.rb-permalink {
+  margin-left: 0.4rem;
+  color: var(--md-default-fg-color--light, var(--rb-border));
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.rb-file-entry:hover .rb-permalink,
+.rb-sys-file:hover .rb-permalink,
+.rb-permalink:focus {
+  opacity: 1;
+}
+.rb-file-entry:target,
+.rb-sys-file:target {
+  outline: 2px solid var(--md-accent-fg-color, var(--rb-border));
+  outline-offset: 2px;
+  scroll-margin-top: 4rem;
+}
+

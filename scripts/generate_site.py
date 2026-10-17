@@ -1776,8 +1776,11 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     sha1_short = sha1_full[:12] if sha1_full != "unknown" else "-"
     md5_short = md5_full[:12] if md5_full != "unknown" else "-"
 
-    lines = ['<div class="rb-sys-file" markdown>', ""]
-    lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>')
+    anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
+    id_attr = f' id="{anchor}"' if anchor else ""
+    lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
+    permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
+    lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>{permalink}')
     lines.append("")
     if "/.variants/" in f.get("path", ""):
         lines.append(f"- Stored as: `{f['path'].rsplit('/', 1)[-1]}`")
@@ -2040,8 +2043,11 @@ def _render_emulator_file(
     consumers: FileConsumers | None,
     files: list,
     _file_available,
+    anchor: str = "",
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
+
+    `anchor` is the card's id on the page, so one file can be cited by URL.
 
     Split out of generate_emulator_page, where it was a 228-line loop body
     carrying most of that function's branching: thirty-odd optional fields,
@@ -2091,11 +2097,13 @@ def _render_emulator_file(
     border_cls = (
         "rb-file-entry-required" if required else "rb-file-entry-optional"
     )
+    id_attr = f' id="{anchor}"' if anchor else ""
     lines.append(
-        f'<div class="rb-file-entry {border_cls}" markdown>'
+        f'<div class="rb-file-entry {border_cls}"{id_attr} markdown>'
     )
     lines.append("")
-    lines.append(f"**`{fname}`** {badge_str}")
+    permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
+    lines.append(f"**`{fname}`** {badge_str}{permalink}")
     if desc:
         lines.append(f"<br>{_escape_tags(str(desc))}")
     lines.append("")
@@ -2103,6 +2111,12 @@ def _render_emulator_file(
     details = []
     if fpath and fpath != fname:
         details.append(f"Path: `{fpath}`")
+    standalone_path = f.get("standalone_path", "")
+    if standalone_path and standalone_path != fpath:
+        # The standalone build reads it elsewhere: MesenCE's dsp1.rom goes
+        # under Firmware/, and a page naming only the core's path sent its
+        # users to the wrong folder.
+        details.append(f"Standalone path: `{standalone_path}`")
     if fsystem:
         details.append(f"System: {_system_link(fsystem, '../')}")
     if size:
@@ -2178,22 +2192,25 @@ def _render_emulator_file(
     if fnote:
         lines.append(f"- {_escape_tags(str(fnote))}")
     if contents:
-        lines.append(f"- Contents ({len(contents)} entries):")
-        for c in contents[:10]:
+        # Every member with the hashes the emulator checks: MAME and FBNeo
+        # verify the members, never the archive, so a member's crc32 is the
+        # value a reader compares a set against.
+        lines.append(f"- Contents ({len(contents)} members):")
+        for c in contents:
             if isinstance(c, dict):
-                cname = c.get("name", "")
-                cdesc = c.get("description", "")
-                csize = c.get("size", "")
-                parts = [f"`{cname}`"]
-                if cdesc:
-                    parts.append(cdesc)
-                if csize:
-                    parts.append(_fmt_size(csize))
-                lines.append(f"    - {' -'.join(parts)}")
+                parts = []
+                if c.get("description"):
+                    parts.append(_escape_tags(str(c["description"])))
+                if c.get("size"):
+                    parts.append(_fmt_size(c["size"]))
+                if c.get("crc32"):
+                    parts.append(f"CRC32 `{c['crc32']}`")
+                if c.get("sha1"):
+                    parts.append(f"SHA1 `{c['sha1']}`")
+                extra = f": {', '.join(parts)}" if parts else ""
+                lines.append(f"    - `{c.get('name', '')}`{extra}")
             else:
                 lines.append(f"    - {c}")
-        if len(contents) > 10:
-            lines.append(f"    - ... and {len(contents) - 10} more")
     lines.append("")
     lines.append("</div>")
     lines.append("")
@@ -2526,10 +2543,17 @@ def generate_emulator_page(
         lines.extend(_emulator_file_summary(files, _file_available))
 
         # File table
+        used: dict[str, int] = {}
         for f in files:
+            base = "file-" + (
+                re.sub(r"[^a-z0-9]+", "-", str(f.get("path") or f.get("name", "")).lower())
+                .strip("-") or "entry"
+            )
+            used[base] = used.get(base, 0) + 1
+            anchor = base if used[base] == 1 else f"{base}-{used[base]}"
             lines.extend(
                 _render_emulator_file(
-                    f, profile, consumers, files, _file_available
+                    f, profile, consumers, files, _file_available, anchor
                 )
             )
 
