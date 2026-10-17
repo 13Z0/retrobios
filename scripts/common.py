@@ -2378,3 +2378,20 @@ from dumpcatalog import (  # noqa: E402,F401
     annotate_provenance,
     write_provenance_snapshot,
 )
+
+
+def run_cli(main) -> None:
+    """Run a command-line entry point to its exit status.
+
+    A reader that stops early (`verify.py --all | head`) closed the pipe
+    and the next write died on a BrokenPipeError traceback. Output nobody
+    reads any more ends the run quietly, with the status a shell gives a
+    writer whose reader left.
+    """
+    try:
+        code = main()
+        sys.stdout.flush()
+    except BrokenPipeError:
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        sys.exit(141)
+    sys.exit(code)

@@ -3442,5 +3442,28 @@ class MessagesSeparateWithAColon(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+
+class AReaderThatLeavesEarlyIsNoCrash(unittest.TestCase):
+    """`verify.py --list-emulators | head -1` ended on a BrokenPipeError
+    traceback; every listing and report did."""
+
+    def test_a_closed_pipe_ends_quietly(self):
+        proc = subprocess.Popen(
+            [sys.executable, "scripts/verify.py", "--list-emulators"], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+        proc.stdout.readline()
+        proc.stdout.close()
+        _, err = proc.communicate(timeout=120)
+        self.assertNotIn(b"Traceback", err)
+        self.assertEqual(proc.returncode, 141)
+
+    def test_every_entry_point_goes_through_run_cli(self):
+        plain = re.compile(r'if __name__ == "__main__":\n    (main\(\)|sys\.exit\(main\(\)\))')
+        found = [p.name for p in sorted((ROOT / "scripts").glob("*.py"))
+                 if plain.search(p.read_text())]
+        self.assertEqual(found, [])
+
+
 if __name__ == "__main__":
     unittest.main()

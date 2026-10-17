@@ -768,4 +768,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    from common import run_cli
+
+    run_cli(main)

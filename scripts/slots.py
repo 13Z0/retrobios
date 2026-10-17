@@ -900,4 +900,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from common import run_cli
+
+    run_cli(main)

@@ -3210,4 +3210,11 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # A reader that stops early (`install.py --list | head`) ends the run
+    # quietly instead of on a BrokenPipeError traceback.
+    try:
+        main()
+        sys.stdout.flush()
+    except BrokenPipeError:
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        sys.exit(141)

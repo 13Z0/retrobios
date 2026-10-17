@@ -2309,4 +2309,6 @@ def _overall_summary(group_results: list[tuple[dict, list[str]]]) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    from common import run_cli
+
+    run_cli(main)
