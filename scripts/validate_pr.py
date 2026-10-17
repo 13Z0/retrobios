@@ -28,6 +28,7 @@ from common import (
     compute_hashes,
     list_registered_platforms,
     load_database,
+    load_emulator_profiles,
     load_platform_config,
     parse_md5_list,
 )
@@ -39,6 +40,7 @@ except ImportError:
 
 DEFAULT_DB = "database.json"
 DEFAULT_PLATFORMS_DIR = "platforms"
+DEFAULT_EMULATORS_DIR = "emulators"
 
 BLOCKED_EXTENSIONS = {
     ".exe",
@@ -138,10 +140,33 @@ def load_platform_hashes(platforms_dir: str) -> dict:
     return known
 
 
+def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
+    """Hash value to the emulators whose profile declares it, per algorithm.
+
+    A file only a core reads (a standalone emulator's firmware, a game
+    engine's data) is in no platform list: the review called every such
+    contribution "not referenced, needs manual review".
+    """
+    known: dict[str, dict[str, set[str]]] = {"sha1": {}, "sha256": {}, "md5": {}}
+    for emulator, profile in load_emulator_profiles(emulators_dir).items():
+        for entry in profile.get("files") or []:
+            if not isinstance(entry, dict):
+                continue
+            for algo in known:
+                values = entry.get(algo)
+                if algo == "md5":
+                    values = parse_md5_list(values)
+                for value in values if isinstance(values, (list, set)) else [values]:
+                    if value:
+                        known[algo].setdefault(str(value).lower(), set()).add(emulator)
+    return known
+
+
 def validate_file(
     filepath: str,
     db: dict | None,
     platform_hashes: dict,
+    profile_hashes: dict | None = None,
 ) -> ValidationResult:
     """Run all validation checks on a file."""
     result = ValidationResult(filepath)
@@ -195,10 +220,21 @@ def validate_file(
     md5_known = result.md5 in platform_hashes.get("md5", set())
     name_known = result.filename in platform_hashes.get("names", set())
 
+    profile_hashes = profile_hashes or {}
+    by_profile = (
+        profile_hashes.get("sha1", {}).get(result.sha1)
+        or profile_hashes.get("sha256", {}).get(hashes.get("sha256", ""))
+        or profile_hashes.get("md5", {}).get(result.md5)
+    )
+
     if sha1_known:
         result.add_check(True, "SHA1 matches known platform requirement")
     elif md5_known:
         result.add_check(True, "MD5 matches known platform requirement")
+    elif by_profile:
+        names = sorted(by_profile)
+        shown = ", ".join(names[:5]) + (f" and {len(names) - 5} more" if len(names) > 5 else "")
+        result.add_check(True, f"Hash matches a file the emulator profile declares: {shown}")
     elif name_known:
         result.add_warning(
             "Filename matches a known requirement but hash differs - may be a variant"
@@ -301,6 +337,7 @@ def main():
     )
     parser.add_argument("--db", default=DEFAULT_DB, help="Path to database.json")
     parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
+    parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
     parser.add_argument(
         "--markdown", action="store_true", help="Output as markdown (for PR comments)"
     )
@@ -313,10 +350,11 @@ def main():
 
     db = _load_database_if_any(args.db)
     platform_hashes = load_platform_hashes(args.platforms_dir)
+    profile_hashes = load_profile_hashes(args.emulators_dir)
 
     results = []
     for f in files:
-        result = validate_file(f, db, platform_hashes)
+        result = validate_file(f, db, platform_hashes, profile_hashes)
         results.append(result)
 
     all_passed = all(r.passed for r in results)

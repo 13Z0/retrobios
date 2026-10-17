@@ -76,6 +76,30 @@ class FileShapeChecks(_Fixture):
         self.assertEqual(len(result.sha1), 40)
 
 
+class AFileOnlyACoreReadsIsKnown(_Fixture):
+    """A file only an emulator profile declares (a standalone firmware, a
+    game engine's data) was reported "not referenced in any platform
+    config - needs manual review"."""
+
+    def test_the_profiles_that_declare_the_hash_are_named(self):
+        import hashlib  # noqa: PLC0415
+
+        emulators = self.tmp / "emulators"
+        emulators.mkdir()
+        data = b"engine data"
+        (emulators / "engine.yml").write_text(
+            "emulator: Engine\ntype: standalone\nsystems: [x]\nfiles:\n"
+            f"  - name: \"data.bin\"\n    sha1: \"{hashlib.sha1(data).hexdigest()}\"\n"
+        )
+        known = validate_pr.load_profile_hashes(str(emulators))
+        result = validate_pr.validate_file(
+            self._bios_file("bios/Maker/Engine/data.bin", data), None, EMPTY_HASHES, known,
+        )
+        self.assertIn(("PASS", "Hash matches a file the emulator profile declares: engine"),
+                      result.checks)
+        self.assertFalse(any("not referenced" in message for _s, message in result.checks))
+
+
 class SymlinksAreRefusedBeforeReading(_Fixture):
     """A symlink must be rejected without its target being read.
 
