@@ -3747,5 +3747,38 @@ class TargetListsReadThePinnedRelease(unittest.TestCase):
                 self.assertNotIn("fetch_github_latest_version(", source)
 
 
+
+class SignaturesCarryTheirTypes(unittest.TestCase):
+    """Type hints on every signature is a written rule; 177 had none, the
+    shared API among them (artifact locks, the data-dir resolver, the region
+    priority list of _select_variants)."""
+
+    # Lowered as modules are annotated; never raised.
+    CEILING = 139
+    COMPLETE = ("artifacts.py", "common.py", "validation.py", "generate_pack.py")
+
+    @staticmethod
+    def _missing(path: Path) -> list[str]:
+        found = []
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            args = node.args
+            params = [a for a in (*args.posonlyargs, *args.args, *args.kwonlyargs)
+                      if a.arg not in ("self", "cls")]
+            params += [a for a in (args.vararg, args.kwarg) if a]
+            if node.returns is None or any(a.annotation is None for a in params):
+                found.append(f"{path.name}:{node.lineno} {node.name}")
+        return found
+
+    def test_the_count_only_goes_down(self):
+        paths = [ROOT / "install.py", *sorted((ROOT / "scripts").rglob("*.py"))]
+        missing = [m for path in paths for m in self._missing(path)]
+        self.assertLessEqual(len(missing), self.CEILING, missing[:20])
+        for name in self.COMPLETE:
+            with self.subTest(module=name):
+                self.assertEqual(self._missing(ROOT / "scripts" / name), [])
+
+
 if __name__ == "__main__":
     unittest.main()

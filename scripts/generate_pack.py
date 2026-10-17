@@ -12,6 +12,8 @@ and 3-tier storage (embedded/external/user_provided).
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
+
 from artifacts import _build_timestamp
 import argparse
 import contextlib
@@ -331,7 +333,7 @@ def _data_directory_members(
     seen_destinations: set,
     seen_lower: set,
     seen_parents: set,
-):
+) -> Iterator[tuple[str, str]]:
     """Yield (source, destination) for the cached data directories a
     platform's systems declare.
 
@@ -386,7 +388,7 @@ def _data_directory_members(
 
 
 def _pack_data_directories(
-    zf,
+    zf: zipfile.ZipFile,
     pack_systems: dict,
     data_registry: dict | None,
     platform_name: str,
@@ -458,10 +460,10 @@ def _select_variants(
     emulators_dir: str,
     db: dict,
     base_dest: str,
-    emu_profiles,
-    target_cores,
+    emu_profiles: dict | None,
+    target_cores: set[str] | None,
     source: str,
-    regions,
+    regions: list[str] | None,
     one_per_slot: bool,
     required_only: bool = False,
 ) -> tuple[set, list, list]:
@@ -1129,7 +1131,7 @@ def generate_pack(
 
 def _extract_zip_to_archive(
     source_zip: str, dest_prefix: str, target_zf: zipfile.ZipFile
-):
+) -> None:
     """Extract contents of a source ZIP into target ZIP under dest_prefix."""
     with zipfile.ZipFile(source_zip, "r") as src:
         for info in src.infolist():
@@ -1153,7 +1155,7 @@ def _add_zip_to_pack(
     dest_path: str,
     target_zf: zipfile.ZipFile,
     file_entry: dict | None = None,
-):
+) -> None:
     """Write a source ZIP into the pack.
 
     A declared outer hash (md5/sha1/crc32) means the platform or profile
@@ -1179,7 +1181,7 @@ def _add_zip_to_pack(
 
 def _normalize_zip_for_pack(
     source_zip: str, dest_path: str, target_zf: zipfile.ZipFile
-):
+) -> None:
     """Add a MAME BIOS ZIP to the pack as a deterministic rebuild.
 
     Instead of copying the original ZIP (with non-deterministic metadata),
@@ -2151,7 +2153,7 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     print(f"Generated {count} target manifest(s) in {output_dir}")
 
 
-def _validate_args(args, parser):
+def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Validate argument combinations and mutual exclusion rules."""
     has_platform = bool(args.platform)
     has_all = args.all
@@ -2251,8 +2253,13 @@ def _write_manifest_if_changed(path: str, manifest: dict) -> None:
 
 
 def _run_manifest_mode(
-    args, groups, db, zip_contents, emu_profiles, target_cores_cache
-):
+    args: argparse.Namespace,
+    groups: list[tuple[list[str], str]],
+    db: dict,
+    zip_contents: dict,
+    emu_profiles: dict,
+    target_cores_cache: dict[str, set[str] | None],
+) -> None:
     """Generate JSON manifests instead of ZIP packs."""
     registry_path = os.path.join(args.platforms_dir, "_registry.yml")
     os.makedirs(args.output_dir, exist_ok=True)
@@ -2350,7 +2357,7 @@ def _run_manifest_mode(
 
 
 @contextlib.contextmanager
-def _pack_output_lock(output_dir: str, exclusive: bool = True):
+def _pack_output_lock(output_dir: str, exclusive: bool = True) -> Iterator[None]:
     """Hold the output directory for the duration of a pack run."""
     try:
         with artifact_lock(output_dir, exclusive=exclusive):
@@ -2360,7 +2367,7 @@ def _pack_output_lock(output_dir: str, exclusive: bool = True):
         sys.exit(1)
 
 
-def _run_verify_packs(args):
+def _run_verify_packs(args: argparse.Namespace) -> None:
     """Verify each pack in the output directory against its platform.
 
     Delegates to verify_pack_against_platform so the command answers the same
@@ -2445,7 +2452,7 @@ def _pack_label(source: str, required_only: bool) -> str:
 
 
 def _truth_layer_is_empty(
-    platform: str, platforms_dir: str, emu_profiles: dict, target_cores
+    platform: str, platforms_dir: str, emu_profiles: dict, target_cores: set[str] | None
 ) -> bool:
     """Whether a platform runs no core a profile describes.
 
@@ -2456,8 +2463,14 @@ def _truth_layer_is_empty(
     return not _platform_cores(config, emu_profiles or {}, target_cores=target_cores)
 
 
-def _skip_empty_truth(args, source: str, representative: str, emu_profiles, tc,
-                      failed: list[str]) -> bool:
+def _skip_empty_truth(
+    args: argparse.Namespace,
+    source: str,
+    representative: str,
+    emu_profiles: dict,
+    tc: set[str] | None,
+    failed: list[str],
+) -> bool:
     """Leave out a truth pack that would be empty; refuse it when asked for."""
     if source != "truth" or not _truth_layer_is_empty(
         representative, args.platforms_dir, emu_profiles, tc
@@ -2475,21 +2488,21 @@ def _skip_empty_truth(args, source: str, representative: str, emu_profiles, tc,
     return True
 
 
-def _produced(split: bool, zip_path, zip_paths) -> bool:
+def _produced(split: bool, zip_path: str | None, zip_paths: list[str] | None) -> bool:
     """Whether the build wrote what the run asked for."""
     return bool(zip_paths if split else zip_path)
 
 
 def _run_platform_packs(
-    args,
-    groups,
-    db,
-    zip_contents,
-    data_registry,
-    emu_profiles,
-    target_cores_cache,
-    system_filter,
-):
+    args: argparse.Namespace,
+    groups: list[tuple[list[str], str]],
+    db: dict,
+    zip_contents: dict,
+    data_registry: dict | None,
+    emu_profiles: dict,
+    target_cores_cache: dict[str, set[str] | None],
+    system_filter: list[str] | None,
+) -> None:
     """Generate ZIP packs for platform groups and verify."""
     if args.all_variants:
         variants = [
@@ -2632,7 +2645,7 @@ def _run_platform_packs(
         sys.exit(1)
 
 
-def _refuse_for_all_variants(args, parser) -> None:
+def _refuse_for_all_variants(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Flags --all-variants would override, or modes that never read it."""
     if not args.all_variants:
         return
@@ -2662,7 +2675,7 @@ def _refuse_for_all_variants(args, parser) -> None:
                 parser.error(f"{flag} is incompatible with --verify-packs")
 
 
-def _refuse_refresh_data(args, parser) -> None:
+def _refuse_refresh_data(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Only the platform pack path refreshes the data directories.
 
     Elsewhere the cache on disk was packed as it stood, and --offline wins
@@ -2684,14 +2697,16 @@ def _refuse_refresh_data(args, parser) -> None:
                 parser.error(f"{name} is incompatible with {flag}")
 
 
-def _refuse_include_archived(args, parser) -> None:
+def _refuse_include_archived(
+    args: argparse.Namespace, parser: argparse.ArgumentParser
+) -> None:
     """Only --all chooses among registered platforms; every other mode names
     its own platform, emulator, system or hash."""
     if args.include_archived and not args.all:
         parser.error("--include-archived requires --all")
 
 
-def _refuse_unapplied_flags(args, parser) -> None:
+def _refuse_unapplied_flags(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Refuse every flag the requested mode would not apply.
 
     A mode applies a narrowing flag or refuses it: a swallowed flag answers
@@ -2749,7 +2764,7 @@ QUICK_MODE_FLAGS: dict[str, set[str]] = {
 }
 
 
-def _given_flags(args) -> set[str]:
+def _given_flags(args: argparse.Namespace) -> set[str]:
     """Flags that select or narrow what a run produces, as typed."""
     flags = {
         "--platform": args.platform,
@@ -2787,7 +2802,7 @@ def _given_flags(args) -> set[str]:
 _MISSING_DATA_DIRS: set[str] = set()
 
 
-def main():
+def main() -> None:
     with contextlib.ExitStack() as held:
         _main(held)
     if _MISSING_DATA_DIRS:
@@ -3281,8 +3296,8 @@ def _attach_claims(
     claims: list[dict],
     db: dict,
     bios_dir: str,
-    zip_contents,
-    offline,
+    zip_contents: dict | None,
+    offline: bool | None,
     required_only: bool,
     validation_index: dict | None,
     owners: dict | None,
@@ -3353,7 +3368,7 @@ def _record_slot_choices(
     entry: dict,
     choices: list[tuple[str, str | None]],
     declarations: list[tuple[list[str], dict, str]],
-    settle,
+    settle: Callable[[dict, str, str, str | None], tuple[str | None, str]],
     dest: str,
     db: dict,
     repo_root: str,
@@ -3416,8 +3431,8 @@ def _manifest_core_entries(
     bios_dir: str,
     base_dest: str,
     repo_root: str,
-    zip_contents,
-    offline,
+    zip_contents: dict | None,
+    offline: bool | None,
     region_drops: set,
     case_insensitive: bool,
     seen_destinations: set,
@@ -3425,7 +3440,7 @@ def _manifest_core_entries(
     seen_parents: set,
     manifest_files: list,
     omitted_by_destination: dict,
-    record_omission,
+    record_omission: Callable[..., None],
     pack_only_sizes: list[int],
     selection: SelectionIndex,
     required_only: bool = False,
@@ -3612,7 +3627,7 @@ def _record_absent(
     required_only: bool,
     seen_destinations: set,
     omitted_by_destination: dict,
-    record_omission,
+    record_omission: Callable[..., None],
 ) -> None:
     """A file a core needs that the collection does not hold is an omission.
 
@@ -3641,7 +3656,7 @@ def _record_absent(
         )
 
 
-def _record_unplaceable(unplaceable: list[dict], record_omission) -> None:
+def _record_unplaceable(unplaceable: list[dict], record_omission: Callable[..., None]) -> None:
     """Held by the collection, nowhere to put it on this platform.
 
     Said in the manifest, where RomM's DOSBox Pure ROMs were simply absent.
@@ -3831,7 +3846,9 @@ def generate_manifest(
                     del remaining[sid]
             return order
 
-        def settle(file_entry: dict, sys_id: str, dest: str, override: str | None):
+        def settle(
+            file_entry: dict, sys_id: str, dest: str, override: str | None
+        ) -> tuple[str | None, str]:
             """The file served once the slot is settled, or None and why not."""
             local_path, status = slots.apply_override(override, *resolve_file(
                 file_entry,
@@ -4056,7 +4073,7 @@ def _manifest_core_index(
     config: dict,
     profiles: dict[str, dict],
     files: list[dict],
-    omitted,
+    omitted: list[dict],
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     """What the installer needs to narrow by a list of core names.
 

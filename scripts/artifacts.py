@@ -6,6 +6,7 @@ it is only meaningful if the comparison ignores the hour."""
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
 import contextlib
 import os
 import tempfile
@@ -22,7 +23,9 @@ _TIMESTAMP_PATTERNS = [
     re.compile(r'<div class="rb-timestamp">[^<]*</div>'),
 ]
 
-def write_if_changed(path: str, content: str, normalize=None) -> bool:
+def write_if_changed(
+    path: str, content: str, normalize: Callable[[str], str] | None = None
+) -> bool:
     """Write content to path only if the non-timestamp content differs.
 
     Compares new and existing content after stripping timestamp lines.
@@ -86,7 +89,7 @@ def write_bytes_atomic(path: str, content: bytes) -> None:
 
 
 @contextlib.contextmanager
-def file_lock(lock_path: str | os.PathLike, shared: bool = False):
+def file_lock(lock_path: str | os.PathLike, shared: bool = False) -> Iterator[None]:
     """Hold a lock on lock_path, waiting for it if taken.
 
     Several sessions refresh the same caches: without it, two swaps of one
@@ -140,7 +143,7 @@ HELD_LOCK_ENV = "RETROBIOS_HELD_ARTIFACT_DIR"
 
 
 @contextlib.contextmanager
-def artifact_lock(directory: str, exclusive: bool = True):
+def artifact_lock(directory: str, exclusive: bool = True) -> Iterator[None]:
     """Serialize access to a shared artifact directory across processes.
 
     Two pipeline runs building the same dist/ leave readers looking at
@@ -175,7 +178,7 @@ def artifact_lock(directory: str, exclusive: bool = True):
 
 
 @contextlib.contextmanager
-def hold_artifact_lock(directory: str):
+def hold_artifact_lock(directory: str) -> Iterator[None]:
     """Hold a directory exclusively across several child steps.
 
     A lock taken step by step frees the directory between them: another

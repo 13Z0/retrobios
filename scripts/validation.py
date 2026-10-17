@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import zipfile
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 
 from common import (
     adler32_of,
@@ -574,7 +574,7 @@ def find_validated_variant(
     current_real = os.path.realpath(current_path)
     seen: set[str] = set()
 
-    def candidates():
+    def candidates() -> Iterator[str]:
         # Sorted: the index holds sets, whose order follows the per-process
         # string hash, and the first passing candidate is the one shipped.
         expected = validation_index[fname]
@@ -789,10 +789,10 @@ def validated_choice(
         # The cores that read this destination judge it, each by its own
         # entries.
         judges = owning & set(rules["emulators"])
-    def check(path: str, strict: bool):
+    def check(path: str, strict: bool) -> tuple[str, list[str]] | None:
         return check_file_validation(path, name, validation_index, bios_dir, judges, strict)
 
-    def variant(strict: bool):
+    def variant(strict: bool) -> str | None:
         return find_validated_variant(
             file_entry, db, local_path, validation_index, bios_dir,
             platform_digest=platform_digest, emulators=judges, strict=strict,

@@ -6,6 +6,7 @@ and file resolution - eliminates DRY violations across scripts.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from collections import Counter
 
 import hashlib
@@ -619,7 +620,7 @@ def declared_hash_verdict(
     md5_list: list,
     crc_candidates: set,
     zipped_file: str | None,
-    declared_size,
+    declared_size: int | list[int] | None,
     file_entry: dict | None = None,
     db: dict | None = None,
 ) -> str:
@@ -669,7 +670,11 @@ def declared_hash_verdict(
     return "data_dir_hash_exact"
 
 
-def _resolve_in_data_dirs(names_to_try, data_dir_registry, verdict):
+def _resolve_in_data_dirs(
+    names_to_try: list[str],
+    data_dir_registry: dict,
+    verdict: Callable[[str], str],
+) -> tuple[tuple[str, str] | None, str | None]:
     """Look for one of these names in the cached data directories.
 
     Returns the first candidate whose content satisfies the entry, and
@@ -743,7 +748,9 @@ def forget_data_dir_index() -> None:
     _data_dir_index.clear()
 
 
-def _resolve_agnostic(file_entry: dict, files_db: dict, has_strong_hash: bool):
+def _resolve_agnostic(
+    file_entry: dict, files_db: dict, has_strong_hash: bool
+) -> tuple[str, str] | None:
     """Any file of the right shape under the declared prefix.
 
     Some cores accept whatever filename sits in their BIOS directory, so the
@@ -2380,7 +2387,7 @@ from dumpcatalog import (  # noqa: E402,F401
 )
 
 
-def run_cli(main) -> None:
+def run_cli(main: Callable[[], int | None]) -> None:
     """Run a command-line entry point to its exit status.
 
     A reader that stops early (`verify.py --all | head`) closed the pipe
