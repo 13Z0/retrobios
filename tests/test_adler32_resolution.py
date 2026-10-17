@@ -64,6 +64,57 @@ class TheAcceptedChecksumWins(unittest.TestCase):
                          format(zlib.adler32(b"\x02\x01" * 8), "08x"))
 
 
+class TheTwoRomsFormAPairTheCodeTakes(unittest.TestCase):
+    """Dolphin-MMJR accepts the v0.3.1 free dsp_rom.bin (128ea7a2) with the
+    free coef, and the official ROM with the official coef. The collection
+    holds the free ROM at the path, the official one in .variants/ and only
+    the official coef: each passed alone, and the pair served was free ROM
+    plus official coef, which its known_roms table refuses."""
+
+    def setUp(self):
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        held = {
+            ("dsp_rom.bin", root / "bios/Sys/GC/dsp_rom.bin"): b"\x01\x02" * 8,
+            ("dsp_rom.bin", root / "bios/.variants/dsp_rom.bin.off"): b"\x03\x04" * 8,
+            ("dsp_coef.bin", root / "bios/.variants/dsp_coef.bin.off"): b"\x05\x06" * 4,
+        }
+        files, by_name, by_suffix = {}, {}, {}
+        for (name, path), data in held.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            files[sha1] = {"path": str(path), "name": name, "sha1": sha1, "size": len(data)}
+            by_name.setdefault(name, []).append(sha1)
+            if "Sys/GC" in str(path):
+                by_suffix["GC/dsp_rom.bin"] = [sha1]
+        self.db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                               "by_path_suffix": by_suffix,
+                                               "by_crc32": {}}}
+        free_rom = adler32_of(str(root / "bios/Sys/GC/dsp_rom.bin"), True)
+        self.official_rom = root / "bios/.variants/dsp_rom.bin.off"
+        official_rom = adler32_of(str(self.official_rom), True)
+        official_coef = adler32_of(str(root / "bios/.variants/dsp_coef.bin.off"), True)
+        free_coef = "a4a575f5"
+        self.rom = {
+            "name": "dsp_rom.bin", "path": "GC/dsp_rom.bin", "size": 16,
+            "validation": ["size", "adler32"], "adler32_byteswap": True,
+            "known_hash_adler32": [f"0x{official_rom}", f"0x{free_rom}"],
+            "adler32_pairs_with": "dsp_coef.bin",
+            "adler32_pairs": [[f"0x{official_rom}", f"0x{official_coef}"],
+                              [f"0x{free_rom}", f"0x{free_coef}"]],
+        }
+
+    def test_the_rom_follows_the_held_coef(self):
+        path, status = resolve_local_file(self.rom, self.db, dest_hint="GC/dsp_rom.bin")
+        self.assertEqual((path, status), (str(self.official_rom), "name_exact"))
+
+    def test_without_a_whole_pair_each_value_stands_alone(self):
+        rom = {**self.rom, "adler32_pairs": [["0x00000001", "0x00000002"]]}
+        path, status = resolve_local_file(rom, self.db, dest_hint="GC/dsp_rom.bin")
+        self.assertEqual(status, "path_exact")
+
+
 class DolphinGetsAPairItTakes(unittest.TestCase):
     def test_each_dolphin_dsp_rom_resolves_to_an_accepted_dump(self):
         from common import load_emulator_profiles  # noqa: PLC0415
@@ -84,6 +135,34 @@ class DolphinGetsAPairItTakes(unittest.TestCase):
                 accepted = {v.lower().removeprefix("0x") for v in entry["known_hash_adler32"]}
                 self.assertIn(adler32_of(path, True), accepted)
 
+
+    def test_every_paired_profile_resolves_a_pair_its_code_takes(self):
+        from common import load_emulator_profiles  # noqa: PLC0415
+
+        database = REPO_ROOT / "database.json"
+        if not database.exists():
+            self.skipTest("database.json is not generated")
+        db = json.loads(database.read_text())
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+        for emu, profile in sorted(profiles.items()):
+            entries = {e["name"]: e for e in profile.get("files", [])
+                       if isinstance(e, dict) and e.get("adler32_pairs")}
+            for name, entry in entries.items():
+                partner = entries.get(entry["adler32_pairs_with"])
+                if partner is None:
+                    continue
+                with self.subTest(emulator=emu, name=name):
+                    values = []
+                    for e in (entry, partner):
+                        path, _status = resolve_local_file(
+                            {**e, "source_profile": emu}, db,
+                            dest_hint=e.get("path") or "",
+                        )
+                        self.assertIsNotNone(path)
+                        values.append(adler32_of(path, bool(e.get("adler32_byteswap"))))
+                    pairs = {tuple(v.lower().removeprefix("0x") for v in pair)
+                             for pair in entry["adler32_pairs"]}
+                    self.assertIn(tuple(values), pairs)
 
 if __name__ == "__main__":
     unittest.main()

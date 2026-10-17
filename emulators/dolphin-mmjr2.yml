@@ -180,6 +180,8 @@ files:
     validation: [size, adler32]
     known_hash_adler32: ["0x66f334fe", "0xe789b5a5"]
     adler32_byteswap: true
+    adler32_pairs_with: "dsp_coef.bin"
+    adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     description: "DSP instruction ROM"
     note: "DSP LLE only, and a file that is absent or not 8192 bytes fails initialisation, which aborts the emulation thread. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair; six replacement pairs are also accepted."
     source_ref: "Source/Core/Common/CommonPaths.h:120, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:107-120, Source/Core/Core/DSP/DSPCore.h:44, Source/Core/Core/DSP/DSPCore.cpp:28-71"
@@ -192,6 +194,8 @@ files:
     validation: [size, adler32]
     known_hash_adler32: ["0xf3b93527", "0xa4a575f5"]
     adler32_byteswap: true
+    adler32_pairs_with: "dsp_rom.bin"
+    adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0xe789b5a5"]]
     description: "DSP coefficient ROM"
     note: "Read by DSP LLE alongside the instruction ROM, and by the AX ucode under HLE for polyphase resampling, which drops any file that is not 0x1000 bytes and plays on without it."
     source_ref: "Source/Core/Common/CommonPaths.h:121, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-120, Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:42-69, Source/Core/Core/DSP/DSPCore.h:58, Source/Core/Core/DSP/DSPCore.cpp:28-102"

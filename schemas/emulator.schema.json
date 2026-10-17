@@ -424,6 +424,21 @@
           "adler32_byteswap": {
             "type": "boolean"
           },
+          "adler32_pairs_with": {
+            "description": "The file hashed together with this one; adler32_pairs lists the combinations the code accepts.",
+            "type": "string"
+          },
+          "adler32_pairs": {
+            "description": "Accepted Adler-32 combinations, this file's value first, in the code's table order.",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 1
+          },
           "agnostic": {
             "type": "boolean"
           },

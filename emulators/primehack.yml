@@ -71,6 +71,8 @@ files:
     validation: [size, adler32]
     known_hash_adler32: ["0x66f334fe", "0xe789b5a5"]
     adler32_byteswap: true
+    adler32_pairs_with: "dsp_coef.bin"
+    adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     note: "DSP instruction ROM for LLE audio. Free replacement (v0.4) included"
     source_ref: "Source/Core/Common/CommonPaths.h:135, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-117, Source/Core/Core/DSP/DSPCore.cpp:28-102"
 
@@ -82,6 +84,8 @@ files:
     validation: [size, adler32]
     known_hash_adler32: ["0xf3b93527", "0xa4a575f5"]
     adler32_byteswap: true
+    adler32_pairs_with: "dsp_rom.bin"
+    adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0xe789b5a5"]]
     note: "DSP coefficient ROM for LLE audio. Free replacement included"
     source_ref: "Source/Core/Common/CommonPaths.h:138, Source/Core/Core/DSP/DSPCore.cpp:32-38, Source/Core/Core/DSP/DSPCore.cpp:28-102"
 

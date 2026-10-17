@@ -92,13 +92,55 @@ def adler32_of(path: str, byteswap: bool = False) -> str:
     return format(zlib.adler32(data) & 0xFFFFFFFF, "08x")
 
 
-def adler32_fits(file_entry: dict, path: str) -> bool:
+def _adler32_value(value: object) -> str:
+    return str(value).lower().removeprefix("0x")
+
+
+def _held_adler32(name: str, db: dict, byteswap: bool) -> set[str]:
+    """The Adler-32 of every copy of a name the collection holds."""
+    files_db = db.get("files", {})
+    held: set[str] = set()
+    for sha1 in db.get("indexes", {}).get("by_name", {}).get(name, []):
+        path = files_db.get(sha1, {}).get("path", "")
+        try:
+            held.add(adler32_of(path, byteswap))
+        except OSError:
+            continue
+    return held
+
+
+def held_adler32_pair(file_entry: dict, db: dict) -> str | None:
+    """The entry's own value in the first pair its code accepts that is held.
+
+    Dolphin hashes dsp_rom.bin and dsp_coef.bin together and warns on any
+    combination outside its table: two files each accepted alone can still
+    be a pair it refuses. ``adler32_pairs`` lists the accepted pairs, the
+    entry's own value first, in the code's table order; both members walk
+    the same pairs over the same collection, so they settle on one pair.
+    None when the entry declares no pair or none is held whole.
+    """
+    pairs = file_entry.get("adler32_pairs")
+    partner = file_entry.get("adler32_pairs_with")
+    if not pairs or not partner:
+        return None
+    byteswap = bool(file_entry.get("adler32_byteswap"))
+    own = _held_adler32(file_entry.get("name", ""), db, byteswap)
+    other = _held_adler32(partner, db, byteswap)
+    for mine, theirs in pairs:
+        if _adler32_value(mine) in own and _adler32_value(theirs) in other:
+            return _adler32_value(mine)
+    return None
+
+
+def adler32_fits(file_entry: dict, path: str, db: dict | None = None) -> bool:
     """Whether a candidate carries an Adler-32 the entry's code accepts.
 
     Dolphin hashes its DSP ROMs and warns on every pair it does not take
     as current: the v0.3.1 free dsp_rom.bin is answered by its path, and
     shipped beside the official dsp_coef.bin it is a pair Dolphin rejects.
     A value declared without ``validation: [adler32]`` rejects nothing.
+    With the collection at hand, a candidate outside the held pair the
+    code accepts (``held_adler32_pair``) is refused too.
     """
     validation = file_entry.get("validation")
     if isinstance(validation, dict):
@@ -107,11 +149,15 @@ def adler32_fits(file_entry: dict, path: str) -> bool:
     if "adler32" not in (validation or []) or not declared:
         return True
     values = declared if isinstance(declared, list) else [declared]
-    accepted = {str(v).lower().removeprefix("0x") for v in values}
+    accepted = {_adler32_value(v) for v in values}
     try:
-        return adler32_of(path, bool(file_entry.get("adler32_byteswap"))) in accepted
+        actual = adler32_of(path, bool(file_entry.get("adler32_byteswap")))
     except OSError:
         return False
+    if actual not in accepted:
+        return False
+    chosen = held_adler32_pair(file_entry, db) if db is not None else None
+    return chosen is None or actual == chosen
 
 
 def size_fits(file_entry: dict, candidate_size: int) -> bool:
@@ -1115,7 +1161,7 @@ def resolve_local_file(
                 if not os.path.exists(path):
                     continue
                 if not has_strong_hash:
-                    if not adler32_fits(file_entry, path):
+                    if not adler32_fits(file_entry, path, db):
                         continue
                     return path, "path_exact"
                 status = _record_match_status(match_sha1)
@@ -1126,7 +1172,7 @@ def resolve_local_file(
     def _size_ok(match_sha1: str) -> bool:
         record = files_db.get(match_sha1, {})
         return name_match_size_ok(file_entry, record.get("size")) and adler32_fits(
-            file_entry, record.get("path", "")
+            file_entry, record.get("path", ""), db
         )
 
     # An entry the profile documents as unsourceable is one the collection
