@@ -368,5 +368,18 @@ class PinsWithExtras(unittest.TestCase):
         self.assertEqual(pins["jsonschema"], "==4.26.0")
 
 
+
+class AStaticTargetStillNamesItsCores(unittest.TestCase):
+    """RetroBat's single target is `cores: null`; the check returned OK
+    before reading the names, and its 50 unprofiled emulators never showed."""
+
+    def test_declared_names_are_checked(self):
+        names = cf._declared_cores("retrobat")
+        self.assertIn("winuae", names)
+        source = Path(cf.__file__).read_text()
+        static = source.index('detail="every declared core"')
+        self.assertLess(static, source.index("_declared_cores(platform)"))
+
+
 if __name__ == "__main__":
     unittest.main()

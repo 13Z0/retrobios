@@ -482,9 +482,18 @@ def check_targets(
             (t or {}).get("cores", []) is None for t in targets.values()
         ):
             # Every core the platform declares runs on these targets: the list
-            # is the platform's own and has nothing of its own to age.
-            return [Finding("targets", platform, OK, local="static",
-                            detail="every declared core")]
+            # is the platform's own and has nothing of its own to age. Its
+            # names still need a profile each: RetroBat's winuae, jzintv or
+            # sudachi without one are BIOS its pack never carries.
+            out = [Finding("targets", platform, OK, local="static",
+                           detail="every declared core")]
+            declared = _declared_cores(platform)
+            missing = unresolved_target_cores(
+                {"targets": {name: {"cores": declared} for name in targets}},
+                index, _platform_overrides(overrides, platform),
+            )
+            out.extend(_unresolved_findings(platform, missing))
+            return out
         if module is None:
             # No scraper: a hand-written file has no upstream to diff against,
             # so only its age and its core names can be reported.
@@ -530,6 +539,19 @@ def check_targets(
         for rows in pool.map(run, names):
             findings.extend(rows)
     return findings
+
+
+def _declared_cores(platform: str) -> list[str]:
+    """The cores and standalone emulators a platform's own file names."""
+    from common import load_platform_config
+
+    try:
+        config = load_platform_config(platform, str(REPO_ROOT / "platforms"))
+    except (FileNotFoundError, OSError):
+        return []
+    cores = config.get("cores")
+    names = [str(c) for c in cores] if isinstance(cores, list) else []
+    return names + [str(c) for c in config.get("standalone_cores") or []]
 
 
 def _unresolved_findings(platform: str, missing: dict[str, list[str]]) -> list[Finding]:
