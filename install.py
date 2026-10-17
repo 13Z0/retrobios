@@ -174,15 +174,15 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
         profile = Path(os.environ.get("USERPROFILE", str(home)))
         appdata = Path(os.environ.get("APPDATA", str(home / "AppData" / "Roaming")))
         return {
-            "retroarch": appdata / "RetroArch" / "system",
+            # RetroArch's system directory defaults to <exe folder>\system
+            # (platform_win32.c), and its installer to C:\RetroArch-Win64.
+            "retroarch": Path("C:/RetroArch-Win64/system"),
             # RetroBat's installer defaults to C:\RetroBat (installer.iss).
             "retrobat": Path("C:/RetroBat/bios"),
             "bizhawk": profile / "BizHawk" / "Firmware",
         }
     if os_type == "darwin":
-        return {
-            "retroarch": home / "Library" / "Application Support" / "RetroArch" / "system",
-        }
+        return {"retroarch": _macos_retroarch_base() / "system"}
     return {
         "retroarch": home / ".config" / "retroarch" / "system",
         "bizhawk": home / ".config" / "BizHawk" / "Firmware",
@@ -453,6 +453,27 @@ def _retroarch_cfg_dir(
                 return app_dir / default
             return _expand_retroarch_path(value, app_dir)
     return None
+
+
+def _windows_retroarch_dirs() -> list[Path]:
+    """Folders holding retroarch.exe where the installer and the archive put
+    it: C:\RetroArch-Win64 by default, C:\RetroArch for 32-bit builds."""
+    candidates = [Path("C:/RetroArch-Win64"), Path("C:/RetroArch")]
+    for var in ("ProgramFiles", "ProgramFiles(x86)"):
+        root = os.environ.get(var, "")
+        if root:
+            candidates.append(Path(root) / "RetroArch")
+    return [folder for folder in candidates if (folder / "retroarch.exe").is_file()]
+
+
+def _macos_retroarch_base() -> Path:
+    """Where RetroArch on macOS keeps its system folder by default:
+    ~/Documents/RetroArch, or Application Support/RetroArch when that folder
+    holds portable.txt (platform_darwin.m)."""
+    support = Path.home() / "Library" / "Application Support" / "RetroArch"
+    if (support / "portable.txt").is_file():
+        return support
+    return Path.home() / "Documents" / "RetroArch"
 
 
 # System directory -> the retroarch.cfg it was read from and the directory
@@ -896,11 +917,17 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             found.append(("retroarch", ra_dir))
 
     if os_type == "darwin":
-        home = Path.home()
-        mac_cfg = home / "Library" / "Application Support" / "RetroArch" / "retroarch.cfg"
-        ra_dir = _parse_retroarch_system_dir(mac_cfg)
-        if ra_dir:
-            found.append(("retroarch", ra_dir))
+        # open_default_config_file reads <Application Support>/RetroArch/config
+        # (configuration.c); a value left at default is the documents folder,
+        # or Application Support itself for a portable install
+        # (platform_darwin.m). The config beside it is where older builds
+        # kept it.
+        support = Path.home() / "Library" / "Application Support" / "RetroArch"
+        for mac_cfg in (support / "config" / "retroarch.cfg", support / "retroarch.cfg"):
+            ra_dir = _parse_retroarch_system_dir(mac_cfg, _macos_retroarch_base())
+            if ra_dir:
+                found.append(("retroarch", ra_dir))
+                break
 
     if os_type in ("windows", "wsl"):
         # EmuDeck Windows
@@ -911,11 +938,20 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             if emu_path:
                 found.append(("emudeck", Path(emu_path) / "bios"))
 
-        # RetroArch Windows
+        # RetroArch Windows: open_default_config_file reads retroarch.cfg
+        # beside the exe, then under %APPDATA%\RetroArch, and a value left at
+        # default is <exe folder>\system (configuration.c, platform_win32.c).
         appdata = os.environ.get("APPDATA", "")
-        if appdata:
-            win_cfg = Path(appdata) / "RetroArch" / "retroarch.cfg"
-            ra_dir = _parse_retroarch_system_dir(win_cfg)
+        appdata_cfg = Path(appdata) / "RetroArch" / "retroarch.cfg" if appdata else None
+        exe_dirs = _windows_retroarch_dirs() if os_type == "windows" else []
+        for exe_dir in exe_dirs:
+            ra_dir = _parse_retroarch_system_dir(exe_dir / "retroarch.cfg", exe_dir)
+            if ra_dir is None and appdata_cfg is not None:
+                ra_dir = _parse_retroarch_system_dir(appdata_cfg, exe_dir)
+            found.append(("retroarch", ra_dir or exe_dir / "system"))
+            break
+        if not exe_dirs and appdata_cfg is not None:
+            ra_dir = _parse_retroarch_system_dir(appdata_cfg)
             if ra_dir:
                 found.append(("retroarch", ra_dir))
 

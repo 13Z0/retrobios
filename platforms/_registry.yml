@@ -171,9 +171,17 @@ platforms:
         method: config_file
         config: $HOME/.config/retroarch/retroarch.cfg
         parse_key: system_directory
+      # configuration.c reads <Application Support>/RetroArch/config; a value
+      # left at default is ~/Documents/RetroArch/system (platform_darwin.m).
       - os: darwin
         method: config_file
-        config: $HOME/Library/Application Support/RetroArch/retroarch.cfg
+        config: $HOME/Library/Application Support/RetroArch/config/retroarch.cfg
+        parse_key: system_directory
+        bios_path: $HOME/Documents/RetroArch/system
+      # Beside retroarch.exe first, then %APPDATA%; default <exe folder>\system.
+      - os: windows
+        method: config_file
+        config: 'C:\RetroArch-Win64\retroarch.cfg'
         parse_key: system_directory
       - os: windows
         method: config_file

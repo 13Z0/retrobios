@@ -1743,5 +1743,54 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
         with unittest.mock.patch.object(install.urllib.request, "urlopen", missing):
             self.assertEqual(install.fetch_targets("retroarch"), {})
 
+
+class RetroArchWhereItReallyLives(unittest.TestCase):
+    """Windows: retroarch.cfg sits beside retroarch.exe and system defaults
+    to <exe folder>\\system; only %APPDATA% was read, and the fallback was a
+    folder RetroArch never reads. macOS: the config is under
+    Application Support/RetroArch/config, the system folder in Documents."""
+
+    def _exe_dir(self) -> tuple[Path, dict]:
+        program_files = Path(_tempdir(self))
+        exe_dir = program_files / "RetroArch"
+        exe_dir.mkdir()
+        (exe_dir / "retroarch.exe").write_bytes(b"MZ")
+        return exe_dir, {"ProgramFiles": str(program_files)}
+
+    def test_windows_install_folder_without_a_config(self):
+        exe_dir, env = self._exe_dir()
+        with unittest.mock.patch.dict(os.environ, env, clear=True):
+            found = install.detect_platforms("windows")
+        self.assertIn(("retroarch", exe_dir / "system"), found)
+
+    def test_windows_appdata_config_at_default_names_the_exe_folder(self):
+        exe_dir, env = self._exe_dir()
+        appdata = Path(_tempdir(self))
+        (appdata / "RetroArch").mkdir()
+        (appdata / "RetroArch" / "retroarch.cfg").write_text('system_directory = "default"\n')
+        env["APPDATA"] = str(appdata)
+        with unittest.mock.patch.dict(os.environ, env, clear=True):
+            found = install.detect_platforms("windows")
+        self.assertIn(("retroarch", exe_dir / "system"), found)
+
+    def test_windows_config_beside_the_exe_wins(self):
+        exe_dir, env = self._exe_dir()
+        (exe_dir / "retroarch.cfg").write_text('system_directory = "D:\\bios"\n')
+        with unittest.mock.patch.dict(os.environ, env, clear=True):
+            found = install.detect_platforms("windows")
+        self.assertIn(("retroarch", Path("D:\\bios")), found)
+
+    def test_macos_config_folder_and_documents_default(self):
+        home = Path(_tempdir(self))
+        support = home / "Library" / "Application Support" / "RetroArch"
+        (support / "config").mkdir(parents=True)
+        (support / "config" / "retroarch.cfg").write_text('system_directory = "default"\n')
+        with unittest.mock.patch.object(install.Path, "home", return_value=home):
+            found = install.detect_platforms("darwin")
+            self.assertIn(("retroarch", home / "Documents" / "RetroArch" / "system"), found)
+            (support / "portable.txt").write_text("")
+            found = install.detect_platforms("darwin")
+            self.assertIn(("retroarch", support / "system"), found)
+
 if __name__ == "__main__":
     unittest.main()
