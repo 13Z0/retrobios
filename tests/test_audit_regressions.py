@@ -3161,3 +3161,32 @@ class ASameNamedMemberIsNotTheFile(unittest.TestCase):
                     self.assertTrue(xr._data_hit(fname, None, held, names))
                     self.assertFalse(xr._data_hit(fname, None, other, names))
                     self.assertTrue(xr._data_hit(fname, None, {"name": fname}, names))
+
+
+class AnEmptyTargetIsNotEveryCore(unittest.TestCase):
+    """A board scraped with `cores: []` and `add_cores: [gpsp]`: the pack
+    served gpsp's files only, the published list said null (every core)."""
+
+    def test_the_published_list_is_the_builder_reading(self):
+        from scripts.common import load_target_config
+        from scripts.generate_pack import generate_target_manifests
+
+        tmp = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        self.addCleanup(lambda: __import__("shutil").rmtree(tmp, True))
+        targets = tmp / "platforms" / "targets"
+        targets.mkdir(parents=True)
+        (targets / "demo.yml").write_text(
+            "platform: demo\ntargets:\n"
+            "  board:\n    architecture: aarch64\n    cores: []\n"
+            "  full:\n    architecture: x86_64\n    cores: null\n"
+        )
+        (targets / "_overrides.yml").write_text(
+            "demo:\n  targets:\n    board:\n      add_cores: [gpsp]\n"
+        )
+        with contextlib.redirect_stdout(io.StringIO()):
+            generate_target_manifests(str(targets), str(tmp / "out"))
+        published = json.loads((tmp / "out" / "demo.json").read_text())
+        builder = load_target_config("demo", "board", str(tmp / "platforms"))
+        self.assertEqual(published["board"], sorted(builder))
+        self.assertEqual(published["board"], ["gpsp"])
+        self.assertIsNone(published["full"])

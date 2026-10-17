@@ -33,7 +33,7 @@ from common import (
     target_listing_line,
     suggest_names,
     require_platform,
-    apply_target_overrides,
+    load_target_config,
     archive_entry,
     profiles_for_systems,
     write_text_atomic,
@@ -2111,7 +2111,7 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
             if not isinstance(target_info, dict):
                 raise ValueError(f"{yml_file}: target {target_name!r} must be a mapping")
             cores = target_info.get("cores")
-            if cores is None or cores == []:
+            if cores is None:
                 result[target_name] = None
                 continue
             if (
@@ -2123,12 +2123,13 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
                     f"{yml_file}: target {target_name!r} cores must be unique "
                     "non-empty strings"
                 )
-            # The same add/remove lists the pack builder applies: a list
-            # published without them makes the installer skip files of a
-            # core the pack for that target ships.
-            result[target_name] = sorted(
-                apply_target_overrides(set(cores), platform_overrides, target_name)
+            # The builder's own reading, overrides included: a list published
+            # another way makes the installer serve what the pack does not.
+            # An empty list is a board with no core, not one with every core.
+            resolved = load_target_config(
+                yml_file.stem, target_name, str(targets_path.parent)
             )
+            result[target_name] = None if resolved is None else sorted(resolved)
 
         for target_name, names in alias_map.items():
             if target_name not in result:
