@@ -434,15 +434,6 @@ def check_file_validation(
     return None
 
 
-def validate_cli_modes(args, mode_attrs: list[str]) -> None:
-    """Validate mutual exclusion of CLI mode arguments."""
-    modes = sum(1 for attr in mode_attrs if getattr(args, attr, None))
-    if modes == 0:
-        raise SystemExit(f"Specify one of: --{'  --'.join(mode_attrs)}")
-    if modes > 1:
-        raise SystemExit(f"Options are mutually exclusive: --{'  --'.join(mode_attrs)}")
-
-
 def read_from_system_dir(file_entry: dict, standalone: bool = False) -> bool:
     """Whether the emulator reads this entry from the system directory.
 
