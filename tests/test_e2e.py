@@ -4595,9 +4595,11 @@ class TestE2E(unittest.TestCase):
             }
         }
         scraped = {
+            # The core the platform runs: an addition is written under it.
+            "cores": ["c"],
             "systems": {
                 "sony-playstation": {"native_id": "psx", "files": []},
-            }
+            },
         }
         from exporter.baseline import build_native_model
 
@@ -4644,9 +4646,11 @@ class TestE2E(unittest.TestCase):
             }
         }
         scraped = {
+            # The core the platform runs: an addition is written under it.
+            "cores": ["c"],
             "systems": {
                 "sony-playstation": {"native_id": "psx", "files": []},
-            }
+            },
         }
         from exporter.baseline import build_native_model
 
