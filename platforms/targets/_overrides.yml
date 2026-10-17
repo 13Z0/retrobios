@@ -42,6 +42,18 @@ batocera:
         - gliden64
         - glide64mk2
         - rice
+    # Boards are named by SoC; the Raspberry Pi models a user knows map here
+    # (Batocera's Config.in comments: "rpi2/rpi3", "rpi4 only", "rpi5 only").
+    bcm2835:
+      aliases: [rpi1, rpi-zero]
+    bcm2836:
+      aliases: [rpi2]
+    bcm2837:
+      aliases: [rpi3, rpi-zero2]
+    bcm2711:
+      aliases: [rpi4, rpi400, cm4]
+    bcm2712:
+      aliases: [rpi5, rpi500, cm5]
     x86_64:
       add_cores: [citron, demul, model2, xenia]
     zen3:

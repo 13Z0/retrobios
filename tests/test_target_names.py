@@ -29,6 +29,15 @@ class AliasesResolveToOneName(unittest.TestCase):
                     "nintendo-switch",
                 )
 
+    def test_raspberry_pi_models_reach_batocera_boards(self):
+        """`--target rpi4`, the example every --help gives, was refused on
+        Batocera: its boards are named by SoC and no alias pointed there."""
+        platforms = str(REPO_ROOT / "platforms")
+        for typed, board in (("rpi4", "bcm2711"), ("rpi5", "bcm2712"),
+                             ("rpi3", "bcm2837"), ("rpi-zero", "bcm2835")):
+            with self.subTest(typed=typed):
+                self.assertEqual(canonical_target_name(["batocera"], typed, platforms), board)
+
     def test_an_unknown_name_is_left_for_the_target_check(self):
         self.assertEqual(
             canonical_target_name(["retroarch"], "bogus", str(REPO_ROOT / "platforms")),
