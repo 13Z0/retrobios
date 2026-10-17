@@ -99,11 +99,58 @@ SYSTEM_SLUG_MAP = {
 }
 
 
-def split_cores(names) -> tuple[list[str], list[str]]:
-    """(every core name, the standalone ones) from es_bios.xml ``core`` values."""
-    cores = {name for name in names if name}
-    standalone = {name for name in cores if not name.startswith("libretro")}
-    return sorted(cores), sorted(standalone)
+SYSTEMS_TREE_URL = (
+    "https://gitlab.com/api/v4/projects/recalbox%2Frecalbox/repository/tree"
+    "?path=package/recalbox-romfs2/systems&ref={tag}&per_page=100&page={page}"
+)
+SYSTEM_INI_URL = (
+    "https://gitlab.com/recalbox/recalbox/-/raw/{tag}"
+    "/package/recalbox-romfs2/systems/{system}/system.ini"
+)
+
+
+def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
+    """The cores one Recalbox system.ini offers, and those run standalone.
+
+    Each ``[core.N]`` section (or its board override ``[core.N.<board>]``)
+    names an ``emulator`` and a ``core``: ``libretro`` with the core's name,
+    or a standalone emulator. es_bios.xml only names the cores that need a
+    BIOS, so read alone it left most of Recalbox's cores outside the pack.
+    """
+    import re
+
+    # Recalbox's .ini files are not strict INI (a value can run on a bare
+    # line), so only sections and key = value lines are read.
+    sections: dict[str, dict[str, str]] = {}
+    current: dict[str, str] | None = None
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith((";", "#")):
+            continue
+        header = re.fullmatch(r"\[([^\]]+)\]", line)
+        if header:
+            current = sections.setdefault(header.group(1).strip(), {})
+            continue
+        if current is not None and "=" in line:
+            key, value = line.split("=", 1)
+            current[key.strip()] = value.strip().strip('"')
+    cores: set[str] = set()
+    standalone: set[str] = set()
+    for section, values in sections.items():
+        if not re.fullmatch(r"core\.\d+(\.[\w-]+)?", section):
+            continue
+        emulator = values.get("emulator", "")
+        core = values.get("core", "")
+        if emulator == "libretro":
+            if core:
+                cores.add(core)
+        elif emulator:
+            cores.add(emulator)
+            standalone.add(emulator)
+            if core and core != emulator:
+                cores.add(core)
+                standalone.add(core)
+    return cores, standalone
 
 
 class Scraper(BaseScraper):
@@ -114,20 +161,46 @@ class Scraper(BaseScraper):
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
     def _fetch_cores(self) -> tuple[list[str], list[str]]:
-        """Core names from es_bios.xml, and those Recalbox runs standalone.
+        """Every core Recalbox's systems offer, and those it runs standalone.
 
-        The ``core`` attribute writes a libretro core as ``libretro/<name>``
-        and a standalone emulator by its bare name (``dolphin``, ``pcsx2``,
-        ``xemu``), so the prefix is the build mode. One entry spells
-        ``libretro-hatari``; a name that starts with ``libretro`` is a core.
+        Read from each system.ini of recalbox-romfs2 at the scraped tag: the
+        systems ES lists and the cores a user can pick for each.
         """
-        raw = self._fetch_raw()
-        root = parse_untrusted_xml(raw, "es_bios.xml")
-        return split_cores(
-            part.strip()
-            for bios_elem in root.findall(".//system/bios")
-            for part in bios_elem.get("core", "").split(",")
-        )
+        import json
+        import urllib.error
+        import urllib.request
+
+        def get(url: str) -> bytes:
+            req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    return resp.read()
+            except urllib.error.URLError as e:
+                raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+
+        systems: list[str] = []
+        page = 1
+        while True:
+            listing = json.loads(get(SYSTEMS_TREE_URL.format(tag=self.tag, page=page)))
+            systems += [
+                item["name"] for item in listing
+                if item.get("type") == "tree" and not item["name"].startswith(".")
+            ]
+            if len(listing) < 100:
+                break
+            page += 1
+        if not systems:
+            raise RuntimeError(f"no Recalbox system found at {self.tag}")
+        cores: set[str] = set()
+        standalone: set[str] = set()
+        for system in systems:
+            text = get(SYSTEM_INI_URL.format(tag=self.tag, system=system)).decode("utf-8")
+            found, alone = system_ini_cores(text)
+            cores |= found
+            standalone |= alone
+        if not cores:
+            raise RuntimeError(f"no core in Recalbox's system.ini files at {self.tag}")
+        return sorted(cores), sorted(standalone)
 
     def fetch_requirements(self) -> list[BiosRequirement]:
         """Parse es_bios.xml and return BIOS requirements."""

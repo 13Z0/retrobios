@@ -219,23 +219,45 @@ class RetroPiePackageList(unittest.TestCase):
 
 
 class RecalboxBuildMode(unittest.TestCase):
-    """es_bios.xml names a libretro core as libretro/<name> and a standalone
-    emulator by its bare name: the prefix is the build mode, and a platform
-    that runs an emulator standalone must say so or the pack lays its files
-    out for the libretro build."""
+    """Recalbox's cores come from each system.ini of recalbox-romfs2: a
+    `[core.N]` section names `emulator = "libretro"` with the core, or a
+    standalone emulator. es_bios.xml only names the cores that need a BIOS,
+    so read alone it left most of Recalbox's cores, mame0258 and mame0278
+    among them, outside the pack."""
 
-    def test_bare_names_are_the_standalone_emulators(self):
-        from scraper.recalbox_scraper import split_cores
+    SYSTEM_INI = """\
+[system]
+name = "mame"
+fullname = "MAME"
+  extra line the parser must survive.
 
-        cores, standalone = split_cores(
-            ["libretro/uae", "amiberry", "", "dolphin", "libretro/dolphin", "libretro-hatari", "hatari"]
-        )
-        self.assertEqual(
-            cores,
-            ["amiberry", "dolphin", "hatari", "libretro-hatari", "libretro/dolphin", "libretro/uae"],
-        )
-        self.assertEqual(standalone, ["amiberry", "dolphin", "hatari"])
+[core.0]
+package = BR2_PACKAGE_LIBRETRO_MAME0278
+emulator = "libretro"
+core = "mame0278"
 
+[core.1]
+emulator = "advancemame"
+core = "advancemame"
+
+[core.2.rpi4]
+emulator = "libretro"
+core = "mame2003_plus"
+"""
+
+    def test_libretro_cores_and_standalone_emulators(self):
+        from scraper.recalbox_scraper import system_ini_cores
+
+        cores, standalone = system_ini_cores(self.SYSTEM_INI)
+        self.assertEqual(cores, {"mame0278", "advancemame", "mame2003_plus"})
+        self.assertEqual(standalone, {"advancemame"})
+
+    def test_the_registry_leaves_the_list_to_the_scraper(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertNotIn("cores", registry["platforms"]["recalbox"])
 
 
 class UnreadableReleaseStopsTheScrape(unittest.TestCase):
