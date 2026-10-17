@@ -303,6 +303,21 @@ class RepositoryWiringTests(unittest.TestCase):
         self.assertIn("[ci]", text)
         self.assertIn("[data]", text)
 
+    def test_a_target_of_every_declared_core_does_not_age(self):
+        """RetroBat, RetroDECK and RomM name one target that runs every core
+        they declare; with nothing hand-kept, there is no date to watch."""
+        import tempfile  # noqa: PLC0415
+        from pathlib import Path as _Path  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            targets = _Path(tmp) / "targets"
+            targets.mkdir()
+            (targets / "solo.yml").write_text(
+                "platform: solo\nsource: static\ntargets:\n  only:\n    cores: null\n")
+            findings = cf.check_targets(_Path(tmp), _Path(tmp), {}, 1, True)
+        solo = [f for f in findings if f.subject == "solo"]
+        self.assertEqual([(f.status, f.detail) for f in solo], [(cf.OK, "every declared core")])
+
     def test_render_keeps_long_values_whole(self):
         """The profile_sync row lost the end of its sentence at 32 characters."""
         local = "12 profiles behind upstream, 103 refs to re-read"

@@ -437,10 +437,14 @@ def load_target_config(
     platform_name: str,
     target: str,
     platforms_dir: str = "platforms",
-) -> set[str]:
+) -> set[str] | None:
     """Load target config and return the set of core names for the given target.
 
     Resolves aliases from _overrides.yml, applies add_cores/remove_cores.
+    A target whose cores are null runs every core the platform declares and
+    returns None, which filters nothing: the platforms with a single target
+    (RetroBat on Windows, RetroDECK, RomM in the browser) kept a hand list
+    that dropped 98 RetroBat cores and 300 RetroDECK ones.
     Raises ValueError if target is unknown (with list of available targets).
     Raises FileNotFoundError if no target file exists for the platform.
     """
@@ -470,7 +474,10 @@ def load_target_config(
             msg += f"\nAliases: {', '.join(sorted(aliases))}"
         raise ValueError(msg)
 
-    cores = set(str(c) for c in targets[canonical].get("cores", []))
+    declared = (targets[canonical] or {}).get("cores")
+    if declared is None:
+        return None
+    cores = set(str(c) for c in declared)
     return apply_target_overrides(cores, overrides, canonical)
 
 
@@ -515,16 +522,28 @@ def list_available_targets(
     result = []
     for tname, tdata in sorted(data.get("targets", {}).items()):
         aliases = (overrides.get(tname) or {}).get("aliases", [])
-        cores = {str(c) for c in tdata.get("cores", [])}
+        declared = (tdata or {}).get("cores")
+        # None: the target runs every core the platform declares.
+        count = (
+            None if declared is None
+            else len(apply_target_overrides({str(c) for c in declared}, overrides, tname))
+        )
         result.append(
             {
                 "name": tname,
-                "architecture": tdata.get("architecture", ""),
-                "core_count": len(apply_target_overrides(cores, overrides, tname)),
+                "architecture": (tdata or {}).get("architecture", ""),
+                "core_count": count,
                 "aliases": aliases,
             }
         )
     return result
+
+
+def target_listing_line(row: dict) -> str:
+    """One --list-targets row, as verify and generate_pack print it."""
+    aliases = f" (aliases: {', '.join(row['aliases'])})" if row["aliases"] else ""
+    count = "all" if row["core_count"] is None else str(row["core_count"])
+    return f"  {row['name']:30s} {row['architecture']:10s} {count:>4s} cores{aliases}"
 
 
 HASH_EXACT_RESOLUTION_STATUSES = frozenset(

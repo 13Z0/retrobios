@@ -34,6 +34,7 @@ import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    target_listing_line,
     suggest_names,
     require_platform,
     archive_entry,
@@ -2029,10 +2030,7 @@ def _run_listing(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
             print(f"No targets configured for platform '{args.platform}'")
             return
         for t in targets:
-            aliases = f" (aliases: {', '.join(t['aliases'])})" if t["aliases"] else ""
-            print(
-                f"  {t['name']:30s} {t['architecture']:10s} {t['core_count']:>4d} cores{aliases}"
-            )
+            print(target_listing_line(t))
 
 
 def main():

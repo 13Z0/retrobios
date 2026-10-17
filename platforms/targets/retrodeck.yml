@@ -1,9 +1,9 @@
 platform: retrodeck
 source: static
-scraped_at: "2026-03-26T00:00:00Z"
 targets:
+  # RetroDECK runs on x86_64 Linux alone: every core the platform declares runs on this target, and
+  # naming it filters nothing. A hand-kept list here fell behind the scraped
+  # platform and dropped cores the pack ships.
   x86_64-linux:
     architecture: x86_64
-    cores: [azahar, cemu, dolphin, duckstation, gzdoom, mame, melonds, openbor, pcsx2,
-      pico-8, ppsspp, primehack, retroarch, rpcs3, ruffle, solarus, vita3k, xemu,
-      xroar]
+    cores: null

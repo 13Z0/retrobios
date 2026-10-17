@@ -90,12 +90,47 @@ class TheListingCountsWhatTheFilterUses(unittest.TestCase):
             platform = target_file.stem
             for row in list_available_targets(platform, platforms):
                 with self.subTest(platform=platform, target=row["name"]):
-                    self.assertEqual(
-                        row["core_count"],
-                        len(load_target_config(platform, row["name"], platforms)),
-                    )
+                    resolved = load_target_config(platform, row["name"], platforms)
+                    self.assertEqual(row["core_count"],
+                                     None if resolved is None else len(resolved))
                 checked += 1
         self.assertGreater(checked, 0)
+
+
+class ASingleTargetFiltersNothing(unittest.TestCase):
+    """CLAUDE.md's rule, held on the real data: RetroBat, RetroDECK and RomM
+    have one target each, and hand-kept lists dropped 98, 300 and 132 cores
+    from a pack the user had only asked to name."""
+
+    def test_the_only_target_resolves_every_declared_core(self):
+        import glob  # noqa: PLC0415
+
+        import yaml  # noqa: PLC0415
+
+        from common import (  # noqa: PLC0415
+            load_emulator_profiles,
+            load_platform_config,
+            load_target_config,
+            resolve_platform_cores,
+        )
+
+        platforms = str(REPO_ROOT / "platforms")
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+        checked = 0
+        for path in sorted(glob.glob(str(REPO_ROOT / "platforms" / "targets" / "*.yml"))):
+            name = Path(path).stem
+            if name.startswith("_"):
+                continue
+            targets = yaml.safe_load(Path(path).read_text())["targets"]
+            if len(targets) != 1:
+                continue
+            with self.subTest(platform=name):
+                config = load_platform_config(name, platforms)
+                only = load_target_config(name, next(iter(targets)), platforms)
+                self.assertEqual(resolve_platform_cores(config, profiles, target_cores=only),
+                                 resolve_platform_cores(config, profiles))
+                checked += 1
+        self.assertGreaterEqual(checked, 3)
 
 if __name__ == "__main__":
     unittest.main()

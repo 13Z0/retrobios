@@ -436,6 +436,14 @@ def check_targets(
         with path.open(encoding="utf-8") as fh:
             old = yaml_load(fh) or {}
         module = scrapers.get(platform)
+        targets = old.get("targets") or {}
+        if module is None and targets and all(
+            (t or {}).get("cores", []) is None for t in targets.values()
+        ):
+            # Every core the platform declares runs on these targets: the list
+            # is the platform's own and has nothing of its own to age.
+            return [Finding("targets", platform, OK, local="static",
+                            detail="every declared core")]
         if module is None:
             # No scraper: a hand-written file has no upstream to diff against,
             # so only its age and its core names can be reported.
