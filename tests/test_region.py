@@ -616,6 +616,38 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
             common._emulator_profiles_cache.clear()
             tmp.cleanup()
 
+    def test_a_missing_regional_core_file_is_withdrawn_too(self):
+        """A missing platform file is grouped and withdrawn under --region; a
+        missing core file was never grouped and stayed "required missing"
+        for a region the request excludes."""
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+        import common
+        import verify as reporter
+
+        tmp, root, db, config = self._fixture()
+        try:
+            jp = next(k for k, v in db["files"].items() if v["name"] == "jp.bin")
+            del db["files"][jp]
+            del db["indexes"]["by_name"]["jp.bin"]
+            common._emulator_profiles_cache.clear()
+            profiles = common.load_emulator_profiles(str(root / "emulators"))
+            plain = reporter.verify_platform(
+                config, db, str(root / "emulators"), profiles,
+                supplemental_names=set(),
+            )
+            narrowed = reporter.verify_platform(
+                config, db, str(root / "emulators"), profiles,
+                supplemental_names=set(), regions=["north-america"],
+            )
+            missing = [u["name"] for u in plain["undeclared_files"] if not u["in_repo"]]
+            self.assertEqual(missing, ["jp.bin"])
+            self.assertEqual(
+                {u["name"] for u in narrowed["undeclared_files"]}, {"us.bin"}
+            )
+        finally:
+            common._emulator_profiles_cache.clear()
+            tmp.cleanup()
+
     def test_one_grouping_pass_serves_both_sides(self):
         """A second hand-rolled grouping is how the two drifted apart.
 

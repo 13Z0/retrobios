@@ -567,8 +567,13 @@ def _collect_emulator_extras(
     claimants: dict[tuple[str, str, str], str] | None = None,
     unplaceable: list[dict] | None = None,
     baseline_claims: dict[str, dict] | None = None,
+    absent: list[dict] | None = None,
 ) -> list[dict]:
     """Collect core requirement files from emulator profiles not in the platform pack.
+
+    ``absent`` receives, placed like the others, the entries the collection
+    does not hold: the region pass groups them as it groups the platform's
+    own missing files, so the report withdraws the ones a request excludes.
 
     ``baseline_claims`` receives, for each destination in ``seen``, the core
     claims made on it: a pack built for a target that drops the platform's
@@ -628,7 +633,7 @@ def _collect_emulator_extras(
         for destination in seen:
             taken[destination] = baseline_claims.setdefault(destination, {})
     for u in undeclared:
-        if not u["in_repo"]:
+        if not u["in_repo"] and absent is None:
             continue
         # For archive entries, use the archive name for resolution
         archive = u.get("archive")
@@ -639,6 +644,10 @@ def _collect_emulator_extras(
 
         # Slug-based platforms: prefix dest with system slug
         placed = placement.place(u, dest)
+        if not u["in_repo"]:
+            if placed is not None:
+                absent.append(_report_extra(u, name, placed[0]))
+            continue
         if placed is None:
             if unplaceable is not None:
                 unplaceable.append(u)
@@ -894,6 +903,7 @@ def platform_region_groups(
     if not include_extras or db is None:
         return groups, extra_dests
 
+    absent: list[dict] = []
     extras = _collect_emulator_extras(
         config,
         emulators_dir,
@@ -904,8 +914,10 @@ def platform_region_groups(
         target_cores=target_cores,
         include_all=include_all,
         claimants=extra_dests,
+        absent=absent,
     )
-    for extra in _kept(extras, required_only):
+    held = {id(extra) for extra in extras}
+    for extra in _kept(extras + absent, required_only):
         dest = sanitize_pack_path(extra.get("destination", extra.get("name", "")))
         if not dest:
             continue
@@ -924,7 +936,7 @@ def platform_region_groups(
         competes = not extra.get("agnostic_scan") or extra.get("region")
         for group_id in extra_region_groups(extra) if competes else ():
             groups.setdefault(group_id, []).append((dest, name))
-        if extras_out is not None:
+        if extras_out is not None and id(extra) in held:
             extras_out.append(extra)
     return groups, extra_dests
 
