@@ -139,7 +139,7 @@ def verify_entry_existence(
     resolve_status: str = "",
     platform_display: str = "",
 ) -> dict:
-    """RetroArch verification: path_is_valid() -file exists = OK."""
+    """RetroArch verification: path_is_valid(), a file that exists is OK."""
     name = file_entry.get("name", "")
     required = file_entry.get("required", True)
     if not local_path:
@@ -1254,7 +1254,7 @@ def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) ->
             req = "required" if d.get("required", True) else "optional"
             hle = ", HLE available" if d.get("hle_fallback") else ""
             reason = d.get("reason", "")
-            print(f"  UNTESTED ({req}{hle}): {key} -{reason}")
+            print(f"  UNTESTED ({req}{hle}): {key}: {reason}")
             _print_ground_truth(d.get("ground_truth", []), verbose)
     for d in details:
         if d["status"] == Status.MISSING:
@@ -1273,7 +1273,7 @@ def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) ->
             if key in seen:
                 continue
             seen.add(key)
-            print(f"  DISCREPANCY: {key} -{disc}")
+            print(f"  DISCREPANCY: {key}: {disc}")
             _print_ground_truth(d.get("ground_truth", []), verbose)
 
     if verbose:
@@ -1422,7 +1422,7 @@ def print_platform_result(
     if exclusions and verbose:
         print(f"  No external files ({len(exclusions)}):")
         for ex in exclusions:
-            print(f"    {ex['emulator']} -{ex['detail']} [{ex['reason']}]")
+            print(f"    {ex['emulator']}: {ex['detail']} [{ex['reason']}]")
     elif exclusions:
         print(f"  No external files: {len(exclusions)} cores (--verbose lists them)")
 
@@ -1944,7 +1944,7 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
             req = "required" if d.get("required", True) else "optional"
             hle = ", HLE available" if d.get("hle_fallback") else ""
             reason = d.get("reason", "")
-            print(f"  UNTESTED ({req}{hle}): {d['name']} -{reason}")
+            print(f"  UNTESTED ({req}{hle}): {d['name']}: {reason}")
             gt = d.get("ground_truth", [])
             if gt:
                 if verbose:
@@ -1973,7 +1973,7 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
                 continue
             seen.add(d["name"])
             why = d.get("unsourceable") or "documented as unobtainable"
-            print(f"  UNSOURCEABLE: {d['name']} -{why}")
+            print(f"  UNSOURCEABLE: {d['name']}: {why}")
 
     for d in result["details"]:
         if d.get("note"):

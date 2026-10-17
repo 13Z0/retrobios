@@ -353,7 +353,7 @@ def _data_directory_members(
             local_path = entry.get("local_cache", "")
             if not local_path or not os.path.isdir(local_path):
                 print(
-                    f"  WARNING: data directory '{ref_key}' not cached at {local_path} -run refresh_data_dirs.py"
+                    f"  WARNING: data directory '{ref_key}' not cached at {local_path} (run refresh_data_dirs.py)"
                 )
                 _MISSING_DATA_DIRS.add(ref_key)
                 continue
@@ -1026,7 +1026,7 @@ def generate_pack(
               validation_owners,
           )
           if disagreement:
-              core_discrepancies.append(f"{full_dest} -{disagreement}")
+              core_discrepancies.append(f"{full_dest}: {disagreement}")
           if status == "hash_mismatch" and not _matches_an_alternative(
               fe, local_path, emu_profiles or {}
           ):
@@ -1037,7 +1037,7 @@ def generate_pack(
               # file_status tracks platform declarations only, so the report
               # goes to its own list and never moves the pack's own count.
               core_discrepancies.append(
-                  f"{full_dest} -declared hash of "
+                  f"{full_dest}: declared hash of "
                   f"{fe.get('source_profile') or fe.get('source_emulator', 'core profile')}"
                   " does not match the packed copy"
               )
@@ -1119,7 +1119,7 @@ def generate_pack(
             label = "MISSING"
         else:
             label = "DISCREPANCY"
-        print(f"  {label}: {key} -{reason}")
+        print(f"  {label}: {key}: {reason}")
     for name in missing_files:
         print(f"  MISSING: {name}")
     for note in sorted(core_discrepancies):
@@ -1500,7 +1500,7 @@ def generate_emulator_pack(
                     )
                     if disagreement:
                         reason = disagreement.split(" says ", 1)[-1]
-                        refusal = refusal or f"{fe['name']} -{reason}"
+                        refusal = refusal or f"{fe['name']}: {reason}"
                         refused_path = refused_path or local_path
                         continue
                     if better != local_path:
@@ -1560,7 +1560,7 @@ def generate_emulator_pack(
                     continue
                 if how == "mismatch":
                     discrepancies.append(
-                        f"{fe['name']} -not the dump the {emu_name} profile declares"
+                        f"{fe['name']}: not the dump the {emu_name} profile declares"
                     )
 
                 # SHA1 dedup: skip if same physical file AND same destination

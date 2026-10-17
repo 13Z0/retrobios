@@ -1499,7 +1499,7 @@ def select_emulator_profiles(
             )
         if kind == "launcher":
             raise ProfileSelectionError(
-                f"{name} is a launcher -use the emulator it launches"
+                f"{name} is a launcher: use the emulator it launches"
             )
         if standalone and "standalone" not in kind:
             raise ProfileSelectionError(

@@ -472,7 +472,7 @@ class OneProfileSelector(unittest.TestCase):
                 f"{name} must ask common, not re-derive the refusal",
             )
             self.assertNotIn(
-                'is a launcher -use the emulator it launches', text,
+                'is a launcher: use the emulator it launches', text,
                 f"{name} still spells the refusal itself",
             )
 

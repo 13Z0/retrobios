@@ -2084,7 +2084,7 @@ class ACheckThatCannotAnswerDoesNotPass(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn(
-            'if report.get("error"):',
+            'if report.get("error") or pending(report):',
             source.split("def main(")[-1],
             "main() ignores the error the report carries",
         )
@@ -3424,6 +3424,22 @@ class AutoFetchAsksVerifyWhatIsMissing(unittest.TestCase):
         with mock.patch.object(verify_mod, "verify_platform", lambda c, d: result):
             names = [m["name"] for m in auto_fetch.find_missing(config, {})]
         self.assertEqual(names, ["gone.bin", "bad.bin", "diabdat.mpq"])
+
+
+
+class MessagesSeparateWithAColon(unittest.TestCase):
+    """Em-dashes were replaced by " -" in messages: "bios/BLOOD.RFF -raze
+    says size mismatch" reads as a flag glued to a file name."""
+
+    PATTERN = re.compile(r"\} -[{a-z]")
+
+    def test_no_message_uses_a_dash_separator(self):
+        found = []
+        for path in [ROOT / "install.py", *sorted((ROOT / "scripts").rglob("*.py"))]:
+            for number, line in enumerate(path.read_text().splitlines(), 1):
+                if self.PATTERN.search(line):
+                    found.append(f"{path.name}:{number}: {line.strip()}")
+        self.assertEqual(found, [])
 
 
 if __name__ == "__main__":
