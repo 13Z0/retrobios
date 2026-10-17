@@ -310,6 +310,20 @@ class TestConflicts(unittest.TestCase):
         )
         self.assertEqual(slots.profile_claims(profile, REGIONS_DB), [])
 
+    def test_a_filename_agnostic_profile_claims_nothing(self):
+        """The gap report skips a `bios_mode: agnostic` profile whole: the
+        builder carries its scan candidates, never its named entries.
+        ARMSX2's GameIndex.yaml replaced the one RetroArch declares."""
+        profile = self._profile("GC/JAP/IPL.bin")
+        self.assertTrue(
+            slots.find_conflicts(self._config("m" * 32), profile, REGIONS_DB)
+        )
+        profile["dolphin"]["bios_mode"] = "agnostic"
+        self.assertEqual(slots.profile_claims(profile, REGIONS_DB), [])
+        self.assertEqual(
+            slots.find_conflicts(self._config("m" * 32), profile, REGIONS_DB), []
+        )
+
     def test_base_destination_prefixes_both_sides(self):
         conflicts = slots.find_conflicts(
             self._config("m" * 32),

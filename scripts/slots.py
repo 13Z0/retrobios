@@ -175,6 +175,10 @@ def profile_claims(
     for emu_name, profile in sorted(profiles.items()):
         if profile.get("type") in ("launcher", "alias"):
             continue
+        # The gap report skips a filename-agnostic profile whole: the builder
+        # carries its scan candidates, never its named entries.
+        if profile.get("bios_mode") == "agnostic":
+            continue
         is_standalone = runs_standalone(emu_name, profile, standalone_cores)
         claims.extend(
             _archive_claims(
