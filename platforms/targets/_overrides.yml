@@ -83,6 +83,11 @@ retroarch:
       aliases: [switch, nx]
     linux-x86_64:
       aliases: [pc, linux, x86_64, desktop]
+    # Raspberry Pi OS 64-bit, ARM single-board computers, Asahi Linux.
+    linux-aarch64:
+      aliases: [linux-arm64, arm64]
+    linux-x86:
+      aliases: [linux-i686, i686]
     playstation-ps2:
       aliases: [ps2]
     playstation-psp:

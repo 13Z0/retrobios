@@ -38,6 +38,8 @@ BUILDBOT_URL = "https://buildbot.libretro.com/nightly/"
 # url_path must end at the directory containing core files
 TARGETS: list[tuple[str, str, str]] = [
     ("linux/x86_64/latest", "linux-x86_64", "x86_64"),
+    ("linux/x86/latest", "linux-x86", "x86"),
+    ("linux/aarch64/latest", "linux-aarch64", "aarch64"),
     ("linux/armhf/latest", "linux-armhf", "armhf"),
     ("linux/armv7-neon-hf/latest", "linux-armv7-neon-hf", "armv7"),
     ("windows/x86_64/latest", "windows-x86_64", "x86_64"),

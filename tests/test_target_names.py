@@ -38,6 +38,19 @@ class AliasesResolveToOneName(unittest.TestCase):
             with self.subTest(typed=typed):
                 self.assertEqual(canonical_target_name(["batocera"], typed, platforms), board)
 
+    def test_linux_on_arm_and_32_bit_x86_is_a_target(self):
+        """The buildbot's linux/aarch64 (232 cores) and linux/x86 builds were
+        not scraped: --target refused RetroArch on Raspberry Pi OS 64-bit."""
+        import yaml  # noqa: PLC0415
+
+        platforms = str(REPO_ROOT / "platforms")
+        targets = yaml.safe_load((REPO_ROOT / "platforms" / "targets" / "retroarch.yml")
+                                 .read_text())["targets"]
+        for typed, target in (("arm64", "linux-aarch64"), ("i686", "linux-x86")):
+            with self.subTest(typed=typed):
+                self.assertEqual(canonical_target_name(["retroarch"], typed, platforms), target)
+                self.assertGreater(len(targets[target]["cores"]), 100)
+
     def test_an_unknown_name_is_left_for_the_target_check(self):
         self.assertEqual(
             canonical_target_name(["retroarch"], "bogus", str(REPO_ROOT / "platforms")),

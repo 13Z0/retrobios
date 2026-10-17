@@ -1,6 +1,6 @@
 platform: retroarch
 source: https://buildbot.libretro.com/nightly/
-scraped_at: '2026-10-04T19:46:40Z'
+scraped_at: '2026-10-17T11:29:47Z'
 targets:
   linux-x86_64:
     architecture: x86_64
@@ -43,6 +43,7 @@ targets:
     - citra
     - citra2018
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -86,6 +87,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -170,6 +172,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -236,6 +239,235 @@ targets:
     - vircon32
     - virtualjaguar
     - virtualxt
+    - vita3k
+    - vitaquake2
+    - vitaquake2-rogue
+    - vitaquake2-xatrix
+    - vitaquake2-zaero
+    - vitaquake3
+    - wasm4
+    - wqxemu
+    - x1
+    - xemu
+    - xenia_edge
+    - xrick
+    - yabasanshiro
+    - yabause
+    - ymir
+  linux-x86:
+    architecture: x86
+    cores:
+    - '2048'
+    - 3dengine
+    - '81'
+    - DoubleCherryGB
+    - a5200
+    - amiarcadia
+    - anarch
+    - applewin
+    - ardens
+    - arduous
+    - atari800
+    - b2
+    - bbkemu
+    - bk
+    - blastem
+    - bluemsx
+    - boom3
+    - bsnes
+    - bsnes-jg
+    - bsnes2014_accuracy
+    - bsnes2014_balanced
+    - bsnes2014_performance
+    - bsnes_cplusplus98
+    - bsnes_hd_beta
+    - bsnes_mercury_accuracy
+    - bsnes_mercury_balanced
+    - bsnes_mercury_performance
+    - cannonball
+    - cap32
+    - cdi2015
+    - chailove
+    - clownmdemu
+    - coolbaremu
+    - craft
+    - crocods
+    - desmume
+    - dice
+    - dingooemu
+    - dinothawr
+    - dirksimple
+    - dosbox
+    - dosbox_core
+    - dosbox_pure
+    - dosbox_svn
+    - easyrpg
+    - ecwolf
+    - emuscv
+    - ep128emu_core
+    - fbalpha2012
+    - fbalpha2012_cps1
+    - fbalpha2012_cps2
+    - fbalpha2012_cps3
+    - fbalpha2012_neogeo
+    - fbneo
+    - fceumm
+    - fixgb
+    - fixnes
+    - flycast
+    - fmsx
+    - freechaf
+    - freeintv
+    - frodo
+    - fsuae
+    - fuse
+    - galaksija
+    - gam4980
+    - gambatte
+    - gearboy
+    - gearcoleco
+    - geargrafx
+    - gearlynx
+    - gearsystem
+    - geartowns
+    - genesis_plus_gx
+    - genesis_plus_gx_wide
+    - geolith
+    - gme
+    - gong
+    - gpsp
+    - gw
+    - handy
+    - hatari
+    - hatari2014
+    - hatarib
+    - hbmame
+    - holani
+    - jaxe
+    - jollycv
+    - jumpnbump
+    - kronos
+    - lowresnx
+    - lutro
+    - m2000
+    - mame
+    - mame2000
+    - mame2003
+    - mame2003_midway
+    - mame2003_plus
+    - mame2010
+    - mame2015
+    - mame2016
+    - mcsoftserve
+    - mednafen_gba
+    - mednafen_lynx
+    - mednafen_ngp
+    - mednafen_pce
+    - mednafen_pce_fast
+    - mednafen_pcfx
+    - mednafen_psx
+    - mednafen_psx_hw
+    - mednafen_saturn
+    - mednafen_snes
+    - mednafen_supafaust
+    - mednafen_supergrafx
+    - mednafen_vb
+    - mednafen_wswan
+    - melonds
+    - mesen
+    - mesen-s
+    - mesen2
+    - meteor
+    - mgba
+    - minivmac
+    - mojozork
+    - mrboom
+    - mu
+    - mupen64plus_next
+    - native32emu
+    - nekop2
+    - neocd
+    - nestopia
+    - nicaiemu
+    - noods
+    - np2kai
+    - nuance
+    - numero
+    - nxengine
+    - o2em
+    - oberon
+    - omicron
+    - openlara
+    - opera
+    - parallel_n64
+    - pcem
+    - pcsx_rearmed
+    - pd777
+    - picodrive
+    - play
+    - playdiaemu
+    - pocketcdg
+    - pokemini
+    - pokket
+    - pokketstation
+    - potator
+    - ppsspp
+    - prboom
+    - prosystem
+    - puae
+    - puae2021
+    - qemu
+    - quasi88
+    - quicknes
+    - race
+    - radio
+    - reminiscence
+    - remotejoy
+    - retro8
+    - rustynes
+    - same_cdi
+    - sameboy
+    - sameduck
+    - scummvm
+    - skyemu
+    - smsplus
+    - snes9x
+    - snes9x2002
+    - snes9x2005
+    - snes9x2010
+    - spmp8000emu
+    - squirreljme
+    - stella
+    - stella2014
+    - stella2023
+    - superbroswar
+    - swanstation
+    - tamalibretro
+    - tgbdual
+    - thepowdertoy
+    - tia
+    - tic80
+    - tyrquake
+    - uw8
+    - uzem
+    - vaporspec
+    - vba_next
+    - vbam
+    - vecx
+    - vemulator
+    - vice_x128
+    - vice_x64
+    - vice_x64sc
+    - vice_xcbm2
+    - vice_xcbm5x0
+    - vice_xpet
+    - vice_xplus4
+    - vice_xscpu64
+    - vice_xvic
+    - video_processor
+    - vircon32
+    - virtualjaguar
+    - virtualxt
     - vitaquake2
     - vitaquake2-rogue
     - vitaquake2-xatrix
@@ -247,7 +479,241 @@ targets:
     - xrick
     - yabasanshiro
     - yabause
-    - ymir
+  linux-aarch64:
+    architecture: aarch64
+    cores:
+    - '2048'
+    - 3dengine
+    - '81'
+    - DoubleCherryGB
+    - a5200
+    - amiarcadia
+    - amiberry
+    - anarch
+    - applewin
+    - arduous
+    - armsx2
+    - atari800
+    - b2
+    - bbkemu
+    - bk
+    - blastem
+    - bluemsx
+    - boom3
+    - bsnes
+    - bsnes-jg
+    - bsnes2014_accuracy
+    - bsnes2014_balanced
+    - bsnes2014_performance
+    - bsnes_cplusplus98
+    - bsnes_mercury_accuracy
+    - bsnes_mercury_balanced
+    - bsnes_mercury_performance
+    - cannonball
+    - cap32
+    - cdi2015
+    - cemu
+    - chailove
+    - citra
+    - citra2018
+    - clownmdemu
+    - coolbaremu
+    - craft
+    - crocods
+    - desmume
+    - desmume2015
+    - dice
+    - dingooemu
+    - dinothawr
+    - dirksimple
+    - dolphin
+    - dosbox
+    - dosbox_core
+    - dosbox_pure
+    - dosbox_svn
+    - easyrpg
+    - ecwolf
+    - emuscv
+    - ep128emu_core
+    - fbalpha2012
+    - fbalpha2012_cps1
+    - fbalpha2012_cps2
+    - fbalpha2012_cps3
+    - fbalpha2012_neogeo
+    - fbneo
+    - fceumm
+    - fixgb
+    - fixnes
+    - flycast
+    - fmsx
+    - freechaf
+    - freeintv
+    - frodo
+    - fsuae
+    - fuse
+    - galaksija
+    - gam4980
+    - gambatte
+    - gearboy
+    - gearcoleco
+    - geargrafx
+    - gearlynx
+    - gearsystem
+    - geartowns
+    - genesis_plus_gx
+    - genesis_plus_gx_wide
+    - geolith
+    - gme
+    - gong
+    - gpsp
+    - gw
+    - handy
+    - hatari
+    - hatari2014
+    - hatarib
+    - hbmame
+    - holani
+    - irogb
+    - jaxe
+    - jollycv
+    - jumpnbump
+    - kronos
+    - lowresnx
+    - lutro
+    - mame
+    - mame2000
+    - mame2003
+    - mame2003_midway
+    - mame2003_plus
+    - mame2010
+    - mame2015
+    - mame2016
+    - mednafen_gba
+    - mednafen_lynx
+    - mednafen_ngp
+    - mednafen_pce
+    - mednafen_pce_fast
+    - mednafen_pcfx
+    - mednafen_psx
+    - mednafen_psx_hw
+    - mednafen_saturn
+    - mednafen_snes
+    - mednafen_supafaust
+    - mednafen_supergrafx
+    - mednafen_vb
+    - mednafen_wswan
+    - melonds
+    - melondsds
+    - mesen
+    - mesen-s
+    - mesen2
+    - meteor
+    - mgba
+    - minivmac
+    - mojozork
+    - mrboom
+    - mu
+    - native32emu
+    - nekop2
+    - neocd
+    - nestopia
+    - nicaiemu
+    - np2kai
+    - nside_sfc_balanced
+    - nuance
+    - numero
+    - nxengine
+    - o2em
+    - oberon
+    - omicron
+    - openlara
+    - opera
+    - parallel_n64
+    - pcee2
+    - pcsx2
+    - pcsx_rearmed
+    - pd777
+    - picodrive
+    - play
+    - playdiaemu
+    - pocketcdg
+    - pokemini
+    - pokket
+    - pokketstation
+    - potator
+    - ppsspp
+    - prboom
+    - prosystem
+    - puae
+    - puae2021
+    - px68k
+    - quasi88
+    - quicknes
+    - race
+    - radio
+    - reminiscence
+    - remotejoy
+    - retro8
+    - rpcs3
+    - rust_dos
+    - rustynes
+    - same_cdi
+    - sameduck
+    - scummvm
+    - skyemu
+    - smsplus
+    - snes9x
+    - snes9x2002
+    - snes9x2005
+    - snes9x2005_plus
+    - snes9x2010
+    - spmp8000emu
+    - squirreljme
+    - stella
+    - stella2014
+    - stella2023
+    - superbroswar
+    - supermodel
+    - swanstation
+    - tamalibretro
+    - tgbdual
+    - theodore
+    - thepowdertoy
+    - tia
+    - tic80
+    - tyrquake
+    - uw8
+    - uzem
+    - vaporspec
+    - vba_next
+    - vbam
+    - vecx
+    - vemulator
+    - vice_x128
+    - vice_x64
+    - vice_x64sc
+    - vice_xpet
+    - vice_xplus4
+    - vice_xscpu64
+    - vice_xvic
+    - video_processor
+    - vircon32
+    - virtualjaguar
+    - virtualxt
+    - vita3k
+    - vitaquake2
+    - vitaquake2-rogue
+    - vitaquake2-xatrix
+    - vitaquake2-zaero
+    - vitaquake3
+    - wasm4
+    - wqxemu
+    - x1
+    - xemu
+    - xenia_edge
+    - xrick
+    - yabasanshiro
+    - yabause
   linux-armhf:
     architecture: armhf
     cores:
@@ -493,6 +959,7 @@ targets:
     - citra
     - citra2018
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -535,6 +1002,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -618,6 +1086,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -683,6 +1152,7 @@ targets:
     - vircon32
     - virtualjaguar
     - virtualxt
+    - vita3k
     - vitaquake2
     - vitaquake2-rogue
     - vitaquake2-xatrix
@@ -691,6 +1161,8 @@ targets:
     - wasm4
     - wqxemu
     - x1
+    - xemu
+    - xenia_edge
     - xrick
     - yabasanshiro
     - yabause
@@ -731,6 +1203,7 @@ targets:
     - cdi2015
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume2015
@@ -769,6 +1242,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -842,6 +1316,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -954,6 +1429,7 @@ targets:
     - citra
     - citra2018
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - daphne
@@ -998,6 +1474,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -1080,6 +1557,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -1145,6 +1623,7 @@ targets:
     - vircon32
     - virtualjaguar
     - virtualxt
+    - vita3k
     - vitaquake2
     - vitaquake2-rogue
     - vitaquake2-xatrix
@@ -1152,6 +1631,7 @@ targets:
     - wasm4
     - wqxemu
     - x1
+    - xenia_edge
     - xrick
     - yabasanshiro
     - yabause
@@ -1190,6 +1670,7 @@ targets:
     - cap32
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - daphne
@@ -1234,6 +1715,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -1311,6 +1793,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -1423,6 +1906,7 @@ targets:
     - citra
     - citra2018
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - daphne
@@ -1467,6 +1951,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -1548,6 +2033,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -1613,6 +2099,7 @@ targets:
     - vircon32
     - virtualjaguar
     - virtualxt
+    - vita3k
     - vitaquake2
     - vitaquake2-rogue
     - vitaquake2-xatrix
@@ -1620,6 +2107,7 @@ targets:
     - wasm4
     - wqxemu
     - x1
+    - xenia_edge
     - xrick
     - yabasanshiro
     - yabause
@@ -1658,6 +2146,7 @@ targets:
     - cap32
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - daphne
@@ -1702,6 +2191,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -1778,6 +2268,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -1887,6 +2378,7 @@ targets:
     - cemu
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - daphne
@@ -1930,6 +2422,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -2010,6 +2503,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -2027,6 +2521,7 @@ targets:
     - remotejoy
     - retro8
     - romcleaner
+    - rpcs3
     - rust_dos
     - rustynes
     - same_cdi
@@ -2128,6 +2623,7 @@ targets:
     - citra
     - citra2018
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -2166,6 +2662,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -2244,6 +2741,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -2261,6 +2759,7 @@ targets:
     - remotejoy
     - retro8
     - romcleaner
+    - rpcs3
     - rust_dos
     - rustynes
     - same_cdi
@@ -2358,6 +2857,7 @@ targets:
     - cemu
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -2395,6 +2895,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -2580,6 +3081,7 @@ targets:
     - cemu
     - chailove
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -2617,6 +3119,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -2813,6 +3316,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - gme
@@ -3073,6 +3577,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - gme
@@ -3295,6 +3800,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - gme
