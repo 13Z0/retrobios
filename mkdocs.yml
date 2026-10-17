@@ -216,7 +216,7 @@ nav:
   - sdlpal: systems/sdlpal.md
 - Emulators:
   - Overview: emulators/index.md
-  - Official ports (76):
+  - Official ports (77):
     - amiarcadia: emulators/amiarcadia.md
     - Amiberry: emulators/amiberry.md
     - Ardens: emulators/ardens.md
@@ -272,6 +272,7 @@ nav:
     - play: emulators/play.md
     - pokketstation: emulators/pokketstation.md
     - PPSSPP: emulators/ppsspp.md
+    - RB5000: emulators/rb5000.md
     - Picocomputer 6502: emulators/rp6502.md
     - RPCS3: emulators/rpcs3.md
     - Rust-DOS: emulators/rust_dos.md
@@ -293,7 +294,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (171):
+  - Community forks (175):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -339,6 +340,7 @@ nav:
     - DOSBox-SVN: emulators/dosbox_svn.md
     - DOSBox-SVN CE: emulators/dosbox_svn_ce.md
     - Eden: emulators/eden.md
+    - EightyOne (Recalbox): emulators/eightyone.md
     - eka2l1: emulators/eka2l1.md
     - EmuCoreV: emulators/emucorev.md
     - EmuCoreX: emulators/emucorex.md
@@ -376,6 +378,7 @@ nav:
     - MD.emu: emulators/md-emu.md
     - mednafen_pce: emulators/mednafen_pce.md
     - mednafen_pce_fast: emulators/mednafen_pce_fast.md
+    - Mednafen STV: emulators/mednafen_stv.md
     - mednafen_supafaust: emulators/mednafen_supafaust.md
     - mednafen_supergrafx: emulators/mednafen_supergrafx.md
     - melonDS: emulators/melonds.md
@@ -419,6 +422,7 @@ nav:
     - QUASI88: emulators/quasi88.md
     - QuickNES: emulators/quicknes.md
     - RACE (Neo Geo Pocket): emulators/race.md
+    - Reicast: emulators/reicast.md
     - REminiscence: emulators/reminiscence.md
     - RetroDream: emulators/retrodream.md
     - Rosalie's Mupen GUI: emulators/rosalies-mupen-gui.md
@@ -428,6 +432,7 @@ nav:
     - SimCoupe: emulators/simcp.md
     - simple64: emulators/simple64.md
     - Snes9x EX+: emulators/snes9x-explus.md
+    - Sugarbox2: emulators/sugarbox2.md
     - SUPER3: emulators/super3.md
     - Supermodel: emulators/supermodel.md
     - Suyu: emulators/suyu.md
@@ -465,7 +470,7 @@ nav:
     - yabause: emulators/yabause.md
     - yaps2: emulators/yaps2.md
     - ymir: emulators/ymir.md
-  - Pure libretro (52):
+  - Pure libretro (53):
     - 00_example: emulators/00_example.md
     - '2048': emulators/2048.md
     - 3DEngine: emulators/3dengine.md
@@ -478,6 +483,7 @@ nav:
     - DingooEmu: emulators/dingooemu.md
     - DirectXBox: emulators/directxbox.md
     - EmuCV: emulators/emucv.md
+    - Exel-Hence: emulators/exel-hence.md
     - FFmpeg: emulators/ffmpeg.md
     - FreeChaF: emulators/freechaf.md
     - FreeIntv: emulators/freeintv.md
@@ -518,7 +524,7 @@ nav:
     - uzem: emulators/uzem.md
     - video_processor: emulators/video_processor.md
     - VirtualXT: emulators/virtualxt.md
-  - Game engines (76):
+  - Game engines (79):
     - Abuse: emulators/abuse.md
     - boom3: emulators/boom3.md
     - BStone: emulators/bstone.md
@@ -539,6 +545,7 @@ nav:
     - FAKE-08: emulators/fake08.md
     - fallout1-ce: emulators/fallout1-ce.md
     - fallout2-ce: emulators/fallout2-ce.md
+    - Frotz: emulators/frotz.md
     - Ion Fury: emulators/fury.md
     - future-pinball: emulators/future-pinball.md
     - Gargoyle: emulators/gargoyle.md
@@ -549,6 +556,7 @@ nav:
     - Ikemen GO: emulators/ikemen.md
     - ioquake3: emulators/ioquake3.md
     - Jazz² Resurrection: emulators/jazz2-native.md
+    - Julius: emulators/julius.md
     - Jump 'n Bump: emulators/jumpnbump.md
     - lightspark: emulators/lightspark.md
     - Lutro: emulators/lutro.md
@@ -590,12 +598,13 @@ nav:
     - vkQuake: emulators/vkquake.md
     - vkQuake2: emulators/vkquake2.md
     - vkQuake3: emulators/vkquake3.md
+    - VVVVVV: emulators/vvvvvv.md
     - WASM-4: emulators/wasm4.md
     - Xash3D FWGS: emulators/xash3d_fwgs.md
     - XRick: emulators/xrick.md
     - Yamagi Quake II: emulators/yquake2.md
     - Zelda Classic v2.10: emulators/zc210.md
-  - Enhanced forks (28):
+  - Enhanced forks (29):
     - A7800: emulators/a7800.md
     - AdvanceMAME: emulators/advancemame.md
     - bsnes-hd beta: emulators/bsnes_hd_beta.md
@@ -621,10 +630,11 @@ nav:
     - PrimeHack: emulators/primehack.md
     - SMS Plus GX: emulators/smsplus.md
     - Supermodel Dojo: emulators/supermodel-dojo.md
+    - SuperSnes9x: emulators/supersnes9x.md
     - Triforce: emulators/triforce.md
     - xm6pro68k: emulators/xm6pro68k.md
     - xm6typeg: emulators/xm6typeg.md
-  - Frozen snapshots (39):
+  - Frozen snapshots (41):
     - bnes: emulators/bnes.md
     - bsnes 2014: emulators/bsnes2014.md
     - bsnes C++98: emulators/bsnes_cplusplus98.md
@@ -637,6 +647,8 @@ nav:
     - FB Alpha 2012 CPS-2: emulators/fbalpha2012_cps2.md
     - FB Alpha 2012 CPS-3: emulators/fbalpha2012_cps3.md
     - FB Alpha 2012 Neo Geo: emulators/fbalpha2012_neogeo.md
+    - FB Alpha 2019: emulators/fbalpha2019.md
+    - Flycast 2021: emulators/flycast2021.md
     - Hatari 2014: emulators/hatari2014.md
     - higan (SFC Accuracy): emulators/higan_sfc.md
     - MAME 0.258: emulators/mame0258.md
@@ -664,10 +676,11 @@ nav:
     - Supermodel Legacy: emulators/supermodel-legacy.md
     - UME 2015: emulators/ume2015.md
     - VBA-Next: emulators/vba_next.md
-  - Embedded HLE (14):
+  - Embedded HLE (16):
     - 3dSen: emulators/3dsen.md
     - Altirra: emulators/altirra.md
     - Cxbx-Reloaded: emulators/cxbx-reloaded.md
+    - DaedalusX64: emulators/daedalusx64.md
     - DroidArcadia: emulators/droidarcadia.md
     - izapple2: emulators/izapple2.md
     - Lindbergh Loader: emulators/lindbergh-loader.md
@@ -679,13 +692,14 @@ nav:
     - Pizza Boy GBA: emulators/pizza-boy-gba.md
     - Pizza Boy GBC: emulators/pizza-boy-gbc.md
     - sixtyforce: emulators/sixtyforce.md
+    - touchHLE: emulators/touchhle.md
   - Launchers (5):
     - ArcadeFlashWeb: emulators/arcadeflashweb.md
     - Dolphin Launcher: emulators/dolphin_launcher.md
     - Parallel Launcher: emulators/parallel-launcher.md
     - Pygame: emulators/pygame.md
     - SWF Player: emulators/swf-player.md
-  - Other (53):
+  - Other (55):
     - ares: emulators/ares.md
     - Basilisk II: emulators/basiliskii.md
     - beebem: emulators/beebem.md
@@ -699,6 +713,7 @@ nav:
     - DraStic: emulators/drastic.md
     - DREAMM: emulators/dreamm.md
     - D.Smile: emulators/dsmile.md
+    - DSperate: emulators/dsperate.md
     - ep128emu-core: emulators/ep128emu.md
     - ePSXe: emulators/epsxe.md
     - FPse: emulators/fpse.md
@@ -713,6 +728,7 @@ nav:
     - MasterGear: emulators/mastergear.md
     - Mednafen: emulators/mednafen.md
     - Model 2 Emulator: emulators/model2.md
+    - NanoBoyAdvance: emulators/nanoboyadvance.md
     - openMSX: emulators/openmsx.md
     - Oricutron: emulators/oricutron.md
     - Pizza Boy SC: emulators/pizza-boy-sc.md

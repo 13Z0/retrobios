@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-17T11:35:15Z",
+  "generated": "2026-10-17T13:36:45Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -241,10 +241,10 @@
       }
     }
   ],
-  "total_files": 7744,
-  "total_size": 7917569686,
-  "pack_files": 7746,
-  "pack_size": 7917569686,
+  "total_files": 7751,
+  "total_size": 7963360255,
+  "pack_files": 7753,
+  "pack_size": 7963360255,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -304,6 +304,9 @@
     "cxbx-reloaded": [
       "cxbx"
     ],
+    "dolphin": [
+      "dolphin-gui"
+    ],
     "dosbox-staging": [
       "dosbox_staging"
     ],
@@ -316,6 +319,9 @@
     "droidarcadia": [
       "com.amigan.droidarcadia"
     ],
+    "dsperate": [
+      "dsperate-sa"
+    ],
     "ep128emu_core": [
       "ep128emu-core"
     ],
@@ -323,6 +329,7 @@
       "fbalpha"
     ],
     "flycast": [
+      "flycast-next",
       "flycast_dev",
       "flycastvl"
     ],
@@ -344,6 +351,7 @@
     "genesis_plus_gx": [
       "genesisplusgx",
       "genesisplusgx-expanded",
+      "genesisplusgx_ex",
       "genplus"
     ],
     "genesis_plus_gx_wide": [
@@ -354,7 +362,8 @@
       "nside_sfc_balanced"
     ],
     "hypseus-singe": [
-      "hypseus"
+      "hypseus",
+      "hypseus_singe"
     ],
     "idtech4a++": [
       "diii4a",
@@ -369,12 +378,18 @@
     "kemulator": [
       "KEMULATOR"
     ],
+    "lexaloffle": [
+      "pico-8",
+      "pico8",
+      "vox_official"
+    ],
     "linkboy": [
       "LINKBOY",
       "Linkboy"
     ],
     "lrps2": [
-      "pcsx2"
+      "pcsx2",
+      "ps2"
     ],
     "lynx-emu": [
       "LYNX-EMU",
@@ -450,7 +465,8 @@
       "mupen64plus-next",
       "mupen64plus_next_develop",
       "mupen64plus_next_gles2",
-      "mupen64plus_next_gles3"
+      "mupen64plus_next_gles3",
+      "mupen64plus_nx"
     ],
     "my-boy": [
       "MY-BOY",
@@ -459,6 +475,9 @@
     "my-oldboy": [
       "MY-OLDBOY",
       "My OldBoy!"
+    ],
+    "nanoboyadvance": [
+      "nanoboyadvance-sa"
     ],
     "nes-emu": [
       "NES-EMU",
@@ -585,11 +604,17 @@
     "vice_x64": [
       "x64"
     ],
+    "vice_x64sc": [
+      "x64sx"
+    ],
     "vice_xvic": [
       "xvic"
     ],
     "visual-pinball": [
       "vpinball"
+    ],
+    "x1": [
+      "xmil"
     ],
     "x1-box": [
       "x1box"
@@ -733,6 +758,7 @@
       "bluemsx",
       "clk",
       "colem",
+      "fbalpha2019",
       "fbneo",
       "gearcoleco",
       "jollycv",
@@ -879,6 +905,7 @@
       "ares",
       "bluemsx",
       "clk",
+      "fbalpha2019",
       "fbneo",
       "fmsx",
       "msx-emu",
@@ -967,6 +994,7 @@
       "desmume",
       "desmume2015",
       "drastic",
+      "dsperate",
       "melonds",
       "melonds-nightly",
       "melonds_ds",
@@ -1005,6 +1033,7 @@
       "pizza-boy-gbc",
       "sameboy",
       "skyemu",
+      "supersnes9x",
       "tgbdual",
       "vbam"
     ],
@@ -1021,6 +1050,7 @@
       "mgba",
       "mgba_splitscreen",
       "my-boy",
+      "nanoboyadvance",
       "noods",
       "pizza-boy-gba",
       "skyemu",
@@ -1046,6 +1076,7 @@
       "pizza-boy-gbc",
       "sameboy",
       "skyemu",
+      "supersnes9x",
       "tgbdual",
       "vbam"
     ],
@@ -1067,7 +1098,8 @@
       "snes9x2002",
       "snes9x2005",
       "snes9x2005_plus",
-      "snes9x2010"
+      "snes9x2010",
+      "supersnes9x"
     ],
     "nintendo-sgb": [
       "bsnes-jg",
@@ -1080,7 +1112,8 @@
       "mgba",
       "my-oldboy",
       "pizza-boy-gbc",
-      "sameboy"
+      "sameboy",
+      "supersnes9x"
     ],
     "nintendo-sufami-turbo": [
       "bsnes-jg",
@@ -1095,7 +1128,8 @@
       "snes9x2002",
       "snes9x2005",
       "snes9x2005_plus",
-      "snes9x2010"
+      "snes9x2010",
+      "supersnes9x"
     ],
     "pegasus": [
       "groovymame",
@@ -1120,7 +1154,9 @@
       "demul",
       "flycast",
       "flycast-dojo",
+      "flycast2021",
       "redream",
+      "reicast",
       "retrodream"
     ],
     "sega-master-system": [
@@ -1145,6 +1181,7 @@
       "beetle_saturn",
       "kronos",
       "mednafen",
+      "mednafen_stv",
       "saturn-emu",
       "ssf",
       "yabasanshiro",
@@ -1174,6 +1211,7 @@
       "mame4droid-2024",
       "mamearcade",
       "mednafen",
+      "mednafen_stv",
       "ssf",
       "ume2015"
     ],
@@ -1191,6 +1229,7 @@
       "fbalpha2012_neogeo"
     ],
     "snk-neogeo-cd": [
+      "fbalpha2019",
       "fbneo",
       "fbneo_neogeo",
       "geolith",
@@ -1269,7 +1308,8 @@
       "groovymame",
       "mame",
       "mame0258",
-      "mame0278"
+      "mame0278",
+      "rb5000"
     ],
     "vtech-vsmile": [
       "dsmile",
@@ -4456,7 +4496,8 @@
         "megacd"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "mega-cd"
@@ -8025,12 +8066,6 @@
       ],
       "systems": [
         "sega-master-system"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "master-system"
       ]
     },
     {
@@ -8048,7 +8083,8 @@
         "sega-master-system"
       ],
       "regions": [
-        "japan"
+        "japan",
+        "south-korea"
       ],
       "region_groups": [
         "master-system"
@@ -8067,12 +8103,6 @@
       ],
       "systems": [
         "sega-master-system"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "master-system"
       ]
     },
     {
@@ -63616,6 +63646,7 @@
         "europe",
         "latin-america",
         "north-america",
+        "oceania",
         "south-korea"
       ],
       "region_groups": [
@@ -70999,12 +71030,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
@@ -71018,12 +71043,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
@@ -71037,12 +71056,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
@@ -71174,14 +71187,6 @@
       ],
       "systems": [
         "segastv"
-      ],
-      "regions": [
-        "asia-pal",
-        "europe",
-        "south-korea"
-      ],
-      "region_groups": [
-        "sega-stv"
       ]
     },
     {
@@ -82297,6 +82302,81 @@
       ]
     },
     {
+      "dest": "pico-8/pico8",
+      "sha1": "be91e70da4c4a23cbd9a73de87a84fb82d7ebf58",
+      "sha256": "a48bb8c4a36873c324990a265d0070bf9f8aba866071b33da80b4bcd729326c8",
+      "size": 9377000,
+      "repo_path": "bios/Lexaloffle/PICO-8/pico8",
+      "cores": [
+        "lexaloffle"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "pico-8/pico8_dyn",
+      "sha1": "22f1bc4660924589331d47119dec0340fb3388a5",
+      "sha256": "55603df52a26eac1d6a8ad7f5fa2b4ff52228aa063e0ef2ebe1eaf72b5f6ba08",
+      "size": 1761480,
+      "repo_path": "bios/Lexaloffle/PICO-8/pico8_dyn",
+      "cores": [
+        "lexaloffle"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "pico-8/pico8.dat",
+      "sha1": "21ab36805e1d602dbfd306b200506afa8e9b0507",
+      "sha256": "4ab066ca9f2e48543603cf6f05ee4e41d632116338919ecf11fdac93f1c2da1a",
+      "size": 17721245,
+      "repo_path": "bios/Lexaloffle/PICO-8/pico8.dat",
+      "cores": [
+        "lexaloffle"
+      ]
+    },
+    {
+      "dest": "voxatron/vox",
+      "sha1": "d57277c1676a688c1556bb61ebbd13470051e345",
+      "sha256": "045d95a428c10d7ee3e211293140e71d23f35d2626e487d660061c740d8dabab",
+      "size": 9607232,
+      "repo_path": "bios/Lexaloffle/Voxatron/vox",
+      "cores": [
+        "lexaloffle"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "voxatron/vox_dyn",
+      "sha1": "50252d56d69f9d99b207f4d6a6b76e361b8f7471",
+      "sha256": "3e20fa90c40abe2d564d9033ba8e865dab5b73de46ec510b871cfa8928f4b998",
+      "size": 1941744,
+      "repo_path": "bios/Lexaloffle/Voxatron/vox_dyn",
+      "cores": [
+        "lexaloffle"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "voxatron/vox.dat",
+      "sha1": "f30f29d0074f5db67128cf47fb9c0731ebca2b65",
+      "sha256": "97191dc1ad70aac3bcad9652c0a69a4759048db07fb871d34eaeadd6fd261996",
+      "size": 3866332,
+      "repo_path": "bios/Lexaloffle/Voxatron/vox.dat",
+      "cores": [
+        "lexaloffle"
+      ]
+    },
+    {
+      "dest": "voxatron/libHoloPlayCore.so",
+      "sha1": "ecd7ce48fe0a80b8221ace4e55974d60cc3c7b48",
+      "sha256": "23b1ffff4789d156a2123b3921a7dbf05be5b747ba725f2ea58c7ff41a095ddf",
+      "size": 1515536,
+      "repo_path": "bios/Lexaloffle/Voxatron/libHoloPlayCore.so",
+      "cores": [
+        "lexaloffle"
+      ],
+      "executable": true
+    },
+    {
       "dest": "galgbios.zip",
       "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
       "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
@@ -83729,7 +83809,8 @@
         "megacd"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"
@@ -83749,7 +83830,8 @@
         "megacd"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"
@@ -83769,7 +83851,8 @@
         "megacd"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"

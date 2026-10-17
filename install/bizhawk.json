@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-17T11:35:15Z",
+  "generated": "2026-10-17T13:36:45Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -72,6 +72,9 @@
     "doublecherrygb": [
       "DoubleCherryGB"
     ],
+    "dsperate": [
+      "dsperate-sa"
+    ],
     "ep128emu": [
       "ep128emu_core"
     ],
@@ -93,6 +96,7 @@
     "genesis_plus_gx": [
       "genesisplusgx",
       "genesisplusgx-expanded",
+      "genesisplusgx_ex",
       "genplus"
     ],
     "genesis_plus_gx_wide": [
@@ -151,6 +155,7 @@
       "beetle_bsnes"
     ],
     "mednafen_supafaust": [
+      "beetle_supafaust",
       "supafaust"
     ],
     "melonds_ds": [
@@ -178,7 +183,8 @@
       "mupen64plus-next",
       "mupen64plus_next_develop",
       "mupen64plus_next_gles2",
-      "mupen64plus_next_gles3"
+      "mupen64plus_next_gles3",
+      "mupen64plus_nx"
     ],
     "my-boy": [
       "MY-BOY",
@@ -187,6 +193,9 @@
     "my-oldboy": [
       "MY-OLDBOY",
       "My OldBoy!"
+    ],
+    "nanoboyadvance": [
+      "nanoboyadvance-sa"
     ],
     "nes-emu": [
       "NES-EMU",
@@ -280,6 +289,9 @@
     "vice_x64": [
       "x64"
     ],
+    "vice_x64sc": [
+      "x64sx"
+    ],
     "yabasanshiro": [
       "yabasanshiro-2"
     ]
@@ -324,6 +336,7 @@
       "bluemsx",
       "clk",
       "colem",
+      "fbalpha2019",
       "fbneo",
       "gearcoleco",
       "jollycv",
@@ -369,6 +382,7 @@
       "ares",
       "bluemsx",
       "clk",
+      "fbalpha2019",
       "fbneo",
       "fmsx",
       "msx-emu",
@@ -406,6 +420,7 @@
       "desmume",
       "desmume2015",
       "drastic",
+      "dsperate",
       "melonds",
       "melonds-nightly",
       "melonds_ds",
@@ -430,6 +445,7 @@
       "pizza-boy-gbc",
       "sameboy",
       "skyemu",
+      "supersnes9x",
       "tgbdual",
       "vbam"
     ],
@@ -446,6 +462,7 @@
       "mgba",
       "mgba_splitscreen",
       "my-boy",
+      "nanoboyadvance",
       "noods",
       "pizza-boy-gba",
       "skyemu",
@@ -471,6 +488,7 @@
       "pizza-boy-gbc",
       "sameboy",
       "skyemu",
+      "supersnes9x",
       "tgbdual",
       "vbam"
     ],
@@ -509,7 +527,8 @@
       "snes9x2002",
       "snes9x2005",
       "snes9x2005_plus",
-      "snes9x2010"
+      "snes9x2010",
+      "supersnes9x"
     ],
     "nintendo-snes": [
       "bsnes",
@@ -534,6 +553,7 @@
       "snes9x2005",
       "snes9x2005_plus",
       "snes9x2010",
+      "supersnes9x",
       "superzsnes"
     ],
     "philips-videopac": [
@@ -591,6 +611,7 @@
       "beetle_saturn",
       "kronos",
       "mednafen",
+      "mednafen_stv",
       "saturn-emu",
       "ssf",
       "yabasanshiro",
@@ -602,6 +623,7 @@
       "ares",
       "clk",
       "cspect",
+      "eightyone",
       "ep128emu",
       "ep128emu_core",
       "fuse",
@@ -2336,6 +2358,7 @@
         "europe",
         "latin-america",
         "north-america",
+        "oceania",
         "south-korea"
       ],
       "region_groups": [
@@ -3132,12 +3155,6 @@
       ],
       "systems": [
         "microsoft-msx"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "microsoft-msx"
       ]
     },
     {
@@ -3582,13 +3599,6 @@
       "repo_path": "bios/Commodore/C128/vice/VIC20/chargen-901460-03.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "europe",
-        "north-america"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3599,12 +3609,6 @@
       "repo_path": "bios/Commodore/C128/vice/VIC20/kernal.901486-07.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3615,12 +3619,6 @@
       "repo_path": "bios/Commodore/C128/vice/VIC20/kernal.901486-06.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3631,12 +3629,6 @@
       "repo_path": "bios/Commodore/VIC-20/characters-danish.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "denmark"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3647,12 +3639,6 @@
       "repo_path": "bios/Commodore/VIC-20/kernel-danish.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "denmark"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3663,12 +3649,6 @@
       "repo_path": "bios/Commodore/C128/vice/VIC20/chargen-901460-02.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3679,12 +3659,6 @@
       "repo_path": "bios/Commodore/C128/vice/VIC20/kernal.901486-02.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3695,12 +3669,6 @@
       "repo_path": "bios/Commodore/VIC-20/characters-swedish.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "sweden"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -3711,12 +3679,6 @@
       "repo_path": "bios/Commodore/VIC-20/kernel-swedish.bin",
       "cores": [
         "clk"
-      ],
-      "regions": [
-        "sweden"
-      ],
-      "region_groups": [
-        "commodore-vic20"
       ]
     },
     {
@@ -8075,12 +8037,6 @@
       ],
       "systems": [
         "microsoft-msx"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "microsoft-msx"
       ]
     },
     {
@@ -8093,12 +8049,6 @@
         "clk"
       ],
       "systems": [
-        "microsoft-msx"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
         "microsoft-msx"
       ]
     },
@@ -8277,7 +8227,8 @@
         "picodrive"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "sega-megacd"
@@ -8330,12 +8281,6 @@
       ],
       "systems": [
         "sega-master-system"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "sega-mastersystem"
       ]
     },
     {
@@ -10530,7 +10475,8 @@
         "picodrive"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"
@@ -10547,7 +10493,8 @@
         "picodrive"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"
@@ -10564,7 +10511,8 @@
         "picodrive"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PicoDrive:variant:mega-cd-bios"

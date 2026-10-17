@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-17T11:35:15Z",
-  "total_files": 19036,
-  "total_size": 17548384677,
+  "generated_at": "2026-10-17T13:36:45Z",
+  "total_files": 19040,
+  "total_size": 17550112571,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -40018,6 +40018,26 @@
       "sha256": "ba55901960866fc4f24aef95bfaefe17e5c6706faa012416cafce6ead352b4c5",
       "crc32": "2338792b",
       "adler32": "7c505959"
+    },
+    "027ac214a55fc808a9e76302d62542cd7e3ddc69": {
+      "path": "bios/Fujitsu/FM Towns/fmtownsftv.zip",
+      "name": "fmtownsftv.zip",
+      "size": 935345,
+      "sha1": "027ac214a55fc808a9e76302d62542cd7e3ddc69",
+      "md5": "a15964726d9ce9625a843282ef7619ca",
+      "sha256": "17139509e1847c3bd54d4fa65f4d0f62d0e5d0a1439f55cc2f64b77e6fe68d41",
+      "crc32": "a5a3e38b",
+      "adler32": "a8655e38"
+    },
+    "239c1ade320fc7e09e426e80aee8f05deddc5a50": {
+      "path": "bios/Fujitsu/FM Towns/fmtownshr.zip",
+      "name": "fmtownshr.zip",
+      "size": 717797,
+      "sha1": "239c1ade320fc7e09e426e80aee8f05deddc5a50",
+      "md5": "5e94d2c67c0adb34f41b69e44c26b6cd",
+      "sha256": "34a693f1543a6cbb714eddc94fcd4772614abc7814510365e0bfc7a653d37bc4",
+      "crc32": "70d3571b",
+      "adler32": "58977ab5"
     },
     "803023b68b8f8b03a245082d4acddc0e5708c222": {
       "path": "bios/Fujitsu/FM Towns/fmtownsux.zip",
@@ -129360,6 +129380,26 @@
       "crc32": "9b4ca911",
       "adler32": "f99ae5af"
     },
+    "f4c74086a83b728b1c1af3a021a60efa80eff5a4": {
+      "path": "bios/Nintendo/Super Famicom Box/KROM1.BIN",
+      "name": "KROM1.BIN",
+      "size": 65536,
+      "sha1": "f4c74086a83b728b1c1af3a021a60efa80eff5a4",
+      "md5": "c0ae170a64f70ab97894c3bc0a64b8e8",
+      "sha256": "505deabd49cdcb2913eacb1064a7e532c664d95d252b7955c3c2042ea484beaf",
+      "crc32": "c9010002",
+      "adler32": "51acb9b8"
+    },
+    "7810a63259cbdddb0e98a3c955b06d51957ef4f0": {
+      "path": "bios/Nintendo/Super Famicom Box/MB90082.BIN",
+      "name": "MB90082.BIN",
+      "size": 9216,
+      "sha1": "7810a63259cbdddb0e98a3c955b06d51957ef4f0",
+      "md5": "2cab6914cc78541c17581cddb43af830",
+      "sha256": "9c0b0e59229f8e19df62e6d8918d77d0446436c01ccc7cc4e196f8920da39c2c",
+      "crc32": "1f0a5efe",
+      "adler32": "de20b7a1"
+    },
     "0f4f556277e87b3532a862b437a1685c6d77574c": {
       "path": "bios/Nintendo/Super Game Boy/SGB SFC for BSNES.zip",
       "name": "SGB SFC for BSNES.zip",
@@ -199397,6 +199437,8 @@
       "54dc6786153da0397c1aaec7e28c89eb": "b558bb5472cfa727dccab92229c66afa0d64404f",
       "47d639ae07daa23d2b5a198ca3aebcd6": "639fef8ce51774e4e34b7bbb14116ce8a56fa87d",
       "f76521f8e7c5bc104a8614c8aead1192": "8ba3bf533b0b75685f03d8759a7a34c32bfaf896",
+      "a15964726d9ce9625a843282ef7619ca": "027ac214a55fc808a9e76302d62542cd7e3ddc69",
+      "5e94d2c67c0adb34f41b69e44c26b6cd": "239c1ade320fc7e09e426e80aee8f05deddc5a50",
       "443eeab819ebfb9ef39e928aabbb5567": "803023b68b8f8b03a245082d4acddc0e5708c222",
       "2ea2d6e18a6ec4cae998be5599fa69de": "ee44bb11ce65086e9a982a375d23b3a50e9c4517",
       "609d6356ac4b950238339772199266ce": "0f2ccf38a5e1b8d96251d66b61a953a3617546b4",
@@ -208227,6 +208269,8 @@
       "6c730e9aef2789bf2544bbc92111786f": "32ef39d22eeccd9f3128e92e62b28bed6d3bc930",
       "fc703df4222db23dbda27cbe30f30904": "fcc541ea293ec759dc183c98c9ce45602c7198dc",
       "d3a44ba7d42a74d3ac58cb9c14c6a5ca": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+      "c0ae170a64f70ab97894c3bc0a64b8e8": "f4c74086a83b728b1c1af3a021a60efa80eff5a4",
+      "2cab6914cc78541c17581cddb43af830": "7810a63259cbdddb0e98a3c955b06d51957ef4f0",
       "f06cf541494cc9685e6eaf568335c193": "0f4f556277e87b3532a862b437a1685c6d77574c",
       "58744063e88786ec3486903e4ce91f5a": "1090223c6e8b38d7f8c1a97c9c125e3aa7c2b8cf",
       "b15ddb15721c657d82c5bab6db982ee9": "973e10840db683cf3faf61bd443090786b3a9f04",
@@ -225516,6 +225560,12 @@
       ],
       "fmtmarty.zip": [
         "639fef8ce51774e4e34b7bbb14116ce8a56fa87d"
+      ],
+      "fmtownsftv.zip": [
+        "027ac214a55fc808a9e76302d62542cd7e3ddc69"
+      ],
+      "fmtownshr.zip": [
+        "239c1ade320fc7e09e426e80aee8f05deddc5a50"
       ],
       "mrom.m36": [
         "ee44bb11ce65086e9a982a375d23b3a50e9c4517"
@@ -247042,6 +247092,12 @@
       ],
       "STBIOS.bin": [
         "ef86ea192eed03d5c413fdbbfd46043be1d7a127"
+      ],
+      "KROM1.BIN": [
+        "f4c74086a83b728b1c1af3a021a60efa80eff5a4"
+      ],
+      "MB90082.BIN": [
+        "7810a63259cbdddb0e98a3c955b06d51957ef4f0"
       ],
       "SGB SFC for BSNES.zip": [
         "0f4f556277e87b3532a862b437a1685c6d77574c"
@@ -271115,6 +271171,12 @@
       "rootfs.tar.gz": [
         "66bc6b5ef62305cd2c18bf71c17a52326bbc6fb3"
       ],
+      "KROM.BIN": [
+        "f4c74086a83b728b1c1af3a021a60efa80eff5a4"
+      ],
+      "krom1.bin": [
+        "f4c74086a83b728b1c1af3a021a60efa80eff5a4"
+      ],
       "outro.lvl": [
         "6e1728edd9b634e04ecf72e59428eb783e1e545b"
       ],
@@ -275284,6 +275346,8 @@
       "8ebff292": "b558bb5472cfa727dccab92229c66afa0d64404f",
       "23d8a749": "639fef8ce51774e4e34b7bbb14116ce8a56fa87d",
       "2338792b": "8ba3bf533b0b75685f03d8759a7a34c32bfaf896",
+      "a5a3e38b": "027ac214a55fc808a9e76302d62542cd7e3ddc69",
+      "70d3571b": "239c1ade320fc7e09e426e80aee8f05deddc5a50",
       "472af5d8": "803023b68b8f8b03a245082d4acddc0e5708c222",
       "08a73af7": "ee44bb11ce65086e9a982a375d23b3a50e9c4517",
       "2fbc0e41": "0f2ccf38a5e1b8d96251d66b61a953a3617546b4",
@@ -284114,6 +284178,8 @@
       "b3655ba5": "32ef39d22eeccd9f3128e92e62b28bed6d3bc930",
       "3d78292a": "fcc541ea293ec759dc183c98c9ce45602c7198dc",
       "9b4ca911": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+      "c9010002": "f4c74086a83b728b1c1af3a021a60efa80eff5a4",
+      "1f0a5efe": "7810a63259cbdddb0e98a3c955b06d51957ef4f0",
       "ba572850": "0f4f556277e87b3532a862b437a1685c6d77574c",
       "de55de92": "1090223c6e8b38d7f8c1a97c9c125e3aa7c2b8cf",
       "8a4a174f": "973e10840db683cf3faf61bd443090786b3a9f04",
@@ -294322,6 +294388,8 @@
       "1d3324c45d441ad5f2f1ed9fb9429b7021d622e5ffba479d6c1b917f5952c0c4": "b558bb5472cfa727dccab92229c66afa0d64404f",
       "fc9d1c6a5b1448a0638d0da429ebb2904c2e89fa0298c1b25b54afcca987ae92": "639fef8ce51774e4e34b7bbb14116ce8a56fa87d",
       "ba55901960866fc4f24aef95bfaefe17e5c6706faa012416cafce6ead352b4c5": "8ba3bf533b0b75685f03d8759a7a34c32bfaf896",
+      "17139509e1847c3bd54d4fa65f4d0f62d0e5d0a1439f55cc2f64b77e6fe68d41": "027ac214a55fc808a9e76302d62542cd7e3ddc69",
+      "34a693f1543a6cbb714eddc94fcd4772614abc7814510365e0bfc7a653d37bc4": "239c1ade320fc7e09e426e80aee8f05deddc5a50",
       "1a6ca13972db380960b7759c6ee2ddc7f5f8a63a5456ed1c00c5bafa155ba499": "803023b68b8f8b03a245082d4acddc0e5708c222",
       "2cd7466183ba965259df35ff078b7b057a99086feea0050ddf87aebc6932f429": "ee44bb11ce65086e9a982a375d23b3a50e9c4517",
       "10fc6d984d0a440c3410d805f4bea247fb5dd5a509befff481164923f883797d": "0f2ccf38a5e1b8d96251d66b61a953a3617546b4",
@@ -303152,6 +303220,8 @@
       "dbf5ef12ce586712ee666fc5805e6dfcaa1e253fdd36644f773909514868a590": "32ef39d22eeccd9f3128e92e62b28bed6d3bc930",
       "4d7d7bf5afe5c4f71b96965e58003816c70c13e8af9b581431504d5e52a0cec1": "fcc541ea293ec759dc183c98c9ce45602c7198dc",
       "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+      "505deabd49cdcb2913eacb1064a7e532c664d95d252b7955c3c2042ea484beaf": "f4c74086a83b728b1c1af3a021a60efa80eff5a4",
+      "9c0b0e59229f8e19df62e6d8918d77d0446436c01ccc7cc4e196f8920da39c2c": "7810a63259cbdddb0e98a3c955b06d51957ef4f0",
       "6219403c7efb56bb7127b4ee18d1f6f65352a2bad51982e573b87ff6d19f6c95": "0f4f556277e87b3532a862b437a1685c6d77574c",
       "da7e06f6647af97cbf39f3920e3979c30454bf5bcccdda118a56abed1ec933fa": "1090223c6e8b38d7f8c1a97c9c125e3aa7c2b8cf",
       "a75160f7b89b1f0e20fd2f6441bb86285c7378db5035ef6885485eaff6059376": "973e10840db683cf3faf61bd443090786b3a9f04",
@@ -341769,6 +341839,18 @@
       ],
       "FM Towns/fmtowns.zip": [
         "8ba3bf533b0b75685f03d8759a7a34c32bfaf896"
+      ],
+      "Fujitsu/FM Towns/fmtownsftv.zip": [
+        "027ac214a55fc808a9e76302d62542cd7e3ddc69"
+      ],
+      "FM Towns/fmtownsftv.zip": [
+        "027ac214a55fc808a9e76302d62542cd7e3ddc69"
+      ],
+      "Fujitsu/FM Towns/fmtownshr.zip": [
+        "239c1ade320fc7e09e426e80aee8f05deddc5a50"
+      ],
+      "FM Towns/fmtownshr.zip": [
+        "239c1ade320fc7e09e426e80aee8f05deddc5a50"
       ],
       "Fujitsu/FM Towns/fmtownsux.zip": [
         "803023b68b8f8b03a245082d4acddc0e5708c222"
@@ -467159,6 +467241,18 @@
       ],
       "SuFami Turbo/STBIOS.bin": [
         "ef86ea192eed03d5c413fdbbfd46043be1d7a127"
+      ],
+      "Nintendo/Super Famicom Box/KROM1.BIN": [
+        "f4c74086a83b728b1c1af3a021a60efa80eff5a4"
+      ],
+      "Super Famicom Box/KROM1.BIN": [
+        "f4c74086a83b728b1c1af3a021a60efa80eff5a4"
+      ],
+      "Nintendo/Super Famicom Box/MB90082.BIN": [
+        "7810a63259cbdddb0e98a3c955b06d51957ef4f0"
+      ],
+      "Super Famicom Box/MB90082.BIN": [
+        "7810a63259cbdddb0e98a3c955b06d51957ef4f0"
       ],
       "Nintendo/Super Game Boy/SGB SFC for BSNES.zip": [
         "0f4f556277e87b3532a862b437a1685c6d77574c"

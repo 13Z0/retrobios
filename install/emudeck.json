@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-17T11:35:15Z",
+  "generated": "2026-10-17T13:36:45Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -274,10 +274,20 @@
     "cxbx-reloaded": [
       "cxbx"
     ],
+    "daedalusx64": [
+      "daedalusx64-sa"
+    ],
+    "dolphin": [
+      "dolphin-gui"
+    ],
+    "dsperate": [
+      "dsperate-sa"
+    ],
     "fbalpha2012": [
       "fbalpha"
     ],
     "flycast": [
+      "flycast-next",
       "flycast_dev",
       "flycastvl"
     ],
@@ -288,6 +298,7 @@
     "genesis_plus_gx": [
       "genesisplusgx",
       "genesisplusgx-expanded",
+      "genesisplusgx_ex",
       "genplus"
     ],
     "genesis_plus_gx_wide": [
@@ -303,7 +314,8 @@
       "lime3ds-gui"
     ],
     "lrps2": [
-      "pcsx2"
+      "pcsx2",
+      "ps2"
     ],
     "m64plus-fz": [
       "M64PLUS-FZ",
@@ -348,7 +360,8 @@
       "mupen64plus-next",
       "mupen64plus_next_develop",
       "mupen64plus_next_gles2",
-      "mupen64plus_next_gles3"
+      "mupen64plus_next_gles3",
+      "mupen64plus_nx"
     ],
     "nethersx2": [
       "NETHERSX2",
@@ -426,6 +439,7 @@
       "bluemsx",
       "clk",
       "colem",
+      "fbalpha2019",
       "fbneo",
       "gearcoleco",
       "jollycv",
@@ -449,6 +463,7 @@
     ],
     "nintendo-64": [
       "ares",
+      "daedalusx64",
       "gopher64",
       "m64plus-fz",
       "mupen64plus-ae",
@@ -464,6 +479,7 @@
       "desmume",
       "desmume2015",
       "drastic",
+      "dsperate",
       "melonds",
       "melonds-nightly",
       "melonds_ds",
@@ -507,7 +523,9 @@
       "demul",
       "flycast",
       "flycast-dojo",
+      "flycast2021",
       "redream",
+      "reicast",
       "retrodream"
     ],
     "sega-mega-cd": [
@@ -526,6 +544,7 @@
       "beetle_saturn",
       "kronos",
       "mednafen",
+      "mednafen_stv",
       "saturn-emu",
       "ssf",
       "yabasanshiro",
@@ -850,7 +869,8 @@
         "sega-mega-cd"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "mega-cd"
@@ -1196,12 +1216,6 @@
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
         "ares"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "master-system"
       ]
     },
     {
@@ -1214,7 +1228,8 @@
         "ares"
       ],
       "regions": [
-        "japan"
+        "japan",
+        "south-korea"
       ],
       "region_groups": [
         "master-system"
@@ -1228,12 +1243,6 @@
       "repo_path": "bios/Other/zesarux/sms.rom",
       "cores": [
         "ares"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "master-system"
       ]
     },
     {
@@ -4120,12 +4129,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
@@ -4139,12 +4142,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
@@ -4158,12 +4155,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "saturn"
       ]
     },
     {
