@@ -1219,6 +1219,19 @@ class TestBuildReport(unittest.TestCase):
             ],
         }
 
+    def test_a_refusing_forge_reads_as_unread_not_gone(self):
+        """git.eden-emu.dev answers 403 to scripts: the muted repository's
+        citations read "absent at HEAD" for files that exist."""
+        def refuse(repo, sha, path, cache_dir, offline=False):
+            raise profile_sync.upstream.UpstreamError(f"{path}: HTTP 403")
+
+        profile_sync.upstream.fetch_file = refuse
+        with contextlib.redirect_stderr(io.StringIO()):
+            report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        statuses = [p.status for e in report.entries for p in e.parts]
+        self.assertEqual(statuses, ["UNCHECKED"])
+        self.assertIn("refused", report.entries[0].parts[0].reason)
+
     def test_counts_by_status(self):
         self.files[("pinsha", "a.c")] = ["x", "hit", "y"]
         self.files[("headsha", "a.c")] = ["pad", "x", "hit", "y"]

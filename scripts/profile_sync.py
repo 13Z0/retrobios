@@ -1840,10 +1840,24 @@ def build_report(
                 f"annotated for version {other}, not the documented one",
             )
         if flag:
-            return verify_at_pin(
+            result = verify_at_pin(
                 part, fetch(PIN, part.path, part.start, tokens), tokens, hashes
             )
-        return anchor_across_views(part, tokens)
+        else:
+            result = anchor_across_views(part, tokens)
+        # A forge that refused the request said nothing about the file:
+        # git.eden-emu.dev answers 403 to scripts, and nine citations of
+        # eden-nightly read "absent at HEAD" for a file that exists.
+        owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+        if (
+            result.status in ("GONE", "AMBIGUOUS")
+            and (owner.repo.host, owner.repo.slug) in mute
+        ):
+            return PartResult(
+                part, "UNCHECKED", None, None, None, [],
+                f"{owner.repo.host}/{owner.repo.slug} refused the request, not read",
+            )
+        return result
 
     staged = []
     for entry_name, ref, tokens, hashes, ref_parts, citation in refs:
