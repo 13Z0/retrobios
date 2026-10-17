@@ -758,6 +758,7 @@ def _mark_hidden(
     emu_profiles: dict | None,
     shipped: dict[str, str],
     target_cores: set[str] | None,
+    region_drops: set[str] | None = None,
 ) -> None:
     """What the builder holds but cannot place beside the files it packed."""
     from packextras import hidden_extras
@@ -766,7 +767,7 @@ def _mark_hidden(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores,
+        shipped, target_cores, region_drops,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1091,7 +1092,8 @@ def verify_platform(
         ]
     _mark_unplaced(config, undeclared, profiles)
     _mark_hidden(
-        config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores
+        config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
+        region_drops,
     )
     exclusions = find_exclusion_notes(
         config, emulators_dir, emu_profiles, target_cores=target_cores

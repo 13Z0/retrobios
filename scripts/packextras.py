@@ -136,8 +136,12 @@ def hidden_extras(
     profiles: dict,
     shipped: dict[str, str],
     target_cores: set[str] | None = None,
+    region_drops: set[str] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
+
+    A destination the region pass withdraws never takes its path in the
+    pack, so it blocks nothing here either.
 
     The builder walks the core extras after the platform's own files and
     skips a destination that a case-insensitive filesystem folds onto one
@@ -169,7 +173,7 @@ def hidden_extras(
         target_cores=target_cores,
     ):
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
-        if not dest:
+        if not dest or (region_drops and dest in region_drops):
             continue
         full = dest if not prefix or dest.startswith(f"{prefix}/") else f"{prefix}/{dest}"
         reason = placement_block(full, seen, lower, parents, case_insensitive)

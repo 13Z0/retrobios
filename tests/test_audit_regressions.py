@@ -2255,6 +2255,38 @@ class AGroupPackIsWrittenUnderItsOwnName(unittest.TestCase):
         self.assertIn("pack_name=group_name", source)
 
 
+class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
+    """The builder skips a region-dropped core extra before placing it;
+    the report placed it anyway, so on a case-folding platform it hid the
+    next core's FOO.ROM that the pack does carry."""
+
+    def test_the_report_skips_what_the_region_pass_drops(self):
+        from unittest import mock
+
+        from scripts import packextras
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            other = Path(directory) / "FOO.ROM"
+            other.write_bytes(b"other bytes")
+            extras = [
+                {"name": "foo.rom", "destination": "foo.rom", "source_emulator": "a"},
+                {"name": "FOO.ROM", "destination": "FOO.ROM", "source_emulator": "b"},
+            ]
+            config = {"case_insensitive_fs": True, "base_destination": ""}
+
+            def report(region_drops):
+                with mock.patch.object(packextras, "_collect_emulator_extras",
+                                       return_value=extras), \
+                        mock.patch.object(packextras, "resolve_local_file",
+                                          return_value=(str(other), "name_exact")):
+                    return packextras.hidden_extras(
+                        config, "emulators", {"files": {}}, {}, {}, None, region_drops
+                    )
+
+            self.assertTrue(report(None))
+            self.assertEqual(report({"foo.rom"}), {})
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
