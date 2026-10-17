@@ -5,7 +5,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 6108,
-  "total_size": 7848133264,
-  "pack_files": 6110,
-  "pack_size": 7848133264,
+  "total_files": 6109,
+  "total_size": 7848229710,
+  "pack_files": 6111,
+  "pack_size": 7848229710,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -67,6 +67,9 @@
     ],
     "cxbx-reloaded": [
       "cxbx"
+    ],
+    "daedalusx64": [
+      "daedalusx64-sa"
     ],
     "dolphin": [
       "dolphin-gui"
@@ -2405,6 +2408,16 @@
       "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeTw.ttf",
       "cores": [
         "cemu"
+      ]
+    },
+    {
+      "dest": "roms.ini",
+      "sha1": "4877d2cfb4c4f228332fbb453ce89d93d1457500",
+      "sha256": "0d276bd3a0420588422821fdae08ec0232d3f8aeb69e94d1bd37b8e777c65aff",
+      "size": 96446,
+      "repo_path": "bios/Nintendo/Nintendo 64/daedalusx64/roms.ini",
+      "cores": [
+        "daedalusx64"
       ]
     },
     {
