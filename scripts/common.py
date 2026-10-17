@@ -647,7 +647,8 @@ def _foreign_tree(path: str, owners: set[str]) -> bool:
 
 
 def _rank_tail_candidates(
-    candidates: list[str], start: int, tail: str, files_db: dict, owners: set[str]
+    candidates: list[str], start: int, tail: str, files_db: dict, owners: set[str],
+    asker: frozenset[str] = frozenset(),
 ) -> list[str]:
     """Order the files a destination tail designates, the likeliest first.
 
@@ -663,10 +664,16 @@ def _rank_tail_candidates(
         return files_db.get(sha1, {}).get("path", "")
 
     # Another emulator's tree answers that emulator's entry, at any tail
-    # length: lrps2 names no hash for pcsx2/resources/GameIndex.yaml, and the
-    # only full-tail copy was ARMSX2's, which then counted as path proof and
-    # replaced the GameIndex RetroArch pins on every desktop target.
-    candidates = [h for h in candidates if not _foreign_tree(path_of(h), owners)]
+    # length when a profile asks: lrps2 names no hash for
+    # pcsx2/resources/GameIndex.yaml, and the only full-tail copy was ARMSX2's,
+    # which then counted as path proof and replaced the GameIndex RetroArch
+    # pins on every desktop target. A platform's own declaration has no
+    # asker, and the tree whose path is its destination still answers it.
+    if start or asker:
+        candidates = [
+            h for h in candidates
+            if not _foreign_tree(path_of(h), owners if start else set(asker))
+        ]
     if len(candidates) < 2:
         return candidates
     depth = len(tail.split("/"))
@@ -988,7 +995,8 @@ def resolve_local_file(
         for start in range(min(2, len(hint_parts) - 1)):
             tail = "/".join(hint_parts[start:])
             candidates = _rank_tail_candidates(
-                by_path_suffix.get(tail, []), start, tail, files_db, owners
+                by_path_suffix.get(tail, []), start, tail, files_db, owners,
+                frozenset(_owner_tokens(file_entry)),
             )
             if start and len(candidates) > 1:
                 continue
