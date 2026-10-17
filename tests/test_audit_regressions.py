@@ -3040,3 +3040,38 @@ class ACitationInsideASourceRefIsTracked(unittest.TestCase):
         self.assertEqual(len(masked), len(ref))
         self.assertEqual(masked.index("b.c:7"), ref.index("b.c:7"))
         self.assertNotIn("a.c", masked)
+
+
+class TriageSurvivesAForgeRefusal(unittest.TestCase):
+    """git.eden-emu.dev answers 403 to commit lookups: `--all --triage`
+    died on the traceback after half an hour and printed no ranking."""
+
+    def test_the_ranking_is_printed_with_the_profile_marked(self):
+        from types import SimpleNamespace
+
+        from scripts import profile_sync
+
+        reports = [
+            profile_sync.ProfileReport(name="eden", pin="a" * 40, head="b" * 40),
+            profile_sync.ProfileReport(name="vice", pin="c" * 40, head="d" * 40),
+        ]
+        selected = {
+            "eden": {"source": "https://git.eden-emu.dev/eden-emu/eden"},
+            "vice": {"source": "https://github.com/libretro/vice-libretro"},
+        }
+
+        def check_version(profile, *_args):
+            if "eden" in profile["source"]:
+                raise profile_sync.upstream.UpstreamError("HTTP 403")
+            return None
+
+        args = SimpleNamespace(cache_dir="", offline=True)
+        out = io.StringIO()
+        with mock.patch.object(profile_sync, "check_version", check_version), \
+                mock.patch.object(profile_sync, "select_repo", lambda p: object()), \
+                contextlib.redirect_stdout(out), \
+                contextlib.redirect_stderr(io.StringIO()):
+            profile_sync._print_triage(args, selected, reports)
+        lines = out.getvalue().splitlines()
+        self.assertEqual(len(lines), 2)
+        self.assertTrue(any("eden" in l and "unreachable" in l for l in lines))

@@ -3422,27 +3422,36 @@ def _print_triage(args, selected: dict, reports: list[ProfileReport]) -> None:
         profile = selected[report.name]
         version = None
         commits = 0
+        refused = ""
         repo = select_repo(profile)
         if report.head and repo is not None:
-            version = check_version(profile, repo, args.cache_dir, args.offline)
             paths = _cited_paths(report)
-            for path in paths[:TRIAGE_PATH_SAMPLE]:
-                commits += upstream.commits_touching(
-                    repo, path, report.pin, args.cache_dir, args.offline,
-                    head=report.head,
-                )
-            if len(paths) > TRIAGE_PATH_SAMPLE:
+            try:
+                version = check_version(profile, repo, args.cache_dir, args.offline)
+                for path in paths[:TRIAGE_PATH_SAMPLE]:
+                    commits += upstream.commits_touching(
+                        repo, path, report.pin, args.cache_dir, args.offline,
+                        head=report.head,
+                    )
+            except upstream.UpstreamError as exc:
+                # One forge refusing a request (Eden's answers 403 to commit
+                # lookups) leaves this profile unscored, not the whole ranking.
+                refused = "commit history unreachable"
+                print(f"{report.name}: {exc}", file=sys.stderr)
+            if len(paths) > TRIAGE_PATH_SAMPLE and not refused:
                 print(
                     f"{report.name}: commit count sampled on "
                     f"{TRIAGE_PATH_SAMPLE} of {len(paths)} paths",
                     file=sys.stderr,
                 )
-        ranked.append((drift_score(report, version, commits), report))
-    for score, report in sorted(ranked, key=lambda item: -item[0]):
+        ranked.append((drift_score(report, version, commits), report, refused))
+    for score, report, refused in sorted(ranked, key=lambda item: -item[0]):
         state = report.skipped or f"{report.needs_review()} to review"
         unchecked = (report.counts or {}).get("UNCHECKED", 0)
         if unchecked and not report.skipped:
             state += f", {unchecked} unchecked"
+        if refused:
+            state += f", {refused}"
         print(f"{score:5d}  {report.name:30s}  {state}")
 
 
