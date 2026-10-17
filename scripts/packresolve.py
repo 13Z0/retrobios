@@ -210,6 +210,10 @@ def resolve_file(
     # Large files from GitHub release assets -tried when local file is
     # missing OR has a hash mismatch (wrong variant on disk)
     name = file_entry.get("name", "")
+    if file_entry.get("type") == "directory" or name.endswith("/"):
+        # A tree the collection does not hold is missing, as verify says;
+        # the asset store holds files, not trees.
+        return (path, status) if path else (None, "not_found")
     declared = _declared_hashes(file_entry)
     if file_entry.get("unsourceable") and not any(declared.values()):
         # The asset store is addressed by file name: with no hash to check,

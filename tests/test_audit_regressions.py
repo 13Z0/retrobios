@@ -3780,5 +3780,28 @@ class SignaturesCarryTheirTypes(unittest.TestCase):
                 self.assertEqual(self._missing(ROOT / "scripts" / name), [])
 
 
+
+class ATreeNobodyHoldsIsMissingNotAnAsset(unittest.TestCase):
+    """julius's caesar3/ directory, unexpanded, went to the asset store,
+    which answered with .cache/large/ itself: the emulator pack died on
+    IsADirectoryError where verify said MISSING."""
+
+    def test_directory_entries_never_reach_the_asset_store(self):
+        from scripts import largefiles, packresolve
+
+        db = {"files": {}, "indexes": {"by_name": {}, "by_md5": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        for entry in ({"name": "caesar3/", "type": "directory"}, {"name": "caesar3/"}):
+            with self.subTest(entry=entry):
+                self.assertEqual(
+                    packresolve.resolve_file(entry, db, "bios", {}, offline=True),
+                    (None, "not_found"),
+                )
+        self.assertIsNone(largefiles.fetch_large_file("caesar3/", offline=True))
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            Path(tmp, "sub").mkdir()
+            self.assertIsNone(largefiles._fetch_asset("sub", tmp, "", "", offline=True))
+
+
 if __name__ == "__main__":
     unittest.main()

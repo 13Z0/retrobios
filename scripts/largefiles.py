@@ -126,6 +126,10 @@ def fetch_large_file(
     turns it into the asset to fetch, and a bare name shared by several
     registered paths tries each of their assets until one verifies.
     """
+    if not name or name.endswith("/"):
+        # A directory entry names a tree, never one asset: asked for
+        # "caesar3/", the store answered with .cache/large/ itself.
+        return None
     if registered is None:
         registered = load_registered_paths()
     for asset in asset_candidates(name, registered):
@@ -153,6 +157,8 @@ def _fetch_asset(
         with contextlib.suppress(FileNotFoundError):
             os.unlink(path)
 
+    if os.path.isdir(cached):
+        return None
     if os.path.exists(cached):
         try:
             hashes = compute_hashes(cached) if (expected_sha1 or expected_md5) else {}
