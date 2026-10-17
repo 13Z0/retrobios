@@ -2576,6 +2576,19 @@ class AnArchiveShipsWholeUnderARegion(unittest.TestCase):
         )
 
 
+class APathConflictKeepsTheMainVerdict(unittest.TestCase):
+    """The builder's file/directory conflict branch judged a declaration by
+    the raw resolver status: a zipped_file archive whose member is right was
+    counted excluded while verify counted it OK."""
+
+    def test_the_branch_reads_baseline_verdict(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        branch = source[source.index("Content ships under the conflicting shape"):]
+        branch = branch[: branch.index("storage = file_entry.get")]
+        self.assertIn("baseline_verdict(", branch)
+        self.assertNotIn('conflict_status == "hash_mismatch"', branch)
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

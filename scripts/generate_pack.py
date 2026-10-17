@@ -726,18 +726,23 @@ def generate_pack(
                     # its own, so this one is counted by what it resolves to:
                     # an unresolved one counted OK had the pack claim a file
                     # verify reports missing.
-                    _conflict_path, conflict_status = resolve_file(
+                    conflict_path, conflict_status = resolve_file(
                         file_entry, db, bios_dir, zip_contents,
                         data_dir_registry=data_registry, offline=offline,
+                    )
+                    # The verdict of the main path: a zipped_file archive is
+                    # judged by the member inside, and a frontend that hashes
+                    # one digest accepts a file another declared hash
+                    # contradicts, as verify judges it.
+                    conflict_status, refusal = baseline_verdict(
+                        file_entry, conflict_path, conflict_status, verification_mode
                     )
                     if conflict_status == "not_found":
                         file_status[dedup_key] = "missing"
                         file_reasons[dedup_key] = "not found"
-                    elif conflict_status == "hash_mismatch" and (
-                        hash_mismatch_excludes_file(verification_mode)
-                    ):
+                    elif refusal:
                         file_status[dedup_key] = "excluded"
-                        file_reasons[dedup_key] = "hash mismatch"
+                        file_reasons[dedup_key] = refusal
                     else:
                         file_status.setdefault(dedup_key, "ok")
                     continue
