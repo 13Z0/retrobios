@@ -1764,6 +1764,45 @@ def generate_provenance_page(db: dict, report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
+    """One file of a system page: hashes, who reads it, its provenance."""
+    name = f["name"]
+    sha1_full = f.get("sha1", "unknown")
+    md5_full = f.get("md5", "unknown")
+    size = _fmt_size(f.get("size", 0))
+    # Who reads this file, not who reads a file of this name
+    plats = sorted(consumers.platforms.get(sha1_full, ()))
+    emus = sorted(consumers.emulators.get(sha1_full, ()))
+    sha1_short = sha1_full[:12] if sha1_full != "unknown" else "-"
+    md5_short = md5_full[:12] if md5_full != "unknown" else "-"
+
+    lines = ['<div class="rb-sys-file" markdown>', ""]
+    lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>')
+    lines.append("")
+    if "/.variants/" in f.get("path", ""):
+        lines.append(f"- Stored as: `{f['path'].rsplit('/', 1)[-1]}`")
+    lines.append(f'- SHA1: <span class="rb-hash" title="{sha1_full}">`{sha1_short}...`</span>')
+    lines.append(f'- MD5: <span class="rb-hash" title="{md5_full}">`{md5_short}...`</span>')
+    if plats:
+        plat_badges = " ".join(
+            f'<span class="rb-badge rb-badge-info">[{p}](../platforms/{p}.md)</span>'
+            for p in plats
+        )
+        lines.append(f"- Platforms: {plat_badges}")
+    if emus:
+        lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
+    provenance = f.get("provenance", {})
+    if provenance:
+        prov_badges = " ".join(
+            f'<span class="rb-badge rb-badge-success" title="{_prov_title(data)}">'
+            f"[{_PROVENANCE_LABELS.get(s, s)}](../provenance.md#{s})</span>"
+            for s, data in sorted(provenance.items())
+        )
+        lines.append(f"- Verified dump: {prov_badges}")
+    lines.extend(["", "</div>", ""])
+    return lines
+
+
 def generate_system_page(
     manufacturer: str,
     consoles: dict[str, list],
@@ -1785,70 +1824,18 @@ def generate_system_page(
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
         for f in sorted(main_files, key=lambda x: x["name"]):
-            name = f["name"]
-            sha1_full = f.get("sha1", "unknown")
-            md5_full = f.get("md5", "unknown")
-            size = _fmt_size(f.get("size", 0))
-
-            # Who reads this file, not who reads a file of this name
-            plats = sorted(consumers.platforms.get(sha1_full, ()))
-            emus = sorted(consumers.emulators.get(sha1_full, ()))
-
-            # Truncated hashes for readability
-            sha1_short = sha1_full[:12] if sha1_full != "unknown" else "-"
-            md5_short = md5_full[:12] if md5_full != "unknown" else "-"
-
-            lines.append('<div class="rb-sys-file" markdown>')
-            lines.append("")
-            lines.append(
-                f'**`{name}`** '
-                f'<span class="rb-badge rb-badge-muted">{size}</span>'
-            )
-            lines.append("")
-            lines.append(
-                f'- SHA1: <span class="rb-hash" '
-                f'title="{sha1_full}">`{sha1_short}...`</span>'
-            )
-            lines.append(
-                f'- MD5: <span class="rb-hash" '
-                f'title="{md5_full}">`{md5_short}...`</span>'
-            )
-            if plats:
-                plat_badges = " ".join(
-                    f'<span class="rb-badge rb-badge-info">'
-                    f"[{p}](../platforms/{p}.md)</span>"
-                    for p in plats
-                )
-                lines.append(f"- Platforms: {plat_badges}")
-            if emus:
-                emu_links = [_emulator_link(e, "../") for e in emus]
-                lines.append(f"- Emulators: {', '.join(emu_links)}")
-            provenance = f.get("provenance", {})
-            if provenance:
-                prov_badges = " ".join(
-                    f'<span class="rb-badge rb-badge-success" '
-                    f'title="{_prov_title(data)}">'
-                    f"[{_PROVENANCE_LABELS.get(s, s)}](../provenance.md#{s})</span>"
-                    for s, data in sorted(provenance.items())
-                )
-                lines.append(f"- Verified dump: {prov_badges}")
-            lines.append("")
-            lines.append("</div>")
-            lines.append("")
+            lines.extend(_system_file_card(f, consumers))
 
         if variant_files:
-            lines.append(
-                f'??? note "Variants ({len(variant_files)})"'
-            )
+            # A variant gets the same card as a primary: the revision a
+            # platform pins is the one a reader comes to find, and showed as
+            # a name and a truncated MD5, nothing said who pins it.
+            lines.append(f'??? note "Variants ({len(variant_files)})"')
             lines.append("")
-            for v in sorted(variant_files, key=lambda x: x["name"]):
-                vname = v["name"]
-                vmd5 = v.get("md5", "unknown")
-                vmd5_short = vmd5[:12] if vmd5 != "unknown" else "-"
-                lines.append(
-                    f'    - `{vname}` '
-                    f'<span class="rb-hash" title="{vmd5}">'
-                    f"MD5: {vmd5_short}...</span>"
+            for v in sorted(variant_files, key=lambda x: (x["name"], x["path"])):
+                lines.extend(
+                    f"    {line}" if line else ""
+                    for line in _system_file_card(v, consumers)
                 )
             lines.append("")
 

@@ -330,5 +330,32 @@ class APlatformPageSaysWhereEachFileGoes(unittest.TestCase):
             self.assertIn(f"- `IPL.bin` at `dolphin-emu/Sys/GC/{region}/IPL.bin` - OK",
                           "\n".join(lines))
 
+
+class AVariantShowsWhoPinsIt(unittest.TestCase):
+    """A .variants/ file showed a name and a truncated MD5: the advision.zip
+    Batocera and RetroBat pin named no platform."""
+
+    def test_the_variant_card_names_its_readers(self):
+        import types  # noqa: PLC0415
+
+        import generate_site  # noqa: PLC0415
+
+        primary = {"name": "advision.zip", "path": "bios/Entex/Adventure Vision/advision.zip",
+                   "sha1": "a" * 40, "md5": "b" * 32, "size": 3000}
+        variant = {"name": "advision.zip",
+                   "path": "bios/Entex/Adventure Vision/.variants/advision.zip.1c086064",
+                   "sha1": "c" * 40, "md5": "1c086064" + "0" * 24, "size": 3000,
+                   "provenance": {"tosec": {"name": "x"}}}
+        consumers = types.SimpleNamespace(
+            platforms={"c" * 40: {"batocera", "retrobat"}}, emulators={"a" * 40: {"mame"}})
+        page = generate_site.generate_system_page(
+            "Entex", {"Adventure Vision": [primary, variant]}, consumers)
+        block = page[page.index('??? note "Variants (1)"'):]
+        self.assertIn("    - Stored as: `advision.zip.1c086064`", block)
+        self.assertIn("[batocera](../platforms/batocera.md)", block)
+        self.assertIn("[retrobat](../platforms/retrobat.md)", block)
+        self.assertIn('title="' + "c" * 40 + '"', block)
+        self.assertIn("Verified dump", block)
+
 if __name__ == "__main__":
     unittest.main()
