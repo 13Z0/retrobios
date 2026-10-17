@@ -63,11 +63,14 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 The first lines name what it found and where it will write:
 
 ```
-RetroBIOS
+RetroBIOS 8c0e9c762d2f
 
 Detecting platform...
   Found Batocera at /userdata/bios
 ```
+
+The code after RetroBIOS identifies the installer: it is the start of the
+SHA-256 the command checked before running it.
 
 That path is the one thing worth reading twice. If it is not where the emulator
 keeps its BIOS files, stop with Ctrl+C and see the last section.
@@ -78,22 +81,25 @@ Two phases follow. The first reads what is already in the folder, which takes a
 few minutes on a memory card because every file is hashed:
 
 ```
-Fetching file index for misterfpga...
-  72 files (24.0 MB)
+Fetching file index for batocera...
+  12893 files (8.6 GB)
 
 Checking existing files...
-  72/72 present (72 verified, 0 wrong hash)
+  0/12893 present (0 verified, 0 wrong hash)
 ```
 
-On a first install those numbers are zeros, which is expected, not a fault.
+On a first install the present count is zero, which is expected, not a fault.
+On a later run it counts what is already there, and only the rest is
+downloaded. A download of 1 GB or more is confirmed first
+(`Download 8.6 GB to /userdata/bios? [Y/n]`).
 
 The second phase downloads what is missing, one line per file:
 
 ```
-Downloading 72 files (24.0 MB)...
+Downloading 12893 files (8.6 GB)...
   Press Ctrl+C to stop. Running the same command again carries on from here.
-  [1/72] AtariLynx/boot.rom ok
-  [2/72] Astrocade/boot.rom ok
+  [1/12893] 3do_arcade_saot.bin ok
+  [2/12893] 3dobios.zip ok
 ```
 
 Ctrl+C is safe at any point. Files already installed stay, and running the

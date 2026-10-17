@@ -237,7 +237,7 @@ It ends on a count:
 
 ```
 Checking existing files...
-  1872/1872 present (1872 verified, 0 wrong hash)
+  5865/5865 present (5865 verified, 0 wrong hash)
 
   All files up to date.
 ```

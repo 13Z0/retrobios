@@ -667,6 +667,7 @@ Located in `scripts/scraper/`. Each inherits `BaseScraper` and implements `fetch
 | `retrodeck_scraper` | component manifests | JSON per component |
 | `romm_scraper` | known_bios_files.json | JSON |
 | `rocknix_scraper` | rocknix-systems script | Python dict |
+| `retropie_scraper` | RetroPie-Setup scriptmodules (`rp_module_id`, `rp_module_help`) and `retropie_packages.sh` (version) | Bash |
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
 | `bizhawk_scraper` | FirmwareDatabase.cs | C# source |

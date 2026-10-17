@@ -208,6 +208,24 @@ class RecalboxReadsItsSystemsInBatches(unittest.TestCase):
         self.assertEqual(len(cores), 120)
 
 
+class EveryNamedScraperExists(unittest.TestCase):
+    """The registry named lakka_targets, a scraper no file defines: a refresh
+    of stale targets would have failed on its import."""
+
+    def test_registry_scrapers_are_modules(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        scraper_dir = REPO_ROOT / "scripts" / "scraper"
+        for name, meta in registry["platforms"].items():
+            with self.subTest(platform=name):
+                if meta.get("scraper"):
+                    self.assertTrue((scraper_dir / f"{meta['scraper']}_scraper.py").is_file())
+                if meta.get("target_scraper"):
+                    self.assertTrue((scraper_dir / "targets"
+                                     / f"{meta['target_scraper']}_scraper.py").is_file())
+
+
 class RetroPiePackageList(unittest.TestCase):
     """RetroPie states its packages, and nothing else states them for it."""
 

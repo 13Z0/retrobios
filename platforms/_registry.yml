@@ -287,8 +287,9 @@ platforms:
     # files there, not the one RetroArch's Windows and macOS builds see.
     case_insensitive_fs: false
     schedule: weekly
-    target_scraper: lakka_targets
-    target_source: https://buildbot.libretro.com/nightly/
+    # No target list yet: Lakka builds its cores per device image, and no
+    # scraper reads those lists.
+    target_scraper: null
     install:
       detect:
       - os: linux

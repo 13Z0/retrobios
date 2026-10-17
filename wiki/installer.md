@@ -101,14 +101,15 @@ A run looks like this:
 
 ```
 Fetching file index for retroarch...
-  1872 files (5.5 GB)
-  Safety notice: 9 unavailable or unsafe entries omitted (1 required; not found: 9).
+  5865 files (5.7 GB)
 
 Checking existing files...
-  0/1872 present (0 verified, 0 wrong hash)
-
-  1872 files need downloading.
+  0/5865 present (0 verified, 0 wrong hash)
 ```
+
+When the manifest leaves entries out (a file the collection cannot supply, or
+one that failed a safety check), a `Safety notice:` line under the index count
+says how many and why.
 
 ## Choosing what to install
 
@@ -116,7 +117,7 @@ By default the installer fetches everything the platform runs. At a terminal,
 after detection, it asks:
 
 ```
-Retroarch: 5861 files, 6.0 GB.
+Retroarch: 5865 files, 5.7 GB.
   Enter) install everything
   i) only what the installed cores read: 102 files, 44.5 MB
   c) choose systems, cores and regions

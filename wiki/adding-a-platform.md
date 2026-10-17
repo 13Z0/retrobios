@@ -142,8 +142,10 @@ platforms:
 ```
 
 A platform without a scraper (`scraper: null`, `schedule: null`) keeps its YAML
-as a hand-maintained file. RetroPie is the example: it inherits RetroArch's
-file set and has nothing of its own to fetch.
+as a hand-maintained file. Every registered platform has a scraper today, so
+none is edited by hand: RetroPie inherits RetroArch's file set and its scraper
+writes the packages it builds, read from the `rp_module_id` of each
+scriptmodule, and any manual change is overwritten on the next scrape.
 
 The `cores` field determines which emulator profiles are resolved for this platform.
 Three strategies exist:
