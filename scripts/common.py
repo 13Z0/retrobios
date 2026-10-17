@@ -644,8 +644,8 @@ def _rank_tail_candidates(
 ) -> list[str]:
     """Order the files a destination tail designates, the likeliest first.
 
-    A shortened tail found only in another emulator's tree is that
-    emulator's asset, not evidence about this entry. A full tail claimed
+    A tail found in another emulator's tree is that emulator's asset, not
+    evidence about this entry, whatever its length. A full tail claimed
     twice goes to the file whose path carries the least on top of the
     destination, then to the owner's own copy (super3's Games.xml was served
     to Supermodel-Dojo by index order alone), then to any copy outside
@@ -655,8 +655,11 @@ def _rank_tail_candidates(
     def path_of(sha1: str) -> str:
         return files_db.get(sha1, {}).get("path", "")
 
-    if start:
-        candidates = [h for h in candidates if not _foreign_tree(path_of(h), owners)]
+    # Another emulator's tree answers that emulator's entry, at any tail
+    # length: lrps2 names no hash for pcsx2/resources/GameIndex.yaml, and the
+    # only full-tail copy was ARMSX2's, which then counted as path proof and
+    # replaced the GameIndex RetroArch pins on every desktop target.
+    candidates = [h for h in candidates if not _foreign_tree(path_of(h), owners)]
     if len(candidates) < 2:
         return candidates
     depth = len(tail.split("/"))
@@ -1040,6 +1043,13 @@ def resolve_local_file(
             if file_entry.get("members"):
                 candidates = _holding_members(candidates, file_entry["members"])
             candidates = _by_affinity(candidates, file_entry, dest_hint)
+            # A copy outside another emulator's tree comes first: the
+            # affinity read pcsx2 in bios/Other/armsx2/pcsx2/ and served
+            # upstream PCSX2 the patches.zip of ARMSX2.
+            owners = _owner_tokens(file_entry)
+            candidates = [
+                p for p in candidates if not _foreign_tree(p, owners)
+            ] or candidates
             primary = [p for p in candidates if "/.variants/" not in p]
             if primary or candidates:
                 chosen = primary[0] if primary else candidates[0]

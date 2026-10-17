@@ -19,6 +19,10 @@ bios_directory: "pcsx2/bios/"
 resources_directory: "pcsx2/resources/"
 
 notes: |
+  pcsx2/resources/GameIndex.yaml, the per-game patch, settings override and
+  compatibility database, is the one the buildbot publishes in LRPS2.zip (the
+  lrps2 data directory). An OSD warning is shown if it is missing; some games
+  do not boot without it.
   Hard fork of PCSX2 (pre-Qt, 1.7-dev era) ported to libretro. x86_64 only.
   BIOS detection is filename-agnostic: scans pcsx2/bios/ for any file between 4-8 MB
   with a valid romdir structure (RESET + ROMVER entries). No hash validation.
@@ -27,6 +31,11 @@ notes: |
   Widescreen patches are largely compiled into the core (libretro/patches.cpp).
   .info firmware_count=2 counts the bios folder and GameIndex.yaml.
   .info description mentions EROM.BIN but no EROM loading path exists in the code.
+
+data_directories:
+  - ref: lrps2
+    destination: ""
+    source_ref: "pcsx2/GameDatabase.cpp:49, pcsx2/GameDatabase.cpp:979"
 
 files:
   - name: "<bios>.bin"
@@ -84,15 +93,6 @@ files:
     note: >
       Mechacon (disc drive controller) version as u32.
       Auto-created with default 0x00020603 if missing.
-
-  - name: "GameIndex.yaml"
-    path: "pcsx2/resources/GameIndex.yaml"
-    required: false
-    description: "game compatibility database"
-    source_ref: "pcsx2/GameDatabase.cpp:49, pcsx2/GameDatabase.cpp:979"
-    note: >
-      YAML database of per-game patches, settings overrides, and compatibility fixes.
-      OSD warning shown if missing. Some games may not boot or have issues without it.
 
   - name: "cheats_ws.zip"
     path: "pcsx2/resources/cheats_ws.zip"

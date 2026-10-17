@@ -2287,6 +2287,83 @@ class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
             self.assertEqual(report({"foo.rom"}), {})
 
 
+class AnotherEmulatorsTreeProvesNothing(unittest.TestCase):
+    """lrps2 names no hash for pcsx2/resources/GameIndex.yaml; the only
+    full-tail copy was ARMSX2's, which counted as path proof and replaced
+    the GameIndex RetroArch pins on desktop targets, where ARMSX2 does not
+    exist. Upstream PCSX2 took ARMSX2's patches.zip by name the same way."""
+
+    def _db(self, root, files):
+        import hashlib
+
+        db = {"files": {}, "indexes": {"by_name": {}, "by_md5": {}, "by_crc32": {},
+                                       "by_path_suffix": {}}}
+        for relative, payload in files.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(payload)
+            sha1 = hashlib.sha1(payload).hexdigest()
+            db["files"][sha1] = {"path": relative, "name": path.name, "sha1": sha1,
+                                 "size": len(payload)}
+            db["indexes"]["by_name"].setdefault(path.name, []).append(sha1)
+            parts = relative.split("/")
+            for start in range(1, len(parts) - 1):
+                db["indexes"]["by_path_suffix"].setdefault(
+                    "/".join(parts[start:]), []).append(sha1)
+        return db
+
+    def test_neither_the_full_tail_nor_the_name_lands_in_a_foreign_tree(self):
+        from scripts.common import resolve_local_file
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            # The collection's layout, read relative to its root.
+            previous = os.getcwd()
+            os.chdir(root)
+            self.addCleanup(os.chdir, previous)
+            db = self._db(root, {
+                "bios/Other/armsx2/pcsx2/resources/GameIndex.yaml": b"fork",
+                "bios/Other/armsx2/pcsx2/resources/patches.zip": b"fork patches",
+                "bios/Sony/PlayStation 2/patches.zip": b"upstream patches",
+            })
+            index, status = resolve_local_file(
+                {"name": "GameIndex.yaml", "path": "pcsx2/resources/GameIndex.yaml",
+                 "source_profile": "lrps2"},
+                db, dest_hint="pcsx2/resources/GameIndex.yaml",
+            )
+            # Held only in the fork's tree, the file answers by name and
+            # proves nothing about this entry.
+            self.assertEqual(status, "name_exact")
+            patches, _status = resolve_local_file(
+                {"name": "patches.zip", "path": "resources/patches.zip",
+                 "source_profile": "pcsx2"},
+                db, dest_hint="resources/patches.zip",
+            )
+            self.assertTrue(patches.endswith("PlayStation 2/patches.zip"))
+
+    def test_no_desktop_retroarch_pack_serves_armsx2s_tree(self):
+        from scripts import slots
+        from scripts.common import (
+            load_data_dir_registry,
+            load_database,
+            load_emulator_profiles,
+            load_platform_config,
+            load_target_config,
+        )
+
+        if not (ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        db = load_database(str(ROOT / "database.json"))
+        config = load_platform_config("retroarch", str(ROOT / "platforms"))
+        profiles = load_emulator_profiles(str(ROOT / "emulators"))
+        cores = set(load_target_config("retroarch", "x86_64", str(ROOT / "platforms")))
+        overrides = slots.pack_overrides(
+            config, profiles, db, None, load_data_dir_registry(str(ROOT / "platforms")),
+            target_cores=cores,
+        )
+        self.assertFalse([d for d, p in overrides.items() if "/armsx2/" in p])
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
