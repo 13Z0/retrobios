@@ -134,6 +134,7 @@ def fetch_bytes(
     headers: dict[str, str] | None = None,
     attempts: int = 5,
     sleep: Callable[[float], None] = time.sleep,
+    data: bytes | None = None,
 ) -> bytes:
     """GET a URL, waiting out a rate limit instead of failing the scrape.
 
@@ -142,7 +143,7 @@ def fetch_bytes(
     wait is the server's Retry-After when it gives one, else 2, 4, 8, 16 s.
     """
     request = urllib.request.Request(
-        url, headers={"User-Agent": "retrobios-scraper/1.0", **(headers or {})}
+        url, data=data, headers={"User-Agent": "retrobios-scraper/1.0", **(headers or {})}
     )
     for attempt in range(attempts):
         try:

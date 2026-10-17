@@ -25,15 +25,11 @@ def _fetch_gitlab_stable_tag() -> str:
     """Fetch the latest stable x.y.z tag from the Recalbox GitLab."""
     import json
     import re
-    import urllib.error
-    import urllib.request
 
     url = "https://gitlab.com/api/v4/projects/recalbox%2Frecalbox/repository/tags?per_page=50"
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            tags = json.loads(resp.read())
-    except (urllib.error.URLError, json.JSONDecodeError) as e:
+        tags = json.loads(fetch_bytes(url))
+    except (ConnectionError, json.JSONDecodeError) as e:
         raise RuntimeError(f"cannot list Recalbox tags: {e}") from e
     stable = [t["name"] for t in tags if re.fullmatch(r"[0-9]+\.[0-9]+(\.[0-9]+)?", t["name"])]
     if not stable:
@@ -105,10 +101,15 @@ SYSTEMS_TREE_URL = (
     "https://gitlab.com/api/v4/projects/recalbox%2Frecalbox/repository/tree"
     "?path=package/recalbox-romfs2/systems&ref={tag}&per_page=100&page={page}"
 )
-SYSTEM_INI_URL = (
-    "https://gitlab.com/recalbox/recalbox/-/raw/{tag}"
-    "/package/recalbox-romfs2/systems/{system}/system.ini"
+SYSTEMS_DIR = "package/recalbox-romfs2/systems"
+# One raw read per system.ini made about 150 requests and GitLab throttled
+# the scrape past half an hour; GraphQL returns a batch of blobs at once.
+GRAPHQL_URL = "https://gitlab.com/api/graphql"
+BLOBS_QUERY = (
+    "query($paths: [String!]!, $ref: String!) { project(fullPath: \"recalbox/recalbox\") "
+    "{ repository { blobs(paths: $paths, ref: $ref) { nodes { path rawBlob } } } } }"
 )
+BLOBS_PER_QUERY = 50
 
 
 def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
@@ -162,6 +163,29 @@ class Scraper(BaseScraper):
         self.tag = _fetch_gitlab_stable_tag()
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
+    def _system_inis(self, systems: list[str]) -> list[str]:
+        """Every system's system.ini at the tag, read in batches."""
+        import json
+
+        paths = [f"{SYSTEMS_DIR}/{system}/system.ini" for system in systems]
+        texts: dict[str, str] = {}
+        for start in range(0, len(paths), BLOBS_PER_QUERY):
+            batch = paths[start:start + BLOBS_PER_QUERY]
+            body = json.dumps({"query": BLOBS_QUERY,
+                               "variables": {"paths": batch, "ref": self.tag}}).encode()
+            answer = json.loads(fetch_bytes(
+                GRAPHQL_URL, data=body, headers={"Content-Type": "application/json"},
+            ))
+            try:
+                nodes = answer["data"]["project"]["repository"]["blobs"]["nodes"]
+            except (KeyError, TypeError) as exc:
+                raise RuntimeError(f"GitLab returned no blobs: {answer.get('errors')}") from exc
+            texts.update({n["path"]: n["rawBlob"] for n in nodes if n.get("rawBlob")})
+        missing = [path for path in paths if path not in texts]
+        if missing:
+            raise RuntimeError(f"no system.ini at {self.tag} for {', '.join(missing[:5])}")
+        return [texts[path] for path in paths]
+
     def _fetch_cores(self) -> tuple[list[str], list[str]]:
         """Every core Recalbox's systems offer, and those it runs standalone.
 
@@ -185,8 +209,7 @@ class Scraper(BaseScraper):
             raise RuntimeError(f"no Recalbox system found at {self.tag}")
         cores: set[str] = set()
         standalone: set[str] = set()
-        for system in systems:
-            text = fetch_bytes(SYSTEM_INI_URL.format(tag=self.tag, system=system)).decode("utf-8")
+        for text in self._system_inis(systems):
             found, alone = system_ini_cores(text)
             cores |= found
             standalone |= alone

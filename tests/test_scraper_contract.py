@@ -176,6 +176,38 @@ class RateLimitedForge(unittest.TestCase):
         self.assertEqual(waits, [])
 
 
+class RecalboxReadsItsSystemsInBatches(unittest.TestCase):
+    """One raw read per system.ini, about 150, kept GitLab throttling the
+    scrape past its half-hour timeout."""
+
+    def test_one_query_per_fifty_systems(self):
+        import json as _json  # noqa: PLC0415
+
+        from scraper import recalbox_scraper  # noqa: PLC0415
+
+        systems = [f"sys{i:03}" for i in range(120)]
+        queries: list[list[str]] = []
+
+        def fetch(url, data=None, headers=None):
+            if "repository/tree" in url:
+                page = int(url.rsplit("page=", 1)[1])
+                names = systems[(page - 1) * 100:page * 100]
+                return _json.dumps([{"name": n, "type": "tree"} for n in names]).encode()
+            paths = _json.loads(data)["variables"]["paths"]
+            queries.append(paths)
+            nodes = [{"path": p, "rawBlob": "[core.0]\nemulator = libretro\ncore = "
+                      + p.split("/")[-2] + "\n"} for p in paths]
+            return _json.dumps({"data": {"project": {"repository": {
+                "blobs": {"nodes": nodes}}}}}).encode()
+
+        scraper = recalbox_scraper.Scraper.__new__(recalbox_scraper.Scraper)
+        scraper.tag = "10.1.1"
+        with mock.patch.object(recalbox_scraper, "fetch_bytes", fetch):
+            cores, _standalone = scraper._fetch_cores()
+        self.assertEqual([len(q) for q in queries], [50, 50, 20])
+        self.assertEqual(len(cores), 120)
+
+
 class RetroPiePackageList(unittest.TestCase):
     """RetroPie states its packages, and nothing else states them for it."""
 
