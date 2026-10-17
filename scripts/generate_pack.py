@@ -476,6 +476,7 @@ def _select_variants(
     # One grouping for both passes: a file judged in its own system by one
     # pass must not land in every system of its profile for the other.
     region_groups: dict[str, list[tuple[str, str]]] = {}
+    held: set[str] = set()
     if regions or one_per_slot:
         region_groups, _extra_dests = platform_region_groups(
             config,
@@ -488,13 +489,14 @@ def _select_variants(
             include_extras=(source != "platform"),
             include_all=(source == "truth"),
             required_only=required_only,
+            held_out=held,
         )
     if regions:
         region_index = region_mod.platform_region_index(
             config, emu_profiles or {}, target_cores
         )
         region_drops = region_mod.resolve_region_drops(
-            region_groups, region_index, regions
+            region_groups, region_index, regions, held
         )
         region_fallbacks = region_mod.fallback_groups(
             region_groups, region_index, regions
@@ -3528,6 +3530,7 @@ def _manifest_selection(
     the full manifest withdraws what `--region` withdraws from the pack.
     """
     extras: list[dict] = []
+    held: set[str] = set()
     region_groups, _extra_dests = platform_region_groups(
         config,
         pack_systems,
@@ -3540,12 +3543,13 @@ def _manifest_selection(
         include_all=(source == "truth"),
         required_only=required_only,
         extras_out=extras,
+        held_out=held,
     )
     region_index = region_mod.platform_region_index(
         config, emu_profiles, target_cores
     )
     drops = (
-        region_mod.resolve_region_drops(region_groups, region_index, regions)
+        region_mod.resolve_region_drops(region_groups, region_index, regions, held)
         if regions
         else set()
     )

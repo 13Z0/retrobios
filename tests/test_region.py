@@ -265,6 +265,33 @@ class TestResolveRegionDrops(unittest.TestCase):
     def _drops(self, groups, requested):
         return region.resolve_region_drops(groups, self.index, requested)
 
+    def test_a_missing_match_never_displaces_a_held_file(self):
+        """Grouped so the report can withdraw it, a missing file must not
+        take a held one's place: a Japanese request with only the American
+        BIOS held kept nothing for the PlayStation."""
+        groups = {"psx": [("scph5501.bin", "scph5501.bin"),
+                          ("scph5500.bin", "scph5500.bin")]}
+        held = {"scph5501.bin"}
+        drop = region.resolve_region_drops
+        self.assertEqual(drop(groups, self.index, ["japan"], held), set())
+        self.assertEqual(
+            drop(groups, self.index, ["japan", "north-america"], held), set()
+        )
+        self.assertEqual(
+            drop(groups, self.index, ["north-america"], held), {"scph5500.bin"}
+        )
+        self.assertEqual(drop(groups, self.index, ["japan"]), {"scph5501.bin"})
+
+    def test_a_missing_world_file_never_displaces_a_held_one(self):
+        groups = {"psx": [("scph5500.bin", "scph5500.bin"),
+                          ("psxonpsp660.bin", "psxonpsp660.bin")]}
+        self.assertEqual(
+            region.resolve_region_drops(
+                groups, self.index, ["europe"], {"scph5500.bin"}
+            ),
+            set(),
+        )
+
     def test_a_world_file_the_code_ranks_lower_keeps_the_regional_ones(self):
         """DuckStation looks for its PS1 images (5) before the world PS2 ones
         (100): asked for Brazil, it kept only the PS2 fallbacks."""

@@ -582,6 +582,7 @@ def verify_pack_against_platform(
         region_index = region_mod.platform_region_index(
             config, emu_profiles, target_cores
         )
+        held: set[str] = set()
         region_groups, _extra_dests = platform_region_groups(
             config,
             expected_systems,
@@ -590,9 +591,10 @@ def verify_pack_against_platform(
             base_dest,
             emu_profiles,
             target_cores=target_cores,
+            held_out=held,
         )
         region_drops = region_mod.resolve_region_drops(
-            region_groups, region_index, regions
+            region_groups, region_index, regions, held
         )
 
     with zipfile.ZipFile(zip_path, "r") as zf:

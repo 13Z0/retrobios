@@ -967,6 +967,7 @@ def verify_platform(
         # every core extra a region run withdraws from the pack.
         from packextras import platform_region_groups
 
+        held: set[str] = set()
         region_groups, region_extra_dests = platform_region_groups(
             config,
             verify_systems,
@@ -975,11 +976,13 @@ def verify_platform(
             config.get("base_destination", ""),
             profiles,
             target_cores=target_cores,
+            held_out=held,
         )
         region_drops = region_mod.resolve_region_drops(
             region_groups,
             region_mod.platform_region_index(config, profiles, target_cores),
             regions,
+            held,
         )
 
     # A destination two systems declare with two hashes ships one file, the

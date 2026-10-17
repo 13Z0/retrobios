@@ -254,6 +254,7 @@ def resolve_region_drops(
     groups: dict[str, list[tuple[str, str]]],
     index: dict[str, dict],
     requested: list[str],
+    held: set[str] | None = None,
 ) -> set[str]:
     """Destinations to skip for a requested region priority list.
 
@@ -261,6 +262,10 @@ def resolve_region_drops(
     A world candidate beats unmatched regional fallbacks the code does not
     search before it, while untagged files always survive.  If neither a requested nor a world candidate exists, all
     regional candidates survive so filtering can never empty a group.
+
+    ``held`` names the destinations the collection holds. A match it lacks
+    never displaces a held file: the American BIOS stays in a Japanese pack
+    when the Japanese one is missing, and the missing one stays reported.
     """
     if not requested:
         return set()
@@ -284,11 +289,20 @@ def resolve_region_drops(
         if not regional:
             continue
         matched = [(r, destination) for r, destination in regional if r < len(requested)]
-        if matched:
-            best = min(r for r, _destination in matched)
-            keep |= {destination for r, destination in matched if r == best}
+        winners, rivals = matched, world
+        if held is not None:
+            # A missing file answers the request but takes no held file's
+            # place: only held files decide what gives way.
+            winners = [(r, d) for r, d in matched if d in held]
+            rivals = world & held
+        if winners:
+            best = min(r for r, _destination in winners)
+            keep |= {
+                destination for r, destination in matched
+                if r == best or (r < best and destination not in (held or ()))
+            }
             drop |= {destination for _r, destination in regional if destination not in keep}
-        elif world:
+        elif rivals:
             # A world file beats an unmatched regional one, unless the code
             # provably looks for the regional one first: DuckStation ranks its
             # PS1 images 5 to 50 and its world PS2 images 100, so a request
@@ -296,7 +310,7 @@ def resolve_region_drops(
             world_ranks = [
                 lookup_priority(index, destination, name)
                 for destination, name in members
-                if destination in world
+                if destination in rivals
             ]
             known = None not in world_ranks
             best_world = min(world_ranks) if known and world_ranks else None

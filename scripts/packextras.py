@@ -877,8 +877,13 @@ def platform_region_groups(
     include_all: bool = False,
     required_only: bool = False,
     extras_out: list[dict] | None = None,
+    held_out: set[str] | None = None,
 ) -> tuple[dict[str, list[tuple[str, str]]], dict[tuple[str, str, str], str]]:
     """Group a platform's pack candidates the way region filtering reads them.
+
+    ``held_out`` receives the destinations whose file the collection holds:
+    a missing file is grouped so the report can withdraw it, but it never
+    takes the slot of a held one (resolve_region_drops).
 
     Returns the groups and, for every core extra, the destination it was
     grouped under, keyed by (emulator, name).  verify.py needs that mapping to
@@ -898,6 +903,10 @@ def platform_region_groups(
             )
             if dest:
                 members.append((dest, file_entry.get("name", "")))
+                if held_out is not None and db is not None and resolve_local_file(
+                    file_entry, db, dest_hint=dest
+                )[0]:
+                    held_out.add(dest)
 
     extra_dests: dict[tuple[str, str, str], str] = {}
     if not include_extras or db is None:
@@ -938,6 +947,8 @@ def platform_region_groups(
             groups.setdefault(group_id, []).append((dest, name))
         if extras_out is not None and id(extra) in held:
             extras_out.append(extra)
+        if held_out is not None and id(extra) in held:
+            held_out.add(dest)
     return groups, extra_dests
 
 
