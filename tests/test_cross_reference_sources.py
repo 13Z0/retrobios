@@ -54,6 +54,22 @@ class GapReportSources(unittest.TestCase):
         report = cross_reference(profiles, declared, db)
         self.assertEqual(report["gpgx"]["gaps"], 0)
 
+    def test_any_accepted_version_fills_the_slot(self):
+        """raze accepts ten DUKE3D.GRP; the report judged the first alone and
+        listed the file to acquire while the collection holds the tenth."""
+        profiles = {"raze": {"emulator": "Raze", "systems": ["dos"], "files": [
+            {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "size": 1, "sha1": "a" * 40},
+            {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "size": 2, "sha1": "b" * 40},
+        ]}}
+        db = {"files": {"b" * 40: {"path": "bios/DUKE3D.GRP", "name": "DUKE3D.GRP"}},
+              "indexes": {"by_name": {}, "by_md5": {}, "by_crc32": {}, "by_sha256": {},
+                          "by_path_suffix": {}}}
+        report = cross_reference(profiles, {}, db)
+        self.assertEqual(report["raze"]["gaps"], 1)
+        self.assertEqual(
+            [g["source"] for g in report["raze"]["gap_details"]], ["bios"]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

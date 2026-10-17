@@ -383,17 +383,29 @@ def _cross_reference_profile(
     unsourceable_list: list[dict] = []
     archive_gaps: dict[tuple, dict] = {}
     seen_files: set[tuple] = set()
-    for f in emu_files:
+
+    def slot_key(f: dict) -> tuple:
         fname = f.get("name", "")
-        effective_path = f.get("path") or fname
-        seen_key = (
+        return (
             fname,
             f.get("archive"),
-            effective_path,
+            f.get("path") or fname,
             f.get("system"),
             f.get("variant_group"),
             f.get("mode", "both"),
         )
+
+    # The entries of one profile on one slot are the versions its code
+    # accepts there (raze's ten DUKE3D.GRP): holding any of them fills the
+    # slot, as verify --emulator credits it.
+    versions: dict[tuple, list[dict]] = {}
+    for f in emu_files:
+        versions.setdefault(slot_key(f), []).append(f)
+
+    for f in emu_files:
+        fname = f.get("name", "")
+        effective_path = f.get("path") or fname
+        seen_key = slot_key(f)
         if not fname or seen_key in seen_files:
             continue
 
@@ -471,9 +483,13 @@ def _cross_reference_profile(
         if storage in ("release", "large_file"):
             source = "large_file"
         else:
-            source = entry_source(f, index)
-            if source is None:
-                source = "missing"
+            source = next(
+                (
+                    found for version in versions[seen_key]
+                    if (found := entry_source(version, index)) is not None
+                ),
+                "missing",
+            )
 
         in_repo = source != "missing"
 
