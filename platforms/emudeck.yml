@@ -35,6 +35,36 @@ cores:
 - xenia
 - xenianative
 - yuzu
+standalone_cores:
+- ares
+- armsx2
+- azahar
+- bigpemu
+- cemu
+- citron
+- dolphin
+- duckstation
+- eden
+- flycast
+- mame
+- melonds
+- mgba
+- model2
+- mupen64plus_next
+- pcsx2
+- ppsspp
+- primehack
+- rpcs3
+- ryujinx
+- scummvm
+- shadps4
+- supermodel
+- suyu
+- vita3k
+- xemu
+- xenia
+- xenianative
+- yuzu
 systems:
   sony-playstation:
     files:

@@ -441,6 +441,12 @@ class Scraper(BaseScraper):
             "hash_type": "md5",
             "verification_mode": "md5",
             "cores": cores,
+            # Every EmuScripts installer sets up a standalone app (RetroArch's
+            # cores come from its own script, skipped above): Dolphin, Cemu,
+            # xemu, ARMSX2 and Supermodel ran with the libretro layout and
+            # lost their standalone-only files. A profile with no standalone
+            # build keeps its layout (runs_standalone).
+            "standalone_cores": list(cores),
             "systems": systems,
         }
 

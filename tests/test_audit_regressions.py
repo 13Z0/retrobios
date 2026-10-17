@@ -3803,5 +3803,25 @@ class ATreeNobodyHoldsIsMissingNotAnAsset(unittest.TestCase):
             self.assertIsNone(largefiles._fetch_asset("sub", tmp, "", "", offline=True))
 
 
+
+class EmuDeckRunsItsEmulatorsStandalone(unittest.TestCase):
+    """EmuDeck declared no standalone_cores: Dolphin, Cemu, xemu, ARMSX2 and
+    Supermodel, installed as apps by EmuScripts, got the libretro layout and
+    lost their standalone-only files."""
+
+    def test_every_emuscripts_emulator_is_standalone(self):
+        from scripts.common import load_platform_config, runs_standalone, load_emulator_profiles
+
+        config = load_platform_config("emudeck", str(ROOT / "platforms"))
+        self.assertEqual(sorted(config["standalone_cores"]), sorted(config["cores"]))
+        profiles = load_emulator_profiles(str(ROOT / "emulators"))
+        standalone = set(config["standalone_cores"])
+        for name in ("dolphin", "cemu", "armsx2", "supermodel"):
+            with self.subTest(emulator=name):
+                self.assertTrue(runs_standalone(name, profiles[name], standalone))
+        source = (ROOT / "scripts" / "scraper" / "emudeck_scraper.py").read_text()
+        self.assertIn('"standalone_cores": list(cores)', source)
+
+
 if __name__ == "__main__":
     unittest.main()
