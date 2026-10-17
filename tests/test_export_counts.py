@@ -242,6 +242,22 @@ class PureDataExportsKeepWhatWeDoNotModel(unittest.TestCase):
         self.assertIn('\tcomment "New - System"', produced)
 
 
+    def test_two_additions_differing_by_directory_are_two_lines(self):
+        """PCSX2's vulkan and opengl convert.glsl were both written under the
+        bare name; the second was dropped and still counted as added."""
+        from exporter.baseline import Report
+
+        shaders = [
+            NativeFile("convert.glsl", f"pcsx2/resources/shaders/{api}/convert.glsl",
+                       "Sony - PlayStation 2", truth={"md5": digest * 32})
+            for api, digest in (("vulkan", "a"), ("opengl", "b"))
+        ]
+        systems = {"Sony - PlayStation 2": NativeSystem("Sony - PlayStation 2", files=shaders)}
+        produced = SystemDat().render(systems, Report(), {})["System.dat"]
+        self.assertIn("name pcsx2/resources/shaders/vulkan/convert.glsl md5 " + "a" * 32, produced)
+        self.assertIn("name pcsx2/resources/shaders/opengl/convert.glsl md5 " + "b" * 32, produced)
+        self.assertEqual(SystemDat().validate(systems, {"System.dat": produced}), [])
+
 class EmuDeckWritesItsCorrections(unittest.TestCase):
     """A correction replaced nothing: every withdrawal was refused, the run
     counted the correction anyway and validate failed on it."""

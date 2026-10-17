@@ -89,10 +89,14 @@ class Exporter(BaseExporter):
         libretro writes the path for some entries (ep128emu/roms/cpc464.rom)
         and the bare name for others whose destination has a directory all
         the same (iplromco.dat, which lives under keropi/), so its own
-        spelling is recorded rather than derived.
+        spelling is recorded rather than derived. An addition has no
+        spelling of libretro's to follow and is named by where the core reads
+        it: two PCSX2 convert.glsl shaders under one bare name were one line.
         """
         declared = fe.native("native_path", "")
-        return str(declared) if declared else fe.name
+        if declared:
+            return str(declared)
+        return fe.destination if fe.platform is None else fe.name
 
     def _header(self, originals: dict[str, str], scraped: dict | None) -> list[str]:
         """Reuse the original header verbatim when we have the original."""
