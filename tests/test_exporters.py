@@ -1359,9 +1359,6 @@ class UpstreamFidelity(unittest.TestCase):
                 )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ARecordDescribesOneDump(unittest.TestCase):
     """syscard2.pce: System.dat states v2.1 (crc 283b74e0, md5, sha1),
@@ -1504,3 +1501,7 @@ class RocknixNamesRunnersItsOwnWay(unittest.TestCase):
         self.assertIn('"file": "bios/a.bin", "emulator": "retroarch", "core": "beetle_psx" }', text)
         self.assertIn('"file": "bios/b.bin", "emulator": "duckstation", "core": "duckstation-sa" }', text)
         self.assertNotIn("c.bin", text)
+
+
+if __name__ == "__main__":
+    unittest.main()

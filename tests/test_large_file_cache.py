@@ -480,14 +480,14 @@ class ReleaseAssetNames(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as root:
             Path(root, ".gitignore").write_text(gitignore, encoding="utf-8")
-            generate_pack._GITIGNORE_ENTRIES = None
+            generate_pack._registered.cache_clear()
             try:
                 manifest = {
                     p: generate_pack._release_asset_name(os.path.join(root, p), root)
                     for p in self.REGISTERED
                 }
             finally:
-                generate_pack._GITIGNORE_ENTRIES = None
+                generate_pack._registered.cache_clear()
         self.assertEqual(manifest, expected)
 
         sizes = {self.ET: 228138631, self.RTCW: 122757192, self.PUP: 10}
@@ -677,9 +677,6 @@ class GameDataHasOneDefinition(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ASameSizeReuploadIsSeen(unittest.TestCase):
     """A DSi NAND rebuilt at the same 251658304 bytes and re-uploaded with
@@ -730,3 +727,7 @@ class ASameSizeReuploadIsSeen(unittest.TestCase):
             ),
             {"x": "abc"},
         )
+
+
+if __name__ == "__main__":
+    unittest.main()

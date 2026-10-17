@@ -15,6 +15,7 @@ from __future__ import annotations
 from artifacts import _build_timestamp
 import argparse
 import contextlib
+import functools
 import hashlib
 import json
 import os
@@ -71,7 +72,7 @@ import slot as slot_mod
 import slots
 import split_pack
 from deterministic_zip import _FIXED_DATE_TIME, rebuild_zip_deterministic
-from largefiles import asset_name
+from largefiles import asset_name, load_registered_paths
 from nativemode import (
     digest_algorithm,
     hash_mismatch_excludes_file,
@@ -3103,24 +3104,11 @@ def _main(held: contextlib.ExitStack) -> None:
 
 # Manifest generation (JSON inventory for install.py)
 
-_GITIGNORE_ENTRIES: set[str] | None = None
-
-
-def _load_gitignore_entries(repo_root: str) -> set[str]:
-    """Load gitignored paths (large files) from .gitignore at repo root."""
-    global _GITIGNORE_ENTRIES
-    if _GITIGNORE_ENTRIES is not None:
-        return _GITIGNORE_ENTRIES
-    gitignore = os.path.join(repo_root, ".gitignore")
-    entries: set[str] = set()
-    if os.path.exists(gitignore):
-        with open(gitignore) as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    entries.add(line)
-    _GITIGNORE_ENTRIES = entries
-    return entries
+@functools.lru_cache(maxsize=None)
+def _registered(repo_root: str) -> frozenset[str]:
+    """The paths a repository's .gitignore registers as release assets, read
+    by the parser the fetcher and the release check use, once per root."""
+    return frozenset(load_registered_paths(os.path.join(repo_root, ".gitignore")))
 
 
 def _is_release_asset(local_path: str, repo_root: str) -> bool:
@@ -3132,7 +3120,7 @@ def _is_release_asset(local_path: str, repo_root: str) -> bool:
     is still served by the repository, and announcing it as a release asset
     sends the installer to an asset nobody uploaded.
     """
-    return _repo_relative(local_path, repo_root) in _load_gitignore_entries(repo_root)
+    return _repo_relative(local_path, repo_root) in _registered(repo_root)
 
 
 def _repo_relative(local_path: str, repo_root: str) -> str:
@@ -3144,11 +3132,7 @@ def _repo_relative(local_path: str, repo_root: str) -> str:
 
 def _release_asset_name(local_path: str, repo_root: str) -> str:
     """The large-files asset install.py downloads for a gitignored file."""
-    registered = [
-        entry for entry in _load_gitignore_entries(repo_root)
-        if entry.startswith("bios/")
-    ]
-    return asset_name(_repo_relative(local_path, repo_root), registered)
+    return asset_name(_repo_relative(local_path, repo_root), sorted(_registered(repo_root)))
 
 
 def _get_repo_path(sha1: str, db: dict) -> str:

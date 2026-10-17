@@ -1618,11 +1618,11 @@ class ReleaseAssetCriterion(unittest.TestCase):
             big.parent.mkdir()
             with big.open("wb") as handle:
                 handle.truncate(60_000_000)
-            generate_pack._GITIGNORE_ENTRIES = None
+            generate_pack._registered.cache_clear()
             try:
                 self.assertFalse(generate_pack._is_release_asset(str(big), root))
             finally:
-                generate_pack._GITIGNORE_ENTRIES = None
+                generate_pack._registered.cache_clear()
 
     def test_a_gitignored_file_is_served_by_the_release_whatever_its_size(self):
         from scripts import generate_pack
@@ -1632,11 +1632,11 @@ class ReleaseAssetCriterion(unittest.TestCase):
             small = Path(root, "bios", "small.zip")
             small.parent.mkdir()
             small.write_bytes(b"PK")
-            generate_pack._GITIGNORE_ENTRIES = None
+            generate_pack._registered.cache_clear()
             try:
                 self.assertTrue(generate_pack._is_release_asset(str(small), root))
             finally:
-                generate_pack._GITIGNORE_ENTRIES = None
+                generate_pack._registered.cache_clear()
 
 
 class ReleaseAssetsMatchTheCollection(unittest.TestCase):
@@ -2860,9 +2860,6 @@ class ADuplicateYamlKeyIsRefused(unittest.TestCase):
         self.assertIn("duplicate key 'target_source'", str(caught.exception))
         self.assertEqual(yaml_load("a: &x {b: 1}\nc: *x\n"), {"a": {"b": 1}, "c": {"b": 1}})
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class AnAcceptedVersionIsNoCoreDiscrepancy(unittest.TestCase):
     """eduke32 lists the retail and demo NWINTER.GRP under one name: the extra
@@ -3244,3 +3241,30 @@ class ADataDirectoryIsHeldWhileRead(unittest.TestCase):
         self.assertIn("hold_data_dirs(held,", verify_src)
         refresh = pack.index("results = refresh_all(")
         self.assertIn("hold_data_dirs(held, data_registry)", pack[refresh:])
+
+
+class EachRootReadsItsOwnRegistry(unittest.TestCase):
+    """The release-asset registry was cached once per process whatever root
+    was asked: a second tree got the first tree's .gitignore."""
+
+    def test_two_roots_in_one_process(self):
+        from scripts import generate_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as a, \
+                tempfile.TemporaryDirectory(dir=TMP_ROOT) as b:
+            Path(a, ".gitignore").write_text("bios/one.bin\n")
+            Path(b, ".gitignore").write_text("bios/two.bin\n")
+            self.assertTrue(generate_pack._is_release_asset(str(Path(a, "bios/one.bin")), a))
+            self.assertFalse(generate_pack._is_release_asset(str(Path(b, "bios/one.bin")), b))
+            self.assertTrue(generate_pack._is_release_asset(str(Path(b, "bios/two.bin")), b))
+
+    def test_one_parser_reads_the_registry(self):
+        for module in ("generate_pack.py", "generate_db.py"):
+            source = (ROOT / "scripts" / module).read_text()
+            with self.subTest(module=module):
+                self.assertIn("load_registered_paths", source)
+                self.assertNotIn('startswith("bios/")\n    }', source)
+
+
+if __name__ == "__main__":
+    unittest.main()

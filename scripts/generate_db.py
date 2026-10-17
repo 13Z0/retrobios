@@ -271,14 +271,9 @@ def save_cache(cache_path: str, cache: dict) -> None:
 
 def _load_gitignored_large_files() -> set[str]:
     """The bios/ paths .gitignore registers as release assets."""
-    gitignore = Path(".gitignore")
-    if not gitignore.exists():
-        return set()
-    return {
-        line.strip()
-        for line in gitignore.read_text().splitlines()
-        if line.strip().startswith("bios/")
-    }
+    from largefiles import load_registered_paths
+
+    return set(load_registered_paths(".gitignore"))
 
 
 def _restore(cached: str, path: str) -> None:

@@ -93,9 +93,6 @@ class ACoreFileFillsAFreeDeclaration(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class AFileDeclaredUnderAnotherName(unittest.TestCase):
     """The platform declares ROM1 with the md5 of the core's ROM. The
@@ -142,3 +139,7 @@ class AFileDeclaredUnderAnotherName(unittest.TestCase):
             self.assertIn("gs/ROM", zf.namelist())
         reported = [(u["name"], u["in_repo"]) for u in result["undeclared_files"]]
         self.assertIn(("ROM", True), reported)
+
+
+if __name__ == "__main__":
+    unittest.main()
