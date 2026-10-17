@@ -163,5 +163,17 @@ class ExclusionNotesListedOnAsk(unittest.TestCase):
         self.assertRegex(verbose, r"No external files \(\d+\):")
         self.assertLess(len(plain.splitlines()), len(verbose.splitlines()))
 
+
+class ATypoGetsTheNearestNames(unittest.TestCase):
+    """The hint listed the first names of the alphabet behind "...":
+    sony-playstaton was answered with 3do to apple-iie."""
+
+    def test_suggestions_follow_the_typed_name(self):
+        hint = common.suggest_names(["sony-playstaton"],
+                                    ["3do", "apple-ii", "sony-playstation"], "--list-systems")
+        self.assertEqual(hint, "Did you mean: sony-playstation? --list-systems lists all 3.")
+        self.assertEqual(common.suggest_names(["zzz"], ["3do"], "--list-systems"),
+                         "--list-systems lists all 1.")
+
 if __name__ == "__main__":
     unittest.main()

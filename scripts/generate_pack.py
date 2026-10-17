@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
+    suggest_names,
     require_platform,
     apply_target_overrides,
     archive_entry,
@@ -1646,10 +1647,8 @@ def generate_system_pack(
                 f"No emulators found for system(s): {', '.join(system_ids)}",
                 file=sys.stderr,
             )
-        print(
-            f"Available systems: {', '.join(sorted(all_systems)[:20])}...",
-            file=sys.stderr,
-        )
+        print(suggest_names(system_ids, sorted(all_systems), "--list-systems"),
+              file=sys.stderr)
         return None
 
     # Named like the platform's --system tag: one spelling of a system is

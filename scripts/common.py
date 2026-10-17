@@ -350,6 +350,20 @@ def list_registered_platforms(
     return platforms
 
 
+def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> str:
+    """The closest known names to what was typed, and how to see them all.
+
+    The hints showed the first ten or twenty names of the alphabet behind a
+    "..." whatever was typed: sony-playstaton listed 3do to apple-iie.
+    """
+    import difflib  # noqa: PLC0415
+
+    close = sorted({m for name in typed
+                    for m in difflib.get_close_matches(name, available, n=3, cutoff=0.6)})
+    hint = f"Did you mean: {', '.join(close)}? " if close else ""
+    return f"{hint}{listing_flag} lists all {len(available)}."
+
+
 def require_platform(name: str, platforms_dir: str = "platforms") -> None:
     """Exit with a usable message when no platform answers to a name.
 
@@ -1345,7 +1359,7 @@ def select_emulator_profiles(
             )
             raise ProfileSelectionError(
                 f"emulator '{name}' not found\n"
-                f"Available: {', '.join(available[:10])}..."
+                + suggest_names([name], available, "--list-emulators")
             )
         profile = all_profiles[name]
         kind = profile.get("type", "libretro")

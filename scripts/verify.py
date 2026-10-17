@@ -34,6 +34,7 @@ import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    suggest_names,
     require_platform,
     archive_entry,
     archive_members,
@@ -1849,10 +1850,8 @@ def verify_system(
                 f"No emulators found for system(s): {', '.join(system_ids)}",
                 file=sys.stderr,
             )
-        print(
-            f"Available systems: {', '.join(sorted(all_systems)[:20])}...",
-            file=sys.stderr,
-        )
+        print(suggest_names(system_ids, sorted(all_systems), "--list-systems"),
+              file=sys.stderr)
         sys.exit(1)
 
     return verify_emulator(
