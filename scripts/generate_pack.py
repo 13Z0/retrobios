@@ -3175,6 +3175,11 @@ def _db_sha1_by_path(db: dict) -> dict[str, str]:
     return index
 
 
+# The hashes a manifest entry records, and each file's once verified.
+_MANIFEST_HASHES = frozenset({"sha1", "sha256"})
+_STABLE_HASHES: dict[tuple, dict] = {}
+
+
 def _stable_hashes(local_path: str, db: dict) -> dict:
     """The file's hashes, held against the scan that built the database.
 
@@ -3184,12 +3189,20 @@ def _stable_hashes(local_path: str, db: dict) -> dict:
     database scanned the same path, and a manifest that disagrees with it is
     refused rather than published.
     """
+    stat = os.stat(local_path)
+    key = (os.path.normpath(local_path), stat.st_size, stat.st_mtime_ns, id(db))
+    known = _STABLE_HASHES.get(key)
+    if known is not None:
+        # Verified against the scan once: twelve manifests name a file up
+        # to a dozen times, and rehashing it each time spent 163 s of 218.
+        return known
     expected = _db_sha1_by_path(db).get(os.path.normpath(local_path))
-    hashes = compute_hashes(local_path)
+    hashes = compute_hashes(local_path, _MANIFEST_HASHES)
     for _attempt in range(2):
         if expected is None or hashes["sha1"] == expected:
+            _STABLE_HASHES[key] = hashes
             return hashes
-        hashes = compute_hashes(local_path)
+        hashes = compute_hashes(local_path, _MANIFEST_HASHES)
     raise RuntimeError(
         f"{local_path}: sha1 {hashes['sha1']} contradicts the database scan "
         f"({expected}); rehash the file or regenerate database.json"

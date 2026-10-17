@@ -3643,5 +3643,33 @@ class EmulatorPagesStateTheirDataForMachines(unittest.TestCase):
         self.assertNotIn("identifier", data["hasPart"][1])
 
 
+
+class AManifestHashesAFileOnce(unittest.TestCase):
+    """Every manifest entry rehashed its file with five algorithms: 70 476
+    calls for 15 011 files, 163 s of a 218 s step."""
+
+    def test_verified_hashes_are_reused(self):
+        from scripts import generate_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            path = Path(tmp, "a.bin")
+            path.write_bytes(b"abc")
+            sha1 = hashlib.sha1(b"abc").hexdigest()
+            db = {"files": {sha1: {"path": str(path)}}}
+            calls = []
+            real = generate_pack.compute_hashes
+
+            def counting(file_path, algorithms=None):
+                calls.append(algorithms)
+                return real(file_path, algorithms)
+
+            with mock.patch.object(generate_pack, "compute_hashes", counting):
+                first = generate_pack._stable_hashes(str(path), db)
+                second = generate_pack._stable_hashes(str(path), db)
+        self.assertEqual(first, second)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0], frozenset({"sha1", "sha256"}))
+
+
 if __name__ == "__main__":
     unittest.main()
