@@ -3698,5 +3698,24 @@ class AZipMemberIsHashedOnce(unittest.TestCase):
         self.assertEqual(len(opened), 1)
 
 
+
+class CompanionsComeFromADirectoryIndex(unittest.TestCase):
+    """_companions walked the whole database per scanned image."""
+
+    def test_same_answer_one_walk(self):
+        from scripts import packextras
+
+        files_db = {
+            "a": {"path": "bios/Sony/PS2/ps2.bin", "name": "ps2.bin"},
+            "b": {"path": "bios/Sony/PS2/ps2.bin.rom1", "name": "ps2.bin.rom1"},
+            "c": {"path": "bios/Sony/PS2/ps2.nvm", "name": "ps2.nvm"},
+            "d": {"path": "bios/Other/ps2.nvm", "name": "ps2.nvm"},
+        }
+        found = packextras._companions("bios/Sony/PS2/ps2.bin", "ps2.bin", {"rom1", "nvm"}, files_db)
+        self.assertEqual([sha1 for sha1, _ in found], ["b", "c"])
+        index = packextras._files_by_directory(files_db)
+        self.assertIs(packextras._files_by_directory(files_db), index)
+
+
 if __name__ == "__main__":
     unittest.main()

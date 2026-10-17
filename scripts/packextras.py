@@ -446,10 +446,26 @@ def _companions(
     wanted |= {f"{stem}.{ext}" for ext in extensions}
     return sorted(
         (sha1, entry)
-        for sha1, entry in files_db.items()
-        if entry.get("path", "").rsplit("/", 1)[0] + "/" == directory
-        and str(entry.get("name", "")).lower() in wanted
+        for sha1, entry in _files_by_directory(files_db).get(directory, ())
+        if str(entry.get("name", "")).lower() in wanted
     )
+
+
+# The database a directory index was built from, with the index: one walk
+# per database instead of one per scanned image (1 023 walks of 19 041
+# entries in verify --all).
+_DIRECTORY_INDEX: tuple[dict, dict[str, list[tuple[str, dict]]]] | None = None
+
+
+def _files_by_directory(files_db: dict) -> dict[str, list[tuple[str, dict]]]:
+    global _DIRECTORY_INDEX
+    if _DIRECTORY_INDEX is None or _DIRECTORY_INDEX[0] is not files_db:
+        index: dict[str, list[tuple[str, dict]]] = {}
+        for sha1, entry in files_db.items():
+            directory = entry.get("path", "").rsplit("/", 1)[0] + "/"
+            index.setdefault(directory, []).append((sha1, entry))
+        _DIRECTORY_INDEX = (files_db, index)
+    return _DIRECTORY_INDEX[1]
 
 
 def _archive_prefix_extras(
