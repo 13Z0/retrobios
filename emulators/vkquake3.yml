@@ -1,0 +1,147 @@
+emulator: vkQuake3
+type: standalone
+core_classification: game_engine
+source: "https://github.com/suijingfeng/vkQuake3"
+upstream: "https://github.com/ioquake/ioq3"
+profiled_date: "2026-10-17"
+source_commit: "5300b32803c1c61bc3b6bdf86a084c1db1a217ad"
+core_version: "1.36"
+display_name: "Quake III Arena (vkQuake3)"
+cores: ["vkquake3"]
+systems: [quake3, teamarena]
+
+notes: |
+  ioquake3 fork with a Vulkan renderer. PRODUCT_VERSION "1.36",
+  BASEGAME = "baseq3", BASETA = "missionpack" (code/qcommon/q_shared.h:45,
+  68, 71). NUM_ID_PAKS 9, NUM_TA_PAKS 4 (code/qcommon/qcommon.h:597-598).
+
+  fs_basepath defaults to Sys_DefaultInstallPath, the directory of the
+  binary (code/qcommon/files.c:3323, code/sys/sys_main.c:88-94, 738).
+  FS_Startup mounts baseq3 under fs_basepath and fs_homepath, then fs_game
+  when set (code/qcommon/files.c:3362-3377, 3396-3409). FS_AddGameDirectory
+  mounts every .pk3 of each directory (code/qcommon/files.c:2933).
+
+  FS_CheckPak0 compares the pak checksum of baseq3/pak0.pk3 through
+  pak8.pk3 and missionpack/pak0.pk3 through pak3.pk3 to pak_checksums[] and
+  missionpak_checksums[] (code/qcommon/files.c:179-197, 3486, 3516). The
+  value is a block checksum over the CRC32 of every member
+  (code/qcommon/files.c:2111), not a file hash. A mismatch prints a warning and the pak stays
+  mounted. A missing baseq3 pak is fatal unless the engine runs standalone,
+  which needs com_basegame other than baseq3 (code/qcommon/files.c:3570-3572,
+  3596-3619). Once any Team Arena pak is found the four are required
+  (code/qcommon/files.c:3622-3640). demoq3/pak0.pk3 with
+  DEMO_PAK0_CHECKSUM counts as baseq3/pak0.pk3 (code/qcommon/files.c:178,
+  3475-3479, 3580-3590).
+
+  Batocera 43.1 installs the binary as /usr/bin/ioquake3/ioquake3 and runs
+  it through the ioquake3 generator, which copies /usr/bin/ioquake3 into
+  /userdata/roms/quake3 and starts /userdata/roms/quake3/ioquake3 with the
+  arguments written in the ROM file (configgen
+  generators/ioquake3/ioquake3Generator.py). fs_basepath is therefore
+  /userdata/roms/quake3. Patch 001-config-dir.patch sets
+  HOMEPATH_NAME_UNIX to "/configs/ioquake3", appended to $HOME
+  (code/sys/sys_unix.c:65, 79).
+
+files:
+  - name: "pak0.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak0.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:180 (pak_checksums[0]=1566731103u), 3486 (checksum compare), 3596-3619 (fatal when a baseq3 pak is absent)"
+    note: "Retail Quake III Arena pak. A checksum mismatch prints a warning, the file is not refused."
+    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+
+  - name: "pak1.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak1.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:181 (pak_checksums[1]=298122907u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak2.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak2.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:182 (pak_checksums[2]=412165236u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak3.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak3.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:183 (pak_checksums[3]=2991495316u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak4.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak4.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:184 (pak_checksums[4]=1197932710u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak5.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak5.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:185 (pak_checksums[5]=4087071573u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak6.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak6.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:186 (pak_checksums[6]=3709064859u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak7.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak7.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:187 (pak_checksums[7]=908855077u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak8.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak8.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:188 (pak_checksums[8]=977125798u), 3596-3619 (fatal when a baseq3 pak is absent)"
+
+  - name: "pak0.pk3"
+    category: game_data
+    system: quake3
+    path: "demoq3/pak0.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:178 (DEMO_PAK0_CHECKSUM=2985612116u), 3475-3479 (demoq3 pak0 checksum compare), 3580-3590 (counted as baseq3/pak0.pk3)"
+    note: "Demo pak. Recognised only under demoq3/ with this checksum; the engine then prints a warning and counts baseq3/pak0.pk3 as found."
+
+  - name: "pak0.pk3"
+    category: game_data
+    system: teamarena
+    path: "missionpack/pak0.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:193 (missionpak_checksums[0]=2430342401u), 3622-3640 (fatal when a Team Arena pak is absent)"
+    note: "Team Arena pak. Read with `+set fs_game missionpack`."
+    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+
+  - name: "pak1.pk3"
+    category: game_data
+    system: teamarena
+    path: "missionpack/pak1.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:194 (missionpak_checksums[1]=511014160u), 3622-3640 (fatal when a Team Arena pak is absent)"
+
+  - name: "pak2.pk3"
+    category: game_data
+    system: teamarena
+    path: "missionpack/pak2.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:195 (missionpak_checksums[2]=2662638993u), 3622-3640 (fatal when a Team Arena pak is absent)"
+
+  - name: "pak3.pk3"
+    category: game_data
+    system: teamarena
+    path: "missionpack/pak3.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:196 (missionpak_checksums[3]=1438664554u), 3622-3640 (fatal when a Team Arena pak is absent)"

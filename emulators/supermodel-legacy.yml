@@ -1,0 +1,73 @@
+emulator: Supermodel Legacy
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/trzy/Supermodel"
+upstream: "https://github.com/trzy/Supermodel"
+profiled_date: "2026-10-17"
+source_commit: "0eef09ba2b74e48fd5cfd388ee69a3743fd5f618"
+pin_frozen: "Batocera's supermodel-legacy package builds this revision, held before the renderer moved to OpenGL 4.1. Recaling would repoint these refs at code this build never had."
+core_version: "0.3a-WIP"
+display_name: "Sega - Model 3 (Supermodel Legacy)"
+cores:
+  - "supermodel-legacy"
+systems:
+  - "sega-model3"
+
+notes: |
+  Supermodel at trzy/Supermodel 0eef09b of 2022-08-19, the revision Batocera
+  builds as supermodel-legacy for boards without OpenGL 4.1, the version the
+  renderer moved to after it. Batocera applies five patches; 001 rewrites the
+  fixed paths below, the others touch the INI template, the build rules, audio
+  volume and an evdev light gun input system.
+  ref: Src/Version.h:32
+
+  All paths are compiled in and relative to the working directory: Config/Games.xml,
+  Config/Supermodel.ini, NVRAM/<game>.nv and Saves/<game>.st<slot>. There is no
+  per-OS path resolution at this revision. Batocera's patch replaces them with
+  /usr/share/supermodel/Games.xml, /userdata/system/configs/supermodel/Supermodel.ini,
+  /userdata/saves/supermodel/NVRAM/<game>.nv and /userdata/saves/supermodel/<game>.st<slot>.
+  ref: Src/OSD/SDL/Main.cpp:1320-1321, Src/OSD/SDL/Main.cpp:579, Src/OSD/SDL/Main.cpp:638,
+       Src/OSD/SDL/Main.cpp:661
+
+  ROM sets are MAME format per game archives identified by the CRC32 values in
+  Games.xml, 60 sets at this revision. A child set missing files makes the loader
+  open <parent>.zip from the same directory; parents are regional or revision
+  variants of one game, not a shared BIOS. Each Model 3 board carries its own
+  program, video, sound and drive board ROMs, so no system ROM is read outside
+  those archives.
+  ref: Src/GameLoader.cpp:858-893
+
+  Supermodel.ini is optional: when it cannot be opened the compiled-in defaults
+  apply. The emulator writes it only after interactive input configuration.
+  Batocera generates it from its own template before each launch.
+  ref: Src/Util/ConfigBuilders.cpp:134-142, Src/OSD/SDL/Main.cpp:1356-1358,
+       Src/OSD/SDL/Main.cpp:1861
+
+  NVRAM/<game>.nv is loaded after the ROMs when present, silently skipped when
+  absent, and written on exit. Batocera ships 43 .nv files, copied into
+  the save directory by its launcher, preset so the games start without a
+  pass through the service menu.
+  ref: Src/OSD/SDL/Main.cpp:656-688, Src/OSD/SDL/Main.cpp:900, Src/OSD/SDL/Main.cpp:1297
+
+  Crosshairs are drawn as GL primitives; no Assets/ bitmap and no Music.xml are
+  read at this revision. External GLSL shaders are read only when a VertexShader
+  or FragmentShader key names a file, and all six keys default to empty.
+  ref: Src/OSD/SDL/Main.cpp:703-712, Src/OSD/SDL/Main.cpp:1420-1425,
+       Src/Graphics/Shader.cpp:93-100
+
+files:
+  - name: "Games.xml"
+    path: "Config/Games.xml"
+    required: true
+    bundled: true
+    size: 152488
+    sha1: "599a74894c61c1849e2aeff17507c233e2f459d6"
+    md5: "84b66c6c9eb9370e983d88c4d187ea05"
+    description: "ROM set definitions"
+    note: "Parsed by the GameLoader constructor before the ROM archive is opened. A file that fails to parse leaves no game defined, no set in the archive is recognised, and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it; Batocera's patch sets the default to /usr/share/supermodel/Games.xml. The hash is that of Config/Games.xml at the pinned revision, which Batocera installs."
+    source_ref: "Src/OSD/SDL/Main.cpp:1321, Src/OSD/SDL/Main.cpp:1412, Src/OSD/SDL/Main.cpp:1866-1874, Src/GameLoader.cpp:492-502, Src/GameLoader.cpp:689-693, Src/GameLoader.cpp:895-898"
+
+exclusion_note: >
+  The Sega Model 3 has no shared system BIOS. Program, video, sound and drive
+  board ROMs are all inside per-game MAME-format archives identified by the
+  CRC32 values in Games.xml.
