@@ -2751,8 +2751,16 @@ def _scalar_values(document: dict) -> dict[str, str]:
     }
 
 
+def _pin_of(document: dict, field: str, mode: str = "") -> str | None:
+    """A pin as the profile records it, read for one build mode when keyed."""
+    value = document.get(field)
+    if isinstance(value, dict):
+        value = value.get(mode) if mode else None
+    return value if isinstance(value, str) and value else None
+
+
 def _writing_pins(
-    revisions: list[tuple[str, dict]], intro_sha: str, field: str
+    revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = ""
 ) -> list[str]:
     """Distinct pins committed while the scalar held its current text.
 
@@ -2771,8 +2779,8 @@ def _writing_pins(
         return []
     pins: list[str] = []
     for position in range(index, -1, -1):
-        value = revisions[position][1].get(field)
-        if isinstance(value, str) and value and value not in pins:
+        value = _pin_of(revisions[position][1], field, mode)
+        if value and value not in pins:
             pins.append(value)
     return pins
 
@@ -2869,11 +2877,11 @@ def _writing_pairs(
     """
     options: list[list] = []
     ambiguous: list[str] = []
-    for pin_field, repo in repos:
-        current = document.get(f"{pin_field}_commit")
-        if not isinstance(current, str) or not current:
+    for pin_field, mode, repo in repos:
+        current = _pin_of(document, f"{pin_field}_commit", mode)
+        if not current:
             continue
-        written = _writing_pins(revisions, intro_sha, f"{pin_field}_commit")
+        written = _writing_pins(revisions, intro_sha, f"{pin_field}_commit", mode)
         if len(written) > 1:
             ambiguous.append(f"{pin_field}_commit {' -> '.join(written)}")
         # The current pin among the candidates reads as "no move" (None) for
@@ -2950,18 +2958,20 @@ def realign_prose(
     citations = [c for c in collect_citations(document) if c.kind == "prose"]
     if not citations:
         return []
+    # Every repository the profile declares, by build mode where it keys
+    # them so: eka2l1, mesence, supermodel and xemu pin a dict, and reading
+    # str(dict) found no repository at all, so their prose was never judged.
     repos = [
-        (field, upstream.parse_repo(str(document.get(field) or "")))
-        for field in ("source", "upstream")
+        (field, mode, repo)
+        for field, mode, url in declared_repositories(document)
+        if field != "source_mirror" and (repo := upstream.parse_repo(url)) is not None
     ]
-    repos = [(field, repo) for field, repo in repos if repo is not None]
     if not repos:
         return []
     pinned = [
-        (repo, document[f"{field}_commit"])
-        for field, repo in repos
-        if isinstance(document.get(f"{field}_commit"), str)
-        and document[f"{field}_commit"]
+        (repo, pin)
+        for field, mode, repo in repos
+        if (pin := _pin_of(document, f"{field}_commit", mode))
     ]
     history = _git_history(path)
     if history is None:

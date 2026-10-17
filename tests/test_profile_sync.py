@@ -2368,10 +2368,24 @@ class TestWriteDryRun(unittest.TestCase):
         ]
         repo = object()
         readings, ambiguous = profile_sync._writing_pairs(
-            {"source_commit": "pin2"}, [("source", repo)], revisions, "c1"
+            {"source_commit": "pin2"}, [("source", "", repo)], revisions, "c1"
         )
         self.assertEqual(readings, [[(repo, "pin1", "pin2")], []])
         self.assertTrue(ambiguous)
+
+    def test_a_pin_keyed_by_build_mode_is_read_for_its_mode(self):
+        """eka2l1 pins a dict per build: read as a string, it gave no
+        repository and its prose was never judged."""
+        revisions = [
+            ("c2", {"source_commit": {"libretro": "new", "standalone": "s"}}),
+            ("c1", {"source_commit": {"libretro": "old", "standalone": "s"}}),
+        ]
+        repo = object()
+        readings, _ambiguous = profile_sync._writing_pairs(
+            {"source_commit": {"libretro": "new", "standalone": "s"}},
+            [("source", "libretro", repo)], revisions, "c1",
+        )
+        self.assertIn([(repo, "old", "new")], readings)
 
     def test_stale_prose_holds_the_pin(self):
         """boom3: a note written at an older pin is not anchored from this one."""
