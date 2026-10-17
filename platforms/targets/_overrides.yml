@@ -12,9 +12,10 @@
 #         add_cores: [core_to_add]
 #         remove_cores: [core_to_remove]
 
-# Batocera: standalone emulators that Config.in selects via compound flags
-# (BATOCERA_WINE, BATOCERA_CORES_STILL_COMMERCIALIZED) which the scraper
-# doesn't resolve. These are confirmed available on x86_64 via Config.in.
+# Batocera: the scraper runs Config.in's selects from each board's flags, so
+# the Wine-gated emulators (demul, model2emu, xenia) resolve on their own.
+# citron and ryujinx stay out: Config.in gates both on
+# BATOCERA_CORES_STILL_COMMERCIALIZED, which no board turns on.
 batocera:
   targets:
     _default:
@@ -54,10 +55,6 @@ batocera:
       aliases: [rpi4, rpi400, cm4]
     bcm2712:
       aliases: [rpi5, rpi500, cm5]
-    x86_64:
-      add_cores: [citron, demul, model2, xenia]
-    zen3:
-      add_cores: [citron, demul, model2, xenia]
 
 retrobat:
   targets:

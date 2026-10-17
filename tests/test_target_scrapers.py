@@ -84,12 +84,19 @@ class FailedRequestsStopTheScrape(unittest.TestCase):
                     return _Body(b'[{"name": "batocera-43"}]')
                 if "/contents/configs" in url:
                     return _Body(json.dumps([{"name": b} for b in boards]).encode())
+                if "/contents/buildroot" in url:
+                    return _Body(b'{"sha": "0123abc"}')
+                if url.endswith("x86_wow64.board"):
+                    # Builds the 32-bit Wine package, not an image.
+                    return _Body(b"BR2_PACKAGE_BATOCERA_TARGET_X86=y\n")
                 if url.endswith(".board"):
                     if refuse_board:
                         _refuse()
-                    return _Body(b"BR2_PACKAGE_BATOCERA_TARGET_X86_64=y\n")
+                    return _Body(b"BR2_PACKAGE_BATOCERA_TARGET_X86_64=y\n"
+                                 b"BR2_PACKAGE_BATOCERA_SYSTEM=y\n")
                 if url.endswith("Config.in"):
-                    return _Body(b"config X\n\tselect BR2_PACKAGE_MGBA\n")
+                    return _Body(b"config BR2_PACKAGE_BATOCERA_SYSTEM\n"
+                                 b"\tselect BR2_PACKAGE_MGBA\n")
                 return _Body(
                     b"gba:\n  emulators:\n    libretro:\n"
                     b"      mgba: {requireAnyOf: [BR2_PACKAGE_MGBA]}\n"
@@ -108,10 +115,65 @@ class FailedRequestsStopTheScrape(unittest.TestCase):
         with mock.patch.object(
             batocera_targets_scraper.urllib.request,
             "urlopen",
-            serve(["batocera-x86_64.board"], False),
+            serve(["batocera-x86_64.board", "batocera-x86_wow64.board"], False),
         ):
             targets = batocera_targets_scraper.Scraper().fetch_targets()["targets"]
         self.assertEqual(targets["x86_64"]["cores"], ["mgba"])
+        self.assertNotIn("x86_wow64", targets)
+
+
+class BatoceraKconfig(unittest.TestCase):
+    """The Batocera target scraper read every select as unconditional and
+    never set a symbol Buildroot sets: 171 cores on almost every board, and
+    xroar ("if BR2_PACKAGE_HAS_LIBGL") on none, so --target x86_64 dropped
+    the CoCo and Dragon systems."""
+
+    CONFIG_IN = (
+        "if BR2_PACKAGE_BATOCERA_TARGET_X86_64\n"
+        "\tconfig BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY\n\tdefault y\nendif\n\n"
+        "config BR2_PACKAGE_BATOCERA_SYSTEM\n"
+        "\tselect BR2_PACKAGE_BATOCERA_XORG\tif BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY\n"
+        "\tselect BR2_PACKAGE_XROAR\t\tif BR2_PACKAGE_HAS_LIBGL # needs OpenGL\n"
+        "\tselect BR2_PACKAGE_RUFFLE\tif BR2_PACKAGE_XORG7 && \\\n"
+        "\t\t\t\tBR2_ARCH_IS_64\n\n"
+        "config BR2_PACKAGE_BATOCERA_XORG\n"
+        "\tselect BR2_PACKAGE_XORG7\n"
+        "\tselect BR2_PACKAGE_MESA3D_OPENGL_GLX if BR2_PACKAGE_XORG7\n"
+        "\tselect BR2_PACKAGE_LIBGLVND if BR2_PACKAGE_XORG7\n\n"
+        "config BR2_PACKAGE_BATOCERA_CORES_EXPERIMENTAL\n"
+        "\tselect BR2_PACKAGE_APPLEWIN\n"
+    )
+    BUILDROOT = (
+        "config BR2_x86_64\n\tbool \"x86_64\"\n\tselect BR2_ARCH_IS_64\n"
+        "config BR2_PACKAGE_MESA3D_OPENGL_GLX\n"
+        "\tselect BR2_PACKAGE_HAS_LIBGL if !BR2_PACKAGE_LIBGLVND\n"
+        "\tselect BR2_PACKAGE_LIBGLVND_DISPATCH_GL if BR2_PACKAGE_LIBGLVND\n"
+        "config BR2_PACKAGE_LIBGLVND_DISPATCH_GL\n\tselect BR2_PACKAGE_HAS_LIBGL\n"
+    )
+
+    def active(self, board: set[str]) -> frozenset[str]:
+        from scraper.targets.batocera_targets_scraper import (  # noqa: PLC0415
+            _active_symbols,
+            _parse_meta_flags,
+            _parse_owned_selects,
+        )
+
+        rules = _parse_owned_selects(self.CONFIG_IN) + _parse_owned_selects(self.BUILDROOT)
+        return _active_symbols(board, _parse_meta_flags(self.CONFIG_IN), rules)
+
+    def test_x86_64_gets_opengl_and_its_cores(self):
+        active = self.active({"BR2_x86_64", "BR2_PACKAGE_BATOCERA_TARGET_X86_64",
+                              "BR2_PACKAGE_BATOCERA_SYSTEM"})
+        self.assertIn("BR2_PACKAGE_HAS_LIBGL", active)
+        self.assertIn("BR2_PACKAGE_XROAR", active)
+        self.assertIn("BR2_PACKAGE_RUFFLE", active)
+        self.assertNotIn("BR2_PACKAGE_APPLEWIN", active)
+
+    def test_a_board_without_x11_gets_none_of_it(self):
+        active = self.active({"BR2_aarch64", "BR2_PACKAGE_BATOCERA_TARGET_RK3588",
+                              "BR2_PACKAGE_BATOCERA_SYSTEM"})
+        self.assertFalse({"BR2_PACKAGE_XORG7", "BR2_PACKAGE_XROAR",
+                          "BR2_PACKAGE_RUFFLE"} & active)
 
 
 class RetroPieModuleFlags(unittest.TestCase):

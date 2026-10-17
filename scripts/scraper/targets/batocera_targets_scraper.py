@@ -5,6 +5,10 @@ Sources (batocera-linux/batocera.linux):
   - package/batocera/core/batocera-system/Config.in -- select PACKAGE if CONDITION lines
   - package/batocera/emulationstation/batocera-es-system/es_systems.yml
     -- emulator requireAnyOf flag mapping
+Sources (batocera-linux/buildroot, at the submodule commit the tag pins):
+  - arch/Config.in, package/mesa3d/Config.in, package/libglvnd/Config.in
+    -- the symbols Batocera's conditions test but Buildroot sets
+    (BR2_ARCH_IS_64, BR2_PACKAGE_HAS_LIBGL)
 """
 
 from __future__ import annotations
@@ -39,15 +43,6 @@ CONFIG_IN_PATH = "package/batocera/core/batocera-system/Config.in"
 ES_SYSTEMS_PATH = "package/batocera/emulationstation/batocera-es-system/es_systems.yml"
 
 _TARGET_FLAG_RE = re.compile(r"^(BR2_PACKAGE_BATOCERA_TARGET_\w+)=y", re.MULTILINE)
-
-# Matches: select BR2_PACKAGE_FOO  (optional: if CONDITION)
-# Condition may span multiple lines (backslash continuation)
-_SELECT_RE = re.compile(
-    r"^\s+select\s+(BR2_PACKAGE_\w+)"  # package being selected
-    r"(?:\s+if\s+((?:[^\n]|\\\n)+?))?"  # optional "if CONDITION" (may continue with \)
-    r"(?:\s*#[^\n]*)?$",  # optional trailing comment
-    re.MULTILINE,
-)
 
 # Meta-flag definition: "if COND\n\tconfig DERIVED_FLAG\n\t...\nendif"
 _META_BLOCK_RE = re.compile(
@@ -173,35 +168,73 @@ def _parse_meta_flags(text: str) -> list[tuple[str, str]]:
     return results
 
 
-def _expand_flags(
-    primary_flag: str, meta_rules: list[tuple[str, str]]
+# Buildroot files whose selects decide symbols Batocera's Config.in tests:
+# the architecture's 64-bit flag and the OpenGL provider. Without them xroar
+# ("select BR2_PACKAGE_XROAR if BR2_PACKAGE_HAS_LIBGL") reached no board.
+BUILDROOT_KCONFIG = (
+    "arch/Config.in",
+    "package/mesa3d/Config.in",
+    "package/libglvnd/Config.in",
+)
+BUILDROOT_RAW = "https://raw.githubusercontent.com/batocera-linux/buildroot/{sha}"
+SYSTEM_SYMBOL = "BR2_PACKAGE_BATOCERA_SYSTEM"
+
+_CONFIG_LINE_RE = re.compile(r"^\s*(?:menu)?config\s+(BR2_\w+)")
+_OWNED_SELECT_RE = re.compile(r"^\s+select\s+(BR2_\w+)(?:\s+if\s+([^#]+))?")
+_BOARD_FLAG_RE = re.compile(r"^(BR2_\w+)=y\s*$", re.MULTILINE)
+_BOARD_INCLUDE_RE = re.compile(r"^(-?)include\s+(\S+)", re.MULTILINE)
+
+
+def _parse_owned_selects(text: str) -> list[tuple[str, str, str]]:
+    """Return [(owner, selected, condition)] for every select in a Kconfig.
+
+    A select fires only when the config it sits under is on: Batocera's
+    XORG7 comes from BATOCERA_XORG, which BATOCERA_SYSTEM turns on for x86_64
+    alone. Reading every select as unconditional put X11 on the Raspberry Pi.
+    """
+    rules: list[tuple[str, str, str]] = []
+    owner: str | None = None
+    for line in re.sub(r"\\\n", " ", text).splitlines():
+        config = _CONFIG_LINE_RE.match(line)
+        if config:
+            owner = config.group(1)
+            continue
+        if line[:1] not in ("", " ", "\t", "#"):
+            owner = None
+            continue
+        select = _OWNED_SELECT_RE.match(line)
+        if select and owner:
+            rules.append(
+                (owner, select.group(1), _normalise_condition(select.group(2) or ""))
+            )
+    return rules
+
+
+def _active_symbols(
+    board_flags: set[str],
+    meta_rules: list[tuple[str, str]],
+    rules: list[tuple[str, str, str]],
 ) -> frozenset[str]:
-    """Given a board's primary flag, expand to all active derived flags.
+    """Every symbol a board ends up with: its own, the derived, the selected.
 
-    Iterates until stable (handles chained derivations like X86_64_ANY -> X86_ANY).
+    Run to a fixed point, as Kconfig does: a select can turn on a config
+    whose own selects then fire, and a derived flag can follow from either.
     """
-    active: set[str] = {primary_flag}
-    changed = True
-    while changed:
-        changed = False
-        for derived, cond in meta_rules:
-            if derived not in active and _condition_holds(cond, frozenset(active)):
-                active.add(derived)
-                changed = True
-    return frozenset(active)
-
-
-def _parse_selects(text: str) -> list[tuple[str, str]]:
-    """Parse all 'select PACKAGE [if CONDITION]' lines from Config.in.
-
-    Returns [(package, condition)] where condition is '' if unconditional.
-    """
-    results: list[tuple[str, str]] = []
-    for m in _SELECT_RE.finditer(text):
-        pkg = m.group(1)
-        cond = _normalise_condition(m.group(2) or "")
-        results.append((pkg, cond))
-    return results
+    active = set(board_flags)
+    while True:
+        before = len(active)
+        frozen = frozenset(active)
+        active |= {
+            derived for derived, condition in meta_rules
+            if _condition_holds(condition, frozen)
+        }
+        active |= {
+            selected
+            for owner, selected, condition in rules
+            if owner in frozen and _condition_holds(condition, frozen)
+        }
+        if len(active) == before:
+            return frozenset(active)
 
 
 def _parse_es_systems(text: str) -> dict[str, list[str]]:
@@ -282,10 +315,43 @@ class Scraper(BaseTargetScraper):
             raise RuntimeError(f"no batocera-*.board file in configs/ at {self.tag}")
         return boards
 
-    def _fetch_board_flag(self, board_name: str) -> str | None:
-        """Fetch a board file and extract its BR2_PACKAGE_BATOCERA_TARGET_* flag."""
-        m = _TARGET_FLAG_RE.search(_fetch(self._raw(f"configs/{board_name}")))
-        return m.group(1) if m else None
+    def _fetch_board(self, board_name: str) -> tuple[str | None, set[str]]:
+        """A board's target flag and every flag it sets, includes followed.
+
+        batocera-board.common turns on BATOCERA_SYSTEM, the config whose
+        selects bring in the display stack and every emulator group.
+        """
+        flags: set[str] = set()
+        target: str | None = None
+        pending, seen = [(board_name, False)], set()
+        while pending:
+            name, optional = pending.pop()
+            if name in seen:
+                continue
+            seen.add(name)
+            try:
+                text = _fetch(self._raw(f"configs/{name}"))
+            except RuntimeError:
+                if optional:
+                    continue
+                raise
+            flags |= set(_BOARD_FLAG_RE.findall(text))
+            if target is None:
+                m = _TARGET_FLAG_RE.search(text)
+                target = m.group(1) if m else None
+            pending += [(inc, bool(dash)) for dash, inc in _BOARD_INCLUDE_RE.findall(text)]
+        return target, flags
+
+    def _buildroot_rules(self) -> list[tuple[str, str, str]]:
+        """Buildroot's selects for the symbols Batocera tests, at its pin."""
+        pin = _fetch_json(f"{GITHUB_API}/buildroot?ref={self.tag}")
+        sha = pin.get("sha") if isinstance(pin, dict) else None
+        if not sha:
+            raise RuntimeError(f"no buildroot submodule commit at {self.tag}")
+        rules: list[tuple[str, str, str]] = []
+        for path in BUILDROOT_KCONFIG:
+            rules += _parse_owned_selects(_fetch(f"{BUILDROOT_RAW.format(sha=sha)}/{path}"))
+        return rules
 
     def fetch_targets(self) -> dict:
         """Build per-board emulator availability map."""
@@ -300,13 +366,14 @@ class Scraper(BaseTargetScraper):
             raise RuntimeError(f"empty Config.in from {config_in_url}")
 
         meta_rules = _parse_meta_flags(config_in_text)
-        selects = _parse_selects(config_in_text)
+        rules = _parse_owned_selects(config_in_text)
         print(
-            f"  parsed {len(meta_rules)} meta-flag rules, {len(selects)} select lines",
+            f"  parsed {len(meta_rules)} meta-flag rules, {len(rules)} select lines",
             file=sys.stderr,
         )
-        if not selects:
+        if not rules:
             raise RuntimeError(f"no 'select BR2_PACKAGE_*' lines parsed from {config_in_url}")
+        rules += self._buildroot_rules()
 
         print("  fetching es_systems.yml...", file=sys.stderr)
         es_systems_url = self._raw(ES_SYSTEMS_PATH)
@@ -325,18 +392,17 @@ class Scraper(BaseTargetScraper):
         for board_name in sorted(boards):
             target_key = board_name.removeprefix("batocera-").removesuffix(".board")
             print(f"  processing {target_key}...", file=sys.stderr)
-            primary_flag = self._fetch_board_flag(board_name)
+            primary_flag, board_flags = self._fetch_board(board_name)
             if primary_flag is None:
                 print(f"    no target flag found in {board_name}", file=sys.stderr)
                 continue
 
-            active = _expand_flags(primary_flag, meta_rules)
-
-            # Determine which packages are selected for this board
-            selected_packages: set[str] = set()
-            for pkg, cond in selects:
-                if _condition_holds(cond, active):
-                    selected_packages.add(pkg)
+            selected_packages = _active_symbols(board_flags, meta_rules, rules)
+            # x86_wow64 builds the 32-bit Wine package the x86_64 image
+            # carries: no batocera-board.common, no system, no target.
+            if SYSTEM_SYMBOL not in selected_packages:
+                print(f"    {board_name} builds no Batocera image", file=sys.stderr)
+                continue
 
             # Map selected packages to emulator names via es_systems.yml
             emulators: set[str] = set()
