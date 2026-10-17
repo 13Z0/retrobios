@@ -1128,6 +1128,22 @@ class TestE2E(unittest.TestCase):
         result = resolve_platform_cores(config, profiles)
         self.assertEqual(result, {"fceumm", "gambatte"})
 
+    def test_a_build_a_platform_compiles_is_reached_by_name(self):
+        """Recalbox compiles libretro/mame at 0.258 and 0.278; the buildbot
+        RetroArch installs from does not, so all_libretro must not reach
+        them while a platform naming them does."""
+        profiles = {
+            "mame": {"type": "standalone + libretro", "systems": ["arcade"], "files": []},
+            "mame0278": {"type": "libretro", "built_by": ["recalbox"],
+                         "cores": ["mame0278"], "systems": ["arcade"], "files": []},
+        }
+        everyone = {"cores": "all_libretro", "systems": {}}
+        self.assertEqual(resolve_platform_cores(everyone, profiles), {"mame"})
+        retroarch_plus = {"cores": ["retroarch"], "systems": {}}
+        self.assertEqual(resolve_platform_cores(retroarch_plus, profiles), {"mame"})
+        recalbox = {"cores": ["mame0278"], "systems": {}}
+        self.assertEqual(resolve_platform_cores(recalbox, profiles), {"mame0278"})
+
     def test_resolve_cores_explicit_list(self):
         """Explicit cores list matches against profile dict keys."""
         config = {"cores": ["fbneo", "opera"], "systems": {"arcade": {"files": []}}}

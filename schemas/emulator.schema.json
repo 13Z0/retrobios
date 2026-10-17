@@ -101,6 +101,16 @@
         "other"
       ]
     },
+    "built_by": {
+      "description": "The platforms that compile this libretro build themselves (Recalbox's mame0278). It is reached by a platform naming it in its cores list, never by all_libretro: the libretro buildbot does not publish it.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
     "source": {
       "type": [
         "string",

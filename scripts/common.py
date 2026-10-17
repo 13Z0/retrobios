@@ -1694,12 +1694,18 @@ def resolve_platform_cores(
     """
     cores_config = config.get("cores")
 
-    if cores_config == "all_libretro":
-        result = {
+    def every_libretro() -> set[str]:
+        # A build only some platforms compile (built_by) is reached by name:
+        # the buildbot RetroArch installs from does not publish it.
+        return {
             name
             for name, p in profiles.items()
             if "libretro" in p.get("type", "") and p.get("type") != "alias"
+            and not p.get("built_by")
         }
+
+    if cores_config == "all_libretro":
+        result = every_libretro()
     elif isinstance(cores_config, list):
         core_set = {str(c) for c in cores_config}
         index = upstream_profile_index(profiles)
@@ -1712,11 +1718,7 @@ def resolve_platform_cores(
         # profiles with explicitly listed standalone cores (e.g. RetroDECK
         # ships RetroArch + standalone emulators)
         if "all_libretro" in core_set or "retroarch" in core_set:
-            result |= {
-                name
-                for name, p in profiles.items()
-                if "libretro" in p.get("type", "") and p.get("type") != "alias"
-            }
+            result |= every_libretro()
     else:
         # Fallback: system ID intersection with normalization
         norm_plat_systems = {_norm_system_id(s) for s in config.get("systems", {})}
@@ -1725,6 +1727,7 @@ def resolve_platform_cores(
             for name, p in profiles.items()
             if {_norm_system_id(s) for s in p.get("systems", [])} & norm_plat_systems
             and p.get("type") != "alias"
+            and not p.get("built_by")
         }
 
     if target_cores is not None:

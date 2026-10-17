@@ -389,13 +389,15 @@ class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
             {"name": "gone.zip", "category": "bios_zip", "system": "x"},
         ]}
         profile = release_profile(
-            "mame0278", bios_sets, "a" * 40, "b" * 40, ["mame0278"], reference
+            "mame0278", bios_sets, "a" * 40, "b" * 40, ["mame0278"], reference,
+            ["recalbox"],
         )
         self.assertEqual(profile["core_version"], "0.278")
         self.assertEqual(profile["upstream"], "https://github.com/mamedev/mame/tree/mame0278")
         self.assertEqual((profile["upstream_commit"], profile["source_commit"]),
                          ("a" * 40, "b" * 40))
         self.assertEqual(profile["cores"], ["mame0278"])
+        self.assertEqual(profile["built_by"], ["recalbox"])
         files = {f["name"]: f for f in profile["files"]}
         self.assertEqual(sorted(files), ["neogeo.zip", "newset.zip"])
         self.assertEqual(files["neogeo.zip"]["system"], "snk-neogeo-mvs")

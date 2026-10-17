@@ -10,6 +10,8 @@ core_version: '0.258'
 display_name: Arcade (MAME 0.258)
 cores:
 - mame0258
+built_by:
+- recalbox
 systems:
 - snk-neogeo-mvs
 - snk-neogeo-aes

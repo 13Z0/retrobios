@@ -336,6 +336,7 @@ def release_profile(
     source_commit: str,
     cores: list[str],
     reference: dict[str, Any],
+    built_by: list[str],
 ) -> dict[str, Any]:
     """A profile for one MAME release a platform builds, from its own source.
 
@@ -376,6 +377,7 @@ def release_profile(
         "core_version": version,
         "display_name": f"Arcade (MAME {version})",
         "cores": cores,
+        "built_by": built_by,
         "systems": list(reference.get("systems") or []),
         "notes": (
             f"libretro/mame built at the {version} release. BIOS root sets "
@@ -398,7 +400,8 @@ def _write_release(args: argparse.Namespace) -> None:
         raise RuntimeError(f"no BIOS root set read at {args.release}")
     reference = yaml_load((_EMULATORS_DIR / "mame.yml").read_text(encoding="utf-8"))
     profile = release_profile(
-        args.release, bios_sets, commit, args.source_commit, args.core, reference
+        args.release, bios_sets, commit, args.source_commit, args.core, reference,
+        args.built_by,
     )
     text = yaml.safe_dump(profile, sort_keys=False, allow_unicode=True, width=100)
     write_text_atomic(str(args.profile), text)
@@ -429,12 +432,16 @@ def build_parser() -> argparse.ArgumentParser:
         "release profile",
         "write the profile of one MAME release a platform builds "
         "(e.g. --release mame0278 --profile emulators/mame0278.yml "
-        "--source-commit <libretro/mame sha> --core mame0278)",
+        "--source-commit <libretro/mame sha> --core mame0278 --built-by recalbox)",
     )
     release.add_argument("--release", help="mamedev/mame tag, such as mame0278")
     release.add_argument("--profile", type=Path, help="profile file to write")
     release.add_argument("--source-commit", help="libretro/mame commit the platform builds")
     release.add_argument("--core", action="append", default=[], help="core name, repeatable")
+    release.add_argument(
+        "--built-by", action="append", default=[],
+        help="platform that compiles this build, repeatable",
+    )
     return parser
 
 
@@ -450,6 +457,7 @@ def main() -> None:
             flag for flag, value in (
                 ("--release", args.release), ("--profile", args.profile),
                 ("--source-commit", args.source_commit), ("--core", args.core),
+                ("--built-by", args.built_by),
             ) if not value
         ]
         if missing:
