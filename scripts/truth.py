@@ -174,8 +174,16 @@ def _same_file(files: list[dict], file_entry: dict, emu_name: str) -> dict | Non
              if emu_name not in f.get("_cores", ()) and not _contents_disagree(f, file_entry)),
             None,
         )
-        # Revisions accepted under one name and no path fill one slot.
-        or next((f for f in same_name if not path or not other_path(f)), None)
+        # Revisions one core accepts under one name and no path fill one
+        # slot. Across cores, contents that disagree are two files: fMSX's
+        # 16640-byte RS232.ROM took blueMSX's 8192 size beside its own md5,
+        # a record no file satisfies.
+        or next(
+            (f for f in same_name
+             if (not path or not other_path(f))
+             and (emu_name in f.get("_cores", ()) or not _contents_disagree(f, file_entry))),
+            None,
+        )
     )
 
 

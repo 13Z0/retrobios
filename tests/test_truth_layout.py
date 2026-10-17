@@ -152,13 +152,24 @@ class EveryRevisionACoreAcceptsStays(unittest.TestCase):
         files = self.truth({"dosbox": profile})["systems"]["dos"]["files"]
         self.assertEqual([f["sha1"] for f in files], [["a" * 40, "b" * 40]])
 
-    def test_two_cores_that_disagree_keep_the_first(self):
+    def test_two_cores_that_disagree_are_two_files(self):
+        """fMSX's 16640-byte RS232.ROM merged into blueMSX's 8192-byte one,
+        and the export wrote one core's size beside the other's md5."""
         first = {"emulator": "A", "type": "libretro", "systems": ["dos"],
                  "files": [self.entry("x.rom", "a" * 40)]}
         second = {"emulator": "B", "type": "libretro", "systems": ["dos"],
                   "files": [{**self.entry("x.rom", "b" * 40), "path": "x.rom"}]}
         files = self.truth({"a": first, "b": second})["systems"]["dos"]["files"]
-        self.assertEqual([f["sha1"] for f in files], ["a" * 40])
+        self.assertEqual(sorted(f["sha1"] for f in files), ["a" * 40, "b" * 40])
+        sizes = {"emulator": "S", "type": "libretro", "systems": ["dos"],
+                 "files": [{"name": "y.rom", "system": "dos", "path": "y.rom", "size": 8192}]}
+        hashed = {"emulator": "H", "type": "libretro", "systems": ["dos"],
+                  "files": [{"name": "y.rom", "system": "dos", "size": 16640, "md5": "c" * 32}]}
+        files = self.truth({"s": sizes, "h": hashed})["systems"]["dos"]["files"]
+        self.assertEqual(
+            sorted((f.get("size"), f.get("md5")) for f in files),
+            [(8192, None), (16640, "c" * 32)],
+        )
 
     def test_a_revision_known_by_one_hash_is_no_mismatch(self):
         """1.04 carries md5 and sha1, 1.07 only its sha1: a platform entry
