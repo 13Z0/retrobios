@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-17T13:36:45Z",
-  "total_files": 19040,
-  "total_size": 17550112571,
+  "generated_at": "2026-10-17T14:58:23Z",
+  "total_files": 19041,
+  "total_size": 17550209017,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -128671,6 +128671,16 @@
         }
       }
     },
+    "4877d2cfb4c4f228332fbb453ce89d93d1457500": {
+      "path": "bios/Nintendo/Nintendo 64/daedalusx64/roms.ini",
+      "name": "roms.ini",
+      "size": 96446,
+      "sha1": "4877d2cfb4c4f228332fbb453ce89d93d1457500",
+      "md5": "5766150f4586283609c6681c5da9efe7",
+      "sha256": "0d276bd3a0420588422821fdae08ec0232d3f8aeb69e94d1bd37b8e777c65aff",
+      "crc32": "8cead75f",
+      "adler32": "274cfc7b"
+    },
     "1d7f6fa0c34e3d50be52c16a0816bebac309fe41": {
       "path": "bios/Nintendo/Nintendo 64DD/Mupen64plus/font.ttf",
       "name": "font.ttf",
@@ -208200,6 +208210,7 @@
       "e280666cdf1037add6f04af0be95fc89": "875f12a1ede52c4353cab2c414b3d3506cafd333",
       "5c124e7948ada85da603a522782940d0": "b7a0070cbe4b9bcaa08ec0b76b8c4955b2ae535a",
       "d4232dc935cad0650ac2664d52281f3a": "15c23c3b671a8828302603f30c81d464b24a7fb1",
+      "5766150f4586283609c6681c5da9efe7": "4877d2cfb4c4f228332fbb453ce89d93d1457500",
       "785d2fd45984c6548763ae6702d83e20": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
       "57eca542eab9ca9303e09d18819feb03": "b31cca5881bb7fa071ccb5940b1bd7a6e4056e35",
       "df28596f96886f70e64006c95097691c": "c7139e7f98c2109adb05703c8d3ba7b3bad3134d",
@@ -246895,6 +246906,9 @@
         "07ba02cbee4e065a7b2100c8288e954ec42ddc56",
         "b8000eada705cf56630266b151564d054d3e2a06"
       ],
+      "roms.ini": [
+        "4877d2cfb4c4f228332fbb453ce89d93d1457500"
+      ],
       "font.ttf": [
         "1d7f6fa0c34e3d50be52c16a0816bebac309fe41"
       ],
@@ -284109,6 +284123,7 @@
       "93bd8276": "875f12a1ede52c4353cab2c414b3d3506cafd333",
       "0aa20b09": "b7a0070cbe4b9bcaa08ec0b76b8c4955b2ae535a",
       "d6650859": "15c23c3b671a8828302603f30c81d464b24a7fb1",
+      "8cead75f": "4877d2cfb4c4f228332fbb453ce89d93d1457500",
       "35d39b97": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
       "ff550460": "b31cca5881bb7fa071ccb5940b1bd7a6e4056e35",
       "7aa253e0": "c7139e7f98c2109adb05703c8d3ba7b3bad3134d",
@@ -303151,6 +303166,7 @@
       "eaa7107775199ccde7d885665aa5d9d765d12bf13c0bc080f306e5e0b1b628e0": "875f12a1ede52c4353cab2c414b3d3506cafd333",
       "fa7b09795ef1e54461e59f6f2d902368133e3f1cd980e34383e6a780d74beffd": "b7a0070cbe4b9bcaa08ec0b76b8c4955b2ae535a",
       "79c81fffae934b6df251da6c3a394f52c6a0eaa07115a3b9677743e3c1335f4a": "15c23c3b671a8828302603f30c81d464b24a7fb1",
+      "0d276bd3a0420588422821fdae08ec0232d3f8aeb69e94d1bd37b8e777c65aff": "4877d2cfb4c4f228332fbb453ce89d93d1457500",
       "c4c45690b345435b2cba52ecabe275f05e49b389b39fe68ad03afbb551288d3d": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
       "9725badc4407a780bda630fc61ca51f5e2705e969cabde8045eb1f0720071784": "b31cca5881bb7fa071ccb5940b1bd7a6e4056e35",
       "a463253e36e2d0d1e33fde43389adeb6168253228b91c1b3e78c209a07e04627": "c7139e7f98c2109adb05703c8d3ba7b3bad3134d",
@@ -466779,6 +466795,15 @@
       ],
       "Nintendo 64/boot1.rom": [
         "15c23c3b671a8828302603f30c81d464b24a7fb1"
+      ],
+      "Nintendo/Nintendo 64/daedalusx64/roms.ini": [
+        "4877d2cfb4c4f228332fbb453ce89d93d1457500"
+      ],
+      "Nintendo 64/daedalusx64/roms.ini": [
+        "4877d2cfb4c4f228332fbb453ce89d93d1457500"
+      ],
+      "daedalusx64/roms.ini": [
+        "4877d2cfb4c4f228332fbb453ce89d93d1457500"
       ],
       "Nintendo/Nintendo 64DD/Mupen64plus/font.ttf": [
         "1d7f6fa0c34e3d50be52c16a0816bebac309fe41"

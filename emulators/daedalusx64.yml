@@ -49,6 +49,12 @@ files:
     path: "n64.psh"
     system: nintendo-64
     required: true
+    sha1:
+      - "b37ed040a7ec00c2fd8029eccc30fb371bc8ce42"
+      - "e1cb0ba231bb29007d53d36952debbecff45c5be"
+    md5:
+      - "c52b5cec265580e443b4cdc4dac9a27d"
+      - "d5ddde64980f70c6db6404d5c1db2e96"
     bundled: true
     description: "N64 fragment shader library"
     note: "Two different files share this name: Source/SysGLES/HLEGraphics/n64.psh for the OpenGL ES build, Source/SysGL/HLEGraphics/n64.psh for the desktop OpenGL build. Installed beside the binary."
@@ -58,6 +64,8 @@ files:
     path: "roms.ini"
     system: nintendo-64
     required: false
+    sha1: "4877d2cfb4c4f228332fbb453ce89d93d1457500"
+    md5: "5766150f4586283609c6681c5da9efe7"
     bundled: true
     category: game_data
     description: "Per-game settings database"
@@ -68,6 +76,8 @@ files:
     path: "Resources/OpenSans.ttf"
     system: nintendo-64
     required: false
+    sha1: "ecdf1d58c0932a775c89b5ad48a7a0aaad66de4f"
+    md5: "78609089d3dad36318ae0190321e6f3e"
     bundled: true
     description: "UI font"
     note: "Opened through SDL_ttf for the on-screen menus; a failure is printed and emulation is not affected."

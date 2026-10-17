@@ -46,6 +46,8 @@ files:
     path: "touchHLE_dylibs/libgcc_s.1.dylib"
     system: apple-ios
     required: false
+    sha1: "827d9304ade7342560b83bb2d79519161a36a395"
+    md5: "f170c90d0940c5989c7ea65f6832906b"
     bundled: true
     description: "GCC runtime library from the iPhoneOS 4.0 SDK"
     note: "Exposed as /usr/lib/libgcc_s.1.dylib. Needed by apps that link it."
@@ -55,6 +57,8 @@ files:
     path: "touchHLE_dylibs/libstdc++.6.0.9.dylib"
     system: apple-ios
     required: false
+    sha1: "80a78b90ed2af3656947124a623be06346c91c07"
+    md5: "d44ff6644a1f42e1a333664752940266"
     bundled: true
     description: "GNU C++ standard library from the iPhoneOS 4.0 SDK"
     note: "Exposed as /usr/lib/libstdc++.6.dylib and /usr/lib/libstdc++.6.0.9.dylib. Needed by apps that link it."
@@ -64,6 +68,8 @@ files:
     path: "touchHLE_dylibs/libz.1.2.3.dylib"
     system: apple-ios
     required: false
+    sha1: "c7a074cc2a28618205107da722d3030441a7f791"
+    md5: "6b2f78a706d9b46f038059ef01c97253"
     bundled: true
     description: "zlib built from Apple's zlib-23.0.1 sources"
     note: "Exposed as /usr/lib/libz.1.2.3.dylib, libz.1.dylib, libz.dylib and libz.1.1.3.dylib. Needed by apps that link it."
@@ -73,6 +79,8 @@ files:
     path: "touchHLE_fonts/LiberationMono-Regular.ttf"
     system: apple-ios
     required: false
+    sha1: "6d137827a5b3b5b4ca2378642cdee0f65497ad0b"
+    md5: "e59b87dce1497a1ba08d472667722916"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -82,6 +90,8 @@ files:
     path: "touchHLE_fonts/LiberationMono-Bold.ttf"
     system: apple-ios
     required: false
+    sha1: "621736fa22ae2661eff1a0a199f882733440a33c"
+    md5: "e52e17953632fd6f1da5e51c84a6dea7"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -91,6 +101,8 @@ files:
     path: "touchHLE_fonts/LiberationMono-BoldItalic.ttf"
     system: apple-ios
     required: false
+    sha1: "6dbf7cd701cb1048dd7a2a01f84b5473842bf3ba"
+    md5: "00bed708fb7614c12c92cfd16f1fb7b8"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -100,6 +112,8 @@ files:
     path: "touchHLE_fonts/LiberationMono-Italic.ttf"
     system: apple-ios
     required: false
+    sha1: "67ec8aefea86e24e6a875e9f5b78437e75edf9e8"
+    md5: "fe762a65e22e23c935aff8eda38eaaf3"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -109,6 +123,8 @@ files:
     path: "touchHLE_fonts/LiberationSans-Regular.ttf"
     system: apple-ios
     required: false
+    sha1: "822a13649cfa7475343d52bfb2db9f0358a36822"
+    md5: "d7b4e92b03deb1865aa61328fd5ff400"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -118,6 +134,8 @@ files:
     path: "touchHLE_fonts/LiberationSans-Bold.ttf"
     system: apple-ios
     required: false
+    sha1: "4e5ee6e5de4d35337f7d14fa43222908e28e2d8d"
+    md5: "ab3823f8c454609eab661b54751fd55e"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -127,6 +145,8 @@ files:
     path: "touchHLE_fonts/LiberationSans-BoldItalic.ttf"
     system: apple-ios
     required: false
+    sha1: "cbf18b615d022b3a49c114c1fdea5170e04e8d08"
+    md5: "ad144bbd42d9dccb07db1aae6682b98b"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -136,6 +156,8 @@ files:
     path: "touchHLE_fonts/LiberationSans-Italic.ttf"
     system: apple-ios
     required: false
+    sha1: "aa4de844c5538cb9bf5393ed767884cd72f2b448"
+    md5: "333f554fddaa0faf89afc3621a6a18c8"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -145,6 +167,8 @@ files:
     path: "touchHLE_fonts/LiberationSerif-Regular.ttf"
     system: apple-ios
     required: false
+    sha1: "e617879345422a0e204de4b1dff4a41103992d64"
+    md5: "732ab01395f607bf178d0f32d841cc71"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -154,6 +178,8 @@ files:
     path: "touchHLE_fonts/LiberationSerif-Bold.ttf"
     system: apple-ios
     required: false
+    sha1: "d38816f0b2205dc619c061a60ef5f250b9bdf231"
+    md5: "184a866d565bae797baa39458fde7ac4"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -163,6 +189,8 @@ files:
     path: "touchHLE_fonts/LiberationSerif-BoldItalic.ttf"
     system: apple-ios
     required: false
+    sha1: "7e9704cabad534e2a56b32bbbec89a8d7e4e138f"
+    md5: "23e615c7010f0ad9f1d2817009733cb9"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -172,6 +200,8 @@ files:
     path: "touchHLE_fonts/LiberationSerif-Italic.ttf"
     system: apple-ios
     required: false
+    sha1: "c5f801425d1f93be54e31267813f4367755f096c"
+    md5: "31defdf69fc00c20b9caabe3e76d53e1"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -181,6 +211,8 @@ files:
     path: "touchHLE_fonts/NotoSansJP-Regular.otf"
     system: apple-ios
     required: false
+    sha1: "2a167a116b54ecd4f939e47d0ad78cb3402d938c"
+    md5: "f82ef23cfbf8b46a234465b0151ee71f"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -190,6 +222,8 @@ files:
     path: "touchHLE_fonts/NotoSansJP-Bold.otf"
     system: apple-ios
     required: false
+    sha1: "a7a997c4c894d2cc691332e7232d909d4f08a552"
+    md5: "77921099a1d3fce6fb64a7b3b678b7dc"
     bundled: true
     description: "Bundled font"
     note: "Opened on first use of its face; touchHLE panics when it is missing."
@@ -199,6 +233,8 @@ files:
     path: "touchHLE_default_options.txt"
     system: apple-ios
     required: false
+    sha1: "ee41db73da6e50593fdb95c3dee3bd42783718cf"
+    md5: "e982d067cdcbda507773dd9d4b3d4c07"
     bundled: true
     category: game_data
     description: "Default options per app"
