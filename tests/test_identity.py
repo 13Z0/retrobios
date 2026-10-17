@@ -59,11 +59,33 @@ class TestCrossVendorDuplicates(unittest.TestCase):
         self._write("Philips/Videopac/O2.bin", b"odyssey")
         first = self._scan()
         self.assertEqual(len(first), 1)
-        identity.KNOWN_SHARED[first[0].sha1] = "one machine, two market names"
+        identity.KNOWN_SHARED[first[0].sha1] = (
+            frozenset({"Magnavox", "Philips"}), "one machine, two market names"
+        )
         try:
             self.assertEqual(self._scan(), [])
         finally:
             del identity.KNOWN_SHARED[first[0].sha1]
+
+    def test_an_exemption_does_not_cover_a_third_maker(self):
+        # The four Roland ROMs were exempt by content alone, under a reason
+        # naming a DOSBox tree; the second copies sat in the Amiga tree and
+        # nothing could tell.
+        self._write("Magnavox/Odyssey2/o2rom.bin", b"odyssey")
+        self._write("Philips/Videopac/O2.bin", b"odyssey")
+        self._write("Commodore/Amiga/odyssey.bin", b"odyssey")
+        sha1 = self._scan()[0].sha1
+        identity.KNOWN_SHARED[sha1] = (
+            frozenset({"Magnavox", "Philips"}), "one machine, two market names"
+        )
+        try:
+            found = self._scan()
+            self.assertEqual(len(found), 1)
+            self.assertEqual(
+                found[0].manufacturers, ["Commodore", "Magnavox", "Philips"]
+            )
+        finally:
+            del identity.KNOWN_SHARED[sha1]
 
     def test_distinct_contents_are_never_grouped(self):
         self._write("Commodore/Amiga/kickstart.rom", b"kick")
@@ -82,10 +104,25 @@ class TestAllowList(unittest.TestCase):
     """Every exemption carries the reason it is one."""
 
     def test_each_entry_is_a_full_sha1_with_a_reason(self):
-        for sha1, reason in identity.KNOWN_SHARED.items():
+        for sha1, (makers, reason) in identity.KNOWN_SHARED.items():
             self.assertEqual(len(sha1), 40, sha1)
             self.assertTrue(all(c in "0123456789abcdef" for c in sha1), sha1)
+            self.assertGreaterEqual(len(makers), 2, sha1)
             self.assertGreater(len(reason), 20, sha1)
+
+    def test_every_exemption_is_still_needed(self):
+        # An entry whose copies no longer cross its makers exempts nothing
+        # today and would silently cover the next misfiling.
+        repo = Path(__file__).resolve().parents[1] / "bios"
+        if not repo.is_dir():
+            self.skipTest("bios/ not present")
+        saved = dict(identity.KNOWN_SHARED)
+        identity.KNOWN_SHARED.clear()
+        try:
+            crossing = {d.sha1 for d in identity.scan(str(repo))}
+        finally:
+            identity.KNOWN_SHARED.update(saved)
+        self.assertEqual(sorted(set(saved) - crossing), [])
 
     def test_the_repository_has_no_unexplained_crossing(self):
         repo = Path(__file__).resolve().parents[1] / "bios"

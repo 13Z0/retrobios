@@ -23,28 +23,42 @@ from pathlib import Path
 # machines, where a shared dump says nothing about a misfiling.
 SHARED_TREES = frozenset({"Arcade", "Other"})
 
-# One dump, two machines that really did share it. Each entry names the reason,
-# so a crossing that is not on this list is a finding rather than noise.
-KNOWN_SHARED = {
-    "5ea7c2b824672e914525d1d5c419d71b84a426a2": "ZX Spectrum 48K ROM, which the "
-    "Enterprise and the FBNeo Spectrum driver run as well",
-    "16375d42ea109b47edded7a16028de7fdb3013a1": "ZX Spectrum 128K ROM, under both "
-    "Sinclair spellings and the Enterprise Spectrum mode",
-    "45bedc4cbdeac66c7df59e9e599195c778d86a92": "ColecoVision BIOS, carried by MSX "
-    "emulators for their ColecoVision machine",
-    "b2e1955d957a475de2411770452eff4ea19f4cee": "Odyssey 2 and Videopac are one "
-    "machine sold under two names",
-    "0d2ef6e67322f48f4b7e08d8bbe68827e2074561": "Oric Microdisc ROM, the Oric being "
-    "a Tangerine machine",
-    "0334b35f164089df7b2a82d46fa0ec6e43fafa90": "ZX81 overlay, the TS1500 being the "
-    "same machine for Timex",
-    "286b2e1fb21cc79851da01666db6c0b0e88f25e3": "one soundfont shipped by two "
-    "interpreters",
-    "a439fbb390da38cada95a7cbb1d6ca199cd66ef8": "Roland CM-32L control ROM, kept a "
-    "second time in the DOSBox mt32-roms tree",
-    "b083518fffb7f66b03c23b7eb4f868e62dc5a987": "Roland MT-32 control ROM, same",
-    "289cc298ad532b702461bfc738009d9ebe8025ea": "Roland CM-32L PCM ROM, same",
-    "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252": "Roland MT-32 PCM ROM, same",
+# One dump, two machines that really did share it. Each entry names the makers
+# whose directories may hold it and the reason they do, so a crossing that is
+# not on this list, or a further copy under a third maker, is a finding rather
+# than noise.
+KNOWN_SHARED: dict[str, tuple[frozenset[str], str]] = {
+    "5ea7c2b824672e914525d1d5c419d71b84a426a2": (
+        frozenset({"Enterprise", "Sinclair"}),
+        "ZX Spectrum 48K ROM, which the Enterprise and the FBNeo Spectrum "
+        "driver run as well",
+    ),
+    "16375d42ea109b47edded7a16028de7fdb3013a1": (
+        frozenset({"Enterprise", "Sinclair"}),
+        "ZX Spectrum 128K ROM, under both Sinclair spellings and the "
+        "Enterprise Spectrum mode",
+    ),
+    "45bedc4cbdeac66c7df59e9e599195c778d86a92": (
+        frozenset({"Coleco", "Microsoft"}),
+        "ColecoVision BIOS, carried by MSX emulators for their ColecoVision "
+        "machine",
+    ),
+    "b2e1955d957a475de2411770452eff4ea19f4cee": (
+        frozenset({"Magnavox", "Philips"}),
+        "Odyssey 2 and Videopac are one machine sold under two names",
+    ),
+    "0d2ef6e67322f48f4b7e08d8bbe68827e2074561": (
+        frozenset({"Oric", "Tangerine"}),
+        "Oric Microdisc ROM, the Oric being a Tangerine machine",
+    ),
+    "0334b35f164089df7b2a82d46fa0ec6e43fafa90": (
+        frozenset({"Sinclair", "Timex"}),
+        "ZX81 overlay, the TS1500 being the same machine for Timex",
+    ),
+    "286b2e1fb21cc79851da01666db6c0b0e88f25e3": (
+        frozenset({"Infocom", "ZC"}),
+        "one soundfont shipped by two interpreters",
+    ),
 }
 
 CHUNK = 1 << 20
@@ -91,9 +105,9 @@ def scan(bios_dir: str = "bios") -> list[Duplicate]:
     for sha1, paths in by_content.items():
         if len(paths) < 2:
             continue
-        if sha1 in KNOWN_SHARED:
-            continue
         makers = {_manufacturer(p, root) for p in paths} - SHARED_TREES
+        if sha1 in KNOWN_SHARED and makers <= KNOWN_SHARED[sha1][0]:
+            continue
         names = {p.name for p in paths}
         if len(makers) > 1 and len(names) > 1:
             found.append(

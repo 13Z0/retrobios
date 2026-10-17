@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-17T14:58:23Z",
+  "generated_at": "2026-10-17T23:25:01Z",
   "total_files": 19041,
   "total_size": 17550209017,
   "bios_dir": "bios",
@@ -32459,46 +32459,6 @@
       "sha256": "7cedf931e8b30620ba69954a30f037260325ff57282833fa557b4b0f2a2689f9",
       "crc32": "3b46f0cb",
       "adler32": "39d2a1e5"
-    },
-    "a439fbb390da38cada95a7cbb1d6ca199cd66ef8": {
-      "path": "bios/Commodore/Amiga/mt32-roms/cm32l_control.rom",
-      "name": "cm32l_control.rom",
-      "size": 65536,
-      "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
-      "md5": "bfff32b6144c1d706109accb6e6b1113",
-      "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
-      "crc32": "b998047e",
-      "adler32": "586ed7ae"
-    },
-    "b083518fffb7f66b03c23b7eb4f868e62dc5a987": {
-      "path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
-      "name": "mt32_control.rom",
-      "size": 65536,
-      "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
-      "md5": "5626206284b22c2734f3e9efefcd2675",
-      "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
-      "crc32": "a7c1531b",
-      "adler32": "1e07fec4"
-    },
-    "289cc298ad532b702461bfc738009d9ebe8025ea": {
-      "path": "bios/Commodore/Amiga/mt32-roms/pcm_cm32l.rom",
-      "name": "pcm_cm32l.rom",
-      "size": 1048576,
-      "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
-      "md5": "08cdcfa0ed93e9cb16afa76e6ac5f0a4",
-      "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
-      "crc32": "4b961eba",
-      "adler32": "884b72ba"
-    },
-    "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252": {
-      "path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
-      "name": "pcm_mt32.rom",
-      "size": 524288,
-      "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
-      "md5": "89e42e386e82e0cacb4a2704a03706ca",
-      "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
-      "crc32": "573e31cc",
-      "adler32": "da23d2eb"
     },
     "801bbab32e3d37386dd1636d4f1d6fa7e21d5874": {
       "path": "bios/Commodore/Amiga/rom.key",
@@ -184614,6 +184574,46 @@
       "crc32": "b9c5abec",
       "adler32": "9344f251"
     },
+    "a439fbb390da38cada95a7cbb1d6ca199cd66ef8": {
+      "path": "bios/Roland/CM32L_CONTROL.ROM",
+      "name": "CM32L_CONTROL.ROM",
+      "size": 65536,
+      "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
+      "md5": "bfff32b6144c1d706109accb6e6b1113",
+      "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
+      "crc32": "b998047e",
+      "adler32": "586ed7ae"
+    },
+    "289cc298ad532b702461bfc738009d9ebe8025ea": {
+      "path": "bios/Roland/CM32L_PCM.ROM",
+      "name": "CM32L_PCM.ROM",
+      "size": 1048576,
+      "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
+      "md5": "08cdcfa0ed93e9cb16afa76e6ac5f0a4",
+      "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
+      "crc32": "4b961eba",
+      "adler32": "884b72ba"
+    },
+    "b083518fffb7f66b03c23b7eb4f868e62dc5a987": {
+      "path": "bios/Roland/MT32_CONTROL.ROM",
+      "name": "MT32_CONTROL.ROM",
+      "size": 65536,
+      "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
+      "md5": "5626206284b22c2734f3e9efefcd2675",
+      "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
+      "crc32": "a7c1531b",
+      "adler32": "1e07fec4"
+    },
+    "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252": {
+      "path": "bios/Roland/MT32_PCM.ROM",
+      "name": "MT32_PCM.ROM",
+      "size": 524288,
+      "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
+      "md5": "89e42e386e82e0cacb4a2704a03706ca",
+      "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
+      "crc32": "573e31cc",
+      "adler32": "da23d2eb"
+    },
     "73683d585cd6948cc19547942ca0e14a0319456d": {
       "path": "bios/Roland/mt32-roms/ctrl_cm32l_1_00.rom",
       "name": "ctrl_cm32l_1_00.rom",
@@ -198776,10 +198776,6 @@
       "3f97c1963d82c808ef29e7c984c4c688": "ca2d6e1e2b4883929447a05e29418533723a419c",
       "547b42b7b070c7f227ea45e0986d57a1": "1ad1b55e7226bd5cd66def8370a69f19244da796",
       "f89f19b858ea6b1a04327c6f71ee1600": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
-      "bfff32b6144c1d706109accb6e6b1113": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
-      "5626206284b22c2734f3e9efefcd2675": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
-      "08cdcfa0ed93e9cb16afa76e6ac5f0a4": "289cc298ad532b702461bfc738009d9ebe8025ea",
-      "89e42e386e82e0cacb4a2704a03706ca": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "58aeacd8526d6c03fa93ca5f396b7ed9": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
       "f2f241bf094168cfb9e7805dc2856433": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "1b1e985ea5325a1f46eb7fd9681707bf": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
@@ -213772,6 +213768,10 @@
       "927ed8f4d8394a4eca03cf7791ff3d6b": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "f7ea340e1b9bad68c08067f37ea12d66": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
       "a70bbb0dfe4bb8556e74258062766f5d": "191c4994adfffe4f83b98dc3959dde2724b1dbac",
+      "bfff32b6144c1d706109accb6e6b1113": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
+      "08cdcfa0ed93e9cb16afa76e6ac5f0a4": "289cc298ad532b702461bfc738009d9ebe8025ea",
+      "5626206284b22c2734f3e9efefcd2675": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
+      "89e42e386e82e0cacb4a2704a03706ca": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "099552dcbc6a94bb0d2abf1281873fa1": "73683d585cd6948cc19547942ca0e14a0319456d",
       "c5233e4594f9b7bc4f773ae6ba5aa87d": "5a5cb5a77d7d55ee69657c2f870416daed52dea7",
       "1eddb73995829e4befecd40b13dfb408": "9cd4858014c4e8a9dff96053f784bfaac1092a2e",
@@ -223670,18 +223670,6 @@
       ],
       "kick40068.A4000.RTB": [
         "973b42dcaf8d6cb111484b3c4d3b719b15f6792d"
-      ],
-      "cm32l_control.rom": [
-        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
-      ],
-      "mt32_control.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "pcm_cm32l.rom": [
-        "289cc298ad532b702461bfc738009d9ebe8025ea"
-      ],
-      "pcm_mt32.rom": [
-        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
       ],
       "rom.key": [
         "801bbab32e3d37386dd1636d4f1d6fa7e21d5874"
@@ -262300,6 +262288,18 @@
       "ringo470.rom": [
         "191c4994adfffe4f83b98dc3959dde2724b1dbac"
       ],
+      "CM32L_CONTROL.ROM": [
+        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
+      ],
+      "CM32L_PCM.ROM": [
+        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      ],
+      "MT32_CONTROL.ROM": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "MT32_PCM.ROM": [
+        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
+      ],
       "ctrl_cm32l_1_00.rom": [
         "73683d585cd6948cc19547942ca0e14a0319456d"
       ],
@@ -268018,10 +268018,8 @@
       "007-Ocean01.jpg": [
         "e5741010ac7f941cdb3c01865a1eda016a479dfd"
       ],
-      "CM32L_CONTROL.ROM": [
-        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
-        "73683d585cd6948cc19547942ca0e14a0319456d",
-        "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
+      "cm32l_control.rom": [
+        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
       "ctrl_cm32l_1_02.rom": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
@@ -268029,7 +268027,16 @@
       "cm32l_ctrl_1_02.rom": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
-      "CM32L_PCM.ROM": [
+      "mt32_control.rom": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "ctrl_mt32_1_07.rom": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "mt32_ctrl_1_07.rom": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "pcm_cm32l.rom": [
         "289cc298ad532b702461bfc738009d9ebe8025ea"
       ],
       "CM32LN_PCM.ROM": [
@@ -268038,24 +268045,7 @@
       "cm32l_pcm.rom": [
         "289cc298ad532b702461bfc738009d9ebe8025ea"
       ],
-      "MT32_CONTROL.ROM": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
-        "5a5cb5a77d7d55ee69657c2f870416daed52dea7",
-        "e17a3a6d265bf1fa150312061134293d2b58288c",
-        "a553481f4e2794c10cfe597fef154eef0d8257de",
-        "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92",
-        "5837064c9df4741a55f7c4d8787ac158dff2d3ce",
-        "2c16432b6c73dd2a3947cba950a0f4c19d6180eb",
-        "2869cf4c235d671668cfcb62415e2ce8323ad4ed",
-        "47b52adefedaec475c925e54340e37673c11707c"
-      ],
-      "ctrl_mt32_1_07.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "mt32_ctrl_1_07.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "MT32_PCM.ROM": [
+      "pcm_mt32.rom": [
         "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
       ],
       "mt32_pcm.rom": [
@@ -270576,33 +270566,6 @@
       "titles.txt": [
         "f6a0cbfda6838065065e830ff40f322e6a3b6b00"
       ],
-      "mt32_ctrl_1_04.rom": [
-        "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
-      ],
-      "mt32_ctrl_1_05.rom": [
-        "e17a3a6d265bf1fa150312061134293d2b58288c"
-      ],
-      "mt32_ctrl_1_06.rom": [
-        "a553481f4e2794c10cfe597fef154eef0d8257de"
-      ],
-      "mt32_ctrl_bluer.rom": [
-        "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92"
-      ],
-      "mt32_ctrl_2_03.rom": [
-        "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
-      ],
-      "mt32_ctrl_2_04.rom": [
-        "2c16432b6c73dd2a3947cba950a0f4c19d6180eb"
-      ],
-      "mt32_ctrl_2_06.rom": [
-        "2869cf4c235d671668cfcb62415e2ce8323ad4ed"
-      ],
-      "mt32_ctrl_2_07.rom": [
-        "47b52adefedaec475c925e54340e37673c11707c"
-      ],
-      "cm32l_ctrl_1_00.rom": [
-        "73683d585cd6948cc19547942ca0e14a0319456d"
-      ],
       "ctrl_cm32ln_1_00.rom": [
         "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
       ],
@@ -270630,17 +270593,26 @@
       "TRIO64 (Ver. 1.5-07) [VGA] (S3 Incorporated).bin": [
         "a308b15f93da34961c0141ec95b98c211557e2d5"
       ],
+      "mt32_ctrl_1_04.rom": [
+        "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
+      ],
       "mt32_ctrl_1_04_a.rom": [
         "9cd4858014c4e8a9dff96053f784bfaac1092a2e"
       ],
       "mt32_ctrl_1_04_b.rom": [
         "fe8db469b5bfeb37edb269fd47e3ce6d91014652"
       ],
+      "mt32_ctrl_1_05.rom": [
+        "e17a3a6d265bf1fa150312061134293d2b58288c"
+      ],
       "mt32_ctrl_1_05_a.rom": [
         "57a09d80d2f7ca5b9734edbe9645e6e700f83701"
       ],
       "mt32_ctrl_1_05_b.rom": [
         "52e3c6666db9ef962591a8ee99be0cde17f3a6b6"
+      ],
+      "mt32_ctrl_1_06.rom": [
+        "a553481f4e2794c10cfe597fef154eef0d8257de"
       ],
       "mt32_ctrl_1_06_a.rom": [
         "cc83bf23cee533097fb4c7e2c116e43b50ebacc8"
@@ -270654,11 +270626,29 @@
       "mt32_ctrl_1_07_b.rom": [
         "c55e165487d71fa88bd8c5e9c083bc456c1a89aa"
       ],
+      "mt32_ctrl_bluer.rom": [
+        "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92"
+      ],
       "mt32_ctrl_bluer_a.rom": [
         "11a6ae5d8b6ee328b371af7f1e40b82125aa6b4d"
       ],
       "mt32_ctrl_bluer_b.rom": [
         "e0934320d7cbb5edfaa29e0d01ae835ef620085b"
+      ],
+      "mt32_ctrl_2_03.rom": [
+        "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
+      ],
+      "mt32_ctrl_2_04.rom": [
+        "2c16432b6c73dd2a3947cba950a0f4c19d6180eb"
+      ],
+      "mt32_ctrl_2_06.rom": [
+        "2869cf4c235d671668cfcb62415e2ce8323ad4ed"
+      ],
+      "mt32_ctrl_2_07.rom": [
+        "47b52adefedaec475c925e54340e37673c11707c"
+      ],
+      "cm32l_ctrl_1_00.rom": [
+        "73683d585cd6948cc19547942ca0e14a0319456d"
       ],
       "mt32_pcm_l.rom": [
         "3a1e19b0cd4036623fd1d1d11f5f25995585962b"
@@ -274689,10 +274679,6 @@
       "71180c7f": "ca2d6e1e2b4883929447a05e29418533723a419c",
       "cf631e0b": "1ad1b55e7226bd5cd66def8370a69f19244da796",
       "3b46f0cb": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
-      "b998047e": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
-      "a7c1531b": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
-      "4b961eba": "289cc298ad532b702461bfc738009d9ebe8025ea",
-      "573e31cc": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "869ae1b1": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
       "f5d4f3c8": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "dd409902": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
@@ -289685,6 +289671,10 @@
       "1184b3e8": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "2477d709": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
       "b9c5abec": "191c4994adfffe4f83b98dc3959dde2724b1dbac",
+      "b998047e": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
+      "4b961eba": "289cc298ad532b702461bfc738009d9ebe8025ea",
+      "a7c1531b": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
+      "573e31cc": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "ee62022f": "73683d585cd6948cc19547942ca0e14a0319456d",
       "4c91fa96": "5a5cb5a77d7d55ee69657c2f870416daed52dea7",
       "a93b65f2": "9cd4858014c4e8a9dff96053f784bfaac1092a2e",
@@ -293732,10 +293722,6 @@
       "69809575d9f631eccb3f6d7b3dfa23017a33d9c1a911a5f7f8e5a4246cf8cbac": "ca2d6e1e2b4883929447a05e29418533723a419c",
       "c1176e7b7b9860a8cded820e824677163cf1cc7c674883896a7f32dca5437736": "1ad1b55e7226bd5cd66def8370a69f19244da796",
       "7cedf931e8b30620ba69954a30f037260325ff57282833fa557b4b0f2a2689f9": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
-      "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
-      "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
-      "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698": "289cc298ad532b702461bfc738009d9ebe8025ea",
-      "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "baf2366ae04337d37e7b37ebfb5cd7af7e4ffddeb6b017bf2e5fec43d87764e0": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
       "53c6053fb5ef9068db57d62c6565dfa30365d35349824525f02aa715962c446a": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "2de4d06b4aa2a1b1129cc641a01cbac7e631de362dbd6fe2129eec7336afad53": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
@@ -308728,6 +308714,10 @@
       "0cc333aa339e76f6c5673b1da3334de582443caf3388b457baf785c2ae3040d2": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "b5673896e0ff174b3030525668483a1a32657e46ee22213c6773f9ef11c961ae": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
       "1b7b0a05f72134f93346d2e83307a4e3a8ff67909c12b5f9b68a5bd42db8e7e2": "191c4994adfffe4f83b98dc3959dde2724b1dbac",
+      "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
+      "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698": "289cc298ad532b702461bfc738009d9ebe8025ea",
+      "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
+      "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "c8aea5fb1b28183523601bbc5fd7e2f48397c1cb26f8687d240333c2190e83e2": "73683d585cd6948cc19547942ca0e14a0319456d",
       "c0ea149eaadc48049572ec429e45f90ab1bb75f1ed07000c636fc0124b64da23": "5a5cb5a77d7d55ee69657c2f870416daed52dea7",
       "70fe51fef3ef16fac12f014f5c03e5cb69d9819d7568322459d9b08c675be78a": "9cd4858014c4e8a9dff96053f784bfaac1092a2e",
@@ -332321,42 +332311,6 @@
       ],
       "Amiga/kick40068.A4000.RTB": [
         "973b42dcaf8d6cb111484b3c4d3b719b15f6792d"
-      ],
-      "Commodore/Amiga/mt32-roms/cm32l_control.rom": [
-        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
-      ],
-      "Amiga/mt32-roms/cm32l_control.rom": [
-        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
-      ],
-      "mt32-roms/cm32l_control.rom": [
-        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
-      ],
-      "Commodore/Amiga/mt32-roms/mt32_control.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "Amiga/mt32-roms/mt32_control.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "mt32-roms/mt32_control.rom": [
-        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
-      ],
-      "Commodore/Amiga/mt32-roms/pcm_cm32l.rom": [
-        "289cc298ad532b702461bfc738009d9ebe8025ea"
-      ],
-      "Amiga/mt32-roms/pcm_cm32l.rom": [
-        "289cc298ad532b702461bfc738009d9ebe8025ea"
-      ],
-      "mt32-roms/pcm_cm32l.rom": [
-        "289cc298ad532b702461bfc738009d9ebe8025ea"
-      ],
-      "Commodore/Amiga/mt32-roms/pcm_mt32.rom": [
-        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
-      ],
-      "Amiga/mt32-roms/pcm_mt32.rom": [
-        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
-      ],
-      "mt32-roms/pcm_mt32.rom": [
-        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
       ],
       "Commodore/Amiga/rom.key": [
         "801bbab32e3d37386dd1636d4f1d6fa7e21d5874"
@@ -541030,6 +540984,18 @@
       "R470/ringo470.rom": [
         "191c4994adfffe4f83b98dc3959dde2724b1dbac"
       ],
+      "Roland/CM32L_CONTROL.ROM": [
+        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
+      ],
+      "Roland/CM32L_PCM.ROM": [
+        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      ],
+      "Roland/MT32_CONTROL.ROM": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "Roland/MT32_PCM.ROM": [
+        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
+      ],
       "Roland/mt32-roms/ctrl_cm32l_1_00.rom": [
         "73683d585cd6948cc19547942ca0e14a0319456d"
       ],
@@ -577154,16 +577120,28 @@
       "Panoramas/007-Ocean01.jpg": [
         "e5741010ac7f941cdb3c01865a1eda016a479dfd"
       ],
-      "Roland/CM32L_CONTROL.ROM": [
+      "Roland/mt32-roms/cm32l_control.rom": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
-      "Roland/CM32L_PCM.ROM": [
-        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      "mt32-roms/cm32l_control.rom": [
+        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
-      "Roland/MT32_CONTROL.ROM": [
+      "Roland/mt32-roms/mt32_control.rom": [
         "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
       ],
-      "Roland/MT32_PCM.ROM": [
+      "mt32-roms/mt32_control.rom": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "Roland/mt32-roms/pcm_cm32l.rom": [
+        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      ],
+      "mt32-roms/pcm_cm32l.rom": [
+        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      ],
+      "Roland/mt32-roms/pcm_mt32.rom": [
+        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
+      ],
+      "mt32-roms/pcm_mt32.rom": [
         "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
       ],
       "SNK/Neo Geo CD/.variants/uni-bioscd.rom.5158b728": [
