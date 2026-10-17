@@ -355,6 +355,7 @@ def _data_directory_members(
                 print(
                     f"  WARNING: data directory '{ref_key}' not cached at {local_path} -run refresh_data_dirs.py"
                 )
+                _MISSING_DATA_DIRS.add(ref_key)
                 continue
             dd_dest = dd.get("destination", "")
             if base_dest and dd_dest:
@@ -1640,6 +1641,7 @@ def generate_emulator_pack(
         print(
             f"  Note: data directory '{ref}' required but not included (use refresh_data_dirs.py)"
         )
+    _MISSING_DATA_DIRS.update(data_dir_notices)
 
     return (
         zip_path
@@ -2777,9 +2779,22 @@ def _given_flags(args) -> set[str]:
     return {flag for flag, on in flags.items() if on}
 
 
+# Data directories a pack needed and the cache did not hold. The pack is
+# written without them, so the run cannot exit as if it were complete: a
+# refresh refused by a quota left the PPSSPP pack with 2 files, exit 0.
+_MISSING_DATA_DIRS: set[str] = set()
+
+
 def main():
     with contextlib.ExitStack() as held:
         _main(held)
+    if _MISSING_DATA_DIRS:
+        print(
+            "ERROR: packs written without data directories that are not cached: "
+            f"{', '.join(sorted(_MISSING_DATA_DIRS))} (run refresh_data_dirs.py)",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 def _main(held: contextlib.ExitStack) -> None:

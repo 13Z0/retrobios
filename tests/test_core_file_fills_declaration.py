@@ -9,6 +9,7 @@ frontend sees a file at the path. verify kept it MISSING, so the pack said
 from __future__ import annotations
 
 import hashlib
+import contextlib
 import io
 import os
 import shutil
@@ -18,6 +19,7 @@ import unittest
 import zipfile
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -139,6 +141,45 @@ class AFileDeclaredUnderAnotherName(unittest.TestCase):
             self.assertIn("gs/ROM", zf.namelist())
         reported = [(u["name"], u["in_repo"]) for u in result["undeclared_files"]]
         self.assertIn(("ROM", True), reported)
+
+
+
+class AMissingDataDirectoryFailsTheRun(unittest.TestCase):
+    """A refresh refused by a quota left the PPSSPP pack with 2 files and
+    the run exited 0; nothing downstream checks data directories."""
+
+    def test_the_pack_records_it_and_main_exits_non_zero(self):
+        import generate_pack as gp
+
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        (root / "platforms").mkdir()
+        (root / "emulators").mkdir()
+        (root / "bios").mkdir()
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "existence",
+            "base_destination": "system", "cores": [],
+            "systems": {"console-a": {"files": [], "data_directories": [
+                {"ref": "assets", "destination": "assets"},
+            ]}},
+        }))
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        gp._MISSING_DATA_DIRS.clear()
+        self.addCleanup(gp._MISSING_DATA_DIRS.clear)
+        with redirect_stdout(io.StringIO()):
+            gp.generate_pack(
+                "fakeplat", str(root / "platforms"), db, str(root / "bios"),
+                str(root / "out"), emulators_dir=str(root / "emulators"),
+                data_registry={"assets": {"local_cache": str(root / "absent")}},
+                offline=True,
+            )
+        self.assertEqual(gp._MISSING_DATA_DIRS, {"assets"})
+        with mock.patch.object(gp, "_main", lambda held: None), \
+                contextlib.redirect_stderr(io.StringIO()), \
+                self.assertRaises(SystemExit) as stop:
+            gp.main()
+        self.assertEqual(stop.exception.code, 1)
 
 
 if __name__ == "__main__":
