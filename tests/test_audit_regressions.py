@@ -3284,5 +3284,25 @@ class TheSiteCountsSlotsNotVersions(unittest.TestCase):
         self.assertIn("1 in repo, 1 missing", line)
 
 
+
+class EveryReadmeNamesItsFolder(unittest.TestCase):
+    """The Lakka pack's README reused RetroArch's guide and never named
+    /storage/system, the folder the registry and the installer use."""
+
+    def test_the_registry_folder_is_in_the_guide(self):
+        from scripts.packreadme import _build_readme
+
+        registry = yaml.safe_load((ROOT / "platforms" / "_registry.yml").read_text())
+        for name, entry in registry["platforms"].items():
+            folder = (entry.get("extract_to") or "").rstrip("/")
+            if not folder:
+                continue
+            with self.subTest(platform=name):
+                text = _build_readme(name, name, "", 1, 1, bios_paths=[folder])
+                self.assertIn(folder, text)
+        lakka = _build_readme("lakka", "Lakka", "", 1, 1)
+        self.assertNotIn("retroarch/system", lakka)
+
+
 if __name__ == "__main__":
     unittest.main()

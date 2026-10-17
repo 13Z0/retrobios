@@ -163,7 +163,7 @@ def _build_readme(
         "romm": (
             "INSTALLATION GUIDE (RomM server)\n\n"
             "  1. Locate your RomM library folder\n"
-            "  2. Navigate to the bios/ subdirectory\n"
+            "  2. Navigate to its bios/ folder (library/bios/)\n"
             "  3. Extract all files from this archive directly into that folder\n"
             "  4. Restart the RomM service to detect new files\n\n"
         ),
@@ -185,8 +185,20 @@ def _build_readme(
         ),
     }
 
-    # Lakka uses same guide as RetroArch
-    guides["lakka"] = guides["retroarch"]
+    guides["lakka"] = (
+        "INSTALLATION GUIDE (Lakka)\n\n"
+        "  Lakka reads its BIOS files from /storage/system/.\n\n"
+        "  Option A: Via network share\n"
+        "  --------------------------\n"
+        "  1. On Lakka: Settings > Services > Samba Enable\n"
+        "  2. On your PC, open the System share: \\\\LAKKA\\System\\\n"
+        "     (macOS and Linux: smb://lakka/System)\n"
+        "  3. Extract all files from this archive directly into that share\n\n"
+        "  Option B: Via SSH\n"
+        "  -----------------\n"
+        "  1. On Lakka: Settings > Services > SSH Enable\n"
+        "  2. Copy the files to /storage/system/ (scp -r * root@lakka:/storage/system/)\n\n"
+    )
 
     # A platform without a written guide is told where its files go by the
     # registry, which the installer reads too: "your BIOS directory" sent
