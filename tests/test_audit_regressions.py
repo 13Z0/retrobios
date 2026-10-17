@@ -15,6 +15,7 @@ import sys
 import tempfile
 import unittest
 import zipfile
+import zlib
 from pathlib import Path
 from unittest import mock
 
@@ -2861,3 +2862,47 @@ class ADuplicateYamlKeyIsRefused(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AnAcceptedVersionIsNoCoreDiscrepancy(unittest.TestCase):
+    """eduke32 lists the retail and demo NWINTER.GRP under one name: the extra
+    carries the first, and a held demo copy is a version the code takes."""
+
+    PROFILE = {"files": [
+        {"name": "NWINTER.GRP", "size": 9, "crc32": "00000000",
+         "validation": ["size", "crc32"]},
+        {"name": "NWINTER.GRP", "size": 4, "crc32": "",
+         "validation": ["size", "crc32"]},
+    ]}
+
+    def _extra(self) -> dict:
+        # The shape find_undeclared_files gives a core extra: source_path
+        # defaults to the name when the profile declares no path.
+        return {"name": "NWINTER.GRP", "source_name": "NWINTER.GRP",
+                "source_path": "NWINTER.GRP", "source_profile": "eduke32"}
+
+    def test_a_sibling_version_matches(self):
+        from scripts.generate_pack import _matches_an_alternative
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            held = Path(tmp) / "NWINTER.GRP"
+            held.write_bytes(b"demo")
+            profile = json.loads(json.dumps(self.PROFILE))
+            profile["files"][1]["crc32"] = f"{zlib.crc32(b'demo'):08x}"
+            self.assertTrue(_matches_an_alternative(
+                self._extra(), str(held), {"eduke32": profile}))
+
+    def test_a_copy_no_entry_declares_still_disagrees(self):
+        from scripts.generate_pack import _matches_an_alternative
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            held = Path(tmp) / "NWINTER.GRP"
+            held.write_bytes(b"other")
+            profile = json.loads(json.dumps(self.PROFILE))
+            profile["files"][1]["crc32"] = f"{zlib.crc32(b'demo'):08x}"
+            self.assertFalse(_matches_an_alternative(
+                self._extra(), str(held), {"eduke32": profile}))
+
+    def test_the_pack_consults_the_alternatives(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text()
+        self.assertRegex(source, r'status == "hash_mismatch" and not _matches_an_alternative\(')

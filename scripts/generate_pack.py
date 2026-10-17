@@ -538,6 +538,33 @@ def _platform_pack_name(
     return f"{stem}{tags}_BIOS_Pack{_system_tag(system_filter)}.zip"
 
 
+def _matches_an_alternative(fe: dict, local_path: str, profiles: dict) -> bool:
+    """Whether the copy is another version the same profile accepts there.
+
+    A profile lists every version its code takes under one name (each GRP
+    of Raze's table, eduke32's demo and retail NWINTER.GRP); the extra
+    carries the first, and the held copy matching a sibling is no mismatch.
+    """
+    profile = profiles.get(fe.get("source_profile") or "", {})
+    name = fe.get("source_name") or fe.get("name")
+    path = fe.get("source_path") or name
+    siblings = [
+        entry for entry in profile.get("files") or []
+        if isinstance(entry, dict) and entry.get("name") == name
+        and (entry.get("path") or name) == path
+    ]
+    if len(siblings) < 2:
+        return False
+    actual = compute_hashes(local_path, frozenset({"sha1", "md5", "crc32"}))
+    for entry in siblings:
+        for algorithm in ("sha1", "md5", "crc32"):
+            declared = entry.get(algorithm)
+            values = declared if isinstance(declared, list) else [declared]
+            if any(v and str(v).lower() == actual.get(algorithm, "") for v in values):
+                return True
+    return False
+
+
 def generate_pack(
     platform_name: str,
     platforms_dir: str,
@@ -996,7 +1023,9 @@ def generate_pack(
           )
           if disagreement:
               core_discrepancies.append(f"{full_dest} -{disagreement}")
-          if status == "hash_mismatch":
+          if status == "hash_mismatch" and not _matches_an_alternative(
+              fe, local_path, emu_profiles or {}
+          ):
               # The core's declared hash comes from its source, the local dump
               # is what the collection holds. Shipping it keeps the emulator
               # working when the code never reads the hash; the divergence is
