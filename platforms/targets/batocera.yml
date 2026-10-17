@@ -1,6 +1,6 @@
 platform: batocera
 source: https://github.com/batocera-linux/batocera.linux
-scraped_at: '2026-10-04T12:31:40Z'
+scraped_at: '2026-10-17T00:21:41Z'
 targets:
   a3gen2:
     architecture: aarch64
@@ -14,6 +14,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -35,6 +36,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -88,6 +90,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -95,6 +98,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -145,6 +149,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -183,6 +188,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -204,6 +210,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -257,6 +264,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -264,6 +272,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -314,6 +323,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -352,6 +362,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -373,6 +384,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -426,6 +438,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -433,6 +446,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -483,6 +497,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -531,6 +546,7 @@ targets:
     - dolphin
     - dosbox-x
     - dosbox_pure
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -585,12 +601,14 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - neocd
     - nestopia
     - np2kai
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -662,6 +680,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -683,6 +702,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -736,6 +756,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -743,6 +764,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -793,6 +815,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -831,6 +854,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -852,6 +876,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -905,6 +930,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -912,6 +938,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -962,6 +989,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1000,6 +1028,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1020,6 +1049,7 @@ targets:
     - dolphin
     - dosbox-x
     - dosbox_pure
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1071,12 +1101,14 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - neocd
     - nestopia
     - np2kai
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1123,6 +1155,7 @@ targets:
     - tyrquake
     - vb
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1161,6 +1194,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1182,6 +1216,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1235,12 +1270,14 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - neocd
     - nestopia
     - np2kai
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1291,6 +1328,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1329,6 +1367,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1350,6 +1389,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1403,6 +1443,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -1410,6 +1451,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1460,6 +1502,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1498,6 +1541,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1519,6 +1563,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1572,6 +1617,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -1579,6 +1625,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1629,6 +1676,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1667,6 +1715,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1688,6 +1737,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1741,6 +1791,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -1748,6 +1799,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1798,6 +1850,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -1836,6 +1889,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -1857,6 +1911,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -1910,6 +1965,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -1917,6 +1973,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -1967,6 +2024,181 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
+    - vice_x128
+    - vice_x64
+    - vice_x64sc
+    - vice_xpet
+    - vice_xplus4
+    - vice_xscpu64
+    - vice_xvic
+    - vircon32
+    - virtualjaguar
+    - vitaquake2
+    - vpinball
+    - x1
+    - x128
+    - x16emu
+    - x64
+    - x64dtv
+    - xash3d_fwgs
+    - xpet
+    - xplus4
+    - xrick
+    - xscpu64
+    - xvic
+    - yabasanshiro
+    - ymir
+    - yquake2
+    - zc210
+  odin:
+    architecture: aarch64
+    cores:
+    - '81'
+    - A1200
+    - A4000
+    - A500
+    - A500+
+    - CD32
+    - CDTV
+    - a5200
+    - abuse
+    - amiberry
+    - applewin
+    - arduous
+    - atari800
+    - azahar
+    - beetle-saturn
+    - bennugd
+    - bk
+    - bluemsx
+    - bsnes
+    - bstone
+    - cannonball
+    - cap32
+    - cdogs
+    - cgenius
+    - devilutionx
+    - dhewm3
+    - dice
+    - dolphin
+    - dosbox-x
+    - dosbox_pure
+    - dosbox_staging
+    - dosboxx
+    - duckstation
+    - easyrpg
+    - eduke32
+    - eka2l1
+    - emuscv
+    - ep128emu-core
+    - fake08
+    - fallout1-ce
+    - fallout2-ce
+    - fbneo
+    - fceumm
+    - flycast
+    - flycastvl
+    - fmsx
+    - freechaf
+    - freeintv
+    - fury
+    - fuse
+    - gambatte
+    - gearcoleco
+    - gearsystem
+    - genesisplusgx
+    - genesisplusgx-expanded
+    - glide64mk2
+    - gliden64
+    - gsplus
+    - gw
+    - handy
+    - hatari
+    - hatarib
+    - hcl
+    - holani
+    - hurrican
+    - hypseus-singe
+    - ioquake3
+    - jazz2-native
+    - lightspark
+    - lowresnx
+    - lutro
+    - mame
+    - mame078plus
+    - mednafen_lynx
+    - mednafen_ngp
+    - mednafen_psx
+    - mednafen_supergrafx
+    - mednafen_wswan
+    - melonds
+    - mesen
+    - mesen-s
+    - mgba
+    - minivmac
+    - moonlight
+    - mrboom
+    - mupen64plus
+    - mupen64plus-next
+    - neocd
+    - nestopia
+    - np2kai
+    - nxengine
+    - o2em
+    - odcommander
+    - openbor
+    - openbor4432
+    - openbor6412
+    - openbor7142
+    - openbor7530
+    - openjazz
+    - opera
+    - parallel_n64
+    - pce_fast
+    - pcfx
+    - pcsx_rearmed
+    - pd777
+    - picodrive
+    - pokemini
+    - potator
+    - ppsspp
+    - prboom
+    - prosystem
+    - puae
+    - puae2021
+    - px68k
+    - pygame
+    - quasi88
+    - redream
+    - rice
+    - ryujinx
+    - samcoupe
+    - same_cdi
+    - sameduck
+    - scummvm
+    - sdlpop
+    - smsplus
+    - snes9x
+    - snes9x_next
+    - solarus
+    - stella
+    - superbroswar
+    - supermodel
+    - swanstation
+    - taradino
+    - tgbdual
+    - theodore
+    - thextech
+    - tic80
+    - tsugaru
+    - tyrian
+    - tyrquake
+    - uzem
+    - vb
+    - vba-m
+    - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2005,6 +2237,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2026,6 +2259,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -2079,6 +2313,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2086,6 +2321,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2136,6 +2372,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2174,6 +2411,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2196,6 +2434,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -2249,6 +2488,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2256,6 +2496,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2306,6 +2547,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2344,6 +2586,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2365,6 +2608,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -2418,6 +2662,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2425,6 +2670,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2475,6 +2721,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2513,6 +2760,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2534,6 +2782,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -2587,6 +2836,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2594,6 +2844,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2644,6 +2895,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2682,6 +2934,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2755,6 +3008,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2762,6 +3016,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2812,6 +3067,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -2850,6 +3106,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -2871,6 +3128,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -2924,6 +3182,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -2931,6 +3190,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -2981,6 +3241,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3019,6 +3280,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3040,6 +3302,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3093,6 +3356,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3100,6 +3364,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3150,6 +3415,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3188,6 +3454,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3209,6 +3476,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3262,6 +3530,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3269,6 +3538,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3319,6 +3589,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3357,6 +3628,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3378,6 +3650,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3431,6 +3704,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3438,6 +3712,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3488,6 +3763,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3526,6 +3802,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3547,6 +3824,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3600,6 +3878,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3607,6 +3886,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3657,6 +3937,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3695,6 +3976,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3716,6 +3998,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3769,6 +4052,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3776,6 +4060,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3826,6 +4111,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -3864,6 +4150,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -3885,6 +4172,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -3938,6 +4226,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -3945,6 +4234,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -3995,6 +4285,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4033,6 +4324,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4054,6 +4346,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4107,6 +4400,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4114,6 +4408,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -4164,6 +4459,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4202,6 +4498,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4223,6 +4520,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4276,6 +4574,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4283,6 +4582,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -4333,6 +4633,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4371,6 +4672,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4392,6 +4694,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4445,6 +4748,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4452,6 +4756,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -4502,6 +4807,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4540,6 +4846,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4561,6 +4868,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4614,6 +4922,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4621,6 +4930,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -4671,6 +4981,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4709,6 +5020,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4731,6 +5043,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4784,6 +5097,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4791,6 +5105,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -4841,6 +5156,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -4879,6 +5195,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -4902,6 +5219,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -4955,6 +5273,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -4962,6 +5281,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -5013,6 +5333,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -5052,6 +5373,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -5073,6 +5395,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -5126,6 +5449,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -5133,6 +5457,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -5183,6 +5508,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -5224,6 +5550,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -5253,6 +5580,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - ecwolf
@@ -5271,6 +5599,7 @@ targets:
     - fmsx
     - freechaf
     - freeintv
+    - fsuae
     - fury
     - fuse
     - gambatte
@@ -5314,6 +5643,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -5321,6 +5651,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -5381,6 +5712,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -5425,6 +5757,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -5448,6 +5781,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - eduke32
@@ -5464,6 +5798,7 @@ targets:
     - fmsx
     - freechaf
     - freeintv
+    - fsuae
     - fury
     - fuse
     - gambatte
@@ -5503,6 +5838,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -5510,6 +5846,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -5561,6 +5898,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc
@@ -5602,6 +5940,7 @@ targets:
     - CDTV
     - a5200
     - abuse
+    - amiberry
     - applewin
     - arduous
     - atari800
@@ -5631,6 +5970,7 @@ targets:
     - dosbox-x
     - dosbox_pure
     - dosbox_staging
+    - dosboxx
     - duckstation
     - easyrpg
     - ecwolf
@@ -5649,6 +5989,7 @@ targets:
     - fmsx
     - freechaf
     - freeintv
+    - fsuae
     - fury
     - fuse
     - gambatte
@@ -5692,6 +6033,7 @@ targets:
     - minivmac
     - moonlight
     - mrboom
+    - mupen64plus
     - mupen64plus-next
     - neocd
     - nestopia
@@ -5699,6 +6041,7 @@ targets:
     - nxengine
     - o2em
     - odcommander
+    - openbor
     - openbor4432
     - openbor6412
     - openbor7142
@@ -5759,6 +6102,7 @@ targets:
     - vb
     - vba-m
     - vecx
+    - vice
     - vice_x128
     - vice_x64
     - vice_x64sc

@@ -73,6 +73,59 @@ CONFIGGEN_DEFAULTS_URL = (
     "configgen-defaults.yml"
 )
 
+ES_SYSTEMS_URL = (
+    _RAW_BASE + "/{tag}"
+    "/package/batocera/emulationstation/batocera-es-system/es_systems.yml"
+)
+
+# Names es_systems.yml files under an emulator that are not emulators:
+# machine selectors, video plugins, launchers. Read from the overrides the
+# target scraper applies, so one list says what is not a core.
+OVERRIDES_PATH = Path(__file__).resolve().parents[2] / "platforms" / "targets" / "_overrides.yml"
+
+
+def _not_cores() -> set[str]:
+    data = yaml_load(OVERRIDES_PATH.read_text(encoding="utf-8")) or {}
+    default = (data.get("batocera", {}).get("targets", {}) or {}).get("_default", {}) or {}
+    return {str(name) for name in default.get("remove_cores", [])}
+
+
+def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
+    """Every core es_systems.yml offers, and those that run standalone.
+
+    ES lists, per system, each emulator a user may pick and the cores under
+    it; configgen-defaults.yml only names the one picked by default, so
+    reading it alone left DOSBox Staging, melonDS DS and nine other built
+    cores outside the pack.
+    """
+    data = yaml_load(text)
+    if not isinstance(data, dict):
+        raise ValueError("es_systems.yml is not a mapping")
+    cores: set[str] = set()
+    standalone: set[str] = set()
+    for system in data.values():
+        emulators = system.get("emulators") if isinstance(system, dict) else None
+        if not isinstance(emulators, dict):
+            continue
+        for emulator, entries in emulators.items():
+            if not isinstance(entries, dict):
+                continue
+            # A standalone emulator is its own core; what it lists under it
+            # are machines or builds, and the non-cores among them are named
+            # in the overrides. Keys whose value is not a mapping
+            # (archs_include) describe the entry, not a core.
+            if emulator != "libretro":
+                cores.add(str(emulator))
+                standalone.add(str(emulator))
+            for core, spec in entries.items():
+                if not isinstance(spec, dict):
+                    continue
+                cores.add(str(core))
+                if emulator != "libretro":
+                    standalone.add(str(core))
+    return cores, standalone
+
+
 SYSTEM_SLUG_MAP = {
     "atari800": "atari-400-800",
     "atari5200": "atari-5200",
@@ -207,8 +260,11 @@ class Scraper(BaseScraper):
                 f"Failed to fetch {url}: {e}"
             ) from e
         data = yaml_load(raw)
-        cores: set[str] = set()
-        standalone: set[str] = set()
+        cores, standalone = es_systems_emulators(
+            self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag))
+        )
+        if not cores:
+            raise RuntimeError("es_systems.yml names no emulator")
         for system, cfg in data.items():
             if system == "default" or not isinstance(cfg, dict):
                 continue
@@ -220,7 +276,16 @@ class Scraper(BaseScraper):
                 standalone.add(emulator)
                 if core and core != emulator:
                     standalone.add(core)
-        return sorted(cores), sorted(standalone)
+        dropped = _not_cores()
+        return sorted(cores - dropped), sorted(standalone - dropped)
+
+    def _fetch_text(self, url: str) -> str:
+        req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return resp.read().decode("utf-8")
+        except urllib.error.URLError as e:
+            raise ConnectionError(f"Failed to fetch {url}: {e}") from e
 
     def _extract_systems_dict(self, raw: str) -> dict:
         """Extract and parse the 'systems' dict from the Python source via ast.literal_eval."""

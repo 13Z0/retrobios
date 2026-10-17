@@ -228,7 +228,7 @@ def _parse_es_systems(text: str) -> dict[str, list[str]]:
         emulators = system_data.get("emulators")
         if not isinstance(emulators, dict):
             continue
-        for _group_name, group_data in emulators.items():
+        for group_name, group_data in emulators.items():
             if not isinstance(group_data, dict):
                 continue
             for core_name, core_data in group_data.items():
@@ -237,9 +237,13 @@ def _parse_es_systems(text: str) -> dict[str, list[str]]:
                 require = core_data.get("requireAnyOf", [])
                 if not isinstance(require, list):
                     continue
+                # A standalone emulator is its own core: amiberry, fsuae and
+                # vice list machines under their name, and the package that
+                # builds a machine builds the emulator.
+                names = [core_name] if group_name == "libretro" else [group_name, core_name]
                 for pkg_flag in require:
                     if isinstance(pkg_flag, str):
-                        package_to_emulators.setdefault(pkg_flag, []).append(core_name)
+                        package_to_emulators.setdefault(pkg_flag, []).extend(names)
 
     return package_to_emulators
 
