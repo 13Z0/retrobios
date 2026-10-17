@@ -138,12 +138,18 @@ def parse_repo(url: str) -> Repo | None:
     if entry is None:
         return None
     segments = [s for s in parts.path.split("/") if s]
+    family, api_base, raw_base = entry
+    if family == "gitlab" and "-" in segments:
+        # GitLab nests projects in subgroups; "/-/" opens the project's pages.
+        segments = segments[: segments.index("-")]
     if len(segments) < 2:
         return None
-    owner, name = segments[0], segments[1]
+    if family == "gitlab":
+        owner, name = "/".join(segments[:-1]), segments[-1]
+    else:
+        owner, name = segments[0], segments[1]
     if name.endswith(".git"):
         name = name[:-4]
-    family, api_base, raw_base = entry
     return Repo(parts.netloc, family, api_base, raw_base, owner, name)
 
 

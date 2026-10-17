@@ -54,6 +54,18 @@ class TestParseRepo(unittest.TestCase):
         repo = parse_repo("https://gitlab.com/recalbox/recalbox")
         self.assertEqual(repo.family, "gitlab")
 
+    def test_gitlab_subgroup_keeps_the_whole_namespace(self):
+        repo = parse_repo(
+            "https://gitlab.com/recalbox/packages/standalone/rb5000/-/tree/main"
+        )
+        self.assertEqual(repo.owner, "recalbox/packages/standalone")
+        self.assertEqual(repo.name, "rb5000")
+        self.assertEqual(
+            raw_url(repo, "abc123", "source/Engine.cpp"),
+            "https://gitlab.com/recalbox/packages/standalone/rb5000"
+            "/-/raw/abc123/source/Engine.cpp",
+        )
+
     def test_libretro_gitlab_is_a_gitlab(self):
         repo = parse_repo("https://git.libretro.com/libretro/wqxemu.git")
         self.assertEqual(repo.family, "gitlab")
