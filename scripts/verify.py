@@ -1089,6 +1089,10 @@ def verify_platform(
         from cross_reference import _build_supplemental_index
 
         supplemental_names = _build_supplemental_index()
+    # The builder's declarations, not the enriched ones: a core file the
+    # platform also declares under another name is packed at the core's own
+    # path, and a report reading the enriched set never counted it (21 such
+    # files in the RetroArch pack).
     undeclared = find_undeclared_files(
         config,
         emulators_dir,
@@ -1096,6 +1100,7 @@ def verify_platform(
         emu_profiles,
         target_cores=target_cores,
         data_names=supplemental_names,
+        declared_names=platform_declarations(config, db, enrich=False),
     )
     if region_drops:
         undeclared = [

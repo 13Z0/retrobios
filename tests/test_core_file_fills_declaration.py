@@ -95,3 +95,50 @@ class ACoreFileFillsAFreeDeclaration(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AFileDeclaredUnderAnotherName(unittest.TestCase):
+    """The platform declares ROM1 with the md5 of the core's ROM. The
+    builder packs ROM at the core's path; verify read the enriched
+    declarations, took ROM as declared and never counted it."""
+
+    def test_the_report_lists_what_the_builder_packs(self):
+        _emulator_profiles_cache.clear()
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        bios = root / "bios" / "Apple" / "IIgs"
+        bios.mkdir(parents=True)
+        data = b"IIGS ROM BYTES"
+        (bios / "ROM").write_bytes(data)
+        sha1, md5 = hashlib.sha1(data).hexdigest(), hashlib.md5(data).hexdigest()
+        db = {
+            "files": {sha1: {"path": str(bios / "ROM"), "name": "ROM", "md5": md5,
+                             "crc32": "", "size": len(data)}},
+            "indexes": {"by_md5": {md5: sha1}, "by_name": {"ROM": [sha1]},
+                        "by_crc32": {}, "by_path_suffix": {}},
+        }
+        (root / "platforms").mkdir()
+        (root / "emulators").mkdir()
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "existence",
+            "base_destination": "system", "cores": ["gs"],
+            "systems": {"apple-iigs": {"files": [
+                {"name": "ROM1", "destination": "ROM1", "md5": md5},
+            ]}},
+        }))
+        (root / "emulators" / "gs.yml").write_text(yaml.safe_dump({
+            "emulator": "GS", "type": "libretro", "cores": ["gs"],
+            "systems": ["apple-iigs"],
+            "files": [{"name": "ROM", "path": "gs/ROM", "md5": md5, "required": True}],
+        }))
+        config = load_platform_config("fakeplat", str(root / "platforms"))
+        result = verify_platform(config, db, str(root / "emulators"), supplemental_names=set())
+        with redirect_stdout(io.StringIO()):
+            zip_path = generate_pack(
+                "fakeplat", str(root / "platforms"), db, str(root / "bios"),
+                str(root / "out"), emulators_dir=str(root / "emulators"), offline=True,
+            )
+        with zipfile.ZipFile(zip_path) as zf:
+            self.assertIn("gs/ROM", zf.namelist())
+        reported = [(u["name"], u["in_repo"]) for u in result["undeclared_files"]]
+        self.assertIn(("ROM", True), reported)
