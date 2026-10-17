@@ -3568,6 +3568,43 @@ def _manifest_selection(
     )
 
 
+def _record_absent(
+    absent: list[dict],
+    config: dict,
+    base_dest: str,
+    region_drops: set,
+    required_only: bool,
+    seen_destinations: set,
+    omitted_by_destination: dict,
+    record_omission,
+) -> None:
+    """A file a core needs that the collection does not hold is an omission.
+
+    Left out of both lists, DevilutionX's diabdat.mpq and dhewm3's
+    pak000-004 reached no safety notice: the installer said everything
+    was verified and the game refused to start.
+    """
+    extras_pfx = _detect_extras_prefix(config, base_dest)
+    for fe in absent:
+        if required_only and fe.get("required") is False:
+            continue
+        dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
+        if not dest or (region_drops and dest in region_drops):
+            continue
+        full_dest = (
+            dest if not extras_pfx or dest.startswith(f"{extras_pfx}/")
+            else f"{extras_pfx}/{dest}"
+        )
+        if full_dest in seen_destinations or full_dest in omitted_by_destination:
+            continue
+        source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
+        systems = _extra_system_ids(fe)
+        record_omission(
+            full_dest, fe, systems[0] if systems else "", "not_found",
+            [source_emu] if source_emu else [],
+        )
+
+
 def _record_unplaceable(unplaceable: list[dict], record_omission) -> None:
     """Held by the collection, nowhere to put it on this platform.
 
@@ -3879,6 +3916,7 @@ def generate_manifest(
     # Phase 2: core complement (emulator extras)
     unplaceable: list[dict] = []
     baseline_claims: dict[str, dict] = {}
+    absent: list[dict] = []
     if source != "platform":
         core_files = _collect_emulator_extras(
             config,
@@ -3891,10 +3929,15 @@ def generate_manifest(
             include_all=(source == "truth"),
             unplaceable=unplaceable,
             baseline_claims=baseline_claims,
+            absent=absent,
         )
     else:
         core_files = []
     _record_unplaceable(unplaceable, record_omission)
+    _record_absent(
+        absent, config, base_dest, region_drops, required_only,
+        seen_destinations, omitted_by_destination, record_omission,
+    )
     total_size += _manifest_core_entries(
         core_files, config, db, bios_dir, base_dest, repo_root,
         zip_contents, offline, region_drops, case_insensitive,

@@ -182,5 +182,46 @@ class AMissingDataDirectoryFailsTheRun(unittest.TestCase):
         self.assertEqual(stop.exception.code, 1)
 
 
+
+class AFileNobodyHoldsIsAnOmission(unittest.TestCase):
+    """DevilutionX's diabdat.mpq, required and not in the collection, was
+    in neither the manifest's files nor its omitted_files: the installer
+    showed no notice and said everything was verified."""
+
+    def test_the_manifest_names_it(self):
+        from generate_pack import generate_manifest
+
+        _emulator_profiles_cache.clear()
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        for folder in ("platforms", "emulators", "bios"):
+            (root / folder).mkdir()
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "existence",
+            "base_destination": "system", "cores": ["devil"],
+            "systems": {"diablo": {"files": []}},
+        }))
+        (root / "platforms" / "_registry.yml").write_text(yaml.safe_dump({
+            "platforms": {"fakeplat": {"config": "fakeplat.yml", "status": "active"}},
+        }))
+        (root / "emulators" / "devil.yml").write_text(yaml.safe_dump({
+            "emulator": "Devil", "type": "libretro", "cores": ["devil"],
+            "systems": ["diablo"],
+            "files": [{"name": "diabdat.mpq", "required": True,
+                       "sha1": "1" * 40, "category": "game_data"}],
+        }))
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        manifest = generate_manifest(
+            "fakeplat", str(root / "platforms"), db, str(root / "bios"),
+            str(root / "platforms" / "_registry.yml"),
+            emulators_dir=str(root / "emulators"), offline=True,
+        )
+        omitted = {o["name"]: o for o in manifest["omitted_files"]}
+        self.assertIn("diabdat.mpq", omitted)
+        self.assertTrue(omitted["diabdat.mpq"]["required"])
+        self.assertEqual(omitted["diabdat.mpq"]["reason"], "not_found")
+
+
 if __name__ == "__main__":
     unittest.main()
