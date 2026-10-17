@@ -1,17 +1,23 @@
 emulator: Xenia Edge
-type: standalone
+type: "standalone + libretro"
 core_classification: community_fork
-source: "https://github.com/has207/xenia-edge"
+source:
+  standalone: "https://github.com/has207/xenia-edge"
+  libretro: "https://git.libretro.com/libretro/xenia-libretro"
 upstream: "https://github.com/has207/xenia-edge"
-source_commit: "fb1c5bf08b16dab5422136c44c593a9f516750f0"
-profiled_date: "2026-09-17"
-core_version: "edge"
+source_commit:
+  standalone: "fb1c5bf08b16dab5422136c44c593a9f516750f0"
+  libretro: "552d508a563dec9a6d05042654de9f76f00e9ba5"
+profiled_date: "2026-10-17"
+core_version:
+  standalone: "edge"
+  libretro: "8dc77b0"
 display_name: "Xenia Edge (Xbox 360)"
 cores:
-  - xenia-edge
+  - "xenia-edge"
+  - "xenia_edge"
 systems:
   - microsoft-xbox-360
-mode: standalone
 
 notes: |
   Xbox 360 emulator forked from Xenia Canary, with a wxWidgets front end, a
@@ -20,6 +26,34 @@ notes: |
   xenia_edge_macos.dmg and xenia_edge_windows.zip. ES-DE finds it through the
   XENIA-EDGE rule and runs `xenia_edge <rom>`; RetroDECK unpacks the AppImage
   into a xenia-edge component and executes bin/xenia_edge.
+
+  The libretro core xenia_edge_libretro is built from libretro/xenia-libretro
+  on git.libretro.com (branch libretro, CORENAME xenia_edge in .gitlab-ci.yml),
+  mirrored as WizzardSK/xenia-libretro on GitHub. It carries the xenia-edge
+  tree merged from edge at 8dc77b09, the release named in upstream.version and
+  reported as library_version (libretro/CMakeLists.txt:74-78,
+  libretro/libretro.cpp:1906-1909). The core is one shared library linked from
+  the emulator's static libraries, without the wxWidgets app
+  (libretro/CMakeLists.txt:1-13, 104-130), and the top-level CMakeLists.txt
+  defines XENIA_LIBRETRO for every target of the tree. Everything it keeps
+  is under <system>/Xenia-Edge: storage root, content, cache, xenia.log, and
+  xbl_profilename.txt, which it creates with "Player" and reads to name the
+  profile it creates (libretro/libretro.cpp:1476-1503, 1526-1546). The frame
+  rate unlock list is compiled into the core and written there when missing
+  (libretro/CMakeLists.txt:15-33, libretro/libretro_gamedb.cc:36-51), and the
+  bundled patches of the running title are written to Xenia-Edge/patches with
+  their core option state before Xenia reads that folder at boot
+  (libretro/libretro.cpp:791-798). It reads no firmware, font or runtime from
+  disk. Vulkan comes from the frontend's instance
+  (libretro/libretro_vk_presenter.cc:42-62), Direct3D 12 runs on the system
+  runtime with the D3D12Core.dll check of d3d12_provider.cc compiled out under
+  XENIA_LIBRETRO, and the download prompts for missing runtimes are stubbed
+  out (libretro/libretro_headless_stubs.cc:22-27).
+  The Windows build embeds bin/x64/dxil.dll of the DXC release as a resource
+  (libretro/CMakeLists.txt:35-51, .ci/build-windows-cross.sh:61-80) and writes
+  it to Xenia-Edge/D3D12/dxil.dll when the copy there differs in size, then
+  points d3d12_runtime_path at that folder, where the D3D12 provider loads it
+  by full path (libretro/libretro.cpp:1437-1462, 1552-1559).
 
   No Xbox 360 system file is read. xboxkrnl, xam and xbdm are C++ HLE modules
   registered at startup (src/xenia/emulator.cc:395-404), the XEX2 retail and devkit AES
@@ -77,7 +111,8 @@ notes: |
 files:
   # -- Direct3D 12 runtime, Windows only --
 
-  - name: dxil.dll
+  - name: "dxil.dll"
+    mode: standalone
     path: "D3D12/dxil.dll"
     system: microsoft-xbox-360
     required: true
@@ -98,9 +133,11 @@ files:
       v1.9.2602.24, pinned at sha256
       cf658aacf070d3045e31b8f1f8a696c2945f37c1095019481ef7c513368db3b4;
       bin/arm64 on ARM64 builds. It is the single entry the installer extracts
-      from that archive.
+      from that archive. The libretro core writes its own embedded copy to
+      Xenia-Edge/D3D12/ in the system directory and loads it from there.
 
-  - name: D3D12Core.dll
+  - name: "D3D12Core.dll"
+    mode: standalone
     path: "D3D12/D3D12Core.dll"
     system: microsoft-xbox-360
     required: true
@@ -116,7 +153,8 @@ files:
       build/native/bin/arm64 on ARM64 builds. The package version has to match
       the exported number.
 
-  - name: D3D12SDKLayers.dll
+  - name: "D3D12SDKLayers.dll"
+    mode: standalone
     path: "D3D12/D3D12SDKLayers.dll"
     system: microsoft-xbox-360
     required: false
@@ -130,7 +168,8 @@ files:
 
   # -- Vulkan runtime, Windows only --
 
-  - name: vulkan-1.dll
+  - name: "vulkan-1.dll"
+    mode: standalone
     path: "Vulkan/vulkan-1.dll"
     system: microsoft-xbox-360
     required: false
@@ -147,7 +186,8 @@ files:
 
   # -- Visual C++ runtime, Windows only --
 
-  - name: vc_redist.x64.exe
+  - name: "vc_redist.x64.exe"
+    mode: standalone
     system: microsoft-xbox-360
     required: false
     validation: [signature]

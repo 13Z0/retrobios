@@ -1,47 +1,56 @@
 emulator: pokketstation
 type: libretro
 core_classification: official_port
-source: "https://github.com/mentalfoundry/pokketstation"
-upstream: "https://github.com/mentalfoundry/pokketstation"
-profiled_date: "2026-09-17"
-source_commit: "484933271b7d362e8e76f1121839c33e5d5ec83e"
-core_version: "v1.12"
+source: "https://github.com/mentalfoundry/Pokket"
+upstream: "https://github.com/mentalfoundry/Pokket"
+profiled_date: "2026-10-17"
+source_commit: "de736cee392567d58e842f96afe77f707e694ce5"
+core_version: "v1.23"
 display_name: "Sony - PocketStation (pokketstation)"
-cores: [pokketstation]
+cores: ["pokketstation", "pokket"]
 systems: [sony-pocketstation]
 
 notes: |
   PocketStation emulator with a portable C core (core/) shared by the libretro
-  core, an SDL2 desktop application and a PS Vita port. The libretro core
-  reports library_version "0.1"; the project version is the release tag,
-  v1.12 in the desktop frontend (frontends/desktop/main.c:40).
+  core, an SDL2 and Win32 desktop application built on Windows only
+  (frontends/desktop/CMakeLists.txt:1-16), a PS Vita port and an Emscripten build.
+  The libretro target is pokket_libretro (frontends/libretro/CMakeLists.txt:10-16).
+  Both the libretro core and the desktop application report POKKET_VERSION,
+  v1.23 from the project() line of the root CMakeLists.txt (CMakeLists.txt:4-5,
+  frontends/libretro/libretro.c:189-196).
 
-  load_bios opens <system>/pocketstation.bin, reads 16384 bytes and fails when
-  fewer are read; a longer file is accepted and truncated. psemu_load_bios
-  copies the image and rejects any size other than PSEMU_BIOS_SIZE.
-  retro_load_game returns false when load_bios fails, and psemu_run executes
-  nothing while no BIOS is loaded: there is no HLE and no embedded copy.
-  Content (.mcr, .mcd, .mcs, .pss, .bin, .gme) is identified by its bytes,
-  not by the extension: a 128 KB image is a full card, a 134976-byte file
-  opening with 123-456-STD is a DexDrive dump whose 3904-byte header is
-  skipped, anything else is tried as a single save then as a Title Sector
-  body (core/src/psemu.c:187-209, 301-317). Save RAM is the full 128 KB
-  flash image.
+  read_bios opens <system>/pocketstation.bin, reads 16384 bytes and fails when
+  fewer are read; a longer file is accepted and truncated
+  (frontends/libretro/libretro.c:545-559). psemu_load_bios copies the image and
+  rejects any size other than PSEMU_BIOS_SIZE (core/src/psemu.c:92-99).
+  retro_load_game returns false when read_bios fails, and psemu_run executes
+  nothing while no BIOS is loaded: there is no HLE and no embedded copy
+  (frontends/libretro/libretro.c:586-595, core/src/psemu.c:808-812). The IR
+  Link subsystem runs two units in one core and loads the same file into both
+  (frontends/libretro/libretro.c:652-693).
+  Content (.mcr, .mcs, .pss, .mcd, .bin, .gme) is identified by its bytes,
+  not by the extension: a 128 KB image is a full card, a file opening with
+  123-456-STD followed by a whole number of 8 KB blocks up to a full card
+  is a DexDrive dump whose 3904-byte header is skipped, anything else is tried
+  as a single save then as a Title Sector body (core/src/psemu.c:113-140,
+  211-234, 326-347). Save RAM is the full 128 KB flash image.
 
   psemu_settings_offsets_known hashes the loaded image with FNV-1a and compares
   it with 0xB2E46838, the retail 110 revision the project traced; a match
-  enables the date, time and volume override writes into kernel RAM. Any
-  16 KB image boots. Two mask ROM revisions are documented: 061, from
-  prototype hardware, and 110, the retail one; the ASCII tags at offsets
-  0x1DFC (C061 or C110) and 0x3FFC (J061 or J110) identify them
-  (docs/hardware-notes.md:782-792). SWI 0Fh FlashWriteSerial works on 061
-  and locks the CPU on 110.
+  enables the date, time and volume override writes into kernel RAM
+  (core/src/psemu.c:1150-1175). Any 16 KB image boots. Two mask ROM revisions
+  are documented: 061, from prototype hardware, and 110, the retail one; the
+  ASCII tags at offsets 0x1DFC (C061 or C110) and 0x3FFC (J061 or J110)
+  identify them. SWI 0Fh FlashWriteSerial works on 061 and locks the CPU on
+  110 (docs/hardware-notes.md:1046-1056).
 
   The desktop application takes the BIOS path from the command line, then
   from the bios= key of settings.cfg beside the executable, then falls back
-  to bios.bin beside the executable; File > Load BIOS opens any path
-  (frontends/desktop/main.c:630-668, 1000-1035, 2380-2451). The Vita frontend
-  loads no BIOS yet (frontends/vita/main.c:31-33).
+  to bios.bin beside the executable; File > Load BIOS opens any path and
+  writes it to settings.cfg (frontends/desktop/main.c:653-700, 1216-1254,
+  3016-3020, 3071-3091). The Vita frontend loads no BIOS yet
+  (frontends/vita/main.c:31-33), and the Emscripten build leaves the BIOS to
+  the hosting page (frontends/web/README.md:35).
 
 files:
   - name: "pocketstation.bin"
@@ -50,7 +59,7 @@ files:
     required: true
     validation: [size]
     standalone_path: "bios.bin"
-    source_ref: "frontends/libretro/libretro.c:178-196, frontends/libretro/libretro.c:206-208, core/src/psemu.c:90-97, core/src/psemu.c:474-477, core/src/psemu.c:854-879, core/include/psemu/psemu.h:19"
+    source_ref: "frontends/libretro/libretro.c:545-559, frontends/libretro/libretro.c:586-595, core/src/psemu.c:92-99, core/src/psemu.c:808-812, core/src/psemu.c:1150-1175, core/include/psemu/psemu.h:19"
     note: >
       Read from the frontend system directory. The desktop application reads
       the whole file and psemu_load_bios rejects any size other than 16384;

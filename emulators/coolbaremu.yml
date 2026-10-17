@@ -1,0 +1,44 @@
+emulator: "CoolbarEmu"
+type: libretro
+core_classification: official_port
+source: "https://github.com/AloysHF/CoolbarEmu"
+upstream: "https://github.com/AloysHF/CoolbarEmu"
+profiled_date: "2026-10-17"
+source_commit: "88e90440daab0bdc7bc141728b51841e0c730528"
+core_version: "0.2.0"
+display_name: "Coolbar (CoolbarEmu)"
+cores:
+  - "coolbaremu"
+systems:
+  - "coolbar"
+
+notes: |
+  Emulator for Coolbar/CBE applications of Chinese feature phones, written
+  in Rust. The workspace builds a standalone binary (crates/coolbaremu) and
+  the libretro core (crates/coolbaremu-libretro), the buildbot builds the
+  latter only (Cargo.toml:13). Guest ARM/Thumb code runs on the armv4t_emu
+  crate and the phone firmware services are reimplemented in
+  crates/coolbaremu-core/src/machine/services. Text is drawn with the unifont
+  crate compiled into the core (Cargo.toml:35,
+  crates/coolbaremu-core/src/machine/drawing.rs:1886).
+
+  The content is read whole by CbeArchive::load()
+  (crates/coolbaremu-core/src/cbe/archive.rs:68-73). Files next to the .cbe
+  (pay kernels, records, update data) are indexed as the guest filesystem
+  (crates/coolbaremu-core/src/machine/mod.rs:1022-1024,
+  crates/coolbaremu-core/src/machine/virtual_fs.rs:58-103); they belong to
+  the game.
+
+  The only system directory read is coolbaremu_orientation.csv, an optional
+  user list of CRC32, size and orientation for landscape titles missing from
+  the built-in table (crates/coolbaremu-libretro/src/libretro/api.rs:45,
+  crates/coolbaremu-libretro/src/libretro/api.rs:369-399,
+  crates/coolbaremu-core/src/orientation_profile.rs:31-54). A missing file is
+  logged and the built-in table applies.
+
+files: []
+
+exclusion_note: >
+  The firmware services are reimplemented in the core and the font is the
+  embedded unifont crate; the system directory holds only an optional
+  user-written orientation list.
