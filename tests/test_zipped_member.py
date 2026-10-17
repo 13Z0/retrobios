@@ -57,5 +57,37 @@ class ZippedMemberIsChecked(unittest.TestCase):
             self.assertNotIn("trs80.zip", names)
 
 
+
+class TheMemberIndexIsCachedByContent(unittest.TestCase):
+    """Each pipeline step that resolves a zipped_file decompressed all 54 845
+    archive members again, about 23 s a step."""
+
+    def test_a_second_process_reads_the_cache(self):
+        from unittest import mock  # noqa: PLC0415
+
+        import ziptools  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            archive = Path(tmp) / "set.zip"
+            with zipfile.ZipFile(archive, "w") as zf:
+                zf.writestr("small.rom", b"a" * 16)
+                zf.writestr("large.rom", b"b" * 64)
+            sha1 = hashlib.sha1(archive.read_bytes()).hexdigest()
+            db = {"files": {sha1: {"path": str(archive), "name": "set.zip"}}}
+            cache = str(Path(tmp) / "members.json")
+            first = ziptools.build_zip_contents_index(db, cache_path=cache)
+            ziptools._zip_contents_cache = None
+            with mock.patch.object(ziptools, "_members_md5",
+                                   side_effect=AssertionError("archive reopened")):
+                second = ziptools.build_zip_contents_index(db, cache_path=cache)
+                ziptools._zip_contents_cache = None
+                bounded = ziptools.build_zip_contents_index(db, max_entry_size=32,
+                                                            cache_path=cache)
+            ziptools._zip_contents_cache = None
+        self.assertEqual(first, second)
+        self.assertEqual(set(first), {hashlib.md5(b"a" * 16).hexdigest(),
+                                      hashlib.md5(b"b" * 64).hexdigest()})
+        self.assertEqual(set(bounded), {hashlib.md5(b"a" * 16).hexdigest()})
+
 if __name__ == "__main__":
     unittest.main()

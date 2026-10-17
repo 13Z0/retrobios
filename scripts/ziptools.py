@@ -10,6 +10,7 @@ import hashlib
 import os
 import re
 import stat
+import sys
 import tempfile
 import zipfile
 
@@ -59,15 +60,80 @@ def zip_member_crcs(path: str) -> frozenset[str]:
 
 _zip_contents_cache: tuple[tuple, dict] | None = None
 
-def build_zip_contents_index(db: dict, max_entry_size: int = 512 * 1024 * 1024) -> dict:
+# Member md5s per archive, keyed by the archive's sha1: content addressed, so
+# a cached answer is never stale. Every pipeline step that resolves a
+# zipped_file used to decompress the 54 845 members again, about 23 s each.
+MEMBER_CACHE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".cache", "zip_member_md5.json"
+)
+
+
+# No caller asks for a member above this bound, the index's default.
+MAX_HASHED_MEMBER = 512 * 1024 * 1024
+
+
+def _read_member_cache(path: str) -> dict[str, list[list]]:
+    import json  # noqa: PLC0415
+
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as exc:
+        print(f"warning: ignoring unreadable {path}: {exc}", file=sys.stderr)
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _write_member_cache(path: str, data: dict[str, list[list]]) -> None:
+    import json  # noqa: PLC0415
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fd, scratch = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, separators=(",", ":"))
+        os.replace(scratch, path)
+    except OSError as exc:
+        print(f"warning: could not write {path}: {exc}", file=sys.stderr)
+        if os.path.exists(scratch):
+            os.unlink(scratch)
+
+
+def _members_md5(path: str) -> list[list] | None:
+    """[md5, size] of each member, or None for an archive that cannot be read."""
+    members: list[list] = []
+    try:
+        with zipfile.ZipFile(path, "r") as zf:
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                if info.file_size > MAX_HASHED_MEMBER:
+                    members.append([None, info.file_size])
+                    continue
+                h = hashlib.md5()
+                with zf.open(info.filename) as inner:
+                    for chunk in iter(lambda: inner.read(65536), b""):
+                        h.update(chunk)
+                members.append([h.hexdigest(), info.file_size])
+    except (zipfile.BadZipFile, OSError) as exc:
+        print(f"warning: unreadable archive {path}: {exc}", file=sys.stderr)
+        return None
+    return members
+
+
+def build_zip_contents_index(
+    db: dict,
+    max_entry_size: int = 512 * 1024 * 1024,
+    cache_path: str | None = MEMBER_CACHE,
+) -> dict:
     """Build {inner_rom_md5: zip_file_sha1} for ROMs inside ZIP files.
 
-    Results are cached in-process; repeated calls with unchanged ZIPs return
-    the cached index.
+    Cached in-process, and on disk per archive sha1 when cache_path is set.
     """
     global _zip_contents_cache
 
-    # Build fingerprint from ZIP paths + mtimes for cache invalidation
     zip_entries: list[tuple[str, str]] = []
     for sha1, entry in db.get("files", {}).items():
         path = entry["path"]
@@ -84,20 +150,22 @@ def build_zip_contents_index(db: dict, max_entry_size: int = 512 * 1024 * 1024) 
     if _zip_contents_cache is not None and _zip_contents_cache[0] == fingerprint:
         return _zip_contents_cache[1]
 
+    cached = _read_member_cache(cache_path) if cache_path else {}
+    added = False
     index: dict[str, str] = {}
     for path, sha1 in zip_entries:
-        try:
-            with zipfile.ZipFile(path, "r") as zf:
-                for info in zf.infolist():
-                    if info.is_dir() or info.file_size > max_entry_size:
-                        continue
-                    h = hashlib.md5()
-                    with zf.open(info.filename) as inner:
-                        for chunk in iter(lambda: inner.read(65536), b""):
-                            h.update(chunk)
-                    index[h.hexdigest()] = sha1
-        except (zipfile.BadZipFile, OSError):
-            continue
+        members = cached.get(sha1)
+        if members is None:
+            members = _members_md5(path)
+            if members is None:
+                continue
+            cached[sha1] = members
+            added = True
+        for md5, size in members:
+            if md5 is not None and size <= max_entry_size:
+                index[md5] = sha1
+    if added and cache_path:
+        _write_member_cache(cache_path, cached)
 
     _zip_contents_cache = (fingerprint, index)
     return index
