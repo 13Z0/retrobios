@@ -2423,6 +2423,31 @@ class ANameWithItsDirectoryIsTheDestination(unittest.TestCase):
             self.assertEqual((path, status), ("bios/BBK/GAM4980/gam4980/E.BIN", "path_exact"))
 
 
+class AnUnreadableDatabaseStopsTheScan(unittest.TestCase):
+    """A database.json left with merge markers read as an absent one: every
+    release-asset entry silently left the rewritten database, then the
+    manifests."""
+
+    def test_a_corrupt_database_is_not_an_empty_one(self):
+        from unittest import mock
+
+        from scripts import generate_db
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = Path(directory) / "database.json"
+            path.write_text("<<<<<<< HEAD\n{}\n")
+            with mock.patch.object(generate_db, "_load_gitignored_large_files",
+                                   return_value={"bios/big.bin"}):
+                with self.assertRaises(SystemExit):
+                    generate_db._preserve_large_file_entries({}, str(path))
+                self.assertEqual(
+                    generate_db._preserve_large_file_entries(
+                        {}, str(Path(directory) / "absent.json")
+                    ),
+                    0,
+                )
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

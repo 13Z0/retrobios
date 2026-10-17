@@ -319,8 +319,17 @@ def _preserve_large_file_entries(files: dict, db_path: str) -> int:
     try:
         with open(db_path) as f:
             existing_db = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
         return 0
+    except json.JSONDecodeError as e:
+        # An unreadable database is not an absent one: rewriting it from a
+        # checkout without the release assets would drop every entry they
+        # hold, and the manifests regenerated from it would omit them.
+        raise SystemExit(
+            f"{db_path} is not valid JSON ({e}); restore it from git "
+            "or regenerate it on a checkout holding the release assets before "
+            "scanning again"
+        ) from e
 
     # A path the scan just claimed holds known bytes. An older entry naming
     # the same path describes a revision that is no longer there, and keeping
