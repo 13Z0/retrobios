@@ -602,10 +602,29 @@ class TestCompare(unittest.TestCase):
         result = upstream.compare(repo, "a", "b", self.dir)
         self.assertEqual(upstream.find_renamed(result, "old.c"), "new.c")
 
-    def test_commits_touching_counts_entries(self):
-        self.payload = [{"sha": "1"}, {"sha": "2"}, {"sha": "3"}]
+    def test_commits_touching_counts_the_commits_after_the_pin(self):
+        """Listing from the pin counted its history: freeintv's pin on HEAD
+        scored 26 commits of drift."""
+        served = {
+            "commits/base": {"commit": {"committer": {"date": "2026-01-01T00:00:00Z"}}},
+        }
+        listing = [{"sha": "1"}, {"sha": "2"}, {"sha": "base"}]
+        seen: list[str] = []
+
+        def answer(url):
+            seen.append(url)
+            for key, value in served.items():
+                if url.endswith(key):
+                    return value
+            return listing
+
+        upstream._http_json = answer
         self.assertEqual(
-            upstream.commits_touching(self.repo, "a.c", "base", self.dir), 3
+            upstream.commits_touching(self.repo, "a.c", "base", self.dir, head="tip"), 2
+        )
+        self.assertTrue(any("since=2026-01-01" in url for url in seen))
+        self.assertEqual(
+            upstream.commits_touching(self.repo, "a.c", "tip", self.dir, head="tip"), 0
         )
 
 

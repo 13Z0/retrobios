@@ -667,22 +667,59 @@ def list_tree(
     return paths, bool(payload.get("truncated"))
 
 
+def commit_date(repo: Repo, sha: str, cache_dir: str, offline: bool = False) -> str | None:
+    """When a revision was committed, as the forge reports it (ISO 8601)."""
+    if repo.family == "gitlab":
+        payload = _api(
+            f"{repo.api_base}/projects/{_project(repo)}/repository/commits/{sha}",
+            cache_dir, offline,
+        )
+        value = payload.get("committed_date") if isinstance(payload, dict) else None
+        return value if isinstance(value, str) else None
+    if repo.family == "github":
+        url = f"{repo.api_base}/repos/{repo.slug}/commits/{sha}"
+    else:
+        url = f"{repo.api_base}/repos/{repo.slug}/git/commits/{sha}"
+    stamp = _gitea_commit_date(_api(url, cache_dir, offline))
+    return stamp.isoformat() if stamp is not None else None
+
+
 def commits_touching(
-    repo: Repo, path: str, base: str, cache_dir: str, offline: bool = False
+    repo: Repo, path: str, base: str, cache_dir: str, offline: bool = False,
+    head: str | None = None,
 ) -> int:
-    """Commits touching one path since a revision."""
+    """Commits touching one path since a revision, on the default branch.
+
+    Listing from the pin counted the history before it: a profile pinned on
+    HEAD scored the age of its files as drift. The count is of the commits
+    after the pin's date that touch the path, the pin itself excluded.
+    """
+    if head is not None and head == base:
+        return 0
+    since = commit_date(repo, base, cache_dir, offline)
+    if since is None:
+        return 0
     quoted = urllib.parse.quote(path)
+    stamp = urllib.parse.quote(since)
     if repo.family == "gitlab":
         url = (
             f"{repo.api_base}/projects/{_project(repo)}"
-            f"/repository/commits?path={quoted}&per_page=100"
+            f"/repository/commits?path={quoted}&since={stamp}&per_page=100"
         )
     elif repo.family == "github":
         url = (
             f"{repo.api_base}/repos/{repo.slug}/commits"
-            f"?path={quoted}&sha={base}&per_page=100"
+            f"?path={quoted}&since={stamp}&per_page=100"
         )
     else:
-        url = f"{repo.api_base}/repos/{repo.slug}/commits?path={quoted}&limit=100"
+        url = (
+            f"{repo.api_base}/repos/{repo.slug}/commits"
+            f"?path={quoted}&since={stamp}&limit=100"
+        )
     payload = _api(url, cache_dir, offline)
-    return len(payload) if isinstance(payload, list) else 0
+    if not isinstance(payload, list):
+        return 0
+    return sum(
+        1 for entry in payload
+        if isinstance(entry, dict) and (entry.get("sha") or entry.get("id")) != base
+    )

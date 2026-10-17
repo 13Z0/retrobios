@@ -3367,7 +3367,8 @@ def _print_triage(args, selected: dict, reports: list[ProfileReport]) -> None:
             paths = _cited_paths(report)
             for path in paths[:TRIAGE_PATH_SAMPLE]:
                 commits += upstream.commits_touching(
-                    repo, path, report.pin, args.cache_dir, args.offline
+                    repo, path, report.pin, args.cache_dir, args.offline,
+                    head=report.head,
                 )
             if len(paths) > TRIAGE_PATH_SAMPLE:
                 print(
