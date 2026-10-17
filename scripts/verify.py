@@ -900,21 +900,24 @@ def verify_platform(
     )
     zip_contents = build_zip_contents_index(db) if has_zipped else {}
 
-    base_dest = config.get("base_destination", "")
-    slot_overrides = {
-        (key[len(base_dest) + 1:] if base_dest and key.startswith(f"{base_dest}/") else key): path
-        for key, path in slots.pack_overrides(
-            config, emu_profiles or {}, db, zip_contents, data_dir_registry,
-            target_cores=target_cores,
-        ).items()
-    }
-
-    # Build HLE + validation indexes from emulator profiles
+    # Loaded before the slot overrides: a caller passing no profiles (the
+    # README's coverage) got no override and reported a discrepancy at a slot
+    # the pack settles.
     profiles = (
         emu_profiles
         if emu_profiles is not None
         else load_emulator_profiles(emulators_dir)
     )
+    base_dest = config.get("base_destination", "")
+    slot_overrides = {
+        (key[len(base_dest) + 1:] if base_dest and key.startswith(f"{base_dest}/") else key): path
+        for key, path in slots.pack_overrides(
+            config, profiles, db, zip_contents, data_dir_registry,
+            target_cores=target_cores,
+        ).items()
+    }
+
+    # Build HLE + validation indexes from emulator profiles
     # Ground truth comes from the emulators the platform runs. A standalone
     # profile that loads a same-named file of its own (ZEsarUX's 48K
     # cpc6128.rom against cap32's 32K one) has nothing to say about a

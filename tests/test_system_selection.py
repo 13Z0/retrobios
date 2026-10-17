@@ -197,5 +197,28 @@ class EmulatorVerifyReadsNoArchiveItDoesNotNeed(unittest.TestCase):
             result = verify.verify_emulator(["handy"], str(REPO_ROOT / "emulators"), db)
         self.assertTrue(result)
 
+
+class CoverageWithoutProfilesMatchesTheCli(unittest.TestCase):
+    """verify_platform built the slot overrides from the profiles the caller
+    passed, before loading them: the README's coverage passes none and listed
+    a neocdz.zip discrepancy the pack and the CLI do not have."""
+
+    def test_omitting_profiles_gives_the_same_report(self):
+        import verify  # noqa: PLC0415
+
+        if not (REPO_ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        db = common.load_database(str(REPO_ROOT / "database.json"))
+        config = common.load_platform_config("retroarch", str(REPO_ROOT / "platforms"))
+        emulators = str(REPO_ROOT / "emulators")
+        bare = verify.verify_platform(config, db, emulators)
+        full = verify.verify_platform(config, db, emulators,
+                                      common.load_emulator_profiles(emulators))
+
+        def discrepancies(result):
+            return sorted(d["name"] for d in result["details"] if d.get("discrepancy"))
+
+        self.assertEqual(discrepancies(bare), discrepancies(full))
+
 if __name__ == "__main__":
     unittest.main()
