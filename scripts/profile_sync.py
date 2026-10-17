@@ -2688,15 +2688,29 @@ def _set_pin(text: str, document: dict, field: str, value: str, after: str) -> s
     return insert_after_line(text, after, f'{field}: "{value}"')
 
 
-def _git_history(path: Path) -> list[str]:
-    """Commits touching the profile, newest first, empty outside a repo."""
-    result = subprocess.run(
-        ["git", "log", "--format=%H", "--", path.name],
-        cwd=path.parent, capture_output=True, text=True, check=False,
-    )
-    if result.returncode != 0:
-        return []
-    return result.stdout.split()
+def _git_history(path: Path) -> list[str] | None:
+    """Commits touching the profile, newest first; None when git cannot say.
+
+    An untracked profile has no history. A git that fails (no repository,
+    dubious ownership, git missing) has not answered, and reading that as
+    "nothing written under an older pin" let a bump through.
+    """
+    def git(*argv: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["git", *argv], cwd=path.parent, capture_output=True, text=True, check=False,
+        )
+
+    try:
+        result = git("log", "--format=%H", "--", path.name)
+        if result.returncode == 0:
+            return result.stdout.split()
+        # A repository with no commit yet holds nothing written earlier.
+        inside = git("rev-parse", "--is-inside-work-tree")
+        if inside.stdout.strip() == "true" and git("rev-parse", "-q", "--verify", "HEAD").returncode:
+            return []
+    except OSError:
+        pass
+    return None
 
 
 def _git_file_at(path: Path, sha: str) -> dict | None:
@@ -2936,6 +2950,8 @@ def realign_prose(
         and document[f"{field}_commit"]
     ]
     history = _git_history(path)
+    if history is None:
+        return [f"read again: {path.name}: git history unreadable"]
     if not history:
         return []
 
@@ -2944,11 +2960,15 @@ def realign_prose(
     alive = dict.fromkeys(fields, True)
     intro: dict[str, str | None] = dict.fromkeys(fields)
     revisions: list[tuple[str, dict]] = []
+    # Fields whose writing pin lies past a revision that cannot be read:
+    # where their text came in is unknown, so they are not moved.
+    unknown: dict[str, str] = {}
     for sha in history:
         if not any(alive.values()):
             break
         past = _git_file_at(path, sha)
         if past is None:
+            unknown = {field: sha for field, live in alive.items() if live}
             break
         revisions.append((sha, past))
         values = _scalar_values(past)
@@ -2963,6 +2983,12 @@ def realign_prose(
     messages: list[str] = []
     jobs: list[tuple[Citation, dict]] = []
     for citation in citations:
+        if citation.field in unknown:
+            messages.append(
+                f"read again: {citation.field}: {citation.ref} "
+                f"(revision {unknown[citation.field][:8]} unreadable)"
+            )
+            continue
         intro_sha = intro.get(citation.field)
         if intro_sha is None:
             # The scalar is not committed yet: written now, under this pin.

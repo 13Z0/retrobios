@@ -2283,6 +2283,9 @@ class TestWriteDryRun(unittest.TestCase):
         self.dir = Path(self.tmp.name)
         self.path = self.dir / "p.yml"
         self.path.write_text(SAMPLE, encoding="utf-8")
+        # Profiles live in a repository: git answers "no history" for an
+        # untracked file, where outside one it answers nothing at all.
+        subprocess.run(["git", "init", "-q"], cwd=self.dir, check=True)
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -3587,6 +3590,23 @@ class TestRealignProse(unittest.TestCase):
             self.path, self.tmp.name, dry_run=True
         )
         self.assertTrue(any("would recale" in m for m in messages))
+        self.assertIn("(a.c:10)", self.path.read_text())
+
+    def test_an_unreadable_history_blocks_rather_than_passes(self):
+        """git failing (no repository, dubious ownership) read as "nothing
+        written under an older pin" and let a bump through."""
+        self.path.write_text(PROSE_SAMPLE, encoding="utf-8")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertEqual(messages, ["read again: p.yml: git history unreadable"])
+
+    def test_an_unreadable_revision_stops_the_move(self):
+        self._repo_with_advanced_pin()
+        self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.files[("pin", "a.c")] = ["x"] * 13 + ["subject"]
+        with mock.patch.object(profile_sync, "_git_file_at", return_value=None):
+            messages = profile_sync.realign_prose(self.path, self.tmp.name)
+        self.assertTrue(messages)
+        self.assertTrue(all(m.startswith("read again: notes:") for m in messages))
         self.assertIn("(a.c:10)", self.path.read_text())
 
     def test_scalar_written_at_the_current_pin_is_left_alone(self):
