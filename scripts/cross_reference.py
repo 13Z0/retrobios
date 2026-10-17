@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    require_platform,
     _norm_system_id,
     directory_members,
     get_mame_clone_map,
@@ -642,6 +643,8 @@ def main():
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
+    if args.platform:
+        require_platform(args.platform, args.platforms_dir)
 
     profiles = load_emulator_profiles(args.emulators_dir)
     if args.emulator:

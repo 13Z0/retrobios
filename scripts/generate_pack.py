@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
+    require_platform,
     apply_target_overrides,
     archive_entry,
     profiles_for_systems,
@@ -2846,6 +2847,9 @@ def main():
     )
     args = parser.parse_args()
     packresolve.set_offline(bool(args.offline))
+    if args.platform:
+        for name in args.platform.split(","):
+            require_platform(name.strip(), args.platforms_dir)
 
     _refuse_unapplied_flags(args, parser)
     if args.target:

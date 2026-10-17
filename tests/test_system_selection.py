@@ -89,5 +89,26 @@ class ADeclinedBuildIsAFailure(unittest.TestCase):
             self.assertEqual([p for p in os.listdir(tmp) if p.endswith(".zip")], [])
 
 
+
+class AMistypedPlatformIsNamed(unittest.TestCase):
+    """verify and cross_reference ended a typo on a traceback; generate_pack
+    ran its whole build first and then said "no pack for batocra"."""
+
+    def test_every_cli_names_the_platform_it_meant(self):
+        out = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        out.rmdir()
+        for script, extra in (("verify.py", []), ("cross_reference.py", []),
+                              ("generate_pack.py", ["--offline", "--output-dir", str(out)])):
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--platform", "batocra", *extra],
+                    capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=300,
+                    check=False,
+                )
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr, proc.stderr)
+                self.assertIn("Did you mean 'batocera'?", proc.stderr)
+        self.assertFalse(out.exists())
+
 if __name__ == "__main__":
     unittest.main()

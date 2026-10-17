@@ -350,6 +350,24 @@ def list_registered_platforms(
     return platforms
 
 
+def require_platform(name: str, platforms_dir: str = "platforms") -> None:
+    """Exit with a usable message when no platform answers to a name.
+
+    A typo used to end in a traceback (verify, cross_reference) or in "no
+    pack for batocra" after the whole build ran (generate_pack).
+    """
+    if os.path.exists(os.path.join(platforms_dir, f"{name}.yml")):
+        return
+    import difflib  # noqa: PLC0415
+
+    known = list_registered_platforms(platforms_dir, include_archived=True)
+    close = difflib.get_close_matches(name, known, n=1)
+    hint = f" Did you mean '{close[0]}'?" if close else ""
+    raise SystemExit(
+        f"ERROR: unknown platform '{name}'.{hint}\nKnown platforms: {', '.join(known)}"
+    )
+
+
 def _target_overrides(platform_name: str, targets_dir: str) -> dict:
     overrides_file = os.path.join(targets_dir, "_overrides.yml")
     if not os.path.exists(overrides_file):

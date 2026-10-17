@@ -34,6 +34,7 @@ import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    require_platform,
     archive_entry,
     archive_members,
     profiles_for_systems,
@@ -2064,6 +2065,8 @@ def main():
     )
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
+    if args.platform:
+        require_platform(args.platform, args.platforms_dir)
 
     requested_regions: list[str] = []
     if getattr(args, "region", None):
