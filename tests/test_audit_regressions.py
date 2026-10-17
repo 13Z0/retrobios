@@ -3623,5 +3623,25 @@ class AFileCardSaysAllItKnows(unittest.TestCase):
         self.assertNotIn("more", text)
 
 
+
+class EmulatorPagesStateTheirDataForMachines(unittest.TestCase):
+    """Every emulator page's JSON-LD differed only by name and url."""
+
+    def test_source_pin_date_and_files(self):
+        from scripts.generate_site import emulator_structured_data
+
+        data = emulator_structured_data({
+            "emulator": "DuckStation", "source": "https://github.com/stenzek/duckstation",
+            "source_commit": "4122fed9", "profiled_date": "2026-03-23",
+            "files": [{"name": "scph5501.bin", "md5": "490F666E", "sha1": ["a" * 40]},
+                      {"name": "free.bin"}],
+        })
+        self.assertEqual(data["about"]["codeRepository"], "https://github.com/stenzek/duckstation")
+        self.assertEqual(data["about"]["version"], "4122fed9")
+        self.assertEqual(data["dateModified"], "2026-03-23")
+        self.assertEqual(data["hasPart"][0]["identifier"], ["sha1:" + "a" * 40, "md5:490f666e"])
+        self.assertNotIn("identifier", data["hasPart"][1])
+
+
 if __name__ == "__main__":
     unittest.main()

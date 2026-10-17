@@ -1209,6 +1209,54 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
 
 
+# Structured data a page generator knows beyond its text, by page path
+# relative to docs/: read by decorate_markdown_pages.
+PAGE_DATA: dict[str, dict] = {}
+
+
+def emulator_structured_data(profile: dict) -> dict:
+    """What an emulator page states, for a reader of its JSON-LD.
+
+    The block said only the page name: a crawler could not learn which files
+    the core loads, their hashes, the source read or when.
+    """
+    data: dict = {}
+    source = profile.get("source")
+    if isinstance(source, dict):
+        source = next(iter(source.values()), "")
+    commit = profile.get("source_commit")
+    if isinstance(commit, dict):
+        commit = next(iter(commit.values()), "")
+    if source:
+        about = {
+            "@type": "SoftwareSourceCode",
+            "name": str(profile.get("emulator", "")),
+            "codeRepository": str(source),
+        }
+        if commit:
+            about["version"] = str(commit)
+        data["about"] = about
+    if profile.get("profiled_date"):
+        data["dateModified"] = str(profile["profiled_date"])
+    parts = []
+    for f in profile.get("files") or []:
+        if not isinstance(f, dict) or not f.get("name"):
+            continue
+        identifiers = []
+        for field in ("sha1", "sha256", "md5", "crc32"):
+            values = f.get(field)
+            for value in values if isinstance(values, list) else [values]:
+                if value:
+                    identifiers.append(f"{field}:{str(value).lower()}")
+        part = {"@type": "CreativeWork", "name": str(f.get("path") or f["name"])}
+        if identifiers:
+            part["identifier"] = identifiers
+        parts.append(part)
+    if parts:
+        data["hasPart"] = parts
+    return data
+
+
 def decorate_markdown_pages(docs: Path) -> None:
     """Add per-page descriptions and machine-readable structured data."""
     for path in sorted(docs.rglob("*.md")):
@@ -1244,6 +1292,7 @@ def decorate_markdown_pages(docs: Path) -> None:
                 "name": SITE_NAME,
                 "url": SITE_URL,
             },
+            **PAGE_DATA.get(relative.as_posix(), {}),
         }
         structured_json = json.dumps(
             structured, ensure_ascii=False, separators=(",", ":")
@@ -3849,6 +3898,7 @@ def main():
     }
     for name, profile in public_profiles.items():
         page = generate_emulator_page(name, profile, db, consumers, suppl_names)
+        PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)
 
     # Generate cross-reference page
