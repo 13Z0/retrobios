@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -241,10 +241,10 @@
       }
     }
   ],
-  "total_files": 7751,
-  "total_size": 7963360255,
-  "pack_files": 7753,
-  "pack_size": 7963360255,
+  "total_files": 7740,
+  "total_size": 7954553855,
+  "pack_files": 7742,
+  "pack_size": 7954553855,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -67887,7 +67887,7 @@
       ]
     },
     {
-      "dest": "NMS8245SystemROM1.08.bin",
+      "dest": "openmsx/share/systemroms/NMS8245SystemROM1.08.bin",
       "sha1": "cc57c1dcd7249ea9f8e2547244592e7d97308ed0",
       "sha256": "8b7e32bbe42dbb77faee79ed4fc0295ecc8330b78e04c1f606a40e5d7ef20011",
       "size": 65536,
@@ -67901,7 +67901,7 @@
       ]
     },
     {
-      "dest": "phc-70fd2_basickun.rom",
+      "dest": "openmsx/share/systemroms/phc-70fd2_basickun.rom",
       "sha1": "22b3191d865010264001b9d896186a9818478a6b",
       "sha256": "d3cee90a6be5e483e9bec92dff5a3940c0fd8c3e473218fa5fde0a431b627211",
       "size": 16384,
@@ -67915,7 +67915,7 @@
       ]
     },
     {
-      "dest": "ide250.dat",
+      "dest": "openmsx/share/systemroms/ide250.dat",
       "sha1": "93e41c7d479bc90c1d1f6d081af20fd9924b8ada",
       "sha256": "0c5a1c9c7cd1d45fad3468a7eebcfa6d77b9f8231d48d99dc5bd13beedd1c07c",
       "size": 65536,
@@ -67929,7 +67929,7 @@
       ]
     },
     {
-      "dest": "svi-3x8_v111.rom",
+      "dest": "openmsx/share/systemroms/svi-3x8_v111.rom",
       "sha1": "10349ce675f6d6d47f0976e39cb7188eba858d89",
       "sha256": "407b47ff8c1ed31d8050600233ef8b70c495f5176d86f98511c4a0cee438f559",
       "size": 32768,
@@ -71187,6 +71187,14 @@
       ],
       "systems": [
         "segastv"
+      ],
+      "regions": [
+        "asia-pal",
+        "europe",
+        "south-korea"
+      ],
+      "region_groups": [
+        "sega-stv"
       ]
     },
     {
@@ -86527,160 +86535,6 @@
       ],
       "systems": [
         "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "yrw801.rom",
-      "sha1": "32760893ce06dbe3930627755ba065cc3d8ec6ca",
-      "sha256": "0481e861f639fa3d6a64a75b735035a54b0875d57aaae33fdbe400146c80423f",
-      "size": 2097152,
-      "repo_path": "bios/Microsoft/MSX/openmsx/yrw801.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_basic-bios2p.rom",
-      "sha1": "f4433752d3bf876bfefb363c749d4d2e08a218b6",
-      "sha256": "cc5b5b461e24be70ebea4dc2762ec98c2e6db850acf646eb88450ab6354d8b26",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_basic-bios2p.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_fmbasic.rom",
-      "sha1": "aad42ba4289b33d8eed225d42cea930b7fc5c228",
-      "sha256": "29325437196ec7fc7b39b25a87f6981805bd8cb302acf4708f504fb1fb89108b",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_fmbasic.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_msx2psub.rom",
-      "sha1": "fe0254cbfc11405b79e7c86c7769bd6322b04995",
-      "sha256": "36000685128f95ff515a128973f8d439116c1a1a8e38c1777293a428894434a2",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2PEXT.ROM",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_kanjibasic.rom",
-      "sha1": "dcc3a67732aa01c4f2ee8d1ad886444a4dbafe06",
-      "sha256": "9fb7ef5003fcb953f46ffe5bab399832d8175f53cccb763d8c454a91bc2429fd",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_kanjibasic.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_disk.rom",
-      "sha1": "7ed7c55e0359737ac5e68d38cb6903f9e5d7c2b6",
-      "sha256": "bbddc2492147a3e1c3585962cae02036ef269dcdc99038e613534cb2b8334460",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_disk.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_firmware.rom",
-      "sha1": "3330d9b6b76e3c4ccb7cf252496ed15d08b95d3f",
-      "sha256": "38cde34f03bb7d134acd1d013eccbac3a447f570039ab1c37fa4b222e59cfc61",
-      "size": 2097152,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_firmware.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1wsx_kanjifont.rom",
-      "sha1": "5aff2d9b6efc723bc395b0f96f0adfa83cc54a49",
-      "sha256": "d87ce758a7171870a2a3e7893e09cbba2bd68ee70b4d0f0e49dd2ecd60aafdd1",
-      "size": 262144,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_kanjifont.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "fs-a1gt_firmware.rom",
-      "sha1": "e779c338eb91a7dea3ff75f3fde76b8af22c4a3a",
-      "sha256": "7eeacb763c39de7185b1ab8bbf9c625f1c5717444e20ea03d3ee2172dfeefe9f",
-      "size": 4194304,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1gt_firmware.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "px-7_basic-bios1.rom",
-      "sha1": "302afb5d8be26c758309ca3df611ae69cced2821",
-      "sha256": "413a2b601a94b3792e054be2439cc77a1819cceadbfa9542f88d51c7480f2ef0",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/CLK/msx-japanese.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "px-7_pbasic.rom",
-      "sha1": "665d805f96616e1037f1823050657b7849899283",
-      "sha256": "6f3a760be58bace2bce20496ffc7d43e0dbe7d229ac14453f2194fcc7059d3ab",
-      "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/openmsx/px-7_pbasic.rom",
-      "cores": [
-        "openmsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
       ]
     },
     {

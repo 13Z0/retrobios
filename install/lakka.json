@@ -59560,6 +59560,14 @@
       "cores": [
         "beetle_saturn",
         "mednafen_stv"
+      ],
+      "regions": [
+        "asia-pal",
+        "europe",
+        "south-korea"
+      ],
+      "region_groups": [
+        "sega-stv"
       ]
     },
     {

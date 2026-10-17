@@ -5,7 +5,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "",
   "detect": [
     {
@@ -75589,6 +75589,14 @@
       "cores": [
         "beetle_saturn",
         "mednafen_stv"
+      ],
+      "regions": [
+        "asia-pal",
+        "europe",
+        "south-korea"
+      ],
+      "region_groups": [
+        "sega-stv"
       ]
     },
     {

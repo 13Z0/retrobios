@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -3106,7 +3106,8 @@
       "regions": [
         "brazil",
         "europe",
-        "north-america"
+        "north-america",
+        "oceania"
       ],
       "region_groups": [
         "sega-mastersystem"

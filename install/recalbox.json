@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -6690,6 +6690,14 @@
       "repo_path": "bios/Sega/ST-V/epr-17954a.ic8",
       "cores": null,
       "systems": [
+        "stv"
+      ],
+      "regions": [
+        "asia-pal",
+        "europe",
+        "south-korea"
+      ],
+      "region_system_groups": [
         "stv"
       ]
     },
@@ -38058,6 +38066,14 @@
       ],
       "systems": [
         "stv"
+      ],
+      "regions": [
+        "asia-pal",
+        "europe",
+        "south-korea"
+      ],
+      "region_groups": [
+        "sega-stv"
       ]
     },
     {
