@@ -158,6 +158,48 @@ def split_source_ref(ref: str) -> list[RefPart]:
     return parts
 
 
+def ref_prose_text(ref: str) -> str:
+    """The text of a source_ref its parts do not read, positions kept.
+
+    split_source_ref keeps the located head of each chunk and drops the
+    rest: annotations, and prose after the head. A citation written there
+    (`(MACHINE_IS_SPECTRUM_128_P2 covers Pentagon, src/cpu.h:545)`, or the
+    second half of `pce.cpp:477-483 + huc.cpp:284-304`) was never anchored.
+    Every character a part reads is blanked, so the prose scanner finds
+    the rest at the offsets it has in the scalar.
+    """
+    masked = list(ref)
+    depth = 0
+    outside: list[int] = []
+
+    def settle() -> None:
+        text = "".join(ref[i] for i in outside)
+        head = text.strip().split(" ", 1)[0] if text.strip() else ""
+        located = bool(head) and bool(
+            _LOCATED_RE.match(head) or _BARE_RANGE_RE.match(head)
+        )
+        blank = outside
+        if located:
+            first = next(k for k, i in enumerate(outside) if not ref[i].isspace())
+            blank = outside[first:first + len(head)]
+        for i in blank:
+            masked[i] = " "
+        outside.clear()
+
+    for index, char in enumerate(ref):
+        if char == "(":
+            depth += 1
+        if depth == 0:
+            if char in ",;":
+                settle()
+            else:
+                outside.append(index)
+        if char == ")":
+            depth = max(0, depth - 1)
+    settle()
+    return "".join(masked)
+
+
 def split_outside_parentheses(text: str) -> list[str]:
     """Split on commas and semicolons, ignoring those inside an annotation.
 
@@ -676,6 +718,15 @@ def collect_citations(document: dict, text: str | None = None) -> list[Citation]
                     field=field, kind="ref", ref=ref, entry=holder,
                     holder=holder, key=key, label=label,
                 ))
+            if isinstance(value, str):
+                for line, path_span, spans, parts, run, wrapped in _prose_runs(
+                    ref_prose_text(value), known
+                ):
+                    citations.append(Citation(
+                        field=field, kind="prose", ref=run, holder=holder,
+                        key=key, line=line, path_span=path_span, spans=spans,
+                        parts=parts, wrapped=wrapped,
+                    ))
             continue
         for line, path_span, spans, parts, run, wrapped in _prose_runs(
             value, known

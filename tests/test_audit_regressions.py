@@ -3003,3 +3003,40 @@ class ProseCitationsUseTheTrackedForm(unittest.TestCase):
             for match in self.UNTRACKED.finditer(line)
         ]
         self.assertEqual(found, [])
+
+
+class ACitationInsideASourceRefIsTracked(unittest.TestCase):
+    """split_source_ref reads each chunk's located head and drops the rest.
+    zesarux cited src/cpu.h:545 inside an annotation, four lines off at its
+    pin, and pce-emu joined two citations with ` + `: neither was anchored."""
+
+    def citations(self, ref: str) -> list[str]:
+        from scripts.profile_sync import collect_citations
+
+        document = {"files": [{"name": "x.rom", "source_ref": ref}]}
+        return [(c.kind, c.ref) for c in collect_citations(document)]
+
+    def test_an_annotation_citation_is_read_as_prose(self):
+        found = self.citations(
+            "src/cpu.c:3381-3383, src/utils.c:4100 "
+            "(MACHINE_IS_SPECTRUM_128_P2 covers Pentagon, src/cpu.h:549)"
+        )
+        self.assertIn(("prose", "src/cpu.h:549"), found)
+        self.assertNotIn(("prose", "src/cpu.c:3381-3383"), found)
+
+    def test_a_joined_citation_is_read_as_prose(self):
+        found = self.citations(
+            "src/pce_fast/pce.cpp:477-483 + src/pce_fast/huc.cpp:284-304"
+        )
+        self.assertIn(("prose", "src/pce_fast/huc.cpp:284-304"), found)
+        self.assertEqual([c for c in found if c[0] == "prose"],
+                         [("prose", "src/pce_fast/huc.cpp:284-304")])
+
+    def test_offsets_match_the_scalar(self):
+        from scripts.profile_sync import ref_prose_text
+
+        ref = "a.c:1-2, 5 (see b.c:7)"
+        masked = ref_prose_text(ref)
+        self.assertEqual(len(masked), len(ref))
+        self.assertEqual(masked.index("b.c:7"), ref.index("b.c:7"))
+        self.assertNotIn("a.c", masked)

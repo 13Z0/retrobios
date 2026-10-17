@@ -202,7 +202,7 @@ files:
     required: true
     bundled: true
     system: sinclair-zx-spectrum
-    source_ref: "src/cpu.c:3381-3383, src/utils.c:4100 (MACHINE_IS_SPECTRUM_128_P2 covers Pentagon, src/cpu.h:545)"
+    source_ref: "src/cpu.c:3381-3383, src/utils.c:4100 (MACHINE_IS_SPECTRUM_128_P2 covers Pentagon, src/cpu.h:549)"
 
   - name: "se.rom"
     sha1: "14321f2092b8af21b52b35c1518d9a753d6618d4"
@@ -346,7 +346,7 @@ files:
     required: true
     bundled: true
     system: timex-tc2048
-    source_ref: "src/cpu.c:3418-3420, src/utils.c:4098 (TC2048 falls under MACHINE_IS_SPECTRUM_16_48, src/cpu.h:543)"
+    source_ref: "src/cpu.c:3418-3420, src/utils.c:4098 (TC2048 falls under MACHINE_IS_SPECTRUM_16_48, src/cpu.h:547)"
 
   - name: "ts2068.rom"
     sha1: "34cd8113bf75b65a4da6eea355f9d46ad635f7e4"
