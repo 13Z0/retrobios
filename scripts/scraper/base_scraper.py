@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -12,6 +13,8 @@ import yaml
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable
+
 from common import write_text_atomic, yaml_load
 
 
@@ -122,6 +125,40 @@ def _read_limited(resp: object, max_bytes: int = MAX_RESPONSE_SIZE) -> bytes:
     return b"".join(chunks)
 
 
+# Statuses a forge answers when it asks the client to slow down.
+_RETRYABLE = frozenset({429, 502, 503, 504})
+
+
+def fetch_bytes(
+    url: str,
+    headers: dict[str, str] | None = None,
+    attempts: int = 5,
+    sleep: Callable[[float], None] = time.sleep,
+) -> bytes:
+    """GET a URL, waiting out a rate limit instead of failing the scrape.
+
+    GitLab answers 429 after about a hundred raw-file reads, and Recalbox's
+    cores live in one system.ini per system: the scrape died midway. The
+    wait is the server's Retry-After when it gives one, else 2, 4, 8, 16 s.
+    """
+    request = urllib.request.Request(
+        url, headers={"User-Agent": "retrobios-scraper/1.0", **(headers or {})}
+    )
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(request, timeout=30) as resp:
+                return _read_limited(resp)
+        except urllib.error.HTTPError as e:
+            if e.code not in _RETRYABLE or attempt == attempts - 1:
+                raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+            retry_after = e.headers.get("Retry-After", "") if e.headers else ""
+            delay = float(retry_after) if retry_after.isdigit() else 2.0 ** (attempt + 1)
+            sleep(min(delay, 120.0))
+        except urllib.error.URLError as e:
+            raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+    raise AssertionError("unreachable")
+
+
 class BaseScraper(ABC):
     """Abstract base class for platform BIOS requirement scrapers."""
 
@@ -135,15 +172,8 @@ class BaseScraper(ABC):
             return self._raw_data
         if not self.url:
             raise ValueError("No source URL configured")
-        try:
-            req = urllib.request.Request(
-                self.url, headers={"User-Agent": "retrobios-scraper/1.0"}
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                self._raw_data = _read_limited(resp).decode("utf-8")
-                return self._raw_data
-        except urllib.error.URLError as e:
-            raise ConnectionError(f"Failed to fetch {self.url}: {e}") from e
+        self._raw_data = fetch_bytes(self.url).decode("utf-8")
+        return self._raw_data
 
     @abstractmethod
     def fetch_requirements(self) -> list[BiosRequirement]:

@@ -124,6 +124,58 @@ class TestConnection(unittest.TestCase):
             _StubScraper(error=KeyError("bug")).test_connection()
 
 
+class RateLimitedForge(unittest.TestCase):
+    """GitLab answered 429 midway through Recalbox's system.ini files and
+    the whole scrape stopped."""
+
+    @staticmethod
+    def _limited(retry_after: str | None):
+        import email.message  # noqa: PLC0415
+        import io  # noqa: PLC0415
+
+        headers = email.message.Message()
+        if retry_after is not None:
+            headers["Retry-After"] = retry_after
+        return urllib.error.HTTPError("u", 429, "Too Many Requests", headers, io.BytesIO())
+
+    def test_a_rate_limit_is_waited_out(self):
+        import io  # noqa: PLC0415
+
+        from scraper.base_scraper import fetch_bytes  # noqa: PLC0415
+
+        waits: list[float] = []
+        answers = [self._limited("7"), self._limited(None), io.BytesIO(b"ok")]
+
+        def urlopen(_request, timeout):
+            answer = answers.pop(0)
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+
+        with mock.patch("urllib.request.urlopen", urlopen):
+            self.assertEqual(fetch_bytes("https://x", sleep=waits.append), b"ok")
+        self.assertEqual(waits, [7.0, 4.0])
+
+    def test_a_lasting_limit_or_a_missing_file_fails(self):
+        from scraper.base_scraper import fetch_bytes  # noqa: PLC0415
+
+        def limited(_request, timeout):
+            raise self._limited(None)
+
+        with mock.patch("urllib.request.urlopen", limited):
+            with self.assertRaises(ConnectionError):
+                fetch_bytes("https://x", attempts=3, sleep=lambda _s: None)
+
+        def gone(_request, timeout):
+            raise urllib.error.HTTPError("u", 404, "Not Found", None, None)
+
+        waits: list[float] = []
+        with mock.patch("urllib.request.urlopen", gone):
+            with self.assertRaises(ConnectionError):
+                fetch_bytes("https://x", sleep=waits.append)
+        self.assertEqual(waits, [])
+
+
 class RetroPiePackageList(unittest.TestCase):
     """RetroPie states its packages, and nothing else states them for it."""
 

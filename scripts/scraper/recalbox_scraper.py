@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from common import parse_untrusted_xml
 
-from .base_scraper import BaseScraper, BiosRequirement, requirement_entry
+from .base_scraper import BaseScraper, BiosRequirement, fetch_bytes, requirement_entry
 
 PLATFORM_NAME = "recalbox"
 
@@ -169,21 +169,11 @@ class Scraper(BaseScraper):
         systems ES lists and the cores a user can pick for each.
         """
         import json
-        import urllib.error
-        import urllib.request
-
-        def get(url: str) -> bytes:
-            req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
-            try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    return resp.read()
-            except urllib.error.URLError as e:
-                raise ConnectionError(f"Failed to fetch {url}: {e}") from e
 
         systems: list[str] = []
         page = 1
         while True:
-            listing = json.loads(get(SYSTEMS_TREE_URL.format(tag=self.tag, page=page)))
+            listing = json.loads(fetch_bytes(SYSTEMS_TREE_URL.format(tag=self.tag, page=page)))
             systems += [
                 item["name"] for item in listing
                 if item.get("type") == "tree" and not item["name"].startswith(".")
@@ -196,7 +186,7 @@ class Scraper(BaseScraper):
         cores: set[str] = set()
         standalone: set[str] = set()
         for system in systems:
-            text = get(SYSTEM_INI_URL.format(tag=self.tag, system=system)).decode("utf-8")
+            text = fetch_bytes(SYSTEM_INI_URL.format(tag=self.tag, system=system)).decode("utf-8")
             found, alone = system_ini_cores(text)
             cores |= found
             standalone |= alone
