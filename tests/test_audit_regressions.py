@@ -3111,3 +3111,26 @@ class VerifyStrictAppliesInEveryMode(unittest.TestCase):
 
     def test_a_listing_refuses_strict(self):
         self.assertEqual(self.run_verify("--list-emulators", "--strict"), 2)
+
+
+class OpenMsxRomsSitInItsSystemroms(unittest.TestCase):
+    """openMSX entries had no path and landed at the BIOS root, where no
+    frontend points FilePool. RetroBat declares its ROMs under
+    openMSX/share/systemroms; the profile's paths must agree."""
+
+    def test_every_entry_is_under_share_systemroms(self):
+        profile = yaml.safe_load((ROOT / "emulators" / "openmsx.yml").read_text())
+        retrobat = yaml.safe_load((ROOT / "platforms" / "retrobat.yml").read_text())
+        declared_dirs = {
+            fe["destination"].rsplit("/", 1)[0].lower()
+            for system in retrobat["systems"].values()
+            for fe in system.get("files", [])
+            if "systemroms" in fe.get("destination", "")
+        }
+        self.assertEqual(declared_dirs, {"openmsx/share/systemroms"})
+        for entry in profile["files"]:
+            with self.subTest(name=entry["name"]):
+                self.assertEqual(
+                    entry.get("path", "").lower(),
+                    f"openmsx/share/systemroms/{entry['name']}".lower(),
+                )
