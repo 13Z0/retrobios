@@ -1888,27 +1888,38 @@ def _download_one(
         tmp_path: Path | None = None
         counted = 0
         resumed_count = 0
+        partial = None
         try:
             offset = 0
             if resumable:
                 tmp_path = dest.parent / f".{dest.name}.part"
-                offset = _partial_size(tmp_path)
-                if offset >= expected_size:
-                    tmp_path.unlink()
-                    offset = 0
+                _partial_size(tmp_path)
+                # Two runs into one BIOS folder used to append to the same
+                # partial copy: the one that finds it locked downloads into
+                # a private file instead.
+                partial = _claim_partial(tmp_path)
+                if partial is None:
+                    tmp_path = None
+                else:
+                    offset = os.fstat(partial.fileno()).st_size
+                    if offset >= expected_size:
+                        partial.truncate(0)
+                        offset = 0
             request = urllib.request.Request(url)
             if offset:
                 request.add_header("Range", f"bytes={offset}-")
             with urllib.request.urlopen(request, timeout=60) as resp:
                 if offset and getattr(resp, "status", 200) != 206:
                     offset = 0  # the server sent the whole file again
+                    partial.truncate(0)
                 raw_length = resp.headers.get("Content-Length") if resp.headers else None
                 if raw_length and int(raw_length) != expected_size - offset:
                     raise ValueError(
                         f"Content-Length {raw_length} != expected {expected_size - offset}"
                     )
-                if resumable:
-                    out = _open_partial(tmp_path, append=bool(offset))
+                if partial is not None:
+                    partial.seek(offset)
+                    out = _Unclosed(partial)
                 else:
                     out = tempfile.NamedTemporaryFile(
                         mode="wb", dir=dest.parent, prefix=f".{dest.name}.",
@@ -1952,6 +1963,10 @@ def _download_one(
             # file is: the temporary file is private, and a BIOS folder
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
+            if partial is not None and os.name == "nt":
+                # Windows renames no open file; elsewhere the lock is held
+                # until the copy has its final name.
+                partial.close()
             os.replace(tmp_path, dest)
             return f["dest"], True, ""
 
@@ -1959,7 +1974,7 @@ def _download_one(
             # Stopped mid-transfer: a large file keeps its partial copy for
             # the next run; a small one is dropped rather than left beside
             # the destination.
-            if tmp_path is not None and not resumable and tmp_path.exists():
+            if tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
             return f["dest"], False, "stopped"
 
@@ -1976,7 +1991,7 @@ def _download_one(
                 reason += " (GitHub rate limit or access refused)"
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
-            if tmp_path is not None and not resumable and tmp_path.exists():
+            if tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
             if exc.code == 416 and tmp_path is not None and tmp_path.exists():
                 tmp_path.unlink()  # the partial copy no longer fits the file
@@ -1991,9 +2006,13 @@ def _download_one(
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
-            if not refused and tmp_path is not None and not resumable and tmp_path.exists():
+            if not refused and tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
             delay = _retry_delay(attempt, None)
+
+        finally:
+            if partial is not None:
+                partial.close()
 
         if progress is not None and counted:
             progress.add(-counted)
@@ -2019,11 +2038,40 @@ def _partial_size(path: Path) -> int:
     return 0
 
 
-def _open_partial(path: Path, append: bool):
-    """Open the partial copy without following a link planted at its name."""
-    flags = os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
-    flags |= os.O_APPEND if append else os.O_TRUNC
-    return os.fdopen(os.open(path, flags, 0o644), "ab" if append else "wb")
+def _claim_partial(path: Path):
+    """The partial copy, opened and locked for this run, or None when
+    another run holds it. A link planted at its name is not followed."""
+    flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    handle = os.fdopen(os.open(path, flags, 0o644), "r+b")
+    try:
+        if os.name == "nt":
+            import msvcrt
+
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        return None
+    return handle
+
+
+class _Unclosed:
+    """The locked partial copy, written through without closing it."""
+
+    def __init__(self, handle) -> None:
+        self._handle = handle
+
+    def __enter__(self):
+        return self._handle
+
+    def __exit__(self, *_exc) -> None:
+        self._handle.flush()
+
+    def write(self, data: bytes) -> int:
+        return self._handle.write(data)
 
 
 class _Corrupt(Exception):

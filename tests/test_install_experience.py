@@ -121,6 +121,30 @@ class LargeFilesResume(unittest.TestCase):
             self.assertEqual(_RangeHandler.ranges, [""])
 
 
+class TwoRunsOneFolder(unittest.TestCase):
+    """Two installs into one BIOS folder appended to the same partial copy:
+    each hashed the other's bytes and one renamed a file still growing."""
+
+    @unittest.skipIf(os.name == "nt", "flock semantics")
+    def test_a_partial_held_by_another_run_is_left_alone(self):
+        with _Server(), tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(install, "RESUME_FROM_SIZE", 1024):
+            part = Path(tmp) / ".big.bin.part"
+            part.write_bytes(PAYLOAD[:40000])
+            other = install._claim_partial(part)
+            self.assertIsNotNone(other)
+            try:
+                dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
+                self.assertEqual((ok, reason), (True, ""))
+                self.assertEqual((Path(tmp) / "big.bin").read_bytes(), PAYLOAD)
+                self.assertEqual(part.read_bytes(), PAYLOAD[:40000])
+                self.assertEqual(_RangeHandler.ranges, [""])
+                self.assertIsNone(install._claim_partial(part))
+            finally:
+                other.close()
+            self.assertIsNotNone(install._claim_partial(part))
+
+
 class InstalledFileModes(unittest.TestCase):
     """A file came out 0600, the mode of the temporary it was written to: run
     with sudo for a root-owned BIOS folder, the emulator's own user could not
