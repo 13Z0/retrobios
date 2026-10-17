@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-17T04:02:46Z",
+  "generated": "2026-10-17T11:35:15Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -237,10 +237,10 @@
       }
     }
   ],
-  "total_files": 12890,
-  "total_size": 9192789120,
-  "pack_files": 12892,
-  "pack_size": 9192789120,
+  "total_files": 12893,
+  "total_size": 9276132393,
+  "pack_files": 12895,
+  "pack_size": 9276132393,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -604,6 +604,9 @@
       "real3doplayer",
       "ume2015"
     ],
+    "acorn-bbc-micro": [
+      "clk"
+    ],
     "adam": [
       "colem",
       "gearcoleco",
@@ -745,10 +748,20 @@
     "electron": [
       "clk"
     ],
+    "elektronika-bk": [
+      "bk"
+    ],
     "enterprise-64-128": [
       "clk",
       "ep128emu",
       "ep128emu_core"
+    ],
+    "entex-advision": [
+      "groovymame",
+      "mame",
+      "mame0258",
+      "mame0278",
+      "mamemess"
     ],
     "fairchild-channel-f": [
       "fbneo",
@@ -763,6 +776,7 @@
     ],
     "fmtowns": [
       "dreamm",
+      "geartowns",
       "tsugaru"
     ],
     "gamate": [
@@ -773,6 +787,13 @@
       "mamemess"
     ],
     "gamecom": [
+      "groovymame",
+      "mame",
+      "mame0258",
+      "mame0278",
+      "mamemess"
+    ],
+    "gamepark-gp32": [
       "groovymame",
       "mame",
       "mame0258",
@@ -958,6 +979,21 @@
       "pizza-boy-gbc",
       "sameboy"
     ],
+    "nintendo-sufami-turbo": [
+      "bsnes-jg",
+      "bsnes2014",
+      "bsnes_cplusplus98",
+      "bsnes_hd_beta",
+      "bsnes_mercury",
+      "chimerasnes",
+      "mesence",
+      "snes9x",
+      "snes9x-explus",
+      "snes9x2002",
+      "snes9x2005",
+      "snes9x2005_plus",
+      "snes9x2010"
+    ],
     "pc80": [
       "quasi88"
     ],
@@ -967,6 +1003,9 @@
       "mame0258",
       "mame0278",
       "zesarux"
+    ],
+    "philips-videopac": [
+      "o2em"
     ],
     "pv2000": [
       "groovymame",
@@ -987,6 +1026,12 @@
     ],
     "scv": [
       "emuscv"
+    ],
+    "sega-ai": [
+      "groovymame",
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "sega-dreamcast": [
       "demul",
@@ -1129,6 +1174,21 @@
       "ep128emu",
       "ep128emu_core"
     ],
+    "vtech-socrates": [
+      "groovymame",
+      "mame",
+      "mame0258",
+      "mame0278",
+      "mamemess"
+    ],
+    "vtech-vsmile": [
+      "dsmile",
+      "groovymame",
+      "mame",
+      "mame0258",
+      "mame0278",
+      "veesem"
+    ],
     "xbox": [
       "cxbx-reloaded",
       "directxbox",
@@ -1207,6 +1267,160 @@
           "repo_path": "bios/3DO Company/3DO/goldstar.bin",
           "cores": [
             "opera"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bbcb.zip",
+      "sha1": "4d7d8a60ffc39fd840365a45388850707b1d016d",
+      "sha256": "331939fa555fb855dcd7ab7e092f29f464dd8e903307ee2d66dfe70da3377fa1",
+      "size": 93427,
+      "repo_path": "bios/Acorn/BBC Micro/bbcb.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbc_acorn8271.zip",
+      "sha1": "25c03a42871df58a880e84e76f90da51d72f6c7e",
+      "sha256": "98eb759e2e0e13e2130f6281832e7756baf2540438d7d2402d0d071a80eefc1d",
+      "size": 164713,
+      "repo_path": "bios/Acorn/BBC Micro/bbc_acorn8271.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "saa5050.zip",
+      "sha1": "c16ded03b2a17dfaaaaac2856e013f27259a2254",
+      "sha256": "fa8d2d4c0f130330a792d1b489d41f95b020ae21c284b58e7a727eb0ae6daaf7",
+      "size": 536,
+      "repo_path": "bios/Acorn/BBC Micro/saa5050.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbc_tube_80186.zip",
+      "sha1": "10cee3c9e02aae1ef8ffacc631d85516ed2766e7",
+      "sha256": "0b693522e51ae37b9a45f8af23ee1be0891ae5439ffd533ffa496a6130adc352",
+      "size": 6643,
+      "repo_path": "bios/Acorn/BBC Micro/bbc_tube_80186.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbcm.zip",
+      "sha1": "4243b6acdcf9d9c2e28142cf8b32971016105923",
+      "sha256": "d30208902157fa163cec939ab5c3e92457c3944aa2558804e72872135cd381d9",
+      "size": 298715,
+      "repo_path": "bios/Acorn/BBC/bbcm.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbcmc.zip",
+      "sha1": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
+      "sha256": "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e",
+      "size": 100096,
+      "repo_path": "bios/Acorn/BBC/bbcmc.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbc_bitstik1.zip",
+      "sha1": "5822df2318477e4571257f369891fb796ecc2e71",
+      "sha256": "36e8673cd20498baaf085c3ffebcac40472bc893a36c83f4404be6fd5ac0a559",
+      "size": 5798,
+      "repo_path": "bios/Acorn/BBC Micro/bbc_bitstik1.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "bbc_bitstik2.zip",
+      "sha1": "d6f512fd9506fc8989e807d2329a84c877c2f80f",
+      "sha256": "c192f2462ecbdea6db93a98d445fa797c19d4c5e33f187ec0686327048f24ff7",
+      "size": 5798,
+      "repo_path": "bios/Acorn/BBC Micro/bbc_bitstik2.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "mame/samples/bbc.zip",
+      "sha1": "46d4a5a34443506160457db43f79d766e5383820",
+      "sha256": "17f1f77b51d82d1bf50e8e1333846aa35a71620a21bca1cec47a7cce5faacd86",
+      "size": 8469,
+      "repo_path": "bios/Acorn/BBC Micro/mame/samples/bbc.zip",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "Acorn/basic2.rom",
+      "sha1": "4a7393f3a45ea309f744441c16723e2ef447a281",
+      "sha256": "45bd55dc0f6f0f8f1fe9e2481de7def206565eec8f600ba3068b849ca4132079",
+      "size": 16384,
+      "repo_path": "bios/Acorn/BBC Micro/basic2.rom",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ]
+    },
+    {
+      "dest": "BBCMicro/os12.rom",
+      "sha1": "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d",
+      "sha256": "2d9fea69017864f6962704481829f95fee08446c8c3a13826d5d4e44000ac9de",
+      "size": 16384,
+      "repo_path": "bios/Acorn/BBC Micro/os12.rom",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ],
+      "alternatives": [
+        {
+          "sha1": "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d",
+          "sha256": "2d9fea69017864f6962704481829f95fee08446c8c3a13826d5d4e44000ac9de",
+          "size": 16384,
+          "repo_path": "bios/Acorn/BBC Micro/os12.rom",
+          "cores": [
+            "clk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "BBCMicro/dfs-2.26.rom",
+      "sha1": "cf2ebc422a8d24ec6f1a0320520c38a0e704109a",
+      "sha256": "83d97c7170b35c26597896a2c0c202d65c98671207250255620a8003d2784e1d",
+      "size": 16384,
+      "repo_path": "bios/Acorn/BBC Micro/dfs-2.26.rom",
+      "cores": null,
+      "systems": [
+        "acorn-bbc-micro"
+      ],
+      "alternatives": [
+        {
+          "sha1": "cf2ebc422a8d24ec6f1a0320520c38a0e704109a",
+          "sha256": "83d97c7170b35c26597896a2c0c202d65c98671207250255620a8003d2784e1d",
+          "size": 16384,
+          "repo_path": "bios/Acorn/BBC Micro/dfs-2.26.rom",
+          "cores": [
+            "clk"
           ]
         }
       ]
@@ -1319,140 +1533,6 @@
             "mame"
           ]
         }
-      ]
-    },
-    {
-      "dest": "advision.zip",
-      "sha1": "a9a7eef3c2f80b669e7421d2cf0a7a74f6088160",
-      "sha256": "8b9132570eaaf11983787f98d13fb7f23817d2375e92d8fe0d8508ca5db165cf",
-      "size": 1572,
-      "repo_path": "bios/Entex/Adventure Vision/.variants/advision.zip.1c086064",
-      "cores": null,
-      "systems": [
-        "advision"
-      ],
-      "alternatives": [
-        {
-          "sha1": "c13fa16800e5c7fb15fd74e8fece02d31dec345e",
-          "sha256": "1fa2384f56c29a7485e9755f8f1266b047f91e9428074b9d99aa75ca632c07ed",
-          "size": 1546,
-          "repo_path": "bios/Entex/Adventure Vision/advision.zip",
-          "cores": [
-            "mame"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "amiga/kick33180.A500",
-      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
-      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/kick37175.A500",
-      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
-      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/kick34005.A500",
-      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
-      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
-      "cores": null,
-      "systems": [
-        "amiga500",
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga/kick37350.A600",
-      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
-      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/kick40063.A600",
-      "sha1": "3b7f1493b27e212830f989f26ca76c02049f09ca",
-      "sha256": "8c8a0cf04f91b88eaf0c4f1126041987067e2286a8ee590bdbae447a8000c5ee",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick31.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/amiga-os-120.rom",
-      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
-      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/amiga-os-130.rom",
-      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
-      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
-      "cores": null,
-      "systems": [
-        "amiga500",
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga/amiga-os-204.rom",
-      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
-      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/amiga-os-205.rom",
-      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
-      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
-      ]
-    },
-    {
-      "dest": "amiga/amiga-os-310-a600.rom",
-      "sha1": "3b7f1493b27e212830f989f26ca76c02049f09ca",
-      "sha256": "8c8a0cf04f91b88eaf0c4f1126041987067e2286a8ee590bdbae447a8000c5ee",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick31.rom",
-      "cores": null,
-      "systems": [
-        "amiga500"
       ]
     },
     {
@@ -2503,160 +2583,6 @@
       ]
     },
     {
-      "dest": "bbcb.zip",
-      "sha1": "4d7d8a60ffc39fd840365a45388850707b1d016d",
-      "sha256": "331939fa555fb855dcd7ab7e092f29f464dd8e903307ee2d66dfe70da3377fa1",
-      "size": 93427,
-      "repo_path": "bios/Acorn/BBC Micro/bbcb.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbc_acorn8271.zip",
-      "sha1": "25c03a42871df58a880e84e76f90da51d72f6c7e",
-      "sha256": "98eb759e2e0e13e2130f6281832e7756baf2540438d7d2402d0d071a80eefc1d",
-      "size": 164713,
-      "repo_path": "bios/Acorn/BBC Micro/bbc_acorn8271.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "saa5050.zip",
-      "sha1": "c16ded03b2a17dfaaaaac2856e013f27259a2254",
-      "sha256": "fa8d2d4c0f130330a792d1b489d41f95b020ae21c284b58e7a727eb0ae6daaf7",
-      "size": 536,
-      "repo_path": "bios/Acorn/BBC Micro/saa5050.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbc_tube_80186.zip",
-      "sha1": "10cee3c9e02aae1ef8ffacc631d85516ed2766e7",
-      "sha256": "0b693522e51ae37b9a45f8af23ee1be0891ae5439ffd533ffa496a6130adc352",
-      "size": 6643,
-      "repo_path": "bios/Acorn/BBC Micro/bbc_tube_80186.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbcm.zip",
-      "sha1": "4243b6acdcf9d9c2e28142cf8b32971016105923",
-      "sha256": "d30208902157fa163cec939ab5c3e92457c3944aa2558804e72872135cd381d9",
-      "size": 298715,
-      "repo_path": "bios/Acorn/BBC/bbcm.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbcmc.zip",
-      "sha1": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
-      "sha256": "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e",
-      "size": 100096,
-      "repo_path": "bios/Acorn/BBC/bbcmc.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbc_bitstik1.zip",
-      "sha1": "5822df2318477e4571257f369891fb796ecc2e71",
-      "sha256": "36e8673cd20498baaf085c3ffebcac40472bc893a36c83f4404be6fd5ac0a559",
-      "size": 5798,
-      "repo_path": "bios/Acorn/BBC Micro/bbc_bitstik1.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "bbc_bitstik2.zip",
-      "sha1": "d6f512fd9506fc8989e807d2329a84c877c2f80f",
-      "sha256": "c192f2462ecbdea6db93a98d445fa797c19d4c5e33f187ec0686327048f24ff7",
-      "size": 5798,
-      "repo_path": "bios/Acorn/BBC Micro/bbc_bitstik2.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "mame/samples/bbc.zip",
-      "sha1": "46d4a5a34443506160457db43f79d766e5383820",
-      "sha256": "17f1f77b51d82d1bf50e8e1333846aa35a71620a21bca1cec47a7cce5faacd86",
-      "size": 8469,
-      "repo_path": "bios/Acorn/BBC Micro/mame/samples/bbc.zip",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "Acorn/basic2.rom",
-      "sha1": "4a7393f3a45ea309f744441c16723e2ef447a281",
-      "sha256": "45bd55dc0f6f0f8f1fe9e2481de7def206565eec8f600ba3068b849ca4132079",
-      "size": 16384,
-      "repo_path": "bios/Acorn/BBC Micro/basic2.rom",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ]
-    },
-    {
-      "dest": "BBCMicro/os12.rom",
-      "sha1": "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d",
-      "sha256": "2d9fea69017864f6962704481829f95fee08446c8c3a13826d5d4e44000ac9de",
-      "size": 16384,
-      "repo_path": "bios/Acorn/BBC Micro/os12.rom",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ],
-      "alternatives": [
-        {
-          "sha1": "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d",
-          "sha256": "2d9fea69017864f6962704481829f95fee08446c8c3a13826d5d4e44000ac9de",
-          "size": 16384,
-          "repo_path": "bios/Acorn/BBC Micro/os12.rom",
-          "cores": [
-            "clk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "BBCMicro/dfs-2.26.rom",
-      "sha1": "cf2ebc422a8d24ec6f1a0320520c38a0e704109a",
-      "sha256": "83d97c7170b35c26597896a2c0c202d65c98671207250255620a8003d2784e1d",
-      "size": 16384,
-      "repo_path": "bios/Acorn/BBC Micro/dfs-2.26.rom",
-      "cores": null,
-      "systems": [
-        "bbc"
-      ],
-      "alternatives": [
-        {
-          "sha1": "cf2ebc422a8d24ec6f1a0320520c38a0e704109a",
-          "sha256": "83d97c7170b35c26597896a2c0c202d65c98671207250255620a8003d2784e1d",
-          "size": 16384,
-          "repo_path": "bios/Acorn/BBC Micro/dfs-2.26.rom",
-          "cores": [
-            "clk"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "beena.zip",
       "sha1": "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33",
       "sha256": "6a8bf30a5a0942f500d1d617506a99552e33774207d3e895258abafe35979641",
@@ -2676,193 +2602,6 @@
             "mame"
           ]
         }
-      ]
-    },
-    {
-      "dest": "bk/B11M_BOS.ROM",
-      "sha1": "7e9a30e38d7b78981999821640a68a201bb6df01",
-      "sha256": "c001943dc7dc693db9aed04e12c274919805c02db3659d65d4ac43d64269fc89",
-      "size": 8192,
-      "repo_path": "bios/Elektronika/BK/B11M_BOS.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7e9a30e38d7b78981999821640a68a201bb6df01",
-          "sha256": "c001943dc7dc693db9aed04e12c274919805c02db3659d65d4ac43d64269fc89",
-          "size": 8192,
-          "repo_path": "bios/Elektronika/BK/B11M_BOS.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/B11M_EXT.ROM",
-      "sha1": "f087af69044432a1ef2431a72ac06946e32f2dd3",
-      "sha256": "4f796684c72a64f49bcb3594518f206f9f6060902711e2045eb09ccd95ee7b27",
-      "size": 8192,
-      "repo_path": "bios/Elektronika/BK/B11M_EXT.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "f087af69044432a1ef2431a72ac06946e32f2dd3",
-          "sha256": "4f796684c72a64f49bcb3594518f206f9f6060902711e2045eb09ccd95ee7b27",
-          "size": 8192,
-          "repo_path": "bios/Elektronika/BK/B11M_EXT.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/BAS11M_0.ROM",
-      "sha1": "9d76f3eefd64e032c763fa1ebf9cd3d9bd22317a",
-      "sha256": "eefb7deff07ee7134edd9de068bf92d58481d45ee38c283a923a5b55c7f51809",
-      "size": 16384,
-      "repo_path": "bios/Elektronika/BK/BAS11M_0.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "9d76f3eefd64e032c763fa1ebf9cd3d9bd22317a",
-          "sha256": "eefb7deff07ee7134edd9de068bf92d58481d45ee38c283a923a5b55c7f51809",
-          "size": 16384,
-          "repo_path": "bios/Elektronika/BK/BAS11M_0.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/BAS11M_1.ROM",
-      "sha1": "34fa37599f2f9eb607390ef2458a3c22d87f09a9",
-      "sha256": "56f2e1bd7397c71528fd3c6df41239480f3c9ee3af460584bd41a4060c35a5fc",
-      "size": 8192,
-      "repo_path": "bios/Elektronika/BK/BAS11M_1.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "34fa37599f2f9eb607390ef2458a3c22d87f09a9",
-          "sha256": "56f2e1bd7397c71528fd3c6df41239480f3c9ee3af460584bd41a4060c35a5fc",
-          "size": 8192,
-          "repo_path": "bios/Elektronika/BK/BAS11M_1.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/DISK_327.ROM",
-      "sha1": "28eefbb63047b26e4aec104aeeca74e2f9d0276c",
-      "sha256": "2879521f48f8f799d2e91908878187bcb223dcfa9149c5d5158ea79c0c5bd671",
-      "size": 4096,
-      "repo_path": "bios/Elektronika/BK/DISK_327.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "28eefbb63047b26e4aec104aeeca74e2f9d0276c",
-          "sha256": "2879521f48f8f799d2e91908878187bcb223dcfa9149c5d5158ea79c0c5bd671",
-          "size": 4096,
-          "repo_path": "bios/Elektronika/BK/DISK_327.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/BASIC10.ROM",
-      "sha1": "af7eae90c398ec12942a408fa5ac2722e331738c",
-      "sha256": "24be347356715352fcab480ed1559302d47d598255980a32150eba1431b462b8",
-      "size": 24576,
-      "repo_path": "bios/Elektronika/BK/BASIC10.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "af7eae90c398ec12942a408fa5ac2722e331738c",
-          "sha256": "24be347356715352fcab480ed1559302d47d598255980a32150eba1431b462b8",
-          "size": 24576,
-          "repo_path": "bios/Elektronika/BK/BASIC10.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/FOCAL10.ROM",
-      "sha1": "6386e58bc1bba5e76baec9e8a1ca4b99dc3c573f",
-      "sha256": "bc0817b0bee227c83132c6b28bbeb64b02a4787461fc8c9d082674fe578e7e24",
-      "size": 24576,
-      "repo_path": "bios/Elektronika/BK/FOCAL10.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "6386e58bc1bba5e76baec9e8a1ca4b99dc3c573f",
-          "sha256": "bc0817b0bee227c83132c6b28bbeb64b02a4787461fc8c9d082674fe578e7e24",
-          "size": 24576,
-          "repo_path": "bios/Elektronika/BK/FOCAL10.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk/MONIT10.ROM",
-      "sha1": "4e83a94ae5155bbea14d7331a5a8db82457bd5ae",
-      "sha256": "c93f3e7d3342f747f6c55a3b5ebb8c1840d3d118e80dc5d274f645dc2b393688",
-      "size": 8192,
-      "repo_path": "bios/Elektronika/BK/MONIT10.ROM",
-      "cores": null,
-      "systems": [
-        "bk"
-      ],
-      "alternatives": [
-        {
-          "sha1": "4e83a94ae5155bbea14d7331a5a8db82457bd5ae",
-          "sha256": "c93f3e7d3342f747f6c55a3b5ebb8c1840d3d118e80dc5d274f645dc2b393688",
-          "size": 8192,
-          "repo_path": "bios/Elektronika/BK/MONIT10.ROM",
-          "cores": [
-            "bk"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bk0010.zip",
-      "sha1": "5b5f73cdd3fac781f169e2b9f4c89ec530a0ed03",
-      "sha256": "c1ee08d0f94ee84e1126dd86d815a7ae5a9ad62c1c77c0a6d0a66f9ac240b5fe",
-      "size": 65991,
-      "repo_path": "bios/Elektronika/BK/bk0010.zip",
-      "cores": null,
-      "systems": [
-        "bk"
       ]
     },
     {
@@ -3073,6 +2812,116 @@
             "gearcoleco"
           ]
         }
+      ]
+    },
+    {
+      "dest": "amiga/kick33180.A500",
+      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
+      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/kick37175.A500",
+      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
+      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/kick34005.A500",
+      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
+      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/kick37350.A600",
+      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
+      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/kick40063.A600",
+      "sha1": "3b7f1493b27e212830f989f26ca76c02049f09ca",
+      "sha256": "8c8a0cf04f91b88eaf0c4f1126041987067e2286a8ee590bdbae447a8000c5ee",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/kick31.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/amiga-os-120.rom",
+      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
+      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/amiga-os-130.rom",
+      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
+      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/amiga-os-204.rom",
+      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
+      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/amiga-os-205.rom",
+      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
+      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/amiga-os-310-a600.rom",
+      "sha1": "3b7f1493b27e212830f989f26ca76c02049f09ca",
+      "sha256": "8c8a0cf04f91b88eaf0c4f1126041987067e2286a8ee590bdbae447a8000c5ee",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/kick31.rom",
+      "cores": null,
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -3315,6 +3164,193 @@
       "cores": null,
       "systems": [
         "electron"
+      ]
+    },
+    {
+      "dest": "bk/B11M_BOS.ROM",
+      "sha1": "7e9a30e38d7b78981999821640a68a201bb6df01",
+      "sha256": "c001943dc7dc693db9aed04e12c274919805c02db3659d65d4ac43d64269fc89",
+      "size": 8192,
+      "repo_path": "bios/Elektronika/BK/B11M_BOS.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "7e9a30e38d7b78981999821640a68a201bb6df01",
+          "sha256": "c001943dc7dc693db9aed04e12c274919805c02db3659d65d4ac43d64269fc89",
+          "size": 8192,
+          "repo_path": "bios/Elektronika/BK/B11M_BOS.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/B11M_EXT.ROM",
+      "sha1": "f087af69044432a1ef2431a72ac06946e32f2dd3",
+      "sha256": "4f796684c72a64f49bcb3594518f206f9f6060902711e2045eb09ccd95ee7b27",
+      "size": 8192,
+      "repo_path": "bios/Elektronika/BK/B11M_EXT.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f087af69044432a1ef2431a72ac06946e32f2dd3",
+          "sha256": "4f796684c72a64f49bcb3594518f206f9f6060902711e2045eb09ccd95ee7b27",
+          "size": 8192,
+          "repo_path": "bios/Elektronika/BK/B11M_EXT.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/BAS11M_0.ROM",
+      "sha1": "9d76f3eefd64e032c763fa1ebf9cd3d9bd22317a",
+      "sha256": "eefb7deff07ee7134edd9de068bf92d58481d45ee38c283a923a5b55c7f51809",
+      "size": 16384,
+      "repo_path": "bios/Elektronika/BK/BAS11M_0.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "9d76f3eefd64e032c763fa1ebf9cd3d9bd22317a",
+          "sha256": "eefb7deff07ee7134edd9de068bf92d58481d45ee38c283a923a5b55c7f51809",
+          "size": 16384,
+          "repo_path": "bios/Elektronika/BK/BAS11M_0.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/BAS11M_1.ROM",
+      "sha1": "34fa37599f2f9eb607390ef2458a3c22d87f09a9",
+      "sha256": "56f2e1bd7397c71528fd3c6df41239480f3c9ee3af460584bd41a4060c35a5fc",
+      "size": 8192,
+      "repo_path": "bios/Elektronika/BK/BAS11M_1.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "34fa37599f2f9eb607390ef2458a3c22d87f09a9",
+          "sha256": "56f2e1bd7397c71528fd3c6df41239480f3c9ee3af460584bd41a4060c35a5fc",
+          "size": 8192,
+          "repo_path": "bios/Elektronika/BK/BAS11M_1.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/DISK_327.ROM",
+      "sha1": "28eefbb63047b26e4aec104aeeca74e2f9d0276c",
+      "sha256": "2879521f48f8f799d2e91908878187bcb223dcfa9149c5d5158ea79c0c5bd671",
+      "size": 4096,
+      "repo_path": "bios/Elektronika/BK/DISK_327.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "28eefbb63047b26e4aec104aeeca74e2f9d0276c",
+          "sha256": "2879521f48f8f799d2e91908878187bcb223dcfa9149c5d5158ea79c0c5bd671",
+          "size": 4096,
+          "repo_path": "bios/Elektronika/BK/DISK_327.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/BASIC10.ROM",
+      "sha1": "af7eae90c398ec12942a408fa5ac2722e331738c",
+      "sha256": "24be347356715352fcab480ed1559302d47d598255980a32150eba1431b462b8",
+      "size": 24576,
+      "repo_path": "bios/Elektronika/BK/BASIC10.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "af7eae90c398ec12942a408fa5ac2722e331738c",
+          "sha256": "24be347356715352fcab480ed1559302d47d598255980a32150eba1431b462b8",
+          "size": 24576,
+          "repo_path": "bios/Elektronika/BK/BASIC10.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/FOCAL10.ROM",
+      "sha1": "6386e58bc1bba5e76baec9e8a1ca4b99dc3c573f",
+      "sha256": "bc0817b0bee227c83132c6b28bbeb64b02a4787461fc8c9d082674fe578e7e24",
+      "size": 24576,
+      "repo_path": "bios/Elektronika/BK/FOCAL10.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "6386e58bc1bba5e76baec9e8a1ca4b99dc3c573f",
+          "sha256": "bc0817b0bee227c83132c6b28bbeb64b02a4787461fc8c9d082674fe578e7e24",
+          "size": 24576,
+          "repo_path": "bios/Elektronika/BK/FOCAL10.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk/MONIT10.ROM",
+      "sha1": "4e83a94ae5155bbea14d7331a5a8db82457bd5ae",
+      "sha256": "c93f3e7d3342f747f6c55a3b5ebb8c1840d3d118e80dc5d274f645dc2b393688",
+      "size": 8192,
+      "repo_path": "bios/Elektronika/BK/MONIT10.ROM",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4e83a94ae5155bbea14d7331a5a8db82457bd5ae",
+          "sha256": "c93f3e7d3342f747f6c55a3b5ebb8c1840d3d118e80dc5d274f645dc2b393688",
+          "size": 8192,
+          "repo_path": "bios/Elektronika/BK/MONIT10.ROM",
+          "cores": [
+            "bk"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bk0010.zip",
+      "sha1": "5b5f73cdd3fac781f169e2b9f4c89ec530a0ed03",
+      "sha256": "c1ee08d0f94ee84e1126dd86d815a7ae5a9ad62c1c77c0a6d0a66f9ac240b5fe",
+      "size": 65991,
+      "repo_path": "bios/Elektronika/BK/bk0010.zip",
+      "cores": null,
+      "systems": [
+        "elektronika-bk"
       ]
     },
     {
@@ -3642,6 +3678,28 @@
       ]
     },
     {
+      "dest": "advision.zip",
+      "sha1": "a9a7eef3c2f80b669e7421d2cf0a7a74f6088160",
+      "sha256": "8b9132570eaaf11983787f98d13fb7f23817d2375e92d8fe0d8508ca5db165cf",
+      "size": 1572,
+      "repo_path": "bios/Entex/Adventure Vision/.variants/advision.zip.1c086064",
+      "cores": null,
+      "systems": [
+        "entex-advision"
+      ],
+      "alternatives": [
+        {
+          "sha1": "c13fa16800e5c7fb15fd74e8fece02d31dec345e",
+          "sha256": "1fa2384f56c29a7485e9755f8f1266b047f91e9428074b9d99aa75ca632c07ed",
+          "size": 1546,
+          "repo_path": "bios/Entex/Adventure Vision/advision.zip",
+          "cores": [
+            "mame"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "sl31253.bin",
       "sha1": "81193965a374d77b99b4743d317824b53c3e3c78",
       "sha256": "876a263d28d8f9e9f51785b91269393f06599debae9ba2ef1cba67a283504e2c",
@@ -3884,6 +3942,28 @@
       ]
     },
     {
+      "dest": "gp32.zip",
+      "sha1": "35def9830e797fb0788740b5da0a7202933554df",
+      "sha256": "b47a1ca92ccffcbb0b589156bef01436d4de9cff52a7f750b8ae7ecd6e2e3925",
+      "size": 1378301,
+      "repo_path": "bios/GamePark/GP32/gp32.zip",
+      "cores": null,
+      "systems": [
+        "gamepark-gp32"
+      ],
+      "alternatives": [
+        {
+          "sha1": "35def9830e797fb0788740b5da0a7202933554df",
+          "sha256": "b47a1ca92ccffcbb0b589156bef01436d4de9cff52a7f750b8ae7ecd6e2e3925",
+          "size": 1378301,
+          "repo_path": "bios/GamePark/GP32/gp32.zip",
+          "cores": [
+            "mame"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "gamepock.zip",
       "sha1": "83e94c56f2fc4ab60de94021a1283cca09d65ee5",
       "sha256": "48a0cdb1062d863d469fe5a64357f56ba21f77ee43e941345fbabbe5ef6fadd8",
@@ -3921,28 +4001,6 @@
           "sha256": "eb84761c062deffecca695ee52d2accdf6d2dfb9d05dd2ade8c9cf767ee217ce",
           "size": 1686,
           "repo_path": "bios/Hartung/Game Master/gmaster.zip",
-          "cores": [
-            "mame"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "gp32.zip",
-      "sha1": "35def9830e797fb0788740b5da0a7202933554df",
-      "sha256": "b47a1ca92ccffcbb0b589156bef01436d4de9cff52a7f750b8ae7ecd6e2e3925",
-      "size": 1378301,
-      "repo_path": "bios/GamePark/GP32/gp32.zip",
-      "cores": null,
-      "systems": [
-        "gp32"
-      ],
-      "alternatives": [
-        {
-          "sha1": "35def9830e797fb0788740b5da0a7202933554df",
-          "sha256": "b47a1ca92ccffcbb0b589156bef01436d4de9cff52a7f750b8ae7ecd6e2e3925",
-          "size": 1378301,
-          "repo_path": "bios/GamePark/GP32/gp32.zip",
           "cores": [
             "mame"
           ]
@@ -4098,6 +4156,10 @@
       "repo_path": "bios/Philips/Videopac/O2_PhillipsC52.bin",
       "cores": null,
       "systems": [
+        "magnavox-odyssey2",
+        "philips-videopac"
+      ],
+      "declared_in": [
         "magnavox-odyssey2"
       ],
       "alternatives": [
@@ -4176,111 +4238,6 @@
       "cores": null,
       "systems": [
         "mc10"
-      ]
-    },
-    {
-      "dest": "bios_CD_E.bin",
-      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
-      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
-      "cores": null,
-      "systems": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "sega-megacd"
-      ],
-      "region_system_groups": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "alternatives": [
-        {
-          "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
-          "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
-          "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
-          "cores": [
-            "genesis_plus_gx",
-            "genesis_plus_gx_wide",
-            "picodrive"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bios_CD_U.bin",
-      "sha1": "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0",
-      "sha256": "b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/us_scd2_9306.bin",
-      "cores": null,
-      "systems": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "sega-megacd"
-      ],
-      "region_system_groups": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "alternatives": [
-        {
-          "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
-          "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
-          "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
-          "cores": [
-            "genesis_plus_gx",
-            "genesis_plus_gx_wide",
-            "picodrive"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bios_CD_J.bin",
-      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
-      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
-      "cores": null,
-      "systems": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "sega-megacd"
-      ],
-      "region_system_groups": [
-        "megadrive-msu",
-        "sega-mega-cd"
-      ],
-      "alternatives": [
-        {
-          "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
-          "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
-          "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
-          "cores": [
-            "genesis_plus_gx",
-            "genesis_plus_gx_wide",
-            "picodrive"
-          ]
-        }
       ]
     },
     {
@@ -5321,6 +5278,28 @@
       ]
     },
     {
+      "dest": "STBIOS.bin",
+      "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+      "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
+      "cores": null,
+      "systems": [
+        "nintendo-sufami-turbo"
+      ],
+      "alternatives": [
+        {
+          "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+          "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
+          "size": 262144,
+          "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
+          "cores": [
+            "snes9x"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "Oric/basic11.rom",
       "sha1": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
       "sha256": "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d",
@@ -5475,6 +5454,50 @@
       ]
     },
     {
+      "dest": "g7400.bin",
+      "sha1": "5130243429b40b01a14e1304d0394b8459a6fbae",
+      "sha256": "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1",
+      "size": 1024,
+      "repo_path": "bios/Philips/Videopac/O2_G7400_bios.bin",
+      "cores": null,
+      "systems": [
+        "philips-videopac"
+      ],
+      "alternatives": [
+        {
+          "sha1": "5130243429b40b01a14e1304d0394b8459a6fbae",
+          "sha256": "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1",
+          "size": 1024,
+          "repo_path": "bios/Philips/Videopac/O2_G7400_bios.bin",
+          "cores": [
+            "o2em"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "jopac.bin",
+      "sha1": "54b8d2c1317628de51a85fc1c424423a986775e4",
+      "sha256": "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074",
+      "size": 1024,
+      "repo_path": "bios/Philips/Videopac+/jopac.bin",
+      "cores": null,
+      "systems": [
+        "philips-videopac"
+      ],
+      "alternatives": [
+        {
+          "sha1": "54b8d2c1317628de51a85fc1c424423a986775e4",
+          "sha256": "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074",
+          "size": 1024,
+          "repo_path": "bios/Philips/Videopac+/jopac.bin",
+          "cores": [
+            "o2em"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "pv2000.zip",
       "sha1": "c18f460301177b64bbfcbedc3010e734d0803d4c",
       "sha256": "6825be490ec8a351bec4d3ecc55f835855c71eb7e3bf580e91cda59a8926a5b1",
@@ -5585,6 +5608,28 @@
       ]
     },
     {
+      "dest": "segaai.zip",
+      "sha1": "39a0fec854e438f6757882604a8dc56e62e401d9",
+      "sha256": "9be7592d4e4d2c0dbfbb0317648603d7a80cf492ca9cb1d01dea09542f51de61",
+      "size": 343220,
+      "repo_path": "bios/Sega/AI/segaai.zip",
+      "cores": null,
+      "systems": [
+        "sega-ai"
+      ],
+      "alternatives": [
+        {
+          "sha1": "39a0fec854e438f6757882604a8dc56e62e401d9",
+          "sha256": "9be7592d4e4d2c0dbfbb0317648603d7a80cf492ca9cb1d01dea09542f51de61",
+          "size": 343220,
+          "repo_path": "bios/Sega/AI/segaai.zip",
+          "cores": [
+            "mame"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "dc/dc_boot.bin",
       "sha1": "8951d1bb219ab2ff8583033d2119c899cc81f18c",
       "sha256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
@@ -5659,6 +5704,105 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ]
+    },
+    {
+      "dest": "bios_CD_E.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": null,
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+          "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bios_CD_U.bin",
+      "sha1": "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0",
+      "sha256": "b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/us_scd2_9306.bin",
+      "cores": null,
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+          "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "bios_CD_J.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": null,
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ],
+      "region_system_groups": [
+        "sega-mega-cd"
+      ],
+      "alternatives": [
+        {
+          "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+          "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+          "size": 131072,
+          "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+          "cores": [
+            "genesis_plus_gx",
+            "genesis_plus_gx_wide",
+            "picodrive"
+          ]
+        }
       ]
     },
     {
@@ -5776,28 +5920,6 @@
           "repo_path": "bios/Sega/Saturn/sega_100.bin",
           "cores": [
             "yabasanshiro"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "segaai.zip",
-      "sha1": "39a0fec854e438f6757882604a8dc56e62e401d9",
-      "sha256": "9be7592d4e4d2c0dbfbb0317648603d7a80cf492ca9cb1d01dea09542f51de61",
-      "size": 343220,
-      "repo_path": "bios/Sega/AI/segaai.zip",
-      "cores": null,
-      "systems": [
-        "segaai"
-      ],
-      "alternatives": [
-        {
-          "sha1": "39a0fec854e438f6757882604a8dc56e62e401d9",
-          "sha256": "9be7592d4e4d2c0dbfbb0317648603d7a80cf492ca9cb1d01dea09542f51de61",
-          "size": 343220,
-          "repo_path": "bios/Sega/AI/segaai.zip",
-          "cores": [
-            "mame"
           ]
         }
       ]
@@ -6140,28 +6262,6 @@
       ]
     },
     {
-      "dest": "socrates.zip",
-      "sha1": "6bbaa8f73027eaca2c6988ee3b9b3f3b0b29d18e",
-      "sha256": "468ff4b7247b7ba6b7ade48a353e17368b4bd1841bf0384c0b2f94a2ab44c799",
-      "size": 218299,
-      "repo_path": "bios/VTech/Socrates/socrates.zip",
-      "cores": null,
-      "systems": [
-        "socrates"
-      ],
-      "alternatives": [
-        {
-          "sha1": "6bbaa8f73027eaca2c6988ee3b9b3f3b0b29d18e",
-          "sha256": "468ff4b7247b7ba6b7ade48a353e17368b4bd1841bf0384c0b2f94a2ab44c799",
-          "size": 218299,
-          "repo_path": "bios/VTech/Socrates/socrates.zip",
-          "cores": [
-            "mame"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "psxonpsp660.bin",
       "sha1": "96880d1ca92a016ff054be5159bb06fe03cb4e14",
       "sha256": "cbe758e1c8ece593c8e14ce1e8b3436428a01c608032a02613b3a4b442b4d712",
@@ -6473,28 +6573,6 @@
       ]
     },
     {
-      "dest": "STBIOS.bin",
-      "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
-      "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
-      "size": 262144,
-      "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
-      "cores": null,
-      "systems": [
-        "sufami"
-      ],
-      "alternatives": [
-        {
-          "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
-          "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
-          "size": 262144,
-          "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
-          "cores": [
-            "snes9x"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "supracan.zip",
       "sha1": "1af645230c3f1741fb1f7efef05e9efe768e9dcc",
       "sha256": "5694fdbb2632acc1a816093d705e3fb9e84dfe14bd239a214712f5f630bf3626",
@@ -6719,9 +6797,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -6730,12 +6810,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ],
       "declared_in": [
         "vgmplay"
@@ -6768,9 +6851,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -6779,12 +6864,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ],
       "declared_in": [
         "vgmplay"
@@ -6817,9 +6905,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -6828,12 +6918,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ],
       "declared_in": [
         "vgmplay"
@@ -6846,50 +6939,6 @@
           "repo_path": "bios/Arcade/MAME/ym2608.zip",
           "cores": [
             "mame"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "g7400.bin",
-      "sha1": "5130243429b40b01a14e1304d0394b8459a6fbae",
-      "sha256": "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1",
-      "size": 1024,
-      "repo_path": "bios/Philips/Videopac/O2_G7400_bios.bin",
-      "cores": null,
-      "systems": [
-        "videopacplus"
-      ],
-      "alternatives": [
-        {
-          "sha1": "5130243429b40b01a14e1304d0394b8459a6fbae",
-          "sha256": "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1",
-          "size": 1024,
-          "repo_path": "bios/Philips/Videopac/O2_G7400_bios.bin",
-          "cores": [
-            "o2em"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "jopac.bin",
-      "sha1": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "sha256": "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074",
-      "size": 1024,
-      "repo_path": "bios/Philips/Videopac+/jopac.bin",
-      "cores": null,
-      "systems": [
-        "videopacplus"
-      ],
-      "alternatives": [
-        {
-          "sha1": "54b8d2c1317628de51a85fc1c424423a986775e4",
-          "sha256": "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074",
-          "size": 1024,
-          "repo_path": "bios/Philips/Videopac+/jopac.bin",
-          "cores": [
-            "o2em"
           ]
         }
       ]
@@ -6994,6 +7043,28 @@
       ]
     },
     {
+      "dest": "socrates.zip",
+      "sha1": "6bbaa8f73027eaca2c6988ee3b9b3f3b0b29d18e",
+      "sha256": "468ff4b7247b7ba6b7ade48a353e17368b4bd1841bf0384c0b2f94a2ab44c799",
+      "size": 218299,
+      "repo_path": "bios/VTech/Socrates/socrates.zip",
+      "cores": null,
+      "systems": [
+        "vtech-socrates"
+      ],
+      "alternatives": [
+        {
+          "sha1": "6bbaa8f73027eaca2c6988ee3b9b3f3b0b29d18e",
+          "sha256": "468ff4b7247b7ba6b7ade48a353e17368b4bd1841bf0384c0b2f94a2ab44c799",
+          "size": 218299,
+          "repo_path": "bios/VTech/Socrates/socrates.zip",
+          "cores": [
+            "mame"
+          ]
+        }
+      ]
+    },
+    {
       "dest": "vsmile.zip",
       "sha1": "65e526ae3e4795a9186c53c7428d8b946170befe",
       "sha256": "40442c0570e0e26350dfab8eb74ff90a8e5b4093daa85a9a60113f9357c0c768",
@@ -7001,7 +7072,7 @@
       "repo_path": "bios/VTech/V.Smile/vsmile.zip",
       "cores": null,
       "systems": [
-        "vsmile"
+        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42677,6 +42748,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -42696,6 +42768,9 @@
       "repo_path": "bios/Other/Clock Signal/BBCMicro/adfs-1.30.rom",
       "cores": [
         "clk"
+      ],
+      "systems": [
+        "acorn-bbc-micro"
       ]
     },
     {
@@ -42706,6 +42781,9 @@
       "repo_path": "bios/Other/Clock Signal/BBCMicro/ADT-1.40.rom",
       "cores": [
         "clk"
+      ],
+      "systems": [
+        "acorn-bbc-micro"
       ]
     },
     {
@@ -42716,6 +42794,9 @@
       "repo_path": "bios/Other/Clock Signal/BBCMicro/TUBE110.rom",
       "cores": [
         "clk"
+      ],
+      "systems": [
+        "acorn-bbc-micro"
       ]
     },
     {
@@ -42726,6 +42807,9 @@
       "repo_path": "bios/Other/Clock Signal/BBCMicro/Z80_122.rom",
       "cores": [
         "clk"
+      ],
+      "systems": [
+        "acorn-bbc-micro"
       ]
     },
     {
@@ -42738,6 +42822,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -42824,6 +42909,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43019,6 +43105,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43079,6 +43166,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43139,6 +43227,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43160,6 +43249,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43194,6 +43284,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43228,6 +43319,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43501,6 +43593,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43542,6 +43635,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43723,6 +43817,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43744,6 +43839,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43795,6 +43891,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43816,6 +43913,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43887,6 +43985,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -43908,6 +44007,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",
@@ -61859,6 +61959,23 @@
       "repo_path": "bios/Other/eka2l1/resources/gamecontrollerdb.txt",
       "cores": [
         "eka2l1"
+      ]
+    },
+    {
+      "dest": "fbneo/hiscore.dat",
+      "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+      "sha256": "efd00af9a44241c2aa094d5f1977aa68fc0bb8467dbcf82f32762977d37a6f17",
+      "size": 328397,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.30c6ad69",
+      "cores": [
+        "fbneo"
+      ],
+      "systems": [
+        "coleco-colecovision",
+        "fairchild-channel-f",
+        "microsoft-msx",
+        "nintendo-fds",
+        "snk-neogeo-cd"
       ]
     },
     {
@@ -83120,7 +83237,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83133,7 +83251,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83146,7 +83265,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83159,7 +83279,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83172,7 +83293,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83185,7 +83307,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83198,7 +83321,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83211,7 +83335,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83224,7 +83349,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83237,7 +83363,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83250,7 +83377,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83263,7 +83391,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83276,7 +83405,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83289,7 +83419,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83302,7 +83433,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83315,7 +83447,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83328,7 +83461,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83341,7 +83475,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83354,7 +83489,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83367,7 +83503,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83380,7 +83517,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83393,7 +83531,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83406,7 +83545,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83419,7 +83559,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83432,7 +83573,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83445,7 +83587,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83458,7 +83601,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83471,7 +83615,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83484,7 +83629,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83497,7 +83643,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83510,7 +83657,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83523,7 +83671,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83536,7 +83685,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83549,7 +83699,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83562,7 +83713,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83575,7 +83727,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83588,7 +83741,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83601,7 +83755,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83614,7 +83769,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83627,7 +83783,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83640,7 +83797,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83653,7 +83811,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83666,7 +83825,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83679,7 +83839,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83692,7 +83853,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83705,7 +83867,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83718,7 +83881,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83731,7 +83895,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83744,7 +83909,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83757,7 +83923,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83770,7 +83937,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83783,7 +83951,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83796,7 +83965,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83809,7 +83979,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83822,7 +83993,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83835,7 +84007,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83848,7 +84021,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83861,7 +84035,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83874,7 +84049,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83887,7 +84063,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83900,7 +84077,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83913,7 +84091,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83926,7 +84105,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83939,7 +84119,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83952,7 +84133,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83965,7 +84147,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83978,7 +84161,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -83991,7 +84175,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84004,7 +84189,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84017,7 +84203,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84030,7 +84217,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84043,7 +84231,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84056,7 +84245,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84069,7 +84259,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84082,7 +84273,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84095,7 +84287,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84108,7 +84301,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84121,7 +84315,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84134,7 +84329,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84147,7 +84343,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84160,7 +84357,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84173,7 +84371,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84186,7 +84385,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84199,7 +84399,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84212,7 +84413,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84225,7 +84427,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84238,7 +84441,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84251,7 +84455,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84264,7 +84469,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84277,7 +84483,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84290,7 +84497,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84303,7 +84511,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84316,7 +84525,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84329,7 +84539,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84342,7 +84553,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84355,7 +84567,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84368,7 +84581,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84381,7 +84595,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84394,7 +84609,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84407,7 +84623,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84420,7 +84637,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84433,7 +84651,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84446,7 +84665,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84459,7 +84679,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84472,7 +84693,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84485,7 +84707,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84498,7 +84721,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84511,7 +84735,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84524,7 +84749,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84537,7 +84763,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84550,7 +84777,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84563,7 +84791,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84576,7 +84805,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84589,7 +84819,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84602,7 +84833,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84615,7 +84847,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84628,7 +84861,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84641,7 +84875,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84654,7 +84889,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84667,7 +84903,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84680,7 +84917,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84693,7 +84931,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84706,7 +84945,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84719,7 +84959,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84732,7 +84973,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84745,7 +84987,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84758,7 +85001,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84771,7 +85015,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84784,7 +85029,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84797,7 +85043,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84810,7 +85057,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84823,7 +85071,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84836,7 +85085,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84849,7 +85099,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84862,7 +85113,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84875,7 +85127,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84888,7 +85141,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84901,7 +85155,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84914,7 +85169,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84927,7 +85183,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84940,7 +85197,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84953,7 +85211,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84966,7 +85225,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84979,7 +85239,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -84992,7 +85253,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85005,7 +85267,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85018,7 +85281,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85031,7 +85295,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85044,7 +85309,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85057,7 +85323,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85070,7 +85337,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85083,7 +85351,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85096,7 +85365,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85109,7 +85379,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85122,7 +85393,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85135,7 +85407,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85148,7 +85421,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85161,7 +85435,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85174,7 +85449,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85187,7 +85463,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85200,7 +85477,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85213,7 +85491,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85226,7 +85505,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85239,7 +85519,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85252,7 +85533,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85265,7 +85547,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85278,7 +85561,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85291,7 +85575,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85304,7 +85589,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85317,7 +85603,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85330,7 +85617,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85343,7 +85631,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85356,7 +85645,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85369,7 +85659,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85382,7 +85673,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85395,7 +85687,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85408,7 +85701,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85421,7 +85715,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85434,7 +85729,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85447,7 +85743,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85460,7 +85757,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85473,7 +85771,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85486,7 +85785,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85499,7 +85799,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85512,7 +85813,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85525,7 +85827,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85538,7 +85841,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85551,7 +85855,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85564,7 +85869,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85577,7 +85883,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85590,7 +85897,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85603,7 +85911,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85616,7 +85925,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85629,7 +85939,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85642,7 +85953,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85655,7 +85967,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85668,7 +85981,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85681,7 +85995,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85694,7 +86009,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85707,7 +86023,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85720,7 +86037,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85733,7 +86051,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85746,7 +86065,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85759,7 +86079,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85772,7 +86093,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85785,7 +86107,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85798,7 +86121,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85811,7 +86135,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85824,7 +86149,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85837,7 +86163,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85850,7 +86177,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85863,7 +86191,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85876,7 +86205,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85889,7 +86219,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85902,7 +86233,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85915,7 +86247,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85928,7 +86261,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85941,7 +86275,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85954,7 +86289,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85967,7 +86303,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85980,7 +86317,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -85993,7 +86331,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86006,7 +86345,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86019,7 +86359,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86032,7 +86373,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86045,7 +86387,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86058,7 +86401,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86071,7 +86415,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86084,7 +86429,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86097,7 +86443,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86110,7 +86457,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86123,7 +86471,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86136,7 +86485,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86149,7 +86499,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86162,7 +86513,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86175,7 +86527,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86188,7 +86541,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86201,7 +86555,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86214,7 +86569,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86227,7 +86583,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86240,7 +86597,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86253,7 +86611,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86266,7 +86625,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86279,7 +86639,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86292,7 +86653,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86305,7 +86667,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86318,7 +86681,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86331,7 +86695,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86344,7 +86709,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86357,7 +86723,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86370,7 +86737,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86383,7 +86751,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86396,7 +86765,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86409,7 +86779,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86422,7 +86793,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86435,7 +86807,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86448,7 +86821,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86461,7 +86835,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86474,7 +86849,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86487,7 +86863,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86500,7 +86877,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86513,7 +86891,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86526,7 +86905,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86539,7 +86919,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86552,7 +86933,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86565,7 +86947,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86578,7 +86961,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86591,7 +86975,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86604,7 +86989,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86617,7 +87003,8 @@
         "o2em"
       ],
       "systems": [
-        "magnavox-odyssey2"
+        "magnavox-odyssey2",
+        "philips-videopac"
       ]
     },
     {
@@ -86990,6 +87377,617 @@
       ]
     },
     {
+      "dest": "scummvm/theme/scummmodern.zip",
+      "sha1": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+      "sha256": "1152e03f0bca45724ad6dd5dbc987a99abd0ffcfb09c7c9c7a0504980c12297c",
+      "size": 68087,
+      "repo_path": "bios/Other/ScummVM/.variants/scummmodern.zip.ee71d6cd",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/scummclassic.zip",
+      "sha1": "69836fb392710f2182df07bab8960e8a2d92c1a9",
+      "sha256": "39b823b709213006b00246e2d0c5c49f5475dc2257434fb2e860b442892e2fe1",
+      "size": 16488,
+      "repo_path": "bios/Other/ScummVM/scummclassic.zip",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/scummremastered.zip",
+      "sha1": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+      "sha256": "0a3df174f3a271cfa384ce524e423cf25f35ee6c873772372ae954f2973e477a",
+      "size": 93901,
+      "repo_path": "bios/Other/ScummVM/.variants/scummremastered.zip.0d990484",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/residualvm.zip",
+      "sha1": "589b622f55c9944c4883e4163d4d49508e22e056",
+      "sha256": "fa8530078efef1719566c6d88edcc87ab3654994ad2a56617e82a77608a36b4b",
+      "size": 94555,
+      "repo_path": "bios/Other/ScummVM/.variants/residualvm.zip.b2811fa9",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/gui-icons.dat",
+      "sha1": "38e74e6994924781487a0d39cc53dc4708a90c1c",
+      "sha256": "e772a8bb64ad3d7a807e859ad55c6b41269e66e32dfc78cdb4e583e183b5d828",
+      "size": 3315855,
+      "repo_path": "bios/Other/ScummVM/gui-icons.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/shaders.dat",
+      "sha1": "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c",
+      "sha256": "1e7839515c92b0e55198a6c96666dcd369ac3d4efab0190a265d244fda65f9e9",
+      "size": 657234,
+      "repo_path": "bios/Other/ScummVM/shaders.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/theme/translations.dat",
+      "sha1": "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4",
+      "sha256": "88e4a57aa5d58b213f6a066518eb8a1cb1046132770987cc7dd8b06ce80e0156",
+      "size": 3693914,
+      "repo_path": "bios/Other/ScummVM/translations.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/achievements.dat",
+      "sha1": "379f9def6d0de4b4bad18b0177df81783a51f17b",
+      "sha256": "6f5394edee3a2ed9165d1ac0611a5e02aabe40e7ceca9e51926d01b23f157493",
+      "size": 249239,
+      "repo_path": "bios/Other/ScummVM/achievements.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/classicmacfonts.dat",
+      "sha1": "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1",
+      "sha256": "d33aa56fbbe119a1567a843df9bb759cb6589f236926b93a78dc033b2f4221d1",
+      "size": 626103,
+      "repo_path": "bios/Other/ScummVM/classicmacfonts.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/encoding.dat",
+      "sha1": "11d3873337827195bc16c3d3175ad00f1777ed95",
+      "sha256": "175689478e2acfe66a106e2df53c5707c49271183cfc7b5e65cd05c6b65c57f8",
+      "size": 179670,
+      "repo_path": "bios/Other/ScummVM/encoding.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/helpdialog.zip",
+      "sha1": "386d8a89e180f8abab53e5d5926b6a81ee4b31dd",
+      "sha256": "9ff3c7964a63b18ffa0e9cfcf60d4d8b4a77d7a583b2e66173716a825c777f81",
+      "size": 207764,
+      "repo_path": "bios/Other/ScummVM/helpdialog.zip",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/macgui.dat",
+      "sha1": "1eed577281b8819367d1ee99b1a76ff3e1920735",
+      "sha256": "5e55c29903809bf5297a28fee22e203b6dc6f56240900036b9bd8036c0a67660",
+      "size": 65656,
+      "repo_path": "bios/Other/ScummVM/macgui.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/access.dat",
+      "sha1": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
+      "sha256": "c108b691e81f8b9ac54feac3538ad7f26ab32b49777a34b47ee477aa464f0b30",
+      "size": 520352,
+      "repo_path": "bios/Other/ScummVM/access.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/bagel.dat",
+      "sha1": "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835",
+      "sha256": "cdab7aae2ef073f074bb4a1da691ad6895dd8de5c7a719a5d10d654abee8295c",
+      "size": 20584,
+      "repo_path": "bios/Other/ScummVM/bagel.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/cryo.dat",
+      "sha1": "220c2fe52d26b8607abeb2ad4a8ea4324daea5ba",
+      "sha256": "71b5e3d68848e67ae3d17eb63ed168d2fce788d3e408b79f025107eab082aa43",
+      "size": 12499,
+      "repo_path": "bios/Other/ScummVM/cryo.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/cryomni3d.dat",
+      "sha1": "3971847e26be0abad8196caf03e5852a81ddbdea",
+      "sha256": "d9fe2368aa9d5ecb4d3ddf1868ea71c7bfeb64f15422156051c449558ba561ae",
+      "size": 70416,
+      "repo_path": "bios/Other/ScummVM/cryomni3d.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/darkseed.dat",
+      "sha1": "343172f1bfff8cb8c4abefa95e211379f39583b7",
+      "sha256": "e4462b43eb16bb5c687fbe21cf8a09943b9be1ddcda508ebf3de6bfff434dd0e",
+      "size": 37183,
+      "repo_path": "bios/Other/ScummVM/darkseed.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/drascula.dat",
+      "sha1": "05c97e92439b67aea8f6eb7fc96db023edf62124",
+      "sha256": "6da45e0e6d8eb04f5f826836f0ddf85c7e41ed32c64c587cea985974b2f76975",
+      "size": 259625,
+      "repo_path": "bios/Other/ScummVM/drascula.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/freescape.dat",
+      "sha1": "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd",
+      "sha256": "5bd36bf848d73be0810f03adebfee105ef1c992fb8689618ef0aec882a6046f9",
+      "size": 30124,
+      "repo_path": "bios/Other/ScummVM/freescape.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/got.aud",
+      "sha1": "209ab6d86a7c44f241689c5511b2027f7ad2c7c4",
+      "sha256": "9b253aedf06bd49159e4241b22d1047aadb1453d125dd961a8d0c458ae3c889a",
+      "size": 11313,
+      "repo_path": "bios/Other/ScummVM/got.aud",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/got.gfx",
+      "sha1": "0c9603da78b980bcf391bbf5f9103a5a642c4ee8",
+      "sha256": "83f5d7681e92daaad63370505ff24d9bea468cbd898fc9628c62b299e707e768",
+      "size": 288199,
+      "repo_path": "bios/Other/ScummVM/got.gfx",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/hadesch_translations.dat",
+      "sha1": "17aae444b3010e72e092635d25d3b93c104b0ad2",
+      "sha256": "55f7bd06cbe7b6503fee3ec3243887450e804deaa9e5a026ff9821496624e630",
+      "size": 431,
+      "repo_path": "bios/Other/ScummVM/hadesch_translations.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/hugo.dat",
+      "sha1": "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9",
+      "sha256": "228dd029399ce7318a60aebed762ee628b9092ece36a824cb005a55534b9995f",
+      "size": 186866,
+      "repo_path": "bios/Other/ScummVM/hugo.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/kyra.dat",
+      "sha1": "31b0b9418af2f9dd4e4094aada05d48eb355975b",
+      "sha256": "6b2cc168d3201305039e78bc067f3cd10c1267d3c12a8aad12ab0656920318a8",
+      "size": 2028520,
+      "repo_path": "bios/Other/ScummVM/kyra.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/lure.dat",
+      "sha1": "516347ec0ec2a397265d1b2fb053aa3758382e09",
+      "sha256": "9c17cfb5349c4bd13e56b0652f81fd2bdec849de7bd875bfedf654a08916b568",
+      "size": 768832,
+      "repo_path": "bios/Other/ScummVM/lure.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/macventure.dat",
+      "sha1": "e431e718e3c784532422ea2654d5fc6042a95c09",
+      "sha256": "21d3194c3f43061055f7ac8f5e1ffbf09ee4aaba0ab22eff1780a45b46eb794d",
+      "size": 4146,
+      "repo_path": "bios/Other/ScummVM/macventure.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/mm.dat",
+      "sha1": "0816fe29b57911b28cbf774348f5492062326a85",
+      "sha256": "76cee02268017112ec6794c18394541ae8241ac4593abf904294daba43c3e78b",
+      "size": 280803,
+      "repo_path": "bios/Other/ScummVM/mm.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/mort.dat",
+      "sha1": "0b9d0fa2a18eadf61aeddc19128ef90898ab7206",
+      "sha256": "ed4f797fd4aff885000ebe589bbac9faa3dd09dd2bee1dee7b20c0d82636f4c1",
+      "size": 76302,
+      "repo_path": "bios/Other/ScummVM/mort.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/myst3.dat",
+      "sha1": "5fbf7b1a596219f0daab60a8ceb2f1e59e042243",
+      "sha256": "a02b766efef65d403577c4aa06f2679d911e05e0da807dcfa195833b55419b1e",
+      "size": 358287,
+      "repo_path": "bios/Other/ScummVM/myst3.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/nancy.dat",
+      "sha1": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+      "sha256": "efea15651895e7223d3b867f361d938dff9fff2c1643282103ecc89247e50d17",
+      "size": 255042,
+      "repo_path": "bios/Other/ScummVM/.variants/nancy.dat.eb7cfdb3",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/neverhood.dat",
+      "sha1": "490012c996ba0c56dd8d077e1418ee53b1e96397",
+      "sha256": "b86cb788237ace2988f7a8b7b02fddd213f29e2cac4e19764e6e3b29342894c6",
+      "size": 23804,
+      "repo_path": "bios/Other/ScummVM/neverhood.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/prince_translation.dat",
+      "sha1": "57403a286c4d251384442a507d285b2dc5ce330e",
+      "sha256": "e9e0647b4d364ed05fce3e9b7a640edc3a59fac72c2e92d9725111ab5c33a543",
+      "size": 168060,
+      "repo_path": "bios/Other/ScummVM/prince_translation.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/queen.tbl",
+      "sha1": "7bafa28dfd9b3be17430d467d8787d8204437ba0",
+      "sha256": "b104d1a01e3ea552b63d98da9365f6beaba40864baa74b5b53159f17fc8f1149",
+      "size": 1100505,
+      "repo_path": "bios/Other/ScummVM/queen.tbl",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/sky.cpt",
+      "sha1": "fa03ede717223eaf011491d2066e37eb112e735b",
+      "sha256": "4c457373415325ea039d7a3d4f1211f7bbedd83d5bf85b94afd14cb4bdd263d2",
+      "size": 419427,
+      "repo_path": "bios/Other/ScummVM/sky.cpt",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/supernova.dat",
+      "sha1": "8a571cfc431b5fe794f0262f0e55f72927ab27b4",
+      "sha256": "f778cb20eca2451220dd7dddf4b96f267e66f378f068f81d9c3f4962dbb1791f",
+      "size": 523211,
+      "repo_path": "bios/Other/ScummVM/supernova.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/teenagent.dat",
+      "sha1": "0d488164930332bae3aa1ad38cef44abbe3d00a6",
+      "sha256": "1c60a898b61bc39b38fa4e5ec5c3d78de666c10d1af7a3ffd36e9bbc234488ab",
+      "size": 403315,
+      "repo_path": "bios/Other/ScummVM/teenagent.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/titanic.dat",
+      "sha1": "15f51828f08fdbe01b56123e96312b5859a968c0",
+      "sha256": "463c1d1460993a1a404f6cece6f8f50706814b97f2b5ee5d2c3b32f480abacd8",
+      "size": 3197968,
+      "repo_path": "bios/Other/ScummVM/titanic.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/tony.dat",
+      "sha1": "a5e19f364bda6a0d2330495114c9ad665bb79ad0",
+      "sha256": "5537b209e5243f0a1c5e7f1e5024585caa9a63c959339dbdb2402038bcedf58c",
+      "size": 24584,
+      "repo_path": "bios/Other/ScummVM/tony.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/toon.dat",
+      "sha1": "85bb688125d66f2797a41f153ce1fa177027a83f",
+      "sha256": "eb7d5855ea3f69f0d1f618baf8e6c8e580c019b6f2fd2c0937dc664740baa252",
+      "size": 20996,
+      "repo_path": "bios/Other/ScummVM/toon.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/ultima.dat",
+      "sha1": "e049932518390257f4d49b1691cad229e6060079",
+      "sha256": "e52cb8c261d747ac4203a0d929bd5cb8f44e80e61a97ee2957b2508824f01358",
+      "size": 15981464,
+      "repo_path": "bios/Other/ScummVM/ultima.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/ultima8.dat",
+      "sha1": "6319d3a245297697c1e4def78dc231a3f30708bb",
+      "sha256": "eb00526c19ff1d878754f27632c29bfecdb9c906764fc4328d76bb708146f4fc",
+      "size": 238149,
+      "repo_path": "bios/Other/ScummVM/ultima8.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/wintermute.zip",
+      "sha1": "5302f543384b21fb55466118a6966e5ef46b85f6",
+      "sha256": "7559d45435dee4b49c339a892b73078a3123b33632567b02282847bed0e70060",
+      "size": 4520,
+      "repo_path": "bios/Other/ScummVM/wintermute.zip",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/fonts.dat",
+      "sha1": "1eaef39122559500fbbc705c9425500311d23e03",
+      "sha256": "b25946aa6ff9c7bbef9d6e5a8fa7b33cf1230fbddfaa5262e19288387c493b95",
+      "size": 6449829,
+      "repo_path": "bios/Other/ScummVM/fonts.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/fonts-cjk.dat",
+      "sha1": "b46f5a744387d1991d66a06292811f217ae063e2",
+      "sha256": "96900e574f5f7b100b63b538f74ac7c8a6ae0f56b5a2fc4131fb070a4d914a7e",
+      "size": 38277312,
+      "repo_path": "bios/Other/ScummVM/fonts-cjk.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/fonts-imgui.dat",
+      "sha1": "659a025dfa39a8caada7dac6e69b4d7c88217b3f",
+      "sha256": "f38eca5a71b33c267cfd909ddda2a859e0e5d4a70976e2cbba03cf9fcb0509d2",
+      "size": 4000965,
+      "repo_path": "bios/Other/ScummVM/fonts-imgui.dat",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/grim-patch.lab",
+      "sha1": "3c43b7a0125f88a9f83ae4307dca57867ffd637c",
+      "sha256": "7928ca5d5bd7d27cf4a386c696d78c01fc92bed7156ac9d381a42648fdd66710",
+      "size": 9341,
+      "repo_path": "bios/Other/ScummVM/grim-patch.lab",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
+      "dest": "scummvm/extra/monkey4-patch.m4b",
+      "sha1": "49fc530e77b61f326f6e1d5a5147daa2fd67d1e2",
+      "sha256": "6d0141a132bf34eb4c81d7db958fc4bbff65ee972056e5bf01ce0105c09bdb95",
+      "size": 2990,
+      "repo_path": "bios/Other/ScummVM/monkey4-patch.m4b",
+      "cores": [
+        "scummvm"
+      ],
+      "systems": [
+        "scummvm"
+      ]
+    },
+    {
       "dest": "gamecontrollerdb.txt",
       "sha1": "ab035b7804089690018318e4a05f9a8fc59421ff",
       "sha256": "eb002773dc8a16aa96f9ee2609798e231a9deb60c45e21fbdd4e221c9e8b7d77",
@@ -87019,6 +88017,17 @@
       "repo_path": "bios/Sega/Model 3/Config/Games.xml",
       "cores": [
         "supermodel"
+      ],
+      "alternatives": [
+        {
+          "sha1": "599a74894c61c1849e2aeff17507c233e2f459d6",
+          "sha256": "7b8f6b18ab7951b47d89742d34b140a6acb84729a1f6ad770689c2695e1bf4cc",
+          "size": 152488,
+          "repo_path": "bios/Sega/Model 3/Config/.variants/Games.xml.84b66c6c",
+          "cores": [
+            "supermodel-legacy"
+          ]
+        }
       ]
     },
     {
@@ -121051,6 +122060,9 @@
       "repo_path": "bios/Elektronika/BK/TERAK.ROM",
       "cores": [
         "bk"
+      ],
+      "systems": [
+        "elektronika-bk"
       ]
     },
     {
@@ -124017,6 +125029,16 @@
       "executable": true
     },
     {
+      "dest": "soundfonts/GeneralUser-GS.sf2",
+      "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
+      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "size": 32319396,
+      "repo_path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
+      "cores": [
+        "dosbox-staging"
+      ]
+    },
+    {
       "dest": "soundfonts/FluidR3_GM.sf2",
       "sha1": "4fd467afcb45c8b4cfd1eadac9372a819e35d46d",
       "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
@@ -124042,6 +125064,19 @@
       ],
       "storage": "release",
       "release_asset": "easyrpg.soundfont"
+    },
+    {
+      "dest": "GeneralUser_GS.sf2",
+      "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
+      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "size": 32319396,
+      "repo_path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
+      "cores": [
+        "dosbox-x"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
     },
     {
       "dest": "ANEX86.BMP",
@@ -124191,7 +125226,7 @@
       "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
       "size": 32319396,
-      "repo_path": "bios/DOS/DOSBox/DOSBOX.SF2",
+      "repo_path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
       "cores": [
         "dosbox_pure"
       ]
@@ -125597,23 +126632,6 @@
       ],
       "storage": "release",
       "release_asset": "vimana.zip"
-    },
-    {
-      "dest": "fbneo/hiscore.dat",
-      "sha1": "ae3329abbcb7b445d979321a1f67733aa3f023d0",
-      "sha256": "d9c51a13ec2c6db6c9ba0f955c8a8fd8fe54fc2ec05cd82226f4ddf53d500182",
-      "size": 314122,
-      "repo_path": "bios/Arcade/FBNeo/hiscore.dat",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ]
     },
     {
       "dest": "fbneo/samples/donpachi.zip",
@@ -127541,7 +128559,8 @@
       "size": 374405,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak1.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127551,7 +128570,8 @@
       "size": 7511182,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak2.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127561,7 +128581,8 @@
       "size": 276305,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak3.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127571,7 +128592,8 @@
       "size": 9600350,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak4.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127581,7 +128603,8 @@
       "size": 191872,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak5.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127591,7 +128614,8 @@
       "size": 7346884,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak6.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127601,7 +128625,8 @@
       "size": 320873,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak7.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127611,7 +128636,8 @@
       "size": 454478,
       "repo_path": "bios/Id Software/Quake III Arena/baseq3/pak8.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127621,7 +128647,8 @@
       "size": 46853694,
       "repo_path": "bios/Id Software/Quake III Arena/demoq3/pak0.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127631,7 +128658,8 @@
       "size": 383888,
       "repo_path": "bios/Id Software/Quake III Arena/missionpack/pak1.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127641,7 +128669,8 @@
       "size": 376234,
       "repo_path": "bios/Id Software/Quake III Arena/missionpack/pak2.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -127651,7 +128680,8 @@
       "size": 384282,
       "repo_path": "bios/Id Software/Quake III Arena/missionpack/pak3.pk3",
       "cores": [
-        "ioquake3"
+        "ioquake3",
+        "vkquake3"
       ]
     },
     {
@@ -128272,9 +129302,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128283,12 +129315,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128309,9 +129344,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128320,12 +129357,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128388,9 +129428,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128399,12 +129441,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -128436,9 +129481,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128447,12 +129494,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128547,9 +129597,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128558,12 +129610,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128637,9 +129692,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128648,12 +129705,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -128695,9 +129755,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128706,12 +129768,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128743,9 +129808,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128754,12 +129821,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128780,9 +129850,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128791,12 +129863,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128817,9 +129892,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128828,12 +129905,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128854,9 +129934,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128865,12 +129947,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128911,9 +129996,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128922,12 +130009,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128948,9 +130038,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128959,12 +130051,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -128985,9 +130080,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -128996,12 +130093,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129022,9 +130122,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129033,12 +130135,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129059,9 +130164,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129070,12 +130177,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129096,9 +130206,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129107,12 +130219,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129133,9 +130248,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129144,12 +130261,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129170,9 +130290,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129181,12 +130303,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129207,9 +130332,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129218,12 +130345,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129244,9 +130374,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129255,12 +130387,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129303,9 +130438,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129314,12 +130451,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129340,9 +130480,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129351,12 +130493,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129390,9 +130535,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129401,12 +130548,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129437,9 +130587,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129448,12 +130600,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129474,9 +130629,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129485,12 +130642,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129512,9 +130672,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129523,12 +130685,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129549,9 +130714,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129560,12 +130727,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129586,9 +130756,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129597,12 +130769,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129623,9 +130798,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129634,12 +130811,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129660,9 +130840,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129671,12 +130853,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129697,9 +130882,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129708,12 +130895,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129734,9 +130924,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129745,12 +130937,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129771,9 +130966,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129782,12 +130979,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129808,9 +131008,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129819,12 +131021,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129845,9 +131050,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129856,12 +131063,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129882,9 +131092,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129893,12 +131105,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129919,9 +131134,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129930,12 +131147,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129956,9 +131176,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -129967,12 +131189,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -129993,9 +131218,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130004,12 +131231,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130030,9 +131260,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130041,12 +131273,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130067,9 +131302,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130078,12 +131315,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130104,9 +131344,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130115,12 +131357,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130141,9 +131386,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130152,12 +131399,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130178,9 +131428,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130189,12 +131441,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130215,9 +131470,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130226,12 +131483,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130327,6 +131587,9 @@
       "repo_path": "bios/Arcade/MAME/segaai_soundbox.zip",
       "cores": [
         "mame"
+      ],
+      "systems": [
+        "sega-ai"
       ]
     },
     {
@@ -130510,9 +131773,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130521,12 +131786,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130547,9 +131815,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130558,12 +131828,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130584,9 +131857,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130595,12 +131870,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130621,9 +131899,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130632,12 +131912,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130658,9 +131941,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130669,12 +131954,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130695,9 +131983,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130706,12 +131996,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130732,9 +132025,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130743,12 +132038,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130769,9 +132067,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130780,12 +132080,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130806,9 +132109,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130817,12 +132122,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130843,9 +132151,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130854,12 +132164,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130880,9 +132193,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130891,12 +132206,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130917,9 +132235,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130928,12 +132248,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130954,9 +132277,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -130965,12 +132290,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -130991,9 +132319,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131002,12 +132332,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131028,9 +132361,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131039,12 +132374,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131065,9 +132403,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131076,12 +132416,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131102,9 +132445,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131113,12 +132458,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131139,9 +132487,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131150,12 +132500,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131176,9 +132529,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131187,12 +132542,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -131213,9 +132571,11 @@
         "cdi",
         "chihiro",
         "crvision",
+        "entex-advision",
         "fm7",
         "gamate",
         "gamecom",
+        "gamepark-gp32",
         "gamepock",
         "gmaster",
         "hikaru",
@@ -131224,12 +132584,15 @@
         "pcw",
         "pv2000",
         "rx78",
+        "sega-ai",
         "tandy-vis",
         "ti99",
         "triforce",
         "trs80",
         "tutor",
-        "vgmplay"
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile"
       ]
     },
     {
@@ -133039,617 +134402,6 @@
       ]
     },
     {
-      "dest": "scummvm/theme/scummmodern.zip",
-      "sha1": "979586143f0f35dddd0d0d5144e1eccf1fe0516f",
-      "sha256": "1cfc3201505b9fb19f604a161926ead074d7eb2e2f53cd74a515d2156eb33dc0",
-      "size": 68072,
-      "repo_path": "bios/Other/ScummVM/scummmodern.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/scummclassic.zip",
-      "sha1": "69836fb392710f2182df07bab8960e8a2d92c1a9",
-      "sha256": "39b823b709213006b00246e2d0c5c49f5475dc2257434fb2e860b442892e2fe1",
-      "size": 16488,
-      "repo_path": "bios/Other/ScummVM/scummclassic.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/scummremastered.zip",
-      "sha1": "a5506cf1fa968b8e4deaea0ef36014704a3d26bb",
-      "sha256": "0f57913915873209926da402138ca88f5b27b02c9527afdfb7db03bb99a1090d",
-      "size": 93886,
-      "repo_path": "bios/Other/ScummVM/scummremastered.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/residualvm.zip",
-      "sha1": "2b28052b63a2cec188412c1af5110095be6e27db",
-      "sha256": "8053b379ad41350ea18d0780ff5b44f4714d147125c31d985d90b5411ec3e5b0",
-      "size": 94540,
-      "repo_path": "bios/Other/ScummVM/residualvm.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/gui-icons.dat",
-      "sha1": "38e74e6994924781487a0d39cc53dc4708a90c1c",
-      "sha256": "e772a8bb64ad3d7a807e859ad55c6b41269e66e32dfc78cdb4e583e183b5d828",
-      "size": 3315855,
-      "repo_path": "bios/Other/ScummVM/gui-icons.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/shaders.dat",
-      "sha1": "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c",
-      "sha256": "1e7839515c92b0e55198a6c96666dcd369ac3d4efab0190a265d244fda65f9e9",
-      "size": 657234,
-      "repo_path": "bios/Other/ScummVM/shaders.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/theme/translations.dat",
-      "sha1": "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4",
-      "sha256": "88e4a57aa5d58b213f6a066518eb8a1cb1046132770987cc7dd8b06ce80e0156",
-      "size": 3693914,
-      "repo_path": "bios/Other/ScummVM/translations.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/achievements.dat",
-      "sha1": "379f9def6d0de4b4bad18b0177df81783a51f17b",
-      "sha256": "6f5394edee3a2ed9165d1ac0611a5e02aabe40e7ceca9e51926d01b23f157493",
-      "size": 249239,
-      "repo_path": "bios/Other/ScummVM/achievements.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/classicmacfonts.dat",
-      "sha1": "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1",
-      "sha256": "d33aa56fbbe119a1567a843df9bb759cb6589f236926b93a78dc033b2f4221d1",
-      "size": 626103,
-      "repo_path": "bios/Other/ScummVM/classicmacfonts.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/encoding.dat",
-      "sha1": "11d3873337827195bc16c3d3175ad00f1777ed95",
-      "sha256": "175689478e2acfe66a106e2df53c5707c49271183cfc7b5e65cd05c6b65c57f8",
-      "size": 179670,
-      "repo_path": "bios/Other/ScummVM/encoding.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/helpdialog.zip",
-      "sha1": "386d8a89e180f8abab53e5d5926b6a81ee4b31dd",
-      "sha256": "9ff3c7964a63b18ffa0e9cfcf60d4d8b4a77d7a583b2e66173716a825c777f81",
-      "size": 207764,
-      "repo_path": "bios/Other/ScummVM/helpdialog.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/macgui.dat",
-      "sha1": "1eed577281b8819367d1ee99b1a76ff3e1920735",
-      "sha256": "5e55c29903809bf5297a28fee22e203b6dc6f56240900036b9bd8036c0a67660",
-      "size": 65656,
-      "repo_path": "bios/Other/ScummVM/macgui.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/access.dat",
-      "sha1": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
-      "sha256": "c108b691e81f8b9ac54feac3538ad7f26ab32b49777a34b47ee477aa464f0b30",
-      "size": 520352,
-      "repo_path": "bios/Other/ScummVM/access.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/bagel.dat",
-      "sha1": "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835",
-      "sha256": "cdab7aae2ef073f074bb4a1da691ad6895dd8de5c7a719a5d10d654abee8295c",
-      "size": 20584,
-      "repo_path": "bios/Other/ScummVM/bagel.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/cryo.dat",
-      "sha1": "220c2fe52d26b8607abeb2ad4a8ea4324daea5ba",
-      "sha256": "71b5e3d68848e67ae3d17eb63ed168d2fce788d3e408b79f025107eab082aa43",
-      "size": 12499,
-      "repo_path": "bios/Other/ScummVM/cryo.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/cryomni3d.dat",
-      "sha1": "3971847e26be0abad8196caf03e5852a81ddbdea",
-      "sha256": "d9fe2368aa9d5ecb4d3ddf1868ea71c7bfeb64f15422156051c449558ba561ae",
-      "size": 70416,
-      "repo_path": "bios/Other/ScummVM/cryomni3d.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/darkseed.dat",
-      "sha1": "343172f1bfff8cb8c4abefa95e211379f39583b7",
-      "sha256": "e4462b43eb16bb5c687fbe21cf8a09943b9be1ddcda508ebf3de6bfff434dd0e",
-      "size": 37183,
-      "repo_path": "bios/Other/ScummVM/darkseed.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/drascula.dat",
-      "sha1": "05c97e92439b67aea8f6eb7fc96db023edf62124",
-      "sha256": "6da45e0e6d8eb04f5f826836f0ddf85c7e41ed32c64c587cea985974b2f76975",
-      "size": 259625,
-      "repo_path": "bios/Other/ScummVM/drascula.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/freescape.dat",
-      "sha1": "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd",
-      "sha256": "5bd36bf848d73be0810f03adebfee105ef1c992fb8689618ef0aec882a6046f9",
-      "size": 30124,
-      "repo_path": "bios/Other/ScummVM/freescape.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/got.aud",
-      "sha1": "209ab6d86a7c44f241689c5511b2027f7ad2c7c4",
-      "sha256": "9b253aedf06bd49159e4241b22d1047aadb1453d125dd961a8d0c458ae3c889a",
-      "size": 11313,
-      "repo_path": "bios/Other/ScummVM/got.aud",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/got.gfx",
-      "sha1": "0c9603da78b980bcf391bbf5f9103a5a642c4ee8",
-      "sha256": "83f5d7681e92daaad63370505ff24d9bea468cbd898fc9628c62b299e707e768",
-      "size": 288199,
-      "repo_path": "bios/Other/ScummVM/got.gfx",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/hadesch_translations.dat",
-      "sha1": "17aae444b3010e72e092635d25d3b93c104b0ad2",
-      "sha256": "55f7bd06cbe7b6503fee3ec3243887450e804deaa9e5a026ff9821496624e630",
-      "size": 431,
-      "repo_path": "bios/Other/ScummVM/hadesch_translations.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/hugo.dat",
-      "sha1": "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9",
-      "sha256": "228dd029399ce7318a60aebed762ee628b9092ece36a824cb005a55534b9995f",
-      "size": 186866,
-      "repo_path": "bios/Other/ScummVM/hugo.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/kyra.dat",
-      "sha1": "31b0b9418af2f9dd4e4094aada05d48eb355975b",
-      "sha256": "6b2cc168d3201305039e78bc067f3cd10c1267d3c12a8aad12ab0656920318a8",
-      "size": 2028520,
-      "repo_path": "bios/Other/ScummVM/kyra.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/lure.dat",
-      "sha1": "516347ec0ec2a397265d1b2fb053aa3758382e09",
-      "sha256": "9c17cfb5349c4bd13e56b0652f81fd2bdec849de7bd875bfedf654a08916b568",
-      "size": 768832,
-      "repo_path": "bios/Other/ScummVM/lure.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/macventure.dat",
-      "sha1": "e431e718e3c784532422ea2654d5fc6042a95c09",
-      "sha256": "21d3194c3f43061055f7ac8f5e1ffbf09ee4aaba0ab22eff1780a45b46eb794d",
-      "size": 4146,
-      "repo_path": "bios/Other/ScummVM/macventure.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/mm.dat",
-      "sha1": "0816fe29b57911b28cbf774348f5492062326a85",
-      "sha256": "76cee02268017112ec6794c18394541ae8241ac4593abf904294daba43c3e78b",
-      "size": 280803,
-      "repo_path": "bios/Other/ScummVM/mm.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/mort.dat",
-      "sha1": "0b9d0fa2a18eadf61aeddc19128ef90898ab7206",
-      "sha256": "ed4f797fd4aff885000ebe589bbac9faa3dd09dd2bee1dee7b20c0d82636f4c1",
-      "size": 76302,
-      "repo_path": "bios/Other/ScummVM/mort.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/myst3.dat",
-      "sha1": "5fbf7b1a596219f0daab60a8ceb2f1e59e042243",
-      "sha256": "a02b766efef65d403577c4aa06f2679d911e05e0da807dcfa195833b55419b1e",
-      "size": 358287,
-      "repo_path": "bios/Other/ScummVM/myst3.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/nancy.dat",
-      "sha1": "6a49b675c8fe03c281bda22ad3070f0a78699284",
-      "sha256": "af54fdf290d7218026b2f7a82c733192e9e9df4a894c10647d5d207c4686035d",
-      "size": 254116,
-      "repo_path": "bios/Other/ScummVM/nancy.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/neverhood.dat",
-      "sha1": "490012c996ba0c56dd8d077e1418ee53b1e96397",
-      "sha256": "b86cb788237ace2988f7a8b7b02fddd213f29e2cac4e19764e6e3b29342894c6",
-      "size": 23804,
-      "repo_path": "bios/Other/ScummVM/neverhood.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/prince_translation.dat",
-      "sha1": "57403a286c4d251384442a507d285b2dc5ce330e",
-      "sha256": "e9e0647b4d364ed05fce3e9b7a640edc3a59fac72c2e92d9725111ab5c33a543",
-      "size": 168060,
-      "repo_path": "bios/Other/ScummVM/prince_translation.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/queen.tbl",
-      "sha1": "7bafa28dfd9b3be17430d467d8787d8204437ba0",
-      "sha256": "b104d1a01e3ea552b63d98da9365f6beaba40864baa74b5b53159f17fc8f1149",
-      "size": 1100505,
-      "repo_path": "bios/Other/ScummVM/queen.tbl",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/sky.cpt",
-      "sha1": "fa03ede717223eaf011491d2066e37eb112e735b",
-      "sha256": "4c457373415325ea039d7a3d4f1211f7bbedd83d5bf85b94afd14cb4bdd263d2",
-      "size": 419427,
-      "repo_path": "bios/Other/ScummVM/sky.cpt",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/supernova.dat",
-      "sha1": "8a571cfc431b5fe794f0262f0e55f72927ab27b4",
-      "sha256": "f778cb20eca2451220dd7dddf4b96f267e66f378f068f81d9c3f4962dbb1791f",
-      "size": 523211,
-      "repo_path": "bios/Other/ScummVM/supernova.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/teenagent.dat",
-      "sha1": "0d488164930332bae3aa1ad38cef44abbe3d00a6",
-      "sha256": "1c60a898b61bc39b38fa4e5ec5c3d78de666c10d1af7a3ffd36e9bbc234488ab",
-      "size": 403315,
-      "repo_path": "bios/Other/ScummVM/teenagent.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/titanic.dat",
-      "sha1": "15f51828f08fdbe01b56123e96312b5859a968c0",
-      "sha256": "463c1d1460993a1a404f6cece6f8f50706814b97f2b5ee5d2c3b32f480abacd8",
-      "size": 3197968,
-      "repo_path": "bios/Other/ScummVM/titanic.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/tony.dat",
-      "sha1": "a5e19f364bda6a0d2330495114c9ad665bb79ad0",
-      "sha256": "5537b209e5243f0a1c5e7f1e5024585caa9a63c959339dbdb2402038bcedf58c",
-      "size": 24584,
-      "repo_path": "bios/Other/ScummVM/tony.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/toon.dat",
-      "sha1": "85bb688125d66f2797a41f153ce1fa177027a83f",
-      "sha256": "eb7d5855ea3f69f0d1f618baf8e6c8e580c019b6f2fd2c0937dc664740baa252",
-      "size": 20996,
-      "repo_path": "bios/Other/ScummVM/toon.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/ultima.dat",
-      "sha1": "e049932518390257f4d49b1691cad229e6060079",
-      "sha256": "e52cb8c261d747ac4203a0d929bd5cb8f44e80e61a97ee2957b2508824f01358",
-      "size": 15981464,
-      "repo_path": "bios/Other/ScummVM/ultima.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/ultima8.dat",
-      "sha1": "6319d3a245297697c1e4def78dc231a3f30708bb",
-      "sha256": "eb00526c19ff1d878754f27632c29bfecdb9c906764fc4328d76bb708146f4fc",
-      "size": 238149,
-      "repo_path": "bios/Other/ScummVM/ultima8.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/wintermute.zip",
-      "sha1": "5302f543384b21fb55466118a6966e5ef46b85f6",
-      "sha256": "7559d45435dee4b49c339a892b73078a3123b33632567b02282847bed0e70060",
-      "size": 4520,
-      "repo_path": "bios/Other/ScummVM/wintermute.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/fonts.dat",
-      "sha1": "1eaef39122559500fbbc705c9425500311d23e03",
-      "sha256": "b25946aa6ff9c7bbef9d6e5a8fa7b33cf1230fbddfaa5262e19288387c493b95",
-      "size": 6449829,
-      "repo_path": "bios/Other/ScummVM/fonts.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/fonts-cjk.dat",
-      "sha1": "b46f5a744387d1991d66a06292811f217ae063e2",
-      "sha256": "96900e574f5f7b100b63b538f74ac7c8a6ae0f56b5a2fc4131fb070a4d914a7e",
-      "size": 38277312,
-      "repo_path": "bios/Other/ScummVM/fonts-cjk.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/fonts-imgui.dat",
-      "sha1": "659a025dfa39a8caada7dac6e69b4d7c88217b3f",
-      "sha256": "f38eca5a71b33c267cfd909ddda2a859e0e5d4a70976e2cbba03cf9fcb0509d2",
-      "size": 4000965,
-      "repo_path": "bios/Other/ScummVM/fonts-imgui.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/grim-patch.lab",
-      "sha1": "3c43b7a0125f88a9f83ae4307dca57867ffd637c",
-      "sha256": "7928ca5d5bd7d27cf4a386c696d78c01fc92bed7156ac9d381a42648fdd66710",
-      "size": 9341,
-      "repo_path": "bios/Other/ScummVM/grim-patch.lab",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "scummvm/extra/monkey4-patch.m4b",
-      "sha1": "49fc530e77b61f326f6e1d5a5147daa2fd67d1e2",
-      "sha256": "6d0141a132bf34eb4c81d7db958fc4bbff65ee972056e5bf01ce0105c09bdb95",
-      "size": 2990,
-      "repo_path": "bios/Other/ScummVM/monkey4-patch.m4b",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
       "dest": "scummvm/extra/pred.dic",
       "sha1": "20f9a6a9838e3189774ea7ac6b8e62d6720dc683",
       "sha256": "cd367e0ef51fe79dae4b90cef9c7bf1566e092419ebec6a625d7a666d7b97287",
@@ -134841,6 +135593,60 @@
       ]
     },
     {
+      "dest": "id1/pak0.pak",
+      "sha1": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
+      "sha256": "35a9c55e5e5a284a159ad2a62e0e8def23d829561fe2f54eb402dbc0a9a946af",
+      "size": 18689235,
+      "repo_path": "bios/Id Software/Quake/id1/pak0.pak",
+      "cores": [
+        "vkquake"
+      ]
+    },
+    {
+      "dest": "baseq2/pak0.pak",
+      "sha1": "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
+      "sha256": "cae257182f34d3913f3d663e1d7cf865d668feda6af393d4ecf3e9e408b48d09",
+      "size": 49951322,
+      "repo_path": "bios/Id Software/Quake II/baseq2/pak0.pak",
+      "cores": [
+        "vkquake2",
+        "yquake2"
+      ]
+    },
+    {
+      "dest": "baseq2/pak1.pak",
+      "sha1": "588ef09965dee539521b4eb6da4337ce78a2ea21",
+      "sha256": "678210ecd1b27dde1c645660333a1a7b139d849425793859657f804d379b62ad",
+      "size": 12992754,
+      "repo_path": "bios/Id Software/Quake II/baseq2/pak1.pak",
+      "cores": [
+        "vkquake2",
+        "yquake2"
+      ]
+    },
+    {
+      "dest": "baseq2/pak2.pak",
+      "sha1": "67e76a7f3234646507ae59ec1bf755637c1dad03",
+      "sha256": "cb88d584ef939d08e24433a6cf86274737303fac2bbd94415927a75e6b269dd8",
+      "size": 45055,
+      "repo_path": "bios/Id Software/Quake II/baseq2/pak2.pak",
+      "cores": [
+        "vkquake2",
+        "yquake2"
+      ]
+    },
+    {
+      "dest": "ctf/pak0.pak",
+      "sha1": "11b2362521cfe27473d79f72172531d206d07e14",
+      "sha256": "04b4aab58c68a39f6ee59c47460f2c4e1bb9e4821d07df3f949d7706c919e16a",
+      "size": 12101005,
+      "repo_path": "bios/Id Software/Quake II/ctf/pak0.pak",
+      "cores": [
+        "vkquake2",
+        "yquake2"
+      ]
+    },
+    {
       "dest": "xmil/IPLROM.X1T",
       "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
@@ -135307,46 +136113,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ]
-    },
-    {
-      "dest": "baseq2/pak0.pak",
-      "sha1": "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
-      "sha256": "cae257182f34d3913f3d663e1d7cf865d668feda6af393d4ecf3e9e408b48d09",
-      "size": 49951322,
-      "repo_path": "bios/Id Software/Quake II/baseq2/pak0.pak",
-      "cores": [
-        "yquake2"
-      ]
-    },
-    {
-      "dest": "baseq2/pak1.pak",
-      "sha1": "588ef09965dee539521b4eb6da4337ce78a2ea21",
-      "sha256": "678210ecd1b27dde1c645660333a1a7b139d849425793859657f804d379b62ad",
-      "size": 12992754,
-      "repo_path": "bios/Id Software/Quake II/baseq2/pak1.pak",
-      "cores": [
-        "yquake2"
-      ]
-    },
-    {
-      "dest": "baseq2/pak2.pak",
-      "sha1": "67e76a7f3234646507ae59ec1bf755637c1dad03",
-      "sha256": "cb88d584ef939d08e24433a6cf86274737303fac2bbd94415927a75e6b269dd8",
-      "size": 45055,
-      "repo_path": "bios/Id Software/Quake II/baseq2/pak2.pak",
-      "cores": [
-        "yquake2"
-      ]
-    },
-    {
-      "dest": "ctf/pak0.pak",
-      "sha1": "11b2362521cfe27473d79f72172531d206d07e14",
-      "sha256": "04b4aab58c68a39f6ee59c47460f2c4e1bb9e4821d07df3f949d7706c919e16a",
-      "size": 12101005,
-      "repo_path": "bios/Id Software/Quake II/ctf/pak0.pak",
-      "cores": [
-        "yquake2"
       ]
     },
     {
@@ -136016,6 +136782,7 @@
         "clk"
       ],
       "systems": [
+        "acorn-bbc-micro",
         "apple-ii",
         "apple-iigs",
         "archimedes",

@@ -216,7 +216,7 @@ nav:
   - sdlpal: systems/sdlpal.md
 - Emulators:
   - Overview: emulators/index.md
-  - Official ports (74):
+  - Official ports (76):
     - amiarcadia: emulators/amiarcadia.md
     - Amiberry: emulators/amiberry.md
     - Ardens: emulators/ardens.md
@@ -225,6 +225,7 @@ nav:
     - Boytacean: emulators/boytacean.md
     - bsnes: emulators/bsnes.md
     - ClownMDEmu: emulators/clownmdemu.md
+    - CoolbarEmu: emulators/coolbaremu.md
     - CrocoDS: emulators/crocods.md
     - DirkSimple: emulators/dirksimple.md
     - DOSBox Pure Unleashed: emulators/dosbox-pure-unleashed.md
@@ -246,6 +247,7 @@ nav:
     - Geargrafx: emulators/geargrafx.md
     - Gearlynx: emulators/gearlynx.md
     - Gearsystem: emulators/gearsystem.md
+    - Geartowns: emulators/geartowns.md
     - Geolith: emulators/geolith.md
     - Hatari: emulators/hatari.md
     - Holani: emulators/holani.md
@@ -516,7 +518,7 @@ nav:
     - uzem: emulators/uzem.md
     - video_processor: emulators/video_processor.md
     - VirtualXT: emulators/virtualxt.md
-  - Game engines (73):
+  - Game engines (76):
     - Abuse: emulators/abuse.md
     - boom3: emulators/boom3.md
     - BStone: emulators/bstone.md
@@ -585,6 +587,9 @@ nav:
     - TyrQuake: emulators/tyrquake.md
     - uqm: emulators/uqm.md
     - visual-pinball: emulators/visual-pinball.md
+    - vkQuake: emulators/vkquake.md
+    - vkQuake2: emulators/vkquake2.md
+    - vkQuake3: emulators/vkquake3.md
     - WASM-4: emulators/wasm4.md
     - Xash3D FWGS: emulators/xash3d_fwgs.md
     - XRick: emulators/xrick.md
@@ -619,7 +624,7 @@ nav:
     - Triforce: emulators/triforce.md
     - xm6pro68k: emulators/xm6pro68k.md
     - xm6typeg: emulators/xm6typeg.md
-  - Frozen snapshots (38):
+  - Frozen snapshots (39):
     - bnes: emulators/bnes.md
     - bsnes 2014: emulators/bsnes2014.md
     - bsnes C++98: emulators/bsnes_cplusplus98.md
@@ -656,6 +661,7 @@ nav:
     - Stella 2014: emulators/stella2014.md
     - Stella 2023: emulators/stella2023.md
     - Stone Soup: emulators/stonesoup.md
+    - Supermodel Legacy: emulators/supermodel-legacy.md
     - UME 2015: emulators/ume2015.md
     - VBA-Next: emulators/vba_next.md
   - Embedded HLE (14):

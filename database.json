@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-17T04:02:46Z",
-  "total_files": 19006,
-  "total_size": 17498092789,
+  "generated_at": "2026-10-17T11:35:15Z",
+  "total_files": 19036,
+  "total_size": 17548384677,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -10580,6 +10580,16 @@
       "sha256": "a9e936f78c9db009fa9561ebb35dc374b343ba38037133ae30e95906ab0ac312",
       "crc32": "e37c02b4",
       "adler32": "54e4596a"
+    },
+    "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7": {
+      "path": "bios/Arcade/FBNeo/.variants/hiscore.dat.37fc4e05",
+      "name": "hiscore.dat",
+      "size": 324575,
+      "sha1": "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7",
+      "md5": "37fc4e050b53a1ef2c2e7f3042553025",
+      "sha256": "eea7622c75e304f896f327d54adcc5683947e2fa33a81f0f2e0a505ad3e581c6",
+      "crc32": "92cfba00",
+      "adler32": "7d7b9820"
     },
     "de369cb4a7df147b55168fa7aaf0b98c753b735e": {
       "path": "bios/Arcade/FBNeo/236-bios.sp1",
@@ -34365,16 +34375,6 @@
       "sha256": "9f32c5a670421961c3d46a9cdcff0a1d333b886a72c0c260c9607645a3abf773",
       "crc32": "4a3bb4ef",
       "adler32": "2d83a165"
-    },
-    "a00461dbea40093cb9ca1694de9c0ec7ca5650c1": {
-      "path": "bios/DOS/DOSBox/DOSBOX.SF2",
-      "name": "DOSBOX.SF2",
-      "size": 32319396,
-      "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
-      "md5": "bfe69fe5b2702ef7c12c44bd0d34f8f1",
-      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
-      "crc32": "218bad37",
-      "adler32": "c9dade05"
     },
     "75c9fa407e0a027713ed563f135747fffec0590d": {
       "path": "bios/DOS/DOSBox/bass.dll",
@@ -119305,6 +119305,16 @@
       "crc32": "c0a123b9",
       "adler32": "20548629"
     },
+    "36b42dc7b6313fd9cabc0be8b9e9864840929735": {
+      "path": "bios/Id Software/Quake/id1/pak0.pak",
+      "name": "pak0.pak",
+      "size": 18689235,
+      "sha1": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
+      "md5": "5906e5998fc3d896ddaf5e6a62e03abb",
+      "sha256": "35a9c55e5e5a284a159ad2a62e0e8def23d829561fe2f54eb402dbc0a9a946af",
+      "crc32": "74e3b084",
+      "adler32": "785c230a"
+    },
     "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab": {
       "path": "bios/Id Software/Quake II/baseq2/pak0.pak",
       "name": "pak0.pak",
@@ -130930,6 +130940,16 @@
       "crc32": "da6f5f8d",
       "adler32": "323261bb"
     },
+    "a00461dbea40093cb9ca1694de9c0ec7ca5650c1": {
+      "path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
+      "name": "GeneralUser-GS.sf2",
+      "size": 32319396,
+      "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
+      "md5": "bfe69fe5b2702ef7c12c44bd0d34f8f1",
+      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "crc32": "218bad37",
+      "adler32": "c9dade05"
+    },
     "91d75a87872cbb88964bead92e0cbf8b72e836b6": {
       "path": "bios/Other/NXEngine/.variants/Doukutsu.exe.91d75a87",
       "name": "Doukutsu.exe",
@@ -131039,6 +131059,276 @@
       "sha256": "5b7e6bd7afb302f61f643571a032bcaac9b9432cabd72c64419a02f971fa11f7",
       "crc32": "a5f26524",
       "adler32": "5cdaee92"
+    },
+    "2b0cc66a507a159a3a44160cc80c561171798f85": {
+      "path": "bios/Other/ScummVM/.variants/access.dat.f1925ac5",
+      "name": "access.dat",
+      "size": 409472,
+      "sha1": "2b0cc66a507a159a3a44160cc80c561171798f85",
+      "md5": "f1925ac548f9551d9d8f648dbc92c897",
+      "sha256": "f7ec60489065628ab3ca158440d2cd34ffb3b7d93f543412e4b837c8bee49f85",
+      "crc32": "c21aaf8f",
+      "adler32": "22677805"
+    },
+    "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad": {
+      "path": "bios/Other/ScummVM/.variants/cryomni3d.dat.474e9a57",
+      "name": "cryomni3d.dat",
+      "size": 34576,
+      "sha1": "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+      "md5": "474e9a57b74c368acc8d19e8d63e3288",
+      "sha256": "4487d435281910e672fed4965b8b0bf8a1a627831a4949a29fa94ecab04a502e",
+      "crc32": "3f109488",
+      "adler32": "b2f17387"
+    },
+    "16a45d421e92b74cbc8cfe53486474700cc176d7": {
+      "path": "bios/Other/ScummVM/.variants/drascula.dat.2647b6df",
+      "name": "drascula.dat",
+      "size": 259619,
+      "sha1": "16a45d421e92b74cbc8cfe53486474700cc176d7",
+      "md5": "2647b6dff6d117b217dd9896cd25b34e",
+      "sha256": "4ad7c24b2e642e1406fddee729159c6dfc6b1563a33bd7e421f85c4a1bd567b8",
+      "crc32": "e4d1d147",
+      "adler32": "42b51f73"
+    },
+    "1f194d6a55882967e4c4d4e4692fb4aa5c992069": {
+      "path": "bios/Other/ScummVM/.variants/fonts.dat.65025f90",
+      "name": "fonts.dat",
+      "size": 1996401,
+      "sha1": "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+      "md5": "65025f90c134e4538efd306e36341aa1",
+      "sha256": "a9d6dfbb16c2fb16f6a7f0c4d1ae3592ccd996c2c5fcd5ae289570a35757d58b",
+      "crc32": "099d83fd",
+      "adler32": "6e525ed2"
+    },
+    "4ed259b5b27d8dfcf4815a73a9946f4ed709457e": {
+      "path": "bios/Other/ScummVM/.variants/freescape.dat.30ca162d",
+      "name": "freescape.dat",
+      "size": 55245,
+      "sha1": "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+      "md5": "30ca162d03b65f46997fa43e1093839e",
+      "sha256": "6a6e25d6547f672ddc985e00a3e7e734cea2d0ab224ec6e860b6aa6401972183",
+      "crc32": "b02f9abb",
+      "adler32": "6896144c"
+    },
+    "7fd69a142d0333e1514a8c819b610a7471162d9e": {
+      "path": "bios/Other/ScummVM/.variants/gui-icons.dat.17150a7a",
+      "name": "gui-icons.dat",
+      "size": 3300128,
+      "sha1": "7fd69a142d0333e1514a8c819b610a7471162d9e",
+      "md5": "17150a7a6ed5c4d5c0384b95c5fce479",
+      "sha256": "62defbfaf65b4c8bbec8220fc8f1fbf0e88be611befa04e9e9cb60622b52f2da",
+      "crc32": "9b4519e8",
+      "adler32": "c5c06e95"
+    },
+    "932c0d6f73effea91a6fca7ac73439e104952205": {
+      "path": "bios/Other/ScummVM/.variants/hugo.dat.0856a20f",
+      "name": "hugo.dat",
+      "size": 189584,
+      "sha1": "932c0d6f73effea91a6fca7ac73439e104952205",
+      "md5": "0856a20f18b3319c92b710ef80d886cd",
+      "sha256": "b6d0a83155733c598d9ce13eb64a06ea921634744d64c861807c65fdae2ebe01",
+      "crc32": "e8d147ef",
+      "adler32": "cef2328b"
+    },
+    "dda6002f09035101a4bf004c1623f8490d739aa1": {
+      "path": "bios/Other/ScummVM/.variants/kyra.dat.21a57f79",
+      "name": "kyra.dat",
+      "size": 1696846,
+      "sha1": "dda6002f09035101a4bf004c1623f8490d739aa1",
+      "md5": "21a57f79886e46f410cfb50186ed8d77",
+      "sha256": "d469669ca2789a57827c4ac6f63253f382379827f95176c08a47c080b606171a",
+      "crc32": "75cbdf42",
+      "adler32": "a24d1176"
+    },
+    "22c05c0a49c218a4194ccfb670604c8277b9a1f2": {
+      "path": "bios/Other/ScummVM/.variants/lure.dat.75a83c78",
+      "name": "lure.dat",
+      "size": 637824,
+      "sha1": "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+      "md5": "75a83c781ac7024fc9c1b6f7ecc5b936",
+      "sha256": "594441ff7f3fd8e7ff190f156ff65149a1817b89b7c4d410de2c499548b18eb3",
+      "crc32": "8b7dc57f",
+      "adler32": "61d3ff2c"
+    },
+    "156d1b9a18e5bd3b90b1b2820acf198af1f65ead": {
+      "path": "bios/Other/ScummVM/.variants/macventure.dat.d855abc9",
+      "name": "macventure.dat",
+      "size": 4167,
+      "sha1": "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+      "md5": "d855abc95d2b7c03b748631c08603ebb",
+      "sha256": "65432acd8ed47ce4cc32f287b47b101bfe3fd3cae54d34bb8cae681d4fb08ef4",
+      "crc32": "3cf789f2",
+      "adler32": "a1783804"
+    },
+    "d3ae68a09f8c60a32ce42736ed8d276825fbf446": {
+      "path": "bios/Other/ScummVM/.variants/mm.dat.fc20f506",
+      "name": "mm.dat",
+      "size": 266845,
+      "sha1": "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+      "md5": "fc20f5064386a19d39bd5f9df0a542fa",
+      "sha256": "5776890389b6838c96a8781d73fb50e61644383814872022fa51150645bf6066",
+      "crc32": "e8217e0e",
+      "adler32": "642719c4"
+    },
+    "18fb24c236adb974ade847794044914a81d539aa": {
+      "path": "bios/Other/ScummVM/.variants/nancy.dat.e482c84f",
+      "name": "nancy.dat",
+      "size": 251046,
+      "sha1": "18fb24c236adb974ade847794044914a81d539aa",
+      "md5": "e482c84f583783b4b9dea5374aa232da",
+      "sha256": "95f31b2cf2cc21355fcbbdf92b4b9ac6f9c968883b45246e4269c22f200fa1d1",
+      "crc32": "05e6dbc9",
+      "adler32": "14f5dd9d"
+    },
+    "7c8907d33da59afd4e4b62eee67541910e0b78d9": {
+      "path": "bios/Other/ScummVM/.variants/nancy.dat.eb7cfdb3",
+      "name": "nancy.dat",
+      "size": 255042,
+      "sha1": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+      "md5": "eb7cfdb3f74972beb8f43196e4e44001",
+      "sha256": "efea15651895e7223d3b867f361d938dff9fff2c1643282103ecc89247e50d17",
+      "crc32": "d7976af8",
+      "adler32": "2a289ee2"
+    },
+    "800ed1a38a1ba46c3e57281c6d50671dd62d44ff": {
+      "path": "bios/Other/ScummVM/.variants/queen.tbl.4f5b513b",
+      "name": "queen.tbl",
+      "size": 1084522,
+      "sha1": "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+      "md5": "4f5b513b52c4ef6fb1c46e984760a3b7",
+      "sha256": "d690b689247441b632a3f09cb13e4bfca91baf5c5201c5ad8428cc1c9aaf5713",
+      "crc32": "ee33b23c",
+      "adler32": "82c2a689"
+    },
+    "f1bcabae2c99b34bc88975c89d042a179caef9d8": {
+      "path": "bios/Other/ScummVM/.variants/residualvm.zip.9cbffee0",
+      "name": "residualvm.zip",
+      "size": 90553,
+      "sha1": "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+      "md5": "9cbffee094a6bfa1765e2f6ba15a268e",
+      "sha256": "a4bd294da1e4a9e2e0de780a692587ce9c2193da19c17827a56c92118d808a3f",
+      "crc32": "8a482338",
+      "adler32": "34f4549c"
+    },
+    "589b622f55c9944c4883e4163d4d49508e22e056": {
+      "path": "bios/Other/ScummVM/.variants/residualvm.zip.b2811fa9",
+      "name": "residualvm.zip",
+      "size": 94555,
+      "sha1": "589b622f55c9944c4883e4163d4d49508e22e056",
+      "md5": "b2811fa9b209733b61cd49ddb21e1e95",
+      "sha256": "fa8530078efef1719566c6d88edcc87ab3654994ad2a56617e82a77608a36b4b",
+      "crc32": "93296840",
+      "adler32": "f4fcaebd"
+    },
+    "8e5aff75e4aa42b365e8f32223d6fef0b789d646": {
+      "path": "bios/Other/ScummVM/.variants/scummclassic.zip.57aaebd1",
+      "name": "scummclassic.zip",
+      "size": 15872,
+      "sha1": "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+      "md5": "57aaebd10238ffe3863192254629aaa9",
+      "sha256": "7b8842a04eb0b74445038126b01e7fd448b7af635806badb86c4eb10128f6797",
+      "crc32": "8387238f",
+      "adler32": "d7d570a1"
+    },
+    "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a": {
+      "path": "bios/Other/ScummVM/.variants/scummmodern.zip.b470c720",
+      "name": "scummmodern.zip",
+      "size": 283299,
+      "sha1": "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+      "md5": "b470c7205246a0bb4718ca0a27d25055",
+      "sha256": "6326bc517dadbe303ba3cce63132819902f380bde7472dd45e3d92330ae2f22a",
+      "crc32": "a641843b",
+      "adler32": "4325932b"
+    },
+    "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c": {
+      "path": "bios/Other/ScummVM/.variants/scummmodern.zip.ee71d6cd",
+      "name": "scummmodern.zip",
+      "size": 68087,
+      "sha1": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+      "md5": "ee71d6cd464c618c632e6fd62b430d2c",
+      "sha256": "1152e03f0bca45724ad6dd5dbc987a99abd0ffcfb09c7c9c7a0504980c12297c",
+      "crc32": "00194297",
+      "adler32": "e9d1996b"
+    },
+    "03e53349eefc39ce25220bfcb1ae4a580704d29d": {
+      "path": "bios/Other/ScummVM/.variants/scummremastered.zip.0d990484",
+      "name": "scummremastered.zip",
+      "size": 93901,
+      "sha1": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+      "md5": "0d990484d0dfc1680b20cfabcae373cd",
+      "sha256": "0a3df174f3a271cfa384ce524e423cf25f35ee6c873772372ae954f2973e477a",
+      "crc32": "6fa86fae",
+      "adler32": "4754a842"
+    },
+    "6016da4b71e5f46f5866f5acf824c337a0e3ee5c": {
+      "path": "bios/Other/ScummVM/.variants/scummremastered.zip.15600f0b",
+      "name": "scummremastered.zip",
+      "size": 283227,
+      "sha1": "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+      "md5": "15600f0b0274f2ab4dd0c181e4ae3e95",
+      "sha256": "c1bc31c7e5e8642958e85672ed7e6e825e1accfaf8a19b7c0e5d79d36ac6347c",
+      "crc32": "f1d52065",
+      "adler32": "3b15bf84"
+    },
+    "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb": {
+      "path": "bios/Other/ScummVM/.variants/supernova.dat.f6af52d5",
+      "name": "supernova.dat",
+      "size": 420725,
+      "sha1": "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+      "md5": "f6af52d51152447f43cf3cf9a50bc144",
+      "sha256": "d8e6fbdd2ba867b9859592e535825543554735dd0921b0df10a8d84abd65c988",
+      "crc32": "b5e601a3",
+      "adler32": "445b2dde"
+    },
+    "6a5c43732e30e25ace6b6ba2b28f038b24cc497f": {
+      "path": "bios/Other/ScummVM/.variants/teenagent.dat.aaaf8792",
+      "name": "teenagent.dat",
+      "size": 141090,
+      "sha1": "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+      "md5": "aaaf8792af40c80122d7dbecaf1dee20",
+      "sha256": "fe074a8432b4feefd0a9b191d101f0fb75f404dabcad28ac4b08a6060cf7e1df",
+      "crc32": "6ae16bb9",
+      "adler32": "e0757a79"
+    },
+    "6f8a60b0d51de1e86ab3a51c932a78a642c1567a": {
+      "path": "bios/Other/ScummVM/.variants/toon.dat.730f63ea",
+      "name": "toon.dat",
+      "size": 17986,
+      "sha1": "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+      "md5": "730f63ea46169f56bb4f9fa0637baef0",
+      "sha256": "6344848f3c26e73afc53c5980f8ceef9aebdbed87756684d3afb1797dd2b041d",
+      "crc32": "c8ceacc9",
+      "adler32": "22de79be"
+    },
+    "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94": {
+      "path": "bios/Other/ScummVM/.variants/translations.dat.1ca70749",
+      "name": "translations.dat",
+      "size": 3191299,
+      "sha1": "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+      "md5": "1ca707498f9024c292ca745c5727a751",
+      "sha256": "9ea73892112d4ddf6123c2f8d53b4cce8a7130c4c6655f37527231f37eb371d0",
+      "crc32": "bd7a5f25",
+      "adler32": "44b9861a"
+    },
+    "c9207e9c33264134e94cfaf28c638431fdcd8772": {
+      "path": "bios/Other/ScummVM/.variants/ultima.dat.420ef1f9",
+      "name": "ultima.dat",
+      "size": 15979622,
+      "sha1": "c9207e9c33264134e94cfaf28c638431fdcd8772",
+      "md5": "420ef1f96eee6dc15395330f28923be2",
+      "sha256": "febb6359e123c041283ea7747e659b7098727e89ef3de2cdde810793c46cc80a",
+      "crc32": "f2699208",
+      "adler32": "f646943c"
+    },
+    "9f4b31838c16baf518ae14dd44dc54973a3508df": {
+      "path": "bios/Other/ScummVM/.variants/wintermute.zip.46ab65cb",
+      "name": "wintermute.zip",
+      "size": 4057,
+      "sha1": "9f4b31838c16baf518ae14dd44dc54973a3508df",
+      "md5": "46ab65cb137a4fc8710a8f3b9455e50e",
+      "sha256": "bfd52c137aff9d6836d2d2a373d5c4453e8b32663730499b2b72e5fdd8044779",
+      "crc32": "972efe9a",
+      "adler32": "90f15669"
     },
     "9dba9212f2e34446ab034595665809f09f303d63": {
       "path": "bios/Other/ScummVM/Roland_SC-55.sf2",
@@ -187394,6 +187684,16 @@
       "crc32": "9befb7a1",
       "adler32": "49c11b91"
     },
+    "599a74894c61c1849e2aeff17507c233e2f459d6": {
+      "path": "bios/Sega/Model 3/Config/.variants/Games.xml.84b66c6c",
+      "name": "Games.xml",
+      "size": 152488,
+      "sha1": "599a74894c61c1849e2aeff17507c233e2f459d6",
+      "md5": "84b66c6c9eb9370e983d88c4d187ea05",
+      "sha256": "7b8f6b18ab7951b47d89742d34b140a6acb84729a1f6ad770689c2695e1bf4cc",
+      "crc32": "d026a8d1",
+      "adler32": "e60aaf09"
+    },
     "6871a47de90ca67f9ff8e4e280416851a8164563": {
       "path": "bios/Sega/Model 3/Config/Games.xml",
       "name": "Games.xml",
@@ -196285,6 +196585,7 @@
       "a93ed3e9468576c03528bceec8a6236a": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "c2428525597a69fc71621e0cdf114619": "2725373cc8e6e3c04bca4bf7bd0b027be6bec058",
       "40b8624b7a72c782998e52a0782b69e2": "9e52cc30850cf9e1855fbd2e26f987cbc05b910a",
+      "37fc4e050b53a1ef2c2e7f3042553025": "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7",
       "192918d31f38165d2b898891c7ea658d": "de369cb4a7df147b55168fa7aaf0b98c753b735e",
       "054a7bcc1f2a16264472dfbeb25768ea": "f4aa64bfe0b93e5df07b4fe2e0f638d91c7f2e71",
       "d656646d41e3fc44dedfa146d0f2a79f": "fa8cf5f868cfb08bce203baaebb6c4055ee2a000",
@@ -198549,7 +198850,6 @@
       "22170c354d2385b6f0e53075fb782b5f": "ea0fd101ee8e6820869797e285d68ed95fd2465c",
       "cdff634414bf19588a93918ce648ceae": "35a39115299db38e8c490bd9f1bd195d906af00b",
       "88f459121acf32923b1d85742c67e9c9": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
-      "bfe69fe5b2702ef7c12c44bd0d34f8f1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "7253a9fabc089044b3b8e9156b07d6f9": "75c9fa407e0a027713ed563f135747fffec0590d",
       "0b00a4ab6b68960efa49272d416b040d": "2ea6df7253ce0a14094d20cd04c098505cc14c23",
       "19addeb0da536c753797ed59b44d5ba3": "8833196b70002f7f2068d8f6c5eb96862777b018",
@@ -207023,6 +207323,7 @@
       "28750b7841de9453eb335bad6841a2a5": "c50bf2c97e989aa19ad27fe62e67c5cfc6ae2a8b",
       "06fc9be965e345587064056bf22236d2": "0d9ca3d4532c0d412fbb64ab2885f52ef8852594",
       "70c2c63ef1190158f1ebd6c255b22d8e": "10df25f1a7d6ae2a7ebf3e2f9f2ecfc10511ad8a",
+      "5906e5998fc3d896ddaf5e6a62e03abb": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
       "27d77240466ec4f3253256832b54db8a": "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
       "42663ea709b7cd3eb9b634b36cfecb1a": "588ef09965dee539521b4eb6da4337ce78a2ea21",
       "c8217cc5557b672a87fc210c2347d98d": "67e76a7f3234646507ae59ec1bf755637c1dad03",
@@ -208084,6 +208385,7 @@
       "641c88ce7f5e1a9a7ac4c18b90a9f38d": "d312b25c5f3a92178a185de122aeb222a32d4096",
       "2614becc041fc813cf87397aa47e8210": "3757750cd3052b8d23f379aba22d7ee3d9353bc9",
       "37c78cb6e0105b946627038dcbfc8c64": "049412d56a41865539faadcd86408d5107a1dbef",
+      "bfe69fe5b2702ef7c12c44bd0d34f8f1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "f20bb7bc1b97453161e63964f24a2785": "91d75a87872cbb88964bead92e0cbf8b72e836b6",
       "38695d3d69d7a0ada8178072dad4c58b": "bb2d0441e073da9c584f23c2ad8c7ab8aac293bf",
       "2c8dff849954bbca9c4a54087a5c06a9": "19555d2f5f72a66d6beddb4acc5ca00d634ac9c4",
@@ -208095,6 +208397,33 @@
       "eb49484ba96ce09cdf4e60da747eceb1": "214f09a25012e8702783d3ab9a22796071de5374",
       "ac7145e0ce4997cd1abe110139f6cb6b": "ca1911d7e4f9ef036bbc37b6f65b7e23509157e7",
       "990d1b27f1ba1cc540992e56d3985e90": "c603ebeea2816d5c52985170aa7ac4b9dd5f7a8d",
+      "f1925ac548f9551d9d8f648dbc92c897": "2b0cc66a507a159a3a44160cc80c561171798f85",
+      "474e9a57b74c368acc8d19e8d63e3288": "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+      "2647b6dff6d117b217dd9896cd25b34e": "16a45d421e92b74cbc8cfe53486474700cc176d7",
+      "65025f90c134e4538efd306e36341aa1": "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+      "30ca162d03b65f46997fa43e1093839e": "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+      "17150a7a6ed5c4d5c0384b95c5fce479": "7fd69a142d0333e1514a8c819b610a7471162d9e",
+      "0856a20f18b3319c92b710ef80d886cd": "932c0d6f73effea91a6fca7ac73439e104952205",
+      "21a57f79886e46f410cfb50186ed8d77": "dda6002f09035101a4bf004c1623f8490d739aa1",
+      "75a83c781ac7024fc9c1b6f7ecc5b936": "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+      "d855abc95d2b7c03b748631c08603ebb": "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+      "fc20f5064386a19d39bd5f9df0a542fa": "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+      "e482c84f583783b4b9dea5374aa232da": "18fb24c236adb974ade847794044914a81d539aa",
+      "eb7cfdb3f74972beb8f43196e4e44001": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+      "4f5b513b52c4ef6fb1c46e984760a3b7": "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+      "9cbffee094a6bfa1765e2f6ba15a268e": "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+      "b2811fa9b209733b61cd49ddb21e1e95": "589b622f55c9944c4883e4163d4d49508e22e056",
+      "57aaebd10238ffe3863192254629aaa9": "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+      "b470c7205246a0bb4718ca0a27d25055": "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+      "ee71d6cd464c618c632e6fd62b430d2c": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+      "0d990484d0dfc1680b20cfabcae373cd": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+      "15600f0b0274f2ab4dd0c181e4ae3e95": "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+      "f6af52d51152447f43cf3cf9a50bc144": "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+      "aaaf8792af40c80122d7dbecaf1dee20": "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+      "730f63ea46169f56bb4f9fa0637baef0": "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+      "1ca707498f9024c292ca745c5727a751": "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+      "420ef1f96eee6dc15395330f28923be2": "c9207e9c33264134e94cfaf28c638431fdcd8772",
+      "46ab65cb137a4fc8710a8f3b9455e50e": "9f4b31838c16baf518ae14dd44dc54973a3508df",
       "dbb97c34404b753724a66fe0108a32e1": "9dba9212f2e34446ab034595665809f09f303d63",
       "4f9dd40b455876d5c54b5ebd93aec88c": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
       "73cf5bd61896442a990e363f284a0bc2": "379f9def6d0de4b4bad18b0177df81783a51f17b",
@@ -213656,6 +213985,7 @@
       "b4e76e416b887f4e7413ba76fa735f16": "70429f1d80503a0632f603bf762fe0bbaa881d22",
       "9012018f50f707c1707009346eb5d18b": "581cea232c296c7bd76f3101c3ae1bffdf5abf08",
       "866dbf59a0e2d849de2365e1c953cc97": "13c5e692c7acf2ec8243ac421d58fdf69c6c2370",
+      "84b66c6c9eb9370e983d88c4d187ea05": "599a74894c61c1849e2aeff17507c233e2f459d6",
       "0c7cfc0cba2f2cd674d94e093936f9f8": "6871a47de90ca67f9ff8e4e280416851a8164563",
       "ddb4e23db15dda67539eee24de23de4b": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "29fd5bc40cea222e040c1a1cfd60ea2e": "57500ad35b883acb5e7766c04f5b42e65185715c",
@@ -214846,6 +215176,7 @@
         "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
         "c086306096722da7f02f624e7efb447659aca1d3",
         "7381472bf046126257e51a0124e4553282f020e5",
+        "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7",
         "ae3329abbcb7b445d979321a1f67733aa3f023d0",
         "1a2b8740f4672fd9668bfa6f648bb34f4339afb6",
         "d38572d22721eb5972f671cde54201d752dffe6b",
@@ -223656,9 +223987,6 @@
       ],
       "CM32LN_CONTROL.ROM": [
         "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
-      ],
-      "DOSBOX.SF2": [
-        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
       ],
       "libbassmidi.dylib": [
         "efa4fdedfac60c98c53f3aec10fb44b324a35835"
@@ -244283,6 +244611,7 @@
         "10df25f1a7d6ae2a7ebf3e2f9f2ecfc10511ad8a"
       ],
       "pak0.pak": [
+        "36b42dc7b6313fd9cabc0be8b9e9864840929735",
         "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
         "11b2362521cfe27473d79f72172531d206d07e14",
         "133105d529addf742fd3be05f598ea89d58cd88a",
@@ -247169,6 +247498,9 @@
       "light.json": [
         "049412d56a41865539faadcd86408d5107a1dbef"
       ],
+      "GeneralUser-GS.sf2": [
+        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
+      ],
       "Doukutsu.exe": [
         "91d75a87872cbb88964bead92e0cbf8b72e836b6",
         "bb2d0441e073da9c584f23c2ad8c7ab8aac293bf"
@@ -247207,11 +247539,104 @@
       "fw_payload.bin": [
         "c603ebeea2816d5c52985170aa7ac4b9dd5f7a8d"
       ],
+      "access.dat": [
+        "2b0cc66a507a159a3a44160cc80c561171798f85",
+        "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef"
+      ],
+      "cryomni3d.dat": [
+        "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+        "3971847e26be0abad8196caf03e5852a81ddbdea"
+      ],
+      "drascula.dat": [
+        "16a45d421e92b74cbc8cfe53486474700cc176d7",
+        "05c97e92439b67aea8f6eb7fc96db023edf62124"
+      ],
+      "fonts.dat": [
+        "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+        "1eaef39122559500fbbc705c9425500311d23e03"
+      ],
+      "freescape.dat": [
+        "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+        "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd"
+      ],
+      "gui-icons.dat": [
+        "7fd69a142d0333e1514a8c819b610a7471162d9e",
+        "38e74e6994924781487a0d39cc53dc4708a90c1c"
+      ],
+      "hugo.dat": [
+        "932c0d6f73effea91a6fca7ac73439e104952205",
+        "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9"
+      ],
+      "kyra.dat": [
+        "dda6002f09035101a4bf004c1623f8490d739aa1",
+        "31b0b9418af2f9dd4e4094aada05d48eb355975b"
+      ],
+      "lure.dat": [
+        "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+        "516347ec0ec2a397265d1b2fb053aa3758382e09"
+      ],
+      "macventure.dat": [
+        "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+        "e431e718e3c784532422ea2654d5fc6042a95c09"
+      ],
+      "mm.dat": [
+        "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+        "0816fe29b57911b28cbf774348f5492062326a85"
+      ],
+      "nancy.dat": [
+        "18fb24c236adb974ade847794044914a81d539aa",
+        "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+        "6a49b675c8fe03c281bda22ad3070f0a78699284"
+      ],
+      "queen.tbl": [
+        "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+        "7bafa28dfd9b3be17430d467d8787d8204437ba0"
+      ],
+      "residualvm.zip": [
+        "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+        "589b622f55c9944c4883e4163d4d49508e22e056",
+        "2b28052b63a2cec188412c1af5110095be6e27db"
+      ],
+      "scummclassic.zip": [
+        "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+        "69836fb392710f2182df07bab8960e8a2d92c1a9"
+      ],
+      "scummmodern.zip": [
+        "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+        "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+        "979586143f0f35dddd0d0d5144e1eccf1fe0516f"
+      ],
+      "scummremastered.zip": [
+        "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+        "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+        "a5506cf1fa968b8e4deaea0ef36014704a3d26bb"
+      ],
+      "supernova.dat": [
+        "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+        "8a571cfc431b5fe794f0262f0e55f72927ab27b4"
+      ],
+      "teenagent.dat": [
+        "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+        "0d488164930332bae3aa1ad38cef44abbe3d00a6"
+      ],
+      "toon.dat": [
+        "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+        "85bb688125d66f2797a41f153ce1fa177027a83f"
+      ],
+      "translations.dat": [
+        "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+        "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4"
+      ],
+      "ultima.dat": [
+        "c9207e9c33264134e94cfaf28c638431fdcd8772",
+        "e049932518390257f4d49b1691cad229e6060079"
+      ],
+      "wintermute.zip": [
+        "9f4b31838c16baf518ae14dd44dc54973a3508df",
+        "5302f543384b21fb55466118a6966e5ef46b85f6"
+      ],
       "Roland_SC-55.sf2": [
         "9dba9212f2e34446ab034595665809f09f303d63"
-      ],
-      "access.dat": [
-        "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef"
       ],
       "achievements.dat": [
         "379f9def6d0de4b4bad18b0177df81783a51f17b"
@@ -247225,14 +247650,8 @@
       "cryo.dat": [
         "220c2fe52d26b8607abeb2ad4a8ea4324daea5ba"
       ],
-      "cryomni3d.dat": [
-        "3971847e26be0abad8196caf03e5852a81ddbdea"
-      ],
       "darkseed.dat": [
         "343172f1bfff8cb8c4abefa95e211379f39583b7"
-      ],
-      "drascula.dat": [
-        "05c97e92439b67aea8f6eb7fc96db023edf62124"
       ],
       "encoding.dat": [
         "11d3873337827195bc16c3d3175ad00f1777ed95"
@@ -247243,12 +247662,6 @@
       "fonts-imgui.dat": [
         "659a025dfa39a8caada7dac6e69b4d7c88217b3f"
       ],
-      "fonts.dat": [
-        "1eaef39122559500fbbc705c9425500311d23e03"
-      ],
-      "freescape.dat": [
-        "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd"
-      ],
       "got.aud": [
         "209ab6d86a7c44f241689c5511b2027f7ad2c7c4"
       ],
@@ -247258,32 +247671,14 @@
       "grim-patch.lab": [
         "3c43b7a0125f88a9f83ae4307dca57867ffd637c"
       ],
-      "gui-icons.dat": [
-        "38e74e6994924781487a0d39cc53dc4708a90c1c"
-      ],
       "hadesch_translations.dat": [
         "17aae444b3010e72e092635d25d3b93c104b0ad2"
       ],
       "helpdialog.zip": [
         "386d8a89e180f8abab53e5d5926b6a81ee4b31dd"
       ],
-      "hugo.dat": [
-        "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9"
-      ],
-      "kyra.dat": [
-        "31b0b9418af2f9dd4e4094aada05d48eb355975b"
-      ],
-      "lure.dat": [
-        "516347ec0ec2a397265d1b2fb053aa3758382e09"
-      ],
       "macgui.dat": [
         "1eed577281b8819367d1ee99b1a76ff3e1920735"
-      ],
-      "macventure.dat": [
-        "e431e718e3c784532422ea2654d5fc6042a95c09"
-      ],
-      "mm.dat": [
-        "0816fe29b57911b28cbf774348f5492062326a85"
       ],
       "monkey4-patch.m4b": [
         "49fc530e77b61f326f6e1d5a5147daa2fd67d1e2"
@@ -247294,9 +247689,6 @@
       "myst3.dat": [
         "5fbf7b1a596219f0daab60a8ceb2f1e59e042243"
       ],
-      "nancy.dat": [
-        "6a49b675c8fe03c281bda22ad3070f0a78699284"
-      ],
       "neverhood.dat": [
         "490012c996ba0c56dd8d077e1418ee53b1e96397"
       ],
@@ -247306,32 +247698,11 @@
       "prince_translation.dat": [
         "57403a286c4d251384442a507d285b2dc5ce330e"
       ],
-      "queen.tbl": [
-        "7bafa28dfd9b3be17430d467d8787d8204437ba0"
-      ],
-      "residualvm.zip": [
-        "2b28052b63a2cec188412c1af5110095be6e27db"
-      ],
-      "scummclassic.zip": [
-        "69836fb392710f2182df07bab8960e8a2d92c1a9"
-      ],
-      "scummmodern.zip": [
-        "979586143f0f35dddd0d0d5144e1eccf1fe0516f"
-      ],
-      "scummremastered.zip": [
-        "a5506cf1fa968b8e4deaea0ef36014704a3d26bb"
-      ],
       "shaders.dat": [
         "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c"
       ],
       "sky.cpt": [
         "fa03ede717223eaf011491d2066e37eb112e735b"
-      ],
-      "supernova.dat": [
-        "8a571cfc431b5fe794f0262f0e55f72927ab27b4"
-      ],
-      "teenagent.dat": [
-        "0d488164930332bae3aa1ad38cef44abbe3d00a6"
       ],
       "titanic.dat": [
         "15f51828f08fdbe01b56123e96312b5859a968c0"
@@ -247339,23 +247710,11 @@
       "tony.dat": [
         "a5e19f364bda6a0d2330495114c9ad665bb79ad0"
       ],
-      "toon.dat": [
-        "85bb688125d66f2797a41f153ce1fa177027a83f"
-      ],
-      "translations.dat": [
-        "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4"
-      ],
-      "ultima.dat": [
-        "e049932518390257f4d49b1691cad229e6060079"
-      ],
       "ultima8.dat": [
         "6319d3a245297697c1e4def78dc231a3f30708bb"
       ],
       "vkeybd_default.zip": [
         "4d787bd5a071c729c4f374e6e7c7d7b06d7f9f63"
-      ],
-      "wintermute.zip": [
-        "5302f543384b21fb55466118a6966e5ef46b85f6"
       ],
       "squirreljme-0.3.0-fast.jar": [
         "7c4cd0a5451eedeac9b328f48408dbc312198ccf"
@@ -254014,6 +254373,7 @@
         "ccbc64e2f5b9aefd89ff9acd7227eff230aed8ed",
         "b41150f8cff409dde89939b80a980a20e853df0b",
         "681e3362f0251d2e26e6bc2e06157c027f5f3116",
+        "599a74894c61c1849e2aeff17507c233e2f459d6",
         "6871a47de90ca67f9ff8e4e280416851a8164563",
         "57500ad35b883acb5e7766c04f5b42e65185715c",
         "fa334ab5ba6366bd28168860c913e6365b9fec96"
@@ -268750,11 +269110,11 @@
       "Mac OS ROM": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
       ],
-      "svi328a.rom": [
-        "10349ce675f6d6d47f0976e39cb7188eba858d89"
-      ],
       "MSXR2.ROM": [
         "04990aa1c3a3fc7294ec884b81deaa89832df614"
+      ],
+      "svi328a.rom": [
+        "10349ce675f6d6d47f0976e39cb7188eba858d89"
       ],
       "squirreljme-0.3.0.jar": [
         "8a2ddc37df2366d4e205e9904cd8bac22db2afd5"
@@ -270178,6 +270538,9 @@
       ],
       "cm32ln_ctrl_1_00.rom": [
         "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
+      ],
+      "GeneralUser_GS.sf2": [
+        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
       ],
       "system.rom": [
         "1f5f7013f18c08ff50d7942e76c4fbd782412414"
@@ -272109,6 +272472,7 @@
       "ff2dc92e": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "8e243fa9": "2725373cc8e6e3c04bca4bf7bd0b027be6bec058",
       "e37c02b4": "9e52cc30850cf9e1855fbd2e26f987cbc05b910a",
+      "92cfba00": "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7",
       "853e6b96": "de369cb4a7df147b55168fa7aaf0b98c753b735e",
       "02bf4426": "f4aa64bfe0b93e5df07b4fe2e0f638d91c7f2e71",
       "5827b1e8": "fa8cf5f868cfb08bce203baaebb6c4055ee2a000",
@@ -274373,7 +274737,6 @@
       "0484b9c5": "ea0fd101ee8e6820869797e285d68ed95fd2465c",
       "5cb9620b": "35a39115299db38e8c490bd9f1bd195d906af00b",
       "4a3bb4ef": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
-      "218bad37": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "03e3f03c": "75c9fa407e0a027713ed563f135747fffec0590d",
       "fd70a398": "2ea6df7253ce0a14094d20cd04c098505cc14c23",
       "9ba00bc0": "8833196b70002f7f2068d8f6c5eb96862777b018",
@@ -282847,6 +283210,7 @@
       "07f34f96": "c50bf2c97e989aa19ad27fe62e67c5cfc6ae2a8b",
       "5d39ce98": "0d9ca3d4532c0d412fbb64ab2885f52ef8852594",
       "c0a123b9": "10df25f1a7d6ae2a7ebf3e2f9f2ecfc10511ad8a",
+      "74e3b084": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
       "cdd535b6": "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
       "b232f881": "588ef09965dee539521b4eb6da4337ce78a2ea21",
       "f3f70bd7": "67e76a7f3234646507ae59ec1bf755637c1dad03",
@@ -283908,6 +284272,7 @@
       "e9732595": "d312b25c5f3a92178a185de122aeb222a32d4096",
       "92e6bfdb": "3757750cd3052b8d23f379aba22d7ee3d9353bc9",
       "da6f5f8d": "049412d56a41865539faadcd86408d5107a1dbef",
+      "218bad37": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "0c0644ba": "91d75a87872cbb88964bead92e0cbf8b72e836b6",
       "c5a2a3f6": "bb2d0441e073da9c584f23c2ad8c7ab8aac293bf",
       "16b45e6c": "19555d2f5f72a66d6beddb4acc5ca00d634ac9c4",
@@ -283919,6 +284284,33 @@
       "e8256af7": "214f09a25012e8702783d3ab9a22796071de5374",
       "dfb7e798": "ca1911d7e4f9ef036bbc37b6f65b7e23509157e7",
       "a5f26524": "c603ebeea2816d5c52985170aa7ac4b9dd5f7a8d",
+      "c21aaf8f": "2b0cc66a507a159a3a44160cc80c561171798f85",
+      "3f109488": "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+      "e4d1d147": "16a45d421e92b74cbc8cfe53486474700cc176d7",
+      "099d83fd": "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+      "b02f9abb": "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+      "9b4519e8": "7fd69a142d0333e1514a8c819b610a7471162d9e",
+      "e8d147ef": "932c0d6f73effea91a6fca7ac73439e104952205",
+      "75cbdf42": "dda6002f09035101a4bf004c1623f8490d739aa1",
+      "8b7dc57f": "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+      "3cf789f2": "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+      "e8217e0e": "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+      "05e6dbc9": "18fb24c236adb974ade847794044914a81d539aa",
+      "d7976af8": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+      "ee33b23c": "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+      "8a482338": "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+      "93296840": "589b622f55c9944c4883e4163d4d49508e22e056",
+      "8387238f": "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+      "a641843b": "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+      "00194297": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+      "6fa86fae": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+      "f1d52065": "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+      "b5e601a3": "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+      "6ae16bb9": "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+      "c8ceacc9": "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+      "bd7a5f25": "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+      "f2699208": "c9207e9c33264134e94cfaf28c638431fdcd8772",
+      "972efe9a": "9f4b31838c16baf518ae14dd44dc54973a3508df",
       "2f280fcc": "9dba9212f2e34446ab034595665809f09f303d63",
       "f63ddcc5": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
       "6b35801f": "379f9def6d0de4b4bad18b0177df81783a51f17b",
@@ -289480,6 +289872,7 @@
       "4dcfd55c": "70429f1d80503a0632f603bf762fe0bbaa881d22",
       "f78e0257": "581cea232c296c7bd76f3101c3ae1bffdf5abf08",
       "9befb7a1": "13c5e692c7acf2ec8243ac421d58fdf69c6c2370",
+      "d026a8d1": "599a74894c61c1849e2aeff17507c233e2f459d6",
       "35bf2db9": "6871a47de90ca67f9ff8e4e280416851a8164563",
       "76b28f83": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "4bb771ea": "57500ad35b883acb5e7766c04f5b42e65185715c",
@@ -291117,6 +291510,7 @@
       "a66bc2ea040ec792308259ee96ba57b4c88de48fbce244714800b6b6340c730d": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "73b9e51295fe7412712ccf73c7010d92181aa12d420c40c1c6bc4f8b948e5a11": "2725373cc8e6e3c04bca4bf7bd0b027be6bec058",
       "a9e936f78c9db009fa9561ebb35dc374b343ba38037133ae30e95906ab0ac312": "9e52cc30850cf9e1855fbd2e26f987cbc05b910a",
+      "eea7622c75e304f896f327d54adcc5683947e2fa33a81f0f2e0a505ad3e581c6": "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7",
       "2d491586dffd8f4387c340457a30161272e3e18bbba4a439c1890cb4590fc6bc": "de369cb4a7df147b55168fa7aaf0b98c753b735e",
       "847a46bff44756487e157c4aa30802e0fa9d92186a371ec315abecabb15c4ef0": "f4aa64bfe0b93e5df07b4fe2e0f638d91c7f2e71",
       "cd2dc865b2ad6b6102d7c02981da3269b725f2c6db964146bf47381dfb681d4b": "fa8cf5f868cfb08bce203baaebb6c4055ee2a000",
@@ -293381,7 +293775,6 @@
       "d91c82a5c05a297282fb6606b16044591efc33b2ccea3abad0b66f91446d3cc9": "ea0fd101ee8e6820869797e285d68ed95fd2465c",
       "7a0f4500cc3c022bf2e3874f8b197899a41208af3160c69f165526a750ac5412": "35a39115299db38e8c490bd9f1bd195d906af00b",
       "9f32c5a670421961c3d46a9cdcff0a1d333b886a72c0c260c9607645a3abf773": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
-      "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "ce5e97630cf4e1ef12a9afad785683414b7504efc443766333360ad2ed142eba": "75c9fa407e0a027713ed563f135747fffec0590d",
       "37a6be37d83e684ad70b5708a1a1f9c3e8fcf988c18bc2847f630b00a37cce75": "2ea6df7253ce0a14094d20cd04c098505cc14c23",
       "e81fb7b4d0009ba6343fbfcd840620704dcb840686d405b9734cd37150d31974": "8833196b70002f7f2068d8f6c5eb96862777b018",
@@ -301855,6 +302248,7 @@
       "57be0712bb180943ad51757b48486bc590e9242fd885704771c0a7102953d4b7": "c50bf2c97e989aa19ad27fe62e67c5cfc6ae2a8b",
       "2ba245254b8ed3440e252f6e2e24af2c6343d7c312f9a9a7e73509abdaf13e49": "0d9ca3d4532c0d412fbb64ab2885f52ef8852594",
       "16d7dfe6b9f7f0765b23169dfab79e927514457b069b9ece9583666f423ec6c1": "10df25f1a7d6ae2a7ebf3e2f9f2ecfc10511ad8a",
+      "35a9c55e5e5a284a159ad2a62e0e8def23d829561fe2f54eb402dbc0a9a946af": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
       "cae257182f34d3913f3d663e1d7cf865d668feda6af393d4ecf3e9e408b48d09": "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab",
       "678210ecd1b27dde1c645660333a1a7b139d849425793859657f804d379b62ad": "588ef09965dee539521b4eb6da4337ce78a2ea21",
       "cb88d584ef939d08e24433a6cf86274737303fac2bbd94415927a75e6b269dd8": "67e76a7f3234646507ae59ec1bf755637c1dad03",
@@ -302916,6 +303310,7 @@
       "ac2db843aac690f26773c470da970b2519f26c7e19815e2454d0c088265618fc": "d312b25c5f3a92178a185de122aeb222a32d4096",
       "5c06c6d9d398729bfab847d15b07a1fc79d323ebe6e05d233fcd652e9aa70759": "3757750cd3052b8d23f379aba22d7ee3d9353bc9",
       "fec02240005667f64905ee5982206abe45f9cd1bee67ee885815d453a6a5c484": "049412d56a41865539faadcd86408d5107a1dbef",
+      "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "8a7a63b24bb21557fb597697bdf09248c1ab7e3298cacfa1166d764dd81e7fc3": "91d75a87872cbb88964bead92e0cbf8b72e836b6",
       "fa18379fe942ecb5fd69360ede81675ad6bb8b743bef2120305c4b439c732218": "bb2d0441e073da9c584f23c2ad8c7ab8aac293bf",
       "75b38bb4ab57b50bfc6c3ba77fe670a2eb67301f425aefe96bb1ed87c2b9e2db": "19555d2f5f72a66d6beddb4acc5ca00d634ac9c4",
@@ -302927,6 +303322,33 @@
       "a7ea86bb06a58ff969fd0942e73b8eae00cb58e4c90bccbd900f6a3a01f54fbb": "214f09a25012e8702783d3ab9a22796071de5374",
       "b227a4f9b242bdcd8deb7de626e5df97a908edd53655d17466e55c6460e08023": "ca1911d7e4f9ef036bbc37b6f65b7e23509157e7",
       "5b7e6bd7afb302f61f643571a032bcaac9b9432cabd72c64419a02f971fa11f7": "c603ebeea2816d5c52985170aa7ac4b9dd5f7a8d",
+      "f7ec60489065628ab3ca158440d2cd34ffb3b7d93f543412e4b837c8bee49f85": "2b0cc66a507a159a3a44160cc80c561171798f85",
+      "4487d435281910e672fed4965b8b0bf8a1a627831a4949a29fa94ecab04a502e": "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+      "4ad7c24b2e642e1406fddee729159c6dfc6b1563a33bd7e421f85c4a1bd567b8": "16a45d421e92b74cbc8cfe53486474700cc176d7",
+      "a9d6dfbb16c2fb16f6a7f0c4d1ae3592ccd996c2c5fcd5ae289570a35757d58b": "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+      "6a6e25d6547f672ddc985e00a3e7e734cea2d0ab224ec6e860b6aa6401972183": "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+      "62defbfaf65b4c8bbec8220fc8f1fbf0e88be611befa04e9e9cb60622b52f2da": "7fd69a142d0333e1514a8c819b610a7471162d9e",
+      "b6d0a83155733c598d9ce13eb64a06ea921634744d64c861807c65fdae2ebe01": "932c0d6f73effea91a6fca7ac73439e104952205",
+      "d469669ca2789a57827c4ac6f63253f382379827f95176c08a47c080b606171a": "dda6002f09035101a4bf004c1623f8490d739aa1",
+      "594441ff7f3fd8e7ff190f156ff65149a1817b89b7c4d410de2c499548b18eb3": "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+      "65432acd8ed47ce4cc32f287b47b101bfe3fd3cae54d34bb8cae681d4fb08ef4": "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+      "5776890389b6838c96a8781d73fb50e61644383814872022fa51150645bf6066": "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+      "95f31b2cf2cc21355fcbbdf92b4b9ac6f9c968883b45246e4269c22f200fa1d1": "18fb24c236adb974ade847794044914a81d539aa",
+      "efea15651895e7223d3b867f361d938dff9fff2c1643282103ecc89247e50d17": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+      "d690b689247441b632a3f09cb13e4bfca91baf5c5201c5ad8428cc1c9aaf5713": "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+      "a4bd294da1e4a9e2e0de780a692587ce9c2193da19c17827a56c92118d808a3f": "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+      "fa8530078efef1719566c6d88edcc87ab3654994ad2a56617e82a77608a36b4b": "589b622f55c9944c4883e4163d4d49508e22e056",
+      "7b8842a04eb0b74445038126b01e7fd448b7af635806badb86c4eb10128f6797": "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+      "6326bc517dadbe303ba3cce63132819902f380bde7472dd45e3d92330ae2f22a": "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+      "1152e03f0bca45724ad6dd5dbc987a99abd0ffcfb09c7c9c7a0504980c12297c": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+      "0a3df174f3a271cfa384ce524e423cf25f35ee6c873772372ae954f2973e477a": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+      "c1bc31c7e5e8642958e85672ed7e6e825e1accfaf8a19b7c0e5d79d36ac6347c": "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+      "d8e6fbdd2ba867b9859592e535825543554735dd0921b0df10a8d84abd65c988": "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+      "fe074a8432b4feefd0a9b191d101f0fb75f404dabcad28ac4b08a6060cf7e1df": "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+      "6344848f3c26e73afc53c5980f8ceef9aebdbed87756684d3afb1797dd2b041d": "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+      "9ea73892112d4ddf6123c2f8d53b4cce8a7130c4c6655f37527231f37eb371d0": "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+      "febb6359e123c041283ea7747e659b7098727e89ef3de2cdde810793c46cc80a": "c9207e9c33264134e94cfaf28c638431fdcd8772",
+      "bfd52c137aff9d6836d2d2a373d5c4453e8b32663730499b2b72e5fdd8044779": "9f4b31838c16baf518ae14dd44dc54973a3508df",
       "fca3e514b635a21789d4224e84865d2954a2a914d46b64aa8219ddb565c44869": "9dba9212f2e34446ab034595665809f09f303d63",
       "c108b691e81f8b9ac54feac3538ad7f26ab32b49777a34b47ee477aa464f0b30": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
       "6f5394edee3a2ed9165d1ac0611a5e02aabe40e7ceca9e51926d01b23f157493": "379f9def6d0de4b4bad18b0177df81783a51f17b",
@@ -308488,6 +308910,7 @@
       "e184f5982a99c6ebf7799383f16a8624221755786056a3573944598283a4b8cf": "70429f1d80503a0632f603bf762fe0bbaa881d22",
       "60920f5a98f37f1e0348df0bda0430e20327bea86bced7024f72f4ffddafc930": "581cea232c296c7bd76f3101c3ae1bffdf5abf08",
       "3dcc570b7728cfbff314a6305c9c0f933c5fa82153c6d50c3b1e780c3615f33e": "13c5e692c7acf2ec8243ac421d58fdf69c6c2370",
+      "7b8f6b18ab7951b47d89742d34b140a6acb84729a1f6ad770689c2695e1bf4cc": "599a74894c61c1849e2aeff17507c233e2f459d6",
       "48c56b24ea720fb66188c0b2d94579a110be24971ac215ea808c563c665cf655": "6871a47de90ca67f9ff8e4e280416851a8164563",
       "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "f605fd169026e18fd1b2f8669492d2ae6821baed81957be9c37ec89588dc83f2": "57500ad35b883acb5e7766c04f5b42e65185715c",
@@ -315621,6 +316044,15 @@
       ],
       "samples/galaga.zip": [
         "9e52cc30850cf9e1855fbd2e26f987cbc05b910a"
+      ],
+      "Arcade/FBNeo/.variants/hiscore.dat.37fc4e05": [
+        "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7"
+      ],
+      "FBNeo/.variants/hiscore.dat.37fc4e05": [
+        "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7"
+      ],
+      ".variants/hiscore.dat.37fc4e05": [
+        "1bef29ccc16eeb2e3c0759bfd2a4f86b1aba03a7"
       ],
       "Arcade/FBNeo/236-bios.sp1": [
         "de369cb4a7df147b55168fa7aaf0b98c753b735e"
@@ -333114,12 +333546,6 @@
       ],
       "DOSBox/CM32LN_CONTROL.ROM": [
         "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
-      ],
-      "DOS/DOSBox/DOSBOX.SF2": [
-        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
-      ],
-      "DOSBox/DOSBOX.SF2": [
-        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
       ],
       "DOS/DOSBox/bass.dll": [
         "75c9fa407e0a027713ed563f135747fffec0590d"
@@ -458220,6 +458646,15 @@
       "demo/demo00.pk4": [
         "10df25f1a7d6ae2a7ebf3e2f9f2ecfc10511ad8a"
       ],
+      "Id Software/Quake/id1/pak0.pak": [
+        "36b42dc7b6313fd9cabc0be8b9e9864840929735"
+      ],
+      "Quake/id1/pak0.pak": [
+        "36b42dc7b6313fd9cabc0be8b9e9864840929735"
+      ],
+      "id1/pak0.pak": [
+        "36b42dc7b6313fd9cabc0be8b9e9864840929735"
+      ],
       "Id Software/Quake II/baseq2/pak0.pak": [
         "b86e8878a8e8706595ceebe88b3e6b4c1ba5bcab"
       ],
@@ -469155,6 +469590,12 @@
       "themes/light.json": [
         "049412d56a41865539faadcd86408d5107a1dbef"
       ],
+      "Other/GeneralUser GS/GeneralUser-GS.sf2": [
+        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
+      ],
+      "GeneralUser GS/GeneralUser-GS.sf2": [
+        "a00461dbea40093cb9ca1694de9c0ec7ca5650c1"
+      ],
       "Other/NXEngine/.variants/Doukutsu.exe.91d75a87": [
         "91d75a87872cbb88964bead92e0cbf8b72e836b6"
       ],
@@ -469242,6 +469683,249 @@
       ],
       "RVVM/fw_payload.bin": [
         "c603ebeea2816d5c52985170aa7ac4b9dd5f7a8d"
+      ],
+      "Other/ScummVM/.variants/access.dat.f1925ac5": [
+        "2b0cc66a507a159a3a44160cc80c561171798f85"
+      ],
+      "ScummVM/.variants/access.dat.f1925ac5": [
+        "2b0cc66a507a159a3a44160cc80c561171798f85"
+      ],
+      ".variants/access.dat.f1925ac5": [
+        "2b0cc66a507a159a3a44160cc80c561171798f85"
+      ],
+      "Other/ScummVM/.variants/cryomni3d.dat.474e9a57": [
+        "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad"
+      ],
+      "ScummVM/.variants/cryomni3d.dat.474e9a57": [
+        "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad"
+      ],
+      ".variants/cryomni3d.dat.474e9a57": [
+        "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad"
+      ],
+      "Other/ScummVM/.variants/drascula.dat.2647b6df": [
+        "16a45d421e92b74cbc8cfe53486474700cc176d7"
+      ],
+      "ScummVM/.variants/drascula.dat.2647b6df": [
+        "16a45d421e92b74cbc8cfe53486474700cc176d7"
+      ],
+      ".variants/drascula.dat.2647b6df": [
+        "16a45d421e92b74cbc8cfe53486474700cc176d7"
+      ],
+      "Other/ScummVM/.variants/fonts.dat.65025f90": [
+        "1f194d6a55882967e4c4d4e4692fb4aa5c992069"
+      ],
+      "ScummVM/.variants/fonts.dat.65025f90": [
+        "1f194d6a55882967e4c4d4e4692fb4aa5c992069"
+      ],
+      ".variants/fonts.dat.65025f90": [
+        "1f194d6a55882967e4c4d4e4692fb4aa5c992069"
+      ],
+      "Other/ScummVM/.variants/freescape.dat.30ca162d": [
+        "4ed259b5b27d8dfcf4815a73a9946f4ed709457e"
+      ],
+      "ScummVM/.variants/freescape.dat.30ca162d": [
+        "4ed259b5b27d8dfcf4815a73a9946f4ed709457e"
+      ],
+      ".variants/freescape.dat.30ca162d": [
+        "4ed259b5b27d8dfcf4815a73a9946f4ed709457e"
+      ],
+      "Other/ScummVM/.variants/gui-icons.dat.17150a7a": [
+        "7fd69a142d0333e1514a8c819b610a7471162d9e"
+      ],
+      "ScummVM/.variants/gui-icons.dat.17150a7a": [
+        "7fd69a142d0333e1514a8c819b610a7471162d9e"
+      ],
+      ".variants/gui-icons.dat.17150a7a": [
+        "7fd69a142d0333e1514a8c819b610a7471162d9e"
+      ],
+      "Other/ScummVM/.variants/hugo.dat.0856a20f": [
+        "932c0d6f73effea91a6fca7ac73439e104952205"
+      ],
+      "ScummVM/.variants/hugo.dat.0856a20f": [
+        "932c0d6f73effea91a6fca7ac73439e104952205"
+      ],
+      ".variants/hugo.dat.0856a20f": [
+        "932c0d6f73effea91a6fca7ac73439e104952205"
+      ],
+      "Other/ScummVM/.variants/kyra.dat.21a57f79": [
+        "dda6002f09035101a4bf004c1623f8490d739aa1"
+      ],
+      "ScummVM/.variants/kyra.dat.21a57f79": [
+        "dda6002f09035101a4bf004c1623f8490d739aa1"
+      ],
+      ".variants/kyra.dat.21a57f79": [
+        "dda6002f09035101a4bf004c1623f8490d739aa1"
+      ],
+      "Other/ScummVM/.variants/lure.dat.75a83c78": [
+        "22c05c0a49c218a4194ccfb670604c8277b9a1f2"
+      ],
+      "ScummVM/.variants/lure.dat.75a83c78": [
+        "22c05c0a49c218a4194ccfb670604c8277b9a1f2"
+      ],
+      ".variants/lure.dat.75a83c78": [
+        "22c05c0a49c218a4194ccfb670604c8277b9a1f2"
+      ],
+      "Other/ScummVM/.variants/macventure.dat.d855abc9": [
+        "156d1b9a18e5bd3b90b1b2820acf198af1f65ead"
+      ],
+      "ScummVM/.variants/macventure.dat.d855abc9": [
+        "156d1b9a18e5bd3b90b1b2820acf198af1f65ead"
+      ],
+      ".variants/macventure.dat.d855abc9": [
+        "156d1b9a18e5bd3b90b1b2820acf198af1f65ead"
+      ],
+      "Other/ScummVM/.variants/mm.dat.fc20f506": [
+        "d3ae68a09f8c60a32ce42736ed8d276825fbf446"
+      ],
+      "ScummVM/.variants/mm.dat.fc20f506": [
+        "d3ae68a09f8c60a32ce42736ed8d276825fbf446"
+      ],
+      ".variants/mm.dat.fc20f506": [
+        "d3ae68a09f8c60a32ce42736ed8d276825fbf446"
+      ],
+      "Other/ScummVM/.variants/nancy.dat.e482c84f": [
+        "18fb24c236adb974ade847794044914a81d539aa"
+      ],
+      "ScummVM/.variants/nancy.dat.e482c84f": [
+        "18fb24c236adb974ade847794044914a81d539aa"
+      ],
+      ".variants/nancy.dat.e482c84f": [
+        "18fb24c236adb974ade847794044914a81d539aa"
+      ],
+      "Other/ScummVM/.variants/nancy.dat.eb7cfdb3": [
+        "7c8907d33da59afd4e4b62eee67541910e0b78d9"
+      ],
+      "ScummVM/.variants/nancy.dat.eb7cfdb3": [
+        "7c8907d33da59afd4e4b62eee67541910e0b78d9"
+      ],
+      ".variants/nancy.dat.eb7cfdb3": [
+        "7c8907d33da59afd4e4b62eee67541910e0b78d9"
+      ],
+      "Other/ScummVM/.variants/queen.tbl.4f5b513b": [
+        "800ed1a38a1ba46c3e57281c6d50671dd62d44ff"
+      ],
+      "ScummVM/.variants/queen.tbl.4f5b513b": [
+        "800ed1a38a1ba46c3e57281c6d50671dd62d44ff"
+      ],
+      ".variants/queen.tbl.4f5b513b": [
+        "800ed1a38a1ba46c3e57281c6d50671dd62d44ff"
+      ],
+      "Other/ScummVM/.variants/residualvm.zip.9cbffee0": [
+        "f1bcabae2c99b34bc88975c89d042a179caef9d8"
+      ],
+      "ScummVM/.variants/residualvm.zip.9cbffee0": [
+        "f1bcabae2c99b34bc88975c89d042a179caef9d8"
+      ],
+      ".variants/residualvm.zip.9cbffee0": [
+        "f1bcabae2c99b34bc88975c89d042a179caef9d8"
+      ],
+      "Other/ScummVM/.variants/residualvm.zip.b2811fa9": [
+        "589b622f55c9944c4883e4163d4d49508e22e056"
+      ],
+      "ScummVM/.variants/residualvm.zip.b2811fa9": [
+        "589b622f55c9944c4883e4163d4d49508e22e056"
+      ],
+      ".variants/residualvm.zip.b2811fa9": [
+        "589b622f55c9944c4883e4163d4d49508e22e056"
+      ],
+      "Other/ScummVM/.variants/scummclassic.zip.57aaebd1": [
+        "8e5aff75e4aa42b365e8f32223d6fef0b789d646"
+      ],
+      "ScummVM/.variants/scummclassic.zip.57aaebd1": [
+        "8e5aff75e4aa42b365e8f32223d6fef0b789d646"
+      ],
+      ".variants/scummclassic.zip.57aaebd1": [
+        "8e5aff75e4aa42b365e8f32223d6fef0b789d646"
+      ],
+      "Other/ScummVM/.variants/scummmodern.zip.b470c720": [
+        "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a"
+      ],
+      "ScummVM/.variants/scummmodern.zip.b470c720": [
+        "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a"
+      ],
+      ".variants/scummmodern.zip.b470c720": [
+        "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a"
+      ],
+      "Other/ScummVM/.variants/scummmodern.zip.ee71d6cd": [
+        "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c"
+      ],
+      "ScummVM/.variants/scummmodern.zip.ee71d6cd": [
+        "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c"
+      ],
+      ".variants/scummmodern.zip.ee71d6cd": [
+        "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c"
+      ],
+      "Other/ScummVM/.variants/scummremastered.zip.0d990484": [
+        "03e53349eefc39ce25220bfcb1ae4a580704d29d"
+      ],
+      "ScummVM/.variants/scummremastered.zip.0d990484": [
+        "03e53349eefc39ce25220bfcb1ae4a580704d29d"
+      ],
+      ".variants/scummremastered.zip.0d990484": [
+        "03e53349eefc39ce25220bfcb1ae4a580704d29d"
+      ],
+      "Other/ScummVM/.variants/scummremastered.zip.15600f0b": [
+        "6016da4b71e5f46f5866f5acf824c337a0e3ee5c"
+      ],
+      "ScummVM/.variants/scummremastered.zip.15600f0b": [
+        "6016da4b71e5f46f5866f5acf824c337a0e3ee5c"
+      ],
+      ".variants/scummremastered.zip.15600f0b": [
+        "6016da4b71e5f46f5866f5acf824c337a0e3ee5c"
+      ],
+      "Other/ScummVM/.variants/supernova.dat.f6af52d5": [
+        "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb"
+      ],
+      "ScummVM/.variants/supernova.dat.f6af52d5": [
+        "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb"
+      ],
+      ".variants/supernova.dat.f6af52d5": [
+        "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb"
+      ],
+      "Other/ScummVM/.variants/teenagent.dat.aaaf8792": [
+        "6a5c43732e30e25ace6b6ba2b28f038b24cc497f"
+      ],
+      "ScummVM/.variants/teenagent.dat.aaaf8792": [
+        "6a5c43732e30e25ace6b6ba2b28f038b24cc497f"
+      ],
+      ".variants/teenagent.dat.aaaf8792": [
+        "6a5c43732e30e25ace6b6ba2b28f038b24cc497f"
+      ],
+      "Other/ScummVM/.variants/toon.dat.730f63ea": [
+        "6f8a60b0d51de1e86ab3a51c932a78a642c1567a"
+      ],
+      "ScummVM/.variants/toon.dat.730f63ea": [
+        "6f8a60b0d51de1e86ab3a51c932a78a642c1567a"
+      ],
+      ".variants/toon.dat.730f63ea": [
+        "6f8a60b0d51de1e86ab3a51c932a78a642c1567a"
+      ],
+      "Other/ScummVM/.variants/translations.dat.1ca70749": [
+        "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94"
+      ],
+      "ScummVM/.variants/translations.dat.1ca70749": [
+        "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94"
+      ],
+      ".variants/translations.dat.1ca70749": [
+        "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94"
+      ],
+      "Other/ScummVM/.variants/ultima.dat.420ef1f9": [
+        "c9207e9c33264134e94cfaf28c638431fdcd8772"
+      ],
+      "ScummVM/.variants/ultima.dat.420ef1f9": [
+        "c9207e9c33264134e94cfaf28c638431fdcd8772"
+      ],
+      ".variants/ultima.dat.420ef1f9": [
+        "c9207e9c33264134e94cfaf28c638431fdcd8772"
+      ],
+      "Other/ScummVM/.variants/wintermute.zip.46ab65cb": [
+        "9f4b31838c16baf518ae14dd44dc54973a3508df"
+      ],
+      "ScummVM/.variants/wintermute.zip.46ab65cb": [
+        "9f4b31838c16baf518ae14dd44dc54973a3508df"
+      ],
+      ".variants/wintermute.zip.46ab65cb": [
+        "9f4b31838c16baf518ae14dd44dc54973a3508df"
       ],
       "Other/ScummVM/Roland_SC-55.sf2": [
         "9dba9212f2e34446ab034595665809f09f303d63"
@@ -542197,6 +542881,18 @@
       ],
       "Assets/p2crosshair.bmp": [
         "13c5e692c7acf2ec8243ac421d58fdf69c6c2370"
+      ],
+      "Sega/Model 3/Config/.variants/Games.xml.84b66c6c": [
+        "599a74894c61c1849e2aeff17507c233e2f459d6"
+      ],
+      "Model 3/Config/.variants/Games.xml.84b66c6c": [
+        "599a74894c61c1849e2aeff17507c233e2f459d6"
+      ],
+      "Config/.variants/Games.xml.84b66c6c": [
+        "599a74894c61c1849e2aeff17507c233e2f459d6"
+      ],
+      ".variants/Games.xml.84b66c6c": [
+        "599a74894c61c1849e2aeff17507c233e2f459d6"
       ],
       "Sega/Model 3/Config/Games.xml": [
         "6871a47de90ca67f9ff8e4e280416851a8164563"

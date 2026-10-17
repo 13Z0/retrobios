@@ -5,7 +5,7 @@
   "platform": "misterfpga",
   "display_name": "MiSTer FPGA",
   "version": "1.0",
-  "generated": "2026-10-15T21:45:48Z",
+  "generated": "2026-10-17T11:35:15Z",
   "base_destination": "games",
   "detect": [
     {
@@ -133,6 +133,39 @@
       "cores": null,
       "systems": [
         "casio-pv2000"
+      ]
+    },
+    {
+      "dest": "COCO3/boot0.rom",
+      "sha1": "e0d82953fb6fd03768604933df1ce8bc51fc427d",
+      "sha256": "ad358430568250eb8330a37f85361d9ce67e5ae6d5a28c17b31802cd3953a5d2",
+      "size": 32768,
+      "repo_path": "bios/Tandy/CoCo/coco3.rom",
+      "cores": null,
+      "systems": [
+        "coco3"
+      ]
+    },
+    {
+      "dest": "COCO3/boot1.rom",
+      "sha1": "10bdc5aa2d7d7f205f67b47b19003a4bd89defd1",
+      "sha256": "1c40c5a74e72edaeecc2511fee1aab347eae2c3d5fc6778cb622e3df14d63157",
+      "size": 8192,
+      "repo_path": "bios/Tandy/CoCo/disk11.rom",
+      "cores": null,
+      "systems": [
+        "coco3"
+      ]
+    },
+    {
+      "dest": "COCO3/boot2.rom",
+      "sha1": "6a20fee9c70b36a6435ac8378f31d5b626017df0",
+      "sha256": "1a5a3e95522296f66a192e9a7ca0725ecc88862f9bb31f50ef37ae789404692f",
+      "size": 8192,
+      "repo_path": "bios/Tandy/CoCo/orch90.rom",
+      "cores": null,
+      "systems": [
+        "coco3"
       ]
     },
     {
@@ -804,39 +837,6 @@
       "cores": null,
       "systems": [
         "superacan"
-      ]
-    },
-    {
-      "dest": "COCO3/boot0.rom",
-      "sha1": "e0d82953fb6fd03768604933df1ce8bc51fc427d",
-      "sha256": "ad358430568250eb8330a37f85361d9ce67e5ae6d5a28c17b31802cd3953a5d2",
-      "size": 32768,
-      "repo_path": "bios/Tandy/CoCo/coco3.rom",
-      "cores": null,
-      "systems": [
-        "tandy-coco"
-      ]
-    },
-    {
-      "dest": "COCO3/boot1.rom",
-      "sha1": "10bdc5aa2d7d7f205f67b47b19003a4bd89defd1",
-      "sha256": "1c40c5a74e72edaeecc2511fee1aab347eae2c3d5fc6778cb622e3df14d63157",
-      "size": 8192,
-      "repo_path": "bios/Tandy/CoCo/disk11.rom",
-      "cores": null,
-      "systems": [
-        "tandy-coco"
-      ]
-    },
-    {
-      "dest": "COCO3/boot2.rom",
-      "sha1": "6a20fee9c70b36a6435ac8378f31d5b626017df0",
-      "sha256": "1a5a3e95522296f66a192e9a7ca0725ecc88862f9bb31f50ef37ae789404692f",
-      "size": 8192,
-      "repo_path": "bios/Tandy/CoCo/orch90.rom",
-      "cores": null,
-      "systems": [
-        "tandy-coco"
       ]
     },
     {
