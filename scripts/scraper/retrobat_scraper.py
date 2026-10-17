@@ -19,6 +19,7 @@ try:
         fetch_github_latest_version,
         requirement_entry,
     )
+    from .batocera_scraper import SYSTEM_SLUG_MAP as BATOCERA_SLUGS
 except ImportError:
     from base_scraper import (
         BaseScraper,
@@ -26,6 +27,7 @@ except ImportError:
         fetch_github_latest_version,
         requirement_entry,
     )
+    from batocera_scraper import SYSTEM_SLUG_MAP as BATOCERA_SLUGS
 
 PLATFORM_NAME = "retrobat"
 
@@ -67,8 +69,11 @@ def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
             standalone.add(name)
     return cores, standalone
 
-# Map RetroBat system keys to our normalized system IDs
+# RetroBat's system keys are Batocera's (its emulatorlauncher reads the same
+# batocera-systems.json format): psx, nds and atari800 met no profile system
+# until the two shared one map.
 SYSTEM_SLUG_MAP = {
+    **BATOCERA_SLUGS,
     "ps2": "sony-playstation-2",
     "ps3": "sony-playstation-3",
     "psvita": "sony-playstation-vita",

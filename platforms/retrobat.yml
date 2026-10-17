@@ -537,7 +537,7 @@ systems:
       native_path: bios/kick37175.A500
       native_name: Amiga 500
     name: Amiga 500
-  amiga1200:
+  commodore-amiga:
     files:
     - name: kick40068.A1200
       destination: kick40068.A1200
@@ -546,19 +546,6 @@ systems:
       native_system: amiga1200
       native_path: bios/kick40068.A1200
       native_name: Amiga 1200
-    name: Amiga 1200
-  amiga4000:
-    files:
-    - name: kick40068.A4000
-      destination: kick40068.A4000
-      required: true
-      md5: 9bdedde6a4f33555b4a270c8ca53297d
-      native_system: amiga4000
-      native_path: bios/kick40068.A4000
-      native_name: Amiga 4000
-    name: Amiga 4000
-  amigacdtv:
-    files:
     - name: kick40060.CD32.ext
       destination: kick40060.CD32.ext
       required: true
@@ -573,9 +560,6 @@ systems:
       native_system: amigacdtv
       native_path: bios/kick34005.CDTV
       native_name: Amiga CDTV
-    name: Amiga CDTV
-  amigacd32:
-    files:
     - name: kick40060.CD32.ext
       destination: kick40060.CD32.ext
       required: true
@@ -591,6 +575,16 @@ systems:
       native_path: bios/kick40060.CD32
       native_name: Amiga CD32
     name: Amiga CD32
+  amiga4000:
+    files:
+    - name: kick40068.A4000
+      destination: kick40068.A4000
+      required: true
+      md5: 9bdedde6a4f33555b4a270c8ca53297d
+      native_system: amiga4000
+      native_path: bios/kick40068.A4000
+      native_name: Amiga 4000
+    name: Amiga 4000
   apfm1000:
     files:
     - name: apfm1000.zip
@@ -607,7 +601,7 @@ systems:
       native_path: bios/mame/hash/apfm1000.xml
       native_name: APF M-1000
     name: APF M-1000
-  apple2:
+  apple-ii:
     files:
     - name: apple2.zip
       destination: apple2.zip
@@ -730,7 +724,7 @@ systems:
       native_path: bios/mame/hash/apple2_flop_orig.xml
       native_name: Apple II
     name: Apple II
-  apple2gs:
+  apple-iigs:
     files:
     - name: APPLE2GS.ROM
       destination: APPLE2GS.ROM
@@ -856,7 +850,7 @@ systems:
       native_path: bios/mame/hash/astrocde.xml
       native_name: Astrocade
     name: Astrocade
-  atari800:
+  atari-400-800:
     files:
     - name: ATARIXL.ROM
       destination: ATARIXL.ROM
@@ -887,7 +881,7 @@ systems:
       native_path: bios/ATARIOSB.ROM
       native_name: Atari 800
     name: Atari 800
-  atari5200:
+  atari-5200:
     files:
     - name: 5200.rom
       destination: 5200.rom
@@ -927,7 +921,7 @@ systems:
       native_path: bios/A78_highscore.bin
       native_name: Atari 7800
     name: Atari 7800
-  atarist:
+  atari-st:
     files:
     - name: tos.img
       destination: tos.img
@@ -1023,7 +1017,7 @@ systems:
       native_path: bios/mame/hash/atom_rom.xml
       native_name: Acorn Atom
     name: Acorn Atom
-  atomiswave:
+  sega-dreamcast-arcade:
     files:
     - name: awbios.zip
       destination: dc/awbios.zip
@@ -1032,7 +1026,20 @@ systems:
       native_system: atomiswave
       native_path: bios/dc/awbios.zip
       native_name: Atomiswave
-    name: Atomiswave
+    - name: naomi.zip
+      destination: dc/naomi.zip
+      required: true
+      md5: eb4099aeb42ef089cfe94f8fe95e51f6
+      native_system: naomi
+      native_path: bios/dc/naomi.zip
+      native_name: Naomi
+    - name: naomi2.zip
+      destination: dc/naomi2.zip
+      required: true
+      native_system: naomi2
+      native_path: bios/dc/naomi2.zip
+      native_name: Naomi2
+    name: Naomi2
   bbcmicro:
     files:
     - name: bbcb.zip
@@ -1258,7 +1265,7 @@ systems:
       native_path: bios/same_cdi/bios/cdimono2.zip
       native_name: Philips CD-I
     name: Philips CD-I
-  channelf:
+  fairchild-channel-f:
     files:
     - name: sl31253.bin
       destination: sl31253.bin
@@ -1360,7 +1367,7 @@ systems:
       native_path: bios/mame/hash/coco_flop.xml
       native_name: Color Computer
     name: Color Computer
-  colecovision:
+  coleco-colecovision:
     files:
     - name: coleco.rom
       destination: coleco.rom
@@ -1430,7 +1437,7 @@ systems:
       native_path: bios/dragon/d64_2.rom
       native_name: Dragon
     name: Dragon
-  dreamcast:
+  sega-dreamcast:
     files:
     - name: dc_boot.bin
       destination: dc/dc_boot.bin
@@ -1498,7 +1505,7 @@ systems:
       native_path: bios/mame/hash/electron_flop.xml
       native_name: Acorn Electron
     name: Acorn Electron
-  fds:
+  nintendo-fds:
     files:
     - name: disksys.rom
       destination: disksys.rom
@@ -1673,7 +1680,7 @@ systems:
       native_path: bios/mame/hash/gamepock.xml
       native_name: Game Pocket
     name: Game Pocket
-  gb:
+  nintendo-gb:
     files:
     - name: gb_bios.bin
       destination: gb_bios.bin
@@ -1683,7 +1690,7 @@ systems:
       native_path: bios/gb_bios.bin
       native_name: Game Boy
     name: Game Boy
-  gba:
+  nintendo-gba:
     files:
     - name: gba_bios.bin
       destination: gba_bios.bin
@@ -1693,7 +1700,7 @@ systems:
       native_path: bios/gba_bios.bin
       native_name: Game Boy Advance
     name: Game Boy Advance
-  gbc:
+  nintendo-gbc:
     files:
     - name: gbc_bios.bin
       destination: gbc_bios.bin
@@ -1752,7 +1759,7 @@ systems:
       native_path: bios/mie.zip
       native_name: Hikaru
     name: Hikaru
-  intellivision:
+  mattel-intellivision:
     files:
     - name: exec.bin
       destination: exec.bin
@@ -1779,7 +1786,7 @@ systems:
       native_path: bios/freej2me-lr.jar
       native_name: Java
     name: Java
-  jaguar:
+  atari-jaguar:
     files:
     - name: "[BIOS] Atari Jaguar (World).j64"
       destination: "[BIOS] Atari Jaguar (World).j64"
@@ -1825,7 +1832,7 @@ systems:
       native_path: "bios/laseractive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin"
       native_name: Pioneer Laseractive
     name: Pioneer Laseractive
-  lynx:
+  atari-lynx:
     files:
     - name: lynxboot.img
       destination: lynxboot.img
@@ -1904,7 +1911,7 @@ systems:
       native_path: bios/mame/hash/camplynx_flop.xml
       native_name: Camputers Lynx
     name: Camputers Lynx
-  mastersystem:
+  sega-master-system:
     files:
     - name: "[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
       destination: "[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
@@ -1919,7 +1926,7 @@ systems:
       native_path: "bios/[BIOS] Sega Master System (Japan) (v2.1).sms"
       native_name: Master System
     name: Master System
-  msx:
+  microsoft-msx:
     files:
     - name: MSX.ROM
       destination: MSX.ROM
@@ -2012,9 +2019,6 @@ systems:
       native_system: msx
       native_path: bios/openMSX/share/systemroms/yrw801.rom
       native_name: MSX
-    name: MSX
-  msx2:
-    files:
     - name: MSX2.ROM
       destination: MSX2.ROM
       required: true
@@ -2113,9 +2117,6 @@ systems:
       native_system: msx2
       native_path: bios/openMSX/share/systemroms/yrw801.rom
       native_name: MSX2
-    name: MSX2
-  msx2+:
-    files:
     - name: MSX2P.ROM
       destination: MSX2P.ROM
       required: true
@@ -2193,9 +2194,6 @@ systems:
       native_system: msx2+
       native_path: bios/openMSX/share/systemroms/yrw801.rom
       native_name: MSX2+
-    name: MSX2+
-  msxturbor:
-    files:
     - name: fs-a1gt_firmware.rom
       destination: openMSX/share/systemroms/fs-a1gt_firmware.rom
       required: true
@@ -2225,7 +2223,7 @@ systems:
       native_path: bios/openMSX/share/systemroms/yrw801.rom
       native_name: MSX Turbo R
     name: MSX Turbo R
-  n64dd:
+  nintendo-64dd:
     files:
     - name: IPL_JAP.n64
       destination: Mupen64plus/IPL_JAP.n64
@@ -2264,26 +2262,7 @@ systems:
       native_path: bios/pcsx2/bios/r27v1602f.8g
       native_name: Namco2x6
     name: Namco2x6
-  naomi:
-    files:
-    - name: naomi.zip
-      destination: dc/naomi.zip
-      required: true
-      md5: eb4099aeb42ef089cfe94f8fe95e51f6
-      native_system: naomi
-      native_path: bios/dc/naomi.zip
-      native_name: Naomi
-    name: Naomi
-  naomi2:
-    files:
-    - name: naomi2.zip
-      destination: dc/naomi2.zip
-      required: true
-      native_system: naomi2
-      native_path: bios/dc/naomi2.zip
-      native_name: Naomi2
-    name: Naomi2
-  nds:
+  nintendo-ds:
     files:
     - name: firmware.bin
       destination: firmware.bin
@@ -2324,7 +2303,7 @@ systems:
       native_path: bios/dsi_firmware.bin
       native_name: Nintendo DS
     name: Nintendo DS
-  neogeo:
+  snk-neogeo:
     files:
     - name: neogeo.zip
       destination: neogeo.zip
@@ -2344,7 +2323,7 @@ systems:
       native_path: bios/neogeo.zip
       native_name: Hyper NeoGeo 64
     name: Hyper NeoGeo 64
-  neogeocd:
+  snk-neogeo-cd:
     files:
     - name: neogeo.zip
       destination: neogeo.zip
@@ -2449,7 +2428,7 @@ systems:
       native_path: "bios/[BIOS] SNK Neo Geo Pocket (Japan, Europe) (En,Ja).ngp"
       native_name: Neo Geo Pocket Color
     name: Neo Geo Pocket Color
-  odyssey2:
+  magnavox-odyssey2:
     files:
     - name: o2rom.bin
       destination: o2rom.bin
@@ -2480,7 +2459,7 @@ systems:
       native_path: bios/jopac.bin
       native_name: Odyssey 2
     name: Odyssey 2
-  pc88:
+  nec-pc-88:
     files:
     - name: N88.ROM
       destination: quasi88/N88.ROM
@@ -2532,7 +2511,7 @@ systems:
       native_path: bios/quasi88/N88EXT3.ROM
       native_name: NEC PC-8800
     name: NEC PC-8800
-  pc98:
+  nec-pc-98:
     files:
     - name: BIOS.ROM
       destination: np2kai/BIOS.ROM
@@ -2570,7 +2549,7 @@ systems:
       native_path: bios/np2kai/font.bmp
       native_name: NEC PC-9800
     name: NEC PC-9800
-  pcengine:
+  nec-pc-engine:
     files:
     - name: syscard3.pce
       destination: syscard3.pce
@@ -2579,9 +2558,6 @@ systems:
       native_system: pcengine
       native_path: bios/syscard3.pce
       native_name: PC Engine
-    name: PC Engine
-  pcenginecd:
-    files:
     - name: syscard3.pce
       destination: syscard3.pce
       required: true
@@ -2589,8 +2565,15 @@ systems:
       native_system: pcenginecd
       native_path: bios/syscard3.pce
       native_name: PC Engine CD
-    name: PC Engine CD
-  pcfx:
+    - name: syscard3.pce
+      destination: syscard3.pce
+      required: true
+      md5: 38179df8f4ac870017db21ebcbf53114
+      native_system: supergrafx
+      native_path: bios/syscard3.pce
+      native_name: Supergrafx
+    name: Supergrafx
+  nec-pc-fx:
     files:
     - name: pcfx.rom
       destination: pcfx.rom
@@ -2622,7 +2605,7 @@ systems:
       native_path: bios/mame/hash/pegasus_cart.xml
       native_name: Aamber Pegasus
     name: Aamber Pegasus
-  pokemini:
+  nintendo-pokemon-mini:
     files:
     - name: bios.min
       destination: bios.min
@@ -2642,7 +2625,7 @@ systems:
       native_path: bios/pcsx2/bios/ps2-0230a-20080220.bin
       native_name: PS2
     name: PS2
-  psx:
+  sony-playstation:
     files:
     - name: psxonpsp660.bin
       destination: psxonpsp660.bin
@@ -2661,7 +2644,7 @@ systems:
       native_path: bios/mame/hash/pv1000.xml
       native_name: PV-1000
     name: PV-1000
-  satellaview:
+  nintendo-satellaview:
     files:
     - name: BS-X.bin
       destination: BS-X.bin
@@ -2671,7 +2654,7 @@ systems:
       native_path: bios/BS-X.bin
       native_name: Satellaview
     name: Satellaview
-  saturn:
+  sega-saturn:
     files:
     - name: sega_101.bin
       destination: sega_101.bin
@@ -2810,7 +2793,7 @@ systems:
       native_path: bios/kronos/stvbios.zip
       native_name: Sega ST-V
     name: Sega ST-V
-  sgb:
+  nintendo-sgb:
     files:
     - name: sgb_boot.bin
       destination: sgb_boot.bin
@@ -2851,16 +2834,6 @@ systems:
       native_path: bios/STBIOS.bin
       native_name: Sufami
     name: Sufami
-  supergrafx:
-    files:
-    - name: syscard3.pce
-      destination: syscard3.pce
-      required: true
-      md5: 38179df8f4ac870017db21ebcbf53114
-      native_system: supergrafx
-      native_path: bios/syscard3.pce
-      native_name: Supergrafx
-    name: Supergrafx
   supracan:
     files:
     - name: supracan.zip
@@ -2993,7 +2966,7 @@ systems:
       native_path: bios/mame/hash/vsmileb_cart.xml
       native_name: V. Smile
     name: V. Smile
-  x1:
+  sharp-x1:
     files:
     - name: IPLROM.X1
       destination: xmil/IPLROM.X1
@@ -3010,7 +2983,7 @@ systems:
       native_path: bios/xmil/iplrom.x1t
       native_name: Sharp x1
     name: Sharp x1
-  x68000:
+  sharp-x68000:
     files:
     - name: iplrom.dat
       destination: keropi/iplrom.dat

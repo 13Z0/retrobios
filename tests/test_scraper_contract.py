@@ -616,6 +616,19 @@ class OneNativeIdOneSystem(unittest.TestCase):
         }
         self.assertEqual(split, {})
 
+    def test_retrobat_files_its_systems_as_batocera_does(self):
+        """RetroBat kept psx, nds and atari800: no profile system met them,
+        so no core extra joined them and --system found nothing."""
+        import yaml  # noqa: PLC0415
+
+        from scraper import batocera_scraper, retrobat_scraper  # noqa: PLC0415
+
+        for native, slug in batocera_scraper.SYSTEM_SLUG_MAP.items():
+            self.assertEqual(retrobat_scraper.SYSTEM_SLUG_MAP[native], slug)
+        data = yaml.safe_load((REPO_ROOT / "platforms" / "retrobat.yml").read_text())
+        self.assertTrue({"sony-playstation", "nintendo-ds"} <= set(data["systems"]))
+        self.assertFalse({"psx", "nds", "atari800"} & set(data["systems"]))
+
     def test_xroar_machines_reach_the_platforms_that_run_it(self):
         import yaml  # noqa: PLC0415
 
