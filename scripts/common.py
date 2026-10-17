@@ -350,6 +350,10 @@ def list_registered_platforms(
     return platforms
 
 
+# A list this short is printed whole rather than pointed at.
+SHORT_LIST = 12
+
+
 def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> str:
     """The closest known names to what was typed, and how to see them all.
 
@@ -360,8 +364,11 @@ def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> 
 
     close = sorted({m for name in typed
                     for m in difflib.get_close_matches(name, available, n=3, cutoff=0.6)})
-    hint = f"Did you mean: {', '.join(close)}? " if close else ""
-    return f"{hint}{listing_flag} lists all {len(available)}."
+    if close:
+        return f"Did you mean: {', '.join(close)}? {listing_flag} lists all {len(available)}."
+    if len(available) <= SHORT_LIST:
+        return f"Known: {', '.join(available)}."
+    return f"{listing_flag} lists all {len(available)}."
 
 
 def require_platform(name: str, platforms_dir: str = "platforms") -> None:

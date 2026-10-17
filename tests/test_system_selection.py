@@ -173,7 +173,10 @@ class ATypoGetsTheNearestNames(unittest.TestCase):
                                     ["3do", "apple-ii", "sony-playstation"], "--list-systems")
         self.assertEqual(hint, "Did you mean: sony-playstation? --list-systems lists all 3.")
         self.assertEqual(common.suggest_names(["zzz"], ["3do"], "--list-systems"),
-                         "--list-systems lists all 1.")
+                         "Known: 3do.")
+        many = [f"system-{i}" for i in range(40)]
+        self.assertEqual(common.suggest_names(["zzz"], many, "--list-systems"),
+                         "--list-systems lists all 40.")
 
 if __name__ == "__main__":
     unittest.main()
