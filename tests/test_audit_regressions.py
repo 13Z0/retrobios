@@ -3544,5 +3544,30 @@ class VerifyPacksSaysWhatItExcluded(unittest.TestCase):
         self.assertNotRegex(body, r"result\[\d\]")
 
 
+
+class TheGapReportKeepsItsShape(unittest.TestCase):
+    """Multi-line notes fell to column 0 and read as emulator headings, a
+    profile without systems printed `Abuse ()`, `*` had no legend, and
+    --platform totals said "across all emulators"."""
+
+    def test_layout(self):
+        from scripts.cross_reference import print_report
+
+        report = {"abuse": {
+            "emulator": "Abuse", "systems": [], "gaps": 1, "total_files": 1,
+            "platform_covered": 0, "gap_missing": 1,
+            "gap_details": [{"name": "a.spe", "required": True, "source": "missing",
+                             "note": "first line\nsecond line"}],
+        }}
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            print_report(report, "the emulators batocera runs")
+        text = out.getvalue()
+        self.assertIn("* marks a file the emulator requires", text)
+        self.assertIn("\nAbuse\n", text)
+        self.assertIn("a.spe [MISSING]: first line second line", text)
+        self.assertIn("across the emulators batocera runs", text)
+
+
 if __name__ == "__main__":
     unittest.main()

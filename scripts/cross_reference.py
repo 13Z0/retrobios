@@ -668,10 +668,15 @@ def cross_reference(
     return report
 
 
-def print_report(report: dict) -> None:
-    """Print a human-readable gap analysis report."""
+def print_report(report: dict, scope: str = "all emulators") -> None:
+    """Print a human-readable gap analysis report.
+
+    `scope` names what the totals cover: under --platform, the emulators
+    that platform runs, not all of them.
+    """
     print("Emulator vs Platform Gap Analysis")
     print("=" * 60)
+    print("* marks a file the emulator requires")
 
     total_gaps = 0
     totals: dict[str, int] = {"bios": 0, "data": 0, "large_file": 0, "missing": 0}
@@ -688,7 +693,8 @@ def print_report(report: dict) -> None:
                 parts.append(f"{count} {key}")
         status = ", ".join(parts) if parts else "OK"
 
-        print(f"\n{data['emulator']} ({', '.join(data['systems'])})")
+        systems = ", ".join(data["systems"])
+        print(f"\n{data['emulator']}" + (f" ({systems})" if systems else ""))
         print(
             f"  {data['total_files']} files in profile, "
             f"{data['platform_covered']} declared by platforms, "
@@ -699,7 +705,9 @@ def print_report(report: dict) -> None:
         for g in data["gap_details"]:
             req = "*" if g["required"] else " "
             src = g.get("source", "missing").upper()
-            note = f" -- {g['note']}" if g["note"] else ""
+            # One line per file: a note spanning lines fell to column 0
+            # between entries and read as an emulator heading.
+            note = f": {' '.join(str(g['note']).split())}" if g["note"] else ""
             archive_info = ""
             if g.get("archive"):
                 fc = g.get("archive_file_count", 0)
@@ -712,7 +720,7 @@ def print_report(report: dict) -> None:
             totals[key] += data.get(f"gap_{key}", 0)
 
     print(f"\n{'=' * 60}")
-    print(f"Total: {total_gaps} undeclared files across all emulators")
+    print(f"Total: {total_gaps} undeclared files across {scope}")
     available = totals["bios"] + totals["data"] + totals["large_file"]
     print(f"  {available} available (bios: {totals['bios']}, data: {totals['data']}, "
           f"large_file: {totals['large_file']})")
@@ -772,7 +780,10 @@ def main():
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        print_report(report)
+        print_report(
+            report,
+            f"the emulators {args.platform} runs" if args.platform else "all emulators",
+        )
 
 
 if __name__ == "__main__":
