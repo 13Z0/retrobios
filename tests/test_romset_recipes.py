@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 import zipfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -556,6 +557,36 @@ class TheMissingReportNamesItsTargets(unittest.TestCase):
         self.assertIn("NOT REPRODUCIBLE: aes.zip (1 pinned: cccccccc)", text)
         self.assertIn("NO RECIPE: scummclassic.zip md5=dddddddd", text)
         self.assertLess(text.index("neogeo.zip"), text.index("aes.zip"))
+
+
+class IdentificationReadsTheDirectoryFirst(unittest.TestCase):
+    """identify_archive built every recipe at DEFLATE level 9 before
+    comparing bytes: 94 s and 1 GB at pipeline step 1c, mostly for recipes
+    whose members could never match."""
+
+    def test_a_recipe_with_other_members_is_never_built(self):
+        from torrentzip import build_torrentzip  # noqa: PLC0415
+
+        import romset_recipes  # noqa: PLC0415
+
+        rom = b"rom bytes"
+        crc = format(zlib.crc32(rom), "08x")
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            archive = Path(tmp) / "set.zip"
+            archive.write_bytes(build_torrentzip([("a.rom", rom)]))
+
+            class Pool:
+                built: list = []
+
+                def build(self, recipe):
+                    self.built.append(recipe)
+                    return build_torrentzip([(name, rom) for name, _crc in recipe])
+
+            pool = Pool()
+            label = romset_recipes.identify_archive(
+                archive, {"other": [("b.rom", crc)], "match": [("a.rom", crc)]}, pool)
+        self.assertEqual(label, "match")
+        self.assertEqual(pool.built, [[("a.rom", crc)]])
 
 if __name__ == "__main__":
     unittest.main()
