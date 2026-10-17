@@ -228,9 +228,18 @@ SKIPPED = _Skipped()
 
 
 def _refuse_unapplied_flags(parser: argparse.ArgumentParser, args) -> None:
-    """--all-variants builds every source itself: a --source beside it is dropped."""
+    """A flag the run would drop is refused before any step.
+
+    --all-variants builds every source itself, so a --source beside it is
+    dropped; --skip-packs builds none, so both are.
+    """
     if args.all_variants and args.source != "full":
         parser.error("--source is incompatible with --all-variants")
+    if args.skip_packs:
+        for flag, on in (("--source", args.source != "full"),
+                         ("--all-variants", args.all_variants)):
+            if on:
+                parser.error(f"{flag} is incompatible with --skip-packs")
 
 
 def _truth_steps(args: argparse.Namespace, results: dict) -> bool:

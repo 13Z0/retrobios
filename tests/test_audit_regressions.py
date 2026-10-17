@@ -3332,5 +3332,40 @@ class TheInstallerNamesWhatItSkipped(unittest.TestCase):
         self.assertIn("and 2 more", many[1])
 
 
+
+class EveryToolRefusesAFlagItWouldDrop(unittest.TestCase):
+    """The mode x flag matrix existed for generate_pack only: verify took
+    --strict in --emulator mode and ignored it, pipeline took --source with
+    --skip-packs and built nothing. Each pair here must exit non-zero
+    before doing any work."""
+
+    REFUSED = {
+        "scripts/verify.py": [
+            ["--list-emulators", "--strict"],
+            ["--list-emulators", "--verbose"],
+            ["--list-emulators", "--json"],
+            ["--list-systems", "--region", "us"],
+            ["--emulator", "handy", "--target", "switch"],
+            ["--platform", "retroarch", "--standalone"],
+            ["--platform", "retroarch", "--include-archived"],
+        ],
+        "scripts/pipeline.py": [
+            ["--offline", "--skip-packs", "--source", "truth"],
+            ["--offline", "--skip-packs", "--all-variants"],
+            ["--offline", "--all-variants", "--source", "platform"],
+        ],
+    }
+
+    def test_each_pair_is_refused(self):
+        for script, cases in self.REFUSED.items():
+            for argv in cases:
+                with self.subTest(script=script, argv=argv):
+                    proc = subprocess.run(
+                        [sys.executable, script, *argv], cwd=ROOT,
+                        capture_output=True, text=True, timeout=120,
+                    )
+                    self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
