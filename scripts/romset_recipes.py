@@ -329,6 +329,30 @@ def write_reconstructions(
     return written
 
 
+def print_missing(gap: dict) -> None:
+    """The pinned archives the collection lacks, each one named."""
+    print(
+        f"\nPinned archives not held: "
+        f"{len(gap['constructible'])} buildable, "
+        f"{len(gap['unreproducible'])} not reproducible, "
+        f"{len(gap['no_recipe'])} without a recipe"
+    )
+    for record in gap["constructible"]:
+        print(
+            f"  BUILDABLE: {record['archive']} md5={record['md5'][:8]} "
+            f"via {record['recipe']} ({record['size']} bytes)"
+        )
+    # The acquisition targets: an archive pinned under several md5s is
+    # one line, the platforms' own bundles rather than romsets.
+    by_archive: dict[str, list[str]] = defaultdict(list)
+    for record in gap["unreproducible"]:
+        by_archive[record["archive"]].append(record["md5"][:8])
+    for archive, md5s in sorted(by_archive.items(), key=lambda kv: (-len(kv[1]), kv[0])):
+        print(f"  NOT REPRODUCIBLE: {archive} ({len(md5s)} pinned: {', '.join(sorted(md5s))})")
+    for record in gap["no_recipe"]:
+        print(f"  NO RECIPE: {record['archive']} md5={record['md5'][:8]}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--identify", action="store_true", help="label local archives")
@@ -384,14 +408,14 @@ def main() -> int:
         return 0
 
     print(
-        f"{result['archives_with_recipes']} archives documentees par "
-        f"{result['recipes']} recettes "
-        f"({result['profile_recipes']} de profils, {result['dat_recipes']} de DAT), "
-        f"{result['atoms']} atomes ROM disponibles"
+        f"{result['archives_with_recipes']} archives described by "
+        f"{result['recipes']} recipes "
+        f"({result['profile_recipes']} from profiles, {result['dat_recipes']} from DATs), "
+        f"{result['atoms']} ROM atoms available"
     )
     if not result["dat_recipes"]:
         print(
-            "  Aucune recette DAT: importer avec "
+            "  No DAT recipe: import one with "
             "`python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0289`"
         )
     for problem in result.get("unreadable_archives", []):
@@ -400,13 +424,12 @@ def main() -> int:
     if args.identify:
         ident = result["identify"]
         print(
-            f"\nIdentification: {len(ident['identified'])} archives reproduites "
-            f"par une recette, {len(ident['unidentified'])} non identifiees"
+            f"\nIdentification: {len(ident['identified'])} archives reproduced "
+            f"by a recipe, {len(ident['unidentified'])} unidentified"
         )
         print(
-            "  L'etiquette est la plus ancienne version produisant ces octets: "
-            "une recette inchangee depuis 0.190 est comptee la, pas a sa version "
-            "d'origine."
+            "  The label is the oldest version producing these bytes: a recipe "
+            "unchanged since 0.190 is counted there, not at its own version."
         )
         by_recipe: dict[str, int] = defaultdict(int)
         for record in ident["identified"]:
@@ -417,18 +440,7 @@ def main() -> int:
             print(f"  UNIDENTIFIED: {record['path']}")
 
     if args.missing:
-        gap = result["missing"]
-        print(
-            f"\nArchives epinglees absentes: "
-            f"{len(gap['constructible'])} reconstructibles, "
-            f"{len(gap['unreproducible'])} irreproductibles, "
-            f"{len(gap['no_recipe'])} sans recette"
-        )
-        for record in gap["constructible"]:
-            print(
-                f"  BUILDABLE: {record['archive']} md5={record['md5'][:8]} "
-                f"via {record['recipe']} ({record['size']} octets)"
-            )
+        print_missing(result["missing"])
         for path in result.get("written", []):
             print(f"  WROTE: {path}")
 

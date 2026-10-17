@@ -530,5 +530,32 @@ class RepositoryRun(unittest.TestCase):
             self.assertIn(record["recipe"], recipes[record["archive"]])
 
 
+
+class TheMissingReportNamesItsTargets(unittest.TestCase):
+    """--missing printed three counters; the archives to go and find were
+    only in --json."""
+
+    def test_every_target_is_named(self):
+        import contextlib  # noqa: PLC0415
+        import io  # noqa: PLC0415
+
+        import romset_recipes  # noqa: PLC0415
+
+        gap = {
+            "constructible": [],
+            "unreproducible": [{"archive": "neogeo.zip", "md5": "a" * 32},
+                               {"archive": "neogeo.zip", "md5": "b" * 32},
+                               {"archive": "aes.zip", "md5": "c" * 32}],
+            "no_recipe": [{"archive": "scummclassic.zip", "md5": "d" * 32}],
+        }
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            romset_recipes.print_missing(gap)
+        text = out.getvalue()
+        self.assertIn("NOT REPRODUCIBLE: neogeo.zip (2 pinned: aaaaaaaa, bbbbbbbb)", text)
+        self.assertIn("NOT REPRODUCIBLE: aes.zip (1 pinned: cccccccc)", text)
+        self.assertIn("NO RECIPE: scummclassic.zip md5=dddddddd", text)
+        self.assertLess(text.index("neogeo.zip"), text.index("aes.zip"))
+
 if __name__ == "__main__":
     unittest.main()
