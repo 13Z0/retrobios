@@ -3495,5 +3495,24 @@ class ThePipelineTableNamesEveryStep(unittest.TestCase):
         self.assertEqual(labels - documented, set())
 
 
+
+class TheIssueFormListsEveryPlatform(unittest.TestCase):
+    """The missing-BIOS form offered 7 of the 12 registered platforms."""
+
+    def test_every_registered_platform_is_an_option(self):
+        from scripts.common import list_registered_platforms, load_platform_config
+
+        form = yaml.safe_load(
+            (ROOT / ".github" / "ISSUE_TEMPLATE" / "missing-bios.yml").read_text()
+        )
+        options = next(
+            item["attributes"]["options"] for item in form["body"]
+            if item.get("id") == "platform"
+        )
+        for name in list_registered_platforms(str(ROOT / "platforms"), include_archived=True):
+            display = load_platform_config(name, str(ROOT / "platforms"))["platform"]
+            self.assertIn(display, options)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -39,6 +39,11 @@ body:
         - EmuDeck
         - Lakka
         - RetroPie
+        - RetroDECK
+        - RomM
+        - ROCKNIX
+        - BizHawk
+        - MiSTer FPGA
         - Other
     validations:
       required: true
