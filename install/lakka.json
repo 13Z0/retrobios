@@ -403,6 +403,8 @@
     "3do": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
@@ -784,6 +786,8 @@
       "cdi2015",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2010",
       "mame2015",
       "mame2016",

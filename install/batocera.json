@@ -507,6 +507,9 @@
       "RMG",
       "com.github.Rosalie241.RMG"
     ],
+    "samcoupe": [
+      "simcoupe"
+    ],
     "saturn-emu": [
       "SATURN-EMU",
       "Saturn.emu",
@@ -529,6 +532,9 @@
       "SNES9X-EXPLUS",
       "Snes9x EX+",
       "Snes9xEXPlus"
+    ],
+    "sonic3-air": [
+      "sonic3air"
     ],
     "triforce": [
       "dolphin-triforce"
@@ -569,6 +575,9 @@
     "x1-box": [
       "x1box"
     ],
+    "xash3d_fwgs": [
+      "xash3d"
+    ],
     "xm6pro68k": [
       "XM6PRO68K",
       "XM6PRO68K-WINDOWS",
@@ -586,6 +595,8 @@
     "3do": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
@@ -598,11 +609,15 @@
       "gearcoleco",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "apfm1000": [
       "groovymame",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "apple-ii": [
       "applewin",
@@ -652,17 +667,23 @@
     ],
     "beena": [
       "groovymame",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "camplynx": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "cdi": [
       "cdi2015",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2010",
       "mame2015",
       "mame2016",
@@ -676,6 +697,8 @@
       "cxbx-reloaded",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2009",
       "mame2010",
       "mame2015",
@@ -712,6 +735,8 @@
     "crvision": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "dragon64": [
@@ -732,6 +757,8 @@
     "fm7": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "fmtowns": [
@@ -741,27 +768,37 @@
     "gamate": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "gamecom": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "gamepock": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "gmaster": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "hikaru": [
       "demul",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2009",
       "mame2010",
       "mame2015",
@@ -773,11 +810,15 @@
     "laser310": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "loopy": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "magnavox-odyssey2": [
@@ -923,16 +964,22 @@
     "pcw": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "zesarux"
     ],
     "pv2000": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "rx78": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "scummvm": [
@@ -1028,11 +1075,15 @@
     "tandy-vis": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess"
     ],
     "ti99": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess",
       "ti99sim"
     ],
@@ -1040,6 +1091,8 @@
       "dolphin",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2009",
       "mame2010",
       "mame2015",
@@ -1052,19 +1105,25 @@
     "trs80": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mamemess",
       "sdl2trs"
     ],
     "tutor": [
       "groovymame",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "vectrex": [
       "vecx"
     ],
     "vgmplay": [
       "groovymame",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "videoton-tvc": [
       "ep128emu",

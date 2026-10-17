@@ -15,10 +15,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 9899,
-  "total_size": 8461322910,
-  "pack_files": 12542,
-  "pack_size": 8501855437,
+  "total_files": 9901,
+  "total_size": 8461357726,
+  "pack_files": 12544,
+  "pack_size": 8501890253,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -337,6 +337,9 @@
       "RMG",
       "com.github.Rosalie241.RMG"
     ],
+    "samcoupe": [
+      "simcoupe"
+    ],
     "saturn-emu": [
       "SATURN-EMU",
       "Saturn.emu",
@@ -418,6 +421,8 @@
     "3do": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
@@ -799,6 +804,8 @@
       "cdi2015",
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2010",
       "mame2015",
       "mame2016",
@@ -103693,6 +103700,48 @@
       ]
     },
     {
+      "dest": "samcoupe.rom",
+      "sha1": "c86601633fb61a8c517f7657aad9af4e6870f2ee",
+      "sha256": "e7ec9cd06fb2d479a807cf1739e75f3ef4975c12869be3d3a991232c57d1688d",
+      "size": 32768,
+      "repo_path": "bios/Other/zesarux/samcoupe.rom",
+      "cores": [
+        "samcoupe",
+        "zesarux"
+      ]
+    },
+    {
+      "dest": "atom.rom",
+      "sha1": "cd342579f066c0863e4f769c2e6757085e21b0a1",
+      "sha256": "020e03a87f46a90f10301e95de02fd7a41232c841d5e785a16893e7b07203f96",
+      "size": 32768,
+      "repo_path": "bios/MGT/SAM Coupe/atom.rom",
+      "cores": [
+        "samcoupe"
+      ]
+    },
+    {
+      "dest": "atomlite.rom",
+      "sha1": "b2303b7200f5a17b54b841af9f0604db7bbdd1ab",
+      "sha256": "444cd9503277112d002d66c90933ef97a50bfd5a2780c88505ee99e90d3e56b2",
+      "size": 32768,
+      "repo_path": "bios/Other/zesarux/atomlite.rom",
+      "cores": [
+        "samcoupe",
+        "zesarux"
+      ]
+    },
+    {
+      "dest": "sp0256-al2.bin",
+      "sha1": "e60fcb5fa16ff3f3b69d36c7a6e955744d3feafc",
+      "sha256": "98c280fd082169c54081e503dfe7d7d9a6fd46d4ffcc973e199ea0e1d9bc1ac9",
+      "size": 2048,
+      "repo_path": "bios/MGT/SAM Coupe/sp0256-al2.bin",
+      "cores": [
+        "samcoupe"
+      ]
+    },
+    {
       "dest": "same_cdi/bios/cdi910.zip",
       "sha1": "b64381aa271ab5cd83b47a83fefab018f39ed11b",
       "sha256": "8a7ab8ce6969f35937973a5c1e413daee31d0fe61197b8bbc837406bb8188a61",
@@ -107592,26 +107641,6 @@
       "sha256": "eace7c57ecfa9957f4478ab523faa1e290719e13cc8a8de448edd8145aeacb1c",
       "size": 194864,
       "repo_path": "bios/Other/zesarux/pcw_8x_boot2.dsk",
-      "cores": [
-        "zesarux"
-      ]
-    },
-    {
-      "dest": "samcoupe.rom",
-      "sha1": "c86601633fb61a8c517f7657aad9af4e6870f2ee",
-      "sha256": "e7ec9cd06fb2d479a807cf1739e75f3ef4975c12869be3d3a991232c57d1688d",
-      "size": 32768,
-      "repo_path": "bios/Other/zesarux/samcoupe.rom",
-      "cores": [
-        "zesarux"
-      ]
-    },
-    {
-      "dest": "atomlite.rom",
-      "sha1": "b2303b7200f5a17b54b841af9f0604db7bbdd1ab",
-      "sha256": "444cd9503277112d002d66c90933ef97a50bfd5a2780c88505ee99e90d3e56b2",
-      "size": 32768,
-      "repo_path": "bios/Other/zesarux/atomlite.rom",
       "cores": [
         "zesarux"
       ]

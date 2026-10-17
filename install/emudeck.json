@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-16T12:33:18Z",
+  "generated": "2026-10-16T17:23:53Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -494,6 +494,8 @@
     "panasonic-3do": [
       "groovymame",
       "mame",
+      "mame0258",
+      "mame0278",
       "mame2015",
       "mame2016",
       "mame4droid-2024",

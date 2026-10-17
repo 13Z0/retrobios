@@ -619,7 +619,7 @@ nav:
     - Triforce: emulators/triforce.md
     - xm6pro68k: emulators/xm6pro68k.md
     - xm6typeg: emulators/xm6typeg.md
-  - Frozen snapshots (36):
+  - Frozen snapshots (38):
     - bnes: emulators/bnes.md
     - bsnes 2014: emulators/bsnes2014.md
     - bsnes C++98: emulators/bsnes_cplusplus98.md
@@ -634,6 +634,8 @@ nav:
     - FB Alpha 2012 Neo Geo: emulators/fbalpha2012_neogeo.md
     - Hatari 2014: emulators/hatari2014.md
     - higan (SFC Accuracy): emulators/higan_sfc.md
+    - MAME 0.258: emulators/mame0258.md
+    - MAME 0.278: emulators/mame0278.md
     - MAME 2000: emulators/mame2000.md
     - MAME 2003: emulators/mame2003.md
     - MAME 2003 Midway: emulators/mame2003_midway.md
