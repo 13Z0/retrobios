@@ -3373,5 +3373,25 @@ class TestsRunOffline(unittest.TestCase):
         self.assertTrue(os.environ.get("RETROBIOS_OFFLINE"))
 
 
+
+class TheWantedPageCountsRomsetMembers(unittest.TestCase):
+    """The site called build_report without archive_members: the public
+    Wanted page asked for dumps the collection holds inside romsets."""
+
+    def test_members_are_read_unless_given(self):
+        from scripts import provenance_report
+
+        calls = []
+
+        def members(db):
+            calls.append(db)
+            return {}
+
+        with mock.patch.object(provenance_report, "archive_members", members):
+            provenance_report.build_report({"files": {}}, {})
+            provenance_report.build_report({"files": {}}, {}, {})
+        self.assertEqual(len(calls), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

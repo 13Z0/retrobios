@@ -84,7 +84,10 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
     split the target list is swamped by content the project never ships.
     """
     by_sha1 = db.get("files", {})
-    members = members or {}
+    # The members a romset holds are held too, whoever asks: the site built
+    # its Wanted page without them and asked the public for the Astrocade
+    # and Gamate BIOS that astrocdw.zip and gamate.zip already carry.
+    members = archive_members(db) if members is None else members
     by_md5_size = {
         (entry.get("md5", ""), entry.get("size", 0)) for entry in by_sha1.values()
     }
