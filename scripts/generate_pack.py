@@ -1176,11 +1176,14 @@ def _pack_data_tree(
     seen_destinations: set[str],
     seen_parents: set[str],
     seen_lower: set[str],
+    packed_at: dict[str, str] | None = None,
 ) -> int:
     """Write one data directory into an emulator pack, under its shared lock.
 
     A refresh swaps the tree by rename; without the lock a walk half done
-    read the old tree and wrote files of the new one.
+    read the old tree and wrote files of the new one. ``packed_at`` records
+    each member, so a later profile asking for the same bytes there is
+    served rather than reported missing.
     """
     added = 0
     with cache_lock(local_cache, shared=True):
@@ -1197,6 +1200,8 @@ def _pack_data_tree(
                 _register_path(full, seen_destinations, seen_parents)
                 seen_lower.add(full.lower())
                 _add_pack_member(zf, src, full)
+                if packed_at is not None:
+                    packed_at[full.lower()] = src
                 added += 1
     return added
 
@@ -1294,6 +1299,15 @@ def generate_emulator_pack(
     # Loose file packed at each folded destination, to tell a profile asking
     # for the same file there from one asking for other bytes.
     packed_at: dict[str, str] = {}
+    # A destination is missing once, however many profiles ask for it:
+    # verify --emulator counts by destination.
+    missing_at: set[str] = set()
+
+    def report_missing(name: str, destination: str) -> None:
+        if destination not in missing_at:
+            missing_at.add(destination)
+            missing_files.append(name)
+
     data_dir_notices: list[str] = []
     data_registry = load_data_dir_registry(
         platforms_dir or os.path.join(os.path.dirname(__file__), "..", "platforms")
@@ -1348,9 +1362,10 @@ def generate_emulator_pack(
                     seen_destinations.add(archive_dest)
                     _register_path(archive_dest, seen_destinations, seen_parents)
                     seen_lower.add(archive_dest.lower())
+                    packed_at[archive_dest.lower()] = local_path
                     total_files += 1
                 else:
-                    missing_files.append(archive_name)
+                    report_missing(archive_name, archive_dest)
 
             # Pack individual files (skip archived ones). The entries of one
             # profile on one destination are the releases the code accepts
@@ -1456,7 +1471,7 @@ def generate_emulator_pack(
                         ):
                             # The file already at this path, asked for twice.
                             continue
-                        missing_files.append(alternatives[0]["name"])
+                        report_missing(alternatives[0]["name"], dest)
                         continue
 
                 if chosen is None:
@@ -1465,7 +1480,7 @@ def generate_emulator_pack(
                     elif all(fe.get("unsourceable") for fe in alternatives):
                         unsourceable_files.append(alternatives[0]["name"])
                     else:
-                        missing_files.append(alternatives[0]["name"])
+                        report_missing(alternatives[0]["name"], dest)
                     continue
 
                 fe, local_path, how = chosen
@@ -1535,7 +1550,8 @@ def generate_emulator_pack(
                     if prefix:
                         dd_dest = f"{prefix}/{dd_dest}" if dd_dest else prefix
                 total_files += _pack_data_tree(
-                    zf, local_cache, dd_dest, seen_destinations, seen_parents, seen_lower
+                    zf, local_cache, dd_dest, seen_destinations, seen_parents, seen_lower,
+                    packed_at,
                 )
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)

@@ -1466,9 +1466,28 @@ def verify_emulator(
     sha1_by_path = {
         entry.get("path"): sha1 for sha1, entry in db.get("files", {}).items()
     }
+    # Destination -> (file packed there, its profile, the path as written).
+    # Archives and data trees take paths too, before and after the loose
+    # files of their profile, as the pack writes them.
     placed: dict[str, tuple[str | None, str, str]] = {}
     placed_files: set[str] = set()
     placed_parents: set[str] = set()
+    content_ids: dict[str, str | None] = {}
+
+    def content_id(path: str | None) -> str | None:
+        if not path:
+            return None
+        if path not in content_ids:
+            content_ids[path] = sha1_by_path.get(path) or (
+                compute_hashes(path)["sha1"] if os.path.isfile(path) else None
+            )
+        return content_ids[path]
+
+    def occupy(dest: str, path: str | None, owner: str) -> None:
+        if placement_block(dest, placed_files, set(placed), placed_parents, True):
+            return
+        placed[dest.lower()] = (path, owner, dest)
+        _register_path(dest, placed_files, placed_parents)
     for emu_name, profile in sorted(selected):
         files = expand_directory_entries(
             filter_files_by_mode(profile.get("files", []), standalone),
@@ -1559,6 +1578,8 @@ def verify_emulator(
                     archive, profile.get("archive_prefix", ""),
                     profile.get("pack_structure"), standalone,
                 )
+                if local_path:
+                    occupy(dest, local_path, emu_name)
                 dest_to_name[dest] = archive
                 cur = result["status"]
                 prev = file_status.get(dest)
@@ -1690,20 +1711,22 @@ def verify_emulator(
             )
             block_reason = ""
             if block and held is not None:
-                other_sha1, owner, other_dest = placed.get(dest.lower(), (None, "", ""))
+                other_path, owner, other_dest = placed.get(dest.lower(), (None, "", ""))
+                same = content_id(held) is not None and content_id(held) == content_id(
+                    other_path
+                )
                 if block == "path_conflict":
                     block_reason = "a packed file occupies its directory"
                 elif block == "case_twin":
                     block_reason = (
                         f"packed only as {other_dest}, from {owner}"
-                        if sha1_by_path.get(held) == other_sha1
+                        if same
                         else f"the pack holds {owner}'s {other_dest} at this path"
                     )
-                elif sha1_by_path.get(held) != other_sha1:
+                elif not same:
                     block_reason = f"the pack holds {owner}'s {other_dest} at this path"
             elif not block and packed is not None:
-                placed[dest.lower()] = (sha1_by_path.get(packed), emu_name, dest)
-                _register_path(dest, placed_files, placed_parents)
+                occupy(dest, packed, emu_name)
             for result, required, hle in alternatives:
                 if block_reason and result["status"] != Status.MISSING:
                     result["status"] = Status.MISSING
@@ -1725,6 +1748,25 @@ def verify_emulator(
                     sev, 0
                 ) > _SEVERITY_ORDER.get(prev_sev, 0):
                     file_severity[dest] = sev
+
+        # The profile's data trees follow its files in the pack.
+        for dd in filter_files_by_mode(profile.get("data_directories", []), standalone):
+            cache = (data_registry or {}).get(dd.get("ref", ""), {}).get("local_cache", "")
+            if not cache or not os.path.isdir(cache):
+                continue
+            dd_dest = dd.get("destination", "")
+            structure = profile.get("pack_structure")
+            prefix = (
+                structure.get("standalone" if standalone else "libretro", "")
+                if structure else ""
+            )
+            if prefix:
+                dd_dest = f"{prefix}/{dd_dest}" if dd_dest else prefix
+            for root, _dirs, names in os.walk(cache):
+                for fname in names:
+                    src = os.path.join(root, fname)
+                    rel = os.path.relpath(src, cache).replace(os.sep, "/")
+                    occupy(f"{dd_dest}/{rel}" if dd_dest else rel, src, emu_name)
 
     counts = {
         Severity.OK: 0,
