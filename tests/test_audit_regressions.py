@@ -3075,3 +3075,39 @@ class TriageSurvivesAForgeRefusal(unittest.TestCase):
         lines = out.getvalue().splitlines()
         self.assertEqual(len(lines), 2)
         self.assertTrue(any("eden" in l and "unreachable" in l for l in lines))
+
+
+class VerifyStrictAppliesInEveryMode(unittest.TestCase):
+    """--strict was read only by the platform branch: `--emulator x --strict`
+    printed MISSING (required) and exited 0, and the listings accepted it."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not (ROOT / "database.json").exists():
+            raise unittest.SkipTest("database.json is not built")
+        cls.dir = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        (cls.dir / "fakeemu.yml").write_text(
+            "emulator: FakeEmu\ntype: libretro\nsystems: [zz-console]\nfiles:\n"
+            "  - name: does_not_exist_strict.bin\n    required: true\n"
+            "    md5: 0123456789abcdef0123456789abcdef\n    validation: [md5]\n"
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        __import__("shutil").rmtree(cls.dir, True)
+
+    def run_verify(self, *flags: str) -> int:
+        return subprocess.run(
+            [sys.executable, "scripts/verify.py", *flags], cwd=ROOT,
+            capture_output=True, text=True,
+        ).returncode
+
+    def test_emulator_and_system_modes_fail_on_a_missing_required_file(self):
+        for mode in (["--emulator", "fakeemu"], ["--system", "zz-console"]):
+            with self.subTest(mode=mode[0]):
+                flags = [*mode, "--emulators-dir", str(self.dir)]
+                self.assertEqual(self.run_verify(*flags), 0)
+                self.assertEqual(self.run_verify(*flags, "--strict"), 1)
+
+    def test_a_listing_refuses_strict(self):
+        self.assertEqual(self.run_verify("--list-emulators", "--strict"), 2)

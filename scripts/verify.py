@@ -2016,6 +2016,8 @@ def _refuse_listing_narrowings(
         ("--standalone", args.standalone),
         ("--include-archived", args.include_archived),
         ("--json", args.json),
+        ("--strict", args.strict),
+        ("--verbose", args.verbose),
     ):
         if on:
             parser.error(f"{flag} is incompatible with {listing}")
@@ -2094,7 +2096,8 @@ def main():
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Exit 1 when a platform that checks hashes misses a required file",
+        help="Exit 1 on a required file missing: where the frontend checks "
+        "hashes for a platform, without HLE for --emulator and --system",
     )
     args = parser.parse_args()
     if args.platform:
@@ -2141,6 +2144,7 @@ def main():
             print(json.dumps(result, indent=2))
         else:
             print_emulator_result(result, verbose=args.verbose)
+        _exit_if_strict_emulator(args.strict, result)
         return
 
     # System mode
@@ -2157,6 +2161,7 @@ def main():
             print(json.dumps(result, indent=2))
         else:
             print_emulator_result(result, verbose=args.verbose)
+        _exit_if_strict_emulator(args.strict, result)
         return
 
     # Platform mode (existing)
@@ -2230,10 +2235,33 @@ def main():
             r["details"] = [d for d in r["details"] if d["status"] != Status.OK]
         print(json.dumps(all_results, indent=2))
 
-    critical = sum(r["severity_counts"].get(Severity.CRITICAL, 0) for r, _ in group_results)
-    if args.strict and critical:
+    _exit_if_strict(args.strict, [r for r, _ in group_results])
+
+
+def _exit_if_strict(strict: bool, results: list[dict]) -> None:
+    """Exit 1 under --strict when a platform result counts a critical file:
+    a required file missing or rejected where the frontend reads hashes."""
+    critical = sum(r["severity_counts"].get(Severity.CRITICAL, 0) for r in results)
+    if strict and critical:
         print(f"ERROR: {critical} required file(s) missing where the frontend "
               "checks hashes", file=sys.stderr)
+        sys.exit(1)
+
+
+def _exit_if_strict_emulator(strict: bool, result: dict) -> None:
+    """Exit 1 under --strict when an emulator lacks a file it cannot run without.
+
+    The emulator, not a frontend, is the judge here: a required file with no
+    HLE fallback that the collection does not hold stops the core.
+    """
+    missing = sorted({
+        d["name"] for d in result["details"]
+        if d["status"] == Status.MISSING and d.get("required", True)
+        and not d.get("hle_fallback")
+    })
+    if strict and missing:
+        print(f"ERROR: {len(missing)} required file(s) missing: "
+              f"{', '.join(missing)}", file=sys.stderr)
         sys.exit(1)
 
 

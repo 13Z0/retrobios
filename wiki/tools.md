@@ -83,6 +83,7 @@ python scripts/verify.py --platform batocera       # single platform
 python scripts/verify.py --platform retroarch --verbose  # with ground truth details
 python scripts/verify.py --emulator dolphin        # single emulator
 python scripts/verify.py --emulator dolphin --standalone  # standalone mode only
+python scripts/verify.py --emulator handy --strict  # exit 1 on a required file missing with no HLE
 python scripts/verify.py --system atari-lynx       # single system
 python scripts/verify.py --platform retroarch --target switch  # filter by hardware
 python scripts/verify.py --platform recalbox --region us   # regional priority list
