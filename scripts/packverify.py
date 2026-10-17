@@ -144,7 +144,11 @@ def verify_pack(
             if info.is_dir():
                 continue
             name = info.filename
-            if name.startswith(("INSTRUCTIONS_", "RENAMED_")) or name in (
+            # The builder writes its notes beside the slot they explain
+            # (bios/INSTRUCTIONS_x.txt, games/keen6/INSTRUCTIONS_y.txt), so
+            # they are told by their own name, not by a root prefix.
+            base = name.rsplit("/", 1)[-1]
+            if base.startswith(("INSTRUCTIONS_", "RENAMED_")) or name in (
                 "manifest.json",
                 "README.txt",
             ):

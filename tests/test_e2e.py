@@ -3734,7 +3734,7 @@ class TestE2E(unittest.TestCase):
             zip_names = {
                 n
                 for n in zf.namelist()
-                if not n.startswith(("INSTRUCTIONS_", "RENAMED_"))
+                if not n.rsplit("/", 1)[-1].startswith(("INSTRUCTIONS_", "RENAMED_"))
                 and n != "manifest.json"
                 and n != "README.txt"
             }
