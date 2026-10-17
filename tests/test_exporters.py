@@ -356,6 +356,35 @@ class SearchOrder(unittest.TestCase):
             exporter._in_search_order(candidates), ["ranked.bin", "unranked.bin"]
         )
 
+    def test_a_region_the_help_already_fills_gets_no_alternative(self):
+        """PicoDrive loads the first file of each region's list. RetroPie
+        names one per region; the export appended three more, which the
+        sentence reads as three more required files."""
+        from exporter.baseline import NativeSystem  # noqa: PLC0415
+
+        def cd(name, region, rank):
+            return NativeFile(name=name, destination=name, native_system="segacd", truth={
+                "name": name, "required": True, "md5": "0" * 32, "_cores": ["picodrive"],
+                "region": [region], "priority": rank})
+
+        files = [cd("us_scd2_9306.bin", "north-america", 1),
+                 cd("us_scd1_9210.bin", "north-america", 3),
+                 cd("eu_mcd2_9306.bin", "europe", 1),
+                 cd("eu_mcd1_9210.bin", "europe", 3),
+                 cd("jp_mcd2_921222.bin", "japan", 1),
+                 cd("jp_mcd1_9112.bin", "japan", 2)]
+        script = ('rp_module_id="lr-picodrive"\nrp_module_help="The Sega CD requires the '
+                  'BIOS files us_scd1_9210.bin, eu_mcd1_9210.bin copied to $biosdir"\n')
+        exporter = discover_exporters()["retropie"]()
+        produced = exporter.render(
+            {"segacd": NativeSystem("segacd", files=files)}, None,
+            {"scriptmodules/libretrocores/lr-picodrive.sh": script},
+        )["scriptmodules/libretrocores/lr-picodrive.sh"]
+        self.assertIn("us_scd1_9210.bin, eu_mcd1_9210.bin and jp_mcd2_921222.bin copied",
+                      produced)
+        self.assertNotIn("us_scd2_9306", produced)
+        self.assertNotIn("jp_mcd1_9112", produced)
+
     def test_cores_that_disagree_keep_the_best_rank(self):
         """Nothing is dropped on the rank here, so the best one wins.
 

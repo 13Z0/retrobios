@@ -185,6 +185,34 @@ class Exporter(BaseExporter):
         return names
 
     @staticmethod
+    def _slot_of(fe: NativeFile) -> tuple[str, tuple[str, ...]] | None:
+        """The search chain a file belongs to, or None when it is in none.
+
+        PicoDrive walks one ranked list per region and loads the first file
+        it finds: the files of one chain are alternatives, and naming two of
+        them in an enumeration that reads "requires a, b and c" says both
+        are needed. A file joins a chain only when its source ranks it and
+        names its territory.
+        """
+        regions = (fe.truth or {}).get("region") or []
+        if fe.priority is None or not regions:
+            return None
+        return fe.native_system, tuple(sorted(str(r) for r in regions))
+
+    @classmethod
+    def _one_per_slot(cls, candidates: list[NativeFile], filled: set) -> list[NativeFile]:
+        """The candidates whose chain the help leaves empty, best first."""
+        kept: list[NativeFile] = []
+        for fe in search_order(candidates):
+            slot = cls._slot_of(fe)
+            if slot is not None:
+                if slot in filled:
+                    continue
+                filled.add(slot)
+            kept.append(fe)
+        return kept
+
+    @staticmethod
     def _required_for(fe: NativeFile, core: str | None) -> bool:
         """Whether the package's own core needs the file.
 
@@ -290,7 +318,14 @@ class Exporter(BaseExporter):
                 )
                 & listed
             ]
-            missing = self._in_search_order(candidates)
+            filled = {
+                slot
+                for fe in files
+                if ({fe.name.lower()}
+                    | {str(a).lower() for a in (fe.native("aliases", []) or [])}) & listed
+                and (slot := self._slot_of(fe)) is not None
+            }
+            missing = self._in_search_order(self._one_per_slot(candidates, filled))
             if not missing:
                 continue
 
