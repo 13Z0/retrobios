@@ -957,6 +957,7 @@ def verify_platform(
     file_severity: dict[str, str] = {}
 
     region_drops: set[str] = set()
+    region_fallbacks: list[str] = []
     region_extra_dests: dict[tuple[str, str, str], str] = {}
     if regions:
         import region as region_mod
@@ -978,11 +979,15 @@ def verify_platform(
             target_cores=target_cores,
             held_out=held,
         )
+        region_index = region_mod.platform_region_index(config, profiles, target_cores)
         region_drops = region_mod.resolve_region_drops(
-            region_groups,
-            region_mod.platform_region_index(config, profiles, target_cores),
-            regions,
-            held,
+            region_groups, region_index, regions, held,
+        )
+        # The pack README names these: no file answers the request, so every
+        # candidate stays. Reported here too, or verify reads all OK for a
+        # system that has no BIOS for the region asked.
+        region_fallbacks = region_mod.fallback_groups(
+            region_groups, region_index, regions
         )
 
     # A destination two systems declare with two hashes ships one file, the
@@ -1170,6 +1175,7 @@ def verify_platform(
         "status_counts": status_counts,
         "undeclared_files": undeclared,
         "exclusion_notes": exclusions,
+        "region_fallbacks": sorted(region_fallbacks),
         "details": details,
         "ground_truth_coverage": {
             "with_validation": with_validation,
@@ -1393,6 +1399,12 @@ def print_platform_result(
         if missing:
             parts.append(f"{missing} missing")
     print(f"{label}: {', '.join(parts)} [{mode}]")
+    fallbacks = result.get("region_fallbacks") or []
+    if fallbacks:
+        from packreadme import _group_label
+
+        print(f"  No BIOS for the requested regions, all kept ({len(fallbacks)}): "
+              + ", ".join(_group_label(g) for g in fallbacks))
 
     seen_details: set[str] = set()
     _print_detail_entries(result["details"], seen_details, verbose)

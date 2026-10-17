@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import sys
 import unittest
@@ -703,6 +705,30 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
             self.assertEqual(
                 {u["name"] for u in narrowed["undeclared_files"]}, {"us.bin"}
             )
+        finally:
+            common._emulator_profiles_cache.clear()
+            tmp.cleanup()
+
+    def test_the_report_names_the_fallback_groups(self):
+        """The pack README lists the systems kept whole because nothing
+        answers the request; verify said all OK and named none."""
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+        import common
+        import verify as reporter
+
+        tmp, root, db, config = self._fixture()
+        try:
+            common._emulator_profiles_cache.clear()
+            profiles = common.load_emulator_profiles(str(root / "emulators"))
+            result = reporter.verify_platform(
+                config, db, str(root / "emulators"), profiles,
+                supplemental_names=set(), regions=["brazil"],
+            )
+            self.assertEqual(result["region_fallbacks"], ["demo-system"])
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                reporter.print_platform_result(result, ["Demo"])
+            self.assertIn("all kept (1): demo-system", out.getvalue())
         finally:
             common._emulator_profiles_cache.clear()
             tmp.cleanup()
