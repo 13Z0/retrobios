@@ -66,39 +66,51 @@ ARCHIVE_ORG_COLLECTIONS = [
 
 
 def find_missing(config: dict, db: dict) -> list[dict]:
-    """Find BIOS files required by platform but not in database."""
-    missing = []
+    """Files the platform's own check or its cores' code would not find.
 
+    Read from verify, the platform's native check: a hash or name lookup
+    of our own called pc6001.zip and fmtowns.zip missing on Batocera, which
+    checks them inside the zip and holds them, and saw none of the files
+    the cores need that no platform lists.
+    """
+    from nativemode import reads_file_contents  # noqa: PLC0415
+    from verify import Status, verify_platform  # noqa: PLC0415
+
+    result = verify_platform(config, db)
+    hashed = reads_file_contents(config.get("verification_mode", "existence"))
+    wanted = {
+        (d.get("system", ""), d.get("name", ""))
+        for d in result["details"]
+        if d["status"] == Status.MISSING or (hashed and d["status"] == Status.UNTESTED)
+    }
+    missing: list[dict] = []
     for sys_id, system in config.get("systems", {}).items():
         for file_entry in system.get("files", []):
-            storage = file_entry.get("storage", "embedded")
-            if storage != "embedded":
-                continue
-
-            sha1 = file_entry.get("sha1")
-            md5 = file_entry.get("md5")
             name = file_entry.get("name", "")
-
-            found = False
-            if sha1 and sha1 in db.get("files", {}):
-                found = True
-            elif md5:
-                by_md5 = db.get("indexes", {}).get("by_md5", {})
-                md5_list = [m.strip() for m in md5.split(",") if m.strip()]
-                found = any(m in by_md5 for m in md5_list)
-
-            if not found:
-                missing.append(
-                    {
-                        "name": name,
-                        "system": sys_id,
-                        "sha1": sha1,
-                        "md5": md5,
-                        "size": file_entry.get("size"),
-                        "destination": file_entry.get("destination", name),
-                    }
-                )
-
+            if (sys_id, name) not in wanted:
+                continue
+            if file_entry.get("storage", "embedded") != "embedded":
+                continue
+            missing.append({
+                "name": name,
+                "system": sys_id,
+                "sha1": file_entry.get("sha1"),
+                "md5": file_entry.get("md5"),
+                "size": file_entry.get("size"),
+                "destination": file_entry.get("destination", name),
+            })
+    for u in result["undeclared_files"]:
+        if u.get("in_repo") or not u.get("required"):
+            continue
+        missing.append({
+            "name": u["name"],
+            "system": u.get("system") or "",
+            "sha1": u.get("sha1"),
+            "md5": u.get("md5"),
+            "size": None,
+            "destination": u.get("path") or u["name"],
+            "emulator": u.get("emulator", ""),
+        })
     return missing
 
 

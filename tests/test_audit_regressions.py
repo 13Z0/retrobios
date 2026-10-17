@@ -3393,5 +3393,38 @@ class TheWantedPageCountsRomsetMembers(unittest.TestCase):
         self.assertEqual(len(calls), 1)
 
 
+
+class AutoFetchAsksVerifyWhatIsMissing(unittest.TestCase):
+    """auto_fetch judged presence by sha1 or md5 in the database: Batocera's
+    pc6001.zip, checked inside the zip and held, was a target, and no core
+    file was ever one. 721 announced where verify saw none critical."""
+
+    def test_the_targets_are_verify_verdicts(self):
+        from scripts import auto_fetch
+        import verify as verify_mod
+
+        config = {"verification_mode": "md5", "systems": {"s": {"files": [
+            {"name": "ok.bin", "md5": "1" * 32},
+            {"name": "gone.bin", "md5": "2" * 32},
+            {"name": "bad.bin", "md5": "3" * 32},
+        ]}}}
+        result = {
+            "details": [
+                {"system": "s", "name": "ok.bin", "status": verify_mod.Status.OK},
+                {"system": "s", "name": "gone.bin", "status": verify_mod.Status.MISSING},
+                {"system": "s", "name": "bad.bin", "status": verify_mod.Status.UNTESTED},
+            ],
+            "undeclared_files": [
+                {"name": "diabdat.mpq", "in_repo": False, "required": True,
+                 "system": "diablo", "emulator": "DevilutionX"},
+                {"name": "held.bin", "in_repo": True, "required": True},
+                {"name": "extra.bin", "in_repo": False, "required": False},
+            ],
+        }
+        with mock.patch.object(verify_mod, "verify_platform", lambda c, d: result):
+            names = [m["name"] for m in auto_fetch.find_missing(config, {})]
+        self.assertEqual(names, ["gone.bin", "bad.bin", "diabdat.mpq"])
+
+
 if __name__ == "__main__":
     unittest.main()
