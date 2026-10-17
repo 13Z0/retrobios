@@ -72,6 +72,7 @@ from nativemode import (
     reads_file_contents,
 )
 from validation import (
+    baseline_verdict,
     declaration_settles,
     frontend_digest_matches,
     existence_discrepancy,
@@ -1027,7 +1028,14 @@ def verify_platform(
                 validation_index,
             )
             details.append(result)
-            if local_path and result["status"] != Status.MISSING:
+            # Occupied only where the builder ships the declaration: a hash
+            # the frontend refuses is left out, and the destination stays free
+            # for a core's file the pack does carry.
+            if (
+                local_path
+                and result["status"] != Status.MISSING
+                and baseline_verdict(file_entry, local_path, resolve_status, mode)[1] is None
+            ):
                 shipped.setdefault(
                     f"{base_dest}/{destination}" if base_dest else destination,
                     local_path,

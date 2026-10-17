@@ -49,6 +49,16 @@ class OneRule(unittest.TestCase):
         )
         self.assertNotIn("if full_dest.lower() in seen_lower and case_insensitive", builder)
 
+    def test_a_refused_declaration_occupies_nothing(self):
+        """verify counted a declaration whose hash the frontend refuses as
+        occupying its path; the builder leaves it out, and the core file
+        that then takes the path was reported missing from the pack."""
+        source = (REPO_ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
+        self.assertIn(
+            "baseline_verdict(file_entry, local_path, resolve_status, mode)[1] is None",
+            source,
+        )
+
 
 class TheReportSaysSo(unittest.TestCase):
     """Reads the repository: skips when the database is absent."""
@@ -66,24 +76,32 @@ class TheReportSaysSo(unittest.TestCase):
 
             db = load_database("database.json")
             profiles = load_emulator_profiles("emulators")
-            config = load_platform_config("retropie", "platforms")
-            cls.result = verify_platform(config, db, "emulators", profiles)
+            # Platforms whose filesystem folds case; RetroPie and Lakka run on
+            # Linux and keep both names.
+            cls.results = {
+                name: verify_platform(
+                    load_platform_config(name, "platforms"), db, "emulators", profiles
+                )
+                for name in ("retroarch", "retrobat")
+            }
         finally:
             os.chdir(previous)
 
-    def _entry(self, emulator: str, path: str) -> dict:
-        for u in self.result["undeclared_files"]:
+    def _entry(self, emulator: str, path: str, platform: str = "retroarch") -> dict:
+        for u in self.results[platform]["undeclared_files"]:
             if u.get("emulator") == emulator and (u.get("path") or u.get("name")) == path:
                 return u
         self.skipTest(f"{emulator} {path} is not in the cross-reference")
 
     def test_a_case_twin_with_other_bytes_is_left_out(self):
-        entry = self._entry("openMSX", "fmpac.rom")
+        entry = self._entry("NP2kai", "np2kai/bios.rom", "retrobat")
         self.assertIs(entry.get("in_pack"), False)
         self.assertIn("another case", entry.get("omitted", ""))
 
     def test_a_twin_with_the_same_bytes_serves_the_core(self):
-        entry = self._entry("Stella 2023", "KVS1.WAV")
+        # MesenCE opens bios.col; RetroArch's pack folds it onto BIOS.col,
+        # the same bytes, which serves the core on a folding filesystem.
+        entry = self._entry("MesenCE", "bios.col")
         self.assertIsNot(entry.get("in_pack"), False)
 
     def test_a_directory_under_a_packed_file_is_left_out(self):
