@@ -1505,10 +1505,14 @@ def verify_emulator(
             standalone,
         )
         if region_drops:
+            # Loose files only, as the emulator pack: an archive ships whole,
+            # and dropping kronos' regional stvbios.zip members rebuilt the
+            # archive here from 4 of its 14 members and changed its required.
             files = [
                 fe
                 for fe in files
-                if _resolve_destination(fe, standalone) not in region_drops
+                if fe.get("archive")
+                or _resolve_destination(fe, standalone) not in region_drops
             ]
 
         # Check data directories (only notice if not cached)

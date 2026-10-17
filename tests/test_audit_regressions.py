@@ -2541,6 +2541,41 @@ class APackNoteBesideItsSlotIsANote(unittest.TestCase):
         self.assertNotIn("from generate_pack import _preferred_entries", source)
 
 
+class NoHandlerSwallowsEverything(unittest.TestCase):
+    """CLAUDE.md forbids `except Exception: pass`; the edit hook missed the
+    two-line form and nothing in CI checked it."""
+
+    def test_no_catch_all_handler_only_passes(self):
+        import ast
+
+        offenders = []
+        for path in [*sorted((ROOT / "scripts").rglob("*.py")), ROOT / "install.py"]:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.ExceptHandler):
+                    continue
+                broad = node.type is None or (
+                    isinstance(node.type, ast.Name)
+                    and node.type.id in ("Exception", "BaseException")
+                )
+                if broad and all(isinstance(stmt, ast.Pass) for stmt in node.body):
+                    offenders.append(f"{path.relative_to(ROOT)}:{node.lineno}")
+        self.assertEqual(offenders, [])
+
+
+class AnArchiveShipsWholeUnderARegion(unittest.TestCase):
+    """verify --emulator dropped kronos' regional stvbios.zip members before
+    rebuilding the archive, so its archive held 4 of 14 members and its
+    required changed, while the emulator pack ships the archive whole."""
+
+    def test_verify_filters_loose_files_only(self):
+        source = (ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
+        self.assertIn(
+            'if fe.get("archive")\n                or _resolve_destination(fe, standalone) not in region_drops',
+            source,
+        )
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
