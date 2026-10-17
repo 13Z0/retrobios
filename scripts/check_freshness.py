@@ -300,6 +300,45 @@ def check_platforms(platforms_dir: Path, workdir: Path, jobs: int) -> list[Findi
     return sorted(findings, key=lambda f: f.subject)
 
 
+_EJS_VERSION_RE = re.compile(r"^ARG EMULATORJS_VERSION=(\S+)", re.MULTILINE)
+ROMM_DOCKERFILES = ("docker/Dockerfile", "Dockerfile")
+
+
+def emulatorjs_pin(dockerfile: str) -> str | None:
+    """The EmulatorJS release a RomM image installs, from its Dockerfile."""
+    match = _EJS_VERSION_RE.search(dockerfile)
+    return match.group(1) if match else None
+
+
+def check_emulatorjs(platforms_dir: Path, offline: bool) -> Finding:
+    """emulatorjs.yml against the EmulatorJS release RomM's image installs.
+
+    emulatorjs.yml is not a registered platform, so no scrape covers it: a
+    RomM moving to a newer EmulatorJS changed the cores its users run with
+    nothing to say so.
+    """
+    subject = "romm emulatorjs"
+    with (platforms_dir / "emulatorjs.yml").open(encoding="utf-8") as fh:
+        local = str((yaml_load(fh) or {}).get("version", ""))
+    if offline:
+        return Finding("platforms", subject, SKIPPED, local=local, detail="offline")
+    with (platforms_dir / "romm.yml").open(encoding="utf-8") as fh:
+        tag = str((yaml_load(fh) or {}).get("version", ""))
+    for path in ROMM_DOCKERFILES:
+        try:
+            text = upstream._http_text(
+                f"https://raw.githubusercontent.com/rommapp/romm/{tag}/{path}")
+        except upstream.UpstreamError as exc:
+            return Finding("platforms", subject, UNKNOWN, local=local, detail=str(exc))
+        pin = emulatorjs_pin(text or "")
+        if pin:
+            return Finding("platforms", subject, OK if pin == local else STALE,
+                           local=local, remote=pin,
+                           detail=f"RomM {tag} installs EmulatorJS {pin}")
+    return Finding("platforms", subject, UNKNOWN, local=local,
+                   detail=f"no EMULATORJS_VERSION in RomM {tag}'s Dockerfile")
+
+
 # --- native originals --------------------------------------------------------
 
 
@@ -1091,6 +1130,7 @@ def main() -> int:
                 if args.offline
                 else check_platforms(platforms_dir, workdir, args.jobs)
             )
+            findings.append(check_emulatorjs(platforms_dir, args.offline))
         if "native" in areas:
             findings.extend(
                 check_native(platforms_dir, Path(args.native_cache_dir), Path(args.truth_dir))

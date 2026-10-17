@@ -318,6 +318,13 @@ class RepositoryWiringTests(unittest.TestCase):
         solo = [f for f in findings if f.subject == "solo"]
         self.assertEqual([(f.status, f.detail) for f in solo], [(cf.OK, "every declared core")])
 
+    def test_romm_emulatorjs_pin_is_read_from_its_dockerfile(self):
+        """emulatorjs.yml is no registered platform: a RomM image moving to
+        another EmulatorJS changed the cores its users run, unnoticed."""
+        text = "FROM x\nARG EMULATORJS_VERSION=4.2.3\nARG EMULATORJS_SHA256=ab\n"
+        self.assertEqual(cf.emulatorjs_pin(text), "4.2.3")
+        self.assertIsNone(cf.emulatorjs_pin("FROM x\n"))
+
     def test_render_keeps_long_values_whole(self):
         """The profile_sync row lost the end of its sentence at 32 characters."""
         local = "12 profiles behind upstream, 103 refs to re-read"
