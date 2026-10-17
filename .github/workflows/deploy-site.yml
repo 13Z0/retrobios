@@ -14,6 +14,7 @@ on:
       - "scripts/common.py"
       - "scripts/cross_reference.py"
       - "scripts/crypto_verify.py"
+      - "scripts/derivations.py"
       - "scripts/deterministic_zip.py"
       - "scripts/dumpcatalog.py"
       - "scripts/generate_pack.py"
