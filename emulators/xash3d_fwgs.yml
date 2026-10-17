@@ -7,7 +7,7 @@ profiled_date: "2026-10-04"
 source_commit: "1414fc281b6dc986378ea7ae35086c62d782a865"
 core_version: "0.21+git"
 display_name: "Xash3D FWGS"
-cores: [xash3d_fwgs]
+cores: [xash3d_fwgs, xash3d]
 systems: [halflife, cstrike, czero, czeror, dmc, gearbox, bshift, ricochet, tfc]
 
 notes: |

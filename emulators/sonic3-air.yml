@@ -6,7 +6,7 @@ upstream: "https://github.com/Eukaryot/sonic3air"
 source_commit: "de0fd6a7c07b399c9a612cb7cb8d61b54cb339d1"
 profiled_date: "2026-10-04"
 display_name: "Sonic 3 - Angel Island Revisited"
-cores: []
+cores: [sonic3air]
 systems: [sonic3-air]
 
 notes: |

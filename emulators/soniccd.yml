@@ -6,7 +6,7 @@ upstream: "https://github.com/RSDKModding/RSDKv3-Decompilation"
 source_commit: "a99e16ad15f4f824c1b9f96a61b3f8576ab648e2"
 profiled_date: "2026-10-04"
 display_name: "Sonic CD (RSDKv3 Decomp)"
-cores: []
+cores: [sonicretrocd]
 systems: [soniccd]
 
 notes: |

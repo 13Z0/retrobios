@@ -7,7 +7,7 @@ source_commit: "9dc699428420d752af9767bdb13f585ee0881bc0"
 upstream_commit: "191d7aea6c262d891244172a8609ac69fbfd7571"
 profiled_date: "2026-10-04"
 display_name: "Sonic Mania (RSDKv5 Decomp)"
-cores: []
+cores: [sonicmania]
 systems: [sonic-mania]
 
 notes: |

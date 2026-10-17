@@ -7,7 +7,7 @@ source_commit: "a7f5195e21fdad7b75e4587e249013feeea9e6f3"
 core_version: "1.3.3"
 profiled_date: "2026-10-04"
 display_name: "Sonic 1 & 2 (2013) (RSDKv4 Decomp)"
-cores: []
+cores: [sonicretro]
 systems: [sonic-1-2013, sonic-2-2013]
 
 notes: |
