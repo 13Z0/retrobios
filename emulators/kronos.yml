@@ -158,8 +158,9 @@ files:
   - name: "epr-17954a.ic8"
     archive: stvbios.zip
     system: sega-stv
+    region: [europe]
     required: false
-    note: "Picked by the kronos_stv_favorite_region option, Europe by default, among the BIOS regions the set accepts (yabause/src/ctrl/src/stv.c:2435, 2562-2564)."
+    note: "Loaded only when the set allows STV_REGION_EU; among allowed regions the kronos_stv_favorite_region option, Europe by default, picks (yabause/src/ctrl/src/stv.c:2435, 2562-2564)."
     size: 524288
     crc32: "f7722da3"
     validation: [crc32]

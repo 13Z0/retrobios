@@ -131,7 +131,7 @@ files:
     system: sega-saturn
     description: "Saturn BIOS read for every area outside Japan and Asia NTSC"
     required: true
-    region: [north-america, europe, south-korea, asia-pal, brazil, latin-america]
+    region: [north-america, europe, oceania, south-korea, asia-pal, brazil, latin-america]
     size: 524288
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
     validation: [existence, size, sha256]
@@ -175,7 +175,7 @@ files:
     system: sega-saturn
     description: "Saturn BIOS v1.00a, accepted for every area outside Japan and Asia NTSC"
     required: false
-    region: [north-america, europe, south-korea, asia-pal, brazil, latin-america]
+    region: [north-america, europe, oceania, south-korea, asia-pal, brazil, latin-america]
     size: 524288
     sha256: "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73"
     validation: [existence, size, sha256]

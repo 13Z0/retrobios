@@ -97,7 +97,7 @@ files:
     source_ref: "libretro/libretro.cpp:640, mednafen/ss/ss.cpp:1449-1450, 1507, 1520-1521"
   - name: "mpr-17933.bin"
     system: "sega-saturn"
-    region: [north-america, latin-america, brazil, south-korea, asia-pal, europe]
+    region: [north-america, latin-america, brazil, south-korea, asia-pal, europe, oceania]
     required: true
     size: 524288
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"

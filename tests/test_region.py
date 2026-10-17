@@ -428,6 +428,38 @@ class TestFallbackGroups(unittest.TestCase):
         self.assertEqual(region.fallback_groups(groups, self.index, []), [])
 
 
+class OneCodeOneRegionAnswer(unittest.TestCase):
+    """mednafen, beetle_saturn, saturn-emu and mednafen_stv read the same
+    ss.cpp, where area E (Australia included) selects the PAL BIOS: only
+    two of them answered oceania. CLK and Kronos are pinned here too."""
+
+    PROFILES = os.path.join(os.path.dirname(__file__), "..", "emulators")
+
+    def test_the_mednafen_saturn_profiles_agree(self):
+        profiles = common.load_emulator_profiles(self.PROFILES)
+        seen: dict[str, dict[str, frozenset]] = {}
+        for name in ("mednafen", "beetle_saturn", "saturn-emu", "mednafen_stv"):
+            for entry in profiles[name]["files"]:
+                if entry["name"] in ("mpr-17933.bin", "sega_100a.bin"):
+                    seen.setdefault(entry["name"], {})[name] = frozenset(
+                        entry.get("region") or ()
+                    )
+        for file_name, tags in seen.items():
+            with self.subTest(file=file_name):
+                self.assertEqual(len(set(tags.values())), 1, tags)
+                self.assertIn("oceania", next(iter(tags.values())))
+
+    def test_export_cartridges_and_allowed_regions(self):
+        profiles = common.load_emulator_profiles(self.PROFILES)
+        bios_sms = next(e for e in profiles["clk"]["files"] if e["name"] == "bios.sms")
+        self.assertIn("oceania", bios_sms["region"])
+        tagged = {
+            e["name"]: e.get("region") for e in profiles["kronos"]["files"]
+            if e.get("archive") == "stvbios.zip" and e["name"].startswith("epr-")
+        }
+        self.assertTrue(all(tagged.values()), tagged)
+
+
 class AustraliaReadsThePalIpl(unittest.TestCase):
     """Dolphin files the Australian country code U under Region::PAL
     (Source/Core/DiscIO/Enums.cpp), whose IPL is GC/EUR. Tagged [europe]
