@@ -497,7 +497,7 @@ systems:
       native_path: bios/mame/hash/adam_flop.xml
       native_name: Coleco Adam
     name: Coleco Adam
-  advision:
+  entex-advision:
     files:
     - name: advision.zip
       destination: advision.zip
@@ -513,7 +513,7 @@ systems:
       native_path: bios/mame/hash/advision.xml
       native_name: Adventure Vision
     name: Adventure Vision
-  amiga500:
+  commodore-amiga:
     files:
     - name: kick33180.A500
       destination: kick33180.A500
@@ -536,9 +536,6 @@ systems:
       native_system: amiga500
       native_path: bios/kick37175.A500
       native_name: Amiga 500
-    name: Amiga 500
-  commodore-amiga:
-    files:
     - name: kick40068.A1200
       destination: kick40068.A1200
       required: true
@@ -546,6 +543,13 @@ systems:
       native_system: amiga1200
       native_path: bios/kick40068.A1200
       native_name: Amiga 1200
+    - name: kick40068.A4000
+      destination: kick40068.A4000
+      required: true
+      md5: 9bdedde6a4f33555b4a270c8ca53297d
+      native_system: amiga4000
+      native_path: bios/kick40068.A4000
+      native_name: Amiga 4000
     - name: kick40060.CD32.ext
       destination: kick40060.CD32.ext
       required: true
@@ -575,16 +579,6 @@ systems:
       native_path: bios/kick40060.CD32
       native_name: Amiga CD32
     name: Amiga CD32
-  amiga4000:
-    files:
-    - name: kick40068.A4000
-      destination: kick40068.A4000
-      required: true
-      md5: 9bdedde6a4f33555b4a270c8ca53297d
-      native_system: amiga4000
-      native_path: bios/kick40068.A4000
-      native_name: Amiga 4000
-    name: Amiga 4000
   apfm1000:
     files:
     - name: apfm1000.zip
@@ -797,7 +791,7 @@ systems:
       native_path: bios/mame/hash/aquarius_cass.xml
       native_name: Aquarius
     name: Aquarius
-  arcadia:
+  emerson-arcadia-2001:
     files:
     - name: ar_bios.zip
       destination: ar_bios.zip
@@ -1145,7 +1139,7 @@ systems:
       native_path: bios/mame/hash/bbcmc_flop.xml
       native_name: BBC
     name: BBC
-  bk:
+  elektronika-bk:
     files:
     - name: B11M_BOS.ROM
       destination: bk/B11M_BOS.ROM
@@ -1515,7 +1509,7 @@ systems:
       native_path: bios/disksys.rom
       native_name: Nintendo Family Computer Disk System
     name: Nintendo Family Computer Disk System
-  ecwolf:
+  wolfenstein3d:
     files:
     - name: ecwolf.pk3
       destination: ecwolf.pk3
@@ -1726,7 +1720,7 @@ systems:
       native_path: bios/mame/hash/gmaster.xml
       native_name: Game Master
     name: Game Master
-  gp32:
+  gamepark-gp32:
     files:
     - name: gp32.zip
       destination: gp32.zip
@@ -2247,7 +2241,7 @@ systems:
       native_path: bios/Mupen64plus/IPL_DEV.n64
       native_name: Nintendo 64 DD
     name: Nintendo 64 DD
-  namco2x6:
+  namco-system246:
     files:
     - name: r27v1602f.7d
       destination: pcsx2/bios/r27v1602f.7d
@@ -2824,7 +2818,7 @@ systems:
       native_path: bios/SGB2.sfc
       native_name: Super Game Boy
     name: Super Game Boy
-  sufami:
+  nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
       destination: STBIOS.bin
@@ -2933,7 +2927,7 @@ systems:
       native_path: bios/mame/hash/vg5k.xml
       native_name: VG5000
     name: VG5000
-  vsmile:
+  vtech-vsmile:
     files:
     - name: vsmile.zip
       destination: vsmile.zip

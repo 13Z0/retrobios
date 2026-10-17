@@ -153,6 +153,7 @@ SYSTEM_SLUG_MAP: dict[str, str | None] = {
     "dragon": "dragon64",
     "tanodragon": "dragon64",
     "pico8": "pico8",
+    "vsmile": "vtech-vsmile",
     "wolfenstein": "wolfenstein-3d",
     "zxspectrum": "sinclair-zx-spectrum",
 }

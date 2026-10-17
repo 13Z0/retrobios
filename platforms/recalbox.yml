@@ -464,7 +464,7 @@ systems:
       native_name: Atari 7800
       note: RUN ONLY EUROPEAN GAMES! Display official Atari logo.
     native_id: atari7800
-  bk:
+  elektronika-bk:
     files:
     - name: B11M_BOS.ROM
       destination: bk/B11M_BOS.ROM
@@ -875,7 +875,7 @@ systems:
       mandatory_declared: true
       native_name: Nintendo Satellaview
     native_id: satellaview
-  sufami:
+  nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
       destination: sufami/STBIOS.bin
@@ -962,7 +962,7 @@ systems:
       core: libretro/pcfx
       native_name: NEC PC-FX
     native_id: pcfx
-  msx1,msx2:
+  microsoft-msx:
     files:
     - name: CARTS.SHA
       destination: msx/CARTS.SHA
@@ -1069,681 +1069,6 @@ systems:
       native_system: msx1,msx2
       core: libretro/fmsx
       native_name: MSX Familly
-    native_id: msx1,msx2
-  lynx:
-    files:
-    - name: lynxboot.img
-      destination: lynx/lynxboot.img
-      required: false
-      md5: fcd403db69f54290b51035d82f835e7b
-      native_system: lynx
-      core: libretro/handy,libretro/mednafen_lynx
-      mandatory_declared: false
-      native_name: Atari Lynx
-    native_id: lynx
-  atari-st:
-    files:
-    - name: tos.img
-      destination: atarist/tos.img
-      required: false
-      md5: 27ac71b59d59f65571b972e0f894054a,5d65c6a384d847a0b8013d5e22ec0887,f62bc9777f28bc6876422738758db365,d41ae4efaa2c97f632dbe75d24d51bea,c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,736adb2dc835df4d323191fdc8926cc9,992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8
-      native_system: atarist
-      alt_paths:
-      - tos.img
-      core: hatari,libretro/hatari
-      hash_match_mandatory: false
-      mandatory_declared: false
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: Default bios
-    - name: st.img
-      destination: atarist/st.img
-      required: true
-      md5: c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,736adb2dc835df4d323191fdc8926cc9
-      native_system: atarist
-      core: hatari,libretro/hatari
-      hash_match_mandatory: false
-      mandatory_declared: true
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: "Atari ST/Mega-ST (not STE!) bios."
-    - name: ste.img
-      destination: atarist/ste.img
-      required: true
-      md5: 992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4
-      native_system: atarist
-      core: hatari,libretro/hatari
-      hash_match_mandatory: false
-      mandatory_declared: true
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: Atari STE bios.
-    - name: megaste.img
-      destination: atarist/megaste.img
-      required: false
-      md5: 4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4
-      native_system: atarist
-      core: hatari,libretro/hatari
-      hash_match_mandatory: true
-      mandatory_declared: false
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: Atari Mega-STE bios.
-    - name: tt.img
-      destination: atarist/tt.img
-      required: false
-      md5: 066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,19cd81e1c3049bf408ad426dc5c3b2e0,ac6ca0f0ed42a1603dfd409c4bf8eb89
-      native_system: atarist
-      core: hatari,libretro/hatari
-      hash_match_mandatory: true
-      mandatory_declared: false
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: Atari TT bios.
-    - name: falcon.img
-      destination: atarist/falcon.img
-      required: true
-      md5: ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8,b338bacb2fc453bab61bcc1e2cf5076b
-      native_system: atarist
-      core: hatari,libretro-hatari
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: FALCON 30/40 bios.
-    - name: emutos.img
-      destination: atarist/emutos.img
-      required: true
-      md5: e2c861c588fca2d0cf6be3df3aaf05f2
-      native_system: atarist
-      core: hatari,libretro/hatari
-      hash_match_mandatory: true
-      mandatory_declared: true
-      native_name: Atari ST/STE/MegaSTE/TT/Falcon
-      note: EMUTOS Open-source bios. 99% Compatible with all Atari machines.
-    native_id: atarist
-  magnavox-odyssey2:
-    files:
-    - name: o2rom.bin
-      destination: o2em/o2rom.bin
-      required: true
-      md5: 562d5ebf9e030a40d6fabfc2f33139fd
-      native_system: o2em
-      core: libretro/o2em
-      native_name: Magnavox Odyssey²
-    - name: c52.bin
-      destination: o2em/c52.bin
-      required: true
-      md5: f1071cdb0b6b10dde94d3bc8a6146387
-      native_system: o2em
-      core: libretro/o2em
-      native_name: Magnavox Odyssey²
-    native_id: o2em
-  videopacplus:
-    files:
-    - name: g7400.bin
-      destination: o2em/g7400.bin
-      required: true
-      md5: c500ff71236068e0dc0d0603d265ae76
-      native_system: videopacplus
-      core: libretro/o2em
-      native_name: Philips VideoPac+
-    - name: jopac.bin
-      destination: o2em/jopac.bin
-      required: true
-      md5: 279008e4a0db2dc5f1c048853b033828
-      native_system: videopacplus
-      core: libretro/o2em
-      native_name: Philips VideoPac+
-    native_id: videopacplus
-  3do:
-    files:
-    - name: panafz1.bin
-      destination: 3do/panafz1.bin
-      required: true
-      md5: f47264dd47fe30f73ab3c010015c155b
-      native_system: 3do
-      core: libretro/opera
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-1 (U)"
-    - name: panafz1j.bin
-      destination: 3do/panafz1j.bin
-      required: true
-      md5: a496cfdded3da562759be3561317b605
-      native_system: 3do
-      core: libretro/opera
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-1 (J)"
-    - name: panafz1j-norsa.bin
-      destination: 3do/panafz1j-norsa.bin
-      required: true
-      md5: f6c71de7470d16abe4f71b1444883dc8
-      native_system: 3do
-      core: libretro/opera
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-1 (J) (RSA check disabled)"
-    - name: panafz10.bin
-      destination: 3do/panafz10.bin
-      required: false
-      md5: 51f2f43ae2f3508a14d9f56597e2d3ce
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-10 (U)"
-    - name: panafz10-norsa.bin
-      destination: 3do/panafz10-norsa.bin
-      required: false
-      md5: 1477bda80dc33731a65468c1f5bcbee9
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-10 (U) (RSA check disabled)"
-    - name: panafz10e-anvil.bin
-      destination: 3do/panafz10e-anvil.bin
-      required: false
-      md5: a48e6746bd7edec0f40cff078f0bb19f
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-10 (E) w/ ANVIL"
-    - name: panafz10e-anvil-norsa.bin
-      destination: 3do/panafz10e-anvil-norsa.bin
-      required: false
-      md5: cf11bbb5a16d7af9875cca9de9a15e09
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-10 (E) w/ ANVIL (RSA check disabled)"
-    - name: goldstar.bin
-      destination: 3do/goldstar.bin
-      required: false
-      md5: 8639fd5e549bd6238cfee79e3e749114
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: Goldstar GDO-101M
-    - name: sanyotry.bin
-      destination: 3do/sanyotry.bin
-      required: false
-      md5: 35fa1a1ebaaeea286dc5cd15487c13ea
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: Sanyo IMP-21J TRY
-    - name: 3do_arcade_saot.bin
-      destination: 3do/3do_arcade_saot.bin
-      required: false
-      md5: 8970fc987ab89a7f64da9f8a8c4333ff
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: Shootout At Old Tucson
-    - name: panafz1-kanji.bin
-      destination: 3do/panafz1-kanji.bin
-      required: false
-      md5: b8dc97f778a6245c58e064b0312e8281
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games"
-    - name: panafz1j-kanji.bin
-      destination: 3do/panafz1j-kanji.bin
-      required: false
-      md5: c23fb5d5e6bb1c240d02cf968972be37
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games"
-    - name: panafz10ja-anvil-kanji.bin
-      destination: 3do/panafz10ja-anvil-kanji.bin
-      required: false
-      md5: 428577250f43edc902ea239c50d2240d
-      native_system: 3do
-      core: libretro/opera
-      mandatory_declared: false
-      native_name: Panasonic 3DO
-      note: "Panasonic FZ-10 (J) w/ ANVIL Kanji ROM. Useful for some Japanese games"
-    native_id: 3do
-  sharp-x68000:
-    files:
-    - name: iplrom.dat
-      destination: keropi/iplrom.dat
-      required: true
-      md5: 7fd4caabac1d9169e289f0f7bbf71d8e
-      native_system: x68000
-      core: libretro/px68k
-      native_name: Sharp X68000
-    - name: cgrom.dat
-      destination: keropi/cgrom.dat
-      required: true
-      md5: cb0a5cfcf7247a7eab74bb2716260269
-      native_system: x68000
-      core: libretro/px68k
-      native_name: Sharp X68000
-    - name: iplrom30.dat
-      destination: keropi/iplrom30.dat
-      required: false
-      md5: f373003710ab4322642f527f567e020a
-      native_system: x68000
-      core: libretro/px68k
-      mandatory_declared: false
-      native_name: Sharp X68000
-    - name: iplromco.dat
-      destination: keropi/iplromco.dat
-      required: false
-      md5: cc78d4f4900f622bd6de1aed7f52592f
-      native_system: x68000
-      core: libretro/px68k
-      mandatory_declared: false
-      native_name: Sharp X68000
-    - name: iplromxv.dat
-      destination: keropi/iplromxv.dat
-      required: false
-      md5: 0617321daa182c3f3d6f41fd02fb3275
-      native_system: x68000
-      core: libretro/px68k
-      mandatory_declared: false
-      native_name: Sharp X68000
-    native_id: x68000
-  x1:
-    files:
-    - name: IPLROM.X1
-      destination: xmil/IPLROM.X1
-      required: true
-      md5: eeeea1cd29c6e0e8b094790ae969bfa7,59074727a953fe965109b7dbe3298e30
-      native_system: x1
-      core: libretro/xmil
-      native_name: Sharp X1
-    - name: IPLROM.X1T
-      destination: xmil/IPLROM.X1T
-      required: true
-      md5: 56c28adcf1f3a2f87cf3d57c378013f5
-      native_system: x1
-      core: libretro/xmil
-      native_name: Sharp X1
-    native_id: x1
-  sony-playstation:
-    files:
-    - name: scph5500.bin
-      destination: scph5500.bin
-      required: true
-      md5: 8dd7d5296a650fac7319bce665a6a53c
-      native_system: psx
-      core: libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
-      native_name: Sony Playstation
-    - name: scph5501.bin
-      destination: scph5501.bin
-      required: true
-      md5: 490f666e1afb15b7362b406ed1cea246
-      native_system: psx
-      core: libretro/pcsx_rearmed,libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
-      native_name: Sony Playstation
-    - name: scph5502.bin
-      destination: scph5502.bin
-      required: true
-      md5: 32736f17079d0b2b7024407c39bd3050
-      native_system: psx
-      core: libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
-      native_name: Sony Playstation
-    - name: scph101.bin
-      destination: scph101.bin
-      required: true
-      md5: 6e3735ff4c7dc899ee98981385f6f3d0
-      native_system: psx
-      core: libretro/pcsx_rearmed
-      native_name: Sony Playstation
-      note: Recommended for better compatibility.
-    - name: scph7001.bin
-      destination: scph7001.bin
-      required: true
-      md5: 1e68c231d0896b7eadcad1d7d8e76129
-      native_system: psx
-      core: libretro/pcsx_rearmed
-      native_name: Sony Playstation
-      note: Recommended for better compatibility.
-    - name: scph1001.bin
-      destination: scph1001.bin
-      required: true
-      md5: dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf
-      native_system: psx
-      core: libretro/pcsx_rearmed
-      native_name: Sony Playstation
-      note: Recommended for better compatibility.
-    - name: ps1_rom.bin
-      destination: ps1_rom.bin
-      required: false
-      md5: 81bbe60ba7a3d1cea1d48c14cbcc647b
-      native_system: psx
-      core: libretro/swanstation,duckstation
-      mandatory_declared: false
-      native_name: Sony Playstation
-      note: Bios you can grab in PS3 firmware upgrade. Compatible with all regions,
-        can replace all others bios.
-    native_id: psx
-  sony-playstation-2:
-    files:
-    - name: ps2-0230a-20080220.bin
-      destination: ps2/ps2-0230a-20080220.bin
-      required: true
-      md5: 21038400dc633070a78ad53090c53017
-      native_system: ps2
-      core: libretro/pcsx2,pcsx2
-      native_name: Sony Playstation 2
-      note: Recommended for better compatibility.
-    - name: ps2-0230e-20080220.bin
-      destination: ps2/ps2-0230e-20080220.bin
-      required: true
-      md5: dc69f0643a3030aaa4797501b483d6c4
-      native_system: ps2
-      core: libretro/pcsx2,pcsx2
-      native_name: Sony Playstation 2
-    - name: ps2-0230h-20080220.bin
-      destination: ps2/ps2-0230h-20080220.bin
-      required: true
-      md5: 30d56e79d89fbddf10938fa67fe3f34e
-      native_system: ps2
-      core: libretro/pcsx2,pcsx2
-      native_name: Sony Playstation 2
-    - name: ps2-0230j-20080220.bin
-      destination: ps2/ps2-0230j-20080220.bin
-      required: true
-      md5: 80ac46fa7e77b8ab4366e86948e54f83
-      native_system: ps2
-      core: libretro/pcsx2,pcsx2
-      native_name: Sony Playstation 2
-    native_id: ps2
-  fairchild-channel-f:
-    files:
-    - name: sl31254.bin
-      destination: channelf/sl31254.bin
-      required: true
-      md5: da98f4bb3242ab80d76629021bb27585
-      native_system: channelf
-      core: libretro/freechaf
-      native_name: Fairchild Channel-F
-    - name: sl31253.bin
-      destination: channelf/sl31253.bin
-      required: true
-      md5: ac9804d4c0e9d07e33472e3726ed15c3
-      native_system: channelf
-      core: libretro/freechaf
-      native_name: Fairchild Channel-F
-    - name: sl90025.bin
-      destination: channelf/sl90025.bin
-      required: false
-      md5: 95d339631d867c8f1d15a5f2ec26069d
-      native_system: channelf
-      core: libretro/freechaf
-      mandatory_declared: false
-      native_name: Fairchild Channel-F
-      note: Optional replacement for sl31254.bin
-    native_id: channelf
-  mattel-intellivision:
-    files:
-    - name: exec.bin
-      destination: intellivision/exec.bin
-      required: true
-      md5: 62e761035cb657903761800f4437b8af
-      native_system: intellivision
-      core: libretro/freeintv
-      native_name: Mattel Intellivision
-    - name: grom.bin
-      destination: intellivision/grom.bin
-      required: true
-      md5: 0cd5946c6473e42e8e4c2137785e427f
-      native_system: intellivision
-      core: libretro/freeintv
-      native_name: Mattel Intellivision
-    native_id: intellivision
-  pokemini:
-    files:
-    - name: bios.min
-      destination: pokemini/bios.min
-      required: false
-      md5: 1e4fb124a3a886865acb574f388c803d
-      native_system: pokemini
-      core: libretro/pokemini
-      mandatory_declared: false
-      native_name: Nintendo Pokémon Mini
-    native_id: pokemini
-  nintendo-ds:
-    files:
-    - name: bios7.bin
-      destination: nds/bios7.bin
-      required: true
-      md5: df692a80a5b1bc90728bc3dfc76cd948
-      native_system: nds
-      core: libretro/melonds,libretro/desmume
-      native_name: Nintendo DS
-    - name: bios9.bin
-      destination: nds/bios9.bin
-      required: true
-      md5: a392174eb3e572fed6447e956bde4b25
-      native_system: nds
-      core: libretro/melonds,libretro/desmume
-      native_name: Nintendo DS
-    - name: firmware.bin
-      destination: nds/firmware.bin
-      required: true
-      md5: 145eaef5bd3037cbc247c213bb3da1b3,e45033d9b0fa6b0de071292bba7c9d13,3ad72b2c9a736b24953f2d391da4bfcc
-      native_system: nds
-      core: libretro/melonds,libretro/desmume
-      native_name: Nintendo DS
-    native_id: nds
-  palm:
-    files:
-    - name: palmos41-en-m515.rom
-      destination: palm/palmos41-en-m515.rom
-      required: true
-      md5: 83cb1d1c76e568b916dc2e7c0bf669f6
-      native_system: palm
-      core: libretro/mu
-      native_name: Palm Pilot
-    - name: bootloader-dbvz.rom
-      destination: palm/bootloader-dbvz.rom
-      required: false
-      md5: 9da101cd2317830649a31f8fa46debec
-      native_system: palm
-      core: libretro/mu
-      mandatory_declared: false
-      native_name: Palm Pilot
-    native_id: palm
-  oricatmos:
-    files:
-    - name: basic11b.rom
-      destination: oricutron/basic11b.rom
-      required: true
-      md5: a330779c42ad7d0c4ac6ef9e92788ec6
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: basic10.rom
-      destination: oricutron/basic10.rom
-      required: true
-      md5: ebe418ec8a6c85d5ac32956c9a96c179
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: bd500.rom
-      destination: oricutron/bd500.rom
-      required: false
-      md5: 2b6498fd29a0adbf1c529762c02c33ab
-      native_system: oricatmos
-      core: oricutron
-      mandatory_declared: false
-      native_name: Tangerine Oric/Atmos
-    - name: jasmin.rom
-      destination: oricutron/jasmin.rom
-      required: true
-      md5: 5136f764a7dbd1352519351fbb53a9f3
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: microdis.rom
-      destination: oricutron/microdis.rom
-      required: true
-      md5: df864344d2a2091c3f952bd1c5ce1707
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: pravetzt.rom
-      destination: oricutron/pravetzt.rom
-      required: true
-      md5: 8712a22e7e078de3343667d9fc1f2390
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: 8dos2.rom
-      destination: oricutron/8dos2.rom
-      required: false
-      md5: 5f3cd5a4307fed7a9dfe8faa4c044273
-      native_system: oricatmos
-      core: oricutron
-      mandatory_declared: false
-      native_name: Tangerine Oric/Atmos
-    - name: teleass.rom
-      destination: oricutron/teleass.rom
-      required: true
-      md5: 2324c9cc227c1327a72a667c97ed2990
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: hyperbas.rom
-      destination: oricutron/hyperbas.rom
-      required: true
-      md5: 364bf095e0dc4222d75354d50b8cddfc
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    - name: telmon24.rom
-      destination: oricutron/telmon24.rom
-      required: true
-      md5: 9a432244d9ee4a49e8ddcde64af94e05
-      native_system: oricatmos
-      core: oricutron
-      native_name: Tangerine Oric/Atmos
-    native_id: oricatmos
-  spectravideo:
-    files:
-    - name: svi318.rom
-      destination: Machines/SVI - Spectravideo SVI-318/svi318.rom
-      required: true
-      md5: ee6ad7ea29e791b03a28a9443e622648
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi328a.rom
-      destination: Machines/SVI - Spectravideo SVI-328 80 Column/svi328a.rom
-      required: true
-      md5: 352f054ab09605070bdff49d73f335cc
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi806.rom
-      destination: Machines/SVI - Spectravideo SVI-328 80 Column/svi806.rom
-      required: true
-      md5: 82f7bc9c08f43db1d79bcb565a0de12b
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi328a.rom
-      destination: Machines/SVI - Spectravideo SVI-328 80 Swedish/svi328a.rom
-      required: true
-      md5: 352f054ab09605070bdff49d73f335cc
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi806se.rom
-      destination: Machines/SVI - Spectravideo SVI-328 80 Swedish/svi806se.rom
-      required: true
-      md5: 6a5536c1eb4f0477c4f76488cd8ca3ad
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi328a.rom
-      destination: Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom
-      required: true
-      md5: 352f054ab09605070bdff49d73f335cc
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi806.rom
-      destination: Machines/SVI - Spectravideo SVI-328 MK2/svi806.rom
-      required: true
-      md5: 82f7bc9c08f43db1d79bcb565a0de12b
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: svi328.rom
-      destination: Machines/SVI - Spectravideo SVI-328/svi328.rom
-      required: true
-      md5: 2cebd1db9dda475a011b7bce65c984a2
-      native_system: spectravideo
-      core: libretro/bluemsx
-      native_name: Spectravideo
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    native_id: spectravideo
-  coleco-colecovision:
-    files:
-    - name: czz50-1.rom
-      destination: Machines/COL - Bit Corporation Dina/czz50-1.rom
-      required: true
-      md5: 1de922acdd742d31349c2801e9768c35
-      native_system: colecovision
-      core: libretro/bluemsx
-      native_name: Colecovision
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: czz50-2.rom
-      destination: Machines/COL - Bit Corporation Dina/czz50-2.rom
-      required: true
-      md5: 72b089dc55b7fe7ffb5028f365e8c045
-      native_system: colecovision
-      core: libretro/bluemsx
-      native_name: Colecovision
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: coleco.rom
-      destination: Machines/COL - ColecoVision with Opcode Memory Extension/coleco.rom
-      required: true
-      md5: 2c66f5911e5b42b8ebe113403548eee7
-      native_system: colecovision
-      core: libretro/bluemsx
-      native_name: Colecovision
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: coleco.rom
-      destination: Machines/COL - ColecoVision/coleco.rom
-      required: true
-      md5: 2c66f5911e5b42b8ebe113403548eee7
-      native_system: colecovision
-      core: libretro/bluemsx
-      native_name: Colecovision
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: SVI603.ROM
-      destination: Machines/COL - Spectravideo SVI-603 Coleco/SVI603.ROM
-      required: true
-      md5: c60a2e85572c0ccb69505a7646d5c1b6
-      native_system: colecovision
-      core: libretro/bluemsx
-      native_name: Colecovision
-      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    - name: boot.rom
-      destination: coleco/boot.rom
-      required: true
-      md5: 2c66f5911e5b42b8ebe113403548eee7
-      native_system: colecovision
-      core: libretro/gearcoleco
-      mandatory_declared: true
-      native_name: Colecovision
-    native_id: colecovision
-  msx1,msx2,msxturbor:
-    files:
     - name: pesadelo.rom
       destination: Machines/Forte II Games - Pesadelo/pesadelo.rom
       required: true
@@ -2384,7 +1709,679 @@ systems:
       core: libretro/bluemsx
       native_name: MSX and MSX2 Series
       note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
-    native_id: msx1,msx2,msxturbor
+    native_id: msx1,msx2
+  lynx:
+    files:
+    - name: lynxboot.img
+      destination: lynx/lynxboot.img
+      required: false
+      md5: fcd403db69f54290b51035d82f835e7b
+      native_system: lynx
+      core: libretro/handy,libretro/mednafen_lynx
+      mandatory_declared: false
+      native_name: Atari Lynx
+    native_id: lynx
+  atari-st:
+    files:
+    - name: tos.img
+      destination: atarist/tos.img
+      required: false
+      md5: 27ac71b59d59f65571b972e0f894054a,5d65c6a384d847a0b8013d5e22ec0887,f62bc9777f28bc6876422738758db365,d41ae4efaa2c97f632dbe75d24d51bea,c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,736adb2dc835df4d323191fdc8926cc9,992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8
+      native_system: atarist
+      alt_paths:
+      - tos.img
+      core: hatari,libretro/hatari
+      hash_match_mandatory: false
+      mandatory_declared: false
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: Default bios
+    - name: st.img
+      destination: atarist/st.img
+      required: true
+      md5: c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,736adb2dc835df4d323191fdc8926cc9
+      native_system: atarist
+      core: hatari,libretro/hatari
+      hash_match_mandatory: false
+      mandatory_declared: true
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: "Atari ST/Mega-ST (not STE!) bios."
+    - name: ste.img
+      destination: atarist/ste.img
+      required: true
+      md5: 992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4
+      native_system: atarist
+      core: hatari,libretro/hatari
+      hash_match_mandatory: false
+      mandatory_declared: true
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: Atari STE bios.
+    - name: megaste.img
+      destination: atarist/megaste.img
+      required: false
+      md5: 4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4
+      native_system: atarist
+      core: hatari,libretro/hatari
+      hash_match_mandatory: true
+      mandatory_declared: false
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: Atari Mega-STE bios.
+    - name: tt.img
+      destination: atarist/tt.img
+      required: false
+      md5: 066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,19cd81e1c3049bf408ad426dc5c3b2e0,ac6ca0f0ed42a1603dfd409c4bf8eb89
+      native_system: atarist
+      core: hatari,libretro/hatari
+      hash_match_mandatory: true
+      mandatory_declared: false
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: Atari TT bios.
+    - name: falcon.img
+      destination: atarist/falcon.img
+      required: true
+      md5: ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8,b338bacb2fc453bab61bcc1e2cf5076b
+      native_system: atarist
+      core: hatari,libretro-hatari
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: FALCON 30/40 bios.
+    - name: emutos.img
+      destination: atarist/emutos.img
+      required: true
+      md5: e2c861c588fca2d0cf6be3df3aaf05f2
+      native_system: atarist
+      core: hatari,libretro/hatari
+      hash_match_mandatory: true
+      mandatory_declared: true
+      native_name: Atari ST/STE/MegaSTE/TT/Falcon
+      note: EMUTOS Open-source bios. 99% Compatible with all Atari machines.
+    native_id: atarist
+  magnavox-odyssey2:
+    files:
+    - name: o2rom.bin
+      destination: o2em/o2rom.bin
+      required: true
+      md5: 562d5ebf9e030a40d6fabfc2f33139fd
+      native_system: o2em
+      core: libretro/o2em
+      native_name: Magnavox Odyssey²
+    - name: c52.bin
+      destination: o2em/c52.bin
+      required: true
+      md5: f1071cdb0b6b10dde94d3bc8a6146387
+      native_system: o2em
+      core: libretro/o2em
+      native_name: Magnavox Odyssey²
+    native_id: o2em
+  philips-videopac:
+    files:
+    - name: g7400.bin
+      destination: o2em/g7400.bin
+      required: true
+      md5: c500ff71236068e0dc0d0603d265ae76
+      native_system: videopacplus
+      core: libretro/o2em
+      native_name: Philips VideoPac+
+    - name: jopac.bin
+      destination: o2em/jopac.bin
+      required: true
+      md5: 279008e4a0db2dc5f1c048853b033828
+      native_system: videopacplus
+      core: libretro/o2em
+      native_name: Philips VideoPac+
+    native_id: videopacplus
+  3do:
+    files:
+    - name: panafz1.bin
+      destination: 3do/panafz1.bin
+      required: true
+      md5: f47264dd47fe30f73ab3c010015c155b
+      native_system: 3do
+      core: libretro/opera
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-1 (U)"
+    - name: panafz1j.bin
+      destination: 3do/panafz1j.bin
+      required: true
+      md5: a496cfdded3da562759be3561317b605
+      native_system: 3do
+      core: libretro/opera
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-1 (J)"
+    - name: panafz1j-norsa.bin
+      destination: 3do/panafz1j-norsa.bin
+      required: true
+      md5: f6c71de7470d16abe4f71b1444883dc8
+      native_system: 3do
+      core: libretro/opera
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-1 (J) (RSA check disabled)"
+    - name: panafz10.bin
+      destination: 3do/panafz10.bin
+      required: false
+      md5: 51f2f43ae2f3508a14d9f56597e2d3ce
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-10 (U)"
+    - name: panafz10-norsa.bin
+      destination: 3do/panafz10-norsa.bin
+      required: false
+      md5: 1477bda80dc33731a65468c1f5bcbee9
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-10 (U) (RSA check disabled)"
+    - name: panafz10e-anvil.bin
+      destination: 3do/panafz10e-anvil.bin
+      required: false
+      md5: a48e6746bd7edec0f40cff078f0bb19f
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-10 (E) w/ ANVIL"
+    - name: panafz10e-anvil-norsa.bin
+      destination: 3do/panafz10e-anvil-norsa.bin
+      required: false
+      md5: cf11bbb5a16d7af9875cca9de9a15e09
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-10 (E) w/ ANVIL (RSA check disabled)"
+    - name: goldstar.bin
+      destination: 3do/goldstar.bin
+      required: false
+      md5: 8639fd5e549bd6238cfee79e3e749114
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: Goldstar GDO-101M
+    - name: sanyotry.bin
+      destination: 3do/sanyotry.bin
+      required: false
+      md5: 35fa1a1ebaaeea286dc5cd15487c13ea
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: Sanyo IMP-21J TRY
+    - name: 3do_arcade_saot.bin
+      destination: 3do/3do_arcade_saot.bin
+      required: false
+      md5: 8970fc987ab89a7f64da9f8a8c4333ff
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: Shootout At Old Tucson
+    - name: panafz1-kanji.bin
+      destination: 3do/panafz1-kanji.bin
+      required: false
+      md5: b8dc97f778a6245c58e064b0312e8281
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games"
+    - name: panafz1j-kanji.bin
+      destination: 3do/panafz1j-kanji.bin
+      required: false
+      md5: c23fb5d5e6bb1c240d02cf968972be37
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games"
+    - name: panafz10ja-anvil-kanji.bin
+      destination: 3do/panafz10ja-anvil-kanji.bin
+      required: false
+      md5: 428577250f43edc902ea239c50d2240d
+      native_system: 3do
+      core: libretro/opera
+      mandatory_declared: false
+      native_name: Panasonic 3DO
+      note: "Panasonic FZ-10 (J) w/ ANVIL Kanji ROM. Useful for some Japanese games"
+    native_id: 3do
+  sharp-x68000:
+    files:
+    - name: iplrom.dat
+      destination: keropi/iplrom.dat
+      required: true
+      md5: 7fd4caabac1d9169e289f0f7bbf71d8e
+      native_system: x68000
+      core: libretro/px68k
+      native_name: Sharp X68000
+    - name: cgrom.dat
+      destination: keropi/cgrom.dat
+      required: true
+      md5: cb0a5cfcf7247a7eab74bb2716260269
+      native_system: x68000
+      core: libretro/px68k
+      native_name: Sharp X68000
+    - name: iplrom30.dat
+      destination: keropi/iplrom30.dat
+      required: false
+      md5: f373003710ab4322642f527f567e020a
+      native_system: x68000
+      core: libretro/px68k
+      mandatory_declared: false
+      native_name: Sharp X68000
+    - name: iplromco.dat
+      destination: keropi/iplromco.dat
+      required: false
+      md5: cc78d4f4900f622bd6de1aed7f52592f
+      native_system: x68000
+      core: libretro/px68k
+      mandatory_declared: false
+      native_name: Sharp X68000
+    - name: iplromxv.dat
+      destination: keropi/iplromxv.dat
+      required: false
+      md5: 0617321daa182c3f3d6f41fd02fb3275
+      native_system: x68000
+      core: libretro/px68k
+      mandatory_declared: false
+      native_name: Sharp X68000
+    native_id: x68000
+  x1:
+    files:
+    - name: IPLROM.X1
+      destination: xmil/IPLROM.X1
+      required: true
+      md5: eeeea1cd29c6e0e8b094790ae969bfa7,59074727a953fe965109b7dbe3298e30
+      native_system: x1
+      core: libretro/xmil
+      native_name: Sharp X1
+    - name: IPLROM.X1T
+      destination: xmil/IPLROM.X1T
+      required: true
+      md5: 56c28adcf1f3a2f87cf3d57c378013f5
+      native_system: x1
+      core: libretro/xmil
+      native_name: Sharp X1
+    native_id: x1
+  sony-playstation:
+    files:
+    - name: scph5500.bin
+      destination: scph5500.bin
+      required: true
+      md5: 8dd7d5296a650fac7319bce665a6a53c
+      native_system: psx
+      core: libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
+      native_name: Sony Playstation
+    - name: scph5501.bin
+      destination: scph5501.bin
+      required: true
+      md5: 490f666e1afb15b7362b406ed1cea246
+      native_system: psx
+      core: libretro/pcsx_rearmed,libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
+      native_name: Sony Playstation
+    - name: scph5502.bin
+      destination: scph5502.bin
+      required: true
+      md5: 32736f17079d0b2b7024407c39bd3050
+      native_system: psx
+      core: libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation
+      native_name: Sony Playstation
+    - name: scph101.bin
+      destination: scph101.bin
+      required: true
+      md5: 6e3735ff4c7dc899ee98981385f6f3d0
+      native_system: psx
+      core: libretro/pcsx_rearmed
+      native_name: Sony Playstation
+      note: Recommended for better compatibility.
+    - name: scph7001.bin
+      destination: scph7001.bin
+      required: true
+      md5: 1e68c231d0896b7eadcad1d7d8e76129
+      native_system: psx
+      core: libretro/pcsx_rearmed
+      native_name: Sony Playstation
+      note: Recommended for better compatibility.
+    - name: scph1001.bin
+      destination: scph1001.bin
+      required: true
+      md5: dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf
+      native_system: psx
+      core: libretro/pcsx_rearmed
+      native_name: Sony Playstation
+      note: Recommended for better compatibility.
+    - name: ps1_rom.bin
+      destination: ps1_rom.bin
+      required: false
+      md5: 81bbe60ba7a3d1cea1d48c14cbcc647b
+      native_system: psx
+      core: libretro/swanstation,duckstation
+      mandatory_declared: false
+      native_name: Sony Playstation
+      note: Bios you can grab in PS3 firmware upgrade. Compatible with all regions,
+        can replace all others bios.
+    native_id: psx
+  sony-playstation-2:
+    files:
+    - name: ps2-0230a-20080220.bin
+      destination: ps2/ps2-0230a-20080220.bin
+      required: true
+      md5: 21038400dc633070a78ad53090c53017
+      native_system: ps2
+      core: libretro/pcsx2,pcsx2
+      native_name: Sony Playstation 2
+      note: Recommended for better compatibility.
+    - name: ps2-0230e-20080220.bin
+      destination: ps2/ps2-0230e-20080220.bin
+      required: true
+      md5: dc69f0643a3030aaa4797501b483d6c4
+      native_system: ps2
+      core: libretro/pcsx2,pcsx2
+      native_name: Sony Playstation 2
+    - name: ps2-0230h-20080220.bin
+      destination: ps2/ps2-0230h-20080220.bin
+      required: true
+      md5: 30d56e79d89fbddf10938fa67fe3f34e
+      native_system: ps2
+      core: libretro/pcsx2,pcsx2
+      native_name: Sony Playstation 2
+    - name: ps2-0230j-20080220.bin
+      destination: ps2/ps2-0230j-20080220.bin
+      required: true
+      md5: 80ac46fa7e77b8ab4366e86948e54f83
+      native_system: ps2
+      core: libretro/pcsx2,pcsx2
+      native_name: Sony Playstation 2
+    native_id: ps2
+  fairchild-channel-f:
+    files:
+    - name: sl31254.bin
+      destination: channelf/sl31254.bin
+      required: true
+      md5: da98f4bb3242ab80d76629021bb27585
+      native_system: channelf
+      core: libretro/freechaf
+      native_name: Fairchild Channel-F
+    - name: sl31253.bin
+      destination: channelf/sl31253.bin
+      required: true
+      md5: ac9804d4c0e9d07e33472e3726ed15c3
+      native_system: channelf
+      core: libretro/freechaf
+      native_name: Fairchild Channel-F
+    - name: sl90025.bin
+      destination: channelf/sl90025.bin
+      required: false
+      md5: 95d339631d867c8f1d15a5f2ec26069d
+      native_system: channelf
+      core: libretro/freechaf
+      mandatory_declared: false
+      native_name: Fairchild Channel-F
+      note: Optional replacement for sl31254.bin
+    native_id: channelf
+  mattel-intellivision:
+    files:
+    - name: exec.bin
+      destination: intellivision/exec.bin
+      required: true
+      md5: 62e761035cb657903761800f4437b8af
+      native_system: intellivision
+      core: libretro/freeintv
+      native_name: Mattel Intellivision
+    - name: grom.bin
+      destination: intellivision/grom.bin
+      required: true
+      md5: 0cd5946c6473e42e8e4c2137785e427f
+      native_system: intellivision
+      core: libretro/freeintv
+      native_name: Mattel Intellivision
+    native_id: intellivision
+  nintendo-pokemon-mini:
+    files:
+    - name: bios.min
+      destination: pokemini/bios.min
+      required: false
+      md5: 1e4fb124a3a886865acb574f388c803d
+      native_system: pokemini
+      core: libretro/pokemini
+      mandatory_declared: false
+      native_name: Nintendo Pokémon Mini
+    native_id: pokemini
+  nintendo-ds:
+    files:
+    - name: bios7.bin
+      destination: nds/bios7.bin
+      required: true
+      md5: df692a80a5b1bc90728bc3dfc76cd948
+      native_system: nds
+      core: libretro/melonds,libretro/desmume
+      native_name: Nintendo DS
+    - name: bios9.bin
+      destination: nds/bios9.bin
+      required: true
+      md5: a392174eb3e572fed6447e956bde4b25
+      native_system: nds
+      core: libretro/melonds,libretro/desmume
+      native_name: Nintendo DS
+    - name: firmware.bin
+      destination: nds/firmware.bin
+      required: true
+      md5: 145eaef5bd3037cbc247c213bb3da1b3,e45033d9b0fa6b0de071292bba7c9d13,3ad72b2c9a736b24953f2d391da4bfcc
+      native_system: nds
+      core: libretro/melonds,libretro/desmume
+      native_name: Nintendo DS
+    native_id: nds
+  palm-os:
+    files:
+    - name: palmos41-en-m515.rom
+      destination: palm/palmos41-en-m515.rom
+      required: true
+      md5: 83cb1d1c76e568b916dc2e7c0bf669f6
+      native_system: palm
+      core: libretro/mu
+      native_name: Palm Pilot
+    - name: bootloader-dbvz.rom
+      destination: palm/bootloader-dbvz.rom
+      required: false
+      md5: 9da101cd2317830649a31f8fa46debec
+      native_system: palm
+      core: libretro/mu
+      mandatory_declared: false
+      native_name: Palm Pilot
+    native_id: palm
+  oricatmos:
+    files:
+    - name: basic11b.rom
+      destination: oricutron/basic11b.rom
+      required: true
+      md5: a330779c42ad7d0c4ac6ef9e92788ec6
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: basic10.rom
+      destination: oricutron/basic10.rom
+      required: true
+      md5: ebe418ec8a6c85d5ac32956c9a96c179
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: bd500.rom
+      destination: oricutron/bd500.rom
+      required: false
+      md5: 2b6498fd29a0adbf1c529762c02c33ab
+      native_system: oricatmos
+      core: oricutron
+      mandatory_declared: false
+      native_name: Tangerine Oric/Atmos
+    - name: jasmin.rom
+      destination: oricutron/jasmin.rom
+      required: true
+      md5: 5136f764a7dbd1352519351fbb53a9f3
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: microdis.rom
+      destination: oricutron/microdis.rom
+      required: true
+      md5: df864344d2a2091c3f952bd1c5ce1707
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: pravetzt.rom
+      destination: oricutron/pravetzt.rom
+      required: true
+      md5: 8712a22e7e078de3343667d9fc1f2390
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: 8dos2.rom
+      destination: oricutron/8dos2.rom
+      required: false
+      md5: 5f3cd5a4307fed7a9dfe8faa4c044273
+      native_system: oricatmos
+      core: oricutron
+      mandatory_declared: false
+      native_name: Tangerine Oric/Atmos
+    - name: teleass.rom
+      destination: oricutron/teleass.rom
+      required: true
+      md5: 2324c9cc227c1327a72a667c97ed2990
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: hyperbas.rom
+      destination: oricutron/hyperbas.rom
+      required: true
+      md5: 364bf095e0dc4222d75354d50b8cddfc
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    - name: telmon24.rom
+      destination: oricutron/telmon24.rom
+      required: true
+      md5: 9a432244d9ee4a49e8ddcde64af94e05
+      native_system: oricatmos
+      core: oricutron
+      native_name: Tangerine Oric/Atmos
+    native_id: oricatmos
+  spectravideo:
+    files:
+    - name: svi318.rom
+      destination: Machines/SVI - Spectravideo SVI-318/svi318.rom
+      required: true
+      md5: ee6ad7ea29e791b03a28a9443e622648
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi328a.rom
+      destination: Machines/SVI - Spectravideo SVI-328 80 Column/svi328a.rom
+      required: true
+      md5: 352f054ab09605070bdff49d73f335cc
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi806.rom
+      destination: Machines/SVI - Spectravideo SVI-328 80 Column/svi806.rom
+      required: true
+      md5: 82f7bc9c08f43db1d79bcb565a0de12b
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi328a.rom
+      destination: Machines/SVI - Spectravideo SVI-328 80 Swedish/svi328a.rom
+      required: true
+      md5: 352f054ab09605070bdff49d73f335cc
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi806se.rom
+      destination: Machines/SVI - Spectravideo SVI-328 80 Swedish/svi806se.rom
+      required: true
+      md5: 6a5536c1eb4f0477c4f76488cd8ca3ad
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi328a.rom
+      destination: Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom
+      required: true
+      md5: 352f054ab09605070bdff49d73f335cc
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi806.rom
+      destination: Machines/SVI - Spectravideo SVI-328 MK2/svi806.rom
+      required: true
+      md5: 82f7bc9c08f43db1d79bcb565a0de12b
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: svi328.rom
+      destination: Machines/SVI - Spectravideo SVI-328/svi328.rom
+      required: true
+      md5: 2cebd1db9dda475a011b7bce65c984a2
+      native_system: spectravideo
+      core: libretro/bluemsx
+      native_name: Spectravideo
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    native_id: spectravideo
+  coleco-colecovision:
+    files:
+    - name: czz50-1.rom
+      destination: Machines/COL - Bit Corporation Dina/czz50-1.rom
+      required: true
+      md5: 1de922acdd742d31349c2801e9768c35
+      native_system: colecovision
+      core: libretro/bluemsx
+      native_name: Colecovision
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: czz50-2.rom
+      destination: Machines/COL - Bit Corporation Dina/czz50-2.rom
+      required: true
+      md5: 72b089dc55b7fe7ffb5028f365e8c045
+      native_system: colecovision
+      core: libretro/bluemsx
+      native_name: Colecovision
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: coleco.rom
+      destination: Machines/COL - ColecoVision with Opcode Memory Extension/coleco.rom
+      required: true
+      md5: 2c66f5911e5b42b8ebe113403548eee7
+      native_system: colecovision
+      core: libretro/bluemsx
+      native_name: Colecovision
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: coleco.rom
+      destination: Machines/COL - ColecoVision/coleco.rom
+      required: true
+      md5: 2c66f5911e5b42b8ebe113403548eee7
+      native_system: colecovision
+      core: libretro/bluemsx
+      native_name: Colecovision
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: SVI603.ROM
+      destination: Machines/COL - Spectravideo SVI-603 Coleco/SVI603.ROM
+      required: true
+      md5: c60a2e85572c0ccb69505a7646d5c1b6
+      native_system: colecovision
+      core: libretro/bluemsx
+      native_name: Colecovision
+      note: "Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip"
+    - name: boot.rom
+      destination: coleco/boot.rom
+      required: true
+      md5: 2c66f5911e5b42b8ebe113403548eee7
+      native_system: colecovision
+      core: libretro/gearcoleco
+      mandatory_declared: true
+      native_name: Colecovision
+    native_id: colecovision
   sega-game-gear:
     files:
     - name: bios.gg
@@ -2481,9 +2478,6 @@ systems:
       core: libretro/sameboy
       mandatory_declared: false
       native_name: Nintendo Gameboy
-    native_id: gb
-  gb,gbc:
-    files:
     - name: sgb_bios.bin
       destination: sgb/sgb_bios.bin
       required: false
@@ -2524,7 +2518,7 @@ systems:
       core: libretro/bsnes,libretro/mesen_s
       mandatory_declared: true
       native_name: Nintendo Super Gameboy
-    native_id: gb,gbc
+    native_id: gb
   nintendo-gbc:
     files:
     - name: gbc_bios.bin

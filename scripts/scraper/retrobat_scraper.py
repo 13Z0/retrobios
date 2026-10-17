@@ -74,6 +74,10 @@ def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
 # until the two shared one map.
 SYSTEM_SLUG_MAP = {
     **BATOCERA_SLUGS,
+    "amiga4000": "commodore-amiga",
+    "arcadia": "emerson-arcadia-2001",
+    "ecwolf": "wolfenstein3d",
+    "namco2x6": "namco-system246",
     "ps2": "sony-playstation-2",
     "ps3": "sony-playstation-3",
     "psvita": "sony-playstation-vita",

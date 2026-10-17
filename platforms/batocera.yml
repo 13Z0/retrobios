@@ -566,7 +566,7 @@ systems:
       native_name: Odyssey 2
     native_id: odyssey2
     name: Odyssey 2
-  videopacplus:
+  philips-videopac:
     files:
     - name: g7400.bin
       destination: g7400.bin
@@ -985,10 +985,6 @@ systems:
       native_system: segacd
       native_path: bios/bios_CD_J.bin
       native_name: Sega CD
-    native_id: segacd
-    name: Sega CD
-  megadrive-msu:
-    files:
     - name: bios_CD_E.bin
       destination: bios_CD_E.bin
       required: true
@@ -1010,7 +1006,7 @@ systems:
       native_system: megadrive-msu
       native_path: bios/bios_CD_J.bin
       native_name: MSU-MD
-    native_id: megadrive-msu
+    native_id: segacd
     name: MSU-MD
   sega-saturn:
     files:
@@ -1230,7 +1226,7 @@ systems:
       native_name: Satellaview
     native_id: satellaview
     name: Satellaview
-  sufami:
+  nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
       destination: STBIOS.bin
@@ -1428,7 +1424,7 @@ systems:
       native_name: Xbox
     native_id: xbox
     name: Xbox
-  amiga500:
+  commodore-amiga:
     files:
     - name: kick33180.A500
       destination: amiga/kick33180.A500
@@ -1500,10 +1496,6 @@ systems:
       native_system: amiga500
       native_path: bios/amiga/amiga-os-310-a600.rom
       native_name: Amiga 500
-    native_id: amiga500
-    name: Amiga 500
-  commodore-amiga:
-    files:
     - name: kick34005.A500
       destination: amiga/kick34005.A500
       required: true
@@ -1616,7 +1608,7 @@ systems:
       native_system: amigacd32
       native_path: bios/amiga/amiga-ext-310-cd32.rom
       native_name: Amiga CD32
-    native_id: amigacdtv
+    native_id: amiga500
     name: Amiga CD32
   pc60:
     files:
@@ -2040,7 +2032,7 @@ systems:
       native_name: Fujistu FM-Towns
     native_id: fmtowns
     name: Fujistu FM-Towns
-  gp32:
+  gamepark-gp32:
     files:
     - name: gp32.zip
       destination: gp32.zip
@@ -2645,7 +2637,7 @@ systems:
       native_name: Apple Macintosh
     native_id: macintosh
     name: Apple Macintosh
-  segaai:
+  sega-ai:
     files:
     - name: segaai.zip
       destination: segaai.zip
@@ -3215,7 +3207,7 @@ systems:
       native_name: ColecoVision
     native_id: colecovision
     name: ColecoVision
-  bbc:
+  acorn-bbc-micro:
     files:
     - name: bbcb.zip
       destination: bbcb.zip
@@ -4822,7 +4814,7 @@ systems:
       native_name: VTech CreatiVision
     native_id: crvision
     name: VTech CreatiVision
-  vsmile:
+  vtech-vsmile:
     files:
     - name: vsmile.zip
       destination: vsmile.zip
@@ -4856,7 +4848,7 @@ systems:
       native_name: VTech V.Smile
     native_id: vsmile
     name: VTech V.Smile
-  socrates:
+  vtech-socrates:
     files:
     - name: socrates.zip
       destination: socrates.zip
@@ -4924,7 +4916,7 @@ systems:
       native_name: Bandai RX-78
     native_id: rx78
     name: Bandai RX-78
-  advision:
+  entex-advision:
     files:
     - name: advision.zip
       destination: advision.zip
@@ -5536,7 +5528,7 @@ systems:
       native_name: Triforce
     native_id: triforce
     name: Triforce
-  bk:
+  elektronika-bk:
     files:
     - name: B11M_BOS.ROM
       destination: bk/B11M_BOS.ROM

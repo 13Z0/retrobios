@@ -713,6 +713,38 @@ class OneNativeIdOneSystem(unittest.TestCase):
         self.assertTrue({"sony-playstation", "nintendo-ds"} <= set(data["systems"]))
         self.assertFalse({"psx", "nds", "atari800"} & set(data["systems"]))
 
+    # A platform system no profile names gets no core extra and answers no
+    # --system. Named here: Batocera's family folds Naomi and Atomiswave into
+    # one system the profiles keep apart, and MiSTer cores nothing profiles.
+    UNMATCHED = {
+        "*": {"sega-dreamcast-arcade"},
+        "misterfpga": {"gameking", "interact", "marty", "studio-ii", "superacan",
+                       "videobrain"},
+    }
+
+    def test_every_platform_system_meets_a_profile_system(self):
+        import yaml  # noqa: PLC0415
+
+        from common import (  # noqa: PLC0415
+            _norm_system_id,
+            load_emulator_profiles,
+            load_platform_config,
+        )
+
+        known = set()
+        for profile in load_emulator_profiles(str(REPO_ROOT / "emulators")).values():
+            known |= {_norm_system_id(s) for s in profile.get("systems") or []}
+            known |= {_norm_system_id(f["system"]) for f in profile.get("files") or []
+                      if isinstance(f, dict) and f.get("system")}
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        for name in registry["platforms"]:
+            with self.subTest(platform=name):
+                config = load_platform_config(name, str(REPO_ROOT / "platforms"))
+                allowed = self.UNMATCHED["*"] | self.UNMATCHED.get(name, set())
+                stray = {s for s in config.get("systems", {})
+                         if _norm_system_id(s) not in known} - allowed
+                self.assertEqual(stray, set())
+
     def test_xroar_machines_reach_the_platforms_that_run_it(self):
         import yaml  # noqa: PLC0415
 

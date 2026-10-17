@@ -15695,7 +15695,7 @@ systems:
       native_system: vectrex
       component: retroarch
       description: Vectrex BIOS
-  vsmile:
+  vtech-vsmile:
     files:
     - name: vsmile.zip
       destination: bios/vsmile.zip

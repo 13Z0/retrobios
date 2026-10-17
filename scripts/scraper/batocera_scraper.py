@@ -127,6 +127,18 @@ def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
 
 
 SYSTEM_SLUG_MAP = {
+    "advision": "entex-advision",
+    "amiga500": "commodore-amiga",
+    "bbc": "acorn-bbc-micro",
+    "bk": "elektronika-bk",
+    "gp32": "gamepark-gp32",
+    # MSU-MD runs on the Mega Drive cores and loads the Mega-CD BIOS.
+    "megadrive-msu": "sega-mega-cd",
+    "segaai": "sega-ai",
+    "socrates": "vtech-socrates",
+    "sufami": "nintendo-sufami-turbo",
+    "videopacplus": "philips-videopac",
+    "vsmile": "vtech-vsmile",
     "atari800": "atari-400-800",
     "atari5200": "atari-5200",
     "atarist": "atari-st",

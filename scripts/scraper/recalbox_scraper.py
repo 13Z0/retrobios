@@ -45,7 +45,12 @@ SOURCE_URL = (
 
 SYSTEM_SLUG_MAP = {
     "3do": "3do",
+    "bk": "elektronika-bk",
     "dragon": "dragon64",
+    "palm": "palm-os",
+    "pokemini": "nintendo-pokemon-mini",
+    "sufami": "nintendo-sufami-turbo",
+    "videopacplus": "philips-videopac",
     "trs80coco": "coco",
     "amiga600": "commodore-amiga",
     "amiga1200": "commodore-amiga",
@@ -230,7 +235,10 @@ class Scraper(BaseScraper):
 
         for system_elem in root.findall(".//system"):
             platform = system_elem.get("platform", "")
-            system_slug = SYSTEM_SLUG_MAP.get(platform, platform)
+            # One <system> can serve several platforms ("msx1,msx2", "gb,gbc"):
+            # it is filed under the first, which names the machine family.
+            first = platform.split(",")[0].strip()
+            system_slug = SYSTEM_SLUG_MAP.get(first, first)
             fullname = system_elem.get("fullname", "")
 
             for bios_elem in system_elem.findall("bios"):
