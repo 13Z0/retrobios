@@ -28,7 +28,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import compute_hashes
+from common import compute_hashes, write_text_atomic
 
 DEFAULT_BIOS_DIR = "bios"
 
@@ -168,6 +168,25 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
 
     Returns dict of {sha1: {"canonical": path, "removed": [paths], "aliases": [names]}}
     """
+    # Beside the scanned tree, where get_mame_clone_map() reads it for
+    # the real layout. A path relative to the working directory let a
+    # scan of a fixture tree rewrite the repository's own map.
+    clone_path = os.path.join(
+        os.path.dirname(os.path.abspath(bios_dir)), "_mame_clones.json"
+    )
+    # Read before anything is removed: the map is cumulative, and a run that
+    # stopped on an unreadable one after deleting clones would lose them.
+    try:
+        with open(clone_path) as f:
+            previous = json.load(f)
+    except FileNotFoundError:
+        previous = {}
+    except json.JSONDecodeError as e:
+        raise SystemExit(
+            f"{clone_path} is not valid JSON ({e}); restore it from git "
+            "before deduplicating again"
+        ) from e
+
     sha1_groups = scan_duplicates(bios_dir)
     results = {}
     total_removed = 0
@@ -253,23 +272,12 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
 
     # Write MAME clone mapping
     if mame_clones:
-        # Beside the scanned tree, where get_mame_clone_map() reads it for
-        # the real layout. A path relative to the working directory let a
-        # scan of a fixture tree rewrite the repository's own map.
-        clone_path = os.path.join(
-            os.path.dirname(os.path.abspath(bios_dir)), "_mame_clones.json"
-        )
         # A group is only visible while both copies are on disk, and this run
         # has just deleted the clone. Writing only what was seen this time
         # therefore erases every mapping an earlier run recorded, and the
         # canonical zip stops answering to the names it stands in for. The
         # older entries stay valid: their canonical file is still here.
         if not dry_run:
-            try:
-                with open(clone_path) as f:
-                    previous = json.load(f)
-            except (FileNotFoundError, json.JSONDecodeError):
-                previous = {}
             if isinstance(previous, dict):
                 merged = dict(previous)
                 merged.update(mame_clones)
@@ -281,8 +289,7 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
                 f"{sum(len(v['clones']) for v in mame_clones.values())} clones"
             )
         else:
-            with open(clone_path, "w") as f:
-                json.dump(mame_clones, f, indent=2, sort_keys=True)
+            write_text_atomic(clone_path, json.dumps(mame_clones, indent=2, sort_keys=True))
             print(f"\nWrote MAME clone map: {clone_path}")
             print(
                 f"  {len(mame_clones)} canonical ZIPs with "

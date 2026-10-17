@@ -21,6 +21,7 @@ from common import (
     load_platform_config,
     load_target_config,
     require_yaml,
+    write_text_atomic,
     yaml_load,
 )
 from truth import generate_platform_truth
@@ -129,14 +130,17 @@ def main(argv: list[str] | None = None) -> None:
         )
 
         out_path = os.path.join(output_dir, f"{name}.yml")
-        with open(out_path, "w") as f:
+        # Whole or not at all: export_native and diff_truth read this file,
+        # and a run stopped midway left a truncated model behind.
+        write_text_atomic(
+            out_path,
             yaml.dump(
                 result,
-                f,
                 default_flow_style=False,
                 sort_keys=False,
                 allow_unicode=True,
-            )
+            ),
+        )
 
         n_systems = len(result.get("systems", {}))
         n_files = sum(

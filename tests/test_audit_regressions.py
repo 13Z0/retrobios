@@ -2471,6 +2471,39 @@ class TheZipIndexCacheKnowsItsInputs(unittest.TestCase):
             ziptools._zip_contents_cache = None
 
 
+class GeneratedModelsAreWrittenWhole(unittest.TestCase):
+    """The truth model and the cumulative MAME clone map were written by
+    truncate-then-write; a corrupt clone map also read as empty and was
+    then overwritten, losing what earlier runs recorded."""
+
+    def test_both_writers_replace_their_file_atomically(self):
+        for module in ("generate_truth.py", "dedup.py"):
+            source = (ROOT / "scripts" / module).read_text(encoding="utf-8")
+            with self.subTest(module=module):
+                self.assertIn("write_text_atomic(", source)
+                self.assertNotIn('open(out_path, "w")', source)
+                self.assertNotIn('open(clone_path, "w")', source)
+
+    def test_an_unreadable_clone_map_stops_the_run(self):
+        from scripts import dedup
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            bios = root / "bios"
+            # A device clone: two archive names, the same ROMs, in MAME's tree.
+            (bios / "Arcade" / "MAME").mkdir(parents=True)
+            for name in ("set.zip", "setclone.zip"):
+                with zipfile.ZipFile(bios / "Arcade" / "MAME" / name, "w") as archive:
+                    archive.writestr("rom.bin", b"rom")
+            data = (bios / "Arcade" / "MAME" / "set.zip").read_bytes()
+            (bios / "Arcade" / "MAME" / "setclone.zip").write_bytes(data)
+            (root / "_mame_clones.json").write_text("<<<<<<< HEAD")
+            with self.assertRaises(SystemExit):
+                dedup.deduplicate(str(bios), dry_run=False)
+            # Stopped before removing anything.
+            self.assertTrue((bios / "Arcade" / "MAME" / "setclone.zip").exists())
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
