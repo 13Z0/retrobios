@@ -3304,5 +3304,33 @@ class EveryReadmeNamesItsFolder(unittest.TestCase):
         self.assertNotIn("retroarch/system", lakka)
 
 
+
+class NoSourceWarnsWhenCompiled(unittest.TestCase):
+    """A docstring naming C:\\RetroArch-Win64 with one backslash compiled to
+    an invalid escape: a SyntaxWarning on every run of the installer."""
+
+    def test_every_script_compiles_clean(self):
+        import warnings
+
+        sources = [ROOT / "install.py", *sorted((ROOT / "scripts").rglob("*.py"))]
+        for path in sources:
+            with self.subTest(path=path.name), warnings.catch_warnings():
+                warnings.simplefilter("error", SyntaxWarning)
+                warnings.simplefilter("error", DeprecationWarning)
+                compile(path.read_text(encoding="utf-8"), str(path), "exec")
+
+
+class TheInstallerNamesWhatItSkipped(unittest.TestCase):
+    def test_count_agrees_and_required_files_are_named(self):
+        one = install._omission_lines(1, [{"name": "diabdat.mpq", "required": True}])
+        self.assertTrue(one[0].startswith("1 file was not installed"))
+        self.assertIn("diabdat.mpq", one[1])
+        many = install._omission_lines(
+            12, [{"name": f"f{i:02}", "required": True} for i in range(12)]
+        )
+        self.assertTrue(many[0].startswith("12 files were not installed"))
+        self.assertIn("and 2 more", many[1])
+
+
 if __name__ == "__main__":
     unittest.main()

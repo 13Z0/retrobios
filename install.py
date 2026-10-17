@@ -457,7 +457,7 @@ def _retroarch_cfg_dir(
 
 def _windows_retroarch_dirs() -> list[Path]:
     """Folders holding retroarch.exe where the installer and the archive put
-    it: C:\RetroArch-Win64 by default, C:\RetroArch for 32-bit builds."""
+    it: C:/RetroArch-Win64 by default, C:/RetroArch for 32-bit builds."""
     candidates = [Path("C:/RetroArch-Win64"), Path("C:/RetroArch")]
     for var in ("ProgramFiles", "ProgramFiles(x86)"):
         root = os.environ.get(var, "")
@@ -2170,6 +2170,7 @@ def _report_outcome(
     seconds: float = 0.0,
     declined: int = 0,
     assumed: set[Path] | None = None,
+    omitted_entries: list[dict] | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -2218,9 +2219,27 @@ def _report_outcome(
           f"{_plural(up_to_date, 'file')} already up to date.")
     print(f"Location: {_locations(paths)}")
     if omitted:
-        print(f"{_plural(omitted, 'file')} are not in the collection yet "
-              "and were skipped.")
+        for line in _omission_lines(omitted, omitted_entries or []):
+            print(line)
     print("To check this later, run the same command with --check.")
+
+
+def _omission_lines(count: int, entries: list[dict]) -> list[str]:
+    """What was skipped, the files an emulator cannot start without first.
+
+    "395 file are not in the collection yet" named nothing and gave one
+    reason for all, while the manifest says which file and why.
+    """
+    one = count == 1
+    lines = [f"{_plural(count, 'file')} {'was' if one else 'were'} not installed: "
+             f"the collection does not hold {'it' if one else 'them'}, or its copy "
+             f"fails {'its' if one else 'their'} check."]
+    required = sorted({e["name"] for e in entries if e.get("required")})
+    if required:
+        shown = ", ".join(required[:10])
+        more = f" and {len(required) - 10} more" if len(required) > 10 else ""
+        lines.append(f"  Needed to start an emulator: {shown}{more}.")
+    return lines
 
 
 # Asked before, in an interactive run: past this size a download is worth a
@@ -2905,6 +2924,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
     total_up_to_date = 0
     total_errors = 0
     total_omitted = 0
+    omitted_seen: list[dict] = []
     total_interrupted = False
     total_bytes = 0
     total_seconds = 0.0
@@ -3061,6 +3081,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
                 f"entries omitted ({required_omitted} required; {reason_summary})."
             )
             total_omitted += len(omitted_files)
+            omitted_seen.extend(omitted_files)
 
         print("\nChecking existing files...")
         to_download, up_to_date, mismatched = check_local(
@@ -3184,6 +3205,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
             seconds=total_seconds,
             declined=total_declined,
             assumed=assumed_dests,
+            omitted_entries=omitted_seen,
         )
 
 
