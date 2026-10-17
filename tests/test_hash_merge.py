@@ -369,6 +369,47 @@ class TheScraperClonesTheReleaseItLabels(unittest.TestCase):
         self.assertEqual(data["commit"], "c" * 40)
 
 
+class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
+    """Recalbox builds libretro/mame at 0.258 and at 0.278; the current
+    MAME profile described neither. A release profile carries that
+    release's sets and pins, and keeps the system the current profile
+    gives a set."""
+
+    def test_sets_pins_and_systems(self):
+        from scripts.scraper.mame_hash_scraper import release_profile
+
+        bios_sets = {
+            "neogeo": {"source_file": "src/mame/neogeo/neogeo.cpp", "source_line": 10,
+                       "roms": [{"name": "sp-s2.sp1", "size": 131072, "crc32": "9036d879"}]},
+            "newset": {"source_file": "src/mame/x/x.cpp", "source_line": 5, "roms": []},
+        }
+        reference = {"systems": ["snk-neogeo-mvs"], "files": [
+            {"name": "neogeo.zip", "category": "bios_zip", "system": "snk-neogeo-mvs",
+             "required": True},
+            {"name": "gone.zip", "category": "bios_zip", "system": "x"},
+        ]}
+        profile = release_profile(
+            "mame0278", bios_sets, "a" * 40, "b" * 40, ["mame0278"], reference
+        )
+        self.assertEqual(profile["core_version"], "0.278")
+        self.assertEqual(profile["upstream"], "https://github.com/mamedev/mame/tree/mame0278")
+        self.assertEqual((profile["upstream_commit"], profile["source_commit"]),
+                         ("a" * 40, "b" * 40))
+        self.assertEqual(profile["cores"], ["mame0278"])
+        files = {f["name"]: f for f in profile["files"]}
+        self.assertEqual(sorted(files), ["neogeo.zip", "newset.zip"])
+        self.assertEqual(files["neogeo.zip"]["system"], "snk-neogeo-mvs")
+        self.assertNotIn("system", files["newset.zip"])
+        self.assertEqual(files["neogeo.zip"]["source_ref"], "src/mame/neogeo/neogeo.cpp:10")
+
+    def test_a_release_profile_is_left_out_of_the_current_refresh(self):
+        from scripts.scraper.mame_hash_scraper import _find_mame_profiles
+
+        names = {path.name for path in _find_mame_profiles()}
+        self.assertIn("mame.yml", names)
+        self.assertFalse({"mame0258.yml", "mame0278.yml"} & names)
+
+
 class TestFbneoMerge(unittest.TestCase):
     """Tests for merge_fbneo_profile."""
 

@@ -658,8 +658,8 @@ Located in `scripts/scraper/`. Each inherits `BaseScraper` and implements `fetch
 | Scraper | Source | Format |
 |---------|--------|--------|
 | `libretro_scraper` | System.dat + core-info .info files | clrmamepro DAT |
-| `batocera_scraper` | batocera-systems script | Python dict |
-| `recalbox_scraper` | es_bios.xml | XML |
+| `batocera_scraper` | batocera-systems script, es_systems.yml (cores) | Python dict, YAML |
+| `recalbox_scraper` | es_bios.xml, recalbox-romfs2 system.ini files (cores) | XML, INI |
 | `retrobat_scraper` | batocera-systems.json | JSON |
 | `emudeck_scraper` | checkBIOS.sh | Bash + CSV |
 | `retrodeck_scraper` | component manifests | JSON per component |
@@ -668,7 +668,7 @@ Located in `scripts/scraper/`. Each inherits `BaseScraper` and implements `fetch
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
 | `bizhawk_scraper` | FirmwareDatabase.cs | C# source |
-| `mame_hash_scraper` | mamedev/mame source tree | C source (sparse clone) |
+| `mame_hash_scraper` | mamedev/mame source tree; `--release mameNNNN` writes the profile of one release a platform builds | C source (sparse clone) |
 | `fbneo_hash_scraper` | FBNeo source tree | C source (sparse clone) |
 
 Internal modules: `base_scraper.py` (abstract base with `_fetch_raw()` caching

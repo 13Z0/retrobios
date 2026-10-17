@@ -24,7 +24,7 @@ import yaml
 
 from common import source_yaml_paths, write_text_atomic, yaml_load
 
-from ._hash_merge import compute_diff, merge_mame_profile
+from ._hash_merge import _build_contents, _build_source_ref, compute_diff, merge_mame_profile
 from .mame_parser import parse_mame_source_tree
 
 log = logging.getLogger(__name__)
@@ -329,6 +329,82 @@ def _run(args: argparse.Namespace) -> None:
         print("(dry run, no files modified)")
 
 
+def release_profile(
+    release: str,
+    bios_sets: dict[str, Any],
+    upstream_commit: str,
+    source_commit: str,
+    cores: list[str],
+    reference: dict[str, Any],
+) -> dict[str, Any]:
+    """A profile for one MAME release a platform builds, from its own source.
+
+    Recalbox ships libretro/mame twice, built at 0.258 and at 0.278; the
+    BIOS root sets and their ROMs change between releases, so the current
+    MAME profile does not describe them. Each set keeps the system and the
+    required flag the current profile gives it; the contents and the line
+    are the release's own.
+    """
+    version = release.removeprefix("mame")
+    version = f"{version[0]}.{version[1:]}" if version.isdigit() else version
+    known = {
+        str(f.get("name")): f for f in reference.get("files") or []
+        if f.get("category") == "bios_zip"
+    }
+    files = []
+    for set_name, data in sorted(bios_sets.items()):
+        name = f"{set_name}.zip"
+        entry: dict[str, Any] = {
+            "name": name,
+            "required": known.get(name, {}).get("required", True),
+            "category": "bios_zip",
+        }
+        if known.get(name, {}).get("system"):
+            entry["system"] = known[name]["system"]
+        entry["source_ref"] = _build_source_ref(data)
+        entry["contents"] = _build_contents(data.get("roms", []))
+        files.append(entry)
+    return {
+        "emulator": f"MAME {version}",
+        "type": "libretro",
+        "core_classification": "frozen_snapshot",
+        "source": "https://github.com/libretro/mame",
+        "upstream": f"https://github.com/mamedev/mame/tree/{release}",
+        "profiled_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "source_commit": source_commit,
+        "upstream_commit": upstream_commit,
+        "core_version": version,
+        "display_name": f"Arcade (MAME {version})",
+        "cores": cores,
+        "systems": list(reference.get("systems") or []),
+        "notes": (
+            f"libretro/mame built at the {version} release. BIOS root sets "
+            f"read from mamedev/mame at {release}: the sets and their ROMs "
+            "are that release's, not the current one's."
+        ),
+        "files": files,
+    }
+
+
+def _write_release(args: argparse.Namespace) -> None:
+    """Write the profile of one MAME release, read from its own tag."""
+    try:
+        _sparse_clone(args.release)
+        bios_sets = parse_mame_source_tree(str(_CLONE_DIR))
+        commit = _get_commit()
+    finally:
+        _cleanup()
+    if not bios_sets or not commit:
+        raise RuntimeError(f"no BIOS root set read at {args.release}")
+    reference = yaml_load((_EMULATORS_DIR / "mame.yml").read_text(encoding="utf-8"))
+    profile = release_profile(
+        args.release, bios_sets, commit, args.source_commit, args.core, reference
+    )
+    text = yaml.safe_dump(profile, sort_keys=False, allow_unicode=True, width=100)
+    write_text_atomic(str(args.profile), text)
+    print(f"{args.profile}: {len(profile['files'])} BIOS root sets at {args.release}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mame_hash_scraper",
@@ -349,6 +425,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="re-fetch even if cache is fresh",
     )
+    release = parser.add_argument_group(
+        "release profile",
+        "write the profile of one MAME release a platform builds "
+        "(e.g. --release mame0278 --profile emulators/mame0278.yml "
+        "--source-commit <libretro/mame sha> --core mame0278)",
+    )
+    release.add_argument("--release", help="mamedev/mame tag, such as mame0278")
+    release.add_argument("--profile", type=Path, help="profile file to write")
+    release.add_argument("--source-commit", help="libretro/mame commit the platform builds")
+    release.add_argument("--core", action="append", default=[], help="core name, repeatable")
     return parser
 
 
@@ -359,6 +445,19 @@ def main() -> None:
     )
     parser = build_parser()
     args = parser.parse_args()
+    if args.release or args.profile:
+        missing = [
+            flag for flag, value in (
+                ("--release", args.release), ("--profile", args.profile),
+                ("--source-commit", args.source_commit), ("--core", args.core),
+            ) if not value
+        ]
+        if missing:
+            parser.error(f"a release profile needs {', '.join(missing)}")
+        if args.dry_run or args.json:
+            parser.error("--release writes a profile; --dry-run and --json do not apply")
+        _write_release(args)
+        return
     _run(args)
 
 
