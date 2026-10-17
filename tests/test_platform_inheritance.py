@@ -62,5 +62,35 @@ class AChildLeavesItsParentAlone(unittest.TestCase):
         self.assertEqual(child["systems"]["sys-a"]["files"], [{"name": "child.bin"}])
 
 
+
+class ALinuxPlatformKeepsBothCases(unittest.TestCase):
+    """Lakka and RetroPie inherited RetroArch's case folding although both
+    run on Linux: np2kai opens 2608_bd.wav and MesenCE bios.col with that
+    exact case, and only System.dat's 2608_BD.WAV and BIOS.col shipped."""
+
+    def setUp(self):
+        self.addCleanup(common._platform_config_cache.clear)
+        common._platform_config_cache.clear()
+
+    def test_the_linux_platforms_do_not_fold(self):
+        platforms = str(REPO_ROOT / "platforms")
+        self.assertTrue(common.load_platform_config("retroarch", platforms)["case_insensitive_fs"])
+        for name in ("lakka", "retropie"):
+            with self.subTest(platform=name):
+                config = common.load_platform_config(name, platforms)
+                self.assertFalse(config["case_insensitive_fs"])
+                dests = {
+                    f.get("destination", f.get("name"))
+                    for system in config["systems"].values() for f in system["files"]
+                }
+                self.assertTrue({"np2kai/2608_BD.WAV", "np2kai/2608_bd.wav"} <= dests)
+
+    def test_lakka_does_not_share_retroarchs_pack(self):
+        groups = common.group_identical_platforms(
+            ["retroarch", "lakka"], str(REPO_ROOT / "platforms")
+        )
+        self.assertEqual(sorted(g for g, _rep in groups), [["lakka"], ["retroarch"]])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -267,9 +267,11 @@ python scripts/download.py --list
 bash scripts/download.sh --list
 ```
 
-Some platforms share packs (Lakka uses the RetroArch pack). The installer handles
-this mapping automatically, but if you're downloading manually, check which pack
-name corresponds to your platform.
+A pack's name lists every platform it serves. Releases built before
+October 2026 ship RetroArch and Lakka as one `RetroArch_Lakka` pack; later
+ones give Lakka its own, since Lakka runs on Linux where two names that differ
+by case are two files. The installer and the download scripts find the right
+pack either way.
 
 **A pack in several parts will not extract:**
 

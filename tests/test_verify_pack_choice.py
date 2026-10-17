@@ -39,7 +39,7 @@ class VerifyPackChoice(unittest.TestCase):
         self.db = self.out / "db.json"
         self.db.write_text(json.dumps({"files": {}}))
         self.stem = generate_pack._platform_pack_stem(
-            ["retroarch", "lakka"], "retroarch", "platforms"
+            ["retroarch"], "retroarch", "platforms"
         )
 
     def _args(self, **overrides) -> argparse.Namespace:

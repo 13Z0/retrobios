@@ -283,6 +283,9 @@ platforms:
     scraper: libretro
     inherits_from: retroarch
     cores: all_libretro
+    # Lakka is a Linux distribution: two names that differ by case are two
+    # files there, not the one RetroArch's Windows and macOS builds see.
+    case_insensitive_fs: false
     schedule: weekly
     target_scraper: lakka_targets
     target_source: https://buildbot.libretro.com/nightly/
@@ -386,6 +389,8 @@ platforms:
     source: https://github.com/RetroPie/RetroPie-Setup
     # No cores here: the registry overrides the config, and RetroPie's own
     # scriptmodules are what say which packages it ships.
+    # RetroPie runs on Linux, where case tells two files apart.
+    case_insensitive_fs: false
     schedule: null
     target_scraper: retropie_targets
     target_source: https://retropie.org.uk/stats/pkgflags/

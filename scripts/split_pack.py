@@ -8,7 +8,7 @@ as stored, never recompressed, so the parts depend on the pack alone.
 
 Usage:
     python scripts/split_pack.py dist/
-    python scripts/split_pack.py dist/RetroArch_Lakka_v1.22.2_BIOS_Pack.zip
+    python scripts/split_pack.py dist/RetroArch_v1.22.2_BIOS_Pack.zip
     python scripts/split_pack.py dist/ --max-size 1900M
 """
 

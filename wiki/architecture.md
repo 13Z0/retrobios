@@ -147,11 +147,13 @@ entries that are out of scope here.
 ## Pack grouping
 
 Platforms that produce identical packs are grouped automatically.
-Two platforms share a pack when they declare the same files and run the same
-emulators. RetroArch and Lakka do, so they produce one combined pack
-(`RetroArch_Lakka_BIOS_Pack.zip`). RetroPie inherits RetroArch's systems but
-ships its own package list, standalone emulators included, so it gets a
-separate pack and a separate install manifest.
+Two platforms share a pack when they declare the same files, run the same
+emulators and see file names the same way. Lakka declares RetroArch's files
+and cores but runs on Linux, where `bios.col` and `BIOS.col` are two files
+that different cores open; RetroArch's pack folds them for Windows and macOS.
+So Lakka gets its own pack. RetroPie inherits RetroArch's systems but ships its
+own package list, standalone emulators included, and is case-sensitive too, so
+it gets a separate pack and a separate install manifest.
 With `--target`, the fingerprint includes target cores so platforms
 with different hardware filters get separate packs. Emulator and system packs
 also retain system identity, `variant_group` and requested region; same-named

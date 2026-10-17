@@ -187,35 +187,6 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
 
     # Resolve shared group includes
     shared_path = os.path.join(platforms_dir, "_shared.yml")
-    if os.path.exists(shared_path):
-        shared_real = os.path.realpath(shared_path)
-        if shared_real not in _shared_yml_cache:
-            with open(shared_path) as f:
-                _shared_yml_cache[shared_real] = yaml_load(f) or {}
-        shared = _shared_yml_cache[shared_real]
-        shared_groups = shared.get("shared_groups", {})
-        for system in config.get("systems", {}).values():
-            for group_name in system.get("includes", []):
-                if group_name in shared_groups:
-                    existing = {
-                        (f.get("name"), f.get("destination", f.get("name")))
-                        for f in system.get("files", [])
-                    }
-                    existing_lower = {
-                        f.get("destination", f.get("name", "")).lower()
-                        for f in system.get("files", [])
-                    }
-                    for gf in shared_groups[group_name]:
-                        key = (gf.get("name"), gf.get("destination", gf.get("name")))
-                        dest_lower = gf.get("destination", gf.get("name", "")).lower()
-                        if key not in existing and dest_lower not in existing_lower:
-                            # Marked as ours: the platform's own file does not
-                            # carry it, and an export must not count it kept.
-                            system.setdefault("files", []).append(
-                                {**gf, "shared_group": group_name}
-                            )
-                            existing.add(key)
-
     # Merge metadata from _registry.yml. The registry is our curated source;
     # the scraped YAML may be incomplete (missing cores, metadata fields).
     # Registry fields supplement (not replace) the scraped config.
@@ -251,6 +222,42 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
             for key, val in reg_entry.items():
                 if key != "cores" and key not in config:
                     config[key] = val
+
+    # A shared group's file joins a system unless the platform already has
+    # it there. Case only makes two names one where the filesystem folds it:
+    # Lakka and RetroPie run on Linux, and np2kai opens 2608_bd.wav beside
+    # System.dat's 2608_BD.WAV.
+    def fold(destination: str) -> str:
+        return destination.lower() if config.get("case_insensitive_fs") else destination
+
+    if os.path.exists(shared_path):
+        shared_real = os.path.realpath(shared_path)
+        if shared_real not in _shared_yml_cache:
+            with open(shared_path) as f:
+                _shared_yml_cache[shared_real] = yaml_load(f) or {}
+        shared = _shared_yml_cache[shared_real]
+        shared_groups = shared.get("shared_groups", {})
+        for system in config.get("systems", {}).values():
+            for group_name in system.get("includes", []):
+                if group_name in shared_groups:
+                    existing = {
+                        (f.get("name"), f.get("destination", f.get("name")))
+                        for f in system.get("files", [])
+                    }
+                    existing_lower = {
+                        fold(f.get("destination", f.get("name", "")))
+                        for f in system.get("files", [])
+                    }
+                    for gf in shared_groups[group_name]:
+                        key = (gf.get("name"), gf.get("destination", gf.get("name")))
+                        dest_lower = fold(gf.get("destination", gf.get("name", "")))
+                        if key not in existing and dest_lower not in existing_lower:
+                            # Marked as ours: the platform's own file does not
+                            # carry it, and an export must not count it kept.
+                            system.setdefault("files", []).append(
+                                {**gf, "shared_group": group_name}
+                            )
+                            existing.add(key)
 
     # Recalbox hashes a .zip by its members, so a plain md5 never answers one
     # of its archive declarations: the resolver reads the mark per entry.
@@ -1513,6 +1520,9 @@ def group_identical_platforms(
         emulators = [
             cores if isinstance(cores, str) else sorted(map(str, cores or [])),
             sorted(map(str, config.get("standalone_cores") or [])),
+            # One archive cannot serve a filesystem that folds case and one
+            # that does not: Lakka keeps bios.col beside BIOS.col.
+            bool(config.get("case_insensitive_fs")),
         ]
         fp = hashlib.sha1(f"{fp}|{emulators}".encode()).hexdigest()
         if target_cores_cache:

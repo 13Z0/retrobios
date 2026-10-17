@@ -202,9 +202,9 @@ python scripts/generate_pack.py --all --all-variants --output-dir dist/
 ```
 
 `--all-variants` builds all six combinations in one run, producing names like
-`RetroArch_Lakka_v1.22.2_BIOS_Pack.zip`,
-`RetroArch_Lakka_v1.22.2_Platform_BIOS_Pack.zip` and
-`RetroArch_Lakka_v1.22.2_Truth_Required_BIOS_Pack.zip`.
+`RetroArch_v1.22.2_BIOS_Pack.zip`,
+`RetroArch_v1.22.2_Platform_BIOS_Pack.zip` and
+`RetroArch_v1.22.2_Truth_Required_BIOS_Pack.zip`.
 
 Which one to pick: `full` is the one to ship, since it covers alternate cores
 and optional firmware. `platform` is much smaller and matches exactly what the
