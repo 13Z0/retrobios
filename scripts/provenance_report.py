@@ -135,6 +135,12 @@ def main() -> int:
         help="Directory with dump-catalog snapshots",
     )
     parser.add_argument("--missing", action="store_true", help="List missing entries")
+    parser.add_argument(
+        "--derive",
+        action="store_true",
+        help="Find missing entries a held dump contains (halves, word splits, "
+        "byte swaps, concatenations); reads the collection, about 90 s",
+    )
     parser.add_argument("--json", action="store_true", help="Full report as JSON")
     args = parser.parse_args()
 
@@ -145,6 +151,16 @@ def main() -> int:
         return 0
 
     report = build_report(db, snapshots, archive_members(db))
+    derived: dict[str, dict] = {}
+    if args.derive:
+        from derivations import derivable  # noqa: PLC0415
+
+        derived = derivable((e for d in report.values() for e in d["missing"]), db)
+        for data in report.values():
+            data["derivable"] = {
+                e["sha1"]: derived[e["sha1"]] for e in data["missing"]
+                if e.get("sha1") in derived
+            }
 
     if args.json:
         print(json.dumps(report, indent=2))
@@ -166,11 +182,19 @@ def main() -> int:
         if args.missing:
             for entry in data["missing"]:
                 label = entry.get("description") or entry["name"]
-                print(f"    MISSING {entry['name']} ({label}) sha1={entry.get('sha1')}")
+                source = derived.get(entry.get("sha1", ""))
+                if source:
+                    print(f"    DERIVABLE {entry['name']} ({label}): {source['transform']} "
+                          f"of {' + '.join(source['from'])}")
+                else:
+                    print(f"    MISSING {entry['name']} ({label}) sha1={entry.get('sha1')}")
 
     total_missing = sum(len(d["missing"]) for d in report.values())
     if total_missing:
-        print(f"  {total_missing} catalog entries missing from collection")
+        line = f"  {total_missing} catalog entries missing from collection"
+        if args.derive:
+            line += f", {len(derived)} of them derivable from held dumps"
+        print(line)
     return 0
 
 

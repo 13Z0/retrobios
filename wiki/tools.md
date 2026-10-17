@@ -544,6 +544,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `download.sh` | Same, as a shell one-liner (`curl` + `unzip`) |
 | `split_pack.py` | Cut a pack over the release asset limit into parts that are each a ZIP of whole files, read back before the pack is removed |
 | `provenance_report.py` | Dump-catalog coverage and acquisition targets (see above) |
+| `find_pinned_revision.py` | Walk the upstream commits that touched a file and return the revision whose bytes match a platform's pinned md5 (`--write` saves them) |
 | `generate_readme.py` | Generate README.md and CONTRIBUTING.md from database |
 | `generate_site.py` | Generate all MkDocs site pages (this documentation) |
 | `validate_site.py` | Validate rendered metadata, headings, image alternatives, JSON-LD, local resources, links and fragments |
@@ -695,8 +696,17 @@ python -m scripts.scraper.dat_pack_importer --source no-intro --pack no-intro.zi
 python -m scripts.scraper.dat_pack_importer --source tosec --pack TOSEC-v2025.zip
 python scripts/provenance_report.py            # coverage summary (pipeline step 1b)
 python scripts/provenance_report.py --missing  # list acquisition targets
+python scripts/provenance_report.py --missing --derive  # mark targets a held dump already contains
 python scripts/provenance_report.py --json     # full report
 ```
+
+A catalog lists chips as they come off the board, the collection often holds
+the image an emulator reads. `--derive` reads the collection (about 90 s) and
+marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
+quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
+or not), swapping bytes, mirroring, or joining two files of one directory.
+The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
+this way: 67 entries on the current snapshots.
 
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|
