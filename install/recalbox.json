@@ -241,8 +241,99 @@
   "total_size": 4162157401,
   "pack_files": 3414,
   "pack_size": 4162157401,
-  "total_omitted": 0,
-  "omitted_files": [],
+  "total_omitted": 9,
+  "omitted_files": [
+    {
+      "dest": "caesar3/The_empire.555",
+      "name": "The_empire.555",
+      "system": "caesar3",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/c3.555",
+      "name": "c3.555",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/c3.eng",
+      "name": "c3.eng",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/c3.sg2",
+      "name": "c3.sg2",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/c3_mm.eng",
+      "name": "c3_mm.eng",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/c3_model.txt",
+      "name": "c3_model.txt",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/caesar3",
+      "name": "caesar3/",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/goths.555",
+      "name": "goths.555",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    },
+    {
+      "dest": "caesar3/goths.sg2",
+      "name": "goths.sg2",
+      "system": "caesar3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "julius"
+      ]
+    }
+  ],
   "core_names": {
     "advancemame": [
       "advmame"
@@ -33400,6 +33491,17 @@
       "repo_path": "bios/Roland/sounddata/Nuked-SC55-Resources/ROMs/SC-55-v1.00/sc55_waverom3.bin",
       "cores": [
         "dosbox"
+      ],
+      "absent_claims": [
+        {
+          "name": "WAVEROM3.BIN",
+          "system": "dos",
+          "required": false,
+          "reason": "not_found",
+          "cores": [
+            "dosbox_pure"
+          ]
+        }
       ]
     },
     {

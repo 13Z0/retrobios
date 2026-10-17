@@ -241,8 +241,98 @@
   "total_size": 8431168656,
   "pack_files": 7686,
   "pack_size": 8431168656,
-  "total_omitted": 1,
+  "total_omitted": 29,
   "omitted_files": [
+    {
+      "dest": "bios/doom2bfg.wad",
+      "name": "doom2bfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doom2kex.wad",
+      "name": "doom2kex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doom2unity.wad",
+      "name": "doom2unity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doom2xbox.wad",
+      "name": "doom2xbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doom_complete.pk3",
+      "name": "doom_complete.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doombfg.wad",
+      "name": "doombfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doomkex.wad",
+      "name": "doomkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doomunity.wad",
+      "name": "doomunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/doomxbox.wad",
+      "name": "doomxbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
     {
       "dest": "bios/dsifirmware.bin",
       "name": "dsifirmware.bin",
@@ -252,6 +342,196 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ]
+    },
+    {
+      "dest": "bios/extras.wad",
+      "name": "extras.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/id24res.wad",
+      "name": "id24res.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/Anims.j2a",
+      "name": "Anims.j2a",
+      "system": "jazz-jackrabbit-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/bonus2.j2b",
+      "name": "bonus2.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/bonus3.j2b",
+      "name": "bonus3.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/ending.j2b",
+      "name": "ending.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/ending.j2v",
+      "name": "ending.j2v",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/secretf.j2e",
+      "name": "secretf.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/xmas98.j2e",
+      "name": "xmas98.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/jazz2/Source/xmas99.j2e",
+      "name": "xmas99.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "bios/nerve.wad",
+      "name": "nerve.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/nerveunity.wad",
+      "name": "nerveunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/plutoniakex.wad",
+      "name": "plutoniakex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/plutoniaunity.wad",
+      "name": "plutoniaunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/soundtrack",
+      "name": "soundtrack",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/square.pk3",
+      "name": "square.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/sve.wad",
+      "name": "sve.wad",
+      "system": "strife",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/tntkex.wad",
+      "name": "tntkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "bios/tntunity.wad",
+      "name": "tntunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
       ]
     }
   ],
@@ -76716,6 +76996,17 @@
       "repo_path": "bios/Roland/sounddata/Nuked-SC55-Resources/ROMs/SC-55-v1.00/sc55_waverom3.bin",
       "cores": [
         "dosbox"
+      ],
+      "absent_claims": [
+        {
+          "name": "WAVEROM3.BIN",
+          "system": "dos",
+          "required": false,
+          "reason": "not_found",
+          "cores": [
+            "dosbox_pure"
+          ]
+        }
       ]
     },
     {

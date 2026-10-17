@@ -241,8 +241,3959 @@
   "total_size": 9276132393,
   "pack_files": 12895,
   "pack_size": 9276132393,
-  "total_omitted": 0,
-  "omitted_files": [],
+  "total_omitted": 395,
+  "omitted_files": [
+    {
+      "dest": "AUDIO.APC",
+      "name": "AUDIO.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "AUDIO.ARM",
+      "name": "AUDIO.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "AUDIO.C3D",
+      "name": "AUDIO.C3D",
+      "system": "catacomb-3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "AUDIOHED.VSI",
+      "name": "AUDIOHED.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "AUDIOT.VSI",
+      "name": "AUDIOT.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "BLOOD.GRP",
+      "name": "BLOOD.GRP",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "CRYPTIC.INI",
+      "name": "CRYPTIC.INI",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "DARK.GOB",
+      "name": "DARK.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "DARKWAR.RTC",
+      "name": "DARKWAR.RTC",
+      "system": "rott",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "taradino"
+      ]
+    },
+    {
+      "dest": "DARKWAR.RTL",
+      "name": "DARKWAR.RTL",
+      "system": "rott",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "taradino"
+      ]
+    },
+    {
+      "dest": "DARKWAR.WAD",
+      "name": "DARKWAR.WAD",
+      "system": "rott",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "taradino"
+      ]
+    },
+    {
+      "dest": "DUKEDC.GRP",
+      "name": "DUKEDC.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "DZ2.GRP",
+      "name": "DZ2.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "Data.rsdk",
+      "name": "Data.rsdk",
+      "system": "sonic-mania",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "sonic-mania"
+      ]
+    },
+    {
+      "dest": "EANIM.BS6",
+      "name": "EANIM.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "EANIM.VSI",
+      "name": "EANIM.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "EDUKE.CON",
+      "name": "EDUKE.CON",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "EGAGRAPH.APC",
+      "name": "EGAGRAPH.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "EGAGRAPH.ARM",
+      "name": "EGAGRAPH.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "EGAGRAPH.C3D",
+      "name": "EGAGRAPH.C3D",
+      "system": "catacomb-3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "GAMEMAPS.APC",
+      "name": "GAMEMAPS.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "GAMEMAPS.ARM",
+      "name": "GAMEMAPS.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "GAMEMAPS.C3D",
+      "name": "GAMEMAPS.C3D",
+      "system": "catacomb-3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "GANIM.BS6",
+      "name": "GANIM.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "JK.EXE",
+      "name": "JK.EXE",
+      "system": "dark-forces-ii",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "JKM.EXE",
+      "name": "JKM.EXE",
+      "system": "mysteries-of-the-sith",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "LEVEL0.003",
+      "name": "LEVEL0.003",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "LEVEL0.004",
+      "name": "LEVEL0.004",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "LEVEL0.005",
+      "name": "LEVEL0.005",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "MAPHEAD.BS6",
+      "name": "MAPHEAD.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPHEAD.VSI",
+      "name": "MAPHEAD.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPTEMP.BS6",
+      "name": "MAPTEMP.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPTEMP.VSI",
+      "name": "MAPTEMP.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "NAM.CON",
+      "name": "NAM.CON",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAM.GRP",
+      "name": "NAM.GRP",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAPALM.CON",
+      "name": "NAPALM.CON",
+      "system": "napalm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAPALM.GRP",
+      "name": "NAPALM.GRP",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "Outlaws.lab",
+      "name": "Outlaws.lab",
+      "system": "outlaws",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "PENTP.GRP",
+      "name": "PENTP.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "PLATOONL.GRP",
+      "name": "PLATOONL.GRP",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "REDNECK.GRP",
+      "name": "REDNECK.GRP",
+      "system": "redneck",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "ROTTCD.RTC",
+      "name": "ROTTCD.RTC",
+      "system": "rott",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "taradino"
+      ]
+    },
+    {
+      "dest": "ROTTSITE.RTC",
+      "name": "ROTTSITE.RTC",
+      "system": "rott",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "taradino"
+      ]
+    },
+    {
+      "dest": "SHADE.DAT",
+      "name": "SHADE.DAT",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "SHP14.APC",
+      "name": "SHP14.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP14.ARM",
+      "name": "SHP14.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP2.APC",
+      "name": "SHP2.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP2.ARM",
+      "name": "SHP2.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP3.APC",
+      "name": "SHP3.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP3.ARM",
+      "name": "SHP3.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP4.APC",
+      "name": "SHP4.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP4.ARM",
+      "name": "SHP4.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP5.APC",
+      "name": "SHP5.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP5.ARM",
+      "name": "SHP5.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP6.APC",
+      "name": "SHP6.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP6.ARM",
+      "name": "SHP6.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP7.APC",
+      "name": "SHP7.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP7.ARM",
+      "name": "SHP7.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP8.APC",
+      "name": "SHP8.APC",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SHP8.ARM",
+      "name": "SHP8.ARM",
+      "system": "catacomb-adventure",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "catacombgl"
+      ]
+    },
+    {
+      "dest": "SOUNDS.GOB",
+      "name": "SOUNDS.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "SPRITES.GOB",
+      "name": "SPRITES.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "STUFF.DAT",
+      "name": "STUFF.DAT",
+      "system": "exhumed",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "Sonic_Knuckles_wSonic3.bin",
+      "name": "Sonic_Knuckles_wSonic3.bin",
+      "system": "sonic3-air",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "sonic3-air"
+      ]
+    },
+    {
+      "dest": "Source/Anims.j2a",
+      "name": "Anims.j2a",
+      "system": "jazz-jackrabbit-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/bonus2.j2b",
+      "name": "bonus2.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/bonus3.j2b",
+      "name": "bonus3.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/ending.j2b",
+      "name": "ending.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/ending.j2v",
+      "name": "ending.j2v",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/secretf.j2e",
+      "name": "secretf.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/xmas98.j2e",
+      "name": "xmas98.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "Source/xmas99.j2e",
+      "name": "xmas99.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "System BIOS image",
+      "name": "System BIOS image",
+      "system": "dos",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dosbox-x"
+      ]
+    },
+    {
+      "dest": "TD.GRP",
+      "name": "TD.GRP",
+      "system": "shadow-warrior",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "TEXTURES.GOB",
+      "name": "TEXTURES.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "VACATION.GRP",
+      "name": "VACATION.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "VGADICT.BS6",
+      "name": "VGADICT.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGADICT.VSI",
+      "name": "VGADICT.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAGRAPH.BS6",
+      "name": "VGAGRAPH.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAGRAPH.VSI",
+      "name": "VGAGRAPH.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAHEAD.BS6",
+      "name": "VGAHEAD.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAHEAD.VSI",
+      "name": "VGAHEAD.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VSWAP.BS6",
+      "name": "VSWAP.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VSWAP.VSI",
+      "name": "VSWAP.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "WT.GRP",
+      "name": "WT.GRP",
+      "system": "shadow-warrior",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "WW2GI.CON",
+      "name": "WW2GI.CON",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "WW2GI.GRP",
+      "name": "WW2GI.GRP",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "alien1.pig",
+      "name": "alien1.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "alien2.pig",
+      "name": "alien2.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "base/assets0.pk3",
+      "name": "assets0.pk3",
+      "system": "jediacademy",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjk"
+      ]
+    },
+    {
+      "dest": "base/assets1.pk3",
+      "name": "assets1.pk3",
+      "system": "jediacademy",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjk"
+      ]
+    },
+    {
+      "dest": "base/assets2.pk3",
+      "name": "assets2.pk3",
+      "system": "jediacademy",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjk"
+      ]
+    },
+    {
+      "dest": "base/assets3.pk3",
+      "name": "assets3.pk3",
+      "system": "jediacademy",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjk"
+      ]
+    },
+    {
+      "dest": "base/assets5.pk3",
+      "name": "assets5.pk3",
+      "system": "jediknight2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjk"
+      ]
+    },
+    {
+      "dest": "base/pak000.pk4",
+      "name": "pak000.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak002.pk4",
+      "name": "pak002.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak003.pk4",
+      "name": "pak003.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak004.pk4",
+      "name": "pak004.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/zpak001.pk4",
+      "name": "zpak001.pk4",
+      "system": "doom3",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "d3xp/pak000.pk4",
+      "name": "pak000.pk4",
+      "system": "doom3",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "descent2.ham",
+      "name": "descent2.ham",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "descent2.hog",
+      "name": "descent2.hog",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "descent2.s11",
+      "name": "descent2.s11",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "descent2.s22",
+      "name": "descent2.s22",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "devilutionx/diabdat.mpq",
+      "name": "diabdat.mpq",
+      "system": "diablo",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hellfire.mpq",
+      "name": "hellfire.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfbarb.mpq",
+      "name": "hfbarb.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfbard.mpq",
+      "name": "hfbard.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfmonk.mpq",
+      "name": "hfmonk.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfmusic.mpq",
+      "name": "hfmusic.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfvoice.mpq",
+      "name": "hfvoice.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "doom2bfg.wad",
+      "name": "doom2bfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2kex.wad",
+      "name": "doom2kex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2unity.wad",
+      "name": "doom2unity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2xbox.wad",
+      "name": "doom2xbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom_complete.pk3",
+      "name": "doom_complete.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doombfg.wad",
+      "name": "doombfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomkex.wad",
+      "name": "doomkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomunity.wad",
+      "name": "doomunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomxbox.wad",
+      "name": "doomxbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "dwCD.GOB",
+      "name": "dwCD.GOB",
+      "system": "droidworks",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "dwHD.GOB",
+      "name": "dwHD.GOB",
+      "system": "droidworks",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "dwMin.GOB",
+      "name": "dwMin.GOB",
+      "system": "droidworks",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "dwStream.GOB",
+      "name": "dwStream.GOB",
+      "system": "droidworks",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "enhanced.gob",
+      "name": "enhanced.gob",
+      "system": "dark-forces",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "extras.wad",
+      "name": "extras.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "fallout1-ce/critter.dat",
+      "name": "critter.dat",
+      "system": "fallout",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout1-ce"
+      ]
+    },
+    {
+      "dest": "fallout1-ce/master.dat",
+      "name": "master.dat",
+      "system": "fallout",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout1-ce"
+      ]
+    },
+    {
+      "dest": "fallout2-ce/critter.dat",
+      "name": "critter.dat",
+      "system": "fallout2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout2-ce"
+      ]
+    },
+    {
+      "dest": "fallout2-ce/master.dat",
+      "name": "master.dat",
+      "system": "fallout2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout2-ce"
+      ]
+    },
+    {
+      "dest": "fire.pig",
+      "name": "fire.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "fury.grp",
+      "name": "fury.grp",
+      "system": "fury",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fury"
+      ]
+    },
+    {
+      "dest": "games/keen2/egahead.ck2",
+      "name": "egahead.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/egalatch.ck2",
+      "name": "egalatch.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/egasprit.ck2",
+      "name": "egasprit.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/finale.ck2",
+      "name": "finale.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/keen2.exe",
+      "name": "keen2.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level01.ck2",
+      "name": "level01.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level02.ck2",
+      "name": "level02.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level03.ck2",
+      "name": "level03.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level04.ck2",
+      "name": "level04.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level05.ck2",
+      "name": "level05.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level06.ck2",
+      "name": "level06.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level07.ck2",
+      "name": "level07.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level08.ck2",
+      "name": "level08.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level09.ck2",
+      "name": "level09.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level10.ck2",
+      "name": "level10.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level11.ck2",
+      "name": "level11.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level12.ck2",
+      "name": "level12.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level13.ck2",
+      "name": "level13.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level14.ck2",
+      "name": "level14.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level15.ck2",
+      "name": "level15.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level16.ck2",
+      "name": "level16.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level80.ck2",
+      "name": "level80.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level81.ck2",
+      "name": "level81.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level90.ck2",
+      "name": "level90.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egahead.ck3",
+      "name": "egahead.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egalatch.ck3",
+      "name": "egalatch.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egasprit.ck3",
+      "name": "egasprit.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/finale.ck3",
+      "name": "finale.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/keen3.exe",
+      "name": "keen3.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level01.ck3",
+      "name": "level01.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level02.ck3",
+      "name": "level02.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level03.ck3",
+      "name": "level03.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level04.ck3",
+      "name": "level04.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level05.ck3",
+      "name": "level05.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level06.ck3",
+      "name": "level06.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level07.ck3",
+      "name": "level07.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level08.ck3",
+      "name": "level08.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level09.ck3",
+      "name": "level09.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level10.ck3",
+      "name": "level10.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level11.ck3",
+      "name": "level11.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level12.ck3",
+      "name": "level12.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level13.ck3",
+      "name": "level13.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level14.ck3",
+      "name": "level14.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level15.ck3",
+      "name": "level15.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level16.ck3",
+      "name": "level16.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level80.ck3",
+      "name": "level80.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level81.ck3",
+      "name": "level81.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level90.ck3",
+      "name": "level90.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/audio.ck5",
+      "name": "audio.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/egagraph.ck5",
+      "name": "egagraph.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/gamemaps.ck5",
+      "name": "gamemaps.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/keen5e.exe",
+      "name": "keen5e.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen6/keen6e.exe",
+      "name": "keen6e.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/cafe.rpl",
+      "name": "cafe.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/canyon.rpl",
+      "name": "canyon.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/core.rpl",
+      "name": "core.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/end.rpl",
+      "name": "end.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/escape.rpl",
+      "name": "escape.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/lift.rpl",
+      "name": "lift.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/mansion.rpl",
+      "name": "mansion.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/prison.rpl",
+      "name": "prison.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/pyramid.rpl",
+      "name": "pyramid.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/snow.rpl",
+      "name": "snow.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/fmv/vision.rpl",
+      "name": "vision.avi",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/cut1.phd",
+      "name": "cut1.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/cut2.phd",
+      "name": "cut2.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/cut3.phd",
+      "name": "cut3.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/cut4.phd",
+      "name": "cut4.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/gym.phd",
+      "name": "gym.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level1.phd",
+      "name": "level1.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level10a.phd",
+      "name": "level10a.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level10b.phd",
+      "name": "level10b.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level10c.phd",
+      "name": "level10c.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level3a.phd",
+      "name": "level3a.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level3b.phd",
+      "name": "level3b.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level4.phd",
+      "name": "level4.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level5.phd",
+      "name": "level5.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level6.phd",
+      "name": "level6.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level7a.phd",
+      "name": "level7a.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level7b.phd",
+      "name": "level7b.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level8a.phd",
+      "name": "level8a.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level8b.phd",
+      "name": "level8b.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/levels/level8c.phd",
+      "name": "level8c.phd",
+      "system": "tomb-raider-1",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track02.flac",
+      "name": "track02.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track03.flac",
+      "name": "track03.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track04.flac",
+      "name": "track04.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track05.flac",
+      "name": "track05.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track06.flac",
+      "name": "track06.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track07.flac",
+      "name": "track07.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track08.flac",
+      "name": "track08.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track09.flac",
+      "name": "track09.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track10.flac",
+      "name": "track10.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track11.flac",
+      "name": "track11.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track12.flac",
+      "name": "track12.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track13.flac",
+      "name": "track13.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track14.flac",
+      "name": "track14.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track15.flac",
+      "name": "track15.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track16.flac",
+      "name": "track16.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track17.flac",
+      "name": "track17.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track18.flac",
+      "name": "track18.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track19.flac",
+      "name": "track19.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track20.flac",
+      "name": "track20.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track21.flac",
+      "name": "track21.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track22.flac",
+      "name": "track22.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track23.flac",
+      "name": "track23.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track24.flac",
+      "name": "track24.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track25.flac",
+      "name": "track25.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track26.flac",
+      "name": "track26.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track27.flac",
+      "name": "track27.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track28.flac",
+      "name": "track28.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track29.flac",
+      "name": "track29.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track30.flac",
+      "name": "track30.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track31.flac",
+      "name": "track31.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track32.flac",
+      "name": "track32.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track33.flac",
+      "name": "track33.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track34.flac",
+      "name": "track34.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track35.flac",
+      "name": "track35.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track36.flac",
+      "name": "track36.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track37.flac",
+      "name": "track37.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track38.flac",
+      "name": "track38.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track39.flac",
+      "name": "track39.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track40.flac",
+      "name": "track40.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track41.flac",
+      "name": "track41.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track42.flac",
+      "name": "track42.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track43.flac",
+      "name": "track43.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track44.flac",
+      "name": "track44.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track45.flac",
+      "name": "track45.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track46.flac",
+      "name": "track46.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track47.flac",
+      "name": "track47.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track48.flac",
+      "name": "track48.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track49.flac",
+      "name": "track49.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track50.flac",
+      "name": "track50.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track51.flac",
+      "name": "track51.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track52.flac",
+      "name": "track52.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track53.flac",
+      "name": "track53.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track54.flac",
+      "name": "track54.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track55.flac",
+      "name": "track55.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track56.flac",
+      "name": "track56.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track57.flac",
+      "name": "track57.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track58.flac",
+      "name": "track58.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track59.flac",
+      "name": "track59.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr1/music/track60.flac",
+      "name": "track60.flac",
+      "system": "tomb-raider-1",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr1x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/ancient.rpl",
+      "name": "ANCIENT.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/crash.rpl",
+      "name": "CRASH.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/end.rpl",
+      "name": "END.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/jeep.rpl",
+      "name": "JEEP.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/landing.rpl",
+      "name": "LANDING.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/logo.rpl",
+      "name": "LOGO.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/modern.rpl",
+      "name": "MODERN.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/fmv/ms.rpl",
+      "name": "MS.AVI",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/assault.tr2",
+      "name": "assault.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/boat.tr2",
+      "name": "boat.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/catacomb.tr2",
+      "name": "catacomb.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/cut1.tr2",
+      "name": "cut1.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/cut2.tr2",
+      "name": "cut2.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/cut3.tr2",
+      "name": "cut3.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/cut4.tr2",
+      "name": "cut4.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/deck.tr2",
+      "name": "deck.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/emprtomb.tr2",
+      "name": "emprtomb.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/floating.tr2",
+      "name": "floating.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/house.tr2",
+      "name": "house.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/icecave.tr2",
+      "name": "icecave.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/keel.tr2",
+      "name": "keel.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/living.tr2",
+      "name": "living.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/monastry.tr2",
+      "name": "monastry.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/opera.tr2",
+      "name": "opera.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/platform.tr2",
+      "name": "platform.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/rig.tr2",
+      "name": "rig.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/skidoo.tr2",
+      "name": "skidoo.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/unwater.tr2",
+      "name": "unwater.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/venice.tr2",
+      "name": "venice.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/wall.tr2",
+      "name": "wall.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/levels/xian.tr2",
+      "name": "xian.tr2",
+      "system": "tomb-raider-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/10.mp3",
+      "name": "10.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/11.mp3",
+      "name": "11.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/12.mp3",
+      "name": "12.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/13.mp3",
+      "name": "13.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/14.mp3",
+      "name": "14.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/15.mp3",
+      "name": "15.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/16.mp3",
+      "name": "16.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/17.mp3",
+      "name": "17.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/18.mp3",
+      "name": "18.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/19.mp3",
+      "name": "19.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/2.mp3",
+      "name": "2.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/20.mp3",
+      "name": "20.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/21.mp3",
+      "name": "21.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/22.mp3",
+      "name": "22.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/23.mp3",
+      "name": "23.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/24.mp3",
+      "name": "24.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/25.mp3",
+      "name": "25.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/26.mp3",
+      "name": "26.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/27.mp3",
+      "name": "27.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/28.mp3",
+      "name": "28.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/29.mp3",
+      "name": "29.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/3.mp3",
+      "name": "3.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/30.mp3",
+      "name": "30.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/31.mp3",
+      "name": "31.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/32.mp3",
+      "name": "32.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/33.mp3",
+      "name": "33.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/34.mp3",
+      "name": "34.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/35.mp3",
+      "name": "35.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/36.mp3",
+      "name": "36.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/37.mp3",
+      "name": "37.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/38.mp3",
+      "name": "38.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/39.mp3",
+      "name": "39.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/4.mp3",
+      "name": "4.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/40.mp3",
+      "name": "40.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/41.mp3",
+      "name": "41.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/42.mp3",
+      "name": "42.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/43.mp3",
+      "name": "43.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/44.mp3",
+      "name": "44.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/45.mp3",
+      "name": "45.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/46.mp3",
+      "name": "46.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/47.mp3",
+      "name": "47.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/48.mp3",
+      "name": "48.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/49.mp3",
+      "name": "49.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/5.mp3",
+      "name": "5.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/50.mp3",
+      "name": "50.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/51.mp3",
+      "name": "51.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/52.mp3",
+      "name": "52.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/53.mp3",
+      "name": "53.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/54.mp3",
+      "name": "54.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/55.mp3",
+      "name": "55.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/56.mp3",
+      "name": "56.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/58.mp3",
+      "name": "58.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/59.mp3",
+      "name": "59.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/6.mp3",
+      "name": "6.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/60.mp3",
+      "name": "60.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/61.mp3",
+      "name": "61.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/7.mp3",
+      "name": "7.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/8.mp3",
+      "name": "8.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "games/tr2/music/9.mp3",
+      "name": "9.mp3",
+      "system": "tomb-raider-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "tr2x"
+      ]
+    },
+    {
+      "dest": "groupa.pig",
+      "name": "groupa.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "ice.pig",
+      "name": "ice.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "id24res.wad",
+      "name": "id24res.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "intro-h.mvl",
+      "name": "intro-h.mvl",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "main/mp_pak0.pk3",
+      "name": "mp_pak0.pk3",
+      "system": "return-to-castle-wolfenstein",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "iortcw"
+      ]
+    },
+    {
+      "dest": "main/sp_pak1.pk3",
+      "name": "sp_pak1.pk3",
+      "system": "return-to-castle-wolfenstein",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "iortcw"
+      ]
+    },
+    {
+      "dest": "missions/d2x.hog",
+      "name": "d2x.hog",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "nerve.wad",
+      "name": "nerve.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "nerveunity.wad",
+      "name": "nerveunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "openjkdf2/episode/JK1.gob",
+      "name": "JK1.gob",
+      "system": "dark-forces-ii",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkdf2/episode/JK1CTF.gob",
+      "name": "JK1CTF.gob",
+      "system": "dark-forces-ii",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkdf2/episode/JK1MP.gob",
+      "name": "JK1MP.gob",
+      "system": "dark-forces-ii",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkdf2/resource/Res1hi.gob",
+      "name": "Res1hi.gob",
+      "system": "dark-forces-ii",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkdf2/resource/Res1low.gob",
+      "name": "Res1low.gob",
+      "system": "dark-forces-ii",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkdf2/resource/Res2.gob",
+      "name": "Res2.gob",
+      "system": "dark-forces-ii",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/episode/JKM.goo",
+      "name": "JKM.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/episode/JKM_KFY.goo",
+      "name": "JKM_KFY.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/episode/JKM_MP.goo",
+      "name": "JKM_MP.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/episode/JKM_SABER.goo",
+      "name": "JKM_SABER.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/resource/JKMsndLO.goo",
+      "name": "JKMsndLO.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "openjkmots/resource/Jkmres.goo",
+      "name": "Jkmres.goo",
+      "system": "mysteries-of-the-sith",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "openjkdf2"
+      ]
+    },
+    {
+      "dest": "other-h.mvl",
+      "name": "other-h.mvl",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "plutoniakex.wad",
+      "name": "plutoniakex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "plutoniaunity.wad",
+      "name": "plutoniaunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "robots-h.mvl",
+      "name": "robots-h.mvl",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    },
+    {
+      "dest": "soundtrack",
+      "name": "soundtrack",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "square.pk3",
+      "name": "square.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "sve.wad",
+      "name": "sve.wad",
+      "system": "strife",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "tntkex.wad",
+      "name": "tntkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "tntunity.wad",
+      "name": "tntunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "water.pig",
+      "name": "water.pig",
+      "system": "descent2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dxx-rebirth"
+      ]
+    }
+  ],
   "core_names": {
     "aethersx2": [
       "aethersx2-sa"
@@ -548,8 +4499,14 @@
       "Snes9x EX+",
       "Snes9xEXPlus"
     ],
+    "sonic-mania": [
+      "sonicmania"
+    ],
     "sonic3-air": [
       "sonic3air"
+    ],
+    "theforceengine": [
+      "tfe"
     ],
     "triforce": [
       "dolphin-triforce"
@@ -124923,6 +128880,17 @@
       "repo_path": "bios/Roland/sounddata/Nuked-SC55-Resources/ROMs/SC-55-v1.00/sc55_waverom3.bin",
       "cores": [
         "dosbox"
+      ],
+      "absent_claims": [
+        {
+          "name": "WAVEROM3.BIN",
+          "system": "dos",
+          "required": false,
+          "reason": "not_found",
+          "cores": [
+            "dosbox_pure"
+          ]
+        }
       ]
     },
     {

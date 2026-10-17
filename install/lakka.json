@@ -20,8 +20,89 @@
   "total_size": 6132457264,
   "pack_files": 8530,
   "pack_size": 6173004927,
-  "total_omitted": 0,
-  "omitted_files": [],
+  "total_omitted": 8,
+  "omitted_files": [
+    {
+      "dest": "jazz2/Source/Anims.j2a",
+      "name": "Anims.j2a",
+      "system": "jazz-jackrabbit-2",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/bonus2.j2b",
+      "name": "bonus2.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/bonus3.j2b",
+      "name": "bonus3.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/ending.j2b",
+      "name": "ending.j2b",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/ending.j2v",
+      "name": "ending.j2v",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/secretf.j2e",
+      "name": "secretf.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/xmas98.j2e",
+      "name": "xmas98.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    },
+    {
+      "dest": "jazz2/Source/xmas99.j2e",
+      "name": "xmas99.j2e",
+      "system": "jazz-jackrabbit-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "jazz2-native"
+      ]
+    }
+  ],
   "core_names": {
     "3dsen": [
       "3dsen-windows"
@@ -60749,6 +60830,17 @@
       ],
       "systems": [
         "dos"
+      ],
+      "absent_claims": [
+        {
+          "name": "WAVEROM3.BIN",
+          "system": "dos",
+          "required": false,
+          "reason": "not_found",
+          "cores": [
+            "dosbox_pure"
+          ]
+        }
       ]
     },
     {

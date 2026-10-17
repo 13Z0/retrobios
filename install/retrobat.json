@@ -245,8 +245,1359 @@
   "total_size": 7954553855,
   "pack_files": 7742,
   "pack_size": 7954553855,
-  "total_omitted": 0,
-  "omitted_files": [],
+  "total_omitted": 135,
+  "omitted_files": [
+    {
+      "dest": "AUDIOHED.VSI",
+      "name": "AUDIOHED.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "AUDIOT.VSI",
+      "name": "AUDIOT.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "BLOOD.GRP",
+      "name": "BLOOD.GRP",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "CRYPTIC.INI",
+      "name": "CRYPTIC.INI",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "DARK.GOB",
+      "name": "DARK.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "DUKEDC.GRP",
+      "name": "DUKEDC.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "DZ2.GRP",
+      "name": "DZ2.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "Data.rsdk",
+      "name": "Data.rsdk",
+      "system": "sonic-mania",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "sonic-mania"
+      ]
+    },
+    {
+      "dest": "EANIM.BS6",
+      "name": "EANIM.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "EANIM.VSI",
+      "name": "EANIM.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "EDUKE.CON",
+      "name": "EDUKE.CON",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "EmuMediaBoard/Chihiro/backup_ram.bin",
+      "name": "backup_ram.bin",
+      "system": "sega-chihiro",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cxbx-reloaded"
+      ]
+    },
+    {
+      "dest": "GANIM.BS6",
+      "name": "GANIM.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "LEVEL0.003",
+      "name": "LEVEL0.003",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "LEVEL0.004",
+      "name": "LEVEL0.004",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "LEVEL0.005",
+      "name": "LEVEL0.005",
+      "system": "jazz-jackrabbit",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openjazz"
+      ]
+    },
+    {
+      "dest": "MAPHEAD.BS6",
+      "name": "MAPHEAD.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPHEAD.VSI",
+      "name": "MAPHEAD.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPTEMP.BS6",
+      "name": "MAPTEMP.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "MAPTEMP.VSI",
+      "name": "MAPTEMP.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "NAM.CON",
+      "name": "NAM.CON",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAM.GRP",
+      "name": "NAM.GRP",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAPALM.CON",
+      "name": "NAPALM.CON",
+      "system": "napalm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "NAPALM.GRP",
+      "name": "NAPALM.GRP",
+      "system": "nam",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "Outlaws.lab",
+      "name": "Outlaws.lab",
+      "system": "outlaws",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "PENTP.GRP",
+      "name": "PENTP.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "PLATOONL.GRP",
+      "name": "PLATOONL.GRP",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "REDNECK.GRP",
+      "name": "REDNECK.GRP",
+      "system": "redneck",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "SHADE.DAT",
+      "name": "SHADE.DAT",
+      "system": "blood",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "SOUNDS.GOB",
+      "name": "SOUNDS.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "SPRITES.GOB",
+      "name": "SPRITES.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "STUFF.DAT",
+      "name": "STUFF.DAT",
+      "system": "exhumed",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "Sonic_Knuckles_wSonic3.bin",
+      "name": "Sonic_Knuckles_wSonic3.bin",
+      "system": "sonic3-air",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "sonic3-air"
+      ]
+    },
+    {
+      "dest": "TD.GRP",
+      "name": "TD.GRP",
+      "system": "shadow-warrior",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "TEXTURES.GOB",
+      "name": "TEXTURES.GOB",
+      "system": "dark-forces",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "VACATION.GRP",
+      "name": "VACATION.GRP",
+      "system": "duke3d",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "VGADICT.BS6",
+      "name": "VGADICT.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGADICT.VSI",
+      "name": "VGADICT.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAGRAPH.BS6",
+      "name": "VGAGRAPH.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAGRAPH.VSI",
+      "name": "VGAGRAPH.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAHEAD.BS6",
+      "name": "VGAHEAD.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VGAHEAD.VSI",
+      "name": "VGAHEAD.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VSWAP.BS6",
+      "name": "VSWAP.BS6",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "VSWAP.VSI",
+      "name": "VSWAP.VSI",
+      "system": "blake-stone",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bstone"
+      ]
+    },
+    {
+      "dest": "WT.GRP",
+      "name": "WT.GRP",
+      "system": "shadow-warrior",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "raze"
+      ]
+    },
+    {
+      "dest": "WW2GI.CON",
+      "name": "WW2GI.CON",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "WW2GI.GRP",
+      "name": "WW2GI.GRP",
+      "system": "ww2gi",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "eduke32"
+      ]
+    },
+    {
+      "dest": "base/pak000.pk4",
+      "name": "pak000.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak002.pk4",
+      "name": "pak002.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak003.pk4",
+      "name": "pak003.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/pak004.pk4",
+      "name": "pak004.pk4",
+      "system": "doom3",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "base/zpak001.pk4",
+      "name": "zpak001.pk4",
+      "system": "doom3",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "d3xp/pak000.pk4",
+      "name": "pak000.pk4",
+      "system": "doom3",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "dhewm3"
+      ]
+    },
+    {
+      "dest": "devilutionx/diabdat.mpq",
+      "name": "diabdat.mpq",
+      "system": "diablo",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hellfire.mpq",
+      "name": "hellfire.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfbarb.mpq",
+      "name": "hfbarb.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfbard.mpq",
+      "name": "hfbard.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfmonk.mpq",
+      "name": "hfmonk.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfmusic.mpq",
+      "name": "hfmusic.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "devilutionx/hfvoice.mpq",
+      "name": "hfvoice.mpq",
+      "system": "diablo",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "devilutionx"
+      ]
+    },
+    {
+      "dest": "doom2bfg.wad",
+      "name": "doom2bfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2kex.wad",
+      "name": "doom2kex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2unity.wad",
+      "name": "doom2unity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom2xbox.wad",
+      "name": "doom2xbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doom_complete.pk3",
+      "name": "doom_complete.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doombfg.wad",
+      "name": "doombfg.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomkex.wad",
+      "name": "doomkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomunity.wad",
+      "name": "doomunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "doomxbox.wad",
+      "name": "doomxbox.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "enhanced.gob",
+      "name": "enhanced.gob",
+      "system": "dark-forces",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "theforceengine"
+      ]
+    },
+    {
+      "dest": "extras.wad",
+      "name": "extras.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "games/keen2/egahead.ck2",
+      "name": "egahead.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/egalatch.ck2",
+      "name": "egalatch.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/egasprit.ck2",
+      "name": "egasprit.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/finale.ck2",
+      "name": "finale.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/keen2.exe",
+      "name": "keen2.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level01.ck2",
+      "name": "level01.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level02.ck2",
+      "name": "level02.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level03.ck2",
+      "name": "level03.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level04.ck2",
+      "name": "level04.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level05.ck2",
+      "name": "level05.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level06.ck2",
+      "name": "level06.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level07.ck2",
+      "name": "level07.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level08.ck2",
+      "name": "level08.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level09.ck2",
+      "name": "level09.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level10.ck2",
+      "name": "level10.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level11.ck2",
+      "name": "level11.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level12.ck2",
+      "name": "level12.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level13.ck2",
+      "name": "level13.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level14.ck2",
+      "name": "level14.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level15.ck2",
+      "name": "level15.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level16.ck2",
+      "name": "level16.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level80.ck2",
+      "name": "level80.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level81.ck2",
+      "name": "level81.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen2/level90.ck2",
+      "name": "level90.ck2",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egahead.ck3",
+      "name": "egahead.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egalatch.ck3",
+      "name": "egalatch.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/egasprit.ck3",
+      "name": "egasprit.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/finale.ck3",
+      "name": "finale.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/keen3.exe",
+      "name": "keen3.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level01.ck3",
+      "name": "level01.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level02.ck3",
+      "name": "level02.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level03.ck3",
+      "name": "level03.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level04.ck3",
+      "name": "level04.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level05.ck3",
+      "name": "level05.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level06.ck3",
+      "name": "level06.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level07.ck3",
+      "name": "level07.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level08.ck3",
+      "name": "level08.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level09.ck3",
+      "name": "level09.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level10.ck3",
+      "name": "level10.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level11.ck3",
+      "name": "level11.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level12.ck3",
+      "name": "level12.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level13.ck3",
+      "name": "level13.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level14.ck3",
+      "name": "level14.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level15.ck3",
+      "name": "level15.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level16.ck3",
+      "name": "level16.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level80.ck3",
+      "name": "level80.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level81.ck3",
+      "name": "level81.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen3/level90.ck3",
+      "name": "level90.ck3",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/audio.ck5",
+      "name": "audio.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/egagraph.ck5",
+      "name": "egagraph.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/gamemaps.ck5",
+      "name": "gamemaps.ck5",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen5/keen5e.exe",
+      "name": "keen5e.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "games/keen6/keen6e.exe",
+      "name": "keen6e.exe",
+      "system": "commander-keen",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "cgenius"
+      ]
+    },
+    {
+      "dest": "id24res.wad",
+      "name": "id24res.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "nerve.wad",
+      "name": "nerve.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "nerveunity.wad",
+      "name": "nerveunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "plutoniakex.wad",
+      "name": "plutoniakex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "plutoniaunity.wad",
+      "name": "plutoniaunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "rapidus-core-pbi.rom",
+      "name": "rapidus-core-pbi.rom",
+      "system": "atari-400-800",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "altirra"
+      ]
+    },
+    {
+      "dest": "soundtrack",
+      "name": "soundtrack",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "square.pk3",
+      "name": "square.pk3",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "sve.wad",
+      "name": "sve.wad",
+      "system": "strife",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "tntkex.wad",
+      "name": "tntkex.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    },
+    {
+      "dest": "tntunity.wad",
+      "name": "tntunity.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gzdoom"
+      ]
+    }
+  ],
   "core_names": {
     "advancemame": [
       "advmame"
@@ -586,11 +1937,17 @@
       "Snes9x EX+",
       "Snes9xEXPlus"
     ],
+    "sonic-mania": [
+      "sonicmania"
+    ],
     "sonic3-air": [
       "sonic3air"
     ],
     "tgbdual": [
       "TGB Dual"
+    ],
+    "theforceengine": [
+      "tfe"
     ],
     "triforce": [
       "dolphin-triforce"
@@ -74000,6 +75357,17 @@
       "repo_path": "bios/Roland/sounddata/Nuked-SC55-Resources/ROMs/SC-55-v1.00/sc55_waverom3.bin",
       "cores": [
         "dosbox"
+      ],
+      "absent_claims": [
+        {
+          "name": "WAVEROM3.BIN",
+          "system": "dos",
+          "required": false,
+          "reason": "not_found",
+          "cores": [
+            "dosbox_pure"
+          ]
+        }
       ]
     },
     {
