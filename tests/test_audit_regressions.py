@@ -2390,6 +2390,39 @@ class APinnedCoreFileTakesTheSlotFirst(unittest.TestCase):
         self.assertEqual([e["source_profile"] for e in extras][:1], ["solarus"])
 
 
+class ANameWithItsDirectoryIsTheDestination(unittest.TestCase):
+    """gam4980 declares gam4980/E.BIN with no path: resolved by its basename,
+    verify --emulator and the emulator pack took the A4980's OS while the
+    platform pack served the GAM4980's."""
+
+    def test_the_directory_in_the_name_picks_the_copy(self):
+        import hashlib
+
+        from scripts.common import resolve_local_file
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            previous = os.getcwd()
+            os.chdir(root)
+            self.addCleanup(os.chdir, previous)
+            files, by_name, by_suffix = {}, {}, {}
+            for relative, payload in (("bios/BBK/A4980/A4980/E.BIN", b"a4980"),
+                                      ("bios/BBK/GAM4980/gam4980/E.BIN", b"gam4980")):
+                Path(relative).parent.mkdir(parents=True, exist_ok=True)
+                Path(relative).write_bytes(payload)
+                sha1 = hashlib.sha1(payload).hexdigest()
+                files[sha1] = {"path": relative, "name": "E.BIN", "sha1": sha1}
+                by_name.setdefault("E.BIN", []).append(sha1)
+                parent = relative.split("/")[-2]
+                by_suffix.setdefault(f"{parent}/E.BIN", []).append(sha1)
+            db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                              "by_crc32": {}, "by_path_suffix": by_suffix}}
+            path, status = resolve_local_file(
+                {"name": "gam4980/E.BIN", "source_profile": "gam4980"}, db
+            )
+            self.assertEqual((path, status), ("bios/BBK/GAM4980/gam4980/E.BIN", "path_exact"))
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

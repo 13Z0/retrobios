@@ -779,6 +779,12 @@ def resolve_local_file(
     """
     sha1 = file_entry.get("sha1")
     name = file_entry.get("name", "")
+    # A name written with its directory is the destination when no path is
+    # given: gam4980/E.BIN resolved by its basename took another model's OS
+    # in verify --emulator and the emulator pack, while the platform pack,
+    # which passes the destination, served the GAM4980's.
+    if not dest_hint and "/" in name.strip("/"):
+        dest_hint = name
     zipped_file = file_entry.get("zipped_file")
     aliases = file_entry.get("aliases", [])
     names_to_try = [name] + [a for a in aliases if a != name]
