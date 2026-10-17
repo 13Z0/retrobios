@@ -3671,5 +3671,32 @@ class AManifestHashesAFileOnce(unittest.TestCase):
         self.assertEqual(calls[0], frozenset({"sha1", "sha256"}))
 
 
+
+class AZipMemberIsHashedOnce(unittest.TestCase):
+    """check_inside_zip decompressed a member for every md5 candidate and
+    every step: 4 788 times for 355 members in verify --all."""
+
+    def test_repeated_questions_read_the_archive_once(self):
+        from scripts import ziptools
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            archive = Path(tmp, "set.zip")
+            with zipfile.ZipFile(archive, "w") as zf:
+                zf.writestr("ROM.bin", b"abc")
+            good = hashlib.md5(b"abc").hexdigest()
+            opened = []
+            real = ziptools.zipfile.ZipFile
+
+            def counting(*args, **kwargs):
+                opened.append(args[0])
+                return real(*args, **kwargs)
+
+            with mock.patch.object(ziptools.zipfile, "ZipFile", counting):
+                answers = [ziptools.check_inside_zip(str(archive), "rom.bin", md5)
+                           for md5 in (good, "0" * 32, good)]
+        self.assertEqual(answers, ["ok", "untested", "ok"])
+        self.assertEqual(len(opened), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

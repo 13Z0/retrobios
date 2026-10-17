@@ -18,25 +18,51 @@ from hashing import md5sum
 
 
 def check_inside_zip(container: str, file_name: str, expected_md5: str) -> str:
-    """Check a ROM inside a ZIP -replicates Batocera checkInsideZip().
+    """Check a ROM inside a ZIP, as Batocera's checkInsideZip() does.
 
     Returns "ok", "untested", "not_in_zip", or "error".
     """
     try:
+        info = os.stat(container)
+    except OSError:
+        return "error"
+    found = _member_md5(
+        container, info.st_size, info.st_mtime_ns, file_name.casefold(),
+        expected_md5 != "",
+    )
+    if found in ("not_in_zip", "error"):
+        return found
+    if expected_md5 == "":
+        return "ok"
+    return "ok" if found == expected_md5 else "untested"
+
+
+@functools.lru_cache(maxsize=8192)
+def _member_md5(
+    container: str, size: int, mtime_ns: int, folded: str, hashed: bool
+) -> str:
+    """The md5 of the member named `folded` (case-folded), or why there is none.
+
+    One archive member is asked about by every md5 a platform accepts for it
+    and by every step that checks it: `verify --all` decompressed 355
+    members 4 788 times. Keyed by the archive's size and mtime, so a
+    rewritten archive is read again.
+    """
+    try:
         with zipfile.ZipFile(container) as archive:
             for fname in archive.namelist():
-                if fname.casefold() == file_name.casefold():
-                    info = archive.getinfo(fname)
-                    if info.file_size > 512 * 1024 * 1024:
-                        return "error"
-                    if expected_md5 == "":
-                        return "ok"
-                    with archive.open(fname) as entry:
-                        actual = md5sum(entry)
-                    return "ok" if actual == expected_md5 else "untested"
+                if fname.casefold() != folded:
+                    continue
+                if archive.getinfo(fname).file_size > 512 * 1024 * 1024:
+                    return "error"
+                if not hashed:
+                    return "present"
+                with archive.open(fname) as entry:
+                    return md5sum(entry)
             return "not_in_zip"
     except (zipfile.BadZipFile, OSError, KeyError):
         return "error"
+
 
 @functools.lru_cache(maxsize=4096)
 def _member_crcs(path: str, mtime: float) -> frozenset[str]:
