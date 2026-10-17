@@ -3584,5 +3584,19 @@ class AFileToSourceIsAFileNotAName(unittest.TestCase):
         self.assertEqual(_first_hash({}), "")
 
 
+
+class GeneratedArtifactsMeetTheirSchemas(unittest.TestCase):
+    """A manifest field added without its schema passed every local test
+    and failed the site deploy, which is the first run of the full check."""
+
+    @unittest.skipUnless(HAS_JSONSCHEMA, "needs jsonschema")
+    def test_the_full_schema_check_passes(self):
+        proc = subprocess.run(
+            [sys.executable, "scripts/validate_schemas.py"], cwd=ROOT,
+            capture_output=True, text=True, timeout=600,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
