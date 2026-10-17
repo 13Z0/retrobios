@@ -10,8 +10,11 @@ one the source boards use; a match is by sha1, never by size or name.
 
 from __future__ import annotations
 
+import array
+import functools
 import hashlib
 import os
+import zipfile
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 
@@ -26,7 +29,14 @@ def _swap16(data: bytes) -> bytes:
 
 
 def _words(data: bytes, start: int) -> bytes:
-    return b"".join(data[i:i + 2] for i in range(start * 2, len(data), 4))
+    """Every other 16-bit word, from word `start`, bytes kept in order.
+
+    Read as an array of 2-byte units and strided: joining slices one word
+    at a time made this pass take most of an hour over the romset chips.
+    """
+    words = array.array("H")
+    words.frombytes(data[: len(data) - len(data) % 2])
+    return words[start::2].tobytes()
 
 
 # (name, size of the output for an input of size n or None, transform)
@@ -69,6 +79,20 @@ def crc32_combine(crc1: int, crc2: int, len2: int) -> int:
     """crc32 of A + B from crc32(A), crc32(B) and len(B), as zlib computes it."""
     if len2 <= 0:
         return crc1
+    return _gf2_times(_shift_operator(len2), crc1) ^ crc2
+
+
+@functools.lru_cache(maxsize=None)
+def _shift_operator(len2: int) -> tuple[int, ...]:
+    """The linear map zlib applies to crc(A) for len2 bytes appended.
+
+    Built once per length, column by column: chip sizes repeat, and
+    rebuilding the squares for every pair spent minutes in GF(2) products.
+    """
+    return tuple(_shift(1 << bit, len2) for bit in range(32))
+
+
+def _shift(crc1: int, len2: int) -> int:
     odd = [0xEDB88320] + [1 << (n - 1) for n in range(1, 32)]
     even = _gf2_square(odd)
     odd = _gf2_square(even)
@@ -85,22 +109,81 @@ def crc32_combine(crc1: int, crc2: int, len2: int) -> int:
         len2 >>= 1
         if not len2:
             break
-    return crc1 ^ crc2
+    return crc1
 
 
-def _read(path: str) -> bytes | None:
+def _read(held: dict, archives: dict[str, zipfile.ZipFile] | None = None) -> bytes | None:
+    """The bytes of a held file, or of a member read out of its archive.
+
+    `archives` keeps each archive open across its members: reopened for
+    every one, a MAME set of a hundred chips parsed its directory a
+    hundred times.
+    """
     try:
-        return open(path, "rb").read()
-    except OSError:
+        if held.get("member"):
+            if archives is None:
+                with zipfile.ZipFile(held["archive"]) as zf:
+                    return zf.read(held["member"])
+            zf = archives.get(held["archive"])
+            if zf is None:
+                zf = archives[held["archive"]] = zipfile.ZipFile(held["archive"])
+            return zf.read(held["member"])
+        with open(held["path"], "rb") as handle:
+            return handle.read()
+    except (OSError, KeyError, zipfile.BadZipFile):
         return None
 
 
-def derivable(entries: Iterable[dict], db: dict) -> dict[str, dict]:
-    """Missing sha1 to the held file and transform that produce its bytes.
+def _held_sources(db: dict) -> list[dict]:
+    """Every file the collection holds, the members of its archives included.
 
-    Only held files whose size can produce a wanted size are read, and a
-    concatenation is only tried between files of one directory: the chip
-    pairs a catalog splits come from one machine.
+    A romset holds chips a catalog lists on their own: cdi910.rom inside
+    cdi910.zip is the CD-i 910 BIOS byte-swapped, and the two halves of the
+    Salora Manager sit in manager.zip. Read from the top level alone, they
+    stayed MISSING. A member's group is its archive, as a file's is its
+    directory: the pairs a catalog splits come from one machine.
+    """
+    sources: list[dict] = []
+    for record in db.get("files", {}).values():
+        path = record.get("path", "")
+        if not os.path.exists(path):
+            continue
+        if 0 < record.get("size", 0) <= MAX_SOURCE_SIZE:
+            sources.append({**record, "group": os.path.dirname(path)})
+        if not path.lower().endswith(".zip"):
+            continue
+        try:
+            with zipfile.ZipFile(path) as zf:
+                infos = [i for i in zf.infolist() if not i.is_dir()]
+        except (OSError, zipfile.BadZipFile):
+            continue
+        for info in infos:
+            if 0 < info.file_size <= MAX_SOURCE_SIZE:
+                sources.append({
+                    "path": f"{path}/{info.filename}", "archive": path,
+                    "member": info.filename, "size": info.file_size,
+                    "crc32": f"{info.CRC:08x}", "group": path,
+                })
+    return sources
+
+
+def derivable(entries: Iterable[dict], db: dict) -> dict[str, dict]:
+    """Missing sha1 to the held file or member and the transform that
+    produce its bytes; archives stay open for the whole pass."""
+    archives: dict[str, zipfile.ZipFile] = {}
+    try:
+        return _derivable(entries, db, archives)
+    finally:
+        for zf in archives.values():
+            zf.close()
+
+
+def _derivable(
+    entries: Iterable[dict], db: dict, archives: dict[str, zipfile.ZipFile]
+) -> dict[str, dict]:
+    """Only held files whose size can produce a wanted size are read, and a
+    concatenation is only tried within one directory or one archive: the
+    chip pairs a catalog splits come from one machine.
     """
     wanted: dict[tuple[int, str], str] = {}
     by_size_crc: dict[tuple[int, int], list[str]] = defaultdict(list)
@@ -114,14 +197,13 @@ def derivable(entries: Iterable[dict], db: dict) -> dict[str, dict]:
     sizes = {size for size, _sha1 in wanted}
     found: dict[str, dict] = {}
 
-    files = [f for f in db.get("files", {}).values()
-             if 0 < f.get("size", 0) <= MAX_SOURCE_SIZE and os.path.exists(f["path"])]
+    files = _held_sources(db)
     for held in files:
         n = held["size"]
         useful = [t for t in TRANSFORMS if t[1](n) in sizes]
         if not useful:
             continue
-        data = _read(held["path"])
+        data = _read(held, archives)
         if data is None:
             continue
         for name, out_size, transform in useful:
@@ -133,25 +215,31 @@ def derivable(entries: Iterable[dict], db: dict) -> dict[str, dict]:
     by_dir: dict[str, list[dict]] = defaultdict(list)
     for held in files:
         if held.get("crc32"):
-            by_dir[os.path.dirname(held["path"])].append(held)
+            by_dir[held["group"]].append(held)
     for group in by_dir.values():
+        # A pair is only worth a crc when its sizes add up to a wanted one:
+        # indexed by size, a group is walked once per wanted size instead
+        # of once per member, and a romset of a few hundred chips stays
+        # linear.
+        by_size: dict[int, list[dict]] = defaultdict(list)
+        for held in group:
+            by_size[held["size"]].append(held)
         for first in group:
-            for second in group:
-                if first is second:
-                    continue
-                total = first["size"] + second["size"]
-                if total not in sizes:
-                    continue
-                crc = crc32_combine(int(first["crc32"], 16), int(second["crc32"], 16),
-                                    second["size"])
-                candidates = [s for s in by_size_crc.get((total, crc), []) if s not in found]
-                if not candidates:
-                    continue
-                a, b = _read(first["path"]), _read(second["path"])
-                if a is None or b is None:
-                    continue
-                sha1 = hashlib.sha1(a + b).hexdigest()
-                if sha1 in candidates:
-                    found[sha1] = {"from": [first["path"], second["path"]],
-                                   "transform": "concatenated"}
+            for total in sizes:
+                for second in by_size.get(total - first["size"], ()):
+                    if first is second:
+                        continue
+                    crc = crc32_combine(int(first["crc32"], 16),
+                                        int(second["crc32"], 16), second["size"])
+                    candidates = [s for s in by_size_crc.get((total, crc), [])
+                                  if s not in found]
+                    if not candidates:
+                        continue
+                    a, b = _read(first, archives), _read(second, archives)
+                    if a is None or b is None:
+                        continue
+                    sha1 = hashlib.sha1(a + b).hexdigest()
+                    if sha1 in candidates:
+                        found[sha1] = {"from": [first["path"], second["path"]],
+                                       "transform": "concatenated"}
     return found

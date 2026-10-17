@@ -64,5 +64,43 @@ class HeldDumpsAnswerCatalogEntries(unittest.TestCase):
         self.assertEqual(derivations.derivable([_wanted(os.urandom(32))], db), {})
 
 
+
+class ARomsetMemberIsASource(unittest.TestCase):
+    """cdi910.rom inside cdi910.zip is the CD-i 910 BIOS byte-swapped, and
+    manager.zip holds the two halves of the Salora Manager: read from the
+    top level alone, both stayed MISSING."""
+
+    def test_members_derive_and_concatenate(self):
+        import zipfile
+
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        chip, low, high = os.urandom(64), os.urandom(32), os.urandom(32)
+        archive = root / "set.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("chip.rom", chip)
+            zf.writestr("01", low)
+            zf.writestr("23", high)
+        db = {"files": {"a" * 40: {"path": str(archive), "size": archive.stat().st_size}}}
+        swapped = derivations._swap16(chip)
+        found = derivations.derivable(
+            [_wanted(swapped), {**_wanted(low + high), "crc32": f"{zlib.crc32(low + high):08x}"}],
+            db,
+        )
+        self.assertEqual(found[hashlib.sha1(swapped).hexdigest()]["transform"], "byte-swapped")
+        self.assertEqual(found[hashlib.sha1(low + high).hexdigest()]["transform"], "concatenated")
+
+    def test_the_word_stride_and_crc_combine_are_exact(self):
+        data = os.urandom(4096)
+        slow = b"".join(data[i:i + 2] for i in range(0, len(data), 4))
+        self.assertEqual(derivations._words(data, 0), slow)
+        for size in (1, 4096, 123457):
+            a, b = os.urandom(99), os.urandom(size)
+            self.assertEqual(
+                derivations.crc32_combine(zlib.crc32(a), zlib.crc32(b), size),
+                zlib.crc32(a + b),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
