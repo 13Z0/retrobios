@@ -25,6 +25,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import sys
@@ -2077,6 +2078,11 @@ def _run_listing(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
 
 
 def main():
+    with contextlib.ExitStack() as held:
+        _main(held)
+
+
+def _main(held: contextlib.ExitStack) -> None:
     parser = argparse.ArgumentParser(description="Platform-native BIOS verification")
     parser.add_argument("--platform", "-p", help="Platform name")
     parser.add_argument(
@@ -2146,6 +2152,10 @@ def main():
             "--platform, --all, --emulator, and --system are mutually exclusive"
         )
     _refuse_mode_flags(args, parser)
+    # The trees stay put while names resolve against them and files are read.
+    from refresh_data_dirs import hold_data_dirs
+
+    hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
 
     with open(args.db) as f:
         db = json.load(f)

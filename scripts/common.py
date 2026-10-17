@@ -716,8 +716,17 @@ _data_dir_index: dict[str, dict[str, list[tuple[int, str]]]] = {}
 
 
 def _data_dir_basenames(cache_dir: str) -> dict[str, list[tuple[int, str]]]:
-    """Casefolded basename -> (walk order, path) of every file in a cache."""
-    key = os.path.realpath(cache_dir)
+    """Casefolded basename -> (walk order, path) of every file in a cache.
+
+    Keyed by the tree's identity as well as its path: a refresh swaps in a
+    new directory under the same name, and an index of the old one named
+    files that were gone.
+    """
+    try:
+        stat = os.stat(cache_dir)
+    except OSError:
+        return {}
+    key = f"{os.path.realpath(cache_dir)}:{stat.st_dev}:{stat.st_ino}"
     if key not in _data_dir_index:
         index: dict[str, list[tuple[int, str]]] = {}
         order = 0

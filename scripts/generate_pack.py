@@ -64,7 +64,7 @@ from common import (
     yaml_load,
 )
 import packresolve
-from refresh_data_dirs import cache_lock
+from refresh_data_dirs import cache_lock, hold_data_dirs
 import region as region_mod
 from manifestselect import SelectionIndex
 import slot as slot_mod
@@ -2777,7 +2777,11 @@ def _given_flags(args) -> set[str]:
 
 
 def main():
+    with contextlib.ExitStack() as held:
+        _main(held)
 
+
+def _main(held: contextlib.ExitStack) -> None:
     parser = argparse.ArgumentParser(description="Generate platform BIOS ZIP packs")
     parser.add_argument("--platform", "-p", help="Platform name (e.g., retroarch)")
     parser.add_argument(
@@ -2936,6 +2940,10 @@ def main():
     _validate_args(args, parser)
 
     # Hash lookup / pack mode
+    # A platform run may refresh the trees below, under the exclusive lock:
+    # it takes the shared ones after that. Every other mode reads them now.
+    if not (args.platform or args.all) or args.offline or args.no_refresh_data:
+        hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
     has_from_md5 = bool(args.from_md5 or getattr(args, "from_md5_file", None))
     if has_from_md5:
         hashes = (
@@ -3049,6 +3057,8 @@ def main():
         failed = sorted(k for k, v in results.items() if v is None)
         if failed:
             print(f"WARNING: data directory refresh failed: {', '.join(failed)}")
+    if data_registry:
+        hold_data_dirs(held, data_registry)
 
     emu_profiles = load_emulator_profiles(args.emulators_dir)
 

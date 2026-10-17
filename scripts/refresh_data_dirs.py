@@ -62,6 +62,21 @@ def cache_lock(cache_dir: str | Path, shared: bool = False):
     return _file_lock(cache_dir.with_name(f".{cache_dir.name}.lock"), shared=shared)
 
 
+def hold_data_dirs(stack: contextlib.ExitStack, registry: dict) -> None:
+    """Hold every cached data directory shared for the life of *stack*.
+
+    A pack resolves names against a tree, then copies the file minutes
+    later; a refresh swapping the tree in between shipped bytes nobody
+    verified, or died on a file the new tree no longer has. A refresh waits
+    for the holders. Never called before a refresh in the same process:
+    the exclusive lock would wait on this one.
+    """
+    for entry in registry.values():
+        cache = entry.get("local_cache", "")
+        if cache and os.path.isdir(cache):
+            stack.enter_context(cache_lock(cache, shared=True))
+
+
 def _load_versions(versions_path: str = VERSIONS_FILE) -> dict[str, dict]:
     path = Path(versions_path)
     if not path.exists():

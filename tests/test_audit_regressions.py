@@ -3190,3 +3190,57 @@ class AnEmptyTargetIsNotEveryCore(unittest.TestCase):
         self.assertEqual(published["board"], sorted(builder))
         self.assertEqual(published["board"], ["gpsp"])
         self.assertIsNone(published["full"])
+
+
+class ADataDirectoryIsHeldWhileRead(unittest.TestCase):
+    """A pack resolved names against data/bluemsx, then a concurrent refresh
+    swapped the tree: the index named files that were gone and the copy
+    died on FileNotFoundError, or shipped bytes nobody had verified."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.tmp, True))
+
+    def test_the_index_follows_a_swapped_tree(self):
+        from scripts import common
+
+        cache = self.tmp / "cache"
+        cache.mkdir()
+        (cache / "old.rom").write_bytes(b"old")
+        self.assertIn("old.rom", common._data_dir_basenames(str(cache)))
+        cache.rename(self.tmp / "gone")
+        cache.mkdir()
+        (cache / "new.rom").write_bytes(b"new")
+        index = common._data_dir_basenames(str(cache))
+        self.assertIn("new.rom", index)
+        self.assertNotIn("old.rom", index)
+
+    def test_a_holder_makes_the_refresh_lock_wait(self):
+        import fcntl
+
+        from scripts import refresh_data_dirs
+
+        cache = self.tmp / "bluemsx"
+        cache.mkdir()
+        lock = cache.with_name(f".{cache.name}.lock")
+
+        def exclusive_free() -> bool:
+            with open(lock, "a") as handle:
+                try:
+                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    return False
+                fcntl.flock(handle, fcntl.LOCK_UN)
+                return True
+
+        with contextlib.ExitStack() as held:
+            refresh_data_dirs.hold_data_dirs(held, {"bluemsx": {"local_cache": str(cache)}})
+            self.assertFalse(exclusive_free())
+        self.assertTrue(exclusive_free())
+
+    def test_both_entry_points_hold_the_trees(self):
+        pack = (ROOT / "scripts" / "generate_pack.py").read_text()
+        verify_src = (ROOT / "scripts" / "verify.py").read_text()
+        self.assertIn("hold_data_dirs(held,", verify_src)
+        refresh = pack.index("results = refresh_all(")
+        self.assertIn("hold_data_dirs(held, data_registry)", pack[refresh:])
