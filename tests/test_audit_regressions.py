@@ -2846,5 +2846,18 @@ class ADataDirectoryIsWalkedOnce(unittest.TestCase):
         self.assertIn(first[0], expected)
         self.assertEqual(second[0], str(cache / "b" / "other.bin"))
 
+
+class ADuplicateYamlKeyIsRefused(unittest.TestCase):
+    """PyYAML kept the last of two equal keys: the registry carried two
+    target_source keys for Recalbox and nothing noticed."""
+
+    def test_the_loader_names_the_repeated_key(self):
+        from safeparse import yaml_load  # noqa: PLC0415
+
+        with self.assertRaises(yaml.constructor.ConstructorError) as caught:
+            yaml_load("platform: x\ntarget_source: a\ntarget_source: b\n")
+        self.assertIn("duplicate key 'target_source'", str(caught.exception))
+        self.assertEqual(yaml_load("a: &x {b: 1}\nc: *x\n"), {"a": {"b": 1}, "c": {"b": 1}})
+
 if __name__ == "__main__":
     unittest.main()
