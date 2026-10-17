@@ -1792,5 +1792,24 @@ class RetroArchWhereItReallyLives(unittest.TestCase):
             found = install.detect_platforms("darwin")
             self.assertIn(("retroarch", support / "system"), found)
 
+
+class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
+    """Every non-zero exit became a red "installer failed" exception and
+    code 1: a --check that found work read as a crash, 2 and 130 were lost."""
+
+    @unittest.skipUnless(shutil.which("pwsh"), "needs PowerShell")
+    def test_the_installer_code_comes_back_unchanged(self):
+        folder = Path(_tempdir(self))
+        shutil.copy(REPO_ROOT / "install.ps1", folder / "install.ps1")
+        for code in (0, 1, 2, 130):
+            with self.subTest(code=code):
+                (folder / "install.py").write_text(f"import sys\nsys.exit({code})\n")
+                proc = subprocess.run(
+                    ["pwsh", "-NoProfile", "-File", str(folder / "install.ps1")],
+                    capture_output=True, text=True, timeout=120,
+                )
+                self.assertEqual(proc.returncode, code, proc.stderr)
+                self.assertNotIn("installer failed", proc.stdout + proc.stderr)
+
 if __name__ == "__main__":
     unittest.main()

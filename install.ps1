@@ -10,6 +10,7 @@ $ErrorActionPreference = "Stop"
 $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
 $defaultInstallSha256 = "61ffed8fddf816c02c1b45268dfd9bfdff9daeb1da2adedf2e13d14472f8654d"
 $maximumInstallerBytes = 2MB
+$installerExit = 0
 $installer = if ($PSScriptRoot) { Join-Path $PSScriptRoot "install.py" } else { $null }
 $temporary = $null
 
@@ -43,28 +44,37 @@ try {
         $installer = $temporary
     }
 
+    $launcher = @()
     $python = Get-Command py -ErrorAction SilentlyContinue
     if ($python) {
-        & $python.Source -3 -c "import sys; raise SystemExit(sys.version_info < (3, 8))"
-        if ($LASTEXITCODE -ne 0) { throw "Python 3.8 or newer is required." }
-        & $python.Source -3 $installer @InstallerArguments
-        if ($LASTEXITCODE -ne 0) { throw "RetroBIOS installer failed with exit code $LASTEXITCODE." }
-        return
-    }
-    $python = Get-Command python3 -ErrorAction SilentlyContinue
-    if (-not $python) {
-        $python = Get-Command python -ErrorAction SilentlyContinue
+        $launcher = @("-3")
+    } else {
+        $python = Get-Command python3 -ErrorAction SilentlyContinue
+        if (-not $python) {
+            $python = Get-Command python -ErrorAction SilentlyContinue
+        }
     }
     if (-not $python) {
         throw "Python 3.8 or newer is required."
     }
-    & $python.Source -c "import sys; raise SystemExit(sys.version_info < (3, 8))"
+    & $python.Source @launcher -c "import sys; raise SystemExit(sys.version_info < (3, 8))"
     if ($LASTEXITCODE -ne 0) { throw "Python 3.8 or newer is required." }
-    & $python.Source $installer @InstallerArguments
-    if ($LASTEXITCODE -ne 0) { throw "RetroBIOS installer failed with exit code $LASTEXITCODE." }
+    & $python.Source @launcher $installer @InstallerArguments
+    # The installer has already said what happened: its status is passed on
+    # as it is (1 for files left to fetch under --check, 2 when nothing was
+    # installed, 130 on Ctrl+C), not turned into a red exception that reads
+    # as a crash and flattens every code to one.
+    $installerExit = $LASTEXITCODE
 }
 finally {
     if ($temporary -and (Test-Path -LiteralPath $temporary)) {
         Remove-Item -LiteralPath $temporary -Force
     }
+}
+
+if ($installerExit) {
+    # Run from a file, the script ends with that status. Piped into iex it
+    # runs in the user's own session, which exit would close.
+    if ($PSScriptRoot) { exit $installerExit }
+    $global:LASTEXITCODE = $installerExit
 }

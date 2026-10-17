@@ -417,9 +417,17 @@ followed.
 
 ## Exit status
 
-`0` on success, `1` on failure: an unusable base URL, an unknown platform or
-target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, or no
-platform to install for in a non-interactive run.
+| Code | Meaning |
+|------|---------|
+| `0` | everything asked for is installed or already up to date |
+| `1` | a failure: an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one) |
+| `130` | stopped with Ctrl+C; run the same command again to carry on |
+| `141` | the output was piped to a reader that closed early (`--list \| head`) |
+
+`install.ps1` passes the installer's code on unchanged: run as a file it exits
+with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
+would close the PowerShell window).
 
 Failures that are per-file, such as a download exhausting its three attempts,
 are counted and reported at the end.
