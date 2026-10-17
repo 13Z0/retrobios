@@ -685,7 +685,31 @@ def check_data(offline: bool) -> list[Finding]:
             findings.append(Finding("data", key, STALE, detail="upstream changed, refresh_data_dirs.py fetches it"))
         else:
             findings.append(Finding("data", key, OK))
+    findings.append(_check_buildbot_system())
     return findings
+
+
+def _check_buildbot_system() -> Finding:
+    """The buildbot's system directory against what _data_dirs.yml tracks.
+
+    The registry entries are refreshed above; an asset published since, or
+    one the buildbot no longer serves, is only seen by reading its .index.
+    """
+    import check_buildbot_system  # noqa: PLC0415
+
+    with contextlib.redirect_stdout(io.StringIO()):
+        report = check_buildbot_system.check(
+            str(REPO_ROOT / "platforms" / "_data_dirs.yml")
+        )
+    if report.get("error"):
+        return Finding("data", "buildbot system", UNKNOWN, detail="index unreachable")
+    todo = check_buildbot_system.pending(report)
+    if not todo:
+        return Finding("data", "buildbot system", OK)
+    names = ", ".join(f"{e['status'].lower()} {e['zip']}" for e in todo[:SHOWN_NAMES])
+    more = ", ..." if len(todo) > SHOWN_NAMES else ""
+    return Finding("data", "buildbot system", STALE, local=f"{len(todo)} to track",
+                   detail=f"{names}{more} (_data_dirs.yml)")
 
 
 # --- catalogs and recipes ---------------------------------------------------

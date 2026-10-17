@@ -205,9 +205,16 @@ def main() -> None:
             sys.exit(1)
 
     # Unreachable upstream means the freshness question was not answered, and
-    # a zero exit says it was answered "fresh".
-    if report.get("error"):
+    # a zero exit says it was answered "fresh". A new asset nobody tracks, or
+    # a tracked one the buildbot dropped, is a change to act on: a zero exit
+    # there let the online pipeline call the system directory current.
+    if report.get("error") or pending(report):
         raise SystemExit(1)
+
+
+def pending(report: dict) -> list[dict]:
+    """Entries a maintainer has to act on: not tracked yet, or gone."""
+    return [e for e in report.get("entries", []) if e["status"] in ("NEW", "STALE")]
 
 
 if __name__ == "__main__":

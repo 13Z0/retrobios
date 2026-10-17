@@ -381,5 +381,28 @@ class AStaticTargetStillNamesItsCores(unittest.TestCase):
         self.assertLess(static, source.index("_declared_cores(platform)"))
 
 
+
+class TheBuildbotIndexIsRead(unittest.TestCase):
+    """A new asset in buildbot's assets/system was seen only by
+    check_buildbot_system, which exited 0, as a non-blocking step."""
+
+    def test_new_and_dropped_assets_are_stale(self):
+        from unittest import mock
+
+        import check_buildbot_system as cbs
+
+        report = {"entries": [
+            {"zip": "New.zip", "status": "NEW", "key": None},
+            {"zip": "Old.zip", "status": "OK", "key": "old"},
+        ]}
+        with mock.patch.object(cbs, "check", lambda registry: report):
+            finding = cf._check_buildbot_system()
+        self.assertEqual(finding.status, cf.STALE)
+        self.assertIn("new New.zip", finding.detail)
+        with mock.patch.object(cbs, "check", lambda registry: {"error": "x", "entries": []}):
+            self.assertEqual(cf._check_buildbot_system().status, cf.UNKNOWN)
+        self.assertEqual([e["zip"] for e in cbs.pending(report)], ["New.zip"])
+
+
 if __name__ == "__main__":
     unittest.main()
