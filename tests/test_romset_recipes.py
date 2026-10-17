@@ -582,11 +582,44 @@ class IdentificationReadsTheDirectoryFirst(unittest.TestCase):
                     self.built.append(recipe)
                     return build_torrentzip([(name, rom) for name, _crc in recipe])
 
+                def digest(self, recipe):
+                    import hashlib  # noqa: PLC0415
+
+                    blob = self.build(recipe)
+                    return hashlib.md5(blob).hexdigest(), len(blob)
+
             pool = Pool()
             label = romset_recipes.identify_archive(
                 archive, {"other": [("b.rom", crc)], "match": [("a.rom", crc)]}, pool)
         self.assertEqual(label, "match")
         self.assertEqual(pool.built, [[("a.rom", crc)]])
+
+
+class BuildDigestsOutliveTheRun(unittest.TestCase):
+    """Step 1c rebuilt every recipe at DEFLATE 9 on each pipeline run (70 s)
+    for bytes that depend only on the members."""
+
+    def test_a_second_pool_reads_the_digest_without_building(self):
+        import hashlib
+
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            bios = Path(tmp) / "bios"
+            bios.mkdir()
+            with zipfile.ZipFile(bios / "source.zip", "w") as archive:
+                archive.writestr("a.rom", ROM_A)
+            cache = Path(tmp) / "digests.json"
+            recipe = [("a.rom", _crc(ROM_A))]
+            first = AtomPool(bios, cache)
+            digest = first.digest(recipe)
+            blob = first.build(recipe)
+            self.assertEqual(digest, (hashlib.md5(blob).hexdigest(), len(blob)))
+            first.save_digests()
+            second = AtomPool(bios, cache)
+            with mock.patch.object(second, "build", side_effect=AssertionError("rebuilt")):
+                self.assertEqual(second.digest(recipe), digest)
+            self.assertIsNone(second.digest([("x.rom", "deadbeef")]))
 
 if __name__ == "__main__":
     unittest.main()

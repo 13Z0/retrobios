@@ -121,8 +121,15 @@ class AtomPool:
     hundreds of megabytes and a whole-pool preload buys nothing.
     """
 
-    def __init__(self, bios_dir: Path):
+    def __init__(self, bios_dir: Path, digest_cache: Path | None = None):
         self._index: dict[str, tuple[Path, str]] = {}
+        # (md5, size) of each build, kept across runs: TorrentZip bytes are a
+        # function of the members alone, so a recipe hashed once is known
+        # until the writer changes. Rebuilding the 1 221 archives took 70 s
+        # of every pipeline run, 63 s of it in zlib.
+        self._digest_cache = digest_cache
+        self._digests: dict[str, list] = _read_digests(digest_cache)
+        self._digests_changed = False
         # A recipe is built once: identification and reconstruction ask for the
         # same archives, and every build re-reads and re-deflates its ROMs.
         self._built: dict[tuple[tuple[str, str], ...], bytes | None] = {}
@@ -149,6 +156,31 @@ class AtomPool:
         with zipfile.ZipFile(archive) as handle:
             return handle.read(member)
 
+    def digest(self, recipe: Recipe) -> tuple[str, int] | None:
+        """(md5, size) of the recipe's TorrentZip build, None if incomplete."""
+        if not all(crc in self for _name, crc in recipe):
+            return None
+        key = _recipe_key(recipe)
+        known = self._digests.get(key)
+        if known is None:
+            blob = self.build(recipe)
+            if blob is None:
+                return None
+            known = self._digests[key] = [hashlib.md5(blob).hexdigest(), len(blob)]
+            self._digests_changed = True
+        return known[0], known[1]
+
+    def save_digests(self) -> None:
+        """Write the digest cache back, when this run learned anything."""
+        if self._digest_cache is None or not self._digests_changed:
+            return
+        from artifacts import write_text_atomic  # noqa: PLC0415
+
+        self._digest_cache.parent.mkdir(parents=True, exist_ok=True)
+        write_text_atomic(
+            str(self._digest_cache), json.dumps(self._digests, sort_keys=True) + "\n"
+        )
+
     def build(self, recipe: Recipe) -> bytes | None:
         """Return the TorrentZip bytes for *recipe*, or None if incomplete."""
         key = tuple(recipe)
@@ -160,6 +192,33 @@ class AtomPool:
             else:
                 self._built[key] = None
         return self._built[key]
+
+
+DIGEST_CACHE = Path(__file__).resolve().parent.parent / ".cache" / "romset_digests.json"
+# The writer's own source is part of every key: a change to how TorrentZip
+# bytes are laid out invalidates every digest it produced.
+_WRITER = hashlib.sha256(
+    (Path(__file__).resolve().parent / "torrentzip.py").read_bytes()
+).hexdigest()[:16]
+
+
+def _recipe_key(recipe: Recipe) -> str:
+    members = json.dumps([[name, crc.lower()] for name, crc in recipe])
+    return hashlib.sha256(f"{_WRITER}:{members}".encode()).hexdigest()
+
+
+def _read_digests(path: Path | None) -> dict[str, list]:
+    if path is None:
+        return {}
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as exc:
+        print(f"  digest cache {path} unreadable, rebuilding: {exc}", file=sys.stderr)
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
 def identify_archive(
@@ -175,11 +234,11 @@ def identify_archive(
     if held is None:
         return None
     original = path.read_bytes()
+    md5, size = hashlib.md5(original).hexdigest(), len(original)
     for label, recipe in sorted(recipes.items()):
         if sorted((name, crc.lower()) for name, crc in recipe) != held:
             continue
-        blob = pool.build(recipe)
-        if blob is not None and blob == original:
+        if pool.digest(recipe) == (md5, size):
             return label
     return None
 
@@ -203,9 +262,11 @@ def reconstruct(
     """Return the (label, bytes) whose TorrentZip build matches *target_md5*."""
     target = target_md5.lower()
     for label, recipe in sorted(recipes.items()):
-        blob = pool.build(recipe)
-        if blob is not None and hashlib.md5(blob).hexdigest() == target:
-            return label, blob
+        known = pool.digest(recipe)
+        if known is not None and known[0] == target:
+            blob = pool.build(recipe)
+            if blob is not None and hashlib.md5(blob).hexdigest() == target:
+                return label, blob
     return None
 
 
@@ -405,7 +466,7 @@ def main() -> int:
     profile_recipes = collect_recipes(profiles)
     dat_recipes = load_dat_recipes(args.dat_recipes)
     recipes = merge_recipes(profile_recipes, dat_recipes)
-    pool = AtomPool(Path(args.bios_dir))
+    pool = AtomPool(Path(args.bios_dir), DIGEST_CACHE)
 
     result: dict = {
         "recipes": sum(len(v) for v in recipes.values()),
@@ -425,6 +486,8 @@ def main() -> int:
                 result["missing"]["constructible"], recipes, pool,
                 Path(args.bios_dir), db,
             )
+
+    pool.save_digests()
 
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))
