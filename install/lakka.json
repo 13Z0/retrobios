@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T14:58:23Z",
   "base_destination": "system",
   "detect": [
     {
@@ -17,9 +17,9 @@
   ],
   "standalone_copies": [],
   "total_files": 5888,
-  "total_size": 6133409820,
+  "total_size": 6132457264,
   "pack_files": 8530,
-  "pack_size": 6173957483,
+  "pack_size": 6173004927,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -12593,44 +12593,13 @@
     },
     {
       "dest": "pcsx2/resources/GameIndex.yaml",
-      "sha1": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8",
-      "sha256": "61c77b789ccde856096f024e4a3eef6891e15ca59c127e0dd13e762a7d338a7e",
-      "size": 2690355,
-      "repo_path": "bios/Other/armsx2/pcsx2/resources/GameIndex.yaml",
+      "sha1": "57369df9ca82a460e596cea7835c5a0797dee668",
+      "sha256": "efa94cb7b9208dc6812bb9407dc986560e523cce57f511eff30942f76b7288bf",
+      "size": 1737799,
+      "repo_path": "bios/Sony/PlayStation 2/.variants/GameIndex.yaml.57369df9",
       "cores": null,
       "systems": [
         "sony-playstation-2"
-      ],
-      "slot_choices": [
-        {
-          "sha1": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8",
-          "sha256": "61c77b789ccde856096f024e4a3eef6891e15ca59c127e0dd13e762a7d338a7e",
-          "size": 2690355,
-          "repo_path": "bios/Other/armsx2/pcsx2/resources/GameIndex.yaml",
-          "cores": [
-            "armsx2"
-          ]
-        },
-        {
-          "sha1": "7efb2ed721cf0c0f0677324e09be311a8337e793",
-          "sha256": "3bf3c54d6f16d88d3669be698179bb8c2fb981ee5ce71bcb952719429a838cc1",
-          "size": 2693579,
-          "repo_path": "bios/Other/yaps2/GameIndex.yaml",
-          "cores": [
-            "yaps2"
-          ]
-        }
-      ],
-      "declared_choices": [
-        {
-          "sha1": "57369df9ca82a460e596cea7835c5a0797dee668",
-          "sha256": "efa94cb7b9208dc6812bb9407dc986560e523cce57f511eff30942f76b7288bf",
-          "size": 1737799,
-          "repo_path": "bios/Sony/PlayStation 2/.variants/GameIndex.yaml.57369df9",
-          "systems": [
-            "sony-playstation-2"
-          ]
-        }
       ],
       "alternatives": [
         {
