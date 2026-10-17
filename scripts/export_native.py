@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import json
 import sys
 import urllib.error
@@ -146,8 +147,27 @@ def wanted_sources(
 
     base = pinned_base(wanted, scraped)
     if base:
-        wanted = {relative: base + relative for relative in wanted}
+        wanted = {
+            relative: _at_revision(wanted[relative], base) or base + relative
+            for relative in wanted
+        }
     return wanted
+
+
+_RAW_GITHUB = re.compile(r"^https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/")
+
+
+def _at_revision(url: str, base: str) -> str:
+    """A file of the pinned repository, read at the pinned revision; empty
+    when the URL is not a raw GitHub URL of that repository.
+
+    ROCKNIX's checker sits in packages/rocknix/, the emulators it names in
+    packages/virtual/: no shared directory, one revision.
+    """
+    pinned, other = _RAW_GITHUB.match(base), _RAW_GITHUB.match(url)
+    if pinned and other and pinned.group(1, 2) == other.group(1, 2):
+        return pinned.group(0) + url[other.end():]
+    return ""
 
 
 def collect_originals(
@@ -347,7 +367,7 @@ def export_platform(
         for entry in system.files:
             if not entry.name:
                 continue
-            if exporter.writable(entry):
+            if exporter.lands(entry):
                 landed += entry.platform is None
             elif entry.platform is None:
                 refused += 1

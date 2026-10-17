@@ -331,7 +331,8 @@ class OneMd5FormatsAddWhole(unittest.TestCase):
         from exporter.batocera_exporter import Exporter as Batocera  # noqa: PLC0415
 
         several = NativeFile("boot.bin", "boot.bin", "dc", truth={"md5": [A, B, C]})
-        single = NativeFile("boot2.bin", "boot2.bin", "dc", truth={"md5": A})
+        single = NativeFile("boot2.bin", "boot2.bin", "dc", truth={"md5": A},
+                          runners=[(False, "flycast")])
         self.assertFalse(Batocera.writable(several))
         self.assertTrue(Batocera.writable(single))
 

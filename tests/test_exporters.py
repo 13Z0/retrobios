@@ -43,6 +43,8 @@ from export_native import (  # noqa: E402
 )
 from exporter.baseline import (  # noqa: E402
     NativeFile,
+    NativeSystem,
+    Report,
     build_native_model,
 )
 
@@ -85,6 +87,11 @@ TRUTH = {
 }
 
 SCRAPED = {
+    # The cores the platform runs, by its own names: an addition is written
+    # with the runner that wants it.
+    "cores": ["atari800", "duckstation", "fuse", "melonds", "o2em", "picodrive",
+              "snes9x", "beetle_psx"],
+    "standalone_cores": ["duckstation"],
     "systems": {
         "sony-playstation": {
             "native_id": "psx",
@@ -949,6 +956,7 @@ class BatoceraExport(unittest.TestCase):
         self.assertTrue(foreign.foreign_system)
         own = next(fe for fe in systems["psx"].files if fe.name == "scph7001.bin")
         self.assertFalse(own.foreign_system)
+        self.assertEqual(own.runners, [(True, "duckstation")])
         for platform in ("batocera", "rocknix", "retrobat", "recalbox"):
             with self.subTest(platform=platform):
                 exporter = discover_exporters()[platform]
@@ -963,7 +971,8 @@ class BatoceraExport(unittest.TestCase):
 
     def test_a_system_the_platform_names_without_files_is_its_own(self):
         """A system the platform declares empty still has the platform's id."""
-        scraped = {"systems": {"nintendo-snes": {"native_id": "snes", "files": []}}}
+        scraped = {"cores": ["snes9x"],
+                   "systems": {"nintendo-snes": {"native_id": "snes", "files": []}}}
         truth = {"systems": {"nintendo-snes": {"files": [{
             "name": "st010.zip", "path": "st010.zip", "md5": "2" * 32,
             "required": False, "_cores": ["snes9x"],
@@ -1389,3 +1398,109 @@ class ARecordDescribesOneDump(unittest.TestCase):
             source = (Path(__file__).resolve().parent.parent / "scripts" / "exporter" / module).read_text()
             with self.subTest(module=module):
                 self.assertNotRegex(source, r'= fe\.hash\("(crc32|md5|sha1)"\)')
+
+
+class AnAdditionCarriesItsRunner(unittest.TestCase):
+    """Batocera's apple2 entry is gated on libretro/mame; Clock Signal's
+    apple2.rom written inside it was asked of mame users and never of clk
+    users. Recalbox got core="libretro/duckstation", a core it never runs."""
+
+    ORIGINAL = (
+        "#!/usr/bin/env python\n"
+        "systems = {\n"
+        '    "apple2": { "name": "Apple II", "emulator": "libretro", "core": "mame", '
+        '"biosFiles": [ { "md5": "", "file": "bios/apple2e.zip" } ] },\n'
+        '    "macintosh": { "name": "Macintosh", "biosFiles": [ '
+        '{ "md5": "", "file": "bios/MacII.ROM", "emulator": "libretro", "core": "minivmac" } ] },\n'
+        "}\n"
+        "def checkBios(systems, prefix, filterROMs):\n"
+        "    return {}\n"
+    )
+
+    def _systems(self):
+        def add(native, name, runners):
+            return NativeFile(name, name, native, truth={"md5": "1" * 32}, runners=runners)
+
+        apple2 = NativeSystem("apple2", "Apple II", from_platform=True, files=[
+            NativeFile("apple2e.zip", "apple2e.zip", "apple2", platform={"md5": ""}),
+            add("apple2", "apple2.rom", [(True, "clk")]),
+            add("apple2", "apple2e.rom", [(False, "mame")]),
+        ])
+        mac = NativeSystem("macintosh", "Macintosh", from_platform=True, files=[
+            NativeFile("MacII.ROM", "MacII.ROM", "macintosh", platform={"md5": ""}),
+            add("macintosh", "macplus.rom", [(True, "clk")]),
+            add("macintosh", "nothing.rom", []),
+        ])
+        return {"apple2": apple2, "macintosh": mac}
+
+    def test_batocera_writes_the_runner_or_counts_the_file_out(self):
+        exporter = discover_exporters()["batocera"]()
+        systems = self._systems()
+        out = exporter.render(systems, Report(), {"batocera-systems": self.ORIGINAL})
+        text = out["batocera-systems"]
+        self.assertNotIn("apple2.rom", text)
+        self.assertIn('"file": "bios/apple2e.rom" }', text)
+        self.assertIn('"file": "bios/macplus.rom", "emulator": "clk" }', text)
+        self.assertNotIn("nothing.rom", text)
+        landed = {fe.name for s in systems.values() for fe in s.files
+                  if fe.platform is None and exporter.lands(fe)}
+        self.assertEqual(landed, {"apple2e.rom", "macplus.rom"})
+
+    def test_recalbox_names_cores_as_it_runs_them(self):
+        fe = NativeFile("scph5000.bin", "scph5000.bin", "psx", truth={"md5": "1" * 32},
+                        runners=[(True, "duckstation"), (False, "mednafen_psx")])
+        self.assertEqual(fe.cores(), ["duckstation", "libretro/mednafen_psx"])
+        self.assertEqual(NativeFile("x", "x", "psx", truth={"md5": "1" * 32}).cores(), [])
+
+    def test_runners_use_the_platform_name_of_the_profile(self):
+        scraped = {"cores": ["mednafen_psx", "duckstation"],
+                   "standalone_cores": ["duckstation"],
+                   "systems": {"sony-playstation": {"native_id": "psx", "files": []}}}
+        truth = {"systems": {"sony-playstation": {"files": [
+            {"name": "a.bin", "md5": "1" * 32, "_cores": ["beetle_psx"]},
+            {"name": "b.bin", "md5": "2" * 32, "_cores": ["duckstation"]},
+            {"name": "c.bin", "md5": "3" * 32, "_cores": ["no-such-core"]},
+        ]}}}
+        systems, _ = build_native_model(truth, scraped)
+        runners = {fe.name: fe.runners for fe in systems["psx"].files}
+        self.assertEqual(runners["a.bin"], [(False, "mednafen_psx")])
+        self.assertEqual(runners["b.bin"], [(True, "duckstation")])
+        self.assertEqual(runners["c.bin"], [])
+
+
+class RocknixNamesRunnersItsOwnWay(unittest.TestCase):
+    """ROCKNIX's es_systems comes from add_emu_core in its emulators package:
+    libretro cores under `retroarch`, standalones under their emulator. The
+    `libretro` pair Batocera writes names nothing there."""
+
+    ORIGINAL = (
+        "#!/usr/bin/env python\n"
+        "systems = {\n"
+        '    "psx": { "name": "PS1", "biosFiles": [ { "md5": "", "file": "bios/scph5501.bin" } ] },\n'
+        "}\n"
+        "def checkBios(systems, prefix, filterROMs):\n"
+        "    return {}\n"
+    )
+    PACKAGE = (
+        "  add_emu_core psx retroarch beetle_psx false\n"
+        "  add_emu_core psx duckstation duckstation-sa false\n"
+    )
+
+    def test_the_package_names_the_runner(self):
+        exporter = discover_exporters()["rocknix"]()
+        psx = NativeSystem("psx", "PS1", from_platform=True, files=[
+            NativeFile("scph5501.bin", "scph5501.bin", "psx", platform={"md5": ""}),
+            NativeFile("a.bin", "a.bin", "psx", truth={"md5": "1" * 32},
+                       runners=[(False, "beetle_psx")]),
+            NativeFile("b.bin", "b.bin", "psx", truth={"md5": "2" * 32},
+                       runners=[(True, "duckstation-sa")]),
+            NativeFile("c.bin", "c.bin", "psx", truth={"md5": "3" * 32},
+                       runners=[(False, "unknown_core")]),
+        ])
+        text = exporter.render(
+            {"psx": psx}, Report(),
+            {"rocknix-systems": self.ORIGINAL, "emulators/package.mk": self.PACKAGE},
+        )["rocknix-systems"]
+        self.assertIn('"file": "bios/a.bin", "emulator": "retroarch", "core": "beetle_psx" }', text)
+        self.assertIn('"file": "bios/b.bin", "emulator": "duckstation", "core": "duckstation-sa" }', text)
+        self.assertNotIn("c.bin", text)

@@ -127,6 +127,11 @@ class BaseExporter(ABC):
         """
         return False
 
+    def lands(self, fe: NativeFile) -> bool:
+        """Whether this render writes the entry: writable(), plus whatever
+        the render learned from the platform's own file."""
+        return self.writable(fe)
+
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """Whether this format can carry the entry.

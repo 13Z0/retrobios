@@ -65,6 +65,9 @@ class NativeFile:
     filled: list[str] = field(default_factory=list)
     # An addition filed under our own slug: the platform names no such system.
     foreign_system: bool = False
+    # For an addition, each core that wants it as (runs standalone, name the
+    # platform gives it); empty when no core the platform runs is named.
+    runners: list[tuple[bool, str]] = field(default_factory=list)
 
     @property
     def origin(self) -> str:
@@ -198,13 +201,14 @@ class NativeFile:
         return default
 
     def cores(self) -> list[str]:
-        """Cores that want this file, the platform's naming preferred."""
+        """Cores that want this file, as Recalbox writes them: the declared
+        value, else each runner, a standalone bare and a core under
+        libretro/. A profile key is not a name the platform knows:
+        `libretro/duckstation` named no core Recalbox runs."""
         declared = self.native("core", "")
         if declared:
             return [c.strip() for c in str(declared).split(",") if c.strip()]
-        if self.truth:
-            return [f"libretro/{c}" for c in self.truth.get("_cores", [])]
-        return []
+        return [name if standalone else f"libretro/{name}" for standalone, name in self.runners]
 
 
 @dataclass
@@ -483,7 +487,44 @@ def build_native_model(
         tail = [fe for fe in system.files if fe.platform is None]
         system.files = head + search_order(tail)
 
+    _attach_runners(systems, scraped)
     return systems, report
+
+
+def _attach_runners(systems: dict[str, NativeSystem], scraped: dict | None) -> None:
+    """Name the cores behind each addition the way the platform names them.
+
+    The platform lists its cores by its own names (Batocera's
+    `mednafen_psx`, Recalbox's `mednafen_psx`), our truth by profile key
+    (`beetle_psx`); a profile's `cores:` holds the names it answers to.
+    The build a platform runs an emulator as decides the runner.
+    """
+    if not scraped:
+        return
+    from common import load_emulator_profiles, runs_standalone
+
+    declared = scraped.get("cores")
+    libretro = {str(c) for c in declared} if isinstance(declared, list) else set()
+    standalone = {str(c) for c in scraped.get("standalone_cores") or []}
+    profiles = load_emulator_profiles(str(Path(__file__).resolve().parents[2] / "emulators"))
+    for system in systems.values():
+        for fe in system.files:
+            if fe.platform is not None or not fe.truth:
+                continue
+            runners: list[tuple[bool, str]] = []
+            for key in sorted(fe.truth.get("_cores") or ()):
+                profile = profiles.get(key, {})
+                names = [key, *(str(c) for c in profile.get("cores") or [])]
+                if runs_standalone(key, profile, standalone):
+                    name = next((n for n in names if n in standalone), None)
+                    runner = (True, name) if name else None
+                else:
+                    name = next((n for n in names if n in libretro - standalone), None) \
+                        or next((n for n in names if n in libretro), None)
+                    runner = (False, name) if name else None
+                if runner and runner not in runners:
+                    runners.append(runner)
+            fe.runners = runners
 
 
 def search_order(files: list[NativeFile]) -> list[NativeFile]:

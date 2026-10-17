@@ -25,6 +25,17 @@ _INDENT = " " * 4
 class Exporter(BaseExporter):
     """Write Batocera's batocera-systems, corrected."""
 
+    # checkBios reads emulator names from es_systems, and Batocera's
+    # standalone_cores are those names. ROCKNIX's list holds package names
+    # (duckstation-sa), which its checker does not know.
+    STANDALONE_RUNNERS = True
+
+    def __init__(self) -> None:
+        super().__init__()
+        # The emulator and core each system entry of the original is gated
+        # on, read by render.
+        self._gates: dict[str, tuple[str, str] | None] = {}
+
     @staticmethod
     def platform_name() -> str:
         return "batocera"
@@ -55,7 +66,59 @@ class Exporter(BaseExporter):
         """
         if fe.platform is None and len(set(fe.hashes("md5"))) > 1:
             return False
+        if fe.platform is None and not cls._usable_runners(fe):
+            # Written without its core's emulator and core, checkBios asks
+            # every build for it (the defect _runner_keys repairs for the
+            # platform's own items).
+            return False
         return super().writable(fe, require)
+
+    @classmethod
+    def _usable_runners(cls, fe: NativeFile) -> list[tuple[bool, str]]:
+        return [r for r in fe.runners if cls.STANDALONE_RUNNERS or not r[0]]
+
+    def _runner_pair(self, runner: tuple[bool, str]) -> tuple[str, str | None] | None:
+        """The emulator and core checkBios finds a runner under, None when
+        the checker has no name for it. Batocera's es_systems names a
+        libretro core under `libretro` and a standalone by itself."""
+        standalone, name = runner
+        return (name, None) if standalone else ("libretro", name)
+
+    def _addition_keys(self, fe: NativeFile) -> list[tuple[str, str | None]] | None:
+        """The emulator/core pairs an addition is written with, [] when its
+        system's own gate already names its core, None when the gate names
+        another: checkBios walks a gated system only when that core is
+        installed, so a file of another core there is asked of the wrong
+        users and never of its own."""
+        pairs = [
+            pair for r in self._usable_runners(fe)
+            if (pair := self._runner_pair(r)) is not None
+        ]
+        if not pairs:
+            return None
+        gate = self._gates.get(fe.native_system)
+        if gate is None:
+            return pairs
+        return [] if gate in pairs else None
+
+    def exportable(
+        self,
+        systems: dict[str, NativeSystem],
+        require: str = "",
+    ) -> list[tuple[NativeSystem, list[NativeFile]]]:
+        """What the format can carry, less the additions its gates refuse:
+        render and validate read the same list."""
+        result = []
+        for system, files in super().exportable(systems, require):
+            kept = [fe for fe in files if self.lands(fe)]
+            if kept:
+                result.append((system, kept))
+        return result
+
+    def lands(self, fe: NativeFile) -> bool:
+        if not self.writable(fe):
+            return False
+        return fe.platform is not None or self._addition_keys(fe) is not None
 
     def states(self, fe: NativeFile, field_name: str) -> bool:
         if field_name == "md5" and "md5" in fe.filled:
@@ -96,21 +159,37 @@ class Exporter(BaseExporter):
         }
         parts: list[str] = []
         for fe in files:
-            # The platform states an unhashed file as an empty md5 rather
-            # than leaving it out, and so do we.
-            item = [f'"md5": "{self.single_value(fe, "md5")}"']
-            alt = fe.native("alt_md5", "")
-            if alt:
-                item.append(f'"altmd5": "{alt}"')
-            declared = fe.native("native_path", "")
-            path = str(declared) if declared else f"bios/{fe.destination}"
-            item.append(f'"file": "{path}"')
-            zipped = fe.native("zipped_file", "")
-            if zipped:
-                item.append(f'"zippedFile": "{zipped}"')
-            item.extend(self._runner_keys(originals.get(path)))
-            parts.append("{ " + ", ".join(item) + " }")
+            for runner in self._item_runners(fe):
+                parts.append(self._bios_item(fe, runner, originals))
         return parts
+
+    def _item_runners(self, fe: NativeFile) -> list[list[str] | None]:
+        """One item per runner an addition names; None keeps the original's."""
+        if fe.platform is not None:
+            return [None]
+        pairs = self._addition_keys(fe) or []
+        if not pairs:
+            return [[]]
+        return [
+            [f'"emulator": "{emulator}"'] + ([f'"core": "{core}"'] if core else [])
+            for emulator, core in pairs
+        ]
+
+    def _bios_item(self, fe: NativeFile, runner: list[str] | None, originals: dict) -> str:
+        # The platform states an unhashed file as an empty md5 rather
+        # than leaving it out, and so do we.
+        item = [f'"md5": "{self.single_value(fe, "md5")}"']
+        alt = fe.native("alt_md5", "")
+        if alt:
+            item.append(f'"altmd5": "{alt}"')
+        declared = fe.native("native_path", "")
+        path = str(declared) if declared else f"bios/{fe.destination}"
+        item.append(f'"file": "{path}"')
+        zipped = fe.native("zipped_file", "")
+        if zipped:
+            item.append(f'"zippedFile": "{zipped}"')
+        item.extend(self._runner_keys(originals.get(path)) if runner is None else runner)
+        return "{ " + ", ".join(item) + " }"
 
     @staticmethod
     def _own_entry(system: NativeSystem, before: dict | None) -> dict:
@@ -257,11 +336,6 @@ class Exporter(BaseExporter):
         originals: dict[str, str],
         scraped: dict | None = None,
     ) -> dict[str, str]:
-        exportable = dict(
-            (system.native_id, (system, files))
-            for system, files in self.exportable(systems, require="md5")
-        )
-
         original = originals.get(self.native_filename(), "")
         if not original:
             raise ValueError(
@@ -272,6 +346,18 @@ class Exporter(BaseExporter):
 
         head, body, tail = self._split_original(original)
         spans = self._entry_spans(body)
+        for key, (start, end) in spans.items():
+            parsed = self._parse_entry(body[start:end + 1]) or {}
+            own = parsed.get(key) if isinstance(parsed.get(key), dict) else {}
+            emulator, core = own.get("emulator"), own.get("core")
+            self._gates[key] = (
+                (emulator, core if isinstance(core, str) else None)
+                if isinstance(emulator, str) else None
+            )
+        exportable = {
+            system.native_id: (system, files)
+            for system, files in self.exportable(systems, require="md5")
+        }
 
         rebuilt: list[str] = []
         written: set[str] = set()
