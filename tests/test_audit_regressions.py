@@ -3514,5 +3514,20 @@ class TheIssueFormListsEveryPlatform(unittest.TestCase):
             self.assertIn(display, options)
 
 
+
+class TheTestJobHasTheDataTrees(unittest.TestCase):
+    """Packs built without data directories exit non-zero; the CI test job
+    had none, and two pack parity tests failed there only."""
+
+    def test_the_trees_are_fetched_before_the_suite(self):
+        steps = yaml.safe_load(
+            (ROOT / ".github" / "workflows" / "validate.yml").read_text()
+        )["jobs"]["run-tests"]["steps"]
+        runs = [step.get("run", "") for step in steps]
+        fetch = next(i for i, run in enumerate(runs) if "refresh_data_dirs.py" in run)
+        suite = next(i for i, run in enumerate(runs) if "unittest discover" in run)
+        self.assertLess(fetch, suite)
+
+
 if __name__ == "__main__":
     unittest.main()
