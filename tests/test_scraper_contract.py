@@ -260,6 +260,41 @@ core = "mame2003_plus"
         self.assertNotIn("cores", registry["platforms"]["recalbox"])
 
 
+class RetroBatCoresFromItsES(unittest.TestCase):
+    """RetroBat's YAML carried no core list: batocera-systems.json names
+    BIOS files only, and a registry list copied from Batocera stood in,
+    with abuse, clk or etlegacy that RetroBat never runs."""
+
+    ES_SYSTEMS = """\
+<?xml version="1.0"?>
+<systemList>
+  <system><name>snes</name><emulators>
+    <emulator name="libretro"><cores><core>snes9x</core><core>bsnes</core></cores></emulator>
+    <emulator name="bsnes" />
+  </emulators></system>
+  <system><name>samcoupe</name><emulators>
+    <emulator name="simcoupe"><cores><core>simcoupe</core></cores></emulator>
+  </emulators></system>
+</systemList>
+"""
+
+    def test_libretro_cores_and_standalone_emulators(self):
+        from scraper.retrobat_scraper import es_systems_cores
+
+        cores, standalone = es_systems_cores(self.ES_SYSTEMS)
+        self.assertEqual(cores, {"snes9x", "bsnes", "simcoupe"})
+        self.assertEqual(standalone, {"bsnes", "simcoupe"})
+
+    def test_the_registry_leaves_the_list_to_the_scraper(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertNotIn("cores", registry["platforms"]["retrobat"])
+        platform = yaml.safe_load((root / "platforms" / "retrobat.yml").read_text())
+        self.assertIn("snes9x", platform["cores"])
+
+
 class UnreadableReleaseStopsTheScrape(unittest.TestCase):
     """A failed tag lookup fell back to master, or to an empty or invented
     version. BizHawk, RomM, Batocera and Recalbox then wrote a YAML read from

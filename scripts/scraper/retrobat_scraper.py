@@ -9,6 +9,8 @@ Hash: MD5 primary
 from __future__ import annotations
 
 import json
+import urllib.error
+import urllib.request
 
 try:
     from .base_scraper import (
@@ -33,6 +35,37 @@ SOURCE_URL = (
 )
 
 GITHUB_REPO = "RetroBat-Official/retrobat"
+
+ES_SYSTEMS_URL = (
+    "https://raw.githubusercontent.com/RetroBat-Official/retrobat/{tag}"
+    "/system/templates/emulationstation/es_systems.cfg"
+)
+
+
+def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
+    """Every core RetroBat's ES offers, and the emulators it runs standalone.
+
+    emulatorlauncher starts what es_systems.cfg lists: a libretro core by its
+    name under ``<emulator name="libretro">``, any other emulator by its own
+    name. batocera-systems.json names BIOS files only, so the platform read
+    from it alone had no core list and relied on one kept by hand.
+    """
+    from common import parse_untrusted_xml
+
+    root = parse_untrusted_xml(text, "es_systems.cfg")
+    cores: set[str] = set()
+    standalone: set[str] = set()
+    for emulator in root.iter("emulator"):
+        name = (emulator.get("name") or "").strip()
+        if not name:
+            continue
+        listed = {(core.text or "").strip() for core in emulator.iter("core")} - {""}
+        if name == "libretro":
+            cores |= listed
+        else:
+            cores.add(name)
+            standalone.add(name)
+    return cores, standalone
 
 # Map RetroBat system keys to our normalized system IDs
 SYSTEM_SLUG_MAP = {
@@ -161,6 +194,15 @@ class Scraper(BaseScraper):
             systems[req.system]["files"].append(requirement_entry(req))
 
         version = fetch_github_latest_version(GITHUB_REPO)
+        es_url = ES_SYSTEMS_URL.format(tag=version)
+        req = urllib.request.Request(es_url, headers={"User-Agent": "retrobios-scraper/1.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                cores, standalone = es_systems_cores(resp.read().decode("utf-8"))
+        except urllib.error.URLError as e:
+            raise ConnectionError(f"Failed to fetch {es_url}: {e}") from e
+        if not cores:
+            raise RuntimeError(f"es_systems.cfg at {version} names no core")
 
         return {
             "platform": "RetroBat",
@@ -170,6 +212,8 @@ class Scraper(BaseScraper):
             "base_destination": "bios",
             "hash_type": "md5",
             "verification_mode": "md5",
+            "cores": sorted(cores),
+            "standalone_cores": sorted(standalone),
             "systems": systems,
         }
 
