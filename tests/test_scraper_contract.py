@@ -295,6 +295,42 @@ class RetroBatCoresFromItsES(unittest.TestCase):
         self.assertIn("snes9x", platform["cores"])
 
 
+class RocknixRunsItsStandaloneEmulators(unittest.TestCase):
+    """ROCKNIX declared all_libretro while it packages duckstation, dolphin,
+    ppsspp and 33 other emulators standalone, and read rocknix-systems on
+    the next branch under the release's version."""
+
+    def test_package_names_reach_the_profiles(self):
+        from scraper.rocknix_scraper import standalone_emulators
+
+        self.assertEqual(
+            standalone_emulators(["duckstation-sa", "hatarisa", "openbor"]),
+            ["duckstation", "duckstation-sa", "hatari", "hatarisa", "openbor"],
+        )
+
+    def test_the_platform_file_is_read_at_its_release(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        platform = yaml.safe_load((root / "platforms" / "rocknix.yml").read_text())
+        self.assertIn(f"/distribution/{platform['version']}/", platform["source"])
+        self.assertIn("retroarch", platform["cores"])
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertNotIn("cores", registry["platforms"]["rocknix"])
+
+
+class RetroDeckCoresAreItsComponents(unittest.TestCase):
+    """The registry added clk and gsplus to RetroDECK, which ships neither
+    as a component, current or archived."""
+
+    def test_the_registry_leaves_the_list_to_the_scraper(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertNotIn("cores", registry["platforms"]["retrodeck"])
+
+
 class UnreadableReleaseStopsTheScrape(unittest.TestCase):
     """A failed tag lookup fell back to master, or to an empty or invented
     version. BizHawk, RomM, Batocera and Recalbox then wrote a YAML read from

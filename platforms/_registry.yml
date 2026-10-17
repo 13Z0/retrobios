@@ -306,28 +306,6 @@ platforms:
       - username: monster-penguin
         contribution: platform support
         pr: 36
-    cores:
-    - azahar
-    - cemu
-    - clk
-    - dolphin
-    - duckstation
-    - gsplus
-    - gzdoom
-    - mame
-    - melonds
-    - openbor
-    - pcsx2
-    - pico-8
-    - ppsspp
-    - primehack
-    - retroarch
-    - rpcs3
-    - ruffle
-    - solarus
-    - vita3k
-    - xemu
-    - xroar
     target_scraper: null
     target_source: null
     install:
