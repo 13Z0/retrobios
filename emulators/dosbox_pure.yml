@@ -202,6 +202,7 @@ files:
 
   - name: "DOSBOX.SF2"
     description: "General MIDI SoundFont (any .sf2/.sf3 accepted)"
+    aliases: ["GeneralUser-GS.sf2"]
     required: false
     hle_fallback: true
     source_ref: "dosbox_pure_libretro.cpp:1405 (scan classifies .SF* as a SoundFont), dosbox_pure_libretro.cpp:2495-2499 (path taken from the system directory), dosbox_pure_libretro.cpp:2806-2813 (auto-detected on the mounted C: drive)"

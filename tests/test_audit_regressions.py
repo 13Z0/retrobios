@@ -2745,5 +2745,28 @@ class AnUnreadableArchiveIsSaidOutLoud(unittest.TestCase):
                 common.resolve_local_file(entry, db)
         self.assertIn(f"unreadable archive {broken}", stderr.getvalue())
 
+
+class GeneralUserGSReachesEveryCoreThatNamesIt(unittest.TestCase):
+    """The SoundFont was held as dosbox_pure's DOSBOX.SF2 alone: dosbox-staging
+    and dosbox-x, which name it GeneralUser-GS.sf2 and GeneralUser_GS.sf2,
+    shipped no General MIDI bank."""
+
+    def test_each_name_resolves_to_the_one_file(self):
+        import common  # noqa: PLC0415
+
+        if not (ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        db = json.loads((ROOT / "database.json").read_text())
+        profiles = common.load_emulator_profiles(str(ROOT / "emulators"))
+        held = "bios/Other/GeneralUser GS/GeneralUser-GS.sf2"
+        for emulator, name in (("dosbox_pure", "DOSBOX.SF2"),
+                               ("dosbox-staging", "GeneralUser-GS.sf2"),
+                               ("dosbox-x", "GeneralUser_GS.sf2")):
+            with self.subTest(emulator=emulator):
+                entry = next(f for f in profiles[emulator]["files"] if f["name"] == name)
+                path, _status = common.resolve_local_file(
+                    {**entry, "source_profile": emulator}, db, dest_hint=entry.get("path", ""))
+                self.assertEqual(path, held)
+
 if __name__ == "__main__":
     unittest.main()
