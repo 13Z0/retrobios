@@ -2470,6 +2470,9 @@ def generate_emulator_page(
         else:
             lines.append(f"| Upstream | {upstream} |")
     lines.append(f"| Version | {version} |")
+    revision = revision_markdown(profile)
+    if revision:
+        lines.append(f"| Revision | {revision} |")
     lines.append(f"| Profiled | {profiled} |")
     if cores:
         lines.append(f"| Cores | {', '.join(str(c) for c in cores)} |")
@@ -3989,6 +3992,7 @@ from sitewrite import (  # noqa: E402,F401
     _sweep_generated,
 )
 from sitesources import (  # noqa: E402,F401
+    revision_markdown,
     _repo_pins,
     _forge_sources,
     _source_permalink,

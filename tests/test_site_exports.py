@@ -287,5 +287,30 @@ class PerModeSourcePins(unittest.TestCase):
         self.assertEqual(_json_text("c" * 40), "c" * 40)
 
 
+
+class AnEmulatorPageNamesItsRevision(unittest.TestCase):
+    """The page linked the repositories unpinned; the commit every citation
+    refers to sat in the YAML alone, for 178 profiles."""
+
+    def test_each_repository_links_its_pinned_commit(self):
+        import generate_site  # noqa: PLC0415
+
+        profile = {
+            "emulator": "Caprice32", "type": "libretro",
+            "source": "https://github.com/libretro/libretro-cap32",
+            "upstream": "https://github.com/ColinPitrat/caprice32",
+            "source_commit": "c" * 40, "upstream_commit": "6" * 40,
+            "source_branch": "main", "systems": ["amstrad-cpc"], "files": [],
+        }
+        page = generate_site.generate_emulator_page("cap32", profile, {"files": {}})
+        self.assertIn(
+            "| Revision | [libretro/libretro-cap32@cccccccccccc]"
+            "(https://github.com/libretro/libretro-cap32/commit/" + "c" * 40 + "), "
+            "[ColinPitrat/caprice32@666666666666]"
+            "(https://github.com/ColinPitrat/caprice32/commit/" + "6" * 40 + "), "
+            "branch `main` |",
+            page,
+        )
+
 if __name__ == "__main__":
     unittest.main()

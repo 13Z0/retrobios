@@ -92,6 +92,32 @@ def _source_permalink(repo: upstream.Repo, pin: str, path: str,
                 url += f"-L{end}"
     return url
 
+def _commit_url(repo: upstream.Repo, pin: str) -> str:
+    """Forge-specific browser URL for one commit."""
+    base = f"https://{repo.host}/{repo.owner}/{repo.name}"
+    if repo.family == "gitlab":
+        return f"{base}/-/commit/{pin}"
+    return f"{base}/commit/{pin}"
+
+
+def revision_markdown(profile: dict) -> str:
+    """Each repository the profile reads, linked at the commit it was read at.
+
+    The page linked the repositories unpinned: the revision every citation
+    refers to sat in the YAML alone, for 178 profiles.
+    """
+    links = [
+        f"[{repo.slug}@{pin[:12]}]({_commit_url(repo, pin)})"
+        for repo, pin in _forge_sources(profile)
+    ]
+    branch = profile.get("source_branch")
+    if branch and not isinstance(branch, dict):
+        links.append(f"branch `{branch}`")
+    elif isinstance(branch, dict):
+        links += [f"{mode} branch `{name}`" for mode, name in branch.items()]
+    return ", ".join(links)
+
+
 def _source_ref_markdown(profile: dict, value) -> str:
     """Render source_ref values as pinned links when their forge is known.
 
