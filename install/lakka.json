@@ -16,10 +16,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5869,
-  "total_size": 6160844731,
-  "pack_files": 8512,
-  "pack_size": 6201377258,
+  "total_files": 5862,
+  "total_size": 6127051679,
+  "pack_files": 8505,
+  "pack_size": 6167584206,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -13268,12 +13268,6 @@
       "systems": [
         "coleco-colecovision",
         "microsoft-msx"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "blueMSX:file:Machines/Shared Roms/PAINT.rom"
       ]
     },
     {
@@ -66159,76 +66153,6 @@
       ],
       "systems": [
         "j2me"
-      ]
-    },
-    {
-      "dest": "kvs1.wav",
-      "sha1": "b094c2c1fca81a0e531e0541f302346150ec4604",
-      "sha256": "8bf8d878db407cc81b4c8a05069d3aa35e0e7bff803112d4d0eba637d60fe12c",
-      "size": 3436329,
-      "repo_path": "bios/Atari/2600/KVS1.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvs2.wav",
-      "sha1": "8b83b2eea01b3e08ceb885aeb153d4084bddb63c",
-      "sha256": "d031b9534ba75d870365657f578ed18c0cc513ebe9b253be7d80114c7ae4210d",
-      "size": 2086275,
-      "repo_path": "bios/Atari/2600/KVS2.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvs3.wav",
-      "sha1": "86896a1e272d8715489de9b407f0b8a42f82d4a0",
-      "sha256": "4e47d32533feebfa9625ea818183edcd519b8cb6516bf3db11dc9a01ada6878b",
-      "size": 3720920,
-      "repo_path": "bios/Atari/2600/KVS3.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvb1.wav",
-      "sha1": "6a582aebcefd6e2a97bdd8968202aab9851a889c",
-      "sha256": "968937d09e17ca059cdc5f092161ba172c56ff31bc945e381638c79bf7a7e4e2",
-      "size": 4219542,
-      "repo_path": "bios/Atari/2600/KVB1.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvb2.wav",
-      "sha1": "60a425c6bde3226ab731995562716321be20fc49",
-      "sha256": "6ac885493469e68992b0d272264b4b0947e7d6a5c6fd0170c65299acc386c122",
-      "size": 9593878,
-      "repo_path": "bios/Atari/2600/KVB2.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvb3.wav",
-      "sha1": "5e34125c4d6c209b21d1c892f3df0ec1644fd0d8",
-      "sha256": "76acf3b4e607cc851c625d455ced2b099dc394460d8716c02420904960842e34",
-      "size": 7676992,
-      "repo_path": "bios/Atari/2600/KVB3.WAV",
-      "cores": [
-        "stella2014"
-      ]
-    },
-    {
-      "dest": "kvshared.wav",
-      "sha1": "9adf10cdf1de833b194c7d8797ad1f041ad98dd3",
-      "sha256": "589b37725aeb9801868deafa2940c6eacb15430d4051ada7942298561f3014b6",
-      "size": 3059116,
-      "repo_path": "bios/Atari/2600/KVSHARED.WAV",
-      "cores": [
-        "stella2014"
       ]
     },
     {

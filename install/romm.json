@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-16T16:55:49Z",
+  "generated": "2026-10-16T17:23:53Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,7 +19,7 @@
   "total_size": 1458695892,
   "pack_files": 1096,
   "pack_size": 1458695892,
-  "total_omitted": 58,
+  "total_omitted": 51,
   "omitted_files": [
     {
       "dest": "CM32LN_CONTROL.ROM",
@@ -329,76 +329,6 @@
       "reason": "no_platform_slug",
       "cores": [
         "MAME 2003"
-      ]
-    },
-    {
-      "dest": "kvb1.wav",
-      "name": "kvb1.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvb2.wav",
-      "name": "kvb2.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvb3.wav",
-      "name": "kvb3.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvs1.wav",
-      "name": "kvs1.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvs2.wav",
-      "name": "kvs2.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvs3.wav",
-      "name": "kvs3.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
-      ]
-    },
-    {
-      "dest": "kvshared.wav",
-      "name": "kvshared.wav",
-      "system": "",
-      "required": false,
-      "reason": "no_platform_slug",
-      "cores": [
-        "Stella 2014"
       ]
     },
     {
