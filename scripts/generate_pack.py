@@ -2237,8 +2237,10 @@ def _run_manifest_mode(
     for source, required_only in variants:
         for group_platforms, representative in groups:
             print(f"\nGenerating manifest for {representative} [source={source}]...")
+            tc = target_cores_cache.get(representative) if args.target else None
+            if _skip_empty_truth(args, source, representative, emu_profiles, tc, failed):
+                continue
             try:
-                tc = target_cores_cache.get(representative) if args.target else None
                 manifest = generate_manifest(
                     representative,
                     args.platforms_dir,
@@ -2403,6 +2405,37 @@ def _pack_label(source: str, required_only: bool) -> str:
     return f"[source={source}, required]" if required_only else f"[source={source}]"
 
 
+def _truth_layer_is_empty(
+    platform: str, platforms_dir: str, emu_profiles: dict, target_cores
+) -> bool:
+    """Whether a platform runs no core a profile describes.
+
+    MiSTer declares `cores: []`: its truth pack held nothing, passed its
+    check and was published under a name claiming a content.
+    """
+    config = load_platform_config(platform, platforms_dir)
+    return not _platform_cores(config, emu_profiles or {}, target_cores=target_cores)
+
+
+def _skip_empty_truth(args, source: str, representative: str, emu_profiles, tc,
+                      failed: list[str]) -> bool:
+    """Leave out a truth pack that would be empty; refuse it when asked for."""
+    if source != "truth" or not _truth_layer_is_empty(
+        representative, args.platforms_dir, emu_profiles, tc
+    ):
+        return False
+    if args.all_variants:
+        print(f"  {representative}: no core profile, no truth pack")
+    else:
+        print(
+            f"ERROR: {representative} runs no core a profile describes; "
+            "a truth pack would hold nothing",
+            file=sys.stderr,
+        )
+        failed.append(representative)
+    return True
+
+
 def _produced(split: bool, zip_path, zip_paths) -> bool:
     """Whether the build wrote what the run asked for."""
     return bool(zip_paths if split else zip_path)
@@ -2444,8 +2477,10 @@ def _run_platform_packs(
 
             zip_path = None
             zip_paths: list = []
+            tc = target_cores_cache.get(representative) if args.target else None
+            if _skip_empty_truth(args, source, representative, emu_profiles, tc, failed):
+                continue
             try:
-                tc = target_cores_cache.get(representative) if args.target else None
                 if args.split:
                     zip_paths = generate_split_packs(
                         representative,

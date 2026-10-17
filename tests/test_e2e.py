@@ -6157,6 +6157,24 @@ struct BurnDriver BurnDrvneogeo = {
             "a required-only system pack took the name of the full one",
         )
 
+    def test_a_platform_without_cores_has_no_truth_pack(self):
+        """MiSTer declares cores: []: its truth pack held nothing, passed
+        its check and exited 0 under a name claiming a content."""
+        import subprocess
+
+        repo = os.path.join(os.path.dirname(__file__), "..")
+        out = os.path.join(self.root, "truth_empty")
+        proc = subprocess.run(
+            [sys.executable, "scripts/generate_pack.py", "--platform", "misterfpga",
+             "--offline", "--source", "truth", "--output-dir", out],
+            capture_output=True, text=True, cwd=repo, timeout=300,
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("a truth pack would hold nothing", proc.stderr)
+        self.assertFalse(
+            [f for f in os.listdir(out) if f.endswith(".zip")] if os.path.isdir(out) else []
+        )
+
     def test_a_full_pack_is_not_announced_as_narrowed(self):
         from generate_pack import _build_readme, _narrowings
 
