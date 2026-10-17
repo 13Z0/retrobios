@@ -12,7 +12,7 @@ profiled_date: "2026-03-25"
 source_commit: "6eabf2242d451ee2e6d52b1e3f10efb77143ed05"
 core_version: "Git"
 display_name: "Sony - PlayStation 2 (LRPS2)"
-cores: [lrps2, pcsx2]
+cores: [lrps2, pcsx2, "ps2"]
 systems: [sony-playstation-2]
 
 bios_directory: "pcsx2/bios/"

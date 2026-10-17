@@ -128,3 +128,27 @@ rocknix:
         - wine
     amd64:
       aliases: [x86_64, pc]
+
+recalbox:
+  targets:
+    _default:
+      # system.ini names a mupen64plus video plugin as the core of the
+      # mupen64plus emulator; mupenGenerator.py loads it with --gfx
+      # mupen64plus-video-<core>.so. Plugins, not emulators.
+      remove_cores:
+        - glide64mk2 # mupen64plus-video-glide64mk2
+        - gliden64 # GLideN64 video plugin
+        - n64_gles2 # mupen64plus-video-gles2n64
+        - rice # mupen64plus-video-rice
+        - rice_gles2 # mupen64plus-video-gles2rice
+    # Recalbox names its boards by defconfig (configs/recalbox-<board>_defconfig).
+    rpi3:
+      aliases: [rpi3b]
+    rpi4_64:
+      aliases: [rpi4, rpi400]
+    rpi5_64:
+      aliases: [rpi5]
+    rpizero2:
+      aliases: [rpi-zero2]
+    x86_64:
+      aliases: [pc]

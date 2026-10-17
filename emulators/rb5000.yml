@@ -1,0 +1,41 @@
+emulator: RB5000
+type: standalone + libretro
+core_classification: official_port
+source:
+  standalone: "https://gitlab.com/recalbox/packages/standalone/rb5000"
+  libretro: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-rb5000"
+upstream: "https://gitlab.com/recalbox/packages/standalone/rb5000"
+profiled_date: "2026-10-17"
+source_commit:
+  standalone: "8c75a4b48a5222b0332d0508600f8ddc7ac1191c"
+  libretro: "7464996aa0cb1be77abf495dc901117e1af36e02"
+core_version:
+  standalone: "v1.1"
+  libretro: "v0.9"
+display_name: "Philips - VG 5000 (RB5000)"
+cores:
+  - "rb5000"
+systems:
+  - "philips-vg5k"
+
+notes: |
+  Philips VG 5000 emulator by Recalbox, a C++ fork of Daniel Coulom's
+  DCVG5K v2. The standalone build and the libretro core live in
+  two repositories and share the same Engine.
+
+  The 16 KB system ROM is not a file. It is encoded in the
+  Video::sPixels image table compiled into the binary, one ROM bit per
+  entry as bit 0 XOR bit 5 (ref: source/Data.cpp:2). The Engine
+  constructor copies that table into sMirror (ref: source/Engine.cpp:54)
+  and Z80ReadW() rebuilds each ROM byte from eight table entries the
+  first time the CPU reads it, caching it in mMemory
+  (ref: source/Engine.cpp:379-389). The libretro core carries the same
+  table and decoder.
+
+  The libretro core can map a user cartridge file over 0x0000-0x3FFF
+  when one is configured (ref: source/Engine.cpp:302-316); that file is
+  content. The on-screen display font is an Ubuntu TTF from the host
+  system fonts directory (ref: source/Video.cpp:90-92).
+
+exclusion_note: "VG 5000 system ROM is encoded in a compiled-in image table and decoded on first access; no file is read"
+files: []

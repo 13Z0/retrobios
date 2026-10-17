@@ -211,8 +211,8 @@ platforms:
     # Bios.cpp:64-68 hashes a .zip with Zip::Md5Composite, never its bytes
     zip_digest: composite
     schedule: monthly
-    target_scraper: null
-    target_source: null
+    target_scraper: recalbox_targets
+    target_source: https://gitlab.com/recalbox/recalbox/-/tree/master/configs
     install:
       detect:
       - os: linux

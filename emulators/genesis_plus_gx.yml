@@ -12,6 +12,7 @@ cores:
   - genesisplusgx
   - genesisplusgx-expanded
   - genplus
+  - "genesisplusgx_ex"
 systems:
   - sega-megadrive
   - sega-megacd

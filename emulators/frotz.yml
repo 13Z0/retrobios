@@ -1,0 +1,33 @@
+emulator: Frotz
+type: standalone
+core_classification: game_engine
+source: "https://gitlab.com/DavidGriffith/frotz"
+upstream: "https://gitlab.com/DavidGriffith/frotz"
+profiled_date: "2026-10-17"
+source_commit: "2f17d64f23f3d6e68cd676d35c9d1789e17bc9fc"
+core_version: "2.55pre"
+display_name: "Infocom Z-Machine (SDL Frotz)"
+cores:
+  - "frotz"
+systems:
+  - "zmachine"
+
+notes: |
+  Z-machine interpreter for Infocom and Inform story files (versions 1
+  to 8). Recalbox builds the SDL front end, sfrotz, and launches it with
+  a generated config file and the story file.
+
+  sf_initfonts() builds the text and fixed-width fonts from the bitmap
+  compiled into sf_deffont.c (ref: src/sdl/sf_deffont.c:22) and the
+  character graphics font from SF_font3 (ref: src/sdl/sf_fonts.c:979-989).
+  TrueType fonts are loaded only when the config file names them under
+  [Fonts] (ref: src/sdl/sf_resource.c:402-413), and a font that fails to
+  load is reported and skipped (ref: src/sdl/sf_fonts.c:959-973). No
+  default font path exists.
+
+  Pictures and sounds come from the story's Blorb data or from loose
+  resource files under the [Resources] Dir setting, "./" by default
+  (ref: src/sdl/sf_resource.c:75, 415). Both belong to the game.
+
+exclusion_note: "fonts compiled into the binary; external TrueType fonts only when the user config names them"
+files: []

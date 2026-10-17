@@ -117,18 +117,14 @@ BLOBS_QUERY = (
 BLOBS_PER_QUERY = 50
 
 
-def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
-    """The cores one Recalbox system.ini offers, and those run standalone.
+def _ini_sections(text: str) -> dict[str, dict[str, str]]:
+    """Sections and their key = value lines of one Recalbox system.ini.
 
-    Each ``[core.N]`` section (or its board override ``[core.N.<board>]``)
-    names an ``emulator`` and a ``core``: ``libretro`` with the core's name,
-    or a standalone emulator. es_bios.xml only names the cores that need a
-    BIOS, so read alone it left most of Recalbox's cores outside the pack.
+    Recalbox's .ini files are not strict INI (a value can run on a bare
+    line), so only sections and key = value lines are read.
     """
     import re
 
-    # Recalbox's .ini files are not strict INI (a value can run on a bare
-    # line), so only sections and key = value lines are read.
     sections: dict[str, dict[str, str]] = {}
     current: dict[str, str] | None = None
     for raw in text.splitlines():
@@ -142,23 +138,62 @@ def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
         if current is not None and "=" in line:
             key, value = line.split("=", 1)
             current[key.strip()] = value.strip().strip('"')
+    return sections
+
+
+def _core_names(values: dict[str, str]) -> tuple[set[str], set[str]]:
+    """(cores, standalone) one [core.N] section names."""
+    emulator = values.get("emulator", "")
+    core = values.get("core", "")
+    if emulator == "libretro":
+        return ({core} if core else set()), set()
+    if not emulator:
+        return set(), set()
+    names = {emulator} | ({core} if core and core != emulator else set())
+    return names, set(names)
+
+
+def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
+    """The cores one Recalbox system.ini offers, and those run standalone.
+
+    Each ``[core.N]`` section (or its board override ``[core.N.<board>]``)
+    names an ``emulator`` and a ``core``: ``libretro`` with the core's name,
+    or a standalone emulator. es_bios.xml only names the cores that need a
+    BIOS, so read alone it left most of Recalbox's cores outside the pack.
+    """
+    import re
+
     cores: set[str] = set()
     standalone: set[str] = set()
-    for section, values in sections.items():
+    for section, values in _ini_sections(text).items():
         if not re.fullmatch(r"core\.\d+(\.[\w-]+)?", section):
             continue
-        emulator = values.get("emulator", "")
-        core = values.get("core", "")
-        if emulator == "libretro":
-            if core:
-                cores.add(core)
-        elif emulator:
-            cores.add(emulator)
-            standalone.add(emulator)
-            if core and core != emulator:
-                cores.add(core)
-                standalone.add(core)
+        found, alone = _core_names(values)
+        cores |= found
+        standalone |= alone
     return cores, standalone
+
+
+def board_cores(text: str, board: str, enabled: set[str]) -> set[str]:
+    """The cores of one system.ini a board's image builds.
+
+    A core is built when the Buildroot package its section names is enabled
+    in the board's defconfig. ``[core.N.<board>]`` replaces the section on
+    that board and ``package.<board>`` its package.
+    """
+    import re
+
+    sections = _ini_sections(text)
+    cores: set[str] = set()
+    for section, values in sections.items():
+        match = re.fullmatch(r"core\.(\d+)", section)
+        if not match:
+            continue
+        values = sections.get(f"{section}.{board}", values)
+        package = values.get(f"package.{board}", values.get("package", ""))
+        if package in enabled:
+            cores |= _core_names(values)[0]
+    return cores
 
 
 class Scraper(BaseScraper):

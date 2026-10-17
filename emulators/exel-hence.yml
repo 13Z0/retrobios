@@ -1,0 +1,34 @@
+emulator: Exel-Hence
+type: libretro
+core_classification: pure_libretro
+source: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-exel-hence"
+upstream: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-exel-hence"
+profiled_date: "2026-10-17"
+source_commit: "213328332cbfd8121e018493443e223a7a780961"
+core_version: "v0.9"
+display_name: "Exelvision - EXL 100 (Exel-Hence)"
+cores:
+  - "exel-hence"
+systems:
+  - "exelvision-exl100"
+
+notes: |
+  Exelvision EXL 100 emulator written as a libretro core by Recalbox.
+
+  retro_load_game() asks for the system directory and hands it to
+  Exl100LoadRoms() (ref: src/libretro.c:710-734), which ignores it: the
+  main and sub CPU BIOS images are unpacked from arrays compiled into the
+  core (ref: src/exl100.c:1163-1181). The images are raw DEFLATE streams
+  XOR'd against a rotating key and inflated at load time
+  (ref: src/exl100_bios.c:56-101). Both arrays are present in the
+  shipped header (ref: src/exl100_bios.h:6703-6704). Exelmemoria, the
+  ExelBASIC and ExelBASIC+ cartridges and the ExelDisk DOS come from the same embedded
+  tables (ref: src/libretro.c:508, 533, 562).
+
+  The only file opened by name is a sidecar next to a .cram content file,
+  <basename>cram.txt or <basename>.txt, scanned for a CALL EXEC or RUN
+  line to auto-start the program (ref: src/libretro.c:614-686). It
+  belongs to the content.
+
+exclusion_note: "BIOS, BASIC cartridges and ExelDisk DOS compiled into the core; the system directory is never read"
+files: []

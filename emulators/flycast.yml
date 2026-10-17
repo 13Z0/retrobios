@@ -12,6 +12,7 @@ cores:
   - flycast
   - flycast_dev
   - flycastvl
+  - "flycast-next"
 systems:
   - sega-dreamcast
   - sega-naomi

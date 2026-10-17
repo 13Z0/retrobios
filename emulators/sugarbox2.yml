@@ -1,0 +1,36 @@
+emulator: Sugarbox2
+type: libretro
+core_classification: community_fork
+source: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-sugarbox2"
+upstream: "https://github.com/Tom1975/SugarboxV2"
+profiled_date: "2026-10-17"
+source_commit: "6b565a43a25e4dfb69867f7e927a707e15ea460f"
+core_version: "v0.9"
+display_name: "Amstrad - CPC / GX4000 (Sugarbox2)"
+cores:
+  - "sugarbox2"
+systems:
+  - "amstrad-cpc"
+
+notes: |
+  Libretro core by Recalbox wrapping Tom1975's SugarboxV2
+  (CPC 464, 664, 6128, 464+, 6128+ and GX-4000). Recalbox 10.1.1 builds
+  tag v1.5 from a token-gated copy of this repository; the public
+  repository carries v0.9 only, which is the revision read here.
+
+  Every ROM is compiled into the core as a zlib stream: OS and BASIC for
+  each model and language, AMSDOS, the Plus cartridge plus_en.cpr, the
+  CP/M Plus, FutureOS, SymbOS and utility expansion ROMs, 57 blobs in all
+  (ref: libretro/RomData.h:1-15).
+  rom_uncompress() inflates them when the machine is built
+  (ref: libretro/LibretroCore.cpp:1098-1107) and they are handed to the
+  memory map directly, never through a path
+  (ref: libretro/LibretroCore.cpp:1173-1174).
+
+  The keyboard map files the engine reads are written from embedded data
+  into the save directory, only when missing: CONF/KeyboardMaps.ini and
+  Keyboards/101_keyboard_linux
+  (ref: libretro/LibretroCore.cpp:1477-1502, 2169-2173).
+
+exclusion_note: "all CPC, Plus and GX-4000 ROMs compiled into the core as zlib blobs; keyboard maps written by the core into the save directory"
+files: []

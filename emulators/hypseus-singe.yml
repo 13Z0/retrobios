@@ -10,6 +10,7 @@ display_name: "Arcade (Hypseus Singe)"
 cores:
   - hypseus-singe
   - hypseus
+  - "hypseus_singe"
 systems:
   - arcade-laserdisc
 mode: standalone

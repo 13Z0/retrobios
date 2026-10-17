@@ -233,6 +233,40 @@ class RocknixPerDevice(unittest.TestCase):
                          ["ecwolf-lr", "prboom-lr", "vitaquake3-lr"])
 
 
+class RecalboxPerBoard(unittest.TestCase):
+    """Recalbox had no target list: a Raspberry Pi 3 pack carried the
+    firmware of emulators only its x86_64 image builds."""
+
+    SYSTEM_INI = (
+        "[core.0]\npackage = BR2_PACKAGE_PCSX2\nemulator = \"pcsx2\"\ncore = \"pcsx2\"\n"
+        "[core.1]\npackage = BR2_PACKAGE_LIBRETRO_PCSX_REARMED\nemulator = \"libretro\"\n"
+        "core = \"pcsx_rearmed\"\npackage.rpi3 = BR2_PACKAGE_LIBRETRO_PCSX_REARMED_NEON\n"
+        "[core.2]\npackage = BR2_PACKAGE_LIBRETRO_SWANSTATION\nemulator = \"libretro\"\n"
+        "core = \"swanstation\"\n"
+        "[core.2.rpi3]\npackage = BR2_PACKAGE_LIBRETRO_DUCKSTATION\nemulator = \"libretro\"\n"
+        "core = \"duckstation\"\n"
+    )
+
+    def test_a_board_gets_the_cores_its_defconfig_builds(self):
+        from scraper.recalbox_scraper import board_cores  # noqa: PLC0415
+        from scraper.targets.recalbox_targets_scraper import (  # noqa: PLC0415
+            defconfig_arch,
+            enabled_packages,
+        )
+
+        x86 = enabled_packages("BR2_x86_64=y\nBR2_PACKAGE_PCSX2=y\n"
+                               "BR2_PACKAGE_LIBRETRO_PCSX_REARMED=y\n"
+                               "BR2_PACKAGE_LIBRETRO_SWANSTATION=y\n# BR2_PACKAGE_X is not set\n")
+        self.assertEqual(board_cores(self.SYSTEM_INI, "x86_64", x86),
+                         {"pcsx2", "pcsx_rearmed", "swanstation"})
+        rpi3 = enabled_packages("BR2_arm=y\nBR2_PACKAGE_LIBRETRO_PCSX_REARMED_NEON=y\n"
+                                "BR2_PACKAGE_LIBRETRO_DUCKSTATION=y\n")
+        self.assertEqual(board_cores(self.SYSTEM_INI, "rpi3", rpi3),
+                         {"pcsx_rearmed", "duckstation"})
+        self.assertEqual(defconfig_arch("BR2_arm=y\n"), "armhf")
+        self.assertEqual(defconfig_arch("BR2_aarch64=y\n"), "aarch64")
+
+
 class RetroPieModuleFlags(unittest.TestCase):
     """The RetroPie target list read flags as requirements and libretro alone.
 

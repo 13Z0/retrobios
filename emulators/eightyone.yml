@@ -1,0 +1,56 @@
+emulator: EightyOne (Recalbox)
+type: libretro
+core_classification: community_fork
+source: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-eightyone"
+upstream: "https://github.com/charlierobson/EightyOne"
+profiled_date: "2026-10-17"
+source_commit: "39ea0cc26453f4026458cfff62f10223a6bb1724"
+core_version: "v1.2"
+display_name: "Sinclair - ZX81 / ZX Spectrum (EightyOne, Recalbox)"
+cores: ["eightyone"]
+systems:
+  - sinclair-zx81
+  - sinclair-zx80
+  - sinclair-zx-spectrum
+  - jupiter-ace
+  - timex-ts1500
+  - timex-tc2048
+  - timex-ts2068
+  - lambda-8300
+  - ringo-r470
+  - microdigital-tk85
+
+notes: |
+  Recalbox port of EightyOne, vendored under 81/ and built with CMake.
+  Machines: ZX80, ZX81, ZX97LE, TS1000, TS1500, TK85, Lambda 8300,
+  Ringo R470, Spectrum 16K/48K/+/128K/+2/+2A/+3, TC2048, TC2068, TS2068,
+  Jupiter ACE.
+  ref: libretro/libretro_core.cpp:876-1074
+
+  The ROM directory is <system>/eightyone/ with ROMs/, FDCs/ and IDEs/
+  subfolders.
+  ref: libretro/libretro_core.cpp:2620-2631
+
+  86 machine, interface, IDE, graphics and speech ROMs are compiled in as
+  zlib-compressed arrays and looked up by basename.
+  ref: libretro/eo_roms.cpp:16-103, libretro/eo_roms.cpp:106-128
+
+  memory_load, memoryLoadToAddress and font_load query the embedded table
+  before opening any path, and every ROM name the core requests is in that
+  table, so no ROM is read from the system directory.
+  ref: 81/Source/zx81/snap.cpp:1189-1199, 81/Source/zx81/snap.cpp:1285-1299, 81/Source/zx81/snap.cpp:1317-1328, 81/Source/zx81config.cpp:161-210, 81/Source/zx81config.cpp:259-284
+
+  Didaktik D40/D80 tests for eightyone/FDCs/didaktik.gama.rom and stores its
+  full path in CurRom when present; memory_load reduces the path to its
+  basename and serves the embedded copy.
+  ref: libretro/libretro_core.cpp:2953-2968, 81/Source/Spectrum/spec48.cpp:361-362
+
+  ZXpand writes zxpand-eeprom.bin (256 bytes of 0xFF) under the ROM
+  directory when it is absent.
+  ref: 81/Source/zxpand/smbsd.cpp:75-98
+
+  Digitalker is a stub and its SSR ROM loader is not compiled; CapsImg is
+  linked statically.
+  ref: libretro/eo_stubs.cpp:67-68, CMakeLists.txt:267-291
+
+files: []

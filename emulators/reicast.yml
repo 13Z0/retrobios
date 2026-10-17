@@ -1,0 +1,63 @@
+emulator: Reicast
+type: standalone
+core_classification: community_fork
+source: "https://github.com/reicast/reicast-emulator"
+upstream: "https://github.com/reicast/reicast-emulator"
+profiled_date: "2026-10-17"
+source_commit: "ad61f95dd6b4c6218846a25de6194550311a5d28"
+core_version: "Git"
+display_name: "Sega - Dreamcast (Reicast)"
+cores:
+  - "reicast"
+systems:
+  - "sega-dreamcast"
+
+notes: |
+  Dreamcast emulator descended from nullDC. The Linux build is compiled
+  for one platform; the default is dreamcast, which sets the ROM prefix
+  dc_, a 2 MB boot ROM, a 128 KB flash and NVR_OPTIONAL 0
+  (ref: core/types.h:209-217).
+
+  LoadRomFiles() tries dc_boot.bin, dc_boot.bin.bin, dc_bios.bin and
+  dc_bios.bin.bin for the boot ROM, then dc_nvmem.bin, dc_flash_wb.bin,
+  dc_flash.bin and dc_flash.bin.bin for the flash
+  (ref: core/hw/holly/sb_mem.cpp:30-51). Each candidate is accepted
+  when a full chip's worth of bytes can be read from it
+  (ref: core/hw/flashrom/flashrom.h:39-49, 61-99). No hash is checked.
+  With NVR_OPTIONAL 0 a missing flash fails LoadRomFiles() the same way
+  a missing boot ROM does.
+
+  When LoadRomFiles() fails, or the reios setting is on, the core starts
+  its HLE BIOS instead and loads only the flash, if present
+  (ref: core/nullDC.cpp:183-200, core/hw/holly/sb_mem.cpp:58-64).
+
+  Upstream resolves the directory as <data dir>/data/, the data dir
+  being $XDG_DATA_HOME/reicast or ~/.local/share/reicast, then each
+  $XDG_DATA_DIRS entry plus /reicast (ref: core/stdclass.cpp:83-100,
+  core/linux-dist/main.cpp:287-326, 355-379). Recalbox patches
+  nullDC.cpp to read and write both files in /recalbox/share/bios/dc/,
+  which is the path given below.
+
+files:
+  - name: "dc_boot.bin"
+    path: "dc/dc_boot.bin"
+    aliases: ["dc_boot.bin.bin", "dc_bios.bin", "dc_bios.bin.bin"]
+    system: "sega-dreamcast"
+    required: false
+    hle_fallback: true
+    min_size: 2097152
+    validation: [size]
+    description: "Dreamcast boot ROM"
+    source_ref: "core/hw/holly/sb_mem.cpp:20, 30-36, core/types.h:211, 215"
+    note: "First of the four names that reads 2097152 bytes wins. Missing, the HLE BIOS runs."
+  - name: "dc_nvmem.bin"
+    path: "dc/dc_nvmem.bin"
+    aliases: ["dc_flash_wb.bin", "dc_flash.bin", "dc_flash.bin.bin"]
+    system: "sega-dreamcast"
+    required: false
+    hle_fallback: true
+    min_size: 131072
+    validation: [size]
+    description: "Dreamcast flash memory"
+    source_ref: "core/hw/holly/sb_mem.cpp:22-23, 37-48, 58-64, core/types.h:212, 217"
+    note: "Written back as dc_nvmem.bin on exit. Missing, LoadRomFiles() fails even with a boot ROM present and the HLE BIOS runs."
