@@ -491,6 +491,11 @@ def refresh_all(
             dry_run=dry_run,
             versions_path=versions_path,
         )
+    if any(results.values()):
+        # A cache the resolver indexed in this process has changed under it.
+        from common import forget_data_dir_index  # noqa: PLC0415
+
+        forget_data_dir_index()
     return results
 
 

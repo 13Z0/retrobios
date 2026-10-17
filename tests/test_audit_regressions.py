@@ -2811,5 +2811,40 @@ class PipelineStepsSpeakAsTheyGo(unittest.TestCase):
         self.assertLess(text.index("two"), text.index("three"))
         self.assertLess(text.index("three"), text.index("--- probe: OK"))
 
+
+class ADataDirectoryIsWalkedOnce(unittest.TestCase):
+    """Each unresolved name walked every data-directory cache again: the
+    resolution cost names x tree on every pack build."""
+
+    def test_two_lookups_share_one_walk_and_keep_its_order(self):
+        import common  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            cache = Path(tmp) / "cache"
+            (cache / "a").mkdir(parents=True)
+            (cache / "b").mkdir()
+            (cache / "a" / "Font.bin").write_bytes(b"1")
+            (cache / "b" / "font.bin").write_bytes(b"2")
+            (cache / "b" / "other.bin").write_bytes(b"3")
+            registry = {"x": {"local_cache": str(cache)}}
+            common.forget_data_dir_index()
+            walks = []
+            real_walk = os.walk
+
+            def counting_walk(top, *a, **k):
+                walks.append(top)
+                return real_walk(top, *a, **k)
+
+            with mock.patch.object(common.os, "walk", counting_walk):
+                first, _ = common._resolve_in_data_dirs(["font.bin"], registry,
+                                                        lambda _p: "name_exact")
+                second, _ = common._resolve_in_data_dirs(["other.bin"], registry,
+                                                         lambda _p: "name_exact")
+            common.forget_data_dir_index()
+        self.assertEqual(len(walks), 1)
+        expected = sorted(str(p) for p in (cache / "a" / "Font.bin", cache / "b" / "font.bin"))
+        self.assertIn(first[0], expected)
+        self.assertEqual(second[0], str(cache / "b" / "other.bin"))
+
 if __name__ == "__main__":
     unittest.main()

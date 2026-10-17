@@ -635,21 +635,49 @@ def _resolve_in_data_dirs(names_to_try, data_dir_registry, verdict):
                 if status != "hash_mismatch":
                     return (candidate, status), mismatch
                 mismatch = mismatch or candidate
-        # The declared path may not be where the cache put it, so the whole
-        # tree is walked for the bare filename, case-insensitively.
+        # The declared path may not be where the cache put it, so the tree
+        # is searched for the bare filename, case-insensitively, in the order
+        # a walk meets it.
         basename_targets = {
             (n.rsplit("/", 1)[-1] if "/" in n else n).casefold()
             for n in names_to_try
         }
+        index = _data_dir_basenames(cache_dir)
+        found = sorted(
+            (order, path)
+            for target in basename_targets
+            for order, path in index.get(target, ())
+        )
+        for _order, candidate in found:
+            status = verdict(candidate)
+            if status != "hash_mismatch":
+                return (candidate, status), mismatch
+            mismatch = mismatch or candidate
+    return None, mismatch
+
+
+# Basename index per data-directory cache. Walking the whole tree again for
+# every unresolved name made resolution O(names x tree) on each pack build.
+_data_dir_index: dict[str, dict[str, list[tuple[int, str]]]] = {}
+
+
+def _data_dir_basenames(cache_dir: str) -> dict[str, list[tuple[int, str]]]:
+    """Casefolded basename -> (walk order, path) of every file in a cache."""
+    key = os.path.realpath(cache_dir)
+    if key not in _data_dir_index:
+        index: dict[str, list[tuple[int, str]]] = {}
+        order = 0
         for root, _dirs, fnames in os.walk(cache_dir):
             for fname in fnames:
-                if fname.casefold() in basename_targets:
-                    candidate = os.path.join(root, fname)
-                    status = verdict(candidate)
-                    if status != "hash_mismatch":
-                        return (candidate, status), mismatch
-                    mismatch = mismatch or candidate
-    return None, mismatch
+                index.setdefault(fname.casefold(), []).append((order, os.path.join(root, fname)))
+                order += 1
+        _data_dir_index[key] = index
+    return _data_dir_index[key]
+
+
+def forget_data_dir_index() -> None:
+    """Drop the basename indexes, after a data directory was refreshed."""
+    _data_dir_index.clear()
 
 
 def _resolve_agnostic(file_entry: dict, files_db: dict, has_strong_hash: bool):
