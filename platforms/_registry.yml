@@ -413,7 +413,6 @@ platforms:
     schedule: monthly
     cores:
     - applewin
-    - ares
     - azahar
     - beetle_ngp
     - beetle_pce

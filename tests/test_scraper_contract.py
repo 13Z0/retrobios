@@ -331,6 +331,21 @@ class RetroDeckCoresAreItsComponents(unittest.TestCase):
         self.assertNotIn("cores", registry["platforms"]["retrodeck"])
 
 
+class BizHawkRunsAresForN64Only(unittest.TestCase):
+    """BizHawk embeds ares as Ares64, its N64 core; mapping it to the ares
+    profile claimed thirty systems and accused FirmwareDatabase.cs of a
+    wrong MSX.rom it never declared for ares."""
+
+    def test_ares_is_not_a_bizhawk_core(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        platform = yaml.safe_load((root / "platforms" / "bizhawk.yml").read_text())
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertNotIn("ares", platform["cores"])
+        self.assertNotIn("ares", registry["platforms"]["bizhawk"]["cores"])
+
+
 class UnreadableReleaseStopsTheScrape(unittest.TestCase):
     """A failed tag lookup fell back to master, or to an empty or invented
     version. BizHawk, RomM, Batocera and Recalbox then wrote a YAML read from

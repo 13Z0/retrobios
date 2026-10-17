@@ -127,7 +127,9 @@ BIZHAWK_CORES = [
     "handy",
     "quicknes",
     "genesis_plus_gx",
-    "ares",
+    # Ares64 is BizHawk's N64 core only; its firmware (the 64DD IPL) is in
+    # FirmwareDatabase.cs. The ares profile's thirty systems are not what
+    # BizHawk runs ares for.
     "mupen64plus_next",
     "puae",
     "prboom",
