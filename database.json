@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-16T17:23:53Z",
-  "total_files": 19006,
-  "total_size": 17497733066,
+  "generated_at": "2026-10-17T04:01:45Z",
+  "total_files": 19007,
+  "total_size": 17498100981,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -185294,6 +185294,16 @@
       "crc32": "f0e8f27d",
       "adler32": "403a24fe"
     },
+    "651e27048fe67950b237b8dae24a30a52ca7fa70": {
+      "path": "bios/SNK/Neo Geo CD/.variants/neocd.zip.5b50a9a1",
+      "name": "neocd.zip",
+      "size": 367915,
+      "sha1": "651e27048fe67950b237b8dae24a30a52ca7fa70",
+      "md5": "5b50a9a185a51ff0780a92c49226d1df",
+      "sha256": "f3d9f399ffca44cc381546a260f6bc4f267705d8e10f8df1e6d624d4bc1c07fa",
+      "crc32": "f23850f7",
+      "adler32": "f19b85ac"
+    },
     "aed2cb663b6370efb10969a3373fd84c558edb4f": {
       "path": "bios/SNK/Neo Geo CD/.variants/neocd_aed2cb66.srm",
       "name": "neocd_aed2cb66.srm",
@@ -213490,6 +213500,7 @@
       "a147aeab5edeb1a9b652e7fb640f5bb3": "5158b728e62b391fb69493743dcf7abbc62abc82",
       "08ca8b2dba6662e8024f9e789711c6fc": "5142f205912869b673a71480c5828b1eaed782a8",
       "530fb9761957e59aeb47f2e8782df288": "ecf01eda815909f1facec62abf3594eaa8d11075",
+      "5b50a9a185a51ff0780a92c49226d1df": "651e27048fe67950b237b8dae24a30a52ca7fa70",
       "041fe48b90b1aed6d0b72da192fb76ef": "aed2cb663b6370efb10969a3373fd84c558edb4f",
       "b31a246b69493c35194fe0bac120dc37": "712816a3c41baf4129e23d645305a536e03d69de",
       "a7cca75f3d5af6acc85efcce589ab04f": "891407e147b2c022ebedf8c51fe3a2f497304906",
@@ -262133,6 +262144,10 @@
       "vs-bios.rom": [
         "ecf01eda815909f1facec62abf3594eaa8d11075"
       ],
+      "neocd.zip": [
+        "651e27048fe67950b237b8dae24a30a52ca7fa70",
+        "cef6a6e78989a595700337c15b79155523935333"
+      ],
       "neocd_aed2cb66.srm": [
         "aed2cb663b6370efb10969a3373fd84c558edb4f"
       ],
@@ -262147,9 +262162,6 @@
       ],
       "neocd.srm": [
         "43d114ed19550da818889dd3d002f0caa4b0be1f"
-      ],
-      "neocd.zip": [
-        "cef6a6e78989a595700337c15b79155523935333"
       ],
       "neocd_f.rom": [
         "a5f4a7a627b3083c979f6ebe1fabc5d2df6d083b"
@@ -289316,6 +289328,7 @@
       "0ffb3127": "5158b728e62b391fb69493743dcf7abbc62abc82",
       "ff3abc59": "5142f205912869b673a71480c5828b1eaed782a8",
       "f0e8f27d": "ecf01eda815909f1facec62abf3594eaa8d11075",
+      "f23850f7": "651e27048fe67950b237b8dae24a30a52ca7fa70",
       "e5554b80": "aed2cb663b6370efb10969a3373fd84c558edb4f",
       "97ea8425": "712816a3c41baf4129e23d645305a536e03d69de",
       "05cfde8c": "891407e147b2c022ebedf8c51fe3a2f497304906",
@@ -308324,6 +308337,7 @@
       "719f3ac7daf609aad3646814930dc583e1872e985b4f7c06ccb5e8cffda105bd": "5158b728e62b391fb69493743dcf7abbc62abc82",
       "1c3ec20824a58e5f5cbf47ccc2c91a10f34d21cfa2791b3413cea89b0c920db8": "5142f205912869b673a71480c5828b1eaed782a8",
       "9e9ad1123f9680bcb76fd3c33b9a77ffa64823f57d2d16136e3b674d7226d77c": "ecf01eda815909f1facec62abf3594eaa8d11075",
+      "f3d9f399ffca44cc381546a260f6bc4f267705d8e10f8df1e6d624d4bc1c07fa": "651e27048fe67950b237b8dae24a30a52ca7fa70",
       "b9fe3ad49ab66038dd14292482fad157de828c29a24c1c6f3c5639bd5ed513a2": "aed2cb663b6370efb10969a3373fd84c558edb4f",
       "f885f2cc79b5c0120ca316b0db360183c2b9a60bc727cbe211b7518e12bd5548": "712816a3c41baf4129e23d645305a536e03d69de",
       "61c9a0034ad19fc7199ff87785e2818712ea01bf1633bf9315166ffac9669a44": "891407e147b2c022ebedf8c51fe3a2f497304906",
@@ -541086,6 +541100,15 @@
       ],
       "Neo Geo/vs-bios.rom": [
         "ecf01eda815909f1facec62abf3594eaa8d11075"
+      ],
+      "SNK/Neo Geo CD/.variants/neocd.zip.5b50a9a1": [
+        "651e27048fe67950b237b8dae24a30a52ca7fa70"
+      ],
+      "Neo Geo CD/.variants/neocd.zip.5b50a9a1": [
+        "651e27048fe67950b237b8dae24a30a52ca7fa70"
+      ],
+      ".variants/neocd.zip.5b50a9a1": [
+        "651e27048fe67950b237b8dae24a30a52ca7fa70"
       ],
       "SNK/Neo Geo CD/.variants/neocd_aed2cb66.srm": [
         "aed2cb663b6370efb10969a3373fd84c558edb4f"
