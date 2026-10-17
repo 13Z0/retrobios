@@ -36,10 +36,33 @@ PLATFORM_NAME = "rocknix"
 
 GITHUB_REPO = "ROCKNIX/distribution"
 
-SOURCE_URL = (
-    "https://raw.githubusercontent.com/ROCKNIX/distribution/next/"
+SOURCE_TEMPLATE = (
+    "https://raw.githubusercontent.com/ROCKNIX/distribution/{ref}/"
     "projects/ROCKNIX/packages/rocknix/sources/scripts/rocknix-systems"
 )
+# The branch a test or a manual run can still name; a scrape reads the tag
+# of the release its YAML is labelled with.
+SOURCE_URL = SOURCE_TEMPLATE.format(ref="next")
+STANDALONE_TREE_URL = (
+    "https://api.github.com/repos/ROCKNIX/distribution/contents/"
+    "projects/ROCKNIX/packages/emulators/standalone?ref={ref}"
+)
+
+
+def standalone_emulators(package_names: list[str]) -> list[str]:
+    """The standalone emulators ROCKNIX packages, by the names profiles use.
+
+    A package is named after its emulator with an ``-sa`` suffix
+    (``duckstation-sa``), once without its hyphen (``hatarisa``); both
+    spellings are kept so a profile listing either is found.
+    """
+    names: set[str] = set()
+    for package in package_names:
+        names.add(package)
+        stripped = re.sub(r"-?sa$", "", package)
+        if stripped and stripped != package:
+            names.add(stripped)
+    return sorted(names)
 
 # ROCKNIX system key -> retrobios system ID
 SYSTEM_SLUG_MAP = {
@@ -124,8 +147,29 @@ def parse_systems(source: str) -> dict[str, dict]:
 class Scraper(BaseScraper):
     """Scraper for the ROCKNIX rocknix-systems script."""
 
-    def __init__(self, url: str = SOURCE_URL):
-        super().__init__(url=url)
+    def __init__(self, url: str | None = None):
+        self.tag = None if url else fetch_github_latest_version(GITHUB_REPO)
+        super().__init__(url=url or SOURCE_TEMPLATE.format(ref=self.tag))
+
+    def _fetch_standalone(self) -> list[str]:
+        """The packages of projects/ROCKNIX/packages/emulators/standalone."""
+        import json
+        import urllib.error
+        import urllib.request
+
+        from .base_scraper import github_headers
+
+        url = STANDALONE_TREE_URL.format(ref=self.tag or "next")
+        req = urllib.request.Request(url, headers=github_headers())
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                listing = json.loads(resp.read())
+        except (urllib.error.URLError, json.JSONDecodeError) as e:
+            raise ConnectionError(f"Failed to list {url}: {e}") from e
+        packages = [item["name"] for item in listing if item.get("type") == "dir"]
+        if not packages:
+            raise RuntimeError(f"no standalone emulator package at {url}")
+        return standalone_emulators(packages)
 
     def validate_format(self, raw_data: str) -> bool:
         """Validate the rocknix-systems format."""
@@ -179,15 +223,19 @@ class Scraper(BaseScraper):
             )
             entry["files"].append(requirement_entry(req))
 
+        standalone = self._fetch_standalone()
         return {
             "platform": "ROCKNIX",
-            "version": fetch_github_latest_version(GITHUB_REPO),
+            "version": self.tag or fetch_github_latest_version(GITHUB_REPO),
             "homepage": "https://rocknix.org",
-            "source": SOURCE_URL,
+            "source": self.url,
             "base_destination": "bios",
             "hash_type": "md5",
             "verification_mode": "md5",
-            "cores": "all_libretro",
+            # RetroArch with every libretro core, plus the standalone
+            # emulators ROCKNIX packages beside it.
+            "cores": ["retroarch", *standalone],
+            "standalone_cores": standalone,
             "systems": systems,
         }
 

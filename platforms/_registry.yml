@@ -391,7 +391,6 @@ platforms:
     extract_to: /storage/roms/bios/
     logo: https://avatars.githubusercontent.com/u/152618023
     scraper: rocknix
-    cores: all_libretro
     schedule: weekly
     install:
       detect:
