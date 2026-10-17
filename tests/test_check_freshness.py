@@ -303,6 +303,14 @@ class RepositoryWiringTests(unittest.TestCase):
         self.assertIn("[ci]", text)
         self.assertIn("[data]", text)
 
+    def test_render_keeps_long_values_whole(self):
+        """The profile_sync row lost the end of its sentence at 32 characters."""
+        local = "12 profiles behind upstream, 103 refs to re-read"
+        text = cf.render([cf.Finding("profiles", "profile_sync", cf.STALE, local=local,
+                                     remote="run profile_sync --all --triage")])
+        self.assertIn(local, text)
+        self.assertIn("run profile_sync --all --triage", text)
+
 
 class RepeatedDestinations(unittest.TestCase):
     def test_a_change_to_an_earlier_declaration_is_seen(self):

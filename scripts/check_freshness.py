@@ -1037,10 +1037,13 @@ def render(findings: list[Finding]) -> str:
         if not rows:
             continue
         lines.append(f"\n[{area}]")
+        # Columns are padded, never cut: the profile_sync row says in its
+        # local and remote values what to re-read, and lost the end of it.
+        local_width = min(max((len(f.local) for f in rows), default=0), 44)
         for f in rows:
-            cols = f"  {f.status:7} {f.subject[:width]:{width}}"
+            cols = f"  {f.status:7} {f.subject:{width}}"
             if f.local or f.remote:
-                cols += f"  {f.local[:32]:32} -> {f.remote[:32]}"
+                cols += f"  {f.local:{local_width}} -> {f.remote}"
             if f.detail:
                 cols += f"  {f.detail}"
             lines.append(cols.rstrip())
