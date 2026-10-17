@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-16T17:23:53Z",
+  "generated": "2026-10-17T04:02:46Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -5668,19 +5668,6 @@
       ]
     },
     {
-      "dest": "psx/openbios.bin",
-      "sha1": "389df7981873d9e6e46c84c20cd43af0e4226cf8",
-      "sha256": "62357c7a9bd88cdccbeb831bd20c4b1f18551e3c13acf466d4e6d636434b348b",
-      "size": 524288,
-      "repo_path": "bios/Sony/PlayStation/openbios.bin",
-      "cores": [
-        "beetle_psx"
-      ],
-      "systems": [
-        "sony-playstation"
-      ]
-    },
-    {
       "dest": "acpc/Archimedes/ROM311",
       "sha1": "3487729e87bebc9cb51665838c27beff22f7b3bd",
       "sha256": "e916a0b84a2c8d96d43731ec9a02c9dff31312c95bca725b2b60e7eb3bfe7384",
@@ -6485,44 +6472,6 @@
       ]
     },
     {
-      "dest": "acpc/MSX/msx-american.rom",
-      "sha1": "3656bb3bbc17d280d2016fe4f6ff3cded3082a41",
-      "sha256": "3b33130d959337be63182c4eae217797774b52322f8eb9e35ab20747412ed417",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/CLK/msx-american.rom",
-      "cores": [
-        "clk"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "acpc/MSX/msx-european.rom",
-      "sha1": "8963fc041975f31dc2ab1019cfdd4967999de53e",
-      "sha256": "efb1547eb341b36526243f506d57e651f06c91f45778cc0c0c189a31eaa8ba85",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/CLK/msx-european.rom",
-      "cores": [
-        "clk"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "microsoft-msx"
-      ]
-    },
-    {
       "dest": "acpc/MSX/disk.rom",
       "sha1": "032cb1c1c75b9a191fa1230978971698d9d2a17f",
       "sha256": "31740a761447d7590c304338d389b0ae114546a8b9f79c9ffd5e374f80b7d354",
@@ -7157,145 +7106,6 @@
       ]
     },
     {
-      "dest": "xbox/cromwell_1024.bin",
-      "sha1": "4e1c2c2ee308ca4591542b3ca48653f65fae6e0f",
-      "sha256": "b5c2cbdf297cd66ada8ef6fe4224c7c437cabc83d7c40c8e44af4941a72339c5",
-      "size": 1048576,
-      "repo_path": "bios/Microsoft/Xbox/cromwell_1024.bin",
-      "cores": [
-        "directxbox"
-      ],
-      "systems": [
-        "microsoft-xbox"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/USA/IPL.bin",
-      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
-      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/USA/IPL.bin"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/EUR/IPL.bin",
-      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
-      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/EUR/IPL.bin"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/JAP/IPL.bin",
-      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
-      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/JAP/IPL.bin"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/dsp_rom.bin",
-      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
-      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
-      "size": 8192,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/dsp_coef.bin",
-      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
-      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
-      "size": 4096,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/font_western.bin",
-      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
-      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
-      "size": 6478,
-      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/GC/font_japanese.bin",
-      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
-      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
-      "size": 259626,
-      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
-      "cores": [
-        "dolphin",
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "ngc/dolphin-emu/Sys/Triforce/segaboot.gcm",
-      "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
-      "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
-      "size": 2097152,
-      "repo_path": "bios/Sega/Triforce/segaboot.gcm",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
       "dest": "acpc/ep128emu/roms/exdos14isdos10uk.rom",
       "sha1": "b82e21b6e3214432b6dc13f650e97de88fc90a72",
       "sha256": "0641d7c8e403dd992a7952650be169374dd489a89cf0cedb60de742ec1168842",
@@ -7341,140 +7151,6 @@
       ],
       "systems": [
         "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "acpc/ep128emu/roms/zx128.rom",
-      "sha1": "16375d42ea109b47edded7a16028de7fdb3013a1",
-      "sha256": "c1ff621d7910105d4ee45c31e9fd8fd0d79a545c78b66c69a562ee1ffbae8d72",
-      "size": 32768,
-      "repo_path": "bios/Enterprise/64-128/zx128.rom",
-      "cores": [
-        "ep128emu_core"
-      ],
-      "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ]
-    },
-    {
-      "dest": "acpc/ep128emu/roms/zx48.rom",
-      "sha1": "5ea7c2b824672e914525d1d5c419d71b84a426a2",
-      "sha256": "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42",
-      "size": 16384,
-      "repo_path": "bios/Arcade/FBNeo/spectrum.rom",
-      "cores": [
-        "ep128emu_core"
-      ],
-      "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ]
-    },
-    {
-      "dest": "colecovision/fbneo/hiscore.dat",
-      "sha1": "ae3329abbcb7b445d979321a1f67733aa3f023d0",
-      "sha256": "d9c51a13ec2c6db6c9ba0f955c8a8fd8fe54fc2ec05cd82226f4ddf53d500182",
-      "size": 314122,
-      "repo_path": "bios/Arcade/FBNeo/hiscore.dat",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
-      ]
-    },
-    {
-      "dest": "colecovision/fbneo/samples/donpachi.zip",
-      "sha1": "d380fb29287eb7fc9ff901a7653ad40785f7deb1",
-      "sha256": "78a237f1e2774eb396e2f14999f1270597e0767a392729e7a4539455888b6fe0",
-      "size": 208549253,
-      "repo_path": "bios/Other/fbneo/fbneo/samples/donpachi.zip",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
-      ],
-      "storage": "release",
-      "release_asset": "donpachi.zip"
-    },
-    {
-      "dest": "colecovision/fbneo/samples/sfz3mix.zip",
-      "sha1": "e39ee9abb19076ef095f67469ca95ff5e7f600dc",
-      "sha256": "2c2e67ab762102f50df641280721164ddff0316e71081d5fa62f2a67365dea66",
-      "size": 101017377,
-      "repo_path": "bios/Other/fbneo/fbneo/samples/sfz3mix.zip",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
-      ],
-      "storage": "release",
-      "release_asset": "sfz3mix.zip"
-    },
-    {
-      "dest": "colecovision/fbneo/samples/twotiger.zip",
-      "sha1": "b286035624978c94194ef5b83b5d784ec00c3a3c",
-      "sha256": "fe5408e3f513c44a64f573e7a8b68885bce9b263bc9c67bfef13fef13f3e976e",
-      "size": 154985212,
-      "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
-      ],
-      "storage": "release",
-      "release_asset": "twotiger.zip"
-    },
-    {
-      "dest": "nes/gamegenie.nes",
-      "sha1": "f430a0d752a9fa0c7032db8131f9090d18f71779",
-      "sha256": "623ee3c09a175b3e5ccb15a295d17b135b9f3cc30397bbd781a5ba0a41ec6d48",
-      "size": 24592,
-      "repo_path": "bios/Nintendo/NES/gamegenie.nes",
-      "cores": [
-        "fceumm"
-      ],
-      "systems": [
-        "nintendo-nes"
-      ]
-    },
-    {
-      "dest": "nes/nes.pal",
-      "sha1": "37027d92e1015b82a7dc5c43e9f1649a961577ab",
-      "sha256": "26072575abb8a28c1f541b8cbcf6386a9bb136c6ff397fc76d649b8e10f220fb",
-      "size": 192,
-      "repo_path": "bios/Nintendo/NES/nes.pal",
-      "cores": [
-        "fceumm"
-      ],
-      "systems": [
-        "nintendo-nes"
       ]
     },
     {
@@ -7712,123 +7388,6 @@
       ]
     },
     {
-      "dest": "zxs/fuse/128p-0.rom",
-      "sha1": "d07fcdeca892ee80494d286ea9ea5bf3928a1aca",
-      "sha256": "633343620691a592c706d18c927fd539b7069a5d0fb7011bcd3bfc94be418681",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/128p-0.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/128p-1.rom",
-      "sha1": "80080644289ed93d71a1103992a154cc9802b2fa",
-      "sha256": "8d93c3342321e9d1e51d60afcd7d15f6a7afd978c231b43435a7c0757c60b9a3",
-      "size": 16384,
-      "repo_path": "bios/Arcade/FBNeo/zx128_1.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/trdos.rom",
-      "sha1": "21695e3f2a8f796386ce66eea8a246b0ac44810c",
-      "sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/beta128.trdos.v5-03.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/gluck.rom",
-      "sha1": "015eb96dafb273d4f4512c467e9b43c305fd1bc4",
-      "sha256": "7e0d59753fc1bc1f659baf0a1d982fe36d3a56a4de6c5a21f4023acd00371313",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/gluck.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/256s-0.rom",
-      "sha1": "477114ff0fe1388e0979df1423602b21248164e5",
-      "sha256": "c7ba1b5a4895b9ffba4499a40f227f955bc147092532f95023afe3a393bba602",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/256s-0.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/256s-1.rom",
-      "sha1": "367b5a102fb663beee8e7930b8c4acc219c1f7b3",
-      "sha256": "e8b8ec052e5e7283a59173326a954773583fc282ccdf1dfff1724c30fdbc86f8",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/256s-1.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/256s-2.rom",
-      "sha1": "07783ee295274d8ff15d935bfd787c8ac1d54900",
-      "sha256": "9f7571982a90268ef567bb6a8523d7c96db1d9644c85fee83c0ef0fa8a8900e1",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/256s-2.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/256s-3.rom",
-      "sha1": "33703e97cc93b7edfcc0334b64233cf81b7930db",
-      "sha256": "31eda65b203179f466e5fcea8741ecb7c14d3c8f022e622585103e903969eadd",
-      "size": 16384,
-      "repo_path": "bios/Sinclair/ZX Spectrum/256s-3.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/if1-2.rom",
-      "sha1": "5cfb6bca4177c45fefd571734576b55e3a127c08",
-      "sha256": "ad392df2bd366a3412f186240a40dd6fd2750c96a1779ffae77cf10aa1faf7ee",
-      "size": 8192,
-      "repo_path": "bios/Other/zesarux/if1-v2.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
       "dest": "zxs/fuse/disciple.rom",
       "sha1": "9a75ed4b293f968985be4c9aa893cd88276d1ced",
       "sha256": "efaedc62de4157d7a638634e6460f5dccff20dff2c043a876f830e04f1e988b1",
@@ -7855,102 +7414,11 @@
       ]
     },
     {
-      "dest": "zxs/fuse/didaktik80.rom",
-      "sha1": "cfb801fe3c0634d57920652e9727119ff8bf3a22",
-      "sha256": "a111f47be28b31c823d36fc6f279a9976ed561c21a21133337f4179d4741ad3b",
-      "size": 14336,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/didaktik80.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/opus.rom",
-      "sha1": "0eee1c503f71709fce8b7560dadc2d07d15edb80",
-      "sha256": "0a658b83257db99370f086f8ec57a5c9108ffc846e6fe567f262b63befc85dc9",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/opus.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/mf1.rom",
-      "sha1": "50fba2d628f3a2e9219f72980e4efd62fc9ec1f8",
-      "sha256": "3dc3ed5a0264dfa547420fc5a79b7b2912b089d12d2936d7fca2c5fb181e25a5",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf1.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/mf128.rom",
-      "sha1": "8df204ab490b87c389971ce0c7fb5f9cbd281f14",
-      "sha256": "06b30184ff8fbb21c125234f753276ccb6d48877f8cdd02324bb68b42f50bd24",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf128.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/mf3.rom",
-      "sha1": "983699a07665186f498f5827f9b35c442c2178ba",
-      "sha256": "8b2b2204b07cf5ac9add21ab6809eb2320141f995c38942e63f04c0014cc4250",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf3.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
       "dest": "zxs/fuse/speccyboot-1.4.rom",
       "sha1": "16af6f052b38a027dd49ba6e96e3a59d16b62672",
       "sha256": "d6156f2a392b3259514f107814349f23dc0c5d56780008fa438dbeae8b8f0b66",
       "size": 8192,
       "repo_path": "bios/Sinclair/ZX Spectrum/speccyboot-1.4.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/ttx2000s.rom",
-      "sha1": "c63d5b6a490a813a6d2890fefe9ce29e66d5c221",
-      "sha256": "8096812e0cfe3040c981046f6d895d3d6b16970698727218a865b984102f2ac3",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/ttx2000s.rom",
-      "cores": [
-        "fuse"
-      ],
-      "systems": [
-        "sinclair-zx-spectrum"
-      ]
-    },
-    {
-      "dest": "zxs/fuse/usource.rom",
-      "sha1": "fae53678a85ba503b77ed2d877de2635b284eef1",
-      "sha256": "0614276bb1e77da88144e43ec5a47bc418f8fb2bc482d216a24629eea826b543",
-      "size": 8192,
-      "repo_path": "bios/Sinclair/ZX Spectrum/usource.rom",
       "cores": [
         "fuse"
       ],
@@ -7979,32 +7447,6 @@
       ]
     },
     {
-      "dest": "lynx/howard.o",
-      "sha1": "bdca7bbb647066cf7555ce5d555ce09de4ebc41b",
-      "sha256": "8fc5201d46abd1a98639b59ba1579198617a4c28839fd3611ac82cbb092fa77e",
-      "size": 513,
-      "repo_path": "bios/Atari/Lynx/howard.o",
-      "cores": [
-        "handy"
-      ],
-      "systems": [
-        "atari-lynx"
-      ]
-    },
-    {
-      "dest": "atari-st/hatari/BOOT.ST",
-      "sha1": "5bcabba35bb8fbfe5a65b85efccf5ed657388308",
-      "sha256": "e2a0f8ce40fabd275f485eb4c1f59c5213ba0202d1b1c44ca8fdae60f112a8d5",
-      "size": 737280,
-      "repo_path": "bios/Atari/ST/hatari/BOOT.ST",
-      "cores": [
-        "hatari"
-      ],
-      "systems": [
-        "atari-st"
-      ]
-    },
-    {
       "dest": "nds/dsi_bios9.bin",
       "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
       "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
@@ -8022,117 +7464,6 @@
       "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
       "cores": [
         "melonds"
-      ]
-    },
-    {
-      "dest": "nds/dsi_firmware.bin",
-      "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
-      "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
-      "size": 131072,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
-      "cores": [
-        "melonds"
-      ]
-    },
-    {
-      "dest": "nds/dsi_sd_card.bin",
-      "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
-      "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
-      "size": 1048576,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
-      "cores": [
-        "melonds"
-      ]
-    },
-    {
-      "dest": "mac/MacIIx.ROM",
-      "sha1": "753b94351d94c369616c2c87b19d568dc5e2764e",
-      "sha256": "79fae48e2d5cfde68520e46616503963f8c16430903f410514b62c1379af20cb",
-      "size": 262144,
-      "repo_path": "bios/Apple/Macintosh II/MacIIx.ROM",
-      "cores": [
-        "minivmac"
-      ],
-      "systems": [
-        "apple-macintosh-ii"
-      ]
-    },
-    {
-      "dest": "64dd/Mupen64plus/IPL.n64",
-      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
-      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
-      "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
-      "cores": [
-        "mupen64plus_next"
-      ],
-      "systems": [
-        "nintendo-64dd"
-      ]
-    },
-    {
-      "dest": "64dd/Mupen64plus/font.ttf",
-      "sha1": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
-      "sha256": "c4c45690b345435b2cba52ecabe275f05e49b389b39fe68ad03afbb551288d3d",
-      "size": 65932,
-      "repo_path": "bios/Nintendo/Nintendo 64DD/Mupen64plus/font.ttf",
-      "cores": [
-        "mupen64plus_next"
-      ],
-      "systems": [
-        "nintendo-64dd"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2/bios9821.rom",
-      "sha1": "48b35384cd148c0cc10ec52d308af50d33916c7c",
-      "sha256": "cf0e73cb4072d14e15da5686a5bf2b7657570d592684e3d6b76f7ff610dc6e2d",
-      "size": 8192,
-      "repo_path": "bios/NEC/PC-98/bios9821.rom",
-      "cores": [
-        "nekop2"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2/scsi.rom",
-      "sha1": "3d7166f05daad1b022fa04c2569e788580158095",
-      "sha256": "9809ed07796454d5524cce240c4f815496b82fae3644aba80778612c618d5cf7",
-      "size": 8192,
-      "repo_path": "bios/NEC/PC-98/scsi.rom",
-      "cores": [
-        "nekop2"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2/sasi.rom",
-      "sha1": "b607707d74b5a7d3ba211825de31a8f32aec8146",
-      "sha256": "bd10f52cb7cb8abb838f51a8551529eaae1418b79020446acbb9a61b1e80830e",
-      "size": 4096,
-      "repo_path": "bios/NEC/PC-98/sasi.rom",
-      "cores": [
-        "nekop2"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "nes/custom.pal",
-      "sha1": "c7635019127aa28d84d28ae48304bfca6d5baefb",
-      "sha256": "3242424dbf90c081fffe87de7e9a4d908440c56b084cfee17e0f39a63b3118b4",
-      "size": 192,
-      "repo_path": "bios/Nintendo/NES/MesenPalette.pal",
-      "cores": [
-        "nestopia"
-      ],
-      "systems": [
-        "nintendo-nes"
       ]
     },
     {
@@ -9043,58 +8374,6 @@
       ],
       "systems": [
         "nintendo-nes"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2kai/ide.rom",
-      "sha1": "0877ffb4b4d1c18283468be3579b72ed8c22e3ac",
-      "sha256": "c15220d1c448bfd3aa268ef8de41dce14a9b3ba90171aaae539d6d94721ff4e0",
-      "size": 8192,
-      "repo_path": "bios/NEC/PC-98/ide.rom",
-      "cores": [
-        "np2kai"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2kai/scsi.rom",
-      "sha1": "3d7166f05daad1b022fa04c2569e788580158095",
-      "sha256": "9809ed07796454d5524cce240c4f815496b82fae3644aba80778612c618d5cf7",
-      "size": 8192,
-      "repo_path": "bios/NEC/PC-98/scsi.rom",
-      "cores": [
-        "np2kai"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2kai/sasi.rom",
-      "sha1": "b607707d74b5a7d3ba211825de31a8f32aec8146",
-      "sha256": "bd10f52cb7cb8abb838f51a8551529eaae1418b79020446acbb9a61b1e80830e",
-      "size": 4096,
-      "repo_path": "bios/NEC/PC-98/sasi.rom",
-      "cores": [
-        "np2kai"
-      ],
-      "systems": [
-        "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "pc-9800-series/np2kai/pci.rom",
-      "sha1": "1246203bebf9f04e3bac2df7fc64719304f9f1bd",
-      "sha256": "349b0c8347766c1459faeca96c1c924370d977bc544b8701180716f343a85ae4",
-      "size": 32768,
-      "repo_path": "bios/NEC/PC-98/pci.rom",
-      "cores": [
-        "np2kai"
-      ],
-      "systems": [
-        "nec-pc-98"
       ]
     },
     {
@@ -12878,6 +12157,728 @@
       ]
     },
     {
+      "dest": "psx/openbios.bin",
+      "sha1": "389df7981873d9e6e46c84c20cd43af0e4226cf8",
+      "sha256": "62357c7a9bd88cdccbeb831bd20c4b1f18551e3c13acf466d4e6d636434b348b",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/openbios.bin",
+      "cores": [
+        "beetle_psx"
+      ],
+      "systems": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "acpc/MSX/msx-american.rom",
+      "sha1": "3656bb3bbc17d280d2016fe4f6ff3cded3082a41",
+      "sha256": "3b33130d959337be63182c4eae217797774b52322f8eb9e35ab20747412ed417",
+      "size": 32768,
+      "repo_path": "bios/Microsoft/MSX/CLK/msx-american.rom",
+      "cores": [
+        "clk"
+      ],
+      "systems": [
+        "microsoft-msx"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "microsoft-msx"
+      ]
+    },
+    {
+      "dest": "acpc/MSX/msx-european.rom",
+      "sha1": "8963fc041975f31dc2ab1019cfdd4967999de53e",
+      "sha256": "efb1547eb341b36526243f506d57e651f06c91f45778cc0c0c189a31eaa8ba85",
+      "size": 32768,
+      "repo_path": "bios/Microsoft/MSX/CLK/msx-european.rom",
+      "cores": [
+        "clk"
+      ],
+      "systems": [
+        "microsoft-msx"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "microsoft-msx"
+      ]
+    },
+    {
+      "dest": "xbox/cromwell_1024.bin",
+      "sha1": "4e1c2c2ee308ca4591542b3ca48653f65fae6e0f",
+      "sha256": "b5c2cbdf297cd66ada8ef6fe4224c7c437cabc83d7c40c8e44af4941a72339c5",
+      "size": 1048576,
+      "repo_path": "bios/Microsoft/Xbox/cromwell_1024.bin",
+      "cores": [
+        "directxbox"
+      ],
+      "systems": [
+        "microsoft-xbox"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/USA/IPL.bin",
+      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "Dolphin:file:ngc/dolphin-emu/Sys/GC/USA/IPL.bin"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/EUR/IPL.bin",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "Dolphin:file:ngc/dolphin-emu/Sys/GC/EUR/IPL.bin"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/JAP/IPL.bin",
+      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "Dolphin:file:ngc/dolphin-emu/Sys/GC/JAP/IPL.bin"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/dsp_rom.bin",
+      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
+      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/dsp_coef.bin",
+      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
+      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/font_western.bin",
+      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
+      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
+      "size": 6478,
+      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/GC/font_japanese.bin",
+      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
+      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
+      "size": 259626,
+      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "ngc/dolphin-emu/Sys/Triforce/segaboot.gcm",
+      "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
+      "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
+      "size": 2097152,
+      "repo_path": "bios/Sega/Triforce/segaboot.gcm",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "acpc/ep128emu/roms/zx128.rom",
+      "sha1": "16375d42ea109b47edded7a16028de7fdb3013a1",
+      "sha256": "c1ff621d7910105d4ee45c31e9fd8fd0d79a545c78b66c69a562ee1ffbae8d72",
+      "size": 32768,
+      "repo_path": "bios/Enterprise/64-128/zx128.rom",
+      "cores": [
+        "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ]
+    },
+    {
+      "dest": "acpc/ep128emu/roms/zx48.rom",
+      "sha1": "5ea7c2b824672e914525d1d5c419d71b84a426a2",
+      "sha256": "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42",
+      "size": 16384,
+      "repo_path": "bios/Arcade/FBNeo/spectrum.rom",
+      "cores": [
+        "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ]
+    },
+    {
+      "dest": "colecovision/fbneo/hiscore.dat",
+      "sha1": "ae3329abbcb7b445d979321a1f67733aa3f023d0",
+      "sha256": "d9c51a13ec2c6db6c9ba0f955c8a8fd8fe54fc2ec05cd82226f4ddf53d500182",
+      "size": 314122,
+      "repo_path": "bios/Arcade/FBNeo/hiscore.dat",
+      "cores": [
+        "fbneo"
+      ],
+      "systems": [
+        "coleco-colecovision",
+        "fairchild-channel-f",
+        "microsoft-msx",
+        "nintendo-fds",
+        "nintendo-snes",
+        "snk-neogeo-cd"
+      ]
+    },
+    {
+      "dest": "colecovision/fbneo/samples/donpachi.zip",
+      "sha1": "d380fb29287eb7fc9ff901a7653ad40785f7deb1",
+      "sha256": "78a237f1e2774eb396e2f14999f1270597e0767a392729e7a4539455888b6fe0",
+      "size": 208549253,
+      "repo_path": "bios/Other/fbneo/fbneo/samples/donpachi.zip",
+      "cores": [
+        "fbneo"
+      ],
+      "systems": [
+        "coleco-colecovision",
+        "fairchild-channel-f",
+        "microsoft-msx",
+        "nintendo-fds",
+        "nintendo-snes",
+        "snk-neogeo-cd"
+      ],
+      "storage": "release",
+      "release_asset": "donpachi.zip"
+    },
+    {
+      "dest": "colecovision/fbneo/samples/sfz3mix.zip",
+      "sha1": "e39ee9abb19076ef095f67469ca95ff5e7f600dc",
+      "sha256": "2c2e67ab762102f50df641280721164ddff0316e71081d5fa62f2a67365dea66",
+      "size": 101017377,
+      "repo_path": "bios/Other/fbneo/fbneo/samples/sfz3mix.zip",
+      "cores": [
+        "fbneo"
+      ],
+      "systems": [
+        "coleco-colecovision",
+        "fairchild-channel-f",
+        "microsoft-msx",
+        "nintendo-fds",
+        "nintendo-snes",
+        "snk-neogeo-cd"
+      ],
+      "storage": "release",
+      "release_asset": "sfz3mix.zip"
+    },
+    {
+      "dest": "colecovision/fbneo/samples/twotiger.zip",
+      "sha1": "b286035624978c94194ef5b83b5d784ec00c3a3c",
+      "sha256": "fe5408e3f513c44a64f573e7a8b68885bce9b263bc9c67bfef13fef13f3e976e",
+      "size": 154985212,
+      "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
+      "cores": [
+        "fbneo"
+      ],
+      "systems": [
+        "coleco-colecovision",
+        "fairchild-channel-f",
+        "microsoft-msx",
+        "nintendo-fds",
+        "nintendo-snes",
+        "snk-neogeo-cd"
+      ],
+      "storage": "release",
+      "release_asset": "twotiger.zip"
+    },
+    {
+      "dest": "nes/gamegenie.nes",
+      "sha1": "f430a0d752a9fa0c7032db8131f9090d18f71779",
+      "sha256": "623ee3c09a175b3e5ccb15a295d17b135b9f3cc30397bbd781a5ba0a41ec6d48",
+      "size": 24592,
+      "repo_path": "bios/Nintendo/NES/gamegenie.nes",
+      "cores": [
+        "fceumm"
+      ],
+      "systems": [
+        "nintendo-nes"
+      ]
+    },
+    {
+      "dest": "nes/nes.pal",
+      "sha1": "37027d92e1015b82a7dc5c43e9f1649a961577ab",
+      "sha256": "26072575abb8a28c1f541b8cbcf6386a9bb136c6ff397fc76d649b8e10f220fb",
+      "size": 192,
+      "repo_path": "bios/Nintendo/NES/nes.pal",
+      "cores": [
+        "fceumm"
+      ],
+      "systems": [
+        "nintendo-nes"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/128p-0.rom",
+      "sha1": "d07fcdeca892ee80494d286ea9ea5bf3928a1aca",
+      "sha256": "633343620691a592c706d18c927fd539b7069a5d0fb7011bcd3bfc94be418681",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/128p-0.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/128p-1.rom",
+      "sha1": "80080644289ed93d71a1103992a154cc9802b2fa",
+      "sha256": "8d93c3342321e9d1e51d60afcd7d15f6a7afd978c231b43435a7c0757c60b9a3",
+      "size": 16384,
+      "repo_path": "bios/Arcade/FBNeo/zx128_1.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/trdos.rom",
+      "sha1": "21695e3f2a8f796386ce66eea8a246b0ac44810c",
+      "sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/beta128.trdos.v5-03.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/gluck.rom",
+      "sha1": "015eb96dafb273d4f4512c467e9b43c305fd1bc4",
+      "sha256": "7e0d59753fc1bc1f659baf0a1d982fe36d3a56a4de6c5a21f4023acd00371313",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/gluck.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/256s-0.rom",
+      "sha1": "477114ff0fe1388e0979df1423602b21248164e5",
+      "sha256": "c7ba1b5a4895b9ffba4499a40f227f955bc147092532f95023afe3a393bba602",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/256s-0.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/256s-1.rom",
+      "sha1": "367b5a102fb663beee8e7930b8c4acc219c1f7b3",
+      "sha256": "e8b8ec052e5e7283a59173326a954773583fc282ccdf1dfff1724c30fdbc86f8",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/256s-1.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/256s-2.rom",
+      "sha1": "07783ee295274d8ff15d935bfd787c8ac1d54900",
+      "sha256": "9f7571982a90268ef567bb6a8523d7c96db1d9644c85fee83c0ef0fa8a8900e1",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/256s-2.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/256s-3.rom",
+      "sha1": "33703e97cc93b7edfcc0334b64233cf81b7930db",
+      "sha256": "31eda65b203179f466e5fcea8741ecb7c14d3c8f022e622585103e903969eadd",
+      "size": 16384,
+      "repo_path": "bios/Sinclair/ZX Spectrum/256s-3.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/if1-2.rom",
+      "sha1": "5cfb6bca4177c45fefd571734576b55e3a127c08",
+      "sha256": "ad392df2bd366a3412f186240a40dd6fd2750c96a1779ffae77cf10aa1faf7ee",
+      "size": 8192,
+      "repo_path": "bios/Other/zesarux/if1-v2.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/didaktik80.rom",
+      "sha1": "cfb801fe3c0634d57920652e9727119ff8bf3a22",
+      "sha256": "a111f47be28b31c823d36fc6f279a9976ed561c21a21133337f4179d4741ad3b",
+      "size": 14336,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/didaktik80.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/opus.rom",
+      "sha1": "0eee1c503f71709fce8b7560dadc2d07d15edb80",
+      "sha256": "0a658b83257db99370f086f8ec57a5c9108ffc846e6fe567f262b63befc85dc9",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/opus.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/mf1.rom",
+      "sha1": "50fba2d628f3a2e9219f72980e4efd62fc9ec1f8",
+      "sha256": "3dc3ed5a0264dfa547420fc5a79b7b2912b089d12d2936d7fca2c5fb181e25a5",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf1.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/mf128.rom",
+      "sha1": "8df204ab490b87c389971ce0c7fb5f9cbd281f14",
+      "sha256": "06b30184ff8fbb21c125234f753276ccb6d48877f8cdd02324bb68b42f50bd24",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf128.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/mf3.rom",
+      "sha1": "983699a07665186f498f5827f9b35c442c2178ba",
+      "sha256": "8b2b2204b07cf5ac9add21ab6809eb2320141f995c38942e63f04c0014cc4250",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/mf3.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/ttx2000s.rom",
+      "sha1": "c63d5b6a490a813a6d2890fefe9ce29e66d5c221",
+      "sha256": "8096812e0cfe3040c981046f6d895d3d6b16970698727218a865b984102f2ac3",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/fuse/ttx2000s.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "zxs/fuse/usource.rom",
+      "sha1": "fae53678a85ba503b77ed2d877de2635b284eef1",
+      "sha256": "0614276bb1e77da88144e43ec5a47bc418f8fb2bc482d216a24629eea826b543",
+      "size": 8192,
+      "repo_path": "bios/Sinclair/ZX Spectrum/usource.rom",
+      "cores": [
+        "fuse"
+      ],
+      "systems": [
+        "sinclair-zx-spectrum"
+      ]
+    },
+    {
+      "dest": "lynx/howard.o",
+      "sha1": "bdca7bbb647066cf7555ce5d555ce09de4ebc41b",
+      "sha256": "8fc5201d46abd1a98639b59ba1579198617a4c28839fd3611ac82cbb092fa77e",
+      "size": 513,
+      "repo_path": "bios/Atari/Lynx/howard.o",
+      "cores": [
+        "handy"
+      ],
+      "systems": [
+        "atari-lynx"
+      ]
+    },
+    {
+      "dest": "atari-st/hatari/BOOT.ST",
+      "sha1": "5bcabba35bb8fbfe5a65b85efccf5ed657388308",
+      "sha256": "e2a0f8ce40fabd275f485eb4c1f59c5213ba0202d1b1c44ca8fdae60f112a8d5",
+      "size": 737280,
+      "repo_path": "bios/Atari/ST/hatari/BOOT.ST",
+      "cores": [
+        "hatari"
+      ],
+      "systems": [
+        "atari-st"
+      ]
+    },
+    {
+      "dest": "nds/dsi_firmware.bin",
+      "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
+      "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
+      "size": 131072,
+      "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+      "cores": [
+        "melonds"
+      ]
+    },
+    {
+      "dest": "nds/dsi_sd_card.bin",
+      "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
+      "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
+      "size": 1048576,
+      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
+      "cores": [
+        "melonds"
+      ]
+    },
+    {
+      "dest": "mac/MacIIx.ROM",
+      "sha1": "753b94351d94c369616c2c87b19d568dc5e2764e",
+      "sha256": "79fae48e2d5cfde68520e46616503963f8c16430903f410514b62c1379af20cb",
+      "size": 262144,
+      "repo_path": "bios/Apple/Macintosh II/MacIIx.ROM",
+      "cores": [
+        "minivmac"
+      ],
+      "systems": [
+        "apple-macintosh-ii"
+      ]
+    },
+    {
+      "dest": "64dd/Mupen64plus/IPL.n64",
+      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
+      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "cores": [
+        "mupen64plus_next"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "64dd/Mupen64plus/font.ttf",
+      "sha1": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
+      "sha256": "c4c45690b345435b2cba52ecabe275f05e49b389b39fe68ad03afbb551288d3d",
+      "size": 65932,
+      "repo_path": "bios/Nintendo/Nintendo 64DD/Mupen64plus/font.ttf",
+      "cores": [
+        "mupen64plus_next"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2/bios9821.rom",
+      "sha1": "48b35384cd148c0cc10ec52d308af50d33916c7c",
+      "sha256": "cf0e73cb4072d14e15da5686a5bf2b7657570d592684e3d6b76f7ff610dc6e2d",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-98/bios9821.rom",
+      "cores": [
+        "nekop2"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2/scsi.rom",
+      "sha1": "3d7166f05daad1b022fa04c2569e788580158095",
+      "sha256": "9809ed07796454d5524cce240c4f815496b82fae3644aba80778612c618d5cf7",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-98/scsi.rom",
+      "cores": [
+        "nekop2"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2/sasi.rom",
+      "sha1": "b607707d74b5a7d3ba211825de31a8f32aec8146",
+      "sha256": "bd10f52cb7cb8abb838f51a8551529eaae1418b79020446acbb9a61b1e80830e",
+      "size": 4096,
+      "repo_path": "bios/NEC/PC-98/sasi.rom",
+      "cores": [
+        "nekop2"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "nes/custom.pal",
+      "sha1": "c7635019127aa28d84d28ae48304bfca6d5baefb",
+      "sha256": "3242424dbf90c081fffe87de7e9a4d908440c56b084cfee17e0f39a63b3118b4",
+      "size": 192,
+      "repo_path": "bios/Nintendo/NES/MesenPalette.pal",
+      "cores": [
+        "nestopia"
+      ],
+      "systems": [
+        "nintendo-nes"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2kai/ide.rom",
+      "sha1": "0877ffb4b4d1c18283468be3579b72ed8c22e3ac",
+      "sha256": "c15220d1c448bfd3aa268ef8de41dce14a9b3ba90171aaae539d6d94721ff4e0",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-98/ide.rom",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2kai/scsi.rom",
+      "sha1": "3d7166f05daad1b022fa04c2569e788580158095",
+      "sha256": "9809ed07796454d5524cce240c4f815496b82fae3644aba80778612c618d5cf7",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-98/scsi.rom",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2kai/sasi.rom",
+      "sha1": "b607707d74b5a7d3ba211825de31a8f32aec8146",
+      "sha256": "bd10f52cb7cb8abb838f51a8551529eaae1418b79020446acbb9a61b1e80830e",
+      "size": 4096,
+      "repo_path": "bios/NEC/PC-98/sasi.rom",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "pc-9800-series/np2kai/pci.rom",
+      "sha1": "1246203bebf9f04e3bac2df7fc64719304f9f1bd",
+      "sha256": "349b0c8347766c1459faeca96c1c924370d977bc544b8701180716f343a85ae4",
+      "size": 32768,
+      "repo_path": "bios/NEC/PC-98/pci.rom",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
       "dest": "gamegear/carthw.cfg",
       "sha1": "d3fe0b958705e4cb5eeb7822e60d474204df4bd3",
       "sha256": "107438c14367af32fe08a731aee9255d5aa5ee444723969a799c546e4ad402f1",
@@ -13148,7 +13149,8 @@
         "nintendo-gamecube"
       ],
       "regions": [
-        "europe"
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "PrimeHack:file:ngc/GC/EUR/IPL.bin"
