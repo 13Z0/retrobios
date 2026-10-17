@@ -79,6 +79,9 @@ class SiteReferenceContracts(unittest.TestCase):
                                     "destination": "fw.bin",
                                     "required": True,
                                     "sha1": sha1,
+                                    "md5": "C87A52C277F7952B41C639FC7BF0A43B,"
+                                           "d0ed892a5e8d47e0cb5f8aa5f4dd7c5a",
+                                    "crc32": "3F9F95A4",
                                     "size": len(payload),
                                 }
                             ]
@@ -109,6 +112,8 @@ class SiteReferenceContracts(unittest.TestCase):
                         "name": "fw.bin",
                         "system": "test-system",
                         "required": True,
+                        "md5": ["5c124e7948ada85da603a522782940d0",
+                                "4921d5f2165dee6e2496f4388c4c81b2"],
                         "source_ref": "src/firmware.cpp:10-12",
                     }
                 ],
@@ -176,6 +181,13 @@ class SiteReferenceContracts(unittest.TestCase):
             "QEMU systems",
         )
 
+    ACCEPTED = (
+        ("md5", "c87a52c277f7952b41c639fc7bf0a43b"),
+        ("md5", "d0ed892a5e8d47e0cb5f8aa5f4dd7c5a"),
+        ("crc32", "3f9f95a4"),
+        ("md5", "4921d5f2165dee6e2496f4388c4c81b2"),
+    )
+
     def test_exports_have_catalog_hashes_and_queryable_sqlite(self):
         db, coverages, profiles, stats = self._fixtures()
         exports = generate_data_exports(
@@ -199,6 +211,14 @@ class SiteReferenceContracts(unittest.TestCase):
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), item["sha256"])
 
         with sqlite3.connect(self.docs / "downloads/retrobios.sqlite") as connection:
+            # One lowercase row per accepted value: a comma-joined Recalbox
+            # md5, a JSON array of accepted revisions and an uppercase crc32
+            # each missed an exact lookup.
+            for algorithm, value in self.ACCEPTED:
+                with self.subTest(algorithm=algorithm, value=value):
+                    self.assertTrue(connection.execute(
+                        "SELECT count(*) FROM accepted_hashes WHERE algorithm = ? AND value = ?",
+                        (algorithm, value)).fetchone()[0])
             self.assertEqual(connection.execute("SELECT count(*) FROM files").fetchone()[0], 1)
             self.assertEqual(connection.execute("SELECT count(*) FROM platforms").fetchone()[0], 1)
             self.assertEqual(connection.execute("SELECT count(*) FROM emulators").fetchone()[0], 1)

@@ -474,6 +474,48 @@ def _json_text(value) -> str:
     return str(value)
 
 
+HASH_ALGORITHMS = ("sha1", "sha256", "md5", "crc32")
+
+
+def _hash_values(value) -> list[str]:
+    """Every accepted value of one hash field, lowercase.
+
+    A field holds one value, a list of accepted revisions, or (Recalbox) a
+    comma-joined string: an exact lookup missed all but the first form.
+    """
+    if value is None:
+        return []
+    items = value if isinstance(value, (list, tuple)) else str(value).split(",")
+    return sorted({str(item).strip().lower() for item in items if str(item).strip()})
+
+
+def _accepted_hash_rows(platform_files: list[dict], emulator_items: list[dict]) -> list[dict]:
+    """One row per accepted hash value, for both layers, lookup-ready."""
+    rows: list[dict] = []
+    for row in platform_files:
+        for algorithm in HASH_ALGORITHMS:
+            for value in _hash_values(row.get(f"{algorithm}_raw", row.get(algorithm))):
+                rows.append({
+                    "layer": "platform", "owner": row["platform_id"],
+                    "system": row["system"], "name": row["name"],
+                    "path": row["destination"], "algorithm": algorithm, "value": value,
+                })
+    for item in emulator_items:
+        for entry in item["profile"].get("files", []) or []:
+            if not isinstance(entry, dict):
+                continue
+            for algorithm in HASH_ALGORITHMS:
+                for value in _hash_values(entry.get(algorithm)):
+                    rows.append({
+                        "layer": "emulator", "owner": item["id"],
+                        "system": _json_text(entry.get("system")),
+                        "name": entry.get("name", ""), "path": entry.get("path", "") or "",
+                        "algorithm": algorithm, "value": value,
+                    })
+    rows.sort(key=lambda r: (r["layer"], r["owner"], r["name"], r["algorithm"], r["value"]))
+    return rows
+
+
 def _csv_document(fieldnames: list[str], rows: list[dict]) -> str:
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(
@@ -733,6 +775,12 @@ def _write_sqlite_export(
                 status TEXT NOT NULL, required INTEGER NOT NULL,
                 in_repo TEXT, reason TEXT, discrepancy TEXT
             );
+            CREATE TABLE accepted_hashes (
+                layer TEXT NOT NULL, owner TEXT NOT NULL, system TEXT,
+                name TEXT NOT NULL, path TEXT, algorithm TEXT NOT NULL,
+                value TEXT NOT NULL
+            );
+            CREATE INDEX accepted_hashes_value_idx ON accepted_hashes(algorithm, value);
             CREATE INDEX files_name_idx ON files(name);
             CREATE INDEX files_md5_idx ON files(md5);
             CREATE INDEX files_sha256_idx ON files(sha256);
@@ -817,6 +865,11 @@ def _write_sqlite_export(
                         _json_text(entry.get("source_ref")),
                     ),
                 )
+        connection.executemany(
+            "INSERT INTO accepted_hashes VALUES "
+            "(:layer, :owner, :system, :name, :path, :algorithm, :value)",
+            _accepted_hash_rows(platform_files, emulator_items),
+        )
         connection.executemany(
             "INSERT INTO gaps VALUES "
             "(:layer, :platform_id, :platform, :emulator, :system, :name, "
@@ -940,6 +993,13 @@ def generate_data_exports(
             gap_rows,
         ),
     )
+    write_if_changed(
+        str(downloads / "accepted-hashes.csv"),
+        _csv_document(
+            ["layer", "owner", "system", "name", "path", "algorithm", "value"],
+            _accepted_hash_rows(platform_files, emulator_items),
+        ),
+    )
     _write_sqlite_export(
         downloads / "retrobios.sqlite", db, platform_items, platform_files,
         emulator_items, gap_rows,
@@ -956,6 +1016,7 @@ def generate_data_exports(
         (downloads / "platform-files.csv", "Platform declarations CSV", "text/csv", None),
         (downloads / "cross-reference.csv", "Cross-reference CSV", "text/csv", None),
         (downloads / "gaps.csv", "Verification and coverage gaps CSV", "text/csv", None),
+        (downloads / "accepted-hashes.csv", "Accepted hashes, one row per value", "text/csv", None),
         (downloads / "retrobios.sqlite", "SQLite snapshot", "application/vnd.sqlite3", None),
     ]
     catalog_items: list[dict] = []
@@ -1041,6 +1102,19 @@ def generate_data_page(exports: list[dict]) -> str:
         "The SQLite file contains indexed tables for content hashes, provenance "
         "catalog matches, platform declarations, emulator profiles and current "
         "gaps. It contains metadata only, never BIOS or firmware bytes.",
+        "",
+        "To find who accepts a hash, query `accepted_hashes` (or "
+        "`accepted-hashes.csv`): one lowercase row per accepted value, per "
+        "algorithm, for platform declarations and emulator profiles alike, "
+        "indexed on `(algorithm, value)`. The hash columns of `platform_files` "
+        "and `emulator_files` keep each source's own form: a Recalbox md5 may "
+        "list several revisions separated by commas, and an emulator field "
+        "holding several accepted values is a JSON array.",
+        "",
+        "```sql",
+        "SELECT layer, owner, name FROM accepted_hashes",
+        "WHERE algorithm = 'md5' AND value = 'c87a52c277f7952b41c639fc7bf0a43b';",
+        "```",
         "",
         "The gaps dataset carries both layers behind one `layer` column: "
         "`platform` rows are anomalies against a platform's own BIOS list, "
