@@ -29,8 +29,8 @@ notes: |
   ROM cartridge and MPEG card ROM loading disabled in libretro port
   (cartpath = empty, mpegpath = NULL).
 
-  BIOS loading: libretro.c retro_load_game() lines 1048-1069.
-  Core load: memory.c LoadBios() line 1353, T123Load() memory.h lines 219-280.
+  BIOS loading: retro_load_game() at yabause/src/libretro/libretro.c:1048-1071.
+  Core load: LoadBios() at yabause/src/memory.c:1353-1356, T123Load() at yabause/src/memory.h:219-289.
 
 files:
   - name: "saturn_bios.bin"

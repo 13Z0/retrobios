@@ -2975,3 +2975,31 @@ class AMameCloneNameIsANameStep(unittest.TestCase):
         self.assertEqual(
             self.resolve(size=5, validation=["size"]), (None, "not_found")
         )
+
+
+class ProseCitationsUseTheTrackedForm(unittest.TestCase):
+    """profile_sync tracks `path:line` citations only. `libretro.c
+    I_FindFile, line 1742` escaped it, and sixteen such citations in six
+    profiles stayed behind when their pins moved, four already pointing at
+    other code."""
+
+    UNTRACKED = re.compile(
+        r"[\w./+-]+\.(?:c|cc|cpp|cxx|h|hh|hpp|inc|cs|py|rs|go|java|kt|js|ts"
+        r"|m|mm|s|asm|lua|sh)\b[^\n:]{0,80}?\blines? \d+"
+    )
+
+    def test_the_pattern_reads_the_old_forms(self):
+        for text in ("libretro.c I_FindFile, line 1742",
+                     "memory.c LoadBios() line 1353",
+                     "libretro_core_options.h lines 52-64"):
+            self.assertRegex(text, self.UNTRACKED)
+        self.assertNotRegex("I_FindFile, libretro/libretro.c:4176-4252", self.UNTRACKED)
+
+    def test_no_profile_writes_a_line_number_profile_sync_cannot_see(self):
+        found = [
+            f"{path.name}:{number}: {match.group(0)}"
+            for path in sorted((ROOT / "emulators").glob("*.yml"))
+            for number, line in enumerate(path.read_text().splitlines(), 1)
+            for match in self.UNTRACKED.finditer(line)
+        ]
+        self.assertEqual(found, [])

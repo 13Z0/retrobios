@@ -28,8 +28,8 @@ notes: |
   ROM cartridge loading, SH1 ROM (CD Block LLE), and MPEG card ROM are
   standalone-only features disabled in the libretro port.
 
-  BIOS loading: libretro.c retro_load_game() lines 1035-1049.
-  Core load: memory.c LoadBios() line 1260, T123Load() memory.h lines 196-264.
+  BIOS loading: retro_load_game() at yabause/src/libretro/libretro.c:1035-1049.
+  Core load: LoadBios() at yabause/src/memory.c:1260-1263, T123Load() at yabause/src/memory.h:196-265.
 
 files:
   - name: "saturn_bios.bin"

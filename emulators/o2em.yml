@@ -27,9 +27,9 @@ notes: |
   (e.g. E480.WAV). Compiled with HAVE_VOICE=1 on most platforms. Optional:
   core works without samples, speech is silently skipped.
 
-  BIOS loading: libretro.c load_bios() lines 145-212.
-  BIOS selection: libretro_core_options.h lines 52-64.
-  Voice loading: voice.c init_voice() lines 38-79, called from libretro.c:1060-1067.
+  BIOS loading: load_bios() at libretro.c:150-229.
+  BIOS selection: libretro_core_options.h:52-64.
+  Voice loading: init_voice() at src/voice.c:39-91, called from libretro.c:1060-1067.
 
 files:
   - name: "o2rom.bin"

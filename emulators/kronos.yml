@@ -33,9 +33,9 @@ notes: |
   ROM cartridges for KOF95 and Ultraman are auto-detected via game database
   (db.c) and loaded from system_dir when the corresponding game is running.
 
-  BIOS loading: libretro.c retro_load_game() lines 1601-1727.
-  STV blob table: ctrl/src/stv.c BiosList lines 112-136.
-  ROM cartridge DB: utils/src/db.c lines 43-45.
+  BIOS loading: retro_load_game() at yabause/src/libretro/libretro.c:1601-1727.
+  STV blob table: BiosList at yabause/src/ctrl/src/stv.c:112-136.
+  ROM cartridge DB: yabause/src/utils/src/db.c:43-45.
 
   Standalone supports MPEG card ROM loading (Video CD card); disabled in
   libretro port (mpegpath = NULL in yabause/src/libretro/libretro.c:1578).

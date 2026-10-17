@@ -26,7 +26,7 @@ notes: |
   (src/d_main.c:1109-1110), so the file is technically optional but expected
   for correct rendering of menus, HUD digits, and extended features.
 
-  File search order (libretro.c I_FindFile, line 1742):
+  File search order (I_FindFile, libretro/libretro.c:4176-4252):
   1. WAD directory (same folder as the loaded game WAD)
   2. system/prboom/ subdirectory
   3. system/ directory directly

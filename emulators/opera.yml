@@ -29,10 +29,10 @@ notes: |
   All BIOS files are exactly 1 MB (1048576 bytes) except 3do_arcade_saot.bin (512 KB)
   and panafz1-kanji.bin (933636 bytes).
 
-  BIOS definitions: libopera/opera_bios.c BIOSES[] lines 3-136.
-  BIOS loading: opera_lr_opts.c opera_lr_opts_set_bios() lines 239-270.
-  Font loading: opera_lr_opts.c opera_lr_opts_get_font() lines 274-293,
-  opera_lr_opts_set_font() lines 297-328.
+  BIOS definitions: BIOSES[] at libopera/opera_bios.c:3-136.
+  BIOS loading: opera_lr_opts_set_bios() at opera_lr_opts.c:283-315.
+  Font loading: opera_lr_opts_get_font() at opera_lr_opts.c:319-338,
+  opera_lr_opts_set_font() at opera_lr_opts.c:342-373.
   Core option: libretro_core_options.c opera_bios / opera_font.
 
 files:
