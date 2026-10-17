@@ -2723,5 +2723,27 @@ class HashMergeBackupsAreNotSources(unittest.TestCase):
         self.assertEqual(offenders, [])
 
 
+
+class AnUnreadableArchiveIsSaidOutLoud(unittest.TestCase):
+    """resolve_local_file skipped a ZIP it could not open without a word: a
+    truncated archive read as a missing dump (not_found) or a wrong one."""
+
+    def test_the_resolver_names_the_archive(self):
+        import common  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            broken = Path(tmp) / "neogeo.zip"
+            broken.write_bytes(b"PK\x03\x04 truncated")
+            sha1 = hashlib.sha1(broken.read_bytes()).hexdigest()
+            db = {"files": {sha1: {"path": str(broken), "name": "neogeo.zip", "sha1": sha1,
+                                   "md5": "0" * 32, "size": broken.stat().st_size}},
+                  "indexes": {"by_name": {"neogeo.zip": [sha1]}, "by_md5": {},
+                              "by_crc32": {}, "by_path_suffix": {}}}
+            entry = {"name": "neogeo.zip", "md5": "1" * 32, "zipped_file": "sp-s2.sp1"}
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                common.resolve_local_file(entry, db)
+        self.assertIn(f"unreadable archive {broken}", stderr.getvalue())
+
 if __name__ == "__main__":
     unittest.main()

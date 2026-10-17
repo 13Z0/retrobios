@@ -784,6 +784,20 @@ def _by_affinity(paths: list[str], file_entry: dict, dest_hint: str) -> list[str
     return sorted(paths, key=score, reverse=True)
 
 
+_unreadable_archives: set[str] = set()
+
+
+def _warn_unreadable_archive(path: str, exc: Exception) -> None:
+    """Say once that an archive on disk cannot be read.
+
+    Skipped in silence, a truncated ZIP came out as not_found or
+    hash_mismatch, which reads as a missing dump instead of a broken one.
+    """
+    if path not in _unreadable_archives:
+        _unreadable_archives.add(path)
+        print(f"warning: unreadable archive {path}: {exc}", file=sys.stderr)
+
+
 def resolve_local_file(
     file_entry: dict,
     db: dict,
@@ -1150,8 +1164,8 @@ def resolve_local_file(
                         composite = md5_composite(path).lower()
                         if composite in md5_set:
                             return path, "md5_composite_exact"
-                    except (zipfile.BadZipFile, OSError):
-                        pass
+                    except (zipfile.BadZipFile, OSError) as exc:
+                        _warn_unreadable_archive(path, exc)
                 if db_md5.lower() in md5_set and not composite_only:
                     return path, "md5_exact"
         # When zipped_file is set, only accept candidates that contain it
@@ -1163,8 +1177,8 @@ def resolve_local_file(
                         inner_names = {n.casefold() for n in zf.namelist()}
                         if zipped_file.casefold() in inner_names:
                             valid.append((path, m, size))
-                except (zipfile.BadZipFile, OSError):
-                    pass
+                except (zipfile.BadZipFile, OSError) as exc:
+                    _warn_unreadable_archive(path, exc)
             # The archive whose member carries the declared md5 is the one:
             # neogeo.zip is held twice, each with its own sfix.sfix, and the
             # first by name was returned as a mismatch while the other matched.
