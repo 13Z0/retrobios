@@ -2364,6 +2364,32 @@ class AnotherEmulatorsTreeProvesNothing(unittest.TestCase):
         self.assertFalse([d for d, p in overrides.items() if "/armsx2/" in p])
 
 
+class APinnedCoreFileTakesTheSlotFirst(unittest.TestCase):
+    """hypseus-singe asks for gamecontrollerdb.txt by name and took the BIOS
+    root of Batocera, RetroBat and RetroPie with C-Dogs' 26 KB table, where
+    Solarus pins its own by sha1."""
+
+    def test_the_content_naming_claim_is_placed_first(self):
+        from unittest import mock
+
+        from scripts import packextras
+
+        undeclared = [
+            {"profile": "hypseus", "emulator": "hypseus", "name": "db.txt",
+             "path": "db.txt", "in_repo": True, "systems": ["a"]},
+            {"profile": "solarus", "emulator": "solarus", "name": "db.txt",
+             "path": "db.txt", "in_repo": True, "systems": ["b"], "sha1": "a" * 40},
+        ]
+        config = {"systems": {}, "base_destination": "bios"}
+        with mock.patch("verify.find_undeclared_files", return_value=undeclared), \
+                mock.patch.object(packextras, "resolve_platform_cores", create=True,
+                                  return_value=set()):
+            extras = packextras._collect_emulator_extras(
+                config, "emulators", {"files": {}, "indexes": {}}, set(), "bios", {}
+            )
+        self.assertEqual([e["source_profile"] for e in extras][:1], ["solarus"])
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

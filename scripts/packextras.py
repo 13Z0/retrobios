@@ -611,6 +611,11 @@ def _collect_emulator_extras(
         config, emulators_dir, db, emu_profiles, target_cores=target_cores,
         include_all=include_all, declared_names=yaml_names,
     )
+    # A destination two cores claim goes to the one that names its content:
+    # hypseus-singe asks for gamecontrollerdb.txt by name alone and took the
+    # BIOS root before Solarus, which pins its own by sha1. Profile order
+    # still decides between claims of the same kind.
+    undeclared = sorted(undeclared, key=lambda u: not _names_content(u))
     extras = []
     seen_dests: set[str] = set(seen)
     # Destination -> the extra that took it, to record later claimants on.
@@ -761,6 +766,11 @@ def _collect_emulator_extras(
     )
 
     return extras
+
+def _names_content(entry: dict) -> bool:
+    """Whether a report entry declares the bytes it wants, not only a name."""
+    return any(entry.get(field) for field in ("sha1", "md5", "sha256", "crc32"))
+
 
 def _report_extra(u: dict, name: str, dest: str) -> dict:
     """The extra a cross-reference entry asks for at its destination."""
