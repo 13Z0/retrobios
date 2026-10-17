@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import os
 import re
 import subprocess
 import sys
@@ -44,21 +45,29 @@ from common import ArtifactLockBusy, artifact_lock, hold_artifact_lock
 
 
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
-    """Run a command. Returns (success, captured_output)."""
+    """Run a command, echoing its output as it comes. Returns (success, output).
+
+    The output used to be captured and printed when the step ended, stderr
+    after stdout: a twenty-minute pack build showed nothing, and a warning
+    landed far from the line it was about. One stream, read line by line.
+    """
     print(f"\n--- {label} ---", flush=True)
     start = time.monotonic()
     repo_root = str(Path(__file__).resolve().parent.parent)
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=repo_root)
+    lines: list[str] = []
+    with subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        cwd=repo_root, env={**os.environ, "PYTHONUNBUFFERED": "1"},
+    ) as proc:
+        for line in proc.stdout:
+            lines.append(line)
+            print(line, end="", flush=True)
+        returncode = proc.wait()
     elapsed = time.monotonic() - start
 
-    output = result.stdout
-    if result.stderr:
-        output += result.stderr
-
-    ok = result.returncode == 0
-    print(output, end="")
+    ok = returncode == 0
     print(f"--- {label}: {'OK' if ok else 'FAILED'} ({elapsed:.1f}s) ---")
-    return ok, output
+    return ok, "".join(lines)
 
 
 def parse_verify_counts(output: str) -> dict[str, tuple[int, int]]:

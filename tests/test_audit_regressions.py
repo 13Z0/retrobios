@@ -2793,5 +2793,23 @@ class APlatformPinDoesNotReplaceTheCoresRevision(unittest.TestCase):
                 self.assertEqual(status, "sha1_exact")
                 self.assertEqual(db["files"][entry["sha1"]]["path"], path)
 
+
+class PipelineStepsSpeakAsTheyGo(unittest.TestCase):
+    """run() captured a step and printed it at the end, stderr after stdout:
+    a twenty-minute pack build was silent and a warning lost its place."""
+
+    def test_output_keeps_its_order_and_is_returned(self):
+        script = ("import sys; print('one', flush=True); "
+                  "print('two', file=sys.stderr, flush=True); print('three')")
+        echoed = io.StringIO()
+        with contextlib.redirect_stdout(echoed):
+            ok, output = pipeline.run([sys.executable, "-c", script], "probe")
+        self.assertTrue(ok)
+        self.assertEqual(output, "one\ntwo\nthree\n")
+        text = echoed.getvalue()
+        self.assertLess(text.index("one"), text.index("two"))
+        self.assertLess(text.index("two"), text.index("three"))
+        self.assertLess(text.index("three"), text.index("--- probe: OK"))
+
 if __name__ == "__main__":
     unittest.main()
