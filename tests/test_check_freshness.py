@@ -160,9 +160,9 @@ class CoreResolutionTests(unittest.TestCase):
                 "linux": {"cores": ["ghost"]},
             }
         }
-        removed = {"android": {"na"}}
+        overrides = {"android": {"remove_cores": ["na"]}}
         self.assertEqual(
-            cf.unresolved_target_cores(targets, index, removed),
+            cf.unresolved_target_cores(targets, index, overrides),
             {"ghost": ["android", "linux"]},
         )
 
@@ -182,10 +182,22 @@ class CoreResolutionTests(unittest.TestCase):
                 }
             }
         }
-        removed = cf._removed_cores(overrides, "plat")
         self.assertEqual(
-            cf.unresolved_target_cores(targets, index, removed),
+            cf.unresolved_target_cores(targets, index, cf._platform_overrides(overrides, "plat")),
             {"ghost": ["x86_64"]},
+        )
+
+    def test_an_added_core_is_read_as_the_builder_reads_it(self):
+        """add_cores without a profile is the false skip this check exists
+        for, and a target may add back what _default removes."""
+        index = cf.profile_name_index(self.PROFILES)
+        targets = {"targets": {"board": {"cores": ["mednafen_psx"]}}}
+        overrides = {
+            "_default": {"remove_cores": ["mednafen_psx"]},
+            "board": {"add_cores": ["mednafen_psx", "citron"]},
+        }
+        self.assertEqual(
+            cf.unresolved_target_cores(targets, index, overrides), {"citron": ["board"]}
         )
 
     def test_coreinfo_gaps_fold_case_and_flag_standalone_profiles(self):

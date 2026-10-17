@@ -477,7 +477,7 @@ class EveryTargetCoreReachesAProfile(unittest.TestCase):
                 continue
             unresolved = check_freshness.unresolved_target_cores(
                 yaml.safe_load(Path(path).read_text()), index,
-                check_freshness._removed_cores(overrides, platform),
+                check_freshness._platform_overrides(overrides, platform),
             )
             with self.subTest(platform=platform):
                 if platform == "retropie":

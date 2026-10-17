@@ -52,6 +52,7 @@ import export_native  # noqa: E402
 import refresh_data_dirs  # noqa: E402
 import upstream  # noqa: E402
 from common import (  # noqa: E402
+    apply_target_overrides,
     list_registered_platforms,
     load_emulator_profiles,
     upstream_profile_index,
@@ -421,26 +422,27 @@ def profile_name_index(profiles: dict[str, dict]) -> dict[str, set[str]]:
     return upstream_profile_index(profiles, include_aliases=True)
 
 
-def _removed_cores(overrides: dict, platform: str) -> dict[str, set[str]]:
-    targets = ((overrides.get(platform) or {}).get("targets")) or {}
-    default = set(map(str, (targets.get("_default") or {}).get("remove_cores") or []))
-    return {
-        name: default | set(map(str, (entry or {}).get("remove_cores") or []))
-        for name, entry in targets.items()
-        if name != "_default"
-    } | {"_default": default}
+def _platform_overrides(overrides: dict, platform: str) -> dict:
+    """The per-target entries of _overrides.yml for one platform."""
+    return ((overrides.get(platform) or {}).get("targets")) or {}
 
 
 def unresolved_target_cores(
-    targets: dict, index: dict[str, str], removed: dict[str, set[str]]
+    targets: dict, index: dict[str, str], overrides: dict
 ) -> dict[str, list[str]]:
-    """Core names a target lists that no profile claims and no override drops."""
+    """Core names a target ends up with that no profile claims.
+
+    Read after the overrides, by the function the builder applies
+    (apply_target_overrides): _default then the target, add_cores
+    included. A name added by hand without a profile is the false skip
+    this check exists for, and a copy that read remove_cores alone never
+    saw it.
+    """
     unresolved: dict[str, list[str]] = {}
-    default_drop = removed.get("_default", set())
     for name, entry in (targets.get("targets") or {}).items():
-        dropped = removed.get(name, default_drop) | default_drop
-        for core in map(str, (entry or {}).get("cores") or []):
-            if core not in index and core not in dropped:
+        cores = {str(c) for c in (entry or {}).get("cores") or []}
+        for core in sorted(apply_target_overrides(cores, overrides, name)):
+            if core not in index:
                 unresolved.setdefault(core, []).append(name)
     return {core: sorted(names) for core, names in sorted(unresolved.items())}
 
@@ -497,7 +499,7 @@ def check_targets(
                     detail=f"{age} days old" if age is not None else "no scrape stamp",
                 )
             ]
-            missing = unresolved_target_cores(old, index, _removed_cores(overrides, platform))
+            missing = unresolved_target_cores(old, index, _platform_overrides(overrides, platform))
             out.extend(_unresolved_findings(platform, missing))
             return out
         try:
@@ -519,7 +521,7 @@ def check_targets(
                 detail=diff.summary(),
             )
         ]
-        missing = unresolved_target_cores(new, index, _removed_cores(overrides, platform))
+        missing = unresolved_target_cores(new, index, _platform_overrides(overrides, platform))
         out.extend(_unresolved_findings(platform, missing))
         return out
 
