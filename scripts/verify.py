@@ -783,7 +783,9 @@ def _twin_index(
     verify_systems: dict, db: dict, base_dest: str, zip_contents: dict,
 ) -> tuple[dict[str, int], dict[int, tuple[str, dict]]]:
     """Which declaration the pack ships at each destination, and every declaration by id."""
-    from generate_pack import _preferred_entries
+    # From the module that defines the rule, not the builder's CLI: importing
+    # generate_pack made every verify depend on its argparse and manifest code.
+    from packresolve import preferred_entries as _preferred_entries
 
     preferred_entries = _preferred_entries(
         verify_systems, db, DEFAULT_BIOS_DIR, base_dest, False,

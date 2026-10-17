@@ -2520,6 +2520,27 @@ class GeneratedModelsAreWrittenWhole(unittest.TestCase):
             self.assertTrue((bios / "Arcade" / "MAME" / "setclone.zip").exists())
 
 
+class APackNoteBesideItsSlotIsANote(unittest.TestCase):
+    """The builder writes INSTRUCTIONS_<name>.txt beside the slot it
+    explains; verify_pack recognised notes at the ZIP root only and failed
+    a pack holding games/keen6/INSTRUCTIONS_egagraph.ck6.txt."""
+
+    def test_a_nested_note_is_not_hashed_against_the_collection(self):
+        from scripts.packverify import verify_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = Path(directory) / "Pack.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr("games/keen6/INSTRUCTIONS_egagraph.ck6.txt", "File needed")
+                archive.writestr("bios/RENAMED_x.bin.txt", "renamed")
+            result = verify_pack(str(path), {"files": {}, "indexes": {}})
+        self.assertTrue(result[0], result)
+
+    def test_verify_reads_the_rule_where_it_is_defined(self):
+        source = (ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
+        self.assertNotIn("from generate_pack import _preferred_entries", source)
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""
