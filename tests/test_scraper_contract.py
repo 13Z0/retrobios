@@ -346,6 +346,44 @@ class BizHawkRunsAresForN64Only(unittest.TestCase):
         self.assertNotIn("ares", registry["platforms"]["bizhawk"]["cores"])
 
 
+class EveryTargetCoreReachesAProfile(unittest.TestCase):
+    """A target lists cores by their buildbot or package name; a name no
+    profile's cores: claims makes --target drop that core and its systems
+    without a word. Only check_freshness compared them, on a fresh scrape."""
+
+    # RetroPie's packages that no profile describes yet, counted down, never up.
+    RETROPIE_UNPROFILED = 53
+
+    def test_the_committed_targets_resolve(self):
+        import glob
+        import os
+
+        import yaml
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        import check_freshness
+        from common import load_emulator_profiles
+
+        root = Path(__file__).resolve().parents[1]
+        index = check_freshness.profile_name_index(
+            load_emulator_profiles(str(root / "emulators"))
+        )
+        overrides = yaml.safe_load((root / "platforms/targets/_overrides.yml").read_text()) or {}
+        for path in sorted(glob.glob(str(root / "platforms/targets/*.yml"))):
+            platform = os.path.basename(path)[:-4]
+            if platform.startswith("_"):
+                continue
+            unresolved = check_freshness.unresolved_target_cores(
+                yaml.safe_load(Path(path).read_text()), index,
+                check_freshness._removed_cores(overrides, platform),
+            )
+            with self.subTest(platform=platform):
+                if platform == "retropie":
+                    self.assertLessEqual(len(unresolved), self.RETROPIE_UNPROFILED)
+                else:
+                    self.assertEqual(unresolved, {})
+
+
 class UnreadableReleaseStopsTheScrape(unittest.TestCase):
     """A failed tag lookup fell back to master, or to an empty or invented
     version. BizHawk, RomM, Batocera and Recalbox then wrote a YAML read from
