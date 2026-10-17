@@ -3367,5 +3367,11 @@ class EveryToolRefusesAFlagItWouldDrop(unittest.TestCase):
                     self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
 
 
+
+class TestsRunOffline(unittest.TestCase):
+    def test_the_package_forbids_downloads(self):
+        self.assertTrue(os.environ.get("RETROBIOS_OFFLINE"))
+
+
 if __name__ == "__main__":
     unittest.main()
