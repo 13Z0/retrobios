@@ -2238,6 +2238,22 @@ class APackNameFitsAFileName(unittest.TestCase):
         self.assertNotEqual(long_name, other)
         self.assertEqual(_bounded_pack_name(["A", "B"], ["a", "b"], ".zip"), "A_B.zip")
 
+    def test_a_long_system_list_is_bounded(self):
+        """Thirty systems joined made a 261-byte platform pack name."""
+        from scripts.generate_pack import MAX_SYSTEM_TAG_BYTES, _system_tag
+
+        systems = [f"vendor-console-number-{i}" for i in range(30)]
+        tag = _system_tag(systems)
+        self.assertLessEqual(len(tag.encode()), MAX_SYSTEM_TAG_BYTES + 1)
+        self.assertNotEqual(tag, _system_tag(systems[:-1] + ["other-console"]))
+        self.assertEqual(_system_tag(["sony-playstation"]), "_Playstation")
+
+    def test_two_hash_lists_get_two_names(self):
+        """--from-md5 named its pack after the context only: a second list
+        overwrote the first pack in the same directory."""
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertIn('_Custom_{selection}', source)
+
     def test_the_system_pack_names_itself(self):
         source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
         self.assertIn("pack_name=final_name", source)

@@ -203,7 +203,25 @@ def _system_tag(system_filter: list[str] | None) -> str:
                 s = s[len(prefix) :]
                 break
         display_parts.append("_".join(p.title() for p in s.split("-") if p))
-    return "_" + "_".join(display_parts)
+    return "_" + _bounded_join(display_parts, system_filter)
+
+
+# A system list long enough to push a pack name past this falls back to the
+# first system, a count and a digest of the list.
+MAX_SYSTEM_TAG_BYTES = 120
+
+
+def _bounded_join(parts: list[str], keys: list[str]) -> str:
+    """Parts joined while they fit, else the first, a count and a digest.
+
+    Thirty systems joined made a 261-byte file name and the ZIP could not
+    be opened; the digest keeps two different selections apart.
+    """
+    joined = "_".join(parts)
+    if len(joined.encode("utf-8")) <= MAX_SYSTEM_TAG_BYTES:
+        return joined
+    digest = hashlib.sha1("\n".join(sorted(keys)).encode("utf-8")).hexdigest()[:8]
+    return f"{parts[0]}_and_{len(parts) - 1}_more_{digest}"
 
 
 _UNSAFE_IN_NAME = re.compile(r'[/\\:*?"<>|]')
@@ -1634,7 +1652,9 @@ def generate_system_pack(
 
     # Named like the platform's --system tag: one spelling of a system is
     # one file name, and one selection.
-    sys_display = "_".join(_system_display_name(sid) for sid in system_ids)
+    sys_display = _bounded_join(
+        [_system_display_name(sid) for sid in system_ids], list(system_ids)
+    )
     # Built in a scratch directory: under its emulator name in output_dir it
     # overwrote, then carried away, an --emulator pack already there.
     os.makedirs(output_dir, exist_ok=True)
@@ -1925,8 +1945,13 @@ def generate_md5_pack(
             "full", None, None, False, False, standalone=standalone
         )
     )
+    # The hash list is what chooses the content: two lists under one name
+    # overwrote each other in the same output directory.
+    selection = hashlib.sha1(
+        "\n".join(sorted(f"{kind}:{value.lower()}" for kind, value in hashes)).encode()
+    ).hexdigest()[:8]
     zip_name = (
-        f"{_name_part(context_name, '_')}_Custom{custom_tags}_BIOS_Pack.zip"
+        f"{_name_part(context_name, '_')}_Custom_{selection}{custom_tags}_BIOS_Pack.zip"
     )
     zip_path = os.path.join(output_dir, zip_name)
     os.makedirs(output_dir, exist_ok=True)
