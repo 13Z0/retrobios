@@ -312,5 +312,23 @@ class AnEmulatorPageNamesItsRevision(unittest.TestCase):
             page,
         )
 
+
+class APlatformPageSaysWhereEachFileGoes(unittest.TestCase):
+    """Three GameCube IPL.bin were listed by name alone: nothing told which
+    goes to GC/USA, GC/EUR or GC/JAP."""
+
+    def test_same_named_files_show_their_destinations(self):
+        import generate_site  # noqa: PLC0415
+
+        regions = ("USA", "EUR", "JAP")
+        declared = [{"name": "IPL.bin", "destination": f"dolphin-emu/Sys/GC/{r}/IPL.bin",
+                     "sha1": str(i) * 40} for i, r in enumerate(regions)]
+        files = [{"name": "IPL.bin", "status": "ok"} for _ in regions]
+        lines = generate_site._render_platform_systems(
+            {"nintendo-gamecube": files}, {("nintendo-gamecube", "IPL.bin"): declared}, {})
+        for region in regions:
+            self.assertIn(f"- `IPL.bin` at `dolphin-emu/Sys/GC/{region}/IPL.bin` - OK",
+                          "\n".join(lines))
+
 if __name__ == "__main__":
     unittest.main()

@@ -1401,7 +1401,11 @@ def _render_platform_systems(
             if size_str:
                 details.append(size_str)
 
-            lines.append(f"{pad}- `{fname}` - {', '.join(details)}")
+            # Where the file goes, when its name alone does not say: three
+            # GameCube IPL.bin differ only by GC/USA, GC/EUR and GC/JAP.
+            destination = str(cfg_entry.get("destination") or "")
+            where = f" at `{destination}`" if destination and destination != fname else ""
+            lines.append(f"{pad}- `{fname}`{where} - {', '.join(details)}")
             # Show full hashes on a sub-line (useful for copy-paste)
             if sha1 or md5:
                 hash_parts = []
