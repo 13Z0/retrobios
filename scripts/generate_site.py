@@ -959,6 +959,7 @@ def generate_data_exports(
         (downloads / "retrobios.sqlite", "SQLite snapshot", "application/vnd.sqlite3", None),
     ]
     catalog_items: list[dict] = []
+    published: list[dict] = []
     for path, title, media_type, schema in assets:
         relative = path.relative_to(docs).as_posix()
         item = {
@@ -971,12 +972,19 @@ def generate_data_exports(
         if schema:
             item["schema"] = schema
         catalog_items.append(item)
+        # In the catalog both references resolve against the catalog's own
+        # URL, as RFC 3986 clients do: `url` was relative to the site root
+        # and `schema` to api/v1/, so no single base resolved both.
+        published.append({
+            **item,
+            "url": os.path.relpath(path, api).replace(os.sep, "/"),
+        })
     catalog = {
         "schema_version": 1,
         "generated_at": generated_at,
         "kind": "catalog",
-        "count": len(catalog_items),
-        "items": catalog_items,
+        "count": len(published),
+        "items": published,
     }
     write_if_changed(
         str(api / "catalog.json"),

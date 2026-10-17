@@ -183,9 +183,19 @@ class SiteReferenceContracts(unittest.TestCase):
         )
         catalog = json.loads((self.docs / "api/v1/catalog.json").read_text())
         self.assertEqual(catalog["count"], len(exports))
+        # Every reference resolves against the catalog's own URL, as an
+        # RFC 3986 client resolves it: the url was relative to the site root
+        # and the schema to api/v1/, so neither base resolved both.
+        import urllib.parse  # noqa: PLC0415
+
+        site = "https://example.org/site/"
+        base = site + "api/v1/catalog.json"
         for item in catalog["items"]:
-            path = self.docs / item["url"]
-            self.assertTrue(path.is_file())
+            for key in ("url", "schema"):
+                if key in item:
+                    target = urllib.parse.urljoin(base, item[key]).removeprefix(site)
+                    self.assertTrue((self.docs / target).is_file(), (key, item[key]))
+            path = self.docs / urllib.parse.urljoin(base, item["url"]).removeprefix(site)
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), item["sha256"])
 
         with sqlite3.connect(self.docs / "downloads/retrobios.sqlite") as connection:
