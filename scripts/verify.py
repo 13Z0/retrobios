@@ -763,15 +763,19 @@ def _mark_hidden(
     shipped: dict[str, str],
     target_cores: set[str] | None,
     region_drops: set[str] | None = None,
-) -> None:
-    """What the builder holds but cannot place beside the files it packed."""
+) -> set[str]:
+    """What the builder holds but cannot place beside the files it packed.
+
+    Returns the full destinations the builder fills with a core's file.
+    """
     from packextras import hidden_extras
 
+    placed: set[str] = set()
     hidden = hidden_extras(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores, region_drops,
+        shipped, target_cores, region_drops, placed,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -780,6 +784,7 @@ def _mark_hidden(
         if reason and u.get("in_repo") and u.get("in_pack", True):
             u["in_pack"] = False
             u["omitted"] = _HIDDEN_REASONS[reason]
+    return placed
 
 
 def _twin_index(
@@ -987,6 +992,7 @@ def verify_platform(
     )
 
     shipped: dict[str, str] = {}
+    results_at: dict[str, list[dict]] = {}
     for sys_id, system in verify_systems.items():
         for file_entry in system.get("files", []):
             if region_drops and (
@@ -1055,6 +1061,7 @@ def verify_platform(
             dest = file_entry.get("destination", file_entry.get("name", ""))
             if not dest:
                 dest = f"{sys_id}/{file_entry.get('name', '')}"
+            results_at.setdefault(dest, []).append(result)
             required = file_entry.get("required", True)
             cur = result["status"]
             prev = file_status.get(dest)
@@ -1068,21 +1075,6 @@ def verify_platform(
                 prev_sev, 0
             ):
                 file_severity[dest] = sev
-
-    # Count by severity
-    counts = {
-        Severity.OK: 0,
-        Severity.INFO: 0,
-        Severity.WARNING: 0,
-        Severity.CRITICAL: 0,
-    }
-    for s in file_severity.values():
-        counts[s] = counts.get(s, 0) + 1
-
-    # Count by file status (ok/untested/missing)
-    status_counts: dict[str, int] = {}
-    for s in file_status.values():
-        status_counts[s] = status_counts.get(s, 0) + 1
 
     # Cross-reference undeclared files
     if supplemental_names is None:
@@ -1107,10 +1099,36 @@ def verify_platform(
             not in region_drops
         ]
     _mark_unplaced(config, undeclared, profiles)
-    _mark_hidden(
+    placed = _mark_hidden(
         config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
         region_drops,
     )
+    if not reads_file_contents(mode):
+        # An existence frontend is satisfied by any file at the path, and the
+        # builder fills a free platform destination with a core's file.
+        for dest, status in file_status.items():
+            full = f"{base_dest}/{dest}" if base_dest else dest
+            if status == Status.MISSING and full in placed:
+                file_status[dest] = Status.OK
+                file_severity[dest] = Severity.OK
+                for result in results_at.get(dest, []):
+                    result["status"] = Status.OK
+
+    # Count by severity
+    counts = {
+        Severity.OK: 0,
+        Severity.INFO: 0,
+        Severity.WARNING: 0,
+        Severity.CRITICAL: 0,
+    }
+    for s in file_severity.values():
+        counts[s] = counts.get(s, 0) + 1
+
+    # Count by file status (ok/untested/missing)
+    status_counts: dict[str, int] = {}
+    for s in file_status.values():
+        status_counts[s] = status_counts.get(s, 0) + 1
+
     exclusions = find_exclusion_notes(
         config, emulators_dir, emu_profiles, target_cores=target_cores
     )

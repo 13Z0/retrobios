@@ -137,6 +137,7 @@ def hidden_extras(
     shipped: dict[str, str],
     target_cores: set[str] | None = None,
     region_drops: set[str] | None = None,
+    placed: set[str] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -150,7 +151,8 @@ def hidden_extras(
     while the report counted it in the pack. A twin carrying the same bytes
     serves the core on the filesystem that folds the names, so it is not a
     file left out. ``shipped`` maps the full destination of each platform
-    file the pack carries to its local copy.
+    file the pack carries to its local copy. ``placed``, when given,
+    receives the full destination of each held extra the pack carries.
     """
     from packpaths import _register_path, placement_block
 
@@ -198,6 +200,8 @@ def hidden_extras(
         content[full.lower()] = held
         if case_insensitive:
             lower.add(full.lower())
+        if placed is not None and local:
+            placed.add(full)
     return hidden
 
 
