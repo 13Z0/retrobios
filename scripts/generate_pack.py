@@ -2418,18 +2418,20 @@ def _run_verify_packs(args):
                 data_registry=verify_data_registry,
                 target_cores=tc,
             )
-            ok, errors = result[0], result[3]
-            bl_checked, bl_present = result[4], result[5]
-            core_checked, core_present = result[6], result[7]
+            (ok, _checked, _present, errors, bl_checked, bl_present,
+             core_checked, core_present, bl_excluded) = result
+            # The unsafe exclusions explain a baseline short of its total: a
+            # dump whose hash the frontend refuses is left out on purpose.
+            excluded = f" ({bl_excluded} unsafe excluded)" if bl_excluded else ""
             counts = (
-                f"{bl_present}/{bl_checked} baseline, "
+                f"{bl_present}/{bl_checked} baseline{excluded}, "
                 f"{core_present}/{core_checked} cores"
             )
             if ok:
                 print(f"  {platform_name} [{pack_name}]: OK ({counts})")
             else:
                 print(f"  {platform_name} [{pack_name}]: FAIL ({counts}, {len(errors)} errors)")
-                for err in errors[:5]:
+                for err in errors:
                     print(f"    {err}")
                 all_ok = False
 

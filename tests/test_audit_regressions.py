@@ -3529,5 +3529,20 @@ class TheTestJobHasTheDataTrees(unittest.TestCase):
         self.assertLess(fetch, suite)
 
 
+
+class VerifyPacksSaysWhatItExcluded(unittest.TestCase):
+    """--verify-packs read the result tuple by position, dropped the unsafe
+    exclusions (352/353 shown as OK with no reason) and printed 5 errors."""
+
+    def test_the_result_is_unpacked_whole_and_every_error_printed(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text()
+        body = source[source.index("def _run_verify_packs"):]
+        body = body[:body.index("\ndef ")]
+        self.assertIn("bl_excluded) = result", body)
+        self.assertIn("unsafe excluded", body)
+        self.assertNotIn("errors[:5]", body)
+        self.assertNotRegex(body, r"result\[\d\]")
+
+
 if __name__ == "__main__":
     unittest.main()
