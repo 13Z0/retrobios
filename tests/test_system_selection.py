@@ -178,5 +178,24 @@ class ATypoGetsTheNearestNames(unittest.TestCase):
         self.assertEqual(common.suggest_names(["zzz"], many, "--list-systems"),
                          "--list-systems lists all 40.")
 
+
+class EmulatorVerifyReadsNoArchiveItDoesNotNeed(unittest.TestCase):
+    """verify --emulator decompressed every archive of the collection to
+    index ZIP members, for zipped_file entries no profile declares: 23 of
+    the 24 seconds of a run."""
+
+    def test_the_member_index_is_not_built(self):
+        from unittest import mock  # noqa: PLC0415
+
+        import verify  # noqa: PLC0415
+
+        if not (REPO_ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        db = common.load_database(str(REPO_ROOT / "database.json"))
+        with mock.patch.object(verify, "build_zip_contents_index",
+                               side_effect=AssertionError("index built")):
+            result = verify.verify_emulator(["handy"], str(REPO_ROOT / "emulators"), db)
+        self.assertTrue(result)
+
 if __name__ == "__main__":
     unittest.main()

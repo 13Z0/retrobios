@@ -1450,13 +1450,18 @@ def verify_emulator(
         placement_block,
     )
 
-    load_emulator_profiles(emulators_dir)
-    zip_contents = build_zip_contents_index(db)
-
     # Also load aliases for redirect messages
     all_profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
 
     selected = _select_profiles(profile_names, all_profiles, standalone)
+    # The member index only answers a zipped_file entry, and decompressing
+    # every archive took 23 of the 24 seconds of a run that had none.
+    zip_contents = (
+        build_zip_contents_index(db)
+        if any(f.get("zipped_file") for _name, profile in selected
+               for f in profile.get("files") or [])
+        else {}
+    )
 
     # Build validation index from selected profiles only
     selected_profiles = {n: p for n, p in selected}
