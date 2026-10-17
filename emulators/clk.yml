@@ -744,31 +744,28 @@ files:
     path: MSX/msx-japanese.rom
     system: microsoft-msx
     description: "Japanese MSX BIOS"
-    region: [japan]
     size: 32768
     crc32: "ee229390"
     required: false
-    note: "Alternative to msx.rom for Japanese region"
+    note: "Alternative to msx.rom for the Japan region, which the analyser never sets; only the user picks it (Analyser/Static/MSX/Target.hpp:34, Analyser/Static/MSX/StaticAnalyser.cpp:217-219)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:785-792"
 
   - name: msx-american.rom
     path: MSX/msx-american.rom
     system: microsoft-msx
     description: "American MSX BIOS"
-    region: [north-america]
     size: 32768
     required: false
-    note: "Alternative to msx.rom for American region"
+    note: "Alternative to msx.rom for the USA region, which the analyser sets whenever no tape is loaded (Analyser/Static/MSX/StaticAnalyser.cpp:217-219, Machines/MSX/MSX.cpp:250-259)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:793-800"
 
   - name: msx-european.rom
     path: MSX/msx-european.rom
     system: microsoft-msx
     description: "European MSX BIOS"
-    region: [europe]
     size: 32768
     required: false
-    note: "Alternative to msx.rom for European region"
+    note: "Alternative to msx.rom for the Europe region, which the analyser sets whenever a tape is loaded or the user picks (Analyser/Static/MSX/StaticAnalyser.cpp:217-219, Machines/MSX/MSX.cpp:261-269)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:801-808"
 
   - name: disk.rom
@@ -1146,99 +1143,90 @@ files:
     path: Vic20/characters-english.bin
     system: commodore-vic20
     description: "English-language VIC-20 character ROM"
-    region: [north-america, europe]
     size: 4096
     crc32: "83e032a6"
     required: true
-    note: "Required for English region"
+    note: "Loaded for the default PAL and the NTSC targets, which the file name or TheC64 tags choose (Machines/Commodore/Vic-20/Vic20.cpp:325-333, Analyser/Static/Commodore/StaticAnalyser.cpp:350-380)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1226-1233"
 
   - name: kernel-pal.bin
     path: Vic20/kernel-pal.bin
     system: commodore-vic20
     description: "English-language PAL VIC-20 kernel ROM"
-    region: [europe]
     size: 8192
     crc32: "4be07cb4"
     required: true
-    note: "Required for English PAL region"
+    note: "Default kernel, replaced by the NTSC one when the file name holds ntsc or the TheC64 tag tn (Analyser/Static/Commodore/Target.hpp:67, Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:325-329)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1234-1241"
 
   - name: kernel-ntsc.bin
     path: Vic20/kernel-ntsc.bin
     system: commodore-vic20
     description: "English-language NTSC VIC-20 kernel ROM"
-    region: [north-america]
     size: 8192
     crc32: "e5e7c174"
     required: true
-    note: "Required for English NTSC region"
+    note: "Picked when the file name holds ntsc or the TheC64 tag tn (Analyser/Static/Commodore/StaticAnalyser.cpp:350-352, 375-377, Machines/Commodore/Vic-20/Vic20.cpp:330-333)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1242-1249"
 
   - name: characters-danish.bin
     path: Vic20/characters-danish.bin
     system: commodore-vic20
     description: "Danish VIC-20 character ROM"
-    region: [denmark]
     size: 4096
     crc32: "7fc11454"
     required: false
-    note: "Required for Danish region"
+    note: "Required for the Danish region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1250-1257"
 
   - name: kernel-danish.bin
     path: Vic20/kernel-danish.bin
     system: commodore-vic20
     description: "Danish VIC-20 kernel ROM"
-    region: [denmark]
     size: 8192
     crc32: "02adaf16"
     required: false
-    note: "Required for Danish region"
+    note: "Required for the Danish region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1258-1265"
 
   - name: characters-japanese.bin
     path: Vic20/characters-japanese.bin
     system: commodore-vic20
     description: "Japanese VIC-20 character ROM"
-    region: [japan]
     size: 4096
     crc32: "fcfd8a4b"
     required: false
-    note: "Required for Japanese region"
+    note: "Required for the Japanese region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1266-1273"
 
   - name: kernel-japanese.bin
     path: Vic20/kernel-japanese.bin
     system: commodore-vic20
     description: "Japanese VIC-20 kernel ROM"
-    region: [japan]
     size: 8192
     crc32: "336900d7"
     required: false
-    note: "Required for Japanese region"
+    note: "Required for the Japanese region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1274-1281"
 
   - name: characters-swedish.bin
     path: Vic20/characters-swedish.bin
     system: commodore-vic20
     description: "Swedish VIC-20 character ROM"
-    region: [sweden]
     size: 4096
     crc32: "d808551d"
     required: false
-    note: "Required for Swedish region"
+    note: "Required for the Swedish region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1282-1289"
 
   - name: kernel-swedish.bin
     path: Vic20/kernel-swedish.bin
     system: commodore-vic20
     description: "Swedish VIC-20 kernel ROM"
-    region: [sweden]
     size: 8192
     crc32: "b2a60662"
     required: false
-    note: "Required for Swedish region"
+    note: "Required for the Swedish region, which only the user picks; the analyser sets American or European alone (Analyser/Static/Commodore/StaticAnalyser.cpp:350-380, Machines/Commodore/Vic-20/Vic20.cpp:334-345)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:1290-1297"
 
   # -------------------------------------------------------

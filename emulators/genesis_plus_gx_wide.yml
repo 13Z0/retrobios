@@ -34,9 +34,10 @@ files:
 
   - name: bios_CD_E.bin
     system: sega-megacd
-    region: [europe]
+    region: [europe, oceania]
     required: true
     size: 131072
+    note: "Loaded for REGION_EUROPE, set by security byte 0x64 at 0x20b, the only PAL branch for Australian discs (core/loadrom.c:1059-1063)."
     source_ref: "core/loadrom.c:411"
 
   - name: bios_CD_J.bin
@@ -54,8 +55,8 @@ files:
 
   - name: bios_E.sms
     system: sega-mastersystem
-    region: [europe]
     required: false
+    note: "REGION_EUROPE comes only from CRC lists of Codemasters and PAL-timing games, Brazilian ones included, or the PAL option (core/cart_hw/sms_cart.c:163-167, 239-258, core/loadrom.c:1155-1158)."
     source_ref: "core/loadrom.c:515"
 
   - name: bios_J.sms

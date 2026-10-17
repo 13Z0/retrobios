@@ -124,7 +124,7 @@ files:
 
   - name: bios_CD_E.bin
     system: sega-megacd
-    region: [europe]
+    region: [europe, oceania]
     required: true
     agnostic: true
     size: 131072

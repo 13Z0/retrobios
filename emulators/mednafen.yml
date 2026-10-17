@@ -322,13 +322,13 @@ files:
   - name: "mpr-17933.bin"
     system: sega-saturn
     description: "Saturn BIOS (North America and Europe)"
-    region: [north-america, europe, south-korea, asia-pal, brazil, latin-america]
+    region: [north-america, europe, oceania, south-korea, asia-pal, brazil, latin-america]
     required: true
     size: 524288
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
     validation: [size, sha256]
     source_ref: "ss/ss.cpp:1431-1434, 1437-1445, 2442, 1461"
-    note: "Default of ss.bios_na_eu."
+    note: "Default of ss.bios_na_eu, read for every area but Japan and Asia NTSC; disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
 
   - name: "sega1003.bin"
     system: sega-saturn
@@ -355,13 +355,13 @@ files:
   - name: "sega_100a.bin"
     system: sega-saturn
     description: "Saturn BIOS v1.00a (North America and Europe)"
-    region: [north-america, europe, south-korea, asia-pal, brazil, latin-america]
+    region: [north-america, europe, oceania, south-korea, asia-pal, brazil, latin-america]
     required: false
     size: 524288
     sha256: "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73"
     validation: [size, sha256]
     source_ref: "ss/ss.cpp:1460, 1447-1492"
-    note: "Recognised alternative for ss.bios_na_eu."
+    note: "Recognised alternative for ss.bios_na_eu, read for every area but Japan and Asia NTSC; disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
 
   - name: "epr-20091.ic8"
     system: sega-stv
@@ -391,7 +391,7 @@ files:
     size: 524288
     validation: [size]
     source_ref: "ss/ss.cpp:1420-1428, 1437-1445, 2446"
-    note: "Default of ss.bios_stv_eu."
+    note: "Default of ss.bios_stv_eu, read for area EU_PAL, which only the ST-V database (Critter Crusher) or ss.region_default=eu sets (ss/ss.cpp:1424-1425, 1674-1676, ss/db.cpp:644-645)."
 
   - name: "mpr-18811-mx.ic1"
     system: sega-saturn

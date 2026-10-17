@@ -80,12 +80,12 @@ files:
 
   - name: "mpr-17933.bin"
     system: sega-saturn
-    region: [north-america, europe, south-korea, asia-pal, brazil, latin-america]
+    region: [north-america, europe, oceania, south-korea, asia-pal, brazil, latin-america]
     required: true
     size: 524288
     validation: {core: [size], upstream: [size, sha256]}
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
-    note: "Saturn BIOS v1.00a (North America and Europe), loaded for every area other than Japan and Asia NTSC, and when no content is loaded. The port checks the size only; the sha256 is the value upstream Mednafen 1.32.1 holds for this filename in its ss.bios_sanity table (src/ss/ss.cpp, BIOSDB)."
+    note: "Saturn BIOS v1.00a (North America and Europe), loaded for every area other than Japan and Asia NTSC, and when no content is loaded. Disc area E maps to EU_PAL and the code has no Oceania area (disc.c:162-165). The port checks the size only; the sha256 is the value upstream Mednafen 1.32.1 holds for this filename in its ss.bios_sanity table (src/ss/ss.cpp, BIOSDB)."
     source_ref: "mednafen/ss/ss.c:1847-1848 (region filename), mednafen/ss/ss.c:1867-1873 (open), mednafen/ss/ss.c:1961-1984 (size check, read), mednafen/ss/ss.c:1988 (sha256 for save states), libretro.c:1103 (default area)"
 
   - name: "mpr-18811-mx.ic1"

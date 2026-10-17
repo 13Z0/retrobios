@@ -47,9 +47,9 @@ files:
 
   - name: bios_CD_E.bin
     system: sega-megacd
-    region: [europe]
+    region: [europe, oceania]
     required: true
-    note: "Mega CD (PAL) boot ROM. Loaded for REGION_EUROPE."
+    note: "Mega CD (PAL) boot ROM. Loaded for REGION_EUROPE, set by security byte 0x64 at 0x20b, the only PAL branch for Australian discs (core/loadrom.c:1065-1069)."
     source_ref: "core/loadrom.c:412"
 
   - name: bios_CD_J.bin
@@ -71,9 +71,8 @@ files:
 
   - name: bios_E.sms
     system: sega-mastersystem
-    region: [europe]
     required: false
-    note: "Master System (PAL) boot ROM. Snail maze / Sonic built in."
+    note: "Master System (PAL) boot ROM. Snail maze / Sonic built in. REGION_EUROPE comes only from CRC lists of Codemasters and PAL-timing games, Brazilian ones included, or the PAL option (core/cart_hw/sms_cart.c:167-171, 245-264, core/loadrom.c:1161-1164)."
     source_ref: "core/loadrom.c:514"
 
   - name: bios_J.sms

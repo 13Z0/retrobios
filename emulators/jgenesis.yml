@@ -87,11 +87,12 @@ files:
   - name: "bios_CD_E.bin"
     system: sega-megacd
     description: "Mega CD BIOS (Europe)"
-    region: [europe]
+    region: [europe, oceania]
     required: true
     size: 131072
     validation: [size]
     source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:238-244 (eu_bios_path), backend/segacd-core/src/api.rs:77-79"
+    note: "Selected when the header area at 0x1F0 holds E and not U or J, as Australian discs do (backend/genesis-components/src/cartridge.rs:361-376, backend/segacd-core/src/api.rs:339-369)."
 
   - name: "bios_CD_J.bin"
     system: sega-megacd

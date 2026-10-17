@@ -108,17 +108,17 @@ files:
   - name: "eu_mcd2_9306.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [europe]
+    region: [europe, oceania]
     priority: 1
     required: true
     size: 131072
-    note: "EU Mega CD Model 2 BIOS (June 1993). First in EU search order."
+    note: "EU Mega CD Model 2 BIOS (June 1993). First in EU search order, used when security byte 0x20b is 0x64, the only PAL branch for Australian discs (pico/media.c:243-247, platform/libretro/libretro.c:1306-1308)."
     source_ref: "platform/libretro/libretro.c:1276"
 
   - name: "eu_mcd2_9303.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [europe]
+    region: [europe, oceania]
     priority: 2
     required: false
     size: 131072
@@ -128,7 +128,7 @@ files:
   - name: "eu_mcd1_9210.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [europe]
+    region: [europe, oceania]
     priority: 3
     required: false
     size: 131072
@@ -138,7 +138,7 @@ files:
   - name: "bios_CD_E.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [europe]
+    region: [europe, oceania]
     priority: 4
     required: false
     size: 131072

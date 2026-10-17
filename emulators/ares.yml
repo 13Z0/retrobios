@@ -140,29 +140,30 @@ files:
   # --- Master System ---
   - name: bios_U.sms
     system: master-system
-    region: [north-america]
     required: false
     sha256: "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50"
     validation: [sha256]
     description: "Master System BIOS (US)"
+    note: "Picked for NTSC-U, which the code gives every export cart outside its PAL list through the Boot/Prefer setting; the header does not tell US from Europe (mia/medium/master-system.cpp:54-63, desktop-ui/emulator/emulator.cpp:40-60)."
     source_ref: "desktop-ui/emulator/master-system.cpp:14, mia/system/master-system.cpp:8 (//optional)"
 
   - name: bios_J.sms
     system: master-system
-    region: [japan]
+    region: [japan, south-korea]
     required: false
     sha256: "67846e26764bd862f19179294347f7353a4166b62ac4198a5ec32933b7da486e"
     validation: [sha256]
     description: "Master System BIOS (Japan)"
+    note: "Picked for NTSC-J, set when the header lacks the export region code 4 and for a hash list of Japanese and Korean carts (mia/medium/master-system.cpp:62-63, 285-464, 493-512)."
     source_ref: "desktop-ui/emulator/master-system.cpp:15"
 
   - name: bios_E.sms
     system: master-system
-    region: [europe]
     required: false
     sha256: "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50"
     validation: [sha256]
     description: "Master System BIOS (Europe), same binary as US"
+    note: "Picked for PAL, set by a hash list that also holds Korean and Australian releases or by the Boot/Prefer setting (mia/medium/master-system.cpp:54-275, desktop-ui/emulator/emulator.cpp:40-60)."
     source_ref: "desktop-ui/emulator/master-system.cpp:16"
 
   # --- Mega CD ---
@@ -187,11 +188,12 @@ files:
 
   - name: bios_CD_E.bin
     system: mega-cd
-    region: [europe]
+    region: [europe, oceania]
     required: true
     sha256: "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb"
     validation: [sha256]
     description: "Mega CD BIOS (Europe)"
+    note: "Picked for PAL, set when the boot code matches the EU security block; the code has no other PAL branch for Australian discs (mia/medium/mega-cd.cpp:47-56, desktop-ui/emulator/mega-cd.cpp:70-74)."
     source_ref: "desktop-ui/emulator/mega-cd.cpp:19"
 
   # --- Mega LD (LaserActive SEGA PAC) ---
@@ -384,23 +386,23 @@ files:
   # --- Saturn ---
   - name: saturn_bios_U.bin
     system: saturn
-    region: [north-america]
     required: true
     description: "Sega Saturn BIOS (US)"
+    note: "Never picked from the disc: mia tags every Saturn disc NTSC-J (mia/medium/saturn.cpp:42, desktop-ui/emulator/saturn.cpp:26-30)."
     source_ref: "desktop-ui/emulator/saturn.cpp:14"
 
   - name: saturn_bios_J.bin
     system: saturn
-    region: [japan]
     required: true
     description: "Sega Saturn BIOS (Japan)"
+    note: "Picked for every disc: mia tags each Saturn disc NTSC-J without reading it (mia/medium/saturn.cpp:42, desktop-ui/emulator/saturn.cpp:26-30)."
     source_ref: "desktop-ui/emulator/saturn.cpp:15"
 
   - name: saturn_bios_E.bin
     system: saturn
-    region: [europe]
     required: true
     description: "Sega Saturn BIOS (Europe)"
+    note: "Never picked from the disc: mia tags every Saturn disc NTSC-J (mia/medium/saturn.cpp:42, desktop-ui/emulator/saturn.cpp:26-30)."
     source_ref: "desktop-ui/emulator/saturn.cpp:16"
 
   # --- SFC subsystem ROMs (loaded as game cartridges, not firmware) ---
