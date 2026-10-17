@@ -26,6 +26,7 @@ from common import load_emulator_profiles
 from common import load_platform_config
 import os
 from packextras import platform_region_groups
+from packpaths import _flat
 from nativemode import reads_file_contents
 import region as region_mod
 from packresolve import resolve_file
@@ -724,13 +725,15 @@ def verify_pack_against_platform(
                     continue
                 if region_drops and sanitize_pack_path(dest) in region_drops:
                     continue
-                if extras_pfx and not (is_flat and extras_pfx == base_dest):
-                    if not dest.startswith(f"{extras_pfx}/"):
-                        full = f"{extras_pfx}/{dest}"
-                    else:
-                        full = dest
+                # The builder's own placement: the prefix, then the flattening
+                # of a pack written at the BIOS root. A destination that
+                # already starts with the prefix (aethersx2's bios/<image>)
+                # lands at the root of a flat pack, not under bios/.
+                if extras_pfx and not dest.startswith(f"{extras_pfx}/"):
+                    full = f"{extras_pfx}/{dest}"
                 else:
                     full = dest
+                full = _flat(full, base_dest, is_flat)
                 # Skip path conflicts (same logic as pack builder)
                 if _has_path_conflict(full, seen_conformance, seen_parents):
                     continue
