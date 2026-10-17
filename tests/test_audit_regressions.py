@@ -3266,5 +3266,23 @@ class EachRootReadsItsOwnRegistry(unittest.TestCase):
                 self.assertNotIn('startswith("bios/")\n    }', source)
 
 
+
+class TheSiteCountsSlotsNotVersions(unittest.TestCase):
+    """raze lists every GRP its code accepts under one name: the site said
+    59 files, 46 missing, where verify --emulator said 23 slots, 12 missing."""
+
+    def test_one_held_version_fills_the_slot(self):
+        from scripts.generate_site import _emulator_file_summary
+
+        files = [
+            {"name": "DUKE3D.GRP", "crc32": "1"},
+            {"name": "DUKE3D.GRP", "crc32": "2"},
+            {"name": "BLOOD.RFF", "crc32": "3"},
+        ]
+        line = _emulator_file_summary(files, lambda f: f.get("crc32") == "2")[0]
+        self.assertIn("**2 files** (3 accepted versions)", line)
+        self.assertIn("1 in repo, 1 missing", line)
+
+
 if __name__ == "__main__":
     unittest.main()

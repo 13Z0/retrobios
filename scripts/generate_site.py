@@ -2354,19 +2354,36 @@ def _availability_check(db: dict, data_names):
 
 
 def _emulator_file_summary(files: list[dict], available) -> list[str]:
-    """The counts above an emulator's file table, and its categories."""
-    in_repo_count = sum(1 for f in files if available(f))
-    unsourceable_count = sum(1 for f in files if f.get("unsourceable"))
-    missing_count = len(files) - in_repo_count - unsourceable_count
-    req_count = sum(1 for f in files if f.get("required"))
-    hle_count = sum(1 for f in files if f.get("hle_fallback"))
+    """The counts above an emulator's file table, and its categories.
+
+    Counted by slot, as verify --emulator and the gaps page count: raze
+    lists every GRP its code accepts under one name, and holding one fills
+    the slot. Counted per entry, the page announced 46 missing where 12
+    slots are empty.
+    """
+    from cross_reference import slot_key
+
+    slots: dict[tuple, list[dict]] = {}
+    for f in files:
+        slots.setdefault(slot_key(f), []).append(f)
+    in_repo_count = sum(1 for group in slots.values() if any(available(f) for f in group))
+    unsourceable_count = sum(
+        1 for group in slots.values()
+        if not any(available(f) for f in group) and all(f.get("unsourceable") for f in group)
+    )
+    missing_count = len(slots) - in_repo_count - unsourceable_count
+    req_count = sum(1 for group in slots.values() if any(f.get("required") for f in group))
+    hle_count = sum(1 for group in slots.values() if any(f.get("hle_fallback") for f in group))
 
     held = f"{in_repo_count} in repo, {missing_count} missing"
     if unsourceable_count:
         held += f", {unsourceable_count} unsourceable"
+    total = f"**{len(slots)} files**"
+    if len(slots) != len(files):
+        total += f" ({len(files)} accepted versions)"
     parts = [
-        f"**{len(files)} files**",
-        f"{req_count} required, {len(files) - req_count} optional",
+        total,
+        f"{req_count} required, {len(slots) - req_count} optional",
         held,
     ]
     if hle_count:

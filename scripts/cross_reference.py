@@ -427,6 +427,20 @@ def _resolve_archive_source(
     return result if result is not None else "missing"
 
 
+def slot_key(f: dict) -> tuple:
+    """The slot a profile entry fills: its entries on one slot are the
+    versions its code accepts there, and holding any of them fills it."""
+    fname = f.get("name", "")
+    return (
+        fname,
+        f.get("archive"),
+        f.get("path") or fname,
+        f.get("system"),
+        f.get("variant_group"),
+        f.get("mode", "both"),
+    )
+
+
 def _cross_reference_profile(
     emu_name: str,
     profile: dict,
@@ -469,17 +483,6 @@ def _cross_reference_profile(
     unsourceable_list: list[dict] = []
     archive_gaps: dict[tuple, dict] = {}
     seen_files: set[tuple] = set()
-
-    def slot_key(f: dict) -> tuple:
-        fname = f.get("name", "")
-        return (
-            fname,
-            f.get("archive"),
-            f.get("path") or fname,
-            f.get("system"),
-            f.get("variant_group"),
-            f.get("mode", "both"),
-        )
 
     # The entries of one profile on one slot are the versions its code
     # accepts there (raze's ten DUKE3D.GRP): holding any of them fills the
