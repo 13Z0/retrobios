@@ -2906,3 +2906,33 @@ class AnAcceptedVersionIsNoCoreDiscrepancy(unittest.TestCase):
     def test_the_pack_consults_the_alternatives(self):
         source = (ROOT / "scripts" / "generate_pack.py").read_text()
         self.assertRegex(source, r'status == "hash_mismatch" and not _matches_an_alternative\(')
+
+
+class ADataDirectoryCopyPassesTheNameChecks(unittest.TestCase):
+    """The name steps over bios/ refuse a candidate outside the size or the
+    Adler-32 the entry's code checks; a cache copy found by the same name
+    was returned without either check."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.tmp, True))
+        cache = self.tmp / "cache"
+        cache.mkdir()
+        (cache / "wiitdb-pt.txt").write_bytes(b"12345")
+        self.registry = {"dolphin-sys": {"local_cache": str(cache)}}
+        self.db = {"files": {}, "indexes": {"by_name": {}, "by_md5": {},
+                                            "by_path_suffix": {}, "by_crc32": {}}}
+
+    def resolve(self, **fields):
+        entry = {"name": "wiitdb-pt.txt", **fields}
+        return resolve_local_file(entry, self.db, data_dir_registry=self.registry)
+
+    def test_a_size_the_code_accepts_resolves(self):
+        self.assertEqual(self.resolve(size=5, validation=["size"])[1], "data_dir")
+
+    def test_another_size_is_a_contradiction(self):
+        self.assertEqual(self.resolve(size=1, validation=["size"])[1], "hash_mismatch")
+
+    def test_another_adler32_is_a_contradiction(self):
+        status = self.resolve(validation=["adler32"], known_hash_adler32="0xdeadbeef")[1]
+        self.assertEqual(status, "hash_mismatch")

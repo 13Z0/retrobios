@@ -74,6 +74,7 @@ def _verified_asset(
             crc_candidates=set(declared["crc32"]),
             zipped_file=file_entry.get("zipped_file"),
             declared_size=file_entry.get("size"),
+            file_entry=file_entry,
         )
         if verdict != "hash_mismatch":
             return cached

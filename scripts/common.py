@@ -620,14 +620,22 @@ def declared_hash_verdict(
     crc_candidates: set,
     zipped_file: str | None,
     declared_size,
+    file_entry: dict | None = None,
+    db: dict | None = None,
 ) -> str:
     """Judge a candidate found by name against everything the entry declares.
 
     A file reached through a directory walk was matched on its filename,
     which is the weakest evidence there is. Whatever the entry declares
-    about its content is checked here before the walk may return it.
+    about its content is checked here before the walk may return it,
+    including the size and Adler-32 the name steps over bios/ apply.
     """
     if not has_strong_hash:
+        if file_entry is not None and not (
+            name_match_size_ok(file_entry, os.path.getsize(candidate))
+            and adler32_fits(file_entry, candidate, db)
+        ):
+            return "hash_mismatch"
         return "data_dir"
     algorithms: set[str] = set()
     if sha1_candidates:
@@ -1236,6 +1244,8 @@ def resolve_local_file(
                             crc_candidates=set(),
                             zipped_file=zipped_file,
                             declared_size=declared_size,
+                            file_entry=file_entry,
+                            db=db,
                         ),
                     )
                     if hit:
@@ -1358,6 +1368,8 @@ def resolve_local_file(
             crc_candidates=set(crc_candidates),
             zipped_file=zipped_file,
             declared_size=declared_size,
+            file_entry=file_entry,
+            db=db,
         )
         hit, data_dir_mismatch = _resolve_in_data_dirs(
             names_to_try, data_dir_registry, verdict
