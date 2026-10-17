@@ -630,5 +630,26 @@ class InstallMatchesATargetManifest(unittest.TestCase):
                 )
 
 
+
+class ACoreWithNothingHeldIsAnOmission(unittest.TestCase):
+    """DOSBox serves SC-55/WAVEROM3.BIN, DOSBox Pure wants it and nothing is
+    held for it. A pack built for a target without DOSBox lists it as left
+    out; narrowed from the full manifest, it had vanished."""
+
+    MANIFEST = {"files": [{
+        "dest": "SC-55/WAVEROM3.BIN", "cores": ["dosbox"], "sha1": "1" * 40,
+        "absent_claims": [{"name": "WAVEROM3.BIN", "system": "dos", "required": False,
+                           "reason": "not_found", "cores": ["dosbox_pure"]}],
+    }], "omitted_files": []}
+
+    def test_narrowing_away_the_holder_leaves_the_omission(self):
+        files, omitted = install.narrow_to_cores(self.MANIFEST, ["dosbox_pure"])
+        self.assertEqual(files, [])
+        self.assertEqual([o["dest"] for o in omitted], ["SC-55/WAVEROM3.BIN"])
+        files, omitted = install.narrow_to_cores(self.MANIFEST, ["dosbox", "dosbox_pure"])
+        self.assertEqual(len(files), 1)
+        self.assertEqual(omitted, [])
+
+
 if __name__ == "__main__":
     unittest.main()

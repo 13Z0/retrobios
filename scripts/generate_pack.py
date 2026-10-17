@@ -3299,6 +3299,20 @@ def _attach_claims(
             dest_hint=claim.get("destination", ""), offline=offline,
         )
         if claim_status in ("not_found", "external", "user_provided") or not claim_path:
+            # Nothing held for this core: narrowed to it without the cores
+            # served above, the slot is a file left out (installer replays it).
+            systems = _extra_system_ids(claim)
+            entry.setdefault("absent_claims", []).append({
+                "name": str(claim.get("name") or ""),
+                "system": systems[0] if systems else "",
+                "required": bool(claim.get("required", True)),
+                "reason": (
+                    claim_status
+                    if claim_status in ("not_found", "external", "user_provided")
+                    else "not_found"
+                ),
+                "cores": [claim_emu],
+            })
             continue
         claim_path, _ = validated_choice(
             claim, claim_path, db, validation_index or {}, bios_dir, None, dest, owners,
@@ -3495,7 +3509,14 @@ def _manifest_core_entries(
         )
 
         manifest_files.append(entry)
-        omitted_by_destination.pop(full_dest, None)
+        displaced = omitted_by_destination.pop(full_dest, None)
+        if displaced and displaced.get("cores"):
+            # A core that wants this slot and has nothing held: a pack built
+            # without the cores served here leaves the slot to it, missing,
+            # and the installer narrowing to those cores has to say so too.
+            entry.setdefault("absent_claims", []).append(
+                {k: v for k, v in displaced.items() if k != "dest"}
+            )
         total_size += file_size
         seen_destinations.add(full_dest)
         _register_path(full_dest, seen_destinations, seen_parents)

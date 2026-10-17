@@ -1151,6 +1151,27 @@ _COPY_FIELDS = (
 )
 
 
+def _check_omission(entry: dict, dest: str) -> None:
+    """The fields of a file left out: an omitted entry, or the claim of a core
+    with nothing held at a destination another core's copy serves."""
+    if not isinstance(entry.get("name"), str) or not entry["name"]:
+        raise ValueError(f"invalid omitted file name for {dest}")
+    if not isinstance(entry.get("system", ""), str):
+        raise ValueError(f"invalid omitted system for {dest}")
+    if not isinstance(entry.get("required"), bool):
+        raise ValueError(f"invalid omitted required flag for {dest}")
+    if entry.get("reason") not in OMISSION_REASONS:
+        raise ValueError(f"invalid omission reason for {dest}")
+    cores = entry.get("cores")
+    if cores is not None and (
+        not isinstance(cores, list)
+        or not all(isinstance(core, str) for core in cores)
+    ):
+        raise ValueError(f"invalid omitted cores list for {dest}")
+    for field in SELECTION_FIELDS:
+        _check_tags(entry, field, dest)
+
+
 def _check_download(entry: dict, where: str, dest: str) -> int:
     """The size, hashes, source and cores of one downloadable copy; its size."""
     size = entry.get("size")
@@ -1271,6 +1292,13 @@ def _validate_manifest(data: object, plat: str) -> dict:
             # Narrowing can swap in any copy: the cap holds for the largest.
             size = max(size, _check_download(alternative, where, dest))
         size = max(size, _check_slot(entry, f"files[{index}]", dest))
+        absent = entry.get("absent_claims", [])
+        if not isinstance(absent, list) or len(absent) > MAX_SELECTION_TAGS:
+            raise ValueError(f"invalid absent claims for {dest}")
+        for claim in absent:
+            if not isinstance(claim, dict):
+                raise ValueError(f"invalid absent claim for {dest}")
+            _check_omission(claim, dest)
         largest_total += size
         if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
@@ -1299,20 +1327,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
         if dest in seen_destinations or dest in seen_omitted:
             raise ValueError(f"duplicate or conflicting omitted destination: {dest}")
         seen_omitted.add(dest)
-        if not isinstance(entry.get("name"), str) or not entry["name"]:
-            raise ValueError(f"invalid omitted file name for {dest}")
-        if not isinstance(entry.get("system", ""), str):
-            raise ValueError(f"invalid omitted system for {dest}")
-        if not isinstance(entry.get("required"), bool):
-            raise ValueError(f"invalid omitted required flag for {dest}")
-        if entry.get("reason") not in OMISSION_REASONS:
-            raise ValueError(f"invalid omission reason for {dest}")
-        cores = entry.get("cores")
-        if cores is not None and (
-            not isinstance(cores, list)
-            or not all(isinstance(core, str) for core in cores)
-        ):
-            raise ValueError(f"invalid omitted cores list for {dest}")
+        _check_omission(entry, dest)
         claims = entry.get("alternatives", [])
         if not isinstance(claims, list) or len(claims) > MAX_SELECTION_TAGS:
             raise ValueError(f"invalid omitted alternatives for {dest}")
@@ -1566,6 +1581,8 @@ def narrow_to_cores(
     def kept_system(system: str) -> bool:
         return system not in reach or bool(cores.intersection(reach[system]))
 
+    displaced: list[dict] = []
+
     def kept(entries: list[dict]) -> list[dict]:
         result: list[dict] = []
         for entry in entries:
@@ -1573,6 +1590,16 @@ def narrow_to_cores(
                 copy = _for_cores(entry, cores)
                 if copy is not None:
                     result.append(copy)
+                    continue
+                # None of the cores served here is named: a named core that
+                # wants the slot and has nothing held is a file left out.
+                claim = next(
+                    (c for c in entry.get("absent_claims", [])
+                     if cores.intersection(c.get("cores") or [])),
+                    None,
+                )
+                if claim is not None:
+                    displaced.append({"dest": entry["dest"], **claim})
                 continue
             # The systems declaring the file, where they are fewer than the
             # ones reading it.
@@ -1589,7 +1616,8 @@ def narrow_to_cores(
 
     files = manifest.get("files", []) if files is None else files
     omitted = manifest.get("omitted_files", []) if omitted is None else omitted
-    return kept(files), kept(omitted)
+    kept_files = kept(files)
+    return kept_files, kept(omitted) + displaced
 
 
 def canonical_region(raw: str) -> str:
