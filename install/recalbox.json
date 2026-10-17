@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-16T17:23:53Z",
+  "generated": "2026-10-17T04:02:46Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -237,24 +237,12 @@
       }
     }
   ],
-  "total_files": 3332,
-  "total_size": 4113420727,
-  "pack_files": 3334,
-  "pack_size": 4113420727,
-  "total_omitted": 1,
-  "omitted_files": [
-    {
-      "dest": "geolith/neocd.zip",
-      "name": "neocd.zip",
-      "system": "snk-neogeo-cd",
-      "required": true,
-      "reason": "hash_mismatch",
-      "cores": null,
-      "systems": [
-        "snk-neogeo-cd"
-      ]
-    }
-  ],
+  "total_files": 3333,
+  "total_size": 4113788642,
+  "pack_files": 3335,
+  "pack_size": 4113788642,
+  "total_omitted": 0,
+  "omitted_files": [],
   "core_names": {
     "advancemame": [
       "advmame"
@@ -6214,6 +6202,17 @@
       "sha256": "6f01090a5022916154a0eb1cc4eb3a15d6f6da00c0ee6ea73d67830974aa691a",
       "size": 65536,
       "repo_path": "bios/SNK/Neo Geo CD/ng-lo.rom",
+      "cores": null,
+      "systems": [
+        "snk-neogeo-cd"
+      ]
+    },
+    {
+      "dest": "geolith/neocd.zip",
+      "sha1": "651e27048fe67950b237b8dae24a30a52ca7fa70",
+      "sha256": "f3d9f399ffca44cc381546a260f6bc4f267705d8e10f8df1e6d624d4bc1c07fa",
+      "size": 367915,
+      "repo_path": "bios/SNK/Neo Geo CD/.variants/neocd.zip.5b50a9a1",
       "cores": null,
       "systems": [
         "snk-neogeo-cd"
