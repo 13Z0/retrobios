@@ -61,7 +61,7 @@ SYSTEM_MAP = {
     "Astrocade": ("bally-astrocade", "Bally Astrocade", "Astrocade_MiSTer"),
     "AtariLynx": ("atari-lynx", "Atari Lynx", "AtariLynx_MiSTer"),
     "CD-i": ("philips-cdi", "Philips CD-i", "CDi_MiSTer"),
-    "COCO3": ("tandy-coco", "Tandy Color Computer 3", "CoCo3_MiSTer"),
+    "COCO3": ("coco3", "Tandy Color Computer 3", "CoCo3_MiSTer"),
     "Casio_PV-2000": ("casio-pv2000", "Casio PV-2000", "Casio_PV-2000_MiSTer"),
     "CreatiVision": ("creativision", "VTech CreatiVision", "CreatiVision_MiSTer"),
     "GAMEBOY": ("nintendo-gb", "Game Boy / Game Boy Color", "Gameboy_MiSTer"),

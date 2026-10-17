@@ -15751,7 +15751,7 @@ systems:
       native_system: xbox
       component: xemu
       description: XBOX Complex BIOS 4627
-  dragon-32-64:
+  dragon64:
     files:
     - name: d32.rom
       destination: bios/d32.rom
@@ -15882,7 +15882,7 @@ systems:
       native_system: tanodragon
       component: xroar
       description: Prológica CP-400 BASIC OS firmware
-  tandy-coco:
+  coco:
     files:
     - name: cp400extbas.rom
       destination: bios/cp400extbas.rom

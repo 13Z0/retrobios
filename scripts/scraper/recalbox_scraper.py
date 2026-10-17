@@ -49,6 +49,8 @@ SOURCE_URL = (
 
 SYSTEM_SLUG_MAP = {
     "3do": "3do",
+    "dragon": "dragon64",
+    "trs80coco": "coco",
     "amiga600": "commodore-amiga",
     "amiga1200": "commodore-amiga",
     "amigacd32": "commodore-amiga",

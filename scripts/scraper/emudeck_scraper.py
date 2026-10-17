@@ -85,7 +85,7 @@ SYSTEM_SLUG_MAP = {
     "ps2": "sony-playstation-2",
     "ps3": "sony-playstation-3",
     "psp": "sony-psp",
-    "psvita": "sony-psvita",
+    "psvita": "sony-playstation-vita",
     "segacd": "sega-mega-cd",
     "megacd": "sega-mega-cd",
     "saturn": "sega-saturn",

@@ -97,6 +97,29 @@ systems:
     native_id: Casio_PV-2000
     name: Casio PV-2000
     docs: "https://github.com/MiSTer-devel/Casio_PV-2000_MiSTer"
+  coco3:
+    files:
+    - name: boot0.rom
+      destination: COCO3/boot0.rom
+      required: true
+      md5: 7233c6c429f3ce1c7392f28a933e0b6f
+      size: 32768
+      native_system: COCO3
+    - name: boot1.rom
+      destination: COCO3/boot1.rom
+      required: true
+      md5: 8cab28f4b7311b8df63c07bb3b59bfd5
+      size: 8192
+      native_system: COCO3
+    - name: boot2.rom
+      destination: COCO3/boot2.rom
+      required: true
+      md5: 171fb7a5d3b808565295b45c773abaaf
+      size: 8192
+      native_system: COCO3
+    native_id: COCO3
+    name: Tandy Color Computer 3
+    docs: "https://github.com/MiSTer-devel/CoCo3_MiSTer"
   creativision:
     files:
     - name: boot.rom
@@ -597,29 +620,6 @@ systems:
       native_system: SuperAcan
     native_id: SuperAcan
     name: superacan
-  tandy-coco:
-    files:
-    - name: boot0.rom
-      destination: COCO3/boot0.rom
-      required: true
-      md5: 7233c6c429f3ce1c7392f28a933e0b6f
-      size: 32768
-      native_system: COCO3
-    - name: boot1.rom
-      destination: COCO3/boot1.rom
-      required: true
-      md5: 8cab28f4b7311b8df63c07bb3b59bfd5
-      size: 8192
-      native_system: COCO3
-    - name: boot2.rom
-      destination: COCO3/boot2.rom
-      required: true
-      md5: 171fb7a5d3b808565295b45c773abaaf
-      size: 8192
-      native_system: COCO3
-    native_id: COCO3
-    name: Tandy Color Computer 3
-    docs: "https://github.com/MiSTer-devel/CoCo3_MiSTer"
   ti99:
     files:
     - name: boot0.rom

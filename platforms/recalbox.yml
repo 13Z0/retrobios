@@ -2948,7 +2948,7 @@ systems:
       native_name: Texas Instrument TI-99/4A
       note: Disk Operating System
     native_id: ti994a
-  dragon:
+  dragon64:
     files:
     - name: d32.rom
       destination: dragon/d32.rom
@@ -3131,7 +3131,7 @@ systems:
       native_name: Dragon 32/64
       note: Super DOS E8
     native_id: dragon
-  trs80coco:
+  coco:
     files:
     - name: bas10.rom
       destination: trs80coco/bas10.rom

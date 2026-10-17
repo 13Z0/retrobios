@@ -587,5 +587,49 @@ class ImportingAScraperFetchesNothing(unittest.TestCase):
             )
 
 
+class OneNativeIdOneSystem(unittest.TestCase):
+    """RetroDECK filed coco as tandy-coco and Batocera as coco: xroar's 28
+    CoCo and Dragon ROMs reached no RetroDECK system, and --system left
+    them out of the pack and the installer alike."""
+
+    # A folder each platform fills with something else, not a system name:
+    # EmuDeck checks the Neo Geo BIOS there, RetroDECK keeps arcade sets.
+    # Several platforms file the PC Engine CD under the HuCard system, the
+    # native_system of each entry keeping the platform's own grouping.
+    FOLDS = {"fbneo", "pcenginecd"}
+
+    def test_scrapers_agree_on_every_shared_native_id(self):
+        from common import _norm_system_id  # noqa: PLC0415
+
+        seen: dict[str, dict[str, str]] = {}
+        for path in sorted((REPO_ROOT / "scripts" / "scraper").glob("*_scraper.py")):
+            if "SYSTEM_SLUG_MAP" not in path.read_text():
+                continue
+            module = importlib.import_module(f"scraper.{path.stem}")
+            for native, slug in getattr(module, "SYSTEM_SLUG_MAP", {}).items():
+                slug = slug[0] if isinstance(slug, tuple) else slug
+                if isinstance(slug, str):
+                    seen.setdefault(native.lower(), {})[path.stem] = slug
+        split = {
+            native: by for native, by in seen.items()
+            if native not in self.FOLDS and len({_norm_system_id(s) for s in by.values()}) > 1
+        }
+        self.assertEqual(split, {})
+
+    def test_xroar_machines_reach_the_platforms_that_run_it(self):
+        import yaml  # noqa: PLC0415
+
+        from common import _norm_system_id  # noqa: PLC0415
+
+        xroar = yaml.safe_load((REPO_ROOT / "emulators" / "xroar.yml").read_text())
+        machines = {_norm_system_id(s) for s in xroar["systems"]}
+        for platform, wanted in (("retrodeck", {"coco", "dragon64"}),
+                                 ("recalbox", {"coco", "dragon64"}),
+                                 ("misterfpga", {"coco3"})):
+            with self.subTest(platform=platform):
+                data = yaml.safe_load((REPO_ROOT / "platforms" / f"{platform}.yml").read_text())
+                ids = {_norm_system_id(s) for s in data["systems"]}
+                self.assertEqual(wanted & ids & machines, wanted)
+
 if __name__ == "__main__":
     unittest.main()

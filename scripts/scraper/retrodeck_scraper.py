@@ -85,7 +85,7 @@ SYSTEM_SLUG_MAP: dict[str, str | None] = {
     "ps2": "sony-playstation-2",
     "ps3": "sony-playstation-3",
     "psp": "sony-psp",
-    "psvita": "sony-psvita",
+    "psvita": "sony-playstation-vita",
     # Sega
     "megadrive": "sega-mega-drive",
     "genesis": "sega-mega-drive",
@@ -146,10 +146,12 @@ SYSTEM_SLUG_MAP: dict[str, str | None] = {
     "wonderswan": "bandai-wonderswan",
     "neogeocd": "snk-neogeo-cd",
     "neogeocdjp": "snk-neogeo-cd",
-    "coco": "tandy-coco",
+    # xroar files the CoCo 1/2 ROMs under coco and the Dragon 64's under
+    # dragon64, the ids Batocera uses too.
+    "coco": "coco",
     "trs80": "tandy-trs-80",
-    "dragon": "dragon-32-64",
-    "tanodragon": "dragon-32-64",
+    "dragon": "dragon64",
+    "tanodragon": "dragon64",
     "pico8": "pico8",
     "wolfenstein": "wolfenstein-3d",
     "zxspectrum": "sinclair-zx-spectrum",
