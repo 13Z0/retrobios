@@ -2936,3 +2936,42 @@ class ADataDirectoryCopyPassesTheNameChecks(unittest.TestCase):
     def test_another_adler32_is_a_contradiction(self):
         status = self.resolve(validation=["adler32"], known_hash_adler32="0xdeadbeef")[1]
         self.assertEqual(status, "hash_mismatch")
+
+
+class AMameCloneNameIsANameStep(unittest.TestCase):
+    """The clone fallback relaunched resolution on the bare canonical name:
+    an unsourceable entry and a size the code checks were both served the
+    parent set."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(dir=TMP_ROOT))
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.tmp, True))
+        bios = self.tmp / "bios" / "Arcade"
+        bios.mkdir(parents=True)
+        parent = bios / "parent.zip"
+        parent.write_bytes(b"PARENTSET")
+        (self.tmp / "_mame_clones.json").write_text(
+            json.dumps({"parent.zip": {"clones": ["clone.zip"]}})
+        )
+        sha1 = hashlib.sha1(parent.read_bytes()).hexdigest()
+        self.db = {
+            "bios_dir": str(self.tmp / "bios"),
+            "files": {sha1: {"path": str(parent), "name": "parent.zip",
+                             "sha1": sha1, "size": 9}},
+            "indexes": {"by_name": {"parent.zip": [sha1]}, "by_md5": {},
+                        "by_path_suffix": {}, "by_crc32": {}},
+        }
+
+    def resolve(self, **fields):
+        return resolve_local_file({"name": "clone.zip", **fields}, self.db)
+
+    def test_a_clone_resolves_to_its_parent(self):
+        self.assertEqual(self.resolve()[1], "mame_clone")
+
+    def test_an_unsourceable_entry_is_not_served_the_parent(self):
+        self.assertEqual(self.resolve(unsourceable="not held"), (None, "not_found"))
+
+    def test_a_size_the_parent_contradicts_is_not_served(self):
+        self.assertEqual(
+            self.resolve(size=5, validation=["size"]), (None, "not_found")
+        )

@@ -1335,12 +1335,20 @@ def resolve_local_file(
                     if os.path.exists(path):
                         return path, "zip_exact"
 
-    # MAME clone fallback: if a file was deduped, resolve via canonical
-    if _depth < 3 and not has_strong_hash:
+    # MAME clone fallback: if a file was deduped, resolve via canonical. The
+    # clone name is a name step like the others: an unsourceable entry skips
+    # it, and the size the code checks travels with it (dedup only merges
+    # identical bytes, so the canonical copy has the clone's size).
+    if _depth < 3 and not has_strong_hash and not unsourceable:
         clone_map = get_mame_clone_map(db.get("bios_dir"))
         canonical = clone_map.get(name)
         if canonical and canonical != name:
-            canonical_entry = {"name": canonical}
+            canonical_entry = {
+                field: file_entry[field]
+                for field in ("size", "min_size", "max_size", "validation")
+                if field in file_entry
+            }
+            canonical_entry["name"] = canonical
             result = resolve_local_file(
                 canonical_entry,
                 db,
@@ -1349,7 +1357,7 @@ def resolve_local_file(
                 _depth=_depth + 1,
                 data_dir_registry=data_dir_registry,
             )
-            if result[0]:
+            if result[0] and result[1] != "hash_mismatch":
                 return result[0], "mame_clone"
 
     # Data directory fallback: scan data/ caches for matching filename
