@@ -32,10 +32,8 @@ PLATFORM_NAME = "batocera"
 GITHUB_API = "https://api.github.com/repos/batocera-linux/batocera.linux/contents"
 try:
     from ..base_scraper import github_headers
-    from ..batocera_scraper import fetch_stable_tag
 except ImportError:
     from scraper.base_scraper import github_headers
-    from scraper.batocera_scraper import fetch_stable_tag
 
 RAW_BASE = "https://raw.githubusercontent.com/batocera-linux/batocera.linux/{tag}"
 
@@ -355,7 +353,7 @@ class Scraper(BaseTargetScraper):
 
     def fetch_targets(self) -> dict:
         """Build per-board emulator availability map."""
-        self.tag = fetch_stable_tag()
+        self.tag = self.pinned_revision(PLATFORM_NAME)
         print("  fetching board list...", file=sys.stderr)
         boards = self._list_boards()
 
@@ -422,7 +420,7 @@ class Scraper(BaseTargetScraper):
 
         return {
             "platform": "batocera",
-            "source": self.url,
+            "source": f"{self.url}/tree/{self.tag}",
             "scraped_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "targets": targets,
         }

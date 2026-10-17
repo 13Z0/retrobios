@@ -30,10 +30,8 @@ DEVICES_DIR = "projects/ROCKNIX/devices"
 
 try:
     from ..base_scraper import fetch_bytes, github_headers
-    from ..rocknix_scraper import GITHUB_REPO
 except ImportError:
     from scraper.base_scraper import fetch_bytes, github_headers
-    from scraper.rocknix_scraper import GITHUB_REPO
 
 # `NAME="a b \
 #   c"` or `NAME+=" a b"`, continuation lines joined first.
@@ -148,11 +146,7 @@ class Scraper(BaseTargetScraper):
         return sorted(devices)
 
     def fetch_targets(self) -> dict:
-        from scraper.base_scraper import fetch_github_latest_version  # noqa: PLC0415
-
-        self.tag = fetch_github_latest_version(GITHUB_REPO)
-        if not self.tag:
-            raise RuntimeError("cannot read ROCKNIX's latest release tag")
+        self.tag = self.pinned_revision(PLATFORM_NAME)
         package_mk = self._raw(EMULATORS_MK)
         if "LIBRETRO_CORES" not in package_mk:
             raise RuntimeError(f"no LIBRETRO_CORES in {EMULATORS_MK} at {self.tag}")

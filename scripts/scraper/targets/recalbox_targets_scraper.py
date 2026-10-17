@@ -62,8 +62,8 @@ class Scraper(BaseTargetScraper):
         super().__init__(url=url)
 
     def fetch_targets(self) -> dict:
-        platform = PlatformScraper()
-        tag = platform.tag
+        tag = self.pinned_revision(PLATFORM_NAME)
+        platform = PlatformScraper(tag)
         listing = json.loads(fetch_bytes(CONFIGS_TREE_URL.format(tag=tag)))
         boards = {
             match.group(1): item["name"]

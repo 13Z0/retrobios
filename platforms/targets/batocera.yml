@@ -1,6 +1,6 @@
 platform: batocera
-source: https://github.com/batocera-linux/batocera.linux
-scraped_at: '2026-10-17T10:20:31Z'
+source: https://github.com/batocera-linux/batocera.linux/tree/batocera-43.1
+scraped_at: '2026-10-17T22:01:01Z'
 targets:
   a3gen2:
     architecture: aarch64

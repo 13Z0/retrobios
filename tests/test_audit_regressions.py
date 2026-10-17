@@ -3717,5 +3717,35 @@ class CompanionsComeFromADirectoryIndex(unittest.TestCase):
         self.assertIs(packextras._files_by_directory(files_db), index)
 
 
+
+class TargetListsReadThePinnedRelease(unittest.TestCase):
+    """Each target scraper asked upstream for its latest tag: a Recalbox
+    10.2 board list could filter 10.1.1 systems, and Batocera's target file
+    did not even record the tag it read."""
+
+    def test_the_revision_comes_from_the_platform_yaml(self):
+        from scripts.scraper.targets import BaseTargetScraper
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            for name, source, tag in (
+                ("a", "https://raw.githubusercontent.com/o/r/batocera-43.1/x/y", "batocera-43.1"),
+                ("b", "https://gitlab.com/recalbox/recalbox/-/raw/10.1.1/a/b.xml", "10.1.1"),
+                ("c", "https://github.com/o/r/blob/v2/f.cs", "v2"),
+            ):
+                Path(tmp, f"{name}.yml").write_text(f"source: {source}\n")
+                self.assertEqual(BaseTargetScraper.pinned_revision(name, tmp), tag)
+            Path(tmp, "d.yml").write_text("source: https://example.test/x\n")
+            with self.assertRaises(RuntimeError):
+                BaseTargetScraper.pinned_revision("d", tmp)
+
+    def test_no_target_scraper_asks_for_the_latest_tag(self):
+        for name in ("batocera", "rocknix", "recalbox"):
+            source = (ROOT / "scripts" / "scraper" / "targets" / f"{name}_targets_scraper.py").read_text()
+            with self.subTest(scraper=name):
+                self.assertIn("self.pinned_revision(PLATFORM_NAME)", source)
+                self.assertNotIn("fetch_stable_tag()", source)
+                self.assertNotIn("fetch_github_latest_version(", source)
+
+
 if __name__ == "__main__":
     unittest.main()
