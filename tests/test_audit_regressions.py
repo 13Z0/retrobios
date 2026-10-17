@@ -2448,6 +2448,29 @@ class AnUnreadableDatabaseStopsTheScan(unittest.TestCase):
                 )
 
 
+class TheZipIndexCacheKnowsItsInputs(unittest.TestCase):
+    """build_zip_contents_index cached on (path, mtime) alone: a smaller
+    max_entry_size, or a database giving the same archive another sha1,
+    got the first call's index back."""
+
+    def test_the_bound_and_the_sha1_are_part_of_the_key(self):
+        from scripts import ziptools
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            path = Path(directory) / "a.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr("big.bin", b"x" * 4096)
+            ziptools._zip_contents_cache = None
+            db = {"files": {"a" * 40: {"path": str(path)}}}
+            self.assertEqual(len(ziptools.build_zip_contents_index(db)), 1)
+            self.assertEqual(ziptools.build_zip_contents_index(db, max_entry_size=10), {})
+            other = {"files": {"b" * 40: {"path": str(path)}}}
+            self.assertEqual(
+                set(ziptools.build_zip_contents_index(other).values()), {"b" * 40}
+            )
+            ziptools._zip_contents_cache = None
+
+
 class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
     """A crash while serializing left a truncated db_cache.json behind, and
     the next run rehashed the whole collection from scratch."""

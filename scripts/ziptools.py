@@ -57,7 +57,7 @@ def zip_member_crcs(path: str) -> frozenset[str]:
     return _member_crcs(path, mtime)
 
 
-_zip_contents_cache: tuple[frozenset[tuple[str, float]], dict] | None = None
+_zip_contents_cache: tuple[tuple, dict] | None = None
 
 def build_zip_contents_index(db: dict, max_entry_size: int = 512 * 1024 * 1024) -> dict:
     """Build {inner_rom_md5: zip_file_sha1} for ROMs inside ZIP files.
@@ -74,7 +74,13 @@ def build_zip_contents_index(db: dict, max_entry_size: int = 512 * 1024 * 1024) 
         if path.endswith(".zip") and os.path.exists(path):
             zip_entries.append((path, sha1))
 
-    fingerprint = frozenset((path, os.path.getmtime(path)) for path, _ in zip_entries)
+    # The bound and the sha1 each path carries are part of the answer: a
+    # second call with a smaller bound got members the first one admitted,
+    # and a regenerated database got the sha1 of the old one.
+    fingerprint = (
+        max_entry_size,
+        frozenset((path, os.path.getmtime(path), sha1) for path, sha1 in zip_entries),
+    )
     if _zip_contents_cache is not None and _zip_contents_cache[0] == fingerprint:
         return _zip_contents_cache[1]
 
