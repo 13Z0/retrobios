@@ -129,7 +129,7 @@ files:
     path: "GC/EUR/IPL_TRI.bin"
     description: "Triforce boot ROM, PAL directory"
     system: sega-triforce
-    region: [europe]
+    region: [europe, oceania]
     size: 2097152
     crc32: "d1883221"
     validation: [crc32]
@@ -205,7 +205,7 @@ files:
   - name: "IPL.bin"
     path: "GC/EUR/IPL.bin"
     description: "GameCube PAL boot ROM"
-    region: [europe]
+    region: [europe, oceania]
     size: 2097152
     required: false
     hle_fallback: true

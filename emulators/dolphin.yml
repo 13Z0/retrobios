@@ -47,7 +47,7 @@ files:
   - name: "IPL.bin"
     path: "dolphin-emu/Sys/GC/EUR/IPL.bin"
     standalone_path: "GC/EUR/IPL.bin"
-    region: [europe]
+    region: [europe, oceania]
     size: 2097152
     required: false
     hle_fallback: true

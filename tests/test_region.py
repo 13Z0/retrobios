@@ -401,6 +401,23 @@ class TestFallbackGroups(unittest.TestCase):
         self.assertEqual(region.fallback_groups(groups, self.index, []), [])
 
 
+class AustraliaReadsThePalIpl(unittest.TestCase):
+    """Dolphin files the Australian country code U under Region::PAL
+    (Source/Core/DiscIO/Enums.cpp), whose IPL is GC/EUR. Tagged [europe]
+    alone, `--region australia` dropped it and kept the American one."""
+
+    def test_the_pal_ipl_answers_oceania(self):
+        profiles = common.load_emulator_profiles(
+            os.path.join(os.path.dirname(__file__), "..", "emulators")
+        )
+        for name in ("dolphin", "primehack", "ishiiruka", "triforce"):
+            with self.subTest(profile=name):
+                pal = [f for f in profiles[name]["files"]
+                       if "/EUR/" in str(f.get("path", ""))]
+                self.assertTrue(pal)
+                self.assertTrue(all("oceania" in f.get("region", []) for f in pal))
+
+
 class TestProfileConformance(unittest.TestCase):
     """Every region: value in the repo is a list of canonical slugs."""
 

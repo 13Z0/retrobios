@@ -97,7 +97,7 @@ files:
     system: nintendo-gamecube
     required: false
     hle_fallback: true
-    region: [europe]
+    region: [europe, oceania]
     size: 2097152
     crc32: ["4f319f43", "ad1b7f16"]
     validation: [crc32]
