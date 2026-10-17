@@ -20,10 +20,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 942,
-  "total_size": 2552247442,
-  "pack_files": 944,
-  "pack_size": 2552247442,
+  "total_files": 922,
+  "total_size": 2539826322,
+  "pack_files": 924,
+  "pack_size": 2539826322,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -205,12 +205,6 @@
     "parallel_n64": [
       "parallel_n64_debug"
     ],
-    "pce-emu": [
-      "PCE-EMU",
-      "PCE.emu",
-      "com.PceEmu",
-      "pceemu"
-    ],
     "pcsx_rearmed": [
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
@@ -380,13 +374,6 @@
       "msx-emu",
       "openmsx",
       "zesarux"
-    ],
-    "nec-pc-engine-cd": [
-      "ares",
-      "geargrafx",
-      "mednafen",
-      "mesence",
-      "pce-emu"
     ],
     "nec-pc-fx": [
       "beetle_pcfx",
@@ -2183,415 +2170,6 @@
       ]
     },
     {
-      "dest": "5200.rom",
-      "sha1": "6ad7a1e8c9fad486fbec9498cb48bf5bc3adc530",
-      "sha256": "06b250f18983d058c0f156ce7ee88ae48b6eaf11e6f10f21dccf6ac7ffb6a6af",
-      "size": 2048,
-      "repo_path": "bios/Atari/5200/5200.rom",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "colecovision.rom",
-      "sha1": "45bedc4cbdeac66c7df59e9e599195c778d86a92",
-      "sha256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad",
-      "size": 8192,
-      "repo_path": "bios/Coleco/ColecoVision/BIOS.col",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "coleco-colecovision"
-      ]
-    },
-    {
-      "dest": "disksys.rom",
-      "sha1": "af5af53f66982e749643fdf8b2acbb7d4d3ed229",
-      "sha256": "fdc1a76e654feea993fcb38366e05ee5f4eb641f86fe6bebaeefd412e112dd72",
-      "size": 8192,
-      "repo_path": "bios/Nintendo/Famicom Disk System/.variants/disksys.rom.af5af53f",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "gba_bios.bin",
-      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
-      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
-      "cores": [
-        "ares",
-        "mgba"
-      ]
-    },
-    {
-      "dest": "bios.gg",
-      "sha1": "914aa165e3d879f060be77870d345b60cfeb4ede",
-      "sha256": "8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2",
-      "size": 1024,
-      "repo_path": "bios/Sega/Game Gear/GG_majesco.gg",
-      "cores": [
-        "ares",
-        "genesis_plus_gx"
-      ],
-      "systems": [
-        "sega-game-gear"
-      ]
-    },
-    {
-      "dest": "bios_U.sms",
-      "sha1": "c315672807d8ddb8d91443729405c766dd95cae7",
-      "sha256": "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50",
-      "size": 8192,
-      "repo_path": "bios/Other/zesarux/sms.rom",
-      "cores": [
-        "ares",
-        "genesis_plus_gx"
-      ],
-      "systems": [
-        "sega-master-system"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "master-system"
-      ]
-    },
-    {
-      "dest": "bios_J.sms",
-      "sha1": "a8c1b39a2e41137835eda6a5de6d46dd9fadbaf2",
-      "sha256": "67846e26764bd862f19179294347f7353a4166b62ac4198a5ec32933b7da486e",
-      "size": 8192,
-      "repo_path": "bios/Sega/Master System/MasterSystem/japanese-bios.sms",
-      "cores": [
-        "ares",
-        "genesis_plus_gx"
-      ],
-      "systems": [
-        "sega-master-system"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "master-system"
-      ]
-    },
-    {
-      "dest": "bios_E.sms",
-      "sha1": "c315672807d8ddb8d91443729405c766dd95cae7",
-      "sha256": "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50",
-      "size": 8192,
-      "repo_path": "bios/Other/zesarux/sms.rom",
-      "cores": [
-        "ares",
-        "genesis_plus_gx"
-      ],
-      "systems": [
-        "sega-master-system"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "master-system"
-      ]
-    },
-    {
-      "dest": "bios_CD_U.bin",
-      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
-      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
-      "cores": [
-        "ares",
-        "genesis_plus_gx",
-        "picodrive"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "mega-cd"
-      ]
-    },
-    {
-      "dest": "bios_CD_J.bin",
-      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
-      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
-      "cores": [
-        "ares",
-        "genesis_plus_gx",
-        "picodrive"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "mega-cd"
-      ]
-    },
-    {
-      "dest": "bios_CD_E.bin",
-      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
-      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
-      "cores": [
-        "ares",
-        "genesis_plus_gx",
-        "picodrive"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "mega-cd"
-      ]
-    },
-    {
-      "dest": "mega_ld_bios_U.bin",
-      "sha1": "aa811861f8874775075bd3f53008c8aaf59b07db",
-      "sha256": "e89b5a319f66406611ec82fe5c4aa6827c175a05135bd7bd177366cba0465021",
-      "size": 131072,
-      "repo_path": "bios/Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.04 (1993)(Pioneer - Sega)(US).bin",
-      "cores": [
-        "ares"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "mega-ld"
-      ]
-    },
-    {
-      "dest": "mega_ld_bios_J.bin",
-      "sha1": "26237b333db4a4c6770297fa5e655ea95840d5d9",
-      "sha256": "dca942d977217f703d8d1c6eb1aeb6b32c78ecc421486bbb46c459d385161c94",
-      "size": 131072,
-      "repo_path": "bios/Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
-      "cores": [
-        "ares"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "mega-ld"
-      ]
-    },
-    {
-      "dest": "MSX2.ROM",
-      "sha1": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
-      "sha256": "0c672d86ead61a97f49a583b88b7c1905da120645cd44f0c9f2baf4f4631e0b1",
-      "size": 32768,
-      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/MSX2J.rom",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "MSX2EXT.ROM",
-      "sha1": "5c1f9c7fb655e43d38e5dd1fcc6b942b2ff68b02",
-      "sha256": "6c6f421a10c428d960b7ecc990f99af1c638147f747bddca7b0bf0e2ab738300",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2EXT.ROM",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "ngp_bios.rom",
-      "sha1": "2f6429b68446536d8b03f35d02f1e98beb6460a0",
-      "sha256": "0293555b21c4fac516d25199df7809b26beeae150e1d4504a050db32264a6ad7",
-      "size": 65536,
-      "repo_path": "bios/SNK/Neo Geo Pocket/SNK Neo-Geo Pocket BIOS (1998)(SNK)(en-ja).bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "ngpc_bios.rom",
-      "sha1": "edc13192054a59be49c6d55f83b70e2510968e86",
-      "sha256": "8fb845a2f71514cec20728e2f0fecfade69444f8d50898b92c2259f1ba63e10d",
-      "size": 65536,
-      "repo_path": "bios/SNK/Neo Geo Pocket/SNK Neo-Geo Pocket Color BIOS (1999)(SNK)(en-ja).bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "64dd_ipl_J.bin",
-      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
-      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
-      "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "nintendo-64dd"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "nintendo-64dd"
-      ]
-    },
-    {
-      "dest": "64dd_ipl_U.bin",
-      "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
-      "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
-      "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "nintendo-64dd"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "nintendo-64dd"
-      ]
-    },
-    {
-      "dest": "syscard1.pce",
-      "sha1": "a39a66da7de6ba94ab84d04eef7afeec7d4ee66a",
-      "sha256": "afe9f27f91ac918348555b86298b4f984643eafa2773196f2c5441ea84f0c3bb",
-      "size": 262144,
-      "repo_path": "bios/NEC/PC Engine/syscard1.pce",
-      "cores": [
-        "ares",
-        "beetle_pce"
-      ],
-      "systems": [
-        "nec-pc-engine-cd"
-      ]
-    },
-    {
-      "dest": "syscard3.pce",
-      "sha1": "79f5ff55dd10187c7fd7b8daab0b3ffbd1f56a2c",
-      "sha256": "e11527b3b96ce112a037138988ca72fd117a6b0779c2480d9e03eaebece3d9ce",
-      "size": 262144,
-      "repo_path": "bios/NEC/PC Engine/syscard3.pce",
-      "cores": [
-        "ares",
-        "beetle_pce"
-      ],
-      "systems": [
-        "nec-pc-engine-cd"
-      ]
-    },
-    {
-      "dest": "syscard3u.pce",
-      "sha1": "d02611d99921986147c753df14c7349b31d71950",
-      "sha256": "cadac2725711b3c442bcf237b02f5a5210c96f17625c35fa58f009e0ed39e4db",
-      "size": 262144,
-      "repo_path": "bios/NEC/PC Engine/syscard3u.pce",
-      "cores": [
-        "ares",
-        "beetle_pce"
-      ],
-      "systems": [
-        "nec-pc-engine-cd"
-      ]
-    },
-    {
-      "dest": "games_express.pce",
-      "sha1": "014881a959e045e00f4db8f52955200865d40280",
-      "sha256": "4b86bb96a48a4ca8375fc0109631d0b1d64f255a03b01de70594d40788ba6c3d",
-      "size": 32768,
-      "repo_path": "bios/NEC/PC Engine/gecard.pce",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "nec-pc-engine-cd"
-      ]
-    },
-    {
-      "dest": "pac-n10.pce",
-      "sha1": "f7412aa822d70a55b2ff3d7095137263dc54f6b6",
-      "sha256": "0e87a3385a27b3a4cac51934819b7eefa5b3d690768d2495633838488cd0e2e4",
-      "size": 524288,
-      "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-N10 (US) (v1.02).bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "pac-n1.pce",
-      "sha1": "6973e2593e66fd21627fedccec98d4a364afaaff",
-      "sha256": "459325690a458baebd77495c91e37c4dddfdd542ba13a821ce954e5bb245627f",
-      "size": 524288,
-      "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-N1 (Japan) (v1.02).bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "pce-lp1.pce",
-      "sha1": "c1b9202cbe072db12114b223a9ba5374b30718fb",
-      "sha256": "3f43b3b577117d84002e99cb0baeb97b0d65b1d70b4adadc68817185c6a687f0",
-      "size": 524288,
-      "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PCE-LP1 (Japan) (v1.02).bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "scph5501.bin",
-      "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
-      "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
-      "size": 524288,
-      "repo_path": "bios/Sony/PlayStation/scph5501.bin",
-      "cores": [
-        "ares",
-        "beetle_psx"
-      ],
-      "systems": [
-        "sony-playstation"
-      ]
-    },
-    {
-      "dest": "scph5500.bin",
-      "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
-      "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
-      "size": 524288,
-      "repo_path": "bios/Sony/PlayStation/scph5500.bin",
-      "cores": [
-        "ares",
-        "beetle_psx"
-      ],
-      "systems": [
-        "sony-playstation"
-      ]
-    },
-    {
-      "dest": "scph5502.bin",
-      "sha1": "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0",
-      "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09",
-      "size": 524288,
-      "repo_path": "bios/Sony/PlayStation/scph5502.bin",
-      "cores": [
-        "ares",
-        "beetle_psx"
-      ],
-      "systems": [
-        "sony-playstation"
-      ]
-    },
-    {
       "dest": "sysdata/keys.txt",
       "sha1": "5fab786695311433602028cd89898689c5df0898",
       "sha256": "dee8cbca96b74e81d19b0292f8c6255f0e2b23d8551f82cacd086c2eead35ea4",
@@ -2618,6 +2196,25 @@
       ]
     },
     {
+      "dest": "scph5500.bin",
+      "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
+      "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5500.bin",
+      "cores": [
+        "beetle_psx"
+      ],
+      "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
       "dest": "scph5903.bin",
       "sha1": "15c94da3cc5a38a582429575af4198c487fe893c",
       "sha256": "6ac8348c8dcd1e34882d5df2f4ba453e4de69847a88bb845ddda3915fa042df0",
@@ -2631,6 +2228,45 @@
       ],
       "regions": [
         "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "scph5501.bin",
+      "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
+      "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5501.bin",
+      "cores": [
+        "beetle_psx"
+      ],
+      "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "scph5502.bin",
+      "sha1": "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0",
+      "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5502.bin",
+      "cores": [
+        "beetle_psx"
+      ],
+      "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
       ],
       "region_groups": [
         "sony-playstation"
@@ -7879,128 +7515,6 @@
       ]
     },
     {
-      "dest": "neo-epo.bin",
-      "sha1": "1b3b22092f30c4d1b2c15f04d1670eb1e9fbea07",
-      "sha256": "70f7906d68acbc3630b6e7792ebb485288b05ca72c6d4c243e07e230aae8d1e4",
-      "size": 131072,
-      "repo_path": "bios/SNK/Neo Geo/neo-epo.bin",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "sp-45.sp1",
-      "sha1": "cdf1f49e3ff2bac528c21ed28449cf35b7957dc1",
-      "sha256": "0fbeee82b463187d6360e92811f1fad58649feb8ab2584c524222d0b5bf53a17",
-      "size": 524288,
-      "repo_path": "bios/SNK/Neo Geo/sp-45.sp1",
-      "cores": [
-        "ares"
-      ]
-    },
-    {
-      "dest": "saturn_bios_U.bin",
-      "sha1": "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3",
-      "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
-      "size": 524288,
-      "repo_path": "bios/Sega/Saturn/SAT_1.00-(U+E).bin",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "sega-saturn"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "saturn"
-      ]
-    },
-    {
-      "dest": "saturn_bios_J.bin",
-      "sha1": "df94c5b4d47eb3cc404d88b33a8fda237eaf4720",
-      "sha256": "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac",
-      "size": 524288,
-      "repo_path": "bios/Sega/Saturn/SAT_1.01-(J).bin",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "sega-saturn"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "saturn"
-      ]
-    },
-    {
-      "dest": "saturn_bios_E.bin",
-      "sha1": "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3",
-      "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
-      "size": 524288,
-      "repo_path": "bios/Sega/Saturn/SAT_1.00-(U+E).bin",
-      "cores": [
-        "ares"
-      ],
-      "systems": [
-        "sega-saturn"
-      ],
-      "regions": [
-        "europe"
-      ],
-      "region_groups": [
-        "saturn"
-      ]
-    },
-    {
-      "dest": "SGB1.sfc",
-      "sha1": "973e10840db683cf3faf61bd443090786b3a9f04",
-      "sha256": "a75160f7b89b1f0e20fd2f6441bb86285c7378db5035ef6885485eaff6059376",
-      "size": 262144,
-      "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
-      "cores": [
-        "ares",
-        "bsnes"
-      ]
-    },
-    {
-      "dest": "SGB2.sfc",
-      "sha1": "e5b2922ca137051059e4269b236d07a22c07bc84",
-      "sha256": "c172498a23d1176672931bab33b629c7d28f914a43dca9e540b8af1b37ccf2c6",
-      "size": 524288,
-      "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
-      "cores": [
-        "ares",
-        "bsnes"
-      ]
-    },
-    {
-      "dest": "STBIOS.bin",
-      "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
-      "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
-      "size": 262144,
-      "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
-      "cores": [
-        "ares",
-        "snes9x"
-      ]
-    },
-    {
-      "dest": "BS-X.bin",
-      "sha1": "4891d739a8a8b67923681bad4fb67edab2e90e50",
-      "sha256": "a49827b45ff9ac9cf5b4658190e1428e59251bc82d8a63d8e9e0f71e439f008f",
-      "size": 1048576,
-      "repo_path": "bios/Nintendo/SNES/BS-X.bin",
-      "cores": [
-        "ares",
-        "bsnes",
-        "snes9x"
-      ]
-    },
-    {
       "dest": "sysdata/shared_font.bin",
       "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
       "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
@@ -8066,6 +7580,26 @@
       ]
     },
     {
+      "dest": "syscard3.pce",
+      "sha1": "79f5ff55dd10187c7fd7b8daab0b3ffbd1f56a2c",
+      "sha256": "e11527b3b96ce112a037138988ca72fd117a6b0779c2480d9e03eaebece3d9ce",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard3.pce",
+      "cores": [
+        "beetle_pce"
+      ]
+    },
+    {
+      "dest": "syscard3u.pce",
+      "sha1": "d02611d99921986147c753df14c7349b31d71950",
+      "sha256": "cadac2725711b3c442bcf237b02f5a5210c96f17625c35fa58f009e0ed39e4db",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard3u.pce",
+      "cores": [
+        "beetle_pce"
+      ]
+    },
+    {
       "dest": "syscard2.pce",
       "sha1": "88da02e2503f7c32810f5d93a34849d470742b6d",
       "sha256": "0deb13845c7e44ea78a25bbbe324afd60a0ec29ea5a4cf5780349f1598d24cd3",
@@ -8081,6 +7615,16 @@
       "sha256": "edba5be43803b180e1d64ca678c3f8bdbf07180c9e2a65a5db69ad635951e6cc",
       "size": 262144,
       "repo_path": "bios/NEC/PC Engine/syscard2u.pce",
+      "cores": [
+        "beetle_pce"
+      ]
+    },
+    {
+      "dest": "syscard1.pce",
+      "sha1": "a39a66da7de6ba94ab84d04eef7afeec7d4ee66a",
+      "sha256": "afe9f27f91ac918348555b86298b4f984643eafa2773196f2c5441ea84f0c3bb",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard1.pce",
       "cores": [
         "beetle_pce"
       ]
@@ -8443,6 +7987,40 @@
       ]
     },
     {
+      "dest": "SGB1.sfc",
+      "sha1": "973e10840db683cf3faf61bd443090786b3a9f04",
+      "sha256": "a75160f7b89b1f0e20fd2f6441bb86285c7378db5035ef6885485eaff6059376",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
+      "cores": [
+        "bsnes"
+      ]
+    },
+    {
+      "dest": "SGB2.sfc",
+      "sha1": "e5b2922ca137051059e4269b236d07a22c07bc84",
+      "sha256": "c172498a23d1176672931bab33b629c7d28f914a43dca9e540b8af1b37ccf2c6",
+      "size": 524288,
+      "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
+      "cores": [
+        "bsnes"
+      ]
+    },
+    {
+      "dest": "BS-X.bin",
+      "sha1": "4891d739a8a8b67923681bad4fb67edab2e90e50",
+      "sha256": "a49827b45ff9ac9cf5b4658190e1428e59251bc82d8a63d8e9e0f71e439f008f",
+      "size": 1048576,
+      "repo_path": "bios/Nintendo/SNES/BS-X.bin",
+      "cores": [
+        "bsnes",
+        "snes9x"
+      ],
+      "systems": [
+        "nintendo-satellaview"
+      ]
+    },
+    {
       "dest": "Citra/sysdata/boot9.bin",
       "sha1": "5a3d3d6df4743e6b50afe0fc717fa8a12bc888e6",
       "sha256": "2f88744feed717856386400a44bba4b9ca62e76a32c715d4f309c399bf28166f",
@@ -8669,6 +8247,127 @@
       ],
       "systems": [
         "nintendo-gbc"
+      ]
+    },
+    {
+      "dest": "bios_CD_U.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "genesis_plus_gx",
+        "picodrive"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ]
+    },
+    {
+      "dest": "bios_CD_E.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "genesis_plus_gx",
+        "picodrive"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ]
+    },
+    {
+      "dest": "bios_CD_J.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "genesis_plus_gx",
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-megacd"
+      ]
+    },
+    {
+      "dest": "bios_U.sms",
+      "sha1": "fc465122134d95363112eb51b9ab71db3576cefd",
+      "sha256": "6f4e6de10f1d07bda695c629c67457bb0248eeb8ffa0c61a2742b8529274de30",
+      "size": 16384,
+      "repo_path": "bios/Sega/Master System/.variants/bios_U.sms.ee2c29ba",
+      "cores": [
+        "genesis_plus_gx"
+      ],
+      "systems": [
+        "sega-master-system"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
+      ]
+    },
+    {
+      "dest": "bios_E.sms",
+      "sha1": "6aca0e3dffe461ba1cb11a86cd4caf5b97e1b8df",
+      "sha256": "c51ec80b7a609c5ee3d203ceee2b602ae4dfb4479caf15dc1d030c40c0364e93",
+      "size": 262144,
+      "repo_path": "bios/Sega/Master System/.variants/bios_E.sms.81c3476b",
+      "cores": [
+        "genesis_plus_gx"
+      ],
+      "systems": [
+        "sega-master-system"
+      ],
+      "regions": [
+        "europe"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
+      ]
+    },
+    {
+      "dest": "bios_J.sms",
+      "sha1": "a8c1b39a2e41137835eda6a5de6d46dd9fadbaf2",
+      "sha256": "67846e26764bd862f19179294347f7353a4166b62ac4198a5ec32933b7da486e",
+      "size": 8192,
+      "repo_path": "bios/Sega/Master System/MasterSystem/japanese-bios.sms",
+      "cores": [
+        "genesis_plus_gx"
+      ],
+      "systems": [
+        "sega-master-system"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-mastersystem"
+      ]
+    },
+    {
+      "dest": "bios.gg",
+      "sha1": "914aa165e3d879f060be77870d345b60cfeb4ede",
+      "sha256": "8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2",
+      "size": 1024,
+      "repo_path": "bios/Sega/Game Gear/GG_majesco.gg",
+      "cores": [
+        "genesis_plus_gx"
+      ],
+      "systems": [
+        "sega-game-gear"
       ]
     },
     {
@@ -10677,6 +10376,19 @@
       ]
     },
     {
+      "dest": "gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "mgba"
+      ],
+      "systems": [
+        "nintendo-gba"
+      ]
+    },
+    {
       "dest": "Mupen64plus/IPL.n64",
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
@@ -11140,6 +10852,16 @@
       ],
       "systems": [
         "nintendo-gbc"
+      ]
+    },
+    {
+      "dest": "STBIOS.bin",
+      "sha1": "ef86ea192eed03d5c413fdbbfd46043be1d7a127",
+      "sha256": "edacb453da14f825f05d1134d6035f4bf034e55f7cfb97c70c4ee107eabc7342",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/SuFami Turbo/STBIOS.bin",
+      "cores": [
+        "snes9x"
       ]
     },
     {

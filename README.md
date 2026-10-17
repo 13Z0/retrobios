@@ -87,7 +87,7 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
 | Batocera | 353/353 | 12,326/12,762 | MD5 hash |
-| BizHawk | 118/118 | 794/795 | SHA1 hash |
+| BizHawk | 118/118 | 754/755 | SHA1 hash |
 | EmuDeck | 168/168 | 435/437 | MD5 hash |
 | Lakka | 533/533 | 5,239/5,269 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-17T08:21:23Z*
+*Auto-generated on 2026-10-17T09:44:04Z*
