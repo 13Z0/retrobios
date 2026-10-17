@@ -110,9 +110,11 @@ class GroupRenameKeepsSystemTag(unittest.TestCase):
         os.chdir(REPO_ROOT)
         self.addCleanup(os.chdir, previous)
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
-            built = Path(tmp) / f"RetroArch_x_BIOS_Pack{gp._system_tag(['atari-lynx'])}.zip"
-
-            def fake_generate(*a, **kw):
+            def fake_generate(*a, pack_name=None, **kw):
+                # The group's name is handed in: nothing is renamed afterwards.
+                built = Path(tmp) / (
+                    pack_name or f"RetroArch_x_BIOS_Pack{gp._system_tag(['atari-lynx'])}.zip"
+                )
                 built.write_bytes(b"")
                 return str(built)
 
