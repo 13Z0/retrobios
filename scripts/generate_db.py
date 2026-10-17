@@ -348,7 +348,7 @@ def _preserve_large_file_entries(files: dict, db_path: str) -> int:
     return count
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description="Generate multi-indexed BIOS database")
     parser.add_argument("--force", action="store_true", help="Force rehash all files")
     parser.add_argument(
@@ -462,7 +462,7 @@ def _collect_all_aliases(files: dict) -> dict:
 
     aliases = {}
 
-    def _add_alias(name: str, matched_sha1: str):
+    def _add_alias(name: str, matched_sha1: str) -> None:
         if not name or name in name_to_sha1:
             return
         if matched_sha1 not in aliases:

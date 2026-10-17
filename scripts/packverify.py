@@ -495,7 +495,7 @@ def _intentional_hash_exclusion(
             return False
     return True
 
-def _structural_errors(zf, zip_set: set) -> list[str]:
+def _structural_errors(zf: zipfile.ZipFile, zip_set: set) -> list[str]:
     """Faults in the archive itself, before any file is looked up.
 
     A duplicate entry, an absolute path or a traversal makes the pack

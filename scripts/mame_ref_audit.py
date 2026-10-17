@@ -51,7 +51,9 @@ def declares(line: str, set_name: str) -> bool:
     return len(args) > 1 and args[1].strip() == set_name
 
 
-def audit(name: str, emulators_dir: str, cache_dir: str, offline: bool):
+def audit(
+    name: str, emulators_dir: str, cache_dir: str, offline: bool
+) -> tuple[list[Finding], int, int]:
     """Findings, plus counts of refs that agree and of unjudgeable ones."""
     with open(os.path.join(emulators_dir, f"{name}.yml"), encoding="utf-8") as handle:
         document = yaml_load(handle) or {}

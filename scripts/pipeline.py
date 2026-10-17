@@ -227,7 +227,9 @@ class _Skipped:
 SKIPPED = _Skipped()
 
 
-def _refuse_unapplied_flags(parser: argparse.ArgumentParser, args) -> None:
+def _refuse_unapplied_flags(
+    parser: argparse.ArgumentParser, args: argparse.Namespace
+) -> None:
     """A flag the run would drop is refused before any step.
 
     --all-variants builds every source itself, so a --source beside it is
@@ -311,7 +313,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
     return all_ok
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full retrobios pipeline")
     parser.add_argument(
         "--include-archived", action="store_true", help="Include archived platforms"

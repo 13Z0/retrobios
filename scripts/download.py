@@ -185,7 +185,9 @@ def fetch_checksums(release: dict) -> dict[str, str]:
     return {}
 
 
-def download_file(url: str, dest: Path, expected_size: int = 0, label: str = ""):
+def download_file(
+    url: str, dest: Path, expected_size: int = 0, label: str = ""
+) -> None:
     """Download a file with progress indication."""
     url = _checked_url(url, "asset URL")
     req = urllib.request.Request(
@@ -292,7 +294,7 @@ def fetch_pack(pack: Pack, staging: Path, checksums: dict[str, str]) -> list[Pat
     return volumes
 
 
-def show_info(platform: str, release: dict):
+def show_info(platform: str, release: dict) -> None:
     """Show pack information for a platform."""
     pack = find_pack(release, platform)
     if not pack:
@@ -307,7 +309,7 @@ def show_info(platform: str, release: dict):
         print(f"    {part['name']} ({part.get('size', 0):,} bytes)")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Download BIOS packs from GitHub Releases",
         formatter_class=argparse.RawDescriptionHelpFormatter,

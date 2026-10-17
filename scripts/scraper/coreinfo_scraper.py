@@ -206,7 +206,7 @@ def _extract_md5_from_notes(info: dict) -> dict[str, str]:
 class Scraper(BaseScraper):
     """Scraper for libretro-core-info firmware declarations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._info_files: dict[str, dict] | None = None
 
@@ -303,7 +303,7 @@ class Scraper(BaseScraper):
         return {"version": version}
 
 
-def main():
+def main() -> None:
     """CLI entry point."""
     import argparse
 

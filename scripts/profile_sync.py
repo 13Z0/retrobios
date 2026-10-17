@@ -20,9 +20,11 @@ import re
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable, Iterable, Iterator, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -121,7 +123,7 @@ def parse_source_ref(ref: str) -> tuple[str, int | None, int | None]:
     return m.group("path"), start, end
 
 
-def source_ref_values(value) -> list[tuple[str, str]]:
+def source_ref_values(value: str | dict | None) -> list[tuple[str, str]]:
     """Flatten a source_ref into (label, refs) pairs.
 
     Most entries hold a plain string. `ymir` keys its refs by mode instead,
@@ -334,7 +336,9 @@ def is_binary_citation(path: str) -> bool:
     return head.startswith(".") and "/" not in head
 
 
-def strip_repo_word(path: str, known=frozenset()) -> str:
+def strip_repo_word(
+    path: str, known: frozenset[str] | set[str] = frozenset()
+) -> str:
     """Drop a leading project word that names a declared repository.
 
     `BAM_FPloader FPLoader.cpp:45` follows the `munt ROMInfo.cpp` convention,
@@ -355,7 +359,7 @@ def strip_repo_word(path: str, known=frozenset()) -> str:
     return path
 
 
-def narrow_by_cited(matches: list[str], cited_dirs) -> list[str]:
+def narrow_by_cited(matches: list[str], cited_dirs: Iterable[str]) -> list[str]:
     """Keep the candidates under the deepest directory the profile cites.
 
     A bare `version.h` matches BasiliskII/src/include/version.h and
@@ -482,7 +486,9 @@ class Citation:
     in_comment: bool = False
 
 
-def _walk_document(node, where: str = ""):
+def _walk_document(
+    node: object, where: str = ""
+) -> Iterator[tuple[str, str, dict | list, object, Any]]:
     """Every citation carrier of the document, with its holder and field path.
 
     Yields ("ref", field, holder, key, value) for each source_ref key and
@@ -509,7 +515,9 @@ def _walk_document(node, where: str = ""):
                 yield from _walk_document(item, spot)
 
 
-def _prose_external(line: str, path_start: int, known=frozenset()) -> bool:
+def _prose_external(
+    line: str, path_start: int, known: frozenset[str] | set[str] = frozenset()
+) -> bool:
     """True when the word before the path names an undeclared project.
 
     `munt ROMInfo.cpp:206-213` in prose follows the source_ref convention:
@@ -533,7 +541,7 @@ def _prose_external(line: str, path_start: int, known=frozenset()) -> bool:
     return not lead or lead[-1] in ",:("
 
 
-def resolve_project_word(path: str, trees) -> str | None:
+def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | None:
     """Path of `project file` inside a declared tree, None when out of reach.
 
     m64plus-fz cites `rice Config.cpp` and `mupen64plus-core
@@ -561,7 +569,11 @@ def resolve_project_word(path: str, trees) -> str | None:
     return None
 
 
-def _prose_runs(text: str, known=frozenset()):
+def _prose_runs(
+    text: str, known: frozenset[str] | set[str] = frozenset()
+) -> Iterator[tuple[
+    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, bool
+]]:
     """Citation runs inside one prose scalar.
 
     A run is a path:range with its attached continuation ranges, written
@@ -642,7 +654,7 @@ def _prose_runs(text: str, known=frozenset()):
             )
 
 
-def _scalar_spans(node, spans: list[tuple[int, int]]) -> None:
+def _scalar_spans(node: yaml.Node, spans: list[tuple[int, int]]) -> None:
     if isinstance(node, yaml.ScalarNode):
         spans.append((node.start_mark.index, node.end_mark.index))
     elif isinstance(node, yaml.MappingNode):
@@ -654,7 +666,9 @@ def _scalar_spans(node, spans: list[tuple[int, int]]) -> None:
             _scalar_spans(item, spans)
 
 
-def comment_citations(text: str, known=frozenset()) -> list[Citation]:
+def comment_citations(
+    text: str, known: frozenset[str] | set[str] = frozenset()
+) -> list[Citation]:
     """Citation runs written in the YAML comments of a profile.
 
     The loader drops comments, so a pin moved without them: zesarux cites
@@ -741,7 +755,7 @@ def collect_citations(document: dict, text: str | None = None) -> list[Citation]
     return citations
 
 
-def worst_status(statuses) -> str:
+def worst_status(statuses: Iterable[str]) -> str:
     """Severity of an entry is the worst severity among its parts."""
     worst = "ANCHORED"
     for status in statuses:
@@ -767,7 +781,9 @@ def _find_all(haystack: list[str], needle: list[str]) -> list[int]:
     return hits
 
 
-def _map_index(opcodes, index: int) -> int | None:
+def _map_index(
+    opcodes: list[tuple[str, int, int, int, int]], index: int
+) -> int | None:
     for tag, i1, i2, j1, j2 in opcodes:
         if i1 <= index < i2:
             return j1 + (index - i1) if tag == "equal" else j1
@@ -853,7 +869,7 @@ NUDGE_WINDOW = 60
 
 
 def nudge_to_declared(
-    pin_lines: list[str], start: int, end: int, tokens
+    pin_lines: list[str], start: int, end: int, tokens: Sequence[str]
 ) -> tuple[int, int] | None:
     """Move a cited range onto the nearest line carrying a declared value.
 
@@ -880,7 +896,7 @@ def nudge_to_declared(
 
 
 def resolve_rename(
-    result: CompareResult, path: str, head_paths=()
+    result: CompareResult, path: str, head_paths: Iterable[str] = ()
 ) -> tuple[str | None, list[str]]:
     """New path of a moved file, or the candidates when several match.
 
@@ -935,7 +951,7 @@ def _narrow(matches: list[str], path: str) -> list[str]:
 
 
 def locate_by_declared_value(
-    head_lines: list[str], anchored: AnchorResult, tokens
+    head_lines: list[str], anchored: AnchorResult, tokens: Sequence[str]
 ) -> tuple[int, int, str] | None:
     """Follow a ref whose subject can still be pinpointed at HEAD.
 
@@ -964,7 +980,7 @@ def locate_by_declared_value(
     return None
 
 
-def _written_against_head(part, head_lines) -> bool:
+def _written_against_head(part: RefPart, head_lines: list[str] | None) -> bool:
     """Whether the cited line exists at HEAD, which is where it was written."""
     return (
         head_lines is not None
@@ -974,7 +990,11 @@ def _written_against_head(part, head_lines) -> bool:
 
 
 def anchor_part(
-    part: RefPart, fetch, rename_getter, describe=None, tokens=()
+    part: RefPart,
+    fetch: Callable[[str, str, int | None, Sequence[str]], list[str] | None],
+    rename_getter: Callable[[str], tuple[str | None, list[str]]],
+    describe: Callable[..., tuple[str | None, str | None, str]] | None = None,
+    tokens: Sequence[str] = (),
 ) -> PartResult:
     """Locate one reference part at HEAD, following a rename when needed.
 
@@ -1107,7 +1127,9 @@ def anchor_part(
 SHIFT_SUPPORT = 3
 
 
-def dominant_shifts(parts, support: int = SHIFT_SUPPORT) -> dict[str, int]:
+def dominant_shifts(
+    parts: Iterable[PartResult], support: int = SHIFT_SUPPORT
+) -> dict[str, int]:
     """Most common line shift per file, taken from the unambiguous anchors.
 
     A file whose refs mostly moved by the same amount gives strong evidence
@@ -1210,8 +1232,8 @@ def select_repo(profile: dict) -> upstream.Repo | None:
 
 
 def resolve_pin(
-    profile: dict, repo, cache_dir: str, offline: bool, field: str = "source",
-    mode: str = "", branch: str | None = None,
+    profile: dict, repo: upstream.Repo, cache_dir: str, offline: bool,
+    field: str = "source", mode: str = "", branch: str | None = None,
 ) -> tuple[str | None, str | None]:
     """Commit the profile was written at, and how it was obtained.
 
@@ -1309,7 +1331,12 @@ def branch_in_url(url: str) -> str | None:
 SELF_CHECK_CONTEXT = 2
 
 
-def verify_at_pin(part: RefPart, pin_lines, tokens, hash_tokens=()) -> PartResult:
+def verify_at_pin(
+    part: RefPart,
+    pin_lines: list[str] | None,
+    tokens: Sequence[str],
+    hash_tokens: Sequence[str] = (),
+) -> PartResult:
     """Check a ref against its own revision instead of against HEAD.
 
     A profile pinned to a superseded tag documents a program HEAD no longer
@@ -1431,7 +1458,7 @@ def version_tag_candidates(core_version: str, repo_name: str = "") -> list[str]:
 
 
 def detect_pinned_tag(
-    profile: dict, views, cache_dir: str, offline: bool
+    profile: dict, views: list[RepoView], cache_dir: str, offline: bool
 ) -> str | None:
     """Tag the profile is pinned to, when the repository has moved past it.
 
@@ -1456,7 +1483,9 @@ def detect_pinned_tag(
     return None
 
 
-def _resolve_project_words(refs: list, tree_order) -> list:
+def _resolve_project_words(
+    refs: list, tree_order: Callable[[], Iterable[list[str] | None]]
+) -> list:
     """Point `project file` parts at the declared tree that vendors them.
 
     tree_order() yields the trees to search, pin before HEAD; it is only
@@ -1656,7 +1685,7 @@ def build_report(
                 if len(matches) <= 4:
                     candidates.extend(m for m in matches if m not in candidates)
 
-        def score(lines) -> int:
+        def score(lines: list[str]) -> int:
             """How well a repository's cited line matches what the ref means.
 
             Two repositories can hold the same path with different contents:
@@ -1709,7 +1738,7 @@ def build_report(
             owners[key] = _locate(path, start, tokens)
         return owners[key]
 
-    def _pin_tree_for(view: RepoView):
+    def _pin_tree_for(view: RepoView) -> list[str] | None:
         """Tree at the revision the refs were written against, memoised."""
         key = view.repo.slug
         if key not in pin_trees:
@@ -1719,7 +1748,7 @@ def build_report(
 
     mute: set[tuple[str, str]] = set()
 
-    def fetch_from(repo, sha, wanted):
+    def fetch_from(repo: upstream.Repo, sha: str, wanted: str) -> list[str] | None:
         """Read a file, treating a repository that refuses as one that lacks it.
 
         A profile can name several repositories, and a mirror exists exactly
@@ -1744,7 +1773,7 @@ def build_report(
             print(f"{name}: {repo.host}/{repo.slug} muted, {exc}", file=sys.stderr)
             return None
 
-    def _context_for(view: RepoView):
+    def _context_for(view: RepoView) -> tuple[CompareResult, list[str]]:
         key = view.repo.slug
         if key not in context:
             comparison = upstream.compare(
@@ -1793,7 +1822,13 @@ def build_report(
 
     lines_cache: dict[tuple[str, str, int | None], list[str] | None] = {}
 
-    def fetch(which: str, path: str, start: int | None = None, tokens=(), forced=None):
+    def fetch(
+        which: str,
+        path: str,
+        start: int | None = None,
+        tokens: Iterable[str] = (),
+        forced: RepoView | None = None,
+    ) -> list[str] | None:
         """Lines for one path at one revision, read once per run.
 
         The same object is handed back every time so the opcode cache can key
@@ -1816,14 +1851,19 @@ def build_report(
             lines_cache[key] = found
         return lines_cache[key]
 
-    def describe(path: str, start=None, tokens=(), forced=None):
+    def describe(
+        path: str,
+        start: int | None = None,
+        tokens: Iterable[str] = (),
+        forced: RepoView | None = None,
+    ) -> tuple[str | None, str, str]:
         view, actual = (
             (forced, path) if forced else resolve_path(path, start, tuple(tokens))
         )
         slug = view.repo.slug if view is not primary else None
         return slug, upstream.raw_url(view.repo, view.head, actual), actual
 
-    def anchor_across_views(part, tokens):
+    def anchor_across_views(part: RefPart, tokens: Sequence[str]) -> PartResult:
         """Judge a part against every repository that carries its path.
 
         A ref is only broken when it fails everywhere. `mame` cites files that
@@ -1875,13 +1915,15 @@ def build_report(
     # a part whose repository already sits on HEAD is judged on
     # self-consistency instead. Decided per part, by the repository that owns
     # it: a primary on HEAD says nothing about an upstream that moved on.
-    def self_checked(part, tokens) -> bool:
+    def self_checked(part: RefPart, tokens: Sequence[str]) -> bool:
         if report.pinned_tag:
             return True
         view, _ = resolve_path(part.path, part.start, tuple(tokens))
         return view.pin == view.head
 
-    def judge(part, flag, tokens, hashes) -> PartResult:
+    def judge(
+        part: RefPart, flag: bool, tokens: Sequence[str], hashes: Sequence[str]
+    ) -> PartResult:
         other = cites_another_version(part, profile.get("core_version"))
         if other:
             # ti99sim cites v0.0.11 beside its v0.16.0 pin: no revision of
@@ -2076,7 +2118,7 @@ class VersionReport:
 
 
 def check_version(
-    profile: dict, repo, cache_dir: str, offline: bool
+    profile: dict, repo: upstream.Repo, cache_dir: str, offline: bool
 ) -> VersionReport | None:
     """Declared core_version against the latest upstream tag and release."""
     declared = str(profile.get("core_version") or "")
@@ -2345,7 +2387,7 @@ def _match_citation(
 
 
 def _prose_moves(
-    entry: EntryReport, statuses
+    entry: EntryReport, statuses: tuple[str, ...]
 ) -> dict[int, tuple[int, int, str | None]]:
     """Recale targets per part of one prose run, empty when unsafe.
 
@@ -2372,7 +2414,9 @@ def _prose_moves(
 
 
 def _run_after_moves(
-    parts, moves: dict[int, tuple[int, int, str | None]], run: str = ""
+    parts: Sequence[RefPart],
+    moves: dict[int, tuple[int, int, str | None]],
+    run: str = "",
 ) -> str:
     """The prose run as it reads once its moved ranges are rewritten.
 
@@ -2837,7 +2881,7 @@ def _writing_pins(
 
 
 def _resolve_at(
-    repo, sha: str, path: str, cache_dir: str, offline: bool
+    repo: upstream.Repo, sha: str, path: str, cache_dir: str, offline: bool
 ) -> tuple[str, object]:
     """("found", (path, lines)) or ("unclear"|"missing", reason).
 
@@ -2872,7 +2916,11 @@ def _resolve_at(
 
 
 def _realign_part(
-    part: RefPart, pairs, cache_dir: str, offline: bool, pinned=()
+    part: RefPart,
+    pairs: list[tuple[upstream.Repo, str, str]],
+    cache_dir: str,
+    offline: bool,
+    pinned: Iterable[tuple[upstream.Repo, str]] = (),
 ) -> tuple[str, object] | None:
     """One range, anchored from its writing revision to the current pin.
 
@@ -2953,7 +3001,7 @@ def _realign_citation(
     ambiguous: list[str],
     cache_dir: str,
     offline: bool,
-    pinned=(),
+    pinned: Iterable[tuple[upstream.Repo, str]] = (),
 ) -> tuple[dict[int, tuple[int, int, str | None]], list[str]]:
     """The moves one prose run needs, and what blocks them.
 
@@ -3195,7 +3243,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def select_profiles(profiles: dict, args) -> dict:
+def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
     """Profiles matching the selection flags."""
     if args.emulator:
         if args.emulator not in profiles:
@@ -3234,7 +3282,7 @@ def _check_quota(count: int, offline: bool) -> None:
         raise SystemExit(1)
 
 
-def _stale_prose_blocks(name: str, path: Path, args) -> bool:
+def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool:
     """Whether prose written under an older pin has to move first.
 
     Anchored from the current pin, a recale or a bump follows someone else's
@@ -3251,7 +3299,10 @@ def _stale_prose_blocks(name: str, path: Path, args) -> bool:
     return bool(stale)
 
 
-def _backfill(args, name: str, profile: dict, report: ProfileReport, path: Path) -> None:
+def _backfill(
+    args: argparse.Namespace, name: str, profile: dict, report: ProfileReport,
+    path: Path,
+) -> None:
     """Write the pin a profile without source_commit was written at."""
     if not report.pin or profile.get("source_commit"):
         return
@@ -3261,7 +3312,9 @@ def _backfill(args, name: str, profile: dict, report: ProfileReport, path: Path)
         print(f"{name}: source_commit {report.pin[:7]}")
 
 
-def _apply_writes(args, name: str, profile: dict, report: ProfileReport) -> None:
+def _apply_writes(
+    args: argparse.Namespace, name: str, profile: dict, report: ProfileReport
+) -> None:
     path = Path(args.emulators_dir) / f"{name}.yml"
     if not path.is_file():
         return
@@ -3308,7 +3361,10 @@ def _cited_paths(report: ProfileReport) -> list[str]:
     )
 
 
-def _print_version(args, profile: dict, report: ProfileReport, repo) -> None:
+def _print_version(
+    args: argparse.Namespace, profile: dict, report: ProfileReport,
+    repo: upstream.Repo,
+) -> None:
     version = check_version(profile, repo, args.cache_dir, args.offline)
     if version is None:
         return
@@ -3322,7 +3378,10 @@ def _print_version(args, profile: dict, report: ProfileReport, repo) -> None:
         print(f"  {warning}")
 
 
-def _print_detection(args, profile: dict, report: ProfileReport, repo) -> None:
+def _print_detection(
+    args: argparse.Namespace, profile: dict, report: ProfileReport,
+    repo: upstream.Repo,
+) -> None:
     names, hashes = declared_names(profile), declared_hashes(profile)
     for path in _cited_paths(report):
         head_lines = upstream.fetch_file(
@@ -3352,7 +3411,9 @@ def _print_detection(args, profile: dict, report: ProfileReport, repo) -> None:
                 print(f"  new {kind}: {path}  {value}")
 
 
-def _print_extras(args, profile: dict, report: ProfileReport) -> None:
+def _print_extras(
+    args: argparse.Namespace, profile: dict, report: ProfileReport
+) -> None:
     """Optional per-profile sections beyond the ref report.
 
     The ref report mutes a forge that refuses; the extras read the same
@@ -3380,7 +3441,10 @@ def _print_extras(args, profile: dict, report: ProfileReport) -> None:
         print(f"  extras skipped: {exc}")
 
 
-def _print_extras_from(args, profile: dict, report: ProfileReport, repo) -> None:
+def _print_extras_from(
+    args: argparse.Namespace, profile: dict, report: ProfileReport,
+    repo: upstream.Repo,
+) -> None:
     if args.check_version:
         _print_version(args, profile, report, repo)
     if args.detect_new_files or args.watch_hashes:
@@ -3415,7 +3479,9 @@ def _print_extras_from(args, profile: dict, report: ProfileReport, repo) -> None
             print(f"  {line}")
 
 
-def _print_triage(args, selected: dict, reports: list[ProfileReport]) -> None:
+def _print_triage(
+    args: argparse.Namespace, selected: dict, reports: list[ProfileReport]
+) -> None:
     """Profiles ranked by drift, worst first."""
     ranked = []
     for report in reports:
@@ -3455,7 +3521,7 @@ def _print_triage(args, selected: dict, reports: list[ProfileReport]) -> None:
         print(f"{score:5d}  {report.name:30s}  {state}")
 
 
-def _refuse_flag_combinations(args) -> None:
+def _refuse_flag_combinations(args: argparse.Namespace) -> None:
     """Exit on a flag the chosen mode would not apply, before any request."""
     if args.accept_changed and not args.emulator:
         print(

@@ -126,7 +126,7 @@ def _system_link(sys_id: str, prefix: str = "") -> str:
         return f"[{sys_id}]({prefix}systems/{slug}.md#{anchor})"
     return sys_id
 
-def _render_yaml_value(lines: list[str], val, indent: int = 4) -> None:
+def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
     """Render any YAML value as indented markdown."""
     pad = " " * indent
     if isinstance(val, dict):
@@ -194,7 +194,7 @@ def _pct(n: int, total: int) -> str:
         return "0%"
     return f"{n / total * 100:.1f}%"
 
-def _by_mode(value, mode: str) -> str:
+def _by_mode(value: str | dict, mode: str) -> str:
     """Read a profile field that may be keyed by build mode."""
     if isinstance(value, dict):
         return str(value.get(mode) or "") if mode else ""

@@ -292,7 +292,9 @@ def _arch_from_flag(flag: str) -> str:
 class Scraper(BaseTargetScraper):
     """Cross-references Batocera boards, Config.in, and es_systems to build target lists."""
 
-    def __init__(self, url: str = "https://github.com/batocera-linux/batocera.linux"):
+    def __init__(
+        self, url: str = "https://github.com/batocera-linux/batocera.linux"
+    ) -> None:
         super().__init__(url=url)
         self.tag = ""
 

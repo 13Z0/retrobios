@@ -49,7 +49,9 @@ def cited_paths(document: dict) -> list[str]:
     return seen
 
 
-def audit(name: str, emulators_dir: str, cache_dir: str, offline: bool):
+def audit(
+    name: str, emulators_dir: str, cache_dir: str, offline: bool
+) -> list[tuple[str, str]] | None:
     """Signals found in the sources a fileless profile cites."""
     with open(os.path.join(emulators_dir, f"{name}.yml"), encoding="utf-8") as handle:
         document = yaml_load(handle) or {}

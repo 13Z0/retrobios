@@ -3754,7 +3754,7 @@ class SignaturesCarryTheirTypes(unittest.TestCase):
     priority list of _select_variants)."""
 
     # Lowered as modules are annotated; never raised.
-    CEILING = 139
+    CEILING = 0
     COMPLETE = ("artifacts.py", "common.py", "validation.py", "generate_pack.py")
 
     @staticmethod

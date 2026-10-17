@@ -15,7 +15,7 @@ from pathlib import Path
 class BaseTargetScraper(ABC):
     """Base class for target scrapers."""
 
-    def __init__(self, url: str = ""):
+    def __init__(self, url: str = "") -> None:
         self.url = url
 
     @abstractmethod

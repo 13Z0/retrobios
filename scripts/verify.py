@@ -2077,7 +2077,7 @@ def _run_listing(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
             print(target_listing_line(t))
 
 
-def main():
+def main() -> None:
     with contextlib.ExitStack() as held:
         _main(held)
 

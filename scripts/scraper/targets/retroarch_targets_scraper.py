@@ -86,7 +86,7 @@ _CORE_NAME_RE = re.compile(r"^(.+?)_libretro")
 class Scraper(BaseTargetScraper):
     """Fetches core lists per target from RetroArch buildbot nightly."""
 
-    def __init__(self, url: str = BUILDBOT_URL):
+    def __init__(self, url: str = BUILDBOT_URL) -> None:
         super().__init__(url=url)
 
     def _fetch_url(self, url: str) -> str:

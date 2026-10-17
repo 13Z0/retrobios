@@ -51,7 +51,7 @@ _PACKAGE_DIRS = ("emulators", "libretrocores", "ports")
 class Scraper(BaseScraper):
     """Scraper for the RetroPie package list."""
 
-    def __init__(self, url: str = SOURCE_URL):
+    def __init__(self, url: str = SOURCE_URL) -> None:
         super().__init__(url=url)
         self._modules: list[str] | None = None
         self._version = ""

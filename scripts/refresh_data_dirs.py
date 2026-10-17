@@ -52,7 +52,9 @@ def load_registry(registry_path: str = DEFAULT_REGISTRY) -> dict[str, dict]:
     return data.get("data_directories", {})
 
 
-def cache_lock(cache_dir: str | Path, shared: bool = False):
+def cache_lock(
+    cache_dir: str | Path, shared: bool = False
+) -> contextlib.AbstractContextManager[None]:
     """The lock a refresh holds while it swaps cache_dir.
 
     A reader takes it shared: a pack walking data/sdlpal while another run

@@ -221,7 +221,7 @@ class Scraper(BaseScraper):
 
     def __init__(
         self, checkbios_url: str = CHECKBIOS_URL, csv_base_url: str = CSV_BASE_URL
-    ):
+    ) -> None:
         super().__init__(url=checkbios_url)
         self.checkbios_url = checkbios_url
         self.csv_base_url = csv_base_url
@@ -492,7 +492,7 @@ class Scraper(BaseScraper):
         return sorted(cores)
 
 
-def main():
+def main() -> None:
     from scripts.scraper.base_scraper import scraper_cli
 
     scraper_cli(Scraper, "Scrape emudeck BIOS requirements")

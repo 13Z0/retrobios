@@ -27,7 +27,7 @@ def set_offline(value: bool) -> None:
     global _OFFLINE
     _OFFLINE = value
 
-def _values(raw) -> list[str]:
+def _values(raw: object) -> list[str]:
     """A hash field's values: one, a list, or a comma-separated string."""
     items = raw if isinstance(raw, list) else [raw] if raw else []
     return [
@@ -235,8 +235,8 @@ def preferred_entries(
     bios_dir: str,
     base_dest: str,
     required_only: bool,
-    zip_contents,
-    offline,
+    zip_contents: dict | None,
+    offline: bool | None,
 ) -> dict[str, int]:
     """Which declaration wins when several claim the same destination.
 

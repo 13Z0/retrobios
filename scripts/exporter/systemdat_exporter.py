@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scraper.dat_parser import parse_dat
 
 from .base_exporter import BaseExporter
-from .baseline import NativeSystem, Report
+from .baseline import NativeFile, NativeSystem, Report
 
 SOURCE_URL = (
     "https://raw.githubusercontent.com/libretro/libretro-database/master/dat/System.dat"
@@ -73,7 +73,7 @@ class Exporter(BaseExporter):
         return {"System.dat": SOURCE_URL}
 
     @classmethod
-    def writable(cls, fe, require: str = "") -> bool:
+    def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """A clrmamepro rom line is a hash record, and the DAT has no other.
 
         The original never states a rom it cannot hash, so neither do we.
@@ -83,7 +83,7 @@ class Exporter(BaseExporter):
         return any(fe.hash(h) for h in ("crc32", "md5", "sha1"))
 
     @staticmethod
-    def _rom_name(fe) -> str:
+    def _rom_name(fe: NativeFile) -> str:
         """The name the DAT gives a rom.
 
         libretro writes the path for some entries (ep128emu/roms/cpc464.rom)

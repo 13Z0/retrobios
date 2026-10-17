@@ -17,7 +17,7 @@ import os
 # and a page is only removed once nothing produced it.
 _produced: set[str] = set()
 
-def _record(path) -> None:
+def _record(path: str | Path) -> None:
     _produced.add(os.path.realpath(str(path)))
 
 def _undecorated(markdown: str) -> str:
@@ -43,7 +43,7 @@ def write_if_changed(path: str, content: str) -> bool:
     _record(path)
     return _write_artifact(path, content, normalize=_undecorated)
 
-def write_decorated(path, content: str) -> bool:
+def write_decorated(path: str | Path, content: str) -> bool:
     """Write the wrapped page, comparing front matter and body together."""
     _record(path)
     return _write_artifact(str(path), content)

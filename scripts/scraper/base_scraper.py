@@ -163,7 +163,7 @@ def fetch_bytes(
 class BaseScraper(ABC):
     """Abstract base class for platform BIOS requirement scrapers."""
 
-    def __init__(self, url: str = ""):
+    def __init__(self, url: str = "") -> None:
         self.url = url
         self._raw_data: str | None = None
 

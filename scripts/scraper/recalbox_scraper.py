@@ -199,7 +199,7 @@ def board_cores(text: str, board: str, enabled: set[str]) -> set[str]:
 class Scraper(BaseScraper):
     """Scraper for Recalbox es_bios.xml."""
 
-    def __init__(self, tag: str | None = None):
+    def __init__(self, tag: str | None = None) -> None:
         # A target scraper passes the tag platforms/recalbox.yml pins.
         self.tag = tag or _fetch_gitlab_stable_tag()
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
@@ -365,7 +365,7 @@ class Scraper(BaseScraper):
         }
 
 
-def main():
+def main() -> None:
     """CLI entry point."""
     from .base_scraper import scraper_cli
 

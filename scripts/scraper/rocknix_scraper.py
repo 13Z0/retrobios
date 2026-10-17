@@ -147,7 +147,7 @@ def parse_systems(source: str) -> dict[str, dict]:
 class Scraper(BaseScraper):
     """Scraper for the ROCKNIX rocknix-systems script."""
 
-    def __init__(self, url: str | None = None):
+    def __init__(self, url: str | None = None) -> None:
         self.tag = None if url else fetch_github_latest_version(GITHUB_REPO)
         super().__init__(url=url or SOURCE_TEMPLATE.format(ref=self.tag))
 

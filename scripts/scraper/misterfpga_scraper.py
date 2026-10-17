@@ -126,7 +126,7 @@ def system_of(path: str) -> str:
 class Scraper(BaseScraper):
     """Scraper for the MiSTer BiosDB database."""
 
-    def __init__(self, url: str = SOURCE_URL):
+    def __init__(self, url: str = SOURCE_URL) -> None:
         super().__init__(url=url)
 
     def _fetch_raw(self) -> str:

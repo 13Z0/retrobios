@@ -29,7 +29,7 @@ def list_platforms(include_archived: bool = False) -> list[str]:
     return list_registered_platforms(PLATFORMS_DIR, include_archived=include_archived)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="List available platforms")
     parser.add_argument("--all", action="store_true", help="Include archived platforms")
     args = parser.parse_args()

@@ -537,7 +537,7 @@ def _append_new_entries(text: str, files: list[dict], original: str) -> str:
     return text
 
 
-def _yaml_scalar(value) -> str:
+def _yaml_scalar(value: object) -> str:
     """Quote a scalar so YAML reads back exactly what the source said.
 
     A MAME ROM named ``01`` written bare re-parses as the integer 1, and the

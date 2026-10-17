@@ -249,7 +249,7 @@ def _resolve_truncated_md5(md5: str, md5_index: dict[str, str]) -> str:
 class Scraper(BaseScraper):
     """Scraper for batocera-systems Python dict."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.tag = fetch_stable_tag()
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
@@ -466,7 +466,7 @@ class Scraper(BaseScraper):
         return result
 
 
-def main():
+def main() -> None:
     from scripts.scraper.base_scraper import scraper_cli
 
     scraper_cli(Scraper, "Scrape batocera BIOS requirements")

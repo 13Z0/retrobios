@@ -121,7 +121,7 @@ class AtomPool:
     hundreds of megabytes and a whole-pool preload buys nothing.
     """
 
-    def __init__(self, bios_dir: Path, digest_cache: Path | None = None):
+    def __init__(self, bios_dir: Path, digest_cache: Path | None = None) -> None:
         self._index: dict[str, tuple[Path, str]] = {}
         # (md5, size) of each build, kept across runs: TorrentZip bytes are a
         # function of the members alone, so a recipe hashed once is known

@@ -25,6 +25,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
@@ -465,7 +466,7 @@ def generate_stats(stats: dict) -> str:
     return json.dumps(stats, indent=2) + "\n"
 
 
-def _json_text(value) -> str:
+def _json_text(value: object) -> str:
     """Stable scalar representation for CSV and SQLite exports."""
     if value is None:
         return ""
@@ -477,7 +478,7 @@ def _json_text(value) -> str:
 HASH_ALGORITHMS = ("sha1", "sha256", "md5", "crc32")
 
 
-def _hash_values(value) -> list[str]:
+def _hash_values(value: object) -> list[str]:
     """Every accepted value of one hash field, lowercase.
 
     A field holds one value, a list of accepted revisions, or (Recalbox) a
@@ -2091,7 +2092,7 @@ def _render_emulator_file(
     profile: dict,
     consumers: FileConsumers | None,
     files: list,
-    _file_available,
+    _file_available: Callable[[dict], bool],
     anchor: str = "",
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
@@ -2382,7 +2383,9 @@ def _hash_spans(value: str | list) -> str:
     )
 
 
-def _availability_check(db: dict, data_names):
+def _availability_check(
+    db: dict, data_names: set[str] | None
+) -> Callable[[dict], bool]:
     """A predicate answering whether the collection holds a file.
 
     It answers the way cross_reference does. A page that called a file
@@ -2419,7 +2422,9 @@ def _availability_check(db: dict, data_names):
     return _file_available
 
 
-def _emulator_file_summary(files: list[dict], available) -> list[str]:
+def _emulator_file_summary(
+    files: list[dict], available: Callable[[dict], bool]
+) -> list[str]:
     """The counts above an emulator's file table, and its categories.
 
     Counted by slot, as verify --emulator and the gaps page count: raze
@@ -3742,7 +3747,7 @@ def generate_mkdocs_nav(
 # Main
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate MkDocs site from project data"
     )

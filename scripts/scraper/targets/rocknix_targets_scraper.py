@@ -127,7 +127,7 @@ def metapackage_cores(package_mk: str, arch: str) -> list[str]:
 class Scraper(BaseTargetScraper):
     """Per-device core lists from ROCKNIX's emulators metapackage."""
 
-    def __init__(self, url: str = "https://github.com/ROCKNIX/distribution"):
+    def __init__(self, url: str = "https://github.com/ROCKNIX/distribution") -> None:
         super().__init__(url=url)
         self.tag = ""
 

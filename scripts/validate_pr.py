@@ -63,7 +63,7 @@ MAX_FILE_SIZE = 100 * 1024 * 1024
 
 
 class ValidationResult:
-    def __init__(self, filepath: str):
+    def __init__(self, filepath: str) -> None:
         self.filepath = filepath
         self.filename = os.path.basename(filepath)
         self.checks = []  # (status, message) tuples
@@ -72,13 +72,13 @@ class ValidationResult:
         self.crc32 = ""
         self.size = 0
 
-    def add_check(self, passed: bool, message: str):
+    def add_check(self, passed: bool, message: str) -> None:
         self.checks.append(("PASS" if passed else "FAIL", message))
 
-    def add_warning(self, message: str):
+    def add_warning(self, message: str) -> None:
         self.checks.append(("WARN", message))
 
-    def add_info(self, message: str):
+    def add_info(self, message: str) -> None:
         self.checks.append(("INFO", message))
 
     @property
@@ -303,7 +303,9 @@ def get_changed_files() -> list[str]:
     return [f for f in result.stdout.strip().split("\n") if f.startswith("bios/") and f]
 
 
-def _files_to_validate(args, parser) -> list:
+def _files_to_validate(
+    args: argparse.Namespace, parser: argparse.ArgumentParser
+) -> list:
     """The files named on the command line, or the changed ones."""
     if not args.changed:
         if not args.files:
@@ -319,7 +321,7 @@ def _files_to_validate(args, parser) -> list:
     return files
 
 
-def _load_database_if_any(path):
+def _load_database_if_any(path: str) -> dict | None:
     try:
         return load_database(path)
     except FileNotFoundError:
@@ -329,7 +331,7 @@ def _load_database_if_any(path):
         return None
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Validate BIOS file contributions")
     parser.add_argument("files", nargs="*", help="Files to validate")
     parser.add_argument(

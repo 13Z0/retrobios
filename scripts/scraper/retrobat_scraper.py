@@ -88,7 +88,7 @@ SYSTEM_SLUG_MAP = {
 class Scraper(BaseScraper):
     """Scraper for RetroBat batocera-systems.json."""
 
-    def __init__(self, url: str = SOURCE_URL):
+    def __init__(self, url: str = SOURCE_URL) -> None:
         super().__init__(url=url)
         self._parsed: dict | None = None
 
@@ -227,7 +227,7 @@ class Scraper(BaseScraper):
         }
 
 
-def main():
+def main() -> None:
     from scripts.scraper.base_scraper import scraper_cli
 
     scraper_cli(Scraper, "Scrape retrobat BIOS requirements")

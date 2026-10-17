@@ -35,7 +35,7 @@ class Page:
 
 
 class _PageParser(HTMLParser):
-    def __init__(self, path: Path):
+    def __init__(self, path: Path) -> None:
         super().__init__(convert_charrefs=True)
         self.page = Page(path)
         self._title_depth = 0
@@ -43,7 +43,7 @@ class _PageParser(HTMLParser):
         self._jsonld_depth = 0
         self._jsonld_parts: list[str] = []
 
-    def handle_starttag(self, tag: str, attrs) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = dict(attrs)
         if tag == "html":
             self.page.lang = data.get("lang", "")

@@ -58,7 +58,7 @@ def defconfig_arch(defconfig: str) -> str:
 class Scraper(BaseTargetScraper):
     """Per-board core lists from Recalbox's defconfigs and system.ini files."""
 
-    def __init__(self, url: str = "https://gitlab.com/recalbox/recalbox"):
+    def __init__(self, url: str = "https://gitlab.com/recalbox/recalbox") -> None:
         super().__init__(url=url)
 
     def fetch_targets(self) -> dict:

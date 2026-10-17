@@ -18,6 +18,7 @@ import argparse
 import concurrent.futures
 import errno
 import hashlib
+import http.client
 import io
 import json
 import os
@@ -33,7 +34,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from pathlib import Path, PurePosixPath
+from typing import BinaryIO, TextIO
 
 # Manifests are read from the same ref the bootstrap verified this installer
 # against, so a file list and the code reading it always come from one commit.
@@ -232,7 +235,7 @@ class Terminal:
     A pipe or a log gets plain lines; NO_COLOR and TERM=dumb are honoured.
     """
 
-    def __init__(self, stream=None, quiet: bool = False) -> None:
+    def __init__(self, stream: TextIO | None = None, quiet: bool = False) -> None:
         self.stream = stream or sys.stdout
         self.quiet = quiet
         isatty = getattr(self.stream, "isatty", None)
@@ -1055,7 +1058,9 @@ def normalize_platform(name: str) -> str:
     return plat
 
 
-def _read_limited_json(response, limit: int, label: str) -> object:
+def _read_limited_json(
+    response: http.client.HTTPResponse, limit: int, label: str
+) -> object:
     """Read a bounded UTF-8 JSON response."""
     raw_length = response.headers.get("Content-Length") if response.headers else None
     if raw_length:
@@ -1499,7 +1504,11 @@ def _for_cores(entry: dict, chosen: set[str]) -> dict | None:
     return None
 
 
-def _settle_slot(entry: dict, chosen: set[str], kept_system=None) -> dict:
+def _settle_slot(
+    entry: dict,
+    chosen: set[str],
+    kept_system: Callable[[str], bool] | None = None,
+) -> dict:
     """A platform file as a pack built for the chosen cores carries it.
 
     Where a core's own source contradicts the platform and the frontend only
@@ -2102,7 +2111,7 @@ def _partial_size(path: Path) -> int:
     return 0
 
 
-def _claim_partial(path: Path):
+def _claim_partial(path: Path) -> BinaryIO | None:
     """The partial copy, opened and locked for this run, or None when
     another run holds it. A link planted at its name is not followed."""
     flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
@@ -2125,13 +2134,13 @@ def _claim_partial(path: Path):
 class _Unclosed:
     """The locked partial copy, written through without closing it."""
 
-    def __init__(self, handle) -> None:
+    def __init__(self, handle: BinaryIO) -> None:
         self._handle = handle
 
-    def __enter__(self):
+    def __enter__(self) -> BinaryIO:
         return self._handle
 
-    def __exit__(self, *_exc) -> None:
+    def __exit__(self, *_exc: object) -> None:
         self._handle.flush()
 
     def write(self, data: bytes) -> int:
@@ -2882,7 +2891,7 @@ def main() -> None:
             sys.stdout = real_stdout
 
 
-def _install(args: argparse.Namespace, real_stdout) -> None:
+def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     term = Terminal(real_stdout, quiet=args.quiet)
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet

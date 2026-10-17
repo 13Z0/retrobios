@@ -125,7 +125,7 @@ def _core_info_files() -> list[str]:
 class Scraper(BaseScraper):
     """Scraper for libretro System.dat."""
 
-    def __init__(self, url: str = SOURCE_URL):
+    def __init__(self, url: str = SOURCE_URL) -> None:
         super().__init__(url=url)
 
     def fetch_requirements(self) -> list[BiosRequirement]:
@@ -516,7 +516,7 @@ class Scraper(BaseScraper):
         }
 
 
-def main():
+def main() -> None:
     from scripts.scraper.base_scraper import scraper_cli
 
     scraper_cli(Scraper, "Scrape libretro BIOS requirements")

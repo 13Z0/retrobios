@@ -90,7 +90,7 @@ def _script_to_core(filename: str) -> str | None:
 class Scraper(BaseTargetScraper):
     """Fetches emulator lists for EmuDeck SteamOS and Windows targets."""
 
-    def __init__(self, url: str = "https://github.com/dragoonDorise/EmuDeck"):
+    def __init__(self, url: str = "https://github.com/dragoonDorise/EmuDeck") -> None:
         super().__init__(url=url)
 
     def _fetch_cores_for_target(

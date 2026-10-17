@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import io
 import re
 import struct
 import sys
@@ -99,7 +100,7 @@ def _dos_stamp(info: zipfile.ZipInfo) -> tuple[int, int]:
     )
 
 
-def _data_offset(source, info: zipfile.ZipInfo) -> int:
+def _data_offset(source: io.BufferedReader, info: zipfile.ZipInfo) -> int:
     """Where a member's stored bytes begin, read from its own local header."""
     source.seek(info.header_offset)
     header = _LOCAL.unpack(source.read(_LOCAL.size))
@@ -108,7 +109,9 @@ def _data_offset(source, info: zipfile.ZipInfo) -> int:
     return info.header_offset + _LOCAL.size + header[10] + header[11]
 
 
-def _write_part(source, members: list[zipfile.ZipInfo], dest: Path) -> None:
+def _write_part(
+    source: io.BufferedReader, members: list[zipfile.ZipInfo], dest: Path
+) -> None:
     directory = []
     with open(dest, "wb") as out:
         for info in members:

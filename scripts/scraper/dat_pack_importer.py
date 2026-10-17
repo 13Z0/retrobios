@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import sys
 import zipfile
+from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -50,7 +51,7 @@ def _bios_entries(source: str, dat: LogiqxDat) -> list[dict]:
     ]
 
 
-def _iter_dat_contents(pack: Path):
+def _iter_dat_contents(pack: Path) -> Iterator[tuple[str, bytes]]:
     """Yield (member name, content bytes) for DAT files in a pack.
 
     Accepts a ZIP archive or a directory of extracted DATs.

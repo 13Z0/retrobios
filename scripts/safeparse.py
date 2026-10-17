@@ -6,6 +6,8 @@ the parsers here are the boundary that keeps it that way."""
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
+from types import ModuleType
+from typing import Any, TextIO
 
 try:
     import yaml
@@ -37,7 +39,7 @@ def parse_untrusted_xml(
         return ET.fromstring(content, parser=parser)
     return ET.fromstring(content)
 
-def require_yaml():
+def require_yaml() -> ModuleType:
     """Import and return yaml, exiting if PyYAML is not installed."""
     try:
         import yaml as _yaml
@@ -49,7 +51,7 @@ def require_yaml():
         print("Error: PyYAML required (pip install pyyaml)", file=sys.stderr)
         sys.exit(1)
 
-def _pick_yaml_loader():
+def _pick_yaml_loader() -> type[yaml.constructor.SafeConstructor] | None:
     """Prefer the libyaml loader when the wheel ships it.
 
     Reading the emulator profiles is the single most expensive step of every
@@ -71,7 +73,9 @@ def _pick_yaml_loader():
         here uses merge keys (<<), which would count as repeats too.
         """
 
-        def construct_mapping(self, node, deep=False):
+        def construct_mapping(
+            self, node: yaml.MappingNode, deep: bool = False
+        ) -> dict:
             mapping = super().construct_mapping(node, deep=deep)
             if len(mapping) < len(node.value):
                 seen: set = set()
@@ -88,7 +92,7 @@ def _pick_yaml_loader():
 
 _YAML_LOADER = _pick_yaml_loader()
 
-def yaml_load(stream):
+def yaml_load(stream: str | TextIO) -> Any:
     """Parse YAML from a string or file object, safely and quickly."""
     if yaml is None:
         return require_yaml()  # exits with the install hint

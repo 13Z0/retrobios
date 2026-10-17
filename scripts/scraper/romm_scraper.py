@@ -122,7 +122,7 @@ FIRMWARE_MIRRORS: dict[str, tuple[str, ...]] = {
 class Scraper(BaseScraper):
     """Scraper for RomM known_bios_files.json."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.tag = fetch_github_latest_version(GITHUB_REPO)
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
         self._parsed: dict | None = None
@@ -225,7 +225,7 @@ class Scraper(BaseScraper):
         }
 
 
-def main():
+def main() -> None:
     from scripts.scraper.base_scraper import scraper_cli
 
     scraper_cli(Scraper, "Scrape RomM BIOS requirements")

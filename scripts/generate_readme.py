@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import sys
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -672,7 +673,9 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
     return "\n".join(lines) + "\n"
 
 
-def contributing_text(link, title: str, site_words: str) -> str:
+def contributing_text(
+    link: Callable[[str], str], title: str, site_words: str
+) -> str:
     """The contribution guide, one text for the repository and the site.
 
     Two copies drifted apart: four steps to add a platform here, five on the
@@ -746,7 +749,7 @@ def generate_contributing() -> str:
     )
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Generate slim README.md")
     parser.add_argument("--db", default="database.json")
     parser.add_argument("--platforms-dir", default="platforms")

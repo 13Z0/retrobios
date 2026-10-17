@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import subprocess
@@ -125,7 +126,9 @@ def verify_content(data: bytes, expected: dict) -> bool:
     return False
 
 
-def _read_limited(resp, limit: int = MAX_DOWNLOAD) -> bytes | None:
+def _read_limited(
+    resp: http.client.HTTPResponse, limit: int = MAX_DOWNLOAD
+) -> bytes | None:
     """Read response up to limit bytes. Returns None if exceeded."""
     data = resp.read(limit + 1)
     if len(data) > limit:
@@ -394,7 +397,7 @@ def generate_issue_body(missing: list[dict], platform: str) -> str:
     return "\n".join(lines)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Auto-fetch missing BIOS files")
     parser.add_argument("--platform", "-p", help="Platform to check")
     parser.add_argument("--all", action="store_true", help="Check all platforms")

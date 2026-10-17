@@ -331,7 +331,7 @@ def parse_firmware_database(
 class Scraper(BaseScraper):
     """BizHawk firmware database scraper."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.tag = fetch_github_latest_version(GITHUB_REPO)
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
@@ -386,7 +386,7 @@ class Scraper(BaseScraper):
         }
 
 
-def main():
+def main() -> None:
     scraper_cli(Scraper, "Scrape BizHawk BIOS requirements")
 
 

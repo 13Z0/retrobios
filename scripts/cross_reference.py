@@ -740,7 +740,7 @@ def print_report(report: dict, scope: str = "all emulators") -> None:
     print(f"  {totals['missing']} missing (need to be sourced)")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Emulator vs platform gap analysis")
     parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
     parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)

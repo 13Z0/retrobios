@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import re
@@ -32,6 +33,7 @@ import shutil
 import sys
 import urllib.request
 import zipfile
+from collections.abc import Callable, Iterator
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -146,7 +148,9 @@ def _machine_roms(blob: bytes) -> list[dict]:
     return members
 
 
-def _scan_listxml(stream, selector) -> dict[str, tuple[str | None, list[dict]]]:
+def _scan_listxml(
+    stream: io.BufferedIOBase, selector: Callable[[str], bool]
+) -> dict[str, tuple[str | None, list[dict]]]:
     """Stream a MAME -listxml document, keeping the machines *selector* wants.
 
     The document is 311 MB for MAME 0.289, so it is never held whole: the
@@ -178,7 +182,7 @@ def _scan_listxml(stream, selector) -> dict[str, tuple[str | None, list[dict]]]:
 
 
 def listxml_entries(
-    open_stream, label: str, keep: set[str] | None
+    open_stream: Callable[[], io.BufferedIOBase], label: str, keep: set[str] | None
 ) -> list[dict]:
     """Recipes from a MAME -listxml document, parents resolved.
 
@@ -291,7 +295,7 @@ def merge_snapshot(
     return write_snapshot(output, snapshot)
 
 
-def _iter_dat_contents(pack: Path):
+def _iter_dat_contents(pack: Path) -> Iterator[tuple[str, bytes]]:
     """Yield (member name, content bytes) for DAT files in *pack*."""
     if pack.is_dir():
         for path in sorted(pack.rglob("*")):
@@ -424,10 +428,10 @@ def _is_listxml(pack: Path) -> bool:
         return b"<!ELEMENT mame" in handle.read(4096)
 
 
-def _listxml_opener(pack: Path):
+def _listxml_opener(pack: Path) -> Callable[[], io.BufferedIOBase]:
     """A callable giving a fresh byte stream over the listxml document."""
     if pack.suffix.lower() == ".zip":
-        def opener():
+        def opener() -> zipfile.ZipExtFile:
             archive = zipfile.ZipFile(pack)
             name = next(n for n in archive.namelist() if n.lower().endswith(".xml"))
             stream = archive.open(name)

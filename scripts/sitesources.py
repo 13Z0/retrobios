@@ -118,7 +118,7 @@ def revision_markdown(profile: dict) -> str:
     return ", ".join(links)
 
 
-def _source_ref_markdown(profile: dict, value) -> str:
+def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     """Render source_ref values as pinned links when their forge is known.
 
     A profile can declare two repositories: the libretro port in ``source`` and

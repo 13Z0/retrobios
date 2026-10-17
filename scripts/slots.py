@@ -17,6 +17,7 @@ union and is never discarded, the same rule region.py already applies.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import nativemode
 from common import (
@@ -33,6 +34,9 @@ from common import (
 )
 from packresolve import preferred_entries
 from validation import outside_gap_scope
+
+if TYPE_CHECKING:
+    from packextras import ExtraPlacement
 
 # A profile entry can prove a slot without declaring a hash: Dolphin names no
 # checksum for the GameCube boot ROM because its source names none, and the
@@ -243,7 +247,7 @@ def _archive_claims(
     is_standalone: bool,
     db: dict,
     base_dest: str,
-    placement,
+    placement: ExtraPlacement | None,
     zip_contents: dict | None,
     data_dir_registry: dict | None,
 ) -> list[Claim]:

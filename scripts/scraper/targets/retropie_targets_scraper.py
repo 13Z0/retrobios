@@ -113,7 +113,7 @@ def _parse_module(content: str) -> tuple[str | None, str]:
 class Scraper(BaseTargetScraper):
     """Fetches RetroPie package availability by parsing scriptmodules."""
 
-    def __init__(self, url: str = GITHUB_API_URL):
+    def __init__(self, url: str = GITHUB_API_URL) -> None:
         super().__init__(url=url)
 
     def _list_scriptmodules(self) -> list[str]:
