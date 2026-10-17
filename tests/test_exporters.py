@@ -1352,3 +1352,40 @@ class UpstreamFidelity(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ARecordDescribesOneDump(unittest.TestCase):
+    """syscard2.pce: System.dat states v2.1 (crc 283b74e0, md5, sha1),
+    geargrafx accepts three crcs with v2.0's first. Field by field, the
+    export wrote v2.0's crc beside v2.1's md5 and sha1."""
+
+    def test_the_platform_record_stays_whole_when_the_truth_accepts_it(self):
+        from exporter.baseline import NativeFile
+
+        fe = NativeFile(
+            name="syscard2.pce", destination="syscard2.pce", native_system="pce",
+            platform={"crc32": "283b74e0", "md5": "3cdd6614" + "0" * 24,
+                      "sha1": "88da02e2" + "0" * 32},
+            truth={"crc32": ["52520bc6", "283b74e0", "ff2a5ec3"]},
+        )
+        self.assertEqual(fe.hash("crc32"), "52520bc6")
+        self.assertEqual(fe.record_hash("crc32"), "283b74e0")
+        self.assertEqual(fe.record_hash("md5"), "3cdd6614" + "0" * 24)
+
+    def test_a_field_only_the_truth_names_is_written_when_unambiguous(self):
+        from exporter.baseline import NativeFile
+
+        one = NativeFile(name="a", destination="a", native_system="s",
+                         platform={"crc32": "11111111"},
+                         truth={"crc32": "11111111", "md5": "a" * 32})
+        two = NativeFile(name="a", destination="a", native_system="s",
+                         platform={"crc32": "11111111"},
+                         truth={"crc32": "11111111", "md5": ["a" * 32, "b" * 32]})
+        self.assertEqual(one.record_hash("md5"), "a" * 32)
+        self.assertEqual(two.record_hash("md5"), "")
+
+    def test_single_record_writers_use_it(self):
+        for module in ("systemdat_exporter.py", "romm_exporter.py"):
+            source = (Path(__file__).resolve().parent.parent / "scripts" / "exporter" / module).read_text()
+            with self.subTest(module=module):
+                self.assertNotRegex(source, r'= fe\.hash\("(crc32|md5|sha1)"\)')

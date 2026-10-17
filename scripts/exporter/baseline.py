@@ -123,6 +123,29 @@ class NativeFile:
         values = self.hashes(field_name)
         return values[0] if values else ""
 
+    def record_hash(self, field_name: str) -> str:
+        """One value of a record whose fields all describe one dump.
+
+        A clrmamepro rom line or a RomM entry carries a single crc, md5 and
+        sha1: taking each field's first accepted value wrote syscard2.pce
+        with the v2.0 crc (the truth's first) beside the v2.1 md5 and sha1
+        (System.dat's), a record no file satisfies. When the two sides
+        agree on the dump, the platform's record is kept whole, its value
+        chosen among those the truth accepts; a field only the truth names
+        is written when it names one value, which is then that dump's.
+        """
+        source = self._identity_source()
+        truth_values = _hash_values(self.truth or {}, field_name)
+        platform_values = _hash_values(self.platform or {}, field_name)
+        if source == "truth":
+            return truth_values[0] if truth_values else ""
+        if source == "platform" or not truth_values:
+            return platform_values[0] if platform_values else ""
+        if platform_values:
+            accepted = [v for v in platform_values if v in truth_values]
+            return (accepted or truth_values)[0]
+        return truth_values[0] if len(truth_values) == 1 else ""
+
     @property
     def required(self) -> bool:
         if self.truth is not None and self.truth.get("required") is not None:

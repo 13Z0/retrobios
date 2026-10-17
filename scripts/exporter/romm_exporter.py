@@ -128,13 +128,13 @@ class Exporter(BaseExporter):
                 entry: OrderedDict[str, str] = OrderedDict()
                 # The fixture states every value as a string, size included.
                 entry["size"] = str(fe.size())
-                crc = fe.hash("crc32")
+                crc = fe.record_hash("crc32")
                 if crc:
                     entry["crc"] = crc
-                md5 = fe.hash("md5")
+                md5 = fe.record_hash("md5")
                 if md5:
                     entry["md5"] = md5
-                sha1 = fe.hash("sha1")
+                sha1 = fe.record_hash("sha1")
                 if sha1:
                     entry["sha1"] = sha1
                 output[f"{system.native_id}:{fe.name}"] = entry

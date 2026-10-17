@@ -153,13 +153,13 @@ class Exporter(BaseExporter):
                 size = fe.size()
                 if size:
                     parts.append(f"size {size}")
-                crc = fe.hash("crc32")
+                crc = fe.record_hash("crc32")
                 if crc:
                     parts.append(f"crc {crc.upper()}")
-                md5 = fe.hash("md5")
+                md5 = fe.record_hash("md5")
                 if md5:
                     parts.append(f"md5 {md5}")
-                sha1 = fe.hash("sha1")
+                sha1 = fe.record_hash("sha1")
                 if sha1:
                     parts.append(f"sha1 {sha1}")
                 rendered.setdefault(name, f"\trom ( {' '.join(parts)} )")
