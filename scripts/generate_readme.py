@@ -45,7 +45,6 @@ def compute_coverage(
     platforms_dir: str,
     db: dict,
     data_registry: dict | None = None,
-    supplemental_names: set[str] | None = None,
     emulators_dir: str = _EMULATORS_DIR,
 ) -> dict:
     config = load_platform_config(platform_name, platforms_dir)
@@ -54,7 +53,6 @@ def compute_coverage(
         db,
         emulators_dir,
         data_dir_registry=data_registry,
-        supplemental_names=supplemental_names,
     )
     sc = result.get("status_counts", {})
     ok = sc.get("ok", 0)
@@ -295,16 +293,14 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
     platform_names = list_registered_platforms(platforms_dir, include_archived=True)
 
     from common import load_data_dir_registry
-    from cross_reference import _build_supplemental_index
 
     data_registry = load_data_dir_registry(platforms_dir)
-    suppl_names = _build_supplemental_index()
 
     coverages = {}
     for name in platform_names:
         try:
             coverages[name] = compute_coverage(
-                name, platforms_dir, db, data_registry, suppl_names
+                name, platforms_dir, db, data_registry
             )
         except FileNotFoundError:
             pass

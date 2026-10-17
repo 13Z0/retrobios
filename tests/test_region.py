@@ -659,11 +659,10 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
 
             plain = reporter.verify_platform(
                 config, db, str(root / "emulators"), profiles,
-                supplemental_names=set(),
             )
             narrowed = reporter.verify_platform(
                 config, db, str(root / "emulators"), profiles,
-                supplemental_names=set(), regions=["north-america"],
+                regions=["north-america"],
             )
             before = {u["name"] for u in plain["undeclared_files"]}
             after = {u["name"] for u in narrowed["undeclared_files"]}
@@ -694,11 +693,10 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
             profiles = common.load_emulator_profiles(str(root / "emulators"))
             plain = reporter.verify_platform(
                 config, db, str(root / "emulators"), profiles,
-                supplemental_names=set(),
             )
             narrowed = reporter.verify_platform(
                 config, db, str(root / "emulators"), profiles,
-                supplemental_names=set(), regions=["north-america"],
+                regions=["north-america"],
             )
             missing = [u["name"] for u in plain["undeclared_files"] if not u["in_repo"]]
             self.assertEqual(missing, ["jp.bin"])
@@ -722,7 +720,7 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
             profiles = common.load_emulator_profiles(str(root / "emulators"))
             result = reporter.verify_platform(
                 config, db, str(root / "emulators"), profiles,
-                supplemental_names=set(), regions=["brazil"],
+                regions=["brazil"],
             )
             self.assertEqual(result["region_fallbacks"], ["demo-system"])
             out = io.StringIO()

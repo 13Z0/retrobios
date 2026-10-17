@@ -79,7 +79,7 @@ class ACoreFileFillsAFreeDeclaration(unittest.TestCase):
 
     def test_verify_counts_what_the_pack_counts(self):
         result = verify_platform(
-            self.config, self.db, str(self.emulators), supplemental_names=set(),
+            self.config, self.db, str(self.emulators),
         )
         out = self.root / "out"
         with redirect_stdout(io.StringIO()):
@@ -131,7 +131,7 @@ class AFileDeclaredUnderAnotherName(unittest.TestCase):
             "files": [{"name": "ROM", "path": "gs/ROM", "md5": md5, "required": True}],
         }))
         config = load_platform_config("fakeplat", str(root / "platforms"))
-        result = verify_platform(config, db, str(root / "emulators"), supplemental_names=set())
+        result = verify_platform(config, db, str(root / "emulators"))
         with redirect_stdout(io.StringIO()):
             zip_path = generate_pack(
                 "fakeplat", str(root / "platforms"), db, str(root / "bios"),
@@ -221,6 +221,42 @@ class AFileNobodyHoldsIsAnOmission(unittest.TestCase):
         self.assertIn("diabdat.mpq", omitted)
         self.assertTrue(omitted["diabdat.mpq"]["required"])
         self.assertEqual(omitted["diabdat.mpq"]["reason"], "not_found")
+
+
+
+class AMemberNameIsNotALooseFile(unittest.TestCase):
+    """verify counted a core file "in pack" when its name existed only as a
+    member of some ZIP (naomi2.zip's 315-6146.bin); the builder, which reads
+    no archive member names, shipped nothing."""
+
+    def test_verify_reads_undeclared_files_as_the_builder_does(self):
+        import cross_reference
+
+        _emulator_profiles_cache.clear()
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        (root / "platforms").mkdir()
+        (root / "emulators").mkdir()
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "existence",
+            "base_destination": "system", "cores": ["naomi2core"],
+            "systems": {"sega-naomi2": {"files": []}},
+        }))
+        (root / "emulators" / "naomi2core.yml").write_text(yaml.safe_dump({
+            "emulator": "N2", "type": "libretro", "cores": ["naomi2core"],
+            "systems": ["sega-naomi2"],
+            "files": [{"name": "315-6146.bin", "required": True}],
+        }))
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        config = load_platform_config("fakeplat", str(root / "platforms"))
+        with mock.patch.object(cross_reference, "_build_supplemental_index",
+                               lambda *a, **k: {"315-6146.bin"}):
+            result = verify_platform(config, db, str(root / "emulators"))
+        self.assertEqual(
+            [(u["name"], u["in_repo"]) for u in result["undeclared_files"]],
+            [("315-6146.bin", False)],
+        )
 
 
 if __name__ == "__main__":

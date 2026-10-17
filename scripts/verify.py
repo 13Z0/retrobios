@@ -884,7 +884,6 @@ def verify_platform(
     emu_profiles: dict | None = None,
     target_cores: set[str] | None = None,
     data_dir_registry: dict | None = None,
-    supplemental_names: set[str] | None = None,
     regions: list[str] | None = None,
 ) -> dict:
     """Verify all BIOS files for a platform, including cross-reference gaps.
@@ -1085,22 +1084,18 @@ def verify_platform(
             ):
                 file_severity[dest] = sev
 
-    # Cross-reference undeclared files
-    if supplemental_names is None:
-        from cross_reference import _build_supplemental_index
-
-        supplemental_names = _build_supplemental_index()
-    # The builder's declarations, not the enriched ones: a core file the
-    # platform also declares under another name is packed at the core's own
-    # path, and a report reading the enriched set never counted it (21 such
-    # files in the RetroArch pack).
+    # Cross-reference undeclared files, called exactly as the builder calls
+    # it: its declarations, not the enriched ones (a core file the platform
+    # also declares under another name is packed at the core's own path, 21
+    # such files in the RetroArch pack), and no names from inside archives
+    # or data trees (a loose file whose name exists only as a member of
+    # naomi2.zip was counted "in pack" while the builder shipped nothing).
     undeclared = find_undeclared_files(
         config,
         emulators_dir,
         db,
         emu_profiles,
         target_cores=target_cores,
-        data_names=supplemental_names,
         declared_names=platform_declarations(config, db, enrich=False),
     )
     if region_drops:
@@ -2226,9 +2221,6 @@ def _main(held: contextlib.ExitStack) -> None:
     groups = group_identical_platforms(
         platforms, args.platforms_dir, target_cores_cache if args.target else None
     )
-    from cross_reference import _build_supplemental_index
-
-    suppl_names = _build_supplemental_index()
 
     all_results = {}
     group_results: list[tuple[dict, list[str]]] = []
@@ -2242,7 +2234,6 @@ def _main(held: contextlib.ExitStack) -> None:
             emu_profiles,
             target_cores=tc,
             data_dir_registry=data_registry,
-            supplemental_names=suppl_names,
             regions=requested_regions,
         )
         names = [

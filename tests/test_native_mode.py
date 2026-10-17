@@ -157,7 +157,6 @@ class ThePolicyIsSpeltInOnePlace(unittest.TestCase):
         }
         result = verify.verify_platform(
             config, {"files": {}, "indexes": {}}, emu_profiles={},
-            supplemental_names=set(),
         )
         self.assertEqual(result["verification_mode"], nativemode.DEFAULT_MODE)
 

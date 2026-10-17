@@ -68,7 +68,7 @@ class TwinDeclarations(unittest.TestCase):
             },
         }
         report = verify_platform(
-            config, self.db, str(self.emulators), {}, supplemental_names=set()
+            config, self.db, str(self.emulators), {}
         )
         by_system = {d["system"]: d for d in report["details"] if d["name"] in ("N88SUB.ROM", "disk.rom")}
         statuses = sorted(d["status"] for d in by_system.values())

@@ -3813,7 +3813,7 @@ def main() -> None:
     for name in sorted(platform_names):
         try:
             cov = compute_coverage(
-                name, args.platforms_dir, db, data_registry, suppl_names,
+                name, args.platforms_dir, db, data_registry,
                 emulators_dir=args.emulators_dir,
             )
             coverages[name] = cov

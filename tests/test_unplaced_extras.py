@@ -86,7 +86,7 @@ class SlugPlatform(unittest.TestCase):
 
     def test_the_report_does_not_count_it_packed(self):
         report = verify_platform(
-            self.config, self.db, "emulators", self.profiles, supplemental_names=set()
+            self.config, self.db, "emulators", self.profiles
         )
         entry = next(u for u in report["undeclared_files"] if u["name"] == "MT32_CONTROL.ROM")
         self.assertTrue(entry["in_repo"])
