@@ -2768,5 +2768,30 @@ class GeneralUserGSReachesEveryCoreThatNamesIt(unittest.TestCase):
                     {**entry, "source_profile": emulator}, db, dest_hint=entry.get("path", ""))
                 self.assertEqual(path, held)
 
+
+class APlatformPinDoesNotReplaceTheCoresRevision(unittest.TestCase):
+    """RetroArch pins ScummVM's kyra.dat and FBNeo's hiscore.dat at older
+    revisions. Collected as variants with profiles that claimed no content,
+    the platform's md5 became the only proof and the pack shipped the old
+    files to cores built against newer ones."""
+
+    def test_the_profile_revision_serves_the_core(self):
+        import common  # noqa: PLC0415
+
+        if not (ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        db = json.loads((ROOT / "database.json").read_text())
+        profiles = common.load_emulator_profiles(str(ROOT / "emulators"))
+        for emulator, name, pinned in (("scummvm", "kyra.dat", "21a57f79886e46f410cfb50186ed8d77"),
+                                       ("fbneo", "hiscore.dat", "37fc4e050b53a1ef2c2e7f3042553025")):
+            with self.subTest(emulator=emulator):
+                entry = next(f for f in profiles[emulator]["files"] if f["name"] == name)
+                self.assertTrue(entry.get("sha1"), "the profile claims its revision")
+                self.assertIn(pinned, db["indexes"]["by_md5"], "the platform's pin is held")
+                path, status = common.resolve_local_file(
+                    {**entry, "source_profile": emulator}, db, dest_hint=entry["path"])
+                self.assertEqual(status, "sha1_exact")
+                self.assertEqual(db["files"][entry["sha1"]]["path"], path)
+
 if __name__ == "__main__":
     unittest.main()

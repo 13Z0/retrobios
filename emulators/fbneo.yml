@@ -1462,7 +1462,9 @@ files:
   - name: "hiscore.dat"
     path: "fbneo/hiscore.dat"
     required: false
-    note: "High score database, enables persistent high scores across all arcade games"
+    sha1: "30c6ad697439de7c2158192ecdb48f5edd37478e"
+    md5: "f5cdce5b3749d673ad8f073ccc7371e4"
+    note: "High score database, enables persistent high scores across all arcade games. The hash is that of metadata/hiscore.dat at source_commit."
     source_ref: "src/burn/hiscore.cpp:407"
 
   # Large audio samples (>50MB, stored as release assets)
