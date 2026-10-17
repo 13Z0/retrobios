@@ -95,8 +95,9 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
     ran its whole build first and then said "no pack for batocra"."""
 
     def test_every_cli_names_the_platform_it_meant(self):
-        out = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
-        out.rmdir()
+        scratch = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(scratch.cleanup)
+        out = Path(scratch.name) / "packs"
         for script, extra in (("verify.py", []), ("cross_reference.py", []),
                               ("generate_pack.py", ["--offline", "--output-dir", str(out)])):
             with self.subTest(script=script):

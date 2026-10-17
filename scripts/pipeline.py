@@ -106,16 +106,10 @@ def parse_pack_counts(output: str) -> dict[str, tuple[int, int]]:
             continue
         if "files packed" not in line:
             continue
-        # New format: "622 files packed (359 baseline + 263 from cores), 358/359 files OK"
-        base_m = re.search(r"\((\d+) baseline", line)
+        # "622 files packed (359 baseline + 263 from cores), 358/359 files OK"
         ok_m = re.search(r"(\d+)/(\d+) files OK", line)
-        if base_m and ok_m:
-            ok, total = int(ok_m.group(1)), int(ok_m.group(2))
-            counts[current_label] = (ok, total)
-        elif ok_m:
-            # Fallback: old format without baseline
-            ok, total = int(ok_m.group(1)), int(ok_m.group(2))
-            counts[current_label] = (ok, total)
+        if ok_m:
+            counts[current_label] = (int(ok_m.group(1)), int(ok_m.group(2)))
     return counts
 
 
