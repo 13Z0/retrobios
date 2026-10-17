@@ -1372,11 +1372,15 @@ def print_platform_result(
     _print_detail_entries(result["details"], seen_details, verbose)
     _print_undeclared_section(result, verbose)
 
+    # The same notes come back for every platform running these cores and
+    # filled 985 of the 1114 lines of verify --all: counted, listed on ask.
     exclusions = result.get("exclusion_notes", [])
-    if exclusions:
+    if exclusions and verbose:
         print(f"  No external files ({len(exclusions)}):")
         for ex in exclusions:
             print(f"    {ex['emulator']} -{ex['detail']} [{ex['reason']}]")
+    elif exclusions:
+        print(f"  No external files: {len(exclusions)} cores (--verbose lists them)")
 
     gt_cov = result.get("ground_truth_coverage")
     if gt_cov and gt_cov["total"] > 0:

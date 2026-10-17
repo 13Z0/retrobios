@@ -146,5 +146,22 @@ class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):
         source = (REPO_ROOT / "scripts" / "pipeline.py").read_text()
         self.assertIn('"scripts/verify.py", "--all", "--strict"', source)
 
+
+class ExclusionNotesListedOnAsk(unittest.TestCase):
+    """verify --all repeated every core's exclusion note under every
+    platform: 985 of its 1114 lines, the platform results lost among them."""
+
+    def test_counted_by_default_listed_with_verbose(self):
+        if not (REPO_ROOT / "database.json").exists():
+            self.skipTest("database.json is not generated")
+        cmd = [sys.executable, "scripts/verify.py", "--platform", "retroarch"]
+        plain = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT),
+                               timeout=900, check=True).stdout
+        verbose = subprocess.run([*cmd, "--verbose"], capture_output=True, text=True,
+                                 cwd=str(REPO_ROOT), timeout=900, check=True).stdout
+        self.assertRegex(plain, r"No external files: \d+ cores \(--verbose lists them\)")
+        self.assertRegex(verbose, r"No external files \(\d+\):")
+        self.assertLess(len(plain.splitlines()), len(verbose.splitlines()))
+
 if __name__ == "__main__":
     unittest.main()
