@@ -1,6 +1,6 @@
 platform: emudeck
 source: https://github.com/dragoonDorise/EmuDeck
-scraped_at: '2026-10-04T12:31:50Z'
+scraped_at: '2026-10-17T18:43:57Z'
 targets:
   steamos:
     architecture: x86_64
@@ -47,6 +47,7 @@ targets:
     - citra2018
     - citron
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -92,6 +93,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -177,6 +179,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -258,6 +261,7 @@ targets:
     - x1
     - xemu
     - xenia
+    - xenia_edge
     - xenianative
     - xrick
     - yabasanshiro
@@ -307,6 +311,7 @@ targets:
     - citra2018
     - citron
     - clownmdemu
+    - coolbaremu
     - craft
     - crocods
     - desmume
@@ -352,6 +357,7 @@ targets:
     - geargrafx
     - gearlynx
     - gearsystem
+    - geartowns
     - genesis_plus_gx
     - genesis_plus_gx_wide
     - geolith
@@ -437,6 +443,7 @@ targets:
     - playdiaemu
     - pocketcdg
     - pokemini
+    - pokket
     - pokketstation
     - potator
     - ppsspp
@@ -518,6 +525,7 @@ targets:
     - x1
     - xemu
     - xenia
+    - xenia_edge
     - xrick
     - yabasanshiro
     - yabause
