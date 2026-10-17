@@ -377,6 +377,50 @@ class TestFreeSpaceGuard(unittest.TestCase):
         self.assertEqual(code, 1)
 
 
+class AFolderThatRefusesWritesIsNamed(unittest.TestCase):
+    """A read-only BIOS folder ended the run on a traceback (a subfolder to
+    create), or on three retries per file and "once that is resolved"; a
+    platform named but not detected was told to use sudo, which on another
+    machine creates /userdata/bios on the wrong disk."""
+
+    ENTRY = {"dest": "mame2015/neogeo.zip", "repo_path": "bios/x", "size": 4}
+
+    def test_a_subfolder_that_cannot_be_made_is_a_failure_not_a_crash(self):
+        with unittest.mock.patch.object(Path, "mkdir", side_effect=PermissionError(13, "denied")):
+            result = install._download_one(self.ENTRY, Path("/userdata/bios"))
+        self.assertEqual(result, ("mame2015/neogeo.zip", False, install.NOT_WRITABLE))
+
+    def test_a_refused_write_is_not_retried(self):
+        class _Body(io.BytesIO):
+            status, headers = 200, {"Content-Length": "4"}
+
+        with tempfile.TemporaryDirectory() as tmp, \
+                unittest.mock.patch.object(install.urllib.request, "urlopen",
+                                  return_value=_Body(b"data")) as opened, \
+                unittest.mock.patch.object(install.tempfile, "NamedTemporaryFile",
+                                  side_effect=PermissionError(13, "denied")):
+            result = install._download_one(self.ENTRY, Path(tmp))
+        self.assertEqual(result[1:], (False, install.NOT_WRITABLE))
+        self.assertEqual(opened.call_count, 1)
+
+    def _summary_for(self, assumed):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), self.assertRaises(SystemExit):
+            install._report_outcome(
+                paths=[Path("/userdata/bios")], downloaded=0, up_to_date=0, errors=1,
+                omitted=0, interrupted=False,
+                failures=[("neogeo.zip", install.NOT_WRITABLE)], assumed=assumed,
+            )
+        return buf.getvalue()
+
+    def test_the_summary_says_sudo_on_the_console_and_dest_elsewhere(self):
+        here = self._summary_for(set())
+        self.assertIn("sudo", here)
+        guessed = self._summary_for({Path("/userdata/bios")})
+        self.assertIn("--dest", guessed)
+        self.assertNotIn("sudo", guessed)
+
+
 class TestStopFlag(unittest.TestCase):
     """Ctrl+C ends the run instead of letting the queue drain."""
 
@@ -1685,7 +1729,7 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
         def boom(*args, **kwargs):
             raise urllib.error.URLError("timed out")
 
-        with mock.patch.object(install.urllib.request, "urlopen", boom), \
+        with unittest.mock.patch.object(install.urllib.request, "urlopen", boom), \
                 contextlib.redirect_stderr(io.StringIO()):
             self.assertIsNone(install.fetch_targets("retroarch"))
 
@@ -1696,7 +1740,7 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
         def missing(url, *args, **kwargs):
             raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)
 
-        with mock.patch.object(install.urllib.request, "urlopen", missing):
+        with unittest.mock.patch.object(install.urllib.request, "urlopen", missing):
             self.assertEqual(install.fetch_targets("retroarch"), {})
 
 if __name__ == "__main__":

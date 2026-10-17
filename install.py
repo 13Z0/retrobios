@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import errno
 import hashlib
 import io
 import json
@@ -1865,7 +1866,12 @@ def _download_one(
         dest = _destination_path(bios_path, f["dest"])
     except ValueError:
         return str(f.get("dest", "?")), False, "unsafe destination"
-    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        if _write_refused(exc):
+            return f["dest"], False, NOT_WRITABLE
+        return f["dest"], False, exc.strerror or str(exc)
 
     if f.get("release_asset"):
         url = RELEASE_URL.format(asset=urllib.parse.quote(f["release_asset"], safe=""))
@@ -1877,6 +1883,7 @@ def _download_one(
     # next run, asks only for what is missing.
     resumable = expected_size >= RESUME_FROM_SIZE
     reason = "download failed"
+    refused = False
     for attempt in range(1, MAX_RETRIES + 1):
         tmp_path: Path | None = None
         counted = 0
@@ -1976,10 +1983,15 @@ def _download_one(
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
 
         except (urllib.error.URLError, OSError, ValueError) as exc:
-            reason = str(getattr(exc, "reason", "") or exc)
+            if (isinstance(exc, OSError) and not isinstance(exc, urllib.error.URLError)
+                    and _write_refused(exc)):
+                # No attempt can change a refused write.
+                reason, refused = NOT_WRITABLE, True
+            else:
+                reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
-            if tmp_path is not None and not resumable and tmp_path.exists():
+            if not refused and tmp_path is not None and not resumable and tmp_path.exists():
                 tmp_path.unlink()
             delay = _retry_delay(attempt, None)
 
@@ -1987,6 +1999,8 @@ def _download_one(
             progress.add(-counted)
             if resumed_count:
                 progress.forget_resumed(resumed_count)
+        if refused:
+            return f["dest"], False, reason
         if attempt < MAX_RETRIES and delay and _stop.wait(delay):
             return f["dest"], False, "stopped"
 
@@ -2031,6 +2045,30 @@ def _locations(paths: list[Path]) -> str:
     return ", ".join(str(p) for p in paths) if paths else "nowhere"
 
 
+# A write refused by the file system: retrying cannot change it, and the
+# summary names the two ways out.
+NOT_WRITABLE = "folder not writable"
+
+
+def _write_refused(exc: OSError) -> bool:
+    return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
+
+
+def _write_advice(path: Path, assumed: bool) -> str:
+    """What to do about a folder this run could not write.
+
+    sudo fixes a root-owned BIOS folder on the console itself. On another
+    machine it would create that folder on the wrong disk: a platform named
+    but not found here is a card or share mounted elsewhere, named by --dest.
+    """
+    if assumed:
+        return (f"  {path} is where the platform keeps its BIOS on its own system, "
+                "and it was not found here. If this machine prepares its card or "
+                "share, run the same command with --dest pointing at that folder.")
+    return ("  This user cannot write there: run the same command with sudo, "
+            "or choose another folder with --dest.")
+
+
 def _plural(count: int, word: str) -> str:
     """Count and noun, so a run of one file does not read as machine output."""
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
@@ -2047,6 +2085,7 @@ def _report_outcome(
     transferred: int = 0,
     seconds: float = 0.0,
     declined: int = 0,
+    assumed: set[Path] | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -2070,9 +2109,14 @@ def _report_outcome(
         print("Run the same command again to carry on from here. Nothing is lost.")
         sys.exit(130)
 
+    refused = any(reason == NOT_WRITABLE for _dest, reason in failures or [])
+    advice = [_write_advice(path, path in (assumed or set())) for path in paths] if refused else []
+
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
         print(f"Location that was being written to: {_locations(paths)}")
+        for line in advice:
+            print(line)
         print("Run the same command again once that is resolved. "
               "Files already installed are kept.")
         sys.exit(2)
@@ -2081,6 +2125,8 @@ def _report_outcome(
         print(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
               f"{_plural(errors, 'file')} failed.")
         print(f"Location: {_locations(paths)}")
+        for line in advice:
+            print(line)
         print("Run the same command again to retry only those.")
         sys.exit(1)
 
@@ -2726,7 +2772,9 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
                 print(f"  {name}: {path}")
         return
 
-    # Platform detection or override
+    # Platform detection or override. A destination taken from the default
+    # table, the platform not being found here, is only a guess.
+    assumed_dests: set[Path] = set()
     if args.platform:
         args.platform = normalize_platform(args.platform)
     if args.platform and args.dest:
@@ -2744,6 +2792,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
                 f"using default path: {default_dest}"
             )
             platforms = [(args.platform, default_dest)]
+            assumed_dests.add(default_dest)
     elif args.dest:
         print(f"  Using destination: {args.dest}")
         platforms = [("retroarch", args.dest)]
@@ -2988,8 +3037,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
             except OSError as exc:
                 print(f"\nCannot create {bios_path}.", file=sys.stderr)
                 print(f"  {exc.strerror}.", file=sys.stderr)
-                print("  On Batocera, Recalbox and ROCKNIX the BIOS folder "
-                      "belongs to root: run the same command with sudo.",
+                print(_write_advice(bios_path, bios_path in assumed_dests),
                       file=sys.stderr)
                 sys.exit(1)
             _check_free_space(bios_path, dl_size)
@@ -3051,6 +3099,7 @@ def _install(args: argparse.Namespace, real_stdout) -> None:
             transferred=total_bytes,
             seconds=total_seconds,
             declined=total_declined,
+            assumed=assumed_dests,
         )
 
 
