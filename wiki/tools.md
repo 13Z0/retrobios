@@ -78,6 +78,7 @@ Check BIOS coverage for each platform using its native verification mode.
 
 ```bash
 python scripts/verify.py --all                     # all platforms
+python scripts/verify.py --all --strict            # exit 1 on a missing required file (md5/sha1 platforms)
 python scripts/verify.py --platform batocera       # single platform
 python scripts/verify.py --platform retroarch --verbose  # with ground truth details
 python scripts/verify.py --emulator dolphin        # single emulator

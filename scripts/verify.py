@@ -2064,6 +2064,11 @@ def main():
         help="Show emulator ground truth details",
     )
     parser.add_argument("--json", action="store_true", help="JSON output")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit 1 when a platform that checks hashes misses a required file",
+    )
     args = parser.parse_args()
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
@@ -2190,11 +2195,32 @@ def main():
         for result, group in group_results:
             print_platform_result(result, group, verbose=args.verbose)
             print()
+        if len(group_results) > 1:
+            print(_overall_summary(group_results))
 
     if args.json:
         for r in all_results.values():
             r["details"] = [d for d in r["details"] if d["status"] != Status.OK]
         print(json.dumps(all_results, indent=2))
+
+    critical = sum(r["severity_counts"].get(Severity.CRITICAL, 0) for r, _ in group_results)
+    if args.strict and critical:
+        print(f"ERROR: {critical} required file(s) missing where the frontend "
+              "checks hashes", file=sys.stderr)
+        sys.exit(1)
+
+
+def _overall_summary(group_results: list[tuple[dict, list[str]]]) -> str:
+    """One closing line for a multi-platform run, worst severity first."""
+    platforms = sum(len(group) for _, group in group_results)
+    totals = {
+        sev: sum(r["severity_counts"].get(sev, 0) for r, _ in group_results)
+        for sev in (Severity.CRITICAL, Severity.WARNING, Severity.INFO)
+    }
+    return (
+        f"{platforms} platforms: {totals[Severity.CRITICAL]} critical, "
+        f"{totals[Severity.WARNING]} warning, {totals[Severity.INFO]} info"
+    )
 
 
 if __name__ == "__main__":

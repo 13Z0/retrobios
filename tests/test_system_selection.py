@@ -111,5 +111,40 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
                 self.assertIn("Did you mean 'batocera'?", proc.stderr)
         self.assertFalse(out.exists())
 
+
+class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):
+    """verify exited 0 with a required file missing on an md5 platform, so
+    the pipeline printed "verify OK" over a pack the frontend rejects."""
+
+    def test_strict_exits_nonzero_and_plain_does_not(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            root = Path(tmp)
+            (root / "plat").mkdir()
+            (root / "emu").mkdir()
+            (root / "plat" / "fx.yml").write_text(
+                "platform: Fx\nverification_mode: md5\nbase_destination: bios\n"
+                "systems:\n  sony-playstation:\n    files:\n    - name: absent.bin\n"
+                "      destination: absent.bin\n      required: true\n"
+                "      md5: 00000000000000000000000000000000\n"
+            )
+            (root / "db.json").write_text(
+                '{"files": {}, "indexes": {"by_md5": {}, "by_name": {}, '
+                '"by_crc32": {}, "by_path_suffix": {}}}'
+            )
+            base = [sys.executable, "scripts/verify.py", "--platform", "fx",
+                    "--platforms-dir", str(root / "plat"), "--emulators-dir",
+                    str(root / "emu"), "--db", str(root / "db.json")]
+            plain = subprocess.run(base, capture_output=True, text=True,
+                                   cwd=str(REPO_ROOT), timeout=300, check=False)
+            strict = subprocess.run([*base, "--strict"], capture_output=True, text=True,
+                                    cwd=str(REPO_ROOT), timeout=300, check=False)
+        self.assertEqual(plain.returncode, 0, plain.stderr)
+        self.assertEqual(strict.returncode, 1, strict.stderr)
+        self.assertIn("1 required file(s) missing", strict.stderr)
+
+    def test_the_pipeline_asks_for_it(self):
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text()
+        self.assertIn('"scripts/verify.py", "--all", "--strict"', source)
+
 if __name__ == "__main__":
     unittest.main()

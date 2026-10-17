@@ -450,7 +450,7 @@ def main():
     all_ok = _truth_steps(args, results) and all_ok
 
     # Step 3: Verify
-    verify_cmd = [sys.executable, "scripts/verify.py", "--all"]
+    verify_cmd = [sys.executable, "scripts/verify.py", "--all", "--strict"]
     if args.include_archived:
         verify_cmd.append("--include-archived")
     if args.target:
