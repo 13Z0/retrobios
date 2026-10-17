@@ -112,3 +112,19 @@ retropie:
     _default:
       # Homebrew game scriptmodule, not an emulator.
       remove_cores: [superflappybirds]
+
+rocknix:
+  targets:
+    _default:
+      # Runtimes and launchers the emulators metapackage installs beside the
+      # emulators: x86 translation (box64, box86), Windows (wine), the Steam
+      # and Heroic clients, and PortMaster, which installs ports.
+      remove_cores:
+        - box64
+        - box86
+        - heroic
+        - portmaster
+        - steam
+        - wine
+    amd64:
+      aliases: [x86_64, pc]

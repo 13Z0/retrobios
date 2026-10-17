@@ -1,0 +1,74 @@
+emulator: "DaedalusX64"
+type: standalone
+core_classification: embedded_hle
+source: "https://github.com/DaedalusX64/daedalus"
+profiled_date: "2026-10-17"
+source_commit: "f17e9ed86f3806fadeb69abd29c9526ab2d4bd1b"
+pin_frozen: "ROCKNIX 20261001 builds this revision. Later upstream commits are not part of that build."
+core_version: "Git"
+display_name: "Nintendo - 64 (DaedalusX64)"
+cores:
+  - "daedalusx64"
+  - "daedalusx64-sa"
+systems:
+  - nintendo-64
+
+notes: |
+  High-level Nintendo 64 emulator. The boot sequence and the RSP are emulated
+  at high level: no PIF ROM or other console firmware is opened. The code
+  carries no version string; the tree is 837 commits past tag 1.1.8.
+
+  Every data file is resolved against baseDir, which on Linux is the working
+  directory at startup. ROCKNIX copies the package to /storage/.config/DaedalusX64
+  and starts the binary from there.
+  ref: Source/Utility/Paths.cpp:30-36, Source/Utility/Paths.cpp:40-42
+
+  Linux builds pick the renderer by architecture: OpenGL ES on aarch64 and arm,
+  desktop OpenGL elsewhere. Each renderer installs its own n64.psh, the fragment
+  shader library prepended to every shader the renderer compiles. The ES
+  renderer fails graphics init without it; the desktop one goes on with an
+  empty library and its shaders do not compile.
+  ref: Source/CMakeLists.txt:132-137, Source/SysPosix/CMakeLists.txt:12-18,
+       Source/SysGLES/HLEGraphics/RendererGL.cpp:77-110,
+       Source/SysGLES/Graphics/GraphicsContextGL.cpp:151-156,
+       Source/SysGL/HLEGraphics/RendererGL.cpp:86-120
+
+  roms.ini is the per-game settings database (name, save type, a few rendering
+  and timing flags), keyed on the two header CRCs and the country code. A game
+  it does not list runs on defaults.
+  ref: Source/RomFile/RomSettings.cpp:149-157, Source/RomFile/RomSettings.cpp:218-228,
+       Source/Core/ROM.cpp:481-484
+
+  The cheat reader is called with "Daedalus.cht" but ignores that argument and
+  opens a file named cheat_file in the working directory, creating it empty, so
+  the bundled Daedalus.cht is never read.
+  ref: Source/Core/ROM.cpp:534, Source/Interface/Cheats.cpp:265, Source/Interface/Cheats.cpp:293-303
+
+files:
+  - name: "n64.psh"
+    path: "n64.psh"
+    system: nintendo-64
+    required: true
+    bundled: true
+    description: "N64 fragment shader library"
+    note: "Two different files share this name: Source/SysGLES/HLEGraphics/n64.psh for the OpenGL ES build, Source/SysGL/HLEGraphics/n64.psh for the desktop OpenGL build. Installed beside the binary."
+    source_ref: "Source/SysGLES/HLEGraphics/RendererGL.cpp:103-110, Source/SysGL/HLEGraphics/RendererGL.cpp:116-120, Source/SysPosix/CMakeLists.txt:12-18"
+
+  - name: "roms.ini"
+    path: "roms.ini"
+    system: nintendo-64
+    required: false
+    bundled: true
+    category: game_data
+    description: "Per-game settings database"
+    note: "Shipped in Data/. Without it every game runs with default settings."
+    source_ref: "Source/RomFile/RomSettings.cpp:149-157, Source/RomFile/RomSettings.cpp:218-228, Source/Core/ROM.cpp:481-484"
+
+  - name: "OpenSans.ttf"
+    path: "Resources/OpenSans.ttf"
+    system: nintendo-64
+    required: false
+    bundled: true
+    description: "UI font"
+    note: "Opened through SDL_ttf for the on-screen menus; a failure is printed and emulation is not affected."
+    source_ref: "Source/SysGL/Graphics/DrawTextSDL.cpp:30-41, Source/SysGLES/Graphics/DrawTextSDL.cpp:30-41"

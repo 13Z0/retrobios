@@ -374,6 +374,8 @@ platforms:
     logo: https://avatars.githubusercontent.com/u/152618023
     scraper: rocknix
     schedule: weekly
+    target_scraper: rocknix_targets
+    target_source: https://github.com/ROCKNIX/distribution/blob/next/projects/ROCKNIX/packages/virtual/emulators/package.mk
     install:
       detect:
       - os: linux

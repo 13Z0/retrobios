@@ -1,0 +1,137 @@
+emulator: "DSperate"
+type: standalone
+core_classification: other
+source: "https://github.com/beebono/DSperate"
+profiled_date: "2026-10-17"
+source_commit: "81b73832c2e68e2b10cb5850f0a6d393ffc6fbb7"
+pin_frozen: "ROCKNIX 20261001 ships the v2.0.1 release binaries, built by CI from the v2.0.1 tag at this commit."
+core_version: "2.0.1"
+display_name: "Nintendo - DS / DSi (DSperate)"
+cores:
+  - "dsperate"
+  - "dsperate-sa"
+systems:
+  - nintendo-ds
+  - nintendo-dsi
+
+notes: |
+  Nintendo DS emulator for ARM handhelds with a DSi mode. ROCKNIX installs the
+  release tarball for its architecture and runs it with --config pointing at
+  /storage/.config/dsperate/dsperate.ini.
+
+  No file name is built in: every system file is a [paths] key of the ini (or
+  the matching command-line flag), and a key that is unset or names no file
+  counts as absent. The names below are the ones ROCKNIX's dsperate.ini gives,
+  all in /storage/roms/bios/.
+  ref: src/frontend/sdl/config.cpp:184-205, src/frontend/sdl/main.cpp:1289-1303
+
+  DS BIOS: both halves or neither, the ARM9 image 4 KB and the ARM7 image 16 KB
+  exactly. Without them the built-in FreeBIOS runs games by direct boot. The
+  firmware may be any non-empty file; without one a firmware is generated from
+  the [user] settings. Booting the DS menu needs both BIOS dumps and a real
+  firmware. No hash is checked; an FNV-1a of the loaded regions only tags save
+  states.
+  ref: src/core/nds.cpp:101-133, src/core/mem/bus.h:121-131,
+       src/frontend/sdl/main.cpp:1410, src/frontend/sdl/main.cpp:1440-1447
+
+  DSi: DSiWare and --dsi-mode need the DSi BIOS pair, 64 KB each, and the DS
+  BIOS dumps as well; FreeBIOS cannot run a DSi session. dsi_firmware replaces
+  firmware for a DSi session when no --firmware is given. The NAND is needed by
+  --dsi-mode and by NAND title shortcuts only; it must carry the nocash footer
+  (at the end, or at 0x000FF800). DSiWare without a NAND runs on a generated
+  console whose system font is DSperate's own unless dsi_font names a
+  TWLFontTable.dat.
+  ref: src/frontend/sdl/main.cpp:1294-1308, src/frontend/sdl/main.cpp:1452-1460,
+       src/core/nds_dsi.cpp:95-112, src/core/nds_dsi.cpp:121-127,
+       src/core/io/dsi_sd.cpp:111-140, src/core/nds_dsi.cpp:356-373,
+       src/frontend/sdl/main.cpp:1915-1919
+
+  Cheats come from usrcheat.dat: the [paths] cheats entry, else beside the ROM,
+  else the config directory.
+  ref: src/frontend/sdl/main.cpp:709-735
+
+files:
+  - name: "bios9.bin"
+    system: nintendo-ds
+    required: false
+    hle_fallback: true
+    size: 4096
+    validation: [size]
+    config_key: "paths.bios9"
+    description: "DS ARM9 BIOS"
+    note: "Loaded only together with bios7.bin. Absent, FreeBIOS runs games by direct boot. Needed to boot the DS menu and for any DSi session."
+    source_ref: "src/core/nds.cpp:105-108, src/core/mem/bus.h:130, src/frontend/sdl/main.cpp:1440-1460"
+
+  - name: "bios7.bin"
+    system: nintendo-ds
+    required: false
+    hle_fallback: true
+    size: 16384
+    validation: [size]
+    config_key: "paths.bios7"
+    description: "DS ARM7 BIOS"
+    note: "Loaded only together with bios9.bin. Absent, FreeBIOS runs games by direct boot. Needed to boot the DS menu and for any DSi session."
+    source_ref: "src/core/nds.cpp:105-109, src/core/mem/bus.h:131, src/frontend/sdl/main.cpp:1440-1460"
+
+  - name: "firmware.bin"
+    system: nintendo-ds
+    required: false
+    hle_fallback: true
+    config_key: "paths.firmware"
+    description: "DS firmware"
+    note: "Any non-empty file is accepted. Absent, a firmware is generated from [user]. Needed to boot the DS menu."
+    source_ref: "src/core/nds.cpp:110, src/core/nds.cpp:124-125, src/frontend/sdl/main.cpp:1441-1447"
+
+  - name: "dsi_bios9.bin"
+    system: nintendo-dsi
+    required: false
+    size: 65536
+    validation: [size]
+    config_key: "paths.bios9i"
+    description: "DSi ARM9 BIOS"
+    note: "Loaded only together with dsi_bios7.bin. Without the pair DSiWare and --dsi-mode are refused; DS games do not use it."
+    source_ref: "src/core/nds_dsi.cpp:95-106, src/core/mem/bus.h:121, src/frontend/sdl/main.cpp:1301-1308"
+
+  - name: "dsi_bios7.bin"
+    system: nintendo-dsi
+    required: false
+    size: 65536
+    validation: [size]
+    config_key: "paths.bios7i"
+    description: "DSi ARM7 BIOS"
+    note: "Loaded only together with dsi_bios9.bin. Without the pair DSiWare and --dsi-mode are refused; DS games do not use it."
+    source_ref: "src/core/nds_dsi.cpp:95-106, src/core/mem/bus.h:122, src/frontend/sdl/main.cpp:1301-1308"
+
+  - name: "dsi_firmware.bin"
+    system: nintendo-dsi
+    required: false
+    config_key: "paths.dsi_firmware"
+    description: "DSi firmware"
+    note: "Used instead of firmware.bin for a DSi session when no --firmware is given."
+    source_ref: "src/frontend/sdl/main.cpp:1294-1298"
+
+  - name: "dsi_nand.bin"
+    system: nintendo-dsi
+    required: false
+    config_key: "paths.dsi_nand"
+    description: "DSi NAND image with nocash footer"
+    note: "Read only by --dsi-mode and NAND title shortcuts; DSiWare run from the game list does without it. Opened read-only, rejected without the \"DSi eMMC CID/CPU\" footer."
+    source_ref: "src/frontend/sdl/main.cpp:1263-1272, src/core/nds_dsi.cpp:121-127, src/core/io/dsi_sd.cpp:111-140"
+
+  - name: "TWLFontTable.dat"
+    system: nintendo-dsi
+    required: false
+    hle_fallback: true
+    config_key: "paths.dsi_font"
+    description: "DSi system font"
+    note: "Used for DSiWare run without a NAND. Absent, DSperate's own font table is generated. ROCKNIX's ini leaves the key unset."
+    source_ref: "src/core/nds_dsi.cpp:356-373, src/frontend/sdl/main.cpp:1915-1919"
+
+  - name: "usrcheat.dat"
+    system: nintendo-ds
+    required: false
+    category: game_data
+    config_key: "paths.cheats"
+    description: "Action Replay cheat database"
+    note: "Looked up by game code and header checksum; nothing is enabled by its presence."
+    source_ref: "src/frontend/sdl/main.cpp:709-735"

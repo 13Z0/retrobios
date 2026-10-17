@@ -1,0 +1,206 @@
+emulator: "touchHLE"
+type: standalone
+core_classification: embedded_hle
+source: "https://github.com/touchHLE/touchHLE"
+profiled_date: "2026-10-17"
+source_commit: "3c5850585ba55615b17a58c58331b6d6f52d4a9d"
+pin_frozen: "ROCKNIX 20261001 builds this revision. Later upstream commits are not part of that build."
+core_version: "0.2.3"
+display_name: "Apple - iPhone OS (touchHLE)"
+cores:
+  - "touchhle"
+  - "touchhle-sa"
+systems:
+  - apple-ios
+
+notes: |
+  High-level emulator for iPhone OS apps. The operating system and its
+  frameworks are reimplemented in Rust, so no Apple firmware or system file is
+  opened. What it reads besides the app are resources bundled with it: three
+  Free Software ARMv6 libraries, fonts, and a table of default per-app options.
+  ref: Cargo.toml:7, src/paths.rs:9-12, src/paths.rs:28-36
+
+  Resources are opened relative to the working directory, or the Resources
+  folder of a macOS bundle. ROCKNIX patches the Linux base to /usr/lib/touchHLE.
+  ref: src/paths.rs:63-82
+
+  The libraries are mapped into the guest at /usr/lib under their own names and
+  aliases. An app binary that links one of them loads it from there, and fails
+  to start with "Could not load bundled dylib" when the host file is missing.
+  ref: src/fs.rs:588-622, src/environment.rs:384-413
+
+  Fonts are opened the first time an app draws text in that face, and a
+  missing or unparsable file is a panic. The Liberation families stand in for
+  the iPhone OS faces; Noto Sans JP is used for strings holding kana or kanji.
+  ROCKNIX installs only the LiberationSans files, so an app that asks for a
+  monospace, serif or Japanese face stops there.
+  ref: src/font.rs:70-129, src/frameworks/uikit/ui_font.rs:26-43,
+       src/frameworks/uikit/ui_font.rs:180-205
+
+  touchHLE_default_options.txt is read before the user's touchHLE_options.txt;
+  when it cannot be opened a warning is printed and the app runs without it.
+  ref: src/lib.rs:319-323
+
+files:
+  - name: "libgcc_s.1.dylib"
+    path: "touchHLE_dylibs/libgcc_s.1.dylib"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "GCC runtime library from the iPhoneOS 4.0 SDK"
+    note: "Exposed as /usr/lib/libgcc_s.1.dylib. Needed by apps that link it."
+    source_ref: "src/fs.rs:588-622, src/environment.rs:384-413"
+
+  - name: "libstdc++.6.0.9.dylib"
+    path: "touchHLE_dylibs/libstdc++.6.0.9.dylib"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "GNU C++ standard library from the iPhoneOS 4.0 SDK"
+    note: "Exposed as /usr/lib/libstdc++.6.dylib and /usr/lib/libstdc++.6.0.9.dylib. Needed by apps that link it."
+    source_ref: "src/fs.rs:588-622, src/environment.rs:384-413"
+
+  - name: "libz.1.2.3.dylib"
+    path: "touchHLE_dylibs/libz.1.2.3.dylib"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "zlib built from Apple's zlib-23.0.1 sources"
+    note: "Exposed as /usr/lib/libz.1.2.3.dylib, libz.1.dylib, libz.dylib and libz.1.1.3.dylib. Needed by apps that link it."
+    source_ref: "src/fs.rs:588-622, src/environment.rs:384-413"
+
+  - name: "LiberationMono-Regular.ttf"
+    path: "touchHLE_fonts/LiberationMono-Regular.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:88-90"
+
+  - name: "LiberationMono-Bold.ttf"
+    path: "touchHLE_fonts/LiberationMono-Bold.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:91-93"
+
+  - name: "LiberationMono-BoldItalic.ttf"
+    path: "touchHLE_fonts/LiberationMono-BoldItalic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:94-96"
+
+  - name: "LiberationMono-Italic.ttf"
+    path: "touchHLE_fonts/LiberationMono-Italic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:97-99"
+
+  - name: "LiberationSans-Regular.ttf"
+    path: "touchHLE_fonts/LiberationSans-Regular.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:100-102"
+
+  - name: "LiberationSans-Bold.ttf"
+    path: "touchHLE_fonts/LiberationSans-Bold.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:103-105"
+
+  - name: "LiberationSans-BoldItalic.ttf"
+    path: "touchHLE_fonts/LiberationSans-BoldItalic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:106-108"
+
+  - name: "LiberationSans-Italic.ttf"
+    path: "touchHLE_fonts/LiberationSans-Italic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:109-111"
+
+  - name: "LiberationSerif-Regular.ttf"
+    path: "touchHLE_fonts/LiberationSerif-Regular.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:112-114"
+
+  - name: "LiberationSerif-Bold.ttf"
+    path: "touchHLE_fonts/LiberationSerif-Bold.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:115-117"
+
+  - name: "LiberationSerif-BoldItalic.ttf"
+    path: "touchHLE_fonts/LiberationSerif-BoldItalic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:118-120"
+
+  - name: "LiberationSerif-Italic.ttf"
+    path: "touchHLE_fonts/LiberationSerif-Italic.ttf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:121-123"
+
+  - name: "NotoSansJP-Regular.otf"
+    path: "touchHLE_fonts/NotoSansJP-Regular.otf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:124-126"
+
+  - name: "NotoSansJP-Bold.otf"
+    path: "touchHLE_fonts/NotoSansJP-Bold.otf"
+    system: apple-ios
+    required: false
+    bundled: true
+    description: "Bundled font"
+    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    source_ref: "src/font.rs:70-85, src/font.rs:127-129"
+
+  - name: "touchHLE_default_options.txt"
+    path: "touchHLE_default_options.txt"
+    system: apple-ios
+    required: false
+    bundled: true
+    category: game_data
+    description: "Default options per app"
+    note: "Command-line style options keyed by app bundle identifier, applied before the user's own file."
+    source_ref: "src/paths.rs:36, src/lib.rs:319-323"

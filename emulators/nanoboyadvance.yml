@@ -1,0 +1,47 @@
+emulator: "NanoBoyAdvance"
+type: standalone
+core_classification: other
+source: "https://github.com/nba-emu/NanoBoyAdvance"
+profiled_date: "2026-10-17"
+source_commit: "3bb6f478f977dbfd3106508536e5fbce90d1898b"
+pin_frozen: "ROCKNIX 20261001 builds this revision of the SDL2 frontend (v1.6 plus four commits). Later upstream work is not part of that build."
+core_version: "1.6"
+display_name: "Nintendo - Game Boy Advance (NanoBoyAdvance)"
+cores:
+  - "nanoboyadvance"
+  - "nanoboyadvance-sa"
+systems:
+  - nintendo-gba
+
+notes: |
+  Game Boy Advance emulator. ROCKNIX builds the SDL2 frontend only
+  (PLATFORM_SDL2=ON, PLATFORM_QT=OFF).
+
+  The SDL2 frontend changes the working directory to the executable's
+  directory, then reads config.toml there. The BIOS path is the general.bios_path
+  key of that file, default "bios.bin", overridden by --bios on the command line.
+  ref: src/platform/sdl/main.cpp:288-293, src/platform/core/src/config.cpp:36,
+       src/platform/core/include/platform/config.hpp:17, src/platform/sdl/main.cpp:98-102
+
+  The BIOS is required. BIOSLoader refuses a missing path, a directory, and any
+  size other than 16 KB; the frontend prints the reason and exits. There is no
+  built-in replacement. bios_skip only jumps past the boot screen after the BIOS
+  is loaded.
+  ref: src/platform/core/src/loader/bios.cpp:17-48, src/platform/sdl/main.cpp:177-192,
+       src/nba/src/core.cpp:42-44
+
+  ROCKNIX patches config.toml and keymap.toml to /storage/.config/nanoboyadvance/
+  and its config.toml sets bios_path = /storage/roms/bios/gba_bios.bin.
+
+files:
+  - name: "bios.bin"
+    path: "bios.bin"
+    aliases: ["gba_bios.bin"]
+    system: nintendo-gba
+    required: true
+    size: 16384
+    validation: [size]
+    config_key: "general.bios_path"
+    description: "Game Boy Advance BIOS"
+    note: "Any file name through general.bios_path or --bios; bios.bin beside the executable when neither is set. ROCKNIX points the key at gba_bios.bin in its BIOS directory."
+    source_ref: "src/platform/core/src/loader/bios.cpp:17-48, src/platform/core/src/config.cpp:36, src/platform/sdl/main.cpp:177-192"

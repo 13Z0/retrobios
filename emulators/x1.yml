@@ -9,6 +9,7 @@ core_version: "0.60a"
 display_name: "Sharp X1 (X Millennium)"
 cores:
   - x1
+  - xmil
 systems:
   - sharp-x1
 

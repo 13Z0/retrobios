@@ -8,7 +8,7 @@ source_commit: "12edd2c74a517ff86dfa8cfc71ad75e4c10486d5"
 core_version: "2.6.0"
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus-Next)"
 systems: [nintendo-64, nintendo-64dd]
-cores: [mupen64plus_next, mupen64plus_next_develop, mupen64plus_next_gles3, mupen64plus_next_gles2, mupen64plus, mupen64plus-next]
+cores: [mupen64plus_next, mupen64plus_next_develop, mupen64plus_next_gles3, mupen64plus_next_gles2, mupen64plus, mupen64plus-next, mupen64plus_nx]
 
 files:
   - name: "IPL.n64"

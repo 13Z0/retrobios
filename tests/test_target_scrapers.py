@@ -176,6 +176,63 @@ class BatoceraKconfig(unittest.TestCase):
                           "BR2_PACKAGE_RUFFLE"} & active)
 
 
+class RocknixPerDevice(unittest.TestCase):
+    """ROCKNIX had no target list: an H700 handheld got the PS2, GameCube
+    and PS3 firmware of emulators its image does not carry."""
+
+    PACKAGE_MK = (
+        'PKG_EMUS="amiberry duckstation-sa hatarisa"\n'
+        'EMUS_32BIT=""\n'
+        'LIBRETRO_CORES="81-lr beetle-psx-lr \\\n'
+        '                neocd_lr idtech-lr"\n'
+        'if [ "${ARCH}" = "aarch64" ]; then\n'
+        '  LIBRETRO_CORES+=" duckstation-lr"\n'
+        'fi\n'
+        'case "${DEVICE}" in\n'
+        '  H700|RK3326)\n'
+        '    [ "${ENABLE_32BIT}" == "true" ] && EMUS_32BIT="box86 gpsp-lr"\n'
+        '    PKG_EMUS+=" drastic-sa"\n'
+        '    ;;\n'
+        '  SM8550)\n'
+        '    PKG_EMUS+=" aethersx2-sa dolphin-sa"\n'
+        '    ;;\n'
+        '  AMD64)\n'
+        '    PKG_EMUS+=" dolphin-sa"\n'
+        'esac\n'
+    )
+    IDTECH = (
+        'if [ "${OPENGLES_SUPPORT}" = yes ]; then\n'
+        '  PKG_DEPENDS_TARGET+=" ecwolf-lr prboom-lr"\n'
+        'fi\n'
+        'if [ "${TARGET_ARCH}" = "x86_64" ]; then\n'
+        '  PKG_DEPENDS_TARGET+=" vitaquake3-lr"\n'
+        'fi\n'
+    )
+
+    def test_each_device_gets_its_own_cores(self):
+        from scraper.targets.rocknix_targets_scraper import (  # noqa: PLC0415
+            core_names,
+            parse_device_cores,
+        )
+
+        h700 = core_names(*parse_device_cores(self.PACKAGE_MK, "H700", "aarch64", True))
+        self.assertTrue({"drastic", "gpsp", "duckstation", "beetle_psx", "hatari",
+                         "81", "neocd"} <= set(h700))
+        self.assertFalse({"aethersx2", "dolphin"} & set(h700))
+        no32 = core_names(*parse_device_cores(self.PACKAGE_MK, "H700", "aarch64", False))
+        self.assertNotIn("gpsp", no32)
+        amd64 = core_names(*parse_device_cores(self.PACKAGE_MK, "AMD64", "x86_64", False))
+        self.assertIn("dolphin", amd64)
+        self.assertNotIn("drastic", amd64)
+
+    def test_a_metapackage_names_the_cores_it_installs(self):
+        from scraper.targets.rocknix_targets_scraper import metapackage_cores  # noqa: PLC0415
+
+        self.assertEqual(metapackage_cores(self.IDTECH, "aarch64"), ["ecwolf-lr", "prboom-lr"])
+        self.assertEqual(metapackage_cores(self.IDTECH, "x86_64"),
+                         ["ecwolf-lr", "prboom-lr", "vitaquake3-lr"])
+
+
 class RetroPieModuleFlags(unittest.TestCase):
     """The RetroPie target list read flags as requirements and libretro alone.
 
