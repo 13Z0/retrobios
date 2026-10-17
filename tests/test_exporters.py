@@ -136,6 +136,21 @@ class Reconciliation(unittest.TestCase):
         self.assertIsNone(platform_entry.truth)
         self.assertEqual(report.hashes_corrected, [])
 
+    def test_a_contradicted_hash_takes_no_platform_size(self):
+        """geolith's neocdz.zip md5 contradicts System.dat's: the export
+        wrote that md5 beside System.dat's 953078 bytes."""
+        entry = NativeFile(
+            "neocdz.zip", "neocdz.zip", "neocd",
+            platform={"md5": "a" * 32, "size": 953078},
+            truth={"md5": "b" * 32},
+        )
+        self.assertEqual((entry.hash("md5"), entry.size()), ("b" * 32, None))
+        agreeing = NativeFile(
+            "neocdz.zip", "neocdz.zip", "neocd",
+            platform={"md5": "b" * 32, "size": 955352}, truth={"md5": "b" * 32},
+        )
+        self.assertEqual(agreeing.size(), 955352)
+
     def test_a_file_the_truth_says_nothing_about_is_kept(self):
         systems, _ = model()
         names = {fe.name for fe in systems["psx"].files}

@@ -153,9 +153,15 @@ class NativeFile:
         truth's size is only taken when the truth also speaks for the hash:
         a name-matched 480-byte fbneo boot.bin turned RomM's Dreamcast
         boot.bin into size 480 beside its 2 MB md5, which never verifies.
+        When the truth contradicts the platform's hash, the platform's size
+        describes the dump the truth rejects: geolith's neocdz.zip md5 went
+        out beside System.dat's 953078 bytes, a record no file satisfies.
         """
         source = self._identity_source()
-        order = (self.platform, self.truth) if source == "platform" else (self.truth, self.platform)
+        order = {
+            "platform": (self.platform, self.truth),
+            "truth": (self.truth,),
+        }.get(source, (self.truth, self.platform))
         for entry in order:
             if entry and entry.get("size"):
                 return _single_size(entry["size"])
