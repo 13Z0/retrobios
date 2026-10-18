@@ -9,6 +9,7 @@ core_version: "v0.0.2.19"
 display_name: "PICO-8 (FAKE-08)"
 cores:
   - fake08
+  - fake_08
 systems:
   - pico8
 

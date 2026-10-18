@@ -9,6 +9,7 @@ core_version: "0.2.1"
 display_name: "PuzzleScript (pzretro)"
 cores:
   - puzzlescript
+  - pzretro
 systems: []
 
 notes: |

@@ -7,7 +7,7 @@ profiled_date: "2026-03-23"
 source_commit: "422b688009ccb9f2917c086a8fe79c8cecb030ae"
 core_version: "SVN (2015 snapshot)"
 display_name: "Nintendo - DS (DeSmuME 2015)"
-cores: [desmume2015]
+cores: [desmume2015, desmume_2015]
 systems: [nintendo-ds]
 exclusion_note: ".info declares firmware_count=3 but libretro frontend never enables external BIOS loading (UseExtBIOS defaults false in desmume/src/NDSSystem.h:497, never set in libretro.cpp)"
 

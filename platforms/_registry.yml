@@ -295,9 +295,10 @@ platforms:
     # files there, not the one RetroArch's Windows and macOS builds see.
     case_insensitive_fs: false
     schedule: weekly
-    # No target list yet: Lakka builds its cores per device image, and no
-    # scraper reads those lists.
-    target_scraper: null
+    # Lakka builds its cores per device image: libretro_cores/package.mk
+    # excludes cores by PROJECT, DEVICE and OpenGL ES.
+    target_scraper: lakka_targets
+    target_source: https://github.com/libretro/Lakka-LibreELEC/blob/master/packages/lakka/libretro_cores/package.mk
     install:
       detect:
       - os: linux

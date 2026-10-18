@@ -10,6 +10,7 @@ core_version: "0.10-dev"
 display_name: "Nintendo - Game Boy Advance (mGBA)"
 cores:
   - mgba
+  - mgba_fork
 systems:
   - nintendo-gba
   - nintendo-gb

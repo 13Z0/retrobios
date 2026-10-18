@@ -9,6 +9,7 @@ core_version: "1.0.3"
 display_name: "Moonlight"
 cores:
   - moonlight
+  - lr_moonlight
 systems: []
 
 notes: |

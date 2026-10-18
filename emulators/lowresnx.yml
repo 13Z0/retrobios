@@ -9,6 +9,7 @@ core_version: "v1.2"
 display_name: "LowRes NX"
 cores:
   - lowresnx
+  - lowres_nx
 systems:
   - lowresnx
 

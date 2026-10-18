@@ -9,6 +9,7 @@ core_version: "Git"
 display_name: "Handheld Electronic (GW)"
 cores:
   - gw
+  - gw_libretro
 systems:
   - handheld-electronic
 

@@ -7,7 +7,7 @@ profiled_date: "2026-03-24"
 source_commit: "5fdbb2187f6b14ca7bf668dd52b36c820b989995"
 core_version: "0.86"
 display_name: "NEC - PC-98 (Neko Project II)"
-cores: [nekop2]
+cores: [nekop2, meowpc98]
 systems: [pc-98]
 
 # Neko Project II (NP2) by Yui, ported to libretro by meepingsnesroms.

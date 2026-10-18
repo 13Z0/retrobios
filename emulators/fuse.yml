@@ -9,6 +9,7 @@ core_version: "1.6.0"
 display_name: "Sinclair - ZX Spectrum (Fuse)"
 cores:
   - fuse
+  - fuse_libretro
 systems:
   - sinclair-zxspectrum
 

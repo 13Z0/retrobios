@@ -107,6 +107,13 @@ emudeck:
       # to scaffold new installers; it is not an emulator.
       remove_cores: [template]
 
+lakka:
+  targets:
+    generic:
+      aliases: [x86_64, pc]
+    rpi:
+      aliases: [rpi1]
+
 retropie:
   targets:
     _default:
