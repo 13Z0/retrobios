@@ -2871,7 +2871,7 @@ def main() -> None:
 
 
 def _main(held: contextlib.ExitStack) -> None:
-    parser = argparse.ArgumentParser(description="Generate platform BIOS ZIP packs")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate platform BIOS ZIP packs")
     parser.add_argument("--platform", "-p", help="Platform name (e.g., retroarch)")
     parser.add_argument(
         "--all", action="store_true", help="Generate packs for all active platforms"

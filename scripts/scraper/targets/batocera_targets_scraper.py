@@ -430,6 +430,7 @@ class Scraper(BaseTargetScraper):
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Scrape Batocera per-board emulator targets"
     )
     parser.add_argument("--dry-run", action="store_true", help="Show target summary")

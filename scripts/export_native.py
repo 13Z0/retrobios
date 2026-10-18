@@ -502,6 +502,7 @@ def run(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Rewrite each platform's own BIOS file, corrected.",
     )
     group = parser.add_mutually_exclusive_group(required=True)

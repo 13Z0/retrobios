@@ -1149,7 +1149,7 @@ def render(findings: list[Finding]) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0])
     parser.add_argument("--only", help="comma-separated areas: " + ",".join(AREAS))
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     parser.add_argument("--profiles", action="store_true", help="also run profile_sync (slow)")

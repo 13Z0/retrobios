@@ -130,7 +130,7 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Dump-catalog coverage report")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Dump-catalog coverage report")
     parser.add_argument("--db", default="database.json", help="Database path")
     parser.add_argument(
         "--provenance-dir",

@@ -342,7 +342,7 @@ def _preserve_large_file_entries(files: dict, db_path: str) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate multi-indexed BIOS database")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate multi-indexed BIOS database")
     parser.add_argument("--force", action="store_true", help="Force rehash all files")
     parser.add_argument(
         "--bios-dir", default=DEFAULT_BIOS_DIR, help="BIOS directory path"

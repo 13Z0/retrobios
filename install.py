@@ -2830,6 +2830,7 @@ def _requested_narrowing(
 def main() -> None:
     """Entry point."""
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Download missing BIOS files for retrogaming emulators.",
     )
     parser.add_argument(

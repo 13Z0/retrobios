@@ -3749,6 +3749,7 @@ def generate_mkdocs_nav(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Generate MkDocs site from project data"
     )
     parser.add_argument("--db", default="database.json")

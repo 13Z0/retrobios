@@ -116,7 +116,7 @@ def identify_romset(
 
 def main() -> int:
     """Entry point: 1 when a checked archive is not TorrentZip."""
-    parser = argparse.ArgumentParser(description="TorrentZip builder and checker")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="TorrentZip builder and checker")
     parser.add_argument("--check", metavar="ZIP", help="report TorrentZip conformance")
     parser.add_argument("--rebuild", metavar="ZIP", help="normalize an archive")
     parser.add_argument("--output", "-o", help="output path for --rebuild")

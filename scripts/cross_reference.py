@@ -748,7 +748,7 @@ def print_report(report: dict, scope: str = "all emulators") -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Emulator vs platform gap analysis")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Emulator vs platform gap analysis")
     parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
     parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
     parser.add_argument("--db", default=DEFAULT_DB)

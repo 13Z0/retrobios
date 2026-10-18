@@ -69,7 +69,7 @@ def find_revision(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0])
     parser.add_argument("--repo", required=True, help="forge URL of the project")
     parser.add_argument("--path", required=True, help="path of the file in the project")
     parser.add_argument("--md5", required=True, help="md5 the platform pins")

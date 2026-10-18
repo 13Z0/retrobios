@@ -746,7 +746,7 @@ def generate_contributing() -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate slim README.md")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate slim README.md")
     parser.add_argument("--db", default="database.json")
     parser.add_argument("--platforms-dir", default="platforms")
     args = parser.parse_args()

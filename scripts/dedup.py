@@ -313,7 +313,7 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Deduplicate bios/ directory")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Deduplicate bios/ directory")
     parser.add_argument(
         "--dry-run", action="store_true", help="Preview without deleting"
     )

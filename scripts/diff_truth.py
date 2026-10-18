@@ -160,7 +160,7 @@ def _format_markdown(report: dict) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Compare scraped vs truth YAMLs")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Compare scraped vs truth YAMLs")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         "--all", action="store_true", help="diff all registered platforms"

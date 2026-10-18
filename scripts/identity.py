@@ -133,6 +133,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Report one content stored under identities that disagree.",
     )
     parser.add_argument("--bios-dir", default="bios")

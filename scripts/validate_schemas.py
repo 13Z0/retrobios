@@ -336,7 +336,7 @@ def _format_errors() -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     parser.add_argument(
         "--source-only",
         action="store_true",

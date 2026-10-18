@@ -518,6 +518,7 @@ def refresh_all(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Refresh cached data directories from upstream"
     )
     parser.add_argument("--key", help="Refresh only this entry")

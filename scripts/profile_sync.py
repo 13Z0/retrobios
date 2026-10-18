@@ -3239,6 +3239,7 @@ def emulators_dir_is_dirty(emulators_dir: str) -> bool:
 def build_parser() -> argparse.ArgumentParser:
     """Command line: selection, output, detection, writes, network."""
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Confront emulator profiles with their upstream source"
     )
     group = parser.add_mutually_exclusive_group(required=True)

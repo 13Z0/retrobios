@@ -311,6 +311,7 @@ def show_info(platform: str, release: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Download BIOS packs from GitHub Releases",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""

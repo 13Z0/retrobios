@@ -325,7 +325,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the full retrobios pipeline")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Run the full retrobios pipeline")
     parser.add_argument(
         "--include-archived", action="store_true", help="Include archived platforms"
     )

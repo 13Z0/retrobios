@@ -320,7 +320,7 @@ def scraper_cli(
     """Shared CLI entry point for all scrapers. Eliminates main() boilerplate."""
     import argparse
 
-    parser = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=description)
     parser.add_argument("--dry-run", action="store_true", help="Show scraped data")
     parser.add_argument("--output", "-o", help="Output YAML file")
     parser.add_argument("--json", action="store_true", help="Output as JSON")

@@ -219,6 +219,7 @@ def _size(text: str) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Split packs over the release asset limit into ZIP parts"
     )
     parser.add_argument("target", type=Path, help="a pack, or a directory of packs")

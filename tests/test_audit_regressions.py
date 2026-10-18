@@ -637,6 +637,33 @@ class AutoFetchReadsListsAndPlacesWithoutClobbering(unittest.TestCase):
             self.assertEqual(held.read_bytes(), b"other revision")
 
 
+class NoParserAcceptsAnAbbreviation(unittest.TestCase):
+    """argparse completes a prefix: `slots.py --emulator dolphin` became
+    --emulators-dir dolphin and reported 0 contested destinations, exit 0;
+    `pipeline.py --all` became --all-variants and built six packs per
+    platform. The flags read like other scripts' and were never refused."""
+
+    def test_every_parser_refuses_prefixes(self):
+        import ast
+
+        lax = []
+        for path in sorted([*(ROOT / "scripts").rglob("*.py"), ROOT / "install.py"]):
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+                if not isinstance(node, ast.Call):
+                    continue
+                func = node.func
+                name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
+                if name != "ArgumentParser":
+                    continue
+                if not any(
+                    kw.arg == "allow_abbrev"
+                    and isinstance(kw.value, ast.Constant) and kw.value.value is False
+                    for kw in node.keywords
+                ):
+                    lax.append(f"{path.relative_to(ROOT)}:{node.lineno}")
+        self.assertEqual(lax, [])
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

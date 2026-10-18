@@ -30,7 +30,7 @@ def list_platforms(include_archived: bool = False) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="List available platforms")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="List available platforms")
     parser.add_argument("--all", action="store_true", help="Include archived platforms")
     args = parser.parse_args()
 

@@ -336,7 +336,7 @@ def _load_database_if_any(path: str) -> dict | None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Validate BIOS file contributions")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Validate BIOS file contributions")
     parser.add_argument("files", nargs="*", help="Files to validate")
     parser.add_argument(
         "--changed", action="store_true", help="Auto-detect changed BIOS files"

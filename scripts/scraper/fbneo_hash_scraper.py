@@ -303,6 +303,7 @@ def run(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Scrape FBNeo BIOS set hashes from upstream source",
     )
     parser.add_argument(

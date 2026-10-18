@@ -451,7 +451,7 @@ def _resolve_modes(args: argparse.Namespace) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     parser.add_argument("--identify", action="store_true", help="label local archives")
     parser.add_argument(
         "--missing", action="store_true", help="attempt pinned archives we lack"

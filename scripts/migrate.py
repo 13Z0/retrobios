@@ -493,6 +493,7 @@ def migrate_local(source: Path, target: Path, dry_run: bool) -> tuple:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Migrate BIOS files to Manufacturer/Console structure"
     )
     parser.add_argument(

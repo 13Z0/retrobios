@@ -812,6 +812,7 @@ def main() -> int:
     )
 
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Report destinations where an emulator profile contradicts "
         "the file a platform baseline would ship.",
     )

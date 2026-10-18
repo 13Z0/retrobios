@@ -421,6 +421,7 @@ def _write_release(args: argparse.Namespace) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         prog="mame_hash_scraper",
         description="Fetch MAME BIOS hashes from source and merge into profiles.",
     )

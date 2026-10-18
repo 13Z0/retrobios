@@ -191,6 +191,7 @@ def print_report(report: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Cross-check profile region: values against No-Intro provenance"
     )
     parser.add_argument("--db", default="database.json", help="Path to database.json")

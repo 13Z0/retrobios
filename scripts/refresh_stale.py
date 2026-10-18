@@ -377,7 +377,7 @@ def render(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0])
     parser.add_argument(
         "--only",
         help="comma-separated areas to check: " + ",".join(AUTO_AREAS),

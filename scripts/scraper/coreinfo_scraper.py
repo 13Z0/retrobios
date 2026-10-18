@@ -308,6 +308,7 @@ def main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Scrape libretro-core-info firmware requirements"
     )
     parser.add_argument("--dry-run", action="store_true")

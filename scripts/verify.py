@@ -2080,7 +2080,7 @@ def main() -> None:
 
 
 def _main(held: contextlib.ExitStack) -> None:
-    parser = argparse.ArgumentParser(description="Platform-native BIOS verification")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Platform-native BIOS verification")
     parser.add_argument("--platform", "-p", help="Platform name")
     parser.add_argument(
         "--all", action="store_true", help="Verify all active platforms"

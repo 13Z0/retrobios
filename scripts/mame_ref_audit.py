@@ -114,7 +114,7 @@ def rewrite(name: str, emulators_dir: str, findings: list[Finding]) -> int:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.splitlines()[0])
     parser.add_argument("emulators", nargs="+")
     parser.add_argument("--emulators-dir", default="emulators")
     parser.add_argument("--cache-dir", default=upstream.CACHE_DIR)

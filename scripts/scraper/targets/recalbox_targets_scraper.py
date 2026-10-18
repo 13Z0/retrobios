@@ -104,7 +104,7 @@ class Scraper(BaseTargetScraper):
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Scrape Recalbox per-board cores")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Scrape Recalbox per-board cores")
     parser.add_argument("--dry-run", action="store_true", help="Show target summary")
     parser.add_argument("--output", "-o", help="Output YAML file")
     args = parser.parse_args()

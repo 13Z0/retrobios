@@ -443,7 +443,7 @@ def _listxml_opener(pack: Path) -> Callable[[], io.BufferedIOBase]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     parser.add_argument("--source", choices=SOURCES, required=True)
     parser.add_argument("--pack", help="DAT file, ZIP or directory")
     parser.add_argument(

@@ -36,6 +36,7 @@ DEFAULT_DB_FILE = "database.json"
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Generate ground-truth YAML from emulator profiles",
     )
     group = parser.add_mutually_exclusive_group(required=True)

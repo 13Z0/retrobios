@@ -177,6 +177,7 @@ def update_changed(report: dict) -> list[str]:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Check buildbot system directory for changes",
     )
     parser.add_argument(

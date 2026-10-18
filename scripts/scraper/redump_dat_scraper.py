@@ -83,7 +83,7 @@ def fetch_snapshot() -> tuple[dict, list[dict]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Fetch Redump BIOS DAT provenance")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Fetch Redump BIOS DAT provenance")
     parser.add_argument("--dry-run", action="store_true", help="Show fetched entries")
     parser.add_argument(
         "--output", "-o", default="provenance/redump.json", help="Snapshot output path"

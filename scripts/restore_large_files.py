@@ -92,7 +92,7 @@ def restore(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     parser.add_argument("--cache", default=".cache/large")
     parser.add_argument("--db", default="database.json")
     parser.add_argument("--gitignore", default=".gitignore")
