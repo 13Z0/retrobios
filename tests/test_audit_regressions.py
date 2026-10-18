@@ -3615,6 +3615,14 @@ class ADataDirectoryIsHeldWhileRead(unittest.TestCase):
         refresh = pack.index("results = refresh_all(")
         self.assertIn("hold_data_dirs(held, data_registry)", pack[refresh:])
 
+    def test_verify_packs_alone_holds_the_trees(self):
+        # --verify-packs returned before the hold and resolved core files
+        # against data/ while a refresh could swap a tree.
+        pack = (ROOT / "scripts" / "generate_pack.py").read_text()
+        branch = pack.index("if args.verify_packs and not args.all_variants:")
+        run = pack.index("_run_verify_packs(args)", branch)
+        self.assertIn("hold_data_dirs(held,", pack[branch:run])
+
 
 class EachRootReadsItsOwnRegistry(unittest.TestCase):
     """The release-asset registry was cached once per process whatever root
