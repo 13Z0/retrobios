@@ -4515,5 +4515,24 @@ class UnsourceableCardSaysWhy(unittest.TestCase):
         self.assertIn("../gaps.md#acknowledged-gaps", text)
 
 
+
+class CollectionCardsSayWhereToGetTheFile(unittest.TestCase):
+    """A system page card gave the hashes, readers and provenance of
+    scph5501.bin and no path or link to the bytes."""
+
+    def test_raw_and_release_asset_urls(self):
+        import scripts.generate_site as site
+
+        site._RELEASE_ASSET_NAMES = None
+        self.addCleanup(setattr, site, "_RELEASE_ASSET_NAMES", None)
+        self.assertEqual(
+            site._fetch_url("bios/Sony/PlayStation/scph5501.bin"),
+            "https://raw.githubusercontent.com/Abdess/retrobios/main/bios/Sony/PlayStation/scph5501.bin",
+        )
+        self.assertTrue(site._fetch_url("bios/Arcade/MAME/MAME 0.174 Arcade XML.dat").endswith(
+            "/releases/download/large-files/MAME.0.174.Arcade.XML.dat"
+        ))
+
+
 if __name__ == "__main__":
     unittest.main()

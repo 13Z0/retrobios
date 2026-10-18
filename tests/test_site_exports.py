@@ -351,7 +351,7 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
         page = generate_site.generate_system_page(
             "Entex", {"Adventure Vision": [primary, variant]}, consumers)
         block = page[page.index('??? note "Variants (1)"'):]
-        self.assertIn("    - Stored as: `advision.zip.1c086064`", block)
+        self.assertIn("    - Collection path: `bios/Entex/Adventure Vision/.variants/advision.zip.1c086064`", block)
         self.assertIn("[batocera](../platforms/batocera.md)", block)
         self.assertIn("[retrobat](../platforms/retrobat.md)", block)
         self.assertIn('title="' + "c" * 40 + '"', block)

@@ -1865,6 +1865,31 @@ def generate_provenance_page(
     return "\n".join(lines) + "\n"
 
 
+_RELEASE_ASSET_NAMES: dict[str, str] | None = None
+
+
+def _fetch_url(path: str) -> str:
+    """Where a collection file downloads from: its raw URL, or the
+    large-files release asset when .gitignore keeps it out of git."""
+    global _RELEASE_ASSET_NAMES
+    if _RELEASE_ASSET_NAMES is None:
+        from largefiles import (  # noqa: PLC0415
+            LARGE_FILES_RELEASE,
+            asset_names,
+            load_registered_paths,
+        )
+
+        _RELEASE_ASSET_NAMES = {
+            registered: f"{REPO_URL}/releases/download/{LARGE_FILES_RELEASE}/"
+            + urllib.parse.quote(name.replace(" ", "."))
+            for registered, name in asset_names(load_registered_paths()).items()
+        }
+    return _RELEASE_ASSET_NAMES.get(path) or (
+        "https://raw.githubusercontent.com/Abdess/retrobios/main/"
+        + urllib.parse.quote(path)
+    )
+
+
 def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     """One file of a system page: hashes, who reads it, its provenance."""
     name = f["name"]
@@ -1883,8 +1908,11 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
     lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>{permalink}')
     lines.append("")
-    if "/.variants/" in f.get("path", ""):
-        lines.append(f"- Stored as: `{f['path'].rsplit('/', 1)[-1]}`")
+    if f.get("path"):
+        # The card named a file, its hashes and provenance, but not where to
+        # get it: a user missing scph5501.bin found the reference and no way
+        # to the bytes.
+        lines.append(f"- Collection path: `{f['path']}` ([download]({_fetch_url(f['path'])}))")
     lines.append(f'- SHA1: <span class="rb-hash" title="{sha1_full}">`{sha1_short}...`</span>')
     lines.append(f'- MD5: <span class="rb-hash" title="{md5_full}">`{md5_short}...`</span>')
     if plats:
