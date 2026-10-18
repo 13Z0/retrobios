@@ -1269,11 +1269,34 @@ def resolve_local_file(
                     path = files_db[match_sha1]["path"]
                     if os.path.exists(path) and path not in candidates:
                         candidates.append(path)
+        if candidates and all("/.variants/" in p for p in candidates):
+            # Only variants answer the exact casing, but the primary they
+            # stand in for may be stored under another one: x1 asked for
+            # IPLROM.X1 and got Recalbox's second md5 while iplrom.x1, the
+            # dump every platform pins, sat in the same directory. A primary
+            # counts here only in a variant's own directory and under its own
+            # file name: an alias (iplrom.x1t names a font in System.dat) or
+            # another machine's font.rom is not that file.
+            homes = {p.split("/.variants/", 1)[0] for p in candidates}
+            folded = _casefold_name_index(by_name)
+            for try_name in names_to_try:
+                wanted = try_name.rsplit("/", 1)[-1].casefold()
+                for match_sha1 in folded.get(try_name.casefold(), []):
+                    path = files_db.get(match_sha1, {}).get("path", "")
+                    if (
+                        "/.variants/" not in path
+                        and os.path.dirname(path) in homes
+                        and os.path.basename(path).casefold() == wanted
+                        and _size_ok(match_sha1)
+                        and os.path.exists(path)
+                        and path not in candidates
+                    ):
+                        candidates.append(path)
         if not candidates:
             # Case-insensitive fallback: upstream platforms disagree on
-            # casing (VEC_MineStorm.vec vs VEC_Minestorm.vec). Safe by
-            # invariant: dedup keeps a single casing per content, so a
-            # casefold match cannot pick a different file.
+            # casing (VEC_MineStorm.vec vs VEC_Minestorm.vec). Two casings
+            # can name two contents (FONT.ROM and font.rom), so this only
+            # runs when no casing matches exactly.
             folded = _casefold_name_index(by_name)
             for try_name in names_to_try:
                 for match_sha1 in folded.get(try_name.casefold(), []):
