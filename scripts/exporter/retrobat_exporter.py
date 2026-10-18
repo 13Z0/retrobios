@@ -21,6 +21,9 @@ SOURCE_URL = (
 class Exporter(BaseExporter):
     """Write RetroBat's batocera-systems.json, corrected."""
 
+    # One md5 per entry, compared as Batocera's checkBios does.
+    SINGLE_HASH_FIELD = "md5"
+
     @staticmethod
     def platform_name() -> str:
         return "retrobat"

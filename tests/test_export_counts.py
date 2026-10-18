@@ -336,6 +336,16 @@ class OneMd5FormatsAddWhole(unittest.TestCase):
         self.assertFalse(Batocera.writable(several))
         self.assertTrue(Batocera.writable(single))
 
+    def test_retrobat_refuses_it_too(self):
+        # RetroBat's batocera-systems.json holds one md5 per entry: the
+        # addition was written with the first and counted added.
+        from exporter.retrobat_exporter import Exporter as RetroBat  # noqa: PLC0415
+
+        several = NativeFile("boot.bin", "boot.bin", "dc", truth={"md5": [A, B, C]})
+        single = NativeFile("boot2.bin", "boot2.bin", "dc", truth={"md5": A})
+        self.assertFalse(RetroBat.writable(several))
+        self.assertTrue(RetroBat.writable(single))
+
 
 class BizHawkKeepsItsOwnHashes(unittest.TestCase):
     def test_a_declared_sha1_is_not_replaced(self):

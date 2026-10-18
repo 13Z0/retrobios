@@ -16,6 +16,10 @@ from .baseline import NativeFile, NativeSystem, Report
 class BaseExporter(ABC):
     """Base class for writing a platform's own BIOS file, corrected."""
 
+    # A hash field the checker compares to one value: an addition the
+    # truth accepts under several cannot be written whole.
+    SINGLE_HASH_FIELD: str | None = None
+
     @staticmethod
     @abstractmethod
     def platform_name() -> str:
@@ -144,6 +148,11 @@ class BaseExporter(ABC):
         if fe.platform is not None:
             return True
         if not cls.can_add() or (cls.keys_by_system() and fe.foreign_system):
+            return False
+        single = cls.SINGLE_HASH_FIELD
+        if single and len(set(fe.hashes(single))) > 1:
+            # One value checked: written with the first, the addition
+            # refuses every other dump the core accepts.
             return False
         require = require or cls.requires()
         return not require or bool(fe.hash(require))

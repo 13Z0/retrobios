@@ -25,6 +25,11 @@ _INDENT = " " * 4
 class Exporter(BaseExporter):
     """Write Batocera's batocera-systems, corrected."""
 
+    # checkBios compares one md5 for a plain file; altmd5 is read only for
+    # a zippedFile: retrodream's boot.bin written with the first of four
+    # md5 refused the three other dumps the core accepts.
+    SINGLE_HASH_FIELD = "md5"
+
     # checkBios reads emulator names from es_systems, and Batocera's
     # standalone_cores are those names. ROCKNIX's list holds package names
     # (duckstation-sa), which its checker does not know.
@@ -58,14 +63,7 @@ class Exporter(BaseExporter):
 
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
-        """An addition the format can state whole.
-
-        checkBios compares one md5 for a plain file (altmd5 is read only for
-        a zippedFile): written with the first of four, retrodream's boot.bin
-        refused the three other dumps the core accepts.
-        """
-        if fe.platform is None and len(set(fe.hashes("md5"))) > 1:
-            return False
+        """An addition the format can state whole."""
         if fe.platform is None and not cls._usable_runners(fe):
             # Written without its core's emulator and core, checkBios asks
             # every build for it (the defect _runner_keys repairs for the
