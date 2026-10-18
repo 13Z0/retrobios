@@ -621,55 +621,34 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
     return None
 
 
+# Embedded systems, first match wins: Knulli also carries the Batocera
+# markers. The registry publishes the same rules as each manifest's
+# `detect`; a test holds the two equal. MiSTer is a path rule below.
+_EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
+    ("rocknix", "os_release", ("rocknix",), "/storage/roms/bios"),
+    ("batocera", "file_exists", ("/etc/knulli-release",), "/userdata/bios"),
+    ("lakka", "os_release", ("lakka",), "/storage/system"),
+    ("batocera", "file_exists", ("/etc/batocera-version",), "/userdata/bios"),
+    ("recalbox", "file_exists", ("/recalbox/recalbox.version",), "/recalbox/share/bios"),
+    ("recalbox", "file_exists", ("/usr/bin/recalbox-settings",), "/recalbox/share/bios"),
+    ("retroarch", "file_exists", ("/opt/muos",), "/mnt/mmc/MUOS/bios"),
+    ("retroarch", "file_exists", ("/mnt/mmc/MUOS",), "/mnt/mmc/MUOS/bios"),
+    ("retroarch", "file_exists", ("/home/ark", "/opt/system"), "/roms/bios"),
+    ("retroarch", "file_exists", ("/mnt/vendor/bin/dmenu.bin",), "/mnt/mmc/bios"),
+)
+
+
 def _detect_embedded() -> list[tuple[str, Path]]:
     """Check for embedded Linux retrogaming OSes."""
-    found: list[tuple[str, Path]] = []
-    os_release = _parse_os_release()
-    os_id = os_release.get("ID", "").lower()
-
-    if os_id == "rocknix":
-        found.append(("rocknix", Path("/storage/roms/bios")))
-        return found
-
-    # MiSTer keeps the SD card at /media/fat with the main binary at its root
-    # (Main_MiSTer file_io.cpp:1150-1156), and cores read from games/
-    # (file_io.h:168)
-    if Path("/media/fat/MiSTer").exists():
-        found.append(("misterfpga", Path("/media/fat/games")))
-        return found
-
-    if Path("/etc/knulli-release").exists():
-        found.append(("batocera", Path("/userdata/bios")))
-        return found
-
-    if os_id == "lakka":
-        found.append(("lakka", Path("/storage/system")))
-        return found
-
-    if Path("/etc/batocera-version").exists():
-        found.append(("batocera", Path("/userdata/bios")))
-        return found
-
-    if (
-        Path("/recalbox/recalbox.version").exists()
-        or Path("/usr/bin/recalbox-settings").exists()
-    ):
-        found.append(("recalbox", Path("/recalbox/share/bios")))
-        return found
-
-    if Path("/opt/muos").exists() or Path("/mnt/mmc/MUOS/").exists():
-        found.append(("retroarch", Path("/mnt/mmc/MUOS/bios")))
-        return found
-
-    if Path("/home/ark").exists() and Path("/opt/system").exists():
-        found.append(("retroarch", Path("/roms/bios")))
-        return found
-
-    if Path("/mnt/vendor/bin/dmenu.bin").exists():
-        found.append(("retroarch", Path("/mnt/mmc/bios")))
-        return found
-
-    return found
+    os_id = _parse_os_release().get("ID", "").lower()
+    for platform_name, method, values, bios in _EMBEDDED_RULES:
+        if method == "os_release":
+            matched = os_id in values
+        else:
+            matched = all(Path(value).exists() for value in values)
+        if matched:
+            return [(platform_name, Path(bios))]
+    return []
 
 
 def _android_storage_root() -> Path:

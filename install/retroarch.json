@@ -38,6 +38,33 @@
       "method": "config_file",
       "config": "%APPDATA%\\RetroArch\\retroarch.cfg",
       "parse_key": "system_directory"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
+      "file": "/opt/muos",
+      "bios_path": "/mnt/mmc/MUOS/bios"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
+      "file": "/mnt/mmc/MUOS",
+      "bios_path": "/mnt/mmc/MUOS/bios"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
+      "file": [
+        "/home/ark",
+        "/opt/system"
+      ],
+      "bios_path": "/roms/bios"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
+      "file": "/mnt/vendor/bin/dmenu.bin",
+      "bios_path": "/mnt/mmc/bios"
     }
   ],
   "standalone_copies": [

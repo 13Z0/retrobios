@@ -187,6 +187,24 @@ platforms:
         method: config_file
         config: '%APPDATA%\RetroArch\retroarch.cfg'
         parse_key: system_directory
+      # Handheld firmwares that run RetroArch as their frontend: muOS,
+      # ArkOS, and the stock Linux of Anbernic devices (dmenu).
+      - os: linux
+        method: file_exists
+        file: /opt/muos
+        bios_path: /mnt/mmc/MUOS/bios
+      - os: linux
+        method: file_exists
+        file: /mnt/mmc/MUOS
+        bios_path: /mnt/mmc/MUOS/bios
+      - os: linux
+        method: file_exists
+        file: [/home/ark, /opt/system]
+        bios_path: /roms/bios
+      - os: linux
+        method: file_exists
+        file: /mnt/vendor/bin/dmenu.bin
+        bios_path: /mnt/mmc/bios
       standalone_copies: *standalone_copies
   batocera:
     config: batocera.yml
@@ -202,6 +220,11 @@ platforms:
     target_source: https://github.com/batocera-linux/batocera.linux
     install:
       detect:
+      # Knulli is a Batocera derivative and carries its markers too.
+      - os: linux
+        method: file_exists
+        file: /etc/knulli-release
+        bios_path: /userdata/bios
       - os: linux
         method: file_exists
         file: /etc/batocera-version
@@ -223,6 +246,10 @@ platforms:
     target_source: https://gitlab.com/recalbox/recalbox/-/tree/master/configs
     install:
       detect:
+      - os: linux
+        method: file_exists
+        file: /recalbox/recalbox.version
+        bios_path: /recalbox/share/bios
       - os: linux
         method: file_exists
         file: /usr/bin/recalbox-settings
@@ -388,9 +415,8 @@ platforms:
     install:
       detect:
       - os: linux
-        method: file_exists
-        file: /etc/os-release
-        match: 'ID=rocknix'
+        method: os_release
+        id: rocknix
         bios_path: /storage/roms/bios
   retropie:
     config: retropie.yml

@@ -11,6 +11,12 @@
     {
       "os": "linux",
       "method": "file_exists",
+      "file": "/etc/knulli-release",
+      "bios_path": "/userdata/bios"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
       "file": "/etc/batocera-version",
       "bios_path": "/userdata/bios"
     }

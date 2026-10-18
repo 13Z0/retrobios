@@ -264,10 +264,15 @@ class TestEmbeddedDetection(unittest.TestCase):
             install._parse_os_release = real_parse
 
     def test_mister_detected_from_main_binary(self):
-        self.assertEqual(
-            self._detect_with({"/media/fat/MiSTer"}),
-            [("misterfpga", Path("/media/fat/games"))],
-        )
+        # A path rule of the registry, read by _detect_by_path.
+        real_exists = install.Path.exists
+        install.Path.exists = lambda self: str(self) == "/media/fat/MiSTer"
+        try:
+            found: list = []
+            install._detect_by_path("linux", found)
+        finally:
+            install.Path.exists = real_exists
+        self.assertEqual(found, [("misterfpga", Path("/media/fat/games"))])
 
     def test_rocknix_wins_over_path_probes(self):
         self.assertEqual(
@@ -939,6 +944,38 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
             if rule["method"] == "path_exists"
         }
         self.assertEqual(set(install._PATH_RULES), rules)
+
+    def test_the_embedded_table_is_the_registry(self):
+        """Only the path rules were compared: Knulli, muOS, ArkOS and the
+        Recalbox version file were detected by the installer and absent
+        from every manifest's `detect`, and ROCKNIX was declared another
+        way. A changed bios_path in the registry reached no installer."""
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
+        )
+        rules = set()
+        for name, entry in registry["platforms"].items():
+            for rule in (entry.get("install") or {}).get("detect", []):
+                if rule["method"] == "os_release":
+                    rules.add((name, "os_release", (rule["id"],), rule["bios_path"]))
+                elif rule["method"] == "file_exists":
+                    files = rule["file"] if isinstance(rule["file"], list) else [rule["file"]]
+                    rules.add((name, "file_exists", tuple(files), rule["bios_path"]))
+        self.assertEqual(set(install._EMBEDDED_RULES), rules)
+
+    def test_the_first_embedded_match_wins(self):
+        with unittest.mock.patch.object(install, "_parse_os_release", return_value={}), \
+                unittest.mock.patch.object(
+                    Path, "exists",
+                    lambda p: str(p) in ("/etc/knulli-release", "/etc/batocera-version"),
+                ):
+            self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
+        with unittest.mock.patch.object(install, "_parse_os_release", return_value={"ID": "ROCKNIX"}):
+            self.assertEqual(
+                install._detect_embedded(), [("rocknix", Path("/storage/roms/bios"))]
+            )
 
     def _home(self) -> Path:
         home = Path(_tempdir(self))

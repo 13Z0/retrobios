@@ -11,6 +11,12 @@
     {
       "os": "linux",
       "method": "file_exists",
+      "file": "/recalbox/recalbox.version",
+      "bios_path": "/recalbox/share/bios"
+    },
+    {
+      "os": "linux",
+      "method": "file_exists",
       "file": "/usr/bin/recalbox-settings",
       "bios_path": "/recalbox/share/bios"
     }

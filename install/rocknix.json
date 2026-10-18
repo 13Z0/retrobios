@@ -10,9 +10,8 @@
   "detect": [
     {
       "os": "linux",
-      "method": "file_exists",
-      "file": "/etc/os-release",
-      "match": "ID=rocknix",
+      "method": "os_release",
+      "id": "rocknix",
       "bios_path": "/storage/roms/bios"
     }
   ],
