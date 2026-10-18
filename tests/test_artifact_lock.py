@@ -207,5 +207,19 @@ class HeldLockTest(unittest.TestCase):
         self.assertIn("hold_artifact_lock(args.output_dir)", source)
 
 
+class PipelineHoldsTheDataTrees(unittest.TestCase):
+    """The pipeline held dist/ for the whole run but not the data directory
+    trees: a refresh from another session could swap one between the packs
+    and the manifests, which then described two revisions of it."""
+
+    def test_the_trees_are_held_after_the_refresh_and_before_verify(self):
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "pipeline.py").read_text()
+        refresh = source.index('"scripts/refresh_data_dirs.py"')
+        hold = source.index("hold_data_dirs(held,")
+        verify = source.index('"scripts/verify.py", "--all"')
+        self.assertLess(refresh, hold)
+        self.assertLess(hold, verify)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,8 +46,10 @@ from common import (
     artifact_lock,
     hold_artifact_lock,
     list_registered_platforms,
+    load_data_dir_registry,
     truth_target_dir,
 )
+from refresh_data_dirs import hold_data_dirs
 
 
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
@@ -477,6 +479,14 @@ def main() -> None:
         results["check_release_assets"] = SKIPPED
 
     all_ok = _truth_steps(args, results) and all_ok
+
+    # Every step from here reads the data directory trees: verify, the packs,
+    # the manifests and the integrity check. Held shared until the run ends,
+    # a refresh from another session waits instead of swapping a tree
+    # between the packs and the manifests, which would then describe two
+    # revisions of it. Taken after step 2, whose own refresh needs them
+    # exclusive.
+    hold_data_dirs(held, load_data_dir_registry("platforms"))
 
     # Step 3: Verify
     verify_cmd = [sys.executable, "scripts/verify.py", "--all", "--strict"]
