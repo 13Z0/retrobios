@@ -46,5 +46,30 @@ class OneRule(unittest.TestCase):
             self.assertIn("declaration_settles(", source, module)
 
 
+class TheRunningBuildPlacesTheGap(unittest.TestCase):
+    """Batocera runs Cemu standalone, which reads keys.txt at its
+    standalone_path. The gap report gave the libretro Cemu/keys.txt while
+    verify gave keys.txt: 163 entries told apart, and the declaration was
+    settled on a slot the platform never fills."""
+
+    KEYS = {"name": "keys.txt", "path": "Cemu/keys.txt",
+            "standalone_path": "keys.txt", "required": True}
+
+    def _gap_paths(self, standalone: set[str]) -> list[str]:
+        profiles = {"cemu": {"emulator": "Cemu", "type": "standalone + libretro",
+                             "systems": ["nintendo-wiiu"], "files": [self.KEYS]}}
+        report = cross_reference(
+            profiles, {}, {"files": {}, "indexes": {}}, all_declared={},
+            standalone_cores=standalone,
+        )
+        return [g["path"] for g in report["cemu"]["gap_details"]]
+
+    def test_a_standalone_build_reads_its_own_path(self):
+        self.assertEqual(self._gap_paths({"cemu"}), ["keys.txt"])
+
+    def test_the_core_reads_the_libretro_path(self):
+        self.assertEqual(self._gap_paths(set()), ["Cemu/keys.txt"])
+
+
 if __name__ == "__main__":
     unittest.main()

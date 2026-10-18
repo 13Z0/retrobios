@@ -504,7 +504,14 @@ def _cross_reference_profile(
 
     for f in emu_files:
         fname = f.get("name", "")
-        effective_path = f.get("path") or fname
+        # The destination the running build reads, as find_undeclared_files
+        # takes it: Batocera's standalone Cemu reads keys.txt at
+        # standalone_path, and the libretro Cemu/keys.txt reported here
+        # settled the declaration on a slot the platform never fills.
+        if is_standalone:
+            effective_path = f.get("standalone_path") or f.get("path") or fname
+        else:
+            effective_path = f.get("path") or fname
         seen_key = slot_key(f)
         if not fname or seen_key in seen_files:
             continue
