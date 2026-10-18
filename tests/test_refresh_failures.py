@@ -138,5 +138,22 @@ class TheVersionIsReadBeforeTheDownload(unittest.TestCase):
         self.assertEqual(json.loads(versions.read_text())["sys"]["sha"], "build-1")
 
 
+class AKeyMustServeThePlatform(unittest.TestCase):
+    """--platform narrowed only a full refresh: under --key it was ignored and
+    dolphin-sys was refreshed for RomM, which never reads it."""
+
+    def test_a_key_outside_the_platform_is_refused(self):
+        import subprocess  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1]
+        refused = subprocess.run(
+            [sys.executable, "scripts/refresh_data_dirs.py", "--key", "dolphin-sys",
+             "--platform", "romm", "--dry-run"],
+            cwd=root, capture_output=True, text=True, timeout=120, check=False,
+        )
+        self.assertEqual(refused.returncode, 2)
+        self.assertIn("does not serve romm", refused.stdout + refused.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

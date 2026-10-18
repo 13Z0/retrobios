@@ -544,6 +544,15 @@ def main() -> None:
         if args.key not in registry:
             log.error("unknown key: %s (available: %s)", args.key, ", ".join(registry))
             raise SystemExit(1)
+        allowed = registry[args.key].get("for_platforms")
+        if args.platform and allowed and args.platform not in allowed:
+            # The platform restriction applied only without --key: dolphin-sys
+            # was refreshed for RomM, which never reads it.
+            log.error(
+                "%s does not serve %s (for_platforms: %s)",
+                args.key, args.platform, ", ".join(allowed),
+            )
+            raise SystemExit(2)
         outcomes = {
             args.key: refresh_entry(
                 args.key, registry[args.key], force=args.force, dry_run=args.dry_run
