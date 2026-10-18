@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import tempfile
 import time
 import unittest
@@ -375,6 +376,41 @@ class TestPackDeterminism(unittest.TestCase):
         with zipfile.ZipFile(pack) as zf:
             info = zf.getinfo("manifest.json")
         self.assertEqual(info.date_time, _FIXED_DATE_TIME)
+
+
+
+class ManifestInjectionIsAtomic(unittest.TestCase):
+    """inject_manifest appended to the final pack in place: zipfile writes
+    the member over the old central directory and the new one only on
+    close, so a process killed in between left a BadZipFile where a valid
+    pack had been."""
+
+    def test_a_kill_mid_write_leaves_the_pack_readable(self):
+        import tempfile
+        from unittest import mock
+
+        from scripts import generate_pack as gp
+
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / "tmp") as d:
+            pack = Path(d) / "Pack.zip"
+            with zipfile.ZipFile(pack, "w", zipfile.ZIP_DEFLATED) as zf:
+                for i in range(20):
+                    zf.writestr(f"bios/{i}.bin", os.urandom(4096))
+            before = pack.read_bytes()
+
+            def die(zf, name, text):
+                zf.writestr(name, text)
+                zf.fp.flush()
+                raise KeyboardInterrupt
+
+            with mock.patch.object(gp, "_write_generated_member", die), \
+                    self.assertRaises(KeyboardInterrupt):
+                gp.inject_manifest(str(pack), {"files": ["x"] * 2000})
+            self.assertEqual(pack.read_bytes(), before)
+            self.assertEqual(
+                [p.name for p in Path(d).iterdir()], ["Pack.zip"],
+                "the scratch copy is removed",
+            )
 
 
 if __name__ == "__main__":

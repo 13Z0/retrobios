@@ -4207,41 +4207,45 @@ def _manifest_core_index(
 
 
 def inject_manifest(zip_path: str, manifest: dict) -> None:
-    """Inject manifest.json into an existing ZIP pack."""
+    """Inject manifest.json into an existing ZIP pack.
+
+    The pack is rewritten beside its final name and swapped in, as
+    _writing_pack builds it: appending in place rewrites the central
+    directory last, so a process killed in between left an unreadable ZIP
+    where a valid pack had been.
+    """
     manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False)
 
-    # Check if manifest already exists
     with zipfile.ZipFile(zip_path, "r") as zf:
         has_manifest = "manifest.json" in zf.namelist()
 
-    if not has_manifest:
-        # Fast path: append directly. Append mode defaults to ZIP_STORED,
-        # which would leave the manifest uncompressed and give the same pack
-        # two different byte layouts depending on the path taken here.
-        with zipfile.ZipFile(zip_path, "a", zipfile.ZIP_DEFLATED) as zf:
-            _write_generated_member(zf, "manifest.json", manifest_json)
-    else:
-        # Rebuild to replace existing manifest
-        import tempfile as _tempfile
-
-        tmp_fd, tmp_path = _tempfile.mkstemp(
-            suffix=".zip", dir=os.path.dirname(zip_path)
-        )
-        os.close(tmp_fd)
-        try:
+    directory = os.path.dirname(zip_path) or "."
+    fd, scratch = tempfile.mkstemp(
+        prefix=f".{os.path.basename(zip_path)}.", suffix=".partial", dir=directory
+    )
+    os.close(fd)
+    try:
+        if not has_manifest:
+            # Append to a copy. Append mode defaults to ZIP_STORED, which
+            # would leave the manifest uncompressed and give the same pack
+            # two different byte layouts depending on the path taken here.
+            shutil.copyfile(zip_path, scratch)
+            with zipfile.ZipFile(scratch, "a", zipfile.ZIP_DEFLATED) as zf:
+                _write_generated_member(zf, "manifest.json", manifest_json)
+        else:
             with (
                 zipfile.ZipFile(zip_path, "r") as src,
-                zipfile.ZipFile(tmp_path, "w", zipfile.ZIP_DEFLATED) as dst,
+                zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED) as dst,
             ):
                 for item in src.infolist():
                     if item.filename == "manifest.json":
                         continue
                     dst.writestr(item, src.read(item.filename))
                 _write_generated_member(dst, "manifest.json", manifest_json)
-            os.replace(tmp_path, zip_path)
-        except (OSError, zipfile.BadZipFile):
-            os.unlink(tmp_path)
-            raise
+        os.replace(scratch, zip_path)
+    except BaseException:
+        Path(scratch).unlink(missing_ok=True)
+        raise
 
 
 
