@@ -12,7 +12,8 @@ Mapping (stale -> command):
                             -o platforms/<name>.yml
                             then the native refresh below: the original
                             the export patches must be the one just scraped
-    native/<name>           python scripts/export_native.py --platform <name>
+    native/<name>           python scripts/generate_truth.py --platform <name>, then
+                            python scripts/export_native.py --platform <name>
                             --refresh-cache
     targets/<name>          python -m scripts.scraper.targets.<module>
                             -o platforms/targets/<name>.yml
@@ -169,12 +170,20 @@ def plan_jobs(
         log = LOG_DIR / f"{area}__{_slug(subject)}.log"
         then: tuple[tuple[str, ...], ...] = ()
         if area == "platforms":
+            # The truth reads the platform file: regenerated first, or the
+            # native refresh refuses it as older than the profiles.
+            then = (tuple(_truth_refresh(subject)), tuple(_native_refresh(subject)))
+        elif area == "native":
             then = (tuple(_native_refresh(subject)),)
         jobs.append(
             Job(area=area, subject=subject, command=command, log_path=log, then=then)
         )
 
     return jobs, surfaced, ignored
+
+
+def _truth_refresh(platform: str) -> list[str]:
+    return [sys.executable, "scripts/generate_truth.py", "--platform", platform]
 
 
 def _native_refresh(platform: str) -> list[str]:
@@ -192,7 +201,9 @@ def _command_for(
 ) -> list[str] | None:
     """Map a stale finding to its refresh command, or None if manual."""
     if area == "native":
-        return _native_refresh(subject)
+        # export_native refuses a truth older than the profiles, so the
+        # truth comes first and the original follows (Job.then).
+        return _truth_refresh(subject)
 
     if area == "platforms":
         entry = registry.get(subject) or {}

@@ -48,7 +48,7 @@ class TheNativeLayerIsThePlatformsOwn(unittest.TestCase):
                 "        curated: true\n"
             )
             pack_view = common.load_platform_config("demo", str(platforms))
-            _truth, native = load_inputs("demo", platforms, str(platforms))
+            _truth, native = load_inputs("demo", platforms / "truth", str(platforms))
 
         self.assertEqual(
             [f["name"] for f in pack_view["systems"]["nec-pc-88"]["files"]],

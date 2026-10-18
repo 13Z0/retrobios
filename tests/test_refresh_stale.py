@@ -41,9 +41,12 @@ class Planning(unittest.TestCase):
             jobs[0].command[1:],
             ["-m", "scripts.scraper.retrobat_scraper", "-o", "platforms/retrobat.yml"],
         )
+        # The truth reads the platform file and export_native refuses one
+        # older than the profiles: regenerated between the two.
         self.assertEqual(
             [list(c[1:]) for c in jobs[0].then],
-            [["scripts/export_native.py", "--platform", "retrobat", "--refresh-cache"]],
+            [["scripts/generate_truth.py", "--platform", "retrobat"],
+             ["scripts/export_native.py", "--platform", "retrobat", "--refresh-cache"]],
         )
 
     def test_a_native_row_of_a_rescraped_platform_is_not_a_second_job(self):
@@ -57,10 +60,12 @@ class Planning(unittest.TestCase):
     def test_a_stale_original_alone_is_refreshed(self):
         jobs, _, _ = self._plan(finding("native", "lakka"))
         self.assertEqual(
-            jobs[0].command[1:],
-            ["scripts/export_native.py", "--platform", "lakka", "--refresh-cache"],
+            jobs[0].command[1:], ["scripts/generate_truth.py", "--platform", "lakka"]
         )
-        self.assertEqual(jobs[0].then, ())
+        self.assertEqual(
+            [list(c[1:]) for c in jobs[0].then],
+            [["scripts/export_native.py", "--platform", "lakka", "--refresh-cache"]],
+        )
 
     def test_a_platform_without_a_scraper_is_surfaced(self):
         jobs, surfaced, _ = self._plan(finding("platforms", "lakka"))

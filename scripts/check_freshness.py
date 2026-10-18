@@ -399,7 +399,11 @@ def check_native(platforms_dir: Path, cache_dir: Path, truth_dir: Path) -> list[
         exporter_class = exporters.get(name)
         if not exporter_class:
             continue
-        truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
+        try:
+            truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
+        except export_native.StaleTruth as exc:
+            findings.append(Finding("native", name, STALE, detail=str(exc)))
+            continue
         systems, _ = build_native_model(truth or {}, scraped)
         wanted = export_native.wanted_sources(exporter_class(), systems, scraped)
         reason = native_cache_state(
