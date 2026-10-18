@@ -70,12 +70,28 @@ ALIASES: dict[str, str] = {
 }
 
 
+def unknown_region_message(raw: str, aliases: dict[str, str], regions: frozenset[str]) -> str:
+    """What to type instead: the closest spellings, then every short form.
+
+    `unknown region: 'uss'` left the user to read the source for `us`.
+    """
+    import difflib  # noqa: PLC0415
+
+    spelled = raw.strip()
+    close = difflib.get_close_matches(spelled.lower(), [*aliases, *regions], n=3, cutoff=0.5)
+    hint = f" Did you mean: {', '.join(close)}?" if close else ""
+    return (
+        f"unknown region: {spelled}.{hint} Short forms: {', '.join(aliases)}; "
+        f"regions: {', '.join(sorted(regions))}"
+    )
+
+
 def _canonical(raw: str) -> str:
     """Map one token to a canonical region slug."""
     key = raw.strip().lower()
     key = ALIASES.get(key, key)
     if key not in REGIONS:
-        raise ValueError(f"unknown region: {raw!r}")
+        raise ValueError(unknown_region_message(raw, ALIASES, REGIONS))
     return key
 
 

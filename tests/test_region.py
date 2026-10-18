@@ -910,5 +910,32 @@ class EmulatorModeKeepsAHeldFile(unittest.TestCase):
         )
 
 
+
+class UnknownRegionSaysWhatToType(unittest.TestCase):
+    """`unknown region: 'uss'` named nothing to type instead."""
+
+    def test_the_build_scripts_suggest_and_list_short_forms(self):
+        import region
+
+        with self.assertRaises(ValueError) as caught:
+            region.parse_requested("uss")
+        message = str(caught.exception)
+        self.assertIn("Did you mean: us", message)
+        self.assertIn("Short forms: jp", message)
+
+    def test_the_installer_says_the_same(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "install_under_test", Path(__file__).resolve().parents[1] / "install.py"
+        )
+        install = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(install)
+        with self.assertRaises(ValueError) as caught:
+            install.canonical_region("europ")
+        self.assertIn("Did you mean: europe", str(caught.exception))
+        self.assertIn("Short forms:", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

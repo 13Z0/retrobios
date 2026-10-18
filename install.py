@@ -1716,7 +1716,14 @@ def canonical_region(raw: str) -> str:
     key = raw.strip().lower()
     key = REGION_ALIASES.get(key, key)
     if key not in REGIONS:
-        raise ValueError(f"unknown region: {raw.strip()}")
+        import difflib  # noqa: PLC0415
+
+        close = difflib.get_close_matches(key, [*REGION_ALIASES, *REGIONS], n=3, cutoff=0.5)
+        hint = f" Did you mean: {', '.join(close)}?" if close else ""
+        raise ValueError(
+            f"unknown region: {raw.strip()}.{hint} "
+            f"Short forms: {', '.join(REGION_ALIASES)}; regions: {', '.join(sorted(REGIONS))}"
+        )
     return key
 
 
@@ -2945,7 +2952,7 @@ def main() -> None:
         try:
             resolve_regions(args.region)
         except ValueError as exc:
-            parser.error(f"{exc} (known: {', '.join(sorted(REGIONS))})")
+            parser.error(str(exc))
     for option, values in (("--system", args.system), ("--core", args.core)):
         if values is not None and not any(
             token.strip() for value in values for token in value.split(",")
