@@ -345,6 +345,36 @@ class DoubledCitationPaths(unittest.TestCase):
         self.assertEqual(errors, [])
 
 
+class VerboseAppliesToJson(unittest.TestCase):
+    """verify accepted --verbose beside --json in every mode and dropped it:
+    the output was byte for byte the same, and the passing entries a script
+    asked for never came."""
+
+    def _run(self, *args: str) -> dict:
+        import json
+        import subprocess
+
+        completed = subprocess.run(
+            [sys.executable, "scripts/verify.py", *args, "--json"],
+            capture_output=True, text=True, cwd=ROOT, timeout=900, check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr[-2000:])
+        return json.loads(completed.stdout)
+
+    def test_emulator_and_system_modes_list_the_passing_entries(self):
+        for mode in (("--emulator", "handy"), ("--system", "atari-lynx")):
+            with self.subTest(mode=mode[0]):
+                plain = self._run(*mode)
+                verbose = self._run(*mode, "--verbose")
+                self.assertGreater(len(verbose["details"]), len(plain["details"]))
+                self.assertIn("ok", {d["status"] for d in verbose["details"]})
+
+    def test_every_json_branch_reads_the_flag(self):
+        source = (ROOT / "scripts" / "verify.py").read_text()
+        self.assertEqual(source.count("_json_details("), 4)
+        self.assertNotIn('if d["status"] != Status.OK\n            ]', source)
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

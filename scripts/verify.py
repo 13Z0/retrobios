@@ -2165,9 +2165,7 @@ def _main(held: contextlib.ExitStack) -> None:
             regions=requested_regions, platforms_dir=args.platforms_dir,
         )
         if args.json:
-            result["details"] = [
-                d for d in result["details"] if d["status"] != Status.OK
-            ]
+            result["details"] = _json_details(result["details"], args.verbose)
             print(json.dumps(result, indent=2))
         else:
             print_emulator_result(result, verbose=args.verbose)
@@ -2182,9 +2180,7 @@ def _main(held: contextlib.ExitStack) -> None:
             regions=requested_regions, platforms_dir=args.platforms_dir,
         )
         if args.json:
-            result["details"] = [
-                d for d in result["details"] if d["status"] != Status.OK
-            ]
+            result["details"] = _json_details(result["details"], args.verbose)
             print(json.dumps(result, indent=2))
         else:
             print_emulator_result(result, verbose=args.verbose)
@@ -2255,10 +2251,20 @@ def _main(held: contextlib.ExitStack) -> None:
 
     if args.json:
         for r in all_results.values():
-            r["details"] = [d for d in r["details"] if d["status"] != Status.OK]
+            r["details"] = _json_details(r["details"], args.verbose)
         print(json.dumps(all_results, indent=2))
 
     _exit_if_strict(args.strict, [r for r, _ in group_results])
+
+
+def _json_details(details: list[dict], verbose: bool) -> list[dict]:
+    """The entries a JSON report lists: what needs attention, or every one.
+
+    --verbose shows each entry with its ground truth in the text report; it
+    used to be accepted beside --json and dropped, the output byte for byte
+    the same, so a script asking for the passing entries got nothing.
+    """
+    return list(details) if verbose else [d for d in details if d["status"] != Status.OK]
 
 
 def _exit_if_strict(strict: bool, results: list[dict]) -> None:

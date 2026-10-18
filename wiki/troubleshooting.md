@@ -210,8 +210,10 @@ python scripts/verify.py --system sony-playstation
 # By hardware target
 python scripts/verify.py --platform retroarch --target switch
 
-# JSON for scripted processing
+# JSON for scripted processing: the entries that need attention
 python scripts/verify.py --platform retroarch --json
+# every entry, passing ones included, with its ground truth
+python scripts/verify.py --platform retroarch --json --verbose
 ```
 
 ## Installation script fails
