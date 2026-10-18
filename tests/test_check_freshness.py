@@ -404,5 +404,23 @@ class TheBuildbotIndexIsRead(unittest.TestCase):
         self.assertEqual([e["zip"] for e in cbs.pending(report)], ["New.zip"])
 
 
+
+class RowsSayAllTheyStandFor(unittest.TestCase):
+    """A row with no remote value ended on an arrow to nothing, and the 50
+    RetroPie cores without a profile were cut to 12, in --json too."""
+
+    def test_no_arrow_without_a_remote_value(self):
+        text = cf.render([
+            cf.Finding("native", "emudeck", "OK", local="1 file(s)"),
+        ])
+        self.assertNotIn("->", text)
+
+    def test_json_carries_every_unresolved_name(self):
+        missing = {f"core{i:02d}": [] for i in range(50)}
+        (row,) = cf._unresolved_findings("retropie", missing)
+        self.assertEqual(len(row.items), 50)
+        self.assertIn("--json lists all 50", row.detail)
+
+
 if __name__ == "__main__":
     unittest.main()

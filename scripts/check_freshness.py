@@ -90,6 +90,9 @@ class Finding:
     local: str = ""
     remote: str = ""
     detail: str = ""
+    # Every name a shortened detail stands for: --json carries them all, so
+    # a script can act on the 50 cores a row names 12 of.
+    items: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -565,7 +568,9 @@ def _unresolved_findings(platform: str, missing: dict[str, list[str]]) -> list[F
     if not missing:
         return []
     names = sorted(missing)
-    shown = ", ".join(names[:SHOWN_NAMES]) + (", ..." if len(names) > SHOWN_NAMES else "")
+    shown = ", ".join(names[:SHOWN_NAMES]) + (
+        f", ... (--json lists all {len(names)})" if len(names) > SHOWN_NAMES else ""
+    )
     return [
         Finding(
             "targets",
@@ -573,6 +578,7 @@ def _unresolved_findings(platform: str, missing: dict[str, list[str]]) -> list[F
             STALE,
             local=f"{len(names)} without a profile",
             detail=f"cores: alias or _overrides remove_cores needed for {shown}",
+            items=names,
         )
     ]
 
@@ -706,10 +712,11 @@ def _check_buildbot_system() -> Finding:
     todo = check_buildbot_system.pending(report)
     if not todo:
         return Finding("data", "buildbot system", OK)
-    names = ", ".join(f"{e['status'].lower()} {e['zip']}" for e in todo[:SHOWN_NAMES])
-    more = ", ..." if len(todo) > SHOWN_NAMES else ""
+    every = [f"{e['status'].lower()} {e['zip']}" for e in todo]
+    names = ", ".join(every[:SHOWN_NAMES])
+    more = f", ... (--json lists all {len(todo)})" if len(todo) > SHOWN_NAMES else ""
     return Finding("data", "buildbot system", STALE, local=f"{len(todo)} to track",
-                   detail=f"{names}{more} (_data_dirs.yml)")
+                   detail=f"{names}{more} (_data_dirs.yml)", items=every)
 
 
 # --- catalogs and recipes ---------------------------------------------------
@@ -1137,8 +1144,11 @@ def render(findings: list[Finding]) -> str:
         local_width = min(max((len(f.local) for f in rows), default=0), 44)
         for f in rows:
             cols = f"  {f.status:7} {f.subject:{width}}"
-            if f.local or f.remote:
+            if f.remote:
                 cols += f"  {f.local:{local_width}} -> {f.remote}"
+            elif f.local:
+                # An arrow pointing at nothing read as a lost value.
+                cols += f"  {f.local:{local_width}}"
             if f.detail:
                 cols += f"  {f.detail}"
             lines.append(cols.rstrip())
