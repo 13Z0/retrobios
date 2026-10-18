@@ -774,5 +774,27 @@ class OneCloneDirectoryPerRun(unittest.TestCase):
                 self.assertTrue(clone.name.endswith(f"-{os.getpid()}"))
 
 
+class ABrokenProfileStopsTheRefresh(unittest.TestCase):
+    """A profile with a YAML error left the list in silence: the refresh
+    printed 'no matching emulator profiles found' and exited 0."""
+
+    def test_both_scrapers_name_it(self):
+        from unittest import mock
+
+        from scripts.scraper import fbneo_hash_scraper, mame_hash_scraper
+
+        with tempfile.TemporaryDirectory() as directory:
+            Path(directory, "fbneo.yml").write_text("files: [\n  - name: a\n")
+            for module, attr, finder in (
+                (fbneo_hash_scraper, "EMULATORS_DIR", "_find_fbneo_profiles"),
+                (mame_hash_scraper, "_EMULATORS_DIR", "_find_mame_profiles"),
+            ):
+                with self.subTest(scraper=module.__name__), \
+                        mock.patch.object(module, attr, Path(directory)), \
+                        self.assertRaises(RuntimeError) as caught:
+                    getattr(module, finder)()
+                self.assertIn("fbneo.yml", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

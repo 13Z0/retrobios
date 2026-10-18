@@ -375,7 +375,13 @@ def main() -> int:
     if preserved:
         print(f"  Preserved {preserved} large file entries from existing database")
 
-    platform_aliases = _collect_all_aliases(files)
+    try:
+        platform_aliases = _collect_all_aliases(files)
+    except UnreadableSource as exc:
+        for source in exc.sources:
+            print(f"Error: cannot read {source}", file=sys.stderr)
+        print(f"Error: {args.output} not written", file=sys.stderr)
+        return 1
     for sha1, name_list in platform_aliases.items():
         for alias_entry in name_list:
             if sha1 not in aliases:
@@ -440,6 +446,14 @@ def _own_aliases(file_entry: dict, primary_names: set[str]) -> list[str]:
     ]
 
 
+class UnreadableSource(Exception):
+    """Platform or profile files that do not parse, named one per line."""
+
+    def __init__(self, sources: list[str]) -> None:
+        super().__init__("\n".join(sources))
+        self.sources = sources
+
+
 def _collect_all_aliases(files: dict) -> dict:
     """Collect alternate filenames from platform YAMLs, core-info, and known aliases.
 
@@ -464,6 +478,10 @@ def _collect_all_aliases(files: dict) -> dict:
         if name not in existing:
             aliases[matched_sha1].append({"name": name, "path": ""})
 
+    # A source that does not parse is reported and the run refused: written
+    # without it, the database lost every alias the file proves and the
+    # command exited 0 (dosbox-x's wqy fonts answered not_found).
+    unreadable: list[str] = []
     platforms_dir = Path("platforms")
     if platforms_dir.is_dir():
         for platform_name in list_registered_platforms(
@@ -474,7 +492,7 @@ def _collect_all_aliases(files: dict) -> dict:
                 with open(config_file) as f:
                     config = yaml_load(f) or {}
             except (yaml.YAMLError, OSError) as e:
-                print(f"Warning: {config_file.name}: {e}", file=sys.stderr)
+                unreadable.append(f"{config_file}: {e}")
                 continue
 
             for sys_id, system in config.get("systems", {}).items():
@@ -513,7 +531,8 @@ def _collect_all_aliases(files: dict) -> dict:
             try:
                 with open(emu_file) as f:
                     emu_config = yaml_load(f) or {}
-            except (yaml.YAMLError, OSError):
+            except (yaml.YAMLError, OSError) as e:
+                unreadable.append(f"{emu_file}: {e}")
                 continue
             # A profile whose entries name each other (dosbox-x opens
             # MT32_CONTROL.ROM and CM32L_CONTROL.ROM alike, so each entry
@@ -602,6 +621,8 @@ def _collect_all_aliases(files: dict) -> dict:
         for name in group:
             _add_alias(name, matched_sha1)
 
+    if unreadable:
+        raise UnreadableSource(unreadable)
     return aliases
 
 

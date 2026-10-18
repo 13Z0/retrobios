@@ -204,8 +204,10 @@ def _find_fbneo_profiles() -> list[Path]:
     for path in source_yaml_paths(EMULATORS_DIR):
         try:
             data = yaml_load(path.read_text(encoding="utf-8"))
-        except (yaml.YAMLError, OSError):
-            continue
+        except (yaml.YAMLError, OSError) as exc:
+            # Skipped, a broken fbneo.yml left the list and the refresh
+            # reported "no matching emulator profiles found" with exit 0.
+            raise RuntimeError(f"cannot read {path}: {exc}") from exc
         if not data or not isinstance(data, dict):
             continue
         upstream = data.get("upstream", "")

@@ -216,8 +216,10 @@ def _find_mame_profiles() -> list[Path]:
                 and source.rstrip("/") in _MAME_TREES
             ):
                 profiles.append(path)
-        except (yaml.YAMLError, OSError):
-            continue
+        except (yaml.YAMLError, OSError) as exc:
+            # Skipped, a broken mame.yml left the list and the refresh
+            # reported success without touching it.
+            raise RuntimeError(f"cannot read {path}: {exc}") from exc
     return profiles
 
 

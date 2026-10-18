@@ -128,5 +128,30 @@ class CrossNamingStaysInItsProfile(unittest.TestCase):
         self.assertEqual([a["name"] for a in aliases["mt"]], ["MT32_CONTROL.ROM"])
         self.assertEqual([a["name"] for a in aliases["cm"]], ["CM32L_CONTROL.ROM"])
 
+class AnUnreadableSourceStopsTheRun(unittest.TestCase):
+    """A profile with a YAML error was skipped in silence: the database was
+    written without its aliases and the command exited 0."""
+
+    def test_the_file_is_named_and_nothing_collected(self):
+        import os
+        import shutil
+        import tempfile
+
+        import generate_db
+
+        tmp_root = Path(__file__).resolve().parents[1] / "tmp"
+        tmp_root.mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=tmp_root))
+        self.addCleanup(shutil.rmtree, root, True)
+        previous = os.getcwd()
+        os.chdir(root)
+        self.addCleanup(os.chdir, previous)
+        Path("emulators").mkdir()
+        Path("emulators/broken.yml").write_text("files: [\n  - name: a\n")
+        with self.assertRaises(generate_db.UnreadableSource) as caught:
+            generate_db._collect_all_aliases({})
+        self.assertIn("broken.yml", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
