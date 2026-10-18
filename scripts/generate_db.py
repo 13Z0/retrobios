@@ -28,6 +28,7 @@ from common import (
     load_provenance_snapshots,
     require_yaml,
     source_yaml_paths,
+    variant_base_name,
     write_if_changed,
     write_text_atomic,
     yaml_load,
@@ -65,17 +66,9 @@ def should_skip(path: Path) -> bool:
 
 def _canonical_name(filepath: Path) -> str:
     """Get canonical filename, stripping .variants/ hash suffix."""
-    name = filepath.name
-    if "/.variants/" in str(filepath) or "\\.variants\\" in str(filepath):
-        # naomi2.zip.da79eca4 -> naomi2.zip
-        parts = name.rsplit(".", 1)
-        if (
-            len(parts) == 2
-            and len(parts[1]) == 8
-            and all(c in "0123456789abcdef" for c in parts[1])
-        ):
-            return parts[0]
-    return name
+    if ".variants" in filepath.parts:
+        return variant_base_name(filepath.name)
+    return filepath.name
 
 
 def scan_bios_dir(bios_dir: Path, cache: dict, force: bool) -> tuple[dict, dict, dict]:

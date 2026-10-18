@@ -771,6 +771,18 @@ def _resolve_agnostic(
     return None
 
 
+_VARIANT_SUFFIX = re.compile(r"\.[0-9a-f]{8}$")
+
+
+def variant_base_name(name: str) -> str:
+    """The name a .variants/ copy stands in for: naomi2.zip.da79eca4 -> naomi2.zip.
+
+    Only an eight-hex-digit suffix is a variant tag. A variant stored under
+    its plain name (.variants/aes.zip) already is that name.
+    """
+    return _VARIANT_SUFFIX.sub("", name)
+
+
 def _affinity_tokens(text: str) -> set[str]:
     return {
         token

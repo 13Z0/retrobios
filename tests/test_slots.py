@@ -459,6 +459,32 @@ class TestSelfContradictingDestinations(unittest.TestCase):
             )
         )
 
+    def test_a_variant_kept_under_its_plain_name_is_one_family(self):
+        # 63 variants carry no hash suffix, aes.zip among them.
+        self.assertTrue(
+            slots._same_file_family(
+                ["bios/SNK/Neo Geo/aes.zip", "bios/SNK/Neo Geo/.variants/aes.zip"]
+            )
+        )
+
+    def test_only_a_hash_suffix_is_stripped(self):
+        self.assertFalse(
+            slots._same_file_family(
+                ["bios/M/C/rom.zip", "bios/M/C/.variants/rom.zip.zip"]
+            )
+        )
+
+    def test_the_database_and_the_arbiter_read_one_rule(self):
+        import generate_db  # noqa: PLC0415
+
+        variant = Path("bios/M/C/.variants/aes.zip")
+        self.assertEqual(generate_db._canonical_name(variant), "aes.zip")
+        for module in ("slots.py", "generate_db.py"):
+            source = (Path(__file__).resolve().parents[1] / "scripts" / module).read_text()
+            with self.subTest(module=module):
+                self.assertIn("variant_base_name(", source)
+                self.assertNotIn('rsplit(".", 1)[0]', source)
+
     def test_two_machines_are_not_one_family(self):
         self.assertFalse(
             slots._same_file_family(

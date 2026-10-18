@@ -31,6 +31,7 @@ from common import (
     resolve_local_file,
     resolve_platform_cores,
     runs_standalone,
+    variant_base_name,
 )
 from packresolve import preferred_entries
 from validation import outside_gap_scope
@@ -752,7 +753,7 @@ def _same_file_family(paths: list[str]) -> bool:
         if "/.variants/" in path:
             directory, _, name = path.rpartition("/")
             directory = directory[: -len("/.variants")]
-            name = name.rsplit(".", 1)[0]
+            name = variant_base_name(name)
             path = f"{directory}/{name}"
         canonical.add(path.casefold())
     return len(canonical) == 1
