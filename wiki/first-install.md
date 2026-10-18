@@ -110,7 +110,7 @@ command again picks up where it stopped.
 This is what a finished run looks like:
 
 ```
-Done. 72 files installed, 0 files already up to date.
+Done. 12893 files installed, 0 files already up to date.
 Location: /userdata/bios
 To check this later, run the same command with --check.
 ```

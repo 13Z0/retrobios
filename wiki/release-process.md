@@ -243,7 +243,7 @@ is `allowed_signers` at the repository root, so anyone can check a download
 without trusting the release page it came from:
 
 ```bash
-gh release download --pattern 'SHA256SUMS.txt*' --pattern 'RetroArch_BIOS_Pack.zip*'
+gh release download --pattern 'SHA256SUMS.txt*' --pattern 'RetroArch_*BIOS_Pack*'
 curl -fsSLO https://raw.githubusercontent.com/Abdess/retrobios/main/allowed_signers
 
 ssh-keygen -Y verify -f allowed_signers -I releases@retrobios -n file \

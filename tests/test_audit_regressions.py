@@ -4886,5 +4886,33 @@ class AProfilePathIsTheEmulatorsNotOurs(unittest.TestCase):
         self.assertIn(".variants/", errors[0])
 
 
+
+class DocumentedExamplesHoldTogether(unittest.TestCase):
+    """The verification block downloaded RetroArch_BIOS_Pack.zip*, a name
+    no release ever published (packs are versioned and split), and the
+    first-install example ended on "72 files installed" after announcing a
+    download of 12,893."""
+
+    def test_the_verification_pattern_matches_published_pack_names(self):
+        import fnmatch
+        import re
+
+        page = (ROOT / "wiki" / "release-process.md").read_text(encoding="utf-8")
+        patterns = re.findall(r"--pattern '([^']*Pack[^']*)'", page)
+        self.assertTrue(patterns)
+        for name in ("RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip",
+                     "RetroArch_v1.22.2_BIOS_Pack.zip"):
+            with self.subTest(name=name):
+                self.assertTrue(any(fnmatch.fnmatch(name, p) for p in patterns))
+
+    def test_the_first_install_example_counts_one_number(self):
+        import re
+
+        page = (ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
+        downloading = re.search(r"Downloading (\d+) files", page).group(1)
+        done = re.search(r"Done\. (\d+) files installed", page).group(1)
+        self.assertEqual(done, downloading)
+
+
 if __name__ == "__main__":
     unittest.main()
