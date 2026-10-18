@@ -334,6 +334,31 @@ class RefusedBeforeAnyInstall(unittest.TestCase):
         fetch.assert_not_called()
 
 
+class AnUnknownTargetStopsTheRunFirst(unittest.TestCase):
+    """EmuDeck installed 3.2 GB, then steamos was refused for RetroArch and
+    the run ended without a summary."""
+
+    def test_nothing_is_fetched_when_one_platform_lacks_the_target(self):
+        tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, tmp, True)
+        detected = [("emudeck", tmp / "bios"), ("retroarch", tmp / "system")]
+        lists = {"emudeck": {"steamos": {"cores": []}}, "retroarch": {"x86_64": {"cores": []}}}
+        with mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "detect_platforms", return_value=detected), \
+                mock.patch.object(install, "fetch_targets", side_effect=lists.get), \
+                mock.patch.object(install, "fetch_manifest") as fetch, \
+                mock.patch.object(sys, "argv", ["install.py", "--target", "steamos", "--no-input"]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            with self.assertRaises(SystemExit) as stop:
+                install.main()
+        self.assertEqual(stop.exception.code, 1)
+        self.assertIn("unknown target 'steamos' for retroarch", err.getvalue())
+        self.assertIn("Nothing was installed", err.getvalue())
+        fetch.assert_not_called()
+
+
 class _CoreRepository(FakeRepository):
     """The fake repository with the two maps and a portable RetroArch."""
 

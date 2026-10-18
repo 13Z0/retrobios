@@ -3276,6 +3276,29 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
 
+    # --target is checked for every platform before anything is written, as
+    # --installed-cores is below: EmuDeck installed 3.2 GB and only then was
+    # steamos refused for RetroArch, with no summary of what had landed.
+    target_lists: dict[str, dict] = {}
+    if args.target and not args.list_targets:
+        for plat_name, _bios_path in platforms:
+            targets = fetch_targets(plat_name)
+            if targets is None:
+                sys.exit(1)
+            target_lists[plat_name] = targets
+            if args.target not in targets:
+                print(f"Error: unknown target '{args.target}' for {plat_name}.",
+                      file=sys.stderr)
+                print(
+                    f"  available: {', '.join(sorted(targets))}" if targets
+                    else f"  {plat_name} publishes no target list",
+                    file=sys.stderr,
+                )
+                if len(platforms) > 1:
+                    print("  Nothing was installed. Name one platform with "
+                          "--platform to install it alone.", file=sys.stderr)
+                sys.exit(1)
+
     # Every check --installed-cores makes before anything is written: a
     # refusal for the second platform must not follow an install of the first.
     cores_found: dict[tuple[str, Path], list[str]] = {}
@@ -3348,7 +3371,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     target = board
                     print(f"  Board {board} detected (--every-board installs all boards)")
         if target:
-            targets = fetch_targets(plat_name)
+            targets = target_lists.get(plat_name)
+            if targets is None:
+                targets = fetch_targets(plat_name)
             if targets is None:
                 sys.exit(1)
             target_info = targets.get(target)
