@@ -884,6 +884,11 @@ def nudge_to_declared(
     """
     if not tokens:
         return None
+    if end > start and any(line.strip() for line in pin_lines[start - 1:end]):
+        # A range over code cites that code (a loading function), not the
+        # value beside it. Moved onto the nearest name, ymir's 598-618 left
+        # load_rom_cartridge() and a real change read as a silent SHIFTED.
+        return None
     lowered = [line.lower() for line in pin_lines]
     hits = [
         i + 1

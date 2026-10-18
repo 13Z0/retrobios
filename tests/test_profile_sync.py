@@ -783,10 +783,17 @@ class TestNudgeToDeclared(unittest.TestCase):
         )
 
     def test_range_length_is_kept(self):
+        lines = [""] * 20 + ["ROM_START( stvbios )"] + ["pad"] * 20
         self.assertEqual(
-            profile_sync.nudge_to_declared(self.LINES, 19, 22, ["stvbios"]),
-            (21, 24),
+            profile_sync.nudge_to_declared(lines, 17, 19, ["stvbios"]),
+            (21, 23),
         )
+
+    def test_a_range_over_code_cites_that_code(self):
+        """ymir's 598-618 cited load_rom_cartridge(); nudged onto the file
+        table beside it, a rewritten function read SHIFTED, not CHANGED."""
+        lines = ["void load_rom_cartridge() {"] + ["  code();"] * 19 + ["}", "kKOF95Files"]
+        self.assertIsNone(profile_sync.nudge_to_declared(lines, 1, 21, ["kkof95files"]))
 
     def test_nothing_when_already_on_target(self):
         self.assertIsNone(
