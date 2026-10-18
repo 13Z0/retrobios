@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-18T00:39:54Z",
+  "generated": "2026-10-18T11:24:19Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -12164,6 +12164,18 @@
       ],
       "storage": "release",
       "release_asset": "dsi_nand.bin.8b79a73c"
+    }
+  ],
+  "case_variants": [
+    {
+      "dest": "dsi_firmware.bin",
+      "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
+      "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
+      "size": 131072,
+      "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+      "cores": [
+        "melonds"
+      ]
     }
   ]
 }

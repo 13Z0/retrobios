@@ -1099,6 +1099,28 @@ def core_dirs(plat: str, bios_path: Path) -> list[Path]:
     return list(dict.fromkeys(dirs))
 
 
+def keeps_case(directory: Path) -> bool:
+    """Whether names differing only by case are distinct files there.
+
+    Probed on the nearest existing directory, since the filesystem decides,
+    not the operating system: an ext4 drive mounted on macOS keeps case and
+    a casefolded ext4 directory folds it. Unprobeable: the system's default.
+    """
+    probe_dir = directory
+    while not probe_dir.is_dir() and probe_dir != probe_dir.parent:
+        probe_dir = probe_dir.parent
+    try:
+        handle, name = tempfile.mkstemp(prefix=".retrobios-case-", dir=str(probe_dir))
+    except OSError:
+        return sys.platform not in ("win32", "darwin")
+    os.close(handle)
+    try:
+        twin = os.path.join(os.path.dirname(name), os.path.basename(name).upper())
+        return not os.path.exists(twin)
+    finally:
+        os.unlink(name)
+
+
 def installed_cores(dirs: list[Path]) -> list[str]:
     """The cores present in these directories, by the name the buildbot uses.
 
@@ -1336,6 +1358,46 @@ def _check_slot(entry: dict, where: str, dest: str) -> int:
     return size
 
 
+def _check_entry(
+    entry: object, where: str, seen_destinations: set[str]
+) -> tuple[int, int]:
+    """Check one file entry; return its size and the largest copy it may fetch."""
+    if not isinstance(entry, dict):
+        raise ValueError(f"{where} must be an object")
+    dest = str(_safe_relative_path(entry.get("dest"), f"{where}.dest"))
+    if dest in seen_destinations:
+        raise ValueError(f"duplicate manifest destination: {dest}")
+    seen_destinations.add(dest)
+
+    size = _check_download(entry, where, dest)
+    largest = size
+    alternatives = entry.get("alternatives", [])
+    if not isinstance(alternatives, list) or len(alternatives) > MAX_SELECTION_TAGS:
+        raise ValueError(f"invalid alternatives for {dest}")
+    for alt_index, alternative in enumerate(alternatives):
+        if (
+            not isinstance(alternative, dict)
+            or not alternative.get("cores")
+            or not set(alternative) <= set(_COPY_FIELDS)
+        ):
+            raise ValueError(f"invalid alternative for {dest}")
+        # Narrowing can swap in any copy: the cap holds for the largest.
+        largest = max(largest, _check_download(
+            alternative, f"{where}.alternatives[{alt_index}]", dest
+        ))
+    largest = max(largest, _check_slot(entry, where, dest))
+    absent = entry.get("absent_claims", [])
+    if not isinstance(absent, list) or len(absent) > MAX_SELECTION_TAGS:
+        raise ValueError(f"invalid absent claims for {dest}")
+    for claim in absent:
+        if not isinstance(claim, dict):
+            raise ValueError(f"invalid absent claim for {dest}")
+        _check_omission(claim, dest)
+    for field in (*SELECTION_FIELDS, "declared_in"):
+        _check_tags(entry, field, dest)
+    return size, largest
+
+
 def _validate_manifest(data: object, plat: str) -> dict:
     """Validate the untrusted install-manifest boundary using stdlib only."""
     if not isinstance(data, dict):
@@ -1352,41 +1414,21 @@ def _validate_manifest(data: object, plat: str) -> dict:
     total_size = 0
     largest_total = 0
     for index, entry in enumerate(files):
-        if not isinstance(entry, dict):
-            raise ValueError(f"files[{index}] must be an object")
-        dest = str(_safe_relative_path(entry.get("dest"), f"files[{index}].dest"))
-        if dest in seen_destinations:
-            raise ValueError(f"duplicate manifest destination: {dest}")
-        seen_destinations.add(dest)
-
-        size = _check_download(entry, f"files[{index}]", dest)
+        size, largest = _check_entry(entry, f"files[{index}]", seen_destinations)
         total_size += size
-        alternatives = entry.get("alternatives", [])
-        if not isinstance(alternatives, list) or len(alternatives) > MAX_SELECTION_TAGS:
-            raise ValueError(f"invalid alternatives for {dest}")
-        for alt_index, alternative in enumerate(alternatives):
-            where = f"files[{index}].alternatives[{alt_index}]"
-            if (
-                not isinstance(alternative, dict)
-                or not alternative.get("cores")
-                or not set(alternative) <= set(_COPY_FIELDS)
-            ):
-                raise ValueError(f"invalid alternative for {dest}")
-            # Narrowing can swap in any copy: the cap holds for the largest.
-            size = max(size, _check_download(alternative, where, dest))
-        size = max(size, _check_slot(entry, f"files[{index}]", dest))
-        absent = entry.get("absent_claims", [])
-        if not isinstance(absent, list) or len(absent) > MAX_SELECTION_TAGS:
-            raise ValueError(f"invalid absent claims for {dest}")
-        for claim in absent:
-            if not isinstance(claim, dict):
-                raise ValueError(f"invalid absent claim for {dest}")
-            _check_omission(claim, dest)
-        largest_total += size
+        largest_total += largest
         if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
-        for field in (*SELECTION_FIELDS, "declared_in"):
-            _check_tags(entry, field, dest)
+    variants = data.get("case_variants", [])
+    if not isinstance(variants, list) or len(variants) > MAX_MANIFEST_FILES:
+        raise ValueError("invalid case_variants list")
+    for index, entry in enumerate(variants):
+        _size, largest = _check_entry(
+            entry, f"case_variants[{index}]", seen_destinations
+        )
+        largest_total += largest
+        if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
+            raise ValueError("manifest total size exceeds safety limit")
 
     declared_total_files = data.get("total_files")
     if declared_total_files is not None and declared_total_files != len(files):
@@ -3154,6 +3196,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         manifest = fetch_manifest(plat_name)
         files = manifest.get("files", [])
         omitted_files = manifest.get("omitted_files", [])
+        variants = manifest.get("case_variants", [])
+        if variants and keeps_case(bios_path):
+            # The list is folded for Windows and macOS; here bios.col and
+            # BIOS.col are two files that two cores open.
+            files = files + variants
 
         if args.list_targets:
             targets = fetch_targets(plat_name)

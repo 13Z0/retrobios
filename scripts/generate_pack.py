@@ -3764,6 +3764,10 @@ def _record_unplaceable(unplaceable: list[dict], record_omission: Callable[..., 
         )
 
 
+# Systems whose default filesystems fold case (NTFS, APFS, HFS+).
+CASE_FOLDING_OS = frozenset({"windows", "darwin"})
+
+
 def generate_manifest(
     platform_name: str,
     platforms_dir: str,
@@ -3780,13 +3784,17 @@ def generate_manifest(
     offline: bool | None = None,
     required_only: bool = False,
     data_registry: dict | None = None,
+    fold_case: bool | None = None,
 ) -> dict:
     """Generate a JSON manifest for a platform (same resolution as generate_pack).
 
     Returns a dict ready for JSON serialization with file inventory,
-    install hints, and download metadata.
+    install hints, and download metadata. ``fold_case`` overrides the
+    platform's ``case_insensitive_fs``, for the case variants below.
     """
     config = load_platform_config(platform_name, platforms_dir)
+    if fold_case is not None:
+        config = {**config, "case_insensitive_fs": fold_case}
     if zip_contents is None:
         zip_contents = {}
     if emu_profiles is None:
@@ -4165,6 +4173,28 @@ def generate_manifest(
         "system_cores": system_cores,
         "files": manifest_files,
     }
+    if case_insensitive and fold_case is None and any(
+        d.get("os") not in CASE_FOLDING_OS for d in detect
+    ):
+        # RetroArch also runs where case is kept: there Mesen-CE opens
+        # bios.col and np2kai np2kai/2608_bd.wav, which the folded list
+        # serves only as BIOS.col and 2608_BD.WAV. The installer adds these
+        # where the directory keeps case; the pack, extracted on Windows
+        # or macOS too, stays folded.
+        kept = generate_manifest(
+            platform_name, platforms_dir, db, bios_dir, registry_path,
+            emulators_dir, zip_contents, emu_profiles, target_cores, source,
+            regions, target_name, offline, required_only, data_registry,
+            fold_case=False,
+        )
+        folded = {entry["dest"] for entry in manifest_files}
+        folded_lower = {dest.lower() for dest in folded}
+        variants = [
+            entry for entry in kept["files"]
+            if entry["dest"] not in folded and entry["dest"].lower() in folded_lower
+        ]
+        if variants:
+            result["case_variants"] = variants
     return result
 
 

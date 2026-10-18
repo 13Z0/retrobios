@@ -2171,5 +2171,57 @@ class SudoAdviceNamesTheFolder(unittest.TestCase):
         self.assertIn("platform_of={path: plat for plat, path in platforms}", source)
 
 
+
+class CaseVariants(unittest.TestCase):
+    """The RetroArch list is folded for Windows and macOS: a Linux user got
+    BIOS.col and np2kai/2608_BD.WAV only, while Mesen-CE opens bios.col and
+    np2kai np2kai/2608_bd.wav. The manifest carries those as case_variants,
+    installed where the directory keeps case."""
+
+    def _manifest(self, variants):
+        entry = {
+            "dest": "BIOS.col", "sha1": "a" * 40, "sha256": "b" * 64,
+            "size": 8192, "repo_path": "bios/Coleco/BIOS.col", "cores": None,
+        }
+        return {
+            "manifest_version": 2, "platform": "retroarch", "files": [entry],
+            "total_files": 1, "total_size": 8192, "case_variants": variants,
+        }
+
+    def test_a_kept_case_directory_is_detected(self):
+        directory = Path(_tempdir(self)) / "not" / "yet"
+        self.assertTrue(install.keeps_case(directory))
+        self.assertEqual(list(Path(directory.parents[1]).iterdir()), [])
+
+    def test_variants_cross_the_trust_boundary(self):
+        variant = {
+            "dest": "bios.col", "sha1": "a" * 40, "sha256": "b" * 64,
+            "size": 8192, "repo_path": "bios/Coleco/BIOS.col", "cores": ["mesence"],
+        }
+        install._validate_manifest(self._manifest([variant]), "retroarch")
+        for bad in ({**variant, "dest": "../x"}, {**variant, "dest": "BIOS.col"}):
+            with self.subTest(dest=bad["dest"]), self.assertRaises(ValueError):
+                install._validate_manifest(self._manifest([bad]), "retroarch")
+
+    def test_main_adds_them_only_where_case_is_kept(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        compact = " ".join(source.split())
+        self.assertIn(
+            'variants = manifest.get("case_variants", []) '
+            "if variants and keeps_case(bios_path):", compact,
+        )
+
+    def test_the_published_retroarch_list_carries_them(self):
+        manifest = json.loads((REPO_ROOT / "install" / "retroarch.json").read_text())
+        variants = {e["dest"] for e in manifest.get("case_variants", [])}
+        self.assertIn("bios.col", variants)
+        lakka = json.loads((REPO_ROOT / "install" / "lakka.json").read_text())
+        folded = {e["dest"] for e in manifest["files"]}
+        self.assertEqual(
+            {e["dest"] for e in lakka["files"]}, folded | variants,
+            "a case-keeping RetroArch install equals the Lakka list",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

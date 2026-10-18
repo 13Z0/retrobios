@@ -1871,7 +1871,7 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
                 data = json.loads(path.read_text())
                 orphans = [
                     entry["dest"]
-                    for entry in data.get("files", [])
+                    for entry in data.get("files", []) + data.get("case_variants", [])
                     if not entry.get("repo_path") and not entry.get("release_asset")
                 ]
                 self.assertEqual(
@@ -1927,7 +1927,7 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
                 data = json.loads(path.read_text(encoding="utf-8"))
                 stale = [
                     (entry["dest"], entry["repo_path"], files.get(entry["sha1"], {}).get("path"))
-                    for entry in data.get("files", [])
+                    for entry in data.get("files", []) + data.get("case_variants", [])
                     if entry.get("repo_path")
                     and files.get(entry.get("sha1", ""), {}).get("path") != entry["repo_path"]
                 ]
@@ -1954,7 +1954,7 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
             with self.subTest(manifest=path.name):
                 data = json.loads(path.read_text(encoding="utf-8"))
                 wrong = []
-                for entry in data.get("files", []):
+                for entry in data.get("files", []) + data.get("case_variants", []):
                     repo_path = entry.get("repo_path")
                     if not repo_path:
                         continue

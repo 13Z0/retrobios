@@ -86,6 +86,15 @@ Batocera's verification uses `casefold()` for case-insensitive matching, but
 the actual emulator may still require exact case. When in doubt, use the exact
 filename from the emulator profile.
 
+The RetroArch pack is built for every system RetroArch runs on, so it holds one
+name per file: `BIOS.col`, never `bios.col` beside it, since extracting both on
+Windows or macOS would overwrite one with the other. On Linux, Mesen-CE opens
+`bios.col` and NP2kai opens the lowercase `np2kai/2608_*.wav`, which the pack
+only holds as `BIOS.col` and `2608_*.WAV`. The installer checks whether the
+BIOS directory keeps case and, if it does, also fetches these names. If you
+extract the ZIP on Linux by hand, take the Lakka pack instead: it is the
+RetroArch pack with both spellings.
+
 ## Hash mismatch / UNTESTED
 
 `verify.py` reports `UNTESTED` for a file.
