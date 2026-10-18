@@ -1448,6 +1448,33 @@ class TestBuildReport(unittest.TestCase):
         report = build_report("mame", profile, self.dir)
         self.assertEqual(report.entries[0].status, "ANCHORED")
 
+    def test_a_blank_first_line_does_not_hand_the_ref_to_the_upstream(self):
+        """lrps2's VMManager.cpp:418-431 opens on a blank line in the fork it
+        was written for; scored 0, the upstream (418 unrelated, not blank)
+        took the ref and its code decided the rebase target."""
+        self.files[("portpin", "src/a.cpp")] = ["x", "", "load_patches();", "y"]
+        self.files[("porthead", "src/a.cpp")] = ["", "load_patches();", "y", "w"]
+        self.files[("uppin", "src/a.cpp")] = ["x", "discord_init();", "pine();", "z"]
+        self.files[("uphead", "src/a.cpp")] = ["a", "b", "x", "discord_init();", "pine();", "z"]
+        heads = {"libretro/ps2": "porthead", "PCSX2/pcsx2": "uphead"}
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache, offline=False, branch=None: heads[repo.slug]
+        )
+        profile = {
+            "emulator": "LRPS2",
+            "source": "https://github.com/libretro/ps2",
+            "upstream": "https://github.com/PCSX2/pcsx2",
+            "source_commit": "portpin",
+            "upstream_commit": "uppin",
+            "files": [{"name": "cheats_ni.zip", "source_ref": "src/a.cpp:2-3"}],
+        }
+        report = profile_sync.report_to_dict(build_report("lrps2", profile, self.dir))
+        part = report["entries"][0]["parts"][0]
+        # Moved by -1 in the fork, the block's real target; the upstream's
+        # +2 shift of unrelated code is not it.
+        self.assertIsNone(part["repo"])
+        self.assertEqual((part["status"], part["start"]), ("SHIFTED", 1))
+
     def test_a_declared_branch_is_followed_for_head(self):
         seen = {}
 

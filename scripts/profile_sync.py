@@ -1136,6 +1136,9 @@ def anchor_part(
 
 SHIFT_SUPPORT = 3
 
+# Lines read past a blank cited line when scoring which repository owns it.
+BLANK_LOOKAHEAD = 5
+
 
 def dominant_shifts(
     parts: Iterable[PartResult], support: int = SHIFT_SUPPORT
@@ -1745,7 +1748,15 @@ def build_report(
                 return 2
             if start > len(lines):
                 return 0
-            line = lines[start - 1].lower()
+            # A blank cited line opens the block below it: lrps2's
+            # VMManager.cpp:418 is blank in the fork it was written for, and
+            # scored 0 it handed the ref to the upstream, where 418 is
+            # unrelated code that then decided the rebase target.
+            line = next(
+                (ln.lower() for ln in lines[start - 1:start - 1 + BLANK_LOOKAHEAD]
+                 if ln.strip()),
+                "",
+            )
             # A set name sits between delimiters in a MAME declaration, so
             # `pgm` matches `GAME( 1997, pgm,` but not `pgm_012_025_drgw2`,
             # which is what tells the two repositories apart.
