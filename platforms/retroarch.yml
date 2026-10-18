@@ -990,8 +990,6 @@ systems:
       native_system: Enterprise - 64/128
       native_path: ep128emu/roms/zt19hfnt.rom
     native_id: Enterprise - 64/128
-    includes:
-    - ep128emu
   epoch-scv:
     files:
     - name: upd7801g.s01
@@ -2807,8 +2805,6 @@ systems:
     core: kronos
     manufacturer: Sega
     docs: "https://docs.libretro.com/library/kronos/"
-    includes:
-    - kronos
   sharp-x1:
     files:
     - name: IPLROM.X1
@@ -2882,8 +2878,6 @@ systems:
     core: px68k
     manufacturer: Sharp
     docs: "https://docs.libretro.com/library/px68k/"
-    includes:
-    - keropi
   sinclair-zx-spectrum:
     files:
     - name: 128-0.rom

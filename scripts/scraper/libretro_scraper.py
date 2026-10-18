@@ -451,22 +451,18 @@ class Scraper(BaseScraper):
                         systems[sys_id]["files"].append({**ef, "curated": True})
                         existing.add(key)
 
-        # ep128emu shared group for Enterprise
-        if "enterprise-64-128" in systems:
-            systems["enterprise-64-128"].setdefault("includes", [])
-            if "ep128emu" not in systems["enterprise-64-128"]["includes"]:
-                systems["enterprise-64-128"]["includes"].append("ep128emu")
-
         # Inject shared group references for systems that have core-specific
         # subdirectory requirements already defined in _shared.yml.
         # Note: fuse/ prefix NOT injected for sinclair-zx-spectrum.
         # Verified in fuse-libretro/src/compat/paths.c -core searches
         # system/ flat, not fuse/ subfolder. Docs are wrong on this.
+        # A group System.dat already covers entry for entry injects nothing
+        # (ep128emu, keropi and kronos were), and a correction made there
+        # would never reach a pack: load_platform_config keeps the
+        # platform's own entry.
         SYSTEM_SHARED_GROUPS = {
             "nec-pc-88": ["quasi88"],
             "nec-pc-98": ["np2kai"],
-            "sharp-x68000": ["keropi"],
-            "sega-saturn": ["kronos"],
         }
         for sys_id, groups in SYSTEM_SHARED_GROUPS.items():
             if sys_id in systems:

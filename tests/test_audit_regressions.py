@@ -457,6 +457,28 @@ class APackIsSwappedInWhole(unittest.TestCase):
         self.assertNotIn('ZipFile(zip_path, "w"', source)
 
 
+class EverySharedGroupServesAPlatform(unittest.TestCase):
+    """Six of the eight shared groups injected nothing: fuse, mt32 and
+    jiffydos were included by no platform, and kronos, keropi and ep128emu
+    repeated System.dat entry for entry. load_platform_config keeps the
+    platform's own entry, so a hash corrected there changed no pack, no
+    verify and no manifest, and nothing said so."""
+
+    def test_each_group_contributes_an_entry_somewhere(self):
+        from common import list_registered_platforms, load_platform_config
+
+        platforms_dir = str(ROOT / "platforms")
+        with (ROOT / "platforms" / "_shared.yml").open(encoding="utf-8") as handle:
+            groups = set((yaml.safe_load(handle) or {}).get("shared_groups") or {})
+        served = {
+            entry.get("shared_group")
+            for name in list_registered_platforms(platforms_dir, include_archived=True)
+            for system in load_platform_config(name, platforms_dir).get("systems", {}).values()
+            for entry in system.get("files", [])
+        }
+        self.assertEqual(sorted(groups - served), [])
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 
