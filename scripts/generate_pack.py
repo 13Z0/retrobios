@@ -62,6 +62,7 @@ from common import (
     MANUFACTURER_PREFIXES,
     require_yaml,
     ProfileSelectionError,
+    entry_serves_systems,
     sanitize_pack_path,
     select_emulator_profiles,
     system_core_reach,
@@ -1374,12 +1375,16 @@ def generate_emulator_pack(
     offline: bool | None = None,
     platforms_dir: str | None = None,
     pack_name: str | None = None,
+    system_ids: list[str] | None = None,
+    final_dir: str | None = None,
 ) -> str | None:
     """Generate a ZIP pack for specific emulator profiles.
 
     `pack_name` is the caller's own file name: the system pack names its
     archive after the system, and joining 23 SNES emulator names went past
-    the 255 bytes a file name may hold.
+    the 255 bytes a file name may hold. `system_ids` keeps only the entries
+    of those systems, as a platform pack narrows core extras. `final_dir`
+    is where the caller moves the archive, the path the report names.
     """
     all_profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
     if zip_contents is None:
@@ -1449,6 +1454,10 @@ def generate_emulator_pack(
                 db,
                 standalone,
             )
+            if system_ids:
+                files = [
+                    fe for fe in files if entry_serves_systems(fe, profile, system_ids)
+                ]
             if not files:
                 print(f"  No files needed for {profile.get('emulator', emu_name)}")
 
@@ -1694,7 +1703,6 @@ def generate_emulator_pack(
         os.unlink(zip_path)
 
     # Report
-    " + ".join(p.get("emulator", n) for n, p in selected)
     missing_count = len(missing_files)
     ok_count = total_files
     parts = [f"{ok_count} files packed"]
@@ -1706,7 +1714,8 @@ def generate_emulator_pack(
         parts.append(f"{len(unsourceable_files)} unsourceable")
     if instruction_files:
         parts.append(f"{len(instruction_files)} to provide")
-    print(f"  {zip_path}: {', '.join(parts)}")
+    shown = os.path.join(final_dir, zip_name) if final_dir else zip_path
+    print(f"  {shown}: {', '.join(parts)}")
     for name in missing_files:
         print(f"  MISSING: {name}")
     for name in unsourceable_files:
@@ -1801,6 +1810,8 @@ def generate_system_pack(
             offline=offline,
             platforms_dir=platforms_dir,
             pack_name=final_name,
+            system_ids=system_ids,
+            final_dir=output_dir,
         )
         if not result:
             return None

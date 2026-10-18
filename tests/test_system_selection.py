@@ -369,5 +369,59 @@ class CoverageWithoutProfilesMatchesTheCli(unittest.TestCase):
 
         self.assertEqual(discrepancies(bare), discrepancies(full))
 
+class ASystemPackHoldsThatSystem(unittest.TestCase):
+    """--system atari-lynx without --platform shipped 36 files: every entry
+    of mednafen.yml, PlayStation, Saturn and Apple II included, though each
+    declares its system. A platform pack narrows core extras per entry."""
+
+    def test_pack_and_report_keep_the_entries_of_the_system(self):
+        import hashlib
+        import io
+        import shutil
+        import zipfile
+        from contextlib import redirect_stdout
+
+        import yaml
+        from verify import verify_system
+
+        common._emulator_profiles_cache.clear()
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        previous = os.getcwd()
+        os.chdir(root)
+        self.addCleanup(os.chdir, previous)
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        for name in ("lynx.img", "psx.bin", "shared.dat"):
+            data = name.encode() * 4
+            rel = f"bios/Maker/Console/{name}"
+            Path(rel).parent.mkdir(parents=True, exist_ok=True)
+            Path(rel).write_bytes(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            db["files"][sha1] = {"path": rel, "name": name, "size": len(data),
+                                 "md5": hashlib.md5(data).hexdigest(), "crc32": ""}
+            db["indexes"]["by_name"][name] = [sha1]
+        Path("emulators").mkdir()
+        Path("emulators/multi.yml").write_text(yaml.safe_dump({
+            "emulator": "Multi", "type": "libretro", "cores": ["multi"],
+            "systems": ["atari-lynx", "sony-playstation"],
+            "files": [
+                {"name": "lynx.img", "system": "atari-lynx", "required": True},
+                {"name": "psx.bin", "system": "sony-playstation", "required": True},
+                {"name": "shared.dat", "required": False},
+            ],
+        }))
+        report = verify_system(["atari-lynx"], "emulators", db)
+        with redirect_stdout(io.StringIO()):
+            path = builder.generate_system_pack(
+                ["atari-lynx"], "emulators", db, "bios", "out", offline=True,
+            )
+        with zipfile.ZipFile(path) as zf:
+            packed = sorted(zf.namelist())
+        self.assertEqual(packed, ["lynx.img", "shared.dat"])
+        self.assertEqual(report["total_files"], 2)
+
+
 if __name__ == "__main__":
     unittest.main()

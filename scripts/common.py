@@ -1628,6 +1628,18 @@ def profiles_for_systems(
     return matching
 
 
+def entry_serves_systems(entry: dict, profile: dict, system_ids: list[str]) -> bool:
+    """Whether a profile entry belongs to one of the systems, spelled either way.
+
+    The entry's own `system:` decides; one without it serves every system
+    of its profile, the rule a platform pack applies to core extras.
+    """
+    own = entry.get("system")
+    systems = [own] if own else profile.get("systems", [])
+    wanted = {_norm_system_id(sid) for sid in system_ids}
+    return bool(wanted & {_norm_system_id(str(sid)) for sid in systems})
+
+
 def select_emulator_profiles(
     profile_names: list[str],
     all_profiles: dict,

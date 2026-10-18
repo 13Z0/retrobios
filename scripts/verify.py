@@ -69,6 +69,7 @@ from common import (
     platform_layouts,
     runs_standalone,
     standalone_set as platform_standalone_set,
+    entry_serves_systems,
     sanitize_pack_path,
     select_emulator_profiles,
 )
@@ -1547,11 +1548,13 @@ def verify_emulator(
     standalone: bool = False,
     regions: list[str] | None = None,
     platforms_dir: str = _REPO_PLATFORMS,
+    system_ids: list[str] | None = None,
 ) -> dict:
     """Verify files for specific emulator profiles.
 
     A region priority list narrows the report the same way a pack built with the
     same list would be narrowed, through the emulator pack's own drop set.
+    `system_ids` keeps the entries of those systems, as the system pack does.
     """
     from packpaths import (
         _archive_destination,
@@ -1625,6 +1628,8 @@ def verify_emulator(
             db,
             standalone,
         )
+        if system_ids:
+            files = [fe for fe in files if entry_serves_systems(fe, profile, system_ids)]
         if region_drops:
             # Loose files only, as the emulator pack: an archive ships whole,
             # and dropping kronos' regional stvbios.zip members rebuilt the
@@ -1996,7 +2001,8 @@ def verify_system(
         sys.exit(1)
 
     return verify_emulator(
-        matching, emulators_dir, db, standalone, regions=regions, platforms_dir=platforms_dir
+        matching, emulators_dir, db, standalone, regions=regions,
+        platforms_dir=platforms_dir, system_ids=system_ids,
     )
 
 
