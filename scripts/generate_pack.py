@@ -1444,11 +1444,6 @@ def generate_emulator_pack(
                     archive_name, archive_prefix, pack_structure, standalone
                 )
 
-                if archive_dest.lower() in seen_lower:
-                    continue
-                if _has_path_conflict(archive_dest, seen_destinations, seen_parents):
-                    continue
-
                 own_entry = archive_entry(archive_name, files)
                 if required_only and _archive_is_optional(own_entry, archive_name, files):
                     continue
@@ -1460,6 +1455,18 @@ def generate_emulator_pack(
                     data_dir_registry=data_registry,
                     offline=offline,
                 )
+                taken = archive_dest.lower() in seen_lower
+                if taken or _has_path_conflict(archive_dest, seen_destinations, seen_parents):
+                    # Another profile's file holds this path. The same archive
+                    # asked for twice is served; anything else leaves this
+                    # profile without its archive, which used to pass in
+                    # silence: a neocdz.zip lacking 000-lo.lo shipped as the
+                    # one the second core needs.
+                    if not (taken and local_path and _same_bytes(
+                        local_path, packed_at.get(archive_dest.lower())
+                    )):
+                        report_missing(archive_name, archive_dest)
+                    continue
                 if local_path and status not in ("not_found",):
                     if local_path.endswith(".zip"):
                         _add_zip_to_pack(local_path, archive_dest, zf, own_entry)

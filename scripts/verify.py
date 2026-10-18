@@ -1688,7 +1688,20 @@ def verify_emulator(
                     archive, profile.get("archive_prefix", ""),
                     profile.get("pack_structure"), standalone,
                 )
-                if local_path:
+                block = placement_block(
+                    dest, placed_files, set(placed), placed_parents, True
+                )
+                if block and local_path and result["status"] != Status.MISSING:
+                    other_path, owner, other_dest = placed.get(dest.lower(), (None, "", ""))
+                    if block == "path_conflict" or content_id(local_path) != content_id(other_path):
+                        # The pack serves the other profile's file here: this
+                        # archive is not in it, whatever this profile resolves.
+                        result["status"] = Status.MISSING
+                        result["reason"] = (
+                            "a packed file occupies its directory" if block == "path_conflict"
+                            else f"the pack holds {owner}'s {other_dest} at this path"
+                        )
+                elif local_path:
                     occupy(dest, local_path, emu_name)
                 dest_to_name[dest] = archive
                 cur = result["status"]

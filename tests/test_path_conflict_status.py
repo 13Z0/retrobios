@@ -278,5 +278,65 @@ class AlternativesAgreeWithThePack(unittest.TestCase):
         self.assertEqual(result["status_counts"].get(Status.UNTESTED), 1)
 
 
+
+class AMaskedArchiveIsMissing(unittest.TestCase):
+    """Profile a ships a loose pack.zip; profile b needs pack.zip as an
+    archive holding a member a's copy lacks. The pack skipped b's archive
+    in silence and verify counted it OK on b's own copy."""
+
+    def setUp(self):
+        import zipfile
+
+        self._tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.root = Path(self._tmp.name)
+        self.emulators = self.root / "emulators"
+        files = {}
+        for folder, members in (("A", {"x.bin": b"x"}), ("B", {"x.bin": b"x", "y.bin": b"y"})):
+            target = self.root / "bios" / folder / "pack.zip"
+            target.parent.mkdir(parents=True)
+            with zipfile.ZipFile(target, "w") as archive:
+                for name, data in members.items():
+                    archive.writestr(name, data)
+            payload = target.read_bytes()
+            sha1 = hashlib.sha1(payload).hexdigest()
+            files[sha1] = {"path": str(target), "name": "pack.zip", "size": len(payload),
+                           "sha1": sha1, "md5": hashlib.md5(payload).hexdigest(),
+                           "sha256": hashlib.sha256(payload).hexdigest(), "crc32": "0"}
+        self.sha1_b = sha1
+        self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+        self.emulators.mkdir()
+        a_sha1 = next(k for k in files if k != sha1)
+        (self.emulators / "a.yml").write_text(yaml.dump({
+            "emulator": "A", "type": "libretro", "cores": ["a"], "systems": ["x"],
+            "files": [{"name": "pack.zip", "required": True, "sha1": a_sha1}],
+        }))
+        (self.emulators / "b.yml").write_text(yaml.dump({
+            "emulator": "B", "type": "libretro", "cores": ["b"], "systems": ["x"],
+            "files": [{"name": "y.bin", "archive": "pack.zip", "required": True,
+                       "crc32": f"{__import__('zlib').crc32(b'y'):08x}"}],
+        }))
+        common._emulator_profiles_cache.clear()
+
+    def tearDown(self):
+        common._emulator_profiles_cache.clear()
+        self._tmp.cleanup()
+
+    def test_both_report_the_archive_missing(self):
+        from verify import Status, verify_emulator
+
+        out = self.root / "dist"
+        out.mkdir()
+        report = io.StringIO()
+        with contextlib.redirect_stdout(report):
+            builder.generate_emulator_pack(
+                ["a", "b"], str(self.emulators), self.db, str(self.root / "bios"),
+                str(out), offline=True,
+            )
+        self.assertIn("pack.zip", report.getvalue().split("MISSING", 1)[-1])
+        result = verify_emulator(["a", "b"], str(self.emulators), self.db)
+        statuses = [d["status"] for d in result["details"] if d["name"] == "pack.zip"]
+        self.assertIn(Status.MISSING, statuses)
+
+
 if __name__ == "__main__":
     unittest.main()
