@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T17:27:52Z",
-  "total_files": 19080,
-  "total_size": 17568533499,
+  "generated_at": "2026-10-18T17:35:31Z",
+  "total_files": 19081,
+  "total_size": 17568664571,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -151,6 +151,16 @@
           "description": "GoldStar GDO-101M 3DO Interactive Multiplayer BIOS v1.59 (1994-05-10)(3DO Company)(NTSC)"
         }
       }
+    },
+    "ee0916093b6ed22ce1d4694faa4c1430269c4d0a": {
+      "path": "bios/3DO Company/3DO/opera-boot.bin",
+      "name": "opera-boot.bin",
+      "size": 131072,
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "md5": "ad43f7905ba53da48c0b8d9643fb8cec",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "crc32": "dacb21ad",
+      "adler32": "b81eba41"
     },
     "acd39a8fee1b9d2950d5ab447846c11fb31af63e": {
       "path": "bios/3DO Company/3DO/panafz1-kanji.bin",
@@ -195999,6 +196009,7 @@
       "ba3eda87fde9bd7f09c2b9db3dbb9887": "1d0db81e171ebc1d07cefc8ce8ab082306186e56",
       "4ca4a976237b6c8fd3abfb393d072469": "c389af32bcadf0d86826927dc3d20b7072f90069",
       "8639fd5e549bd6238cfee79e3e749114": "c4a2e5336f77fb5f743de1eea2cda43675ee2de7",
+      "ad43f7905ba53da48c0b8d9643fb8cec": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
       "b8dc97f778a6245c58e064b0312e8281": "acd39a8fee1b9d2950d5ab447846c11fb31af63e",
       "f47264dd47fe30f73ab3c010015c155b": "34bf189111295f74d7b7dfc1f304d98b8d36325a",
       "1477bda80dc33731a65468c1f5bcbee9": "f05e642322c03694f06a809c0b90fc27ac73c002",
@@ -215104,6 +215115,9 @@
       ],
       "goldstar.bin": [
         "c4a2e5336f77fb5f743de1eea2cda43675ee2de7"
+      ],
+      "opera-boot.bin": [
+        "ee0916093b6ed22ce1d4694faa4c1430269c4d0a"
       ],
       "panafz1-kanji.bin": [
         "acd39a8fee1b9d2950d5ab447846c11fb31af63e"
@@ -271995,6 +272009,7 @@
       "a191e1aa": "1d0db81e171ebc1d07cefc8ce8ab082306186e56",
       "c4c3db01": "c389af32bcadf0d86826927dc3d20b7072f90069",
       "b6f5028b": "c4a2e5336f77fb5f743de1eea2cda43675ee2de7",
+      "dacb21ad": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
       "a8e9447c": "acd39a8fee1b9d2950d5ab447846c11fb31af63e",
       "c8c8ff89": "34bf189111295f74d7b7dfc1f304d98b8d36325a",
       "230e6feb": "f05e642322c03694f06a809c0b90fc27ac73c002",
@@ -291077,6 +291092,7 @@
       "6f7d03d82b33605399d8b49408477184f483409e976c46ca69c073d03e228898": "1d0db81e171ebc1d07cefc8ce8ab082306186e56",
       "91f61a226ab9b8fc53cb643979bd9916eaf45283a43c06f1518a0b41541a6dab": "c389af32bcadf0d86826927dc3d20b7072f90069",
       "4162ec1bc0f0f449c0457413e8ae8d1e8e351e67e0ccca20d0ac86813e7cfe9b": "c4a2e5336f77fb5f743de1eea2cda43675ee2de7",
+      "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
       "303cd0812f2d2f3e703fe901c5d54e1e94c5c78f7e6c9321c2ca66fafa4f9bc6": "acd39a8fee1b9d2950d5ab447846c11fb31af63e",
       "41b5b8e7c44e55eaf5cfd4f2a58df42f4a1bbc776723368fb25bf118dd631b1b": "34bf189111295f74d7b7dfc1f304d98b8d36325a",
       "6f01a5679334b879c11adffb92d04b216a7437c588881d276880d1a6fd97aa3a": "f05e642322c03694f06a809c0b90fc27ac73c002",
@@ -310234,6 +310250,12 @@
       ],
       "3DO/goldstar.bin": [
         "c4a2e5336f77fb5f743de1eea2cda43675ee2de7"
+      ],
+      "3DO Company/3DO/opera-boot.bin": [
+        "ee0916093b6ed22ce1d4694faa4c1430269c4d0a"
+      ],
+      "3DO/opera-boot.bin": [
+        "ee0916093b6ed22ce1d4694faa4c1430269c4d0a"
       ],
       "3DO Company/3DO/panafz1-kanji.bin": [
         "acd39a8fee1b9d2950d5ab447846c11fb31af63e"
