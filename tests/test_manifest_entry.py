@@ -41,6 +41,12 @@ class AnEntryWithoutSourceIsAnOmission(unittest.TestCase):
         if held is None:
             self.skipTest("no small indexed file on disk")
         self.sha1, self.record = held
+        # Every case hashes the file anew through its own compute_hashes: a
+        # result another test verified for the same path and scan is a valid
+        # cache hit, and it skipped the miscompute this class simulates.
+        saved = dict(gp._STABLE_HASHES)
+        gp._STABLE_HASHES.clear()
+        self.addCleanup(gp._STABLE_HASHES.update, saved)
 
     def _run_core_entries(self, hashes: dict) -> tuple[list, dict, list]:
         name = Path(self.record["path"]).name
