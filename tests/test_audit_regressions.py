@@ -4551,5 +4551,35 @@ class CollectionCardsCarryFullHashes(unittest.TestCase):
             self.assertIn(f"`{value}`", text)
 
 
+
+class NullReadsAsNone(unittest.TestCase):
+    """`upstream: ~` printed `| Upstream | None |` and `bios_filename: null`
+    printed `bios_filename: None`: a stated "there is none" read as a gap."""
+
+    def test_page_and_values(self):
+        from scripts.generate_site import _plain_value, generate_emulator_page
+
+        self.assertEqual(_plain_value(None), "none")
+        page = generate_emulator_page(
+            "own", {"emulator": "Own", "type": "standalone", "source": "https://x/own",
+                    "upstream": None, "core_version": None, "files": []},
+            {"files": {}, "indexes": {}},
+        )
+        self.assertNotIn("None", page)
+        self.assertIn("none: the source is the project itself", page)
+
+    def test_the_rendered_site_has_no_python_none(self):
+        docs = ROOT / "docs"
+        if not docs.is_dir():
+            self.skipTest("docs/ not generated")
+        pattern = re.compile(r"\| None \||: None$|: None \|", re.M)
+        from scripts.generate_site import LOCAL_NOTE_DIRS
+
+        found = [p.relative_to(docs).as_posix() for p in sorted(docs.rglob("*.md"))
+                 if not set(p.relative_to(docs).parts[:-1]) & set(LOCAL_NOTE_DIRS)
+                 and pattern.search(p.read_text(encoding="utf-8"))]
+        self.assertEqual(found, [])
+
+
 if __name__ == "__main__":
     unittest.main()

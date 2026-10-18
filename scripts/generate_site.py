@@ -1259,11 +1259,16 @@ def emulator_structured_data(profile: dict) -> dict:
     return data
 
 
+# Working notes kept under docs/ during development, never part of the site;
+# no generated page lives in a directory of these names.
+LOCAL_NOTE_DIRS = ("plans", "specs")
+
+
 def decorate_markdown_pages(docs: Path) -> None:
     """Add per-page descriptions and machine-readable structured data."""
     for path in sorted(docs.rglob("*.md")):
         relative = path.relative_to(docs)
-        if relative.parts and relative.parts[0] == "superpowers":
+        if any(part in LOCAL_NOTE_DIRS for part in relative.parts[:-1]):
             continue
         markdown = path.read_text(encoding="utf-8")
         stripped = _undecorated(markdown)
@@ -2418,6 +2423,9 @@ def _plain_value(value: object) -> str:
     """A scalar or a list of scalars as a reader writes it, not as Python does."""
     if isinstance(value, bool):
         return "yes" if value else "no"
+    if value is None:
+        # A YAML null states that there is none; Python's `None` read as a gap.
+        return "none"
     if isinstance(value, (list, tuple)):
         return ", ".join(_plain_value(item) for item in value)
     return _escape_tags(str(value))
@@ -2585,9 +2593,14 @@ def generate_emulator_page(
     classification = profile.get("core_classification", "")
     source_raw = profile.get("source", "")
     source = str(source_raw) if not isinstance(source_raw, dict) else ""
+    # A key set to null says there is none (the project is its own upstream,
+    # it publishes no version); an absent key says nobody wrote it down. The
+    # page printed `None` for the first, which read as the second.
     upstream_raw = profile.get("upstream", "")
-    upstream = str(upstream_raw) if not isinstance(upstream_raw, dict) else ""
-    version = profile.get("core_version", "unknown")
+    upstream_none = "upstream" in profile and upstream_raw is None
+    upstream = str(upstream_raw) if isinstance(upstream_raw, str) else ""
+    version_raw = profile.get("core_version", "unknown")
+    version = "none published" if version_raw is None else version_raw
     profile.get("display_name", emu_name)
     profiled = profile.get("profiled_date", "unknown")
     systems = profile.get("systems", [])
@@ -2633,6 +2646,8 @@ def generate_emulator_page(
             else:
                 parts.append(f"{k}: {v}")
         lines.append(f"| Upstream | {', '.join(parts)} |")
+    elif upstream_none:
+        lines.append("| Upstream | none: the source is the project itself |")
     elif upstream and upstream != source:
         if upstream.startswith("http"):
             lines.append(f"| Upstream | [{upstream}]({upstream}) |")
@@ -3334,8 +3349,9 @@ def _render_xref_by_platform(
             cls_raw = p.get("core_classification", "-")
             cls = CLS_LABELS.get(cls_raw, cls_raw)
             p.get("type", "")
+            # Null means the project is its own upstream: show its source.
             upstream_raw2 = p.get("upstream", "")
-            upstream = str(upstream_raw2) if not isinstance(upstream_raw2, dict) else ""
+            upstream = upstream_raw2 if isinstance(upstream_raw2, str) else ""
             source_raw2 = p.get("source", "")
             source = str(source_raw2) if not isinstance(source_raw2, dict) else ""
             systems = p.get("systems", [])
@@ -3398,8 +3414,10 @@ def _render_xref_by_upstream(
     # Group profiles by upstream
     by_upstream: dict[str, list[str]] = {}
     for emu_name, p in sorted(unique.items()):
-        raw_up = p.get("upstream", p.get("source", ""))
-        up_str = str(raw_up) if not isinstance(raw_up, dict) else ""
+        # A null upstream is the project's own source: grouping it under
+        # the string "None" put eight unrelated engines in one row.
+        raw_up = p.get("upstream") or p.get("source", "")
+        up_str = raw_up if isinstance(raw_up, str) else ""
         if up_str:
             by_upstream.setdefault(up_str, []).append(emu_name)
 
@@ -4106,10 +4124,10 @@ repo_name: Abdess/retrobios
 # Almost every page is generated from platforms/, emulators/ and database.json,
 # so a per-page edit link would point at a file that does not exist.
 edit_uri: ''
-# Local implementation plans are preserved in docs/ for development sessions,
-# but are not part of the public reference site.
+# Working notes kept under docs/ during development are not part of the site.
 exclude_docs: |
-  superpowers/**
+  plans/
+  specs/
 copyright: MIT for the tooling. BIOS and firmware files are third-party system
   software, preserved for personal backup, archival and interoperability.
 theme:
