@@ -1441,12 +1441,34 @@ class RegionRegressions(unittest.TestCase):
     def test_multi_system_emulator_uses_separate_region_groups(self):
         profile = {"systems": ["odyssey2", "videopac"]}
         north_america = _emulator_region_group(
-            "o2em", profile, {"name": "o2rom.bin", "system": "odyssey2"}
+            "o2em", profile, {"name": "o2rom.bin", "system": "odyssey2"}, "o2rom.bin"
         )
         europe = _emulator_region_group(
-            "o2em", profile, {"name": "c52.bin", "system": "videopac"}
+            "o2em", profile, {"name": "c52.bin", "system": "videopac"}, "c52.bin"
         )
         self.assertNotEqual(north_america, europe)
+
+    def test_a_systemless_file_groups_alike_in_both_modes(self):
+        """geargrafx files pac-n1.bin [japan] and pac-n10.bin [north-america]
+        under none of its four systems: emulator mode grouped them and
+        dropped pac-n1.bin for --region us, platform mode isolated each and
+        kept it."""
+        from packextras import extra_region_groups
+
+        profile = {"systems": ["nec-pc-engine", "nec-pc-engine-cd", "nec-supergrafx",
+                               "pioneer-laseractive"]}
+        names = ["pac-n1.bin", "pac-n10.bin"]
+        emulator = [
+            _emulator_region_group("geargrafx", profile, {"name": n}, n) for n in names
+        ]
+        platform = [
+            extra_region_groups({
+                "source_emulator": "geargrafx", "destination": n,
+                "source_systems": profile["systems"],
+            })[0]
+            for n in names
+        ]
+        self.assertEqual(emulator, platform)
 
     def test_region_audit_resolves_the_way_the_pack_does(self):
         """A private resolver read sha1, md5 and a lone name: an entry

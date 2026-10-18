@@ -1079,7 +1079,7 @@ def emulator_region_drops(
         for fe in _kept(entries, required_only):
             dest = _resolve_destination(fe, standalone)
             if dest:
-                group_id = _emulator_region_group(emu_name, profile, fe)
+                group_id = _emulator_region_group(emu_name, profile, fe, dest)
                 region_groups.setdefault(group_id, []).append(
                     (dest, fe.get("name", ""))
                 )
@@ -1090,8 +1090,16 @@ def emulator_region_drops(
     return region_mod.resolve_region_drops(region_groups, region_index, regions, held)
 
 
-def _emulator_region_group(emu_name: str, profile: dict, file_entry: dict) -> str:
-    """Stable group ID for regional alternatives within an emulator profile."""
+def _emulator_region_group(
+    emu_name: str, profile: dict, file_entry: dict, dest: str
+) -> str:
+    """Stable group ID for regional alternatives within an emulator profile.
+
+    The rule extra_region_groups applies on the platform side: a file no
+    system names, in a profile serving several, competes with nothing.
+    Grouped together, geargrafx's LaserActive pac-n1.bin was dropped by
+    --emulator --region us and kept by --platform --region us.
+    """
     variant = file_entry.get("variant_group")
     if variant:
         return f"{emu_name}:variant:{variant}"
@@ -1099,4 +1107,6 @@ def _emulator_region_group(emu_name: str, profile: dict, file_entry: dict) -> st
     profile_systems = list(profile.get("systems", []))
     if not system and len(profile_systems) == 1:
         system = profile_systems[0]
-    return f"{emu_name}:system:{system or '_profile'}"
+    if not system:
+        return f"{emu_name}:file:{dest}"
+    return f"{emu_name}:system:{system}"
