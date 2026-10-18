@@ -437,5 +437,26 @@ class AGoneSourceIsSaid(unittest.TestCase):
         self.assertIn("| Mirror | [https://example.org/mirror/Citron]", page)
 
 
+
+class ASystemCardLandsOnThePlatformsSection(unittest.TestCase):
+    """From scph5000.bin's card, [retrodeck] opened the top of a 2,000-file
+    page; the emulator card already landed on #sony-playstation."""
+
+    def test_section_and_destination(self):
+        import types
+
+        from generate_site import _platform_links
+
+        consumers = types.SimpleNamespace(
+            platforms={"s": {"retrodeck"}},
+            platform_systems={"s": {"retrodeck": {"sony-playstation"}}},
+            platform_destinations={"s": {"retrodeck": {"bios/scph5000.bin"}}},
+        )
+        self.assertEqual(
+            _platform_links("s", consumers),
+            ["[retrodeck](../platforms/retrodeck.md#sony-playstation) `bios/scph5000.bin`"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

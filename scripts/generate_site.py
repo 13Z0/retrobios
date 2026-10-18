@@ -2083,6 +2083,23 @@ def _fetch_url(path: str) -> str:
     )
 
 
+def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
+    """Each platform declaring the file: a link to its system section, and
+    the destination it gives the file."""
+    systems_of = getattr(consumers, "platform_systems", {}).get(sha1, {})
+    destinations_of = getattr(consumers, "platform_destinations", {}).get(sha1, {})
+    links: list[str] = []
+    for platform in sorted(consumers.platforms.get(sha1, ())):
+        section = sorted(systems_of.get(platform, ()))
+        fragment = f"#{section[0].replace(' ', '-')}" if section else ""
+        link = f"[{platform}](../platforms/{platform}.md{fragment})"
+        destinations = sorted(destinations_of.get(platform, ()))
+        if destinations:
+            link += " " + ", ".join(_code(d) for d in destinations)
+        links.append(link)
+    return links
+
+
 def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     """One file of a system page: hashes, who reads it, its provenance."""
     name = f["name"]
@@ -2112,11 +2129,10 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
         if value and value != "unknown":
             lines.append(f'- {label}: <span class="rb-hash">{_code(value)}</span>')
     if plats:
-        plat_badges = " ".join(
-            f'<span class="rb-badge rb-badge-info">[{p}](../platforms/{p}.md)</span>'
-            for p in plats
-        )
-        lines.append(f"- Platforms: {plat_badges}")
+        # Each link lands on the platform's system section, and says where
+        # that platform puts the file: from the card, retrodeck sent the
+        # reader to the top of a 2,000-file page.
+        lines.append(f"- Platforms: {', '.join(_platform_links(sha1_full, consumers))}")
     if emus:
         lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
     provenance = f.get("provenance", {})
@@ -2513,15 +2529,8 @@ def _render_emulator_file(
                     f"Collection copy: [{_code(held)}]"
                     f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
                 )
-        plats = sorted(consumers.platforms.get(sha1, ())) if sha1 else []
-        if plats:
-            systems_of = consumers.platform_systems.get(sha1, {})
-            plat_links = []
-            for p in plats:
-                section = sorted(systems_of.get(p, ()))
-                # Land on the system section that gives the destination.
-                fragment = f"#{section[0].replace(' ', '-')}" if section else ""
-                plat_links.append(f"[{p}](../platforms/{p}.md{fragment})")
+        plat_links = _platform_links(sha1, consumers) if sha1 else []
+        if plat_links:
             details.append(f"Platforms: {', '.join(plat_links)}")
 
     if dest and dest != fname and dest != fpath:

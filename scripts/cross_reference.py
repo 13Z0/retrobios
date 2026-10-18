@@ -338,6 +338,8 @@ class FileConsumers:
         # Under which of its systems each platform declares a file, so a
         # link can land on that section rather than the page top.
         self.platform_systems: dict[str, dict[str, set[str]]] = {}
+        # Where each platform puts the file in its BIOS directory.
+        self.platform_destinations: dict[str, dict[str, set[str]]] = {}
         self.emulators: dict[str, set[str]] = {}
 
     def sha1_of(self, entry: dict, dest: str = "", owner: str = "") -> str | None:
@@ -368,6 +370,13 @@ class FileConsumers:
                         self.platform_systems.setdefault(sha1, {}).setdefault(
                             name, set()
                         ).add(system_id)
+                        where = str(entry.get("destination") or entry["name"])
+                        # EmuDeck matches by md5 alone: its entries carry a
+                        # system:md5 key, not a place in the folder.
+                        if ":" not in where:
+                            self.platform_destinations.setdefault(sha1, {}).setdefault(
+                                name, set()
+                            ).add(where)
 
     def path_of(self, sha1: str) -> str:
         """The collection path the database records for a file."""
