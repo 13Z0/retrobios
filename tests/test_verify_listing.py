@@ -71,6 +71,20 @@ class VerifyRefusesWhatAModeDoesNotRead(unittest.TestCase):
         self.assertEqual(seen, ["elsewhere"])
 
 
+class VerifyAppliesWhatItAccepts(unittest.TestCase):
+    """--verbose under --json was accepted in every mode and changed nothing;
+    the refusal matrix above could not see it, since nothing was refused."""
+
+    def test_verbose_changes_the_json_in_every_mode(self):
+        for mode in (("--platform", "bizhawk"), ("--emulator", "handy"),
+                     ("--system", "atari-lynx")):
+            with self.subTest(mode=mode):
+                plain = _run("scripts/verify.py", *mode, "--json")
+                verbose = _run("scripts/verify.py", *mode, "--json", "--verbose")
+                self.assertEqual((plain.returncode, verbose.returncode), (0, 0))
+                self.assertNotEqual(plain.stdout, verbose.stdout)
+
+
 class EmulatorPackReadsThePlatformsDir(unittest.TestCase):
     def test_the_registry_comes_from_the_given_dir(self):
         sys.path.insert(0, str(REPO_ROOT / "scripts"))
