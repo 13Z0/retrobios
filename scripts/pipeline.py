@@ -330,7 +330,9 @@ def main() -> None:
         "--skip-docs", action="store_true", help="Skip README and site generation"
     )
     parser.add_argument(
-        "--offline", action="store_true", help="Skip data directory refresh"
+        "--offline", action="store_true",
+        help="No network: skips steps 2 to 2b2 and packs only the release "
+        "assets already in .cache/large/"
     )
     parser.add_argument(
         "--output-dir", default="dist", help="Pack output directory (default: dist/)"

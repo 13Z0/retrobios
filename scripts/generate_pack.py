@@ -2900,7 +2900,9 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--offline",
         action="store_true",
-        help="Skip data directory freshness check, use cache only",
+        help="No network at all: data directories and release assets come "
+        "from the cache only, so a gitignored file never fetched is missing "
+        "(--no-refresh-data keeps the trees as cached and still fetches assets)",
     )
     parser.add_argument(
         "--refresh-data",

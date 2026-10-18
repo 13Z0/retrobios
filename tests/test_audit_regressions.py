@@ -4327,5 +4327,22 @@ class EveryOptionIsDocumented(unittest.TestCase):
         self.assertEqual(undocumented, [])
 
 
+
+class OfflineHelpSaysWhatItCuts(unittest.TestCase):
+    """--offline read "Skip data directory freshness check" while it also
+    stops release assets from downloading: on a fresh clone the gitignored
+    files were missing from the pack and nothing had announced it."""
+
+    def test_both_helps_name_the_release_assets(self):
+        for script in ("generate_pack.py", "pipeline.py"):
+            with self.subTest(script=script):
+                out = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--help"],
+                    capture_output=True, text=True, cwd=str(ROOT), check=True,
+                ).stdout
+                block = out.split("--offline", 2)[-1].split("\n  --", 1)[0]
+                self.assertIn("release", " ".join(block.split()))
+
+
 if __name__ == "__main__":
     unittest.main()
