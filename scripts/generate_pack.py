@@ -3236,13 +3236,16 @@ def _stable_hashes(local_path: str, db: dict) -> dict:
     refused rather than published.
     """
     stat = os.stat(local_path)
-    key = (os.path.normpath(local_path), stat.st_size, stat.st_mtime_ns, id(db))
+    expected = _db_sha1_by_path(db).get(os.path.normpath(local_path))
+    # Keyed by what was checked, the sha1 this database expects there, never
+    # by id(db): a database freed and replaced at the same address answered
+    # with hashes verified against the first one.
+    key = (os.path.normpath(local_path), stat.st_size, stat.st_mtime_ns, expected)
     known = _STABLE_HASHES.get(key)
     if known is not None:
         # Verified against the scan once: twelve manifests name a file up
         # to a dozen times, and rehashing it each time spent 163 s of 218.
         return known
-    expected = _db_sha1_by_path(db).get(os.path.normpath(local_path))
     hashes = compute_hashes(local_path, _MANIFEST_HASHES)
     for _attempt in range(2):
         if expected is None or hashes["sha1"] == expected:

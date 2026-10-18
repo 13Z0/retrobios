@@ -212,6 +212,16 @@ class ManifestHashesMatchTheScan(unittest.TestCase):
                 generate_pack._stable_hashes(str(path), bad)
             self.assertEqual(generate_pack._stable_hashes(str(path), {"files": {}})["sha1"], real)
 
+    def test_the_cache_is_keyed_by_what_was_checked(self):
+        """Keyed by id(db), a database freed and replaced at the same address
+        got hashes verified against the first one back, unchecked."""
+        source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        body = source[source.index("def _stable_hashes("):]
+        body = body[: body.index("\ndef ")]
+        key_line = next(line for line in body.splitlines() if line.strip().startswith("key ="))
+        self.assertNotIn("id(", key_line)
+        self.assertIn("expected", key_line)
+
 
 class RetriesWait(unittest.TestCase):
     def test_a_server_error_is_retried_after_the_delay_it_asks(self):
