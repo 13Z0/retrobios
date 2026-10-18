@@ -2657,5 +2657,20 @@ class TheProgressLineFitsTheTerminal(unittest.TestCase):
                 self.assertIn("%", line)
 
 
+
+class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
+    """The installer page and the FAQ quoted "install.py SHA-256 mismatch",
+    a message the bootstraps no longer print."""
+
+    def test_the_quoted_message_is_printed(self):
+        quoted = "does not match its expected"
+        for wrapper in ("install.sh", "install.ps1"):
+            self.assertIn(quoted, (REPO_ROOT / wrapper).read_text(encoding="utf-8"))
+        for page in ("wiki/installer.md", "wiki/faq.md"):
+            text = (REPO_ROOT / page).read_text(encoding="utf-8")
+            self.assertNotIn("SHA-256 mismatch`", text)
+            self.assertIn(quoted, " ".join(text.split()))
+
+
 if __name__ == "__main__":
     unittest.main()

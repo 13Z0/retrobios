@@ -91,7 +91,9 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
   if [ "$actual" != "$expected" ]; then
     echo "Error: the downloaded installer does not match its expected fingerprint." >&2
     echo "  Nothing was run and nothing was written." >&2
-    echo "  The download was most likely cut short. Try again, on another network if possible." >&2
+    echo "  The download was most likely cut short: try again. Within minutes of an update" >&2
+    echo "  of this project the two files can come from caches of different ages; waiting" >&2
+    echo "  five minutes settles that." >&2
     exit 1
   fi
   INSTALLER="$TEMP_INSTALLER"

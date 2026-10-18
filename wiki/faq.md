@@ -103,8 +103,8 @@ The `--verbose` flag shows source references and expected values from the emulat
 The one-liner runs a small bootstrap, not the installer. That bootstrap fetches
 `install.py` over HTTPS only, refuses anything over 2 MB, and requires its
 SHA-256 to equal the value written inside the bootstrap itself. A substituted
-installer aborts with `install.py SHA-256 mismatch` before a single line of it
-runs.
+installer aborts with "the downloaded installer does not match its expected
+fingerprint" before a single line of it runs.
 
 The installer then verifies every file it downloads against the size, SHA-256
 and SHA-1 the manifest declares, and moves it into place only once those match.

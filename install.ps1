@@ -46,7 +46,7 @@ try {
         }
         $actual = (Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actual -ne $expected.ToLowerInvariant()) {
-            throw "The downloaded installer does not match its expected fingerprint. Nothing was run and nothing was written. The download was most likely cut short; try again, on another network if possible."
+            throw "The downloaded installer does not match its expected fingerprint. Nothing was run and nothing was written. The download was most likely cut short: try again. Within minutes of an update of this project the two files can come from caches of different ages; waiting five minutes settles that."
         }
         $installer = $temporary
     }

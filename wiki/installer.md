@@ -52,8 +52,11 @@ pinned raw URL. A URL with any other scheme is refused outright.
 
 They cap the download at 2 MB and require the SHA-256 to equal the 64 hex
 characters embedded in the wrapper, `RETROBIOS_INSTALL_SHA256` when set. A
-mismatch aborts with `install.py SHA-256 mismatch` and nothing runs. Any change
-to `install.py` therefore means recomputing that pin in both wrappers.
+mismatch aborts with "the downloaded installer does not match its expected
+fingerprint" and nothing runs. Right after an update of this project the
+wrapper and `install.py` can come from caches a few minutes apart, which reads
+the same way: waiting five minutes settles it. Any change to `install.py`
+therefore means recomputing that pin in both wrappers.
 
 They locate a Python 3.8 or newer interpreter (`python3` then `python` on
 POSIX, `py -3` then `python3` then `python` on Windows) and refuse to continue
