@@ -1424,6 +1424,7 @@ def generate_emulator_pack(
     )
 
     total_files = 0
+    data_files = 0
     missing_files = []
     rejected_files: list[str] = []
     discrepancies: list[str] = []
@@ -1464,7 +1465,7 @@ def generate_emulator_pack(
                 files = [
                     fe for fe in files if entry_serves_systems(fe, profile, system_ids)
                 ]
-            if not files:
+            if not files and not profile.get("data_directories"):
                 print(f"  No files needed for {profile.get('emulator', emu_name)}")
 
             # Collect archives as atomic units
@@ -1699,19 +1700,23 @@ def generate_emulator_pack(
                     prefix = pack_structure.get(mode_key, "")
                     if prefix:
                         dd_dest = f"{prefix}/{dd_dest}" if dd_dest else prefix
-                total_files += _pack_data_tree(
+                data_files += _pack_data_tree(
                     zf, local_cache, dd_dest, seen_destinations, seen_parents, seen_lower,
                     packed_at,
                 )
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)
-    if total_files == 0 and not (missing_files or rejected_files or instruction_files or unsourceable_files):
+    if total_files + data_files == 0 and not (missing_files or rejected_files or instruction_files or unsourceable_files):
         os.unlink(zip_path)
 
-    # Report
+    # Report. The members of data trees are counted apart: verify --emulator
+    # counts the profile's files, and folding 3500 tree members into the
+    # same number made the two impossible to compare.
     missing_count = len(missing_files)
     ok_count = total_files
     parts = [f"{ok_count} files packed"]
+    if data_files:
+        parts.append(f"{data_files} from data directories")
     if missing_count:
         parts.append(f"{missing_count} missing")
     if rejected_files:
@@ -1740,7 +1745,7 @@ def generate_emulator_pack(
 
     return (
         zip_path
-        if total_files > 0 or missing_files or rejected_files or instruction_files
+        if total_files + data_files > 0 or missing_files or rejected_files or instruction_files
         or unsourceable_files
         else None
     )

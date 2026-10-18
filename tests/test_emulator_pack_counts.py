@@ -21,9 +21,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # kronos: an archive unit under its archive_prefix and a loose same-named file.
 # speccy,zesarux: the pack keeps speccy's PENTAGON.ROM and drops zesarux's
 # 32 KB pentagon.rom, which verify called covered.
+# dinothawr, cemu: data directories, whose members the pack counted among
+# "files packed" (110 against verify's 0/0, 303 against 67/68).
 CASES = (
     "raze", "rust_dos", "hatari", "xash3d_fwgs", "catacombgl", "openjk", "sonic2013",
-    "kronos", "speccy,zesarux",
+    "kronos", "speccy,zesarux", "dinothawr", "cemu",
 )
 
 
