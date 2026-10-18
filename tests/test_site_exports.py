@@ -402,5 +402,22 @@ class EmulatorPagesPrintWholeHashes(unittest.TestCase):
         self.assertNotIn("...", both)
 
 
+
+class TheGapsSayWhatToSupplyAndWhere(unittest.TestCase):
+    """The Files to Source table, gaps.csv and gaps.json gave neither the
+    expected hash nor the destination: EANIM.BS6's sha1 af5af59a... was on
+    the emulator page only, and Data.rsdk's three rows looked identical."""
+
+    def test_export_rows(self):
+        from generate_site import _gap_export_rows
+
+        report = {"bstone": {"emulator": "BStone", "systems": ["blake-stone"], "gap_details": [
+            {"name": "EANIM.BS6", "path": "AOG/EANIM.BS6", "source": "missing",
+             "required": False, "identity": "sha1:" + "a" * 40}]}}
+        row = next(r for r in _gap_export_rows({}, report) if r["name"] == "EANIM.BS6")
+        self.assertEqual(row["destination"], "AOG/EANIM.BS6")
+        self.assertEqual(row["expected"], "sha1:" + "a" * 40)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -638,6 +638,8 @@ def _gap_export_rows(coverages: dict, gap_report: dict | None = None) -> list[di
                 "in_repo": "",
                 "reason": detail.get("reason", ""),
                 "discrepancy": detail.get("discrepancy", ""),
+                "destination": detail.get("destination", ""),
+                "expected": "",
             })
     for emu_key, data in sorted((gap_report or {}).items()):
         systems = ";".join(str(s) for s in data.get("systems", []) or [])
@@ -659,6 +661,10 @@ def _gap_export_rows(coverages: dict, gap_report: dict | None = None) -> list[di
                 "in_repo": bool(gap.get("in_repo", False)),
                 "reason": gap.get("note", ""),
                 "discrepancy": "",
+                # What a contributor needs to supply the right revision and
+                # put it in the right place: the gaps table gave neither.
+                "destination": gap.get("path") or gap.get("name", ""),
+                "expected": gap.get("identity", ""),
             })
         for entry in data.get("unsourceable", []) or []:
             rows.append({
@@ -673,6 +679,8 @@ def _gap_export_rows(coverages: dict, gap_report: dict | None = None) -> list[di
                 "in_repo": False,
                 "reason": entry.get("reason", ""),
                 "discrepancy": "",
+                "destination": entry.get("path") or entry.get("name", ""),
+                "expected": "",
             })
     return rows
 
@@ -771,7 +779,8 @@ def _write_sqlite_export(
                 layer TEXT NOT NULL, platform_id TEXT, platform TEXT,
                 emulator TEXT, system TEXT, name TEXT NOT NULL,
                 status TEXT NOT NULL, required INTEGER NOT NULL,
-                in_repo TEXT, reason TEXT, discrepancy TEXT
+                in_repo TEXT, reason TEXT, discrepancy TEXT,
+                destination TEXT, expected TEXT
             );
             CREATE TABLE accepted_hashes (
                 layer TEXT NOT NULL, owner TEXT NOT NULL, system TEXT,
@@ -871,7 +880,7 @@ def _write_sqlite_export(
         connection.executemany(
             "INSERT INTO gaps VALUES "
             "(:layer, :platform_id, :platform, :emulator, :system, :name, "
-            ":status, :required, :in_repo, :reason, :discrepancy)",
+            ":status, :required, :in_repo, :reason, :discrepancy, :destination, :expected)",
             gap_rows,
         )
         connection.commit()
@@ -987,7 +996,7 @@ def generate_data_exports(
             [
                 "layer", "platform_id", "platform", "emulator", "system",
                 "name", "status", "required", "in_repo", "reason",
-                "discrepancy",
+                "discrepancy", "destination", "expected",
             ],
             gap_rows,
         ),
@@ -3448,6 +3457,8 @@ def generate_gap_analysis(
                 if row is None:
                     row = by_identity[key] = {
                         "name": g["name"],
+                        "path": g.get("path") or g["name"],
+                        "identity": g.get("identity", ""),
                         "emulators": [data["emulator"]],
                         "emu_keys": [emu_name],
                         "required": g["required"],
@@ -3470,8 +3481,8 @@ def generate_gap_analysis(
                     if entries != len(src_missing_details) else ")"
                 ),
                 "",
-                "| File | Emulator | Required | Affects platforms | Source ref |",
-                "|------|----------|----------|------------------|-----------|",
+                "| File | Destination | Expected | Emulator | Required | Affects platforms | Source ref |",
+                "|------|-------------|----------|----------|----------|------------------|-----------|",
             ])
             for m in sorted(
                 src_missing_details,
@@ -3489,8 +3500,15 @@ def generate_gap_analysis(
                     else "-"
                 )
                 req = "yes" if m["required"] else "no"
+                algorithm, _, value = m["identity"].partition(":")
+                expected = f"{algorithm} {_code(value)}" if value else "-"
+                destination = _code(m["path"]) if m["path"] != m["name"] else "-"
+                emulators = ", ".join(
+                    f"[{_escape_tags(display)}](emulators/{key}.md)"
+                    for display, key in zip(m["emulators"], m["emu_keys"])
+                )
                 lines.append(
-                    f"| `{m['name']}` | {', '.join(m['emulators'])} | {req} | "
+                    f"| `{m['name']}` | {destination} | {expected} | {emulators} | {req} | "
                     f"{plat_badges} | "
                     f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
