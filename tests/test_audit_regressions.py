@@ -4374,5 +4374,32 @@ class PipelineDocstringNamesThePrintedSteps(unittest.TestCase):
         self.assertEqual(listed, printed)
 
 
+
+class VerifyAllSummaryNamesWhatIsWrong(unittest.TestCase):
+    """The closing line counted platform severities only: a required core
+    file missing on ROCKNIX was absent from it, and the one warning did not
+    say which platform carried it."""
+
+    def test_counts_carry_platforms_and_core_misses(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import verify
+
+        clean = {"severity_counts": {}, "undeclared_files": []}
+        warned = {"severity_counts": {verify.Severity.WARNING: 1}, "undeclared_files": []}
+        core_miss = {
+            "severity_counts": {},
+            "undeclared_files": [{
+                "name": "n64.psh", "required": True, "in_repo": False,
+                "category": "bios", "in_pack": True,
+            }],
+        }
+        summary = verify._overall_summary(
+            [(clean, ["RetroArch"]), (warned, ["RetroDECK"]), (core_miss, ["ROCKNIX"])]
+        )
+        self.assertIn("1 warning (RetroDECK)", summary)
+        self.assertIn("ROCKNIX: n64.psh", summary)
+        self.assertIn("0 critical,", summary)
+
+
 if __name__ == "__main__":
     unittest.main()

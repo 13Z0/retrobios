@@ -1345,6 +1345,15 @@ def _split_undeclared(undeclared: list[dict]) -> tuple[list[dict], list[dict], l
     return game_data, placed, unplaced
 
 
+def _core_required_missing(bios_files: list[dict]) -> list[dict]:
+    """Core files a core cannot run without, absent from the collection."""
+    return [
+        u
+        for u in bios_files
+        if u["required"] and not u["in_repo"] and not u.get("hle_fallback")
+    ]
+
+
 def _print_undeclared_section(result: dict, verbose: bool) -> None:
     """Print cross-reference section for undeclared files used by cores."""
     undeclared = result.get("undeclared_files", [])
@@ -1353,11 +1362,7 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
 
     game_data, bios_files, unplaced = _split_undeclared(undeclared)
 
-    req_not_in_repo = [
-        u
-        for u in bios_files
-        if u["required"] and not u["in_repo"] and not u.get("hle_fallback")
-    ]
+    req_not_in_repo = _core_required_missing(bios_files)
     req_hle_not_in_repo = [
         u
         for u in bios_files
@@ -2314,16 +2319,43 @@ def _exit_if_strict_emulator(strict: bool, result: dict) -> None:
 
 
 def _overall_summary(group_results: list[tuple[dict, list[str]]]) -> str:
-    """One closing line for a multi-platform run, worst severity first."""
+    """The closing lines of a multi-platform run, worst severity first.
+
+    Each count names the platforms carrying it, and the core files a core
+    cannot run without are counted too: a reader of the summary alone used
+    to conclude nothing required was missing, and could not tell where the
+    one warning was without reading the whole output.
+    """
     platforms = sum(len(group) for _, group in group_results)
-    totals = {
-        sev: sum(r["severity_counts"].get(sev, 0) for r, _ in group_results)
-        for sev in (Severity.CRITICAL, Severity.WARNING, Severity.INFO)
+
+    def where(counts: dict[str, int]) -> str:
+        named = [f"{name} {count}" if count > 1 else name
+                 for name, count in counts.items() if count]
+        return f" ({', '.join(named)})" if named else ""
+
+    parts = []
+    for severity, label in ((Severity.CRITICAL, "critical"), (Severity.WARNING, "warning"),
+                            (Severity.INFO, "info")):
+        counts = {
+            " / ".join(group): r["severity_counts"].get(severity, 0)
+            for r, group in group_results
+        }
+        parts.append(f"{sum(counts.values())} {label}{where(counts)}")
+    lines = [f"{platforms} platforms: {', '.join(parts)}"]
+
+    missing = {
+        " / ".join(group): sorted({
+            u["name"] for u in _core_required_missing(_split_undeclared(
+                r.get("undeclared_files", []))[1])
+        })
+        for r, group in group_results
     }
-    return (
-        f"{platforms} platforms: {totals[Severity.CRITICAL]} critical, "
-        f"{totals[Severity.WARNING]} warning, {totals[Severity.INFO]} info"
-    )
+    total = sum(len(names) for names in missing.values())
+    if total:
+        detail = "; ".join(f"{group}: {', '.join(names)}"
+                           for group, names in missing.items() if names)
+        lines.append(f"{total} core file(s) a core cannot run without are missing ({detail})")
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":
