@@ -4868,7 +4868,10 @@ class AProfilePathIsTheEmulatorsNotOurs(unittest.TestCase):
     def test_a_variants_path_is_refused(self):
         from unittest import mock
 
-        from scripts import validate_schemas
+        try:
+            from scripts import validate_schemas
+        except ImportError as exc:
+            self.skipTest(f"validate_schemas needs jsonschema: {exc}")
 
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
             emulators = Path(directory) / "emulators"
