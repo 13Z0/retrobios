@@ -12,70 +12,63 @@ shared_groups:
   np2kai:
     - name: bios.rom
       destination: np2kai/bios.rom
-      required: true
+      required: false
       sha1: "76a7360502fa0296ea93b4c537174610a834d367"
       md5: "cd237e16e7e77c06bb58540e9e9fca68"
       crc32: "0a682b93"
       size: 98304
-    - name: itf.rom
-      destination: np2kai/itf.rom
-      required: true
-      sha1: "a2fb11c000ed7c976520622cfb7940ed6ddc904e"
-      md5: "72ea51443070f0e9212bfc9b793ee28e"
-      crc32: "c1815325"
-      size: 32768
     - name: sound.rom
       destination: np2kai/sound.rom
-      required: true
+      required: false
       sha1: "d5dbc4fea3b8367024d363f5351baecd6adcd8ef"
       md5: "524473c1a5a03b17e21d86a0408ff827"
       crc32: "fe9f57f2"
       size: 16384
     - name: font.bmp
       destination: np2kai/font.bmp
-      required: true
+      required: false
       sha1: "b4f14e58030ed40fff2dc312b58ea4440bdf8cc5"
       md5: "7da1e5b7c482d4108d22a5b09631d967"
       crc32: "d271798b"
       size: 524350
     - name: 2608_bd.wav
       destination: np2kai/2608_bd.wav
-      required: true
+      required: false
       sha1: "0a56c142ef40cec50f3ee56a6e42d0029c9e2818"
       md5: "d94546e70f17fd899be8df3544ab6cbb"
       crc32: "bb038714"
       size: 19192
     - name: 2608_sd.wav
       destination: np2kai/2608_sd.wav
-      required: true
+      required: false
       sha1: "3c79663ef74c0b0439d13351326eb1c52a657008"
       md5: "d71004351c8bbfdad53b18222c061d49"
       crc32: "542cc58c"
       size: 15558
     - name: 2608_top.wav
       destination: np2kai/2608_top.wav
-      required: true
+      required: false
       sha1: "aa4a8f766a86b830687d5083fd3b9db0652f46fc"
       md5: "593cff6597ab9380d822b8f824fd2c28"
       crc32: "ab73a296"
       size: 57016
     - name: 2608_hh.wav
       destination: np2kai/2608_hh.wav
-      required: true
+      required: false
       sha1: "12f676cef249b82480b6f19c454e234b435ca7b6"
       md5: "08c54a0c1f774a5538a848a6665a34b4"
       crc32: "9898b372"
       size: 36722
     - name: 2608_tom.wav
       destination: np2kai/2608_tom.wav
-      required: true
+      required: false
       sha1: "9513fb4a3f41e75a972a273a5104cbd834c1e2c5"
       md5: "96a4ead13f364734f79b0c58af2f0e1f"
       crc32: "93c57bba"
       size: 23092
     - name: 2608_rim.wav
       destination: np2kai/2608_rim.wav
-      required: true
+      required: false
       sha1: "c65592330c9dd84011151daed52f9aec926b7e56"
       md5: "465ea0768b27da404aec45dfc501404b"
       crc32: "638864c1"
@@ -100,13 +93,13 @@ shared_groups:
       md5: "d675a2ca186c6efcd6277b835de4c7e5"
     - name: N88EXT1.ROM
       destination: quasi88/N88EXT1.ROM
-      required: true
+      required: false
       md5: "e844534dfe5744b381444dbe61ef1b66"
     - name: N88EXT2.ROM
       destination: quasi88/N88EXT2.ROM
-      required: true
+      required: false
       md5: "6548fa45061274dee1ea8ae1e9e93910"
     - name: N88EXT3.ROM
       destination: quasi88/N88EXT3.ROM
-      required: true
+      required: false
       md5: "fc4b76a402ba501e6ba6de4b3e8b4273"
