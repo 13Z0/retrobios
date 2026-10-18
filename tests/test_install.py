@@ -2631,5 +2631,31 @@ class AChunkedCutIsADownloadFailure(unittest.TestCase):
         self.assertIn("IncompleteRead", reason)
 
 
+
+class TheProgressLineFitsTheTerminal(unittest.TestCase):
+    """At 80 columns the 94-100 column line wrapped, and every redraw left
+    a ghost line behind."""
+
+    def test_each_width(self):
+        import os as _os
+
+        for columns in (40, 60, 80, 120):
+            with self.subTest(columns=columns):
+                out = io.StringIO()
+                term = install.Terminal(out)
+                term.live = True
+                progress = install.Progress(5865, 2_300_000_000, term)
+                progress.bytes = 1_000_000_000
+                progress.files = 5000
+                with unittest.mock.patch.object(
+                    install.shutil, "get_terminal_size",
+                    return_value=_os.terminal_size((columns, 24)),
+                ):
+                    progress._draw()
+                line = out.getvalue().split("\033[K")[-1]
+                self.assertLess(len(line), columns)
+                self.assertIn("%", line)
+
+
 if __name__ == "__main__":
     unittest.main()

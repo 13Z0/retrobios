@@ -340,19 +340,34 @@ class Progress:
 
     def _draw(self) -> None:
         share = min(self.bytes / self.total_bytes, 1.0)
-        filled = int(share * self.BAR)
-        bar = "#" * filled + "-" * (self.BAR - filled)
         elapsed = self.elapsed()
         speed = self.bytes / elapsed if elapsed > 0 else 0
         left = (self.total_bytes - self.bytes) / speed if speed > 0 else 0
-        text = (
-            f"  [{bar}] {share * 100:5.1f}%  "
-            f"{format_size(self.bytes)} / {format_size(self.total_bytes)}  "
-            f"{format_size(int(speed))}/s  "
-            f"{format_duration(left)} left  "
-            f"({self.files}/{self.total_files} files)"
-        )
-        print(f"\r\033[K{text}", end="", file=self.term.stream, flush=True)
+        parts = [
+            f"{share * 100:5.1f}%",
+            f"{format_size(self.bytes)} / {format_size(self.total_bytes)}",
+            f"{format_size(int(speed))}/s",
+            f"{format_duration(left)} left",
+            f"({self.files}/{self.total_files} files)",
+        ]
+        # One physical line, whatever the width: \r\033[K clears only the
+        # line the cursor is on, so a wrapped line left a ghost per redraw
+        # on an 80-column console. The bar gives way first, then the least
+        # telling figures.
+        width = shutil.get_terminal_size((80, 24)).columns - 1
+        while True:
+            tail = "  ".join(parts)
+            room = width - len(tail) - 6
+            if room >= 10 or len(parts) == 1:
+                break
+            parts.pop()
+        if room >= 10:
+            bar_width = min(self.BAR, room)
+            filled = int(share * bar_width)
+            text = f"  [{'#' * filled}{'-' * (bar_width - filled)}] {tail}"
+        else:
+            text = f"  {tail}"
+        print(f"\r\033[K{text[:width]}", end="", file=self.term.stream, flush=True)
 
 
 # The three RetroArch packages published for Android, newest ABI first.
