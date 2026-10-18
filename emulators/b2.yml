@@ -5,6 +5,7 @@ source: "https://github.com/zoltanvb/b2-libretro"
 upstream: "https://github.com/tom-seddon/b2"
 profiled_date: "2026-03-23"
 source_commit: "9793f6a8040c416d147003cada29363b955b54e7"
+upstream_commit: "e1c9b84a9460909d4dc2030ad1d4e050012b1910"
 core_version: "v0.4"
 display_name: "Acorn - BBC Micro (b2)"
 cores: [b2]
@@ -12,14 +13,29 @@ systems:
   - bbc-micro-b
   - bbc-micro-bplus
   - bbc-master-128
+  - bbc-master-compact
 
 notes: |
   Libretro port by Zoltan Balogh of Tom Seddon's b2 BBC Micro emulator.
   is_experimental=true in .info.
   ref: zoltanvb/b2-libretro, tom-seddon/b2
 
-  Standalone loads ROMs from etc/roms/ via GetAssetPath() + LoadFile().
+  Standalone loads ROMs through BeebROM::GetAssetPath(), which resolves
+  roms/<path> under the assets folder: assets/ beside the executable on
+  Windows and Linux, ../Resources/assets on macOS. Linux then tries
+  ../share/b2 when the executable sits in bin/, XDG_DATA_HOME/b2 and each
+  XDG_DATA_DIRS entry. The build copies etc/roms into that folder, flattening
+  acorn/, watford/ and opus/ and lowercasing M128/ and MCompact/.
   ref: src/b2/roms.cpp:9-10
+  ref: src/b2/load_save.cpp:171-179, src/b2/load_save.cpp:200-284
+  ref: src/b2/CMakeLists.txt:285-325
+
+  Each configuration names one OS ROM, up to 16 sideways ROMs and an optional
+  second processor OS. Default configurations: six Model B disc interfaces,
+  B+, B+128, Master 128 and Master Turbo on MOS 3.20 and 3.50, B with 6502
+  second processor, Master Compact on MOS 5.00, 5.10 and 5.11i, and the
+  Olivetti PC 128 S on MOS I5.10C.
+  ref: src/b2/BeebConfig.cpp:212-462
 
   Libretro port embeds all ROMs as hex arrays in src/libretro/roms.hpp.
   create_core() loads OS and sideways ROMs from static machine_types[] arrays.
@@ -34,6 +50,619 @@ notes: |
   Master 3.50, Master Turbo, Master Compact not yet implemented.
   ref: src/libretro/core.h:117
 
-files: []
-# all ROMs embedded in binary via roms.hpp — no external files needed
-# .info firmware_count=0 matches code reality
+files:
+  - name: "OS12.ROM"
+    standalone_path: "assets/roms/OS12.ROM"
+    mode: standalone
+    system: bbc-micro-b
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
+    md5: "0a59a5ba15fe8557b5f7fee32bbd393a"
+    crc32: "3c14fc70"
+    description: "OS 1.20"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window. The B/Acorn 1770 configuration is the one b2 falls back to when no saved configuration loads, so a missing file stops startup."
+    source_ref: "src/b2/roms.cpp:16, src/b2/BeebConfig.cpp:220, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57, src/b2/b2.cpp:1599-1607"
+
+  - name: "B+MOS.rom"
+    standalone_path: "assets/roms/B+MOS.rom"
+    mode: standalone
+    system: bbc-micro-bplus
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330"
+    md5: "47a1eff6c7fbb47be780c87dfd50ece1"
+    crc32: "66c8d893"
+    description: "B+ MOS"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:17, src/b2/BeebConfig.cpp:243, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "BASIC2.ROM"
+    standalone_path: "assets/roms/BASIC2.ROM"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "4a7393f3a45ea309f744441c16723e2ef447a281"
+    md5: "2cc67be4624df4dc66617742571a8e3d"
+    crc32: "79434781"
+    description: "BASIC II"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:19, src/b2/BeebConfig.cpp:221, src/b2/BeebConfig.cpp:244, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "DFS-2.26.rom"
+    standalone_path: "assets/roms/DFS-2.26.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "cf2ebc422a8d24ec6f1a0320520c38a0e704109a"
+    md5: "f083f49d6fe66344c650d7e74249cb96"
+    crc32: "5ae33e94"
+    description: "Acorn 1770 DFS"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:20, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:245, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "DDFS-1.53.rom"
+    standalone_path: "assets/roms/DDFS-1.53.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "6719dc958f2631e6dc8f045429797b289bfe649a"
+    md5: "d2b71fa664f6cdf8c24b9b304777998c"
+    crc32: "e1be4ee4"
+    description: "Watford DDFS (DDB2)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:21, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "DDFS-1.54T.rom"
+    standalone_path: "assets/roms/DDFS-1.54T.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+    md5: "e73a0417278504a6dfac2ccd9a73e9a9"
+    crc32: "6504c1ed"
+    description: "Watford DDFS (DDB3)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:22, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "OPUS-DDOS-3.45.rom"
+    standalone_path: "assets/roms/OPUS-DDOS-3.45.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+    md5: "d98316eaff56ceab4fe3bfe54d2f92b2"
+    crc32: "c0163b95"
+    description: "Opus DDOS"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:23, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "challenger-1.01.rom"
+    standalone_path: "assets/roms/challenger-1.01.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "37ee3f20bed50555720703b279f62aab0ed28922"
+    md5: "67e086a11834f8cc69175b601c4e5a5f"
+    crc32: "2f64503d"
+    description: "Opus Challenger"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:24, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "MasterTurboParasite.rom"
+    standalone_path: "assets/roms/MasterTurboParasite.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: true
+    bundled: true
+    size: 2048
+    sha1: "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+    md5: "83d73e0e78693bb4b43e7cb18e58d556"
+    crc32: "da634682"
+    description: "65C102 TUBE 1.20 (Master Turbo)"
+    note: "Second processor OS ROM, read only by configurations with that parasite. A failed load, or an image over 4 KiB, aborts loading the configuration."
+    source_ref: "src/b2/roms.cpp:26, src/b2/BeebConfig.cpp:460, src/b2/BeebConfig.cpp:613-619"
+
+  - name: "TUBE110.rom"
+    standalone_path: "assets/roms/TUBE110.rom"
+    mode: standalone
+    system: bbc-micro-b
+    required: true
+    bundled: true
+    size: 2048
+    sha1: "5f461811edd22c08d5fb0e13a7bae99ee571c9f6"
+    md5: "a77c7946128ca0b2c5e5a66b17c99dae"
+    crc32: "9ec2dbd0"
+    description: "6502 TUBE 1.10 (6502 Second Processor)"
+    note: "Second processor OS ROM, read only by configurations with that parasite. A failed load, or an image over 4 KiB, aborts loading the configuration."
+    source_ref: "src/b2/roms.cpp:27, src/b2/BeebConfig.cpp:459, src/b2/BeebConfig.cpp:613-619"
+
+  - name: "dfs.rom"
+    standalone_path: "assets/roms/m128/3.20/dfs.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "cff80460954b3b9f75c83bd6a301c45d24d118a6"
+    md5: "865a0f7a5d6f10f48798801bf514d761"
+    crc32: "5e5d82ca"
+    description: "MOS 3.20 DFS (9)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:32, src/b2/BeebConfig.cpp:273, src/b2/BeebConfig.cpp:321, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "viewsht.rom"
+    standalone_path: "assets/roms/m128/3.20/viewsht.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "b7e85a55f517959912422b02248a03a4d32f6998"
+    md5: "7d5a80a8ce929d0a0f6ca8626cb9f436"
+    crc32: "1a831564"
+    description: "MOS 3.20 Viewsheet (a)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:33, src/b2/BeebConfig.cpp:272, src/b2/BeebConfig.cpp:320, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "edit.rom"
+    standalone_path: "assets/roms/m128/3.20/edit.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "96d209441f4cabacf3d4e8e9da68cce918ea923e"
+    md5: "cb3d762eaab6130d1360e1ac575589de"
+    crc32: "1a4a1113"
+    description: "MOS 3.20 Edit (b)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:34, src/b2/BeebConfig.cpp:271, src/b2/BeebConfig.cpp:319, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/m128/3.20/basic4.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "c45fd3c0abdcd32b78d2288addd2a777b19e9a1d"
+    md5: "63a6f43cbf491533cb03ceca2d2728d4"
+    crc32: "805529c7"
+    description: "MOS 3.20 BASIC (c)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:35, src/b2/BeebConfig.cpp:270, src/b2/BeebConfig.cpp:318, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/m128/3.20/adfs.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "7557e99be10d81c0395df2dc6c2f8e2f95896c29"
+    md5: "10f08b255d6a6e3e888631946b628f1a"
+    crc32: "10583dfe"
+    description: "MOS 3.20 ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:36, src/b2/BeebConfig.cpp:269, src/b2/BeebConfig.cpp:317, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "view.rom"
+    standalone_path: "assets/roms/m128/3.20/view.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "14820174e8ea802f1ae95186285a4592fd519699"
+    md5: "178d09285727d596f8863f94a2fc8dad"
+    crc32: "bdc9b5df"
+    description: "MOS 3.20 View (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:37, src/b2/BeebConfig.cpp:268, src/b2/BeebConfig.cpp:316, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "terminal.rom"
+    standalone_path: "assets/roms/m128/3.20/terminal.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "d990f41a3a0605127083a3cf7a3a676dd30423ef"
+    md5: "7e053353b78b4631c274280931d96f02"
+    crc32: "353b46b0"
+    description: "MOS 3.20 Terminal (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:38, src/b2/BeebConfig.cpp:267, src/b2/BeebConfig.cpp:315, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/m128/3.20/mos.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "04d5876999f93fc61a18f172b1fbb3b75db733ac"
+    md5: "9087f772447038a00178488b3591347b"
+    crc32: "aa317ef5"
+    description: "MOS 3.20 MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:39, src/b2/BeebConfig.cpp:266, src/b2/BeebConfig.cpp:314, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "dfs.rom"
+    standalone_path: "assets/roms/m128/3.50/dfs.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+    md5: "22c2b7f14f244da21d630a7828541c79"
+    crc32: "3537cd95"
+    description: "MOS 3.50 DFS (9)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:44, src/b2/BeebConfig.cpp:297, src/b2/BeebConfig.cpp:347, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "viewsht.rom"
+    standalone_path: "assets/roms/m128/3.50/viewsht.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "7e97cd3539ab973f898bae17714285a6e85042ea"
+    md5: "1bc68b7c5eba6a2de2a43c9d1d9d983b"
+    crc32: "976f7beb"
+    description: "MOS 3.50 Viewsheet (a)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:45, src/b2/BeebConfig.cpp:296, src/b2/BeebConfig.cpp:346, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "edit.rom"
+    standalone_path: "assets/roms/m128/3.50/edit.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+    md5: "8c72c7f24567cb4a2fb15eb0b0aeb55b"
+    crc32: "5ba2edce"
+    description: "MOS 3.50 Edit (b)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:46, src/b2/BeebConfig.cpp:295, src/b2/BeebConfig.cpp:345, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/m128/3.50/basic4.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "8e9d3eeba3797d966505a538252c73222cb5d202"
+    md5: "e11eed95d1caba8aa9772e9001590585"
+    crc32: "6c6f5cd8"
+    description: "MOS 3.50 BASIC (c)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:47, src/b2/BeebConfig.cpp:294, src/b2/BeebConfig.cpp:344, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/m128/3.50/adfs.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+    md5: "fb8ceb72c5fbd9dd80eedd10d076b1a2"
+    crc32: "55c22377"
+    description: "MOS 3.50 ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:48, src/b2/BeebConfig.cpp:293, src/b2/BeebConfig.cpp:343, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "view.rom"
+    standalone_path: "assets/roms/m128/3.50/view.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+    md5: "1566fab2f1827fb7ba61b283b828731d"
+    crc32: "55846c15"
+    description: "MOS 3.50 View (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:49, src/b2/BeebConfig.cpp:292, src/b2/BeebConfig.cpp:342, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "terminal.rom"
+    standalone_path: "assets/roms/m128/3.50/terminal.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "4ca97b439e8bcecb56531dc3864c1e5778099762"
+    md5: "b1fa51fd49d31224ecb7e10e6908ec01"
+    crc32: "9f375368"
+    description: "MOS 3.50 Terminal (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:50, src/b2/BeebConfig.cpp:291, src/b2/BeebConfig.cpp:341, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/m128/3.50/mos.rom"
+    mode: standalone
+    system: bbc-master-128
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+    md5: "d7a046b1e6a9991748cee05332f1e258"
+    crc32: "f8b84874"
+    description: "MOS 3.50 MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:51, src/b2/BeebConfig.cpp:290, src/b2/BeebConfig.cpp:340, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/mcompact/5.00/adfs.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+    md5: "bfbd0a7dbbfb1f1f4ba5ac0343c1f8ce"
+    crc32: "a3ca7f75"
+    description: "MOS 5.00 ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:56, src/b2/BeebConfig.cpp:380, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/mcompact/5.00/basic4.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "2278018884c65ef7b4edd174505ac1138e4dc2db"
+    md5: "64b3cd52e36b5262ac6ca3a9823c6ee2"
+    crc32: "c0ddabc4"
+    description: "MOS 5.00 BASIC (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:57, src/b2/BeebConfig.cpp:379, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "utils.rom"
+    standalone_path: "assets/roms/mcompact/5.00/utils.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+    md5: "4f9ded16f44278a4ca0ef4e66822e316"
+    crc32: "3fb619a5"
+    description: "MOS 5.00 UTILS (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:58, src/b2/BeebConfig.cpp:378, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/mcompact/5.00/mos.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "8720284aafa21928c519be806b0383f4a3b50088"
+    md5: "5d1b635e39aa461f17db2344870dda36"
+    crc32: "12c5f709"
+    description: "MOS 5.00 MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:59, src/b2/BeebConfig.cpp:377, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/mcompact/5.10/adfs.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "a080fff109e19d189c324eb8537e1764b6fb0a01"
+    md5: "c2afc1cabb135e6f2254bcf9300a9b83"
+    crc32: "45408fbb"
+    description: "MOS 5.10 ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:64, src/b2/BeebConfig.cpp:401, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/mcompact/5.10/basic4.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "2278018884c65ef7b4edd174505ac1138e4dc2db"
+    md5: "64b3cd52e36b5262ac6ca3a9823c6ee2"
+    crc32: "c0ddabc4"
+    description: "MOS 5.10 BASIC (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:65, src/b2/BeebConfig.cpp:400, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "utils.rom"
+    standalone_path: "assets/roms/mcompact/5.10/utils.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+    md5: "48a197850113b00a1eb141fb6d3ea135"
+    crc32: "9a742d06"
+    description: "MOS 5.10 UTILS (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:66, src/b2/BeebConfig.cpp:399, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/mcompact/5.10/mos.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+    md5: "f65eb89c7044e328b79f2ef8e51b7fd8"
+    crc32: "56c83755"
+    description: "MOS 5.10 MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:67, src/b2/BeebConfig.cpp:398, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/mcompact/I5.10C/adfs.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+    md5: "10f23a239dde39b7fe09d72083709e93"
+    crc32: "e87dde0c"
+    description: "MOS I5.10C ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:72, src/b2/BeebConfig.cpp:445, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/mcompact/I5.10C/basic4.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "261023c99952c6fcfc492f572a56e354a575628d"
+    md5: "717df34edae5b6bf5bbd8879c0d13022"
+    crc32: "7890765a"
+    description: "MOS I5.10C BASIC (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:73, src/b2/BeebConfig.cpp:444, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "utils.rom"
+    standalone_path: "assets/roms/mcompact/I5.10C/utils.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+    md5: "75364aa6fd5e134a40051d9ee772df37"
+    crc32: "ad58045f"
+    description: "MOS I5.10C UTILS (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:74, src/b2/BeebConfig.cpp:443, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/mcompact/I5.10C/mos.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "736561de701019c20425bd45cddf7e384db412af"
+    md5: "5e16a38bd7fd6f07f26b5a64826e4ec6"
+    crc32: "440f411f"
+    description: "MOS I5.10C MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:75, src/b2/BeebConfig.cpp:442, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "adfs.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/adfs.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+    md5: "ce15d43fe56fb2a421884605a6b006fe"
+    crc32: "1a9f470e"
+    description: "MOS 5.11i ADFS (d)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:80, src/b2/BeebConfig.cpp:422, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "basic4.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/basic4.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+    md5: "48c5b544025ecc353a7716bb9afa339a"
+    crc32: "45d76a23"
+    description: "MOS 5.11i BASIC (e)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:81, src/b2/BeebConfig.cpp:421, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "utils.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/utils.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+    md5: "27aaeace0cce67aeffe48723b03e1344"
+    crc32: "c30fc8cd"
+    description: "MOS 5.11i UTILS (f)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:82, src/b2/BeebConfig.cpp:420, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "mos.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/mos.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: true
+    bundled: true
+    size: 16384
+    sha1: "4db54c0427f6a3e316759d3fa25f91249d48613e"
+    md5: "e0da7278637754841dfd6b2b847783bc"
+    crc32: "3f81574e"
+    description: "MOS 5.11i MOS (OS)"
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    source_ref: "src/b2/roms.cpp:83, src/b2/BeebConfig.cpp:419, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "arabic.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/arabic.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+    md5: "64e7627ef99aac94283f0ca03b777867"
+    crc32: "4f3aadff"
+    description: "MOS 5.11i ARABIC (usually 8)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:84, src/b2/BeebConfig.cpp:423, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+
+  - name: "international.rom"
+    standalone_path: "assets/roms/mcompact/5.11i/international.rom"
+    mode: standalone
+    system: bbc-master-compact
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "dc5149ccf588cd591a6ad47727474ef3313272ce"
+    md5: "881baf661c61ddbfc09a10a4e6613a82"
+    crc32: "0ef527b1"
+    description: "MOS 5.11i INTERNATIONAL (usually 2)"
+    note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
+    source_ref: "src/b2/roms.cpp:85, src/b2/BeebConfig.cpp:428, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"

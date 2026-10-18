@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T00:39:54Z",
-  "total_files": 19044,
-  "total_size": 17567277278,
+  "generated_at": "2026-10-18T05:34:25Z",
+  "total_files": 19075,
+  "total_size": 17567770846,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -413,6 +413,316 @@
       "sha256": "43cfc33a4d65926212b5be778cb39c93623b747398958bc0c2c0451384ee54ca",
       "crc32": "4d194164",
       "adler32": "d7a323a4"
+    },
+    "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/B+MOS.rom",
+      "name": "B+MOS.rom",
+      "size": 16384,
+      "sha1": "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330",
+      "md5": "47a1eff6c7fbb47be780c87dfd50ece1",
+      "sha256": "8d4432bc32e5affa6bb0034bc739907c247835a2236474d10446f24c9c54ad9a",
+      "crc32": "66c8d893",
+      "adler32": "ec0fdc99"
+    },
+    "6719dc958f2631e6dc8f045429797b289bfe649a": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/DDFS-1.53.rom",
+      "name": "DDFS-1.53.rom",
+      "size": 16384,
+      "sha1": "6719dc958f2631e6dc8f045429797b289bfe649a",
+      "md5": "d2b71fa664f6cdf8c24b9b304777998c",
+      "sha256": "3139280172f4fbd941fa90a011160b2af17fea68afcee039a57f9a745126f86c",
+      "crc32": "e1be4ee4",
+      "adler32": "ad952087"
+    },
+    "618b7a1551f91e2b18608428b9e581f3d920d4b5": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/DDFS-1.54T.rom",
+      "name": "DDFS-1.54T.rom",
+      "size": 16384,
+      "sha1": "618b7a1551f91e2b18608428b9e581f3d920d4b5",
+      "md5": "e73a0417278504a6dfac2ccd9a73e9a9",
+      "sha256": "b5876307e5fad7415ab32804190e1789e0b6713a7403ee87f67300d961f69a90",
+      "crc32": "6504c1ed",
+      "adler32": "34d54a3e"
+    },
+    "d95815c367e07f2d5a00e860092e7d6da795cbe5": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/MasterTurboParasite.rom",
+      "name": "MasterTurboParasite.rom",
+      "size": 2048,
+      "sha1": "d95815c367e07f2d5a00e860092e7d6da795cbe5",
+      "md5": "83d73e0e78693bb4b43e7cb18e58d556",
+      "sha256": "89b656a2b8bccb42da8f8a047490685aef7fbed283b82619fd0446837c5ba5bc",
+      "crc32": "da634682",
+      "adler32": "414ad021"
+    },
+    "1c5a68e08abbb7ffe663151c59088f750d2287a9": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/OPUS-DDOS-3.45.rom",
+      "name": "OPUS-DDOS-3.45.rom",
+      "size": 16384,
+      "sha1": "1c5a68e08abbb7ffe663151c59088f750d2287a9",
+      "md5": "d98316eaff56ceab4fe3bfe54d2f92b2",
+      "sha256": "c3cf4ddb836d4103f2694fb2dc8d2da402ae9d88acd8debef6f2c308d79fadef",
+      "crc32": "c0163b95",
+      "adler32": "220f21e1"
+    },
+    "37ee3f20bed50555720703b279f62aab0ed28922": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/challenger-1.01.rom",
+      "name": "challenger-1.01.rom",
+      "size": 16384,
+      "sha1": "37ee3f20bed50555720703b279f62aab0ed28922",
+      "md5": "67e086a11834f8cc69175b601c4e5a5f",
+      "sha256": "139298ad707ba25d3ba19c41a8b5450100a1f01a2979e36484eb7c6651051ec9",
+      "crc32": "2f64503d",
+      "adler32": "43b97892"
+    },
+    "c81cf13f11d9783efbebebc63f5525f4373f7cd7": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/adfs.rom",
+      "name": "adfs.rom",
+      "size": 16384,
+      "sha1": "c81cf13f11d9783efbebebc63f5525f4373f7cd7",
+      "md5": "fb8ceb72c5fbd9dd80eedd10d076b1a2",
+      "sha256": "7c3232811fec16939c224fd53e972541b5a5366a7dbddcfcc56a1aab1672b9bb",
+      "crc32": "55c22377",
+      "adler32": "b781e1bb"
+    },
+    "8e9d3eeba3797d966505a538252c73222cb5d202": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/basic4.rom",
+      "name": "basic4.rom",
+      "size": 16384,
+      "sha1": "8e9d3eeba3797d966505a538252c73222cb5d202",
+      "md5": "e11eed95d1caba8aa9772e9001590585",
+      "sha256": "a988eb52b8bfc697275cea00b4bb50fd7e85b6e1739d36cbe1c0749650376ce1",
+      "crc32": "6c6f5cd8",
+      "adler32": "f99f67ba"
+    },
+    "0a1cc8747e49390ae0d80458649ab1df0fbd8372": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/dfs.rom",
+      "name": "dfs.rom",
+      "size": 16384,
+      "sha1": "0a1cc8747e49390ae0d80458649ab1df0fbd8372",
+      "md5": "22c2b7f14f244da21d630a7828541c79",
+      "sha256": "33c7e5070484d7068200edafadad05a59d10d1055536b39a691c39f7a87aaeed",
+      "crc32": "3537cd95",
+      "adler32": "a50f67a1"
+    },
+    "85519afe983a5a4cee33d4c061bc4a0c77eef922": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/edit.rom",
+      "name": "edit.rom",
+      "size": 16384,
+      "sha1": "85519afe983a5a4cee33d4c061bc4a0c77eef922",
+      "md5": "8c72c7f24567cb4a2fb15eb0b0aeb55b",
+      "sha256": "4f48b1f49f3f1c618436b0b5ee45b1f07c97d2b691b88a972ccfb3d3aa2a33f7",
+      "crc32": "5ba2edce",
+      "adler32": "2b92acdb"
+    },
+    "3b6f5a82a4581da9a0a4ccd203571141720ddbd2": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/mos.rom",
+      "name": "mos.rom",
+      "size": 16384,
+      "sha1": "3b6f5a82a4581da9a0a4ccd203571141720ddbd2",
+      "md5": "d7a046b1e6a9991748cee05332f1e258",
+      "sha256": "7b91fbfdb43b4ed6badc64e616cf10fc84356e996e1135db0f84841b3236dc7c",
+      "crc32": "f8b84874",
+      "adler32": "569bebc8"
+    },
+    "4ca97b439e8bcecb56531dc3864c1e5778099762": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/terminal.rom",
+      "name": "terminal.rom",
+      "size": 16384,
+      "sha1": "4ca97b439e8bcecb56531dc3864c1e5778099762",
+      "md5": "b1fa51fd49d31224ecb7e10e6908ec01",
+      "sha256": "1570d54ee122578a36fc2213e81df77c1d41f60d48563d3a92d754b4e259738e",
+      "crc32": "9f375368",
+      "adler32": "03b94aac"
+    },
+    "313a248dadcd9e0a3a25032c3d2cf388bee7432c": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/view.rom",
+      "name": "view.rom",
+      "size": 16384,
+      "sha1": "313a248dadcd9e0a3a25032c3d2cf388bee7432c",
+      "md5": "1566fab2f1827fb7ba61b283b828731d",
+      "sha256": "86b245bf736ea17640d3527cd709fd67b600c1901df5b3210f09a12595072681",
+      "crc32": "55846c15",
+      "adler32": "95f45132"
+    },
+    "7e97cd3539ab973f898bae17714285a6e85042ea": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/m128/3.50/viewsht.rom",
+      "name": "viewsht.rom",
+      "size": 16384,
+      "sha1": "7e97cd3539ab973f898bae17714285a6e85042ea",
+      "md5": "1bc68b7c5eba6a2de2a43c9d1d9d983b",
+      "sha256": "db11f2a259a01d8ad92eb6a037995251ffacabe24a8d963af52dbec25e220c9e",
+      "crc32": "976f7beb",
+      "adler32": "9a4f75a5"
+    },
+    "e5b6988ada0971761cd4804fe0e6fb2457f9e965": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.00/adfs.rom",
+      "name": "adfs.rom",
+      "size": 16384,
+      "sha1": "e5b6988ada0971761cd4804fe0e6fb2457f9e965",
+      "md5": "bfbd0a7dbbfb1f1f4ba5ac0343c1f8ce",
+      "sha256": "12cf4a58a20a91ac957698c32d0db0f1adce272c04d7d9a564a5c673cc93962d",
+      "crc32": "a3ca7f75",
+      "adler32": "50f7d43b"
+    },
+    "2278018884c65ef7b4edd174505ac1138e4dc2db": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.00/basic4.rom",
+      "name": "basic4.rom",
+      "size": 16384,
+      "sha1": "2278018884c65ef7b4edd174505ac1138e4dc2db",
+      "md5": "64b3cd52e36b5262ac6ca3a9823c6ee2",
+      "sha256": "360a1c77e195ecec060fa0a46585a7d34404e3242cd9c3a0a465b501e4f31327",
+      "crc32": "c0ddabc4",
+      "adler32": "c097125d"
+    },
+    "8720284aafa21928c519be806b0383f4a3b50088": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.00/mos.rom",
+      "name": "mos.rom",
+      "size": 16384,
+      "sha1": "8720284aafa21928c519be806b0383f4a3b50088",
+      "md5": "5d1b635e39aa461f17db2344870dda36",
+      "sha256": "bb501e07ce8f912919e08b8a256e9cd5c8775c4c80b8c40061d5aefa8a407ce0",
+      "crc32": "12c5f709",
+      "adler32": "d402862c"
+    },
+    "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.00/utils.rom",
+      "name": "utils.rom",
+      "size": 16384,
+      "sha1": "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4",
+      "md5": "4f9ded16f44278a4ca0ef4e66822e316",
+      "sha256": "443739d0fe2c168e3fb2a2433d6458beabc07f0241fe65b1ca65959da8c28b79",
+      "crc32": "3fb619a5",
+      "adler32": "1599e019"
+    },
+    "a080fff109e19d189c324eb8537e1764b6fb0a01": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.10/adfs.rom",
+      "name": "adfs.rom",
+      "size": 16384,
+      "sha1": "a080fff109e19d189c324eb8537e1764b6fb0a01",
+      "md5": "c2afc1cabb135e6f2254bcf9300a9b83",
+      "sha256": "e80004f96901366c0baaa74c2f868a731cae463e1744e5e8ee514cc8dc1be662",
+      "crc32": "45408fbb",
+      "adler32": "6ccce3f1"
+    },
+    "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.10/mos.rom",
+      "name": "mos.rom",
+      "size": 16384,
+      "sha1": "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2",
+      "md5": "f65eb89c7044e328b79f2ef8e51b7fd8",
+      "sha256": "2bf97e25a87b394016dab554202658ef8357f9ee286423fb27ffa2dd4e23dc5e",
+      "crc32": "56c83755",
+      "adler32": "29678741"
+    },
+    "8134476d88509b024fbc81cba1b4e89cb8e3d655": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.10/utils.rom",
+      "name": "utils.rom",
+      "size": 16384,
+      "sha1": "8134476d88509b024fbc81cba1b4e89cb8e3d655",
+      "md5": "48a197850113b00a1eb141fb6d3ea135",
+      "sha256": "c431d99fdfea0e9d756c271122f41695fdf5cdd4df769ecca9c90bdbf57bd01b",
+      "crc32": "9a742d06",
+      "adler32": "9791c838"
+    },
+    "03b536e0dfcb8e30f52d5763706ae9d517a3ae02": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/adfs.rom",
+      "name": "adfs.rom",
+      "size": 16384,
+      "sha1": "03b536e0dfcb8e30f52d5763706ae9d517a3ae02",
+      "md5": "ce15d43fe56fb2a421884605a6b006fe",
+      "sha256": "c5a457c4479176a2c6f20687210927fb36a10c08fed6dcc1b581ca2a24fd79fc",
+      "crc32": "1a9f470e",
+      "adler32": "9784e0e5"
+    },
+    "2bbf61ba68264ce5845aab9c54e750b0efe219c8": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/arabic.rom",
+      "name": "arabic.rom",
+      "size": 16384,
+      "sha1": "2bbf61ba68264ce5845aab9c54e750b0efe219c8",
+      "md5": "64e7627ef99aac94283f0ca03b777867",
+      "sha256": "407965fc6400474810a9a82160875326d02f2d4c8c24c58eee8b1dd37fe7ffb3",
+      "crc32": "4f3aadff",
+      "adler32": "1b3966bc"
+    },
+    "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/basic4.rom",
+      "name": "basic4.rom",
+      "size": 16384,
+      "sha1": "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac",
+      "md5": "48c5b544025ecc353a7716bb9afa339a",
+      "sha256": "bb09b1d094492b9557471f12bfcda7a287f174b49dfa3b4e364819f4cbe17b0e",
+      "crc32": "45d76a23",
+      "adler32": "a4e3147a"
+    },
+    "dc5149ccf588cd591a6ad47727474ef3313272ce": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/international.rom",
+      "name": "international.rom",
+      "size": 16384,
+      "sha1": "dc5149ccf588cd591a6ad47727474ef3313272ce",
+      "md5": "881baf661c61ddbfc09a10a4e6613a82",
+      "sha256": "990fd4fd40d554655476e0c29657e56f80839cb6324ba0af0a6f0012850d9593",
+      "crc32": "0ef527b1",
+      "adler32": "4f366540"
+    },
+    "4db54c0427f6a3e316759d3fa25f91249d48613e": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/mos.rom",
+      "name": "mos.rom",
+      "size": 16384,
+      "sha1": "4db54c0427f6a3e316759d3fa25f91249d48613e",
+      "md5": "e0da7278637754841dfd6b2b847783bc",
+      "sha256": "372884cb9dc5720e838e371f76e7088216e4085fe5be24284ed715ebfb562483",
+      "crc32": "3f81574e",
+      "adler32": "995c5e2f"
+    },
+    "28eb171c8ea2b94535d2805fe3dafafcd64a23b5": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/5.11i/utils.rom",
+      "name": "utils.rom",
+      "size": 16384,
+      "sha1": "28eb171c8ea2b94535d2805fe3dafafcd64a23b5",
+      "md5": "27aaeace0cce67aeffe48723b03e1344",
+      "sha256": "154b5bb4fab3abfd8df0e7be7fdfcd50f80fe28a20859bbf01378957b3ee9090",
+      "crc32": "c30fc8cd",
+      "adler32": "1526b774"
+    },
+    "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/I5.10C/adfs.rom",
+      "name": "adfs.rom",
+      "size": 16384,
+      "sha1": "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10",
+      "md5": "10f23a239dde39b7fe09d72083709e93",
+      "sha256": "472e4422666f3773d8b4123c0e77a74b4ce3aa0eebeadbd8f0696c5dd6b16b83",
+      "crc32": "e87dde0c",
+      "adler32": "c613deba"
+    },
+    "261023c99952c6fcfc492f572a56e354a575628d": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/I5.10C/basic4.rom",
+      "name": "basic4.rom",
+      "size": 16384,
+      "sha1": "261023c99952c6fcfc492f572a56e354a575628d",
+      "md5": "717df34edae5b6bf5bbd8879c0d13022",
+      "sha256": "8f444cab72bd157418c63f649d010ed6d98bc21cb5990d3ef09f745f8ef01214",
+      "crc32": "7890765a",
+      "adler32": "026d1358"
+    },
+    "736561de701019c20425bd45cddf7e384db412af": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/I5.10C/mos.rom",
+      "name": "mos.rom",
+      "size": 16384,
+      "sha1": "736561de701019c20425bd45cddf7e384db412af",
+      "md5": "5e16a38bd7fd6f07f26b5a64826e4ec6",
+      "sha256": "447241c0ff6b89dadc7c610ff492dd0da7e750d4d4f26bdea68f8d28a3a7b493",
+      "crc32": "440f411f",
+      "adler32": "18a55a0c"
+    },
+    "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5": {
+      "path": "bios/Acorn/BBC Micro/b2/roms/mcompact/I5.10C/utils.rom",
+      "name": "utils.rom",
+      "size": 16384,
+      "sha1": "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5",
+      "md5": "75364aa6fd5e134a40051d9ee772df37",
+      "sha256": "68c62bad93d6a32a37563d67a84a5d677ace29e591e7c900f61edb6dab7253be",
+      "crc32": "ad58045f",
+      "adler32": "dc54ac23"
     },
     "4a7393f3a45ea309f744441c16723e2ef447a281": {
       "path": "bios/Acorn/BBC Micro/basic2.rom",
@@ -195649,6 +195959,37 @@
       "e6d0d56e04c04e816dc2d72cfc997ed7": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
       "224779dcd4b9aa1bb27865568fb80f72": "1203096ca9d0748ba722066f47f089513a9be151",
       "6c00b2e8c8cc432a0eefbd02255dc1de": "38cda1f2199ee138c509e9b68647d7ac6c6885f6",
+      "47a1eff6c7fbb47be780c87dfd50ece1": "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330",
+      "d2b71fa664f6cdf8c24b9b304777998c": "6719dc958f2631e6dc8f045429797b289bfe649a",
+      "e73a0417278504a6dfac2ccd9a73e9a9": "618b7a1551f91e2b18608428b9e581f3d920d4b5",
+      "83d73e0e78693bb4b43e7cb18e58d556": "d95815c367e07f2d5a00e860092e7d6da795cbe5",
+      "d98316eaff56ceab4fe3bfe54d2f92b2": "1c5a68e08abbb7ffe663151c59088f750d2287a9",
+      "67e086a11834f8cc69175b601c4e5a5f": "37ee3f20bed50555720703b279f62aab0ed28922",
+      "fb8ceb72c5fbd9dd80eedd10d076b1a2": "c81cf13f11d9783efbebebc63f5525f4373f7cd7",
+      "e11eed95d1caba8aa9772e9001590585": "8e9d3eeba3797d966505a538252c73222cb5d202",
+      "22c2b7f14f244da21d630a7828541c79": "0a1cc8747e49390ae0d80458649ab1df0fbd8372",
+      "8c72c7f24567cb4a2fb15eb0b0aeb55b": "85519afe983a5a4cee33d4c061bc4a0c77eef922",
+      "d7a046b1e6a9991748cee05332f1e258": "3b6f5a82a4581da9a0a4ccd203571141720ddbd2",
+      "b1fa51fd49d31224ecb7e10e6908ec01": "4ca97b439e8bcecb56531dc3864c1e5778099762",
+      "1566fab2f1827fb7ba61b283b828731d": "313a248dadcd9e0a3a25032c3d2cf388bee7432c",
+      "1bc68b7c5eba6a2de2a43c9d1d9d983b": "7e97cd3539ab973f898bae17714285a6e85042ea",
+      "bfbd0a7dbbfb1f1f4ba5ac0343c1f8ce": "e5b6988ada0971761cd4804fe0e6fb2457f9e965",
+      "64b3cd52e36b5262ac6ca3a9823c6ee2": "2278018884c65ef7b4edd174505ac1138e4dc2db",
+      "5d1b635e39aa461f17db2344870dda36": "8720284aafa21928c519be806b0383f4a3b50088",
+      "4f9ded16f44278a4ca0ef4e66822e316": "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4",
+      "c2afc1cabb135e6f2254bcf9300a9b83": "a080fff109e19d189c324eb8537e1764b6fb0a01",
+      "f65eb89c7044e328b79f2ef8e51b7fd8": "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2",
+      "48a197850113b00a1eb141fb6d3ea135": "8134476d88509b024fbc81cba1b4e89cb8e3d655",
+      "ce15d43fe56fb2a421884605a6b006fe": "03b536e0dfcb8e30f52d5763706ae9d517a3ae02",
+      "64e7627ef99aac94283f0ca03b777867": "2bbf61ba68264ce5845aab9c54e750b0efe219c8",
+      "48c5b544025ecc353a7716bb9afa339a": "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac",
+      "881baf661c61ddbfc09a10a4e6613a82": "dc5149ccf588cd591a6ad47727474ef3313272ce",
+      "e0da7278637754841dfd6b2b847783bc": "4db54c0427f6a3e316759d3fa25f91249d48613e",
+      "27aaeace0cce67aeffe48723b03e1344": "28eb171c8ea2b94535d2805fe3dafafcd64a23b5",
+      "10f23a239dde39b7fe09d72083709e93": "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10",
+      "717df34edae5b6bf5bbd8879c0d13022": "261023c99952c6fcfc492f572a56e354a575628d",
+      "5e16a38bd7fd6f07f26b5a64826e4ec6": "736561de701019c20425bd45cddf7e384db412af",
+      "75364aa6fd5e134a40051d9ee772df37": "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5",
       "2cc67be4624df4dc66617742571a8e3d": "4a7393f3a45ea309f744441c16723e2ef447a281",
       "4c2027c59689fa0da2029e507a15ed0f": "25c03a42871df58a880e84e76f90da51d72f6c7e",
       "0aeab3e1f3114ef52a55ff65485e1601": "5822df2318477e4571257f369891fb796ecc2e71",
@@ -214760,6 +215101,73 @@
       "bbcb.zip": [
         "1203096ca9d0748ba722066f47f089513a9be151",
         "4d7d8a60ffc39fd840365a45388850707b1d016d"
+      ],
+      "B+MOS.rom": [
+        "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330",
+        "d9426dd7454ca199cdef9435daa332cdf405c965"
+      ],
+      "DDFS-1.53.rom": [
+        "6719dc958f2631e6dc8f045429797b289bfe649a"
+      ],
+      "DDFS-1.54T.rom": [
+        "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+      ],
+      "MasterTurboParasite.rom": [
+        "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+      ],
+      "OPUS-DDOS-3.45.rom": [
+        "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+      ],
+      "challenger-1.01.rom": [
+        "37ee3f20bed50555720703b279f62aab0ed28922"
+      ],
+      "adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7",
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965",
+        "a080fff109e19d189c324eb8537e1764b6fb0a01",
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02",
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10",
+        "e7c7a1094d50a3579751df2007269067c8ff6812"
+      ],
+      "basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202",
+        "2278018884c65ef7b4edd174505ac1138e4dc2db",
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac",
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2",
+        "8720284aafa21928c519be806b0383f4a3b50088",
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2",
+        "4db54c0427f6a3e316759d3fa25f91249d48613e",
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4",
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655",
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5",
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
       ],
       "basic2.rom": [
         "4a7393f3a45ea309f744441c16723e2ef447a281"
@@ -247493,9 +247901,6 @@
       "ELK130E.rom": [
         "818b50e0b77cb920276d2ff733b68a9058ccd303"
       ],
-      "adfs.rom": [
-        "e7c7a1094d50a3579751df2007269067c8ff6812"
-      ],
       "8dos.rom": [
         "8aa28471c04d4e249c7da94ab6b54482d3fff2ed"
       ],
@@ -248433,9 +248838,6 @@
       ],
       "BIOS.rom": [
         "eb2a043d139ae0f3d512b4f1afa32286510c886c"
-      ],
-      "B+MOS.rom": [
-        "d9426dd7454ca199cdef9435daa332cdf405c965"
       ],
       "CCPN102.rom": [
         "e6ee738e5f2f8556002b79d18caa8ef21f14e08d"
@@ -270499,8 +270901,14 @@
       "atari_os_b.rom": [
         "db1031585968cfc6ec2ecda5c9a5a52f61444a3b"
       ],
+      "OS12.ROM": [
+        "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
+      ],
       "OS12.rom": [
         "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
+      ],
+      "BASIC2.ROM": [
+        "4a7393f3a45ea309f744441c16723e2ef447a281"
       ],
       "BASIC2.rom": [
         "4a7393f3a45ea309f744441c16723e2ef447a281"
@@ -271533,6 +271941,37 @@
       "4e3ff8ed": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
       "440ff82b": "1203096ca9d0748ba722066f47f089513a9be151",
       "4d194164": "38cda1f2199ee138c509e9b68647d7ac6c6885f6",
+      "66c8d893": "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330",
+      "e1be4ee4": "6719dc958f2631e6dc8f045429797b289bfe649a",
+      "6504c1ed": "618b7a1551f91e2b18608428b9e581f3d920d4b5",
+      "da634682": "d95815c367e07f2d5a00e860092e7d6da795cbe5",
+      "c0163b95": "1c5a68e08abbb7ffe663151c59088f750d2287a9",
+      "2f64503d": "37ee3f20bed50555720703b279f62aab0ed28922",
+      "55c22377": "c81cf13f11d9783efbebebc63f5525f4373f7cd7",
+      "6c6f5cd8": "8e9d3eeba3797d966505a538252c73222cb5d202",
+      "3537cd95": "0a1cc8747e49390ae0d80458649ab1df0fbd8372",
+      "5ba2edce": "85519afe983a5a4cee33d4c061bc4a0c77eef922",
+      "f8b84874": "3b6f5a82a4581da9a0a4ccd203571141720ddbd2",
+      "9f375368": "4ca97b439e8bcecb56531dc3864c1e5778099762",
+      "55846c15": "313a248dadcd9e0a3a25032c3d2cf388bee7432c",
+      "976f7beb": "7e97cd3539ab973f898bae17714285a6e85042ea",
+      "a3ca7f75": "e5b6988ada0971761cd4804fe0e6fb2457f9e965",
+      "c0ddabc4": "2278018884c65ef7b4edd174505ac1138e4dc2db",
+      "12c5f709": "8720284aafa21928c519be806b0383f4a3b50088",
+      "3fb619a5": "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4",
+      "45408fbb": "a080fff109e19d189c324eb8537e1764b6fb0a01",
+      "56c83755": "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2",
+      "9a742d06": "8134476d88509b024fbc81cba1b4e89cb8e3d655",
+      "1a9f470e": "03b536e0dfcb8e30f52d5763706ae9d517a3ae02",
+      "4f3aadff": "2bbf61ba68264ce5845aab9c54e750b0efe219c8",
+      "45d76a23": "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac",
+      "0ef527b1": "dc5149ccf588cd591a6ad47727474ef3313272ce",
+      "3f81574e": "4db54c0427f6a3e316759d3fa25f91249d48613e",
+      "c30fc8cd": "28eb171c8ea2b94535d2805fe3dafafcd64a23b5",
+      "e87dde0c": "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10",
+      "7890765a": "261023c99952c6fcfc492f572a56e354a575628d",
+      "440f411f": "736561de701019c20425bd45cddf7e384db412af",
+      "ad58045f": "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5",
       "79434781": "4a7393f3a45ea309f744441c16723e2ef447a281",
       "cdcfa3f7": "25c03a42871df58a880e84e76f90da51d72f6c7e",
       "74a7372d": "5822df2318477e4571257f369891fb796ecc2e71",
@@ -290579,6 +291018,37 @@
       "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
       "b392c609df4da5111c861538b057f843e6689147b5b16a0e7283fa0ea3310712": "1203096ca9d0748ba722066f47f089513a9be151",
       "43cfc33a4d65926212b5be778cb39c93623b747398958bc0c2c0451384ee54ca": "38cda1f2199ee138c509e9b68647d7ac6c6885f6",
+      "8d4432bc32e5affa6bb0034bc739907c247835a2236474d10446f24c9c54ad9a": "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330",
+      "3139280172f4fbd941fa90a011160b2af17fea68afcee039a57f9a745126f86c": "6719dc958f2631e6dc8f045429797b289bfe649a",
+      "b5876307e5fad7415ab32804190e1789e0b6713a7403ee87f67300d961f69a90": "618b7a1551f91e2b18608428b9e581f3d920d4b5",
+      "89b656a2b8bccb42da8f8a047490685aef7fbed283b82619fd0446837c5ba5bc": "d95815c367e07f2d5a00e860092e7d6da795cbe5",
+      "c3cf4ddb836d4103f2694fb2dc8d2da402ae9d88acd8debef6f2c308d79fadef": "1c5a68e08abbb7ffe663151c59088f750d2287a9",
+      "139298ad707ba25d3ba19c41a8b5450100a1f01a2979e36484eb7c6651051ec9": "37ee3f20bed50555720703b279f62aab0ed28922",
+      "7c3232811fec16939c224fd53e972541b5a5366a7dbddcfcc56a1aab1672b9bb": "c81cf13f11d9783efbebebc63f5525f4373f7cd7",
+      "a988eb52b8bfc697275cea00b4bb50fd7e85b6e1739d36cbe1c0749650376ce1": "8e9d3eeba3797d966505a538252c73222cb5d202",
+      "33c7e5070484d7068200edafadad05a59d10d1055536b39a691c39f7a87aaeed": "0a1cc8747e49390ae0d80458649ab1df0fbd8372",
+      "4f48b1f49f3f1c618436b0b5ee45b1f07c97d2b691b88a972ccfb3d3aa2a33f7": "85519afe983a5a4cee33d4c061bc4a0c77eef922",
+      "7b91fbfdb43b4ed6badc64e616cf10fc84356e996e1135db0f84841b3236dc7c": "3b6f5a82a4581da9a0a4ccd203571141720ddbd2",
+      "1570d54ee122578a36fc2213e81df77c1d41f60d48563d3a92d754b4e259738e": "4ca97b439e8bcecb56531dc3864c1e5778099762",
+      "86b245bf736ea17640d3527cd709fd67b600c1901df5b3210f09a12595072681": "313a248dadcd9e0a3a25032c3d2cf388bee7432c",
+      "db11f2a259a01d8ad92eb6a037995251ffacabe24a8d963af52dbec25e220c9e": "7e97cd3539ab973f898bae17714285a6e85042ea",
+      "12cf4a58a20a91ac957698c32d0db0f1adce272c04d7d9a564a5c673cc93962d": "e5b6988ada0971761cd4804fe0e6fb2457f9e965",
+      "360a1c77e195ecec060fa0a46585a7d34404e3242cd9c3a0a465b501e4f31327": "2278018884c65ef7b4edd174505ac1138e4dc2db",
+      "bb501e07ce8f912919e08b8a256e9cd5c8775c4c80b8c40061d5aefa8a407ce0": "8720284aafa21928c519be806b0383f4a3b50088",
+      "443739d0fe2c168e3fb2a2433d6458beabc07f0241fe65b1ca65959da8c28b79": "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4",
+      "e80004f96901366c0baaa74c2f868a731cae463e1744e5e8ee514cc8dc1be662": "a080fff109e19d189c324eb8537e1764b6fb0a01",
+      "2bf97e25a87b394016dab554202658ef8357f9ee286423fb27ffa2dd4e23dc5e": "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2",
+      "c431d99fdfea0e9d756c271122f41695fdf5cdd4df769ecca9c90bdbf57bd01b": "8134476d88509b024fbc81cba1b4e89cb8e3d655",
+      "c5a457c4479176a2c6f20687210927fb36a10c08fed6dcc1b581ca2a24fd79fc": "03b536e0dfcb8e30f52d5763706ae9d517a3ae02",
+      "407965fc6400474810a9a82160875326d02f2d4c8c24c58eee8b1dd37fe7ffb3": "2bbf61ba68264ce5845aab9c54e750b0efe219c8",
+      "bb09b1d094492b9557471f12bfcda7a287f174b49dfa3b4e364819f4cbe17b0e": "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac",
+      "990fd4fd40d554655476e0c29657e56f80839cb6324ba0af0a6f0012850d9593": "dc5149ccf588cd591a6ad47727474ef3313272ce",
+      "372884cb9dc5720e838e371f76e7088216e4085fe5be24284ed715ebfb562483": "4db54c0427f6a3e316759d3fa25f91249d48613e",
+      "154b5bb4fab3abfd8df0e7be7fdfcd50f80fe28a20859bbf01378957b3ee9090": "28eb171c8ea2b94535d2805fe3dafafcd64a23b5",
+      "472e4422666f3773d8b4123c0e77a74b4ce3aa0eebeadbd8f0696c5dd6b16b83": "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10",
+      "8f444cab72bd157418c63f649d010ed6d98bc21cb5990d3ef09f745f8ef01214": "261023c99952c6fcfc492f572a56e354a575628d",
+      "447241c0ff6b89dadc7c610ff492dd0da7e750d4d4f26bdea68f8d28a3a7b493": "736561de701019c20425bd45cddf7e384db412af",
+      "68c62bad93d6a32a37563d67a84a5d677ace29e591e7c900f61edb6dab7253be": "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5",
       "45bd55dc0f6f0f8f1fe9e2481de7def206565eec8f600ba3068b849ca4132079": "4a7393f3a45ea309f744441c16723e2ef447a281",
       "98eb759e2e0e13e2130f6281832e7756baf2540438d7d2402d0d071a80eefc1d": "25c03a42871df58a880e84e76f90da51d72f6c7e",
       "36e8673cd20498baaf085c3ffebcac40472bc893a36c83f4404be6fd5ac0a559": "5822df2318477e4571257f369891fb796ecc2e71",
@@ -309819,6 +310289,528 @@
       ],
       "BBC Micro/atom.zip": [
         "38cda1f2199ee138c509e9b68647d7ac6c6885f6"
+      ],
+      "Acorn/BBC Micro/b2/roms/B+MOS.rom": [
+        "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330"
+      ],
+      "BBC Micro/b2/roms/B+MOS.rom": [
+        "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330"
+      ],
+      "b2/roms/B+MOS.rom": [
+        "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330"
+      ],
+      "roms/B+MOS.rom": [
+        "1a663b9d1022aeea65f07d3d1d6e0a4ad81c0330"
+      ],
+      "Acorn/BBC Micro/b2/roms/DDFS-1.53.rom": [
+        "6719dc958f2631e6dc8f045429797b289bfe649a"
+      ],
+      "BBC Micro/b2/roms/DDFS-1.53.rom": [
+        "6719dc958f2631e6dc8f045429797b289bfe649a"
+      ],
+      "b2/roms/DDFS-1.53.rom": [
+        "6719dc958f2631e6dc8f045429797b289bfe649a"
+      ],
+      "roms/DDFS-1.53.rom": [
+        "6719dc958f2631e6dc8f045429797b289bfe649a"
+      ],
+      "Acorn/BBC Micro/b2/roms/DDFS-1.54T.rom": [
+        "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+      ],
+      "BBC Micro/b2/roms/DDFS-1.54T.rom": [
+        "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+      ],
+      "b2/roms/DDFS-1.54T.rom": [
+        "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+      ],
+      "roms/DDFS-1.54T.rom": [
+        "618b7a1551f91e2b18608428b9e581f3d920d4b5"
+      ],
+      "Acorn/BBC Micro/b2/roms/MasterTurboParasite.rom": [
+        "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+      ],
+      "BBC Micro/b2/roms/MasterTurboParasite.rom": [
+        "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+      ],
+      "b2/roms/MasterTurboParasite.rom": [
+        "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+      ],
+      "roms/MasterTurboParasite.rom": [
+        "d95815c367e07f2d5a00e860092e7d6da795cbe5"
+      ],
+      "Acorn/BBC Micro/b2/roms/OPUS-DDOS-3.45.rom": [
+        "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+      ],
+      "BBC Micro/b2/roms/OPUS-DDOS-3.45.rom": [
+        "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+      ],
+      "b2/roms/OPUS-DDOS-3.45.rom": [
+        "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+      ],
+      "roms/OPUS-DDOS-3.45.rom": [
+        "1c5a68e08abbb7ffe663151c59088f750d2287a9"
+      ],
+      "Acorn/BBC Micro/b2/roms/challenger-1.01.rom": [
+        "37ee3f20bed50555720703b279f62aab0ed28922"
+      ],
+      "BBC Micro/b2/roms/challenger-1.01.rom": [
+        "37ee3f20bed50555720703b279f62aab0ed28922"
+      ],
+      "b2/roms/challenger-1.01.rom": [
+        "37ee3f20bed50555720703b279f62aab0ed28922"
+      ],
+      "roms/challenger-1.01.rom": [
+        "37ee3f20bed50555720703b279f62aab0ed28922"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "b2/roms/m128/3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "roms/m128/3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "m128/3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "3.50/adfs.rom": [
+        "c81cf13f11d9783efbebebc63f5525f4373f7cd7"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "b2/roms/m128/3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "roms/m128/3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "m128/3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "3.50/basic4.rom": [
+        "8e9d3eeba3797d966505a538252c73222cb5d202"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "b2/roms/m128/3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "roms/m128/3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "m128/3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "3.50/dfs.rom": [
+        "0a1cc8747e49390ae0d80458649ab1df0fbd8372"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "b2/roms/m128/3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "roms/m128/3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "m128/3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "3.50/edit.rom": [
+        "85519afe983a5a4cee33d4c061bc4a0c77eef922"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "b2/roms/m128/3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "roms/m128/3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "m128/3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "3.50/mos.rom": [
+        "3b6f5a82a4581da9a0a4ccd203571141720ddbd2"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "b2/roms/m128/3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "roms/m128/3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "m128/3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "3.50/terminal.rom": [
+        "4ca97b439e8bcecb56531dc3864c1e5778099762"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "b2/roms/m128/3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "roms/m128/3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "m128/3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "3.50/view.rom": [
+        "313a248dadcd9e0a3a25032c3d2cf388bee7432c"
+      ],
+      "Acorn/BBC Micro/b2/roms/m128/3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "BBC Micro/b2/roms/m128/3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "b2/roms/m128/3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "roms/m128/3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "m128/3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "3.50/viewsht.rom": [
+        "7e97cd3539ab973f898bae17714285a6e85042ea"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "b2/roms/mcompact/5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "roms/mcompact/5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "mcompact/5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "5.00/adfs.rom": [
+        "e5b6988ada0971761cd4804fe0e6fb2457f9e965"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "b2/roms/mcompact/5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "roms/mcompact/5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "mcompact/5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "5.00/basic4.rom": [
+        "2278018884c65ef7b4edd174505ac1138e4dc2db"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "b2/roms/mcompact/5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "roms/mcompact/5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "mcompact/5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "5.00/mos.rom": [
+        "8720284aafa21928c519be806b0383f4a3b50088"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "b2/roms/mcompact/5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "roms/mcompact/5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "mcompact/5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "5.00/utils.rom": [
+        "b8ebb39e6373ddaa81fb0c6eb572a9f1a30402c4"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "b2/roms/mcompact/5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "roms/mcompact/5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "mcompact/5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "5.10/adfs.rom": [
+        "a080fff109e19d189c324eb8537e1764b6fb0a01"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "b2/roms/mcompact/5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "roms/mcompact/5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "mcompact/5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "5.10/mos.rom": [
+        "844b056bcfb4a585fc5fd0f0bdfd8a849e686ce2"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "b2/roms/mcompact/5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "roms/mcompact/5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "mcompact/5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "5.10/utils.rom": [
+        "8134476d88509b024fbc81cba1b4e89cb8e3d655"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "b2/roms/mcompact/5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "roms/mcompact/5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "mcompact/5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "5.11i/adfs.rom": [
+        "03b536e0dfcb8e30f52d5763706ae9d517a3ae02"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "b2/roms/mcompact/5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "roms/mcompact/5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "mcompact/5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "5.11i/arabic.rom": [
+        "2bbf61ba68264ce5845aab9c54e750b0efe219c8"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "b2/roms/mcompact/5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "roms/mcompact/5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "mcompact/5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "5.11i/basic4.rom": [
+        "f9f9d7658d50772c8d6bd9813d9cb68cd3b30cac"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "b2/roms/mcompact/5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "roms/mcompact/5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "mcompact/5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "5.11i/international.rom": [
+        "dc5149ccf588cd591a6ad47727474ef3313272ce"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "b2/roms/mcompact/5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "roms/mcompact/5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "mcompact/5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "5.11i/mos.rom": [
+        "4db54c0427f6a3e316759d3fa25f91249d48613e"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "BBC Micro/b2/roms/mcompact/5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "b2/roms/mcompact/5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "roms/mcompact/5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "mcompact/5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "5.11i/utils.rom": [
+        "28eb171c8ea2b94535d2805fe3dafafcd64a23b5"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "BBC Micro/b2/roms/mcompact/I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "b2/roms/mcompact/I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "roms/mcompact/I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "mcompact/I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "I5.10C/adfs.rom": [
+        "222a4c73e3147e3dfa7b3741f397e9d73f5c4a10"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "BBC Micro/b2/roms/mcompact/I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "b2/roms/mcompact/I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "roms/mcompact/I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "mcompact/I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "I5.10C/basic4.rom": [
+        "261023c99952c6fcfc492f572a56e354a575628d"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "BBC Micro/b2/roms/mcompact/I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "b2/roms/mcompact/I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "roms/mcompact/I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "mcompact/I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "I5.10C/mos.rom": [
+        "736561de701019c20425bd45cddf7e384db412af"
+      ],
+      "Acorn/BBC Micro/b2/roms/mcompact/I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "BBC Micro/b2/roms/mcompact/I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "b2/roms/mcompact/I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "roms/mcompact/I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "mcompact/I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
+      ],
+      "I5.10C/utils.rom": [
+        "5ace7ba3e3296bea4c77b2eb040ef571ff9e41a5"
       ],
       "Acorn/BBC Micro/basic2.rom": [
         "4a7393f3a45ea309f744441c16723e2ef447a281"
