@@ -543,6 +543,19 @@ class RetroPieProposals(unittest.TestCase):
                     RetroPie._extended(help_text, enumeration, missing), expected
                 )
 
+    def test_a_list_of_examples_is_not_extended(self):
+        # lr-neocd: "a minimum of two BIOS files (eg. ng-lo.rom,
+        # uni-bioscd.rom)" became "(eg. ng-lo.rom, uni-bioscd.rom and
+        # neocd.bin)": two announced, three named, read as all required.
+        help_text = (
+            "You will need a minimum of two BIOS files (eg. ng-lo.rom, "
+            "uni-bioscd.rom) which should be copied to $biosdir/neocd"
+        )
+        self.assertIsNone(RetroPie._enumeration(help_text))
+        self.assertIsNone(RetroPie._enumeration(
+            "Copy BIOS files such as a.bin and b.bin to $biosdir"
+        ))
+
     def test_words_between_names_are_not_rewritten(self):
         self.assertIsNone(
             RetroPie._enumeration("BIOS files a.bin (US) and b.bin to $biosdir")

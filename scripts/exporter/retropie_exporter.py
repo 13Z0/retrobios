@@ -49,6 +49,7 @@ _FILENAME = re.compile(r"[A-Za-z0-9][\w.+-]*\.[A-Za-z0-9]{1,5}\b")
 _BIOS_CLAUSE = re.compile(r"BIOS\b.*?(?=\\n|$)", re.DOTALL)
 _BIOS_NOUN = re.compile(r"BIOS (files?)\b")
 _SEPARATOR = re.compile(r"\s*(?:,\s*(?:and\s+)?|and\s+)")
+_EXAMPLES = re.compile(r"\b(?:e\.?g\b|for example|for instance|such as|like)\W*$", re.I)
 
 
 class Exporter(BaseExporter):
@@ -148,7 +149,8 @@ class Exporter(BaseExporter):
         A list of alternatives ("a or b", "a/b") is not an enumeration: an
         appended ", c" reads as one more required file and the plural turns
         "one of these" into "all of these". Such a list is left alone, and so
-        is one with words between its names, which a rewrite would lose.
+        are a list of examples ("eg. a, b") and one with words between its
+        names, which a rewrite would lose.
         """
         clause = _BIOS_CLAUSE.search(help_text)
         if clause is None:
@@ -159,6 +161,10 @@ class Exporter(BaseExporter):
             return None
         between = text[names[0].start():names[-1].end()]
         if re.search(r"\bor\b|/", between):
+            return None
+        # "a minimum of two BIOS files (eg. a, b)" names examples, not the
+        # set: an appended name reads as one more required file.
+        if _EXAMPLES.search(text[:names[0].start()]):
             return None
         gaps = [text[a.end():b.start()] for a, b in zip(names, names[1:])]
         if not all(_SEPARATOR.fullmatch(gap) for gap in gaps):
