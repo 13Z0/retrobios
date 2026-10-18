@@ -157,11 +157,22 @@ def _parse_version_tag(tag: str) -> str:
 
 
 def _get_commit() -> str:
+    """The commit the clone holds, or an error: never an empty pin.
+
+    Returned empty, it was cached for a day and the merge advanced
+    core_version and the refs to the new release while upstream_commit
+    stayed on the old one, a profile describing two revisions at once.
+    """
     try:
         result = _run_git(["rev-parse", "HEAD"], cwd=_CLONE_DIR)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        return ""
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(
+            f"cannot read the commit of the MAME clone in {_CLONE_DIR}: {exc}"
+        ) from exc
+    commit = result.stdout.strip()
+    if not commit:
+        raise RuntimeError(f"the MAME clone in {_CLONE_DIR} names no commit")
+    return commit
 
 
 def _cleanup() -> None:

@@ -685,5 +685,26 @@ class TestDerivativeVersion(unittest.TestCase):
             self.assertEqual(entry["source_ref"], "src/mame/philips/cdi.cpp:484")
 
 
+class AnUnreadableCloneStopsTheScrape(unittest.TestCase):
+    """_get_commit swallowed a failed rev-parse and returned "": cached for a
+    day, the merge then advanced core_version and the refs while
+    upstream_commit stayed on the previous release."""
+
+    def test_no_empty_commit_reaches_the_cache(self):
+        import subprocess
+        from unittest import mock
+
+        from scripts.scraper import mame_hash_scraper as scraper
+
+        failing = subprocess.CalledProcessError(128, ["git", "rev-parse", "HEAD"])
+        with mock.patch.object(scraper, "_run_git", side_effect=failing):
+            with self.assertRaises(RuntimeError):
+                scraper._get_commit()
+        empty = subprocess.CompletedProcess(["git"], 0, stdout="\n", stderr="")
+        with mock.patch.object(scraper, "_run_git", return_value=empty):
+            with self.assertRaises(RuntimeError):
+                scraper._get_commit()
+
+
 if __name__ == "__main__":
     unittest.main()
