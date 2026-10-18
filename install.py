@@ -1528,16 +1528,45 @@ def _validate_targets(data: object) -> dict[str, dict]:
     return normalized
 
 
+NETWORK_ADVICE = ("  Check the connection, and HTTPS_PROXY if this network needs a "
+                  "proxy, then run the same command again.")
+
+
+def _fetch_json(url: str, limit: int, label: str) -> object:
+    """A JSON document, tried MAX_RETRIES times like every file download.
+
+    A file list fetched once ended the run on one timeout over flaky Wi-Fi.
+    A 4xx answer or an invalid document is final: asking again changes
+    nothing.
+    """
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=30) as resp:
+                return _read_limited_json(resp, limit, label)
+        except urllib.error.HTTPError as exc:
+            if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
+                raise
+            delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
+        except (urllib.error.URLError, OSError):
+            if attempt == MAX_RETRIES:
+                raise
+            delay = _retry_delay(attempt, None)
+        time.sleep(delay)
+    raise AssertionError("unreachable")
+
+
 def fetch_manifest(plat: str) -> dict:
     """Download platform manifest JSON."""
     url = MANIFEST_URL.format(platform=plat)
     try:
-        with urllib.request.urlopen(url, timeout=30) as resp:
-            return _validate_manifest(
-                _read_limited_json(resp, MAX_MANIFEST_BYTES, "manifest"), plat
-            )
-    except (urllib.error.URLError, urllib.error.HTTPError, OSError, ValueError) as exc:
-        print(f"  Failed to fetch manifest for {plat}: {exc}", file=sys.stderr)
+        return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "manifest"), plat)
+    except ValueError as exc:
+        print(f"  The file list for {plat} is not valid: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except (urllib.error.URLError, OSError) as exc:
+        print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
+              f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+        print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
 
 
@@ -1550,17 +1579,20 @@ def fetch_targets(plat: str) -> "dict | None":
     """
     url = TARGETS_URL.format(platform=plat)
     try:
-        with urllib.request.urlopen(url, timeout=30) as resp:
-            return _validate_targets(
-                _read_limited_json(resp, MAX_TARGETS_BYTES, "targets manifest")
-            )
+        return _validate_targets(_fetch_json(url, MAX_TARGETS_BYTES, "targets manifest"))
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return {}
         print(f"  Error: failed to fetch targets for {plat}: {exc}", file=sys.stderr)
+        print(NETWORK_ADVICE, file=sys.stderr)
         return None
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        print(f"  Error: failed to fetch targets for {plat}: {exc}", file=sys.stderr)
+    except ValueError as exc:
+        print(f"  Error: the target list for {plat} is not valid: {exc}", file=sys.stderr)
+        return None
+    except (urllib.error.URLError, OSError) as exc:
+        print(f"  Error: failed to fetch targets for {plat}: "
+              f"{getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+        print(NETWORK_ADVICE, file=sys.stderr)
         return None
 
 

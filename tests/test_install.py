@@ -1973,6 +1973,60 @@ class TestAvailablePlatforms(unittest.TestCase):
         self.assertIn("installer stdin is a terminal: True", proc.stdout)
 
 
+class FileListsAreRetried(unittest.TestCase):
+    """The file list was fetched once with a 30 s timeout: one timeout on
+    flaky Wi-Fi ended the run, while each file got three attempts."""
+
+    def _fetch(self, outcomes):
+        calls = []
+
+        def urlopen(url, timeout=None):
+            calls.append(url)
+            outcome = outcomes.pop(0)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return contextlib.nullcontext(io.BytesIO(outcome))
+
+        with unittest.mock.patch.object(install.urllib.request, "urlopen", urlopen), \
+                unittest.mock.patch.object(install.time, "sleep"), \
+                unittest.mock.patch.object(install, "_read_limited_json",
+                                           lambda resp, limit, label: json.loads(resp.read())):
+            try:
+                return install._fetch_json("https://x/list.json", 1000, "list"), calls
+            except OSError as exc:
+                return exc, calls
+
+    def test_a_timeout_then_an_answer_succeeds(self):
+        import urllib.error
+
+        result, calls = self._fetch([urllib.error.URLError("timed out"), b'{"a": 1}'])
+        self.assertEqual(result, {"a": 1})
+        self.assertEqual(len(calls), 2)
+
+    def test_a_404_is_not_retried(self):
+        import urllib.error
+
+        missing = urllib.error.HTTPError("https://x", 404, "Not Found", None, None)
+        result, calls = self._fetch([missing])
+        self.assertIs(result, missing)
+        self.assertEqual(len(calls), 1)
+
+    def test_three_failures_end_with_advice(self):
+        import urllib.error
+
+        failures = [urllib.error.URLError("timed out")] * install.MAX_RETRIES
+        err = io.StringIO()
+        with unittest.mock.patch.object(install.urllib.request, "urlopen",
+                                        side_effect=failures), \
+                unittest.mock.patch.object(install.time, "sleep"), \
+                contextlib.redirect_stderr(err):
+            with self.assertRaises(SystemExit) as caught:
+                install.fetch_manifest("retroarch")
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn("HTTPS_PROXY", err.getvalue())
+        self.assertIn(f"after {install.MAX_RETRIES} attempts", err.getvalue())
+
+
 class TargetListFailureIsNotAnAnswer(unittest.TestCase):
     """A timeout is not 'no targets': it sent users to the full pack."""
 
