@@ -4498,5 +4498,22 @@ class GapsPageCountsOneWay(unittest.TestCase):
         self.assertEqual(result["settled_by"], "arcade")
 
 
+
+class UnsourceableCardSaysWhy(unittest.TestCase):
+    """DraStic's nds_firmware_modified.bin carried an 'unsourceable' badge
+    and nothing else; the reason was only on the gaps page."""
+
+    def test_reason_and_link(self):
+        from scripts.generate_site import _render_emulator_file
+
+        entry = {"name": "nds_firmware_modified.bin", "path": "x.bin",
+                 "unsourceable": "written by the firmware editor, so no dump of it exists"}
+        text = "\n".join(_render_emulator_file(
+            entry, {"files": [entry]}, None, [entry], lambda f: False, "file-x",
+        ))
+        self.assertIn("Not collectable: written by the firmware editor", text)
+        self.assertIn("../gaps.md#acknowledged-gaps", text)
+
+
 if __name__ == "__main__":
     unittest.main()

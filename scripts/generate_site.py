@@ -2304,6 +2304,13 @@ def _render_emulator_file(
             lines.append(f"- {d}")
     if fnote:
         lines.append(f"- {_escape_tags(str(fnote))}")
+    if not in_repo and f.get("unsourceable"):
+        # The badge alone sent readers after a dump that cannot exist; the
+        # reason was only on the gaps page, which the card did not link.
+        lines.append(
+            f"- Not collectable: {_escape_tags(str(f['unsourceable']))} "
+            "([acknowledged gaps](../gaps.md#acknowledged-gaps))"
+        )
     if contents:
         # Every member with the hashes the emulator checks: MAME and FBNeo
         # verify the members, never the archive, so a member's crc32 is the
