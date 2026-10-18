@@ -672,6 +672,30 @@ class TestCompare(unittest.TestCase):
         listing.extend([{"sha": "2"}, {"sha": "3"}])
         self.assertEqual(upstream.commits_touching(self.repo, "a.c", "base", self.dir), 3)
 
+    def test_a_missing_tag_is_asked_again_once_stale(self):
+        """A profile written on release day asked for v2.0 before it was
+        pushed; the 404 was cached for good and the profile was never seen
+        as frozen on its tag."""
+        import os as _os
+
+        answers: list = [None]
+
+        def answer(url):
+            return answers[-1]
+
+        upstream._http_json = answer
+        self.assertIsNone(upstream.tag_commit(self.repo, "v2.0", self.dir))
+        for cached in (Path(self.dir) / "_api").glob("*.json"):
+            stale = _os.path.getmtime(cached) - upstream.MOVING_TTL - 1
+            _os.utime(cached, (stale, stale))
+        answers.append({"object": {"type": "commit", "sha": "rel"}})
+        self.assertEqual(upstream.tag_commit(self.repo, "v2.0", self.dir), "rel")
+        # Found, the answer is kept however old it gets.
+        for cached in (Path(self.dir) / "_api").glob("*.json"):
+            _os.utime(cached, (0, 0))
+        answers.append({"object": {"type": "commit", "sha": "moved"}})
+        self.assertEqual(upstream.tag_commit(self.repo, "v2.0", self.dir), "rel")
+
 
 class TestGitlabTree(unittest.TestCase):
     def setUp(self):

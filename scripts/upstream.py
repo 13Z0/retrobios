@@ -350,22 +350,27 @@ MOVING_TTL = 6 * 3600
 
 
 def _api(
-    url: str, cache_dir: str, offline: bool, max_age: float | None = None
+    url: str, cache_dir: str, offline: bool, max_age: float | None = None,
+    absent_max_age: float | None = None,
 ) -> object | None:
     """Cached API call. The cache stores absence as well as payloads.
 
     ``max_age`` bounds the trust in a cached answer, in seconds; a stale
     answer is refreshed unless the run is offline, when it still serves.
+    ``absent_max_age`` bounds a cached absence alone, for a resource that
+    can appear but, once there, does not change.
     """
     key = hashlib.sha256(url.encode()).hexdigest()
     target = Path(cache_dir) / "_api" / f"{key}.json"
     if target.is_file():
-        fresh = (
-            max_age is None
-            or time.time() - target.stat().st_mtime <= max_age
+        raw = target.read_text(encoding="utf-8")
+        bound = (
+            absent_max_age
+            if raw == ABSENT and absent_max_age is not None
+            else max_age
         )
+        fresh = bound is None or time.time() - target.stat().st_mtime <= bound
         if fresh or offline:
-            raw = target.read_text(encoding="utf-8")
             return None if raw == ABSENT else json.loads(raw)
     if offline:
         return None
@@ -521,10 +526,13 @@ def tag_commit(
     if repo.family != "github":
         return resolve_tag_commit(repo, tag, cache_dir, offline)
     quoted = urllib.parse.quote(tag)
+    # A tag pushed after the first lookup must be seen: the 404 expires,
+    # the commit a tag names does not.
     payload = _api(
         f"{repo.api_base}/repos/{repo.slug}/git/ref/tags/{quoted}",
         cache_dir,
         offline,
+        absent_max_age=MOVING_TTL,
     )
     if not isinstance(payload, dict):
         return None
