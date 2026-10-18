@@ -122,6 +122,24 @@ def fetch(
     return payload
 
 
+def _remove_stale(platform_dir: Path, produced: set[str]) -> None:
+    """Remove what an earlier run wrote and this one does not.
+
+    RetroPie writes one scriptmodule per package it corrects and RetroDECK one
+    manifest per component: a package corrected by an older truth kept its
+    file beside a report saying it was no longer touched, and the directory
+    contradicted the run.
+    """
+    if not platform_dir.is_dir():
+        return
+    for path in sorted(platform_dir.rglob("*"), reverse=True):
+        relative = path.relative_to(platform_dir).as_posix()
+        if path.is_file() and relative not in produced:
+            path.unlink()
+        elif path.is_dir() and not any(path.iterdir()):
+            path.rmdir()
+
+
 def pinned_base(wanted: dict[str, str], scraped: dict | None) -> str:
     """The revision our transcription came from, when the YAML records it.
 
@@ -362,6 +380,7 @@ def export_platform(
     issues = exporter.validate(systems, produced)
 
     platform_dir = output_dir / platform
+    _remove_stale(platform_dir, set(produced))
     for relative, content in produced.items():
         path = platform_dir / relative
         path.parent.mkdir(parents=True, exist_ok=True)

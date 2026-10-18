@@ -784,6 +784,34 @@ class RommExport(unittest.TestCase):
         self.assertTrue(all(k.startswith("psx:") for k in data))
 
 
+class AnExportLeavesNoStaleFile(unittest.TestCase):
+    """RetroPie writes one scriptmodule per corrected package. A second run on
+    a fresher truth printed "2 packages corrected" over a directory still
+    holding the six files of the first run."""
+
+    def test_files_this_run_does_not_write_are_removed(self):
+        import export_native  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "retropie"
+            (root / "scriptmodules" / "libretrocores").mkdir(parents=True)
+            kept = root / "scriptmodules" / "libretrocores" / "lr-mgba.sh"
+            stale = root / "scriptmodules" / "libretrocores" / "lr-pcsx-rearmed.sh"
+            gone_dir = root / "scriptmodules" / "emulators"
+            gone_dir.mkdir()
+            for path in (kept, stale, gone_dir / "pcsx-rearmed.sh"):
+                path.write_text("old", encoding="utf-8")
+            export_native._remove_stale(root, {"scriptmodules/libretrocores/lr-mgba.sh"})
+            self.assertTrue(kept.exists())
+            self.assertFalse(stale.exists())
+            self.assertFalse(gone_dir.exists())
+
+    def test_the_export_clears_before_it_writes(self):
+        source = (REPO_ROOT / "scripts" / "export_native.py").read_text()
+        body = source[source.index("def export_platform("):]
+        self.assertLess(body.index("_remove_stale("), body.index(".write_text("))
+
+
 class RommKeepsItsFixture(unittest.TestCase):
     """The export rebuilt known_bios_files.json from our model in our order:
     3 hash corrections came out as a 3116-line diff, and a key RomM had that
