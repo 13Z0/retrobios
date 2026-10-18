@@ -5001,5 +5001,40 @@ class AFailedVerificationIsAnError(unittest.TestCase):
         self.assertIn('print(f"ERROR: packs failed verification: {\', \'.join(failing)}", file=sys.stderr)', source)
 
 
+
+class TheGroundTruthFooterSaysWhatItCounts(unittest.TestCase):
+    """"417 platform-only (no emulator profile)" where 369 of 526 files had
+    a profile; 20% here for 21% on the site; and "0/81 (0%)" for MiSTer,
+    which declares no core by design."""
+
+    def _footer(self, coverage):
+        import io as _io
+        from contextlib import redirect_stdout
+
+        from scripts.verify import Severity, print_platform_result
+
+        out = _io.StringIO()
+        counts = {Severity.OK: 1, Severity.INFO: 0, Severity.WARNING: 0, Severity.CRITICAL: 0}
+        result = {"platform": "X", "verification_mode": "existence", "total_files": 1,
+                  "severity_counts": counts, "status_counts": {"ok": 1},
+                  "undeclared_files": [], "exclusion_notes": [], "details": [],
+                  "ground_truth_coverage": coverage}
+        with redirect_stdout(out):
+            print_platform_result(result, ["X"])
+        return out.getvalue()
+
+    def test_counts_and_rounding(self):
+        text = self._footer({"with_validation": 109, "with_profile": 369,
+                             "platform_only": 417, "total": 526, "applicable": True})
+        self.assertIn("(21%)", text)
+        self.assertIn("157 platform-only", text)
+
+    def test_not_applicable(self):
+        text = self._footer({"with_validation": 0, "with_profile": 0,
+                             "platform_only": 81, "total": 81, "applicable": False})
+        self.assertIn("not applicable", text)
+        self.assertNotIn("0/81", text)
+
+
 if __name__ == "__main__":
     unittest.main()

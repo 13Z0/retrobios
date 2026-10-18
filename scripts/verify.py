@@ -1478,13 +1478,20 @@ def print_platform_result(
         print(f"  No external files: {len(exclusions)} cores (--verbose lists them)")
 
     gt_cov = result.get("ground_truth_coverage")
-    if gt_cov and gt_cov["total"] > 0:
-        pct = gt_cov["with_validation"] * 100 // gt_cov["total"]
+    if gt_cov and not gt_cov.get("applicable", True):
+        # MiSTer declares no core by design: its BiosDB is the answer, and
+        # the site shows "-" for it rather than a 0% gap.
+        print("  Ground truth: not applicable, the platform runs no profiled core")
+    elif gt_cov and gt_cov["total"] > 0:
+        # Rounded, as the site rounds: truncated, RetroArch read 20% here
+        # and 21% there for one measure.
+        pct = round(gt_cov["with_validation"] * 100 / gt_cov["total"])
         print(
             f"  Ground truth: {gt_cov['with_validation']}/{gt_cov['total']} files have emulator validation ({pct}%)"
         )
-        if gt_cov["platform_only"]:
-            print(f"    {gt_cov['platform_only']} platform-only (no emulator profile)")
+        no_profile = gt_cov["total"] - gt_cov.get("with_profile", gt_cov["with_validation"])
+        if no_profile:
+            print(f"    {no_profile} platform-only (no emulator profile)")
 
 
 # Emulator/system mode verification
@@ -2077,7 +2084,7 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
     # Ground truth coverage footer
     gt_cov = result.get("ground_truth_coverage")
     if gt_cov and gt_cov["total"] > 0:
-        pct = gt_cov["with_validation"] * 100 // gt_cov["total"]
+        pct = round(gt_cov["with_validation"] * 100 / gt_cov["total"])
         print(
             f"  Ground truth: {gt_cov['with_validation']}/{gt_cov['total']} files have emulator validation ({pct}%)"
         )
