@@ -73,6 +73,26 @@ class ForeignTreeNames(unittest.TestCase):
         self.assertEqual(status, "data_dir")
         self.assertEqual(Path(path).stat().st_size, 64)
 
+    def test_a_casing_only_another_tree_holds_reads_the_data_directory(self):
+        """MSX2P.rom: only msx-emu's tree had the exact casing, and widening
+        to every casing served Microsoft/MSX/MSX2P.ROM, another dump, while
+        data/bluemsx held the one blueMSX ships."""
+        self._hold("bios/Other/msx-emu/Machines/Shared Roms/MSX2P.rom", b"B" * 64)
+        self._hold("bios/Microsoft/MSX/MSX2P.ROM", b"O" * 64)
+        cache = self.root / "data" / "bluemsx"
+        (cache / "Machines" / "Shared Roms").mkdir(parents=True)
+        (cache / "Machines" / "Shared Roms" / "MSX2P.rom").write_bytes(b"B" * 64)
+        entry = {
+            "name": "MSX2P.rom", "path": "Machines/Shared Roms/MSX2P.rom",
+            "source_emulator": "bluemsx",
+        }
+        path, status = resolve_local_file(
+            entry, self.db,
+            data_dir_registry={"bluemsx": {"local_cache": str(cache)}},
+        )
+        self.assertEqual(status, "data_dir")
+        self.assertEqual(Path(path).read_bytes(), b"B" * 64)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1365,7 +1365,12 @@ def resolve_local_file(
                     ):
                         candidates.append(path)
         owners = _owner_tokens(file_entry)
-        if not candidates or all(_foreign_tree(p, owners) for p in candidates):
+        # Only another emulator's tree answers the exact casing: what it
+        # holds there says nothing about this entry's file.
+        exact_foreign = bool(candidates) and all(
+            _foreign_tree(p, owners) for p in candidates
+        )
+        if not candidates or exact_foreign:
             # Case-insensitive fallback: upstream platforms disagree on
             # casing (VEC_MineStorm.vec vs VEC_Minestorm.vec). Two casings
             # can name two contents (FONT.ROM and font.rom), so this only
@@ -1403,8 +1408,10 @@ def resolve_local_file(
                 # and a data directory it reads may hold it. Dolphin got
                 # Dolphin-MMJR's codehandler.bin while data/dolphin-sys held
                 # its own; blueMSX got the 16 KB RS232.ROM once msx-emu's
-                # 8 KB copy was set aside, while data/bluemsx held its own.
-                if data_dir_registry and _foreign_tree(best, owners):
+                # 8 KB copy was set aside, while data/bluemsx held its own,
+                # and MSX2P.ROM of another dump once only msx-emu answered
+                # the exact casing.
+                if data_dir_registry and (exact_foreign or _foreign_tree(best, owners)):
                     hit, _mismatch = _resolve_in_data_dirs(
                         names_to_try, data_dir_registry,
                         functools.partial(
