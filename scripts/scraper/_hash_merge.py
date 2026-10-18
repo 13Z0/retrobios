@@ -564,12 +564,63 @@ def _format_contents(contents: list[dict]) -> str:
     return "\n".join(lines)
 
 
+# Content values an FBNeo entry carries, in the order a new one is written.
+_FBNEO_VALUES = ("size", "crc32", "sha1")
+_ENTRY_START = re.compile(r"^  - name: ", re.M)
+_FIELD_LINE = re.compile(r"^    (?P<key>[a-z0-9_]+):\s*(?P<value>[^#\n]*?)\s*(?P<comment>#.*)?$")
+
+
+def _patch_fbneo_values(text: str, changed: dict[tuple[str, str], dict]) -> str:
+    """Rewrite size/crc32/sha1 inside the blocks of the changed entries."""
+    starts = [m.start() for m in _ENTRY_START.finditer(text)] + [len(text)]
+    out = [text[: starts[0]]]
+    for begin, end in zip(starts, starts[1:]):
+        block = text[begin:end]
+        fields = {}
+        for line in block.splitlines()[1:]:
+            match = _FIELD_LINE.match(line)
+            if match:
+                fields[match["key"]] = match["value"].strip().strip('"')
+        name = block.splitlines()[0].removeprefix("  - name:").strip().strip('"')
+        entry = changed.get((fields.get("archive", ""), name))
+        if entry is not None:
+            block = _patch_block_values(block, entry)
+        out.append(block)
+    return "".join(out)
+
+
+def _patch_block_values(block: str, entry: dict) -> str:
+    lines = block.split("\n")
+    for key in _FBNEO_VALUES:
+        value = entry.get(key)
+        if not value:
+            continue
+        rendered = str(value) if key == "size" else f'"{value}"'
+        for i, line in enumerate(lines):
+            match = _FIELD_LINE.match(line)
+            if match and match["key"] == key:
+                if match["value"].strip().strip('"') != str(value):
+                    # A size comment spells the old value; it goes with it.
+                    lines[i] = f"    {key}: {rendered}"
+                break
+        else:
+            anchor = max(
+                (i for i, line in enumerate(lines)
+                 if (m := _FIELD_LINE.match(line)) and m["key"] in ("archive", *_FBNEO_VALUES)),
+                default=0,
+            )
+            lines.insert(anchor + 1, f"    {key}: {rendered}")
+    return "\n".join(lines)
+
+
 def _backup_and_write_fbneo(path: str, data: dict, hashes: dict) -> None:
     """Write merged FBNeo profile using text-based patching.
 
     FBNeo profiles have individual ROM entries with archive: field.
-    Only patches core_version and appends new ROM entries.
-    Existing entries are left untouched (CRC32 changes are rare).
+    Patches core_version, the content values of existing entries that
+    changed, and appends new ROM entries. Advancing core_version alone left
+    a profile claiming a release whose crc32 it did not carry; comments and
+    curated source_refs stay as written.
     """
     p = Path(path)
     backup = p.with_suffix(PROFILE_BACKUP_SUFFIX)
@@ -580,11 +631,25 @@ def _backup_and_write_fbneo(path: str, data: dict, hashes: dict) -> None:
 
     # Identify new ROM entries by comparing parsed data keys, not text search
     existing_data = yaml_load(original) or {}
-    existing_keys = {
-        (f["archive"], f["name"])
+    existing_by_key = {
+        (f["archive"], f["name"]): f
         for f in existing_data.get("files", [])
         if f.get("archive")
     }
+    existing_keys = set(existing_by_key)
+    changed = {
+        (f["archive"], f["name"]): f
+        for f in data.get("files", [])
+        if f.get("archive")
+        and (f["archive"], f["name"]) in existing_by_key
+        and any(
+            str(f.get(k) or "") != str(existing_by_key[(f["archive"], f["name"])].get(k) or "")
+            for k in _FBNEO_VALUES
+            if f.get(k)
+        )
+    }
+    if changed:
+        patched = _patch_fbneo_values(patched, changed)
     new_roms = [
         f
         for f in data.get("files", [])

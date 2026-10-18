@@ -706,5 +706,58 @@ class AnUnreadableCloneStopsTheScrape(unittest.TestCase):
                 scraper._get_commit()
 
 
+
+class WritersPutTheValuesOnDisk(unittest.TestCase):
+    """No test read back what the writers wrote. The FBNeo writer advanced
+    core_version and never patched a changed crc32, and a broken MAME
+    patcher would have done the same without a failing test. These
+    fixtures use the layout the profiles use (entries indented two)."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(dir=Path(__file__).resolve().parents[1] / "tmp"))
+        self.addCleanup(lambda: __import__("shutil").rmtree(self.dir, True))
+
+    def test_fbneo_writes_a_changed_crc32(self):
+        profile = self.dir / "fbneo.yml"
+        profile.write_text(
+            'emulator: FBNeo\ncore_version: "v1.0.0.02"\nfiles:\n'
+            '  - name: "sp-s2.sp1"\n    archive: neogeo.zip\n    required: false\n'
+            '    size: 131072  # 0x20000\n    crc32: "00000000"\n'
+            '    note: "MVS Asia/Europe ver. 5"\n    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1625"\n',
+            encoding="utf-8",
+        )
+        hashes = _write_json(self.dir / "h.json", {
+            "version": "v1.0.0.03",
+            "bios_sets": {"neogeo": {"source_file": "src/burn/drv/neogeo/d_neogeo.cpp",
+                                     "source_line": 1625,
+                                     "roms": [{"name": "sp-s2.sp1", "size": 131072,
+                                               "crc32": "9036d879"}]}},
+        })
+        merge_fbneo_profile(str(profile), hashes, write=True, add_new=False)
+        written = yaml.safe_load(profile.read_text(encoding="utf-8"))
+        entry = written["files"][0]
+        self.assertEqual(written["core_version"], "v1.0.0.03")
+        self.assertEqual(entry["crc32"], "9036d879")
+        self.assertEqual(entry["note"], "MVS Asia/Europe ver. 5")
+        self.assertEqual(entry["source_ref"], "src/burn/drv/neogeo/d_neogeo.cpp:1625")
+        self.assertIn("size: 131072  # 0x20000", profile.read_text(encoding="utf-8"))
+
+    def test_mame_writes_member_values(self):
+        profile = self.dir / "mame.yml"
+        profile.write_text(
+            'emulator: MAME\ncore_version: "0.285"\nfiles:\n'
+            '  - name: neogeo.zip\n    required: true\n    category: bios_zip\n'
+            '    system: snk-neogeo-mvs\n    source_ref: "src/mame/neogeo/neogeo.cpp:2400"\n'
+            '    contents:\n      - name: sp-s2.sp1\n        size: 131072\n'
+            '        crc32: oldcrc32\n        description: Europe MVS (Ver. 2)\n',
+            encoding="utf-8",
+        )
+        hashes = _write_json(self.dir / "h.json", _make_mame_hashes())
+        merge_mame_profile(str(profile), hashes, write=True)
+        written = yaml.safe_load(profile.read_text(encoding="utf-8"))
+        member = written["files"][0]["contents"][0]
+        self.assertEqual(member["crc32"], "9036d879")
+
+
 if __name__ == "__main__":
     unittest.main()
