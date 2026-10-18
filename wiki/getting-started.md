@@ -189,8 +189,11 @@ Accessible via SSH or Samba.
 ```
 
 RetroPie is archived in this project: its configuration is kept and packs are
-still built, but the upstream data is no longer scraped on a schedule. It
-inherits RetroArch's file set, so the RetroArch pack applies as well.
+still built, but the upstream data is no longer scraped on a schedule. Use the
+RetroPie pack, not the RetroArch one: RetroPie inherits RetroArch's systems
+but also installs standalone emulators (openMSX, PCSX2, XRoar, Amiberry and
+others) whose files only the RetroPie pack carries, laid out for
+`~/RetroPie/BIOS/` rather than RetroArch's `system/`.
 
 ### ROCKNIX
 
