@@ -70,6 +70,7 @@ from common import (
 
 yaml = require_yaml()
 from nativemode import (
+    SIZE_AND_ANY_HASH,
     digest_algorithm,
     hash_mismatch_excludes_file,
     normalize as normalize_mode,
@@ -173,8 +174,12 @@ def verify_entry_md5(
     file_entry: dict,
     local_path: str | None,
     resolve_status: str = "",
+    hash_rule: str = "",
 ) -> dict:
-    """MD5 verification -Batocera md5sum + Recalbox multi-hash + Md5Composite."""
+    """MD5 verification -Batocera md5sum + Recalbox multi-hash + Md5Composite.
+
+    Under SIZE_AND_ANY_HASH (RomM) the size and any one declared hash decide.
+    """
     name = file_entry.get("name", "")
     expected_md5 = file_entry.get("md5", "")
     zipped_file = file_entry.get("zipped_file")
@@ -188,6 +193,16 @@ def verify_entry_md5(
 
     if not local_path:
         return {**base, "status": Status.MISSING}
+
+    if hash_rule == SIZE_AND_ANY_HASH:
+        if frontend_digest_matches(file_entry, local_path, "md5", hash_rule):
+            return {**base, "status": Status.OK, "path": local_path}
+        return {
+            **base,
+            "status": Status.UNTESTED,
+            "path": local_path,
+            "reason": "the declared size and at least one declared hash must match",
+        }
 
     if zipped_file:
         found_in_zip = False
@@ -1034,7 +1049,9 @@ def verify_platform(
             elif digest_algorithm(mode) == "sha1":
                 result = verify_entry_sha1(file_entry, local_path)
             else:
-                result = verify_entry_md5(file_entry, local_path, resolve_status)
+                result = verify_entry_md5(
+                    file_entry, local_path, resolve_status, config.get("hash_rule", "")
+                )
                 # Emulator-level validation: informational for platform packs.
                 # Platform verification (MD5) is the authority. Emulator
                 # mismatches are reported as discrepancies, not failures.
@@ -1058,7 +1075,9 @@ def verify_platform(
             if (
                 local_path
                 and result["status"] != Status.MISSING
-                and baseline_verdict(file_entry, local_path, resolve_status, mode)[1] is None
+                and baseline_verdict(
+                    file_entry, local_path, resolve_status, mode, config.get("hash_rule", "")
+                )[1] is None
             ):
                 shipped.setdefault(
                     f"{base_dest}/{destination}" if base_dest else destination,

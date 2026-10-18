@@ -34,6 +34,12 @@ MODES = ("existence", "md5", "sha1")
 MODE_DIGEST = {"md5": "md5", "sha1": "sha1"}
 
 
+#: A frontend that accepts a file on its size and any one declared hash.
+#: RomM's Firmware.verify_file_hashes: size first, then md5, sha1 or crc.
+SIZE_AND_ANY_HASH = "size_and_any_hash"
+HASH_RULES = (SIZE_AND_ANY_HASH,)
+
+
 def normalize(mode: str | None) -> str:
     """Return a declared mode, falling back to the schema default."""
     return mode if mode in MODES else DEFAULT_MODE

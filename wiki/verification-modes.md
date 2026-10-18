@@ -93,10 +93,15 @@ If the inner file is not found inside the ZIP, the status is UNTESTED with a rea
 
 ### RomM verification
 
-RomM uses MD5 verification (`verification_mode: md5`). The platform YAML stores
-SHA1, MD5, and CRC32 for reference, but `verify.py` checks only the MD5 field,
-matching the platform's runtime behavior. ZIP files are not opened; only the
-container is checked.
+**Source**: `backend/models/firmware.py`, `Firmware.verify_file_hashes`
+
+RomM reads the file's bytes (`verification_mode: md5`) but does not compare one
+digest. Its platform YAML carries `hash_rule: size_and_any_hash`: the file's
+size must equal the declared size, then any one of MD5, SHA1 and CRC32 must
+match. An entry without a size never verifies, since RomM reads it as 0. A
+wrong hash beside a right one does not withhold the file. `verify.py`, the
+pack builder and the install manifest apply that rule. ZIP files are not
+opened; only the container is checked.
 
 ### ROCKNIX verification
 

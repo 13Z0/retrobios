@@ -221,6 +221,8 @@ class Scraper(BaseScraper):
             "base_destination": "bios",
             "hash_type": "sha1",
             "verification_mode": "md5",
+            # Firmware.verify_file_hashes: size, then md5, sha1 or crc.
+            "hash_rule": "size_and_any_hash",
             "systems": systems,
         }
 

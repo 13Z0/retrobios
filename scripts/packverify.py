@@ -464,6 +464,7 @@ def _intentional_hash_exclusion(
     zip_contents: dict | None = None,
     data_dir_registry: dict | None = None,
     verification_mode: str = "md5",
+    hash_rule: str = "",
 ) -> bool:
     """Return whether the builder must omit every declaration as unsafe.
 
@@ -490,7 +491,9 @@ def _intentional_hash_exclusion(
         # The builder's own verdict: a zipped_file archive is refused when the
         # member is missing whatever the outer resolution said, a hash
         # mismatch when the frontend's digest disagrees too.
-        _status, refusal = baseline_verdict(entry, local_path, status, verification_mode)
+        _status, refusal = baseline_verdict(
+            entry, local_path, status, verification_mode, hash_rule
+        )
         if refusal is None:
             return False
     return True
@@ -652,6 +655,7 @@ def verify_pack_against_platform(
                 zip_contents=exclusion_index,
                 data_dir_registry=data_registry,
                 verification_mode=verification_mode,
+                hash_rule=config.get("hash_rule", ""),
             ):
                 baseline_excluded += 1
                 continue

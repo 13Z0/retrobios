@@ -805,7 +805,8 @@ def generate_pack(
                     # one digest accepts a file another declared hash
                     # contradicts, as verify judges it.
                     conflict_status, refusal = baseline_verdict(
-                        file_entry, conflict_path, conflict_status, verification_mode
+                        file_entry, conflict_path, conflict_status, verification_mode,
+                        config.get("hash_rule", ""),
                     )
                     if conflict_status == "not_found":
                         file_status[dedup_key] = "missing"
@@ -937,7 +938,8 @@ def generate_pack(
                 # The verdict the install manifest reads too: a member missing
                 # from a zipped_file archive, or a hash the frontend rejects.
                 status, refusal = baseline_verdict(
-                    file_entry, local_path, status, verification_mode
+                    file_entry, local_path, status, verification_mode,
+                    config.get("hash_rule", ""),
                 )
                 if refusal:
                     file_status[dedup_key] = "excluded"
@@ -3949,7 +3951,8 @@ def generate_manifest(
             # missing whatever the outer resolution said. An existence
             # platform never reads the bytes.
             status, refusal = baseline_verdict(
-                file_entry, local_path, status, verification_mode
+                file_entry, local_path, status, verification_mode,
+                config.get("hash_rule", ""),
             )
             if refusal or status in ("not_found", "external"):
                 return None, "hash_mismatch" if refusal else status

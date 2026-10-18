@@ -19,7 +19,7 @@ from common import (
     size_fits,
 )
 from hashing import md5_composite, parse_md5_list
-from nativemode import digest_algorithm, hash_mismatch_excludes_file
+from nativemode import SIZE_AND_ANY_HASH, digest_algorithm, hash_mismatch_excludes_file
 from ziptools import check_inside_zip
 
 # Validation types that require console-specific cryptographic keys.
@@ -649,15 +649,30 @@ def agnostic_substitute(
     return None
 
 
-def frontend_digest_matches(file_entry: dict, local_path: str, algorithm: str) -> bool:
+def frontend_digest_matches(
+    file_entry: dict, local_path: str, algorithm: str, rule: str = ""
+) -> bool:
     """Whether the frontend's own digest accepts the file.
 
     resolve_local_file calls a file `hash_mismatch` when any declared hash
-    disagrees, but a frontend compares one digest. RomM's list carries md5,
-    sha1 and crc32: a mistyped crc32 next to the right md5 must not withhold
-    a file RomM accepts. verify_entry_md5 reads it too: Batocera compares a
-    truncated md5 by prefix and Recalbox hashes a ZIP by its members.
+    disagrees, but a frontend compares one digest. verify_entry_md5 reads it
+    too: Batocera compares a truncated md5 by prefix and Recalbox hashes a
+    ZIP by its members. Under SIZE_AND_ANY_HASH (RomM) the declared size must
+    match and then any one of md5, sha1 and crc32 does: a mistyped hash next
+    to a right one does not withhold the file, a wrong size does.
     """
+    if rule == SIZE_AND_ANY_HASH:
+        if not local_path:
+            return False
+        # RomM reads an absent size as 0: such an entry never verifies.
+        if os.path.getsize(local_path) != int(file_entry.get("size") or 0):
+            return False
+        actual = compute_hashes(local_path)
+        return any(
+            actual[field].lower() == str(file_entry[field]).strip().lower()
+            for field in ("md5", "sha1", "crc32")
+            if file_entry.get(field)
+        )
     if algorithm == "md5":
         declared = parse_md5_list(file_entry.get("md5"))
     else:
@@ -698,7 +713,11 @@ def inner_rom_check(file_entry: dict, local_path: str) -> str:
 
 
 def baseline_verdict(
-    file_entry: dict, local_path: str | None, status: str, verification_mode: str
+    file_entry: dict,
+    local_path: str | None,
+    status: str,
+    verification_mode: str,
+    rule: str = "",
 ) -> tuple[str, str | None]:
     """The status a platform entry ships under, or why a hash platform refuses it.
 
@@ -721,6 +740,12 @@ def baseline_verdict(
         if result == "error":
             return status, "cannot read ZIP"
         return status, f"{member} MD5 mismatch inside ZIP"
+    if rule == SIZE_AND_ANY_HASH and local_path:
+        # A hash found by the resolver does not settle it: the size the
+        # frontend compares first can still be declared otherwise.
+        if frontend_digest_matches(file_entry, local_path, "", rule):
+            return status, None
+        return status, "size or hash mismatch"
     if status != "hash_mismatch":
         return status, None
     if frontend_digest_matches(file_entry, local_path, digest_algorithm(verification_mode)):

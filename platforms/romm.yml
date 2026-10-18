@@ -1,11 +1,12 @@
 inherits: emulatorjs
 platform: RomM
-version: 5.3.1
+version: 5.4.0
 homepage: "https://romm.app"
-source: "https://raw.githubusercontent.com/rommapp/romm/5.3.1/backend/models/fixtures/known_bios_files.json"
+source: "https://raw.githubusercontent.com/rommapp/romm/5.4.0/backend/models/fixtures/known_bios_files.json"
 base_destination: bios
 hash_type: sha1
 verification_mode: md5
+hash_rule: size_and_any_hash
 systems:
   3do:
     files:

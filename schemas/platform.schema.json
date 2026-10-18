@@ -68,6 +68,13 @@
       ],
       "description": "Primary hash algorithm used by this platform"
     },
+    "hash_rule": {
+      "type": "string",
+      "enum": [
+        "size_and_any_hash"
+      ],
+      "description": "How a digest-mode frontend accepts a file when it is not one digest: size_and_any_hash requires the declared size, then any one of md5, sha1 and crc32 (RomM)"
+    },
     "verification_mode": {
       "type": "string",
       "enum": [
