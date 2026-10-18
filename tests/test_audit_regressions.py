@@ -534,6 +534,32 @@ class StandaloneCopiesNameTheirSource(unittest.TestCase):
         self.assertEqual(placed, copies)
 
 
+class ADamagedArchiveIsNotPacked(unittest.TestCase):
+    """The deterministic rebuild raises on a member whose bytes fail their
+    CRC; the builder caught it and copied the damaged archive into the pack
+    "for verify to flag", which nothing did."""
+
+    def test_the_rebuild_refusal_reaches_the_run(self):
+        import zipfile
+
+        from generate_pack import DamagedArchiveError, _normalize_zip_for_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            source = Path(directory) / "set.zip"
+            with zipfile.ZipFile(source, "w", zipfile.ZIP_STORED) as zf:
+                zf.writestr("rom.bin", b"A" * 64)
+            data = bytearray(source.read_bytes())
+            data[data.index(b"A" * 64)] ^= 0xFF
+            source.write_bytes(bytes(data))
+            pack = Path(directory) / "pack.zip"
+            with zipfile.ZipFile(pack, "w") as target:
+                with self.assertRaises(DamagedArchiveError) as caught:
+                    _normalize_zip_for_pack(str(source), "set.zip", target)
+                self.assertNotIn("set.zip", target.namelist())
+            self.assertIsInstance(caught.exception, OSError)
+            self.assertIn("set.zip", str(caught.exception))
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

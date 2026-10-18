@@ -1217,6 +1217,10 @@ def _add_zip_to_pack(
     _normalize_zip_for_pack(source_zip, dest_path, target_zf)
 
 
+class DamagedArchiveError(OSError):
+    """An archive of the collection whose members fail their own CRC."""
+
+
 def _normalize_zip_for_pack(
     source_zip: str, dest_path: str, target_zf: zipfile.ZipFile
 ) -> None:
@@ -1241,9 +1245,12 @@ def _normalize_zip_for_pack(
     try:
         rebuild_zip_deterministic(source_zip, tmp_path)
         _add_pack_member(target_zf, tmp_path, dest_path)
-    except zipfile.BadZipFile:
-        # Corrupt source ZIP: copy as-is (will be flagged by verify)
-        _add_pack_member(target_zf, source_zip, dest_path)
+    except zipfile.BadZipFile as exc:
+        # The rebuild checks every member's CRC. Copied as-is "for verify to
+        # flag", a damaged archive went into the pack and nothing flagged it.
+        raise DamagedArchiveError(
+            f"{source_zip}: {exc}; restore it from git or the release before packing"
+        ) from exc
     finally:
         os.unlink(tmp_path)
 
@@ -2847,7 +2854,13 @@ _MISSING_DATA_DIRS: set[str] = set()
 
 def main() -> None:
     with contextlib.ExitStack() as held:
-        _main(held)
+        try:
+            _main(held)
+        except DamagedArchiveError as exc:
+            # Emulator, system and hash modes have no per-platform loop to
+            # report it: the run stops with the file to restore.
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
     if _MISSING_DATA_DIRS:
         print(
             "ERROR: packs written without data directories that are not cached: "
