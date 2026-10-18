@@ -23,10 +23,10 @@ systems: [pc-98]
 # .info declares firmware_count=11 but is incomplete: misses IDE, SCSI, SASI,
 # PCI, GPIB ROMs and key.txt. Lists itf.rom which is dead code (phantom).
 #
-# The fmgen YM2608 rhythm engine (fmgen_opna.cpp:1413-1443) loads WAV files
-# with uppercase names (2608_BD.WAV). The built-in rhythm engine (rhythmc.c)
-# uses lowercase (2608_bd.wav). Both resolve from np2kai/.
-# The fmgen engine also accepts "2608_RYM.WAV" as fallback for the rim sample.
+# The fmgen YM2608 rhythm engine (fmgen_opna.cpp:1415-1444) loads WAV files
+# with uppercase names (2608_BD.WAV), the built-in rhythm engine (rhythmc.c)
+# lowercase ones (2608_bd.wav), both from np2kai/. fmgen's 2608_RYM.WAV
+# fallback for the rim sample is opened without the directory.
 #
 # Sound ROM has board-specific variants tried before the generic fallback:
 # sound26.rom (26K), sound86.rom (86), sound118.rom (118), soundSPB.rom
@@ -85,50 +85,84 @@ files:
     source_ref: "sound/soundrom.c:15-16,21-55,93-106"
 
   # -- YM2608 OPNA rhythm samples --
-  # Loaded by the built-in rhythm engine (rhythmc.c:60-71) using lowercase
-  # filenames, and by the fmgen engine (fmgen_opna.cpp:1413-1443) using
-  # uppercase (2608_BD.WAV etc). Both resolve via getbiospath().
+  # Two engines, two sets of names: the built-in rhythm engine (rhythmc.c:60-71)
+  # opens the lowercase files, fmgen (fmgen_opna.cpp:1415-1444, selected by the
+  # np2kai_usefmgen option) the uppercase ones. getbiospath() folds no case
+  # (pccore.c:262-275), so a case-sensitive filesystem needs both sets.
   - name: "2608_bd.wav"
     path: "np2kai/2608_bd.wav"
     required: false
-    aliases: ["2608_BD.WAV"]
     note: "YM2608 OPNA rhythm sample: bass drum"
-    source_ref: "sound/rhythmc.c:11, 60-71, sound/fmgen/fmgen_opna.cpp:1435"
+    source_ref: "sound/rhythmc.c:11, 60-71"
 
   - name: "2608_sd.wav"
     path: "np2kai/2608_sd.wav"
     required: false
-    aliases: ["2608_SD.WAV"]
     note: "YM2608 OPNA rhythm sample: snare drum"
-    source_ref: "sound/rhythmc.c:12, sound/fmgen/fmgen_opna.cpp:1435-1439"
+    source_ref: "sound/rhythmc.c:12, 60-71"
 
   - name: "2608_top.wav"
     path: "np2kai/2608_top.wav"
     required: false
-    aliases: ["2608_TOP.WAV"]
     note: "YM2608 OPNA rhythm sample: top cymbal"
-    source_ref: "sound/rhythmc.c:13, sound/fmgen/fmgen_opna.cpp:1435-1439"
+    source_ref: "sound/rhythmc.c:13, 60-71"
 
   - name: "2608_hh.wav"
     path: "np2kai/2608_hh.wav"
     required: false
-    aliases: ["2608_HH.WAV"]
     note: "YM2608 OPNA rhythm sample: hi-hat"
-    source_ref: "sound/rhythmc.c:14, sound/fmgen/fmgen_opna.cpp:1435-1439"
+    source_ref: "sound/rhythmc.c:14, 60-71"
 
   - name: "2608_tom.wav"
     path: "np2kai/2608_tom.wav"
     required: false
-    aliases: ["2608_TOM.WAV"]
     note: "YM2608 OPNA rhythm sample: tom"
-    source_ref: "sound/rhythmc.c:15, sound/fmgen/fmgen_opna.cpp:1435-1439"
+    source_ref: "sound/rhythmc.c:15, 60-71"
 
   - name: "2608_rim.wav"
     path: "np2kai/2608_rim.wav"
     required: false
-    aliases: ["2608_RIM.WAV", "2608_RYM.WAV"]
-    note: "YM2608 OPNA rhythm sample: rim shot. fmgen also accepts 2608_RYM.WAV."
-    source_ref: "sound/rhythmc.c:16, sound/fmgen/fmgen_opna.cpp:1435-1445"
+    note: "YM2608 OPNA rhythm sample: rim shot"
+    source_ref: "sound/rhythmc.c:16, 60-71"
+
+  - name: "2608_BD.WAV"
+    path: "np2kai/2608_BD.WAV"
+    required: false
+    note: "YM2608 OPNA rhythm sample for the fmgen engine: bass drum"
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+
+  - name: "2608_SD.WAV"
+    path: "np2kai/2608_SD.WAV"
+    required: false
+    note: "YM2608 OPNA rhythm sample for the fmgen engine: snare drum"
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+
+  - name: "2608_TOP.WAV"
+    path: "np2kai/2608_TOP.WAV"
+    required: false
+    note: "YM2608 OPNA rhythm sample for the fmgen engine: top cymbal"
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+
+  - name: "2608_HH.WAV"
+    path: "np2kai/2608_HH.WAV"
+    required: false
+    note: "YM2608 OPNA rhythm sample for the fmgen engine: hi-hat"
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+
+  - name: "2608_TOM.WAV"
+    path: "np2kai/2608_TOM.WAV"
+    required: false
+    note: "YM2608 OPNA rhythm sample for the fmgen engine: tom"
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+
+  - name: "2608_RIM.WAV"
+    path: "np2kai/2608_RIM.WAV"
+    required: false
+    note: >-
+      YM2608 OPNA rhythm sample for the fmgen engine: rim shot. When it is
+      missing fmgen tries 2608_RYM.WAV, but strncpy drops the directory, so
+      that name is opened from the working directory, not from np2kai/.
+    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
 
   # -- IDE BIOS ROM --
   # Loaded by ideio_reset (cbus/ideio.c:1944-1981). Tried in order:

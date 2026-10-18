@@ -102,5 +102,27 @@ class SharedGroupsAddNoSecondSpelling(unittest.TestCase):
         self.assertEqual(respelled, [])
 
 
+class Np2kaiRhythmSamplesAreTwoSets(unittest.TestCase):
+    """NP2kai's rhythm engine opens 2608_bd.wav, fmgen 2608_BD.WAV, and
+    getbiospath folds no case. Filed as aliases of one entry, a pack built
+    from the profile shipped one spelling and reported both OK."""
+
+    def test_each_spelling_is_its_own_entry(self):
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from common import load_emulator_profiles
+
+        files = load_emulator_profiles(str(REPO_ROOT / "emulators"))["np2kai"]["files"]
+        paths = {entry.get("path") for entry in files}
+        aliases = {alias for entry in files for alias in entry.get("aliases", [])}
+        for sample in ("BD", "SD", "TOP", "HH", "TOM", "RIM"):
+            with self.subTest(sample=sample):
+                self.assertIn(f"np2kai/2608_{sample.lower()}.wav", paths)
+                self.assertIn(f"np2kai/2608_{sample}.WAV", paths)
+                self.assertNotIn(f"2608_{sample}.WAV", aliases)
+        self.assertNotIn("2608_RYM.WAV", aliases)
+
+
 if __name__ == "__main__":
     unittest.main()
