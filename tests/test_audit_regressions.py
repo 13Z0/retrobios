@@ -4802,5 +4802,24 @@ class ZippedFileMd5IsParsedOnce(unittest.TestCase):
             self.assertIn("parse_md5_list(", source, module)
 
 
+
+class AHashListIsReadOneWay(unittest.TestCase):
+    """mesence declares four sha256 for BS-X.bin as one comma-joined string.
+    The resolver split it and shipped the file; the gap report and
+    profile_sync looked the whole string up and called it missing."""
+
+    def test_every_reader_splits_the_list(self):
+        from scripts.cross_reference import _declared_content
+        from scripts.hashing import parse_hash_list
+        from scripts.profile_sync import entry_hashes
+
+        a, b = "a" * 64, "B" * 64
+        entry = {"name": "BS-X.bin", "sha256": f"{a}, {b}", "crc32": "0xDEADBEEF"}
+        self.assertEqual(parse_hash_list(entry["sha256"]), [a, b.lower()])
+        self.assertEqual(_declared_content(entry)["sha256"], {a, b.lower()})
+        self.assertEqual(_declared_content(entry)["crc32"], {"deadbeef"})
+        self.assertEqual(set(entry_hashes(entry)), {a, b.lower(), "deadbeef"})
+
+
 if __name__ == "__main__":
     unittest.main()

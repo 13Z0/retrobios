@@ -18,7 +18,7 @@ from common import (
     sanitize_pack_path,
     size_fits,
 )
-from hashing import md5_composite, parse_md5_list
+from hashing import md5_composite, parse_hash_list, parse_md5_list
 from nativemode import SIZE_AND_ANY_HASH, digest_algorithm, hash_mismatch_excludes_file
 from ziptools import check_inside_zip
 
@@ -58,18 +58,9 @@ def _entry_rule(emu_name: str, f: dict, checks: set[str]) -> dict:
     1 KiB Wii U otp.bin, and the variant search handed Cemu the 3DS file.
     """
     def values(field: str) -> set[str]:
-        raw = f.get(field)
-        if not raw or field not in checks:
+        if field not in checks:
             return set()
-        items = raw if isinstance(raw, list) else str(raw).split(",")
-        out = set()
-        for item in items:
-            norm = str(item).strip().lower()
-            if field == "crc32" and norm.startswith("0x"):
-                norm = norm[2:]
-            if norm:
-                out.add(norm)
-        return out
+        return set(parse_hash_list(f.get(field)))
 
     raw_size = f.get("size") if "size" in checks else None
     adler = f.get("known_hash_adler32") or f.get("adler32")

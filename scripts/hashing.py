@@ -88,13 +88,29 @@ def md5_composite(filepath: str | Path) -> str:
     _md5_composite_cache[key] = result
     return result
 
+def parse_hash_list(raw: str | list | int | None) -> list[str]:
+    """Normalize any hash field into its accepted values, lowercase.
+
+    A field holds one value, a YAML list, or one comma-joined string
+    (Recalbox md5, mesence's four sha256 for one entry); a crc32 may carry
+    a 0x prefix. Read one way here, the resolver, the gap report and
+    profile_sync accept the same values.
+    """
+    if raw is None or raw == "":
+        return []
+    items = raw if isinstance(raw, list) else str(raw).split(",")
+    out: list[str] = []
+    for item in items:
+        value = str(item).strip().lower().removeprefix("0x")
+        if value and value not in out:
+            out.append(value)
+    return out
+
+
 def parse_md5_list(raw: str | list | None) -> list[str]:
     """Normalize an md5 field into a lowercase list.
 
     Platform YAMLs carry Recalbox multi-hash as one comma-separated string,
     emulator profiles carry a YAML list. Both reach here.
     """
-    if not raw:
-        return []
-    values = raw if isinstance(raw, list) else str(raw).split(",")
-    return [str(m).strip().lower() for m in values if str(m).strip()]
+    return parse_hash_list(raw)

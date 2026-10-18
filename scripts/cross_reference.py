@@ -42,6 +42,7 @@ from common import (
     standalone_set,
     select_emulator_profiles,
 )
+from hashing import parse_hash_list
 from validation import declaration_settles, outside_gap_scope
 
 yaml = require_yaml()
@@ -254,9 +255,7 @@ def _declared_content(file_entry: dict) -> dict[str, set[str]]:
     """The hashes an entry declares, lowercased, by algorithm."""
     declared: dict[str, set[str]] = {}
     for field in _HASH_FIELDS:
-        raw = file_entry.get(field)
-        values = raw if isinstance(raw, list) else [raw]
-        found = {str(v).lower().removeprefix("0x") for v in values if v}
+        found = set(parse_hash_list(file_entry.get(field)))
         if found:
             declared[field] = found
     return declared
@@ -415,8 +414,7 @@ def entry_source(f: dict, index: dict) -> str | None:
             return source
 
     def values(field: str) -> list[str]:
-        raw = f.get(field) or []
-        return [str(v).lower() for v in (raw if isinstance(raw, list) else [raw]) if v]
+        return parse_hash_list(f.get(field))
 
     held = (
         any(index["by_md5"].get(v) for v in parse_md5_list(f.get("md5")))

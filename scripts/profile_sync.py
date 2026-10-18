@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
 from common import load_emulator_profiles, suggest_names
+from hashing import parse_hash_list
 from upstream import CompareResult, find_renamed
 
 DEFAULT_CACHE = upstream.CACHE_DIR
@@ -257,11 +258,8 @@ def entry_hashes(entry: dict) -> list[str]:
         if not isinstance(source, dict):
             continue
         for field in HASH_FIELDS:
-            val = source.get(field)
-            vals = val if isinstance(val, list) else [val] if val else []
-            for v in vals:
-                v = str(v).lower().removeprefix("0x")
-                if v and v not in tokens:
+            for v in parse_hash_list(source.get(field)):
+                if v not in tokens:
                     tokens.append(v)
     return tokens
 
