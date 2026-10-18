@@ -2872,6 +2872,15 @@ def generate_emulator_page(
             lines.append(f"| Upstream | [{upstream}]({upstream}) |")
         else:
             lines.append(f"| Upstream | {upstream} |")
+    gone = profile.get("upstream_gone")
+    if gone:
+        # The links above answer 451 or reach a domain someone else now
+        # owns: said beside them, with the date the profile observed it.
+        lines.append(f"| Source status | gone: {_escape_tags(str(gone))} |")
+    mirror = profile.get("source_mirror")
+    if mirror:
+        lines.append(f"| Mirror | [{mirror}]({mirror}) |" if str(mirror).startswith("http")
+                     else f"| Mirror | {mirror} |")
     lines.append(f"| Version | {version} |")
     revision = revision_markdown(profile)
     if revision:

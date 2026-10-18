@@ -419,5 +419,23 @@ class TheGapsSayWhatToSupplyAndWhere(unittest.TestCase):
         self.assertEqual(row["expected"], "sha1:" + "a" * 40)
 
 
+
+class AGoneSourceIsSaid(unittest.TestCase):
+    """citron, yuzu and suyu linked sources answering 451 or a domain now
+    owned by someone else, and the page said nothing."""
+
+    def test_the_status_row(self):
+        import generate_site
+
+        profile = {"emulator": "Citron", "type": "standalone", "systems": [],
+                   "source": "https://git.citron-emu.org/citron-emu/Citron",
+                   "upstream_gone": "git.citron-emu.org no longer resolves. Observed 2026-09-04.",
+                   "source_mirror": "https://example.org/mirror/Citron", "files": []}
+        page = generate_site.generate_emulator_page(
+            "citron", profile, {"files": {}, "indexes": {}}, {})
+        self.assertIn("| Source status | gone: git.citron-emu.org no longer resolves", page)
+        self.assertIn("| Mirror | [https://example.org/mirror/Citron]", page)
+
+
 if __name__ == "__main__":
     unittest.main()
