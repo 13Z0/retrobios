@@ -2811,6 +2811,21 @@ def _print_choices(
         print(f"  {name:<{width}}  {_sized(held)}")
 
 
+def _older_list_advice() -> str:
+    """How to reach a file list that records what an option needs.
+
+    A list without the fields comes from an older release. Pinned with
+    RETROBIOS_REF, as the docs suggest for reproducibility, "a newer one"
+    meant unsetting the variable, and nothing said so.
+    """
+    if RELEASE_REF != DEFAULT_RELEASE_REF:
+        return (f"  RETROBIOS_REF={RELEASE_REF} selects file lists published before "
+                "this option existed: unset RETROBIOS_REF to use the current ones, "
+                "or run without the option.")
+    return ("  The file list comes from an older release: run the one-line "
+            "installer again to fetch the current one.")
+
+
 def _requested_narrowing(
     args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict]
 ) -> tuple[list[str], list[str], list[str]] | None:
@@ -2821,10 +2836,11 @@ def _requested_narrowing(
         # Without the fields, a region filter would match nothing and install
         # everything: refused rather than ignored.
         print(
-            f"Error: the {plat} file list records no systems or regions; "
-            "narrowing needs a newer one",
+            f"Error: the {plat} file list records no systems or regions, so "
+            "--system, --core and --region cannot narrow it.",
             file=sys.stderr,
         )
+        print(_older_list_advice(), file=sys.stderr)
         sys.exit(1)
     choices = available_choices(files, omitted)
     try:
@@ -3153,9 +3169,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             if "system_cores" not in manifest:
                 print(
                     f"Error: the {plat_name} file list does not say which cores "
-                    "read which systems; --installed-cores needs a newer one",
+                    "read which systems, which --installed-cores needs.",
                     file=sys.stderr,
                 )
+                print(_older_list_advice(), file=sys.stderr)
                 sys.exit(1)
             before = len(files)
             files, omitted_files = narrow_to_cores(

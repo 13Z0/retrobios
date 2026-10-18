@@ -379,7 +379,7 @@ class TheOneLinerReadsInstalledCores(unittest.TestCase):
             (repo.root / "cores" / "mgba_libretro.so").write_bytes(b"")
             proc = repo.run("--installed-cores")
             self.assertEqual(proc.returncode, 1)
-            self.assertIn("needs a newer one", proc.stderr)
+            self.assertIn("older release", proc.stderr)
 
     def test_a_platform_that_ships_its_cores_refuses_the_flag(self):
         with _CoreRepository() as repo:

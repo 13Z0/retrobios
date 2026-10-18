@@ -374,6 +374,20 @@ class TheOneLinerNarrows(unittest.TestCase):
             self.assertIn("records no systems or regions", proc.stderr)
             self.assertEqual(repo.installed(), [])
 
+    def test_a_pinned_ref_is_named_as_the_way_out(self):
+        """RETROBIOS_REF=<tag>, which the docs suggest for reproducibility,
+        selects lists from before narrowing existed; the error said only
+        "narrowing needs a newer one"."""
+        with FakeRepository(selection=False) as repo:
+            proc = subprocess.run(
+                repo.command("--region", "us"),
+                env={**repo.env(), "RETROBIOS_REF": "v2026.10.10"},
+                capture_output=True, text=True, timeout=60, check=False,
+                stdin=subprocess.DEVNULL,
+            )
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("unset RETROBIOS_REF", proc.stderr)
+
     def test_empty_names_are_a_usage_error(self):
         with FakeRepository() as repo:
             for option in (["--region", " , "], ["--system", ""], ["--core", ","]):
