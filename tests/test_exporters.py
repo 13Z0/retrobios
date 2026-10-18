@@ -849,12 +849,14 @@ class BizhawkExport(unittest.TestCase):
         self.assertEqual(produced, source)
         self.assertFalse(exporter.states(entry, "sha1"))
 
-    def test_a_fill_the_call_holds_is_counted(self):
-        exporter, entry, _, produced = self._export(
-            "bios.bin", f'File("{"0" * 40}", 4096, "bios.bin", "BIOS");'
-        )
-        self.assertIn(self.SHA1.upper(), produced)
-        self.assertTrue(exporter.states(entry, "sha1"))
+    def test_a_homonym_in_another_system_keeps_bizhawks_hash(self):
+        """A Dummy entry the truth gained a SHA1 for (DSi_Firmware.bin) could
+        only be rewritten through a same-named File call of another system,
+        which then took the NDS hash and refused the dump it accepted."""
+        call = f'File("{"0" * 40}", 131072, "DSi_Firmware.bin", "Other system");'
+        exporter, entry, source, produced = self._export("DSi_Firmware.bin", call)
+        self.assertEqual(produced, source)
+        self.assertFalse(exporter.states(entry, "sha1"))
 
 
 class RetrodeckExport(unittest.TestCase):
