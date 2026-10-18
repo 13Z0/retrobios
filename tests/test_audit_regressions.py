@@ -4670,5 +4670,25 @@ class SiteCodeSpansHoldTheirValue(unittest.TestCase):
         self.assertTrue(span.startswith("`") and span.endswith("`"))
 
 
+
+class TheDatasetDescribesItsDownloads(unittest.TestCase):
+    """data.md was a Dataset named "Data & API" with no distribution,
+    licence, date or creator: nothing a dataset harvester could index."""
+
+    def test_distribution_licence_and_date(self):
+        from scripts.generate_site import dataset_structured_data
+
+        exports = [{"title": "Content database", "url": "api/v1/database.json",
+                    "media_type": "application/json", "bytes": 10, "sha256": "ab" * 32}]
+        data = dataset_structured_data(exports, {"generated_at": "2026-10-18T07:00:00Z"})
+        self.assertEqual(data["dateModified"], "2026-10-18")
+        self.assertIn("MIT", data["license"])
+        (download,) = data["distribution"]
+        self.assertEqual(download["@type"], "DataDownload")
+        self.assertTrue(download["contentUrl"].endswith("/api/v1/database.json"))
+        self.assertEqual(download["sha256"], "ab" * 32)
+        self.assertNotEqual(data["name"], "Data & API")
+
+
 if __name__ == "__main__":
     unittest.main()

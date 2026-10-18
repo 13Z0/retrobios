@@ -1216,6 +1216,36 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
 PAGE_DATA: dict[str, dict] = {}
 
 
+def dataset_structured_data(exports: list[dict], db: dict) -> dict:
+    """The data page as a schema.org Dataset a harvester can index.
+
+    It was a Dataset named "Data & API" with no download, licence, date or
+    creator, so Google Dataset Search and open-data catalogues had nothing
+    to list. The exports are metadata this project authors: MIT, as the
+    LICENSE's scope says.
+    """
+    data: dict = {
+        "name": f"{SITE_NAME} collection data",
+        "license": "https://opensource.org/licenses/MIT",
+        "creator": {"@type": "Organization", "name": SITE_NAME, "url": REPO_URL},
+        "distribution": [
+            {
+                "@type": "DataDownload",
+                "name": item["title"],
+                "contentUrl": urllib.parse.urljoin(SITE_URL, item["url"]),
+                "encodingFormat": item["media_type"],
+                "contentSize": f"{item['bytes']} B",
+                "sha256": item["sha256"],
+            }
+            for item in exports
+        ],
+    }
+    generated = str(db.get("generated_at") or "")[:10]
+    if generated:
+        data["dateModified"] = generated
+    return data
+
+
 def emulator_structured_data(profile: dict) -> dict:
     """What an emulator page states, for a reader of its JSON-LD.
 
@@ -4064,6 +4094,7 @@ def main() -> None:
         docs, db, coverages, profiles, stats, gap_report
     )
     write_if_changed(str(docs / "data.md"), generate_data_page(exports))
+    PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 
     # Build system_id -> manufacturer page map (needed by all generators)
     print("Building system cross-reference map...")
