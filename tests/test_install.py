@@ -2260,5 +2260,26 @@ class CaseVariants(unittest.TestCase):
         )
 
 
+
+class AnUnreadableRetroDeckConfigIsSaid(unittest.TestCase):
+    """retrodeck.json present but unreadable: the installer wrote to
+    ~/retrodeck without a word, where a home moved to an SD card is not."""
+
+    def test_the_fallback_is_announced(self):
+        import contextlib
+
+        home = Path(_tempdir(self))
+        conf = home / ".var" / "app" / "net.retrodeck.retrodeck" / "config" / "retrodeck"
+        conf.mkdir(parents=True)
+        (conf / "retrodeck.json").write_text("{truncated")
+        err = io.StringIO()
+        with unittest.mock.patch.object(install.Path, "home", return_value=home), \
+                unittest.mock.patch.object(install, "_detect_embedded", return_value=[]), \
+                contextlib.redirect_stderr(err):
+            found = install.detect_platforms("linux")
+        self.assertIn(("retrodeck", home / "retrodeck"), found)
+        self.assertIn("could not read paths.rd_home_path", err.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

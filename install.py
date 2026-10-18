@@ -952,6 +952,14 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         retrodeck_cfg = retrodeck_conf_dir / "retrodeck.cfg"
         if retrodeck_json.exists():
             rd_home = _parse_json_path(retrodeck_json, "paths", "rd_home_path")
+            if not rd_home:
+                # A home moved to an SD card lives only in this file: the
+                # default is a guess, and the user is told so.
+                print(
+                    f"Warning: could not read paths.rd_home_path from "
+                    f"{retrodeck_json}; assuming {home / 'retrodeck'}",
+                    file=sys.stderr,
+                )
             found.append(("retrodeck", Path(rd_home) if rd_home else home / "retrodeck"))
         elif retrodeck_cfg.exists():
             rd_home = _parse_bash_var(retrodeck_cfg, "rdhome")
