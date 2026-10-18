@@ -457,14 +457,51 @@ def _retroarch_cfg_dir(
     return None
 
 
+def _steam_libraries() -> list[Path]:
+    """Every Steam library, the default one first.
+
+    Steam lists the others in steamapps/libraryfolders.vdf, each as a
+    "path" line; a RetroArch installed on D:/SteamLibrary was not found
+    when only Program Files was searched.
+    """
+    roots: list[Path] = []
+    for var in ("ProgramFiles(x86)", "ProgramFiles"):
+        base = os.environ.get(var, "")
+        if base and (Path(base) / "Steam").is_dir():
+            roots.append(Path(base) / "Steam")
+    libraries = list(roots)
+    for root in roots:
+        vdf = root / "steamapps" / "libraryfolders.vdf"
+        try:
+            text = vdf.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for raw in re.findall(r'"path"\s+"([^"]+)"', text):
+            library = Path(raw.replace("\\\\", "\\"))
+            if library not in libraries:
+                libraries.append(library)
+    return libraries
+
+
 def _windows_retroarch_dirs() -> list[Path]:
-    """Folders holding retroarch.exe where the installer and the archive put
-    it: C:/RetroArch-Win64 by default, C:/RetroArch for 32-bit builds."""
+    """Folders holding retroarch.exe where its installers put it.
+
+    C:/RetroArch-Win64 by default, C:/RetroArch for 32-bit builds, the same
+    names under Program Files, every Steam library, and the Emulators folder
+    of an installed ES-DE (es_find_rules.xml lists all of them).
+    """
     candidates = [Path("C:/RetroArch-Win64"), Path("C:/RetroArch")]
     for var in ("ProgramFiles", "ProgramFiles(x86)"):
         root = os.environ.get(var, "")
         if root:
-            candidates.append(Path(root) / "RetroArch")
+            candidates += [Path(root) / "RetroArch-Win64", Path(root) / "RetroArch"]
+            candidates += [
+                Path(root) / "ES-DE" / "Emulators" / name
+                for name in ("RetroArch-Win64", "RetroArch")
+            ]
+    candidates += [
+        library / "steamapps" / "common" / "RetroArch" for library in _steam_libraries()
+    ]
     return [folder for folder in candidates if (folder / "retroarch.exe").is_file()]
 
 

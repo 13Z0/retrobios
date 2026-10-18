@@ -970,6 +970,49 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         self.assertEqual(found, [("emudeck", home / "elsewhere" / "bios")])
 
 
+class RetroArchIsFoundWhereWindowsInstallsPutIt(unittest.TestCase):
+    """Program Files\\RetroArch-Win64, a Steam library on another drive and
+    an installed ES-DE's Emulators folder all held a RetroArch the one-liner
+    reported as "no supported platform detected"."""
+
+    def _env(self, program_files: Path) -> None:
+        patcher = unittest.mock.patch.dict(
+            os.environ, {"ProgramFiles": str(program_files), "ProgramFiles(x86)": ""}
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def _exe(folder: Path) -> Path:
+        folder.mkdir(parents=True)
+        (folder / "retroarch.exe").write_bytes(b"MZ")
+        return folder
+
+    def test_program_files_win64(self):
+        program_files = Path(_tempdir(self))
+        self._env(program_files)
+        found = self._exe(program_files / "RetroArch-Win64")
+        self.assertIn(found, install._windows_retroarch_dirs())
+
+    def test_a_steam_library_on_another_drive(self):
+        program_files = Path(_tempdir(self))
+        library = Path(_tempdir(self))
+        steamapps = program_files / "Steam" / "steamapps"
+        steamapps.mkdir(parents=True)
+        (steamapps / "libraryfolders.vdf").write_text(
+            '"libraryfolders"\n{\n\t"1"\n\t{\n\t\t"path"\t\t"' + str(library) + '"\n\t}\n}\n'
+        )
+        self._env(program_files)
+        found = self._exe(library / "steamapps" / "common" / "RetroArch")
+        self.assertIn(found, install._windows_retroarch_dirs())
+
+    def test_an_installed_es_de(self):
+        program_files = Path(_tempdir(self))
+        self._env(program_files)
+        found = self._exe(program_files / "ES-DE" / "Emulators" / "RetroArch-Win64")
+        self.assertIn(found, install._windows_retroarch_dirs())
+
+
 class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
     """install.py runs where the bootstraps let it run: Python 3.8, stdlib only.
 
