@@ -171,6 +171,43 @@ class CrossReferenceAnswersForTheEmulatorAsked(unittest.TestCase):
         self.assertIn("not run by misterfpga", proc.stderr)
 
 
+class AMissingDatabaseIsNamed(unittest.TestCase):
+    """`slots.py --db nosuch.json` and `verify.py --all --db nosuch.json`
+    ended on a FileNotFoundError at the bottom of a stack trace;
+    generate_truth and validate_pr carried on without one."""
+
+    EXTRA = {
+        "auto_fetch.py": ["--all", "--dry-run"],
+        "generate_truth.py": ["--all", "--output-dir", "{out}"],
+        "generate_site.py": ["--docs-dir", "{out}"],
+        "generate_pack.py": ["--platform", "retroarch", "--offline", "--output-dir", "{out}"],
+        "validate_pr.py": ["bios/Sony/PlayStation/scph5501.bin"],
+        "verify.py": ["--all"],
+    }
+
+    def _taking_db(self) -> list[str]:
+        return sorted(
+            path.name for path in (REPO_ROOT / "scripts").glob("*.py")
+            if re.search(r'add_argument\(\s*"--db"', path.read_text(encoding="utf-8"))
+        )
+
+    def test_every_script_names_the_missing_file(self):
+        scratch = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(scratch.cleanup)
+        out = str(Path(scratch.name) / "out")
+        for script in self._taking_db():
+            extra = [arg.format(out=out) for arg in self.EXTRA.get(script, [])]
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--db", "nosuch.json", *extra],
+                    capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=600,
+                    check=False,
+                )
+                self.assertNotEqual(proc.returncode, 0, proc.stdout[-500:])
+                self.assertNotIn("Traceback", proc.stderr, proc.stderr[-1500:])
+                self.assertIn("nosuch.json", proc.stderr)
+
+
 class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):
     """verify exited 0 with a required file missing on an md5 platform, so
     the pipeline printed "verify OK" over a pack the frontend rejects."""

@@ -31,10 +31,30 @@ except ImportError:
 
 
 
+class DatabaseUnreadable(FileNotFoundError):
+    """The database a command was pointed at does not exist or is not JSON."""
+
+
 def load_database(db_path: str) -> dict:
-    """Load database.json and return parsed dict."""
-    with open(db_path) as f:
-        return json.load(f)
+    """Load database.json and return parsed dict.
+
+    A missing or damaged file raises DatabaseUnreadable, which run_cli turns
+    into one line saying how to build it: `--db nosuch.json` ended at the
+    bottom of a stack trace.
+    """
+    try:
+        with open(db_path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise DatabaseUnreadable(
+            f"{db_path} not found. Build it with: python scripts/generate_db.py "
+            "--force --bios-dir bios --output database.json"
+        ) from None
+    except json.JSONDecodeError as exc:
+        raise DatabaseUnreadable(
+            f"{db_path} is not valid JSON ({exc}). Rebuild it with: "
+            "python scripts/generate_db.py --force --bios-dir bios --output database.json"
+        ) from None
 
 
 
@@ -2501,6 +2521,9 @@ def run_cli(main: Callable[[], int | None]) -> None:
     try:
         code = main()
         sys.stdout.flush()
+    except DatabaseUnreadable as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
     except BrokenPipeError:
         os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
         sys.exit(141)

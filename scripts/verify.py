@@ -56,6 +56,7 @@ from common import (
     list_emulator_profiles,
     list_system_ids,
     load_data_dir_registry,
+    load_database,
     load_emulator_profiles,
     load_platform_config,
     md5sum,
@@ -2178,8 +2179,7 @@ def _main(held: contextlib.ExitStack) -> None:
 
     hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
 
-    with open(args.db) as f:
-        db = json.load(f)
+    db = load_database(args.db)
 
     # Emulator mode
     if args.emulator:

@@ -807,6 +807,7 @@ def main() -> int:
 
     from common import (
         list_registered_platforms,
+        load_database,
         load_emulator_profiles,
         load_platform_config,
         require_platform,
@@ -830,8 +831,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    with open(args.db, encoding="utf-8") as handle:
-        db = json.load(handle)
+    db = load_database(args.db)
     profiles = load_emulator_profiles(args.emulators_dir)
     if args.platform:
         require_platform(args.platform, args.platforms_dir)

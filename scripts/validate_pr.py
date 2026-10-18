@@ -326,13 +326,15 @@ def _files_to_validate(
 
 
 def _load_database_if_any(path: str) -> dict | None:
-    try:
-        return load_database(path)
-    except FileNotFoundError:
+    """The database, optional only where the default is meant.
+
+    A mistyped --db read as "no database" and every file passed its
+    duplicate and placement checks unchecked; a damaged one did the same
+    after a warning.
+    """
+    if path == DEFAULT_DB and not os.path.exists(path):
         return None
-    except json.JSONDecodeError as e:
-        print(f"WARNING: corrupt database.json: {e}", file=sys.stderr)
-        return None
+    return load_database(path)
 
 
 def main() -> None:

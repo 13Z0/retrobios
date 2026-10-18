@@ -2426,8 +2426,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     second implementation here answered a narrower one and reported OK while
     the core extras went unchecked.
     """
-    with open(args.db) as f:
-        verify_db = json.load(f)
+    verify_db = load_database(args.db)
 
     if args.platform:
         platforms = [args.platform]
