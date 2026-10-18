@@ -721,10 +721,19 @@ Full walkthrough: [profiling guide]({link("wiki/profiling")}).
 
 ## Before opening a PR
 
+The checks CI runs on a pull request (Python 3.12 or newer):
+
 ```bash
+pip install pyyaml "jsonschema[format-nongpl]"
+python scripts/validate_pr.py --changed          # the BIOS files the branch adds
+python scripts/validate_schemas.py --source-only # profiles and platform files
 python -m unittest discover -s tests -t .
-python scripts/pipeline.py --offline
 ```
+
+The full pipeline is not needed for a contribution: it rebuilds every pack
+(about 35 GB in `dist/`) and needs the data directories fetched first
+(`python scripts/refresh_data_dirs.py`), which is why maintainers run it
+before a release.
 
 ## PR validation
 

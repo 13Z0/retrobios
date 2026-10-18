@@ -51,5 +51,25 @@ class CoverageReadsTheGivenProfiles(unittest.TestCase):
             )
         self.assertEqual(seen, ["elsewhere"])
 
+
+class BeforeOpeningAPullRequest(unittest.TestCase):
+    """The section asked for the full pipeline: on a fresh fork, without
+    data/, it rebuilt 35 GB of packs and then failed on the data
+    directories, while CI asks for three checks."""
+
+    def test_it_lists_the_checks_ci_runs_and_not_the_pipeline(self):
+        import re as _re
+
+        text = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        section = text.split("## Before opening a PR", 1)[1].split("\n## ", 1)[0]
+        block = _re.search(r"```bash\n(.*?)```", section, _re.S).group(1)
+        for command in ("validate_pr.py --changed", "validate_schemas.py --source-only",
+                        "unittest discover"):
+            self.assertIn(command, block)
+        self.assertNotIn("pipeline.py", block)
+        workflow = (REPO_ROOT / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8")
+        self.assertIn("validate_schemas.py --source-only", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
