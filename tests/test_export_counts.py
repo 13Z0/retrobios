@@ -58,6 +58,27 @@ class RetroDeckWritesWhatItCounts(unittest.TestCase):
         merged = RetroDeck._merge(existing, ours)
         self.assertEqual([e["md5"] for e in merged], [f"{A},{C}", B])
 
+    def test_an_appended_revision_is_not_counted_corrected(self):
+        # 64DD_IPL.bin declared twice (A, B), truth C: the render keeps both
+        # and appends C, and the summary said "1 hashes corrected".
+        from export_native import landed_changes  # noqa: PLC0415
+
+        appended: set = set()
+        merged = RetroDeck._merge(
+            [{"filename": "64DD_IPL.bin", "system": "n64dd", "md5": A},
+             {"filename": "64DD_IPL.bin", "system": "n64dd", "md5": B}],
+            [OrderedDict(filename="64DD_IPL.bin", system="n64dd", md5=C)],
+            None, appended,
+        )
+        self.assertEqual([e["md5"] for e in merged], [A, B, C])
+        self.assertEqual(appended, {("64DD_IPL.bin", "n64dd")})
+        fe = NativeFile("64DD_IPL.bin", "64DD_IPL.bin", "n64dd",
+                        platform={"md5": A}, truth={"md5": C}, corrections=["md5"])
+        exporter = RetroDeck()
+        exporter._appended = {id(fe)}
+        changes = landed_changes(exporter, {"n64dd": NativeSystem("n64dd", files=[fe])})
+        self.assertEqual(changes.applied, [])
+
     def test_an_addition_at_another_path_is_written(self):
         """melonDS: RetroDECK declares firmware.bin at the root; the truth adds
         SkyEmu/firmware.bin. Keyed by name and system, the addition vanished

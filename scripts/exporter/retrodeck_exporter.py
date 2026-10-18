@@ -91,6 +91,8 @@ class Exporter(BaseExporter):
         return super().writable(fe, require)
 
     def states(self, fe: NativeFile, field_name: str) -> bool:
+        if id(fe) in getattr(self, "_appended", ()):
+            return False
         if field_name == "required":
             label = str(fe.native("required_label", ""))
             return not label or label in PLAIN_LABELS
@@ -193,6 +195,7 @@ class Exporter(BaseExporter):
         existing: object,
         ours: list[OrderedDict],
         additions: list[OrderedDict] | None = None,
+        appended: set[tuple[str, str]] | None = None,
     ) -> list[OrderedDict]:
         """Correct the component's own list; never replace it.
 
@@ -251,9 +254,10 @@ class Exporter(BaseExporter):
             merged.append(combined)
             corrected.update(keys)
 
-        merged.extend(
-            entry for key, entry in by_key.items() if key not in corrected
-        )
+        uncorrected = [key for key in by_key if key not in corrected]
+        merged.extend(by_key[key] for key in uncorrected)
+        if appended is not None:
+            appended.update(uncorrected)
         # A file the platform does not declare is appended unless the list
         # already holds that name for that system at that path. The key
         # above is name and system only, and folded melonDS's SkyEmu/
@@ -279,6 +283,7 @@ class Exporter(BaseExporter):
         scraped: dict | None = None,
     ) -> dict[str, str]:
         self._place_additions(systems)
+        self._appended: set[int] = set()
         grouped = self._by_component(systems)
         produced: dict[str, str] = {}
 
@@ -294,16 +299,28 @@ class Exporter(BaseExporter):
 
             entries = [self._entry(fe) for fe in files if fe.platform is not None]
             additions = [self._entry(fe) for fe in files if fe.platform is None]
+            appended: set[tuple[str, str]] = set()
             for component_value in manifest.values():
                 if not isinstance(component_value, dict):
                     continue
                 holder = self._bios_holder(component_value)
                 if holder is None:
-                    component_value["bios"] = self._merge(None, entries, additions)
+                    component_value["bios"] = self._merge(
+                        None, entries, additions, appended
+                    )
                 else:
                     container, key = holder
-                    container[key] = self._merge(container.get(key), entries, additions)
+                    container[key] = self._merge(
+                        container.get(key), entries, additions, appended
+                    )
                 break
+            # A declared entry whose revision the platform does not hold is
+            # written beside theirs: a new line, not a corrected value.
+            self._appended.update(
+                id(fe) for fe in files
+                if fe.platform is not None
+                and (str(fe.name), str(fe.native_system)) in appended
+            )
 
             produced[path] = json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
 
