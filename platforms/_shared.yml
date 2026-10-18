@@ -40,6 +40,8 @@ shared_groups:
   # NEC PC-9801/9821 — NP2kai core
   # np2kai hardcodes "np2kai/" subfolder for firmware lookups
   # ref: NP2kai/sdl/libretro/libretro.c:1804,1806 — milstr_ncat(np2path, "/np2kai")
+  # font.rom is the lowercase fallback for FONT.ROM, which System.dat declares
+  # (font/font.c:192-195): an alias in the profile, not a second file here.
   np2kai:
     - name: bios.rom
       destination: np2kai/bios.rom
@@ -48,13 +50,6 @@ shared_groups:
       md5: "cd237e16e7e77c06bb58540e9e9fca68"
       crc32: "0a682b93"
       size: 98304
-    - name: font.rom
-      destination: np2kai/font.rom
-      required: true
-      sha1: "78ba9960f135372825ab7244b5e4e73a810002ff"
-      md5: "38d32748ae49d1815b0614970849fd40"
-      crc32: "456d9fc7"
-      size: 288768
     - name: itf.rom
       destination: np2kai/itf.rom
       required: true
