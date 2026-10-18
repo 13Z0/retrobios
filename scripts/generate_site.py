@@ -1827,6 +1827,50 @@ def _prov_title(data: dict) -> str:
     return ": ".join(p for p in parts if p).replace('"', "&quot;")
 
 
+# TOSEC dump flags that say the dump is not a clean copy of the chip
+# (TOSEC Naming Convention, "Dump info flags"); [a] alternate and [!]
+# verified good are not among them.
+_TOSEC_BAD_FLAGS = {
+    "b": "bad dump", "o": "overdump", "h": "hacked", "cr": "cracked",
+    "f": "fixed", "t": "trained", "p": "pirate",
+}
+_TOSEC_FLAG_RE = re.compile(r"\[(b|o|h|cr|f|t|p)\d*(?:\s[^\]]*)?\]")
+
+
+def _dump_flags(source: str, data: dict) -> list[str]:
+    """What a catalog's name says is wrong with the dump, as words."""
+    if source != "tosec":
+        return []
+    name = str(data.get("name") or data.get("description") or "")
+    seen: list[str] = []
+    for flag in _TOSEC_FLAG_RE.findall(name):
+        word = _TOSEC_BAD_FLAGS[flag]
+        if word not in seen:
+            seen.append(word)
+    return seen
+
+
+def _provenance_lines(provenance: dict, prefix: str) -> list[str]:
+    """One visible line per catalog: its badge and the entry's own name.
+
+    The name was only a title attribute, unreadable on a touch screen and
+    absent from the search for 793 of 803 provenances; and a TOSEC entry
+    flagged [b] or [o] wore the same green badge as a clean dump.
+    """
+    lines: list[str] = []
+    for source, data in sorted(provenance.items()):
+        label = _PROVENANCE_LABELS.get(source, source)
+        flags = _dump_flags(source, data)
+        kind = "rb-badge-warning" if flags else "rb-badge-success"
+        badge = f'<span class="rb-badge {kind}">[{label}]({prefix}provenance.md#{source})</span>'
+        name = str(data.get("name") or data.get("description") or "")
+        line = f"- Catalogued: {badge} {_code(name)}" if name else f"- Catalogued: {badge}"
+        if flags:
+            line += f" ({', '.join(flags)}, as {label} records it)"
+        lines.append(line)
+    return lines
+
+
 def load_derivable(path: str = "derivable.json") -> dict[str, dict]:
     """Missing sha1 -> how the collection produces it, as the pipeline found.
 
@@ -1852,8 +1896,11 @@ def generate_provenance_page(
         "",
         f"**{matched_files:,}** of {total_files:,} system files match an entry "
         "in a dump-preservation catalog. Those files carry a "
-        '<span class="rb-badge rb-badge-success">Verified dump</span> badge on '
-        "the [system pages](systems/index.md). Arcade ROM sets and engine data "
+        '<span class="rb-badge rb-badge-success">catalog</span> badge and the '
+        "catalog entry's own name on the [system pages](systems/index.md), "
+        'orange (<span class="rb-badge rb-badge-warning">TOSEC</span>) where '
+        "TOSEC flags the dump as bad, overdumped, hacked, cracked or fixed. "
+        "Arcade ROM sets and engine data "
         "sit outside what those catalogs index, so they are left out of the "
         "ratio rather than counted as failures.",
         "",
@@ -2065,12 +2112,7 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
         lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
     provenance = f.get("provenance", {})
     if provenance:
-        prov_badges = " ".join(
-            f'<span class="rb-badge rb-badge-success" title="{_prov_title(data)}">'
-            f"[{_PROVENANCE_LABELS.get(s, s)}](../provenance.md#{s})</span>"
-            for s, data in sorted(provenance.items())
-        )
-        lines.append(f"- Verified dump: {prov_badges}")
+        lines.extend(_provenance_lines(provenance, "../"))
     lines.extend(["", "</div>", ""])
     return lines
 

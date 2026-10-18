@@ -355,7 +355,35 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
         self.assertIn("[batocera](../platforms/batocera.md)", block)
         self.assertIn("[retrobat](../platforms/retrobat.md)", block)
         self.assertIn('`' + "c" * 40 + '`', block)
-        self.assertIn("Verified dump", block)
+        self.assertIn("Catalogued", block)
+
+
+class AFlaggedDumpIsNotVerified(unittest.TestCase):
+    """scph5000.bin, which TOSEC names "...(JP)[b].bin", wore a green
+    "Verified dump: TOSEC" badge; the catalog name lived only in a title
+    attribute, outside the search and invisible on a touch screen."""
+
+    def test_flags_and_name(self):
+        from generate_site import _provenance_lines
+
+        lines = _provenance_lines({
+            "tosec": {"name": "Sony PlayStation BIOS (v2.2)(Sony)(JP)[b].bin"},
+            "redump": {"name": "SCPH-5000 BIOS v2.2"},
+        }, "../")
+        tosec = next(l for l in lines if "TOSEC" in l)
+        redump = next(l for l in lines if "Redump" in l)
+        self.assertIn("rb-badge-warning", tosec)
+        self.assertIn("bad dump", tosec)
+        self.assertIn("(JP)[b].bin", tosec)
+        self.assertIn("rb-badge-success", redump)
+        self.assertIn("SCPH-5000 BIOS v2.2", redump)
+
+    def test_an_alternate_is_not_a_flag(self):
+        from generate_site import _dump_flags
+
+        self.assertEqual(_dump_flags("tosec", {"name": "x (JP)[a].bin"}), [])
+        self.assertEqual(_dump_flags("tosec", {"name": "x [o][b].bin"}), ["overdump", "bad dump"])
+
 
 if __name__ == "__main__":
     unittest.main()
