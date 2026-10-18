@@ -353,5 +353,28 @@ class ANamelessWhitelistEntry(unittest.TestCase):
         self.assertIn("2/3 files OK", out.getvalue())
 
 
+class TheManifestResolvesLikeThePack(unittest.TestCase):
+    """The builder resolved core files with the data directories and the
+    manifest without: blueMSX's pack carried its own MSX2P.rom while the
+    manifest named another dump for the installer to place."""
+
+    def test_every_platform_resolution_reads_the_data_directories(self):
+        import ast
+
+        source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        missing = []
+        for fn in ast.walk(ast.parse(source)):
+            if not isinstance(fn, ast.FunctionDef) or fn.name == "generate_md5_pack":
+                continue
+            for node in ast.walk(fn):
+                if (
+                    isinstance(node, ast.Call)
+                    and getattr(node.func, "id", None) == "resolve_file"
+                    and "data_dir_registry" not in {k.arg for k in node.keywords}
+                ):
+                    missing.append(f"{fn.name}:{node.lineno}")
+        self.assertEqual(missing, [])
+
+
 if __name__ == "__main__":
     unittest.main()

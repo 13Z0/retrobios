@@ -3448,6 +3448,7 @@ def _attach_claims(
     dest: str,
     manifest_dest: str,
     repo_root: str,
+    data_registry: dict | None = None,
 ) -> None:
     """Every other core that reads this destination, in the order the builder
     meets them: a pack built without the earlier cores, or without the
@@ -3470,7 +3471,8 @@ def _attach_claims(
             continue
         claim_path, claim_status = resolve_file(
             claim, db, bios_dir, zip_contents,
-            dest_hint=claim.get("destination", ""), offline=offline,
+            dest_hint=claim.get("destination", ""),
+            data_dir_registry=data_registry, offline=offline,
         )
         if claim_status in ("not_found", "external", "user_provided") or not claim_path:
             # Nothing held for this core: narrowed to it without the cores
@@ -3590,6 +3592,7 @@ def _manifest_core_entries(
     required_only: bool = False,
     validation_index: dict | None = None,
     owners: dict | None = None,
+    data_registry: dict | None = None,
 ) -> int:
     """Add the files a platform's cores need but its list does not name.
 
@@ -3623,12 +3626,16 @@ def _manifest_core_entries(
             continue
 
         dest_hint = fe.get("destination", "")
+        # Resolved with the data directories, as the builder resolves the
+        # same extra: without them blueMSX's MSX2P.rom named a different
+        # dump than the one its pack carried.
         local_path, status = resolve_file(
             fe,
             db,
             bios_dir,
             zip_contents,
             dest_hint=dest_hint,
+            data_dir_registry=data_registry,
             offline=offline,
         )
         if status in ("not_found", "external", "user_provided") or not local_path:
@@ -3679,7 +3686,7 @@ def _manifest_core_entries(
         _attach_claims(
             entry, fe.get("other_claims", []), db, bios_dir, zip_contents,
             offline, required_only, validation_index, owners, dest,
-            manifest_dest, repo_root,
+            manifest_dest, repo_root, data_registry,
         )
 
         manifest_files.append(entry)
@@ -4149,7 +4156,7 @@ def generate_manifest(
         zip_contents, offline, region_drops, case_insensitive,
         seen_destinations, seen_lower, seen_parents, manifest_files,
         omitted_by_destination, record_omission, pack_only_sizes, selection,
-        required_only, manifest_validation, manifest_owners,
+        required_only, manifest_validation, manifest_owners, data_registry,
     )
     for key, (entry, full_dest, dest) in platform_entries.items():
         declared = declared_by.get(full_dest, set())
@@ -4160,6 +4167,7 @@ def generate_manifest(
             _attach_claims(
                 entry, claims, db, bios_dir, zip_contents, offline, required_only,
                 manifest_validation, manifest_owners, dest, dest, repo_root,
+                data_registry,
             )
     # A platform omission narrows like a platform file: by the systems
     # declaring it, which can be fewer than the ones whose cores read it.
