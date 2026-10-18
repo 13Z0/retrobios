@@ -1134,6 +1134,24 @@ def keeps_case(directory: Path) -> bool:
         os.unlink(name)
 
 
+def fold_case_twins(files: list[dict]) -> tuple[list[dict], list[str]]:
+    """One file per name where the directory folds case; the others named.
+
+    The first in manifest order stays, as the pack's own order places it.
+    """
+    kept: list[dict] = []
+    seen: set[str] = set()
+    folded: list[str] = []
+    for entry in files:
+        key = str(entry.get("dest", "")).casefold()
+        if key in seen:
+            folded.append(str(entry.get("dest", "")))
+            continue
+        seen.add(key)
+        kept.append(entry)
+    return kept, folded
+
+
 def installed_cores(dirs: list[Path]) -> list[str]:
     """The cores present in these directories, by the name the buildbot uses.
 
@@ -3218,10 +3236,22 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         files = manifest.get("files", [])
         omitted_files = manifest.get("omitted_files", [])
         variants = manifest.get("case_variants", [])
-        if variants and keeps_case(bios_path):
+        case_kept = keeps_case(bios_path)
+        if variants and case_kept:
             # The list is folded for Windows and macOS; here bios.col and
             # BIOS.col are two files that two cores open.
             files = files + variants
+        if not case_kept:
+            files, folded = fold_case_twins(files)
+            if folded:
+                # Batocera's share opened over SMB, an exFAT card: the second
+                # spelling overwrote the first, and every --check found one
+                # of them wrong and fetched it again.
+                shown = ", ".join(folded[:3]) + (" ..." if len(folded) > 3 else "")
+                print(
+                    f"  {_plural(len(folded), 'file')} left out: {bios_path} does not keep "
+                    f"case and holds another file under the same name ({shown})"
+                )
 
         if args.list_targets:
             targets = fetch_targets(plat_name)

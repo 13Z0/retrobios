@@ -95,6 +95,13 @@ BIOS directory keeps case and, if it does, also fetches these names. If you
 extract the ZIP on Linux by hand, take the Lakka pack instead: it is the
 RetroArch pack with both spellings.
 
+The reverse happens on Batocera and Recalbox, whose lists hold both spellings
+because their systems keep case: NP2kai reads `np2kai/bios.rom` and
+`np2kai/BIOS.ROM` as two different files. Written to a folder that folds case
+(the share opened from Windows, an exFAT card), one overwrites the other. The
+installer checks the folder first, keeps one file per name there and lists
+the ones it left out.
+
 ## Hash mismatch / UNTESTED
 
 `verify.py` reports `UNTESTED` for a file.

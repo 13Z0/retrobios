@@ -2245,7 +2245,7 @@ class CaseVariants(unittest.TestCase):
         compact = " ".join(source.split())
         self.assertIn(
             'variants = manifest.get("case_variants", []) '
-            "if variants and keeps_case(bios_path):", compact,
+            "case_kept = keeps_case(bios_path) if variants and case_kept:", compact,
         )
 
     def test_the_published_retroarch_list_carries_them(self):
@@ -2316,6 +2316,23 @@ class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
                     (REPO_ROOT / "platforms" / "targets" / f"{platform}.yml").read_text()
                 )["targets"]
                 self.assertTrue(targets)
+
+
+
+class CaseTwinsOnAFoldingVolume(unittest.TestCase):
+    """Batocera and Recalbox list np2kai/bios.rom and np2kai/BIOS.ROM, other
+    bytes each. Installed to a share opened from Windows or an exFAT card,
+    the second overwrote the first and --check never converged."""
+
+    def test_one_file_per_name_is_kept(self):
+        files = [{"dest": "np2kai/bios.rom"}, {"dest": "np2kai/BIOS.ROM"}, {"dest": "x.bin"}]
+        kept, folded = install.fold_case_twins(files)
+        self.assertEqual([f["dest"] for f in kept], ["np2kai/bios.rom", "x.bin"])
+        self.assertEqual(folded, ["np2kai/BIOS.ROM"])
+
+    def test_main_folds_only_where_case_is_not_kept(self):
+        source = " ".join((REPO_ROOT / "install.py").read_text(encoding="utf-8").split())
+        self.assertIn("if not case_kept: files, folded = fold_case_twins(files)", source)
 
 
 if __name__ == "__main__":
