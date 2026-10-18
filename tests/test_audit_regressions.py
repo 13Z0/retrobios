@@ -479,6 +479,24 @@ class EverySharedGroupServesAPlatform(unittest.TestCase):
         self.assertEqual(sorted(groups - served), [])
 
 
+class PatchesTargetWhatRuns(unittest.TestCase):
+    """mock.patch.object with create set to True builds an attribute on a
+    module when the name is missing: packextras imported resolve_platform_cores
+    inside the function, the patch created a global nobody read, and the
+    real function walked the repository while the test claimed to isolate
+    it."""
+
+    def test_no_test_creates_the_attribute_it_patches(self):
+        needle = "create" + "=True"
+        offenders = []
+        for path in sorted((ROOT / "tests").glob("test_*.py")):
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                code = line.split("#", 1)[0]
+                if needle in code:
+                    offenders.append(f"{path.name}:{number}")
+        self.assertEqual(offenders, [])
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 
@@ -2568,12 +2586,16 @@ class APinnedCoreFileTakesTheSlotFirst(unittest.TestCase):
         ]
         config = {"systems": {}, "base_destination": "bios"}
         with mock.patch("verify.find_undeclared_files", return_value=undeclared), \
-                mock.patch.object(packextras, "resolve_platform_cores", create=True,
-                                  return_value=set()):
+                mock.patch.object(packextras, "resolve_platform_cores",
+                                  return_value=set()) as cores:
             extras = packextras._collect_emulator_extras(
                 config, "emulators", {"files": {}, "indexes": {}}, set(), "bios", {}
             )
         self.assertEqual([e["source_profile"] for e in extras][:1], ["solarus"])
+        # The stub is what ran: patched with create=True on a name the module
+        # imported inside the function, it was never read and the real
+        # resolve_platform_cores walked the repository's profiles.
+        cores.assert_called_once()
 
 
 class ANameWithItsDirectoryIsTheDestination(unittest.TestCase):

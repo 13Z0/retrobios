@@ -14,6 +14,7 @@ from common import declared_root, expand_platform_declared_names, platform_decla
 from common import load_emulator_profiles
 from common import resolution_is_hash_exact
 from common import resolve_local_file
+from common import resolve_platform_cores
 from common import runs_standalone
 from common import sanitize_pack_path
 from common import size_fits
@@ -616,7 +617,6 @@ def _collect_emulator_extras(
 
     Works for ANY platform (RetroArch, Batocera, Recalbox, etc.)
     """
-    from common import resolve_platform_cores
     from verify import find_undeclared_files
 
     profiles = (
