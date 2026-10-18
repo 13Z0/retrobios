@@ -42,7 +42,7 @@ Full walkthrough: [profiling guide](https://abdess.github.io/retrobios/wiki/prof
 ## Before opening a PR
 
 ```bash
-python -m unittest discover tests
+python -m unittest discover -s tests -t .
 python scripts/pipeline.py --offline
 ```
 

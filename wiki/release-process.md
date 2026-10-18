@@ -103,7 +103,7 @@ every emulator profile against `schemas/emulator.schema.json`. Both schemas set
 `additionalProperties: false`, so a typo in a field name fails the job instead
 of being silently ignored.
 
-**run-tests.** Runs `python -m unittest discover tests -v`. Must pass before a
+**run-tests.** Runs `python -m unittest discover -s tests -t . -v`. Must pass before a
 merge, and again on the commit a direct push puts at the head of main.
 
 **label-pr** (pull requests only). Auto-labels the PR based on changed paths:

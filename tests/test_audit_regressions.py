@@ -3563,6 +3563,20 @@ class TestsRunOffline(unittest.TestCase):
     def test_the_package_forbids_downloads(self):
         self.assertTrue(os.environ.get("RETROBIOS_OFFLINE"))
 
+    def test_every_documented_run_imports_the_package(self):
+        """`discover tests` makes tests/ the top level, so tests/__init__.py,
+        which sets RETROBIOS_OFFLINE, never ran: a local run of the documented
+        command queried the release and wrote into the shared cache. Only CI,
+        which sets the variable itself, was offline."""
+        import subprocess
+
+        listed = subprocess.run(
+            ["git", "grep", "-n", "unittest discover", "--", ":!tests"],
+            capture_output=True, text=True, cwd=ROOT, check=False,
+        ).stdout.splitlines()
+        self.assertTrue(listed)
+        self.assertEqual([line for line in listed if "-t ." not in line], [])
+
 
 
 class TheWantedPageCountsRomsetMembers(unittest.TestCase):

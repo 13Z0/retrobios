@@ -12,7 +12,7 @@ not require network access. Most build synthetic fixtures under the repository's
 Run the full suite:
 
 ```bash
-python -m unittest discover tests -v
+python -m unittest discover -s tests -t . -v
 ```
 
 Run a single module:
@@ -237,7 +237,7 @@ README generation). Requires packs in `dist/`; skip with `--skip-packs`.
 
 The test suite is one layer of verification. The full quality gate is:
 
-1. All unit tests pass (`python -m unittest discover tests`)
+1. All unit tests pass (`python -m unittest discover -s tests -t .`)
 2. The full pipeline completes without error (`python scripts/pipeline.py --offline`)
 3. No unexpected CRITICAL entries in the verify output
 4. Pack file counts match verification file counts (consistency check)
@@ -250,7 +250,7 @@ Ideally, tests, code, and documentation ship together. When profiles and platfor
 
 ## CI integration
 
-The `validate.yml` workflow runs `python -m unittest discover tests -v` on both
+The `validate.yml` workflow runs `python -m unittest discover -s tests -t . -v` on both
 roads into main: every pull request, and every direct push, that touches
 `bios/`, `platforms/`, `emulators/`, `schemas/`, `scripts/`, `tests/` or
 `install.py`. Work reaches main by push as often as by pull request, so a suite
@@ -264,10 +264,10 @@ of main passes, not every commit under it.
 
 Modules that need real artifacts skip themselves when those artifacts are absent,
 so `test_pack_integrity` is a no-op in CI (no `dist/`) and a real check locally.
-Run `python -m unittest discover tests` before pushing.
+Run `python -m unittest discover -s tests -t .` before pushing.
 
 Tests must pass before merge. If a test fails in CI, reproduce locally with:
 
 ```bash
-python -m unittest discover tests -v
+python -m unittest discover -s tests -t . -v
 ```

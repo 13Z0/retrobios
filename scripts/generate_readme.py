@@ -722,7 +722,7 @@ Full walkthrough: [profiling guide]({link("wiki/profiling")}).
 ## Before opening a PR
 
 ```bash
-python -m unittest discover tests
+python -m unittest discover -s tests -t .
 python scripts/pipeline.py --offline
 ```
 

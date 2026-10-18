@@ -339,7 +339,7 @@ subset:
 | artifact modules | deterministic ZIPs, locking, large-file cache, pack integrity and portable paths |
 
 ```bash
-python -m unittest discover tests -v      # full suite
+python -m unittest discover -s tests -t . -v   # full suite
 python -m unittest tests.test_e2e -v      # single module
 ```
 
