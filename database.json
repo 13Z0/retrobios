@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T11:24:19Z",
-  "total_files": 19079,
-  "total_size": 17568402427,
+  "generated_at": "2026-10-18T17:27:52Z",
+  "total_files": 19080,
+  "total_size": 17568533499,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -158574,25 +158574,25 @@
         }
       }
     },
-    "3fc9358072f74bd24e3e297ea11b2bf15a7af891": {
-      "path": "bios/Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.d21fe71d",
+    "b3b1d880e288b6dc79eec0ff1b0480c229ec141d": {
+      "path": "bios/Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773",
       "name": "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "size": 131072,
-      "sha1": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
-      "md5": "732b60960226caf33df6b487f376de69",
-      "sha256": "f84d43ae82be5c03fa418286e8142c377869cd392c0d3a9dd5ba72b78d2075fc",
-      "crc32": "d21fe71d",
-      "adler32": "993a073b",
+      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "md5": "927df773f9a1c7de94a72420b2d538dd",
+      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
+      "crc32": "474aaa44",
+      "adler32": "04fa4128",
       "provenance": {
         "no-intro": {
           "dat": "Sega - Mega Drive - Genesis",
-          "name": "[BIOS] WonderMega (Japan) (En).md",
-          "description": "[BIOS] WonderMega (Japan) (En)"
+          "name": "[BIOS] LaserActive (Japan) (v1.05).md",
+          "description": "[BIOS] LaserActive (Japan) (v1.05)"
         },
         "tosec": {
-          "dat": "Sega Mega-CD & Sega CD - Firmware",
-          "name": "Wondermega v1.00W (1992-02-06)(Sega)(JP)(en).bin",
-          "description": "Wondermega v1.00W (1992-02-06)(Sega)(JP)(en)"
+          "dat": "Pioneer LaserActive - Firmware",
+          "name": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
+          "description": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja)"
         }
       }
     },
@@ -187829,6 +187829,28 @@
       "crc32": "7e86c5da",
       "adler32": "dd0738e8"
     },
+    "3fc9358072f74bd24e3e297ea11b2bf15a7af891": {
+      "path": "bios/Sega/Mega CD/[BIOS] WonderMega (Japan) (En).bin",
+      "name": "[BIOS] WonderMega (Japan) (En).bin",
+      "size": 131072,
+      "sha1": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
+      "md5": "732b60960226caf33df6b487f376de69",
+      "sha256": "f84d43ae82be5c03fa418286e8142c377869cd392c0d3a9dd5ba72b78d2075fc",
+      "crc32": "d21fe71d",
+      "adler32": "993a073b",
+      "provenance": {
+        "no-intro": {
+          "dat": "Sega - Mega Drive - Genesis",
+          "name": "[BIOS] WonderMega (Japan) (En).md",
+          "description": "[BIOS] WonderMega (Japan) (En)"
+        },
+        "tosec": {
+          "dat": "Sega Mega-CD & Sega CD - Firmware",
+          "name": "Wondermega v1.00W (1992-02-06)(Sega)(JP)(en).bin",
+          "description": "Wondermega v1.00W (1992-02-06)(Sega)(JP)(en)"
+        }
+      }
+    },
     "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed": {
       "path": "bios/Sega/Mega CD/bios_CD_U.bin",
       "name": "bios_CD_U.bin",
@@ -211554,7 +211576,7 @@
       "c500ff71236068e0dc0d0603d265ae76": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "f1071cdb0b6b10dde94d3bc8a6146387": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "279008e4a0db2dc5f1c048853b033828": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "732b60960226caf33df6b487f376de69": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
+      "927df773f9a1c7de94a72420b2d538dd": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "a5a2f9aae57d464bc66b80ee79c3da6e": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "0e7393cd0951d6dde818fcd4cd819466": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "f69f173b251d8bf7649b10a9167a10bf": "6973e2593e66fd21627fedccec98d4a364afaaff",
@@ -214440,6 +214462,7 @@
       "278a9397d192149e84e820ac621a8edd": "4846f448160059a7da0215a5df12ca160f26dd69",
       "310a9081d2edf2d316ab38813136725e": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
       "14db9657bbaa6fbb9249752424dc0ce4": "9eed922bec1b9ff2b611dacf484d710b732bea5e",
+      "732b60960226caf33df6b487f376de69": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
       "2efd74e3232ff260e371b99f84024f7f": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
       "51de1667b2a131377ed6f2aacbe14e7e": "2a170e18ca44a8bbaa8d36675cdae9e7203026d0",
       "9b562ebf2d095bf1dabadbc1881f519a": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
@@ -255595,7 +255618,7 @@
         "54b8d2c1317628de51a85fc1c424423a986775e4"
       ],
       "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin": [
-        "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
         "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
       ],
       "Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin": [
@@ -263391,6 +263414,9 @@
       ],
       "US Sega CD 2 (Region Free) 930601 l_oliveira.bin": [
         "9eed922bec1b9ff2b611dacf484d710b732bea5e"
+      ],
+      "[BIOS] WonderMega (Japan) (En).bin": [
+        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
       ],
       "bios_CD_U.bin": [
         "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed"
@@ -287546,7 +287572,7 @@
       "e20a9f41": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "a318e8d6": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "11647ca5": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "d21fe71d": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
+      "474aaa44": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "00eedb3a": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "50cd3d23": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "a8cb694c": "6973e2593e66fd21627fedccec98d4a364afaaff",
@@ -290432,6 +290458,7 @@
       "9d2da8f2": "4846f448160059a7da0215a5df12ca160f26dd69",
       "8af65f58": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
       "7e86c5da": "9eed922bec1b9ff2b611dacf484d710b732bea5e",
+      "d21fe71d": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
       "c6d10268": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
       "757b3a78": "2a170e18ca44a8bbaa8d36675cdae9e7203026d0",
       "0507b590": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
@@ -306627,7 +306654,7 @@
       "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "2ab1b2c7f4b28a74d0ecf3e073088fac19ce40866404420c70576e1862bb5502": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "f84d43ae82be5c03fa418286e8142c377869cd392c0d3a9dd5ba72b78d2075fc": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
+      "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "dca942d977217f703d8d1c6eb1aeb6b32c78ecc421486bbb46c459d385161c94": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "e89b5a319f66406611ec82fe5c4aa6827c175a05135bd7bd177366cba0465021": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "459325690a458baebd77495c91e37c4dddfdd542ba13a821ce954e5bb245627f": "6973e2593e66fd21627fedccec98d4a364afaaff",
@@ -309513,6 +309540,7 @@
       "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f": "4846f448160059a7da0215a5df12ca160f26dd69",
       "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
       "59403e7f8be1d4e98d673cca17cfec072770a56415165ad7ac88dcd3f7273317": "9eed922bec1b9ff2b611dacf484d710b732bea5e",
+      "f84d43ae82be5c03fa418286e8142c377869cd392c0d3a9dd5ba72b78d2075fc": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
       "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
       "26ec7848cdbf4fcdae522c16f707ccc9bb7ae9f492db912f09f94d5bac4dd65d": "2a170e18ca44a8bbaa8d36675cdae9e7203026d0",
       "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
@@ -498833,14 +498861,14 @@
       "Videopac+/jopac.bin": [
         "54b8d2c1317628de51a85fc1c424423a986775e4"
       ],
-      "Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.d21fe71d": [
-        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
+      "Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
-      "LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.d21fe71d": [
-        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
+      "LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
-      ".variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.d21fe71d": [
-        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
+      ".variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
       "Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin": [
         "26237b333db4a4c6770297fa5e655ea95840d5d9"
@@ -543973,6 +544001,12 @@
       ],
       "Mega CD/US Sega CD 2 (Region Free) 930601 l_oliveira.bin": [
         "9eed922bec1b9ff2b611dacf484d710b732bea5e"
+      ],
+      "Sega/Mega CD/[BIOS] WonderMega (Japan) (En).bin": [
+        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
+      ],
+      "Mega CD/[BIOS] WonderMega (Japan) (En).bin": [
+        "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
       ],
       "Sega/Mega CD/bios_CD_U.bin": [
         "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed"
