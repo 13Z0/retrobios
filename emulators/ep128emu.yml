@@ -181,8 +181,8 @@ files:
     hle_fallback: true
     system: enterprise-128
     has_builtin: true
-    note: "Hungarian language extension. Auto-loaded when content locale is Hungarian."
-    source_ref: "core/core.cpp:245-246"
+    note: "Hungarian language extension. Loaded into segment 4 when the content name carries the TOSEC tag [req zrom]."
+    source_ref: "core/core.cpp:240-244, core/core.hpp:221-226, core/main.cpp:890-898"
 
   - name: epdos16f.rom
     path: ep128emu/roms/epdos16f.rom
@@ -197,14 +197,13 @@ files:
 
   - name: brd.rom
     path: ep128emu/roms/brd.rom
-    region: [germany]
     md5: 6af0402906944fd134004b85097c8524
     required: false
     hle_fallback: true
     system: enterprise-128
     has_builtin: true
-    note: "German (BRD) language extension. Auto-loaded when content locale is German."
-    source_ref: "core/core.cpp:263-264"
+    note: "German (BRD) language extension. Loaded into segment 4 when the content name carries the TOSEC tag [req brd-rom]."
+    source_ref: "core/core.cpp:258-262, core/core.hpp:221-226, core/main.cpp:890-898"
 
   # epd19hft.rom and zt19hfnt.rom: listed in .info (firmware8, firmware9) but
   # NOT referenced in core source code and NOT in builtin_rom map (roms.hpp:46516-46538).

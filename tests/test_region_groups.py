@@ -62,6 +62,17 @@ class TheEnterpriseKeepsItsRom(unittest.TestCase):
         )
         self.assertNotIn("bios/brd.rom", drops)
 
+    def test_brd_rom_is_chosen_by_the_content_not_a_territory(self):
+        # core.hpp:221-226: "[req brd-rom]" in the content name selects it,
+        # whatever the user's country, as "[req zrom]" selects hun.rom.
+        from common import load_emulator_profiles
+
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+        for name in ("ep128emu", "ep128emu_core"):
+            entry = next(f for f in profiles[name]["files"] if f["name"] == "brd.rom")
+            with self.subTest(profile=name):
+                self.assertFalse(entry.get("region"))
+
 
 class TheGroupTakesThePlatformSpelling(unittest.TestCase):
     def test_a_profile_spelling_maps_to_the_platform_one(self):
