@@ -1216,6 +1216,48 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
 PAGE_DATA: dict[str, dict] = {}
 
 
+SYSTEM_PARTS_IN_FULL = 1000
+
+
+def system_structured_data(slug: str, consoles: dict[str, list]) -> dict:
+    """A system page's files for a machine: each card as a CreativeWork.
+
+    The pages that hold a card per file published a bare TechArticle with
+    no file, hash or provenance, while emulator pages listed theirs.
+    """
+    parts = []
+    for _console, entries in sorted(consoles.items()):
+        for entry in entries:
+            sha1 = str(entry.get("sha1") or "")
+            part: dict = {"@type": "CreativeWork", "name": str(entry.get("name", ""))}
+            if sha1:
+                part["url"] = urllib.parse.urljoin(SITE_URL, f"systems/{slug}/#sha1-{sha1[:12]}")
+            identifiers = [
+                f"{field}:{str(entry[field]).lower()}"
+                for field in ("sha1", "md5", "crc32", "sha256") if entry.get(field)
+            ]
+            if identifiers:
+                part["identifier"] = identifiers
+            if entry.get("size"):
+                part["contentSize"] = f"{entry['size']} B"
+            citations = [
+                f"{catalog}: {record.get('dat', '')} ({record.get('name', '')})"
+                for catalog, record in sorted((entry.get("provenance") or {}).items())
+                if isinstance(record, dict)
+            ]
+            if citations:
+                part["citation"] = citations
+            parts.append(part)
+    if len(parts) > SYSTEM_PARTS_IN_FULL:
+        # game-engines would carry 2.6 MB of JSON-LD: past the cap a page
+        # lists its catalogue-verified files and points at the full table.
+        return {
+            "hasPart": [part for part in parts if part.get("citation")],
+            "isBasedOn": urllib.parse.urljoin(SITE_URL, "downloads/files.csv"),
+        }
+    return {"hasPart": parts} if parts else {}
+
+
 def dataset_structured_data(exports: list[dict], db: dict) -> dict:
     """The data page as a schema.org Dataset a harvester can index.
 
@@ -4129,6 +4171,7 @@ def main() -> None:
     for mfr, consoles in manufacturers.items():
         slug = mfr.lower().replace(" ", "-")
         page = generate_system_page(mfr, consoles, consumers)
+        PAGE_DATA[f"systems/{slug}.md"] = system_structured_data(slug, consoles)
         write_if_changed(str(docs / "systems" / f"{slug}.md"), page)
 
     # Generate emulator pages

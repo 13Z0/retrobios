@@ -4690,5 +4690,33 @@ class TheDatasetDescribesItsDownloads(unittest.TestCase):
         self.assertNotEqual(data["name"], "Data & API")
 
 
+
+class SystemPagesDescribeTheirFiles(unittest.TestCase):
+    """systems/* published a generic TechArticle: no file, hash or
+    provenance for the pages that carry a card per file."""
+
+    def test_parts_carry_hashes_anchor_and_provenance(self):
+        from scripts.generate_site import system_structured_data
+
+        entry = {"name": "scph5501.bin", "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
+                 "md5": "490f666e1afb15b7362b406ed1cea246", "crc32": "8d8cb7e4", "size": 524288,
+                 "provenance": {"redump": {"dat": "Sony - PlayStation - BIOS Images",
+                                           "name": "ps-30a.bin"}}}
+        (part,) = system_structured_data("sony", {"PlayStation": [entry]})["hasPart"]
+        self.assertTrue(part["url"].endswith("systems/sony/#sha1-0555c6fae890"))
+        self.assertIn("md5:490f666e1afb15b7362b406ed1cea246", part["identifier"])
+        self.assertIn("redump: Sony - PlayStation - BIOS Images (ps-30a.bin)", part["citation"])
+
+    def test_a_huge_page_lists_its_verified_files_and_points_at_the_table(self):
+        from scripts.generate_site import SYSTEM_PARTS_IN_FULL, system_structured_data
+
+        plain = [{"name": f"f{i}", "sha1": f"{i:040x}"} for i in range(SYSTEM_PARTS_IN_FULL)]
+        cited = {"name": "v", "sha1": "f" * 40,
+                 "provenance": {"tosec": {"dat": "d", "name": "n"}}}
+        data = system_structured_data("engines", {"x": [*plain, cited]})
+        self.assertEqual([p["name"] for p in data["hasPart"]], ["v"])
+        self.assertTrue(data["isBasedOn"].endswith("downloads/files.csv"))
+
+
 if __name__ == "__main__":
     unittest.main()
