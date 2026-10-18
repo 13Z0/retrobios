@@ -106,12 +106,14 @@ def lookup_slot(index: dict[str, dict], destination: str, name: str) -> dict | N
 def resolve_slot_drops(
     groups: dict[str, list[tuple[str, str]]],
     index: dict[str, dict],
+    held: set[str] | None = None,
 ) -> tuple[set[str], list[str]]:
     """Destinations to skip, and the groups no declared order can decide.
 
     Returns (drops, undecidable). A group is decided only when every candidate
     declares a priority and exactly one holds the lowest; anything else keeps
-    every candidate.
+    every candidate. ``held`` names the destinations the collection holds: a
+    candidate it lacks ships nothing, so it neither wins nor displaces one.
     """
     keep: set[str] = set()
     drop: set[str] = set()
@@ -123,6 +125,8 @@ def resolve_slot_drops(
     tiers: dict[tuple[str, tuple[str, ...]], list[tuple[str, int | None]]] = {}
     for group_id, members in groups.items():
         for destination, name in members:
+            if held is not None and destination not in held:
+                continue
             entry = lookup_slot(index, destination, name)
             if entry is None:
                 keep.add(destination)

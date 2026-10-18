@@ -297,5 +297,35 @@ class AnUnrankedDeclarationIsADisagreement(unittest.TestCase):
         self.assertEqual(drops, {"bios/b.bin"})
 
 
+
+class AnAbsentRankOneDisplacesNothing(unittest.TestCase):
+    """--one-per-slot received no `held`: a rank-1 file the collection lacks
+    dropped the rank-2 and rank-3 files it holds, leaving the slot empty."""
+
+    def test_the_best_held_file_wins(self):
+        from slot import build_slot_index, resolve_slot_drops
+
+        index = build_slot_index({"picodrive": {"files": [
+            {"name": "us_scd2_9306.bin", "priority": 1},
+            {"name": "SegaCDBIOS9303.bin", "priority": 2},
+            {"name": "us_scd1_9210.bin", "priority": 3},
+        ]}})
+        group = {"sega-mega-cd": [
+            ("bios/us_scd2_9306.bin", "us_scd2_9306.bin"),
+            ("bios/SegaCDBIOS9303.bin", "SegaCDBIOS9303.bin"),
+            ("bios/us_scd1_9210.bin", "us_scd1_9210.bin"),
+        ]}
+        held = {"bios/SegaCDBIOS9303.bin", "bios/us_scd1_9210.bin"}
+        drops, _ = resolve_slot_drops(group, index, held)
+        self.assertEqual(drops, {"bios/us_scd1_9210.bin"})
+
+    def test_the_builder_passes_held(self):
+        from pathlib import Path
+
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "generate_pack.py").read_text()
+        compact = " ".join(source.split())
+        self.assertRegex(compact, r"resolve_slot_drops\( slot_groups, slot_mod\.platform_slot_index\([^)]*\), held, \)")
+
+
 if __name__ == "__main__":
     unittest.main()

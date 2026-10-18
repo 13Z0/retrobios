@@ -555,6 +555,7 @@ def _select_variants(
         slot_drops, slot_undecidable = slot_mod.resolve_slot_drops(
             slot_groups,
             slot_mod.platform_slot_index(config, emu_profiles or {}, target_cores),
+            held,
         )
         region_drops = region_drops | slot_drops
         if slot_undecidable:
