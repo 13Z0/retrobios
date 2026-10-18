@@ -1794,13 +1794,25 @@ def verify_emulator(
             emu_results.setdefault(dest, []).append((result, required, hle))
 
         for dest, alternatives in emu_results.items():
-            held = [a for a in alternatives if a[0]["status"] == Status.OK]
-            if held and len(alternatives) > 1:
-                alternatives = held[:1]
             # What the emulator pack places here: an accepted file, else a
             # file whose hash the profile contradicts. A refused copy is held
             # but never packed.
             fallback_reason = "declared hash contradicted by the local file"
+            if len(alternatives) > 1:
+                # Reduced in the order generate_emulator_pack chooses, so the
+                # destination's status is the one the pack reports: a slot it
+                # fills with a contradicted copy, or counts as refused by the
+                # core, is not missing because another alternative is absent.
+                for keep in (
+                    lambda a: a[0]["status"] == Status.OK,
+                    lambda a: a[0]["status"] == Status.UNTESTED
+                    and a[0].get("reason") == fallback_reason,
+                    lambda a: a[0]["status"] != Status.MISSING,
+                ):
+                    chosen = [a for a in alternatives if keep(a)]
+                    if chosen:
+                        alternatives = chosen[:1]
+                        break
             packed = next(
                 (a[0].get("path") for a in alternatives
                  if a[0]["status"] == Status.OK and a[0].get("path")),

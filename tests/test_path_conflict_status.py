@@ -223,5 +223,60 @@ class TheEmulatorPackShipsWhatTheCoreAccepts(unittest.TestCase):
         result = verify_emulator(["mac"], str(self.emulators), self.db)
         self.assertEqual(result["severity_counts"][Severity.OK], 0)
 
+
+class AlternativesAgreeWithThePack(unittest.TestCase):
+    """Two versions declared at one path: the held one has a contradicted
+    md5, the other is not held. The pack ships the held copy with a
+    discrepancy; verify took the worst status and said missing."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.root = Path(self._tmp.name)
+        bios = self.root / "bios"
+        self.emulators = self.root / "emulators"
+        for directory in (bios, self.emulators):
+            directory.mkdir(parents=True)
+        payload = b"held version"
+        (bios / "game.grp").write_bytes(payload)
+        sha1 = hashlib.sha1(payload).hexdigest()
+        files = {sha1: {
+            "path": str(bios / "game.grp"), "name": "game.grp", "size": len(payload),
+            "sha1": sha1, "md5": hashlib.md5(payload).hexdigest(),
+            "sha256": hashlib.sha256(payload).hexdigest(), "crc32": "00000004",
+        }}
+        self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+        profile = {
+            "emulator": "Eng", "type": "libretro", "cores": ["eng"], "systems": ["x"],
+            "files": [
+                {"name": "game.grp", "path": "slot.grp", "required": True, "md5": "0" * 32},
+                {"name": "other.grp", "path": "slot.grp", "required": True},
+            ],
+        }
+        (self.emulators / "eng.yml").write_text(yaml.dump(profile))
+        common._emulator_profiles_cache.clear()
+
+    def tearDown(self):
+        common._emulator_profiles_cache.clear()
+        self._tmp.cleanup()
+
+    def test_verify_counts_what_the_pack_ships(self):
+        import zipfile
+
+        from verify import Status, verify_emulator
+
+        out = self.root / "dist"
+        out.mkdir()
+        with contextlib.redirect_stdout(io.StringIO()):
+            zip_path = builder.generate_emulator_pack(
+                ["eng"], str(self.emulators), self.db, str(self.root / "bios"),
+                str(out), offline=True,
+            )
+        with zipfile.ZipFile(zip_path) as archive:
+            self.assertIn("slot.grp", archive.namelist())
+        result = verify_emulator(["eng"], str(self.emulators), self.db)
+        self.assertEqual(result["status_counts"].get(Status.MISSING, 0), 0)
+        self.assertEqual(result["status_counts"].get(Status.UNTESTED), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
