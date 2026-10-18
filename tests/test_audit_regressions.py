@@ -4860,5 +4860,28 @@ class RommNeoGeoFoldersGetTheirBios(unittest.TestCase):
         self.assertNotIn("neogeoaes/pgm.zip", text)
 
 
+
+class AProfilePathIsTheEmulatorsNotOurs(unittest.TestCase):
+    """No guard stopped a profile `path:` naming .variants/, our storage:
+    the pack would write the file where no emulator reads."""
+
+    def test_a_variants_path_is_refused(self):
+        from unittest import mock
+
+        from scripts import validate_schemas
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            emulators = Path(directory) / "emulators"
+            emulators.mkdir()
+            (emulators / "x.yml").write_text(
+                "emulator: X\nfiles:\n  - name: scph1001.bin\n"
+                "    path: .variants/scph1001.bin.abc12345\n"
+            )
+            with mock.patch.object(validate_schemas, "ROOT", Path(directory)):
+                errors = validate_schemas._repository_layout_in_profiles()
+        self.assertEqual(len(errors), 1)
+        self.assertIn(".variants/", errors[0])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -256,6 +256,30 @@ def _unknown_data_dir_refs() -> list[str]:
     return out
 
 
+def _repository_layout_in_profiles() -> list[str]:
+    """Profile destinations that name this repository's storage.
+
+    `path:` is where the emulator's code reads the file, never where we keep
+    it: a profile written from a clone filed its variants under
+    `.variants/...`, and the pack then wrote them where no emulator looks.
+    """
+    out: list[str] = []
+    for path in source_yaml_paths(ROOT / "emulators"):
+        with path.open(encoding="utf-8") as handle:
+            document = yaml_load(handle) or {}
+        for entry in document.get("files") or []:
+            if not isinstance(entry, dict):
+                continue
+            for key in ("path", "standalone_path"):
+                value = str(entry.get(key) or "")
+                if ".variants" in value.replace("\\", "/").split("/"):
+                    out.append(
+                        f"{path.relative_to(ROOT)}: {entry.get('name')} {key} "
+                        f"names the repository's .variants/ storage: {value}"
+                    )
+    return out
+
+
 def _semantic_envelope_checks(path: Path, document: dict) -> list[str]:
     if document.get("count") != len(document.get("items", [])):
         return [f"{path.relative_to(ROOT)}: count does not equal len(items)"]
@@ -354,6 +378,7 @@ def main() -> int:
         )
     )
     errors.extend(_unknown_data_dir_refs())
+    errors.extend(_repository_layout_in_profiles())
 
     if not args.source_only:
         database_path = ROOT / "database.json"
