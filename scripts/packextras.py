@@ -108,21 +108,24 @@ def _map_emulator_to_slug(
     return ""
 
 def _slug_for(
-    u: dict, profiles: dict, platform_systems: set, norm_map: dict, sys_to_slug: dict
+    u: dict, profiles: dict, platform_systems: set, norm_map: dict, sys_to_slug: dict,
+    native_systems: set | None = None,
 ) -> str:
     """The platform slug a report entry files under, or empty.
 
-    The entry's own system decides first: picodrive's Mega CD BIOS belongs
-    under segacd/, where RomM looks for a Mega CD game's firmware, not under
-    gamegear/, the first of the emulator's systems.
+    The entry's own system decides, and alone: picodrive's Mega CD BIOS
+    belongs under segacd/, where RomM looks for a Mega CD game's firmware,
+    and a file of a system the platform lacks has no folder there (MAME
+    2003's ZN-1 BIOS once fell back on its Neo Geo systems). A file of no
+    system takes the emulator's first system the platform declares for
+    itself: a folder present only as a mirror of another slug's firmware
+    (RomM's neogeoaes/) says nothing about the emulators that read it.
     """
     own = u.get("system")
     if own:
-        slug = _map_emulator_to_slug(
+        return _map_emulator_to_slug(
             {"systems": [own]}, platform_systems, norm_map, sys_to_slug
         )
-        if slug:
-            return slug
     emu_name = u.get("profile") or u.get("emulator", "")
     profile = profiles.get(emu_name, {})
     if not profile:
@@ -130,7 +133,17 @@ def _slug_for(
         profile = next(
             (pp for pp in profiles.values() if pp.get("emulator") == emu_name), {}
         )
-    return _map_emulator_to_slug(profile, platform_systems, norm_map, sys_to_slug)
+    systems = platform_systems if native_systems is None else native_systems
+    native_norm = {k: v for k, v in norm_map.items() if v in systems}
+    return _map_emulator_to_slug(profile, systems, native_norm, sys_to_slug)
+
+
+def native_slug_systems(config: dict) -> set[str]:
+    """Systems the platform declares at least one file of its own for."""
+    return {
+        sid for sid, data in (config.get("systems") or {}).items()
+        if any(not f.get("mirror_of") for f in data.get("files", []))
+    }
 
 
 def hidden_extras(
@@ -223,11 +236,12 @@ def unplaceable_extras(config: dict, undeclared: list[dict], profiles: dict) -> 
         return set()
     platform_systems = set(config.get("systems", {}).keys())
     norm_map = {_norm_system_id(sid): sid for sid in platform_systems}
+    native = native_slug_systems(config)
     return {
         (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
         for u in undeclared
         if u.get("in_repo")
-        and not _slug_for(u, profiles, platform_systems, norm_map, sys_to_slug)
+        and not _slug_for(u, profiles, platform_systems, norm_map, sys_to_slug, native)
     }
 
 
@@ -550,6 +564,7 @@ class ExtraPlacement:
         self.prefix = _detect_extras_prefix(config, base_dest)
         self.slug_based, self.sys_to_slug = _detect_slug_structure(config)
         self.platform_systems = set(config.get("systems", {}).keys())
+        self.native_systems = native_slug_systems(config)
         self.norm_map = (
             {_norm_system_id(sid): sid for sid in self.platform_systems}
             if self.slug_based
@@ -567,7 +582,7 @@ class ExtraPlacement:
         if self.slug_based:
             slug = _slug_for(
                 entry, self.profiles, self.platform_systems, self.norm_map,
-                self.sys_to_slug,
+                self.sys_to_slug, self.native_systems,
             )
             if not slug:
                 return None

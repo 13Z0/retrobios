@@ -252,6 +252,28 @@ systems:
       crc32: f25cf3a8
       size: 2189528
       native_system: arcade
+  snk-neogeo-aes:
+    files:
+    - name: neogeo.zip
+      destination: neogeoaes/neogeo.zip
+      required: true
+      sha1: deb62b0074b8cae4f162c257662136733cfc76ad
+      md5: 00dad01abdbf8ea9e79ad2fe11bdb182
+      crc32: "81315163"
+      size: 1859335
+      native_system: neogeoaes
+      mirror_of: arcade
+  snk-neogeo-mvs:
+    files:
+    - name: neogeo.zip
+      destination: neogeomvs/neogeo.zip
+      required: true
+      sha1: deb62b0074b8cae4f162c257662136733cfc76ad
+      md5: 00dad01abdbf8ea9e79ad2fe11bdb182
+      crc32: "81315163"
+      size: 1859335
+      native_system: neogeomvs
+      mirror_of: arcade
   atari-400-800:
     files:
     - name: ATARIBAS.ROM

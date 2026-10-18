@@ -4821,5 +4821,44 @@ class AHashListIsReadOneWay(unittest.TestCase):
         self.assertEqual(set(entry_hashes(entry)), {a, b.lower(), "deadbeef"})
 
 
+
+class RommNeoGeoFoldersGetTheirBios(unittest.TestCase):
+    """RomM runs fbneo for neogeoaes and neogeomvs as for arcade and reads
+    firmware per platform folder; the fixture gives neogeo.zip to arcade
+    alone, so a Neo Geo game in its own folder started without it."""
+
+    def test_the_mirror_is_per_file(self):
+        from scripts.scraper.romm_scraper import FIRMWARE_MIRRORS, SLUG_MAP
+
+        arcade = FIRMWARE_MIRRORS["arcade"]
+        self.assertEqual(arcade["neogeoaes"], ("neogeo.zip",))
+        self.assertEqual(arcade["neogeomvs"], ("neogeo.zip",))
+        self.assertIn("neogeoaes", SLUG_MAP)
+
+    def test_a_file_files_under_its_own_system_only(self):
+        # Adding the Neo Geo slugs sent MAME 2003's ZN-1 BIOS and data files
+        # into neogeoaes/, and FBNeo's CPS3 sets already sat in colecovision/:
+        # a system the platform lacks has no folder, and a mirror-only
+        # folder attracts no system-less file.
+        from scripts.packextras import _slug_for
+
+        config_systems = {"arcade", "snk-neogeo-aes", "nintendo-ds"}
+        sys_to_slug = {"arcade": "arcade", "snk-neogeo-aes": "neogeoaes",
+                       "nintendo-ds": "nds"}
+        profiles = {"mame2003": {"systems": ["snk-neogeo-aes", "zn1-acclaim"]},
+                    "melonds": {"systems": ["nintendo-ds", "nintendo-dsi"]}}
+        args = (profiles, config_systems, {}, sys_to_slug, {"arcade", "nintendo-ds"})
+        self.assertEqual(_slug_for({"profile": "mame2003", "system": "zn1-acclaim"}, *args), "")
+        self.assertEqual(_slug_for({"profile": "mame2003"}, *args), "")
+        self.assertEqual(_slug_for({"profile": "melonds", "system": "nintendo-dsi"}, *args), "")
+        self.assertEqual(_slug_for({"profile": "melonds"}, *args), "nds")
+
+    def test_the_platform_file_carries_it(self):
+        text = (ROOT / "platforms" / "romm.yml").read_text(encoding="utf-8")
+        self.assertIn("destination: neogeoaes/neogeo.zip", text)
+        self.assertIn("destination: neogeomvs/neogeo.zip", text)
+        self.assertNotIn("neogeoaes/pgm.zip", text)
+
+
 if __name__ == "__main__":
     unittest.main()

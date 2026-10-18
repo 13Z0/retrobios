@@ -79,6 +79,8 @@ SLUG_MAP: dict[str, str] = {
     "msx2": "microsoft-msx",
     "nds": "nintendo-ds",
     "neo-geo-cd": "snk-neogeo-cd",
+    "neogeoaes": "snk-neogeo-aes",
+    "neogeomvs": "snk-neogeo-mvs",
     "nes": "nintendo-nes",
     "ngc": "nintendo-gamecube",
     "odyssey-2-slash-videopac-g7000": "magnavox-odyssey2",
@@ -114,8 +116,15 @@ SLUG_MAP: dict[str, str] = {
 # and lists firmware per platform folder (backend/handler/filesystem/
 # firmware_handler.py get_firmware_fs_structure), so a CD library without the
 # system cards under its own slug cannot boot a disc.
-FIRMWARE_MIRRORS: dict[str, tuple[str, ...]] = {
-    "tg16": ("turbografx-cd",),
+#
+# Mirrors are per file, not per core: a slug sharing a core with another reads
+# only the firmware that core needs for its own system. The Neo Geo slugs run
+# fbneo, as arcade does (index.ts:410-418), and fbneo boots every Neo Geo
+# game from neogeo.zip; the fixture gives it to arcade alone. None mirrors
+# every file of the slug.
+FIRMWARE_MIRRORS: dict[str, dict[str, tuple[str, ...] | None]] = {
+    "tg16": {"turbografx-cd": None},
+    "arcade": {"neogeoaes": ("neogeo.zip",), "neogeomvs": ("neogeo.zip",)},
 }
 
 
@@ -163,7 +172,12 @@ class Scraper(BaseScraper):
             crc32 = (entry.get("crc") or "").strip() or None
             size = int(entry["size"]) if entry.get("size") else None
 
-            for slug in (igdb_slug, *FIRMWARE_MIRRORS.get(igdb_slug, ())):
+            mirrors = [
+                slug
+                for slug, names in FIRMWARE_MIRRORS.get(igdb_slug, {}).items()
+                if names is None or filename in names
+            ]
+            for slug in (igdb_slug, *mirrors):
                 requirements.append(
                     BiosRequirement(
                         name=filename,
