@@ -5019,6 +5019,18 @@ class ANamedPackThatIsAbsentFails(unittest.TestCase):
         self.assertIn("retroarch: FAIL (no pack in", result.stdout)
         self.assertIn("generate_pack.py --platform retroarch", result.stdout)
 
+    def test_all_with_no_pack_is_a_failure(self):
+        """--all on a mistyped or purged directory skipped every platform
+        and exited 0, a passed integrity check that checked nothing."""
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            result = subprocess.run(
+                [sys.executable, "scripts/generate_pack.py", "--all",
+                 "--verify-packs", "--output-dir", directory],
+                cwd=ROOT, capture_output=True, text=True, timeout=600,
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("no pack to verify", result.stdout)
+
 
 
 class AnAliasNamesItsProfile(unittest.TestCase):

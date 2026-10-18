@@ -2497,8 +2497,10 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         set(os.listdir(args.output_dir)) if os.path.isdir(args.output_dir) else set()
     )
 
+    verified = 0
     for platform_name in platforms:
         found = sorted(expected[platform_name] & on_disk)
+        verified += len(found)
         if not found:
             # Naming a platform is asking about its pack: FAIL, with the
             # command that builds it. With --all, a platform whose pack was
@@ -2545,6 +2547,11 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                     print(f"    {err}")
                 all_ok = False
 
+    if not verified:
+        # Every platform skipped is no check at all: a mistyped or purged
+        # output directory read as a passed integrity check.
+        print(f"ERROR: no pack to verify in {args.output_dir}")
+        all_ok = False
     if not all_ok:
         sys.exit(1)
 
