@@ -665,5 +665,24 @@ class AnOversizedDatIsNamed(unittest.TestCase):
             self.assertIn("Skipping big.dat", err.getvalue())
 
 
+
+class LooseRomsAreAtoms(unittest.TestCase):
+    """AtomPool read only ZIP members: nmk004.zip stayed unidentified while
+    its one ROM sat loose in bios/Arcade/FBNeo/nmk004.bin."""
+
+    def test_a_loose_file_completes_a_recipe(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            bios = Path(directory) / "bios"
+            bios.mkdir()
+            loose = bios / "nmk004.bin"
+            loose.write_bytes(ROM_A)
+            db = {"files": {"x": {"path": str(loose), "crc32": _crc(ROM_A)}}}
+            self.assertNotIn(_crc(ROM_A), AtomPool(bios))
+            pool = AtomPool(bios, None, db)
+            self.assertIn(_crc(ROM_A), pool)
+            self.assertEqual(pool.read(_crc(ROM_A)), ROM_A)
+            self.assertIsNotNone(pool.build([("nmk004.bin", _crc(ROM_A))]))
+
+
 if __name__ == "__main__":
     unittest.main()

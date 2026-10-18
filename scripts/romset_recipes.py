@@ -122,8 +122,11 @@ class AtomPool:
     hundreds of megabytes and a whole-pool preload buys nothing.
     """
 
-    def __init__(self, bios_dir: Path, digest_cache: Path | None = None) -> None:
-        self._index: dict[str, tuple[Path, str]] = {}
+    def __init__(
+        self, bios_dir: Path, digest_cache: Path | None = None, db: dict | None = None
+    ) -> None:
+        # crc32 -> (archive, member), or (file, None) for a loose ROM.
+        self._index: dict[str, tuple[Path, str | None]] = {}
         # (md5, size) of each build, kept across runs: TorrentZip bytes are a
         # function of the members alone, so a recipe hashed once is known
         # until the writer changes. Rebuilding the 1 221 archives took 70 s
@@ -145,6 +148,16 @@ class AtomPool:
                             )
             except (OSError, zipfile.BadZipFile) as exc:
                 self.unreadable.append(f"{archive}: {exc}")
+        # Loose ROMs, by the crc32 the database already computed: nmk004.zip
+        # needs nmk004.bin, which the collection holds only as a file.
+        root = bios_dir.resolve()
+        for entry in ((db or {}).get("files") or {}).values():
+            crc, path = str(entry.get("crc32") or "").lower(), entry.get("path", "")
+            if not crc or not path or path.lower().endswith(".zip"):
+                continue
+            loose = Path(path)
+            if root in loose.resolve().parents and loose.is_file():
+                self._index.setdefault(crc, (loose, None))
 
     def __len__(self) -> int:
         return len(self._index)
@@ -154,6 +167,8 @@ class AtomPool:
 
     def read(self, crc32: str) -> bytes:
         archive, member = self._index[crc32.lower()]
+        if member is None:
+            return archive.read_bytes()
         with zipfile.ZipFile(archive) as handle:
             return handle.read(member)
 
@@ -480,7 +495,7 @@ def main() -> int:
     profile_recipes = collect_recipes(profiles)
     dat_recipes = load_dat_recipes(args.dat_recipes)
     recipes = merge_recipes(profile_recipes, dat_recipes)
-    pool = AtomPool(Path(args.bios_dir), DIGEST_CACHE)
+    pool = AtomPool(Path(args.bios_dir), DIGEST_CACHE, db)
 
     result: dict = {
         "recipes": sum(len(v) for v in recipes.values()),
