@@ -333,44 +333,53 @@ def validate_file(
     return result
 
 
-def get_changed_files() -> list[str]:
-    """BIOS files the branch changes against origin's main line.
-
-    A base git cannot resolve is skipped; when none resolves the staged
-    changes are read and said so. A git that fails outright is an error,
-    never "nothing changed": a clone whose remote is not called origin
-    used to answer that no BIOS had changed while the branch committed one.
-    """
-    compared = False
-    for base in ("main", "master", "v2"):
-        result = subprocess.run(
-            ["git", "diff", "--name-only", f"origin/{base}...HEAD"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            continue
-        compared = True
-        files = [f for f in result.stdout.strip().split("\n") if f.startswith("bios/")]
-        if files:
-            return files
-    if compared:
-        return []
-    print(
-        "no origin/main, origin/master or origin/v2 to compare against; "
-        "reading the staged changes only",
-        file=sys.stderr,
-    )
-    result = subprocess.run(
-        ["git", "diff", "--cached", "--name-only"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+def _git_lines(*args: str) -> list[str] | None:
+    """Output lines of a git command, or None when git refuses it."""
+    result = subprocess.run(["git", *args], capture_output=True, text=True, check=False)
     if result.returncode != 0:
-        raise RuntimeError(f"git diff --cached failed: {result.stderr.strip()}")
-    return [f for f in result.stdout.strip().split("\n") if f.startswith("bios/") and f]
+        return None
+    return [line for line in result.stdout.splitlines() if line]
+
+
+def get_changed_files() -> list[str]:
+    """BIOS files this checkout changes against the project's main line.
+
+    Committed changes are read against upstream/<base> first, then
+    origin/<base>: on a fork whose main carries the commit, origin/main is
+    HEAD and the diff was empty. Uncommitted and untracked files count too,
+    since CONTRIBUTING has the file copied into bios/ before any commit.
+    A git that fails outright is an error, never "nothing changed".
+    """
+    changed: list[str] = []
+    compared = False
+    for remote in ("upstream", "origin"):
+        for base in ("main", "master", "v2"):
+            committed = _git_lines("diff", "--name-only", f"{remote}/{base}...HEAD")
+            if committed is None:
+                continue
+            compared = True
+            changed.extend(committed)
+            break
+        if compared and changed:
+            break
+    staged = _git_lines("diff", "--cached", "--name-only")
+    local = _git_lines("diff", "--name-only")
+    untracked = _git_lines("ls-files", "--others", "--exclude-standard", "--", "bios")
+    if staged is None and local is None and untracked is None:
+        raise RuntimeError("git cannot read this checkout")
+    for found in (staged, local, untracked):
+        changed.extend(found or [])
+    if not compared:
+        print(
+            "no upstream/ or origin/ main line to compare against; reading the "
+            "staged, modified and untracked files only",
+            file=sys.stderr,
+        )
+    seen: set[str] = set()
+    return [
+        f for f in changed
+        if f.startswith("bios/") and not (f in seen or seen.add(f)) and os.path.isfile(f)
+    ]
 
 
 def _files_to_validate(

@@ -52,7 +52,32 @@ class GitThatCannotAnswer(unittest.TestCase):
             )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("bios/x.bin", proc.stdout)
-        self.assertIn("staged changes only", proc.stderr)
+        self.assertIn("untracked files only", proc.stderr)
+
+
+class ChangesNotYetCommittedAreRead(unittest.TestCase):
+    """--changed read only `git diff origin/main...HEAD`: a file copied into
+    bios/ before any commit, as CONTRIBUTING has it, or committed on a
+    fork's own main, answered "No changed BIOS files detected", rc 0."""
+
+    def test_an_untracked_file_is_read(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            subprocess.run(["git", "init", "-q", tmp], check=True)
+            Path(tmp, "README").write_text("x")
+            subprocess.run(["git", "-C", tmp, "add", "README"], check=True)
+            subprocess.run(["git", "-C", tmp, "-c", "user.email=a@b", "-c", "user.name=a",
+                            "commit", "-qm", "init"], check=True)
+            Path(tmp, "bios").mkdir()
+            Path(tmp, "bios", "new.bin").write_bytes(b"x")
+            proc = subprocess.run(
+                [sys.executable, "-c", (
+                    f"import sys; sys.path.insert(0, {str(REPO_ROOT / 'scripts')!r}); "
+                    "import validate_pr; print(validate_pr.get_changed_files())"
+                )],
+                cwd=tmp, capture_output=True, text=True, timeout=60, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("bios/new.bin", proc.stdout)
 
 
 class RefreshFailuresAreFailures(unittest.TestCase):
