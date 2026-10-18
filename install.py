@@ -567,10 +567,18 @@ def _windows_retroarch_dirs() -> list[Path]:
 
 def _macos_retroarch_base() -> Path:
     """Where RetroArch on macOS keeps its system folder by default:
-    ~/Documents/RetroArch, or Application Support/RetroArch when that folder
-    holds portable.txt (platform_darwin.m)."""
+    ~/Documents/RetroArch, or Application Support/RetroArch for a portable
+    install. The Steam build is always portable (platform_darwin.m, `#if
+    HAVE_STEAM portable = YES`), with no portable.txt to say so: its
+    bundle under Steam's library, and no other RetroArch.app, mark it."""
     support = Path.home() / "Library" / "Application Support" / "RetroArch"
     if (support / "portable.txt").is_file():
+        return support
+    steam = (
+        Path.home() / "Library" / "Application Support" / "Steam" / "steamapps"
+        / "common" / "RetroArch" / "RetroArch.app"
+    )
+    if steam.is_dir() and not Path("/Applications/RetroArch.app").is_dir():
         return support
     return Path.home() / "Documents" / "RetroArch"
 

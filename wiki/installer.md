@@ -306,7 +306,7 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 | `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg` | RetroArch (Flatpak) | `system_directory` |
 | `~/snap/retroarch/current/.config/retroarch/retroarch.cfg` | RetroArch (Snap) | `system_directory` |
 | `~/.config/retroarch/retroarch.cfg` | RetroArch (native) | `system_directory` |
-| `~/Library/Application Support/RetroArch/config/retroarch.cfg` | RetroArch (macOS) | `system_directory`; at default, `~/Documents/RetroArch/system` (portable: `Application Support/RetroArch/system`) |
+| `~/Library/Application Support/RetroArch/config/retroarch.cfg` | RetroArch (macOS) | `system_directory`; at default, `~/Documents/RetroArch/system` (portable, Steam build included: `Application Support/RetroArch/system`) |
 | `retroarch.cfg` beside `retroarch.exe` (`C:\RetroArch-Win64`, `C:\RetroArch`, `Program Files\RetroArch`) | RetroArch (Windows) | `system_directory`; at default or without a config, `system` beside the exe |
 | `%APPDATA%\RetroArch\retroarch.cfg` | RetroArch (Windows) | `system_directory`, read when the exe folder has no config |
 | `%ProgramFiles(x86)%\Steam\steamapps\common\RetroArch\retroarch.cfg` | RetroArch (Steam) | `system_directory` |

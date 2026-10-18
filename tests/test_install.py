@@ -2826,5 +2826,20 @@ class WindowsSeenFromWsl(unittest.TestCase):
             self.assertEqual(os.environ["ProgramFiles"], "")
 
 
+class SteamRetroArchOnMacIsPortable(unittest.TestCase):
+    """platform_darwin.m makes the Steam build portable (HAVE_STEAM) with no
+    portable.txt: a default system_directory is Application Support's, and
+    the installer took ~/Documents/RetroArch/system."""
+
+    def test_the_steam_bundle_moves_the_base(self):
+        home = Path(_tempdir(self))
+        support = home / "Library" / "Application Support"
+        with unittest.mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                unittest.mock.patch.object(Path, "home", return_value=home):
+            self.assertEqual(install._macos_retroarch_base(), home / "Documents" / "RetroArch")
+            (support / "Steam/steamapps/common/RetroArch/RetroArch.app").mkdir(parents=True)
+            self.assertEqual(install._macos_retroarch_base(), support / "RetroArch")
+
+
 if __name__ == "__main__":
     unittest.main()
