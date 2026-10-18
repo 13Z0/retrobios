@@ -343,7 +343,7 @@ platforms:
       detect:
       - os: linux
         method: os_release
-        id: lakka
+        match: [ID=lakka]
         bios_path: /storage/system
   retrodeck:
     config: retrodeck.yml
@@ -429,7 +429,7 @@ platforms:
       detect:
       - os: linux
         method: os_release
-        id: rocknix
+        match: [OS_NAME=rocknix, ID=rocknix]
         bios_path: /storage/roms/bios
   retropie:
     config: retropie.yml

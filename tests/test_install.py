@@ -959,7 +959,7 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         for name, entry in registry["platforms"].items():
             for rule in (entry.get("install") or {}).get("detect", []):
                 if rule["method"] == "os_release":
-                    rules.add((name, "os_release", (rule["id"],), rule["bios_path"]))
+                    rules.add((name, "os_release", tuple(rule["match"]), rule["bios_path"]))
                 elif rule["method"] == "file_exists":
                     files = rule["file"] if isinstance(rule["file"], list) else [rule["file"]]
                     rules.add((name, "file_exists", tuple(files), rule["bios_path"]))
@@ -972,7 +972,9 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
                     lambda p: str(p) in ("/etc/knulli-release", "/etc/batocera-version"),
                 ):
             self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
-        with unittest.mock.patch.object(install, "_parse_os_release", return_value={"ID": "ROCKNIX"}):
+        # What ROCKNIX writes since 2025: OS_NAME and HW_DEVICE, no ID.
+        with unittest.mock.patch.object(install, "_parse_os_release",
+                                        return_value={"OS_NAME": "ROCKNIX", "HW_DEVICE": "RK3566"}):
             self.assertEqual(
                 install._detect_embedded(), [("rocknix", Path("/storage/roms/bios"))]
             )

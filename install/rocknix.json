@@ -11,7 +11,10 @@
     {
       "os": "linux",
       "method": "os_release",
-      "id": "rocknix",
+      "match": [
+        "OS_NAME=rocknix",
+        "ID=rocknix"
+      ],
       "bios_path": "/storage/roms/bios"
     }
   ],

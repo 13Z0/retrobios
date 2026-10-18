@@ -260,7 +260,7 @@ wins, since a machine is only one of them.
 
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
-| `/etc/os-release` `ID=rocknix` | ROCKNIX | `/storage/roms/bios` |
+| `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | `/storage/roms/bios` |
 | `/etc/knulli-release` | Batocera | `/userdata/bios` |
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
 | `/etc/batocera-version` | Batocera | `/userdata/bios` |

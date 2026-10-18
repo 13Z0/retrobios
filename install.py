@@ -670,9 +670,11 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
 # markers. The registry publishes the same rules as each manifest's
 # `detect`; a test holds the two equal. MiSTer is a path rule below.
 _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
-    ("rocknix", "os_release", ("rocknix",), "/storage/roms/bios"),
+    # ROCKNIX writes OS_NAME and no ID since 2025 (scripts/image); older
+    # images wrote ID=rocknix.
+    ("rocknix", "os_release", ("OS_NAME=rocknix", "ID=rocknix"), "/storage/roms/bios"),
     ("batocera", "file_exists", ("/etc/knulli-release",), "/userdata/bios"),
-    ("lakka", "os_release", ("lakka",), "/storage/system"),
+    ("lakka", "os_release", ("ID=lakka",), "/storage/system"),
     ("batocera", "file_exists", ("/etc/batocera-version",), "/userdata/bios"),
     ("recalbox", "file_exists", ("/recalbox/recalbox.version",), "/recalbox/share/bios"),
     ("recalbox", "file_exists", ("/usr/bin/recalbox-settings",), "/recalbox/share/bios"),
@@ -685,10 +687,14 @@ _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
 
 def _detect_embedded() -> list[tuple[str, Path]]:
     """Check for embedded Linux retrogaming OSes."""
-    os_id = _parse_os_release().get("ID", "").lower()
+    release = {k: v.lower() for k, v in _parse_os_release().items()}
     for platform_name, method, values, bios in _EMBEDDED_RULES:
         if method == "os_release":
-            matched = os_id in values
+            # Any of the KEY=value pairs, the value compared without case.
+            matched = any(
+                release.get(key) == value.lower()
+                for key, _, value in (pair.partition("=") for pair in values)
+            )
         else:
             matched = all(Path(value).exists() for value in values)
         if matched:
