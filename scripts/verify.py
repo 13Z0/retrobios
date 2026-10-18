@@ -787,10 +787,13 @@ def _mark_hidden(
     shipped: dict[str, str],
     target_cores: set[str] | None,
     region_drops: set[str] | None = None,
+    report: list[dict] | None = None,
 ) -> set[str]:
     """What the builder holds but cannot place beside the files it packed.
 
     Returns the full destinations the builder fills with a core's file.
+    ``report`` is the gap report the caller already computed with the
+    builder's arguments; without it the builder's pass computes its own.
     """
     from packextras import hidden_extras
 
@@ -799,7 +802,7 @@ def _mark_hidden(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores, region_drops, placed,
+        shipped, target_cores, region_drops, placed, report,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1128,6 +1131,9 @@ def verify_platform(
         target_cores=target_cores,
         declared_names=platform_declarations(config, db, enrich=False),
     )
+    # The builder's own pass reads the same report: computed once here and
+    # handed over as it stands now, before the markings below.
+    report_for_builder = [dict(u) for u in undeclared]
     if region_drops:
         undeclared = [
             u
@@ -1140,7 +1146,7 @@ def verify_platform(
     _mark_unplaced(config, undeclared, profiles)
     placed = _mark_hidden(
         config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
-        region_drops,
+        region_drops, report_for_builder,
     )
     if not reads_file_contents(mode):
         # An existence frontend is satisfied by any file at the path, and the

@@ -110,5 +110,34 @@ class TheReportSaysSo(unittest.TestCase):
         self.assertIs(entry.get("in_pack"), False)
 
 
+
+class TheGapReportIsComputedOnce(unittest.TestCase):
+    """verify_platform ran find_undeclared_files twice with the same
+    arguments, once itself and once through hidden_extras: every
+    resolution twice, 8% of verify --all."""
+
+    def test_one_call_per_platform(self):
+        if not (REPO_ROOT / "database.json").exists():
+            self.skipTest("database.json is not built")
+        from unittest import mock
+
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        try:
+            import verify
+            from common import load_database, load_emulator_profiles, load_platform_config
+
+            db = load_database("database.json")
+            profiles = load_emulator_profiles("emulators")
+            config = load_platform_config("emudeck", "platforms")
+            with mock.patch.object(
+                verify, "find_undeclared_files", wraps=verify.find_undeclared_files
+            ) as counted:
+                verify.verify_platform(config, db, "emulators", profiles)
+        finally:
+            os.chdir(previous)
+        self.assertEqual(counted.call_count, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

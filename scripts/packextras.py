@@ -155,6 +155,7 @@ def hidden_extras(
     target_cores: set[str] | None = None,
     region_drops: set[str] | None = None,
     placed: set[str] | None = None,
+    report: list[dict] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -189,7 +190,7 @@ def hidden_extras(
     hidden: dict[tuple[str, str, str], str] = {}
     for fe in _collect_emulator_extras(
         config, emulators_dir, db, set(shipped), base_dest, profiles,
-        target_cores=target_cores,
+        target_cores=target_cores, undeclared=report,
     ):
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
@@ -603,8 +604,12 @@ def _collect_emulator_extras(
     unplaceable: list[dict] | None = None,
     baseline_claims: dict[str, dict] | None = None,
     absent: list[dict] | None = None,
+    undeclared: list[dict] | None = None,
 ) -> list[dict]:
     """Collect core requirement files from emulator profiles not in the platform pack.
+
+    ``undeclared`` is the gap report when the caller already holds it,
+    computed with the same arguments (verify's own pass).
 
     ``absent`` receives, placed like the others, the entries the collection
     does not hold: the region pass groups them as it groups the platform's
@@ -650,10 +655,11 @@ def _collect_emulator_extras(
     # under an alias still get packed at the emulator's expected path.
     yaml_names = platform_declarations(config, db, enrich=False)
 
-    undeclared = find_undeclared_files(
-        config, emulators_dir, db, emu_profiles, target_cores=target_cores,
-        include_all=include_all, declared_names=yaml_names,
-    )
+    if undeclared is None:
+        undeclared = find_undeclared_files(
+            config, emulators_dir, db, emu_profiles, target_cores=target_cores,
+            include_all=include_all, declared_names=yaml_names,
+        )
     # A destination two cores claim goes to the one that names its content:
     # hypseus-singe asks for gamecontrollerdb.txt by name alone and took the
     # BIOS root before Solarus, which pins its own by sha1. Profile order
