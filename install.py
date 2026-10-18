@@ -27,6 +27,7 @@ import re
 import shutil
 import stat
 import sys
+import tarfile
 import tempfile
 import threading
 import time
@@ -34,7 +35,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from collections.abc import Callable
+import zipfile
+from collections.abc import Callable, Iterator
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, TextIO
 
@@ -88,6 +90,8 @@ MAX_MANIFEST_BYTES = 16 * 1024 * 1024
 MAX_TARGETS_BYTES = 4 * 1024 * 1024
 MAX_MANIFEST_FILES = 100_000
 MAX_DOWNLOAD_SIZE = 1024 * 1024 * 1024
+# A data directory's source archive: PCSX2's source tarball is the largest.
+MAX_DATA_ARCHIVE_SIZE = 4 * 1024 * 1024 * 1024
 MAX_TOTAL_DOWNLOAD_SIZE = 64 * 1024 * 1024 * 1024
 # Why a manifest leaves a file out, as the installer words it. The manifest
 # schema and the generator are held to this list by the tests.
@@ -1507,6 +1511,52 @@ def _check_entry(
     return size, largest
 
 
+_SHA1_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def _check_data_directory(entry: object, where: str) -> None:
+    """A data directory: its source archive, its mapping, its file list."""
+    if not isinstance(entry, dict):
+        raise ValueError(f"{where} must be an object")
+    if not isinstance(entry.get("ref"), str) or not entry["ref"]:
+        raise ValueError(f"{where}.ref is missing")
+    if entry.get("dest", "") != "":
+        _safe_relative_path(entry.get("dest"), f"{where}.dest")
+    url = entry.get("url")
+    parsed = urllib.parse.urlparse(url if isinstance(url, str) else "")
+    if not (parsed.scheme == "https" or (
+        parsed.scheme == "http" and (parsed.hostname or "") in _LOOPBACK_HOSTS
+    )):
+        raise ValueError(f"{where}.url must use HTTPS")
+    kind = entry.get("type")
+    if kind not in ("zip", "tarball"):
+        raise ValueError(f"{where}.type must be zip or tarball")
+    strip = entry.get("strip_components", 0)
+    if not isinstance(strip, int) or isinstance(strip, bool) or not 0 <= strip <= 16:
+        raise ValueError(f"{where}.strip_components is invalid")
+    if kind == "tarball" and (
+        not isinstance(entry.get("source_path"), str) or not entry["source_path"]
+    ):
+        raise ValueError(f"{where}.source_path is missing")
+    for field in ("exclude", "systems"):
+        values = entry.get(field, [])
+        if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
+            raise ValueError(f"{where}.{field} is invalid")
+    files = entry.get("files")
+    if not isinstance(files, dict) or not files or len(files) > MAX_MANIFEST_FILES:
+        raise ValueError(f"{where}.files is invalid")
+    for rel, meta in files.items():
+        _safe_relative_path(rel, f"{where}.files")
+        if (
+            not isinstance(meta, dict)
+            or not isinstance(meta.get("sha1"), str)
+            or not _SHA1_RE.match(meta["sha1"])
+            or not isinstance(meta.get("size"), int)
+            or not 0 <= meta["size"] <= MAX_DOWNLOAD_SIZE
+        ):
+            raise ValueError(f"{where}.files[{rel!r}] is invalid")
+
+
 def _validate_manifest(data: object, plat: str) -> dict:
     """Validate the untrusted install-manifest boundary using stdlib only."""
     if not isinstance(data, dict):
@@ -1538,6 +1588,11 @@ def _validate_manifest(data: object, plat: str) -> dict:
         largest_total += largest
         if largest_total > MAX_TOTAL_DOWNLOAD_SIZE:
             raise ValueError("manifest total size exceeds safety limit")
+    data_dirs = data.get("data_directories", [])
+    if not isinstance(data_dirs, list) or len(data_dirs) > MAX_SELECTION_TAGS:
+        raise ValueError("invalid data_directories list")
+    for index, entry in enumerate(data_dirs):
+        _check_data_directory(entry, f"data_directories[{index}]")
 
     declared_total_files = data.get("total_files")
     if declared_total_files is not None and declared_total_files != len(files):
@@ -2670,6 +2725,150 @@ def download_files(
     return failed, interrupted
 
 
+def _fetch_archive(url: str, directory: Path) -> Path:
+    """A data directory's source archive, in *directory*, retried like files."""
+    reason: Exception | None = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        handle = tempfile.NamedTemporaryFile(dir=directory, suffix=".archive", delete=False)
+        try:
+            with handle, urllib.request.urlopen(url, timeout=60) as resp:
+                received = 0
+                while True:
+                    if _stop.is_set():
+                        raise _Interrupted()
+                    chunk = resp.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    received += len(chunk)
+                    if received > MAX_DATA_ARCHIVE_SIZE:
+                        raise ValueError("archive exceeds the size limit")
+                    handle.write(chunk)
+            return Path(handle.name)
+        except urllib.error.HTTPError as exc:
+            Path(handle.name).unlink(missing_ok=True)
+            if exc.code < 500 and exc.code != 429:
+                raise
+            reason = exc
+        except (urllib.error.URLError, OSError) as exc:
+            Path(handle.name).unlink(missing_ok=True)
+            reason = exc
+        except BaseException:
+            Path(handle.name).unlink(missing_ok=True)
+            raise
+        if attempt < MAX_RETRIES:
+            time.sleep(_retry_delay(attempt, None))
+    raise reason if reason else OSError("download failed")
+
+
+def _archive_members(
+    archive: Path, entry: dict
+) -> Iterator[tuple[str, Callable[[], BinaryIO]]]:
+    """(path in the tree, opener) for each file the archive maps into it.
+
+    The rules refresh_data_dirs applies to build the cache: a ZIP drops
+    strip_components leading parts, a tarball keeps what sits under
+    source_path, and a first part named in exclude is left out.
+    """
+    exclude = set(entry.get("exclude") or [])
+    if entry["type"] == "zip":
+        strip = entry.get("strip_components", 0)
+        with zipfile.ZipFile(archive) as zf:
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                parts = info.filename.split("/")
+                if ".." in parts or info.filename.startswith("/"):
+                    continue
+                if strip:
+                    if len(parts) <= strip:
+                        continue
+                    parts = parts[strip:]
+                if parts[0] in exclude:
+                    continue
+                yield "/".join(parts), (lambda info=info: zf.open(info))
+        return
+    prefix = entry["source_path"].rstrip("/") + "/"
+    with tarfile.open(archive, "r:gz") as tf:
+        for member in tf:
+            if not member.isfile() or not member.name.startswith(prefix):
+                continue
+            rel = member.name[len(prefix):]
+            if not rel or ".." in rel.split("/") or rel.split("/")[0] in exclude:
+                continue
+            yield rel, (lambda member=member: tf.extractfile(member))
+
+
+def data_directory_state(entry: dict, bios_path: Path) -> tuple[Path, dict[str, dict], int]:
+    """(tree root, files missing or wrong, files already right)."""
+    root = _destination_path(bios_path, entry["dest"]) if entry.get("dest") else bios_path.resolve()
+    needed: dict[str, dict] = {}
+    present = 0
+    for rel, meta in entry["files"].items():
+        target = _destination_path(root, rel)
+        if (
+            target.is_file()
+            and target.stat().st_size == meta["size"]
+            and _sha1_file(target) == meta["sha1"]
+        ):
+            present += 1
+        else:
+            needed[rel] = meta
+    return root, needed, present
+
+
+def install_data_directory(entry: dict, bios_path: Path) -> dict:
+    """Rebuild one data tree from its source archive, file by file verified.
+
+    Returns counts: present, installed, changed (the source no longer holds
+    the recorded bytes), absent (not in the archive), and error, the reason
+    the archive could not be read.
+    """
+    root, needed, present = data_directory_state(entry, bios_path)
+    counts = {"present": present, "installed": 0, "changed": 0, "absent": 0, "error": ""}
+    if not needed:
+        return counts
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=root) as scratch:
+            archive = _fetch_archive(entry["url"], Path(scratch))
+            for rel, opener in _archive_members(archive, entry):
+                meta = needed.pop(rel, None)
+                if meta is None:
+                    continue
+                target = _destination_path(root, rel)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                digest = hashlib.sha1()
+                size = 0
+                with opener() as src, tempfile.NamedTemporaryFile(
+                    dir=target.parent, prefix=f".{target.name}.", suffix=".part",
+                    delete=False,
+                ) as out:
+                    for chunk in iter(lambda: src.read(1024 * 1024), b""):
+                        digest.update(chunk)
+                        size += len(chunk)
+                        out.write(chunk)
+                if digest.hexdigest() == meta["sha1"] and size == meta["size"]:
+                    os.replace(out.name, target)
+                    counts["installed"] += 1
+                else:
+                    Path(out.name).unlink(missing_ok=True)
+                    counts["changed"] += 1
+    except (urllib.error.URLError, OSError, ValueError, zipfile.BadZipFile,
+            tarfile.TarError) as exc:
+        counts["error"] = str(getattr(exc, "reason", None) or exc)
+    counts["absent"] = len(needed)
+    return counts
+
+
+def select_data_directories(manifest: dict, files: list[dict], narrowed: bool) -> list[dict]:
+    """The data trees this install keeps: all, or those of a kept system."""
+    entries = manifest.get("data_directories") or []
+    if not narrowed:
+        return list(entries)
+    kept = {system for f in files for system in entry_systems(f)}
+    return [e for e in entries if kept & set(e.get("systems") or [])]
+
+
 def do_standalone_copies(
     manifest: dict, bios_path: Path, os_type: str,
     extra_dirs: dict[str, Path] | None = None,
@@ -3516,16 +3715,33 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # Mismatched files need re-download
         to_download.extend(mismatched)
 
+        narrowed = bool(
+            target or args.system or args.core or args.region or args.installed_cores
+            or len(files) != len(manifest.get("files", [])) + len(
+                variants if case_kept else []
+            )
+        )
+        data_dirs = select_data_directories(manifest, files, narrowed)
+
         if args.check:
             if to_download:
                 print(f"\n  {len(to_download)} files need downloading.")
                 check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
+            for entry in data_dirs:
+                _root, needed, present = data_directory_state(entry, bios_path)
+                if needed:
+                    print(f"  {entry['ref']}: {present}/{len(entry['files'])} data files "
+                          f"present, {len(needed)} to fetch")
+                    check_pending += len(needed)
             continue
 
         if args.dry_run:
             _print_plan(to_download, bios_path, term)
+            for entry in data_dirs:
+                print(f"  and the {entry['ref']} tree ({len(entry['files'])} files) "
+                      f"from {entry['url']}")
             continue
 
         if to_download:
@@ -3576,6 +3792,27 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print("\n  All files up to date.")
 
         total_up_to_date += len(up_to_date)
+
+        # Data trees the pack carries beside the files: Dolphin's Sys,
+        # PPSSPP's assets. Fetched from their source archive, each file
+        # checked against the hash the list records.
+        if data_dirs and not total_interrupted:
+            print("\nData directories:")
+            for entry in data_dirs:
+                counts = install_data_directory(entry, bios_path)
+                total_downloaded += counts["installed"]
+                total_up_to_date += counts["present"]
+                line = f"  {entry['ref']}: {counts['installed']} installed, " \
+                       f"{counts['present']} already up to date"
+                if counts["changed"] or counts["absent"]:
+                    line += (f", {counts['changed'] + counts['absent']} no longer in "
+                             "the source (the pack has them)")
+                print(line)
+                if counts["error"]:
+                    print(f"  {entry['ref']}: could not read {entry['url']}: "
+                          f"{counts['error']}", file=sys.stderr)
+                    failures.append((entry["ref"], counts["error"]))
+                    total_errors += 1
 
         # Standalone copies
         if (

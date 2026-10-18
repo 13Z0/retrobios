@@ -373,9 +373,13 @@ def _data_directory_members(
     seen_destinations: set,
     seen_lower: set,
     seen_parents: set,
+    refs_out: dict | None = None,
 ) -> Iterator[tuple[str, str]]:
     """Yield (source, destination) for the cached data directories a
     platform's systems declare.
+
+    ``refs_out``, when given, maps each yielded destination to
+    (registry key, system id, directory destination), for the manifest.
 
     These are not BIOS and carry no hash of their own: they are whole
     trees an emulator reads, refreshed from upstream, so what ships is
@@ -424,6 +428,8 @@ def _data_directory_members(
                         _register_path(full, seen_destinations, seen_parents)
                         if case_insensitive:
                             seen_lower.add(full.lower())
+                        if refs_out is not None:
+                            refs_out[full] = (ref_key, sys_id, dd_prefix)
                         yield src, full
 
 
@@ -4130,16 +4136,19 @@ def generate_manifest(
         ):
             omission["declared_in"] = sorted(declared)
 
-    # Phase 3: data directories. The installer does not fetch them, so they
-    # stay out of the file list; the pack carries them, so they count toward
-    # what an extraction shows.
-    data_sizes = pack_only_sizes + [
-        os.path.getsize(src)
-        for src, _dest in _data_directory_members(
-            pack_systems, data_registry, platform_name, base_dest,
-            case_insensitive, seen_destinations, seen_lower, seen_parents,
-        )
-    ]
+    # Phase 3: data directories. They are not files of the collection: the
+    # installer fetches each from its source archive and keeps the members
+    # whose hash the list below records, the same tree the pack carries.
+    data_refs: dict[str, tuple[str, str, str]] = {}
+    data_members = list(_data_directory_members(
+        pack_systems, data_registry, platform_name, base_dest,
+        case_insensitive, seen_destinations, seen_lower, seen_parents,
+        data_refs,
+    ))
+    data_sizes = pack_only_sizes + [os.path.getsize(src) for src, _dest in data_members]
+    data_directories = _manifest_data_directories(
+        data_members, data_refs, data_registry or {}, base_dest
+    )
 
     now = _build_timestamp(db)
     core_names, system_cores = _manifest_core_index(
@@ -4179,6 +4188,8 @@ def generate_manifest(
         "system_cores": system_cores,
         "files": manifest_files,
     }
+    if data_directories:
+        result["data_directories"] = data_directories
     if case_insensitive and fold_case is None and any(
         d.get("os") not in CASE_FOLDING_OS for d in detect
     ):
@@ -4202,6 +4213,53 @@ def generate_manifest(
         if variants:
             result["case_variants"] = variants
     return result
+
+
+def _manifest_data_directories(
+    members: list[tuple[str, str]],
+    refs: dict[str, tuple[str, str, str]],
+    registry: dict,
+    base_dest: str,
+) -> list[dict]:
+    """Each data directory the pack carries, as the installer rebuilds it.
+
+    The source archive and the rule that maps its members onto the tree
+    (strip_components for a ZIP, source_path for a tarball, exclude) come
+    from _data_dirs.yml, the same refresh_data_dirs applies; every file
+    carries the sha1 and size the cache holds, so a member the source
+    changed since is refused rather than installed.
+    """
+    grouped: dict[tuple[str, str], dict] = {}
+    for src, full in members:
+        ref, system, prefix = refs[full]
+        entry = registry.get(ref, {})
+        key = (ref, prefix)
+        group = grouped.get(key)
+        if group is None:
+            version = str(entry.get("version", "master"))
+            dest = prefix
+            if base_dest and (dest == base_dest or dest.startswith(base_dest + "/")):
+                dest = dest[len(base_dest):].lstrip("/")
+            group = grouped[key] = {
+                "ref": ref,
+                "dest": dest,
+                "url": str(entry.get("source_url", "")).format(version=version),
+                "type": "zip" if entry.get("source_type") == "zip" else "tarball",
+                "systems": [],
+                "files": {},
+            }
+            if group["type"] == "zip":
+                group["strip_components"] = int(entry.get("strip_components", 0))
+            else:
+                group["source_path"] = str(entry.get("source_path", "")).format(version=version)
+            if entry.get("exclude"):
+                group["exclude"] = [str(e) for e in entry["exclude"]]
+        if system not in group["systems"]:
+            group["systems"].append(system)
+        rel = full[len(prefix):].lstrip("/") if prefix else full
+        hashes = compute_hashes(src, frozenset({"sha1"}))
+        group["files"][rel] = {"sha1": hashes["sha1"], "size": os.path.getsize(src)}
+    return [grouped[key] for key in sorted(grouped)]
 
 
 def _manifest_core_index(

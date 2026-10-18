@@ -420,6 +420,18 @@ Entries the collection cannot satisfy are not silently dropped: they travel in
 anything. `not_found` means no file in the collection matches the entry, which
 is what the [gap analysis](../gaps.md) tracks.
 
+Some cores read a whole tree of data rather than a few files: Dolphin's `Sys/`,
+PPSSPP's assets, blueMSX's machines. These are not files of the collection, so
+`data_directories` names each tree's source archive (the libretro buildbot, an
+upstream release) and the sha1 and size of every file the pack carries. The
+installer downloads the archive once, maps its members the way the pack was
+built (`strip_components` for a ZIP, `source_path` for a tarball, `exclude`),
+and writes a file only when its hash matches the list. A file the source has
+changed since is left out and counted, and the pack still holds it. `--check`
+counts the data files missing, `--dry-run` names each tree it would fetch, and
+narrowing with `--system`, `--core` or `--target` keeps only the trees of the
+systems that stay.
+
 ## Trust boundary
 
 The manifest is fetched over the network and treated as untrusted input. Every

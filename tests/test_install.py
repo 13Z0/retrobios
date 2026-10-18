@@ -2475,5 +2475,88 @@ class ACutFileListIsRetried(unittest.TestCase):
             install._read_limited_json(self._Response(b'{"a"', 10), 1000, "manifest")
 
 
+
+class DataDirectoriesAreInstalled(unittest.TestCase):
+    """The README said the installer does what the pack does; for RetroArch
+    it left out 2,640 data files (Dolphin's Sys, PPSSPP's assets) and
+    --check still said "All files up to date"."""
+
+    def _zip(self, root: Path) -> Path:
+        import zipfile
+
+        archive = root / "Dolphin.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("Dolphin/Sys/GC/font.bin", b"font")
+            zf.writestr("Dolphin/Sys/GC/dsp.bin", b"new bytes upstream")
+            zf.writestr("Dolphin/Themes/x.png", b"theme")
+        return archive
+
+    def _entry(self) -> dict:
+        return {
+            "ref": "dolphin-sys", "dest": "dolphin-emu", "url": "https://example.invalid/D.zip",
+            "type": "zip", "strip_components": 1, "exclude": ["Themes"],
+            "systems": ["nintendo-gamecube"],
+            "files": {
+                "Sys/GC/font.bin": {"sha1": hashlib.sha1(b"font").hexdigest(), "size": 4},
+                "Sys/GC/dsp.bin": {"sha1": hashlib.sha1(b"old").hexdigest(), "size": 3},
+                "Sys/GC/gone.bin": {"sha1": "0" * 40, "size": 1},
+            },
+        }
+
+    def test_verified_members_land_the_rest_are_said(self):
+        work = Path(_tempdir(self))
+        archive = self._zip(work)
+        bios = work / "system"
+        bios.mkdir()
+
+        def fetch(url, directory):
+            copy = Path(directory) / "a.zip"
+            shutil.copy(archive, copy)
+            return copy
+
+        with unittest.mock.patch.object(install, "_fetch_archive", fetch):
+            counts = install.install_data_directory(self._entry(), bios)
+            again = install.install_data_directory(self._entry(), bios)
+        self.assertEqual((counts["installed"], counts["changed"], counts["absent"]), (1, 1, 1))
+        self.assertEqual((bios / "dolphin-emu" / "Sys" / "GC" / "font.bin").read_bytes(), b"font")
+        self.assertFalse((bios / "dolphin-emu" / "Sys" / "GC" / "dsp.bin").exists())
+        self.assertFalse((bios / "dolphin-emu" / "Themes").exists())
+        self.assertEqual(again["present"], 1)
+        self.assertEqual(sorted(p.name for p in (bios / "dolphin-emu").iterdir()), ["Sys"])
+
+    def test_a_tarball_maps_through_source_path(self):
+        import io as _io
+        import tarfile
+
+        work = Path(_tempdir(self))
+        archive = work / "src.tar.gz"
+        with tarfile.open(archive, "w:gz") as tf:
+            data = b"index"
+            info = tarfile.TarInfo("pcsx2-v1/bin/resources/GameIndex.yaml")
+            info.size = len(data)
+            tf.addfile(info, _io.BytesIO(data))
+        entry = {"type": "tarball", "source_path": "pcsx2-v1/bin/resources"}
+        names = [rel for rel, _open in install._archive_members(archive, entry)]
+        self.assertEqual(names, ["GameIndex.yaml"])
+
+    def test_the_trust_boundary(self):
+        entry = self._entry()
+        install._check_data_directory(entry, "d")
+        for bad in ({"url": "http://example.com/x.zip"}, {"dest": "../up"},
+                    {"files": {"../x": {"sha1": "0" * 40, "size": 1}}},
+                    {"type": "rar"}):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                install._check_data_directory({**entry, **bad}, "d")
+
+    def test_the_published_retroarch_list_carries_them(self):
+        manifest = json.loads((REPO_ROOT / "install" / "retroarch.json").read_text())
+        dirs = manifest.get("data_directories") or []
+        files = sum(len(d["files"]) for d in dirs)
+        self.assertEqual(
+            manifest["pack_files"] - manifest["total_files"] - files,
+            2, "the pack's two documents are the only files the installer lacks",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

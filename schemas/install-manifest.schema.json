@@ -303,6 +303,81 @@
       "items": {
         "$ref": "#/$defs/file"
       }
+    },
+    "data_directories": {
+      "description": "Data trees the pack carries, rebuilt by the installer from their source archive; each file is kept only when its sha1 matches.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "dest",
+          "url",
+          "type",
+          "systems",
+          "files"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "dest": {
+            "type": "string",
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).*$"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "type": {
+            "enum": [
+              "zip",
+              "tarball"
+            ]
+          },
+          "strip_components": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_path": {
+            "type": "string"
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "systems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha1",
+                "size"
+              ],
+              "properties": {
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
