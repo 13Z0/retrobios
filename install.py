@@ -2296,7 +2296,7 @@ def _write_refused(exc: OSError) -> bool:
     return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
 
 
-def _write_advice(path: Path, assumed: bool) -> str:
+def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     """What to do about a folder this run could not write.
 
     sudo fixes a root-owned BIOS folder on the console itself. On another
@@ -2307,6 +2307,13 @@ def _write_advice(path: Path, assumed: bool) -> str:
         return (f"  {path} is where the platform keeps its BIOS on its own system, "
                 "and it was not found here. If this machine prepares its card or "
                 "share, run the same command with --dest pointing at that folder.")
+    if plat:
+        # sudo resets HOME to root's on Debian, Ubuntu, Arch and SteamOS:
+        # the same command detected nothing there, fell back to a folder
+        # under /root and reported success.
+        return ("  This user cannot write there. Run it again with sudo, naming the "
+                f"folder so root does not look in its own home: --platform {plat} "
+                f"--dest '{path.absolute()}'. Or choose another folder with --dest.")
     return ("  This user cannot write there: run the same command with sudo, "
             "or choose another folder with --dest.")
 
@@ -2329,6 +2336,7 @@ def _report_outcome(
     declined: int = 0,
     assumed: set[Path] | None = None,
     omitted_entries: list[dict] | None = None,
+    platform_of: dict[Path, str] | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -2353,7 +2361,10 @@ def _report_outcome(
         sys.exit(130)
 
     refused = any(reason == NOT_WRITABLE for _dest, reason in failures or [])
-    advice = [_write_advice(path, path in (assumed or set())) for path in paths] if refused else []
+    advice = [
+        _write_advice(path, path in (assumed or set()), (platform_of or {}).get(path, ""))
+        for path in paths
+    ] if refused else []
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
@@ -3325,7 +3336,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sys.stdout.flush()
                 print(f"\nCannot create {bios_path}.", file=sys.stderr)
                 print(f"  {exc.strerror}.", file=sys.stderr)
-                print(_write_advice(bios_path, bios_path in assumed_dests),
+                print(_write_advice(bios_path, bios_path in assumed_dests, plat_name),
                       file=sys.stderr)
                 # The documented code for a folder that cannot be written,
                 # as when it exists read-only; 1 once an earlier platform
@@ -3392,6 +3403,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             declined=total_declined,
             assumed=assumed_dests,
             omitted_entries=omitted_seen,
+            platform_of={path: plat for plat, path in platforms},
         )
 
 

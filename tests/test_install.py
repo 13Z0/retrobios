@@ -2158,5 +2158,20 @@ class AnUnwritableFolderIsCodeTwo(unittest.TestCase):
                 self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
 
 
+
+class SudoAdviceNamesTheFolder(unittest.TestCase):
+    """"Run the same command with sudo" re-ran detection under root's HOME,
+    found nothing, installed under /root and reported success."""
+
+    def test_the_advice_carries_platform_and_folder(self):
+        advice = install._write_advice(Path("/media/card/Emulation/bios"), False, "emudeck")
+        self.assertIn("--platform emudeck", advice)
+        self.assertIn("--dest '/media/card/Emulation/bios'", advice)
+
+    def test_the_closing_report_passes_the_platform(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("platform_of={path: plat for plat, path in platforms}", source)
+
+
 if __name__ == "__main__":
     unittest.main()
