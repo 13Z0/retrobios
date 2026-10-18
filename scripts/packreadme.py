@@ -119,7 +119,7 @@ def _build_readme(
             "    prod.keys    -> ~/.local/share/yuzu/keys/\n"
             "    prod.keys    -> ~/.local/share/eden/keys/\n"
             "    prod.keys    -> ~/.config/Ryujinx/system/\n"
-            "    aes_keys.txt -> ~/.local/share/azahar/sysdata/\n"
+            "    aes_keys.txt -> ~/.local/share/azahar-emu/sysdata/\n"
             "  The installer copies them with --standalone-copies.\n\n"
         ),
         "retrodeck": (
