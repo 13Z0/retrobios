@@ -4005,5 +4005,36 @@ class OfflineCacheMissIsNotGone(TestBuildReport):
             build_report("test", self._profile(["a.c:2"]), self.dir, offline=True)
 
 
+
+class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
+    """`--all --system atari-lynxx` printed nothing and exited 0, which read
+    as "no Lynx profile needs a re-read"; `--emulator handyy` offered no
+    suggestion."""
+
+    PROFILES = {
+        "handy": {"type": "libretro", "systems": ["atari-lynx"]},
+        "mednafen_lynx": {"type": "libretro", "systems": ["atari-lynx"]},
+    }
+
+    def _args(self, **values):
+        base = {"emulator": None, "system": None, "type_": None,
+                "stale_before": None, "limit": None}
+        return argparse.Namespace(**{**base, **values})
+
+    def test_a_misspelt_system_stops_and_suggests(self):
+        with self.assertRaises(SystemExit) as caught:
+            profile_sync.select_profiles(self.PROFILES, self._args(system="atari-lynxx"))
+        self.assertIn("atari-lynx", str(caught.exception.code))
+
+    def test_a_misspelt_emulator_suggests(self):
+        with self.assertRaises(SystemExit) as caught:
+            profile_sync.select_profiles(self.PROFILES, self._args(emulator="handyy"))
+        self.assertIn("Did you mean: handy", str(caught.exception.code))
+
+    def test_a_matching_filter_selects(self):
+        selected = profile_sync.select_profiles(self.PROFILES, self._args(system="atari-lynx"))
+        self.assertEqual(sorted(selected), ["handy", "mednafen_lynx"])
+
+
 if __name__ == "__main__":
     unittest.main()

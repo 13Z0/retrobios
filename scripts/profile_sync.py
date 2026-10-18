@@ -31,7 +31,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
-from common import load_emulator_profiles
+from common import load_emulator_profiles, suggest_names
 from upstream import CompareResult, find_renamed
 
 DEFAULT_CACHE = upstream.CACHE_DIR
@@ -3305,8 +3305,10 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
     """Profiles matching the selection flags."""
     if args.emulator:
         if args.emulator not in profiles:
-            print(f"unknown profile: {args.emulator}", file=sys.stderr)
-            raise SystemExit(1)
+            raise SystemExit(
+                f"ERROR: unknown profile {args.emulator}. "
+                + suggest_names([args.emulator], sorted(profiles), "verify.py --list-emulators")
+            )
         return {args.emulator: profiles[args.emulator]}
 
     selected = {}
@@ -3324,6 +3326,23 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
         selected[name] = profile
         if args.limit and len(selected) >= args.limit:
             break
+    if not selected:
+        # A misspelt filter selected nothing and the run said nothing: it
+        # read as "no profile of that system needs a re-read".
+        filters = ", ".join(
+            f"{flag} {value}" for flag, value in (
+                ("--system", args.system), ("--type", args.type_),
+                ("--stale-before", args.stale_before),
+            ) if value
+        )
+        hint = ""
+        if args.system:
+            systems = sorted({s for p in profiles.values() for s in p.get("systems") or []})
+            hint = " " + suggest_names([args.system], systems, "verify.py --list-systems")
+        elif args.type_:
+            kinds = sorted({str(p.get("type")) for p in profiles.values() if p.get("type")})
+            hint = f" Types: {', '.join(kinds)}."
+        raise SystemExit(f"ERROR: no profile matches {filters or 'the selection'}.{hint}")
     return selected
 
 
