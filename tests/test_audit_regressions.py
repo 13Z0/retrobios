@@ -310,6 +310,7 @@ class UnreachableCitationRegressions(unittest.TestCase):
         self.assertEqual(errors, [])
 
 
+@unittest.skipUnless(HAS_JSONSCHEMA, "validate_schemas needs jsonschema")
 class DoubledCitationPaths(unittest.TestCase):
     """primehack cited Source/Core/Core/IOS/USB/Bluetooth/ twice in a row in a
     comment: no revision holds that path, and the parsed document never
@@ -335,7 +336,6 @@ class DoubledCitationPaths(unittest.TestCase):
             with self.subTest(citation=good):
                 self.assertFalse(self._hits(good))
 
-    @unittest.skipUnless(HAS_JSONSCHEMA, "validating a schema needs jsonschema")
     def test_the_corpus_carries_none(self):
         import validate_schemas
 
