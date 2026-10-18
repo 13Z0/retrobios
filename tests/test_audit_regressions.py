@@ -4277,5 +4277,28 @@ class ToolReferenceCountsMatchTheirArtifacts(unittest.TestCase):
         self.assertEqual(int(match.group(1)), len(derivable))
 
 
+
+class WikiProseHasNoTornSentence(unittest.TestCase):
+    """tools.md read "replaces each destination atomically. The shell and /
+    Both one-liners verify...": half of an old sentence left in front of
+    its rewrite, on the page that explains the installer's trust boundary."""
+
+    STARTERS = {"Both", "The", "This", "It", "A", "An", "Each", "Every", "When",
+                "If", "They", "These", "That", "There"}
+
+    def test_no_line_ends_on_a_function_word_before_a_new_sentence(self):
+        for page in sorted((ROOT / "wiki").glob("*.md")):
+            lines = page.read_text(encoding="utf-8").splitlines()
+            in_code = False
+            for number, (line, following) in enumerate(zip(lines, lines[1:]), 1):
+                if line.startswith("```"):
+                    in_code = not in_code
+                if in_code:
+                    continue
+                if (re.search(r"\b(and|or|the|a|an|of|to)$", line.rstrip())
+                        and following.split(" ")[0] in self.STARTERS):
+                    self.fail(f"{page.name}:{number} ends mid-sentence: {line.strip()!r}")
+
+
 if __name__ == "__main__":
     unittest.main()

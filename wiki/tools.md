@@ -585,8 +585,8 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 
 `install.py` auto-detects the user's platform by checking config files,
 downloads the missing files from an immutable release revision, verifies their
-SHA-256 and SHA-1, and replaces each destination atomically. The shell and
-Both one-liners verify the downloaded Python installer against the SHA-256
+SHA-256 and SHA-1, and replaces each destination atomically. Both
+one-liners, shell and PowerShell, verify the downloaded Python installer against the SHA-256
 embedded in their bootstrap before running it. Copies into standalone-emulator
 directories are opt-in through `--standalone-copies`. Manifest entries with no
 available payload are reported as safely omitted; they are never replaced by a
