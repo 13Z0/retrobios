@@ -1690,6 +1690,7 @@ def verify_emulator(
                     archive, profile.get("archive_prefix", ""),
                     profile.get("pack_structure"), standalone,
                 )
+                result["destination"] = dest
                 block = placement_block(
                     dest, placed_files, set(placed), placed_parents, True
                 )
