@@ -257,11 +257,6 @@ def generate_home(
             cls = "other"
         classifications[cls] = classifications.get(cls, 0) + 1
 
-    # Count total systems across all profiles
-    all_systems = set()
-    for p in unique.values():
-        all_systems.update(p.get("systems", []))
-
     lines = [
         '<div class="rb-hero" markdown>',
         "",

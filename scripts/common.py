@@ -2459,25 +2459,29 @@ def list_emulator_profiles(emulators_dir: str, skip_aliases: bool = True) -> Non
         print(f"  {name:30s} {display:40s} [{ptype}] {systems}{more}")
 
 
-def list_system_ids(emulators_dir: str) -> None:
-    """Print available system IDs with emulator count.
+def system_index(profiles: dict) -> dict[str, tuple[str, set[str]]]:
+    """Normalized system id -> (the first spelling met, the emulators).
 
-    Counted on the normalized id, as --system selects: listed per spelling,
-    3do showed two emulators and panasonic-3do six for one system.
+    One system per normalized id, as --system selects: counted per spelling,
+    nes and nintendo-nes were two systems and the README announced 550
+    where --list-systems printed 513.
     """
-    profiles = load_emulator_profiles(emulators_dir)
-    system_emus: dict[str, set[str]] = {}
-    spelling: dict[str, str] = {}
+    index: dict[str, tuple[str, set[str]]] = {}
     for name, p in sorted(profiles.items()):
         if p.get("type") in ("alias", "test", "launcher"):
             continue
         for sys_id in p.get("systems", []):
             key = _norm_system_id(sys_id)
-            system_emus.setdefault(key, set()).add(name)
-            spelling.setdefault(key, sys_id)
-    for key in sorted(system_emus, key=lambda k: spelling[k]):
-        count = len(system_emus[key])
-        print(f"  {spelling[key]:35s} ({count} emulator{'s' if count > 1 else ''})")
+            index.setdefault(key, (sys_id, set()))[1].add(name)
+    return index
+
+
+def list_system_ids(emulators_dir: str) -> None:
+    """Print available system IDs with emulator count."""
+    index = system_index(load_emulator_profiles(emulators_dir))
+    for _key, (spelling, emulators) in sorted(index.items(), key=lambda kv: kv[1][0]):
+        count = len(emulators)
+        print(f"  {spelling:35s} ({count} emulator{'s' if count > 1 else ''})")
 
 
 def list_platform_system_ids(platform_name: str, platforms_dir: str) -> None:

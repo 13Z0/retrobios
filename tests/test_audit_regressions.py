@@ -4914,5 +4914,26 @@ class DocumentedExamplesHoldTogether(unittest.TestCase):
         self.assertEqual(done, downloading)
 
 
+
+class TheReadmeCountsSystemsAsListSystemsDoes(unittest.TestCase):
+    """The README counted every raw spelling (nes and nintendo-nes as two)
+    and announced 550 systems; the tool it points to listed 513."""
+
+    def test_one_count(self):
+        import io
+        import re
+        from contextlib import redirect_stdout
+
+        from scripts.common import list_system_ids
+
+        out = io.StringIO()
+        with redirect_stdout(out):
+            list_system_ids(str(ROOT / "emulators"))
+        listed = len(out.getvalue().splitlines())
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        announced = int(re.search(r"\*\*(\d+) systems\*\*", readme).group(1))
+        self.assertEqual(announced, listed)
+
+
 if __name__ == "__main__":
     unittest.main()

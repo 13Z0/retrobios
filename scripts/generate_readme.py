@@ -28,6 +28,7 @@ from common import (
     load_platform_config,
     load_platform_registry,
     resolve_platform_cores,
+    system_index,
     unique_emulator_profiles,
     write_if_changed,
 )
@@ -321,9 +322,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
     )
     acquirable_total = missing_total - unsourceable_total
 
-    system_ids: set[str] = set()
-    for p in profiles.values():
-        system_ids.update(p.get("systems", []))
+    system_ids = system_index(profiles)
 
     lines = [
         '<p align="center">',
