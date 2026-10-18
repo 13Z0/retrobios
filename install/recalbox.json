@@ -239,10 +239,10 @@
       }
     }
   ],
-  "total_files": 3418,
-  "total_size": 4183759111,
-  "pack_files": 3420,
-  "pack_size": 4183759111,
+  "total_files": 3426,
+  "total_size": 4192426111,
+  "pack_files": 3428,
+  "pack_size": 4192426111,
   "total_omitted": 9,
   "omitted_files": [
     {
@@ -33255,6 +33255,68 @@
       ]
     },
     {
+      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
+      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
+      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
+      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
+      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_western.bin",
+      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
+      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
+      "size": 6478,
+      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
+      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
+      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
+      "size": 259626,
+      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
+      "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
+      "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
+      "size": 2097152,
+      "repo_path": "bios/Sega/Triforce/segaboot.gcm",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
       "dest": "GC/dsp_rom.bin",
       "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
       "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
@@ -38599,6 +38661,64 @@
       ],
       "systems": [
         "nintendo-ds"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
+      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/EUR/IPL.bin",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/JAP/IPL.bin",
+      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
       ]
     },
     {

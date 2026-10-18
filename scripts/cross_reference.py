@@ -38,7 +38,8 @@ from common import (
     require_platform,
     require_yaml,
     resolve_local_file,
-    runs_standalone,
+    platform_layouts,
+    standalone_set,
     select_emulator_profiles,
 )
 from validation import declaration_settles, outside_gap_scope
@@ -502,7 +503,10 @@ def _cross_reference_profile(
 
     # The build a platform runs decides which entries it reads, as in
     # find_undeclared_files: without a platform, the libretro build.
-    is_standalone = runs_standalone(emu_name, profile, standalone_cores or set())
+    layouts = platform_layouts(emu_name, profile, standalone_cores or set())
+    # Each file under each layout the platform gives the emulator: both, for
+    # one it launches as a libretro core and standalone.
+    layout_files = [(f, standalone) for view, standalone in layouts for f in view.get("files", [])]
     gaps = []
     covered = []
     unsourceable_list: list[dict] = []
@@ -516,7 +520,7 @@ def _cross_reference_profile(
     for f in emu_files:
         versions.setdefault(slot_key(f), []).append(f)
 
-    for f in emu_files:
+    for f, is_standalone in layout_files:
         fname = f.get("name", "")
         # The destination the running build reads, as find_undeclared_files
         # takes it: Batocera's standalone Cemu reads keys.txt at
@@ -527,6 +531,9 @@ def _cross_reference_profile(
         else:
             effective_path = f.get("path") or fname
         seen_key = slot_key(f)
+        if len(layouts) > 1:
+            # One file read at one path by both builds counts once.
+            seen_key = (effective_path.casefold(), seen_key)
         if not fname or seen_key in seen_files:
             continue
 
@@ -820,7 +827,7 @@ def main() -> None:
         config = load_platform_config(args.platform, args.platforms_dir)
         relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
         profiles = {k: v for k, v in profiles.items() if k in relevant}
-        standalone_cores = set(map(str, config.get("standalone_cores", [])))
+        standalone_cores = standalone_set(config)
 
     if not profiles:
         if args.emulator:

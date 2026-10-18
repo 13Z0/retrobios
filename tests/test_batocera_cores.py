@@ -66,5 +66,61 @@ class TheTargetsNameTheStandaloneEmulator(unittest.TestCase):
         self.assertEqual(mapping["BR2_PACKAGE_LIBRETRO_DOSBOX_STAGING"], ["dosbox_staging"])
 
 
+
+class AnEmulatorLaunchedBothWaysGetsBothLayouts(unittest.TestCase):
+    """es_systems.yml offers libretro:dolphin and standalone dolphin for
+    GameCube. Filed as standalone only, the pack gave libretro Dolphin no
+    dolphin-emu/Sys/GC/ files: no IPL, no DSP ROM."""
+
+    def test_the_scraper_names_dual_mode_emulators(self):
+        from scripts.scraper.batocera_scraper import es_systems_emulators, es_systems_libretro
+
+        text = ES_SYSTEMS + (
+            "gamecube:\n  emulators:\n    libretro:\n      dolphin: { requireAnyOf: [X] }\n"
+            "    dolphin:\n      dolphin: { requireAnyOf: [Y] }\n"
+        )
+        _cores, standalone = es_systems_emulators(text)
+        self.assertEqual(standalone & es_systems_libretro(text), {"dolphin"})
+
+    def test_the_layouts_are_both(self):
+        from common import DUAL_MODE_PREFIX, platform_layouts
+
+        profile = {"type": "standalone + libretro", "cores": ["dolphin"], "files": []}
+        both = platform_layouts("dolphin", profile, {"dolphin", DUAL_MODE_PREFIX + "dolphin"})
+        self.assertEqual([standalone for _view, standalone in both], [False, True])
+        only = platform_layouts("dolphin", profile, {"dolphin"})
+        self.assertEqual([standalone for _view, standalone in only], [True])
+
+    def test_the_batocera_manifest_carries_both(self):
+        import json
+
+        manifest = json.loads((REPO_ROOT / "install" / "batocera.json").read_text())
+        dests = {entry["dest"] for entry in manifest["files"]}
+        self.assertIn("dolphin-emu/Sys/GC/USA/IPL.bin", dests)
+        self.assertIn("GC/USA/IPL.bin", dests)
+
+    def test_retrobat_and_recalbox_name_theirs(self):
+        from scripts.scraper.recalbox_scraper import system_ini_cores, system_ini_libretro
+        from scripts.scraper.retrobat_scraper import es_systems_dual
+
+        cfg = ("<systemList><system><emulators>"
+               "<emulator name=\"libretro\"><cores><core>dolphin</core></cores></emulator>"
+               "<emulator name=\"dolphin\"/></emulators></system></systemList>")
+        self.assertEqual(es_systems_dual(cfg), {"dolphin"})
+        ini = "[core.0]\nemulator = libretro\ncore = dolphin\n[core.1]\nemulator = dolphin\ncore = dolphin\n"
+        _cores, standalone = system_ini_cores(ini)
+        self.assertEqual(system_ini_libretro(ini) & standalone, {"dolphin"})
+
+    def test_upstream_yaml_is_read_as_its_code_reads_it(self):
+        """configgen-defaults.yml names rtcw's core twice; the strict loader
+        stopped the rescrape, Batocera's PyYAML keeps the last value."""
+        from safeparse import yaml_load_upstream
+
+        self.assertEqual(
+            yaml_load_upstream("rtcw:\n  core: iortcw\n  core: taradino\n"),
+            {"rtcw": {"core": "taradino"}},
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

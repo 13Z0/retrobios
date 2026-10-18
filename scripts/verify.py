@@ -65,7 +65,9 @@ from common import (
     resolve_local_file,
     ProfileSelectionError,
     resolve_platform_cores,
+    platform_layouts,
     runs_standalone,
+    standalone_set as platform_standalone_set,
     sanitize_pack_path,
     select_emulator_profiles,
 )
@@ -483,7 +485,7 @@ def find_undeclared_files(
     )
 
     relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
-    standalone_set = set(str(c) for c in config.get("standalone_cores", []))
+    standalone_set = platform_standalone_set(config)
     undeclared = []
     seen_files: set[tuple] = set()
     # Key -> the entry reported for it. A later profile reading the same
@@ -503,166 +505,166 @@ def find_undeclared_files(
         if profile.get("bios_mode") == "agnostic":
             continue
 
-        is_standalone = runs_standalone(emu_name, profile, standalone_set)
+        for profile, is_standalone in platform_layouts(emu_name, profile, standalone_set):
 
-        for f in expand_directory_entries(
-            profile.get("files", []), db, is_standalone
-        ):
-            fname = f.get("name", "")
-            # One destination rule for the dedup key and for the entry: a
-            # standalone build without standalone_path falls back on path.
-            # The key used to skip that fallback, so clk's Acorn/basic.rom and
-            # Electron/basic.rom both keyed as "basic.rom" under Batocera's
-            # standalone clk and the second was dropped.
-            if is_standalone:
-                dest = f.get("standalone_path") or f.get("path") or fname
-            else:
-                dest = f.get("path") or fname
-            raw_regions = f.get("region") or []
-            region_key = tuple(
-                str(value) for value in (
-                    raw_regions if isinstance(raw_regions, list) else [raw_regions]
+            for f in expand_directory_entries(
+                profile.get("files", []), db, is_standalone
+            ):
+                fname = f.get("name", "")
+                # One destination rule for the dedup key and for the entry: a
+                # standalone build without standalone_path falls back on path.
+                # The key used to skip that fallback, so clk's Acorn/basic.rom and
+                # Electron/basic.rom both keyed as "basic.rom" under Batocera's
+                # standalone clk and the second was dropped.
+                if is_standalone:
+                    dest = f.get("standalone_path") or f.get("path") or fname
+                else:
+                    dest = f.get("path") or fname
+                raw_regions = f.get("region") or []
+                region_key = tuple(
+                    str(value) for value in (
+                        raw_regions if isinstance(raw_regions, list) else [raw_regions]
+                    )
                 )
-            )
-            # Same-name requirements at different paths, for different systems,
-            # or in distinct variant groups are not interchangeable.
-            seen_key = (
-                fname,
-                f.get("archive"),
-                dest,
-                f.get("system"),
-                f.get("variant_group"),
-                region_key,
-            )
-            if not fname:
-                continue
-            first = reported.get(seen_key)
-            duplicate = seen_key in seen_files
-            if duplicate and (first is None or first["profile"] == emu_name):
-                continue
-            verdict = _candidate_verdict(
-                f, fname, is_standalone, include_all, declared_names, dest
-            )
-            if verdict == "settled":
-                seen_files.add(seen_key)
-                continue
-            if verdict == "skip":
-                continue
-
-            archive = f.get("archive")
-            seen_files.add(seen_key)
-
-            # Archived files are grouped by archive
-            if archive:
-                archive_key = (
-                    archive,
+                # Same-name requirements at different paths, for different systems,
+                # or in distinct variant groups are not interchangeable.
+                seen_key = (
+                    fname,
+                    f.get("archive"),
+                    dest,
                     f.get("system"),
                     f.get("variant_group"),
                     region_key,
-                    is_standalone,
                 )
-                if archive_key not in archive_entries:
-                    in_repo = _name_in_index(
-                        archive, by_name, by_path_suffix, data_names,
-                        by_name_lower,
-                    )
-                    archive_entries[archive_key] = {
-                        "profile": emu_name,
-                        "emulator": profile.get("emulator", emu_name),
-                        "systems": list(profile.get("systems", [])),
-                        "system": f.get("system"),
-                        "region": f.get("region"),
-                        "variant_group": f.get("variant_group"),
-                        "name": archive,
-                        "archive": archive,
-                        "path": archive,
-                        "required": False,
-                        "hle_fallback": False,
-                        "category": f.get("category", "bios"),
-                        "in_repo": in_repo,
-                        "note": "",
-                        "checks": [],
-                        "source_ref": None,
-                        "expected": {},
-                        "archive_file_count": 0,
-                        "archive_required_count": 0,
-                        "members": archive_members(archive, profile.get("files", [])),
-                    }
-                entry = archive_entries[archive_key]
-                entry["archive_file_count"] += 1
-                if f.get("required", False):
-                    entry["archive_required_count"] += 1
-                    entry["required"] = True
-                continue
+                if not fname:
+                    continue
+                first = reported.get(seen_key)
+                duplicate = seen_key in seen_files
+                if duplicate and (first is None or first["profile"] == emu_name):
+                    continue
+                verdict = _candidate_verdict(
+                    f, fname, is_standalone, include_all, declared_names, dest
+                )
+                if verdict == "settled":
+                    seen_files.add(seen_key)
+                    continue
+                if verdict == "skip":
+                    continue
 
-            # Resolution: storage flag, then name, then path basename
-            storage = f.get("storage", "")
-            if storage in ("release", "large_file"):
-                in_repo = True
-            elif shipped_on_mismatch and (f.get("md5") or f.get("sha1")):
-                # The entry states what its content should be and the builder
-                # drops a copy that contradicts it, so content decides here
-                # too. A name match would not do: generic names collide across
-                # systems, and answering yes on one describes a pack that will
-                # not contain the file.
-                _lp, _st = resolve_local_file(f, db, dest_hint=dest)
-                in_repo = _lp is not None and _st != "hash_mismatch"
-            else:
-                in_repo = _name_in_index(
-                    fname, by_name, by_path_suffix, data_names, by_name_lower,
-                )
-                if not in_repo and dest != fname:
-                    path_base = dest.rsplit("/", 1)[-1]
-                    in_repo = _name_in_index(
-                        path_base, by_name, by_path_suffix, data_names,
-                        by_name_lower,
+                archive = f.get("archive")
+                seen_files.add(seen_key)
+
+                # Archived files are grouped by archive
+                if archive:
+                    archive_key = (
+                        archive,
+                        f.get("system"),
+                        f.get("variant_group"),
+                        region_key,
+                        is_standalone,
                     )
-                if not in_repo:
-                    # Hash fallback: the repo may hold the content under a
-                    # different filename (exos21.rom vs exos21.bin).
-                    #
-                    # A copy contradicting the declared hash counts as held
-                    # only where the builder would ship it. Under existence
-                    # the frontend never opens the file, so the pack carries
-                    # it and reports the divergence; under a digest mode the
-                    # frontend would reject it, the builder leaves it out, and
-                    # calling it available here would describe a pack that
-                    # does not contain it.
+                    if archive_key not in archive_entries:
+                        in_repo = _name_in_index(
+                            archive, by_name, by_path_suffix, data_names,
+                            by_name_lower,
+                        )
+                        archive_entries[archive_key] = {
+                            "profile": emu_name,
+                            "emulator": profile.get("emulator", emu_name),
+                            "systems": list(profile.get("systems", [])),
+                            "system": f.get("system"),
+                            "region": f.get("region"),
+                            "variant_group": f.get("variant_group"),
+                            "name": archive,
+                            "archive": archive,
+                            "path": archive,
+                            "required": False,
+                            "hle_fallback": False,
+                            "category": f.get("category", "bios"),
+                            "in_repo": in_repo,
+                            "note": "",
+                            "checks": [],
+                            "source_ref": None,
+                            "expected": {},
+                            "archive_file_count": 0,
+                            "archive_required_count": 0,
+                            "members": archive_members(archive, profile.get("files", [])),
+                        }
+                    entry = archive_entries[archive_key]
+                    entry["archive_file_count"] += 1
+                    if f.get("required", False):
+                        entry["archive_required_count"] += 1
+                        entry["required"] = True
+                    continue
+
+                # Resolution: storage flag, then name, then path basename
+                storage = f.get("storage", "")
+                if storage in ("release", "large_file"):
+                    in_repo = True
+                elif shipped_on_mismatch and (f.get("md5") or f.get("sha1")):
+                    # The entry states what its content should be and the builder
+                    # drops a copy that contradicts it, so content decides here
+                    # too. A name match would not do: generic names collide across
+                    # systems, and answering yes on one describes a pack that will
+                    # not contain the file.
                     _lp, _st = resolve_local_file(f, db, dest_hint=dest)
-                    in_repo = _st != "not_found" and _lp is not None
-                    if in_repo and _st == "hash_mismatch" and shipped_on_mismatch:
-                        in_repo = False
+                    in_repo = _lp is not None and _st != "hash_mismatch"
+                else:
+                    in_repo = _name_in_index(
+                        fname, by_name, by_path_suffix, data_names, by_name_lower,
+                    )
+                    if not in_repo and dest != fname:
+                        path_base = dest.rsplit("/", 1)[-1]
+                        in_repo = _name_in_index(
+                            path_base, by_name, by_path_suffix, data_names,
+                            by_name_lower,
+                        )
+                    if not in_repo:
+                        # Hash fallback: the repo may hold the content under a
+                        # different filename (exos21.rom vs exos21.bin).
+                        #
+                        # A copy contradicting the declared hash counts as held
+                        # only where the builder would ship it. Under existence
+                        # the frontend never opens the file, so the pack carries
+                        # it and reports the divergence; under a digest mode the
+                        # frontend would reject it, the builder leaves it out, and
+                        # calling it available here would describe a pack that
+                        # does not contain it.
+                        _lp, _st = resolve_local_file(f, db, dest_hint=dest)
+                        in_repo = _st != "not_found" and _lp is not None
+                        if in_repo and _st == "hash_mismatch" and shipped_on_mismatch:
+                            in_repo = False
 
-            checks = _parse_validation(f.get("validation"))
-            entry = {
-                "profile": emu_name,
-                "emulator": profile.get("emulator", emu_name),
-                "systems": list(profile.get("systems", [])),
-                "system": f.get("system"),
-                "region": f.get("region"),
-                "variant_group": f.get("variant_group"),
-                "name": fname,
-                "path": dest,
-                "required": f.get("required", False),
-                "hle_fallback": f.get("hle_fallback", False),
-                "bundled": f.get("bundled", False),
-                "category": f.get("category", "bios"),
-                "in_repo": in_repo,
-                "note": f.get("note", ""),
-                "checks": sorted(checks) if checks else [],
-                "source_ref": f.get("source_ref"),
-                "expected": _build_expected(f, checks),
-                **_identity_of(f),
-                "sha1": f.get("sha1"),
-                "md5": f.get("md5"),
-            }
-            if f.get("contents"):
-                entry["contents"] = f["contents"]
-            if duplicate:
-                first.setdefault("other_claims", []).append(entry)
-                continue
-            reported[seen_key] = entry
-            undeclared.append(entry)
+                checks = _parse_validation(f.get("validation"))
+                entry = {
+                    "profile": emu_name,
+                    "emulator": profile.get("emulator", emu_name),
+                    "systems": list(profile.get("systems", [])),
+                    "system": f.get("system"),
+                    "region": f.get("region"),
+                    "variant_group": f.get("variant_group"),
+                    "name": fname,
+                    "path": dest,
+                    "required": f.get("required", False),
+                    "hle_fallback": f.get("hle_fallback", False),
+                    "bundled": f.get("bundled", False),
+                    "category": f.get("category", "bios"),
+                    "in_repo": in_repo,
+                    "note": f.get("note", ""),
+                    "checks": sorted(checks) if checks else [],
+                    "source_ref": f.get("source_ref"),
+                    "expected": _build_expected(f, checks),
+                    **_identity_of(f),
+                    "sha1": f.get("sha1"),
+                    "md5": f.get("md5"),
+                }
+                if f.get("contents"):
+                    entry["contents"] = f["contents"]
+                if duplicate:
+                    first.setdefault("other_claims", []).append(entry)
+                    continue
+                reported[seen_key] = entry
+                undeclared.append(entry)
 
     # Append grouped archive entries
     for entry in sorted(archive_entries.values(), key=lambda e: e["name"]):
@@ -731,7 +733,7 @@ def find_exclusion_notes(
 
         # Count standalone-only files -but only report as excluded if the
         # platform does NOT use this emulator in standalone mode
-        standalone_set = set(str(c) for c in config.get("standalone_cores", []))
+        standalone_set = platform_standalone_set(config)
         is_standalone = runs_standalone(emu_name, profile, standalone_set)
         if not is_standalone:
             standalone_files = [

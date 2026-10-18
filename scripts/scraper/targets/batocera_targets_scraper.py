@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 
 import yaml
 
-from common import yaml_load
+from safeparse import yaml_load_upstream
 
 from . import BaseTargetScraper
 
@@ -244,7 +244,7 @@ def _parse_es_systems(text: str) -> dict[str, list[str]]:
           <core_name>: {requireAnyOf: [BR2_PACKAGE_FOO]}
     """
     try:
-        data = yaml_load(text)
+        data = yaml_load_upstream(text)
     except yaml.YAMLError:
         return {}
 

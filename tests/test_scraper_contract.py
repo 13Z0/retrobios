@@ -203,7 +203,7 @@ class RecalboxReadsItsSystemsInBatches(unittest.TestCase):
         scraper = recalbox_scraper.Scraper.__new__(recalbox_scraper.Scraper)
         scraper.tag = "10.1.1"
         with mock.patch.object(recalbox_scraper, "fetch_bytes", fetch):
-            cores, _standalone = scraper._fetch_cores()
+            cores, _standalone, _dual = scraper._fetch_cores()
         self.assertEqual([len(q) for q in queries], [50, 50, 20])
         self.assertEqual(len(cores), 120)
 

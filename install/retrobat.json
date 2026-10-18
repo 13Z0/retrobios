@@ -245,10 +245,10 @@
       }
     }
   ],
-  "total_files": 7740,
-  "total_size": 7988832663,
-  "pack_files": 7742,
-  "pack_size": 7988832663,
+  "total_files": 7751,
+  "total_size": 7997666672,
+  "pack_files": 7753,
+  "pack_size": 7997666672,
   "total_omitted": 135,
   "omitted_files": [
     {
@@ -70317,6 +70317,36 @@
       ]
     },
     {
+      "dest": "supermodel/Games.xml",
+      "sha1": "fa334ab5ba6366bd28168860c913e6365b9fec96",
+      "sha256": "275832cdb077c22883192f5aaeb8f76547f4dce786370f10b2d54c46a8ed3c5e",
+      "size": 148364,
+      "repo_path": "bios/Sega/Model 3/supermodel/Games.xml",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
+      "dest": "supermodel/Supermodel.ini",
+      "sha1": "cbda2b3fa65e37c5c2824a4630f95f145533c360",
+      "sha256": "3c910e7aa207ea55d1946fedaf12718115c21be5e67abf35b1220080c6c67919",
+      "size": 9421,
+      "repo_path": "bios/Sega/Model 3/supermodel/Supermodel.ini",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
+      "dest": "supermodel/Music.xml",
+      "sha1": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
+      "sha256": "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c",
+      "size": 9224,
+      "repo_path": "bios/Sega/Model 3/Config/Music.xml",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
       "dest": "Config/Games.xml",
       "sha1": "6871a47de90ca67f9ff8e4e280416851a8164563",
       "sha256": "48c56b24ea720fb66188c0b2d94579a110be24971ac215ea808c563c665cf655",
@@ -74984,6 +75014,116 @@
       ],
       "storage": "release",
       "release_asset": "demo00.pk4"
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
+      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
+      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/EUR/IPL.bin",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/JAP/IPL.bin",
+      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
+      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "size": 2097152,
+      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
+      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
+      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
+      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
+      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_western.bin",
+      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
+      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
+      "size": 6478,
+      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
+      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
+      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
+      "size": 259626,
+      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
+      ]
     },
     {
       "dest": "GC/USA/IPL.bin",
@@ -87721,6 +87861,19 @@
         "mame",
         "mame2010",
         "mame2016"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
+      "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
+      "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
+      "size": 2097152,
+      "repo_path": "bios/Sega/Triforce/segaboot.gcm",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "triforce"
       ]
     },
     {

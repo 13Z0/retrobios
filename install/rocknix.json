@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 6115,
-  "total_size": 7848090128,
-  "pack_files": 6117,
-  "pack_size": 7848090128,
+  "total_files": 6132,
+  "total_size": 7913710008,
+  "pack_files": 6134,
+  "pack_size": 7913710008,
   "total_omitted": 49,
   "omitted_files": [
     {
@@ -1964,6 +1964,7 @@
           "size": 4194304,
           "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
           "cores": [
+            "armsx2",
             "yaps2"
           ]
         }
@@ -2877,6 +2878,46 @@
       "repo_path": "bios/Sega/Arcade/epr-10330.57",
       "cores": [
         "cannonball"
+      ]
+    },
+    {
+      "dest": "Cemu/resources/sharedFonts/CafeCn.ttf",
+      "sha1": "2d95227b9b3eaf1c74d9293ecd0d190ec7ffbbe3",
+      "sha256": "6afd751a9bb76bc788efb50a138c6f3765624ee84d8d8203be04d871ade40a6a",
+      "size": 9664448,
+      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeCn.ttf",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/resources/sharedFonts/CafeKr.ttf",
+      "sha1": "f0ef38fcc6133c24f4f38ff9b5c06b37e970d3cc",
+      "sha256": "c3c326f6ce1899e391dc4996b10a0c30558c5b8f36dfbaa418976862b3e2dffb",
+      "size": 5626464,
+      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeKr.ttf",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/resources/sharedFonts/CafeStd.ttf",
+      "sha1": "da0d4bcc3b13339179bee946eba16adfd731b4d3",
+      "sha256": "59e2494727b8e7a7bbf48c8749f2dbc07d438c9fabeaa9847a08ec690f9888a1",
+      "size": 5363768,
+      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeStd.ttf",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/resources/sharedFonts/CafeTw.ttf",
+      "sha1": "8ec796192ebc710f23ab6bd55453cae523b70444",
+      "sha256": "c8f9e16345dbc3b6e165fe12435486a748e730ebe6002b5d713efe73d171d51c",
+      "size": 6593548,
+      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeTw.ttf",
+      "cores": [
+        "cemu"
       ]
     },
     {
@@ -47547,6 +47588,36 @@
       ]
     },
     {
+      "dest": "supermodel/Games.xml",
+      "sha1": "fa334ab5ba6366bd28168860c913e6365b9fec96",
+      "sha256": "275832cdb077c22883192f5aaeb8f76547f4dce786370f10b2d54c46a8ed3c5e",
+      "size": 148364,
+      "repo_path": "bios/Sega/Model 3/supermodel/Games.xml",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
+      "dest": "supermodel/Supermodel.ini",
+      "sha1": "cbda2b3fa65e37c5c2824a4630f95f145533c360",
+      "sha256": "3c910e7aa207ea55d1946fedaf12718115c21be5e67abf35b1220080c6c67919",
+      "size": 9421,
+      "repo_path": "bios/Sega/Model 3/supermodel/Supermodel.ini",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
+      "dest": "supermodel/Music.xml",
+      "sha1": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
+      "sha256": "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c",
+      "size": 9224,
+      "repo_path": "bios/Sega/Model 3/Config/Music.xml",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
       "dest": "Config/Games.xml",
       "sha1": "6871a47de90ca67f9ff8e4e280416851a8164563",
       "sha256": "48c56b24ea720fb66188c0b2d94579a110be24971ac215ea808c563c665cf655",
@@ -50324,6 +50395,90 @@
       ]
     },
     {
+      "dest": "Cemu/keys.txt",
+      "sha1": "9edc52be45201ec99f6e4ceb5dc6abfc633c4eae",
+      "sha256": "c5b9ee2a14cf6a0effb3b2f0f4b93be75823da80ebf5f0ca6a0f2be8b5aa5bfd",
+      "size": 449507,
+      "repo_path": "bios/Nintendo/Wii U/keys.txt",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/otp.bin",
+      "sha1": "aa4ebc7f94c22b04945b6c9232547ada10b71f6f",
+      "sha256": "a12993f7fe069098ab6fe1cdb43099a1dfb568223bef08ed5cb43ec93d9ff2de",
+      "size": 1024,
+      "repo_path": "bios/Nintendo/Wii U/otp.bin",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/seeprom.bin",
+      "sha1": "d08ffcf19945b63c7baf35d9965a9cd6bf61332b",
+      "sha256": "eab425e6e65430232ec87a776d352f8fe1be4905df3a6bdaa0941c03e20069bc",
+      "size": 512,
+      "repo_path": "bios/Nintendo/Wii U/seeprom.bin",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/shareddata.bin",
+      "sha1": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
+      "sha256": "662bc6c693c88040531fbe51186ce203e188d1c67ad788b2013b3c91ce595420",
+      "size": 33554432,
+      "repo_path": "bios/Nintendo/Wii U/shareddata.bin",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/cafeLibs/snd_user.rpl",
+      "sha1": "4e0ff91f1881203e404cd41ec34725b43eec5cf2",
+      "sha256": "45b0dbe8926a263d86bc4e77084815e58336b9b437196d48bc3da3c5b2b2675e",
+      "size": 84032,
+      "repo_path": "bios/Nintendo/Wii U/cafeLibs/snd_user.rpl",
+      "cores": [
+        "cemu"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "Cemu/cafeLibs/snduser2.rpl",
+      "sha1": "38eac5a4695e777b25c8f8a472f36e35c5a88fc4",
+      "sha256": "ce928ad53d8497b6626ef3893cc0427c9ea36f0a63e82e2530179afa354eb15e",
+      "size": 111360,
+      "repo_path": "bios/Nintendo/Wii U/cafeLibs/snduser2.rpl",
+      "cores": [
+        "cemu"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "Cemu/cafeLibs/swkbd.rpl",
+      "sha1": "4d88ddd169da56de721e4aa9e213a421f7221b4b",
+      "sha256": "94532b2639819e121ba69d75f5eabdf00988f87609c9ab9afe5ba1ca01eef4ea",
+      "size": 1116288,
+      "repo_path": "bios/Nintendo/Wii U/cafeLibs/swkbd.rpl",
+      "cores": [
+        "cemu"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "Cemu/cafeLibs/erreula.rpl",
+      "sha1": "8c04ae8fea6e6d7431d9be8599377eca2dd690da",
+      "sha256": "f259a75dba800856afdda263664c6f8563b59692d5694e64d763654550d294fc",
+      "size": 790080,
+      "repo_path": "bios/Nintendo/Wii U/cafeLibs/erreula.rpl",
+      "cores": [
+        "cemu"
+      ],
+      "executable": true
+    },
+    {
       "dest": "keys.txt",
       "sha1": "9edc52be45201ec99f6e4ceb5dc6abfc633c4eae",
       "sha256": "c5b9ee2a14cf6a0effb3b2f0f4b93be75823da80ebf5f0ca6a0f2be8b5aa5bfd",
@@ -50462,6 +50617,72 @@
       ],
       "systems": [
         "microsoft-xbox"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
+      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
+      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
+      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
+      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_western.bin",
+      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
+      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
+      "size": 6478,
+      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
+      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
+      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
+      "size": 259626,
+      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
+      "cores": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
+      "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
+      "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
+      "size": 2097152,
+      "repo_path": "bios/Sega/Triforce/segaboot.gcm",
+      "cores": [
+        "dolphin"
       ]
     },
     {
@@ -53365,58 +53586,6 @@
       "repo_path": "bios/Arcade/Daphne/uvt.zip",
       "cores": [
         "hypseus-singe"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
-      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
-      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
-      "size": 8192,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
-      "cores": [
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
-      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
-      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
-      "size": 4096,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
-      "cores": [
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/Sys/GC/font_western.bin",
-      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
-      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
-      "size": 6478,
-      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
-      "cores": [
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
-      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
-      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
-      "size": 259626,
-      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
-      "cores": [
-        "ishiiruka"
-      ],
-      "systems": [
-        "nintendo-gamecube"
       ]
     },
     {
@@ -61993,7 +62162,7 @@
       ]
     },
     {
-      "dest": "eeprom.bin",
+      "dest": "xbox_eeprom.bin",
       "sha1": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
       "sha256": "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2",
       "size": 256,
@@ -62024,6 +62193,19 @@
       "sha256": "160efaeb4bea94e7a12b24da0414c88d7fff7db9531104b93d6ae7b01ab858ea",
       "size": 499128,
       "repo_path": "bios/Other/xemu/wpcap.dll",
+      "cores": [
+        "xemu"
+      ],
+      "systems": [
+        "microsoft-xbox"
+      ]
+    },
+    {
+      "dest": "eeprom.bin",
+      "sha1": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
+      "sha256": "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2",
+      "size": 256,
+      "repo_path": "bios/Microsoft/Xbox/xbox_eeprom.bin",
       "cores": [
         "xemu"
       ],
@@ -62693,25 +62875,13 @@
       ]
     },
     {
-      "dest": "GBA/gba_bios.bin",
-      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
-      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
       "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
       "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
       "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
+        "dolphin",
         "ishiiruka"
       ],
       "systems": [
@@ -62721,7 +62891,7 @@
         "north-america"
       ],
       "region_groups": [
-        "Ishiiruka:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
       ]
     },
     {
@@ -62731,6 +62901,7 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": [
+        "dolphin",
         "ishiiruka"
       ],
       "systems": [
@@ -62741,7 +62912,7 @@
         "oceania"
       ],
       "region_groups": [
-        "Ishiiruka:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
       ]
     },
     {
@@ -62751,6 +62922,7 @@
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
       "cores": [
+        "dolphin",
         "ishiiruka"
       ],
       "systems": [
@@ -62760,7 +62932,20 @@
         "japan"
       ],
       "region_groups": [
-        "Ishiiruka:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+      ]
+    },
+    {
+      "dest": "GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
       ]
     },
     {

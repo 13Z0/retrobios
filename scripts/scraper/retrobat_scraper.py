@@ -44,6 +44,21 @@ ES_SYSTEMS_URL = (
 )
 
 
+def es_systems_dual(text: str) -> set[str]:
+    """Emulators es_systems.cfg offers both as a libretro core and standalone."""
+    from common import parse_untrusted_xml
+
+    libretro: set[str] = set()
+    standalone: set[str] = set()
+    for emulator in parse_untrusted_xml(text, "es_systems.cfg").iter("emulator"):
+        name = (emulator.get("name") or "").strip()
+        if name == "libretro":
+            libretro |= {(core.text or "").strip() for core in emulator.iter("core")} - {""}
+        elif name:
+            standalone.add(name)
+    return libretro & standalone
+
+
 def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
     """Every core RetroBat's ES offers, and the emulators it runs standalone.
 
@@ -207,7 +222,9 @@ class Scraper(BaseScraper):
         req = urllib.request.Request(es_url, headers={"User-Agent": "retrobios-scraper/1.0"})
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
-                cores, standalone = es_systems_cores(resp.read().decode("utf-8"))
+                es_text = resp.read().decode("utf-8")
+            cores, standalone = es_systems_cores(es_text)
+            dual = es_systems_dual(es_text)
         except urllib.error.URLError as e:
             raise ConnectionError(f"Failed to fetch {es_url}: {e}") from e
         if not cores:
@@ -223,6 +240,8 @@ class Scraper(BaseScraper):
             "verification_mode": "md5",
             "cores": sorted(cores),
             "standalone_cores": sorted(standalone),
+            # Launched both ways: each layout gets its files.
+            **({"dual_mode_cores": sorted(dual)} if dual else {}),
             "systems": systems,
         }
 

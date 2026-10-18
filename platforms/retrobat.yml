@@ -421,6 +421,27 @@ standalone_cores:
 - zesarux
 - zinc
 - zquestclassic
+dual_mode_cores:
+- amiberry
+- applewin
+- azahar
+- desmume
+- dolphin
+- fbneo
+- flycast
+- hatari
+- kronos
+- melonds
+- mesen
+- mgba
+- pcsx2
+- ppsspp
+- scummvm
+- snes9x
+- stella
+- supermodel
+- yabasanshiro
+- ymir
 systems:
   3do:
     files:

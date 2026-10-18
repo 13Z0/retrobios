@@ -262,6 +262,16 @@ standalone_cores:
 - xroar
 - xscpu64
 - xvic
+dual_mode_cores:
+- amiberry
+- dolphin
+- hatari
+- mupen64plus
+- pcsx2
+- pcsx_rearmed
+- ppsspp
+- rb5000
+- scummvm
 systems:
   commodore-amiga:
     files:

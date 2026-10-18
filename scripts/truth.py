@@ -8,7 +8,12 @@ from __future__ import annotations
 
 import sys
 
-from common import _norm_system_id, resolve_platform_cores, runs_standalone
+from common import (
+    _norm_system_id,
+    platform_layouts,
+    resolve_platform_cores,
+    standalone_set as platform_standalone_set,
+)
 from hashing import parse_md5_list
 from validation import filter_files_by_mode, read_from_system_dir
 
@@ -395,7 +400,7 @@ def generate_platform_truth(
     # The layout rule verify and the pack builder apply: truth guessed its
     # own from the profile type where the platform names no standalone
     # emulator, and kept files the pack never carries.
-    standalone_set = {str(c) for c in config.get("standalone_cores") or []}
+    standalone_set = platform_standalone_set(config)
 
     resolved = resolve_platform_cores(config, profiles, target_cores)
 
@@ -449,9 +454,11 @@ def generate_platform_truth(
             continue
         cores_profiled.add(emu_name)
 
-        filtered = _archives_not_members(_system_dir_files(
-            profile, runs_standalone(emu_name, profile, standalone_set)
-        ))
+        filtered = _archives_not_members([
+            fe
+            for view, standalone in platform_layouts(emu_name, profile, standalone_set)
+            for fe in _system_dir_files(view, standalone)
+        ])
 
         on_platform = {
             _map_sys_id(sid) for sid in profile.get("systems", [])

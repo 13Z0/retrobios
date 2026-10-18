@@ -236,6 +236,9 @@ class Scraper(BaseScraper):
             # emulators ROCKNIX packages beside it.
             "cores": ["retroarch", *standalone],
             "standalone_cores": standalone,
+            # RetroArch carries every libretro core beside them, so an
+            # emulator with a libretro build is launched both ways.
+            "dual_mode_cores": list(standalone),
             "systems": systems,
         }
 

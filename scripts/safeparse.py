@@ -97,3 +97,15 @@ def yaml_load(stream: str | TextIO) -> Any:
     if yaml is None:
         return require_yaml()  # exits with the install hint
     return yaml.load(stream, Loader=_YAML_LOADER)
+
+
+def yaml_load_upstream(stream: str | TextIO) -> Any:
+    """Parse a third party's YAML the way its own PyYAML code reads it.
+
+    Our files refuse a repeated key; a platform's file is data we transcribe,
+    and its code keeps the last value. Batocera 43.1's configgen-defaults.yml
+    names rtcw's core twice, and refusing it stopped the rescrape.
+    """
+    if yaml is None:
+        return require_yaml()
+    return yaml.load(stream, Loader=getattr(yaml, "CSafeLoader", None) or yaml.SafeLoader)

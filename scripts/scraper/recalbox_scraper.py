@@ -153,6 +153,18 @@ def _core_names(values: dict[str, str]) -> tuple[set[str], set[str]]:
     return names, set(names)
 
 
+def system_ini_libretro(text: str) -> set[str]:
+    """The libretro cores one Recalbox system.ini offers."""
+    import re
+
+    return {
+        values.get("core", "")
+        for section, values in _ini_sections(text).items()
+        if re.fullmatch(r"core\.\d+(\.[\w-]+)?", section)
+        and values.get("emulator") == "libretro" and values.get("core")
+    }
+
+
 def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
     """The cores one Recalbox system.ini offers, and those run standalone.
 
@@ -227,8 +239,9 @@ class Scraper(BaseScraper):
             raise RuntimeError(f"no system.ini at {self.tag} for {', '.join(missing[:5])}")
         return [texts[path] for path in paths]
 
-    def _fetch_cores(self) -> tuple[list[str], list[str]]:
-        """Every core Recalbox's systems offer, and those it runs standalone.
+    def _fetch_cores(self) -> tuple[list[str], list[str], list[str]]:
+        """Every core Recalbox's systems offer, those it runs standalone, and
+        those it offers both as a libretro core and standalone.
 
         Read from each system.ini of recalbox-romfs2 at the scraped tag: the
         systems ES lists and the cores a user can pick for each.
@@ -250,13 +263,15 @@ class Scraper(BaseScraper):
             raise RuntimeError(f"no Recalbox system found at {self.tag}")
         cores: set[str] = set()
         standalone: set[str] = set()
+        libretro: set[str] = set()
         for text in self._system_inis(systems):
             found, alone = system_ini_cores(text)
             cores |= found
             standalone |= alone
+            libretro |= system_ini_libretro(text)
         if not cores:
             raise RuntimeError(f"no core in Recalbox's system.ini files at {self.tag}")
-        return sorted(cores), sorted(standalone)
+        return sorted(cores), sorted(standalone), sorted(libretro & standalone)
 
     def fetch_requirements(self) -> list[BiosRequirement]:
         """Parse es_bios.xml and return BIOS requirements."""
@@ -350,7 +365,7 @@ class Scraper(BaseScraper):
 
             systems[req.system]["files"].append(requirement_entry(req))
 
-        cores, standalone = self._fetch_cores()
+        cores, standalone, dual = self._fetch_cores()
         return {
             "platform": "Recalbox",
             "version": self.tag,
@@ -361,6 +376,8 @@ class Scraper(BaseScraper):
             "verification_mode": "md5",
             "cores": cores,
             "standalone_cores": standalone,
+            # Launched both ways: each layout gets its files.
+            **({"dual_mode_cores": dual} if dual else {}),
             "systems": systems,
         }
 

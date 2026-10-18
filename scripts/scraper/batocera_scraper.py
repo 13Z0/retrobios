@@ -18,6 +18,7 @@ from pathlib import Path
 
 
 from common import yaml_load
+from safeparse import yaml_load_upstream
 
 from .base_scraper import (
     BaseScraper,
@@ -98,7 +99,7 @@ def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
     reading it alone left DOSBox Staging, melonDS DS and nine other built
     cores outside the pack.
     """
-    data = yaml_load(text)
+    data = yaml_load_upstream(text)
     if not isinstance(data, dict):
         raise ValueError("es_systems.yml is not a mapping")
     cores: set[str] = set()
@@ -124,6 +125,20 @@ def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
                 if emulator != "libretro":
                     standalone.add(str(core))
     return cores, standalone
+
+
+def es_systems_libretro(text: str) -> set[str]:
+    """The cores es_systems.yml offers under `libretro:` for some system."""
+    data = yaml_load_upstream(text)
+    if not isinstance(data, dict):
+        raise ValueError("es_systems.yml is not a mapping")
+    found: set[str] = set()
+    for system in data.values():
+        emulators = system.get("emulators") if isinstance(system, dict) else None
+        libretro = emulators.get("libretro") if isinstance(emulators, dict) else None
+        if isinstance(libretro, dict):
+            found.update(str(core) for core, spec in libretro.items() if isinstance(spec, dict))
+    return found
 
 
 SYSTEM_SLUG_MAP = {
@@ -253,11 +268,12 @@ class Scraper(BaseScraper):
         self.tag = fetch_stable_tag()
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
-    def _fetch_cores(self) -> tuple[list[str], list[str]]:
+    def _fetch_cores(self) -> tuple[list[str], list[str], list[str]]:
         """Extract core names and standalone cores from configgen-defaults.yml.
 
-        Returns (all_cores, standalone_cores) where standalone_cores are
-        those with emulator != "libretro".
+        Returns (all_cores, standalone_cores, dual_mode_cores): standalone
+        cores are those with emulator != "libretro", dual-mode ones those
+        es_systems.yml also offers under libretro (dolphin for GameCube).
         """
         url = CONFIGGEN_DEFAULTS_URL.format(tag=self.tag)
         try:
@@ -271,10 +287,10 @@ class Scraper(BaseScraper):
             raise ConnectionError(
                 f"Failed to fetch {url}: {e}"
             ) from e
-        data = yaml_load(raw)
-        cores, standalone = es_systems_emulators(
-            self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag))
-        )
+        data = yaml_load_upstream(raw)
+        es_systems = self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag))
+        cores, standalone = es_systems_emulators(es_systems)
+        libretro = es_systems_libretro(es_systems)
         if not cores:
             raise RuntimeError("es_systems.yml names no emulator")
         for system, cfg in data.items():
@@ -289,7 +305,8 @@ class Scraper(BaseScraper):
                 if core and core != emulator:
                     standalone.add(core)
         dropped = _not_cores()
-        return sorted(cores - dropped), sorted(standalone - dropped)
+        dual = (standalone & libretro) - dropped
+        return sorted(cores - dropped), sorted(standalone - dropped), sorted(dual)
 
     def _fetch_text(self, url: str) -> str:
         req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
@@ -449,7 +466,7 @@ class Scraper(BaseScraper):
 
             systems[req.system]["files"].append(requirement_entry(req))
 
-        cores, standalone = self._fetch_cores()
+        cores, standalone, dual = self._fetch_cores()
         result = {
             "platform": "Batocera",
             "version": self.tag.removeprefix("batocera-"),
@@ -463,6 +480,9 @@ class Scraper(BaseScraper):
         }
         if standalone:
             result["standalone_cores"] = standalone
+        if dual:
+            # Launched both ways: each layout gets its files.
+            result["dual_mode_cores"] = dual
         return result
 
 

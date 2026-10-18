@@ -5803,3 +5803,17 @@ standalone_cores:
 - xvic
 - ymir
 - yquake2
+dual_mode_cores:
+- applewin
+- dolphin
+- easyrpg
+- flycast
+- hatari
+- mame
+- melonds
+- pcsx2
+- play
+- ppsspp
+- scummvm
+- stella
+- tic80

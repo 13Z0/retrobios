@@ -32,7 +32,8 @@ from common import (
     resolution_is_hash_exact,
     resolve_local_file,
     resolve_platform_cores,
-    runs_standalone,
+    platform_layouts,
+    standalone_set as platform_standalone_set,
     variant_base_name,
 )
 from packresolve import preferred_entries
@@ -202,63 +203,63 @@ def profile_claims(
         # carries its scan candidates, never its named entries.
         if profile.get("bios_mode") == "agnostic":
             continue
-        is_standalone = runs_standalone(emu_name, profile, standalone_cores)
-        claims.extend(
-            _archive_claims(
-                emu_name, profile, is_standalone, db, base_dest, placement,
-                zip_contents, data_dir_registry,
-            )
-        )
-        for entry in profile.get("files") or []:
-            if not isinstance(entry, dict):
-                continue
-            # The same rule as the gap report and the builder: an entry the
-            # pack never carries (read from the save directory, a
-            # placeholder, a filename-agnostic scan) arbitrates nothing.
-            if outside_gap_scope(entry, is_standalone):
-                continue
-            # A member of a romset is not a file at the BIOS root: the archive
-            # holding it occupies the destination (_archive_claims). Claiming
-            # the member put FBNeo's msx.zip contents loose at the root.
-            if entry.get("archive"):
-                continue
-            dest = (
-                (entry.get("standalone_path") or entry.get("path"))
-                if is_standalone
-                else entry.get("path")
-            ) or entry.get("name") or ""
-            if not dest:
-                continue
-            if placement is None:
-                full = f"{base_dest}/{dest}" if base_dest else dest
-            else:
-                placed = placement.place(
-                    {"profile": emu_name, "system": entry.get("system")}, dest
+        for profile, is_standalone in platform_layouts(emu_name, profile, standalone_cores):
+            claims.extend(
+                _archive_claims(
+                    emu_name, profile, is_standalone, db, base_dest, placement,
+                    zip_contents, data_dir_registry,
                 )
-                if placed is None:
+            )
+            for entry in profile.get("files") or []:
+                if not isinstance(entry, dict):
                     continue
-                full = placed[1]
-            # The owner's own copy is the one the builder ships.
-            local, status = resolve_local_file(
-                {**entry, "source_profile": emu_name},
-                db,
-                zip_contents,
-                dest_hint=dest,
-                data_dir_registry=data_dir_registry,
-            )
-            if status == "name_exact" and _size_the_code_reads(entry, local):
-                status = SIZE_EXACT
-            claims.append(
-                Claim(
-                    origin="profile",
-                    destination=full,
-                    name=entry.get("name", ""),
-                    emulator=emu_name,
-                    entry=entry,
-                    local_path=local,
-                    status=status,
+                # The same rule as the gap report and the builder: an entry the
+                # pack never carries (read from the save directory, a
+                # placeholder, a filename-agnostic scan) arbitrates nothing.
+                if outside_gap_scope(entry, is_standalone):
+                    continue
+                # A member of a romset is not a file at the BIOS root: the archive
+                # holding it occupies the destination (_archive_claims). Claiming
+                # the member put FBNeo's msx.zip contents loose at the root.
+                if entry.get("archive"):
+                    continue
+                dest = (
+                    (entry.get("standalone_path") or entry.get("path"))
+                    if is_standalone
+                    else entry.get("path")
+                ) or entry.get("name") or ""
+                if not dest:
+                    continue
+                if placement is None:
+                    full = f"{base_dest}/{dest}" if base_dest else dest
+                else:
+                    placed = placement.place(
+                        {"profile": emu_name, "system": entry.get("system")}, dest
+                    )
+                    if placed is None:
+                        continue
+                    full = placed[1]
+                # The owner's own copy is the one the builder ships.
+                local, status = resolve_local_file(
+                    {**entry, "source_profile": emu_name},
+                    db,
+                    zip_contents,
+                    dest_hint=dest,
+                    data_dir_registry=data_dir_registry,
                 )
-            )
+                if status == "name_exact" and _size_the_code_reads(entry, local):
+                    status = SIZE_EXACT
+                claims.append(
+                    Claim(
+                        origin="profile",
+                        destination=full,
+                        name=entry.get("name", ""),
+                        emulator=emu_name,
+                        entry=entry,
+                        local_path=local,
+                        status=status,
+                    )
+                )
     return claims
 
 
@@ -524,7 +525,7 @@ def slot_choices(
         platform_profiles,
         db,
         config.get("base_destination", ""),
-        {str(c) for c in config.get("standalone_cores", [])},
+        platform_standalone_set(config),
         zip_contents,
         data_dir_registry,
     )
@@ -821,7 +822,7 @@ def scan_platform(
         relevant,
         db,
         config.get("base_destination", ""),
-        {str(c) for c in config.get("standalone_cores", [])},
+        platform_standalone_set(config),
         build_zip_contents_index(db),
         load_data_dir_registry(platforms_dir),
     )

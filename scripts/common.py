@@ -1861,6 +1861,7 @@ def group_identical_platforms(
         emulators = [
             cores if isinstance(cores, str) else sorted(map(str, cores or [])),
             sorted(map(str, config.get("standalone_cores") or [])),
+            sorted(map(str, config.get("dual_mode_cores") or [])),
             # One archive cannot serve a filesystem that folds case and one
             # that does not: Lakka keeps bios.col beside BIOS.col.
             bool(config.get("case_insensitive_fs")),
@@ -2002,6 +2003,44 @@ def runs_standalone(
     return emu_name in standalone_cores or bool(
         standalone_cores & {str(c) for c in profile.get("cores", [])}
     )
+
+
+# Marks, in a platform's standalone set, an emulator it also launches as a
+# libretro core. No core name starts with it.
+DUAL_MODE_PREFIX = "dual:"
+
+
+def standalone_set(config: dict) -> set[str]:
+    """The emulators a platform launches standalone, with its dual-mode ones.
+
+    ``dual_mode_cores`` names those it offers both ways (Batocera lists
+    libretro:dolphin and standalone dolphin for GameCube). They travel in the
+    same set, tagged, so every reader of standalone_cores sees them.
+    """
+    names = {str(c) for c in config.get("standalone_cores") or []}
+    names |= {DUAL_MODE_PREFIX + str(c) for c in config.get("dual_mode_cores") or []}
+    return names
+
+
+def platform_layouts(
+    emu_name: str, profile: dict, standalone_cores: set[str]
+) -> list[tuple[dict, bool]]:
+    """The layouts a platform gives an emulator: (profile, standalone?) each.
+
+    One, libretro or standalone, for most. Both for an emulator the platform
+    launches either way: laid out standalone only, Batocera's libretro
+    Dolphin found dolphin-emu/Sys/GC/ empty. Each layout keeps its own rules
+    (what the build reads from the system directory, where it reads it).
+    """
+    if not runs_standalone(emu_name, profile, standalone_cores):
+        return [(profile, False)]
+    dual = {c.removeprefix(DUAL_MODE_PREFIX) for c in standalone_cores
+            if c.startswith(DUAL_MODE_PREFIX)}
+    if "libretro" in str(profile.get("type", "")) and dual & {
+        emu_name, *(str(c) for c in profile.get("cores", []))
+    }:
+        return [(profile, False), (profile, True)]
+    return [(profile, True)]
 
 
 # What identifies a profile entry's content, carried unchanged wherever the

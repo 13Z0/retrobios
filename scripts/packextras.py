@@ -15,7 +15,8 @@ from common import load_emulator_profiles
 from common import resolution_is_hash_exact
 from common import resolve_local_file
 from common import resolve_platform_cores
-from common import runs_standalone
+from common import platform_layouts
+from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
 from validation import read_from_system_dir
@@ -290,96 +291,96 @@ def _agnostic_scan_extras(
                 agnostic_votes.get(directory + "/", 0) + 1
             )
 
-        standalone = runs_standalone(emu_name, profile, standalone_set or set())
-        for f in profile.get("files", []):
-            if not is_profile_agnostic and not f.get("agnostic"):
-                continue
-            fname = f.get("name", "")
-            if not fname:
-                continue
-            # A file of the build the platform does not run seeds nothing:
-            # armsx2's proverb.zip is fetched by the Android app into its own
-            # arcade/ folder, and the libretro packs carried it at system/.
-            mode = f.get("mode")
-            if (mode == "standalone" and not standalone) or (
-                mode == "libretro" and standalone
-            ):
-                continue
-            # An agnostic BIOS mode says the BIOS filename is free, not that
-            # every file the emulator loads is.  A free filename still has a
-            # known shape, and that shape is what identifies a candidate: an
-            # entry declaring no size takes the whole directory, which is how
-            # the flag icons of an Android package walked into a PS2 pack.
-            if f.get("category", "bios") != "bios":
-                continue
-            if not (f.get("size") or f.get("min_size") or f.get("max_size")):
-                continue
-            # The free name is the BIOS directory's: a shader, a sound or a
-            # font the emulator reads from its resources tree has a fixed
-            # name and must not seed a scan (yaps2 flattened 189 of them to
-            # the root of the RetroArch pack).
-            bios_dir = profile.get("bios_directory")
-            fpath = f.get("path") or ""
-            if bios_dir and "/" in fpath and not fpath.startswith(bios_dir):
-                continue
+        for profile, standalone in platform_layouts(emu_name, profile, standalone_set or set()):
+            for f in profile.get("files", []):
+                if not is_profile_agnostic and not f.get("agnostic"):
+                    continue
+                fname = f.get("name", "")
+                if not fname:
+                    continue
+                # A file of the build the platform does not run seeds nothing:
+                # armsx2's proverb.zip is fetched by the Android app into its own
+                # arcade/ folder, and the libretro packs carried it at system/.
+                mode = f.get("mode")
+                if (mode == "standalone" and not standalone) or (
+                    mode == "libretro" and standalone
+                ):
+                    continue
+                # An agnostic BIOS mode says the BIOS filename is free, not that
+                # every file the emulator loads is.  A free filename still has a
+                # known shape, and that shape is what identifies a candidate: an
+                # entry declaring no size takes the whole directory, which is how
+                # the flag icons of an Android package walked into a PS2 pack.
+                if f.get("category", "bios") != "bios":
+                    continue
+                if not (f.get("size") or f.get("min_size") or f.get("max_size")):
+                    continue
+                # The free name is the BIOS directory's: a shader, a sound or a
+                # font the emulator reads from its resources tree has a fixed
+                # name and must not seed a scan (yaps2 flattened 189 of them to
+                # the root of the RetroArch pack).
+                bios_dir = profile.get("bios_directory")
+                fpath = f.get("path") or ""
+                if bios_dir and "/" in fpath and not fpath.startswith(bios_dir):
+                    continue
 
-            path_prefix = resolved_dirs.get(id(f), "")
-            if not path_prefix:
-                continue
-            # A name matching one file identifies it. A name matching several
-            # identifies nothing on its own, so the profile's other files have
-            # to agree on the directory before the scan walks it.
-            ambiguous = id(f) in named_only and len(by_name.get(fname, [])) > 1
-            if ambiguous and agnostic_votes.get(path_prefix, 0) < 2:
-                continue
+                path_prefix = resolved_dirs.get(id(f), "")
+                if not path_prefix:
+                    continue
+                # A name matching one file identifies it. A name matching several
+                # identifies nothing on its own, so the profile's other files have
+                # to agree on the directory before the scan walks it.
+                ambiguous = id(f) in named_only and len(by_name.get(fname, [])) > 1
+                if ambiguous and agnostic_votes.get(path_prefix, 0) < 2:
+                    continue
 
-            # Scan DB for all files under this prefix matching size
-            for sha1, entry in files_db.items():
-                path = entry.get("path", "")
-                if not path.startswith(path_prefix):
-                    continue
-                if not size_fits(f, entry.get("size", 0)):
-                    continue
-                scan_name = entry.get("name", "")
-                if not scan_name:
-                    continue
-                # Into the directory the seed entry names, not the root:
-                # yaps2 reads its BIOS from pcsx2/bios/.
-                seed = f.get("path") or ""
-                if standalone:
-                    seed = f.get("standalone_path") or seed
-                folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
-                dest = f"{folder}/{scan_name}" if folder else scan_name
-                full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-                if full_dest in seen_dests and (taken is None or full_dest not in taken):
-                    continue
-                extra = {
-                    "name": scan_name,
-                    "destination": dest,
-                    # The scan already holds the entry it selected, so it
-                    # names it by content.  Emitting the filename alone
-                    # sent the packing step back to a by-name lookup, and
-                    # three PS2 resources came back from another
-                    # emulator's copy of the same filename.
-                    "sha1": sha1,
-                    "required": False,
-                    "hle_fallback": False,
-                    "source_emulator": profile.get("emulator", emu_name),
-                    "source_profile": emu_name,
-                    "source_system": f.get("system"),
-                    "source_systems": list(profile.get("systems", [])),
-                    "region": f.get("region"),
-                    "variant_group": f.get("variant_group"),
-                    "agnostic_scan": True,
-                }
-                extra["claim_order"] = (4, 0, emu_name)
-                if not _take(extra, full_dest, seen_dests, taken):
-                    continue
-                extras.append(extra)
-                extras.extend(_companion_extras(
-                    _companions(path, scan_name, _companion_extensions(profile, fname), files_db),
-                    folder, extras_prefix, seen_dests, profile, emu_name, f, taken,
-                ))
+                # Scan DB for all files under this prefix matching size
+                for sha1, entry in files_db.items():
+                    path = entry.get("path", "")
+                    if not path.startswith(path_prefix):
+                        continue
+                    if not size_fits(f, entry.get("size", 0)):
+                        continue
+                    scan_name = entry.get("name", "")
+                    if not scan_name:
+                        continue
+                    # Into the directory the seed entry names, not the root:
+                    # yaps2 reads its BIOS from pcsx2/bios/.
+                    seed = f.get("path") or ""
+                    if standalone:
+                        seed = f.get("standalone_path") or seed
+                    folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
+                    dest = f"{folder}/{scan_name}" if folder else scan_name
+                    full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+                    if full_dest in seen_dests and (taken is None or full_dest not in taken):
+                        continue
+                    extra = {
+                        "name": scan_name,
+                        "destination": dest,
+                        # The scan already holds the entry it selected, so it
+                        # names it by content.  Emitting the filename alone
+                        # sent the packing step back to a by-name lookup, and
+                        # three PS2 resources came back from another
+                        # emulator's copy of the same filename.
+                        "sha1": sha1,
+                        "required": False,
+                        "hle_fallback": False,
+                        "source_emulator": profile.get("emulator", emu_name),
+                        "source_profile": emu_name,
+                        "source_system": f.get("system"),
+                        "source_systems": list(profile.get("systems", [])),
+                        "region": f.get("region"),
+                        "variant_group": f.get("variant_group"),
+                        "agnostic_scan": True,
+                    }
+                    extra["claim_order"] = (4, 0, emu_name)
+                    if not _take(extra, full_dest, seen_dests, taken):
+                        continue
+                    extras.append(extra)
+                    extras.extend(_companion_extras(
+                        _companions(path, scan_name, _companion_extensions(profile, fname), files_db),
+                        folder, extras_prefix, seen_dests, profile, emu_name, f, taken,
+                    ))
     return extras
 
 
@@ -701,7 +702,7 @@ def _collect_emulator_extras(
         return extras
 
     relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
-    standalone_set = {str(c) for c in config.get("standalone_cores", [])}
+    standalone_set = platform_standalone_set(config)
     by_name = db.get("indexes", {}).get("by_name", {})
     by_path_suffix = db.get("indexes", {}).get("by_path_suffix", {})
 
@@ -716,73 +717,73 @@ def _collect_emulator_extras(
             continue
         if emu_name not in relevant:
             continue
-        is_standalone = runs_standalone(emu_name, profile, standalone_set)
-        for f in profile.get("files", []):
-            fname = f.get("name", "")
-            if not fname:
-                continue
-            # Only duplicate files already covered at another destination.
-            # An unsourceable entry is a file no collection holds: the name
-            # covered elsewhere belongs to another program's file.
-            if fname not in covered_names or f.get("unsourceable"):
-                continue
-            # A member of an archive is read inside it, never as a loose
-            # file; the archive itself is placed by the passes above.
-            if f.get("archive"):
-                continue
-            # No path: the core reads it from nowhere a pack reaches
-            # (Dolphin's codehandler.bin ships in its Sys tree).
-            if "path" in f and f["path"] is None:
-                continue
-            file_mode = f.get("mode")
-            if file_mode == "standalone" and not is_standalone:
-                continue
-            if file_mode == "libretro" and is_standalone:
-                continue
-            if not read_from_system_dir(f, is_standalone):
-                continue
-            if is_standalone:
-                raw = f.get("standalone_path") or f.get("path") or fname
-            else:
-                raw = f.get("path") or fname
-            dest = f"{raw}{fname}" if raw.endswith("/") else raw
-            # A bare name is a destination too: the core reads it at the root
-            # of the directory core files go to, which the platform may not
-            # declare (Recalbox has its System Cards under pcenginecd/ only,
-            # geargrafx reads them from the root).
-            full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-            if full_dest in seen_dests and full_dest not in taken:
-                continue
-            # Check file exists in repo or data dirs
-            if not (
-                by_name.get(fname)
-                or by_name.get(dest.rsplit("/", 1)[-1])
-                or by_path_suffix.get(dest)
-            ):
-                continue
-            extra = {
-                "name": fname,
-                "destination": dest,
-                "required": f.get("required", False),
-                "hle_fallback": f.get("hle_fallback", False),
-                "source_emulator": profile.get("emulator", emu_name),
-                "source_profile": emu_name,
-                "source_system": f.get("system"),
-                "source_systems": list(profile.get("systems", [])),
-                "region": f.get("region"),
-                "variant_group": f.get("variant_group"),
-            }
-            # The same identity the first pass carries: without it the copy
-            # resolves on its name alone and a same-named file of another
-            # game fills the slot the profile marks as not held.
-            for identity in PROFILE_IDENTITY_FIELDS:
-                if f.get(identity) not in (None, "", []):
-                    extra[identity] = f[identity]
-            if f.get("contents"):
-                extra["contents"] = f["contents"]
-            extra["claim_order"] = (2, 0, emu_name)
-            if _take(extra, full_dest, seen_dests, taken):
-                extras.append(extra)
+        for profile, is_standalone in platform_layouts(emu_name, profile, standalone_set):
+            for f in profile.get("files", []):
+                fname = f.get("name", "")
+                if not fname:
+                    continue
+                # Only duplicate files already covered at another destination.
+                # An unsourceable entry is a file no collection holds: the name
+                # covered elsewhere belongs to another program's file.
+                if fname not in covered_names or f.get("unsourceable"):
+                    continue
+                # A member of an archive is read inside it, never as a loose
+                # file; the archive itself is placed by the passes above.
+                if f.get("archive"):
+                    continue
+                # No path: the core reads it from nowhere a pack reaches
+                # (Dolphin's codehandler.bin ships in its Sys tree).
+                if "path" in f and f["path"] is None:
+                    continue
+                file_mode = f.get("mode")
+                if file_mode == "standalone" and not is_standalone:
+                    continue
+                if file_mode == "libretro" and is_standalone:
+                    continue
+                if not read_from_system_dir(f, is_standalone):
+                    continue
+                if is_standalone:
+                    raw = f.get("standalone_path") or f.get("path") or fname
+                else:
+                    raw = f.get("path") or fname
+                dest = f"{raw}{fname}" if raw.endswith("/") else raw
+                # A bare name is a destination too: the core reads it at the root
+                # of the directory core files go to, which the platform may not
+                # declare (Recalbox has its System Cards under pcenginecd/ only,
+                # geargrafx reads them from the root).
+                full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+                if full_dest in seen_dests and full_dest not in taken:
+                    continue
+                # Check file exists in repo or data dirs
+                if not (
+                    by_name.get(fname)
+                    or by_name.get(dest.rsplit("/", 1)[-1])
+                    or by_path_suffix.get(dest)
+                ):
+                    continue
+                extra = {
+                    "name": fname,
+                    "destination": dest,
+                    "required": f.get("required", False),
+                    "hle_fallback": f.get("hle_fallback", False),
+                    "source_emulator": profile.get("emulator", emu_name),
+                    "source_profile": emu_name,
+                    "source_system": f.get("system"),
+                    "source_systems": list(profile.get("systems", [])),
+                    "region": f.get("region"),
+                    "variant_group": f.get("variant_group"),
+                }
+                # The same identity the first pass carries: without it the copy
+                # resolves on its name alone and a same-named file of another
+                # game fills the slot the profile marks as not held.
+                for identity in PROFILE_IDENTITY_FIELDS:
+                    if f.get(identity) not in (None, "", []):
+                        extra[identity] = f[identity]
+                if f.get("contents"):
+                    extra["contents"] = f["contents"]
+                extra["claim_order"] = (2, 0, emu_name)
+                if _take(extra, full_dest, seen_dests, taken):
+                    extras.append(extra)
 
     extras.extend(
         _archive_prefix_extras(
