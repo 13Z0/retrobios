@@ -1364,11 +1364,14 @@ def resolve_local_file(
                         and path not in candidates
                     ):
                         candidates.append(path)
-        if not candidates:
+        owners = _owner_tokens(file_entry)
+        if not candidates or all(_foreign_tree(p, owners) for p in candidates):
             # Case-insensitive fallback: upstream platforms disagree on
             # casing (VEC_MineStorm.vec vs VEC_Minestorm.vec). Two casings
             # can name two contents (FONT.ROM and font.rom), so this only
-            # runs when no casing matches exactly.
+            # runs when no casing matches exactly, or when only another
+            # emulator's tree does: xm6typeg got XM6 Utility's synthesized
+            # SCSIINROM.DAT while the X68000 dump sat as scsiinrom.dat.
             folded = _casefold_name_index(by_name)
             for try_name in names_to_try:
                 for match_sha1 in folded.get(try_name.casefold(), []):
@@ -1385,21 +1388,23 @@ def resolve_local_file(
             elif len(candidates) > 1 and name.casefold().endswith(".zip"):
                 candidates = _covering_archives(candidates)
             candidates = _by_affinity(candidates, file_entry, dest_hint)
+            best = candidates[0] if candidates else ""
             # A copy outside another emulator's tree comes first: the
             # affinity read pcsx2 in bios/Other/armsx2/pcsx2/ and served
             # upstream PCSX2 the patches.zip of ARMSX2.
-            owners = _owner_tokens(file_entry)
             candidates = [
                 p for p in candidates if not _foreign_tree(p, owners)
             ] or candidates
             primary = [p for p in candidates if "/.variants/" not in p]
             if primary or candidates:
                 chosen = primary[0] if primary else candidates[0]
-                # Even the best of them is another emulator's own copy: the
-                # name says nothing about this profile's file, and a data
-                # directory it reads may hold it. Dolphin got Dolphin-MMJR's
-                # codehandler.bin while data/dolphin-sys held its own.
-                if data_dir_registry and _foreign_tree(chosen, _owner_tokens(file_entry)):
+                # The best of them is another emulator's own copy, served or
+                # set aside: the name says nothing about this profile's file,
+                # and a data directory it reads may hold it. Dolphin got
+                # Dolphin-MMJR's codehandler.bin while data/dolphin-sys held
+                # its own; blueMSX got the 16 KB RS232.ROM once msx-emu's
+                # 8 KB copy was set aside, while data/bluemsx held its own.
+                if data_dir_registry and _foreign_tree(best, owners):
                     hit, _mismatch = _resolve_in_data_dirs(
                         names_to_try, data_dir_registry,
                         functools.partial(
