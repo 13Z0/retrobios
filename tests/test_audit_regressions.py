@@ -560,6 +560,48 @@ class ADamagedArchiveIsNotPacked(unittest.TestCase):
             self.assertIn("set.zip", str(caught.exception))
 
 
+class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
+    """The EmuDeck README promised keys set up automatically (they need
+    --standalone-copies) and gave a Citra path the installer never uses; the
+    RetroArch README offered only `| sh`, which Windows cannot run."""
+
+    def _guide(self, platform: str) -> str:
+        from packreadme import _build_readme
+
+        text = _build_readme(platform, platform, "", 1, 1)
+        return text[text.index("INSTALLATION"):text.index("TROUBLESHOOTING")]
+
+    def test_retroarch_offers_the_windows_installer(self):
+        guide = self._guide("retroarch")
+        self.assertIn("install.sh | sh", guide)
+        self.assertIn("install.ps1 | iex", guide)
+
+    def test_emudeck_keys_match_the_registry_and_the_flag(self):
+        import re
+
+        guide = self._guide("emudeck")
+        self.assertIn("--standalone-copies", guide)
+        self.assertNotIn("emulator keys automatically", guide)
+        self.assertNotIn("handles this for you", guide)
+        with (ROOT / "platforms" / "_registry.yml").open(encoding="utf-8") as handle:
+            registry = yaml.safe_load(handle)
+        targets = {
+            target.rstrip("/").replace("$HOME", "~")
+            for copy in registry["_standalone_copies"]
+            for target in copy.get("targets", {}).get("linux", [])
+        }
+        named = {
+            path.rstrip("/") for path in re.findall(r"-> (~/\S+)", guide)
+        }
+        self.assertTrue(named)
+        self.assertEqual(sorted(named - targets), [])
+
+    def test_retropie_never_sends_a_pc_to_the_linux_partition(self):
+        guide = self._guide("retropie")
+        self.assertNotIn("Put the SD card in your PC", guide)
+        self.assertIn("install.sh | sh", guide)
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 
