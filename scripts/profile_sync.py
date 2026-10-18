@@ -2861,6 +2861,18 @@ def bump_commit(
         # Rewriting the pin to the value it already holds is not a bump, and
         # announcing it buries the profiles that did move.
         return False
+    if (
+        document.get("source_commit") != report.head
+        and not cites_primary(report)
+    ):
+        # Every ref anchored in another repository: HEAD of this one was
+        # never compared with anything. gam4980's pin moved to the fork's
+        # HEAD while its bare libretro.c refs still described upstream.
+        print(
+            f"{path.stem}: no ref resolves in {report.repo}, its pin is not advanced",
+            file=sys.stderr,
+        )
+        return False
     expected = dict(document)
     expected["source_commit"] = report.head
     new_text = _set_pin(text, document, "source_commit", report.head, "profiled_date")
@@ -2871,6 +2883,22 @@ def bump_commit(
         )
     apply_edit(path, new_text, expected)
     return True
+
+
+def cites_primary(report: ProfileReport) -> bool:
+    """Whether a ref resolved in the repository source_commit pins.
+
+    A part attributed to another declared repository carries its slug; one
+    read in the primary carries none. A profile citing nothing proves
+    nothing either way and is not held back.
+    """
+    if len(report.repos) < 2:
+        return True
+    parts = [
+        part for entry in report.entries for part in entry.parts
+        if part.status != "EXTERNAL"
+    ]
+    return not parts or any(part.repo is None for part in parts)
 
 
 def _set_pin(text: str, document: dict, field: str, value: str, after: str) -> str:

@@ -2772,6 +2772,24 @@ class TestBumpCommit(unittest.TestCase):
         self.assertEqual(profile_sync.pending_recale(report), 0)
         self.assertTrue(bump_commit(self.path, report))
 
+    def test_refused_when_no_ref_reads_the_pinned_repository(self):
+        """gam4980: every bare libretro.c ref anchored in upstream, and the
+        bump wrote the fork's HEAD over refs that never described it."""
+        def report(repo):
+            part = PartResult(
+                RefPart("libretro.c", 10, 12, "libretro.c:10-12"), "ANCHORED",
+                None, 10, 12, [], None, repo,
+            )
+            return ProfileReport(
+                name="p", repo="fork/n", repos=["fork/n", "up/n"], pin="pin",
+                head="newhead",
+                entries=[EntryReport("a.bin", "libretro.c:10-12", "ANCHORED", [part])],
+                counts={"ANCHORED": 1},
+            )
+        self.assertFalse(bump_commit(self.path, report("up/n")))
+        self.assertNotIn("newhead", self.path.read_text())
+        self.assertTrue(bump_commit(self.path, report(None)))
+
     def test_a_bump_alone_waits_for_the_recale(self):
         """lrps2 at 0 to review with two SHIFTED parts: --bump-commit run
         alone wrote the new pin over refs still on the old lines."""
