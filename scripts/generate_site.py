@@ -952,6 +952,7 @@ def generate_data_exports(
                 sorted((entry.get("provenance") or {}).keys())
             ),
         })
+    write_if_changed(str(downloads / "retrobios.dat"), collection_dat(db, generated_at))
     write_if_changed(
         str(downloads / "files.csv"),
         _csv_document(
@@ -1015,6 +1016,8 @@ def generate_data_exports(
         (api / "gaps.json", "Verification and coverage gaps", "application/json", "schemas/site-api-envelope.schema.json"),
         (api / "stats.json", "Project statistics", "application/json", "schemas/stats.schema.json"),
         (downloads / "files.csv", "File hashes CSV", "text/csv", None),
+        (downloads / "retrobios.dat", "Collection DAT (Logiqx XML, for clrmamepro and RomVault)",
+         "application/xml", None),
         (downloads / "platform-files.csv", "Platform declarations CSV", "text/csv", None),
         (downloads / "cross-reference.csv", "Cross-reference CSV", "text/csv", None),
         (downloads / "gaps.csv", "Verification and coverage gaps CSV", "text/csv", None),
@@ -1064,7 +1067,14 @@ def generate_data_page(exports: list[dict]) -> str:
         "and website as versioned static files. No account or API key is required.",
         "",
         "[API catalog](api/v1/catalog.json){ .md-button .md-button--primary } "
-        "[SQLite snapshot](downloads/retrobios.sqlite){ .md-button }",
+        "[SQLite snapshot](downloads/retrobios.sqlite){ .md-button } "
+        "[Collection DAT](downloads/retrobios.dat){ .md-button }",
+        "",
+        "The DAT is Logiqx XML, the format clrmamepro and RomVault read: one game "
+        "per `bios/<Manufacturer>/<Console>/` folder of the collection, each file a "
+        "rom named by its path below that folder. It audits a copy of the "
+        "collection's `bios/` tree, or rebuilds that layout from your own dumps; a "
+        "platform pack has its own layout and is checked with `install.py --check`.",
         "",
         "## Stable JSON endpoints",
         "",
@@ -1217,6 +1227,56 @@ PAGE_DATA: dict[str, dict] = {}
 
 
 SYSTEM_PARTS_IN_FULL = 1000
+
+
+def collection_dat(db: dict, generated_at: str) -> str:
+    """The collection as a Logiqx DAT, the format clrmamepro and RomVault read.
+
+    One game per bios/<Manufacturer>/<Console>/ folder, each file a rom
+    named by its path below that folder, subfolders joined with a backslash
+    as Logiqx DATs write them. An auditor checking a BIOS tree against the
+    collection had JSON, CSV and SQLite, and a converter to write.
+    """
+    import xml.etree.ElementTree as ET  # noqa: PLC0415
+
+    games: dict[str, list[dict]] = {}
+    for entry in db.get("files", {}).values():
+        parts = str(entry.get("path", "")).split("/")
+        if len(parts) < 3 or parts[0] != "bios":
+            continue
+        folder = parts[1:3] if len(parts) > 3 else parts[1:2]
+        games.setdefault(" - ".join(folder), []).append(
+            {**entry, "_rom": "\\".join(parts[1 + len(folder):])}
+        )
+    root = ET.Element("datafile")
+    header = ET.SubElement(root, "header")
+    version = generated_at[:10].replace("-", "")
+    for tag, text in (
+        ("name", SITE_NAME),
+        ("description", f"{SITE_NAME} collection ({sum(map(len, games.values()))} files)"),
+        ("version", version),
+        ("date", generated_at[:10]),
+        ("author", SITE_NAME),
+        ("homepage", SITE_URL),
+        ("url", REPO_URL),
+    ):
+        ET.SubElement(header, tag).text = text
+    for game_name in sorted(games):
+        game = ET.SubElement(root, "game", name=game_name)
+        ET.SubElement(game, "description").text = game_name
+        for entry in sorted(games[game_name], key=lambda e: e["_rom"]):
+            attributes = {"name": entry["_rom"], "size": str(entry.get("size", 0))}
+            for attribute, field in (("crc", "crc32"), ("md5", "md5"), ("sha1", "sha1")):
+                if entry.get(field):
+                    attributes[attribute] = str(entry[field]).lower()
+            ET.SubElement(game, "rom", attributes)
+    ET.indent(root, space="\t")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<!DOCTYPE datafile PUBLIC "-//Logiqx//DTD ROM Management Datafile//EN" '
+        '"http://www.logiqx.com/Dats/datafile.dtd">\n'
+        + ET.tostring(root, encoding="unicode") + "\n"
+    )
 
 
 def system_structured_data(slug: str, consoles: dict[str, list]) -> dict:

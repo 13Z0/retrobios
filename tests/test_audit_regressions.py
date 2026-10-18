@@ -4718,5 +4718,30 @@ class SystemPagesDescribeTheirFiles(unittest.TestCase):
         self.assertTrue(data["isBasedOn"].endswith("downloads/files.csv"))
 
 
+
+class TheCollectionShipsADat(unittest.TestCase):
+    """The exports had JSON, CSV and SQLite and no DAT, the one format
+    clrmamepro and RomVault read: auditing a BIOS tree meant writing a
+    converter from files.csv."""
+
+    def test_round_trip_through_the_logiqx_parser(self):
+        sys.path.insert(0, str(ROOT / "scripts" / "scraper"))
+        from logiqx_parser import parse_logiqx
+        from scripts.generate_site import collection_dat
+
+        db = {"files": {
+            "a" * 40: {"path": "bios/Sony/PlayStation/scph5501.bin", "size": 4,
+                       "crc32": "8D8CB7E4", "md5": "1" * 32, "sha1": "a" * 40},
+            "b" * 40: {"path": "bios/Nintendo/GameCube/GC/USA/IPL.bin", "size": 8,
+                       "crc32": "00000001", "md5": "2" * 32, "sha1": "b" * 40},
+        }}
+        dat = parse_logiqx(collection_dat(db, "2026-10-18T07:00:00Z"))
+        self.assertEqual(dat.version, "20261018")
+        roms = {(r.game, r.name): r for r in dat.roms}
+        self.assertIn(("Sony - PlayStation", "scph5501.bin"), roms)
+        self.assertIn(("Nintendo - GameCube", "GC\\USA\\IPL.bin"), roms)
+        self.assertEqual(roms[("Sony - PlayStation", "scph5501.bin")].crc32, "8d8cb7e4")
+
+
 if __name__ == "__main__":
     unittest.main()
