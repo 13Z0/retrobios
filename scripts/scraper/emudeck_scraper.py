@@ -440,13 +440,16 @@ class Scraper(BaseScraper):
             "base_destination": "bios",
             "hash_type": "md5",
             "verification_mode": "md5",
+            # RetroArch is one of them: its cores read the same bios folder,
+            # and naming it makes the pack carry every libretro core's files,
+            # as RetroPie's list does. Without it np2kai, neocd and the other
+            # cores EmuDeck installs got nothing checkBIOS.sh does not name.
             "cores": cores,
-            # Every EmuScripts installer sets up a standalone app (RetroArch's
-            # cores come from its own script, skipped above): Dolphin, Cemu,
-            # xemu, ARMSX2 and Supermodel ran with the libretro layout and
-            # lost their standalone-only files. A profile with no standalone
-            # build keeps its layout (runs_standalone).
-            "standalone_cores": list(cores),
+            # Every other EmuScripts installer sets up a standalone app:
+            # Dolphin, Cemu, xemu, ARMSX2 and Supermodel ran with the libretro
+            # layout and lost their standalone-only files. A profile with no
+            # standalone build keeps its layout (runs_standalone).
+            "standalone_cores": [core for core in cores if core != "retroarch"],
             "systems": systems,
         }
 
@@ -467,7 +470,8 @@ class Scraper(BaseScraper):
             "cemuproton": "cemu",
             "rmg": "mupen64plus_next",
         }
-        skip = {"retroarch_maincfg", "retroarch"}
+        # The main RetroArch config script installs no emulator.
+        skip = {"retroarch_maincfg"}
 
         try:
             req = urllib.request.Request(api_url, headers=github_headers())

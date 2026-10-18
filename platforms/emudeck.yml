@@ -24,6 +24,7 @@ cores:
 - pcsx2
 - ppsspp
 - primehack
+- retroarch
 - rpcs3
 - ryujinx
 - scummvm

@@ -4272,14 +4272,30 @@ class EmuDeckRunsItsEmulatorsStandalone(unittest.TestCase):
         from scripts.common import load_platform_config, runs_standalone, load_emulator_profiles
 
         config = load_platform_config("emudeck", str(ROOT / "platforms"))
-        self.assertEqual(sorted(config["standalone_cores"]), sorted(config["cores"]))
+        self.assertEqual(
+            sorted(config["standalone_cores"]),
+            sorted(c for c in config["cores"] if c != "retroarch"),
+        )
         profiles = load_emulator_profiles(str(ROOT / "emulators"))
         standalone = set(config["standalone_cores"])
         for name in ("dolphin", "cemu", "armsx2", "supermodel"):
             with self.subTest(emulator=name):
                 self.assertTrue(runs_standalone(name, profiles[name], standalone))
-        source = (ROOT / "scripts" / "scraper" / "emudeck_scraper.py").read_text()
-        self.assertIn('"standalone_cores": list(cores)', source)
+
+    def test_retroarch_brings_its_libretro_cores(self):
+        """The scraper dropped RetroArch's own script: np2kai, neocd and
+        every core EmuDeck installs through RetroArch got no file that
+        checkBIOS.sh does not name."""
+        from scripts.common import (
+            load_emulator_profiles, load_platform_config, resolve_platform_cores,
+        )
+
+        config = load_platform_config("emudeck", str(ROOT / "platforms"))
+        self.assertIn("retroarch", config["cores"])
+        cores = resolve_platform_cores(config, load_emulator_profiles(str(ROOT / "emulators")))
+        for name in ("np2kai", "neocd", "dolphin"):
+            with self.subTest(core=name):
+                self.assertIn(name, cores)
 
 
 
