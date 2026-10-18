@@ -54,9 +54,10 @@ class OneRule(unittest.TestCase):
         occupying its path; the builder leaves it out, and the core file
         that then takes the path was reported missing from the pack."""
         source = (REPO_ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
-        self.assertIn(
-            "baseline_verdict(file_entry, local_path, resolve_status, mode)[1] is None",
-            source,
+        compact = " ".join(source.split())
+        self.assertRegex(
+            compact,
+            r"baseline_verdict\( file_entry, local_path, resolve_status, mode.{0,60}?\)\[1\] is None",
         )
 
 
