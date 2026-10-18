@@ -6,6 +6,7 @@ frontends check against."""
 from __future__ import annotations
 
 import hashlib
+import os
 import zipfile
 import zlib
 from pathlib import Path
@@ -13,12 +14,37 @@ from pathlib import Path
 
 _ALL_ALGORITHMS = frozenset({"sha1", "md5", "sha256", "crc32", "adler32"})
 
+# (path, inode, size, mtime_ns, ctime_ns) -> the digests read so far.
+# verify --all hashed GB_dmg.bin 13 times, once per platform and entry; the
+# bytes are still read from disk, once per file and change.
+_hash_cache: dict[tuple, dict[str, str]] = {}
+
+
 def compute_hashes(
     filepath: str | Path,
     algorithms: frozenset[str] | None = None,
 ) -> dict[str, str]:
     """Compute file hashes. Pass *algorithms* to limit which are computed."""
-    algos = algorithms or _ALL_ALGORITHMS
+    algos = frozenset(algorithms) if algorithms else _ALL_ALGORITHMS
+    try:
+        stat = os.stat(filepath)
+        key: tuple | None = (
+            os.path.realpath(filepath), stat.st_ino, stat.st_size,
+            stat.st_mtime_ns, stat.st_ctime_ns,
+        )
+    except OSError:
+        key = None
+    known = _hash_cache.get(key) if key else None
+    if known is not None and algos <= known.keys():
+        return {name: known[name] for name in algos}
+    result = _compute_hashes(filepath, algos)
+    if key is not None:
+        _hash_cache.setdefault(key, {}).update(result)
+    return result
+
+
+def _compute_hashes(filepath: str | Path, algos: frozenset[str]) -> dict[str, str]:
+    """Read the file once and compute the requested digests."""
     sha1 = hashlib.sha1() if "sha1" in algos else None
     md5 = hashlib.md5() if "md5" in algos else None
     sha256 = hashlib.sha256() if "sha256" in algos else None
