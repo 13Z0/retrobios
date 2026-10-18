@@ -127,7 +127,13 @@ class Exporter(BaseExporter):
                     continue
                 entry: OrderedDict[str, str] = OrderedDict()
                 # The fixture states every value as a string, size included.
-                entry["size"] = str(fe.size())
+                # Where the model settles no size, RomM's own value stands;
+                # str(None) wrote "None", and RomM's int() on it raised.
+                size = fe.size()
+                if size is None and fe.platform is not None:
+                    size = fe.platform.get("size")
+                if size is not None:
+                    entry["size"] = str(int(size))
                 crc = fe.record_hash("crc32")
                 if crc:
                     entry["crc"] = crc
@@ -159,7 +165,7 @@ class Exporter(BaseExporter):
                 issues.append(f"key without a platform slug: {key}")
             elif not self._known_platform(slug):
                 issues.append(f"platform slug RomM does not know: {slug}")
-            if not entry.get("size"):
+            if not str(entry.get("size", "")).isdigit():
                 issues.append(f"entry without a size, never verifiable: {key}")
             if not any(entry.get(h) for h in ("md5", "sha1", "crc")):
                 issues.append(f"entry without a hash, never verifiable: {key}")

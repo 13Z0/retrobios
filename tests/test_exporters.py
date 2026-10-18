@@ -158,6 +158,23 @@ class Reconciliation(unittest.TestCase):
         )
         self.assertEqual(agreeing.size(), 955352)
 
+    def test_a_size_list_keeps_the_platform_size_it_accepts(self):
+        """geargrafx accepts syscard3.pce headerless or headered; System.dat
+        states 262144 for the same dump. The list came first, stated no
+        single size, and the rom line went out with none."""
+        both = NativeFile(
+            "syscard3.pce", "syscard3.pce", "pce",
+            platform={"md5": "c" * 32, "size": 262144},
+            truth={"md5": "c" * 32, "size": [262144, 262656]},
+        )
+        self.assertEqual(both.size(), 262144)
+        refused = NativeFile(
+            "syscard3.pce", "syscard3.pce", "pce",
+            platform={"md5": "c" * 32, "size": 131072},
+            truth={"md5": "c" * 32, "size": [262144, 262656]},
+        )
+        self.assertIsNone(refused.size())
+
     def test_a_file_the_truth_says_nothing_about_is_kept(self):
         systems, _ = model()
         names = {fe.name for fe in systems["psx"].files}
@@ -736,13 +753,20 @@ class RommExport(unittest.TestCase):
         return exporter, systems, exporter.render(systems, report, {}, None)
 
     def test_every_entry_can_actually_verify(self):
-        """RomM matches on size and then on one hash; without both, never."""
-        _, _, produced = self._render()
+        """RomM matches on size and then on one hash; without both, never.
+        An entry no source gives a size to carries none and validate() names
+        it: this test passed for one only because it held the string
+        "None"."""
+        exporter, systems, produced = self._render()
         data = json.loads(produced["known_bios_files.json"])
         self.assertTrue(data)
+        issues = exporter.validate(systems, produced)
         for key, entry in data.items():
             with self.subTest(key=key):
-                self.assertTrue(entry.get("size"))
+                if "size" in entry:
+                    self.assertTrue(entry["size"].isdigit())
+                else:
+                    self.assertIn(f"entry without a size, never verifiable: {key}", issues)
                 self.assertTrue(
                     any(entry.get(h) for h in ("md5", "sha1", "crc"))
                 )
@@ -756,6 +780,42 @@ class RommExport(unittest.TestCase):
         _, _, produced = self._render()
         data = json.loads(produced["known_bios_files.json"])
         self.assertTrue(all(k.startswith("psx:") for k in data))
+
+
+class RommSizeIsNeverNone(unittest.TestCase):
+    """size() is None where the truth contradicts RomM's hash without a size
+    or names several sizes; str(None) went out as "None", validate() passed
+    it as truthy, and RomM's int("None") raised."""
+
+    def _export(self, platform_size):
+        entry = {"name": "scph5501.bin", "destination": "psx/scph5501.bin",
+                 "native_system": "psx", "md5": "a" * 32}
+        if platform_size is not None:
+            entry["size"] = platform_size
+        scraped = {"systems": {"sony-playstation": {"native_id": "psx", "files": [entry]}}}
+        truth = {"systems": {"sony-playstation": {"files": [{
+            "name": "scph5501.bin", "path": "scph5501.bin", "md5": "b" * 32,
+            "required": True, "_cores": ["beetle_psx"],
+        }]}}}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["romm"]()
+        produced = exporter.render(systems, report, {}, None)
+        return exporter, systems, produced, json.loads(produced["known_bios_files.json"])
+
+    def test_the_platform_size_stands_when_none_is_settled(self):
+        _, _, _, data = self._export(524288)
+        self.assertEqual(data["psx:scph5501.bin"]["size"], "524288")
+
+    def test_no_size_is_written_rather_than_none(self):
+        exporter, systems, produced, data = self._export(None)
+        self.assertNotIn("size", data["psx:scph5501.bin"])
+        self.assertTrue(any("without a size" in i for i in exporter.validate(systems, produced)))
+
+    def test_validate_refuses_the_string_none(self):
+        exporter, systems, _, _ = self._export(524288)
+        broken = {"known_bios_files.json": json.dumps(
+            {"psx:scph5501.bin": {"size": "None", "md5": "b" * 32}})}
+        self.assertTrue(any("without a size" in i for i in exporter.validate(systems, broken)))
 
 
 class BizhawkExport(unittest.TestCase):

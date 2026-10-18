@@ -188,9 +188,21 @@ class NativeFile:
             "platform": (self.platform, self.truth),
             "truth": (self.truth,),
         }.get(source, (self.truth, self.platform))
+        # A list names every size the code accepts (geargrafx's syscard3.pce,
+        # headerless or headered). It states no single size, but it still
+        # admits the one the platform writes: System.dat's 262144 for the
+        # same md5 lost its size field when the list came first.
+        accepted: set[int] | None = None
         for entry in order:
-            if entry and entry.get("size"):
-                return _single_size(entry["size"])
+            if not entry or not entry.get("size"):
+                continue
+            single = _single_size(entry["size"])
+            if single is None:
+                if accepted is None:
+                    accepted = {int(v) for v in entry["size"]}
+                continue
+            if accepted is None or single in accepted:
+                return single
         return None
 
     def native(self, key: str, default: object = "") -> object:
