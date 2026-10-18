@@ -21,7 +21,7 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -1293,7 +1293,44 @@ def select_views(
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
-    return views
+    return _follow_submodule(views, cache_dir, offline)
+
+
+def _follow_submodule(
+    views: list[RepoView], cache_dir: str, offline: bool
+) -> list[RepoView]:
+    """An upstream the port vendors as a submodule moves with the port.
+
+    libretro/TIC-80 builds nesbox/TIC-80 through its `core` submodule, and
+    upstream_commit was that submodule's commit. Compared to nesbox's own
+    HEAD, the view reported changes the shipped core never had, and a bump
+    would have moved upstream_commit past what it builds. The commit the
+    port's HEAD points the submodule at is the upstream HEAD that matters.
+    """
+    source = next((v for v in views if v.field == "source"), None)
+    behind = [v for v in views if v.field == "upstream" and v.pin != v.head]
+    if source is None or not behind:
+        return views
+    pinned = {
+        sha: path
+        for path, sha in upstream.list_gitlinks(
+            source.repo, source.pin, cache_dir, offline
+        ).items()
+    }
+    if not pinned:
+        return views
+    followed: list[RepoView] = []
+    for view in views:
+        path = pinned.get(view.pin) if view.field == "upstream" else None
+        head = (
+            upstream.list_gitlinks(source.repo, source.head, cache_dir, offline).get(path)
+            if path else None
+        )
+        followed.append(
+            replace(view, head=head, origin=f"{view.origin} via {path}")
+            if head else view
+        )
+    return followed
 
 
 def declared_repositories(profile: dict) -> list[tuple[str, str, str]]:

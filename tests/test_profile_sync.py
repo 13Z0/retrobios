@@ -1155,8 +1155,13 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream.tag_commit,
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
+            profile_sync.upstream.list_gitlinks,
         )
         self.tags: list[str] = []
+        self.gitlinks: dict[str, dict[str, str]] = {}
+        profile_sync.upstream.list_gitlinks = (
+            lambda repo, sha, cache_dir, offline=False: self.gitlinks.get(sha, {})
+        )
         self.tag_commits: dict[str, str] = {}
         # Any code path reaching the HTTP layer is a leak, not a slow test.
         def _no_network(url):
@@ -1205,6 +1210,7 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream.tag_commit,
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
+            profile_sync.upstream.list_gitlinks,
         ) = self._orig
         self.tmp.cleanup()
 
@@ -3894,6 +3900,36 @@ class TestEmulatorsDirStatus(unittest.TestCase):
         ):
             with self.assertRaises(RuntimeError):
                 profile_sync.emulators_dir_is_dirty(root)
+
+
+class UpstreamVendoredAsASubmodule(unittest.TestCase):
+    """libretro/TIC-80 builds nesbox/TIC-80 through its `core` submodule, and
+    tic80's upstream_commit is that submodule's commit. Compared to nesbox's
+    own HEAD it reported changes the shipped core never had, and a bump would
+    have moved upstream_commit past what libretro builds."""
+
+    def _views(self, links: dict) -> list:
+        from unittest import mock  # noqa: PLC0415
+
+        repo_s, repo_u = object(), object()
+        views = [
+            profile_sync.RepoView(repo_s, "src-pin", "src-head", "source_commit", "source"),
+            profile_sync.RepoView(repo_u, "sub-old", "nesbox-tip", "upstream_commit", "upstream"),
+        ]
+        with mock.patch.object(
+            profile_sync.upstream, "list_gitlinks",
+            side_effect=lambda repo, sha, *a, **k: links.get(sha, {}),
+        ):
+            return profile_sync._follow_submodule(views, "cache", True)
+
+    def test_the_upstream_head_is_what_the_port_head_builds(self):
+        views = self._views({"src-pin": {"core": "sub-old"}, "src-head": {"core": "sub-new"}})
+        self.assertEqual(views[1].head, "sub-new")
+        self.assertEqual(views[0].head, "src-head")
+
+    def test_an_upstream_the_port_does_not_vendor_keeps_its_tip(self):
+        views = self._views({"src-pin": {"deps/zlib": "other"}, "src-head": {}})
+        self.assertEqual(views[1].head, "nesbox-tip")
 
 
 if __name__ == "__main__":

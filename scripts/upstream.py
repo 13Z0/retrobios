@@ -673,6 +673,45 @@ def list_tree(
     return paths, bool(payload.get("truncated"))
 
 
+def list_gitlinks(
+    repo: Repo, sha: str, cache_dir: str, offline: bool = False
+) -> dict[str, str]:
+    """Submodule path -> the commit it points at, at one revision.
+
+    Read from the same tree listing as list_tree, so the call costs nothing
+    once the tree is cached.
+    """
+    if repo.family == "gitlab":
+        links: dict[str, str] = {}
+        for page in range(1, MAX_TREE_PAGES + 1):
+            url = (
+                f"{repo.api_base}/projects/{_project(repo)}/repository/tree"
+                f"?ref={sha}&recursive=true&per_page={TREE_PAGE_SIZE}&page={page}"
+            )
+            payload = _api(url, cache_dir, offline)
+            if not isinstance(payload, list):
+                break
+            links.update(
+                (entry["path"], entry["id"])
+                for entry in payload
+                if isinstance(entry, dict) and entry.get("type") == "commit"
+                and entry.get("path") and entry.get("id")
+            )
+            if len(payload) < TREE_PAGE_SIZE:
+                break
+        return links
+    url = _tree_url(repo, sha)
+    payload = _api(url, cache_dir, offline) if url else None
+    if not isinstance(payload, dict):
+        return {}
+    return {
+        entry["path"]: entry["sha"]
+        for entry in payload.get("tree") or []
+        if isinstance(entry, dict) and entry.get("type") == "commit"
+        and entry.get("path") and entry.get("sha")
+    }
+
+
 def commit_date(repo: Repo, sha: str, cache_dir: str, offline: bool = False) -> str | None:
     """When a revision was committed, as the forge reports it (ISO 8601)."""
     if repo.family == "gitlab":
