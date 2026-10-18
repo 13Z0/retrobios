@@ -2175,6 +2175,16 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
     return badges
 
 
+def _first_hash_value(entry: dict) -> str:
+    """The first declared hash of an entry, lowercase, for a stable anchor."""
+    for field in ("sha1", "md5", "crc32", "sha256"):
+        value = entry.get(field)
+        value = value[0] if isinstance(value, list) and value else value
+        if value:
+            return str(value).lower().split(",")[0].strip().removeprefix("0x")
+    return ""
+
+
 def _render_emulator_file(
     f: dict,
     profile: dict,
@@ -2722,14 +2732,38 @@ def generate_emulator_page(
         lines.extend(_emulator_file_summary(files, _file_available))
 
         # File table
-        used: dict[str, int] = {}
-        for f in files:
-            base = "file-" + (
-                re.sub(r"[^a-z0-9]+", "-", str(f.get("path") or f.get("name", "")).lower())
-                .strip("-") or "entry"
+        bases = [
+            "file-" + (
+                re.sub(
+                    r"[^a-z0-9]+", "-",
+                    str(f.get("path") or f.get("standalone_path") or f.get("name", "")).lower(),
+                ).strip("-") or "entry"
             )
-            used[base] = used.get(base, 0) + 1
-            anchor = base if used[base] == 1 else f"{base}-{used[base]}"
+            for f in files
+        ]
+        repeated = {b for b in bases if bases.count(b) > 1}
+
+        # A path declared once keeps its plain anchor. One declared for
+        # several versions (raze's nine DUKE3D.GRP) takes what tells the
+        # version apart: its hash, else its size, else, when even the size
+        # is shared, its description. By rank, a link to -3 named another
+        # edition as soon as a version was declared before it.
+        def _version_key(f: dict) -> str:
+            digest = _first_hash_value(f)
+            if digest:
+                return digest[:8]
+            return f"{f['size']}b" if f.get("size") else ""
+
+        keys = [(b, _version_key(f)) if b in repeated else (b, "") for f, b in zip(files, bases)]
+        used: dict[str, int] = {}
+        for f, (base, key) in zip(files, keys):
+            anchor = f"{base}-{key}" if key else base
+            if base in repeated and keys.count((base, key)) > 1 and f.get("description"):
+                described = re.sub(r"[^a-z0-9]+", "-", str(f["description"]).lower()).strip("-")
+                anchor = f"{anchor}-{described[:40].strip('-')}"
+            used[anchor] = used.get(anchor, 0) + 1
+            if used[anchor] > 1:
+                anchor = f"{anchor}-{used[anchor]}"
             lines.extend(
                 _render_emulator_file(
                     f, profile, consumers, files, _file_available, anchor, name

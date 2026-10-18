@@ -4607,5 +4607,36 @@ class EmulatorCardsLinkTheCopyAndTheSection(unittest.TestCase):
         self.assertIn("../platforms/batocera.md#nintendo-gamecube", text)
 
 
+
+class VersionAnchorsFollowContent(unittest.TestCase):
+    """raze's nine DUKE3D.GRP were anchored -1 to -9 by declaration rank: a
+    version declared before another moved every later link to another
+    edition."""
+
+    @staticmethod
+    def _anchors(files):
+        from scripts.generate_site import generate_emulator_page
+
+        page = generate_emulator_page(
+            "raze", {"emulator": "Raze", "type": "standalone", "files": files},
+            {"files": {}, "indexes": {}},
+        )
+        return re.findall(r'id="(file-[^"]+)"', page)
+
+    def test_inserting_a_version_keeps_the_others(self):
+        a = {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "crc32": "bbc9ce44"}
+        b = {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "crc32": "aa4f6a40"}
+        c = {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "crc32": "982afe4a"}
+        before = self._anchors([a, b])
+        after = self._anchors([c, a, b])
+        self.assertTrue(set(before) <= set(after))
+
+    def test_same_size_versions_are_told_by_description(self):
+        v1 = {"name": "AUDIO.ABS", "path": "AUDIO.ABS", "size": 6904, "description": "v1.12"}
+        v2 = {"name": "AUDIO.ABS", "path": "AUDIO.ABS", "size": 6904, "description": "v1.13"}
+        self.assertEqual(self._anchors([v1, v2]),
+                         ["file-audio-abs-6904b-v1-12", "file-audio-abs-6904b-v1-13"])
+
+
 if __name__ == "__main__":
     unittest.main()
