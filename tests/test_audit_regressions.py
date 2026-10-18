@@ -4401,5 +4401,25 @@ class VerifyAllSummaryNamesWhatIsWrong(unittest.TestCase):
         self.assertIn("0 critical,", summary)
 
 
+
+class OneOutputFormPerRun(unittest.TestCase):
+    """`diff_truth.py --json --format markdown` printed JSON with rc 0, the
+    markdown asked for dropped without a word."""
+
+    def test_json_and_markdown_are_refused_together(self):
+        for script, argv in (
+            ("diff_truth.py", ["--platform", "romm", "--json", "--format", "markdown"]),
+            ("diff_truth.py", ["--platform", "romm", "--json", "--markdown"]),
+            ("validate_pr.py", ["--json", "--markdown", "bios/Sony/PlayStation/scph5501.bin"]),
+        ):
+            with self.subTest(script=script, argv=argv):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", *argv], capture_output=True,
+                    text=True, cwd=str(ROOT), timeout=120, check=False,
+                )
+                self.assertEqual(proc.returncode, 2, proc.stdout[-300:])
+                self.assertIn("not allowed with", proc.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

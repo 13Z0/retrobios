@@ -597,7 +597,7 @@ Further options, by script:
 | `check_freshness.py` | `--cache-dir`, `--native-cache-dir` (originals of the native export) and `--truth-dir` move the caches it reads |
 | `check_release.py` | `--tag`, `--sums dist/SHA256SUMS.txt`, `--record` (default `release.json`), `--json` |
 | `check_release_assets.py` | `--gitignore` (the asset registry), `--db`, `--notes FILE`, `--json` |
-| `diff_truth.py` | `--format markdown`, `--truth-dir`, `--target` |
+| `diff_truth.py` | `--format markdown` (or `--markdown`), `--json`, one of them; `--truth-dir`, `--target` |
 | `download.py` | `--list`, `--info <platform>` shows a pack's file name, size and parts without downloading |
 | `export_native.py` | `--truth-dir`, `--upstream-dir` (where the platforms' own files are cached) |
 | `find_pinned_revision.py` | `--repo URL --path FILE --md5 HASH`, `--write PATH`, `--cache-dir` |

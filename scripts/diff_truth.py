@@ -168,11 +168,18 @@ def main() -> None:
         "--all", action="store_true", help="diff all registered platforms"
     )
     group.add_argument("--platform", help="diff a single platform")
-    parser.add_argument(
+    # One output form: --json beside --format markdown printed JSON and
+    # dropped the markdown without a word.
+    output = parser.add_mutually_exclusive_group()
+    output.add_argument(
         "--json", action="store_true", dest="json_output", help="JSON output"
     )
-    parser.add_argument(
+    output.add_argument(
         "--format", choices=["terminal", "markdown"], default="terminal"
+    )
+    output.add_argument(
+        "--markdown", action="store_const", const="markdown", dest="format",
+        help="same as --format markdown, the spelling validate_pr uses",
     )
     parser.add_argument("--truth-dir", default="dist/truth")
     parser.add_argument("--platforms-dir", default="platforms")
