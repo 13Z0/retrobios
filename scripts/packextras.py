@@ -912,6 +912,22 @@ def _kept(entries: list[dict], required_only: bool) -> list[dict]:
     return [e for e in entries if e.get("required") is not False]
 
 
+def _ships(config: dict, file_entry: dict, db: dict, dest: str) -> bool:
+    """Whether the builder packs this declaration: resolved, and not refused
+    by a hash frontend. A dump whose md5 Recalbox would reject is left out
+    of the pack, so it cannot win a regional slot over a file that ships.
+    """
+    from validation import baseline_verdict
+
+    path, status = resolve_local_file(file_entry, db, dest_hint=dest)
+    if not path:
+        return False
+    return baseline_verdict(
+        file_entry, path, status, config.get("verification_mode", "existence"),
+        config.get("hash_rule", ""),
+    )[1] is None
+
+
 def platform_region_groups(
     config: dict,
     systems: dict,
@@ -951,9 +967,9 @@ def platform_region_groups(
             )
             if dest:
                 members.append((dest, file_entry.get("name", "")))
-                if held_out is not None and db is not None and resolve_local_file(
-                    file_entry, db, dest_hint=dest
-                )[0]:
+                if held_out is not None and db is not None and _ships(
+                    config, file_entry, db, dest
+                ):
                     held_out.add(dest)
 
     extra_dests: dict[tuple[str, str, str], str] = {}
