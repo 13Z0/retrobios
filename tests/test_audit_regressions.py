@@ -3839,6 +3839,15 @@ class AReaderThatLeavesEarlyIsNoCrash(unittest.TestCase):
             [sys.executable, "scripts/verify.py", "--list-emulators"], cwd=ROOT,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         )
+        # The listing fits a 64 KiB pipe: a child that wrote it all before
+        # the close below never met the broken pipe and exited 0. A 4 KiB
+        # pipe keeps it writing when the reader leaves.
+        try:
+            import fcntl  # noqa: PLC0415
+
+            fcntl.fcntl(proc.stdout.fileno(), fcntl.F_SETPIPE_SZ, 4096)
+        except (ImportError, AttributeError, OSError):
+            pass
         proc.stdout.readline()
         proc.stdout.close()
         _, err = proc.communicate(timeout=120)
