@@ -375,6 +375,38 @@ class VerboseAppliesToJson(unittest.TestCase):
         self.assertNotIn('if d["status"] != Status.OK\n            ]', source)
 
 
+class OnePlatformPerFlag(unittest.TestCase):
+    """generate_pack validated --platform as a comma list, then used the whole
+    string as one name: `--platform bizhawk,misterfpga` passed and ended in a
+    FileNotFoundError traceback. Every script now says it takes one name."""
+
+    def test_a_list_is_refused_with_a_message(self):
+        import subprocess
+
+        runs = {
+            "generate_pack.py": ["--list-systems"],
+            "verify.py": [],
+            "cross_reference.py": [],
+        }
+        for script, extra in runs.items():
+            with self.subTest(script=script):
+                completed = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--platform",
+                     "bizhawk,misterfpga", *extra],
+                    capture_output=True, text=True, cwd=ROOT, timeout=600, check=False,
+                )
+                self.assertNotEqual(completed.returncode, 0)
+                self.assertIn("takes one platform", completed.stderr)
+                self.assertNotIn("Traceback", completed.stderr)
+
+    def test_unknown_names_still_get_a_suggestion(self):
+        from common import require_platform
+
+        with self.assertRaises(SystemExit) as caught:
+            require_platform("batocra", str(ROOT / "platforms"))
+        self.assertIn("batocera", str(caught.exception))
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

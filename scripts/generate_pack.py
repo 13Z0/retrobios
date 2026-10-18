@@ -2917,8 +2917,7 @@ def _main(held: contextlib.ExitStack) -> None:
     args = parser.parse_args()
     packresolve.set_offline(bool(args.offline))
     if args.platform:
-        for name in args.platform.split(","):
-            require_platform(name.strip(), args.platforms_dir)
+        require_platform(args.platform, args.platforms_dir)
 
     _refuse_unapplied_flags(args, parser)
     if args.target:

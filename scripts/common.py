@@ -424,6 +424,13 @@ def require_platform(name: str, platforms_dir: str = "platforms") -> None:
     A typo used to end in a traceback (verify, cross_reference) or in "no
     pack for batocra" after the whole build ran (generate_pack).
     """
+    if "," in name:
+        # generate_pack split the list to validate it, then used the whole
+        # string as one name and ended in a traceback.
+        raise SystemExit(
+            f"ERROR: --platform takes one platform, not '{name}'. "
+            "Run once per platform, or use --all."
+        )
     if os.path.exists(os.path.join(platforms_dir, f"{name}.yml")):
         return
     import difflib  # noqa: PLC0415
