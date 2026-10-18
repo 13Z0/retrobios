@@ -1,26 +1,38 @@
 #!/usr/bin/env python3
 """Run the full retrobios pipeline.
 
-Steps:
-  1. generate_db.py --force     (rebuild database.json from bios/)
-  1b. provenance_report.py      (dump-catalog coverage, derivable.json)
-  1c. romset_recipes.py         (archive identification, reconstruction targets)
-  2. refresh_data_dirs.py       (update Dolphin Sys, PPSSPP, etc.)
-  2b2. check_release_assets.py  (large-files release vs gitignored files, online)
-  3. verify.py --all            (check all platforms)
-  4. generate_pack.py --all     (build ZIP packs)
-  4b. generate install manifests
-  4c. generate target manifests
-  5. consistency check          (verify counts == pack counts)
-  8. generate_readme.py         (rebuild README.md + CONTRIBUTING.md)
-  9. generate_site.py           (rebuild MkDocs pages)
+Steps, numbered as the run prints them:
+  1    generate_db.py --force       rebuild database.json from bios/
+  1b   provenance_report.py         dump-catalog coverage, derivable.json
+  1c   romset_recipes.py            archive identification, reconstruction targets
+  2    refresh_data_dirs.py         Dolphin Sys, PPSSPP assets and the other trees
+  2a   mame_hash_scraper            MAME BIOS hashes from the driver source
+  2a2  fbneo_hash_scraper           FBNeo BIOS hashes
+  2b   check_buildbot_system.py     buildbot freshness (--check-buildbot)
+  2b2  check_release_assets.py      large-files release vs gitignored files
+  2c   generate_truth.py            truth models (--with-truth, --with-export)
+  2d   diff_truth.py                truth vs scraped platforms
+  2e   export_native.py             corrected native files (--with-export)
+  3    verify.py --all              every platform, native logic
+  3a   identity.py --strict         one content under two identities
+  3b   slots.py                     destinations both layers claim
+  4    generate_pack.py --all       ZIP packs
+  4b   generate_pack.py --manifest  install manifests
+  4c   --manifest-targets           per-target core lists
+  5    consistency check            verify counts == pack counts
+  6    --verify-packs               pack integrity, extraction and hashes
+  7    generate_readme.py           README.md and CONTRIBUTING.md
+  8    generate_site.py             MkDocs pages
+
+--offline skips 2 to 2b2 and the network side of 2e and 4: release assets
+come from .cache/large/ only.
 
 Usage:
     python scripts/pipeline.py                    # active platforms
     python scripts/pipeline.py --include-archived # all platforms
-    python scripts/pipeline.py --skip-packs       # steps 1-3 only
-    python scripts/pipeline.py --skip-docs        # skip steps 8-9
-    python scripts/pipeline.py --offline          # skip step 2
+    python scripts/pipeline.py --skip-packs       # steps 1 to 3b, then 7 and 8
+    python scripts/pipeline.py --skip-docs        # skip steps 7 and 8
+    python scripts/pipeline.py --offline          # no network, see above
 """
 
 from __future__ import annotations

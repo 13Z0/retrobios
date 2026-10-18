@@ -4344,5 +4344,26 @@ class OfflineHelpSaysWhatItCuts(unittest.TestCase):
                 self.assertIn("release", " ".join(block.split()))
 
 
+
+class PipelineDocstringNamesThePrintedSteps(unittest.TestCase):
+    """The docstring numbered 1 to 9 while the run prints 1/8 to 8/8, and
+    had no 2a, 2b, 3a, 3b or 6: a reader of a failed `6/8 pack integrity`
+    found nothing under 6."""
+
+    def test_the_two_lists_hold_the_same_steps(self):
+        import ast
+
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        doc = ast.get_docstring(ast.parse(source))
+        listed = set(re.findall(r"^  (\d[a-z0-9]*)\s{2,}", doc, re.M))
+        # A step label is "N/8 ..." or a lettered sub-step "2b2 ...".
+        printed = {
+            step
+            for step, of_eight in re.findall(r'(?:"|--- )(\d+[a-z0-9]*)(/8)? [a-zA-Z]', source)
+            if of_eight or not step.isdigit()
+        }
+        self.assertEqual(listed, printed)
+
+
 if __name__ == "__main__":
     unittest.main()
