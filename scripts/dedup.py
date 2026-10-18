@@ -129,6 +129,19 @@ def _plan_group_removals(
             name_paths.sort(key=path_priority)
             true_dupes_to_remove.extend(name_paths[1:])
 
+    # A variant exists to hold a content its primary does not. Once another
+    # file holds the same bytes, the copy under .variants/ answers nothing
+    # the index does not already know, whatever its name or suffix: the
+    # resolver finds the content by hash and writes it under the name the
+    # destination asks for.
+    remaining = [p for p in paths if p not in true_dupes_to_remove]
+    variants = [p for p in remaining if ".variants" in Path(p).parts]
+    if variants:
+        holders = [p for p in remaining if p not in variants] or [
+            min(variants, key=path_priority)
+        ]
+        true_dupes_to_remove.extend(p for p in variants if p not in holders)
+
     # Different filenames, same content -need special handling
     unique_names = sorted(by_name.keys())
     if len(unique_names) > 1:

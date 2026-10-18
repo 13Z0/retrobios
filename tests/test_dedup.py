@@ -98,6 +98,28 @@ class TrueDuplicates(_Bios):
         self.run_dedup()
         self.assertEqual(self.existing(), {"Sony/PS/scph.bin"})
 
+    def test_a_variant_under_another_name_loses_to_the_file_holding_its_bytes(self):
+        # .variants/scph1001.bin.649895ef held the bytes of scph1001_v20.bin:
+        # the content was answered twice and the index kept one at random.
+        self.write("Sony/PS/scph1001_v20.bin")
+        self.write("Sony/PS/.variants/scph1001.bin.649895ef")
+        self.run_dedup()
+        self.assertEqual(self.existing(), {"Sony/PS/scph1001_v20.bin"})
+
+    def test_two_variants_of_one_content_keep_one(self):
+        # msx.rom.a317e6b4 and MSX.ROM.e998f0c4 differ only by casing and
+        # suffix; nothing outside .variants/ holds the bytes in this tree.
+        self.write("Microsoft/MSX/.variants/msx.rom.a317e6b4")
+        self.write("Microsoft/MSX/.variants/MSX.ROM.e998f0c4")
+        self.run_dedup()
+        self.assertEqual(len(self.existing()), 1)
+
+    def test_a_variant_of_other_bytes_stays(self):
+        self.write("Sony/PS/scph1001.bin", b"PRIMARY")
+        self.write("Sony/PS/.variants/scph1001.bin.649895ef", b"ALTERNATE")
+        self.run_dedup()
+        self.assertEqual(len(self.existing()), 2)
+
     def test_different_content_under_one_name_is_never_touched(self):
         self.write("Sony/PS/a.bin", b"CONTENT ONE")
         self.write("Sega/Saturn/a.bin", b"CONTENT TWO")
