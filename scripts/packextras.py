@@ -6,7 +6,9 @@ this module builds so the report and the pack withdraw the same files."""
 
 from __future__ import annotations
 
-from common import PROFILE_IDENTITY_FIELDS
+from collections.abc import Iterable
+
+from common import PROFILE_IDENTITY_FIELDS, _norm_system_id
 from common import archive_members
 from common import declared_root, expand_platform_declared_names, platform_declarations
 from common import load_emulator_profiles
@@ -948,6 +950,7 @@ def platform_region_groups(
         absent=absent,
     )
     held = {id(extra) for extra in extras}
+    spellings = system_spellings(systems)
     for extra in _kept(extras + absent, required_only):
         dest = sanitize_pack_path(extra.get("destination", extra.get("name", "")))
         if not dest:
@@ -965,7 +968,7 @@ def platform_region_groups(
         # looked up by name its scph50006 took DuckStation's [japan], which
         # describes DuckStation's own PS1-on-PS2 choice.
         competes = not extra.get("agnostic_scan") or extra.get("region")
-        for group_id in extra_region_groups(extra) if competes else ():
+        for group_id in extra_region_groups(extra, spellings) if competes else ():
             groups.setdefault(group_id, []).append((dest, name))
         if extras_out is not None and id(extra) in held:
             extras_out.append(extra)
@@ -974,8 +977,31 @@ def platform_region_groups(
     return groups, extra_dests
 
 
-def extra_region_groups(extra: dict) -> list[str]:
-    """The region groups a core extra competes in."""
+def system_spellings(systems: Iterable[str]) -> dict[str, str]:
+    """A platform's own spelling of each system, keyed the way ids compare.
+
+    RetroDECK files the Master System as sega-master-system, the profiles as
+    sega-mastersystem. Grouped under both, the declared bios/bios_J.sms and
+    the core's bios_J.sms were reduced apart and a --region us pack kept the
+    Japanese BIOS.
+    """
+    spellings: dict[str, str] = {}
+    for sys_id in sorted(systems):
+        spellings.setdefault(_norm_system_id(sys_id), sys_id)
+    return spellings
+
+
+def extra_region_groups(
+    extra: dict, spellings: dict[str, str] | None = None
+) -> list[str]:
+    """The region groups a core extra competes in.
+
+    A group named after a system takes the platform's spelling of it, so the
+    extra competes beside the files the platform declares for that system.
+    """
+    def system_group(sys_id: str) -> str:
+        return (spellings or {}).get(_norm_system_id(sys_id), sys_id)
+
     emulator = extra.get("source_emulator", "")
     variant = extra.get("variant_group")
     if variant:
@@ -986,10 +1012,10 @@ def extra_region_groups(extra: dict) -> list[str]:
         return [f"{emulator}:variant:{variant}"]
     explicit = extra.get("source_system")
     if explicit:
-        return [str(explicit)]
+        return [system_group(str(explicit))]
     systems = [str(s) for s in extra.get("source_systems", []) if s]
     if len(systems) == 1:
-        return systems
+        return [system_group(systems[0])]
     # No system names the machine this file is chosen for. Filed under every
     # system of a 30-system profile, CLK's American MSX ROM made the
     # Enterprise group drop its German ROM. Alone, it drops nothing and is

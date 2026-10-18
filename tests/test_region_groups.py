@@ -14,7 +14,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from packextras import extra_region_groups  # noqa: E402
+from packextras import extra_region_groups, system_spellings  # noqa: E402
 
 
 class TheGroupFollowsWhatTheProfileSays(unittest.TestCase):
@@ -61,6 +61,30 @@ class TheEnterpriseKeepsItsRom(unittest.TestCase):
             groups, region.build_region_index(profiles), ["north-america"]
         )
         self.assertNotIn("bios/brd.rom", drops)
+
+
+class TheGroupTakesThePlatformSpelling(unittest.TestCase):
+    def test_a_profile_spelling_maps_to_the_platform_one(self):
+        spellings = system_spellings(["sega-master-system", "sony-playstation"])
+        self.assertEqual(
+            extra_region_groups({"source_system": "sega-mastersystem"}, spellings),
+            ["sega-master-system"],
+        )
+
+    def test_a_system_the_platform_lacks_keeps_its_name(self):
+        spellings = system_spellings(["sony-playstation"])
+        self.assertEqual(
+            extra_region_groups({"source_systems": ["sega-saturn"]}, spellings),
+            ["sega-saturn"],
+        )
+
+    def test_file_and_variant_groups_are_untouched(self):
+        spellings = system_spellings(["sega-megacd"])
+        self.assertEqual(
+            extra_region_groups({"source_emulator": "picodrive", "variant_group": "mcd",
+                                 "source_system": "sega-megacd"}, spellings),
+            ["picodrive:variant:mcd"],
+        )
 
 
 if __name__ == "__main__":

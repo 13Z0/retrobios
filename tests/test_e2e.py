@@ -6251,6 +6251,44 @@ struct BurnDriver BurnDrvneogeo = {
              ("declared.bin", "declared.bin")],
         )
 
+    def test_a_system_spelled_two_ways_is_one_group(self):
+        """RetroDECK files the Master System as sega-master-system, the
+        profiles as sega-mastersystem. Two groups reduced apart, and a
+        --region us pack kept the declared Japanese BIOS."""
+        import hashlib  # noqa: PLC0415
+
+        from packextras import platform_region_groups  # noqa: PLC0415
+
+        files, by_name = {}, {}
+        for name in ("bios_U.sms", "bios_J.sms"):
+            payload = name.encode()
+            path = os.path.join(self.bios_dir, name)
+            with open(path, "wb") as handle:
+                handle.write(payload)
+            sha1 = hashlib.sha1(payload).hexdigest()
+            files[sha1] = {"path": path, "name": name, "size": len(payload),
+                           "md5": hashlib.md5(payload).hexdigest()}
+            by_name[name] = [sha1]
+        db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                          "by_crc32": {}, "by_path_suffix": {}}}
+        profiles = {"smscore": {
+            "emulator": "SMS Core", "type": "libretro",
+            "systems": ["sega-mastersystem"],
+            "files": [{"name": "bios_U.sms", "region": ["north-america"]},
+                      {"name": "bios_J.sms", "region": ["japan"]}],
+        }}
+        config = {"platform": "P", "cores": ["smscore"], "base_destination": "system",
+                  "systems": {"sega-master-system": {"files": [
+                      {"name": "bios_J.sms", "destination": "bios/bios_J.sms"}]}}}
+        groups, _ = platform_region_groups(
+            config, config["systems"], self.emulators_dir, db, "system", profiles,
+        )
+        self.assertNotIn("sega-mastersystem", groups)
+        self.assertEqual(
+            sorted(dest for dest, _ in groups["sega-master-system"]),
+            ["bios/bios_J.sms", "bios_J.sms", "bios_U.sms"],
+        )
+
     def test_slot_narrowed_pack_gets_its_own_name(self):
         names = {
             os.path.basename(self._region_pack()),

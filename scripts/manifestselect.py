@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import region as region_mod
 from common import _norm_system_id, sanitize_pack_path
-from packextras import _extra_system_ids, _kept, extra_region_groups
+from packextras import _extra_system_ids, _kept, extra_region_groups, system_spellings
 
 
 def _dest(entry: dict) -> str:
@@ -58,11 +58,14 @@ class SelectionIndex:
 
         owned_by: dict[str, set[str]] = {}
         extra_groups: dict[str, set[str]] = {}
+        spellings = system_spellings(pack_systems)
         for extra in extras:
             dest = _dest(extra)
             if not dest:
                 continue
-            extra_groups.setdefault(dest, set()).update(extra_region_groups(extra))
+            extra_groups.setdefault(dest, set()).update(
+                extra_region_groups(extra, spellings)
+            )
             # A profile system the platform does not have is no system the
             # pack's --system accepts: it would offer what the pack refuses.
             for sys_id in _extra_system_ids(extra):
