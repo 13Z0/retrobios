@@ -2281,5 +2281,42 @@ class AnUnreadableRetroDeckConfigIsSaid(unittest.TestCase):
         self.assertIn("could not read paths.rd_home_path", err.getvalue())
 
 
+
+class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
+    """Batocera, Recalbox and ROCKNIX each write the board they were built
+    for; the installer read none of them, so a Batocera RPi4 installed
+    every board's files (8.6 GiB where bcm2711 needs 5.5)."""
+
+    def test_each_source_is_read(self):
+        root = Path(_tempdir(self))
+        arch = root / "batocera.arch"
+        arch.write_text("bcm2711")
+        with unittest.mock.patch.dict(install._BOARD_SOURCES, {"batocera": ("file", str(arch))}):
+            self.assertEqual(install.detect_board("batocera"), "bcm2711")
+        with unittest.mock.patch.object(install, "_parse_os_release",
+                                        return_value={"HW_DEVICE": "RK3326"}):
+            self.assertEqual(install.detect_board("rocknix"), "rk3326")
+        self.assertIsNone(install.detect_board("retroarch"))
+
+    def test_every_board_and_target_are_refused_together(self):
+        result = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--every-board",
+             "--target", "bcm2711", "--platform", "batocera", "--dry-run"],
+            capture_output=True, text=True, timeout=120,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("--every-board", result.stderr)
+
+    def test_the_sources_name_our_target_lists(self):
+        import yaml  # noqa: PLC0415
+
+        for platform in install._BOARD_SOURCES:
+            with self.subTest(platform=platform):
+                targets = yaml.safe_load(
+                    (REPO_ROOT / "platforms" / "targets" / f"{platform}.yml").read_text()
+                )["targets"]
+                self.assertTrue(targets)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -591,6 +591,32 @@ def _parse_bash_var(path: Path, key: str) -> str | None:
     return None
 
 
+# Where an embedded system names the board it was built for, in the words
+# of our target lists: batocera-system.mk writes BATOCERA_SYSTEM_ARCH,
+# recalbox-system.mk RECALBOX_SYSTEM_PLATFORM, ROCKNIX's scripts/image puts
+# HW_DEVICE in os-release (RK3326, our rk3326).
+_BOARD_SOURCES: dict[str, tuple[str, str]] = {
+    "batocera": ("file", "/usr/share/batocera/batocera.arch"),
+    "recalbox": ("file", "/recalbox/recalbox.arch"),
+    "rocknix": ("os_release", "HW_DEVICE"),
+}
+
+
+def detect_board(platform: str) -> str | None:
+    """The board this system was built for, or None where it names none."""
+    kind, where = _BOARD_SOURCES.get(platform, ("", ""))
+    if kind == "file":
+        try:
+            value = Path(where).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return None
+    elif kind == "os_release":
+        value = _parse_os_release().get(where, "")
+    else:
+        return None
+    return value.strip().lower() or None
+
+
 def _parse_json_path(path: Path, *keys: str) -> str | None:
     """Extract a nested string value from a JSON file."""
     if not path.exists():
@@ -2942,7 +2968,13 @@ def main() -> None:
     )
     parser.add_argument(
         "--target",
-        help="hardware target for core filtering (switch, rpi4, ...)",
+        help="hardware target for core filtering (switch, rpi4, ...); "
+        "on Batocera, Recalbox and ROCKNIX the board is read from the system",
+    )
+    parser.add_argument(
+        "--every-board",
+        action="store_true",
+        help="install the files of every board, not only the detected one",
     )
     parser.add_argument(
         "--check",
@@ -3054,6 +3086,8 @@ def main() -> None:
         or args.list_systems or args.list_cores
     ):
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
+    if args.every_board and args.target:
+        parser.error("--every-board installs every board; --target names one")
     if not args.quiet:
         _install(args, sys.stdout)
         return
@@ -3202,18 +3236,28 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(f"  {t} ({label})")
             continue
 
-        # Target filtering
-        if args.target:
+        # Target filtering. With no --target, a system that names its board
+        # narrows to it: a Batocera RPi4 took 8.6 GiB where its board needs
+        # 5.5. Only on the device itself, where the board file exists.
+        target = args.target
+        if not target and not args.every_board and args.dest is None:
+            board = detect_board(plat_name)
+            if board:
+                known = fetch_targets(plat_name) or {}
+                if board in known:
+                    target = board
+                    print(f"  Board {board} detected (--every-board installs all boards)")
+        if target:
             targets = fetch_targets(plat_name)
             if targets is None:
                 sys.exit(1)
-            target_info = targets.get(args.target)
+            target_info = targets.get(target)
             if target_info is None:
                 # Carrying on would install every file, which is the opposite
                 # of what a filter was asked for: a 4 GB download instead of
                 # the subset the target needs. Refuse rather than ignore.
                 print(
-                    f"Error: unknown target '{args.target}' for {plat_name}.",
+                    f"Error: unknown target '{target}' for {plat_name}.",
                     file=sys.stderr,
                 )
                 if targets:
@@ -3227,7 +3271,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sys.exit(1)
             elif target_info.get("cores") is None:
                 print(
-                    f"  Target '{args.target}' publishes no core list; "
+                    f"  Target '{target}' publishes no core list; "
                     "installing every file"
                 )
             else:
@@ -3235,7 +3279,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files, omitted_files = narrow_to_cores(
                     manifest, target_info["cores"], files, omitted_files
                 )
-                print(f"  Filtered {before} -> {len(files)} files for target {args.target}")
+                print(f"  Filtered {before} -> {len(files)} files for target {target}")
 
         found_cores = cores_found.get((plat_name, bios_path), [])
         if "system_cores" not in manifest:

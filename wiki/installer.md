@@ -209,7 +209,8 @@ what the options name, everything by default.
 |--------|--------|
 | `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
 | `--dest PATH` | Destination directory, overriding detection. With `--dest` alone the file list is RetroArch's |
-| `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything |
+| `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox and ROCKNIX the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`) and applied when no `--target` is given |
+| `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie); see [Installed cores](#installed-cores) |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated; `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load; `--list-cores` prints the names |
