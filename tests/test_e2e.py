@@ -5963,6 +5963,8 @@ struct BurnDriver BurnDrvneogeo = {
             (["--platform", "retroarch", "--manifest"], ["--one-per-slot"], "refuse"),
             (["--emulator", "duckstation"], ["--one-per-slot"], "refuse"),
             (["--system", "sony-playstation"], ["--one-per-slot"], "refuse"),
+            (["--platform", "retroarch", "--system", "sony-playstation"],
+             ["--one-per-slot"], "refuse"),
             (["--platform", "retroarch", "--from-md5", "d8f1"], ["--region", "us"],
              "refuse"),
             (["--platform", "retroarch", "--from-md5", "d8f1"], ["--one-per-slot"],
@@ -6063,6 +6065,20 @@ struct BurnDriver BurnDrvneogeo = {
                     f"{' '.join(mode + flag)} was accepted and ignored:\n{combined}",
                 )
                 self.assertIn("error:", combined)
+                # The refusal names a flag the command carries: "requires
+                # --platform or --all" answered --platform --system
+                # --one-per-slot, and the user could not tell what to drop.
+                message = combined[combined.index("error:"):].splitlines()[0]
+                passed = [arg for arg in mode + flag if arg.startswith("--")]
+                self.assertTrue(
+                    any(arg in message for arg in passed),
+                    f"{' '.join(mode + flag)}: {message}",
+                )
+                demanded = message.partition(" requires ")[2].replace(",", " ").split()
+                self.assertFalse(
+                    [arg for arg in passed if arg in demanded],
+                    f"{' '.join(mode + flag)} asks for a flag it was given: {message}",
+                )
 
     def test_conformance_narrows_by_target_like_it_does_by_region(self):
         """A targeted pack is checked against the targeted expectation.

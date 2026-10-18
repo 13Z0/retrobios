@@ -2230,8 +2230,10 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
             parser.error("--one-per-slot and --from-md5 are mutually exclusive")
         if args.manifest:
             parser.error("--one-per-slot is incompatible with --manifest")
-        if has_emulator or has_system:
-            parser.error("--one-per-slot requires --platform or --all")
+        if has_emulator:
+            parser.error("--one-per-slot is incompatible with --emulator")
+        if has_system:
+            parser.error("--one-per-slot is incompatible with --system")
 
 
 def _write_manifest_if_changed(path: str, manifest: dict) -> None:
