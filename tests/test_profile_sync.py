@@ -2379,6 +2379,39 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertEqual(readings, [[(repo, "pin1", "pin2")], []])
         self.assertTrue(ambiguous)
 
+    def test_a_confirmed_pin_settles_the_readings(self):
+        """fixnes: doOpenFDSBIOS lived under four pins and was exact at the
+        last; with nothing to record that reading, the bump was refused for
+        good. prose_written_at names the pin and the readings collapse."""
+        revisions = [
+            ("c2", {"source_commit": "pin2", "notes": "x"}),
+            ("c1", {"source_commit": "pin1", "notes": "x"}),
+        ]
+        repo = object()
+        readings, _ambiguous = profile_sync._writing_pairs(
+            {"source_commit": "pin2", "prose_written_at": "pin2"},
+            [("source", "", repo)], revisions, "c1",
+        )
+        self.assertEqual(readings, [[]])
+        later, _ = profile_sync._writing_pairs(
+            {"source_commit": "pin3", "prose_written_at": "pin2"},
+            [("source", "", repo)], revisions, "c1",
+        )
+        self.assertEqual(later, [[(repo, "pin2", "pin3")]])
+
+    def test_a_confirmed_pin_outside_the_history_changes_nothing(self):
+        revisions = [
+            ("c2", {"source_commit": "pin2", "notes": "x"}),
+            ("c1", {"source_commit": "pin1", "notes": "x"}),
+        ]
+        repo = object()
+        readings, ambiguous = profile_sync._writing_pairs(
+            {"source_commit": "pin2", "prose_written_at": "elsewhere"},
+            [("source", "", repo)], revisions, "c1",
+        )
+        self.assertEqual(readings, [[(repo, "pin1", "pin2")], []])
+        self.assertTrue(ambiguous)
+
     def test_a_pin_keyed_by_build_mode_is_read_for_its_mode(self):
         """eka2l1 pins a dict per build: read as a string, it gave no
         repository and its prose was never judged."""

@@ -4,6 +4,7 @@ core_classification: other
 source: "https://github.com/chernandezba/zesarux"
 upstream: "https://github.com/chernandezba/zesarux"
 source_commit: "8e1e8f3fcb5a8e677984df7aeaff30667682ab56"
+prose_written_at: "8e1e8f3fcb5a8e677984df7aeaff30667682ab56"
 profiled_date: "2026-09-17"
 core_version: "13.1-SN"
 display_name: "Sinclair - ZX Spectrum and clones (ZEsarUX)"

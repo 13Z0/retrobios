@@ -3016,14 +3016,23 @@ def _writing_pairs(
     Each reading lists (repo, writing pin, current pin) per declared
     repository. A repository whose text lived under several pins gives one
     reading per pin; the caller settles them when they all agree.
+
+    `prose_written_at` names the pin a reader confirmed the prose against.
+    Among several candidate pins it is the answer: fixnes's doOpenFDSBIOS
+    citation lived under four pins, exact at the last, and with nothing to
+    record that reading the bump stayed refused for good. It never
+    overrides a history with a single candidate.
     """
     options: list[list] = []
     ambiguous: list[str] = []
+    attested = str(document.get("prose_written_at") or "")
     for pin_field, mode, repo in repos:
         current = _pin_of(document, f"{pin_field}_commit", mode)
         if not current:
             continue
         written = _writing_pins(revisions, intro_sha, f"{pin_field}_commit", mode)
+        if attested in written:
+            written = [attested]
         if len(written) > 1:
             ambiguous.append(f"{pin_field}_commit {' -> '.join(written)}")
         # The current pin among the candidates reads as "no move" (None) for
@@ -3336,7 +3345,7 @@ def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool
     if stale:
         print(
             f"{name}: {len(stale)} prose citation(s) written under an older pin; "
-            "run --realign-prose or read them before the pin moves",
+            "run --realign-prose, or read them and set prose_written_at to the pin they match",
             file=sys.stderr,
         )
     return bool(stale)
