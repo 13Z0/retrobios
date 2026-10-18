@@ -29,7 +29,8 @@ log = logging.getLogger(__name__)
 
 REPO_URL = "https://github.com/finalburnneo/FBNeo.git"
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-CLONE_DIR = REPO_ROOT / "tmp" / "fbneo"
+# One clone per process, for the reason mame_hash_scraper gives.
+CLONE_DIR = REPO_ROOT / "tmp" / f"fbneo-{os.getpid()}"
 CACHE_PATH = REPO_ROOT / "data" / "fbneo-hashes.json"
 EMULATORS_DIR = REPO_ROOT / "emulators"
 STALE_HOURS = 24

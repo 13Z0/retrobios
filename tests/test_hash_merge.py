@@ -759,5 +759,20 @@ class WritersPutTheValuesOnDisk(unittest.TestCase):
         self.assertEqual(member["crc32"], "9036d879")
 
 
+class OneCloneDirectoryPerRun(unittest.TestCase):
+    """Two runs shared tmp/mame: the second removed and recloned it at
+    another release while the first parsed it, and the first wrote 0.289
+    sets into a 0.278 profile."""
+
+    def test_the_clone_directory_names_the_process(self):
+        import os
+
+        from scripts.scraper import fbneo_hash_scraper, mame_hash_scraper
+
+        for clone in (mame_hash_scraper._CLONE_DIR, fbneo_hash_scraper.CLONE_DIR):
+            with self.subTest(clone=clone.name):
+                self.assertTrue(clone.name.endswith(f"-{os.getpid()}"))
+
+
 if __name__ == "__main__":
     unittest.main()

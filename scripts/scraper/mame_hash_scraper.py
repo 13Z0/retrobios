@@ -31,7 +31,9 @@ log = logging.getLogger(__name__)
 
 _ROOT = Path(__file__).resolve().parents[2]
 _CACHE_PATH = _ROOT / "data" / "mame-hashes.json"
-_CLONE_DIR = _ROOT / "tmp" / "mame"
+# One clone per process: a fixed tmp/mame was removed and recloned at another
+# release by a second run while the first was still parsing it.
+_CLONE_DIR = _ROOT / "tmp" / f"mame-{os.getpid()}"
 _EMULATORS_DIR = _ROOT / "emulators"
 _REPO_URL = "https://github.com/mamedev/mame.git"
 _STALE_HOURS = 24
