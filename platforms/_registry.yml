@@ -182,23 +182,78 @@ platforms:
         parse_key: system_directory
       - os: linux
         method: config_file
+        config: $HOME/snap/retroarch/current/.config/retroarch/retroarch.cfg
+        parse_key: system_directory
+      - os: linux
+        method: config_file
         config: $HOME/.config/retroarch/retroarch.cfg
         parse_key: system_directory
       # configuration.c reads <Application Support>/RetroArch/config; a value
       # left at default is ~/Documents/RetroArch/system (platform_darwin.m).
+      # Older builds kept the file one level up.
       - os: darwin
         method: config_file
         config: $HOME/Library/Application Support/RetroArch/config/retroarch.cfg
         parse_key: system_directory
         bios_path: $HOME/Documents/RetroArch/system
+      - os: darwin
+        method: config_file
+        config: $HOME/Library/Application Support/RetroArch/retroarch.cfg
+        parse_key: system_directory
+        bios_path: $HOME/Documents/RetroArch/system
       # Beside retroarch.exe first, then %APPDATA%; default <exe folder>\system.
+      # The folders its installers, Steam and ES-DE put it in.
       - os: windows
         method: config_file
         config: 'C:\RetroArch-Win64\retroarch.cfg'
         parse_key: system_directory
       - os: windows
         method: config_file
+        config: 'C:\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles%\RetroArch-Win64\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles%\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles%\ES-DE\Emulators\RetroArch-Win64\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles%\ES-DE\Emulators\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles(x86)%\RetroArch-Win64\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles(x86)%\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles(x86)%\ES-DE\Emulators\RetroArch-Win64\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles(x86)%\ES-DE\Emulators\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
         config: '%APPDATA%\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles(x86)%\Steam\steamapps\common\RetroArch\retroarch.cfg'
+        parse_key: system_directory
+      - os: windows
+        method: config_file
+        config: '%ProgramFiles%\Steam\steamapps\common\RetroArch\retroarch.cfg'
         parse_key: system_directory
       # Handheld firmwares that run RetroArch as their frontend: muOS,
       # ArkOS, and the stock Linux of Anbernic devices (dmenu).
@@ -363,6 +418,18 @@ platforms:
     target_source: null
     install:
       detect:
+      # retrodeck.json since the cfg-to-json migration (global.sh:149-153),
+      # retrodeck.cfg before it; a home moved to an SD card lives only there.
+      - os: linux
+        method: config_file
+        config: $HOME/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json
+        parse_key: paths.rd_home_path
+        bios_path: $HOME/retrodeck
+      - os: linux
+        method: config_file
+        config: $HOME/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.cfg
+        parse_key: rdhome
+        bios_path: $HOME/retrodeck
       - os: linux
         method: path_exists
         path: $HOME/.var/app/net.retrodeck.retrodeck

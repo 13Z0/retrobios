@@ -965,6 +965,60 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
                     rules.add((name, "file_exists", tuple(files), rule["bios_path"]))
         self.assertEqual(set(install._EMBEDDED_RULES), rules)
 
+    def test_every_config_file_read_is_published(self):
+        """The registry published five RetroArch config files and the fixed
+        RetroDECK folder; the installer also read Snap, the older macOS file,
+        C:\\RetroArch, Program Files, ES-DE, Steam and RetroDECK's own
+        config. A manifest reader saw a subset of what the installer does."""
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            env = {
+                "HOME": str(root / "home"), "APPDATA": str(root / "appdata"),
+                "ProgramFiles": str(root / "pf"), "ProgramFiles(x86)": str(root / "pf86"),
+            }
+
+            def expand(text: str) -> str:
+                text = text.replace("$HOME", env["HOME"])
+                for var in ("ProgramFiles(x86)", "ProgramFiles", "APPDATA"):
+                    text = text.replace(f"%{var}%", env[var])
+                return str(Path(text.replace("\\", "/")))
+
+            published = {
+                (rule["os"], expand(rule["config"]))
+                for entry in registry["platforms"].values()
+                for rule in (entry.get("install") or {}).get("detect", [])
+                if rule["method"] == "config_file"
+            }
+            read: set[tuple[str, str]] = set()
+
+            def record(os_type: str):
+                def probe(path, *_args, **_kwargs):
+                    read.add((os_type, str(Path(str(path).replace("\\", "/")))))
+                    return None
+                return probe
+
+            with unittest.mock.patch.dict(os.environ, env), \
+                    unittest.mock.patch.object(install, "_detect_embedded", lambda: []), \
+                    unittest.mock.patch.object(install, "_detect_android", lambda: []):
+                for os_type in ("linux", "darwin", "windows"):
+                    with unittest.mock.patch.object(
+                        install, "_parse_retroarch_system_dir", record(os_type)
+                    ):
+                        install.detect_platforms(os_type)
+                with unittest.mock.patch.object(Path, "is_file", lambda _self: True):
+                    for folder in install._windows_retroarch_dirs():
+                        read.add(("windows", str(folder / "retroarch.cfg")))
+            retrodeck = root / "home/.var/app/net.retrodeck.retrodeck/config/retrodeck"
+            read |= {("linux", str(retrodeck / "retrodeck.json")),
+                     ("linux", str(retrodeck / "retrodeck.cfg"))}
+            # The default Steam library is the Program Files one, already read.
+            self.assertEqual(sorted(read - published), [])
+
     def test_the_first_embedded_match_wins(self):
         with unittest.mock.patch.object(install, "_parse_os_release", return_value={}), \
                 unittest.mock.patch.object(
