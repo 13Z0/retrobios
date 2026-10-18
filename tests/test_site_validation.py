@@ -202,5 +202,20 @@ class EveryTestDependencyIsInstalledInCi(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+
+class TheTestingGuideNamesEveryModule(unittest.TestCase):
+    """The guide described 18 modules of 144, and a contributor touching
+    slots.py or the downloader found no module named for it."""
+
+    def test_every_module_is_in_the_table(self):
+        root = Path(__file__).resolve().parents[1]
+        guide = (root / "wiki" / "testing-guide.md").read_text(encoding="utf-8")
+        missing = sorted(
+            path.stem for path in (root / "tests").glob("test_*.py")
+            if f"`{path.stem}`" not in guide
+        )
+        self.assertEqual(missing, [])
+
+
 if __name__ == "__main__":
     unittest.main()

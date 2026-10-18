@@ -15,28 +15,14 @@ Run the full suite:
 python -m unittest discover -s tests -t . -v
 ```
 
-Run a single module:
+Run a single module, or several:
 
 ```bash
 python -m unittest tests.test_e2e -v
-python -m unittest tests.test_install -v
-python -m unittest tests.test_provenance -v
-python -m unittest tests.test_mame_parser -v
-python -m unittest tests.test_hash_merge -v
-python -m unittest tests.test_fbneo_parser -v
-python -m unittest tests.test_profile_sync -v
-python -m unittest tests.test_upstream -v
-python -m unittest tests.test_deterministic_zip -v
-python -m unittest tests.test_artifact_lock -v
-python -m unittest tests.test_large_file_cache -v
-python -m unittest tests.test_pack_integrity -v
-python -m unittest tests.test_torrentzip -v
-python -m unittest tests.test_no_case_collisions -v
-python -m unittest tests.test_region -v
-python -m unittest tests.test_audit_regressions -v
-python -m unittest tests.test_site_exports -v
-python -m unittest tests.test_site_validation -v
+python -m unittest tests.test_install tests.test_install_cores -v
 ```
+
+The table below says which module covers what.
 
 Running the build needs Python 3.12 and `pyyaml` alone, and so does most of the suite. The
 schema contract tests also need `jsonschema[format-nongpl]`, which the CI
@@ -47,34 +33,28 @@ standard library `unittest` module.
 
 ## Modules at a glance
 
-| Module | Fixtures | What it covers |
-|--------|----------|----------------|
-| `test_e2e.py` | synthetic | resolution, verification, packs, cross-reference, targets, truth |
-| `test_profile_sync.py` | synthetic | ref anchoring, guarded profile writes, detection, triage |
-| `test_install.py` | synthetic | platform detection, manifests, downloads and both automatic wrappers |
-| `test_region.py` | synthetic + profiles | canonical vocabulary, ranking, grouping and repository conformance |
-| `test_audit_regressions.py` | synthetic | pipeline exits, strong hashes, safe archives, manifest trust boundaries |
-| `test_site_exports.py` | synthetic | source permalinks, API/catalog hashes, SQLite and page metadata |
-| `test_site_validation.py` | rendered HTML | links, fragments, headings, alternatives and duplicate search metadata |
-| `test_upstream.py` | synthetic | forge URL parsing, cache, revision resolution, tree comparison |
-| `test_provenance.py` | synthetic | Logiqx/Redump parsing, DAT import, provenance join, coverage report |
-| `test_mame_parser.py` | inline C | BIOS root sets, ROM blocks, macro expansion |
-| `test_hash_merge.py` | synthetic | YAML hash merge, diff, formatting preservation |
-| `test_fbneo_parser.py` | inline C | `BDF_BOARDROM` sets and ROM info parsing |
-| `test_deterministic_zip.py` | synthetic | streaming rebuild, metadata normalisation, ordering and source CRC |
-| `test_artifact_lock.py` | synthetic | writer/reader exclusion, sharing and lock release |
-| `test_large_file_cache.py` | synthetic | concurrent downloads, temporary residue and hash rejection |
-| `test_pack_integrity.py` | real packs | extract ZIPs and verify paths plus hashes |
-| `test_torrentzip.py` | real romsets | TorrentZip builder byte-for-byte |
-| `test_no_case_collisions.py` | real `bios/` | portable case-collision guard |
+Every module in `tests/`, by the area it guards.
+
+| Area | Fixtures | Modules |
+|------|----------|---------|
+| Core regression suites | synthetic | `test_e2e`, `test_audit_regressions` |
+| File resolution and identity | synthetic + collection | `test_adler32_resolution`, `test_agnostic_scan`, `test_agnostic_scan_mode`, `test_agnostic_scope`, `test_agnostic_substitute`, `test_archive_choice`, `test_bios_companions`, `test_bundled_identity`, `test_casefold_cache`, `test_db_aliases`, `test_declared_names`, `test_derivations`, `test_directory_entries`, `test_extra_identity`, `test_foreign_tree`, `test_frontend_digest`, `test_game_data_homonyms`, `test_hashing`, `test_identity`, `test_md5_pack_context`, `test_name_tiebreak`, `test_nec_filing`, `test_owner_resolution`, `test_path_suffix`, `test_resolution_evidence`, `test_shipped_content`, `test_twin_declarations`, `test_validated_choice`, `test_variant_choice`, `test_zipped_member` |
+| Verification, cross-reference and profile checks | synthetic + profiles | `test_crypto_aes`, `test_crypto_unique_data`, `test_crypto_verify`, `test_case_insensitive_platforms`, `test_checks_have_values`, `test_core_file_fills_declaration`, `test_cross_reference_sources`, `test_file_consumers`, `test_fileless_audit`, `test_gap_settlement`, `test_hidden_extras`, `test_native_mode`, `test_no_case_collisions`, `test_path_conflict_status`, `test_path_null_copies`, `test_profile_checks`, `test_romm_hash_rule`, `test_shared_groups`, `test_standalone_mode`, `test_undeclared_dedup`, `test_unplaced_extras`, `test_validation_scope`, `test_verify_all_dir`, `test_verify_emulator_evidence`, `test_verify_listing`, `test_verify_pack_choice` |
+| Packs and manifests | synthetic + real packs | `test_artifact_lock`, `test_atomic_artifacts`, `test_batocera_cores`, `test_deterministic_zip`, `test_emulator_pack_counts`, `test_finalize_pack_names`, `test_large_file_cache`, `test_libretro_layout`, `test_manifest_entry`, `test_pack_conformance_dirs`, `test_pack_counts`, `test_pack_failures`, `test_pack_file_names`, `test_pack_grouping`, `test_pack_integrity`, `test_pack_member_identity`, `test_pack_readme`, `test_platform_inheritance`, `test_platform_keys`, `test_required_only_archives`, `test_required_only_twins`, `test_split_extras`, `test_split_names`, `test_split_pack`, `test_system_pack_extras`, `test_system_pack_parity`, `test_torrentzip`, `test_which_pack` |
+| Slots and regions | synthetic + profiles | `test_region`, `test_region_agnostic_scan`, `test_region_groups`, `test_region_platform_index`, `test_region_required_only`, `test_slot`, `test_slots`, `test_slots_shipped_file` |
+| Hardware targets and systems | synthetic + target files | `test_extract_targets`, `test_lakka_targets`, `test_libretro_slugs`, `test_system_ids`, `test_system_selection`, `test_target_names`, `test_target_scrapers`, `test_target_systems`, `test_target_verify` |
+| Installer and downloads | loopback server | `test_check_release`, `test_download`, `test_install`, `test_install_cores`, `test_install_experience`, `test_install_selection` |
+| Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_exporters`, `test_truth_diff`, `test_truth_layout` |
+| Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_optional_dependencies`, `test_site_availability`, `test_site_cores`, `test_site_exports`, `test_site_platform_hashes`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
 ### test_e2e.py
 
-The main regression suite. A single `TestE2E` class exercises every code path
-through the resolution, verification, pack generation, and cross-reference
-logic.
+The main regression suite. `TestE2E` exercises the resolution, verification,
+pack generation and cross-reference logic; `StandaloneModeRequiresAStandaloneBuild`
+sits beside it for the per-emulator build mode.
 
 **Fixture pattern.** `setUp` creates a temporary directory tree with:
 

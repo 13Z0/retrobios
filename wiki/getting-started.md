@@ -253,10 +253,13 @@ dump shows up.
 repository's collection is. It reads `database.json`, never your BIOS folder,
 and needs a clone.
 
-Only hash-checking platforms can catch a wrong version: Batocera, RetroBat,
-Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX and MiSTer FPGA compare MD5,
-BizHawk compares SHA1. RetroArch, Lakka and RetroPie only check that the file
-exists, so add `--verbose` there to compare against the emulator ground truth.
+The installer's `--check` hashes every file against the list on every
+platform, so it catches a wrong revision even where the frontend would not:
+RetroArch, Lakka and RetroPie only check that a file exists, while Batocera,
+RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX and MiSTer FPGA compare
+MD5 and BizHawk compares SHA1. To see which emulator reads a file and what it
+expects, `python scripts/verify.py --platform retroarch --verbose` lists the
+ground truth per core, for the collection rather than your folder.
 
 For a single system:
 
