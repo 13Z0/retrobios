@@ -2885,6 +2885,14 @@ def bump_commit(
     return True
 
 
+def pins_changed(before: dict, after: dict) -> list[str]:
+    """The pin fields whose value a write changed."""
+    return [
+        pin for pin in ("source_commit", "upstream_commit")
+        if after.get(pin) and after.get(pin) != before.get(pin)
+    ]
+
+
 def cites_primary(report: ProfileReport) -> bool:
     """Whether a ref resolved in the repository source_commit pins.
 
@@ -3480,10 +3488,7 @@ def _apply_writes(
         # refs at the old pin and saw them shifted again.
         target = Path(scratch) / path.name
         target.write_bytes(path.read_bytes())
-        recale, bumped = (
-            ("would recale ", "would set source_commit ->") if args.dry_run
-            else ("", "source_commit ->")
-        )
+        recale, bumped = ("would recale ", "would set ") if args.dry_run else ("", "")
         applied = []
         if args.rebase_refs and not report.skipped:
             applied = rebase_refs(target, report, args.accept_changed)
@@ -3498,7 +3503,12 @@ def _apply_writes(
         for line in applied:
             print(f"{name}: {recale}{line}")
         if moved:
-            print(f"{name}: {bumped} {report.head[:7]}")
+            # Each pin the write changes, as written: a bump that only moved
+            # upstream_commit announced the source_commit it already held.
+            after = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
+            before = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            for pin in pins_changed(before, after):
+                print(f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}")
         if not args.dry_run and (applied or moved):
             path.write_bytes(target.read_bytes())
 

@@ -2494,6 +2494,28 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertIn("would set source_commit -> newhead", output)
         self.assertEqual(self.path.read_text(), before)
 
+    def test_a_bump_that_moves_only_upstream_says_so(self):
+        """rustation: source_commit already at HEAD, the write added
+        upstream_commit, and the dry run announced the source_commit it
+        already held."""
+        self.path.write_text(
+            self.path.read_text().replace(
+                'profiled_date: "2026-03-29"',
+                'profiled_date: "2026-03-29"\nsource_commit: "newhead"',
+            )
+        )
+        part = PartResult(
+            RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="newhead", head="newhead",
+            entries=[EntryReport("a.bin", "a.c:10-12", "ANCHORED", [part])],
+            counts={"ANCHORED": 1}, upstream_pin="oldup", upstream_head="uphead",
+        )
+        output = self._run(self._args(bump_commit=True), report)
+        self.assertIn("would set upstream_commit -> uphead", output)
+        self.assertNotIn("source_commit ->", output)
+
     def test_writes_still_happen_without_the_flag(self):
         output = self._run(
             self._args(rebase_refs=True, dry_run=False), self._shifted()

@@ -411,7 +411,8 @@ pass cannot rewrite without guessing: those are repaired first, by hand or
 with `--realign-prose`.
 
 The first prints the plan and changes nothing: `would recale` per ref and
-`would set source_commit` per profile. It reaches that plan by running the
+`would set source_commit` (and `upstream_commit`, when that one moves too)
+per pin the write changes. It reaches that plan by running the
 real write path over a throwaway copy, so the planned bump reads the text
 the recale would have left rather than the one on disk; a pin held back by
 prose that the same pass would have moved is not reported as blocked. Drop
