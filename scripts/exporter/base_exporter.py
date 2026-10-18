@@ -179,6 +179,20 @@ class BaseExporter(ABC):
         """
         return field_name in self.carries()
 
+    def fills(self, fe: NativeFile, field_name: str) -> bool:
+        """Whether a hash only the truth names lands in the written entry."""
+        return self.states(fe, field_name)
+
+    def clears(self, fe: NativeFile, field_name: str) -> bool:
+        """Whether a platform hash the truth contradicts leaves the entry."""
+        return self.states(fe, field_name)
+
+    @staticmethod
+    def record_fills(fe: NativeFile, field_name: str) -> bool:
+        """A record format writes a filled hash only when record_hash names
+        one: two values the truth accepts make no single record."""
+        return bool(fe.record_hash(field_name))
+
     def withheld(self) -> list[str]:
         """Corrections the render proved and still did not write, named.
 

@@ -247,6 +247,12 @@ class Exporter(BaseExporter):
                 (field, value) for field, value in by_key[keys[0]].items()
                 if field in cls.carries() and not (field == "system" and declared)
             )
+            # A hash of theirs that ours no longer carries is one the truth
+            # contradicts: kept, it went on rejecting the dump the emulator
+            # loads while the summary counted it cleared.
+            for field in ("md5", "sha256"):
+                if field in cls.carries() and field not in by_key[keys[0]]:
+                    combined.pop(field, None)
             if _md5_set(entry.get("md5")) == _md5_set(combined.get("md5")):
                 combined["md5"] = entry.get("md5")
             elif isinstance(entry.get("md5"), list) and isinstance(combined.get("md5"), str):

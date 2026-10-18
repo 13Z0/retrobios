@@ -134,6 +134,9 @@ class Exporter(BaseExporter):
         )
         return lines
 
+    def fills(self, fe: NativeFile, field_name: str) -> bool:
+        return self.states(fe, field_name) and self.record_fills(fe, field_name)
+
     def render(
         self,
         systems: dict[str, NativeSystem],

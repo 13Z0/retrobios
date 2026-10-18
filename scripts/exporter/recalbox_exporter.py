@@ -98,6 +98,17 @@ class Exporter(BaseExporter):
 
         return f"    <bios {' '.join(attrs)} />"
 
+    def states(self, fe: NativeFile, field_name: str) -> bool:
+        """An element it cannot rewrite is written back as Recalbox wrote it.
+
+        es_bios.xsd makes md5 required: an entry whose md5 the truth
+        contradicts without naming another keeps its element whole, and
+        counting the md5 cleared announced a change absent from the file.
+        """
+        if fe.platform is not None and not self.writable(fe):
+            return False
+        return super().states(fe, field_name)
+
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """es_bios.xsd makes md5 and core required; without them, no element.

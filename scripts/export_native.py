@@ -371,7 +371,7 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
             changes.filled.extend(
                 f"{label} {field_name}"
                 for field_name in entry.filled
-                if exporter.states(entry, field_name)
+                if exporter.fills(entry, field_name)
             )
             if entry.platform is None:
                 continue
@@ -389,7 +389,7 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                 for field_name in HASH_FIELDS
                 if _hash_values(entry.platform, field_name)
                 and not entry.hashes(field_name)
-                and exporter.states(entry, field_name)
+                and exporter.clears(entry, field_name)
             )
     # A value the render rewrote though the model reads it as the
     # platform's own (RomM's sha1 with a leading space).

@@ -786,5 +786,70 @@ class ACorruptOriginalIsRefused(unittest.TestCase):
                             {exporter.native_filename(): '{"nes": {'})
 
 
+class TheSummaryCountsWhatTheFileCarries(unittest.TestCase):
+    """RomM kept the sha1 and crc the truth contradicts beside the corrected
+    md5, and RomM accepts any one hash; RetroDECK kept a cleared md5 and
+    Recalbox an element it could not rewrite, both counted cleared; RomM and
+    System.dat counted a sha1 filled that no record could hold."""
+
+    def _contradicted(self):
+        return NativeFile(
+            "scph5501.bin", "scph5501.bin", "psx",
+            platform={"size": 524288, "crc32": "deadbeef", "md5": A, "sha1": "1" * 40},
+            truth={"md5": B},
+        )
+
+    def test_romm_drops_the_hashes_it_counts_cleared(self):
+        from export_native import landed_changes  # noqa: PLC0415
+        from exporter.baseline import Report  # noqa: PLC0415
+
+        fe = self._contradicted()
+        systems = {"psx": NativeSystem("psx", files=[fe])}
+        original = json.dumps({"psx:scph5501.bin": {
+            "size": "524288", "crc": "deadbeef", "md5": A, "sha1": "1" * 40}})
+        exporter = Romm()
+        written = json.loads(exporter.render(
+            systems, Report(), {exporter.native_filename(): original},
+        )[exporter.native_filename()])["psx:scph5501.bin"]
+        self.assertEqual(written.get("md5"), B)
+        self.assertNotIn("sha1", written)
+        self.assertNotIn("crc", written)
+        cleared = landed_changes(exporter, systems).cleared
+        self.assertEqual(sorted(cleared), ["psx/scph5501.bin crc32", "psx/scph5501.bin sha1"])
+
+    def test_a_fill_no_record_holds_is_not_counted(self):
+        from export_native import landed_changes  # noqa: PLC0415
+
+        fe = NativeFile(
+            "scph5501.bin", "scph5501.bin", "psx",
+            platform={"md5": A},
+            truth={"md5": [A, B], "sha1": ["1" * 40, "2" * 40]},
+            filled=["sha1"],
+        )
+        systems = {"psx": NativeSystem("psx", files=[fe])}
+        for exporter in (Romm(), SystemDat()):
+            with self.subTest(exporter=type(exporter).__module__):
+                self.assertEqual(landed_changes(exporter, systems).filled, [])
+
+    def test_retrodeck_drops_a_cleared_md5(self):
+        merged = RetroDeck._merge(
+            [{"filename": "scph5501.bin", "system": "psx", "md5": A}],
+            [OrderedDict(filename="scph5501.bin", system="psx",
+                         sha256="e" * 64)],
+        )
+        self.assertNotIn("md5", merged[0])
+
+    def test_recalbox_counts_nothing_on_an_element_it_keeps(self):
+        from export_native import landed_changes  # noqa: PLC0415
+
+        fe = NativeFile(
+            "scph5501.bin", "scph5501.bin", "psx",
+            platform={"md5": A, "size": 1, "core": "libretro/pcsx_rearmed"},
+            truth={"sha1": "1" * 40, "size": 2},
+        )
+        changes = landed_changes(Recalbox(), {"psx": NativeSystem("psx", files=[fe])})
+        self.assertEqual(changes.cleared, [])
+
+
 if __name__ == "__main__":
     unittest.main()

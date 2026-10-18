@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scraper.romm_scraper import SLUG_MAP
 
 from .base_exporter import BaseExporter
-from .baseline import NativeFile, NativeSystem, Report
+from .baseline import NativeFile, NativeSystem, Report, _hash_values
 
 SOURCE_URL = (
     "https://raw.githubusercontent.com/rommapp/romm/master/backend/models"
@@ -143,10 +143,24 @@ class Exporter(BaseExporter):
                     value = fe.record_hash(hash_name)
                     if value:
                         self._write(entry, field, value, fe, hash_name)
+                    elif self._contradicted(fe, hash_name):
+                        # RomM accepts any one hash: a value the truth
+                        # rejects, left beside the corrected md5, still
+                        # passes the dump it describes.
+                        entry.pop(field, None)
                 output[key] = entry
 
         text = json.dumps(output, indent=2, ensure_ascii=False) + "\n"
         return {self.native_filename(): text}
+
+    @staticmethod
+    def _contradicted(fe: NativeFile, name: str) -> bool:
+        """A hash the platform states and the truth, taking the entry over,
+        does not keep."""
+        return bool(_hash_values(fe.platform or {}, name)) and not fe.hashes(name)
+
+    def fills(self, fe: NativeFile, field_name: str) -> bool:
+        return self.states(fe, field_name) and self.record_fills(fe, field_name)
 
     def _write(
         self, entry: dict, field: str, value: str, fe: NativeFile, name: str
