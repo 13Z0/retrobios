@@ -4638,5 +4638,37 @@ class VersionAnchorsFollowContent(unittest.TestCase):
                          ["file-audio-abs-6904b-v1-12", "file-audio-abs-6904b-v1-13"])
 
 
+
+class SitemapDatesComeFromThePage(unittest.TestCase):
+    """All 664 sitemap URLs carried the build date: eduke32, re-read on
+    2026-10-04, was announced as changed on the day of every build."""
+
+    def test_the_hook_takes_the_page_date_or_none(self):
+        from types import SimpleNamespace
+
+        from scripts.mkdocs_hooks import on_page_markdown
+
+        dated = SimpleNamespace(meta={"date_modified": "2026-10-04"}, update_date="today")
+        undated = SimpleNamespace(meta={}, update_date="today")
+        on_page_markdown("", dated, None, None)
+        on_page_markdown("", undated, None, None)
+        self.assertEqual((dated.update_date, undated.update_date), ("2026-10-04", ""))
+        config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+        self.assertIn("hooks:\n  - scripts/mkdocs_hooks.py", config)
+
+
+class SiteCodeSpansHoldTheirValue(unittest.TestCase):
+    """Values from profiles, platform files and file names went into code
+    spans as they were: a backtick in one closed the span and what followed
+    was read as markup."""
+
+    def test_a_backtick_cannot_close_the_span(self):
+        from scripts.siterender import _code
+
+        span = _code("a`<img src=x onerror=alert(1)>`")
+        self.assertEqual(span.count("`"), 2)
+        self.assertTrue(span.startswith("`") and span.endswith("`"))
+
+
 if __name__ == "__main__":
     unittest.main()

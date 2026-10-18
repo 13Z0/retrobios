@@ -1309,7 +1309,9 @@ def decorate_markdown_pages(docs: Path) -> None:
             "generated_by: retrobios-site\n"
             f"title: {json.dumps(browser_title, ensure_ascii=False)}\n"
             f"description: {json.dumps(description, ensure_ascii=False)}\n"
-            "---\n\n"
+            + (f"date_modified: {json.dumps(str(structured['dateModified']))}\n"
+               if structured.get("dateModified") else "")
+            + "---\n\n"
             '<script type="application/ld+json">\n'
             f"{structured_json}\n"
             "</script>\n\n"
@@ -1916,14 +1918,14 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
         # The card named a file, its hashes and provenance, but not where to
         # get it: a user missing scph5501.bin found the reference and no way
         # to the bytes.
-        lines.append(f"- Collection path: `{f['path']}` ([download]({_fetch_url(f['path'])}))")
+        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
     # Every hash in full: the site search indexes text, not a title
     # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
     # emulator log prints) found nothing behind a 12-character prefix.
     for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
-            lines.append(f'- {label}: <span class="rb-hash">`{value}`</span>')
+            lines.append(f'- {label}: <span class="rb-hash">{_code(value)}</span>')
     if plats:
         plat_badges = " ".join(
             f'<span class="rb-badge rb-badge-info">[{p}](../platforms/{p}.md)</span>'
@@ -2293,7 +2295,7 @@ def _render_emulator_file(
         # byte-swapped 16-bit words, so the raw Adler-32 the downloads carry
         # for the same file differs, and the card says which one it lists.
         values = fadler32 if isinstance(fadler32, list) else [fadler32]
-        shown = ", ".join(f"`{str(v).lower().removeprefix('0x')}`" for v in values)
+        shown = ", ".join(_code(str(v).lower().removeprefix("0x")) for v in values)
         if f.get("adler32_byteswap"):
             details.append(
                 f"Adler32 over the file's 16-bit words byte-swapped: {shown} "
@@ -2328,7 +2330,8 @@ def _render_emulator_file(
             if len(parts) >= 3 and parts[0] == "bios":
                 page = parts[1].lower().replace(" ", "-")
                 details.append(
-                    f"Collection copy: [`{held}`](../systems/{page}.md#sha1-{sha1[:12]})"
+                    f"Collection copy: [{_code(held)}]"
+                    f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
                 )
         plats = sorted(consumers.platforms.get(sha1, ())) if sha1 else []
         if plats:
@@ -2895,7 +2898,8 @@ def _render_problem_files(platform_problems: list, settled: list | None = None) 
         ])
         for p in sorted(settled, key=lambda row: (row["name"], row["platform"])):
             lines.append(
-                f"| `{p['name']}` | {p['platform']} | {p['status']} | `{p['held_by']}` |"
+                f"| {_code(p['name'])} | {_escape_tags(p['platform'])} | {p['status']} "
+                f"| {_code(p['held_by'])} |"
             )
         lines.append("")
 
@@ -3318,7 +3322,7 @@ def generate_gap_analysis(
             emulators = sorted({emulator for emulator, _name in bundled_rows})
             lines.extend([
                 f"{len(bundled_rows)} further files arrive with their emulator's own "
-                f"package ({', '.join(emulators)}): documented in the profile, not "
+                f"package ({_escape_tags(', '.join(emulators))}): documented in the profile, not "
                 "collected, and not listed here.",
                 "",
             ])
@@ -4178,6 +4182,9 @@ repo_name: Abdess/retrobios
 # Almost every page is generated from platforms/, emulators/ and database.json,
 # so a per-page edit link would point at a file that does not exist.
 edit_uri: ''
+# lastmod in the sitemap from each page's own date, or none at all.
+hooks:
+  - scripts/mkdocs_hooks.py
 # Working notes kept under docs/ during development are not part of the site.
 exclude_docs: |
   plans/
@@ -4323,6 +4330,7 @@ from siterender import (  # noqa: E402,F401
     _fmt_size,
     _pct,
     _admonition_body,
+    _code,
     _escape_tags,
     _icon_name,
     _icon_url,

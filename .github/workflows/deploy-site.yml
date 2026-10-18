@@ -20,6 +20,7 @@ on:
       - "scripts/generate_site.py"
       - "scripts/hashing.py"
       - "scripts/largefiles.py"
+      - "scripts/mkdocs_hooks.py"
       - "scripts/nativemode.py"
       - "scripts/packextras.py"
       - "scripts/packpaths.py"

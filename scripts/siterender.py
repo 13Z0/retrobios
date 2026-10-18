@@ -20,6 +20,16 @@ _icon_available: dict[str, bool] = {}
 _CODE_SPAN = re.compile(r"(`+).+?\1", re.S)
 
 
+def _code(value: object) -> str:
+    """A value as an inline code span it cannot leave.
+
+    Markdown shows HTML inside a code span as text, so the one way out is a
+    backtick in the value closing the span early. Data from a profile, a
+    platform file or a file name is not ours to trust that far.
+    """
+    return "`" + str(value).replace("`", "'") + "`"
+
+
 def _escape_tags(text: str) -> str:
     """Show a placeholder such as ``<system_dir>`` as it was written.
 

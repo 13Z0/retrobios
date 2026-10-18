@@ -8,6 +8,9 @@ repo_name: Abdess/retrobios
 # Almost every page is generated from platforms/, emulators/ and database.json,
 # so a per-page edit link would point at a file that does not exist.
 edit_uri: ''
+# lastmod in the sitemap from each page's own date, or none at all.
+hooks:
+  - scripts/mkdocs_hooks.py
 # Working notes kept under docs/ during development are not part of the site.
 exclude_docs: |
   plans/

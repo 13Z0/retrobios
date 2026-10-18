@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import fnmatch
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -78,6 +79,15 @@ class DeploySiteTriggers(unittest.TestCase):
             }
         )
         self.assertIn("generate_site.py", entry_points)
+        # mkdocs build runs the hooks mkdocs.yml names: a script of the build.
+        # The file carries Python tags safe_load refuses; the list is plain.
+        mkdocs = (REPO_ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+        hooks = re.search(r"^hooks:\n((?:  - .+\n)+)", mkdocs, re.M)
+        entry_points += [
+            line.strip()[2:].removeprefix("scripts/")
+            for line in (hooks.group(1).splitlines() if hooks else [])
+            if line.strip()[2:].startswith("scripts/")
+        ]
         uncovered = sorted(
             path
             for path in closure(entry_points)
