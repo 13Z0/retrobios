@@ -9,10 +9,12 @@ checksum of each layout and the staging location.
 """
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import http.server
 import importlib.util
+import io
 import json
 import os
 import shutil
@@ -94,6 +96,15 @@ def _release(names, base="https://example.invalid", size=10):
 
 
 class TestPackGrouping(unittest.TestCase):
+    def test_info_on_an_unknown_platform_fails(self):
+        """--info printed "not found" and exited 0."""
+        release = _release(["EmuDeck_2.3.8_BIOS_Pack.zip"])
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            with self.assertRaises(SystemExit) as caught:
+                download.show_info("emudek", release)
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn("EmuDeck", out.getvalue())
+
     def test_whole_pack_has_one_part(self):
         packs = download.group_packs(_release(["EmuDeck_2.3.8_BIOS_Pack.zip"]))
         self.assertEqual([p.name for p in packs], ["EmuDeck_2.3.8_BIOS_Pack.zip"])

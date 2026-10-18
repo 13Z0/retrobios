@@ -20,10 +20,12 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
+from common import suggest_names
 from profile_sync import collect_citations, select_views, split_source_ref
 from safeparse import yaml_load
 
@@ -84,20 +86,52 @@ def audit(
     return hits
 
 
+def _settled_before_reading(document: dict) -> bool:
+    """A profile answered without its sources: files, an exclusion note, or
+    a declared data directory (see audit)."""
+    return bool(
+        document.get("files")
+        or str(document.get("exclusion_note") or "").strip()
+        or document.get("data_directories")
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.splitlines()[0])
-    parser.add_argument("emulators", nargs="+")
+    parser.add_argument("emulators", nargs="*", help="profiles to read")
+    parser.add_argument(
+        "--all", action="store_true",
+        help="every profile that declares no files and has no answer yet",
+    )
     parser.add_argument("--emulators-dir", default="emulators")
     parser.add_argument("--cache-dir", default=".cache")
     parser.add_argument("--offline", action="store_true")
     args = parser.parse_args()
+    if args.all == bool(args.emulators):
+        parser.error("name profiles or pass --all, not both")
 
-    flagged = 0
-    for name in args.emulators:
+    known = sorted(path.stem for path in Path(args.emulators_dir).glob("*.yml"))
+    unknown = [name for name in args.emulators if name not in known]
+    if unknown:
+        raise SystemExit(
+            "ERROR: unknown profile " + ", ".join(unknown) + ". "
+            + suggest_names(unknown, known, "verify.py --list-emulators")
+        )
+    names = args.emulators
+    if args.all:
+        names = []
+        for name in known:
+            with open(Path(args.emulators_dir) / f"{name}.yml", encoding="utf-8") as handle:
+                if not _settled_before_reading(yaml_load(handle) or {}):
+                    names.append(name)
+
+    flagged = unreachable = 0
+    for name in names:
         try:
             hits = audit(name, args.emulators_dir, args.cache_dir, args.offline)
         except upstream.UpstreamError as exc:
             print(f"{name}: unreachable, {exc}", file=sys.stderr)
+            unreachable += 1
             continue
         if hits is None or not hits:
             continue
@@ -105,7 +139,13 @@ def main() -> None:
         print(f"{name}: declares no files, yet its source asks for a directory")
         for path, signal in hits:
             print(f"    {path}: {signal}")
-    raise SystemExit(1 if flagged else 0)
+    print(
+        f"{len(names)} profile(s) read, {flagged} to read again"
+        + (f", {unreachable} unreachable" if unreachable else ""),
+        file=sys.stderr,
+    )
+    # An unreachable source is not a clean one.
+    raise SystemExit(1 if flagged or unreachable else 0)
 
 
 if __name__ == "__main__":

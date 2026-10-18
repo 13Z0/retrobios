@@ -298,8 +298,9 @@ def show_info(platform: str, release: dict) -> None:
     """Show pack information for a platform."""
     pack = find_pack(release, platform)
     if not pack:
-        print(f"Platform '{platform}' not found in release")
-        return
+        print(f"Platform '{platform}' not found in release.")
+        print("Available:", ", ".join(list_platforms(release)))
+        sys.exit(1)
 
     print(f"  Platform: {pack.platform}")
     print(f"  File: {pack.name}")

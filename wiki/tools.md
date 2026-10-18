@@ -279,8 +279,13 @@ Names the profiles that declare no files whose source asks for a directory to
 read from.
 
 ```bash
-python scripts/fileless_audit.py craft dice lutro
+python scripts/fileless_audit.py --all            # every profile not yet answered
+python scripts/fileless_audit.py virtualjaguar b2 # the profiles named
 ```
+
+It exits 1 when a profile is worth a reading or a source could not be reached
+(`--offline` reads the cache only, `--cache-dir` moves it), and ends on a
+count of what it read.
 
 An empty `files:` list is the one assertion in the repository that ages
 unwatched: there is no file to go missing and no ref to drift, so nothing
@@ -341,6 +346,21 @@ python scripts/profile_sync.py --emulator vice --full-diff
 python scripts/profile_sync.py --all --triage
 python scripts/profile_sync.py --all --changed-only --json
 python scripts/profile_sync.py --emulator vice --fetch-plan
+```
+
+Selection narrows `--all` before any request is spent: `--system sega-saturn`,
+`--type standalone`, `--stale-before 2026-06-01` (profiled before that date)
+and `--limit 20`. Output takes `--markdown` (a report written under
+`--report-dir`, `reports/` by default), and `--full-diff` takes `--ref PATH`
+to show one cited file and `--context N` lines around each hunk. `--strict`
+exits 1 when a profile has refs to review; CI runs it on every profile a change
+adds. `--offline` answers from `--cache-dir` alone.
+
+```bash
+python scripts/profile_sync.py --all --system sega-saturn --changed-only
+python scripts/profile_sync.py --all --stale-before 2026-06-01 --limit 20 --triage
+python scripts/profile_sync.py --emulator vice --full-diff --ref vice/src/c64/c64rom.h --context 6
+python scripts/profile_sync.py --emulator vice --strict
 ```
 
 Per part of a ref: `ANCHORED` (same content, same lines), `SHIFTED` (same
@@ -567,6 +587,36 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `check_freshness.py` | One report on every upstream the repository transcribes (see above) |
 | `refresh_stale.py` | Run the refresher behind every stale row of that report (see above) |
 | `migrate.py` | Migrate flat bios structure to Manufacturer/Console/ hierarchy |
+
+Further options, by script:
+
+| Script | Options |
+|--------|---------|
+| `auto_fetch.py` | `--create-issues` prints a GitHub issue body per file still missing; it posts nothing |
+| `check_buildbot_system.py` | `--update` refreshes the entries found stale, `--json`, `--registry` |
+| `check_freshness.py` | `--cache-dir`, `--native-cache-dir` (originals of the native export) and `--truth-dir` move the caches it reads |
+| `check_release.py` | `--tag`, `--sums dist/SHA256SUMS.txt`, `--record` (default `release.json`), `--json` |
+| `check_release_assets.py` | `--gitignore` (the asset registry), `--db`, `--notes FILE`, `--json` |
+| `diff_truth.py` | `--format markdown`, `--truth-dir`, `--target` |
+| `download.py` | `--list`, `--info <platform>` shows a pack's file name, size and parts without downloading |
+| `export_native.py` | `--truth-dir`, `--upstream-dir` (where the platforms' own files are cached) |
+| `find_pinned_revision.py` | `--repo URL --path FILE --md5 HASH`, `--write PATH`, `--cache-dir` |
+| `generate_db.py` | `--provenance-dir` (dump-catalog snapshots joined into the database) |
+| `generate_site.py` | `--docs-dir` (output, `docs/` by default) |
+| `mame_ref_audit.py` | `--write` points each stale ref at the line declaring its set, `--offline`, `--cache-dir` |
+| `migrate.py` | `--dry-run`, `--include-branches` also reads BIOS files from every remote branch |
+| `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`; the pipeline writes `derivable.json`) |
+| `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
+| `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
+| `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |
+| `romset_recipes.py` | `--dat-recipes PATH`, a snapshot or a directory of them (default `recipes/`) |
+| `split_pack.py` | `--max-size 1900M`, the ceiling per part (K, M, G; default 2G) |
+| `torrentzip.py` | `--check ZIP` reports conformance, `--rebuild ZIP -o OUT` normalizes an archive |
+| `validate_pr.py` | `--changed` takes the BIOS files the branch changes, `--markdown`, `--json` |
+| `validate_site.py` | `--site-dir` (rendered site), `--config` (mkdocs.yml), `--max-errors N` |
+| `scraper/coreinfo_scraper.py` | `--compare-db database.json` lists the `.info` firmware the database lacks |
+| `scraper/mame_hash_scraper.py` | `--release mameNNNN --profile FILE --source-commit SHA --core NAME --built-by PLATFORM` writes the profile of a MAME build a platform compiles |
+| `scraper/romset_dat_importer.py` | `--cache-dir` (downloaded listxml and DATs) |
 
 ## Installation tools
 

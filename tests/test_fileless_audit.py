@@ -99,6 +99,53 @@ class TestFilelessAudit(unittest.TestCase):
         self.assertEqual(len(self._run()), 1)
 
 
+class TestCommandLine(unittest.TestCase):
+    """Named profiles were the only mode, so the documented example printed
+    nothing; a misspelt name ended in a traceback and an unreachable source
+    left the run green."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        Path(self.tmp.name, "open.yml").write_text(BASE, encoding="utf-8")
+        Path(self.tmp.name, "done.yml").write_text(
+            "emulator: D\nfiles:\n  - name: a.bin\n", encoding="utf-8"
+        )
+
+    def _main(self, *argv, audit=None):
+        read = []
+
+        def fake(name, *args):
+            read.append(name)
+            if audit:
+                return audit(name)
+            return []
+
+        with mock.patch.object(sys, "argv", ["fileless_audit.py", *argv,
+                                             "--emulators-dir", self.tmp.name]), \
+                mock.patch.object(fileless_audit, "audit", side_effect=fake), \
+                mock.patch("sys.stderr"), mock.patch("sys.stdout"):
+            with self.assertRaises(SystemExit) as caught:
+                fileless_audit.main()
+        return caught.exception.code, read
+
+    def test_all_reads_only_the_profiles_nobody_answered(self):
+        code, read = self._main("--all")
+        self.assertEqual((code, read), (0, ["open"]))
+
+    def test_a_misspelt_profile_is_named(self):
+        code, read = self._main("opne")
+        self.assertIn("open", str(code))
+        self.assertEqual(read, [])
+
+    def test_an_unreachable_source_fails_the_run(self):
+        def unreachable(name):
+            raise fileless_audit.upstream.UpstreamError("HTTP 403")
+
+        code, _ = self._main("open", audit=unreachable)
+        self.assertEqual(code, 1)
+
+
 class TestCorpusIsAnswered(unittest.TestCase):
     """Every fileless profile is covered, answered, or flagged.
 

@@ -4300,5 +4300,32 @@ class WikiProseHasNoTornSentence(unittest.TestCase):
                     self.fail(f"{page.name}:{number} ends mid-sentence: {line.strip()!r}")
 
 
+
+class EveryOptionIsDocumented(unittest.TestCase):
+    """profile_sync's --system, --stale-before and --ref, auto_fetch
+    --create-issues, download.py --info and forty more were in no page: a
+    maintainer ran --all and spent the API quota that --system would have
+    saved. --help lists a flag; only a page says when to reach for it."""
+
+    def test_every_long_option_of_a_tracked_script_is_in_the_docs(self):
+        tracked = subprocess.run(
+            ["git", "ls-files", "scripts"], capture_output=True, text=True,
+            cwd=str(ROOT), check=True,
+        ).stdout.split()
+        docs = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in [*sorted((ROOT / "wiki").glob("*.md")),
+                         ROOT / "README.md", ROOT / "CONTRIBUTING.md"]
+        )
+        option = re.compile(r'add_argument\(\s*(?:"-\w",\s*)?"(--[\w-]+)"')
+        undocumented = sorted(
+            f"{name}: {flag}"
+            for name in tracked if name.endswith(".py")
+            for flag in set(option.findall((ROOT / name).read_text(encoding="utf-8")))
+            if not re.search(re.escape(flag) + r"(?![\w-])", docs)
+        )
+        self.assertEqual(undocumented, [])
+
+
 if __name__ == "__main__":
     unittest.main()
