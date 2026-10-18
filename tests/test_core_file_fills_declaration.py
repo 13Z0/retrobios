@@ -11,7 +11,6 @@ from __future__ import annotations
 import hashlib
 import contextlib
 import io
-import os
 import shutil
 import sys
 import tempfile

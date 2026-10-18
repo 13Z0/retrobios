@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import struct
-import sys
 import zipfile
 import zlib
 from pathlib import Path

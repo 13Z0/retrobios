@@ -560,7 +560,6 @@ def verify_pack_against_platform(
     Returns ``(all_ok, checked, present, errors, baseline_checked,
     baseline_present, core_checked, core_present, baseline_excluded)``.
     """
-    from collections import Counter
 
     config = load_platform_config(platform_name, platforms_dir)
     base_dest = config.get("base_destination", "")

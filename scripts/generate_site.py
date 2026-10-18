@@ -26,7 +26,6 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -45,7 +44,6 @@ from common import (
     resolve_local_file,
     resolve_platform_cores,
     unique_emulator_profiles,
-    write_if_changed as _write_artifact,
     yaml_load,
 )
 from cross_reference import FileConsumers
@@ -64,10 +62,8 @@ from generate_readme import (
     extract_targets,
     release_totals,
 )
-from profile_sync import source_ref_values, split_source_ref
 from provenance_report import build_report, distinct_missing
 import release_record
-import upstream
 
 DOCS_DIR = "docs"
 SITE_NAME = "RetroBIOS"
@@ -2794,7 +2790,6 @@ def generate_gap_analysis(
     2. Problem files -- missing, untested, hash mismatch
     3. Core complement -- emulator files not declared by any platform
     """
-    from cross_reference import cross_reference as run_cross_reference
 
     from common import resolve_platform_cores
 

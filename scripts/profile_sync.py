@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import bisect
-import contextlib
 import difflib
 import itertools
 import json

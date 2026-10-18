@@ -2032,7 +2032,6 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
 
     def test_unreachable_list_is_none(self):
         import urllib.error
-        from unittest import mock
 
         def boom(*args, **kwargs):
             raise urllib.error.URLError("timed out")
@@ -2043,7 +2042,6 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
 
     def test_absent_list_is_empty(self):
         import urllib.error
-        from unittest import mock
 
         def missing(url, *args, **kwargs):
             raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)

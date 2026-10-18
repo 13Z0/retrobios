@@ -6,7 +6,6 @@ opinion on provenance, never an authority: the emulator source is."""
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 
 from artifacts import write_if_changed

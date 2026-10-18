@@ -7,7 +7,6 @@ it. RetroArch names Galaksija's 4 KiB galaksija/rom1.bin, so DOSBox's
 
 from __future__ import annotations
 
-import os
 import sys
 import unittest
 from pathlib import Path
