@@ -1257,18 +1257,31 @@ def normalize_platform(name: str) -> str:
 def _read_limited_json(
     response: http.client.HTTPResponse, limit: int, label: str
 ) -> object:
-    """Read a bounded UTF-8 JSON response."""
+    """Read a bounded UTF-8 JSON response.
+
+    A body shorter than its Content-Length is a dropped connection, raised
+    as one so the caller retries: parsed, the cut read as an invalid file
+    list and the run ended without the network advice.
+    """
     raw_length = response.headers.get("Content-Length") if response.headers else None
+    expected: int | None = None
     if raw_length:
         try:
-            if int(raw_length) > limit:
-                raise ValueError(f"{label} exceeds {limit} bytes")
-        except ValueError as exc:
-            if "exceeds" in str(exc):
-                raise
-    payload = response.read(limit + 1)
+            expected = int(raw_length)
+        except ValueError:
+            expected = None
+        if expected is not None and expected > limit:
+            raise ValueError(f"{label} exceeds {limit} bytes")
+    try:
+        payload = response.read(limit + 1)
+    except http.client.IncompleteRead as exc:
+        raise ConnectionError(
+            f"{label} cut after {len(exc.partial)} bytes"
+        ) from exc
     if len(payload) > limit:
         raise ValueError(f"{label} exceeds {limit} bytes")
+    if expected is not None and len(payload) < expected:
+        raise ConnectionError(f"{label} cut after {len(payload)} of {expected} bytes")
     try:
         return json.loads(payload.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:

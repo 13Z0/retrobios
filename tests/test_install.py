@@ -2446,5 +2446,34 @@ class QuitMeansNoAtTheLastQuestion(unittest.TestCase):
                 self.assertIs(install._confirm("? "), expected)
 
 
+
+class ACutFileListIsRetried(unittest.TestCase):
+    """Wi-Fi dropped mid install/batocera.json: the short body parsed as an
+    invalid file list, no retry, no network advice."""
+
+    class _Response(io.BytesIO):
+        def __init__(self, body: bytes, length: int):
+            super().__init__(body)
+            self.headers = {"Content-Length": str(length)}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def test_the_second_attempt_succeeds(self):
+        full = json.dumps({"a": 1}).encode()
+        answers = iter([self._Response(full[:4], len(full)), self._Response(full, len(full))])
+        with unittest.mock.patch.object(install.urllib.request, "urlopen",
+                                        lambda *a, **k: next(answers)), \
+                unittest.mock.patch.object(install.time, "sleep"):
+            self.assertEqual(install._fetch_json("https://x/y.json", 1000, "manifest"), {"a": 1})
+
+    def test_a_short_body_is_a_connection_error(self):
+        with self.assertRaises(ConnectionError):
+            install._read_limited_json(self._Response(b'{"a"', 10), 1000, "manifest")
+
+
 if __name__ == "__main__":
     unittest.main()
