@@ -578,6 +578,35 @@ class CachedOriginal(unittest.TestCase):
         )
         self.assertEqual((originals, missing), ({"list.txt": "one"}, []))
 
+    def test_the_bytes_are_written_under_the_index_lock(self):
+        """Written under two locks, two runs wanting two URLs for one path
+        could leave one's bytes beside the other's index entry."""
+        import fcntl  # noqa: PLC0415
+        from unittest import mock  # noqa: PLC0415
+
+        import export_native  # noqa: PLC0415
+
+        url = self._upstream("v1.txt", "one")
+        target = self.cache / "plat" / "list.txt"
+        lock = self.index.with_name(f".{self.index.name}.lock")
+        held: list[bool] = []
+        write = export_native.write_bytes_atomic
+
+        def probing(path, data):
+            with open(lock, "a") as handle:
+                try:
+                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    held.append(True)
+                else:
+                    fcntl.flock(handle, fcntl.LOCK_UN)
+                    held.append(False)
+            write(path, data)
+
+        with mock.patch.object(export_native, "write_bytes_atomic", probing):
+            fetch(url, target, self.index)
+        self.assertEqual(held, [True])
+
     def test_the_index_names_a_file_the_same_from_any_directory(self):
         target = self.cache / "plat" / "list.txt"
         self.assertEqual(source_key(target, self.index), "plat/list.txt")

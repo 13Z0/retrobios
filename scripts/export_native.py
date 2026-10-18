@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import re
 import json
 import sys
@@ -84,24 +85,35 @@ def fetch(
     describe the same moment.
     """
     key = source_key(destination, index)
-    if (
-        not refresh
-        and destination.exists()
-        and _load_sources(index).get(key, url) == url
-    ):
-        return destination.read_bytes()
+
+    def locked() -> contextlib.AbstractContextManager[object]:
+        # The bytes and the URL that names them change together: written
+        # under two locks, two runs wanting two URLs for one path could leave
+        # one's bytes beside the other's index entry, and the wrong revision
+        # was then served as current.
+        if index is None:
+            return contextlib.nullcontext()
+        index.parent.mkdir(parents=True, exist_ok=True)
+        return file_lock(index.with_name(f".{index.name}.lock"))
+
+    with locked():
+        if (
+            not refresh
+            and destination.exists()
+            and _load_sources(index).get(key, url) == url
+        ):
+            return destination.read_bytes()
     request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
     with urllib.request.urlopen(request, timeout=60) as response:
         payload = response.read(_MAX_BYTES + 1)
     if len(payload) > _MAX_BYTES:
         raise ValueError(f"{url}: response larger than {_MAX_BYTES} bytes")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    write_bytes_atomic(str(destination), payload)
-    if index is not None:
-        # Platforms refresh in parallel: the index is read again under the
-        # lock, or the last writer erased what the others had recorded.
-        index.parent.mkdir(parents=True, exist_ok=True)
-        with file_lock(index.with_name(f".{index.name}.lock")):
+    with locked():
+        write_bytes_atomic(str(destination), payload)
+        if index is not None:
+            # Platforms refresh in parallel: the index is read again under
+            # the lock, or the last writer erased what the others recorded.
             recorded = _load_sources(index)
             recorded[key] = url
             write_text_atomic(
