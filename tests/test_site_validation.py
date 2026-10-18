@@ -163,5 +163,44 @@ class RenderedSiteValidation(unittest.TestCase):
         self.assertTrue(any("duplicate description" in issue for issue in issues))
 
 
+
+class EveryTestDependencyIsInstalledInCi(unittest.TestCase):
+    """The markdown rendering test skipped on every CI run: the test job
+    installed pyyaml and jsonschema only. A test that skips where it is
+    meant to run guards nothing."""
+
+    PACKAGES = {"yaml": "pyyaml", "jsonschema": "jsonschema", "markdown": "markdown"}
+
+    def test_the_test_job_installs_what_the_tests_import(self):
+        import ast
+
+        root = Path(__file__).resolve().parents[1]
+        local = (
+            {p.stem for p in (root / "scripts").rglob("*.py")}
+            | {p.name for p in (root / "scripts").iterdir() if p.is_dir()}
+            | {p.stem for p in (root / "tests").glob("*.py")}
+            | {"scripts", "tests", "install"}
+        )
+        imported: set[str] = set()
+        for path in (root / "tests").glob("*.py"):
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+                if isinstance(node, ast.Import):
+                    imported.update(a.name.split(".")[0] for a in node.names)
+                elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                    imported.add(node.module.split(".")[0])
+        third_party = {
+            m for m in imported if m not in sys.stdlib_module_names and m not in local
+        }
+        workflow = (root / ".github" / "workflows" / "validate.yml").read_text()
+        job = workflow[workflow.index("run-tests:"):]
+        install_line = next(
+            line for line in job.splitlines() if "pip install" in line
+        )
+        missing = sorted(
+            m for m in third_party if self.PACKAGES.get(m, m) not in install_line
+        )
+        self.assertEqual(missing, [])
+
+
 if __name__ == "__main__":
     unittest.main()

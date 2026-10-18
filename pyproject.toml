@@ -17,6 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "jsonschema[format-nongpl]>=4.23",
+    "markdown>=3.7",
 ]
 # The site build the repo generates and documents. Both were hard
 # requirements of deploy-site.yml and of wiki/release-process.md while being

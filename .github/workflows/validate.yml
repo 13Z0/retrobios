@@ -173,8 +173,10 @@ jobs:
             3.8
             3.12
 
+      # markdown: the site validation test renders a wiki line to prove the
+      # heading guard's premise, and skipped on every run without it.
       - name: Install dependencies
-        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0"
+        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2"
 
       # The exporter fidelity cases compare what we hand back against the
       # file each platform publishes, so they need those files. They skip
