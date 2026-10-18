@@ -920,6 +920,56 @@ class StandaloneCopiesReadWhereThePackPutTheFile(unittest.TestCase):
             install._validate_manifest(manifest, "emudeck")
 
 
+class DetectionFollowsTheRegistry(unittest.TestCase):
+    """The registry declared RetroPie at ~/RetroPie/BIOS and BizHawk at
+    ~/.config/BizHawk/Firmware, every manifest published it, and the
+    installer never read it: such a home detected nothing."""
+
+    def test_the_table_is_the_registry(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
+        )
+        rules = {
+            (rule["os"], name, rule["path"], rule.get("bios_path"))
+            for name, entry in registry["platforms"].items()
+            for rule in (entry.get("install") or {}).get("detect", [])
+            if rule["method"] == "path_exists"
+        }
+        self.assertEqual(set(install._PATH_RULES), rules)
+
+    def _home(self) -> Path:
+        home = Path(_tempdir(self))
+        patcher = unittest.mock.patch.dict(os.environ, {"HOME": str(home), "USERPROFILE": str(home)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return home
+
+    def test_a_home_layout_is_detected(self):
+        home = self._home()
+        (home / "RetroPie" / "BIOS").mkdir(parents=True)
+        (home / ".config" / "BizHawk" / "Firmware").mkdir(parents=True)
+        found: list = []
+        install._detect_by_path("linux", found)
+        self.assertIn(("retropie", home / "RetroPie" / "BIOS"), found)
+        self.assertIn(("bizhawk", home / ".config" / "BizHawk" / "Firmware"), found)
+
+    def test_a_windows_profile_path_is_detected(self):
+        home = self._home()
+        (home / "BizHawk" / "Firmware").mkdir(parents=True)
+        found: list = []
+        install._detect_by_path("windows", found)
+        self.assertEqual(found, [("bizhawk", home / "BizHawk" / "Firmware")])
+
+    def test_a_platform_already_found_is_not_added_again(self):
+        home = self._home()
+        (home / "Emulation" / "bios").mkdir(parents=True)
+        found = [("emudeck", home / "elsewhere" / "bios")]
+        install._detect_by_path("linux", found)
+        self.assertEqual(found, [("emudeck", home / "elsewhere" / "bios")])
+
+
 class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
     """install.py runs where the bootstraps let it run: Python 3.8, stdlib only.
 

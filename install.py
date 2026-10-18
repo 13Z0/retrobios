@@ -870,6 +870,47 @@ def detect_frontends(os_type: str, home: Path | None = None) -> list[str]:
     return frontends
 
 
+# The registry's path_exists rules (platforms/_registry.yml install.detect),
+# one row each: (os, platform, path, BIOS directory when it is not the path).
+# The manifests publish them too, but detection runs before any manifest is
+# fetched; a test holds this table equal to the registry. Without it a Linux
+# home holding RetroPie/BIOS or .config/BizHawk/Firmware detected nothing.
+_PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
+    ("windows", "retrobat", "C:\\RetroBat\\bios", None),
+    ("windows", "retrobat", "%USERPROFILE%\\RetroBat\\bios", None),
+    ("linux", "emudeck", "$HOME/Emulation/bios", None),
+    ("linux", "retrodeck", "$HOME/.var/app/net.retrodeck.retrodeck", "$HOME/retrodeck"),
+    ("linux", "romm", "/romm/library/bios", None),
+    ("linux", "retropie", "$HOME/RetroPie/BIOS", None),
+    ("windows", "bizhawk", "%USERPROFILE%\\BizHawk\\Firmware", None),
+    ("linux", "bizhawk", "$HOME/.config/BizHawk/Firmware", None),
+    ("linux", "misterfpga", "/media/fat/MiSTer", "/media/fat/games"),
+)
+
+
+def _rule_path(template: str) -> Path:
+    """A rule's path on this machine: $HOME or %USERPROFILE%, then the rest."""
+    bases = (
+        ("$HOME", Path.home()),
+        ("%USERPROFILE%", Path(os.environ.get("USERPROFILE") or Path.home())),
+    )
+    for variable, base in bases:
+        if template.startswith(variable):
+            rest = [part for part in re.split(r"[\\/]", template[len(variable):]) if part]
+            return base.joinpath(*rest)
+    return Path(template)
+
+
+def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
+    """Add what a registry path rule finds, for a platform not found yet."""
+    systems = ("linux", "windows") if os_type == "wsl" else (os_type,)
+    for rule_os, platform, path, bios in _PATH_RULES:
+        if rule_os not in systems or any(name == platform for name, _ in found):
+            continue
+        if _rule_path(path).exists():
+            found.append((platform, _rule_path(bios or path)))
+
+
 def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
     """Detect installed emulator platforms and their BIOS directories."""
     found: list[tuple[str, Path]] = []
@@ -981,6 +1022,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             if system_dir:
                 found.append(("retroarch", system_dir))
 
+    _detect_by_path(os_type, found)
     return found
 
 
