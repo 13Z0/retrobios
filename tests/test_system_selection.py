@@ -137,6 +137,40 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
         self.assertEqual(taking - listed, set())
 
 
+class CrossReferenceAnswersForTheEmulatorAsked(unittest.TestCase):
+    """`--emulator dolhpin` printed "No emulator profiles found" with exit 0,
+    and `--emulator dolphin` showed only a header and a total "across all
+    emulators": an emulator with nothing undeclared was skipped."""
+
+    def _run(self, *argv: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, "scripts/cross_reference.py", *argv],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=600,
+            check=False,
+        )
+
+    def test_a_mistyped_emulator_fails_and_names_the_one_meant(self):
+        proc = self._run("--emulator", "dolhpin")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertIn("Did you mean: dolphin", proc.stderr)
+        listing = self._run("--list-emulators")
+        self.assertEqual(listing.returncode, 0)
+        self.assertIn("dolphin", listing.stdout.split())
+
+    def test_the_named_emulator_is_reported_even_without_gaps(self):
+        proc = self._run("--emulator", "dolphin")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("files in profile", proc.stdout)
+        self.assertIn("across dolphin", proc.stdout)
+        self.assertNotIn("all emulators", proc.stdout)
+
+    def test_an_emulator_the_platform_does_not_run_is_refused(self):
+        proc = self._run("--emulator", "dolphin", "--platform", "misterfpga")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("not run by misterfpga", proc.stderr)
+
+
 class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):
     """verify exited 0 with a required file missing on an md5 platform, so
     the pipeline printed "verify OK" over a pack the frontend rejects."""

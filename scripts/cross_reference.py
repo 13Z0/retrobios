@@ -23,19 +23,22 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
-    require_platform,
+    ProfileSelectionError,
     _norm_system_id,
     directory_members,
     get_mame_clone_map,
+    list_emulator_profiles,
     list_registered_platforms,
     load_database,
     load_emulator_profiles,
     load_platform_config,
     name_match_size_ok,
     parse_md5_list,
+    require_platform,
     require_yaml,
     resolve_local_file,
     runs_standalone,
+    select_emulator_profiles,
 )
 from validation import declaration_settles, outside_gap_scope
 
@@ -688,11 +691,15 @@ def cross_reference(
     return report
 
 
-def print_report(report: dict, scope: str = "all emulators") -> None:
+def print_report(
+    report: dict, scope: str = "all emulators", show_clean: bool = False
+) -> None:
     """Print a human-readable gap analysis report.
 
     `scope` names what the totals cover: under --platform, the emulators
-    that platform runs, not all of them.
+    that platform runs, not all of them. `show_clean` lists an emulator with
+    nothing undeclared too: asked about by name, it was the whole answer and
+    the report used to leave it out.
     """
     print("Emulator vs Platform Gap Analysis")
     print("=" * 60)
@@ -703,7 +710,7 @@ def print_report(report: dict, scope: str = "all emulators") -> None:
 
     for emu_name, data in sorted(report.items()):
         gaps = data["gaps"]
-        if gaps == 0:
+        if gaps == 0 and not show_clean:
             continue
 
         parts = []
@@ -758,12 +765,32 @@ def main() -> None:
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument("--json", action="store_true", help="JSON output")
+    parser.add_argument(
+        "--list-emulators", action="store_true", help="List available emulators"
+    )
     args = parser.parse_args()
+    if args.list_emulators:
+        ignored = [flag for flag, on in (
+            ("--emulator", args.emulator), ("--platform", args.platform),
+            ("--target", args.target), ("--json", args.json),
+        ) if on]
+        if ignored:
+            parser.error(f"--list-emulators does not apply {', '.join(ignored)}")
+        list_emulator_profiles(args.emulators_dir)
+        return
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
 
     profiles = load_emulator_profiles(args.emulators_dir)
     if args.emulator:
+        # A typo answered "No emulator profiles found" with exit 0.
+        try:
+            select_emulator_profiles(
+                [args.emulator],
+                load_emulator_profiles(args.emulators_dir, skip_aliases=False),
+            )
+        except ProfileSelectionError as exc:
+            raise SystemExit(f"ERROR: {exc}") from None
         profiles = {k: v for k, v in profiles.items() if k == args.emulator}
 
     if args.target and not args.platform:
@@ -784,7 +811,9 @@ def main() -> None:
         standalone_cores = set(map(str, config.get("standalone_cores", [])))
 
     if not profiles:
-        print("No emulator profiles found.", file=sys.stderr)
+        if args.emulator:
+            raise SystemExit(f"ERROR: {args.emulator} is not run by {args.platform}")
+        print(f"{args.platform or 'The tree'} runs no profiled emulator.", file=sys.stderr)
         return
 
     selected = [args.platform] if args.platform else None
@@ -800,10 +829,13 @@ def main() -> None:
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        print_report(
-            report,
-            f"the emulators {args.platform} runs" if args.platform else "all emulators",
-        )
+        if args.emulator:
+            scope = args.emulator
+        elif args.platform:
+            scope = f"the emulators {args.platform} runs"
+        else:
+            scope = "all emulators"
+        print_report(report, scope, show_clean=bool(args.emulator))
 
 
 if __name__ == "__main__":
