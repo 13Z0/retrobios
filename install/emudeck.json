@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-18T00:39:54Z",
+  "generated": "2026-10-18T06:45:25Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -1148,7 +1148,7 @@
       "sha1": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "sha256": "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723",
       "size": 8192,
-      "repo_path": "bios/Sony/PlayStation 2/ROM2.BIN",
+      "repo_path": "bios/Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2",
       "cores": null,
       "systems": [
         "sony-playstation-2"

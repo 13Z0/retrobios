@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T05:34:25Z",
+  "generated_at": "2026-10-18T06:45:25Z",
   "total_files": 19075,
   "total_size": 17567770846,
   "bios_dir": "bios",
@@ -191531,16 +191531,6 @@
       "crc32": "b5d7481e",
       "adler32": "fbffdd41"
     },
-    "1bae895fbdd658cfb56c53cc2139282cc1e778de": {
-      "path": "bios/Sony/PlayStation 2/ROM2.BIN",
-      "name": "ROM2.BIN",
-      "size": 8192,
-      "sha1": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
-      "md5": "b406d05922dac2eaf3c2e68157b1b468",
-      "sha256": "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723",
-      "crc32": "b5fad94a",
-      "adler32": "d9572b32"
-    },
     "3f8affbe07024ccd2f5b8374072d0928c583a862": {
       "path": "bios/Sony/PlayStation 2/SCPH-10000.MEC",
       "name": "SCPH-10000.MEC",
@@ -191717,6 +191707,16 @@
       "sha256": "b86fbccaa111ca7497630337dafea7da7320fc4f924ada22b92145ef806e7b42",
       "crc32": "0e8797c0",
       "adler32": "5a508f48"
+    },
+    "1bae895fbdd658cfb56c53cc2139282cc1e778de": {
+      "path": "bios/Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2",
+      "name": "SCPH-70004_BIOS_V12_EUR_200.ROM2",
+      "size": 8192,
+      "sha1": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
+      "md5": "b406d05922dac2eaf3c2e68157b1b468",
+      "sha256": "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723",
+      "crc32": "b5fad94a",
+      "adler32": "d9572b32"
     },
     "06ccc54cdbe8b017a629155ccb66310cba9c4720": {
       "path": "bios/Sony/PlayStation 2/SCPH-70006_BIOS_V12_HK_200.NVM",
@@ -214667,7 +214667,6 @@
       "79b4880006769a1af9b0a6c7302cc18d": "747e36b086aceceb300c72c0d1bbab38e2920e63",
       "9a9e8ed7668e6adfc8f7766c08ab9cd0": "adb4dbb7feb8247811506a38896ddcb789c4b477",
       "6a42e113ffab12c06a82db00147311fd": "b22389650f6c0a1e276b48213fed8a9c1c6476ce",
-      "b406d05922dac2eaf3c2e68157b1b468": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "3faf7c064a4984f53e2ef5e80ed543bc": "3f8affbe07024ccd2f5b8374072d0928c583a862",
       "acf4730ceb38ac9d8c7d8e21f2614600": "aea061e6e263fdcc1c4fdbd68553ef78dae74263",
       "28922c703cc7d2cf856f177f2985b3a9": "8fa040852d4b8688f0c84bcfffc65eb208f2b432",
@@ -214680,6 +214679,7 @@
       "dc752f160044f2ed5fc1f4964db2a095": "434bc0b4eb4827da0773ec0795aadc5162569a07",
       "9feb1fdeadd6232a13b95e60b34ccef9": "ec0121bb8e2a209044309780d2efc2559c9a0ef1",
       "82dc50fa18e636850f557c4ea66c7bfd": "cc44355ded232a2ba5309bb24d4cd55af08696b2",
+      "b406d05922dac2eaf3c2e68157b1b468": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "bc6bb12cd349c0d3dd96f3412d74b60b": "06ccc54cdbe8b017a629155ccb66310cba9c4720",
       "7c5bfa5137a6f1631549557d4ace33e5": "cce6fac0f7e682ad167e1e828b2d53192c3d5051",
       "bd41c04a80e9cbef0bab382b1c43be4c": "6611151e8f599230cdf19a17318e7e5ddc781961",
@@ -226025,8 +226025,7 @@
         "aea7a4c0c7ffe1f212f7b9faecfd728862ac6904"
       ],
       "ROM2.BIN": [
-        "5d5ab4313a2d0effe7572bb129193b64cab002c1",
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
+        "5d5ab4313a2d0effe7572bb129193b64cab002c1"
       ],
       "campaign.json": [
         "848db80f017d0e638aeb7f8f484222cc54343f77",
@@ -264087,6 +264086,9 @@
       "SCPH-70004.ROM1": [
         "cc44355ded232a2ba5309bb24d4cd55af08696b2"
       ],
+      "SCPH-70004_BIOS_V12_EUR_200.ROM2": [
+        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
+      ],
       "SCPH-70006_BIOS_V12_HK_200.NVM": [
         "06ccc54cdbe8b017a629155ccb66310cba9c4720"
       ],
@@ -268833,9 +268835,6 @@
       "SCPH-70004_BIOS_V12_EUR_200.ROM1": [
         "cc44355ded232a2ba5309bb24d4cd55af08696b2"
       ],
-      "SCPH-70004_BIOS_V12_EUR_200.ROM2": [
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
-      ],
       "SCPH-90006_BIOS_VX_HK _230.ROM2": [
         "b96cf94772f01b8434038285896467884a84b0c2"
       ],
@@ -271011,6 +271010,9 @@
       ],
       "TRIO64 (Ver. 1.5-07) [VGA] (S3 Incorporated).bin": [
         "a308b15f93da34961c0141ec95b98c211557e2d5"
+      ],
+      "ROM2_ST.BIN": [
+        "5d5ab4313a2d0effe7572bb129193b64cab002c1"
       ],
       "mt32_ctrl_1_04.rom": [
         "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
@@ -290649,7 +290651,6 @@
       "cecc5e2d": "747e36b086aceceb300c72c0d1bbab38e2920e63",
       "6932e64c": "adb4dbb7feb8247811506a38896ddcb789c4b477",
       "b5d7481e": "b22389650f6c0a1e276b48213fed8a9c1c6476ce",
-      "b5fad94a": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "054a6ec2": "3f8affbe07024ccd2f5b8374072d0928c583a862",
       "b7ef81a9": "aea061e6e263fdcc1c4fdbd68553ef78dae74263",
       "9386a740": "8fa040852d4b8688f0c84bcfffc65eb208f2b432",
@@ -290662,6 +290663,7 @@
       "6f8e3c29": "434bc0b4eb4827da0773ec0795aadc5162569a07",
       "bf3cbc65": "ec0121bb8e2a209044309780d2efc2559c9a0ef1",
       "0e8797c0": "cc44355ded232a2ba5309bb24d4cd55af08696b2",
+      "b5fad94a": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "df95b3e3": "06ccc54cdbe8b017a629155ccb66310cba9c4720",
       "92aa71a2": "cce6fac0f7e682ad167e1e828b2d53192c3d5051",
       "c5dd92d4": "6611151e8f599230cdf19a17318e7e5ddc781961",
@@ -309726,7 +309728,6 @@
       "98da02e0b2d264a438b4c3a918dd533641dcd9363e902413d1f424b0dbd2deb9": "747e36b086aceceb300c72c0d1bbab38e2920e63",
       "f7c4944e3001e3849cdead743e200e009d4d07bd5afb20fb937a7b201895f713": "adb4dbb7feb8247811506a38896ddcb789c4b477",
       "fe469d080984767b32b45dd4f26f58680470003c4935d78e57b21ed4d2061d88": "b22389650f6c0a1e276b48213fed8a9c1c6476ce",
-      "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "fbbfc6c156266ac7e9afb37f0cc53fb78fadf2f09f580e56b2da57e6539e463b": "3f8affbe07024ccd2f5b8374072d0928c583a862",
       "c4dad3b5c6ad58bce70a47fc332602880f041c0338ac6be89061c928f6919ab1": "aea061e6e263fdcc1c4fdbd68553ef78dae74263",
       "ee7ae4cc152588b7da1dab17494a321ceafafaf799769baea4e8a28afa5044b1": "8fa040852d4b8688f0c84bcfffc65eb208f2b432",
@@ -309739,6 +309740,7 @@
       "d6653f4e93be2f6f9e9d690a934f26cf0f6ad4e348b69f41ef736732c3a6685b": "434bc0b4eb4827da0773ec0795aadc5162569a07",
       "e5bcd5925c1f22de48d49c3895dd421d167faddc033aac628f5facfba90ceef3": "ec0121bb8e2a209044309780d2efc2559c9a0ef1",
       "b86fbccaa111ca7497630337dafea7da7320fc4f924ada22b92145ef806e7b42": "cc44355ded232a2ba5309bb24d4cd55af08696b2",
+      "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
       "48ea5461a794fbc366798776e1dd5b734a25d0f140d75c23b642d99e48e2b76f": "06ccc54cdbe8b017a629155ccb66310cba9c4720",
       "d6da9154a9954cafd9d3df44609236ba86c197a0b7d75380f952c4cb910b67f6": "cce6fac0f7e682ad167e1e828b2d53192c3d5051",
       "b1704c7da37f03db017ad7576508c61b250d9ed4f3ceda8732ea91a3034f6cbf": "6611151e8f599230cdf19a17318e7e5ddc781961",
@@ -545725,12 +545727,6 @@
       "PlayStation 2/GameIndex.yaml": [
         "b22389650f6c0a1e276b48213fed8a9c1c6476ce"
       ],
-      "Sony/PlayStation 2/ROM2.BIN": [
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
-      ],
-      "PlayStation 2/ROM2.BIN": [
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
-      ],
       "Sony/PlayStation 2/SCPH-10000.MEC": [
         "3f8affbe07024ccd2f5b8374072d0928c583a862"
       ],
@@ -545802,6 +545798,12 @@
       ],
       "PlayStation 2/SCPH-70004.ROM1": [
         "cc44355ded232a2ba5309bb24d4cd55af08696b2"
+      ],
+      "Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2": [
+        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
+      ],
+      "PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2": [
+        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
       ],
       "Sony/PlayStation 2/SCPH-70006_BIOS_V12_HK_200.NVM": [
         "06ccc54cdbe8b017a629155ccb66310cba9c4720"
@@ -578590,12 +578592,6 @@
       ],
       "PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM1": [
         "cc44355ded232a2ba5309bb24d4cd55af08696b2"
-      ],
-      "Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2": [
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
-      ],
-      "PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2": [
-        "1bae895fbdd658cfb56c53cc2139282cc1e778de"
       ],
       "Sony/PlayStation 2/SCPH-90006_BIOS_VX_HK _230.ROM2": [
         "b96cf94772f01b8434038285896467884a84b0c2"
