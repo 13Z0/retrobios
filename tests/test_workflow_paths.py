@@ -84,6 +84,12 @@ class DeploySiteTriggers(unittest.TestCase):
             if not any(fnmatch.fnmatch(path, p.replace("**", "*")) for p in patterns)
         )
         self.assertEqual(uncovered, [])
+        # And no script the build no longer reaches: generate_pack.py and six
+        # others stayed listed after the site stopped importing the builder,
+        # and a push touching only them rebuilt the site for nothing.
+        listed = {p for p in patterns if p.startswith("scripts/") and p.endswith(".py")}
+        self.assertEqual(sorted(listed - closure(entry_points)), [])
+        self.assertNotIn("tests/**", patterns)
 
 
 class DocumentedSteps(unittest.TestCase):
