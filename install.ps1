@@ -33,7 +33,14 @@ try {
                 [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
         }
         $temporary = Join-Path ([IO.Path]::GetTempPath()) ("retrobios-install-{0}.py" -f [Guid]::NewGuid())
-        Invoke-WebRequest -Uri $uri -OutFile $temporary -UseBasicParsing
+        try {
+            Invoke-WebRequest -Uri $uri -OutFile $temporary -UseBasicParsing
+        } catch {
+            # The raw WebException read as a crash and named no next step.
+            throw ("The installer could not be downloaded from {0}: {1} " +
+                "Check the network connection and any proxy, then run the same command again. " +
+                "Nothing was run and nothing was written.") -f $url, $_.Exception.Message
+        }
         if ((Get-Item -LiteralPath $temporary).Length -gt $maximumInstallerBytes) {
             throw "Downloaded installer exceeds the size limit."
         }
@@ -54,17 +61,26 @@ try {
             $python = Get-Command python -ErrorAction SilentlyContinue
         }
     }
+    $needPython = "Python 3.8 or newer is required. Install it with " +
+        "'winget install Python.Python.3.12' or from https://www.python.org/downloads/ " +
+        "(tick 'Add python.exe to PATH'), then open a new PowerShell window and run this command again."
     if (-not $python) {
-        throw "Python 3.8 or newer is required."
+        throw $needPython
     }
     & $python.Source @launcher -c "import sys; raise SystemExit(sys.version_info < (3, 8))"
-    if ($LASTEXITCODE -ne 0) { throw "Python 3.8 or newer is required." }
+    if ($LASTEXITCODE -ne 0) { throw $needPython }
     & $python.Source @launcher $installer @InstallerArguments
     # The installer has already said what happened: its status is passed on
     # as it is (1 for files left to fetch under --check, 2 when nothing was
     # installed, 130 on Ctrl+C), not turned into a red exception that reads
     # as a crash and flattens every code to one.
     $installerExit = $LASTEXITCODE
+}
+catch {
+    # One line saying what failed and what to do, rather than the red
+    # exception block PowerShell prints for an uncaught throw.
+    [Console]::Error.WriteLine("Error: " + $_.Exception.Message)
+    $installerExit = 1
 }
 finally {
     if ($temporary -and (Test-Path -LiteralPath $temporary)) {

@@ -50,14 +50,28 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
   fi
   TEMP_DIRECTORY=$(mktemp -d)
   TEMP_INSTALLER="$TEMP_DIRECTORY/install.py"
+  # Quiet but for the error line: a progress table followed by
+  # "curl: (6) ..." and curl's own exit code told nobody what failed.
   if command -v curl >/dev/null 2>&1; then
-    curl --fail --location --proto '=https' --tlsv1.2 \
-      "$install_url" --output "$TEMP_INSTALLER"
+    fetch() {
+      curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 \
+        --connect-timeout 30 --retry 2 "$install_url" --output "$TEMP_INSTALLER"
+    }
   elif command -v wget >/dev/null 2>&1; then
-    wget --https-only --output-document="$TEMP_INSTALLER" "$install_url"
+    fetch() {
+      wget --quiet --https-only --timeout=30 --tries=3 \
+        --output-document="$TEMP_INSTALLER" "$install_url"
+    }
   else
     echo "Error: curl or wget is required to download the installer." >&2
     echo "  On Debian or Ubuntu: sudo apt install curl" >&2
+    exit 1
+  fi
+  if ! fetch_error=$(fetch 2>&1); then
+    echo "Error: the installer could not be downloaded from $install_url" >&2
+    echo "  $(printf '%s\n' "$fetch_error" | tail -n 1)" >&2
+    echo "  Check the network connection, and HTTPS_PROXY if this network needs a proxy," >&2
+    echo "  then run the same command again. Nothing was run and nothing was written." >&2
     exit 1
   fi
   actual_size=$(wc -c < "$TEMP_INSTALLER" | tr -d ' ')

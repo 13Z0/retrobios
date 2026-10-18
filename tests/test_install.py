@@ -1895,6 +1895,41 @@ class TestAvailablePlatforms(unittest.TestCase):
             self.assertTrue(marker.is_file(), "piped bootstrap did not download install.py")
             self.assertIn("retroarch", proc.stdout)
 
+    def test_a_failed_download_says_so_in_one_message(self):
+        """Offline, the one-liner printed curl's progress table and
+        "curl: (6) ...", then exited 6, a code the table does not list."""
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            (fake_bin / "curl").write_text(
+                "#!/bin/sh\necho 'curl: (6) Could not resolve host: x' >&2\nexit 6\n",
+                encoding="utf-8",
+            )
+            (fake_bin / "curl").chmod(0o755)
+            env = os.environ.copy()
+            env.update(
+                PATH=f"{fake_bin}{os.pathsep}{env['PATH']}",
+                TMPDIR=str(root),
+                RETROBIOS_INSTALL_URL="https://example.invalid/install.py",
+            )
+            proc = subprocess.run(
+                ["sh", "-s"], cwd=root, env=env,
+                input=(REPO_ROOT / "install.sh").read_text(encoding="utf-8"),
+                capture_output=True, text=True, timeout=30, check=False,
+            )
+        self.assertEqual(proc.returncode, 1, proc.stderr)
+        self.assertIn("could not be downloaded", proc.stderr)
+        self.assertIn("Nothing was run and nothing was written", proc.stderr)
+        self.assertEqual(proc.stderr.count("curl: (6)"), 1)
+
+    def test_powershell_turns_a_failure_into_one_line(self):
+        source = (REPO_ROOT / "install.ps1").read_text(encoding="utf-8")
+        self.assertIn('[Console]::Error.WriteLine("Error: "', source)
+        self.assertIn("winget install Python", source)
+
     @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
     def test_piped_one_liner_hands_the_terminal_to_the_installer(self):
         """curl | sh gives the installer the script as stdin, so isatty()

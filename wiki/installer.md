@@ -420,7 +420,7 @@ followed.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one) |
 | `130` | stopped with Ctrl+C; run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list \| head`) |
