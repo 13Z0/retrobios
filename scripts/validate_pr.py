@@ -109,9 +109,18 @@ class ValidationResult:
         return "\n".join(lines)
 
 
-def load_platform_hashes(platforms_dir: str) -> dict:
-    """Load all known hashes from platform configs."""
-    known = {"sha1": set(), "md5": set(), "names": set()}
+def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
+    """Load all known hashes from platform configs.
+
+    With the database, `folders` maps each declared hash to the
+    bios/<Manufacturer>/<Console>/ folders the collection files its system
+    under, read from the other files of that system it holds.
+    """
+    known = {"sha1": set(), "md5": set(), "names": set(), "folders": {}}
+    systems_of: dict[str, set[str]] = {}
+    folders_of: dict[str, dict[str, int]] = {}
+    files = (db or {}).get("files", {})
+    by_md5 = (db or {}).get("indexes", {}).get("by_md5", {})
 
     if not os.path.isdir(platforms_dir) or yaml is None:
         return known
@@ -127,16 +136,37 @@ def load_platform_hashes(platforms_dir: str) -> dict:
             print(f"WARNING: {name}: {exc}", file=sys.stderr)
             continue
 
-        for system in config.get("systems", {}).values():
+        for system_id, system in config.get("systems", {}).items():
             for file_entry in system.get("files", []):
                 sha1 = file_entry.get("sha1")
-                for value in sha1 if isinstance(sha1, list) else [sha1]:
-                    if value:
-                        known["sha1"].add(str(value).lower())
-                known["md5"].update(parse_md5_list(file_entry.get("md5")))
+                sha1s = [str(v).lower() for v in (sha1 if isinstance(sha1, list) else [sha1]) if v]
+                md5s = parse_md5_list(file_entry.get("md5"))
+                known["sha1"].update(sha1s)
+                known["md5"].update(md5s)
                 if "name" in file_entry:
                     known["names"].add(file_entry["name"])
+                for value in (*sha1s, *md5s):
+                    systems_of.setdefault(value, set()).add(system_id)
+                held = next((s for s in sha1s if s in files), None) or next(
+                    (by_md5[m] for m in md5s if m in by_md5), None
+                )
+                parts = str(files.get(held, {}).get("path", "")).split("/")
+                if len(parts) >= 4 and parts[0] == "bios" and not parts[2].startswith("."):
+                    folder = "/".join(parts[:3]) + "/"
+                    counts = folders_of.setdefault(system_id, {})
+                    counts[folder] = counts.get(folder, 0) + 1
 
+    # A system whose files sit under several manufacturers (arcade sets,
+    # computers sharing ROM chips) names no single home: only a system
+    # filed under one manufacturer says where a newcomer belongs.
+    for value, systems in systems_of.items():
+        folders: set[str] = set()
+        for system_id in systems:
+            held_in = folders_of.get(system_id, {})
+            if len({folder.split("/")[1] for folder in held_in}) == 1:
+                folders.update(held_in)
+        if folders:
+            known["folders"][value] = folders
     return known
 
 
@@ -257,7 +287,17 @@ def validate_file(
     normalized = os.path.normpath(filepath)
     if normalized.startswith("bios" + os.sep):
         parts = normalized.split(os.sep)
-        if len(parts) >= 4:
+        expected = (platform_hashes.get("folders", {}).get(result.sha1)
+                    or platform_hashes.get("folders", {}).get(result.md5) or set())
+        here = f"bios/{parts[1]}/{parts[2]}/" if len(parts) >= 4 else ""
+        makers = {folder.split("/")[1] for folder in expected}
+        if expected and (len(parts) < 4 or parts[1] not in makers):
+            # Depth alone passed a PS1 BIOS filed under bios/Nintendo/Game Boy/.
+            result.add_warning(
+                "Placed under " + (here or "the bios/ root") + "; the other files of "
+                "its system are in " + " or ".join(f"`{f}`" for f in sorted(expected))
+            )
+        elif len(parts) >= 4:
             result.add_check(True, f"Correct placement: bios/{parts[1]}/{parts[2]}/")
         else:
             result.add_warning("File should be in bios/Manufacturer/Console/ structure")
@@ -372,7 +412,7 @@ def main() -> None:
         return
 
     db = _load_database_if_any(args.db)
-    platform_hashes = load_platform_hashes(args.platforms_dir)
+    platform_hashes = load_platform_hashes(args.platforms_dir, db)
     profile_hashes = load_profile_hashes(args.emulators_dir)
 
     results = []

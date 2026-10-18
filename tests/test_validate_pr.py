@@ -195,6 +195,45 @@ class HashRecognition(_Fixture):
         self.assertIn("Already in the database at this path", markdown)
 
 
+class PlacementBySystem(_Fixture):
+    """Depth alone passed a PS1 BIOS filed under bios/Nintendo/Game Boy/:
+    a declared hash names its system, and the files of that system already
+    held name its folder."""
+
+    def _known(self, sha1: str) -> dict:
+        return {"sha1": {sha1}, "md5": set(), "names": set(),
+                "folders": {sha1: {"bios/Sony/PlayStation/"}}}
+
+    def test_a_file_under_another_maker_is_told_where_its_system_lives(self):
+        rel = self._bios_file("bios/Nintendo/Game Boy/scph.bin")
+        probe = validate_pr.validate_file(rel, None, EMPTY_HASHES)
+        markdown = validate_pr.validate_file(rel, None, self._known(probe.sha1)).to_markdown()
+        self.assertIn("bios/Sony/PlayStation/", markdown)
+        self.assertNotIn("Correct placement", markdown)
+
+    def test_the_folder_of_its_system_passes(self):
+        rel = self._bios_file("bios/Sony/PlayStation/scph.bin")
+        probe = validate_pr.validate_file(rel, None, EMPTY_HASHES)
+        markdown = validate_pr.validate_file(rel, None, self._known(probe.sha1)).to_markdown()
+        self.assertIn("Correct placement: bios/Sony/PlayStation/", markdown)
+
+    def test_systems_spread_over_makers_name_no_home(self):
+        platforms = self.tmp / "platforms"
+        platforms.mkdir()
+        (platforms / "_registry.yml").write_text(
+            "platforms:\n  p:\n    config: p.yml\n    status: active\n", encoding="utf-8")
+        (platforms / "p.yml").write_text(
+            "platform: P\nsystems:\n  arcade:\n    files:\n"
+            "      - {name: a.zip, sha1: aaaa}\n      - {name: b.zip, sha1: bbbb}\n",
+            encoding="utf-8",
+        )
+        db = {"files": {"aaaa": {"path": "bios/Arcade/MAME/a.zip"},
+                        "bbbb": {"path": "bios/Apple/Apple II/b.zip"}},
+              "indexes": {"by_md5": {}}}
+        known = validate_pr.load_platform_hashes(str(platforms), db)
+        self.assertEqual(known["folders"], {})
+
+
 class Placement(_Fixture):
     def test_manufacturer_and_console_directories_are_accepted(self):
         rel = self._bios_file("bios/Sega/Saturn/sega_101.bin")
@@ -235,7 +274,7 @@ class Reporting(_Fixture):
 class PlatformHashLoading(_Fixture):
     def test_missing_directory_yields_empty_sets(self):
         known = validate_pr.load_platform_hashes(str(self.tmp / "absent"))
-        self.assertEqual(known, {"sha1": set(), "md5": set(), "names": set()})
+        self.assertEqual(known, {"sha1": set(), "md5": set(), "names": set(), "folders": {}})
 
     def test_declared_hashes_and_names_are_collected(self):
         platforms = self.tmp / "platforms"
