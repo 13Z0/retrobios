@@ -36,7 +36,10 @@ def _quote(name: str, quoted: frozenset[str] = frozenset()) -> str:
     return f'"{name}"' if name in quoted or any(c in name for c in ' ()') else name
 
 
-_ROM_NAME = re.compile(r'^\trom \( name ("[^"]+"|\S+)')
+# libretro indents most lines with a tab and 39 with four spaces (the Amiga
+# kickstarts, the TI-83). Read with a tab only, those lines left the base and
+# came back re-rendered, re-indented and moved to the end of their section.
+_ROM_NAME = re.compile(r'^(\s+)rom \( name ("[^"]+"|\S+)')
 
 
 def _sections(original: str) -> list[tuple[str, list[str]]]:
@@ -46,9 +49,10 @@ def _sections(original: str) -> list[tuple[str, list[str]]]:
         return []
     sections: list[tuple[str, list[str]]] = []
     for line in body.splitlines():
-        if line.startswith('\tcomment "') and line != '\tcomment "System"':
-            sections.append((line[len('\tcomment "'):].rstrip('"'), []))
-        elif line.startswith("\trom (") and sections:
+        stripped = line.lstrip()
+        if stripped.startswith('comment "') and stripped != 'comment "System"':
+            sections.append((stripped[len('comment "'):].rstrip('"'), []))
+        elif stripped.startswith("rom (") and line != stripped and sections:
             sections[-1][1].append(line)
     return sections
 
@@ -180,7 +184,11 @@ class Exporter(BaseExporter):
             body = []
             for line in roms:
                 match = _ROM_NAME.match(line)
-                body.append(rendered.pop(match.group(1), line) if match else line)
+                if match and match.group(2) in rendered:
+                    # The values are ours, the indentation stays libretro's.
+                    body.append(match.group(1) + rendered.pop(match.group(2)).lstrip("\t"))
+                else:
+                    body.append(line)
             body.extend(rendered.values())
             section(comment, body)
         for comment in sorted(ours):

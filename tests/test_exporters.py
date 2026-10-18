@@ -782,6 +782,37 @@ class RommExport(unittest.TestCase):
         self.assertTrue(all(k.startswith("psx:") for k in data))
 
 
+class SystemDatKeepsSpaceIndentedLines(unittest.TestCase):
+    """libretro indents 39 rom lines with four spaces. Read with a tab only,
+    they left the base and came back last in their section, re-indented."""
+
+    def test_order_and_indentation_survive(self):
+        amiga = "Commodore - Amiga"
+        a, b = "1" * 32, "2" * 32
+        original = (
+            'clrmamepro (\n\tname "System"\n)\n\ngame (\n\tname "System"\n'
+            '\tcomment "System"\n\n'
+            f'\tcomment "{amiga}"\n'
+            f"    rom ( name kick33180.A500 size 262144 md5 {a} )\n"
+            f"\trom ( name kick34005.A500 size 262144 md5 {b} )\n"
+            ")\n"
+        )
+        scraped = {"systems": {"commodore-amiga": {"native_id": amiga, "files": [
+            {"name": "kick33180.A500", "destination": "kick33180.A500",
+             "native_system": amiga, "md5": a, "size": 262144},
+            {"name": "kick34005.A500", "destination": "kick34005.A500",
+             "native_system": amiga, "md5": b, "size": 262144},
+        ]}}}
+        systems, report = build_native_model({"systems": {}}, scraped)
+        produced = discover_exporters()["retroarch"]().render(
+            systems, report, {"System.dat": original}, None
+        )["System.dat"]
+        body = produced[produced.index(f'comment "{amiga}"'):].splitlines()[1:3]
+        self.assertTrue(body[0].startswith("    rom ( name kick33180.A500"), body)
+        self.assertTrue(body[1].startswith("\trom ( name kick34005.A500"), body)
+        self.assertEqual(produced.count("kick33180.A500"), 1)
+
+
 class RommSizeIsNeverNone(unittest.TestCase):
     """size() is None where the truth contradicts RomM's hash without a size
     or names several sizes; str(None) went out as "None", validate() passed
