@@ -53,6 +53,7 @@ from common import (
     list_emulator_profiles,
     list_platform_system_ids,
     canonical_target_name,
+    platform_files_target,
     list_registered_platforms,
     list_system_ids,
     load_data_dir_registry,
@@ -227,9 +228,11 @@ def _platform_target(
     Named once for the whole run, a target two platforms file differently
     (rpi4: Batocera's bcm2711, Recalbox's rpi4_64) kept the typed name under
     --all and took the platform's own under --platform, so --verify-packs
-    looked for a pack the --all build had named otherwise.
+    looked for a pack the --all build had named otherwise. A platform that
+    does not file the target is packed whole under --all, and its name
+    claims no narrowing: BizHawk_..._Switch_BIOS_Pack.zip was the full pack.
     """
-    if not target:
+    if not target or not platform_files_target(platform_name, target, platforms_dir):
         return None
     return canonical_target_name([platform_name], target, platforms_dir)
 

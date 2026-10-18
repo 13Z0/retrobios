@@ -511,6 +511,17 @@ def _target_alias_index(targets: dict, overrides: dict) -> dict[str, str]:
     return alias_index
 
 
+def platform_files_target(platform: str, target: str, platforms_dir: str = "platforms") -> bool:
+    """Whether the platform's targets file knows this target, by any alias."""
+    targets_dir = os.path.join(platforms_dir, "targets")
+    target_file = os.path.join(targets_dir, f"{platform}.yml")
+    if not os.path.exists(target_file):
+        return False
+    with open(target_file) as f:
+        targets = (yaml_load(f) or {}).get("targets", {})
+    return target in _target_alias_index(targets, _target_overrides(platform, targets_dir))
+
+
 def canonical_target_name(
     platforms: list[str], target: str, platforms_dir: str = "platforms"
 ) -> str:

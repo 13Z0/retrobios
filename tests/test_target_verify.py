@@ -35,5 +35,21 @@ class CheckReadsTheTargetLikeTheBuild(unittest.TestCase):
         self.assertTrue(cores)
 
 
+class ANameClaimsOnlyANarrowingThatHappened(unittest.TestCase):
+    """--all --target switch packed BizHawk and MiSTer whole, and named them
+    BizHawk_..._Switch_BIOS_Pack.zip with a README saying 'cores available
+    on switch'."""
+
+    def test_a_platform_without_the_target_is_named_plainly(self):
+        from generate_pack import _narrowings, _platform_target
+
+        platforms = str(REPO_ROOT / "platforms")
+        self.assertIsNone(_platform_target("bizhawk", "switch", platforms))
+        self.assertEqual(_narrowings("full", None, None, False, False), [])
+        self.assertEqual(
+            _platform_target("retroarch", "nx", platforms), "nintendo-switch"
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
