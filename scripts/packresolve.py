@@ -124,8 +124,9 @@ def lookup_hashes(
     bios_dir: str,
     emulators_dir: str,
     platforms_dir: str,
-) -> None:
-    """Print diagnostic info for each hash."""
+) -> int:
+    """Print diagnostic info for each hash; return how many were not found."""
+    missing = 0
     files_db = db.get("files", {})
     by_md5 = db.get("indexes", {}).get("by_md5", {})
     by_crc32 = db.get("indexes", {}).get("by_crc32", {})
@@ -142,6 +143,7 @@ def lookup_hashes(
         if not sha1 or sha1 not in files_db:
             print(f"\n{hash_type.upper()}: {hash_val}")
             print("  NOT FOUND in database")
+            missing += 1
             continue
 
         entry = files_db[sha1]
@@ -174,6 +176,9 @@ def lookup_hashes(
             except (KeyError, OSError):
                 pass
         print(f"  In repo: {'YES' if in_repo else 'NO'}")
+    if missing:
+        print(f"\n{missing} of {len(hashes)} hash(es) not in the database")
+    return missing
 
 def resolve_file(
     file_entry: dict,

@@ -4210,5 +4210,23 @@ class EmuDeckRunsItsEmulatorsStandalone(unittest.TestCase):
         self.assertIn('"standalone_cores": list(cores)', source)
 
 
+
+class DocumentedHashLookupsFindTheirFile(unittest.TestCase):
+    """The --from-md5 example was a test fixture hash: copied from the docs,
+    it answered NOT FOUND, which then exited 0."""
+
+    def test_every_documented_lookup_is_in_the_database(self):
+        db = json.loads((ROOT / "database.json").read_text(encoding="utf-8"))
+        by_md5 = db["indexes"]["by_md5"]
+        found = 0
+        for page in sorted((ROOT / "wiki").glob("*.md")):
+            text = page.read_text(encoding="utf-8")
+            for md5 in re.findall(r"--from-md5 ([0-9a-f]{32})\b", text):
+                found += 1
+                with self.subTest(page=page.name, md5=md5):
+                    self.assertIn(md5, by_md5)
+        self.assertGreater(found, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

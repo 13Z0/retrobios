@@ -3033,9 +3033,11 @@ def _main(held: contextlib.ExitStack) -> None:
             sys.exit(1)
         db = load_database(args.db)
         if not args.platform and not args.emulator:
-            lookup_hashes(
+            # A lookup that found nothing is an answer a script must see.
+            if lookup_hashes(
                 hashes, db, args.bios_dir, args.emulators_dir, args.platforms_dir
-            )
+            ):
+                sys.exit(1)
             return
         zip_contents = build_zip_contents_index(db)
         with _pack_output_lock(args.output_dir):

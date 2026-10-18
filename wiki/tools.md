@@ -136,7 +136,7 @@ python scripts/generate_pack.py --platform retroarch --split
 python scripts/generate_pack.py --platform retroarch --split --group-by manufacturer
 
 # Hash-based lookup and custom packs
-python scripts/generate_pack.py --from-md5 d8f1206299c48946e6ec5ef96d014eaa
+python scripts/generate_pack.py --from-md5 490f666e1afb15b7362b406ed1cea246
 python scripts/generate_pack.py --platform batocera --from-md5-file missing.txt
 python scripts/generate_pack.py --platform retroarch --list-systems
 
@@ -190,7 +190,9 @@ would have loaded.
 - `--split`: generate one ZIP per system instead of one big pack
 - `--split --group-by manufacturer`: group split packs by manufacturer (Sony, Nintendo, Sega...)
 - `--from-md5`: look up a hash in the database, or build a custom pack with `--platform`/`--emulator`
-- `--from-md5-file`: same, reading hashes from a file (one per line, comments with #)
+- `--from-md5-file`: same, reading hashes from a file: one MD5, SHA-1 or CRC32
+  per line, alone or beside a file name as `md5sum` writes it, `#` for comments.
+  A lookup exits 1 when a hash is not in the database
 - `--target`: filter by hardware target (e.g. `switch`, `rpi4`, `x86_64`)
 - `--region`: ordered priority list, best first. Regions nest, a system with no
   regional split keeps everything, and a group with no candidate in any named

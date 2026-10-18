@@ -2635,11 +2635,12 @@ class TestE2E(unittest.TestCase):
         }
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            lookup_hashes([("md5", "md5abc")], db, "bios", "emulators", "platforms")
+            missing = lookup_hashes([("md5", "md5abc")], db, "bios", "emulators", "platforms")
         output = buf.getvalue()
         self.assertIn("test.bin", output)
         self.assertIn("sha1abc", output)
         self.assertIn("alt.bin", output)
+        self.assertEqual(missing, 0)
 
     def test_141_lookup_hashes_not_found(self):
         """lookup_hashes reports unknown hashes."""
@@ -2651,11 +2652,13 @@ class TestE2E(unittest.TestCase):
         db = {"files": {}, "indexes": {"by_md5": {}, "by_crc32": {}}}
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            lookup_hashes(
+            missing = lookup_hashes(
                 [("md5", "unknown123" + "0" * 22)], db, "bios", "emulators", "platforms"
             )
         output = buf.getvalue()
         self.assertIn("NOT FOUND", output)
+        # The CLI exited 0 on this, so a script read "found".
+        self.assertEqual(missing, 1)
 
     def test_142_from_md5_platform_pack(self):
         """--from-md5 with --platform generates correctly laid out ZIP."""

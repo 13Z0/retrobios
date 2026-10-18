@@ -9,10 +9,15 @@ Fine-grained control over pack generation, hardware filtering, truth analysis, a
 Look up a single MD5 in the database:
 
 ```bash
-python scripts/generate_pack.py --from-md5 d8f1206299c48946e6ec5ef96d014eaa
+python scripts/generate_pack.py --from-md5 490f666e1afb15b7362b406ed1cea246
 ```
 
-Build a pack containing only files matching hashes from a list (one MD5 per line, `#` for comments):
+It prints the file's name, hashes, path and whether the collection holds it,
+and exits 1 when a hash is not in the database, so a script can tell.
+
+Build a pack containing only files matching hashes from a list. Each line
+carries one hash (MD5, SHA-1 or CRC32), alone or beside a file name as
+`md5sum` writes it; `#` starts a comment:
 
 ```bash
 python scripts/generate_pack.py --platform batocera --from-md5-file missing.txt
