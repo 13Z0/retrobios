@@ -2250,7 +2250,19 @@ def _render_emulator_file(
     if fsha256:
         details.append(f"SHA256: {_hash_spans(fsha256)}")
     if fadler32:
-        details.append(f"Adler32: `{fadler32}`")
+        # Printed as the downloads spell a hash, one per code span: the list
+        # repr read `['0x66f334fe', ...]`. Dolphin hashes its DSP ROMs over
+        # byte-swapped 16-bit words, so the raw Adler-32 the downloads carry
+        # for the same file differs, and the card says which one it lists.
+        values = fadler32 if isinstance(fadler32, list) else [fadler32]
+        shown = ", ".join(f"`{str(v).lower().removeprefix('0x')}`" for v in values)
+        if f.get("adler32_byteswap"):
+            details.append(
+                f"Adler32 over the file's 16-bit words byte-swapped: {shown} "
+                "(the Adler-32 in the downloads is the file's own and differs)"
+            )
+        else:
+            details.append(f"Adler32: {shown}")
     if aliases:
         details.append(f"Aliases: {', '.join(f'`{a}`' for a in aliases)}")
     if priority is not None:

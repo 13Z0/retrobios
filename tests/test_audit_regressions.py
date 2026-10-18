@@ -4451,5 +4451,25 @@ class BundledFilesAreNotToSource(unittest.TestCase):
         self.assertEqual([row["status"] for row in rows], ["bundled"])
 
 
+
+class AdlerValuesReadLikeTheDownloads(unittest.TestCase):
+    """The Dolphin card read Adler32: `['0x66f334fe', '0xe789b5a5']`, a list
+    repr no download spells, and never said the values are taken over the
+    byte-swapped ROM, so the raw ea3734fe in files.csv matched neither."""
+
+    def test_values_and_the_swap_are_stated(self):
+        from scripts.generate_site import _render_emulator_file
+
+        entry = {"name": "dsp_rom.bin", "path": "dsp_rom.bin",
+                 "known_hash_adler32": ["0x66f334fe", "0xE789B5A5"],
+                 "adler32_byteswap": True}
+        text = "\n".join(_render_emulator_file(
+            entry, {"files": [entry]}, None, [entry], lambda f: True, "file-dsp",
+        ))
+        self.assertIn("`66f334fe`, `e789b5a5`", text)
+        self.assertIn("byte-swapped", text)
+        self.assertNotIn("['", text)
+
+
 if __name__ == "__main__":
     unittest.main()
