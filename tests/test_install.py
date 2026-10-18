@@ -1514,6 +1514,39 @@ class TestDestinationFollowsUserLinks(unittest.TestCase):
             install._destination_path(bios, "/etc/passwd")
 
 
+class TestDetectedPlatformPrompt(unittest.TestCase):
+    """With two platforms detected the menu had no quit entry, and q or any
+    wrong answer brought back a bare prompt."""
+
+    PLATFORMS = [("emudeck", Path("/e")), ("retroarch", Path("/r"))]
+
+    def _answer(self, *answers: str):
+        replies = iter(answers)
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(replies)), \
+                contextlib.redirect_stdout(out):
+            try:
+                result = install._prompt_platform_choice(self.PLATFORMS)
+            except SystemExit as exc:
+                result = exc
+        return result, out.getvalue()
+
+    def test_q_quits_and_the_menu_says_so(self):
+        result, out = self._answer("q")
+        self.assertIsInstance(result, SystemExit)
+        self.assertEqual(result.code, 0)
+        self.assertIn("q) quit", out)
+
+    def test_a_wrong_answer_names_the_choices(self):
+        result, out = self._answer("x", "2")
+        self.assertEqual(result, [self.PLATFORMS[1]])
+        self.assertIn("Type a number from 1 to 3, or q to quit.", out)
+
+    def test_all_installs_every_platform(self):
+        result, _ = self._answer("3")
+        self.assertEqual(result, self.PLATFORMS)
+
+
 class TestManualPlatformPrompt(unittest.TestCase):
     """With nothing detected, an interactive run asks instead of exiting."""
 
@@ -1542,6 +1575,14 @@ class TestManualPlatformPrompt(unittest.TestCase):
             with self.assertRaises(SystemExit) as raised:
                 install._prompt_manual_platform("linux")
         self.assertEqual(raised.exception.code, 0)
+
+    def test_a_wrong_answer_says_what_to_type(self):
+        answers = iter(["99", "1", ""])
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_manual_platform("linux")
+        self.assertIn("or q to quit", out.getvalue())
 
     def test_windows_hint_shows_the_one_liner_with_arguments(self):
         hint = "\n".join(install._manual_usage_hint("windows"))

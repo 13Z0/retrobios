@@ -2599,6 +2599,9 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
             plat = AVAILABLE_PLATFORMS[int(choice) - 1]
         elif choice in AVAILABLE_PLATFORMS:
             plat = choice
+        else:
+            print(f"  Type a number from 1 to {len(AVAILABLE_PLATFORMS)}, a platform name, "
+                  "or q to quit.")
     default_dest = _default_dest(os_type, plat)
     try:
         raw = input(f"BIOS directory [{default_dest}]: ").strip()
@@ -2652,26 +2655,24 @@ def _prompt_platform_choice(
     print("\nInstall for:")
     for i, (name, path) in enumerate(platforms, 1):
         print(f"  {i}) {name.capitalize()} ({path})")
+    last = len(platforms) + (1 if len(platforms) > 1 else 0)
     if len(platforms) > 1:
-        print(f"  {len(platforms) + 1}) All")
+        print(f"  {last}) All")
+    print("  q) quit")
     print()
 
     while True:
-        try:
-            choice = input("> ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print()
+        choice = _ask("> ").lower()
+        if choice == "q":
             sys.exit(0)
-        if not choice:
-            continue
-        try:
-            idx = int(choice)
-        except ValueError:
-            continue
+        idx = int(choice) if choice.isdigit() else 0
         if 1 <= idx <= len(platforms):
             return [platforms[idx - 1]]
-        if idx == len(platforms) + 1 and len(platforms) > 1:
+        if idx == last and len(platforms) > 1:
             return platforms
+        # A wrong answer used to bring back a bare prompt, and nothing said
+        # how to leave it.
+        print(f"  Type a number from 1 to {last}, or q to quit.")
 
 
 def _ask(prompt: str) -> str:
@@ -2741,6 +2742,8 @@ def _prompt_custom_selection(
             return INSTALLED_ONLY
         if answer == "c":
             break
+        keys = "Enter, i, c or q" if installed is not None else "Enter, c or q"
+        print(f"  Type {keys}.")
 
     choices = available_choices(files, omitted)
     if OTHER_SYSTEMS in choices["systems"]:
