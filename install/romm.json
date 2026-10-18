@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-18T11:04:01Z",
+  "generated": "2026-10-18T11:24:19Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -3552,6 +3552,7 @@
         "sega-master-system"
       ],
       "regions": [
+        "europe",
         "north-america"
       ],
       "region_system_groups": [

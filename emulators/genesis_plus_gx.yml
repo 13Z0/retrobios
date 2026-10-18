@@ -64,9 +64,9 @@ files:
   # -------------------------------------------------------
   - name: bios_U.sms
     system: sega-mastersystem
-    region: [north-america]
+    region: [north-america, europe]
     required: false
-    note: "Master System (NTSC-U) boot ROM. Snail maze game built in."
+    note: "Master System (NTSC-U) boot ROM. Snail maze game built in. REGION_USA is the default of sms_cart_region_detect for any export header outside the PAL CRC list, so European cartridges load it too (core/cart_hw/sms_cart.c:831-874)."
     source_ref: "core/loadrom.c:511"
 
   - name: bios_E.sms

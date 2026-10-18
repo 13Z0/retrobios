@@ -937,5 +937,31 @@ class UnknownRegionSaysWhatToType(unittest.TestCase):
         self.assertIn("Short forms:", str(caught.exception))
 
 
+
+class GenesisPlusGxUsBiosServesEurope(unittest.TestCase):
+    """sms_cart_region_detect returns REGION_USA for any export header
+    outside the PAL CRC list, European cartridges included, and REGION_USA
+    loads bios_U.sms. Tagged north-america only, --region eu,jp dropped it."""
+
+    def test_eu_jp_keeps_bios_u(self):
+        from pathlib import Path
+
+        from common import load_emulator_profiles
+        from region import build_region_index, parse_requested, resolve_region_drops
+
+        root = Path(__file__).resolve().parents[1]
+        profiles = load_emulator_profiles(str(root / "emulators"))
+        for name in ("genesis_plus_gx", "genesis_plus_gx_wide"):
+            with self.subTest(profile=name):
+                index = build_region_index({name: profiles[name]})
+                group = {"sega-mastersystem": [
+                    (f"bios/{n}", n) for n in ("bios_U.sms", "bios_E.sms", "bios_J.sms")
+                ]}
+                drops = resolve_region_drops(
+                    group, index, parse_requested("eu,jp"), None
+                )
+                self.assertNotIn("bios/bios_U.sms", drops)
+
+
 if __name__ == "__main__":
     unittest.main()

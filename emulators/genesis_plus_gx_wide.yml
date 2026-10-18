@@ -49,8 +49,9 @@ files:
 
   - name: bios_U.sms
     system: sega-mastersystem
-    region: [north-america]
+    region: [north-america, europe]
     required: false
+    note: "REGION_USA is the default of sms_cart_region_detect for any export header outside the PAL CRC list, so European cartridges load it too (core/cart_hw/sms_cart.c:863-864)."
     source_ref: "core/loadrom.c:512"
 
   - name: bios_E.sms

@@ -5602,6 +5602,7 @@
         "sega-master-system"
       ],
       "regions": [
+        "europe",
         "north-america"
       ],
       "region_system_groups": [
@@ -39284,6 +39285,7 @@
         "sega-master-system"
       ],
       "regions": [
+        "europe",
         "north-america"
       ],
       "region_groups": [
