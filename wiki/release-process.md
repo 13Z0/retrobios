@@ -216,8 +216,13 @@ gh release create "v${DATE}" --draft --title "BIOS Pack v${DATE}" --notes-file n
 for f in dist/SHA256SUMS.txt dist/SHA256SUMS.txt.sig dist/*.zip; do
   [ -f "$f" ] && gh release upload "v${DATE}" "$f#$(basename "$f")" --clobber
 done
-gh release view "v${DATE}" --json assets --jq '.assets | length'   # expect every file
-gh release edit "v${DATE}" --draft=false --latest
+#    A count does not see a failed upload beside a stray file, nor a part
+#    re-uploaded from an older build. The check holds every asset against
+#    release.json and the local checksum list, by the sha256 GitHub computes,
+#    and the parts of each pack against the download size the README prints.
+#    Publish only on a clean exit; rerun the upload for what it names.
+python scripts/check_release.py --tag "v${DATE}" --sums dist/SHA256SUMS.txt \
+  && gh release edit "v${DATE}" --draft=false --latest
 
 #    The record and the pages it feeds go to main with the release, so the
 #    table never describes a pack other than the one the link serves.
