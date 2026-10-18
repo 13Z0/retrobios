@@ -229,6 +229,10 @@ class TestDefaultsFollowTheRegistry(unittest.TestCase):
                     elif rule.get("parse_key") == "system_directory":
                         config = self._expand(rule["config"])
                         by_os.setdefault(rule["os"], set()).add(config.parent / "system")
+                if name in install.PORTABLE_ONLY:
+                    # No folder of its own to fall back on: the run stops
+                    # and asks for --dest (test_a_portable_platform_is_not_guessed).
+                    continue
                 for os_type, candidates in by_os.items():
                     with self.subTest(platform=name, os=os_type):
                         self.assertIn(install._default_dest(os_type, name), candidates)
@@ -1043,11 +1047,52 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
     def test_a_home_layout_is_detected(self):
         home = self._home()
         (home / "RetroPie" / "BIOS").mkdir(parents=True)
-        (home / ".config" / "BizHawk" / "Firmware").mkdir(parents=True)
         found: list = []
         install._detect_by_path("linux", found)
         self.assertIn(("retropie", home / "RetroPie" / "BIOS"), found)
-        self.assertIn(("bizhawk", home / ".config" / "BizHawk" / "Firmware"), found)
+
+    def test_bizhawk_is_found_by_its_executable(self):
+        """~/.config/BizHawk/Firmware is a folder no build reads: the
+        archive extracted to ~/Games/BizHawk-2.11.1 reads the Firmware folder
+        beside EmuHawkMono.sh."""
+        home = self._home()
+        extracted = home / "Games" / "BizHawk-2.11.1"
+        extracted.mkdir(parents=True)
+        (extracted / "EmuHawkMono.sh").write_text("#!/bin/sh\n")
+        found: list = []
+        install._detect_by_executable("linux", found)
+        self.assertEqual(found, [("bizhawk", extracted / "Firmware")])
+        self.assertNotIn("bizhawk", install._os_default_dests("linux"))
+        self.assertNotIn("bizhawk", install._os_default_dests("windows"))
+
+    def test_a_portable_platform_is_not_guessed(self):
+        """--platform bizhawk with no install found wrote 924 files into
+        ~/.config/BizHawk/Firmware, then detected that folder next time."""
+        home = self._home()
+        with unittest.mock.patch.object(sys, "argv", ["install.py", "--platform", "bizhawk"]), \
+                unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch.object(install, "detect_platforms", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit) as stop:
+            install.main()
+        self.assertEqual(stop.exception.code, 1)
+        self.assertIn("--dest", err.getvalue())
+        self.assertFalse((home / ".config" / "BizHawk").exists())
+
+    def test_the_executable_table_is_the_registry(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
+        )
+        rules = {
+            (rule["os"], name, tuple(rule["file"]), rule["bios_subdir"])
+            for name, entry in registry["platforms"].items()
+            for rule in (entry.get("install") or {}).get("detect", [])
+            if rule["method"] == "executable"
+        }
+        self.assertEqual(set(install._EXE_RULES), rules)
 
     def test_a_windows_profile_path_is_detected(self):
         home = self._home()

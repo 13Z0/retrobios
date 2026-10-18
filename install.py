@@ -178,20 +178,17 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
     """
     home = Path.home()
     if os_type == "windows":
-        profile = Path(os.environ.get("USERPROFILE", str(home)))
         return {
             # RetroArch's system directory defaults to <exe folder>\system
             # (platform_win32.c), and its installer to C:\RetroArch-Win64.
             "retroarch": Path("C:/RetroArch-Win64/system"),
             # RetroBat's installer defaults to C:\RetroBat (installer.iss).
             "retrobat": Path("C:/RetroBat/bios"),
-            "bizhawk": profile / "BizHawk" / "Firmware",
         }
     if os_type == "darwin":
         return {"retroarch": _macos_retroarch_base() / "system"}
     return {
         "retroarch": home / ".config" / "retroarch" / "system",
-        "bizhawk": home / ".config" / "BizHawk" / "Firmware",
     }
 
 # Set when the run is interrupted, so queued downloads end instead of draining
@@ -949,7 +946,6 @@ _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("linux", "romm", "/romm/library/bios", None),
     ("linux", "retropie", "$HOME/RetroPie/BIOS", None),
     ("windows", "bizhawk", "%USERPROFILE%\\BizHawk\\Firmware", None),
-    ("linux", "bizhawk", "$HOME/.config/BizHawk/Firmware", None),
     ("linux", "misterfpga", "/media/fat/MiSTer", "/media/fat/games"),
 )
 
@@ -965,6 +961,38 @@ def _rule_path(template: str) -> Path:
             rest = [part for part in re.split(r"[\\/]", template[len(variable):]) if part]
             return base.joinpath(*rest)
     return Path(template)
+
+
+# The registry's executable rules: (os, platform, glob under $HOME or
+# %USERPROFILE%, folder beside the executable that holds the BIOS). BizHawk is
+# a portable archive reading <EmuHawk folder>/Firmware (PathExtensions.cs
+# DataDirectoryPath), wherever it was extracted; ~/.config/BizHawk/Firmware,
+# the old guess, is a folder no build reads.
+_EXE_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
+    ("linux", "bizhawk", ("$HOME/BizHawk*/EmuHawkMono.sh", "$HOME/*/BizHawk*/EmuHawkMono.sh"),
+     "Firmware"),
+    ("windows", "bizhawk", ("%USERPROFILE%\\BizHawk*\\EmuHawk.exe",
+                            "%USERPROFILE%\\*\\BizHawk*\\EmuHawk.exe"), "Firmware"),
+)
+
+
+def _detect_by_executable(os_type: str, found: list[tuple[str, Path]]) -> None:
+    """Add a portable install found by its executable, the newest first."""
+    systems = ("linux", "windows") if os_type == "wsl" else (os_type,)
+    for rule_os, platform_name, patterns, subdir in _EXE_RULES:
+        if rule_os not in systems or any(name == platform_name for name, _ in found):
+            continue
+        hits: list[Path] = []
+        for pattern in patterns:
+            base, _, rest = pattern.partition("/" if "/" in pattern else "\\")
+            glob = "/".join(part for part in re.split(r"[\\/]", rest) if part)
+            try:
+                hits.extend(path for path in _rule_path(base).glob(glob) if path.is_file())
+            except OSError:
+                continue
+        if hits:
+            newest = max(hits, key=lambda path: path.stat().st_mtime)
+            found.append((platform_name, newest.parent / subdir))
 
 
 def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
@@ -1113,6 +1141,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         if bizhawk is not None and not any(name == "bizhawk" for name, _ in found):
             found.append(("bizhawk", bizhawk))
 
+    _detect_by_executable(os_type, found)
     _detect_by_path(os_type, found)
     return found
 
@@ -3060,6 +3089,13 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
     return [(plat, dest)]
 
 
+# Platforms with no install location of their own: the BIOS folder sits
+# beside the executable, wherever the archive was extracted.
+PORTABLE_ONLY = {
+    "bizhawk": "BizHawk reads the Firmware folder beside EmuHawk, and none was found.",
+}
+
+
 def _default_dest(os_type: str, platform_name: str) -> Path:
     """Fall back path for a platform named on the command line but not found.
 
@@ -3491,6 +3527,16 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         matched = [(n, p) for n, p in detected if n == args.platform]
         if matched:
             platforms = matched
+        elif args.platform in PORTABLE_ONLY:
+            # A portable emulator reads the folder beside its executable:
+            # any default would be a folder it never opens.
+            print(
+                f"  Platform '{args.platform}' not found. {PORTABLE_ONLY[args.platform]} "
+                f"Name it with --dest, for example: --platform {args.platform} "
+                f"--dest '<BizHawk folder>{os.sep}Firmware'",
+                file=sys.stderr,
+            )
+            sys.exit(1)
         else:
             default_dest = _default_dest(os_type, args.platform)
             print(

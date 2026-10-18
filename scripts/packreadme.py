@@ -155,10 +155,9 @@ def _build_readme(
         ),
         "bizhawk": (
             "INSTALLATION GUIDE\n\n"
-            "  1. Open your BizHawk installation folder\n"
-            "  2. Navigate to the Firmware subfolder:\n"
-            "     - Windows: BizHawk\\Firmware\\\n"
-            "     - Linux: ~/.config/BizHawk/Firmware/\n"
+            "  1. Open the folder you extracted BizHawk to, the one holding\n"
+            "     EmuHawk.exe (Windows) or EmuHawkMono.sh (Linux)\n"
+            "  2. Navigate to its Firmware subfolder\n"
             "  3. Extract all files from this archive directly into your Firmware folder\n"
             "  4. In BizHawk: Config > Paths > Firmware should\n"
             "     point to this folder\n\n"

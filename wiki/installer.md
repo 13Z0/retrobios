@@ -285,7 +285,8 @@ not already found that way.
 | `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
 | `/romm/library/bios` | RomM | the same |
 | `~/RetroPie/BIOS` | RetroPie | the same |
-| `%USERPROFILE%\BizHawk\Firmware` or `~/.config/BizHawk/Firmware` | BizHawk | the same |
+| `%USERPROFILE%\BizHawk\Firmware` | BizHawk | the same |
+| `EmuHawk.exe` or `EmuHawkMono.sh` in a `BizHawk*` folder of the home folder or one level down (`~/Games/BizHawk-2.11.1`), the newest | BizHawk | `Firmware` beside it |
 
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
@@ -338,9 +339,10 @@ destination falls back to the directory its detection looks for:
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
 for EmuDeck, `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
-`C:\RetroBat\bios` for RetroBat, `%USERPROFILE%\BizHawk\Firmware` (Windows)
-or `~/.config/BizHawk/Firmware` for BizHawk, and RetroArch's own default
-system directory for RetroArch. On Android a forced `--platform retroarch` falls back to
+`C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
+directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
+beside its executable wherever the archive was extracted, so a forced
+`--platform bizhawk` that finds no install stops and asks for `--dest`. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that.

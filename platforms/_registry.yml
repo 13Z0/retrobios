@@ -575,12 +575,20 @@ platforms:
     target_source: null
     install:
       detect:
+      # A portable archive reading <EmuHawk folder>/Firmware wherever it was
+      # extracted (PathExtensions.cs DataDirectoryPath): found by its
+      # executable in the home folder or one level down, the newest first.
       - os: windows
         method: path_exists
         path: '%USERPROFILE%\BizHawk\Firmware'
       - os: linux
-        method: path_exists
-        path: $HOME/.config/BizHawk/Firmware
+        method: executable
+        file: [$HOME/BizHawk*/EmuHawkMono.sh, $HOME/*/BizHawk*/EmuHawkMono.sh]
+        bios_subdir: Firmware
+      - os: windows
+        method: executable
+        file: ['%USERPROFILE%\BizHawk*\EmuHawk.exe', '%USERPROFILE%\*\BizHawk*\EmuHawk.exe']
+        bios_subdir: Firmware
   misterfpga:
     config: misterfpga.yml
     status: active
