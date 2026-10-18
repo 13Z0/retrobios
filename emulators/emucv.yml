@@ -12,6 +12,10 @@ cores:
 systems:
   - epochcv
 
+exclusion_note: >
+  The system directory is asked for and stored (src/core.cpp:362-366), and the
+  helpers that would read it back sit inside comment blocks
+  (src/common.cpp:799-937, src/common.cpp:1095-1719): the answer is never used.
 notes: |
   Cassette Vision emulator written for libretro by Maxime Marconato. The
   console has no system ROM: each cartridge carries the NEC uPD777 (or

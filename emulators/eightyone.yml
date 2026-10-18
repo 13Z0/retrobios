@@ -20,6 +20,11 @@ systems:
   - ringo-r470
   - microdigital-tk85
 
+exclusion_note: >
+  The system directory holds eightyone/ROMs, FDCs and IDEs, but every ROM the
+  core requests is served from its embedded table before any path is opened
+  (libretro/eo_roms.cpp:106-128). The one file it touches there is
+  zxpand-eeprom.bin, written when absent (81/Source/zxpand/smbsd.cpp:75-98).
 notes: |
   Recalbox port of EightyOne, vendored under 81/ and built with CMake.
   Machines: ZX80, ZX81, ZX97LE, TS1000, TS1500, TK85, Lambda 8300,
