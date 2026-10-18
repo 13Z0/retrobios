@@ -1609,7 +1609,7 @@ def build_report(
 
     try:
         views = select_views(profile, cache_dir, offline)
-    except upstream.GoneError as exc:
+    except upstream.GoneError:
         if stated_gone:
             # The profile says the forge is gone and the forge agrees. That is
             # a recorded fact, not an open problem: the refs describe the last

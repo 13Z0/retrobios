@@ -354,7 +354,7 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
         self.assertIn("    - Collection path: `bios/Entex/Adventure Vision/.variants/advision.zip.1c086064`", block)
         self.assertIn("[batocera](../platforms/batocera.md)", block)
         self.assertIn("[retrobat](../platforms/retrobat.md)", block)
-        self.assertIn('title="' + "c" * 40 + '"', block)
+        self.assertIn('`' + "c" * 40 + '`', block)
         self.assertIn("Verified dump", block)
 
 if __name__ == "__main__":

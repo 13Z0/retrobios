@@ -1492,7 +1492,6 @@ def generate_platform_page(
     hash_type = config.get("hash_type", "")
     base_dest = config.get("base_destination", "")
 
-    pct_val = cov["present"] / cov["total"] * 100 if cov["total"] else 0
     mode_badge = (
         "rb-badge-success" if reads_file_contents(mode) else "rb-badge-info"
     )
@@ -1899,8 +1898,6 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     # Who reads this file, not who reads a file of this name
     plats = sorted(consumers.platforms.get(sha1_full, ()))
     emus = sorted(consumers.emulators.get(sha1_full, ()))
-    sha1_short = sha1_full[:12] if sha1_full != "unknown" else "-"
-    md5_short = md5_full[:12] if md5_full != "unknown" else "-"
 
     anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
     id_attr = f' id="{anchor}"' if anchor else ""
@@ -1913,8 +1910,13 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
         # get it: a user missing scph5501.bin found the reference and no way
         # to the bytes.
         lines.append(f"- Collection path: `{f['path']}` ([download]({_fetch_url(f['path'])}))")
-    lines.append(f'- SHA1: <span class="rb-hash" title="{sha1_full}">`{sha1_short}...`</span>')
-    lines.append(f'- MD5: <span class="rb-hash" title="{md5_full}">`{md5_short}...`</span>')
+    # Every hash in full: the site search indexes text, not a title
+    # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
+    # emulator log prints) found nothing behind a 12-character prefix.
+    for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
+                         ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
+        if value and value != "unknown":
+            lines.append(f'- {label}: <span class="rb-hash">`{value}`</span>')
     if plats:
         plat_badges = " ".join(
             f'<span class="rb-badge rb-badge-info">[{p}](../platforms/{p}.md)</span>'
@@ -2187,14 +2189,10 @@ def _render_emulator_file(
     required = f.get("required", False)
     in_repo = _file_available(f)
     source_ref = f.get("source_ref", "")
-    mode = f.get("mode", "")
-    hle = f.get("hle_fallback", False)
     aliases = f.get("aliases", [])
-    category = f.get("category", "")
     validation = f.get("validation", [])
     size = f.get("size")
     fnote = f.get("note", f.get("notes", ""))
-    storage = f.get("storage", "")
     fmd5 = f.get("md5", "")
     fsha1 = f.get("sha1", "")
     fcrc32 = f.get("crc32", "")
@@ -2203,19 +2201,13 @@ def _render_emulator_file(
     fmin = f.get("min_size")
     fmax = f.get("max_size")
     desc = f.get("description", "")
-    region = f.get("region", "")
-    archive = f.get("archive", "")
     fpath = f.get("path", "")
     fsystem = f.get("system", "")
     priority = f.get("priority")
     fast_boot = f.get("fast_boot")
-    bundled = f.get("bundled", False)
-    embedded = f.get("embedded", False)
-    has_builtin = f.get("has_builtin", False)
     contents = f.get("contents", [])
     config_key = f.get("config_key", "")
     dest = f.get("dest", f.get("destination", ""))
-    ftype = f.get("type", "")
     fpattern = f.get("pattern", "")
     region_check = f.get("region_check")
     size_note = f.get("size_note", "")

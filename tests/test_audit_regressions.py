@@ -4534,5 +4534,22 @@ class CollectionCardsSayWhereToGetTheFile(unittest.TestCase):
         ))
 
 
+
+class CollectionCardsCarryFullHashes(unittest.TestCase):
+    """A pasted md5 or crc32 found nothing: cards showed 12 characters of
+    SHA1 and MD5 (the rest in a title the search does not index) and no
+    CRC32 or SHA256."""
+
+    def test_every_hash_in_full(self):
+        from scripts.generate_site import FileConsumers, _system_file_card
+
+        entry = {"name": "DUKE.RTS", "path": "bios/x/DUKE.RTS", "size": 10,
+                 "sha1": "a" * 40, "md5": "9d29f9673bbdb56068acf7645c13749c",
+                 "crc32": "504086c1", "sha256": "b" * 64}
+        text = "\n".join(_system_file_card(entry, FileConsumers({}, {})))
+        for value in (entry["sha1"], entry["md5"], entry["crc32"], entry["sha256"]):
+            self.assertIn(f"`{value}`", text)
+
+
 if __name__ == "__main__":
     unittest.main()
