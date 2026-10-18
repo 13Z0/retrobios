@@ -242,5 +242,17 @@ class TheHomeTitleSaysWhatTheSiteIs(unittest.TestCase):
         self.assertIn("BIOS", title)
 
 
+
+class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
+    """System.dat pins aes.zip by crc32 91e93107; the RetroArch page printed
+    only its sha1 and md5, so the crc a clrmamepro user pastes found nothing."""
+
+    def test_the_rendered_page(self):
+        page = ROOT / "docs" / "platforms" / "retroarch.md"
+        if not page.is_file():
+            self.skipTest("site not generated")
+        self.assertIn("CRC32: `91e93107`", page.read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()

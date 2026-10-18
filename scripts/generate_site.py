@@ -1622,13 +1622,18 @@ def _render_platform_systems(
             destination = str(cfg_entry.get("destination") or "")
             where = f" at `{destination}`" if destination and destination != fname else ""
             lines.append(f"{pad}- `{fname}`{where} - {', '.join(details)}")
-            # Show full hashes on a sub-line (useful for copy-paste)
-            if sha1 or md5:
+            # Every hash the platform declares, whole: the crc32 is what
+            # System.dat and clrmamepro print, and pasting it found nothing
+            # for a pinned file the collection holds under other bytes.
+            crc32 = str(cfg_entry.get("crc32") or "")
+            if sha1 or md5 or crc32:
                 hash_parts = []
                 if sha1:
                     hash_parts.append(f"SHA1: `{sha1}`")
                 if md5:
                     hash_parts.append(f"MD5: `{md5}`")
+                if crc32:
+                    hash_parts.append(f"CRC32: `{crc32}`")
                 lines.append(f"{pad}    {' | '.join(hash_parts)}")
 
         lines.append("")
