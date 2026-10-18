@@ -75,6 +75,27 @@ def _member_crcs(path: str, mtime: float) -> frozenset[str]:
         return frozenset()
 
 
+@functools.lru_cache(maxsize=4096)
+def _member_names(path: str, mtime: float) -> frozenset[str]:
+    try:
+        with zipfile.ZipFile(path) as archive:
+            return frozenset(
+                info.filename.rsplit("/", 1)[-1].casefold()
+                for info in archive.infolist() if not info.is_dir()
+            )
+    except (zipfile.BadZipFile, OSError):
+        return frozenset()
+
+
+def zip_member_names(path: str) -> frozenset[str]:
+    """Casefolded base name of each member, read from the central directory."""
+    try:
+        mtime = os.path.getmtime(path)
+    except OSError:
+        return frozenset()
+    return _member_names(path, mtime)
+
+
 def zip_member_crcs(path: str) -> frozenset[str]:
     """CRC-32 of each member, read from the central directory."""
     try:

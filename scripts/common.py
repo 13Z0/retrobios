@@ -870,7 +870,29 @@ def archive_entry(archive: str, files: list[dict]) -> dict:
 def holds_required_members(path: str, members: list[dict]) -> bool:
     """Whether an archive holds every member a profile requires inside it."""
     crcs = zip_member_crcs(path)
-    return all(m["crc32"] in crcs for m in members if m["required"])
+    names = zip_member_names(path)
+    return all(_member_held(m, crcs, names) for m in members if m["required"])
+
+
+def contents_members(file_entry: dict) -> list[dict]:
+    """The members an archive entry's ``contents:`` lists, as ranking keys.
+
+    A member is its crc32 where the profile declares one, its name where the
+    code opens it by name alone: Flycast reads epr-21329.ic27 in
+    hod2bios.zip by filename, and a copy without it has no Japan BIOS.
+    """
+    return [
+        {"crc32": str(m["crc32"]).lower(), "required": True}
+        if m.get("crc32") else {"name": str(m["name"]), "required": True}
+        for m in file_entry.get("contents") or []
+        if m.get("crc32") or m.get("name")
+    ]
+
+
+def _member_held(member: dict, crcs: frozenset[str], names: frozenset[str]) -> bool:
+    if member.get("crc32"):
+        return member["crc32"] in crcs
+    return member["name"].rsplit("/", 1)[-1].casefold() in names
 
 
 def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
@@ -881,14 +903,33 @@ def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
     """
     def held(path: str) -> tuple[int, int]:
         crcs = zip_member_crcs(path)
-        return (
-            sum(1 for m in members if m["required"] and m["crc32"] in crcs),
-            sum(1 for m in members if m["crc32"] in crcs),
-        )
+        names = zip_member_names(path)
+        found = [m for m in members if _member_held(m, crcs, names)]
+        return sum(1 for m in found if m["required"]), len(found)
 
     scores = {path: held(path) for path in paths}
     best = max(scores.values(), default=(0, 0))
     return [path for path in paths if scores[path] == best]
+
+
+def _covering_archives(paths: list[str]) -> list[str]:
+    """Same-named archives, those holding every ROM each other copy holds.
+
+    Without a declared layout, a primary that is a superset of the other
+    primaries misses nothing any of them holds. Two copies that each hold a
+    ROM the other lacks are different revisions, and nothing here can
+    choose: the order is kept. Index order alone used to decide, and
+    deleting an unrelated duplicate flipped which copy a core received.
+    """
+    # A variant is served only when no primary is, so the primaries are
+    # the copies this choice is between.
+    pool = [path for path in paths if "/.variants/" not in path] or paths
+    crcs = {path: zip_member_crcs(path) for path in pool}
+    covering = [
+        path for path in pool
+        if crcs[path] and all(crcs[other] <= crcs[path] for other in pool)
+    ]
+    return covering + [path for path in paths if path not in covering]
 
 
 def _by_affinity(paths: list[str], file_entry: dict, dest_hint: str) -> list[str]:
@@ -1231,8 +1272,11 @@ def resolve_local_file(
         if candidates:
             if zipped_file:
                 candidates = [p for p in candidates if ".zip" in os.path.basename(p)]
-            if file_entry.get("members"):
-                candidates = _holding_members(candidates, file_entry["members"])
+            members = file_entry.get("members") or contents_members(file_entry)
+            if members:
+                candidates = _holding_members(candidates, members)
+            elif len(candidates) > 1 and name.casefold().endswith(".zip"):
+                candidates = _covering_archives(candidates)
             candidates = _by_affinity(candidates, file_entry, dest_hint)
             # A copy outside another emulator's tree comes first: the
             # affinity read pcsx2 in bios/Other/armsx2/pcsx2/ and served
@@ -2361,6 +2405,7 @@ from ziptools import (  # noqa: E402,F401
     _zip_contents_cache,
     _BOUNDED_RATIO_METHODS,
     zip_member_crcs,
+    zip_member_names,
 )
 from artifacts import (  # noqa: E402,F401
     write_if_changed,

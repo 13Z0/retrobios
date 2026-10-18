@@ -776,6 +776,8 @@ def _collect_emulator_extras(
             for identity in PROFILE_IDENTITY_FIELDS:
                 if f.get(identity) not in (None, "", []):
                     extra[identity] = f[identity]
+            if f.get("contents"):
+                extra["contents"] = f["contents"]
             extra["claim_order"] = (2, 0, emu_name)
             if _take(extra, full_dest, seen_dests, taken):
                 extras.append(extra)
@@ -823,6 +825,10 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
     }
     if u.get("members"):
         extra["members"] = u["members"]
+    # The archive layout the core opens ranks same-named copies by what
+    # they hold; without it the first copy indexed won.
+    if u.get("contents"):
+        extra["contents"] = u["contents"]
     # Keep every reproducible identity constraint carried by the source
     # profile.  Some profiles expose CRC32/SHA-256 only through their
     # validation block; dropping those fields here would let a same-named

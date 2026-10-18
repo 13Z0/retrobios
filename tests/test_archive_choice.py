@@ -269,5 +269,85 @@ class AnArchiveHashedByItsMembers(unittest.TestCase):
         self.assertEqual(marks, {(True, "composite"), (False, None)})
 
 
+class AnArchiveRankedByWhatItHolds(unittest.TestCase):
+    """Two primaries answered hod2bios.zip and the first one indexed won:
+    Flycast received a set without epr-21329.ic27, its Japan BIOS, once an
+    unrelated duplicate was deleted and the index order flipped."""
+
+    def setUp(self):
+        directory = tempfile.mkdtemp(dir=REPO_ROOT / "tmp")
+        self.addCleanup(shutil.rmtree, directory, True)
+        self.root = Path(directory)
+        self.roms = {f"epr-213{n}.ic27": bytes([n]) * 16 for n in (29, 30, 31, 32)}
+
+    def _db(self, copies: list[tuple[str, list[str]]]) -> dict:
+        files, by_name = {}, {}
+        for relative, members in copies:
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(path, "w") as zf:
+                for member in members:
+                    zf.writestr(member, self.roms.get(member, member.encode()))
+            sha1 = hashlib.sha1(path.read_bytes()).hexdigest()
+            files[sha1] = {"path": str(path), "name": "hod2bios.zip", "sha1": sha1}
+            by_name.setdefault("hod2bios.zip", []).append(sha1)
+        return {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                            "by_path_suffix": {}, "by_crc32": {}}}
+
+    def _resolve(self, entry: dict, db: dict) -> str:
+        from common import resolve_local_file
+
+        path, _status = resolve_local_file(entry, db)
+        return str(Path(path).relative_to(self.root))
+
+    def test_member_names_the_code_opens_choose_the_copy(self):
+        db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27", "epr-21331.ic27"]),
+                       ("bios/MAME/hod2bios.zip", list(self.roms))])
+        entry = {"name": "hod2bios.zip", "contents": [
+            {"name": name, "size": 16} for name in ("epr-21331.ic27", "epr-21330.ic27",
+                                                     "epr-21329.ic27")]}
+        self.assertEqual(self._resolve(entry, db), "bios/MAME/hod2bios.zip")
+
+    def test_member_crcs_choose_the_copy(self):
+        db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27", "renamed.ic27"]),
+                       ("bios/MAME/hod2bios.zip", ["epr-21330.ic27", "epr-21332.ic27"])])
+        entry = {"name": "hod2bios.zip", "contents": [
+            {"name": "other-name.ic27", "crc32": format(zlib.crc32(self.roms[name]), "08x")}
+            for name in ("epr-21330.ic27", "epr-21332.ic27")]}
+        self.assertEqual(self._resolve(entry, db), "bios/MAME/hod2bios.zip")
+
+    def test_without_a_layout_a_superset_primary_wins(self):
+        db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27"]),
+                       ("bios/MAME/hod2bios.zip", list(self.roms))])
+        self.assertEqual(self._resolve({"name": "hod2bios.zip"}, db),
+                         "bios/MAME/hod2bios.zip")
+
+    def test_two_revisions_keep_the_index_order(self):
+        db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27", "epr-21331.ic27"]),
+                       ("bios/MAME/hod2bios.zip", ["epr-21330.ic27", "epr-21332.ic27"])])
+        self.assertEqual(self._resolve({"name": "hod2bios.zip"}, db),
+                         "bios/Arcade/hod2bios.zip")
+
+    def test_a_variant_does_not_stop_a_primary_from_covering(self):
+        db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27"]),
+                       ("bios/MAME/hod2bios.zip", list(self.roms)),
+                       ("bios/Arcade/.variants/hod2bios.zip", ["proto.ic27"])])
+        self.assertEqual(self._resolve({"name": "hod2bios.zip"}, db),
+                         "bios/MAME/hod2bios.zip")
+
+    def test_every_claim_path_carries_the_layout(self):
+        from packextras import _report_extra
+
+        contents = [{"name": "epr-21329.ic27", "size": 16}]
+        extra = _report_extra({"name": "hod2bios.zip", "contents": contents},
+                              "hod2bios.zip", "dc/hod2bios.zip")
+        self.assertEqual(extra["contents"], contents)
+        # The second pass builds its extra from the profile entry itself.
+        source = (REPO_ROOT / "scripts" / "packextras.py").read_text()
+        self.assertEqual(source.count('extra["contents"] = '), 2)
+        report = (REPO_ROOT / "scripts" / "verify.py").read_text()
+        self.assertIn('entry["contents"] = f["contents"]', report)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -638,6 +638,8 @@ def find_undeclared_files(
                 "sha1": f.get("sha1"),
                 "md5": f.get("md5"),
             }
+            if f.get("contents"):
+                entry["contents"] = f["contents"]
             if duplicate:
                 first.setdefault("other_claims", []).append(entry)
                 continue
