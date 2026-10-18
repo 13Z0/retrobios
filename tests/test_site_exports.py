@@ -385,5 +385,22 @@ class AFlaggedDumpIsNotVerified(unittest.TestCase):
         self.assertEqual(_dump_flags("tosec", {"name": "x [o][b].bin"}), ["overdump", "bad dump"])
 
 
+
+class EmulatorPagesPrintWholeHashes(unittest.TestCase):
+    """Emulator pages cut every hash to 12 characters, the rest in a title
+    attribute the search does not index: bstone's AUDIOHED.BS1 sha1 pasted
+    whole found nothing."""
+
+    def test_full_and_split(self):
+        from generate_site import _hash_spans
+
+        sha1 = "0c3de403b524107809fa9308b730d60e8e41ba93"
+        self.assertIn(f"`{sha1}`", _hash_spans(sha1))
+        both = _hash_spans(f"{'a' * 64}, {'b' * 64}")
+        self.assertIn("`" + "a" * 64 + "`", both)
+        self.assertIn("`" + "b" * 64 + "`", both)
+        self.assertNotIn("...", both)
+
+
 if __name__ == "__main__":
     unittest.main()

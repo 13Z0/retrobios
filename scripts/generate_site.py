@@ -2678,10 +2678,16 @@ def _render_structured_blocks(profile: dict) -> list[str]:
 
 
 def _hash_spans(value: str | list) -> str:
-    """One abbreviated hash, or each of the hashes a profile accepts."""
-    values = [value] if isinstance(value, str) else [str(v) for v in value]
+    """Each hash a profile accepts, in full.
+
+    Cut to 12 characters with the rest in a title attribute, 208 hashes
+    that only a profile declares were out of reach of the site search: it
+    indexes text, and a pasted sha1 matched nothing.
+    """
+    from hashing import parse_hash_list  # noqa: PLC0415
+
     return ", ".join(
-        f'<span class="rb-hash" title="{v}">`{v[:12]}...`</span>' for v in values
+        f'<span class="rb-hash">{_code(v)}</span>' for v in parse_hash_list(value)
     )
 
 
