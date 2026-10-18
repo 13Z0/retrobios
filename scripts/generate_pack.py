@@ -2713,7 +2713,6 @@ def _run_platform_packs(
         print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}")
         sys.exit(1)
     if not all_ok:
-        print("WARNING: some packs have verification errors")
         sys.exit(1)
 
 
@@ -4511,6 +4510,7 @@ def verify_and_finalize_packs(
             if name in expected[pname]:
                 pack_to_platform.setdefault(name, []).append(pname)
 
+    failing: list[str] = []
     for name in _pack_archives(output_dir):
         zip_path = os.path.join(output_dir, name)
 
@@ -4526,6 +4526,7 @@ def verify_and_finalize_packs(
             for err in manifest["errors"]:
                 print(f"    ERROR: {err}")
             all_ok = False
+            failing.append(name)
         inject_manifest(zip_path, manifest)
 
         # Stage 2: platform conformance (extract + verify)
@@ -4569,8 +4570,12 @@ def verify_and_finalize_packs(
                 for err in p_errors:
                     print(f"    {err}")
                 all_ok = False
+                failing.append(f"{name} ({pname})")
 
     generate_sha256sums(output_dir)
+    if failing:
+        # Named at the end, where a 4,000-line log is read, and on stderr.
+        print(f"ERROR: packs failed verification: {', '.join(failing)}", file=sys.stderr)
     return all_ok
 
 from packpaths import (  # noqa: E402,F401

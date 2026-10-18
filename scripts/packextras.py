@@ -775,7 +775,8 @@ def _collect_emulator_extras(
                 full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
                 if full_dest in seen_dests and full_dest not in taken:
                     continue
-                # Check file exists in repo or data dirs
+                # Only files the database indexes: members of a data
+                # directory are not in it and are not duplicated here.
                 if not (
                     by_name.get(fname)
                     or by_name.get(dest.rsplit("/", 1)[-1])

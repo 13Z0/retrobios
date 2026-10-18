@@ -4990,5 +4990,16 @@ class AnAliasNamesItsProfile(unittest.TestCase):
             self.assertIn(expected, str(caught.exception))
 
 
+
+class AFailedVerificationIsAnError(unittest.TestCase):
+    """--all ended on "WARNING: some packs have verification errors" and
+    exit 1: a warning that fails the run, naming no pack."""
+
+    def test_the_last_line_names_the_packs(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text()
+        self.assertNotIn("WARNING: some packs have verification errors", source)
+        self.assertIn('print(f"ERROR: packs failed verification: {\', \'.join(failing)}", file=sys.stderr)', source)
+
+
 if __name__ == "__main__":
     unittest.main()
