@@ -258,7 +258,6 @@ wins, since a machine is only one of them.
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `/etc/os-release` `ID=rocknix` | ROCKNIX | `/storage/roms/bios` |
-| `/media/fat/MiSTer` | MiSTer FPGA | `/media/fat/games` |
 | `/etc/knulli-release` | Batocera | `/userdata/bios` |
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
 | `/etc/batocera-version` | Batocera | `/userdata/bios` |
@@ -266,6 +265,24 @@ wins, since a machine is only one of them.
 | `/opt/muos` or `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
 | `/home/ark` and `/opt/system` | RetroArch | `/roms/bios` |
 | `/mnt/vendor/bin/dmenu.bin` | RetroArch | `/mnt/mmc/bios` |
+
+Batocera, Recalbox and ROCKNIX also name the board they were built for, and
+that board narrows the install unless `--target` or `--every-board` says
+otherwise (see the options above).
+
+Some platforms keep their BIOS in a fixed directory, and that directory is the
+evidence. They are looked for after the configurations below, for a platform
+not already found that way.
+
+| Evidence | Platform | BIOS directory |
+|----------|----------|----------------|
+| `/media/fat/MiSTer` | MiSTer FPGA | `/media/fat/games` |
+| `C:\RetroBat\bios` or `%USERPROFILE%\RetroBat\bios` | RetroBat | the same |
+| `~/Emulation/bios` | EmuDeck | the same |
+| `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
+| `/romm/library/bios` | RomM | the same |
+| `~/RetroPie/BIOS` | RetroPie | the same |
+| `%USERPROFILE%\BizHawk\Firmware` or `~/.config/BizHawk/Firmware` | BizHawk | the same |
 
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
@@ -309,13 +326,15 @@ they reference emulators rather than owning a BIOS directory. ES-DE is looked
 up at `$ESDE_APPDATA_DIR` or `~/ES-DE`, the two locations its own
 `getAppDataDirectory` resolves.
 
-BizHawk, RetroBat, RomM and RetroPie have no detection and are selected with
-`--platform`. When a forced platform is not found on the machine, the
-destination falls back to `/userdata/bios` for Batocera, `/recalbox/share/bios`
-for Recalbox, `/storage/system` for Lakka, `~/retrodeck` for RetroDECK,
-`~/Emulation/bios` for EmuDeck, `/storage/roms/bios` for ROCKNIX,
-`/media/fat/games` for MiSTer, `~/RetroPie/BIOS` for RetroPie, and `~/bios`
-for anything else. On Android a forced `--platform retroarch` falls back to
+When a platform named with `--platform` is not found on the machine, the
+destination falls back to the directory its detection looks for:
+`/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
+`/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
+for EmuDeck, `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
+`~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
+`C:\RetroBat\bios` for RetroBat, `%USERPROFILE%\BizHawk\Firmware` (Windows)
+or `~/.config/BizHawk/Firmware` for BizHawk, and RetroArch's own default
+system directory for RetroArch. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that.

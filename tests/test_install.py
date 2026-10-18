@@ -2362,5 +2362,22 @@ class StandaloneCopiesReachFlatpakInstalls(unittest.TestCase):
         self.assertNotIn("$HOME/.local/share/azahar/sysdata", linux)
 
 
+
+class TheInstallerPageNamesEveryEvidence(unittest.TestCase):
+    """The page said BizHawk, RetroBat, RomM and RetroPie had no detection
+    and fell back to ~/bios, while install.py found each by its directory."""
+
+    def test_every_rule_is_on_the_page(self):
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        page = page.replace("\\\\", "\\")
+        expected = [path for _p, method, values, _b in install._EMBEDDED_RULES
+                    if method == "file_exists" for path in values]
+        expected += [path.replace("$HOME", "~").rstrip("/")
+                     for _os, _p, path, _b in install._PATH_RULES]
+        missing = [path for path in expected if path not in page]
+        self.assertEqual(missing, [])
+        self.assertNotIn("have no detection", page)
+
+
 if __name__ == "__main__":
     unittest.main()
