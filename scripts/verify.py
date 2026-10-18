@@ -34,6 +34,7 @@ from collections.abc import Mapping
 import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
+from hashing import parse_md5_list
 from common import (
     platform_arg,
     target_listing_line,
@@ -190,10 +191,10 @@ def verify_entry_md5(
     required = file_entry.get("required", True)
     base = {"name": name, "required": required}
 
-    if expected_md5 and "," in expected_md5:
-        md5_list = [m.strip().lower() for m in expected_md5.split(",") if m.strip()]
-    else:
-        md5_list = [expected_md5] if expected_md5 else []
+    # One parse for verify, the builder and the pack check: Recalbox writes
+    # md5 in uppercase, and a copy that lowercased only comma lists judged
+    # a single uppercase value differently from the others.
+    md5_list = parse_md5_list(expected_md5)
 
     if not local_path:
         return {**base, "status": Status.MISSING}

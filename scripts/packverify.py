@@ -22,6 +22,7 @@ from nativemode import hash_mismatch_excludes_file
 import functools
 import hashlib
 from common import filter_systems_by_target
+from hashing import parse_md5_list
 from common import load_emulator_profiles
 from common import load_platform_config
 import os
@@ -447,7 +448,7 @@ def _repo_satisfies_declaration(
 def _repo_holds_member(file_entry: dict, db: dict) -> bool:
     """Whether a held archive of that name carries the declared member."""
     files_db = db.get("files", {})
-    declared = [m.strip() for m in str(file_entry.get("md5") or "").split(",") if m.strip()]
+    declared = parse_md5_list(file_entry.get("md5"))
     for sha1 in db.get("indexes", {}).get("by_name", {}).get(file_entry.get("name", ""), []):
         path = (files_db.get(sha1) or {}).get("path", "")
         if not path.endswith(".zip") or not os.path.exists(path):

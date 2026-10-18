@@ -703,7 +703,7 @@ def inner_rom_check(file_entry: dict, local_path: str) -> str:
     matches, else for the last one tried. The pack and the install manifest
     both read it, so a file one of them ships is a file the other lists.
     """
-    declared = [m.strip() for m in file_entry.get("md5", "").split(",") if m.strip()]
+    declared = parse_md5_list(file_entry.get("md5"))
     result = "not_in_zip"
     for candidate in declared or [""]:
         result = check_inside_zip(local_path, file_entry["zipped_file"], candidate)

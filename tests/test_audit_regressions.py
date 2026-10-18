@@ -4770,5 +4770,37 @@ class TheCollectionShipsADat(unittest.TestCase):
         self.assertEqual(roms[("Sony - PlayStation", "scph5501.bin")].crc32, "8d8cb7e4")
 
 
+
+class ZippedFileMd5IsParsedOnce(unittest.TestCase):
+    """verify lowercased a comma md5 list, the builder and packverify did
+    not: an uppercase Recalbox-style md5 on a zipped_file entry was OK for
+    verify and a mismatch for the pack and the manifest."""
+
+    def test_an_uppercase_member_md5_is_accepted_everywhere(self):
+        import hashlib
+        import zipfile as zf_mod
+
+        from scripts.validation import inner_rom_check
+        from scripts.verify import verify_entry_md5
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            archive = Path(directory, "x.zip")
+            with zf_mod.ZipFile(archive, "w") as zf:
+                zf.writestr("rom.bin", b"rom")
+            member = hashlib.md5(b"rom").hexdigest().upper()
+            for md5 in (member, f"{member},{'0' * 32}"):
+                with self.subTest(md5=md5):
+                    entry = {"name": "x.zip", "zipped_file": "rom.bin", "md5": md5}
+                    self.assertEqual(inner_rom_check(entry, str(archive)), "ok")
+                    self.assertEqual(
+                        verify_entry_md5(entry, str(archive))["status"], "ok"
+                    )
+
+    def test_the_three_sites_share_the_parser(self):
+        for module in ("validation.py", "packverify.py", "verify.py"):
+            source = (ROOT / "scripts" / module).read_text()
+            self.assertIn("parse_md5_list(", source, module)
+
+
 if __name__ == "__main__":
     unittest.main()
