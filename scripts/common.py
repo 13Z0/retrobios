@@ -1651,9 +1651,19 @@ def select_emulator_profiles(
         profile = all_profiles[name]
         kind = profile.get("type", "libretro")
         if kind == "alias":
+            # An alias without alias_of is found through the profile whose
+            # cores: names it, as the buildbot reverse index does.
+            target = profile.get("alias_of") or next(
+                (
+                    key for key, value in all_profiles.items()
+                    if value.get("type") != "alias" and name in (value.get("cores") or [])
+                ),
+                None,
+            )
             raise ProfileSelectionError(
-                f"{name} is an alias of {profile.get('alias_of', '?')} "
-                f"-use --emulator {profile.get('alias_of', '?')}"
+                f"{name} is an alias of {target}: use --emulator {target}"
+                if target
+                else f"{name} is an alias with no profile of its own to name"
             )
         if kind == "launcher":
             raise ProfileSelectionError(

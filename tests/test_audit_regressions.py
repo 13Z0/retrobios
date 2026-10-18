@@ -4968,5 +4968,27 @@ class ANamedPackThatIsAbsentFails(unittest.TestCase):
         self.assertIn("generate_pack.py --platform retroarch", result.stdout)
 
 
+
+class AnAliasNamesItsProfile(unittest.TestCase):
+    """"flycast_gles2 is an alias of flycast -use --emulator flycast": the
+    dash read as an option, and an alias without alias_of advised
+    "--emulator ?"."""
+
+    def test_the_message(self):
+        from scripts.common import ProfileSelectionError, select_emulator_profiles
+
+        profiles = {
+            "flycast": {"type": "libretro", "cores": ["flycast", "flycast_gles2"]},
+            "flycast_gles2": {"type": "alias", "alias_of": "flycast"},
+            "orphan": {"type": "alias"},
+            "core": {"type": "libretro", "cores": ["orphan"]},
+        }
+        for name, expected in (("flycast_gles2", "alias of flycast: use --emulator flycast"),
+                               ("orphan", "alias of core: use --emulator core")):
+            with self.subTest(name=name), self.assertRaises(ProfileSelectionError) as caught:
+                select_emulator_profiles([name], profiles)
+            self.assertIn(expected, str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
