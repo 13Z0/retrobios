@@ -1753,12 +1753,17 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
             if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
                 raise
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
+            problem = f"HTTP {exc.code}"
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             if attempt == MAX_RETRIES:
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
+            problem = str(getattr(exc, "reason", None) or exc)
+        # Said, or three 30-second attempts read as a frozen program.
+        print(f"  The {label} did not arrive ({problem}); trying again "
+              f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
 

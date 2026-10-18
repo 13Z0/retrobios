@@ -2470,6 +2470,19 @@ class ACutFileListIsRetried(unittest.TestCase):
                 unittest.mock.patch.object(install.time, "sleep"):
             self.assertEqual(install._fetch_json("https://x/y.json", 1000, "manifest"), {"a": 1})
 
+    def test_a_retry_is_announced(self):
+        import contextlib
+
+        full = json.dumps({"a": 1}).encode()
+        answers = iter([self._Response(full[:4], len(full)), self._Response(full, len(full))])
+        err = io.StringIO()
+        with unittest.mock.patch.object(install.urllib.request, "urlopen",
+                                        lambda *a, **k: next(answers)), \
+                unittest.mock.patch.object(install.time, "sleep"), \
+                contextlib.redirect_stderr(err):
+            install._fetch_json("https://x/y.json", 1000, "file list")
+        self.assertIn("trying again (2/3)", err.getvalue())
+
     def test_a_short_body_is_a_connection_error(self):
         with self.assertRaises(ConnectionError):
             install._read_limited_json(self._Response(b'{"a"', 10), 1000, "manifest")
