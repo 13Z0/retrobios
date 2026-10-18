@@ -602,7 +602,14 @@ def verify_pack_against_platform(
 
     with zipfile.ZipFile(zip_path, "r") as zf:
         zip_set = set(zf.namelist())
-        zip_lower = {n.lower(): n for n in zip_set}
+        # A case twin stands in for the file only where the platform's
+        # filesystem folds case, as the builder decides: on Lakka bios.col
+        # and BIOS.col are two files two cores open, and either one missing
+        # was counted present through the other.
+        zip_lower = (
+            {n.lower(): n for n in zip_set}
+            if config.get("case_insensitive_fs", False) else {}
+        )
 
         # Auto-detect flat vs nested ZIP
         is_flat = bool(base_dest) and not any(

@@ -61,6 +61,21 @@ class OneRule(unittest.TestCase):
         )
 
 
+class TheIntegrityCheckFoldsCaseLikeTheBuilder(unittest.TestCase):
+    """--verify-packs counted a file present through its case twin on Lakka,
+    whose filesystem keeps bios.col and BIOS.col apart: a pack missing one
+    of the two passed step 6."""
+
+    def test_case_folding_reads_the_platform(self):
+        source = (REPO_ROOT / "scripts" / "packverify.py").read_text(encoding="utf-8")
+        compact = " ".join(source.split())
+        self.assertRegex(
+            compact,
+            r"zip_lower = \( \{n\.lower\(\): n for n in zip_set\} "
+            r"if config\.get\(\"case_insensitive_fs\", False\) else \{\} \)",
+        )
+
+
 class TheReportSaysSo(unittest.TestCase):
     """Reads the repository: skips when the database is absent."""
 
