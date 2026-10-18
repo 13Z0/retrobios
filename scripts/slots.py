@@ -806,13 +806,14 @@ def format_conflict(conflict: Conflict) -> str:
 
 
 def scan_platform(
-    platform: str, profiles: dict, db: dict, platforms_dir: str = "platforms"
+    platform: str, profiles: dict, db: dict, platforms_dir: str = "platforms",
+    target_cores: set[str] | None = None,
 ) -> list[Conflict]:
     """Conflicts on one platform, using the cores that platform actually runs."""
     from common import load_platform_config, resolve_platform_cores
 
     config = load_platform_config(platform, platforms_dir)
-    keys = resolve_platform_cores(config, profiles)
+    keys = resolve_platform_cores(config, profiles, target_cores=target_cores)
     relevant = {k: profiles[k] for k in keys if k in profiles}
     # The same evidence the builder and the verifier resolve with: without
     # the ZIP index and the data-directory registry the arbitration judged
@@ -833,6 +834,7 @@ def main() -> int:
     import json
 
     from common import (
+        build_target_cores_cache,
         list_registered_platforms,
         load_database,
         load_emulator_profiles,
@@ -851,6 +853,13 @@ def main() -> int:
     parser.add_argument("--emulators-dir", default="emulators")
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
+        "--include-archived", action="store_true",
+        help="with all platforms, the archived ones too (RetroPie)",
+    )
+    parser.add_argument(
+        "--target", help="judge only the cores a hardware target builds",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="exit non-zero on any contested destination, not only on one the "
@@ -862,16 +871,30 @@ def main() -> int:
     profiles = load_emulator_profiles(args.emulators_dir)
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
+    if args.include_archived and args.platform:
+        parser.error("--include-archived widens the list of all platforms; --platform names one")
     names = (
         [args.platform]
         if args.platform
-        else list_registered_platforms(args.platforms_dir)
+        else list_registered_platforms(
+            args.platforms_dir, include_archived=args.include_archived
+        )
     )
+    target_cores: dict[str, set[str] | None] = {}
+    if args.target:
+        try:
+            target_cores, names = build_target_cores_cache(
+                names, args.target, args.platforms_dir, is_all=not args.platform
+            )
+        except (FileNotFoundError, ValueError) as exc:
+            parser.error(str(exc))
 
     found: dict[str, list[Conflict]] = {}
     collided: dict[str, list[Collision]] = {}
     for name in names:
-        conflicts = scan_platform(name, profiles, db, args.platforms_dir)
+        conflicts = scan_platform(
+            name, profiles, db, args.platforms_dir, target_cores.get(name)
+        )
         if conflicts:
             found[name] = conflicts
         collisions = find_collisions(

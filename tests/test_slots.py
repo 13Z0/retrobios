@@ -809,5 +809,30 @@ class AnArchiveIsClaimedByItsMembers(unittest.TestCase):
         self.assertEqual(slots.find_conflicts(config, self.profiles, self.db, "system"), [])
 
 
+
+class SlotsJudgeWhatVerifyJudged(unittest.TestCase):
+    """pipeline --include-archived verified RetroPie and built its pack, but
+    step 3b ran slots.py without the flag (it had none) and never arbitrated
+    RetroPie's 31 contested destinations; --target was dropped the same way."""
+
+    def test_the_pipeline_passes_both_flags(self):
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "pipeline.py").read_text()
+        step = source[source.index('slots_cmd = [sys.executable, "scripts/slots.py"]'):]
+        step = step[:step.index("3b/8")]
+        self.assertIn('slots_cmd.append("--include-archived")', step)
+        self.assertIn('slots_cmd.extend(["--target", args.target])', step)
+
+    def test_slots_accepts_them(self):
+        import subprocess
+
+        root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, "scripts/slots.py", "--include-archived", "--platform", "retropie"],
+            cwd=root, capture_output=True, text=True, timeout=600,
+        )
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("--include-archived", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

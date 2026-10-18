@@ -522,10 +522,14 @@ def main() -> None:
     # upstream declaration no build can repair, so this reports and never gates.
     # A crash is not a report: without --strict slots.py exits 0 on every
     # conflict, so a non-zero code means it never finished reading.
-    ok, _ = run(
-        [sys.executable, "scripts/slots.py"],
-        "3b/8 slot arbitration",
-    )
+    # The same platforms and cores verify judged: without these flags the
+    # arbitration of an --include-archived run never looked at RetroPie.
+    slots_cmd = [sys.executable, "scripts/slots.py"]
+    if args.include_archived:
+        slots_cmd.append("--include-archived")
+    if args.target:
+        slots_cmd.extend(["--target", args.target])
+    ok, _ = run(slots_cmd, "3b/8 slot arbitration")
     results["slots"] = ok
     all_ok &= ok
 
