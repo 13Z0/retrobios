@@ -2259,12 +2259,6 @@
       ],
       "systems": [
         "sony-playstation"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "sony-playstation"
       ]
     },
     {
@@ -8213,6 +8207,7 @@
         "picodrive"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -10418,6 +10413,7 @@
         "picodrive"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -10435,6 +10431,7 @@
         "picodrive"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -10452,6 +10449,7 @@
         "picodrive"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [

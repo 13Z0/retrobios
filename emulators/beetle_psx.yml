@@ -45,8 +45,8 @@ files:
 
   - name: "scph5903.bin"
     description: "SCPH-5903 (System ROM Version 2.2 12/04/95 J), Video CD daughterboard"
-    region: [japan]
     required: false
+    note: "No code path opens this name: the Japanese name list and the SHA-1 scan look for scph5500.bin (libretro.c:594-602, 486-490). Copied as scph5500.bin it loads with a SHA-1 warning (libretro.c:680-687) and enables the Video CD daughterboard."
     size: 1048576
     sha1: "15c94da3cc5a38a582429575af4198c487fe893c"
     md5: "81328b966e6dcf7ea1e32e55e1c104bb"

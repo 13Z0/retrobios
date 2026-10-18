@@ -65,17 +65,17 @@ files:
   - name: "us_scd2_9306.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [north-america]
+    region: [north-america, latin-america]
     priority: 1
     required: true
     size: 131072  # 128 KB (0x20000)
-    note: "US Sega CD Model 2 BIOS (September 1993). First in US search order."
+    note: "US Sega CD Model 2 BIOS (September 1993). First in US search order. The US list serves every disc whose security byte is neither 0x64 nor 0xa1 (pico/cd/cd_image.c:190, 247-248)."
     source_ref: "platform/libretro/libretro.c:1273"
 
   - name: "SegaCDBIOS9303.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [north-america]
+    region: [north-america, latin-america]
     priority: 2
     required: false
     size: 131072
@@ -85,7 +85,7 @@ files:
   - name: "us_scd1_9210.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [north-america]
+    region: [north-america, latin-america]
     priority: 3
     required: false
     size: 131072
@@ -95,7 +95,7 @@ files:
   - name: "bios_CD_U.bin"
     system: sega-megacd
     variant_group: "mega-cd-bios"
-    region: [north-america]
+    region: [north-america, latin-america]
     priority: 4
     required: false
     size: 131072

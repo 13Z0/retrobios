@@ -5916,6 +5916,7 @@
         "megacd"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -9786,12 +9787,6 @@
         "beetle_psx"
       ],
       "systems": [
-        "sony-playstation"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -70493,7 +70488,8 @@
         "triforce"
       ],
       "regions": [
-        "japan"
+        "japan",
+        "south-korea"
       ],
       "region_groups": [
         "triforce"
@@ -75122,7 +75118,8 @@
         "triforce"
       ],
       "regions": [
-        "japan"
+        "japan",
+        "south-korea"
       ],
       "region_groups": [
         "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
@@ -75235,7 +75232,8 @@
         "triforce"
       ],
       "regions": [
-        "japan"
+        "japan",
+        "south-korea"
       ],
       "region_groups": [
         "Dolphin:file:GC/JAP/IPL.bin"
@@ -85260,6 +85258,7 @@
         "megacd"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -85280,6 +85279,7 @@
         "megacd"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [

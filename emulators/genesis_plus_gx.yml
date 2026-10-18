@@ -40,9 +40,9 @@ files:
   # -------------------------------------------------------
   - name: bios_CD_U.bin
     system: sega-megacd
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
-    note: "Sega CD (NTSC-U) boot ROM. Loaded for REGION_USA."
+    note: "Sega CD (NTSC-U) boot ROM. Loaded for REGION_USA, which get_region sets for every disc whose security byte is neither 0x64 (Europe) nor 0xa1 (Japan) (core/loadrom.c:1065-1078)."
     source_ref: "core/loadrom.c:409"
 
   - name: bios_CD_E.bin

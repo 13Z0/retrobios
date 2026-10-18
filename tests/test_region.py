@@ -963,5 +963,71 @@ class GenesisPlusGxUsBiosServesEurope(unittest.TestCase):
                 self.assertNotIn("bios/bios_U.sms", drops)
 
 
+
+def _real_drops(profile: str, members: list[str], requested: str) -> set[str]:
+    from pathlib import Path
+
+    from common import load_emulator_profiles
+    from region import build_region_index, parse_requested, resolve_region_drops
+
+    root = Path(__file__).resolve().parents[1]
+    profiles = load_emulator_profiles(str(root / "emulators"))
+    index = build_region_index({profile: profiles[profile]})
+    group = {"g": [(m, m.rsplit("/", 1)[-1]) for m in members]}
+    return resolve_region_drops(group, index, parse_requested(requested), None)
+
+
+class MegaCdUsBiosIsTheDefaultBranch(unittest.TestCase):
+    """GPGX and PicoDrive load the US Mega CD BIOS for any disc whose
+    security byte is neither 0x64 nor 0xa1, Brazilian discs included:
+    --region brazil,jp dropped it and those discs found no BIOS."""
+
+    def test_brazil_keeps_the_us_bios(self):
+        cases = {
+            "genesis_plus_gx": ["bios_CD_U.bin", "bios_CD_E.bin", "bios_CD_J.bin"],
+            "genesis_plus_gx_wide": ["bios_CD_U.bin", "bios_CD_E.bin", "bios_CD_J.bin"],
+            "picodrive": ["us_scd2_9306.bin", "eu_mcd2_9306.bin", "jp_mcd2_921222.bin"],
+        }
+        for profile, members in cases.items():
+            with self.subTest(profile=profile):
+                drops = _real_drops(profile, members, "brazil,jp")
+                self.assertNotIn(members[0], drops)
+
+
+class KoreanGameCubeDiscsReadTheJapaneseIpl(unittest.TestCase):
+    """Dolphin's ToGameCubeRegion maps NTSC-K to NTSC-J, so a Korean disc
+    boots from GC/JAP/IPL.bin; --region south-korea,us dropped it."""
+
+    def test_korea_keeps_the_jap_ipl(self):
+        for profile in ("dolphin", "dolphin-mmjr", "dolphin-mmjr2", "ishiiruka",
+                        "primehack", "triforce"):
+            with self.subTest(profile=profile):
+                from common import load_emulator_profiles
+
+                entries = [
+                    f for f in load_emulator_profiles("emulators")[profile]["files"]
+                    if "JAP/" in (f.get("path") or "")
+                ]
+                self.assertTrue(entries)
+                for entry in entries:
+                    self.assertIn("south-korea", entry.get("region") or [])
+
+
+class ANameNoCodeOpensCarriesNoRegion(unittest.TestCase):
+    """Beetle PSX never opens scph5903.bin: its Japanese list and scan want
+    scph5500.bin. Tagged japan, --region jp shipped a 1 MB file the core
+    does not read and --region us removed it, on a selection that does not
+    exist."""
+
+    def test_scph5903_is_unregioned(self):
+        from common import load_emulator_profiles
+
+        entry = next(
+            f for f in load_emulator_profiles("emulators")["beetle_psx"]["files"]
+            if f["name"] == "scph5903.bin"
+        )
+        self.assertNotIn("region", entry)
+
+
 if __name__ == "__main__":
     unittest.main()
