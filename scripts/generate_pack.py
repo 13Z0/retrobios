@@ -193,6 +193,21 @@ def _target_tag(target_name: str) -> str:
     )
 
 
+def _platform_target(
+    platform_name: str, target: str | None, platforms_dir: str
+) -> str | None:
+    """The target as this platform files it, the name its artifacts carry.
+
+    Named once for the whole run, a target two platforms file differently
+    (rpi4: Batocera's bcm2711, Recalbox's rpi4_64) kept the typed name under
+    --all and took the platform's own under --platform, so --verify-packs
+    looked for a pack the --all build had named otherwise.
+    """
+    if not target:
+        return None
+    return canonical_target_name([platform_name], target, platforms_dir)
+
+
 def _system_tag(system_filter: list[str] | None) -> str:
     """Filename tag for a pack limited to some systems, empty for all."""
     if not system_filter:
@@ -2299,7 +2314,9 @@ def _run_manifest_mode(
                     target_cores=tc,
                     source=source,
                     regions=getattr(args, "regions", None),
-                    target_name=args.target,
+                    target_name=_platform_target(
+                        representative, args.target, args.platforms_dir
+                    ),
                     offline=args.offline,
                     required_only=required_only,
                 )
@@ -2308,7 +2325,7 @@ def _run_manifest_mode(
                     for tag, _label in _narrowings(
                         source,
                         getattr(args, "regions", None),
-                        args.target,
+                        _platform_target(representative, args.target, args.platforms_dir),
                         False,
                         required_only,
                     )
@@ -2532,6 +2549,7 @@ def _run_platform_packs(
             zip_path = None
             zip_paths: list = []
             tc = target_cores_cache.get(representative) if args.target else None
+            named_target = _platform_target(representative, args.target, args.platforms_dir)
             if _skip_empty_truth(args, source, representative, emu_profiles, tc, failed):
                 continue
             try:
@@ -2551,7 +2569,7 @@ def _run_platform_packs(
                         required_only=required_only,
                         source=source,
                         regions=getattr(args, "regions", None),
-                        target_name=args.target,
+                        target_name=named_target,
                         one_per_slot=args.one_per_slot,
                         offline=args.offline,
                     )
@@ -2569,7 +2587,7 @@ def _run_platform_packs(
                             for tag, _label in _narrowings(
                                 source,
                                 getattr(args, "regions", None),
-                                args.target,
+                                named_target,
                                 args.one_per_slot,
                                 required_only,
                             )
@@ -2596,7 +2614,7 @@ def _run_platform_packs(
                         system_filter=system_filter,
                         source=source,
                         regions=getattr(args, "regions", None),
-                        target_name=args.target,
+                        target_name=named_target,
                         one_per_slot=args.one_per_slot,
                         offline=args.offline,
                         pack_name=group_name,
@@ -2922,17 +2940,6 @@ def _main(held: contextlib.ExitStack) -> None:
         require_platform(args.platform, args.platforms_dir)
 
     _refuse_unapplied_flags(args, parser)
-    if args.target:
-        # Named once, by the name the target is filed under: every artifact
-        # name below derives from it.
-        args.target = canonical_target_name(
-            [args.platform]
-            if args.platform
-            else list_registered_platforms(args.platforms_dir, include_archived=True),
-            args.target,
-            args.platforms_dir,
-        )
-
     # Quick-exit modes: --verify-packs alone = verify existing packs only
     # Combined with --all-variants, generation runs first then verify
     if args.verify_packs and not args.all_variants:
@@ -4186,11 +4193,14 @@ def _expected_pack_names(
     narrowed pack when the full one was. A platform answers to its own name
     and to the name of the group it shares a pack with.
     """
-    narrow_tags = "".join(
-        tag for tag, _label in _narrowings("full", regions, target_name, False, False)
-    )
+    def narrow_tags(platform_name: str) -> str:
+        named = _platform_target(platform_name, target_name, platforms_dir)
+        return "".join(
+            tag for tag, _label in _narrowings("full", regions, named, False, False)
+        )
+
     names: dict[str, set[str]] = {
-        p: {f"{_platform_pack_stem([p], p, platforms_dir)}{narrow_tags}_BIOS_Pack.zip"}
+        p: {f"{_platform_pack_stem([p], p, platforms_dir)}{narrow_tags(p)}_BIOS_Pack.zip"}
         for p in platforms
     }
     # Groups depend on which platforms a run built: --all alone or with
@@ -4211,7 +4221,7 @@ def _expected_pack_names(
                 continue
             name = (
                 f"{_platform_pack_stem(group, representative, platforms_dir)}"
-                f"{narrow_tags}_BIOS_Pack.zip"
+                f"{narrow_tags(representative)}_BIOS_Pack.zip"
             )
             for p in group:
                 if p in names:

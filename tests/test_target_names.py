@@ -77,6 +77,36 @@ class TheBuilderNamesByTheCanonicalTarget(unittest.TestCase):
 
 
 
+class EachPlatformNamesTheTargetItsOwnWay(unittest.TestCase):
+    """rpi4 is Batocera's bcm2711, Recalbox's rpi4_64 and RetroPie's rpi4.
+    Named once for the run, --all kept "rpi4" for all three while
+    --platform batocera named the same pack Bcm2711, so --verify-packs
+    answered SKIP for a pack the --all build had written."""
+
+    def test_the_all_run_and_the_platform_run_agree(self):
+        import contextlib  # noqa: PLC0415
+        import io  # noqa: PLC0415
+
+        import generate_pack  # noqa: PLC0415
+
+        platforms_dir = str(REPO_ROOT / "platforms")
+        with contextlib.redirect_stdout(io.StringIO()):
+            expected = generate_pack._expected_pack_names(
+                ["batocera", "recalbox"], platforms_dir, None, "rpi4"
+            )
+        self.assertTrue(any("_Bcm2711_" in name for name in expected["batocera"]))
+        self.assertTrue(any("_Rpi464_" in name for name in expected["recalbox"]))
+        for platform, tag in (("batocera", "bcm2711"), ("recalbox", "rpi4_64")):
+            self.assertEqual(
+                generate_pack._platform_target(platform, "rpi4", platforms_dir), tag
+            )
+
+    def test_no_naming_site_reads_the_typed_target(self):
+        source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text()
+        self.assertNotIn("target_name=args.target,\n                        one_per_slot", source)
+        self.assertNotIn("args.target = canonical_target_name(", source)
+
+
 class TheListingCountsWhatTheFilterUses(unittest.TestCase):
     """--list-targets showed Batocera x86_64 with 198 cores; --target x86_64
     filters on 187 once _overrides.yml removes machine variants and launchers."""
