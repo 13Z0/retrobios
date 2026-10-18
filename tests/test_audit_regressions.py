@@ -4935,5 +4935,21 @@ class TheReadmeCountsSystemsAsListSystemsDoes(unittest.TestCase):
         self.assertEqual(announced, listed)
 
 
+
+class ATargetIsNamedWhenItRemovesTheCore(unittest.TestCase):
+    """--platform batocera --target rpi4 --emulator dolphin said "dolphin is
+    not run by batocera", which runs it on every x86 board."""
+
+    def test_the_message_names_the_target(self):
+        result = subprocess.run(
+            [sys.executable, "scripts/cross_reference.py", "--platform", "batocera",
+             "--target", "bcm2711", "--emulator", "dolphin"],
+            cwd=ROOT, capture_output=True, text=True, timeout=600,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("bcm2711 target", result.stderr)
+        self.assertNotIn("is not run by", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

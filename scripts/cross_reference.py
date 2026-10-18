@@ -830,10 +830,19 @@ def main() -> None:
         )
         config = load_platform_config(args.platform, args.platforms_dir)
         relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
+        run_anywhere = (
+            set(resolve_platform_cores(config, profiles)) if args.target else relevant
+        )
         profiles = {k: v for k, v in profiles.items() if k in relevant}
         standalone_cores = standalone_set(config)
 
     if not profiles:
+        if args.emulator and args.target and set(args.emulator.split(",")) & run_anywhere:
+            raise SystemExit(
+                f"ERROR: {args.emulator} is not built for {args.platform}'s "
+                f"{args.target} target; {args.platform} runs it elsewhere "
+                f"(drop --target to see its files)"
+            )
         if args.emulator:
             raise SystemExit(f"ERROR: {args.emulator} is not run by {args.platform}")
         print(f"{args.platform or 'The tree'} runs no profiled emulator.", file=sys.stderr)
