@@ -194,9 +194,13 @@ def download_file(
         url, headers={"User-Agent": "retrobios-downloader/1.0"}
     )
 
+    # A redrawn bar only on a terminal: written to a log, 32,768 redraws of a
+    # 2 GiB part made one line of nearly 3 MB.
+    live = sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
     with urllib.request.urlopen(req, timeout=300) as resp:
         total = int(resp.headers.get("Content-Length", expected_size))
         downloaded = 0
+        shown = -1
 
         with open(dest, "wb") as f:
             while True:
@@ -206,16 +210,21 @@ def download_file(
                 f.write(chunk)
                 downloaded += len(chunk)
 
-                if total > 0:
+                if total > 0 and live:
                     pct = downloaded * 100 // total
-                    bar = "=" * (pct // 2) + " " * (50 - pct // 2)
-                    print(
-                        f"\r  {label}[{bar}] {pct}% ({downloaded:,}/{total:,})",
-                        end="",
-                        flush=True,
-                    )
+                    if pct != shown:
+                        shown = pct
+                        bar = "=" * (pct // 2) + " " * (50 - pct // 2)
+                        print(
+                            f"\r  {label}[{bar}] {pct}% ({downloaded:,}/{total:,})",
+                            end="",
+                            flush=True,
+                        )
 
-    print()
+    if live:
+        print()
+    else:
+        print(f"  {label}{downloaded:,} bytes")
     if expected_size and downloaded != expected_size:
         raise ValueError(f"downloaded {downloaded} bytes; expected {expected_size}")
 

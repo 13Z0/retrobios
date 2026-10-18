@@ -583,5 +583,39 @@ class TestZipPartsShell(ZipPartsTests, ZipPartsCase, TestDownloadShell):
     pass
 
 
+
+class AProgressBarOnlyOnATerminal(unittest.TestCase):
+    """Redirected to a log, download.py wrote a carriage-return redraw per
+    64 KiB block: one line of nearly 3 MB for a 2 GiB part."""
+
+    def test_a_log_gets_one_line(self):
+        import contextlib
+        import io as _io
+        import tempfile as _tempfile
+        from pathlib import Path as _Path
+        from unittest import mock
+
+        import download
+
+        class Body(_io.BytesIO):
+            headers = {"Content-Length": str(200_000)}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        out = _io.StringIO()
+        with _tempfile.TemporaryDirectory() as directory, \
+                mock.patch.object(download.urllib.request, "urlopen",
+                                  lambda *a, **k: Body(b"x" * 200_000)), \
+                contextlib.redirect_stdout(out):
+            download.download_file("https://example.com/a.zip",
+                                   _Path(directory) / "a.zip", 200_000, "a.zip ")
+        self.assertNotIn("\r", out.getvalue())
+        self.assertEqual(out.getvalue().count("\n"), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
