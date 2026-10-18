@@ -217,5 +217,20 @@ class TheTestingGuideNamesEveryModule(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+
+class TheSitemapIsAnnouncedWhereCrawlersLook(unittest.TestCase):
+    """robots.txt was published as /retrobios/robots.txt, which no crawler
+    reads (RFC 9309 reads the host root): the sitemap it announced was
+    never found that way."""
+
+    def test_the_head_names_it_and_no_robots_is_written(self):
+        root = Path(__file__).resolve().parents[1]
+        override = (root / "docs_assets" / "overrides" / "main.html").read_text()
+        self.assertIn('rel="sitemap"', override)
+        source = (root / "scripts" / "generate_site.py").read_text()
+        self.assertNotIn('"robots.txt"),\n        "User-agent', source)
+        self.assertNotIn("Sitemap: https://", source)
+
+
 if __name__ == "__main__":
     unittest.main()

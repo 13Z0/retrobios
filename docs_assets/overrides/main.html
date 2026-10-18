@@ -23,6 +23,10 @@
   {% if page_url %}<meta property="og:url" content="{{ page_url }}">{% endif %}
   {% if preview_image %}<meta property="og:image" content="{{ preview_image }}">{% endif %}
 
+  {# The sitemap, named from every page: a project site under /retrobios/
+     cannot serve the host-root robots.txt that would announce it. #}
+  {% if config.site_url %}<link rel="sitemap" type="application/xml" title="Sitemap" href="{{ config.site_url }}sitemap.xml">{% endif %}
+
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{{ page_title }}">
   <meta name="twitter:description" content="{{ page_description }}">

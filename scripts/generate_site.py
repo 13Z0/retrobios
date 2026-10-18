@@ -4226,12 +4226,10 @@ def _generate(args: argparse.Namespace) -> None:
         js_dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(js_src, js_dest)
 
-    # mkdocs writes sitemap.xml but no robots.txt, so nothing points a crawler
-    # at it. Everything published here is meant to be indexed.
-    write_if_changed(
-        str(docs / "robots.txt"),
-        "User-agent: *\nAllow: /\n\nSitemap: https://abdess.github.io/retrobios/sitemap.xml\n",
-    )
+    # No robots.txt: a crawler reads it only at the host root (RFC 9309), and
+    # this project site lives under /retrobios/. Every page's head points at
+    # the sitemap instead (overrides/main.html).
+    (docs / "robots.txt").unlink(missing_ok=True)
 
     # Copy branding assets
     images_dest = docs / "assets" / "images"
