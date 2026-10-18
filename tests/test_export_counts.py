@@ -762,5 +762,29 @@ class AStaleTruthIsRefused(unittest.TestCase):
             export_native.load_inputs("retropie", truth_dir, str(root / "platforms"))
 
 
+
+class ACorruptOriginalIsRefused(unittest.TestCase):
+    """A truncated es_bios.xml in the cache was ignored: the export was
+    rebuilt from our model alone, losing the systems we do not transcribe
+    and the maintainer's comments, and the run ended in success."""
+
+    def test_recalbox_refuses_it(self):
+        fe = NativeFile("bios.bin", "bios.bin", "nes", platform={"md5": A})
+        exporter = Recalbox()
+        with self.assertRaises(ValueError) as caught:
+            exporter.render({"nes": NativeSystem("nes", files=[fe])}, None,
+                            {exporter.native_filename(): "<biosList><system platform="})
+        self.assertIn("does not parse", str(caught.exception))
+
+    def test_retrobat_refuses_it(self):
+        from exporter.retrobat_exporter import Exporter as RetroBat  # noqa: PLC0415
+
+        fe = NativeFile("bios.bin", "bios.bin", "nes", platform={"md5": A})
+        exporter = RetroBat()
+        with self.assertRaises(ValueError):
+            exporter.render({"nes": NativeSystem("nes", files=[fe])}, None,
+                            {exporter.native_filename(): '{"nes": {'})
+
+
 if __name__ == "__main__":
     unittest.main()

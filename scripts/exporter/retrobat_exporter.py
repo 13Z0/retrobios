@@ -69,8 +69,11 @@ class Exporter(BaseExporter):
         if original:
             try:
                 base = json.loads(original, object_pairs_hook=OrderedDict)
-            except json.JSONDecodeError:
-                base = {}
+            except json.JSONDecodeError as exc:
+                raise ValueError(
+                    f"RetroBat's {self.native_filename()} does not parse ({exc}); "
+                    "fetch it again with --refresh-cache"
+                ) from exc
 
         exportable = {
             system.native_id: (system, files)

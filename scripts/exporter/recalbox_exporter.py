@@ -131,8 +131,13 @@ class Exporter(BaseExporter):
         if original:
             try:
                 root = parse_untrusted_xml(original, self.native_filename(), comments=True)
-            except (ParseError, ValueError):
-                root = None
+            except (ParseError, ValueError) as exc:
+                # Rebuilt from our model alone, the export would drop every
+                # system we do not transcribe and the maintainer's comments.
+                raise ValueError(
+                    f"Recalbox's {self.native_filename()} does not parse ({exc}); "
+                    "fetch it again with --refresh-cache"
+                ) from exc
             if root is not None:
                 theirs = [
                     (s.get("platform", ""), s.get("fullname", ""), [
