@@ -113,23 +113,28 @@ class OneTruthModelPerTarget(unittest.TestCase):
     rebuilt the same slug by hand to find it."""
 
     def test_aliases_share_a_directory(self):
-        from common import list_registered_platforms, truth_target_dir  # noqa: PLC0415
+        from common import truth_target_dir  # noqa: PLC0415
 
-        platforms = list_registered_platforms(
-            str(REPO_ROOT / "platforms"), include_archived=True
-        )
+        platforms = str(REPO_ROOT / "platforms")
         dirs = {
-            truth_target_dir("truth", platforms, alias, str(REPO_ROOT / "platforms"))
+            truth_target_dir("truth", ["retroarch"], alias, platforms)
             for alias in ("nx", "switch", "nintendo-switch")
         }
         self.assertEqual(dirs, {str(Path("truth") / "nintendo-switch")})
+        # Lakka builds an image named switch: its own target, its own model.
+        self.assertEqual(
+            truth_target_dir("truth", ["lakka"], "switch", platforms),
+            str(Path("truth") / "switch"),
+        )
 
     def test_writer_and_reader_call_one_function(self):
-        for module in ("generate_truth.py", "pipeline.py"):
+        for module in ("generate_truth.py", "diff_truth.py"):
             source = (REPO_ROOT / "scripts" / module).read_text()
             with self.subTest(module=module):
                 self.assertIn("truth_target_dir(", source)
                 self.assertNotIn('re.sub(\n            r"[^a-z0-9]+"', source)
+        pipeline = (REPO_ROOT / "scripts" / "pipeline.py").read_text()
+        self.assertIn('diff_cmd.extend(["--target", args.target])', pipeline)
 
 
 class TheListingCountsWhatTheFilterUses(unittest.TestCase):

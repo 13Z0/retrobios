@@ -92,15 +92,16 @@ def main(argv: list[str] | None = None) -> None:
 
     # A target-narrowed model is a different artifact: written under the
     # platform's own name it overwrote the full one, and diff_truth then
-    # compared a narrowed model against the whole scrape.
-    output_dir = args.output_dir
-    if args.target:
-        output_dir = truth_target_dir(
-            output_dir, platforms, args.target, args.platforms_dir
-        )
-    os.makedirs(output_dir, exist_ok=True)
-
+    # compared a narrowed model against the whole scrape. Its directory is
+    # the target as this platform files it, as the packs are named: Lakka's
+    # switch is its own image, RetroArch's is nintendo-switch.
     for name in platforms:
+        output_dir = args.output_dir
+        if args.target:
+            output_dir = truth_target_dir(
+                output_dir, [name], args.target, args.platforms_dir
+            )
+        os.makedirs(output_dir, exist_ok=True)
         # Resolve target cores
         target_cores: set[str] | None = None
         if args.target:

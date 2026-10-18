@@ -21,6 +21,7 @@ from common import (
     load_platform_config,
     native_layer,
     require_yaml,
+    truth_target_dir,
     yaml_load,
 )
 from truth import diff_platform_truth
@@ -174,6 +175,11 @@ def main() -> None:
     )
     parser.add_argument("--truth-dir", default="dist/truth")
     parser.add_argument("--platforms-dir", default="platforms")
+    parser.add_argument(
+        "--target",
+        help="read the models generate_truth --target wrote, each under the "
+        "target as its platform files it",
+    )
     args = parser.parse_args()
 
     if args.all:
@@ -188,9 +194,13 @@ def main() -> None:
     compared = 0
 
     for platform in platforms:
-        truth = _load_truth(args.truth_dir, platform)
+        truth_dir = (
+            truth_target_dir(args.truth_dir, [platform], args.target, args.platforms_dir)
+            if args.target else args.truth_dir
+        )
+        truth = _load_truth(truth_dir, platform)
         if truth is None:
-            print(f"skip {platform}: no truth YAML in {args.truth_dir}/", file=sys.stderr)
+            print(f"skip {platform}: no truth YAML in {truth_dir}/", file=sys.stderr)
             continue
 
         try:

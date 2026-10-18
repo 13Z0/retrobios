@@ -494,8 +494,9 @@ def truth_target_dir(
 
     Slugged from the name the target is filed under: `nx`, `switch` and
     `nintendo-switch` wrote three copies of one model, and a run under one
-    alias left the others stale beside it. generate_truth writes here and
-    the pipeline's diff reads here, so both call this.
+    alias left the others stale beside it. Called per platform, since two
+    platforms can file one name differently (Lakka builds an image named
+    switch). generate_truth writes here and diff_truth reads here.
     """
     named = canonical_target_name(platforms, target, platforms_dir)
     slug = re.sub(r"[^a-z0-9]+", "-", named.strip().lower()).strip("-")

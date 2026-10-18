@@ -45,9 +45,7 @@ from common import (
     ArtifactLockBusy,
     artifact_lock,
     hold_artifact_lock,
-    list_registered_platforms,
     load_data_dir_registry,
-    truth_target_dir,
 )
 from refresh_data_dirs import hold_data_dirs
 
@@ -256,17 +254,9 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
     """Steps 2c to 2e: truth model, its diff, the native export."""
     all_ok = True
     # Step 2c: Generate truth YAMLs
-    # A targeted run writes its model in a subdirectory of its own, and the
-    # diff has to read the same one or it compares a narrowed model against
-    # the whole scrape.
+    # A targeted run writes each platform's model under the target as that
+    # platform files it; the diff is told the target and reads the same place.
     truth_dir = Path(args.output_dir) / "truth"
-    if args.target:
-        # generate_truth --all writes every registered platform's model.
-        truth_dir = Path(truth_target_dir(
-            str(truth_dir),
-            list_registered_platforms("platforms", include_archived=True),
-            args.target,
-        ))
 
     if args.with_truth or args.with_export:
         truth_cmd = [
@@ -293,6 +283,8 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
     if args.with_truth or args.with_export:
         diff_cmd = [sys.executable, "scripts/diff_truth.py", "--all"]
         diff_cmd.extend(["--truth-dir", str(truth_dir)])
+        if args.target:
+            diff_cmd.extend(["--target", args.target])
         ok, _ = run(diff_cmd, "2d diff truth")
         results["diff_truth"] = ok
         all_ok = all_ok and ok
