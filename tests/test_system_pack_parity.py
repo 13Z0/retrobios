@@ -57,7 +57,13 @@ class SystemPackMatchesVerify(unittest.TestCase):
                     if d["status"] == "missing" and not d.get("unsourceable")
                 })
                 verify_missing = sorted(name for _dest, name in verify_missing)
-                self.assertTrue(pack_missing or verify_missing)
+                # Both sides reported, so an empty list is a finding and not a
+                # parse that matched nothing. Requiring missing files instead
+                # would fail the day the collection fills them.
+                summary = re.search(r"(\d+) files packed, (\d+) missing", packed)
+                self.assertIsNotNone(summary, packed[-500:])
+                self.assertGreater(report["total_files"], 0)
+                self.assertEqual(int(summary.group(2)), len(pack_missing))
                 self.assertEqual(pack_missing, verify_missing)
 
 
