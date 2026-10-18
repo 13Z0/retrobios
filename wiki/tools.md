@@ -733,12 +733,18 @@ It never overrides the emulator source code: see
 
 Located in `scripts/scraper/targets/`. Each inherits `BaseTargetScraper` and implements `fetch_targets()`.
 
-| Scraper | Source | Targets |
-|---------|--------|---------|
-| `retroarch_targets_scraper` | libretro buildbot nightly | 20+ architectures |
-| `batocera_targets_scraper` | Config.in + es_systems.yml | 35+ boards |
-| `emudeck_targets_scraper` | EmuScripts GitHub API | steamos, windows |
-| `retropie_targets_scraper` | scriptmodules + rp_module_flags | 7 platforms |
+| Scraper | Source | One target per |
+|---------|--------|----------------|
+| `retroarch_targets_scraper` | libretro buildbot nightly listings | buildbot architecture |
+| `batocera_targets_scraper` | Config.in + es_systems.yml + Buildroot Kconfig | board |
+| `recalbox_targets_scraper` | board defconfigs + system.ini cores | board |
+| `rocknix_targets_scraper` | emulators package.mk + device options | device |
+| `lakka_targets_scraper` | libretro_cores package.mk + project and device options | device image |
+| `emudeck_targets_scraper` | EmuScripts (SteamOS and Windows) | operating system |
+| `retropie_targets_scraper` | scriptmodules + rp_module_flags | platform flag |
+
+`verify.py --platform <name> --list-targets` prints the current list with
+each target's core count.
 
 ```bash
 python -m scripts.scraper.targets.retroarch_targets_scraper --dry-run
@@ -748,16 +754,19 @@ python -m scripts.scraper.targets.batocera_targets_scraper --dry-run
 ## Exporters
 
 Located in `scripts/exporter/`. Each inherits `BaseExporter`, defined in
-`base_exporter.py` with `export()` and `validate()`, and implements both.
+`base_exporter.py`, and implements `render()` and `validate()`.
 
-| Exporter | Output format |
-|----------|--------------|
-| `systemdat_exporter` | clrmamepro DAT (RetroArch System.dat) |
-| `batocera_exporter` | Python dict (batocera-systems) |
-| `recalbox_exporter` | XML (es_bios.xml) |
-| `retrobat_exporter` | JSON (batocera-systems.json) |
-| `emudeck_exporter` | Bash script (checkBIOS.sh) |
-| `retrodeck_exporter` | JSON (component_manifest.json) |
-| `romm_exporter` | JSON (known_bios_files.json) |
-| `lakka_exporter` | clrmamepro DAT (delegates to systemdat) |
-| `retropie_exporter` | clrmamepro DAT (delegates to systemdat) |
+| Exporter | Writes |
+|----------|--------|
+| `systemdat_exporter` | libretro `System.dat`, a clrmamepro DAT |
+| `lakka_exporter` | the same `System.dat`, which Lakka reads unchanged |
+| `batocera_exporter` | the systems block of the `batocera-systems` script, patched entry by entry |
+| `rocknix_exporter` | the systems mapping of the `rocknix-systems` script, patched the same way |
+| `retrobat_exporter` | `batocera-systems.json` |
+| `recalbox_exporter` | `es_bios.xml`, valid against `es_bios.xsd` |
+| `emudeck_exporter` | the MD5 lists of the `checkBIOS.sh` functions, patched in place |
+| `retrodeck_exporter` | the BIOS list inside each component's `component_manifest.json` |
+| `romm_exporter` | `known_bios_files.json`, every entry with a size and a hash |
+| `bizhawk_exporter` | `FirmwareDatabase.cs`, BizHawk's own C# |
+| `misterfpga_exporter` | hash and size in MiSTer's BiosDB (`bios_db.json`) |
+| `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a name it lacks |

@@ -4228,5 +4228,27 @@ class DocumentedHashLookupsFindTheirFile(unittest.TestCase):
         self.assertGreater(found, 0)
 
 
+
+class ToolReferenceListsEveryModule(unittest.TestCase):
+    """The exporter table described retropie_exporter as a System.dat writer
+    and left out bizhawk, misterfpga and rocknix; the target table missed
+    recalbox and rocknix. A contributor reads these tables as the map."""
+
+    def _rows(self, heading: str) -> set[str]:
+        text = (ROOT / "wiki" / "tools.md").read_text(encoding="utf-8")
+        section = text.split(f"## {heading}\n", 1)[1].split("\n## ", 1)[0]
+        return set(re.findall(r"^\| `(\w+)` \|", section, re.M))
+
+    def test_every_exporter_has_a_row(self):
+        modules = {p.stem for p in (ROOT / "scripts" / "exporter").glob("*_exporter.py")}
+        self.assertEqual(self._rows("Exporters"), modules - {"base_exporter"})
+
+    def test_every_target_scraper_has_a_row(self):
+        modules = {
+            p.stem for p in (ROOT / "scripts" / "scraper" / "targets").glob("*_targets_scraper.py")
+        }
+        self.assertEqual(self._rows("Target scrapers"), modules)
+
+
 if __name__ == "__main__":
     unittest.main()
