@@ -184,8 +184,12 @@ def build_region_index(profiles: dict) -> dict[str, dict]:
             # sees the union and is never dropped on ambiguity. The standalone
             # layout is a path of its own: GC/EUR/IPL.bin fell through to the
             # bare name and its five-region union, and was never reduced.
+            # An alias is another name the core reads for the same file:
+            # scph5552.bin, the name beetle_psx also opens for its European
+            # BIOS, stayed in a --region jp pack once scph5502.bin went.
+            aliases = {str(a) for a in f.get("aliases") or []}
             priority = f.get("priority")
-            for key in {path, f.get("standalone_path") or "", name} - {""}:
+            for key in {path, f.get("standalone_path") or "", name, *aliases} - {""}:
                 entry = index.setdefault(
                     key,
                     {"regions": set(), "has_untagged": False, "emulators": [],

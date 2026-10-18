@@ -264,6 +264,18 @@ class TestStandaloneLayoutIsIndexed(unittest.TestCase):
         self.assertEqual(region.lookup_regions(index, "GC/EUR/IPL.bin", "IPL.bin"), {"europe"})
         self.assertIn("GC/EUR/IPL.bin", slot.build_slot_index(profiles))
 
+    def test_an_alias_carries_the_region_of_its_file(self):
+        """scph5552.bin, the name beetle_psx also opens for its European
+        BIOS, stayed in a --region jp pack once scph5502.bin went."""
+        index = region.build_region_index({"beetle_psx": {"files": [
+            {"name": "scph5502.bin", "aliases": ["scph5552.bin"],
+             "region": ["europe", "oceania"]},
+        ]}})
+        self.assertEqual(
+            region.lookup_regions(index, "scph5552.bin", "scph5552.bin"),
+            {"europe", "oceania"},
+        )
+
 
 class TestResolveRegionDrops(unittest.TestCase):
     def setUp(self):
