@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -21,6 +20,7 @@ from common import (
     load_platform_config,
     load_target_config,
     require_yaml,
+    truth_target_dir,
     write_text_atomic,
     yaml_load,
 )
@@ -94,8 +94,9 @@ def main(argv: list[str] | None = None) -> None:
     # compared a narrowed model against the whole scrape.
     output_dir = args.output_dir
     if args.target:
-        slug = re.sub(r"[^a-z0-9]+", "-", args.target.strip().lower()).strip("-")
-        output_dir = os.path.join(output_dir, slug or "target")
+        output_dir = truth_target_dir(
+            output_dir, platforms, args.target, args.platforms_dir
+        )
     os.makedirs(output_dir, exist_ok=True)
 
     for name in platforms:

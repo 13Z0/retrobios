@@ -107,6 +107,31 @@ class EachPlatformNamesTheTargetItsOwnWay(unittest.TestCase):
         self.assertNotIn("args.target = canonical_target_name(", source)
 
 
+class OneTruthModelPerTarget(unittest.TestCase):
+    """generate_truth slugged the typed name: --target nx, switch and
+    nintendo-switch wrote three copies of one model, and the pipeline's diff
+    rebuilt the same slug by hand to find it."""
+
+    def test_aliases_share_a_directory(self):
+        from common import list_registered_platforms, truth_target_dir  # noqa: PLC0415
+
+        platforms = list_registered_platforms(
+            str(REPO_ROOT / "platforms"), include_archived=True
+        )
+        dirs = {
+            truth_target_dir("truth", platforms, alias, str(REPO_ROOT / "platforms"))
+            for alias in ("nx", "switch", "nintendo-switch")
+        }
+        self.assertEqual(dirs, {str(Path("truth") / "nintendo-switch")})
+
+    def test_writer_and_reader_call_one_function(self):
+        for module in ("generate_truth.py", "pipeline.py"):
+            source = (REPO_ROOT / "scripts" / module).read_text()
+            with self.subTest(module=module):
+                self.assertIn("truth_target_dir(", source)
+                self.assertNotIn('re.sub(\n            r"[^a-z0-9]+"', source)
+
+
 class TheListingCountsWhatTheFilterUses(unittest.TestCase):
     """--list-targets showed Batocera x86_64 with 198 cores; --target x86_64
     filters on 187 once _overrides.yml removes machine variants and launchers."""

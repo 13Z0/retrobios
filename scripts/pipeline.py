@@ -41,7 +41,13 @@ if sys.version_info < (3, 12):
     sys.exit(f"pipeline.py needs Python 3.12 or newer, this is {sys.version.split()[0]}")
 
 sys.path.insert(0, str(Path(__file__).parent))
-from common import ArtifactLockBusy, artifact_lock, hold_artifact_lock
+from common import (
+    ArtifactLockBusy,
+    artifact_lock,
+    hold_artifact_lock,
+    list_registered_platforms,
+    truth_target_dir,
+)
 
 
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
@@ -253,9 +259,12 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
     # the whole scrape.
     truth_dir = Path(args.output_dir) / "truth"
     if args.target:
-        truth_dir = truth_dir / re.sub(
-            r"[^a-z0-9]+", "-", args.target.strip().lower()
-        ).strip("-")
+        # generate_truth --all writes every registered platform's model.
+        truth_dir = Path(truth_target_dir(
+            str(truth_dir),
+            list_registered_platforms("platforms", include_archived=True),
+            args.target,
+        ))
 
     if args.with_truth or args.with_export:
         truth_cmd = [

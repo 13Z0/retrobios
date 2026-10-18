@@ -487,6 +487,21 @@ def canonical_target_name(
     return found.pop() if len(found) == 1 else target
 
 
+def truth_target_dir(
+    output_dir: str, platforms: list[str], target: str, platforms_dir: str = "platforms"
+) -> str:
+    """Where a target-narrowed truth model is written and read.
+
+    Slugged from the name the target is filed under: `nx`, `switch` and
+    `nintendo-switch` wrote three copies of one model, and a run under one
+    alias left the others stale beside it. generate_truth writes here and
+    the pipeline's diff reads here, so both call this.
+    """
+    named = canonical_target_name(platforms, target, platforms_dir)
+    slug = re.sub(r"[^a-z0-9]+", "-", named.strip().lower()).strip("-")
+    return os.path.join(output_dir, slug or "target")
+
+
 def load_target_config(
     platform_name: str,
     target: str,
