@@ -15,10 +15,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 9931,
-  "total_size": 8499945705,
-  "pack_files": 12573,
-  "pack_size": 8540493368,
+  "total_files": 9930,
+  "total_size": 8499656937,
+  "pack_files": 12572,
+  "pack_size": 8540204600,
   "total_omitted": 107,
   "omitted_files": [
     {
@@ -4640,15 +4640,6 @@
       "systems": [
         "enterprise-64-128"
       ],
-      "regions": [
-        "germany"
-      ],
-      "region_groups": [
-        "enterprise-128"
-      ],
-      "region_system_groups": [
-        "enterprise-64-128"
-      ],
       "alternatives": [
         {
           "sha1": "f34f0c330b44dbf2548329bea954d5991dec30ca",
@@ -5983,6 +5974,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
+          "sha256": "802fb0ce40878e98335fc56d11eff6382982e9f09ebc83055b0a469df13f7900",
+          "size": 19192,
+          "repo_path": "bios/NEC/PC-98/2608_bd.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -5994,6 +5996,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "12f676cef249b82480b6f19c454e234b435ca7b6",
+          "sha256": "216c81ff9a84af0dfbf21dd8df6827c25fca9fdeefe9bc8426f7a00d6ff2264e",
+          "size": 36722,
+          "repo_path": "bios/NEC/PC-98/2608_hh.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -6005,6 +6018,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "c65592330c9dd84011151daed52f9aec926b7e56",
+          "sha256": "6f7d1996001c74452a9ca68b41a2767925b5b947c699096a8ad15bbc658af5a3",
+          "size": 5288,
+          "repo_path": "bios/NEC/PC-98/2608_rim.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -6016,6 +6040,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "3c79663ef74c0b0439d13351326eb1c52a657008",
+          "sha256": "e5877cd1e4821cbbc9a450491a189032c82906c05f7fc9f2e48ee0d06b3ad18c",
+          "size": 15558,
+          "repo_path": "bios/NEC/PC-98/2608_sd.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -6027,6 +6062,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
+          "sha256": "8e2c9ccfa8caff03dbd0d945d7c1d4de15292817409fe6fabda07f008f97dbc6",
+          "size": 23092,
+          "repo_path": "bios/NEC/PC-98/2608_tom.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -6038,6 +6084,17 @@
       "cores": null,
       "systems": [
         "nec-pc-98"
+      ],
+      "alternatives": [
+        {
+          "sha1": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
+          "sha256": "d7bcf2da99a09589096e9bcee98da43303c588cca4e89b1a263adace52038cd3",
+          "size": 57016,
+          "repo_path": "bios/NEC/PC-98/2608_top.wav",
+          "cores": [
+            "np2kai"
+          ]
+        }
       ]
     },
     {
@@ -6126,17 +6183,6 @@
             "np2kai"
           ]
         }
-      ]
-    },
-    {
-      "dest": "np2kai/font.rom",
-      "sha1": "78ba9960f135372825ab7244b5e4e73a810002ff",
-      "sha256": "8db165d567e13bce3f50ee495975671faa5a0ff332dcb08e187aa91125c81ec6",
-      "size": 288768,
-      "repo_path": "bios/NEC/PC-98/font.rom",
-      "cores": null,
-      "systems": [
-        "nec-pc-98"
       ]
     },
     {
@@ -10033,7 +10079,7 @@
         "japan"
       ],
       "region_groups": [
-        "sega-mastersystem"
+        "sega-master-system"
       ],
       "region_system_groups": [
         "sega-master-system"
@@ -10065,7 +10111,7 @@
         "north-america"
       ],
       "region_groups": [
-        "sega-mastersystem"
+        "sega-master-system"
       ],
       "region_system_groups": [
         "sega-master-system"
@@ -10098,7 +10144,7 @@
         "oceania"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -10131,7 +10177,7 @@
         "japan"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -10164,7 +10210,7 @@
         "north-america"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -108123,6 +108169,19 @@
       ]
     },
     {
+      "dest": "quasi88/font.rom",
+      "sha1": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
+      "sha256": "3227087599afd9304f260cdeb3bf1533e39e425cf444ceb3c24f55f561e71a0c",
+      "size": 2048,
+      "repo_path": "bios/NEC/PC-88/font.rom",
+      "cores": [
+        "quasi88"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
       "dest": "quasi88/font2.rom",
       "sha1": "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e",
       "sha256": "d35d380c8a716c086cdee9f821c879a01196eeec4e52c94a93f79631248c11ba",
@@ -111143,19 +111202,6 @@
       ],
       "systems": [
         "sony-playstation-2"
-      ]
-    },
-    {
-      "dest": "quasi88/font.rom",
-      "sha1": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
-      "sha256": "3227087599afd9304f260cdeb3bf1533e39e425cf444ceb3c24f55f561e71a0c",
-      "size": 2048,
-      "repo_path": "bios/NEC/PC-88/font.rom",
-      "cores": [
-        "quasi88"
-      ],
-      "systems": [
-        "nec-pc-88"
       ]
     },
     {

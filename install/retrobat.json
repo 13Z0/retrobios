@@ -5865,7 +5865,7 @@
         "oceania"
       ],
       "region_groups": [
-        "mega-cd"
+        "megacd"
       ],
       "region_system_groups": [
         "megacd"
@@ -5900,7 +5900,7 @@
         "north-america"
       ],
       "region_groups": [
-        "mega-cd"
+        "megacd"
       ],
       "region_system_groups": [
         "megacd"
@@ -5935,7 +5935,7 @@
         "japan"
       ],
       "region_groups": [
-        "mega-cd"
+        "megacd"
       ],
       "region_system_groups": [
         "megacd"
@@ -9476,7 +9476,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "master-system"
+        "sega-master-system"
       ]
     },
     {
@@ -70353,7 +70353,7 @@
         "north-america"
       ],
       "region_groups": [
-        "sega-triforce"
+        "triforce"
       ]
     },
     {
@@ -70373,7 +70373,7 @@
         "oceania"
       ],
       "region_groups": [
-        "sega-triforce"
+        "triforce"
       ]
     },
     {
@@ -70392,7 +70392,7 @@
         "japan"
       ],
       "region_groups": [
-        "sega-triforce"
+        "triforce"
       ]
     },
     {
@@ -72561,7 +72561,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "sega-stv"
+        "segastv"
       ]
     },
     {
@@ -72583,7 +72583,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "sega-stv"
+        "segastv"
       ]
     },
     {
@@ -76852,12 +76852,6 @@
       "repo_path": "bios/Enterprise/64-128/brd.rom",
       "cores": [
         "ep128emu_core"
-      ],
-      "regions": [
-        "germany"
-      ],
-      "region_groups": [
-        "ep128emu_core:file:ep128emu/roms/brd.rom"
       ]
     },
     {

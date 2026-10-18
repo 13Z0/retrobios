@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-17T23:31:21Z",
+  "generated": "2026-10-18T00:39:54Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -884,7 +884,7 @@
         "oceania"
       ],
       "region_groups": [
-        "mega-cd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -915,7 +915,7 @@
         "north-america"
       ],
       "region_groups": [
-        "mega-cd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -946,7 +946,7 @@
         "japan"
       ],
       "region_groups": [
-        "mega-cd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"

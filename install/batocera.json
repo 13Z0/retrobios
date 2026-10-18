@@ -237,10 +237,10 @@
       }
     }
   ],
-  "total_files": 12893,
-  "total_size": 9279203966,
-  "pack_files": 12895,
-  "pack_size": 9279203966,
+  "total_files": 12899,
+  "total_size": 9279360834,
+  "pack_files": 12901,
+  "pack_size": 9279360834,
   "total_omitted": 395,
   "omitted_files": [
     {
@@ -7583,15 +7583,6 @@
         "enterprise-64-128",
         "videoton-tvc"
       ],
-      "regions": [
-        "germany"
-      ],
-      "region_groups": [
-        "ep128emu_core:file:ep128emu/roms/brd.rom"
-      ],
-      "region_system_groups": [
-        "enterprise-64-128"
-      ],
       "declared_in": [
         "enterprise-64-128"
       ],
@@ -9710,7 +9701,7 @@
         "oceania"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -9743,7 +9734,7 @@
         "north-america"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -9776,7 +9767,7 @@
         "japan"
       ],
       "region_groups": [
-        "sega-megacd"
+        "sega-mega-cd"
       ],
       "region_system_groups": [
         "sega-mega-cd"
@@ -136848,6 +136839,84 @@
     },
     {
       "dest": "np2kai/2608_rim.wav",
+      "sha1": "c65592330c9dd84011151daed52f9aec926b7e56",
+      "sha256": "6f7d1996001c74452a9ca68b41a2767925b5b947c699096a8ad15bbc658af5a3",
+      "size": 5288,
+      "repo_path": "bios/NEC/PC-98/2608_rim.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_BD.WAV",
+      "sha1": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
+      "sha256": "802fb0ce40878e98335fc56d11eff6382982e9f09ebc83055b0a469df13f7900",
+      "size": 19192,
+      "repo_path": "bios/NEC/PC-98/2608_bd.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_SD.WAV",
+      "sha1": "3c79663ef74c0b0439d13351326eb1c52a657008",
+      "sha256": "e5877cd1e4821cbbc9a450491a189032c82906c05f7fc9f2e48ee0d06b3ad18c",
+      "size": 15558,
+      "repo_path": "bios/NEC/PC-98/2608_sd.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_TOP.WAV",
+      "sha1": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
+      "sha256": "d7bcf2da99a09589096e9bcee98da43303c588cca4e89b1a263adace52038cd3",
+      "size": 57016,
+      "repo_path": "bios/NEC/PC-98/2608_top.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_HH.WAV",
+      "sha1": "12f676cef249b82480b6f19c454e234b435ca7b6",
+      "sha256": "216c81ff9a84af0dfbf21dd8df6827c25fca9fdeefe9bc8426f7a00d6ff2264e",
+      "size": 36722,
+      "repo_path": "bios/NEC/PC-98/2608_hh.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_TOM.WAV",
+      "sha1": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
+      "sha256": "8e2c9ccfa8caff03dbd0d945d7c1d4de15292817409fe6fabda07f008f97dbc6",
+      "size": 23092,
+      "repo_path": "bios/NEC/PC-98/2608_tom.wav",
+      "cores": [
+        "np2kai"
+      ],
+      "systems": [
+        "nec-pc-98"
+      ]
+    },
+    {
+      "dest": "np2kai/2608_RIM.WAV",
       "sha1": "c65592330c9dd84011151daed52f9aec926b7e56",
       "sha256": "6f7d1996001c74452a9ca68b41a2767925b5b947c699096a8ad15bbc658af5a3",
       "size": 5288,
