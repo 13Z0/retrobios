@@ -2405,5 +2405,33 @@ class BizHawkIsFoundWhereItReads(unittest.TestCase):
         self.assertIn('.get("emuhawk.exe")', source)
 
 
+
+class RetroArchUwpIsFound(unittest.TestCase):
+    """The UWP/MSIX RetroArch keeps retroarch.cfg and system/ in its
+    package's LocalState; no rule looked under %LOCALAPPDATA%\\Packages."""
+
+    def _state(self) -> Path:
+        local = Path(_tempdir(self))
+        state = local / "Packages" / f"{install.RETROARCH_UWP_ID}_abc123" / "LocalState"
+        state.mkdir(parents=True)
+        patcher = unittest.mock.patch.dict(os.environ, {"LOCALAPPDATA": str(local)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return state
+
+    def test_the_default_is_local_state_system(self):
+        state = self._state()
+        self.assertEqual(install._retroarch_uwp_system_dir(), state / "system")
+
+    def test_a_tilde_is_local_state(self):
+        state = self._state()
+        (state / "retroarch.cfg").write_text('system_directory = "~\\bios"\n')
+        self.assertEqual(install._retroarch_uwp_system_dir(), state / "bios")
+
+    def test_nothing_installed(self):
+        with unittest.mock.patch.dict(os.environ, {"LOCALAPPDATA": _tempdir(self)}):
+            self.assertIsNone(install._retroarch_uwp_system_dir())
+
+
 if __name__ == "__main__":
     unittest.main()

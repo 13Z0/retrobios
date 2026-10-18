@@ -1062,6 +1062,12 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
                 found.append(("retroarch", ra_dir))
                 break
 
+        # The UWP/MSIX package (sideloaded, or Xbox in dev mode)
+        if not any(name == "retroarch" for name, _ in found):
+            uwp = _retroarch_uwp_system_dir()
+            if uwp is not None:
+                found.append(("retroarch", uwp))
+
         # Portable RetroArch referenced by LaunchBox
         lb_root = launchbox_root(os_type)
         if lb_root and not any(name == "retroarch" for name, _ in found):
@@ -1084,6 +1090,39 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
 
     _detect_by_path(os_type, found)
     return found
+
+
+# Identity Name in pkg/msvc-uwp/RetroArch-msvcUWP/Package.appxmanifest.
+RETROARCH_UWP_ID = "1e4cf179-f3c2-404f-b9f3-cb2070a5aad8"
+
+
+def _retroarch_uwp_system_dir() -> Path | None:
+    """System directory of the RetroArch UWP package, if one is installed.
+
+    The package writes into its LocalState folder: uwp_main.cpp makes it the
+    home directory, configuration.c reads retroarch.cfg there, and
+    platform_uwp.c defaults the system directory to ~\\system. A `~` in the
+    config is therefore LocalState, not the user's profile.
+    """
+    local = os.environ.get("LOCALAPPDATA", "").strip()
+    if not local:
+        return None
+    states = sorted(Path(local, "Packages").glob(f"{RETROARCH_UWP_ID}_*/LocalState"))
+    if not states:
+        return None
+    state = states[0]
+    cfg = state / "retroarch.cfg"
+    try:
+        for line in cfg.read_text(encoding="utf-8", errors="replace").splitlines():
+            name, sep, value = line.strip().partition("=")
+            if sep and name.strip() == "system_directory":
+                value = value.strip().strip('"').strip("'")
+                if value.startswith("~"):
+                    return state / value[1:].lstrip("\\/")
+                break
+    except OSError:
+        return state / "system"
+    return _retroarch_cfg_dir(cfg, "system_directory", state, "system") or state / "system"
 
 
 def _bizhawk_unix_firmware() -> Path | None:
