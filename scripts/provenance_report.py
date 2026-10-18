@@ -73,6 +73,22 @@ def _held_in_archive(entry: dict, members: dict) -> bool:
     return False
 
 
+def dump_identity(entry: dict) -> tuple:
+    """What makes two catalog listings one dump: the strongest hash stated."""
+    if entry.get("sha1"):
+        return ("sha1", str(entry["sha1"]).lower())
+    if entry.get("md5"):
+        return ("md5", str(entry["md5"]).lower(), entry.get("size"))
+    if entry.get("crc32"):
+        return ("crc32", str(entry["crc32"]).lower(), entry.get("size"))
+    return ("name", entry.get("dat", ""), entry.get("name", ""))
+
+
+def distinct_missing(report: dict) -> int:
+    """Missing dumps across every catalog, each counted once."""
+    return len({dump_identity(e) for data in report.values() for e in data["missing"]})
+
+
 def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict:
     """Compare each snapshot against the collection.
 
@@ -101,7 +117,7 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
 
     report = {}
     for source, snapshot in sorted(snapshots.items()):
-        matched = 0
+        matched: set = set()
         covered_dats = set()
         unmatched = []
         for entry in snapshot["entries"]:
@@ -111,12 +127,27 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
                 or (str(entry.get("crc32") or "").lower(), entry.get("size")) in by_crc32_size
                 or _held_in_archive(entry, members)
             ):
-                matched += 1
+                matched.add(dump_identity(entry))
                 covered_dats.add(entry.get("dat", ""))
             else:
                 unmatched.append(entry)
-        missing = [e for e in unmatched if e.get("dat", "") in covered_dats]
-        out_of_scope = len(unmatched) - len(missing)
+        # One dump listed by several DATs (No-Intro's three FM-7 DATs share
+        # DICROM.rom, KANJI.rom...) is one dump: counted per listing, the
+        # report announced 2 485 missing for 2 284 distinct ones.
+        merged: dict = {}
+        for entry in unmatched:
+            if entry.get("dat", "") not in covered_dats:
+                continue
+            held = merged.get(dump_identity(entry))
+            if held is None:
+                merged[dump_identity(entry)] = {**entry, "dats": [entry.get("dat", "")]}
+            elif entry.get("dat", "") not in held["dats"]:
+                held["dats"].append(entry.get("dat", ""))
+        missing = list(merged.values())
+        out_of_scope = len({
+            dump_identity(e) for e in unmatched if e.get("dat", "") not in covered_dats
+        })
+        matched = len(matched)
         report[source] = {
             "imported_at": snapshot.get("imported_at", ""),
             "dats": snapshot.get("dats", {}),
@@ -192,9 +223,9 @@ def main() -> int:
                 else:
                     print(f"    MISSING {entry['name']} ({label}) sha1={entry.get('sha1')}")
 
-    total_missing = sum(len(d["missing"]) for d in report.values())
+    total_missing = distinct_missing(report)
     if total_missing:
-        line = f"  {total_missing} catalog entries missing from collection"
+        line = f"  {total_missing} catalogued dumps missing from collection"
         if args.derive:
             line += f", {len(derived)} of them derivable from held dumps"
         print(line)

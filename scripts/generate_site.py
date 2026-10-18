@@ -65,7 +65,7 @@ from generate_readme import (
     release_totals,
 )
 from profile_sync import source_ref_values, split_source_ref
-from provenance_report import build_report
+from provenance_report import build_report, distinct_missing
 import release_record
 import upstream
 
@@ -1774,7 +1774,7 @@ def generate_provenance_page(db: dict, report: dict) -> str:
             ]
         )
 
-    total_missing = sum(len(d["missing"]) for d in report.values())
+    total_missing = distinct_missing(report)
     lines.extend(
         [
             "## Wanted: catalogued dumps this project does not have",
@@ -1795,7 +1795,8 @@ def generate_provenance_page(db: dict, report: dict) -> str:
         label = _PROVENANCE_LABELS.get(source, source)
         by_dat: dict[str, list] = {}
         for entry in data["missing"]:
-            by_dat.setdefault(entry.get("dat", ""), []).append(entry)
+            for dat in entry.get("dats") or [entry.get("dat", "")]:
+                by_dat.setdefault(dat, []).append(entry)
         lines.extend([f"### {label}", ""])
         for dat in sorted(by_dat):
             entries = by_dat[dat]

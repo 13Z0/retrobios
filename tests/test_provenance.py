@@ -510,5 +510,29 @@ class ArchiveMembersAreHeld(unittest.TestCase):
         self.assertEqual(report["no-intro"]["matched"], 1)
         self.assertEqual([e["name"] for e in report["no-intro"]["missing"]], ["other.bin"])
 
+class OneDumpIsCountedOnce(unittest.TestCase):
+    """No-Intro's three FM-7 DATs each list DICROM.rom and KANJI.rom: the
+    report said 2 485 missing where 2 284 distinct dumps were missing, and
+    the site's Wanted page published the larger number."""
+
+    def test_a_dump_in_several_dats_is_one_missing_entry(self):
+        from scripts import provenance_report  # noqa: PLC0415
+
+        rom = {"name": "DICROM.rom", "sha1": "a" * 40, "size": 32768}
+        held = {"name": "held.rom", "sha1": "b" * 40, "size": 16}
+        snapshots = {"no-intro": {"entries": [
+            {**rom, "dat": "FM-7 (Bitstream)"}, {**held, "dat": "FM-7 (Bitstream)"},
+            {**rom, "dat": "FM-7 (Flux)"}, {**held, "dat": "FM-7 (Flux)"},
+        ]}}
+        db = {"files": {"b" * 40: {"md5": "", "size": 16}}}
+        report = provenance_report.build_report(db, snapshots, {})
+        (entry,) = report["no-intro"]["missing"]
+        self.assertEqual(entry["dats"], ["FM-7 (Bitstream)", "FM-7 (Flux)"])
+        self.assertEqual(report["no-intro"]["matched"], 1)
+        self.assertEqual(provenance_report.distinct_missing(report), 1)
+        twice = {"redump": report["no-intro"], "no-intro": report["no-intro"]}
+        self.assertEqual(provenance_report.distinct_missing(twice), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
