@@ -778,12 +778,22 @@ def generate_pack(
                     continue
                 if not dest:
                     # EmuDeck-style entries (system:md5 whitelist, no filename).
+                    # Judged as verify judges it: resolved on disk, the md5
+                    # list parsed once (case, comma lists).
                     fkey = f"{sys_id}/{file_entry.get('name', '')}"
-                    md5 = file_entry.get("md5", "")
-                    if md5 and md5 in db.get("indexes", {}).get("by_md5", {}):
-                        file_status.setdefault(fkey, "ok")
-                    else:
+                    held, held_status = resolve_file(
+                        file_entry, db, bios_dir, zip_contents,
+                        data_dir_registry=data_registry, offline=offline,
+                    )
+                    if held_status == "not_found" or not held:
                         file_status[fkey] = "missing"
+                    elif baseline_verdict(
+                        file_entry, held, held_status, verification_mode,
+                        config.get("hash_rule", ""),
+                    )[1]:
+                        file_status[fkey] = "excluded"
+                    else:
+                        file_status.setdefault(fkey, "ok")
                     continue
                 if base_dest:
                     full_dest = f"{base_dest}/{dest}"

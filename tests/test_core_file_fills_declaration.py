@@ -310,5 +310,48 @@ class TwoDeclarationsOfOnePath(unittest.TestCase):
                     self.assertIn("1/1 files OK", printed)
 
 
+class ANamelessWhitelistEntry(unittest.TestCase):
+    """EmuDeck lists md5 values with no file name. The builder looked the
+    raw string up in by_md5: an uppercase value or a comma list was
+    missing in the pack and met in verify."""
+
+    def test_the_pack_counts_what_verify_counts(self):
+        _emulator_profiles_cache.clear()
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        bios = root / "bios" / "Sony" / "PlayStation"
+        bios.mkdir(parents=True)
+        data = b"PSX BIOS BYTES"
+        (bios / "scph.bin").write_bytes(data)
+        sha1, md5 = hashlib.sha1(data).hexdigest(), hashlib.md5(data).hexdigest()
+        db = {
+            "files": {sha1: {"path": str(bios / "scph.bin"), "name": "scph.bin",
+                             "md5": md5, "crc32": "", "size": len(data)}},
+            "indexes": {"by_md5": {md5: sha1}, "by_name": {"scph.bin": [sha1]},
+                        "by_crc32": {}, "by_path_suffix": {}},
+        }
+        for folder in ("platforms", "emulators"):
+            (root / folder).mkdir()
+        values = [md5.upper(), f"{'0' * 32},{md5}", "f" * 32]
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "md5",
+            "base_destination": "bios", "cores": [],
+            "systems": {"sony-playstation": {"files": [
+                {"name": f"sony-playstation:{v}", "destination": "", "md5": v}
+                for v in values
+            ]}},
+        }))
+        config = load_platform_config("fakeplat", str(root / "platforms"))
+        result = verify_platform(config, db, str(root / "emulators"))
+        out = io.StringIO()
+        with redirect_stdout(out):
+            generate_pack(
+                "fakeplat", str(root / "platforms"), db, str(root / "bios"),
+                str(root / "out"), emulators_dir=str(root / "emulators"), offline=True,
+            )
+        self.assertEqual(result["status_counts"], {"ok": 2, "missing": 1})
+        self.assertIn("2/3 files OK", out.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()
