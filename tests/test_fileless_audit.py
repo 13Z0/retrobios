@@ -94,6 +94,12 @@ class TestFilelessAudit(unittest.TestCase):
         self._write(BASE + 'exclusion_note: "the directory is written, not read"\n')
         self.assertIsNone(self._run())
 
+    def test_an_alias_has_no_files_of_its_own(self):
+        """eden-nightly is eden under another name; it was swept and its
+        forge's 403 failed the run."""
+        self._write(BASE + "type: alias\nalias_of: other\n")
+        self.assertIsNone(self._run())
+
     def test_an_empty_answer_does_not_settle_it(self):
         self._write(BASE + 'exclusion_note: "   "\n')
         self.assertEqual(len(self._run()), 1)

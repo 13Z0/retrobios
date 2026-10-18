@@ -59,6 +59,9 @@ def audit(
         document = yaml_load(handle) or {}
     if document.get("files"):
         return None
+    if document.get("type") == "alias":
+        # The same binary under another name: its files are its target's.
+        return None
     if str(document.get("exclusion_note") or "").strip():
         # Someone read this one and wrote down why nothing is declared. The
         # check exists to find the profiles nobody has answered yet; an
@@ -91,6 +94,7 @@ def _settled_before_reading(document: dict) -> bool:
     a declared data directory (see audit)."""
     return bool(
         document.get("files")
+        or document.get("type") == "alias"
         or str(document.get("exclusion_note") or "").strip()
         or document.get("data_directories")
     )
