@@ -1151,6 +1151,52 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
         self.assertEqual(used, [])
 
 
+    def test_no_local_is_assigned_and_never_read(self):
+        """ruff --select F in py38 mode is the installer's lint gate; an
+        unread `appdata` in _os_default_dests made it exit 1. The suite has
+        no ruff, so the rule is read from the syntax tree."""
+        import ast  # noqa: PLC0415
+
+        tree = ast.parse((Path(__file__).resolve().parents[1] / "install.py").read_text())
+        unread = []
+        for func in ast.walk(tree):
+            if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            stored, loaded = {}, set()
+            for node in ast.walk(func):
+                if isinstance(node, ast.Name):
+                    if isinstance(node.ctx, ast.Store):
+                        stored.setdefault(node.id, node.lineno)
+                    else:
+                        loaded.add(node.id)
+            nested = {
+                n.id for inner in ast.walk(func) if inner is not func
+                and isinstance(inner, (ast.FunctionDef, ast.Lambda))
+                for n in ast.walk(inner) if isinstance(n, ast.Name)
+            }
+            unread += [
+                f"{func.name}:{line} {name}" for name, line in stored.items()
+                if name not in loaded | nested and not name.startswith("_")
+                and not any(
+                    isinstance(g, (ast.Global, ast.Nonlocal)) and name in g.names
+                    for g in ast.walk(func)
+                )
+            ]
+        self.assertEqual(unread, [])
+        # Nor a module rebound: a loop variable named `platform` shadowed the
+        # platform module in _detect_by_path (F402).
+        modules = {
+            alias.asname or alias.name.split(".")[0]
+            for node in tree.body if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+        rebound = sorted(
+            f"{node.id}:{node.lineno}" for node in ast.walk(tree)
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+            and node.id in modules
+        )
+        self.assertEqual(rebound, [])
+
 class ARefusedCopyIsAnError(unittest.TestCase):
     """A PermissionError on a standalone copy was counted as "dir not found"
     and the run ended on Done with exit code 0."""

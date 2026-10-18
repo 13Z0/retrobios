@@ -175,7 +175,6 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
     home = Path.home()
     if os_type == "windows":
         profile = Path(os.environ.get("USERPROFILE", str(home)))
-        appdata = Path(os.environ.get("APPDATA", str(home / "AppData" / "Roaming")))
         return {
             # RetroArch's system directory defaults to <exe folder>\system
             # (platform_win32.c), and its installer to C:\RetroArch-Win64.
@@ -904,11 +903,11 @@ def _rule_path(template: str) -> Path:
 def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
     """Add what a registry path rule finds, for a platform not found yet."""
     systems = ("linux", "windows") if os_type == "wsl" else (os_type,)
-    for rule_os, platform, path, bios in _PATH_RULES:
-        if rule_os not in systems or any(name == platform for name, _ in found):
+    for rule_os, platform_name, path, bios in _PATH_RULES:
+        if rule_os not in systems or any(name == platform_name for name, _ in found):
             continue
         if _rule_path(path).exists():
-            found.append((platform, _rule_path(bios or path)))
+            found.append((platform_name, _rule_path(bios or path)))
 
 
 def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
