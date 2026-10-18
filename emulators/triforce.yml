@@ -195,6 +195,7 @@ files:
   - name: "IPL.bin"
     path: "GC/USA/IPL.bin"
     description: "GameCube NTSC-U boot ROM"
+    system: nintendo-gamecube
     region: [north-america]
     size: 2097152
     required: false
@@ -205,6 +206,7 @@ files:
   - name: "IPL.bin"
     path: "GC/EUR/IPL.bin"
     description: "GameCube PAL boot ROM"
+    system: nintendo-gamecube
     region: [europe, oceania]
     size: 2097152
     required: false
@@ -214,6 +216,7 @@ files:
   - name: "IPL.bin"
     path: "GC/JAP/IPL.bin"
     description: "GameCube NTSC-J boot ROM"
+    system: nintendo-gamecube
     region: [japan, south-korea]
     size: 2097152
     required: false

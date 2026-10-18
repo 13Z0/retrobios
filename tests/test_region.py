@@ -246,6 +246,25 @@ class TestRegionIndex(unittest.TestCase):
         self.assertIn("x.bin", str(ctx.exception))
 
 
+class TestStandaloneLayoutIsIndexed(unittest.TestCase):
+    """GC/EUR/IPL.bin, Dolphin's standalone path, was looked up by its bare
+    name and got the union of five regions: never reduced in a Batocera
+    pack nor in --emulator dolphin --standalone."""
+
+    def test_the_standalone_path_carries_its_own_regions(self):
+        import slot
+
+        profiles = {"dolphin": {"files": [
+            {"name": "IPL.bin", "path": "dolphin-emu/Sys/GC/USA/IPL.bin",
+             "standalone_path": "GC/USA/IPL.bin", "region": ["north-america"]},
+            {"name": "IPL.bin", "path": "dolphin-emu/Sys/GC/EUR/IPL.bin",
+             "standalone_path": "GC/EUR/IPL.bin", "region": ["europe"]},
+        ]}}
+        index = region.build_region_index(profiles)
+        self.assertEqual(region.lookup_regions(index, "GC/EUR/IPL.bin", "IPL.bin"), {"europe"})
+        self.assertIn("GC/EUR/IPL.bin", slot.build_slot_index(profiles))
+
+
 class TestResolveRegionDrops(unittest.TestCase):
     def setUp(self):
         self.index = region.build_region_index(

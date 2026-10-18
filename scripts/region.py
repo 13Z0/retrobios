@@ -181,9 +181,11 @@ def build_region_index(profiles: dict) -> dict[str, dict]:
             path = f.get("path") or ""
             # Path-keyed so same-named entries stay separate (Dolphin declares
             # three IPL.bin), name-keyed so a candidate identified by name alone
-            # sees the union and is never dropped on ambiguity.
+            # sees the union and is never dropped on ambiguity. The standalone
+            # layout is a path of its own: GC/EUR/IPL.bin fell through to the
+            # bare name and its five-region union, and was never reduced.
             priority = f.get("priority")
-            for key in {path, name} - {""}:
+            for key in {path, f.get("standalone_path") or "", name} - {""}:
                 entry = index.setdefault(
                     key,
                     {"regions": set(), "has_untagged": False, "emulators": [],

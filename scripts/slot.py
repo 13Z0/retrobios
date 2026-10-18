@@ -60,7 +60,8 @@ def build_slot_index(profiles: dict) -> dict[str, dict]:
                 continue
             name = f.get("name", "")
             path = f.get("path") or ""
-            for key in {path, name} - {""}:
+            # Keyed by the standalone layout too, as build_region_index is.
+            for key in {path, f.get("standalone_path") or "", name} - {""}:
                 entry = index.setdefault(
                     key,
                     {"rank": None, "conflict": False, "regions": set(),
