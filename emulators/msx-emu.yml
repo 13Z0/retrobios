@@ -241,6 +241,7 @@ files:
     bundled: true
     category: game_data
     size: 10469
+    sha1: "78ae5c049bc94ee1284536c419388b1ab7ac218c"
     description: "C-BIOS 0.29 release notes and licence, bundled beside the machine folders"
     note: >-
       Shipped in the application bundle. No code reads it.

@@ -485,5 +485,35 @@ class HeldFilesAreNotUnsourceable(unittest.TestCase):
         self.assertEqual(stale, [])
 
 
+class BundledFilesAreTheBuildTheyDescribe(unittest.TestCase):
+    """A bundled file is documented from one build. msx-emu's cbios.txt is the
+    C-BIOS 0.29 notes (10469 bytes); the collection held the 0.23 notes and
+    served them by name. future-pinball-fploader documents BAM 1.5-408 and
+    received the 1.5-360 BAM.dll. A namesake of another size is another
+    build: the entry needs a hash, its own bytes, or `unsourceable:`."""
+
+    def test_no_bundled_entry_resolves_to_another_size(self):
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            self.skipTest("database.json is not built")
+        db = load_database(str(db_path))
+        wrong = []
+        for owner, profile in load_emulator_profiles(str(REPO_ROOT / "emulators")).items():
+            for entry in profile.get("files", []):
+                if not isinstance(entry, dict) or not entry.get("bundled"):
+                    continue
+                if entry.get("unsourceable") or not entry.get("size"):
+                    continue
+                if any(entry.get(k) for k in ("sha1", "md5", "sha256", "crc32")):
+                    continue
+                path, _status = resolve_local_file(
+                    dict(entry, source_profile=owner), db,
+                    dest_hint=entry.get("path") or entry["name"],
+                )
+                if path and os.path.getsize(path) != entry["size"]:
+                    wrong.append((owner, entry["name"], path))
+        self.assertEqual(wrong, [])
+
+
 if __name__ == "__main__":
     unittest.main()
