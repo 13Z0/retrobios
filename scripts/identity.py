@@ -93,13 +93,22 @@ def _sha1(path: Path) -> str:
 
 
 def scan(bios_dir: str = "bios") -> list[Duplicate]:
-    """Group the tree by content and keep the groups that cross makers."""
-    by_content: dict[str, list[Path]] = {}
+    """Group the tree by content and keep the groups that cross makers.
+
+    Only files that share a size can share a content, so a size held by one
+    file is never read: hashing the whole tree read 18 GB on every pipeline.
+    """
+    by_size: dict[int, list[Path]] = {}
     root = Path(bios_dir)
     for path in sorted(root.rglob("*")):
-        if not path.is_file():
+        if path.is_file():
+            by_size.setdefault(path.stat().st_size, []).append(path)
+    by_content: dict[str, list[Path]] = {}
+    for paths in by_size.values():
+        if len(paths) < 2:
             continue
-        by_content.setdefault(_sha1(path), []).append(path)
+        for path in paths:
+            by_content.setdefault(_sha1(path), []).append(path)
 
     found: list[Duplicate] = []
     for sha1, paths in by_content.items():

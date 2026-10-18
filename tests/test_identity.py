@@ -92,6 +92,20 @@ class TestCrossVendorDuplicates(unittest.TestCase):
         self._write("Sega/Saturn/cartridge.bin", b"other")
         self.assertEqual(self._scan(), [])
 
+    def test_a_file_whose_size_no_other_shares_is_never_read(self):
+        """Hashing the whole tree read 18 GB on every pipeline run."""
+        from unittest import mock
+
+        self._write("Commodore/Amiga/kickstart.rom", b"kick")
+        self._write("Sega/Saturn/cartridge.bin", b"kick")
+        self._write("Sony/PlayStation/scph5501.bin", b"a longer dump")
+        self._write("Sega/Saturn/other.bin", b"same")
+        with mock.patch.object(identity, "_sha1", wraps=identity._sha1) as hashed:
+            found = self._scan()
+        read = sorted(Path(call.args[0]).name for call in hashed.call_args_list)
+        self.assertEqual(read, ["cartridge.bin", "kickstart.rom", "other.bin"])
+        self.assertEqual(len(found), 1)
+
     def test_report_line_names_every_identity(self):
         self._write("Commodore/Amiga/kickstart.rom", b"kick")
         self._write("Sega/Saturn/cartridge.bin", b"kick")
