@@ -210,9 +210,19 @@ def validate_file(
     if db:
         if result.sha1 in db.get("files", {}):
             existing = db["files"][result.sha1]
-            result.add_warning(
-                f"Duplicate: identical file already exists at `{existing['path']}`"
-            )
+            held_at = {
+                os.path.normpath(p)
+                for p in [existing.get("path"), *(existing.get("paths") or [])] if p
+            }
+            if os.path.normpath(filepath) in held_at:
+                # The file the database was built from, not a copy of it: a
+                # PR that regenerated database.json was told each new file
+                # duplicated itself.
+                result.add_check(True, "Already in the database at this path")
+            else:
+                result.add_warning(
+                    f"Duplicate: identical file already exists at `{existing['path']}`"
+                )
         else:
             result.add_check(True, "Not a duplicate in database")
 

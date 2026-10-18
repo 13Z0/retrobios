@@ -184,6 +184,17 @@ class HashRecognition(_Fixture):
         self.assertTrue(validate_pr.validate_file(rel, db, EMPTY_HASHES).passed)
 
 
+    def test_the_file_the_database_holds_is_not_its_own_duplicate(self):
+        """The documented example on a tracked file warned "Duplicate:
+        identical file already exists at" the very path being validated."""
+        rel = self._bios_file("bios/Sony/PS/held.bin")
+        probe = validate_pr.validate_file(rel, None, EMPTY_HASHES)
+        db = {"files": {probe.sha1: {"path": rel}}}
+        markdown = validate_pr.validate_file(rel, db, EMPTY_HASHES).to_markdown()
+        self.assertNotIn("Duplicate", markdown)
+        self.assertIn("Already in the database at this path", markdown)
+
+
 class Placement(_Fixture):
     def test_manufacturer_and_console_directories_are_accepted(self):
         rel = self._bios_file("bios/Sega/Saturn/sega_101.bin")
