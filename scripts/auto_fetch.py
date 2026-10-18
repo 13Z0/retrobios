@@ -23,6 +23,7 @@ import os
 import subprocess
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -115,14 +116,26 @@ def find_missing(config: dict, db: dict) -> list[dict]:
     return missing
 
 
+def _accepted(entry: dict, field: str) -> set[str]:
+    """Every value an entry accepts for a hash field.
+
+    A profile lists several revisions as a YAML list (daedalusx64's
+    n64.psh), a platform as a comma-separated string; read as one value,
+    the list stopped the run with an unhashable-type error.
+    """
+    value = entry.get(field)
+    values = value if isinstance(value, list) else str(value or "").split(",")
+    return {str(v).strip().lower() for v in values if str(v).strip()}
+
+
 def verify_content(data: bytes, expected: dict) -> bool:
-    """Verify downloaded content matches expected hashes."""
-    if expected.get("sha1"):
-        actual = hashlib.sha1(data).hexdigest()
-        return actual == expected["sha1"]
-    if expected.get("md5"):
-        actual = hashlib.md5(data).hexdigest()
-        return actual == expected["md5"]
+    """Verify downloaded content matches one of the expected hashes."""
+    sha1s = _accepted(expected, "sha1")
+    if sha1s:
+        return hashlib.sha1(data).hexdigest() in sha1s
+    md5s = _accepted(expected, "md5")
+    if md5s:
+        return hashlib.md5(data).hexdigest() in md5s
     return False
 
 
@@ -138,17 +151,15 @@ def _read_limited(
 
 def step1_crossref_db(entry: dict, db: dict) -> str | None:
     """Check if file exists under different name/path in database."""
-    sha1 = entry.get("sha1")
-    md5 = entry.get("md5")
-
-    if sha1 and sha1 in db.get("files", {}):
-        return db["files"][sha1]["path"]
-
-    if md5:
-        sha1_match = db.get("indexes", {}).get("by_md5", {}).get(md5)
-        if sha1_match and sha1_match in db["files"]:
-            return db["files"][sha1_match]["path"]
-
+    files = db.get("files", {})
+    for sha1 in sorted(_accepted(entry, "sha1")):
+        if sha1 in files:
+            return files[sha1]["path"]
+    by_md5 = db.get("indexes", {}).get("by_md5", {})
+    for md5 in sorted(_accepted(entry, "md5")):
+        sha1_match = by_md5.get(md5)
+        if sha1_match and sha1_match in files:
+            return files[sha1_match]["path"]
     return None
 
 
@@ -247,12 +258,15 @@ def step4_search_archive_org(entry: dict) -> bytes | None:
             except (urllib.error.URLError, urllib.error.HTTPError):
                 continue
 
-    sha1 = entry.get("sha1", "")
-    if not sha1:
+    sha1s = sorted(_accepted(entry, "sha1"))
+    if not sha1s:
         return None
+    # Each accepted revision is a query of its own; archive.org matches one.
+    sha1 = " OR ".join(f"sha1:{value}" for value in sha1s)
 
     search_url = (
-        f"https://archive.org/advancedsearch.php?q=sha1:{sha1}&output=json&rows=1"
+        "https://archive.org/advancedsearch.php?q="
+        f"{urllib.parse.quote(sha1)}&output=json&rows=1"
     )
 
     try:
@@ -289,21 +303,24 @@ def place_file(data: bytes, entry: dict, bios_dir: str, db: dict) -> str:
 
     dest_dir = Path(bios_dir)
 
-    for manufacturer_dir in dest_dir.iterdir():
-        if not manufacturer_dir.is_dir():
-            continue
-        for console_dir in manufacturer_dir.iterdir():
-            if not console_dir.is_dir():
-                continue
-            dir_path = f"{manufacturer_dir.name}/{console_dir.name}".lower()
-            if any(part in dir_path for part in system.split("-") if len(part) > 2):
-                dest = console_dir / name
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                with open(dest, "wb") as f:
-                    f.write(data)
-                return str(dest)
-
-    dest = dest_dir / "Unknown" / system / name
+    # Every part of the slug, not any: matching "nintendo" alone filed the
+    # N64's n64.psh under the first Nintendo folder walked, the SNES one.
+    parts = [part for part in system.lower().split("-") if len(part) > 1]
+    matches = sorted(
+        (len(f"{manufacturer_dir.name}/{console_dir.name}"), str(console_dir), console_dir)
+        for manufacturer_dir in dest_dir.iterdir() if manufacturer_dir.is_dir()
+        for console_dir in manufacturer_dir.iterdir() if console_dir.is_dir()
+        and all(
+            part in f"{manufacturer_dir.name}/{console_dir.name}".lower()
+            for part in parts
+        )
+    )
+    folder = matches[0][2] if matches else dest_dir / "Unknown" / system
+    dest = folder / name
+    if dest.exists() and dest.read_bytes() != data:
+        # Another revision under the same name: the collection keeps it
+        # beside, never in place of, the file already there.
+        dest = folder / ".variants" / f"{name}.{hashlib.sha1(data).hexdigest()[:8]}"
     dest.parent.mkdir(parents=True, exist_ok=True)
     with open(dest, "wb") as f:
         f.write(data)
@@ -377,8 +394,8 @@ def generate_issue_body(missing: list[dict], platform: str) -> str:
     ]
 
     for entry in missing:
-        sha1 = entry.get("sha1") or "N/A"
-        md5 = entry.get("md5") or "N/A"
+        sha1 = ", ".join(sorted(_accepted(entry, "sha1"))) or "N/A"
+        md5 = ", ".join(sorted(_accepted(entry, "md5"))) or "N/A"
         lines.append(
             f"| `{entry['name']}` | {entry['system']} | `{sha1[:12]}...` | `{md5[:12]}...` |"
         )

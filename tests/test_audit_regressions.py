@@ -602,6 +602,41 @@ class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
         self.assertIn("install.sh | sh", guide)
 
 
+class AutoFetchReadsListsAndPlacesWithoutClobbering(unittest.TestCase):
+    """A profile hash list (daedalusx64's n64.psh) stopped auto_fetch with
+    an unhashable-type error, and a fetched file went to the first folder
+    sharing one word of the system slug (nintendo-64 into Nintendo/SNES),
+    overwriting a same-named file there."""
+
+    def test_a_hash_list_is_every_accepted_revision(self):
+        import hashlib
+
+        from scripts import auto_fetch
+
+        data = b"second revision"
+        entry = {"sha1": ["0" * 40, hashlib.sha1(data).hexdigest()]}
+        self.assertTrue(auto_fetch.verify_content(data, entry))
+        db = {"files": {hashlib.sha1(data).hexdigest(): {"path": "bios/x/n64.psh"}},
+              "indexes": {"by_md5": {}}}
+        self.assertEqual(auto_fetch.step1_crossref_db(entry, db), "bios/x/n64.psh")
+
+    def test_the_whole_slug_picks_the_folder_and_nothing_is_overwritten(self):
+        from scripts import auto_fetch
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            bios = Path(directory)
+            for folder in ("Nintendo/SNES", "Nintendo/N64", "Nintendo/Nintendo 64DD"):
+                (bios / folder).mkdir(parents=True)
+            held = bios / "Nintendo" / "N64" / "n64.psh"
+            held.write_bytes(b"other revision")
+            placed = Path(auto_fetch.place_file(
+                b"fetched", {"name": "n64.psh", "system": "nintendo-64"}, str(bios), {}
+            ))
+            self.assertEqual(placed.parent.parent, bios / "Nintendo" / "N64")
+            self.assertEqual(placed.parent.name, ".variants")
+            self.assertEqual(held.read_bytes(), b"other revision")
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 
