@@ -52,12 +52,6 @@ class Exporter(BaseExporter):
     def native_sources() -> dict[str, str]:
         return {"known_bios_files.json": SOURCE_URL}
 
-    def __init__(self) -> None:
-        super().__init__()
-        # Filled by render; empty until then, so writable() answers before it.
-        self._platform_keys: set[tuple[str, str]] = set()
-        self._first_addition: dict[tuple[str, str], int] = {}
-
     @staticmethod
     def _verifiable(fe: NativeFile) -> bool:
         return bool(fe.size()) and any(
@@ -102,7 +96,15 @@ class Exporter(BaseExporter):
         originals: dict[str, str],
         scraped: dict | None = None,
     ) -> dict[str, str]:
-        output: OrderedDict[str, dict] = OrderedDict()
+        # RomM's own fixture is the base: its key order stays, and a key our
+        # transcription lacks (added after the scrape, or filtered from the
+        # model) is kept. Rebuilt from the model in our order, three hash
+        # corrections came out as a diff of the whole file.
+        original = originals.get(self.native_filename(), "")
+        output: OrderedDict[str, OrderedDict] = (
+            json.loads(original, object_pairs_hook=OrderedDict)
+            if original else OrderedDict()
+        )
         self._platform_keys = {
             (system.native_id, fe.name)
             for system in systems.values()
@@ -125,7 +127,9 @@ class Exporter(BaseExporter):
             for fe in sorted(system.files, key=lambda f: f.name):
                 if not self.writable(fe):
                     continue
-                entry: OrderedDict[str, str] = OrderedDict()
+                key = f"{system.native_id}:{fe.name}"
+                # Their entry keeps its fields and their order; ours fill in.
+                entry: OrderedDict[str, str] = OrderedDict(output.get(key, {}))
                 # The fixture states every value as a string, size included.
                 # Where the model settles no size, RomM's own value stands;
                 # str(None) wrote "None", and RomM's int() on it raised.
@@ -134,16 +138,11 @@ class Exporter(BaseExporter):
                     size = fe.platform.get("size")
                 if size is not None:
                     entry["size"] = str(int(size))
-                crc = fe.record_hash("crc32")
-                if crc:
-                    entry["crc"] = crc
-                md5 = fe.record_hash("md5")
-                if md5:
-                    entry["md5"] = md5
-                sha1 = fe.record_hash("sha1")
-                if sha1:
-                    entry["sha1"] = sha1
-                output[f"{system.native_id}:{fe.name}"] = entry
+                for field, hash_name in (("crc", "crc32"), ("md5", "md5"), ("sha1", "sha1")):
+                    value = fe.record_hash(hash_name)
+                    if value:
+                        entry[field] = value
+                output[key] = entry
 
         text = json.dumps(output, indent=2, ensure_ascii=False) + "\n"
         return {self.native_filename(): text}

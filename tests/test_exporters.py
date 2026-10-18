@@ -14,6 +14,7 @@ and skip when it has not been populated (python scripts/export_native.py
 
 from __future__ import annotations
 
+import difflib
 import json
 import os
 import re
@@ -22,6 +23,7 @@ import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -780,6 +782,46 @@ class RommExport(unittest.TestCase):
         _, _, produced = self._render()
         data = json.loads(produced["known_bios_files.json"])
         self.assertTrue(all(k.startswith("psx:") for k in data))
+
+
+class RommKeepsItsFixture(unittest.TestCase):
+    """The export rebuilt known_bios_files.json from our model in our order:
+    3 hash corrections came out as a 3116-line diff, and a key RomM had that
+    our transcription lacked was deleted."""
+
+    def test_order_unknown_keys_and_untouched_entries_survive(self):
+        theirs = OrderedDict([
+            ("psx:zzz_first.bin", OrderedDict([("size", "1024"), ("md5", "a" * 32)])),
+            ("psx:only_theirs.bin", OrderedDict([("size", "16"), ("crc", "deadbeef")])),
+            ("psx:scph5501.bin", OrderedDict([("size", "524288"), ("md5", "b" * 32)])),
+        ])
+        original = json.dumps(theirs, indent=2) + "\n"
+        scraped = {"systems": {"sony-playstation": {"native_id": "psx", "files": [
+            {"name": "zzz_first.bin", "destination": "psx/zzz_first.bin",
+             "native_system": "psx", "md5": "a" * 32, "size": 1024},
+            {"name": "scph5501.bin", "destination": "psx/scph5501.bin",
+             "native_system": "psx", "md5": "b" * 32, "size": 524288},
+        ]}}}
+        truth = {"systems": {"sony-playstation": {"files": [{
+            "name": "scph5501.bin", "path": "scph5501.bin", "md5": "c" * 32,
+            "size": 524288, "required": True, "_cores": ["beetle_psx"],
+        }]}}}
+        systems, report = build_native_model(truth, scraped)
+        produced = discover_exporters()["romm"]().render(
+            systems, report, {"known_bios_files.json": original}, None
+        )["known_bios_files.json"]
+        data = json.loads(produced, object_pairs_hook=OrderedDict)
+        self.assertEqual(
+            list(data), ["psx:zzz_first.bin", "psx:only_theirs.bin", "psx:scph5501.bin"]
+        )
+        self.assertEqual(data["psx:only_theirs.bin"], theirs["psx:only_theirs.bin"])
+        self.assertEqual(data["psx:scph5501.bin"]["md5"], "c" * 32)
+        changed = [
+            line for line in difflib.unified_diff(
+                original.splitlines(), produced.splitlines(), lineterm="", n=0
+            ) if line[:1] in "+-" and line[:3] not in ("+++", "---")
+        ]
+        self.assertEqual(len(changed), 2, changed)
 
 
 class SystemDatKeepsSpaceIndentedLines(unittest.TestCase):
