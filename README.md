@@ -97,7 +97,7 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 | RetroBat | 348/348 | 7,260/7,419 | MD5 hash |
 | RetroDECK | 2,008/2,008 | 5,326/5,376 | MD5 hash |
 | RetroPie * | 532/532 | 9,196/9,338 | file presence |
-| RomM | 381/381 | 773/780 | MD5 hash |
+| RomM | 383/383 | 773/780 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
 That second number is a floor, not a ceiling: an emulator that accepts any file handed to it names none in its code, so nothing there can be counted.
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-18T12:38:03Z*
+*Auto-generated on 2026-10-18T13:59:53Z*
