@@ -492,6 +492,24 @@ class RommKeepsItsOwnKeys(unittest.TestCase):
         self.assertEqual(written["dc:boot.bin"]["size"], "2097152")
         self.assertFalse(exporter.writable(ours))
 
+    def test_a_normalised_value_is_counted(self):
+        """known_bios_files.json writes PLUTONIA.WAD's sha1 with a leading
+        space, which RomM compares as stored and never matches. The export
+        wrote it stripped and the summary named no change for it."""
+        from export_native import landed_changes  # noqa: PLC0415
+
+        sha1 = "8" * 40
+        fe = NativeFile("PLUTONIA.WAD", "doom/PLUTONIA.WAD", "doom",
+                        platform={"size": 1024, "sha1": sha1})
+        exporter = Romm()
+        original = json.dumps({"doom:PLUTONIA.WAD": {"size": "1024", "sha1": " " + sha1}})
+        produced = exporter.render({"doom": NativeSystem("doom", files=[fe])}, None,
+                                   {exporter.native_filename(): original})
+        written = json.loads(produced[exporter.native_filename()])
+        self.assertEqual(written["doom:PLUTONIA.WAD"]["sha1"], sha1)
+        changes = landed_changes(exporter, {"doom": NativeSystem("doom", files=[fe])})
+        self.assertEqual(changes.applied, ["doom/PLUTONIA.WAD sha1"])
+
     def test_the_shared_helper_reads_every_exporter_the_same_way(self):
         """RomM's writable is per instance; the base helper bound fe as self."""
         from exporter import discover_exporters  # noqa: PLC0415

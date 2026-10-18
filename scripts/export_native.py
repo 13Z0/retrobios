@@ -342,6 +342,9 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                 and not entry.hashes(field_name)
                 and exporter.states(entry, field_name)
             )
+    # A value the render rewrote though the model reads it as the
+    # platform's own (RomM's sha1 with a leading space).
+    changes.applied.extend(getattr(exporter, "normalized", []))
     return changes
 
 

@@ -112,6 +112,7 @@ class Exporter(BaseExporter):
             if fe.platform is not None
         }
         self._first_addition = {}
+        self.normalized: list[str] = []
         for system in sorted(systems.values(), key=lambda s: s.native_id):
             for fe in sorted(system.files, key=lambda f: f.name):
                 key = (fe.native_system, fe.name)
@@ -137,15 +138,34 @@ class Exporter(BaseExporter):
                 if size is None and fe.platform is not None:
                     size = fe.platform.get("size")
                 if size is not None:
-                    entry["size"] = str(int(size))
+                    self._write(entry, "size", str(int(size)), fe, "size")
                 for field, hash_name in (("crc", "crc32"), ("md5", "md5"), ("sha1", "sha1")):
                     value = fe.record_hash(hash_name)
                     if value:
-                        entry[field] = value
+                        self._write(entry, field, value, fe, hash_name)
                 output[key] = entry
 
         text = json.dumps(output, indent=2, ensure_ascii=False) + "\n"
         return {self.native_filename(): text}
+
+    def _write(
+        self, entry: dict, field: str, value: str, fe: NativeFile, name: str
+    ) -> None:
+        """Set one field, noting a value the model reads as RomM's own.
+
+        RomM compares strings as stored: PLUTONIA.WAD's sha1 starts with a
+        space and never matches. The model normalises it away, so no
+        correction names it, yet the written file changes it.
+        """
+        theirs = entry.get(field)
+        if (
+            theirs is not None
+            and str(theirs) != value
+            and str(theirs).strip().lower() == value
+            and name not in fe.corrections
+        ):
+            self.normalized.append(f"{fe.native_system}/{fe.name} {name}")
+        entry[field] = value
 
     def validate(
         self,
