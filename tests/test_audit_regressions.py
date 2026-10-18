@@ -310,6 +310,41 @@ class UnreachableCitationRegressions(unittest.TestCase):
         self.assertEqual(errors, [])
 
 
+class DoubledCitationPaths(unittest.TestCase):
+    """primehack cited Source/Core/Core/IOS/USB/Bluetooth/ twice in a row in a
+    comment: no revision holds that path, and the parsed document never
+    showed it to the citation checks."""
+
+    def _hits(self, text: str) -> bool:
+        import validate_schemas
+
+        return bool(validate_schemas._DOUBLED_PATH.search(text))
+
+    def test_a_repeated_directory_is_rejected(self):
+        self.assertTrue(self._hits(
+            "# ref: Source/Core/Core/IOS/USB/Bluetooth/Source/Core/Core/IOS/USB/"
+            "Bluetooth/RealtekFirmwareLoader.cpp:373-416"
+        ))
+
+    def test_a_directory_named_once_passes(self):
+        for good in (
+            "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:383",
+            "src/src/main.c:10",
+            "a/b/c/a/b.c:1",
+        ):
+            with self.subTest(citation=good):
+                self.assertFalse(self._hits(good))
+
+    @unittest.skipUnless(HAS_JSONSCHEMA, "validating a schema needs jsonschema")
+    def test_the_corpus_carries_none(self):
+        import validate_schemas
+
+        errors = []
+        for path in sorted((ROOT / "emulators").glob("*.yml")):
+            errors.extend(validate_schemas._doubled_paths(path))
+        self.assertEqual(errors, [])
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

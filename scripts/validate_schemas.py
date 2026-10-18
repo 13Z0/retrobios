@@ -59,6 +59,7 @@ def _validate_yaml_directory(
         out.extend(_unreachable_citations(path, data))
         if schema_name == "emulator.schema.json":
             out.extend(_checks_without_values(path, data))
+            out.extend(_doubled_paths(path))
     return out
 
 
@@ -199,6 +200,27 @@ def _unreachable_citations(path: Path, document: object) -> list[str]:
                     f"{path.relative_to(ROOT)}: citation names a path outside "
                     f"any repository: {match.group().strip(' ,;(')}"
                 )
+    return out
+
+
+_DOUBLED_PATH = re.compile(r"((?:[\w.-]+/){2,})\1")
+
+
+def _doubled_paths(path: Path) -> list[str]:
+    """A citation whose directory is written twice in a row.
+
+    Read from the raw text, comments included: primehack's note on the
+    Realtek loader cited Source/Core/Core/IOS/USB/Bluetooth/ twice over, a
+    path no revision holds, in a comment the parsed document never shows.
+    """
+    out: list[str] = []
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        match = _DOUBLED_PATH.search(line)
+        if match:
+            out.append(
+                f"{path.relative_to(ROOT)}:{number}: citation repeats its "
+                f"directory: {match.group(1)}"
+            )
     return out
 
 

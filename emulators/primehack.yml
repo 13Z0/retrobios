@@ -201,97 +201,97 @@ files:
   # Required for real Wiimote connectivity via USB Bluetooth adapters with Realtek chipsets.
   # PrimeHack can auto-download these from gitlab.com/kernel-firmware/linux-firmware.
   # Placed in Load/Firmware/rtl_bt/.
-  # ref: Source/Core/Core/IOS/USB/Bluetooth/Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:373-416
+  # ref: Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:383-426,434
 
   - name: "rtl8723a_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8723a_fw.bin"
     required: false
     note: "Realtek 8723A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:379"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:388-389"
 
   - name: "rtl8723b_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8723b_fw.bin"
     required: false
     note: "Realtek 8723B BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:516-519"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:390-391, 516-519"
 
   - name: "rtl8723d_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8723d_fw.bin"
     required: false
     note: "Realtek 8723D BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:383"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:392-393"
 
   - name: "rtl8761a_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8761a_fw.bin"
     required: false
     note: "Realtek 8761A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:385"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:394-395"
 
   - name: "rtl8761bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8761bu_fw.bin"
     required: false
     note: "Realtek 8761BU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:387"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:396-397"
 
   - name: "rtl8821a_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8821a_fw.bin"
     required: false
     note: "Realtek 8821A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:389"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:398-399"
 
   - name: "rtl8821c_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8821c_fw.bin"
     required: false
     note: "Realtek 8821C BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:391"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:400-401"
 
   - name: "rtl8822b_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8822b_fw.bin"
     required: false
     note: "Realtek 8822B BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:395"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:404-405"
 
   - name: "rtl8822cu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8822cu_fw.bin"
     required: false
     note: "Realtek 8822CU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:393"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:402-403"
 
   - name: "rtl8851bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8851bu_fw.bin"
     required: false
     note: "Realtek 8851BU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:397"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:406-407"
 
   - name: "rtl8852au_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852au_fw.bin"
     required: false
     note: "Realtek 8852AU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:399"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:408-409"
 
   - name: "rtl8852bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852bu_fw.bin"
     required: false
     note: "Realtek 8852BU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:401"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:410-411"
 
   - name: "rtl8852cu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852cu_fw.bin"
     required: false
     note: "Realtek 8852CU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:403"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:412-413"
 
   - name: "rtl8852btu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852btu_fw.bin"
     required: false
     note: "Realtek 8852BT/8852BE-VT BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:405"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:414-415"
 
   - name: "rtl8922au_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8922au_fw.bin"
     required: false
     note: "Realtek 8922AU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:407"
+    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:416-417"
 
 notes:
   hle_available: true
