@@ -2379,5 +2379,31 @@ class TheInstallerPageNamesEveryEvidence(unittest.TestCase):
         self.assertNotIn("have no detection", page)
 
 
+
+class BizHawkIsFoundWhereItReads(unittest.TestCase):
+    """BizHawk reads <data dir>/Firmware: $BIZHAWK_DATA_HOME on Unix (the
+    Nix package sets $XDG_DATA_HOME/emuhawk-monort-<version>), else the
+    EmuHawk folder. Only two conventional folders were looked at, and a
+    forced --platform bizhawk wrote where EmuHawk never reads."""
+
+    def test_the_data_home_variable(self):
+        home = Path(_tempdir(self))
+        with unittest.mock.patch.dict(os.environ, {"BIZHAWK_DATA_HOME": str(home)}):
+            self.assertEqual(install._bizhawk_unix_firmware(), home / "Firmware")
+
+    def test_the_nix_data_home(self):
+        xdg = Path(_tempdir(self))
+        (xdg / "emuhawk-monort-2.11.1").mkdir()
+        env = {"XDG_DATA_HOME": str(xdg), "BIZHAWK_DATA_HOME": ""}
+        with unittest.mock.patch.dict(os.environ, env):
+            self.assertEqual(
+                install._bizhawk_unix_firmware(), xdg / "emuhawk-monort-2.11.1" / "Firmware"
+            )
+
+    def test_launchbox_names_emuhawk(self):
+        source = " ".join((REPO_ROOT / "install.py").read_text(encoding="utf-8").split())
+        self.assertIn('.get("emuhawk.exe")', source)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1070,9 +1070,35 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             )
             if system_dir:
                 found.append(("retroarch", system_dir))
+        # BizHawk is a portable archive reading <EmuHawk folder>\Firmware
+        # (PathExtensions.cs DataDirectoryPath, PathEntryCollection "Firmware").
+        if lb_root and not any(name == "bizhawk" for name, _ in found):
+            emu_dir = launchbox_emulators(lb_root / "Data" / "Emulators.xml").get("emuhawk.exe")
+            if emu_dir is not None:
+                found.append(("bizhawk", emu_dir / "Firmware"))
+
+    if os_type in ("linux", "wsl", "darwin"):
+        bizhawk = _bizhawk_unix_firmware()
+        if bizhawk is not None and not any(name == "bizhawk" for name, _ in found):
+            found.append(("bizhawk", bizhawk))
 
     _detect_by_path(os_type, found)
     return found
+
+
+def _bizhawk_unix_firmware() -> Path | None:
+    """BizHawk's Firmware folder on Unix, where its data home says.
+
+    PathExtensions.cs reads $BIZHAWK_DATA_HOME before the executable's
+    folder, and the Nix package sets it to
+    $XDG_DATA_HOME/emuhawk-monort-<version> (Dist/launch-scripts.nix).
+    """
+    data_home = os.environ.get("BIZHAWK_DATA_HOME", "").strip()
+    if data_home and Path(data_home).is_dir():
+        return Path(data_home) / "Firmware"
+    xdg = os.environ.get("XDG_DATA_HOME", "").strip() or str(Path.home() / ".local" / "share")
+    homes = sorted(Path(xdg).glob("emuhawk-monort-*"), key=lambda p: p.stat().st_mtime)
+    return homes[-1] / "Firmware" if homes else None
 
 
 # A libretro core as RetroArch loads it: <name>_libretro.so|dll|dylib, and

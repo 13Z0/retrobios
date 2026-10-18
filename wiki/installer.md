@@ -300,6 +300,8 @@ found on one machine.
 | `%APPDATA%\RetroArch\retroarch.cfg` | RetroArch (Windows) | `system_directory`, read when the exe folder has no config |
 | `%ProgramFiles(x86)%\Steam\steamapps\common\RetroArch\retroarch.cfg` | RetroArch (Steam) | `system_directory` |
 | LaunchBox `Data\Emulators.xml` | RetroArch (portable) | the system directory that entry points at |
+| LaunchBox `Data\Emulators.xml` naming `EmuHawk.exe` | BizHawk (portable) | `Firmware` beside `EmuHawk.exe` |
+| `$BIZHAWK_DATA_HOME`, or `$XDG_DATA_HOME/emuhawk-monort-<version>` (Nix package) | BizHawk (Unix) | `Firmware` under it |
 
 `system_directory` is read the way RetroArch expands it: a leading `~` is the
 home directory, a leading `:` is the application directory, and `default` means
