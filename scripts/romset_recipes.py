@@ -437,6 +437,19 @@ def print_missing(gap: dict) -> None:
         print(f"  NO RECIPE: {record['archive']} md5={record['md5'][:8]}")
 
 
+def _resolve_modes(args: argparse.Namespace) -> None:
+    """Which reports run: both by default, and --missing whenever --write.
+
+    The reconstructions --write saves are those of the missing pins: with
+    --identify alone beside it, nothing ran them, nothing was written, and
+    the run exited 0.
+    """
+    if args.write:
+        args.missing = True
+    if not args.identify and not args.missing:
+        args.identify = args.missing = True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--identify", action="store_true", help="label local archives")
@@ -444,7 +457,8 @@ def main() -> int:
         "--missing", action="store_true", help="attempt pinned archives we lack"
     )
     parser.add_argument(
-        "--write", action="store_true", help="write reconstructions to .variants/"
+        "--write", action="store_true",
+        help="write reconstructions to .variants/ (implies --missing)",
     )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     parser.add_argument("--bios-dir", default="bios")
@@ -457,9 +471,7 @@ def main() -> int:
         help="recipe snapshot file, or a directory of them",
     )
     args = parser.parse_args()
-
-    if not args.identify and not args.missing:
-        args.identify = args.missing = True
+    _resolve_modes(args)
 
     db = load_database(args.db)
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)

@@ -621,5 +621,25 @@ class BuildDigestsOutliveTheRun(unittest.TestCase):
                 self.assertEqual(second.digest(recipe), digest)
             self.assertIsNone(second.digest([("x.rom", "deadbeef")]))
 
+class WriteRunsTheReportItWrites(unittest.TestCase):
+    """--identify --write ran the identification only: the reconstructions
+    --write saves come from the missing-pins report, which did not run."""
+
+    def test_write_implies_missing(self):
+        import argparse  # noqa: PLC0415
+
+        import romset_recipes  # noqa: PLC0415
+
+        args = argparse.Namespace(identify=True, missing=False, write=True)
+        romset_recipes._resolve_modes(args)
+        self.assertEqual((args.identify, args.missing), (True, True))
+        default = argparse.Namespace(identify=False, missing=False, write=False)
+        romset_recipes._resolve_modes(default)
+        self.assertEqual((default.identify, default.missing), (True, True))
+        alone = argparse.Namespace(identify=True, missing=False, write=False)
+        romset_recipes._resolve_modes(alone)
+        self.assertEqual((alone.identify, alone.missing), (True, False))
+
+
 if __name__ == "__main__":
     unittest.main()
