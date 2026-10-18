@@ -2586,5 +2586,37 @@ class DataDirectoriesAreInstalled(unittest.TestCase):
         )
 
 
+
+class AChunkedCutIsADownloadFailure(unittest.TestCase):
+    """Behind a proxy that re-encodes as chunked, a cut raised
+    http.client.IncompleteRead, which no handler caught: the run ended on a
+    traceback with no summary."""
+
+    def test_the_file_fails_and_the_run_goes_on(self):
+        import http.client
+
+        class Cut:
+            headers = {}
+            status = 200
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+            def read(self, *_args):
+                raise http.client.IncompleteRead(b"abc", 10)
+
+        entry = {"dest": "a.bin", "repo_path": "bios/a.bin", "size": 10,
+                 "sha1": "0" * 40, "sha256": "0" * 64}
+        with unittest.mock.patch.object(install.urllib.request, "urlopen",
+                                        lambda *a, **k: Cut()), \
+                unittest.mock.patch.object(install, "_retry_delay", return_value=0):
+            dest, ok, reason = install._download_one(entry, Path(_tempdir(self)))
+        self.assertFalse(ok)
+        self.assertIn("IncompleteRead", reason)
+
+
 if __name__ == "__main__":
     unittest.main()

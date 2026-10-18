@@ -1753,8 +1753,10 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
             if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
                 raise
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
-        except (urllib.error.URLError, OSError):
+        except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             if attempt == MAX_RETRIES:
+                if isinstance(exc, http.client.HTTPException):
+                    raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
         time.sleep(delay)
@@ -2397,7 +2399,10 @@ def _download_one(
                 tmp_path.unlink()  # the partial copy no longer fits the file
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
 
-        except (urllib.error.URLError, OSError, ValueError) as exc:
+        # http.client raises IncompleteRead (an HTTPException, not an
+        # OSError) when a chunked transfer is cut, as a proxy re-encoding
+        # the stream does: it is a dropped connection like any other.
+        except (urllib.error.URLError, OSError, ValueError, http.client.HTTPException) as exc:
             if (isinstance(exc, OSError) and not isinstance(exc, urllib.error.URLError)
                     and _write_refused(exc)):
                 # No attempt can change a refused write.
@@ -2749,9 +2754,9 @@ def _fetch_archive(url: str, directory: Path) -> Path:
             if exc.code < 500 and exc.code != 429:
                 raise
             reason = exc
-        except (urllib.error.URLError, OSError) as exc:
+        except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             Path(handle.name).unlink(missing_ok=True)
-            reason = exc
+            reason = exc if isinstance(exc, OSError) else ConnectionError(repr(exc))
         except BaseException:
             Path(handle.name).unlink(missing_ok=True)
             raise
