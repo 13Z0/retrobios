@@ -291,6 +291,13 @@ not already found that way.
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
 
+Under WSL both sides are searched. The Windows one is reached through its
+`/mnt/<drive>` mount: a `C:\` path from a rule or a config becomes
+`/mnt/c/...`, and the Windows variables the rules use (`USERPROFILE`,
+`APPDATA`, `LOCALAPPDATA`, `ProgramFiles`) are read through `cmd.exe` when
+WSL does not pass them. A forced `--platform retrobat` falls back to
+`/mnt/c/RetroBat/bios`.
+
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `~/.config/EmuDeck/settings.sh` | EmuDeck | `emulationPath` + `/bios` |

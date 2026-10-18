@@ -2786,5 +2786,45 @@ class APartialIsClosedBeforeItIsDeleted(unittest.TestCase):
         self.assertLess(branch.index("partial.close()"), branch.index("tmp_path.unlink()"))
 
 
+class WindowsSeenFromWsl(unittest.TestCase):
+    """Under WSL, C:\\RetroBat\\bios was a relative path, %APPDATA% and
+    %USERPROFILE% were unset, and --platform retrobat wrote 7 753 files into
+    ~/bios inside the distribution, where RetroBat reads nothing."""
+
+    def setUp(self):
+        self.root = Path(_tempdir(self))
+        patcher = unittest.mock.patch.dict(install._WSL, {"active": True, "root": str(self.root)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_a_drive_path_is_its_mount(self):
+        self.assertEqual(install._host_path("C:\\RetroBat\\bios"), self.root / "c" / "RetroBat" / "bios")
+        self.assertEqual(install._rule_path("C:\\RetroBat\\bios"), self.root / "c" / "RetroBat" / "bios")
+        self.assertEqual(install._default_dest("wsl", "retrobat"), self.root / "c" / "RetroBat" / "bios")
+        self.assertEqual(install._host_path("relative/path"), Path("relative/path"))
+
+    def test_retrobat_on_the_windows_side_is_detected(self):
+        (self.root / "c" / "RetroBat" / "bios").mkdir(parents=True)
+        found: list = []
+        install._detect_by_path("wsl", found)
+        self.assertIn(("retrobat", self.root / "c" / "RetroBat" / "bios"), found)
+
+    def test_the_windows_variables_are_read_through_cmd(self):
+        answers = {"USERPROFILE": "C:\\Users\\me", "APPDATA": "C:\\Users\\me\\AppData\\Roaming"}
+
+        def cmd(argv, **_kwargs):
+            name = argv[-1].split("%")[1]
+            return subprocess.CompletedProcess(argv, 0, answers.get(name, f"%{name}%") + "\r\n", "")
+
+        cleared = {name: "" for name in install._WINDOWS_VARIABLES}
+        with unittest.mock.patch.dict(os.environ, cleared), \
+                unittest.mock.patch.object(install.subprocess, "run", cmd):
+            install._enter_wsl()
+            self.assertEqual(os.environ["USERPROFILE"], str(self.root / "c" / "Users" / "me"))
+            self.assertEqual(os.environ["APPDATA"],
+                             str(self.root / "c" / "Users" / "me" / "AppData" / "Roaming"))
+            self.assertEqual(os.environ["ProgramFiles"], "")
+
+
 if __name__ == "__main__":
     unittest.main()

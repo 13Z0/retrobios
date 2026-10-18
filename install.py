@@ -26,6 +26,7 @@ import platform
 import re
 import shutil
 import stat
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -181,9 +182,16 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
         return {
             # RetroArch's system directory defaults to <exe folder>\system
             # (platform_win32.c), and its installer to C:\RetroArch-Win64.
-            "retroarch": Path("C:/RetroArch-Win64/system"),
+            "retroarch": _host_path("C:/RetroArch-Win64/system"),
             # RetroBat's installer defaults to C:\RetroBat (installer.iss).
-            "retrobat": Path("C:/RetroBat/bios"),
+            "retrobat": _host_path("C:/RetroBat/bios"),
+        }
+    if os_type == "wsl":
+        # RetroArch may be the Linux one inside the distribution; RetroBat
+        # only exists on the Windows side, reached through /mnt/c.
+        return {
+            "retroarch": home / ".config" / "retroarch" / "system",
+            "retrobat": _host_path("C:/RetroBat/bios"),
         }
     if os_type == "darwin":
         return {"retroarch": _macos_retroarch_base() / "system"}
@@ -435,6 +443,42 @@ def _parse_os_release() -> dict[str, str]:
     return result
 
 
+# Set under WSL: a Windows path read from a config or a rule names a drive
+# that Linux sees under /mnt (drvfs). C:\\RetroBat\\bios was used as a relative
+# path and nothing Windows-side was ever found from WSL.
+_WSL = {"active": False, "root": "/mnt"}
+_WINDOWS_VARIABLES = ("USERPROFILE", "APPDATA", "LOCALAPPDATA", "ProgramFiles", "ProgramFiles(x86)")
+
+
+def _host_path(text: str) -> Path:
+    """A path as this machine opens it: under WSL, C:\\X is /mnt/c/X."""
+    match = re.match(r"^([A-Za-z]):(?:[\\/]+(.*))?$", text) if _WSL["active"] else None
+    if match:
+        rest = [part for part in re.split(r"[\\/]", match.group(2) or "") if part]
+        return Path(_WSL["root"], match.group(1).lower(), *rest)
+    return Path(text)
+
+
+def _enter_wsl() -> None:
+    """Read Windows paths through drvfs, and the Windows variables detection
+    needs, which WSL does not pass to Linux (only those named in WSLENV)."""
+    _WSL["active"] = True
+    for variable in _WINDOWS_VARIABLES:
+        if os.environ.get(variable):
+            continue
+        try:
+            result = subprocess.run(
+                ["cmd.exe", "/c", f"echo %{variable}%"],
+                capture_output=True, text=True, timeout=10,
+                cwd="/mnt/c" if Path("/mnt/c").is_dir() else None,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return
+        value = result.stdout.strip()
+        if value and not value.startswith("%"):
+            os.environ[variable] = str(_host_path(value))
+
+
 def _expand_retroarch_path(value: str, app_dir: Path) -> Path:
     """Expand the notations RetroArch writes into its config values.
 
@@ -446,7 +490,7 @@ def _expand_retroarch_path(value: str, app_dir: Path) -> Path:
         return Path(str(Path.home())) / value[2:]
     if value[:1] == ":":
         return app_dir / value[2:]
-    return Path(os.path.expandvars(os.path.expanduser(value)))
+    return _host_path(os.path.expandvars(os.path.expanduser(value)))
 
 
 def _retroarch_cfg_dir(
@@ -506,7 +550,7 @@ def _windows_retroarch_dirs() -> list[Path]:
     names under Program Files, every Steam library, and the Emulators folder
     of an installed ES-DE (es_find_rules.xml lists all of them).
     """
-    candidates = [Path("C:/RetroArch-Win64"), Path("C:/RetroArch")]
+    candidates = [_host_path("C:/RetroArch-Win64"), _host_path("C:/RetroArch")]
     for var in ("ProgramFiles", "ProgramFiles(x86)"):
         root = os.environ.get(var, "")
         if root:
@@ -960,7 +1004,7 @@ def _rule_path(template: str) -> Path:
         if template.startswith(variable):
             rest = [part for part in re.split(r"[\\/]", template[len(variable):]) if part]
             return base.joinpath(*rest)
-    return Path(template)
+    return _host_path(template)
 
 
 # The registry's executable rules: (os, platform, glob under $HOME or
@@ -3501,6 +3545,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
+    if os_type == "wsl":
+        _enter_wsl()
 
     # Early exit for listing
     if args.list_platforms:
