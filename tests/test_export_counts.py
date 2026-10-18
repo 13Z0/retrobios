@@ -325,6 +325,25 @@ class MisterCountsWhatItWrites(unittest.TestCase):
         self.assertTrue(exporter.states(held, "md5"))
         self.assertFalse(exporter.states(absent, "md5"))
 
+    def test_a_truth_without_md5_leaves_the_record_whole(self):
+        # The truth took the entry on a size contradiction and has no md5:
+        # the render kept MiSTer's hash, wrote the new size, and the summary
+        # announced the hash cleared.
+        from export_native import landed_changes  # noqa: PLC0415
+
+        fe = NativeFile("boot.rom", "NES/boot.rom", "nes",
+                        platform={"md5": A, "size": 100},
+                        truth={"sha1": "f" * 40, "size": 200})
+        systems = {"nes": NativeSystem("nes", files=[fe])}
+        database = {"db_id": "x", "files": {
+            "games/NES/boot.rom": {"hash": A, "size": 100, "url": "u"}}}
+        exporter = Mister()
+        produced = exporter.render(systems, None, {"bios_db.json": json.dumps(database)})
+        written = json.loads(produced["bios_db.json"])["files"]["games/NES/boot.rom"]
+        self.assertEqual((written["hash"], written["size"]), (A, 100))
+        changes = landed_changes(exporter, systems)
+        self.assertEqual((changes.cleared, changes.resized), ([], []))
+
 
 class OneMd5FormatsAddWhole(unittest.TestCase):
     def test_an_addition_with_several_md5_is_refused(self):

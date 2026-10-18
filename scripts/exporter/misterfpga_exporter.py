@@ -93,10 +93,14 @@ class Exporter(BaseExporter):
             fe = indexed.get(path)
             if fe is None:
                 continue
-            self._written.add(id(fe))
             md5 = fe.hash("md5")
-            if md5:
-                entry["hash"] = md5
+            if not md5:
+                # The record is checked by its md5: where the truth takes the
+                # entry without one, a new size beside the old hash describes
+                # no file, and the entry is left as MiSTer wrote it.
+                continue
+            self._written.add(id(fe))
+            entry["hash"] = md5
             size = fe.size()
             if size:
                 entry["size"] = size
