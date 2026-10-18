@@ -247,5 +247,29 @@ class PlatformHashLoading(_Fixture):
         self.assertIn("boot.bin", known["names"])
 
 
+class FlagsAreAppliedOrRefused(unittest.TestCase):
+    """Files named beside --changed were dropped for the git diff and the run
+    said "No changed BIOS files detected" about files it never read; --json
+    beside --markdown printed JSON and dropped the markdown."""
+
+    def _run(self, *argv: str):
+        import subprocess  # noqa: PLC0415
+
+        return subprocess.run(
+            [sys.executable, "scripts/validate_pr.py", *argv], cwd=REPO_ROOT,
+            capture_output=True, text=True, timeout=300, check=False,
+        )
+
+    def test_files_beside_changed_are_refused(self):
+        result = self._run("--changed", "bios/Sony/PlayStation/scph5501.bin", "--json")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("--changed", result.stderr)
+
+    def test_two_output_formats_are_refused(self):
+        result = self._run("--json", "--markdown", "bios/Sony/PlayStation/scph5501.bin")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("not allowed with", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

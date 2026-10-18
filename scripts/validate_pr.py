@@ -307,6 +307,10 @@ def _files_to_validate(
     args: argparse.Namespace, parser: argparse.ArgumentParser
 ) -> list:
     """The files named on the command line, or the changed ones."""
+    if args.changed and args.files:
+        # Named files were dropped for the git diff, and the run reported
+        # "No changed BIOS files detected" about files it never looked at.
+        parser.error("--changed reads the git diff; name files or pass --changed, not both")
     if not args.changed:
         if not args.files:
             parser.error("No files specified. Use --changed or provide file paths.")
@@ -316,7 +320,7 @@ def _files_to_validate(
     except (RuntimeError, OSError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(2)
-    if not files:
+    if not files and not args.json:
         print("No changed BIOS files detected")
     return files
 
@@ -340,14 +344,19 @@ def main() -> None:
     parser.add_argument("--db", default=DEFAULT_DB, help="Path to database.json")
     parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
     parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
-    parser.add_argument(
+    # One output format: --json beside --markdown printed JSON and dropped
+    # the markdown without a word.
+    output = parser.add_mutually_exclusive_group()
+    output.add_argument(
         "--markdown", action="store_true", help="Output as markdown (for PR comments)"
     )
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    output.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
     files = _files_to_validate(args, parser)
     if not files:
+        if args.json:
+            print("[]")
         return
 
     db = _load_database_if_any(args.db)
