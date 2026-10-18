@@ -21,7 +21,7 @@ systems:
 # LoadBIOS() exists in Ee_SubSystem.cpp:832 but is commented out at line 232.
 # IOP modules (SIO2MAN, PADMAN, MCMAN, MCSERV, CDVDMAN, CDVDFSV, etc.)
 # are all HLE-replaced via m_hleModules in IopBios.cpp:279-290.
-# _IOP_EMULATE_MODULES=1 is unconditionally defined in CMakeLists.txt:24.
+# _IOP_EMULATE_MODULES=1 is unconditionally defined in Source/CMakeLists.txt:24.
 #
 # source_ref: Source/ee/Ee_SubSystem.cpp:232 (LoadBIOS commented out)
 # source_ref: Source/iop/IopBios.cpp:279-290 (HLE module table)
