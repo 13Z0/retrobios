@@ -641,5 +641,29 @@ class WriteRunsTheReportItWrites(unittest.TestCase):
         self.assertEqual((alone.identify, alone.missing), (True, False))
 
 
+
+class AnOversizedDatIsNamed(unittest.TestCase):
+    """The romset importer skipped a DAT over its size cap without a word,
+    and the run ended on "Unchanged" with a version missing."""
+
+    def test_the_skip_is_reported(self):
+        import contextlib
+        import io
+        import zipfile
+        from unittest import mock
+
+        from scripts.scraper import romset_dat_importer as importer
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            pack = Path(directory) / "pack.zip"
+            with zipfile.ZipFile(pack, "w") as archive:
+                archive.writestr("big.dat", b"x" * 64)
+            err = io.StringIO()
+            with mock.patch.object(importer, "MAX_MEMBER_SIZE", 16), \
+                    contextlib.redirect_stderr(err):
+                self.assertEqual(list(importer._iter_dat_contents(pack)), [])
+            self.assertIn("Skipping big.dat", err.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -305,9 +305,18 @@ def _iter_dat_contents(pack: Path) -> Iterator[tuple[str, bytes]]:
     if pack.suffix.lower() == ".zip":
         with zipfile.ZipFile(pack) as archive:
             for info in sorted(archive.infolist(), key=lambda i: i.filename):
-                if info.is_dir() or info.file_size > MAX_MEMBER_SIZE:
+                if info.is_dir():
                     continue
                 if Path(info.filename).suffix.lower() not in (".dat", ".xml"):
+                    continue
+                if info.file_size > MAX_MEMBER_SIZE:
+                    # Said out loud: a DAT left out silently ended the run
+                    # on "Unchanged" with a version missing.
+                    print(
+                        f"  Skipping {info.filename}: {info.file_size} bytes "
+                        f"exceeds {MAX_MEMBER_SIZE}",
+                        file=sys.stderr,
+                    )
                     continue
                 yield info.filename, archive.read(info)
         return
