@@ -2960,6 +2960,12 @@ def generate_emulator_page(
     if revision:
         lines.append(f"| Revision | {revision} |")
     lines.append(f"| Profiled | {profiled} |")
+    # The YAML is the reusable document this site renders; the JSON is the
+    # same profile for a program.
+    lines.append(
+        f"| Profile | [YAML]({REPO_URL}/blob/main/emulators/{name}.yml), "
+        f"[JSON](../api/v1/emulators/{name}.json) |"
+    )
     if cores:
         lines.append(f"| Cores | {', '.join(str(c) for c in cores)} |")
     if systems:
@@ -4400,7 +4406,15 @@ def _generate(args: argparse.Namespace) -> None:
         for name, profile in profiles.items()
         if profile.get("type") not in ("alias", "test")
     }
+    (docs / "api" / "v1" / "emulators").mkdir(parents=True, exist_ok=True)
     for name, profile in public_profiles.items():
+        # The profile itself, one small document per core: reusing one
+        # meant downloading emulators.json (5.9 MB) and filtering it.
+        write_if_changed(
+            str(docs / "api" / "v1" / "emulators" / f"{name}.json"),
+            json.dumps({"id": name, **profile}, indent=2, sort_keys=True,
+                       ensure_ascii=False, default=str) + "\n",
+        )
         page = generate_emulator_page(name, profile, db, consumers, suppl_names)
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)

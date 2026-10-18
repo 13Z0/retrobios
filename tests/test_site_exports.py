@@ -494,5 +494,20 @@ class PlatformPagesCarryTheirDeclarations(unittest.TestCase):
         self.assertTrue(part["url"].endswith("platforms/batocera/#sony-playstation"))
 
 
+
+class AnEmulatorPageLinksItsProfile(unittest.TestCase):
+    """A page rendered a profile without linking it: reusing raze.yml meant
+    guessing its path or filtering the 5.9 MB emulators.json."""
+
+    def test_links(self):
+        import generate_site
+
+        page = generate_site.generate_emulator_page(
+            "raze", {"emulator": "Raze", "type": "standalone", "systems": [], "files": []},
+            {"files": {}, "indexes": {}}, {})
+        self.assertIn("/blob/main/emulators/raze.yml", page)
+        self.assertIn("(../api/v1/emulators/raze.json)", page)
+
+
 if __name__ == "__main__":
     unittest.main()
