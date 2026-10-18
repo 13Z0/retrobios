@@ -46,6 +46,7 @@ from common import (
     unique_emulator_profiles,
     yaml_load,
 )
+from artifacts import ArtifactLockBusy, artifact_lock
 from cross_reference import FileConsumers
 from nativemode import reads_file_contents
 
@@ -4097,6 +4098,17 @@ def main() -> None:
     parser.add_argument("--emulators-dir", default="emulators")
     parser.add_argument("--docs-dir", default=DOCS_DIR)
     args = parser.parse_args()
+    try:
+        # Two runs over one docs/ delete each other's pages and scratch
+        # files in the sweep; the second is refused instead.
+        with artifact_lock(args.docs_dir):
+            _generate(args)
+    except ArtifactLockBusy as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _generate(args: argparse.Namespace) -> None:
 
     db = load_database(args.db)
     docs = Path(args.docs_dir)

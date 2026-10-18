@@ -221,5 +221,26 @@ class PipelineHoldsTheDataTrees(unittest.TestCase):
         self.assertLess(hold, verify)
 
 
+
+class SiteGenerationHoldsDocs(unittest.TestCase):
+    """generate_site swept from docs/ every file its own run had not
+    written, including the scratch file and new pages of a second run on
+    the same tree; that run then died on os.replace or lost pages."""
+
+    def test_a_second_run_is_refused_before_it_writes(self):
+        docs = _tempdir(self)
+        marker = Path(docs) / "platforms" / ".retroarch.md.k2j3.tmp"
+        marker.parent.mkdir()
+        marker.write_text("scratch of another run")
+        with artifact_lock(docs):
+            result = subprocess.run(
+                [sys.executable, "scripts/generate_site.py", "--docs-dir", docs],
+                cwd=REPO_ROOT, capture_output=True, text=True, timeout=600,
+            )
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("in use by another run", result.stderr)
+        self.assertTrue(marker.exists())
+
+
 if __name__ == "__main__":
     unittest.main()
