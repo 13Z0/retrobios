@@ -155,6 +155,20 @@ What does not, and why each trap is easy to fall into:
 One naming trap: in `ORIC.PAL-PROM-TBP24S10-1ab9b572.bin`, PAL is a
 Programmable Array Logic, not the television standard.
 
+Two traps run the other way, where a region is real but wider than it looks:
+
+- **The detector's default branch.** Genesis Plus GX and PicoDrive set the US
+  region for every Mega CD disc whose security byte is neither Europe's nor
+  Japan's, so the US BIOS serves Latin America as well. Read where the region
+  value comes from, not only the switch that uses it.
+- **A territory the code folds into another.** Dolphin maps NTSC-K discs to
+  NTSC-J (`ToGameCubeRegion`), so the Japanese IPL is also Korea's.
+
+`python scripts/region_audit.py` then lists every `region:` that disagrees with
+the regions No-Intro gives the same dump. Each disagreement is a line to read
+in the source, not a correction to apply: the field records the code's
+selection, and a Hong Kong PS2 is an NTSC-J console.
+
 ### 4. Document divergences
 
 When the libretro port differs from the upstream:
