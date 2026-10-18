@@ -581,6 +581,9 @@
       "beetle-saturn",
       "mednafen_saturn"
     ],
+    "bsnes-jg": [
+      "bsnes_jg"
+    ],
     "bsnes2014": [
       "bsnes2014_accuracy",
       "bsnes2014_balanced",
@@ -605,6 +608,9 @@
     "cxbx-reloaded": [
       "cxbx"
     ],
+    "desmume2015": [
+      "desmume_2015"
+    ],
     "dolphin": [
       "dolphin-gui"
     ],
@@ -626,6 +632,9 @@
     "ep128emu_core": [
       "ep128emu-core"
     ],
+    "fake08": [
+      "fake_08"
+    ],
     "fba2x": [
       "pifba"
     ],
@@ -640,6 +649,9 @@
     "fpse-ng": [
       "fpse64",
       "fpseng"
+    ],
+    "fuse": [
+      "fuse_libretro"
     ],
     "gba-emu": [
       "GBA-EMU",
@@ -767,6 +779,9 @@
     "mess2015": [
       "mess"
     ],
+    "mgba": [
+      "mgba_fork"
+    ],
     "mkxp_z": [
       "mkxp-z"
     ],
@@ -796,6 +811,9 @@
     ],
     "nanoboyadvance": [
       "nanoboyadvance-sa"
+    ],
+    "nekop2": [
+      "meowpc98"
     ],
     "nes-emu": [
       "NES-EMU",

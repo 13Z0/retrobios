@@ -19,7 +19,7 @@
   "total_files": 5887,
   "total_size": 6132361388,
   "pack_files": 8529,
-  "pack_size": 6172909051,
+  "pack_size": 6172909591,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -137,6 +137,9 @@
       "beetle-saturn",
       "mednafen_saturn"
     ],
+    "bsnes-jg": [
+      "bsnes_jg"
+    ],
     "bsnes2014": [
       "bsnes2014_accuracy",
       "bsnes2014_balanced",
@@ -157,6 +160,9 @@
     ],
     "cap32": [
       "caprice32"
+    ],
+    "desmume2015": [
+      "desmume_2015"
     ],
     "dolphin": [
       "dolphin-gui"
@@ -199,6 +205,9 @@
     "fpse-ng": [
       "fpse64",
       "fpseng"
+    ],
+    "fuse": [
+      "fuse_libretro"
     ],
     "gba-emu": [
       "GBA-EMU",
@@ -314,6 +323,9 @@
     "mess2015": [
       "mess"
     ],
+    "mgba": [
+      "mgba_fork"
+    ],
     "mkxp_z": [
       "mkxp-z"
     ],
@@ -343,6 +355,9 @@
     ],
     "nanoboyadvance": [
       "nanoboyadvance-sa"
+    ],
+    "nekop2": [
+      "meowpc98"
     ],
     "nes-emu": [
       "NES-EMU",

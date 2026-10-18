@@ -281,6 +281,9 @@
     "daedalusx64": [
       "daedalusx64-sa"
     ],
+    "desmume2015": [
+      "desmume_2015"
+    ],
     "dolphin": [
       "dolphin-gui"
     ],
@@ -350,6 +353,9 @@
     ],
     "mesence": [
       "mesen2"
+    ],
+    "mgba": [
+      "mgba_fork"
     ],
     "msx-emu": [
       "MSX-EMU",
