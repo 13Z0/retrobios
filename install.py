@@ -2562,9 +2562,14 @@ def installer_id() -> str:
         return "unknown"
 
 
+# Answers that stop: every menu before this one taught q as quit.
+_REFUSALS = ("n", "q", "quit", "exit", "stop", "abort")
+
+
 def _confirm(prompt: str) -> bool:
-    """Yes unless the answer starts with n."""
-    return not _ask(prompt).lower().startswith("n")
+    """Yes unless the answer refuses: n, no, or one of the quit words."""
+    answer = _ask(prompt).strip().lower()
+    return not (answer.startswith("n") or answer in _REFUSALS)
 
 
 def _print_plan(to_download: list[dict], bios_path: Path, term: Terminal) -> None:

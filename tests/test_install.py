@@ -2433,5 +2433,18 @@ class RetroArchUwpIsFound(unittest.TestCase):
             self.assertIsNone(install._retroarch_uwp_system_dir())
 
 
+
+class QuitMeansNoAtTheLastQuestion(unittest.TestCase):
+    """Every menu taught q as quit; at "Download 3.2 GB ...? [Y/n]" a q
+    started the download."""
+
+    def test_quit_words_refuse(self):
+        for answer, expected in (("q", False), ("quit", False), ("exit", False),
+                                 ("n", False), ("No", False), ("", True), ("y", True)):
+            with self.subTest(answer=answer), \
+                    unittest.mock.patch.object(install, "_ask", return_value=answer):
+                self.assertIs(install._confirm("? "), expected)
+
+
 if __name__ == "__main__":
     unittest.main()
