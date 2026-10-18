@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-18T11:04:01Z",
+  "generated": "2026-10-18T11:24:19Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -246,9 +246,9 @@
     }
   ],
   "total_files": 7751,
-  "total_size": 7997666672,
+  "total_size": 7997248949,
   "pack_files": 7753,
-  "pack_size": 7997666672,
+  "pack_size": 7997248949,
   "total_omitted": 135,
   "omitted_files": [
     {
@@ -64937,6 +64937,61 @@
       ]
     },
     {
+      "dest": "mame2003/hiscore.dat",
+      "sha1": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
+      "sha256": "b95bbae8b1be197aea6d9b896a37bead6212852303b9f85559699da92c883832",
+      "size": 215475,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.a22ec279",
+      "cores": [
+        "mame2003"
+      ],
+      "systems": [
+        "segastv"
+      ],
+      "alternatives": [
+        {
+          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+          "size": 322458,
+          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+          "cores": [
+            "mame2003_midway"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "mame2003-plus/hiscore.dat",
+      "sha1": "c086306096722da7f02f624e7efb447659aca1d3",
+      "sha256": "ed444310ec543bf42acaf48fcab956f30c4c97268f4145dc36e5ad2980f19823",
+      "size": 131878,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.c0863060",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2010/hiscore.dat",
+      "sha1": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "sha256": "5a8f5bf5090e7fb9c2878ecee11b2b5e80e9b3e8fdc15a9158b3f14f31fcc5d5",
+      "size": 202298,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.17b8b03a",
+      "cores": [
+        "mame2010"
+      ],
+      "systems": [
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "segastv",
+        "triforce"
+      ]
+    },
+    {
       "dest": "apple2e.rom",
       "sha1": "61fa9254628e5bb7236fb474006116d67684d747",
       "sha256": "1fb812584c6633fa16b77b20915986ed1178d1e6fc07a647f7ee8d4e6ab9d40b",
@@ -77132,12 +77187,30 @@
       "cores": [
         "fbalpha2012",
         "fbalpha2012_cps3",
-        "groovymame",
-        "mame2000",
-        "visual-pinball"
+        "groovymame"
       ],
       "systems": [
         "snk-neogeo"
+      ],
+      "alternatives": [
+        {
+          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+          "size": 36182,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+          "cores": [
+            "mame2000"
+          ]
+        },
+        {
+          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+          "size": 322458,
+          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+          "cores": [
+            "visual-pinball"
+          ]
+        }
       ]
     },
     {
@@ -83921,20 +83994,6 @@
       ]
     },
     {
-      "dest": "mame2003/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-      "cores": [
-        "mame2003",
-        "mame2003_midway"
-      ],
-      "systems": [
-        "segastv"
-      ]
-    },
-    {
       "dest": "mame2003/cheat.dat",
       "sha1": "32fc78415114a976af9c2ee53ea13de9f40b55ee",
       "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
@@ -84064,19 +84123,6 @@
       ]
     },
     {
-      "dest": "mame2003-plus/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-      "cores": [
-        "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
-      ]
-    },
-    {
       "dest": "mame2003-plus/cheat.dat",
       "sha1": "32fc78415114a976af9c2ee53ea13de9f40b55ee",
       "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
@@ -84113,24 +84159,6 @@
       ],
       "systems": [
         "segastv"
-      ]
-    },
-    {
-      "dest": "mame2010/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-      "cores": [
-        "mame2010"
-      ],
-      "systems": [
-        "cdi",
-        "chihiro",
-        "hikaru",
-        "namco-system246",
-        "segastv",
-        "triforce"
       ]
     },
     {

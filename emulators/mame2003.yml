@@ -51,8 +51,15 @@ files:
     path: "mame2003/hiscore.dat"
     required: false
     category: game_data
-    source_ref: "src/hiscore.c:14,248"
-    note: "high score definitions, auto-generated if missing"
+    sha1: "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1"
+    md5: "c6f35123264db9cdfb216e8fdb673679"
+    size: 215475
+    source_ref: "src/hiscore.c:14,102-116,248-262"
+    note: >-
+      high score definitions, auto-generated if missing from
+      precompile/hiscore_dat.h, which holds metadata/hiscore.dat with CRLF line
+      endings. is_mem_range reads only "cpu:addr:len:start:end" lines under a
+      "gamename:" header.
 
   - name: cheat.dat
     path: "mame2003/cheat.dat"

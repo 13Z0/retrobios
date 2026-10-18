@@ -94,11 +94,16 @@ files:
   - name: hiscore.dat
     required: false
     category: game_data
-    source_ref: "src/hiscore.c:28,313"
+    sha1: "23e0dec66680aa4545eafe436c23d2bf5622e32e"
+    md5: "2490bad5079ec0991c23c579092cca19"
+    size: 176851
+    source_ref: "src/hiscore.c:28,133-147,313"
     note: >-
       High score definitions, selected by misc_hiscorefile
       (advance/osd/glue.c:800,3293). Absent, hiscore_open matches no entry and
-      no high score is restored or saved.
+      no high score is restored or saved. support/hiscore.dat, installed by
+      MAME_INSTALL_DATAFILES (advance/advance.mak:29-31). is_mem_range reads
+      only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.dat
     required: false

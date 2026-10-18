@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T11:04:01Z",
-  "total_files": 19075,
-  "total_size": 17567770846,
+  "generated_at": "2026-10-18T11:24:19Z",
+  "total_files": 19079,
+  "total_size": 17568402427,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -2421,6 +2421,36 @@
       "crc32": "3d54fe55",
       "adler32": "383bfd6f"
     },
+    "17b8b03a89d8443927aa92ede799e117b4ab6fdb": {
+      "path": "bios/Arcade/Arcade/.variants/hiscore.dat.17b8b03a",
+      "name": "hiscore.dat",
+      "size": 202298,
+      "sha1": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "md5": "bb8023a43e357b7f0cc06bf00f0470b2",
+      "sha256": "5a8f5bf5090e7fb9c2878ecee11b2b5e80e9b3e8fdc15a9158b3f14f31fcc5d5",
+      "crc32": "88a4f0e3",
+      "adler32": "1ead8318"
+    },
+    "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8": {
+      "path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+      "name": "hiscore.dat",
+      "size": 36182,
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "md5": "9b262149ec70cbda741a8ba55784f8e1",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "crc32": "cd9f4a9c",
+      "adler32": "0e043d58"
+    },
+    "23e0dec66680aa4545eafe436c23d2bf5622e32e": {
+      "path": "bios/Arcade/Arcade/.variants/hiscore.dat.23e0dec6",
+      "name": "hiscore.dat",
+      "size": 176851,
+      "sha1": "23e0dec66680aa4545eafe436c23d2bf5622e32e",
+      "md5": "2490bad5079ec0991c23c579092cca19",
+      "sha256": "ddd60dfe4883b3b374384b49003a32e4c84f8b527f04844a4770c8cf3a3d5ee0",
+      "crc32": "9fbacfda",
+      "adler32": "2b02a685"
+    },
     "30c6ad697439de7c2158192ecdb48f5edd37478e": {
       "path": "bios/Arcade/Arcade/.variants/hiscore.dat.30c6ad69",
       "name": "hiscore.dat",
@@ -2430,6 +2460,16 @@
       "sha256": "efd00af9a44241c2aa094d5f1977aa68fc0bb8467dbcf82f32762977d37a6f17",
       "crc32": "ab7b721a",
       "adler32": "44fc1121"
+    },
+    "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20": {
+      "path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
+      "name": "hiscore.dat",
+      "size": 216250,
+      "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+      "md5": "7e31f0b84f6ea6f9ffec0cd968decf9f",
+      "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+      "crc32": "8213e86a",
+      "adler32": "b7bc0c91"
     },
     "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1": {
       "path": "bios/Arcade/Arcade/.variants/hiscore.dat.a22ec279",
@@ -196159,7 +196199,11 @@
       "e0d8f3de7d217882fec5aa55883b6a11": "ca7bf85999eaaa79652c721986e64f769cf03892",
       "95476beb879ac19e9eec1ce474f72a8a": "acf4211eddc2d98e28c3c9f2229cdea0b35f30f3",
       "c26bf1744cb7f6ffe441f463870321f8": "c25686d24c7205473741f948f8a9df9906823145",
+      "bb8023a43e357b7f0cc06bf00f0470b2": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "9b262149ec70cbda741a8ba55784f8e1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "2490bad5079ec0991c23c579092cca19": "23e0dec66680aa4545eafe436c23d2bf5622e32e",
       "f5cdce5b3749d673ad8f073ccc7371e4": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+      "7e31f0b84f6ea6f9ffec0cd968decf9f": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
       "c6f35123264db9cdfb216e8fdb673679": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
       "2f60c1ed69c152dea95e734979ca2ecb": "c086306096722da7f02f624e7efb447659aca1d3",
       "f4011d3116500354edf7302a90402711": "782c303cbdfab1027b04db74a63e27bdad5e0c53",
@@ -215668,7 +215712,11 @@
         "199e05ebd1966d23877c8aed60f3502115b70a2e"
       ],
       "hiscore.dat": [
+        "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+        "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+        "23e0dec66680aa4545eafe436c23d2bf5622e32e",
         "30c6ad697439de7c2158192ecdb48f5edd37478e",
+        "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
         "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
         "c086306096722da7f02f624e7efb447659aca1d3",
         "7381472bf046126257e51a0124e4553282f020e5",
@@ -272143,7 +272191,11 @@
       "9f9c396d": "ca7bf85999eaaa79652c721986e64f769cf03892",
       "72f5b958": "acf4211eddc2d98e28c3c9f2229cdea0b35f30f3",
       "3d54fe55": "c25686d24c7205473741f948f8a9df9906823145",
+      "88a4f0e3": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "cd9f4a9c": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "9fbacfda": "23e0dec66680aa4545eafe436c23d2bf5622e32e",
       "ab7b721a": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+      "8213e86a": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
       "e929973f": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
       "14f27ed1": "c086306096722da7f02f624e7efb447659aca1d3",
       "0ddc6daf": "782c303cbdfab1027b04db74a63e27bdad5e0c53",
@@ -291220,7 +291272,11 @@
       "46fedc667ae36aed0b663ae770181268df8ca2295f7be6ee34e61d1f051068a7": "ca7bf85999eaaa79652c721986e64f769cf03892",
       "65b15ff1e547220baef8907866e5d3665978a35129ce0d19d9225b7cdad4bfc7": "acf4211eddc2d98e28c3c9f2229cdea0b35f30f3",
       "c89b60537573183cc93e245f19ea4d4cf7c60d9a37f5c41a765d5732cb437fa3": "c25686d24c7205473741f948f8a9df9906823145",
+      "5a8f5bf5090e7fb9c2878ecee11b2b5e80e9b3e8fdc15a9158b3f14f31fcc5d5": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "ddd60dfe4883b3b374384b49003a32e4c84f8b527f04844a4770c8cf3a3d5ee0": "23e0dec66680aa4545eafe436c23d2bf5622e32e",
       "efd00af9a44241c2aa094d5f1977aa68fc0bb8467dbcf82f32762977d37a6f17": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+      "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
       "b95bbae8b1be197aea6d9b896a37bead6212852303b9f85559699da92c883832": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
       "ed444310ec543bf42acaf48fcab956f30c4c97268f4145dc36e5ad2980f19823": "c086306096722da7f02f624e7efb447659aca1d3",
       "43d2c16c6a5b19a778b96a4e7d00468ee461b2c141f9d735427f7a7d893ba692": "782c303cbdfab1027b04db74a63e27bdad5e0c53",
@@ -311906,6 +311962,33 @@
       ".variants/fdsbios.zip.c25686d2": [
         "c25686d24c7205473741f948f8a9df9906823145"
       ],
+      "Arcade/Arcade/.variants/hiscore.dat.17b8b03a": [
+        "17b8b03a89d8443927aa92ede799e117b4ab6fdb"
+      ],
+      "Arcade/.variants/hiscore.dat.17b8b03a": [
+        "17b8b03a89d8443927aa92ede799e117b4ab6fdb"
+      ],
+      ".variants/hiscore.dat.17b8b03a": [
+        "17b8b03a89d8443927aa92ede799e117b4ab6fdb"
+      ],
+      "Arcade/Arcade/.variants/hiscore.dat.21ddda0c": [
+        "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8"
+      ],
+      "Arcade/.variants/hiscore.dat.21ddda0c": [
+        "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8"
+      ],
+      ".variants/hiscore.dat.21ddda0c": [
+        "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8"
+      ],
+      "Arcade/Arcade/.variants/hiscore.dat.23e0dec6": [
+        "23e0dec66680aa4545eafe436c23d2bf5622e32e"
+      ],
+      "Arcade/.variants/hiscore.dat.23e0dec6": [
+        "23e0dec66680aa4545eafe436c23d2bf5622e32e"
+      ],
+      ".variants/hiscore.dat.23e0dec6": [
+        "23e0dec66680aa4545eafe436c23d2bf5622e32e"
+      ],
       "Arcade/Arcade/.variants/hiscore.dat.30c6ad69": [
         "30c6ad697439de7c2158192ecdb48f5edd37478e"
       ],
@@ -311914,6 +311997,15 @@
       ],
       ".variants/hiscore.dat.30c6ad69": [
         "30c6ad697439de7c2158192ecdb48f5edd37478e"
+      ],
+      "Arcade/Arcade/.variants/hiscore.dat.68e94fb5": [
+        "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20"
+      ],
+      "Arcade/.variants/hiscore.dat.68e94fb5": [
+        "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20"
+      ],
+      ".variants/hiscore.dat.68e94fb5": [
+        "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20"
       ],
       "Arcade/Arcade/.variants/hiscore.dat.a22ec279": [
         "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1"

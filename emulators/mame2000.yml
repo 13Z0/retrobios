@@ -34,8 +34,14 @@ files:
   - name: hiscore.dat
     required: false
     category: game_data
-    source_ref: "src/hiscore.c:18,252-254"
-    note: "high score definitions, loaded from ROM directory"
+    sha1: "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8"
+    md5: "9b262149ec70cbda741a8ba55784f8e1"
+    size: 36182
+    source_ref: "src/hiscore.c:18,132-146,252-254"
+    note: >-
+      high score definitions, loaded from ROM directory. metadata/hiscore.dat
+      of the core repository; is_mem_range reads only "cpu:addr:len:start:end"
+      lines under a "gamename:" header.
 
   - name: cheat.dat
     path: "mame2000/cheat/cheat.dat"

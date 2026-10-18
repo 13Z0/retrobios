@@ -62,8 +62,13 @@ files:
     path: "mame2015/hiscore.dat"
     required: false
     category: game_data
-    source_ref: "src/emu/hiscore.c:335-337"
-    note: "high score definitions, external file, not embedded"
+    sha1: "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20"
+    md5: "7e31f0b84f6ea6f9ffec0cd968decf9f"
+    size: 216250
+    source_ref: "src/emu/hiscore.c:122-138,335-337"
+    note: >-
+      high score definitions, external file, not embedded. metadata/hiscore.dat of the core repository; is_mem_range reads
+      only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   # SNK Neo Geo MVS/AES
   - name: neogeo.zip

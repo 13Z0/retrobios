@@ -60,8 +60,15 @@ files:
     path: "mame2010/hiscore.dat"
     required: false
     category: game_data
-    source_ref: "src/emu/hiscore.c:25,353-358"
-    note: "high score definitions, embedded in binary by default, external via core option mame-external_hiscore"
+    sha1: "17b8b03a89d8443927aa92ede799e117b4ab6fdb"
+    md5: "bb8023a43e357b7f0cc06bf00f0470b2"
+    size: 202298
+    source_ref: "src/emu/hiscore.c:25,136-150,353-358"
+    note: >-
+      high score definitions, embedded in binary by default, external via core
+      option mame-external_hiscore. metadata/hiscore.dat of the core repository,
+      the same bytes as the embedded precompile/hiscore_dat.h. is_mem_range
+      reads only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.zip
     path: "mame2010/cheat.zip"

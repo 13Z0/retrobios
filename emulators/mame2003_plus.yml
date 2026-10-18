@@ -66,8 +66,15 @@ files:
     path: "mame2003-plus/hiscore.dat"
     required: false
     category: game_data
-    source_ref: "src/hiscore.c:15,248"
-    note: "high score definitions, compiled into binary and spawned on first run"
+    sha1: "c086306096722da7f02f624e7efb447659aca1d3"
+    md5: "2f60c1ed69c152dea95e734979ca2ecb"
+    size: 131878
+    source_ref: "src/hiscore.c:15,102-116,248"
+    note: >-
+      high score definitions, compiled into binary and spawned on first run.
+      metadata/hiscore.dat of the core repository; the compiled copy
+      (precompile/hiscore_dat.h) predates its last edits. is_mem_range reads
+      only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.dat
     path: "mame2003-plus/cheat.dat"

@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-18T11:04:01Z",
+  "generated": "2026-10-18T11:24:19Z",
   "base_destination": "system",
   "detect": [
     {
@@ -268,9 +268,9 @@
     }
   ],
   "total_files": 5880,
-  "total_size": 6132227048,
+  "total_size": 6131490701,
   "pack_files": 8522,
-  "pack_size": 6172775251,
+  "pack_size": 6172038904,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -69769,11 +69769,21 @@
       "repo_path": "bios/Arcade/Arcade/hiscore.dat",
       "cores": [
         "fbalpha2012",
-        "fbalpha2012_cps3",
-        "mame2000"
+        "fbalpha2012_cps3"
       ],
       "systems": [
         "arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+          "size": 36182,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+          "cores": [
+            "mame2000"
+          ]
+        }
       ]
     },
     {
@@ -70282,31 +70292,41 @@
     },
     {
       "dest": "mame2003/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
+      "sha256": "b95bbae8b1be197aea6d9b896a37bead6212852303b9f85559699da92c883832",
+      "size": 215475,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.a22ec279",
       "cores": [
-        "mame2003",
-        "mame2003_midway"
+        "mame2003"
+      ],
+      "alternatives": [
+        {
+          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+          "size": 322458,
+          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+          "cores": [
+            "mame2003_midway"
+          ]
+        }
       ]
     },
     {
       "dest": "mame2003-plus/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "c086306096722da7f02f624e7efb447659aca1d3",
+      "sha256": "ed444310ec543bf42acaf48fcab956f30c4c97268f4145dc36e5ad2980f19823",
+      "size": 131878,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.c0863060",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
       "dest": "mame2010/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+      "sha256": "5a8f5bf5090e7fb9c2878ecee11b2b5e80e9b3e8fdc15a9158b3f14f31fcc5d5",
+      "size": 202298,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.17b8b03a",
       "cores": [
         "mame2010"
       ],
@@ -70316,10 +70336,10 @@
     },
     {
       "dest": "mame2015/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+      "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+      "size": 216250,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
       "cores": [
         "mame2015"
       ],
@@ -70330,10 +70350,10 @@
     },
     {
       "dest": "mess2015/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+      "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+      "size": 216250,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
       "cores": [
         "mess2015"
       ]
@@ -70566,10 +70586,10 @@
     },
     {
       "dest": "ume2015/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+      "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+      "size": 216250,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
       "cores": [
         "ume2015"
       ],
