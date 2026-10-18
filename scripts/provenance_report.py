@@ -178,7 +178,7 @@ def main() -> int:
         "--derive",
         action="store_true",
         help="Find missing entries a held dump contains (halves, word splits, "
-        "byte swaps, concatenations); reads the collection, about 90 s",
+        "byte swaps, concatenations); reads the collection, about 35 s",
     )
     parser.add_argument("--json", action="store_true", help="Full report as JSON")
     parser.add_argument(

@@ -86,30 +86,33 @@ def crc32_combine(crc1: int, crc2: int, len2: int) -> int:
 def _shift_operator(len2: int) -> tuple[int, ...]:
     """The linear map zlib applies to crc(A) for len2 bytes appended.
 
-    Built once per length, column by column: chip sizes repeat, and
-    rebuilding the squares for every pair spent minutes in GF(2) products.
+    Built once per length, as zlib's crc32_combine walks it: the chain of
+    squared operators depends on len2 alone, so it is squared once and the
+    operators the set bits select are composed. Rebuilding the chain for
+    each of the 32 columns spent 57 s of the provenance step in GF(2)
+    products.
     """
-    return tuple(_shift(1 << bit, len2) for bit in range(32))
-
-
-def _shift(crc1: int, len2: int) -> int:
     odd = [0xEDB88320] + [1 << (n - 1) for n in range(1, 32)]
     even = _gf2_square(odd)
     odd = _gf2_square(even)
+    selected: list[list[int]] = []
     while True:
         even = _gf2_square(odd)
         if len2 & 1:
-            crc1 = _gf2_times(even, crc1)
+            selected.append(even)
         len2 >>= 1
         if not len2:
             break
         odd = _gf2_square(even)
         if len2 & 1:
-            crc1 = _gf2_times(odd, crc1)
+            selected.append(odd)
         len2 >>= 1
         if not len2:
             break
-    return crc1
+    columns = [1 << bit for bit in range(32)]
+    for matrix in selected:
+        columns = [_gf2_times(matrix, column) for column in columns]
+    return tuple(columns)
 
 
 def _read(held: dict, archives: dict[str, zipfile.ZipFile] | None = None) -> bytes | None:

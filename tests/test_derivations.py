@@ -102,5 +102,23 @@ class ARomsetMemberIsASource(unittest.TestCase):
             )
 
 
+
+class CombineMatchesZlib(unittest.TestCase):
+    """The operator is composed once per length; it must stay zlib's."""
+
+    def test_against_zlib(self):
+        import os
+        import zlib
+
+        from derivations import crc32_combine
+
+        for size in (1, 2, 3, 7, 100, 4096, 65537, 1000003):
+            with self.subTest(size=size):
+                a, b = os.urandom(37), os.urandom(size)
+                self.assertEqual(
+                    crc32_combine(zlib.crc32(a), zlib.crc32(b), len(b)), zlib.crc32(a + b)
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
