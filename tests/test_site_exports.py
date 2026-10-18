@@ -458,5 +458,24 @@ class ASystemCardLandsOnThePlatformsSection(unittest.TestCase):
         )
 
 
+
+class ArchiveMembersAreAcceptedHashes(unittest.TestCase):
+    """accepted_hashes read only an entry's own hashes: 4,673 member crc32
+    values of MAME and FBNeo sets were absent from the table the Data page
+    calls the one to ask."""
+
+    def test_member_rows(self):
+        from generate_site import _accepted_hash_rows
+
+        item = {"id": "fbalpha2019", "profile": {"files": [
+            {"name": "nmk004.zip", "system": "arcade",
+             "contents": [{"name": "nmk004.bin", "crc32": "83b6f611"}]}]}}
+        rows = _accepted_hash_rows([], [item])
+        self.assertIn(
+            ("nmk004.bin", "nmk004.zip/nmk004.bin", "crc32", "83b6f611"),
+            {(r["name"], r["path"], r["algorithm"], r["value"]) for r in rows},
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

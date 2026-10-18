@@ -505,6 +505,21 @@ def _accepted_hash_rows(platform_files: list[dict], emulator_items: list[dict]) 
                         "name": entry.get("name", ""), "path": entry.get("path", "") or "",
                         "algorithm": algorithm, "value": value,
                     })
+            # Members of an archive: MAME and FBNeo hash the ROMs inside the
+            # set, never the set. Left out, a loose nmk004.bin (crc32
+            # 83b6f611) found no row while the site search found it.
+            archive = entry.get("name", "")
+            for member in entry.get("contents") or []:
+                if not isinstance(member, dict) or not member.get("name"):
+                    continue
+                for algorithm in HASH_ALGORITHMS:
+                    for value in _hash_values(member.get(algorithm)):
+                        rows.append({
+                            "layer": "emulator", "owner": item["id"],
+                            "system": _json_text(entry.get("system")),
+                            "name": str(member["name"]), "path": f"{archive}/{member['name']}",
+                            "algorithm": algorithm, "value": value,
+                        })
     rows.sort(key=lambda r: (r["layer"], r["owner"], r["name"], r["algorithm"], r["value"]))
     return rows
 
@@ -1123,7 +1138,9 @@ def generate_data_page(exports: list[dict]) -> str:
         "To find who accepts a hash, query `accepted_hashes` (or "
         "`accepted-hashes.csv`): one lowercase row per accepted value, per "
         "algorithm, for platform declarations and emulator profiles alike, "
-        "indexed on `(algorithm, value)`. The hash columns of `platform_files` "
+        "indexed on `(algorithm, value)`. A ROM inside a MAME or FBNeo set "
+        "has its own row, its `path` naming the archive and the member "
+        "(`nmk004.zip/nmk004.bin`). The hash columns of `platform_files` "
         "and `emulator_files` keep each source's own form: a Recalbox md5 may "
         "list several revisions separated by commas, and an emulator field "
         "holding several accepted values is a JSON array.",
