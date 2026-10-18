@@ -4070,5 +4070,60 @@ class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
         self.assertEqual(sorted(selected), ["handy", "mednafen_lynx"])
 
 
+
+class TestTreeUrlIntoADirectory(unittest.TestCase):
+    """`.../libretro-samples/tree/master/tests/cruzes` took the whole tail as
+    the branch; nothing resolved and cruzes was skipped as having no pin."""
+
+    def test_candidates_are_prefixes_shortest_first(self):
+        self.assertEqual(
+            profile_sync.branch_candidates(
+                "https://github.com/libretro/libretro-samples/tree/master/tests/cruzes"
+            ),
+            ["master", "master/tests", "master/tests/cruzes"],
+        )
+        self.assertEqual(profile_sync.branch_candidates("https://github.com/o/r"), [])
+
+    def test_the_first_resolving_prefix_is_the_branch(self):
+        from unittest import mock
+
+        asked = []
+
+        def head(repo, cache, offline=False, branch=None):
+            asked.append(branch)
+            return "tipsha" if branch == "master" else None
+
+        profile = {"source": "https://github.com/libretro/libretro-samples/tree/master/tests/cruzes",
+                   "source_commit": "pinsha"}
+        with mock.patch.object(profile_sync.upstream, "resolve_head", side_effect=head):
+            views = profile_sync.select_views(profile, ".cache", True)
+        self.assertEqual([(v.pin, v.head) for v in views], [("pinsha", "tipsha")])
+        self.assertEqual(asked[0], "master")
+
+
+
+class TestAnUnansweringRepository(unittest.TestCase):
+    """pyxel declares source_commit, yet the skip read "no source_commit":
+    its repository answers 404. A declared upstream_gone was honoured only
+    when the forge raised GoneError, never on a plain non-answer."""
+
+    def _report(self, profile):
+        from unittest import mock
+
+        with mock.patch.object(profile_sync, "select_views", return_value=[]):
+            return profile_sync.build_report("p", profile, ".cache", True)
+
+    def test_a_declared_pin_names_the_repository(self):
+        report = self._report({"source": "https://github.com/o/r", "source_commit": "abc",
+                               "files": [{"name": "a", "source_ref": "a.c:1"}]})
+        self.assertIn("no declared repository answers", report.skipped)
+
+    def test_a_declared_gone_upstream_is_honoured(self):
+        report = self._report({"source": "https://github.com/o/r", "source_commit": "abc",
+                               "upstream_gone": "404 since 2026-10-18",
+                               "files": [{"name": "a", "source_ref": "a.c:1"}]})
+        self.assertEqual(report.skipped, "upstream gone (declared): 404 since 2026-10-18")
+
+
 if __name__ == "__main__":
     unittest.main()

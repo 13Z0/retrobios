@@ -1293,15 +1293,19 @@ def select_views(
         # no profile carries, and fell back to profiled_date, which a bump
         # never moves (eden judged from f6e76860 while pinned on d16735f5).
         pin_field = "source" if field == "source_mirror" else field
-        branch = branch_in_url(url) or (
-            declared if pin_field == "source" else None
-        )
+        branch = declared if pin_field == "source" else None
+        head = None
+        for candidate in branch_candidates(url):
+            head = upstream.resolve_head(repo, cache_dir, offline, candidate)
+            if head:
+                branch = candidate
+                break
         pin, origin = resolve_pin(
             profile, repo, cache_dir, offline, pin_field, mode, branch
         )
         if not pin:
             continue
-        head = upstream.resolve_head(repo, cache_dir, offline, branch)
+        head = head or upstream.resolve_head(repo, cache_dir, offline, branch)
         if not head:
             continue
         seen.add((repo.host, repo.slug))
@@ -1372,10 +1376,27 @@ def branch_in_url(url: str) -> str | None:
     """Branch named by a forge URL pointing inside a repository.
 
     A profile can cite a fork as `.../Ymir/tree/libretro`, which names both
-    the repository and the branch the port lives on.
+    the repository and the branch the port lives on. The tail may go on into
+    a directory (`.../libretro-samples/tree/master/tests/cruzes`): this is
+    the whole tail, and branch_candidates() its prefixes.
     """
     _, sep, tail = url.partition("/tree/")
     return tail.strip("/") or None if sep else None
+
+
+def branch_candidates(url: str) -> list[str]:
+    """Each prefix of a /tree/ tail, shortest first, that may be the branch.
+
+    A branch name can hold a slash, so the tail is not split blindly; the
+    first prefix the forge resolves is the branch, the rest a directory.
+    Taken whole, `master/tests/cruzes` resolved to nothing and the profile
+    was skipped as having no resolvable pin.
+    """
+    tail = branch_in_url(url)
+    if not tail:
+        return []
+    parts = tail.split("/")
+    return ["/".join(parts[:n]) for n in range(1, len(parts) + 1)]
 
 
 SELF_CHECK_CONTEXT = 2
@@ -1632,9 +1653,18 @@ def build_report(
             f"upstream_gone is declared but the forge answers: {stated_gone}"
         )
         return report
+    if not views and stated_gone:
+        report.skipped = f"upstream gone (declared): {stated_gone}"
+        return report
     if not views:
+        # A declared pin whose repository or branch does not answer is not a
+        # profile without a pin: pyxel's kitao/pyxel answers 404, and the
+        # message sent the reader looking for a missing source_commit.
         report.skipped = (
-            "no source_commit and no resolvable profiled_date "
+            "no declared repository answers (moved, removed, or a branch the "
+            "forge does not know)"
+            if profile.get("source_commit") or profile.get("upstream_commit")
+            else "no source_commit and no resolvable profiled_date "
             "on any declared repository"
         )
         return report
