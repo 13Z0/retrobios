@@ -814,6 +814,12 @@ def _mark_hidden(
     return placed
 
 
+def _dest_key(file_entry: dict, sys_id: str) -> str:
+    """The path a declaration occupies, as the builder keys its pack."""
+    dest = sanitize_pack_path(file_entry.get("destination", file_entry.get("name", "")))
+    return dest or f"{sys_id}/{file_entry.get('name', '')}"
+
+
 def _twin_index(
     verify_systems: dict, db: dict, base_dest: str, zip_contents: dict,
 ) -> tuple[dict[str, int], dict[int, tuple[str, dict]]]:
@@ -1098,19 +1104,25 @@ def verify_platform(
             if _twin_unmet(result, held_by):
                 continue
 
-            # Aggregate by destination
-            dest = file_entry.get("destination", file_entry.get("name", ""))
-            if not dest:
-                dest = f"{sys_id}/{file_entry.get('name', '')}"
+            # Aggregate by destination, keyed as the builder keys its pack.
+            # A declaration that finds nothing leaves the path to one that
+            # holds a file: the builder packs that file there, whatever the
+            # order the two are read in.
+            dest = _dest_key(file_entry, sys_id)
             results_at.setdefault(dest, []).append(result)
             required = file_entry.get("required", True)
             cur = result["status"]
             prev = file_status.get(dest)
+            hle = hle_index.get(file_entry.get("name", ""), False)
+            sev = compute_severity(cur, required, mode, hle)
+            if prev is not None and (cur == Status.MISSING) != (prev == Status.MISSING):
+                if cur == Status.MISSING:
+                    continue
+                del file_status[dest], file_severity[dest]
+                prev = None
             if prev is None or _STATUS_ORDER.get(cur, 0) > _STATUS_ORDER.get(prev, 0):
                 file_status[dest] = cur
                 file_required[dest] = required
-            hle = hle_index.get(file_entry.get("name", ""), False)
-            sev = compute_severity(cur, required, mode, hle)
             prev_sev = file_severity.get(dest)
             if prev_sev is None or _SEVERITY_ORDER.get(sev, 0) > _SEVERITY_ORDER.get(
                 prev_sev, 0
@@ -1192,10 +1204,7 @@ def verify_platform(
     dest_to_name: dict[str, str] = {}
     for sys_id, system in verify_systems.items():
         for fe in system.get("files", []):
-            dest = fe.get("destination", fe.get("name", ""))
-            if not dest:
-                dest = f"{sys_id}/{fe.get('name', '')}"
-            dest_to_name.setdefault(dest, fe.get("name", ""))
+            dest_to_name.setdefault(_dest_key(fe, sys_id), fe.get("name", ""))
     with_validation = sum(
         1 for dest in file_status if dest_to_name.get(dest, "") in gt_filenames
     )

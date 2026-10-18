@@ -258,5 +258,57 @@ class AMemberNameIsNotALooseFile(unittest.TestCase):
         )
 
 
+class TwoDeclarationsOfOnePath(unittest.TestCase):
+    """Two systems declare one destination under two names, no hash, one
+    held. The builder packed the held file and kept the first verdict it
+    read; verify kept the worst, on the raw destination. Read either way
+    round, both must count the path once and met."""
+
+    def _run(self, first: str, second: str, spelling: str):
+        _emulator_profiles_cache.clear()
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        bios = root / "bios" / "Maker" / "Console"
+        bios.mkdir(parents=True)
+        data = b"SHARED BOOT ROM"
+        (bios / "boot.bin").write_bytes(data)
+        sha1, md5 = hashlib.sha1(data).hexdigest(), hashlib.md5(data).hexdigest()
+        db = {
+            "files": {sha1: {"path": str(bios / "boot.bin"), "name": "boot.bin",
+                             "md5": md5, "crc32": "", "size": len(data)}},
+            "indexes": {"by_md5": {md5: sha1}, "by_name": {"boot.bin": [sha1]},
+                        "by_crc32": {}, "by_path_suffix": {}},
+        }
+        for folder in ("platforms", "emulators"):
+            (root / folder).mkdir()
+        (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
+            "platform": "FakePlat", "verification_mode": "existence",
+            "base_destination": "system", "cores": [],
+            "systems": {
+                "a-system": {"files": [{"name": first, "destination": "shared.bin"}]},
+                "b-system": {"files": [{"name": second, "destination": spelling}]},
+            },
+        }))
+        config = load_platform_config("fakeplat", str(root / "platforms"))
+        result = verify_platform(config, db, str(root / "emulators"))
+        out = io.StringIO()
+        with redirect_stdout(out):
+            zip_path = generate_pack(
+                "fakeplat", str(root / "platforms"), db, str(root / "bios"),
+                str(root / "out"), emulators_dir=str(root / "emulators"), offline=True,
+            )
+        with zipfile.ZipFile(zip_path) as zf:
+            self.assertIn("shared.bin", zf.namelist())
+        return result["status_counts"], out.getvalue()
+
+    def test_either_order_counts_one_met_path(self):
+        for first, second in (("boot.bin", "absent.bin"), ("absent.bin", "boot.bin")):
+            for spelling in ("shared.bin", "./shared.bin"):
+                with self.subTest(first=first, spelling=spelling):
+                    counts, printed = self._run(first, second, spelling)
+                    self.assertEqual(counts, {"ok": 1})
+                    self.assertIn("1/1 files OK", printed)
+
+
 if __name__ == "__main__":
     unittest.main()

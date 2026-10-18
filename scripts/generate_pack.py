@@ -964,6 +964,11 @@ def generate_pack(
                         dedup_key,
                         existence_discrepancy(file_entry, local_path, platform_display),
                     )
+                if file_status.get(dedup_key) == "missing":
+                    # An earlier declaration of this path found nothing; this
+                    # one fills it, as verify counts it.
+                    del file_status[dedup_key]
+                    file_reasons.pop(dedup_key, None)
                 file_status.setdefault(dedup_key, "ok")
 
                 # Emulator-level validation: informational only for platform packs.
