@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T06:45:25Z",
+  "generated_at": "2026-10-18T11:04:01Z",
   "total_files": 19075,
   "total_size": 17567770846,
   "bios_dir": "bios",
@@ -188752,23 +188752,6 @@
       "crc32": "7b28d9de",
       "adler32": "d6c53905"
     },
-    "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3": {
-      "path": "bios/Sharp/X1/.variants/IPLROM.X1T.44620f57",
-      "name": "IPLROM.X1T",
-      "size": 32768,
-      "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
-      "md5": "56c28adcf1f3a2f87cf3d57c378013f5",
-      "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
-      "crc32": "2e8b767c",
-      "adler32": "7af8f6bb",
-      "provenance": {
-        "tosec": {
-          "dat": "Sharp X1 Turbo - Firmware",
-          "name": "Sharp X1 Turbo IPL ROM (198x)(Sharp).bin",
-          "description": "Sharp X1 Turbo IPL ROM (198x)(Sharp)"
-        }
-      }
-    },
     "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2": {
       "path": "bios/Sharp/X1/FNT0808.X1",
       "name": "FNT0808.X1",
@@ -188805,6 +188788,23 @@
       "sha256": "40c080b7ad381050fe9f8d8063985a2648785ef470e397fbeb3d606a9774fc48",
       "crc32": "46826745",
       "adler32": "5991cbd7"
+    },
+    "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3": {
+      "path": "bios/Sharp/X1/IPLROM.X1T",
+      "name": "IPLROM.X1T",
+      "size": 32768,
+      "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
+      "md5": "56c28adcf1f3a2f87cf3d57c378013f5",
+      "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
+      "crc32": "2e8b767c",
+      "adler32": "7af8f6bb",
+      "provenance": {
+        "tosec": {
+          "dat": "Sharp X1 Turbo - Firmware",
+          "name": "Sharp X1 Turbo IPL ROM (198x)(Sharp).bin",
+          "description": "Sharp X1 Turbo IPL ROM (198x)(Sharp)"
+        }
+      }
     },
     "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a": {
       "path": "bios/Sharp/X1/iplrom.x1",
@@ -214475,10 +214475,10 @@
       "1474da2b8fbbb37abce8e7ab5cf9024c": "fec7527ecbf79b1ac697137f770bb8715fe8a652",
       "e634c906c23e62d5d3cd63581e5748ff": "2ca428b70ed1746834d129c11fb8e60a56317cff",
       "59074727a953fe965109b7dbe3298e30": "c4db9a6e99873808c8022afd1c50fef556a8b44d",
-      "56c28adcf1f3a2f87cf3d57c378013f5": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "851e4a5936f17d13f8c39a980cf00d77": "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
       "fb31145036be80d392c95ff50ee8553c": "4f06d20c997a79ee6af954b69498147789bf1847",
       "77000214fda5f3ecd2043db1e6091074": "b9e6c320611f0842df6f45673c47c3e23bc14272",
+      "56c28adcf1f3a2f87cf3d57c378013f5": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "eeeea1cd29c6e0e8b094790ae969bfa7": "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a",
       "51b55ee3807901c015fdb93616858b8b": "76c18deb168ad0ffd7886a130a9e74e915070782",
       "d407317a52f8425a6753232064d14700": "77be2f6f28897f99b73d4c47bf7cd47e999fd7cd",
@@ -263515,9 +263515,6 @@
       "IPLROM.X1": [
         "c4db9a6e99873808c8022afd1c50fef556a8b44d"
       ],
-      "IPLROM.X1T": [
-        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
-      ],
       "FNT0808.X1": [
         "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2"
       ],
@@ -263526,6 +263523,9 @@
       ],
       "FNT1616.X1": [
         "b9e6c320611f0842df6f45673c47c3e23bc14272"
+      ],
+      "IPLROM.X1T": [
+        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
       ],
       "iplrom.x1": [
         "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a"
@@ -268584,10 +268584,6 @@
       "sega-saturn:85ec9ca47d8f6807718151cbcca8b964": [
         "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
       ],
-      "iplrom.x1t": [
-        "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
-        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
-      ],
       "cgrom.tmp": [
         "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
       ],
@@ -269320,6 +269316,10 @@
       ],
       "Kickstart v3.0 rev 39.106 (1992)(Commodore)(A1200)[!].rom": [
         "70033828182fffc7ed106e5373a8b89dda76faa5"
+      ],
+      "iplrom.x1t": [
+        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
+        "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2"
       ],
       "basic11.rom": [
         "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
@@ -290459,10 +290459,10 @@
       "17878e56": "fec7527ecbf79b1ac697137f770bb8715fe8a652",
       "a61ca7c7": "2ca428b70ed1746834d129c11fb8e60a56317cff",
       "7b28d9de": "c4db9a6e99873808c8022afd1c50fef556a8b44d",
-      "2e8b767c": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "e3995a57": "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
       "8f9fb213": "4f06d20c997a79ee6af954b69498147789bf1847",
       "46826745": "b9e6c320611f0842df6f45673c47c3e23bc14272",
+      "2e8b767c": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "e70011d3": "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a",
       "72628c06": "76c18deb168ad0ffd7886a130a9e74e915070782",
       "5dd9a0c5": "77be2f6f28897f99b73d4c47bf7cd47e999fd7cd",
@@ -309536,10 +309536,10 @@
       "b853ce2856970592853e19e91f855e9905e4d9e5af46da26e8e818e0ed456cdf": "fec7527ecbf79b1ac697137f770bb8715fe8a652",
       "ad1b2eb9300efd3d9476dad742c72e7436d9a9f67c951d537868553fa0c80843": "2ca428b70ed1746834d129c11fb8e60a56317cff",
       "0513077cb96c90c3ab8809c44259d8274c7a34862ea7df1b957b2d6129eaaeb1": "c4db9a6e99873808c8022afd1c50fef556a8b44d",
-      "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "42139ed610747190c8ca9046c799907b52582c0d642b5f52f1548d9c1d4a86f8": "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
       "e356dd1992708d2bdf03d4029ba07a8177158e1cb0eac145f881ed8dcdae35d8": "4f06d20c997a79ee6af954b69498147789bf1847",
       "40c080b7ad381050fe9f8d8063985a2648785ef470e397fbeb3d606a9774fc48": "b9e6c320611f0842df6f45673c47c3e23bc14272",
+      "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
       "e6295a523008688421991b651ab61de392b28c67bec9efbf040b0004e4b70a2a": "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a",
       "847de5c002e031b53459f76fd630779f692ff3d1e824ad5859e439ce1069c410": "76c18deb168ad0ffd7886a130a9e74e915070782",
       "07ab9575dfc9024cd52ebc92e2f3e64e9a0a3d713f6902eaf81974f20174d582": "77be2f6f28897f99b73d4c47bf7cd47e999fd7cd",
@@ -544446,15 +544446,6 @@
       ".variants/IPLROM.X1.c4db9a6e": [
         "c4db9a6e99873808c8022afd1c50fef556a8b44d"
       ],
-      "Sharp/X1/.variants/IPLROM.X1T.44620f57": [
-        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
-      ],
-      "X1/.variants/IPLROM.X1T.44620f57": [
-        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
-      ],
-      ".variants/IPLROM.X1T.44620f57": [
-        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
-      ],
       "Sharp/X1/FNT0808.X1": [
         "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2"
       ],
@@ -544472,6 +544463,12 @@
       ],
       "X1/FNT1616.X1": [
         "b9e6c320611f0842df6f45673c47c3e23bc14272"
+      ],
+      "Sharp/X1/IPLROM.X1T": [
+        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
+      ],
+      "X1/IPLROM.X1T": [
+        "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3"
       ],
       "Sharp/X1/iplrom.x1": [
         "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a"
@@ -578232,12 +578229,6 @@
       ],
       "Saturn/sega_101.bin": [
         "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
-      ],
-      "Sharp/X1/iplrom.x1t": [
-        "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2"
-      ],
-      "X1/iplrom.x1t": [
-        "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2"
       ],
       "Sharp/X68000/cgrom.tmp": [
         "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"

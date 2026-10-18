@@ -16,6 +16,7 @@ union and is never discarded, the same rule region.py already applies.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -43,7 +44,23 @@ if TYPE_CHECKING:
 # A profile entry can prove a slot without declaring a hash: Dolphin names no
 # checksum for the GameCube boot ROM because its source names none, and the
 # proof is then the path the repository stores the file at.
-PROVEN_STATUSES = frozenset({"path_exact", "members_held"})
+# A profile entry that names an exact size, for a file the code reads in
+# full (no hash to declare), is proven by a held copy of that size: the
+# platform's xmil/IPLROM.X1T pinned the 2 KiB X1 font where xmil reads a
+# 32 KiB Turbo IPL, and a name-only claim could not contest it.
+SIZE_EXACT = "size_exact"
+PROVEN_STATUSES = frozenset({"path_exact", "members_held", SIZE_EXACT})
+
+
+def _size_the_code_reads(entry: dict, local: str | None) -> bool:
+    """Whether a name-resolved copy has the exact size the entry declares."""
+    size = entry.get("size")
+    if not local or not isinstance(size, int) or size <= 0:
+        return False
+    try:
+        return os.path.getsize(local) == size
+    except OSError:
+        return False
 
 # A core that reads ROMs inside an archive proves the archive by its members:
 # FBNeo's neocdz.zip is any copy holding neocd.bin and 000-lo.lo by crc.
@@ -229,6 +246,8 @@ def profile_claims(
                 dest_hint=dest,
                 data_dir_registry=data_dir_registry,
             )
+            if status == "name_exact" and _size_the_code_reads(entry, local):
+                status = SIZE_EXACT
             claims.append(
                 Claim(
                     origin="profile",
@@ -371,6 +390,12 @@ def _slot_claims(
         key = _normalize(claim.destination, fold)
         platform = by_dest.get(key)
         if platform is None or not claim.is_proven:
+            continue
+        if claim.status == SIZE_EXACT and (
+            not platform.local_path
+            or _size_the_code_reads(claim.entry, platform.local_path)
+        ):
+            # A size proves a claim only against a file of another size.
             continue
         if not platform.is_proven and not (path_only and platform.local_path):
             continue

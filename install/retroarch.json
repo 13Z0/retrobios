@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-18T00:39:54Z",
+  "generated": "2026-10-18T11:04:01Z",
   "base_destination": "system",
   "detect": [
     {
@@ -268,9 +268,9 @@
     }
   ],
   "total_files": 5880,
-  "total_size": 6132196328,
+  "total_size": 6132227048,
   "pack_files": 8522,
-  "pack_size": 6172744531,
+  "pack_size": 6172775251,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -4180,6 +4180,28 @@
       "cores": null,
       "systems": [
         "galaksija"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
+          "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
+          "size": 4096,
+          "repo_path": "bios/Galaksija/ROM2.BIN",
+          "cores": [
+            "galaksija"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
+          "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
+          "size": 4096,
+          "repo_path": "bios/Galaksija/ROM2.BIN",
+          "systems": [
+            "galaksija"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -9696,20 +9718,42 @@
     },
     {
       "dest": "xmil/IPLROM.X1T",
-      "sha1": "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
-      "sha256": "42139ed610747190c8ca9046c799907b52582c0d642b5f52f1548d9c1d4a86f8",
-      "size": 2048,
-      "repo_path": "bios/Sharp/X1/FNT0808.X1",
+      "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
+      "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
+      "size": 32768,
+      "repo_path": "bios/Sharp/X1/IPLROM.X1T",
       "cores": null,
       "systems": [
         "sharp-x1"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
+          "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
+          "size": 32768,
+          "repo_path": "bios/Sharp/X1/IPLROM.X1T",
+          "cores": [
+            "x1"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "1c1a0d8c9f4c446ccd7470516b215ddca5052fb2",
+          "sha256": "42139ed610747190c8ca9046c799907b52582c0d642b5f52f1548d9c1d4a86f8",
+          "size": 2048,
+          "repo_path": "bios/Sharp/X1/FNT0808.X1",
+          "systems": [
+            "sharp-x1"
+          ]
+        }
       ],
       "alternatives": [
         {
           "sha1": "44620f57a25f0bcac2b57ca2b0f1ebad3bf305d3",
           "sha256": "212895703175665be8544daa55b65da1aebcf1e9a2db65bcc1622e564b802b71",
           "size": 32768,
-          "repo_path": "bios/Sharp/X1/.variants/IPLROM.X1T.44620f57",
+          "repo_path": "bios/Sharp/X1/IPLROM.X1T",
           "cores": [
             "x1"
           ]

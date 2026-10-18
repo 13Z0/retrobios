@@ -610,6 +610,38 @@ class TestProvenEvidence(unittest.TestCase):
 
 
 
+class AnExactSizeContestsAnotherSize(unittest.TestCase):
+    """System.dat pinned the 2 KiB X1 font as xmil/IPLROM.X1T, where xmil
+    reads a 32 KiB Turbo IPL; the profile's name-only claim could not
+    contest it, and RetroArch packs shipped the font as the IPL."""
+
+    def setUp(self):
+        import tempfile
+
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        root = Path(self._tmp.name)
+        self.ipl = root / "IPLROM.X1T"
+        self.ipl.write_bytes(b"i" * 32768)
+        self.font = root / "FNT0808.X1"
+        self.font.write_bytes(b"f" * 2048)
+
+    def test_a_held_copy_of_the_declared_size_proves_the_claim(self):
+        entry = {"name": "IPLROM.X1T", "size": 32768}
+        self.assertTrue(slots._size_the_code_reads(entry, str(self.ipl)))
+        self.assertFalse(slots._size_the_code_reads(entry, str(self.font)))
+        self.assertTrue(slots.Claim("profile", "d", "n", status=slots.SIZE_EXACT).is_proven)
+
+    def test_retroarch_ships_the_turbo_ipl(self):
+        import json as _json
+
+        manifest = _json.loads(
+            (Path(__file__).resolve().parents[1] / "install" / "retroarch.json").read_text()
+        )
+        entry = next(f for f in manifest["files"] if f["dest"] == "xmil/IPLROM.X1T")
+        self.assertEqual(entry["size"], 32768)
+
+
 class ManifestFollowsTheArbitration(unittest.TestCase):
     """The installer is handed the file the ZIP carries on a contested slot."""
 
