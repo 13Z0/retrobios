@@ -1519,7 +1519,7 @@ def verify_emulator(
     if regions:
         from packextras import emulator_region_drops
 
-        region_drops = emulator_region_drops(selected, standalone, regions)
+        region_drops = emulator_region_drops(selected, standalone, regions, db=db)
 
     # The emulator pack walks profiles in name order and keeps the first
     # file at a path, folding case: a later profile's different file there

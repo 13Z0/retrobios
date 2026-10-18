@@ -1028,6 +1028,7 @@ def emulator_region_drops(
     standalone: bool,
     regions: list[str],
     required_only: bool = False,
+    db: dict | None = None,
 ) -> set[str]:
     """Destinations an emulator-mode `--region` withdraws.
 
@@ -1035,6 +1036,11 @@ def emulator_region_drops(
     a multi-system core such as O2EM keeps a fallback BIOS for every system
     instead of letting one matching system empty another. The emulator pack
     and `verify --emulator` both read this, keyed by pack destination.
+
+    With `db`, a requested-region file the collection lacks never displaces
+    a held one, as in platform mode: a held scph5501.bin was withdrawn for a
+    Japanese image nobody had collected, and the pack shipped no PlayStation
+    BIOS at all.
     """
     import region as region_mod
     from packpaths import _resolve_destination
@@ -1042,6 +1048,7 @@ def emulator_region_drops(
 
     region_index = region_mod.build_region_index(dict(selected))
     region_groups: dict[str, list[tuple[str, str]]] = {}
+    held: set[str] | None = set() if db is not None else None
     for emu_name, profile in sorted(selected):
         # Decided over what the pack keeps, as on the platform side: an
         # optional winner removed afterwards left its slot empty.
@@ -1053,7 +1060,11 @@ def emulator_region_drops(
                 region_groups.setdefault(group_id, []).append(
                     (dest, fe.get("name", ""))
                 )
-    return region_mod.resolve_region_drops(region_groups, region_index, regions)
+                if held is not None and resolve_local_file(
+                    dict(fe, source_profile=emu_name), db, dest_hint=dest
+                )[0]:
+                    held.add(dest)
+    return region_mod.resolve_region_drops(region_groups, region_index, regions, held)
 
 
 def _emulator_region_group(emu_name: str, profile: dict, file_entry: dict) -> str:

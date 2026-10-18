@@ -877,5 +877,38 @@ class FontRomsCarryNoTerritory(unittest.TestCase):
         ]
         self.assertEqual(tagged, [])
 
+class EmulatorModeKeepsAHeldFile(unittest.TestCase):
+    """Platform mode never lets a missing file displace a held one; emulator
+    mode did. A held scph5501.bin (north-america) was withdrawn under
+    --region jp for a Japanese image the collection lacks, and the pack
+    shipped no PlayStation BIOS."""
+
+    def test_a_missing_match_does_not_withdraw_the_held_file(self):
+        import hashlib  # noqa: PLC0415
+        import shutil  # noqa: PLC0415
+        import tempfile  # noqa: PLC0415
+
+        root = Path(tempfile.mkdtemp(dir=Path(__file__).resolve().parents[1] / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        held = root / "scph5501.bin"
+        held.write_bytes(b"us bios")
+        sha1 = hashlib.sha1(b"us bios").hexdigest()
+        db = {"files": {sha1: {"path": str(held), "name": held.name, "sha1": sha1}},
+              "indexes": {"by_name": {held.name: [sha1]}, "by_md5": {},
+                          "by_crc32": {}, "by_path_suffix": {}}}
+        profile = {"systems": ["sony-playstation"], "files": [
+            {"name": "scph5501.bin", "region": ["north-america"]},
+            {"name": "scph5500.bin", "region": ["japan"]},
+        ]}
+        selected = [("psx", profile)]
+        self.assertEqual(
+            emulator_region_drops(selected, False, ["japan"], db=db), set()
+        )
+        # Without the collection to ask, the old reading stands.
+        self.assertEqual(
+            emulator_region_drops(selected, False, ["japan"]), {"scph5501.bin"}
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
