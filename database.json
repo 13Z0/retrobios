@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-17T23:31:21Z",
-  "total_files": 19041,
-  "total_size": 17550209017,
+  "generated_at": "2026-10-18T00:39:54Z",
+  "total_files": 19044,
+  "total_size": 17567277278,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -137323,6 +137323,26 @@
       "crc32": "d4486029",
       "adler32": "91466537"
     },
+    "cd9c5f22c5408304bacaeb88e529a4dd121f90eb": {
+      "path": "bios/Other/future-pinball-fploader/.variants/BAM.dll.cd9c5f22",
+      "name": "BAM.dll",
+      "size": 5709936,
+      "sha1": "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
+      "md5": "fdb6418c188af668032759a1c549142c",
+      "sha256": "67505ec2e8f52c731bfee423306c9aeb80a8774a45d20821cdb1f2fce99916f0",
+      "crc32": "84f38041",
+      "adler32": "4bfc8a8e"
+    },
+    "e4ad22c907042aba3162848b86f43ffec16d5c2d": {
+      "path": "bios/Other/future-pinball-fploader/.variants/renderingengine.dll.e4ad22c9",
+      "name": "renderingengine.dll",
+      "size": 5374720,
+      "sha1": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "md5": "ae0003e622bd21052e3a3f38e1c3d67a",
+      "sha256": "17c0738ca06b9b6a7450a27c1d77df52843de3691097ad1849af372b48efdb58",
+      "crc32": "84fa42db",
+      "adler32": "bd64a26f"
+    },
     "c4fc4467ccec0c9c2852a9342b5b500511b6c886": {
       "path": "bios/Other/future-pinball-fploader/BAM-Tracker.exe",
       "name": "BAM-Tracker.exe",
@@ -137333,15 +137353,15 @@
       "crc32": "4c05679c",
       "adler32": "1b277ba6"
     },
-    "cd9c5f22c5408304bacaeb88e529a4dd121f90eb": {
+    "ad5f6f31e506d4458720ad3c809d529d48103622": {
       "path": "bios/Other/future-pinball-fploader/BAM.dll",
       "name": "BAM.dll",
-      "size": 5709936,
-      "sha1": "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
-      "md5": "fdb6418c188af668032759a1c549142c",
-      "sha256": "67505ec2e8f52c731bfee423306c9aeb80a8774a45d20821cdb1f2fce99916f0",
-      "crc32": "84f38041",
-      "adler32": "4bfc8a8e"
+      "size": 8266240,
+      "sha1": "ad5f6f31e506d4458720ad3c809d529d48103622",
+      "md5": "c0cafa62c0b6d96fd4337ddedc8cb909",
+      "sha256": "f3163c34adc3423d0b4c1f64399a91d090b4f7d0c54dc35049833466645645f7",
+      "crc32": "66292847",
+      "adler32": "31ec89f9"
     },
     "badfe5b7ab16c88f3fe255143546932c09fc2097": {
       "path": "bios/Other/future-pinball-fploader/Balls/Baseball.zip",
@@ -137983,15 +138003,15 @@
       "crc32": "e8f33c89",
       "adler32": "807ee8fd"
     },
-    "e4ad22c907042aba3162848b86f43ffec16d5c2d": {
+    "b471bb4affb974e0af9874ee6fe28c4417809926": {
       "path": "bios/Other/future-pinball-fploader/renderingengine.dll",
       "name": "renderingengine.dll",
-      "size": 5374720,
-      "sha1": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
-      "md5": "ae0003e622bd21052e3a3f38e1c3d67a",
-      "sha256": "17c0738ca06b9b6a7450a27c1d77df52843de3691097ad1849af372b48efdb58",
-      "crc32": "84fa42db",
-      "adler32": "bd64a26f"
+      "size": 8791552,
+      "sha1": "b471bb4affb974e0af9874ee6fe28c4417809926",
+      "md5": "c8cb99cc54d9bd79d4f939bb52059d9d",
+      "sha256": "2e39b5eda4899f187906c1859ab236fd6c142196b70d99ed9a6b2a71f30eb48d",
+      "crc32": "62a17f17",
+      "adler32": "a4c0d384"
     },
     "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd": {
       "path": "bios/Other/future-pinball-fploader/stereoCalibrationData.cfg",
@@ -140473,6 +140493,16 @@
       "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
       "crc32": "3353dcc6",
       "adler32": "0d623470"
+    },
+    "78ae5c049bc94ee1284536c419388b1ab7ac218c": {
+      "path": "bios/Other/msx-emu/cbios.txt",
+      "name": "cbios.txt",
+      "size": 10469,
+      "sha1": "78ae5c049bc94ee1284536c419388b1ab7ac218c",
+      "md5": "317388d614741e85cf29d1443f2705bc",
+      "sha256": "b7c5b9fde2fd3b7bab292b8995581bc4f0f0315efe65ee49d934a1afd53099d8",
+      "crc32": "2a01356c",
+      "adler32": "c8311c32"
     },
     "c939bb0c356b3388ee371959e0af2d71ffbfb6dc": {
       "path": "bios/Other/my-boy/rom_config.ini",
@@ -209074,8 +209104,10 @@
       "bd4ff726291d98374fa6791c0589f288": "d3534cd62d312fe28988c6229c47ab81a3ae1f9e",
       "938b740d34d77bb6c93ca3e4751ca5f7": "30566eda672fef3036fbd3998af3cc9fdcef38e7",
       "e85950e5eab078856275ceaf80ab7514": "8189136493d48adc2bdeff1e77297ab988ae789d",
-      "6779ed5942f437dae88f2b7c6d9b3803": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
       "fdb6418c188af668032759a1c549142c": "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
+      "ae0003e622bd21052e3a3f38e1c3d67a": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "6779ed5942f437dae88f2b7c6d9b3803": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
+      "c0cafa62c0b6d96fd4337ddedc8cb909": "ad5f6f31e506d4458720ad3c809d529d48103622",
       "1c491d64ad3792e2b98a00c06a61355a": "badfe5b7ab16c88f3fe255143546932c09fc2097",
       "69d61a305769bfa50aca88d73b44e401": "5aff2d72c317d58a6f1951811a31ec1b99dfdfe4",
       "1516aa3385665a8dedefd97678d2cab4": "1fa517b848c69c0b2c2f3a32e4097a157fff3aa2",
@@ -209140,7 +209172,7 @@
       "c1a42c4e5c3a392bf3254b05c78399c5": "83a3b55b2cc1b29997d50cf38108f6725d9a0df2",
       "aa91e1206c7118e16ed1bf1032277c40": "d668cbe8712f062bcc6af898ebb2937b73dcfd2d",
       "296e1b6ac5f0287f9cd1590b76662d15": "7fd3a13b0abec02f84564bef0fb0e89c142ed9c9",
-      "ae0003e622bd21052e3a3f38e1c3d67a": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "c8cb99cc54d9bd79d4f939bb52059d9d": "b471bb4affb974e0af9874ee6fe28c4417809926",
       "959b9991f457b14ab74731ac62179d7d": "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd",
       "5d68c02b3c93088f64cf6a1f0a98abbd": "d87747718c1aa06a9ddd8504b2581eb0034b754a",
       "0a98bc3d53a0965de87fc77377b5a0db": "704e726eeda2dd06afa99135e76393b926187bc9",
@@ -209387,6 +209419,7 @@
       "53bec1c22b30c0a15263e04b91a7814f": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
       "847cc025ffae665487940ff2639540e5": "e90f80a61d94c617850c415e12ad70ac41e66bb7",
       "55cca200bbbdd0a1ec5c9d70966c05c0": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "317388d614741e85cf29d1443f2705bc": "78ae5c049bc94ee1284536c419388b1ab7ac218c",
       "4fb8c78a0641ded54f858feef4d4d359": "c939bb0c356b3388ee371959e0af2d71ffbfb6dc",
       "0f64534edb881583d063c3252b1f1daa": "a110c33cdb3bbe17f8dd561f6a5c0160a7dd9dfa",
       "cdeb275c0067d5fcc5fb75b7bafa5edf": "4b1b4ba452735c55b39d215d926a5d9a55fec754",
@@ -245788,7 +245821,8 @@
         "0ef27e3599370e179b6fceaa22431fb97f5e7e61"
       ],
       "cbios.txt": [
-        "1152f3e3eff0afac2143d478f157fd26c7466e6e"
+        "1152f3e3eff0afac2143d478f157fd26c7466e6e",
+        "78ae5c049bc94ee1284536c419388b1ab7ac218c"
       ],
       "cbios_logo_msx1.rom": [
         "95fe138745f5e627b021085c7e4629a6dfe6f93a"
@@ -249292,11 +249326,16 @@
       "libcurl.dll": [
         "8189136493d48adc2bdeff1e77297ab988ae789d"
       ],
+      "BAM.dll": [
+        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
+        "ad5f6f31e506d4458720ad3c809d529d48103622"
+      ],
+      "renderingengine.dll": [
+        "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+        "b471bb4affb974e0af9874ee6fe28c4417809926"
+      ],
       "BAM-Tracker.exe": [
         "c4fc4467ccec0c9c2852a9342b5b500511b6c886"
-      ],
-      "BAM.dll": [
-        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
       ],
       "Baseball.zip": [
         "badfe5b7ab16c88f3fe255143546932c09fc2097"
@@ -249489,9 +249528,6 @@
       ],
       "openvr_api.dll": [
         "7fd3a13b0abec02f84564bef0fb0e89c142ed9c9"
-      ],
-      "renderingengine.dll": [
-        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
       ],
       "stereoCalibrationData.cfg": [
         "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd"
@@ -284952,8 +284988,10 @@
       "688c7661": "d3534cd62d312fe28988c6229c47ab81a3ae1f9e",
       "b10700e6": "30566eda672fef3036fbd3998af3cc9fdcef38e7",
       "d4486029": "8189136493d48adc2bdeff1e77297ab988ae789d",
-      "4c05679c": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
       "84f38041": "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
+      "84fa42db": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "4c05679c": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
+      "66292847": "ad5f6f31e506d4458720ad3c809d529d48103622",
       "2a48d9f2": "badfe5b7ab16c88f3fe255143546932c09fc2097",
       "1dbaeb64": "5aff2d72c317d58a6f1951811a31ec1b99dfdfe4",
       "6e770bb0": "1fa517b848c69c0b2c2f3a32e4097a157fff3aa2",
@@ -285018,7 +285056,7 @@
       "3ce371a5": "83a3b55b2cc1b29997d50cf38108f6725d9a0df2",
       "c577735e": "d668cbe8712f062bcc6af898ebb2937b73dcfd2d",
       "e8f33c89": "7fd3a13b0abec02f84564bef0fb0e89c142ed9c9",
-      "84fa42db": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "62a17f17": "b471bb4affb974e0af9874ee6fe28c4417809926",
       "77f0f051": "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd",
       "7df99cca": "d87747718c1aa06a9ddd8504b2581eb0034b754a",
       "64e50e23": "704e726eeda2dd06afa99135e76393b926187bc9",
@@ -285265,6 +285303,7 @@
       "9b3e7b97": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
       "19771608": "e90f80a61d94c617850c415e12ad70ac41e66bb7",
       "3353dcc6": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "2a01356c": "78ae5c049bc94ee1284536c419388b1ab7ac218c",
       "26366ed0": "c939bb0c356b3388ee371959e0af2d71ffbfb6dc",
       "b78f53e8": "a110c33cdb3bbe17f8dd561f6a5c0160a7dd9dfa",
       "86af55af": "4b1b4ba452735c55b39d215d926a5d9a55fec754",
@@ -303995,8 +304034,10 @@
       "c37851d8d77eb4a8eb6514b91dc6ff39d82ccab41e32fb3a184324b0352d81ac": "d3534cd62d312fe28988c6229c47ab81a3ae1f9e",
       "5d07aa29132347d877e6d5d39795dfecd4471005dd26f1a1336b36c159a7f8bb": "30566eda672fef3036fbd3998af3cc9fdcef38e7",
       "3a9b95b349ae91458c204bf804f03554fecd1c0c9f1b05c076c1f6d8639759c5": "8189136493d48adc2bdeff1e77297ab988ae789d",
-      "b2841b993dafde568e2b08df4268b19f637d6dbb66d8a7f1ea0315b72ce3b2a4": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
       "67505ec2e8f52c731bfee423306c9aeb80a8774a45d20821cdb1f2fce99916f0": "cd9c5f22c5408304bacaeb88e529a4dd121f90eb",
+      "17c0738ca06b9b6a7450a27c1d77df52843de3691097ad1849af372b48efdb58": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "b2841b993dafde568e2b08df4268b19f637d6dbb66d8a7f1ea0315b72ce3b2a4": "c4fc4467ccec0c9c2852a9342b5b500511b6c886",
+      "f3163c34adc3423d0b4c1f64399a91d090b4f7d0c54dc35049833466645645f7": "ad5f6f31e506d4458720ad3c809d529d48103622",
       "c6457e696430d1c0945f9a645750bff8b0df8bbe48bbf7407b772fac8d79bd71": "badfe5b7ab16c88f3fe255143546932c09fc2097",
       "1c80ce633d717be1358f099d516b43d2752b174c6be67c1245da38eac22236bb": "5aff2d72c317d58a6f1951811a31ec1b99dfdfe4",
       "3deb0fb4a43bb18e0cf00c8701293b5f000512572c422f9ed8993363e6a652fb": "1fa517b848c69c0b2c2f3a32e4097a157fff3aa2",
@@ -304061,7 +304102,7 @@
       "b569f792df2cc10e6f37217db3ef2f8bb3affeba87fdd0af659d9fc112a46f02": "83a3b55b2cc1b29997d50cf38108f6725d9a0df2",
       "6f5f20091b0d20311c929bcd8c927074e50bd0ac6424321016c679f43cf5ebcf": "d668cbe8712f062bcc6af898ebb2937b73dcfd2d",
       "43343fe983119505d33826a72cbd2c491dfcda03f74f06e73e7a040f35bd38ed": "7fd3a13b0abec02f84564bef0fb0e89c142ed9c9",
-      "17c0738ca06b9b6a7450a27c1d77df52843de3691097ad1849af372b48efdb58": "e4ad22c907042aba3162848b86f43ffec16d5c2d",
+      "2e39b5eda4899f187906c1859ab236fd6c142196b70d99ed9a6b2a71f30eb48d": "b471bb4affb974e0af9874ee6fe28c4417809926",
       "c8f5854966bc69820a249b42a82e5af6532a0d6cfaece27cc1d141e3ed8c87c9": "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd",
       "813ed20449c14827ecef55a147098603ab45854312ac9eaad34383030c3e0048": "d87747718c1aa06a9ddd8504b2581eb0034b754a",
       "d9952fd04096283a2ae5b2f497442f02be5cc6e3a1d1bd5339100b8e9aa4b6cc": "704e726eeda2dd06afa99135e76393b926187bc9",
@@ -304308,6 +304349,7 @@
       "0c672d86ead61a97f49a583b88b7c1905da120645cd44f0c9f2baf4f4631e0b1": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
       "ca45b50d49a8199a2b8f74300556367a776df1bb28bf8af24d33e65f0fe37a99": "e90f80a61d94c617850c415e12ad70ac41e66bb7",
       "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "b7c5b9fde2fd3b7bab292b8995581bc4f0f0315efe65ee49d934a1afd53099d8": "78ae5c049bc94ee1284536c419388b1ab7ac218c",
       "fbbb1991f822257c5928932b167a48e0886f79e7d779b7d1dd4916eec8c4297e": "c939bb0c356b3388ee371959e0af2d71ffbfb6dc",
       "4977f2c3b824e9ed0eeddb3a197c398b7207e2ae131c03a1c4416380e83594a4": "a110c33cdb3bbe17f8dd561f6a5c0160a7dd9dfa",
       "ff0848bd8f243de054144dd6f1234fb4192df7456f0093cbe09aa62645dcc05a": "4b1b4ba452735c55b39d215d926a5d9a55fec754",
@@ -475177,6 +475219,24 @@
       "future-pinball/libcurl.dll": [
         "8189136493d48adc2bdeff1e77297ab988ae789d"
       ],
+      "Other/future-pinball-fploader/.variants/BAM.dll.cd9c5f22": [
+        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
+      ],
+      "future-pinball-fploader/.variants/BAM.dll.cd9c5f22": [
+        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
+      ],
+      ".variants/BAM.dll.cd9c5f22": [
+        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
+      ],
+      "Other/future-pinball-fploader/.variants/renderingengine.dll.e4ad22c9": [
+        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
+      ],
+      "future-pinball-fploader/.variants/renderingengine.dll.e4ad22c9": [
+        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
+      ],
+      ".variants/renderingengine.dll.e4ad22c9": [
+        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
+      ],
       "Other/future-pinball-fploader/BAM-Tracker.exe": [
         "c4fc4467ccec0c9c2852a9342b5b500511b6c886"
       ],
@@ -475184,10 +475244,10 @@
         "c4fc4467ccec0c9c2852a9342b5b500511b6c886"
       ],
       "Other/future-pinball-fploader/BAM.dll": [
-        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
+        "ad5f6f31e506d4458720ad3c809d529d48103622"
       ],
       "future-pinball-fploader/BAM.dll": [
-        "cd9c5f22c5408304bacaeb88e529a4dd121f90eb"
+        "ad5f6f31e506d4458720ad3c809d529d48103622"
       ],
       "Other/future-pinball-fploader/Balls/Baseball.zip": [
         "badfe5b7ab16c88f3fe255143546932c09fc2097"
@@ -475733,10 +475793,10 @@
         "7fd3a13b0abec02f84564bef0fb0e89c142ed9c9"
       ],
       "Other/future-pinball-fploader/renderingengine.dll": [
-        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
+        "b471bb4affb974e0af9874ee6fe28c4417809926"
       ],
       "future-pinball-fploader/renderingengine.dll": [
-        "e4ad22c907042aba3162848b86f43ffec16d5c2d"
+        "b471bb4affb974e0af9874ee6fe28c4417809926"
       ],
       "Other/future-pinball-fploader/stereoCalibrationData.cfg": [
         "0550881f67d5e8b56c1a36206a8b7a5d3dd87ddd"
@@ -477678,6 +477738,12 @@
       ],
       "Shared Roms/RS232.ROM": [
         "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7"
+      ],
+      "Other/msx-emu/cbios.txt": [
+        "78ae5c049bc94ee1284536c419388b1ab7ac218c"
+      ],
+      "msx-emu/cbios.txt": [
+        "78ae5c049bc94ee1284536c419388b1ab7ac218c"
       ],
       "Other/my-boy/rom_config.ini": [
         "c939bb0c356b3388ee371959e0af2d71ffbfb6dc"

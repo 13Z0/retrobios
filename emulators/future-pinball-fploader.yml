@@ -124,6 +124,7 @@ files:
     required: true
     bundled: true
     size: 8266240
+    sha1: "ad5f6f31e506d4458720ad3c809d529d48103622"
     description: "The mod, injected into Future Pinball and holding every feature"
     source_ref: "BAM_FPloader FPLoader.cpp:45, 166-182"
     note: >-
@@ -135,6 +136,7 @@ files:
     required: true
     bundled: true
     size: 8791552
+    sha1: "b471bb4affb974e0af9874ee6fe28c4417809926"
     description: "Rendering engine and asset loader behind BAM"
     source_ref: "BAM.dll 1.5-408 import directory, BAM_FPloader FPLoader.cpp:249-257"
     note: >-
