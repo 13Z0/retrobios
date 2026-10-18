@@ -4250,5 +4250,32 @@ class ToolReferenceListsEveryModule(unittest.TestCase):
         self.assertEqual(self._rows("Target scrapers"), modules)
 
 
+
+class ToolReferenceCountsMatchTheirArtifacts(unittest.TestCase):
+    """tools.md said 67 derivable entries for 79 and 1,113 identified
+    archives for 1,181: counts written by hand drift from the tools."""
+
+    def setUp(self):
+        self.text = (ROOT / "wiki" / "tools.md").read_text(encoding="utf-8")
+
+    def test_recipe_store_counts(self):
+        store = json.loads((ROOT / "recipes" / "mame.json").read_text(encoding="utf-8"))
+        versions = {dat for entry in store["entries"] for dat in entry.get("dats") or [entry["dat"]]}
+        listed = sum(len(entry.get("dats") or [entry["dat"]]) for entry in store["entries"])
+        match = re.search(
+            r"(\d+) MAME versions produce ([\d,]+) entries but only ([\d,]+)\s+distinct",
+            self.text,
+        )
+        self.assertIsNotNone(match)
+        stated = [int(group.replace(",", "")) for group in match.groups()]
+        self.assertEqual(stated, [len(versions), listed, len(store["entries"])])
+
+    def test_derivable_count(self):
+        derivable = json.loads((ROOT / "derivable.json").read_text(encoding="utf-8"))
+        match = re.search(r"(\d+) entries on the current snapshots", self.text)
+        self.assertIsNotNone(match)
+        self.assertEqual(int(match.group(1)), len(derivable))
+
+
 if __name__ == "__main__":
     unittest.main()

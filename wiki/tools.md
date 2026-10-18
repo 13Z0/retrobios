@@ -645,8 +645,9 @@ distinct recipes, since most sets do not change between releases. Each is kept
 once, `dats` listing every version that agrees and `dat` naming the earliest, so
 an identification reads as "unchanged since that version".
 
-`--identify` answers what an archive on disk actually is: with 22 MAME versions
-and the FBNeo DATs imported, 1,113 archives are reproduced byte for byte. `--missing` takes the container MD5s the platforms pin, keeps those the
+`--identify` answers what an archive on disk actually is: the version whose
+recipe reproduces it byte for byte. Step 1c of the pipeline prints how many
+archives that is on the current collection. `--missing` takes the container MD5s the platforms pin, keeps those the
 collection does not have, and tries every recipe whose ROMs are present.
 
 Reconstruction only works when the pinned archive is itself TorrentZip. An
@@ -716,7 +717,8 @@ marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
 quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
 or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
-this way: 67 entries on the current snapshots.
+this way: 79 entries on the current snapshots, recorded in `derivable.json`
+by pipeline step 1b.
 
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|
