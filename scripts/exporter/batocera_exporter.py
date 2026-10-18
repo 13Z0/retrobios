@@ -8,6 +8,7 @@ entries and the code around them survive untouched.
 
 from __future__ import annotations
 
+import ast
 import re
 
 from .base_exporter import BaseExporter
@@ -317,14 +318,18 @@ class Exporter(BaseExporter):
 
     @staticmethod
     def _parse_entry(lines: list[str]) -> dict | None:
-        """Evaluate one entry so two spellings of the same data compare equal."""
-        text = "\n".join(lines).strip().rstrip(",")
-        namespace: dict[str, object] = {}
+        """Read one entry so two spellings of the same data compare equal.
+
+        A literal, never executed: the text is the platform's file. The
+        closing brace goes on a line of its own, since an entry may end in a
+        comment (gba's '] }, # Optional') that swallowed it, and every such
+        entry was rewritten with its emulator gate lost.
+        """
+        text = "\n".join(lines).strip()
         try:
-            exec(f"entry = {{{text}}}", {}, namespace)  # noqa: S102
-        except (SyntaxError, ValueError, TypeError):
+            entry = ast.literal_eval("{" + text + "\n}")
+        except (SyntaxError, ValueError, TypeError, MemoryError, RecursionError):
             return None
-        entry = namespace.get("entry")
         return entry if isinstance(entry, dict) else None
 
     def render(
@@ -403,7 +408,6 @@ class Exporter(BaseExporter):
         content = produced[self.native_filename()]
         issues: list[str] = []
 
-        namespace: dict[str, object] = {}
         block = content.split("\nsystems = {", 1)
         if len(block) != 2:
             return ["no systems dict in the output"]
@@ -411,11 +415,10 @@ class Exporter(BaseExporter):
         if end < 0:
             return ["the systems dict is not closed"]
         try:
-            exec("systems = {" + block[1][:end] + "\n}", {}, namespace)  # noqa: S102
-        except SyntaxError as exc:
+            exported = ast.literal_eval("{" + block[1][:end] + "\n}")
+        except (SyntaxError, ValueError) as exc:
             return [f"the systems dict does not parse: {exc}"]
 
-        exported = namespace.get("systems", {})
         if not isinstance(exported, dict):
             return ["the systems dict did not evaluate to a dict"]
 

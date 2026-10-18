@@ -851,5 +851,23 @@ class TheSummaryCountsWhatTheFileCarries(unittest.TestCase):
         self.assertEqual(changes.cleared, [])
 
 
+class BatoceraEntriesParseAsWritten(unittest.TestCase):
+    """gba ends in '] }, # Optional': the comment swallowed the closing
+    brace, the entry read as unparsable and was rewritten with its emulator
+    gate and runner keys lost. The text was also run through exec."""
+
+    def test_a_trailing_comment_and_no_execution(self):
+        from exporter.batocera_exporter import Exporter as Batocera  # noqa: PLC0415
+
+        entry = Batocera._parse_entry([
+            '"gba": { "name": "GBA", "emulator": "libretro", "biosFiles": [',
+            '  { "md5": "a", "file": "bios/gba_bios.bin" } ] }, # Optional',
+        ])
+        self.assertEqual(entry["gba"]["emulator"], "libretro")
+        self.assertIsNone(Batocera._parse_entry(['"x": __import__("os").getcwd()']))
+        source = (REPO_ROOT / "scripts" / "exporter" / "batocera_exporter.py").read_text()
+        self.assertNotIn("exec(", source)
+
+
 if __name__ == "__main__":
     unittest.main()
