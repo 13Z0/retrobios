@@ -208,6 +208,41 @@ class AMissingDatabaseIsNamed(unittest.TestCase):
                 self.assertIn("nosuch.json", proc.stderr)
 
 
+class AMissingBiosDirIsRefused(unittest.TestCase):
+    """identity --strict passed on a mistyped --bios-dir with "0 contents",
+    dedup saved 0 MB, and generate_pack wrote a pack of nothing: a folder
+    that does not exist read as an empty collection."""
+
+    EXTRA = {
+        "auto_fetch.py": ["--platform", "batocera", "--dry-run"],
+        "generate_pack.py": ["--platform", "batocera", "--offline", "--output-dir", "{out}"],
+        "dedup.py": ["--dry-run"],
+        "identity.py": ["--strict"],
+    }
+
+    def test_every_script_taking_a_bios_dir_refuses_a_missing_one(self):
+        scratch = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(scratch.cleanup)
+        out = str(Path(scratch.name) / "out")
+        taking = sorted(
+            path.name for path in (REPO_ROOT / "scripts").glob("*.py")
+            if re.search(r'add_argument\(\s*"--bios-dir"', path.read_text(encoding="utf-8"))
+            and path.name != "generate_db.py"
+        )
+        self.assertGreater(len(taking), 4)
+        for script in taking:
+            extra = [arg.format(out=out) for arg in self.EXTRA.get(script, [])]
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--bios-dir", "nosuch", *extra],
+                    capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=600,
+                    check=False,
+                )
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertIn("--bios-dir nosuch is not a directory", proc.stderr)
+        self.assertFalse(Path(out).exists())
+
+
 class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):
     """verify exited 0 with a required file missing on an md5 platform, so
     the pipeline printed "verify OK" over a pack the frontend rejects."""

@@ -33,6 +33,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
+    require_directory,
     target_listing_line,
     suggest_names,
     require_platform,
@@ -2977,6 +2978,7 @@ def _main(held: contextlib.ExitStack) -> None:
     packresolve.set_offline(bool(args.offline))
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
+    require_directory(args.bios_dir)
 
     _refuse_unapplied_flags(args, parser)
     # Quick-exit modes: --verify-packs alone = verify existing packs only

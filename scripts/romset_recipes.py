@@ -35,6 +35,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (
+    require_directory,
     load_database,
     load_emulator_profiles,
     load_platform_config,
@@ -471,6 +472,7 @@ def main() -> int:
         help="recipe snapshot file, or a directory of them",
     )
     args = parser.parse_args()
+    require_directory(args.bios_dir)
     _resolve_modes(args)
 
     db = load_database(args.db)

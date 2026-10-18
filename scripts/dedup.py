@@ -28,7 +28,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import compute_hashes, write_text_atomic
+from common import compute_hashes, require_directory, write_text_atomic
 
 DEFAULT_BIOS_DIR = "bios"
 
@@ -319,6 +319,7 @@ def main() -> None:
     )
     parser.add_argument("--bios-dir", default=DEFAULT_BIOS_DIR)
     args = parser.parse_args()
+    require_directory(args.bios_dir)
 
     print(f"Scanning {args.bios_dir}/ for duplicates...")
     if args.dry_run:

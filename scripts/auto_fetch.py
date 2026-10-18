@@ -29,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (
+    require_directory,
     list_registered_platforms,
     load_database,
     load_platform_config,
@@ -429,6 +430,7 @@ def main() -> None:
         "--create-issues", action="store_true", help="Output GitHub Issue bodies"
     )
     args = parser.parse_args()
+    require_directory(args.bios_dir)
 
     if not os.path.exists(args.db):
         print(f"Error: {args.db} not found. Run generate_db.py first.", file=sys.stderr)

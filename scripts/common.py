@@ -31,6 +31,17 @@ except ImportError:
 
 
 
+def require_directory(path: str, flag: str = "--bios-dir") -> None:
+    """Stop on a folder that does not exist.
+
+    identity --strict, dedup, auto_fetch, romset_recipes and generate_pack
+    read a mistyped --bios-dir as an empty collection and passed: 0
+    conflicts, 0 duplicates, a pack of nothing.
+    """
+    if not os.path.isdir(path):
+        raise SystemExit(f"ERROR: {flag} {path} is not a directory")
+
+
 class DatabaseUnreadable(FileNotFoundError):
     """The database a command was pointed at does not exist or is not JSON."""
 
