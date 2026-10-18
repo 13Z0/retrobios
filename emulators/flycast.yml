@@ -109,6 +109,15 @@ files:
       epr-21578h.ic27 (Export), epr-21579d.ic27 (Korea).
       Also used for NAOMI 2 games in the libretro port (no separate naomi2.zip).
     source_ref: "core/hw/naomi/naomi_roms.h:133-188"
+    contents:
+      - name: "epr-21576h.ic27"
+        size: 2097152
+      - name: "epr-21578h.ic27"
+        size: 2097152
+      - name: "epr-21577h.ic27"
+        size: 2097152
+      - name: "epr-21579d.ic27"
+        size: 2097152
 
   - name: "f355bios.zip"
     path: "dc/f355bios.zip"
@@ -116,6 +125,13 @@ files:
     required: false
     note: "Ferrari F355 Challenge BIOS. Japan/USA/Export variants."
     source_ref: "core/hw/naomi/naomi_roms.h:96-103"
+    contents:
+      - name: "epr-22851.ic27"
+        size: 2097152
+      - name: "epr-22850.ic27"
+        size: 2097152
+      - name: "epr-22849.ic27"
+        size: 2097152
 
   - name: "f355dlx.zip"
     path: "dc/f355dlx.zip"
@@ -123,6 +139,13 @@ files:
     required: false
     note: "Ferrari F355 Challenge Deluxe BIOS. Japan/USA/Export variants."
     source_ref: "core/hw/naomi/naomi_roms.h:105-119"
+    contents:
+      - name: "epr-21864.ic27"
+        size: 2097152
+      - name: "epr-21863.ic27"
+        size: 2097152
+      - name: "epr-21862.ic27"
+        size: 2097152
 
   - name: "hod2bios.zip"
     path: "dc/hod2bios.zip"
@@ -130,6 +153,13 @@ files:
     required: false
     note: "House of the Dead 2 BIOS. Japan/USA/Export variants."
     source_ref: "core/hw/naomi/naomi_roms.h:121-131"
+    contents:
+      - name: "epr-21331.ic27"
+        size: 2097152
+      - name: "epr-21330.ic27"
+        size: 2097152
+      - name: "epr-21329.ic27"
+        size: 2097152
 
   # -------------------------------------------------------
   # Sega Atomiswave
@@ -140,6 +170,9 @@ files:
     required: true
     note: "Atomiswave system BIOS archive (MAME format). Contains bios0.ic23 (Sammy, 128 KB)."
     source_ref: "core/hw/naomi/naomi_roms.h:87-94"
+    contents:
+      - name: "bios0.ic23"
+        size: 131072
 
   # -------------------------------------------------------
   # Not supported by libretro port
