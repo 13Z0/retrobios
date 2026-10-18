@@ -103,6 +103,14 @@ class Exporter(BaseExporter):
             return []
         return self._md5s(systems, system_id)
 
+    def withheld(self) -> list[str]:
+        """Each check whose rewrite was refused, and the md5 that kept it."""
+        return [
+            f"{name} keeps EmuDeck's array: rewriting it would drop "
+            f"{', '.join(sorted(values))}, which no profile carries"
+            for name, values in sorted(getattr(self, "_withdrawn", {}).items())
+        ]
+
     def _refused_systems(self) -> set[str]:
         withdrawn = getattr(self, "_withdrawn", {})
         return {FUNCTION_HASH_MAP[name] for name in withdrawn if name in FUNCTION_HASH_MAP}

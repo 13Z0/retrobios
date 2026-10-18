@@ -318,6 +318,16 @@ class EmuDeckWritesItsCorrections(unittest.TestCase):
         self.assertEqual(
             [i for i in exporter.validate(systems, produced) if "checkPS1BIOS" in i], []
         )
+        # Refused and named: the run said only "0 hashes corrected", which
+        # reads the same as nothing to correct.
+        withheld = exporter.withheld()
+        self.assertEqual(len(withheld), 1)
+        self.assertIn("checkPS1BIOS", withheld[0])
+        self.assertIn(d, withheld[0])
+
+    def test_the_summary_reads_the_hook(self):
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "export_native.py").read_text()
+        self.assertIn("withheld = exporter.withheld()", source)
 
 
 class BizHawkCountsWhatItWrites(unittest.TestCase):

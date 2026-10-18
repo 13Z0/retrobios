@@ -179,6 +179,14 @@ class BaseExporter(ABC):
         """
         return field_name in self.carries()
 
+    def withheld(self) -> list[str]:
+        """Corrections the render proved and still did not write, named.
+
+        Empty for most formats. One that refuses a rewrite to keep a value
+        the platform holds says so here, or the run reads as nothing to do.
+        """
+        return []
+
     def outcome(
         self,
         systems: dict[str, NativeSystem],

@@ -433,7 +433,11 @@ def export_platform(
             summary += f", {refused} the format cannot state"
         if lost:
             summary += f", {lost} of theirs dropped"
+    withheld = exporter.withheld()
+    if withheld:
+        summary += f", {len(withheld)} corrections withheld"
     messages.append(summary)
+    messages.extend(f"withheld: {reason}" for reason in withheld)
     for correction in applied[:5]:
         messages.append(f"hash corrected: {correction}")
     if len(applied) > 5:
