@@ -76,7 +76,7 @@ import slot as slot_mod
 import slots
 import split_pack
 from deterministic_zip import _FIXED_DATE_TIME, rebuild_zip_deterministic
-from largefiles import asset_name, load_registered_paths
+from largefiles import asset_name, load_registered_paths, published_asset_name
 from nativemode import (
     digest_algorithm,
     hash_mismatch_excludes_file,
@@ -3226,8 +3226,14 @@ def _repo_relative(local_path: str, repo_root: str) -> str:
 
 
 def _release_asset_name(local_path: str, repo_root: str) -> str:
-    """The large-files asset install.py downloads for a gitignored file."""
-    return asset_name(_repo_relative(local_path, repo_root), sorted(_registered(repo_root)))
+    """The large-files asset install.py downloads for a gitignored file.
+
+    The name GitHub serves, not the one uploaded: a space in the path came
+    back as a 404 for an installer asking for it verbatim.
+    """
+    return published_asset_name(
+        asset_name(_repo_relative(local_path, repo_root), sorted(_registered(repo_root)))
+    )
 
 
 def _get_repo_path(sha1: str, db: dict) -> str:

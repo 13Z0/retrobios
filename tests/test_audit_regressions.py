@@ -1993,6 +1993,25 @@ class ReleaseAssetCriterion(unittest.TestCase):
             finally:
                 generate_pack._registered.cache_clear()
 
+    def test_the_manifest_names_the_asset_as_github_serves_it(self):
+        # GitHub publishes a space as a dot; the site linked the dotted
+        # name while the manifest gave install.py the spaced one, a 404.
+        from scripts import generate_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = self._repo(directory, "bios/MAME/MAME 0.174 Arcade XML.dat")
+            target = Path(root, "bios", "MAME", "MAME 0.174 Arcade XML.dat")
+            target.parent.mkdir(parents=True)
+            target.write_bytes(b"x")
+            generate_pack._registered.cache_clear()
+            try:
+                self.assertEqual(
+                    generate_pack._release_asset_name(str(target), root),
+                    "MAME.0.174.Arcade.XML.dat",
+                )
+            finally:
+                generate_pack._registered.cache_clear()
+
     def test_a_gitignored_file_is_served_by_the_release_whatever_its_size(self):
         from scripts import generate_pack
 

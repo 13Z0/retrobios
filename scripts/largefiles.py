@@ -88,6 +88,11 @@ def asset_name(path: str, registered: Iterable[str]) -> str:
     return asset_names([*registered, path])[path]
 
 
+def published_asset_name(name: str) -> str:
+    """The name GitHub serves an asset under: it publishes a space as a dot."""
+    return name.replace(" ", ".")
+
+
 def asset_candidates(name: str, registered: Iterable[str]) -> list[str]:
     """Assets that may hold *name*, a registered path or a bare file name.
 

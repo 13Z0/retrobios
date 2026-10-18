@@ -2018,11 +2018,12 @@ def _fetch_url(path: str) -> str:
             LARGE_FILES_RELEASE,
             asset_names,
             load_registered_paths,
+            published_asset_name,
         )
 
         _RELEASE_ASSET_NAMES = {
             registered: f"{REPO_URL}/releases/download/{LARGE_FILES_RELEASE}/"
-            + urllib.parse.quote(name.replace(" ", "."))
+            + urllib.parse.quote(published_asset_name(name))
             for registered, name in asset_names(load_registered_paths()).items()
         }
     return _RELEASE_ASSET_NAMES.get(path) or (
