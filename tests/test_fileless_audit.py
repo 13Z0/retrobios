@@ -115,7 +115,11 @@ class TestCorpusIsAnswered(unittest.TestCase):
         read = []
 
         def counted(*args, **kwargs):
-            lines = fetch(*args, **kwargs)
+            # A cold path is unread here, not absent.
+            try:
+                lines = fetch(*args, **kwargs)
+            except fileless_audit.upstream.NotCachedError:
+                return None
             if lines is not None:
                 read.append(args[2])
             return lines

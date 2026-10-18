@@ -80,6 +80,14 @@ class RateLimitError(UpstreamError):
     """The forge refused the request for quota reasons."""
 
 
+class NotCachedError(UpstreamError):
+    """An offline read of something the cache never stored.
+
+    Distinct from absence: returning None made profile_sync report a file
+    that exists as GONE, "absent at HEAD, no rename found".
+    """
+
+
 class GoneError(UpstreamError):
     """The upstream is not coming back.
 
@@ -317,13 +325,17 @@ def fetch_file(
     cache_dir: str,
     offline: bool = False,
 ) -> list[str] | None:
-    """Lines of one path at one revision, or None when absent."""
+    """Lines of one path at one revision, or None when absent.
+
+    Offline, a path the cache never stored raises NotCachedError: nothing
+    is known about it, which is not the same as knowing it is absent.
+    """
     target = cache_path(cache_dir, repo, sha, path)
     if target.is_file():
         text = target.read_text(encoding="utf-8")
         return None if text == ABSENT else text.splitlines()
     if offline:
-        return None
+        raise NotCachedError(f"{repo.slug}@{sha[:8]}:{path} is not in the offline cache")
     text = _http_text(raw_url(repo, sha, path))
     write_cache(target, ABSENT if text is None else text)
     return None if text is None else text.splitlines()

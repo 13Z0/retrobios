@@ -124,9 +124,13 @@ def main() -> None:
 
     total = 0
     for name in args.emulators:
-        findings, agreed, unjudged = audit(
-            name, args.emulators_dir, args.cache_dir, args.offline
-        )
+        try:
+            findings, agreed, unjudged = audit(
+                name, args.emulators_dir, args.cache_dir, args.offline
+            )
+        except upstream.UpstreamError as exc:
+            print(f"{name}: unreachable, {exc}", file=sys.stderr)
+            continue
         total += len(findings)
         print(
             f"{name}: {agreed} agree, {len(findings)} point elsewhere, "

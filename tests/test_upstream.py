@@ -379,9 +379,18 @@ class TestCache(unittest.TestCase):
         self.assertEqual(second, first)
         self.assertEqual(len(self.calls), 1)
 
-    def test_offline_miss_returns_none_without_request(self):
-        self.assertIsNone(
+    def test_offline_miss_is_not_absence(self):
+        # Returning None made profile_sync report an existing file as GONE.
+        with self.assertRaises(upstream.NotCachedError):
             upstream.fetch_file(self.repo, "abc", "a.c", self.dir, offline=True)
+        self.assertEqual(self.calls, [])
+
+    def test_offline_cached_absence_stays_absence(self):
+        upstream.write_cache(
+            upstream.cache_path(self.dir, self.repo, "abc", "gone.c"), upstream.ABSENT
+        )
+        self.assertIsNone(
+            upstream.fetch_file(self.repo, "abc", "gone.c", self.dir, offline=True)
         )
         self.assertEqual(self.calls, [])
 

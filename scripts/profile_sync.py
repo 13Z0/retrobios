@@ -1803,7 +1803,7 @@ def build_report(
             return None
         try:
             return upstream.fetch_file(repo, sha, wanted, cache_dir, offline)
-        except upstream.RateLimitError:
+        except (upstream.RateLimitError, upstream.NotCachedError):
             raise
         except upstream.UpstreamError as exc:
             mute.add(key)
@@ -3677,6 +3677,13 @@ def main() -> None:
             )
         except upstream.RateLimitError:
             raise
+        except upstream.NotCachedError as exc:
+            # Offline with a cache that never stored this file: the profile
+            # is unverified, not wrong. Reporting GONE sent readers after
+            # files that exist.
+            report = ProfileReport(
+                name=name, entries=[], counts={}, skipped=f"offline: {exc}"
+            )
         except upstream.GoneError as exc:
             # The forge is not coming back: a takedown, or a host that no
             # longer resolves. Saying so once in the summary beats repeating

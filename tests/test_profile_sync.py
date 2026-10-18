@@ -3932,5 +3932,19 @@ class UpstreamVendoredAsASubmodule(unittest.TestCase):
         self.assertEqual(views[1].head, "nesbox-tip")
 
 
+class OfflineCacheMissIsNotGone(TestBuildReport):
+    """Offline, a file the cache never stored came back as None and the
+    report read "GONE (absent at HEAD, no rename found)" for files that
+    exist. The miss now stops the profile as unverified."""
+
+    def test_an_uncached_file_is_not_reported_gone(self):
+        def cold(repo, sha, path, cache_dir, offline=False):
+            raise profile_sync.upstream.NotCachedError(f"{path} not cached")
+
+        profile_sync.upstream.fetch_file = cold
+        with self.assertRaises(profile_sync.upstream.NotCachedError):
+            build_report("test", self._profile(["a.c:2"]), self.dir, offline=True)
+
+
 if __name__ == "__main__":
     unittest.main()
