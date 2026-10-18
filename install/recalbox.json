@@ -181,7 +181,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "GC/dsp_rom.bin"
     },
     {
       "file": "dsp_coef.bin",
@@ -196,7 +197,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "GC/dsp_coef.bin"
     },
     {
       "file": "PPSSPP/ppge_atlas.zim",

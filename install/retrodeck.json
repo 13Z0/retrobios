@@ -68,7 +68,8 @@
         "windows": [
           "%APPDATA%\\Azahar\\sysdata"
         ]
-      }
+      },
+      "source": "bios/Citra/sysdata/aes_keys.txt"
     },
     {
       "file": "Citra/sysdata/boot9.bin",
@@ -79,7 +80,8 @@
         "windows": [
           "%APPDATA%\\Azahar\\sysdata"
         ]
-      }
+      },
+      "source": "bios/Citra/sysdata/boot9.bin"
     },
     {
       "pattern": "scph*.bin",
@@ -136,7 +138,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/USA"
         ]
-      }
+      },
+      "source": "bios/GC/USA/IPL.bin"
     },
     {
       "file": "GC/EUR/IPL.bin",
@@ -151,7 +154,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/EUR"
         ]
-      }
+      },
+      "source": "bios/GC/EUR/IPL.bin"
     },
     {
       "file": "GC/JAP/IPL.bin",
@@ -166,7 +170,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/JAP"
         ]
-      }
+      },
+      "source": "bios/GC/JAP/IPL.bin"
     },
     {
       "file": "dsp_rom.bin",
@@ -181,7 +186,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "bios/GC/dsp_rom.bin"
     },
     {
       "file": "dsp_coef.bin",
@@ -196,7 +202,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "bios/GC/dsp_coef.bin"
     },
     {
       "file": "PPSSPP/ppge_atlas.zim",
@@ -210,7 +217,8 @@
         "darwin": [
           "$HOME/Library/Application Support/PPSSPP/PSP/SYSTEM"
         ]
-      }
+      },
+      "source": "bios/PPSSPP/ppge_atlas.zim"
     },
     {
       "file": "dc/dc_boot.bin",
@@ -222,7 +230,8 @@
         "windows": [
           "%APPDATA%\\flycast\\data"
         ]
-      }
+      },
+      "source": "bios/dc/dc_boot.bin"
     },
     {
       "file": "dc/dc_nvmem.bin",

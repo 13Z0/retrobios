@@ -37,7 +37,8 @@
           "$HOME/Library/Application Support/yuzu/keys",
           "$HOME/Library/Application Support/Ryujinx/system"
         ]
-      }
+      },
+      "source": "switch/prod.keys"
     },
     {
       "file": "title.keys",
@@ -57,7 +58,8 @@
         "darwin": [
           "$HOME/Library/Application Support/yuzu/keys"
         ]
-      }
+      },
+      "source": "switch/title.keys"
     },
     {
       "file": "Citra/sysdata/aes_keys.txt",
@@ -181,7 +183,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "GC/dsp_rom.bin"
     },
     {
       "file": "dsp_coef.bin",
@@ -196,7 +199,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "GC/dsp_coef.bin"
     },
     {
       "file": "PPSSPP/ppge_atlas.zim",

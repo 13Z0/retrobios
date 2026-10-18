@@ -161,7 +161,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/USA"
         ]
-      }
+      },
+      "source": "dolphin-emu/Sys/GC/USA/IPL.bin"
     },
     {
       "file": "GC/EUR/IPL.bin",
@@ -176,7 +177,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/EUR"
         ]
-      }
+      },
+      "source": "dolphin-emu/Sys/GC/EUR/IPL.bin"
     },
     {
       "file": "GC/JAP/IPL.bin",
@@ -191,7 +193,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin/GC/JAP"
         ]
-      }
+      },
+      "source": "dolphin-emu/Sys/GC/JAP/IPL.bin"
     },
     {
       "file": "dsp_rom.bin",
@@ -206,7 +209,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "dolphin-emu/Sys/GC/dsp_rom.bin"
     },
     {
       "file": "dsp_coef.bin",
@@ -221,7 +225,8 @@
         "darwin": [
           "$HOME/Library/Application Support/Dolphin"
         ]
-      }
+      },
+      "source": "dolphin-emu/Sys/GC/dsp_coef.bin"
     },
     {
       "file": "PPSSPP/ppge_atlas.zim",
