@@ -7,8 +7,8 @@ from __future__ import annotations
 
 from siterender import _by_mode
 import re
-from profile_sync import source_ref_values
-from profile_sync import split_source_ref
+from sourceref import source_ref_values
+from sourceref import split_source_ref
 import upstream
 import urllib.request
 def _repo_pins(profile: dict, field: str, label: str) -> list[tuple[str, str, str]]:

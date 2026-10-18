@@ -101,6 +101,12 @@ class DeploySiteTriggers(unittest.TestCase):
         self.assertEqual(sorted(listed - closure(entry_points)), [])
         self.assertNotIn("tests/**", patterns)
 
+    def test_the_site_reads_the_ref_grammar_not_the_checker(self):
+        """sitesources imported two parsing functions from profile_sync, so
+        every change to the comparison tool rebuilt an unchanged site."""
+        self.assertNotIn("scripts/profile_sync.py", closure(["generate_site.py"]))
+        self.assertIn("scripts/sourceref.py", closure(["generate_site.py"]))
+
 
 class DocumentedSteps(unittest.TestCase):
     def test_the_release_page_names_every_installed_package(self):
