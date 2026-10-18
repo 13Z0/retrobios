@@ -515,6 +515,12 @@ def _walk_document(
                 yield from _walk_document(item, spot)
 
 
+# What separates one citation from the next in prose. lynx-emu writes
+# "...:112; mednafen src/lynx/system.cpp:86-93": without the semicolon the
+# project word read as prose and the citation was charged to the fork.
+_PROSE_LIST_DELIMITERS = ",;:("
+
+
 def _prose_external(
     line: str, path_start: int, known: frozenset[str] | set[str] = frozenset()
 ) -> bool:
@@ -529,7 +535,7 @@ def _prose_external(
     `mednafen src/lynx/rom.cpp:55` it is the declared upstream itself.
     """
     before = line[:path_start].rstrip()
-    if not before or before[-1] in ",:(":
+    if not before or before[-1] in _PROSE_LIST_DELIMITERS:
         return False
     word_start = max(before.rfind(" "), before.rfind("\t"), before.rfind("(")) + 1
     word = before[word_start:]
@@ -538,7 +544,7 @@ def _prose_external(
     if word.lower() in PROSE_LINKING_WORDS or word.lower() in known:
         return False
     lead = before[:word_start].rstrip()
-    return not lead or lead[-1] in ",:("
+    return not lead or lead[-1] in _PROSE_LIST_DELIMITERS
 
 
 def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | None:

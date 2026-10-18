@@ -3028,6 +3028,19 @@ class TestCollectCitations(unittest.TestCase):
             [("main.c", 112, 112), ("main.c", 1624, 1633)],
         )
 
+    def test_a_semicolon_separates_citations_like_a_comma(self):
+        # lynx-emu: "...:112; mednafen src/lynx/system.cpp:86-93" cites the
+        # mednafen upstream, not the fork the profile was read from.
+        for line in (
+            "see Lynx.emu/src/lynx/system.cpp:112; mednafen src/lynx/system.cpp:86-93",
+            "see Lynx.emu/src/lynx/system.cpp:112, mednafen src/lynx/system.cpp:86-93",
+        ):
+            with self.subTest(line=line):
+                start = line.index("src/lynx/system.cpp:86")
+                self.assertTrue(profile_sync._prose_external(line, start))
+        line = "boot; then src/lynx/system.cpp:86"
+        self.assertFalse(profile_sync._prose_external(line, line.index("src/")))
+
     def test_spans_locate_the_tokens_on_the_line(self):
         document = {"notes": "See main.c:112,1624-1633 for the boot path.\n"}
         citation = collect_citations(document)[0]
