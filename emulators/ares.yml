@@ -361,27 +361,30 @@ files:
   # --- PlayStation ---
   - name: scph5501.bin
     system: sony-playstation
+    region: [north-america]
     required: true
     sha256: "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
     validation: [sha256]
     description: "PlayStation BIOS (US)"
-    source_ref: "desktop-ui/emulator/playstation.cpp:18"
+    source_ref: "desktop-ui/emulator/playstation.cpp:18, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
 
   - name: scph5500.bin
     system: sony-playstation
+    region: [japan]
     required: true
     sha256: "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb"
     validation: [sha256]
     description: "PlayStation BIOS (Japan)"
-    source_ref: "desktop-ui/emulator/playstation.cpp:19"
+    source_ref: "desktop-ui/emulator/playstation.cpp:19, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
 
   - name: scph5502.bin
     system: sony-playstation
+    region: [europe, oceania]
     required: true
     sha256: "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09"
     validation: [sha256]
     description: "PlayStation BIOS (Europe)"
-    source_ref: "desktop-ui/emulator/playstation.cpp:20"
+    source_ref: "desktop-ui/emulator/playstation.cpp:20, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
 
   # --- Saturn ---
   - name: saturn_bios_U.bin
