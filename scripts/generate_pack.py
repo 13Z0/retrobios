@@ -258,9 +258,12 @@ def _bounded_join(parts: list[str], keys: list[str]) -> str:
     """Parts joined while they fit, else the first, a count and a digest.
 
     Thirty systems joined made a 261-byte file name and the ZIP could not
-    be opened; the digest keeps two different selections apart.
+    be opened; the digest keeps two different selections apart. The joiner
+    is one no part holds: with "_", sega-dreamcast + arcade and
+    sega-dreamcast-arcade both named Dreamcast_Arcade, and the second build
+    replaced the first.
     """
-    joined = "_".join(parts)
+    joined = "+".join(parts)
     if len(joined.encode("utf-8")) <= MAX_SYSTEM_TAG_BYTES:
         return joined
     digest = hashlib.sha1("\n".join(sorted(keys)).encode("utf-8")).hexdigest()[:8]

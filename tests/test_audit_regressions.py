@@ -2637,6 +2637,20 @@ class APackNameFitsAFileName(unittest.TestCase):
         self.assertNotEqual(tag, _system_tag(systems[:-1] + ["other-console"]))
         self.assertEqual(_system_tag(["sony-playstation"]), "_Playstation")
 
+    def test_two_systems_never_name_one_system(self):
+        """sega-dreamcast,arcade and sega-dreamcast-arcade both wrote
+        RetroArch_..._Dreamcast_Arcade.zip; the second replaced the first."""
+        from scripts.generate_pack import _system_tag
+
+        pairs = [
+            (["sega-dreamcast", "arcade"], ["sega-dreamcast-arcade"]),
+            (["mega-cd", "sega-32x"], ["mega-cd-32x"]),
+            (["x86", "nintendo-64"], ["x86-64"]),
+        ]
+        for two, one in pairs:
+            with self.subTest(two=two):
+                self.assertNotEqual(_system_tag(two), _system_tag(one))
+
     def test_two_hash_lists_get_two_names(self):
         """--from-md5 named its pack after the context only: a second list
         overwrote the first pack in the same directory."""
