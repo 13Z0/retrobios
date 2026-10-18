@@ -773,7 +773,9 @@ def commits_touching(
             f"{repo.api_base}/repos/{repo.slug}/commits"
             f"?path={quoted}&since={stamp}&limit=100"
         )
-    payload = _api(url, cache_dir, offline)
+    # The list grows with every push touching the path: cached for good, the
+    # triage drift score stayed at whatever the first run counted.
+    payload = _api(url, cache_dir, offline, MOVING_TTL)
     if not isinstance(payload, list):
         return 0
     return sum(

@@ -648,6 +648,30 @@ class TestCompare(unittest.TestCase):
             upstream.commits_touching(self.repo, "a.c", "tip", self.dir, head="tip"), 0
         )
 
+    def test_commits_touching_is_recounted_once_stale(self):
+        """The list grows with every push: cached for good, the triage drift
+        score stayed at what the first run counted."""
+        import os as _os
+
+        served = {
+            "commits/base": {"commit": {"committer": {"date": "2026-01-01T00:00:00Z"}}},
+        }
+        listing = [{"sha": "1"}]
+
+        def answer(url):
+            for key, value in served.items():
+                if url.endswith(key):
+                    return value
+            return list(listing)
+
+        upstream._http_json = answer
+        self.assertEqual(upstream.commits_touching(self.repo, "a.c", "base", self.dir), 1)
+        for cached in (Path(self.dir) / "_api").glob("*.json"):
+            stale = _os.path.getmtime(cached) - upstream.MOVING_TTL - 1
+            _os.utime(cached, (stale, stale))
+        listing.extend([{"sha": "2"}, {"sha": "3"}])
+        self.assertEqual(upstream.commits_touching(self.repo, "a.c", "base", self.dir), 3)
+
 
 class TestGitlabTree(unittest.TestCase):
     def setUp(self):
