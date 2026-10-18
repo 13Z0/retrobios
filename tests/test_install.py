@@ -2524,6 +2524,34 @@ class DataDirectoriesAreInstalled(unittest.TestCase):
         self.assertEqual(again["present"], 1)
         self.assertEqual(sorted(p.name for p in (bios / "dolphin-emu").iterdir()), ["Sys"])
 
+    def test_a_member_that_inflates_is_cut_at_its_size(self):
+        # A member whose header claims the recorded size and whose stream
+        # never ends: reading stops one byte past it.
+        class Endless(io.RawIOBase):
+            served = 0
+
+            def readable(self):
+                return True
+
+            def readinto(self, buffer):
+                Endless.served += len(buffer)
+                buffer[:] = b"x" * len(buffer)
+                return len(buffer)
+
+        work = Path(_tempdir(self))
+        entry = self._entry()
+        entry["files"] = {"Sys/GC/font.bin": {"sha1": "1" * 40, "size": 4}}
+
+        def members(_archive, _entry):
+            yield "Sys/GC/font.bin", 4, lambda: io.BufferedReader(Endless())
+
+        with unittest.mock.patch.object(install, "_fetch_archive",
+                                        lambda url, d: Path(d) / "a"), \
+                unittest.mock.patch.object(install, "_archive_members", members):
+            counts = install.install_data_directory(entry, work)
+        self.assertEqual(counts["changed"], 1)
+        self.assertLess(Endless.served, 64 * 1024)
+
     def test_a_tarball_maps_through_source_path(self):
         import io as _io
         import tarfile
@@ -2536,7 +2564,7 @@ class DataDirectoriesAreInstalled(unittest.TestCase):
             info.size = len(data)
             tf.addfile(info, _io.BytesIO(data))
         entry = {"type": "tarball", "source_path": "pcsx2-v1/bin/resources"}
-        names = [rel for rel, _open in install._archive_members(archive, entry)]
+        names = [rel for rel, _size, _open in install._archive_members(archive, entry)]
         self.assertEqual(names, ["GameIndex.yaml"])
 
     def test_the_trust_boundary(self):

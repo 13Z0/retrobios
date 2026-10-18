@@ -2762,8 +2762,9 @@ def _fetch_archive(url: str, directory: Path) -> Path:
 
 def _archive_members(
     archive: Path, entry: dict
-) -> Iterator[tuple[str, Callable[[], BinaryIO]]]:
-    """(path in the tree, opener) for each file the archive maps into it.
+) -> Iterator[tuple[str, int, Callable[[], BinaryIO]]]:
+    """(path in the tree, declared size, opener) for each file the archive
+    maps into it.
 
     The rules refresh_data_dirs applies to build the cache: a ZIP drops
     strip_components leading parts, a tarball keeps what sits under
@@ -2785,7 +2786,7 @@ def _archive_members(
                     parts = parts[strip:]
                 if parts[0] in exclude:
                     continue
-                yield "/".join(parts), (lambda info=info: zf.open(info))
+                yield "/".join(parts), info.file_size, (lambda info=info: zf.open(info))
         return
     prefix = entry["source_path"].rstrip("/") + "/"
     with tarfile.open(archive, "r:gz") as tf:
@@ -2795,7 +2796,7 @@ def _archive_members(
             rel = member.name[len(prefix):]
             if not rel or ".." in rel.split("/") or rel.split("/")[0] in exclude:
                 continue
-            yield rel, (lambda member=member: tf.extractfile(member))
+            yield rel, member.size, (lambda member=member: tf.extractfile(member))
 
 
 def data_directory_state(entry: dict, bios_path: Path) -> tuple[Path, dict[str, dict], int]:
@@ -2831,9 +2832,16 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
         root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as scratch:
             archive = _fetch_archive(entry["url"], Path(scratch))
-            for rel, opener in _archive_members(archive, entry):
+            for rel, declared, opener in _archive_members(archive, entry):
                 meta = needed.pop(rel, None)
                 if meta is None:
+                    continue
+                # Read no more than the list records: the archive's own size
+                # field is checked first, and the stream is cut at the
+                # expected size whatever the member claims, so a member that
+                # inflates without end costs one byte past it.
+                if declared != meta["size"]:
+                    counts["changed"] += 1
                     continue
                 target = _destination_path(root, rel)
                 target.parent.mkdir(parents=True, exist_ok=True)
@@ -2843,7 +2851,10 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
                     dir=target.parent, prefix=f".{target.name}.", suffix=".part",
                     delete=False,
                 ) as out:
-                    for chunk in iter(lambda: src.read(1024 * 1024), b""):
+                    while size <= meta["size"]:
+                        chunk = src.read(min(1024 * 1024, meta["size"] + 1 - size))
+                        if not chunk:
+                            break
                         digest.update(chunk)
                         size += len(chunk)
                         out.write(chunk)
