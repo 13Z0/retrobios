@@ -13,6 +13,7 @@ import shlex
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -2063,6 +2064,45 @@ class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
                 )
                 self.assertEqual(proc.returncode, code, proc.stderr)
                 self.assertNotIn("installer failed", proc.stdout + proc.stderr)
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0, "needs a folder this user cannot write")
+class AnUnwritableFolderIsCodeTwo(unittest.TestCase):
+    """A BIOS folder that could not be created ended with 1, while the same
+    folder existing read-only ended with the documented 2."""
+
+    def test_both_shapes_exit_two(self):
+        handler = functools.partial(
+            http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
+        )
+        handler.log_message = lambda *args: None
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        home = Path(tempfile.mkdtemp(dir=str(REPO_ROOT / "tmp")))
+        locked = home / "locked"
+        locked.mkdir()
+        locked.chmod(0o555)
+        self.addCleanup(shutil.rmtree, home, True)
+        self.addCleanup(locked.chmod, 0o755)
+        env = {
+            **os.environ,
+            "HOME": str(home),
+            "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+        for dest in (locked / "sub", locked):
+            with self.subTest(dest=dest.name):
+                proc = subprocess.run(
+                    [sys.executable, "install.py", "--platform", "retroarch",
+                     "--dest", str(dest), "--system", "atari-lynx", "--no-input"],
+                    cwd=str(REPO_ROOT), env=env, capture_output=True, text=True,
+                    timeout=300, check=False,
+                )
+                self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

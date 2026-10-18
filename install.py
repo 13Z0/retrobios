@@ -3273,11 +3273,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             try:
                 bios_path.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
+                sys.stdout.flush()
                 print(f"\nCannot create {bios_path}.", file=sys.stderr)
                 print(f"  {exc.strerror}.", file=sys.stderr)
                 print(_write_advice(bios_path, bios_path in assumed_dests),
                       file=sys.stderr)
-                sys.exit(1)
+                # The documented code for a folder that cannot be written,
+                # as when it exists read-only; 1 once an earlier platform
+                # of the run installed something.
+                sys.exit(1 if total_downloaded else 2)
             _check_free_space(bios_path, dl_size)
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
