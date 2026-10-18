@@ -477,5 +477,22 @@ class ArchiveMembersAreAcceptedHashes(unittest.TestCase):
         )
 
 
+
+class PlatformPagesCarryTheirDeclarations(unittest.TestCase):
+    """Platform pages were the only content pages without structured data:
+    5,640 md5 and 2,047 sha1 the platforms declare lived in the prose only."""
+
+    def test_parts_and_version(self):
+        from generate_site import platform_structured_data
+
+        data = platform_structured_data("batocera", {"platform": "Batocera", "config": {
+            "version": "43.1", "systems": {"sony-playstation": {"files": [
+                {"name": "scph5501.bin", "destination": "scph5501.bin", "md5": "490f666e"}]}}}})
+        self.assertEqual(data["about"]["softwareVersion"], "43.1")
+        part = data["hasPart"][0]
+        self.assertEqual(part["identifier"], ["md5:490f666e"])
+        self.assertTrue(part["url"].endswith("platforms/batocera/#sony-playstation"))
+
+
 if __name__ == "__main__":
     unittest.main()

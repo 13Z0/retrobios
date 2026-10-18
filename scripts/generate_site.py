@@ -1342,6 +1342,47 @@ def system_structured_data(slug: str, consoles: dict[str, list]) -> dict:
     return {"hasPart": parts} if parts else {}
 
 
+def platform_structured_data(name: str, coverage: dict) -> dict:
+    """A platform page's declarations for a machine reader.
+
+    The page printed thousands of hashes while its JSON-LD named only the
+    page: a crawler could not learn which md5 Batocera requires for a file.
+    The software and its version are the subject; each declared file, with
+    the hashes the platform checks, is a part. Past SYSTEM_PARTS_IN_FULL the
+    parts give way to the platform-files table, as system pages do.
+    """
+    config = coverage.get("config") or {}
+    about: dict = {"@type": "SoftwareApplication", "name": str(coverage.get("platform", name))}
+    if config.get("version"):
+        about["softwareVersion"] = str(config["version"])
+    if config.get("homepage"):
+        about["url"] = str(config["homepage"])
+    parts = []
+    for system_id, system in sorted((config.get("systems") or {}).items()):
+        for entry in system.get("files") or []:
+            if not isinstance(entry, dict) or not entry.get("name"):
+                continue
+            part: dict = {
+                "@type": "CreativeWork",
+                "name": str(entry.get("destination") or entry["name"]),
+                "url": urllib.parse.urljoin(SITE_URL, f"platforms/{name}/#{system_id}"),
+            }
+            identifiers = [
+                f"{field}:{value}"
+                for field in ("sha1", "md5", "crc32")
+                for value in _hash_values(entry.get(field))
+            ]
+            if identifiers:
+                part["identifier"] = identifiers
+            parts.append(part)
+    data: dict = {"about": about}
+    if len(parts) > SYSTEM_PARTS_IN_FULL:
+        data["isBasedOn"] = urllib.parse.urljoin(SITE_URL, "downloads/platform-files.csv")
+    elif parts:
+        data["hasPart"] = parts
+    return data
+
+
 def dataset_structured_data(exports: list[dict], db: dict) -> dict:
     """The data page as a schema.org Dataset a harvester can index.
 
@@ -4329,6 +4370,7 @@ def _generate(args: argparse.Namespace) -> None:
             str(docs / "platforms" / f"{name}.md"),
             generate_platform_page(name, cov, registry, emulator_files),
         )
+        PAGE_DATA[f"platforms/{name}.md"] = platform_structured_data(name, cov)
 
     # Generate system pages
     print("Generating system pages...")
