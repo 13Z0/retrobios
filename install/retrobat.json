@@ -28,7 +28,9 @@
           "$HOME/.local/share/eden/keys",
           "$HOME/.local/share/citron/keys",
           "$HOME/.local/share/suyu/keys",
-          "$HOME/.config/Ryujinx/system"
+          "$HOME/.var/app/dev.eden_emu.eden/data/eden/keys",
+          "$HOME/.config/Ryujinx/system",
+          "$HOME/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/system"
         ],
         "windows": [
           "%APPDATA%\\yuzu\\keys",
@@ -51,7 +53,8 @@
           "$HOME/.local/share/yuzu/keys",
           "$HOME/.local/share/eden/keys",
           "$HOME/.local/share/citron/keys",
-          "$HOME/.local/share/suyu/keys"
+          "$HOME/.local/share/suyu/keys",
+          "$HOME/.var/app/dev.eden_emu.eden/data/eden/keys"
         ],
         "windows": [
           "%APPDATA%\\yuzu\\keys",
@@ -69,7 +72,8 @@
       "file": "Citra/sysdata/aes_keys.txt",
       "targets": {
         "linux": [
-          "$HOME/.local/share/azahar/sysdata"
+          "$HOME/.local/share/azahar-emu/sysdata",
+          "$HOME/.var/app/org.azahar_emu.Azahar/data/azahar-emu/sysdata"
         ],
         "windows": [
           "%APPDATA%\\Azahar\\sysdata"
@@ -80,7 +84,8 @@
       "file": "Citra/sysdata/boot9.bin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/azahar/sysdata"
+          "$HOME/.local/share/azahar-emu/sysdata",
+          "$HOME/.var/app/org.azahar_emu.Azahar/data/azahar-emu/sysdata"
         ],
         "windows": [
           "%APPDATA%\\Azahar\\sysdata"
@@ -91,7 +96,8 @@
       "pattern": "scph*.bin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/duckstation/bios"
+          "$HOME/.local/share/duckstation/bios",
+          "$HOME/.var/app/org.duckstation.DuckStation/config/duckstation/bios"
         ],
         "windows": [
           "%LOCALAPPDATA%\\DuckStation\\bios",
@@ -122,7 +128,8 @@
       "note": "PS3 firmware (PS3UPDAT.PUP) found. Install via RPCS3 > File > Install Firmware.",
       "detect": {
         "linux": [
-          "$HOME/.config/rpcs3"
+          "$HOME/.config/rpcs3",
+          "$HOME/.var/app/net.rpcs3.RPCS3/config/rpcs3"
         ],
         "windows": [
           "%APPDATA%\\rpcs3"
@@ -134,7 +141,8 @@
       "emulator": "dolphin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/dolphin-emu/GC/USA"
+          "$HOME/.local/share/dolphin-emu/GC/USA",
+          "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/USA"
         ],
         "windows": [
           "%APPDATA%\\Dolphin Emulator\\GC\\USA"
@@ -149,7 +157,8 @@
       "emulator": "dolphin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/dolphin-emu/GC/EUR"
+          "$HOME/.local/share/dolphin-emu/GC/EUR",
+          "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/EUR"
         ],
         "windows": [
           "%APPDATA%\\Dolphin Emulator\\GC\\EUR"
@@ -164,7 +173,8 @@
       "emulator": "dolphin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/dolphin-emu/GC/JAP"
+          "$HOME/.local/share/dolphin-emu/GC/JAP",
+          "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/JAP"
         ],
         "windows": [
           "%APPDATA%\\Dolphin Emulator\\GC\\JAP"
@@ -179,7 +189,8 @@
       "emulator": "dolphin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/dolphin-emu"
+          "$HOME/.local/share/dolphin-emu",
+          "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu"
         ],
         "windows": [
           "%APPDATA%\\Dolphin Emulator"
@@ -195,7 +206,8 @@
       "emulator": "dolphin",
       "targets": {
         "linux": [
-          "$HOME/.local/share/dolphin-emu"
+          "$HOME/.local/share/dolphin-emu",
+          "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu"
         ],
         "windows": [
           "%APPDATA%\\Dolphin Emulator"
@@ -210,7 +222,8 @@
       "file": "PPSSPP/ppge_atlas.zim",
       "targets": {
         "linux": [
-          "$HOME/.config/ppsspp/PSP/SYSTEM"
+          "$HOME/.config/ppsspp/PSP/SYSTEM",
+          "$HOME/.var/app/org.ppsspp.PPSSPP/config/ppsspp/PSP/SYSTEM"
         ],
         "windows": [
           "%USERPROFILE%\\Documents\\PPSSPP\\PSP\\SYSTEM"

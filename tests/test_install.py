@@ -2335,5 +2335,32 @@ class CaseTwinsOnAFoldingVolume(unittest.TestCase):
         self.assertIn("if not case_kept: files, folded = fold_case_twins(files)", source)
 
 
+
+class StandaloneCopiesReachFlatpakInstalls(unittest.TestCase):
+    """Copies went only to native and AppImage directories: Dolphin, PPSSPP
+    and Azahar from Flathub received nothing. Azahar's native Linux
+    directory was wrong too: XDG_DATA_HOME/azahar-emu (common_paths.h
+    EMU_DATA_DIR), not azahar."""
+
+    def test_flatpak_and_native_directories(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        linux = {
+            target
+            for entry in registry["_standalone_copies"]
+            for target in (entry.get("targets") or {}).get("linux", [])
+        }
+        for expected in (
+            "$HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/USA",
+            "$HOME/.var/app/org.ppsspp.PPSSPP/config/ppsspp/PSP/SYSTEM",
+            "$HOME/.var/app/org.azahar_emu.Azahar/data/azahar-emu/sysdata",
+            "$HOME/.local/share/azahar-emu/sysdata",
+        ):
+            with self.subTest(target=expected):
+                self.assertIn(expected, linux)
+        self.assertNotIn("$HOME/.local/share/azahar/sysdata", linux)
+
+
 if __name__ == "__main__":
     unittest.main()

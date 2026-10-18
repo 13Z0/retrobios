@@ -8,7 +8,9 @@ _standalone_copies: &standalone_copies
       - $HOME/.local/share/eden/keys
       - $HOME/.local/share/citron/keys
       - $HOME/.local/share/suyu/keys
+      - $HOME/.var/app/dev.eden_emu.eden/data/eden/keys
       - $HOME/.config/Ryujinx/system
+      - $HOME/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/system
       windows:
       - '%APPDATA%\yuzu\keys'
       - '%APPDATA%\eden\keys'
@@ -25,6 +27,7 @@ _standalone_copies: &standalone_copies
       - $HOME/.local/share/eden/keys
       - $HOME/.local/share/citron/keys
       - $HOME/.local/share/suyu/keys
+      - $HOME/.var/app/dev.eden_emu.eden/data/eden/keys
       windows:
       - '%APPDATA%\yuzu\keys'
       - '%APPDATA%\eden\keys'
@@ -36,13 +39,15 @@ _standalone_copies: &standalone_copies
   - file: Citra/sysdata/aes_keys.txt
     targets:
       linux:
-      - $HOME/.local/share/azahar/sysdata
+      - $HOME/.local/share/azahar-emu/sysdata
+      - $HOME/.var/app/org.azahar_emu.Azahar/data/azahar-emu/sysdata
       windows:
       - '%APPDATA%\Azahar\sysdata'
   - file: Citra/sysdata/boot9.bin
     targets:
       linux:
-      - $HOME/.local/share/azahar/sysdata
+      - $HOME/.local/share/azahar-emu/sysdata
+      - $HOME/.var/app/org.azahar_emu.Azahar/data/azahar-emu/sysdata
       windows:
       - '%APPDATA%\Azahar\sysdata'
   # DuckStation (PS1)
@@ -50,6 +55,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/duckstation/bios
+      - $HOME/.var/app/org.duckstation.DuckStation/config/duckstation/bios
       windows:
       - '%LOCALAPPDATA%\DuckStation\bios'
       - '%USERPROFILE%\Documents\DuckStation\bios'
@@ -71,6 +77,7 @@ _standalone_copies: &standalone_copies
     detect:
       linux:
       - $HOME/.config/rpcs3
+      - $HOME/.var/app/net.rpcs3.RPCS3/config/rpcs3
       windows:
       - '%APPDATA%\rpcs3'
   # Dolphin (GameCube)
@@ -79,6 +86,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/dolphin-emu/GC/USA
+      - $HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/USA
       windows:
       - '%APPDATA%\Dolphin Emulator\GC\USA'
       darwin:
@@ -88,6 +96,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/dolphin-emu/GC/EUR
+      - $HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/EUR
       windows:
       - '%APPDATA%\Dolphin Emulator\GC\EUR'
       darwin:
@@ -97,6 +106,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/dolphin-emu/GC/JAP
+      - $HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu/GC/JAP
       windows:
       - '%APPDATA%\Dolphin Emulator\GC\JAP'
       darwin:
@@ -106,6 +116,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/dolphin-emu
+      - $HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu
       windows:
       - '%APPDATA%\Dolphin Emulator'
       darwin:
@@ -115,6 +126,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.local/share/dolphin-emu
+      - $HOME/.var/app/org.DolphinEmu.dolphin-emu/data/dolphin-emu
       windows:
       - '%APPDATA%\Dolphin Emulator'
       darwin:
@@ -124,6 +136,7 @@ _standalone_copies: &standalone_copies
     targets:
       linux:
       - $HOME/.config/ppsspp/PSP/SYSTEM
+      - $HOME/.var/app/org.ppsspp.PPSSPP/config/ppsspp/PSP/SYSTEM
       windows:
       - '%USERPROFILE%\Documents\PPSSPP\PSP\SYSTEM'
       darwin:
