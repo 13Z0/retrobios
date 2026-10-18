@@ -497,6 +497,43 @@ class PatchesTargetWhatRuns(unittest.TestCase):
         self.assertEqual(offenders, [])
 
 
+class StandaloneCopiesNameTheirSource(unittest.TestCase):
+    """The registry's anchor names one path per file for every platform;
+    each manifest places the file its own way, and the installer copied
+    nothing where the two differed (EmuDeck's aes_keys.txt, Batocera's
+    switch/prod.keys)."""
+
+    def _placed(self, copies, dests):
+        from generate_pack import _placed_copies
+
+        return _placed_copies(copies, dests)
+
+    def test_a_path_tail_finds_the_file(self):
+        (copy,) = self._placed(
+            [{"file": "GC/USA/IPL.bin"}],
+            ["dolphin-emu/Sys/GC/USA/IPL.bin", "dolphin-emu/Sys/GC/EUR/IPL.bin"],
+        )
+        self.assertEqual(copy["source"], "dolphin-emu/Sys/GC/USA/IPL.bin")
+
+    def test_the_tail_with_least_on_top_wins(self):
+        (copy,) = self._placed(
+            [{"file": "GC/USA/IPL.bin"}],
+            ["bios/GC/USA/IPL.bin", "bios/dolphin-emu/Sys/GC/USA/IPL.bin"],
+        )
+        self.assertEqual(copy["source"], "bios/GC/USA/IPL.bin")
+
+    def test_a_unique_name_finds_the_file_elsewhere(self):
+        (copy,) = self._placed(
+            [{"file": "Citra/sysdata/aes_keys.txt"}], ["aes_keys.txt", "bios.bin"]
+        )
+        self.assertEqual(copy["source"], "aes_keys.txt")
+
+    def test_an_ambiguous_or_present_file_is_left_as_written(self):
+        copies = [{"file": "prod.keys"}, {"file": "IPL.bin"}]
+        placed = self._placed(copies, ["prod.keys", "a/IPL.bin", "b/IPL.bin"])
+        self.assertEqual(placed, copies)
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 

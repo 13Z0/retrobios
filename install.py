@@ -1396,6 +1396,10 @@ def _validate_manifest(data: object, plat: str) -> dict:
             _safe_relative_path(
                 entry["file"], f"standalone_copies[{index}].file"
             )
+        if "source" in entry:
+            _safe_relative_path(
+                entry["source"], f"standalone_copies[{index}].source"
+            )
         if "pattern" in entry:
             pattern = entry["pattern"]
             if (
@@ -2432,7 +2436,10 @@ def do_standalone_copies(
                 if fnmatch(f.name, entry["pattern"]) and f.is_file()
             ]
         else:
-            src = bios_path / entry["file"]
+            # `source` is where this platform's manifest put the file; `file`
+            # names it as the registry does for every platform, and laid out
+            # that way it was missing wherever the pack places it elsewhere.
+            src = _destination_path(bios_path, entry.get("source") or entry["file"])
             sources = [src] if src.exists() else []
 
         if not sources:

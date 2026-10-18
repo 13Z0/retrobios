@@ -882,6 +882,44 @@ class TestStandaloneCopiesExtraDirs(unittest.TestCase):
         )
 
 
+class StandaloneCopiesReadWhereThePackPutTheFile(unittest.TestCase):
+    """The registry names Citra/sysdata/aes_keys.txt for every platform;
+    EmuDeck's manifest installs it at the root. The installer looked under
+    the registry's path, found nothing and copied nothing to Azahar."""
+
+    def _copy(self, entry: dict) -> tuple[Path, tuple[int, int, int]]:
+        bios = Path(_tempdir(self))
+        (bios / "aes_keys.txt").write_text("keys")
+        sysdata = Path(_tempdir(self)) / "sysdata"
+        sysdata.mkdir()
+        manifest = {"standalone_copies": [
+            {**entry, "emulator": "azahar", "targets": {"linux": [str(sysdata)]}},
+        ]}
+        return sysdata, install.do_standalone_copies(manifest, bios, "linux")
+
+    def test_the_source_the_manifest_names_is_copied(self):
+        sysdata, (copied, _, _) = self._copy(
+            {"file": "Citra/sysdata/aes_keys.txt", "source": "aes_keys.txt"}
+        )
+        self.assertEqual(copied, 1)
+        self.assertEqual((sysdata / "aes_keys.txt").read_text(), "keys")
+
+    def test_without_a_source_the_file_path_is_read(self):
+        _, (copied, _, _) = self._copy({"file": "Citra/sysdata/aes_keys.txt"})
+        self.assertEqual(copied, 0)
+
+    def test_an_unsafe_source_is_refused_at_load(self):
+        manifest = json.loads(
+            (Path(__file__).resolve().parents[1] / "install" / "emudeck.json").read_text()
+        )
+        manifest["standalone_copies"] = [
+            {"file": "aes_keys.txt", "source": "../../etc/passwd",
+             "targets": {"linux": ["/tmp"]}},
+        ]
+        with self.assertRaisesRegex(ValueError, r"standalone_copies\[0\]\.source"):
+            install._validate_manifest(manifest, "emudeck")
+
+
 class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
     """install.py runs where the bootstraps let it run: Python 3.8, stdlib only.
 

@@ -3226,6 +3226,36 @@ _MANIFEST_HASHES = frozenset({"sha1", "sha256"})
 _STABLE_HASHES: dict[tuple, dict] = {}
 
 
+def _placed_copies(copies: list[dict], dests: list[str]) -> list[dict]:
+    """Each standalone copy with the path this manifest gives its file.
+
+    The registry names one path per file for every platform (one anchor),
+    while each manifest places the file its own way: EmuDeck installs
+    aes_keys.txt at the root and Batocera prod.keys under switch/, so the
+    installer looked for Citra/sysdata/aes_keys.txt, found nothing and
+    copied nothing. `file` stays as written, since it also lays out a custom
+    emulator root; `source` says where the installed file is.
+    """
+    by_name: dict[str, list[str]] = {}
+    for dest in dests:
+        by_name.setdefault(dest.rsplit("/", 1)[-1].casefold(), []).append(dest)
+    placed: list[dict] = []
+    for copy in copies:
+        wanted = copy.get("file")
+        if not wanted or wanted in dests:
+            placed.append(copy)
+            continue
+        tail = [d for d in dests if d.endswith("/" + wanted)]
+        if tail:
+            # The file whose path carries the least on top of the tail.
+            shortest = min(len(d) for d in tail)
+            tail = [d for d in tail if len(d) == shortest]
+        else:
+            tail = by_name.get(wanted.rsplit("/", 1)[-1].casefold(), [])
+        placed.append({**copy, "source": tail[0]} if len(tail) == 1 else copy)
+    return placed
+
+
 def _stable_hashes(local_path: str, db: dict) -> dict:
     """The file's hashes, held against the scan that built the database.
 
@@ -4084,7 +4114,9 @@ def generate_manifest(
         "generated": now,
         "base_destination": base_dest,
         "detect": detect,
-        "standalone_copies": standalone_copies,
+        "standalone_copies": _placed_copies(
+            standalone_copies, [entry["dest"] for entry in manifest_files]
+        ),
         "total_files": len(manifest_files),
         "total_size": total_size,
         "pack_files": (
