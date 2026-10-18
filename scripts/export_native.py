@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import functools
 import re
 import json
 import sys
@@ -28,9 +29,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from artifacts import file_lock, write_bytes_atomic, write_text_atomic
+import yaml
+
 from common import (
     platform_arg,
     list_registered_platforms,
+    load_database,
+    load_emulator_profiles,
     load_platform_config,
     native_layer,
     require_platform,
@@ -38,8 +43,11 @@ from common import (
 )
 from exporter import discover_exporters
 from exporter.baseline import HASH_FIELDS, _hash_values, _single_size, build_native_model
+from truth import generate_platform_truth
 
 DEFAULT_CACHE = ".cache/upstream-native"
+# The database generate_truth reads by default.
+TRUTH_DB = "database.json"
 SOURCES_INDEX = ".sources.json"
 _USER_AGENT = "retrobios-exporter/1.0"
 _MAX_BYTES = 64 * 1024 * 1024
@@ -250,20 +258,55 @@ def collect_originals(
     return originals, missing
 
 
+class StaleTruth(ValueError):
+    """The truth file no longer describes the profiles it was built from."""
+
+
+@functools.lru_cache(maxsize=None)
+def _truth_sources(platforms_dir: str) -> tuple[dict, dict, dict | None]:
+    """Registry, profiles and database, as generate_truth reads them."""
+    with open(Path(platforms_dir) / "_registry.yml") as handle:
+        registry = (yaml_load(handle) or {}).get("platforms", {})
+    profiles = load_emulator_profiles("emulators")
+    db = load_database(TRUTH_DB) if Path(TRUTH_DB).exists() else None
+    return registry, profiles, db
+
+
+def current_truth(platform: str, config: dict, platforms_dir: str) -> dict:
+    """The truth model generate_truth would write now, as YAML reads it back."""
+    registry, profiles, db = _truth_sources(platforms_dir)
+    model = generate_platform_truth(
+        platform, config, registry.get(platform, {}), profiles, db=db
+    )
+    return yaml_load(yaml.dump(model, default_flow_style=False, sort_keys=False,
+                               allow_unicode=True)) or {}
+
+
 def load_inputs(
     platform: str, truth_dir: Path, platforms_dir: str
 ) -> tuple[dict | None, dict | None]:
-    """The truth and the scraped config of a platform, None where absent."""
+    """The truth and the scraped config of a platform, None where absent.
+
+    A truth file is an artifact of the profiles: read at any age, one from
+    before `_required_by` existed silently undid the RetroPie guard that
+    reads it. One that no longer matches what generate_truth builds now is
+    refused.
+    """
     truth_file = truth_dir / f"{platform}.yml"
     truth: dict | None = None
+    try:
+        config = load_platform_config(platform, platforms_dir)
+    except (FileNotFoundError, OSError):
+        config = None
     if truth_file.exists():
         with open(truth_file) as handle:
             truth = yaml_load(handle) or {}
-    try:
-        scraped = load_platform_config(platform, platforms_dir)
-    except (FileNotFoundError, OSError):
-        scraped = None
-    return truth, native_layer(scraped)
+        if config is not None and truth != current_truth(platform, config, platforms_dir):
+            raise StaleTruth(
+                f"{truth_file} no longer matches the profiles: run "
+                f"python scripts/generate_truth.py --platform {platform}"
+            )
+    return truth, native_layer(config)
 
 
 def refresh_cache(
@@ -274,7 +317,10 @@ def refresh_cache(
     upstream_dir: Path,
 ) -> tuple[bool, list[str]]:
     """Download a platform's own files again. Returns (ok, messages)."""
-    truth, scraped = load_inputs(platform, truth_dir, platforms_dir)
+    try:
+        truth, scraped = load_inputs(platform, truth_dir, platforms_dir)
+    except StaleTruth as exc:
+        return False, [str(exc)]
     systems, _ = build_native_model(truth or {}, scraped)
     exporter = exporter_class()
     wanted = wanted_sources(exporter, systems, scraped)
@@ -360,7 +406,10 @@ def export_platform(
     """Write one platform's corrected file. Returns (ok, messages)."""
     messages: list[str] = []
 
-    truth, scraped = load_inputs(platform, truth_dir, platforms_dir)
+    try:
+        truth, scraped = load_inputs(platform, truth_dir, platforms_dir)
+    except StaleTruth as exc:
+        return False, [str(exc)]
     if truth is None:
         truth = {}
         messages.append(f"no truth for {platform}, only the platform's own data")

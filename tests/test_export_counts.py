@@ -741,5 +741,26 @@ class SummaryCountsWhatTheTruthRewrites(unittest.TestCase):
         self.assertEqual((changes.resized, changes.cleared), ([], []))
 
 
+
+class AStaleTruthIsRefused(unittest.TestCase):
+    """export_native read dist/truth/<platform>.yml at any age: a model from
+    before `_required_by` existed made RetroPie's guard fall back on the
+    merged `required`, and the export wrote pcsx_rearmed's optional BIOS
+    as required."""
+
+    def test_a_truth_that_no_longer_matches_is_refused(self):
+        import shutil
+        import tempfile
+
+        import export_native  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1]
+        truth_dir = Path(tempfile.mkdtemp(dir=root / "tmp"))
+        self.addCleanup(shutil.rmtree, truth_dir, True)
+        (truth_dir / "retropie.yml").write_text("platform: retropie\nsystems: {}\n")
+        with self.assertRaises(export_native.StaleTruth):
+            export_native.load_inputs("retropie", truth_dir, str(root / "platforms"))
+
+
 if __name__ == "__main__":
     unittest.main()
