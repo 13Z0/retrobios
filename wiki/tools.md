@@ -564,7 +564,8 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `common.py` | Shared library: hash computation, file resolution, platform config loading, emulator profiles, target filtering |
 | `dedup.py` | Deduplicate `bios/` (`--dry-run`, `--bios-dir`): byte-identical copies are deleted and one kept; identical MAME sets under other names stay one file, named in `_mame_clones.json`. Trees addressed by path are left alone (`NODEDUP_DIRS`): BBK, C-Dogs SDL, Ikemen GO, PinMAME, RPG Maker, ScummVM, Softdisk, TheXTech, Theme Hospital, c64-emu, tzdata |
 | `identity.py` | One content filed under two identities: groups `bios/` by content and reports a group that crosses manufacturers outside `KNOWN_SHARED` (`--strict` exits 1, pipeline step 3a) |
-| `slots.py` | Destinations the platform and a core both claim, and how the pack settles each (`--platform`, `--json`, `--strict`; pipeline step 3b reports without gating) |
+| `slots.py` | Destinations the platform and a core both claim, and how the pack settles each (`--platform`, `--include-archived`, `--target`, `--json`, `--strict`; pipeline step 3b passes the run's own `--include-archived` and `--target`) |
+| `region_audit.py` | Confront every profile `region:` with the regions No-Intro names for the same dump (`--json`, `--db`, `--emulators-dir`). An opinion, never an authority: the code decides, and a disagreement is a line to read in the emulator's source |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
 | `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline) |
