@@ -809,6 +809,7 @@ def main() -> int:
         list_registered_platforms,
         load_emulator_profiles,
         load_platform_config,
+        require_platform,
     )
 
     parser = argparse.ArgumentParser(
@@ -832,6 +833,8 @@ def main() -> int:
     with open(args.db, encoding="utf-8") as handle:
         db = json.load(handle)
     profiles = load_emulator_profiles(args.emulators_dir)
+    if args.platform:
+        require_platform(args.platform, args.platforms_dir)
     names = (
         [args.platform]
         if args.platform

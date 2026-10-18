@@ -25,7 +25,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 from artifacts import file_lock as _file_lock
-from common import yaml_load
+from common import require_platform, yaml_load
 
 try:
     import yaml
@@ -539,6 +539,9 @@ def main() -> None:
         format="%(message)s",
     )
 
+    if args.platform:
+        # The registry sits in the platforms directory it serves.
+        require_platform(args.platform, os.path.dirname(args.registry) or ".")
     registry = load_registry(args.registry)
 
     if args.key:

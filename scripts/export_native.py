@@ -28,7 +28,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from artifacts import file_lock, write_bytes_atomic, write_text_atomic
-from common import list_registered_platforms, load_platform_config, native_layer, yaml_load
+from common import (
+    list_registered_platforms,
+    load_platform_config,
+    native_layer,
+    require_platform,
+    yaml_load,
+)
 from exporter import discover_exporters
 from exporter.baseline import HASH_FIELDS, _hash_values, _single_size, build_native_model
 
@@ -535,6 +541,7 @@ def main() -> None:
             include_archived=True,
         )
     else:
+        require_platform(args.platform, args.platforms_dir)
         platforms = [args.platform]
 
     sys.exit(

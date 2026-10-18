@@ -20,6 +20,7 @@ from common import (
     list_registered_platforms,
     load_platform_config,
     native_layer,
+    require_platform,
     require_yaml,
     truth_target_dir,
     yaml_load,
@@ -187,6 +188,7 @@ def main() -> None:
             args.platforms_dir, include_archived=True
         )
     else:
+        require_platform(args.platform, args.platforms_dir)
         platforms = [args.platform]
 
     reports: list[dict] = []

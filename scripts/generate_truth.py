@@ -19,6 +19,7 @@ from common import (
     load_emulator_profiles,
     load_platform_config,
     load_target_config,
+    require_platform,
     require_yaml,
     truth_target_dir,
     write_text_atomic,
@@ -88,6 +89,7 @@ def main(argv: list[str] | None = None) -> None:
             include_archived=True,
         )
     else:
+        require_platform(args.platform, args.platforms_dir)
         platforms = [args.platform]
 
     # A target-narrowed model is a different artifact: written under the

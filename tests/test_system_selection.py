@@ -11,6 +11,7 @@ libretro pack.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -94,12 +95,28 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
     """verify and cross_reference ended a typo on a traceback; generate_pack
     ran its whole build first and then said "no pack for batocra"."""
 
+    # Every script taking --platform: slots ended on a traceback, and
+    # generate_truth, refresh_data_dirs and auto_fetch exited 0 having done
+    # nothing (or, for refresh_data_dirs, refreshed every unscoped entry).
+    CLIS = {
+        "verify.py": [],
+        "cross_reference.py": [],
+        "slots.py": [],
+        "diff_truth.py": [],
+        "auto_fetch.py": ["--dry-run"],
+        "refresh_data_dirs.py": ["--dry-run"],
+    }
+
     def test_every_cli_names_the_platform_it_meant(self):
         scratch = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
         self.addCleanup(scratch.cleanup)
         out = Path(scratch.name) / "packs"
-        for script, extra in (("verify.py", []), ("cross_reference.py", []),
-                              ("generate_pack.py", ["--offline", "--output-dir", str(out)])):
+        writers = {
+            "generate_pack.py": ["--offline", "--output-dir", str(out)],
+            "generate_truth.py": ["--output-dir", str(out)],
+            "export_native.py": ["--output-dir", str(out)],
+        }
+        for script, extra in {**self.CLIS, **writers}.items():
             with self.subTest(script=script):
                 proc = subprocess.run(
                     [sys.executable, f"scripts/{script}", "--platform", "batocra", *extra],
@@ -110,6 +127,14 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
                 self.assertNotIn("Traceback", proc.stderr, proc.stderr)
                 self.assertIn("Did you mean 'batocera'?", proc.stderr)
         self.assertFalse(out.exists())
+
+    def test_the_list_holds_every_script_taking_a_platform(self):
+        taking = {
+            path.name for path in (REPO_ROOT / "scripts").glob("*.py")
+            if re.search(r'add_argument\(\s*"--platform"', path.read_text(encoding="utf-8"))
+        }
+        listed = set(self.CLIS) | {"generate_pack.py", "generate_truth.py", "export_native.py"}
+        self.assertEqual(taking - listed, set())
 
 
 class StrictVerifyFailsOnACriticalMiss(unittest.TestCase):

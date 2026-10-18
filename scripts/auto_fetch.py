@@ -32,6 +32,7 @@ from common import (
     list_registered_platforms,
     load_database,
     load_platform_config,
+    require_platform,
     require_yaml,
 )
 
@@ -441,6 +442,7 @@ def main() -> None:
             include_archived=True,
         )
     elif args.platform:
+        require_platform(args.platform, args.platforms_dir)
         platforms = [args.platform]
     else:
         parser.error("Specify --platform or --all")
