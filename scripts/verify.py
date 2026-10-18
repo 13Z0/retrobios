@@ -864,6 +864,9 @@ def _twin_unmet(result: dict, held_by: str | None) -> bool:
     result["discrepancy"] = (
         f"{result.get('name', '')} is not met at the path {held_by} holds"
     )
+    # Read by reports that list entries: the destination itself is held, and
+    # a count by destination does not include this one.
+    result["settled_by"] = held_by
     return True
 
 

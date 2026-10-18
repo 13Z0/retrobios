@@ -4471,5 +4471,32 @@ class AdlerValuesReadLikeTheDownloads(unittest.TestCase):
         self.assertNotIn("['", text)
 
 
+
+class GapsPageCountsOneWay(unittest.TestCase):
+    """The stats block said 1 untested (by destination) while Problem Files
+    listed 4 untested entries, three of them at paths another declaration
+    of the same platform already holds."""
+
+    def test_settled_declarations_are_listed_apart(self):
+        from scripts.generate_site import _render_problem_files
+
+        problems = [{"platform": "RetroDECK", "name": "dsifirmware.bin", "status": "untested",
+                     "required": True, "reason": "x", "discrepancy": ""}]
+        settled = [{"platform": "RetroDECK", "name": "cdibios.zip", "status": "untested",
+                    "held_by": "arcade"}]
+        text = "\n".join(_render_problem_files(problems, settled))
+        self.assertIn("0 missing, 1 untested", text)
+        self.assertIn("Other revisions of a held destination", text)
+        self.assertIn("`cdibios.zip`", text)
+
+    def test_verify_marks_the_settled_entry(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import verify
+
+        result = {"name": "cdibios.zip", "status": verify.Status.UNTESTED}
+        self.assertTrue(verify._twin_unmet(result, "arcade"))
+        self.assertEqual(result["settled_by"], "arcade")
+
+
 if __name__ == "__main__":
     unittest.main()

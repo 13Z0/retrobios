@@ -2690,7 +2690,7 @@ def generate_emulator_page(
 # Contributing page
 
 
-def _render_problem_files(platform_problems: list) -> list[str]:
+def _render_problem_files(platform_problems: list, settled: list | None = None) -> list[str]:
     """Files a platform declares that its own check then rejects.
 
     Split out of generate_gap_analysis, which reached complexity 56. This
@@ -2786,6 +2786,23 @@ def _render_problem_files(platform_problems: list) -> list[str]:
                 lines.append(f"| `{fname}` | {plats} | {f['discrepancy']} |")
             lines.append("")
 
+    if settled:
+        lines.extend([
+            "### Other revisions of a held destination",
+            "",
+            "A platform can declare one path twice with different hashes. The "
+            "path holds the file one declaration accepts, so it is counted once, "
+            "as held; the other declaration cannot be met at the same time.",
+            "",
+            "| File | Platform | Status | Path held for system |",
+            "|------|----------|--------|--------------|",
+        ])
+        for p in sorted(settled, key=lambda row: (row["name"], row["platform"])):
+            lines.append(
+                f"| `{p['name']}` | {p['platform']} | {p['status']} | `{p['held_by']}` |"
+            )
+        lines.append("")
+
     return lines
 
 
@@ -2818,6 +2835,7 @@ def generate_gap_analysis(
     total_files_verify = 0
 
     platform_problems: list[dict] = []
+    settled_problems: list[dict] = []
     for pname, cov in sorted(coverages.items(), key=lambda x: x[1]["platform"]):
         total_verified += cov["verified"]
         total_untested += cov["untested"]
@@ -2825,6 +2843,15 @@ def generate_gap_analysis(
         total_files_verify += cov["total"]
 
         for d in cov["details"]:
+            if d.get("settled_by") and d["status"] != "ok":
+                # Its path holds another declaration's file: the headline,
+                # counted by destination, rightly leaves it out, and listing
+                # it under the same word made the page contradict itself.
+                settled_problems.append({
+                    "platform": cov["platform"], "name": d["name"],
+                    "status": d["status"], "held_by": d["settled_by"],
+                })
+                continue
             if d["status"] != "ok" or d.get("discrepancy"):
                 platform_problems.append({
                     "platform": cov["platform"],
@@ -3018,7 +3045,7 @@ def generate_gap_analysis(
         "",
     ])
 
-    lines.extend(_render_problem_files(platform_problems))
+    lines.extend(_render_problem_files(platform_problems, settled_problems))
 
     # ---- Section 3: Core complement (cross-reference provenance) ----
 
