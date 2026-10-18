@@ -51,6 +51,13 @@ _HOSTS: dict[str, tuple[str, str, str]] = {
         "https://codeberg.org/api/v1",
         "https://codeberg.org",
     ),
+    # The Ryujinx repository left GitHub in October 2024; this Gitea pull
+    # mirror kept its history up to 1.1.1402.
+    "git.ngram.ca": (
+        "forgejo",
+        "https://git.ngram.ca/api/v1",
+        "https://git.ngram.ca",
+    ),
     "git.citron-emu.org": (
         "forgejo",
         "https://git.citron-emu.org/api/v1",
@@ -178,6 +185,20 @@ def raw_url(repo: Repo, sha: str, path: str) -> str:
     if repo.family == "gitlab":
         return f"{repo.raw_base}/{repo.owner}/{repo.name}/-/raw/{sha}/{quoted}"
     return f"{repo.raw_base}/{repo.owner}/{repo.name}/raw/commit/{sha}/{quoted}"
+
+
+def content_url(repo: Repo, sha: str, path: str) -> str:
+    """URL the tooling fetches one path from.
+
+    Forgejo and Gitea hosts put their web routes, /raw/commit included,
+    behind a proof-of-work page (git.ngram.ca answers 200 with an HTML
+    challenge); the API raw route is not challenged. raw_url stays the
+    link a reader opens.
+    """
+    if repo.family != "forgejo":
+        return raw_url(repo, sha, path)
+    quoted = urllib.parse.quote(path)
+    return f"{repo.api_base}/repos/{repo.owner}/{repo.name}/raw/{quoted}?ref={sha}"
 
 
 def _headers(url: str, accept_json: bool = False) -> dict[str, str]:
@@ -336,7 +357,7 @@ def fetch_file(
         return None if text == ABSENT else text.splitlines()
     if offline:
         raise NotCachedError(f"{repo.slug}@{sha[:8]}:{path} is not in the offline cache")
-    text = _http_text(raw_url(repo, sha, path))
+    text = _http_text(content_url(repo, sha, path))
     write_cache(target, ABSENT if text is None else text)
     return None if text is None else text.splitlines()
 

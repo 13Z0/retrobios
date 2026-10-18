@@ -115,6 +115,21 @@ class TestRawUrl(unittest.TestCase):
             "https://codeberg.org/g/p/raw/commit/abc123/a.c",
         )
 
+    def test_forgejo_fetches_through_the_api(self):
+        # git.ngram.ca serves an HTML proof-of-work page on /raw/commit,
+        # which fetch_file would have cached as the file's lines.
+        import upstream
+
+        repo = parse_repo("https://git.ngram.ca/mirrors/Ryujinx")
+        self.assertEqual(
+            upstream.content_url(repo, "abc123", "src/a b.cs"),
+            "https://git.ngram.ca/api/v1/repos/mirrors/Ryujinx/raw/src/a%20b.cs?ref=abc123",
+        )
+        github = parse_repo("https://github.com/o/n")
+        self.assertEqual(
+            upstream.content_url(github, "s", "a.c"), raw_url(github, "s", "a.c")
+        )
+
     def test_path_is_quoted(self):
         repo = parse_repo("https://github.com/o/n")
         self.assertIn("src/a%20b.cpp", raw_url(repo, "s", "src/a b.cpp"))

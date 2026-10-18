@@ -3,38 +3,38 @@ type: standalone
 source: "https://git.ngram.ca/mirrors/Ryujinx"
 upstream: "https://github.com/Ryujinx/Ryujinx"
 profiled_date: "2026-03-26"
-core_version: "1.1.1403"
+source_commit: "7d158acc3b5826a08941d6e8d50d3a3897021bcd"
+core_version: "1.1.1402"
 display_name: "Ryujinx (Nintendo Switch)"
 cores:
   - ryujinx
 systems: [nintendo-switch]
 analysis_date: "2026-03-26"
-analysis_commit: "HEAD (depth=1, ngram.ca mirror)"
 mode: standalone
 
-# Key files are read from {BaseDirPath}/system/ (AppDataManager.cs:229)
-# Also searched in ~/.switch/ (AppDataManager.cs:47)
-# Batocera copies bios/switch/prod.keys to Ryujinx/system/prod.keys (ryujinxGenerator.py:108)
-# Firmware NCAs are installed via UI (ContentManager.cs:429), not placed as files
+# Key files are read from {BaseDirPath}/system/ (src/Ryujinx.Common/Configuration/AppDataManager.cs:229)
+# Also searched in ~/.switch/ (src/Ryujinx.Common/Configuration/AppDataManager.cs:47)
+# Batocera copied bios/switch/prod.keys to Ryujinx/system/prod.keys (batocera ryujinxGenerator.py:108 at 1f69a46e) until it dropped the package in ee8a418f
+# Firmware NCAs are installed via UI (src/Ryujinx.HLE/FileSystem/ContentManager.cs:429), not placed as files
 
 files:
   - name: "prod.keys"
     required: true
     path: "switch/prod.keys"
     note: "Switch production keys for NCA decryption"
-    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:239"
+    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:238"
 
   - name: "title.keys"
     required: false
     path: "switch/title.keys"
     note: "Per-title decryption keys, needed for specific game content"
-    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:240"
+    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:239"
 
   - name: "console.keys"
     required: false
     path: "switch/console.keys"
     note: "Console-specific keys for encrypted content"
-    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:241"
+    source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:240"
 
 notes: |
   Ryujinx is a standalone Nintendo Switch emulator written in C#, created by gdkchan.
