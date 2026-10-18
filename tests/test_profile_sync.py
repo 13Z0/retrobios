@@ -2516,6 +2516,18 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
         self.assertEqual(rebase_refs(path, report), [])
         self.assertFalse(bump_commit(path, report))
 
+    def test_the_builds_platforms_hold_say_so(self):
+        # reicast is the commit Recalbox's reicast.mk builds, 789 commits
+        # behind master; compared to HEAD it showed eight refs to review that
+        # nobody could act on.
+        from common import load_emulator_profiles  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1] / "emulators"
+        profiles = load_emulator_profiles(str(root))
+        for name in ("reicast", "fbalpha2019", "supermodel-legacy"):
+            with self.subTest(profile=name):
+                self.assertTrue(str(profiles[name].get("pin_frozen") or "").strip())
+
     def test_an_ordinary_profile_is_unaffected(self):
         self.files[("pinsha", "a.c")] = ["x", "hit"]
         self.files[("headsha", "a.c")] = ["pad", "x", "hit"]
