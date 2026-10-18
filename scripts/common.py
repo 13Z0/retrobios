@@ -449,6 +449,24 @@ def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> 
     return f"{listing_flag} lists all {len(available)}."
 
 
+def platform_arg(value: str) -> str:
+    """--platform as typed, mapped to the registry's slug when it names one.
+
+    The site and the pack names say RetroArch and MiSTer FPGA; verify and
+    generate_pack refused both while install.py took them. Letters and
+    digits decide, as for pack names; anything else reaches require_platform
+    unchanged and gets its suggestion.
+    """
+    key = re.sub(r"[^a-z0-9]", "", value.lower())
+    if yaml is None or not os.path.isdir("platforms"):
+        return value
+    known = list_registered_platforms("platforms", include_archived=True)
+    for name in known:
+        if re.sub(r"[^a-z0-9]", "", name.lower()) == key:
+            return name
+    return value
+
+
 def require_platform(name: str, platforms_dir: str = "platforms") -> None:
     """Exit with a usable message when no platform answers to a name.
 

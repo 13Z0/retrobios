@@ -29,6 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from artifacts import file_lock, write_bytes_atomic, write_text_atomic
 from common import (
+    platform_arg,
     list_registered_platforms,
     load_platform_config,
     native_layer,
@@ -513,7 +514,7 @@ def main() -> None:
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--all", action="store_true", help="every platform")
-    group.add_argument("--platform", help="a single platform")
+    group.add_argument("--platform", type=platform_arg, help="a single platform")
     parser.add_argument("--output-dir", default="dist/upstream")
     parser.add_argument("--truth-dir", default="dist/truth")
     parser.add_argument("--platforms-dir", default="platforms")

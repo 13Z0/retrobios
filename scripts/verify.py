@@ -35,6 +35,7 @@ import slots
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    platform_arg,
     target_listing_line,
     suggest_names,
     require_platform,
@@ -2106,7 +2107,7 @@ def main() -> None:
 
 def _main(held: contextlib.ExitStack) -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Platform-native BIOS verification")
-    parser.add_argument("--platform", "-p", help="Platform name")
+    parser.add_argument("--platform", "-p", type=platform_arg, help="Platform name")
     parser.add_argument(
         "--all", action="store_true", help="Verify all active platforms"
     )

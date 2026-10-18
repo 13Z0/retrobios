@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    platform_arg,
     ProfileSelectionError,
     _norm_system_id,
     directory_members,
@@ -761,7 +762,7 @@ def main() -> None:
     parser.add_argument("--db", default=DEFAULT_DB)
     parser.add_argument("--emulator", "-e", help="Analyze single emulator")
     parser.add_argument(
-        "--platform", "-p", help="Restrict analysis to one platform's cores"
+        "--platform", "-p", type=platform_arg, help="Restrict analysis to one platform's cores"
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument("--json", action="store_true", help="JSON output")

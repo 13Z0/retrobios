@@ -25,7 +25,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 from artifacts import file_lock as _file_lock
-from common import require_platform, yaml_load
+from common import platform_arg, require_platform, yaml_load
 
 try:
     import yaml
@@ -528,7 +528,7 @@ def main() -> None:
     parser.add_argument(
         "--dry-run", action="store_true", help="Preview without downloading"
     )
-    parser.add_argument("--platform", help="Only refresh entries for this platform")
+    parser.add_argument("--platform", type=platform_arg, help="Only refresh entries for this platform")
     parser.add_argument(
         "--registry", default=DEFAULT_REGISTRY, help="Path to _data_dirs.yml"
     )

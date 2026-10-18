@@ -33,6 +33,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
+    platform_arg,
     require_directory,
     target_listing_line,
     suggest_names,
@@ -2874,7 +2875,7 @@ def main() -> None:
 
 def _main(held: contextlib.ExitStack) -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate platform BIOS ZIP packs")
-    parser.add_argument("--platform", "-p", help="Platform name (e.g., retroarch)")
+    parser.add_argument("--platform", "-p", type=platform_arg, help="Platform name (e.g., retroarch)")
     parser.add_argument(
         "--all", action="store_true", help="Generate packs for all active platforms"
     )

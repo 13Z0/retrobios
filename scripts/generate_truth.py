@@ -14,6 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    platform_arg,
     list_registered_platforms,
     load_database,
     load_emulator_profiles,
@@ -42,7 +43,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--all", action="store_true", help="all registered platforms")
-    group.add_argument("--platform", help="single platform name")
+    group.add_argument("--platform", type=platform_arg, help="single platform name")
     parser.add_argument(
         "--output-dir",
         default=DEFAULT_OUTPUT_DIR,

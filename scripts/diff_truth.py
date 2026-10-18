@@ -17,6 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    platform_arg,
     list_registered_platforms,
     load_platform_config,
     native_layer,
@@ -167,7 +168,7 @@ def main() -> None:
     group.add_argument(
         "--all", action="store_true", help="diff all registered platforms"
     )
-    group.add_argument("--platform", help="diff a single platform")
+    group.add_argument("--platform", type=platform_arg, help="diff a single platform")
     # One output form: --json beside --format markdown printed JSON and
     # dropped the markdown without a word.
     output = parser.add_mutually_exclusive_group()

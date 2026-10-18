@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING
 
 import nativemode
 from common import (
+    platform_arg,
     archive_entry,
     build_zip_contents_index,
     check_inside_zip,
@@ -818,7 +819,7 @@ def main() -> int:
         description="Report destinations where an emulator profile contradicts "
         "the file a platform baseline would ship.",
     )
-    parser.add_argument("--platform", help="one platform instead of all")
+    parser.add_argument("--platform", type=platform_arg, help="one platform instead of all")
     parser.add_argument("--db", default="database.json")
     parser.add_argument("--platforms-dir", default="platforms")
     parser.add_argument("--emulators-dir", default="emulators")

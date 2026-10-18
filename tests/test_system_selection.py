@@ -128,6 +128,24 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
                 self.assertIn("Did you mean 'batocera'?", proc.stderr)
         self.assertFalse(out.exists())
 
+    def test_the_names_the_site_prints_are_accepted(self):
+        """`--platform RetroArch` and `--platform "MiSTer FPGA"` were refused
+        by verify and generate_pack while install.py took them."""
+        from common import platform_arg  # noqa: PLC0415
+
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        self.addCleanup(os.chdir, previous)
+        self.assertEqual(platform_arg("RetroArch"), "retroarch")
+        self.assertEqual(platform_arg("MiSTer FPGA"), "misterfpga")
+        self.assertEqual(platform_arg("retroarh"), "retroarh")
+        for name in [p.name for p in (REPO_ROOT / "scripts").glob("*.py")
+                     if re.search(r'add_argument\(\s*"--platform"', p.read_text(encoding="utf-8"))]:
+            with self.subTest(script=name):
+                source = (REPO_ROOT / "scripts" / name).read_text(encoding="utf-8")
+                call = re.search(r'add_argument\(\s*"--platform"[^)]*\)', source).group(0)
+                self.assertIn("type=platform_arg", call)
+
     def test_the_list_holds_every_script_taking_a_platform(self):
         taking = {
             path.name for path in (REPO_ROOT / "scripts").glob("*.py")

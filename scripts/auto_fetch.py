@@ -29,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (
+    platform_arg,
     require_directory,
     list_registered_platforms,
     load_database,
@@ -418,7 +419,7 @@ def generate_issue_body(missing: list[dict], platform: str) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Auto-fetch missing BIOS files")
-    parser.add_argument("--platform", "-p", help="Platform to check")
+    parser.add_argument("--platform", "-p", type=platform_arg, help="Platform to check")
     parser.add_argument("--all", action="store_true", help="Check all platforms")
     parser.add_argument(
         "--dry-run", action="store_true", help="Don't download, just report"
