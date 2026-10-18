@@ -2403,6 +2403,10 @@ def _download_one(
         except _Corrupt:
             if verbose:
                 print(f"    {reason} on attempt {attempt}", file=sys.stderr)
+            # Closed before the delete: Windows refuses to remove a file
+            # still open (WinError 32), and the error ended the run.
+            if partial is not None:
+                partial.close()
             if tmp_path is not None and tmp_path.exists():
                 tmp_path.unlink()
             delay = 0.0
@@ -2416,6 +2420,8 @@ def _download_one(
             if tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
             if exc.code == 416 and tmp_path is not None and tmp_path.exists():
+                if partial is not None:
+                    partial.close()
                 tmp_path.unlink()  # the partial copy no longer fits the file
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
 

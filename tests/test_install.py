@@ -2672,5 +2672,18 @@ class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
             self.assertIn(quoted, " ".join(text.split()))
 
 
+
+class APartialIsClosedBeforeItIsDeleted(unittest.TestCase):
+    """Windows refuses to delete an open file: a resumed partial copy whose
+    hash no longer matched was unlinked with its handle still open, and the
+    PermissionError ended the run."""
+
+    def test_the_source_closes_first(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        branch = source[source.index("        except _Corrupt:"):]
+        branch = branch[:branch.index("delay = 0.0")]
+        self.assertLess(branch.index("partial.close()"), branch.index("tmp_path.unlink()"))
+
+
 if __name__ == "__main__":
     unittest.main()
