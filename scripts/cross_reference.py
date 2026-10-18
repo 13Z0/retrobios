@@ -335,6 +335,9 @@ class FileConsumers:
             if path
         }
         self.platforms: dict[str, set[str]] = {}
+        # Under which of its systems each platform declares a file, so a
+        # link can land on that section rather than the page top.
+        self.platform_systems: dict[str, dict[str, set[str]]] = {}
         self.emulators: dict[str, set[str]] = {}
 
     def sha1_of(self, entry: dict, dest: str = "", owner: str = "") -> str | None:
@@ -357,11 +360,18 @@ class FileConsumers:
 
     def add_platforms(self, configs: dict[str, dict]) -> None:
         for name, config in configs.items():
-            for system in config.get("systems", {}).values():
+            for system_id, system in config.get("systems", {}).items():
                 for entry in system.get("files", []):
                     sha1 = self.sha1_of(entry, entry.get("destination", ""))
                     if sha1:
                         self.platforms.setdefault(sha1, set()).add(name)
+                        self.platform_systems.setdefault(sha1, {}).setdefault(
+                            name, set()
+                        ).add(system_id)
+
+    def path_of(self, sha1: str) -> str:
+        """The collection path the database records for a file."""
+        return str(self._db.get("files", {}).get(sha1, {}).get("path", ""))
 
     def add_emulators(self, profiles: dict[str, dict]) -> None:
         for name, profile in profiles.items():

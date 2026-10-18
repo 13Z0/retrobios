@@ -1418,6 +1418,8 @@ def _render_platform_systems(
             lines.append("")
             pad = "    "
         else:
+            # The same anchor in both layouts: emulator cards link here.
+            lines.append(f'<a id="{anchor}"></a>')
             lines.append(f"## {sys_link}")
             lines.append("")
             pad = ""
@@ -2180,6 +2182,7 @@ def _render_emulator_file(
     files: list,
     _file_available: Callable[[dict], bool],
     anchor: str = "",
+    owner: str = "",
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
 
@@ -2305,10 +2308,27 @@ def _render_emulator_file(
             f"Source: {_source_ref_markdown(profile, source_ref)}"
         )
     if consumers:
-        sha1 = consumers.sha1_of(f, f.get("path") or "")
+        sha1 = consumers.sha1_of(f, f.get("path") or "", owner=owner)
+        if sha1 and in_repo:
+            # Which copy answers this entry, linked to its collection card
+            # (provenance, every hash, download): an entry declaring no hash
+            # said "in repo" without naming the file.
+            held = consumers.path_of(sha1)
+            parts = held.split("/")
+            if len(parts) >= 3 and parts[0] == "bios":
+                page = parts[1].lower().replace(" ", "-")
+                details.append(
+                    f"Collection copy: [`{held}`](../systems/{page}.md#sha1-{sha1[:12]})"
+                )
         plats = sorted(consumers.platforms.get(sha1, ())) if sha1 else []
         if plats:
-            plat_links = [_platform_link(p, p, "../") for p in plats]
+            systems_of = consumers.platform_systems.get(sha1, {})
+            plat_links = []
+            for p in plats:
+                section = sorted(systems_of.get(p, ()))
+                # Land on the system section that gives the destination.
+                fragment = f"#{section[0].replace(' ', '-')}" if section else ""
+                plat_links.append(f"[{p}](../platforms/{p}.md{fragment})")
             details.append(f"Platforms: {', '.join(plat_links)}")
 
     if dest and dest != fname and dest != fpath:
@@ -2712,7 +2732,7 @@ def generate_emulator_page(
             anchor = base if used[base] == 1 else f"{base}-{used[base]}"
             lines.extend(
                 _render_emulator_file(
-                    f, profile, consumers, files, _file_available, anchor
+                    f, profile, consumers, files, _file_available, anchor, name
                 )
             )
 

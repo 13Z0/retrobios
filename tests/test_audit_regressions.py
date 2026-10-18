@@ -4581,5 +4581,31 @@ class NullReadsAsNone(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+
+class EmulatorCardsLinkTheCopyAndTheSection(unittest.TestCase):
+    """Dolphin's IPL.bin (GC/USA) read "in repo" without naming the copy,
+    did not link its collection card, and its platform links landed on the
+    page top instead of the GameCube section."""
+
+    def test_copy_and_sections(self):
+        from types import SimpleNamespace
+
+        from scripts.generate_site import _render_emulator_file
+
+        sha1 = "ef9194ab4804aa0aa8540d846caf291b28331165"
+        consumers = SimpleNamespace(
+            sha1_of=lambda entry, dest="", owner="": sha1,
+            path_of=lambda value: "bios/Nintendo/GameCube/GC/USA/IPL.bin",
+            platforms={sha1: {"batocera"}},
+            platform_systems={sha1: {"batocera": {"nintendo-gamecube"}}},
+        )
+        entry = {"name": "IPL.bin", "path": "GC/USA/IPL.bin"}
+        text = "\n".join(_render_emulator_file(
+            entry, {"files": [entry]}, consumers, [entry], lambda f: True, "file-ipl", "dolphin",
+        ))
+        self.assertIn("../systems/nintendo.md#sha1-ef9194ab4804", text)
+        self.assertIn("../platforms/batocera.md#nintendo-gamecube", text)
+
+
 if __name__ == "__main__":
     unittest.main()
