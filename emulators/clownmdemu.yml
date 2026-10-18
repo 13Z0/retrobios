@@ -5,6 +5,8 @@ source: "https://github.com/Clownacy/clownmdemu-libretro"
 upstream: "https://github.com/Clownacy/clownmdemu"
 profiled_date: "2026-03-23"
 source_commit: "d43c2708b0a31c285ce16724b6c4a2e92af07346"
+# The core the port vendors at source_commit (common -> core submodule).
+upstream_commit: "88ef45a6585556e2247dd26b6c937d6b9fb4a12d"
 core_version: "Git"
 display_name: "Sega - MD/CD (ClownMDEmu)"
 cores:
@@ -32,6 +34,6 @@ analysis:
     boot_rom_source: "https://github.com/Clownacy/clownmdemu-mcd-boot"
     boot_rom_location: "source/mega-cd-boot-rom.c (16384 uint16 entries = 32 KB)"
     bus_mapping: "0x400000-0x41FFFF (address & 0x20000 == 0)"
-    source_ref: "source/bus-main-m68k.c:19-21, source/bus-main-m68k.c:519-531"
+    source_ref: "source/bus-main-m68k.c:19-21, source/bus-main-m68k.c:508-521"
     bios_hle: true
     hle_source_ref: "source/bus-sub-m68k.c:66 (MegaCDBIOSCall)"
