@@ -267,6 +267,18 @@ class TestResolveRegionDrops(unittest.TestCase):
     def _drops(self, groups, requested):
         return region.resolve_region_drops(groups, self.index, requested)
 
+    def test_a_lone_file_never_vetoes_its_system(self):
+        """Dolphin's GC/EUR/IPL.bin came back as a core extra alone in its
+        group, and that group's keep cancelled the drop the GameCube group
+        decided: the full pack kept what --source platform dropped."""
+        groups = {
+            "psx": [("scph5501.bin", "scph5501.bin"), ("scph5502.bin", "scph5502.bin")],
+            "core:file:scph5502.bin": [("scph5502.bin", "scph5502.bin")],
+        }
+        self.assertEqual(self._drops(groups, ["north-america"]), {"scph5502.bin"})
+        alone = {"core:file:scph5502.bin": [("scph5502.bin", "scph5502.bin")]}
+        self.assertEqual(self._drops(alone, ["north-america"]), set())
+
     def test_a_missing_match_never_displaces_a_held_file(self):
         """Grouped so the report can withdraw it, a missing file must not
         take a held one's place: a Japanese request with only the American

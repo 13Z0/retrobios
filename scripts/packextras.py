@@ -20,6 +20,7 @@ from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
 from validation import read_from_system_dir
+from region import FILE_GROUP
 
 
 def _detect_extras_prefix(config: dict, base_dest: str) -> str:
@@ -1044,7 +1045,7 @@ def extra_region_groups(
     # Enterprise group drop its German ROM. Alone, it drops nothing and is
     # never dropped.
     destination = extra.get("destination", extra.get("name", ""))
-    return [f"{emulator}:file:{destination}"]
+    return [f"{emulator}{FILE_GROUP}{destination}"]
 
 def emulator_region_drops(
     selected: list[tuple[str, dict]],
@@ -1108,5 +1109,5 @@ def _emulator_region_group(
     if not system and len(profile_systems) == 1:
         system = profile_systems[0]
     if not system:
-        return f"{emu_name}:file:{dest}"
+        return f"{emu_name}{FILE_GROUP}{dest}"
     return f"{emu_name}:system:{system}"

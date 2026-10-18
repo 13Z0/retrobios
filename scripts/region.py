@@ -266,6 +266,11 @@ def _competing_ranks(
     return ranked
 
 
+# Marks the group of a file no system names (extra_region_groups and the
+# emulator-mode grouping both build it).
+FILE_GROUP = ":file:"
+
+
 def resolve_region_drops(
     groups: dict[str, list[tuple[str, str]]],
     index: dict[str, dict],
@@ -288,7 +293,14 @@ def resolve_region_drops(
 
     keep: set[str] = set()
     drop: set[str] = set()
-    for members in groups.values():
+    for group_id, members in groups.items():
+        if FILE_GROUP in group_id:
+            # A file no system names competes with nothing: it drops nothing,
+            # and keeping it would veto the group that does decide for the
+            # same path. Dolphin's GC/EUR/IPL.bin, alone as a core extra,
+            # kept what the GameCube group dropped for --region us. A system
+            # holding one file still keeps it: a group is never emptied.
+            continue
         regional: list[tuple[int, str]] = []
         world: set[str] = set()
         untagged: set[str] = set()
