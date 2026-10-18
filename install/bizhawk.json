@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-17T14:58:23Z",
+  "generated": "2026-10-17T23:31:21Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -21,9 +21,9 @@
   ],
   "standalone_copies": [],
   "total_files": 922,
-  "total_size": 2539840597,
+  "total_size": 2539851389,
   "pack_files": 924,
-  "pack_size": 2539840597,
+  "pack_size": 2539851389,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -7717,18 +7717,8 @@
       "size": 3455065,
       "repo_path": "bios/Arcade/Arcade/stvbios.zip",
       "cores": [
-        "beetle_saturn"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7783ab663bb1a8d62ff60d583674355c2af556b1",
-          "sha256": "38ceb2792c72770f56aadb1865cf66dc33a3017db1ee05e11c2b2dff397ad39e",
-          "size": 2955630,
-          "repo_path": "bios/Arcade/MAME/stvbios.zip",
-          "cores": [
-            "mame"
-          ]
-        }
+        "beetle_saturn",
+        "mame"
       ]
     },
     {
@@ -8553,10 +8543,10 @@
     },
     {
       "dest": "hikaru.zip",
-      "sha1": "041feccfae58fe052247119138098b51c26448ed",
-      "sha256": "f71329fce4e616df3473f1e115931e36afbe13a36769df652db6cdae28ccfccf",
-      "size": 1049242,
-      "repo_path": "bios/Arcade/Arcade/hikaru.zip",
+      "sha1": "8ce366388c9e09c5d218d639f19d1d816b59395d",
+      "sha256": "806a236b5665bbcc4f204e8e877e8c9416d150353a34d469849244bbaa138dbf",
+      "size": 1049493,
+      "repo_path": "bios/Sega/Hikaru/hikaru.zip",
       "cores": [
         "mame"
       ]
@@ -8609,10 +8599,10 @@
     },
     {
       "dest": "megaplay.zip",
-      "sha1": "9012d69ce8d2efe231012dc033d651065b5f4669",
-      "sha256": "fa8e8dd81f091f44f52ebda692deb98057cec04c338fe1f1f5bfee9d7b75a659",
-      "size": 49978,
-      "repo_path": "bios/Arcade/MAME/megaplay.zip",
+      "sha1": "cbdb2ec6510fd760d2b6a0ad4c1f54b9f6b80b76",
+      "sha256": "641100cf14081dc13d078cf8860213f3c345a2a7f87a9d67a62efd48e29d93cb",
+      "size": 50801,
+      "repo_path": "bios/Arcade/MAME/.variants/megaplay.zip",
       "cores": [
         "mame"
       ]
@@ -8666,23 +8656,13 @@
     },
     {
       "dest": "decocass.zip",
-      "sha1": "cf6c5c284110bdac0496704884fcd4f29d8480d9",
-      "sha256": "947956d4983e8500b22cd6c40a1cc5ca13328c9849352ea966ddc882e125ac57",
-      "size": 13203,
-      "repo_path": "bios/Arcade/MAME/decocass.zip",
+      "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
+      "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
+      "size": 22379,
+      "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
-        "mame"
-      ],
-      "alternatives": [
-        {
-          "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
-          "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
-          "size": 22379,
-          "repo_path": "bios/Arcade/Arcade/decocass.zip",
-          "cores": [
-            "fbneo"
-          ]
-        }
+        "mame",
+        "fbneo"
       ]
     },
     {
@@ -9256,10 +9236,10 @@
     },
     {
       "dest": "gts1.zip",
-      "sha1": "d0a347bbf8d3d6996a025054fe84f16719cc871f",
-      "sha256": "2054f0619231def0b5dca29e0e2662bb63e7365f66d6dd0b143bc6fa153ffa4a",
-      "size": 3756,
-      "repo_path": "bios/Arcade/MAME/gts1.zip",
+      "sha1": "d4b0c8277c187a92279e2d2b71fc91b72d581257",
+      "sha256": "bc9de75976d523320ebb05b8a31e4c082c442bc564475db540b36c68026b6e15",
+      "size": 3759,
+      "repo_path": "bios/Arcade/PinMAME/pinmame/roms/gts1.zip",
       "cores": [
         "mame"
       ],
@@ -9840,10 +9820,10 @@
     },
     {
       "dest": "trs80.zip",
-      "sha1": "b7234d5a61a9b52b1b656e672d559bd3cb6526a1",
-      "sha256": "24c8398c46a0b5373e7ad82b8bc0a58af35e09d90ca096286b096588f37e104e",
-      "size": 14019,
-      "repo_path": "bios/Arcade/Arcade/trs80.zip",
+      "sha1": "a9b8931c42303e8dfb475112fc18ff200b7252ce",
+      "sha256": "bc508eeb02be884256a8b12ab4eb28baf91dfea54f1abbc417c771d05a06a712",
+      "size": 14558,
+      "repo_path": "bios/Tandy/TRS-80/trs80.zip",
       "cores": [
         "mame"
       ]

@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-17T14:58:23Z",
+  "generated": "2026-10-17T23:31:21Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -238,9 +238,9 @@
     }
   ],
   "total_files": 12893,
-  "total_size": 9276132393,
+  "total_size": 9279203966,
   "pack_files": 12895,
-  "pack_size": 9276132393,
+  "pack_size": 9279203966,
   "total_omitted": 395,
   "omitted_files": [
     {
@@ -7102,10 +7102,10 @@
     },
     {
       "dest": "dragon32.zip",
-      "sha1": "976c799fbab92dd0ab591f035052d03718d3cd23",
-      "sha256": "1a1c88991944295f9f3f6660b2814cbcfc6805aca853665dc87524e05122e262",
-      "size": 13776,
-      "repo_path": "bios/Arcade/Arcade/dragon32.zip",
+      "sha1": "9e042597360e6090687b040364101a64c9f54a89",
+      "sha256": "82b52e5de5e5b9d206ebbb3775df0939b8f896735108de46c9e93d24c546d89f",
+      "size": 34983,
+      "repo_path": "bios/Dragon/Dragon/dragon32.zip",
       "cores": null,
       "systems": [
         "dragon64"
@@ -8008,10 +8008,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "041feccfae58fe052247119138098b51c26448ed",
-          "sha256": "f71329fce4e616df3473f1e115931e36afbe13a36769df652db6cdae28ccfccf",
-          "size": 1049242,
-          "repo_path": "bios/Arcade/Arcade/hikaru.zip",
+          "sha1": "8ce366388c9e09c5d218d639f19d1d816b59395d",
+          "sha256": "806a236b5665bbcc4f204e8e877e8c9416d150353a34d469849244bbaa138dbf",
+          "size": 1049493,
+          "repo_path": "bios/Sega/Hikaru/hikaru.zip",
           "cores": [
             "demul",
             "mame"
@@ -8061,10 +8061,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "05723a49f8f79507742cb4461743d531f580f677",
-          "sha256": "0fdcf0b50617cd5efa51b542805b2f119678e399f24416e8698e46d8d63e9ea3",
-          "size": 12456,
-          "repo_path": "bios/Arcade/Arcade/jvs13551.zip",
+          "sha1": "2c79934afdbcfc15684de9b75a520ac196ca75d5",
+          "sha256": "ecaa2e254c5200ec1a136d06dec3e3d18314f6dc7d26918ebc62296a59051d1e",
+          "size": 15088,
+          "repo_path": "bios/Sega/Hikaru/jvs13551.zip",
           "cores": [
             "demul"
           ]
@@ -9535,7 +9535,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
+      "repo_path": "bios/Roland/MT32_PCM.ROM",
       "cores": null,
       "systems": [
         "scummvm"
@@ -9545,7 +9545,7 @@
           "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
           "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
           "size": 524288,
-          "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
+          "repo_path": "bios/Roland/MT32_PCM.ROM",
           "cores": [
             "scummvm"
           ]
@@ -9557,7 +9557,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
+      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
       "cores": null,
       "systems": [
         "scummvm"
@@ -9567,7 +9567,7 @@
           "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
           "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
           "size": 65536,
-          "repo_path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
+          "repo_path": "bios/Roland/MT32_CONTROL.ROM",
           "cores": [
             "scummvm"
           ]
@@ -10003,10 +10003,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "420194cc1171adb1920d2ff05e3b7b9ae2b73942",
+          "sha256": "7eb6e948f095d669f4bcdd22dbb58f6e3da4f3cca5ffe92ea42ebca8396cadac",
+          "size": 2438734,
+          "repo_path": "bios/Arcade/Arcade/.variants/neogeo.zip.9d7bbba3",
           "cores": [
             "fba2x"
           ]
@@ -10021,10 +10021,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "fc398ab4e13ca6bfef3366ed3391b1050e0eb5e8",
+          "sha256": "d5eb00ce8a584ca185732cbbab7d99665f43023c1ef8d1237154d3431270b907",
+          "size": 1862445,
+          "repo_path": "bios/SNK/Neo Geo/.variants/neogeo.zip.fc398ab4",
           "cores": [
             "mame2003_plus"
           ]
@@ -10241,10 +10241,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "5158b728e62b391fb69493743dcf7abbc62abc82",
-          "sha256": "719f3ac7daf609aad3646814930dc583e1872e985b4f7c06ccb5e8cffda105bd",
+          "sha1": "5142f205912869b673a71480c5828b1eaed782a8",
+          "sha256": "1c3ec20824a58e5f5cbf47ccc2c91a10f34d21cfa2791b3413cea89b0c920db8",
           "size": 524288,
-          "repo_path": "bios/SNK/Neo Geo/uni-bioscd32.rom",
+          "repo_path": "bios/SNK/Neo Geo/uni-bioscd33.rom",
           "cores": [
             "neocd"
           ]
@@ -10652,20 +10652,20 @@
     },
     {
       "dest": "trs80.zip",
-      "sha1": "b7234d5a61a9b52b1b656e672d559bd3cb6526a1",
-      "sha256": "24c8398c46a0b5373e7ad82b8bc0a58af35e09d90ca096286b096588f37e104e",
-      "size": 14019,
-      "repo_path": "bios/Arcade/Arcade/trs80.zip",
+      "sha1": "a9b8931c42303e8dfb475112fc18ff200b7252ce",
+      "sha256": "bc508eeb02be884256a8b12ab4eb28baf91dfea54f1abbc417c771d05a06a712",
+      "size": 14558,
+      "repo_path": "bios/Tandy/TRS-80/trs80.zip",
       "cores": null,
       "systems": [
         "trs80"
       ],
       "alternatives": [
         {
-          "sha1": "b7234d5a61a9b52b1b656e672d559bd3cb6526a1",
-          "sha256": "24c8398c46a0b5373e7ad82b8bc0a58af35e09d90ca096286b096588f37e104e",
-          "size": 14019,
-          "repo_path": "bios/Arcade/Arcade/trs80.zip",
+          "sha1": "a9b8931c42303e8dfb475112fc18ff200b7252ce",
+          "sha256": "bc508eeb02be884256a8b12ab4eb28baf91dfea54f1abbc417c771d05a06a712",
+          "size": 14558,
+          "repo_path": "bios/Tandy/TRS-80/trs80.zip",
           "cores": [
             "mame"
           ]
@@ -51921,7 +51921,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_cm32l.rom",
+      "repo_path": "bios/Roland/CM32L_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox-x",
@@ -51963,7 +51963,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
+      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
       "cores": [
         "dosbox-staging"
       ]
@@ -52033,7 +52033,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/cm32l_control.rom",
+      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
       "cores": [
         "dosbox-staging"
       ]
@@ -52153,7 +52153,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
+      "repo_path": "bios/Roland/MT32_PCM.ROM",
       "cores": [
         "dosbox-staging",
         "amiberry"
@@ -52184,7 +52184,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_cm32l.rom",
+      "repo_path": "bios/Roland/CM32L_PCM.ROM",
       "cores": [
         "dosbox-staging",
         "amiberry"
@@ -125777,7 +125777,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
+      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -125790,7 +125790,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/cm32l_control.rom",
+      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -125933,27 +125933,9 @@
       "repo_path": "bios/Arcade/Arcade/stvbios.zip",
       "cores": [
         "beetle_saturn",
-        "kronos"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7783ab663bb1a8d62ff60d583674355c2af556b1",
-          "sha256": "38ceb2792c72770f56aadb1865cf66dc33a3017db1ee05e11c2b2dff397ad39e",
-          "size": 2955630,
-          "repo_path": "bios/Arcade/MAME/stvbios.zip",
-          "cores": [
-            "mame"
-          ]
-        },
-        {
-          "sha1": "b14bbed4bf459439cf7e96d2f79d7adea5d31448",
-          "sha256": "1c4970da5f7066dd213d3dca14f7e45408cf667f508f4653025626bb33fbeb14",
-          "size": 3455065,
-          "repo_path": "bios/Arcade/Arcade/stvbios.zip",
-          "cores": [
-            "mame2003_plus"
-          ]
-        }
+        "kronos",
+        "mame",
+        "mame2003_plus"
       ]
     },
     {
@@ -128237,13 +128219,23 @@
     },
     {
       "dest": "naomigd.zip",
-      "sha1": "a0f07de6070d98f86d55a4ecd61b4a5b05a4a0d5",
-      "sha256": "d185636dd45be0545cb22557793b4ac0543c8b8a9abcf6a78eaffc3cc9d3f8fa",
-      "size": 3387512,
-      "repo_path": "bios/Arcade/MAME/naomigd.zip",
+      "sha1": "4b92936f396c8199f745d3ed0ff588a324b8dd70",
+      "sha256": "793db2a859be2d814d334ab511811c42c6727a16841e7627fa7c33171c3de441",
+      "size": 4972898,
+      "repo_path": "bios/Arcade/Arcade/naomigd.zip",
       "cores": [
-        "demul",
-        "mame"
+        "demul"
+      ],
+      "alternatives": [
+        {
+          "sha1": "a0f07de6070d98f86d55a4ecd61b4a5b05a4a0d5",
+          "sha256": "d185636dd45be0545cb22557793b4ac0543c8b8a9abcf6a78eaffc3cc9d3f8fa",
+          "size": 3387512,
+          "repo_path": "bios/Arcade/MAME/naomigd.zip",
+          "cores": [
+            "mame"
+          ]
+        }
       ]
     },
     {
@@ -128259,44 +128251,24 @@
     },
     {
       "dest": "f355bios.zip",
-      "sha1": "b6ff66dcb5547bd91760d239ddf428a655631c53",
-      "sha256": "8335208b035253d5c671ecaaa113369409ffd70e86d1c87ab1e21bdf352fff6c",
-      "size": 1394278,
-      "repo_path": "bios/Arcade/Arcade/f355bios.zip",
+      "sha1": "37487f9f73734e8dd621004a5ef98c5a2301bd1d",
+      "sha256": "47ebe6dad9d8398c7eacb69c652d8f5c449c6f7ce420579c3a287c1b73e0250b",
+      "size": 1396910,
+      "repo_path": "bios/Arcade/MAME/f355bios.zip",
       "cores": [
-        "demul"
-      ],
-      "alternatives": [
-        {
-          "sha1": "37487f9f73734e8dd621004a5ef98c5a2301bd1d",
-          "sha256": "47ebe6dad9d8398c7eacb69c652d8f5c449c6f7ce420579c3a287c1b73e0250b",
-          "size": 1396910,
-          "repo_path": "bios/Arcade/MAME/f355bios.zip",
-          "cores": [
-            "mame"
-          ]
-        }
+        "demul",
+        "mame"
       ]
     },
     {
       "dest": "f355dlx.zip",
-      "sha1": "48d1712d1b1cdfeeeb43c6287c17b0b6309cfaab",
-      "sha256": "58e88cedb31918e2b9deeaddb80df45b8484cc1c4f10792520360a2585ad5014",
-      "size": 2328436,
-      "repo_path": "bios/Arcade/Arcade/f355dlx.zip",
+      "sha1": "7740229e15dd80b20a8d263a67cd37c310602ee4",
+      "sha256": "92d8634d8c61a1b50aa0b517638d8829bb70e7fe051423695722e77869d6780c",
+      "size": 2331068,
+      "repo_path": "bios/Arcade/MAME/f355dlx.zip",
       "cores": [
-        "demul"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7740229e15dd80b20a8d263a67cd37c310602ee4",
-          "sha256": "92d8634d8c61a1b50aa0b517638d8829bb70e7fe051423695722e77869d6780c",
-          "size": 2331068,
-          "repo_path": "bios/Arcade/MAME/f355dlx.zip",
-          "cores": [
-            "mame"
-          ]
-        }
+        "demul",
+        "mame"
       ]
     },
     {
@@ -130415,22 +130387,30 @@
     },
     {
       "dest": "pgm.zip",
-      "sha1": "c0c001ec80fa860857000f4cfc9844a28498a355",
-      "sha256": "b8603d9021cf9508152fe8ce23c411bb631b24b61d24a26fdd41e273ab925fe5",
-      "size": 2094636,
-      "repo_path": "bios/Arcade/MAME/pgm.zip",
+      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
+      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
+      "size": 2240738,
+      "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
-        "fba2x",
-        "mame",
-        "mame2003_plus"
+        "fba2x"
       ],
       "alternatives": [
+        {
+          "sha1": "c0c001ec80fa860857000f4cfc9844a28498a355",
+          "sha256": "b8603d9021cf9508152fe8ce23c411bb631b24b61d24a26fdd41e273ab925fe5",
+          "size": 2094636,
+          "repo_path": "bios/Arcade/MAME/pgm.zip",
+          "cores": [
+            "mame"
+          ]
+        },
         {
           "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
           "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
           "size": 2240738,
           "repo_path": "bios/Arcade/Arcade/pgm.zip",
           "cores": [
+            "mame2003_plus",
             "fbneo"
           ]
         }
@@ -133293,10 +133273,10 @@
     },
     {
       "dest": "megaplay.zip",
-      "sha1": "9012d69ce8d2efe231012dc033d651065b5f4669",
-      "sha256": "fa8e8dd81f091f44f52ebda692deb98057cec04c338fe1f1f5bfee9d7b75a659",
-      "size": 49978,
-      "repo_path": "bios/Arcade/MAME/megaplay.zip",
+      "sha1": "cbdb2ec6510fd760d2b6a0ad4c1f54b9f6b80b76",
+      "sha256": "641100cf14081dc13d078cf8860213f3c345a2a7f87a9d67a62efd48e29d93cb",
+      "size": 50801,
+      "repo_path": "bios/Arcade/MAME/.variants/megaplay.zip",
       "cores": [
         "mame"
       ],
@@ -133430,24 +133410,14 @@
     },
     {
       "dest": "decocass.zip",
-      "sha1": "cf6c5c284110bdac0496704884fcd4f29d8480d9",
-      "sha256": "947956d4983e8500b22cd6c40a1cc5ca13328c9849352ea966ddc882e125ac57",
-      "size": 13203,
-      "repo_path": "bios/Arcade/MAME/decocass.zip",
+      "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
+      "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
+      "size": 22379,
+      "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
-        "mame"
-      ],
-      "alternatives": [
-        {
-          "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
-          "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
-          "size": 22379,
-          "repo_path": "bios/Arcade/Arcade/decocass.zip",
-          "cores": [
-            "mame2003_plus",
-            "fbneo"
-          ]
-        }
+        "mame",
+        "mame2003_plus",
+        "fbneo"
       ]
     },
     {
@@ -134332,12 +134302,20 @@
       ],
       "alternatives": [
         {
+          "sha1": "aabedfebe2cd8cfede8c2a3cb9ff33166f0ef953",
+          "sha256": "190c5fd9d68619eda986d32d03114a5c9239ab5c29e6e0676afe18612e9cd052",
+          "size": 783766,
+          "repo_path": "bios/Arcade/Arcade/.variants/skns.zip.aabedfeb",
+          "cores": [
+            "mame2003_plus"
+          ]
+        },
+        {
           "sha1": "4257bd14b541fafbd555cb98ba079a3416a45934",
           "sha256": "6edf22c68e70be06c9b32741e0d1df1aa38cf6fc162c1027c15d6c1d882f621b",
           "size": 924762,
           "repo_path": "bios/Arcade/Arcade/skns.zip",
           "cores": [
-            "mame2003_plus",
             "fbneo"
           ]
         }
@@ -134957,10 +134935,10 @@
     },
     {
       "dest": "gts1.zip",
-      "sha1": "d0a347bbf8d3d6996a025054fe84f16719cc871f",
-      "sha256": "2054f0619231def0b5dca29e0e2662bb63e7365f66d6dd0b143bc6fa153ffa4a",
-      "size": 3756,
-      "repo_path": "bios/Arcade/MAME/gts1.zip",
+      "sha1": "d4b0c8277c187a92279e2d2b71fc91b72d581257",
+      "sha256": "bc9de75976d523320ebb05b8a31e4c082c442bc564475db540b36c68026b6e15",
+      "size": 3759,
+      "repo_path": "bios/Arcade/PinMAME/pinmame/roms/gts1.zip",
       "cores": [
         "mame"
       ],
@@ -138293,7 +138271,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/cm32l_control.rom",
+      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
       "cores": [
         "scummvm"
       ],
@@ -138306,7 +138284,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_cm32l.rom",
+      "repo_path": "bios/Roland/CM32L_PCM.ROM",
       "cores": [
         "scummvm"
       ],
@@ -140735,44 +140713,24 @@
     },
     {
       "dest": "naomi.zip",
-      "sha1": "788aee0f30ee80ea54dcd705afe93944accafc31",
-      "sha256": "62a011c3a4dc5686ebced343987199bd7ccad1578ca8e2f2350b41204d87de65",
-      "size": 9651827,
-      "repo_path": "bios/Arcade/Arcade/naomi.zip",
+      "sha1": "a39d7d17e52c26435ed1745503c7d6a68b36be1d",
+      "sha256": "9b85d2183bc3739efa2ebf1440c73abb252c6ca8944efcff3a7204645f7e03d4",
+      "size": 10419595,
+      "repo_path": "bios/Arcade/MAME/naomi.zip",
       "cores": [
-        "demul"
-      ],
-      "alternatives": [
-        {
-          "sha1": "a39d7d17e52c26435ed1745503c7d6a68b36be1d",
-          "sha256": "9b85d2183bc3739efa2ebf1440c73abb252c6ca8944efcff3a7204645f7e03d4",
-          "size": 10419595,
-          "repo_path": "bios/Arcade/MAME/naomi.zip",
-          "cores": [
-            "mame"
-          ]
-        }
+        "demul",
+        "mame"
       ]
     },
     {
       "dest": "naomi2.zip",
-      "sha1": "da79eca49c59f7661737643b5e11e63a73b51fcc",
-      "sha256": "5efc11a37e0b8fe97e0007bb707d8a4f047dd0b8b7ba59293e81cca0443f7993",
-      "size": 7038226,
-      "repo_path": "bios/Arcade/Arcade/naomi2.zip",
+      "sha1": "b42c05722fa25416a382f87113132131153363f7",
+      "sha256": "f227eade732c9f77fda75f7084703b6d12bfcdb83a726a0b1509abe04f13fe5e",
+      "size": 7573531,
+      "repo_path": "bios/Arcade/MAME/naomi2.zip",
       "cores": [
-        "demul"
-      ],
-      "alternatives": [
-        {
-          "sha1": "b42c05722fa25416a382f87113132131153363f7",
-          "sha256": "f227eade732c9f77fda75f7084703b6d12bfcdb83a726a0b1509abe04f13fe5e",
-          "size": 7573531,
-          "repo_path": "bios/Arcade/MAME/naomi2.zip",
-          "cores": [
-            "mame"
-          ]
-        }
+        "demul",
+        "mame"
       ]
     },
     {
@@ -140830,7 +140788,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
+      "repo_path": "bios/Roland/MT32_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox-x",

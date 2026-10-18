@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-17T13:36:45Z",
+  "generated": "2026-10-17T23:31:21Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -250,10 +250,10 @@
       }
     }
   ],
-  "total_files": 626,
-  "total_size": 3488254881,
-  "pack_files": 628,
-  "pack_size": 3488254881,
+  "total_files": 619,
+  "total_size": 3480100802,
+  "pack_files": 621,
+  "pack_size": 3480100802,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -730,10 +730,10 @@
     },
     {
       "dest": "IPL.bin",
-      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
-      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
+      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
+      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
       "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
+      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-gamecube"
@@ -790,6 +790,17 @@
       "cores": null,
       "systems": [
         "nintendo-wii-u"
+      ],
+      "alternatives": [
+        {
+          "sha1": "9edc52be45201ec99f6e4ceb5dc6abfc633c4eae",
+          "sha256": "c5b9ee2a14cf6a0effb3b2f0f4b93be75823da80ebf5f0ca6a0f2be8b5aa5bfd",
+          "size": 449507,
+          "repo_path": "bios/Nintendo/Wii U/keys.txt",
+          "cores": [
+            "cemu"
+          ]
+        }
       ]
     },
     {
@@ -838,10 +849,10 @@
     },
     {
       "dest": "dc/naomi.zip",
-      "sha1": "788aee0f30ee80ea54dcd705afe93944accafc31",
-      "sha256": "62a011c3a4dc5686ebced343987199bd7ccad1578ca8e2f2350b41204d87de65",
-      "size": 9651827,
-      "repo_path": "bios/Arcade/Arcade/naomi.zip",
+      "sha1": "a39d7d17e52c26435ed1745503c7d6a68b36be1d",
+      "sha256": "9b85d2183bc3739efa2ebf1440c73abb252c6ca8944efcff3a7204645f7e03d4",
+      "size": 10419595,
+      "repo_path": "bios/Arcade/MAME/naomi.zip",
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
@@ -1440,7 +1451,7 @@
       ]
     },
     {
-      "dest": "Cemu/resources/sharedFonts/CafeCn.ttf",
+      "dest": "resources/sharedFonts/CafeCn.ttf",
       "sha1": "2d95227b9b3eaf1c74d9293ecd0d190ec7ffbbe3",
       "sha256": "6afd751a9bb76bc788efb50a138c6f3765624ee84d8d8203be04d871ade40a6a",
       "size": 9664448,
@@ -1453,7 +1464,7 @@
       ]
     },
     {
-      "dest": "Cemu/resources/sharedFonts/CafeKr.ttf",
+      "dest": "resources/sharedFonts/CafeKr.ttf",
       "sha1": "f0ef38fcc6133c24f4f38ff9b5c06b37e970d3cc",
       "sha256": "c3c326f6ce1899e391dc4996b10a0c30558c5b8f36dfbaa418976862b3e2dffb",
       "size": 5626464,
@@ -1466,7 +1477,7 @@
       ]
     },
     {
-      "dest": "Cemu/resources/sharedFonts/CafeStd.ttf",
+      "dest": "resources/sharedFonts/CafeStd.ttf",
       "sha1": "da0d4bcc3b13339179bee946eba16adfd731b4d3",
       "sha256": "59e2494727b8e7a7bbf48c8749f2dbc07d438c9fabeaa9847a08ec690f9888a1",
       "size": 5363768,
@@ -1479,7 +1490,7 @@
       ]
     },
     {
-      "dest": "Cemu/resources/sharedFonts/CafeTw.ttf",
+      "dest": "resources/sharedFonts/CafeTw.ttf",
       "sha1": "8ec796192ebc710f23ab6bd55453cae523b70444",
       "sha256": "c8f9e16345dbc3b6e165fe12435486a748e730ebe6002b5d713efe73d171d51c",
       "size": 6593548,
@@ -4063,27 +4074,37 @@
       ]
     },
     {
-      "dest": "supermodel/Games.xml",
-      "sha1": "fa334ab5ba6366bd28168860c913e6365b9fec96",
-      "sha256": "275832cdb077c22883192f5aaeb8f76547f4dce786370f10b2d54c46a8ed3c5e",
-      "size": 148364,
-      "repo_path": "bios/Sega/Model 3/supermodel/Games.xml",
+      "dest": "Config/Games.xml",
+      "sha1": "6871a47de90ca67f9ff8e4e280416851a8164563",
+      "sha256": "48c56b24ea720fb66188c0b2d94579a110be24971ac215ea808c563c665cf655",
+      "size": 151626,
+      "repo_path": "bios/Sega/Model 3/Config/Games.xml",
       "cores": [
         "supermodel"
       ]
     },
     {
-      "dest": "supermodel/Supermodel.ini",
-      "sha1": "cbda2b3fa65e37c5c2824a4630f95f145533c360",
-      "sha256": "3c910e7aa207ea55d1946fedaf12718115c21be5e67abf35b1220080c6c67919",
-      "size": 9421,
-      "repo_path": "bios/Sega/Model 3/supermodel/Supermodel.ini",
+      "dest": "Assets/p1crosshair.bmp",
+      "sha1": "581cea232c296c7bd76f3101c3ae1bffdf5abf08",
+      "sha256": "60920f5a98f37f1e0348df0bda0430e20327bea86bced7024f72f4ffddafc930",
+      "size": 295992,
+      "repo_path": "bios/Sega/Model 3/Assets/p1crosshair.bmp",
       "cores": [
         "supermodel"
       ]
     },
     {
-      "dest": "supermodel/Music.xml",
+      "dest": "Assets/p2crosshair.bmp",
+      "sha1": "13c5e692c7acf2ec8243ac421d58fdf69c6c2370",
+      "sha256": "3dcc570b7728cfbff314a6305c9c0f933c5fa82153c6d50c3b1e780c3615f33e",
+      "size": 295992,
+      "repo_path": "bios/Sega/Model 3/Assets/p2crosshair.bmp",
+      "cores": [
+        "supermodel"
+      ]
+    },
+    {
+      "dest": "Config/Music.xml",
       "sha1": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "sha256": "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c",
       "size": 9224,
@@ -4276,7 +4297,7 @@
       ]
     },
     {
-      "dest": "Cemu/otp.bin",
+      "dest": "otp.bin",
       "sha1": "aa4ebc7f94c22b04945b6c9232547ada10b71f6f",
       "sha256": "a12993f7fe069098ab6fe1cdb43099a1dfb568223bef08ed5cb43ec93d9ff2de",
       "size": 1024,
@@ -4289,7 +4310,7 @@
       ]
     },
     {
-      "dest": "Cemu/seeprom.bin",
+      "dest": "seeprom.bin",
       "sha1": "d08ffcf19945b63c7baf35d9965a9cd6bf61332b",
       "sha256": "eab425e6e65430232ec87a776d352f8fe1be4905df3a6bdaa0941c03e20069bc",
       "size": 512,
@@ -4302,7 +4323,7 @@
       ]
     },
     {
-      "dest": "Cemu/shareddata.bin",
+      "dest": "shareddata.bin",
       "sha1": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
       "sha256": "662bc6c693c88040531fbe51186ce203e188d1c67ad788b2013b3c91ce595420",
       "size": 33554432,
@@ -4315,7 +4336,7 @@
       ]
     },
     {
-      "dest": "Cemu/cafeLibs/snd_user.rpl",
+      "dest": "cafeLibs/snd_user.rpl",
       "sha1": "4e0ff91f1881203e404cd41ec34725b43eec5cf2",
       "sha256": "45b0dbe8926a263d86bc4e77084815e58336b9b437196d48bc3da3c5b2b2675e",
       "size": 84032,
@@ -4329,7 +4350,7 @@
       "executable": true
     },
     {
-      "dest": "Cemu/cafeLibs/snduser2.rpl",
+      "dest": "cafeLibs/snduser2.rpl",
       "sha1": "38eac5a4695e777b25c8f8a472f36e35c5a88fc4",
       "sha256": "ce928ad53d8497b6626ef3893cc0427c9ea36f0a63e82e2530179afa354eb15e",
       "size": 111360,
@@ -4343,7 +4364,7 @@
       "executable": true
     },
     {
-      "dest": "Cemu/cafeLibs/swkbd.rpl",
+      "dest": "cafeLibs/swkbd.rpl",
       "sha1": "4d88ddd169da56de721e4aa9e213a421f7221b4b",
       "sha256": "94532b2639819e121ba69d75f5eabdf00988f87609c9ab9afe5ba1ca01eef4ea",
       "size": 1116288,
@@ -4357,7 +4378,7 @@
       "executable": true
     },
     {
-      "dest": "Cemu/cafeLibs/erreula.rpl",
+      "dest": "cafeLibs/erreula.rpl",
       "sha1": "8c04ae8fea6e6d7431d9be8599377eca2dd690da",
       "sha256": "f259a75dba800856afdda263664c6f8563b59692d5694e64d763654550d294fc",
       "size": 790080,
@@ -4421,65 +4442,379 @@
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/dsp_rom.bin",
+      "dest": "GC/dsp_rom.bin",
       "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
       "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
       "size": 8192,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/dsp_coef.bin",
+      "dest": "GC/dsp_coef.bin",
       "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
       "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
       "size": 4096,
       "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/font_western.bin",
+      "dest": "GC/font_western.bin",
       "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
       "size": 6478,
       "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/font_japanese.bin",
+      "dest": "GC/font_japanese.bin",
       "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
       "size": 259626,
       "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/Triforce/segaboot.gcm",
+      "dest": "Triforce/segaboot.gcm",
       "sha1": "7297a11be143011ceb75a0720f96855003415a5d",
       "sha256": "9a2eee93f5ed961aea4b12a318e2b4a54fa69a31239c1378b8bef6ea02e90391",
       "size": 2097152,
       "repo_path": "bios/Sega/Triforce/segaboot.gcm",
       "cores": [
         "dolphin"
+      ]
+    },
+    {
+      "dest": "GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/WiiSD.raw",
+      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
+      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "storage": "release",
+      "release_asset": "WiiSD.raw"
+    },
+    {
+      "dest": "Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8723a_fw.bin",
+      "sha1": "2937529b25c46e29429811829988f56f28142a41",
+      "sha256": "756951ee36e417c0714b00547a6175d5d5decbe1e4cf7585f211019150c7cd10",
+      "size": 24548,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723a_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8723b_fw.bin",
+      "sha1": "5c43fb17ef04a2ee13f9e697f685f68f0d0d1096",
+      "sha256": "c9c8a9f6ebd90b7449a7e4d38ee39952dc7cc47d6c1d054e42cfbb5e4d818853",
+      "size": 45048,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723b_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8723d_fw.bin",
+      "sha1": "a9182178ae400dd68b3e82f5f4c650001e9d1b85",
+      "sha256": "6b70723b2db9b658cd9535fe36f1494b4494699e1ad07920c9356f8bd90d9263",
+      "size": 52080,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723d_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8761a_fw.bin",
+      "sha1": "7eca505aad586772d66c3d6336d450c591e10670",
+      "sha256": "581e5e81f5b51a29f475f8a276be95ad3210b3e3065987541c508e7f7a83a462",
+      "size": 74488,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8761a_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8761bu_fw.bin",
+      "sha1": "f5bf3a7fc9605ee31b3904d64b89ce0fa3d9eaf5",
+      "sha256": "1d7a9597349ad89344fa16c1913d3e39e9a12e966e417ca16871bc79bbe59edb",
+      "size": 44484,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8761bu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8821a_fw.bin",
+      "sha1": "0183b48cda05bd4aed70b9f0b762eea5d2fc3b1d",
+      "sha256": "3ed5077f8f02ff2b06be257691dc72061efac976cd2dc174057833624c820b9d",
+      "size": 37420,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8821a_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8821c_fw.bin",
+      "sha1": "9a192c6a003390a5eab017fe79d42514ec6712e7",
+      "sha256": "dfe7ef772d078ec09490c02190a32fcd40b3eaf3b040049d8930eb80e6d5743c",
+      "size": 54636,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8821c_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8822b_fw.bin",
+      "sha1": "d5ec968f1609b1c436ad25db7d34f5e393373396",
+      "sha256": "eecef2c3b2ff03c3a41292a93a25eca6f4ec38eb4a7491a3651b530be89a04fc",
+      "size": 51176,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8822b_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8822cu_fw.bin",
+      "sha1": "08751f476d0d0aa165af020ed19d2ed1fbaeeef6",
+      "sha256": "09d81457457a7760b867c715517d12dd3919f9ecec7b080f2985e75f1563209f",
+      "size": 38207,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8822cu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8851bu_fw.bin",
+      "sha1": "0e877d65077a42db4971c7f930dddc7b63047617",
+      "sha256": "7fcf88c00b2548a5ff157102a35722db5e4be655dab1ce8d9bddb6df85f88f24",
+      "size": 49760,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8851bu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8852au_fw.bin",
+      "sha1": "24118f0e3b1ac5be44abacd4fa0bc07e2364e223",
+      "sha256": "56be2eb99d36109bb5e01eee171573b6f3dd041238c01cd97ce4f01df8dbf09e",
+      "size": 67188,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852au_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8852bu_fw.bin",
+      "sha1": "22cacf5d1b9da25801cd5d6e8b7f06dff0965439",
+      "sha256": "c2b0d34a4ff8a8ea136993f0dc4ba657522d84231b4094c2a53cda39afc91c57",
+      "size": 129733,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852bu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8852cu_fw.bin",
+      "sha1": "acd067bdc7933d1d9b8f2d72a750de5d125a5529",
+      "sha256": "9b8b27741a914c1cecc1ab9837194236890522101a57ba1898eb55f8d538dae0",
+      "size": 113336,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852cu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8852btu_fw.bin",
+      "sha1": "eb1139c1b27429eef639b6002b16212d702ad378",
+      "sha256": "bd162fd3b70e805cf7a8098f22f4ddf5d89da58fafff97d87da1a1e2e0cbeb80",
+      "size": 128140,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852btu_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ]
+    },
+    {
+      "dest": "Load/Firmware/rtl_bt/rtl8922au_fw.bin",
+      "sha1": "088a3cf44d2372cdb557241bbbf519bcbbac156f",
+      "sha256": "112290ca9dc3985034f572594812f0deb8530dd031686461b55cac43a1c35a79",
+      "size": 71360,
+      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8922au_fw.bin",
+      "cores": [
+        "dolphin",
+        "primehack"
+      ],
+      "systems": [
+        "nintendo-gamecube"
       ]
     },
     {
@@ -4672,10 +5007,10 @@
     },
     {
       "dest": "stvbios.zip",
-      "sha1": "7783ab663bb1a8d62ff60d583674355c2af556b1",
-      "sha256": "38ceb2792c72770f56aadb1865cf66dc33a3017db1ee05e11c2b2dff397ad39e",
-      "size": 2955630,
-      "repo_path": "bios/Arcade/MAME/stvbios.zip",
+      "sha1": "b14bbed4bf459439cf7e96d2f79d7adea5d31448",
+      "sha256": "1c4970da5f7066dd213d3dca14f7e45408cf667f508f4653025626bb33fbeb14",
+      "size": 3455065,
+      "repo_path": "bios/Arcade/Arcade/stvbios.zip",
       "cores": [
         "mame"
       ]
@@ -4705,10 +5040,10 @@
     },
     {
       "dest": "hikaru.zip",
-      "sha1": "041feccfae58fe052247119138098b51c26448ed",
-      "sha256": "f71329fce4e616df3473f1e115931e36afbe13a36769df652db6cdae28ccfccf",
-      "size": 1049242,
-      "repo_path": "bios/Arcade/Arcade/hikaru.zip",
+      "sha1": "8ce366388c9e09c5d218d639f19d1d816b59395d",
+      "sha256": "806a236b5665bbcc4f204e8e877e8c9416d150353a34d469849244bbaa138dbf",
+      "size": 1049493,
+      "repo_path": "bios/Sega/Hikaru/hikaru.zip",
       "cores": [
         "mame"
       ]
@@ -4761,10 +5096,10 @@
     },
     {
       "dest": "megaplay.zip",
-      "sha1": "9012d69ce8d2efe231012dc033d651065b5f4669",
-      "sha256": "fa8e8dd81f091f44f52ebda692deb98057cec04c338fe1f1f5bfee9d7b75a659",
-      "size": 49978,
-      "repo_path": "bios/Arcade/MAME/megaplay.zip",
+      "sha1": "cbdb2ec6510fd760d2b6a0ad4c1f54b9f6b80b76",
+      "sha256": "641100cf14081dc13d078cf8860213f3c345a2a7f87a9d67a62efd48e29d93cb",
+      "size": 50801,
+      "repo_path": "bios/Arcade/MAME/.variants/megaplay.zip",
       "cores": [
         "mame"
       ]
@@ -4807,10 +5142,10 @@
     },
     {
       "dest": "decocass.zip",
-      "sha1": "cf6c5c284110bdac0496704884fcd4f29d8480d9",
-      "sha256": "947956d4983e8500b22cd6c40a1cc5ca13328c9849352ea966ddc882e125ac57",
-      "size": 13203,
-      "repo_path": "bios/Arcade/MAME/decocass.zip",
+      "sha1": "1b33cf0e730a6cde96479b0face108b6931d433e",
+      "sha256": "bd86d293abab2e816d307626cdd793e2da2ed69c4124bf92f7e7eca69f9a5096",
+      "size": 22379,
+      "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
         "mame"
       ]
@@ -5373,10 +5708,10 @@
     },
     {
       "dest": "gts1.zip",
-      "sha1": "d0a347bbf8d3d6996a025054fe84f16719cc871f",
-      "sha256": "2054f0619231def0b5dca29e0e2662bb63e7365f66d6dd0b143bc6fa153ffa4a",
-      "size": 3756,
-      "repo_path": "bios/Arcade/MAME/gts1.zip",
+      "sha1": "d4b0c8277c187a92279e2d2b71fc91b72d581257",
+      "sha256": "bc9de75976d523320ebb05b8a31e4c082c442bc564475db540b36c68026b6e15",
+      "size": 3759,
+      "repo_path": "bios/Arcade/PinMAME/pinmame/roms/gts1.zip",
       "cores": [
         "mame"
       ],
@@ -5956,10 +6291,10 @@
     },
     {
       "dest": "trs80.zip",
-      "sha1": "b7234d5a61a9b52b1b656e672d559bd3cb6526a1",
-      "sha256": "24c8398c46a0b5373e7ad82b8bc0a58af35e09d90ca096286b096588f37e104e",
-      "size": 14019,
-      "repo_path": "bios/Arcade/Arcade/trs80.zip",
+      "sha1": "a9b8931c42303e8dfb475112fc18ff200b7252ce",
+      "sha256": "bc508eeb02be884256a8b12ab4eb28baf91dfea54f1abbc417c771d05a06a712",
+      "size": 14558,
+      "repo_path": "bios/Tandy/TRS-80/trs80.zip",
       "cores": [
         "mame"
       ]
@@ -6476,346 +6811,6 @@
       ]
     },
     {
-      "dest": "GC/dsp_rom.bin",
-      "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
-      "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
-      "size": 8192,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_rom.bin.3c6cc6e0",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "GC/dsp_coef.bin",
-      "sha1": "c116d867ba001dcd6bf6d399ff4bf38d340f556c",
-      "sha256": "a1e269cfdc6b82d5a55baab5a0bbbb3b9f953ad92729e0d5ec50dbc2746a2c47",
-      "size": 4096,
-      "repo_path": "bios/Nintendo/GameCube/.variants/dsp_coef.bin.c116d867",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "GC/font_western.bin",
-      "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370",
-      "sha256": "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0",
-      "size": 6478,
-      "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "GC/font_japanese.bin",
-      "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
-      "sha256": "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f",
-      "size": 259626,
-      "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "GBA/gba_bios.bin",
-      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
-      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/shared2/sys/SYSCONF",
-      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
-      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/Wii/SYSCONF",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/title/00000001/00000002/data/setting.txt",
-      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
-      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
-      "size": 256,
-      "repo_path": "bios/Nintendo/Wii/setting.txt",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/WiiSD.raw",
-      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
-      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
-      "size": 134217728,
-      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "storage": "release",
-      "release_asset": "WiiSD.raw"
-    },
-    {
-      "dest": "Wii/clientca.pem",
-      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
-      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
-      "size": 1005,
-      "repo_path": "bios/Nintendo/Wii/clientca.pem",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/clientcakey.pem",
-      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
-      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
-      "size": 609,
-      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Wii/rootca.pem",
-      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
-      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
-      "size": 897,
-      "repo_path": "bios/Nintendo/Wii/rootca.pem",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8723a_fw.bin",
-      "sha1": "2937529b25c46e29429811829988f56f28142a41",
-      "sha256": "756951ee36e417c0714b00547a6175d5d5decbe1e4cf7585f211019150c7cd10",
-      "size": 24548,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723a_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8723b_fw.bin",
-      "sha1": "5c43fb17ef04a2ee13f9e697f685f68f0d0d1096",
-      "sha256": "c9c8a9f6ebd90b7449a7e4d38ee39952dc7cc47d6c1d054e42cfbb5e4d818853",
-      "size": 45048,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723b_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8723d_fw.bin",
-      "sha1": "a9182178ae400dd68b3e82f5f4c650001e9d1b85",
-      "sha256": "6b70723b2db9b658cd9535fe36f1494b4494699e1ad07920c9356f8bd90d9263",
-      "size": 52080,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8723d_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8761a_fw.bin",
-      "sha1": "7eca505aad586772d66c3d6336d450c591e10670",
-      "sha256": "581e5e81f5b51a29f475f8a276be95ad3210b3e3065987541c508e7f7a83a462",
-      "size": 74488,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8761a_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8761bu_fw.bin",
-      "sha1": "f5bf3a7fc9605ee31b3904d64b89ce0fa3d9eaf5",
-      "sha256": "1d7a9597349ad89344fa16c1913d3e39e9a12e966e417ca16871bc79bbe59edb",
-      "size": 44484,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8761bu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8821a_fw.bin",
-      "sha1": "0183b48cda05bd4aed70b9f0b762eea5d2fc3b1d",
-      "sha256": "3ed5077f8f02ff2b06be257691dc72061efac976cd2dc174057833624c820b9d",
-      "size": 37420,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8821a_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8821c_fw.bin",
-      "sha1": "9a192c6a003390a5eab017fe79d42514ec6712e7",
-      "sha256": "dfe7ef772d078ec09490c02190a32fcd40b3eaf3b040049d8930eb80e6d5743c",
-      "size": 54636,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8821c_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8822b_fw.bin",
-      "sha1": "d5ec968f1609b1c436ad25db7d34f5e393373396",
-      "sha256": "eecef2c3b2ff03c3a41292a93a25eca6f4ec38eb4a7491a3651b530be89a04fc",
-      "size": 51176,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8822b_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8822cu_fw.bin",
-      "sha1": "08751f476d0d0aa165af020ed19d2ed1fbaeeef6",
-      "sha256": "09d81457457a7760b867c715517d12dd3919f9ecec7b080f2985e75f1563209f",
-      "size": 38207,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8822cu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8851bu_fw.bin",
-      "sha1": "0e877d65077a42db4971c7f930dddc7b63047617",
-      "sha256": "7fcf88c00b2548a5ff157102a35722db5e4be655dab1ce8d9bddb6df85f88f24",
-      "size": 49760,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8851bu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8852au_fw.bin",
-      "sha1": "24118f0e3b1ac5be44abacd4fa0bc07e2364e223",
-      "sha256": "56be2eb99d36109bb5e01eee171573b6f3dd041238c01cd97ce4f01df8dbf09e",
-      "size": 67188,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852au_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8852bu_fw.bin",
-      "sha1": "22cacf5d1b9da25801cd5d6e8b7f06dff0965439",
-      "sha256": "c2b0d34a4ff8a8ea136993f0dc4ba657522d84231b4094c2a53cda39afc91c57",
-      "size": 129733,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852bu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8852cu_fw.bin",
-      "sha1": "acd067bdc7933d1d9b8f2d72a750de5d125a5529",
-      "sha256": "9b8b27741a914c1cecc1ab9837194236890522101a57ba1898eb55f8d538dae0",
-      "size": 113336,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852cu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8852btu_fw.bin",
-      "sha1": "eb1139c1b27429eef639b6002b16212d702ad378",
-      "sha256": "bd162fd3b70e805cf7a8098f22f4ddf5d89da58fafff97d87da1a1e2e0cbeb80",
-      "size": 128140,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8852btu_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
-      "dest": "Load/Firmware/rtl_bt/rtl8922au_fw.bin",
-      "sha1": "088a3cf44d2372cdb557241bbbf519bcbbac156f",
-      "sha256": "112290ca9dc3985034f572594812f0deb8530dd031686461b55cac43a1c35a79",
-      "size": 71360,
-      "repo_path": "bios/Nintendo/GameCube/Load/Firmware/rtl_bt/rtl8922au_fw.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ]
-    },
-    {
       "dest": "PS3UPDAT.PUP",
       "sha1": "093f8698b54b78dcb701de2043f82639de51d63b",
       "sha256": "69070a95780f59fc9e0d82bcf53eb9b28fd4ed4a7d54d0a40045f80422fd98d6",
@@ -6832,7 +6827,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/mt32_control.rom",
+      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
       "cores": [
         "scummvm"
       ]
@@ -6842,7 +6837,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_mt32.rom",
+      "repo_path": "bios/Roland/MT32_PCM.ROM",
       "cores": [
         "scummvm"
       ]
@@ -6852,7 +6847,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/cm32l_control.rom",
+      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
       "cores": [
         "scummvm"
       ]
@@ -6862,7 +6857,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Commodore/Amiga/mt32-roms/pcm_cm32l.rom",
+      "repo_path": "bios/Roland/CM32L_PCM.ROM",
       "cores": [
         "scummvm"
       ]
@@ -7221,7 +7216,7 @@
       ]
     },
     {
-      "dest": "xbox_eeprom.bin",
+      "dest": "eeprom.bin",
       "sha1": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
       "sha256": "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2",
       "size": 256,
@@ -7260,7 +7255,7 @@
       ]
     },
     {
-      "dest": "pcsx2/bios/ps2-0230a-20080220.bin",
+      "dest": "ps2-0230a-20080220.bin",
       "sha1": "f9229fe159d0353b9f0632f3fdc66819c9030458",
       "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
       "size": 4194304,
@@ -7286,19 +7281,6 @@
       ]
     },
     {
-      "dest": "Cemu/keys.txt",
-      "sha1": "9edc52be45201ec99f6e4ceb5dc6abfc633c4eae",
-      "sha256": "c5b9ee2a14cf6a0effb3b2f0f4b93be75823da80ebf5f0ca6a0f2be8b5aa5bfd",
-      "size": 449507,
-      "repo_path": "bios/Nintendo/Wii U/keys.txt",
-      "cores": [
-        "cemu"
-      ],
-      "systems": [
-        "nintendo-wii-u"
-      ]
-    },
-    {
       "dest": "switch/prod.keys",
       "sha1": "c146b651696d25287241f4bab18226e488bc45b3",
       "sha256": "039895c6e93a0c6208c3af27da8c3fc408083873a96f2320dc334a6fa252c112",
@@ -7316,13 +7298,14 @@
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/USA/IPL.bin",
+      "dest": "GC/USA/IPL.bin",
       "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
       "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7331,17 +7314,18 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "Dolphin:file:GC/USA/IPL.bin"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/EUR/IPL.bin",
+      "dest": "GC/EUR/IPL.bin",
       "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
       "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7351,17 +7335,18 @@
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "Dolphin:file:GC/EUR/IPL.bin"
       ]
     },
     {
-      "dest": "dolphin-emu/Sys/GC/JAP/IPL.bin",
+      "dest": "GC/JAP/IPL.bin",
       "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
       "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
       "size": 2097152,
       "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
       "cores": [
-        "dolphin"
+        "dolphin",
+        "primehack"
       ],
       "systems": [
         "nintendo-gamecube"
@@ -7370,7 +7355,7 @@
         "japan"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "Dolphin:file:GC/JAP/IPL.bin"
       ]
     },
     {
@@ -7384,77 +7369,6 @@
       ]
     },
     {
-      "dest": "ps2-0230a-20080220.bin",
-      "sha1": "f9229fe159d0353b9f0632f3fdc66819c9030458",
-      "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
-      "size": 4194304,
-      "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
-      "cores": [
-        "pcsx2"
-      ],
-      "systems": [
-        "sony-playstation-2"
-      ]
-    },
-    {
-      "dest": "GC/USA/IPL.bin",
-      "sha1": "ef9194ab4804aa0aa8540d846caf291b28331165",
-      "sha256": "7c833f95839c226699108b93ab6acbe772788bfa3f05132b8ced5e78f5bc9a26",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "north-america"
-      ],
-      "region_groups": [
-        "PrimeHack:file:GC/USA/IPL.bin"
-      ]
-    },
-    {
-      "dest": "GC/EUR/IPL.bin",
-      "sha1": "80b8744ff5e43585392f55546bd03a673d11ef5f",
-      "sha256": "85ffcbc834238eb24c87fce27ba7b438cc53a77db013a0a7c59c78e0af08cb84",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "europe",
-        "oceania"
-      ],
-      "region_groups": [
-        "PrimeHack:file:GC/EUR/IPL.bin"
-      ]
-    },
-    {
-      "dest": "GC/JAP/IPL.bin",
-      "sha1": "a1837968288253ed541f2b11440b68f5a9b33875",
-      "sha256": "5b2f2617cc63f1861a1f4ae44bb135caf10e202b5b9b79271daaf60f8caaf37d",
-      "size": 2097152,
-      "repo_path": "bios/Nintendo/GameCube/GC/JAP/IPL.bin",
-      "cores": [
-        "primehack"
-      ],
-      "systems": [
-        "nintendo-gamecube"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "PrimeHack:file:GC/JAP/IPL.bin"
-      ]
-    },
-    {
       "dest": "eeprom.dat",
       "sha1": "ffc6261e487efa8c7442069f71acfc4aa826993d",
       "sha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
@@ -7463,6 +7377,19 @@
       "cores": [
         "armsx2",
         "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "arcade/proverb.zip",
+      "sha1": "65ae93ae9308be0f4a36fb401a82ebab57af531b",
+      "sha256": "ca1a6eaae507a09c0d8737a05ecfd9365f2622059d870f9e663dd8a8f44a7ed2",
+      "size": 1195760,
+      "repo_path": "bios/Other/armsx2/arcade/proverb.zip",
+      "cores": [
+        "armsx2"
       ],
       "systems": [
         "sony-playstation-2"
