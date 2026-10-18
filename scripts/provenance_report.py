@@ -22,7 +22,12 @@ import sys
 import zipfile
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import DEFAULT_PROVENANCE_DIR, load_database, load_provenance_snapshots
+from common import (
+    DEFAULT_PROVENANCE_DIR,
+    load_database,
+    load_provenance_snapshots,
+    write_if_changed,
+)
 
 
 def archive_members(db: dict) -> dict[tuple[str, int], list[tuple[str, str]]]:
@@ -176,7 +181,15 @@ def main() -> int:
         "byte swaps, concatenations); reads the collection, about 90 s",
     )
     parser.add_argument("--json", action="store_true", help="Full report as JSON")
+    parser.add_argument(
+        "--write-derivable",
+        metavar="PATH",
+        help="With --derive, record the derivable entries for the site "
+        "(the pipeline writes derivable.json)",
+    )
     args = parser.parse_args()
+    if args.write_derivable and not args.derive:
+        parser.error("--write-derivable records what --derive finds; pass both")
 
     db = load_database(args.db)
     snapshots = load_provenance_snapshots(args.provenance_dir)
@@ -195,6 +208,14 @@ def main() -> int:
                 e["sha1"]: derived[e["sha1"]] for e in data["missing"]
                 if e.get("sha1") in derived
             }
+        if args.write_derivable:
+            # The site cannot spend 80 s reading the collection on every
+            # build: the pipeline records what this pass found, and the
+            # Wanted page stops asking for dumps the collection can produce.
+            write_if_changed(
+                args.write_derivable,
+                json.dumps(dict(sorted(derived.items())), indent=2, sort_keys=True) + "\n",
+            )
 
     if args.json:
         print(json.dumps(report, indent=2))

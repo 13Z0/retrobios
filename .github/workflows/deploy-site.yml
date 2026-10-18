@@ -51,6 +51,7 @@ on:
       - "install.py"
       - "database.json"
       - "release.json"
+      - "derivable.json"
       - "mkdocs.yml"
       - ".github/workflows/deploy-site.yml"
   workflow_dispatch:

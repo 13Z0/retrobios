@@ -1690,7 +1690,22 @@ def _prov_title(data: dict) -> str:
     return ": ".join(p for p in parts if p).replace('"', "&quot;")
 
 
-def generate_provenance_page(db: dict, report: dict) -> str:
+def load_derivable(path: str = "derivable.json") -> dict[str, dict]:
+    """Missing sha1 -> how the collection produces it, as the pipeline found.
+
+    Empty when the pipeline has not recorded it: the page then lists every
+    missing dump, as it did before the record existed.
+    """
+    try:
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        return {}
+
+
+def generate_provenance_page(
+    db: dict, report: dict, derivable: dict[str, dict] | None = None
+) -> str:
     """Page explaining the verified dump badges and listing catalog gaps."""
     matched_files = count_catalog_matched(db)
     total_files = compute_composition(db)["systems"]["files"]
@@ -1774,6 +1789,20 @@ def generate_provenance_page(db: dict, report: dict) -> str:
             ]
         )
 
+    # A dump the collection already produces (the odd bytes of a Kickstart,
+    # the halves of a character ROM) is no acquisition target: the page asked
+    # the public for 79 of them.
+    derivable = derivable or {}
+    derived_entries: dict[str, dict] = {}
+    for data in report.values():
+        kept = []
+        for entry in data["missing"]:
+            sha1 = (entry.get("sha1") or "").lower()
+            if sha1 in derivable:
+                derived_entries.setdefault(sha1, entry)
+            else:
+                kept.append(entry)
+        data["missing"] = kept
     total_missing = distinct_missing(report)
     lines.extend(
         [
@@ -1810,6 +1839,26 @@ def generate_provenance_page(db: dict, report: dict) -> str:
                 desc = (entry.get("description") or "").replace("|", "-")
                 lines.append(f"    | `{name}` | {desc} | `{sha1}` |")
             lines.append("")
+
+    if derived_entries:
+        lines.extend(
+            [
+                "## Derivable: dumps the collection already produces",
+                "",
+                f"**{len(derived_entries):,}** catalogued dumps are not held as "
+                "files but come out of one that is: a byte or word split, a "
+                "half, a swap, or two chips joined. They are not wanted.",
+                "",
+                "| Name | Comes from | How | SHA1 |",
+                "|------|------------|-----|------|",
+            ]
+        )
+        for sha1, entry in sorted(derived_entries.items(), key=lambda kv: kv[1]["name"]):
+            how = derivable[sha1]
+            sources = " + ".join(f"`{path}`" for path in how.get("from", []))
+            name = entry["name"].replace("|", "-")
+            lines.append(f"| `{name}` | {sources} | {how.get('transform', '')} | `{sha1}` |")
+        lines.append("")
 
     lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
     return "\n".join(lines) + "\n"
@@ -3927,7 +3976,8 @@ def main() -> None:
     print("Generating dump provenance page...")
     provenance_report = build_report(db, load_provenance_snapshots())
     write_if_changed(
-        str(docs / "provenance.md"), generate_provenance_page(db, provenance_report)
+        str(docs / "provenance.md"),
+        generate_provenance_page(db, provenance_report, load_derivable()),
     )
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones

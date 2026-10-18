@@ -534,5 +534,31 @@ class OneDumpIsCountedOnce(unittest.TestCase):
         self.assertEqual(provenance_report.distinct_missing(twice), 1)
 
 
+class TheWantedPageAsksOnlyForWhatCannotBeMade(unittest.TestCase):
+    """The site's Wanted page asked the public for 79 dumps the collection
+    already produces (a Kickstart's odd bytes, a character ROM's halves)."""
+
+    def test_a_derivable_dump_moves_out_of_the_wanted_list(self):
+        from scripts import generate_site  # noqa: PLC0415
+
+        report = {"tosec": {
+            "imported_at": "2026-01-01", "dats": {}, "total": 2, "matched": 0,
+            "covered_dats": ["Commodore Amiga - Firmware"], "out_of_scope": 0,
+            "missing": [
+                {"name": "kick31.rom", "sha1": "a" * 40, "dat": "Commodore Amiga - Firmware"},
+                {"name": "lost.rom", "sha1": "b" * 40, "dat": "Commodore Amiga - Firmware"},
+            ],
+        }}
+        derivable = {"a" * 40: {"from": ["bios/Commodore/Amiga/a1200.rom"],
+                                "transform": "byte swap"}}
+        page = generate_site.generate_provenance_page({"files": {}}, report, derivable)
+        wanted, _, derived = page.partition("## Derivable")
+        self.assertIn("**1** dumps a catalog", wanted)
+        self.assertNotIn("kick31.rom", wanted)
+        self.assertIn("lost.rom", wanted)
+        self.assertIn("kick31.rom", derived)
+        self.assertIn("byte swap", derived)
+
+
 if __name__ == "__main__":
     unittest.main()

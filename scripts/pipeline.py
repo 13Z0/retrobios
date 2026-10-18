@@ -3,7 +3,7 @@
 
 Steps:
   1. generate_db.py --force     (rebuild database.json from bios/)
-  1b. provenance_report.py      (dump-catalog coverage from provenance/)
+  1b. provenance_report.py      (dump-catalog coverage, derivable.json)
   1c. romset_recipes.py         (archive identification, reconstruction targets)
   2. refresh_data_dirs.py       (update Dolphin Sys, PPSSPP, etc.)
   2b2. check_release_assets.py  (large-files release vs gitignored files, online)
@@ -400,9 +400,12 @@ def main() -> None:
         print("\nDatabase generation failed, aborting.")
         sys.exit(1)
 
-    # Step 1b: Dump-catalog coverage (offline, reads provenance/ snapshots)
+    # Step 1b: Dump-catalog coverage (offline, reads provenance/ snapshots),
+    # and which missing dumps the collection already produces: recorded in
+    # derivable.json, which the site reads instead of rereading bios/.
     ok, _ = run(
-        [sys.executable, "scripts/provenance_report.py"],
+        [sys.executable, "scripts/provenance_report.py", "--derive",
+         "--write-derivable", "derivable.json"],
         "1b provenance report",
     )
     results["provenance"] = ok

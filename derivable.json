@@ -1,0 +1,486 @@
+{
+  "03df800f032046fd892f6e7eec08b76d33981e8c": {
+    "from": [
+      "bios/Arcade/MAME/amiga_a570.zip/391298-01_v230.u20"
+    ],
+    "transform": "odd bytes"
+  },
+  "052ac869da3764b44031328cd584985f705a6516": {
+    "from": [
+      "bios/Enterprise/64-128/basic10.bin"
+    ],
+    "transform": "first half"
+  },
+  "05ff9debbb0c6a2e446243dbb58b192ec901af7e": {
+    "from": [
+      "bios/Arcade/MAME/everdrive_md.zip/v35.bin"
+    ],
+    "transform": "second half"
+  },
+  "0735ecfafd151cb7bb4c09748c0eb5de54321e93": {
+    "from": [
+      "bios/Arcade/Arcade/famicom.zip/famitvc1/ix0402ce.ic109",
+      "bios/Arcade/Arcade/famicom.zip/famitvc1/ix0403ce.ic110"
+    ],
+    "transform": "concatenated"
+  },
+  "08c702b45017641cf7bb2d23334509c2f7dd35d3": {
+    "from": [
+      "bios/Commodore/Amiga/kick31034.A1000"
+    ],
+    "transform": "mirrored twice"
+  },
+  "09fc005625589ef5992515957ce7a3167dec24b2": {
+    "from": [
+      "bios/Other/zesarux/p2as.rom"
+    ],
+    "transform": "quarter 3"
+  },
+  "0a2f67455166f8dac101f8f8564a1c0364cb456a": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalfr"
+    ],
+    "transform": "quarter 1"
+  },
+  "0b0e7571c8ab7a18a1d1c5e7181cb5dac372daac": {
+    "from": [
+      "bios/Arcade/Namco System 246/COH-H31000.BIN"
+    ],
+    "transform": "first half"
+  },
+  "0be048cd378625afd99338ada53bde434cc4613f": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "quarter 4"
+  },
+  "0d1c771d8c836cd010cb06434accba2a5532f7f9": {
+    "from": [
+      "bios/Other/citron/switch/key_retail.bin"
+    ],
+    "transform": "first half"
+  },
+  "1330580c0614d3556a389da4649488ba04a60908": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+    ],
+    "transform": "quarter 1"
+  },
+  "196e9f3f9cad934e181c07da33083b1f0a3c702f": {
+    "from": [
+      "bios/Commodore/Amiga/kick39106.A4000"
+    ],
+    "transform": "even words, byte-swapped"
+  },
+  "1bc0ebf27c9bb62ad71bca40313e874234cab6ac": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "second half"
+  },
+  "1f5abdcbb305e08ca3d352eadcff6a58542d86d7": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "quarter 3"
+  },
+  "21a90256a3572a890f8027a085d851bf818b0dda": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalno"
+    ],
+    "transform": "second half"
+  },
+  "22f6c5f40d4e895ea51e8432b30c219eacb75778": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalno"
+    ],
+    "transform": "quarter 1"
+  },
+  "24e52b5efc02049517387ab7b1a1475fc540350e": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a4000.rom"
+    ],
+    "transform": "even words, byte-swapped"
+  },
+  "2920cdaf1fda0b54b1e0e53736f936b853716988": {
+    "from": [
+      "bios/Arcade/Arcade/mz800.zip/mz800.rom"
+    ],
+    "transform": "quarter 1"
+  },
+  "2e51c562ef5ae6aa4cd333c560afed0c34902e28": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalfi"
+    ],
+    "transform": "second half"
+  },
+  "313c7cbda5779e56f19a41d34e760f517626d882": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a4000.rom"
+    ],
+    "transform": "odd words, byte-swapped"
+  },
+  "3341108d3a402882b5ef9d3b242cbf3c8ab1a3e9": {
+    "from": [
+      "bios/Commodore/Amiga/kick39106.A1200"
+    ],
+    "transform": "odd words, byte-swapped"
+  },
+  "33777c133c76436a55ada7041eedb0ce76991984": {
+    "from": [
+      "bios/Arcade/MAME/spectrum_opus.zip/24.ic8"
+    ],
+    "transform": "mirrored twice"
+  },
+  "3622111f486d0e137022523657394befa92bde44": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "first half"
+  },
+  "38662a024f1de2f4417a5f9df4898a9985503e06": {
+    "from": [
+      "bios/Commodore/C128/JiffyDOS_C128.bin"
+    ],
+    "transform": "quarter 2"
+  },
+  "39add4c0adda7a64f68a09ae8742599091228017": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalit"
+    ],
+    "transform": "quarter 1"
+  },
+  "3ac4b9ae895c45630d10cfc9079f5dcbce5eb48e": {
+    "from": [
+      "bios/Arcade/Arcade/pet_superpet.zip/901898-03.u19",
+      "bios/Arcade/Arcade/pet_superpet.zip/901898-04.u20"
+    ],
+    "transform": "concatenated"
+  },
+  "3eba870bcb2c5efa906f2ca3febe960fc35d66bb": {
+    "from": [
+      "bios/Other/zesarux/plus2c.rom"
+    ],
+    "transform": "first half"
+  },
+  "3fcdfa96f862b0cb7603fb6c2af84cac59527b05": {
+    "from": [
+      "bios/Philips/CD-i/cdi910.zip/cdi910.rom"
+    ],
+    "transform": "byte-swapped"
+  },
+  "401270052aebac24c8321f2c7436828b08185a00": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/basichi-318019-04.bin",
+      "bios/Commodore/C128/vice/C128/basiclo-318018-04.bin"
+    ],
+    "transform": "concatenated"
+  },
+  "4081e365ff53bd5b8675a232a4793f6a1d087543": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/kernal-2.901465-03.bin"
+    ],
+    "transform": "second half"
+  },
+  "42e7909e0198701102ec19b1bf66c240dd3fa8b3": {
+    "from": [
+      "bios/Arcade/MAME/manager.zip/01",
+      "bios/Arcade/MAME/manager.zip/23"
+    ],
+    "transform": "concatenated"
+  },
+  "42fbed3453d1f11ccbde89a9826f2d1175cca5cc": {
+    "from": [
+      "bios/Commodore/Amiga/kick39106.A4000"
+    ],
+    "transform": "odd words, byte-swapped"
+  },
+  "446ae58f7110d74d434301491209299f66798d8a": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/chargen-325181-01.bin"
+    ],
+    "transform": "second half"
+  },
+  "4708d6678cfff5be9b6a217aa45102d4f4dc20c7": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/basic-901226-01.bin",
+      "bios/Commodore/C128/vice/C128/kernal64-325179-01.bin"
+    ],
+    "transform": "concatenated"
+  },
+  "4990536c7f77e1025c90f0541a73bd157210efc9": {
+    "from": [
+      "bios/Other/zesarux/plus2b.rom"
+    ],
+    "transform": "first half"
+  },
+  "4b0a38b5af525aa598907683f0dcfeaa90d242e0": {
+    "from": [
+      "bios/Arcade/Arcade/channelf.zip/sl31253.rom",
+      "bios/Arcade/Arcade/channelf.zip/sl31254.rom"
+    ],
+    "transform": "concatenated"
+  },
+  "4bf2c20c51a63d213886957485ebef336bb803d0": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+    ],
+    "transform": "quarter 3"
+  },
+  "4e48f196427596c7990c175d135c15a039c274a4": {
+    "from": [
+      "bios/Other/zesarux/p2as.rom"
+    ],
+    "transform": "quarter 2"
+  },
+  "4f41f85124a682b0243e9d64a5f7f6a99258ea20": {
+    "from": [
+      "bios/Arcade/Arcade/msx_cart_bm_012.zip/midi_v1.00.u4"
+    ],
+    "transform": "quarter 1"
+  },
+  "549460542269e41036018402e1f6b855fd89092b": {
+    "from": [
+      "bios/Arcade/MAME/amiga_a570.zip/391298-01_v230.u20"
+    ],
+    "transform": "even bytes"
+  },
+  "56684c4c85a616e726a50707483b9a42d8e724ed": {
+    "from": [
+      "bios/Other/zesarux/p2f.rom"
+    ],
+    "transform": "first half"
+  },
+  "5ab17ee70467152bf2130e3f48a2aa81e9df93c9": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-4.901465-23-20-21.bin",
+      "bios/Commodore/C128/vice/PET/kernal-4.901465-22.bin"
+    ],
+    "transform": "concatenated"
+  },
+  "5f02e97b48ebbba87d516a56b0400c6fc3434d8d": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a3000.rom"
+    ],
+    "transform": "odd words, byte-swapped"
+  },
+  "603ba1e5967ca6298ff598ced18b28439fbc027f": {
+    "from": [
+      "bios/Arcade/MAME/spectrum_opus.zip/gamma.bin"
+    ],
+    "transform": "second half"
+  },
+  "6763a2258ec493f7408cf663110dae9a17803ad1": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a3000.rom"
+    ],
+    "transform": "even words, byte-swapped"
+  },
+  "699ce22561ed85351e833019771f8375454a063b": {
+    "from": [
+      "bios/Microsoft/MSX/Shared Roms/MSX2R.rom"
+    ],
+    "transform": "first half"
+  },
+  "70c0f4fa67a70995b168668c957c3fcf2c8641bd": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+    ],
+    "transform": "quarter 2"
+  },
+  "7551f74cc332f20923c36b24ae0ad3274f74ec37": {
+    "from": [
+      "bios/Enterprise/64-128/basic10.bin"
+    ],
+    "transform": "second half"
+  },
+  "765372a0e16cbb0adf23a07b80f6b682b39fbf88": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/basic-901226-01.bin",
+      "bios/Commodore/C128/vice/C128/kernal-901227-03.bin"
+    ],
+    "transform": "concatenated"
+  },
+  "7e398f62689c9d90a36d3a101351ec9987207308": {
+    "from": [
+      "bios/Other/zesarux/p2f.rom"
+    ],
+    "transform": "second half"
+  },
+  "8259241b28ff85441f1bedc2bee53445767c51c5": {
+    "from": [
+      "bios/Other/zesarux/p2s.rom"
+    ],
+    "transform": "first half"
+  },
+  "89639e3dbf517eeac7b307ba59df708c99728e66": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "quarter 2"
+  },
+  "8b26c86586787cd615c72f858307d18147872fb3": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+    ],
+    "transform": "quarter 1"
+  },
+  "90e331be1970b0e53f53a9b0390b51b59b3869c2": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a1200.rom"
+    ],
+    "transform": "odd words, byte-swapped"
+  },
+  "953dcdf5784a6b39ef84dd6fd968c7a03d8d6816": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/basiclo-318018-04.bin",
+      "bios/Commodore/C128/vice/C128/basichi-318019-04.bin"
+    ],
+    "transform": "concatenated"
+  },
+  "960717282878e7de893d87242ddf9d1512be162e": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin"
+    ],
+    "transform": "first half"
+  },
+  "97f5916d9877b5bac9fa7bc1dd724a4d10212208": {
+    "from": [
+      "bios/Other/zesarux/plus2b.rom"
+    ],
+    "transform": "quarter 3"
+  },
+  "999eb81c65dfd07a71ee19315d99c7eb858ab186": {
+    "from": [
+      "bios/Commodore/Amiga/kick39106.A1200"
+    ],
+    "transform": "even words, byte-swapped"
+  },
+  "a7f06facc6f0a3713215f4befc307914836706a4": {
+    "from": [
+      "bios/Other/speccy/COUPE.ROM"
+    ],
+    "transform": "second half"
+  },
+  "ad676ac04c6e7861924093654bd67ff4807ebc53": {
+    "from": [
+      "bios/Other/citron/switch/key_retail.bin"
+    ],
+    "transform": "second half"
+  },
+  "b1caa56044db8731f9959d78abd7d4194fb39c0a": {
+    "from": [
+      "bios/Other/zesarux/plus2b.rom"
+    ],
+    "transform": "quarter 4"
+  },
+  "b8800f5f909298109ea69690b1b8523fa22ddb37": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a1200.rom"
+    ],
+    "transform": "even words, byte-swapped"
+  },
+  "d234a031caf59a0f66871f2babe1644783e66cf7": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalfr"
+    ],
+    "transform": "second half"
+  },
+  "d293972d529023d8fd1f493149e4777b5c253a69": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+    ],
+    "transform": "quarter 4"
+  },
+  "d440f2510bc52e20c3d6bc8b9ded9cea7f462a9c": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin"
+    ],
+    "transform": "second half"
+  },
+  "d92e3fd2a65dbf439d7050d9cea732a63640d567": {
+    "from": [
+      "bios/Other/zesarux/samcoupe.rom"
+    ],
+    "transform": "first half"
+  },
+  "dcd18397dd2a691118aaacf2b087d08e3782f81a": {
+    "from": [
+      "bios/Arcade/Arcade/pet_superpet.zip/901898-01.u17",
+      "bios/Arcade/Arcade/pet_superpet.zip/901898-02.u18"
+    ],
+    "transform": "concatenated"
+  },
+  "e0771493503225d309e51239249e8d92da55ca37": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalfi"
+    ],
+    "transform": "quarter 1"
+  },
+  "e0e99cd91e88ce2676445663f832c835d74d6fd4": {
+    "from": [
+      "bios/Arcade/Arcade/msx.zip/kanji.rom"
+    ],
+    "transform": "first half"
+  },
+  "e1d062ae209ad0257e1b743718d210b1c83d8035": {
+    "from": [
+      "bios/Commodore/Amiga/kick32034.A1000"
+    ],
+    "transform": "mirrored twice"
+  },
+  "e9b0a60a1a8def511d59090b945d175bdc646346": {
+    "from": [
+      "bios/Other/zesarux/p2as.rom"
+    ],
+    "transform": "quarter 1"
+  },
+  "ec0d5a158842d20601b4fbeaefc6668db979d0e1": {
+    "from": [
+      "bios/Other/zesarux/p2s.rom"
+    ],
+    "transform": "second half"
+  },
+  "ec8f644a81e2e9bcb58ace974103ea960361bad2": {
+    "from": [
+      "bios/Other/zesarux/p2as.rom"
+    ],
+    "transform": "quarter 4"
+  },
+  "ecbddfa12ca44bc7aae7a12d13c6c0bd10066362": {
+    "from": [
+      "bios/Microsoft/MSX/MSX2R2.ROM"
+    ],
+    "transform": "second half"
+  },
+  "f27bb2ba0f4c7b9e8c6b997eefe5a21ebec80c71": {
+    "from": [
+      "bios/Arcade/MAME/spectrum_opus.zip/gamma.bin"
+    ],
+    "transform": "first half"
+  },
+  "f5d604d89daedb47a1abe4b0aa41ea762829e71e": {
+    "from": [
+      "bios/Commodore/C128/vice/C128/kernalit"
+    ],
+    "transform": "second half"
+  },
+  "f69252609e587d4fb5713ef834b63e8a70ffd82a": {
+    "from": [
+      "bios/Other/zesarux/plus2b.rom"
+    ],
+    "transform": "quarter 1"
+  },
+  "f71be031a5dfa837de225081b2ddc8dcb74a0552": {
+    "from": [
+      "bios/Philips/CD-i/cdi490a.zip/cdi490a.rom"
+    ],
+    "transform": "byte-swapped"
+  },
+  "fcc939d58c9bda5b54d6fb818ed4d0804e5ac377": {
+    "from": [
+      "bios/Commodore/C128/vice/PET/kernal-2.901465-03.bin"
+    ],
+    "transform": "first half"
+  }
+}
