@@ -321,5 +321,45 @@ class FlagsAreAppliedOrRefused(unittest.TestCase):
         self.assertIn("not allowed with", result.stderr)
 
 
+
+class AFileOutsideBiosIsToldWhereToGo(unittest.TestCase):
+    """validate_pr knew bios/Sony/PlayStation/ for scph5501.bin and only said
+    "not under bios/"; given an absolute path, a placed file was reported a
+    duplicate of itself."""
+
+    def test_both(self):
+        import os as _os
+        import tempfile as _tempfile
+
+        from validate_pr import validate_file
+
+        content = b"bios bytes"
+        import hashlib as _hashlib
+        sha1 = _hashlib.sha1(content).hexdigest()
+        md5 = _hashlib.md5(content).hexdigest()
+        hashes = {"sha1": {sha1}, "md5": {md5}, "names": set(),
+                  "folders": {sha1: {"bios/Sony/PlayStation/"}}}
+        with _tempfile.TemporaryDirectory() as directory:
+            loose = _os.path.join(directory, "scph5501.bin")
+            with open(loose, "wb") as handle:
+                handle.write(content)
+            result = validate_file(loose, None, hashes)
+        self.assertTrue(any("bios/Sony/PlayStation/" in m for _s, m in result.checks))
+
+        previous = _os.getcwd()
+        with _tempfile.TemporaryDirectory() as root:
+            placed = _os.path.join(root, "bios", "Sony", "PlayStation", "scph5501.bin")
+            _os.makedirs(_os.path.dirname(placed))
+            with open(placed, "wb") as handle:
+                handle.write(content)
+            db = {"files": {sha1: {"path": "bios/Sony/PlayStation/scph5501.bin"}}}
+            _os.chdir(root)
+            try:
+                result = validate_file(placed, db, hashes)
+            finally:
+                _os.chdir(previous)
+        self.assertFalse(any("Duplicate" in m for _s, m in result.checks))
+
+
 if __name__ == "__main__":
     unittest.main()

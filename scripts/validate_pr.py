@@ -237,6 +237,14 @@ def validate_file(
     else:
         result.add_check(True, f"File size OK ({result.size:,} bytes)")
 
+    # Paths are compared as the database writes them, relative to the
+    # checkout: an absolute path to the file itself read as its duplicate.
+    relative = filepath
+    if os.path.isabs(filepath):
+        candidate = os.path.relpath(filepath, os.getcwd())
+        if not candidate.startswith(".."):
+            relative = candidate
+
     if db:
         if result.sha1 in db.get("files", {}):
             existing = db["files"][result.sha1]
@@ -244,7 +252,7 @@ def validate_file(
                 os.path.normpath(p)
                 for p in [existing.get("path"), *(existing.get("paths") or [])] if p
             }
-            if os.path.normpath(filepath) in held_at:
+            if os.path.normpath(relative) in held_at:
                 # The file the database was built from, not a copy of it: a
                 # PR that regenerated database.json was told each new file
                 # duplicated itself.
@@ -284,7 +292,11 @@ def validate_file(
             "File not referenced in any platform config - needs manual review"
         )
 
-    normalized = os.path.normpath(filepath)
+    normalized = os.path.normpath(relative)
+    expected_folders = sorted(
+        platform_hashes.get("folders", {}).get(result.sha1)
+        or platform_hashes.get("folders", {}).get(result.md5) or set()
+    )
     if normalized.startswith("bios" + os.sep):
         parts = normalized.split(os.sep)
         expected = (platform_hashes.get("folders", {}).get(result.sha1)
@@ -301,8 +313,16 @@ def validate_file(
             result.add_check(True, f"Correct placement: bios/{parts[1]}/{parts[2]}/")
         else:
             result.add_warning("File should be in bios/Manufacturer/Console/ structure")
+    elif expected_folders:
+        # The contributor asks before forking: say where it goes.
+        result.add_warning(
+            "File is not under bios/ yet; its system's files are in "
+            + " or ".join(f"`{f}`" for f in expected_folders)
+        )
     else:
-        result.add_warning("File is not under bios/ directory")
+        result.add_warning(
+            "File is not under bios/ yet; place it in bios/Manufacturer/Console/"
+        )
 
     if name_known and not sha1_known and not md5_known:
         result.add_info(
