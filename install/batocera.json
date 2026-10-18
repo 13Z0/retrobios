@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-17T23:31:21Z",
+  "generated": "2026-10-18T00:39:54Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -9926,10 +9926,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "c4db9a6e99873808c8022afd1c50fef556a8b44d",
-          "sha256": "0513077cb96c90c3ab8809c44259d8274c7a34862ea7df1b957b2d6129eaaeb1",
+          "sha1": "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a",
+          "sha256": "e6295a523008688421991b651ab61de392b28c67bec9efbf040b0004e4b70a2a",
           "size": 4096,
-          "repo_path": "bios/Sharp/X1/.variants/IPLROM.X1.c4db9a6e",
+          "repo_path": "bios/Sharp/X1/iplrom.x1",
           "cores": [
             "x1"
           ]
@@ -140797,10 +140797,10 @@
     },
     {
       "dest": "FONT.ROM",
-      "sha1": "541271ea46c5166a1e054379963b0dc663e9b60f",
-      "sha256": "782690d89a4bd671151e4ba77f004d8f1ee6db3c304f2bccb4bddc145f1227a5",
+      "sha1": "78ba9960f135372825ab7244b5e4e73a810002ff",
+      "sha256": "8db165d567e13bce3f50ee495975671faa5a0ff332dcb08e187aa91125c81ec6",
       "size": 288768,
-      "repo_path": "bios/NEC/PC-98/.variants/FONT.ROM.541271ea",
+      "repo_path": "bios/NEC/PC-98/font.rom",
       "cores": [
         "dosbox-x"
       ],
@@ -140810,10 +140810,10 @@
     },
     {
       "dest": "SOUND.ROM",
-      "sha1": "34137c287c39c44300b04ee97c1e6459bb826b60",
-      "sha256": "4db8274393f8267db83665bbb70be8efb83201818dff3ad76c11f451be96a803",
+      "sha1": "d5dbc4fea3b8367024d363f5351baecd6adcd8ef",
+      "sha256": "667a0e17189cc9f28185386ac6fe86784164740992a662b0a6fb0e00713b20e8",
       "size": 16384,
-      "repo_path": "bios/NEC/PC-98/.variants/SOUND.ROM.34137c28",
+      "repo_path": "bios/NEC/PC-98/sound.rom",
       "cores": [
         "dosbox-x"
       ],
@@ -140823,10 +140823,10 @@
     },
     {
       "dest": "ITF.ROM",
-      "sha1": "9bca7d5116788776ed0f297bccb4dfc485379b41",
-      "sha256": "2ca3ee3c7d5a6b6304a0205fec3cd7eaeb4e1e197e5db740cff0665006498076",
+      "sha1": "a2fb11c000ed7c976520622cfb7940ed6ddc904e",
+      "sha256": "94b4f1bde239372cd691cc4a228677dad6dbc787b26c3f952a512139de6ed60e",
       "size": 32768,
-      "repo_path": "bios/NEC/PC-98/.variants/ITF.ROM.9bca7d51",
+      "repo_path": "bios/NEC/PC-98/itf.rom",
       "cores": [
         "dosbox-x"
       ],

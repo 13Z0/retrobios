@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-17T23:31:21Z",
+  "generated": "2026-10-18T00:39:54Z",
   "base_destination": "system",
   "detect": [
     {
@@ -9607,10 +9607,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "c4db9a6e99873808c8022afd1c50fef556a8b44d",
-          "sha256": "0513077cb96c90c3ab8809c44259d8274c7a34862ea7df1b957b2d6129eaaeb1",
+          "sha1": "d3395e9aeb5b8bbba7654dd471bcd8af228ee69a",
+          "sha256": "e6295a523008688421991b651ab61de392b28c67bec9efbf040b0004e4b70a2a",
           "size": 4096,
-          "repo_path": "bios/Sharp/X1/.variants/IPLROM.X1.c4db9a6e",
+          "repo_path": "bios/Sharp/X1/iplrom.x1",
           "cores": [
             "x1"
           ]
