@@ -182,6 +182,29 @@ def _narrowings(
     return applied
 
 
+@contextlib.contextmanager
+def _writing_pack(zip_path: str) -> Iterator[zipfile.ZipFile]:
+    """A pack written beside its final name, swapped in once complete.
+
+    Opened on the final name, a rebuild truncated the previous pack at once,
+    and a build that raised half way still wrote a central directory: a
+    readable ZIP holding part of the files, which the run then checked and
+    summed as the pack.
+    """
+    directory = os.path.dirname(zip_path) or "."
+    fd, scratch = tempfile.mkstemp(
+        prefix=f".{os.path.basename(zip_path)}.", suffix=".partial", dir=directory
+    )
+    os.close(fd)
+    try:
+        with zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED) as zf:
+            yield zf
+        os.replace(scratch, zip_path)
+    except BaseException:
+        Path(scratch).unlink(missing_ok=True)
+        raise
+
+
 def _target_tag(target_name: str) -> str:
     """Filename tag for a hardware target.
 
@@ -735,7 +758,7 @@ def generate_pack(
         target_cores, source, regions, one_per_slot, required_only,
     )
 
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    with _writing_pack(zip_path) as zf:
       if source != "truth":
         for sys_id, system in sorted(pack_systems.items()):
             for file_entry in system.get("files", []):
@@ -1385,7 +1408,7 @@ def generate_emulator_pack(
         platforms_dir or os.path.join(os.path.dirname(__file__), "..", "platforms")
     )
 
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    with _writing_pack(zip_path) as zf:
         for emu_name, profile in sorted(selected):
             pack_structure = profile.get("pack_structure")
             files = expand_directory_entries(
@@ -2014,7 +2037,7 @@ def generate_md5_pack(
     not_in_db: list[str] = []
     seen: set[str] = set()
 
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    with _writing_pack(zip_path) as zf:
         for hash_type, hash_val in hashes:
             sha1 = None
             if hash_type == "sha1" and hash_val in files_db:

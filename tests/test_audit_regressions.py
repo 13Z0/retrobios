@@ -407,6 +407,56 @@ class OnePlatformPerFlag(unittest.TestCase):
         self.assertIn("batocera", str(caught.exception))
 
 
+class APackIsSwappedInWhole(unittest.TestCase):
+    """Packs were opened on their final name: a rebuild truncated the good
+    pack at once, and a build that raised half way left a readable ZIP of
+    part of the files, which the run then verified and summed."""
+
+    def _dir(self) -> Path:
+        import shutil
+        import tempfile
+
+        (ROOT / "tmp").mkdir(exist_ok=True)
+        directory = Path(tempfile.mkdtemp(dir=ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, directory, True)
+        return directory
+
+    def test_a_failed_build_keeps_the_previous_pack(self):
+        import zipfile
+
+        from generate_pack import _writing_pack
+
+        directory = self._dir()
+        pack = directory / "Pack.zip"
+        with zipfile.ZipFile(pack, "w") as zf:
+            zf.writestr("old.bin", b"complete")
+        with self.assertRaises(OSError):
+            with _writing_pack(str(pack)) as zf:
+                zf.writestr("new.bin", b"half")
+                raise OSError("disk full")
+        with zipfile.ZipFile(pack) as zf:
+            self.assertEqual(zf.namelist(), ["old.bin"])
+        self.assertEqual(sorted(p.name for p in directory.iterdir()), ["Pack.zip"])
+
+    def test_a_finished_build_replaces_it(self):
+        import zipfile
+
+        from generate_pack import _writing_pack
+
+        directory = self._dir()
+        pack = directory / "Pack.zip"
+        pack.write_bytes(b"stale")
+        with _writing_pack(str(pack)) as zf:
+            zf.writestr("new.bin", b"whole")
+        with zipfile.ZipFile(pack) as zf:
+            self.assertEqual(zf.namelist(), ["new.bin"])
+        self.assertEqual(sorted(p.name for p in directory.iterdir()), ["Pack.zip"])
+
+    def test_no_pack_is_opened_on_its_final_name(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text()
+        self.assertNotIn('ZipFile(zip_path, "w"', source)
+
+
 class FaqRegressions(unittest.TestCase):
     """The FAQ states facts the code owns; these tie it back to the source.
 
