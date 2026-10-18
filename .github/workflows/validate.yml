@@ -117,6 +117,48 @@ jobs:
       - name: Validate platform configs and emulator profiles
         run: python scripts/validate_schemas.py --source-only
 
+  # A profile written from a clone can cite lines that do not hold the value
+  # it declares; schemas and tests pass it. Each profile a change adds is
+  # confronted with its upstream, both roads into main. An edited profile is
+  # not held to it: the backlog of older refs is reviewed by hand.
+  check-new-profiles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Confront added profiles with their upstream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          # A pull request is checked out as a merge commit whose first
+          # parent is the base; a push names the commit it moved main from.
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            base=HEAD^1
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "first push of the branch: no base to diff against"
+            exit 0
+          else
+            base=$BEFORE
+          fi
+          status=0
+          for file in $(git diff --name-only --diff-filter=A "$base" HEAD -- 'emulators/*.yml'); do
+            name=$(basename "$file" .yml)
+            echo "::group::$name"
+            python scripts/profile_sync.py --emulator "$name" --strict || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
   run-tests:
     runs-on: ubuntu-latest
     steps:

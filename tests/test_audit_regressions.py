@@ -230,6 +230,21 @@ class WorkflowRegressions(unittest.TestCase):
             f"{job} carries a condition; the suite must run on push and on PR",
         )
 
+    def test_added_profiles_meet_their_upstream_on_both_roads(self):
+        """A new profile's refs were confronted only if its author remembered."""
+        workflow = self._workflow("validate.yml")
+        runs = [
+            (name, str(step.get("run", "")))
+            for name, body in workflow["jobs"].items()
+            for step in body.get("steps", [])
+            if "profile_sync.py" in str(step.get("run", ""))
+        ]
+        self.assertTrue(runs, "no job confronts profiles with their upstream")
+        for name, body in runs:
+            self.assertIn("--strict", body)
+            self.assertIn("--diff-filter=A", body)
+            self.assertIsNone(workflow["jobs"][name].get("if"), f"{name} must run on push too")
+
     def test_both_events_watch_the_same_paths(self):
         triggers = self._workflow("validate.yml")["on"]
         self.assertEqual(

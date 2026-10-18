@@ -3804,6 +3804,19 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual([r["name"] for r in json.loads(out)], ["drift"])
 
+    def test_strict_fails_on_refs_to_review(self):
+        """A new profile whose refs miss their value used to pass CI green."""
+        code, out, _ = self._main("--changed-only", "--strict")
+        self.assertEqual(code, 1)
+        self.assertIn("drift", out)
+
+    def test_strict_passes_when_nothing_is_to_review(self):
+        from unittest import mock
+
+        with mock.patch.object(ProfileReport, "needs_review", return_value=0):
+            code, _, _ = self._main("--strict")
+        self.assertEqual(code, 0)
+
     def test_extras_are_refused_with_json(self):
         code, _, err = self._main("--json", "--check-version")
         self.assertEqual(code, 1)
@@ -3872,7 +3885,7 @@ class TestRealignFlagMatrix(unittest.TestCase):
     def test_output_flags_are_refused(self):
         for flag in (
             "--json", "--markdown", "--fetch-plan", "--triage",
-            "--changed-only", "--check-version", "--detect-new-files",
+            "--changed-only", "--strict", "--check-version", "--detect-new-files",
             "--watch-hashes", "--full-diff", "--tree-diff",
             "--accept-changed",
         ):

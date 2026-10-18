@@ -3251,6 +3251,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--stale-before", help="keep profiles profiled before a date")
     parser.add_argument("--limit", type=int, help="stop after N profiles")
     parser.add_argument("--changed-only", action="store_true")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="exit 1 when a profile has refs to review, as for a new profile in CI",
+    )
     parser.add_argument("--json", action="store_true", dest="as_json")
     parser.add_argument("--markdown", action="store_true")
     parser.add_argument(
@@ -3600,6 +3605,7 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
                 ("--fetch-plan", args.fetch_plan),
                 ("--triage", args.triage),
                 ("--changed-only", args.changed_only),
+                ("--strict", args.strict),
                 ("--check-version", args.check_version),
                 ("--detect-new-files", args.detect_new_files),
                 ("--watch-hashes", args.watch_hashes),
@@ -3731,7 +3737,7 @@ def main() -> None:
         if not args.changed_only or report.needs_review() or report.name in failed
     ]
     _emit(args, selected, reports, shown)
-    if failed:
+    if failed or (args.strict and any(report.needs_review() for report in reports)):
         raise SystemExit(1)
 
 
