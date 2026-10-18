@@ -232,5 +232,15 @@ class TheSitemapIsAnnouncedWhereCrawlersLook(unittest.TestCase):
         self.assertNotIn("Sitemap: https://", source)
 
 
+
+class TheHomeTitleSaysWhatTheSiteIs(unittest.TestCase):
+    def test_not_the_site_name_twice(self):
+        from generate_site import SITE_NAME, _browser_title
+
+        title = _browser_title(Path("index.md"), SITE_NAME)
+        self.assertNotEqual(title, SITE_NAME)
+        self.assertIn("BIOS", title)
+
+
 if __name__ == "__main__":
     unittest.main()

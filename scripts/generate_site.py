@@ -1187,7 +1187,9 @@ def _browser_title(relative: Path, title: str) -> str:
     """Return a concise, unique browser/search title for a generated page."""
     key = relative.as_posix()
     index_titles = {
-        "index.md": SITE_NAME,
+        # Material appends " - RetroBIOS": the home title says what the site
+        # is, instead of "RetroBIOS - RetroBIOS".
+        "index.md": "BIOS and firmware packs for RetroArch, Batocera and more",
         "platforms/index.md": "Platforms",
         "systems/index.md": "Systems",
         "emulators/index.md": "Emulators",
