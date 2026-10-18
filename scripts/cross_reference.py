@@ -453,14 +453,19 @@ def _first_hash(entry: dict) -> str:
     return ""
 
 
-def slot_key(f: dict) -> tuple:
+def slot_key(f: dict, standalone: bool = False) -> tuple:
     """The slot a profile entry fills: its entries on one slot are the
-    versions its code accepts there, and holding any of them fills it."""
+    versions its code accepts there, and holding any of them fills it.
+
+    The path is the one the running build reads: b2's standalone build
+    reads MOS 3.20 and 3.50 from two directories, two slots, while the
+    entries share a name and no `path:`."""
     fname = f.get("name", "")
+    where = (f.get("standalone_path") if standalone else None) or f.get("path")
     return (
         fname,
         f.get("archive"),
-        f.get("path") or fname,
+        where or fname,
         f.get("system"),
         f.get("variant_group"),
         f.get("mode", "both"),
@@ -517,8 +522,8 @@ def _cross_reference_profile(
     # accepts there (raze's ten DUKE3D.GRP): holding any of them fills the
     # slot, as verify --emulator credits it.
     versions: dict[tuple, list[dict]] = {}
-    for f in emu_files:
-        versions.setdefault(slot_key(f), []).append(f)
+    for f, is_standalone in layout_files:
+        versions.setdefault(slot_key(f, is_standalone), []).append(f)
 
     for f, is_standalone in layout_files:
         fname = f.get("name", "")
@@ -530,7 +535,8 @@ def _cross_reference_profile(
             effective_path = f.get("standalone_path") or f.get("path") or fname
         else:
             effective_path = f.get("path") or fname
-        seen_key = slot_key(f)
+        slot = slot_key(f, is_standalone)
+        seen_key = slot
         if len(layouts) > 1:
             # One file read at one path by both builds counts once.
             seen_key = (effective_path.casefold(), seen_key)
@@ -613,7 +619,7 @@ def _cross_reference_profile(
         else:
             source = next(
                 (
-                    found for version in versions[seen_key]
+                    found for version in versions[slot]
                     if (found := entry_source(version, index)) is not None
                 ),
                 "missing",

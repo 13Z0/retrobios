@@ -90,5 +90,31 @@ class CrossReferenceReadsTheBuildThePlatformRuns(unittest.TestCase):
         self.assertEqual(self._gaps(set()), ["both.bin", "libretro.bin"])
 
 
+    def test_a_platform_running_both_builds(self):
+        # The dual layout keyed seen files by (path, slot) and then looked
+        # the pair up in the slot table: KeyError on Batocera's dolphin.
+        from common import DUAL_MODE_PREFIX
+
+        self.assertEqual(
+            self._gaps({"dual", DUAL_MODE_PREFIX + "dual"}),
+            ["both.bin", "libretro.bin", "standalone.bin"],
+        )
+
+    def test_standalone_paths_are_separate_slots(self):
+        # b2 reads MOS 3.20 and 3.50 ROMs under one name from two
+        # directories: two slots, not two versions of one.
+        profile = {
+            "emulator": "B", "type": "standalone", "systems": ["sys"],
+            "files": [
+                {"name": "dfs.rom", "standalone_path": "m128/3.20/dfs.rom"},
+                {"name": "dfs.rom", "standalone_path": "m128/3.50/dfs.rom"},
+            ],
+        }
+        report = cross_reference(
+            {"b": profile}, {}, {"files": {}, "indexes": {}}, standalone_cores={"b"}
+        )
+        self.assertEqual(len(report["b"]["gap_details"]), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
