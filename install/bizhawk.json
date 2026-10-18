@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -20,10 +20,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 922,
-  "total_size": 2539851389,
-  "pack_files": 924,
-  "pack_size": 2539851389,
+  "total_files": 923,
+  "total_size": 2539982461,
+  "pack_files": 925,
+  "pack_size": 2539982461,
   "total_omitted": 0,
   "omitted_files": [],
   "core_names": {
@@ -7402,6 +7402,19 @@
       ],
       "systems": [
         "philips-videopac"
+      ]
+    },
+    {
+      "dest": "opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {

@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -15,10 +15,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 985,
-  "total_size": 1449736860,
-  "pack_files": 987,
-  "pack_size": 1449736860,
+  "total_files": 986,
+  "total_size": 1449867932,
+  "pack_files": 988,
+  "pack_size": 1449867932,
   "total_omitted": 170,
   "omitted_files": [
     {
@@ -12682,6 +12682,19 @@
       ]
     },
     {
+      "dest": "3do/opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
       "dest": "scummvm/scummvm/theme/scummmodern.zip",
       "sha1": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
       "sha256": "1152e03f0bca45724ad6dd5dbc987a99abd0ffcfb09c7c9c7a0504980c12297c",
@@ -13335,7 +13348,7 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -13356,7 +13369,7 @@
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -13377,7 +13390,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:ngc/dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -14274,7 +14287,7 @@
         "north-america"
       ],
       "region_groups": [
-        "PrimeHack:file:ngc/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -14294,7 +14307,7 @@
         "oceania"
       ],
       "region_groups": [
-        "PrimeHack:file:ngc/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -14314,7 +14327,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "PrimeHack:file:ngc/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {

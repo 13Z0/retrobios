@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -258,10 +258,10 @@
       }
     }
   ],
-  "total_files": 7751,
-  "total_size": 7997248949,
-  "pack_files": 7753,
-  "pack_size": 7997248949,
+  "total_files": 7752,
+  "total_size": 7997371573,
+  "pack_files": 7754,
+  "pack_size": 7997371573,
   "total_omitted": 135,
   "omitted_files": [
     {
@@ -69414,6 +69414,19 @@
       ]
     },
     {
+      "dest": "opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
       "dest": "panafz1j.bin",
       "sha1": "ec7ec62d60ec0459a14ed56ebc66761ef3c80efc",
       "sha256": "f356b28b1b35ec27c8697f70d9e0118c4f20609ac5586b9ee4f9241aea96336b",
@@ -73319,10 +73332,10 @@
     },
     {
       "dest": "Machines/Shared Roms/RS232.ROM",
-      "sha1": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "sha256": "4df4236ea4687fc729eba6c5bf57a9ac1eceda0c012c5bbe5170b8d722ab9387",
-      "size": 16640,
-      "repo_path": "bios/Microsoft/MSX/RS232.ROM",
+      "sha1": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
+      "size": 8192,
+      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/RS232.ROM",
       "cores": [
         "bluemsx"
       ],
@@ -75088,14 +75101,11 @@
       "cores": [
         "dolphin"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -75107,15 +75117,12 @@
       "cores": [
         "dolphin"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "europe",
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -75127,15 +75134,12 @@
       "cores": [
         "dolphin"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "japan",
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -75200,14 +75204,11 @@
         "dolphin",
         "triforce"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -75220,15 +75221,12 @@
         "dolphin",
         "triforce"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "europe",
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -75241,15 +75239,12 @@
         "dolphin",
         "triforce"
       ],
-      "systems": [
-        "triforce"
-      ],
       "regions": [
         "japan",
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -86307,10 +86302,10 @@
     },
     {
       "dest": "Sys/codehandler.bin",
-      "sha1": "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
-      "sha256": "4e72048c6bd59cc2de556aea4d63ef4c6b21a12d9c6347c52e8eca89ff2150db",
+      "sha1": "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
+      "sha256": "2b2ff0716aeb9b806cc61181e559041312957f25f04c435bd7da80a78917b33b",
       "size": 2880,
-      "repo_path": "bios/Other/dolphin-mmjr/codehandler.bin",
+      "repo_path": "bios/Other/dolphin-mmjr2/codehandler.bin",
       "cores": [
         "triforce"
       ],

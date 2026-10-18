@@ -5,7 +5,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,10 +19,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 6132,
-  "total_size": 7912973661,
-  "pack_files": 6134,
-  "pack_size": 7912973661,
+  "total_files": 6133,
+  "total_size": 7913096285,
+  "pack_files": 6135,
+  "pack_size": 7913096285,
   "total_omitted": 49,
   "omitted_files": [
     {
@@ -1246,13 +1246,10 @@
       ],
       "regions": [
         "europe",
-        "japan",
-        "north-america",
-        "oceania",
-        "south-korea"
+        "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -1280,14 +1277,11 @@
         "nintendo-gamecube"
       ],
       "regions": [
-        "europe",
         "japan",
-        "north-america",
-        "oceania",
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -1315,14 +1309,10 @@
         "nintendo-gamecube"
       ],
       "regions": [
-        "europe",
-        "japan",
-        "north-america",
-        "oceania",
-        "south-korea"
+        "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -45998,6 +45988,16 @@
       ]
     },
     {
+      "dest": "opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ]
+    },
+    {
       "dest": "panafz1.bin",
       "sha1": "34bf189111295f74d7b7dfc1f304d98b8d36325a",
       "sha256": "41b5b8e7c44e55eaf5cfd4f2a58df42f4a1bbc776723368fb25bf118dd631b1b",
@@ -49853,10 +49853,10 @@
     },
     {
       "dest": "Machines/Shared Roms/RS232.ROM",
-      "sha1": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "sha256": "4df4236ea4687fc729eba6c5bf57a9ac1eceda0c012c5bbe5170b8d722ab9387",
-      "size": 16640,
-      "repo_path": "bios/Microsoft/MSX/RS232.ROM",
+      "sha1": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
+      "size": 8192,
+      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/RS232.ROM",
       "cores": [
         "bluemsx"
       ]
@@ -62913,7 +62913,7 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -62934,7 +62934,7 @@
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -62955,7 +62955,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {

@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "system",
   "detect": [
     {
@@ -18,10 +18,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5887,
-  "total_size": 6131655761,
-  "pack_files": 8529,
-  "pack_size": 6172203964,
+  "total_files": 5888,
+  "total_size": 6131778385,
+  "pack_files": 8530,
+  "pack_size": 6172326588,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -6011,7 +6011,7 @@
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -6044,7 +6044,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -6076,7 +6076,7 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ],
       "region_system_groups": [
         "nintendo-gamecube"
@@ -57156,6 +57156,19 @@
       ]
     },
     {
+      "dest": "opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
       "dest": "qemu/bios.bin",
       "sha1": "f402170ee4f374c304a7ce0b139d6cecb1732aff",
       "sha256": "8244f3e5eaca828cc0a6a963f1fad15d68d8d3c0b5c80b8451b3067a85f14ae1",
@@ -69554,10 +69567,10 @@
     },
     {
       "dest": "Machines/Shared Roms/RS232.ROM",
-      "sha1": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "sha256": "4df4236ea4687fc729eba6c5bf57a9ac1eceda0c012c5bbe5170b8d722ab9387",
-      "size": 16640,
-      "repo_path": "bios/Microsoft/MSX/RS232.ROM",
+      "sha1": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
+      "size": 8192,
+      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/RS232.ROM",
       "cores": [
         "bluemsx"
       ],

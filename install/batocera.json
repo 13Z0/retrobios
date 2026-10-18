@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -260,10 +260,10 @@
       }
     }
   ],
-  "total_files": 12907,
-  "total_size": 9287837254,
-  "pack_files": 12909,
-  "pack_size": 9287837254,
+  "total_files": 12908,
+  "total_size": 9287959878,
+  "pack_files": 12910,
+  "pack_size": 9287959878,
   "total_omitted": 395,
   "omitted_files": [
     {
@@ -8966,23 +8966,16 @@
       "repo_path": "bios/Nintendo/GameCube/GC/EUR/IPL.bin",
       "cores": null,
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
+        "nintendo-gamecube"
       ],
       "regions": [
         "europe",
-        "japan",
-        "north-america",
-        "oceania",
-        "south-korea"
+        "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
-      ],
-      "region_system_groups": [
         "nintendo-gamecube"
       ],
-      "declared_in": [
+      "region_system_groups": [
         "nintendo-gamecube"
       ],
       "alternatives": [
@@ -9005,23 +8998,16 @@
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": null,
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
+        "nintendo-gamecube"
       ],
       "regions": [
-        "europe",
         "japan",
-        "north-america",
-        "oceania",
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
-      ],
-      "region_system_groups": [
         "nintendo-gamecube"
       ],
-      "declared_in": [
+      "region_system_groups": [
         "nintendo-gamecube"
       ],
       "alternatives": [
@@ -9044,23 +9030,15 @@
       "repo_path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",
       "cores": null,
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
-      ],
-      "regions": [
-        "europe",
-        "japan",
-        "north-america",
-        "oceania",
-        "south-korea"
-      ],
-      "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
-      ],
-      "region_system_groups": [
         "nintendo-gamecube"
       ],
-      "declared_in": [
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "nintendo-gamecube"
+      ],
+      "region_system_groups": [
         "nintendo-gamecube"
       ],
       "alternatives": [
@@ -91045,6 +91023,19 @@
       ]
     },
     {
+      "dest": "opera-boot.bin",
+      "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+      "sha256": "6cbd0664c36e64c315b699b43dfc27c176597ef8f393279f199986fa5b6ba3bb",
+      "size": 131072,
+      "repo_path": "bios/3DO Company/3DO/opera-boot.bin",
+      "cores": [
+        "opera"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
       "dest": "panafz1j.bin",
       "sha1": "ec7ec62d60ec0459a14ed56ebc66761ef3c80efc",
       "sha256": "f356b28b1b35ec27c8697f70d9e0118c4f20609ac5586b9ee4f9241aea96336b",
@@ -126584,10 +126575,10 @@
     },
     {
       "dest": "Machines/Shared Roms/RS232.ROM",
-      "sha1": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "sha256": "4df4236ea4687fc729eba6c5bf57a9ac1eceda0c012c5bbe5170b8d722ab9387",
-      "size": 16640,
-      "repo_path": "bios/Microsoft/MSX/RS232.ROM",
+      "sha1": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
+      "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
+      "size": 8192,
+      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/RS232.ROM",
       "cores": [
         "bluemsx"
       ],
@@ -140919,14 +140910,13 @@
         "dolphin"
       ],
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
+        "nintendo-gamecube"
       ],
       "regions": [
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -140939,15 +140929,14 @@
         "dolphin"
       ],
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
+        "nintendo-gamecube"
       ],
       "regions": [
         "europe",
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -140960,15 +140949,14 @@
         "dolphin"
       ],
       "systems": [
-        "nintendo-gamecube",
-        "triforce"
+        "nintendo-gamecube"
       ],
       "regions": [
         "japan",
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:dolphin-emu/Sys/GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {

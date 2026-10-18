@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-18T11:24:19Z",
+  "generated": "2026-10-18T17:35:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -7338,7 +7338,7 @@
         "north-america"
       ],
       "region_groups": [
-        "Dolphin:file:GC/USA/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -7359,7 +7359,7 @@
         "oceania"
       ],
       "region_groups": [
-        "Dolphin:file:GC/EUR/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
@@ -7380,7 +7380,7 @@
         "south-korea"
       ],
       "region_groups": [
-        "Dolphin:file:GC/JAP/IPL.bin"
+        "nintendo-gamecube"
       ]
     },
     {
