@@ -267,6 +267,81 @@ def _match_key(entry: dict) -> tuple[str, str]:
     return dest.casefold(), str(entry.get("name", "")).casefold()
 
 
+def _names(entry: dict) -> set[str]:
+    """The names an entry answers to: its own and the aliases it declares."""
+    return {
+        str(n).casefold()
+        for n in (entry.get("name", ""), *(entry.get("aliases") or []))
+        if n
+    }
+
+
+def by_destination(truth_entry: dict, platform_entry: dict) -> bool:
+    """The platform's destination ends in the path the truth declares.
+
+    Dolphin writes dolphin-emu/Sys/GC/USA/IPL.bin for the truth's
+    GC/USA/IPL.bin. A bare name is no path: dc/boot.bin ends in /boot.bin,
+    and fbneo's 480-byte boot.bin is not that 2 MB Dreamcast BIOS.
+    """
+    t_dest = _match_key(truth_entry)[0]
+    theirs = _match_key(platform_entry)[0]
+    if not t_dest:
+        return False
+    return theirs == t_dest or ("/" in t_dest and theirs.endswith("/" + t_dest))
+
+
+def by_name(truth_entry: dict, platform_entry: dict) -> bool:
+    """One of the truth's names, in the same directory, at the same size."""
+    t_dest = _match_key(truth_entry)[0]
+    theirs_dest, theirs = _match_key(platform_entry)
+    if not theirs or theirs not in _names(truth_entry):
+        return False
+    # Two declared directories that differ name two files: the truth's
+    # BeebFile/BIOS.rom is not Recalbox's np2kai/bios.rom.
+    if "/" in t_dest and "/" in theirs_dest and not theirs_dest.endswith(
+        "/" + t_dest.rsplit("/", 1)[0].rsplit("/", 1)[-1] + "/" + theirs
+    ):
+        return False
+    # A shared name with two declared sizes is two files: fbneo's 480-byte
+    # boot.bin is not RomM's 2 MB Dreamcast boot.bin.
+    t_size = truth_entry.get("size")
+    p_size = platform_entry.get("size")
+    return not (isinstance(t_size, int) and isinstance(p_size, int) and t_size != p_size)
+
+
+def by_hash(truth_entry: dict, platform_entry: dict) -> bool:
+    """A value on any of the four hash fields in common: a renamed file."""
+    ours = {v for f in HASH_FIELDS for v in _hash_values(truth_entry, f)}
+    if not ours:
+        return False
+    return bool(ours & {v for f in HASH_FIELDS for v in _hash_values(platform_entry, f)})
+
+
+def pair_truth_entry(
+    truth_entry: dict, candidates: list[dict], claimed: set[int]
+) -> int | None:
+    """Which platform entry a truth entry describes, by index, or None.
+
+    The one rule export_native and diff_truth read. Each test is tried
+    across every candidate before the next: with three IPL.bin under one
+    system, separated only by their path, a first-match-wins scan attached
+    the truth to whichever came first. An entry never answers for two.
+    """
+    for test in (by_destination, by_name, by_hash):
+        for index, candidate in enumerate(candidates):
+            if index not in claimed and test(truth_entry, candidate):
+                return index
+    return None
+
+
+def platform_declares(truth_entry: dict, candidates: list[dict]) -> bool:
+    """A file another truth entry already claimed is still the platform's
+    file, not one it lacks: scph101.bin, declared by two PSX cores."""
+    return any(
+        by_destination(truth_entry, c) or by_name(truth_entry, c) for c in candidates
+    )
+
+
 def build_native_model(
     truth: dict,
     scraped: dict | None,
@@ -363,13 +438,6 @@ def build_native_model(
             if not name or name.startswith("_") or _is_placeholder(name):
                 continue
 
-            t_dest, t_name = _match_key(truth_entry)
-            t_hashes = {
-                value
-                for field_name in HASH_FIELDS
-                for value in _hash_values(truth_entry, field_name)
-            }
-
             candidates = [
                 candidate
                 for native_id in target_ids
@@ -378,60 +446,10 @@ def build_native_model(
                 ).files
                 if candidate.truth is None
             ]
-
-            def by_destination(candidate: NativeFile, t_dest: str = t_dest) -> bool:
-                # Dolphin writes dolphin-emu/Sys/GC/USA/IPL.bin for the truth's
-                # GC/USA/IPL.bin: a destination ending in the path is the file.
-                # A bare name is no path: dc/boot.bin ends in /boot.bin, and
-                # fbneo's 480-byte boot.bin is not that 2 MB Dreamcast BIOS.
-                # Names go through by_name and its size guard.
-                theirs = _match_key(candidate.platform or {})[0]
-                if not t_dest:
-                    return False
-                return theirs == t_dest or ("/" in t_dest and theirs.endswith("/" + t_dest))
-
-            def by_name(
-                candidate: NativeFile,
-                t_dest: str = t_dest,
-                t_name: str = t_name,
-                truth_entry: dict = truth_entry,
-            ) -> bool:
-                theirs_dest, theirs = _match_key(candidate.platform or {})
-                if not t_name or theirs != t_name:
-                    return False
-                # Two declared directories that differ name two files: the
-                # truth's BeebFile/BIOS.rom is not Recalbox's np2kai/bios.rom.
-                if "/" in t_dest and "/" in theirs_dest and not theirs_dest.endswith(
-                    "/" + t_dest.rsplit("/", 1)[0].rsplit("/", 1)[-1] + "/" + t_name
-                ):
-                    return False
-                # A shared name with two declared sizes is two files: fbneo's
-                # 480-byte boot.bin is not RomM's 2 MB Dreamcast boot.bin.
-                t_size = truth_entry.get("size")
-                p_size = (candidate.platform or {}).get("size")
-                return not (
-                    isinstance(t_size, int) and isinstance(p_size, int) and t_size != p_size
-                )
-
-            def by_hash(candidate: NativeFile, t_hashes: set = t_hashes) -> bool:
-                if not t_hashes:
-                    return False
-                theirs = {
-                    value
-                    for field_name in HASH_FIELDS
-                    for value in _hash_values(candidate.platform or {}, field_name)
-                }
-                return bool(t_hashes & theirs)
-
-            # Tried in order across every candidate, not per candidate: with
-            # three IPL.bin under one system, separated only by their path, a
-            # first-match-wins scan would attach the truth to whichever came
-            # first and correct the wrong region's file.
-            matched: NativeFile | None = None
-            for test in (by_destination, by_name, by_hash):
-                matched = next((c for c in candidates if test(c)), None)
-                if matched is not None:
-                    break
+            index = pair_truth_entry(
+                truth_entry, [c.platform or {} for c in candidates], set()
+            )
+            matched = candidates[index] if index is not None else None
 
             if matched is not None:
                 matched.truth = truth_entry
@@ -462,12 +480,12 @@ def build_native_model(
             # platform's file, not a new one: scph101.bin, declared by two
             # PSX cores, was written into RetroDECK's manifest a second time.
             declared = [
-                candidate
+                candidate.platform
                 for native_id in target_ids
                 for candidate in systems.get(native_id, NativeSystem(native_id)).files
                 if candidate.platform is not None
             ]
-            if any(by_destination(c) or by_name(c) for c in declared):
+            if platform_declares(truth_entry, declared):
                 continue
 
             # The truth knows a file the platform does not declare.

@@ -19,9 +19,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
+from exporter.baseline import pair_truth_entry  # noqa: E402
 from truth import (  # noqa: E402
     _diff_system,
-    _match_renames,
     _merge_file_into_system,
     generate_platform_truth,
 )
@@ -132,74 +132,60 @@ class DifferentContentsStayApart(unittest.TestCase):
 
 
 class RenameMatching(unittest.TestCase):
-    def test_a_shared_sha1_pairs_the_two_names(self):
-        truth = [_entry("bios_CD_U.bin", sha1="a" * 40)]
-        scraped = {"rom1.bin": _entry("ROM1.bin", sha1="a" * 40)}
-        matched_truth, matched_scraped = _match_renames(truth, scraped)
-        self.assertEqual(matched_truth, {0})
-        self.assertEqual(matched_scraped, {"rom1.bin"})
+    """A platform may call a file anything (Batocera ships a ROM as ROM1):
+    a shared hash pairs the two names, through the rule export_native uses."""
 
-    def test_md5_and_crc32_pair_them_too(self):
-        for algorithm in ("md5", "crc32"):
+    @staticmethod
+    def _pair(truth, scraped, claimed=None):
+        return pair_truth_entry(truth, scraped, claimed or set())
+
+    def test_a_shared_sha1_pairs_the_two_names(self):
+        self.assertEqual(
+            self._pair(_entry("bios_CD_U.bin", sha1="a" * 40),
+                       [_entry("ROM1.bin", sha1="a" * 40)]),
+            0,
+        )
+
+    def test_md5_crc32_and_sha256_pair_them_too(self):
+        for algorithm, value in (("md5", "b" * 32), ("crc32", "b" * 8), ("sha256", "c" * 64)):
             with self.subTest(algorithm=algorithm):
-                value = "b" * 32
-                truth = [_entry("a.bin", **{algorithm: value})]
-                scraped = {"b.bin": _entry("b.bin", **{algorithm: value})}
-                matched_truth, _ = _match_renames(truth, scraped)
-                self.assertEqual(matched_truth, {0})
+                self.assertEqual(
+                    self._pair(_entry("a.bin", **{algorithm: value}),
+                               [_entry("b.bin", **{algorithm: value})]),
+                    0,
+                )
 
     def test_hash_comparison_ignores_case(self):
-        truth = [_entry("a.bin", sha1="AbCdEf" + "0" * 34)]
-        scraped = {"b.bin": _entry("b.bin", sha1="abcdef" + "0" * 34)}
-        self.assertEqual(_match_renames(truth, scraped)[0], {0})
+        self.assertEqual(
+            self._pair(_entry("a.bin", sha1="AbCdEf" + "0" * 34),
+                       [_entry("b.bin", sha1="abcdef" + "0" * 34)]),
+            0,
+        )
 
     def test_different_content_is_not_a_rename(self):
-        truth = [_entry("a.bin", sha1="a" * 40)]
-        scraped = {"b.bin": _entry("b.bin", sha1="b" * 40)}
-        self.assertEqual(_match_renames(truth, scraped), (set(), set()))
+        self.assertIsNone(
+            self._pair(_entry("a.bin", sha1="a" * 40), [_entry("b.bin", sha1="b" * 40)])
+        )
 
     def test_files_with_no_hashes_never_pair(self):
         """Two unknowns are not evidence of the same file."""
-        truth = [_entry("a.bin")]
-        scraped = {"b.bin": _entry("b.bin")}
-        self.assertEqual(_match_renames(truth, scraped), (set(), set()))
+        self.assertIsNone(self._pair(_entry("a.bin"), [_entry("b.bin")]))
 
-    def test_a_non_string_hash_is_ignored_rather_than_crashing(self):
-        truth = [_entry("a.bin", crc32=12345678)]
-        scraped = {"b.bin": _entry("b.bin", crc32=12345678)}
-        self.assertEqual(_match_renames(truth, scraped), (set(), set()))
-
-    def test_empty_input_on_either_side_pairs_nothing(self):
-        self.assertEqual(_match_renames([], {}), (set(), set()))
-        self.assertEqual(_match_renames([_entry("a", sha1="a" * 40)], {}), (set(), set()))
+    def test_a_hash_yaml_made_a_number_reads_as_its_digits(self):
+        # A digit-only crc32 written unquoted: the export writes it back.
         self.assertEqual(
-            _match_renames([], {"b": _entry("b", sha1="a" * 40)}), (set(), set())
+            self._pair(_entry("a.bin", crc32=12345678), [_entry("b.bin", crc32="12345678")]),
+            0,
         )
 
-    def test_each_scraped_file_pairs_once(self):
-        """A file matching on several digests must not be counted twice."""
-        truth = [_entry("a.bin", sha1="a" * 40, md5="b" * 32)]
-        scraped = {"b.bin": _entry("b.bin", sha1="a" * 40, md5="b" * 32)}
-        matched_truth, matched_scraped = _match_renames(truth, scraped)
-        self.assertEqual(len(matched_truth), 1)
-        self.assertEqual(len(matched_scraped), 1)
+    def test_a_claimed_entry_never_answers_twice(self):
+        scraped = [_entry("b.bin", sha1="a" * 40)]
+        self.assertIsNone(self._pair(_entry("a.bin", sha1="a" * 40), scraped, {0}))
 
-    def test_several_renames_are_all_reported(self):
-        truth = [_entry("a.bin", sha1="a" * 40), _entry("c.bin", sha1="c" * 40)]
-        scraped = {
-            "b.bin": _entry("b.bin", sha1="a" * 40),
-            "d.bin": _entry("d.bin", sha1="c" * 40),
-        }
-        matched_truth, matched_scraped = _match_renames(truth, scraped)
-        self.assertEqual(matched_truth, {0, 1})
-        self.assertEqual(matched_scraped, {"b.bin", "d.bin"})
-
-    def test_an_unrelated_file_beside_a_rename_stays_unmatched(self):
-        truth = [_entry("a.bin", sha1="a" * 40), _entry("lonely.bin", sha1="f" * 40)]
-        scraped = {"b.bin": _entry("b.bin", sha1="a" * 40)}
-        matched_truth, _ = _match_renames(truth, scraped)
-        self.assertEqual(matched_truth, {0})
-        self.assertNotIn("lonely.bin", matched_truth)
+    def test_the_diff_reads_no_gap_for_a_rename(self):
+        truth = {"files": [_entry("a.bin", sha1="a" * 40)]}
+        scraped = {"files": [_entry("b.bin", sha1="a" * 40)]}
+        self.assertEqual(_diff_system(truth, scraped), {})
 
 
 
@@ -222,7 +208,7 @@ class PlatformMultiHash(unittest.TestCase):
     def test_a_rename_is_found_through_the_list(self):
         truth = [_entry("scph1001.bin", md5=self.TRUTH)]
         scraped = {"psx.bin": _entry("psx.bin", md5=self.SCRAPED)}
-        self.assertEqual(_match_renames(truth, scraped), ({0}, {"psx.bin"}))
+        self.assertEqual(pair_truth_entry(truth[0], list(scraped.values()), set()), 0)
 
 
 class OnlySystemDirectoryEntries(unittest.TestCase):
