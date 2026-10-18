@@ -2468,12 +2468,17 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     for platform_name in platforms:
         found = sorted(expected[platform_name] & on_disk)
         if not found:
-            print(f"  {platform_name}: SKIP (no pack in {args.output_dir})")
-            # Naming a platform is asking about its pack. Answering SKIP and
-            # exiting 0 says the pack passed; with --all, a platform whose pack
-            # was not built is genuinely out of scope.
+            # Naming a platform is asking about its pack: FAIL, with the
+            # command that builds it. With --all, a platform whose pack was
+            # not built is out of scope and skipped.
             if args.platform:
+                print(
+                    f"  {platform_name}: FAIL (no pack in {args.output_dir}; build it with "
+                    f"generate_pack.py --platform {platform_name} --output-dir {args.output_dir})"
+                )
                 all_ok = False
+            else:
+                print(f"  {platform_name}: SKIP (no pack in {args.output_dir})")
             continue
         tc = _target_cores_for(platform_name, args.target, args.platforms_dir)
         # A group pack and a pack built for the platform alone can both be

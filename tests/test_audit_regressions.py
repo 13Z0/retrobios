@@ -4951,5 +4951,22 @@ class ATargetIsNamedWhenItRemovesTheCore(unittest.TestCase):
         self.assertNotIn("is not run by", result.stderr)
 
 
+
+class ANamedPackThatIsAbsentFails(unittest.TestCase):
+    """--verify-packs --platform retroarch on an empty directory printed
+    "SKIP" and exited 1: a skip label on a failure, and no next step."""
+
+    def test_the_line_says_fail_and_how_to_build(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            result = subprocess.run(
+                [sys.executable, "scripts/generate_pack.py", "--platform", "retroarch",
+                 "--verify-packs", "--output-dir", directory],
+                cwd=ROOT, capture_output=True, text=True, timeout=600,
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("retroarch: FAIL (no pack in", result.stdout)
+        self.assertIn("generate_pack.py --platform retroarch", result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
