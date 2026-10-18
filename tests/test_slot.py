@@ -260,5 +260,42 @@ class TestRepoProfiles(unittest.TestCase):
         self.assertEqual(undecidable, ["sony-playstation|japan"])
 
 
+
+class AnUnrankedDeclarationIsADisagreement(unittest.TestCase):
+    """ROCKNIX --one-per-slot dropped the required bios_CD_U.bin: PicoDrive
+    ranks it 4 behind its own us_scd1_9210.bin, while Genesis Plus GX opens
+    bios_CD_U.bin by name and ranks nothing."""
+
+    def test_the_file_genesis_plus_gx_opens_is_kept(self):
+        from slot import build_slot_index, resolve_slot_drops
+
+        profiles = {
+            "picodrive": {"files": [
+                {"name": "us_scd1_9210.bin", "priority": 3},
+                {"name": "bios_CD_U.bin", "priority": 4},
+            ]},
+            "genesis_plus_gx": {"files": [{"name": "bios_CD_U.bin"}]},
+        }
+        index = build_slot_index(profiles)
+        drops, undecidable = resolve_slot_drops(
+            {"sega-mega-cd": [("bios/us_scd1_9210.bin", "us_scd1_9210.bin"),
+                              ("bios/bios_CD_U.bin", "bios_CD_U.bin")]},
+            index,
+        )
+        self.assertEqual(drops, set())
+        self.assertEqual(undecidable, ["sega-mega-cd"])
+
+    def test_one_core_ranking_alone_still_decides(self):
+        from slot import build_slot_index, resolve_slot_drops
+
+        index = build_slot_index({"picodrive": {"files": [
+            {"name": "a.bin", "priority": 1}, {"name": "b.bin", "priority": 2},
+        ]}})
+        drops, _ = resolve_slot_drops(
+            {"g": [("bios/a.bin", "a.bin"), ("bios/b.bin", "b.bin")]}, index
+        )
+        self.assertEqual(drops, {"bios/b.bin"})
+
+
 if __name__ == "__main__":
     unittest.main()

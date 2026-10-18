@@ -23,6 +23,8 @@ The scale is only meaningful inside one emulator's candidate set. When two
 profiles rank the same file differently -- pcsx1 walks scph1001 first while
 DuckStation prefers scph5501 -- the pack serves both cores, so neither order
 may win: the file is marked conflicting and its group stays undecidable.
+The same holds when one profile ranks a file and another declares it with no
+rank: the second core reads it by its own rule, which no rank expresses.
 """
 
 from __future__ import annotations
@@ -62,10 +64,11 @@ def build_slot_index(profiles: dict) -> dict[str, dict]:
                 entry = index.setdefault(
                     key,
                     {"rank": None, "conflict": False, "regions": set(),
-                     "emulators": []},
+                     "emulators": [], "ranked_by": set(), "unranked_by": set()},
                 )
                 entry["regions"] |= {str(r) for r in (f.get("region") or [])}
                 rank = f.get("priority")
+                entry["unranked_by" if rank is None else "ranked_by"].add(emu_name)
                 if rank is not None:
                     current = entry["rank"]
                     if current is not None and current != rank:
@@ -75,6 +78,14 @@ def build_slot_index(profiles: dict) -> dict[str, dict]:
                     )
                 if emu_name not in entry["emulators"]:
                     entry["emulators"].append(emu_name)
+    # A core that declares the file without a rank loads it by a rule of its
+    # own: Genesis Plus GX opens bios_CD_U.bin by name for a US disc, and
+    # PicoDrive's rank 4 for it would let its rank-3 file replace it.
+    for entry in index.values():
+        if entry["ranked_by"] and entry.pop("unranked_by") - entry["ranked_by"]:
+            entry["conflict"] = True
+        entry.pop("unranked_by", None)
+        entry.pop("ranked_by")
     return index
 
 
