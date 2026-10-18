@@ -4421,5 +4421,35 @@ class OneOutputFormPerRun(unittest.TestCase):
                 self.assertIn("not allowed with", proc.stderr)
 
 
+
+class BundledFilesAreNotToSource(unittest.TestCase):
+    """DaedalusX64's n64.psh, the shader library its renderer installs
+    beside the binary, was reported as a required core file missing and
+    listed among the files to source, with 19 more like it."""
+
+    def test_verify_does_not_count_it_missing(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import verify
+
+        entry = {"name": "n64.psh", "required": True, "in_repo": False,
+                 "category": "bios", "in_pack": True, "bundled": True}
+        self.assertEqual(verify._core_required_missing([entry]), [])
+        summary = verify._overall_summary(
+            [({"severity_counts": {}, "undeclared_files": [entry]}, ["ROCKNIX"])]
+        )
+        self.assertNotIn("n64.psh", summary)
+
+    def test_the_site_gives_it_its_own_status(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import generate_site
+
+        rows = generate_site._gap_export_rows({}, {"daedalusx64": {
+            "emulator": "DaedalusX64", "systems": ["nintendo-64"],
+            "gap_details": [{"name": "n64.psh", "source": "missing", "required": True,
+                             "in_repo": False, "bundled": True}],
+        }})
+        self.assertEqual([row["status"] for row in rows], ["bundled"])
+
+
 if __name__ == "__main__":
     unittest.main()

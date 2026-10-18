@@ -645,6 +645,7 @@ def find_undeclared_files(
                 "path": dest,
                 "required": f.get("required", False),
                 "hle_fallback": f.get("hle_fallback", False),
+                "bundled": f.get("bundled", False),
                 "category": f.get("category", "bios"),
                 "in_repo": in_repo,
                 "note": f.get("note", ""),
@@ -1348,11 +1349,18 @@ def _split_undeclared(undeclared: list[dict]) -> tuple[list[dict], list[dict], l
 
 
 def _core_required_missing(bios_files: list[dict]) -> list[dict]:
-    """Core files a core cannot run without, absent from the collection."""
+    """Core files a core cannot run without, absent from the collection.
+
+    A file bundled with the emulator (DaedalusX64's n64.psh, the shader
+    library its renderer installs beside the binary) arrives with it: the
+    collection does not hold it by design, and listing it as missing sent
+    readers after a file every install already has.
+    """
     return [
         u
         for u in bios_files
         if u["required"] and not u["in_repo"] and not u.get("hle_fallback")
+        and not u.get("bundled")
     ]
 
 
@@ -1374,6 +1382,11 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
     opt_in_repo = [u for u in bios_files if not u["required"] and u["in_repo"]]
     opt_not_in_repo = [u for u in bios_files if not u["required"] and not u["in_repo"]]
 
+    bundled = [
+        u for u in bios_files
+        if u["required"] and not u["in_repo"] and u.get("bundled")
+        and not u.get("hle_fallback")
+    ]
     core_in_pack = len(req_in_repo) + len(opt_in_repo)
     core_missing_req = len(req_not_in_repo) + len(req_hle_not_in_repo)
     core_missing_opt = len(opt_not_in_repo)
@@ -1381,6 +1394,9 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
     print(
         f"  Core files: {core_in_pack} in pack, {core_missing_req} required missing, {core_missing_opt} optional missing"
     )
+    if bundled:
+        names = ", ".join(sorted({u["name"] for u in bundled}))
+        print(f"  Bundled with their emulator, not collected: {names}")
     if unplaced:
         print(f"  Core files held but not packed: {len(unplaced)} ({unplaced[0]['omitted']})")
 

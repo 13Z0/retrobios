@@ -608,6 +608,7 @@ def _cross_reference_profile(
             "name": fname,
             "path": effective_path,
             "required": f.get("required", False),
+            "bundled": bool(f.get("bundled")),
             "note": f.get("note", ""),
             "source_ref": f.get("source_ref", ""),
             "in_platform": False,

@@ -653,7 +653,12 @@ def _gap_export_rows(coverages: dict, gap_report: dict | None = None) -> list[di
                 "emulator": data.get("emulator", emu_key),
                 "system": systems,
                 "name": gap.get("name", ""),
-                "status": gap.get("source", ""),
+                # A file the emulator's own package installs is not one to
+                # find: its own status, as unsourceable has.
+                "status": (
+                    "bundled" if gap.get("bundled") and gap.get("source") == "missing"
+                    else gap.get("source", "")
+                ),
                 "required": bool(gap.get("required", False)),
                 "in_repo": bool(gap.get("in_repo", False)),
                 "reason": gap.get("note", ""),
@@ -3109,9 +3114,17 @@ def generate_gap_analysis(
         src_missing_details: list[dict] = []
         by_identity: dict[tuple[str, str], dict] = {}
         entries = 0
+        bundled_rows: set[tuple[str, str]] = set()
         for emu_name, data in emulator_gaps:
             for g in data["gap_details"]:
                 if g["source"] != "missing":
+                    continue
+                if g.get("bundled"):
+                    # It arrives with the emulator's own package, which is
+                    # why the collection documents it and does not hold it:
+                    # asking readers to source it sent them after a file
+                    # every install already has.
+                    bundled_rows.add((data["emulator"], g["name"]))
                     continue
                 entries += 1
                 key = (g["name"], g.get("identity") or f"emulator:{emu_name}")
@@ -3166,6 +3179,14 @@ def generate_gap_analysis(
                     f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
             lines.append("")
+        if bundled_rows:
+            emulators = sorted({emulator for emulator, _name in bundled_rows})
+            lines.extend([
+                f"{len(bundled_rows)} further files arrive with their emulator's own "
+                f"package ({', '.join(emulators)}): documented in the profile, not "
+                "collected, and not listed here.",
+                "",
+            ])
 
     # ---- Section 4: Acknowledged gaps (unsourceable files) ----
 
