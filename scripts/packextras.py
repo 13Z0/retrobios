@@ -215,6 +215,7 @@ def hidden_extras(
     placed: set[str] | None = None,
     report: list[dict] | None = None,
     resolver: ExtraResolver | None = None,
+    placed_by: dict[str, tuple[str, str, str]] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -286,6 +287,11 @@ def hidden_extras(
             lower.add(full.lower())
         if placed is not None and local:
             placed.add(full)
+        if placed_by is not None and local:
+            placed_by[full] = (
+                fe.get("source_emulator", ""), fe.get("source_name", ""),
+                fe.get("source_path", ""),
+            )
     return hidden
 
 

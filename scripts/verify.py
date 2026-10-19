@@ -824,6 +824,7 @@ def _mark_hidden(
     region_drops: set[str] | None = None,
     report: list[dict] | None = None,
     resolver: object | None = None,
+    placed_by: dict[str, tuple[str, str, str]] | None = None,
 ) -> set[str]:
     """What the builder holds but cannot place beside the files it packed.
 
@@ -838,7 +839,7 @@ def _mark_hidden(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores, region_drops, placed, report, resolver,
+        shipped, target_cores, region_drops, placed, report, resolver, placed_by,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1200,6 +1201,7 @@ def verify_platform(
     _mark_unplaced(config, undeclared, profiles)
     from packextras import ExtraResolver
 
+    placed_by: dict[str, tuple[str, str, str]] = {}
     placed = _mark_hidden(
         config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
         region_drops, report_for_builder,
@@ -1207,7 +1209,20 @@ def verify_platform(
             db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
             validation_owners,
         ),
+        placed_by,
     )
+    # What the builder places from the cores, one per pack path, by category:
+    # several entries claim one path (rom.key from three Amiga cores) and the
+    # builder ships one file there.
+    categories = {
+        (u.get("emulator", ""), u.get("name", ""), u.get("path") or ""):
+            u.get("category", "bios")
+        for u in report_for_builder
+    }
+    packed_extras = {"bios": 0, "game_data": 0}
+    for key in placed_by.values():
+        kind = "game_data" if categories.get(key) == "game_data" else "bios"
+        packed_extras[kind] += 1
     if not reads_file_contents(mode):
         # An existence frontend is satisfied by any file at the path, and the
         # builder fills a free platform destination with a core's file.
@@ -1276,6 +1291,7 @@ def verify_platform(
         "severity_counts": counts,
         "status_counts": status_counts,
         "excluded_files": excluded,
+        "packed_extras": packed_extras,
         "undeclared_files": undeclared,
         "exclusion_notes": exclusions,
         "region_fallbacks": sorted(region_fallbacks),
@@ -1465,7 +1481,13 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
         if u["required"] and not u["in_repo"] and u.get("bundled")
         and not u.get("hle_fallback")
     ]
-    core_in_pack = len(req_in_repo) + len(opt_in_repo)
+    # The builder's count, one file per pack path, when the platform pass
+    # replayed it. Counting entries said 1130 for RetroArch, 48 more than the
+    # pack holds: rom.key alone was claimed by three Amiga cores.
+    packed = result.get("packed_extras")
+    core_in_pack = (
+        packed["bios"] if packed is not None else len(req_in_repo) + len(opt_in_repo)
+    )
     core_missing_req = len(req_not_in_repo) + len(req_hle_not_in_repo)
     core_missing_opt = len(opt_not_in_repo)
 
@@ -1485,9 +1507,18 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
 
     if game_data:
         gd_missing = [u for u in game_data if not u["in_repo"]]
-        gd_present = [u for u in game_data if u["in_repo"]]
-        if gd_missing or gd_present:
-            print(f"  Game data: {len(gd_present)} in pack, {len(gd_missing)} missing")
+        gd_packed = (
+            packed["game_data"] if packed is not None
+            else sum(1 for u in game_data if u["in_repo"] and u.get("in_pack", True))
+        )
+        gd_unplaced = [u for u in game_data if u["in_repo"] and not u.get("in_pack", True)]
+        if gd_missing or gd_packed or gd_unplaced:
+            print(f"  Game data: {gd_packed} in pack, {len(gd_missing)} missing")
+        if gd_unplaced:
+            print(
+                f"  Game data held but not packed: {len(gd_unplaced)} "
+                f"({gd_unplaced[0].get('omitted', 'not placed')})"
+            )
 
 
 def print_platform_result(

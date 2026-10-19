@@ -274,5 +274,39 @@ class UserProvidedIsNeverTakenFromTheCollection(unittest.TestCase):
         self.assertNotIn(Status.OK, result["status_counts"])
 
 
+class OnePathCountsOnce(unittest.TestCase):
+    """rom.key is claimed by three Amiga cores and the pack holds one file
+    there: the report said 1130 core files in the RetroArch pack, 48 more
+    than it carries."""
+
+    def test_two_claims_on_one_path_count_one_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            self.addCleanup(os.chdir, previous)
+            for d in ("emulators", "bios/Commodore"):
+                Path(d).mkdir(parents=True)
+            Path("bios/Commodore/rom.key").write_bytes(b"key")
+            sha1 = hashlib.sha1(b"key").hexdigest()
+            files = {sha1: {"path": "bios/Commodore/rom.key", "name": "rom.key", "size": 3,
+                            "sha1": sha1, "md5": hashlib.md5(b"key").hexdigest(),
+                            "sha256": hashlib.sha256(b"key").hexdigest(), "crc32": "00000001"}}
+            db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+            for core, region in (("one", ""), ("two", "    region: [world]\n")):
+                Path(f"emulators/{core}.yml").write_text(
+                    f"emulator: {core}\ntype: libretro\nsystems: [amiga]\ncores: [{core}]\n"
+                    f"files:\n  - name: rom.key\n    required: false\n{region}"
+                )
+            common._emulator_profiles_cache.clear()
+            self.addCleanup(common._emulator_profiles_cache.clear)
+            profiles = common.load_emulator_profiles("emulators")
+            config = {"platform": "P", "verification_mode": "existence", "cores": ["one", "two"],
+                      "systems": {"amiga": {"files": []}}}
+            report = verify_platform(config, db, "emulators", profiles)
+        claims = [u for u in report["undeclared_files"] if u["name"] == "rom.key"]
+        self.assertEqual(len(claims), 2)
+        self.assertEqual(report["packed_extras"], {"bios": 1, "game_data": 0})
+
+
 if __name__ == "__main__":
     unittest.main()
