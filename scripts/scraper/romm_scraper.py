@@ -23,12 +23,14 @@ Slugs are IGDB-style platform identifiers.
 from __future__ import annotations
 
 import json
+import re
 import sys
 
 try:
     from .base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_bytes,
         fetch_github_latest_version,
         requirement_entry,
     )
@@ -36,6 +38,7 @@ except ImportError:
     from base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_bytes,
         fetch_github_latest_version,
         requirement_entry,
     )
@@ -48,6 +51,42 @@ SOURCE_URL = (
     "https://raw.githubusercontent.com/rommapp/romm/{tag}"
     "/backend/models/fixtures/known_bios_files.json"
 )
+
+# The player's core table. _EJS_CORES_MAP is what EmulatorJS 4.2.3 runs, and
+# _EJS_NIGHTLY_CORES_MAP adds the nightly cores RomM merges in when netplay is
+# enabled (getSupportedEJSCores). Both are cores RomM can launch, so the pack
+# carries what either needs: azahar, bsnes and genesis_plus_gx_wide exist only
+# in the nightly map.
+CORES_URL = (
+    "https://raw.githubusercontent.com/rommapp/romm/{tag}"
+    "/frontend/src/utils/index.ts"
+)
+CORE_MAPS = ("_EJS_CORES_MAP", "_EJS_NIGHTLY_CORES_MAP")
+
+
+def parse_player_cores(source: str) -> list[str]:
+    """Every core named by the player's core maps, sorted.
+
+    A map missing from the file, or one naming no core, means the source has
+    changed shape: that raises instead of publishing a shorter list.
+    """
+    cores: set[str] = set()
+    for name in CORE_MAPS:
+        match = re.search(
+            rf"const {name}\b[^=]*=\s*\{{(.*?)^\}}", source, re.S | re.M
+        )
+        if match is None:
+            raise RuntimeError(f"{name} not found in the RomM player source")
+        found = set(re.findall(r"\[([^\]]*)\]", match.group(1)))
+        named = {
+            core
+            for values in found
+            for core in re.findall(r'"([A-Za-z0-9_]+)"', values)
+        }
+        if not named:
+            raise RuntimeError(f"{name} names no core")
+        cores |= named
+    return sorted(cores)
 
 # IGDB slug -> retrobios system ID
 SLUG_MAP: dict[str, str] = {
@@ -112,7 +151,7 @@ SLUG_MAP: dict[str, str] = {
 
 # Slugs whose player runs the same core as another slug and reads firmware
 # from its own folder. RomM keys the fixture by tg16 only, but its player maps
-# both tg16 and turbografx-cd to mednafen_pce (frontend/src/utils/index.ts:540-541)
+# both tg16 and turbografx-cd to mednafen_pce (frontend/src/utils/index.ts:481-482)
 # and lists firmware per platform folder (backend/handler/filesystem/
 # firmware_handler.py get_firmware_fs_structure), so a CD library without the
 # system cards under its own slug cannot boot a disc.
@@ -237,6 +276,9 @@ class Scraper(BaseScraper):
             "verification_mode": "md5",
             # Firmware.verify_file_hashes: size, then md5, sha1 or crc.
             "hash_rule": "size_and_any_hash",
+            "cores": parse_player_cores(
+                fetch_bytes(CORES_URL.format(tag=self.tag)).decode("utf-8")
+            ),
             "systems": systems,
         }
 

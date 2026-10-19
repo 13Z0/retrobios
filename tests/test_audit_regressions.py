@@ -4876,6 +4876,48 @@ class AHashListIsReadOneWay(unittest.TestCase):
 
 
 
+class RommRunsTheCoresItsPlayerNames(unittest.TestCase):
+    """RomM's player merges a nightly core map into the stable one when netplay
+    is on. Inheriting EmulatorJS's list left azahar, bsnes and
+    genesis_plus_gx_wide out of the RomM pack, though RomM launches them."""
+
+    SOURCE = """
+const _EJS_CORES_MAP: Record<string, string[]> = {
+  "3do": ["opera"],
+  arcade: [
+    "mame2003_plus",
+    "fbneo",
+  ],
+} as const;
+
+const _EJS_NIGHTLY_CORES_MAP: Record<string, string[]> = {
+  "3ds": ["azahar"],
+  snes: ["snes9x", "bsnes"],
+};
+"""
+
+    def test_both_maps_are_read(self):
+        from scripts.scraper.romm_scraper import parse_player_cores
+
+        self.assertEqual(
+            parse_player_cores(self.SOURCE),
+            ["azahar", "bsnes", "fbneo", "mame2003_plus", "opera", "snes9x"],
+        )
+
+    def test_a_missing_map_raises(self):
+        from scripts.scraper.romm_scraper import parse_player_cores
+
+        source = self.SOURCE.replace("_EJS_NIGHTLY_CORES_MAP", "_RENAMED")
+        with self.assertRaises(RuntimeError):
+            parse_player_cores(source)
+
+    def test_the_platform_file_carries_the_nightly_cores(self):
+        from common import load_platform_config
+
+        cores = set(load_platform_config("romm", str(ROOT / "platforms"))["cores"])
+        self.assertTrue({"azahar", "bsnes", "genesis_plus_gx_wide"} <= cores)
+
+
 class RommNeoGeoFoldersGetTheirBios(unittest.TestCase):
     """RomM runs fbneo for neogeoaes and neogeomvs as for arcade and reads
     firmware per platform folder, but the fixture gives neogeo.zip to arcade
