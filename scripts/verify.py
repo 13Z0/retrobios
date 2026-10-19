@@ -782,6 +782,31 @@ def _mark_unplaced(config: dict, undeclared: list[dict], profiles: dict) -> None
             u["omitted"] = _UNPLACED_REASONS[reason]
 
 
+def _storage_verdict(file_entry: dict, emulator_pack: bool) -> dict | None:
+    """The result a storage tier fixes before any lookup, as the builder sees it.
+
+    A user_provided entry is never taken from the collection: a platform pack
+    writes its instructions in the slot and counts it filled, an emulator pack
+    lists it to provide. An external one is fetched from its URL when the pack
+    is built, never read from bios/. Resolving either by name credited a
+    same-named file the pack does not carry.
+    """
+    storage = file_entry.get("storage", "embedded")
+    base = {"name": file_entry.get("name", ""), "required": file_entry.get("required", True)}
+    if storage == "user_provided":
+        if emulator_pack:
+            stated = file_entry.get("unsourceable")
+            why = (
+                stated if isinstance(stated, str) and stated
+                else file_entry.get("instructions") or "the user provides it"
+            )
+            return {**base, "status": Status.MISSING, "unsourceable": why}
+        return {**base, "status": Status.OK, "user_provided": True}
+    if storage == "external":
+        return {**base, "status": Status.MISSING, "reason": "fetched from its URL when the pack is built"}
+    return None
+
+
 _HIDDEN_REASONS = {
     "case_twin": "a packed file of the same name in another case takes its place",
     "path_conflict": "a packed file occupies its directory",
@@ -1064,7 +1089,11 @@ def verify_platform(
             destination = sanitize_pack_path(
                 file_entry.get("destination", file_entry.get("name", ""))
             )
-            if not reads_file_contents(mode):
+            stored = _storage_verdict(file_entry, emulator_pack=False)
+            if stored is not None:
+                result = stored
+                local_path = None
+            elif not reads_file_contents(mode):
                 result = verify_entry_existence(
                     file_entry,
                     local_path,
@@ -1795,7 +1824,10 @@ def verify_emulator(
             required = file_entry.get("required", True)
             hle = file_entry.get("hle_fallback", False)
 
-            if not local_path:
+            stored = _storage_verdict(file_entry, emulator_pack=True)
+            if stored is not None:
+                result = stored
+            elif not local_path:
                 result = {"name": name, "status": Status.MISSING, "required": required}
                 # An entry the profile documents as unsourceable is absent by
                 # design: a per-user key, a slot the user fills, a dump nobody

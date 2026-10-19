@@ -242,5 +242,37 @@ class FlatFirmwareFolder(unittest.TestCase):
         self.assertEqual([f["dest"] for f in files if f["dest"].count("/") > 1], [])
 
 
+class UserProvidedIsNeverTakenFromTheCollection(unittest.TestCase):
+    """The builder writes instructions for a user_provided entry and never
+    looks it up. verify resolved it by name, so a same-named file in bios/
+    made it report 1/1 OK for a pack that holds no such file."""
+
+    def test_verify_matches_the_builder(self):
+        from verify import Status, verify_emulator
+
+        with tempfile.TemporaryDirectory() as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            self.addCleanup(os.chdir, previous)
+            for d in ("emulators", "bios/Sony"):
+                Path(d).mkdir(parents=True)
+            Path("bios/Sony/scph5501.bin").write_bytes(b"psx")
+            sha1 = hashlib.sha1(b"psx").hexdigest()
+            files = {sha1: {"path": "bios/Sony/scph5501.bin", "name": "scph5501.bin",
+                            "size": 3, "sha1": sha1, "md5": hashlib.md5(b"psx").hexdigest(),
+                            "sha256": hashlib.sha256(b"psx").hexdigest(), "crc32": "00000001"}}
+            db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+            Path("emulators/fake.yml").write_text(
+                "emulator: Fake\ntype: libretro\nsystems: [psx]\ncores: [fake]\n"
+                "files:\n  - name: scph5501.bin\n    storage: user_provided\n"
+            )
+            common._emulator_profiles_cache.clear()
+            self.addCleanup(common._emulator_profiles_cache.clear)
+            result = verify_emulator(["fake"], "emulators", db)
+        statuses = [d["status"] for d in result["details"] if d["name"] == "scph5501.bin"]
+        self.assertEqual(statuses, [Status.MISSING])
+        self.assertNotIn(Status.OK, result["status_counts"])
+
+
 if __name__ == "__main__":
     unittest.main()
