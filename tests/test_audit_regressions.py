@@ -5100,5 +5100,23 @@ class TheGroundTruthFooterSaysWhatItCounts(unittest.TestCase):
         self.assertNotIn("0/81", text)
 
 
+class ThePipelineSummaryTimesEachStep(unittest.TestCase):
+    """The summary gave OK per step and one total: the slow step of a
+    twenty-minute run could only be found by reading the log."""
+
+    def test_each_outcome_carries_its_time(self):
+        from unittest import mock
+
+        clock = iter([10.0, 12.5, 12.5, 20.0])
+        with mock.patch.object(pipeline.time, "monotonic", lambda: next(clock)):
+            results = pipeline.StepResults(pipeline.time.monotonic())
+            results["generate_db"] = True
+            results["refresh_data"] = pipeline.SKIPPED
+            results["verify"] = True
+        self.assertEqual(results.seconds, {"generate_db": 2.5, "refresh_data": 0.0, "verify": 7.5})
+        self.assertEqual(dict(results), {"generate_db": True, "refresh_data": pipeline.SKIPPED,
+                                         "verify": True})
+
+
 if __name__ == "__main__":
     unittest.main()

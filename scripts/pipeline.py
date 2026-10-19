@@ -62,6 +62,27 @@ from common import (
 from refresh_data_dirs import hold_data_dirs
 
 
+class StepResults(dict):
+    """The outcome of each step, and how long it took.
+
+    A step's time runs from the previous step's outcome to its own, so the
+    in-process steps (consistency, the truth diff) are timed like the ones
+    run() launches. The summary prints it: finding the slow step in a
+    twenty-minute run meant reading the whole log.
+    """
+
+    def __init__(self, start: float) -> None:
+        super().__init__()
+        self.seconds: dict[str, float] = {}
+        self._mark = start
+
+    def __setitem__(self, step: str, outcome: object) -> None:
+        now = time.monotonic()
+        self.seconds[step] = self.seconds.get(step, 0.0) + now - self._mark
+        self._mark = now
+        super().__setitem__(step, outcome)
+
+
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
     """Run a command, echoing its output as it comes. Returns (success, output).
 
@@ -384,9 +405,9 @@ def main() -> None:
             print(f"ERROR: {exc}")
             sys.exit(1)
 
-    results = {}
     all_ok = True
     total_start = time.monotonic()
+    results = StepResults(total_start)
 
     # Step 1: Generate database
     ok, out = run(
@@ -709,10 +730,10 @@ def main() -> None:
     print(f"\n{'=' * 60}")
     for step, outcome in results.items():
         if outcome is SKIPPED:
-            label = "SKIPPED"
-        else:
-            label = "OK" if outcome else "FAILED"
-        print(f"  {step:.<40} {label}")
+            print(f"  {step:.<40} SKIPPED")
+            continue
+        label = "OK" if outcome else "FAILED"
+        print(f"  {step:.<40} {label:<7}{results.seconds[step]:>8.1f}s")
     print(f"  {'total':.<40} {total_elapsed:.1f}s")
     print(f"{'=' * 60}")
     print(f"  Pipeline {'COMPLETE' if all_ok else 'FINISHED WITH ERRORS'}")
