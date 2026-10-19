@@ -140,17 +140,14 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
                 if part.end is not None and part.end != part.start:
                     display += f"-{part.end}"
 
+            # The path is linked as written. A first segment equal to a
+            # repository's name proves nothing: PCSX2 keeps its sources in
+            # pcsx2/, hatariB vendors Hatari in hatari/, and stripping it
+            # broke 470 links. Two repositories and no tree to read: no link.
             selected: tuple[upstream.Repo, str] | None = None
             real_path = part.path
-            if path_re.fullmatch(part.path) and candidates:
-                for repo, pin in candidates:
-                    prefix = f"{repo.name}/"
-                    if part.path.startswith(prefix):
-                        selected = (repo, pin)
-                        real_path = part.path[len(prefix):]
-                        break
-                if selected is None and len(candidates) == 1:
-                    selected = candidates[0]
+            if path_re.fullmatch(part.path) and len(candidates) == 1:
+                selected = candidates[0]
 
             if selected is None:
                 rendered.append(f"`{display}`")

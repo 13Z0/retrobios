@@ -162,9 +162,16 @@ class SiteReferenceContracts(unittest.TestCase):
         self.assertEqual(rendered, "`jg.c:213-214`")
         self.assertNotIn("http", rendered)
 
-        # A repository-name prefix removes the ambiguity, so it links again.
+        # A first segment equal to a repository's name proves nothing: PCSX2
+        # keeps its sources in pcsx2/, hatariB vendors Hatari in hatari/.
+        # Stripped, 470 links pointed at nothing or at another file.
         prefixed = _source_ref_markdown(profile, "example/jg.c:213-214")
-        self.assertIn("gitlab.com/vendor/example/-/blob/" + "b" * 40 + "/jg.c", prefixed)
+        self.assertEqual(prefixed, "`example/jg.c:213-214`")
+
+    def test_a_single_repository_links_the_path_as_written(self):
+        profile = {"source": "https://github.com/PCSX2/pcsx2", "source_commit": "c" * 40}
+        rendered = _source_ref_markdown(profile, "pcsx2/ImGui/FullscreenUI.cpp:755-759")
+        self.assertIn("/blob/" + "c" * 40 + "/pcsx2/ImGui/FullscreenUI.cpp#L755-L759", rendered)
 
     def test_preprocessor_tokens_cannot_become_page_headings(self):
         rendered = _admonition_body("First paragraph.\n\n#if FEATURE\nEnabled")
