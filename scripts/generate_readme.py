@@ -60,7 +60,9 @@ def compute_coverage(
     untested = sc.get("untested", 0)
     missing = sc.get("missing", 0)
     total = result["total_files"]
-    present = ok + untested
+    # An UNTESTED file the builder refuses (its declared hash contradicted on
+    # a hash platform) is held, not packed.
+    present = ok + untested - len(result.get("excluded_files", []))
     pct = (present / total * 100) if total > 0 else 0
     undeclared = result.get("undeclared_files", [])
     # Held is not packed: a file the platform has no folder for, or one below

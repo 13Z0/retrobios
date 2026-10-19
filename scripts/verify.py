@@ -1045,6 +1045,7 @@ def verify_platform(
     )
 
     shipped: dict[str, str] = {}
+    shipped_keys: set[str] = set()
     results_at: dict[str, list[dict]] = {}
     for sys_id, system in verify_systems.items():
         for file_entry in system.get("files", []):
@@ -1111,6 +1112,7 @@ def verify_platform(
                     f"{base_dest}/{destination}" if base_dest else destination,
                     local_path,
                 )
+                shipped_keys.add(_dest_key(file_entry, sys_id))
             if _twin_unmet(result, held_by):
                 continue
 
@@ -1191,6 +1193,14 @@ def verify_platform(
     for s in file_severity.values():
         counts[s] = counts.get(s, 0) + 1
 
+    # Held but refused: on a hash platform the builder leaves out a file whose
+    # declared hash the local copy contradicts. Counted apart, so a coverage
+    # figure never calls present what the pack does not carry.
+    excluded = sorted(
+        dest for dest, status in file_status.items()
+        if status == Status.UNTESTED and dest not in shipped_keys
+    )
+
     # Count by file status (ok/untested/missing)
     status_counts: dict[str, int] = {}
     for s in file_status.values():
@@ -1229,6 +1239,7 @@ def verify_platform(
         "total_files": total,
         "severity_counts": counts,
         "status_counts": status_counts,
+        "excluded_files": excluded,
         "undeclared_files": undeclared,
         "exclusion_notes": exclusions,
         "region_fallbacks": sorted(region_fallbacks),

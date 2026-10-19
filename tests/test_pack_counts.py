@@ -425,5 +425,54 @@ class TheCollectionTotalNamesTheCollection(unittest.TestCase):
         self.assertEqual(generate_site.COLLECTION_FILES_LABEL, "Files collected")
 
 
+class RefusedFilesAreNotPresent(unittest.TestCase):
+    """RetroDECK's dsifirmware.bin is held, but its declared hash contradicts
+    the local copy, so the md5 builder leaves it out. The README still
+    printed 2,008/2,008 for a pack that carries 2,007."""
+
+    def test_the_coverage_subtracts_a_refused_file(self):
+        import os
+
+        import common
+        import generate_db
+        import generate_readme
+
+        with tempfile.TemporaryDirectory() as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            self.addCleanup(os.chdir, previous)
+            for d in ("bios/X", "platforms", "emulators"):
+                Path(d).mkdir(parents=True)
+            files = {}
+            for name in ("good.bin", "wrong.bin"):
+                payload = name.encode()
+                Path(f"bios/X/{name}").write_bytes(payload)
+                sha1 = hashlib.sha1(payload).hexdigest()
+                files[sha1] = {
+                    "path": f"bios/X/{name}", "name": name, "size": len(payload),
+                    "sha1": sha1, "md5": hashlib.md5(payload).hexdigest(),
+                    "sha256": hashlib.sha256(payload).hexdigest(), "crc32": "00000001",
+                }
+            db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+            config = {
+                "platform": "Hashy", "verification_mode": "md5", "base_destination": "bios",
+                "systems": {"sys": {"files": [
+                    {"name": "good.bin", "destination": "good.bin",
+                     "md5": hashlib.md5(b"good.bin").hexdigest()},
+                    {"name": "wrong.bin", "destination": "wrong.bin", "md5": "f" * 32},
+                ]}},
+            }
+            Path("platforms/hashy.yml").write_text(yaml.dump(config))
+            Path("platforms/_registry.yml").write_text(
+                yaml.dump({"platforms": {"hashy": {"status": "active"}}})
+            )
+            common._platform_config_cache.clear()
+            self.addCleanup(common._platform_config_cache.clear)
+            coverage = generate_readme.compute_coverage(
+                "hashy", "platforms", db, emulators_dir="emulators"
+            )
+        self.assertEqual((coverage["present"], coverage["total"]), (1, 2))
+
+
 if __name__ == "__main__":
     unittest.main()
