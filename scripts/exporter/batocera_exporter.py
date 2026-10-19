@@ -23,6 +23,13 @@ _ENTRY_START = re.compile(r'^(\s{4})"([^"]+)":\s*\{')
 _INDENT = " " * 4
 
 
+def _note_key(text: str) -> tuple[str, str]:
+    """(file, zippedFile) of the item a line holds, ("", "") for none."""
+    path = re.search(r'"file"\s*:\s*"([^"]+)"', text)
+    member = re.search(r'"zippedFile"\s*:\s*"([^"]+)"', text)
+    return (path.group(1) if path else "", member.group(1) if member else "")
+
+
 class Exporter(BaseExporter):
     """Write Batocera's batocera-systems, corrected."""
 
@@ -208,16 +215,22 @@ class Exporter(BaseExporter):
         )
 
     @staticmethod
-    def _item_notes(lines: list[str]) -> tuple[dict[str, str], dict[str, list[str]]]:
-        """The notes a maintainer wrote about each file, keyed by its path.
+    def _item_notes(
+        lines: list[str],
+    ) -> tuple[dict[tuple[str, str], str], dict[tuple[str, str], list[str]]]:
+        """The notes a maintainer wrote about each item, keyed by its file
+        and the member it names inside an archive.
 
         Rewriting an entry as one line would drop them, and a note like
         "ideally - 94bc50..." is the only record of why a hash is blank.
-        A comment on its own line belongs to the file below it, a comment at
-        the end of a line belongs to the file on it.
+        A comment on its own line belongs to the item below it, a comment at
+        the end of a line belongs to the item on it, and a comment after the
+        list's opening bracket (`"biosFiles": [# ep128emu-core`) to the first
+        item. Keyed by path alone, bk's '# MAME' came back before each of
+        twelve items reading bios/bk0010.zip.
         """
-        trailing: dict[str, str] = {}
-        leading: dict[str, list[str]] = {}
+        trailing: dict[tuple[str, str], str] = {}
+        leading: dict[tuple[str, str], list[str]] = {}
         pending: list[str] = []
         for line in lines:
             stripped = line.strip()
@@ -225,16 +238,18 @@ class Exporter(BaseExporter):
             if stripped.startswith("#"):
                 pending.append(stripped)
                 continue
-            path = re.search(r'"file"\s*:\s*"([^"]+)"', line)
-            if not path:
+            key = _note_key(line)
+            if not key[0]:
+                if 0 <= hash_at and "[" in line[:hash_at]:
+                    pending.append(line[hash_at:].strip())
                 continue
-            key = path.group(1)
             if pending:
                 leading[key] = pending
                 pending = []
-            if 0 <= hash_at and hash_at > line.index(key):
+            if 0 <= hash_at and hash_at > line.index(key[0]):
                 trailing[key] = line[hash_at:].rstrip()
         return trailing, leading
+
 
     def _entry_block(
         self,
@@ -259,19 +274,14 @@ class Exporter(BaseExporter):
         pad = " " * (len(_INDENT) + 4)
         lines = [head]
         for index, item in enumerate(items):
-            key = self._item_path(item)
-            lines.extend(f"{pad}{note}" for note in leading.get(key, []))
+            key = _note_key(item)
+            lines.extend(f"{pad}{note}" for note in leading.pop(key, []))
             separator = "," if index < len(items) - 1 else ""
             note = trailing.get(key, "")
             suffix = f" {note}" if note else ""
             lines.append(f"{pad}{item}{separator}{suffix}")
         lines.append(f"{_INDENT}] }},")
         return lines
-
-    @staticmethod
-    def _item_path(item: str) -> str:
-        match = re.search(r'"file": "([^"]+)"', item)
-        return match.group(1) if match else ""
 
     @staticmethod
     def _split_original(original: str) -> tuple[list[str], list[str], list[str]]:

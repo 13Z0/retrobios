@@ -1744,5 +1744,25 @@ class RetroDeckAdditionsFollowTheirCore(unittest.TestCase):
         self.assertEqual(read_by_armsx2.native("component", ""), "")
 
 
+class BatoceraNotesStayWithTheirItem(unittest.TestCase):
+    """Keyed by path, bk's '# MAME' came back before each of twelve items
+    reading bios/bk0010.zip, and enterprise's '"biosFiles": [# ep128emu-core'
+    was dropped."""
+
+    def test_notes_are_kept_once_per_item(self):
+        from exporter.batocera_exporter import Exporter
+
+        lines = [
+            '    "bk": { "name": "BK", "biosFiles": [# head note',
+            "        # MAME",
+            '        { "md5": "a", "file": "bios/bk0010.zip", "zippedFile": "one.rom" },',
+            '        { "md5": "b", "file": "bios/bk0010.zip", "zippedFile": "two.rom" }, # tail',
+            "    ] },",
+        ]
+        trailing, leading = Exporter._item_notes(lines)
+        self.assertEqual(leading, {("bios/bk0010.zip", "one.rom"): ["# head note", "# MAME"]})
+        self.assertEqual(trailing, {("bios/bk0010.zip", "two.rom"): "# tail"})
+
+
 if __name__ == "__main__":
     unittest.main()
