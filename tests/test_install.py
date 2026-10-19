@@ -1267,7 +1267,7 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
             check=False,
         )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("need downloading", proc.stdout)
+        self.assertIn("to download:", proc.stdout)
 
     def test_no_syntax_a_312_parser_lets_through(self):
         """Parenthesized context managers (3.9) and f-strings reusing their
@@ -2864,6 +2864,97 @@ class AMissingFileListNamesTheRef(unittest.TestCase):
         text = self._run(install.DEFAULT_RELEASE_REF)
         self.assertIn("No file list for retroarch", text)
         self.assertNotIn("proxy", text)
+
+
+class TheInstallerSaysWhatItFound(unittest.TestCase):
+    """--check gave a count and no name, a read-only folder printed a line
+    per file, a piped log put errors before their step, and Ctrl+C while
+    the file list was fetched ended on a socket traceback."""
+
+    def setUp(self):
+        import functools  # noqa: PLC0415
+        import http.server  # noqa: PLC0415
+        import shutil  # noqa: PLC0415
+
+        handler = functools.partial(
+            http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
+        )
+        handler.log_message = lambda *args: None
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        self.home = Path(tempfile.mkdtemp(dir=str(REPO_ROOT / "tmp")))
+        self.addCleanup(shutil.rmtree, self.home, True)
+        self.env = {
+            **os.environ, "HOME": str(self.home), "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+
+    def _run(self, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, "install.py", "--platform", "retroarch", "--no-input", *extra],
+            cwd=REPO_ROOT, env=self.env, capture_output=True, text=True, timeout=300,
+            check=False,
+        )
+
+    def test_check_names_the_files(self):
+        dest = self.home / "system"
+        self.assertEqual(self._run("--dest", str(dest), "--system", "atari-lynx", "--yes").returncode, 0)
+        (dest / "lynxboot.img").write_bytes(b"corrupt")
+        proc = self._run("--dest", str(dest), "--system", "atari-lynx", "--check")
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("wrong hash: lynxboot.img", proc.stdout)
+        self.assertIn("without --check", proc.stdout)
+
+    def test_a_read_only_folder_is_said_once(self):
+        if os.geteuid() == 0:
+            self.skipTest("root writes anywhere")
+        dest = self.home / "system"
+        dest.mkdir()
+        dest.chmod(0o500)
+        self.addCleanup(dest.chmod, 0o700)
+        proc = self._run("--dest", str(dest), "--system", "atari-lynx", "--yes")
+        output = proc.stdout + proc.stderr
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertLessEqual(output.count("FAILED"), 1, output)
+        self.assertIn("failed: 2 files (folder not writable)", output)
+
+    def test_a_piped_log_keeps_its_order(self):
+        proc = subprocess.run(
+            [sys.executable, "install.py", "--platform", "retroarch", "--no-input",
+             "--target", "no-such-target", "--dest", str(self.home / "s")],
+            cwd=REPO_ROOT, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, timeout=300, check=False,
+        )
+        banner = proc.stdout.find("RetroBIOS")
+        error = proc.stdout.lower().find("unknown target")
+        self.assertGreaterEqual(banner, 0, proc.stdout)
+        self.assertGreater(error, banner, proc.stdout)
+
+    def test_ctrl_c_before_the_downloads_is_a_stop(self):
+        import signal  # noqa: PLC0415
+        import socket  # noqa: PLC0415
+
+        silent = socket.socket()
+        silent.bind(("127.0.0.1", 0))
+        silent.listen(1)
+        self.addCleanup(silent.close)
+        env = {**self.env, "RETROBIOS_BASE_URL": f"http://127.0.0.1:{silent.getsockname()[1]}"}
+        proc = subprocess.Popen(
+            [sys.executable, "install.py", "--platform", "retroarch", "--no-input",
+             "--dest", str(self.home / "s")],
+            cwd=REPO_ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        import time  # noqa: PLC0415
+
+        time.sleep(3)
+        proc.send_signal(signal.SIGINT)
+        out, err = proc.communicate(timeout=60)
+        self.assertEqual(proc.returncode, 130, out + err)
+        self.assertIn("Stopped", out)
+        self.assertNotIn("Traceback", err)
 
 
 if __name__ == "__main__":

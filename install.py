@@ -2348,11 +2348,14 @@ def _classify_local(entry: dict, dest: Path) -> str:
 
 
 def check_local(
-    files: list[dict], bios_path: Path, jobs: int = 8
+    files: list[dict], bios_path: Path, jobs: int = 8,
+    term: "Terminal | None" = None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """Check which files exist locally and have correct hashes.
 
-    Returns (to_download, up_to_date, mismatched).
+    Returns (to_download, up_to_date, mismatched). With a terminal, a count
+    moves while the files are read: 3.9 GB on an SD card went by in minutes
+    of silence, read as a hung run and stopped with Ctrl+C.
     """
     to_download: list[dict] = []
     present: list[tuple[dict, Path]] = []
@@ -2371,11 +2374,20 @@ def check_local(
             verdicts = pool.map(
                 lambda item: (item[0], _classify_local(item[0], item[1])), present
             )
-            for entry, verdict in verdicts:
+            live = term is not None and term.live and not term.quiet
+            last = 0.0
+            for done, (entry, verdict) in enumerate(verdicts, 1):
                 if verdict == "up_to_date":
                     up_to_date.append(entry)
                 else:
                     mismatched.append(entry)
+                now = time.monotonic()
+                if live and (now - last >= 0.1 or done == len(present)):
+                    last = now
+                    print(f"\r  read {done}/{len(present)}", end="", file=term.stream,
+                          flush=True)
+            if live:
+                print("\r\033[K", end="", file=term.stream, flush=True)
 
     return to_download, up_to_date, mismatched
 
@@ -2636,6 +2648,16 @@ def _write_refused(exc: OSError) -> bool:
     return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
 
 
+def _folder_writable(path: Path) -> bool:
+    """Whether a file can be created under path, read from its nearest
+    existing folder: a BIOS folder not created yet is as writable as the
+    folder it would go in."""
+    probe = path
+    while not probe.exists() and probe.parent != probe:
+        probe = probe.parent
+    return os.access(probe, os.W_OK)
+
+
 def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     """What to do about a folder this run could not write.
 
@@ -2686,10 +2708,17 @@ def _report_outcome(
     if transferred and seconds > 0:
         print(f"\n{format_size(transferred)} downloaded in "
               f"{format_duration(seconds)} ({format_size(int(transferred / seconds))}/s).")
-    for dest, reason in (failures or [])[:10]:
-        print(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
-    if failures and len(failures) > 10:
-        print(f"  ... and {len(failures) - 10} more")
+    reasons = {reason for _dest, reason in failures or []}
+    if failures and len(failures) > 1 and len(reasons) == 1 and reasons != {""}:
+        # One cause, said once: a read-only folder listed ten of its files
+        # and "... and 266 more" above the advice that fixes them all.
+        print(f"  failed: {_plural(len(failures), 'file')} ({reasons.pop()}), "
+              f"first {failures[0][0]}")
+    else:
+        for dest, reason in (failures or [])[:10]:
+            print(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
+        if failures and len(failures) > 10:
+            print(f"  ... and {len(failures) - 10} more")
     if declined and not downloaded and not errors and not interrupted:
         print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, "
               "as answered.")
@@ -2842,14 +2871,26 @@ def download_files(
             pool.submit(_download_one, f, bios_path, verbose, progress): f
             for f in files
         }
+        refused = False
         try:
             for future in concurrent.futures.as_completed(future_map):
                 dest, success, reason = future.result()
+                if refused:
+                    # The folder they all go in refused the first: each
+                    # would fail alike, counted without a line of its own.
+                    if not success:
+                        failed.append((dest, NOT_WRITABLE))
+                    continue
                 if _stop.is_set():
                     continue
                 progress.done(dest, success, reason)
                 if not success:
                     failed.append((dest, reason))
+                    if reason == NOT_WRITABLE and not _folder_writable(bios_path):
+                        # A read-only card or share: hundreds of identical
+                        # FAILED lines buried the one cause and its advice.
+                        refused = True
+                        _stop.set()
         except KeyboardInterrupt:
             interrupted = True
             _stop.set()
@@ -3859,7 +3900,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         print("\nChecking existing files...")
         to_download, up_to_date, mismatched = check_local(
-            files, bios_path, jobs=args.jobs
+            files, bios_path, jobs=args.jobs, term=term
         )
         present = len(up_to_date) + len(mismatched)
         print(
@@ -3891,7 +3932,19 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         if args.check:
             if to_download:
-                print(f"\n  {len(to_download)} files need downloading.")
+                # Named, not only counted: a user looking for the one bad
+                # BIOS learned "1 files need downloading" and nothing else.
+                wrong = {id(entry) for entry in mismatched}
+                shown = to_download if args.verbose else to_download[:10]
+                print(f"\n  {_plural(len(to_download), 'file')} to download:")
+                for entry in shown:
+                    state = "wrong hash" if id(entry) in wrong else "missing"
+                    print(f"    {state}: {entry['dest']}")
+                if len(shown) < len(to_download):
+                    print(f"    ... and {len(to_download) - len(shown)} more "
+                          "(--verbose lists them all)")
+                print("  Run the same command without --check to fetch them; "
+                      "a file with a wrong hash is replaced.")
                 check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
@@ -4026,7 +4079,25 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         )
 
 
+def _line_buffered_stdout() -> None:
+    """Flush stdout line by line, as stderr is.
+
+    Piped to a log (`| tee install.log`), stdout was block-buffered while
+    errors went out at once: the log opened on "Could not fetch the file
+    list" before the banner and the step that produced it.
+    """
+    reconfigure = getattr(sys.stdout, "reconfigure", None)
+    if reconfigure is not None:
+        try:
+            reconfigure(line_buffering=True)
+        except (ValueError, OSError):
+            # A stream that cannot be reconfigured keeps its own buffering:
+            # the order of a log is cosmetic, the run goes on.
+            return
+
+
 if __name__ == "__main__":
+    _line_buffered_stdout()
     # A reader that stops early (`install.py --list | head`) ends the run
     # quietly instead of on a BrokenPipeError traceback.
     try:
@@ -4035,3 +4106,10 @@ if __name__ == "__main__":
     except BrokenPipeError:
         os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
         sys.exit(141)
+    except KeyboardInterrupt:
+        # Outside the download phase (fetching the file list, checking the
+        # files present, rebuilding data directories): nothing is half
+        # written there, and a socket traceback read as a crash.
+        print("\nStopped. Run the same command again to carry on from here. "
+              "Nothing is lost.")
+        sys.exit(130)
