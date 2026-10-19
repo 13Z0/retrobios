@@ -423,5 +423,27 @@ class ASystemPackHoldsThatSystem(unittest.TestCase):
         self.assertEqual(report["total_files"], 2)
 
 
+class ListingsKeepTheirColumns(unittest.TestCase):
+    """--list-systems and --list-emulators started their last column at a
+    position that moved with the file count and the profile type."""
+
+    def test_the_last_column_starts_in_one_place(self):
+        listing = subprocess.run(
+            [sys.executable, "scripts/generate_pack.py", "--platform", "retroarch",
+             "--list-systems"], cwd=REPO_ROOT, capture_output=True, text=True, timeout=300,
+        ).stdout.splitlines()
+        starts = {line.index("[") for line in listing if "[" in line}
+        self.assertEqual(len(starts), 1, listing[:5])
+        emulators = subprocess.run(
+            [sys.executable, "scripts/verify.py", "--list-emulators"],
+            cwd=REPO_ROOT, capture_output=True, text=True, timeout=300,
+        ).stdout.splitlines()
+        ends = {line.index("]") + 1 for line in emulators if "]" in line}
+        tails = {len(line) - len(line[line.index("]") + 1:].lstrip())
+                 for line in emulators if "]" in line and line[line.index("]") + 1:].strip()}
+        self.assertEqual(len(tails), 1, sorted(ends))
+        self.assertFalse([line for line in listing + emulators if line != line.rstrip()])
+
+
 if __name__ == "__main__":
     unittest.main()

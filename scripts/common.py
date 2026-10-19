@@ -2501,7 +2501,10 @@ def list_emulator_profiles(emulators_dir: str, skip_aliases: bool = True) -> Non
         ptype = p.get("type", "libretro")
         systems = ", ".join(p.get("systems", [])[:3])
         more = "..." if len(p.get("systems", [])) > 3 else ""
-        print(f"  {name:30s} {display:40s} [{ptype}] {systems}{more}")
+        # The type is padded to its longest value, so the systems start in
+        # one column whatever the type reads.
+        kind = f"[{ptype}]"
+        print(f"  {name:30s} {display:40s} {kind:24s}{systems}{more}".rstrip())
 
 
 def system_index(profiles: dict) -> dict[str, tuple[str, set[str]]]:
@@ -2537,9 +2540,8 @@ def list_platform_system_ids(platform_name: str, platforms_dir: str) -> None:
         file_count = len(systems[sys_id].get("files", []))
         mfr = systems[sys_id].get("manufacturer", "")
         mfr_display = f"  [{mfr.split('|')[0]}]" if mfr else ""
-        print(
-            f"  {sys_id:35s} ({file_count} file{'s' if file_count != 1 else ''}){mfr_display}"
-        )
+        count = f"({file_count} file{'s' if file_count != 1 else ''})"
+        print(f"  {sys_id:35s} {count:12s}{mfr_display}".rstrip())
 
 
 def build_target_cores_cache(
