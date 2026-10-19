@@ -6,9 +6,9 @@ each resolved by its bare name to whatever shared it: the patched ROM at the
 original's slot, the Wii U disc keys at the 3DS key slot, the OpenGL shader
 at the Vulkan one. An entry with a hash resolves by content first.
 
-529 bundled entries still carry neither a hash nor `unsourceable:`. The
-count per profile may only fall: a new entry is written with the hash of
-the file the emulator ships.
+512 bundled entries still carry neither a hash nor `unsourceable:`. The
+count per profile may only fall, and the table records each fall: a new
+entry is written with the hash of the file the emulator ships.
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ UNIDENTIFIED = {
     "fpse": 7,
     "fpse-ng": 7,
     "future-pinball": 18,
-    "future-pinball-fploader": 54,
+    "future-pinball-fploader": 52,
     "gba-emu": 1,
     "hakux": 1,
     "hcl": 3,
@@ -52,12 +52,11 @@ UNIDENTIFIED = {
     "idtech4a++": 1,
     "ikemen": 32,
     "ines": 2,
-    "j2me-loader": 14,
     "jl-mod": 22,
     "kemulator": 4,
     "mastergear": 2,
     "mfme": 58,
-    "msx-emu": 10,
+    "msx-emu": 9,
     "my-boy": 1,
     "neo-emu": 3,
     "nethersx2": 2,
@@ -101,6 +100,11 @@ class BundledFilesCarryTheirIdentity(unittest.TestCase):
             if count > UNIDENTIFIED.get(name, 0)
         }
         self.assertEqual(grown, {}, "bundled entries need the shipped file's hash")
+
+    def test_the_table_records_every_fall(self):
+        # A baseline above the real count lets that profile grow back unseen:
+        # j2me-loader kept 14 after its 18 bundled files were all identified.
+        self.assertEqual(_unidentified(), UNIDENTIFIED)
 
 
 class TheFixedEntriesGetTheirOwnBytes(unittest.TestCase):

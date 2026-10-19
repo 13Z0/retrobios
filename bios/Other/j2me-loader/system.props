@@ -1,4 +1,4 @@
-microedition.configuration: CDLC-1.1
+microedition.configuration: CLDC-1.1
 microedition.profiles: MIDP-2.0
 microedition.encoding: ISO-8859-1
 microedition.platform: Nokia6233/05.10
@@ -21,4 +21,5 @@ com.sonyericsson.imei: IMEI 00460101-501594-5-00
 com.nokia.mid.impl.isa.visual_radio_operator_id: 0
 com.nokia.mid.impl.isa.visual_radio_channel_freq: 0
 com.nokia.mid.ui.DirectGraphics.PIXEL_FORMAT: 565
+com.nokia.mid.ui.softnotification: true
 wireless.messaging.sms.smsc: +8613800010000

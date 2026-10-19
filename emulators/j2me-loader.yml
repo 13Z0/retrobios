@@ -50,11 +50,18 @@ notes: |
   ref: app/src/main/java/javax/microedition/media/Manager.java:138-140,
        app/src/main/java/ru/woesss/j2me/mmapi/synth/SynthPluginFactory.java:36-54
 
+  The package carries every native library for arm64-v8a, armeabi-v7a, x86 and
+  x86_64. The hashes below are those of the x86_64 build, version 1.8.2-dev-1964,
+  the continuous release built from source_commit.
+
 files:
   - name: Roboto-Regular.ttf
     system: j2me
     required: true
     bundled: true
+    size: 438780
+    sha1: "d0860202be85147f3ce96d71aa88541d939a1aea"
+    md5: "bff5a23de5917c16288d7076ad684c1b"
     category: game_data
     description: "Typeface for the virtual keyboard and overlays"
     note: "Built into a Typeface at CanvasWrapper construction, which is a field initializer of Canvas and therefore runs for every MIDlet that opens one. Drives the key captions, the soft bar and the FPS counter."
@@ -64,6 +71,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 949
+    sha1: "402e03cdd612250de7863e9984b2b6ebac54de72"
+    md5: "34cb4519624e7b504fb0bbc1b3e613c1"
     category: game_data
     description: "Default microedition system properties"
     note: "Read from assets/defaults when a profile is created and again when the config screen or updateSystemProperties fills the field. Each line becomes a System.setProperty pair at MIDlet startup, carrying microedition.configuration, microedition.platform, the JSR version strings and the vendor identity values."
@@ -73,6 +83,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 157
+    sha1: "475e25d9bf8422d1faeae206488507d59bf7b716"
+    md5: "924e08886710123aaa0fa990da0f2be2"
     category: game_data
     description: "Vertex shader for the screen blitter"
     note: "Compiled when the GL surface is created and no user shader is selected. Graphics mode 1 is the default, so this is the standard display path. Also compiled as the Simple program of the Mascot Capsule renderer."
@@ -82,6 +95,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 147
+    sha1: "c6569e0e83d244224a829ce13699bc91ff01bfaf"
+    md5: "9f801bc9b0b148ae6d0368c27281d1bc"
     category: game_data
     description: "Fragment shader for the screen blitter"
     note: "Paired with simple.vsh. createProgram returning -1 raises RuntimeException at surface creation."
@@ -91,6 +107,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 493
+    sha1: "96e1d0b91b0cf3b61a1c6a9782dd087e06286c36"
+    md5: "efde617a923308f2d02ddc1bc18ecc87"
     category: game_data
     description: "Vertex shader for untextured Mascot Capsule geometry"
     note: "Program.create builds the tex, color, simple and sprite programs together whenever the renderer binds a target of a new size, so all four pairs are read on the first micro3d frame."
@@ -100,6 +119,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 891
+    sha1: "8cac05782651c5b9e56577d7f33486a32c00480f"
+    md5: "d07e54d4dd63209596eaf080cf8c35e3"
     category: game_data
     description: "Fragment shader for untextured Mascot Capsule geometry"
     note: "Carries the sphere map and toon shading uniforms of the Color program."
@@ -109,6 +131,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 671
+    sha1: "e8ad127bb080a8d61899aebf224e745bcc5eab44"
+    md5: "c6c3e762a7e1357e6769233faf240981"
     category: game_data
     description: "Vertex shader for textured Mascot Capsule geometry"
     note: "Built by Program.create alongside the other three pairs."
@@ -118,15 +143,21 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 1083
+    sha1: "eecb9e9f71079b1b8ab37210f58ec19d1c0f515a"
+    md5: "c00b8b73be298d613fbc33867eef97ad"
     category: game_data
     description: "Fragment shader for textured Mascot Capsule geometry"
-    note: "Carries the texture size, sphere map and toon shading uniforms of the Tex program."
+    note: "Carries the sphere map and toon shading uniforms of the Tex program. The texture size goes to tex.vsh."
     source_ref: "app/src/main/java/ru/woesss/j2me/micro3d/Program.java:234, app/src/main/java/ru/woesss/j2me/micro3d/Program.java:258-267"
 
   - name: sprite.vsh
     system: j2me
     required: true
     bundled: true
+    size: 255
+    sha1: "8bff9b5dce3c825669278ea1e744d0644a57e7cb"
+    md5: "c527845c331d6b060c657d1fbbdadcbf"
     category: game_data
     description: "Vertex shader for Mascot Capsule sprites"
     note: "Built by Program.create alongside the other three pairs."
@@ -136,16 +167,21 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 286
+    sha1: "94c1d85c818c14489f4e2aa10c4c33c14a395077"
+    md5: "247e772a2c38de937fd702d4ccc4d403"
     category: game_data
     description: "Fragment shader for Mascot Capsule sprites"
-    note: "Carries the texture size and transparency uniforms of the Sprite program."
-    source_ref: "app/src/main/java/ru/woesss/j2me/micro3d/Program.java:314, app/src/main/java/ru/woesss/j2me/micro3d/Program.java:333-334"
+    note: "Carries the texture unit and transparency uniforms of the Sprite program. The texture size goes to sprite.vsh."
+    source_ref: "app/src/main/java/ru/woesss/j2me/micro3d/Program.java:314, app/src/main/java/ru/woesss/j2me/micro3d/Program.java:334-336"
 
   - name: libc++_shared.so
     system: j2me
     required: true
     bundled: true
-    unsourceable: "built into this app's package only, and the same-named build of another app must not stand in"
+    size: 1337488
+    sha1: "98b6547ca7af3fcf325ba236950a5e55401b94cb"
+    md5: "26756baa2bb82c113368f0a462213253"
     category: game_data
     description: "NDK C++ runtime for the native modules"
     note: "Named ahead of every other native library, in the M3G toolkit init, in the static initializer of micro3d Utils and in both synthesizer classes."
@@ -155,6 +191,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 416488
+    sha1: "74171083847c3836e1ffb9470d3b7e3e7dafe242"
+    md5: "0e273cd2a17253fa9f0f475f95283777"
     category: game_data
     description: "JSR-184 M3G engine"
     note: "Named by System.loadLibrary(\"javam3g\") outside any catch, the first time the toolkit reports the UI thread available. Built by ndkBuild from the m3g sources against GLES 1.1."
@@ -164,6 +203,9 @@ files:
     system: j2me
     required: true
     bundled: true
+    size: 9912
+    sha1: "a0e5ec65163c2952d9cb789053f1d309bd3d886f"
+    md5: "33d351c4d3a2eb991a1fe7d00297f77b"
     category: game_data
     description: "Mascot Capsule vertex and buffer routines"
     note: "Loaded from the static initializer of Utils, so the first call into the micro3d renderer brings it in. Holds fillBuffer, glReadPixels and the bone transform."
@@ -173,7 +215,9 @@ files:
     system: j2me
     required: false
     bundled: true
-    unsourceable: "built into this app's package only, and the same-named build of another app must not stand in"
+    size: 329816
+    sha1: "3f633bc545a826b1cb88517d4b77d10062e692a5"
+    md5: "df82e6bd14299af71cb2480f4eeaa4e3"
     category: game_data
     description: "Audio output stream of the sound bank synthesizers"
     note: "Named by both synthesizer classes ahead of their own libraries. Reached only when a sound bank is selected, and SynthPluginFactory catches the load failure and falls back to the Android synthesizer."
@@ -183,7 +227,9 @@ files:
     system: j2me
     required: false
     bundled: true
-    unsourceable: "built into this app's package only, and the same-named build of another app must not stand in"
+    size: 16192
+    sha1: "87d66343f9cf456a7b686a46872bd52d5b9345df"
+    md5: "847aaf47b6d0c565c72cd9d2ee63bd8a"
     category: game_data
     description: "Shared player and listener code of the synthesizer plugins"
     note: "Named by both synthesizer classes ahead of their own libraries. Same fallback as liboboe.so."
@@ -193,7 +239,9 @@ files:
     system: j2me
     required: false
     bundled: true
-    unsourceable: "built into this app's package only, and the same-named build of another app must not stand in"
+    size: 607376
+    sha1: "2bf1bdc26d3efb8a07d01aab0f86e091245944a0"
+    md5: "af8a1d656161c368cf2671ab9720a30d"
     category: game_data
     description: "Sonivox EAS synthesizer"
     note: "Loaded from the static initializer of LibEAS when a sound bank is selected. Links the sonivox wavetable engine statically and reads the bank as a DLS collection. A failure leaves the TinySoundFont plugin or the Android synthesizer."
@@ -203,7 +251,9 @@ files:
     system: j2me
     required: false
     bundled: true
-    unsourceable: "built into this app's package only, and the same-named build of another app must not stand in"
+    size: 60392
+    sha1: "55cded2de92eaf2ca3ca9ca5701d05536b5c4582"
+    md5: "c90296619ea218b83e246f62046400e9"
     category: game_data
     description: "TinySoundFont synthesizer"
     note: "Loaded from the static initializer of LibTSF when a sound bank is selected. Reads the bank as a SoundFont and plays standard MIDI files and tones. A failure leaves the EAS plugin or the Android synthesizer."
@@ -213,6 +263,9 @@ files:
     system: j2me
     required: false
     bundled: true
+    size: 2510
+    sha1: "465fae37aeb0ae34d0495044cd8c8c397e682bae"
+    md5: "bcc31ad30dcd2f59b3861880d63eff53"
     category: game_data
     description: "Third party licence text of the about screen"
     note: "Read when the licences dialog is opened and shown as HTML. Emulation never touches it."
