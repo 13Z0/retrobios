@@ -128,7 +128,8 @@ class RetroDeckWritesWhatItCounts(unittest.TestCase):
     def test_addition_goes_to_the_system_component(self):
         declared = NativeFile("a.bin", "bios/a.bin", "psx",
                               platform={"component": "duckstation", "md5": A})
-        added = NativeFile("b.bin", "bios/b.bin", "psx", truth={"md5": B})
+        added = NativeFile("b.bin", "bios/b.bin", "psx", truth={"md5": B},
+                           runners=[(True, "duckstation")])
         spread = NativeSystem("amiga", files=[
             NativeFile("k1", "bios/k1", "amiga", platform={"component": "retroarch"}),
             NativeFile("k2", "bios/k2", "amiga", platform={"component": "puae"}),

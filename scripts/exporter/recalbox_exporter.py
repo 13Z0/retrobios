@@ -35,7 +35,7 @@ SCHEMA_URL = (
 )
 
 
-_ATTRIBUTE = re.compile(r'([A-Za-z]+)\s*=\s*"([^"]*)"')
+_ATTRIBUTE = re.compile(r'([A-Za-z][A-Za-z0-9]*)\s*=\s*"([^"]*)"')
 _SYSTEM_BLOCK = re.compile(r"<system\b.*?</system>", re.S)
 _BIOS_ELEMENT = re.compile(r"[ \t]*<bios\b.*?/>", re.S)
 
