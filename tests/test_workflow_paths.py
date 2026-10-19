@@ -109,6 +109,19 @@ class DeploySiteTriggers(unittest.TestCase):
 
 
 class DocumentedSteps(unittest.TestCase):
+    def test_the_profiling_reference_names_every_profile_field(self):
+        """built_by, source_branch, bios_mode, standalone_path and
+        on_mismatch change what the tools do and no page named them."""
+        import json  # noqa: PLC0415
+
+        schema = json.loads((REPO_ROOT / "schemas/emulator.schema.json").read_text(encoding="utf-8"))
+        item = schema["properties"]["files"]["items"]
+        if "$ref" in item:
+            item = schema.get("$defs", schema.get("definitions", {}))[item["$ref"].split("/")[-1]]
+        page = (REPO_ROOT / "wiki/profiling.md").read_text(encoding="utf-8")
+        fields = [*schema["properties"], *item.get("properties", {})]
+        self.assertEqual(sorted(f for f in fields if f"`{f}`" not in page), [])
+
     def test_the_release_page_names_every_validation_job(self):
         """check-new-profiles ran on every pull request and push while the
         page said four jobs and named none of it."""

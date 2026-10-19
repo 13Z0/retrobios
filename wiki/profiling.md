@@ -274,18 +274,18 @@ python scripts/verify.py --emulator dolphin --verbose   # per-core checks + sour
 python scripts/profile_sync.py --emulator dolphin       # do the source_ref lines still hold
 ```
 
-The profile also has to satisfy `schemas/emulator.schema.json`, which CI checks
-on every PR touching `emulators/`:
+The profile also has to satisfy `schemas/emulator.schema.json` and the semantic
+invariants checked beside it, which CI runs on every PR touching `emulators/`.
+The same command, locally:
 
 ```bash
-python -c "
-import json, yaml, sys
-from jsonschema import validate
-schema = json.load(open('schemas/emulator.schema.json'))
-validate(yaml.safe_load(open('emulators/dolphin.yml')), schema)
-print('ok')
-"
+python scripts/validate_schemas.py --source-only
 ```
+
+A schema check alone accepts profiles this rejects: a check declared with no
+value to compare (`validation: [crc32]` and no `crc32`), a `data_directories`
+ref the registry does not name, a `path:` written in this repository's layout
+instead of the emulator's, a citation no declared revision can reach.
 
 ### Lessons learned
 
@@ -337,6 +337,10 @@ which CI validates every profile against.
 | `core_version` | yes | version analyzed |
 | `source_commit` | no | commit SHA of `source` the code was read at; anchors every `source_ref` line number |
 | `upstream_commit` | no | same, for `upstream` |
+| `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch); profile_sync follows it |
+| `built_by` | no | platforms that compile this libretro build themselves (Recalbox's `mame0278`). Such a profile is reached only by a platform naming it in `cores:`, never by `all_libretro`: the buildbot does not publish it |
+| `bios_mode` | no | `agnostic` when the core takes any file of the right shape in its BIOS folder instead of a fixed name (PCSX2). Packs then carry every matching dump, and a `<bios>.bin` placeholder stands for them |
+| `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`); a scan never seeds from files outside it |
 | `display_name` | no | full display name (e.g. "Sega - Mega Drive (BlastEm)") |
 | `logo` | no | image URL used on the emulator page |
 | `systems` | yes | list of system IDs this core handles |
@@ -354,6 +358,16 @@ which CI validates every profile against.
 | `platform_details` | no | per-system platform-specific details (paths, romsets, forced systems) |
 | `mame_version` | no | MAME romset generation a MAME-family profile targets |
 | `archive_prefix`, `pack_structure` | no | how arcade entries are laid out inside the pack |
+
+Descriptive fields, rendered on the emulator page and read by no tool:
+`author`, `based_on` (the project and version a fork starts from), `core` and
+`core_name` (the library file name), `bios_size`, `bios_identical_to` (the
+profile whose BIOS set is the same), `resources_directory`, `rom_path`,
+`builtin_boot_roms`, `valid_bios_crc32`, `memory_layout`, `machine_properties`,
+`machine_directories`, `model_kickstart_map`, `whdload_kickstarts`,
+`firmware_titles` and `mlc_structure` (system titles a Wii U or Switch
+firmware installs), `dev_flash`, `dev_flash2`, `dev_flash3` (PS3 flash
+partitions), and `game_count`.
 
 ### File entry fields
 
@@ -388,6 +402,10 @@ which CI validates every profile against.
 | `load_from` | directory the core reads the file from when it is not the system directory |
 | `source_ref` | source file and line number (e.g. `boot.cpp:42`), read at the profile's `source_commit` when set. A dict splits `standalone` from `libretro` when they diverge |
 | `path` | destination path relative to system directory |
+| `standalone_path` | where the standalone build reads the file, under its own data folder, when it differs from `path` (the libretro destination). Packs for a platform running the emulator standalone use it |
+| `on_mismatch` | what the code does when a declared check fails: `reject` (default) or `warn` and run with it, for every check or check by check (`{size: warn, md5: reject}`) |
+| `variant_group` | one slot of one core that several entries fill, whatever system each is filed under (PicoDrive's twelve Mega CD BIOS). Region selection keeps one per group |
+| `size_note` | how the code treats the file's size when no size field can say it (a read capped at 32 bytes, a file created empty when absent) |
 | `type` | `directory` when the code reads a whole tree (an RTP, a folder of speech samples). `path` is then the directory, written with its trailing slash, and the entry stands for every file the collection holds under it. A name ending in `/` requires it |
 | `description` | what this file is |
 | `note` | additional context |
