@@ -5132,5 +5132,23 @@ class StrictFailsOnMissingOnly(unittest.TestCase):
         self.assertNotIn("or rejected", verify_mod._exit_if_strict.__doc__)
 
 
+class TheRepairCommandWritesTheFileNamed(unittest.TestCase):
+    """--db nosuch.json said to rebuild with --output database.json: the
+    command wrote another file and the next run failed the same way."""
+
+    def test_the_command_names_the_path(self):
+        from scripts.common import DatabaseUnreadable, load_database
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            target = str(Path(directory) / "nosuch.json")
+            with self.assertRaises(DatabaseUnreadable) as caught:
+                load_database(target)
+            self.assertIn(f"--output {target}", str(caught.exception))
+            Path(target).write_text("{")
+            with self.assertRaises(DatabaseUnreadable) as caught:
+                load_database(target)
+            self.assertIn(f"--output {target}", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

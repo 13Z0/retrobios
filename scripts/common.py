@@ -59,12 +59,12 @@ def load_database(db_path: str) -> dict:
     except FileNotFoundError:
         raise DatabaseUnreadable(
             f"{db_path} not found. Build it with: python scripts/generate_db.py "
-            "--force --bios-dir bios --output database.json"
+            f"--force --bios-dir bios --output {db_path}"
         ) from None
     except json.JSONDecodeError as exc:
         raise DatabaseUnreadable(
             f"{db_path} is not valid JSON ({exc}). Rebuild it with: "
-            "python scripts/generate_db.py --force --bios-dir bios --output database.json"
+            f"python scripts/generate_db.py --force --bios-dir bios --output {db_path}"
         ) from None
 
 
