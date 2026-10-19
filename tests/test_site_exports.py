@@ -500,6 +500,15 @@ class PlatformPagesCarryTheirDeclarations(unittest.TestCase):
         self.assertEqual(part["identifier"], ["md5:490f666e"])
         self.assertTrue(part["url"].endswith("platforms/batocera/#sony-playstation"))
 
+    def test_a_declared_sha256_is_published(self):
+        """RetroDECK's dsifirmware.bin sha256 lived in the CSV exports only."""
+        from generate_site import platform_structured_data
+
+        data = platform_structured_data("retrodeck", {"platform": "RetroDECK", "config": {
+            "systems": {"nds": {"files": [
+                {"name": "dsifirmware.bin", "sha256": "11A150E3"}]}}}})
+        self.assertEqual(data["hasPart"][0]["identifier"], ["sha256:11a150e3"])
+
 
 
 class AnEmulatorPageLinksItsProfile(unittest.TestCase):

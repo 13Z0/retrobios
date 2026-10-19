@@ -1369,7 +1369,7 @@ def platform_structured_data(name: str, coverage: dict) -> dict:
             }
             identifiers = [
                 f"{field}:{value}"
-                for field in ("sha1", "md5", "crc32")
+                for field in ("sha1", "md5", "crc32", "sha256")
                 for value in _hash_values(entry.get(field))
             ]
             if identifiers:
@@ -1733,7 +1733,10 @@ def _render_platform_systems(
             # System.dat and clrmamepro print, and pasting it found nothing
             # for a pinned file the collection holds under other bytes.
             crc32 = str(cfg_entry.get("crc32") or "")
-            if sha1 or md5 or crc32:
+            # RetroDECK declares sha256 too: dsifirmware.bin's was in the CSV
+            # exports only, and pasting it into the search found nothing.
+            sha256 = str(cfg_entry.get("sha256") or "")
+            if sha1 or md5 or crc32 or sha256:
                 hash_parts = []
                 if sha1:
                     hash_parts.append(f"SHA1: `{sha1}`")
@@ -1741,6 +1744,8 @@ def _render_platform_systems(
                     hash_parts.append(f"MD5: `{md5}`")
                 if crc32:
                     hash_parts.append(f"CRC32: `{crc32}`")
+                if sha256:
+                    hash_parts.append(f"SHA256: `{sha256}`")
                 lines.append(f"{pad}    {' | '.join(hash_parts)}")
 
         lines.append("")
