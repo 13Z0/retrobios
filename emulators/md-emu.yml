@@ -94,7 +94,7 @@ notes: |
 files:
   - name: bios_CD_U.bin
     system: sega-megacd
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     agnostic: true
     size: 131072

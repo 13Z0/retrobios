@@ -1072,5 +1072,27 @@ class ANameNoCodeOpensCarriesNoRegion(unittest.TestCase):
         self.assertNotIn("region", entry)
 
 
+class MegaCdAmericasIsOneCode(unittest.TestCase):
+    """A Sega CD disc carries one region code for all the Americas, so every
+    emulator picking the US BIOS by that code picks it for a Brazilian disc
+    too. jgenesis, md-emu and ares tagged it north-america alone, and a
+    --region brazil pack dropped the BIOS those discs boot with."""
+
+    def test_a_us_mega_cd_bios_includes_latin_america(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        narrow = []
+        for path in sorted((root / "emulators").glob("*.yml")):
+            profile = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            for entry in profile.get("files") or []:
+                system = str(entry.get("system", ""))
+                regions = entry.get("region") or []
+                if system in ("sega-megacd", "mega-cd") and "north-america" in regions \
+                        and "latin-america" not in regions:
+                    narrow.append(f"{path.stem}: {entry.get('name')}")
+        self.assertEqual(narrow, [])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -77,7 +77,7 @@ files:
   - name: "bios_CD_U.bin"
     system: sega-megacd
     description: "Sega CD BIOS (US)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     size: 131072
     validation: [size]

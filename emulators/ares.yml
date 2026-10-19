@@ -170,7 +170,7 @@ files:
   # Also used by Mega CD 32X (desktop-ui/emulator/mega-cd-32x.cpp)
   - name: SegaCDBIOS9303.bin
     system: mega-cd
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     sha256: "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c"
     validation: [sha256]
