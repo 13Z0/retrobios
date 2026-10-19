@@ -516,5 +516,21 @@ class AnEmulatorPageLinksItsProfile(unittest.TestCase):
         self.assertIn("(../api/v1/emulators/raze.json)", page)
 
 
+class AVersionPerBuildReadsAsVersions(unittest.TestCase):
+    """MesenCE's page showed {'standalone': '2.2.1', 'libretro': '2.0.0'}."""
+
+    def test_each_build_is_named(self):
+        from generate_site import generate_emulator_page  # noqa: PLC0415
+
+        page = generate_emulator_page(
+            "mesence",
+            {"emulator": "MesenCE", "type": "standalone + libretro", "systems": [],
+             "core_version": {"standalone": "2.2.1", "libretro": "2.0.0"}, "files": []},
+            {"files": {}, "indexes": {}},
+        )
+        self.assertIn("2.2.1 (standalone), 2.0.0 (libretro)", page)
+        self.assertNotIn("{'standalone'", page)
+
+
 if __name__ == "__main__":
     unittest.main()

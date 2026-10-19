@@ -2893,8 +2893,14 @@ def generate_emulator_page(
     upstream_none = "upstream" in profile and upstream_raw is None
     upstream = str(upstream_raw) if isinstance(upstream_raw, str) else ""
     version_raw = profile.get("core_version", "unknown")
-    version = "none published" if version_raw is None else version_raw
-    profile.get("display_name", emu_name)
+    if version_raw is None:
+        version = "none published"
+    elif isinstance(version_raw, dict):
+        # Keyed by build mode like source: each build's version, named,
+        # where the page printed the dict's Python repr.
+        version = ", ".join(f"{v} ({mode})" for mode, v in version_raw.items() if v)
+    else:
+        version = version_raw
     profiled = profile.get("profiled_date", "unknown")
     systems = profile.get("systems", [])
     cores = profile.get("cores", [name])
