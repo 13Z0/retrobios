@@ -122,6 +122,17 @@ class DocumentedSteps(unittest.TestCase):
         fields = [*schema["properties"], *item.get("properties", {})]
         self.assertEqual(sorted(f for f in fields if f"`{f}`" not in page), [])
 
+    def test_the_scraper_recipe_names_every_abstract_method(self):
+        """tools.md said implement fetch_requirements(); validate_format() is
+        abstract too, and a scraper written from the page could not be built."""
+        source = (SCRIPTS / "scraper" / "base_scraper.py").read_text(encoding="utf-8")
+        abstract = re.findall(r"@abstractmethod\s+def (\w+)", source)
+        self.assertTrue(abstract)
+        for page in ("tools.md", "adding-a-scraper.md"):
+            text = (REPO_ROOT / "wiki" / page).read_text(encoding="utf-8")
+            with self.subTest(page=page):
+                self.assertEqual([m for m in abstract if f"{m}(" not in text], [])
+
     def test_every_function_the_pages_name_exists(self):
         """verification-modes described _find_best_variant(), deleted on
         2026-10-05, and an algorithm the code no longer follows."""

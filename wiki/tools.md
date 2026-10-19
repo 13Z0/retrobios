@@ -717,7 +717,10 @@ using `fetch_large_file()` from `common.py`. The same function is used by
 
 ## Scrapers
 
-Located in `scripts/scraper/`. Each inherits `BaseScraper` and implements `fetch_requirements()`.
+Located in `scripts/scraper/`. Each platform scraper inherits `BaseScraper` and
+implements its two abstract methods, `fetch_requirements()` and
+`validate_format()`; the MAME and FBNeo hash scrapers read a source tree and
+stand alone.
 
 | Scraper | Source | Format |
 |---------|--------|--------|
@@ -743,8 +746,10 @@ and shared CLI), `dat_parser.py` (clrmamepro DAT format parser),
 `fbneo_parser.py` (FBNeo C source BIOS set parser),
 `_hash_merge.py` (text-based YAML patching that preserves formatting).
 
-Adding a scraper: inherit `BaseScraper`, implement `fetch_requirements()`,
-call `scraper_cli(YourScraper)` in `__main__`.
+Adding a scraper: inherit `BaseScraper`, implement `fetch_requirements()` and
+`validate_format()` (a class missing either cannot be instantiated), call
+`scraper_cli(YourScraper)` in `__main__`. The full recipe is in
+[adding-a-scraper.md](adding-a-scraper.md).
 
 ## Dump-catalog provenance
 
