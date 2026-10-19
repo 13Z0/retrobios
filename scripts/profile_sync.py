@@ -873,6 +873,12 @@ def _written_against_head(part: RefPart, head_lines: list[str] | None) -> bool:
     )
 
 
+# What the rename search answers when a tree it needed came back truncated:
+# a file missing from a partial listing may still exist, so absence is not
+# established. eden's fs_paths.h and path_util.cpp were reported GONE.
+TREE_TRUNCATED = "(HEAD tree truncated by the forge)"
+
+
 def anchor_part(
     part: RefPart,
     fetch: Callable[[str, str, int | None, Sequence[str]], list[str] | None],
@@ -906,6 +912,13 @@ def anchor_part(
     if head_lines is None:
         moved, candidates = rename_getter(part.path)
         if moved is None:
+            if candidates == [TREE_TRUNCATED]:
+                return PartResult(
+                    part, "AMBIGUOUS", None, None, None, [],
+                    "absent from a HEAD tree the forge truncated: "
+                    "the file may still exist",
+                    slug, url,
+                )
             if candidates:
                 return PartResult(
                     part,
@@ -1579,6 +1592,7 @@ def build_report(
 
     owners: dict[tuple[str, int | None], tuple[RepoView, str]] = {}
     context: dict[str, object] = {}
+    truncated_trees: set[str] = set()
     pin_trees: dict[str, list[str] | None] = {}
 
     def _locate(
@@ -1745,6 +1759,8 @@ def build_report(
                 view.repo, view.head, cache_dir, offline
             )
             context[key] = (comparison, tree)
+            if truncated:
+                truncated_trees.add(key)
             if truncated and tree:
                 print(
                     f"{name}: {key} HEAD tree truncated by the forge, "
@@ -1772,6 +1788,8 @@ def build_report(
             # across repositories turns a resolvable path into an ambiguous one.
             if view is owner:
                 candidates = near
+        if not candidates and any(v.repo.slug in truncated_trees for v in ordered):
+            return None, [TREE_TRUNCATED]
         return None, candidates
 
     # Pin trees before HEAD trees, each read only when reached.

@@ -1245,6 +1245,19 @@ class TestBuildReport(unittest.TestCase):
         self.assertEqual(statuses, ["UNCHECKED"])
         self.assertIn("refused", report.entries[0].parts[0].reason)
 
+    def test_a_truncated_head_tree_is_not_an_absence(self):
+        """git.eden-emu.dev truncates the HEAD tree: fs_paths.h, cited bare,
+        was reported GONE though it lives under src/common/fs/."""
+        self.files[("pinsha", "fs_paths.h")] = ["x", "hit"]
+        profile_sync.upstream.list_tree = (
+            lambda repo, sha, cache_dir, offline=False: (["other.c"], True)
+        )
+        with contextlib.redirect_stderr(io.StringIO()):
+            report = build_report("test", self._profile(["fs_paths.h:2"]), self.dir)
+        part = report.entries[0].parts[0]
+        self.assertEqual(part.status, "AMBIGUOUS")
+        self.assertIn("truncated", part.reason)
+
     def test_counts_by_status(self):
         self.files[("pinsha", "a.c")] = ["x", "hit", "y"]
         self.files[("headsha", "a.c")] = ["pad", "x", "hit", "y"]
