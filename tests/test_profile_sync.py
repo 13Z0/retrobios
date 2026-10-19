@@ -3141,6 +3141,7 @@ class TestCollectCitations(unittest.TestCase):
         for line in (
             "see Lynx.emu/src/lynx/system.cpp:112; mednafen src/lynx/system.cpp:86-93",
             "see Lynx.emu/src/lynx/system.cpp:112, mednafen src/lynx/system.cpp:86-93",
+            "see Lynx.emu/src/lynx/system.cpp:112. mednafen src/lynx/system.cpp:86-93",
         ):
             with self.subTest(line=line):
                 start = line.index("src/lynx/system.cpp:86")
@@ -3717,6 +3718,27 @@ class TestRealignProse(unittest.TestCase):
             any("pin moved under this text" in m for m in messages), messages
         )
         self.assertEqual(self.path.read_text(), before)
+
+    def test_rewording_around_citations_keeps_the_writing_pin(self):
+        """Punctuation edited in a note after a bump is not a new writing.
+
+        Keyed on the whole text, the rewording commit became the writing
+        revision, its pin was current, and the bump that had left the
+        citations behind was no longer reported.
+        """
+        self._repo_with_advanced_pin()
+        self._commit(PROSE_SAMPLE, "advance the pin")
+        self._commit(
+            PROSE_SAMPLE.replace("on boot.", "at boot."), "reword the note"
+        )
+        self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.files[("pin", "a.c")] = ["x"] * 13 + ["subject"]
+        self.files[("oldpin", "b.c")] = list("pqrstuvwx")
+        self.files[("pin", "b.c")] = list("pqrstuvwx")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertTrue(
+            any("pin moved under this text" in m for m in messages), messages
+        )
 
     def test_a_citation_in_an_unmoved_upstream_needs_no_reading(self):
         """nethersx2 cites AetherSX2 files that only its upstream carries,

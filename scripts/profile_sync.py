@@ -383,8 +383,9 @@ def _walk_document(
 
 # What separates one citation from the next in prose. lynx-emu writes
 # "...:112; mednafen src/lynx/system.cpp:86-93": without the semicolon the
-# project word read as prose and the citation was charged to the fork.
-_PROSE_LIST_DELIMITERS = ",;:("
+# project word read as prose and the citation was charged to the fork. A
+# sentence end separates them the same way.
+_PROSE_LIST_DELIMITERS = ",;:(."
 
 
 def _prose_external(
@@ -2845,6 +2846,26 @@ def _pin_of(document: dict, field: str, mode: str = "") -> str | None:
     return value if isinstance(value, str) and value else None
 
 
+_CITATION_RUN_RE = re.compile(
+    PROSE_CITE_RE.pattern + r"(?:, *\d+(?:-\d+)?)*"
+)
+
+
+def _scalar_citations(text: str | None) -> tuple[str, ...] | None:
+    """The citations a scalar carries, in order, without the prose around them.
+
+    A note reworded around unchanged citations was still written under the
+    pin those citations describe: comparing whole texts moved the writing
+    revision to the rewording commit, whose pin is current, and the stale
+    citations were never offered for realignment again.
+    """
+    if text is None:
+        return None
+    return tuple(
+        _citation_key(m.group(0)) for m in _CITATION_RUN_RE.finditer(text)
+    )
+
+
 def _writing_pins(
     revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = ""
 ) -> list[str]:
@@ -3098,7 +3119,9 @@ def realign_prose(
         for field in fields:
             if not alive[field]:
                 continue
-            if values.get(field) == current_values.get(field):
+            if _scalar_citations(values.get(field)) == _scalar_citations(
+                current_values.get(field)
+            ):
                 intro[field] = sha
             else:
                 alive[field] = False
