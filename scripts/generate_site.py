@@ -1840,6 +1840,15 @@ def generate_platform_page(
         lines.append(f"| BIOS path | `{base_dest}/` |")
     if homepage:
         lines.append(f"| Homepage | [{homepage}]({homepage}) |")
+    transcribed = str(config.get("source") or "")
+    if transcribed:
+        # The file every declaration on this page was read from: without it
+        # a hash could not be traced to the revision that states it.
+        moving = re.search(r"/(?:master|main|db)(?:/|$)|refs/heads/", transcribed) or (
+            re.fullmatch(r"https://(?:github|gitlab)\.com/[^/]+/[^/]+/?", transcribed)
+        )
+        note = " (a branch: the revision read is not recorded)" if moving else ""
+        lines.append(f"| Transcribed from | <{transcribed}>{note} |")
     contrib_list = (registry or {}).get(name, {}).get("contributed_by", [])
     if contrib_list:
         for cb in contrib_list:

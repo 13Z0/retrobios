@@ -607,5 +607,25 @@ class ADataDirectorySaysWhatItIs(unittest.TestCase):
         self.assertIn("src/main.cpp#L10", page)
 
 
+class APlatformPageNamesTheFileItTranscribes(unittest.TestCase):
+    """Batocera's page gave 'Version 43.1' and a homepage, never the
+    batocera-systems revision every md5 on it comes from."""
+
+    def test_pinned_and_moving_sources(self):
+        import generate_site  # noqa: PLC0415
+
+        def page(source: str) -> str:
+            cov = {"platform": "P", "config": {"source": source, "systems": {}},
+                   "details": [], "total": 0, "verified": 0, "present": 0,
+                   "missing": 0, "untested": 0, "mode": "md5"}
+            return generate_site.generate_platform_page("p", cov)
+
+        tag = "https://raw.githubusercontent.com/o/r/batocera-43.1/x/batocera-systems"
+        self.assertIn(f"| Transcribed from | <{tag}> |", page(tag))
+        branch = "https://raw.githubusercontent.com/o/r/master/x.json"
+        self.assertIn("revision read is not recorded", page(branch))
+        self.assertIn("revision read is not recorded", page("https://github.com/RetroDECK/components"))
+
+
 if __name__ == "__main__":
     unittest.main()
