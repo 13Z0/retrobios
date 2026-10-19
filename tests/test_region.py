@@ -1094,5 +1094,24 @@ class MegaCdAmericasIsOneCode(unittest.TestCase):
         self.assertEqual(narrow, [])
 
 
+class NoMarketStopsAtAustralia(unittest.TestCase):
+    """simple64 tagged its PAL PIF [europe, australia]. New Zealand is not
+    under australia, so --region new-zealand kept only the NTSC PIF, though
+    New Zealand carts carry the European or Australian PAL codes."""
+
+    def test_no_profile_tags_australia_alone(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        tagged = [
+            f"{path.stem}: {entry.get('name')}"
+            for path in sorted((root / "emulators").glob("*.yml"))
+            for entry in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("files") or []
+            if "australia" in (entry.get("region") or [])
+            and "new-zealand" not in (entry.get("region") or [])
+        ]
+        self.assertEqual(tagged, [])
+
+
 if __name__ == "__main__":
     unittest.main()

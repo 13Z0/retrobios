@@ -150,7 +150,7 @@ files:
     system: nintendo-64
     required: false
     hle_fallback: true
-    region: [europe, australia]
+    region: [europe, oceania]
     size: 1984
     md5:
       - "d4232dc935cad0650ac2664d52281f3a"
