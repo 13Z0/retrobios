@@ -400,6 +400,117 @@ def _agnostic_scan_extras(
     return extras
 
 
+def _placeholder_scan(
+    files: list[dict], emu_name: str, profile: dict, db: dict, standalone: bool,
+    all_profiles: dict | None = None,
+) -> list[dict]:
+    """The dumps a profile made of placeholders accepts, found by evidence.
+
+    `<bios>.bin` resolves to nothing, so it anchors no directory. The folder
+    where other profiles of the same system resolve their hashed files of
+    that shape is one: PCSX2 proves bios/Sony/PlayStation 2/ by content, and
+    LRPS2 reads any 4-8 MB image. Only that folder, not the ones below it
+    (its DVD firmware). Nothing proven, nothing scanned.
+    """
+    files_db = db.get("files", {})
+    systems = set(profile.get("systems", []))
+    extras: list[dict] = []
+    for seed in files:
+        name = str(seed.get("name", ""))
+        if "<" not in name or seed.get("category", "bios") != "bios":
+            continue
+        if not (seed.get("size") or seed.get("min_size") or seed.get("max_size")):
+            continue
+        directories: set[str] = set()
+        for other_name, other in (all_profiles or load_emulator_profiles("emulators")).items():
+            if other_name == emu_name or not systems & set(other.get("systems", [])):
+                continue
+            for f in other.get("files", []):
+                if not any(f.get(h) for h in ("sha1", "md5", "sha256", "crc32")):
+                    continue
+                if f.get("size") and not size_fits(seed, f["size"]):
+                    continue
+                local, status = resolve_local_file({**f, "source_profile": other_name}, db)
+                if local and "/" in local and resolution_is_hash_exact(status):
+                    directories.add(local.rsplit("/", 1)[0])
+        layout = (seed.get("standalone_path") if standalone else None) or seed.get("path") or ""
+        folder = layout.rsplit("/", 1)[0] if "/" in layout else ""
+        for sha1, entry in sorted(files_db.items(), key=lambda kv: kv[1].get("path", "")):
+            path = entry.get("path", "")
+            if "/" not in path or path.rsplit("/", 1)[0] not in directories:
+                continue
+            if "/.variants/" in path or not size_fits(seed, entry.get("size", 0)):
+                continue
+            scan_name = entry.get("name", "")
+            dest = f"{folder}/{scan_name}" if folder else scan_name
+            extras.append({
+                "name": scan_name,
+                "destination": dest,
+                "sha1": sha1,
+                "source_system": seed.get("system"),
+                "region": seed.get("region"),
+            })
+            extras.extend(_companion_extras(
+                _companions(path, scan_name, _companion_extensions(profile, name), files_db),
+                folder, "", set(), profile, emu_name, seed,
+            ))
+    return extras
+
+
+def expand_agnostic_entries(
+    files: list[dict], emu_name: str, profile: dict, db: dict, standalone: bool,
+    all_profiles: dict | None = None,
+) -> list[dict]:
+    """A filename-agnostic profile's placeholders, as the files they accept.
+
+    `<bios>.bin` names no file: the core takes any dump of the right shape
+    in its BIOS folder, which is what the platform pack's scan carries. The
+    emulator pack and verify --emulator looked the placeholder up by name,
+    found nothing and shipped LRPS2 without a PS2 BIOS. The same scan
+    replaces the placeholders here; with nothing found they stay, a gap.
+    """
+    if profile.get("bios_mode") != "agnostic" and not any(f.get("agnostic") for f in files):
+        return files
+    def folder(entry: dict) -> str:
+        layout = (entry.get("standalone_path") if standalone else None) or entry.get("path") or ""
+        return layout.rsplit("/", 1)[0] if "/" in layout else ""
+
+    scanned = _agnostic_scan_extras(
+        {emu_name: {**profile, "files": files}}, {emu_name}, db,
+        db.get("indexes", {}).get("by_name", {}), set(), "",
+        {emu_name} if standalone else set(),
+    )
+    # A placeholder is answered by files found in its own folder: PCEE2's
+    # eeprom.dat, scanned at the root, said nothing about pcsx2/bios/.
+    covered = {e["destination"].rsplit("/", 1)[0] if "/" in e["destination"] else "" for e in scanned}
+    open_seeds = [
+        f for f in files if "<" in str(f.get("name", "")) and folder(f) not in covered
+    ]
+    scanned += _placeholder_scan(
+        open_seeds, emu_name, profile, db, standalone, all_profiles
+    )
+    covered = {e["destination"].rsplit("/", 1)[0] if "/" in e["destination"] else "" for e in scanned}
+    if not scanned:
+        return files
+    concrete = [
+        {
+            "name": extra["name"],
+            "path": extra["destination"],
+            **({"standalone_path": extra["destination"]} if standalone else {}),
+            "sha1": extra["sha1"],
+            "required": False,
+            **({"system": extra["source_system"]} if extra.get("source_system") else {}),
+            **({"region": extra["region"]} if extra.get("region") else {}),
+            "agnostic_scan": True,
+        }
+        for extra in scanned
+    ]
+    return [
+        f for f in files
+        if "<" not in str(f.get("name", "")) or folder(f) not in covered
+    ] + concrete
+
+
 def _companion_extras(
     companions: list[tuple[str, dict]],
     folder: str,

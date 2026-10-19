@@ -1456,10 +1456,13 @@ def generate_emulator_pack(
     with _writing_pack(zip_path) as zf:
         for emu_name, profile in sorted(selected):
             pack_structure = profile.get("pack_structure")
-            files = expand_directory_entries(
-                filter_files_by_mode(profile.get("files", []), standalone),
-                db,
-                standalone,
+            files = expand_agnostic_entries(
+                expand_directory_entries(
+                    filter_files_by_mode(profile.get("files", []), standalone),
+                    db,
+                    standalone,
+                ),
+                emu_name, profile, db, standalone, all_profiles,
             )
             if system_ids:
                 files = [
@@ -4648,6 +4651,7 @@ from packextras import (  # noqa: E402,F401
     platform_region_groups,
     emulator_region_drops,
     _emulator_region_group,
+    expand_agnostic_entries,
 )
 
 

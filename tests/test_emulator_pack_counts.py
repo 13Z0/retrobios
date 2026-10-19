@@ -62,5 +62,72 @@ class PackAndReportAgree(unittest.TestCase):
                 self.assertEqual(_count(summary, "refused"), _count(verdict, "untested"))
 
 
+class APlaceholderIsAnsweredByEvidence(unittest.TestCase):
+    """LRPS2 declares only <bios>.bin: no name to look up, so its emulator
+    pack shipped no PS2 BIOS and verify said missing. Another profile of the
+    system proves the folder by hash; the images there of the declared
+    size are what the core reads."""
+
+    def test_pack_and_report_carry_the_images(self):
+        import hashlib
+        import io
+        import os
+        import shutil
+        import zipfile
+        from contextlib import redirect_stdout
+
+        import yaml
+
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from common import _emulator_profiles_cache  # noqa: PLC0415
+        from generate_pack import generate_emulator_pack  # noqa: PLC0415
+        from verify import verify_emulator  # noqa: PLC0415
+
+        _emulator_profiles_cache.clear()
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        previous = os.getcwd()
+        os.chdir(root)
+        self.addCleanup(os.chdir, previous)
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}, "by_crc32": {},
+                                      "by_path_suffix": {}}}
+        hashes = {}
+        for name, data in (("proven.bin", b"P" * 64), ("other.bin", b"O" * 64),
+                           ("small.bin", b"S" * 8)):
+            rel = f"bios/Sony/PS2/{name}"
+            Path(rel).parent.mkdir(parents=True, exist_ok=True)
+            Path(rel).write_bytes(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            hashes[name] = sha1
+            db["files"][sha1] = {"path": rel, "name": name, "size": len(data),
+                                 "md5": hashlib.md5(data).hexdigest(), "crc32": ""}
+            db["indexes"]["by_name"][name] = [sha1]
+        Path("emulators").mkdir()
+        Path("emulators/named.yml").write_text(yaml.safe_dump({
+            "emulator": "Named", "type": "libretro", "systems": ["sony-playstation-2"],
+            "files": [{"name": "proven.bin", "sha1": hashes["proven.bin"], "size": 64}],
+        }))
+        Path("emulators/free.yml").write_text(yaml.safe_dump({
+            "emulator": "Free", "type": "libretro", "bios_mode": "agnostic",
+            "systems": ["sony-playstation-2"],
+            "files": [{"name": "<bios>.bin", "path": "pcsx2/bios/<bios>.bin",
+                       "min_size": 32, "max_size": 128, "required": True}],
+        }))
+        report = verify_emulator(["free"], "emulators", db, platforms_dir="platforms")
+        with redirect_stdout(io.StringIO()):
+            zip_path = generate_emulator_pack(
+                ["free"], "emulators", db, "bios", "out", offline=True,
+                platforms_dir="platforms",
+            )
+        with zipfile.ZipFile(zip_path) as zf:
+            packed = sorted(zf.namelist())
+        self.assertEqual(
+            [n for n in packed if n != "README.txt"],
+            ["pcsx2/bios/other.bin", "pcsx2/bios/proven.bin"],
+        )
+        self.assertEqual(report["total_files"], 2)
+
+
 if __name__ == "__main__":
     unittest.main()

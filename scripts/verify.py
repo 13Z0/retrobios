@@ -1556,6 +1556,7 @@ def verify_emulator(
     same list would be narrowed, through the emulator pack's own drop set.
     `system_ids` keeps the entries of those systems, as the system pack does.
     """
+    from packextras import expand_agnostic_entries
     from packpaths import (
         _archive_destination,
         _register_path,
@@ -1623,10 +1624,13 @@ def verify_emulator(
         placed[dest.lower()] = (path, owner, dest)
         _register_path(dest, placed_files, placed_parents)
     for emu_name, profile in sorted(selected):
-        files = expand_directory_entries(
-            filter_files_by_mode(profile.get("files", []), standalone),
-            db,
-            standalone,
+        files = expand_agnostic_entries(
+            expand_directory_entries(
+                filter_files_by_mode(profile.get("files", []), standalone),
+                db,
+                standalone,
+            ),
+            emu_name, profile, db, standalone, all_profiles,
         )
         if system_ids:
             files = [fe for fe in files if entry_serves_systems(fe, profile, system_ids)]
