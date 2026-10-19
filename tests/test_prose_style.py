@@ -21,7 +21,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 
 GLYPHS = re.compile(
-    "[–—…←-⇿─-╿✓-✘⚠✅❌]"
+    "[\u2013\u2014\u2026\u2190-\u21ff\u2500-\u257f\u2713-\u2718\u26a0\u2705\u274c]"
 )
 # A semicolon between two words of prose. Code quoted in prose sits in
 # backticks, which are blanked before the search.
