@@ -2604,6 +2604,17 @@ def _claim_partial(path: Path) -> BinaryIO | None:
     except OSError:
         handle.close()
         return None
+    # Opened and locked are two steps: in between, the run that held the
+    # partial may have renamed it into place and released it. The lock then
+    # sits on the installed BIOS, which looks like a finished partial and
+    # would be truncated. Only the file still under the partial's name is ours.
+    try:
+        ours = os.path.samestat(os.fstat(handle.fileno()), os.lstat(path))
+    except OSError:
+        ours = False
+    if not ours:
+        handle.close()
+        return None
     return handle
 
 

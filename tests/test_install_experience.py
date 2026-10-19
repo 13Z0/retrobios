@@ -145,6 +145,31 @@ class TwoRunsOneFolder(unittest.TestCase):
             self.assertIsNotNone(install._claim_partial(part))
 
 
+class APartialRenamedBeforeTheLock(unittest.TestCase):
+    """Open and lock are two steps. The run holding the partial could finish
+    in between, rename it into place and release it: the second run then
+    locked the installed BIOS, took it for a finished partial and truncated it."""
+
+    @unittest.skipIf(os.name == "nt", "flock semantics")
+    def test_the_installed_file_is_not_claimed(self):
+        import fcntl
+
+        with tempfile.TemporaryDirectory() as tmp:
+            part = Path(tmp) / ".big.bin.part"
+            final = Path(tmp) / "big.bin"
+            part.write_bytes(PAYLOAD)
+            real_flock = fcntl.flock
+
+            def finish_first(fd, op):
+                os.replace(part, final)
+                return real_flock(fd, op)
+
+            with mock.patch.object(fcntl, "flock", finish_first):
+                claimed = install._claim_partial(part)
+            self.assertIsNone(claimed)
+            self.assertEqual(final.read_bytes(), PAYLOAD)
+
+
 class InstalledFileModes(unittest.TestCase):
     """A file came out 0600, the mode of the temporary it was written to: run
     with sudo for a root-owned BIOS folder, the emulator's own user could not
