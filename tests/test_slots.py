@@ -855,5 +855,32 @@ class ARecordIsFoundByItsPathOnce(unittest.TestCase):
         self.assertEqual(Counted.walks, 1)
 
 
+class TheSlotsSummaryClosesTheRun(unittest.TestCase):
+    """The totals came before the collision section and ignored it, and the
+    help said the default run fails on conflicts the pack should settle,
+    which it never does."""
+
+    def test_order_and_help(self):
+        import subprocess  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1]
+        if not (root / "database.json").exists():
+            self.skipTest("database.json is not built")
+        proc = subprocess.run(
+            [sys.executable, "scripts/slots.py"], cwd=root, capture_output=True,
+            text=True, timeout=600, check=False,
+        )
+        lines = [line for line in proc.stdout.splitlines() if line.strip()]
+        self.assertEqual(proc.returncode, 0)
+        totals = next(i for i, line in enumerate(lines) if "contested destinations." in line)
+        self.assertIn("declared twice.", lines[totals])
+        self.assertFalse(any(line.endswith("destinations declared twice") for line in lines[totals:]))
+        helped = subprocess.run(
+            [sys.executable, "scripts/slots.py", "--help"], cwd=root, capture_output=True,
+            text=True, timeout=60, check=False,
+        ).stdout
+        self.assertIn("exits 0", " ".join(helped.split()))
+
+
 if __name__ == "__main__":
     unittest.main()

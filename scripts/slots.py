@@ -889,8 +889,8 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="exit non-zero on any contested destination, not only on one the "
-        "pack should have settled by itself",
+        help="exit 1 on any contested destination or destination declared twice; "
+        "without it the run reports them and exits 0",
     )
     args = parser.parse_args()
 
@@ -968,15 +968,19 @@ def main() -> int:
                 fixable += decision.serves_both
                 print(f"  {format_decision(decision)}")
         total = sum(len(c) for c in found.values())
-        print(
-            f"\n{total} contested destinations. {fixable} the pack settles on "
-            f"its own, {total - fixable} rest on an upstream declaration."
-        )
         for platform, collisions in collided.items():
             print(f"{platform}: {len(collisions)} destinations declared twice")
             for collision in collisions:
                 print(f"  {format_collision(collision)}")
-        if not args.strict and total:
+        # The totals close the run, collisions counted: printed before that
+        # section, they were not the last word and left it out.
+        doubled = sum(len(c) for c in collided.values())
+        print(
+            f"\n{total} contested destinations. {fixable} the pack settles on "
+            f"its own, {total - fixable} rest on an upstream declaration. "
+            f"{doubled} destinations declared twice."
+        )
+        if not args.strict and (total or doubled):
             print(
                 "Reported, not failed: the remainder needs the upstream list "
                 "corrected, which no build can do. Use --strict to gate on them."
