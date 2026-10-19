@@ -5265,5 +5265,27 @@ class AHashScanningCoreContradictsNoPlatform(unittest.TestCase):
         self.assertEqual(claimed, [])
 
 
+class ReportsHoldTheDataTrees(unittest.TestCase):
+    """Run on their own, the README, site and slot reports resolved against
+    data/ without the shared hold, so a concurrent refresh could swap a tree
+    while they read it and the published counts came from half of it."""
+
+    def test_each_entry_point_holds_them(self):
+        import ast
+
+        for script in ("generate_readme.py", "generate_site.py", "slots.py"):
+            tree = ast.parse((ROOT / "scripts" / script).read_text(encoding="utf-8"))
+            main = next(
+                node for node in tree.body
+                if isinstance(node, ast.FunctionDef) and node.name == "main"
+            )
+            with self.subTest(script=script):
+                self.assertTrue(any(
+                    isinstance(call, ast.Call)
+                    and getattr(call.func, "id", None) == "hold_data_dirs"
+                    for call in ast.walk(main)
+                ))
+
+
 if __name__ == "__main__":
     unittest.main()

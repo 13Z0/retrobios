@@ -772,9 +772,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    import contextlib
+
+    from common import load_data_dir_registry
+    from refresh_data_dirs import hold_data_dirs
+
     db = load_database(args.db)
 
-    readme = generate_readme(db, args.platforms_dir)
+    # Coverage resolves against data/: a refresh swapping a tree mid-read
+    # published counts taken from half of it.
+    with contextlib.ExitStack() as held:
+        hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
+        readme = generate_readme(db, args.platforms_dir)
     status = "Generated" if write_if_changed("README.md", readme) else "Unchanged"
     print(f"{status} ./README.md")
 

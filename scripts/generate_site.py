@@ -4395,7 +4395,14 @@ def main() -> None:
     try:
         # Two runs over one docs/ delete each other's pages and scratch
         # files in the sweep, so the second is refused instead.
-        with artifact_lock(args.docs_dir):
+        import contextlib
+
+        from common import load_data_dir_registry
+        from refresh_data_dirs import hold_data_dirs
+
+        # The coverage pages resolve against data/, held while they are read.
+        with artifact_lock(args.docs_dir), contextlib.ExitStack() as held:
+            hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
             _generate(args)
     except ArtifactLockBusy as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

@@ -894,6 +894,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    import contextlib
+
+    from common import load_data_dir_registry
+    from refresh_data_dirs import hold_data_dirs
+
+    # Claims resolve against data/: the trees stay put until the process
+    # ends, which releases the hold.
+    held = contextlib.ExitStack()
+    hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
+
     db = load_database(args.db)
     profiles = load_emulator_profiles(args.emulators_dir)
     if args.platform:
