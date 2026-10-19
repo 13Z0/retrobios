@@ -181,9 +181,11 @@ pack means adding it to that list, so it cannot reach users nameless or
 unannounced.
 
 Region and target both appear in the output filename
-(`RetroArch_v1.22.2_NorthAmerica_Switch_BIOS_Pack.zip`,
-`install/retroarch_northamerica_switch.json`), so a filtered build can never
-overwrite the full one.
+under the name the platform files the target by, whichever alias was typed:
+`--region us --target switch` writes
+`RetroArch_v1.22.2_NorthAmerica_NintendoSwitch_BIOS_Pack.zip` and
+`install/retroarch_northamerica_nintendoswitch.json`, so a filtered build can
+never overwrite the full one.
 
 
 ## Pack Source Variants
@@ -455,8 +457,10 @@ python scripts/pipeline.py --offline --with-export
 Flags compose freely:
 
 ```bash
-python scripts/pipeline.py --offline --skip-docs --with-truth --target switch
+python scripts/pipeline.py --offline --skip-packs --skip-docs --with-truth --target switch
 ```
 
 This runs: database generation, verification (filtered to Switch cores), truth generation
-and diff, consistency check. Packs and docs are skipped, no network access.
+and diff. Packs, manifests and docs are skipped, no network access. Without
+`--skip-packs` the same run empties `dist/` and rebuilds every pack for the
+target.
