@@ -823,6 +823,7 @@ def _mark_hidden(
     target_cores: set[str] | None,
     region_drops: set[str] | None = None,
     report: list[dict] | None = None,
+    resolver: object | None = None,
 ) -> set[str]:
     """What the builder holds but cannot place beside the files it packed.
 
@@ -837,7 +838,7 @@ def _mark_hidden(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores, region_drops, placed, report,
+        shipped, target_cores, region_drops, placed, report, resolver,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1197,9 +1198,15 @@ def verify_platform(
             not in region_drops
         ]
     _mark_unplaced(config, undeclared, profiles)
+    from packextras import ExtraResolver
+
     placed = _mark_hidden(
         config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
         region_drops, report_for_builder,
+        ExtraResolver(
+            db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
+            validation_owners,
+        ),
     )
     if not reads_file_contents(mode):
         # An existence frontend is satisfied by any file at the path, and the

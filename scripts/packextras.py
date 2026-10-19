@@ -147,6 +147,63 @@ def native_slug_systems(config: dict) -> set[str]:
     }
 
 
+def _file_sha1(path: str) -> str | None:
+    """sha1 of a copy the database does not index, a data tree's file."""
+    from hashing import compute_hashes
+
+    try:
+        return compute_hashes(path, frozenset({"sha1"}))["sha1"]
+    except OSError:
+        return None
+
+
+class ExtraResolver:
+    """How the builder finds the copy of a core's file it packs.
+
+    The builder and verify's replay of its placement must look the file up
+    the same way: by the storage-aware resolver with the archive index and
+    the data directories, then through the core's own check. verify once
+    looked up by name alone and compared other bytes than the pack's
+    (blueMSX's MSX2P.rom from bios/ against the data tree's copy).
+    """
+
+    def __init__(
+        self,
+        db: dict,
+        bios_dir: str,
+        zip_contents: dict | None,
+        data_registry: dict | None,
+        validation_index: dict,
+        validation_owners: dict | None,
+        offline: bool | None = True,
+    ) -> None:
+        self.db = db
+        self.bios_dir = bios_dir
+        self.zip_contents = zip_contents
+        self.data_registry = data_registry
+        self.validation_index = validation_index
+        self.validation_owners = validation_owners
+        self.offline = offline
+
+    def resolve(self, fe: dict, dest: str) -> tuple[str | None, str, str]:
+        """(local copy or None, resolver status, the core's disagreement)."""
+        from packresolve import resolve_file
+        from validation import validated_choice
+
+        local_path, status = resolve_file(
+            fe, self.db, self.bios_dir, self.zip_contents,
+            dest_hint=fe.get("destination", ""),
+            data_dir_registry=self.data_registry, offline=self.offline,
+        )
+        if status in ("not_found", "external", "user_provided") or not local_path:
+            return None, status, ""
+        local_path, disagreement = validated_choice(
+            fe, local_path, self.db, self.validation_index, self.bios_dir, None,
+            dest, self.validation_owners,
+        )
+        return local_path, status, disagreement
+
+
 def hidden_extras(
     config: dict,
     emulators_dir: str,
@@ -157,6 +214,7 @@ def hidden_extras(
     region_drops: set[str] | None = None,
     placed: set[str] | None = None,
     report: list[dict] | None = None,
+    resolver: ExtraResolver | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -172,6 +230,8 @@ def hidden_extras(
     file left out. ``shipped`` maps the full destination of each platform
     file the pack carries to its local copy. ``placed``, when given,
     receives the full destination of each held extra the pack carries.
+    ``resolver`` is the builder's lookup. An extra it cannot resolve is
+    skipped and takes no path, as the builder skips it.
     """
     from packpaths import _register_path, placement_block
 
@@ -202,10 +262,15 @@ def hidden_extras(
             # Another core's claim on the same path, settled by the claims
             # the collector records: not a file left out.
             continue
-        local, _status = resolve_local_file(
-            fe, db, dest_hint=fe.get("destination", "")
-        )
-        held = sha1_by_path.get(local) if local else None
+        if resolver is not None:
+            local, _status, _disagreement = resolver.resolve(fe, dest)
+            if not local:
+                continue
+        else:
+            local, _status = resolve_local_file(
+                fe, db, dest_hint=fe.get("destination", "")
+            )
+        held = (sha1_by_path.get(local) or _file_sha1(local)) if local else None
         if reason == "case_twin" and held and content.get(full.lower()) == held:
             continue
         if reason is not None:

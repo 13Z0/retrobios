@@ -1049,6 +1049,10 @@ def generate_pack(
           )
 
       core_count = 0
+      extra_resolver = ExtraResolver(
+          db, bios_dir, zip_contents, data_registry, validation_index,
+          validation_owners, offline,
+      )
       for fe in core_files:
           if required_only and fe.get("required") is False:
               continue
@@ -1078,26 +1082,13 @@ def generate_pack(
           ):
               continue
 
-          dest_hint = fe.get("destination", "")
-          local_path, status = resolve_file(
-              fe,
-              db,
-              bios_dir,
-              zip_contents,
-              dest_hint=dest_hint,
-              data_dir_registry=data_registry,
-              offline=offline,
-          )
-          if status in ("not_found", "external", "user_provided") or not local_path:
-              continue
           # The emulator's own check picks the copy, as for a declared file
           # and in the emulator pack: the name led RetroArch's GC/dsp_rom.bin
           # to Dolphin's obsolete v0.3.1 free ROM, beside Nintendo's coef
           # ROM, a pair Dolphin warns about at every start.
-          local_path, disagreement = validated_choice(
-              fe, local_path, db, validation_index, bios_dir, None, dest,
-              validation_owners,
-          )
+          local_path, status, disagreement = extra_resolver.resolve(fe, dest)
+          if not local_path:
+              continue
           if disagreement:
               core_discrepancies.append(f"{full_dest}: {disagreement}")
           if status == "hash_mismatch" and not _matches_an_alternative(
@@ -4672,6 +4663,7 @@ from packpaths import (  # noqa: E402,F401
     placement_block,
 )
 from packextras import (  # noqa: E402,F401
+    ExtraResolver,
     _detect_extras_prefix,
     _detect_slug_structure,
     _map_emulator_to_slug,

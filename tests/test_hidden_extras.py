@@ -154,5 +154,38 @@ class TheGapReportIsComputedOnce(unittest.TestCase):
         self.assertEqual(counted.call_count, 1)
 
 
+class TheReplayResolvesAsTheBuilder(unittest.TestCase):
+    """verify replayed the builder's placement with a bare name lookup: it
+    compared other bytes than the pack's, and an extra it could not resolve
+    still took its path and blocked the next one the builder places."""
+
+    def test_an_unresolved_extra_blocks_nothing(self):
+        from unittest import mock
+
+        import packextras
+
+        extras = [
+            {"destination": "box.bin/inner.rom", "name": "inner.rom",
+             "source_emulator": "a", "source_name": "inner.rom", "source_path": ""},
+            {"destination": "box.bin", "name": "box.bin",
+             "source_emulator": "b", "source_name": "box.bin", "source_path": ""},
+        ]
+
+        class Resolver:
+            def resolve(self, fe, dest):
+                return (None, "not_found", "") if fe["name"] == "inner.rom" else (
+                    "bios/box.bin", "sha1_exact", ""
+                )
+
+        placed: set[str] = set()
+        with mock.patch.object(packextras, "_collect_emulator_extras", return_value=extras):
+            hidden = packextras.hidden_extras(
+                {"systems": {}}, "emulators", {"files": {}}, {}, {},
+                placed=placed, resolver=Resolver(),
+            )
+        self.assertEqual(hidden, {})
+        self.assertEqual(placed, {"box.bin"})
+
+
 if __name__ == "__main__":
     unittest.main()

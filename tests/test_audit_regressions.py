@@ -2711,6 +2711,9 @@ class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
             other = Path(directory) / "FOO.ROM"
             other.write_bytes(b"other bytes")
+            first = Path(directory) / "foo.rom"
+            first.write_bytes(b"first bytes")
+            copies = {"foo.rom": str(first), "FOO.ROM": str(other)}
             extras = [
                 {"name": "foo.rom", "destination": "foo.rom", "source_emulator": "a"},
                 {"name": "FOO.ROM", "destination": "FOO.ROM", "source_emulator": "b"},
@@ -2721,7 +2724,8 @@ class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
                 with mock.patch.object(packextras, "_collect_emulator_extras",
                                        return_value=extras), \
                         mock.patch.object(packextras, "resolve_local_file",
-                                          return_value=(str(other), "name_exact")):
+                                          side_effect=lambda fe, *a, **k: (
+                                              copies[fe["name"]], "name_exact")):
                     return packextras.hidden_extras(
                         config, "emulators", {"files": {}}, {}, {}, None, region_drops
                     )
