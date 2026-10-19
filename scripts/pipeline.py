@@ -126,6 +126,43 @@ def parse_verify_counts(output: str) -> dict[str, tuple[int, int]]:
     return counts
 
 
+def parse_verify_extras(output: str) -> dict[str, int]:
+    """Core files and game data verify says each pack carries, per platform.
+
+    Read from the "Core files: N in pack" and "Game data: N in pack" lines
+    that follow a platform's summary line.
+    """
+    extras: dict[str, int] = {}
+    names: list[str] = []
+    for line in output.splitlines():
+        m = re.match(r"^(.+?):\s+(\d+)/(\d+)\s+(OK|present)", line)
+        if m:
+            names = [name.strip() for name in m.group(1).split(" / ")]
+            for name in names:
+                extras[name] = 0
+            continue
+        packed = re.match(r"^\s+(?:Core files|Game data): (\d+) in pack", line)
+        if packed and names:
+            for name in names:
+                extras[name] += int(packed.group(1))
+    return extras
+
+
+def parse_pack_extras(output: str) -> dict[str, int]:
+    """Files each full pack takes from the cores, per pack label."""
+    extras: dict[str, int] = {}
+    current_label = ""
+    for line in output.splitlines():
+        m = re.match(r"Generating (?:shared )?pack for (.+)\.\.\.", line)
+        if m:
+            current_label = _full_pack_label(m.group(1).strip())
+            continue
+        cores = re.search(r"\+ (\d+) from cores\)", line)
+        if current_label and "files packed" in line and cores:
+            extras[current_label] = int(cores.group(1))
+    return extras
+
+
 def _full_pack_label(label: str) -> str:
     """The pack name, or "" for a reduced variant such as [source=platform]."""
     meta = re.search(r"\s+\[([^\]]+)\]$", label)
@@ -199,6 +236,8 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
     v = parse_verify_counts(verify_output)
     p = parse_pack_counts(pack_output)
     excluded = parse_pack_exclusions(pack_output)
+    verify_extras = parse_verify_extras(verify_output)
+    pack_extras = parse_pack_extras(pack_output)
 
     print("\n--- 5/8 consistency check ---")
     all_ok = True
@@ -223,6 +262,15 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
                 p_match = p_label
                 break
 
+        if p_match and p_match in pack_extras and v_label in verify_extras:
+            if verify_extras[v_label] != pack_extras[p_match]:
+                # The cores' share: the base check passed RomM while verify
+                # counted 412 core files and game data and the pack held 60.
+                print(
+                    f"  {v_label}: MISMATCH core files verify "
+                    f"{verify_extras[v_label]} != pack {pack_extras[p_match]}"
+                )
+                all_ok = False
         if p_match:
             p_ok, p_total = p[p_match]
             p_excluded = excluded.get(p_match, 0)

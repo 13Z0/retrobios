@@ -860,6 +860,24 @@ class PipelineRegressions(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertTrue(pipeline.check_consistency(verify, pack))
 
+    def test_the_cores_share_is_compared_too(self):
+        """RomM passed this step while verify counted 412 core files and game
+        data in the pack and the builder placed 60."""
+        verify = "\n".join([
+            "RomM: 383/383 OK [md5]",
+            "  Core files: 61 in pack, 0 required missing, 1 optional missing",
+            "  Game data: 351 in pack, 0 missing",
+        ])
+        pack = "\n".join([
+            "Generating pack for RomM [source=full]...",
+            "  pack.zip: 443 files packed (383 baseline + 60 from cores), "
+            "383/383 files OK [md5]",
+        ])
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(pipeline.check_consistency(verify, pack))
+            agreed = verify.replace("61 in pack", "60 in pack").replace("351 in pack", "0 in pack")
+            self.assertTrue(pipeline.check_consistency(agreed, pack))
+
     def test_an_exclusion_never_covers_a_file_verify_counts_ok(self):
         """An existence platform packs a file whose hash disagrees and a hash
         platform's verify reports it untested: exclusions that make up the
