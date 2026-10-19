@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-18T17:35:31Z",
+  "generated": "2026-10-18T18:08:38Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -9712,6 +9712,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -9730,6 +9736,12 @@
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -9747,6 +9759,13 @@
         "swanstation"
       ],
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
         "sony-playstation"
       ]
     },
@@ -65070,13 +65089,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "asia-ntsc",
-        "japan"
-      ],
-      "region_groups": [
-        "sega-saturn"
       ]
     },
     {
@@ -65090,13 +65102,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ],
-      "regions": [
-        "asia-ntsc",
-        "japan"
-      ],
-      "region_groups": [
-        "sega-saturn"
       ]
     },
     {
@@ -65109,18 +65114,6 @@
         "mednafen"
       ],
       "systems": [
-        "sega-saturn"
-      ],
-      "regions": [
-        "asia-pal",
-        "brazil",
-        "europe",
-        "latin-america",
-        "north-america",
-        "oceania",
-        "south-korea"
-      ],
-      "region_groups": [
         "sega-saturn"
       ]
     },
@@ -72678,16 +72671,6 @@
       ],
       "systems": [
         "segastv"
-      ],
-      "regions": [
-        "asia-pal",
-        "brazil",
-        "latin-america",
-        "north-america",
-        "south-korea"
-      ],
-      "region_groups": [
-        "segastv"
       ]
     },
     {
@@ -72701,14 +72684,6 @@
         "mednafen"
       ],
       "systems": [
-        "segastv"
-      ],
-      "regions": [
-        "asia-pal",
-        "europe",
-        "south-korea"
-      ],
-      "region_groups": [
         "segastv"
       ]
     },

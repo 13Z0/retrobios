@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-18T17:35:31Z",
+  "generated": "2026-10-18T18:08:38Z",
   "base_destination": "system",
   "detect": [
     {
@@ -11124,6 +11124,13 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_system_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -11192,6 +11199,12 @@
       "repo_path": "bios/Sony/PlayStation/scph5501.bin",
       "cores": null,
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_system_groups": [
         "sony-playstation"
       ]
     },

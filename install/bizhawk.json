@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-18T17:35:31Z",
+  "generated": "2026-10-18T18:08:38Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -15,8 +15,21 @@
     },
     {
       "os": "linux",
-      "method": "path_exists",
-      "path": "$HOME/.config/BizHawk/Firmware"
+      "method": "executable",
+      "file": [
+        "$HOME/BizHawk*/EmuHawkMono.sh",
+        "$HOME/*/BizHawk*/EmuHawkMono.sh"
+      ],
+      "bios_subdir": "Firmware"
+    },
+    {
+      "os": "windows",
+      "method": "executable",
+      "file": [
+        "%USERPROFILE%\\BizHawk*\\EmuHawk.exe",
+        "%USERPROFILE%\\*\\BizHawk*\\EmuHawk.exe"
+      ],
+      "bios_subdir": "Firmware"
     }
   ],
   "standalone_copies": [],

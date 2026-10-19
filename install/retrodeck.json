@@ -5,9 +5,23 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-18T17:35:31Z",
+  "generated": "2026-10-18T18:08:38Z",
   "base_destination": "",
   "detect": [
+    {
+      "os": "linux",
+      "method": "config_file",
+      "config": "$HOME/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json",
+      "parse_key": "paths.rd_home_path",
+      "bios_path": "$HOME/retrodeck"
+    },
+    {
+      "os": "linux",
+      "method": "config_file",
+      "config": "$HOME/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.cfg",
+      "parse_key": "rdhome",
+      "bios_path": "$HOME/retrodeck"
+    },
     {
       "os": "linux",
       "method": "path_exists",
@@ -27317,6 +27331,12 @@
       "repo_path": "bios/Sony/PlayStation/scph5501.bin",
       "cores": null,
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_system_groups": [
         "sony-playstation"
       ]
     },

@@ -5,13 +5,19 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-18T17:35:31Z",
+  "generated": "2026-10-18T18:08:38Z",
   "base_destination": "system",
   "detect": [
     {
       "os": "linux",
       "method": "config_file",
       "config": "$HOME/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "linux",
+      "method": "config_file",
+      "config": "$HOME/snap/retroarch/current/.config/retroarch/retroarch.cfg",
       "parse_key": "system_directory"
     },
     {
@@ -28,6 +34,13 @@
       "bios_path": "$HOME/Documents/RetroArch/system"
     },
     {
+      "os": "darwin",
+      "method": "config_file",
+      "config": "$HOME/Library/Application Support/RetroArch/retroarch.cfg",
+      "parse_key": "system_directory",
+      "bios_path": "$HOME/Documents/RetroArch/system"
+    },
+    {
       "os": "windows",
       "method": "config_file",
       "config": "C:\\RetroArch-Win64\\retroarch.cfg",
@@ -36,7 +49,73 @@
     {
       "os": "windows",
       "method": "config_file",
+      "config": "C:\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles%\\RetroArch-Win64\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles%\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles%\\ES-DE\\Emulators\\RetroArch-Win64\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles%\\ES-DE\\Emulators\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles(x86)%\\RetroArch-Win64\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles(x86)%\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles(x86)%\\ES-DE\\Emulators\\RetroArch-Win64\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles(x86)%\\ES-DE\\Emulators\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
       "config": "%APPDATA%\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles(x86)%\\Steam\\steamapps\\common\\RetroArch\\retroarch.cfg",
+      "parse_key": "system_directory"
+    },
+    {
+      "os": "windows",
+      "method": "config_file",
+      "config": "%ProgramFiles%\\Steam\\steamapps\\common\\RetroArch\\retroarch.cfg",
       "parse_key": "system_directory"
     },
     {
@@ -11281,6 +11360,13 @@
       "cores": null,
       "systems": [
         "sony-playstation"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_system_groups": [
+        "sony-playstation"
       ]
     },
     {
@@ -11349,6 +11435,12 @@
       "repo_path": "bios/Sony/PlayStation/scph5501.bin",
       "cores": null,
       "systems": [
+        "sony-playstation"
+      ],
+      "regions": [
+        "north-america"
+      ],
+      "region_system_groups": [
         "sony-playstation"
       ]
     },
