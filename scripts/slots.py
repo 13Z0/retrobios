@@ -746,11 +746,26 @@ def _declared_hashes(entry: dict, field_name: str) -> set[str]:
     }
 
 
+def _record_at(path: str, db: dict) -> dict | None:
+    """The database record stored at path, from an index built once per db.
+
+    A scan of db['files'] on every call was O(calls x 19 000 files) on the
+    path verify --all and slots.py both take.
+    """
+    files = db.get("files", {})
+    cached = _PATH_INDEX.get(id(files))
+    if cached is None or cached[0] is not files:
+        cached = (files, {e.get("path"): e for e in files.values()})
+        _PATH_INDEX[id(files)] = cached
+    return cached[1].get(path)
+
+
+_PATH_INDEX: dict[int, tuple[dict, dict[str, dict]]] = {}
+
+
 def _accepted_by_all(path: str, entries: list[dict], db: dict) -> bool:
     """Whether every declaration's own hashes accept the file at path."""
-    record = next(
-        (e for e in db.get("files", {}).values() if e.get("path") == path), None
-    )
+    record = _record_at(path, db)
     if record is None:
         return False
     for entry in entries:

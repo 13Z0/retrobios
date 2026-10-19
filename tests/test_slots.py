@@ -834,5 +834,26 @@ class SlotsJudgeWhatVerifyJudged(unittest.TestCase):
         self.assertIn("--include-archived", result.stderr)
 
 
+class ARecordIsFoundByItsPathOnce(unittest.TestCase):
+    """_accepted_by_all walked all 19 000 records for every path asked."""
+
+    def test_the_files_are_walked_once(self):
+        import slots  # noqa: PLC0415
+
+        class Counted(dict):
+            walks = 0
+
+            def values(self):
+                Counted.walks += 1
+                return super().values()
+
+        files = Counted({"a" * 40: {"path": "bios/x.bin"}, "b" * 40: {"path": "bios/y.bin"}})
+        db = {"files": files}
+        for _ in range(50):
+            self.assertEqual(slots._record_at("bios/y.bin", db)["path"], "bios/y.bin")
+        self.assertIsNone(slots._record_at("bios/z.bin", db))
+        self.assertEqual(Counted.walks, 1)
+
+
 if __name__ == "__main__":
     unittest.main()
