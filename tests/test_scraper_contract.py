@@ -451,6 +451,18 @@ class BizHawkRunsAresForN64Only(unittest.TestCase):
         self.assertNotIn("ares", platform["cores"])
         self.assertNotIn("ares", registry["platforms"]["bizhawk"]["cores"])
 
+    def test_no_profile_speaks_for_emuhawk(self):
+        """EmuHawk finds firmware by SHA1 in its own database. Cores listed
+        for overlapping systems shipped 400 files it never reads (Clock
+        Signal, O2EM, FBNeo, VICE)."""
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        platform = yaml.safe_load((root / "platforms" / "bizhawk.yml").read_text())
+        registry = yaml.safe_load((root / "platforms" / "_registry.yml").read_text())
+        self.assertEqual(platform["cores"], [])
+        self.assertEqual(registry["platforms"]["bizhawk"]["cores"], [])
+
 
 class EveryTargetCoreReachesAProfile(unittest.TestCase):
     """A target lists cores by their buildbot or package name. A name no

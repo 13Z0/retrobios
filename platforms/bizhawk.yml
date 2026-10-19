@@ -5,33 +5,7 @@ source: "https://raw.githubusercontent.com/TASEmulators/BizHawk/2.11.1/src/BizHa
 base_destination: Firmware
 hash_type: sha1
 verification_mode: sha1
-cores:
-- gambatte
-- mgba
-- sameboy
-- melonds
-- snes9x
-- bsnes
-- beetle_psx
-- beetle_saturn
-- beetle_pce
-- beetle_pcfx
-- beetle_wswan
-- beetle_vb
-- beetle_ngp
-- opera
-- stella
-- picodrive
-- ppsspp
-- handy
-- quicknes
-- genesis_plus_gx
-- mupen64plus_next
-- puae
-- prboom
-- virtualjaguar
-- vice_x64
-- mame
+cores: []
 systems:
   sega-32x:
     files:

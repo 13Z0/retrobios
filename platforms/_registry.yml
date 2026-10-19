@@ -535,48 +535,11 @@ platforms:
     # Windows: names differing only by case land on one file.
     case_insensitive_fs: true
     schedule: monthly
-    cores:
-    - applewin
-    - azahar
-    - beetle_ngp
-    - beetle_pce
-    - beetle_pcfx
-    - beetle_psx
-    - beetle_saturn
-    - beetle_vb
-    - beetle_wswan
-    - bsnes
-    - citra
-    - citra2018
-    - citra_canary
-    - clk
-    - fbneo
-    - freechaf
-    - freeintv
-    - gambatte
-    - genesis_plus_gx
-    - handy
-    - mame
-    - melonds
-    - mgba
-    - mupen64plus_next
-    - numero
-    - o2em
-    - opera
-    - panda3ds
-    - picodrive
-    - ppsspp
-    - prboom
-    - prosystem
-    - puae
-    - quicknes
-    - sameboy
-    - snes9x
-    - stella
-    - trident
-    - vecx
-    - vice_x64
-    - virtualjaguar
+    # EmuHawk finds firmware by SHA1 against FirmwareDatabase.FirmwareRecords
+    # and its cores are its own builds (CoreNames.cs): no libretro profile
+    # describes what it reads, so the database alone decides, as MiSTer's
+    # BiosDB does.
+    cores: []
     target_scraper: null
     target_source: null
     install:

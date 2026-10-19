@@ -105,38 +105,13 @@ SYSTEM_ID_MAP: dict[str, str] = {
     "ZXSpectrum": "sinclair-zx-spectrum",
 }
 
-# Cores that overlap with BizHawk's system coverage
-BIZHAWK_CORES = [
-    "gambatte",
-    "mgba",
-    "sameboy",
-    "melonds",
-    "snes9x",
-    "bsnes",
-    "beetle_psx",
-    "beetle_saturn",
-    "beetle_pce",
-    "beetle_pcfx",
-    "beetle_wswan",
-    "beetle_vb",
-    "beetle_ngp",
-    "opera",
-    "stella",
-    "picodrive",
-    "ppsspp",
-    "handy",
-    "quicknes",
-    "genesis_plus_gx",
-    # Ares64 is BizHawk's N64 core only. Its firmware (the 64DD IPL) is in
-    # FirmwareDatabase.cs. The ares profile's thirty systems are not what
-    # BizHawk runs ares for.
-    "mupen64plus_next",
-    "puae",
-    "prboom",
-    "virtualjaguar",
-    "vice_x64",
-    "mame",
-]
+# EmuHawk looks every firmware up by SHA1 against FirmwareDatabase.FirmwareRecords
+# (FirmwareManager.cs), and its cores are its own builds (CoreNames.cs). A
+# libretro profile of the same upstream emulator describes what that libretro
+# build opens, not what EmuHawk reads: listing them by overlapping systems
+# shipped Clock Signal, O2EM, FBNeo and VICE files into Firmware/. The
+# database alone decides what the pack carries.
+BIZHAWK_CORES: list[str] = []
 
 
 def _safe_arithmetic(expr: str) -> int:
