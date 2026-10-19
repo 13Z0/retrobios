@@ -5,7 +5,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-19T21:16:15Z",
+  "generated": "2026-10-19T22:32:31Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -67567,6 +67567,16 @@
       ]
     },
     {
+      "dest": "Master.dsk",
+      "sha1": "7b03befac4fbcef8c649048fa3ff5d095fd48dd3",
+      "sha256": "0add32bcbd0e5b350437fa9d138b3c232368e36d8009852479fdb09d9db31113",
+      "size": 143360,
+      "repo_path": "bios/Other/linapple/Master.dsk",
+      "cores": [
+        "linapple"
+      ]
+    },
+    {
       "dest": "icon.bmp",
       "sha1": "5aee3a718f3d541122b61b9b8203e8a28db97a34",
       "sha256": "90e7ede6d0889020f5d2f23375f89d7cdae90b1ad5a79e5858cf144badc6ffbd",
@@ -102799,16 +102809,6 @@
       "repo_path": "bios/Epic MegaGames/Jazz Jackrabbit 2/jazz2/Source/intro.j2v",
       "cores": [
         "jazz2-native"
-      ]
-    },
-    {
-      "dest": "Master.dsk",
-      "sha1": "7b03befac4fbcef8c649048fa3ff5d095fd48dd3",
-      "sha256": "0add32bcbd0e5b350437fa9d138b3c232368e36d8009852479fdb09d9db31113",
-      "size": 143360,
-      "repo_path": "bios/Other/linapple/Master.dsk",
-      "cores": [
-        "linapple"
       ]
     },
     {
