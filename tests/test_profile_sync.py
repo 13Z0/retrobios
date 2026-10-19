@@ -1845,7 +1845,7 @@ class TestFormatReport(unittest.TestCase):
         self.assertEqual(format_report(report).count("2-4"), 2)
 
     def test_review_count_in_summary(self):
-        self.assertIn("1 demandent une relecture", format_report(_sample_report()))
+        self.assertIn("1 to review", format_report(_sample_report()))
 
     def test_skipped_profile_states_reason(self):
         text = format_report(ProfileReport(name="x", skipped="no source_ref"))

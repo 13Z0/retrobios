@@ -2030,7 +2030,7 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         f"{count} {status.lower()}" for status, count in sorted(report.counts.items())
     )
     lines.append(f"  {len(report.entries)} refs: {summary}")
-    lines.append(f"  {report.needs_review()} demandent une relecture")
+    lines.append(f"  {report.needs_review()} to review")
     return "\n".join(lines)
 
 
@@ -2046,7 +2046,7 @@ def format_markdown(reports: list[ProfileReport]) -> str:
     lines = [
         "# profile-sync",
         "",
-        "| profil | depot | refs | relecture |",
+        "| profile | repository | refs | to review |",
         "|---|---|---|---|",
     ]
     for report in reports:
