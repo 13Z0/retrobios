@@ -113,7 +113,22 @@ class ValidatedChoice(unittest.TestCase):
             call for call in ast.walk(builder)
             if isinstance(call, ast.Call) and getattr(call.func, "id", None) == "validated_choice"
         ]
-        self.assertGreaterEqual(len(calls), 2)
+        self.assertGreaterEqual(len(calls), 1)
+        # The core extras go through the lookup verify shares, which judges.
+        self.assertTrue(any(
+            isinstance(call, ast.Call) and getattr(call.func, "attr", None) == "resolve"
+            and getattr(call.func.value, "id", None) == "extra_resolver"
+            for call in ast.walk(builder)
+        ))
+        extras = ast.parse((REPO_ROOT / "scripts" / "packextras.py").read_text(encoding="utf-8"))
+        resolve = next(
+            node for node in ast.walk(extras)
+            if isinstance(node, ast.FunctionDef) and node.name == "resolve"
+        )
+        self.assertTrue(any(
+            isinstance(call, ast.Call) and getattr(call.func, "id", None) == "validated_choice"
+            for call in ast.walk(resolve)
+        ))
 
 
 class ManifestsServeWhatTheCoreAccepts(unittest.TestCase):
