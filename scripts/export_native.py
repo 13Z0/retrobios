@@ -369,8 +369,15 @@ class LandedChanges:
     applied: list[str] = field(default_factory=list)
     filled: list[str] = field(default_factory=list)
     resized: list[str] = field(default_factory=list)
+    unsized: list[str] = field(default_factory=list)
     cleared: list[str] = field(default_factory=list)
     requirements: int = 0
+
+
+def _count(number: int, noun: str) -> str:
+    """"1 hash", "2 hashes": a count with its noun in the right number."""
+    plural = noun + ("es" if noun.endswith(("sh", "ch", "s", "x")) else "s")
+    return f"{number} {noun if number == 1 else plural}"
 
 
 def landed_changes(exporter: object, systems: dict) -> LandedChanges:
@@ -411,6 +418,15 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                 and exporter.states(entry, "size")
             ):
                 changes.resized.append(label)
+            elif (
+                theirs
+                and ours is None
+                and _single_size(theirs) is not None
+                and exporter.states(entry, "size")
+            ):
+                # The truth took the entry over without a size of its own:
+                # System.dat's neocdz.zip line went out without size 953078.
+                changes.unsized.append(label)
             changes.cleared.extend(
                 f"{label} {field_name}"
                 for field_name in HASH_FIELDS
@@ -478,6 +494,7 @@ def export_platform(
     changes = landed_changes(exporter, systems)
     applied, filled = changes.applied, changes.filled
     resized, cleared = changes.resized, changes.cleared
+    unsized = changes.unsized
     requirements = changes.requirements
 
     landed = 0
@@ -500,39 +517,46 @@ def export_platform(
     if summary is None:
         summary = (
             f"{report.files_kept} kept, {landed} added, "
-            f"{len(applied)} hashes corrected, {requirements} requirements corrected"
+            f"{_count(len(applied), 'hash')} corrected, "
+            f"{_count(requirements, 'requirement')} corrected"
         )
         if filled:
-            summary += f", {len(filled)} hashes filled"
+            summary += f", {_count(len(filled), 'hash')} filled"
         if resized:
-            summary += f", {len(resized)} sizes corrected"
+            summary += f", {_count(len(resized), 'size')} corrected"
+        if unsized:
+            summary += f", {_count(len(unsized), 'size')} removed"
         if cleared:
-            summary += f", {len(cleared)} hashes cleared"
+            summary += f", {_count(len(cleared), 'hash')} cleared"
         if refused:
             summary += f", {refused} the format cannot state"
         if lost:
             summary += f", {lost} of theirs dropped"
     withheld = exporter.withheld()
     if withheld:
-        summary += f", {len(withheld)} corrections withheld"
+        summary += f", {_count(len(withheld), 'correction')} withheld"
     messages.append(summary)
     messages.extend(f"withheld: {reason}" for reason in withheld)
     for correction in applied[:5]:
         messages.append(f"hash corrected: {correction}")
     if len(applied) > 5:
-        messages.append(f"and {len(applied) - 5} more hash corrections")
+        messages.append(f"and {_count(len(applied) - 5, 'more hash correction')}")
     for fill in filled[:5]:
         messages.append(f"hash filled: {fill}")
     if len(filled) > 5:
-        messages.append(f"and {len(filled) - 5} more hash fills")
+        messages.append(f"and {_count(len(filled) - 5, 'more hash fill')}")
     for label in resized[:5]:
         messages.append(f"size corrected: {label}")
     if len(resized) > 5:
-        messages.append(f"and {len(resized) - 5} more size corrections")
+        messages.append(f"and {_count(len(resized) - 5, 'more size correction')}")
+    for label in unsized[:5]:
+        messages.append(f"size removed: {label}")
+    if len(unsized) > 5:
+        messages.append(f"and {len(unsized) - 5} more removed")
     for clear in cleared[:5]:
         messages.append(f"hash cleared: {clear}")
     if len(cleared) > 5:
-        messages.append(f"and {len(cleared) - 5} more hashes cleared")
+        messages.append(f"and {len(cleared) - 5} more cleared")
 
     messages.extend(f"INVALID: {issue}" for issue in issues[:10])
     if len(issues) > 10:
