@@ -4165,5 +4165,25 @@ class TestAnUnansweringRepository(unittest.TestCase):
         self.assertEqual(report.skipped, "upstream gone (declared): 404 since 2026-10-18")
 
 
+class TheUnknownProfileHintCountsTheListing(unittest.TestCase):
+    """profile_sync said "verify.py --list-emulators lists all 553" for a
+    listing of 530: the alias and test profiles it counted are not listed."""
+
+    def test_the_count_matches(self):
+        import subprocess  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1]
+        hint = subprocess.run(
+            [sys.executable, "scripts/profile_sync.py", "--emulator", "no-such-profile"],
+            cwd=root, capture_output=True, text=True, timeout=120, check=False,
+        )
+        listing = subprocess.run(
+            [sys.executable, "scripts/verify.py", "--list-emulators"],
+            cwd=root, capture_output=True, text=True, timeout=120, check=False,
+        ).stdout
+        count = len([line for line in listing.splitlines() if line.strip()])
+        self.assertIn(f"lists all {count}.", hint.stderr + hint.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

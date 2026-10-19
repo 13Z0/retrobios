@@ -3304,9 +3304,15 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
     """Profiles matching the selection flags."""
     if args.emulator:
         if args.emulator not in profiles:
+            # Suggested from what the listing it names shows: counted over the
+            # alias and test profiles too, "lists all 553" pointed at 530 lines.
+            listed = sorted(
+                name for name, profile in profiles.items()
+                if profile.get("type") not in ("alias", "test")
+            )
             raise SystemExit(
                 f"ERROR: unknown profile {args.emulator}. "
-                + suggest_names([args.emulator], sorted(profiles), "verify.py --list-emulators")
+                + suggest_names([args.emulator], listed, "verify.py --list-emulators")
             )
         return {args.emulator: profiles[args.emulator]}
 
