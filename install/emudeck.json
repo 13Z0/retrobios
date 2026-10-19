@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-18T18:08:38Z",
+  "generated": "2026-10-19T21:16:15Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -266,10 +266,10 @@
       }
     }
   ],
-  "total_files": 6004,
-  "total_size": 7042388303,
-  "pack_files": 6006,
-  "pack_size": 7042388303,
+  "total_files": 6006,
+  "total_size": 7042453839,
+  "pack_files": 6008,
+  "pack_size": 7042453839,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -1181,10 +1181,10 @@
     },
     {
       "dest": "bios_CD_E.bin",
-      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
-      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
       "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
       "cores": null,
       "systems": [
         "sega-mega-cd"
@@ -1201,12 +1201,11 @@
       ],
       "alternatives": [
         {
-          "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
-          "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+          "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+          "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
           "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+          "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
           "cores": [
-            "ares",
             "genesis_plus_gx",
             "genesis_plus_gx_wide",
             "picodrive"
@@ -1216,10 +1215,10 @@
     },
     {
       "dest": "bios_CD_U.bin",
-      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
-      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
       "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
       "cores": null,
       "systems": [
         "sega-mega-cd"
@@ -1236,12 +1235,11 @@
       ],
       "alternatives": [
         {
-          "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
-          "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+          "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+          "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
           "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+          "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
           "cores": [
-            "ares",
             "genesis_plus_gx",
             "genesis_plus_gx_wide",
             "picodrive"
@@ -1251,10 +1249,10 @@
     },
     {
       "dest": "bios_CD_J.bin",
-      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
-      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
       "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
       "cores": null,
       "systems": [
         "sega-mega-cd"
@@ -1270,12 +1268,11 @@
       ],
       "alternatives": [
         {
-          "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
-          "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+          "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+          "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
           "size": 131072,
-          "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+          "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
           "cores": [
-            "ares",
             "genesis_plus_gx",
             "genesis_plus_gx_wide",
             "picodrive"
@@ -1777,6 +1774,68 @@
       ]
     },
     {
+      "dest": "SegaCDBIOS9303.bin",
+      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
+      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+      "cores": [
+        "ares",
+        "picodrive"
+      ],
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "sega-mega-cd"
+      ]
+    },
+    {
+      "dest": "jp_mcd2_921222.bin",
+      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
+      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+      "cores": [
+        "ares",
+        "picodrive"
+      ],
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sega-mega-cd"
+      ]
+    },
+    {
+      "dest": "eu_mcd2_9303.bin",
+      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
+      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+      "cores": [
+        "ares",
+        "picodrive"
+      ],
+      "systems": [
+        "sega-mega-cd"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sega-mega-cd"
+      ]
+    },
+    {
       "dest": "mega_ld_bios_U.bin",
       "sha1": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "sha256": "e89b5a319f66406611ec82fe5c4aa6827c175a05135bd7bd177366cba0465021",
@@ -1809,25 +1868,23 @@
       ]
     },
     {
-      "dest": "MSX.ROM",
+      "dest": "msx-japanese.rom",
       "sha1": "302afb5d8be26c758309ca3df611ae69cced2821",
       "sha256": "413a2b601a94b3792e054be2439cc77a1819cceadbfa9542f88d51c7480f2ef0",
       "size": 32768,
       "repo_path": "bios/Microsoft/MSX/CLK/msx-japanese.rom",
       "cores": [
-        "ares",
-        "fmsx"
+        "ares"
       ]
     },
     {
-      "dest": "MSX2.ROM",
+      "dest": "MSX2J.rom",
       "sha1": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
       "sha256": "0c672d86ead61a97f49a583b88b7c1905da120645cd44f0c9f2baf4f4631e0b1",
       "size": 32768,
       "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/MSX2J.rom",
       "cores": [
-        "ares",
-        "fmsx"
+        "ares"
       ]
     },
     {
@@ -16395,6 +16452,26 @@
         "gambatte",
         "mgba",
         "vbam"
+      ]
+    },
+    {
+      "dest": "MSX.ROM",
+      "sha1": "409e82adac40f6bdd18eb6c84e8b2fbdc7fb5498",
+      "sha256": "999564a371dd2fdf7fbe8d853e82a68d557c27b7d87417639b2fa17704b83f78",
+      "size": 32768,
+      "repo_path": "bios/Microsoft/MSX/MSX.ROM",
+      "cores": [
+        "fmsx"
+      ]
+    },
+    {
+      "dest": "MSX2.ROM",
+      "sha1": "6103b39f1e38d1aa2d84b1c3219c44f1abb5436e",
+      "sha256": "4bc4ae85ca5f28246cd3e7b7e017d298ddd375603657f84ef2c7954bc2d9b919",
+      "size": 32768,
+      "repo_path": "bios/Microsoft/MSX/MSX2.ROM",
+      "cores": [
+        "fmsx"
       ]
     },
     {
@@ -58618,27 +58695,6 @@
       "priority": 1
     },
     {
-      "dest": "SegaCDBIOS9303.bin",
-      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
-      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
-      "cores": [
-        "picodrive"
-      ],
-      "systems": [
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "latin-america",
-        "north-america"
-      ],
-      "region_groups": [
-        "PicoDrive:variant:mega-cd-bios"
-      ],
-      "priority": 2
-    },
-    {
       "dest": "us_scd1_9210.bin",
       "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
       "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
@@ -58681,27 +58737,6 @@
       "priority": 1
     },
     {
-      "dest": "eu_mcd2_9303.bin",
-      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
-      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
-      "cores": [
-        "picodrive"
-      ],
-      "systems": [
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "europe",
-        "oceania"
-      ],
-      "region_groups": [
-        "PicoDrive:variant:mega-cd-bios"
-      ],
-      "priority": 2
-    },
-    {
       "dest": "eu_mcd1_9210.bin",
       "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
       "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
@@ -58721,26 +58756,6 @@
         "PicoDrive:variant:mega-cd-bios"
       ],
       "priority": 3
-    },
-    {
-      "dest": "jp_mcd2_921222.bin",
-      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
-      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
-      "size": 131072,
-      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
-      "cores": [
-        "picodrive"
-      ],
-      "systems": [
-        "sega-mega-cd"
-      ],
-      "regions": [
-        "japan"
-      ],
-      "region_groups": [
-        "PicoDrive:variant:mega-cd-bios"
-      ],
-      "priority": 1
     },
     {
       "dest": "jp_mcd1_9112.bin",
