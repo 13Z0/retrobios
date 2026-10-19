@@ -1117,6 +1117,12 @@ def generate_data_page(exports: list[dict]) -> str:
         "Every JSON document carries `schema_version`. Breaking changes use a new "
         "URL prefix (`/api/v2/`); fields may only be added compatibly within v1.",
         "",
+        "One emulator profile without the whole list: "
+        "`api/v1/emulators/<id>.json`, the envelope of `emulators.json` holding "
+        "that one item, its `profile` valid against "
+        "[`emulator.schema.json`](api/v1/schemas/emulator.schema.json). Each "
+        "emulator page links its own.",
+        "",
         "## Bulk downloads",
         "",
         "| Export | Format | Size | SHA256 |",
@@ -4495,10 +4501,21 @@ def _generate(args: argparse.Namespace) -> None:
     for name, profile in public_profiles.items():
         # The profile itself, one small document per core: reusing one
         # meant downloading emulators.json (5.9 MB) and filtering it.
+        # The envelope and item of emulators.json, one item long: the
+        # profile validates against the published schema, which an "id"
+        # beside its fields broke on all 530, and schema_version is there.
         write_if_changed(
             str(docs / "api" / "v1" / "emulators" / f"{name}.json"),
-            json.dumps({"id": name, **profile}, indent=2, sort_keys=True,
-                       ensure_ascii=False, default=str) + "\n",
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "generated_at": str(db.get("generated_at") or _timestamp()),
+                    "kind": "emulators",
+                    "count": 1,
+                    "items": [{"id": name, "profile": profile}],
+                },
+                indent=2, sort_keys=True, ensure_ascii=False, default=str,
+            ) + "\n",
         )
         page = generate_emulator_page(
             name, profile, db, consumers, suppl_names, data_registry

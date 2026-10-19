@@ -627,5 +627,29 @@ class APlatformPageNamesTheFileItTranscribes(unittest.TestCase):
         self.assertIn("revision read is not recorded", page("https://github.com/RetroDECK/components"))
 
 
+class APerCoreDocumentValidates(unittest.TestCase):
+    """api/v1/emulators/<id>.json had no schema_version, and its "id" beside
+    the profile's fields failed the schema published next to it."""
+
+    def test_shape(self):
+        try:
+            import jsonschema  # noqa: PLC0415
+        except ImportError:
+            self.skipTest("jsonschema is not installed")
+        import yaml  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1]
+        source = (root / "scripts" / "generate_site.py").read_text(encoding="utf-8")
+        self.assertNotIn('json.dumps({"id": name, **profile}', source)
+        envelope = json.loads((root / "schemas" / "site-api-envelope.schema.json").read_text())
+        schema = json.loads((root / "schemas" / "emulator.schema.json").read_text())
+        profile = yaml.safe_load((root / "emulators" / "handy.yml").read_text())
+        document = {"schema_version": 1, "generated_at": "2026-10-19T00:00:00Z",
+                    "kind": "emulators", "count": 1,
+                    "items": [{"id": "handy", "profile": profile}]}
+        jsonschema.validate(document, envelope)
+        jsonschema.validate(document["items"][0]["profile"], schema)
+
+
 if __name__ == "__main__":
     unittest.main()
