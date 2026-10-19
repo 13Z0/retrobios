@@ -930,6 +930,7 @@ def generate_data_exports(
         "platforms.json": ("platforms", platform_items),
         "emulators.json": ("emulators", emulator_items),
         "gaps.json": ("verification-and-coverage-gaps", gap_rows),
+        "file-locations.json": ("file-locations", file_location_items(db)),
     }
     for filename, (kind, items) in envelopes.items():
         document = {
@@ -1034,6 +1035,7 @@ def generate_data_exports(
         (api / "platforms.json", "Platform contracts", "application/json", "schemas/site-api-envelope.schema.json"),
         (api / "emulators.json", "Emulator profiles", "application/json", "schemas/site-api-envelope.schema.json"),
         (api / "gaps.json", "Verification and coverage gaps", "application/json", "schemas/site-api-envelope.schema.json"),
+        (api / "file-locations.json", "Where each file's card is, by SHA1", "application/json", "schemas/site-api-envelope.schema.json"),
         (api / "stats.json", "Project statistics", "application/json", "schemas/stats.schema.json"),
         (downloads / "files.csv", "File hashes CSV", "text/csv", None),
         (downloads / "retrobios.dat", "Collection DAT (Logiqx XML, for clrmamepro and RomVault)",
@@ -1936,6 +1938,51 @@ def generate_platform_page(
 # System pages
 
 
+def generate_files_page() -> str:
+    """The content address of every held file: files/?sha1=<sha1>.
+
+    site.js reads api/v1/file-locations.json and goes to the card; without
+    a sha1, or with one the collection does not hold, the page says so.
+    """
+    return "\n".join([
+        f"# Find a file by its SHA1 - {SITE_NAME}",
+        "",
+        "A file's card lives on its manufacturer's page, and a file refiled "
+        "between manufacturers moves with it. `files/?sha1=<sha1>` is the "
+        "address that does not move: it opens the card wherever it is now. "
+        "Each card's **permalink** is that address.",
+        "",
+        '<form class="rb-file-lookup" action="./" method="get">',
+        '<label for="rb-sha1">SHA1</label> ',
+        '<input id="rb-sha1" name="sha1" size="44" pattern="[0-9a-fA-F]{40}" required> ',
+        '<button type="submit">Open</button>',
+        "</form>",
+        "",
+        '<p id="rb-file-lookup-status" role="status"></p>',
+        "",
+        "The index behind it is [`api/v1/file-locations.json`](../api/v1/file-locations.json).",
+        "",
+    ])
+
+
+def file_location_items(db: dict) -> list[dict]:
+    """Each held file's card, keyed by its sha1.
+
+    A card lives on its manufacturer's page, and a file refiled between
+    manufacturers (mt32_control.rom, Commodore to Roland) moved its link
+    with it. files/?sha1= reads this list and goes to the card wherever it
+    is now: the address cited depends on the content only.
+    """
+    items = []
+    for sha1, entry in sorted(db.get("files", {}).items()):
+        parts = entry.get("path", "").split("/")
+        if len(parts) < 3 or parts[0] != "bios":
+            continue
+        slug = parts[1].lower().replace(" ", "-")
+        items.append({"sha1": sha1, "url": f"systems/{slug}/#sha1-{sha1[:12]}"})
+    return items
+
+
 def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
     """Group files by manufacturer -> console -> files."""
     manufacturers: dict[str, dict[str, list]] = {}
@@ -2268,7 +2315,13 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
     id_attr = f' id="{anchor}"' if anchor else ""
     lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
-    permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
+    # The anchor is this page's; the second link is the file's own address,
+    # resolved by content wherever its card moves.
+    permalink = (
+        f' <a class="rb-permalink" href="#{anchor}" title="Link to this card">#</a>'
+        f' <a class="rb-permalink" href="../../files/?sha1={sha1_full}" '
+        f'title="Permanent link, by content">permalink</a>'
+    ) if anchor else ""
     lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>{permalink}')
     lines.append("")
     if f.get("path"):
@@ -4481,6 +4534,8 @@ def _generate(args: argparse.Namespace) -> None:
     write_if_changed(
         str(docs / "systems" / "index.md"), generate_systems_index(manufacturers)
     )
+    (docs / "files").mkdir(parents=True, exist_ok=True)
+    write_if_changed(str(docs / "files" / "index.md"), generate_files_page())
     for mfr, consoles in manufacturers.items():
         slug = mfr.lower().replace(" ", "-")
         page = generate_system_page(mfr, consoles, consumers)

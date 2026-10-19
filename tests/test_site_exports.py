@@ -651,5 +651,32 @@ class APerCoreDocumentValidates(unittest.TestCase):
         jsonschema.validate(document["items"][0]["profile"], schema)
 
 
+class AFileHasAnAddressByContent(unittest.TestCase):
+    """mt32_control.rom moved from the Commodore page to the Roland page and
+    every link to its card broke: the anchor was content-based, the page
+    was not."""
+
+    def test_index_page_and_resolver(self):
+        import generate_site  # noqa: PLC0415
+
+        db = {"files": {
+            "ab" * 20: {"path": "bios/Roland/mt32-roms/mt32_control.rom"},
+            "cd" * 20: {"path": "data/elsewhere.bin"},
+        }}
+        self.assertEqual(
+            generate_site.file_location_items(db),
+            [{"sha1": "ab" * 20, "url": "systems/roland/#sha1-" + "ab" * 6}],
+        )
+        self.assertIn('id="rb-file-lookup-status"', generate_site.generate_files_page())
+        script = (Path(__file__).resolve().parents[1] / "docs_assets" / "site.js").read_text()
+        self.assertIn("file-locations.json", script)
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        card = "\n".join(generate_site._system_file_card(
+            {"name": "x.rom", "sha1": "ab" * 20, "size": 1}, FileConsumers({"files": {}}),
+        ))
+        self.assertIn("../../files/?sha1=" + "ab" * 20, card)
+
+
 if __name__ == "__main__":
     unittest.main()

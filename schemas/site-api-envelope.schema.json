@@ -14,7 +14,8 @@
         "catalog",
         "platforms",
         "emulators",
-        "verification-and-coverage-gaps"
+        "verification-and-coverage-gaps",
+        "file-locations"
       ]
     },
     "count": { "type": "integer", "minimum": 0 },

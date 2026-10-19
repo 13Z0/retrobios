@@ -95,9 +95,39 @@
     });
   };
 
+  // files/?sha1=<sha1> is a file's content address: the card it names may
+  // sit on another manufacturer's page today than when the link was cited.
+  const resolveFileAddress = () => {
+    const status = document.getElementById("rb-file-lookup-status");
+    if (!status) return;
+    const sha1 = (new URLSearchParams(window.location.search).get("sha1") || "")
+      .trim().toLowerCase();
+    if (!sha1) return;
+    if (!/^[0-9a-f]{40}$/.test(sha1)) {
+      status.textContent = "A SHA1 is 40 hexadecimal characters.";
+      return;
+    }
+    status.textContent = "Looking it up...";
+    const index = new URL("../api/v1/file-locations.json", window.location.href);
+    fetch(index)
+      .then((response) => response.json())
+      .then((document_) => {
+        const item = (document_.items || []).find((entry) => entry.sha1 === sha1);
+        if (item) {
+          window.location.replace(new URL("../" + item.url, window.location.href));
+        } else {
+          status.textContent = "The collection holds no file with this SHA1.";
+        }
+      })
+      .catch(() => {
+        status.textContent = "The file index could not be read.";
+      });
+  };
+
   const enhance = () => {
     enhanceTables();
     nameMaterialWidgets();
+    resolveFileAddress();
   };
 
   if (window.document$?.subscribe) {
