@@ -91,7 +91,7 @@ no YAML anchor.
 **Concurrency.** Per-PR group on a pull request, per-ref on a push, cancel
 in-progress either way: a push series collapses to the tip.
 
-Four jobs, two of which read pull request context and carry an event guard:
+Five jobs, two of which read pull request context and carry an event guard:
 
 **validate-bios** (pull requests only). Diffs the PR to find changed BIOS
 files, runs `validate_pr.py --markdown` on each, and posts the validation
@@ -102,6 +102,13 @@ which validates every platform YAML against `schemas/platform.schema.json` and
 every emulator profile against `schemas/emulator.schema.json`. Both schemas set
 `additionalProperties: false`, so a typo in a field name fails the job instead
 of being silently ignored.
+
+**check-new-profiles.** Runs `profile_sync.py --emulator NAME --strict` on
+each profile the change adds (the files `git diff --diff-filter=A` names
+against the pull request base, or against the commit a push moved main from).
+A profile written from a clone can cite lines that do not hold the value it
+declares while schemas and tests pass it; this job confronts it with its
+upstream. An edited profile is not held to it.
 
 **run-tests.** Runs `python -m unittest discover -s tests -t . -v`. Must pass before a
 merge, and again on the commit a direct push puts at the head of main.

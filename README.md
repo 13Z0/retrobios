@@ -88,13 +88,13 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 |----------|-----------------:|-------------------------:|------------|
 | Batocera | 353/353 | 12,354/12,788 | MD5 hash |
 | BizHawk | 118/118 | 755/756 | SHA1 hash |
-| EmuDeck | 168/168 | 451/453 | MD5 hash |
+| EmuDeck | 168/168 | 5,810/5,840 | MD5 hash |
 | Lakka | 532/532 | 5,267/5,297 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
 | ROCKNIX | 38/38 | 5,926/6,003 | MD5 hash |
 | Recalbox | 351/351 | 2,788/2,806 | MD5 hash |
 | RetroArch | 526/526 | 5,279/5,309 | file presence |
-| RetroBat | 348/348 | 7,261/7,420 | MD5 hash |
+| RetroBat | 348/348 | 7,258/7,417 | MD5 hash |
 | RetroDECK | 2,008/2,008 | 5,327/5,377 | MD5 hash |
 | RetroPie * | 532/532 | 9,197/9,339 | file presence |
 | RomM | 383/383 | 774/781 | MD5 hash |
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-18T18:31:56Z*
+*Auto-generated on 2026-10-19T02:14:14Z*

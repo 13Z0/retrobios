@@ -109,6 +109,18 @@ class DeploySiteTriggers(unittest.TestCase):
 
 
 class DocumentedSteps(unittest.TestCase):
+    def test_the_release_page_names_every_validation_job(self):
+        """check-new-profiles ran on every pull request and push while the
+        page said four jobs and named none of it."""
+        workflow = yaml.safe_load(
+            (REPO_ROOT / ".github/workflows/validate.yml").read_text(encoding="utf-8")
+        )
+        page = (REPO_ROOT / "wiki/release-process.md").read_text(encoding="utf-8")
+        missing = sorted(job for job in workflow["jobs"] if f"**{job}" not in page)
+        self.assertEqual(missing, [])
+        words = {2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six", 7: "Seven"}
+        self.assertIn(f"{words[len(workflow['jobs'])]} jobs", page)
+
     def test_the_release_page_names_every_installed_package(self):
         """The page listed pyyaml and mkdocs and left out jsonschema: a
         maintainer following it could not run the contract check."""

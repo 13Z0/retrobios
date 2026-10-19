@@ -47,6 +47,7 @@ The checks CI runs on a pull request (Python 3.12 or newer):
 pip install pyyaml "jsonschema[format-nongpl]"
 python scripts/validate_pr.py --changed          # the BIOS files the branch adds
 python scripts/validate_schemas.py --source-only # profiles and platform files
+python scripts/profile_sync.py --emulator NAME --strict  # each profile the branch adds
 python -m unittest discover -s tests -t .
 ```
 
@@ -58,8 +59,8 @@ before a release.
 ## PR validation
 
 CI computes SHA1/MD5/CRC32 for every new file, checks them against the platform
-configs, validates the YAML against the schemas, runs the test suite, and posts
-a report on the PR.
+configs, validates the YAML against the schemas, confronts each added profile
+with its upstream source, runs the test suite, and posts a report on the PR.
 
 Contributors who add platform support are credited in the README,
 on the documentation site, and in the BIOS packs.
