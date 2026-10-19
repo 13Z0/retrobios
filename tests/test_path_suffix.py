@@ -275,5 +275,34 @@ class TestSizeGateOnThePathStep(unittest.TestCase):
         self.assertNotEqual(status, "path_exact")
 
 
+class TestAGamesFolderGoesAfterANeutralCopy(unittest.TestCase):
+    """Four profiles that name gamecontrollerdb.txt without a hash took
+    C-Dogs' 98-line copy from its game folder, by index order."""
+
+    def test_the_neutral_copy_wins_the_name_step(self):
+        with tempfile.TemporaryDirectory() as root:
+            previous = os.getcwd()
+            os.chdir(root)
+            self.addCleanup(os.chdir, previous)
+            paths = {
+                "a" * 40: "bios/Game Engines/C-Dogs SDL/data/gamecontrollerdb.txt",
+                "b" * 40: "bios/SDL/GameControllerDB/gamecontrollerdb.txt",
+            }
+            files = {}
+            for sha1, rel in paths.items():
+                Path(rel).parent.mkdir(parents=True)
+                Path(rel).write_bytes(sha1[:4].encode())
+                files[sha1] = {"path": rel, "name": "gamecontrollerdb.txt", "md5": "",
+                               "size": 4, "crc32": "", "sha1": sha1}
+            db = {"files": files, "indexes": {
+                "by_md5": {}, "by_crc32": {}, "by_path_suffix": {},
+                "by_name": {"gamecontrollerdb.txt": list(paths)},
+            }}
+            path, status = resolve_local_file(
+                {"name": "gamecontrollerdb.txt", "source_profile": "hypseus-singe"}, db,
+            )
+        self.assertEqual((path, status), (paths["b" * 40], "name_exact"))
+
+
 if __name__ == "__main__":
     unittest.main()

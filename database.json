@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-19T21:13:16Z",
-  "total_files": 19082,
-  "total_size": 17568673502,
+  "generated_at": "2026-10-19T21:16:15Z",
+  "total_files": 19083,
+  "total_size": 17569283332,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -185544,6 +185544,16 @@
       "crc32": "0f826c7f",
       "adler32": "cd98cde2"
     },
+    "082f7534a897eeb1bfc6d6c700525bb96f3f4f21": {
+      "path": "bios/SDL/GameControllerDB/gamecontrollerdb.txt",
+      "name": "gamecontrollerdb.txt",
+      "size": 609830,
+      "sha1": "082f7534a897eeb1bfc6d6c700525bb96f3f4f21",
+      "md5": "a81c0baa153a35744850d70df2af069d",
+      "sha256": "c6587cc65789539e61ec375aad5bdbc14f974508b57e2ae87730ac75c4445dba",
+      "crc32": "de6f86a8",
+      "adler32": "718e6761"
+    },
     "12b54bf6bf277791445c2618065ec88e0302957c": {
       "path": "bios/SNK/Neo Geo/.variants/aes.zip",
       "name": "aes.zip",
@@ -214287,6 +214297,7 @@
       "4e39dcfc30352a33caf1f4d81a7f13e4": "4d48578d811a762a8e7bfaf18989bcac70ae1ba4",
       "30df645acf7f1b621d5f2891ea53e00b": "96708cb21381c2fd03de4babbf7aea301c7594a6",
       "f86e0433a11707a048a8a79e8d98a3be": "4d91cdeaed048d653dbf846a221003c3a3f08279",
+      "a81c0baa153a35744850d70df2af069d": "082f7534a897eeb1bfc6d6c700525bb96f3f4f21",
       "b95fde264333c05a8e2e2754cdc8accc": "12b54bf6bf277791445c2618065ec88e0302957c",
       "ae758c39c7da5d8a16085264f6bb5e14": "0c3418b4f20bd497f419acff26e182020cd71a11",
       "67682655fa5fb32831e28429643e26c7": "cdbde4e73d49ed3a682b99f66c231eb3dfd90dc7",
@@ -227982,6 +227993,7 @@
         "8c272ae624c56d48d788fafe0397fab2e33d838f",
         "b194b556763146786b994f606c8697ab8f1b5f47",
         "cb6be8206308470ecaa8b9cc882d82abe0ef3562",
+        "082f7534a897eeb1bfc6d6c700525bb96f3f4f21",
         "231b29ef9d6314930eb18e57240e27ae81a6e88f"
       ],
       "prefixes.txt": [
@@ -290286,6 +290298,7 @@
       "702c0a82": "4d48578d811a762a8e7bfaf18989bcac70ae1ba4",
       "1519d3b3": "96708cb21381c2fd03de4babbf7aea301c7594a6",
       "0f826c7f": "4d91cdeaed048d653dbf846a221003c3a3f08279",
+      "de6f86a8": "082f7534a897eeb1bfc6d6c700525bb96f3f4f21",
       "9e5ee4a2": "12b54bf6bf277791445c2618065ec88e0302957c",
       "401513da": "0c3418b4f20bd497f419acff26e182020cd71a11",
       "3a1b0586": "cdbde4e73d49ed3a682b99f66c231eb3dfd90dc7",
@@ -309370,6 +309383,7 @@
       "b0b5f865a403f7308b4be8d0ed3ba2ed1c22db881b8a8326769dea222f6431d8": "4d48578d811a762a8e7bfaf18989bcac70ae1ba4",
       "c6429e21b9b3a02fbd68ef0b2053668433bee0bccd537a71841bc70b8874243b": "96708cb21381c2fd03de4babbf7aea301c7594a6",
       "5b753f6cef4cfc7fcafe1430fecbb94a739b874e55356246a46abe24097ee491": "4d91cdeaed048d653dbf846a221003c3a3f08279",
+      "c6587cc65789539e61ec375aad5bdbc14f974508b57e2ae87730ac75c4445dba": "082f7534a897eeb1bfc6d6c700525bb96f3f4f21",
       "7b6e9b32a538a6ec326822fdeca8c3e8f0de9972874bdfd535e1294388e7447a": "12b54bf6bf277791445c2618065ec88e0302957c",
       "bcdfbdce1354dd3e0c621653afc2657cad45ce3cf09ab7054276e9974338e54f": "0c3418b4f20bd497f419acff26e182020cd71a11",
       "36a47cf50a585cafc812e19ef7646ad1556a5de90440d9dcb06f373926cd68ea": "cdbde4e73d49ed3a682b99f66c231eb3dfd90dc7",
@@ -542742,6 +542756,12 @@
       ],
       "SC-55mk2-v1.01/waverom2.bin": [
         "4d91cdeaed048d653dbf846a221003c3a3f08279"
+      ],
+      "SDL/GameControllerDB/gamecontrollerdb.txt": [
+        "082f7534a897eeb1bfc6d6c700525bb96f3f4f21"
+      ],
+      "GameControllerDB/gamecontrollerdb.txt": [
+        "082f7534a897eeb1bfc6d6c700525bb96f3f4f21"
       ],
       "SNK/Neo Geo/.variants/aes.zip": [
         "12b54bf6bf277791445c2618065ec88e0302957c"

@@ -897,6 +897,14 @@ def _foreign_tree(path: str, owners: set[str]) -> bool:
     return not (owners & _affinity_tokens(parts[2]))
 
 
+def _engine_tree(path: str, owners: set[str]) -> bool:
+    """Whether a path lives in another game's folder under bios/Game Engines/."""
+    parts = path.split("/")
+    if len(parts) < 4 or parts[0] != "bios" or parts[1] != "Game Engines":
+        return False
+    return not (owners & _affinity_tokens(parts[2]))
+
+
 def _own_tree(path: str, owners: set[str]) -> bool:
     """Whether a path lives in the bios/Other/<emulator>/ tree of the asker."""
     parts = path.split("/")
@@ -1066,7 +1074,14 @@ def _by_affinity(paths: list[str], file_entry: dict, dest_hint: str) -> list[str
         # The owner's own copy ranks above any shared tree segment: NetherSX2's
         # shaders/common/ beat armsx2's own fxaa.fx on two directory tokens.
         # Another emulator's own tree ranks below everything else.
-        return fits, bool(owners & tokens), not _foreign_tree(path, owners | wanted), len(wanted & tokens)
+        # A game's folder under Game Engines/ holds that game's data: for a
+        # name-only match, a neutral copy goes first. hypseus-singe,
+        # flycast-dojo, lindbergh-loader and vvvvvv took C-Dogs' 98-line
+        # gamecontrollerdb.txt by index order.
+        return (
+            fits, bool(owners & tokens), not _foreign_tree(path, owners | wanted),
+            not _engine_tree(path, owners | wanted), len(wanted & tokens),
+        )
 
     return sorted(paths, key=score, reverse=True)
 
