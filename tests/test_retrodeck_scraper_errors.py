@@ -34,6 +34,8 @@ class _Response(io.BytesIO):
 def _opener(failure):
     def urlopen(req, timeout=0):
         url = req.full_url
+        if "/commits/" in url:
+            return _Response(json.dumps({"sha": "a" * 40}).encode())
         if "api.github.com" in url:
             return _Response(json.dumps(TREE).encode())
         if "pcsx2" in url and failure is not None:
@@ -59,6 +61,20 @@ class ManifestErrors(unittest.TestCase):
     def test_a_404_is_a_component_without_a_manifest(self):
         error = urllib.error.HTTPError("u", 404, "not found", {}, None)
         self.assertEqual([name for name, _ in self.fetch(error)], ["ppsspp"])
+
+    def test_the_tree_and_files_are_read_at_one_commit(self):
+        seen = []
+        opener = _opener(None)
+
+        def recording(req, timeout=0):
+            seen.append(req.full_url)
+            return opener(req, timeout)
+
+        with mock.patch("urllib.request.urlopen", recording):
+            Scraper()._fetch_remote_manifests()
+        reads = [url for url in seen if "/commits/" not in url]
+        self.assertTrue(reads)
+        self.assertTrue(all("a" * 40 in url for url in reads), reads)
 
     def test_a_truncated_tree_stops_the_scrape(self):
         TREE["truncated"] = True

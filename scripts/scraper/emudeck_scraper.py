@@ -21,6 +21,7 @@ try:
     from .base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_branch_head,
         fetch_github_latest_version,
         github_headers,
         requirement_entry,
@@ -29,6 +30,7 @@ except ImportError:
     from base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_branch_head,
         fetch_github_latest_version,
         github_headers,
         requirement_entry,
@@ -36,9 +38,10 @@ except ImportError:
 
 PLATFORM_NAME = "emudeck"
 
+EMUDECK_REPO = "dragoonDorise/EmuDeck"
 CHECKBIOS_URL = (
     "https://raw.githubusercontent.com/dragoonDorise/EmuDeck/"
-    "main/functions/checkBIOS.sh"
+    "{rev}/functions/checkBIOS.sh"
 )
 
 CSV_BASE_URL = (
@@ -220,8 +223,13 @@ class Scraper(BaseScraper):
     """Scraper for EmuDeck checkBIOS.sh and CSV cheat sheets."""
 
     def __init__(
-        self, checkbios_url: str = CHECKBIOS_URL, csv_base_url: str = CSV_BASE_URL
+        self, checkbios_url: str | None = None, csv_base_url: str = CSV_BASE_URL
     ) -> None:
+        # checkBIOS.sh is read from main: the commit read is recorded.
+        if checkbios_url is None:
+            checkbios_url = CHECKBIOS_URL.format(
+                rev=fetch_branch_head(EMUDECK_REPO, "main")
+            )
         super().__init__(url=checkbios_url)
         self.checkbios_url = checkbios_url
         self.csv_base_url = csv_base_url
@@ -436,7 +444,7 @@ class Scraper(BaseScraper):
             "platform": "EmuDeck",
             "version": version or "",
             "homepage": "https://www.emudeck.com",
-            "source": CHECKBIOS_URL,
+            "source": self.checkbios_url,
             "base_destination": "bios",
             "hash_type": "md5",
             "verification_mode": "md5",

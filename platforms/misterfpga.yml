@@ -1,7 +1,7 @@
 platform: MiSTer FPGA
 version: '2026-09-29'
 homepage: "https://misterfpga.org"
-source: "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/db/bios_db.json.zip"
+source: "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/7cfa7a3e84af078d0efba74fa46c50357c4f567c/bios_db.json.zip"
 base_destination: games
 hash_type: md5
 verification_mode: md5

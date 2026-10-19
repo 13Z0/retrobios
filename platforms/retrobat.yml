@@ -1,7 +1,7 @@
 platform: RetroBat
 version: 8.3.1
 homepage: "https://www.retrobat.org"
-source: "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/master/batocera-systems/Resources/batocera-systems.json"
+source: "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/48cdc61623c5943bb17647b80a60d32d395c3725/batocera-systems/Resources/batocera-systems.json"
 base_destination: bios
 hash_type: md5
 verification_mode: md5

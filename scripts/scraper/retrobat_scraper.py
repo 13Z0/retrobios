@@ -16,6 +16,7 @@ try:
     from .base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_branch_head,
         fetch_github_latest_version,
         requirement_entry,
     )
@@ -24,6 +25,7 @@ except ImportError:
     from base_scraper import (
         BaseScraper,
         BiosRequirement,
+        fetch_branch_head,
         fetch_github_latest_version,
         requirement_entry,
     )
@@ -31,9 +33,10 @@ except ImportError:
 
 PLATFORM_NAME = "retrobat"
 
+LAUNCHER_REPO = "RetroBat-Official/emulatorlauncher"
 SOURCE_URL = (
     "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/"
-    "master/batocera-systems/Resources/batocera-systems.json"
+    "{rev}/batocera-systems/Resources/batocera-systems.json"
 )
 
 GITHUB_REPO = "RetroBat-Official/retrobat"
@@ -103,7 +106,10 @@ SYSTEM_SLUG_MAP = {
 class Scraper(BaseScraper):
     """Scraper for RetroBat batocera-systems.json."""
 
-    def __init__(self, url: str = SOURCE_URL) -> None:
+    def __init__(self, url: str | None = None) -> None:
+        # batocera-systems.json is read from master: the commit read is recorded.
+        if url is None:
+            url = SOURCE_URL.format(rev=fetch_branch_head(LAUNCHER_REPO, "master"))
         super().__init__(url=url)
         self._parsed: dict | None = None
 
@@ -234,7 +240,7 @@ class Scraper(BaseScraper):
             "platform": "RetroBat",
             "version": version,
             "homepage": "https://www.retrobat.org",
-            "source": SOURCE_URL,
+            "source": self.url,
             "base_destination": "bios",
             "hash_type": "md5",
             "verification_mode": "md5",

@@ -36,18 +36,26 @@ import urllib.request
 from pathlib import Path
 
 try:
-    from .base_scraper import BaseScraper, BiosRequirement, requirement_entry
+    from .base_scraper import (
+        BaseScraper,
+        BiosRequirement,
+        fetch_branch_head,
+        requirement_entry,
+    )
 except ImportError:
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from scraper.base_scraper import BaseScraper, BiosRequirement, requirement_entry
+    from scraper.base_scraper import (
+        BaseScraper,
+        BiosRequirement,
+        fetch_branch_head,
+        requirement_entry,
+    )
 
 PLATFORM_NAME = "retrodeck"
 COMPONENTS_REPO = "RetroDECK/components"
 COMPONENTS_BRANCH = "main"
-COMPONENTS_API_URL = (
-    f"https://api.github.com/repos/{COMPONENTS_REPO}/git/trees/{COMPONENTS_BRANCH}"
-)
-RAW_BASE = f"https://raw.githubusercontent.com/{COMPONENTS_REPO}/{COMPONENTS_BRANCH}"
+COMPONENTS_API_URL = "https://api.github.com/repos/" + COMPONENTS_REPO + "/git/trees/{rev}"
+RAW_BASE = "https://raw.githubusercontent.com/" + COMPONENTS_REPO + "/{rev}"
 SKIP_DIRS = {"archive_later", "archive_old", "automation-tools", ".github"}
 NON_EMULATOR_COMPONENTS = {
     "framework",
@@ -225,6 +233,11 @@ class Scraper(BaseScraper):
         super().__init__()
         self.manifests_dir = manifests_dir
         self._manifests: list[tuple[str, dict]] | None = None
+        # The manifests are read from main: one commit for the tree and for
+        # every file, and that commit is the one recorded.
+        self.revision = (
+            "" if manifests_dir else fetch_branch_head(COMPONENTS_REPO, COMPONENTS_BRANCH)
+        )
 
     def _get_manifests(self) -> list[tuple[str, dict]]:
         """Fetch manifests once, cache for reuse."""
@@ -244,7 +257,9 @@ class Scraper(BaseScraper):
             headers["Authorization"] = f"token {token}"
 
         try:
-            req = urllib.request.Request(COMPONENTS_API_URL, headers=headers)
+            req = urllib.request.Request(
+                COMPONENTS_API_URL.format(rev=self.revision), headers=headers
+            )
             with urllib.request.urlopen(req, timeout=30) as resp:
                 tree = json.loads(resp.read().decode())
         except (urllib.error.HTTPError, urllib.error.URLError) as e:
@@ -263,7 +278,7 @@ class Scraper(BaseScraper):
 
         manifests: list[tuple[str, dict]] = []
         for comp in sorted(component_dirs):
-            url = f"{RAW_BASE}/{comp}/component_manifest.json"
+            url = f"{RAW_BASE.format(rev=self.revision)}/{comp}/component_manifest.json"
             print(f"  {comp} ...", file=sys.stderr, end="", flush=True)
             # Only a 404 says the component has no manifest. A 429, a 503 or
             # a dropped connection is no answer: skipping it wrote
@@ -450,7 +465,11 @@ class Scraper(BaseScraper):
             "platform": "RetroDECK",
             "version": version,
             "homepage": "https://retrodeck.net",
-            "source": "https://github.com/RetroDECK/components",
+            "source": (
+                f"https://github.com/{COMPONENTS_REPO}/tree/{self.revision}"
+                if self.revision
+                else f"https://github.com/{COMPONENTS_REPO}"
+            ),
             "base_destination": "",
             "hash_type": "md5",
             "verification_mode": "md5",

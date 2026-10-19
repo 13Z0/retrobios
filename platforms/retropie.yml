@@ -2,7 +2,7 @@ inherits: retroarch
 platform: RetroPie
 version: 4.8.12
 homepage: "https://retropie.org.uk"
-source: "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/refs/heads/master"
+source: "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/46128cd252cdecae852a4d0bafa2aaf9d03ab563"
 base_destination: BIOS
 cores:
 - "81"

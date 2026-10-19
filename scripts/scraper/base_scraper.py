@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -294,6 +295,25 @@ def fetch_github_latest_version(repo: str) -> str:
     if not tag:
         raise RuntimeError(f"the latest release of {repo} names no tag")
     return tag
+
+
+def fetch_branch_head(repo: str, branch: str) -> str:
+    """The commit a branch of a GitHub repo points at right now.
+
+    A platform read from a moving branch records this sha in its source URL,
+    so the exporter later patches the revision the data was read from and
+    not whatever the branch has become. Raises like the release lookup.
+    """
+    url = f"https://api.github.com/repos/{repo}/commits/{branch}"
+    try:
+        req = urllib.request.Request(url, headers=github_headers())
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            sha = json.loads(resp.read()).get("sha", "")
+    except (urllib.error.URLError, json.JSONDecodeError) as e:
+        raise RuntimeError(f"cannot read the head of {repo}@{branch}: {e}") from e
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+        raise RuntimeError(f"{repo}@{branch} answered no commit sha")
+    return sha
 
 
 class _PlatformDumper(yaml.SafeDumper):

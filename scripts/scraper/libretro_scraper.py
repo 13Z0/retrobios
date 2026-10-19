@@ -14,6 +14,7 @@ import urllib.request
 from .base_scraper import (
     BaseScraper,
     BiosRequirement,
+    fetch_branch_head,
     fetch_github_latest_version,
     github_headers,
     requirement_entry,
@@ -22,8 +23,9 @@ from .dat_parser import parse_dat, parse_dat_metadata, validate_dat_format
 
 PLATFORM_NAME = "libretro"
 
+DATABASE_REPO = "libretro/libretro-database"
 SOURCE_URL = (
-    "https://raw.githubusercontent.com/libretro/libretro-database/master/dat/System.dat"
+    "https://raw.githubusercontent.com/libretro/libretro-database/{rev}/dat/System.dat"
 )
 
 # Libretro cores that expect BIOS files in a subdirectory of system/.
@@ -125,8 +127,10 @@ def _core_info_files() -> list[str]:
 class Scraper(BaseScraper):
     """Scraper for libretro System.dat."""
 
-    def __init__(self, url: str = SOURCE_URL) -> None:
-        super().__init__(url=url)
+    def __init__(self, url: str | None = None) -> None:
+        # System.dat lives on master: the commit read is the one recorded.
+        self.revision = fetch_branch_head(DATABASE_REPO, "master") if url is None else ""
+        super().__init__(url=url or SOURCE_URL.format(rev=self.revision))
 
     def fetch_requirements(self) -> list[BiosRequirement]:
         """Parse System.dat and return BIOS requirements."""
@@ -504,7 +508,10 @@ class Scraper(BaseScraper):
             "version": metadata["retroarch_version"] or "",
             "dat_version": metadata["dat_version"] or "",
             "homepage": "https://www.retroarch.com",
-            "source": "https://github.com/libretro/libretro-database/blob/master/dat/System.dat",
+            "source": (
+                f"https://github.com/{DATABASE_REPO}/blob/"
+                f"{self.revision or 'master'}/dat/System.dat"
+            ),
             "base_destination": "system",
             "hash_type": "sha1",
             "verification_mode": "existence",

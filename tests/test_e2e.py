@@ -5497,7 +5497,7 @@ struct BurnDriver BurnDrvneogeo = {
 
         from scraper.misterfpga_scraper import Scraper
 
-        scraper = Scraper()
+        scraper = Scraper(url="https://example.test/bios_db.json.zip")
         scraper._raw_data = json.dumps(self.MISTER_DB)
         return scraper
 

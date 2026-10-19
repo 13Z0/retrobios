@@ -1,7 +1,7 @@
 platform: RetroDECK
 version: 0.10.10b
 homepage: "https://retrodeck.net"
-source: "https://github.com/RetroDECK/components"
+source: "https://github.com/RetroDECK/components/tree/fcd0d72995d7aa2e741e2753ac6914025b2ff1ac"
 base_destination: ''
 hash_type: md5
 verification_mode: md5

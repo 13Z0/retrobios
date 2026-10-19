@@ -1,7 +1,7 @@
 platform: EmuDeck
 version: 2.7EA
 homepage: "https://www.emudeck.com"
-source: "https://raw.githubusercontent.com/dragoonDorise/EmuDeck/main/functions/checkBIOS.sh"
+source: "https://raw.githubusercontent.com/dragoonDorise/EmuDeck/dddb30229adbbd54d5ff7283cfd70e11c4322c26/functions/checkBIOS.sh"
 base_destination: bios
 hash_type: md5
 verification_mode: md5

@@ -33,6 +33,7 @@ try:
         BaseScraper,
         BiosRequirement,
         _read_limited,
+        fetch_branch_head,
         requirement_entry,
     )
 except ImportError:
@@ -40,13 +41,15 @@ except ImportError:
         BaseScraper,
         BiosRequirement,
         _read_limited,
+        fetch_branch_head,
         requirement_entry,
     )
 
 PLATFORM_NAME = "misterfpga"
 
+BIOSDB_REPO = "ajgowans/BiosDB_MiSTer"
 SOURCE_URL = (
-    "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/db/bios_db.json.zip"
+    "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/{rev}/bios_db.json.zip"
 )
 
 DB_MEMBER = "bios_db.json"
@@ -126,7 +129,10 @@ def system_of(path: str) -> str:
 class Scraper(BaseScraper):
     """Scraper for the MiSTer BiosDB database."""
 
-    def __init__(self, url: str = SOURCE_URL) -> None:
+    def __init__(self, url: str | None = None) -> None:
+        # The database is published on the db branch: the commit read is recorded.
+        if url is None:
+            url = SOURCE_URL.format(rev=fetch_branch_head(BIOSDB_REPO, "db"))
         super().__init__(url=url)
 
     def _fetch_raw(self) -> str:
@@ -220,7 +226,7 @@ class Scraper(BaseScraper):
             "platform": "MiSTer FPGA",
             "version": released,
             "homepage": "https://misterfpga.org",
-            "source": SOURCE_URL,
+            "source": self.url,
             "base_destination": "games",
             "hash_type": "md5",
             "verification_mode": "md5",

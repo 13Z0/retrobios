@@ -26,15 +26,13 @@ import urllib.error
 import urllib.request
 
 try:
-    from .base_scraper import BaseScraper, BiosRequirement
+    from .base_scraper import BaseScraper, BiosRequirement, fetch_branch_head
 except ImportError:
-    from base_scraper import BaseScraper, BiosRequirement
+    from base_scraper import BaseScraper, BiosRequirement, fetch_branch_head
 
 PLATFORM_NAME = "retropie"
 
-SOURCE_URL = (
-    "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/refs/heads/master"
-)
+SOURCE_URL = "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/{rev}"
 GITHUB_REPO = "RetroPie/RetroPie-Setup"
 MAX_ARCHIVE = 64 * 1024 * 1024
 
@@ -51,7 +49,10 @@ _PACKAGE_DIRS = ("emulators", "libretrocores", "ports")
 class Scraper(BaseScraper):
     """Scraper for the RetroPie package list."""
 
-    def __init__(self, url: str = SOURCE_URL) -> None:
+    def __init__(self, url: str | None = None) -> None:
+        # The package list is read from master: the commit read is recorded.
+        if url is None:
+            url = SOURCE_URL.format(rev=fetch_branch_head(GITHUB_REPO, "master"))
         super().__init__(url=url)
         self._modules: list[str] | None = None
         self._version = ""
@@ -135,7 +136,7 @@ class Scraper(BaseScraper):
             "platform": "RetroPie",
             "version": self._version,
             "homepage": "https://retropie.org.uk",
-            "source": SOURCE_URL,
+            "source": self.url,
             "base_destination": "BIOS",
             "cores": cores,
         }

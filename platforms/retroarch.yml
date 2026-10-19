@@ -2,7 +2,7 @@ platform: RetroArch
 version: v1.22.2
 dat_version: v1.19.0
 homepage: "https://www.retroarch.com"
-source: "https://github.com/libretro/libretro-database/blob/master/dat/System.dat"
+source: "https://github.com/libretro/libretro-database/blob/12c21cf79f1e20eff6ac68b80875816c717d0a7a/dat/System.dat"
 base_destination: system
 hash_type: sha1
 verification_mode: existence

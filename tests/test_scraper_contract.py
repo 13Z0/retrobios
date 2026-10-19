@@ -11,6 +11,8 @@ exercised is a promise to contributors backed by nothing.
 from __future__ import annotations
 
 import importlib
+import io
+import json
 import subprocess
 import sys
 import tempfile
@@ -246,7 +248,9 @@ class RetroPiePackageList(unittest.TestCase):
     def _scraper(self, modules: dict[str, str]):
         from scraper.retropie_scraper import Scraper
 
-        scraper = Scraper()
+        # An explicit archive URL: the tests read a local archive, never the
+        # branch head.
+        scraper = Scraper(url="https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/" + "0" * 40)
         scraper.module_ids(self._archive(modules))
         return scraper
 
@@ -502,12 +506,63 @@ class UnreadableReleaseStopsTheScrape(unittest.TestCase):
             "scraper.romm_scraper",
             "scraper.batocera_scraper",
             "scraper.recalbox_scraper",
+            "scraper.libretro_scraper",
+            "scraper.retrobat_scraper",
+            "scraper.emudeck_scraper",
+            "scraper.misterfpga_scraper",
+            "scraper.retropie_scraper",
         ):
             module = importlib.import_module(name)
             with self.subTest(scraper=name), mock.patch(
                 "urllib.request.urlopen", self._refuse
             ), self.assertRaises(RuntimeError):
                 module.Scraper()
+
+    def test_a_branch_read_records_its_commit(self):
+        """System.dat, batocera-systems.json, checkBIOS.sh, the BiosDB and the
+        RetroPie scriptmodules are read from a branch. The YAML named the
+        branch, so the exporter patched whatever it had become since."""
+        sha = "0123456789abcdef0123456789abcdef01234567"
+
+        class Answer(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_exc):
+                return False
+
+        def answer(request, timeout=None):
+            return Answer(json.dumps({"sha": sha}).encode())
+
+        for name in (
+            "scraper.libretro_scraper",
+            "scraper.retrobat_scraper",
+            "scraper.emudeck_scraper",
+            "scraper.misterfpga_scraper",
+            "scraper.retropie_scraper",
+        ):
+            module = importlib.import_module(name)
+            with self.subTest(scraper=name), mock.patch("urllib.request.urlopen", answer):
+                self.assertRegex(module.Scraper().url, f"/{sha}(/|$)")
+
+    def test_the_export_reads_the_recorded_tarball(self):
+        from export_native import _tarball_at
+
+        branch = "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/refs/heads/master"
+        pinned = "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/" + "a" * 40
+        self.assertEqual(_tarball_at(branch, pinned), pinned)
+        other = "https://codeload.github.com/Other/Repo/tar.gz/" + "b" * 40
+        self.assertEqual(_tarball_at(branch, other), "")
+
+    def test_the_export_reads_every_component_at_the_recorded_tree(self):
+        from export_native import pinned_base
+
+        sha = "c" * 40
+        base = pinned_base(
+            {"pcsx2/component_manifest.json": "unused"},
+            {"source": f"https://github.com/RetroDECK/components/tree/{sha}"},
+        )
+        self.assertEqual(base, f"https://raw.githubusercontent.com/RetroDECK/components/{sha}/")
 
     def test_a_release_lookup_raises(self):
         with mock.patch("urllib.request.urlopen", self._refuse), self.assertRaises(

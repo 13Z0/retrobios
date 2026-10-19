@@ -163,10 +163,18 @@ def pinned_base(wanted: dict[str, str], scraped: dict | None) -> str:
     correct a file our data never described.
     """
     source = _raw_url(str((scraped or {}).get("source", "")))
+    tree = _GITHUB_TREE.match(source)
+    if tree:
+        # RetroDECK reads one manifest per component: the YAML records the
+        # tree at the commit read, and every file is taken at that commit.
+        return "https://raw.githubusercontent.com/{}/{}/{}/".format(*tree.groups())
     for relative in wanted:
         if source.endswith("/" + relative):
             return source[: -len(relative)]
     return ""
+
+
+_GITHUB_TREE = re.compile(r"^https://github\.com/([^/]+)/([^/]+)/tree/([0-9a-f]{40})/?$")
 
 
 def _raw_url(url: str) -> str:
@@ -196,7 +204,26 @@ def wanted_sources(
             relative: _at_revision(wanted[relative], base) or base + relative
             for relative in wanted
         }
-    return wanted
+    source = str((scraped or {}).get("source", ""))
+    return {
+        relative: _tarball_at(url, source) or url for relative, url in wanted.items()
+    }
+
+
+_CODELOAD = re.compile(r"^https://codeload\.github\.com/([^/]+)/([^/]+)/tar\.gz/")
+
+
+def _tarball_at(url: str, source: str) -> str:
+    """The recorded tarball when the original is a tarball of the same repository.
+
+    RetroPie's declarations are spread over every scriptmodule, so its scraper
+    reads the repository archive. The archive the YAML records is the one at
+    the commit it was read from, the exporter's own URL names the branch.
+    """
+    wanted, recorded = _CODELOAD.match(url), _CODELOAD.match(source)
+    if wanted and recorded and wanted.group(1, 2) == recorded.group(1, 2):
+        return source
+    return ""
 
 
 _RAW_GITHUB = re.compile(r"^https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/")
