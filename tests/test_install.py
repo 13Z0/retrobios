@@ -2841,5 +2841,30 @@ class SteamRetroArchOnMacIsPortable(unittest.TestCase):
             self.assertEqual(install._macos_retroarch_base(), support / "RetroArch")
 
 
+class AMissingFileListNamesTheRef(unittest.TestCase):
+    """A 404 on the manifest said three attempts were made and to check the
+    connection and proxy; it was asked once, and the cause is the ref."""
+
+    def _run(self, ref: str) -> str:
+        error = install.urllib.error.HTTPError("u", 404, "Not Found", None, None)
+        with unittest.mock.patch.object(install, "RELEASE_REF", ref), \
+                unittest.mock.patch.object(install, "_fetch_json", side_effect=error), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit):
+            install.fetch_manifest("retroarch")
+        return err.getvalue()
+
+    def test_a_pinned_tag_is_named(self):
+        text = self._run("v2020.01.01")
+        self.assertIn("RETROBIOS_REF=v2020.01.01", text)
+        self.assertNotIn("attempts", text)
+        self.assertNotIn("proxy", text)
+
+    def test_the_default_ref_is_not_blamed_on_the_network(self):
+        text = self._run(install.DEFAULT_RELEASE_REF)
+        self.assertIn("No file list for retroarch", text)
+        self.assertNotIn("proxy", text)
+
+
 if __name__ == "__main__":
     unittest.main()

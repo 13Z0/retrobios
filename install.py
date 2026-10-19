@@ -1878,6 +1878,22 @@ def fetch_manifest(plat: str) -> dict:
     except ValueError as exc:
         print(f"  The file list for {plat} is not valid: {exc}", file=sys.stderr)
         sys.exit(1)
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            # Asked once, a 4xx being final; the name was checked before any
+            # request, so the revision is what has no such list.
+            print(f"  No file list for {plat} at {RELEASE_REF}.", file=sys.stderr)
+            if RELEASE_REF != DEFAULT_RELEASE_REF:
+                print(f"  RETROBIOS_REF={RELEASE_REF} names a tag that does not exist or "
+                      f"predates {plat}: unset RETROBIOS_REF, or pick a tag from "
+                      "https://github.com/Abdess/retrobios/releases.", file=sys.stderr)
+            else:
+                print("  The repository may be moving its files: run the same command "
+                      "again in a few minutes.", file=sys.stderr)
+            sys.exit(1)
+        print(f"  Could not fetch the file list for {plat}: HTTP {exc.code}", file=sys.stderr)
+        print(NETWORK_ADVICE, file=sys.stderr)
+        sys.exit(1)
     except (urllib.error.URLError, OSError) as exc:
         print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
               f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)

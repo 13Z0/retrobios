@@ -264,13 +264,16 @@ python install.py --platform retroarch --dest ~/RetroArch/system/
 python install.py --platform batocera --dest /userdata/bios/
 ```
 
-Use `python install.py --help` to see all available platforms and options.
+`python install.py --list-platforms` lists the platforms the installer knows
+and the ones it detects here; `--help` lists the options.
 
 **Manifest or file not found:**
 
 The one-line bootstrap verifies the downloaded installer before running it, and
-the installer reads its manifests from the same revision. A 404 usually means
-the platform name is wrong; check `python install.py --list-platforms`.
+the installer reads its manifests from the same revision. A platform name is
+checked before anything is downloaded, so a "No file list" message comes from
+the revision: `RETROBIOS_REF` naming a tag that does not exist, or one older
+than the platform. Unset it, or pick a tag from the releases page.
 `RETROBIOS_REF` pins an installation to a published tag when a reproducible
 file set matters more than the newest one.
 
