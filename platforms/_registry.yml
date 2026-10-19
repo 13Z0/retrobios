@@ -450,6 +450,12 @@ platforms:
         contribution: platform support
         pr: 37
     inherits_from: emulatorjs
+    # RomM lists a firmware folder without descending into it
+    # (backend/handler/filesystem/base_handler.py:1002, recursive=False), and
+    # EmulatorJS writes the chosen file, or each member of a zip, under its
+    # bare name (data/src/emulator.js:713-722). A file below the platform
+    # folder never reaches a core.
+    firmware_folder_flat: true
     target_scraper: null
     target_source: null
     install:

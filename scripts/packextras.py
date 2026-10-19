@@ -678,6 +678,7 @@ class ExtraPlacement:
         self.slug_based, self.sys_to_slug = _detect_slug_structure(config)
         self.platform_systems = set(config.get("systems", {}).keys())
         self.native_systems = native_slug_systems(config)
+        self.flat = bool(config.get("firmware_folder_flat"))
         self.norm_map = (
             {_norm_system_id(sid): sid for sid in self.platform_systems}
             if self.slug_based
@@ -697,10 +698,14 @@ class ExtraPlacement:
                 entry, self.profiles, self.platform_systems, self.norm_map,
                 self.sys_to_slug, self.native_systems,
             )
-            if not slug:
+            if not slug or self.nested(dest):
                 return None
             dest = f"{slug}/{dest}"
         return dest, (f"{self.prefix}/{dest}" if self.prefix else dest)
+
+    def nested(self, dest: str) -> bool:
+        """True when the file would sit below a folder the frontend lists flat."""
+        return self.slug_based and self.flat and "/" in dest
 
 
 def _collect_emulator_extras(
@@ -802,7 +807,10 @@ def _collect_emulator_extras(
             continue
         if placed is None:
             if unplaceable is not None:
-                unplaceable.append(u)
+                unplaceable.append(
+                    {**u, "unplaceable": "below_platform_folder"}
+                    if placement.nested(dest) else u
+                )
             continue
         dest, full_dest = placed
         if claimants is not None:

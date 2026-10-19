@@ -3859,7 +3859,7 @@ def _record_unplaceable(unplaceable: list[dict], record_omission: Callable[..., 
     for u in unplaceable:
         record_omission(
             u.get("path") or u.get("name", ""), u, u.get("system") or "",
-            "no_platform_slug", [u.get("emulator", "")],
+            u.get("unplaceable", "no_platform_slug"), [u.get("emulator", "")],
         )
 
 

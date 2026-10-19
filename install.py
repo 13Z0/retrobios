@@ -102,6 +102,7 @@ OMISSION_REASONS = {
     "external": "external",
     "user_provided": "user provided",
     "no_platform_slug": "no platform folder",
+    "below_platform_folder": "below the platform folder",
 }
 _SHA1_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 _SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")

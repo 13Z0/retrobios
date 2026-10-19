@@ -137,5 +137,87 @@ class RegionKeysForEveryClaimant(unittest.TestCase):
             self.assertEqual(claimants, {"one", "two"}, extra_dests)
 
 
+class FlatFirmwareFolder(unittest.TestCase):
+    """RomM lists a platform's firmware folder without descending, and
+    EmulatorJS writes each file under its bare name. 543 files of the RomM
+    pack sat below the folder, where no core could ever read them."""
+
+    PROFILE = (
+        "emulator: Psx\ntype: libretro\nsystems: [psx]\ncores: [psx]\nfiles:\n"
+        "  - name: flat.bin\n    required: false\n"
+        "  - name: deep.bin\n    path: core/bios/deep.bin\n    required: false\n"
+    )
+
+    def _manifest(self, flat: bool) -> dict:
+        with tempfile.TemporaryDirectory() as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            try:
+                for d in ("emulators", "platforms", "bios/Sony"):
+                    Path(d).mkdir(parents=True)
+                files = {}
+                for name in ("flat.bin", "deep.bin", "scph5501.bin"):
+                    payload = name.encode()
+                    Path(f"bios/Sony/{name}").write_bytes(payload)
+                    sha1 = hashlib.sha1(payload).hexdigest()
+                    files[sha1] = {
+                        "path": f"bios/Sony/{name}", "name": name, "size": len(payload),
+                        "sha1": sha1, "md5": hashlib.md5(payload).hexdigest(),
+                        "sha256": hashlib.sha256(payload).hexdigest(), "crc32": "00000001",
+                    }
+                db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+                config = {
+                    "platform": "Flat", "verification_mode": "md5",
+                    "base_destination": "bios", "cores": ["psx"],
+                    "systems": {
+                        "psx": {"files": [{"name": "scph5501.bin",
+                                           "destination": "psx/scph5501.bin",
+                                           "md5": hashlib.md5(b"scph5501.bin").hexdigest()}]},
+                        "snes": {"files": [{"name": "s.bin", "destination": "snes/s.bin",
+                                            "md5": "1" * 32}]},
+                    },
+                }
+                Path("platforms/flat.yml").write_text(yaml.dump(config))
+                entry = {"status": "active"}
+                if flat:
+                    entry["firmware_folder_flat"] = True
+                Path("platforms/_registry.yml").write_text(
+                    yaml.dump({"platforms": {"flat": entry}})
+                )
+                Path("emulators/psx.yml").write_text(self.PROFILE)
+                common._platform_config_cache.clear()
+                common._emulator_profiles_cache.clear()
+                profiles = common.load_emulator_profiles("emulators")
+                return builder.generate_manifest(
+                    "flat", "platforms", db, "bios", "platforms/_registry.yml",
+                    emulators_dir="emulators", emu_profiles=profiles, offline=True,
+                )
+            finally:
+                common._platform_config_cache.clear()
+                common._emulator_profiles_cache.clear()
+                os.chdir(previous)
+
+    def test_a_nested_file_is_omitted_with_its_reason(self):
+        manifest = self._manifest(flat=True)
+        dests = {entry["dest"] for entry in manifest["files"]}
+        self.assertIn("psx/flat.bin", dests)
+        self.assertFalse(any("deep.bin" in d for d in dests), dests)
+        reasons = {o["name"]: o["reason"] for o in manifest["omitted_files"]}
+        self.assertEqual(reasons.get("deep.bin"), "below_platform_folder")
+
+    def test_a_folder_read_recursively_keeps_it(self):
+        dests = {entry["dest"] for entry in self._manifest(flat=False)["files"]}
+        self.assertIn("psx/core/bios/deep.bin", dests)
+
+    def test_the_romm_pack_holds_nothing_below_a_folder(self):
+        manifest = REPO_ROOT / "install" / "romm.json"
+        if not manifest.exists():
+            self.skipTest("install/romm.json not generated")
+        import json
+
+        files = json.loads(manifest.read_text(encoding="utf-8"))["files"]
+        self.assertEqual([f["dest"] for f in files if f["dest"].count("/") > 1], [])
+
+
 if __name__ == "__main__":
     unittest.main()

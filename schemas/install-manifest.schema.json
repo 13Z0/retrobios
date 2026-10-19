@@ -154,7 +154,8 @@
               "not_found",
               "external",
               "user_provided",
-              "no_platform_slug"
+              "no_platform_slug",
+              "below_platform_folder"
             ]
           },
           "cores": {
@@ -712,7 +713,8 @@
                   "not_found",
                   "external",
                   "user_provided",
-                  "no_platform_slug"
+                  "no_platform_slug",
+                  "below_platform_folder"
                 ]
               },
               "cores": {
