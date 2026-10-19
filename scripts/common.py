@@ -1346,7 +1346,12 @@ def resolve_local_file(
                 if not os.path.exists(path):
                     continue
                 if not has_strong_hash:
-                    if not adler32_fits(file_entry, path, db):
+                    # A path names the file, the size the code checks still
+                    # bounds it, as on the name step: ZEsarUX's 48 KB
+                    # cpc6128.rom is not cap32's 32 KB one at the same tail.
+                    if not name_match_size_ok(
+                        file_entry, files_db[match_sha1].get("size")
+                    ) or not adler32_fits(file_entry, path, db):
                         continue
                     return path, "path_exact"
                 status = _record_match_status(match_sha1)

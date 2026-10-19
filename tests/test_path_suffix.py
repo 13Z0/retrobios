@@ -251,5 +251,29 @@ class TestForeignTreesAndSharedTails(unittest.TestCase):
         self.assertEqual((status, path), ("path_exact", "bios/Other/emucorex/resources/RedumpDatabase.yaml"))
 
 
+class TestSizeGateOnThePathStep(unittest.TestCase):
+    """The path step took any file at the tail when no hash was declared,
+    while the name step already refused one outside the checked size."""
+
+    def test_a_file_outside_the_checked_size_is_not_path_proof(self):
+        with tempfile.TemporaryDirectory() as root:
+            previous = os.getcwd()
+            os.chdir(root)
+            self.addCleanup(os.chdir, previous)
+            rel = "bios/Other/x/cpc/cpc6128.rom"
+            Path(rel).parent.mkdir(parents=True)
+            Path(rel).write_bytes(b"x" * 32768)
+            sha1 = "e" * 40
+            db = {
+                "files": {sha1: {"path": rel, "name": "cpc6128.rom", "md5": "",
+                                 "size": 32768, "crc32": "", "sha1": sha1}},
+                "indexes": {"by_md5": {}, "by_name": {"cpc6128.rom": [sha1]},
+                            "by_crc32": {}, "by_path_suffix": {"cpc/cpc6128.rom": [sha1]}},
+            }
+            entry = {"name": "cpc6128.rom", "size": 49152, "validation": ["size"]}
+            _path, status = resolve_local_file(entry, db, dest_hint="cpc/cpc6128.rom")
+        self.assertNotEqual(status, "path_exact")
+
+
 if __name__ == "__main__":
     unittest.main()
