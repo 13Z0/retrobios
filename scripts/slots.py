@@ -862,10 +862,22 @@ def main() -> int:
         description="Report destinations where an emulator profile contradicts "
         "the file a platform baseline would ship.",
     )
-    parser.add_argument("--platform", type=platform_arg, help="one platform instead of all")
-    parser.add_argument("--db", default="database.json")
-    parser.add_argument("--platforms-dir", default="platforms")
-    parser.add_argument("--emulators-dir", default="emulators")
+    parser.add_argument(
+        "--platform", type=platform_arg,
+        help="one platform instead of all",
+    )
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
         "--include-archived", action="store_true",

@@ -74,7 +74,10 @@ def main() -> int:
     parser.add_argument("--path", required=True, help="path of the file in the project")
     parser.add_argument("--md5", required=True, help="md5 the platform pins")
     parser.add_argument("--write", type=Path, help="save the matching bytes here")
-    parser.add_argument("--cache-dir", default=upstream.CACHE_DIR)
+    parser.add_argument(
+        "--cache-dir", default=upstream.CACHE_DIR,
+        help="download cache directory (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     repo = upstream.parse_repo(args.repo)

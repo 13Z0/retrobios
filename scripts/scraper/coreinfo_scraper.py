@@ -311,7 +311,10 @@ def main() -> None:
         allow_abbrev=False,
         description="Scrape libretro-core-info firmware requirements"
     )
-    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="print what would change and write nothing",
+    )
     parser.add_argument("--compare-db", help="Compare against database.json")
     args = parser.parse_args()
 

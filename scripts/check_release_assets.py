@@ -319,9 +319,15 @@ def fetch_assets() -> dict[str, int]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n")[0])
-    parser.add_argument("--db", default="database.json")
-    parser.add_argument("--gitignore", default=".gitignore")
-    parser.add_argument("--json", action="store_true")
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--gitignore", default=".gitignore",
+        help="the .gitignore listing release-asset files (default: %(default)s)",
+    )
+    parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
         "--notes", metavar="FILE",
         help="write the release page rendered from the collection to FILE",

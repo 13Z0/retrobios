@@ -317,7 +317,10 @@ def main() -> None:
     parser.add_argument(
         "--dry-run", action="store_true", help="Preview without deleting"
     )
-    parser.add_argument("--bios-dir", default=DEFAULT_BIOS_DIR)
+    parser.add_argument(
+        "--bios-dir", default=DEFAULT_BIOS_DIR,
+        help="BIOS collection directory (default: %(default)s)",
+    )
     args = parser.parse_args()
     require_directory(args.bios_dir)
 

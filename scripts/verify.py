@@ -2202,7 +2202,10 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--list-systems", action="store_true", help="List available systems"
     )
-    parser.add_argument("--include-archived", action="store_true")
+    parser.add_argument(
+        "--include-archived", action="store_true",
+        help="With --all, also verify the archived platforms (RetroPie)",
+    )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument(
         "--region", help="Region priority list, best first (e.g. us,eu,jp)"
@@ -2212,9 +2215,18 @@ def _main(held: contextlib.ExitStack) -> None:
         action="store_true",
         help="List available targets for the platform",
     )
-    parser.add_argument("--db", default=DEFAULT_DB)
-    parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
-    parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
+    parser.add_argument(
+        "--db", default=DEFAULT_DB,
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default=DEFAULT_EMULATORS_DIR,
+        help="emulator profile directory (default: %(default)s)",
+    )
     parser.add_argument(
         "--verbose",
         "-v",

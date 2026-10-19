@@ -189,7 +189,10 @@ def main() -> None:
         dest="json_output",
         help="Machine-readable JSON output",
     )
-    parser.add_argument("--registry", default=DEFAULT_REGISTRY)
+    parser.add_argument(
+        "--registry", default=DEFAULT_REGISTRY,
+        help="the data directory registry to check (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     report = check(args.registry)

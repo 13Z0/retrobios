@@ -92,7 +92,10 @@ def import_pack(source: str, pack: Path) -> tuple[dict, list[dict], int]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Import BIOS provenance from a DAT pack")
-    parser.add_argument("--source", required=True, choices=SOURCES)
+    parser.add_argument(
+        "--source", required=True, choices=SOURCES,
+        help="catalog the pack comes from",
+    )
     parser.add_argument("--pack", required=True, help="DAT pack (ZIP or directory)")
     parser.add_argument("--output", "-o", help="Snapshot output path")
     parser.add_argument("--dry-run", action="store_true", help="Show imported entries")

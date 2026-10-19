@@ -195,7 +195,10 @@ def main() -> int:
         description="Cross-check profile region: values against No-Intro provenance"
     )
     parser.add_argument("--db", default="database.json", help="Path to database.json")
-    parser.add_argument("--emulators-dir", default="emulators")
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
     parser.add_argument("--json", action="store_true", help="Machine-readable output")
     args = parser.parse_args()
 

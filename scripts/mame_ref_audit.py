@@ -115,11 +115,23 @@ def rewrite(name: str, emulators_dir: str, findings: list[Finding]) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.splitlines()[0])
-    parser.add_argument("emulators", nargs="+")
-    parser.add_argument("--emulators-dir", default="emulators")
-    parser.add_argument("--cache-dir", default=upstream.CACHE_DIR)
-    parser.add_argument("--offline", action="store_true")
-    parser.add_argument("--write", action="store_true")
+    parser.add_argument("emulators", nargs="+", help="MAME-family profiles to audit")
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--cache-dir", default=upstream.CACHE_DIR,
+        help="download cache directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--offline", action="store_true",
+        help="read only what the cache holds; no network access",
+    )
+    parser.add_argument(
+        "--write", action="store_true",
+        help="rewrite the refs the audit can settle",
+    )
     args = parser.parse_args()
 
     total = 0

@@ -2952,7 +2952,10 @@ def main() -> None:
 
 def _main(held: contextlib.ExitStack) -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate platform BIOS ZIP packs")
-    parser.add_argument("--platform", "-p", type=platform_arg, help="Platform name (e.g., retroarch)")
+    parser.add_argument(
+        "--platform", "-p", type=platform_arg,
+        help="Platform name (e.g., retroarch)",
+    )
     parser.add_argument(
         "--all", action="store_true", help="Generate packs for all active platforms"
     )
@@ -2970,11 +2973,23 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--include-archived", action="store_true", help="Include archived platforms"
     )
-    parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
+    parser.add_argument(
+        "--platforms-dir", default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
+    )
     parser.add_argument("--db", default=DEFAULT_DB_FILE, help="Path to database.json")
-    parser.add_argument("--bios-dir", default=DEFAULT_BIOS_DIR)
-    parser.add_argument("--output-dir", "-o", default=DEFAULT_OUTPUT_DIR)
-    parser.add_argument("--emulators-dir", default="emulators")
+    parser.add_argument(
+        "--bios-dir", default=DEFAULT_BIOS_DIR,
+        help="BIOS collection directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--output-dir", "-o", default=DEFAULT_OUTPUT_DIR,
+        help="directory the packs and manifests go to (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
     parser.add_argument(
         "--offline",
         action="store_true",
@@ -3002,7 +3017,8 @@ def _main(held: contextlib.ExitStack) -> None:
         "--source",
         choices=["platform", "truth", "full"],
         default="full",
-        help="File source: platform (YAML only), truth (emulator profiles), full (both)",
+        help="File source: platform (YAML only), truth (emulator profiles), full "
+             "(both)",
     )
     parser.add_argument(
         "--all-variants",

@@ -3469,7 +3469,8 @@ def main() -> None:
         "--system",
         action="append",
         metavar="NAME",
-        help="install only these systems (repeat or comma-separate; see --list-systems)",
+        help="install only these systems (repeat or comma-separate; see "
+             "--list-systems)",
     )
     parser.add_argument(
         "--core",
@@ -3518,6 +3519,7 @@ def main() -> None:
         "--version",
         action="version",
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
+        help="print the installer version and exit",
     )
 
     args = parser.parse_args()

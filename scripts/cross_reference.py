@@ -788,9 +788,18 @@ def print_report(
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Emulator vs platform gap analysis")
-    parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
-    parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
-    parser.add_argument("--db", default=DEFAULT_DB)
+    parser.add_argument(
+        "--emulators-dir", default=DEFAULT_EMULATORS_DIR,
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--db", default=DEFAULT_DB,
+        help="database file to read (default: %(default)s)",
+    )
     parser.add_argument("--emulator", "-e", help="Analyze single emulator")
     parser.add_argument(
         "--platform", "-p", type=platform_arg, help="Restrict analysis to one platform's cores"

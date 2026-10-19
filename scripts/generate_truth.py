@@ -58,10 +58,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--platforms-dir",
         default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
     )
     parser.add_argument(
         "--emulators-dir",
         default=DEFAULT_EMULATORS_DIR,
+        help="emulator profile directory (default: %(default)s)",
     )
     parser.add_argument("--db", default=DEFAULT_DB_FILE, help="database.json path")
     return parser.parse_args(argv)

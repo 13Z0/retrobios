@@ -107,9 +107,18 @@ def main() -> None:
         "--all", action="store_true",
         help="every profile that declares no files and has no answer yet",
     )
-    parser.add_argument("--emulators-dir", default="emulators")
-    parser.add_argument("--cache-dir", default=".cache")
-    parser.add_argument("--offline", action="store_true")
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--cache-dir", default=".cache",
+        help="download cache directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--offline", action="store_true",
+        help="read only what the cache holds; no network access",
+    )
     args = parser.parse_args()
     if args.all == bool(args.emulators):
         parser.error("name profiles or pass --all, not both")

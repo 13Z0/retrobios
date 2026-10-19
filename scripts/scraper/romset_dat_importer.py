@@ -453,7 +453,10 @@ def _listxml_opener(pack: Path) -> Callable[[], io.BufferedIOBase]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
-    parser.add_argument("--source", choices=SOURCES, required=True)
+    parser.add_argument(
+        "--source", choices=SOURCES, required=True,
+        help="emulator whose DATs are imported",
+    )
     parser.add_argument("--pack", help="DAT file, ZIP or directory")
     parser.add_argument(
         "--fetch",
@@ -462,14 +465,29 @@ def main() -> int:
         help="download upstream instead of using --pack "
         "(a MAME tag such as mame0289; bare, the newest release)",
     )
-    parser.add_argument("--cache-dir", default=".cache/dats")
-    parser.add_argument("--output", default="")
-    parser.add_argument("--emulators-dir", default="emulators")
-    parser.add_argument("--platforms-dir", default="platforms")
+    parser.add_argument(
+        "--cache-dir", default=".cache/dats",
+        help="download cache directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--output", default="",
+        help="snapshot to write (default: recipes/<source>.json)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
     parser.add_argument(
         "--all", action="store_true", help="keep every set, not only referenced ones"
     )
-    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="print what would change and write nothing",
+    )
     args = parser.parse_args()
 
     blobs: dict[str, str] = {}

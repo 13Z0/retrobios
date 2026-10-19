@@ -477,10 +477,22 @@ def main() -> int:
         help="write reconstructions to .variants/ (implies --missing)",
     )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
-    parser.add_argument("--bios-dir", default="bios")
-    parser.add_argument("--platforms-dir", default="platforms")
-    parser.add_argument("--emulators-dir", default="emulators")
-    parser.add_argument("--db", default="database.json")
+    parser.add_argument(
+        "--bios-dir", default="bios",
+        help="BIOS collection directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
     parser.add_argument(
         "--dat-recipes",
         default="recipes",

@@ -150,14 +150,20 @@ def fetch_sums(tag: str) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n")[0])
-    parser.add_argument("--record", default=str(RECORD), help="release record (release.json)")
-    parser.add_argument("--tag", help="release to check (default: the tag the record names)")
+    parser.add_argument(
+        "--record", default=str(RECORD),
+        help="release record (release.json)",
+    )
+    parser.add_argument(
+        "--tag",
+        help="release to check (default: the tag the record names)",
+    )
     parser.add_argument(
         "--sums", metavar="FILE",
         help=f"local {SUMS} the packs were listed in; its copy and signature on "
         f"the release must be these files (default: the list attached to the release)",
     )
-    parser.add_argument("--json", action="store_true")
+    parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
     record = load_record(args.record)

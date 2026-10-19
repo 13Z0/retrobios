@@ -4244,10 +4244,22 @@ def main() -> None:
         allow_abbrev=False,
         description="Generate MkDocs site from project data"
     )
-    parser.add_argument("--db", default="database.json")
-    parser.add_argument("--platforms-dir", default="platforms")
-    parser.add_argument("--emulators-dir", default="emulators")
-    parser.add_argument("--docs-dir", default=DOCS_DIR)
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--docs-dir", default=DOCS_DIR,
+        help="directory the site sources are written to (default: %(default)s)",
+    )
     args = parser.parse_args()
     try:
         # Two runs over one docs/ delete each other's pages and scratch

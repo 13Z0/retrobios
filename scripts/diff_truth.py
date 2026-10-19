@@ -176,14 +176,22 @@ def main() -> None:
         "--json", action="store_true", dest="json_output", help="JSON output"
     )
     output.add_argument(
-        "--format", choices=["terminal", "markdown"], default="terminal"
+        "--format", choices=["terminal", "markdown"], default="terminal",
+        help="report format (default: %(default)s)",
     )
     output.add_argument(
         "--markdown", action="store_const", const="markdown", dest="format",
         help="same as --format markdown, the spelling validate_pr uses",
     )
-    parser.add_argument("--truth-dir", default="dist/truth")
-    parser.add_argument("--platforms-dir", default="platforms")
+    parser.add_argument(
+        "--truth-dir", default="dist/truth",
+        help="directory of the truth models generate_truth writes (default: "
+             "%(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
     parser.add_argument(
         "--target",
         help="read the models generate_truth --target wrote, each under the "

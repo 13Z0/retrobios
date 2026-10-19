@@ -3193,34 +3193,73 @@ def build_parser() -> argparse.ArgumentParser:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--emulator", help="a single profile")
     group.add_argument("--all", action="store_true", help="every profile")
-    parser.add_argument("--emulators-dir", default="emulators")
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
     parser.add_argument("--system", help="keep profiles covering this system")
     parser.add_argument("--type", dest="type_", help="keep profiles of this type")
     parser.add_argument("--stale-before", help="keep profiles profiled before a date")
     parser.add_argument("--limit", type=int, help="stop after N profiles")
-    parser.add_argument("--changed-only", action="store_true")
+    parser.add_argument(
+        "--changed-only", action="store_true",
+        help="list only the profiles with refs to review",
+    )
     parser.add_argument(
         "--strict",
         action="store_true",
         help="exit 1 when a profile has refs to review, as for a new profile in CI",
     )
-    parser.add_argument("--json", action="store_true", dest="as_json")
-    parser.add_argument("--markdown", action="store_true")
+    parser.add_argument(
+        "--json", action="store_true", dest="as_json",
+        help="JSON report",
+    )
+    parser.add_argument(
+        "--markdown", action="store_true",
+        help="write a markdown report to --report-dir",
+    )
     parser.add_argument(
         "--report-dir",
         default="reports",
         help="directory for the markdown report (default: reports)",
     )
-    parser.add_argument("--fetch-plan", action="store_true")
-    parser.add_argument("--full-diff", action="store_true")
+    parser.add_argument(
+        "--fetch-plan", action="store_true",
+        help="print the upstream URLs a reader has to open",
+    )
+    parser.add_argument(
+        "--full-diff", action="store_true",
+        help="print the upstream diff of every cited file since the pin",
+    )
     parser.add_argument("--ref", help="restrict --full-diff to one cited path")
-    parser.add_argument("--context", type=int, default=3)
-    parser.add_argument("--check-version", action="store_true")
-    parser.add_argument("--detect-new-files", action="store_true")
-    parser.add_argument("--watch-hashes", action="store_true")
-    parser.add_argument("--tree-diff", action="store_true")
-    parser.add_argument("--triage", action="store_true")
-    parser.add_argument("--backfill-commits", action="store_true")
+    parser.add_argument(
+        "--context", type=int, default=3,
+        help="lines of context around each diff hunk (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--check-version", action="store_true",
+        help="compare core_version with the latest tag and release",
+    )
+    parser.add_argument(
+        "--detect-new-files", action="store_true",
+        help="name files upstream loads that the profile does not list",
+    )
+    parser.add_argument(
+        "--watch-hashes", action="store_true",
+        help="report hash literals that changed in the cited files",
+    )
+    parser.add_argument(
+        "--tree-diff", action="store_true",
+        help="list files added, removed or renamed upstream since the pin",
+    )
+    parser.add_argument(
+        "--triage", action="store_true",
+        help="rank the profiles by how much there is to reread",
+    )
+    parser.add_argument(
+        "--backfill-commits", action="store_true",
+        help="write source_commit for profiles that only carry profiled_date",
+    )
     parser.add_argument(
         "--rebase-refs",
         action="store_true",
@@ -3242,10 +3281,22 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="recale CHANGED refs too, after their diff has been read",
     )
-    parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--force", action="store_true")
-    parser.add_argument("--offline", action="store_true")
-    parser.add_argument("--cache-dir", default=DEFAULT_CACHE)
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="print the writes and leave the profiles untouched",
+    )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="write even when emulators/ has uncommitted changes",
+    )
+    parser.add_argument(
+        "--offline", action="store_true",
+        help="read only what the cache holds; no network access",
+    )
+    parser.add_argument(
+        "--cache-dir", default=DEFAULT_CACHE,
+        help="download cache directory (default: %(default)s)",
+    )
     return parser
 
 

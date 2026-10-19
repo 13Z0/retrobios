@@ -122,6 +122,23 @@ class DocumentedSteps(unittest.TestCase):
         fields = [*schema["properties"], *item.get("properties", {})]
         self.assertEqual(sorted(f for f in fields if f"`{f}`" not in page), [])
 
+    def test_every_option_says_what_it_does(self):
+        """--include-archived and --all-variants, and 94 others, showed in
+        --help with no text: their constraints surfaced only as errors."""
+        sources = [*SCRIPTS.rglob("*.py"), REPO_ROOT / "install.py"]
+        silent = []
+        for path in sources:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Call)
+                    and getattr(node.func, "attr", None) == "add_argument"
+                    and not any(k.arg == "help" for k in node.keywords)
+                ):
+                    first = next((a.value for a in node.args if isinstance(a, ast.Constant)), "?")
+                    silent.append(f"{path.relative_to(REPO_ROOT)}: {first}")
+        self.assertEqual(silent, [])
+
     def test_the_scraper_recipe_names_every_abstract_method(self):
         """tools.md said implement fetch_requirements(); validate_format() is
         abstract too, and a scraper written from the page could not be built."""

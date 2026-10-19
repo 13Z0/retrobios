@@ -93,9 +93,18 @@ def restore(
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
-    parser.add_argument("--cache", default=".cache/large")
-    parser.add_argument("--db", default="database.json")
-    parser.add_argument("--gitignore", default=".gitignore")
+    parser.add_argument(
+        "--cache", default=".cache/large",
+        help="where release assets are cached (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--gitignore", default=".gitignore",
+        help="the .gitignore listing release-asset files (default: %(default)s)",
+    )
     args = parser.parse_args()
     _restored, unsatisfied = restore(args.cache, args.db, args.gitignore)
     if unsatisfied:

@@ -371,8 +371,16 @@ def main() -> None:
         "--output-dir", default="dist", help="Pack output directory (default: dist/)"
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
-    parser.add_argument("--source", choices=["platform", "truth", "full"], default="full")
-    parser.add_argument("--all-variants", action="store_true")
+    parser.add_argument(
+        "--source", choices=["platform", "truth", "full"], default="full",
+        help="packs to build: the platform list, the profiles, or both (default: "
+             "%(default)s)",
+    )
+    parser.add_argument(
+        "--all-variants", action="store_true",
+        help="Build the six source x required packs of each platform; "
+        "not with --source or --skip-packs",
+    )
     parser.add_argument(
         "--check-buildbot",
         action="store_true",

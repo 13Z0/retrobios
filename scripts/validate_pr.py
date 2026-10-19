@@ -423,8 +423,14 @@ def main() -> None:
         "--changed", action="store_true", help="Auto-detect changed BIOS files"
     )
     parser.add_argument("--db", default=DEFAULT_DB, help="Path to database.json")
-    parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
-    parser.add_argument("--emulators-dir", default=DEFAULT_EMULATORS_DIR)
+    parser.add_argument(
+        "--platforms-dir", default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default=DEFAULT_EMULATORS_DIR,
+        help="emulator profile directory (default: %(default)s)",
+    )
     # One output format: --json beside --markdown printed JSON and dropped
     # the markdown without a word.
     output = parser.add_mutually_exclusive_group()

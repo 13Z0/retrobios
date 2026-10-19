@@ -265,9 +265,18 @@ def validate_site(site: Path, config_path: Path) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
-    parser.add_argument("--site-dir", default="site")
-    parser.add_argument("--config", default="mkdocs.yml")
-    parser.add_argument("--max-errors", type=int, default=100)
+    parser.add_argument(
+        "--site-dir", default="site",
+        help="the built site (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--config", default="mkdocs.yml",
+        help="the MkDocs configuration (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--max-errors", type=int, default=100,
+        help="stop listing after this many errors (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     try:

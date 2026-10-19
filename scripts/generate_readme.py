@@ -756,8 +756,14 @@ def generate_contributing() -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Generate slim README.md")
-    parser.add_argument("--db", default="database.json")
-    parser.add_argument("--platforms-dir", default="platforms")
+    parser.add_argument(
+        "--db", default="database.json",
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     db = load_database(args.db)

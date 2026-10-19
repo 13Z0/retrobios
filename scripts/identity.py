@@ -145,7 +145,10 @@ def main() -> int:
         allow_abbrev=False,
         description="Report one content stored under identities that disagree.",
     )
-    parser.add_argument("--bios-dir", default="bios")
+    parser.add_argument(
+        "--bios-dir", default="bios",
+        help="BIOS collection directory (default: %(default)s)",
+    )
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
         "--strict", action="store_true", help="exit non-zero when any is found"

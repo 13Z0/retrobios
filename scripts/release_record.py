@@ -127,8 +127,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="Record what a release's packs hold")
     parser.add_argument("dist", type=Path, help="directory of the packs to publish")
     parser.add_argument("--tag", required=True, help="release tag, e.g. v2026.10.04")
-    parser.add_argument("--install-dir", default="install", type=Path)
-    parser.add_argument("--output", default=RECORD, type=Path)
+    parser.add_argument(
+        "--install-dir", default="install", type=Path,
+        help="manifests the archives are compared with (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--output", default=RECORD, type=Path,
+        help="record to write (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     try:

@@ -424,9 +424,18 @@ def main() -> None:
     parser.add_argument(
         "--dry-run", action="store_true", help="Don't download, just report"
     )
-    parser.add_argument("--db", default=DEFAULT_DB)
-    parser.add_argument("--platforms-dir", default=DEFAULT_PLATFORMS_DIR)
-    parser.add_argument("--bios-dir", default=DEFAULT_BIOS_DIR)
+    parser.add_argument(
+        "--db", default=DEFAULT_DB,
+        help="database file to read (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default=DEFAULT_PLATFORMS_DIR,
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--bios-dir", default=DEFAULT_BIOS_DIR,
+        help="BIOS collection directory (default: %(default)s)",
+    )
     parser.add_argument(
         "--create-issues", action="store_true", help="Output GitHub Issue bodies"
     )

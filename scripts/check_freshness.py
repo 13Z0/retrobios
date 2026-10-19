@@ -1166,14 +1166,36 @@ def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0])
     parser.add_argument("--only", help="comma-separated areas: " + ",".join(AREAS))
     parser.add_argument("--json", action="store_true", help="machine-readable output")
-    parser.add_argument("--profiles", action="store_true", help="also run profile_sync (slow)")
-    parser.add_argument("--offline", action="store_true", help="no network, local ages only")
+    parser.add_argument(
+        "--profiles", action="store_true",
+        help="also run profile_sync (slow)",
+    )
+    parser.add_argument(
+        "--offline", action="store_true",
+        help="no network, local ages only",
+    )
     parser.add_argument("--jobs", type=int, default=4, help="parallel scrapers")
-    parser.add_argument("--cache-dir", default=upstream.CACHE_DIR)
-    parser.add_argument("--native-cache-dir", default=export_native.DEFAULT_CACHE)
-    parser.add_argument("--truth-dir", default="dist/truth")
-    parser.add_argument("--platforms-dir", default="platforms")
-    parser.add_argument("--emulators-dir", default="emulators")
+    parser.add_argument(
+        "--cache-dir", default=upstream.CACHE_DIR,
+        help="download cache directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--native-cache-dir", default=export_native.DEFAULT_CACHE,
+        help="where the platforms' own files are cached (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--truth-dir", default="dist/truth",
+        help="directory of the truth models generate_truth writes (default: "
+             "%(default)s)",
+    )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="platform YAML directory (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="emulator profile directory (default: %(default)s)",
+    )
     args = parser.parse_args()
 
     areas = tuple(a.strip() for a in args.only.split(",")) if args.only else AREAS
