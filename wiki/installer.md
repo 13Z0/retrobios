@@ -1,4 +1,4 @@
-# Installer - RetroBIOS
+# Installer
 
 Reference for `install.sh`, `install.ps1` and `install.py`: what the one-liner
 runs, what it detects, where the bytes come from and what it is allowed to

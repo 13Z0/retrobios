@@ -1,4 +1,4 @@
-# Profiling guide - RetroBIOS
+# Profiling guide
 
 How to create an emulator profile from source code.
 

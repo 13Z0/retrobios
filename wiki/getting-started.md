@@ -1,4 +1,4 @@
-# Getting started - RetroBIOS
+# Getting started
 
 ## What are BIOS files?
 

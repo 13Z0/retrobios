@@ -1,4 +1,4 @@
-# FAQ - RetroBIOS
+# FAQ
 
 ## My game shows a black screen
 

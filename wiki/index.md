@@ -1,4 +1,4 @@
-# Wiki - RetroBIOS
+# Wiki
 
 Technical documentation for the RetroBIOS toolchain.
 

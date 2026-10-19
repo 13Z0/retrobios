@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -252,6 +253,41 @@ class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
         if not page.is_file():
             self.skipTest("site not generated")
         self.assertIn("CRC32: `91e93107`", page.read_text(encoding="utf-8"))
+
+
+class PlainHouseStyle(unittest.TestCase):
+    """The stylesheet stays a plain documentation theme.
+
+    Gradient banners, coloured side stripes on cards, lifting hover cards,
+    pill badges and small-caps table headers had piled up into the look of
+    a generated landing page. Each pattern below brought one of them back.
+    """
+
+    PATTERNS = {
+        "gradient": re.compile(r"gradient\("),
+        "side stripe": re.compile(r"border-(?:left|inline-start)\s*:\s*\d+px"),
+        "lifting card": re.compile(r"translateY\("),
+        "drop shadow": re.compile(r"box-shadow"),
+        "small caps header": re.compile(r"text-transform\s*:\s*uppercase"),
+        "pill": re.compile(r"border-radius\s*:\s*(?:[5-9]|\d{2,})px|50%"),
+        "box-drawing rule": re.compile("[\u2500-\u257f]"),
+    }
+
+    def test_the_stylesheet_has_none_of_the_patterns(self):
+        css = (ROOT / "docs_assets" / "extra.css").read_text(encoding="utf-8")
+        for label, pattern in self.PATTERNS.items():
+            with self.subTest(pattern=label):
+                self.assertIsNone(pattern.search(css), label)
+
+    def test_headings_do_not_repeat_the_site_name(self):
+        # The header bar already names the site, and the browser title gets
+        # it from the theme: "# DuckStation - RetroBIOS" said it twice.
+        source = (ROOT / "scripts" / "generate_site.py").read_text(encoding="utf-8")
+        self.assertNotRegex(source, r'"# [^"]* - (?:\{SITE_NAME\}|RetroBIOS)')
+        for page in sorted((ROOT / "wiki").glob("*.md")):
+            first = page.read_text(encoding="utf-8").splitlines()[0]
+            with self.subTest(page=page.name):
+                self.assertFalse(first.endswith(" - RetroBIOS"), first)
 
 
 if __name__ == "__main__":

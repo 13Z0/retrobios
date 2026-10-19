@@ -1,4 +1,4 @@
-# Tools - RetroBIOS
+# Tools
 
 All tools are Python scripts in `scripts/`. They need Python 3.12 and `pyyaml`;
 only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`

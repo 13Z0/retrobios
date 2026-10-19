@@ -258,14 +258,10 @@ def generate_home(
         classifications[cls] = classifications.get(cls, 0) + 1
 
     lines = [
-        '<div class="rb-hero" markdown>',
-        "",
         f"# {SITE_NAME}",
         "",
         "BIOS and firmware metadata checked the way each platform checks it, "
         "cross-referenced against revision-pinned emulator source code.",
-        "",
-        "</div>",
         "",
         '<div class="rb-stats" markdown>',
         "",
@@ -1083,7 +1079,7 @@ def generate_data_exports(
 
 def generate_data_page(exports: list[dict]) -> str:
     lines = [
-        f"# Data & API - {SITE_NAME}",
+        "# Data & API",
         "",
         "RetroBIOS publishes the same metadata used by its verifier, pack builder "
         "and website as versioned static files. No account or API key is required.",
@@ -1601,7 +1597,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
     total_present = sum(c["present"] for c in coverages.values())
 
     lines = [
-        f"# Platforms - {SITE_NAME}",
+        "# Platforms",
         "",
         f"{len(coverages)} supported platforms with "
         f"{total_present:,} verified files.",
@@ -1791,7 +1787,7 @@ def generate_platform_page(
     )
 
     lines = [
-        f"# {display} - {SITE_NAME}",
+        f"# {display}",
         "",
         logo_md,
     ]
@@ -1945,7 +1941,7 @@ def generate_files_page() -> str:
     a sha1, or with one the collection does not hold, the page says so.
     """
     return "\n".join([
-        f"# Find a file by its SHA1 - {SITE_NAME}",
+        "# Find a file by its SHA1",
         "",
         "A file's card lives on its manufacturer's page, and a file refiled "
         "between manufacturers moves with it. `files/?sha1=<sha1>` is the "
@@ -2005,7 +2001,7 @@ def generate_systems_index(manufacturers: dict) -> str:
     )
 
     lines = [
-        f"# Systems - {SITE_NAME}",
+        "# Systems",
         "",
         f"{total_mfr} manufacturers, {total_consoles} consoles, "
         f"{total_files:,} files in the repository.",
@@ -2103,7 +2099,7 @@ def generate_provenance_page(
     total_files = compute_composition(db)["systems"]["files"]
 
     lines = [
-        f"# Dump provenance - {SITE_NAME}",
+        "# Dump provenance",
         "",
         f"**{matched_files:,}** of {total_files:,} system files match an entry "
         "in a dump-preservation catalog. Those files carry a "
@@ -2357,7 +2353,7 @@ def generate_system_page(
 ) -> str:
     manufacturer.lower().replace(" ", "-")
     lines = [
-        f"# {manufacturer} - {SITE_NAME}",
+        f"# {manufacturer}",
         "",
     ]
 
@@ -2411,7 +2407,7 @@ def generate_emulators_index(profiles: dict) -> str:
     total_files = sum(len(p.get("files", [])) for p in unique.values())
 
     lines = [
-        f"# Emulators - {SITE_NAME}",
+        "# Emulators",
         "",
         f"**{len(unique)}** emulator profiles, **{total_files}** files total, **{len(aliases)}** aliases.",
         "",
@@ -2460,7 +2456,7 @@ def generate_emulators_index(profiles: dict) -> str:
         desc = cls_desc.get(cls, "")
         lines.extend(
             [
-                f'## <span class="rb-cls-dot rb-dot-{cls}"></span>{label} {{ #{cls} }}',
+                f"## {label} {{ #{cls} }}",
                 "",
                 f"*{desc}* -- {len(entries)} profiles",
                 "",
@@ -2610,7 +2606,6 @@ def _render_emulator_file(
     """
     lines: list[str] = []
     fname = f.get("name", "")
-    required = f.get("required", False)
     in_repo = _file_available(f)
     source_ref = f.get("source_ref", "")
     aliases = f.get("aliases", [])
@@ -2639,13 +2634,8 @@ def _render_emulator_file(
 
     badges = _file_badges(f, in_repo)
     badge_str = " ".join(badges)
-    border_cls = (
-        "rb-file-entry-required" if required else "rb-file-entry-optional"
-    )
     id_attr = f' id="{anchor}"' if anchor else ""
-    lines.append(
-        f'<div class="rb-file-entry {border_cls}"{id_attr} markdown>'
-    )
+    lines.append(f'<div class="rb-file-entry"{id_attr} markdown>')
     lines.append("")
     permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
     lines.append(f"**`{fname}`** {badge_str}{permalink}")
@@ -3020,7 +3010,7 @@ def generate_emulator_page(
     if profile.get("type") == "alias":
         parent = profile.get("alias_of", profile.get("bios_identical_to", "unknown"))
         return (
-            f"# {name} - {SITE_NAME}\n\n"
+            f"# {name}\n\n"
             f"This core uses the same firmware as **{parent}**.\n\n"
             f"See [{parent}]({parent}.md) for details.\n"
         )
@@ -3057,7 +3047,7 @@ def generate_emulator_page(
     data_dirs = profile.get("data_directories", [])
 
     lines = [
-        f"# {emu_name} - {SITE_NAME}",
+        f"# {emu_name}",
         "",
         '<div class="rb-meta-card" markdown>',
         "",
@@ -3378,7 +3368,7 @@ def generate_gap_analysis(
     )
 
     lines = [
-        f"# Gap Analysis - {SITE_NAME}",
+        "# Gap Analysis",
         "",
         "Unified view of BIOS verification, file provenance, and coverage gaps.",
         "",
@@ -3944,7 +3934,7 @@ def generate_cross_reference(
     })
 
     lines = [
-        f"# Cross-reference - {SITE_NAME}",
+        "# Cross-reference",
         "",
         f"Platform > Core > Systems > Upstream emulator. "
         f"{total_cores} cores across {len(coverages)} platforms, "
@@ -3968,7 +3958,7 @@ def generate_cross_reference(
 
 def generate_contributing() -> str:
     return contributing_text(
-        lambda page: f"{page}.md", "# Contributing - RetroBIOS", "on this site"
+        lambda page: f"{page}.md", "# Contributing", "on this site"
     )
 
 
@@ -3987,7 +3977,7 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
     by_sha256 = len(db.get("indexes", {}).get("by_sha256", {}))
 
     lines = [
-        f"# Data model - {SITE_NAME}",
+        "# Data model",
         "",
         "## database.json",
         "",

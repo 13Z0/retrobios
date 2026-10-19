@@ -1,4 +1,4 @@
-# Architecture - RetroBIOS
+# Architecture
 
 ## Directory structure
 

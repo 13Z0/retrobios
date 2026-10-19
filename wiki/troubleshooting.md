@@ -1,4 +1,4 @@
-# Troubleshooting - RetroBIOS
+# Troubleshooting
 
 Diagnosis guide organized by symptom. Each section describes what to check and how to fix it.
 

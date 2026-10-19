@@ -1,17 +1,11 @@
-/* RetroBIOS custom theme */
+/* RetroBIOS theme on top of mkdocs-material */
 
-/* ── Color palette ── */
 :root {
   --rb-primary: #4a4e8a;
   --rb-primary-light: #6366a0;
   --rb-primary-dark: #363870;
   --rb-accent: #b42318;
   --rb-link: #273c8f;
-  --rb-success: #2e7d32;
-  --rb-warning: #f57c00;
-  --rb-danger: #c62828;
-  --rb-info: #1565c0;
-  --rb-muted: #78909c;
   --rb-surface: #f5f6fa;
   --rb-border: #e0e3eb;
   --rb-text-secondary: #546e7a;
@@ -25,7 +19,6 @@
   --rb-link: #aebcff;
 }
 
-/* ── Material theme overrides ── */
 [data-md-color-scheme="default"] {
   --md-primary-fg-color: var(--rb-primary);
   --md-primary-fg-color--light: var(--rb-primary-light);
@@ -38,134 +31,38 @@
   --md-accent-fg-color: var(--rb-accent);
 }
 
-/* ── Hero section (home page) ── */
-.rb-hero {
-  background: linear-gradient(135deg, var(--rb-primary) 0%, var(--rb-primary-dark) 100%);
-  color: white;
-  padding: 2.5rem 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.rb-hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 100%;
-  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.04) 100%);
-  pointer-events: none;
-}
-
-.rb-hero h1 {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-  font-weight: 700;
-  color: white !important;
-  border: none;
-}
-
-.rb-hero p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 1.1rem;
-}
-
-/* ── Stat cards ── */
+/* Headline figures, read as one line of numbers */
 .rb-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.rb-stat {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 1.2rem;
-  text-align: center;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.rb-stat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 2rem;
+  margin: 1rem 0 1.5rem;
 }
 
 .rb-stat .rb-stat-value {
-  font-size: 1.8rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--rb-primary);
-  line-height: 1.2;
   display: block;
-}
-
-[data-md-color-scheme="slate"] .rb-stat .rb-stat-value {
-  color: var(--rb-primary-light);
 }
 
 .rb-stat .rb-stat-label {
   font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--rb-text-secondary);
-  margin-top: 0.3rem;
   display: block;
 }
 
-/* ── Progress bars (inline) ── */
-.rb-progress {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.rb-progress-bar {
-  flex: 1;
-  height: 6px;
-  background: var(--rb-border);
-  border-radius: 3px;
-  overflow: hidden;
-  min-width: 60px;
-}
-
-.rb-progress-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.rb-progress-fill[data-level="high"] { background: var(--rb-success); }
-.rb-progress-fill[data-level="mid"] { background: var(--rb-warning); }
-.rb-progress-fill[data-level="low"] { background: var(--rb-danger); }
-
-.rb-progress-text {
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-  min-width: 3.5em;
-  text-align: right;
-}
-
-/* ── Status badges ── */
 .rb-badge {
   display: inline-block;
-  padding: 0.15em 0.6em;
-  border-radius: 10px;
+  padding: 0 0.4em;
+  border-radius: 2px;
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: nowrap;
 }
 
 .rb-badge-success { background: #e8f5e9; color: #1b5e20; }
-.rb-badge-warning { background: #fff3e0; color: #e65100; }
+.rb-badge-warning { background: #fff3e0; color: #a33f00; }
 .rb-badge-danger { background: #ffebee; color: #b71c1c; }
 .rb-badge-info { background: #e3f2fd; color: #0d47a1; }
 .rb-badge-muted { background: #eceff1; color: #455a64; }
@@ -176,144 +73,16 @@
 [data-md-color-scheme="slate"] .rb-badge-info { background: #0d47a1; color: #90caf9; }
 [data-md-color-scheme="slate"] .rb-badge-muted { background: #37474f; color: #b0bec5; }
 
-/* ── Tables ── */
-.md-typeset table:not([class]) {
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.85rem;
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
 .md-typeset table:not([class]) th {
-  background: var(--rb-surface);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  color: var(--rb-text-secondary);
-  padding: 0.75rem 1rem;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.md-typeset table:not([class]) td {
-  padding: 0.6rem 1rem;
-  border-top: 1px solid var(--rb-border);
-}
-
-.md-typeset table:not([class]) tbody tr:hover {
-  background: rgba(74, 78, 138, 0.04);
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:hover {
-  background: rgba(99, 102, 160, 0.08);
-}
-
-/* Zebra striping */
-.md-typeset table:not([class]) tbody tr:nth-child(even) {
-  background: rgba(0, 0, 0, 0.015);
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-/* ── Platform cards (home page) ── */
-.rb-platform-row td:first-child img {
-  vertical-align: middle;
-  border-radius: 4px;
-}
-
-/* ── Quick start grid ── */
-.rb-quickstart {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.75rem;
-  margin: 1rem 0;
-}
-
-.rb-quickstart-item {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.rb-quickstart-item code {
-  background: transparent;
-  font-weight: 600;
-  color: var(--rb-primary);
-}
-
-/* ── Section separators ── */
-.rb-section {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--rb-border);
-}
-
-/* ── Methodology steps ── */
-.rb-methodology ol {
-  counter-reset: method-step;
-  list-style: none;
-  padding-left: 0;
-}
-
-.rb-methodology ol li {
-  counter-increment: method-step;
-  padding: 0.6rem 0 0.6rem 2.5rem;
-  position: relative;
-}
-
-.rb-methodology ol li::before {
-  content: counter(method-step);
-  position: absolute;
-  left: 0;
-  top: 0.5rem;
-  width: 1.8rem;
-  height: 1.8rem;
-  background: var(--rb-primary);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-/* ── Classification badges (emulators) ── */
-.rb-cls-official_port { border-left: 3px solid var(--rb-success); }
-.rb-cls-community_fork { border-left: 3px solid var(--rb-info); }
-.rb-cls-pure_libretro { border-left: 3px solid var(--rb-primary); }
-.rb-cls-game_engine { border-left: 3px solid #7b1fa2; }
-.rb-cls-enhanced_fork { border-left: 3px solid #00838f; }
-.rb-cls-frozen_snapshot { border-left: 3px solid var(--rb-muted); }
-.rb-cls-embedded_hle { border-left: 3px solid #4e342e; }
-.rb-cls-launcher { border-left: 3px solid #37474f; }
-
-/* ── Gap analysis priority markers ── */
-.rb-gap-required {
-  color: var(--rb-danger);
-  font-weight: 600;
-}
-
-.rb-gap-optional {
-  color: var(--rb-muted);
-}
-
-/* ── Scrollable table container improvements ── */
 .md-typeset__scrollwrap {
   margin: 1rem 0;
 }
 
-/* ── Footer timestamp ── */
 .rb-timestamp {
   font-size: 0.8rem;
   color: var(--rb-text-secondary);
@@ -322,52 +91,17 @@
   border-top: 1px solid var(--rb-border);
 }
 
-/* ── Info card (platform/emulator metadata) ── */
-.rb-info-card {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
-  margin: 1rem 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.3rem 1.2rem;
-  font-size: 0.9rem;
-}
-
-.rb-info-card dt {
-  font-weight: 600;
-  color: var(--rb-text-secondary);
-  white-space: nowrap;
-}
-
-.rb-info-card dd {
+/* One block per file on emulator and system pages, separated by a rule */
+.rb-file-entry,
+.rb-sys-file {
+  border-top: 1px solid var(--rb-border);
+  padding: 0.75rem 0 0.25rem;
   margin: 0;
 }
 
-/* ── File entry cards (emulator detail) ── */
-.rb-file-entry {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
-  margin: 0.75rem 0;
-}
-
-.rb-file-entry-required {
-  border-left: 3px solid var(--rb-danger);
-}
-
-.rb-file-entry-optional {
-  border-left: 3px solid var(--rb-muted);
-}
-
-.rb-file-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
+.rb-file-entry > p:first-child,
+.rb-sys-file > p:first-child {
+  margin-top: 0;
 }
 
 .rb-file-header code {
@@ -375,62 +109,28 @@
   font-weight: 700;
 }
 
-.rb-file-entry ul {
-  margin: 0.3rem 0 0;
-  padding-left: 1.2rem;
-}
-
-.rb-file-entry li {
-  font-size: 0.85rem;
-  margin: 0.15rem 0;
-}
-
-/* ── Hash display: printed whole so the search finds it, wrapped on phones ── */
-.rb-hash {
-  font-family: monospace;
-  font-size: 0.78rem;
-  color: var(--rb-text-secondary);
-  letter-spacing: -0.02em;
-  overflow-wrap: anywhere;
-}
-
-/* System page file cards */
-.rb-sys-file {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  margin: 0.6rem 0;
-}
-
-.rb-sys-file > p:first-child {
-  margin-top: 0;
-}
-
+.rb-file-entry ul,
 .rb-sys-file ul {
   margin: 0.3rem 0 0;
-  padding-left: 1rem;
+  padding-left: 1.2rem;
   font-size: 0.85rem;
 }
 
+.rb-file-entry li,
 .rb-sys-file li {
   margin: 0.1rem 0;
 }
 
-/* Emulator metadata card */
-.rb-meta-card {
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  border-radius: 8px;
-  padding: 0.8rem 0;
-  margin: 1rem 0;
-  overflow: hidden;
+/* Hashes are printed whole so the search finds them, and wrap on phones */
+.rb-hash {
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--rb-text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .rb-meta-card table {
-  border: none !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
+  margin: 1rem 0 !important;
 }
 
 .rb-meta-card th {
@@ -442,146 +142,14 @@
   color: var(--rb-text-secondary);
   white-space: nowrap;
   width: 140px;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
-.rb-meta-card td {
-  border-top: 1px solid var(--rb-border) !important;
-}
-
-.rb-meta-card tr:first-child td {
-  border-top: none !important;
-}
-
-/* ── Platform detail: coverage bar ── */
-.rb-coverage-bar {
-  background: var(--rb-border);
-  border-radius: 4px;
-  height: 8px;
-  overflow: hidden;
-  margin: 0.5rem 0;
-  max-width: 300px;
-}
-
-.rb-coverage-fill {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--rb-success);
-}
-
-/* ── Emulator index: section accent ── */
-.md-typeset h2 .rb-cls-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 0.4rem;
-  vertical-align: middle;
-}
-
-.rb-dot-official_port { background: var(--rb-success); }
-.rb-dot-community_fork { background: var(--rb-info); }
-.rb-dot-pure_libretro { background: var(--rb-primary); }
-.rb-dot-game_engine { background: #7b1fa2; }
-.rb-dot-enhanced_fork { background: #00838f; }
-.rb-dot-frozen_snapshot { background: var(--rb-muted); }
-.rb-dot-embedded_hle { background: #4e342e; }
-.rb-dot-launcher { background: #37474f; }
-.rb-dot-other { background: #9e9e9e; }
-
-/* ── Cross-ref: classification in table ── */
-.rb-cls-label {
-  font-size: 0.8rem;
-  padding: 0.1em 0.5em;
-  border-radius: 4px;
-  background: var(--rb-surface);
-  border: 1px solid var(--rb-border);
-  white-space: nowrap;
-}
-
-/* ── Buttons ── */
-.md-typeset .md-button {
-  border-radius: 6px;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-/* Pack button in tables: smaller */
 .md-typeset table .md-button {
   font-size: 0.75rem;
   min-height: 44px;
   padding: 0.55em 0.8em;
 }
 
-/* ── Hide permalink anchors in hero ── */
-.rb-hero .headerlink {
-  display: none;
-}
-
-/* ── Compact stat variant ── */
-.rb-stats-compact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1rem 0;
-}
-
-.rb-stats-compact .rb-stat {
-  padding: 0.6rem 1rem;
-  flex: 1;
-  min-width: 100px;
-}
-
-.rb-stats-compact .rb-stat-value {
-  font-size: 1.3rem;
-}
-
-.rb-stats-compact .rb-stat-label {
-  font-size: 0.7rem;
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .rb-hero {
-    padding: 1.5rem;
-  }
-  .rb-hero h1 {
-    font-size: 1.5rem;
-  }
-  .rb-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-  .rb-stat {
-    padding: 0.8rem;
-  }
-  .rb-stat .rb-stat-value {
-    font-size: 1.4rem;
-  }
-  .rb-stat .rb-stat-label {
-    font-size: 0.7rem;
-  }
-  .rb-file-entry {
-    padding: 0.7rem 0.8rem;
-  }
-  .rb-sys-file {
-    padding: 0.6rem 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .rb-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .rb-hero h1 {
-    font-size: 1.3rem;
-  }
-}
-
-/* ── Accessibility and dense-data navigation ── */
 .md-typeset a:not(.md-button):not(.headerlink):not(.rb-badge) {
   color: var(--rb-link);
   text-decoration: underline;
@@ -634,8 +202,8 @@
 
 .rb-table-filter input {
   width: 100%;
-  border: 2px solid var(--rb-border);
-  border-radius: 6px;
+  border: 1px solid var(--rb-text-secondary);
+  border-radius: 2px;
   background: var(--md-default-bg-color);
   color: var(--md-default-fg-color);
   padding: 0.55rem 0.75rem;
@@ -650,7 +218,6 @@
 }
 
 .md-typeset__scrollwrap[role="region"]:focus-visible {
-  border-radius: 8px;
   outline: 3px solid var(--rb-accent);
   outline-offset: 2px;
 }
@@ -685,14 +252,13 @@
   }
 }
 
-/* A file card can be cited by URL: its link shows on hover, and the card a
+/* A file block can be cited by URL: its link shows on hover, and the block a
    link lands on is marked. */
 .rb-permalink {
   margin-left: 0.4rem;
   color: var(--md-default-fg-color--light, var(--rb-border));
   text-decoration: none;
   opacity: 0;
-  transition: opacity 0.15s;
 }
 .rb-file-entry:hover .rb-permalink,
 .rb-sys-file:hover .rb-permalink,
@@ -701,8 +267,6 @@
 }
 .rb-file-entry:target,
 .rb-sys-file:target {
-  outline: 2px solid var(--md-accent-fg-color, var(--rb-border));
-  outline-offset: 2px;
+  background: var(--rb-surface);
   scroll-margin-top: 4rem;
 }
-
