@@ -1413,6 +1413,47 @@ def dataset_structured_data(exports: list[dict], db: dict) -> dict:
     return data
 
 
+def emulator_file_anchors(files: list[dict]) -> list[str]:
+    """The id of each file card on an emulator page, in profile order.
+
+    A path declared once keeps its plain anchor. One declared for several
+    versions (raze's nine DUKE3D.GRP) takes what tells the version apart:
+    its hash, else its size, else, when even the size is shared, its
+    description. The page and its JSON-LD both read this, so a structured
+    part links to its card.
+    """
+    bases = [
+        "file-" + (
+            re.sub(
+                r"[^a-z0-9]+", "-",
+                str(f.get("path") or f.get("standalone_path") or f.get("name", "")).lower(),
+            ).strip("-") or "entry"
+        )
+        for f in files
+    ]
+    repeated = {b for b in bases if bases.count(b) > 1}
+
+    def _version_key(f: dict) -> str:
+        digest = _first_hash_value(f)
+        if digest:
+            return digest[:8]
+        return f"{f['size']}b" if f.get("size") else ""
+
+    keys = [(b, _version_key(f)) if b in repeated else (b, "") for f, b in zip(files, bases)]
+    used: dict[str, int] = {}
+    anchors = []
+    for f, (base, key) in zip(files, keys):
+        anchor = f"{base}-{key}" if key else base
+        if base in repeated and keys.count((base, key)) > 1 and f.get("description"):
+            described = re.sub(r"[^a-z0-9]+", "-", str(f["description"]).lower()).strip("-")
+            anchor = f"{anchor}-{described[:40].strip('-')}"
+        used[anchor] = used.get(anchor, 0) + 1
+        if used[anchor] > 1:
+            anchor = f"{anchor}-{used[anchor]}"
+        anchors.append(anchor)
+    return anchors
+
+
 def emulator_structured_data(profile: dict) -> dict:
     """What an emulator page states, for a reader of its JSON-LD.
 
@@ -1438,18 +1479,43 @@ def emulator_structured_data(profile: dict) -> dict:
     if profile.get("profiled_date"):
         data["dateModified"] = str(profile["profiled_date"])
     parts = []
-    for f in profile.get("files") or []:
-        if not isinstance(f, dict) or not f.get("name"):
+    files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
+    for f, anchor in zip(files, emulator_file_anchors(files)):
+        if not f.get("name"):
             continue
-        identifiers = []
-        for field in ("sha1", "sha256", "md5", "crc32"):
-            values = f.get(field)
-            for value in values if isinstance(values, list) else [values]:
-                if value:
-                    identifiers.append(f"{field}:{str(value).lower()}")
-        part = {"@type": "CreativeWork", "name": str(f.get("path") or f["name"])}
+        # One identifier per accepted value: "sha256:a,b,c,d" matched no
+        # exact search (mesence's BS-X.bin).
+        identifiers = [
+            f"{field}:{value}"
+            for field in ("sha1", "sha256", "md5", "crc32")
+            for value in _hash_values(f.get(field))
+        ]
+        part = {
+            "@type": "CreativeWork",
+            "name": str(f.get("path") or f["name"]),
+            # The card's own anchor, as system and platform parts carry.
+            "url": f"#{anchor}",
+        }
         if identifiers:
             part["identifier"] = identifiers
+        # An archive is identified by its members: MAME and FBNeo hash them,
+        # never the ZIP, and 1 338 archive parts had no identifier at all.
+        members = [
+            {
+                "@type": "CreativeWork",
+                "name": str(member.get("name", "")),
+                "identifier": [
+                    f"{field}:{value}"
+                    for field in ("sha1", "crc32")
+                    for value in _hash_values(member.get(field))
+                ],
+            }
+            for member in f.get("contents") or []
+            if isinstance(member, dict) and member.get("name")
+            and (member.get("sha1") or member.get("crc32"))
+        ]
+        if members:
+            part["hasPart"] = members
         parts.append(part)
     if parts:
         data["hasPart"] = parts
@@ -3016,38 +3082,7 @@ def generate_emulator_page(
         lines.extend(_emulator_file_summary(files, _file_available))
 
         # File table
-        bases = [
-            "file-" + (
-                re.sub(
-                    r"[^a-z0-9]+", "-",
-                    str(f.get("path") or f.get("standalone_path") or f.get("name", "")).lower(),
-                ).strip("-") or "entry"
-            )
-            for f in files
-        ]
-        repeated = {b for b in bases if bases.count(b) > 1}
-
-        # A path declared once keeps its plain anchor. One declared for
-        # several versions (raze's nine DUKE3D.GRP) takes what tells the
-        # version apart: its hash, else its size, else, when even the size
-        # is shared, its description. By rank, a link to -3 named another
-        # edition as soon as a version was declared before it.
-        def _version_key(f: dict) -> str:
-            digest = _first_hash_value(f)
-            if digest:
-                return digest[:8]
-            return f"{f['size']}b" if f.get("size") else ""
-
-        keys = [(b, _version_key(f)) if b in repeated else (b, "") for f, b in zip(files, bases)]
-        used: dict[str, int] = {}
-        for f, (base, key) in zip(files, keys):
-            anchor = f"{base}-{key}" if key else base
-            if base in repeated and keys.count((base, key)) > 1 and f.get("description"):
-                described = re.sub(r"[^a-z0-9]+", "-", str(f["description"]).lower()).strip("-")
-                anchor = f"{anchor}-{described[:40].strip('-')}"
-            used[anchor] = used.get(anchor, 0) + 1
-            if used[anchor] > 1:
-                anchor = f"{anchor}-{used[anchor]}"
+        for f, anchor in zip(files, emulator_file_anchors(files)):
             lines.extend(
                 _render_emulator_file(
                     f, profile, consumers, files, _file_available, anchor, name

@@ -532,5 +532,29 @@ class AVersionPerBuildReadsAsVersions(unittest.TestCase):
         self.assertNotIn("{'standalone'", page)
 
 
+class EmulatorPartsCarryTheirIdentity(unittest.TestCase):
+    """The emulator JSON-LD published 'sha256:a,b,c,d' as one identifier,
+    gave archives none though their members carry crc32 and sha1, and gave
+    no part the url of its card."""
+
+    def test_identifiers_members_and_url(self):
+        from generate_site import emulator_file_anchors, emulator_structured_data  # noqa: PLC0415
+
+        files = [
+            {"name": "BS-X.bin", "sha256": "aa,bb"},
+            {"name": "neogeo.zip", "contents": [
+                {"name": "sp-s2.sp1", "crc32": "9036D879", "sha1": "ff" * 20}]},
+        ]
+        data = emulator_structured_data({"files": files})
+        bsx, neogeo = data["hasPart"]
+        self.assertEqual(bsx["identifier"], ["sha256:aa", "sha256:bb"])
+        self.assertEqual(
+            neogeo["hasPart"][0]["identifier"], ["sha1:" + "ff" * 20, "crc32:9036d879"]
+        )
+        self.assertEqual(
+            [bsx["url"], neogeo["url"]], [f"#{a}" for a in emulator_file_anchors(files)]
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
