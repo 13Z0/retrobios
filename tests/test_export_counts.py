@@ -870,5 +870,20 @@ class BatoceraEntriesParseAsWritten(unittest.TestCase):
         self.assertNotIn("exec(", source)
 
 
+class ARemovedSizeIsReported(unittest.TestCase):
+    """System.dat's neocdz.zip went out without size 953078 when the truth
+    took the entry over with no size: no counter named the removal."""
+
+    def test_the_removal_is_counted(self):
+        from export_native import landed_changes
+        from exporter.systemdat_exporter import Exporter as SystemDat
+
+        fe = NativeFile("neocdz.zip", "neocdz.zip", "SNK - NeoGeo CD",
+                        platform={"md5": A, "size": 953078}, truth={"md5": B})
+        changes = landed_changes(SystemDat(), {"SNK - NeoGeo CD": NativeSystem(
+            "SNK - NeoGeo CD", files=[fe])})
+        self.assertEqual(changes.unsized, ["SNK - NeoGeo CD/neocdz.zip"])
+
+
 if __name__ == "__main__":
     unittest.main()
