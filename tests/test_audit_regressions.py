@@ -2458,13 +2458,15 @@ class ACheckThatCannotAnswerDoesNotPass(unittest.TestCase):
                 "a named platform with no pack reported success:\n"
                 + named.stdout + named.stderr,
             )
-            # --all is a sweep: a platform nobody built is out of scope.
+            # --all is a sweep: a platform nobody built is out of scope and
+            # skipped, but a sweep that found no pack at all checked nothing.
             swept = subprocess.run(
                 [sys.executable, "scripts/generate_pack.py", "--all",
                  "--verify-packs", "--output-dir", directory],
                 capture_output=True, text=True, cwd=str(ROOT), timeout=300,
             )
-            self.assertEqual(swept.returncode, 0, swept.stdout + swept.stderr)
+            self.assertIn("SKIP (no pack in", swept.stdout)
+            self.assertNotEqual(swept.returncode, 0, swept.stdout + swept.stderr)
 
     def test_an_unsatisfiable_declared_path_is_reported(self):
         from scripts.restore_large_files import restore
