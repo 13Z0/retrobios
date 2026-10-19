@@ -1,0 +1,509 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "identity",
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "Gemini 2000",
+      "flags": 0,
+      "id": "gemini",
+      "manufacturer": "Taito",
+      "year": "1982"
+    },
+    {
+      "clone_of": "gemini",
+      "description": "Gemini 2000 (alternate set)",
+      "flags": 0,
+      "id": "gemini1",
+      "manufacturer": "Taito",
+      "year": "1982"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw2a",
+      "kind": "switch",
+      "label": "Sw2a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw12",
+      "kind": "switch",
+      "label": "Sw12",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw13",
+      "kind": "switch",
+      "label": "Sw13",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw14",
+      "kind": "switch",
+      "label": "Sw14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw22",
+      "kind": "switch",
+      "label": "Sw22",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw23",
+      "kind": "switch",
+      "label": "Sw23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw33",
+      "kind": "switch",
+      "label": "Sw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "34"
+        }
+      ],
+      "binding": {
+        "device": 34,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw34",
+      "kind": "switch",
+      "label": "Sw34",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "42"
+        }
+      ],
+      "binding": {
+        "device": 42,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw42",
+      "kind": "switch",
+      "label": "Sw42",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "43"
+        }
+      ],
+      "binding": {
+        "device": 43,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw43",
+      "kind": "switch",
+      "label": "Sw43",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "45"
+        }
+      ],
+      "binding": {
+        "device": 45,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "52"
+        }
+      ],
+      "binding": {
+        "device": 52,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw52",
+      "kind": "switch",
+      "label": "Sw52",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "55"
+        }
+      ],
+      "binding": {
+        "device": 55,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw55",
+      "kind": "switch",
+      "label": "Sw55",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "61"
+        }
+      ],
+      "binding": {
+        "device": 61,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw61",
+      "kind": "switch",
+      "label": "Sw61",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "62"
+        }
+      ],
+      "binding": {
+        "device": 62,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw62",
+      "kind": "switch",
+      "label": "Sw62",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "72"
+        }
+      ],
+      "binding": {
+        "device": 72,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "75"
+        }
+      ],
+      "binding": {
+        "device": 75,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw75",
+      "kind": "switch",
+      "label": "Sw75",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/taito/gemini-2000-1982.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "taito.gemini-2000.1982",
+    "manufacturer": "Taito",
+    "name": "Gemini 2000",
+    "year": 1982
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.auto-plunger",
+      "kind": "coil",
+      "label": "Auto Plunger",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.fda3fcdd71c9e048"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Gemini 2000 (Taito do Brasil - 1982) v600.vbs and repository contributors",
+      "id": "vpx-script.fda3fcdd71c9e048",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Gemini 2000 (Taito do Brasil - 1982) v600.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "fda3fcdd71c9e048c61815376f33b9f9f699e32450e392de66de16f487e32f72",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

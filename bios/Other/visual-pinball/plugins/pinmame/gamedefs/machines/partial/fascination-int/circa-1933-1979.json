@@ -1,0 +1,355 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "allied",
+      "description": "Circa 1933",
+      "flags": 0,
+      "id": "circa33",
+      "manufacturer": "Fascination Int.",
+      "year": "1979"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sling4",
+      "kind": "switch",
+      "label": "Sling4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-slingshot",
+      "kind": "switch",
+      "label": "Right Slingshot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-slingshot",
+      "kind": "switch",
+      "label": "Left Slingshot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger5",
+      "kind": "switch",
+      "label": "Trigger5",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger8",
+      "kind": "switch",
+      "label": "Trigger8",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger9",
+      "kind": "switch",
+      "label": "Trigger9",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger4",
+      "kind": "switch",
+      "label": "Trigger4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger1",
+      "kind": "switch",
+      "label": "Trigger1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger3",
+      "kind": "switch",
+      "label": "Trigger3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger2",
+      "kind": "switch",
+      "label": "Trigger2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.f275711dd137822a"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/fascination-int/circa-1933-1979.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "fascination-int.circa-1933.1979",
+    "ipdb_id": 514,
+    "manufacturer": "Fascination Int.",
+    "name": "Circa 1933",
+    "opdb_id": "G4XD3-MJdVN",
+    "year": 1979
+  },
+  "mechanisms": [],
+  "outputs": [],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Circa 1933 (Allied Leisure 1979).vbs and repository contributors",
+      "id": "vpx-script.f275711dd137822a",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Circa 1933 (Allied Leisure 1979).vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "f275711dd137822a85c22079bbef3daa565fd1a8f24664ba70384209802f02c8",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

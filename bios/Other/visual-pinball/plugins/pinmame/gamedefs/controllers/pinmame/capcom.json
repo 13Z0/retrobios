@@ -1,0 +1,94 @@
+{
+  "format": "pinmame-controller-profile",
+  "version": 1,
+  "id": "pinmame.capcom",
+  "authority": "pinmame",
+  "hardware_family": "Capcom CC",
+  "inversion_applied_by_emulator": true,
+  "groups": [
+    {
+      "id": "pinmame.input.switch",
+      "direction": "input",
+      "kind": "switch",
+      "label": "Cabinet, playfield, and synthetic flipper switch addresses",
+      "address_rules": [
+        {
+          "minimum": 1,
+          "maximum": 16
+        },
+        {
+          "minimum": 17,
+          "maximum": 80
+        },
+        {
+          "minimum": 81,
+          "maximum": 88
+        },
+        {
+          "minimum": 89,
+          "maximum": 96
+        }
+      ],
+      "transports": {
+        "libpinmame": {
+          "channel": "switch"
+        }
+      },
+      "notes": "Every `cc` driver overrides the platform default with `MDRV_SWITCH_CONV(cc_sw2m, cc_m2sw)` in `src/wpc/capcom.c`'s `MACHINE_DRIVER_START(cc)`. This profile therefore follows `cc_sw2m`/`cc_m2sw` exactly, rather than the sequential `core_swSeq2m` mapping used by generations without an override.\n\n`cc_m2sw(col, row)` maps the internal matrix as follows:\n\n| Internal column | Public address | Purpose |\n| --- | --- | --- |\n| 0-8 | `9 + row + col * 8` | Public 9-80 |\n| 9 | `1 + row` | Public 1-8 |\n| 10 | `89 + row` | Public 89-96 |\n| Any other column (11 in practice) | `81 + row` | Public 81-88 |\n\n- **1-8 -- cabinet inputs.** Internal column 9 is the first `CC_COMPORTS` cabinet byte (`src/wpc/capcom.h`): Coin 1-4 at 1-4, Start Game at 7, and the toggle-style Coin Door input at 8. Addresses 5 and 6 are excluded from `CORE_SETKEYSW` by `SWITCH_UPDATE(cc)`'s `0xcf` mask because `FLIP_SWNO(5,6)` (`src/wpc/capgames.c` `#define FLIP`) reserves them for the two physical flipper buttons, which a host drives through 82 and 84 (see 81-88).\n- **9-16 -- second cabinet byte.** Internal column 0 supplies Slam Tilt at 9, Tilt at 10, Buy In at 11, unused positions at 12-15, and a fifth unused position at 16. `CC_COMPORTS` places this second byte in internal switch column 0 (`src/wpc/capcom.h`), decoded separately from the column-9 byte above. Together, 1-16 are the 16 cabinet switches described by the driver header. `SWITCH_UPDATE(cc)` writes this byte to internal column 0 only when `HAS_SWITCH_BOARD` is true (`hw.lampCol > 1`). Breakshot's single-lamp-matrix mode instead shifts its low nibble (bits 0-3) into internal column 2 bits 4-7, so Slam Tilt, Tilt, Buy In, and the unused fourth bit surface at public addresses 29-32.\n- **17-80 -- playfield switches.** When `HAS_SWITCH_BOARD` is true, internal columns 1-8 are the 64 external-board switches. The `io_r` handler at `0x200008-0x20000b` reads two decoded bytes from `coreGlobals.swMatrix[swcol+4]` and `[swcol]`, inverts the hardware state as documented by the driver's 'Switches are inverted' comment, and exposes the normalized result through this range. Breakshot has no external switch board; its single-lamp-matrix hardware instead reads the same public range through the lamp-column-strobed switch matrix.\n- **81-88 -- flipper column: two host button inputs plus synthetic state.** Internal column 11 (`CORE_FLIPPERSWCOL`, `src/wpc/core.h`) is PinMAME's flipper column, maintained by `core_updateSw` (`src/wpc/core.c`); no `cc` ROM reads it. Every `cc` driver declares `FLIP_SWNO(5,6)` in `src/wpc/capgames.c`'s `#define FLIP`, so with keyboard handling off (`g_fHandleKeyboard = 0`, the LibPinMAME default in `src/libpinmame/libpinmame.cpp`) `core_updateSw` reads the button bits `CORE_SWLRFLIPBUTBIT` and `CORE_SWLLFLIPBUTBIT` from this column and, in its block commented 'set switches in matrix for non-fliptronic games', writes them into matrix switches 6 and 5 every frame. **82 is therefore the host input for the physical right flipper button and 84 the host input for the left one.** Switches 5 and 6 are what the ROM reads; a host write to either lasts at most one frame. None of the other six bits has a Capcom circuit behind it. The shared `FLIP_SOL(FLIP_LL | FLIP_LR | FLIP_UR | FLIP_UL)` declaration implies `FLIP_EOS` for all four positions, so the end-of-stroke model synthesizes 81, 83, 85 and 87 and overwrites them every frame. No `cc` driver declares `FLIP_SW(FLIP_U)`, so the upper-button bits 86 and 88 lie outside `locals.flipMask`: `core_updateSw` leaves a host write there unchanged, and neither it nor any `cc` ROM acts on either bit.\n- **89-96 -- unused core allocation.** Internal column 10 exists because `CORE_STDSWCOLS` (`src/wpc/core.h`) reserves 12 columns for every generation. No `cc` driver reads or writes it, so this range is permanently zero rather than a physical cabinet or matrix column.",
+      "notes_format": "markdown"
+    },
+    {
+      "id": "pinmame.output.solenoid",
+      "direction": "controlled_device",
+      "kind": "solenoid",
+      "label": "Solenoids, flashers, motors, and Fast Flips state",
+      "address_rules": [
+        {
+          "minimum": 1,
+          "maximum": 32
+        },
+        {
+          "minimum": 33,
+          "maximum": 50
+        },
+        {
+          "minimum": 51,
+          "maximum": 51
+        }
+      ],
+      "transports": {
+        "libpinmame": {
+          "channel": "solenoid"
+        }
+      },
+      "notes": "#### Physical outputs\n\n**Addresses 1-32** are the 32 real driver-board outputs (`src/wpc/capcom.c`'s header documents 'Solenoids = 32 Solenoids/Flashers'). The `io_w` handlers at `0x20000c` and `0x20000d` write two 16-bit words covering 1-8/17-24 and 9-16/25-32 through `core_write_pwm_output_8b`.\n\n`MACHINE_INIT(cc)` in `src/wpc/capcom.c` assigns the bulb-driver type per root game:\n\n| Root prefix | Game | Flasher outputs |\n| --- | --- | --- |\n| `abv` | Airborne | `20-27` |\n| `bbb` | Big Bang Bar | `21-26` |\n| `bsv` | Breakshot | `28-32` |\n| `ffv` | Flipper Football | `28-32` |\n| `kpb` | Kingpin | `18-19`, `21-31` |\n| `pmv` | Pinball Magic | `21-31` |\n\nBreakshot's production branch keeps the center-pocket range at `28-32`; the source comments out an alternative plunger range at `27-31` because it appeared in documentation but was not kept in production. Kingpin's two ranges are explicitly provisional in the source: they came from a VPX table because no manual was found. Kingpin's own ROM Solenoid Test prints every output from 18 to 31 as a 20 V flasher; the gap at 20 is the Big Al flasher, which Krellan places on the backglass and the retained table does not bind (see `machines/partial/capcom/kingpin-1996.json`).\n\nThe selected ranges use `CORE_MODOUT_BULB_89_20V_DC_WPC`; addresses outside the range selected by the game's own `strncasecmp(gn,...)` branch default to ordinary two-state coil or motor drivers. Never assume one fixed flasher range for the whole family.\n\n#### Legacy flipper mirrors\n\nAddresses 33-44 are the platform's Fliptronic-shaped upper-flipper range (`CORE_FIRSTUFLIPSOL = 33`), and 45-48 are the synthetic lower-flipper range (`CORE_FIRSTLFLIPSOL = 45`, both in `src/wpc/core.h`). The `io_w` handler for physical solenoids 9-16 mirrors four circuits with `core_write_pwm_output(CORE_MODOUT_SOL0+sLRFlipPow-1,...)` (and the corresponding `sLLFlipPow`, `sURFlipPow`, and `sULFlipPow` indices) for compatibility with old DOF configurations:\n\n| Physical address | Legacy mirror | PinMAME mirror name |\n| --- | --- | --- |\n| 9 | 45 | `sLRFlipPow` |\n| 10 | 47 | `sLLFlipPow` |\n| 11 | 33 | `sURFlipPow` |\n| 12 | 35 | `sULFlipPow` |\n\nTreat **9-12 as the physical, manual-documented circuits** and 33/35/45/47 as backward-compatibility duplicates with no device of their own. The driver explains the compatibility hack verbatim:\n\n> This should be removed as this push the legacy PinMAME specific mapping forward while it does not correspond to manuals or any other reference\n>\n> System using this driver must use the native output 8..11. But as it breaks existing DOF config, we still maintain this hack for the sake of backward compatibility.\n\nHere `8..11` are zero-based PWM output indices, so the corresponding public physical addresses are 9-12. The WPC-derived left/right names are not proof of a particular game's wiring; check that game's manual and known-working script.\n\nThe rest of the shaped ranges are dead slots: 34, 36, 37-44, 46, and 48 receive no PWM write from any `cc` driver and remain zero. In particular, Capcom does not implement WPC's LPDC duplication at 37-44.\n\n#### Reserved and custom state\n\n- **49-50** are unused platform gaps. They mirror the platform-wide `CORE_FIRSTSIMSOL = 49`/reserved-50 convention, but the `cc` driver does not reference either address.\n- **51** is optional synthetic Fast Flips state, not a driver-board circuit. `CORE_FIRSTCUSTSOL = 51` and `CORE_MODOUT_SOL_CUSTOM` define the slot (`src/wpc/core.h`). It exists only for games declared with `INITGAMEFF` (`src/wpc/capgames.c`), where `hw.custSol = 1` and the game's `name##_getsol` callback reads a game-on/game-off flag from ROM or RAM. Since `coreGlobals.nSolenoids = CORE_FIRSTCUSTSOL - 1 + hw.custSol`, a game declared with plain `INITGAME` has `hw.custSol = 0` and publishes no address 51.",
+      "notes_format": "markdown"
+    },
+    {
+      "id": "pinmame.output.lamp",
+      "direction": "controlled_device",
+      "kind": "lamp",
+      "label": "CPU-controlled lamp outputs and diagnostic LEDs (no separate general-illumination channel)",
+      "address_rules": [
+        {
+          "minimum": 1,
+          "maximum": 136
+        }
+      ],
+      "transports": {
+        "libpinmame": {
+          "channel": "lamp"
+        }
+      },
+      "notes": "The `cc`/`cc1`/`cc2` driver family uses `coreGlobals.nLamps = 64 + (hw.lampCol * 8)` in `src/wpc/capcom.c`'s `MACHINE_INIT(cc)`. A machine definition must narrow the platform-wide 1-136 ceiling to the game's own `hw.lampCol` declaration.\n\n- **Matrix A** occupies public addresses 1-64 when fitted.\n- **Matrix B** starts at `((hw.lampCol - 1) * 8) + 1`: address 65 when `hw.lampCol = 9`, address 57 for Flipper Football 1.03 with `hw.lampCol = 8`, and address 1 for Breakshot with `hw.lampCol = 1`.\n- **The final eight published addresses** are diagnostic allocation. The first two report the CPU- and sound-board LEDs; the remaining six are unused.\n\nMost games have an external switch board and two lamp matrices. **Breakshot is a supported hardware mode** in the same `cc` family, but uses `hw.lampCol = 1`: it has no external switch board, has one physical lamp matrix, and reuses the other lamp-matrix circuitry to strobe switches. This is the distinction expressed by `HAS_SWITCH_BOARD = core_gameData->hw.lampCol > 1`.\n\nThe largest family declaration is `hw.lampCol = 9`, making **136 the exact platform ceiling**, not 200. There is no separate general-illumination channel; every fitted bulb is CPU-controlled and belongs to the lamp group.",
+      "notes_format": "markdown"
+    }
+  ],
+  "sources": [
+    {
+      "uri": "https://github.com/vpinball/pinmame",
+      "revision": "4ec52ff0ac133ac251681518aed2249e19fe26eb",
+      "locator": "src/wpc/capcom.c (file header hardware/lamp/switch/solenoid comment; cc_vblank/SWITCH_UPDATE(cc)/cc_zeroCross/io_r/io_w/MACHINE_INIT(cc)/cc_sw2m/cc_m2sw/MACHINE_DRIVER_START(cc/cc1/cc2); MACHINE_DRIVER_START(romstar) inspected only to establish that the unrelated Goofy Hoops driver is outside this profile); src/wpc/capcom.h (CC_COMPORTS, CC_INPUT_PORTS_START, CC_ROMSTART_2/4/8/2X macros); src/wpc/capgames.c (capInvSw0-13 per-game inverted-switch masks, #define FLIP FLIP_SWNO(5,6)+FLIP_SOL(FLIP_LL|FLIP_LR|FLIP_UR|FLIP_UL), INITGAME/INITGAMEFF macros and their core_tGameData positional field order, cc_dispDMD128x32/cc_dispDMD256x64, every cc-family CORE_GAMEDEFNV/CORE_CLONEDEFNV entry); src/wpc/core.h (core_tGameData hw struct field order: flippers/swCol/lampCol/custSol/soundBoard/display/gameSpecific1/gameSpecific2/getSol; CORE_FIRSTUFLIPSOL=33, CORE_FIRSTLFLIPSOL=45, CORE_FIRSTCUSTSOL=51, CORE_CUSTSOLNO, CORE_MAXSWCOL=16, CORE_STDSWCOLS=12, CORE_FLIPPERSWCOL=11, CORE_SWLRFLIPEOSBIT/CORE_SWLRFLIPBUTBIT/CORE_SWLLFLIPEOSBIT/CORE_SWLLFLIPBUTBIT/CORE_SWURFLIPEOSBIT/CORE_SWURFLIPBUTBIT/CORE_SWULFLIPEOSBIT/CORE_SWULFLIPBUTBIT bit values, FLIP_LR/FLIP_LL/FLIP_UR/FLIP_UL/FLIP_L/FLIP_U/FLIP_SW/FLIP_SWNO/FLIP_SOL/FLIP_EOS/FLIP_BUT/FLIP_SWL/FLIP_SWR macros, sLRFlip/sLRFlipPow/sLLFlip/sLLFlipPow/sURFlip/sURFlipPow/sULFlip/sULFlipPow); src/wpc/core.c (core_updateSw flipMask construction, its keyboard-off read of the CORE_FLIPPERSWCOL button bits and 'set switches in matrix for non-fliptronic games' FLIP_SWL/FLIP_SWR copy, and synthetic EOS handling at locals.flipMask/CORE_FLIPPERSWCOL, core_getSw/core_setSw generic invSw application via coreGlobals.invSw[swNo/8], core_gameData->wpc.invSw copied into coreGlobals.invSw at game init); src/libpinmame/libpinmame.cpp (int g_fHandleKeyboard = 0, the LibPinMAME keyboard-handling default); src/libpinmame/libpinmame.h (PINMAME_HARDWARE_GEN enum: no Capcom/cc entry exists anywhere in this enum, confirmed by its absence and by core_tGameData's own gen field being the literal 0 in every cc-family INITGAME/INITGAMEFF expansion, so PinmameGetHardwareGen() reports 0 for every Capcom game; this profile's hardware_family is identified by MACHINE_DRIVER_START(cc)/driver short-name prefix, not by a hardware-generation bitmask, unlike every WPC/System-11/Whitestar/SAM profile in this repository)"
+    }
+  ]
+}

@@ -1,0 +1,602 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "stingray",
+      "description": "Stingray (MOD rev. 14)",
+      "flags": 0,
+      "id": "stingrab",
+      "manufacturer": "Stern / Quench",
+      "year": "2022"
+    },
+    {
+      "description": "Stingray",
+      "flags": 0,
+      "id": "stingray",
+      "manufacturer": "Stern",
+      "year": "1977"
+    },
+    {
+      "clone_of": "stingray",
+      "description": "Stingray (Free Play)",
+      "flags": 0,
+      "id": "stingrfp",
+      "manufacturer": "Stern",
+      "year": "1977"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw5",
+      "kind": "switch",
+      "label": "Sw5",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw12a",
+      "kind": "switch",
+      "label": "Sw12a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w14",
+      "kind": "switch",
+      "label": "W14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18",
+      "kind": "switch",
+      "label": "Sw18",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w21",
+      "kind": "switch",
+      "label": "W21",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw22a",
+      "kind": "switch",
+      "label": "Sw22a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w23",
+      "kind": "switch",
+      "label": "W23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w24",
+      "kind": "switch",
+      "label": "W24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w30a",
+      "kind": "switch",
+      "label": "W30a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w31",
+      "kind": "switch",
+      "label": "W31",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w32",
+      "kind": "switch",
+      "label": "W32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw38",
+      "kind": "switch",
+      "label": "Sw38",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw39",
+      "kind": "switch",
+      "label": "Sw39",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw40",
+      "kind": "switch",
+      "label": "Sw40",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/stern/stingray-1977.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "stern.stingray.1977",
+    "ipdb_id": 2377,
+    "manufacturer": "Stern",
+    "name": "Stingray",
+    "opdb_id": "G57lj-MJwxY",
+    "year": 1977
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-chime1",
+      "kind": "coil",
+      "label": "Sol Chime1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-chime10",
+      "kind": "coil",
+      "label": "Sol Chime10",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-chime100",
+      "kind": "coil",
+      "label": "Sol Chime100",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-chime1000",
+      "kind": "coil",
+      "label": "Sol Chime1000",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.solknocker",
+      "kind": "coil",
+      "label": "Solknocker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.bs-trough-sol-out",
+      "kind": "coil",
+      "label": "Bs Trough Sol Out",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.solsaucer",
+      "kind": "coil",
+      "label": "Solsaucer",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.reset-drops-l",
+      "kind": "coil",
+      "label": "Reset Drops L",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c317abf476428d15"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Stingray (Stern 1977) 2.0/Stingray (Stern 1977).vbs and repository contributors",
+      "id": "vpx-script.c317abf476428d15",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpx-standalone-scripts: Stingray (Stern 1977) 2.0/Stingray (Stern 1977).vbs",
+      "revision": "15d112648a1b94b9f59eb8b3c335d57283653c50",
+      "sha256": "c317abf476428d15ba8e0502c94f0232d2769f0f2ac16fa2b3d4ade055917960",
+      "uri": "https://github.com/jsm174/vpx-standalone-scripts"
+    }
+  ]
+}

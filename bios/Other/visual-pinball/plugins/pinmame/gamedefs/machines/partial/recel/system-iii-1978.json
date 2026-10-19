@@ -1,0 +1,74 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "not_applicable",
+      "physical_wiring": "not_applicable",
+      "recreation_knowledge": "candidate",
+      "semantic_naming": "unknown",
+      "variant_coverage": "validated"
+    },
+    "missing": [
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "recreation_notes",
+      "provenance"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "System III",
+      "flags": 16384,
+      "id": "recel",
+      "manufacturer": "Recel",
+      "year": "1978"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [],
+  "knowledge": {
+    "path": "knowledge/recel/system-iii-1978.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "recel.system-iii.1978",
+    "kind": "system_software",
+    "manufacturer": "Recel",
+    "name": "System III",
+    "year": 1978
+  },
+  "mechanisms": [],
+  "outputs": [],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.b7a60eb0dd97",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames: recel (flags 0x4000 NOT_A_DRIVER)",
+      "revision": "b7a60eb0dd9722f5397fc296987d94528ab111ff",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.core.b7a60eb0dd97",
+      "kind": "pinmame_core",
+      "license": "BSD-3-Clause",
+      "locator": "src/wpc/recelgames.c:67-73 (INIT_RECEL(recel), RECEL_BIOS_ROMSTART(recel), GAMEX(...,\"System III\",NOT_A_DRIVER)); src/wpc/recel.h:103-126 (RECEL_BIOS_ROMSTART comment: the shared program common to every machine, no game PROM); src/wpc/driver.c:1016",
+      "revision": "b7a60eb0dd9722f5397fc296987d94528ab111ff",
+      "uri": "https://github.com/vpinball/pinmame"
+    }
+  ]
+}

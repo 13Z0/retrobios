@@ -1,0 +1,1301 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.01)",
+      "flags": 0,
+      "id": "gpr301",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.01 French)",
+      "flags": 0,
+      "id": "gpr301f",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.01 German)",
+      "flags": 0,
+      "id": "gpr301g",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.01 Italian)",
+      "flags": 0,
+      "id": "gpr301i",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.01 Spanish)",
+      "flags": 0,
+      "id": "gpr301l",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.40)",
+      "flags": 0,
+      "id": "gpr340",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.40 French)",
+      "flags": 0,
+      "id": "gpr340f",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.40 German)",
+      "flags": 0,
+      "id": "gpr340g",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.40 Italian)",
+      "flags": 0,
+      "id": "gpr340i",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.40 Spanish)",
+      "flags": 0,
+      "id": "gpr340l",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.50)",
+      "flags": 0,
+      "id": "gpr350",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.50 French)",
+      "flags": 0,
+      "id": "gpr350f",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.50 German)",
+      "flags": 0,
+      "id": "gpr350g",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.50 Italian)",
+      "flags": 0,
+      "id": "gpr350i",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.50 Spanish)",
+      "flags": 0,
+      "id": "gpr350l",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.52)",
+      "flags": 0,
+      "id": "gpr352",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.52 French)",
+      "flags": 0,
+      "id": "gpr352f",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.52 German)",
+      "flags": 0,
+      "id": "gpr352g",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.52 Italian)",
+      "flags": 0,
+      "id": "gpr352i",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (3.52 Spanish)",
+      "flags": 0,
+      "id": "gpr352l",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.00)",
+      "flags": 0,
+      "id": "gpr400",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.00 French)",
+      "flags": 0,
+      "id": "gpr400f",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.00 German)",
+      "flags": 0,
+      "id": "gpr400g",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.00 Italian)",
+      "flags": 0,
+      "id": "gpr400i",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.00 Spanish)",
+      "flags": 0,
+      "id": "gpr400l",
+      "manufacturer": "Stern",
+      "year": "2005"
+    },
+    {
+      "description": "Grand Prix (4.50)",
+      "flags": 0,
+      "id": "gprix",
+      "manufacturer": "Stern",
+      "year": "2006"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.50 French)",
+      "flags": 0,
+      "id": "gprixf",
+      "manufacturer": "Stern",
+      "year": "2006"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.50 German)",
+      "flags": 0,
+      "id": "gprixg",
+      "manufacturer": "Stern",
+      "year": "2006"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.50 Italian)",
+      "flags": 0,
+      "id": "gprixi",
+      "manufacturer": "Stern",
+      "year": "2006"
+    },
+    {
+      "clone_of": "gprix",
+      "description": "Grand Prix (4.50 Spanish)",
+      "flags": 0,
+      "id": "gprixl",
+      "manufacturer": "Stern",
+      "year": "2006"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sol-trough",
+      "kind": "switch",
+      "label": "Sol Trough",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw16",
+      "kind": "switch",
+      "label": "Sw16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw21",
+      "kind": "switch",
+      "label": "Sw21",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "25"
+        }
+      ],
+      "binding": {
+        "device": 25,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw25",
+      "kind": "switch",
+      "label": "Sw25",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "26"
+        }
+      ],
+      "binding": {
+        "device": 26,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw26",
+      "kind": "switch",
+      "label": "Sw26",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw33",
+      "kind": "switch",
+      "label": "Sw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "34"
+        }
+      ],
+      "binding": {
+        "device": 34,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw34",
+      "kind": "switch",
+      "label": "Sw34",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw35",
+      "kind": "switch",
+      "label": "Sw35",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw36a",
+      "kind": "switch",
+      "label": "Sw36a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw37",
+      "kind": "switch",
+      "label": "Sw37",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw38",
+      "kind": "switch",
+      "label": "Sw38",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sol-garage-down",
+      "kind": "switch",
+      "label": "Sol Garage Down",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw40",
+      "kind": "switch",
+      "label": "Sw40",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "42"
+        }
+      ],
+      "binding": {
+        "device": 42,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw42",
+      "kind": "switch",
+      "label": "Sw42",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "43"
+        }
+      ],
+      "binding": {
+        "device": 43,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw43",
+      "kind": "switch",
+      "label": "Sw43",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "44"
+        }
+      ],
+      "binding": {
+        "device": 44,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw44",
+      "kind": "switch",
+      "label": "Sw44",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "45"
+        }
+      ],
+      "binding": {
+        "device": 45,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw45",
+      "kind": "switch",
+      "label": "Sw45",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "47"
+        }
+      ],
+      "binding": {
+        "device": 47,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw47",
+      "kind": "switch",
+      "label": "Sw47",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "48"
+        }
+      ],
+      "binding": {
+        "device": 48,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw48",
+      "kind": "switch",
+      "label": "Sw48",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "49"
+        }
+      ],
+      "binding": {
+        "device": 49,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw49",
+      "kind": "switch",
+      "label": "Sw49",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "50"
+        }
+      ],
+      "binding": {
+        "device": 50,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw50",
+      "kind": "switch",
+      "label": "Sw50",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "51"
+        }
+      ],
+      "binding": {
+        "device": 51,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw51",
+      "kind": "switch",
+      "label": "Sw51",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "57"
+        }
+      ],
+      "binding": {
+        "device": 57,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw57",
+      "kind": "switch",
+      "label": "Sw57",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "58"
+        }
+      ],
+      "binding": {
+        "device": 58,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw58",
+      "kind": "switch",
+      "label": "Sw58",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "59"
+        }
+      ],
+      "binding": {
+        "device": 59,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "60"
+        }
+      ],
+      "binding": {
+        "device": 60,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw60",
+      "kind": "switch",
+      "label": "Sw60",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "61"
+        }
+      ],
+      "binding": {
+        "device": 61,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw61",
+      "kind": "switch",
+      "label": "Sw61",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "62"
+        }
+      ],
+      "binding": {
+        "device": 62,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/stern/grand-prix-2005.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "stern.grand-prix.2005",
+    "ipdb_id": 5120,
+    "manufacturer": "Stern",
+    "name": "Grand Prix",
+    "opdb_id": "G5YWX-MDxXX",
+    "year": 2005
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-trough",
+      "kind": "coil",
+      "label": "Sol Trough",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.truck-exit",
+      "kind": "coil",
+      "label": "Truck Exit",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-truck",
+      "kind": "coil",
+      "label": "Sol Truck",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-garage-down",
+      "kind": "coil",
+      "label": "Sol Garage Down",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-track-exit",
+      "kind": "coil",
+      "label": "Sol Track Exit",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-reset-droptargets",
+      "kind": "coil",
+      "label": "Sol Reset Droptargets",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-right-divert",
+      "kind": "coil",
+      "label": "Sol Right Divert",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-garage-up",
+      "kind": "coil",
+      "label": "Sol Garage Up",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.flasher19",
+      "kind": "coil",
+      "label": "Flasher19",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.tmag",
+      "kind": "coil",
+      "label": "TMag",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "25"
+        }
+      ],
+      "binding": {
+        "device": 25,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.lmag",
+      "kind": "coil",
+      "label": "LMag",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "26"
+        }
+      ],
+      "binding": {
+        "device": 26,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.bmag",
+      "kind": "coil",
+      "label": "BMag",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "27"
+        }
+      ],
+      "binding": {
+        "device": 27,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-pit-rleft",
+      "kind": "coil",
+      "label": "Sol Pit RLeft",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-pit-rright",
+      "kind": "coil",
+      "label": "Sol Pit RRight",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "29"
+        }
+      ],
+      "binding": {
+        "device": 29,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.flasher29",
+      "kind": "coil",
+      "label": "Flasher29",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.flasher30",
+      "kind": "coil",
+      "label": "Flasher30",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.flasher31",
+      "kind": "coil",
+      "label": "Flasher31",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.flasher32",
+      "kind": "coil",
+      "label": "Flasher32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.15c9b0097a99d350"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in JPs Grand Prix  (Stern 2005) v600.vbs and repository contributors",
+      "id": "vpx-script.15c9b0097a99d350",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: JPs Grand Prix  (Stern 2005) v600.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "15c9b0097a99d350226fde671fa08900d73d4c1e21c40c70be9732fb8c1a8c0d",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

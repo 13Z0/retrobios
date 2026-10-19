@@ -1,0 +1,505 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "nightrdr",
+      "description": "Night Rider (rev. 20)",
+      "flags": 0,
+      "id": "nightr20",
+      "manufacturer": "Bally",
+      "year": "1977"
+    },
+    {
+      "clone_of": "nightrdr",
+      "description": "Night Rider (Free Play)",
+      "flags": 0,
+      "id": "nightrdb",
+      "manufacturer": "Bally / Oliver",
+      "year": "2008"
+    },
+    {
+      "clone_of": "nightrdr",
+      "description": "Night Rider (Free Play+)",
+      "flags": 0,
+      "id": "nightrdc",
+      "manufacturer": "Bally",
+      "year": "2019"
+    },
+    {
+      "description": "Night Rider (rev. 21)",
+      "flags": 0,
+      "id": "nightrdr",
+      "manufacturer": "Bally",
+      "year": "1977"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw17",
+      "kind": "switch",
+      "label": "Sw17",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18a",
+      "kind": "switch",
+      "label": "Sw18a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw19a",
+      "kind": "switch",
+      "label": "Sw19a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner-right",
+      "kind": "switch",
+      "label": "Spinner Right",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner-left",
+      "kind": "switch",
+      "label": "Spinner Left",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw23",
+      "kind": "switch",
+      "label": "Sw23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw30",
+      "kind": "switch",
+      "label": "Sw30",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw31",
+      "kind": "switch",
+      "label": "Sw31",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/bally/night-rider-1976.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "bally.night-rider.1976",
+    "ipdb_id": 4497,
+    "manufacturer": "Bally",
+    "name": "Night Rider",
+    "opdb_id": "GryQj-MLvN7",
+    "year": 1976
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-release",
+      "kind": "coil",
+      "label": "Sol Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dt-l-sol-drop-up",
+      "kind": "coil",
+      "label": "Dt L Sol Drop Up",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dt-r-sol-drop-up",
+      "kind": "coil",
+      "label": "Dt R Sol Drop Up",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.enable",
+      "kind": "coil",
+      "label": "Enable",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.b9de8215dc5c8856"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Night Rider (Bally 1976) v1.0b.vbs and repository contributors",
+      "id": "vpx-script.b9de8215dc5c8856",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Night Rider (Bally 1976) v1.0b.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "b9de8215dc5c885698132bea619c58ec3c1459a75191bbc62928a2f58d5220aa",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

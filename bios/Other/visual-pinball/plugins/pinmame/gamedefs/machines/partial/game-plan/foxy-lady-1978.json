@@ -1,0 +1,482 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "gp_110",
+      "description": "Foxy Lady",
+      "flags": 0,
+      "id": "foxylady",
+      "manufacturer": "Game Plan",
+      "year": "1978"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw9",
+      "kind": "switch",
+      "label": "Sw9",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw14",
+      "kind": "switch",
+      "label": "Sw14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw16",
+      "kind": "switch",
+      "label": "Sw16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner2",
+      "kind": "switch",
+      "label": "Spinner2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18",
+      "kind": "switch",
+      "label": "Sw18",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw20",
+      "kind": "switch",
+      "label": "Sw20",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper001",
+      "kind": "switch",
+      "label": "Bumper001",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper002",
+      "kind": "switch",
+      "label": "Bumper002",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner1",
+      "kind": "switch",
+      "label": "Spinner1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "25"
+        }
+      ],
+      "binding": {
+        "device": 25,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw25",
+      "kind": "switch",
+      "label": "Sw25",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "27"
+        }
+      ],
+      "binding": {
+        "device": 27,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time-28",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "29"
+        }
+      ],
+      "binding": {
+        "device": 29,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time-29",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time-30",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time-31",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.luck-time-32",
+      "kind": "switch",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/game-plan/foxy-lady-1978.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "game-plan.foxy-lady.1978",
+    "ipdb_id": 946,
+    "manufacturer": "Game Plan",
+    "name": "Foxy Lady",
+    "opdb_id": "GRw0Z-Ml9Eb-ARDKp",
+    "year": 1978
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.luck-time",
+      "kind": "coil",
+      "label": "Luck Time",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.7a90a948b6e39e95"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Foxy Lady (Game Plan 1978).vbs and repository contributors",
+      "id": "vpx-script.7a90a948b6e39e95",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Foxy Lady (Game Plan 1978).vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "7a90a948b6e39e95ff86019eed4a2400de63b89ee0e6dfb0b750d2de053044e1",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

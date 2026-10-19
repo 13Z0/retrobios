@@ -1,0 +1,701 @@
+{
+  "conflicts": [],
+  "controller": {
+    "inversion_applied_by_emulator": true,
+    "platform": "pinmame.by35"
+  },
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "Embryon",
+      "flags": 0,
+      "id": "embryon",
+      "manufacturer": "Bally",
+      "year": "1981"
+    },
+    {
+      "clone_of": "embryon",
+      "description": "Embryon (Free Play)",
+      "flags": 0,
+      "id": "embryona",
+      "manufacturer": "Bally / Oliver",
+      "year": "2004"
+    },
+    {
+      "clone_of": "embryon",
+      "description": "Embryon (7-digit conversion rev. 1)",
+      "flags": 0,
+      "id": "embryonb",
+      "manufacturer": "Bally / Oliver",
+      "year": "2002"
+    },
+    {
+      "clone_of": "embryon",
+      "description": "Embryon (7-digit conversion rev. 8)",
+      "flags": 0,
+      "id": "embryonc",
+      "manufacturer": "Bally / Oliver",
+      "year": "2004"
+    },
+    {
+      "clone_of": "embryon",
+      "description": "Embryon (7-digit conversion rev. 9)",
+      "flags": 0,
+      "id": "embryond",
+      "manufacturer": "Bally / Oliver",
+      "year": "2004"
+    },
+    {
+      "clone_of": "embryon",
+      "description": "Embryon (7-digit conversion rev. 92)",
+      "flags": 0,
+      "id": "embryone",
+      "manufacturer": "Bally",
+      "year": "2011"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.rubber-band010",
+      "kind": "switch",
+      "label": "Rubber Band010",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.trigger2a",
+      "kind": "switch",
+      "label": "Trigger2a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw4",
+      "kind": "switch",
+      "label": "Sw4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.slot",
+      "kind": "switch",
+      "label": "Slot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "8"
+        }
+      ],
+      "binding": {
+        "device": 8,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.ball-release",
+      "kind": "switch",
+      "label": "Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw12",
+      "kind": "switch",
+      "label": "Sw12",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw13",
+      "kind": "switch",
+      "label": "Sw13",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw14",
+      "kind": "switch",
+      "label": "Sw14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw15",
+      "kind": "switch",
+      "label": "Sw15",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner1",
+      "kind": "switch",
+      "label": "Spinner1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw19",
+      "kind": "switch",
+      "label": "Sw19",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw23",
+      "kind": "switch",
+      "label": "Sw23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper4",
+      "kind": "switch",
+      "label": "Bumper4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/bally/embryon-1981.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "bally.embryon.1981",
+    "ipdb_id": 783,
+    "manufacturer": "Bally",
+    "name": "Embryon",
+    "opdb_id": "G4qk7-MNEjx",
+    "year": 1981
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-dtleft",
+      "kind": "coil",
+      "label": "Sol DTLeft",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-dttop",
+      "kind": "coil",
+      "label": "Sol DTTop",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-saucer",
+      "kind": "coil",
+      "label": "Sol Saucer",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-outhole-kicker",
+      "kind": "coil",
+      "label": "Sol Outhole Kicker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-knocker",
+      "kind": "coil",
+      "label": "Sol Knocker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.bggi",
+      "kind": "coil",
+      "label": "BGGI",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.pfgi",
+      "kind": "coil",
+      "label": "PFGI",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-rflipper2",
+      "kind": "coil",
+      "label": "Sol RFlipper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.98c037f318c92257"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.core.8371478a7640",
+      "kind": "pinmame_core",
+      "license": "BSD-3-Clause",
+      "locator": "src/wpc/by35games.c:1214 (machine module by35_mBY35_61BS)",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Embryon (Bally 1981) w VR Room v2.0.2.vbs and repository contributors",
+      "id": "vpx-script.98c037f318c92257",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Embryon (Bally 1981) w VR Room v2.0.2.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "98c037f318c9225768f3abe4cb82687340413f57a8aa7203cfe5cb1269222814",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

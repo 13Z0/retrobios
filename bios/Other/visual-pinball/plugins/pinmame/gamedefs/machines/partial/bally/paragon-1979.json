@@ -1,0 +1,601 @@
+{
+  "conflicts": [],
+  "controller": {
+    "inversion_applied_by_emulator": true,
+    "platform": "pinmame.by35"
+  },
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "Paragon",
+      "flags": 0,
+      "id": "paragon",
+      "manufacturer": "Bally",
+      "year": "1979"
+    },
+    {
+      "clone_of": "paragon",
+      "description": "Paragon (7-digit conversion rev. 20)",
+      "flags": 0,
+      "id": "paragonb",
+      "manufacturer": "Bally / Oliver",
+      "year": "2004"
+    },
+    {
+      "clone_of": "paragon",
+      "description": "Paragon (Free Play rev. 3)",
+      "flags": 0,
+      "id": "paragonc",
+      "manufacturer": "Bally / Oliver",
+      "year": "2008"
+    },
+    {
+      "clone_of": "paragon",
+      "description": "Paragon (/10 Scoring Free Play)",
+      "flags": 0,
+      "id": "paragond",
+      "manufacturer": "Bally / Oliver",
+      "year": "2008"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w22",
+      "kind": "switch",
+      "label": "W22",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w23",
+      "kind": "switch",
+      "label": "W23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "26"
+        }
+      ],
+      "binding": {
+        "device": 26,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w26",
+      "kind": "switch",
+      "label": "W26",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "27"
+        }
+      ],
+      "binding": {
+        "device": 27,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw27a",
+      "kind": "switch",
+      "label": "Sw27a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w28",
+      "kind": "switch",
+      "label": "W28",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "29"
+        }
+      ],
+      "binding": {
+        "device": 29,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw29",
+      "kind": "switch",
+      "label": "Sw29",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw30",
+      "kind": "switch",
+      "label": "Sw30",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw31",
+      "kind": "switch",
+      "label": "Sw31",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw33",
+      "kind": "switch",
+      "label": "Sw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "34"
+        }
+      ],
+      "binding": {
+        "device": 34,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.w34",
+      "kind": "switch",
+      "label": "W34",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper4",
+      "kind": "switch",
+      "label": "Bumper4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/bally/paragon-1979.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "bally.paragon.1979",
+    "ipdb_id": 1755,
+    "manufacturer": "Bally",
+    "name": "Paragon",
+    "opdb_id": "GrXy3-ML0Ey",
+    "year": 1979
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-left-target-reset",
+      "kind": "coil",
+      "label": "Sol Left Target Reset",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "8"
+        }
+      ],
+      "binding": {
+        "device": 8,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-left-out",
+      "kind": "coil",
+      "label": "Sol Left Out",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-center-out",
+      "kind": "coil",
+      "label": "Sol Center Out",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-right-out",
+      "kind": "coil",
+      "label": "Sol Right Out",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-right-target-reset",
+      "kind": "coil",
+      "label": "Sol Right Target Reset",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.c61b0824933bea6f"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.core.8371478a7640",
+      "kind": "pinmame_core",
+      "license": "BSD-3-Clause",
+      "locator": "src/wpc/by35games.c:537 (machine module by35_mBY35_50S)",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in special_audiopan_and_audiofade_patched/bord_probably/Paragon (Bally 1979).vbs and repository contributors",
+      "id": "vpx-script.c61b0824933bea6f",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: special_audiopan_and_audiofade_patched/bord_probably/Paragon (Bally 1979).vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "c61b0824933bea6f136dcd3b06da8304e175dbfe7b1e88725635dd5e7b053bcc",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

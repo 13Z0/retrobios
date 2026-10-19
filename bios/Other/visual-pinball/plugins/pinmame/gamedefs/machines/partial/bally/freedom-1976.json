@@ -1,0 +1,392 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "Freedom",
+      "flags": 0,
+      "id": "freedom",
+      "manufacturer": "Bally",
+      "year": "1976"
+    },
+    {
+      "clone_of": "freedom",
+      "description": "Freedom (Free Play+ rev. 07)",
+      "flags": 0,
+      "id": "freedoma",
+      "manufacturer": "Bally",
+      "year": "2019"
+    },
+    {
+      "clone_of": "freedom",
+      "description": "Freedom (Free Play+ rev. 20)",
+      "flags": 0,
+      "id": "freedomb",
+      "manufacturer": "Bally",
+      "year": "2019"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18a",
+      "kind": "switch",
+      "label": "Sw18a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw-wall3",
+      "kind": "switch",
+      "label": "Sw wall3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw-wall1",
+      "kind": "switch",
+      "label": "Sw wall1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.star-trigger",
+      "kind": "switch",
+      "label": "Star Trigger",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw22",
+      "kind": "switch",
+      "label": "Sw22",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.spinner-left",
+      "kind": "switch",
+      "label": "Spinner Left",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "29"
+        }
+      ],
+      "binding": {
+        "device": 29,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/bally/freedom-1976.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "bally.freedom.1976",
+    "ipdb_id": 4500,
+    "manufacturer": "Bally",
+    "name": "Freedom",
+    "opdb_id": "GR9qY-MD3Px",
+    "year": 1976
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-release",
+      "kind": "coil",
+      "label": "Sol Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dt-l-sol-drop-up",
+      "kind": "coil",
+      "label": "Dt L Sol Drop Up",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.game-on",
+      "kind": "coil",
+      "label": "Game On",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.2457bcf2b5cc0dbf"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Freedom (Bally 1976) V1.0.vbs and repository contributors",
+      "id": "vpx-script.2457bcf2b5cc0dbf",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Freedom (Bally 1976) V1.0.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "2457bcf2b5cc0dbf7cc77d97cecd3fe56b1da72ccd04fcc4de25ce593bafd5cf",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

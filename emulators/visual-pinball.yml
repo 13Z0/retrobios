@@ -405,6 +405,53 @@ files:
       back to loudspeaker decoding. The file sits in src/assets, which the build
       copies beside the binary.
 
+  - name: "plugins/nixie/layouts/"
+    type: directory
+    path: "plugins/nixie/layouts/"
+    system: vpinball
+    required: false
+    bundled: true
+    description: "Nixie default score display layouts, twelve .nix files and the four glass textures they name"
+    source_ref: "plugins/nixie/NixiePlugin.cpp:96-110, plugins/nixie/Nixie.cpp:45-65,104-129, make/CMakeLists_plugin_Nixie.txt:92-95"
+    note: >-
+      Copied from plugins/nixie/layouts in vpinball at e4a79a5. It is the last
+      source each Nixie window falls back to, after the table's own .nix and
+      the LayoutFolder setting. Every .nix file in the folder is parsed, and
+      glass images are read relative to the layout that names them. Without
+      the folder the windows get no default layout.
+
+  - name: "plugins/pinmame/memmaps/"
+    type: directory
+    path: "plugins/pinmame/memmaps/"
+    system: vpinball
+    required: false
+    bundled: true
+    description: "NVRAM memory maps, index.json with the maps/ and platforms/ files it names"
+    source_ref: "plugins/pinmame/PinMAMEPlugin.cpp:465-472, plugins/pinmame/Controller.cpp:184-242, make/CMakeLists_plugin_PinMAME.txt:115-122, platforms/config.sh:12, platforms/linux-x64/external.sh:252-254,558-559"
+    note: >-
+      From tomlogic/pinball-memory-maps at
+      68c1b3373ba74cd07f42fba9d56db63ea28212dc, which every platform script
+      fetches and copies as index.json, maps/ and platforms/. The plugin falls
+      back to this folder when neither the table's pinmame folder nor the
+      PinMAMEPath setting holds a memmaps folder. Without one no memory map is
+      loaded and the machine still runs.
+
+  - name: "plugins/pinmame/gamedefs/"
+    type: directory
+    path: "plugins/pinmame/gamedefs/"
+    system: vpinball
+    required: false
+    bundled: true
+    description: "PinMAME game definitions, catalog/pinmame.json, the machines/ files it names and the controllers/ files those reference"
+    source_ref: "plugins/pinmame/PinMAMEPlugin.cpp:465-472, plugins/pinmame/Controller.cpp:244-284, make/CMakeLists_plugin_PinMAME.txt:115-122, platforms/config.sh:13, platforms/linux-x64/external.sh:256-258,560-561"
+    note: >-
+      From vpinball/pinmame-game-defs at
+      6eece7e53de9463bf783b9476ce3aeb98e2e7256, which every platform script
+      fetches and copies as catalog/, machines/ and controllers/. The plugin
+      falls back to this folder the same way as memmaps. Without
+      catalog/pinmame.json PinMAME receives an empty game definition and the
+      machine still runs.
+
 analysis:
   shipped_with_the_binary:
     note: >-

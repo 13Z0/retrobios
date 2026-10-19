@@ -1,0 +1,875 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "description": "Frankenstein, Mary Shelley's",
+      "flags": 0,
+      "id": "frankst",
+      "manufacturer": "Sega",
+      "year": "1994"
+    },
+    {
+      "clone_of": "frankst",
+      "description": "Frankenstein, Mary Shelley's (German)",
+      "flags": 0,
+      "id": "frankstg",
+      "manufacturer": "Sega",
+      "year": "1995"
+    },
+    {
+      "clone_of": "frankst",
+      "description": "Frankenstein, Mary Shelley's (Italian)",
+      "flags": 0,
+      "id": "franksti",
+      "manufacturer": "Sega",
+      "year": "1995"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.ball-release",
+      "kind": "switch",
+      "label": "Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw16",
+      "kind": "switch",
+      "label": "Sw16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw31",
+      "kind": "switch",
+      "label": "Sw31",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw33",
+      "kind": "switch",
+      "label": "Sw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "34"
+        }
+      ],
+      "binding": {
+        "device": 34,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw34",
+      "kind": "switch",
+      "label": "Sw34",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw35",
+      "kind": "switch",
+      "label": "Sw35",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw36",
+      "kind": "switch",
+      "label": "Sw36",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw37",
+      "kind": "switch",
+      "label": "Sw37",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw38",
+      "kind": "switch",
+      "label": "Sw38",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw39",
+      "kind": "switch",
+      "label": "Sw39",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw40",
+      "kind": "switch",
+      "label": "Sw40",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "41"
+        }
+      ],
+      "binding": {
+        "device": 41,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper13",
+      "kind": "switch",
+      "label": "Bumper13",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "42"
+        }
+      ],
+      "binding": {
+        "device": 42,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper14",
+      "kind": "switch",
+      "label": "Bumper14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "43"
+        }
+      ],
+      "binding": {
+        "device": 43,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper15",
+      "kind": "switch",
+      "label": "Bumper15",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "44"
+        }
+      ],
+      "binding": {
+        "device": 44,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper16",
+      "kind": "switch",
+      "label": "Bumper16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "45"
+        }
+      ],
+      "binding": {
+        "device": 45,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw45",
+      "kind": "switch",
+      "label": "Sw45",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "46"
+        }
+      ],
+      "binding": {
+        "device": 46,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw46",
+      "kind": "switch",
+      "label": "Sw46",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "47"
+        }
+      ],
+      "binding": {
+        "device": 47,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "48"
+        }
+      ],
+      "binding": {
+        "device": 48,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "53"
+        }
+      ],
+      "binding": {
+        "device": 53,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw53",
+      "kind": "switch",
+      "label": "Sw53",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "54"
+        }
+      ],
+      "binding": {
+        "device": 54,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw54",
+      "kind": "switch",
+      "label": "Sw54",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "55"
+        }
+      ],
+      "binding": {
+        "device": 55,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw55",
+      "kind": "switch",
+      "label": "Sw55",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "56"
+        }
+      ],
+      "binding": {
+        "device": 56,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw56",
+      "kind": "switch",
+      "label": "Sw56",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/sega/mary-shelley-s-frankenstein-1995.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "sega.mary-shelley-s-frankenstein.1995",
+    "ipdb_id": 947,
+    "manufacturer": "Sega",
+    "name": "Mary Shelley's Frankenstein",
+    "opdb_id": "GRB7E-MP3rR",
+    "year": 1995
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-lockout",
+      "kind": "coil",
+      "label": "Sol Lockout",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-release",
+      "kind": "coil",
+      "label": "Sol Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-auto-launch",
+      "kind": "coil",
+      "label": "Sol Auto Launch",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-lower-scoop-eject",
+      "kind": "coil",
+      "label": "Sol Lower Scoop Eject",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-top-scoop-eject",
+      "kind": "coil",
+      "label": "Sol Top Scoop Eject",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ice-cave-eject",
+      "kind": "coil",
+      "label": "Sol Ice Cave Eject",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-vukeject",
+      "kind": "coil",
+      "label": "Sol VUKEject",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-trap-left-hand",
+      "kind": "coil",
+      "label": "Sol Trap Left Hand",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "11"
+        }
+      ],
+      "binding": {
+        "device": 11,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-gi",
+      "kind": "coil",
+      "label": "Sol GI",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-trap-right-hand",
+      "kind": "coil",
+      "label": "Sol Trap Right Hand",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-franks-arms",
+      "kind": "coil",
+      "label": "Sol Franks Arms",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-orbit-diverter",
+      "kind": "coil",
+      "label": "Sol Orbit Diverter",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-kickback",
+      "kind": "coil",
+      "label": "Sol Kickback",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.d94351ddf7a92c20"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Mary Shelley's Frankenstein (Sega 1995) v2.0.4.vbs and repository contributors",
+      "id": "vpx-script.d94351ddf7a92c20",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Mary Shelley's Frankenstein (Sega 1995) v2.0.4.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "d94351ddf7a92c209e15f72c74f5a9d2db3e2ac4fc5433433013e75be43509a1",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

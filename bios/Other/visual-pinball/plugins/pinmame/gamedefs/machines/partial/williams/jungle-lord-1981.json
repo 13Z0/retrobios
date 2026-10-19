@@ -1,0 +1,1056 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "jngld_l2",
+      "description": "Jungle Lord (L-1)",
+      "flags": 0,
+      "id": "jngld_l1",
+      "manufacturer": "Williams",
+      "year": "1981"
+    },
+    {
+      "description": "Jungle Lord (L-2)",
+      "flags": 0,
+      "id": "jngld_l2",
+      "manufacturer": "Williams",
+      "year": "1981"
+    },
+    {
+      "clone_of": "jngld_l2",
+      "description": "Jungle Lord (New Tricks)",
+      "flags": 0,
+      "id": "jngld_nt",
+      "manufacturer": "A.M. Thurnherr",
+      "year": "2013"
+    },
+    {
+      "clone_of": "jngld_l2",
+      "description": "Jungle Lord (New Tricks L-2)",
+      "flags": 0,
+      "id": "jngld_ntl2",
+      "manufacturer": "idealjoker",
+      "year": "2022"
+    },
+    {
+      "clone_of": "jngld_l2",
+      "description": "Jungle Lord (New Tricks L-2beta)",
+      "flags": 0,
+      "id": "jngld_ntl2b",
+      "manufacturer": "idealjoker",
+      "year": "2021"
+    },
+    {
+      "clone_of": "jngld_l2",
+      "description": "Jungle Lord (New Tricks L-3beta)",
+      "flags": 0,
+      "id": "jngld_ntl3",
+      "manufacturer": "idealjoker",
+      "year": "2022"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.ball-release",
+      "kind": "switch",
+      "label": "Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.slot",
+      "kind": "switch",
+      "label": "Slot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw13",
+      "kind": "switch",
+      "label": "Sw13",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw14",
+      "kind": "switch",
+      "label": "Sw14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw15",
+      "kind": "switch",
+      "label": "Sw15",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw16",
+      "kind": "switch",
+      "label": "Sw16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw20",
+      "kind": "switch",
+      "label": "Sw20",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw21",
+      "kind": "switch",
+      "label": "Sw21",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw22",
+      "kind": "switch",
+      "label": "Sw22",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw23",
+      "kind": "switch",
+      "label": "Sw23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.kicker2",
+      "kind": "switch",
+      "label": "Kicker2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.kicker1",
+      "kind": "switch",
+      "label": "Kicker1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.upper-right-sling-shot",
+      "kind": "switch",
+      "label": "Upper Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "42"
+        }
+      ],
+      "binding": {
+        "device": 42,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.drain",
+      "kind": "switch",
+      "label": "Drain",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "43"
+        }
+      ],
+      "binding": {
+        "device": 43,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw43",
+      "kind": "switch",
+      "label": "Sw43",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "44"
+        }
+      ],
+      "binding": {
+        "device": 44,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw44",
+      "kind": "switch",
+      "label": "Sw44",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw17",
+      "kind": "switch",
+      "label": "Sw17",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18",
+      "kind": "switch",
+      "label": "Sw18",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw19",
+      "kind": "switch",
+      "label": "Sw19",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.dtsw33",
+      "kind": "switch",
+      "label": "Dtsw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "34"
+        }
+      ],
+      "binding": {
+        "device": 34,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.dtsw34",
+      "kind": "switch",
+      "label": "Dtsw34",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.dtsw35",
+      "kind": "switch",
+      "label": "Dtsw35",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.dtsw36",
+      "kind": "switch",
+      "label": "Dtsw36",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.dtsw37",
+      "kind": "switch",
+      "label": "Dtsw37",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.bce351f80f62154f"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/williams/jungle-lord-1981.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "williams.jungle-lord.1981",
+    "ipdb_id": 1338,
+    "manufacturer": "Williams",
+    "name": "Jungle Lord",
+    "opdb_id": "G5nkY-MDv88",
+    "year": 1981
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "1"
+        }
+      ],
+      "binding": {
+        "device": 1,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-outhole",
+      "kind": "coil",
+      "label": "Sol Outhole",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-release",
+      "kind": "coil",
+      "label": "Sol Ball Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-gi",
+      "kind": "coil",
+      "label": "Sol GI",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft-reset",
+      "kind": "coil",
+      "label": "DTLeft Reset",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtright-reset",
+      "kind": "coil",
+      "label": "DTRight Reset",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.buzzer",
+      "kind": "coil",
+      "label": "Buzzer",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "7"
+        }
+      ],
+      "binding": {
+        "device": 7,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.lower-kicker",
+      "kind": "coil",
+      "label": "Lower Kicker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "8"
+        }
+      ],
+      "binding": {
+        "device": 8,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.upper-kicker",
+      "kind": "coil",
+      "label": "Upper Kicker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft1",
+      "kind": "coil",
+      "label": "DTLeft1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft2",
+      "kind": "coil",
+      "label": "DTLeft2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "11"
+        }
+      ],
+      "binding": {
+        "device": 11,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft3",
+      "kind": "coil",
+      "label": "DTLeft3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft4",
+      "kind": "coil",
+      "label": "DTLeft4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtleft5",
+      "kind": "coil",
+      "label": "DTLeft5",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.dtup-release",
+      "kind": "coil",
+      "label": "DTUp Release",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.bell",
+      "kind": "coil",
+      "label": "Bell",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.mini-kicker",
+      "kind": "coil",
+      "label": "Mini Kicker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.86043a09b5c18568"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Jungle Lord (Williams 1981) w VR Room v2.01/Jungle Lord (Williams 1981) w VR Room v2.01.vbs and repository contributors",
+      "id": "vpx-script.86043a09b5c18568",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpx-standalone-scripts: Jungle Lord (Williams 1981) w VR Room v2.01/Jungle Lord (Williams 1981) w VR Room v2.01.vbs",
+      "revision": "15d112648a1b94b9f59eb8b3c335d57283653c50",
+      "sha256": "86043a09b5c18568daac3e32ae286f30086b25ec50e9a4ba9c4c923fd69a143d",
+      "uri": "https://github.com/jsm174/vpx-standalone-scripts"
+    },
+    {
+      "attribution": "Authors credited in Jungle Lord (Williams 1981)-VPX-v1.05.vbs and repository contributors",
+      "id": "vpx-script.bce351f80f62154f",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Jungle Lord (Williams 1981)-VPX-v1.05.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "bce351f80f62154fce96d977026d4c5756e8e40e378dd1566bdb76098f57d286",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

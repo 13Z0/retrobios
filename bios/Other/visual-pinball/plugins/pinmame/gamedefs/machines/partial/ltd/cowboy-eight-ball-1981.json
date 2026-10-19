@@ -1,0 +1,509 @@
+{
+  "conflicts": [],
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "identity",
+      "driver_mapping",
+      "controller_platform",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "cowboy3p",
+      "description": "Cowboy Eight Ball (alternate set)",
+      "flags": 0,
+      "id": "cowboy3a",
+      "manufacturer": "LTD",
+      "year": "1981"
+    },
+    {
+      "description": "Cowboy Eight Ball",
+      "flags": 0,
+      "id": "cowboy3p",
+      "manufacturer": "LTD",
+      "year": "1981"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "2"
+        }
+      ],
+      "binding": {
+        "device": 2,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "3"
+        }
+      ],
+      "binding": {
+        "device": 3,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.s9a",
+      "kind": "switch",
+      "label": "S9a",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-outlane",
+      "kind": "switch",
+      "label": "Left Outlane",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "11"
+        }
+      ],
+      "binding": {
+        "device": 11,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.leftinlane",
+      "kind": "switch",
+      "label": "Leftinlane",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "12"
+        }
+      ],
+      "binding": {
+        "device": 12,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.rightinlane",
+      "kind": "switch",
+      "label": "Rightinlane",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.top-rollover1",
+      "kind": "switch",
+      "label": "Top Rollover1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.top-rollover2",
+      "kind": "switch",
+      "label": "Top Rollover2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target1",
+      "kind": "switch",
+      "label": "Right Target1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target2",
+      "kind": "switch",
+      "label": "Right Target2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target3",
+      "kind": "switch",
+      "label": "Right Target3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target4",
+      "kind": "switch",
+      "label": "Right Target4",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target5",
+      "kind": "switch",
+      "label": "Right Target5",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-target6",
+      "kind": "switch",
+      "label": "Right Target6",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "26"
+        }
+      ],
+      "binding": {
+        "device": 26,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.top-target",
+      "kind": "switch",
+      "label": "Top Target",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "27"
+        }
+      ],
+      "binding": {
+        "device": 27,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-lane",
+      "kind": "switch",
+      "label": "Left Lane",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/ltd/cowboy-eight-ball-1981.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "ltd.cowboy-eight-ball.1981",
+    "manufacturer": "LTD",
+    "name": "Cowboy Eight Ball",
+    "year": 1981
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "17"
+        }
+      ],
+      "binding": {
+        "device": 17,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-game-on",
+      "kind": "coil",
+      "label": "Sol Game On",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.89dacf2bfbc2348a"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Cowboy Eight Ball (LTD do Brasil 1981) v600.vbs and repository contributors",
+      "id": "vpx-script.89dacf2bfbc2348a",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Cowboy Eight Ball (LTD do Brasil 1981) v600.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "89dacf2bfbc2348a434b049ee79a312c4cd8cb2a417ba361f81eaf95b76f7fca",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}

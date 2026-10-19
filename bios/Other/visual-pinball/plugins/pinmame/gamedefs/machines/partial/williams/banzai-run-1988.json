@@ -1,0 +1,1312 @@
+{
+  "conflicts": [],
+  "controller": {
+    "inversion_applied_by_emulator": true,
+    "platform": "pinmame.system-11"
+  },
+  "coverage": {
+    "dimensions": {
+      "address_enumeration": "unknown",
+      "catalog_identity": "validated",
+      "mechanisms": "unknown",
+      "physical_wiring": "unknown",
+      "recreation_knowledge": "unknown",
+      "semantic_naming": "unknown",
+      "variant_coverage": "candidate"
+    },
+    "missing": [
+      "driver_mapping",
+      "input_enumeration",
+      "input_semantics",
+      "output_enumeration",
+      "output_semantics",
+      "display_inventory",
+      "mechanism_inventory",
+      "mechanism_behavior",
+      "polarity",
+      "variant_differences",
+      "recreation_notes",
+      "provenance",
+      "spatial_placement"
+    ],
+    "status": "partial"
+  },
+  "displays": [],
+  "drivers": [
+    {
+      "clone_of": "bnzai_l3",
+      "description": "Banzai Run (G-3 German)",
+      "flags": 0,
+      "id": "bnzai_g3",
+      "manufacturer": "Williams",
+      "year": "1988"
+    },
+    {
+      "clone_of": "bnzai_l3",
+      "description": "Banzai Run (L-1)",
+      "flags": 0,
+      "id": "bnzai_l1",
+      "manufacturer": "Williams",
+      "year": "1988"
+    },
+    {
+      "description": "Banzai Run (L-3)",
+      "flags": 0,
+      "id": "bnzai_l3",
+      "manufacturer": "Williams",
+      "year": "1988"
+    },
+    {
+      "clone_of": "bnzai_l3",
+      "description": "Banzai Run (P-A Prototype)",
+      "flags": 0,
+      "id": "bnzai_pa",
+      "manufacturer": "Williams",
+      "year": "1988"
+    },
+    {
+      "clone_of": "bnzai_l3",
+      "description": "Banzai Run (L-3 Target sound fix)",
+      "flags": 0,
+      "id": "bnzai_t3",
+      "manufacturer": "Williams / Francis",
+      "year": "2011"
+    }
+  ],
+  "format": "pinmame-machine-definition",
+  "inputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sol-ball-lifter-magnet",
+      "kind": "switch",
+      "label": "Sol Ball Lifter Magnet",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw14",
+      "kind": "switch",
+      "label": "Sw14",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw15",
+      "kind": "switch",
+      "label": "Sw15",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw16",
+      "kind": "switch",
+      "label": "Sw16",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "18"
+        }
+      ],
+      "binding": {
+        "device": 18,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw18",
+      "kind": "switch",
+      "label": "Sw18",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "19"
+        }
+      ],
+      "binding": {
+        "device": 19,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw19",
+      "kind": "switch",
+      "label": "Sw19",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "20"
+        }
+      ],
+      "binding": {
+        "device": 20,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw20",
+      "kind": "switch",
+      "label": "Sw20",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "21"
+        }
+      ],
+      "binding": {
+        "device": 21,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw21",
+      "kind": "switch",
+      "label": "Sw21",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "22"
+        }
+      ],
+      "binding": {
+        "device": 22,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw22",
+      "kind": "switch",
+      "label": "Sw22",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "23"
+        }
+      ],
+      "binding": {
+        "device": 23,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw23",
+      "kind": "switch",
+      "label": "Sw23",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "24"
+        }
+      ],
+      "binding": {
+        "device": 24,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw24",
+      "kind": "switch",
+      "label": "Sw24",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "26"
+        }
+      ],
+      "binding": {
+        "device": 26,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw26",
+      "kind": "switch",
+      "label": "Sw26",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "27"
+        }
+      ],
+      "binding": {
+        "device": 27,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper1",
+      "kind": "switch",
+      "label": "Bumper1",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "28"
+        }
+      ],
+      "binding": {
+        "device": 28,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper2",
+      "kind": "switch",
+      "label": "Bumper2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "29"
+        }
+      ],
+      "binding": {
+        "device": 29,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.bumper3",
+      "kind": "switch",
+      "label": "Bumper3",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "30"
+        }
+      ],
+      "binding": {
+        "device": 30,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.left-sling-shot",
+      "kind": "switch",
+      "label": "Left Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "31"
+        }
+      ],
+      "binding": {
+        "device": 31,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.right-sling-shot",
+      "kind": "switch",
+      "label": "Right Sling Shot",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "33"
+        }
+      ],
+      "binding": {
+        "device": 33,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw33",
+      "kind": "switch",
+      "label": "Sw33",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "35"
+        }
+      ],
+      "binding": {
+        "device": 35,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw35",
+      "kind": "switch",
+      "label": "Sw35",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "37"
+        }
+      ],
+      "binding": {
+        "device": 37,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw37",
+      "kind": "switch",
+      "label": "Sw37",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "38"
+        }
+      ],
+      "binding": {
+        "device": 38,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw38",
+      "kind": "switch",
+      "label": "Sw38",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "39"
+        }
+      ],
+      "binding": {
+        "device": 39,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw39",
+      "kind": "switch",
+      "label": "Sw39",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "40"
+        }
+      ],
+      "binding": {
+        "device": 40,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw40",
+      "kind": "switch",
+      "label": "Sw40",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "41"
+        }
+      ],
+      "binding": {
+        "device": 41,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw41",
+      "kind": "switch",
+      "label": "Sw41",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "42"
+        }
+      ],
+      "binding": {
+        "device": 42,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw42",
+      "kind": "switch",
+      "label": "Sw42",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "43"
+        }
+      ],
+      "binding": {
+        "device": 43,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw43",
+      "kind": "switch",
+      "label": "Sw43",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "44"
+        }
+      ],
+      "binding": {
+        "device": 44,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw44",
+      "kind": "switch",
+      "label": "Sw44",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "45"
+        }
+      ],
+      "binding": {
+        "device": 45,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw45",
+      "kind": "switch",
+      "label": "Sw45",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "46"
+        }
+      ],
+      "binding": {
+        "device": 46,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw46",
+      "kind": "switch",
+      "label": "Sw46",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "47"
+        }
+      ],
+      "binding": {
+        "device": 47,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw47",
+      "kind": "switch",
+      "label": "Sw47",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "48"
+        }
+      ],
+      "binding": {
+        "device": 48,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw48",
+      "kind": "switch",
+      "label": "Sw48",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "49"
+        }
+      ],
+      "binding": {
+        "device": 49,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw49",
+      "kind": "switch",
+      "label": "Sw49",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "50"
+        }
+      ],
+      "binding": {
+        "device": 50,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.postswitch",
+      "kind": "switch",
+      "label": "Postswitch",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "52"
+        }
+      ],
+      "binding": {
+        "device": 52,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw52",
+      "kind": "switch",
+      "label": "Sw52",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "53"
+        }
+      ],
+      "binding": {
+        "device": 53,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw53",
+      "kind": "switch",
+      "label": "Sw53",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "54"
+        }
+      ],
+      "binding": {
+        "device": 54,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw54",
+      "kind": "switch",
+      "label": "Sw54",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "55"
+        }
+      ],
+      "binding": {
+        "device": 55,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.capwall2",
+      "kind": "switch",
+      "label": "Capwall2",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "56"
+        }
+      ],
+      "binding": {
+        "device": 56,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw56",
+      "kind": "switch",
+      "label": "Sw56",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "57"
+        }
+      ],
+      "binding": {
+        "device": 57,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw57",
+      "kind": "switch",
+      "label": "Sw57",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "58"
+        }
+      ],
+      "binding": {
+        "device": 58,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw58",
+      "kind": "switch",
+      "label": "Sw58",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "59"
+        }
+      ],
+      "binding": {
+        "device": 59,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw59",
+      "kind": "switch",
+      "label": "Sw59",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "60"
+        }
+      ],
+      "binding": {
+        "device": 60,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw60",
+      "kind": "switch",
+      "label": "Sw60",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "61"
+        }
+      ],
+      "binding": {
+        "device": 61,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw61",
+      "kind": "switch",
+      "label": "Sw61",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "62"
+        }
+      ],
+      "binding": {
+        "device": 62,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw62",
+      "kind": "switch",
+      "label": "Sw62",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "32"
+        }
+      ],
+      "binding": {
+        "device": 32,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sw32",
+      "kind": "switch",
+      "label": "Sw32",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.a3108ffb2e8ce510"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.switch",
+          "value": "36"
+        }
+      ],
+      "binding": {
+        "device": 36,
+        "group": "pinmame.input.switch"
+      },
+      "id": "switch.sol-ball-cannon",
+      "kind": "switch",
+      "label": "Sol Ball Cannon",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.a3108ffb2e8ce510"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "knowledge": {
+    "path": "knowledge/williams/banzai-run-1988.md",
+    "status": "partial"
+  },
+  "machine": {
+    "id": "williams.banzai-run.1988",
+    "ipdb_id": 175,
+    "manufacturer": "Williams",
+    "name": "Banzai Run",
+    "opdb_id": "GR9lZ-MkP2j",
+    "year": 1988
+  },
+  "mechanisms": [],
+  "outputs": [
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "4"
+        }
+      ],
+      "binding": {
+        "device": 4,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-cannon",
+      "kind": "coil",
+      "label": "Sol Ball Cannon",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "5"
+        }
+      ],
+      "binding": {
+        "device": 5,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-flipper-post",
+      "kind": "coil",
+      "label": "Sol Flipper Post",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "6"
+        }
+      ],
+      "binding": {
+        "device": 6,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-freestyle-kicker",
+      "kind": "coil",
+      "label": "Sol Freestyle Kicker",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "9"
+        }
+      ],
+      "binding": {
+        "device": 9,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-upper-flipper-relay",
+      "kind": "coil",
+      "label": "Sol Upper Flipper Relay",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "10"
+        }
+      ],
+      "binding": {
+        "device": 10,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-lpfgirelay",
+      "kind": "coil",
+      "label": "Sol LPFGIRelay",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "11"
+        }
+      ],
+      "binding": {
+        "device": 11,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-upfgirelay",
+      "kind": "coil",
+      "label": "Sol UPFGIRelay",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "13"
+        }
+      ],
+      "binding": {
+        "device": 13,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-lifter-magnet",
+      "kind": "coil",
+      "label": "Sol Ball Lifter Magnet",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "14"
+        }
+      ],
+      "binding": {
+        "device": 14,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-kickback",
+      "kind": "coil",
+      "label": "Sol Kickback",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "15"
+        }
+      ],
+      "binding": {
+        "device": 15,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-ball-lifter-motor-relay",
+      "kind": "coil",
+      "label": "Sol Ball Lifter Motor Relay",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    },
+    {
+      "aliases": [
+        {
+          "namespace": "pinmame.solenoid",
+          "value": "16"
+        }
+      ],
+      "binding": {
+        "device": 16,
+        "group": "pinmame.output.solenoid"
+      },
+      "id": "coil.sol-left-eject-hole",
+      "kind": "coil",
+      "label": "Sol Left Eject Hole",
+      "provenance": {
+        "source_refs": [
+          "vpx-script.ec2d1eb8e08db3ac"
+        ],
+        "status": "candidate"
+      }
+    }
+  ],
+  "relationships": [],
+  "schema_version": 1,
+  "sources": [
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.catalog.8371478a7640",
+      "kind": "pinmame_catalog",
+      "license": "BSD-3-Clause",
+      "locator": "PinmameGetGames",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "PinMAME contributors",
+      "id": "pinmame.core.8371478a7640",
+      "kind": "pinmame_core",
+      "license": "BSD-3-Clause",
+      "locator": "src/wpc/s11games.c:582 (machine module s11_mS11BS)",
+      "revision": "8371478a7640f1896dcdf565aed340dc5df989ba",
+      "uri": "https://github.com/vpinball/pinmame"
+    },
+    {
+      "attribution": "Authors credited in Banzai Run (Williams 1988) v600.vbs and repository contributors",
+      "id": "vpx-script.ec2d1eb8e08db3ac",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: Banzai Run (Williams 1988) v600.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "ec2d1eb8e08db3accfad65107a522f79b4fdda085a4cb045f5bdebeec345954c",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    },
+    {
+      "attribution": "Authors credited in special_audiopan_and_audiofade_patched/Banzai Run (Williams 1988) v1.01.vbs and repository contributors",
+      "id": "vpx-script.a3108ffb2e8ce510",
+      "kind": "vpx_script",
+      "license": "NOASSERTION",
+      "locator": "vpxtable-scripts: special_audiopan_and_audiofade_patched/Banzai Run (Williams 1988) v1.01.vbs",
+      "revision": "0c036bb61b4b4e8c778c37559f6795df8cd1521e",
+      "sha256": "a3108ffb2e8ce5106e6df7f8e70b631ecd79201121ada53d729578b075de3de5",
+      "uri": "https://github.com/sverrewl/vpxtable_scripts"
+    }
+  ]
+}
