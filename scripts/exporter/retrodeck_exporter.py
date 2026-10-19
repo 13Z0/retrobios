@@ -104,8 +104,11 @@ class Exporter(BaseExporter):
 
         A component is one emulator's manifest, and only the platform's
         entries name it. A system whose entries all sit in one component
-        takes the addition there. One spread over several, or with none of
-        its own, cannot say which manifest is meant, and the addition is
+        takes the addition there, when a core reading the file is that
+        component's emulator: armsx2's flash.dat is no file PCSX2 opens, and
+        beetle_psx's scph5903.bin none DuckStation's manifest should ask for.
+        One spread over several, with none of its own, or of another
+        emulator cannot say which manifest is meant, and the addition is
         left out and counted as such.
         """
         for system in systems.values():
@@ -118,7 +121,10 @@ class Exporter(BaseExporter):
                 continue
             component = components.pop()
             for fe in system.files:
-                if fe.platform is None and fe.truth is not None:
+                if fe.platform is None and fe.truth is not None and any(
+                    name == component if standalone else component == "retroarch"
+                    for standalone, name in fe.runners
+                ):
                     fe.truth = {**fe.truth, "component": component}
 
     @staticmethod

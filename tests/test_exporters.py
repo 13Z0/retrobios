@@ -1724,5 +1724,25 @@ class RocknixRunnersFollowTheBuild(unittest.TestCase):
         self.assertTrue(EMULATORS_MK)
 
 
+class RetroDeckAdditionsFollowTheirCore(unittest.TestCase):
+    """Every RetroDECK ps2 entry sits in the pcsx2 component, so every ps2
+    addition went into PCSX2's manifest, armsx2's flash.dat included: a file
+    PCSX2 never opens, asked of PCSX2 users and counted as added."""
+
+    def test_only_the_components_emulator_places_a_file(self):
+        exporter = discover_exporters()["retrodeck"]()
+        own = NativeFile("scph39001.bin", "bios/scph39001.bin", "ps2",
+                         platform={"md5": "0" * 32, "component": "pcsx2"})
+        read_by_pcsx2 = NativeFile("rom1.bin", "bios/rom1.bin", "ps2",
+                                   truth={"md5": "1" * 32}, runners=[(True, "pcsx2")])
+        read_by_armsx2 = NativeFile("flash.dat", "bios/flash.dat", "ps2",
+                                    truth={"md5": "2" * 32}, runners=[(False, "armsx2")])
+        system = NativeSystem("ps2", "PS2", from_platform=True,
+                              files=[own, read_by_pcsx2, read_by_armsx2])
+        exporter._place_additions({"ps2": system})
+        self.assertEqual(read_by_pcsx2.native("component", ""), "pcsx2")
+        self.assertEqual(read_by_armsx2.native("component", ""), "")
+
+
 if __name__ == "__main__":
     unittest.main()
