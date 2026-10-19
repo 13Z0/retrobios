@@ -762,15 +762,24 @@ def find_exclusion_notes(
 # Platform verification
 
 
+_UNPLACED_REASONS = {
+    "no_platform_slug": "no platform slug for its system",
+    "below_platform_folder": "below the folder the platform lists",
+}
+
+
 def _mark_unplaced(config: dict, undeclared: list[dict], profiles: dict) -> None:
     """What the builder cannot place is not in the pack, held or not."""
     from packextras import unplaceable_extras
 
     unplaced = unplaceable_extras(config, undeclared, profiles)
     for u in undeclared:
-        if (u.get("emulator", ""), u.get("name", ""), u.get("path") or "") in unplaced:
+        reason = unplaced.get(
+            (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
+        )
+        if reason:
             u["in_pack"] = False
-            u["omitted"] = "no platform slug for its system"
+            u["omitted"] = _UNPLACED_REASONS[reason]
 
 
 _HIDDEN_REASONS = {

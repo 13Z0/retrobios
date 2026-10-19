@@ -224,27 +224,41 @@ def hidden_extras(
     return hidden
 
 
-def unplaceable_extras(config: dict, undeclared: list[dict], profiles: dict) -> set:
-    """Keys of the report entries a slug-based platform cannot place.
+def _extra_dest(u: dict) -> str:
+    """Where a report entry lands before any platform prefix.
+
+    An archive entry goes by the archive's name, and a directory path takes
+    the file's name after it ("cafeLibs/" + "snd_user.rpl").
+    """
+    archive = u.get("archive")
+    raw = archive if archive else (u.get("path") or u["name"])
+    return f"{raw}{u['name']}" if raw.endswith("/") else raw
+
+
+def unplaceable_extras(
+    config: dict, undeclared: list[dict], profiles: dict
+) -> dict[tuple[str, str, str], str]:
+    """The report entries a slug-based platform cannot place, with the reason.
 
     RomM files every BIOS under the slug of its system and knows no slug
-    for DOS or for the arcade sets MAME 2003 reads. The builder skipped
-    those entries and the report counted them in the pack.
+    for DOS or for the arcade sets MAME 2003 reads, and it lists each folder
+    flat. The builder skipped those entries and the report counted them in
+    the pack. The answer comes from the builder's own placement.
     """
-    from common import _norm_system_id
-
-    is_slug_based, sys_to_slug = _detect_slug_structure(config)
-    if not is_slug_based:
-        return set()
-    platform_systems = set(config.get("systems", {}).keys())
-    norm_map = {_norm_system_id(sid): sid for sid in platform_systems}
-    native = native_slug_systems(config)
-    return {
-        (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
-        for u in undeclared
-        if u.get("in_repo")
-        and not _slug_for(u, profiles, platform_systems, norm_map, sys_to_slug, native)
-    }
+    placement = ExtraPlacement(config, "", profiles)
+    if not placement.slug_based:
+        return {}
+    unplaced: dict[tuple[str, str, str], str] = {}
+    for u in undeclared:
+        if not u.get("in_repo"):
+            continue
+        dest = _extra_dest(u)
+        if placement.place(u, dest) is None:
+            key = (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
+            unplaced[key] = (
+                "below_platform_folder" if placement.nested(dest) else "no_platform_slug"
+            )
+    return unplaced
 
 
 def _agnostic_scan_extras(
@@ -795,9 +809,7 @@ def _collect_emulator_extras(
         # For archive entries, use the archive name for resolution
         archive = u.get("archive")
         name = archive if archive else u["name"]
-        raw_dest = archive if archive else (u.get("path") or u["name"])
-        # Directory path: append filename (e.g. "cafeLibs/" + "snd_user.rpl")
-        dest = f"{raw_dest}{u['name']}" if raw_dest.endswith("/") else raw_dest
+        dest = _extra_dest(u)
 
         # Slug-based platforms: prefix dest with system slug
         placed = placement.place(u, dest)

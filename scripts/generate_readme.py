@@ -63,7 +63,11 @@ def compute_coverage(
     present = ok + untested
     pct = (present / total * 100) if total > 0 else 0
     undeclared = result.get("undeclared_files", [])
-    core_present = sum(1 for u in undeclared if u.get("in_repo"))
+    # Held is not packed: a file the platform has no folder for, or one below
+    # a folder it lists flat, stays out of the pack the fraction describes.
+    core_present = sum(
+        1 for u in undeclared if u.get("in_repo") and u.get("in_pack", True)
+    )
     core_missing = len(undeclared) - core_present
     # Files a profile marks unsourceable never reach the undeclared list, so
     # the gap they represent has to be counted back in.

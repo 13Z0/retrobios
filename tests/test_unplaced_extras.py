@@ -92,6 +92,17 @@ class SlugPlatform(unittest.TestCase):
         self.assertTrue(entry["in_repo"])
         self.assertFalse(entry.get("in_pack", True))
 
+    def test_the_readme_fraction_does_not_count_it(self):
+        # The README's second column is what the pack has: a held file the
+        # platform has no folder for was counted there.
+        import generate_readme
+
+        coverage = generate_readme.compute_coverage(
+            "slugs", "platforms", self.db, emulators_dir="emulators"
+        )
+        self.assertEqual(coverage["core_present"], 0)
+        self.assertEqual(coverage["core_missing"], 1)
+
     def test_the_manifest_says_why_it_is_absent(self):
         manifest = builder.generate_manifest(
             "slugs", "platforms", self.db, "bios", "platforms/_registry.yml",
@@ -148,7 +159,7 @@ class FlatFirmwareFolder(unittest.TestCase):
         "  - name: deep.bin\n    path: core/bios/deep.bin\n    required: false\n"
     )
 
-    def _manifest(self, flat: bool) -> dict:
+    def _manifest(self, flat: bool, report: bool = False) -> dict:
         with tempfile.TemporaryDirectory() as tmp:
             previous = os.getcwd()
             os.chdir(tmp)
@@ -188,6 +199,11 @@ class FlatFirmwareFolder(unittest.TestCase):
                 common._platform_config_cache.clear()
                 common._emulator_profiles_cache.clear()
                 profiles = common.load_emulator_profiles("emulators")
+                if report:
+                    return verify_platform(
+                        common.load_platform_config("flat", "platforms"), db,
+                        "emulators", profiles,
+                    )
                 return builder.generate_manifest(
                     "flat", "platforms", db, "bios", "platforms/_registry.yml",
                     emulators_dir="emulators", emu_profiles=profiles, offline=True,
@@ -204,6 +220,13 @@ class FlatFirmwareFolder(unittest.TestCase):
         self.assertFalse(any("deep.bin" in d for d in dests), dests)
         reasons = {o["name"]: o["reason"] for o in manifest["omitted_files"]}
         self.assertEqual(reasons.get("deep.bin"), "below_platform_folder")
+
+    def test_the_report_agrees_with_the_builder(self):
+        report = self._manifest(flat=True, report=True)
+        entries = {u["name"]: u for u in report["undeclared_files"]}
+        self.assertFalse(entries["deep.bin"].get("in_pack", True))
+        self.assertEqual(entries["deep.bin"]["omitted"], "below the folder the platform lists")
+        self.assertTrue(entries["flat.bin"].get("in_pack", True))
 
     def test_a_folder_read_recursively_keeps_it(self):
         dests = {entry["dest"] for entry in self._manifest(flat=False)["files"]}

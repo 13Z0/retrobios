@@ -87,17 +87,17 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
 | Batocera | 353/353 | 12,354/12,788 | MD5 hash |
-| BizHawk | 118/118 | 755/756 | SHA1 hash |
-| EmuDeck | 168/168 | 5,810/5,840 | MD5 hash |
-| Lakka | 532/532 | 5,267/5,297 | file presence |
+| BizHawk | 118/118 | 754/756 | SHA1 hash |
+| EmuDeck | 168/168 | 5,804/5,840 | MD5 hash |
+| Lakka | 532/532 | 5,265/5,297 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 5,926/6,003 | MD5 hash |
+| ROCKNIX | 38/38 | 5,920/6,003 | MD5 hash |
 | Recalbox | 351/351 | 2,788/2,806 | MD5 hash |
-| RetroArch | 526/526 | 5,279/5,309 | file presence |
-| RetroBat | 348/348 | 7,258/7,417 | MD5 hash |
-| RetroDECK | 2,008/2,008 | 5,327/5,377 | MD5 hash |
-| RetroPie * | 532/532 | 9,197/9,339 | file presence |
-| RomM | 383/383 | 774/781 | MD5 hash |
+| RetroArch | 526/526 | 5,277/5,309 | file presence |
+| RetroBat | 348/348 | 7,255/7,417 | MD5 hash |
+| RetroDECK | 2,008/2,008 | 5,323/5,377 | MD5 hash |
+| RetroPie * | 532/532 | 9,195/9,339 | file presence |
+| RomM | 383/383 | 61/788 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
 That second number is a floor, not a ceiling: an emulator that accepts any file handed to it names none in its code, so nothing there can be counted.
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-19T02:14:14Z*
+*Auto-generated on 2026-10-19T05:42:39Z*
