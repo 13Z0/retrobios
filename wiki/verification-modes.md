@@ -267,25 +267,33 @@ accepted.
 
 ### Variant search
 
-`_find_best_variant()` searches for an alternative file in the repository that satisfies
-both the platform MD5 requirement and emulator validation:
+`validated_choice()` (`scripts/validation.py`) decides the file a platform
+destination ships when the emulators reading that destination check it. The
+pack, verify and the install manifest all read it, so they name the same file.
 
-1. Look up all files with the same name in the `by_name` index.
-2. Skip the current file (already known to fail validation).
-3. For each candidate, check that its MD5 matches the platform expectation.
-4. Run `check_file_validation()` against the candidate.
-5. Return the first candidate that passes both checks.
-
-The search covers files in `.variants/` (alternate hashes stored during deduplication).
-If a better variant is found, the pack uses it instead of the primary file. If no variant
-satisfies both independent contracts, the platform-verified baseline is retained but the
-emulator discrepancy remains explicit; it is never reported as source-compatible.
+1. Only the cores that read this destination judge it: a core checking the
+   same name at another path has no say (ZEsarUX's 48 KB `cpc6128.rom` check
+   does not judge `ep128emu/roms/cpc6128.rom`).
+2. The resolved file is kept when every check of those cores passes.
+3. Otherwise `find_validated_variant()` looks for a held file that passes them
+   all, warning-level checks included. Candidates come first from the hashes
+   the emulator declares, which finds a dump stored under another name, then
+   from the files sharing the name, `.variants/` included, in a stable order.
+   On a md5 or sha1 platform a candidate must also carry a value the platform
+   entry declares, or the frontend would refuse it.
+4. When only a warning-level check fails (`on_mismatch: warn`), the file
+   itself stands: the core runs it.
+5. Then a held file the core at least runs.
+6. Failing all of these, the platform-verified file is kept and the
+   disagreement is reported ("<core> says ..."), never as compatible.
 
 ### Practical example
 
-A `scph5501.bin` file passes Batocera MD5 verification (hash matches upstream declaration)
-but fails the emulator profile's size check because the profile was verified against a
-different revision. `_find_best_variant` scans `.variants/scph5501.bin.*` for a file
-that matches both the Batocera MD5 and the emulator's size expectation. If found, the
-variant is used in the pack. If not, the Batocera-verified baseline is retained and the
-emulator discrepancy stays visible in verification and gap reporting.
+A `scph5501.bin` file passes Batocera MD5 verification (hash matches upstream
+declaration) but fails an emulator profile's size check because the profile
+was verified against a different revision. The search looks for a held file
+carrying a Batocera-accepted md5 that also passes the size check, under that
+name or any name the emulator's hashes reach. If found, it ships; if not, the
+Batocera-verified file ships and the discrepancy stays visible in verification
+and gap reporting.
+

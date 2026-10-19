@@ -122,6 +122,30 @@ class DocumentedSteps(unittest.TestCase):
         fields = [*schema["properties"], *item.get("properties", {})]
         self.assertEqual(sorted(f for f in fields if f"`{f}`" not in page), [])
 
+    def test_every_function_the_pages_name_exists(self):
+        """verification-modes described _find_best_variant(), deleted on
+        2026-10-05, and an algorithm the code no longer follows."""
+        # Names the pages cite from the platforms' and emulators' own code,
+        # or from Python itself.
+        upstream = {"casefold", "checkInsideZip", "path_is_valid", "GAME", "COMP"}
+        sources = [*SCRIPTS.rglob("*.py"), REPO_ROOT / "install.py"]
+        defined = {
+            match
+            for path in sources
+            for match in re.findall(
+                r"^\s*(?:def|class)\s+(\w+)", path.read_text(encoding="utf-8", errors="replace"), re.M
+            )
+        }
+        stale = sorted(
+            {
+                (page.name, name)
+                for page in (REPO_ROOT / "wiki").glob("*.md")
+                for name in re.findall(r"`(\w+)\(\)`", page.read_text(encoding="utf-8"))
+                if name not in defined and name not in upstream
+            }
+        )
+        self.assertEqual(stale, [])
+
     def test_the_release_page_names_every_validation_job(self):
         """check-new-profiles ran on every pull request and push while the
         page said four jobs and named none of it."""
