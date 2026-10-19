@@ -305,6 +305,7 @@ PROSE_CITE_RE = re.compile(
     r":(?P<range>\d+(?:-\d+)?)"
 )
 PROSE_LIST_ITEM_RE = re.compile(r"\d+[.)](?:\s|$)")
+PROSE_WRAPPED_RANGE_RE = re.compile(r":\d+(?:-\d+)?(?:[,)\s]|$)")
 PROSE_CONT_RE = re.compile(r",(?P<range>\d+(?:-\d+)?)(?![\w-])(?!\.\d)")
 # A spaced continuation is accepted only for a range: `x.c:55-71, 80-147`
 # follows the source_ref convention, while `x.c:100, 200 files` is prose.
@@ -464,6 +465,11 @@ def _prose_runs(
         line = own.rstrip()
         boundary = len(line)
         following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
+        if PROSE_WRAPPED_RANGE_RE.match(following) and line[-1:].isalnum():
+            # The break can fall before the colon too: jgenesis wraps
+            # `.../src/config.rs` then `:76-78,95-99` on the next line.
+            line += following
+            following = ""
         # A numbered list after a colon (abuse: `setup.cpp:` then `1. -datadir`)
         # is not a range.
         if not following[:1].isdigit() or PROSE_LIST_ITEM_RE.match(following):

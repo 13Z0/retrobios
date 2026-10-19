@@ -3546,6 +3546,20 @@ class TestWrappedProse(unittest.TestCase):
             {"libretro.cpp:2372-2373, 2429-2433": True, "c.c:5-6, 40-41": True},
         )
 
+    def test_a_break_before_the_colon_is_read_whole(self):
+        # jgenesis wrote `(frontend/.../config.rs` then `:76-78,95-99)` on the
+        # next line, and the citation was never collected.
+        text = PROSE_SAMPLE.replace(
+            "files:",
+            "cfg: |\n  Read from the config (src/config.rs\n  :76-78,95-99) at start.\nfiles:",
+        )
+        runs = {
+            c.ref: c.wrapped
+            for c in profile_sync.collect_citations(yaml.safe_load(text))
+            if c.field == "cfg"
+        }
+        self.assertEqual(runs, {"src/config.rs:76-78,95-99": True})
+
     def test_a_wrapped_run_that_moves_holds_the_pin(self):
         parts = [
             PartResult(RefPart("libretro.cpp", 2372, 2373, "2372-2373"),
