@@ -23,6 +23,7 @@ import functools
 import hashlib
 from common import filter_systems_by_target
 from hashing import parse_md5_list
+import io
 from common import load_emulator_profiles
 from common import load_platform_config
 import os
@@ -34,7 +35,6 @@ from packresolve import resolve_file
 from common import resolve_platform_cores
 from common import sanitize_pack_path
 import zipfile
-import io
 from collections.abc import Callable
 
 
@@ -98,6 +98,25 @@ def _settle_untracked(
         return "verified_members", os.path.basename(name)
     errors.append(f"{name}: content matches no collected file")
     return "untracked", file_name
+
+
+def _member_crcs(archive: zipfile.ZipFile) -> dict[str, int]:
+    return {i.filename: i.CRC for i in archive.infolist() if not i.is_dir()}
+
+
+def _same_members(pack: zipfile.ZipFile, name: str, source: str) -> bool:
+    """Whether a ZIP inside the pack holds the members of a ZIP on disk.
+
+    A rebuilt archive (TorrentZip) differs byte for byte and is the same
+    set when every member and its CRC agree. The two checks that ask it
+    each carried their own copy.
+    """
+    try:
+        with zipfile.ZipFile(io.BytesIO(pack.read(name))) as packed, \
+                zipfile.ZipFile(source) as held:
+            return _member_crcs(packed) == _member_crcs(held)
+    except (zipfile.BadZipFile, OSError):
+        return False
 
 
 def verify_pack(
@@ -193,27 +212,10 @@ def verify_pack(
                     _src_path = files_db[_src_sha1]["path"]
                     if not os.path.exists(_src_path):
                         continue
-                    try:
-                        import io as _io
-
-                        with zipfile.ZipFile(_src_path) as _sz:
-                            _sc = {
-                                i.filename: i.CRC
-                                for i in _sz.infolist()
-                                if not i.is_dir()
-                            }
-                        with zipfile.ZipFile(_io.BytesIO(zf.read(name))) as _pz:
-                            _pc = {
-                                i.filename: i.CRC
-                                for i in _pz.infolist()
-                                if not i.is_dir()
-                            }
-                        if _sc == _pc:
-                            status = "verified_rebuild"
-                            file_name = _bn
-                            break
-                    except (zipfile.BadZipFile, OSError):
-                        continue
+                    if _same_members(zf, name, _src_path):
+                        status = "verified_rebuild"
+                        file_name = _bn
+                        break
 
             # Data directory: check against cached files
             if status == "untracked" and _data_index:
@@ -239,28 +241,13 @@ def verify_pack(
                         status = "verified_data"
                         file_name = _bn
                         break
-                    if name.endswith(".zip") and _dp.endswith(".zip"):
-                        try:
-                            import io as _io2
-
-                            with zipfile.ZipFile(_io2.BytesIO(zf.read(name))) as _pz2:
-                                _pc2 = {
-                                    i.filename: i.CRC
-                                    for i in _pz2.infolist()
-                                    if not i.is_dir()
-                                }
-                            with zipfile.ZipFile(_dp) as _dz:
-                                _dc = {
-                                    i.filename: i.CRC
-                                    for i in _dz.infolist()
-                                    if not i.is_dir()
-                                }
-                            if _pc2 == _dc:
-                                status = "verified_data"
-                                file_name = _bn
-                                break
-                        except (zipfile.BadZipFile, OSError):
-                            continue
+                    if (
+                        name.endswith(".zip") and _dp.endswith(".zip")
+                        and _same_members(zf, name, _dp)
+                    ):
+                        status = "verified_data"
+                        file_name = _bn
+                        break
 
             status, file_name = _settle_untracked(
                 status, name, zf, by_md5, held_inside, errors, file_name

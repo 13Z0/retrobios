@@ -82,5 +82,40 @@ class SchemaAcceptsEveryStatus(unittest.TestCase):
         self.assertEqual(sorted(written - allowed), [])
 
 
+class OneComparisonOfArchiveMembers(unittest.TestCase):
+    """verify_pack compared member CRCs twice, each copy with its own local
+    import and names (_sc/_pc, _pc2/_dc)."""
+
+    def test_the_helper_answers_both_ways(self):
+        import io
+        import tempfile
+        import zipfile
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        from packverify import _same_members  # noqa: PLC0415
+
+        def archive(members: dict) -> bytes:
+            buffer = io.BytesIO()
+            with zipfile.ZipFile(buffer, "w") as zf:
+                for member, data in members.items():
+                    zf.writestr(member, data)
+            return buffer.getvalue()
+
+        with tempfile.TemporaryDirectory() as directory:
+            held = Path(directory) / "held.zip"
+            held.write_bytes(archive({"a.rom": b"A", "b.rom": b"B"}))
+            pack = io.BytesIO()
+            with zipfile.ZipFile(pack, "w") as zf:
+                zf.writestr("same.zip", archive({"b.rom": b"B", "a.rom": b"A"}))
+                zf.writestr("other.zip", archive({"a.rom": b"X"}))
+                zf.writestr("broken.zip", b"not a zip")
+            with zipfile.ZipFile(pack) as zf:
+                self.assertTrue(_same_members(zf, "same.zip", str(held)))
+                self.assertFalse(_same_members(zf, "other.zip", str(held)))
+                self.assertFalse(_same_members(zf, "broken.zip", str(held)))
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "packverify.py").read_text()
+        self.assertNotIn("import io as _io", source)
+
+
 if __name__ == "__main__":
     unittest.main()
