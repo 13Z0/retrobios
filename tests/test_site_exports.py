@@ -565,5 +565,24 @@ class EmulatorPartsCarryTheirIdentity(unittest.TestCase):
         )
 
 
+class OnlyAPinnedProfileClaimsAPin(unittest.TestCase):
+    """Redream, with no revision at all, was described as source-pinned."""
+
+    def test_the_description_follows_the_pin(self):
+        from unittest import mock  # noqa: PLC0415
+
+        import generate_site  # noqa: PLC0415
+
+        pages = {
+            "emulators/pinned.md": {"about": {"version": "a" * 40}},
+            "emulators/redream.md": {},
+        }
+        with mock.patch.dict(generate_site.PAGE_DATA, pages, clear=True):
+            pinned = generate_site._page_description("", Path("emulators/pinned.md"), "P")
+            loose = generate_site._page_description("", Path("emulators/redream.md"), "R")
+        self.assertIn("source-pinned", pinned)
+        self.assertNotIn("source-pinned", loose)
+
+
 if __name__ == "__main__":
     unittest.main()

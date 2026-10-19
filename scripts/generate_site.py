@@ -1227,7 +1227,11 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     if key.startswith("platforms/") and relative.stem != "index":
         return f"{title}: declared BIOS contract, verification mode, coverage, destinations and emulator complement."
     if key.startswith("emulators/") and relative.stem != "index":
-        return f"{title}: source-pinned emulator firmware profile with paths, hashes, requirements and validation behavior."
+        # Pinned only when the profile names the revision it was read at:
+        # 48 pages without one called themselves source-pinned.
+        pinned = PAGE_DATA.get(key, {}).get("about", {}).get("version")
+        kind = "source-pinned emulator firmware profile" if pinned else "emulator firmware profile"
+        return f"{title}: {kind} with paths, hashes, requirements and validation behavior."
     if key.startswith("systems/") and relative.stem != "index":
         return f"{title}: indexed firmware files, hashes, variants, provenance and platform or emulator usage."
 
