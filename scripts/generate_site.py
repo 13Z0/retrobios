@@ -618,9 +618,14 @@ def build_emulator_gap_report(
         for k, v in profiles.items()
         if v.get("type") not in ("alias", "test")
     }
+    from common import standalone_set
+
     return run_cross_reference(
         unique_profiles, declared, db,
         data_names=data_names, all_declared=all_declared,
+        standalone_cores=set().union(
+            *(standalone_set(cov["config"]) for cov in coverages.values())
+        ),
     )
 
 

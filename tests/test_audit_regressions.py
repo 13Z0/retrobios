@@ -5287,5 +5287,22 @@ class ReportsHoldTheDataTrees(unittest.TestCase):
                 ))
 
 
+class TheTreeKeepsStandaloneEntries(unittest.TestCase):
+    """With no platform named, the gap report laid every dual profile out as
+    libretro only: eka2l1, dolphin and xenia-edge lost 133 files that
+    Batocera and RetroBat run standalone and no platform declares."""
+
+    def test_a_standalone_only_entry_is_reported(self):
+        if not (ROOT / "database.json").exists():
+            self.skipTest("database.json is not built")
+        out = subprocess.run(
+            [sys.executable, "scripts/cross_reference.py", "--emulator", "eka2l1"],
+            cwd=ROOT, capture_output=True, text=True, timeout=600, check=True,
+        ).stdout
+        undeclared = re.search(r"(\d+) undeclared", out)
+        self.assertIsNotNone(undeclared, out[-500:])
+        self.assertGreater(int(undeclared.group(1)), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -853,6 +853,16 @@ def main() -> None:
         )
         profiles = {k: v for k, v in profiles.items() if k in relevant}
         standalone_cores = standalone_set(config)
+    else:
+        # The tree as every platform runs it: a profile some platform runs
+        # standalone keeps its standalone entries. Laid out as libretro only,
+        # eka2l1, dolphin and xenia-edge lost 133 files no platform declares.
+        from common import list_registered_platforms
+
+        standalone_cores = set().union(*(
+            standalone_set(load_platform_config(name, args.platforms_dir))
+            for name in list_registered_platforms(args.platforms_dir, include_archived=True)
+        ))
 
     if not profiles:
         if args.emulator and args.target and set(args.emulator.split(",")) & run_anywhere:
