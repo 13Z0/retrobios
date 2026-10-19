@@ -467,9 +467,11 @@ def _enter_wsl() -> None:
         if os.environ.get(variable):
             continue
         try:
+            # No stdin: cmd.exe inherited the terminal and swallowed the
+            # answer typed at the first prompt.
             result = subprocess.run(
                 ["cmd.exe", "/c", f"echo %{variable}%"],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True, text=True, timeout=10, stdin=subprocess.DEVNULL,
                 cwd="/mnt/c" if Path("/mnt/c").is_dir() else None,
             )
         except (OSError, subprocess.SubprocessError):

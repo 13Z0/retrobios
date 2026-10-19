@@ -2812,7 +2812,10 @@ class WindowsSeenFromWsl(unittest.TestCase):
     def test_the_windows_variables_are_read_through_cmd(self):
         answers = {"USERPROFILE": "C:\\Users\\me", "APPDATA": "C:\\Users\\me\\AppData\\Roaming"}
 
-        def cmd(argv, **_kwargs):
+        def cmd(argv, **kwargs):
+            # cmd.exe must not read the terminal: it swallowed the answer
+            # typed at the first prompt.
+            self.assertIs(kwargs.get("stdin"), subprocess.DEVNULL)
             name = argv[-1].split("%")[1]
             return subprocess.CompletedProcess(argv, 0, answers.get(name, f"%{name}%") + "\r\n", "")
 
