@@ -1695,5 +1695,34 @@ class RocknixNamesRunnersItsOwnWay(unittest.TestCase):
         self.assertNotIn("c.bin", text)
 
 
+class RocknixRunnersFollowTheBuild(unittest.TestCase):
+    """ROCKNIX registers DuckStation twice: as the libretro core under
+    retroarch, and as duckstation-sa under its own emulator. The exporter
+    looked a standalone runner up as a core name, gating standalone
+    DuckStation's 98 files on the libretro core, and refused ARMSX2."""
+
+    MK = (
+        "add_emu_core psx retroarch duckstation false\n"
+        "add_emu_core psx duckstation duckstation-sa false\n"
+        "add_emu_core ps2 armsx2 armsx2-sa true\n"
+    )
+
+    def test_each_build_answers_with_its_own_pair(self):
+        from exporter.rocknix_exporter import EMULATORS_MK, Exporter
+
+        exporter = Exporter()
+        exporter._pairs = {
+            (emulator, core)
+            for _s, emulator, core in __import__("re").findall(
+                r"add_emu_core\s+(\S+)\s+(\S+)\s+(\S+)", self.MK
+            )
+        }
+        self.assertEqual(exporter._runner_pair((False, "duckstation")), ("retroarch", "duckstation"))
+        self.assertEqual(exporter._runner_pair((True, "duckstation")), ("duckstation", "duckstation-sa"))
+        self.assertEqual(exporter._runner_pair((True, "armsx2")), ("armsx2", "armsx2-sa"))
+        self.assertIsNone(exporter._runner_pair((False, "armsx2")))
+        self.assertTrue(EMULATORS_MK)
+
+
 if __name__ == "__main__":
     unittest.main()

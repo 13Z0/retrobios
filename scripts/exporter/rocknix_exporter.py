@@ -32,16 +32,27 @@ class Exporter(BatoceraExporter):
 
     def __init__(self) -> None:
         super().__init__()
-        self._emulator_of: dict[str, str] = {}
+        self._pairs: set[tuple[str, str]] = set()
 
     def _runner_pair(self, runner: tuple[bool, str]) -> tuple[str, str | None] | None:
         """ROCKNIX registers libretro cores under `retroarch` and each
         standalone under its own emulator (`azahar azahar-sa`), in the
         emulators package. The `libretro` Batocera writes names nothing
-        there."""
-        _standalone, name = runner
-        emulator = self._emulator_of.get(name)
-        return (emulator, name) if emulator else None
+        there.
+
+        The build decides which registration answers. A libretro core is the
+        `retroarch` pair of that core. A standalone is its own emulator's
+        pair: DuckStation is registered both ways, and looking the standalone
+        up as a core name sent its 98 files to the libretro core's users.
+        """
+        standalone, name = runner
+        if not standalone:
+            return ("retroarch", name) if ("retroarch", name) in self._pairs else None
+        own = sorted(
+            pair for pair in self._pairs
+            if pair[0] == name or (pair[1] == name and pair[0] != "retroarch")
+        )
+        return own[0] if own else None
 
     def render(
         self,
@@ -50,8 +61,8 @@ class Exporter(BatoceraExporter):
         originals: dict[str, str],
         scraped: dict | None = None,
     ) -> dict[str, str]:
-        self._emulator_of = {
-            core: emulator
+        self._pairs = {
+            (emulator, core)
             for _system, emulator, core in _ADD_EMU_CORE.findall(
                 originals.get(EMULATORS_MK, "")
             )
