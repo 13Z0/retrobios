@@ -897,6 +897,14 @@ def _foreign_tree(path: str, owners: set[str]) -> bool:
     return not (owners & _affinity_tokens(parts[2]))
 
 
+def _own_tree(path: str, owners: set[str]) -> bool:
+    """Whether a path lives in the bios/Other/<emulator>/ tree of the asker."""
+    parts = path.split("/")
+    if not owners or len(parts) < 4 or parts[0] != "bios" or parts[1] != "Other":
+        return False
+    return bool(owners & _affinity_tokens(parts[2]))
+
+
 def _rank_tail_candidates(
     candidates: list[str], start: int, tail: str, files_db: dict, owners: set[str],
     asker: frozenset[str] = frozenset(),
@@ -921,9 +929,14 @@ def _rank_tail_candidates(
     # pins on every desktop target. A platform's own declaration has no
     # asker, and the tree whose path is its destination still answers it.
     if start or asker:
+        # The database keeps one path per content. When that path does not
+        # end with the tail, the tail was indexed from an identical copy
+        # elsewhere, and the recorded path says nothing about whose tree it
+        # sits in: PCSX2x6's RedumpDatabase.yaml has EmuCoreX's bytes.
         candidates = [
             h for h in candidates
-            if not _foreign_tree(path_of(h), owners if start else set(asker))
+            if not path_of(h).endswith("/" + tail)
+            or not _foreign_tree(path_of(h), owners if start else set(asker))
         ]
     if len(candidates) < 2:
         return candidates
@@ -1304,6 +1317,18 @@ def resolve_local_file(
                 by_path_suffix.get(tail, []), start, tail, files_db, owners,
                 frozenset(_owner_tokens(file_entry)),
             )
+            raw = by_path_suffix.get(tail, [])
+            if start and len(raw) > 1:
+                # Ambiguity is read before the foreign trees are set aside:
+                # PCSX2x6's bin/resources/GameIndex.yaml met four copies
+                # under resources/GameIndex.yaml, three in other emulators'
+                # trees, and the fourth (PCSX2's console database, not
+                # PCSX2x6's arcade one) passed for proof. Only the asker's own
+                # tree still answers a tail several files share.
+                candidates = [
+                    h for h in candidates
+                    if _own_tree(files_db.get(h, {}).get("path", ""), owners)
+                ]
             if start and len(candidates) > 1:
                 continue
             # The index names the file this destination designates. Not on

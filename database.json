@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T18:08:38Z",
-  "total_files": 19081,
-  "total_size": 17568664571,
+  "generated_at": "2026-10-19T21:13:16Z",
+  "total_files": 19082,
+  "total_size": 17568673502,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -142534,6 +142534,16 @@
       "crc32": "0e016ecf",
       "adler32": "be32f95f"
     },
+    "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364": {
+      "path": "bios/Other/pcsx2x6/bin/resources/GameIndex.yaml",
+      "name": "GameIndex.yaml",
+      "size": 8931,
+      "sha1": "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
+      "md5": "bb279005ee28d778f59d2476938b5983",
+      "sha256": "6e80e18cecc1c2f1016e0ddc0835a9d17f255c2934edb50d16dea94e899b140b",
+      "crc32": "dd157af0",
+      "adler32": "4780cc9d"
+    },
     "b624812e3aa0ef2f75847f47907296e1f370cecd": {
       "path": "bios/Other/pcsx2x6/game_controller_db.txt",
       "name": "game_controller_db.txt",
@@ -210005,6 +210015,7 @@
       "9d4c94e260e14a114e79d7618bcc4331": "0572593b67aad6bb1639afba4f303f221261246f",
       "5f30d9c6cabc2d121bd1c22df016e7a5": "579d3b402f27189ccb4965082e8e5de097513a81",
       "7844c637dc246ec5f0e760ea33475073": "2f5ac8921b7cba56b02122ef772f5f11bbf6d8a2",
+      "bb279005ee28d778f59d2476938b5983": "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
       "37ce488ec574ba351c2dcf90a13d8fed": "b624812e3aa0ef2f75847f47907296e1f370cecd",
       "18756952572508cb0948b3a884128a0f": "3061cf7af25793a655a1ff5a509385f3620f3eb3",
       "b73761d82a77f73006145848a00c515b": "0c8c9706abc0116f08b66d11a69da6aa9ef7e6bf",
@@ -248336,6 +248347,7 @@
         "997fdfb1c1873c1a43972b2984ac0da61fd47b14",
         "fca26d4f7c1fe0abf6534b470da2ee5ad461eba5",
         "58fb1f8ea6cf2d526904349640453e682fe388a1",
+        "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
         "7efb2ed721cf0c0f0677324e09be311a8337e793",
         "57369df9ca82a460e596cea7835c5a0797dee668",
         "b22389650f6c0a1e276b48213fed8a9c1c6476ce",
@@ -286002,6 +286014,7 @@
       "b4308300": "0572593b67aad6bb1639afba4f303f221261246f",
       "ef4efa89": "579d3b402f27189ccb4965082e8e5de097513a81",
       "0e016ecf": "2f5ac8921b7cba56b02122ef772f5f11bbf6d8a2",
+      "dd157af0": "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
       "eef26072": "b624812e3aa0ef2f75847f47907296e1f370cecd",
       "611423b6": "3061cf7af25793a655a1ff5a509385f3620f3eb3",
       "43f15403": "0c8c9706abc0116f08b66d11a69da6aa9ef7e6bf",
@@ -305085,6 +305098,7 @@
       "1c85b8f1d13b37ab157b6f4b256c687c83a12c0dc5fe7f13fb562ed73c3aec45": "0572593b67aad6bb1639afba4f303f221261246f",
       "cac33fe9739f97e1fcb7af00494ebfb83d5bbc200cc065f32012fc16f0b5fbdc": "579d3b402f27189ccb4965082e8e5de097513a81",
       "f68a569f71fc090cec61bc5f699d0553dca7c5d012166709e74fc6c72568fdc2": "2f5ac8921b7cba56b02122ef772f5f11bbf6d8a2",
+      "6e80e18cecc1c2f1016e0ddc0835a9d17f255c2934edb50d16dea94e899b140b": "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
       "49f94f7bc9fc605cbf60457937429e3c8499e515d8164b7dd7cd0345844fc86a": "b624812e3aa0ef2f75847f47907296e1f370cecd",
       "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280": "3061cf7af25793a655a1ff5a509385f3620f3eb3",
       "af19d135d3a935b3ebfbd80320716ffe1202052c5f68dc2c5f1abc57005ac605": "0c8c9706abc0116f08b66d11a69da6aa9ef7e6bf",
@@ -471535,6 +471549,7 @@
         "71fc274cbe27f382afb0324024ebdc6f59aa666d",
         "72bfdf91fa11a86e2810a7c167cdcf11e20418a8",
         "2d9878fdd70979ecf6dd0da7652efd3797c26039",
+        "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364",
         "40ecf6138c99a0aba775ef93240b295025a45500"
       ],
       "Other/altirra/.variants/810-archiver.rom.8080d51e": [
@@ -480460,6 +480475,15 @@
       ],
       "tandy/tandy1t1.020": [
         "2f5ac8921b7cba56b02122ef772f5f11bbf6d8a2"
+      ],
+      "Other/pcsx2x6/bin/resources/GameIndex.yaml": [
+        "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364"
+      ],
+      "pcsx2x6/bin/resources/GameIndex.yaml": [
+        "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364"
+      ],
+      "bin/resources/GameIndex.yaml": [
+        "b1e1fd4c082c0d8c11e2b5ecc8119fc280323364"
       ],
       "Other/pcsx2x6/game_controller_db.txt": [
         "b624812e3aa0ef2f75847f47907296e1f370cecd"
@@ -565978,6 +566002,15 @@
       ],
       "flags/PAL-M.png": [
         "c78cd2ff8c2f363043a753b663af8855ee3b02f5"
+      ],
+      "Other/pcsx2x6/bin/resources/RedumpDatabase.yaml": [
+        "dceb4536fba7fb89452864fc512a4d071a19eae0"
+      ],
+      "pcsx2x6/bin/resources/RedumpDatabase.yaml": [
+        "dceb4536fba7fb89452864fc512a4d071a19eae0"
+      ],
+      "bin/resources/RedumpDatabase.yaml": [
+        "dceb4536fba7fb89452864fc512a4d071a19eae0"
       ],
       "Other/skyline/tzdata/zoneinfo/Africa/Asmara": [
         "4650b524081009959e8487ed97c07a331c13fd2d"

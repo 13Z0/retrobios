@@ -192,5 +192,64 @@ class TestSizeGateOnTheNameStep(unittest.TestCase):
         self.assertIsNotNone(path)
 
 
+class TestForeignTreesAndSharedTails(unittest.TestCase):
+    """PCSX2x6's arcade GameIndex.yaml met four copies under a shortened
+    tail: three in other emulators' trees and PCSX2's console database. The
+    three were set aside first, the fourth then looked unique and passed for
+    path proof."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = Path(tempfile.mkdtemp(prefix="foreign-"))
+        cls.previous = os.getcwd()
+        stored = {
+            "1" * 40: "bios/Other/aethersx2/resources/GameIndex.yaml",
+            "2" * 40: "bios/Other/armsx2/resources/GameIndex.yaml",
+            "3" * 40: "bios/Other/emucorex/resources/GameIndex.yaml",
+            "4" * 40: "bios/Sony/PlayStation 2/resources/GameIndex.yaml",
+            "5" * 40: "bios/Other/emucorex/resources/RedumpDatabase.yaml",
+        }
+        # Same bytes as emucorex's copy: the database keeps one path for it.
+        duplicate = ("5" * 40, "bios/Other/x6/bin/resources/RedumpDatabase.yaml")
+        files, by_name, by_suffix = {}, {}, {}
+        for sha1, rel in [*stored.items(), duplicate]:
+            target = cls.root / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(sha1[:4].encode())
+            name = rel.rsplit("/", 1)[-1]
+            if sha1 not in files:
+                files[sha1] = {"path": rel, "name": name, "md5": "", "size": 4,
+                               "crc32": "", "sha1": sha1}
+                by_name.setdefault(name, []).append(sha1)
+            for suffix in _path_suffixes(rel):
+                if sha1 not in by_suffix.setdefault(suffix, []):
+                    by_suffix[suffix].append(sha1)
+        cls.db = {
+            "files": files,
+            "indexes": {"by_md5": {}, "by_name": by_name, "by_crc32": {},
+                        "by_path_suffix": by_suffix},
+        }
+        os.chdir(cls.root)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.chdir(cls.previous)
+        shutil.rmtree(cls.root, ignore_errors=True)
+
+    def test_a_shared_shortened_tail_proves_nothing(self):
+        _path, status = resolve_local_file(
+            {"name": "GameIndex.yaml", "source_profile": "x6"}, self.db,
+            dest_hint="bin/resources/GameIndex.yaml",
+        )
+        self.assertNotEqual(status, "path_exact")
+
+    def test_a_tail_indexed_from_a_duplicate_is_the_askers(self):
+        path, status = resolve_local_file(
+            {"name": "RedumpDatabase.yaml", "source_profile": "x6"}, self.db,
+            dest_hint="bin/resources/RedumpDatabase.yaml",
+        )
+        self.assertEqual((status, path), ("path_exact", "bios/Other/emucorex/resources/RedumpDatabase.yaml"))
+
+
 if __name__ == "__main__":
     unittest.main()
