@@ -584,5 +584,28 @@ class OnlyAPinnedProfileClaimsAPin(unittest.TestCase):
         self.assertNotIn("source-pinned", loose)
 
 
+class ADataDirectorySaysWhatItIs(unittest.TestCase):
+    """The page said `dolphin-sys` > `Sys` and nothing of the tree it packs."""
+
+    def test_description_origin_mode_and_source(self):
+        from generate_site import generate_emulator_page  # noqa: PLC0415
+
+        profile = {
+            "emulator": "Cemu", "type": "standalone + libretro", "systems": [],
+            "source": "https://github.com/cemu-project/Cemu", "source_commit": "c" * 40,
+            "files": [{"name": "keys.txt"}],
+            "data_directories": [{"ref": "packs", "destination": "graphicPacks",
+                                  "mode": "standalone", "source_ref": "src/main.cpp:10"}],
+        }
+        registry = {"packs": {"description": "Community graphic packs",
+                              "source_url": "https://example.test/packs.zip"}}
+        page = generate_emulator_page("cemu", profile, {"files": {}, "indexes": {}},
+                                      None, set(), registry)
+        self.assertIn("`packs` > `graphicPacks`: Community graphic packs", page)
+        self.assertIn("<https://example.test/packs.zip>", page)
+        self.assertIn("standalone build only", page)
+        self.assertIn("src/main.cpp#L10", page)
+
+
 if __name__ == "__main__":
     unittest.main()

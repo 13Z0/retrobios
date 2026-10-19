@@ -2947,6 +2947,7 @@ def generate_emulator_page(
     db: dict,
     consumers: FileConsumers | None = None,
     data_names: set[str] | None = None,
+    data_registry: dict | None = None,
 ) -> str:
     if profile.get("type") == "alias":
         parent = profile.get("alias_of", profile.get("bios_identical_to", "unknown"))
@@ -3101,10 +3102,23 @@ def generate_emulator_page(
     # Data directories
     if data_dirs:
         lines.extend(["## Data directories", ""])
+        # Each tree with what it holds, where it comes from, which build reads
+        # it and the code that does: these trees put thousands of files in
+        # the packs, and the page said only `dolphin-sys` > `Sys`.
         for dd in data_dirs:
             ref = dd.get("ref", "")
             dest = dd.get("destination", "")
-            lines.append(f"- `{ref}` >`{dest}`")
+            entry = (data_registry or {}).get(ref, {})
+            line = f"- `{ref}` > `{dest}`"
+            if entry.get("description"):
+                line += f": {entry['description']}"
+            lines.append(line)
+            if entry.get("source_url"):
+                lines.append(f"    - Fetched from <{entry['source_url']}>")
+            if dd.get("mode"):
+                lines.append(f"    - Read by the {dd['mode']} build only")
+            if dd.get("source_ref"):
+                lines.append(f"    - Source: {_source_ref_markdown(profile, dd['source_ref'])}")
         lines.append("")
 
     lines.extend([f"*Generated on {_timestamp()}*"])
@@ -4477,7 +4491,9 @@ def _generate(args: argparse.Namespace) -> None:
             json.dumps({"id": name, **profile}, indent=2, sort_keys=True,
                        ensure_ascii=False, default=str) + "\n",
         )
-        page = generate_emulator_page(name, profile, db, consumers, suppl_names)
+        page = generate_emulator_page(
+            name, profile, db, consumers, suppl_names, data_registry
+        )
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)
 
