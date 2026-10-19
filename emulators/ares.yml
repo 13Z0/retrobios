@@ -168,7 +168,7 @@ files:
 
   # --- Mega CD ---
   # Also used by Mega CD 32X (desktop-ui/emulator/mega-cd-32x.cpp)
-  - name: bios_CD_U.bin
+  - name: SegaCDBIOS9303.bin
     system: mega-cd
     region: [north-america]
     required: true
@@ -177,7 +177,7 @@ files:
     description: "Mega CD / Sega CD BIOS (US)"
     source_ref: "desktop-ui/emulator/mega-cd.cpp:17"
 
-  - name: bios_CD_J.bin
+  - name: jp_mcd2_921222.bin
     system: mega-cd
     region: [japan]
     required: true
@@ -186,7 +186,7 @@ files:
     description: "Mega CD BIOS (Japan)"
     source_ref: "desktop-ui/emulator/mega-cd.cpp:18"
 
-  - name: bios_CD_E.bin
+  - name: eu_mcd2_9303.bin
     system: mega-cd
     region: [europe, oceania]
     required: true
@@ -216,7 +216,7 @@ files:
     source_ref: "desktop-ui/emulator/mega-ld.cpp:17"
 
   # --- MSX ---
-  - name: MSX.ROM
+  - name: msx-japanese.rom
     system: msx
     required: true
     sha256: "413a2b601a94b3792e054be2439cc77a1819cceadbfa9542f88d51c7480f2ef0"
@@ -225,7 +225,7 @@ files:
     source_ref: "desktop-ui/emulator/msx.cpp:19"
 
   # --- MSX2 ---
-  - name: MSX2.ROM
+  - name: MSX2J.rom
     system: msx2
     required: true
     sha256: "0c672d86ead61a97f49a583b88b7c1905da120645cd44f0c9f2baf4f4631e0b1"

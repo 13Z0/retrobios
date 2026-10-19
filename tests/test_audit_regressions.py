@@ -5220,5 +5220,32 @@ class VerifyPacksRefusesWhatItCannotDo(unittest.TestCase):
                 self.assertFalse((Path(out) / ".lock").exists())
 
 
+class AHashScanningCoreContradictsNoPlatform(unittest.TestCase):
+    """ares finds its firmware by sha256 in a folder and opens no file by
+    name, so its entries' names are labels. Labels reused from other dumps
+    (MSX2.ROM, bios_CD_U.bin) put ares's revision on a path where RetroBat
+    pins another: slots called RetroBat's declaration wrong, and the pack
+    dropped ares's own dump behind the platform's."""
+
+    def test_no_conflict_names_ares(self):
+        import json
+
+        from scripts import slots
+        from scripts.common import list_registered_platforms, load_emulator_profiles
+
+        root = ROOT
+        if not (root / "database.json").exists():
+            self.skipTest("database.json is not built")
+        profiles = load_emulator_profiles(str(root / "emulators"))
+        db = json.loads((root / "database.json").read_text(encoding="utf-8"))
+        claimed = [
+            (platform, conflict.destination)
+            for platform in list_registered_platforms(str(root / "platforms"), include_archived=True)
+            for conflict in slots.scan_platform(platform, profiles, db, str(root / "platforms"))
+            if any(claim.emulator == "ares" for claim in conflict.profile_claims)
+        ]
+        self.assertEqual(claimed, [])
+
+
 if __name__ == "__main__":
     unittest.main()
