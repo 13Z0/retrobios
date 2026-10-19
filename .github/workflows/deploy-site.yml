@@ -16,6 +16,7 @@ on:
       - "scripts/crypto_verify.py"
       - "scripts/derivations.py"
       - "scripts/dumpcatalog.py"
+      - "scripts/exporter/baseline.py"
       - "scripts/generate_readme.py"
       - "scripts/generate_site.py"
       - "scripts/hashing.py"
