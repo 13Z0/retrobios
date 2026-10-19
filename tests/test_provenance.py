@@ -477,6 +477,26 @@ class TestProvenancePage(unittest.TestCase):
         self.assertEqual(row.count("|"), 4)
         self.assertIn("has - pipe", row)
 
+    def test_a_romset_carrying_the_dump_is_named(self):
+        extra = [{
+            "dat": "Sony - PlayStation - BIOS Images", "name": "carried.bin",
+            "description": "kept in a set", "size": 4, "crc32": "0000beef",
+            "md5": "88888888888888888888888888888888",
+            "sha1": "8888888888888888888888888888888888888888",
+        }]
+        romsets = {("0000beef", 4): [{
+            "source": "mame", "archive": "set.zip", "member": "c.rom",
+            "sha1": "", "dats": ["MAME mame0190"],
+        }]}
+        db = {"files": {"b05def971d8ec59f346f2d9ac21fb742e3eb6917": {
+            "name": "scph5500.bin", "size": 524288,
+            "md5": "8dd7d5296a650fac7319bce665a6a53c"}}}
+        snapshots = {"redump": {"source": "redump", "imported_at": "", "dats": {},
+                                "entries": _snapshot_entries() + extra}}
+        page = generate_provenance_page(db, build_report(db, snapshots, {}, romsets))
+        row = next(line for line in page.split("\n") if "carried.bin" in line)
+        self.assertIn("Ships in MAME `set.zip` as `c.rom`.", row)
+
     def test_page_without_any_match(self):
         page = self._page(provenance=False)
         self.assertIn("**0** of 2 system files", page)
@@ -558,6 +578,42 @@ class TheWantedPageAsksOnlyForWhatCannotBeMade(unittest.TestCase):
         self.assertIn("lost.rom", wanted)
         self.assertIn("kick31.rom", derived)
         self.assertIn("byte swap", derived)
+
+
+class MissingDumpsNameTheirRomsets(unittest.TestCase):
+    """17 TOSEC ZX Spectrum ROMs listed as missing ship in MAME's
+    spectrum.zip: the report said MISSING and nothing about where to look."""
+
+    def _index(self, entries: list[dict]) -> dict:
+        from scripts.provenance_report import romset_index
+
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, "mame.json").write_text(
+                json.dumps({"source": "mame", "entries": entries}), encoding="utf-8"
+            )
+            return romset_index(Path(tmp))
+
+    def test_versions_of_one_set_merge(self):
+        from scripts.provenance_report import romsets_holding
+
+        member = {"name": "1986es.rom", "size": 16384, "crc32": "aaaa0001", "sha1": "f9"}
+        index = self._index([
+            {"name": "spectrum.zip", "members": [member], "dats": ["MAME mame0190", "MAME mame0220"]},
+            {"name": "spectrum.zip", "members": [member, {**member, "name": "x.rom", "crc32": "b"}],
+             "dats": ["MAME mame0289"]},
+        ])
+        hits = romsets_holding({"crc32": "AAAA0001", "size": 16384, "sha1": "F9"}, index)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]["archive"], "spectrum.zip")
+        self.assertEqual(hits[0]["dats"], ["MAME mame0190", "MAME mame0220", "MAME mame0289"])
+
+    def test_a_disagreeing_sha1_is_not_the_dump(self):
+        from scripts.provenance_report import romsets_holding
+
+        member = {"name": "a.rom", "size": 8, "crc32": "00000001", "sha1": "aa"}
+        index = self._index([{"name": "set.zip", "members": [member], "dats": ["MAME mame0190"]}])
+        self.assertEqual(romsets_holding({"crc32": "00000001", "size": 8, "sha1": "bb"}, index), [])
+        self.assertEqual(len(romsets_holding({"crc32": "00000001", "size": 8}, index)), 1)
 
 
 if __name__ == "__main__":

@@ -20,6 +20,7 @@ import json
 import os
 import sys
 import zipfile
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
@@ -78,6 +79,59 @@ def _held_in_archive(entry: dict, members: dict) -> bool:
     return False
 
 
+RECIPES_DIR = Path(__file__).resolve().parent.parent / "recipes"
+
+
+def romset_index(recipes_dir: Path = RECIPES_DIR) -> dict[tuple[str, int], list[dict]]:
+    """(crc32, size) of every member of an imported romset -> where it sits.
+
+    A dump the collection lacks may still ship inside an emulator's romset:
+    17 TOSEC ZX Spectrum ROMs are members of MAME's spectrum.zip. Naming the
+    set and the versions that carry it turns a dead end into a download.
+    """
+    index: dict[tuple[str, int], list[dict]] = {}
+    for snapshot in sorted(recipes_dir.glob("*.json")):
+        with snapshot.open(encoding="utf-8") as handle:
+            data = json.load(handle)
+        source = data.get("source", snapshot.stem)
+        for entry in data.get("entries", []):
+            dats = entry.get("dats") or [entry.get("dat", "")]
+            for member in entry.get("members", []) or []:
+                crc, size = str(member.get("crc32") or "").lower(), member.get("size")
+                if not crc or size is None:
+                    continue
+                index.setdefault((crc.zfill(8), int(size)), []).append({
+                    "source": source,
+                    "archive": entry.get("name", ""),
+                    "member": member.get("name", ""),
+                    "sha1": member.get("sha1", ""),
+                    "dats": dats,
+                })
+    return index
+
+
+def romsets_holding(entry: dict, index: dict) -> list[dict]:
+    """The imported romsets whose members are this dump.
+
+    A member and an entry that both carry a sha1 must agree on it: crc32
+    and size alone match by accident across 40 000 ROMs.
+    """
+    crc, size = str(entry.get("crc32") or "").lower(), entry.get("size")
+    if not crc or size is None:
+        return []
+    sha1 = str(entry.get("sha1") or "").lower()
+    # A set whose contents changed between versions is stored once per
+    # distinct content: one line per set and member, with every version.
+    merged: dict[tuple[str, str, str], dict] = {}
+    for hit in index.get((crc.zfill(8), int(size)), []):
+        if sha1 and hit["sha1"] and hit["sha1"].lower() != sha1:
+            continue
+        key = (hit["source"], hit["archive"], hit["member"])
+        held = merged.setdefault(key, {**hit, "dats": []})
+        held["dats"] = sorted(set(held["dats"]) | set(hit["dats"]))
+    return list(merged.values())
+
+
 def dump_identity(entry: dict) -> tuple:
     """What makes two catalog listings one dump: the strongest hash stated."""
     if entry.get("sha1"):
@@ -94,7 +148,12 @@ def distinct_missing(report: dict) -> int:
     return len({dump_identity(e) for data in report.values() for e in data["missing"]})
 
 
-def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict:
+def build_report(
+    db: dict,
+    snapshots: dict,
+    members: dict | None = None,
+    romsets: dict | None = None,
+) -> dict:
     """Compare each snapshot against the collection.
 
     A DAT counts as covered when the collection holds at least one of
@@ -109,6 +168,7 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
     # its Wanted page without them and asked the public for the Astrocade
     # and Gamate BIOS that astrocdw.zip and gamate.zip already carry.
     members = archive_members(db) if members is None else members
+    romsets = romset_index() if romsets is None else romsets
     by_md5_size = {
         (entry.get("md5", ""), entry.get("size", 0)) for entry in by_sha1.values()
     }
@@ -149,6 +209,10 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
             elif entry.get("dat", "") not in held["dats"]:
                 held["dats"].append(entry.get("dat", ""))
         missing = list(merged.values())
+        for entry in missing:
+            holders = romsets_holding(entry, romsets)
+            if holders:
+                entry["romsets"] = holders
         out_of_scope = len({
             dump_identity(e) for e in unmatched if e.get("dat", "") not in covered_dats
         })
@@ -243,6 +307,12 @@ def main() -> int:
                           f"of {' + '.join(source['from'])}")
                 else:
                     print(f"    MISSING {entry['name']} ({label}) sha1={entry.get('sha1')}")
+                for hit in entry.get("romsets", []):
+                    versions = hit["dats"][0] if len(hit["dats"]) == 1 else (
+                        f"{hit['dats'][0]} to {hit['dats'][-1]}"
+                    )
+                    print(f"      in {hit['source']} {hit['archive']} as "
+                          f"{hit['member']} ({versions})")
 
     total_missing = distinct_missing(report)
     if total_missing:

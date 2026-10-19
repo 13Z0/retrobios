@@ -2091,6 +2091,9 @@ def load_derivable(path: str = "derivable.json") -> dict[str, dict]:
         return {}
 
 
+_ROMSET_SOURCES = {"mame": "MAME", "fbneo": "FBNeo"}
+
+
 def generate_provenance_page(
     db: dict, report: dict, derivable: dict[str, dict] | None = None
 ) -> str:
@@ -2228,6 +2231,12 @@ def generate_provenance_page(
                 # A pipe in catalog text would split the markdown table row
                 name = entry["name"].replace("|", "-")
                 desc = (entry.get("description") or "").replace("|", "-")
+                # Where an emulator's romset already carries the dump.
+                for hit in entry.get("romsets", []):
+                    desc += (
+                        f" Ships in {_ROMSET_SOURCES.get(hit['source'], hit['source'])} "
+                        f"`{hit['archive']}` as `{hit['member']}`."
+                    )
                 lines.append(f"    | `{name}` | {desc} | `{sha1}` |")
             lines.append("")
 
