@@ -22,7 +22,7 @@ systems:
 notes: >-
   Emulates Enterprise 64/128, Videoton TVC, Amstrad CPC 464/664/6128,
   and ZX Spectrum 16/48/128. All ROMs are embedded in the binary since
-  v1.1.0; external files override built-in data. Content type is
+  v1.1.0, and external files override built-in data. Content type is
   auto-detected and determines machine configuration and ROM selection.
   Custom ROM mappings are possible via .ep128cfg config files placed in
   ep128emu/config/ or next to content. The .info declares epd19hft.rom

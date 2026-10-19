@@ -24,7 +24,7 @@ notes: |
   softrdp, and the raphnetraw input plugin are vendored alongside it, plus
   RMG's own audio and input plugins. softrdp opens no data file. ES-DE runs it as `--nogui -q <rom>` for both n64 and
   n64dd. Against mupen64plus-core 6dca4c15 the media loader, the DD region
-  enum and load_dd_rom are unchanged; the fork diverges on SDL3, video
+  enum and load_dd_rom are unchanged. The fork diverges on SDL3, video
   capture, netplay and the dynarec.
 
   Cartridge boot needs no boot ROM. The PIF boot ROM is simulated
@@ -57,20 +57,20 @@ notes: |
   (Source/3rdParty/mupen64plus-core/src/device/gb/gb_cart.c:999-1012) and fixes no name, size or hash, so neither
   the cart nor its save carries an entry here.
 
-  Data the install places in the shared data directory (CMakeLists.txt:130-153;
+  Data the install places in the shared data directory (CMakeLists.txt:130-153,
   /usr/share/RMG, or Data beside the executable for portable and Windows
   builds, Source/RMG-Core/Directories.cpp:406-431): mupen64plus.ini, read as the ROM database
   (Source/3rdParty/mupen64plus-core/src/main/rom.c:585-604) and used by GLideN64 to locate that same directory
-  (Source/3rdParty/mupen64plus-video-GLideN64/src/mupenplus/CommonAPIImpl_mupenplus.cpp:77-85); GLideN64.custom.ini, per ROM
+  (Source/3rdParty/mupen64plus-video-GLideN64/src/mupenplus/CommonAPIImpl_mupenplus.cpp:77-85). GLideN64.custom.ini holds per ROM
   overrides keyed on the uppercased header name
-  (Source/3rdParty/mupen64plus-video-GLideN64/src/mupenplus/Config_mupenplus.cpp:331-350); font.ttf, reached only after the
+  (Source/3rdParty/mupen64plus-video-GLideN64/src/mupenplus/Config_mupenplus.cpp:331-350). font.ttf is reached only after the
   configured font name fails both as a system font path and as a full path
-  (Source/3rdParty/mupen64plus-video-GLideN64/src/TextDrawer.cpp:202-230); Cheats/<name>.cht, named from the header CRC pair
+  (Source/3rdParty/mupen64plus-video-GLideN64/src/TextDrawer.cpp:202-230). Cheats/<name>.cht is named from the header CRC pair
   and country code, or from the ROM MD5 when all three are zero, and merged
   with a user copy under the config directory
-  (Source/RMG-Core/Cheats.cpp:82-116,579-598); InputProfileDB.json
-  (Source/RMG-Input/Utilities/InputProfileDB.cpp:26-36); gamecontrollerdb.txt
-  (Source/RMG-Input/main.cpp:1071-1077); and for VRU builds
+  (Source/RMG-Core/Cheats.cpp:82-116,579-598). The directory also holds InputProfileDB.json
+  (Source/RMG-Input/Utilities/InputProfileDB.cpp:26-36), gamecontrollerdb.txt
+  (Source/RMG-Input/main.cpp:1071-1077) and, for VRU builds,
   vosk-model-small-en-us-0.15.zip, extracted into the user data directory when
   any of the thirteen model files it checks for is missing
   (Source/RMG-Input/VRU.cpp:154-232). The published AppImage is the features-on build,
@@ -99,7 +99,7 @@ notes: |
   data/mupencheat.txt, which RMG neither installs nor parses since cheats use
   its own .cht format and the core's cheat.c opens no file, and cxd4's
   rsp_conf.bin, whose reader is the zilmar variant of update_conf behind
-  #if !defined(M64P_PLUGIN_API); the variant this build compiles takes settings
+  #if !defined(M64P_PLUGIN_API). The variant this build compiles takes settings
   from the core config API and ignores its filename argument
   (Source/3rdParty/mupen64plus-rsp-cxd4/module.c:89-99,652-673).
 
@@ -115,7 +115,7 @@ files:
       0xe848d316, which covers the retail library. The path is set in the
       settings dialog and no name is fixed by the code. Loaded whole, then
       byteswapped after identifying the first word as one of 0x80270740 (z64),
-      0x40072780 (n64) or 0x27804007 (v64); any other value disables 64DD.
+      0x40072780 (n64) or 0x27804007 (v64). Any other value disables 64DD.
       Size is not checked and no hash is computed.
     source_ref: "Source/RMG-Core/MediaLoader.cpp:47-74, Source/RMG-Core/Settings.cpp:284-286, Source/3rdParty/mupen64plus-core/src/main/main.c:1189-1254, Source/3rdParty/mupen64plus-core/src/device/dd/disk.c:434-445"
 

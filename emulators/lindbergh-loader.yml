@@ -33,7 +33,7 @@ notes: |
   from constants and recomputes the CRCs (eeprom.c:33-48, baseBoard.c:60-74,
   eepromSettings.c:24-120). Card_01.crd and Card_02.crd are written from a
   56-byte header held in the binary (cardReader.c:227-247). lindbergh.ini and
-  controls.ini are optional; both fall back to compiled-in defaults and can be
+  controls.ini are optional: both fall back to compiled-in defaults and can be
   emitted with --create (config.c:510-516, src/lindbergh/sdlInput.c:790-795).
 
   The one hard external dependency is the NVIDIA Cg runtime. findLibCg() checks
@@ -74,8 +74,8 @@ files:
     note: >-
       Searched at LIBCG_PATH, /app/lib32/libCg2.so, $APP_IMG_ROOT/usr/lib32/
       libCg2.so, then ./libCg.so and $LINDBERGH_LOADER_CURRENT_DIR/libCg.so. The
-      loader reads 8 bytes at offset 0x226d84 and requires exactly "2.0.0.12";
-      a missing file, a different version string or a failed dlopen of
+      loader reads 8 bytes at offset 0x226d84 and requires exactly "2.0.0.12".
+      A missing file, a different version string or a failed dlopen of
       cgCreateContext, cgCreateProgram, cgGetProgramString, cgDestroyContext or
       cgDestroyProgram each call exit(EXIT_FAILURE). Upstream vendors the build
       as libs/libCg.so and both installers rename it to libCg2.so so it can sit
@@ -199,7 +199,7 @@ files:
       The .abc is the metrics sidecar of the .tga atlas, named for the GDI
       ABC width triple. Header of 28 bytes: renderOffset, renderHeight,
       atlas width, atlas height, lineHeight, then firstSymbol and lastSymbol
-      as uint16 and a uint32 symbol count; then one 24-byte record per glyph,
+      as uint16 and a uint32 symbol count, then one 24-byte record per glyph:
       four float32 giving the normalised UV rectangle followed by leftMargin,
       width, rightMargin and a pad as uint16. Field names come from
       JayFoxRox/lindbergh-tools Utilities/src/font.c, written against a real
@@ -225,7 +225,7 @@ files:
       The .abc is the metrics sidecar of the .tga atlas, named for the GDI
       ABC width triple. Header of 28 bytes: renderOffset, renderHeight,
       atlas width, atlas height, lineHeight, then firstSymbol and lastSymbol
-      as uint16 and a uint32 symbol count; then one 24-byte record per glyph,
+      as uint16 and a uint32 symbol count, then one 24-byte record per glyph:
       four float32 giving the normalised UV rectangle followed by leftMargin,
       width, rightMargin and a pad as uint16. Field names come from
       JayFoxRox/lindbergh-tools Utilities/src/font.c, written against a real
@@ -252,7 +252,7 @@ files:
       The .abc is the metrics sidecar of the .tga atlas, named for the GDI
       ABC width triple. Header of 28 bytes: renderOffset, renderHeight,
       atlas width, atlas height, lineHeight, then firstSymbol and lastSymbol
-      as uint16 and a uint32 symbol count; then one 24-byte record per glyph,
+      as uint16 and a uint32 symbol count, then one 24-byte record per glyph:
       four float32 giving the normalised UV rectangle followed by leftMargin,
       width, rightMargin and a pad as uint16. Field names come from
       JayFoxRox/lindbergh-tools Utilities/src/font.c, written against a real
@@ -280,7 +280,7 @@ files:
       The .abc is the metrics sidecar of the .tga atlas, named for the GDI
       ABC width triple. Header of 28 bytes: renderOffset, renderHeight,
       atlas width, atlas height, lineHeight, then firstSymbol and lastSymbol
-      as uint16 and a uint32 symbol count; then one 24-byte record per glyph,
+      as uint16 and a uint32 symbol count, then one 24-byte record per glyph:
       four float32 giving the normalised UV rectangle followed by leftMargin,
       width, rightMargin and a pad as uint16. Field names come from
       JayFoxRox/lindbergh-tools Utilities/src/font.c, written against a real
@@ -307,7 +307,7 @@ files:
       was pushed from a developer host onto development units, and a stock
       production machine ships none.
     note: >-
-      An INI file read by Sega's boot programs, not by the games; the
+      An INI file read by Sega's boot programs, not by the games. The
       per-title <id>rc files that do ship in game dumps are xinit client
       scripts, a different thing. lxmaster (Sep 2005 and Jan 2008 builds)
       reads [develop], [terminal] and [segaboot], and from the 2008 build

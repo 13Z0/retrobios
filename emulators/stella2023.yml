@@ -18,10 +18,10 @@ notes: |
   The .info reports display_version 6.6 which does not match the source
   (src/common/Version.hxx defines STELLA_VERSION as "7.0_pre").
 
-  The Atari 2600 has no BIOS ROM; TIA, RIOT, and 6507 CPU are fully
+  The Atari 2600 has no BIOS ROM: TIA, RIOT, and 6507 CPU are fully
   emulated in software. The SuperCharger (Starpath) BIOS is emulated via
   a built-in dummy ROM (ourDummyROMCode in src/emucore/CartAR.cxx:279). The game
-  properties database is compiled into DefProps.hxx; external loading is
+  properties database is compiled into DefProps.hxx, and external loading is
   disabled in the libretro port (OSystemLIBRETRO returns
   CompositeKeyValueRepositoryNoop for the property repository).
 

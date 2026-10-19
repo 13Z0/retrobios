@@ -17,7 +17,7 @@ notes: |
   ColecoVision and Coleco Adam emulator by Marat Fayzullin, published as
   versioned archives on a personal site rather than a repository. The 5.6
   source archive carries the portable core (ColEm/, EMULib/, Z80/) and the
-  Unix port; Windows and Android builds are binary-only.
+  Unix port. Windows and Android builds are binary-only.
 
   Three system ROMs are read by StartColeco (Coleco.c:266-300) before the
   hardware reset and before the cartridge. Lookup runs in the directory
@@ -41,7 +41,7 @@ notes: |
   1502). SmartWriter maps at 0000h on boot and EOS at 4000h once port 20h
   enables it (Coleco.c:628-646).
 
-  No hash or magic number is checked on the three ROMs; the read length is
+  No hash or magic number is checked on the three ROMs: the read length is
   the only gate. CRC32 is computed for cartridges alone, feeding the
   GuessROM hardware heuristics (Coleco.c:482-486).
 

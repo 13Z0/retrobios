@@ -16,7 +16,7 @@ mode: standalone
 
 notes: |
   The GitHub repository skyline-emu/skyline was replaced by an archival notice on
-  2026-08-18, so the pinned revision is served by Software Heritage; the same tree
+  2026-08-18, so the pinned revision is served by Software Heritage. The same tree
   is in the archive.org bundle github.com_skyline-emu_bundles_20230508, and the
   signed edge-69 APK carries the built assets. Every path below reads against
   that revision.
@@ -25,14 +25,14 @@ notes: |
   Android package skyline.emu, versionCode 3, minSdk 29, with the debug variant taking a
   .dev suffix (build.gradle:23,28-29,120-121). ES-DE reaches it through its SKYLINE find
   rule and starts it with android.intent.action.VIEW on the content URI of the game.
-  Development ceased and the README at the pinned commit records it; the code is split
+  Development ceased and the README at the pinned commit records it. The code is split
   across skyline and skyline-dev, whose external file surface is identical (key_store.cpp
   :10-13 and shared_font_core.h:40-47 in both).
 
   NCA, NRO, NSO, NSP and XCI are loaded (loader/). Two key files are read, from keys/
   under the application internal files directory, which os.cpp:35 hands to the key store
   as its root. Both arrive through the in-app importer, which accepts only the two names
-  and rewrites the trimmed pairs into that directory (KeyReader.kt:25-26,56-60); nothing
+  and rewrites the trimmed pairs into that directory (KeyReader.kt:25-26,56-60). Nothing
   else is consulted for keys, and there is no dev.keys or console.keys path.
 
   No firmware is installed and none is read. The system version is answered from a
@@ -57,8 +57,8 @@ notes: |
   A custom Vulkan driver can be loaded through adrenotools from gpu_drivers/<label>/
   under the internal files directory (gpu.cpp:342-357). The label and the library
   filename are both read from a meta.json inside the archive the user installs
-  (GpuDriverHelper.kt:19-22,150-191,219), so the code names no driver file of its own;
-  loading falls back to the built-in driver and then to the system libvulkan.so. Save
+  (GpuDriverHelper.kt:19-22,150-191,219), so the code names no driver file of its own.
+  Loading falls back to the built-in driver and then to the system libvulkan.so. Save
   data and the emulated SD card live under switch/ in the external files directory
   (IFileSystemProxy.cpp:21,67) and are written by the emulator.
 
@@ -87,7 +87,7 @@ files:
       Read as rights id to title key pairs from the same directory. A title key normally
       arrives instead from the .tik tickets carried inside an NSP, which are parsed and
       pushed into the same store, so this file is only needed when no ticket supplies
-      one; that case fails with MissingTitleKey. The importer requires both halves of a
+      one. That case fails with MissingTitleKey. The importer requires both halves of a
       pair to be 32 hexadecimal characters.
     source_ref: "app/src/main/cpp/skyline/crypto/key_store.cpp:10-11 (read), app/src/main/cpp/skyline/crypto/key_store.cpp:35-39 (parse), app/src/main/cpp/skyline/loader/nsp.cpp:14-21 (tickets), app/src/main/cpp/skyline/vfs/nca.cpp:108-110 (failure), app/src/main/java/emu/skyline/KeyReader.kt:77-82 (import check)"
 

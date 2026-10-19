@@ -330,7 +330,7 @@ Parses Logiqx XML DATs, the format the dump-preservation catalogs publish:
 Used by `redump_dat_scraper` (fetches the four Redump BIOS DATs directly) and
 by `dat_pack_importer` (reads a locally downloaded No-Intro or TOSEC pack,
 since neither can be fetched without a browser). Both write a snapshot to
-`provenance/`; they do not touch platform YAMLs.
+`provenance/`, and they do not touch platform YAMLs.
 
 ### mame_parser
 
@@ -436,8 +436,8 @@ exporter then had to invent: add it to the requirement instead, through
 | Unmapped slug warnings | New system added upstream | Add mapping to `SLUG_MAP` |
 | Empty requirements list | Upstream format changed | Check `validate_format()`, update parser |
 | Hash mismatch in verify | Upstream updated hashes | Re-scrape and regenerate platform YAML |
-| Scraper hangs | URL unreachable, no timeout | `_fetch_raw()` has 30s timeout; check URL |
-| `Response exceeds 50 MB` | Upstream file grew | Investigate; may need chunked parsing |
+| Scraper hangs | URL unreachable, no timeout | `_fetch_raw()` has 30s timeout, check URL |
+| `Response exceeds 50 MB` | Upstream file grew | Investigate, may need chunked parsing |
 | `validate_format` fails | Upstream restructured | Update both `validate_format` and `fetch_requirements` |
 
 ### E2E tests

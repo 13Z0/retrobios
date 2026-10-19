@@ -19,7 +19,7 @@ notes: |
   r2.6.0.4a build 109, package com.dsemu.drastic, apk md5
   7df979ef9420c5053b27c838e6a7e20c, whose loader is
   lib/arm64-v8a/libdrastic_arm64.so and whose installer is the smali of
-  DraSticActivity; and the Linux AArch64 build r2.5.2.2, md5
+  DraSticActivity. The second is the Linux AArch64 build r2.5.2.2, md5
   17550db727f3b59d36b57746ad1944be, which ships unstripped with 2731 named
   functions and is cited by function name. r2.5.2.2 predates the firmware editor
   and the user database, and that is the whole of the divergence. Every
@@ -29,7 +29,7 @@ notes: |
        /home/odroid/nds_emu/src/linux_odroid64), DraSticActivity.smali
 
   One root holds everything. On Android it is a directory named DraStic at the
-  root of shared storage; on Linux it is the working directory. Startup creates
+  root of shared storage, on Linux it is the working directory. Startup creates
   backup, savestates, config, unzip_cache, system, input_record, cheats, slot2,
   microphone and scripts below it, and the Android build adds backgrounds,
   icon_cache, users, shaders and virtual_controller. Paths below are relative to
@@ -42,13 +42,13 @@ notes: |
   load_system_file builds <root>/system/<name>, opens it read only, measures it
   by seeking to the end, refuses any length other than the one its caller asks
   for with "System file %s is the wrong size (should be %d bytes, is %d)", then
-  reads it whole. Size is the only test; no hash is computed on any file.
+  reads it whole. Size is the only test: no hash is computed on any file.
   ref: drastic r2.5.2.2 load_system_file 0xea80-0xebe4,
        libdrastic_arm64.so 0x1b4d4-0x1b510
 
   Each BIOS slot has two candidates. The ARM9 slot takes nds_bios_arm9.bin, and
   on failure logs "Can't find Nintendo ARM9 BIOS. Trying free DraStic ARM9
-  BIOS." and takes drastic_bios_arm9.bin; the ARM7 slot does the same with
+  BIOS." and takes drastic_bios_arm9.bin. The ARM7 slot does the same with
   nds_bios_arm7.bin then drastic_bios_arm7.bin. A slot left empty returns -1
   from initialize_memory, and initialize_system answers that with the on-screen
   warning naming the two Nintendo files and their sizes, the line "FATAL: Could
@@ -65,7 +65,7 @@ notes: |
 
   Firmware is answered in code when no file loads: the 256 KB region is zeroed
   and patch_firmware_header_data writes the header, the console identity and the
-  user settings block into it. r2.5.2.2 reads nds_firmware.bin alone; r2.6.0.4a
+  user settings block into it. r2.5.2.2 reads nds_firmware.bin alone, while r2.6.0.4a
   reads nds_firmware_modified.bin first, which is what its firmware editor
   writes back, and falls through to nds_firmware.bin.
   ref: drastic r2.5.2.2 initialize_memory 0x1c3e0-0x1c3f8,
@@ -84,7 +84,7 @@ notes: |
 
   Two databases sit at the root. game_database.xml carries the save type per
   title and a failed open only logs "Error: could not load game database file
-  %s."; r2.6.0.4a reads game_database_user.xml after it as a user overlay.
+  %s." r2.6.0.4a reads game_database_user.xml after it as a user overlay.
   usrcheat.dat is the Action Replay library, read by load_cheat_directory.
   ref: drastic r2.5.2.2 initialize_gamecard 0x709bc-0x70a30,
        drastic r2.5.2.2 initialize_game_database 0x73180,
@@ -267,7 +267,7 @@ files:
     bundled: true
     category: game_data
     description: "lookup texture named by a chain"
-    note: "Android only. Loaded when a texture tag names a file instead of the framebuffer or an FBO, with the dimensions and the format taken from the tag. SMAA is the one shipped chain that names any, taking smaa/AreaTexRGB.raw and smaa/SearchTexRGB.raw; the package also carries the non-RGB pair of the same two tables, which no shipped chain names."
+    note: "Android only. Loaded when a texture tag names a file instead of the framebuffer or an FBO, with the dimensions and the format taken from the tag. SMAA is the one shipped chain that names any, taking smaa/AreaTexRGB.raw and smaa/SearchTexRGB.raw. The package also carries the non-RGB pair of the same two tables, which no shipped chain names."
     source_ref: "assets/shaders/_shader_format_.txt:42-56, assets/shaders/SMAA.dfx:1-6"
 
   - name: "<name>.zip"

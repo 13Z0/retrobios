@@ -77,7 +77,7 @@ class ADiffThatComparedNothingFails(unittest.TestCase):
 
 
 class OneNameSeveralFiles(unittest.TestCase):
-    """Dolphin's three IPL.bin differ only by path; the model kept one."""
+    """Dolphin's three IPL.bin differ only by path, and the model kept one."""
 
     REGIONS = {"USA": "a" * 32, "EUR": "b" * 32, "JAP": "c" * 32}
 

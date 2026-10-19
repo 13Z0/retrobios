@@ -30,7 +30,7 @@ notes: |
   Pico out and CD support in. Content is read from .bin, .smd, .md, .gen and .sms
   cartridge images and from .cue, .iso and .chd discs (MD.emu/metadata/conf.mk:5,
   MD.emu/src/main/system.ccm:91-101). A .sms name switches the machine to Power
-  Base Converter mode (MD.emu/src/genplus-gx/loadrom.cc:383-387); Game Gear and
+  Base Converter mode (MD.emu/src/genplus-gx/loadrom.cc:383-387). Game Gear and
   SG-1000 sit inside #if 0 blocks in the renderer with no SYSTEM_GG or SYSTEM_SG
   defined anywhere in the tree (MD.emu/src/genplus-gx/vdp_render.cc:934-962,974-989,
   MD.emu/src/genplus-gx/system.h:35-40).
@@ -52,7 +52,7 @@ notes: |
   imagine/src/base/common/ApplicationContext.cc:542-562,
   imagine/src/fs/ArchiveFS.cc:75-78). init_rom accepts the image only at exactly
   131072 bytes with "BOOT" at 0x124 or 0x128 of the raw bytes, which is what raises
-  sCD.isActive; anything else ends the load with "Invalid BIOS"
+  sCD.isActive, and anything else ends the load with "Invalid BIOS"
   (MD.emu/src/genplus-gx/loadrom.cc:426-432, MD.emu/src/main/Main.cc:340-344).
   Cartridge content never reads it.
 
@@ -104,7 +104,7 @@ files:
     note: >-
       Picked by the user from any path, under any name ending in .bin, .smd, .md,
       .gen or .sms, or inside a .zip, .7z or .rar holding one. The tests are the
-      length and the "BOOT" text at 0x124 or 0x128; a file failing either aborts
+      length and the "BOOT" text at 0x124 or 0x128, and a file failing either aborts
       the load rather than falling back.
     source_ref: "MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), MD.emu/src/main/EmuMenuViews.cc:290-295,317-345 (picker and filter)"
 

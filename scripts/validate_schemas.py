@@ -134,7 +134,7 @@ def _validate_pack_manifests(dist: Path) -> list[str]:
             return _scan_pack_manifests(dist)
     except ArtifactLockBusy:
         print(
-            f"note: {dist.name} is being written; skipping pack manifests",
+            f"note: {dist.name} is being written, skipping pack manifests",
             file=sys.stderr,
         )
         return []
@@ -340,7 +340,7 @@ def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
 def unchecked_formats() -> list[str]:
     """Formats the schemas declare that this jsonschema install cannot check.
 
-    date-time and uri need the format extras; without them the ten format
+    date-time and uri need the format extras. Without them the ten format
     constraints of the published schemas were accepted unread.
     """
     used = {

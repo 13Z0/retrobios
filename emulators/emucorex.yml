@@ -24,7 +24,7 @@ notes: |
   minSdk 29. A Kotlin and Compose front end drives a PCSX2 tree vendored under
   app/src/main/cpp/pcsx2 and pinned to v2.8.0, reached through the ARM_ANDROID
   adapter that owns the JNI entry points. Frontends start the exported activity
-  com.sbro.emucorex.MainActivity; ES-DE passes the disc as the intent data URI.
+  com.sbro.emucorex.MainActivity, and ES-DE passes the disc as the intent data URI.
   ref: app/build.gradle.kts:66-70, app/build.gradle.kts:97,
        app/src/main/AndroidManifest.xml:90-104,
        app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:78-82,
@@ -40,7 +40,7 @@ notes: |
        app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:706,
        app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:723-734
 
-  Storage. The data root is the app files directory; the app creates cache,
+  Storage. The data root is the app files directory. The app creates cache,
   resources, inis, sstates and memcards under it, then copies the whole resources
   asset tree out of the package into resources. The core is handed AppRoot,
   DataRoot, Resources, Settings and Cache from that root, and the launcher sets
@@ -149,7 +149,7 @@ files:
     description: "PS2 BIOS image"
     note: >-
       Any image whose romdir holds RESET and ROMVER is accepted, whatever its
-      name. The 2 to 8 MB range gates the folder scan; an image named in the
+      name. The 2 to 8 MB range gates the folder scan, but an image named in the
       configuration skips that range. Read into the 4 MB ROM region, which is
       zero-filled first, and truncated to it. Shorter than 2465792 bytes disables
       the OSDSys parameter HLE.
@@ -170,7 +170,7 @@ files:
       extension, so the picker takes .7d alongside .bin and .rom, and the name
       hint r27v1602f carries it past the name test. Read into the 4 MB ROM
       window, whose upper half is cleared first. ROMVER marks it T with a fifth
-      character Z, which is what makes it COH-H and region 11; its description
+      character Z, which is what makes it COH-H and region 11. Its description
       comes from the EXTINFO serial. A System 246 arcade manifest selects this
       name from the BIOS folder. Byte-identical to the r27v1602f.7d member of the
       MAME sys246 set.
@@ -554,7 +554,7 @@ files:
       Played from the resources directory whenever an achievement notification is
       raised and no custom sound is configured. Sound effects and the notification
       sound both default on. The vendored tree carries only the README for this
-      directory, so the file has to be supplied; the Android sound callback
+      directory, so the file has to be supplied. The Android sound callback
       returns without playing when the path is not a file. Upstream v2.8.0
       ships it at 15696 bytes.
     source_ref: "app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:81, app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:1245-1250, app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:1963-1966, app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:461-467"
@@ -649,7 +649,7 @@ exclusion_note: >
   Left out are the parts of the bundled resource tree that this platform compiles
   out. ImGuiManager::Initialize returns false before the ImGui context exists, so
   LoadFontData never runs and fonts/RobotoMono-Medium.ttf, fonts/fa-solid-900.ttf
-  and fonts/promptfont.otf are never read; InitializeFullscreenUI returns false
+  and fonts/promptfont.otf are never read. InitializeFullscreenUI returns false
   unconditionally, so FullscreenUI::Initialize never runs and nothing under
   fullscreenui or icons is loaded, cover-placeholder.png included. The DX11 and
   DX12 renderers sit in the Windows branch of the core CMakeLists, so

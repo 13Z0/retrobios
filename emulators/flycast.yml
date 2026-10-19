@@ -26,7 +26,7 @@ notes: |
 
   The libretro port (libretro/flycast, last updated 2025-12-12) is significantly
   behind upstream (flyinghead/flycast). Key divergences:
-  - NAOMI 2 has no separate BIOS entry or platform detection; NAOMI 2 games
+  - NAOMI 2 has no separate BIOS entry or platform detection: NAOMI 2 games
     run as NAOMI using naomi.zip. Upstream has naomi2.zip with dedicated ROMs.
   - System SP is not supported. Upstream has segasp.zip support.
   - The n2_ prefix for NAOMI 2 flat boot ROMs is dead code (DC_PLATFORM_NAOMI2

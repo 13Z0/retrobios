@@ -288,7 +288,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
     all_ok = True
     # Step 2c: Generate truth YAMLs
     # A targeted run writes each platform's model under the target as that
-    # platform files it; the diff is told the target and reads the same place.
+    # platform files it, and the diff is told the target and reads the same place.
     truth_dir = Path(args.output_dir) / "truth"
 
     if args.with_truth or args.with_export:
@@ -547,7 +547,7 @@ def main() -> None:
     all_ok = all_ok and ok
 
     # Step 3b: Destinations both layers claim, and how each was settled. The
-    # ones the pack settles by itself must stay at zero cost; the rest name an
+    # ones the pack settles by itself must stay at zero cost. The rest name an
     # upstream declaration no build can repair, so this reports and never gates.
     # A crash is not a report: without --strict slots.py exits 0 on every
     # conflict, so a non-zero code means it never finished reading.
@@ -658,7 +658,7 @@ def main() -> None:
         print("\n--- 4c/8 generate target manifests: SKIPPED (--skip-packs) ---")
         results["generate_target_manifests"] = SKIPPED
 
-    # Step 5: Consistency check. verify describes the full pack; a run that
+    # Step 5: Consistency check. verify describes the full pack, and a run that
     # built only a reduced one (--source platform or truth) has nothing to
     # compare it with, and says so instead of failing on an empty parse.
     full_pack_built = args.source == "full" or args.all_variants
@@ -675,7 +675,7 @@ def main() -> None:
 
     # Step 6: Pack integrity (extract + hash verification)
     if not args.skip_packs and not full_pack_built:
-        # The check reads the full pack's name; a reduced pack holds fewer
+        # The check reads the full pack's name, while a reduced pack holds fewer
         # files than the platform declares by design.
         print("\n--- 6/8 pack integrity: SKIPPED (no full pack built) ---")
         results["pack_integrity"] = SKIPPED

@@ -48,7 +48,7 @@ notes: |
   (src/xenia/kernel/xconfig.cc:87-246). Launching a system title symlinks
   \SystemRoot to that title's own mount and resolves xam.xex, then
   $flash_xam.xex, through the guest filesystem
-  (src/xenia/emulator.cc:744-759); spa.bin is resolved the same way inside an
+  (src/xenia/emulator.cc:744-759). spa.bin is resolved the same way inside an
   installed DLC package (src/xenia/kernel/xam/content_manager.cc:31, 425-426).
 
   The fork's data ships inside the executable. The UI font and the app icon are
@@ -101,7 +101,7 @@ exclusion_note: >
   is synthesised. Its own data (UI font, icons, locale catalogues, SDL
   controller mappings, game patches, compatibility lists) is compressed into the
   executable through xe_embed_binary_assets and xe_embed_compressed_bundle, so
-  none of it exists as a file beside the binary; the shipped bundle carries only
+  none of it exists as a file beside the binary. The shipped bundle carries only
   the executable, its property list, an icon, a compiled asset catalog and the
   two shader translation dylibs. The three cvars that accept a path default to
   empty and fall back to those embedded copies. libmetalirconverter.dylib and

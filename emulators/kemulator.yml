@@ -41,7 +41,7 @@ notes: |
        x64/src/main/emulator/EmulatorPlatform.java:9-11
 
   Every caller degrades when the probe fails. PlayerImpl.midi() breaks out of the
-  ma block and falls back to MidiSystem; PlayerImpl.mmf(), SmafPlayer, AudioClip
+  ma block and falls back to MidiSystem. PlayerImpl.mmf(), SmafPlayer, AudioClip
   and PhrasePlayerImpl each throw and lose SMAF audio alone. Only the file's
   existence is tested, then the path goes to Native.load, so the code reads no
   size and no hash.
@@ -77,7 +77,7 @@ files:
     required: false
     validation: [existence]
     description: "Yamaha MA-7 SMAF hardware layer"
-    note: "Tested for existence next to M7_EmuSmw7.dll; the MA-7 branch is skipped unless both are present. Loaded by the Windows loader as a dependency of the sequencer library, which is the path handed to Native.load."
+    note: "Tested for existence next to M7_EmuSmw7.dll, and the MA-7 branch is skipped unless both are present. Loaded by the Windows loader as a dependency of the sequencer library, which is the path handed to Native.load."
     source_ref: "src/media/emulator/media/mmf/MMFPlayer.java:21"
 
   - name: M5_EmuSmw5.dll
@@ -93,7 +93,7 @@ files:
     required: false
     validation: [existence]
     description: "Yamaha MA-5 SMAF hardware layer"
-    note: "Tested for existence next to M5_EmuSmw5.dll; the MA-5 branch is skipped unless both are present."
+    note: "Tested for existence next to M5_EmuSmw5.dll, and the MA-5 branch is skipped unless both are present."
     source_ref: "src/media/emulator/media/mmf/MMFPlayer.java:25"
 
   - name: ma3smwemu.dll
@@ -141,7 +141,7 @@ files:
     sha1: f59e0d445aafe2503c6e5249ca07df4b89626f8f
     validation: [existence]
     description: "Mascot Capsule V3 renderer"
-    note: "Pulled in by the Windows loader when java_micro3d_v3_32.dll loads; no Java code names it."
+    note: "Pulled in by the Windows loader when java_micro3d_v3_32.dll loads. No Java code names it."
     source_ref: "micro3d_dll/src/com/mascotcapsule/micro3d/v3/Figure.java:163"
 
   - name: s60snr.ttf
@@ -181,5 +181,5 @@ files:
     category: game_data
     validation: [existence]
     description: "UI strings, English"
-    note: "Read from the lang directory next to the executable at startup and kept as the fallback bundle; the language setting names a sibling in the same directory. Every lookup that misses both bundles falls back to the string built into the call site."
+    note: "Read from the lang directory next to the executable at startup and kept as the fallback bundle, and the language setting names a sibling in the same directory. Every lookup that misses both bundles falls back to the string built into the call site."
     source_ref: "src/main/emulator/UILocale.java:11-48"

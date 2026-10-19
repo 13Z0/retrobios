@@ -368,7 +368,7 @@ files:
     standalone_path: "Source/boss2.j2b"
     required: false
     source_ref: "Sources/Jazz2/Compatibility/EventConverter.cpp:360-370, Sources/Jazz2/Compatibility/AssetConverter.cpp:505-508, Sources/Jazz2/LevelHandler.cpp:1397-1400, Sources/Jazz2/ContentResolver.cpp:2784-2788"
-    note: "Boss music. The boss activation event carries a music index that is converted to boss1.j2b or boss2.j2b and recorded as music the level uses; share3.j2l carries index 1."
+    note: "Boss music. The boss activation event carries a music index that is converted to boss1.j2b or boss2.j2b and recorded as music the level uses. share3.j2l carries index 1."
 
   # Cinematics, read from Content/Cinematics/ then from Source/
 

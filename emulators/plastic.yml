@@ -40,7 +40,7 @@ notes: |
   and reloaded on the next run (plastic_core/src/cartridge/mod.rs:319-348,
   :457-463). Save state slots 0 to 9 are <rom-stem>_<slot>.pst under the data
   directory, ~/.local/share/plastic/saved_states on Linux
-  (plastic_ui/src/main.rs:16-32,95-118; plastic_tui/src/ui.rs:38-51,144-176;
+  (plastic_ui/src/main.rs:16-32,95-118, plastic_tui/src/ui.rs:38-51,144-176,
   plastic_core/src/nes.rs:393-406).
 
   Gamepad support comes from gilrs, which compiles the SDL controller database

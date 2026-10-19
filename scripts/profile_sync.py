@@ -66,7 +66,7 @@ WIDEN_STEPS = (0, 3, 6, 12, 25, 50)
 # The fallback mapping is a full sequence diff, and it only runs once exact
 # anchoring has failed, which is rare. openbor.c is the largest file any
 # profile cites, 55k lines against 57k, and diffing the pair takes nine
-# seconds; the ceiling sits above it so that one resolves, and still stops a
+# seconds. The ceiling sits above it so that one resolves, and still stops a
 # pathological pair from stalling a sweep of every profile.
 MAX_MATCH_LINES = 60000
 
@@ -217,7 +217,7 @@ def strip_repo_word(
     if head.lower() in known and tail and "/" not in head and "." not in head:
         tail = tail.strip()
         # `ArcadeFlashWeb v1.0.2 flash/flash.html` names the release the file
-        # was read from; the version is not part of the path either.
+        # was read from. The version is not part of the path either.
         version, _, rest = tail.partition(" ")
         if rest and _VERSION_WORD_RE.fullmatch(version):
             return rest.strip()
@@ -229,7 +229,7 @@ def narrow_by_cited(matches: list[str], cited_dirs: Iterable[str]) -> list[str]:
     """Keep the candidates under the deepest directory the profile cites.
 
     A bare `version.h` matches BasiliskII/src/include/version.h and
-    SheepShaver/src/include/version.h in cebix/macemu; the profile's own
+    SheepShaver/src/include/version.h in cebix/macemu. The profile's own
     source_refs all live under SheepShaver/src, which is the tree the prose
     meant. Candidates under no cited directory are kept only when none is.
     """
@@ -271,7 +271,7 @@ def _anchor_tokens(entry: dict) -> list[str]:
 
     Both the content values and the set name are searched, because profiles
     cite two different shapes. FBNeo and Hypseus refs point at the ROM table,
-    where the CRC32s are; MAME refs point at the machine declaration, which
+    where the CRC32s are, while MAME refs point at the machine declaration, which
     carries the set name and no hash at all.
     """
     tokens = collect_tokens(entry)
@@ -328,7 +328,7 @@ class Citation:
 
     A structured citation lives under a source_ref key and keeps its entry
     for the values it declares. A prose citation is a path:line run found
-    inside any other string scalar; its spans locate the path and every
+    inside any other string scalar. Its spans locate the path and every
     range token inside the scalar line, so a recale can move the numbers
     and leave the sentence around them alone.
     """
@@ -382,7 +382,7 @@ def _walk_document(
 
 
 # What separates one citation from the next in prose. lynx-emu writes
-# "...:112; mednafen src/lynx/system.cpp:86-93": without the semicolon the
+# `...:112; mednafen src/lynx/system.cpp:86-93`: without the semicolon the
 # project word read as prose and the citation was charged to the fork. A
 # sentence end separates them the same way.
 _PROSE_LIST_DELIMITERS = ",;:(."
@@ -421,7 +421,7 @@ def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | 
     device/pif/bootrom_hle.c`: plugins vendored in the declared repository
     under mupen64plus-video-rice/ and mupen64plus-core/. A citation is in
     reach when exactly one file ends with the path below a directory naming
-    the project; the first tree that answers decides.
+    the project. The first tree that answers decides.
     """
     word, _, rest = path.partition(" ")
     rest = rest.strip().lstrip("/")
@@ -460,7 +460,7 @@ def _prose_runs(
         # A literal block keeps its line breaks, so a citation wrapped after
         # `file:` or after a range's comma lost the ranges on the next line
         # (gearcoleco `libretro.cpp:` then four ranges). The next line is
-        # read as the run's continuation; a run reaching into it is wrapped.
+        # read as the run's continuation, and a run reaching into it is wrapped.
         line = own.rstrip()
         boundary = len(line)
         following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
@@ -941,7 +941,7 @@ def anchor_part(
 
     pin_lines = fetch(PIN, part.path, part.start, tokens)
     if pin_lines is None and path != part.path:
-        # A ref may cite a bare filename the tree search resolved at HEAD; the
+        # A ref may cite a bare filename the tree search resolved at HEAD. The
         # same resolved path usually holds at the pin. A genuine rename keeps
         # the old path at the pin, which is why that one is tried first.
         pin_lines = fetch(PIN, path, part.start, tokens)
@@ -949,7 +949,7 @@ def anchor_part(
         # Present at HEAD, absent at the pin, and the cited range fits the
         # HEAD file: the ref was written against HEAD while source_commit
         # still names an older revision. Saying "missing" sends the reader
-        # hunting for a move that never happened; the fix is the pin.
+        # hunting for a move that never happened: the fix is the pin.
         reason = "pin revision missing"
         if _written_against_head(part, head_lines):
             reason = "written against HEAD, pin names an older revision"
@@ -1255,7 +1255,7 @@ def branch_in_url(url: str) -> str | None:
 def branch_candidates(url: str) -> list[str]:
     """Each prefix of a /tree/ tail, shortest first, that may be the branch.
 
-    A branch name can hold a slash, so the tail is not split blindly; the
+    A branch name can hold a slash, so the tail is not split blindly. The
     first prefix the forge resolves is the branch, the rest a directory.
     Taken whole, `master/tests/cruzes` resolved to nothing and the profile
     was skipped as having no resolvable pin.
@@ -1311,7 +1311,7 @@ def verify_at_pin(
             part, "UNCHECKED", None, None, None, [],
             "entry declares no value to look for",
         )
-    # An archive ref cites the line declaring the set; its members follow, one
+    # An archive ref cites the line declaring the set. Its members follow, one
     # per line, so the window reaches forward as far as the entry has members.
     reach = SELF_CHECK_CONTEXT + len(tokens)
     lo = max(0, part.start - 1 - SELF_CHECK_CONTEXT)
@@ -1427,7 +1427,7 @@ def _resolve_project_words(
 ) -> list:
     """Point `project file` parts at the declared tree that vendors them.
 
-    tree_order() yields the trees to search, pin before HEAD; it is only
+    tree_order() yields the trees to search, pin before HEAD. It is only
     called for a part that needs it, since reading a HEAD tree costs a
     request. Parts no tree carries stay external.
     """
@@ -1587,7 +1587,7 @@ def build_report(
 
         The pin comes before HEAD because that is the revision the ref was
         written against. `mame` cites files that both mamedev/mame and the
-        libretro fork carry today, but only the upstream pin holds them; the
+        libretro fork carry today, but only the upstream pin holds them. The
         fork's pin is an older tree where they lived elsewhere.
         """
         candidates = [path]
@@ -1825,7 +1825,7 @@ def build_report(
         A ref is only broken when it fails everywhere. `mame` cites files that
         both mamedev/mame and its libretro fork hold, with the same delimited
         token on the cited line, so no single attribution can be right for all
-        of them; taking the best outcome across repositories settles it.
+        of them. Taking the best outcome across repositories settles it.
         """
         owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
         carrying = [
@@ -2670,7 +2670,7 @@ def pending_recale(
         moves = _prose_moves(entry, movable)
         if not moves:
             # Either nothing has to move, or the run cannot be written
-            # without guessing; the second case still blocks the pin.
+            # without guessing, and the second case still blocks the pin.
             if any(
                 part.status in movable
                 and part.start is not None
@@ -2766,7 +2766,7 @@ def pins_changed(before: dict, after: dict) -> list[str]:
 def cites_primary(report: ProfileReport) -> bool:
     """Whether a ref resolved in the repository source_commit pins.
 
-    A part attributed to another declared repository carries its slug; one
+    A part attributed to another declared repository carries its slug, and one
     read in the primary carries none. A profile citing nothing proves
     nothing either way and is not held back.
     """
@@ -2790,7 +2790,7 @@ def _set_pin(text: str, document: dict, field: str, value: str, after: str) -> s
 
 
 def _git_history(path: Path) -> list[str] | None:
-    """Commits touching the profile, newest first; None when git cannot say.
+    """Commits touching the profile, newest first, or None when git cannot say.
 
     An untracked profile has no history. A git that fails (no repository,
     dubious ownership, git missing) has not answered, and reading that as
@@ -2897,7 +2897,7 @@ def _resolve_at(
 ) -> tuple[str, object]:
     """("found", (path, lines)) or ("unclear"|"missing", reason).
 
-    Prose often cites a bare filename; the tree at the revision resolves it
+    Prose often cites a bare filename. The tree at the revision resolves it
     when exactly one path carries that name. An unreadable or truncated
     tree, or several paths carrying the name, proves nothing: those come
     back "unclear", never "missing", because a verdict of absence taken on
@@ -2984,7 +2984,7 @@ def _writing_pairs(
 
     Each reading lists (repo, writing pin, current pin) per declared
     repository. A repository whose text lived under several pins gives one
-    reading per pin; the caller settles them when they all agree.
+    reading per pin, and the caller settles them when they all agree.
 
     `prose_written_at` names the pin a reader confirmed the prose against.
     Among several candidate pins it is the answer: fixnes's doOpenFDSBIOS
@@ -3314,7 +3314,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--offline", action="store_true",
-        help="read only what the cache holds; no network access",
+        help="read only what the cache holds, no network access",
     )
     parser.add_argument(
         "--cache-dir", default=DEFAULT_CACHE,
@@ -3428,7 +3428,7 @@ def _apply_writes(
     if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(name, path, args):
         return
     with tempfile.TemporaryDirectory() as scratch:
-        # Always work on a copy. A dry run reports what it left there; a real
+        # Always work on a copy. A dry run reports what it left there, a real
         # run promotes it. A recale rewrites the refs for HEAD, so the pin
         # has to follow or neither moves: a profile whose refs describe one
         # revision and whose pin names another is exactly what the
@@ -3445,7 +3445,7 @@ def _apply_writes(
         if args.rebase_refs and applied and not moved:
             print(
                 f"{name}: refs recaled but the pin will not follow, so nothing "
-                "was written; the prose or an annotated ref has to move first",
+                "was written: the prose or an annotated ref has to move first",
                 file=sys.stderr,
             )
             return
@@ -3523,7 +3523,7 @@ def _print_extras(
 ) -> None:
     """Optional per-profile sections beyond the ref report.
 
-    The ref report mutes a forge that refuses; the extras read the same
+    The ref report mutes a forge that refuses, but the extras read the same
     forge again, so a refusal here is reported on the profile's own line
     instead of ending a pass over every profile. A quota signal still
     stops everything.
@@ -3688,7 +3688,7 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
         ) if on
     ]
     if machine and extras:
-        # The extra sections only exist in the text report; the other outputs
+        # The extra sections only exist in the text report. The other outputs
         # returned before reaching them and printed as if never asked.
         print(
             f"{', '.join(machine)} does not carry {', '.join(extras)}",
@@ -3775,7 +3775,7 @@ def main() -> None:
             try:
                 _apply_writes(args, name, profile, report)
             except YamlWriteError as exc:
-                # The guard already left the file untouched; keep going.
+                # The guard already left the file untouched, so keep going.
                 print(f"{name}: write refused: {exc}", file=sys.stderr)
                 failed.add(name)
 

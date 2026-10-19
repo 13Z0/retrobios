@@ -46,8 +46,8 @@ files:
     required: false
     hle_fallback: true
     note: >
-      PC-9801 system BIOS ROM. The first 0x18000 bytes are read to 0xe8000;
-      a file shorter than that is ignored and the built-in BIOS simulator
+      PC-9801 system BIOS ROM. The first 0x18000 bytes are read to 0xe8000.
+      A file shorter than that is ignored and the built-in BIOS simulator
       is used, as when the file is absent.
     source_ref: "bios/bios.c:440-447, pccore.c:129, common/strres.c:67"
 
@@ -180,12 +180,12 @@ files:
     note: >
       IDE BIOS of a PC-9821, the ROM a real machine maps at D8000h. The
       first 0x2000 bytes of the first name found are read to
-      idebaddr << 12 and nothing past them; a shorter file is dropped.
+      idebaddr << 12 and nothing past them. A shorter file is dropped.
       Without a loaded ROM the emulated IDE BIOS is used.
     source_ref: "cbus/ideio.c:1928-1930, cbus/ideio.c:1944-1981"
 
   # -- SCSI BIOS ROM --
-  # Read into a 0x4000 buffer; any non-empty read is kept. Falls back to the
+  # Read into a 0x4000 buffer, and any non-empty read is kept. Falls back to the
   # scsibios[] stub.
   - name: "scsi.rom"
     path: "np2kai/scsi.rom"

@@ -17,7 +17,7 @@ notes: >
   1571CR, 1581, 1001, 2031, 2040, 3040, 4040, 9000). TED palettes embedded
   (colodore_ted, BT601, BT709, BT2020, yape-pal, yape-ntsc). Embedded check in
   sysfile_load takes priority over filesystem. Models: C16 PAL/NTSC, Plus/4
-  PAL/NTSC, V364 NTSC, 232 NTSC — all use embedded kernal variants. No JiffyDOS
+  PAL/NTSC, V364 NTSC, 232 NTSC. All use embedded kernal variants. No JiffyDOS
   support (C64/C128/SCPU64 only). 3+1 function ROMs loaded for Plus/4 and V364
   models, cleared to 0xFF for C16 and 232 models. c2lo loaded only for V364 model.
 

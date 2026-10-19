@@ -27,7 +27,7 @@ notes: |
     LEVEL1.MAP  -> DOS
     LEVEL1.LEV  -> Amiga
     DEMO.LEV    -> Amiga Demo
-  Only kResourceTypeDOS is accepted (line 199); Amiga data is rejected.
+  Only kResourceTypeDOS is accepted (line 199), so Amiga data is rejected.
 
   Language detection (src/libretro.cpp:142-166) probes for:
     ENGCINE.TXT -> English
@@ -44,10 +44,10 @@ notes: |
   like "LEVEL1.MAP", "GLOBAL.ICN", "PERSO.SPR", "FB_TXT.FNT", etc.
 
   The core never calls RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. All data files must live
-  alongside the loaded .MAP content file. No BIOS or firmware files; the required files
+  alongside the loaded .MAP content file. No BIOS or firmware files: the required files
   are the original Flashback DOS game data.
 
-  Music loaded from .mod files (mod_player.cpp, staticres.cpp:3198-3225). Optional;
+  Music loaded from .mod files (mod_player.cpp, staticres.cpp:3198-3225). Optional:
   the core has a built-in SFX player for in-game action music (sfx_player.cpp with
   embedded music data in staticres.cpp).
 

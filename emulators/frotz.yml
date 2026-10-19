@@ -29,5 +29,5 @@ notes: |
   resource files under the [Resources] Dir setting, "./" by default
   (ref: src/sdl/sf_resource.c:75, 415). Both belong to the game.
 
-exclusion_note: "fonts compiled into the binary; external TrueType fonts only when the user config names them"
+exclusion_note: "fonts compiled into the binary, external TrueType fonts only when the user config names them"
 files: []

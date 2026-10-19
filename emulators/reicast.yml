@@ -15,7 +15,7 @@ systems:
 
 notes: |
   Dreamcast emulator descended from nullDC. The Linux build is compiled
-  for one platform; the default is dreamcast, which sets the ROM prefix
+  for one platform, and the default is dreamcast, which sets the ROM prefix
   dc_, a 2 MB boot ROM, a 128 KB flash and NVR_OPTIONAL 0
   (ref: core/types.h:209-217).
 

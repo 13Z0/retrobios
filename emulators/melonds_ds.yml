@@ -21,14 +21,14 @@ notes: |
   DS mode: the firmware named by the core option is loaded when BIOS/Firmware
   Mode is Native, otherwise (or when it fails to load) a generated firmware
   is used (src/libretro/config/console.cpp:337-364). bios7.bin and bios9.bin
-  are only read with a native firmware; if either fails the core falls back
+  are only read with a native firmware. If either fails the core falls back
   to FreeBIOS (src/libretro/config/console.cpp:379-410). With FreeBIOS an
   encrypted retail ROM is refused (src/libretro/config/console.cpp:420-424),
   and booting without content needs native BIOS and a bootable firmware
   (src/libretro/config/console.cpp:398-401).
 
   DSi mode requires dsi_bios7.bin, dsi_bios9.bin, bios7.bin, bios9.bin, a DSi
-  firmware and a NAND image; each missing file throws
+  firmware and a NAND image, and each missing file throws
   (src/libretro/config/console.cpp:490-551).
 
   Firmware and NAND images have no fixed name. RegisterCoreOptions() scans
@@ -97,11 +97,11 @@ files:
     description: "DSi firmware image"
     required: true
     source_ref: "src/libretro/config/console.cpp:497-499, src/libretro/config/console.cpp:536-551, src/libretro/config/constants.cpp:102-176"
-    note: "Any file name, selected through a core option; the firmware header must declare the DSi console type."
+    note: "Any file name, selected through a core option, and the firmware header must declare the DSi console type."
 
   - name: dsi_nand.bin
     system: nintendo-dsi
     description: "DSi NAND dump"
     required: true
     source_ref: "src/libretro/config/console.cpp:490-495, src/libretro/config/console.cpp:564-592, src/libretro/config/console.cpp:1401-1416, src/libretro/config/constants.cpp:44-100, src/libretro/config/constants.hpp:283-287"
-    note: "Any file name, selected through a core option or picked automatically by region. 251658240 or 257425408 bytes, plus 64 when the no$gba footer is appended; the footer magic must be present at the end or at offset 0xFF800."
+    note: "Any file name, selected through a core option or picked automatically by region. 251658240 or 257425408 bytes, plus 64 when the no$gba footer is appended. The footer magic must be present at the end or at offset 0xFF800."

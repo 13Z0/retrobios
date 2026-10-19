@@ -377,7 +377,7 @@ This executes in sequence:
 
 A new platform is archived-by-default nowhere: `status: active` puts it in
 `list_platforms.py`, the CI matrix, and the scrapers. Set
-`status: archived` to keep the configuration without the automation; archived
+`status: archived` to keep the configuration without the automation. Archived
 platforms are excluded unless `--all` or `--include-archived` is passed.
 
 Check the output for:

@@ -18,7 +18,7 @@ systems: [nintendo-gamecube, nintendo-wii, sega-triforce]
 # Libretro: User is <save>/User, Sys is <system>/dolphin-emu/Sys
 #   (Source/Core/DolphinLibretro/Boot.cpp:248-254). The GC ROMs and
 #   segaboot.gcm fall back to Sys (Source/Core/Core/Config/MainSettings.cpp:761-768,
-#   Source/Core/Core/HW/DVD/AMMediaboard.cpp:500-513); the Wii and GBA files
+#   Source/Core/Core/HW/DVD/AMMediaboard.cpp:500-513). The Wii and GBA files
 #   are read under User only.
 
 pack_structure:

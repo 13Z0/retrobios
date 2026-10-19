@@ -23,7 +23,7 @@ notes: |
   Zero BRF_BIOS entries in d_cps1.cpp and d_cps2.cpp. QSound emulated in
   software (qs_c.cpp:QscInit, panning table). No DSP ROM needed.
 
-  Board PLDs (buf1, ioa1, prg1/prg2, rom1, sou1) are BRF_OPT — GAL/PAL
+  Board PLDs (buf1, ioa1, prg1/prg2, rom1, sou1) are BRF_OPT: GAL/PAL
   dumps for hardware preservation, never loaded by the emulator.
 
   hiscore.dat enables persistent high scores across all arcade games.

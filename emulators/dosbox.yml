@@ -12,7 +12,7 @@ systems: [dos]
 notes: |
   Rebuilt on the dosbox-core tree (DOSBox SVN r4494) with ZIP content and the
   Nuked-SC55 driver. No BIOS. Every file below belongs to a MIDI driver picked
-  by the core option; the default driver is "none".
+  by the core option, and the default driver is "none".
   ref: libretro/src/libretro_core_options.cpp:1684-1702
   A driver that fails to open is replaced by the first handler that opens.
   ref: src/gui/midi.cpp:241-243
@@ -34,9 +34,9 @@ notes: |
   size, wave ROMs by the last 1, 2 or 3 in their name. No hash is checked.
   ref: src/gui/midi_sc55.h:43-52, src/gui/midi_sc55.h:98-133
   Byte 67 of ROM1 selects the model and the sizes the other ROMs must have:
-  SC-55mkII/SC-55st need ROM_SM, a 2 MiB WAVEROM1 and a 1 MiB WAVEROM2;
+  SC-55mkII/SC-55st need ROM_SM, a 2 MiB WAVEROM1 and a 1 MiB WAVEROM2.
   SC-55/SC-155 and CM-300/SCC-1 need a 256 KiB ROM2 and three 1 MiB wave
-  ROMs; JV-880 needs a 256 KiB ROM2 and two 2 MiB wave ROMs; SCB-55 needs a
+  ROMs. JV-880 needs a 256 KiB ROM2 and two 2 MiB wave ROMs. SCB-55 needs a
   2 MiB WAVEROM1.
   ref: src/gui/midi_sc55.h:151-175
   fluidsynth and bassmidi: the soundfont option lists the files found in

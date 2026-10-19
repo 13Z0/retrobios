@@ -53,7 +53,7 @@ notes: |
   Chihiro, and each one ends the run when it cannot be opened. Byte 0x1F00 of the
   QC firmware carries the region, rewritten to one the title's BootID accepts so
   the board does not reject the game. Titles read and write all four images
-  through the JVS patches at offsets of their own choosing; no size, bound or
+  through the JVS patches at offsets of their own choosing, and no size, bound or
   hash check exists anywhere in that path.
   ref: src/core/hle/JVS/JVS.cpp:129-145,
        src/core/hle/JVS/JVS.cpp:174-213,
@@ -79,7 +79,7 @@ files:
     validation: [size]
     description: "Chihiro media board flash ROM"
     note: >-
-      Checked for existence, opened, and rejected unless it is exactly 2 MB; each
+      Checked for existence, opened, and rejected unless it is exactly 2 MB. Each
       failure ends the run with a message naming the file and the EmuMediaBoard
       folder. Read once, to write out the two SEGABOOT halves when they are
       absent. It is also the target a Chihiro title returns to when it reboots
@@ -183,7 +183,7 @@ files:
     validation: [size]
     description: "Xbox EEPROM image"
     note: >-
-      Opened at startup and mapped read/write; the file is created and filled
+      Opened at startup and mapped read/write. The file is created and filled
       with defaults when it does not exist, and a file that is not 256 bytes ends
       the run. Section checksums are recomputed on every load. The encrypted
       section is read as plaintext: the stored checksum is compared with the
@@ -206,7 +206,7 @@ files:
       as produced by dump-xbox. A file of any other length is refused with a
       warning naming the expected length, and an absent file only costs the
       ability to read save data from a real console. The certificate key derives
-      the LAN, signature and alternate signature keys of the running title; the
+      the LAN, signature and alternate signature keys of the running title, and the
       EEPROM key checks the EEPROM header and is read again by the EEPROM editor
       to recompute the checksum it writes.
     source_ref: "src/common/FilePaths.cpp:139-172, src/core/kernel/common/types.h:2232, src/core/kernel/init/CxbxKrnl.cpp:113-132, src/common/EmuEEPROM.cpp:184-191, src/gui/DlgEepromConfig.cpp:200-207"

@@ -16,19 +16,19 @@ notes: |
 
   Accepts .crawlrc config files as content (supported_extensions: crawlrc).
   The libretro wrapper sets -dir to the content directory.
-  ref: libretro/libretro.cc:178-198 — main_wrap() passes -dir content_dir
+  ref: libretro/libretro.cc:178-198 (main_wrap() passes -dir content_dir)
 
   Game data loaded at runtime from dat/ tree via datafile_path().
-  ref: source/files.cc:375-458 — _get_base_dirs() + datafile_path()
-  No DATA_DIR_PATH defined in Makefile.libretro — falls back to SysEnv.crawl_dir.
+  ref: source/files.cc:375-458 (_get_base_dirs() + datafile_path())
+  No DATA_DIR_PATH defined in Makefile.libretro, so it falls back to SysEnv.crawl_dir.
   Data is NOT compiled into the binary.
 
   dat/ tree contents (532 files, 16 MB):
-  - dat/tiles/*.png (floor, wall, feat, player, main, gui, icons) — tiletex.cc:89-97
-  - dat/DejaVuSans.ttf, dat/DejaVuSansMono.ttf — fontwrapper-ft.cc:79
-  - dat/descript/*.txt, dat/database/*.txt — database.cc:72-140
-  - dat/des/*.des (level generation) — maps.cc:1457
-  - dat/dlua/*.lua, dat/clua/*.lua — maps.cc:1465
+  - dat/tiles/*.png (floor, wall, feat, player, main, gui, icons) (tiletex.cc:89-97)
+  - dat/DejaVuSans.ttf, dat/DejaVuSansMono.ttf (fontwrapper-ft.cc:79)
+  - dat/descript/*.txt, dat/database/*.txt (database.cc:72-140)
+  - dat/des/*.des (level generation) (maps.cc:1457)
+  - dat/dlua/*.lua, dat/clua/*.lua (maps.cc:1465)
   - dat/defaults/ (settings)
 
   Not on buildbot.libretro.com/assets/system/.
@@ -39,4 +39,4 @@ data_directories:
     source_ref: "source/files.cc:375-458"
 
 files: []
-# no BIOS/firmware — game data loaded via data_directories
+# no BIOS/firmware, game data loaded via data_directories

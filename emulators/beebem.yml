@@ -21,7 +21,7 @@ notes: |
   ref: Src/Model.h:24-32
 
   Two file roots. GetUserDataPath() defaults to <Documents>\BeebEm and falls back
-  to <app>\UserData; it holds BeebFile/ and the .cfg and .kmap files. GetAppPath()
+  to <app>\UserData. It holds BeebFile/ and the .cfg and .kmap files. GetAppPath()
   is the program directory and holds Teletext.fnt and the sound samples.
   ref: Src/BeebWin.cpp:5813-5851
 
@@ -51,7 +51,7 @@ notes: |
 
   BeebFile/ also carries an application ROM library (word processors, drawing
   packages, language ROMs) and DiscIms/ carries the disc images supplied with the
-  Master 512, ARM and Z80 co-processors. No code path names them; they load only
+  Master 512, ARM and Z80 co-processors. No code path names them: they load only
   through the file browser in Edit ROM Configuration, the same way a disc image
   does.
   ref: Src/RomConfigDialog.cpp:179-215
@@ -86,7 +86,7 @@ files:
     sha1: 0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d
     validation: [size]
     on_mismatch: warn
-    note: "OS ROM slot. Read into 0xc000; an error is reported unless 16384 bytes are read."
+    note: "OS ROM slot. Read into 0xc000. An error is reported unless 16384 bytes are read."
     source_ref: "Src/BeebMem.cpp:1291-1308, Src/RomConfigFile.cpp:43"
 
   - name: BASIC2.rom
@@ -496,7 +496,7 @@ files:
     on_mismatch: warn
     note: >
       Loaded for TubeDevice::AcornZ80. An error is reported unless 4096 bytes are
-      read. Jonathan Harston's v1.21; the Acorn v1.20 ships as Z80-1.20.rom and is
+      read. Jonathan Harston's v1.21. The Acorn v1.20 ships as Z80-1.20.rom and is
       used by renaming it onto this path.
     source_ref: "Src/Z80Support.cpp:243-267, Help/z80copro.html"
 

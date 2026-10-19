@@ -29,7 +29,7 @@ notes: |
   (2600.emu/src/stella/emucore/CartAR.cxx:263-278).
 
   The build defines EMU_EX_PLATFORM, SOUND_SUPPORT and THUMB_SUPPORT
-  (2600.emu/CMakeLists.txt:22); DEBUGGER_SUPPORT and CHEATCODE_SUPPORT are
+  (2600.emu/CMakeLists.txt:22). DEBUGGER_SUPPORT and CHEATCODE_SUPPORT are
   absent, so the cheat database and the debugger are not compiled. PropertiesSet
   is constructed on CompositeKeyValueRepositoryNoop
   (2600.emu/src/stella/emucore/PropsSet.cxx:29-32), so cartridge properties come

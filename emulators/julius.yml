@@ -15,10 +15,10 @@ systems:
 notes: |
   Open-source reimplementation of Impressions Games' Caesar III engine.
   It reads every graphic, text, sound and scenario from an installed copy
-  of the game; nothing is bundled.
+  of the game. Nothing is bundled.
 
   The data directory is the command-line argument. pre_init() makes it
-  the base path and runs game_pre_init(); a missing directory shows
+  the base path and runs game_pre_init(). A missing directory shows
   "Julius requires the original files from Caesar 3" and exits
   (ref: src/platform/julius.c:488-501, 580-586). File lookups are
   case-corrected inside that directory.
@@ -29,7 +29,7 @@ notes: |
   climate graphics c3.sg2 and c3.555, the barbarian enemy graphics
   goths.sg2 and goths.555, and c3_model.txt (ref: src/game/game.c:79-104).
   Any of them missing aborts init. The_empire.555 is loaded with the
-  climate graphics; a wrong size is logged and the game continues
+  climate graphics. A wrong size is logged and the game continues
   (ref: src/core/image.c:283-293, 323). The other climates, enemies,
   sounds, videos and scenario maps are opened from the same directory on
   demand.
@@ -46,7 +46,7 @@ files:
     required: true
     description: "Caesar III install directory"
     source_ref: "src/platform/julius.c:488-501"
-    note: "Given on the command line; every game file is opened by name inside it."
+    note: "Given on the command line. Every game file is opened by name inside it."
   - name: "c3.eng"
     path: "caesar3/c3.eng"
     system: "caesar3"
@@ -62,7 +62,7 @@ files:
     required: true
     description: "Caesar III message text"
     source_ref: "src/core/lang.c:24, 129-150, 160-165"
-    note: "Loaded as a pair with c3.eng; c3_mm.rus replaces it on a Russian install."
+    note: "Loaded as a pair with c3.eng, and c3_mm.rus replaces it on a Russian install."
   - name: "c3.sg2"
     path: "caesar3/c3.sg2"
     system: "caesar3"

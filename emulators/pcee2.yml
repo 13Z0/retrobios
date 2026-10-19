@@ -22,9 +22,9 @@ data_directories:
 
 notes: |
   libretro port of current PCSX2, merged up to upstream 6db638dc (v2.7.523,
-  pcee2-libretro/upstream.version); the build reports that version as
+  pcee2-libretro/upstream.version). The build reports that version as
   library_version. Everything the port adds lives in pcee2-libretro/ and in
-  the libretro renderer bridges; the BIOS, CDVD, patch and database code is
+  the libretro renderer bridges, while the BIOS, CDVD, patch and database code is
   upstream PCSX2.
 
   InitializeConfig maps the PCSX2 folder layout under <system>/pcsx2:
@@ -34,7 +34,7 @@ notes: |
   snaps, sstates, logs, covers, inputprofiles and videos from DataRoot
   (pcee2-libretro/Libretro.cpp:414-428, pcsx2/Pcsx2Config.cpp:2319-2336).
   A standalone PCSX2.ini dropped in pcsx2/inis contributes nine emulation
-  sections as the baseline (Libretro.cpp:504-535); the core options and the
+  sections as the baseline (Libretro.cpp:504-535), and the core options and the
   port overrides apply on top.
 
   BIOS detection is filename-agnostic. The core option pcsx2_bios lists every
@@ -45,14 +45,14 @@ notes: |
   pcsx2/ps2/BiosTools.cpp:80-197, 284-294). When no BIOS is configured or the
   configured name is missing, LoadBIOS falls back to FindBiosImage, which
   also filters on size between 4 and 8 MB (BiosTools.cpp:258-282, 317-369).
-  The image is read into the 4 MB ROM region; a file shorter than 2465792
+  The image is read into the 4 MB ROM region, and a file shorter than 2465792
   bytes turns off the OSDSys parameter HLE. No hash is matched. Booting with
   no content starts the BIOS (Libretro.cpp:2090-2096).
 
   Companions derive from the selected image: rom1 and rom2 are tried as the
   full name plus extension, then with the extension replaced, and are skipped
-  when absent; the nvm is read at the replaced extension and rebuilt with
-  region and language defaults when missing or blank; the mec is written back
+  when absent. The nvm is read at the replaced extension and rebuilt with
+  region and language defaults when missing or blank, and the mec is written back
   as 0x00020603 when it cannot be read (BiosTools.cpp:214-241, 366-367,
   pcsx2/CDVD/CDVD.cpp:136-205).
 
@@ -92,7 +92,7 @@ files:
     source_ref: "pcee2-libretro/Libretro.cpp:578-618, pcsx2/ps2/BiosTools.cpp:16-17, pcsx2/ps2/BiosTools.cpp:80-197, pcsx2/ps2/BiosTools.cpp:258-294, pcsx2/ps2/BiosTools.cpp:317-369"
     note: >
       Any file of pcsx2/bios whose romdir carries RESET and ROMVER. The 4 to
-      8 MB filter applies in FindBiosImage only; the core option scan and the
+      8 MB filter applies in FindBiosImage only. The core option scan and the
       auto selection accept any size that passes the romdir check.
 
   - name: "<bios>.rom1"
@@ -134,7 +134,7 @@ files:
     hle_fallback: true
     source_ref: "pcsx2/CDVD/CDVD.cpp:49, pcsx2/CDVD/CDVD.cpp:190-204"
     note: >
-      Read at <bios>.mec; written as 0x00020603 when it cannot be read.
+      Read at <bios>.mec, written as 0x00020603 when it cannot be read.
 
   - name: "patches.zip"
     path: "pcsx2/resources/patches.zip"
@@ -158,4 +158,4 @@ files:
     source_ref: "pcsx2/DEV9/DEV9.cpp:60-73, pcsx2/DEV9/DEV9.cpp:97-158"
     note: >
       Opened read-write and mapped from the process working directory by
-      DEV9init; the built-in eeprom table is used when it cannot be opened.
+      DEV9init. The built-in eeprom table is used when it cannot be opened.

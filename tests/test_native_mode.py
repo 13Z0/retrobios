@@ -117,7 +117,7 @@ class BothConsumersAgree(unittest.TestCase):
 
 
 class ThePolicyIsSpeltInOnePlace(unittest.TestCase):
-    """Consumers ask the module; they do not re-spell the rule.
+    """Consumers ask the module and do not re-spell the rule.
 
     Four sites still compared the mode to a literal after this module existed,
     and one of them dispatched an unknown mode to MD5 verification while

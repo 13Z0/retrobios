@@ -101,7 +101,7 @@ size must equal the declared size, then any one of MD5, SHA1 and CRC32 must
 match. An entry without a size never verifies, since RomM reads it as 0. A
 wrong hash beside a right one does not withhold the file. `verify.py`, the
 pack builder and the install manifest apply that rule. ZIP files are not
-opened; only the container is checked.
+opened, only the container is checked.
 
 ### ROCKNIX verification
 
@@ -229,16 +229,16 @@ evidence-compatible match:
 
 | Step | Method | Returns | When it applies |
 |------|--------|---------|-----------------|
-| 1 | SHA1 | `sha1_exact` | A declared SHA1 identifies a database record; every other declared hash must agree with that same record |
+| 1 | SHA1 | `sha1_exact` | A declared SHA1 identifies a database record, and every other declared hash must agree with that same record |
 | 2 | SHA256 | `sha256_exact` | A declared SHA256 identifies a record, again requiring all declarations to agree |
-| 3 | CRC32 plus size | `crc32_exact` | Used only when no stronger hash is declared; size confirms the weaker checksum when available |
-| 4 | MD5 | `md5_exact` | Direct lookup; an explicitly supported truncated MD5 also needs a compatible name |
+| 3 | CRC32 plus size | `crc32_exact` | Used only when no stronger hash is declared. Size confirms the weaker checksum when available |
+| 4 | MD5 | `md5_exact` | Direct lookup. An explicitly supported truncated MD5 also needs a compatible name |
 | 5 | Path suffix | `path_exact` or a hash-exact status | Disambiguates regional paths. With any declared hash, the path is accepted only when the content matches it |
-| 6 | Name or alias | `name_exact` | Existence/size resolution only when no content hash is declared; prefers primary files and supports casefold matching |
+| 6 | Name or alias | `name_exact` | Existence/size resolution only when no content hash is declared. Prefers primary files and supports casefold matching |
 | 7 | Named candidate inspection | `md5_composite_exact`, `md5_exact`, or `hash_mismatch` | Checks composite ZIP MD5 or direct MD5. A matching name with wrong content is surfaced, never treated as exact |
-| 8 | ZIP contents index | `zip_exact` | `zipped_file` with MD5; searches the inner-ROM index only after name-based resolution fails |
+| 8 | ZIP contents index | `zip_exact` | `zipped_file` with MD5. Searches the inner-ROM index only after name-based resolution fails |
 | 9 | MAME clone | `mame_clone` | Resolves a deduplicated clone to its canonical set only when no content hash was declared |
-| 10 | Data directory | `data_dir` or `data_dir_hash_exact` | Searches exact path then case-insensitive basename; computes every declared hash before accepting an unindexed candidate |
+| 10 | Data directory | `data_dir` or `data_dir_hash_exact` | Searches exact path then case-insensitive basename, then computes every declared hash before accepting an unindexed candidate |
 | 11 | Agnostic fallback | `agnostic_fallback` | Size/path constrained lookup only when no content hash was declared |
 
 If no step matches, the result is `(None, "not_found")`.
@@ -293,7 +293,7 @@ A `scph5501.bin` file passes Batocera MD5 verification (hash matches upstream
 declaration) but fails an emulator profile's size check because the profile
 was verified against a different revision. The search looks for a held file
 carrying a Batocera-accepted md5 that also passes the size check, under that
-name or any name the emulator's hashes reach. If found, it ships; if not, the
+name or any name the emulator's hashes reach. If found, it ships. If not, the
 Batocera-verified file ships and the discrepancy stays visible in verification
 and gap reporting.
 

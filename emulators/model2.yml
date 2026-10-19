@@ -20,12 +20,12 @@ notes: |
 
   Uses MAME-format merged ROM sets. Each game ZIP contains all required ROMs
   (program, geometry, texture, sound, protection chips). No shared parent BIOS
-  set exists for Sega Model 2 hardware; each game board has its own ROM chips.
+  set exists for Sega Model 2 hardware, as each game board has its own ROM chips.
 
   EmuDeck packages version 1.1c from SeongGino/edc-repo0004. Installs to
   romsPath/model2/ with emulator_multicpu.exe as main binary. Ships with
   Lua scripts for game-specific patches (widescreen, fixes). No checkBIOS
-  entry in EmuDeck; EMULATOR.INI references only a roms/ subdirectory.
+  entry in EmuDeck, and EMULATOR.INI references only a roms/ subdirectory.
 
   Source code never published. Original distribution via nebula.emulatronia.com
   (archived). PhilrocWP/Model2 GitHub repo no longer exists.
@@ -35,5 +35,5 @@ files: []
 exclusion_note: >
   Uses MAME-format merged ROM sets where all required ROMs are contained within
   each game's ZIP file. No standalone BIOS or firmware files are loaded by the
-  emulator. The Sega Model 2 hardware has no shared system BIOS; each game board
+  emulator. The Sega Model 2 hardware has no shared system BIOS: each game board
   has its own set of program, geometry, texture, and sound ROMs.

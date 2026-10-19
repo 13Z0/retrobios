@@ -52,7 +52,7 @@ notes: |
   Two read paths belong to the desktop build alone, because the Android build
   drops LibKenjinx.Native.cs and wires those subsystems differently.
   SDL_GameControllerDB.txt is read by SDL3Driver, whose only callers are the
-  SDL3 audio, gamepad and keyboard drivers; on Android JnaDeviceInitialize
+  SDL3 audio, gamepad and keyboard drivers. On Android JnaDeviceInitialize
   builds an OpenALHardwareDeviceDriver and InitializeInput builds a
   VirtualGamepadDriver, so SDL3 never initialises. Amiibo diverge the same way:
   the desktop scan decrypts a dump through AmiiboBinReader and therefore needs
@@ -93,7 +93,7 @@ files:
       reader, but an empty header key stops NCA header decryption outright and
       no encrypted content loads. The desktop importer accepts a .keys file or a
       zip of them and rejects any line that is not "name = value" in lowercase
-      hexadecimal; the Android importer accepts the name prod.keys only and
+      hexadecimal. The Android importer accepts the name prod.keys only and
       copies it straight into the system directory.
     source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:231-266, src/Ryujinx.HLE/FileSystem/ContentManager.cs:500-537,681-684,1082-1118, src/KenjinxAndroid/app/src/main/java/org/kenjinx/android/viewmodels/SettingsViewModel.kt:254-301"
 
@@ -135,7 +135,7 @@ files:
     note: >-
       Chosen through a file picker and read whole at install time, by path on
       desktop and by file descriptor on Android. A zip is walked entry by entry
-      and an xci is opened at its update partition; a directory of NCAs is also
+      and an xci is opened at its update partition. A directory of NCAs is also
       accepted on desktop. Each NCA is decrypted with the key set to read its
       title id and content type, the package is rejected when it carries
       archives that belong to no system title, and the version string comes out
@@ -156,7 +156,7 @@ files:
       HMAC key, a 14-byte type string, a reserved byte, a magic size byte, 16
       magic bytes and a 32-byte XOR pad. Any total other than 160 bytes throws
       and the scan fails. The desktop window hides its amiibo-from-dump entry
-      when the file is absent. Only the desktop scan path decrypts a dump; the
+      when the file is absent. Only the desktop scan path decrypts a dump. The
       Android slots hand the raw bytes to the tag buffer instead.
     source_ref: "src/Ryujinx.HLE/HOS/Services/Nfc/AmiiboDecryption/AmiiboBinReader.cs:22-44,331-336, src/Ryujinx.HLE/HOS/Services/Nfc/AmiiboDecryption/AmiiboDecryptor.cs:10-16, src/Ryujinx.HLE/HOS/Services/Nfc/AmiiboDecryption/AmiiboMasterKey.cs:15-39, src/Ryujinx/UI/ViewModels/MainWindowViewModel.cs:385,2243"
 
@@ -206,7 +206,7 @@ files:
       Imported through a picker filtered on application/zip and unpacked into a
       folder named after the archive under drivers in the data root. A folder is
       offered only when it holds a meta.json naming a libraryName that resolves
-      to a file present beside it; the chosen path is remembered in a file named
+      to a file present beside it, and the chosen path is remembered in a file named
       selected. At renderer start the folder is copied into internal storage,
       because the external filesystem cannot carry an executable mapping, loaded
       through the rootless Adreno driver loader, and the resulting handle is

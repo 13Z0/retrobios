@@ -9,7 +9,7 @@ nothing in the pipeline could see it, because on paper both names resolved.
 
 This walks the tree rather than the index, groups by content, and reports a
 group whose paths sit under different manufacturers. A dump legitimately
-shared by two systems of the same maker is common; one shared across makers
+shared by two systems of the same maker is common, one shared across makers
 almost never is.
 """
 

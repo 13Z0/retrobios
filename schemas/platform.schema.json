@@ -297,7 +297,7 @@
         },
         "mirror_of": {
           "type": "string",
-          "description": "Native system whose entry this one repeats; the platform's own file does not carry the copy"
+          "description": "Native system whose entry this one repeats. The platform's own file does not carry the copy"
         },
         "curated": {
           "type": "boolean",

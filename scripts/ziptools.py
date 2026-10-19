@@ -223,7 +223,7 @@ MAX_ZIP_MEMBERS = 100_000
 MAX_ZIP_MEMBER_SIZE = 8 * 1024 * 1024 * 1024
 
 # The largest generated pack is already ~5 GB uncompressed and the collection
-# only grows; this bounds a malicious archive without capping a real one.
+# only grows. This bounds a malicious archive without capping a real one.
 MAX_ZIP_TOTAL_SIZE = 64 * 1024 * 1024 * 1024
 
 # DEFLATE cannot exceed roughly 1,032:1, so this rejects a declared ratio no
@@ -249,14 +249,14 @@ def safe_extract_zip(
     """
     dest = os.path.realpath(dest_dir)
     os.makedirs(dest, exist_ok=True)
-    # Reading the umask sets it; it is put back at once.
+    # Reading the umask sets it, so it is put back at once.
     umask = os.umask(0)
     os.umask(umask)
     with zipfile.ZipFile(zip_path, "r") as zf:
         members = zf.infolist()
         if len(members) > max_members:
             raise ValueError(
-                f"ZIP has {len(members)} members; limit is {max_members}"
+                f"ZIP has {len(members)} members, limit is {max_members}"
             )
 
         declared_total = 0
@@ -292,7 +292,7 @@ def safe_extract_zip(
             declared_total += member.file_size
             if declared_total > max_total_size:
                 raise ValueError(
-                    f"ZIP expands to {declared_total} bytes; limit is {max_total_size}"
+                    f"ZIP expands to {declared_total} bytes, limit is {max_total_size}"
                 )
             if member.file_size and member.compress_type in _BOUNDED_RATIO_METHODS:
                 if member.compress_size == 0:
@@ -331,7 +331,7 @@ def safe_extract_zip(
                         f"ZIP member size mismatch for {name}: "
                         f"{actual_size} != {member.file_size}"
                     )
-                # The member's own mode, else what a plain open() gives; the
+                # The member's own mode, else what a plain open() gives. The
                 # temporary file is private and would keep 0600 otherwise.
                 os.chmod(tmp_path, ((mode & 0o777) or 0o666) & ~umask)
                 os.replace(tmp_path, target)

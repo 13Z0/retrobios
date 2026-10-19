@@ -533,7 +533,7 @@ class RepositoryRun(unittest.TestCase):
 
 
 class TheMissingReportNamesItsTargets(unittest.TestCase):
-    """--missing printed three counters; the archives to go and find were
+    """--missing printed three counters. The archives to go and find were
     only in --json."""
 
     def test_every_target_is_named(self):

@@ -127,7 +127,7 @@ class TestConflicts(unittest.TestCase):
 
     def test_a_core_claim_sits_where_the_pack_puts_it(self):
         """RetroDECK writes bios/ into every destination and leaves its base
-        empty; core files go under bios/ too. Claimed at the root, they never
+        empty, so core files go under bios/ too. Claimed at the root, they never
         met the platform's and four contradictions went unreported."""
         config = {"base_destination": "", "systems": {"console": {"files": [
             {"name": "IPL.bin", "destination": "bios/GC/JAP/IPL.bin", "md5": "m" * 32},
@@ -169,7 +169,7 @@ class TestConflicts(unittest.TestCase):
         self.assertEqual(conflicts, [])
 
     def test_a_platform_list_naming_the_profile_file_is_agreement(self):
-        """Recalbox names both scph1001.bin revisions; the resolver stops on
+        """Recalbox names both scph1001.bin revisions. The resolver stops on
         the first, the profile pins the other, and --strict reported a
         contradiction nobody has to correct."""
         conflicts = slots.find_conflicts(
@@ -223,7 +223,7 @@ class TestConflicts(unittest.TestCase):
 
     def test_a_bare_sibling_met_first_does_not_hide_the_contradiction(self):
         """RetroArch declares dsi_bios7.bin bare under one system and with a
-        hash under another; the pack ships the hashed one, so the slot is
+        hash under another. The pack ships the hashed one, so the slot is
         judged on it, whichever system is read first."""
         config = {
             "systems": {
@@ -403,7 +403,7 @@ class TestBuilderAndVerifierAgree(unittest.TestCase):
     def test_neither_reimplements_the_mode_test(self):
         # A local "if mode == md5" beside the override would drift from the
         # arbitration rule the moment either side is edited. The anchor is the
-        # override lookup both sides must perform; the old anchor was a string
+        # override lookup both sides must perform. The old anchor was a string
         # the test above forbids, so the window was the whole file.
         mode_test = re.compile(r"""[=!]=\s*["'](?:md5|sha1|existence)["']""")
         for name in ("generate_pack.py", "verify.py"):
@@ -443,7 +443,7 @@ class TestSelfContradictingDestinations(unittest.TestCase):
 
     def test_a_file_both_declarations_accept_settles_the_path(self):
         """RetroDECK: ATARIOSB.ROM under one system with one md5, under
-        another with a list naming that same md5; the shipped file passes
+        another with a list naming that same md5. The shipped file passes
         both, so --strict has nothing to correct there."""
         config = self._config(
             {"name": "IPL.bin", "destination": "disk.rom", "md5": "m" * 32},
@@ -599,7 +599,7 @@ class TestProvenEvidence(unittest.TestCase):
 
     def test_path_evidence_is_proof(self):
         # Dolphin declares no checksum for the GameCube boot ROM because its
-        # source declares none; the path is then the whole assertion.
+        # source declares none, so the path is then the whole assertion.
         self.assertTrue(slots.Claim("profile", "d", "n", status="path_exact").is_proven)
 
     def test_a_name_is_not_proof(self):
@@ -612,7 +612,7 @@ class TestProvenEvidence(unittest.TestCase):
 
 class AnExactSizeContestsAnotherSize(unittest.TestCase):
     """System.dat pinned the 2 KiB X1 font as xmil/IPLROM.X1T, where xmil
-    reads a 32 KiB Turbo IPL; the profile's name-only claim could not
+    reads a 32 KiB Turbo IPL. The profile's name-only claim could not
     contest it, and RetroArch packs shipped the font as the IPL."""
 
     def setUp(self):
@@ -688,7 +688,7 @@ class ManifestFollowsTheArbitration(unittest.TestCase):
 
 
 class StrongestProfileClaimWins(unittest.TestCase):
-    """yaps2 pins GameIndex.yaml by sha1; armsx2 matched a path only."""
+    """yaps2 pins GameIndex.yaml by sha1 while armsx2 matched a path only."""
 
     def test_hash_proof_beats_path_proof(self):
         def claim(emu, path, status):

@@ -36,14 +36,14 @@ notes: |
   any location, and the choice is stored as the persisted URI biosUri
   (settings/EmulatorSettings.java:65-73,121-135). A document is
   accepted only when its reported size is exactly 16384 bytes, or, for an
-  application/zip document, when an entry declares that size; the name is never
+  application/zip document, when an entry declares that size. The name is never
   examined (g.java:66-68,80-100,102-111). One that fails leaves the preference reading
   "Unrecognized BIOS file." at pick time and on every later visit to the screen
   (settings/EmulatorSettings.java:101-108,131-133). At game start the stream is read
   until 16384 bytes are in hand and anything shorter raises, which reports "Load BIOS
   failed." and passes null (EmulatorActivity.java:1564-1599).
 
-  The read happens only while Use BIOS is on, off until the user turns it on; both Boot
+  The read happens only while Use BIOS is on, off until the user turns it on. Both Boot
   BIOS and the file picker depend on that switch, and the advanced reset returns all
   three to their defaults (res/xml/settings_advanced.xml,
   settings/EmulatorSettings.java:79-80).

@@ -199,7 +199,7 @@ class TestMameMerge(unittest.TestCase):
     def test_numeric_looking_rom_name_survives_the_write(self) -> None:
         """MAME ships ROMs named 01 and 23. Bare YAML turns them into numbers.
 
-        The manager set loads "01"; written unquoted it re-parses as the
+        The manager set loads "01", but written unquoted it re-parses as the
         integer 1 and the profile stops naming the file the driver opens.
         """
         from scripts.scraper._hash_merge import (
@@ -370,7 +370,7 @@ class TheScraperClonesTheReleaseItLabels(unittest.TestCase):
 
 
 class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
-    """Recalbox builds libretro/mame at 0.258 and at 0.278; the current
+    """Recalbox builds libretro/mame at 0.258 and at 0.278, but the current
     MAME profile described neither. A release profile carries that
     release's sets and pins, and keeps the system the current profile
     gives a set."""
@@ -571,7 +571,7 @@ class TestDiff(unittest.TestCase):
             self.assertEqual(len(diff["updated"]), 0)
 
     def test_diff_fbneo_keeps_a_per_rom_ref(self) -> None:
-        """The scraper knows the driver line; a curated ref knows its ROM."""
+        """The scraper knows the driver line, while a curated ref knows its ROM."""
         profile = _make_fbneo_profile()
         profile["files"][0]["crc32"] = "9036d879"
         profile["files"][0]["size"] = 131072

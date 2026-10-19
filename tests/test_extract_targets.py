@@ -48,7 +48,7 @@ class ExtractTargets(unittest.TestCase):
         self.assertEqual(explained, rooted)
 
     def test_no_generator_keeps_its_own_table(self):
-        """The which-pack page describes setups per OS; these two were the
+        """The which-pack page describes setups per OS, and these two were the
         per-platform copies of the registry."""
         readme = (REPO_ROOT / "scripts" / "generate_readme.py").read_text(encoding="utf-8")
         site = (REPO_ROOT / "scripts" / "generate_site.py").read_text(encoding="utf-8")

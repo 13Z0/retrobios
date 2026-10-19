@@ -31,7 +31,7 @@ notes: |
   g_rom_c700[] (config.c:463,1165-1169). Slot 6 gets a Disk II PROM rebuilt
   at load time, XORed out of the IIGS ROM through g_rom_c600_rom01_diffs[]
   (config.c:428,1177-1183) or copied from offset 0x600 of a //e ROM
-  (config.c:1172-1176); the IIGS control panel reaches it by setting slot 6
+  (config.c:1172-1176). The IIGS control panel reaches it by setting slot 6
   to "Your Card". Text uses g_font_array[] from kegsfont.h (video.c:272-273,
   prepared at sim65816.c:667).
 
@@ -77,6 +77,6 @@ files:
     source_ref: "config.c:136-137,259-276,1070-1093"
     note: >
       Picked through the F4 config panel, which stores the path in
-      g_cfg_charrom_path; there is no default name. KEGS reads 4096 bytes at
+      g_cfg_charrom_path, and there is no default name. KEGS reads 4096 bytes at
       0x1000 times the selected font number and replaces the built-in text
       font with them. The 32 fonts it lists span a 131072-byte image.

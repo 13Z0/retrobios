@@ -68,12 +68,12 @@ notes: |
   Android port of MAME 0.139u1 by David Valdeita (Seleuco), package
   com.seleuco.mame4droid. The Java app (seleuco/MAME4droid-0.139u1-,
   version 1.16.9) loads a prebuilt libMAME4droid.so built from the native
-  tree profiled here. src/version.c reads 0.139u1; the 0139u2 and 0139u3
+  tree profiled here. src/version.c reads 0.139u1, and the 0139u2 and 0139u3
   diffs ship in the repository unapplied. Romset is 0.139 only.
 
   8846 drivers in mamedriv.c, 51 BIOS root sets. ZN-based boards keep their
   0.139 set names (cpzn1, cpzn2, acpsx, atpsx, atluspsx, vspsx, psarc95,
-  tps, taitofx1); later MAME renamed them to coh####.
+  tps, taitofx1). Later MAME renamed them to coh####.
 
   setGlobalPath chdirs into the installation directory, /sdcard/MAME4droid
   or /sdcard/Android/data/com.seleuco.mame4droid/files, so every relative
@@ -111,7 +111,7 @@ files:
     sha1: "c686635c5470e4711dbf817e8196dcb169fdc68d"
     category: game_data
     description: "high score memory ranges per game"
-    note: "Opened from the installation root with an empty search path, once per session, when the hiscore setting is on. That setting is off by default on Android. Seeded from the package assets on first run; the hash identifies that drop, the engine reads the file without checking it. Definitions are keyed to the 0.139 driver names, so another MAME generation's file is a different one."
+    note: "Opened from the installation root with an empty search path, once per session, when the hiscore setting is on. That setting is off by default on Android. Seeded from the package assets on first run. The hash identifies that drop, the engine reads the file without checking it. Definitions are keyed to the 0.139 driver names, so another MAME generation's file is a different one."
     source_ref: "src/emu/hiscore.c:29,365, src/emu/machine.c:379-382, src/osd/droid-ios/osd-droid.c:89,345"
 
   - name: cheat.zip
@@ -122,7 +122,7 @@ files:
     sha1: "a737e925e3b86374da57496e3261d0303889977f"
     category: game_data
     description: "per-game XML cheat files"
-    note: "cheat_list_load opens cheat/<gamename>.xml and fopen_attempt_zipped rewrites the directory component to cheat.zip. Loaded when the cheat setting is on. Seeded from the package assets on first run; the hash identifies that drop, the engine reads members without checking the container."
+    note: "cheat_list_load opens cheat/<gamename>.xml and fopen_attempt_zipped rewrites the directory component to cheat.zip. Loaded when the cheat setting is on. Seeded from the package assets on first run. The hash identifies that drop, the engine reads members without checking the container."
     source_ref: "src/emu/cheat.c:428,1026-1027, src/emu/fileio.c:276-352, src/emu/emuopts.c:48, src/osd/droid-ios/osdmain.c:317"
 
   - name: Category.ini
@@ -133,7 +133,7 @@ files:
     sha1: "75d31d949614b7d4e79de676c8a4b1c68b571f0a"
     category: game_data
     description: "game name to category map for the ROM list filter"
-    note: "Read from the installation root with a plain fopen the first time the category filter is used, then sorted for binary search. Seeded from the package assets on first run; the hash identifies that drop, the reader checks nothing."
+    note: "Read from the installation root with a plain fopen the first time the category filter is used, then sorted for binary search. Seeded from the package assets on first run. The hash identifies that drop, the reader checks nothing."
     source_ref: "src/emu/uimenu.c:4600-4648"
 
   - name: ui.bdf
@@ -199,7 +199,7 @@ files:
     required: false
     category: game_data
     description: "crosshair bitmap for player 8"
-    note: "MAX_PLAYERS is 8 in src/emu/inptport.h:29. crosshair_colors has seven entries, so player 8 reads past the table; the file follows the white that 0.289 assigns beyond the table."
+    note: "MAX_PLAYERS is 8 in src/emu/inptport.h:29. crosshair_colors has seven entries, so player 8 reads past the table, and the file follows the white that 0.289 assigns beyond the table."
     source_ref: "src/emu/crsshair.c:169-174, src/emu/inptport.h:29"
     aliases: ["cross7.png"]
 

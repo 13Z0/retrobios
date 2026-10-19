@@ -22,7 +22,7 @@ notes: |
   NstDatabase.xml is an optional game database for region autodetection,
   mapper selection, and 4-player adapter recognition. A copy is baked into
   the core binary (libretro/nstdatabase.hpp) as fallback. The upstream
-  Nestopia JG requires this file; the libretro port makes it optional.
+  Nestopia JG requires this file, while the libretro port makes it optional.
 
   An optional custom palette file (custom.pal, 64 RGB triplets) overrides
   built-in palettes when the nestopia_palette core option is set to Custom.
@@ -65,7 +65,7 @@ files:
     hle_fallback: true
     size: 192
     source_ref: "libretro/libretro.cpp:2099-2120 (palette load)"
-    note: "64 RGB triplets (64 x 3 bytes = 192 bytes). Loaded unconditionally at startup; applied only when nestopia_palette core option is set to Custom. Falls back to built-in Royaltea palette. Multiple valid palettes exist so no canonical hash."
+    note: "64 RGB triplets (64 x 3 bytes = 192 bytes). Loaded unconditionally at startup, applied only when nestopia_palette core option is set to Custom. Falls back to built-in Royaltea palette. Multiple valid palettes exist so no canonical hash."
 
   # --- ADPCM audio samples (optional, game-specific) ---
   - name: "nestopia/samples/moepro/"

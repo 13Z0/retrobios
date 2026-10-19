@@ -76,7 +76,7 @@ class ShippedFilesSatisfyTheirDeclaration(unittest.TestCase):
             if not reads_file_contents(config.get("verification_mode")):
                 continue
             # A destination may be declared by more than one system, bare in
-            # one and hash-constrained in another; the builder lets whichever
+            # one and hash-constrained in another. The builder lets whichever
             # resolves claim it, so any of them satisfying the bytes is enough.
             declared: dict[str, list[dict]] = {}
             for system in config.get("systems", {}).values():

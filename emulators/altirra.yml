@@ -10,7 +10,7 @@ cores: [altirra]
 systems: [atari-400-800, xegs, atari-5200]
 
 # Altirra emulates the Atari 400/800, 1200XL, 600XL/800XL, 130XE, XEGS and 5200.
-# Windows only; ES-DE launches Altirra64.exe or Altirra.exe.
+# Windows only. ES-DE launches Altirra64.exe or Altirra.exe.
 #
 # Firmware is identified by content, never by filename. ATUIScanForFirmware
 # (uifirmwarescan.cpp:29-113) walks a folder the user picks, keeps every file whose
@@ -24,7 +24,7 @@ systems: [atari-400-800, xegs, atari-5200]
 # below carries aliases.
 #
 # Every external image is optional. Altirra links replacement ROMs into the binary
-# as resources (ATLoadInternalFirmware, firmwaremanager.cpp:189-295; res/Altirra.rc:4260-4292)
+# as resources (ATLoadInternalFirmware, firmwaremanager.cpp:189-295, res/Altirra.rc:4260-4292)
 # and GetCompatibleFirmware selects them when nothing is registered
 # (firmwaremanager.cpp:502-549). The setup wizard states it: "Altirra has internal
 # replacements for all standard ROMs" (uisetupwizard.cpp:134-138). The internal set
@@ -395,10 +395,10 @@ files:
   - name: happy-810-prev7-3k.rom
     description: "Happy 810 pre-v7 firmware, functional 3K inside a 6K image (serial $4B9B)"
     note: >
-      The image is 6144 bytes; Altirra identifies it by a checksum taken over
+      The image is 6144 bytes. Altirra identifies it by a checksum taken over
       the functional 3K, which its firmware list reports as the size. The
       checksum skips the hidden 1K of a 4K image and the 2-byte serial, so any
-      serial is recognised; a file it does not recognise can still be given
+      serial is recognised, and a file it does not recognise can still be given
       the Happy 810 type by hand.
     system: atari-400-800
     required: false
@@ -424,7 +424,7 @@ files:
     size: 6144
     crc32: "9cc7a207"
     validation: [size, crc32]
-    note: "Functional 6K region only; the loader also accepts 3K, 4K and 8K dumps."
+    note: "Functional 6K region only. The loader also accepts 3K, 4K and 8K dumps."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:63, src/Altirra/source/diskdrivefull.cpp:1165-1234"
 
   - name: happy-810-v7-8k.rom
@@ -674,7 +674,7 @@ files:
     size: 8192
     crc32: "fc02766b"
     validation: [size, crc32]
-    note: "8K image; the loader reads the first 4K and splits it into two 2K banks."
+    note: "8K image: the loader reads the first 4K and splits it into two 2K banks."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:93, src/Altirra/source/diskdrivexf551.cpp:269-276"
 
   - name: xf551-7.7.rom
@@ -684,7 +684,7 @@ files:
     size: 8192
     crc32: "38b97ae3"
     validation: [size, crc32]
-    note: "8K image; the loader reads the first 4K and splits it into two 2K banks."
+    note: "8K image: the loader reads the first 4K and splits it into two 2K banks."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:94, src/Altirra/source/diskdrivexf551.cpp:269-276"
 
   - name: xf551-7.7-density-hack.rom
@@ -704,7 +704,7 @@ files:
     size: 8192
     crc32: "0e117428"
     validation: [size, crc32]
-    note: 'Modified for 720K 3.5" drives. 8K image; the loader reads the first 4K and splits it into two 2K banks.'
+    note: 'Modified for 720K 3.5" drives. 8K image: the loader reads the first 4K and splits it into two 2K banks.'
     source_ref: "src/Altirra/source/firmwaredetect.cpp:96, src/Altirra/source/diskdrivexf551.cpp:269-276"
 
   - name: 1400xl-handler-v1.rom
@@ -750,7 +750,7 @@ files:
     size: 4096
     crc32: "e8f9c8a7"
     validation: [size, crc32]
-    note: "The image is 4K; the loader reads its first 2K into mFirmware (1450xld.h:179)."
+    note: "The image is 4K, and the loader reads its first 2K into mFirmware (1450xld.h:179)."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:103, src/Altirra/source/1450xld.cpp:738-742"
 
   - name: 1450xld-disk-handler-rev-f.rom
@@ -760,7 +760,7 @@ files:
     size: 4096
     crc32: "4bb7fa3a"
     validation: [size, crc32]
-    note: "The image is 4K; the loader reads its first 2K into mFirmware (1450xld.h:179)."
+    note: "The image is 4K, and the loader reads its first 2K into mFirmware (1450xld.h:179)."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:104, src/Altirra/source/1450xld.cpp:738-742"
 
   - name: 1450xld-disk-handler-post-rev-f.rom
@@ -770,7 +770,7 @@ files:
     size: 4096
     crc32: "29359910"
     validation: [size, crc32]
-    note: "The image is 4K; the loader reads its first 2K into mFirmware (1450xld.h:179)."
+    note: "The image is 4K, and the loader reads its first 2K into mFirmware (1450xld.h:179)."
     source_ref: "src/Altirra/source/firmwaredetect.cpp:105, src/Altirra/source/1450xld.cpp:738-742"
 
   - name: atari-835-internal.rom
@@ -868,7 +868,7 @@ files:
     source_ref: "src/Altirra/source/firmwaredetect.cpp:120, src/Altirra/source/diskdrivespeedyxf.cpp:353-364"
 
   # -- Types with no row in the detect table. Registered by hand with an explicit
-  #    type from the menu in uifirmware.cpp:498-585; max_size is the read length
+  #    type from the menu in uifirmware.cpp:498-585. max_size is the read length
   #    at the load site. --
 
   - name: 810-archiver.rom
@@ -989,7 +989,7 @@ files:
 
   - name: kmkjz-ide2-sdx.rom
     description: "KMK/JZ IDE 2 (IDEPlus) SpartaDOS X firmware"
-    note: "Two revisions circulate, SDX 4.45 and 4.47; the collection carries 4.47."
+    note: "Two revisions circulate, SDX 4.45 and 4.47, and the collection carries 4.47."
     system: atari-400-800
     required: false
     max_size: 524288

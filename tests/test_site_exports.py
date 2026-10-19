@@ -296,7 +296,7 @@ class PerModeSourcePins(unittest.TestCase):
 
 
 class AnEmulatorPageNamesItsRevision(unittest.TestCase):
-    """The page linked the repositories unpinned; the commit every citation
+    """The page linked the repositories unpinned. The commit every citation
     refers to sat in the YAML alone, for 178 profiles."""
 
     def test_each_repository_links_its_pinned_commit(self):
@@ -367,7 +367,7 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
 
 class AFlaggedDumpIsNotVerified(unittest.TestCase):
     """scph5000.bin, which TOSEC names "...(JP)[b].bin", wore a green
-    "Verified dump: TOSEC" badge; the catalog name lived only in a title
+    "Verified dump: TOSEC" badge. The catalog name lived only in a title
     attribute, outside the search and invisible on a touch screen."""
 
     def test_flags_and_name(self):
@@ -447,7 +447,7 @@ class AGoneSourceIsSaid(unittest.TestCase):
 
 class ASystemCardLandsOnThePlatformsSection(unittest.TestCase):
     """From scph5000.bin's card, [retrodeck] opened the top of a 2,000-file
-    page; the emulator card already landed on #sony-playstation."""
+    page, while the emulator card already landed on #sony-playstation."""
 
     def test_section_and_destination(self):
         import types

@@ -17,17 +17,17 @@ notes: |
   Virtual machine for the Eternal Software Initiative architecture, a Subleq
   variant with indirect operands, a keyboard port, a console port, a wall
   clock at word 64 and a timer interrupt through word 0. Adrian Cable's
-  reference machines are vm/vm.c (SDL3 framebuffer) and vm/vm_console.c;
-  the libretro core by iyzsong carries the same loop in libretro.c:186-222.
+  reference machines are vm/vm.c (SDL3 framebuffer) and vm/vm_console.c,
+  and the libretro core by iyzsong carries the same loop in libretro.c:186-222.
 
   Machine memory is a static array of 3<<27 words, 1.5 GiB, cleared again
-  when the content is unloaded (libretro.c:360-364); the framebuffer is its
+  when the content is unloaded (libretro.c:360-364). The framebuffer is its
   last 800x512 words (libretro.c:9-13, 22-23), pushed to the frontend as
   XRGB8888 on every retro_run (libretro.c:330-334).
 
   The content is the whole machine image. retro_load_game copies the buffer
   the frontend hands over to word 0, refuses an image larger than memory and
-  starts the interpreter on a thread (libretro.c:302-314); need_fullpath is
+  starts the interpreter on a thread (libretro.c:302-314). need_fullpath is
   false and the accepted extensions are capsule and bootimage
   (libretro.c:275-282). The upstream machines fread the same file into mem
   (vm/vm.c:45-48, vm/vm_console.c:32).
@@ -39,15 +39,15 @@ notes: |
   39, followed by the flat binary (tools/make_boot_image.py:34-68). The
   upstream repository ships capsules/vmlinux.bootimage.xz, ESI Linux with
   busybox, Doom, nano, lynx and htop in its initramfs, 110 MiB once
-  decompressed; the frontend does not open xz, so the image is decompressed
+  decompressed. The frontend does not open xz, so the image is decompressed
   before loading.
 
   Nothing else is read. retro_set_environment registers the log interface and
-  the keyboard callback and nothing more (libretro.c:238-249); the core never
+  the keyboard callback and nothing more (libretro.c:238-249), and the core never
   asks for a system, save or content directory and opens no file itself.
   Keyboard events are translated to USB HID usage IDs and queued eight deep
-  (libretro.c:36-184); console output goes to the host stdout with write
-  (libretro.c:205-206); a fetched C of zero halts the machine and asks the
+  (libretro.c:36-184). Console output goes to the host stdout with write
+  (libretro.c:205-206). A fetched C of zero halts the machine and asks the
   frontend to shut down (libretro.c:196-199). No savestate
   (libretro.c:336-339), no memory map, no audio.
 

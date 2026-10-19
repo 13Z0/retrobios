@@ -25,7 +25,7 @@ notes: |
   ref: SP/code/qcommon/files.c:3842-3972, MP/code/qcommon/files.c:3836-3966
 
   Single-player (SP/code/qcommon/files.c) then requires the four
-  point-release paks; a missing one is fatal, a wrong checksum only
+  point-release paks. A missing one is fatal, a wrong checksum only
   prints a warning:
     main/sp_pak1.pk3  five localized checksums (en/fr/gm/it/sp)
     main/sp_pak2.pk3  3033901371, or 285968110 for the German release
@@ -58,8 +58,8 @@ files:
     path: "main/pak0.pk3"
     required: true
     source_ref: "SP/code/qcommon/files.c:183-185, 3865-3882, 3950-3967, MP/code/qcommon/files.c:194-196, 3859-3876, 3944-3961"
-    note: "RTCW retail base. Checksum 1886207346 in both builds; fatal when missing or when the checksum differs."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    note: "RTCW retail base. Checksum 1886207346 in both builds, fatal when missing or when the checksum differs."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # main/ - single-player point-release paks
@@ -71,7 +71,7 @@ files:
     path: "main/sp_pak1.pk3"
     required: true
     source_ref: "SP/code/qcommon/files.c:188, 196, 204, 212, 220, 3735-3767, 3806-3826"
-    note: "Single-player build: fatal when missing. One checksum per language (en/fr/gm/it/sp); a mismatch prints a warning."
+    note: "Single-player build: fatal when missing. One checksum per language (en/fr/gm/it/sp), and a mismatch prints a warning."
 
   - name: "sp_pak2.pk3"
     category: game_data

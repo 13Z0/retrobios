@@ -49,7 +49,7 @@ notes: |
   folder names under it come from the Folders section, Bios defaulting to bios.
   A script in the repository moves that root to /storage/emulated/0/NetherSX2
   once all-files access is granted, and patches out the library check that
-  requires the package name in the path; the published packages do not carry it.
+  requires the package name in the path. The published packages do not carry it.
   ref: nethersx2 v2.1-4248 libemucore.so 0xf70a9,
        nethersx2 v2.1-4248 libemucore.so 0x7ea914-0x7eaa8c,
        xyz/aethersx2/android/NativeLibrary.smali initializeOnce,
@@ -57,13 +57,13 @@ notes: |
 
   Detection is by content. The scan lists the BIOS folder with a * mask, keeps
   files between 4194304 and 8388608 bytes, and accepts an image whose romdir
-  carries a RESET entry followed by a readable ROMVER; the fifth ROMVER
+  carries a RESET entry followed by a readable ROMVER. The fifth ROMVER
   character gives the zone, A for USA, C for China, E for Europe, H for Asia,
   J for Japan, P for Free, T for T10K and X for Test, any other character
   standing for itself, and an EXTINFO entry is read along the way. Stock 4248
   also required
-  the sixth character to differ from D, which turned away development images;
-  the patch forces that result to true, and the 3668 line never carried the
+  the sixth character to differ from D, which turned away development images.
+  The patch forces that result to true, and the 3668 line never carried the
   test. An image named in the configuration is combined with the BIOS folder and
   opened at that path when it exists, without the size filter and without the
   romdir test. No name and no hash is matched anywhere. The image is read into
@@ -93,7 +93,7 @@ notes: |
   sets. A compiled-in image stands in for the first and a card filled with 0xFF
   for the second. DEV9hdd.raw is the default name of the empty disk image its
   settings page writes. An IRX named in the configuration is read into the ROM
-  region at 0x3C0000 at boot; the field is empty by default and names no file of
+  region at 0x3C0000 at boot. The field is empty by default and names no file of
   its own.
   ref: aethersx2/pcsx2/DEV9/DEV9.cpp:146-161,
        aethersx2/pcsx2/DEV9/flash.cpp:76-104,
@@ -126,7 +126,7 @@ files:
     description: "PS2 BIOS image"
     note: >-
       Any image whose romdir holds RESET and a readable ROMVER is accepted,
-      whatever its name. The 4 to 8 MB range gates the folder scan; an image
+      whatever its name. The 4 to 8 MB range gates the folder scan, and an image
       named in the configuration skips both that range and the romdir test. The
       sixth ROMVER character is not examined here, the patch having replaced the
       test that rejected images carrying D.

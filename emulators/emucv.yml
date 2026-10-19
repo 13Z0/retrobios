@@ -3,7 +3,7 @@ type: libretro
 core_classification: pure_libretro
 source: "https://gitlab.com/MaaaX-EPOCH84/libretro-emucv"
 profiled_date: "2026-09-17"
-pin_frozen: "the shipping core is this revision. HEAD removed the prototype from the tree on 2026-09-11 (a188c0f) and archived its last description files on 2026-09-12 (06a066a); the new skeleton has not yet been copied from libretro-emuscv1 (ROADMAP step 4.3). Recaling would repoint these refs at a tree that currently holds nothing but a roadmap."
+pin_frozen: "the shipping core is this revision. HEAD removed the prototype from the tree on 2026-09-11 (a188c0f) and archived its last description files on 2026-09-12 (06a066a). The new skeleton has not yet been copied from libretro-emuscv1 (ROADMAP step 4.3). Recaling would repoint these refs at a tree that currently holds nothing but a roadmap."
 source_commit: "6a6e1b15c5d5afefbc3fefdd8b52f3f2c8c0a0eb"
 core_version: "0.00"
 display_name: "EPOCH - Cassette Vision (EmuCV)"
@@ -25,7 +25,7 @@ notes: |
   src/core.cpp:307) with a plain fopen (src/emu.cpp:138,
   src/fileio.cpp:84-93). The file must be exactly 4064 bytes, the 2032
   valid program addresses as 16-bit words (src/emu.h:16, src/emu.h:223,
-  src/emu.cpp:143-153); any other size zeroes program memory and leaves
+  src/emu.cpp:143-153). Any other size zeroes program memory and leaves
   the cartridge not inserted. Each word is read as a big-endian 12-bit
   instruction (src/emu.cpp:159-164). The commented MD5 check at
   src/emu.cpp:313-320 is not compiled.

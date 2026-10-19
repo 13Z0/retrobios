@@ -12,8 +12,8 @@ BizHawk declares firmware in FirmwareDatabase.cs using four patterns:
   FirmwareAndOption(sha1, size, sys, id, ...)  - combined one-liner
 
 Variable assignments (var x = File(...)) let Option() reference files
-by name. Multiple options per firmware slot are ranked by status;
-the Ideal non-bad option is selected as canonical.
+by name. Multiple options per firmware slot are ranked by status,
+and the Ideal non-bad option is selected as canonical.
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ BIZHAWK_CORES = [
     "handy",
     "quicknes",
     "genesis_plus_gx",
-    # Ares64 is BizHawk's N64 core only; its firmware (the 64DD IPL) is in
+    # Ares64 is BizHawk's N64 core only. Its firmware (the 64DD IPL) is in
     # FirmwareDatabase.cs. The ares profile's thirty systems are not what
     # BizHawk runs ares for.
     "mupen64plus_next",
@@ -173,7 +173,7 @@ def parse_firmware_database(
     """
     source = _strip_comments(source)
 
-    # ── Pass 1: collect File() definitions ────────────────────────
+    # Pass 1: collect File() definitions
     files_by_hash: dict[str, dict] = {}
     var_to_hash: dict[str, str] = {}
 
@@ -210,7 +210,7 @@ def parse_firmware_database(
         if var_name:
             var_to_hash[var_name] = key
 
-    # ── Pass 2: collect firmware slots and options ────────────────
+    # Pass 2: collect firmware slots and options
 
     # FirmwareAndOption one-liner
     fao_re = re.compile(

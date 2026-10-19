@@ -127,7 +127,7 @@ class IntegrityChecksEveryMember(unittest.TestCase):
 
 class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
     """FBNeo reads neocd.bin and 000-lo.lo inside neocdz.zip. The primary
-    copy has no 000-lo.lo; a variant holds both. Resolved by name, every
+    copy has no 000-lo.lo, and a variant holds both. Resolved by name, every
     pack shipped the primary at fbneo/neocdz.zip and the core could not
     start a Neo Geo CD game."""
 
@@ -182,7 +182,7 @@ class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
         self.assertEqual(extra["members"], members)
 
     def test_the_collection_holds_each_archive_a_core_requires(self):
-        """FBNeo's nmk004.zip wants nmk004.bin crc 8ae61a09; both copies held
+        """FBNeo's nmk004.zip wants nmk004.bin crc 8ae61a09, but both copies held
         MAME's 83b6f611 dump while the FBNeo dump sat loose in bios/."""
         import json
 

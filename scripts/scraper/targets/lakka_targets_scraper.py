@@ -45,7 +45,7 @@ class ShellSubsetError(RuntimeError):
 
 
 def _condition(text: str, env: dict[str, str]) -> bool | None:
-    """`[ "${A}" = "x" -o "${B}" != "y" ]`, `-n`, `-z`; None when a clause
+    """`[ "${A}" = "x" -o "${B}" != "y" ]`, `-n`, `-z`. None when a clause
     tests a variable nothing has set and no other clause is true."""
     results: list[bool | None] = []
     for clause in re.split(r"\s+-o\s+", text):
@@ -72,12 +72,12 @@ def _condition(text: str, env: dict[str, str]) -> bool | None:
 
 
 # The variables this scraper reads. Set inside a case statement, which the
-# evaluator does not follow, they stop the scrape; anything else is skipped.
+# evaluator does not follow, they stop the scrape. Anything else is skipped.
 WATCHED = frozenset({"OPENGLES", "LIBRETRO_CORES", "EXCLUDE_LIBRETRO_CORES"})
 
 
 def _expand(value: str, env: dict[str, str]) -> str:
-    """${NAME} and $NAME from what is set so far; unset expands to nothing."""
+    """${NAME} and $NAME from what is set so far. Unset expands to nothing."""
     return re.sub(
         r"\$\{(\w+)\}|\$(\w+)",
         lambda m: env.get(m.group(1) or m.group(2), ""),
@@ -182,7 +182,7 @@ def device_cores(cores_mk: str, env: dict[str, str]) -> list[str]:
 
 def device_arch(project: str, options: str) -> str:
     """The architecture Lakka builds a device for: aarch64 where its options
-    list it, else arm; the Generic images are x86_64."""
+    list it, else arm. The Generic images are x86_64."""
     if project == "Generic":
         return "x86_64"
     return "aarch64" if re.search(r"^\s*aarch64\)", options, re.MULTILINE) else "arm"

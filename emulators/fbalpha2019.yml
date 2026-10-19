@@ -29,7 +29,7 @@ systems:
 notes: |
   Final Burn Alpha v0.2.97.44 as left in libretro/fbalpha, the repository the
   libretro project froze when development moved to FinalBurn Neo. The makefile
-  builds fbalpha_libretro.so; ROCKNIX installs it as fbalpha2019_libretro.so.
+  builds fbalpha_libretro.so, and ROCKNIX installs it as fbalpha2019_libretro.so.
   ref: src/burner/libretro/libretro.cpp:19
 
   Each archive the driver names is looked for in three places, the first that
@@ -76,7 +76,7 @@ files:
     system: snk-neogeo-mvs
     description: "Neo Geo system BIOS ROM set"
     required: true
-    note: "sm1.sm1, sfix.sfix and 000-lo.lo are required. sp-s3.sp1 is required unless one of the other 68K BIOS images is present; all other members are BRF_OPT."
+    note: "sm1.sm1, sfix.sfix and 000-lo.lo are required. sp-s3.sp1 is required unless one of the other 68K BIOS images is present. All other members are BRF_OPT."
     source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:930-981, src/burn/drv/neogeo/d_neogeo.cpp:1207-1216, src/burner/libretro/libretro.cpp:733-748"
     contents:
       - name: "sp-s3.sp1"
@@ -286,7 +286,7 @@ files:
     system: coleco-colecovision
     description: "ColecoVision system BIOS ROM set"
     required: true
-    note: "coleco.rom is required; colecoa.rom, svi603.rom and czz50.rom are BRF_OPT. Archive name from CVGetZipName, which drops the cv_ prefix of cv_coleco."
+    note: "coleco.rom is required, while colecoa.rom, svi603.rom and czz50.rom are BRF_OPT. Archive name from CVGetZipName, which drops the cv_ prefix of cv_coleco."
     source_ref: "src/burn/drv/coleco/d_coleco.cpp:638-670, src/burn/drv/coleco/d_coleco.cpp:675-680"
     contents:
       - name: "coleco.rom"
@@ -307,7 +307,7 @@ files:
     system: msx
     description: "MSX1 system BIOS ROM set"
     required: true
-    note: "msx.rom is required; msxj.rom and kanji.rom are BRF_OPT. Archive name from MSXGetZipName, which drops the msx_ prefix of msx_msx."
+    note: "msx.rom is required, while msxj.rom and kanji.rom are BRF_OPT. Archive name from MSXGetZipName, which drops the msx_ prefix of msx_msx."
     source_ref: "src/burn/drv/msx/d_msx.cpp:1680-1712, src/burn/drv/msx/d_msx.cpp:1716-1720"
     contents:
       - name: "msx.rom"
@@ -363,7 +363,7 @@ files:
     system: deco-cassette
     description: "DECO Cassette System BIOS ROM set"
     required: true
-    note: "The program ROMs and cassmcu.1c are required; the six PROMs (v2.3m, v4.10d, v3.3j, dsp-3_p3-.e5, rms-3_p4-.f6, dsp-3_p5-.m4) are BRF_OPT."
+    note: "The program ROMs and cassmcu.1c are required, while the six PROMs (v2.3m, v4.10d, v3.3j, dsp-3_p3-.e5, rms-3_p4-.f6, dsp-3_p5-.m4) are BRF_OPT."
     source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3392-3446, src/burn/drv/dataeast/d_decocass.cpp:3456-3465"
     contents:
       - name: "v0a-.7e"
@@ -425,7 +425,7 @@ files:
     system: taito-cchip
     description: "Taito C-Chip uPD78C11 internal ROM"
     required: true
-    note: "Named as board ROM set by Operation Wolf, Rainbow Islands, Volfied and others; there is no BurnDriver called cchip, the name comes from szBoardROM."
+    note: "Named as board ROM set by Operation Wolf, Rainbow Islands, Volfied and others. There is no BurnDriver called cchip, the name comes from szBoardROM."
     source_ref: "src/burn/drv/taito/d_taitomisc.cpp:1369-1373, src/burn/drv/taito/d_taitomisc.cpp:6250"
     contents:
       - name: "cchip_upd78c11.bin"

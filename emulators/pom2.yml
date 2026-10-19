@@ -49,7 +49,7 @@ notes: |
   Character generators follow charRomProbeOrder per profile, or the locale
   picked in the toolbar (src/CharRomCatalog.cpp:42-91,
   src/ProfileSwitch.cpp:135-141). Memory::loadCharRom accepts 2 KB, 4 KB
-  and 8 KB dumps (src/Memory.cpp:325-358); an 8 KB dump is two 4 KB banks,
+  and 8 KB dumps (src/Memory.cpp:325-358). An 8 KB dump is two 4 KB banks,
   loaded as one bank or kept dual-bank with annunciator 2 selecting the
   live set.
 
@@ -58,22 +58,22 @@ notes: |
   sequencer built in (src/DiskIICard.cpp:136-149). CFFA, Liron,
   Workstation, the MC68705 mouse card, the 1981 Grappler, the Apple
   Parallel Interface and the Videx Videoterm leave the slot empty without
-  their dump; Grappler+, ThunderClock+ and the Super Serial Card run a
+  their dump. Grappler+, ThunderClock+ and the Super Serial Card run a
   synthetic ROM instead, and TransWarp accelerates without its boot
   firmware. The catalogue behind the ROM Status panel (src/RomCatalog.h)
   lists every name in probe order with the size the loader enforces,
   what a missing dump costs (degraded, card unavailable, unused) and,
-  where POM2 vouches for a dump, its CRC32; the panel hashes each present
+  where POM2 vouches for a dump, its CRC32. The panel hashes each present
   file (src/RomStatus_ImGui.cpp:169-181, 311).
 
   Help > Download missing ROMs (src/RomFetch.cpp:68-301) fetches 45 files,
   43 distinct dumps, with curl from raw.githubusercontent.com/Abdess/retrobios,
   pinned to HTTPS (src/RomFetch.cpp:732-748). Every entry carries a
-  SHA-256, fourteen a CRC32 as well; a download is installed only when its
+  SHA-256, fourteen a CRC32 as well, and a download is installed only when its
   size, CRC32 and SHA-256 match (src/RomFetch.cpp:629-665). A present file
   is re-checked with the same gate and, when it is not the catalogued dump,
   replaced after a copy to roms-replaced/ under the data directory
-  (src/RomFetch.cpp:579-627, 833-853, 862-880); a 12 KB apple2p.rom is the
+  (src/RomFetch.cpp:579-627, 833-853, 862-880). A 12 KB apple2p.rom is the
   one alternate size kept as is. Nine entries are members of MAME romsets,
   read in-process (src/ZipMember.cpp): apple2e_unenh.rom is 342-0135-b.64
   then 342-0134-a.64 from apple2e.zip, mouse_341-0270-c.bin is
@@ -86,21 +86,21 @@ notes: |
 
   The floppy mechanical sounds are MAME's samples/floppy set, read from
   roms/floppy_samples/ as two banks of ten WAV files prefixed 525_ and 35_
-  (src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358); a
+  (src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358). A
   missing sample is logged and the drive stays silent. A second bank, the
   Virtual ][ recordings, is read from roms/virtual_ii_sons/ when that
   directory exists (src/MainWindow.cpp:362-376): eight drive and switch
   takes under lecteur/ and interface/ (src/FloppySoundDevice.cpp:195-204)
   and one printer loop under imprimante/. The bank is selectable once
   Disk Rotation, Move arm, Disk Insertion and Disk Removal have loaded
-  (src/FloppySoundDevice.cpp:205-225); an .aiff name is retried as .wav
+  (src/FloppySoundDevice.cpp:205-225). An .aiff name is retried as .wav
   (src/FloppySoundDevice.cpp:166-187). The packaging manifest keeps the
   directory out of release packages (packaging/bundle.manifest:75-78).
 
   Media named by the code are not firmware and are not listed here: the
   browser demo boots floppyemu/DIX.po (wasm/shell.html:89) or, when the
   shell passes no disk, floppyemu/Total Replay v6.1.hdv
-  (src/main.cpp:285-289); the headless CLI mounts
+  (src/main.cpp:285-289), and the headless CLI mounts
   disks_5.4/dos33_master.dsk by default (src/pom2_headless.cpp:262-264).
   Disk, tape and hard-disk images are browsed from disks_5.4/, disks_3.5/,
   hdv/, floppyemu/, cassettes/ and prodos_folder/ next to the executable.
@@ -116,7 +116,7 @@ files:
     sha1: "78008be557f643e956a106121bcc182c0fb9ea6d"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:38, src/Memory.cpp:174-237, src/RomFetch.cpp:72-75"
-    note: "First candidate of the Apple ][ Original profile; apple2.rom is probed next."
+    note: "First candidate of the Apple ][ Original profile. apple2.rom is probed next."
   - name: "apple2.rom"
     path: "roms/apple2.rom"
     description: "Apple ][ generic 12 KB fallback, Autostart monitor and Applesoft"
@@ -138,7 +138,7 @@ files:
     sha1: "29a53f3bb158b160433369e8e4a1d7cd5bf68ac6"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:54, src/Memory.cpp:222-232, src/RomFetch.cpp:84-96, src/RomFetch.cpp:862-873"
-    note: "First candidate of the ][+ profile and of the first-run fallback (src/MainWindow.cpp:242-246). The loader drops the leading 4 KB of the 20 KB dump. The fetch gate names that dump; a 12 KB six-chip image already on disk is kept as present without a digest check."
+    note: "First candidate of the ][+ profile and of the first-run fallback (src/MainWindow.cpp:242-246). The loader drops the leading 4 KB of the 20 KB dump. The fetch gate names that dump, but a 12 KB six-chip image already on disk is kept as present without a digest check."
   - name: "apple2e.rom"
     path: "roms/apple2e.rom"
     description: "Apple //e Enhanced firmware, 32 KB dump with the 16 KB firmware in the upper half"
@@ -161,7 +161,7 @@ files:
     sha1: "61fa9254628e5bb7236fb474006116d67684d747"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:78-79, src/SystemProfile.cpp:267-279, src/RomFetch.cpp:51-56, src/RomFetch.cpp:101-109"
-    note: "First candidate of the //e Unenhanced profiles; 342-0135-b.64.rom is probed second, apple2e.rom third. The fetcher assembles it from the two 8 KB chips of the MAME apple2e set, 342-0135-b.64 then 342-0134-a.64."
+    note: "First candidate of the //e Unenhanced profiles. 342-0135-b.64.rom is probed second, apple2e.rom third. The fetcher assembles it from the two 8 KB chips of the MAME apple2e set, 342-0135-b.64 then 342-0134-a.64."
   - name: "apple2c-32Kv0.rom"
     path: "roms/apple2c-32Kv0.rom"
     description: "Apple //c two-bank firmware, bank 0 in the lower 16 KB"
@@ -210,7 +210,7 @@ files:
     sha1: "1a27ae26966bbafd825d08ad1a24742d3e33557c"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:204-205, src/SystemProfile.cpp:429-434, src/RomFetch.cpp:122-125"
-    note: "First candidate of the //c Plus profile; apple2c-plus.rom is probed second and apple2c-32Kv0.rom third."
+    note: "First candidate of the //c Plus profile. apple2c-plus.rom is probed second and apple2c-32Kv0.rom third."
   - name: "apple2_char.rom"
     path: "roms/apple2_char.rom"
     description: "Apple ][ and ][+ character generator, 2 KB uppercase set"
@@ -233,7 +233,7 @@ files:
     sha1: "b2b5d87f52693817fc747df087a4aa1ddcdb1f10"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:105, src/SystemProfile.cpp:144, src/SystemProfile.cpp:206, src/CharRomCatalog.cpp:48-49, src/RomFetch.cpp:132-144, src/Memory.cpp:325-358"
-    note: "First candidate of the //e Enhanced, //c and //c Plus profiles; the same dump answers to apple2e_char_us.rom in the locale picker, and the fetcher writes both names."
+    note: "First candidate of the //e Enhanced, //c and //c Plus profiles. The same dump answers to apple2e_char_us.rom in the locale picker, and the fetcher writes both names."
   - name: "apple2e_char_us_unenh.rom"
     path: "roms/apple2e_char_us_unenh.rom"
     description: "Apple //e Unenhanced character generator 342-0133-A, 4 KB"
@@ -245,7 +245,7 @@ files:
     sha1: "58ad0008df72896a18601e090ee0d58155ffa5be"
     validation: [size, sha256]
     source_ref: "src/SystemProfile.cpp:83-84, src/CharRomCatalog.cpp:50-51, src/RomFetch.cpp:145-152, src/Memory.cpp:325-358"
-    note: "The //e Unenhanced profile probes apple2e_char_2k.rom then 341-0265-a.chr.rom then apple2_char.rom; the same dump ships under both names and the fetcher writes both."
+    note: "The //e Unenhanced profile probes apple2e_char_2k.rom then 341-0265-a.chr.rom then apple2_char.rom. The same dump ships under both names and the fetcher writes both."
   - name: "apple2e_char_fr.rom"
     path: "roms/apple2e_char_fr.rom"
     description: "Apple //e French character generator, 4 KB"
@@ -268,7 +268,7 @@ files:
     sha1: "4043e0808af8be096660827445e41149d16c5c85"
     validation: [size, sha256]
     source_ref: "src/CharRomCatalog.cpp:54-55, src/CharRomCatalog.cpp:165-180, src/RomFetch.cpp:159-162, src/Memory.cpp:325-358"
-    note: "Locale picker entry; equals the low bank of 342-0274-a.e9."
+    note: "Locale picker entry, equal to the low bank of 342-0274-a.e9."
   - name: "apple2e_char_uk.rom"
     path: "roms/apple2e_char_uk.rom"
     description: "Apple //e UK Enhanced character generator 342-0273-A, 4 KB"
@@ -323,7 +323,7 @@ files:
     sha1: "c81c1bbf237e70f8c3e5eef3c8fd5bd9b9f54d1e"
     validation: [size, sha256]
     source_ref: "src/CharRomCatalog.cpp:81-84, src/CharRomCatalog.cpp:158-163, src/RomFetch.cpp:179-184, src/RomStatus_ImGui.cpp:250, src/Memory.cpp:325-358"
-    note: "Locale picker entries select bank 0 or bank 1; loaded whole, both banks stay live and annunciator 2 picks the set."
+    note: "Locale picker entries select bank 0 or bank 1. Loaded whole, both banks stay live and annunciator 2 picks the set."
   - name: "apple2e_char_ft_blockascii.rom"
     path: "roms/apple2e_char_ft_blockascii.rom"
     description: "French Touch Block ASCII dual-bank character generator, 8 KB"
@@ -345,7 +345,7 @@ files:
     sha256: "097cd3500afe6c15d710d2e96af539a8e5065853986289294aac08ee7a1f070a"
     validation: [size]
     source_ref: "src/CharRomCatalog.cpp:87-88, src/CharRomCatalog.cpp:165-180, src/RomStatus_ImGui.cpp:250, src/Memory.cpp:325-358"
-    note: "Locale picker entry. Shipped in roms/; the fetcher does not serve it, so only the size is checked."
+    note: "Locale picker entry. Shipped in roms/. The fetcher does not serve it, so only the size is checked."
   - name: "apple2e_char_reactive.rom"
     path: "roms/apple2e_char_reactive.rom"
     description: "ReActive custom Apple //e character generator, 4 KB"
@@ -356,7 +356,7 @@ files:
     sha256: "49716e2804b119810c22ab668ae37cebadf0cd53bc8911b5f17c4a62a3acb514"
     validation: [size]
     source_ref: "src/CharRomCatalog.cpp:89-90, src/CharRomCatalog.cpp:165-180, src/RomStatus_ImGui.cpp:250, src/Memory.cpp:325-358"
-    note: "Locale picker entry. Shipped in roms/; the fetcher does not serve it, so only the size is checked."
+    note: "Locale picker entry. Shipped in roms/. The fetcher does not serve it, so only the size is checked."
   - name: "Videx Lower Case Chip ROM.bin"
     path: "roms/Videx Lower Case Chip ROM.bin"
     description: "Videx LOWER CASE CHIP character generator for the ][ and ][+, 2 KB"
@@ -367,7 +367,7 @@ files:
     sha1: "447874fe0850c8add3fd5b13fa98f6648fe6f999"
     validation: [size, crc32, sha256]
     source_ref: "src/CharRomCatalog.cpp:44-45, src/RomCatalog.h:208-214, src/RomFetch.cpp:190-194, src/RomStatus_ImGui.cpp:311"
-    note: "Locale picker entry for the ][ and ][+ profiles; without it the picker keeps the stock uppercase set."
+    note: "Locale picker entry for the ][ and ][+ profiles. Without it the picker keeps the stock uppercase set."
   - name: "disk2.rom"
     path: "roms/disk2.rom"
     description: "Disk II 16-sector boot PROM 341-0027-A"
@@ -378,7 +378,7 @@ files:
     sha1: "d4181c9f046aafc3fb326b381baac809d9e38d16"
     validation: [size, sha256]
     source_ref: "src/SlotCardFactory.cpp:102-115, src/DiskIICard.cpp:136-141, src/DiskIICard.cpp:151-174, src/RomFetch.cpp:197-200"
-    note: "The card carries the same PROM built in; the file replaces it when present."
+    note: "The card carries the same PROM built in, and the file replaces it when present."
   - name: "diskii_p6.rom"
     path: "roms/diskii_p6.rom"
     description: "Disk II 16-sector P6 logic state sequencer PROM 341-0028-A"
@@ -389,7 +389,7 @@ files:
     sha1: "bc39fbd5b9a8d2287ac5d0a42e639fc4d3c2f9d4"
     validation: [size, sha256]
     source_ref: "src/SlotCardFactory.cpp:102-115, src/DiskIICard.cpp:142-149, src/DiskIICard.cpp:176-202, src/DiskIICard.cpp:251-263, src/RomFetch.cpp:201-204"
-    note: "Loading the file switches the bit-level LSS path on for every image; without it the legacy 32-cycle nibble gate serves non-WOZ images and the built-in PROM serves WOZ images."
+    note: "Loading the file switches the bit-level LSS path on for every image. Without it the legacy 32-cycle nibble gate serves non-WOZ images and the built-in PROM serves WOZ images."
   - name: "disk2_13.rom"
     path: "roms/disk2_13.rom"
     description: "Disk II 13-sector boot PROM 341-0009"
@@ -399,7 +399,7 @@ files:
     sha1: "afd060e6f35faf3bb0146fa889fc787adf56330a"
     validation: [size, sha256]
     source_ref: "src/SlotCardFactory.cpp:102-115, src/DiskIICard.cpp:204-221, src/DiskIICard.cpp:264-288, src/RomCatalog.h:90-93, src/RomFetch.cpp:205-208"
-    note: "A mounted 13-sector disk switches the card to this PROM at $Cn00 and forces the bit-level LSS; without it the disk mounts but cannot boot."
+    note: "A mounted 13-sector disk switches the card to this PROM at $Cn00 and forces the bit-level LSS. Without it the disk mounts but cannot boot."
   - name: "diskii_p6_13.rom"
     path: "roms/diskii_p6_13.rom"
     description: "Disk II 13-sector P6 logic state sequencer PROM 341-0010"
@@ -420,7 +420,7 @@ files:
     sha1: "080ff88f19de22328e162954ee2b51ee65f9d5cd"
     validation: [size, crc32, sha256]
     source_ref: "src/SlotCardFactory.cpp:124-148, src/CffaCard.cpp:26-40, src/RomCatalog.h:119-123, src/RomFetch.cpp:223-226"
-    note: "Preferred when the CPU is a 65C02, the 6502 build is the fallback; the slot stays empty when neither is found."
+    note: "Preferred when the CPU is a 65C02, the 6502 build is the fallback, and the slot stays empty when neither is found."
   - name: "cffa20ee02.bin"
     path: "roms/cffa20ee02.bin"
     description: "CFFA 2.0 firmware, 6502 build"
@@ -520,7 +520,7 @@ files:
     sha1: "19f69011ed7d2551c39d5c1cac1f5a2defc8f8fb"
     validation: [size, crc32, sha256]
     source_ref: "src/SlotCardFactory.cpp:235-246, src/SlotCardFactory.cpp:254-264, src/VidexVideotermCard.cpp:40-47, src/RomCatalog.h:165-171, src/RomFetch.cpp:263-266"
-    note: "First firmware candidate of the Videoterm card; the 50 Hz dump is probed second. With neither the slot stays empty. The fetcher extracts it from the MAME a2vidtrm set."
+    note: "First firmware candidate of the Videoterm card. The 50 Hz dump is probed second. With neither the slot stays empty. The fetcher extracts it from the MAME a2vidtrm set."
   - name: "videx_videoterm_v24_50hz.bin"
     path: "roms/videx_videoterm_v24_50hz.bin"
     description: "Videx Videoterm firmware v2.4 with the 50 Hz CRTC table, 1 KB, MAME a2videoterm videx videoterm rom 2.4.bin"
@@ -565,7 +565,7 @@ files:
     sha1: "60f434f5325899d7ea257a6e56e6f53eae65146a"
     validation: [size, sha256]
     source_ref: "src/ClockCard.cpp:469-530, src/RomCatalog.h:216-226, src/RomFetch.cpp:227-230"
-    note: "The card loads a 256-byte slot ROM or the 2 KB chip, which supplies the $C800 expansion ROM as well; the fetch gate names the 2 KB dump and replaces a 256-byte file. The first four even bytes must read $08, $28, $58, $70, the ProDOS clock signature, or the synthetic ROM stays in place."
+    note: "The card loads a 256-byte slot ROM or the 2 KB chip, which supplies the $C800 expansion ROM as well. The fetch gate names the 2 KB dump and replaces a 256-byte file. The first four even bytes must read $08, $28, $58, $70, the ProDOS clock signature, or the synthetic ROM stays in place."
   - name: "liron.rom"
     path: "roms/liron.rom"
     description: "Apple Liron SmartPort controller firmware, 4 KB"
@@ -587,7 +587,7 @@ files:
     sha1: "59c8e8c88bac5c31ada1306b412edfcf5912a720"
     validation: [size, crc32, sha256]
     source_ref: "src/SlotCardFactory.cpp:274-297, src/WorkstationCard.cpp:60-74, src/RomCatalog.h:198-206, src/RomFetch.cpp:291-294"
-    note: "The Workstation card leaves its slot empty without it; the card runs its own 65C02 on the upper 32 KB."
+    note: "The Workstation card leaves its slot empty without it. The card runs its own 65C02 on the upper 32 KB."
   - name: "341-0438-a.bin"
     path: "roms/341-0438-a.bin"
     description: "Apple II 3.5 Disk Controller SuperDrive firmware 341-0438-A, MAME a2superdrive"
@@ -598,7 +598,7 @@ files:
     sha1: "440c3f84176c7b9f542da0b6ddf4fb13ec326c46"
     validation: [size, crc32, sha256]
     source_ref: "src/RomCatalog.h:105-111, src/RomStatus_ImGui.cpp:169-181, src/RomFetch.cpp:287-290"
-    note: "No card reads it; the ROM Status panel and the fetch gate check it."
+    note: "No card reads it. The ROM Status panel and the fetch gate check it."
   - name: "342-0326-a.f12"
     path: "roms/342-0326-a.f12"
     description: "Apple //e French keyboard decode ROM 342-0326-A, MAME apple2eefr"
@@ -609,7 +609,7 @@ files:
     sha1: "806a602195c18ffec637c03b6bb3405188b0dc1e"
     validation: [size, crc32, sha256]
     source_ref: "src/RomCatalog.h:112-118, src/RomStatus_ImGui.cpp:169-181, src/RomStatus_ImGui.cpp:311, src/RomFetch.cpp:295-298"
-    note: "Host keys are mapped directly, no keyboard decode ROM is emulated; the ROM Status panel and the fetch gate check the file only."
+    note: "Host keys are mapped directly, no keyboard decode ROM is emulated. The ROM Status panel and the fetch gate check the file only."
   - name: "525_seek_2ms.wav"
     path: "roms/floppy_samples/525_seek_2ms.wav"
     description: "MAME floppy sample, 5.25 inch drive, 2 ms head seek"
@@ -618,7 +618,7 @@ files:
     size: 5336
     sha1: "2d046a880476218685ed738fe8c8381962afd74a"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
-    note: "One of ten samples per drive bank; a missing sample is logged and that sound stays silent."
+    note: "One of ten samples per drive bank. A missing sample is logged and that sound stays silent."
   - name: "525_seek_6ms.wav"
     path: "roms/floppy_samples/525_seek_6ms.wav"
     description: "MAME floppy sample, 5.25 inch drive, 6 ms head seek"
@@ -699,7 +699,7 @@ files:
     size: 7450
     sha1: "55caafbd19486b8d517e4b33a6fa65250df55e25"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
-    note: "One of ten samples per drive bank; a missing sample is logged and that sound stays silent."
+    note: "One of ten samples per drive bank. A missing sample is logged and that sound stays silent."
   - name: "35_seek_6ms.wav"
     path: "roms/floppy_samples/35_seek_6ms.wav"
     description: "MAME floppy sample, 3.5 inch drive, 6 ms head seek"
@@ -792,7 +792,7 @@ files:
     required: false
     aliases: ["Move arm.wav"]
     source_ref: "src/FloppySoundDevice.cpp:198, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank; the .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
   - name: "Disk Insertion.aiff"
     path: "roms/virtual_ii_sons/lecteur/Disk Insertion.aiff"
     description: "Virtual ][ recording, drive lid, disk inserted"
@@ -800,7 +800,7 @@ files:
     required: false
     aliases: ["Disk Insertion.wav"]
     source_ref: "src/FloppySoundDevice.cpp:199, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank; the .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
   - name: "Disk Removal.aiff"
     path: "roms/virtual_ii_sons/lecteur/Disk Removal.aiff"
     description: "Virtual ][ recording, drive lid, disk removed"
@@ -808,7 +808,7 @@ files:
     required: false
     aliases: ["Disk Removal.wav"]
     source_ref: "src/FloppySoundDevice.cpp:200, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank; the .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
   - name: "I-O Error.wav"
     path: "roms/virtual_ii_sons/lecteur/I-O Error.wav"
     description: "Virtual ][ recording, read error one-shot"
@@ -835,7 +835,7 @@ files:
     category: game_data
     required: false
     source_ref: "src/MainWindow.cpp:372-374, src/PrinterSoundDevice.cpp:272-299"
-    note: "Loaded when present; the printer sound is generated otherwise."
+    note: "Loaded when present, otherwise the printer sound is generated."
   - name: "DejaVuSans.ttf"
     path: "fonts/DejaVuSans.ttf"
     description: "DejaVu Sans, the frontend text font"
@@ -874,4 +874,4 @@ files:
     size: 794259
     sha1: "a178f37661078739637ff7642cd6450c762993aa"
     source_ref: "src/MainWindow_MiscPanels.cpp:480"
-    note: "The window hotspots are fractions of this image; without it the window has nothing to click."
+    note: "The window hotspots are fractions of this image. Without it the window has nothing to click."

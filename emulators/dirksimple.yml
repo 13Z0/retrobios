@@ -17,7 +17,7 @@ notes: |
   and libretro backends (source == upstream).
 
   Libretro port loads from system_dir/DirkSimple/.
-  ref: dirksimple_libretro.c:782,794 —
+  ref: dirksimple_libretro.c:782,794
     sysdir from RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY
     basedir = sysdir + "/DirkSimple/"
   DirkSimple_startup(basedir, info->path, ...) at line 799
@@ -38,5 +38,5 @@ data_directories:
     source_ref: "dirksimple_libretro.c:794"
 
 files: []
-# no BIOS/firmware — game data via data_directories
+# no BIOS/firmware, game data via data_directories
 # user provides OGV video as content

@@ -17,7 +17,7 @@ notes: |
   Closed-source Delphi emulator for fruit machine and slot machine hardware,
   written by Chris Wren (Wizard) and distributed as a Windows installer. MFME.exe
   carries FileVersion 20.1.0.0, FileDescription "Multiple Fruit Machine Emulator" and
-  copyright "C.J.Wren 1997-2020"; the installer targets Windows 10, defaults to
+  copyright "C.J.Wren 1997-2020", and the installer targets Windows 10, defaults to
   C:\MFME\v20 (history.txt:323) and writes HKCU\Software\CJW\MFME. The binary is
   ASPack compressed, imports dinput8, xaudio2_9, d2d1 and d3d11 for input, sound
   and the hardware accelerated scaler added in v19.0 (history.txt:8-9), and holds
@@ -33,10 +33,10 @@ notes: |
   set. The .gam is plain text: a System line naming the tech, DIP switch, reel,
   stake, jackpot, percentage and meter state, a Layout line naming the .fml, a
   Game line, and one ROM line per ROM file. Layouts before v5 used .dat and are
-  converted by loading them in v5 or v6 and saving; v20 loads .fml only. The .fml
+  converted by loading them in v5 or v6 and saving, while v20 loads .fml only. The .fml
   is an AACS container whose password is derived from a four byte seed at the end
   of the file through a mixer, hashed with RIPEMD-128 into a Rijndael key, and
-  each chunk is zlib compressed; it holds the Delphi layout stream with every
+  each chunk is zlib compressed. It holds the Delphi layout stream with every
   bitmap embedded, carries no external file path, and text components name a font
   family rather than a font file. MFME.exe is started with the .gam path as its
   argument (history.txt:271).
@@ -64,7 +64,7 @@ notes: |
   SYS85, SYSTEM80 and spACE, with cabinet subfolders Eclipse for ADDER5,
   SCORPION4 and SCORPION5, Elegance for EPOCH, and Genesis for MPU4 and MPU5.
   DefaultSounds/Readme.txt:35-37 lists the electronic token mech effects as
-  CoinInToken, CoinInTokenSwitch and CoinInTokenRejected; the files that ship and
+  CoinInToken, CoinInTokenSwitch and CoinInTokenRejected, but the files that ship and
   the entry that introduced them name them TokenIn, TokenInSwitch and
   TokenInRejected (history.txt:80).
 
@@ -90,7 +90,7 @@ files:
       Listed in the MFME.exe import descriptors, so the Windows loader resolves it
       at process start and MFME does not launch when it is absent from the
       application directory. Drives real cabinet lamps, hoppers and meters through
-      Ultimarc boards; v20.0 updated the library and added PacLed64 and UltimateIO
+      Ultimarc boards. v20.0 updated the library and added PacLed64 and UltimateIO
       support.
 
   # -- Fonts, scanned from the Fonts folder beside MFME.exe --

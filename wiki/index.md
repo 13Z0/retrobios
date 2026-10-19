@@ -45,9 +45,9 @@ See [contributing](../contributing.md) for submission guidelines.
 ## Glossary
 
 - **BIOS** - firmware burned into console hardware, needed by emulators that rely on original boot code
-- **firmware** - system software loaded by a console at boot; used interchangeably with BIOS in this project
-- **HLE** - High-Level Emulation; software reimplementation of BIOS functions, avoids needing the original file
-- **hash** - fixed-length fingerprint of a file's contents; this project uses MD5, SHA1, SHA256, CRC32, and Adler-32
+- **firmware** - system software loaded by a console at boot, used interchangeably with BIOS in this project
+- **HLE** - High-Level Emulation: software reimplementation of BIOS functions, avoids needing the original file
+- **hash** - fixed-length fingerprint of a file's contents. This project uses MD5, SHA1, SHA256, CRC32, and Adler-32
 - **platform** - a distribution that packages emulators (RetroArch, Batocera, Recalbox, EmuDeck, etc.)
 - **core** - an emulator packaged as a libretro plugin, loaded by RetroArch or compatible frontends
 - **profile** - a YAML file in `emulators/` documenting one core's BIOS requirements, verified against source code
@@ -58,11 +58,11 @@ See [contributing](../contributing.md) for submission guidelines.
 - **scraper** - a script that fetches BIOS requirement data from an upstream source (System.dat, es_bios.xml, etc.)
 - **exporter** - a script that converts ground truth data back into a platform's native format
 - **target** - a hardware architecture that a platform runs on (e.g. switch, rpi4, x86_64, steamos)
-- **region** - the territory an emulator's code branches on to select a file; `--region` builds a pack from an ordered priority list, `--one-per-slot` keeps one file per system and region
+- **region** - the territory an emulator's code branches on to select a file. `--region` builds a pack from an ordered priority list, `--one-per-slot` keeps one file per system and region
 - **variant** - an alternative version of a BIOS file (different revision, region, or dump), stored in `.variants/`
-- **required** - a file the core needs to function; determined by source code behavior
+- **required** - a file the core needs to function, determined by source code behavior
 - **optional** - a file the core functions without, possibly with reduced accuracy or missing features
-- **hle_fallback** - flag on a file indicating the core has an HLE path; absence is downgraded to INFO severity
+- **hle_fallback** - flag on a file indicating the core has an HLE path, and absence is downgraded to INFO severity
 - **severity** - the urgency of a verification result: OK (verified), INFO (negligible), WARNING (degraded), CRITICAL (broken)
 - **status** - the outcome of a single file check: `ok`, `untested` (present, hash not the expected one), or `missing`
 - **discrepancy** - a file that passes the platform check but fails the emulator's own size or hash validation
@@ -71,5 +71,5 @@ See [contributing](../contributing.md) for submission guidelines.
 - **storage tier** - where a file comes from: `embedded` (in `bios/`), `external` (downloaded at build), `user_provided`
 - **truth** - platform-shaped data generated from emulator profiles, used to diff against what the platform declares
 - **dump catalog** - a preservation project (Redump, No-Intro, TOSEC) publishing DATs of verified hardware dumps
-- **provenance** - the catalogs that list a file, joined into the database by hash; an annotation, never an authority
+- **provenance** - the catalogs that list a file, joined into the database by hash. An annotation, never an authority
 - **manifest** - the JSON file list per platform in `install/`, consumed by `install.py`

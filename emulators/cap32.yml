@@ -54,7 +54,7 @@ notes: |
   and loads it via snapshot_load_mem() in cap32/slots.c:71-90.
 
 files:
-  # Standalone loads from rom_path/; libretro embeds all as C arrays
+  # Standalone loads from rom_path/, libretro embeds all as C arrays
   - name: cpc464.rom
     system: amstrad-cpc
     required: false
@@ -80,7 +80,7 @@ files:
     size: 32768
     md5: b96280dc6c95a48857b4b8eb931533ae
     sha1: 5977adbad3f7c1e0e082cd02fe76a700d9860c30
-    note: "CPC 6128 OS + BASIC 1.1, default model=2; missing file returns ERR_CPC_ROM_MISSING"
+    note: "CPC 6128 OS + BASIC 1.1, default model=2. A missing file returns ERR_CPC_ROM_MISSING"
     source_ref: "src/cap32.cpp:212-217, src/cap32.cpp:1013-1027, src/cap32.cpp:1799, rom/cpc6128.rom"
   - name: amsdos.rom
     system: amstrad-cpc
@@ -89,7 +89,7 @@ files:
     size: 16384
     md5: 25629dfe870d097469c217b95fdc1c95
     sha1: 39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb
-    note: "AMSDOS disc ROM, shipped cap32.cfg sets slot07=DEFAULT, skipped on the 464; missing file clears the slot"
+    note: "AMSDOS disc ROM, shipped cap32.cfg sets slot07=DEFAULT, skipped on the 464. A missing file clears the slot"
     source_ref: "src/cap32.cpp:1170-1178, src/cap32.cpp:1245-1249, cap32.cfg:205-206, 215, rom/amsdos.rom"
   - name: system.cpr
     system: amstrad-cpc
@@ -107,7 +107,7 @@ files:
     size: 8192
     md5: 4c9f014e91d407cc6509fad0095ab909
     sha1: 1431ec628d38f000715545dd2186b684c5fe5a6f
-    note: "Multiface 2 ROM, read when mf2=1; checks the \"MULTIFACE 2\" signature at 0x0d32"
+    note: "Multiface 2 ROM, read when mf2=1. Checks the \"MULTIFACE 2\" signature at 0x0d32"
     source_ref: "src/cap32.cpp:1252-1278, rom/MF2.rom"
 
 platform_details:
@@ -116,7 +116,7 @@ platform_details:
     note: |
       All ROMs are embedded. emulator_select_ROM() copies the ROM array for
       CPC.model into pbROM. No filesystem lookup occurs in the libretro
-      port; retro_system_bios_directory is set in
+      port. retro_system_bios_directory is set in
       libretro/libretro-core.c:1617-1636 and no ROM is read from it.
 
   embedded_roms:

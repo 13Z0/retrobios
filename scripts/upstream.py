@@ -51,7 +51,7 @@ _HOSTS: dict[str, tuple[str, str, str]] = {
         "https://codeberg.org/api/v1",
         "https://codeberg.org",
     ),
-    # The Ryujinx repository left GitHub in October 2024; this Gitea pull
+    # The Ryujinx repository left GitHub in October 2024. This Gitea pull
     # mirror kept its history up to 1.1.1402.
     "git.ngram.ca": (
         "forgejo",
@@ -192,7 +192,7 @@ def content_url(repo: Repo, sha: str, path: str) -> str:
 
     Forgejo and Gitea hosts put their web routes, /raw/commit included,
     behind a proof-of-work page (git.ngram.ca answers 200 with an HTML
-    challenge); the API raw route is not challenged. raw_url stays the
+    challenge), while the API raw route is not challenged. raw_url stays the
     link a reader opens.
     """
     if repo.family != "forgejo":
@@ -236,7 +236,7 @@ def _host_is_unresolvable(exc: BaseException) -> bool:
     """Whether a connection failure is the name itself, not the network.
 
     URLError carries the cause in `reason`, and a wrapped one carries it in
-    `__cause__`; the walk is bounded because either chain can be cyclic.
+    `__cause__`. The walk is bounded because either chain can be cyclic.
     """
     seen: BaseException | None = exc
     for _ in range(8):
@@ -271,7 +271,7 @@ def _fetch(url: str, accept_json: bool = False) -> bytes | None:
 
     A pass over every profile issues thousands of requests, so a dropped
     connection or a transient 5xx is a certainty rather than an accident.
-    Those are retried; a definitive answer from the forge is not.
+    Those are retried, a definitive answer from the forge is not.
     """
     failure: UpstreamError | None = None
     for attempt in range(RETRIES):
@@ -376,7 +376,7 @@ def _api(
 ) -> object | None:
     """Cached API call. The cache stores absence as well as payloads.
 
-    ``max_age`` bounds the trust in a cached answer, in seconds; a stale
+    ``max_age`` bounds the trust in a cached answer, in seconds. A stale
     answer is refreshed unless the run is offline, when it still serves.
     ``absent_max_age`` bounds a cached absence alone, for a resource that
     can appear but, once there, does not change.
@@ -668,7 +668,7 @@ MAX_TREE_PAGES = 50
 def _gitlab_tree(
     repo: Repo, sha: str, cache_dir: str, offline: bool
 ) -> tuple[list[str], bool]:
-    """GitLab serves its tree in pages; each page is cached on its own URL.
+    """GitLab serves its tree in pages, each page cached on its own URL.
 
     A page that cannot be read mid-walk reports the listing as truncated:
     the paths already collected are real, but their absence proves nothing.

@@ -22,7 +22,7 @@ notes: |
   ref: src/common/common_paths.h:16-70, src/common/file_util.cpp:770-839
 
   InitKeys reads boot9.bin then aes_keys.txt. Encrypted content needs one of the
-  two; a ROM without crypto reads neither.
+  two, while a ROM without crypto reads neither.
   ref: src/core/hw/aes/key.cpp:315-324, src/core/file_sys/ncch_container.cpp:200-210
 
   Failure to derive a key or to find a seed marks the content undecryptable and
@@ -84,7 +84,7 @@ files:
     path: sysdata/seeddb.bin
     system: nintendo-3ds
     required: false
-    note: "game seed database for 9.6+ titles; an empty database is written when the file is absent"
+    note: "game seed database for 9.6+ titles. An empty database is written when the file is absent"
     source_ref: "src/core/file_sys/seed_db.cpp:12-58"
 
   - name: shared_font.bin
@@ -92,7 +92,7 @@ files:
     system: nintendo-3ds
     required: false
     hle_fallback: true
-    note: "legacy path, tried after the shared font system archive; decompressed BCFNT with the 0x80 byte APT header"
+    note: "legacy path, tried after the shared font system archive. It is a decompressed BCFNT with the 0x80 byte APT header"
     source_ref: "src/core/hle/service/apt/apt.cpp:254-270, src/common/common_paths.h:67"
 
   - name: CTCert.bin
@@ -101,7 +101,7 @@ files:
     required: false
     size: 384
     validation: [size]
-    note: "console client certificate; signature type must be 0x010005 and the issuer one of the two Nintendo CA G3 strings. The certificate here is assembled from a console OTP: signature and expiry read at 0x44 and 0x20, public key derived from the private key at 0x24 over sect233r1, and the whole body checked against Nintendo's root public key"
+    note: "console client certificate. Signature type must be 0x010005 and the issuer one of the two Nintendo CA G3 strings. The certificate here is assembled from a console OTP: signature and expiry read at 0x44 and 0x20, public key derived from the private key at 0x24 over sect233r1, and the whole body checked against Nintendo's root public key"
     source_ref: "src/core/hle/service/am/am.cpp:2427-2454, src/core/hle/service/am/am.cpp:83-93, src/core/hle/service/am/am.h:95"
 
   - name: SecureInfo_A
@@ -110,7 +110,7 @@ files:
     required: false
     size: 273
     validation: [size]
-    note: "console region and serial number; loaded on a size check alone, and paired with LocalFriendCodeSeed_B"
+    note: "console region and serial number, loaded on a size check alone, and paired with LocalFriendCodeSeed_B"
     source_ref: "src/core/hle/service/cfg/cfg.cpp:608-610, 689-709, src/core/hle/service/cfg/cfg.h:180-186"
 
   - name: LocalFriendCodeSeed_B
@@ -119,5 +119,5 @@ files:
     required: false
     size: 272
     validation: [size]
-    note: "friend code generation seed; loaded on a size check alone, and paired with SecureInfo_A"
+    note: "friend code generation seed, loaded on a size check alone, and paired with SecureInfo_A"
     source_ref: "src/core/hle/service/cfg/cfg.cpp:604-606, 711-732, src/core/hle/service/cfg/cfg.h:188-193"

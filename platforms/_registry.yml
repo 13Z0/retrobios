@@ -188,7 +188,7 @@ platforms:
         method: config_file
         config: $HOME/.config/retroarch/retroarch.cfg
         parse_key: system_directory
-      # configuration.c reads <Application Support>/RetroArch/config; a value
+      # configuration.c reads <Application Support>/RetroArch/config, and a value
       # left at default is ~/Documents/RetroArch/system (platform_darwin.m).
       # Older builds kept the file one level up.
       - os: darwin
@@ -419,7 +419,7 @@ platforms:
     install:
       detect:
       # retrodeck.json since the cfg-to-json migration (global.sh:149-153),
-      # retrodeck.cfg before it; a home moved to an SD card lives only there.
+      # retrodeck.cfg before it. A home moved to an SD card lives only there.
       - os: linux
         method: config_file
         config: $HOME/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json

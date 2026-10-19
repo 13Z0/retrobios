@@ -273,7 +273,7 @@ def _restore(cached: str, path: str) -> None:
     """Copy a fetched asset to its registered path, whole or not at all.
 
     An interrupted copy at the final name is a truncated file the next scan
-    hashes and publishes; a scratch beside it is swapped in only once full.
+    hashes and publishes. A scratch beside it is swapped in only once full.
     """
     directory = os.path.dirname(path)
     os.makedirs(directory, exist_ok=True)
@@ -314,7 +314,7 @@ def _preserve_large_file_entries(files: dict, db_path: str) -> int:
         # checkout without the release assets would drop every entry they
         # hold, and the manifests regenerated from it would omit them.
         raise SystemExit(
-            f"{db_path} is not valid JSON ({e}); restore it from git "
+            f"{db_path} is not valid JSON ({e}). Restore it from git "
             "or regenerate it on a checkout holding the release assets before "
             "scanning again"
         ) from e

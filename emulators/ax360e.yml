@@ -90,7 +90,7 @@ files:
     note: >-
       Imported through a picker that keeps only names ending in .zip. The archive
       is read whole, meta.json names the library to keep, and a single .so is
-      taken instead when no meta.json is present; the .so files and meta.json are
+      taken instead when no meta.json is present. The .so files and meta.json are
       unpacked into a directory named after the archive, in internal storage. The
       configured path is read before the instance is created and opened through
       adrenotools when it exists, otherwise the system libvulkan.so is used. The

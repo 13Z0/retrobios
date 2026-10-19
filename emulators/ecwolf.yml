@@ -14,7 +14,7 @@ notes: |
   Spear of Destiny (sod/sdm), Super 3D Noah's Ark (n3d), and community pk3 mods.
   Blake Stone and Rise of the Triad support flagged as Preview in upstream.
 
-  Requires ecwolf.pk3 — engine data package built from wadsrc/static/.
+  Requires ecwolf.pk3, the engine data package built from wadsrc/static/.
   Contains IWADINFO (game detection rules), palettes, sprites, map configs,
   DECORATE actor definitions, MAPINFO, SNDINFO, fonts, and localization strings.
   Without this file: "Could not open ecwolf.pk3!" fatal error.

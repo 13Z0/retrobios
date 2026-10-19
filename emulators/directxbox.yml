@@ -49,7 +49,7 @@ files:
       Xbox MCPX ROM (secret boot ROM on the southbridge). Contains the initial
       boot vector that loads the flash BIOS. Overlaid at the last 512 bytes of
       the 16 MB flash region (0xFFFFFE00-0xFFFFFFFF). Only needed for retail
-      machine types; Debug and Chihiro skip this file.
+      machine types. Debug and Chihiro skip this file.
     source_ref: "src/xbox.cpp:186-207, src/libretro/libretro.cpp:202"
 
   - name: "cromwell_1024.bin"

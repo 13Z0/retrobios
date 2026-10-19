@@ -19,7 +19,7 @@ notes: >
   Arcade Card mode (pce_arcadecard option, enabled by default) extends System
   Card 3 with extra RAM mapping.
   No hash or size validation on BIOS load.
-  Upstream pce module has configurable pce.cdbios/pce.gecdbios string settings;
+  Upstream pce module has configurable pce.cdbios/pce.gecdbios string settings, and
   the 6-option dropdown is a libretro addition.
 
 files:

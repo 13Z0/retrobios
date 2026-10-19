@@ -31,7 +31,7 @@ notes: |
   6.0.6. The Pro on the store is 7.4.5 (versionCode 324) and no genuine copy of it is
   reachable: apkcombo bounces the download page of a paid app back to the app page,
   apkvision carries no copy, and archive.org holds 6.0.6 alone. The Pro ships its core
-  as a stripped armeabi-v7a build; it carries the same log strings and the same
+  as a stripped armeabi-v7a build. It carries the same log strings and the same
   constants as the Basic core, the 64 KB clear, the 8192 byte read cap, the 256 byte
   header copy and the 256 and 2304 byte gate, and 65 of the 70 entry points it exports
   are exported by the Basic core as well. The Pro also ships libpizza-jni.so, an
@@ -83,7 +83,7 @@ files:
     description: "Game Boy (DMG) boot ROM"
     note: >-
       Chosen from any location under any name through the document picker and copied
-      into the application directory under the name the picker reports; the legacy
+      into the application directory under the name the picker reports. The legacy
       browser offers .gbc, .gb, .bin and .zip and writes the entry it extracts from a
       zip to bios.bin. The absolute path is stored and handed to the library, which
       copies it into a 256 byte buffer. It is used when the ROM name ends in .gb or

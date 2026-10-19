@@ -72,7 +72,7 @@ files:
     source_ref: "src/hiscore.c:15,102-116,248"
     note: >-
       high score definitions, compiled into binary and spawned on first run.
-      metadata/hiscore.dat of the core repository; the compiled copy
+      metadata/hiscore.dat of the core repository. The compiled copy
       (precompile/hiscore_dat.h) predates its last edits. is_mem_range reads
       only "cpu:addr:len:start:end" lines under a "gamename:" header.
 

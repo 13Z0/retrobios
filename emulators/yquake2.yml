@@ -15,7 +15,7 @@ notes: |
   :36). FS_AddDirToSearchPath (src/common/filesystem.c:1646) loops
   pak%d.<ext> from 0 to MAX_PAKS-1 (=99) across fs_packtypes = { pak, pk3 }
   for the active game directory, loading each one as a protected pak.
-  baseq2/pak0.pak is the retail data; id's 3.20 point release adds
+  baseq2/pak0.pak is the retail data, and id's 3.20 point release adds
   baseq2/pak1.pak, baseq2/pak2.pak and the Three Wave CTF data under ctf/.
 
   Supported official mods are listed in first_mods[]
@@ -78,7 +78,7 @@ files:
     required: false
     source_ref: "src/common/filesystem.c:1331 (first_mods[1]=xatrix), 1688"
     note: "The Reckoning data. Loaded when `+set game xatrix` is passed."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Ground Zero (rogue/), official Mission Pack 2
@@ -92,7 +92,7 @@ files:
     required: false
     source_ref: "src/common/filesystem.c:1331 (first_mods[2]=rogue), 1688"
     note: "Ground Zero data. Loaded when `+set game rogue` is passed."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Three Wave Capture The Flag (ctf/), official free addon

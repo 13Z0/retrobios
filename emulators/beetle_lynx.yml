@@ -22,8 +22,8 @@ notes: >
   The cart database in cart.cpp includes the BIOS CRC32 0x0d973c9d for
   identification purposes, not validation.
   Upstream Mednafen throws an exception if the BIOS is missing or
-  undersized; the libretro port silently degrades. Upstream supports
-  custom palette loading (lynx.pal); the libretro port does not.
+  undersized, while the libretro port silently degrades. Upstream supports
+  custom palette loading (lynx.pal), but the libretro port does not.
 
 files:
   - name: "lynxboot.img"

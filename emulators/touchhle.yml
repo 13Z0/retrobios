@@ -31,7 +31,7 @@ notes: |
 
   Fonts are opened the first time an app draws text in that face, and a
   missing or unparsable file is a panic. The Liberation families stand in for
-  the iPhone OS faces; Noto Sans JP is used for strings holding kana or kanji.
+  the iPhone OS faces, and Noto Sans JP is used for strings holding kana or kanji.
   ROCKNIX installs only the LiberationSans files, so an app that asks for a
   monospace, serif or Japanese face stops there.
   ref: src/font.rs:70-129, src/frameworks/uikit/ui_font.rs:26-43,
@@ -83,7 +83,7 @@ files:
     md5: "e59b87dce1497a1ba08d472667722916"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:88-90"
 
   - name: "LiberationMono-Bold.ttf"
@@ -94,7 +94,7 @@ files:
     md5: "e52e17953632fd6f1da5e51c84a6dea7"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:91-93"
 
   - name: "LiberationMono-BoldItalic.ttf"
@@ -105,7 +105,7 @@ files:
     md5: "00bed708fb7614c12c92cfd16f1fb7b8"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:94-96"
 
   - name: "LiberationMono-Italic.ttf"
@@ -116,7 +116,7 @@ files:
     md5: "fe762a65e22e23c935aff8eda38eaaf3"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:97-99"
 
   - name: "LiberationSans-Regular.ttf"
@@ -127,7 +127,7 @@ files:
     md5: "d7b4e92b03deb1865aa61328fd5ff400"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:100-102"
 
   - name: "LiberationSans-Bold.ttf"
@@ -138,7 +138,7 @@ files:
     md5: "ab3823f8c454609eab661b54751fd55e"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:103-105"
 
   - name: "LiberationSans-BoldItalic.ttf"
@@ -149,7 +149,7 @@ files:
     md5: "ad144bbd42d9dccb07db1aae6682b98b"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:106-108"
 
   - name: "LiberationSans-Italic.ttf"
@@ -160,7 +160,7 @@ files:
     md5: "333f554fddaa0faf89afc3621a6a18c8"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:109-111"
 
   - name: "LiberationSerif-Regular.ttf"
@@ -171,7 +171,7 @@ files:
     md5: "732ab01395f607bf178d0f32d841cc71"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:112-114"
 
   - name: "LiberationSerif-Bold.ttf"
@@ -182,7 +182,7 @@ files:
     md5: "184a866d565bae797baa39458fde7ac4"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:115-117"
 
   - name: "LiberationSerif-BoldItalic.ttf"
@@ -193,7 +193,7 @@ files:
     md5: "23e615c7010f0ad9f1d2817009733cb9"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:118-120"
 
   - name: "LiberationSerif-Italic.ttf"
@@ -204,7 +204,7 @@ files:
     md5: "31defdf69fc00c20b9caabe3e76d53e1"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:121-123"
 
   - name: "NotoSansJP-Regular.otf"
@@ -215,7 +215,7 @@ files:
     md5: "f82ef23cfbf8b46a234465b0151ee71f"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:124-126"
 
   - name: "NotoSansJP-Bold.otf"
@@ -226,7 +226,7 @@ files:
     md5: "77921099a1d3fce6fb64a7b3b678b7dc"
     bundled: true
     description: "Bundled font"
-    note: "Opened on first use of its face; touchHLE panics when it is missing."
+    note: "Opened on first use of its face. touchHLE panics when it is missing."
     source_ref: "src/font.rs:70-85, src/font.rs:127-129"
 
   - name: "touchHLE_default_options.txt"

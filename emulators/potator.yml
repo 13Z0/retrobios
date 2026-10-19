@@ -14,6 +14,6 @@ systems:
 
 notes: |
   Watara Supervision emulator. No BIOS required.
-  The Supervision has no BIOS ROM; games execute directly from cartridge.
+  The Supervision has no BIOS ROM, and games execute directly from cartridge.
 
 files: []

@@ -153,7 +153,7 @@ def verify_entry_existence(
         return {"name": name, "status": Status.MISSING, "required": required}
     result = {"name": name, "status": Status.OK, "required": required}
     if resolve_status == "hash_mismatch":
-        # The frontend reads no bytes, so the file stays; the declared hash
+        # The frontend reads no bytes, so the file stays, and the declared hash
         # it contradicts is reported, as the pack does.
         result["discrepancy"] = existence_discrepancy(
             file_entry, local_path, platform_display
@@ -267,7 +267,7 @@ def verify_entry_md5(
         **base,
         "status": Status.UNTESTED,
         "path": local_path,
-        "reason": f"expected {md5_list[0][:12]}… got {actual_md5[:12]}…",
+        "reason": f"expected {md5_list[0][:12]}... got {actual_md5[:12]}...",
     }
 
 
@@ -296,7 +296,7 @@ def verify_entry_sha1(
         **base,
         "status": Status.UNTESTED,
         "path": local_path,
-        "reason": f"expected {expected_sha1[:12]}… got {actual_sha1[:12]}…",
+        "reason": f"expected {expected_sha1[:12]}... got {actual_sha1[:12]}...",
     }
 
 
@@ -628,7 +628,7 @@ def find_undeclared_files(
                         # A copy contradicting the declared hash counts as held
                         # only where the builder would ship it. Under existence
                         # the frontend never opens the file, so the pack carries
-                        # it and reports the divergence; under a digest mode the
+                        # it and reports the divergence. Under a digest mode the
                         # frontend would reject it, the builder leaves it out, and
                         # calling it available here would describe a pack that
                         # does not contain it.
@@ -794,7 +794,7 @@ def _mark_hidden(
 
     Returns the full destinations the builder fills with a core's file.
     ``report`` is the gap report the caller already computed with the
-    builder's arguments; without it the builder's pass computes its own.
+    builder's arguments. Without it the builder's pass computes its own.
     """
     from packextras import hidden_extras
 
@@ -868,8 +868,8 @@ def _resolve_declaration(
 def _twin_unmet(result: dict, held_by: str | None) -> bool:
     """Mark a declaration unmet at a path another declaration holds.
 
-    The path is answered by the winner's file, which the pack counts once;
-    this declaration's failure is reported, never folded into the
+    The path is answered by the winner's file, which the pack counts once.
+    This declaration's failure is reported, never folded into the
     destination's status.
     """
     if held_by is None or result["status"] == Status.OK:
@@ -895,7 +895,7 @@ def _resolve_for_platform(
 ) -> tuple[str | None, str]:
     """Resolve one platform entry the way the pack builder does.
 
-    A slot the arbitration decided wins over the resolver; a frontend that
+    A slot the arbitration decided wins over the resolver, and a frontend that
     never reads the bytes takes the filename-free core's own image.
     """
     override = slot_overrides.get(
@@ -932,7 +932,7 @@ def verify_platform(
     mode = normalize_mode(config.get("verification_mode"))
     platform = config.get("platform", "unknown")
 
-    # The builder settles a destination claimed by both layers; this must read
+    # The builder settles a destination claimed by both layers, and this must read
     # the same decision, or the two tools describe different packs.
     has_zipped = any(
         fe.get("zipped_file")
@@ -1588,7 +1588,7 @@ def verify_emulator(
     dest_to_name: dict[str, str] = {}
     data_dir_notices: list[str] = []
 
-    # The emulator pack withdraws these; the report withdraws the same.
+    # The emulator pack withdraws these, and the report withdraws the same.
     region_drops: set[str] = set()
     if regions:
         from packextras import emulator_region_drops
@@ -2114,7 +2114,7 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
 def _refuse_listing_narrowings(
     args: argparse.Namespace, parser: argparse.ArgumentParser
 ) -> None:
-    """A listing mode reads --platform at most; anything else is refused.
+    """A listing mode reads --platform at most, anything else is refused.
 
     Printing past a narrowing flag lets the user believe it applied
     (generate_pack applies the same table).
@@ -2378,7 +2378,7 @@ def _main(held: contextlib.ExitStack) -> None:
 def _json_details(details: list[dict], verbose: bool) -> list[dict]:
     """The entries a JSON report lists: what needs attention, or every one.
 
-    --verbose shows each entry with its ground truth in the text report; it
+    --verbose shows each entry with its ground truth in the text report. It
     used to be accepted beside --json and dropped, the output byte for byte
     the same, so a script asking for the passing entries got nothing.
     """

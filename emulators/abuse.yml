@@ -14,7 +14,7 @@ verification: existence
 notes: |
   Side-scrolling 1995 action game by Crack dot Com, SDL2 fork from the Xenoveritas
   branch. The port ships its own game data in-tree under data/ (14 MB), including
-  the Lisp scripts, levels, art and freedesktop metadata; the fRaBs expansion was
+  the Lisp scripts, levels, art and freedesktop metadata. The fRaBs expansion was
   removed from this fork over licensing uncertainty.
 
   Entry point abuse.lsp is loaded relative to the data directory. The data root
@@ -42,7 +42,7 @@ files:
     bundled: true
     source_ref: "src/loader2.cpp:284 (lsf default), src/netcfg.cpp:204 (lsf override)"
     note: >
-      Shipped in the source tree under data/. Loader2 reads it via load(); the
+      Shipped in the source tree under data/. Loader2 reads it via load(), and the
       file in turn chain-loads the rest of the Lisp data (english.lsp,
       common.lsp, startup.lsp, options.lsp, input.lsp, startup).
 

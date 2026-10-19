@@ -17,7 +17,7 @@ notes: |
   by theelf, then adapted for libretro.
 
   No external BIOS files are required. The upstream versions (GP2X, PSP) load
-  NPBIOS.BIN optionally; the libretro port's loadBIOS() returns 0
+  NPBIOS.BIN optionally, but the libretro port's loadBIOS() returns 0
   unconditionally, and the disabled file-reading body it once carried under
   #if 0 was removed in June 2026, so the port no longer names the file. The
   core never queries the system directory: the only files it opens are the
@@ -44,7 +44,7 @@ analysis:
     note: |
       loadBIOS() returns 0 unconditionally in the libretro port, so mem_init()
       always takes the HLE branch. The #if 0 body that opened NPBIOS.BIN with
-      filestream_open() was dropped by commit 0e4783a on 2026-06-15; the
+      filestream_open() was dropped by commit 0e4783a on 2026-06-15, and the
       libretro tree no longer contains the name. In upstream, loadBIOS() opens
       NPBIOS.BIN from the working directory with fopen(), requires exactly
       0x10000 bytes, and falls back to HLE when the file is absent or short.

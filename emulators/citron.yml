@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://git.citron-emu.org/citron-emu/Citron"
 upstream: "https://git.citron-emu.org/citron-emu/Citron"
 profiled_date: "2026-03-26"
-upstream_gone: "git.citron-emu.org no longer resolves, and git.citron-emu.com redirects to an unrelated survey site, the domain having been taken. Observed 2026-09-04; no mirror found."
+upstream_gone: "git.citron-emu.org no longer resolves, and git.citron-emu.com redirects to an unrelated survey site, the domain having been taken. Observed 2026-09-04, no mirror found."
 core_version: "2026.03.12"
 display_name: "Citron (Nintendo Switch)"
 cores:
@@ -17,7 +17,7 @@ mode: standalone
 # Citron is a community fork of yuzu, continued by Zephyron after yuzu's takedown.
 # Key files loaded from <data_dir>/keys/ (fs_paths.h:18, path_util.cpp:124).
 # On Linux: $XDG_DATA_HOME/citron/keys/
-# On Batocera: XDG_DATA_HOME=/userdata/saves/switch → /userdata/saves/switch/citron/keys/
+# On Batocera: XDG_DATA_HOME=/userdata/saves/switch -> /userdata/saves/switch/citron/keys/
 # Firmware NCAs are installed into NAND via UI (main.cpp:1808), not placed as files.
 # HLE fallbacks exist for fonts, timezone, system version, mii model, ng word lists.
 

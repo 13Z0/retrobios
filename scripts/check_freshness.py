@@ -565,7 +565,7 @@ def _unresolved_findings(platform: str, missing: dict[str, list[str]]) -> list[F
     """One row per platform: the names its targets list that no profile claims.
 
     A buildbot name without a profile is a core the target filter cannot
-    see; a platform's own emulator id without one is an emulator nobody has
+    see, and a platform's own emulator id without one is an emulator nobody has
     profiled yet. Both are actionable, so both are listed, but as one row so
     the backlog does not bury the day's changes.
     """
@@ -702,7 +702,7 @@ def check_data(offline: bool) -> list[Finding]:
 def _check_buildbot_system() -> Finding:
     """The buildbot's system directory against what _data_dirs.yml tracks.
 
-    The registry entries are refreshed above; an asset published since, or
+    The registry entries are refreshed above. An asset published since, or
     one the buildbot no longer serves, is only seen by reading its .index.
     """
     import check_buildbot_system  # noqa: PLC0415
@@ -1030,7 +1030,7 @@ def check_ci(cache_dir: str, offline: bool) -> list[Finding]:
 
 
 def _check_installer_pins() -> Finding:
-    """The bootstraps pin install.py by SHA-256; a stale pin refuses every install."""
+    """The bootstraps pin install.py by SHA-256, so a stale pin refuses every install."""
     digest = hashlib.sha256((REPO_ROOT / "install.py").read_bytes()).hexdigest()
     stale = []
     for name in INSTALLERS:
@@ -1084,7 +1084,7 @@ def check_profiles(run: bool, offline: bool) -> list[Finding]:
 def summarize_profile_sync(report: object) -> list[Finding]:
     """One row per profile with something to look at, from profile_sync's JSON.
 
-    The JSON carries the ref verdicts and the pin against the tip; a profile
+    The JSON carries the ref verdicts and the pin against the tip. A profile
     whose refs need review is stale, one the forge could not serve is unknown,
     and one whose upstream moved while every ref still anchors is reported as
     such without being counted as stale.

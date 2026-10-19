@@ -32,7 +32,7 @@ systems:
 #   Files are loaded from {system_dir}/bk/{filename} (libretro.c:720-728).
 #   If not found with original casing, the loader retries with lowercase
 #   filename (libretro.c:1071-1081).
-#   Size is validated (min/max bounds); no hash validation.
+#   Size is validated (min/max bounds), no hash validation.
 #
 # All ROM files are required for their respective model. The core calls
 # environ_cb(RETRO_ENVIRONMENT_SHUTDOWN) if any ROM file is missing.

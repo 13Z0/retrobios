@@ -14,7 +14,7 @@ systems:
 files: []
 exclusion_note: >
   The core opens no file. src/ has no fopen, filestream or opendir call and
-  libretro.c never asks for RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY; its
+  libretro.c never asks for RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. Its
   environment calls cover options, logging, controller info, input
   descriptors, messages, pixel format and AV info. The Supercharger BIOS is
   a 294-byte routine compiled in (src/cart.c:195-235) and written into the
@@ -24,6 +24,6 @@ exclusion_note: >
   (src/palette.c). Content arrives in memory (src/libretro.c:596).
 notes: |
   Tia is an Atari 2600 core written for libretro by Eric Warmenhoven, with
-  no standalone build; the repository is its own upstream. The version
+  no standalone build, so the repository is its own upstream. The version
   string is the commit count and short hash the Makefile bakes in
   (Makefile:36-37, src/libretro.c:595). The .info shows 26.

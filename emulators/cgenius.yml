@@ -22,7 +22,7 @@ notes: |
   src/engine/CGameLauncher.cpp:134-141, 64-78). A file name containing
   keenN.exe, keenNe.exe, keenN.lua or kNdemo.exe (N from 1 to 6) or kdreams
   makes the folder a game (src/engine/CGameLauncher.cpp:437-487). Folder names
-  are free; the paths below use the folder names of the packages the project
+  are free. The paths below use the folder names of the packages the project
   publishes for its in-app downloader, which unpacks under games/
   (src/engine/gamedownloader.cpp:455-491). File lookups are case-insensitive.
 
@@ -42,20 +42,20 @@ notes: |
   properties are known for Keen 1 v1.1, v1.31, v1.34, Keen 2 and 3 v1.0 and
   v1.31, Keen 4 and 5 v1.4, Keen 6 v1.4 and v1.5, Keen Dreams and the Keen 6
   demo (src/fileio/CTileLoader.cpp:68-88). The constructor also holds a
-  support map keyed by the same sizes (src/fileio/CExeFile.cpp:29-50); its
+  support map keyed by the same sizes (src/fileio/CExeFile.cpp:29-50). Its
   result and the CRC comparison of getEXECrc are stored in the launcher entry
   and read nowhere else (src/engine/CGameLauncher.cpp:546-548).
 
   Vorticon episodes open egahead, egalatch and egasprit, one levelNN file per
-  map (80 is the world map, 81 the ending map, 90 the title map; the other
+  map (80 is the world map, 81 the ending map, 90 the title map, and the other
   numbers come from the world map data) and finale.ckN. Episode 1 also reads
   its story, help and ending texts, its sounds and its preview screens from
-  files; episodes 2 and 3 take texts and sounds from the executable
+  files, while episodes 2 and 3 take texts and sounds from the executable
   (src/engine/keen/vorticon/CStory.cpp:35-76,
   src/engine/keen/vorticon/CHelp.cpp:38-81,
   src/engine/keen/vorticon/CAudioVorticon.cpp:40-60). A sounds.ckN file, when
   present, replaces the embedded sounds. Without the three EGA files or a
-  level file nothing is drawn or the map load fails; the text, finale, sound
+  level file nothing is drawn or the map load fails. The text, finale, sound
   and preview files are skipped when absent. High scores are kept in the
   engine's own highscoreepN.dat, SCORES.CKN is not read
   (src/engine/keen/vorticon/CHighScores.cpp:394-397).
@@ -78,7 +78,7 @@ notes: |
   (src/engine/keen/dreams/dreamsengine.cpp:103-114, 226-283, 438) and opens
   KDREAMS.EGA, KDREAMS.MAP and KDREAMS.AUD, quitting when one is missing.
   The same file lists a size and CRC-32 for each file of that release
-  (src/engine/keen/dreams/dreamsengine.cpp:93-101); the routine that compared
+  (src/engine/keen/dreams/dreamsengine.cpp:93-101), but the routine that compared
   them is commented out (src/engine/refkeen/be_cross_fs.cpp:660-679), so
   nothing is verified. LAST.SHL is in that list and is never opened.
 
@@ -813,7 +813,7 @@ files:
     description: "Keen 6 EGA graphics"
     required: false
     source_ref: "src/engine/keen/galaxy/res/CEGAGraphicsGalaxy.cpp:754-763"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "gamemaps.ck6"
     path: "games/keen6/gamemaps.ck6"
@@ -822,7 +822,7 @@ files:
     description: "Keen 6 level maps"
     required: false
     source_ref: "src/fileio/KeenFiles.h:47, src/engine/keen/galaxy/common/CMapLoaderGalaxy.cpp:249-257"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "audio.ck6"
     path: "games/keen6/audio.ck6"
@@ -831,7 +831,7 @@ files:
     description: "Keen 6 sounds and music"
     required: false
     source_ref: "src/fileio/KeenFiles.h:44, src/engine/keen/galaxy/res/CAudioGalaxy.cpp:358-366, src/fileio/CExeFile.cpp:709-716"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # Commander Keen 6: Aliens Ate My Baby Sitter! (demo)
   - name: "k6demo.exe"

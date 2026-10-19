@@ -160,7 +160,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--sums", metavar="FILE",
-        help=f"local {SUMS} the packs were listed in; its copy and signature on "
+        help=f"local {SUMS} the packs were listed in. Its copy and signature on "
         f"the release must be these files (default: the list attached to the release)",
     )
     parser.add_argument("--json", action="store_true", help="JSON output")
@@ -169,7 +169,7 @@ def main() -> int:
     record = load_record(args.record)
     tag = args.tag or record.get("tag")
     if not tag:
-        print(f"ERROR: {args.record} names no tag; pass --tag", file=sys.stderr)
+        print(f"ERROR: {args.record} names no tag, pass --tag", file=sys.stderr)
         return 2
     try:
         assets, draft = fetch_assets(tag)

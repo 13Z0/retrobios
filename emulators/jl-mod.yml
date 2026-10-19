@@ -254,7 +254,7 @@ files:
     unsourceable: "user supplied, no canonical file"
     category: game_data
     description: "DLS sound bank for MIDI playback"
-    note: "The config screen lists every regular file in the sound banks directory with no extension filter, and the selected name is kept as a path when the file exists. EAS_LoadDLSCollection reads it with the header search flag off; a rejected file throws and the plugin is skipped."
+    note: "The config screen lists every regular file in the sound banks directory with no extension filter, and the selected name is kept as a path when the file exists. EAS_LoadDLSCollection reads it with the header search flag off. A rejected file throws and the plugin is skipped."
     source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:318-337, app/src/main/java/javax/microedition/shell/MicroLoader.java:272-274, app/src/main/cpp/mmapi_eas/eas_player.cpp:112-126"
 
   - name: "<soundbank>.sf2"

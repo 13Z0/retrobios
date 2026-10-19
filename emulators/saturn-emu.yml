@@ -96,7 +96,7 @@ notes: |
 
   Per content the app writes and reads back a .bkr backup RAM image, a .smpc real
   time clock block, .mca save states and, when a memory cart is selected, a
-  gzipped .bcr cart image; settings live in SaturnEmu.config
+  gzipped .bcr cart image. Settings live in SaturnEmu.config
   (Saturn.emu/src/main/Main.cc:50-129,152-155,
   Saturn.emu/src/main/system.ccm:180, Saturn.emu/src/ss/cart/backup.cpp:69-73,
   Saturn.emu/src/main/AppMeta.cc:28). Mednafen's image reader picks up an .sbi
@@ -195,7 +195,7 @@ files:
     note: >
       Read when the cart type is KoF '95, which the internal database forces for
       MK-81088 and T-3101G and which the Cart Type menu also offers. Those two
-      discs end the load when the path is unset; every other disc ignores it.
+      discs end the load when the path is unset, and every other disc ignores it.
       CART_ROM_Init takes a fixed 2097152 bytes and Stream::read throws on a
       shorter file, so anything smaller aborts and anything larger has its tail
       ignored. The name comes from the module's setting table, which this build

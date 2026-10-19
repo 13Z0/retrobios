@@ -4,7 +4,7 @@
 wiki/adding-a-scraper.md and wiki/adding-a-platform.md document
 compare_with_config, ChangeSet.has_changes and test_connection as the
 interface a new scraper plugs into. No scraper in the repository calls them,
-so nothing proved they still worked; a documented contract that is never
+so nothing proved they still worked. A documented contract that is never
 exercised is a promise to contributors backed by nothing.
 """
 
@@ -119,7 +119,7 @@ class TestConnection(unittest.TestCase):
         self.assertFalse(_StubScraper(error=ValueError("bad format")).test_connection())
 
     def test_an_unexpected_error_is_not_swallowed(self):
-        """Only reachability failures are absorbed; a bug must surface."""
+        """Only reachability failures are absorbed. A bug must surface."""
         with self.assertRaises(KeyError):
             _StubScraper(error=KeyError("bug")).test_connection()
 
@@ -434,7 +434,7 @@ class RetroDeckCoresAreItsComponents(unittest.TestCase):
 
 
 class BizHawkRunsAresForN64Only(unittest.TestCase):
-    """BizHawk embeds ares as Ares64, its N64 core; mapping it to the ares
+    """BizHawk embeds ares as Ares64, its N64 core. Mapping it to the ares
     profile claimed thirty systems and accused FirmwareDatabase.cs of a
     wrong MSX.rom it never declared for ares."""
 
@@ -449,7 +449,7 @@ class BizHawkRunsAresForN64Only(unittest.TestCase):
 
 
 class EveryTargetCoreReachesAProfile(unittest.TestCase):
-    """A target lists cores by their buildbot or package name; a name no
+    """A target lists cores by their buildbot or package name. A name no
     profile's cores: claims makes --target drop that core and its systems
     without a word. Only check_freshness compared them, on a fresh scrape."""
 
@@ -639,7 +639,7 @@ for path in sorted((root / package.replace(".", "/")).rglob("*.py")):
 
 class ImportingAScraperFetchesNothing(unittest.TestCase):
     """A tag resolved at module load made a refused API call fall back to
-    master before any scraper ran; the rule since is no network at import.
+    master before any scraper ran. The rule since is no network at import.
     Each module is imported in a fresh interpreter with sockets refused, so
     nothing already cached hides an import-time fetch."""
 

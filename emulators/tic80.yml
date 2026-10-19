@@ -15,7 +15,7 @@ systems:
 
 notes: |
   Fantasy computer for making, playing and sharing tiny games.
-  The libretro repo wraps nesbox/TIC-80 as a submodule; the libretro
+  The libretro repo wraps nesbox/TIC-80 as a submodule, and the libretro
   wrapper (tic80_libretro.c) lives in the upstream repo itself.
 
   Content loaded entirely via libretro data buffer (need_fullpath = false,

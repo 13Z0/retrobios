@@ -49,7 +49,7 @@ notes: |
   (src/frontends/common/AppController.cpp:127-171,251-253). mem_initialize
   accepts the buffer at exactly 16384 or 12288 bytes, or larger, taking the
   trailing 16384 for the //e-class types and the trailing 12288 otherwise
-  (src/apple2/Memory.cpp:1038-1059). No hash or name is checked; the file is
+  (src/apple2/Memory.cpp:1038-1059). No hash or name is checked: the file is
   whatever the user points at.
 
   Character generators are res/charset40*.png, converted to XPM by CMake
@@ -74,7 +74,7 @@ notes: |
   assigned, so the names resolve against the working directory.
   g_file_name_symbols lists nine tables (src/Debugger/Debugger_Symbols.cpp:37-48).
   CmdSymbolsLoad reads a table's default file when it receives no argument
-  (src/Debugger/Debugger_Symbols.cpp:636-652); its only caller is the LOAD
+  (src/Debugger/Debugger_Symbols.cpp:636-652). Its only caller is the LOAD
   parameter of the SYM commands (src/Debugger/Debugger_Symbols.cpp:817-819),
   and debug_initialize loads no table (src/Debugger/Debug.cpp:29-37).
   ParseSymbolTable opens the file with fopen and a missing one leaves the
@@ -141,7 +141,7 @@ files:
   # ENABLE_ROM_CLONE_PRAVETS and ENABLE_ROM_CLONE_TK3000E are OFF in
   # CMakeLists.txt:95-97, so these machine types refuse to start unless the
   # user passes the image with --rom. The names are the ones upstream gives
-  # the images in res/roms; the option takes a path and checks no name.
+  # the images in res/roms. The option takes a path and checks no name.
   - name: Base64A.rom
     required: false
     description: "Copam Base 64A clone system ROM, supplied with --rom"
@@ -316,7 +316,7 @@ analysis:
     video_roms:
       note: >
         Compiled in under the macro of their machine. No source file reads
-        the symbols; the display uses the character_generators below.
+        the symbols. The display uses the character_generators below.
       images:
         - symbol: g_rom_apple2_video
           image: res/roms/Apple2_Video.rom
@@ -387,7 +387,7 @@ analysis:
         size: 256
         md5: 4f80448507cf43ab40c17ac08d89e278
         sha1: afd060e6f35faf3bb0146fa889fc787adf56330a
-        note: "Compiled in; no source file reads the symbol"
+        note: "Compiled in. No source file reads the symbol"
 
       - device: "Super Serial Card"
         slot: 2
@@ -401,7 +401,7 @@ analysis:
           Not generated and behind no cmake option: the card carries the 2048
           bytes as an array in SuperSerialRom.h, the last page mapped at $Cn00
           and the whole image at $C800. The generator does not read
-          res/roms/SSC.rom; a build test pins its SHA-1 as the reference of
+          res/roms/SSC.rom. A build test pins its SHA-1 as the reference of
           that transcription.
 
       - device: "Mouse interface card"
@@ -426,7 +426,7 @@ analysis:
         note: >
           Not generated and behind no cmake option: the card carries the 256
           bytes as an array in Printer.cpp. The generator does not read
-          res/roms/Parallel.rom; a build test pins its SHA-1 as the reference
+          res/roms/Parallel.rom. A build test pins its SHA-1 as the reference
           of that transcription.
 
       - device: "Clock card"
@@ -482,7 +482,7 @@ analysis:
       - A2_DOS33.SYM
       - A2_PRODOS.SYM
     note: >
-      Each table is read by the LOAD parameter of its SYM command; no table is
+      Each table is read by the LOAD parameter of its SYM command, and no table is
       loaded when the debugger starts. Only APPLE2E.SYM and A2_BASIC.SYM are
       distributed with the emulator, in res/. The user slots and the remaining
       tables have no shipped counterpart.

@@ -58,7 +58,7 @@ files:
     hle_fallback: true
     sha1: "5288772be438b86978a801e6dcb14228ad3a20af"
     md5: "4812e96097b7fc1bdd7b40366208b7a7"
-    note: "AES key slots, common keys and NFC secrets; embedded encrypted blob used if missing: default_keys_enc, AES-CBC with a zero key and IV, the hashes are those of the decrypted text"
+    note: "AES key slots, common keys and NFC secrets. Embedded encrypted blob used if missing: default_keys_enc, AES-CBC with a zero key and IV, the hashes are those of the decrypted text"
     source_ref: "src/core/hw/aes/key.cpp:225-364, src/core/hw/aes/key.cpp:473-613, src/core/hw/default_keys.h:11"
 
   - name: aes_keys.txt
@@ -90,7 +90,7 @@ files:
     system: nintendo-3ds
     required: false
     hle_fallback: true
-    note: "game seed database for 9.6+ titles; written out from the embedded seeds if absent"
+    note: "game seed database for 9.6+ titles, written out from the embedded seeds if absent"
     source_ref: "src/core/file_sys/seed_db.cpp:50-101"
 
   - name: otp.bin
@@ -108,7 +108,7 @@ files:
     required: false
     size: [288, 320]
     validation: [size, signature]
-    note: "console-unique key seed; 288 bytes without the AES MAC block, 320 with it"
+    note: "console-unique key seed, 288 bytes without the AES MAC block, 320 with it"
     source_ref: "src/core/hw/unique_data.cpp:276-318, src/core/hw/unique_data.h:103-133"
 
   - name: SecureInfo_A
@@ -117,7 +117,7 @@ files:
     required: false
     size: 273
     validation: [size, signature]
-    note: "console serial and region; a failed signature is retried against every region"
+    note: "console serial and region. A failed signature is retried against every region"
     source_ref: "src/core/hw/unique_data.cpp:122-180, src/core/hw/unique_data.h:57"
 
   - name: LocalFriendCodeSeed_B

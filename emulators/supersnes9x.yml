@@ -36,7 +36,7 @@ notes: |
   header at 0x7FC0 reads "Super GAMEBOY", the next byte deciding SGB2. Without
   one the built-in BIOS-less Game Boy core runs the cart. In BIOS mode a
   256-byte GB-side boot ROM is read too, and used only when it contains the
-  3E F1 handshake sequence; otherwise an embedded SGB boot ROM is used.
+  3E F1 handshake sequence. Otherwise an embedded SGB boot ROM is used.
   ref: libretro/libretro.cpp:657-671, memmap.cpp:1088-1155,
        memmap.cpp:1165-1213, memmap.cpp:1655-1686, memmap.cpp:1858-1883
 
@@ -46,7 +46,7 @@ notes: |
 
   Sufami Turbo: a cart loads only with STBIOS.bin (256 KB). The Sufami Turbo
   subsystem asks LoadBIOS for 0x100000 bytes, so a 256 KB STBIOS.bin fails that
-  path; the plain content path and the two-cart path ask for 0x40000.
+  path, while the plain content path and the two-cart path ask for 0x40000.
   ref: libretro/libretro.cpp:1302-1305, libretro/libretro.cpp:1413-1425,
        libretro/libretro.cpp:1445-1455
 
@@ -99,7 +99,7 @@ files:
     size: 256
     validation: [size]
     description: "Super Game Boy 2 GB-side boot ROM"
-    note: "Read in SGB2 BIOS mode; used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
+    note: "Read in SGB2 BIOS mode and used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
     source_ref: "memmap.cpp:1165-1213, memmap.cpp:1858-1883"
 
   - name: "sgb.boot.rom"
@@ -110,7 +110,7 @@ files:
     size: 256
     validation: [size]
     description: "Super Game Boy GB-side boot ROM"
-    note: "Read in SGB1 BIOS mode; used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
+    note: "Read in SGB1 BIOS mode and used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
     source_ref: "memmap.cpp:1165-1213, memmap.cpp:1858-1883"
 
   - name: "KROM1.BIN"

@@ -15,7 +15,7 @@ notes: |
   SDLPoP is NagyD's open-source port of the DOS Prince of Persia (1989),
   rebuilt from the leaked Jordan Mechner source and refined through
   years of community reverse engineering. Unlike the other engines in
-  this directory, SDLPoP ships with ALL game data in-tree; no retail
+  this directory, SDLPoP ships with ALL game data in-tree, so no retail
   data file is required or useful.
 
   open_dat() (src/seg009.c:438) reads an archive named FOO.DAT if
@@ -42,7 +42,7 @@ notes: |
 
   Consequence: retrobios does not supply any file to run the base game.
   Users can drop MOD folders under mods/<MODNAME>/ to layer custom
-  level packs on top (open_dat lines 448-452); those are user content,
+  level packs on top (open_dat lines 448-452). Those are user content,
   not shared BIOS data, and are not tracked here.
 
 exclusion_note: "all required game data ships inside the source repository (data/ and data/<folder>/ trees)"

@@ -19,13 +19,13 @@ systems:
 
 notes: |
   Android package com.androidemu.nes, launched on the path of the content with
-  android.intent.action.VIEW; the activity declares the file scheme with the
+  android.intent.action.VIEW, and the activity declares the file scheme with the
   application/zip and application/octet-stream types
   (app/src/main/AndroidManifest.xml:59-71). Two build families answer to that
   package id. Yongzh's own closed builds come first, and 2.3 (versionCode 56)
   and 2.5.0 (versionCode 62) are read here, both carrying his certificate sha256
   744b1df1b3610d58e447d243521a0957cc5f4ebd50b12d2816a92396d1aa32f2 (C=CN,
-  O=androidemu.com, freeman.yong@gmail.com). He later published the sources; the
+  O=androidemu.com, freeman.yong@gmail.com). He later published the sources. The
   SourceForge project carried them on and Yaroslav Pronin forked that tree to
   GitHub, where release 2.5-4 (versionName 2.5, versionCode 61, armeabi-v7a,
   certificate O=Free Software CN=Yaroslav Pronin) is the build ES-DE names. The
@@ -83,7 +83,7 @@ notes: |
   (EmulatorSettingsFragment.java:179-210, FileChooser.java:157-172).
 
   A palette named after the content is read from the pal directory of the same
-  unset base directory as the disk BIOS, 192 bytes taken as 64 RGB triples; a
+  unset base directory as the disk BIOS, 192 bytes taken as 64 RGB triples. A
   missing file leaves the built-in table in place
   (app/jni/neslib/palette.c:205-224, app/jni/neslib/general.c:216-221,
   app/jni/neslib/fce.c:1212).
@@ -115,12 +115,12 @@ files:
     note: >-
       Read as 8192 bytes into the 8 KB array mapped over 0xE000 to 0xFFFF. A
       failed open or a short read frees the disk data and ends the load, so no
-      .fds content runs; both messages are discarded and the application reports
+      .fds content runs. Both messages are discarded and the application reports
       only that the ROM failed to load. Nothing else about the image is
       examined, so a longer file passes on its first 8192 bytes and no hash is
       compared. The open is a plain fopen, so neither a zipped nor a gzipped
       copy answers. Yongzh's builds take the path from the fdsRom setting, whose
-      picker lists names ending .nes, .rom or .bin; the builds made from the
+      picker lists names ending .nes, .rom or .bin, while the builds made from the
       published sources ignore that setting and resolve the compiled name under
       a base directory that is never set, which puts it at the root of the
       filesystem.
@@ -138,7 +138,7 @@ files:
       through a picker listing names ending .nes, .rom or .bin. The first 16
       bytes decide the format: a leading 0x4E is taken as an iNES image, from
       which 4096 bytes of program ROM are read, then 256 bytes of character ROM
-      16 KB further in, so such a file needs at least 16656 bytes; anything else
+      16 KB further in, so such a file needs at least 16656 bytes. Anything else
       is read as a raw 4352 byte image. A failed open or a short read leaves the
       Game Genie off and the content still runs. No hash is compared.
     source_ref: "app/jni/neslib/cart.c:475-521 (open and format branch), app/jni/neslib/svga.c:132-140 (setter), app/jni/neslib/drivers/android/nesengine.cpp:242-243, app/jni/neslib/fce.c:1201-1203 (call site), EmulatorActivity.java:870-874, EmulatorSettingsFragment.java:179-193 (picker)"
@@ -153,7 +153,7 @@ files:
       Opened as pal/<name>.pal under the base directory when content loads, with
       the name taken from the content. 192 bytes are read as 64 RGB triples and
       replace the built-in table, without checking how many arrived, so a
-      shorter file leaves the remaining entries unset; a missing file changes
+      shorter file leaves the remaining entries unset, and a missing file changes
       nothing. The base directory is never set on Android, so the name resolves
       at the root of the filesystem.
     source_ref: "app/jni/neslib/palette.c:205-224, app/jni/neslib/general.c:216-221, app/jni/neslib/fce.c:1212"

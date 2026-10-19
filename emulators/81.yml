@@ -32,7 +32,7 @@ notes: |
 
 files:
   # --- Machine ROMs ---
-  # All mode: standalone — libretro core embeds what it needs
+  # All mode: standalone, the libretro core embeds what it needs
 
   # ZX81 (default machine for both libretro and standalone)
   - name: zx81.edition3.rom

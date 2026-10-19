@@ -197,7 +197,7 @@ class TestRepoProfiles(unittest.TestCase):
         self.assertEqual(kept, {"scph5501.bin"})
 
     def test_conflicting_cross_profile_orders_decide_nothing(self):
-        """pcsx1 walks scph1001 first; DuckStation prefers scph5501. The pack
+        """pcsx1 walks scph1001 first while DuckStation prefers scph5501. The pack
         serves both cores, so neither order may drop the other's first pick."""
         index = slot.build_slot_index(self.profiles)
         for name in ("scph1001.bin", "scph5501.bin"):

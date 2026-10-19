@@ -14,7 +14,7 @@ notes: >
   (901227-03), chargen (901225-01), plus all drive ROMs (1540, 1541, 1541-II,
   1551, 1570, 1571, 1571CR, 1581, 1001, 2031, 2040, 3040, 4040, 9000).
   Embedded ROM check in sysfile_load takes priority over filesystem.
-  DTV has its own color system (viciidtv-color.c); external palette loading
+  DTV has its own color system (viciidtv-color.c), and external palette loading
   is disabled. JiffyDOS is not supported (excluded from build conditionals).
   The .info declares 4 JiffyDOS firmware (firmware_count=4) but the code
   never loads them for this core. The .info also omits dtvrom.bin.
@@ -32,4 +32,4 @@ files:
       found, the core copies embedded BASIC, kernal and chargen ROMs into
       flash memory. Without it, the DTV operates as a basic C64 without the
       built-in DTV games and firmware. The original DTV ROM has distorted
-      colors; a patched ROM is recommended.
+      colors, so a patched ROM is recommended.

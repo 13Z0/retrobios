@@ -46,7 +46,7 @@ notes: |
   Place all files in: <system_dir>/xmil/
   The core selects between IPLROM.X1 and IPLROM.X1T based on the "X1_ROMTYPE"
   core option. A 575-byte built-in IPL stub provides limited boot without the
-  real ROMs. Font files add Japanese character support; the libretro port has a
+  real ROMs. Font files add Japanese character support. The libretro port has a
   path resolution quirk where fonts are searched in "./" instead of "xmil/"
   (missing file_setcd call).
 
@@ -57,7 +57,7 @@ files:
     required: false
     hle_fallback: true
     description: "X1 IPL ROM. Loaded when ROM_TYPE=1 (X1 model)."
-    note: "file_read copies up to 0x8000 bytes into biosmem, unchecked; the X1 IPL dump is 4 KiB."
+    note: "file_read copies up to 0x8000 bytes into biosmem, unchecked. The X1 IPL dump is 4 KiB."
     source_ref: "io/memio.c:82,96-108"
 
   - name: IPLROM.X1T

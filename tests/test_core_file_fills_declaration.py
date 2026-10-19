@@ -97,7 +97,7 @@ class ACoreFileFillsAFreeDeclaration(unittest.TestCase):
 
 class AFileDeclaredUnderAnotherName(unittest.TestCase):
     """The platform declares ROM1 with the md5 of the core's ROM. The
-    builder packs ROM at the core's path; verify read the enriched
+    builder packs ROM at the core's path, but verify read the enriched
     declarations, took ROM as declared and never counted it."""
 
     def test_the_report_lists_what_the_builder_packs(self):
@@ -145,7 +145,7 @@ class AFileDeclaredUnderAnotherName(unittest.TestCase):
 
 class AMissingDataDirectoryFailsTheRun(unittest.TestCase):
     """A refresh refused by a quota left the PPSSPP pack with 2 files and
-    the run exited 0; nothing downstream checks data directories."""
+    the run exited 0: nothing downstream checks data directories."""
 
     def test_the_pack_records_it_and_main_exits_non_zero(self):
         import generate_pack as gp
@@ -225,7 +225,7 @@ class AFileNobodyHoldsIsAnOmission(unittest.TestCase):
 
 class AMemberNameIsNotALooseFile(unittest.TestCase):
     """verify counted a core file "in pack" when its name existed only as a
-    member of some ZIP (naomi2.zip's 315-6146.bin); the builder, which reads
+    member of some ZIP (naomi2.zip's 315-6146.bin), but the builder, which reads
     no archive member names, shipped nothing."""
 
     def test_verify_reads_undeclared_files_as_the_builder_does(self):
@@ -261,7 +261,7 @@ class AMemberNameIsNotALooseFile(unittest.TestCase):
 class TwoDeclarationsOfOnePath(unittest.TestCase):
     """Two systems declare one destination under two names, no hash, one
     held. The builder packed the held file and kept the first verdict it
-    read; verify kept the worst, on the raw destination. Read either way
+    read, while verify kept the worst, on the raw destination. Read either way
     round, both must count the path once and met."""
 
     def _run(self, first: str, second: str, spelling: str):

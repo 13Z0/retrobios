@@ -97,10 +97,10 @@ notes: |
   Android port of MAME 0.289 by David Valdeita (Seleuco), package
   com.seleuco.mame4d2024, app version 1.38.1. The repository carries the
   Android app, the myosd OSD MAME is built against and 16 patches over stock
-  sources; none of them changes which external files a user has to supply.
+  sources, and none of them changes which external files a user has to supply.
   res/values/strings.xml reads 0.289 and the whatsnew.txt in the asset
   bundle is MAME's own for 0.289, dated 2026-07-31. The README titles the
-  project MAME4droid (Current); the package id and the ES-DE find rules keep
+  project MAME4droid (Current), while the package id and the ES-DE find rules keep
   the 2024 name.
 
   MAME4droid.java hands the installation directory to Emulator.emulate, and
@@ -111,7 +111,7 @@ notes: |
   the app's external media folder, picked in the settings. When a Storage
   Access Framework folder is chosen for ROMs the app prepends it to rompath,
   artpath, samplepath and swpath and keeps the installation directory as the
-  second entry; with the mame.ini setting on it passes no path at all and
+  second entry. With the mame.ini setting on it passes no path at all and
   leaves them to the ini chain.
 
   MainHelper.copyFiles unpacks res/raw/files.zip into that directory on first
@@ -130,7 +130,7 @@ notes: |
   -ctrlr, language/<name>/strings.mo from -language, artwork/<name>.png from
   -effect, cheat members from the running machine, and folders/*.ini from a
   directory scan. Of the shipped presets the ini chain reaches raster.ini,
-  vector.ini, lcd.ini, gameboy.ini and gba.ini; the rest of ini/presets and
+  vector.ini, lcd.ini, gameboy.ini and gba.ini. The rest of ini/presets and
   all of ini/examples are templates no chain step names. The floppy sound set
   is named in floppy.cpp, which lists 19 of the 20 samples shipped:
   525_seek_2ms.wav appears in no sample list in 0.289.
@@ -158,7 +158,7 @@ files:
     sha1: "d16938569bb1b572f1e3f55bd17381dc28235d62"
     category: game_data
     description: "GNU Unifont, the UI font used for CJK and for the low-resolution OSD"
-    note: "Passed as -uifont when the language is Chinese, Japanese or Korean on the low-resolution OSD, or when the unifont setting is on. render_font opens it from fontpath, which defaults to the installation root; a miss falls back to the font compiled into the binary. Seeded from the package assets on first run; the hash identifies that drop, the loader checks nothing."
+    note: "Passed as -uifont when the language is Chinese, Japanese or Korean on the low-resolution OSD, or when the unifont setting is on. render_font opens it from fontpath, which defaults to the installation root, and a miss falls back to the font compiled into the binary. Seeded from the package assets on first run. The hash identifies that drop, the loader checks nothing."
     source_ref: "src/osd/myosd/droid/myosd_droid.cpp:1620-1624, src/emu/rendfont.cpp:526-534,853-863"
 
   - name: unifont.bdc
@@ -169,7 +169,7 @@ files:
     sha1: "ce173b7341bb271da5bf47761f4bf3b4de8e9deb"
     category: game_data
     description: "compiled glyph cache for unifont.bdf"
-    note: "load_cached_bdf derives the name by swapping the BDF extension and opens it before parsing the 9 MB source font, accepting it only when its stored size and hash match unifont.bdf. Shipped prebuilt; MAME writes it itself when it is absent."
+    note: "load_cached_bdf derives the name by swapping the BDF extension and opens it before parsing the 9 MB source font, accepting it only when its stored size and hash match unifont.bdf. Shipped prebuilt, though MAME writes it itself when it is absent."
     source_ref: "src/emu/rendfont.cpp:888-905,1303-1325"
 
   - name: uismall.bdf
@@ -213,7 +213,7 @@ files:
     sha1: "8d5a5e5b6b179f5c27f0d9379aea1c4fd36b51f9"
     category: game_data
     description: "per-game XML cheat files"
-    note: "cheat_manager::load_cheats opens <basename>.xml over cheatpath, which defaults to cheat, and emu_file's archive fallback rewrites the directory component to cheat.7z or cheat.zip before looking inside. It runs when -cheat is on, which the app passes from its cheats setting; the Lua cheat plugin reads the same collection when it is enabled. The collection distributed with it dates itself 03 April 2024, base release for MAME 0.264."
+    note: "cheat_manager::load_cheats opens <basename>.xml over cheatpath, which defaults to cheat, and emu_file's archive fallback rewrites the directory component to cheat.7z or cheat.zip before looking inside. It runs when -cheat is on, which the app passes from its cheats setting, and the Lua cheat plugin reads the same collection when it is enabled. The collection distributed with it dates itself 03 April 2024, base release for MAME 0.264."
     source_ref: "src/frontend/mame/cheat.cpp:1143-1190,1400-1412, plugins/cheat/init.lua:96-122, src/emu/fileio.cpp:713-716, src/emu/emuopts.cpp:51, src/osd/myosd/droid/myosd_droid.cpp:1536-1538"
 
   - name: boot.lua
@@ -224,7 +224,7 @@ files:
     sha1: "3732f1aeea740c2e5df51b0b51c6665028314ae6"
     category: game_data
     description: "bootstrap script that starts the enabled Lua plugins"
-    note: "Opened by name from pluginspath after the plugin directories are scanned. Without it no plugin runs, so hiscore, autofire, inputmacro and data stay silent; the emulator itself is unaffected. A script that is present but fails to load is fatal."
+    note: "Opened by name from pluginspath after the plugin directories are scanned. Without it no plugin runs, so hiscore, autofire, inputmacro and data stay silent, but the emulator itself is unaffected. A script that is present but fails to load is fatal."
     source_ref: "src/frontend/mame/mame.cpp:139-221"
 
   - name: shaders.cfg
@@ -235,7 +235,7 @@ files:
     sha1: "f58525f9a3dfc2c09957f0e5ec070474694dfa41"
     category: game_data
     description: "index of the GLES effect shaders, one per line as file, name, filtering and format version"
-    note: "load_filters reads it from the installation root and opens each shader it lists under shaders/. A missing file means no effect shaders; a listed shader that cannot be opened raises. 53 of the 65 shipped shaders are loaded: ten more are commented out, and stock.glsl and vector_halo-fringe - copia.glsl are named nowhere."
+    note: "load_filters reads it from the installation root and opens each shader it lists under shaders/. A missing file means no effect shaders, while a listed shader that cannot be opened raises. 53 of the 65 shipped shaders are loaded: ten more are commented out, and stock.glsl and vector_halo-fringe - copia.glsl are named nowhere."
     source_ref: "src/osd/myosd/renderer/filter_shader.cpp:106-183"
 
   - name: cross1.png

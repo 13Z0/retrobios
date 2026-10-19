@@ -720,7 +720,7 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
             tmp.cleanup()
 
     def test_a_missing_regional_core_file_is_withdrawn_too(self):
-        """A missing platform file is grouped and withdrawn under --region; a
+        """A missing platform file is grouped and withdrawn under --region, but a
         missing core file was never grouped and stayed "required missing"
         for a region the request excludes."""
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
@@ -752,7 +752,7 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
 
     def test_the_report_names_the_fallback_groups(self):
         """The pack README lists the systems kept whole because nothing
-        answers the request; verify said all OK and named none."""
+        answers the request. verify said all OK and named none."""
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
         import common
         import verify as reporter
@@ -850,7 +850,7 @@ class TestReportAndBuilderNarrowTogether(unittest.TestCase):
 
         DuckStation's ConsoleRegion::PAL, Beetle PSX, SwanStation, PCSX ReARMed's
         EU slot and Rustation all serve Australian and New Zealand discs from the
-        same images; annotated [europe] only, --region australia dropped them.
+        same images. Annotated [europe] only, --region australia dropped them.
         """
         import yaml
 
@@ -921,7 +921,7 @@ class FontRomsCarryNoTerritory(unittest.TestCase):
         self.assertEqual(tagged, [])
 
 class EmulatorModeKeepsAHeldFile(unittest.TestCase):
-    """Platform mode never lets a missing file displace a held one; emulator
+    """Platform mode never lets a missing file displace a held one. Emulator
     mode did. A held scph5501.bin (north-america) was withdrawn under
     --region jp for a Japanese image the collection lacks, and the pack
     shipped no PlayStation BIOS."""

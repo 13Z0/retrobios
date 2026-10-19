@@ -30,7 +30,7 @@ class TestPathSuffixes(unittest.TestCase):
         )
 
     def test_a_deep_tree_keeps_every_level(self):
-        # Seven 3DS system archives differ only past the sixth segment; a
+        # Seven 3DS system archives differ only past the sixth segment, so a
         # single key per file merged all seven onto one.
         suffixes = _path_suffixes(
             "bios/Nintendo/3DS/Citra/nand/0000/title/0004009b/00014002/"
@@ -100,7 +100,7 @@ class TestResolutionAmbiguity(unittest.TestCase):
         return resolve_local_file({"name": name}, self.db, dest_hint=hint)
 
     def test_a_full_tail_claimed_twice_goes_to_the_closest_owner(self):
-        # emu_one stores it right at its destination; emu_two nests it one
+        # emu_one stores it right at its destination while emu_two nests it one
         # directory deeper. The one that IS the destination wins.
         path, status = self._resolve(
             "convert.glsl", "resources/shaders/convert.glsl"
@@ -174,7 +174,7 @@ class TestSizeGateOnTheNameStep(unittest.TestCase):
         self.assertEqual(status, "hash_mismatch")
 
     def test_a_list_of_accepted_sizes_gates_the_name_step(self):
-        # SC-55/ROM2.BIN accepts two sizes; a PlayStation 2 ROM2.BIN of a
+        # SC-55/ROM2.BIN accepts two sizes. A PlayStation 2 ROM2.BIN of a
         # third size answered to the name because the list was ignored.
         entry = {"name": "ROM", "size": [8, 999], "validation": ["size"]}
         path, status = resolve_local_file(entry, self.db)

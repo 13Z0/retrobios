@@ -390,7 +390,7 @@ def scraper_cli(
                 config["systems"][sys_id]["files"].append(entry)
         # Merge into existing YAML: preserve fields the scraper doesn't generate
         # (data_directories, case_insensitive_fs, manually added metadata).
-        # The scraper replaces systems + files; everything else is preserved.
+        # The scraper replaces systems + files, everything else is preserved.
         output_path = Path(args.output)
         if output_path.exists():
             with open(output_path) as f:

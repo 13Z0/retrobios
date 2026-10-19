@@ -9,7 +9,7 @@ required or loaded by this core" while its source had grown eleven filenames
 read from the system directory.
 
 The signal is the request for a directory to read from. A libretro core asks
-the frontend with RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY; other shapes ask the
+the frontend with RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. Other shapes ask the
 environment or build a path from a home directory. Finding one in a file the
 profile itself cites does not prove a file is loaded, and this reports rather
 than concludes: it names the profiles worth a reading, so the other hundred and
@@ -64,12 +64,12 @@ def audit(
         return None
     if str(document.get("exclusion_note") or "").strip():
         # Someone read this one and wrote down why nothing is declared. The
-        # check exists to find the profiles nobody has answered yet; an
+        # check exists to find the profiles nobody has answered yet, and an
         # answer that goes stale shows up as a drifting ref instead.
         return None
     if document.get("data_directories"):
         # The load is declared, as a directory rather than a file. dinothawr
-        # reads system_dir/dinothawr/ and says so there; that is coverage, not
+        # reads system_dir/dinothawr/ and says so there. That is coverage, not
         # an assertion waiting to age.
         return None
     views = select_views(document, cache_dir, offline)
@@ -117,7 +117,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--offline", action="store_true",
-        help="read only what the cache holds; no network access",
+        help="read only what the cache holds, no network access",
     )
     args = parser.parse_args()
     if args.all == bool(args.emulators):

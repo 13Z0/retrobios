@@ -38,4 +38,4 @@ can open an issue at
 identifying the file by path or hash. Requests are handled on receipt, and a
 file whose removal is requested by its rights holder is removed from the
 repository and from the next release without requiring a formal notice. State
-the file and the basis of the claim; no particular format is needed.
+the file and the basis of the claim. No particular format is needed.

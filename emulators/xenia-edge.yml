@@ -24,7 +24,7 @@ notes: |
   game library, and Direct3D 12, Vulkan and Metal backends. Releases are tagged
   by short commit on the edge branch and ship as xenia_edge_linux.AppImage,
   xenia_edge_macos.dmg and xenia_edge_windows.zip. ES-DE finds it through the
-  XENIA-EDGE rule and runs `xenia_edge <rom>`; RetroDECK unpacks the AppImage
+  XENIA-EDGE rule and runs `xenia_edge <rom>`. RetroDECK unpacks the AppImage
   into a xenia-edge component and executes bin/xenia_edge.
 
   The libretro core xenia_edge_libretro is built from libretro/xenia-libretro
@@ -62,7 +62,7 @@ notes: |
   rather than read from a flash image (src/xenia/kernel/xconfig.cc:87-246, 259-272). When the
   launched title is itself a system title the kernel resolves xam.xex, then
   $flash_xam.xex, through the guest filesystem under the \SystemRoot symlink
-  pointing at that title's own directory (src/xenia/emulator.cc:777-792); that is a
+  pointing at that title's own directory (src/xenia/emulator.cc:777-792). That is a
   companion module inside the dump the user launched, not a host-side lookup.
 
   The fork's data ships inside the executable. assets/font/Inter-VariableFont
@@ -124,14 +124,14 @@ files:
       system search path, because the signer's own plain-name load skips
       D3D12/. D3D12 rejects an unsigned shader, so PipelineCache::Initialize
       stops when IsSignerAvailable() is false and asks for a recent dxil.dll in
-      the D3D12 folder; that failure propagates to "Failed to setup
+      the D3D12 folder, and that failure propagates to "Failed to setup
       graphics_system!" (src/xenia/emulator.cc:435-446). Windows defaults to
       gpu = "d3d12" (src/xenia/emulator.cc:119) and the backend factory
       only falls back when D3D12GraphicsSystem::IsAvailable() is false, which
       tests the D3D12 API itself, not the redistributable. Taken from
       bin/x64/dxil.dll in dxc_2026_05_27.zip of DirectXShaderCompiler release
       v1.9.2602.24, pinned at sha256
-      cf658aacf070d3045e31b8f1f8a696c2945f37c1095019481ef7c513368db3b4;
+      cf658aacf070d3045e31b8f1f8a696c2945f37c1095019481ef7c513368db3b4, and
       bin/arm64 on ARM64 builds. It is the single entry the installer extracts
       from that archive. The libretro core writes its own embedded copy to
       Xenia-Edge/D3D12/ in the system directory and loads it from there.
@@ -149,7 +149,7 @@ files:
       it, offers the download, and returns false when it is still absent. Taken
       from build/native/bin/x64/D3D12Core.dll in the Microsoft.Direct3D.D3D12
       1.619.3 NuGet package, pinned at sha256
-      43a7d5a3973812eb4b42623fae5275c790a005b8e48b8d7f5bb43cef39e073c5;
+      43a7d5a3973812eb4b42623fae5275c790a005b8e48b8d7f5bb43cef39e073c5, and
       build/native/bin/arm64 on ARM64 builds. The package version has to match
       the exported number.
 

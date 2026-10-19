@@ -354,7 +354,7 @@ class TestProvenanceReport(unittest.TestCase):
         )
 
     def test_a_loose_file_matches_by_crc32_and_size(self):
-        """Redump lists DTL-H10100's image by crc32 alone; collected as a
+        """Redump lists DTL-H10100's image by crc32 alone. Collected as a
         loose file it stayed MISSING for good."""
         db = {"files": {"f" * 40: {"name": "ps2-0101jd.bin", "size": 4194304,
                                    "md5": "e" * 32, "crc32": "E9836A0C"}}}

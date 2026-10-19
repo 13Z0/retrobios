@@ -37,7 +37,7 @@ notes: |
   STV blob table: BiosList at yabause/src/ctrl/src/stv.c:112-136.
   ROM cartridge DB: yabause/src/utils/src/db.c:43-45.
 
-  Standalone supports MPEG card ROM loading (Video CD card); disabled in
+  Standalone supports MPEG card ROM loading (Video CD card). Disabled in
   libretro port (mpegpath = NULL in yabause/src/libretro/libretro.c:1578).
 
 archive_prefix: kronos
@@ -160,7 +160,7 @@ files:
     system: sega-stv
     region: [europe]
     required: false
-    note: "Loaded only when the set allows STV_REGION_EU; among allowed regions the kronos_stv_favorite_region option, Europe by default, picks (yabause/src/ctrl/src/stv.c:2435, 2562-2564)."
+    note: "Loaded only when the set allows STV_REGION_EU. Among allowed regions the kronos_stv_favorite_region option, Europe by default, picks (yabause/src/ctrl/src/stv.c:2435, 2562-2564)."
     size: 524288
     crc32: "f7722da3"
     validation: [crc32]

@@ -111,7 +111,7 @@ class Exporter(BaseExporter):
 
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
-        """es_bios.xsd makes md5 and core required; without them, no element.
+        """es_bios.xsd makes md5 and core required: without them, no element.
 
         An entry Recalbox already ships has both, so this only ever gates
         what we would be adding.

@@ -22,12 +22,12 @@ notes: |
 
   MAME expects each romset as a ZIP containing the individual ROM files.
   The ZIP filenames match the MAME driver names. Only cdimono1.zip is required
-  for consumer CD-i games; the other ZIPs are for alternate hardware models
+  for consumer CD-i games. The other ZIPs are for alternate hardware models
   (unreachable without boot_from_cli core option).
 
   ROM definitions: src/mame/drivers/cdi.cpp:639-704. The fork carries four
   sets, cdimono1, cdimono2, cdi910 and cdi490a, declared at
-  src/mame/drivers/cdi.cpp:713-716; the Quizard game ROMs upstream MAME
+  src/mame/drivers/cdi.cpp:713-716. The Quizard game ROMs upstream MAME
   keeps in this driver are not in it. The .info also lists cdibios.zip, a set
   this driver does not declare.
 

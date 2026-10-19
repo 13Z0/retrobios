@@ -25,12 +25,12 @@ notes: |
   (Lynx.emu/metadata/conf.mk:8, Lynx.emu/src/main/AppMeta.cc:26) and driven by
   the app's own video, audio and input layers. The vendored copy declares
   Mednafen 1.32.0-UNSTABLE
-  (EmuFramework/include/shared/mednafen/mednafen-config.h:167); the upstream
+  (EmuFramework/include/shared/mednafen/mednafen-config.h:167). The upstream
   comparisons below are against the 1.32.1 release. Content is read from .lnx,
   .lyx and .o files (Lynx.emu/metadata/conf.mk:5,
   Lynx.emu/src/main/AppMeta.cc:30), and the module also takes a headerless image
   of 128, 256 or 512 KB, a filetype upstream rejects
-  (Lynx.emu/src/lynx/system.cpp:90-91,112; mednafen src/lynx/system.cpp:86-93).
+  (Lynx.emu/src/lynx/system.cpp:90-91,112, mednafen src/lynx/system.cpp:86-93).
 
   The boot ROM is the one file the user supplies and it carries no name of its
   own. The picker takes any name ending in .img and stores the chosen URI in
@@ -39,7 +39,7 @@ notes: |
   MDFN_MakeFName returns that URI for MDFNMKF_FIRMWARE and drops the
   lynxboot.img name the module hands it, the name upstream resolves in its
   firmware directory (Lynx.emu/src/main/options.cc:150-154,
-  Lynx.emu/src/lynx/system.cpp:103; mednafen src/lynx/system.cpp:101). CRom
+  Lynx.emu/src/lynx/system.cpp:103, mednafen src/lynx/system.cpp:101). CRom
   opens the file only when the path is not empty and throws unless it is exactly
   512 bytes (Lynx.emu/src/lynx/rom.cpp:75-95). Upstream has neither test: it
   opens whatever the firmware directory yields and takes 512 bytes or more
@@ -65,7 +65,7 @@ notes: |
   245-264, Lynx.emu/src/lynx/system.cpp:313,319). The custom palette entry
   survives in the module table and reaches nothing: Lynx_SetPixelFormat passes an
   empty span where upstream Emulate passes espec->CustomPalette
-  (Lynx.emu/src/lynx/system.cpp:352,555,583; mednafen src/lynx/system.cpp:
+  (Lynx.emu/src/lynx/system.cpp:352,555,583, mednafen src/lynx/system.cpp:
   267,298), the app calls MDFNGI::Load directly instead of going through the
   Mednafen frontend that reads .pal files
   (EmuFramework/src/shared/mednafen-emuex/MDFNUtils.hh:133-145,

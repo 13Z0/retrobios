@@ -96,8 +96,8 @@ def published_asset_name(name: str) -> str:
 def asset_candidates(name: str, registered: Iterable[str]) -> list[str]:
     """Assets that may hold *name*, a registered path or a bare file name.
 
-    A bare name shared by several registered paths has one asset per path;
-    the caller's hash tells them apart.
+    A bare name shared by several registered paths has one asset per path,
+    and the caller's hash tells them apart.
     """
     registered = list(registered)
     if "/" in name:
@@ -127,7 +127,7 @@ def fetch_large_file(
 ) -> str | None:
     """Return a verified cached large file, downloading it only when allowed.
 
-    *name* is a registered bios/ path or a bare file name; asset_names()
+    *name* is a registered bios/ path or a bare file name. asset_names()
     turns it into the asset to fetch, and a bare name shared by several
     registered paths tries each of their assets until one verifies.
     """
@@ -255,7 +255,7 @@ def _replaced_on_release(name: str, cached: str, offline: bool) -> bool:
     The release lists a sha256 per asset: a dump rebuilt at the same size
     (the eight 251658304-byte DSi NANDs) differs only there, and judged by
     size the stale copy was kept for good. Without a digest the sizes are
-    compared, as check_release_assets does. No download either way;
+    compared, as check_release_assets does. No download either way:
     offline or unreadable, the copy is assumed current.
     """
     if offline:
@@ -275,7 +275,7 @@ _digests_cache: dict[str, str] | None = None
 
 
 def _served_digests() -> dict[str, str]:
-    """sha256 of each asset the release serves, by asset name; empty when
+    """sha256 of each asset the release serves, by asset name, empty when
     the API cannot be read."""
     global _digests_cache
     if _digests_cache is not None:

@@ -45,7 +45,7 @@ from scripts.generate_pack import (
 
 
 class ReadmeRegressions(unittest.TestCase):
-    """The README advertises commands; these must stay executable.
+    """The README advertises commands, and these must stay executable.
 
     Wording is the maintainer's, so nothing here asserts prose. What is
     asserted is that every flag and URL the README hands a reader is one the
@@ -114,7 +114,7 @@ class ReadmeRegressions(unittest.TestCase):
 class ReleaseSigningRegressions(unittest.TestCase):
     """A checksum list published beside its own artifacts proves nothing.
 
-    SHA256SUMS.txt answers corruption; whoever can rewrite a release rewrites
+    SHA256SUMS.txt answers corruption, but whoever can rewrite a release rewrites
     the list with it. The signature is what a third party checks, and it is
     only checkable while allowed_signers, the signing step and the upload
     list stay in agreement.
@@ -227,7 +227,7 @@ class WorkflowRegressions(unittest.TestCase):
         self.assertIsNotNone(job, "no job runs the test suite")
         self.assertIsNone(
             workflow["jobs"][job].get("if"),
-            f"{job} carries a condition; the suite must run on push and on PR",
+            f"{job} carries a condition, but the suite must run on push and on PR",
         )
 
     def test_added_profiles_meet_their_upstream_on_both_roads(self):
@@ -250,7 +250,7 @@ class WorkflowRegressions(unittest.TestCase):
         self.assertEqual(
             triggers["pull_request"]["paths"],
             triggers["push"]["paths"],
-            "the two path lists have drifted; a push would skip what a PR checks",
+            "the two path lists have drifted, so a push would skip what a PR checks",
         )
 
     def test_pull_request_only_jobs_are_guarded(self):
@@ -265,7 +265,7 @@ class WorkflowRegressions(unittest.TestCase):
                 )
 
     def test_no_workflow_relies_on_a_yaml_anchor(self):
-        """The workflow parser reads no anchor; PyYAML would hide the break."""
+        """The workflow parser reads no anchor, and PyYAML would hide the break."""
         for path in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
             for number, line in enumerate(
                 path.read_text(encoding="utf-8").splitlines(), 1
@@ -513,8 +513,8 @@ class PatchesTargetWhatRuns(unittest.TestCase):
 
 
 class StandaloneCopiesNameTheirSource(unittest.TestCase):
-    """The registry's anchor names one path per file for every platform;
-    each manifest places the file its own way, and the installer copied
+    """The registry's anchor names one path per file for every platform,
+    while each manifest places the file its own way, and the installer copied
     nothing where the two differed (EmuDeck's aes_keys.txt, Batocera's
     switch/prod.keys)."""
 
@@ -551,7 +551,7 @@ class StandaloneCopiesNameTheirSource(unittest.TestCase):
 
 class ADamagedArchiveIsNotPacked(unittest.TestCase):
     """The deterministic rebuild raises on a member whose bytes fail their
-    CRC; the builder caught it and copied the damaged archive into the pack
+    CRC. The builder caught it and copied the damaged archive into the pack
     "for verify to flag", which nothing did."""
 
     def test_the_rebuild_refusal_reaches_the_run(self):
@@ -577,7 +577,7 @@ class ADamagedArchiveIsNotPacked(unittest.TestCase):
 
 class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
     """The EmuDeck README promised keys set up automatically (they need
-    --standalone-copies) and gave a Citra path the installer never uses; the
+    --standalone-copies) and gave a Citra path the installer never uses, and the
     RetroArch README offered only `| sh`, which Windows cannot run."""
 
     def _guide(self, platform: str) -> str:
@@ -654,7 +654,7 @@ class AutoFetchReadsListsAndPlacesWithoutClobbering(unittest.TestCase):
 
 class NoParserAcceptsAnAbbreviation(unittest.TestCase):
     """argparse completes a prefix: `slots.py --emulator dolphin` became
-    --emulators-dir dolphin and reported 0 contested destinations, exit 0;
+    --emulators-dir dolphin and reported 0 contested destinations, exit 0, and
     `pipeline.py --all` became --all-variants and built six packs per
     platform. The flags read like other scripts' and were never refused."""
 
@@ -680,7 +680,7 @@ class NoParserAcceptsAnAbbreviation(unittest.TestCase):
 
 
 class FaqRegressions(unittest.TestCase):
-    """The FAQ states facts the code owns; these tie it back to the source.
+    """The FAQ states facts the code owns, and these tie it back to the source.
 
     Three of its claims had drifted: a pinned MAME version, Adler-32
     attributed to Dolphin's IPL instead of its DSP ROMs, and a verbose
@@ -730,7 +730,7 @@ class FaqRegressions(unittest.TestCase):
             self.assertIn(name, sentence, f"FAQ omits the Adler-32 file {name}")
         self.assertNotIn(
             "IPL.bin", carriers,
-            "IPL.bin gained an Adler-32 hash; the docs say it has none",
+            "IPL.bin gained an Adler-32 hash, but the docs say it has none",
         )
         for page in ("faq.md", "profiling.md"):
             text = (ROOT / "wiki" / page).read_text(encoding="utf-8")
@@ -905,7 +905,7 @@ class PipelineRegressions(unittest.TestCase):
     def test_nothing_parsed_is_not_consistent(self):
         """A changed output format must not pass with no platform compared."""
         with contextlib.redirect_stdout(io.StringIO()):
-            self.assertFalse(pipeline.check_consistency("RetroArch — 2/2 OK", ""))
+            self.assertFalse(pipeline.check_consistency("RetroArch = 2/2 OK", ""))
             self.assertFalse(pipeline.check_consistency("", ""))
 
     def test_pack_without_verify_result_is_a_failure(self):
@@ -922,7 +922,7 @@ class PipelineRegressions(unittest.TestCase):
             self.assertFalse(pipeline.check_consistency(verify, pack))
 
     def test_only_the_full_variant_feeds_the_comparison(self):
-        """--all-variants printed six packs under one label; the last won."""
+        """--all-variants printed six packs under one label, and the last won."""
         output = "\n".join([
             "Generating pack for RetroArch [source=full]...",
             "  a.zip: 5 files packed (5 baseline + 0 from cores), 535/535 files OK",
@@ -932,7 +932,7 @@ class PipelineRegressions(unittest.TestCase):
         self.assertEqual(pipeline.parse_pack_counts(output), {"RetroArch": (535, 535)})
 
     def test_exclusions_read_only_the_full_variant(self):
-        """--all-variants printed six packs under one label; the last won."""
+        """--all-variants printed six packs under one label, and the last won."""
         output = "\n".join([
             "Generating pack for Batocera [source=full]...",
             "  a.zip: 5 files packed (5 baseline + 0 from cores), 5/5 files OK, 3 unsafe excluded",
@@ -967,7 +967,7 @@ class PipelineRegressions(unittest.TestCase):
 
 
     def test_a_targeted_export_reads_a_full_model(self):
-        """--target wrote truth/<target>/ only; the export read truth/."""
+        """--target wrote truth/<target>/ only, but the export read truth/."""
         commands: list[list[str]] = []
 
         def fake_run(command, _label):
@@ -991,7 +991,7 @@ class PipelineRegressions(unittest.TestCase):
 
 
 class SchemaFormatsAreChecked(unittest.TestCase):
-    """date-time and uri need jsonschema's format extras; without them the
+    """date-time and uri need jsonschema's format extras. Without them the
     published format constraints were accepted unread."""
 
     @unittest.skipUnless(HAS_JSONSCHEMA, "validating a schema needs jsonschema")
@@ -1082,7 +1082,7 @@ class OneBaselineVerdict(unittest.TestCase):
     """The builder and the manifest each wrote the platform baseline.
 
     The builder looked inside a zipped_file archive whatever the outer
-    resolution said; the manifest only after a hash_mismatch. An archive
+    resolution said, the manifest only after a hash_mismatch. An archive
     found by name without the member Batocera checks left the pack and
     stayed in the manifest. A slot override replaced a release asset in the
     manifest and not in the pack.
@@ -1130,7 +1130,7 @@ class OneBaselineVerdict(unittest.TestCase):
 
     def test_the_builder_accepts_what_verify_accepts(self):
         """verify took a 29-character md5 by prefix and a ZIP by its
-        composite; the builder compared exact md5s and refused both when
+        composite, but the builder compared exact md5s and refused both when
         another declared hash disagreed."""
         import hashlib
 
@@ -1695,7 +1695,7 @@ class InstallerBoundaryRegressions(unittest.TestCase):
     def test_target_schema_accepts_the_null_the_generator_emits(self):
         """The schema and generate_target_manifests must agree on null.
 
-        A target with no core list is written as null; a schema that rejects
+        A target with no core list is written as null, and a schema that rejects
         it turns a valid manifest into a CI failure.
         """
         from jsonschema import Draft202012Validator
@@ -1742,7 +1742,7 @@ class InstallerBoundaryRegressions(unittest.TestCase):
         """A target without a core inventory must not void the manifest.
 
         generate_target_manifests emits null for a target that publishes no
-        core list; rejecting the document would silently disable --target for
+        core list. Rejecting the document would silently disable --target for
         every target on that platform.
         """
         normalized = install._validate_targets({"windows": None, "switch": ["a5200"]})
@@ -1934,7 +1934,7 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
     def test_repo_paths_name_the_file_the_database_holds(self):
         """A manifest written before a file moved sends the installer to 404.
 
-        database.json is regenerated whenever a file is refiled; the manifests
+        database.json is regenerated whenever a file is refiled, but the manifests
         are a separate artefact and were left behind once (the two DS
         firmware dumps of the 7 September refile). The installer fetches
         repo_path from raw.githubusercontent.com, so a stale one is a
@@ -1958,7 +1958,7 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
     def test_release_entries_are_exactly_the_files_git_does_not_hold(self):
         """The installer has two sources, and the manifest must pick the right one.
 
-        A committed file is served by the repository; a gitignored one by
+        A committed file is served by the repository, a gitignored one by
         the large-files release. Marking a committed file as a release asset
         sends the installer to an asset nobody uploaded (sdlpal/5.avi, 83 MB
         in git, was announced as release asset `5.avi`). Marking a gitignored
@@ -2016,7 +2016,7 @@ class ReleaseAssetCriterion(unittest.TestCase):
                 generate_pack._registered.cache_clear()
 
     def test_the_manifest_names_the_asset_as_github_serves_it(self):
-        # GitHub publishes a space as a dot; the site linked the dotted
+        # GitHub publishes a space as a dot. The site linked the dotted
         # name while the manifest gave install.py the spaced one, a 404.
         from scripts import generate_pack
 
@@ -2056,7 +2056,7 @@ class ReleaseAssetsMatchTheCollection(unittest.TestCase):
     downloads, and the manifest size is that of the local copy. Both FBNeo
     sample archives were rebuilt locally after their upload and never
     re-uploaded: same members, different container, every install of them
-    failed. The comparison is offline here on a fixture; the script runs it
+    failed. The comparison is offline here on a fixture, while the script runs it
     against the live release.
     """
 
@@ -2098,12 +2098,12 @@ class ReleaseAssetsMatchTheCollection(unittest.TestCase):
         )
 
     def test_release_notes_are_rendered_from_the_collection(self):
-        """The release page is written by hand and drifts; it is rendered instead.
+        """The release page is written by hand and drifts, so it is rendered instead.
 
         Three assets had no row, three rows carried the SHA1 of an asset
         that had since been replaced, and the footer counted 41 files for 44.
-        Hand-written descriptions survive by name; a new row takes its
-        description from the profile that declares the file; an asset the
+        Hand-written descriptions survive by name. A new row takes its
+        description from the profile that declares the file, and an asset the
         collection does not index is listed apart, with its size only.
         """
         from scripts import check_release_assets
@@ -2263,7 +2263,7 @@ class FreshnessGuardMechanics(unittest.TestCase):
 
     deploy-site.yml regenerates README.md and CONTRIBUTING.md and then fails
     if git sees a change. That is only a staleness check because a run which
-    moves nothing but the clock leaves the file untouched; if the comparison
+    moves nothing but the clock leaves the file untouched. If the comparison
     missed a timestamp form, the guard would fail on every run and stop
     meaning anything.
     """
@@ -2663,7 +2663,7 @@ class APackNameFitsAFileName(unittest.TestCase):
 
     def test_two_systems_never_name_one_system(self):
         """sega-dreamcast,arcade and sega-dreamcast-arcade both wrote
-        RetroArch_..._Dreamcast_Arcade.zip; the second replaced the first."""
+        RetroArch_..._Dreamcast_Arcade.zip, and the second replaced the first."""
         from scripts.generate_pack import _system_tag
 
         pairs = [
@@ -2699,8 +2699,8 @@ class AGroupPackIsWrittenUnderItsOwnName(unittest.TestCase):
 
 
 class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
-    """The builder skips a region-dropped core extra before placing it;
-    the report placed it anyway, so on a case-folding platform it hid the
+    """The builder skips a region-dropped core extra before placing it,
+    but the report placed it anyway, so on a case-folding platform it hid the
     next core's FOO.ROM that the pack does carry."""
 
     def test_the_report_skips_what_the_region_pass_drops(self):
@@ -2731,7 +2731,7 @@ class ARegionDroppedExtraBlocksNothing(unittest.TestCase):
 
 
 class AnotherEmulatorsTreeProvesNothing(unittest.TestCase):
-    """lrps2 names no hash for pcsx2/resources/GameIndex.yaml; the only
+    """lrps2 names no hash for pcsx2/resources/GameIndex.yaml, and the only
     full-tail copy was ARMSX2's, which counted as path proof and replaced
     the GameIndex RetroArch pins on desktop targets, where ARMSX2 does not
     exist. Upstream PCSX2 took ARMSX2's patches.zip by name the same way."""
@@ -2920,7 +2920,7 @@ class TheZipIndexCacheKnowsItsInputs(unittest.TestCase):
 
 class GeneratedModelsAreWrittenWhole(unittest.TestCase):
     """The truth model and the cumulative MAME clone map were written by
-    truncate-then-write; a corrupt clone map also read as empty and was
+    truncate-then-write, and a corrupt clone map also read as empty and was
     then overwritten, losing what earlier runs recorded."""
 
     def test_both_writers_replace_their_file_atomically(self):
@@ -2953,7 +2953,7 @@ class GeneratedModelsAreWrittenWhole(unittest.TestCase):
 
 class APackNoteBesideItsSlotIsANote(unittest.TestCase):
     """The builder writes INSTRUCTIONS_<name>.txt beside the slot it
-    explains; verify_pack recognised notes at the ZIP root only and failed
+    explains, but verify_pack recognised notes at the ZIP root only and failed
     a pack holding games/keen6/INSTRUCTIONS_egagraph.ck6.txt."""
 
     def test_a_nested_note_is_not_hashed_against_the_collection(self):
@@ -2973,7 +2973,7 @@ class APackNoteBesideItsSlotIsANote(unittest.TestCase):
 
 
 class NoHandlerSwallowsEverything(unittest.TestCase):
-    """CLAUDE.md forbids `except Exception: pass`; the edit hook missed the
+    """CLAUDE.md forbids `except Exception: pass`, but the edit hook missed the
     two-line form and nothing in CI checked it."""
 
     def test_no_catch_all_handler_only_passes(self):
@@ -3093,7 +3093,7 @@ class ModuleConstantsDeclaredOnce(unittest.TestCase):
 
 
 class OnlyTheSchemaValidatorNeedsJsonschema(unittest.TestCase):
-    """Build scripts and install.py run on stdlib plus pyyaml; jsonschema is
+    """Build scripts and install.py run on stdlib plus pyyaml, and jsonschema is
     tooling for validate_schemas and CI. An import anywhere else turns a
     contributor's pipeline run into an ImportError."""
 
@@ -3337,7 +3337,7 @@ class AnAcceptedVersionIsNoCoreDiscrepancy(unittest.TestCase):
 
 class ADataDirectoryCopyPassesTheNameChecks(unittest.TestCase):
     """The name steps over bios/ refuse a candidate outside the size or the
-    Adler-32 the entry's code checks; a cache copy found by the same name
+    Adler-32 the entry's code checks, but a cache copy found by the same name
     was returned without either check."""
 
     def setUp(self):
@@ -3543,7 +3543,7 @@ class VerifyStrictAppliesInEveryMode(unittest.TestCase):
 class OpenMsxRomsSitInItsSystemroms(unittest.TestCase):
     """openMSX entries had no path and landed at the BIOS root, where no
     frontend points FilePool. RetroBat declares its ROMs under
-    openMSX/share/systemroms; the profile's paths must agree."""
+    openMSX/share/systemroms, and the profile's paths must agree."""
 
     def test_every_entry_is_under_share_systemroms(self):
         profile = yaml.safe_load((ROOT / "emulators" / "openmsx.yml").read_text())
@@ -3565,8 +3565,8 @@ class OpenMsxRomsSitInItsSystemroms(unittest.TestCase):
 
 class ASameNamedMemberIsNotTheFile(unittest.TestCase):
     """The gap report counted touchhle's LiberationMono-Regular.ttf as held
-    because idtech4a++'s extras.zip has a member of that name, another font;
-    verify --emulator said missing."""
+    because idtech4a++'s extras.zip has a member of that name, another font,
+    while verify --emulator said missing."""
 
     def test_a_declared_hash_decides_a_member_or_data_hit(self):
         from scripts import cross_reference as xr
@@ -3897,7 +3897,7 @@ class MessagesSeparateWithAColon(unittest.TestCase):
 
 class AReaderThatLeavesEarlyIsNoCrash(unittest.TestCase):
     """`verify.py --list-emulators | head -1` ended on a BrokenPipeError
-    traceback; every listing and report did."""
+    traceback, and so did every listing and report."""
 
     def test_a_closed_pipe_ends_quietly(self):
         proc = subprocess.Popen(
@@ -3977,7 +3977,7 @@ class TheIssueFormListsEveryPlatform(unittest.TestCase):
 
 
 class TheTestJobHasTheDataTrees(unittest.TestCase):
-    """Packs built without data directories exit non-zero; the CI test job
+    """Packs built without data directories exit non-zero, but the CI test job
     had none, and two pack parity tests failed there only."""
 
     def test_the_trees_are_fetched_before_the_suite(self):
@@ -4214,7 +4214,7 @@ class SignaturesCarryTheirTypes(unittest.TestCase):
     shared API among them (artifact locks, the data-dir resolver, the region
     priority list of _select_variants)."""
 
-    # Lowered as modules are annotated; never raised.
+    # Lowered as modules are annotated, never raised.
     CEILING = 0
     COMPLETE = ("artifacts.py", "common.py", "validation.py", "generate_pack.py")
 
@@ -4321,7 +4321,7 @@ class DocumentedHashLookupsFindTheirFile(unittest.TestCase):
 
 class ToolReferenceListsEveryModule(unittest.TestCase):
     """The exporter table described retropie_exporter as a System.dat writer
-    and left out bizhawk, misterfpga and rocknix; the target table missed
+    and left out bizhawk, misterfpga and rocknix, and the target table missed
     recalbox and rocknix. A contributor reads these tables as the map."""
 
     def _rows(self, heading: str) -> set[str]:
@@ -4395,7 +4395,7 @@ class EveryOptionIsDocumented(unittest.TestCase):
     """profile_sync's --system, --stale-before and --ref, auto_fetch
     --create-issues, download.py --info and forty more were in no page: a
     maintainer ran --all and spent the API quota that --system would have
-    saved. --help lists a flag; only a page says when to reach for it."""
+    saved. --help lists a flag, but only a page says when to reach for it."""
 
     def test_every_long_option_of_a_tracked_script_is_in_the_docs(self):
         tracked = subprocess.run(
@@ -4582,7 +4582,7 @@ class GapsPageCountsOneWay(unittest.TestCase):
 
 class UnsourceableCardSaysWhy(unittest.TestCase):
     """DraStic's nds_firmware_modified.bin carried an 'unsourceable' badge
-    and nothing else; the reason was only on the gaps page."""
+    and nothing else. The reason was only on the gaps page."""
 
     def test_reason_and_link(self):
         from scripts.generate_site import _render_emulator_file
@@ -4859,7 +4859,7 @@ class ZippedFileMd5IsParsedOnce(unittest.TestCase):
 
 class AHashListIsReadOneWay(unittest.TestCase):
     """mesence declares four sha256 for BS-X.bin as one comma-joined string.
-    The resolver split it and shipped the file; the gap report and
+    The resolver split it and shipped the file, but the gap report and
     profile_sync looked the whole string up and called it missing."""
 
     def test_every_reader_splits_the_list(self):
@@ -4878,7 +4878,7 @@ class AHashListIsReadOneWay(unittest.TestCase):
 
 class RommNeoGeoFoldersGetTheirBios(unittest.TestCase):
     """RomM runs fbneo for neogeoaes and neogeomvs as for arcade and reads
-    firmware per platform folder; the fixture gives neogeo.zip to arcade
+    firmware per platform folder, but the fixture gives neogeo.zip to arcade
     alone, so a Neo Geo game in its own folder started without it."""
 
     def test_the_mirror_is_per_file(self):
@@ -4971,7 +4971,7 @@ class DocumentedExamplesHoldTogether(unittest.TestCase):
 
 class TheReadmeCountsSystemsAsListSystemsDoes(unittest.TestCase):
     """The README counted every raw spelling (nes and nintendo-nes as two)
-    and announced 550 systems; the tool it points to listed 513."""
+    and announced 550 systems while the tool it points to listed 513."""
 
     def test_one_count(self):
         import io
@@ -5070,7 +5070,7 @@ class AFailedVerificationIsAnError(unittest.TestCase):
 
 class TheGroundTruthFooterSaysWhatItCounts(unittest.TestCase):
     """"417 platform-only (no emulator profile)" where 369 of 526 files had
-    a profile; 20% here for 21% on the site; and "0/81 (0%)" for MiSTer,
+    a profile, 20% here for 21% on the site, and "0/81 (0%)" for MiSTer,
     which declares no core by design."""
 
     def _footer(self, coverage):
@@ -5121,8 +5121,8 @@ class ThePipelineSummaryTimesEachStep(unittest.TestCase):
 
 
 class StrictFailsOnMissingOnly(unittest.TestCase):
-    """The docstring promised exit 1 on a required file missing or rejected;
-    a rejected file is UNTESTED, a warning, and --strict never saw it."""
+    """The docstring promised exit 1 on a required file missing or rejected,
+    but a rejected file is UNTESTED, a warning, and --strict never saw it."""
 
     def test_the_contract(self):
         from scripts import verify as verify_mod

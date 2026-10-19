@@ -13,7 +13,7 @@ notes: >
   Quake engine source port by Kevin Shanahan (Tyrann). Plays Quake (id1), mission
   packs Scourge of Armagon (hipnotic) and Dissolution of Eternity (rogue), Quoth
   mod, and custom mods via -game parameter. Content is loaded directly from the
-  PAK file path — the directory containing the PAK becomes basedir
+  PAK file path: the directory containing the PAK becomes basedir
   (libretro.c:988,1050). The engine auto-detects game variant by checking the
   content path for id1, hipnotic, rogue, or quoth substrings
   (common/libretro.c:1313-1377). All engine assets (gfx/palette.lmp, gfx/colormap.lmp,

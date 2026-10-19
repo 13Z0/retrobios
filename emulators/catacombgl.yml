@@ -48,7 +48,7 @@ notes: |
   (src/Engine/EgaGraph.cpp:50-70, src/Engine/AudioRepository.cpp:43-58). The
   SHP files are the intro pictures (src/Abyss/IntroViewAbyss.cpp:48-90,
   src/Armageddon/IntroViewArmageddon.cpp:27-76,
-  src/Apocalypse/IntroViewApocalypse.cpp:27-76); Abyss v1.12 uses SDLOGO,
+  src/Apocalypse/IntroViewApocalypse.cpp:27-76). Abyss v1.12 uses SDLOGO,
   TITLE, CREDITS, BEGIN and FINALE instead (src/Abyss/IntroViewAbyss.cpp:28-45,
   src/Abyss/GameAbyss.cpp:53-58). SHP10.ABS, SHP13.ARM and SHP13.APC are
   never opened but belong to the detection tables.

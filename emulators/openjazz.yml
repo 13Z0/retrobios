@@ -12,7 +12,7 @@ systems: [jazz-jackrabbit]
 
 notes: |
   Open-source reimplementation of Jazz Jackrabbit 1 (Epic MegaGames,
-  1994). Reads the original DOS game data; no asset bundling in the
+  1994). Reads the original DOS game data, with no asset bundling in the
   engine binary.
 
   File lookup walks a path list (platform paths, command-line paths,
@@ -20,7 +20,7 @@ notes: |
   the first match.
   ref: src/io/file.cpp:51-77 (File::File), src/main.cpp:186-220
 
-  PANEL.000 is the first file opened at startup; the engine aborts with
+  PANEL.000 is the first file opened at startup, and the engine aborts with
   "Unable to find game data files" if that probe fails. The five .0FN
   fonts follow and abort startup the same way.
   ref: src/main.cpp:279-295, src/main.cpp:308-333
@@ -34,7 +34,7 @@ notes: |
        src/menu/gamemenu.cpp:557-566
 
   JJ2 engine support is experimental and gated by `ENABLE_JJ2` at build
-  time (off by default); it reads JJ2's .j2l/.j2t files directly (no
+  time (off by default). It reads JJ2's .j2l/.j2t files directly (no
   conversion step).
   ref: CMakeLists.txt:241-255, src/jj2/level/jj2level.cpp:54-67
 
@@ -174,9 +174,9 @@ files:
     note: "Cutscene played when a bonus level is won."
 
   # ================================================================
-  # Level data. Not every episode is required to run; a user may own
-  # only one. The episode menu probes LEVEL0.<world> for the first
-  # world of each episode; the levels that follow are named by the
+  # Level data. Not every episode is required to run, since a user may
+  # own only one. The episode menu probes LEVEL0.<world> for the first
+  # world of each episode, and the levels that follow are named by the
   # level data itself (next level and next world numbers).
   # ================================================================
 

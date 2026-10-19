@@ -20,7 +20,7 @@ notes: |
 
   The three BIOS files are not firmware dumps. bios.cof, minibios.cof and
   minibiosX.cof are Aries assembly implementations of BIOS routines,
-  assembled from bios.s, minibios.s and minibiosX.s in the source tree; every
+  assembled from bios.s, minibios.s and minibiosX.s in the source tree. Every
   other BIOS call is handled in C++ through BiosJumpTable (src/bios.cpp:395-547).
   The entries left to the assembly code are the comm bus calls, TimeToSleep,
   MPEWait and BiosGetInfo.
@@ -32,25 +32,25 @@ notes: |
   loads bios.cof into MPE3 and MediaInitMPE loads minibios.cof into MPE0
   (minibiosX.cof on MPEs 1 to 3). A failed load prints "Missing File!" and
   emulation continues without the routines. LoadCoffFile checks the COFF magic
-  0x0120 and copies the sections to their physical addresses; no size or hash
+  0x0120 and copies the sections to their physical addresses. No size or hash
   is checked (src/coff.cpp:47-176).
 
   Two builds of bios.cof exist. The source tree carries the NuanceExperimental
-  build (23938 bytes, 12 sections, with commrecv_vars and commrecv_queues);
-  the 0.6.6 and 0.6.7 release archives ship the 2007 build (19410 bytes, 10
+  build (23938 bytes, 12 sections, with commrecv_vars and commrecv_queues).
+  The 0.6.6 and 0.6.7 release archives ship the 2007 build (19410 bytes, 10
   sections). Both carry the same biosvars, haltab, biosinfo, halstub,
   biosdata, halts and controllerdata sections and the C++ side references
   neither extra section.
 
   nuance.cfg is read from the working directory, then from the directory of
-  the running executable (src/NuonEnvironment.cpp:547-563); without it the
+  the running executable (src/NuonEnvironment.cpp:547-563). Without it the
   values set in NuonEnvironment::Init apply. The GLSL shaders are opened from
   the working directory and fall back to the copies compiled into the binary
   (src/ShaderProgram.cpp:94-144, src/embedded_shaders.h). FlashEEPROM.bin is
   read by the FlashEEPROM constructor and written by the destructor, both
   relative to the process working directory at load and unload of the core
   (src/FlashEEPROM.h:36-51). Game data (nuon.run, nuon.dat) is read from the
-  loaded disc image or directory; no other fixed file is opened.
+  loaded disc image or directory, and no other fixed file is opened.
 
 files:
   - name: "bios.cof"
@@ -119,7 +119,7 @@ files:
     has_builtin: true
     source_ref: "src/video.cpp:129, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
-      Opened from the working directory; the copy compiled into the binary is
+      Opened from the working directory, and the copy compiled into the binary is
       used when the file is absent. The release archives ship the file without
       the EMBED_HLSL guards (413 bytes).
 
@@ -135,7 +135,7 @@ files:
     source_ref: "src/video.cpp:130, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
       Selected when UseCRTshader is disabled in nuance.cfg. Same lookup and
-      fallback as video_generic.vs; the release copy is 6090 bytes.
+      fallback as video_generic.vs. The release copy is 6090 bytes.
 
   - name: "video_m32_o32_crt.fs"
     path: "nuance/video_m32_o32_crt.fs"
@@ -149,7 +149,7 @@ files:
     source_ref: "src/video.cpp:130, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
       Selected when UseCRTshader is enabled, the shipped default. Same lookup
-      and fallback as video_generic.vs; the release copy is 8052 bytes.
+      and fallback as video_generic.vs. The release copy is 8052 bytes.
 
   - name: "FlashEEPROM.bin"
     description: "Atmel AT49BV162A flash ROM image, 2 MB at 0xF0000000"
@@ -160,7 +160,7 @@ files:
     note: >
       Read by the FlashEEPROM constructor from the process working directory
       when the core is loaded, truncated to 2 MB, and written back by the
-      destructor. The release archives ship one; its content is the flash
+      destructor. The release archives ship one, and its content is the flash
       state of the session that produced it.
 
   - name: "breakpoint.txt"
@@ -169,6 +169,6 @@ files:
     mode: standalone
     source_ref: "src/NuanceMain_linux.cpp:124, src/NuanceMain.cpp:446"
     note: >
-      Read from the working directory by the standalone executables only;
+      Read from the working directory by the standalone executables only:
       NuanceMain.cpp and NuanceMain_linux.cpp are excluded from the libretro
       build (CMakeLists.txt:214).

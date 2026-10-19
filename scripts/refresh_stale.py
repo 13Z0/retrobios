@@ -55,7 +55,7 @@ PLATFORMS_REGISTRY = REPO_ROOT / "platforms" / "_registry.yml"
 AUTO_AREAS = ("platforms", "native", "targets", "data", "catalogs")
 MANUAL_AREAS = ("coreinfo", "ci", "profiles")
 
-JOB_TIMEOUT = 1800  # 30 minutes per refresher; scrapers rarely exceed 10
+JOB_TIMEOUT = 1800  # 30 minutes per refresher, scrapers rarely exceed 10
 
 
 @dataclass(frozen=True)
@@ -81,7 +81,7 @@ class JobResult:
 def _load_platform_registry() -> dict[str, dict]:
     """Return the platforms map from _registry.yml.
 
-    pyyaml is already a project dependency; the registry is small so we read
+    pyyaml is already a project dependency, and the registry is small so we read
     it once at startup rather than parsing each dispatch.
     """
     import yaml
@@ -122,7 +122,7 @@ def plan_jobs(
 
     Surfaced-only entries carry stale state that only a human can resolve
     (new .info file, manual DAT download, PyPI bump). Ignored entries are
-    anything not STALE (OK, SKIPPED, UNKNOWN, ERROR); ERROR is also surfaced
+    anything not STALE (OK, SKIPPED, UNKNOWN, ERROR). ERROR is also surfaced
     so the final report mentions it.
     """
     jobs: list[Job] = []
@@ -219,7 +219,7 @@ def _command_for(
         ]
 
     if area == "targets":
-        # "<platform> cores" rows list buildbot names without a profile; no
+        # "<platform> cores" rows list buildbot names without a profile. No
         # scraper fixes that, a human writes `cores:` or _overrides.yml.
         if subject.endswith(" cores"):
             return None
@@ -237,7 +237,7 @@ def _command_for(
 
     if area == "data":
         if subject == "_data_dirs.yml":
-            # The registry file itself cannot be refreshed; its entries can.
+            # The registry file itself cannot be refreshed, but its entries can.
             return None
         return [
             sys.executable,
@@ -276,7 +276,7 @@ def _command_for(
 def _github_token_env() -> dict[str, str]:
     """Hand `gh auth token` to the subprocess environment.
 
-    emudeck and retropie target scrapers hit the GitHub API; without a token
+    emudeck and retropie target scrapers hit the GitHub API. Without a token
     the unauthenticated rate limit (60/h) is burnt within a few platforms.
     """
     env = os.environ.copy()
@@ -396,7 +396,7 @@ def main() -> int:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="list what would be refreshed; do not run any command",
+        help="list what would be refreshed without running any command",
     )
     parser.add_argument(
         "--jobs",

@@ -92,7 +92,7 @@ class ADeclinedBuildIsAFailure(unittest.TestCase):
 
 
 class AMistypedPlatformIsNamed(unittest.TestCase):
-    """verify and cross_reference ended a typo on a traceback; generate_pack
+    """verify and cross_reference ended a typo on a traceback, and generate_pack
     ran its whole build first and then said "no pack for batocra"."""
 
     # Every script taking --platform: slots ended on a traceback, and

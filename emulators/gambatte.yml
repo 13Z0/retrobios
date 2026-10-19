@@ -12,8 +12,8 @@ cores:
 systems: [nintendo-gb, nintendo-gbc]
 
 notes: |
-  Accuracy-focused GB/GBC emulator. No BIOS required for normal operation;
-  built-in HLE boot sequence skips the Nintendo logo animation.
+  Accuracy-focused GB/GBC emulator. No BIOS required for normal operation:
+  the built-in HLE boot sequence skips the Nintendo logo animation.
 
   Core option gambatte_gb_bootloader (default: enabled) enables loading
   official boot ROMs from the system directory for the real startup animation.
@@ -27,7 +27,7 @@ notes: |
   detection (ld b,0x01), enabling GBA-enhanced features in compatible
   GBC games.
 
-  The upstream standalone supports SGB boot ROM loading; the libretro
+  The upstream standalone supports SGB boot ROM loading, but the libretro
   port does not implement this.
 
   Custom palette files (palettes/*.pal) are user-created colorization

@@ -1,4 +1,4 @@
-# Redream — Sega Dreamcast (libretro)
+# Redream: Sega Dreamcast (libretro)
 # ref: libretro/redream, docs.libretro.com/library/redream
 # Uses dc/boot.bin and dc/flash.bin (different names from Flycast)
 # Same BIOS data as Flycast's dc_boot.bin / dc_flash.bin

@@ -19,10 +19,10 @@ systems:
 
 notes: |
   Multi-system emulator by skylersaleh. Libretro core built from the upstream repo.
-  All BIOS optional; bundles Cult-of-GBA BIOS (GBA), DraStic free BIOS (NDS ARM7/ARM9),
+  All BIOS optional: bundles Cult-of-GBA BIOS (GBA), DraStic free BIOS (NDS ARM7/ARM9),
   stub firmware (NDS), and HLE boot skip (GB/GBC). BIOS loading controlled by core options
   (default: on). Files loaded from system_dir/SkyEmu/ subdirectory.
-  Standalone validates exact BIOS file size; libretro only rejects files exceeding buffer.
+  Standalone validates exact BIOS file size, while libretro only rejects files exceeding buffer.
   .info missing gb_bios.bin (gb.h:1603).
 
 files:

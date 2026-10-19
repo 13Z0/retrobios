@@ -23,7 +23,7 @@ notes: |
 
   Software list support via 375 XML hash files in system_dir/mess2015/hash/.
   Hash files are bundled in the source repo at /hash/. Not on libretro buildbot.
-  .info incorrectly says SYSTEMDIR\ume\hash — actual path is mess2015/hash.
+  .info incorrectly says SYSTEMDIR\ume\hash, the actual path is mess2015/hash.
 
   hiscore.c integrated (libretro addition, not in upstream MAME 0.159).
   SAMPLES sound driver disabled in mess.mak.
@@ -42,5 +42,5 @@ files:
     size: 216250
     source_ref: "src/emu/hiscore.c:122-138,335-337"
     note: >-
-      high score definitions, loaded via f.open without explicit search path. metadata/hiscore.dat of the core repository; is_mem_range reads
+      high score definitions, loaded via f.open without explicit search path. metadata/hiscore.dat of the core repository. is_mem_range reads
       only "cpu:addr:len:start:end" lines under a "gamename:" header.

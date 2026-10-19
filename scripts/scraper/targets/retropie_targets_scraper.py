@@ -148,7 +148,7 @@ class Scraper(BaseTargetScraper):
                 print(f"  warning: no rp_module_id in {filename}", file=sys.stderr)
                 continue
             # A libretro package is lr-<core> with the buildbot name hyphenated
-            # (lr-beetle-psx -> beetle_psx); a standalone package keeps the id
+            # (lr-beetle-psx -> beetle_psx), and a standalone package keeps the id
             # the platform list carries (dosbox-staging).
             core_name = module_id
             if core_name.startswith("lr-"):

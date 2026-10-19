@@ -15,7 +15,7 @@ mode: standalone
 notes: |
   Amstrad CPC emulator by Marco Vieth and Rainer Loritz, closed-source freeware
   for Windows, macOS, Linux, Android and iOS. Machines are the CPC 464, 664 and
-  6128; the firmware identifier and the message catalogue also know the 464+,
+  6128. The firmware identifier and the message catalogue also know the 464+,
   the 6128+ and the KC compact.
 
   Two packages were used. The 3.0.2 Windows portable and macOS builds of
@@ -28,7 +28,7 @@ notes: |
   truncating and patching each file and reading the emulator's own messages.
 
   ROMs live in ROM_PATH, "./ROM/" in the shipped configuration, resolved against
-  the working directory; the macOS build reads them from the application bundle
+  the working directory, while the macOS build reads them from the application bundle
   Resources folder. Slots are filled by ROM_BLOCK lines naming a ROM number, a
   file in ROM_PATH and a 16 KB block position inside that file:
 
@@ -42,7 +42,7 @@ notes: |
   for types 2, 4 and 5, and adds the M4 line once for all types. A file named by
   a ROM_BLOCK line that cannot be opened prints "ROM: Cannot open file" and ends
   the process with status 3 before audio initialisation, whichever slot it fills
-  and whether or not the matching device is enabled; deleting the line instead
+  and whether or not the matching device is enabled. Deleting the line instead
   lets the emulator start.
 
   The machine is identified from the foreground ROM, not from the lower half and
@@ -65,18 +65,18 @@ notes: |
   M4 board emulation is on by default. HACK.ROM, the board's lower ROM, is
   opened at every startup whatever M4_ENABLED holds, after M4_SD_PATH +
   NMIROM.BIN has been tried, so a NMIROM.BIN placed on the emulated SD card
-  replaces it; with neither present the emulator prints "Unable to load
+  replaces it. With neither present the emulator prints "Unable to load
   HACK.ROM" and keeps running. M4.ROM contents are checked, a zeroed file boots
   the CPC and reports "M4 ROM not valid." The firmware updater downloads
   M4FIRM.BIN from spinpoint.org and rewrites M4.ROM and HACK.ROM in place.
 
   Alongside the ROMs the binary reads its own payload from the program
-  directory: cpcemu.msg, the message catalogue, whose absence leaves every
-  message unprinted; cpcemu.dat, colours and key tables; cpcemu.hlp, the online
-  help opened on F1; cpcemu.dbf, the poke database opened from the poke menu;
-  and cpcemu0.cfg, the template used when no user configuration exists.
+  directory. cpcemu.msg is the message catalogue, and its absence leaves every
+  message unprinted. cpcemu.dat holds colours and key tables, cpcemu.hlp is the
+  online help opened on F1, cpcemu.dbf is the poke database opened from the poke
+  menu, and cpcemu0.cfg is the template used when no user configuration exists.
   Configuration is looked up first in the user profile, ~/.CPCemu/cpcemu.cfg on
-  Linux, then cpcemu0.cfg in the working directory; with neither, startup stops
+  Linux, then cpcemu0.cfg in the working directory. With neither, startup stops
   on "CPCEMU: Use INSTALL first". The disc, tape and snapshot folders and the
   M4 SD card folder hold user content.
 
@@ -133,7 +133,7 @@ files:
     note: >-
       AMSDOS disc ROM, the 8 KB image zero-padded to 16 KB. Declared for every
       machine by the shipped configuration, so startup ends on status 3 without
-      it; dropping the ROM_BLOCK line instead boots with "ROM: No AMSDOS ROM
+      it. Dropping the ROM_BLOCK line instead boots with "ROM: No AMSDOS ROM
       found." and no disc support. Length is not checked, an 8 KB file installs
       the AMSDOS speedup all the same.
 

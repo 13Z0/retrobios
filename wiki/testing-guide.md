@@ -5,7 +5,7 @@ This page covers how to run, understand, and extend the test suite.
 The suite is discovered dynamically across focused modules, so its exact count
 is reported by the test runner instead of being hand-maintained here. Tests do
 not require network access. Most build synthetic fixtures under the repository's
-`tmp/`; modules that read real artifacts skip cleanly when those inputs are absent.
+`tmp/`. Modules that read real artifacts skip cleanly when those inputs are absent.
 
 ## Running tests
 
@@ -46,14 +46,14 @@ Every module in `tests/`, by the area it guards.
 | Installer and downloads | loopback server | `test_check_release`, `test_download`, `test_install`, `test_install_cores`, `test_install_experience`, `test_install_selection` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_exporters`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
-| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_optional_dependencies`, `test_site_availability`, `test_site_cores`, `test_site_exports`, `test_site_platform_hashes`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_hashes`, `test_workflow_paths` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_cores`, `test_site_exports`, `test_site_platform_hashes`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
 ### test_e2e.py
 
 The main regression suite. `TestE2E` exercises the resolution, verification,
-pack generation and cross-reference logic; `StandaloneModeRequiresAStandaloneBuild`
+pack generation and cross-reference logic, and `StandaloneModeRequiresAStandaloneBuild`
 sits beside it for the per-emulator build mode.
 
 **Fixture pattern.** `setUp` creates a temporary directory tree with:
@@ -148,7 +148,7 @@ only by case. On Windows and macOS, git can only check out one of them, which
 silently corrupts the clone. `.variants/` is exempt: those names are
 disambiguated by a hash suffix on purpose.
 
-**test_pack_integrity.** Described below; needs packs in `dist/`.
+**test_pack_integrity.** Described below. Needs packs in `dist/`.
 
 ## How to add a test
 
@@ -211,7 +211,7 @@ python scripts/generate_pack.py --all --verify-packs --output-dir dist/
 ```
 
 Integrated as pipeline step 6/8 (runs after consistency check, before
-README generation). Requires packs in `dist/`; skip with `--skip-packs`.
+README generation). Requires packs in `dist/`, skip with `--skip-packs`.
 
 ## Verification discipline
 
@@ -236,7 +236,7 @@ roads into main: every pull request, and every direct push, that touches
 `install.py`. Work reaches main by push as often as by pull request, so a suite
 wired to pull requests alone would guard the road nobody takes. The test job
 (`run-tests`) runs in parallel with schema validation, and on a pull request
-with BIOS validation and auto-labeling too; those two read pull request context
+with BIOS validation and auto-labeling too. Those two read pull request context
 and stay behind an event guard.
 
 A push series collapses to the tip, so what a green run states is that the head

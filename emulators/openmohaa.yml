@@ -13,7 +13,7 @@ systems: [mohaa, mohaa-spearhead, mohaa-breakthrough]
 notes: |
   Reimplementation of the id Tech 3-derived engine that powers Medal of
   Honor: Allied Assault (2002) and its expansions Spearhead and
-  Breakthrough. BASEGAME = "main" (code/qcommon/q_shared.h:35); the target
+  Breakthrough. BASEGAME = "main" (code/qcommon/q_shared.h:35), and the target
   game is selected at startup via the com_target_game cvar (0 = Allied
   Assault / TG_MOH, 1 = Spearhead / TG_MOHTA, 2 = Breakthrough / TG_MOHTT,
   code/qcommon/common.c:3164-3237).
@@ -22,21 +22,21 @@ notes: |
   for every "*.pk3" via Sys_ListFiles(curpath, ".pk3", ...) at line 3136,
   sorts them with paksort and mounts each one. It does not look up
   individual retail names and does not refuse an unknown pak. FS_Startup
-  (code/qcommon/files.cpp:3640-3650) always loads com_basegame = "main";
+  (code/qcommon/files.cpp:3640-3650) always loads com_basegame = "main".
   Spearhead additionally sets fs_basegame = "mainta" (common.c:3200) and
   Breakthrough sets fs_basegame = "maintt" (common.c:3227), which triggers
   a second FS_AddGameDirectories call for that folder.
 
   The only hard failure during init is "Couldn't load default.cfg"
   (code/qcommon/files.cpp:4108), i.e. no pak in the active search path
-  provides default.cfg. Retail Pak0.pk3 (main/) carries it; Spearhead and
+  provides default.cfg. Retail Pak0.pk3 (main/) carries it. Spearhead and
   Breakthrough ship a default.cfg inside their own pak1.pk3 so they can
   run with or without a main/ install under openmohaa.
 
   The retail pak names are documented in-source as reference arrays
   fs_originalPaks_main / fs_originalPaks_mainta / fs_originalPaks_maintt
   (code/qcommon/files.cpp:324-350). They are declared but not currently
-  consulted by the loader; they encode the files the engine was authored
+  consulted by the loader. They encode the files the engine was authored
   against. Capitalisation ("Pak0.pk3" under main/, "pak1.pk3" under
   mainta/ and maintt/) matches the retail ISO filenames and is preserved
   below for case-sensitive filesystems. FS_FilenameCompare and
@@ -48,7 +48,7 @@ notes: |
   versions to pin a checksum, so no CRC / MD5 is enforced on the paks.
 
   com_target_demo 1 selects the demo protocol. The Allied Assault demo
-  is read from main/ like the full game; the Spearhead and Breakthrough
+  is read from main/ like the full game, while the Spearhead and Breakthrough
   demos are read from demota/ and demott/
   (code/qcommon/common.c:3168-3182, 3203, 3230, 3249).
 
@@ -64,8 +64,8 @@ files:
     path: "main/Pak0.pk3"
     required: true
     source_ref: "code/qcommon/files.cpp:326 (fs_originalPaks_main[0]), 4108 (Couldn't load default.cfg)"
-    note: "Carries default.cfg; without it FS_Startup aborts with ERR_FATAL."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    note: "Carries default.cfg. Without it FS_Startup aborts with ERR_FATAL."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak1.pk3"
     category: game_data
@@ -73,7 +73,7 @@ files:
     path: "main/Pak1.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:327 (fs_originalPaks_main[1])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak2.pk3"
     category: game_data
@@ -81,7 +81,7 @@ files:
     path: "main/Pak2.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:328 (fs_originalPaks_main[2])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak3.pk3"
     category: game_data
@@ -89,7 +89,7 @@ files:
     path: "main/Pak3.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:329 (fs_originalPaks_main[3])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak4.pk3"
     category: game_data
@@ -97,7 +97,7 @@ files:
     path: "main/Pak4.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:330 (fs_originalPaks_main[4])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak5.pk3"
     category: game_data
@@ -105,7 +105,7 @@ files:
     path: "main/Pak5.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:331 (fs_originalPaks_main[5])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "Pak6.pk3"
     category: game_data
@@ -127,8 +127,8 @@ files:
     path: "mainta/pak1.pk3"
     required: true
     source_ref: "code/qcommon/files.cpp:337 (fs_originalPaks_mainta[0]), 3200 (fs_basegame=mainta), 4108"
-    note: "Spearhead default.cfg lives here; required when com_target_game=1."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    note: "Spearhead default.cfg lives here, so the file is required when com_target_game=1."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak2.pk3"
     category: game_data
@@ -136,7 +136,7 @@ files:
     path: "mainta/pak2.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:338 (fs_originalPaks_mainta[1])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak3.pk3"
     category: game_data
@@ -174,8 +174,8 @@ files:
     path: "maintt/pak1.pk3"
     required: true
     source_ref: "code/qcommon/files.cpp:346 (fs_originalPaks_maintt[0]), 3227 (fs_basegame=maintt), 4108"
-    note: "Breakthrough default.cfg lives here; required when com_target_game=2."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    note: "Breakthrough default.cfg lives here, so the file is required when com_target_game=2."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak2.pk3"
     category: game_data
@@ -183,7 +183,7 @@ files:
     path: "maintt/pak2.pk3"
     required: false
     source_ref: "code/qcommon/files.cpp:347 (fs_originalPaks_maintt[1])"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak3.pk3"
     category: game_data

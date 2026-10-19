@@ -86,7 +86,7 @@ class ValidationResult:
         return all(s != "FAIL" for s, _ in self.checks)
 
     def to_markdown(self) -> str:
-        status = "✅" if self.passed else "❌"
+        status = "PASS" if self.passed else "FAIL"
         lines = [f"### {status} `{self.filename}`"]
         lines.append("")
         lines.append(f"- **Path**: `{self.filepath}`")
@@ -98,13 +98,13 @@ class ValidationResult:
 
         for status_str, message in self.checks:
             if status_str == "PASS":
-                lines.append(f"- ✅ {message}")
+                lines.append(f"- Pass: {message}")
             elif status_str == "FAIL":
-                lines.append(f"- ❌ {message}")
+                lines.append(f"- Fail: {message}")
             elif status_str == "WARN":
-                lines.append(f"- ⚠️ {message}")
+                lines.append(f"- Warning: {message}")
             else:
-                lines.append(f"- ℹ️ {message}")
+                lines.append(f"- Info: {message}")
 
         return "\n".join(lines)
 
@@ -306,7 +306,7 @@ def validate_file(
         if expected and (len(parts) < 4 or parts[1] not in makers):
             # Depth alone passed a PS1 BIOS filed under bios/Nintendo/Game Boy/.
             result.add_warning(
-                "Placed under " + (here or "the bios/ root") + "; the other files of "
+                "Placed under " + (here or "the bios/ root") + ", while the other files of "
                 "its system are in " + " or ".join(f"`{f}`" for f in sorted(expected))
             )
         elif len(parts) >= 4:
@@ -316,12 +316,12 @@ def validate_file(
     elif expected_folders:
         # The contributor asks before forking: say where it goes.
         result.add_warning(
-            "File is not under bios/ yet; its system's files are in "
+            "File is not under bios/ yet. Its system's files are in "
             + " or ".join(f"`{f}`" for f in expected_folders)
         )
     else:
         result.add_warning(
-            "File is not under bios/ yet; place it in bios/Manufacturer/Console/"
+            "File is not under bios/ yet. Place it in bios/Manufacturer/Console/"
         )
 
     if name_known and not sha1_known and not md5_known:
@@ -371,7 +371,7 @@ def get_changed_files() -> list[str]:
         changed.extend(found or [])
     if not compared:
         print(
-            "no upstream/ or origin/ main line to compare against; reading the "
+            "no upstream/ or origin/ main line to compare against, reading the "
             "staged, modified and untracked files only",
             file=sys.stderr,
         )
@@ -389,7 +389,7 @@ def _files_to_validate(
     if args.changed and args.files:
         # Named files were dropped for the git diff, and the run reported
         # "No changed BIOS files detected" about files it never looked at.
-        parser.error("--changed reads the git diff; name files or pass --changed, not both")
+        parser.error("--changed reads the git diff: name files or pass --changed, not both")
     if not args.changed:
         if not args.files:
             parser.error("No files specified. Use --changed or provide file paths.")
@@ -408,7 +408,7 @@ def _load_database_if_any(path: str) -> dict | None:
     """The database, optional only where the default is meant.
 
     A mistyped --db read as "no database" and every file passed its
-    duplicate and placement checks unchecked; a damaged one did the same
+    duplicate and placement checks unchecked. A damaged one did the same
     after a warning.
     """
     if path == DEFAULT_DB and not os.path.exists(path):
@@ -473,7 +473,7 @@ def main() -> None:
         print(json.dumps(output, indent=2))
     elif args.markdown:
         lines = ["## BIOS Validation Report", ""]
-        status = "✅ All checks passed" if all_passed else "❌ Some checks failed"
+        status = "all checks passed" if all_passed else "some checks failed"
         lines.append(f"**Status**: {status}")
         lines.append("")
 
@@ -491,13 +491,13 @@ def main() -> None:
             print(f"  Size: {r.size:,}")
             for s, m in r.checks:
                 marker = (
-                    "✓"
+                    "ok"
                     if s == "PASS"
-                    else "✗"
+                    else "fail"
                     if s == "FAIL"
-                    else "!"
+                    else "warn"
                     if s == "WARN"
-                    else "i"
+                    else "info"
                 )
                 print(f"  [{marker}] {m}")
 

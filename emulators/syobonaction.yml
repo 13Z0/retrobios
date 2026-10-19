@@ -14,11 +14,11 @@ notes: >
   Japanese platformer by z_gundam_tanosii. Game assets required in
   system_dir/SyobonAction/ with BGM/, SE/, and res/ subdirectories.
   Level data hardcoded in source. The original libretro/syobonaction-libretro
-  repo was deleted; source points to the archived original by iyzsong.
+  repo was deleted, so source points to the archived original by iyzsong.
   The .info display_version is "0.1" but the code reports "0.3".
 
 files:
-  # ── res/ - Graphics (required: LoadGraph → exit(1) on failure) ──
+  # res/ - Graphics (required: LoadGraph failure calls exit(1))
 
   - name: player.PNG
     path: SyobonAction/res/player.PNG
@@ -83,7 +83,7 @@ files:
     category: game_data
     source_ref: "loadg.cpp:56"
 
-  # ── res/ - Font (required: TTF_OpenFont → exit(1) on failure) ──
+  # res/ - Font (required: TTF_OpenFont failure calls exit(1))
 
   - name: sazanami-gothic.ttf
     path: SyobonAction/res/sazanami-gothic.ttf
@@ -92,7 +92,7 @@ files:
     category: game_data
     source_ref: "DxLib.cpp:73"
 
-  # ── BGM/ - Music (optional: LoadMusicMem → NULL on failure, game continues) ──
+  # BGM/ - Music (optional: LoadMusicMem returns NULL on failure, game continues)
 
   - name: field.ogg
     path: SyobonAction/BGM/field.ogg
@@ -129,7 +129,7 @@ files:
     category: game_data
     source_ref: "loadg.cpp:224"
 
-  # ── SE/ - Sound effects (optional: LoadSoundMem → NULL on failure, game continues) ──
+  # SE/ - Sound effects (optional: LoadSoundMem returns NULL on failure, game continues)
 
   - name: jump.ogg
     path: SyobonAction/SE/jump.ogg

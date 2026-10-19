@@ -31,7 +31,7 @@ notes: |
   each is given a fake FM frequency for the tuner. A playlist that parses to
   zero entries counts as no content and the chain above continues, which is
   what the zero-byte empty.m3u in the repository is for. Local audio is
-  opened from the path the playlist or the frontend gives; a WAV must be
+  opened from the path the playlist or the frontend gives, and a WAV must be
   PCM or float with a fmt and a data chunk.
   ref: libretro-radio.c:1965-1971, libretro-radio.c:37,
        libretro-radio.c:2221-2291, libretro-radio.c:2419-2435,
@@ -40,14 +40,14 @@ notes: |
   Streaming is a hand-written HTTP/1.0 client over an AF_INET socket: the
   URL scheme is stripped, an https:// entry is joined in clear on the port
   it names or 80, ICY status lines are accepted and up to five redirects
-  are followed. No TLS library, certificate store or font file is read; the
+  are followed. No TLS library, certificate store or font file is read: the
   8x8 glyphs are a table in the binary. MP3 decoding is libmad, compiled in
   from the libretro-deps submodule.
   ref: libretro-radio.c:517-548, libretro-radio.c:564-743,
        libretro-radio.c:81, Makefile:30-45, .gitlab-ci.yml:13-17
 
   The presets are the loaded list seen through the Active Preset core
-  option, which selects entries 1 to 100 by index; a list longer than that
+  option, which selects entries 1 to 100 by index, and a list longer than that
   is still walked with up and down on the pad. retro_load_game accepts a
   null game, but retro_set_environment only sets the pixel format and the
   variables and never announces SET_SUPPORT_NO_GAME, so the frontend still
@@ -73,7 +73,7 @@ files:
       Opened from the system directory, then from the save directory, then
       from the working directory, each only while no station has been
       loaded yet. Parsed like a content playlist and accepted once one entry
-      comes out of it; a missing or empty file hands over to the
+      comes out of it. A missing or empty file hands over to the
       radio-browser.info API and then to the eight built-in SomaFM streams.
       A file put here replaces those two fallbacks for every start without
       content.

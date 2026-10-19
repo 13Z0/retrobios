@@ -1,7 +1,7 @@
 # Tools
 
-All tools are Python scripts in `scripts/`. They need Python 3.12 and `pyyaml`;
-only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`
+All tools are Python scripts in `scripts/`. They need Python 3.12 and `pyyaml`,
+and only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`
 alone runs on Python 3.8.
 
 ## Pipeline
@@ -54,9 +54,9 @@ Pipeline flags:
 | `--skip-docs` | skip steps 7 and 8 |
 | `--include-archived` | include archived platforms in verify, packs, truth and export |
 | `--target TARGET` | filter verify, packs and truth by hardware target |
-| `--source {platform,truth,full}` | pack file source, passed through to `generate_pack.py`; refused with `--skip-packs` |
-| `--all-variants` | build the 6 source x required combinations; refused with `--skip-packs` and with `--source` |
-| `--check-buildbot` | run step 2b; additive, and ignored under `--offline` |
+| `--source {platform,truth,full}` | pack file source, passed through to `generate_pack.py`. Refused with `--skip-packs` |
+| `--all-variants` | build the 6 source x required combinations. Refused with `--skip-packs` and with `--source` |
+| `--check-buildbot` | run step 2b. Additive, and ignored under `--offline` |
 | `--with-truth` | run steps 2c and 2d |
 | `--with-export` | run steps 2c, 2d and 2e |
 | `--output-dir DIR` | pack output directory (default `dist/`) |
@@ -165,7 +165,7 @@ python scripts/generate_pack.py --all --verify-packs --output-dir dist/  # extra
 
 # Data refresh
 python scripts/generate_pack.py --all --refresh-data  # force re-download data dirs
-python scripts/generate_pack.py --all --offline       # cache-only; never open the network
+python scripts/generate_pack.py --all --offline       # cache-only, never open the network
 
 # Install manifests (consumed by install.py)
 python scripts/generate_pack.py --all --manifest --output-dir install/
@@ -254,7 +254,7 @@ of patching the previous one.
 
 A branch URL keeps its name while its content moves, and no URL comparison
 can see that. `--refresh-cache` downloads every file again and writes no
-export; it is what follows a rescrape, so the original and the platform
+export. It is what follows a rescrape, so the original and the platform
 YAML describe the same moment.
 
 ```bash
@@ -353,7 +353,7 @@ Selection narrows `--all` before any request is spent: `--system sega-saturn`,
 and `--limit 20`. Output takes `--markdown` (a report written under
 `--report-dir`, `reports/` by default), and `--full-diff` takes `--ref PATH`
 to show one cited file and `--context N` lines around each hunk. `--strict`
-exits 1 when a profile has refs to review; CI runs it on every profile a change
+exits 1 when a profile has refs to review, and CI runs it on every profile a change
 adds. `--offline` answers from `--cache-dir` alone.
 
 ```bash
@@ -371,7 +371,7 @@ not declare, so no revision can confirm it), `UNCHECKED` (a pin equal to
 HEAD is judged on self-consistency, and an entry with neither a hash nor
 a name gives that check nothing to look for). An entry carries the worst
 status of its parts. Only `CHANGED`, `GONE` and `AMBIGUOUS` count as
-needing a re-read; a zero next to a row of `unchecked` is not a proof.
+needing a re-read. A zero next to a row of `unchecked` is not a proof.
 
 A single cited line is often not distinctive, so the anchor widens by
 steps of ±3, ±6, ±12, ±25 and ±50 lines until it is unique. Three further
@@ -403,7 +403,7 @@ python scripts/profile_sync.py --all --rebase-refs --bump-commit
 ```
 
 Asking for both makes the pass atomic. The work happens on a copy, and the
-copy is promoted only when the pin follows the refs; a profile whose refs
+copy is promoted only when the pin follows the refs. A profile whose refs
 describe one revision while its pin names another is the state the
 all-or-nothing rule exists to prevent, and recaling alone produces it. What
 holds a pin back is an annotated ref, one under a mode key, or a prose run the
@@ -414,7 +414,7 @@ The first prints the plan and changes nothing: `would recale` per ref and
 `would set source_commit` (and `upstream_commit`, when that one moves too)
 per pin the write changes. It reaches that plan by running the
 real write path over a throwaway copy, so the planned bump reads the text
-the recale would have left rather than the one on disk; a pin held back by
+the recale would have left rather than the one on disk, and a pin held back by
 prose that the same pass would have moved is not reported as blocked. Drop
 `--dry-run` and the same pass writes, recale before bump on each profile.
 
@@ -475,8 +475,8 @@ and every write is verified by reparsing the document.
 
 Uses `GITHUB_TOKEN` when set, which `--all` requires. Responses are cached
 under `.cache/upstream/`, addressed by commit sha, so `--offline` replays a
-previous run. GitHub, GitLab and Forgejo upstreams; other hosts are
-reported as skipped.
+previous run. GitHub, GitLab and Forgejo upstreams are supported, other
+hosts are reported as skipped.
 
 The forge side lives in `upstream.py`: it resolves a revision, fetches a
 file at a given sha, and compares trees, for the forge families the
@@ -563,9 +563,9 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | Script | Purpose |
 |--------|---------|
 | `common.py` | Shared library: hash computation, file resolution, platform config loading, emulator profiles, target filtering |
-| `dedup.py` | Deduplicate `bios/` (`--dry-run`, `--bios-dir`): byte-identical copies are deleted and one kept; identical MAME sets under other names stay one file, named in `_mame_clones.json`. Trees addressed by path are left alone (`NODEDUP_DIRS`): BBK, C-Dogs SDL, Ikemen GO, PinMAME, RPG Maker, ScummVM, Softdisk, TheXTech, Theme Hospital, c64-emu, tzdata |
+| `dedup.py` | Deduplicate `bios/` (`--dry-run`, `--bios-dir`): byte-identical copies are deleted and one kept. Identical MAME sets under other names stay one file, named in `_mame_clones.json`. Trees addressed by path are left alone (`NODEDUP_DIRS`): BBK, C-Dogs SDL, Ikemen GO, PinMAME, RPG Maker, ScummVM, Softdisk, TheXTech, Theme Hospital, c64-emu, tzdata |
 | `identity.py` | One content filed under two identities: groups `bios/` by content and reports a group that crosses manufacturers outside `KNOWN_SHARED` (`--strict` exits 1, pipeline step 3a) |
-| `slots.py` | Destinations the platform and a core both claim, and how the pack settles each (`--platform`, `--include-archived`, `--target`, `--json`, `--strict`; pipeline step 3b passes the run's own `--include-archived` and `--target`) |
+| `slots.py` | Destinations the platform and a core both claim, and how the pack settles each (`--platform`, `--include-archived`, `--target`, `--json`, `--strict`, and pipeline step 3b passes the run's own `--include-archived` and `--target`) |
 | `region_audit.py` | Confront every profile `region:` with the regions No-Intro names for the same dump (`--json`, `--db`, `--emulators-dir`). An opinion, never an authority: the code decides, and a disagreement is a line to read in the emulator's source |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
@@ -580,7 +580,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `generate_site.py` | Generate all MkDocs site pages (this documentation) |
 | `validate_site.py` | Validate rendered metadata, headings, image alternatives, JSON-LD, local resources, links and fragments |
 | `romset_recipes.py` | Identify which emulator version an arcade archive matches, and rebuild a pinned archive from ROMs already held |
-| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`; `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha |
+| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha |
 | `deterministic_zip.py` | Rebuild MAME BIOS ZIPs deterministically (same ROMs = same hash) |
 | `torrentzip.py` | Build TorrentZip archives for MAME/FBNeo ROM sets (archive bytes depend only on contents) |
 | `crypto_verify.py` | 3DS RSA signature and AES crypto verification |
@@ -594,12 +594,12 @@ Further options, by script:
 
 | Script | Options |
 |--------|---------|
-| `auto_fetch.py` | `--create-issues` prints a GitHub issue body per file still missing; it posts nothing |
+| `auto_fetch.py` | `--create-issues` prints a GitHub issue body per file still missing. It posts nothing |
 | `check_buildbot_system.py` | `--update` refreshes the entries found stale, `--json`, `--registry` |
 | `check_freshness.py` | `--cache-dir`, `--native-cache-dir` (originals of the native export) and `--truth-dir` move the caches it reads |
 | `check_release.py` | `--tag`, `--sums dist/SHA256SUMS.txt`, `--record` (default `release.json`), `--json` |
 | `check_release_assets.py` | `--gitignore` (the asset registry), `--db`, `--notes FILE`, `--json` |
-| `diff_truth.py` | `--format markdown` (or `--markdown`), `--json`, one of them; `--truth-dir`, `--target` |
+| `diff_truth.py` | `--format markdown` (or `--markdown`), `--json` (one of them), `--truth-dir`, `--target` |
 | `download.py` | `--list`, `--info <platform>` shows a pack's file name, size and parts without downloading |
 | `export_native.py` | `--truth-dir`, `--upstream-dir` (where the platforms' own files are cached) |
 | `find_pinned_revision.py` | `--repo URL --path FILE --md5 HASH`, `--write PATH`, `--cache-dir` |
@@ -607,12 +607,12 @@ Further options, by script:
 | `generate_site.py` | `--docs-dir` (output, `docs/` by default) |
 | `mame_ref_audit.py` | `--write` points each stale ref at the line declaring its set, `--offline`, `--cache-dir` |
 | `migrate.py` | `--dry-run`, `--include-branches` also reads BIOS files from every remote branch |
-| `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`; the pipeline writes `derivable.json`) |
+| `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
 | `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
 | `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
 | `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |
 | `romset_recipes.py` | `--dat-recipes PATH`, a snapshot or a directory of them (default `recipes/`) |
-| `split_pack.py` | `--max-size 1900M`, the ceiling per part (K, M, G; default 2G) |
+| `split_pack.py` | `--max-size 1900M`, the ceiling per part (K, M, G, default 2G) |
 | `torrentzip.py` | `--check ZIP` reports conformance, `--rebuild ZIP -o OUT` normalizes an archive |
 | `validate_pr.py` | `--changed` takes the BIOS files the branch changes, `--markdown`, `--json` |
 | `validate_site.py` | `--site-dir` (rendered site), `--config` (mkdocs.yml), `--max-errors N` |
@@ -641,18 +641,18 @@ SHA-256 and SHA-1, and replaces each destination atomically. Both
 one-liners, shell and PowerShell, verify the downloaded Python installer against the SHA-256
 embedded in their bootstrap before running it. Copies into standalone-emulator
 directories are opt-in through `--standalone-copies`. Manifest entries with no
-available payload are reported as safely omitted; they are never replaced by a
+available payload are reported as safely omitted, and they are never replaced by a
 same-named file.
 
 `scripts/download.sh` remains available for downloading a prebuilt platform
-ZIP when a manually reviewed pack release contains it; it is separate from the
+ZIP when a manually reviewed pack release contains it. It is separate from the
 per-file automatic installer above. A pack over 2 GB is published in several
 parts: both downloaders group them under one platform name, download each
 one and check it against the release's `SHA256SUMS.txt`. Parts that are each
-a ZIP are extracted one after the other; the `.zip.001` slices of releases up
+a ZIP are extracted one after the other, and the `.zip.001` slices of releases up
 to v2026.09.04 are joined first.
 That list carries a detached signature, `SHA256SUMS.txt.sig`, verifiable
-against `allowed_signers` at the repository root; the
+against `allowed_signers` at the repository root, and the
 [release process](release-process.md#verifying-a-release) gives the commands.
 Volumes are staged inside the destination directory rather than the system
 temp directory, which is a RAM disk on Batocera, ROCKNIX and RetroDECK.
@@ -704,7 +704,7 @@ collection does not have, and tries every recipe whose ROMs are present.
 
 Reconstruction only works when the pinned archive is itself TorrentZip. An
 archive whose bytes carry metadata unrelated to its contents cannot be derived
-from ROMs by anyone; those are reported as unreproducible rather than guessed
+from ROMs by anyone, so those are reported as unreproducible rather than guessed
 at. Writing is explicit: the pipeline only ever reports.
 
 ## Large files
@@ -719,7 +719,7 @@ using `fetch_large_file()` from `common.py`. The same function is used by
 
 Located in `scripts/scraper/`. Each platform scraper inherits `BaseScraper` and
 implements its two abstract methods, `fetch_requirements()` and
-`validate_format()`; the MAME and FBNeo hash scrapers read a source tree and
+`validate_format()`. The MAME and FBNeo hash scrapers read a source tree and
 stand alone.
 
 | Scraper | Source | Format |
@@ -736,7 +736,7 @@ stand alone.
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
 | `bizhawk_scraper` | FirmwareDatabase.cs | C# source |
-| `mame_hash_scraper` | mamedev/mame source tree; `--release mameNNNN` writes the profile of one release a platform builds | C source (sparse clone) |
+| `mame_hash_scraper` | mamedev/mame source tree. `--release mameNNNN` writes the profile of one release a platform builds | C source (sparse clone) |
 | `fbneo_hash_scraper` | FBNeo source tree | C source (sparse clone) |
 
 Internal modules: `base_scraper.py` (abstract base with `_fetch_raw()` caching
@@ -754,8 +754,8 @@ Adding a scraper: inherit `BaseScraper`, implement `fetch_requirements()` and
 ## Dump-catalog provenance
 
 Snapshots of the preservation catalogs are committed to `provenance/` and
-refreshed manually. `generate_db.py` joins them into `database.json`;
-`provenance_report.py` reports the gaps.
+refreshed manually. `generate_db.py` joins them into `database.json`,
+and `provenance_report.py` reports the gaps.
 
 ```bash
 python -m scripts.scraper.redump_dat_scraper --dry-run
@@ -780,7 +780,7 @@ by pipeline step 1b.
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|
 | Redump | direct fetch from redump.info `/static/bios` | 4 BIOS DATs. redump.org serves stale DATs |
-| No-Intro | local pack, imported with `dat_pack_importer` | Dat-o-Matic blocks automation; the `hugo19941994/auto-datfile-generator` mirror rebuilds daily |
+| No-Intro | local pack, imported with `dat_pack_importer` | Dat-o-Matic blocks automation, and the `hugo19941994/auto-datfile-generator` mirror rebuilds daily |
 | TOSEC | local pack, imported with `dat_pack_importer` | annual pack from tosecdev.org, 138 Firmware DATs |
 
 The join is by SHA1, then by MD5 + size. A match sets the `provenance` field

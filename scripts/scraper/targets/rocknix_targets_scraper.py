@@ -91,7 +91,7 @@ def core_names(libretro: list[str], standalone: list[str]) -> list[str]:
     """Package names as the profiles' cores: lists spell them.
 
     A libretro package is the core's name with `-lr` (`beetle-psx-lr`,
-    `neocd_lr`), spelled with underscores as the buildbot names it; a
+    `neocd_lr`), spelled with underscores as the buildbot names it, and a
     standalone package drops its `-sa` (`duckstation-sa`, `hatarisa`).
     """
     names = {re.sub(r"[-_]lr$", "", package).replace("-", "_") for package in libretro}
@@ -101,7 +101,7 @@ def core_names(libretro: list[str], standalone: list[str]) -> list[str]:
 
 # A package that builds nothing itself and pulls other cores in. idtech-lr
 # installs ecwolf, prboom, tyrquake and vitaquake2 (vitaquake3 and boom3 on
-# x86_64); no profile could name it.
+# x86_64). No profile could name it.
 METAPACKAGES = {"idtech-lr": "projects/ROCKNIX/packages/emulators/libretro/idtech-lr/package.mk"}
 _IF_RE = re.compile(r'^if \[ "\$\{(\w+)\}" = "?([\w-]+)"? \]; then\n(.*?)^fi$',
                     re.MULTILINE | re.DOTALL)
@@ -111,7 +111,7 @@ def metapackage_cores(package_mk: str, arch: str) -> list[str]:
     """The -lr packages a metapackage depends on for one architecture.
 
     OPENGLES_SUPPORT is yes on every ROCKNIX device (config/graphic, from
-    OPENGLES="mesa" in projects/ROCKNIX/options); TARGET_ARCH is the device's.
+    OPENGLES="mesa" in projects/ROCKNIX/options), and TARGET_ARCH is the device's.
     """
     found: list[str] = []
     for variable, value, body in _IF_RE.findall(package_mk):

@@ -11,7 +11,7 @@ systems: [smbx]
 
 notes: |
   C++ reimplementation of the SMBX 1.3 engine. The engine itself ships
-  no game assets; asset packs are searched at startup under every root
+  no game assets. Asset packs are searched at startup under every root
   of AppPathManager::assetsSearchPath(): the root itself (legacy
   layout), then each directory or archive of its assets/ folder.
   ref: src/main/asset_pack.cpp:249-378 (s_find_asset_packs),
@@ -23,7 +23,7 @@ notes: |
                    matching the running target, pack-id)
     gameinfo.ini   directory pack ([game] id, menu images under
                    [android])
-  A pack under assets/ is ignored when no id could be read; the legacy
+  A pack under assets/ is ignored when no id could be read, while the legacy
   root pack needs none.
   ref: src/main/asset_pack.cpp:125-207, 334-339
 
@@ -39,12 +39,12 @@ notes: |
   TheXTech is content-agnostic. The reference packs that TheXTech
   releases alongside the engine are the SMBX 1.3 asset pack
   (`thextech-assets-smbx13`) and the free Adventures of Demo pack
-  (`thextech-assets-adventures-of-demo`); any pack that satisfies the
+  (`thextech-assets-adventures-of-demo`). Any pack that satisfies the
   structure above runs.
 
   Paths below are written from a search root. TheXTech/ is the name the
   build gives its user directory (THEXTECH_DIRECTORY_PREFIX) and its
-  system directory; the application directory is searched the same way.
+  system directory, and the application directory is searched the same way.
   ref: CMakeLists.txt:297, lib/AppPath/private/app_path_unix.cpp:46, 103,
        lib/AppPath/private/app_path.cpp:87
 
@@ -59,7 +59,7 @@ files:
     path: "TheXTech/assets/"
     required: false
     source_ref: "src/main/asset_pack.cpp:131-181, 290-300, 313-319"
-    note: "Every file directly under assets/ is opened as an archive and kept as a pack when it holds _meta.ini; every subdirectory is kept when it holds graphics/ui/. _meta.ini is read only through the archive prefix: [content] engine must be TheXTech, platform must match the build, pack-id names the pack."
+    note: "Every file directly under assets/ is opened as an archive and kept as a pack when it holds _meta.ini, and every subdirectory is kept when it holds graphics/ui/. _meta.ini is read only through the archive prefix: [content] engine must be TheXTech, platform must match the build, pack-id names the pack."
 
   - name: "gameinfo.ini"
     category: game_data
@@ -91,7 +91,7 @@ files:
     path: "TheXTech/graphics/ui/MenuGFX2.png"
     required: true
     source_ref: "src/main/asset_pack.cpp:116, 226-230, 334-335, src/gfx.cpp:201"
-    note: "Main menu logo. Pack ignored if no logo loads; GFX_t::load requires it as well."
+    note: "Main menu logo. Pack ignored if no logo loads, and GFX_t::load requires it as well."
 
   - name: "background2-2.png"
     category: game_data
@@ -102,7 +102,7 @@ files:
 
   # ================================================================
   # Core content (engine iterates on disk, filenames are the pack's
-  # own; the directory contract is what the engine checks)
+  # own, the directory contract is what the engine checks)
   # ================================================================
 
   - name: "graphics/"
@@ -111,7 +111,7 @@ files:
     path: "TheXTech/graphics/"
     required: true
     source_ref: "src/main/asset_pack.cpp:274, 326-327, src/gfx.cpp:121-229, src/load_gfx.cpp:120-123"
-    note: "graphics/ui/ must exist for a directory to be scanned as a pack; GFX_t::load rejects the pack when a required UI image is missing."
+    note: "graphics/ui/ must exist for a directory to be scanned as a pack, and GFX_t::load rejects the pack when a required UI image is missing."
 
   - name: "fonts/"
     type: directory
@@ -172,7 +172,7 @@ files:
     aliases: ["intro.lvl"]
     required: true
     source_ref: "src/game_main.cpp:172-185, 224-250, 1095-1106"
-    note: "Level shown behind the main menu. intro.lvl is opened when intro.lvlx is absent, and a level picked from introset/ takes the place of both; with none of the three the game exits on a fatal error."
+    note: "Level shown behind the main menu. intro.lvl is opened when intro.lvlx is absent, and a level picked from introset/ takes the place of both. With none of the three the game exits on a fatal error."
 
   - name: "introset/"
     type: directory
@@ -180,7 +180,7 @@ files:
     path: "TheXTech/introset/"
     required: false
     source_ref: "src/game_main.cpp:194-222, 247, src/main/level_file.cpp:321-339"
-    note: "Directory of .lvl/.lvlx intro levels; one is picked at random when present, otherwise the root intro level is opened. The Adventures of Demo pack carries none; these 19 levels come from the introset/ of the Nostalgic Paradise pack (Blue Edition 0.2.8b, nostalgic-paradise-stable.7z). A level reads custom graphics from introset/ and from the subfolder named after it (07/, 08/, 10/); every other block, BGO, NPC and background ID they use is present in the Adventures of Demo graphics."
+    note: "Directory of .lvl/.lvlx intro levels. One is picked at random when present, otherwise the root intro level is opened. The Adventures of Demo pack carries none, and these 19 levels come from the introset/ of the Nostalgic Paradise pack (Blue Edition 0.2.8b, nostalgic-paradise-stable.7z). A level reads custom graphics from introset/ and from the subfolder named after it (07/, 08/, 10/), and every other block, BGO, NPC and background ID they use is present in the Adventures of Demo graphics."
 
   - name: "outro.lvlx"
     category: game_data

@@ -17,15 +17,15 @@ notes: |
   V.Smile emulator for Android, package com.dsmile.emulator, built on an SPG200
   (unSP) core of its own. Frontends launch the exported EmuActivity either with
   ACTION_VIEW and a content or file Uri, or with the LAUNCH_GAME action and a
-  rom, ROM, path or uri string extra carrying a path; ES-DE uses the first form.
+  rom, ROM, path or uri string extra carrying a path. ES-DE uses the first form.
   ref: AndroidManifest.xml:34-51, EmuActivity.kt:123-145,
        docs/iisu-integration.md:42-51
 
   The machine never boots from the system ROM. UnSP::Reset takes the program
   counter from 0xFFF7, and the FIQ, IRQ n and BREAK vectors are read from
-  0xFFF6, 0xFFF8+n and 0xFFF5; all four sit in bank 0, which ExtRead answers
+  0xFFF6, 0xFFF8+n and 0xFFF5. All four sit in bank 0, which ExtRead answers
   from the cartridge under every decode mode. The system ROM sits on bank 3 and
-  is reachable only once cartridge code selects decode mode 2 or 3;
+  is reachable only once cartridge code selects decode mode 2 or 3.
   extmem_ctrl_ resets to 0x0028, which is decode 0, so nothing but the
   cartridge is mapped at power on.
   ref: unsp.cpp:49,67,77,253, spg200.cpp:188-209, spg200.cpp:37
@@ -53,7 +53,7 @@ notes: |
 
   Region is a jumper, never a file. Port C carries the region code in its low
   nibble and the intro jumper in bit 4. The code is fixed at 0xF and SetRegion
-  has no caller, so one image serves every session; the jumper is exposed only
+  has no caller, so one image serves every session, and the jumper is exposed only
   as the Game intros setting, passed through nativeInit.
   ref: vsmile.cpp:365-369, vsmile.h:76, vsmile.h:77, vsmile.h:116,
        jni_bridge.cpp:39, MainActivity.kt:309,320

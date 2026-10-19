@@ -38,7 +38,7 @@ notes: |
   (icarus/heuristics/super-famicom.cpp:707-759) and write a manifest naming
   each firmware file with its size
   (icarus/heuristics/super-famicom.cpp:482-545). DSP1 games are given the
-  DSP1B names; dsp1.program.rom and dsp1.data.rom are named for the Campus
+  DSP1B names, while dsp1.program.rom and dsp1.data.rom are named for the Campus
   Challenge '92 and Powerfest '94 cartridges
   (icarus/heuristics/super-famicom.cpp:623-640,
   icarus/heuristics/super-famicom.cpp:416-417,
@@ -49,7 +49,7 @@ notes: |
   and imports again (higan/target-libretro/libretro.cpp:105-141).
   locate_libretro tries the system directory, then higan/ under the user's
   config and data directories (higan/target-libretro/libretro.cpp:15-35). No
-  hash is checked; the sizes below are those the manifest declares, and a
+  hash is checked. The sizes below are those the manifest declares, and a
   shorter file leaves the second import short and the load fails.
 
   The icarus database is read from Database/ next to the frontend
@@ -88,14 +88,14 @@ files:
     system: nintendo-snes
     size: 6144
     required: false
-    note: "Named for the Campus Challenge '92 and Powerfest '94 cartridges and by the icarus database; other DSP1 games use dsp1b.program.rom."
+    note: "Named for the Campus Challenge '92 and Powerfest '94 cartridges and by the icarus database. Other DSP1 games use dsp1b.program.rom."
     source_ref: "higan/sfc/cartridge/load.cpp:227-257, icarus/heuristics/super-famicom.cpp:416, icarus/heuristics/super-famicom.cpp:437"
 
   - name: "dsp1.data.rom"
     system: nintendo-snes
     size: 2048
     required: false
-    note: "Named for the Campus Challenge '92 and Powerfest '94 cartridges and by the icarus database; other DSP1 games use dsp1b.data.rom."
+    note: "Named for the Campus Challenge '92 and Powerfest '94 cartridges and by the icarus database. Other DSP1 games use dsp1b.data.rom."
     source_ref: "higan/sfc/cartridge/load.cpp:227-257, icarus/heuristics/super-famicom.cpp:417, icarus/heuristics/super-famicom.cpp:438"
 
   - name: "dsp1b.program.rom"

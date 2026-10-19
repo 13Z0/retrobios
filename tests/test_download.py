@@ -219,7 +219,7 @@ class TestPackGrouping(unittest.TestCase):
         self.assertIsNone(download.find_pack(_release(RELEASE_ASSETS), "nintendo"))
 
     def test_find_pack_resolves_a_platform_id_that_drops_separators(self):
-        # The platform is `misterfpga` everywhere else; the asset is MiSTer_FPGA.
+        # The platform is `misterfpga` everywhere else, but the asset is MiSTer_FPGA.
         pack = download.find_pack(
             _release(RELEASE_ASSETS + ["MiSTer_FPGA_2026-08-29_BIOS_Pack.zip"]),
             "misterfpga",

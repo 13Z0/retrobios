@@ -436,7 +436,7 @@ class TestCache(unittest.TestCase):
 class TestCacheCollision(unittest.TestCase):
     def test_a_file_where_a_directory_is_needed_skips_the_write(self):
         # A profile citing both a directory and files inside it caches the
-        # directory as a file first; that must not break the files.
+        # directory as a file first, and that must not break the files.
         with tempfile.TemporaryDirectory() as root:
             base = Path(root)
             (base / "C64DTV").write_text("", encoding="utf-8")
@@ -689,7 +689,7 @@ class TestCompare(unittest.TestCase):
 
     def test_a_missing_tag_is_asked_again_once_stale(self):
         """A profile written on release day asked for v2.0 before it was
-        pushed; the 404 was cached for good and the profile was never seen
+        pushed. The 404 was cached for good and the profile was never seen
         as frozen on its tag."""
         import os as _os
 

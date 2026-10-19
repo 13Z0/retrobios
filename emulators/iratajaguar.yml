@@ -16,7 +16,7 @@ mode: standalone
 notes: |
   Atari Jaguar emulator for Android, the Android build of Maxim Grishin's Phoenix
   Emu Project. The native library is libphoenixcore.so and reports
-  PhoenixEmuProject core 2.8.21; the same core carries the author's desktop builds
+  PhoenixEmuProject core 2.8.21. The same core carries the author's desktop builds
   and his three other Android emulators, Real3DOPlayer, NumPadPlayer and
   GearMasterPlayer. The build read here is the free package the author publishes
   himself, IrataJaguar_free_1.0.7.zip holding app-release.apk md5
@@ -26,7 +26,7 @@ notes: |
   f268dda6844e4f6013731f7ec7adbbb89a22cf06c9753e85c184b889dc81a758. No source has
   been published. The Android slices are stripped, so the readings below were
   taken against the desktop 2.8.JAG build from the same site, which keeps its
-  symbol table, and each was confirmed against the Android x86_64 slice; the
+  symbol table, and each was confirmed against the Android x86_64 slice. The
   arm64-v8a, armeabi-v7a and x86 slices carry the same signature bytes at 0x9f7e8,
   0x83988 and 0xba848.
   ref: app-release.apk META-INF/CERT.RSA, AndroidManifest.xml,
@@ -39,7 +39,7 @@ notes: |
   rom, jag, cof and j64 and hands every candidate to the library, which caches what
   it found in configs.xml under the private storage path as Library/CARTRIDGE and
   Library/BIOS entries carrying path, size, fast-md5, md5 and sh1. Those hashes are
-  the cache key; nothing compares them against a known value. nameOfBios returns
+  the cache key, and nothing compares them against a known value. nameOfBios returns
   the single BIOS the library holds and the game list shows it as its first row,
   shifting the game indices by one.
   ref: MainActivity.java:257-273, 382-392, 447, 517, 99-100, 557-561,
@@ -94,7 +94,7 @@ files:
     required: true
     validation: [signature]
     description: "Atari Jaguar boot ROM"
-    note: "The emulator spells no filename for it. Any file the directory scan reaches whose first twelve bytes are 00 00 00 00 00 E0 00 08 41 F9 00 F0 is taken as the BIOS, so more than one boot ROM revision answers; the name carried here is the catalogue name of the retail dump, crc32 FB731AAA, under the extension the BIOS data element declares. Read into a 1 MB window at 0xE00000 and byte swapped, and its first eight bytes are copied over DRAM 0 to give the 68000 its reset vector. A longer file is read up to that bound rather than rejected."
+    note: "The emulator spells no filename for it. Any file the directory scan reaches whose first twelve bytes are 00 00 00 00 00 E0 00 08 41 F9 00 F0 is taken as the BIOS, so more than one boot ROM revision answers. The name carried here is the catalogue name of the retail dump, crc32 FB731AAA, under the extension the BIOS data element declares. Read into a 1 MB window at 0xE00000 and byte swapped, and its first eight bytes are copied over DRAM 0 to give the 68000 its reset vector. A longer file is read up to that bound rather than rejected."
     source_ref: "dumpAdapterJaguarROM::dumpAdapterJaguarROM 0x8d3c20 (memcmp 0x8d4259-0x8d426f), bios_sign 0x99d7a0, platformJaguar::getConfig 0x8ce197-0x8ce209, platformJaguar::platformJaguar 0x8d0bc7-0x8d0c2e"
 
 exclusion_note: >

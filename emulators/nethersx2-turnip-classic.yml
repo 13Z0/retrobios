@@ -6,7 +6,7 @@ source: "https://github.com/nckstwrt/NetherSX2-Turnip"
 upstream: "https://github.com/Trixarian/AetherSX2"
 author: "nckstwrt"
 profiled_date: "2026-08-12"
-pin_frozen: "the classic build is this revision. v0.7 ships a newer shim, and its rules are described in the notes; recaling would repoint these refs at code this build never had."
+pin_frozen: "the classic build is this revision. v0.7 ships a newer shim, and its rules are described in the notes. Recaling would repoint these refs at code this build never had."
 source_commit: "8e17e584884e19b0a912f1988730d576d6d5aa84"
 upstream_commit: "1d1f795dfc70e38da67724c7298779260f513889"
 core_version: "2.2n-3668-Turnip-v0.7"
@@ -33,7 +33,7 @@ notes: |
        nethersx2-turnip-classic v0.7 libemucore.so 0xcdcba
 
   The package pairs two revisions of the project. libemucore.so is the blob the
-  v0.7 commit carries, byte for byte; libvulkad.so is the one committed for
+  v0.7 commit carries, byte for byte, and libvulkad.so is the one committed for
   v0.6 and reports its own build date. libhook_impl.so, libmain_hook.so and the
   six packed drivers are the same at both revisions. The shim rules described
   here are therefore those of the older revision, which this profile pins:
@@ -79,7 +79,7 @@ notes: |
 
   Detection is by content. The scan lists the BIOS folder with a * mask, keeps
   files between 4194304 and 8388608 bytes, and accepts an image whose romdir
-  carries a RESET entry followed by a readable ROMVER; the fifth ROMVER
+  carries a RESET entry followed by a readable ROMVER. The fifth ROMVER
   character gives the zone, A for USA, C for China, E for Europe, H for Asia,
   J for Japan, P for Free, T for T10K and X for Test, any other character
   standing for itself. The sixth character is read only to pick the word
@@ -116,7 +116,7 @@ notes: |
   sets. A compiled-in image stands in for the first and a card filled with 0xFF
   for the second. DEV9hdd.raw is the default name of the empty disk image its
   settings page writes. An IRX named in the configuration is read into the ROM
-  region at 0x3C0000 at boot; the field is empty by default and names no file of
+  region at 0x3C0000 at boot. The field is empty by default and names no file of
   its own.
   ref: aethersx2/pcsx2/DEV9/DEV9.cpp:73, aethersx2/pcsx2/DEV9/DEV9.cpp:145-160,
        aethersx2/pcsx2/DEV9/flash.cpp:76-103,
@@ -171,7 +171,7 @@ files:
     description: "PS2 BIOS image"
     note: >-
       Any image whose romdir holds RESET and a readable ROMVER is accepted,
-      whatever its name. The 4 to 8 MB range gates the folder scan; an image
+      whatever its name. The 4 to 8 MB range gates the folder scan, and an image
       named in the configuration skips both that range and the romdir test.
     source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, nethersx2-turnip-classic v0.7 libemucore.so 0x81bc00-0x81bc24 (size window), nethersx2-turnip-classic v0.7 libemucore.so 0x81c1c0 (acceptance flag set outright)"
 
@@ -311,7 +311,7 @@ files:
     description: "Turnip driver, default branch"
     note: >-
       Chosen when no other branch matches. Loaded by name from the library
-      directory through the hook; a load failure falls back to the vendor
+      directory through the hook. A load failure falls back to the vendor
       driver.
     source_ref: "VulkanShim2/vulkan_shim.cpp:1011, VulkanShim2/vulkan_shim.cpp:1079-1080, VulkanShim2/hook_impl.cpp:127-135"
 
@@ -799,22 +799,22 @@ exclusion_note: >
   Left out are the libraries the package carries for the dynamic linker rather
   than for its own code. libc.so, libm.so, libdl.so, ld-android.so, liblog.so
   and libc++_shared.so sit beside the drivers so the namespace built over that
-  directory can satisfy their DT_NEEDED, and no code path names any of them;
+  directory can satisfy their DT_NEEDED, and no code path names any of them.
   android_linker_ns.o is a relocatable object nothing can open. libc++.so and
   libsync.so are named in the fallback and promote arrays but the package
   carries neither, and the promote call passes RTLD_NOLOAD, which never reads
   from disk. libfile_redirect_hook.so and libgsl_alloc_hook.so are reachable
   only under feature flags the shim never sets, the only flag passed being the
   custom driver one. The system Vulkan loader and libandroid.so come from the
-  platform. Also left out are the assets no code path on this platform opens:
-  game_controller_db.txt, whose name appears in neither the library nor the dex,
-  pad input arriving through handleControllerButtonEvent and
-  handleControllerAxisEvent; the seven Direct3D shader sources under
-  shaders/dx11; icons/AppIconLarge.png and cover-placeholder.png;
-  fonts/Roboto-Regular-copyright and sounds/achievements/README.txt, which are
-  licence and credit texts; and dexopt/baseline.prof and baseline.profm, which
-  the Android runtime consumes. Everything the emulator produces for itself
-  under the data directory is out as well: memory cards as Mcd<nnn>.ps2 and
+  platform. Also left out are the assets no code path on this platform opens.
+  game_controller_db.txt is named in neither the library nor the dex, pad input
+  arriving through handleControllerButtonEvent and handleControllerAxisEvent.
+  The others are the seven Direct3D shader sources under shaders/dx11,
+  icons/AppIconLarge.png and cover-placeholder.png, the licence and credit texts
+  fonts/Roboto-Regular-copyright and sounds/achievements/README.txt, and
+  dexopt/baseline.prof and baseline.profm, which the Android runtime consumes.
+  Everything the emulator produces for itself under the data directory is out
+  as well: memory cards as Mcd<nnn>.ps2 and
   Mcd-Multitap<n>-Slot<nn>.ps2, DEV9hdd.raw for the internal disk, save states,
   screenshots, covers, texture dumps, playtime.dat, emulog.txt, imgui.ini,
   per-game settings, input profiles, the gamedb and gl_programs caches, and

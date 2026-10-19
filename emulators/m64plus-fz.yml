@@ -27,7 +27,7 @@ notes: |
   (AppData.java:334-337,
   DataPrefsActivity.java:173-182, GamePrefsActivity.java:288-296), so the three
   packages want the same files. The repository default branch is a 2017 snapshot
-  of the parent project; the application is built from fz-master, which carries
+  of the parent project, while the application is built from fz-master, which carries
   mupen64plus-core, the hle, cxd4 and parallel RSP plugins, the GLideN64,
   glide64mk2, gln64, rice, angrylion-plus and parallel video plugins, its own
   audio, touchscreen and raphnet input plugins, and a miniupnp bridge for
@@ -53,7 +53,7 @@ notes: |
   image sits in the slot is the one loaded. A disk is recognised only when its
   system data header matches and carries one of three region words, 0xe848d316
   for Japan, 0x2263ee56 for the United States and 0x00000000 for development
-  (RomHeader.java:180-212); the word sets a country code used for the ROM
+  (RomHeader.java:180-212). The word sets a country code used for the ROM
   database and cheat lookup, never for picking the IPL. Launching a bare disk
   with the global slot empty stops before the core starts
   (CoreService.java:621-623), and since disk only games still need a cartridge
@@ -76,10 +76,10 @@ notes: |
   the gallery (SplashActivity.java:447, ScanRomsFragment.java:195,
   GamePrefsActivity.java:244). mupencheat.default is copied over
   Profiles/customCheats.txt into mupencheat.txt and parsed in Java
-  (SplashActivity.java:443, CheatUtils.java:88-93, GamePrefsActivity.java:618);
-  the core's own cheat.c opens no file. font.ttf is reached by GLideN64 only
+  (SplashActivity.java:443, CheatUtils.java:88-93, GamePrefsActivity.java:618),
+  while the core's own cheat.c opens no file. font.ttf is reached by GLideN64 only
   after /system/fonts/DroidSans.ttf fails, which it does on current Android
-  (TextDrawer.cpp:201-233,235-241, NativeConfigFiles.java:292); the core's OSD,
+  (TextDrawer.cpp:201-233,235-241, NativeConfigFiles.java:292). The core's OSD,
   the other upstream reader of that name, is absent from the Android source list
   (mupen64plus-core.mk:24-101). RiceVideoLinux.ini holds rice's per ROM settings
   (rice Config.cpp:38,933-951), Glide64mk2.ini glide64mk2's
@@ -115,7 +115,7 @@ notes: |
   NativeConfigFiles.java:109-112,276,289).
 
   One file in the tree this build never reads: cxd4's rsp_conf.bin. Its reader
-  is the zilmar variant of update_conf behind #if !defined(M64P_PLUGIN_API); the
+  is the zilmar variant of update_conf behind #if !defined(M64P_PLUGIN_API). The
   build defines that macro (mupen64plus-rsp-cxd4.mk:8), so the variant compiled
   takes its settings from the core config API and ignores the filename it is
   handed (mupen64plus-rsp-cxd4 module.c:83-93,239,637-659).
@@ -133,7 +133,7 @@ files:
       document picker with no extension filter and the file is copied to
       dd_rom.n64 before the core sees it. The core reads it whole, then
       byteswaps after identifying the first word as one of 0x80270740 (z64),
-      0x40072780 (n64) or 0x27804007 (v64); any other value logs an invalid IPL
+      0x40072780 (n64) or 0x27804007 (v64). Any other value logs an invalid IPL
       and disables 64DD. Size is not checked and no hash is computed.
     source_ref: "app/src/main/java/paulscode/android/mupen64plusae/jni/CoreService.java:599-612,621-623, app/src/main/java/paulscode/android/mupen64plusae/jni/CoreInterface.java:455-484, app/src/main/java/paulscode/android/mupen64plusae/persistent/GlobalPrefs.java:417,715, mupen64plus-core/upstream/src/main/main.c:1080-1145"
 

@@ -35,7 +35,7 @@ def load_provenance_snapshots(provenance_dir: str = DEFAULT_PROVENANCE_DIR) -> d
 def build_provenance_index(snapshots: dict) -> dict:
     """Index snapshot entries by sha1 and by (md5, size) per source.
 
-    First entry wins on hash collisions within a source; entries are
+    First entry wins on hash collisions within a source. Entries are
     pre-sorted at snapshot write time so the outcome is deterministic.
     """
     index = {}
@@ -95,7 +95,7 @@ def build_snapshot(
 
 
 def write_snapshot(path: str, snapshot: dict) -> bool:
-    """Write a snapshot; timestamps alone never count as a change."""
+    """Write a snapshot. Timestamps alone never count as a change."""
     return write_if_changed(path, json.dumps(snapshot, indent=2) + "\n")
 
 

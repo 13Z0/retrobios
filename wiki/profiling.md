@@ -29,7 +29,7 @@ level. The emulator's own codebase is the single source of truth. No
 
 A note on libretro port differences: the most common change is path
 resolution. The upstream emulator loads files from the current working
-directory; the libretro wrapper redirects to `retro_system_directory`.
+directory, and the libretro wrapper redirects to `retro_system_directory`.
 This is normal adaptation, not a divergence worth documenting. Similarly,
 filename changes like `naomi2_eeprom.bin` becoming `n2_eeprom.bin` are
 often deliberate. RetroArch uses a single shared system directory for
@@ -59,7 +59,7 @@ If the source is hosted outside GitHub, it's worth exploring further. Emulator
 source on GitLab, Codeberg, SourceForge, Bitbucket, archive.org
 snapshots, and community mirror tarballs. Inspecting copyright headers
 or license strings in the libretro fork often points to the original
-author's site. The upstream code exists somewhere; it's worth continuing the search before concluding the source is unavailable.
+author's site. The upstream code exists somewhere, so it's worth continuing the search before concluding the source is unavailable.
 
 One thing worth noting: even when the same repository was analyzed for
 a related profile (e.g., fbneo for arcade systems), it helps to do a
@@ -148,7 +148,7 @@ What does not, and why each trap is easy to fall into:
   The exception is hardware that fuses both axes in one register, such as the
   Saturn SMPC area codes behind `asia-ntsc` and `asia-pal`.
 - **A single-region system.** When every file of a system shares one region,
-  the pack filter keeps them all anyway; annotating adds nothing.
+  the pack filter keeps them all anyway, so annotating adds nothing.
 - **A language without a territory.** Arabic MSX variants, CJK fonts. The
   vocabulary is territorial by design and inventing a slug would break it.
 
@@ -222,7 +222,7 @@ files:
 Record `source_commit` when profiling: upstream code moves, and a
 `source_ref` line number only stays checkable against the commit it was
 read at. Profiles written before this field existed carry `profiled_date`
-and `core_version` instead; they gain `source_commit` as they are
+and `core_version` instead. They gain `source_commit` as they are
 re-verified.
 
 ### Writing style
@@ -305,7 +305,7 @@ familiar codebase, avoids carrying over blind spots.
 
 **Path adaptation vs real divergence.** The libretro wrapper changing
 `fopen("./rom.bin")` to load from `system_dir` is the standard
-porting pattern. The file is the same; only the directory resolution
+porting pattern. The file is the same, only the directory resolution
 changed. True divergences (added/removed files, different embedded
 data) are the ones worth documenting.
 
@@ -335,21 +335,21 @@ which CI validates every profile against.
 | `upstream` | no | original emulator repository URL |
 | `profiled_date` | yes | date of source analysis. Quote it, or YAML parses it as a date object |
 | `core_version` | yes | version analyzed |
-| `source_commit` | no | commit SHA of `source` the code was read at; anchors every `source_ref` line number |
+| `source_commit` | no | commit SHA of `source` the code was read at. Anchors every `source_ref` line number |
 | `upstream_commit` | no | same, for `upstream` |
-| `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch); profile_sync follows it |
+| `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch). profile_sync follows it |
 | `built_by` | no | platforms that compile this libretro build themselves (Recalbox's `mame0278`). Such a profile is reached only by a platform naming it in `cores:`, never by `all_libretro`: the buildbot does not publish it |
 | `bios_mode` | no | `agnostic` when the core takes any file of the right shape in its BIOS folder instead of a fixed name (PCSX2). Packs then carry every matching dump, and a `<bios>.bin` placeholder stands for them |
-| `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`); a scan never seeds from files outside it |
+| `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`). A scan never seeds from files outside it |
 | `display_name` | no | full display name (e.g. "Sega - Mega Drive (BlastEm)") |
 | `logo` | no | image URL used on the emulator page |
 | `systems` | yes | list of system IDs this core handles |
 | `cores` | no | every upstream name the core is known by, for buildbot/target matching |
-| `alias_of` | for `type: alias` | profile key this one aliases; the alias carries no `files` |
+| `alias_of` | for `type: alias` | profile key this one aliases. The alias carries no `files` |
 | `mode` | no | default mode: `standalone`, `libretro`, or `both` |
 | `verification` | no | how the core verifies BIOS: `existence`, `md5`, `sha1`, `crc32` |
 | `files` | yes, unless `type: alias` | list of file entries |
-| `data_directories` | no | whole directory trees the core needs, referencing `_data_dirs.yml` keys; an entry may carry `mode:` when only one build reads the tree |
+| `data_directories` | no | whole directory trees the core needs, referencing `_data_dirs.yml` keys. An entry may carry `mode:` when only one build reads the tree |
 | `notes` | no | free-form technical notes |
 | `note` | no | single-paragraph variant of `notes` |
 | `exclusion_note` | no | why the profile has no files despite .info declaring firmware |
@@ -377,14 +377,14 @@ partitions), and `game_count`.
 | `required` | true if the core needs this file to function |
 | `system` | system ID this file belongs to (for multi-system profiles) |
 | `archive` | ROM set the file lives inside, for arcade entries (e.g. `neogeo.zip`) |
-| `size` | expected size in bytes; a list when the code accepts several exact sizes |
+| `size` | expected size in bytes, or a list when the code accepts several exact sizes |
 | `min_size`, `max_size` | size range when the code accepts a range |
 | `md5`, `sha1`, `crc32`, `sha256` | expected hashes from source code |
-| `known_hash_adler32` | expected Adler-32 hash (Dolphin's DSP ROMs); pair with `adler32_byteswap` when the code hashes 16-bit byte-swapped data |
+| `known_hash_adler32` | expected Adler-32 hash (Dolphin's DSP ROMs). Pair with `adler32_byteswap` when the code hashes 16-bit byte-swapped data |
 | `adler32_pairs_with`, `adler32_pairs` | the file hashed together with this one and the combinations the code accepts, this file's value first, in table order: Dolphin warns on a DSP ROM pair outside its `known_roms` even when each file passes alone |
 | `pin_frozen` | why `source_commit` is held on purpose rather than followed. The profile is then judged against its own revision, like one pinned to a superseded tag |
 | `prose_written_at` | the pin a reader confirmed the prose citations against. When the profile's history shows a text living under several pins, profile_sync takes this one as the revision the text describes, so a bump is no longer refused for a citation already reread. It never overrides a history with a single candidate |
-| `upstream_gone` | why the declared upstream can no longer be reached, when that is settled rather than transient. Records the death instead of leaving the profile failing every pass; profile_sync reports it as declared, and reports the contradiction if the forge answers again |
+| `upstream_gone` | why the declared upstream can no longer be reached, when that is settled rather than transient. Records the death instead of leaving the profile failing every pass. profile_sync reports it as declared, and reports the contradiction if the forge answers again |
 | `source_mirror` | a repository carrying the same tree, consulted after `source` and `upstream`. What keeps a profile checkable once its own forge stops answering |
 | `validation` | checks the code performs: `size`, `crc32`, `md5`, `sha1`, `adler32`, `signature`, `crypto`. Can be a list or dict `{core: [...], upstream: [...]}` for divergent checks |
 | `aliases` | alternate filenames for the same file |
@@ -394,7 +394,7 @@ partitions), and `game_count`.
 | `region` | always a list of territory slugs from the schema enum (`[north-america]`, `[japan, asia-ntsc]`). The region the code selects the file **for**, never the region of the dump. See step 3b |
 | `region_check` | true if the core refuses to boot a game whose region does not match the BIOS |
 | `fast_boot` | BIOS generation label the core uses to decide whether fast boot is available |
-| `priority` | preference order when several BIOS satisfy the same slot, **lowest wins**. DuckStation's `FindBIOSImageInDirectory` keeps the image whose priority is lower, and its table de-prioritizes by raising the number: the buggy launch console sits at 50 and PS2 images at 100, while `scph5501` sits at 5. A core that walks an ordered search list, as PicoDrive does with `biosfiles_us/eu/jp`, maps onto the same field as 1, 2, 3. Only set it from the source; `--one-per-slot` reads it |
+| `priority` | preference order when several BIOS satisfy the same slot, **lowest wins**. DuckStation's `FindBIOSImageInDirectory` keeps the image whose priority is lower, and its table de-prioritizes by raising the number: the buggy launch console sits at 50 and PS2 images at 100, while `scph5501` sits at 5. A core that walks an ordered search list, as PicoDrive does with `biosfiles_us/eu/jp`, maps onto the same field as 1, 2, 3. Only set it from the source. `--one-per-slot` reads it |
 | `embedded` | true if the data is compiled into the binary and the external file is optional |
 | `bundled` | true if the file ships with the emulator rather than being user-provided |
 | `has_builtin` | true if the core falls back to a built-in copy when the file is absent |

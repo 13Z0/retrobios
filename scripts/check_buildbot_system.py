@@ -153,7 +153,7 @@ def print_report(report: dict) -> None:
 
 
 def update_changed(report: dict) -> list[str]:
-    """Refresh entries that have changed; the keys whose refresh failed."""
+    """Refresh entries that have changed and return the keys whose refresh failed."""
     failed: list[str] = []
     for e in report.get("entries", []):
         if e["status"] == "UPDATED" and e.get("key"):

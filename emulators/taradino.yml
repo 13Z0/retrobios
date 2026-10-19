@@ -15,16 +15,16 @@ notes: |
   original 1995 Apogee/3D Realms source release.
 
   Build-time switch: SHAREWARE=0 (default, "registered") expects
-  DARKWAR.WAD / DARKWAR.RTL / DARKWAR.RTC; SHAREWARE=1 (dropped by the
+  DARKWAR.WAD / DARKWAR.RTL / DARKWAR.RTC, while SHAREWARE=1 (dropped by the
   CMakeLists SHAREWARE option) expects HUNTBGIN.WAD / HUNTBGIN.RTL /
   HUNTBGIN.RTC (rott/rt_main.h:33-45). The repo distributes the
-  non-shareware binary; shareware builds are compiled by users from the
+  non-shareware binary. Shareware builds are compiled by users from the
   same tree.
 
   Startup assembles argv in SetupWadFile (rott/rt_main.c:808-842), joining
   `datadir` and STANDARDGAMEWAD, then feeds it to W_InitMultipleFiles
   (rott/rt_main.c:842, rott/w_wad.c). The WAD search tries each path
-  registered through add_datadir() (rott/rt_datadir.c:198-209); a missing
+  registered through add_datadir() (rott/rt_datadir.c:198-209). A missing
   main WAD aborts with FileNotFoundError(STANDARDGAMEWAD)
   (rott/rt_main.c:812).
 
@@ -35,7 +35,7 @@ notes: |
   ROTT_SITELICENSE, ROTT_SUPERCD or ROTT_REGISTERED. Shareware builds
   stay on ROTT_SHAREWARE.
 
-  REMOTE1.RTS carries the "Remote Ridicule" speech bank; its absence is
+  REMOTE1.RTS carries the "Remote Ridicule" speech bank, and its absence is
   silently tolerated (rott/rt_main.c:830-834).
 
   No hash is validated: the loader relies on WAD lump names and the
@@ -91,7 +91,7 @@ files:
 
   # ================================================================
   # Shareware build (SHAREWARE=1, rott/rt_main.h:41-43)
-  # Produced only when users set -DSHAREWARE=1; file names differ.
+  # Produced only when users set -DSHAREWARE=1. File names differ.
   # ================================================================
 
   - name: "HUNTBGIN.WAD"

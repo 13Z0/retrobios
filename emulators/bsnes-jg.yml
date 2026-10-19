@@ -135,11 +135,11 @@ files:
     aliases: [arm6.data.rom]
 
 # Embedded (no external file needed):
-#   SGB1BootROM[256] — src/coprocessor/icd.cpp:249
-#   SGB2BootROM[256] — src/coprocessor/icd.cpp:260
-#   hitachidspStaticDataROM[3072] — src/cartridge.cpp:62
-#   CX4 HLE — src/cartridge.cpp:705-720 (preferHLE path for HG51BS169)
-#   boards_bml — libretro/boards_bml.hpp
-#   SuperFamicom_bml — libretro/SuperFamicom_bml.hpp
-#   BSMemory_bml — libretro/BSMemory_bml.hpp
-#   SufamiTurbo_bml — libretro/SufamiTurbo_bml.hpp
+#   SGB1BootROM[256]: src/coprocessor/icd.cpp:249
+#   SGB2BootROM[256]: src/coprocessor/icd.cpp:260
+#   hitachidspStaticDataROM[3072]: src/cartridge.cpp:62
+#   CX4 HLE: src/cartridge.cpp:705-720 (preferHLE path for HG51BS169)
+#   boards_bml: libretro/boards_bml.hpp
+#   SuperFamicom_bml: libretro/SuperFamicom_bml.hpp
+#   BSMemory_bml: libretro/BSMemory_bml.hpp
+#   SufamiTurbo_bml: libretro/SufamiTurbo_bml.hpp

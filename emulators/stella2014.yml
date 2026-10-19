@@ -13,14 +13,14 @@ systems:
   - atari_2600
 
 notes: |
-  Frozen snapshot of Stella 3.9.3. The Atari 2600 has no BIOS ROM; the TIA,
+  Frozen snapshot of Stella 3.9.3. The Atari 2600 has no BIOS ROM: the TIA,
   RIOT, and 6507 CPU are fully emulated in software. The SuperCharger (Starpath)
   BIOS is emulated via a built-in dummy ROM (ourDummyROMCode in stella/src/emucore/CartAR.cxx:518).
-  Game properties database (stella.pro) is compiled into DefProps.hxx; external
+  Game properties database (stella.pro) is compiled into DefProps.hxx, and external
   loading is disabled in the libretro port (stella/src/emucore/PropsSet.cxx:35). The core does not
   call GET_SYSTEM_DIRECTORY. KidVid Voice Module audio tapes (7 WAV files) are
   opened by rfopen with bare filenames, relative to the process working
-  directory (stella/src/emucore/KidVid.cxx:166-185); absence is handled gracefully. EEPROM save data for
+  directory (stella/src/emucore/KidVid.cxx:166-185), and absence is handled gracefully. EEPROM save data for
   AtariVox and SaveKey peripherals is managed as NVRAM, not user-supplied.
 
 files:

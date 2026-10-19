@@ -16,7 +16,7 @@ notes: |
   bindings for Python, used by batocera as a launcher that runs user-supplied
   Python scripts (file.py) as the "ROM". Batocera's package
   batocera/emulators/python-pygame2 pins the standard pygame/pygame 2.6.1
-  wheel; nothing about pygame itself ships game data.
+  wheel. Nothing about pygame itself ships game data.
 
   The content executed by this launcher is the user's own Python file,
   which plays the role of the cartridge. No file in the pack belongs here.

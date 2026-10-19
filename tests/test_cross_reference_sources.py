@@ -55,7 +55,7 @@ class GapReportSources(unittest.TestCase):
         self.assertEqual(report["gpgx"]["gaps"], 0)
 
     def test_any_accepted_version_fills_the_slot(self):
-        """raze accepts ten DUKE3D.GRP; the report judged the first alone and
+        """raze accepts ten DUKE3D.GRP, but the report judged the first alone and
         listed the file to acquire while the collection holds the tenth."""
         profiles = {"raze": {"emulator": "Raze", "systems": ["dos"], "files": [
             {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "size": 1, "sha1": "a" * 40},

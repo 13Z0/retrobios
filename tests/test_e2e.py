@@ -1129,7 +1129,7 @@ class TestE2E(unittest.TestCase):
         self.assertEqual(result, {"fceumm", "gambatte"})
 
     def test_a_build_a_platform_compiles_is_reached_by_name(self):
-        """Recalbox compiles libretro/mame at 0.258 and 0.278; the buildbot
+        """Recalbox compiles libretro/mame at 0.258 and 0.278, but the buildbot
         RetroArch installs from does not, so all_libretro must not reach
         them while a platform naming them does."""
         profiles = {
@@ -2888,7 +2888,7 @@ class TestE2E(unittest.TestCase):
         # --platform + --system is a valid combination
         self.assertTrue(has_platform and has_system)
 
-    # ── BizHawk scraper tests ──────────────────────────────────────
+    # BizHawk scraper tests
 
     def test_150_bizhawk_scraper_parse_firmware_and_option(self):
         """Parse FirmwareAndOption() one-liner pattern."""
@@ -3087,7 +3087,7 @@ class TestE2E(unittest.TestCase):
     # ---------------------------------------------------------------
 
     def test_159_cross_ref_archive_in_repo(self):
-        """Archived files group by archive; in_repo=True when archive exists."""
+        """Archived files group by archive, in_repo=True when archive exists."""
         config = load_platform_config("test_existence", self.platforms_dir)
         profiles = load_emulator_profiles(self.emulators_dir)
         undeclared = find_undeclared_files(
@@ -3438,7 +3438,7 @@ class TestE2E(unittest.TestCase):
         self.assertNotIn("lr_file.bin", names)
 
     def test_171_generate_truth_dedup_required_wins(self):
-        """Dedup merges cores; required=True wins over required=False."""
+        """Dedup merges cores and required=True wins over required=False."""
         import yaml as _yaml
         from common import _emulator_profiles_cache
 
@@ -3521,7 +3521,7 @@ class TestE2E(unittest.TestCase):
             "unprofiled_core", [name for name in profiles if name == "unprofiled_core"]
         )
         # unprofiled_core has no profile YAML so resolve_platform_cores
-        # won't include it; cores_resolved reflects only matched profiles
+        # won't include it, so cores_resolved reflects only matched profiles
         self.assertEqual(cov["cores_resolved"], 1)
         self.assertNotIn("unprofiled_core", cov["cores_unprofiled"])
 
@@ -4297,7 +4297,7 @@ class TestE2E(unittest.TestCase):
         cov = truth["_coverage"]
         self.assertEqual(cov["cores_profiled"], 1)
         # core_b has no profile YAML, so resolve_platform_cores never
-        # includes it; cores_resolved reflects only matched profiles
+        # includes it, so cores_resolved reflects only matched profiles
         self.assertEqual(cov["cores_resolved"], 1)
 
         # Inject unprofiled info into system-level coverage for diff.
@@ -6002,7 +6002,7 @@ struct BurnDriver BurnDrvneogeo = {
             # --all took the same filter and wrote twelve complete manifests.
             (["--all", "--manifest"], ["--system", "sony-playstation"], "refuse"),
             (["--all", "--split"], ["--system", "sony-playstation"], "refuse"),
-            # A pack built with --system is named after its systems; the check
+            # A pack built with --system is named after its systems, but the check
             # looked for the full pack instead.
             (["--platform", "retroarch", "--verify-packs"],
              ["--system", "sony-playstation"], "refuse"),
@@ -6089,7 +6089,7 @@ struct BurnDriver BurnDrvneogeo = {
         --target narrowed the build and nothing else: the conformance stage
         held every targeted pack to the platform's whole system list and
         core set, so a correct build exited non-zero on hundreds of files it
-        was never asked to carry. Region was already passed to the check;
+        was never asked to carry. Region was already passed to the check, and
         target has to travel the same way, which is why the pack is not in
         the skip list.
         """
@@ -6124,7 +6124,7 @@ struct BurnDriver BurnDrvneogeo = {
             )
 
     def test_standalone_mode_names_itself(self):
-        """--emulator --standalone ships a different file set; without a tag it
+        """--emulator --standalone ships a different file set, and without a tag it
         overwrote the pack built without it."""
         from generate_pack import _narrowings
 

@@ -1,11 +1,11 @@
 """Catalog entries whose bytes a held dump already contains.
 
-A catalog lists chips as they come off the board; a collection often holds
+A catalog lists chips as they come off the board, while a collection often holds
 the image an emulator reads. The Amiga 3.1 Kickstart pair 391773/391774 is
-the high and low 16-bit words of amiga-os-310-a1200.rom, byte-swapped; the
+the high and low 16-bit words of amiga-os-310-a1200.rom, byte-swapped, and the
 TOSEC "Basic V7" is basiclo and basichi end to end. Listed as missing, they
 send a maintainer after files that are already here. Each transform below is
-one the source boards use; a match is by sha1, never by size or name.
+one the source boards use. A match is by sha1, never by size or name.
 """
 
 from __future__ import annotations
@@ -172,7 +172,7 @@ def _held_sources(db: dict) -> list[dict]:
 
 def derivable(entries: Iterable[dict], db: dict) -> dict[str, dict]:
     """Missing sha1 to the held file or member and the transform that
-    produce its bytes; archives stay open for the whole pass."""
+    produce its bytes. Archives stay open for the whole pass."""
     archives: dict[str, zipfile.ZipFile] = {}
     try:
         return _derivable(entries, db, archives)

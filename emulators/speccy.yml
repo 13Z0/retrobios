@@ -37,7 +37,7 @@ notes: |
   Play for it, apkcombo bounces its download page back to the app page, apkpure
   redirects to its generic downloader, apkvision holds no copy and archive.org
   none either. The native libraries keep their symbol tables, so the readings
-  below cite libmain.so offsets in the x86_64 slice; the arm64-v8a slice carries
+  below cite libmain.so offsets in the x86_64 slice, and the arm64-v8a slice carries
   the same nineteen ROM names. The free Speccy 5.9 builds for Windows and Ubuntu
   were read beside it and open the same names with the same lengths and the same
   order. No source has ever been published: every download on the site, from 1.7
@@ -53,7 +53,7 @@ notes: |
   of when it is done. That directory is external storage
   joined with the application label up to its first space, so /sdcard/Speccy for
   the package read here, falling back to getExternalFilesDirs(null) when it is
-  not a writable directory; the author's own instructions give the same
+  not a writable directory. The author's own instructions give the same
   placement. Every open goes through mopen, which calls OpenRealFile first: the
   name is tried as given, and again as <PrivateDir>/<basename>, keeping the
   larger of the two when both open. mopen then layers gzdopen over the
@@ -344,7 +344,7 @@ files:
     sha1: 0b53d51635a2ce3d4e12c2077df9aeffeac02517
     crc32: "b58e81f1"
     description: "cheat database read by the Cheatopedia browser"
-    note: "The package ships no cheat set. Cheatopedia looks for the file in the package assets, then in the home directory and its subdirectories, and takes it from Speccy-Cheats.zip in the Downloads directory when that is newer, unpacking it into <HomeDir>/Cheats. The author publishes that archive at fms.komkon.org/EmuAndroid/Speccy-Cheats.zip and states it is what re-enables the cheat features Google Play made him disable in March 2019; the copy read here holds this one file."
+    note: "The package ships no cheat set. Cheatopedia looks for the file in the package assets, then in the home directory and its subdirectories, and takes it from Speccy-Cheats.zip in the Downloads directory when that is newer, unpacking it into <HomeDir>/Cheats. The author publishes that archive at fms.komkon.org/EmuAndroid/Speccy-Cheats.zip and states it is what re-enables the cheat features Google Play made him disable in March 2019. The copy read here holds this one file."
     source_ref: "CheatHelper.java:17-67, Cheatopedia.java:397-427, EmuAndroid \"Cheats support\""
 
   - name: Controls.png

@@ -2,7 +2,7 @@
 
 PCSX2 opens <bios>.rom1 or <stem>.rom1, and nvm and mec the same way. Its
 profile named them rom1.bin, ROM2.BIN and EROM.BIN, names the code never
-opens; ROM2.BIN found a misfiled Galaksija ROM inside the PS2 folder, and a
+opens. ROM2.BIN found a misfiled Galaksija ROM inside the PS2 folder, and a
 4 MB size bound then swept GameIndex.yaml and cheat archives to the root of
 the Batocera BIOS folder.
 """

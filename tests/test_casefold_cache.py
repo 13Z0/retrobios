@@ -27,7 +27,7 @@ class CasefoldIndexFollowsItsSource(unittest.TestCase):
 
 
 class APrimaryUnderAnotherCasing(unittest.TestCase):
-    """x1 asked for IPLROM.X1; only Recalbox's second md5 sat under that
+    """x1 asked for IPLROM.X1, and only Recalbox's second md5 sat under that
     casing, in .variants/, and it won over iplrom.x1, the dump every
     platform pins, in the same directory."""
 

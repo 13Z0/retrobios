@@ -68,7 +68,7 @@ def hold_data_dirs(stack: contextlib.ExitStack, registry: dict) -> None:
     """Hold every cached data directory shared for the life of *stack*.
 
     A pack resolves names against a tree, then copies the file minutes
-    later; a refresh swapping the tree in between shipped bytes nobody
+    later. A refresh swapping the tree in between shipped bytes nobody
     verified, or died on a file the new tree no longer has. A refresh waits
     for the holders. Never called before a refresh in the same process:
     the exclusive lock would wait on this one.
@@ -445,8 +445,8 @@ def _refresh_entry(
 
     if remote_tag is None:
         # Read before the download. A release published in between then
-        # leaves an older tag on newer content, which the next run refreshes;
-        # read after, it left a newer tag on older content, trusted for good.
+        # leaves an older tag on newer content, which the next run refreshes.
+        # Read after, it left a newer tag on older content, trusted for good.
         if source_type == "zip":
             remote_tag = _get_remote_etag(source_url)
         else:

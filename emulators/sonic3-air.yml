@@ -12,7 +12,7 @@ systems: [sonic3-air]
 notes: |
   Sonic 3 - Angel Island Revisited by Eukaryot. The Oxygen Engine runs the
   decompiled game logic (lemon scripts) against the original Genesis ROM
-  loaded at runtime; the ROM is not shipped with the engine.
+  loaded at runtime. The ROM is not shipped with the engine.
 
   ROM search order (ResourcesCache::loadRom):
     1. GameAppData/<SteamRomName>
@@ -40,7 +40,7 @@ notes: |
 
   The engine ships four data packages (enginedata.bin, gamedata.bin,
   audiodata.bin, audioremaster.bin). Three are required and part of the
-  release; audioremaster.bin is optional and downloaded on demand from
+  release, while audioremaster.bin is optional and downloaded on demand from
   https://sonic3air.org/download/audioremaster.bin when the user enables
   the remastered soundtrack.
   ref: Oxygen/sonic3air/oxygenproject.json:32-38,
@@ -57,7 +57,7 @@ notes: |
   Each package is a flat container: "OPCK", format version 3, content
   version BUILD_NUMBER, then one entry per file keyed by its path relative
   to the base directory, in std::map order. Packing reads the data
-  directories only; the ROM is not involved.
+  directories only. The ROM is not involved.
   ref: Oxygen/sonic3air/source/sonic3air/main.cpp:92-97,
        Oxygen/sonic3air/source/sonic3air/helper/PackageBuilder.cpp:16-63,
        Oxygen/oxygenengine/source/oxygen/file/FilePackage.cpp:44-151,
@@ -73,7 +73,7 @@ notes: |
        Oxygen/oxygenengine/source/oxygen/application/Configuration.cpp:288-289
 
   Only one RomInfo is declared (S3K_Steam). The engine does not support
-  on-the-fly Sonic 3 + Sonic & Knuckles lock-on concatenation at run time;
+  on-the-fly Sonic 3 + Sonic & Knuckles lock-on concatenation at run time, so
   the user must supply the 4 MiB combined ROM (as distributed with Sega
   Mega Drive & Genesis Classics / Sonic Origins).
 
@@ -89,7 +89,7 @@ files:
       Sonic 3 & Knuckles combined ROM as shipped on Steam (Sega Mega Drive
       and Genesis Classics / Sonic Origins). Expected size 0x400000 bytes.
       After the engine overwrites offset 0x2001f0 with 0x4a, Murmur2_64 of
-      the whole buffer must equal 0x344983ffcfeff8cb (not CRC32; the hash
+      the whole buffer must equal 0x344983ffcfeff8cb (not CRC32: the hash
       is computed with rmx::getMurmur2_64 over mRom). The engine also
       accepts a user-picked .bin via the native file-selection dialog that
       satisfies the same post-modification check.
@@ -143,5 +143,5 @@ files:
       Remastered soundtrack package (131677405 bytes). Downloaded on demand
       from https://sonic3air.org/download/audioremaster.bin, saved as
       data/audioremaster.bin under the app-data directory and reloaded
-      via EngineMain::reloadFilePackage. Absent at first launch; the
+      via EngineMain::reloadFilePackage. Absent at first launch. The
       engine falls back to the emulated FM soundtrack.

@@ -14,10 +14,10 @@ systems: []
 notes: |
   Libretro wrapper around libmpv. Links against the mpv shared library
   for video/audio decoding and OpenGL rendering. Experimental, proof of
-  concept. No system directory access — the core only loads the content
+  concept. No system directory access: the core only loads the content
   file passed by RetroArch.
 
-# source_ref: mpv-libretro.c — single-file core (672 lines). No call to
+# source_ref: mpv-libretro.c, a single-file core (672 lines). No call to
 # RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. Only file access is the content
 # path via retro_load_game(info->path) forwarded to mpv loadfile command
 # (line 241, 296). No fopen, no system_dir path construction.

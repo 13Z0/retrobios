@@ -17,7 +17,7 @@ mode: standalone
 notes: |
   Nintendo 64 and 64DD emulator for Windows. Project64.exe plus the plugin DLLs
   the same solution builds, driven by the plugin spec in Source/Project64-plugin-spec.
-  ES-DE passes the ROM as the only argument. AppVeyor builds Win32 and x64 only;
+  ES-DE passes the ROM as the only argument. AppVeyor builds Win32 and x64 only, and
   Source/Android holds no build file.
 
   Cartridge boot reads no file. PostPif is hardcoded true, so Reset seeds the
@@ -56,7 +56,7 @@ notes: |
   GLideN64 ships as a bundled plugin, pinned as a submodule at
   gonetz/GLideN64 c8ef81c7d9aede9f67f6ed3d3426c90541f9f13e, and brings its own
   GLideN64.ini, GLideN64.custom.ini and translations. Project64's own code names
-  none of them; only Installer.iss and package_zip.cmd copy them
+  none of them. Only Installer.iss and package_zip.cmd copy them
   (Source/Installer/Installer.iss:38, Source/Script/package_zip.cmd:42-47).
 
   Generated at runtime, never supplied: Project64.cfg, Project64.rdn,

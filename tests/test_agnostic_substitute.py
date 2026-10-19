@@ -1,7 +1,7 @@
 """Pack, verify and manifest answer the same way for a filename-agnostic core.
 
 The pack alone renamed any PS2 image into a missing slot, even on an md5
-platform whose frontend then rejects it, and counted it OK; verify called
+platform whose frontend then rejects it, and counted it OK, while verify called
 the slot missing and the manifest omitted it.
 """
 

@@ -73,7 +73,7 @@ notes: |
   them. They are distributed both ways. 0.11.190 shipped none of them, tested for
   each file in the private directory, stopped on an error dialog before loading
   the core when one was absent, and fetched plugins267.zip and its per GPU and per
-  ABI variants from fpse.net; 12.1 carries them in the package and keeps an
+  ABI variants from fpse.net. 12.1 carries them in the package and keeps an
   updater that asks getfile.php for the list matching its own versionCode and ABI,
   alongside plugins605 constants nothing reads. Both generations of the pack still
   answer: plugins605v7.zip is 1359776 bytes and holds the armeabi-v7a build of
@@ -213,7 +213,7 @@ exclusion_note: >
   so a replacement stays. It is not a dump of the font ROM inside the Japanese
   BIOS, and it shares its generic name with the unrelated kanji ROMs of the MSX
   and the PC-88. Only
-  the ARM builds name it; the x86 build of 0.11.190 carries neither it nor the
+  the ARM builds name it: the x86 build of 0.11.190 carries neither it nor the
   v2.2 identification strings. The disc images and their .cue sidecars are not
   emulator files. The HLE BIOS is not a file either: it is code, and the strings
   it answers a BIOS identification with sit in .rodata beside the rest of the core

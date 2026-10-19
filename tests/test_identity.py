@@ -69,7 +69,7 @@ class TestCrossVendorDuplicates(unittest.TestCase):
 
     def test_an_exemption_does_not_cover_a_third_maker(self):
         # The four Roland ROMs were exempt by content alone, under a reason
-        # naming a DOSBox tree; the second copies sat in the Amiga tree and
+        # naming a DOSBox tree, but the second copies sat in the Amiga tree and
         # nothing could tell.
         self._write("Magnavox/Odyssey2/o2rom.bin", b"odyssey")
         self._write("Philips/Videopac/O2.bin", b"odyssey")

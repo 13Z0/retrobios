@@ -25,12 +25,12 @@ notes: |
 
   ROM resolution via FilePool (src/file/FilePool.cc, FilePoolCore.cc):
   searches configured directories for files matching SHA1 checksums.
-  Filenames are secondary hints; SHA1 is the primary lookup key.
+  Filenames are secondary hints, while SHA1 is the primary lookup key.
   Files may be gzipped or individually zipped.
   Each user data directory contributes share/systemroms, scanned
   recursively (src/file/FilePool.cc:27, FilePoolCore.cc:369-385). RetroBat
   sets OPENMSX_HOME to bios/openmsx and refuses to start a machine whose
-  ROMs are not in bios/openmsx/share/systemroms; RetroPie links
+  ROMs are not in bios/openmsx/share/systemroms. RetroPie links
   share/systemroms to BIOS/openmsx and Batocera adds bios/openmsx to the
   pool, both scanned recursively, so openmsx/share/systemroms serves all
   three.

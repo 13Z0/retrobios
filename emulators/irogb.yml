@@ -26,14 +26,14 @@ notes: |
   auto (the default) tries cgb_boot.bin then dmg_boot.bin, none opens
   nothing (src/frontend/libretro/libretro_host.cpp:86-113). Under auto a
   DMG cartridge boots through the CGB boot ROM whenever cgb_boot.bin is
-  present and gets the CGB colouring of monochrome games; the
+  present and gets the CGB colouring of monochrome games. The
   irogb_monochrome_dmg option turns that off.
 
   BootROM accepts a file of exactly 256 or 2304 bytes and rejects any
   other size (src/memory/boot.cpp:10-24). The size also picks the machine:
   a 2304-byte image starts in CGB mode (src/gbc.cpp:330-340). 256 bytes
   covers DMG, DMG0, MGB and SGB dumps, 2304 bytes CGB, CGB0, AGB0 and AGB
-  dumps (includes/memory/boot.hpp:9-30); only the two names above are
+  dumps (includes/memory/boot.hpp:9-30). Only the two names above are
   ever opened. No hash is checked.
 
   Without a boot ROM, or when the file fails to open or has another size,
@@ -41,7 +41,7 @@ notes: |
   values, unmaps the boot ROM and sets CGB mode from the cartridge header
   (src/gbc.cpp:342-349, src/gbc.cpp:387-405, src/gbc.cpp:489-490).
 
-  The .info declares cgb_bios.bin; the code opens cgb_boot.bin.
+  The .info declares cgb_bios.bin, but the code opens cgb_boot.bin.
 
 files:
   - name: "dmg_boot.bin"

@@ -32,7 +32,7 @@ notes: |
   snapshots and on-disk states return an empty string
   (NES.emu/src/main/FceuApi.cc:367-379). Content is read from
   .nes, .unf, .unif, .fds and .nsf files (NES.emu/metadata/conf.mk:5,
-  NES.emu/src/main/system.ccm:108-118, NES.emu/src/main/AppMeta.cc:34); an
+  NES.emu/src/main/system.ccm:108-118, NES.emu/src/main/AppMeta.cc:34). An
   archive is opened by the framework, which keeps the first entry passing that
   same filter (EmuFramework/src/EmuSystem.cc:394-412).
 
@@ -42,7 +42,7 @@ notes: |
   set through a selector that accepts a name ending .rom or .bin caselessly, or
   an archive holding such an entry (NES.emu/src/main/EmuMenuViews.cc:609-624,
   NES.emu/src/main/system.ccm:107, NES.emu/src/main/FceuApi.cc:233-254). The
-  image must measure exactly 8192 bytes; a shorter or longer one is refused as
+  image must measure exactly 8192 bytes. A shorter or longer one is refused as
   "Incompatible FDS BIOS" and an unset path as "No FDS BIOS set"
   (NES.emu/src/main/FceuApi.cc:227-231,244-248,257-263). Either answer makes the
   loader free the disk data and return an error, so the content never runs
@@ -94,7 +94,7 @@ files:
     validation: [size]
     description: "Famicom Disk System BIOS"
     note: >-
-      Read through a path the user sets, so no name is compiled in; the selector
+      Read through a path the user sets, so no name is compiled in. The selector
       accepts any name ending .rom or .bin caselessly, or an archive whose first
       entry with one of those extensions is used. The size must be exactly 8192
       bytes, and a mismatch or an unset path ends the load of any .fds content.

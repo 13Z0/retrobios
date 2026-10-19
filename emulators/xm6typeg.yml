@@ -21,7 +21,7 @@ notes: |
   PI's XM6 page as a single archive, xm6_typeg_338_20260223.zip, holding an x64
   xm6g.exe, the Visual C++ 2015-2019 runtime it imports (mfc140u.dll,
   msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll) and the 32-page manual
-  xm6g.pdf. No source is published; the analysis below reads xm6g.exe, and the
+  xm6g.pdf. No source is published. The analysis below reads xm6g.exe, and the
   XM6 v2.06 sources cited alongside are PI's own release, xm6_206s.zip from the
   same page. ES-DE launches it through the XM6TYPEG and XM6TYPEG-WINDOWS find
   rules with the working directory set to the emulator folder, on Linux under
@@ -61,7 +61,7 @@ notes: |
 
   SCSI ROM requirements follow the machine (xm6g.pdf p.17). SCSIINROM.DAT is
   needed by SUPER, XVI and Compact and by any machine set to the internal SCSI
-  interface; SCSIEXROM.DAT drives the CZ-6BS1 external board, which is the only
+  interface. SCSIEXROM.DAT drives the CZ-6BS1 external board, which is the only
   SCSI variant the SASI models can take. X68030 needs neither, its SCSI ROM
   being part of IPLROM30.DAT or IPLROM30S.DAT. IPLROM30S.DAT and ROM30S.DAT are
   a pair used only when Expansion ROM is enabled on the X68030 options tab, for
@@ -69,7 +69,7 @@ notes: |
 
   The Mercury Unit carries an OPN (YMF288) whose rhythm section is sampled from
   external files. The fmgen and X68Sound engines read six WAV files named from a
-  table at xm6g.exe:0x1405c0090 (0x1404ed610, CreateFileW at 0x1404ed8bf); the
+  table at xm6g.exe:0x1405c0090 (0x1404ed610, CreateFileW at 0x1404ed8bf), and the
   ymfm engine reads ym2608_adpcm_rom.bin instead (0x140574fec, ReadFile at
   0x140575095), which is why the rhythm level control is documented as inert for
   ymfm.
@@ -94,7 +94,7 @@ files:
       Covers the first model, ACE, EXPERT, PRO and SUPER. LoadROM reads 0x20000
       bytes and fails when fewer are returned, and the failure aborts
       initialisation. The startup warning naming version 1.00 (05/07/1987) as
-      recommended only advises; it does not reject the file. The recommended
+      recommended only advises: it does not reject the file. The recommended
       source is the free X68BIOSE.LZH package (xm6g.pdf p.6).
 
   - name: IPLROMXV.DAT
@@ -274,7 +274,7 @@ files:
     note: >-
       Holds the boot device and memory switch settings for the first model, ACE,
       EXPERT, PRO and SUPER. A supplied image preloads those settings. The
-      standard capacity is the 16 KB X68000 SRAM; the SRAM64K modification the
+      standard capacity is the 16 KB X68000 SRAM, and the SRAM64K modification the
       emulator reproduces raises it to 64 KB. No size is enforced.
 
   - name: SRAMXVI.DAT
@@ -325,7 +325,7 @@ files:
     source_ref: "xm6g.exe:0x140574eb0 (name at 0x140574fec, read at 0x140575095)"
     note: >-
       Rhythm source for the Mercury Unit OPN when the FM engine is set to ymfm.
-      The name is appended to a directory and the file is read whole; when it is
+      The name is appended to a directory and the file is read whole. When it is
       absent the rhythm section stays silent and the emulator runs.
 
   - name: 2608_BD.WAV
@@ -383,7 +383,7 @@ files:
     source_ref: "xm6g.pdf p.29, p.31, xm6g.exe:LoadLibraryW at 0x140488dfb"
     note: >-
       One of the three FM engines the sound options offer, alongside the
-      built-in fmgen and ymfm. Not shipped in the archive; without it that
+      built-in fmgen and ymfm. Not shipped in the archive, and without it that
       engine cannot be selected.
 
   - name: c86ctl.dll

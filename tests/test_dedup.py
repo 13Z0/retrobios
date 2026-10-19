@@ -108,7 +108,7 @@ class TrueDuplicates(_Bios):
 
     def test_two_variants_of_one_content_keep_one(self):
         # msx.rom.a317e6b4 and MSX.ROM.e998f0c4 differ only by casing and
-        # suffix; nothing outside .variants/ holds the bytes in this tree.
+        # suffix, and nothing outside .variants/ holds the bytes in this tree.
         self.write("Microsoft/MSX/.variants/msx.rom.a317e6b4")
         self.write("Microsoft/MSX/.variants/MSX.ROM.e998f0c4")
         self.run_dedup()
@@ -295,7 +295,7 @@ class PathPriority(unittest.TestCase):
 
 class TheNoDedupListIsPinned(unittest.TestCase):
     """Every directory the dedup must leave alone, with the reason written
-    beside it in dedup.py. Only RPG Maker and ScummVM were tested; a merge
+    beside it in dedup.py. Only RPG Maker and ScummVM were tested, so a merge
     that dropped c64-emu would have the name step serve the C128 keymap to
     three machines again, with the suite green."""
 

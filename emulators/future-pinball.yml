@@ -17,7 +17,7 @@ notes: |
   Closed-source Windows pinball simulator and table editor written by Chris
   Leathley for BSP Software Design Solutions. Development stopped with
   v1.9.1.20101231, still served from futurepinball.com. Rendering is OpenGL
-  (88 imports from opengl32 and 4 from glu32); ddraw is loaded by name only to
+  (88 imports from opengl32 and 4 from glu32). ddraw is loaded by name only to
   call DirectDrawCreateEx while enumerating display modes. Physics come from
   Newton Game Dynamics, audio from FMOD 3, image decoding from DevIL and the
   script editor from Scintilla. The binary registers its own type library at
@@ -48,7 +48,7 @@ notes: |
   are .fpl files, also OLE compound documents, holding models, textures, sounds,
   DMD fonts and scripts under one storage per item. The Texture, Sound, Model
   and DMD Font managers each offer Import, which copies the item into the table,
-  and Link, which records the library name and the item name instead; the manual
+  and Link, which records the library name and the item name instead. The manual
   recommends always linking to the shipped model library. A linked library is
   opened by StgOpenStorage on the name as written, which resolves against the
   table's own folder, and on failure against the install directory plus
@@ -70,7 +70,7 @@ notes: |
   0x00478d20, Future Pinball Manual.chm GlobalScript.html
 
   Settings live in the registry under HKCU\Software\Future Pinball, split into
-  GamePlayer, GamePlayer\Joypads and Editor keys; there is no ini file.
+  GamePlayer, GamePlayer\Joypads and Editor keys. There is no ini file.
   RetroBat writes resolution, aspect ratio, camera, render preset and the whole
   joypad map there before launching. Per table state is written to
   fpRAM\<table>.fpRAM beside the program. Nothing in the program verifies a size
@@ -82,7 +82,7 @@ notes: |
   Front ends drive it with the documented switches /Open "<table>", /Play, /Exit
   and /ArcadeRender. ES-DE declares it for Windows only, as FUTURE-PINBALL
   finding "Future Pinball.exe" and as FUTURE-PINBALL-FPLOADER finding
-  "BAM\FPLoader.exe", both invoked with /Exit /Play /Open; the fpinball system
+  "BAM\FPLoader.exe", both invoked with /Exit /Play /Open. The fpinball system
   is a placeholder on its six other platforms. RetroBat maps the emulator keys
   fpinball and bam to one generator, one install folder and the same
   "Future Pinball.exe" presence check, swapping only the launched binary, and
@@ -361,8 +361,8 @@ files:
     source_ref: "Future Pinball.exe 1.9.1.20101231 .text:0x0045f1b8-0x0045f1f8"
     note: >-
       The directory is read from HKCU\Software\NaturalPoint\NATURALPOINT\NPClient
-      Location, this name appended and the result given to LoadLibraryA;
-      NP_GetSignature and the rest are then bound with GetProcAddress. A null
+      Location, this name appended and the result given to LoadLibraryA,
+      then NP_GetSignature and the rest are bound with GetProcAddress. A null
       handle jumps past all tracking setup. It comes from a TrackIR install, not
       from any Future Pinball distribution, which is why no path is given here.
 

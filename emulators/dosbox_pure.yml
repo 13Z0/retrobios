@@ -21,7 +21,7 @@ notes: |
     MT-32 requires matched pair: *_CONTROL.ROM + *_PCM.ROM (PCM name derived
     from CONTROL name by replacing CONTROL with PCM, preserving case).
     ref: src/gui/midi_mt32.h:189-199
-    ZIP archives also supported — scanned for files by size (65536/131072 =
+    ZIP archives also supported, scanned for files by size (65536/131072 =
     control, 524288/1048576 = PCM), not by name.
     ref: src/gui/midi_mt32.h:160-166
     Files can also be on mounted C: drive (DOSBOX.SF2, MT32_CONTROL.ROM,
@@ -46,7 +46,7 @@ notes: |
   ref: src/gui/mt32emu.h:2982-2988,3016-3019,5183-5187
   12 full control ROMs + 2 PCM ROMs supported (no split ROMs in this MUNT).
   TinySoundFont (tsf.h) for SF2/SF3 playback.
-  No firmware entries in .info file — all MIDI files optional.
+  No firmware entries in .info file, all MIDI files optional.
 
   DBP_STANDALONE build mode exists (same MIDI logic, different I/O layer).
   ref: dosbox_pure_libretro.cpp:81,1588,2302
@@ -223,7 +223,7 @@ files:
     source_ref: "dosbox_pure_libretro.cpp:1405, src/gui/midi_sc55.h:71-75, src/gui/midi_sc55.h:97-101"
     note: >-
       Any name ending in ROM1.BIN anywhere under the system directory is
-      listed; byte 67 selects the emulated model.
+      listed. Byte 67 selects the emulated model.
 
   - name: "ROM2.BIN"
     path: "SC-55/ROM2.BIN"

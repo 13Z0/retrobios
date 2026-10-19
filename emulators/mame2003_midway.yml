@@ -19,7 +19,7 @@ notes: |
   devices that cannot load the full mame2003 core. Supports ~50 games
   (Mortal Kombat series, NBA Jam, Smash TV, Total Carnage, etc.).
 
-  No shared BIOS ZIPs needed — all Midway games are self-contained ROM sets.
+  No shared BIOS ZIPs needed: all Midway games are self-contained ROM sets.
 
   Uses system_dir/mame2003/ for data files (shared path with mame2003).
   Data files are not bundled in this repo.

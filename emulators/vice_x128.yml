@@ -15,7 +15,7 @@ notes: >
   plus all drive ROMs (1540, 1541, 1541-II, 1551, 1570, 1571, 1571CR, 1581, 1001, 2031,
   2040, 3040, 4040, 9000). Embedded ROM check in sysfile_load takes priority over filesystem.
   Localized kernal/chargen variants (DE, FI, FR, IT, NO, SE, CH) are in the embedded list
-  with NULL data pointers; selecting a non-international model produces uninitialized ROM data.
+  with NULL data pointers, so selecting a non-international model produces uninitialized ROM data.
   JiffyDOS requires True Drive Emulation enabled and a 1541/1571/1581 drive type.
   C64 BASIC/kernal use shared names (basic-901226-01.bin, kernal-901227-03.bin) instead of
   upstream c128-specific names (basic64-901226-01.bin, kernal64-901227-03.bin) to share

@@ -16,7 +16,7 @@ notes: |
   Emulator for Sunplus SPMP8000 NGame1.0 games written in Rust by
   AloysHF. The libretro core and the spmp8000-emu standalone binary share
   the spmp8000emu-core crate. A .bin game is read from its full path
-  (need_fullpath = true, crates/spmp8000emu-libretro/src/libretro/api.rs:96;
+  (need_fullpath = true, crates/spmp8000emu-libretro/src/libretro/api.rs:96,
   from_path_with_config, crates/spmp8000emu-core/src/emulator.rs:63-68),
   its header parsed, the payload DES-decrypted and LZ77/RLE-decompressed
   with keys and tables compiled into the core, then loaded at the code
@@ -27,7 +27,7 @@ notes: |
   NativeGE_writeRecord) resolve the guest path under the directory of the
   loaded .bin (crates/spmp8000emu-core/src/emulator.rs:129-131,
   crates/spmp8000emu-core/src/api/mod.rs:125-127,
-  crates/spmp8000emu-core/src/api/emu_fs.rs:9-13); what a game reads or
+  crates/spmp8000emu-core/src/api/emu_fs.rs:9-13). What a game reads or
   writes there is its own data and saves.
   RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY and GET_SAVE_DIRECTORY are
   defined (crates/spmp8000emu-libretro/src/libretro/constants.rs:36,
@@ -38,7 +38,7 @@ notes: |
   bank is the SPMP8000 firmware's own PCM tone library, compiled into the
   core with include_bytes! (crates/spmp8000emu-core/src/tone_library.rs:8,
   crates/spmp8000emu-core/src/audio_resource.rs:498-499). It is the only
-  embedded data and the only firmware-derived component; nothing is read
+  embedded data and the only firmware-derived component, and nothing is read
   from disk for it.
 
 files:
@@ -57,5 +57,5 @@ files:
       and never opened at run time. 256-entry patch table (128 melodic,
       128 percussion) followed by per-zone PCM samples, read by the
       NativeGE MIDI path. Hashes are of the file in the emulator
-      repository; the repository states the SHA-256.
+      repository, which states the SHA-256.
     source_ref: "crates/spmp8000emu-core/src/tone_library.rs:8, crates/spmp8000emu-core/src/tone_library.rs:24-26, crates/spmp8000emu-core/src/audio_resource.rs:498-499, crates/spmp8000emu-core/assets/README.md:3-9"

@@ -26,7 +26,7 @@ notes: |
   device to emulate is built from a firmware dump. Covers the N-Gage and
   N-Gage 2.0 libraries and the game libraries from S60v1 to Symbian Belle. One
   tree builds the Qt desktop frontend, the Android and iOS applications, and a
-  libretro core; the core lives on the libretro branch of the WizzardSK fork,
+  libretro core. The core lives on the libretro branch of the WizzardSK fork,
   rebased on the upstream revision named in its upstream.version, 11f5b6cd.
   content.cpp passes isolate_drives false to install_firmware and
   install_rom_with_optional_rpkg, so drives C, D and E are shared between
@@ -40,7 +40,7 @@ notes: |
   A device is registered in <storage>/devices.yml and holds its ROM image at
   <storage>/roms/<firmware code, lower case>/SYM.ROM with the unpacked ROFS
   tree beside it under <storage>/drives/z/<firmware code>/. Selecting the
-  device opens that SYM.ROM; a parse failure or a missing file makes set_device
+  device opens that SYM.ROM, and a parse failure or a missing file makes set_device
   return false and nothing runs. The image is parsed for its root directory
   list and never checked against a size or a hash. <storage> is the
   data-storage option, "data" by default, relative to the working directory.
@@ -58,7 +58,7 @@ notes: |
   the RPKG made by the Dumber tool beside it, which supplies the ROFS. A .vpl
   variant packing list names the .fpsx flash images of a factory firmware,
   from which the core image, the ROFS and the drive contents are extracted.
-  The names of the dump files are free; SYM.ROM is the name the installers
+  The names of the dump files are free. SYM.ROM is the name the installers
   give the resident copy.
   ref: src/emu/system/src/installation/rpkg.cpp:44-68,
        src/emu/system/src/software.cpp:396-408,
@@ -71,13 +71,13 @@ notes: |
        src/emu/system/src/installation/firmware.cpp:480-515
 
   Standalone, the Qt frontend installs through its device dialog, from a ROM,
-  a ROM with its RPKG, or a VPL; the settings dialog can also rescan drives/z/
+  a ROM with its RPKG, or a VPL, and the settings dialog can also rescan drives/z/
   and rebuild devices.yml from the directories that still hold a SYM.ROM. A
   device installed with the isolate-drives box ticked keeps drives C, D and E
   under <storage>/drives/<firmware code>/ instead of <storage>/drives/. On
   Linux and macOS the working directory is the EKA2L1 folder of the user data
   location and the shipped patch, resources, scripts and compat folders are
-  copied there at startup; on Windows it is the directory the executable is
+  copied there at startup. On Windows it is the directory the executable is
   started from.
   ref: src/emu/qt/src/device_install_dialog.cpp:162-172,
        src/emu/qt/src/device_install_dialog.cpp:181-185,
@@ -118,8 +118,8 @@ notes: |
   directory. Patch libraries: every patch/*.map is parsed, the DLL is
   <map name>_<version suffix>.dll for the device's Symbian version upward,
   stopping at 8.1a on an EKA1 device, then <map name>_general.dll on EKA2
-  only; a map naming a source picks that DLL prefix; a map requiring host-tls
-  is skipped below S60v3 FP1; a missing folder is skipped. A map routes exports
+  only. A map naming a source picks that DLL prefix, a map requiring host-tls
+  is skipped below S60v3 FP1, and a missing folder is skipped. A map routes exports
   of the original DLL to the patch DLL and is dropped when it holds no route
   for the device's version. A map whose requirements carry replace holds no
   route: its DLL is loaded in place of the image of that name, and with
@@ -130,13 +130,13 @@ notes: |
   the eight files under resources are compiled by the OpenGL driver at start
   and an unreadable one leaves the program without source. The upscale filter
   named in an application's screen-upscale setting is read from
-  resources/upscale/<name>.frag; the 21 filters ship from the upscale-shaders
+  resources/upscale/<name>.frag, and the 21 filters ship from the upscale-shaders
   submodule, pinned at 49dd304c. MIDI: resources/defaultbank.sf2 feeds the
   TinySoundFont player and resources/defaultbank.hsb the miniBAE player, the
   paths being the sf2-bank-path and hsb-bank-path options. SDL2 controller
   mappings come from resources/gamecontrollerdb.txt. compat/panicBlackList.json
   names thread panics to swallow and compat/<UID>.yml carries per-application
-  settings; panic.json holds the panic category descriptions. Lua scripts under
+  settings. panic.json holds the panic category descriptions. Lua scripts under
   scripts/ are loaded when the build carries LuaJIT and require the eka2l1.*
   modules from scripts/eka2l1/; the libretro recipe builds without it. Fonts
   the user imports live in <storage>/fonts and are added to the font store

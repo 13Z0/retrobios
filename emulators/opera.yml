@@ -18,7 +18,7 @@ notes: |
   Opera Boot, an open boot ROM (trapexit/opera-boot) compiled into the core as a
   zlib stream and inflated at load, so the core starts with no file at all. The
   option lists the built-in ROM first, then each BIOS file physically present in
-  the system directory; a file is read with read_file_from_system_directory()
+  the system directory. A file is read with read_file_from_system_directory()
   and byteswapped on little-endian hosts.
 
   opera-boot.bin is the same Opera Boot image read from the system directory

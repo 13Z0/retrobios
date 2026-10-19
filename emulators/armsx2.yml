@@ -37,7 +37,7 @@ notes: |
 
   Detection is by content. The scan lists the BIOS folder, keeps files between 4
   and 8 MB, and accepts an image whose romdir carries a RESET entry followed by a
-  readable ROMVER; the fifth ROMVER character gives the zone among Japan, USA,
+  readable ROMVER. The fifth ROMVER character gives the zone among Japan, USA,
   Europe, Asia, China, T10K, COH-H, Test and Free, and an EXTINFO entry supplies
   the serial. The console scan passes over a COH-H image. An image named in the
   configuration is opened at its own path, without the size filter. No name and
@@ -51,7 +51,7 @@ notes: |
 
   An arcade session, opened from an .acgame manifest carrying an NM game id,
   takes a Namco System 246 or 256 board BIOS instead. Filenames/ArcadeBIOS names
-  it; when that is empty or is not a COH-H image the BIOS folder is scanned for
+  it. When that is empty or is not a COH-H image the BIOS folder is scanned for
   images between 2 and 8 MB whose zone is COH-H, the one with EXTINFO serial
   20040519-145634, the System 256 board, being preferred. Boot stops when none is
   found. The boot ELF, the media image and the SRAM the manifest names are
@@ -95,7 +95,7 @@ notes: |
   matches the binary. The libretro core reads the same tree from
   <system>/pcsx2/resources, with the BIOS folder at <system>/pcsx2/bios. Its build
   also compiles in the shaders under shaders/common, shaders/opengl and
-  shaders/vulkan, GameIndex.yaml and a patches.zip fetched at configure time; the
+  shaders/vulkan, GameIndex.yaml and a patches.zip fetched at configure time. The
   copy in the resources folder wins and the compiled-in one stands in when the
   file is absent.
   ref: pcsx2/Pcsx2Config.cpp:2400-2414, pcsx2/Pcsx2Config.cpp:2563,
@@ -139,7 +139,7 @@ files:
     description: "PS2 BIOS image"
     note: >-
       Any image whose romdir holds RESET and ROMVER is accepted, whatever its
-      name. The 4 to 8 MB range gates the folder scan; an image named in the
+      name. The 4 to 8 MB range gates the folder scan, while an image named in the
       configuration skips that range. Read into the 4 MB ROM region and truncated
       to it. Shorter than 2465792 bytes disables the OSDSys parameter HLE. A
       COH-H image is passed over by the console scan.
@@ -291,7 +291,7 @@ files:
       Second pass over the game database, merged onto the entries GameIndex.yaml
       declares. Carries GS and JIT tuning correct on tiler GPUs. Kept outside the
       shipped resources folder and copied in only for arm64 Linux, Android and
-      iOS; the loader no-ops where it is absent.
+      iOS. The loader no-ops where it is absent.
     source_ref: "pcsx2/GameDatabase.cpp:54, pcsx2/GameDatabase.cpp:1379-1382, cmake/BuildParameters.cmake:227-240, pcsx2/CMakeLists.txt:1828-1837, platforms/android/app/build.gradle.kts:73-85"
 
   - name: RedumpDatabase.yaml
@@ -386,7 +386,7 @@ files:
     note: >-
       First entry of the emoji script table, resolved under UserResources then the
       resources folder and downloaded into UserResources/fonts when neither holds
-      it. Read by the Qt builds only; the Android asset step leaves it out.
+      it. Read by the Qt builds only, and the Android asset step leaves it out.
     source_ref: "pcsx2-qt/Translations.cpp:340-347, pcsx2-qt/Translations.cpp:407-424, pcsx2-qt/Translations.cpp:541-549, platforms/android/app/build.gradle.kts:79-81"
 
   - name: NotoSansJP-Regular.ttf
@@ -608,7 +608,7 @@ files:
     note: >-
       The OpenGL backend is one of those the renderer setting selects, and it is
       what an Android device falls back to when Vulkan is not chosen. Its device
-      creation fails without this source; a Vulkan session is unaffected.
+      creation fails without this source, while a Vulkan session is unaffected.
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895, pcsx2/GS/GS.cpp:97-133"
 
   - name: tfx_fs.glsl
@@ -617,7 +617,7 @@ files:
     required: false
     bundled: true
     description: "OpenGL texture function fragment shader"
-    note: "Read with tfx_vgs.glsl; the OpenGL device fails without it."
+    note: "Read with tfx_vgs.glsl. The OpenGL device fails without it."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895"
 
   - name: convert.glsl

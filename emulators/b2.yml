@@ -39,7 +39,7 @@ notes: |
 
   Libretro port embeds all ROMs as hex arrays in src/libretro/roms.hpp.
   create_core() loads OS and sideways ROMs from static machine_types[] arrays.
-  GetAssetPath() and LoadFile() are stubbed — no file I/O at runtime.
+  GetAssetPath() and LoadFile() are stubbed: no file I/O at runtime.
   ref: zoltanvb/b2-libretro/src/libretro/roms.hpp
   ref: src/libretro/core.cpp:275-305
   ref: src/libretro/adapters.cpp:74-78
@@ -62,7 +62,7 @@ files:
     md5: "0a59a5ba15fe8557b5f7fee32bbd393a"
     crc32: "3c14fc70"
     description: "OS 1.20"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window. The B/Acorn 1770 configuration is the one b2 falls back to when no saved configuration loads, so a missing file stops startup."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window. The B/Acorn 1770 configuration is the one b2 falls back to when no saved configuration loads, so a missing file stops startup."
     source_ref: "src/b2/roms.cpp:16, src/b2/BeebConfig.cpp:220, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57, src/b2/b2.cpp:1599-1607"
 
   - name: "B+MOS.rom"
@@ -76,7 +76,7 @@ files:
     md5: "47a1eff6c7fbb47be780c87dfd50ece1"
     crc32: "66c8d893"
     description: "B+ MOS"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:17, src/b2/BeebConfig.cpp:243, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "BASIC2.ROM"
@@ -300,7 +300,7 @@ files:
     md5: "9087f772447038a00178488b3591347b"
     crc32: "aa317ef5"
     description: "MOS 3.20 MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:39, src/b2/BeebConfig.cpp:266, src/b2/BeebConfig.cpp:314, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "dfs.rom"
@@ -412,7 +412,7 @@ files:
     md5: "d7a046b1e6a9991748cee05332f1e258"
     crc32: "f8b84874"
     description: "MOS 3.50 MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:51, src/b2/BeebConfig.cpp:290, src/b2/BeebConfig.cpp:340, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
@@ -468,7 +468,7 @@ files:
     md5: "5d1b635e39aa461f17db2344870dda36"
     crc32: "12c5f709"
     description: "MOS 5.00 MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:59, src/b2/BeebConfig.cpp:377, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
@@ -524,7 +524,7 @@ files:
     md5: "f65eb89c7044e328b79f2ef8e51b7fd8"
     crc32: "56c83755"
     description: "MOS 5.10 MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:67, src/b2/BeebConfig.cpp:398, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
@@ -580,7 +580,7 @@ files:
     md5: "5e16a38bd7fd6f07f26b5a64826e4ec6"
     crc32: "440f411f"
     description: "MOS I5.10C MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:75, src/b2/BeebConfig.cpp:442, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
@@ -636,7 +636,7 @@ files:
     md5: "e0da7278637754841dfd6b2b847783bc"
     crc32: "3f81574e"
     description: "MOS 5.11i MOS (OS)"
-    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration; a shorter image is placed at the top of the 16 KiB window."
+    note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
     source_ref: "src/b2/roms.cpp:83, src/b2/BeebConfig.cpp:419, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
 
   - name: "arabic.rom"

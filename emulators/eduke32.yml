@@ -16,7 +16,7 @@ notes: |
   Platoon Leader. Startup scans the search path for registered GRPs by
   CRC32 (source/duke3d/src/grpscan.cpp:39-76 internalgrpfiles[]). Each GRP
   carries a game flag (DUKE / NAM / NAPALM / WW2GI) and optional addon
-  dependency; EDuke32 picks the user selection, mounts it with
+  dependency. EDuke32 picks the user selection, mounts it with
   initgroupfile and loads the DEF / CON / RTS the GRP points to.
 
   G_DefaultGrpFile (source/duke3d/src/common.cpp:60-73) returns the base
@@ -25,12 +25,12 @@ notes: |
   NAPALM.CON / WW2GI.CON and DUKE.RTS / NAM.RTS / NAPALM.RTS / WW2GI.RTS.
 
   CRCs listed in source/duke3d/src/grpscan.h match the retail GRP byte
-  for byte; the loader only checks CRC32 (not MD5) and only to pick the
+  for byte, but the loader only checks CRC32 (not MD5) and only to pick the
   entry, never to refuse an unknown GRP. CON / RTS / addon files are
   referenced from the chosen entry but their contents are not validated.
 
   The scan checksums every *.grp, *.ssi, *.dat and *.zip file of the
-  search path and matches size and CRC32 against the table; the table
+  search path and matches size and CRC32 against the table, and the table
   holds no file name (source/duke3d/src/grpscan.cpp:360-370, 486-492).
   An addon whose dependency is not found is removed from the list
   (source/duke3d/src/grpscan.cpp:503-517).
@@ -53,15 +53,15 @@ files:
       grpscan.h:41), World Tour (DUKEWT_CRC 0x982AFE4A, grpscan.h:37),
       Plutonium Pak (DUKEPP_CRC 0xF514A6AC, grpscan.h:36), South Korean
       censored (DUKEKR_CRC 0xAA4F6A40, grpscan.h:34). CRC32 identifies
-      the variant and selects the matching entry in internalgrpfiles[];
-      no MD5 or SHA1 is read.
+      the variant and selects the matching entry in internalgrpfiles[],
+      and no MD5 or SHA1 is read.
 
   - name: "EDUKE.CON"
     category: game_data
     system: duke3d
     required: false
     source_ref: "source/duke3d/src/common.cpp:38 (defaultgameconfilename GAME_DUKE)"
-    note: "EDuke32 CON script. Shipped inside the GRP by default; external copy only when the user overrides it."
+    note: "EDuke32 CON script. Shipped inside the GRP by default, external copy only when the user overrides it."
 
   - name: "DUKE.RTS"
     category: game_data
@@ -103,7 +103,7 @@ files:
     crc32: "c7efbfa9"
     validation: [size, crc32]
     source_ref: "source/duke3d/src/grpscan.cpp:66 (Duke: Nuclear Winter Demo, GAMEFLAG_ADDON), 366 (crc and size compare)"
-    note: "Addon of the Atomic Edition (dependency DUKE15_CRC); dropped from the list when that GRP is not found."
+    note: "Addon of the Atomic Edition (dependency DUKE15_CRC), dropped from the list when that GRP is not found."
 
   - name: "DZ2.GRP"
     category: game_data

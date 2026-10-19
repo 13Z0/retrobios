@@ -16,7 +16,7 @@ notes: |
   .def, .air, .cmd, .cns, .sff and .snd files of M.U.G.E.N. content, plus its
   own .zss state files.
 
-  Every file is read relative to the working directory; paths below are
+  Every file is read relative to the working directory. Paths below are
   written under ikemen/, which stands for it. The file names come from the
   embedded default configuration, src/resources/defaultConfig.ini, which
   save/config.ini overrides (src/main.go:189-195).
@@ -216,7 +216,7 @@ files:
     source_ref: "font/debug.def:19, src/util_desktop.go:29-40"
     note: >
       When the file is not found, the same name is searched in the system
-      font directories; the engine panics when that fails too.
+      font directories, and the engine panics when that fails too.
 
   - name: "default-3x5.def"
     path: "ikemen/font/default-3x5.def"
@@ -306,7 +306,7 @@ files:
     required: true
     bundled: true
     source_ref: "src/fightscreen.go:4916-4926"
-    note: "Named by the sff key of fight.def; a load failure fails loadFightScreen."
+    note: "Named by the sff key of fight.def. A load failure fails loadFightScreen."
 
   - name: "fight.snd"
     path: "ikemen/data/fight.snd"
@@ -315,7 +315,7 @@ files:
     required: true
     bundled: true
     source_ref: "src/fightscreen.go:4927-4937"
-    note: "Named by the snd key of fight.def; a load failure fails loadFightScreen."
+    note: "Named by the snd key of fight.def. A load failure fails loadFightScreen."
 
   - name: "fightfx.sff"
     path: "ikemen/data/fightfx.sff"
@@ -324,7 +324,7 @@ files:
     required: true
     bundled: true
     source_ref: "src/fightscreen.go:4938-4948"
-    note: "Named by the fightfx.sff key of fight.def; a load failure fails loadFightScreen."
+    note: "Named by the fightfx.sff key of fight.def. A load failure fails loadFightScreen."
 
   - name: "fightfx.air"
     path: "ikemen/data/fightfx.air"
@@ -333,7 +333,7 @@ files:
     required: true
     bundled: true
     source_ref: "src/fightscreen.go:4949-4959"
-    note: "Named by the fightfx.air key of fight.def; a load failure fails loadFightScreen."
+    note: "Named by the fightfx.air key of fight.def. A load failure fails loadFightScreen."
 
   - name: "common.snd"
     path: "ikemen/data/common.snd"
@@ -342,7 +342,7 @@ files:
     required: true
     bundled: true
     source_ref: "src/fightscreen.go:4960-4966"
-    note: "Named by the common.snd key of fight.def; a load failure fails loadFightScreen."
+    note: "Named by the common.snd key of fight.def. A load failure fails loadFightScreen."
 
   - name: "system.snd"
     path: "ikemen/data/system.snd"
@@ -381,7 +381,7 @@ files:
     bundled: true
     source_ref: "src/stage.go:204-212"
     note: >
-      A background element of type video names its file in path; video/ is
+      A background element of type video names its file in path, and video/ is
       the default directory of the lookup.
 
   - name: "gamecontrollerdb.txt"

@@ -1,7 +1,7 @@
 """The pack and the install manifest place the same bytes at a destination.
 
 The builder replaced a file an emulator rejects by a held variant both
-accept; the manifest kept the first resolution. install.py then placed the
+accept, but the manifest kept the first resolution. install.py then placed the
 PS2 ROM2.BIN at galaksija/ROM2.BIN where the pack carried the Galaksija ROM,
 across 14 destinations on six platforms.
 """
@@ -102,7 +102,7 @@ class ValidatedChoice(unittest.TestCase):
         )
 
     def test_core_extras_are_judged_too(self):
-        """The baseline loop judged a platform's own files; the core-extras loop
+        """The baseline loop judged a platform's own files while the core-extras loop
         shipped whatever the name found. Both loops live in generate_pack."""
         tree = ast.parse((REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8"))
         builder = next(
@@ -217,7 +217,7 @@ class DolphinForksJudgeTheirOwnDspTable(unittest.TestCase):
 
 
 class AWarningRejectsNothing(unittest.TestCase):
-    """BeebEm warns about a short ROM and runs it; Azahar warns about a bad
+    """BeebEm warns about a short ROM and runs it. Azahar warns about a bad
     signature and runs the file. A warn-level check never refuses a file, yet
     a held file that passes it is preferred."""
 

@@ -20,7 +20,7 @@ notes: |
   binary. Two artifacts are read here and they describe the same emulator: the
   Windows build SSF_PreviewVer_R38.zip of 2026-01-01, sha256
   7325a9b9d666560ddf632f747fb42ab880f82c45391e51fe0716beb1c535f00b, whose
-  emulator is the 64-bit SSF.exe and which is cited by virtual address; and the
+  emulator is the 64-bit SSF.exe and which is cited by virtual address, and the
   Android build SSF_AndroidVer.zip of 2022-08-07, package
   com.xrea.g2.aaaaaaaa.ssf, whose lib/arm64-v8a/libnative-lib.so keeps its 40738
   dynamic symbols and which is cited by symbol. Prose references name the
@@ -103,7 +103,7 @@ files:
     required: false
     category: game_data
     description: "cartridge image mapped at A-Bus CS0"
-    note: "[Peripheral] DataCartridge, gated by DataCartridgeEnable and off by default. SSF reads the file at the configured path into the 32 MiB A-Bus CS0 window and identifies it in no way; the dumps that belong there are the two Saturn ROM carts, mpr-18811-mx.ic1 for The King of Fighters '95 and mpr-19367-mx.ic1 for Ultraman. Readme.txt records the option as unverified."
+    note: "[Peripheral] DataCartridge, gated by DataCartridgeEnable and off by default. SSF reads the file at the configured path into the 32 MiB A-Bus CS0 window and identifies it in no way. The dumps that belong there are the two Saturn ROM carts, mpr-18811-mx.ic1 for The King of Fighters '95 and mpr-19367-mx.ic1 for Ultraman. Readme.txt records the option as unverified."
     source_ref: "SSF.exe 0x43e26b (DataCartridge 0x1298838), SSF.exe 0x43e178 (DataCartridgeEnable 0x1298820), SSF.exe 0x129a340, SSF.exe 0x916e5e-0x916e84, SSF-archive Document/Readme.txt Data Cartridge option"
 
   - name: "<name>.cht"
@@ -113,5 +113,5 @@ files:
     bundled: true
     category: game_data
     description: "cheat script"
-    note: "Read when [Program4] EnableCheat is set, from the directory named after the disc product number. The format is a script language: triggers on first read, field, file, sector, CDDA and scanline, memory reads and writes, storage slots, branches and labels. Six ship with the emulator; the memory cheat dialog saves its own with the target address in the name."
+    note: "Read when [Program4] EnableCheat is set, from the directory named after the disc product number. The format is a script language: triggers on first read, field, file, sector, CDDA and scanline, memory reads and writes, storage slots, branches and labels. Six ship with the emulator, and the memory cheat dialog saves its own with the target address in the name."
     source_ref: "SSF.exe 0x4403c0 (EnableCheat 0x1298de0), SSF.exe 0x12998a0, SSF.exe 0x129a658, SSF.exe command table 0x128c570-0x128c808"

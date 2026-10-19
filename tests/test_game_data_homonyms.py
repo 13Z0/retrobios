@@ -5,7 +5,7 @@ under `baseq2/` and Half-Life's under `valve/`. The name step of the resolver
 ignores directories, so once one of them is collected every other entry of
 that name resolves to it and a pack ships the wrong game's bytes under the
 right path. The collection stores such a file under the tail the engine
-reads (`.../baseq2/pak0.pak`), which lets its own entry resolve by path; an
+reads (`.../baseq2/pak0.pak`), which lets its own entry resolve by path. An
 entry that only reaches the same file by its bare name is a homonym, and
 carries `unsourceable:` until its own bytes are held.
 """
@@ -192,7 +192,7 @@ class SecondPassKeepsIdentity(unittest.TestCase):
 class ReleaseAssetIsNotANameMatch(unittest.TestCase):
     """The release fallback keeps the flag the local resolver honours.
 
-    ioquake3's baseq3/pak0.pk3 is flagged unsourceable; the local resolver
+    ioquake3's baseq3/pak0.pk3 is flagged unsourceable. The local resolver
     returned not_found, then the release fallback looked the asset up by its
     bare name and handed Return to Castle Wolfenstein's demo pak to three
     platform manifests.
@@ -256,7 +256,7 @@ class ReleaseAssetAnswersEveryDeclaredHash(unittest.TestCase):
 
 class ForeignCopyYieldsToADataDirectory(unittest.TestCase):
     """codehandler.bin is held by three Dolphin forks under bios/Other/, all
-    different; Dolphin, PrimeHack and Triforce got MMJR's by index order
+    different. Dolphin, PrimeHack and Triforce got MMJR's by index order
     while data/dolphin-sys, which Dolphin reads, held the upstream file."""
 
     def test_the_data_directory_answers_before_another_emulators_copy(self):
@@ -412,7 +412,7 @@ class SwitchKeysAreTheNewestSet(unittest.TestCase):
 
 
 class Pc98ScsiBiosIsNotTheAppleCard(unittest.TestCase):
-    """np2kai declared an exact 16 KB its loader never requires; the Apple II
+    """np2kai declared an exact 16 KB its loader never requires, so the Apple II
     SCSI card ROM of that size won the name tie over the PC-98 BIOS."""
 
     def test_np2kai_resolves_the_pc98_rom(self):
@@ -455,7 +455,7 @@ class BundledFilesComeFromTheirOwnTree(unittest.TestCase):
 
 
 class HeldFilesAreNotUnsourceable(unittest.TestCase):
-    """`unsourceable:` says the collection cannot hold a file; once its bytes
+    """`unsourceable:` says the collection cannot hold a file, so once its bytes
     sit at the path the entry names, the flag hides them.
 
     The RTCW demo paks and the Spearhead 2.11 pak3 were collected the night
@@ -487,7 +487,7 @@ class HeldFilesAreNotUnsourceable(unittest.TestCase):
 
 class BundledFilesAreTheBuildTheyDescribe(unittest.TestCase):
     """A bundled file is documented from one build. msx-emu's cbios.txt is the
-    C-BIOS 0.29 notes (10469 bytes); the collection held the 0.23 notes and
+    C-BIOS 0.29 notes (10469 bytes), but the collection held the 0.23 notes and
     served them by name. future-pinball-fploader documents BAM 1.5-408 and
     received the 1.5-360 BAM.dll. A namesake of another size is another
     build: the entry needs a hash, its own bytes, or `unsourceable:`."""

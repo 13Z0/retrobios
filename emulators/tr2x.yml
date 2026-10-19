@@ -33,7 +33,7 @@ notes: |
 
   FMV extension probing (src/trx/game/paths.c:76-79):
     .mp4 .mkv .mpeg .avi .webm .ogv .rpl .fmv .bik
-  The retail Core/Eidos cutscenes are .rpl; the gameflow still names
+  The retail Core/Eidos cutscenes are .rpl. The gameflow still names
   them .AVI, resolution picks whichever extension exists.
 
   Music backend (src/trx/game/music/backend_files.c:25-49):
@@ -46,7 +46,7 @@ files:
   # Soundbank
   - name: "main.sfx"
     path: "games/tr2/main.sfx"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
     required: true
     category: game_data
     source_ref: "data/trx/ship/games/tr2/gameflow.json5:33"
@@ -56,7 +56,7 @@ files:
   # Enumerated by data/trx/ship/games/tr2/gameflow.json5 "levels" array.
   - name: "title.tr2"
     path: "games/tr2/levels/title.tr2"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
     required: true
     category: game_data
     source_ref: "data/trx/ship/games/tr2/gameflow.json5:15"
@@ -224,7 +224,7 @@ files:
 
   # FMV cutscenes
   # Enumerated by data/trx/ship/games/tr2/gameflow.json5 "fmvs" array.
-  # The retail files on disc carry a .rpl extension; the gameflow still
+  # The retail files on disc carry a .rpl extension. The gameflow still
   # lists .AVI, resolution picks whichever extension is present.
   - name: "LOGO.AVI"
     aliases: [logo.rpl]
@@ -286,7 +286,7 @@ files:
 
   # Music tracks (retail CD audio, ripped as N.<ext>).
   # Enumerated by the ship tree in docs/trx/INSTALLING.md (TR2 uses the
-  # bare-number form, not the trackNN form; the loader accepts either).
+  # bare-number form, not the trackNN form, and the loader accepts either).
   - name: "2.mp3"
     path: "games/tr2/music/2.mp3"
     required: false
@@ -652,7 +652,7 @@ files:
   # Enumerated by data/trx/ship/games/tr2-gm/gameflow.json5 "levels" array.
   # Its FMVs and music fall back to games/tr2.
   # tools/download_assets and the installer fetch tr2-gm.zip from the
-  # project's host; it holds games/tr2-gm/main.sfx and games/tr2-gm/levels/*.tr2.
+  # project's host. It holds games/tr2-gm/main.sfx and games/tr2-gm/levels/*.tr2.
   # Installing from a retail directory maps data/main_gm.sfx to
   # games/tr2-gm/main_gm.sfx and data/*.tr2 to games/tr2-gm/levels/.
   - name: "main.sfx"

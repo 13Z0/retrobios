@@ -18,7 +18,7 @@ notes: |
   adds g_ram_data/g_ram_size exposure in mach/sms.c for RETRO_MEMORY_SYSTEM_RAM).
 
   BIOS loaded via file_map(PATH_SYSTEM, "bios.sms", 0, BIOS_SIZE) in
-  sms_mapper_init (controllers/mapper/sms_mapper.c:162-165). Returns false on failure — no HLE
+  sms_mapper_init (controllers/mapper/sms_mapper.c:162-165). Returns false on failure, no HLE
   fallback. Mapped at 0x0000, overlays cartridge ROM until bios_disable bit
   set in slot control register (controllers/mapper/sms_mapper.c:79-82).
 
@@ -32,5 +32,5 @@ files:
     required: true
     size: 8192
     validation: [size]
-    source_ref: "controllers/mapper/sms_mapper.c:12 (BIOS_SIZE=0x2000), :61 (bios_path), :162-170 (file_map + NULL check → return false)"
+    source_ref: "controllers/mapper/sms_mapper.c:12 (BIOS_SIZE=0x2000), :61 (bios_path), :162-170 (file_map, then false on a NULL map)"
     note: "Mapped at 0x0000, overlays cartridge ROM until bios_disable bit set. file_map rejects files < 8192 bytes (main/file.c:59)."

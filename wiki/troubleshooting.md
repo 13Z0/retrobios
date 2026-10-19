@@ -186,7 +186,7 @@ How to read and interpret `verify.py` output.
 | `missing` | File not found in the repository |
 
 Hash and size mismatches are reported as `untested` with a reason field
-showing expected vs actual values (e.g., `expected abc123… got def456…`).
+showing expected vs actual values (e.g., `expected abc123... got def456...`).
 
 **Reading the output:**
 
@@ -265,7 +265,7 @@ python install.py --platform batocera --dest /userdata/bios/
 ```
 
 `python install.py --list-platforms` lists the platforms the installer knows
-and the ones it detects here; `--help` lists the options.
+and the ones it detects here, and `--help` lists the options.
 
 **Manifest or file not found:**
 
@@ -289,7 +289,7 @@ bash scripts/download.sh --list
 ```
 
 A pack's name lists every platform it serves. Releases up to v2026.10.10
-ship RetroArch and Lakka as one `RetroArch_Lakka` pack; the next ones give
+ship RetroArch and Lakka as one `RetroArch_Lakka` pack, and the next ones give
 Lakka its own, since Lakka runs on Linux where two names that differ by case
 are two files. The installer and the download scripts find the right pack
 either way.

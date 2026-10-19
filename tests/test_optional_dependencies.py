@@ -53,7 +53,7 @@ class SuiteWithoutJsonschema(unittest.TestCase):
 
 
 class ScriptsNeedOnlyPyyaml(unittest.TestCase):
-    """The build scripts need the standard library and pyyaml; jsonschema is
+    """The build scripts need the standard library and pyyaml. jsonschema is
     validate_schemas.py's alone. CI installs jsonschema with its whole tree
     (attrs, referencing, rpds-py), so an import of any of them would pass
     there and fail for a contributor following the documented setup."""

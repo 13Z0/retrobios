@@ -13,10 +13,10 @@ systems: [nintendo-virtualboy]
 notes: |
   Libretro port of Mednafen's Virtual Boy emulation module.
   No external BIOS or firmware files. The Virtual Boy has no boot
-  ROM; the V810 CPU executes directly from the game ROM mapped at
+  ROM: the V810 CPU executes directly from the game ROM mapped at
   0x07000000. Load() in libretro.cpp:1810 takes only ROM data.
   Upstream Mednafen supports an optional vb.pal palette file
-  (Documentation/vb.html); the libretro port handles palette via
+  (Documentation/vb.html), while the libretro port handles palette via
   core options instead.
 
 files: []

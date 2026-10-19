@@ -49,7 +49,7 @@ notes: |
   portable directory next to the executable when it exists, otherwise
   %APPDATA%/Cemu on Windows, XDG_DATA_HOME/Cemu and XDG_CONFIG_HOME/Cemu on
   Linux, and the MLC defaults to <user data>/mlc01. path: entries below are
-  the libretro destination under the system directory; standalone_path: is
+  the libretro destination under the system directory, and standalone_path: is
   relative to the Cemu user data directory.
   ref: src/libretro/CemuLibretro.cpp:1647-1707,
        src/libretro/CemuLibretro.cpp:3264-3272,
@@ -57,7 +57,7 @@ notes: |
        src/config/ActiveSettings.cpp:295-321
 
   keys.txt is read once from the user data path. A missing file is created
-  with a comment header and an example key; each line is stripped of
+  with a comment header and an example key. Each line is stripped of
   comments, spaces, dashes and underscores and must then be 32 hex
   characters, otherwise an error is raised for that line. FindDiscKey tries
   every key in order against the encrypted partition header of a .wud/.wux
@@ -87,11 +87,11 @@ notes: |
        src/resource/CafeDefaultFont.cpp:2562-2569
 
   Online files. iosuCrypto_init reads otp.bin and seeprom.bin from the user
-  data path and rejects any size other than 1024 and 512 bytes; without a
+  data path and rejects any size other than 1024 and 512 bytes. Without a
   valid OTP no certificate is loaded and online mode is off. The certificate
   table names 8 client certificates with their AES-encrypted RSA keys and 39
   CA certificates, all under sys/title/0005001b/10054000/content/ of the
-  MLC; olive and wood appear twice under distinct ids, so 7 distinct client
+  MLC, and olive and wood appear twice under distinct ids, so 7 distinct client
   pairs and 39 CA files are read. A key file must be a non-empty multiple of
   16 bytes and is decrypted with the key at OTP offset 0x120. Online mode is
   only enabled when every file of the table is present. For the libretro
@@ -105,7 +105,7 @@ notes: |
   <module>.rpl in cafeLibs/ under the user data path and loads it in place
   of Cemu's own implementation, as long as the game profile does not set
   loadSharedLibraries to false (the default is true). Any Cafe OS module can
-  be placed there; the code names snd_user.rpl and snduser2.rpl as the ones
+  be placed there. The code names snd_user.rpl and snduser2.rpl as the ones
   to dump when a title uses an unsupported audio effect, and gates
   swkbd.rpl and erreula.rpl on the presence of their data packs in the MLC
   (swkbd.pack of title 0005001b-1004f000, erreula.pack of 0005001b-10051000),
@@ -116,7 +116,7 @@ notes: |
 
   Data directories. A title's game profile is read from gameProfiles/<title
   id>.ini under the config path, then from gameProfiles/default/<title
-  id>.ini under the data path; upstream ships 236 of them in
+  id>.ini under the data path. Upstream ships 236 of them in
   bin/gameProfiles/default and the libretro data path is <system_dir>/Cemu.
   Standalone loads as a graphic pack every directory holding a rules.txt
   under graphicPacks/ of the user data path, and its downloader extracts the
@@ -179,7 +179,7 @@ files:
     validation: [size]
     description: "Wii U OTP dump"
     note: >-
-      Read into the OTP mirror at init; any other size is rejected and
+      Read into the OTP mirror at init. Any other size is rejected and
       online mode stays off. Its keys decrypt the client certificate keys
       and sign the device certificate.
     source_ref: "src/Cafe/IOSU/legacy/iosu_crypto.cpp:553-577, src/Cafe/IOSU/legacy/iosu_crypto.cpp:619-626"
@@ -192,7 +192,7 @@ files:
     validation: [size]
     description: "Wii U SEEPROM dump"
     note: >-
-      Read into the SEEPROM mirror at init; any other size is rejected and
+      Read into the SEEPROM mirror at init. Any other size is rejected and
       online mode stays off.
     source_ref: "src/Cafe/IOSU/legacy/iosu_crypto.cpp:579-600, src/Cafe/IOSU/legacy/iosu_crypto.cpp:627-632"
 
@@ -301,7 +301,7 @@ files:
       included. Nothing about it is validated. The region holds the
       SharedDataEntry table (0xFFCAFE01 to 0xFFCAFE04, type 2) followed by
       CafeCn.ttf, CafeKr.ttf, CafeStd.ttf and CafeTw.ttf, byte-identical to
-      the console dumps of title 0005001b-10042400 above; every other byte
+      the console dumps of title 0005001b-10042400 above, and every other byte
       is zero.
     source_ref: "src/Cafe/CafeSystem.cpp:268-291, src/Cafe/CafeSystem.cpp:357-365"
 
@@ -335,8 +335,8 @@ files:
     hle_fallback: true
     description: "Cafe OS software keyboard applet library"
     note: >-
-      Loaded from cafeLibs/ only when swkbd.pack is present in the MLC;
-      otherwise the built-in keyboard is used and the file is ignored.
+      Loaded from cafeLibs/ only when swkbd.pack is present in the MLC.
+      Otherwise the built-in keyboard is used and the file is ignored.
     source_ref: "src/Cafe/OS/RPL/rpl.cpp:1929-1933, src/Cafe/OS/RPL/rpl.cpp:1978-1988"
 
   - name: erreula.rpl
@@ -346,8 +346,8 @@ files:
     hle_fallback: true
     description: "Cafe OS error viewer applet library"
     note: >-
-      Loaded from cafeLibs/ only when erreula.pack is present in the MLC;
-      otherwise the built-in error viewer is used and the file is ignored.
+      Loaded from cafeLibs/ only when erreula.pack is present in the MLC.
+      Otherwise the built-in error viewer is used and the file is ignored.
     source_ref: "src/Cafe/OS/RPL/rpl.cpp:1935-1939, src/Cafe/OS/RPL/rpl.cpp:1978-1988"
 
   - name: swkbd.pack
@@ -358,7 +358,7 @@ files:
     description: "Software keyboard applet data, title 0005001b-1004f000"
     note: >-
       Its presence in the MLC is what lets a swkbd.rpl from cafeLibs/ be
-      used; the applet then reads it through the Cafe filesystem.
+      used, and the applet then reads it through the Cafe filesystem.
     source_ref: "src/Cafe/OS/RPL/rpl.cpp:1929-1933"
 
   - name: erreula.pack
@@ -369,7 +369,7 @@ files:
     description: "Error viewer applet data, title 0005001b-10051000"
     note: >-
       Its presence in the MLC is what lets an erreula.rpl from cafeLibs/ be
-      used; the applet then reads it through the Cafe filesystem.
+      used, and the applet then reads it through the Cafe filesystem.
     source_ref: "src/Cafe/OS/RPL/rpl.cpp:1935-1939"
 
   - name: OfflineDB.zar
@@ -476,7 +476,7 @@ files:
     source_ref: "src/Cafe/IOSU/legacy/iosu_crypto.cpp:475, src/Cafe/IOSU/legacy/iosu_crypto.cpp:477, src/Cafe/IOSU/legacy/iosu_crypto.cpp:312-326"
 
   # CA certificates, same title, scerts/. Parsed as DER X.509 and added to
-  # the SSL store; every one of them must load for online mode.
+  # the SSL store. Every one of them must load for online mode.
   - name: CACERT_NINTENDO_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der

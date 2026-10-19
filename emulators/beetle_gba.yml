@@ -1,4 +1,4 @@
-# Beetle GBA (Mednafen) — Game Boy Advance (libretro)
+# Beetle GBA (Mednafen), Game Boy Advance (libretro)
 # ref: beetle-gba-libretro/mednafen/gba, docs.libretro.com/library/beetle_gba
 # Same BIOS as mGBA/VBA-M. Read only with the gba_hle core option disabled.
 emulator: Beetle GBA (Mednafen)
@@ -17,6 +17,6 @@ files:
     validation: [size]
     source_ref: "mednafen/gba/GBA.cpp:2639-2673, mednafen/settings.cpp:81-82, libretro.cpp:223-230"
     note: >
-      Read only when the gba_hle core option is disabled; it is enabled by
+      Read only when the gba_hle core option is disabled. It is enabled by
       default and the core then uses its built-in HLE BIOS. A file of any size
       other than 16384 bytes is ignored and the core falls back to HLE.

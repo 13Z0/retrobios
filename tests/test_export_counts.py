@@ -80,7 +80,7 @@ class RetroDeckWritesWhatItCounts(unittest.TestCase):
         self.assertEqual(changes.applied, [])
 
     def test_an_addition_at_another_path_is_written(self):
-        """melonDS: RetroDECK declares firmware.bin at the root; the truth adds
+        """melonDS: RetroDECK declares firmware.bin at the root and the truth adds
         SkyEmu/firmware.bin. Keyed by name and system, the addition vanished
         and the report still counted it."""
         existing = [{"filename": "firmware.bin", "system": "nds", "md5": A}]
@@ -265,7 +265,7 @@ class PureDataExportsKeepWhatWeDoNotModel(unittest.TestCase):
 
     def test_two_additions_differing_by_directory_are_two_lines(self):
         """PCSX2's vulkan and opengl convert.glsl were both written under the
-        bare name; the second was dropped and still counted as added."""
+        bare name, so the second was dropped and still counted as added."""
         from exporter.baseline import Report
 
         shaders = [
@@ -424,7 +424,7 @@ class SystemDatKeepsItsQuoting(unittest.TestCase):
 
 class ModelKeepsOneFileOneEntry(unittest.TestCase):
     def test_a_list_of_sizes_is_not_one_size(self):
-        """A profile may accept several revisions; int() on the list crashed."""
+        """A profile may accept several revisions, and int() on the list crashed."""
         several = NativeFile("a.bin", "a.bin", "s", truth={"size": [1024, 2048], "crc32": "aaaaaaaa"})
         single = NativeFile("b.bin", "b.bin", "s", truth={"size": [1024], "crc32": "aaaaaaaa"})
         self.assertIsNone(several.size())
@@ -521,7 +521,7 @@ class RommKeepsItsOwnKeys(unittest.TestCase):
         self.assertEqual(changes.applied, ["doom/PLUTONIA.WAD sha1"])
 
     def test_the_shared_helper_reads_every_exporter_the_same_way(self):
-        """RomM's writable is per instance; the base helper bound fe as self."""
+        """RomM's writable is per instance, but the base helper bound fe as self."""
         from exporter import discover_exporters  # noqa: PLC0415
 
         theirs = NativeFile("boot.bin", "dc/boot.bin", "dc",
@@ -688,8 +688,8 @@ class RetroDeckCorrectsOnlyWhatItCarries(unittest.TestCase):
 
 class BatoceraKeepsTheRunnerKeys(unittest.TestCase):
     def test_emulator_and_core_travel_with_a_rewritten_entry(self):
-        """checkBios skips a BIOS whose emulator or core is not installed;
-        rewritten without the keys, vectrex's MAME BIOS was wanted by every
+        """checkBios skips a BIOS whose emulator or core is not installed.
+        Rewritten without the keys, vectrex's MAME BIOS was wanted by every
         build."""
         from exporter.batocera_exporter import Exporter as Batocera  # noqa: PLC0415
 
@@ -788,8 +788,8 @@ class ACorruptOriginalIsRefused(unittest.TestCase):
 
 class TheSummaryCountsWhatTheFileCarries(unittest.TestCase):
     """RomM kept the sha1 and crc the truth contradicts beside the corrected
-    md5, and RomM accepts any one hash; RetroDECK kept a cleared md5 and
-    Recalbox an element it could not rewrite, both counted cleared; RomM and
+    md5, and RomM accepts any one hash. RetroDECK kept a cleared md5 and
+    Recalbox an element it could not rewrite, both counted cleared. RomM and
     System.dat counted a sha1 filled that no record could hold."""
 
     def _contradicted(self):

@@ -24,7 +24,7 @@ notes: |
        app/src/main/cpp/rpcs3/rpcs3/rpcs3_version.cpp:29
 
   Source drops land on successive branches, not on the default one. Release 2.43
-  of 2026-10-05 is the commit titled 2.43 at the head of main4; the lightweight
+  of 2026-10-05 is the commit titled 2.43 at the head of main4. The lightweight
   tags 2.39 to 2.43 all sit on the head of main2, the default branch, an April
   tree that predates every one of those releases and whose generated
   git-version.h was never filled in. main4 is the tree read here. No versionName is usable either:
@@ -35,7 +35,7 @@ notes: |
 
   Emulator paths derive from APS3E_DATA_DIR, set by the Java layer to the
   external files directory of the package. The config directory holds dev_flash,
-  dev_hdd0, custom_cfg and the global config.yml; caches live beside it. The
+  dev_hdd0, custom_cfg and the global config.yml, with caches beside it. The
   custom font directory sits at the data root, and the custom GPU driver
   directory sits in internal storage because the external filesystem cannot
   carry an executable mapping.
@@ -73,7 +73,7 @@ notes: |
   Vulkan is reached through a loader chosen before the emulator starts. The
   global config YAML is read directly for Use Custom Driver and Custom Driver
   Library Path, and the named library is opened through libadrenotools as a
-  custom driver when both are set and the path exists; otherwise the system
+  custom driver when both are set and the path exists. Otherwise the system
   libvulkan.so is dlopened. Drivers are imported either as a bare shared object
   or as a zip whose meta.json names the library.
   ref: app/src/main/cpp/aps3e_emu.cpp:952-976,
@@ -116,7 +116,7 @@ files:
       rejects an empty file, a wrong magic, a declared size the file does not
       reach, an unreadable entry table and a failed entry hash. Segment 0x300
       carries the installation package database and segment 0x100 the version
-      string; the packages whose names contain dev_flash_ are decrypted with the
+      string. The packages whose names contain dev_flash_ are decrypted with the
       SCEPKG keys and their inner TARs extracted over dev_flash. The Java layer
       creates dev_flash/.installed once the native call returns true. No digest
       of the file itself is compared against anything.
@@ -133,8 +133,8 @@ files:
     note: >-
       Resolved as a sidecar of the image being launched, .dkey first then .key,
       and passed down as a second descriptor. Up to 32 bytes are read: a full
-      32-byte read is taken as a hex string and converted, a 16-byte file as raw;
-      any other length fails the key check. An image whose odd regions are
+      32-byte read is taken as a hex string and converted, a 16-byte file as raw.
+      Any other length fails the key check. An image whose odd regions are
       encrypted does not boot without it.
     source_ref: "app/src/main/java/aenu/aps3e/Utils.java:185-205, app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:362-408, app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:855-882"
 
@@ -206,7 +206,7 @@ dev_flash:
     path: "dev_flash/sys/external/"
     source_ref: "app/src/main/cpp/rpcs3/rpcs3/Emu/Cell/PPUModule.cpp:2703-2705, app/src/main/cpp/rpcs3/rpcs3/Emu/Cell/lv2/sys_prx.cpp:208, app/src/main/cpp/rpcs3/rpcs3/Emu/Cell/Modules/cellSysmodule.cpp:1031"
     note: >-
-      Firmware SPRX modules. liblv2.sprx gates the boot and pulls the rest in;
+      Firmware SPRX modules. liblv2.sprx gates the boot and pulls the rest in, and
       each module can be forced to LLE or HLE through Libraries Control, which
       the shipped configuration leaves empty. flashATRAC.pic is named by
       cellSysmodule for the ATRAC module path.

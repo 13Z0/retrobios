@@ -15,7 +15,7 @@ systems: [oberon]
 # Emulates the Oberon RISC processor designed by Niklaus Wirth.
 # Bootloader (512 words) compiled into the binary from risc-boot.inc,
 # loaded into ROM at 0xFFFFF800 on startup (risc.c:75-77,93).
-# No retro_get_system_directory() call — no files from system dir.
+# No retro_get_system_directory() call, so no files from system dir.
 # Content: .dsk disk images loaded via retro_load_game (libretro.c:209-214).
 # Upstream and libretro core emulation code (risc.c, disk.c) are identical.
 

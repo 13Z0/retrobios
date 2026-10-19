@@ -330,7 +330,7 @@ class TestWorstStatus(unittest.TestCase):
 
 class TestAnchorBlock(unittest.TestCase):
     def test_a_range_ending_past_the_file_is_gone(self):
-        """dolphin cited NANDImporter.cpp:239-323 in a 317-line file; the
+        """dolphin cited NANDImporter.cpp:239-323 in a 317-line file. The
         part inside the file anchored, and the ref read as sound."""
         lines = [f"line {n}" for n in range(1, 11)]
         self.assertEqual(anchor_block(lines, list(lines), 8, 14).status, "GONE")
@@ -465,7 +465,7 @@ class TestVerifyAtPin(unittest.TestCase):
         self.assertIsNone(profile_sync.cites_another_version(same, {"libretro": "v0.16.0"}))
 
     def test_a_name_stem_elsewhere_does_not_move_a_ref(self):
-        """linapple cites the PRAVETS82 option; the stem also names an install line."""
+        """linapple cites the PRAVETS82 option, and the stem also names an install line."""
         lines = ['option(ENABLE_ROM_CLONE_PRAVETS "" OFF)', "", "", "", "", "",
                  "", "", "", "", "", "", "res/roms/pravets82.rom"]
         part = RefPart("CMakeLists.txt", 1, 1, "CMakeLists.txt:1")
@@ -560,7 +560,7 @@ class TestVerifyAtPin(unittest.TestCase):
         )
 
     def test_an_entry_declaring_nothing_is_accepted_but_not_called_anchored(self):
-        # Nothing to re-read, so no review is demanded; but the verdict says
+        # Nothing to re-read, so no review is demanded, but the verdict says
         # that nothing was checked rather than claiming the ref anchors.
         part = RefPart("a.c", 1, 1, "a.c:1")
         result = profile_sync.verify_at_pin(part, self.LINES, [])
@@ -790,7 +790,7 @@ class TestNudgeToDeclared(unittest.TestCase):
         )
 
     def test_a_range_over_code_cites_that_code(self):
-        """ymir's 598-618 cited load_rom_cartridge(); nudged onto the file
+        """ymir's 598-618 cited load_rom_cartridge(). Nudged onto the file
         table beside it, a rewritten function read SHIFTED, not CHANGED."""
         lines = ["void load_rom_cartridge() {"] + ["  code();"] * 19 + ["}", "kKOF95Files"]
         self.assertIsNone(profile_sync.nudge_to_declared(lines, 1, 21, ["kkof95files"]))
@@ -1414,7 +1414,7 @@ class TestBuildReport(unittest.TestCase):
         self.assertEqual(report.entries[0].status, "MOVED")
 
     def test_a_value_absent_from_the_whole_file_is_not_held_against_the_ref(self):
-        # A ref citing loading logic never spells the value out; its absence
+        # A ref citing loading logic never spells the value out, so its absence
         # is not evidence that the ref is stale.
         self.files[("headsha", "a.c")] = ["x", "load_bios(path);"]
         profile = self._profile(["a.c:2"])
@@ -1432,7 +1432,7 @@ class TestBuildReport(unittest.TestCase):
         self.assertEqual(report.entries[0].status, "ANCHORED")
 
     def test_the_repository_with_a_subject_owns_a_shared_path(self):
-        # A port and its upstream can both carry a path; only one holds the
+        # A port and its upstream can both carry a path, but only one holds the
         # cited subject, and a blank line is never a citation.
         self.files[("portpin", "src/a.cpp")] = ["x", "", "y"]
         self.files[("uppin", "src/a.cpp")] = ["x", "GAME(1985, bubsys", "y"]
@@ -1450,7 +1450,7 @@ class TestBuildReport(unittest.TestCase):
 
     def test_a_blank_first_line_does_not_hand_the_ref_to_the_upstream(self):
         """lrps2's VMManager.cpp:418-431 opens on a blank line in the fork it
-        was written for; scored 0, the upstream (418 unrelated, not blank)
+        was written for. Scored 0, the upstream (418 unrelated, not blank)
         took the ref and its code decided the rebase target."""
         self.files[("portpin", "src/a.cpp")] = ["x", "", "load_patches();", "y"]
         self.files[("porthead", "src/a.cpp")] = ["", "load_patches();", "y", "w"]
@@ -1470,7 +1470,7 @@ class TestBuildReport(unittest.TestCase):
         }
         report = profile_sync.report_to_dict(build_report("lrps2", profile, self.dir))
         part = report["entries"][0]["parts"][0]
-        # Moved by -1 in the fork, the block's real target; the upstream's
+        # Moved by -1 in the fork, the block's real target. The upstream's
         # +2 shift of unrelated code is not it.
         self.assertIsNone(part["repo"])
         self.assertEqual((part["status"], part["start"]), ("SHIFTED", 1))
@@ -1487,13 +1487,13 @@ class TestBuildReport(unittest.TestCase):
         profile["upstream"] = "https://github.com/o/up"
         profile["source_branch"] = "libretro"
         build_report("test", profile, self.dir)
-        # Only the port carries the branch; the upstream keeps its own tip.
+        # Only the port carries the branch. The upstream keeps its own tip.
         self.assertEqual(seen["o/n"], "libretro")
         self.assertIsNone(seen["o/up"])
 
     def test_the_subject_beats_a_merely_non_blank_line(self):
         # A fork whose tree is offset holds a real but unrelated statement at
-        # the cited line; the repository carrying the subject wins.
+        # the cited line. The repository carrying the subject wins.
         self.files[("portpin", "src/a.cpp")] = ["x", "GAME(1997, drgw2100c", "y"]
         self.files[("uppin", "src/a.cpp")] = ["x", "GAME(1997, pgm,", "y"]
         self.files[("headsha", "src/a.cpp")] = ["x", "GAME(1997, pgm,", "y"]
@@ -1510,7 +1510,7 @@ class TestBuildReport(unittest.TestCase):
 
     def test_a_ref_is_broken_only_when_it_fails_everywhere(self):
         # Both repositories carry the path with the same delimited token on the
-        # cited line, so no single attribution is right; the ref anchors in one
+        # cited line, so no single attribution is right. The ref anchors in one
         # of them and that settles it.
         self.files[("portpin", "src/a.cpp")] = ["x", "GAME(1997, drgw, pgm,", "y"]
         self.files[("porthead", "src/a.cpp")] = ["x", "", "y"]
@@ -1682,7 +1682,7 @@ class TestDeclaredDeadUpstream(TestBuildReport):
 
     yuzu and suyu were withdrawn, citron's domain was taken by a squatter.
     Leaving those profiles to fail every pass reports an open problem where
-    there is a settled fact. Declaring it records the death; the guard is
+    there is a settled fact. Declaring it records the death, and the guard is
     that a declaration must stop being true the moment the forge answers.
     """
 
@@ -1745,7 +1745,7 @@ class TestRefsAheadOfTheirPin(TestBuildReport):
         """nestopia's shape: the file is there, the line is not yet.
 
         Palette and database loads sat at 2041 and 2063, which is where HEAD
-        carries them; the pinned revision was four hundred lines shorter.
+        carries them. The pinned revision was four hundred lines shorter.
         """
         self.files[("pinsha", "a.c")] = ["x"] * 10
         self.files[("headsha", "a.c")] = ["x"] * 40 + ["the cited line"] + ["y"]
@@ -1757,7 +1757,7 @@ class TestRefsAheadOfTheirPin(TestBuildReport):
         )
 
     def test_a_range_beyond_head_is_still_just_missing(self):
-        """Not every pin miss is a stale pin; only one that fits HEAD."""
+        """Not every pin miss is a stale pin, only one that fits HEAD."""
         self.files[("headsha", "a.c")] = ["x"]
         report = build_report("test", self._profile(["a.c:40"]), self.dir)
         part = report.entries[0].parts[0]
@@ -2401,7 +2401,7 @@ class TestWriteDryRun(unittest.TestCase):
 
     def test_two_writing_pins_give_two_readings(self):
         """vitaquake2: written at one pin, re-pinned under the same text. Each
-        pin is a reading; a run settles when every reading agrees."""
+        pin is a reading, and a run settles when every reading agrees."""
         revisions = [
             ("c2", {"source_commit": "pin2", "notes": "x"}),
             ("c1", {"source_commit": "pin1", "notes": "x"}),
@@ -2415,7 +2415,7 @@ class TestWriteDryRun(unittest.TestCase):
 
     def test_a_confirmed_pin_settles_the_readings(self):
         """fixnes: doOpenFDSBIOS lived under four pins and was exact at the
-        last; with nothing to record that reading, the bump was refused for
+        last. With nothing to record that reading, the bump was refused for
         good. prose_written_at names the pin and the readings collapse."""
         revisions = [
             ("c2", {"source_commit": "pin2", "notes": "x"}),
@@ -2613,7 +2613,7 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
 
     def test_the_builds_platforms_hold_say_so(self):
         # reicast is the commit Recalbox's reicast.mk builds, 789 commits
-        # behind master; compared to HEAD it showed eight refs to review that
+        # behind master. Compared to HEAD it showed eight refs to review that
         # nobody could act on.
         from common import load_emulator_profiles  # noqa: PLC0415
 
@@ -2631,7 +2631,7 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
 
 
 class TestProseSpacingIsNotADifference(unittest.TestCase):
-    """A recale keeps the author's spacing; the check has to allow for it.
+    """A recale keeps the author's spacing, so the check has to allow for it.
 
     _run_after_moves renders `a.c:228,1439-1443` while the writer leaves the
     sentence as written, `a.c:228, 1439-1443`. Comparing the two literally
@@ -3136,7 +3136,7 @@ class TestCollectCitations(unittest.TestCase):
         )
 
     def test_a_semicolon_separates_citations_like_a_comma(self):
-        # lynx-emu: "...:112; mednafen src/lynx/system.cpp:86-93" cites the
+        # lynx-emu: `...:112; mednafen src/lynx/system.cpp:86-93` cites the
         # mednafen upstream, not the fork the profile was read from.
         for line in (
             "see Lynx.emu/src/lynx/system.cpp:112; mednafen src/lynx/system.cpp:86-93",
@@ -3318,7 +3318,7 @@ class TestCitationSurfaceGuard(unittest.TestCase):
 
         A consumer keying on the field name reopens the gap this closes:
         citations outside its list rot while the pin advances. The walker
-        matches the key once; everything else goes through the collector.
+        matches the key once. Everything else goes through the collector.
         """
         source = Path(profile_sync.__file__).read_text(encoding="utf-8")
         self.assertNotIn('.get("source_ref")', source)
@@ -3683,7 +3683,7 @@ class TestRealignProse(unittest.TestCase):
 
     def test_run_realigns_from_the_writing_pin(self):
         self._repo_with_advanced_pin()
-        # At the writing pin line 10 is the subject; at the current pin the
+        # At the writing pin line 10 is the subject. At the current pin the
         # same content sits on line 14. Anchoring from the current pin would
         # track whatever occupies line 10 there instead.
         self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
@@ -3703,7 +3703,7 @@ class TestRealignProse(unittest.TestCase):
         """A committed pin change under the same text may be a correction.
 
         vitaquake2 kept its notes while 38fc9331 re-pinned it onto the
-        revision those notes described; realigning from the first pin moved
+        revision those notes described. Realigning from the first pin moved
         correct citations onto unrelated code.
         """
         self._repo_with_advanced_pin()
@@ -3867,7 +3867,7 @@ class TestRealignProse(unittest.TestCase):
 
 
 class TestOutputModesApplyTheirFlags(unittest.TestCase):
-    """--changed-only narrows --json too; extras are refused off the text report."""
+    """--changed-only narrows --json too. Extras are refused off the text report."""
 
     def _main(self, *argv):
         from unittest import mock
@@ -4104,7 +4104,7 @@ class OfflineCacheMissIsNotGone(TestBuildReport):
 
 class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
     """`--all --system atari-lynxx` printed nothing and exited 0, which read
-    as "no Lynx profile needs a re-read"; `--emulator handyy` offered no
+    as "no Lynx profile needs a re-read", and `--emulator handyy` offered no
     suggestion."""
 
     PROFILES = {
@@ -4135,7 +4135,7 @@ class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
 
 class TestTreeUrlIntoADirectory(unittest.TestCase):
     """`.../libretro-samples/tree/master/tests/cruzes` took the whole tail as
-    the branch; nothing resolved and cruzes was skipped as having no pin."""
+    the branch. Nothing resolved and cruzes was skipped as having no pin."""
 
     def test_candidates_are_prefixes_shortest_first(self):
         self.assertEqual(

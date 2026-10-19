@@ -147,7 +147,7 @@ def held_adler32_pair(file_entry: dict, db: dict) -> str | None:
     Dolphin hashes dsp_rom.bin and dsp_coef.bin together and warns on any
     combination outside its table: two files each accepted alone can still
     be a pair it refuses. ``adler32_pairs`` lists the accepted pairs, the
-    entry's own value first, in the code's table order; both members walk
+    entry's own value first, in the code's table order. Both members walk
     the same pairs over the same collection, so they settle on one pair.
     None when the entry declares no pair or none is held whole.
     """
@@ -195,7 +195,7 @@ def adler32_fits(file_entry: dict, path: str, db: dict | None = None) -> bool:
 def size_fits(file_entry: dict, candidate_size: int) -> bool:
     """Whether a size is one the entry declares.
 
-    ``size`` is an exact size or the list of sizes the code accepts; it
+    ``size`` is an exact size or the list of sizes the code accepts, and it
     outranks a ``min_size``/``max_size`` range. Nothing declared fits all.
     """
     declared = file_entry.get("size")
@@ -265,8 +265,8 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
 
     # Resolve shared group includes
     shared_path = os.path.join(platforms_dir, "_shared.yml")
-    # Merge metadata from _registry.yml. The registry is our curated source;
-    # the scraped YAML may be incomplete (missing cores, metadata fields).
+    # Merge metadata from _registry.yml. The registry is our curated source,
+    # while the scraped YAML may be incomplete (missing cores, metadata fields).
     # Registry fields supplement (not replace) the scraped config.
     registry_path = os.path.join(platforms_dir, "_registry.yml")
     if os.path.exists(registry_path):
@@ -281,7 +281,7 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
         for depth, name in enumerate(chain):
             reg_entry = reg.get("platforms", {}).get(name, {})
 
-            # Merge cores (union for lists, override for all_libretro); a
+            # Merge cores (union for lists, override for all_libretro), a
             # parent's only where the platform names none.
             reg_cores = reg_entry.get("cores")
             if reg_cores is not None and (depth == 0 or "cores" not in config):
@@ -452,9 +452,9 @@ def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> 
 def platform_arg(value: str) -> str:
     """--platform as typed, mapped to the registry's slug when it names one.
 
-    The site and the pack names say RetroArch and MiSTer FPGA; verify and
+    The site and the pack names say RetroArch and MiSTer FPGA, but verify and
     generate_pack refused both while install.py took them. Letters and
-    digits decide, as for pack names; anything else reaches require_platform
+    digits decide, as for pack names. Anything else reaches require_platform
     unchanged and gets its suggestion.
     """
     key = re.sub(r"[^a-z0-9]", "", value.lower())
@@ -993,7 +993,7 @@ def _member_held(member: dict, crcs: frozenset[str], names: frozenset[str]) -> b
 def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
     """The same-named archives holding the most required members, then the most members.
 
-    FBNeo reads neocd.bin and 000-lo.lo inside neocdz.zip; the primary copy,
+    FBNeo reads neocd.bin and 000-lo.lo inside neocdz.zip. The primary copy,
     a set without 000-lo.lo, won on the name while a variant held both.
     """
     def held(path: str) -> tuple[int, int]:
@@ -1034,7 +1034,7 @@ def _by_affinity(paths: list[str], file_entry: dict, dest_hint: str) -> list[str
     TheXTech coin.ogg for Syobon Action, a Hurrican sound for ARMSX2, the
     1 MB CM-32L PCM ROM for ScummVM's 512 KB MT32_PCM.ROM. A size the entry
     declares orders the candidates first (ordering rejects nothing, so an
-    unvalidated size keeps its informative status); then the destination's
+    unvalidated size keeps its informative status). Then the destination's
     directories and the profile that asks name where its own copy lives. The
     order is otherwise kept.
     """
@@ -1210,7 +1210,7 @@ def resolve_local_file(
                     return path, status
 
     # 1c. CRC32 lookup, only when no stronger hash is declared.  A declared
-    # size confirms it when available; a handful of emulators validate CRC32
+    # size confirms it when available. A handful of emulators validate CRC32
     # alone, so those entries retain the same (weaker) evidence as the core.
     if (
         crc_candidates
@@ -1287,11 +1287,11 @@ def resolve_local_file(
         # shortened tail can be claimed by several emulators shipping the same
         # asset tree, and it then proves nothing: skip it. The full tail can be
         # claimed twice as well, one storing it at the root of its own
-        # directory and one nested deeper; there the file whose path carries
+        # directory and one nested deeper. There the file whose path carries
         # the least on top of the destination is the one that IS the
         # destination.
         # The descent drops at most one leading segment. A destination and the
-        # tree differ by the wrapper directory at most; beyond that the tail
+        # tree differ by the wrapper directory at most. Beyond that the tail
         # stops describing this file and starts describing whichever emulator
         # happens to store the same asset tree.
         hint_parts = dest_hint.split("/")
@@ -1418,7 +1418,7 @@ def resolve_local_file(
                 # set aside: the name says nothing about this profile's file,
                 # and a data directory it reads may hold it. Dolphin got
                 # Dolphin-MMJR's codehandler.bin while data/dolphin-sys held
-                # its own; blueMSX got the 16 KB RS232.ROM once msx-emu's
+                # its own, and blueMSX got the 16 KB RS232.ROM once msx-emu's
                 # 8 KB copy was set aside, while data/bluemsx held its own,
                 # and MSX2P.ROM of another dump once only msx-emu answered
                 # the exact casing.
@@ -1649,7 +1649,7 @@ def profiles_for_systems(
 def entry_serves_systems(entry: dict, profile: dict, system_ids: list[str]) -> bool:
     """Whether a profile entry belongs to one of the systems, spelled either way.
 
-    The entry's own `system:` decides; one without it serves every system
+    The entry's own `system:` decides. One without it serves every system
     of its profile, the rule a platform pack applies to core extras.
     """
     own = entry.get("system")
@@ -1990,7 +1990,7 @@ def expand_directory_entries(
 ) -> list[dict]:
     """Replace each ``type: directory`` entry by the files held under it.
 
-    A profile declares the directory its code walks; what a pack can carry
+    A profile declares the directory its code walks, but what a pack can carry
     is the files. Each member keeps the entry's fields and is pinned to the
     content the collection holds at that destination. A directory nothing
     answers is kept as declared, one gap, and a member the profile also
@@ -2277,7 +2277,7 @@ def designated_profiles(profiles: dict[str, dict], names: set[str]) -> set[str]:
     """The profiles a list of upstream core names designates.
 
     The buildbot and es_systems name cores their own way (`mednafen_psx` for
-    beetle_psx); a profile's `cores:` lists those names. A name no profile
+    beetle_psx), and a profile's `cores:` lists those names. A name no profile
     claims stands for itself.
     """
     index = upstream_profile_index(profiles, include_aliases=True)
@@ -2385,7 +2385,7 @@ def platform_declarations(
     A name alone does not say which file a declaration is: RetroArch declares
     galaksija/ROM1.BIN, a 4 KiB ROM, and DOSBox reads a 32 KiB SC-55 ROM1.BIN.
     The size, from the platform entry or else from the file its hash names,
-    tells a declaration of the same file from a same-named one; None stands
+    tells a declaration of the same file from a same-named one. None stands
     for a size nobody knows. The slot is the declared destination, sanitized
     and case-folded, relative to the directory core files go to: RetroDECK
     writes bios/ in front of every destination, the others put it in

@@ -32,7 +32,7 @@ notes: |
   Two engines ship in the package, one activity each, both exported and both answering
   android.intent.action.VIEW for application/swf, application/x-shockwave-flash and
   video/x-flv. FlashPlayerActivity is labelled "SWF Player by Ruffle" and runs the movie
-  in a WebView; AirPlayerActivity is labelled "SWF Player by AdobeAIR", lives in a :air
+  in a WebView. AirPlayerActivity is labelled "SWF Player by AdobeAIR", lives in a :air
   process and drives a captive Adobe AIR runtime. ES-DE names the first one and passes the
   movie as the content URI of its own provider, so it always gets the Ruffle engine.
   ref: AndroidManifest.xml activity com.issess.flashplayer.player.FlashPlayerActivity and
@@ -52,9 +52,9 @@ notes: |
 
   The Ruffle engine serves everything over a virtual host. FlashPlayerActivity.g0 writes
   <cache>/assetLoader/swf.html from the bundled contents.html template, substituting the
-  movie URL and the wmode, scale, quality, background and density preferences;
+  movie URL and the wmode, scale, quality, background and density preferences.
   FlashPlayerActivity.h0 builds a WebViewAssetLoader on the domain localhost.issess.net
-  mapping /ruffle/ to the package assets and / to that cache directory; i0 then loads
+  mapping /ruffle/ to the package assets and / to that cache directory, and i0 then loads
   https://localhost.issess.net/swf.html one second later. The template pulls
   /ruffle/ruffle/ruffle.js, which resolves to assets/ruffle/ruffle.js, and declares the
   movie as a plain <object type="application/x-shockwave-flash">, which the Ruffle polyfill
@@ -271,7 +271,7 @@ files:
 
 exclusion_note: >
   Four files the package carries are left out because no code path opens them. The assets
-  cached.swf, Hello2.swf and empty.html are named in no class; the cached.swf the AIR
+  cached.swf, Hello2.swf and empty.html are named in no class. The cached.swf the AIR
   runtime reads is the copy of the user's movie written into the cache, not the one in the
   assets. libysshared.so, which exports only ysEncrypt and ysDecrypt, is loaded by nothing:
   the three loadLibrary calls in the package name swfplayer, c++_shared and Core, no

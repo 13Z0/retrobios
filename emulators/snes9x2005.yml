@@ -22,5 +22,5 @@ notes: |
   are pure HLE. The core never calls GET_SYSTEM_DIRECTORY and performs no file I/O
   from the system directory.
 
-exclusion_note: "all coprocessor ROMs embedded in binary; no system_directory access"
+exclusion_note: "all coprocessor ROMs embedded in binary, no system_directory access"
 files: []

@@ -25,9 +25,9 @@ notes: |
   native AArch64 EE, IOP and VU recompilers, a persisted VU program cache,
   libmali and Adreno gates in the Vulkan backend. One tree builds the Qt
   desktop application, an SDL3 kmsdrm frontend (yaps2-sdl) and a libretro core
-  (yaps2_libretro.so); the nightly release ships all three for arm64 Linux
+  (yaps2_libretro.so). The nightly release ships all three for arm64 Linux
   plus a macOS build. The fork is discontinued and its recompilers moved to
-  ARMSX2; main is the final state. The tree is PCSX2 at 342db515 (2026-06-19)
+  ARMSX2, and main is the final state. The tree is PCSX2 at 342db515 (2026-06-19)
   plus 335 fork commits, and bin/resources is byte for byte that PCSX2
   revision.
   ref: README.md:1-3, CMakeLists.txt:51-53, CMakeLists.txt:92-110,
@@ -61,7 +61,7 @@ notes: |
        pcsx2-qt/QtHost.cpp:1343-1346
 
   A BIOS image is required. VMManager::Initialize calls LoadBIOS before
-  opening the CDVD, and a false return is a startup failure; only a GS dump
+  opening the CDVD, and a false return is a startup failure. Only a GS dump
   replay skips it. In the libretro core that failure ends the CPU thread and
   no frame is ever presented. Detection is by content: LoadBIOS opens the
   image named by Filenames/BIOS, or when that is empty or absent scans the
@@ -69,7 +69,7 @@ notes: |
   entry followed by a readable ROMVER. The fifth ROMVER character gives the
   zone among Japan, USA, Europe, Asia, China, T10K, COH-H, Test and Free, an
   EXTINFO entry supplies the serial. No name and no hash is matched. The image
-  is read into the 4 MB ROM region and truncated to it; one shorter than
+  is read into the 4 MB ROM region and truncated to it, and one shorter than
   2465792 bytes turns off the OSDSys parameter HLE.
   ref: pcsx2/VMManager.cpp:1444-1461, pcsx2-libretro/Main.cpp:670-680,
        pcsx2/ps2/BiosTools.cpp:16-17, pcsx2/ps2/BiosTools.cpp:80-197,
@@ -77,7 +77,7 @@ notes: |
        pcsx2/Pcsx2Config.cpp:2100-2106
 
   The core option yaps2_bios lists the files of <system>/pcsx2/bios whose name
-  ends in .bin, sorted, behind an auto entry; auto writes an empty
+  ends in .bin, sorted, behind an auto entry. The auto entry writes an empty
   Filenames/BIOS and leaves the choice to the folder scan, a listed name is
   written as is. The libretro boot always sets fast_boot.
   ref: pcsx2-libretro/Main.cpp:937-940, pcsx2-libretro/Main.cpp:989-1039,
@@ -87,7 +87,7 @@ notes: |
   full name plus extension, then with the extension replaced, opened
   case-insensitively, copied to 4 MB regions and skipped with a console line
   when absent. The nvm is read at the replaced extension and rebuilt in memory
-  with region and language defaults when missing, short or blank; the mec is
+  with region and language defaults when missing, short or blank. The mec is
   read the same way and written back as 0x00020603 when it cannot be read. No
   EROM path exists. The IRX injection at 0x1630 reads EmuConfig.CurrentIRX,
   which is set at runtime only and assigned by nothing in this tree.
@@ -100,7 +100,7 @@ notes: |
   resource is read at its own name under EmuFolders::Resources, and
   GetOverridableResourcePath lets a copy under UserResources take precedence.
   The libretro core ships as a bare shared object, so the user supplies
-  <system>/pcsx2/resources from a yaps2 build; the SDL and Qt packages carry
+  <system>/pcsx2/resources from a yaps2 build, while the SDL and Qt packages carry
   the folder beside the binary.
   ref: pcsx2/Pcsx2Config.cpp:2399-2413, pcsx2-libretro/Main.cpp:157-158,
        pcsx2-sdl/CMakeLists.txt:29-33, .github/workflows/linux_build_libretro.yml:139-150
@@ -111,10 +111,10 @@ notes: |
   without it, the libretro core only logs a warning, but with no standard
   font AddTextFont returns null and AddImGuiFonts fails the same way. Every
   Vulkan shader source is read in GSDeviceVK::Create, cas.glsl and its two
-  includes with the others, and any read failure fails the device; the
+  includes with the others, and any read failure fails the device. The
   OpenGL backend behaves the same except that a missing cas.glsl only turns
   sharpening off. Vulkan is the only backend the libretro core presents
-  through; the OpenGL device is what the software renderer opens when the
+  through. The OpenGL device is what the software renderer opens when the
   first Vulkan GPU is Intel or a software rasterizer, and what the standalone
   builds open when OpenGL is selected. Direct3D sources are read by Windows
   builds only, which the libretro target excludes. The databases, the patch
@@ -131,7 +131,7 @@ notes: |
 
   The fullscreen interface and its textures are opened by the SDL and Qt
   frontends, and by the achievements client when it shows a login or a
-  notification; the libretro core never opens it on its own, and its
+  notification. The libretro core never opens it on its own, and its
   achievements stay off unless yaps2-libretro.ini enables them. Achievement
   sounds play from the resources folder when the sound effects are enabled
   and no custom sound is set.
@@ -173,7 +173,7 @@ files:
     description: "PS2 BIOS image"
     note: >-
       Any image whose romdir holds RESET and ROMVER is accepted, whatever its
-      name. The 4 to 8 MB range gates the folder scan; an image named in the
+      name. The 4 to 8 MB range gates the folder scan, and an image named in the
       configuration skips that range. The libretro option list only shows
       names ending in .bin. Read into the 4 MB ROM region and truncated to
       it. Shorter than 2465792 bytes disables the OSDSys parameter HLE.
@@ -251,7 +251,7 @@ files:
     note: >-
       Opened from the process working directory at network adapter init and
       read as 1024 blocks of 16 pages of 512 bytes plus 16 ECC bytes. The
-      card is filled with 0xFF when the file is absent; a short read is
+      card is filled with 0xFF when the file is absent, and a short read is
       logged.
     source_ref: "pcsx2/DEV9/flash.cpp:9-16, pcsx2/DEV9/flash.cpp:62-86"
 
@@ -266,7 +266,7 @@ files:
     note: >-
       Read from the resources folder on the first serial lookup, keyed by
       serial, carrying the per-game fixes, patches and settings overrides.
-      A console error when absent; no game is then matched.
+      A console error when absent, and no game is then matched.
     source_ref: "pcsx2/GameDatabase.cpp:39, pcsx2/GameDatabase.cpp:974-984, pcsx2/GameDatabase.cpp:1020-1034"
 
   - name: RedumpDatabase.yaml
@@ -311,7 +311,7 @@ files:
     description: "SDL controller mapping database"
     note: >-
       A copy in the data root wins, then the resources folder, and the path
-      is handed to SDL as a hint; SDL falls back to its built-in mappings
+      is handed to SDL as a hint. SDL falls back to its built-in mappings
       when neither exists. Read by the SDL input source, which the libretro
       core switches off.
     source_ref: "pcsx2/Input/SDLInputSource.cpp:24, pcsx2/Input/SDLInputSource.cpp:614-629, pcsx2-libretro/Main.cpp:219"
@@ -326,7 +326,7 @@ files:
     description: "Interface font"
     note: >-
       Mapped by each frontend and handed to ImGuiManager as the standard
-      font. The SDL frontend exits without it; the libretro core logs a
+      font. The SDL frontend exits without it, while the libretro core logs a
       warning, then AddTextFont has nothing to add and ImGui setup fails with
       the GS device.
     source_ref: "pcsx2-libretro/Main.cpp:177-193, pcsx2-sdl/Main.cpp:129-137, pcsx2/ImGui/ImGuiManager.cpp:598-637, pcsx2/ImGui/ImGuiManager.cpp:772-779, pcsx2/GS/GS.cpp:154-172"
@@ -605,7 +605,7 @@ files:
     size: 36862
     sha1: 554160d31bb97aca0e9f367f4de811dd8ad1fb21
     description: "OpenGL texture function fragment shader"
-    note: "Read with tfx_vgs.glsl; the OpenGL device fails without it."
+    note: "Read with tfx_vgs.glsl. The OpenGL device fails without it."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:684-694"
 
   - name: convert.glsl
@@ -827,7 +827,7 @@ files:
     description: "Fullscreen interface placeholder texture"
     note: >-
       Named as the placeholder texture when the fullscreen interface
-      initialises; that initialisation fails without it and the interface
+      initialises, and that initialisation fails without it and the interface
       stays closed.
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:335-341, pcsx2/ImGui/ImGuiFullscreen.cpp:216-226, 292-300"
 
@@ -1070,7 +1070,7 @@ files:
     bundled: true
     size: 1296
     sha1: 630d3cc1a29b86023ab331836acd7ae3791aec07
-    description: "Flag icon, game list region PAL-A; BIOS zone Oceania"
+    description: "Flag icon, game list region PAL-A, BIOS zone Oceania"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113"
 
   - name: az.svg
@@ -1101,7 +1101,7 @@ files:
     bundled: true
     size: 6978
     sha1: 00d4d90a54e0cd40122df3763b5b20161d433abd
-    description: "Flag icon, game list region NTSC-B; interface language pt-BR"
+    description: "Flag icon, game list region NTSC-B, interface language pt-BR"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: ch.svg
@@ -1121,7 +1121,7 @@ files:
     bundled: true
     size: 775
     sha1: 863b0360572b2d7c9b1a08ce6fbb32ffa1ce3644
-    description: "Flag icon, game list region NTSC-C; BIOS zone China; interface language zh-CN"
+    description: "Flag icon, game list region NTSC-C, BIOS zone China, interface language zh-CN"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: cz.svg
@@ -1142,7 +1142,7 @@ files:
     bundled: true
     size: 209
     sha1: 9003c2aa29d2869772266e9b56c869387541999a
-    description: "Flag icon, game list region PAL-G; interface language de-DE"
+    description: "Flag icon, game list region PAL-G, interface language de-DE"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: dk.svg
@@ -1163,7 +1163,7 @@ files:
     bundled: true
     size: 80294
     sha1: 674a3b81dc17c092c26e94b3ede351619854680e
-    description: "Flag icon, game list region PAL-S; interface language ca-ES and es-ES"
+    description: "Flag icon, game list region PAL-S, interface language ca-ES and es-ES"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: eu.svg
@@ -1173,7 +1173,7 @@ files:
     bundled: true
     size: 1295
     sha1: ebbe870f77114dc2a12e385c56a5a7c993b3f22d
-    description: "Flag icon, game list region PAL-E and PAL-M; BIOS zone Europe"
+    description: "Flag icon, game list region PAL-E and PAL-M, BIOS zone Europe"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113"
 
   - name: fi.svg
@@ -1183,7 +1183,7 @@ files:
     bundled: true
     size: 216
     sha1: b10db9c6d1271076effc0c451ad2ce64fa511fa8
-    description: "Flag icon, game list region PAL-FI; interface language fi-FI"
+    description: "Flag icon, game list region PAL-FI, interface language fi-FI"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: fr.svg
@@ -1193,7 +1193,7 @@ files:
     bundled: true
     size: 220
     sha1: 4250bebf6de8e988e864342934beb72c510ea382
-    description: "Flag icon, game list region PAL-F; interface language fr-FR"
+    description: "Flag icon, game list region PAL-F, interface language fr-FR"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: gb.svg
@@ -1213,7 +1213,7 @@ files:
     bundled: true
     size: 814
     sha1: 7fa4815d8ad260e10afb5e9e3f10531a169017df
-    description: "Flag icon, game list region PAL-GR; interface language el-GR"
+    description: "Flag icon, game list region PAL-GR, interface language el-GR"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: hk.svg
@@ -1223,7 +1223,7 @@ files:
     bundled: true
     size: 727
     sha1: 74008ed4de892e7028f393138b4fd15a94e71eb8
-    description: "Flag icon, game list region NTSC-HK; BIOS zone Asia"
+    description: "Flag icon, game list region NTSC-HK, BIOS zone Asia"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113"
 
   - name: hr.svg
@@ -1277,7 +1277,7 @@ files:
     bundled: true
     size: 1090
     sha1: fa2a2b11f6d78ef7ea1aee9ae341b26a0f398dc8
-    description: "Flag icon, game list region PAL-IN; interface language hi-IN"
+    description: "Flag icon, game list region PAL-IN, interface language hi-IN"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: ir.svg
@@ -1298,7 +1298,7 @@ files:
     bundled: true
     size: 273
     sha1: 7415b7fed9a98587f62ea65ceff5f9ea0689d33e
-    description: "Flag icon, game list region PAL-I; interface language it-IT"
+    description: "Flag icon, game list region PAL-I, interface language it-IT"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: jp.svg
@@ -1308,7 +1308,7 @@ files:
     bundled: true
     size: 438
     sha1: 7b40bd2022d8b824d22ee3f480e82aa18d462b28
-    description: "Flag icon, game list region NTSC-J; BIOS zone Japan; interface language ja-JP"
+    description: "Flag icon, game list region NTSC-J, BIOS zone Japan, interface language ja-JP"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: kr.svg
@@ -1318,7 +1318,7 @@ files:
     bundled: true
     size: 1016
     sha1: 09f0d9286160100831513846a1425ff3cf526c5b
-    description: "Flag icon, game list region NTSC-K; interface language ko-KR"
+    description: "Flag icon, game list region NTSC-K, interface language ko-KR"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: lt.svg
@@ -1351,7 +1351,7 @@ files:
     mode: standalone
     size: 83734
     sha1: 77e296aab748df78d1b2e92a4cb1631778e39c7b
-    description: "Flag icon, BIOS zone Mexico; interface language es-419"
+    description: "Flag icon, BIOS zone Mexico, interface language es-419"
     source_ref: "pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: nl.svg
@@ -1361,7 +1361,7 @@ files:
     bundled: true
     size: 212
     sha1: eac8781372854f4ce2b7fe100257b714503ac6ff
-    description: "Flag icon, game list region PAL-NL; interface language nl-NL"
+    description: "Flag icon, game list region PAL-NL, interface language nl-NL"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: no.svg
@@ -1371,7 +1371,7 @@ files:
     bundled: true
     size: 302
     sha1: 8083fdbbd0f5dcfb1a044b17c934c640dc2c16be
-    description: "Flag icon, game list region PAL-NO; interface language no-NO"
+    description: "Flag icon, game list region PAL-NO, interface language no-NO"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: Other.svg
@@ -1392,7 +1392,7 @@ files:
     bundled: true
     size: 204
     sha1: 12edefd7e07dfc56da5840a767d8f346d754741d
-    description: "Flag icon, game list region PAL-PL; interface language pl-PL"
+    description: "Flag icon, game list region PAL-PL, interface language pl-PL"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: pt.svg
@@ -1402,7 +1402,7 @@ files:
     bundled: true
     size: 7890
     sha1: 27aa81654a49de86b9bdc5fa803509eac8c6eb1d
-    description: "Flag icon, game list region PAL-P; interface language pt-PT"
+    description: "Flag icon, game list region PAL-P, interface language pt-PT"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: ro.svg
@@ -1434,7 +1434,7 @@ files:
     bundled: true
     size: 212
     sha1: 2a502ee04c295946091a85800c634af684e04119
-    description: "Flag icon, game list region PAL-R; BIOS zone Russia; interface language ru-RU"
+    description: "Flag icon, game list region PAL-R, BIOS zone Russia, interface language ru-RU"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: sa.svg
@@ -1465,7 +1465,7 @@ files:
     bundled: true
     size: 199
     sha1: d4e52e7b15063ba562cafe525610e7cc6ad0e4ab
-    description: "Flag icon, game list region PAL-SW; interface language sv-SE"
+    description: "Flag icon, game list region PAL-SW, interface language sv-SE"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: tr.svg
@@ -1486,7 +1486,7 @@ files:
     bundled: true
     size: 2450
     sha1: a9014bf94727050ce0c1670debbda2aba22d348c
-    description: "Flag icon, game list region NTSC-T; interface language zh-TW"
+    description: "Flag icon, game list region NTSC-T, interface language zh-TW"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: ua.svg
@@ -1507,7 +1507,7 @@ files:
     bundled: true
     size: 2524
     sha1: 141d1636ceff28ecd7762b37ee7f4818137fa7b3
-    description: "Flag icon, game list region NTSC-U; BIOS zone USA; interface language en-US"
+    description: "Flag icon, game list region NTSC-U, BIOS zone USA, interface language en-US"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/Settings/BIOSSettingsWidget.cpp:81-113, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"
 
   - name: vn.svg
@@ -1528,5 +1528,5 @@ files:
     bundled: true
     size: 860
     sha1: b8e39cc07766388f5d2759604692c1789f4fb1a8
-    description: "Flag icon, game list region PAL-AF; interface language af-ZA"
+    description: "Flag icon, game list region PAL-AF, interface language af-ZA"
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2846, pcsx2/GameList.cpp:155-190, pcsx2-qt/GameList/GameListModel.cpp:486, pcsx2-qt/QtUtils.cpp:515-552, pcsx2-qt/SetupWizardDialog.cpp:188-190"

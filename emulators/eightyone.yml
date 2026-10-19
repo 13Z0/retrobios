@@ -46,7 +46,7 @@ notes: |
   ref: 81/Source/zx81/snap.cpp:1189-1199, 81/Source/zx81/snap.cpp:1285-1299, 81/Source/zx81/snap.cpp:1317-1328, 81/Source/zx81config.cpp:161-210, 81/Source/zx81config.cpp:259-284
 
   Didaktik D40/D80 tests for eightyone/FDCs/didaktik.gama.rom and stores its
-  full path in CurRom when present; memory_load reduces the path to its
+  full path in CurRom when present, and memory_load reduces the path to its
   basename and serves the embedded copy.
   ref: libretro/libretro_core.cpp:2953-2968, 81/Source/Spectrum/spec48.cpp:361-362
 
@@ -54,7 +54,7 @@ notes: |
   directory when it is absent.
   ref: 81/Source/zxpand/smbsd.cpp:75-98
 
-  Digitalker is a stub and its SSR ROM loader is not compiled; CapsImg is
+  Digitalker is a stub and its SSR ROM loader is not compiled. CapsImg is
   linked statically.
   ref: libretro/eo_stubs.cpp:67-68, CMakeLists.txt:267-291
 

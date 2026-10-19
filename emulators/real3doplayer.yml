@@ -23,7 +23,7 @@ notes: |
   certificate sha256 336dca7bf758d4d4d3e31783a1cb3f777cf0f0791ff6b1a8bbf698892f8860a9
   (C=RU, L=Tula, O=AltmerSoft, CN=MAXIM GRISHIN): versionCode 33, minSdk 14,
   targetSdk 23, seven ABIs. Java line numbers below are jadx output of that build and
-  native addresses are its arm64-v8a library; the armeabi-v7a library carries the same
+  native addresses are its arm64-v8a library, and the armeabi-v7a library carries the same
   strings and the same constants. The decompiled tree published as
   BoUnCe587/Real3DOPlayer was rejected: it is signed with the AOSP test key
   a40da80a59d170caa950cf15c18c454d47a39b26989d8b640ecd745ba71bf5dc.
@@ -42,7 +42,7 @@ notes: |
   (MainActivity.java:469-471,412-414).
 
   Nothing is recognised by name. A ROM candidate is measured, and a file of 3 MB or
-  more is dropped before it is read; the remainder is scanned on four byte boundaries
+  more is dropped before it is read. The remainder is scanned on four byte boundaries
   for the RomTag signature 01 5A 5A 5A 5A 5A 01 00, and the 0x84 byte header at that
   point is read back. The null terminated string at header offset 0x28 is what sorts
   the file: "rom" fills the BIOS list, "rom2" the font list, and "fmvrom" is compared
@@ -70,8 +70,8 @@ notes: |
   0xe98cc), and no ext-fmv key exists.
 
   Files the app makes for itself, in its storage directory rather than the scan
-  directory: nvram.bin, the 32 KB console save area, erasable from the interface;
-  configs.xml and settings.ini; save states; and the controller maps. madam.bin and
+  directory: nvram.bin (the 32 KB console save area, erasable from the interface),
+  configs.xml and settings.ini, save states, and the controller maps. madam.bin and
   clio.bin name 2 KB and 64 KB regions of the emulator's own state blob and are
   reached only in mode 2 (0x8ce8c-0x8d064).
 
@@ -108,7 +108,7 @@ files:
     note: >-
       Found by the same scan of the same directory, and taken as the font when the
       RomTag header names itself "rom2". Held in its own list and mapped into a second
-      1 MB window of the machine. Japanese titles draw their kanji from it; the
+      1 MB window of the machine. Japanese titles draw their kanji from it. The
       emulator starts and runs without one, and the core carries GRAFERR_NO_FONT and
       GRAFERR_BADFONTFILE for that case.
     source_ref: "Real3DOPlayer 1.0.32 MainActivity.java:413,471 (ext-font),

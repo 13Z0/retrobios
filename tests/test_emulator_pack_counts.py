@@ -65,7 +65,7 @@ class PackAndReportAgree(unittest.TestCase):
 class APlaceholderIsAnsweredByEvidence(unittest.TestCase):
     """LRPS2 declares only <bios>.bin: no name to look up, so its emulator
     pack shipped no PS2 BIOS and verify said missing. Another profile of the
-    system proves the folder by hash; the images there of the declared
+    system proves the folder by hash, and the images there of the declared
     size are what the core reads."""
 
     def test_pack_and_report_carry_the_images(self):

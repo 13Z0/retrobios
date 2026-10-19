@@ -39,8 +39,8 @@ Platforms that verify by MD5 accept specific hashes. If yours doesn't match any 
 A filename is never allowed to stand in for a declared hash. When a file entry
 carries a hash, resolution matches on content and reports `hash_mismatch` if the
 only same-named copy disagrees. What happens next depends on the platform: an
-MD5 or SHA1 platform would reject the file, so the pack omits it and says why;
-an existence platform only checks presence, so the file ships and the divergence
+MD5 or SHA1 platform would reject the file, so the pack omits it and says why,
+while an existence platform only checks presence, so the file ships and the divergence
 is reported instead.
 
 ## Why are there files that aren't BIOS?
@@ -80,7 +80,7 @@ version's own source tree, because the BIOS root sets differ between
 versions. Derivatives and ports carry their own profiles on top of those
 generations: `mamearcade`, `mamemess`, `mame2003_midway`, the three
 `mame4droid` drops, `advancemame`, `groovymame` and `hbmame`. The pack
-ships the sets matching the core you run; a generic unversioned arcade
+ships the sets matching the core you run, and a generic unversioned arcade
 pack cannot do that.
 
 ## How do I know which BIOS I need?
@@ -138,7 +138,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 ```
 
 On Windows the arguments need a script block, since `iex` would read them as
-its own; the form is on the [Installer](installer.md#passing-options) page.
+its own. The form is on the [Installer](installer.md#passing-options) page.
 
 ## Is this legal?
 
@@ -148,7 +148,7 @@ Redistributing firmware is not settled law, and this page does not pretend other
 
 - **Writing an emulator is lawful.** *Sony v. Connectix* (2000) and *Sega v. Accolade* (1992) held that copying a work during reverse engineering, to reach the functional elements needed for interoperability, is fair use. Both concern the act of copying while developing, and *Connectix* specifically involved copying Sony's BIOS in the course of that work. Neither decision addresses distributing firmware to third parties, so they support the legality of emulation itself rather than of this collection.
 - **Fair use (US, 17 USC 107) is a defence, argued case by case.** The project's position is that non-commercial redistribution for personal backup and archival weighs favourably on purpose and on market effect, since these files are not sold separately. It weighs poorly on the amount used: each file is copied whole. Manufacturers do still monetise some of this firmware indirectly, through re-releases, subscription services and mini consoles, so the market factor is contestable rather than clear.
-- **Interoperability in the EU.** The Software Directive (2009/24/EC, Art. 5-6) permits decompilation and use to achieve interoperability, subject to conditions, and Art. 6 restricts passing the resulting information to others. It supports the emulation use case; it is not a general redistribution permission.
+- **Interoperability in the EU.** The Software Directive (2009/24/EC, Art. 5-6) permits decompilation and use to achieve interoperability, subject to conditions, and Art. 6 restricts passing the resulting information to others. It supports the emulation use case, but it is not a general redistribution permission.
 - **Discontinued hardware.** Most firmware here is for hardware no longer sold or supported. This bears on the fair-use market factor and on the practical likelihood of complaint. "Abandonware" is not a legal doctrine in any jurisdiction, and nothing here rests on it.
 
 ### Encryption keys (Switch prod.keys, 3DS AES keys, Wii U keys)
@@ -158,13 +158,13 @@ This is the most contested area, and the weakest part of the project's position.
 - **Keys are unlikely to be copyrightable.** A bare numeric value has no author's creative expression, so copyright is a poor fit. This says nothing about the DMCA, which is the provision that actually applies.
 - **DMCA 1201(f) is narrow.** Section 1201(f) allows a person who has lawfully obtained the right to use a copy to circumvent for the sole purpose of achieving interoperability with an independently created program, and 1201(f)(3) allows the means to be made available to others only for that same purpose. Publishing keys openly is not obviously within that allowance, and the trafficking prohibitions in 1201(a)(2) and 1201(b) remain in play. This is the clearest legal risk the project carries.
 - **Library of Congress exemptions do not cover this repository.** The triennial exemptions at 37 CFR 201.40 let an eligible library, archive or museum circumvent access controls to preserve a lawfully acquired video game whose server support has ended, with access limited to the institution's premises. The Ninth Triennial Proceeding (2024 cycle) renewed them and declined to extend them to off-premises remote access. A public repository is neither an eligible institution nor an on-premises reading room, so these exemptions show which way preservation policy is moving without authorising what is done here.
-- **Keys come from consumer hardware.** They are extracted from retail devices their owners bought. *Chamberlain v. Skylink* (2004) held that a 1201 claim requires some nexus to copyright infringement, in a dispute over a garage-door opener; later cases have narrowed its reach, and it is a weak foundation for a general post-sale right.
+- **Keys come from consumer hardware.** They are extracted from retail devices their owners bought. *Chamberlain v. Skylink* (2004) held that a 1201 claim requires some nexus to copyright infringement, in a dispute over a garage-door opener. Later cases have narrowed its reach, and it is a weak foundation for a general post-sale right.
 - **Trade secret is not a live issue.** Keys embedded in millions of shipped devices and widely republished are not kept secret by reasonable measures.
 
 ### Recent firmware (Switch 19.0.0, PS3UPDAT, PSVUPDAT)
 
-- **Free download is not a licence.** Manufacturers publish these updates on open CDNs without authentication, which makes them easy to obtain but does not grant a right to redistribute them; PlayStation firmware ships under an end-user licence agreement. The practical argument is that mirroring a file the manufacturer already gives away for free causes no identifiable loss, not that doing so is expressly permitted.
-- **Functional necessity.** Emulators cannot run the software these systems were built for without this firmware. That is why the files are collected; it is a statement of purpose, not a legal defence in itself.
+- **Free download is not a licence.** Manufacturers publish these updates on open CDNs without authentication, which makes them easy to obtain but does not grant a right to redistribute them, and PlayStation firmware ships under an end-user licence agreement. The practical argument is that mirroring a file the manufacturer already gives away for free causes no identifiable loss, not that doing so is expressly permitted.
+- **Functional necessity.** Emulators cannot run the software these systems were built for without this firmware. That is why the files are collected. It is a statement of purpose, not a legal defence in itself.
 - **Yuzu context.** The Yuzu settlement (2024) concerned the emulator and its alleged facilitation of piracy. Yuzu settled without admitting liability, so it set no precedent either way on firmware or key redistribution. It does show that rights holders in this space litigate.
 
 ### Summary
@@ -175,11 +175,11 @@ This reflects the project's good-faith understanding, not legal advice.
 
 ### Asking for a file to be removed
 
-A rights holder, or anyone acting for one, can [open an issue](https://github.com/Abdess/retrobios/issues) identifying the file by path or hash. A file whose removal is requested by its rights holder is removed from the repository and from the next release; no formal notice is required and none will be demanded. State the file and the basis of the claim. The same channel is open to anyone else with a concern about a specific file.
+A rights holder, or anyone acting for one, can [open an issue](https://github.com/Abdess/retrobios/issues) identifying the file by path or hash. A file whose removal is requested by its rights holder is removed from the repository and from the next release. No formal notice is required and none will be demanded. State the file and the basis of the claim. The same channel is open to anyone else with a concern about a specific file.
 
 ## Isn't the Switch or PS3 too recent for a retro project?
 
-Age is not what decides inclusion here; availability is. Firmware distribution depends on manufacturer servers, and those disappear: Nintendo closed the 3DS and Wii U eShops in March 2023, Sony shut the PSP store in 2021. Once a CDN goes offline, the files only survive where someone archived them.
+Age is not what decides inclusion here: availability is. Firmware distribution depends on manufacturer servers, and those disappear: Nintendo closed the 3DS and Wii U eShops in March 2023, Sony shut the PSP store in 2021. Once a CDN goes offline, the files only survive where someone archived them.
 
 The project tries to archive files while they are still available rather than after they have become rare. "Retro" is a moving window: the PlayStation 2 was current hardware when its BIOS was first preserved, and today's consoles will be tomorrow's retro systems. A file is included for the same reason at any age: an emulator needs it, and nothing guarantees it stays available.
 
@@ -211,7 +211,7 @@ On existence-mode platforms (RetroArch, Lakka, RetroPie), files are never `untes
 
 Running `verify.py --emulator <core> --verbose` shows the emulator-level ground truth, which can confirm whether the file's hash matches what the source code expects. The platform report applies the same check on its own: `verify.py --platform retroarch` prints a `DISCREPANCY` line for every file the platform accepts and a profiled emulator rejects.
 
-It reaches only as far as the profiles do. Files no profile states a value for are platform-only, and nothing can be said about their content; the footer of the platform report gives that ratio as `Ground truth: N/M files have emulator validation`.
+It reaches only as far as the profiles do. Files no profile states a value for are platform-only, and nothing can be said about their content. The footer of the platform report gives that ratio as `Ground truth: N/M files have emulator validation`.
 
 ## Can I use BIOS from one platform on another?
 

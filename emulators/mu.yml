@@ -20,7 +20,7 @@ notes: |
     Tungsten T3 / Palm OS 6.0 -> palmos60-en-t3.rom
 
   ROM path: RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY + "/" + osVersion + ".rom".
-  No hash or size validation; the code reads whatever file is present.
+  No hash or size validation: the code reads whatever file is present.
   The bootloader is optional and ignored for Tungsten T3.
   Supports no-game mode (boots Palm OS desktop from ROM without content).
 

@@ -261,7 +261,7 @@ def _bounded_join(parts: list[str], keys: list[str]) -> str:
     """Parts joined while they fit, else the first, a count and a digest.
 
     Thirty systems joined made a 261-byte file name and the ZIP could not
-    be opened; the digest keeps two different selections apart. The joiner
+    be opened. The digest keeps two different selections apart. The joiner
     is one no part holds: with "_", sega-dreamcast + arcade and
     sega-dreamcast-arcade both named Dreamcast_Arcade, and the second build
     replaced the first.
@@ -279,7 +279,7 @@ _UNSAFE_IN_NAME = re.compile(r'[/\\:*?"<>|]')
 def _name_part(text: str, space: str = "") -> str:
     """A display name made safe to stand in a file name.
 
-    'FinalBurn Neo (CPS-1/CPS-2)' named a directory that did not exist; a
+    'FinalBurn Neo (CPS-1/CPS-2)' named a directory that did not exist, and a
     Windows user cannot write ':' or '?' either.
     """
     return _UNSAFE_IN_NAME.sub("-", text.replace(" ", space))
@@ -290,8 +290,8 @@ def _platform_pack_stem(
 ) -> str:
     """Platform part of a pack name, version included.
 
-    A group of identical platforms shares one pack named after all of them;
-    the builder and --verify-packs both read the name from here.
+    A group of identical platforms shares one pack named after all of them,
+    and the builder and --verify-packs both read the name from here.
     """
     rep_cfg = load_platform_config(representative, platforms_dir)
     version = rep_cfg.get("version", rep_cfg.get("dat_version", ""))
@@ -602,7 +602,7 @@ def _matches_an_alternative(fe: dict, local_path: str, profiles: dict) -> bool:
     """Whether the copy is another version the same profile accepts there.
 
     A profile lists every version its code takes under one name (each GRP
-    of Raze's table, eduke32's demo and retail NWINTER.GRP); the extra
+    of Raze's table, eduke32's demo and retail NWINTER.GRP). The extra
     carries the first, and the held copy matching a sibling is no mismatch.
     """
     profile = profiles.get(fe.get("source_profile") or "", {})
@@ -660,7 +660,7 @@ def generate_pack(
     if zip_contents is None:
         zip_contents = {}
     if emu_profiles is None:
-        # The pipeline always passes them; a caller that does not must get the
+        # The pipeline always passes them, but a caller that does not must get the
         # same pack, not one built without validation, slots or agnostic cores.
         emu_profiles = load_emulator_profiles(emulators_dir)
 
@@ -913,7 +913,7 @@ def generate_pack(
 
                 if status == "not_found":
                     # A filename-agnostic core takes any image of its system,
-                    # renamed; only an existence frontend accepts that.
+                    # renamed. Only an existence frontend accepts that.
                     files_db = db.get("files", {})
                     agnostic_path = None
                     agnostic_resolved = False
@@ -982,7 +982,7 @@ def generate_pack(
                         existence_discrepancy(file_entry, local_path, platform_display),
                     )
                 if file_status.get(dedup_key) == "missing":
-                    # An earlier declaration of this path found nothing; this
+                    # An earlier declaration of this path found nothing, and this
                     # one fills it, as verify counts it.
                     del file_status[dedup_key]
                     file_reasons.pop(dedup_key, None)
@@ -1105,7 +1105,7 @@ def generate_pack(
           ):
               # The core's declared hash comes from its source, the local dump
               # is what the collection holds. Shipping it keeps the emulator
-              # working when the code never reads the hash; the divergence is
+              # working when the code never reads the hash, and the divergence is
               # reported so it can be resolved at the profile or the dump.
               # file_status tracks platform declarations only, so the report
               # goes to its own list and never moves the pack's own count.
@@ -1315,7 +1315,7 @@ def _pack_data_tree(
 ) -> int:
     """Write one data directory into an emulator pack, under its shared lock.
 
-    A refresh swaps the tree by rename; without the lock a walk half done
+    A refresh swaps the tree by rename. Without the lock a walk half done
     read the old tree and wrote files of the new one. ``packed_at`` records
     each member, so a later profile asking for the same bytes there is
     served rather than reported missing.
@@ -1349,8 +1349,8 @@ def _same_bytes(path: str, other: str | None) -> bool:
     return compute_hashes(path)["sha1"] == compute_hashes(other)["sha1"]
 
 
-# A file name holds 255 bytes on every filesystem a pack is written to;
-# the margin leaves room for the split part suffix and a scratch prefix.
+# A file name holds 255 bytes on every filesystem a pack is written to,
+# and the margin leaves room for the split part suffix and a scratch prefix.
 MAX_PACK_NAME_BYTES = 200
 
 
@@ -1499,7 +1499,7 @@ def generate_emulator_pack(
                 taken = archive_dest.lower() in seen_lower
                 if taken or _has_path_conflict(archive_dest, seen_destinations, seen_parents):
                     # Another profile's file holds this path. The same archive
-                    # asked for twice is served; anything else leaves this
+                    # asked for twice is served. Anything else leaves this
                     # profile without its archive, which used to pass in
                     # silence: a neocdz.zip lacking 000-lo.lo shipped as the
                     # one the second core needs.
@@ -1606,8 +1606,8 @@ def generate_emulator_pack(
                         chosen = (fe, better, None)
                         break
                     if status == "hash_mismatch":
-                        # Not a check the core runs, so the file still serves;
-                        # it is not the dump the profile documents.
+                        # Not a check the core runs, so the file still serves,
+                        # but it is not the dump the profile documents.
                         fallback = fallback or (fe, local_path, "mismatch")
                         continue
                     chosen = (fe, local_path, None)
@@ -1870,7 +1870,7 @@ def _group_systems_by_manufacturer(
 def _extras_for_systems(extras: list[dict], system_ids: list[str]) -> list[dict]:
     """Core extras owned by one of the given systems.
 
-    Extras carry their profile/system identity directly; display labels are
+    Extras carry their profile/system identity directly. Display labels are
     presentation only and must never drive routing.
     """
     from common import _norm_system_id
@@ -1915,7 +1915,7 @@ def generate_split_packs(
             source, regions, target_name, one_per_slot, required_only
         )
     )
-    # Two groupings write different files; without the tag they accumulate in
+    # Two groupings write different files. Without the tag they accumulate in
     # one directory under one SHA256SUMS.txt.
     group_tag = "" if group_by == "system" else f"_By{group_by.title()}"
     # The parts carry the version, so the directory does too: a rescrape that
@@ -2004,7 +2004,7 @@ def generate_split_packs(
 def _entry_for_file(candidates: list[dict], held: dict) -> dict:
     """The declaration a held file answers when several share its name.
 
-    BBKEmu declares 8.BIN once per model; the last one won, and the A4980
+    BBKEmu declares 8.BIN once per model. The last one won, and the A4980
     dump went to the A4988 folder. The declared hash decides, then the
     destination the collection's own path ends with, then the last one.
     """
@@ -2547,7 +2547,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
             continue
         tc = _target_cores_for(platform_name, args.target, args.platforms_dir)
         # A group pack and a pack built for the platform alone can both be
-        # present; each one is a pack of this platform.
+        # present, and each one is a pack of this platform.
         for pack_name in found:
             zip_path = os.path.join(args.output_dir, pack_name)
             result = verify_pack_against_platform(
@@ -2612,7 +2612,7 @@ def _skip_empty_truth(
     tc: set[str] | None,
     failed: list[str],
 ) -> bool:
-    """Leave out a truth pack that would be empty; refuse it when asked for."""
+    """Leave out a truth pack that would be empty, refuse it when asked for."""
     if source != "truth" or not _truth_layer_is_empty(
         representative, args.platforms_dir, emu_profiles, tc
     ):
@@ -2778,7 +2778,7 @@ def _run_platform_packs(
                 )
                 all_ok = all_ok and ok
     if failed:
-        # Verification only sees the ZIPs that exist; a pack that was never
+        # Verification only sees the ZIPs that exist, so a pack that was never
         # written does not fail it.
         print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}")
         sys.exit(1)
@@ -2830,7 +2830,7 @@ def _refuse_refresh_data(args: argparse.Namespace, parser: argparse.ArgumentPars
 def _refuse_include_archived(
     args: argparse.Namespace, parser: argparse.ArgumentParser
 ) -> None:
-    """Only --all chooses among registered platforms; every other mode names
+    """Only --all chooses among registered platforms. Every other mode names
     its own platform, emulator, system or hash."""
     if args.include_archived and not args.all:
         parser.error("--include-archived requires --all")
@@ -3079,8 +3079,8 @@ def _main(held: contextlib.ExitStack) -> None:
     # Quick-exit modes: --verify-packs alone = verify existing packs only
     # Combined with --all-variants, generation runs first then verify
     if args.verify_packs and not args.all_variants:
-        # The check resolves core files against data/ like the build did;
-        # a refresh swapping a tree mid-check would judge another tree.
+        # The check resolves core files against data/ like the build did,
+        # and a refresh swapping a tree mid-check would judge another tree.
         hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
         with _pack_output_lock(args.output_dir, exclusive=False):
             _run_verify_packs(args)
@@ -3295,7 +3295,7 @@ def _registered(repo_root: str) -> frozenset[str]:
 def _is_release_asset(local_path: str, repo_root: str) -> bool:
     """Whether the installer fetches this file from the large-files release.
 
-    The repository serves every committed file from its raw URL; only the
+    The repository serves every committed file from its raw URL. Only the
     files kept out of git live as release assets, and .gitignore is the
     ledger of those. Size is not the criterion: a committed file over 50 MB
     is still served by the repository, and announcing it as a release asset
@@ -3358,7 +3358,7 @@ def _placed_copies(copies: list[dict], dests: list[str]) -> list[dict]:
     aes_keys.txt at the root and Batocera prod.keys under switch/, so the
     installer looked for Citra/sysdata/aes_keys.txt, found nothing and
     copied nothing. `file` stays as written, since it also lays out a custom
-    emulator root; `source` says where the installed file is.
+    emulator root. `source` says where the installed file is.
     """
     by_name: dict[str, list[str]] = {}
     for dest in dests:
@@ -3408,7 +3408,7 @@ def _stable_hashes(local_path: str, db: dict) -> dict:
         hashes = compute_hashes(local_path, _MANIFEST_HASHES)
     raise RuntimeError(
         f"{local_path}: sha1 {hashes['sha1']} contradicts the database scan "
-        f"({expected}); rehash the file or regenerate database.json"
+        f"({expected}). Rehash the file or regenerate database.json"
     )
 
 
@@ -3455,7 +3455,7 @@ def _manifest_entry(
     if is_release_asset:
         entry["storage"] = "release"
         entry["release_asset"] = _release_asset_name(local_path, repo_root)
-    # The installer writes what it downloads with the umask's mode; a program
+    # The installer writes what it downloads with the umask's mode, but a program
     # (RetroDECK's pico8, vox) has to stay runnable. The git mode cannot say:
     # hundreds of MAME archives carry an execute bit nothing reads.
     if local_path and _is_program(local_path):
@@ -3500,7 +3500,7 @@ def _attach_claims(
     one's copy.
 
     A claim joins the copy just before it when the bytes agree and starts an
-    alternative otherwise; it never joins an earlier copy, which would let it
+    alternative otherwise. It never joins an earlier copy, which would let it
     win over a core the builder tries first. Only a core's first claim can
     win: its later ones are reached only when that one is. A platform entry
     names no core, so its first claim always starts an alternative.
@@ -3703,7 +3703,7 @@ def _manifest_core_entries(
 
         source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
 
-        # Manifest dests are relative to base_destination; keep the inferred
+        # Manifest dests are relative to base_destination. Keep the inferred
         # extras prefix when it is an internal layout dir (RetroDECK bios/).
         manifest_dest = full_dest
         if base_dest and manifest_dest.startswith(f"{base_dest}/"):
@@ -3755,7 +3755,7 @@ def _claim_platform_omission(held: dict | None, emulator: str) -> bool:
     """Record a core's claim on a destination the platform already omits.
 
     The platform's own omission stands while one of its declaring systems
-    does; a pack built without them falls to the first core claiming the
+    does. A pack built without them falls to the first core claiming the
     path, as for a file present. Overwriting the record lost the platform's
     claim: a target without that core dropped an omission its pack reports.
     """
@@ -3936,7 +3936,7 @@ def generate_manifest(
     # platform file, for the core claims a target build would fall back on.
     platform_entries: dict[str, tuple[dict, str, str]] = {}
     # Full destination -> the platform systems declaring it. A file's
-    # `systems` also names the systems whose cores read it there; a pack built
+    # `systems` also names the systems whose cores read it there. A pack built
     # for a target keeps the file only while a declaring system stays.
     declared_by: dict[str, set[str]] = {}
     seen_lower: set[str] = set()
@@ -4000,11 +4000,11 @@ def generate_manifest(
     if source != "truth":
         # The same destination can be declared by more than one system, bare
         # in one and hash-constrained in another. The builder lets the
-        # constrained sibling claim it; without the same rule here the
+        # constrained sibling claim it. Without the same rule here the
         # manifest named whatever answered to the name, so the pack and the
         # installer disagreed about which file a destination means.
         # Decided among the declarations this manifest keeps, as the pack
-        # does; a manifest carries no data directories.
+        # does. A manifest carries no data directories.
         preferred_entries = _preferred_entries(
             pack_systems, db, bios_dir, base_dest, required_only,
             zip_contents, offline,
@@ -4284,7 +4284,7 @@ def generate_manifest(
         # RetroArch also runs where case is kept: there Mesen-CE opens
         # bios.col and np2kai np2kai/2608_bd.wav, which the folded list
         # serves only as BIOS.col and 2608_BD.WAV. The installer adds these
-        # where the directory keeps case; the pack, extracted on Windows
+        # where the directory keeps case, while the pack, extracted on Windows
         # or macOS too, stays folded.
         kept = generate_manifest(
             platform_name, platforms_dir, db, bios_dir, registry_path,
@@ -4313,7 +4313,7 @@ def _manifest_data_directories(
 
     The source archive and the rule that maps its members onto the tree
     (strip_components for a ZIP, source_path for a tarball, exclude) come
-    from _data_dirs.yml, the same refresh_data_dirs applies; every file
+    from _data_dirs.yml, the same refresh_data_dirs applies. Every file
     carries the sha1 and size the cache holds, so a member the source
     changed since is refused rather than installed.
     """
@@ -4362,7 +4362,7 @@ def _manifest_core_index(
     buildbot does, and a file names the profile that reads it: `core_names`
     gives each profile the other names it goes by. `system_cores` gives each
     platform system the cores whose presence keeps it, as
-    `filter_systems_by_target` decides; a system absent from it is kept
+    `filter_systems_by_target` decides. A system absent from it is kept
     whatever is available.
     """
     reach = system_core_reach(

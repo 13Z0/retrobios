@@ -63,11 +63,11 @@ POSIX, `py -3` then `python3` then `python` on Windows) and refuse to continue
 without one. `install.sh` needs `curl` or `wget` and `sha256sum` or `shasum`.
 Windows PowerShell 5.1 still negotiates SSL 3.0 and TLS 1.0 by default and
 GitHub refuses both, so `install.ps1` raises the floor to TLS 1.2 before
-downloading; `install.sh` pins the same floor with `curl --tlsv1.2`.
+downloading, and `install.sh` pins the same floor with `curl --tlsv1.2`.
 
 They delete the temporary installer on the way out, including on interrupt.
 Run from a clone, `install.sh` and `install.ps1` reuse the `install.py` sitting
-next to them and skip the download entirely; piped from stdin, `install.sh`
+next to them and skip the download entirely. Piped from stdin, `install.sh`
 never treats the working directory as a trusted location for it.
 
 Piped from `curl`, the shell's standard input is the script itself, so
@@ -88,7 +88,7 @@ macOS.
 4. Hashes what is already in the destination and reports how many entries are
    present, verified, or present with the wrong contents.
 5. Downloads what is missing or wrong, up to 8 files at a time. At a
-   terminal one line shows the progress, the speed and the time left; in a
+   terminal one line shows the progress, the speed and the time left, while in a
    log each finished file gets its own line. In an interactive run, a
    download of 1 GB or more is confirmed first (`--yes` skips the question).
 6. Verifies each download against the declared size, SHA-256 and SHA-1 before
@@ -127,8 +127,8 @@ Retroarch: 5865 files, 5.7 GB.
   q) quit
 ```
 
-`i` appears for RetroArch, Lakka and RetroPie when cores are found installed;
-the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX
+`i` appears for RetroArch, Lakka and RetroPie when cores are found installed,
+and the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX
 and FCEUmm.
 It keeps what those cores read and drops the systems none of them emulates,
 the rule `--installed-cores` applies.
@@ -141,7 +141,7 @@ the rule `--installed-cores` applies.
   list, such as game engines and extra computers. Choosing systems leaves it
   out unless it is chosen too, as `generate_pack.py --system` does.
 - **Cores.** The platform's own BIOS list for the chosen systems is always
-  kept; this narrows only the extra files each emulator core loads beyond it.
+  kept. This narrows only the extra files each emulator core loads beyond it.
   Asked only when the chosen systems have such files.
 - **Regions.** Asked only when a chosen system has one BIOS per region. The
   numbers give an order of preference: `2,1` keeps the second region where a
@@ -169,12 +169,12 @@ they need. The cores are the `<name>_libretro.so` (`.dll`, `.dylib`,
 unset, a `retroarch.cfg` next to the system directory for a portable install
 given with `--dest`, and the folders RetroPie (`/opt/retropie/libretrocores`)
 and Lakka (`/usr/lib/libretro`, `/storage/cores`) install into. A core file
-is named the buildbot's way (`mednafen_psx`); the manifest maps each name to
+is named the buildbot's way (`mednafen_psx`), and the manifest maps each name to
 the profile its files are filed under (`beetle_psx`).
 
 What stays is what a pack built for exactly those cores carries, the rule
 `--target` follows too: a platform system stays when an installed core
-emulates it or reads its files, or when no core of the platform does; a
+emulates it or reads its files, or when no core of the platform does. A
 file a core loads stays when that core is installed. Where two cores read
 one path and want different bytes, the copy of the first installed core in
 the builder's order is the one installed. The same holds for a file of the
@@ -195,12 +195,12 @@ than what was asked. A system name that itself contains commas, as Recalbox's
 
 The region rule is the one `generate_pack.py --region` applies, and a test
 holds the two to the same file list. In each group of regional alternatives
-the best-ranked match stays; a file declared for every region beats regional
-files that match nothing asked; when nothing matches, every regional file
+the best-ranked match stays. A file declared for every region beats regional
+files that match nothing asked. When nothing matches, every regional file
 stays, so no system is left without its BIOS. A file the emulator does not
 select by region always stays. The manifest records, for each file, the
 systems that declare it, and for a regional file, its regions and the groups
-it competes in; the installer reads nothing else.
+it competes in. The installer reads nothing else.
 
 The questions are asked only when standard input is a terminal. Piped,
 scripted or run with `--no-input`, the installer asks nothing and installs
@@ -214,9 +214,9 @@ what the options name, everything by default.
 | `--dest PATH` | Destination directory, overriding detection. With `--dest` alone the file list is RetroArch's |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox and ROCKNIX the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
-| `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie); see [Installed cores](#installed-cores) |
-| `--system NAMES` | Install only these systems. Comma-separated or repeated; `--list-systems` prints the names, `other` included |
-| `--core NAMES` | Keep the platform's own list and only the extra files these cores load; `--list-cores` prints the names |
+| `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
+| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
+| `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |
@@ -224,7 +224,7 @@ what the options name, everything by default.
 | `--check` | Report and exit without writing |
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
-| `--quiet`, `-q` | Print only failures and the final summary; implies `--no-input` |
+| `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
@@ -243,7 +243,7 @@ Files the list does not name are never read, moved or deleted.
 
 | Variable | Effect |
 |----------|--------|
-| `RETROBIOS_REF` | Branch or tag the file list and the payloads are read from. Defaults to `main`; a release tag pins a reproducible file set |
+| `RETROBIOS_REF` | Branch or tag the file list and the payloads are read from. Defaults to `main`, and a release tag pins a reproducible file set |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
@@ -306,11 +306,11 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 | `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg` | RetroArch (Flatpak) | `system_directory` |
 | `~/snap/retroarch/current/.config/retroarch/retroarch.cfg` | RetroArch (Snap) | `system_directory` |
 | `~/.config/retroarch/retroarch.cfg` | RetroArch (native) | `system_directory` |
-| `~/Library/Application Support/RetroArch/config/retroarch.cfg` | RetroArch (macOS) | `system_directory`; at default, `~/Documents/RetroArch/system` (portable, Steam build included: `Application Support/RetroArch/system`) |
-| `retroarch.cfg` beside `retroarch.exe` (`C:\RetroArch-Win64`, `C:\RetroArch`, `Program Files\RetroArch`) | RetroArch (Windows) | `system_directory`; at default or without a config, `system` beside the exe |
+| `~/Library/Application Support/RetroArch/config/retroarch.cfg` | RetroArch (macOS) | `system_directory`. At default, `~/Documents/RetroArch/system` (portable, Steam build included: `Application Support/RetroArch/system`) |
+| `retroarch.cfg` beside `retroarch.exe` (`C:\RetroArch-Win64`, `C:\RetroArch`, `Program Files\RetroArch`) | RetroArch (Windows) | `system_directory`. At default or without a config, `system` beside the exe |
 | `%APPDATA%\RetroArch\retroarch.cfg` | RetroArch (Windows) | `system_directory`, read when the exe folder has no config |
 | `%ProgramFiles(x86)%\Steam\steamapps\common\RetroArch\retroarch.cfg` | RetroArch (Steam) | `system_directory` |
-| `%LOCALAPPDATA%\Packages\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\LocalState` | RetroArch (UWP/MSIX package) | `system_directory` of the `retroarch.cfg` there, `~` meaning that folder; by default `LocalState\system` |
+| `%LOCALAPPDATA%\Packages\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\LocalState` | RetroArch (UWP/MSIX package) | `system_directory` of the `retroarch.cfg` there, `~` meaning that folder. By default `LocalState\system` |
 | LaunchBox `Data\Emulators.xml` | RetroArch (portable) | the system directory that entry points at |
 | LaunchBox `Data\Emulators.xml` naming `EmuHawk.exe` | BizHawk (portable) | `Firmware` beside `EmuHawk.exe` |
 | `$BIZHAWK_DATA_HOME`, or `$XDG_DATA_HOME/emuhawk-monort-<version>` (Nix package) | BizHawk (Unix) | `Firmware` under it |
@@ -469,7 +469,7 @@ followed.
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one) |
-| `130` | stopped with Ctrl+C; run the same command again to carry on |
+| `130` | stopped with Ctrl+C. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list \| head`) |
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits

@@ -16,7 +16,7 @@ mode: standalone
 
 notes: |
   Android-only Dolphin fork published as the org.dolphinemu.mmjr package. The
-  repositories it was developed and released from are gone; this reading is
+  repositories it was developed and released from are gone. This reading is
   taken from a surviving copy carrying the whole maintainer commit line, up to
   the last one, which sets the version string to 2.0-18025. The tree is a
   selective merge of Dolphin Official carrying that label rather than a
@@ -30,7 +30,7 @@ notes: |
   files directory, and a change of git revision deletes it and extracts it
   again, so nothing placed there survives an update. The build drops Resources
   and Themes from the assets copy. Paths below are relative to the user
-  directory; entries with no path are read only from the Sys directory and name
+  directory. Entries with no path are read only from the Sys directory and name
   their location in their note.
   ref: Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.java:103,
        Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.java:138-155,
@@ -53,7 +53,7 @@ notes: |
 
   Fonts follow the IPL. When a dump is present the Shift JIS and Windows-1252
   fonts are read out of it at offsets 0x1aff00 and 0x1fcf00, for 0x4a24d and
-  0x2575 bytes; otherwise the standalone font files are loaded whole, and the
+  0x2575 bytes. Otherwise the standalone font files are loaded whole, and the
   bundled ones have different padding from the console fonts.
   ref: Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:102-131,
        Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:175-187,
@@ -88,7 +88,7 @@ notes: |
   boot, one file at a time, and a file already present in the NAND is left
   alone. Copies placed under Wii/shared2/wc24 are therefore the ones that
   survive, and the shipped blanks only fill what is still missing. Dolphin
-  itself reads nwc24msg.cfg and nwc24dl.bin back out of the NAND; the rest are
+  itself reads nwc24msg.cfg and nwc24dl.bin back out of the NAND, and the rest are
   there because titles expect them.
   ref: Source/Core/Core/WiiRoot.cpp:288-322, Source/Core/Core/WiiRoot.cpp:330-335,
        Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:24-38,
@@ -125,7 +125,7 @@ files:
     validation: [crc32]
     on_mismatch: warn
     description: "GameCube boot ROM, NTSC-U directory"
-    note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns; the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint."
+    note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns: the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint."
     source_ref: "Source/Core/Core/Config/MainSettings.cpp:594-600, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105-113, Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, Source/Core/Core/Boot/Boot.cpp:408-442, Source/Core/Core/Boot/Boot.cpp:444-449"
 
   - name: IPL.bin
@@ -183,7 +183,7 @@ files:
     adler32_pairs_with: "dsp_coef.bin"
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     description: "DSP instruction ROM"
-    note: "DSP LLE only, and a file that is absent or not 8192 bytes fails initialisation, which aborts the emulation thread. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair; six replacement pairs are also accepted."
+    note: "DSP LLE only, and a file that is absent or not 8192 bytes fails initialisation, which aborts the emulation thread. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair. Six replacement pairs are also accepted."
     source_ref: "Source/Core/Common/CommonPaths.h:120, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:107-120, Source/Core/Core/DSP/DSPCore.h:44, Source/Core/Core/DSP/DSPCore.cpp:28-71"
 
   - name: dsp_coef.bin
@@ -204,7 +204,7 @@ files:
     path: null
     required: false
     description: "Gecko code handler"
-    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds; too large a file is refused and cheats stay off."
+    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off."
     source_ref: "Source/Core/Common/CommonPaths.h:139, Source/Core/Core/GeckoCode.cpp:120-134, Source/Core/Core/GeckoCode.cpp:142-144"
 
   - name: keys.bin
@@ -226,7 +226,7 @@ files:
     size: 16384
     validation: [size]
     description: "Wii system configuration"
-    note: "Opened through the emulated filesystem and accepted only at 0x4000 bytes; anything else is replaced by a freshly generated one."
+    note: "Opened through the emulated filesystem and accepted only at 0x4000 bytes, and anything else is replaced by a freshly generated one."
     source_ref: "Source/Core/Common/CommonPaths.h:102, Source/Core/Core/SysConf.cpp:19, Source/Core/Core/SysConf.cpp:54-65"
 
   - name: setting.txt
@@ -246,7 +246,7 @@ files:
     required: false
     hle_fallback: true
     description: "Wii SD card image"
-    note: "Opened read-write when the SD device is opened; a 128 MB image is created when the file is missing. The configured override is empty by default, so the file stays under Load/."
+    note: "Opened read-write when the SD device is opened, and a 128 MB image is created when the file is missing. The configured override is empty by default, so the file stays under Load/."
     source_ref: "Source/Core/Common/CommonPaths.h:134, Source/Core/Common/FileUtil.cpp:998, Source/Core/Core/Config/MainSettings.cpp:289, Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:90-107"
 
   - name: clientca.pem
@@ -268,7 +268,7 @@ files:
     sha256: "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df"
     validation: [sha256]
     description: "console SSL client private key"
-    note: "Read alongside the client certificate and parsed as the private key for it; either one failing leaves the connection without a client certificate."
+    note: "Read alongside the client certificate and parsed as the private key for it. Either one failing leaves the connection without a client certificate."
     source_ref: "Source/Core/Core/IOS/Network/SSL.cpp:139-142, Source/Core/Core/IOS/Network/SSL.cpp:383-395, Source/Core/DiscIO/NANDImporter.cpp:225"
 
   - name: rootca.pem
@@ -365,7 +365,7 @@ files:
     system: nintendo-wii
     required: false
     description: "WiiConnect24 receive mailbox"
-    note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub; the note shipped beside it gives 0x700000 as the size on a console."
+    note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub, and the note shipped beside it gives 0x700000 as the size on a console."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Data/Sys/Wii/shared2/wc24/mbox/Readme.txt"
 
   - name: wc24send.ctl
@@ -381,7 +381,7 @@ files:
     system: nintendo-wii
     required: false
     description: "WiiConnect24 send mailbox"
-    note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub; the note shipped beside it gives 0x200000 as the size on a console."
+    note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub, and the note shipped beside it gives 0x200000 as the size on a console."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Data/Sys/Wii/shared2/wc24/mbox/Readme.txt"
 
   - name: Readme.txt
@@ -391,7 +391,7 @@ files:
     size: 103
     sha256: "e5a888912968050c6c1d46d1c364c324684e1d15aaa62cfe36cf7fce2c687b21"
     description: "note on the truncated mailboxes, copied into the NAND"
-    note: "The Sys/Wii copy walks the directory and takes every entry, so this file lands in the NAND with the mailboxes. It records the console sizes of the two mbx files. The hash names the file carried in the source tree, the only form it has, and is not a check the code performs; without it the name alone matches any readme."
+    note: "The Sys/Wii copy walks the directory and takes every entry, so this file lands in the NAND with the mailboxes. It records the console sizes of the two mbx files. The hash names the file carried in the source tree, the only form it has, and is not a check the code performs. Without it the name alone matches any readme."
     source_ref: "Source/Core/Core/WiiRoot.cpp:291-319, Data/Sys/Wii/shared2/wc24/mbox/Readme.txt"
 
   - name: wiitdb.txt
@@ -399,7 +399,7 @@ files:
     aliases: [titles.txt]
     required: false
     description: "user title database"
-    note: "One title id equals name pair per line, ids of four characters and up. titles.txt is read only when wiitdb.txt yields nothing. Overlays the per-language databases shipped in the Sys directory, which cover ten languages; the Portuguese and Russian files also present there are never registered."
+    note: "One title id equals name pair per line, ids of four characters and up. titles.txt is read only when wiitdb.txt yields nothing. Overlays the per-language databases shipped in the Sys directory, which cover ten languages. The Portuguese and Russian files also present there are never registered."
     source_ref: "Source/Core/Core/TitleDatabase.cpp:29-51, Source/Core/Core/TitleDatabase.cpp:54-58, Source/Core/Core/TitleDatabase.cpp:63-79"
 
   - name: mios-ipl.map

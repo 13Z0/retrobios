@@ -34,7 +34,7 @@ notes: |
   ref: garglk/launcher.cpp:114-189 (probe, extensions, interpreters), 379-419 (rungame)
 
   Formats and the interpreter each one runs: Adrift 4 and Adrift 5 both
-  default to scarier, which handles the two; scare takes Adrift 4 and
+  default to scarier, which handles the two. Scare takes Adrift 4 and
   FrankenDrift takes Adrift 5 only where the build asked for them, since each
   covers a single format. Then AdvSys (advsys), AGT (agility), Alan 2 (alan2), Alan 3
   (alan3), Glulx (git), Hugo (hugo), JACL (jacl), Level 9 (level9), Magnetic
@@ -51,7 +51,7 @@ notes: |
 
   Every glyph is drawn through FreeType rather than by the operating system,
   so a font file has to be reachable. The default config asks for the families
-  "Gargoyle Mono" and "Gargoyle Serif"; if fontconfig cannot resolve them, the
+  "Gargoyle Mono" and "Gargoyle Serif". If fontconfig cannot resolve them, the
   interpreter loads the shipped TTF files by name from the data directory,
   then the executable directory, then the working directory, and calls
   winabort() when all three miss.
@@ -69,7 +69,7 @@ notes: |
   <binary>/../share/gargoyle for the AppImage, the install directory on
   Windows, and the bundle Resources directory on macOS. Fonts sit at its root
   and themes in its themes subdirectory. macOS keeps the eight Gargoyle faces
-  in Resources/Fonts and Unifont in Resources; the Windows installer also
+  in Resources/Fonts and Unifont in Resources, and the Windows installer also
   registers the eight faces as system fonts.
   ref: garglk/sysqt.cpp:960-1004, garglk/sysmac.mm:1013-1030, garglk/CMakeLists.txt:137,145,
        510-534, gargoyle_osx.sh:124-125,211-213, installer.nsi:89-90,208-215
@@ -107,7 +107,7 @@ exclusion_note: >
   TADS character mapping files are not loaded by this build. The Glk port
   reports utf-8 and asc7dflt as the local character sets, both built-in
   tables, and its os_gen_charmap_filename() returns an empty name, so the
-  automatic .tcp lookup never runs; cmap_load() only fires for a path given
+  automatic .tcp lookup never runs. cmap_load() only fires for a path given
   with -ctab. The agil.cfg read by AGiliTy lives in os_dos.c and os_dos16.c,
   while the build compiles os_glk.c.
   ref: terps/tads/glk/osmisc.c:69-72,316-334, terps/tads/tads2/cmap.c:290-315,
@@ -158,7 +158,7 @@ files:
     source_ref: "garglk/draw.cpp:664 (make_entry propz), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   # -- Glyph substitution fonts, data directory root --
-  # Tried for every face after the main fonts; a load failure is skipped.
+  # Tried for every face after the main fonts, and a load failure is skipped.
   - name: "unifont.otf"
     description: "GNU Unifont, Basic Multilingual Plane glyph fallback"
     required: false

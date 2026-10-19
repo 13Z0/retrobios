@@ -32,7 +32,7 @@ notes: |
   and retro_get_system_info announces it as library_version under the name
   "higan (Super Famicom Balanced)" (nSide/target-libretro/libretro.cpp:87-93,
   nSide/target-libretro/libretro-sfc.cpp:486). The balanced profile keeps a
-  scanline-based PPU; the accuracy profile is refused at build time
+  scanline-based PPU, and the accuracy profile is refused at build time
   (nSide/target-libretro/GNUmakefile:1-2, nSide/target-libretro/libretro.cpp:38-39).
   The library is named nside_$(corename)_libretro with corename sfc_balanced
   (nSide/target-libretro/GNUmakefile:4-13, nSide/target-libretro/GNUmakefile:18-23),
@@ -56,9 +56,9 @@ notes: |
   directories (nSide/target-libretro/libretro.cpp:3-31). Identifiers come from
   the cartridge label: DSP1 for PILOTWINGS, DSP2 for DUNGEON MASTER, DSP3 for
   SD Gundam GX, DSP4 for TOP GEAR 3000 and PLANETS CHAMP TG3000, DSP1B
-  otherwise; ST011 for 2DAN MORITA SHOUGI, ST010 otherwise; ST018 and Cx4 have
-  a single revision (icarus/heuristics/super-famicom.cpp:512-541). No hash is
-  checked; a file shorter than the size the manifest declares leaves the
+  otherwise. ST011 is used for 2DAN MORITA SHOUGI, ST010 otherwise, and ST018
+  and Cx4 have a single revision (icarus/heuristics/super-famicom.cpp:512-541).
+  No hash is checked, and a file shorter than the size the manifest declares leaves the
   second import short and the load fails. The sizes below are those declared
   by the heuristics.
 

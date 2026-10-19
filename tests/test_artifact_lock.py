@@ -111,7 +111,7 @@ class PackLockCliTest(unittest.TestCase):
         self.assertIn("is in use by another run", proc.stdout)
 
     def test_every_writing_mode_refuses_a_locked_output(self):
-        """Two of seven modes took the lock; five wrote straight into it.
+        """Two of seven modes took the lock, and five wrote straight into it.
 
         A mode that writes packs or manifests into a directory another run
         holds produces the half-written artifact the lock exists to prevent.
@@ -225,7 +225,7 @@ class PipelineHoldsTheDataTrees(unittest.TestCase):
 class SiteGenerationHoldsDocs(unittest.TestCase):
     """generate_site swept from docs/ every file its own run had not
     written, including the scratch file and new pages of a second run on
-    the same tree; that run then died on os.replace or lost pages."""
+    the same tree. That run then died on os.replace or lost pages."""
 
     def test_a_second_run_is_refused_before_it_writes(self):
         docs = _tempdir(self)

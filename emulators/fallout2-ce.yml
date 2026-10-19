@@ -33,7 +33,7 @@ notes: |
   present (src/game.cc:1380-1382). Not required for the base game.
 
   Music (ACM), movies (MVE) and sound effects live in sound/, movies/,
-  and data/ overlays; the engine runs without them, so they are not
+  and data/ overlays. The engine runs without them, so they are not
   tracked here.
 
 exclusion_note: "data/, sound/ and movies/ load from the retail install folder, not from a shared BIOS tree"

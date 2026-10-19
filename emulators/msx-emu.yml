@@ -53,19 +53,19 @@ notes: |
   Paths are resolved against the user's BIOS folder first and the application bundle
   second (MSX.emu/src/main/RomLoader.cc:57-92,94-133,135-144). That folder may be a
   directory or an archive and is refused unless it carries a Machines entry
-  (MSX.emu/src/main/options.cc:212-228); with none set the app falls back to the asset
+  (MSX.emu/src/main/options.cc:212-228). With none set the app falls back to the asset
   path on Linux and to the storage path elsewhere
   (MSX.emu/src/main/options.cc:230-243). The machine picker lists every subdirectory
   holding a config.ini and appends the three bundled C-BIOS names on Android, where
   the asset directory enumeration skips directories
   (MSX.emu/src/main/EmuMenuViews.cc:32-97,548-608).
 
-  The default machine is MSX2 and the default Coleco machine is COL - ColecoVision; a
+  The default machine is MSX2 and the default Coleco machine is COL - ColecoVision. A
   .col name picks the second and a session setting overrides both
   (MSX.emu/src/main/system.ccm:75-76, MSX.emu/src/main/Main.cc:534,563-577). Neither
   default is bundled. The application ships only the three C-BIOS machines in its
   assets (MSX.emu/res/firmware/Machines, symlinked into MSX.emu/res/android/assets),
-  which run cartridge images; the definitions and ROMs behind every other name come
+  which run cartridge images, while the definitions and ROMs behind every other name come
   from MSX.emu.zip, the firmware set on the author's site, whose Machines folder holds
   MSX, MSX2, MSX2+, MSXturboR, COL - ColecoVision and Shared Roms. Its MSXturboR
   definition spells MSXTR, MSXTREXT, MSXTRMUS, MSXTROPT and MSXDOS23 with a lowercase
@@ -86,7 +86,7 @@ notes: |
 
   No hash is checked anywhere, and the sizes below are the ones the shipped set
   carries. The machine definitions still carry one, because config.ini is the name of
-  every definition there is and nothing else tells two of them apart; the values are
+  every definition there is and nothing else tells two of them apart. The values are
   those of the emulator's own assets and of the author's firmware set. A single length
   test exists, the Kanji mapper taking 131072 or 262144 bytes
   and nothing else (MSX.emu/src/blueMSX/Memory/romMapperKanji.c:141-149). The other

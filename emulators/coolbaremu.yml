@@ -26,7 +26,7 @@ notes: |
   (crates/coolbaremu-core/src/cbe/archive.rs:68-73). Files next to the .cbe
   (pay kernels, records, update data) are indexed as the guest filesystem
   (crates/coolbaremu-core/src/machine/mod.rs:1022-1024,
-  crates/coolbaremu-core/src/machine/virtual_fs.rs:58-103); they belong to
+  crates/coolbaremu-core/src/machine/virtual_fs.rs:58-103), and they belong to
   the game.
 
   The only system directory read is coolbaremu_orientation.csv, an optional
@@ -40,5 +40,5 @@ files: []
 
 exclusion_note: >
   The firmware services are reimplemented in the core and the font is the
-  embedded unifont crate; the system directory holds only an optional
+  embedded unifont crate. The system directory holds only an optional
   user-written orientation list.

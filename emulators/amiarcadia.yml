@@ -24,8 +24,8 @@ systems:
 # all code runs from the game cartridge. The core auto-identifies known
 # ROMs by CRC32 via games.h lookup table.
 #
-# source_ref: src/libretro.c:497-624 (retro_load_game — no file I/O)
-# source_ref: DroidArcadia/app/src/main/cpp/android.c:893-1052 (parse_bytes — ROM-only)
+# source_ref: src/libretro.c:497-624 (retro_load_game, no file I/O)
+# source_ref: DroidArcadia/app/src/main/cpp/android.c:893-1052 (parse_bytes, ROM-only)
 # source_ref: DroidArcadia/app/src/main/cpp/da.h:3-5 (version 4.42)
 # source_ref: amiarcadia_libretro.info (firmware_count=0)
 

@@ -28,16 +28,16 @@ notes: |
   so only BBKEmu/A4980/ is ever read from RetroArch. Both reads are
   std::fs::read guarded by `if let Ok`: a missing file is skipped without
   any message to the frontend. The image is copied into a 2 MiB
-  zero-filled buffer (crates/bbkemu-core/src/memory.rs:197-209); nothing
+  zero-filled buffer (crates/bbkemu-core/src/memory.rs:197-209), and nothing
   checks its size or contents.
 
   Without E.BIN, run_os_init (crates/bbkemu-core/src/emulator.rs:231-252)
   sets PC to 0x350, reads zeros from the ROM window, never sees
-  _MTCT=0xFE and gives up after 10 million cycles; the bank registers
+  _MTCT=0xFE and gives up after 10 million cycles. The bank registers
   stay unmapped and the game exits at its first OS call. Measured by
   running run_os_init from bbkemu-core against a dump: 1 092 023 cycles
   to completion with E.BIN, timeout without it. Without 8.BIN the font
-  window reads as 0x00 and every glyph the OS draws is blank; execution
+  window reads as 0x00 and every glyph the OS draws is blank, but execution
   continues.
 
   The standalone binary takes -8/--rom8 and -e/--rome explicit paths and
@@ -50,7 +50,7 @@ notes: |
 
   During init the OS maps its own bank at logical bank D: 0xEA8 for the
   A4980 OS, 0xE88 for the A4988 OS (crates/bbkemu-core/src/model.rs:11-13).
-  The core never reads that value back; detect_model
+  The core never reads that value back: detect_model
   (crates/bbkemu-core/src/model.rs:37-49) has no caller. The
   include_bytes! font in crates/bbkemu-core/src/font.rs is not declared in
   lib.rs and is not compiled. Content arrives through the frontend buffer
@@ -68,9 +68,9 @@ files:
     description: "BBK A-series font ROM"
     note: >-
       Read whole from {system}/BBKEmu/A4980/8.BIN into the 2 MiB window at
-      physical 0x800000. A missing file is skipped silently; the window
+      physical 0x800000. A missing file is skipped silently, and the window
       then reads as 0x00 and text drawn through the OS is blank. No size
-      or hash check; size is the window the image fills.
+      or hash check. Size is the window the image fills.
     source_ref: "crates/bbkemu-libretro/src/lib.rs:187-199, crates/bbkemu-libretro/src/lib.rs:470-471, crates/bbkemu-core/src/memory.rs:8, crates/bbkemu-core/src/memory.rs:197-202, crates/bbkemu-core/src/memory.rs:384-390, crates/bbkemu/src/main.rs:147-158"
 
   - name: E.BIN
@@ -82,10 +82,10 @@ files:
     description: "BBK A-series OS ROM"
     note: >-
       Read whole from {system}/BBKEmu/A4980/E.BIN into the 2 MiB window at
-      physical 0xE00000; the last 256 bytes also serve as the interrupt
+      physical 0xE00000. The last 256 bytes also serve as the interrupt
       vector page at 0x0300. A missing file is skipped silently, the OS
       init loop times out after 10 million cycles and no game runs. No
-      size or hash check; size is the window the image fills.
+      size or hash check. Size is the window the image fills.
     source_ref: "crates/bbkemu-libretro/src/lib.rs:187-193, crates/bbkemu-libretro/src/lib.rs:201-206, crates/bbkemu-libretro/src/lib.rs:470-471, crates/bbkemu-core/src/memory.rs:9, crates/bbkemu-core/src/memory.rs:204-209, crates/bbkemu-core/src/memory.rs:224-226, crates/bbkemu-core/src/memory.rs:391-397, crates/bbkemu-core/src/emulator.rs:231-252, crates/bbkemu/src/main.rs:159-170"
 
   - name: 8.BIN
@@ -120,5 +120,5 @@ platform_details:
     note: |
       Physical space seen through sixteen 4 KiB bank registers: RAM below
       0x8000, 2 MiB flash at 0x200000, 8.BIN at 0x800000, E.BIN at
-      0xE00000. Reads outside a loaded image return 0x00; ROM windows
+      0xE00000. Reads outside a loaded image return 0x00, and ROM windows
       ignore writes.

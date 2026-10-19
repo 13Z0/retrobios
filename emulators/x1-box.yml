@@ -36,7 +36,7 @@ notes: |
   folder. The two ROM pickers keep .bin, .rom and .img, the disk picker .qcow2
   and .img. A pick is fingerprinted before anything is written, and only a file
   that passes is copied into x1box under the external files directory as
-  mcpx.bin, flash.bin or hdd.img; a file chosen as a path in place is kept as
+  mcpx.bin, flash.bin or hdd.img. A file chosen as a path in place is kept as
   that path instead. Those names, the eeprom the wizard never asks for and the
   disc are written to x1box/xemu.toml under sys.files. The disc is handed to
   QEMU as a file descriptor through -add-fd and only copied to x1box/dvd.iso
@@ -100,7 +100,7 @@ files:
     note: >-
       The only file the app verifies by content. A pick is accepted just when
       its MD5 equals the value hardcoded in the wizard, which is the v1.0 boot
-      ROM; anything else is refused with the expected hash quoted, and the
+      ROM. Anything else is refused with the expected hash quoted, and the
       512-byte dump whose MD5 is 196a5f59a13382c185636e691d6c323d is named
       separately as a known bad dump to re-dump. The check runs again over the
       stored copy every time the wizard opens, so a file that stops matching
@@ -122,9 +122,9 @@ files:
       Passed as -bios, and the one image whose absence stops the run on its
       own: a path that cannot be opened queues an error and clears autostart.
       The picker only refuses what looks like the boot ROM, a 512-byte file or
-      either MCPX hash, and asks for a BIOS instead; there is no positive hash
+      either MCPX hash, and asks for a BIOS instead. There is no positive hash
       to match. The image is mapped at 0xFF000000 and mirrored to the top of
-      the address space; a size that is zero or not a multiple of 64 KB, or a
+      the address space. A size that is zero or not a multiple of 64 KB, or a
       short read, falls back to 256 KB filled with 0xFF. A retail image cannot
       launch unsigned code, so a debug or modified image is what boots a title.
     source_ref: "system/vl.c:3057-3072, hw/xbox/xbox.c:64-102, android/app/src/main/java/com/izzy2lost/x1box/SetupWizardActivity.kt:64, 93-116, 487-495"
@@ -140,7 +140,7 @@ files:
       unopenable one only queues a message, but the launcher refuses to leave
       the wizard until the file resolves. The formatter builds FATX partitions
       inside an image that already exists and needs at least 0x1DD156000 bytes
-      for the retail layout; it never creates the image. Partitions C and E of
+      for the retail layout. It never creates the image. Partitions C and E of
       this image are what the dashboard import writes into.
     source_ref: "system/vl.c:3078-3092, android/app/src/main/java/com/izzy2lost/x1box/SetupWizardActivity.kt:65, 118-139, android/app/src/main/java/com/izzy2lost/x1box/XboxHddFormatter.kt:7-16, 46-50, android/app/src/main/cpp/xemu_android.cpp:822-843"
 
@@ -155,7 +155,7 @@ files:
       Always pointed at x1box/eeprom.bin, a path the wizard never asks for.
       Generated as XBOX_EEPROM_VERSION_R1 when it does not exist, so a dump is
       needed only to carry over a console serial, region or HDD key. It is
-      attached through the smbus-storage device; a size other than 256 bytes,
+      attached through the smbus-storage device. A size other than 256 bytes,
       or a generation that fails, clears autostart. Preparing Insignia and the
       EEPROM editor write to it in place.
     source_ref: "system/vl.c:2921-2964, 3045-3055, android/app/src/main/cpp/xemu_android.cpp:757-759, 719, android/app/src/main/cpp/xemu_settings_android.cc:246-286, android/app/src/main/java/com/izzy2lost/x1box/SettingsActivity.kt:2748-2751"
@@ -221,7 +221,7 @@ files:
       Read from the assets of the package as the game controller subsystem
       comes up and handed to SDL as a memory stream. The asset manager reads
       inside the archive and the path is a constant, so there is no search
-      order and nothing outside the package replaces this copy; an added pad
+      order and nothing outside the package replaces this copy. An added pad
       mapping goes in through controller_map.txt instead. The revision shipped
       here is 589031 bytes and is not the one other releases carry under this
       name.

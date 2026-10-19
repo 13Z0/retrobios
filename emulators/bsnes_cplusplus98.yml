@@ -32,6 +32,6 @@ exclusion_note: >
   firmware_count=0 in .info is correct. DSP firmware (NEC uPD7725/uPD96050,
   Hitachi CX4) is loaded from the ROM directory via game XML markup, not from
   system_dir. RetroArch cannot pre-populate firmware in the ROM directory.
-  Upstream byuu.org is defunct; this libretro port is the preserved v085 code.
+  Upstream byuu.org is defunct, and this libretro port is the preserved v085 code.
 
 files: []

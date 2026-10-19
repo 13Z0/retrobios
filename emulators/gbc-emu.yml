@@ -26,7 +26,7 @@ notes: |
   GBC.emu/src/main/AppMeta.cc:26) and driven by the app's own video, audio,
   input and save layers, with the OSD compiled out
   (GBC.emu/CMakeLists.txt:14-19). Content is read from .gb, .gbc and .dmg files
-  (GBC.emu/metadata/conf.mk:5, GBC.emu/src/main/AppMeta.cc:30); an archive is
+  (GBC.emu/metadata/conf.mk:5, GBC.emu/src/main/AppMeta.cc:30). An archive is
   opened by the framework, which keeps the first entry passing that same filter
   (EmuFramework/src/EmuSystem.cc:392-419).
 

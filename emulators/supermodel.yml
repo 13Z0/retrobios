@@ -47,7 +47,7 @@ notes: |
   the same relative directories are used when Config/ exists in the working
   directory, otherwise ~/.supermodel/ when present, otherwise the XDG data and
   config homes. Supermodel.ini is written from a compiled-in default when it is
-  absent and rewritten after interactive input configuration; NVRAM/<game>.nv
+  absent and rewritten after interactive input configuration. NVRAM/<game>.nv
   and Saves/<game>.st<slot> are written by the emulator itself.
   ref: Src/OSD/Windows/FileSystemPath.cpp:28-49, Src/OSD/OSX/FileSystemPath.cpp:28-48,
        Src/OSD/Unix/FileSystemPath.cpp:51-157, Src/OSD/SDL/Main.cpp:1394-1413,
@@ -67,7 +67,7 @@ notes: |
 
   Libretro NVRAM is the frontend .srm through the memory API. On the first frame
   a <game>.nv written by the standalone build is imported from the save directory
-  when the .srm is empty; it is never written back. Save states are serialised in
+  when the .srm is empty. It is never written back. Save states are serialised in
   memory, and a state file on disk is loaded only when InitStateFile names one,
   which the core option layer leaves empty.
   ref: Src/OSD/libretro/libretro.cpp:766-781, Src/OSD/libretro/libretro.cpp:1380-1409,
@@ -75,7 +75,7 @@ notes: |
        Src/OSD/libretro/LibretroWrapper.cpp:544-545, Src/OSD/libretro/LibretroConfigProvider.h:15
 
   The Legacy3D renderer compiles its shaders from built-in strings and reads a
-  file only when VertexShader or FragmentShader names one; both default to an
+  file only when VertexShader or FragmentShader names one, and both default to an
   empty string in either build.
   ref: Src/Graphics/Shader.cpp:52-63, Src/Graphics/Shader.cpp:100-108,
        Src/OSD/libretro/LibretroConfigProvider.h:22-23
@@ -93,7 +93,7 @@ files:
     sha1: "6871a47de90ca67f9ff8e4e280416851a8164563"
     md5: "0c7cfc0cba2f2cd674d94e093936f9f8"
     description: "ROM set definitions"
-    note: "Parsed at startup into the game database (Src/GameLoader.cpp:549-559, 1014-1017). Every ROM region, file name and CRC32 the loader matches against comes from here, so an unreadable file leaves no set to resolve and the launch returns before the emulator is built. The path is a config key, so -game-xml-file moves it. Nothing about the file is verified beyond parsing; the hash is that of the copy the pinned revision ships."
+    note: "Parsed at startup into the game database (Src/GameLoader.cpp:549-559, 1014-1017). Every ROM region, file name and CRC32 the loader matches against comes from here, so an unreadable file leaves no set to resolve and the launch returns before the emulator is built. The path is a config key, so -game-xml-file moves it. Nothing about the file is verified beyond parsing. The hash is that of the copy the pinned revision ships."
     source_ref: "Src/OSD/SDL/Main.cpp:117, Src/OSD/SDL/Main.cpp:1500, Src/OSD/SDL/Main.cpp:1957, Src/OSD/SDL/Main.cpp:2319-2329"
 
   - name: Games.xml
@@ -110,7 +110,7 @@ files:
       - "2d16307ceb658636a05d34c7ba935b48"
       - "29fd5bc40cea222e040c1a1cfd60ea2e"
     description: "ROM set definitions, libretro copy"
-    note: "Read through the VFS from {system}/supermodel/Games.xml, or Config/Games.xml under it, and parsed from memory (Src/GameLoader.cpp:1019-1030). When the read yields nothing the bytes compiled in from Config/Games.xml are parsed instead, so the core identifies every set without a file on disk; a file that is present takes precedence. The second hash is the embedded array, which predates the indentation cleanup of the repository copy by one tab."
+    note: "Read through the VFS from {system}/supermodel/Games.xml, or Config/Games.xml under it, and parsed from memory (Src/GameLoader.cpp:1019-1030). When the read yields nothing the bytes compiled in from Config/Games.xml are parsed instead, so the core identifies every set without a file on disk, but a file that is present takes precedence. The second hash is the embedded array, which predates the indentation cleanup of the repository copy by one tab."
     source_ref: "Src/OSD/libretro/LibretroWrapper.cpp:187-206, Src/OSD/libretro/LibretroWrapper.cpp:221-222, Src/OSD/libretro/LibretroWrapper.cpp:822, Src/OSD/libretro/LibretroWrapper.cpp:834-859, Makefile:651-653"
 
   - name: Supermodel.ini
@@ -123,7 +123,7 @@ files:
     sha1: "cbda2b3fa65e37c5c2824a4630f95f145533c360"
     md5: "06533608174992f6ea180ae190011778"
     description: "Configuration override"
-    note: "Read from {system}/supermodel/Supermodel.ini, or Config/Supermodel.ini under it, when present; a file that fails to parse aborts the load. Core options are applied over it afterwards, so it only reaches keys the options do not set and per-game sections. Extracted from the embedded copy when absent."
+    note: "Read from {system}/supermodel/Supermodel.ini, or Config/Supermodel.ini under it, when present, and a file that fails to parse aborts the load. Core options are applied over it afterwards, so it only reaches keys the options do not set and per-game sections. Extracted from the embedded copy when absent."
     source_ref: "Src/OSD/libretro/LibretroWrapper.cpp:187-206, Src/OSD/libretro/LibretroWrapper.cpp:219-220, Src/OSD/libretro/LibretroWrapper.cpp:812-817, Src/OSD/libretro/LibretroWrapper.cpp:858, Src/OSD/libretro/LibretroWrapper.cpp:865-866, Makefile:659-661"
 
   - name: p1crosshair.bmp

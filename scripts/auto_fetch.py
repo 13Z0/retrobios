@@ -123,7 +123,7 @@ def _accepted(entry: dict, field: str) -> set[str]:
     """Every value an entry accepts for a hash field.
 
     A profile lists several revisions as a YAML list (daedalusx64's
-    n64.psh), a platform as a comma-separated string; read as one value,
+    n64.psh), a platform as a comma-separated string. Read as one value,
     the list stopped the run with an unhashable-type error.
     """
     value = entry.get(field)
@@ -264,7 +264,7 @@ def step4_search_archive_org(entry: dict) -> bytes | None:
     sha1s = sorted(_accepted(entry, "sha1"))
     if not sha1s:
         return None
-    # Each accepted revision is a query of its own; archive.org matches one.
+    # Each accepted revision is a query of its own: archive.org matches one.
     sha1 = " OR ".join(f"sha1:{value}" for value in sha1s)
 
     search_url = (

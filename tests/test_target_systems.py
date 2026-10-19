@@ -2,7 +2,7 @@
 
 Batocera files the Enterprise under enterprise-64-128. ep128emu, the core
 that reads ep128emu/roms/exos21.rom, declares enterprise-64 and
-enterprise-128; only CLK carries the joined id. With a target that has
+enterprise-128. Only CLK carries the joined id. With a target that has
 ep128emu and not CLK, the system was dropped from the report while the
 builder still shipped its ROMs as ep128emu extras.
 """
@@ -57,7 +57,7 @@ class TargetSystems(unittest.TestCase):
         self.assertEqual(self.kept(systems("Enterprise/exos10.bin")), [])
 
     def test_a_path_an_off_target_core_reads_excludes_nothing(self):
-        """Batocera's bbc runs on MAME, which no profile ties to bbcb.zip; CLK
+        """Batocera's bbc runs on MAME, which no profile ties to bbcb.zip, but CLK
         reads two of its ROMs. With CLK off the target the system stayed
         unknown before and must stay kept."""
         declared = {"bbc": {"files": [

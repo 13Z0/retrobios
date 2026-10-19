@@ -21,7 +21,7 @@ resources_directory: "pcsx2/resources/"
 notes: |
   pcsx2/resources/GameIndex.yaml, the per-game patch, settings override and
   compatibility database, is the one the buildbot publishes in LRPS2.zip (the
-  lrps2 data directory). An OSD warning is shown if it is missing; some games
+  lrps2 data directory). An OSD warning is shown if it is missing, and some games
   do not boot without it.
   Hard fork of PCSX2 (pre-Qt, 1.7-dev era) ported to libretro. x86_64 only.
   BIOS detection is filename-agnostic: scans pcsx2/bios/ for any file between 4-8 MB

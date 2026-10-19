@@ -264,11 +264,11 @@ class Reporting(_Fixture):
         markdown = result.to_markdown()
         for value in (result.sha1, result.md5, result.crc32):
             self.assertIn(value, markdown)
-        self.assertIn("✅", markdown)
+        self.assertIn("### PASS", markdown)
 
     def test_a_failure_is_marked_in_the_heading(self):
         rel = self._bios_file("bios/Sega/Saturn/bad.exe")
-        self.assertIn("❌", validate_pr.validate_file(rel, None, EMPTY_HASHES).to_markdown())
+        self.assertIn("### FAIL", validate_pr.validate_file(rel, None, EMPTY_HASHES).to_markdown())
 
 
 class PlatformHashLoading(_Fixture):
@@ -324,7 +324,7 @@ class FlagsAreAppliedOrRefused(unittest.TestCase):
 
 class AFileOutsideBiosIsToldWhereToGo(unittest.TestCase):
     """validate_pr knew bios/Sony/PlayStation/ for scph5501.bin and only said
-    "not under bios/"; given an absolute path, a placed file was reported a
+    "not under bios/". Given an absolute path, a placed file was reported a
     duplicate of itself."""
 
     def test_both(self):

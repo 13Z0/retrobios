@@ -20,7 +20,7 @@ notes: |
   BIOS loading in src/vm/scv/memory.cpp:initialize() (lines 74-243).
   Tries filenames in order: upd7801g.s01, upd7801g.bin, upd7801g.bios,
   bios.rom, bios.bin. First successful open wins. Upstream eSCV uses
-  only BIOS.ROM (uppercase); the libretro port renamed and added
+  only BIOS.ROM (uppercase), and the libretro port renamed and added
   fallback aliases.
 
   The BIOS is read as 0x1000 (4096) bytes into the bios[] array, mapped

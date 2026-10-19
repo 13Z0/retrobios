@@ -35,7 +35,7 @@ notes: |
   CDBlockROMImages to /userdata/roms/saturn/cdb/, ROMCartImages to
   /userdata/roms/saturn.
 
-  No HLE fallback for IPL ROM. CD Block LLE is optional; falls back to
+  No HLE fallback for IPL ROM. CD Block LLE is optional and falls back to
   HLE when disabled or no ROM found. Known CDB versions: 1.04, 1.05, 1.06.
 
   ROM cartridges: KoF95 and Ultraman shipped with physical ROM carts.

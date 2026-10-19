@@ -13,7 +13,7 @@ platforms/               one YAML config per platform (scraped from upstream)
   _data_dirs.yml         data directory definitions (Dolphin Sys, PPSSPP...)
   targets/               hardware target configs + _overrides.yml
 provenance/              dump-catalog snapshots (redump, no-intro, tosec)
-scripts/                 all tooling (Python, pyyaml; jsonschema for schema checks)
+scripts/                 all tooling (Python and pyyaml, jsonschema for schema checks)
   scraper/               upstream scrapers (libretro, batocera, recalbox...)
   scraper/targets/       hardware target scrapers (retroarch, batocera, emudeck, retropie)
   exporter/              native format exporters (batocera, recalbox, emudeck...)
@@ -96,7 +96,7 @@ graph LR
 The pack combines platform baseline (layer 1) with core requirements (layer 3).
 Neither too much (no files from unused cores) nor too few (no missing files for active cores).
 A same-named local file that contradicts an explicit hash is recorded as an
-unsafe omission on hash-verifying platforms; existence platforms ship it and
+unsafe omission on hash-verifying platforms, while existence platforms ship it and
 report the divergence, because their code never reads the bytes.
 
 The emulator's source code serves as ground truth for what files are needed,
@@ -139,7 +139,7 @@ follow the emulator source code.
 
 `provenance_report.py` reports the reverse direction: catalog entries absent
 from the collection, which become acquisition targets. A DAT counts as covered
-when the collection holds at least one of its entries; entries from DATs the
+when the collection holds at least one of its entries. Entries from DATs the
 collection does not cover are counted but not listed, since No-Intro tags every
 non-game dump as `[BIOS]`, including tens of thousands of digital-distribution
 entries that are out of scope here.
@@ -150,13 +150,13 @@ Platforms that produce identical packs are grouped automatically.
 Two platforms share a pack when they declare the same files, run the same
 emulators and see file names the same way. Lakka declares RetroArch's files
 and cores but runs on Linux, where `bios.col` and `BIOS.col` are two files
-that different cores open; RetroArch's pack folds them for Windows and macOS.
+that different cores open, while RetroArch's pack folds them for Windows and macOS.
 So Lakka gets its own pack. RetroPie inherits RetroArch's systems but ships its
 own package list, standalone emulators included, and is case-sensitive too, so
 it gets a separate pack and a separate install manifest.
 With `--target`, the fingerprint includes target cores so platforms
 with different hardware filters get separate packs. Emulator and system packs
-also retain system identity, `variant_group` and requested region; same-named
+also retain system identity, `variant_group` and requested region. Same-named
 regional files are never collapsed merely because their display label matches.
 
 ## Pack reproducibility
@@ -209,19 +209,19 @@ emulator-level validation (wrong CRC32, wrong size), a DISCREPANCY is reported.
 The pack generator searches the repo for a variant that satisfies both.
 If none exists, the platform version is kept and the discrepancy stays
 reported. A filename or destination never overrides a declared content hash
-during resolution; whether a mismatch is packed is then decided by the
+during resolution. Whether a mismatch is packed is then decided by the
 platform's own verification mode.
 
 ## Security
 
 - install metadata is fetched from the same revision as the installer that
-  reads it, and validated before use;
-- destinations are normalized and contained below the selected BIOS root;
+  reads it, and validated before use.
+- destinations are normalized and contained below the selected BIOS root.
 - downloads are bounded by declared and global size limits, verified with
-  SHA256/SHA1, written to unique temporary siblings and atomically replaced;
+  SHA256/SHA1, written to unique temporary siblings and atomically replaced.
 - ZIP extraction rejects traversal, absolute paths, duplicates, links, special
-  files, encryption, excessive expansion and suspicious compression ratios;
-- standalone-emulator copies require explicit `--standalone-copies` consent;
+  files, encryption, excessive expansion and suspicious compression ratios.
+- standalone-emulator copies require explicit `--standalone-copies` consent.
 - CI writes only what its job needs: `validate.yml` holds `pull-requests: write`
   for the validation comment and labels, `deploy-site.yml` holds the Pages
   deploy identity, and the release job holds `contents: write` but runs only
@@ -355,7 +355,7 @@ pattern and how to add a test.
 | Workflow | File | Trigger | Role |
 |----------|------|---------|------|
 | Deploy Site | `deploy-site.yml` | push to main (platforms, emulators, wiki, scripts) + manual | validate contracts, generate site, build with MkDocs, validate rendered HTML, deploy to Pages |
-| Validation | `validate.yml` | pull request and push to main on bios/, platforms/, emulators/, schemas/, scripts/, tests/ | schema check and full test suite on both; BIOS hash validation and auto-label on pull requests |
+| Validation | `validate.yml` | pull request and push to main on bios/, platforms/, emulators/, schemas/, scripts/, tests/ | schema check and full test suite on both, BIOS hash validation and auto-label on pull requests |
 
 Releases are not built in CI: the packs are generated and checked on the
 maintainer's machine and uploaded with `gh`, see the

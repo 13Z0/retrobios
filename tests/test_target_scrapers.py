@@ -323,7 +323,7 @@ class RetroPieModuleFlags(unittest.TestCase):
 
 class HashScrapersRefuseAnUnknownVersion(unittest.TestCase):
     """mame_hash_scraper wrote core_version "unknown" after a failed API call
-    and cached it for a day; the pipeline step still read OK."""
+    and cached it for a day, while the pipeline step still read OK."""
 
     def test_mame_raises(self):
         from scripts.scraper import mame_hash_scraper  # noqa: PLC0415

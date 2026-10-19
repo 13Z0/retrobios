@@ -44,7 +44,7 @@ notes: |
   Configuration: -conf and -userconf name the files to read. Otherwise
   dosbox-x.conf then dosbox.conf is tried in the working directory, then in the
   program directory, then in the configuration directory, which is last tried
-  for dosbox-x-<version>.conf; that file is written with the defaults when it
+  for dosbox-x-<version>.conf. That file is written with the defaults when it
   does not exist.
   ref: src/gui/sdlmain.cpp:8667-8743, src/misc/cross.cpp:229-245
 
@@ -54,13 +54,13 @@ notes: |
   image list only, which rejects the interleaved chip dumps.
   ref: src/gui/midi_mt32.h:74-109, src/libs/mt32/c_interface/c_interface.cpp:442-462, src/libs/mt32/ROMInfo.cpp:206-215
   mt32.model = auto opens CM32L_CONTROL.ROM then MT32_CONTROL.ROM, and
-  CM32L_PCM.ROM then MT32_PCM.ROM; cm32l keeps only the CM32L names, mt32 only
+  CM32L_PCM.ROM then MT32_PCM.ROM. cm32l keeps only the CM32L names, mt32 only
   the MT32 names. The directory is mt32.romdir, then the working directory, then
   the resource directory, then the configuration directory. A missing pair logs
   the accepted file names and disables the device.
   ref: src/gui/midi_mt32.h:246-275, src/dosbox.cpp:3607-3617
 
-  FluidSynth reads fluid.soundfont; fluid_synth_sfload is the only check. With
+  FluidSynth reads fluid.soundfont, and fluid_synth_sfload is the only check. With
   the setting empty it probes /usr/share/soundfonts/default.sf2,
   /usr/share/sounds/sf2/FluidR3_GM.sf2 and GeneralUser_GS.sf2 on Linux, and
   C:\soundfonts\default.sf2 then the two same names under C:\DOSBox-X on Windows.
@@ -93,13 +93,13 @@ notes: |
   ref: src/dos/dos_programs.cpp:2227-2228, 2261-2350
 
   BIOSTEST.COM loads an image of up to 64 KB at F000:0 and restarts the CPU at
-  the reset vector; it is compiled only when the debugger is enabled. The
+  the reset vector. It is compiled only when the debugger is enabled. The
   settings call binary on reset and call binary on boot load blobs of up to
   128 KB into the ROM BIOS area for CPU testing.
   ref: src/dos/dos_programs.cpp:3666-3719, src/ints/bios.cpp:13298-13374
 
   A build configured with --enable-dosbox_agent reads the key=value file named
-  by -agent-config to start the RPC debugger agent; the file names the
+  by -agent-config to start the RPC debugger agent. The file names the
   transport and endpoint, nothing else is read from disk.
   ref: configure.ac:1441-1448, src/gui/sdlmain.cpp:8490-8496, src/agent/protocol/agent_protocol.cpp:477-632
 
@@ -267,13 +267,13 @@ files:
   - name: "default.sf2"
     description: "SoundFont the operating system installs as FluidSynth default"
     required: false
-    unsourceable: "a link the operating system creates to the SoundFont it installs as default, FluidR3_GM.sf2 on Fedora; no file of this name is distributed, and a same-named file of another program must not stand in"
+    unsourceable: "a link the operating system creates to the SoundFont it installs as default, FluidR3_GM.sf2 on Fedora. No file of this name is distributed, and a same-named file of another program must not stand in"
     note: >
       first probe when fluid.soundfont is empty:
       /usr/share/soundfonts/default.sf2, or C:\soundfonts\default.sf2 on
       Windows. The source marks the first path as the Red Hat and Fedora
       one, where the name links to FluidR3_GM.sf2, the file of the second
-      probe. Any SF2 or SF3 file loads; fluid.soundfont names it and
+      probe. Any SF2 or SF3 file loads: fluid.soundfont names it and
       fluid_synth_sfload is the only check
     source_ref: "src/gui/midi_synth.h:346-352, src/gui/midi_synth.h:364-368, src/gui/midi_synth.h:381-384, src/gui/midi_synth.h:462-473, src/dosbox.cpp:3746-3747"
 
@@ -294,7 +294,7 @@ files:
       third probe when fluid.soundfont is empty:
       /usr/share/sounds/sf2/GeneralUser_GS.sf2, or
       C:\DOSBox-X\GeneralUser_GS.sf2 on Windows. Elsewhere the file loads
-      when fluid.soundfont gives its path; the setting's help text names this
+      when fluid.soundfont gives its path, and the setting's help text names this
       file as its example. The synth device probes the same paths
     source_ref: "src/gui/midi_synth.h:356-358, src/gui/midi_synth.h:373-375, src/gui/midi_synth.h:179-181, src/gui/midi_synth.h:196-198, src/dosbox.cpp:3747"
 
@@ -308,7 +308,7 @@ files:
     validation: [size]
     note: >
       256 8x8 cells at 0x0, 256 8x16 cells at 0x800, 96 by 92 16x16 cells at
-      0x1800; a file of any other length is rejected. Enabled by
+      0x1800. A file of any other length is rejected. Enabled by
       pc-98 try font rom, on by default
     source_ref: "src/ints/int10.cpp:1487-1549, src/dosbox.cpp:2494-2495"
 
@@ -318,7 +318,7 @@ files:
     hle_fallback: true
     note: >
       2048 by 2048 monochrome Windows bitmap, biSize 40, one plane, one bit per
-      pixel, no compression, inverse colour scheme; the first row is the 8x16
+      pixel, no compression, inverse colour scheme. The first row is the 8x16
       single-width set and the rest is 16x16 full-width. Also reachable through
       the pc-98 anex86 font setting, which is tried before FONT.ROM
     source_ref: "src/ints/int10.cpp:1555-1647, src/dosbox.cpp:2498-2501"
@@ -328,7 +328,7 @@ files:
     required: false
     hle_fallback: true
     note: >
-      same bitmap layout as ANEX86.BMP and tried after it; ships in the resource
+      same bitmap layout as ANEX86.BMP and tried after it, ships in the resource
       directory
     source_ref: "src/ints/int10.cpp:1577-1580, src/Makefile.am:17"
 
@@ -358,7 +358,7 @@ files:
     note: >
       tried by the TTF output on PC-98 and on double-byte code pages when
       ttf.font is unset, and by the printer when the selected typeface file is
-      missing; ships in the resource directory
+      missing. Ships in the resource directory
     source_ref: "src/output/output_ttf.cpp:655-668, src/hardware/parport/printer.cpp:354-380, src/Makefile.am:21"
 
   # -- Printer typefaces --
@@ -444,7 +444,7 @@ files:
     max_size: 32768
     validation: [size]
     note: >
-      read by LOADROM.COM from a mounted local drive; accepted when the file
+      read by LOADROM.COM from a mounted local drive, accepted when the file
       starts with 55 AA, byte 3 masked with 0xFC equals 0xE8 and the string IBM
       appears at offset 0x1E, and the machine is EGA or better
     source_ref: "src/dos/dos_programs.cpp:3606-3632, src/dos/dos_programs.cpp:3643-3649"
@@ -461,7 +461,7 @@ files:
     validation: [size]
     note: >
       the ibm rom basic setting maps it just below the ROM BIOS and accepts
-      32 KB to 64 KB in 4 KB steps; LOADROM.COM maps the same image at F600:0
+      32 KB to 64 KB in 4 KB steps. LOADROM.COM maps the same image at F600:0
       when it is exactly 32768 bytes, starts with E9 8F 7E and carries the
       string IBM at offset 0x4CD4
     source_ref: "src/ints/bios.cpp:13230-13250, src/dos/dos_programs.cpp:3633-3637, src/dosbox.cpp:1948-1950"
@@ -476,7 +476,7 @@ files:
     min_size: 57344
     validation: [size]
     note: >
-      read during PCjr cartridge boot; bytes 0x3000 to 0xDFFF are copied to
+      read during PCjr cartridge boot, and bytes 0x3000 to 0xDFFF are copied to
       physical F3000. A short read leaves the region untouched and the cartridge
       still boots
     source_ref: "src/dos/dos_programs.cpp:3079-3088"
@@ -488,7 +488,7 @@ files:
     required: false
     note: >
       loaded at the top of the first megabyte, rounded up to a paragraph and
-      truncated to 128 KB, or to 96 KB on PC-98; a larger image is clamped
+      truncated to 128 KB, or to 96 KB on PC-98, and a larger image is clamped
       rather than rejected
     source_ref: "src/dos/dos_programs.cpp:2261-2311"
 
@@ -498,7 +498,7 @@ files:
     max_size: 32768
     validation: [size]
     note: >
-      served through the port 43Dh bank switch alongside a BOOT -bios image;
+      served through the port 43Dh bank switch alongside a BOOT -bios image.
       <image>.itf.rom is tried before the bare name so one directory can hold
       several
     source_ref: "src/dos/dos_programs.cpp:2313-2344"

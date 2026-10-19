@@ -192,5 +192,5 @@ files:
 
   # -- General MIDI SoundFont --
   # Placed in system/soundfonts/ directory. Core scans for .sf2/.sf3/.sfz/.dls/.gig.
-  # FluidSynth reads .sf2/.sf3/.dls/.gig; BASSMIDI reads .sf2/.sfz.
+  # FluidSynth reads .sf2/.sf3/.dls/.gig, BASSMIDI reads .sf2/.sfz.
   # No specific filename required - all found files appear in the core option dropdown.

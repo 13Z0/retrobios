@@ -17,16 +17,16 @@ systems:
 
 notes: |
   Geolith emulates the Neo Geo AES, MVS, CD, and CDZ. Cartridge systems use
-  .NEO format ROMs; CD systems use .cue or .chd disc images. System ROMs come
+  .NEO format ROMs, CD systems use .cue or .chd disc images. System ROMs come
   from MAME-format ZIP archives in the system directory.
 
   Cartridge content opens aes.zip (System Type = AES, default) or neogeo.zip
   (MVS and Universe BIOS) (libretro/libretro.c:1222-1225). CD content opens
   neocd.zip (Front/Top Loader) or neocdz.zip (CDZ, default, and CD Universe
-  BIOS) (libretro/libretro.c:1213-1221); Front/Top Loader additionally reads
+  BIOS) (libretro/libretro.c:1213-1221). Front/Top Loader additionally reads
   000-lo.lo from neocdz.zip, so neocdz.zip is needed in every CD mode
   (libretro/libretro.c:1232-1239). The Irritating Maze in MVS mode loads
-  236-bios.sp1 from irrmaze.zip for trackball support; without it the game
+  236-bios.sp1 from irrmaze.zip for trackball support. Without it the game
   runs but the trackball does not work (libretro/libretro.c:1281-1292).
 
   Inside the opened archive, members are extracted by exact filename
@@ -43,7 +43,7 @@ notes: |
     - CD Top Loader:      top-sp1.bin
     - CDZ:                neocd.bin
     - CD Universe BIOS:   uni-bioscd33.rom
-  000-lo.lo is required in every mode; only the Front/Top Loader tolerates
+  000-lo.lo is required in every mode. Only the Front/Top Loader tolerates
   its absence from neocd.zip because it comes from neocdz.zip instead
   (src/geo.c:234-243, 273-285). sfix.sfix and sm1.sm1 are required for MVS
   and Universe BIOS modes only (src/geo.c:245-267).
@@ -52,7 +52,7 @@ notes: |
   detection and the optional CD speed hack patches use byte patterns and
   apply only when the 68K BIOS is at least 512 KiB (src/geo_cd.c:1888-1910,
   1904-1924). Upstream declares the expected archive MD5s through the Jolly
-  Good API BIOS list (jg.c:220-231); the md5 fields on the archives below
+  Good API BIOS list (jg.c:220-231), and the md5 fields on the archives below
   are copied from it.
 
 files:
@@ -84,14 +84,14 @@ files:
     system: snk-neogeo-cd
     required: true
     md5: "b31a246b69493c35194fe0bac120dc37"
-    note: "Neo Geo CDZ System ROMs. Opened for CDZ (default) and CD Universe BIOS; also supplies 000-lo.lo to Front/Top Loader mode."
+    note: "Neo Geo CDZ System ROMs. Opened for CDZ (default) and CD Universe BIOS, and also supplies 000-lo.lo to Front/Top Loader mode."
     source_ref: "libretro/libretro.c:1213-1239, jg.c:227-228"
 
   - name: "irrmaze.zip"
     system: snk-neogeo-mvs
     required: false
     md5: "0e369df30a70e45547cef9e4078dc511"
-    note: "The Irritating Maze auxiliary BIOS. Loaded in MVS mode for trackball support; on failure the game runs without trackball."
+    note: "The Irritating Maze auxiliary BIOS. Loaded in MVS mode for trackball support. On failure the game runs without trackball."
     source_ref: "libretro/libretro.c:1281-1292, jg.c:229-230"
 
   # -----------------------------------------------------------
@@ -222,7 +222,7 @@ files:
     required: false
     size: 131072
     crc32: "5a86cff2"
-    note: "Zoom lookup table. Extraction is attempted but absence is tolerated in Front/Top Loader mode; the copy in neocdz.zip is used instead."
+    note: "Zoom lookup table. Extraction is attempted but absence is tolerated in Front/Top Loader mode, where the copy in neocdz.zip is used instead."
     source_ref: "src/geo.c:234-243"
 
   # -----------------------------------------------------------

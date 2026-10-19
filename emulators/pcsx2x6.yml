@@ -35,7 +35,7 @@ notes: |
 
   Detection is by content. The scan lists the BIOS folder with a * mask, keeps
   files between 4 and 8 MB, and accepts the ones whose romdir carries a RESET
-  entry followed by a readable ROMVER; EXTINFO supplies the serial. The picker
+  entry followed by a readable ROMVER. EXTINFO supplies the serial. The picker
   in the settings window runs the same romdir test without the size filter, so
   a manually selected image of any length is accepted. No name and no hash is
   matched anywhere.
@@ -87,10 +87,10 @@ files:
       - 256.BIN
     note: >-
       Any image whose romdir holds RESET and ROMVER is accepted, whatever its
-      name. The 4 to 8 MB range gates the folder scan; a manually selected image
+      name. The 4 to 8 MB range gates the folder scan, and a manually selected image
       skips it. Named after the board model by the dumper, extension rom0. The
       aliases are the three board dumps held here, COH-H31000, System 246C and
-      System 256; each carries its romdir at 0x2740 and answers the same test.
+      System 256. Each carries its romdir at 0x2740 and answers the same test.
     source_ref: "pcsx2/ps2/BiosTools.cpp:268-292, pcsx2/ps2/BiosTools.cpp:80-207, pcsx2/ps2/BiosTools.cpp:327-379"
 
   - name: COH-H31100.rom1
@@ -119,7 +119,7 @@ files:
     hle_fallback: true
     size: 1024
     description: "Board NVRAM"
-    note: "Read from the BIOS path with the extension replaced by nvm. Carries the iLinkId the 256 games read as a regional signature; a hardcoded id stands in when the file is missing or blank there. A default image is built when the file cannot be read."
+    note: "Read from the BIOS path with the extension replaced by nvm. Carries the iLinkId the 256 games read as a regional signature, and a hardcoded id stands in when the file is missing or blank there. A default image is built when the file cannot be read."
     source_ref: "pcsx2/CDVD/CDVD.cpp:47, pcsx2/CDVD/CDVD.cpp:140-178, pcsx2/CDVD/CDVD.cpp:2608"
 
   - name: COH-H31100.mec
@@ -182,5 +182,5 @@ files:
     system: namco-system246
     required: false
     description: "SDL controller mapping database"
-    note: "A copy in the user data root takes precedence over the one in resources. Fed to SDL as a hint; without either, SDL falls back to its built-in mappings and an error is logged."
+    note: "A copy in the user data root takes precedence over the one in resources. Fed to SDL as a hint. Without either, SDL falls back to its built-in mappings and an error is logged."
     source_ref: "pcsx2/Input/SDLInputSource.cpp:24, pcsx2/Input/SDLInputSource.cpp:614-629"

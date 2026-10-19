@@ -60,7 +60,7 @@ notes: |
   reads SPIR-V modules from the application assets instead, one vertex module plus
   one fragment module chosen by the display filter. Version 501 ships no shader
   asset at all, version 404 ships the four listed below, and both libraries name
-  them; the loader takes no null check between AAssetManager_open and
+  them, and the loader takes no null check between AAssetManager_open and
   AAsset_getLength. The manifest requires only abi and density splits, so no asset
   pack can deliver them separately.
   ref: vh.java:381 graphics_backend default 0, vh.java:297 display_filter default 0,

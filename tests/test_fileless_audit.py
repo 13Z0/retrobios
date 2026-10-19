@@ -95,7 +95,7 @@ class TestFilelessAudit(unittest.TestCase):
         self.assertIsNone(self._run())
 
     def test_an_alias_has_no_files_of_its_own(self):
-        """eden-nightly is eden under another name; it was swept and its
+        """eden-nightly is eden under another name, yet it was swept and its
         forge's 403 failed the run."""
         self._write(BASE + "type: alias\nalias_of: other\n")
         self.assertIsNone(self._run())
@@ -107,7 +107,7 @@ class TestFilelessAudit(unittest.TestCase):
 
 class TestCommandLine(unittest.TestCase):
     """Named profiles were the only mode, so the documented example printed
-    nothing; a misspelt name ended in a traceback and an unreachable source
+    nothing. A misspelt name ended in a traceback and an unreachable source
     left the run green."""
 
     def setUp(self):
@@ -155,7 +155,7 @@ class TestCommandLine(unittest.TestCase):
 class TestCorpusIsAnswered(unittest.TestCase):
     """Every fileless profile is covered, answered, or flagged.
 
-    Offline, so it reads the fetch cache; skipped where that is cold rather
+    Offline, so it reads the fetch cache, and is skipped where that is cold rather
     than turning a network absence into a failure.
     """
 

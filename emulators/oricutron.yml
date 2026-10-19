@@ -33,7 +33,7 @@ notes: |
   a failure returns SDL_FALSE, after which the emulator exits
   (main.c:1442-1446). The four disk controller ROMs are loaded once at startup
   by load_diskroms (main.c:1407, machine.c:1249-1255) whatever the machine and
-  the drive setting; a failure only clears the matching flag and startup
+  the drive setting. A failure only clears the matching flag and startup
   continues. Of those flags only pravetzrom_valid is read afterwards
   (machine.c:1055): the Microdisc, BD-500 and Jasmin buffers are mapped into
   the CPU address space whether or not the file was read, so a missing file
@@ -217,7 +217,7 @@ analysis:
         note: "Read with SDL_LoadBMP and passed to SDL_COMPAT_WM_SetIcon, which takes a null surface."
     unused:
       - filename: status_bar.bmp
-        reason: "the gimgs table names statusbar.bmp; no code path reads this second file"
+        reason: "the gimgs table names statusbar.bmp and no code path reads this second file"
 
   rom_sidecars:
     note: >
@@ -282,27 +282,27 @@ analysis:
         - filename: 8dos.sym
           implies: "the earlier Pravetz 8-DOS boot PROM, offered as pravetz8drom in oricutron.cfg:44"
         - filename: cumana.sym
-          implies: "a Cumana controller ROM; its symbols run from $F800, the window jasminrom feeds"
+          implies: "a Cumana controller ROM, whose symbols run from $F800, the window jasminrom feeds"
         - filename: sedoric.sym
-          implies: "a Sedoric DOS ROM; its symbols name the Microdisc FDC registers at $310-$318"
+          implies: "a Sedoric DOS ROM, whose symbols name the Microdisc FDC registers at $310-$318"
 
   unused_resources:
     - filename: empty_orix.rom
-      reason: "no reference anywhere in the tree; not named by any config default nor by twilighte.cfg"
+      reason: "no reference anywhere in the tree, and not named by any config default nor by twilighte.cfg"
     - filename: orixbank1.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank2.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank3.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank4.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank5.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank6.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
     - filename: orixbank7.rom
-      reason: "no reference anywhere in the tree; loadable only once a twilbankromNN key names it"
+      reason: "no reference anywhere in the tree, loadable only once a twilbankromNN key names it"
 
   user_supplied_paths:
     note: "Named on the command line or in the config, with no fixed filename"

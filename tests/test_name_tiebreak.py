@@ -1,6 +1,6 @@
 """Same-named candidates are ordered by the size the entry declares.
 
-ScummVM declares MT32_PCM.ROM at 524288 bytes; the name step took the 1 MB
+ScummVM declares MT32_PCM.ROM at 524288 bytes, but the name step took the 1 MB
 CM-32L PCM ROM that sorted first. Ordering rejects nothing, so a size
 without `validation: [size]` keeps its informative status.
 """

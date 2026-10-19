@@ -50,7 +50,7 @@ notes: |
   the same base) because it does not share binaries or load behaviour.
 
 files:
-  # ─── Neo Geo system BIOS (archive: neogeo.zip) ───
+  # Neo Geo system BIOS (archive: neogeo.zip)
   - name: "neogeo.zip"
     category: bios_zip
     system: snk-neogeo-mvs
@@ -116,7 +116,7 @@ files:
         size: 524288
         crc32: "148dd727"
 
-  # ─── PGM board BIOS (archive: pgm.zip) ───
+  # PGM board BIOS (archive: pgm.zip)
   - name: "pgm.zip"
     category: bios_zip
     system: igs-pgm

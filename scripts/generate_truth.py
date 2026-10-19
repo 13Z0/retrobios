@@ -81,7 +81,7 @@ def main(argv: list[str] | None = None) -> None:
     profiles = load_emulator_profiles(args.emulators_dir)
 
     # Load database (optional)
-    # The default may be absent; a --db that was named must exist.
+    # The default may be absent, but a --db that was named must exist.
     db: dict | None = None
     if args.db != DEFAULT_DB_FILE or os.path.exists(args.db):
         db = load_database(args.db)

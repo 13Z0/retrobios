@@ -4,9 +4,9 @@
 
 shared_groups:
 
-  # NEC PC-9801/9821 — NP2kai core
+  # NEC PC-9801/9821, NP2kai core
   # np2kai hardcodes "np2kai/" subfolder for firmware lookups
-  # ref: NP2kai/sdl/libretro/libretro.c:1804,1806 — milstr_ncat(np2path, "/np2kai")
+  # ref: NP2kai/sdl/libretro/libretro.c:1804,1806: `milstr_ncat(np2path, "/np2kai")`
   # font.rom is the lowercase fallback for FONT.ROM, which System.dat declares
   # (font/font.c:192-195): an alias in the profile, not a second file here.
   np2kai:
@@ -74,9 +74,9 @@ shared_groups:
       crc32: "638864c1"
       size: 5288
 
-  # NEC PC-8801 — QUASI88 core
+  # NEC PC-8801, QUASI88 core
   # QUASI88 searches "quasi88/" subfolder first
-  # ref: quasi88-libretro/src/LIBRETRO/libretro.c:463 — snprintf(..., "%s%cquasi88%c%s", ...)
+  # ref: quasi88-libretro/src/LIBRETRO/libretro.c:463: `snprintf(..., "%s%cquasi88%c%s", ...)`
   quasi88:
     # Only what System.dat does not declare for nec-pc-88: the mkII SR
     # extension ROMs that match N88.ROM (MAME pc8801mk2sr: 710a63ec, c0bd2aa6,

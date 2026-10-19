@@ -84,7 +84,7 @@ files:
     bundled: true
     source_ref: "Hurrican/src/DX8Graphics.cpp:393-428"
     note: >
-      Loaded by the GL2 and GL3 renderers (GL2 is the build default); a GL1
+      Loaded by the GL2 and GL3 renderers (GL2 is the build default). A GL1
       build compiles this block out.
 
   - name: "music/"
@@ -112,4 +112,4 @@ files:
     required: false
     bundled: true
     source_ref: "Hurrican/src/DX8Input.cpp:97-102"
-    note: "Passed to SDL_GameControllerAddMappingsFromFile; the result is only logged."
+    note: "Passed to SDL_GameControllerAddMappingsFromFile, and the result is only logged."

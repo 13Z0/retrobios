@@ -81,7 +81,7 @@ notes: |
   longer with a warning (C64.emu/src/main/sysfile.cc:30-71).
 
   SHA-1s are those hardcoded in c64/c64rom.h:88-96. c64rom.c:120-131 hashes the
-  loaded kernal and matches that table to identify the revision; an unmatched
+  loaded kernal and matches that table to identify the revision, and an unmatched
   image is reported and accepted. VICE distributes C128/kernal64-901227-03.bin
   and C128/basic64-901226-01.bin with the same bytes as the C64 Rev 3 kernal and
   BASIC, so those two entries carry the same hashes.
@@ -93,7 +93,7 @@ notes: |
   machine directory and sets both resources
   (C64.emu/src/main/EmuMenuViews.cc:186,1058,1074-1083,
   C64.emu/src/main/options.cc:38-51). Only the code-named default of each chip
-  is listed here; palette_load appends the .vpl extension itself
+  is listed here, and palette_load appends the .vpl extension itself
   (palette.c:228-248).
 
   Keymaps are named from KBD_PORT_PREFIX, which the app sets to gtk3
@@ -105,7 +105,7 @@ notes: |
   Four subsystems are compiled but cannot reach their files. Printer ROMs and
   the PRINTER/ palettes load from drv_mps803_open and drv_nl10_open, which
   require Printer4, Printer5 or Printer6 to leave PRINTER_DEVICE_NONE
-  (printerdrv/interface-serial.c:145-149); the app writes no printer resource,
+  (printerdrv/interface-serial.c:145-149). The app writes no printer resource,
   and neither main.c nor initcmdline.c is compiled, so the resource file and the
   command line that would set one do not exist. Romset .vrs files, the monitor
   command file and joystick .vjm maps have no default name at all
@@ -1106,7 +1106,7 @@ files:
     description: "CMD HD boot ROM"
     note: >-
       The MAME dump cmd_hd_bootrom_v280.bin reads the chip over 32 KB and its
-      two halves are identical; the image here is the first half, the 16 KB the
+      two halves are identical. The image here is the first half, the 16 KB the
       loader asks for.
     source_ref: "C64.emu/src/vice/drive/driverom.h:49,100, C64.emu/src/vice/drive/iec/iecrom.c:145,218"
 

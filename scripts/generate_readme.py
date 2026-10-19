@@ -280,7 +280,7 @@ def _catalog_matched_line(db: dict) -> list[str]:
     labels = ", ".join(_CATALOG_LABELS.get(s, s) for s in sorted(sources))
     return [
         f"- **{matched:,} of {system_files:,} system files** matched to"
-        f" dump-preservation catalogs ({labels}); arcade sets and engine data"
+        f" dump-preservation catalogs ({labels}). Arcade sets and engine data"
         f" fall outside what those catalogs index"
     ]
 
@@ -368,12 +368,12 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "",
         "## Download BIOS packs",
         "",
-        "One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions; for a bare minimum, build your own pack below.",
+        "One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
         "Files is how many the pack holds once extracted, the figure a file"
         " manager shows for the folder. It differs from one platform to the"
         " next because a pack carries only what that platform's emulators"
         " load."
-        " The size is what the files occupy once extracted; the ZIP itself"
+        " The size is what the files occupy once extracted, and the ZIP itself"
         " downloads smaller.",
         "",
         "A pack over 2 GB comes in several parts, and every part is needed."
@@ -429,7 +429,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "BIOS, firmware, and system files for consoles from Atari to PlayStation 3.",
             "These are the files an emulator loads from disk instead of"
             " carrying inside itself. Some are required to boot a system,"
-            " others improve accuracy or unlock a feature; the packs carry"
+            " others improve accuracy or unlock a feature, and the packs carry"
             " both.",
             "",
             "Each file is checked the way your platform checks it. Most compare"
@@ -445,7 +445,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
                 f"- **{acquirable_total} files** the platforms' emulators load"
                 f" are still to be found, and {unsourceable_total} more cannot"
                 f" be sourced at all (per-user keys, user-filled slots, dumps"
-                f" nobody has made); both are named in the"
+                f" nobody has made). Both are named in the"
                 f" [gap analysis]({SITE_URL}gaps/)"
                 if missing_total
                 else "- **Nothing missing**: every file the platforms'"
@@ -594,11 +594,11 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "",
             "Documentation and metadata can drift from what emulators actually load.",
             "To keep packs accurate, platform lists are checked against emulator"
-            " source code, file by file where a profile exists; when the two"
+            " source code, file by file where a profile exists. When the two"
             " disagree, the code wins.",
             "",
             "Hashes document what emulator code loads and accepts, not dump"
-            " provenance; that boundary, and how it relates to preservation"
+            " provenance. That boundary, and how it relates to preservation"
             " catalogs such as No-Intro, is drawn in the"
             f" [FAQ]({SITE_URL}wiki/faq/"
             "#are-these-files-verified-against-original-hardware-dumps).",
@@ -715,8 +715,8 @@ Full walkthrough: [profiling guide]({link("wiki/profiling")}).
 - `bios/Manufacturer/Console/.variants/filename.sha1prefix` for alternate versions
 - Files >50 MB go in GitHub release assets (`large-files` release)
 - RPG Maker and ScummVM directories are excluded from deduplication
-- Two paths differing only by case break clones on Windows and macOS;
-  `tests/test_no_case_collisions.py` enforces this
+- Two paths differing only by case break clones on Windows and macOS,
+  and `tests/test_no_case_collisions.py` enforces this
 
 ## Before opening a PR
 

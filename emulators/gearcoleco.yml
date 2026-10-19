@@ -14,7 +14,7 @@ systems:
   - coleco-adam
 
 notes: |
-  ColecoVision and Coleco ADAM emulator by Ignacio Sanchez (drhelius); the
+  ColecoVision and Coleco ADAM emulator by Ignacio Sanchez (drhelius). The
   libretro port lives in the same repository. Three firmware roles are
   declared in kAdamFirmwareMetadata (src/Adam.cpp:26-42): OS-7, EOS and
   SmartWriter, each with a size, a CRC32 and its accepted file names.
@@ -31,7 +31,7 @@ notes: |
   The machine is chosen per load (platforms/libretro/libretro.cpp:2386-2388): .ddp, .dsk, a ZIP
   holding an ADAM image, an .m3u playlist, no content at all, or a cartridge
   with the core option gearcoleco_cartridge_hardware set to ADAM start the
-  ADAM; any other cartridge starts the ColecoVision. The "adam" subsystem
+  ADAM, and any other cartridge starts the ColecoVision. The "adam" subsystem
   (platforms/libretro/libretro.cpp:528-536) takes a cartridge, two disks and two data packs.
 
   ColecoVision: load_colecovision_firmware() (platforms/libretro/libretro.cpp:851-878) needs OS-7
@@ -39,7 +39,7 @@ notes: |
   It runs again on retro_reset() (platforms/libretro/libretro.cpp:2203-2204). The image goes
   through Memory::LoadBiosFromBuffer() (src/Memory.cpp:310-319) and byte 0x69
   is patched on reset, 0x32 when the cartridge is PAL and 0x3C otherwise
-  (src/Memory.cpp:246-249); the ADAM always gets 0x3C (src/Memory.cpp:221).
+  (src/Memory.cpp:246-249). The ADAM always gets 0x3C (src/Memory.cpp:221).
 
   ADAM: load_adam_firmware() (platforms/libretro/libretro.cpp:880-941) needs all three roles and
   every ADAM entry point returns false when one is missing (libretro.cpp:
@@ -51,7 +51,7 @@ notes: |
   8 KiB in cartridge mode (src/Adam.cpp:531-555).
 
   Save RAM, save states and IPS patches are read next to the content or in
-  the frontend save directory; they are state the core writes, not files a
+  the frontend save directory. They are state the core writes, not files a
   user obtains.
 
 files:
@@ -66,7 +66,7 @@ files:
     validation: [size, crc32]
     source_ref: "platforms/libretro/libretro.cpp:772-833 (find_firmware), platforms/libretro/libretro.cpp:851-878 (load_colecovision_firmware), platforms/libretro/libretro.cpp:2398-2402, platforms/libretro/libretro.cpp:2203-2204, src/Adam.cpp:28-32, src/Adam.h:53, src/Memory.cpp:310-319, src/Memory.cpp:246-249"
     note: >
-      Loaded for both machines. Any 8192-byte image is accepted; a CRC32
+      Loaded for both machines. Any 8192-byte image is accepted, and a CRC32
       other than 3aa93ef3 logs "Unknown OS-7 revision" and runs. PAL timing
       comes from the byte patched at 0x69, not from a PAL dump.
 
@@ -79,7 +79,7 @@ files:
     validation: [size, crc32]
     source_ref: "platforms/libretro/libretro.cpp:880-941 (load_adam_firmware), platforms/libretro/libretro.cpp:2371-2372, platforms/libretro/libretro.cpp:2428-2432, platforms/libretro/libretro.cpp:2445-2446, platforms/libretro/libretro.cpp:2529-2533, src/Adam.cpp:33-36, src/Adam.h:54, src/Adam.cpp:139-148, src/Adam.cpp:168-190, src/GearcolecoCore.cpp:410-415, src/Adam.cpp:537-540"
     note: >
-      The 8 KiB EOS bank, the first half of the 16 KiB u22 chip; a CRC32
+      The 8 KiB EOS bank, the first half of the 16 KiB u22 chip. A CRC32
       other than 05a37a34 logs "Unknown EOS revision" and runs. Only the ADAM
       needs it: ColecoVision cartridges load without it.
 

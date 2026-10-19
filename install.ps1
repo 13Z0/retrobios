@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-$defaultInstallSha256 = "7e74935ae51bf8b0076f637bc640b33f0ca774bec065df56080a0321fa292820"
+$defaultInstallSha256 = "8ca436e66f04f3fa202350f84afa0fc339bf60953022509b9d1e5177830b8636"
 $maximumInstallerBytes = 2MB
 $installerExit = 0
 $installer = if ($PSScriptRoot) { Join-Path $PSScriptRoot "install.py" } else { $null }
@@ -46,7 +46,7 @@ try {
         }
         $actual = (Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actual -ne $expected.ToLowerInvariant()) {
-            throw "The downloaded installer does not match its expected fingerprint. Nothing was run and nothing was written. The download was most likely cut short: try again. Within minutes of an update of this project the two files can come from caches of different ages; waiting five minutes settles that."
+            throw "The downloaded installer does not match its expected fingerprint. Nothing was run and nothing was written. The download was most likely cut short: try again. Within minutes of an update of this project the two files can come from caches of different ages. Waiting five minutes settles that."
         }
         $installer = $temporary
     }

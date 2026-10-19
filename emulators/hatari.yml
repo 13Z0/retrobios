@@ -26,19 +26,19 @@ notes: |
   src/CMakeLists.txt:371-404), reports library_name hatari and the
   HATARI_VERSION string 2.6.1-devel (src/retro/main_retro.c:218-219,
   src/includes/version.h:8). The .info shipped in the tree declares no
-  firmware (share/libretro/info/libretro-hatari.info); the
+  firmware (share/libretro/info/libretro-hatari.info). The
   hatari_libretro.info in libretro-core-info took that file's metadata on
   2026-09-16 and keeps a tos.img firmware entry with the TOS 1.02 US MD5,
   which this code never checks.
 
   retro_init builds <system>/tos.img, records whether it exists and passes
-  it as --tos (src/retro/main_retro.c:157-207); when it is absent a
+  it as --tos (src/retro/main_retro.c:157-207). When it is absent a
   frontend message is shown and retro_run only refreshes the framebuffer
   (src/retro/main_retro.c:186-189, src/retro/main_retro.c:250-261). The
   name is fixed by that check: the .rom and .tos fallbacks of File_Read
   (src/tos.c:60-66, src/file.c:312-353, src/file.c:544-583) are never
   reached under a frontend. A missing --tos file fails option parsing
-  (src/options.c:1026-1079, src/options.c:1937-1945); Main_ErrorExit only
+  (src/options.c:1026-1079, src/options.c:1937-1945), but Main_ErrorExit only
   raises the quit flag in this build (src/retro/main_retro.c:478-490), so
   Main_Init carries on with bUseTos cleared and TOS_InitImage installs the
   built-in test stub of faketosData.c instead of reading a ROM
@@ -79,7 +79,7 @@ notes: |
   enabled (src/midi.c:342-367, src/printer.c:42-65, src/printer.c:89-106,
   src/rs232.c:175-246, src/scc.c:439-500). szMappingFileName is parsed
   (src/configuration.c:256) but the port's Keymap_LoadRemapFile is empty
-  (src/retro/keymap.c:222-224); only the SDL build reads a keymap file
+  (src/retro/keymap.c:222-224). Only the SDL build reads a keymap file
   (src/sdl/keymap.c:701). The autosave snapshot is restored by
   M68000_Start (src/m68000.c:332-348), which the port never calls. TT and
   Falcon NVRAM is hatari.nvram in the home directory, read at NvRam_Init
@@ -98,7 +98,7 @@ notes: |
   hatari_savestate.tmp in the system directory
   (src/retro/main_retro.c:41, src/retro/main_retro.c:292-359). IPF support
   is compiled in from rsn8887/capsimg when ENABLE_STATIC_CAPSIMAGE is on
-  (cmake/BuildDependencies.cmake:93-126); the Windows jobs build with it
+  (cmake/BuildDependencies.cmake:93-126). The Windows jobs build with it
   since September 2026 (.gitlab-ci-libretro.yml:101,
   .gitlab-ci-libretro.yml:109) and the static Vita, Wii, Wii U and Switch
   jobs turn it off (.gitlab-ci-libretro.yml:193, .gitlab-ci-libretro.yml:202,
@@ -133,7 +133,7 @@ files:
       replaced by sym, and the image path is always tos.img here: retro_init
       passes <system>/tos.img as --tos and no other image name reaches the
       loader, so a table named after another image, emutos.sym beside
-      emutos.img, is never opened. nSymbolsAutoLoad gates the read; its
+      emutos.img, is never opened. nSymbolsAutoLoad gates the read. Its
       default is not off and no core option changes it, so the table is read
       at every TOS load when present. The symbols serve the built-in
       debugger.
@@ -149,8 +149,8 @@ files:
     source_ref: "src/cart.c:41-47, src/cart.c:53-88, src/cart.c:97-104, src/cart.c:114-142, src/configuration.c:487-493, src/configuration.c:814"
     note: >
       Set through hatari.cfg. Raw images up to 0x20000 bytes or .stc
-      images of exactly 0x20004 bytes whose 4-byte header is skipped;
-      extensions .img, .rom and .stc are tried when the configured path is
+      images of exactly 0x20004 bytes whose 4-byte header is skipped.
+      Extensions .img, .rom and .stc are tried when the configured path is
       missing. Replaced by the built-in GEMDOS trampoline whenever GEMDOS
       hard disk emulation, extended VDI, program autostart or OS tracing
       is on.
@@ -167,7 +167,7 @@ files:
     description: "Hatari configuration file"
     required: false
     storage: user_provided
-    unsourceable: "user settings in Hatari's INI format; no canonical contents"
+    unsourceable: "user settings in Hatari's INI format, with no canonical contents"
     source_ref: "src/main.c:260-282, src/main.c:319-322, src/main.c:328-330, src/configuration.c:862-867, src/configuration.c:1061-1071, src/paths.c:236-250, CMakeLists.txt:444-461"
     note: >
       Read from <CONFDIR>/hatari.cfg and then from hatari.cfg in the
@@ -182,8 +182,8 @@ files:
     min_size: 50
     validation: [size]
     storage: user_provided
-    unsourceable: "machine state the emulator writes itself at exit; no canonical contents"
+    unsourceable: "machine state the emulator writes itself at exit, with no canonical contents"
     source_ref: "src/falcon/nvram.c:96-97, src/falcon/nvram.c:116-141, src/falcon/nvram.c:148-171, src/falcon/nvram.c:282-294, src/falcon/nvram.c:334-337, src/paths.c:236-250, src/main.c:208"
     note: >
-      Read from the RetroArch save directory at NvRam_Init; a short read
+      Read from the RetroArch save directory at NvRam_Init. A short read
       keeps the built-in defaults. Saved back on exit.

@@ -25,8 +25,8 @@ notes: |
   83b92276d28d71e491ebcbec3fa85cef42ef49d8ee0c6fd1bbe0045bc118f866) and 1.4.2
   (versionCode 12), both carrying the app signing certificate sha256
   feb643cfdd9c49f58eb325fde3d869cefcf59e45dfadb8e540beca35a7b1c28e and the Play
-  distribution source stamp. Emulation lives in liblinkboy.so behind a JNI bridge;
-  addresses below are armeabi-v7a of 3.11.0 and class names are those of its
+  distribution source stamp. Emulation lives in liblinkboy.so behind a JNI bridge.
+  Addresses below are armeabi-v7a of 3.11.0 and class names are those of its
   obfuscated dex.
 
   Four subsystems are declared: GBA, GBC, GB and SGB (ve0.java:16-21). An SGB
@@ -44,7 +44,7 @@ notes: |
   firmware/ and the name to the directory handed to setDataDir, the app's external
   files directory (c51.java:69, hg3.java:32-38), and opens the result with fopen "rb".
   A file whose length is not exactly the expected size is closed and treated as
-  absent, as is a short read; on success the loader returns the crc32 of the bytes
+  absent, as is a short read. On success the loader returns the crc32 of the bytes
   (liblinkboy.so 0x1c870-0x1ca10, crc32 at 0x1c4cc).
 
   A missing image stops nothing. The GBA path copies a replacement bios compiled into

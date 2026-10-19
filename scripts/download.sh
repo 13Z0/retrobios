@@ -209,7 +209,7 @@ verify_checksum() {
         echo "Error: checksum mismatch for ${archive}" >&2
         echo "  expected ${expected}" >&2
         echo "  got      ${actual}" >&2
-        echo "Download the parts again; a truncated part gives this." >&2
+        echo "Download the parts again: a truncated part gives this." >&2
         exit 1
     fi
 }

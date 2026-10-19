@@ -26,7 +26,7 @@ notes: |
   functions in .dynsym although it reports as stripped, so it is cited by
   function name. The Android side is package com.epsxe.ePSXe, versionCode 139
   versionName 2.0.15, apk md5 e18988b825f263bbc961bfbed1c4bc0b, with 2.0.6
-  (fce9c60c5cbc4e075cf97a587e64eb78) read alongside it; both verify against the
+  (fce9c60c5cbc4e075cf97a587e64eb78) read alongside it. Both verify against the
   epsxe.com signing certificate (CN=epsxeteam, serial 0x4fdaca68), every entry
   digest matches and none is unsigned. Two copies of 2.0.16 circulating on
   archive.org are repackaged, signed CN=A1 and ModYolo, and are not read here.
@@ -62,7 +62,7 @@ notes: |
 
   Both consumer families carry a table of the images they recognise, and the two
   tables are built differently and do not hold the same set. Android ships 21
-  pairs of label and md5; findBios walks the tree to a depth of ten, skipping
+  pairs of label and md5. findBios walks the tree to a depth of ten, skipping
   DCIM, Camera, asec, secure, dev, obb, .lfs and anything under /Android/data,
   keeps files whose lowercased name ends in .bin and whose length is exactly
   524288, md5s each one and on a hit writes biosPref to that path and turns
@@ -71,7 +71,7 @@ notes: |
   own: over the 512 KB as big endian 16-bit words, the sum shifted left 16 bits
   or'd with the low 16 bits of the xor. That value is looked up only to name the
   image in the setup wizard. The Linux and macOS builds carry neither table.
-  Seventeen dumps are in both tables; four are known to Android alone; two are
+  Seventeen dumps are in both tables, four are known to Android alone, and two are
   known to Windows alone and both turn out to be dumps TOSEC marks [b].
   ref: ScanBiosTask.java:28, ScanBiosTask.java:145-191, ePSXeNative.java:280,
        ePSXe 2.0.18 Windows 0x5c1090-0x5c1384, ePSXe 2.0.18 Windows 0x5c108c,
@@ -90,7 +90,7 @@ notes: |
   Video, sound, cdrom and input go through the PSEmu Pro plugin interface.
   init_gpu builds plugins/<name> from the configured name, dlopens it and
   resolves GPUinit, GPUopen, GPUdmaChain and the rest of the entry points one by
-  one; init_spu_plugins and LoadPadPlugins do the same for their own. Windows
+  one, and init_spu_plugins and LoadPadPlugins do the same for their own. Windows
   enumerates gpu*.dll, spu*.dll and cdr*.dll in plugins\. GPUCORE, SPUCORE and
   INPUTCORE are the built-in defaults and are not files. Android has no PSEmu Pro
   loader: its two OpenGL renderers ship inside the package and are only replaced
@@ -220,7 +220,7 @@ files:
     validation: [size, md5]
     md5: ca5cfc321f916756e3f0effbfaeba13b
     description: "DTL-H1100 (v2.2 03-06-96 D)"
-    note: "Known to the Android table alone; no Windows record carries its checksum."
+    note: "Known to the Android table alone. No Windows record carries its checksum."
     source_ref: "ScanBiosTask.java:28, ScanBiosTask.java:162-172"
 
   - name: scph1001_v21.bin
@@ -234,7 +234,7 @@ files:
     validation: [size, md5]
     md5: da27e8b6dab242d8f91a9b25d80c63b8
     description: "DTL-H1101 (v2.1 07-17-95 A)"
-    note: "Known to the Android table alone; no Windows record carries its checksum."
+    note: "Known to the Android table alone. No Windows record carries its checksum."
     source_ref: "ScanBiosTask.java:28, ScanBiosTask.java:162-172"
 
   - name: scph1002b.bin
@@ -248,7 +248,7 @@ files:
     validation: [size, md5]
     md5: 417b34706319da7cf001e76e40136c23
     description: "SCPH-1002, DTL-H1102 (v2.1 07-17-95 E)"
-    note: "Known to the Android table alone; no Windows record carries its checksum."
+    note: "Known to the Android table alone. No Windows record carries its checksum."
     source_ref: "ScanBiosTask.java:28, ScanBiosTask.java:162-172"
 
   - name: scph5000.bin
@@ -430,7 +430,7 @@ files:
     validation: [size]
     md5: eb201d2d98251a598af467d4347bb62f
     description: "SCPH-5000, DTL-H1200, DTL-H3000 (v2.2 12-04-95 J), bad dump"
-    note: "Recognised by Windows alone, as scph5000 - JP with id 0xa63468aa. That record is pinned on a checksum, not on a hash the code spells out; the md5 here is the dump that reproduces the checksum. TOSEC tags the same dump [b]."
+    note: "Recognised by Windows alone, as scph5000 - JP with id 0xa63468aa. That record is pinned on a checksum, not on a hash the code spells out, and the md5 here is the dump that reproduces the checksum. TOSEC tags the same dump [b]."
     source_ref: "ePSXe 2.0.18 Windows 0x5c118c, ePSXe 2.0.18 Windows 0x42f525-0x42f568"
 
   - name: scph5502_b.bin
@@ -632,7 +632,7 @@ files:
     category: game_data
     unsourceable: "guide text the user files under the disc serial"
     description: "in-app guide for one title"
-    note: "Android only. Named after the disc serial and loaded into the help viewer as a local page; the menu entry is offered only when the file is there."
+    note: "Android only. Named after the disc serial and loaded into the help viewer as a local page. The menu entry is offered only when the file is there."
     source_ref: "ePSXe.java:1047, ePSXe.java:1857, ePSXe.java:1896"
 
   - name: skin.png

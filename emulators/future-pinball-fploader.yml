@@ -20,7 +20,7 @@ notes: |
   with VirtualAllocEx and WriteProcessMemory, runs LoadLibraryA on it through
   CreateRemoteThread, waits for that thread and resumes the main one. Everything
   else lives in BAM.dll, which detours the running program. The loader is
-  published as source; the shipped FPLoader.exe carries the same .text and
+  published as source, and the shipped FPLoader.exe carries the same .text and
   .rdata as the build committed to that repository and differs only by an
   Authenticode blob, 9472 bytes against 5384.
   ref: BAM_FPloader FPLoader.cpp:259-305, FPLoader.exe .text sha1
@@ -30,11 +30,11 @@ notes: |
   C:\Games\Future Pinball\BAM\. Both missing puts up "Couldn't locate BAM.dll."
   and returns -1. Future Pinball.exe comes from /FPEXE if that switch names an
   existing file, otherwise from one level above the loader, then from the
-  loader's directory, then from C:\Games\Future Pinball\; the same failure path
+  loader's directory, then from C:\Games\Future Pinball\. The same failure path
   reports "Couldn't locate Future Pinball.exe.". Before the process is created
   the loader prepends its own directory to %PATH% so the system resolves
   renderingengine.dll from there while the working directory is the game
-  directory. /STAYINRAM keeps the loader alive until the game thread ends; the
+  directory. /STAYINRAM keeps the loader alive until the game thread ends. The
   rest of the command line is handed to Future Pinball untouched, which is how
   /Open, /Play, /Exit and /ArcadeRender reach it.
   ref: BAM_FPloader FPLoader.cpp:40-48, 87-111, 166-240, 249-257
@@ -51,7 +51,7 @@ notes: |
   glTexImage2D and wglChoosePixelFormatARB taken separately. That is how BAM
   sees the program's own resource and file traffic and can answer it. Newton is
   reached through GetModuleHandleA on the copy Future Pinball already imported
-  followed by GetProcAddress on 83 entry points; no second copy is loaded.
+  followed by GetProcAddress on 83 entry points. No second copy is loaded.
   ref: BAM.dll 1.5-408 .text:0x10082a75-0x10082f3d, 0x100831b3-0x100831d9,
   0x1002ab92-0x1002abeb, .rsrc version, debug tags Routed_glTexImage2D and
   Routed_wglChoosePixelFormatARB
@@ -78,7 +78,7 @@ notes: |
   Future Pinball itself uses: the program carries 29 resources of type BMP and
   every id the shipped packs contain is one of them, 452 being the ball.
   balls\*.zip is walked with FindFirstFileA and each hit becomes a choice in the
-  menu; default.zip in the BAM directory is applied without being chosen. The
+  menu, while default.zip in the BAM directory is applied without being chosen. The
   routed FindResourceA answers the nine SHADERS resources the same way, while
   the single XML resource, id 464, is read straight from the program by the save
   path and is what the presets under XML\ are edited copies of. The 83 GLSL
@@ -711,7 +711,7 @@ files:
     size: 45056
     description: "Score database the plugin opens by name"
     source_ref: "PinballHighScore.dll .rdata"
-    note: "Only BAM-OpenVR.zip carries a copy; the plugin creates one otherwise."
+    note: "Only BAM-OpenVR.zip carries a copy. The plugin creates one otherwise."
 
   - name: PuPPlugin.dll
     system: fpinball
@@ -848,7 +848,7 @@ analysis:
         source_ref: "BAM.dll 1.5-408 .text:0x1007a45b, 0x1007ae0a, 0x100d4318-0x100d4391"
         note: >-
           The crash log is written from the fault handler installed at load
-          time; the other two only when the matching switch is on the command
+          time, the other two only when the matching switch is on the command
           line.
 
   shipped_but_not_loaded:
@@ -858,7 +858,7 @@ analysis:
         source_ref: "BAM.dll, renderingengine.dll and every plugin import directory"
         note: >-
           No shipped binary imports it and neither BAM.dll nor
-          renderingengine.dll names it in any string; both carry their own zlib.
+          renderingengine.dll names it in any string. Both carry their own zlib.
       - what: "License.txt, 3741 bytes"
         source_ref: "bam-setup.exe payload"
         note: "The zlib licence the loader source carries, copied into the install."

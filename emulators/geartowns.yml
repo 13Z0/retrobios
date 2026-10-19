@@ -25,7 +25,7 @@ notes: |
   accepting first only a set made for the selected model and then any set
   (platforms/libretro/libretro.cpp:798-825). Firmware::FindSources() takes
   as candidates the folder itself, every direct subfolder and every .zip in
-  it (src/media/firmware.cpp:286-346); folder and zip names are free. A
+  it (src/media/firmware.cpp:286-346). Folder and zip names are free. A
   candidate counts only when the System, OS, Font and Dictionary ROMs are all
   present at the right size, and the CRC32 of its System ROM names the set
   (src/media/firmware.cpp:375-414, src/media/firmware.h:114-123).
@@ -41,31 +41,31 @@ notes: |
   (platforms/libretro/libretro.cpp:827-860).
 
   File names are matched without case, inside a zip only at the archive root
-  (src/media/firmware.cpp:614-663). Accepted names per component are
-  FMT_SYS.ROM, FMT_SYS_A.ROM, FMTHR_SYS.ROM; FMT_DOS.ROM, FMT_DOS_A.ROM;
-  FMT_FNT.ROM; FMT_DIC.ROM; FMT_F20.ROM, FMT_F20_A.ROM; MYTOWNS.ROM,
-  MYTOWNSUX.ROM, MYTOWNSM2.ROM, MYTOWNSFTV.ROM, MYTOWNSHR.ROM; MAR_EX0.ROM to
-  MAR_EX3.ROM (src/media/firmware.cpp:28-42). Without separate files the
+  (src/media/firmware.cpp:614-663). Accepted names, one group per component,
+  are (FMT_SYS.ROM, FMT_SYS_A.ROM, FMTHR_SYS.ROM), (FMT_DOS.ROM, FMT_DOS_A.ROM),
+  (FMT_FNT.ROM), (FMT_DIC.ROM), (FMT_F20.ROM, FMT_F20_A.ROM), (MYTOWNS.ROM,
+  MYTOWNSUX.ROM, MYTOWNSM2.ROM, MYTOWNSFTV.ROM, MYTOWNSHR.ROM) and (MAR_EX0.ROM
+  to MAR_EX3.ROM) (src/media/firmware.cpp:28-42). Without separate files the
   Marty components are cut from MROM.M36 and MROM.M37, 2 MiB each
   (src/media/firmware.cpp:497-508): OS at 0 and the first three extension
-  parts in M36; the fourth extension part, 20-dot font at 0x80000,
+  parts in M36, and the fourth extension part, 20-dot font at 0x80000,
   dictionary at 0x100000, font at 0x180000 and System ROM at 0x1C0000 in M37.
 
   Each component must have its exact size or it is rejected
   (src/media/firmware.cpp:530-612, src/common/defines.h:47-54): System
   256 KiB, OS 512 KiB, Font 256 KiB, Dictionary 512 KiB, 20-dot Font 512 KiB,
   Serial 32 bytes, Extension 2 MiB (four 512 KiB parts). System, OS, Font and
-  Dictionary are required; a missing 20-dot Font or Extension is replaced by
+  Dictionary are required. A missing 20-dot Font or Extension is replaced by
   0xFF, a missing Serial ROM is generated (src/media/firmware.cpp:73-163,
   src/media/firmware.cpp:258-261). The CRC32 of every component is looked up
-  in game_db.h (src/media/firmware.cpp:165-182, src/media/game_db.h:303-335);
-  an unknown CRC only produces a warning. The Free FM Towns set is known by
+  in game_db.h (src/media/firmware.cpp:165-182, src/media/game_db.h:303-335),
+  and an unknown CRC only produces a warning. The Free FM Towns set is known by
   System 65DC3B1F, OS 43C18E92, Font 736D9CB1 and a blank Dictionary
   504BF849. The Marty slices are known by System 937311F6, OS 2BC2AF96,
   Extension E1A9FA72 and 20-dot Font 75660AAC.
 
   The CMOS is written by the core next to the saves
-  (platforms/libretro/libretro.cpp:2753-2767); it is state, not a file to
+  (platforms/libretro/libretro.cpp:2753-2767). It is state, not a file to
   obtain.
 
 files:
@@ -85,7 +85,7 @@ files:
       Set for the Model 1/2, the machine Auto falls back to. The same four
       files load from any subfolder of system/geartowns or from
       system/geartowns itself. The core has no CRC for a Model 1/2 20-dot
-      Font; fmt_f20.rom is read when present.
+      Font, and fmt_f20.rom is read when present.
 
   - name: "fmtownsux.zip"
     description: "FM Towns II UX firmware set"
@@ -131,7 +131,7 @@ files:
       - { name: "fmt_dic.rom", size: 524288 }
       - { name: "mytownshr.rom", size: 32, crc32: "c52f0e89" }
     source_ref: "src/media/firmware.h:121, src/media/firmware.cpp:28-34, src/media/game_db.h:322-324"
-    note: "First choice for the HG; the HR itself is not emulated."
+    note: "First choice for the HG. The HR itself is not emulated."
 
   - name: "fmtownsftv.zip"
     description: "FM Towns II Fresh TV firmware set"
@@ -147,4 +147,4 @@ files:
       - { name: "fmt_f20.rom", size: 524288, crc32: "9f55a20c" }
       - { name: "mytownsftv.rom", size: 32, crc32: "a961aae7" }
     source_ref: "src/media/firmware.h:122, src/media/firmware.cpp:28-34, src/media/game_db.h:326-329"
-    note: "Second choice for the HG; the MF/Fresh itself is not emulated."
+    note: "Second choice for the HG. The MF/Fresh itself is not emulated."

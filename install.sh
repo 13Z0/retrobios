@@ -18,7 +18,7 @@ esac
 TEMP_INSTALLER=""
 TEMP_DIRECTORY=""
 DEFAULT_INSTALL_URL="https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-DEFAULT_INSTALL_SHA256="7e74935ae51bf8b0076f637bc640b33f0ca774bec065df56080a0321fa292820"
+DEFAULT_INSTALL_SHA256="8ca436e66f04f3fa202350f84afa0fc339bf60953022509b9d1e5177830b8636"
 MAX_INSTALLER_BYTES=2097152
 
 cleanup() {
@@ -92,8 +92,8 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
     echo "Error: the downloaded installer does not match its expected fingerprint." >&2
     echo "  Nothing was run and nothing was written." >&2
     echo "  The download was most likely cut short: try again. Within minutes of an update" >&2
-    echo "  of this project the two files can come from caches of different ages; waiting" >&2
-    echo "  five minutes settles that." >&2
+    echo "  of this project the two files can come from caches of different ages." >&2
+    echo "  Waiting five minutes settles that." >&2
     exit 1
   fi
   INSTALLER="$TEMP_INSTALLER"

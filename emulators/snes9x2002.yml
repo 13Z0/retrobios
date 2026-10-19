@@ -20,5 +20,5 @@ notes: |
   All ROM I/O via memstream (snes9x.h:54-57). The core never calls
   GET_SYSTEM_DIRECTORY and performs no file I/O from the system directory.
 
-exclusion_note: "SPC700 IPL ROM embedded in binary (src/globals.c:283); no system_directory access"
+exclusion_note: "SPC700 IPL ROM embedded in binary (src/globals.c:283), no system_directory access"
 files: []

@@ -39,7 +39,7 @@ notes: |
        video_processor_v4l2.c:244-268, video_processor_v4l2.c:448-455
 
   The frame rate is the frameperiod of the active V4L2 standard and the
-  pixel aspect comes from VIDIOC_CROPCAP; retro_get_region reports NTSC when
+  pixel aspect comes from VIDIOC_CROPCAP. retro_get_region reports NTSC when
   the standard carries the NTSC bit and PAL otherwise. A device that does not
   enumerate its active standard makes retro_load_game fail.
   ref: video_processor_v4l2.c:457-480, video_processor_v4l2.c:593-617,
@@ -52,13 +52,13 @@ notes: |
   packages, and the buildbot binary for linux x86_64 links libv4l2.so.0,
   libasound.so.2 and libudev.so.1. RetroArch also compiles a diverged copy of
   this core into its own binary under cores/libretro-video-processor when
-  HAVE_VIDEOPROCESSOR is set; that copy declares no-content support and adds
+  HAVE_VIDEOPROCESSOR is set. That copy declares no-content support and adds
   capture and output mode options, and opens the same device nodes only.
   ref: video_processor_v4l2.c:45-57, Makefile:107-124
 
   Written by Jared McNeill in July 2016 as libretro-v4l2. The libretro fork
   carries the author's last commits, the audio batch callback and the ALSA
-  overrun recovery, then the 2026 CI and dependency autodetection change; the
+  overrun recovery, then the 2026 CI and dependency autodetection change. The
   original repository stopped at the RGB24 conversion commit.
 
 files: []

@@ -133,7 +133,7 @@
           "type": "object"
         }
       ],
-      "description": "Revision the profile was read at; an object keys it by build mode when the builds live in different repositories."
+      "description": "Revision the profile was read at. An object keys it by build mode when the builds live in different repositories."
     },
     "upstream_commit": {
       "oneOf": [
@@ -144,7 +144,7 @@
           "type": "object"
         }
       ],
-      "description": "Revision the profile was read at; an object keys it by build mode when the builds live in different repositories."
+      "description": "Revision the profile was read at. An object keys it by build mode when the builds live in different repositories."
     },
     "profiled_date": {
       "description": "Quote it: an unquoted YAML date parses to a date object.",
@@ -425,7 +425,7 @@
             "type": "boolean"
           },
           "adler32_pairs_with": {
-            "description": "The file hashed together with this one; adler32_pairs lists the combinations the code accepts.",
+            "description": "The file hashed together with this one. adler32_pairs lists the combinations the code accepts.",
             "type": "string"
           },
           "adler32_pairs": {
@@ -458,7 +458,7 @@
             "type": "boolean"
           },
           "load_from": {
-            "description": "Where the emulator reads the file when not from the system directory; keyed by build when the libretro and standalone builds read it from different places.",
+            "description": "Where the emulator reads the file when not from the system directory, keyed by build when the libretro and standalone builds read it from different places.",
             "oneOf": [
               {
                 "type": "string"
@@ -479,7 +479,7 @@
             ]
           },
           "priority": {
-            "description": "Preference order among the BIOS a system accepts, lowest first. DuckStation's FindBIOSImageInDirectory keeps the image whose priority is lower; a search list the code walks in order maps onto it as 1, 2, 3.",
+            "description": "Preference order among the BIOS a system accepts, lowest first. DuckStation's FindBIOSImageInDirectory keeps the image whose priority is lower. A search list the code walks in order maps onto it as 1, 2, 3.",
             "type": "integer",
             "minimum": 0
           },
@@ -560,7 +560,7 @@
             "pattern": "^[a-fA-F0-9]{64}(,[a-fA-F0-9]{64})*$"
           },
           "crc32": {
-            "description": "CRC32 the code accepts; a list when several dumps pass.",
+            "description": "CRC32 the code accepts, as a list when several dumps pass.",
             "oneOf": [
               {
                 "type": "string",
@@ -577,7 +577,7 @@
             ]
           },
           "known_hash_adler32": {
-            "description": "Adler-32 values the code accepts; a list when several revisions pass.",
+            "description": "Adler-32 values the code accepts, as a list when several revisions pass.",
             "oneOf": [
               {
                 "type": [
@@ -803,7 +803,7 @@
     "prose_written_at": {
       "type": "string",
       "pattern": "^[0-9a-f]{40}$",
-      "description": "The pin a reader confirmed every prose citation against. When the profile's history shows several pins under one text, profile_sync takes this one as the revision the text describes; it never overrides a single candidate."
+      "description": "The pin a reader confirmed every prose citation against. When the profile's history shows several pins under one text, profile_sync takes this one as the revision the text describes. It never overrides a single candidate."
     },
     "pin_frozen": {
       "type": "string",
@@ -811,7 +811,7 @@
     },
     "upstream_gone": {
       "type": "string",
-      "description": "Why the declared upstream can no longer be reached, when that is settled rather than transient. Records the death instead of leaving the profile failing every pass; profile_sync reports the contradiction if the forge answers again."
+      "description": "Why the declared upstream can no longer be reached, when that is settled rather than transient. Records the death instead of leaving the profile failing every pass. profile_sync reports the contradiction if the forge answers again."
     },
     "source_mirror": {
       "type": "string",

@@ -20,7 +20,7 @@ notes: |
   the release binary, RetroBat in portable mode.
 
   The boot chain reads no file. Both PIF ROMs are compiled in as 1984 byte
-  arrays, the size of the PIF ROM window (src/device/pif/rom.rs:1,90;
+  arrays, the size of the PIF ROM window (src/device/pif/rom.rs:1,90 and
   src/device/pif.rs:7). reset_pif installs the PAL image when the cartridge
   country code is one of DFIPSUXY and the NTSC image otherwise
   (src/device/pif.rs:252-257, src/device/cart/rom.rs:137-143), and the VR4300
@@ -47,13 +47,13 @@ notes: |
 
   Everything else under the configuration, data and cache directories is written
   by the emulator: config.json and cheats.json (src/ui/config.rs:99-111,134-146),
-  retroachievements.json (src/lib.rs:209; src/retroachievements.rs:37,61),
+  retroachievements.json (src/lib.rs:209, src/retroachievements.rs:37,61),
   ice_config.json from the netplay server response (src/ui/netplay.rs:715-718,
   src/netplay.rs:419), the eeprom, sram, flash, mempak, sdcard and romsave saves
-  and the savestates (src/ui/storage.rs:212-232; src/savestates.rs:179,236). For
+  and the savestates (src/ui/storage.rs:212-232, src/savestates.rs:179,236). For
   a netplay launch the GUI serialises the cheats to the cache directory, passes
   them to a re-exec of itself through the hidden --cheats flag and deletes the
-  file afterwards (src/ui/gui.rs:585-595,602-617,632; src/lib.rs:141-147).
+  file afterwards (src/ui/gui.rs:585-595,602-617,632, src/lib.rs:141-147).
   portable.txt is tested for existence only, to move those three directories
   beside the executable (src/ui.rs:186-200).
 

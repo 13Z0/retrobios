@@ -1,7 +1,7 @@
 """One file per slot: keep the BIOS a core would actually load.
 
 A slot is a (system, region) pair holding several interchangeable BIOS. Region
-filtering narrows a pack to one territory; a system can still ship three US
+filtering narrows a pack to one territory, but a system can still ship three US
 PlayStation BIOS that differ only by revision, which is what leaves the choice
 open in the frontend.
 
@@ -112,7 +112,7 @@ def resolve_slot_drops(
     """Destinations to skip, and the groups no declared order can decide.
 
     Returns (drops, undecidable). A group is decided only when every candidate
-    declares a priority and exactly one holds the lowest; anything else keeps
+    declares a priority and exactly one holds the lowest. Anything else keeps
     every candidate. ``held`` names the destinations the collection holds: a
     candidate it lacks ships nothing, so it neither wins nor displaces one.
     """

@@ -45,7 +45,7 @@ notes: |
   the slot is the one loaded. A disk is recognised only when its system data
   header matches and carries one of three region words, 0xe848d316 for Japan,
   0x2263ee56 for the United States and 0x00000000 for development
-  (app/src/main/java/paulscode/android/mupen64plusae/util/RomHeader.java:180-220); the word sets a country code used for the ROM
+  (app/src/main/java/paulscode/android/mupen64plusae/util/RomHeader.java:180-220). The word sets a country code used for the ROM
   database and cheat lookup, never for picking the IPL. Launching a bare disk
   with the global slot empty stops before the core starts
   (app/src/main/java/paulscode/android/mupen64plusae/jni/CoreService.java:638-639), and since disk only games still need a cartridge
@@ -69,11 +69,11 @@ notes: |
   core (mupen64plus-core/upstream/src/main/rom.c:473-490 from mupen64plus-core/upstream/src/api/frontend.c:106) and by the gallery
   (app/src/main/java/paulscode/android/mupen64plusae/SplashActivity.java:447). mupencheat.default is copied over
   Profiles/customCheats.txt into mupencheat.txt and parsed in Java
-  (app/src/main/java/paulscode/android/mupen64plusae/SplashActivity.java:443, app/src/main/java/paulscode/android/mupen64plusae/cheat/CheatUtils.java:88-96, app/src/main/java/paulscode/android/mupen64plusae/persistent/GamePrefsActivity.java:548);
-  the core's own cheat.c opens no file. font.ttf is reached by GLideN64 only
+  (app/src/main/java/paulscode/android/mupen64plusae/SplashActivity.java:443, app/src/main/java/paulscode/android/mupen64plusae/cheat/CheatUtils.java:88-96, app/src/main/java/paulscode/android/mupen64plusae/persistent/GamePrefsActivity.java:548),
+  while the core's own cheat.c opens no file. font.ttf is reached by GLideN64 only
   after /system/fonts/DroidSans.ttf fails, that name being what the front end
   writes as the configured font (mupen64plus-video-gliden64/upstream/src/TextDrawer.cpp:209-210,222-228,
-  app/src/main/java/paulscode/android/mupen64plusae/jni/NativeConfigFiles.java:291); the core's OSD, the other upstream reader of
+  app/src/main/java/paulscode/android/mupen64plusae/jni/NativeConfigFiles.java:291). The core's OSD, the other upstream reader of
   that name (mupen64plus-core/upstream/src/osd/osd.c:40), is absent from the Android source list
   (mupen64plus-core/mupen64plus-core.mk:24-101). RiceVideoLinux.ini holds rice's per ROM
   settings (rice Config.cpp:38,933-953), Glide64mk2.ini glide64mk2's
@@ -132,8 +132,8 @@ files:
       setting is named for. No name is fixed by the code: the path comes from a
       document picker and the file is copied to dd_rom.n64 before the core sees
       it. The core reads it whole, then byteswaps after identifying the first
-      word as one of 0x80270740 (z64), 0x40072780 (n64) or 0x27804007 (v64);
-      any other value logs an invalid IPL and disables 64DD. Size is not
+      word as one of 0x80270740 (z64), 0x40072780 (n64) or 0x27804007 (v64).
+      Any other value logs an invalid IPL and disables 64DD. Size is not
       checked and no hash is computed.
     source_ref: "app/src/main/java/paulscode/android/mupen64plusae/jni/CoreService.java:606-620,638-639, app/src/main/java/paulscode/android/mupen64plusae/jni/CoreInterface.java:459-488, app/src/main/java/paulscode/android/mupen64plusae/persistent/GlobalPrefs.java:421,727, mupen64plus-core/upstream/src/main/main.c:1080-1145"
 

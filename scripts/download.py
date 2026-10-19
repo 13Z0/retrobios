@@ -226,7 +226,7 @@ def download_file(
     else:
         print(f"  {label}{downloaded:,} bytes")
     if expected_size and downloaded != expected_size:
-        raise ValueError(f"downloaded {downloaded} bytes; expected {expected_size}")
+        raise ValueError(f"downloaded {downloaded} bytes, expected {expected_size}")
 
 
 def join_volumes(parts: list[Path], dest: Path) -> None:
@@ -263,7 +263,7 @@ def _check(archive: Path, checksums: dict[str, str]) -> None:
         print(
             f"Error: checksum mismatch for {archive.name}\n"
             f"  expected {expected}\n  got      {actual}\n"
-            "Download the parts again; a truncated part gives this.",
+            "Download the parts again: a truncated part gives this.",
             file=sys.stderr,
         )
         sys.exit(1)

@@ -58,7 +58,7 @@ class BeebEmTeletextFont(_Probe):
 class BeebEmSystemRoms(_Probe):
     """The OS, Tube, Z80 and Master 512 ROMs are read with one fread of the
     slot's size. A short read reports an error and BeebEm runs with what it
-    read; bytes past the slot are never read (Src/BeebMem.cpp:1291-1308,
+    read. Bytes past the slot are never read (Src/BeebMem.cpp:1291-1308,
     Src/Tube.cpp:1540-1553, Src/Z80Support.cpp:247-261,
     Src/Master512CoPro.cpp:3777-3790 at a982ba6)."""
 
@@ -90,7 +90,7 @@ class BeebEmSidewaysRoms(_Probe):
 
 class BeetleLynxBootRom(_Probe):
     """CRom drops a boot ROM under 512 bytes and keeps the 0x88 fill, so no
-    game boots; a longer one is read for its first 512 bytes
+    game boots, and a longer one is read for its first 512 bytes
     (mednafen/lynx/rom.cpp:61-75 at fcdefcf)."""
 
     def test_short_is_refused_and_longer_is_read(self):
@@ -135,7 +135,7 @@ class Atari800SystemRoms(_Probe):
 class AresAtari5200Bios(unittest.TestCase):
     """ares registers an Atari 5200 firmware by sha256 and refuses to load a
     game without it (desktop-ui/emulator/atari-5200.cpp:12-16, 82-88 at
-    4cb8d92); the profile left the system out, so no pack carried the BIOS."""
+    4cb8d92). The profile left the system out, so no pack carried the BIOS."""
 
     def test_the_profile_declares_it(self):
         profile = _profile("ares")
@@ -150,7 +150,7 @@ class AresAtari5200Bios(unittest.TestCase):
 
 class A5200Bios(_Probe):
     """The core reads 0x800 bytes and falls back to the Altirra OS on a short
-    read; bytes past them are never read (libretro/libretro.c:456-468 at
+    read. Bytes past them are never read (libretro/libretro.c:456-468 at
     40c6f2f)."""
 
     def test_short_falls_back_and_longer_is_read(self):
@@ -177,7 +177,7 @@ class BeetlePceSystemCards(_Probe):
 
 class EightyOneRoms(_Probe):
     """memory_load reads the ROM and CRC32Block's value only picks the tape
-    patches in rompatch.c; a ROM the table does not know loads without them
+    patches in rompatch.c: a ROM the table does not know loads without them
     (81/zx81/zx81.c:102-103, 81/Ace/ace.c:77-78, 81/zx81/rompatch.c at
     fa70949). The profile declared a crc32 check with no value."""
 
@@ -191,7 +191,7 @@ class EightyOneRoms(_Probe):
 
 
 class AdvanceMameArchives(_Probe):
-    """verify_length_and_hash checks each member and only adds a warning; the
+    """verify_length_and_hash checks each member and only adds a warning. The
     archive itself has no size or hash anyone checks (src/romload.c:327-363
     at 21f8f6f). The 26 BIOS archives declared archive-level checks with no
     archive values."""
@@ -210,7 +210,7 @@ class AdvanceMameArchives(_Probe):
 class MameMemberChecksOnlyWarn(unittest.TestCase):
     """libretro MAME and mame2015 warn on a member's wrong length or checksums
     and run (src/emu/romload.cpp:602-625 at 9069f39, src/emu/romload.c:501-519
-    at 7adbf44); an archive-level check with no archive value ran nothing."""
+    at 7adbf44). An archive-level check with no archive value ran nothing."""
 
     def test_no_valueless_archive_check(self):
         for emulator, names in (
@@ -225,7 +225,7 @@ class MameMemberChecksOnlyWarn(unittest.TestCase):
 
 class HypseusArchives(unittest.TestCase):
     """Hypseus checks each member's size and CRC32, never the archive
-    (game.cpp:636-906 at cda8796); its 71 archives declared archive-level
+    (game.cpp:636-906 at cda8796). Its 71 archives declared archive-level
     checks with no archive value."""
 
     def test_no_archive_level_check(self):
@@ -252,7 +252,7 @@ class DolphinForksIplDumps(_Probe):
 
 class GambatteBootRoms(_Probe):
     """get_bootloader_from_file reads 0x100 or 0x900 bytes and gives up on a
-    short read; it never reads past them (libgambatte/libretro/libretro.cpp
+    short read, and never reads past them (libgambatte/libretro/libretro.cpp
     1426-1486 at d9d6cd0). The upstream crc32 check the profile claimed has
     no code behind it: sinamas/gambatte was reset to a README in 2021."""
 
@@ -264,7 +264,7 @@ class GambatteBootRoms(_Probe):
 
 
 class GeargrafxCards(_Probe):
-    """LoadBiosData strips a 512-byte header and refuses any other size; the
+    """LoadBiosData strips a 512-byte header and refuses any other size. The
     CRC32 only names the card in the log, and an unknown LaserActive CRC32
     is logged and loaded (src/media.cpp:570-632, 662-705, 1028-1063 at
     d0307bf). The profiles declared crc32 checks with no value."""
@@ -318,7 +318,7 @@ class AppleIIgsRomSizes(_Probe):
 class AltirraHappy810(_Probe):
     """ATFirmwareDetection recognises the pre-v7 Happy 810 ROM by its size
     (3K, 4K or a doubled overdump) and a CRC32 that skips the hidden 1K and
-    the serial; the whole-file CRC32 the profile checked is never computed,
+    the serial. The whole-file CRC32 the profile checked is never computed,
     so a dump with another serial was refused (firmwaredetect.cpp:186-231 in
     the 4.40 source)."""
 

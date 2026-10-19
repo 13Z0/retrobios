@@ -70,7 +70,7 @@ notes: |
   board program, the MPEG program and the MPEG music, all declared as regions of one
   game in Games.xml. The set is identified by the basename of the zip, not by a scan,
   and the ErrorLog asks for an appropriately named archive when no game answers to that
-  name; the individual members are then matched by name or by crc32. A child set names a
+  name. The individual members are then matched by name or by crc32. A child set names a
   parent and the loader opens <same directory>/<parent>.zip for the rest of its regions,
   which the front end prepares for by walking the parent chain and staging every zip it
   names into romcache, refusing to start and naming what is missing when one cannot be
@@ -99,7 +99,7 @@ notes: |
   the game zip and from nowhere else. Assets/p1crosshair.bmp and Assets/p2crosshair.bmp
   are documented by the inherited Manual for a crosshair-style option that does not
   exist here, and the tree holds no bitmap reader at all, Src/Util/BMPFile.h being a
-  writer; the Crosshairs setting is a two bit mask and the presenter draws the crosshair
+  writer. The Crosshairs setting is a two bit mask and the presenter draws the crosshair
   as geometry. A build that wires either feature up would turn these into files to
   collect.
   ref: android/app/src/main/assets/Config/Music.xml, Manual.txt:99-102,
@@ -150,7 +150,7 @@ files:
     note: >-
       Read after the built-in defaults have been applied, the Global section first and
       then the section named after the loaded game, each merged over what is already
-      set; a file that is absent or unparseable leaves the defaults standing. The hashes
+      set. A file that is absent or unparseable leaves the defaults standing. The hashes
       are those of the copy in the package assets, which is not the 13290 byte copy in
       the repository root Config directory: the Android build ships its own. They
       describe the file as shipped, since AssetInstaller rewrites it on first run,

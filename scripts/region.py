@@ -1,7 +1,7 @@
 """Region vocabulary and ordered-priority selection for pack generation.
 
 A file's region: value is the region the emulator code selects it for, not the
-region of the dump. Signal standard has no field of its own; it survives only
+region of the dump. Signal standard has no field of its own. It survives only
 inside slugs whose hardware register fuses the two axes (Saturn SMPC areas).
 """
 

@@ -6,8 +6,8 @@ BIOS files are firmware dumps from original console hardware. Emulators need the
 
 ## Installation
 
-Three ways to get BIOS files in place. The installer is the one to use;
-the two sections after it are for when it cannot run. For a walkthrough of a
+Three ways to get BIOS files in place. The installer is the one to use,
+and the two sections after it are for when it cannot run. For a walkthrough of a
 first install with what each step prints, see
 [First install](first-install.md).
 
@@ -56,7 +56,7 @@ python install.py --standalone-copies  # opt in to extra standalone-emulator pat
 The default flow writes inside the detected platform tree only. Copies into
 separate standalone-emulator directories are opt-in, so discovery cannot cause
 unexpected writes elsewhere on the machine. Entries the collection cannot
-satisfy are reported as safely omitted and the run continues; the installer
+satisfy are reported as safely omitted and the run continues. The installer
 never substitutes a same-named file for one a hash-verifying platform would
 reject.
 

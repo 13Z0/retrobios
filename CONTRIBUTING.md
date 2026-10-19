@@ -36,8 +36,8 @@ Full walkthrough: [profiling guide](https://abdess.github.io/retrobios/wiki/prof
 - `bios/Manufacturer/Console/.variants/filename.sha1prefix` for alternate versions
 - Files >50 MB go in GitHub release assets (`large-files` release)
 - RPG Maker and ScummVM directories are excluded from deduplication
-- Two paths differing only by case break clones on Windows and macOS;
-  `tests/test_no_case_collisions.py` enforces this
+- Two paths differing only by case break clones on Windows and macOS,
+  and `tests/test_no_case_collisions.py` enforces this
 
 ## Before opening a PR
 

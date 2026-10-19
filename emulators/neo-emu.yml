@@ -40,7 +40,7 @@ notes: |
   in the directory holding the content, not in a system directory
   (NEO.emu/src/gngeo/roms.c:1202-1211, NEO.emu/src/main/Main.cc:465-471,
   EmuFramework/src/EmuSystem.cc:83). Members are matched on name or on CRC32,
-  so an image carrying the expected CRC is taken whatever it is called; turning
+  so an image carrying the expected CRC is taken whatever it is called. Turning
   on Strict ROM Checking, off by default, drops the name test and leaves CRC32
   alone (NEO.emu/src/main/unzip.cc:49-50, NEO.emu/src/main/Main.cc:316-319,
   NEO.emu/src/main/system.ccm:87). The archive itself is never hashed.
@@ -57,7 +57,7 @@ notes: |
   BIOS Type defaults to Unibios 2.3 and MVS Region to USA
   (NEO.emu/src/main/system.ccm:74-81, NEO.emu/src/main/options.cc:45-46). The
   menu offers the six Universe BIOS versions and MVS
-  (NEO.emu/src/main/EmuMenuViews.cc:127-136); under MVS the region picks
+  (NEO.emu/src/main/EmuMenuViews.cc:127-136). Under MVS the region picks
   vs-bios.rom for Japan, usa_2slt.bin for USA, asia-s3.rom for Asia and sp-s2.sp1
   for Europe and any other value (NEO.emu/src/gngeo/roms.c:1269-1300,
   NEO.emu/src/main/EmuMenuViews.cc:103-116). aes-bios.bin sits on the SYS_HOME
@@ -87,19 +87,19 @@ notes: |
   (src/roms.c:1372-1376).
 
   The romset definitions and the CMC42/CMC50 key tables ship with the app. On
-  Android they are assets read through the asset manager; elsewhere they are read
+  Android they are assets read through the asset manager. Elsewhere they are read
   from gngeo_data.zip beside the executable (NEO.emu/src/main/Main.cc:64-67,
   198-206,321-369, imagine/src/base/linux/ApplicationContext.cc:44-47). Upstream
   ships the same archive with 237 definitions plus a skin/ set for its own SDL
-  menu; the app carries 240, adds bbbuster, ironclad, ironclado and totcarib,
+  menu. The app carries 240, adds bbbuster, ironclad, ironclado and totcarib,
   drops mslug3n, changes 31 others and keeps no skin, its resource loader being
   replaced wholesale (NEO.emu/src/main/Main.cc:321-369, src/resfile.c:71-115,
   gngeo.dat/gngeo_data.zip). The two key tables are byte identical to upstream's.
 
   Divergences from gngeo 0.8 in what is read: upstream passes 0 for every member
-  CRC, so it verifies nothing and matches on name alone; it knows one Universe
+  CRC, so it verifies nothing and matches on name alone. It knows one Universe
   BIOS under the name uni-bios.rom and falls back to a loose uni-bios.rom beside
-  the archive when the archive lacks it; and it opens the BIOS archive only as
+  the archive when the archive lacks it. It also opens the BIOS archive only as
   .zip, under a configured rompath (src/roms.c:1217-1320,1078-1087).
 
   Nothing else is read from outside. The per-game gngeo configuration path is
@@ -131,7 +131,7 @@ files:
     required: true
     crc32: "5a86cff2"
     description: "Zoom lookup table"
-    note: "Read for every game; a miss ends the load."
+    note: "Read for every game, and a miss ends the load."
     source_ref: "NEO.emu/src/gngeo/roms.c:1213-1218, NEO.emu/src/gngeo/video.c:757"
 
   - name: "sfix.sfx"
@@ -275,7 +275,7 @@ files:
       Holds rom/<set>.drv for 240 sets plus rom/cmc42.xor and rom/cmc50.xor. A
       definition is read before anything else and a miss ends the load with
       "This game isn't recognized". On Android the members are read as assets
-      through the asset manager; elsewhere they are read from this archive at the
+      through the asset manager. Elsewhere they are read from this archive at the
       executable's own directory.
     source_ref: "NEO.emu/src/main/Main.cc:64-67,198-206,217-221,321-355, imagine/src/base/linux/ApplicationContext.cc:44-47"
 

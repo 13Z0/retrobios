@@ -16,7 +16,7 @@ systems:
 notes: |
   High-level Nintendo 64 emulator. The boot sequence and the RSP are emulated
   at high level: no PIF ROM or other console firmware is opened. The code
-  carries no version string; the tree is 837 commits past tag 1.1.8.
+  carries no version string, and the tree is 837 commits past tag 1.1.8.
 
   Every data file is resolved against baseDir, which on Linux is the working
   directory at startup. ROCKNIX copies the package to /storage/.config/DaedalusX64
@@ -26,7 +26,7 @@ notes: |
   Linux builds pick the renderer by architecture: OpenGL ES on aarch64 and arm,
   desktop OpenGL elsewhere. Each renderer installs its own n64.psh, the fragment
   shader library prepended to every shader the renderer compiles. The ES
-  renderer fails graphics init without it; the desktop one goes on with an
+  renderer fails graphics init without it, while the desktop one goes on with an
   empty library and its shaders do not compile.
   ref: Source/CMakeLists.txt:132-137, Source/SysPosix/CMakeLists.txt:12-18,
        Source/SysGLES/HLEGraphics/RendererGL.cpp:77-110,
@@ -80,5 +80,5 @@ files:
     md5: "78609089d3dad36318ae0190321e6f3e"
     bundled: true
     description: "UI font"
-    note: "Opened through SDL_ttf for the on-screen menus; a failure is printed and emulation is not affected."
+    note: "Opened through SDL_ttf for the on-screen menus. A failure is printed and emulation is not affected."
     source_ref: "Source/SysGL/Graphics/DrawTextSDL.cpp:30-41, Source/SysGLES/Graphics/DrawTextSDL.cpp:30-41"

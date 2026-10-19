@@ -18,20 +18,20 @@ notes: |
   Wolfenstein: Enemy Territory installation to <path>". pak1.pk3 and
   pak2.pk3 are checked against the server's requested pak list in
   FS_ComparePaks (src/qcommon/files.c:4011-4018) but neither is a
-  startup gate; third-party mods pull them in as needed (see README.md
+  startup gate. Third-party mods pull them in as needed (see README.md
   "In addition, third party mods might also require pak1.pk3 and
   pak2.pk3"). mp_bin.pk3 ships in the retail release and holds the
   stock multiplayer binaries.
 
   NUM_ID_PAKS = 9 (src/qcommon/qcommon.h:815) counts the names recognised
-  by FS_idPak; retail Enemy Territory 2.60b publishes only pak0, pak1,
+  by FS_idPak. Retail Enemy Territory 2.60b publishes only pak0, pak1,
   pak2 and mp_bin, so the extra slots are reserved for forward compatible
   server lists, never filled by id.
 
   The ET Legacy project ships its own replacement etmain/ assets (configs,
   presets, locale files) directly in the source tree, plus a Legacy mod
   pk3 downloaded on first run. The user still has to supply the retail
-  pak0.pk3 from the free Enemy Territory 2.60b download; pak0.pk3 holds
+  pak0.pk3 from the free Enemy Territory 2.60b download. pak0.pk3 holds
   every id map, model, texture and sound.
 
 files:
@@ -65,4 +65,4 @@ files:
     path: "etmain/mp_bin.pk3"
     required: false
     source_ref: "src/qcommon/files.c:4011-4018 (FS_idPak)"
-    note: "Retail multiplayer QVM binaries. ET Legacy ships its own cgame/ui binaries; retail pack is for pure clients joining stock servers."
+    note: "Retail multiplayer QVM binaries. ET Legacy ships its own cgame/ui binaries, and the retail pack is for pure clients joining stock servers."

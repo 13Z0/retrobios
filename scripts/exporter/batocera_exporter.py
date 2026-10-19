@@ -26,7 +26,7 @@ _INDENT = " " * 4
 class Exporter(BaseExporter):
     """Write Batocera's batocera-systems, corrected."""
 
-    # checkBios compares one md5 for a plain file; altmd5 is read only for
+    # checkBios compares one md5 for a plain file. altmd5 is read only for
     # a zippedFile: retrodream's boot.bin written with the first of four
     # md5 refused the three other dumps the core accepts.
     SINGLE_HASH_FIELD = "md5"
@@ -130,7 +130,7 @@ class Exporter(BaseExporter):
 
     @staticmethod
     def needs_original() -> bool:
-        # The data block is a fraction of the file; the rest is the checker.
+        # The data block is a fraction of the file, the rest is the checker.
         return True
 
     def _bios_files(self, files: list[NativeFile], before: dict | None = None) -> str:
@@ -163,7 +163,7 @@ class Exporter(BaseExporter):
         return parts
 
     def _item_runners(self, fe: NativeFile) -> list[list[str] | None]:
-        """One item per runner an addition names; None keeps the original's."""
+        """One item per runner an addition names. None keeps the original's."""
         if fe.platform is not None:
             return [None]
         pairs = self._addition_keys(fe) or []
@@ -213,7 +213,7 @@ class Exporter(BaseExporter):
 
         Rewriting an entry as one line would drop them, and a note like
         "ideally - 94bc50..." is the only record of why a hash is blank.
-        A comment on its own line belongs to the file below it; a comment at
+        A comment on its own line belongs to the file below it, a comment at
         the end of a line belongs to the file on it.
         """
         trailing: dict[str, str] = {}

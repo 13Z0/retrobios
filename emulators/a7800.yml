@@ -33,7 +33,7 @@ notes: |
   machines fall back to the a7800 set, and the manual documents one merged
   archive at bios/a7800.zip. Inside an archive the search tries name with CRC,
   then CRC alone, then name (fileio.cpp:692-701), so a ROM whose filename
-  differs from the driver still resolves; loose files under rompath/a7800/
+  differs from the driver still resolves. Loose files under rompath/a7800/
   match by name only. Loaded ROMs are checked for exact length and against the
   declared CRC32 and SHA1, and a mismatch is a warning (romload.cpp:417-455).
 

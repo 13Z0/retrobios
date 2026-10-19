@@ -46,7 +46,7 @@ notes: |
 
   Arcade BIOS archives are opened as <name>.zip, then <name>.7z
   (core/hw/naomi/naomi_cart.cpp:69-71). Each ROM inside is looked up by CRC
-  then by filename; the crc field of every BIOS blob is left at zero, so the
+  then by filename. The crc field of every BIOS blob is left at zero, so the
   filename decides. No hash is checked on an archive.
 
   NAOMI 2 is a platform of its own here: naomi_cart_GetPlatform returns

@@ -43,7 +43,7 @@ class OnlyThePlatformsCores(unittest.TestCase):
 
 class OnlyThePlatformsCoresRankASlot(unittest.TestCase):
     """RomM runs beetle_psx and pcsx_rearmed, which rank no PlayStation
-    BIOS; DuckStation's ranks dropped four images RomM declares."""
+    BIOS, yet DuckStation's ranks dropped four images RomM declares."""
 
     PROFILES = {
         "beetle_psx": {"emulator": "Beetle", "type": "libretro",

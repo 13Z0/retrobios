@@ -17,7 +17,7 @@ and exits 1 when a hash is not in the database, so a script can tell.
 
 Build a pack containing only files matching hashes from a list. Each line
 carries one hash (MD5, SHA-1 or CRC32), alone or beside a file name as
-`md5sum` writes it; `#` starts a comment:
+`md5sum` writes it. A `#` starts a comment:
 
 ```bash
 python scripts/generate_pack.py --platform batocera --from-md5-file missing.txt
@@ -87,7 +87,7 @@ Three rules keep a filtered pack usable:
   `--region us` still ships `disksys.rom`, because the Famicom Disk System has no
   American BIOS.
 - **Region-free files always survive.** `psxonpsp660.bin`, `ps1_rom.bin` and
-  `openbios.bin` are declared `[world]`; they add a capability rather than
+  `openbios.bin` are declared `[world]`: they add a capability rather than
   competing regionally.
 - **Untagged files always survive.** Most BIOS are not regional and carry no
   `region:` at all.
@@ -144,7 +144,7 @@ Where no such list is declared, the group is left untouched and counted:
 Two rules keep a declared order from overreaching:
 
 - **Cores that disagree cancel out.** pcsx1 walks `scph1001` first while
-  DuckStation prefers `scph5501`; the pack serves both cores, so neither order
+  DuckStation prefers `scph5501`. The pack serves both cores, so neither order
   wins and both files stay.
 - **A slot mixing unrelated roles stays open.** px68k's IPL ROMs are ranked,
   but its character ROM shares the same system and carries no rank, so the

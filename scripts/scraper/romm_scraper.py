@@ -120,7 +120,7 @@ SLUG_MAP: dict[str, str] = {
 # Mirrors are per file, not per core: a slug sharing a core with another reads
 # only the firmware that core needs for its own system. The Neo Geo slugs run
 # fbneo, as arcade does (index.ts:410-418), and fbneo boots every Neo Geo
-# game from neogeo.zip; the fixture gives it to arcade alone. None mirrors
+# game from neogeo.zip, but the fixture gives it to arcade alone. None mirrors
 # every file of the slug.
 FIRMWARE_MIRRORS: dict[str, dict[str, tuple[str, ...] | None]] = {
     "tg16": {"turbografx-cd": None},

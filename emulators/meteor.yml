@@ -29,5 +29,5 @@ platform_details:
     source_ref: "ameteor/source/bios.cpp, ameteor/source/cpu.cpp:245-311"
     note: |
       Full HLE BIOS. The libretro port never loads an external BIOS file.
-      Cpu::SoftwareInterrupt() checks HasBios() — if false (always in
+      Cpu::SoftwareInterrupt() checks HasBios(). If false (always in
       libretro), SWI calls are routed to C++ reimplementations.

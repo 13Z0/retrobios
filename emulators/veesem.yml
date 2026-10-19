@@ -46,7 +46,7 @@ notes: |
   Region is a jumper, not a file. The low nibble of Port C carries the region
   code and bit 4 the VTech logo jumper (vsmile.cc:148-152), defaulting to 0xe
   with the logo on (main.cc:44-45) and settable with -region and -novtech. One
-  system ROM image serves every region; the table at vsmile.cc:3-25 maps the
+  system ROM image serves every region. The table at vsmile.cc:3-25 maps the
   sixteen jumper values to the intro each revision produces, and names
   revisions 1.00, 1.02 and 1.03.
 

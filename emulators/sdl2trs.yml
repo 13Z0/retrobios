@@ -18,7 +18,7 @@ notes: |
   TRS-80 Model I, III, 4 and 4P emulator. Jens Guenther's GitLab tree continues
   Mark Grebe's SDLTRS, itself an SDL port of Tim Mann's xtrs, whose licence
   still ships as xtrs.LICENSE. The sdl2 branch builds the sdl2trs binary that
-  ES-DE and RetroDECK look for; master builds sdltrs for hosts without SDL2
+  ES-DE and RetroDECK look for, while master builds sdltrs for hosts without SDL2
   (README.md:106-111). The branches diverge only in the display and paste code:
   trs_cmd_rom.c and trs_memory.c are byte-identical between them.
 
@@ -77,7 +77,7 @@ files:
     max_size: 18432
     source_ref: "src/trs_options.c:82 (romfile3), src/trs_options.c:898 (default name), src/trs_cmd_rom.c:885-889 (trs_model 3 and 4)"
     note: >
-      Serves Model III and Model 4 alike; the stub text spells out that Model 4
+      Serves Model III and Model 4 alike. The stub text spells out that Model 4
       mode needs a Model 3 image (src/trs_cmd_rom.c:110-115). This is the one slot
       that also accepts a MODELA/III CMD file, which html/index.html presents as
       the substitute for a real Model III ROM. Same truncating ceiling as the
@@ -97,7 +97,7 @@ files:
       image is what restores Model III mode and hard-drive booting. Hard drive
       unit 0 is tried before floppy by the Radio Shack ROM, and F2 held at boot
       forces floppy (html/Features.html). The image is the 4 KB gate-array boot
-      ROM 8075332.u69, the only ROM the machine carries; the Model III code
+      ROM 8075332.u69, the only ROM the machine carries, and the Model III code
       comes from a boot disk.
 
 analysis:
@@ -169,7 +169,7 @@ analysis:
         slot: model3.rom
         image_size: 18432
         source_ref: "src/trs_memory.c:570-580, src/trs_memory.c:1043-1065"
-        note: "4 KB VID-80 ROM with the Model III ROM appended behind it; this pairing is what sets MAX_ROM_SIZE."
+        note: "4 KB VID-80 ROM with the Model III ROM appended behind it. This pairing is what sets MAX_ROM_SIZE."
 
       - machine: "TCS SpeedMaster, also sold as Genie IIs"
         slot: level2.rom
@@ -193,7 +193,7 @@ analysis:
         slot: level2.rom
         image_size: 12288
         source_ref: "src/trs_memory.c:918-946"
-        note: "Reads 0x0000-0x2FFF only; the rest of the address space is banked RAM, video and the HRG window."
+        note: "Reads 0x0000-0x2FFF only. The rest of the address space is banked RAM, video and the HRG window."
 
       - machine: "LNW Research LNW80/II"
         slot: level2.rom
@@ -230,7 +230,7 @@ analysis:
         note: >
           Declares level1.rom, level2.rom, level3.rom, level4.rom, level4p.rom
           and boot.dsk under $roms_path/trs-80. Of those the emulator opens only
-          level2.rom by default; level3.rom, level4.rom and level4p.rom are
+          level2.rom by default, while level3.rom, level4.rom and level4p.rom are
           renames of the model3.rom and model4p.rom slots, and level1.rom is a
           Level I BASIC image for the Model I slot. The manifest hashes come
           from the frontend, not from the emulator, which computes none.

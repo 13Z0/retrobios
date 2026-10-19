@@ -13,7 +13,7 @@ notes: |
   Fork of DuckStation maintained by the libretro community after stenzek removed
   libretro support. Frozen at an early DuckStation state.
 
-  Boot loads a BIOS image; when none is found a built-in OpenBIOS copy
+  Boot loads a BIOS image. When none is found a built-in OpenBIOS copy
   (dep/openbios) boots instead.
   ref: src/core/system.cpp:650,678-682
 

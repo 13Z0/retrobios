@@ -51,7 +51,7 @@ class OneRule(unittest.TestCase):
 
     def test_a_refused_declaration_occupies_nothing(self):
         """verify counted a declaration whose hash the frontend refuses as
-        occupying its path; the builder leaves it out, and the core file
+        occupying its path, but the builder leaves it out, and the core file
         that then takes the path was reported missing from the pack."""
         source = (REPO_ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
         compact = " ".join(source.split())
@@ -92,7 +92,7 @@ class TheReportSaysSo(unittest.TestCase):
 
             db = load_database("database.json")
             profiles = load_emulator_profiles("emulators")
-            # Platforms whose filesystem folds case; RetroPie and Lakka run on
+            # Platforms whose filesystem folds case. RetroPie and Lakka run on
             # Linux and keep both names.
             cls.results = {
                 name: verify_platform(
@@ -115,7 +115,7 @@ class TheReportSaysSo(unittest.TestCase):
         self.assertIn("another case", entry.get("omitted", ""))
 
     def test_a_twin_with_the_same_bytes_serves_the_core(self):
-        # MesenCE opens bios.col; RetroArch's pack folds it onto BIOS.col,
+        # MesenCE opens bios.col, and RetroArch's pack folds it onto BIOS.col,
         # the same bytes, which serves the core on a folding filesystem.
         entry = self._entry("MesenCE", "bios.col")
         self.assertIsNot(entry.get("in_pack"), False)

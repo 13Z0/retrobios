@@ -68,7 +68,7 @@ def compare(
     against the collection's: a dump rebuilt at its old size and never
     re-uploaded was invisible to a size comparison.
 
-    *registered* is every path .gitignore lists; an asset name depends on
+    *registered* is every path .gitignore lists. An asset name depends on
     which other paths share its basename, so it defaults to *expected* only
     when the caller has nothing wider. A release description that no longer
     matches what render_notes() would write is a finding of its own: the
@@ -182,8 +182,8 @@ def render_notes(
     """The release page, from what the release actually serves.
 
     Every asset gets one row. A file the database indexes carries its
-    database SHA1; a data-directory bundle carries the hash of its cached
-    copy when one exists; anything else is listed apart with its size only,
+    database SHA1, a data-directory bundle carries the hash of its cached
+    copy when one exists, and anything else is listed apart with its size only,
     so the page never vouches for bytes nobody indexed. Descriptions and
     sections already written by hand are kept by name.
     """

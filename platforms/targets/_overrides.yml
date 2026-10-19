@@ -20,9 +20,9 @@ batocera:
   targets:
     _default:
       # Amiga machine variants (A500, CD32, etc.) are selectors passed to
-      # fsuae/amiberry, not emulators of their own; batocera-es-system
+      # fsuae/amiberry, not emulators of their own. batocera-es-system
       # groups them under the emulator's node in es_systems.yml.
-      # odcommander is OpenDingux's file manager; flatpak/steam/wine-tkg/sh
+      # odcommander is OpenDingux's file manager, and flatpak/steam/wine-tkg/sh
       # are runtime launchers. N64 video plugins (gliden64, glide64mk2,
       # rice) are backends to mupen64plus, not emulators.
       remove_cores:
@@ -43,7 +43,7 @@ batocera:
         - gliden64
         - glide64mk2
         - rice
-    # Boards are named by SoC; the Raspberry Pi models a user knows map here
+    # Boards are named by SoC. The Raspberry Pi models a user knows map here
     # (Batocera's Config.in comments: "rpi2/rpi3", "rpi4 only", "rpi5 only").
     bcm2835:
       aliases: [rpi1, rpi-zero]
@@ -96,7 +96,7 @@ retroarch:
 retrodeck:
   targets:
     _default:
-      # RetroDECK ships RetroArch itself as a component; its target list
+      # RetroDECK ships RetroArch itself as a component, and its target list
       # includes the frontend name alongside the actual cores.
       remove_cores: [retroarch]
 
@@ -104,7 +104,7 @@ emudeck:
   targets:
     _default:
       # EmuDeck's EmuScripts tree carries a template.sh placeholder used
-      # to scaffold new installers; it is not an emulator.
+      # to scaffold new installers. It is not an emulator.
       remove_cores: [template]
 
 lakka:
@@ -140,7 +140,7 @@ recalbox:
   targets:
     _default:
       # system.ini names a mupen64plus video plugin as the core of the
-      # mupen64plus emulator; mupenGenerator.py loads it with --gfx
+      # mupen64plus emulator. mupenGenerator.py loads it with --gfx
       # mupen64plus-video-<core>.so. Plugins, not emulators.
       remove_cores:
         - glide64mk2 # mupen64plus-video-glide64mk2

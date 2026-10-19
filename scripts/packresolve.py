@@ -1,6 +1,6 @@
 """Finding the bytes a pack entry names.
 
-Resolution proper lives in common; this layer adds what only a build
+Resolution proper lives in common. This layer adds what only a build
 needs: storage tiers, release assets for files too large to commit,
 and the offline switch that forbids reaching for the network."""
 
@@ -51,7 +51,7 @@ def _verified_asset(
     """The release asset of that name, if it is a copy the entry accepts.
 
     The store is asked once per accepted sha1 (or md5), since it keeps one
-    revision under a name; what it returns is held against every hash the
+    revision under a name. What it returns is held against every hash the
     entry declares, sha256 and crc32 included.
     """
     attempts = (
@@ -125,7 +125,7 @@ def lookup_hashes(
     emulators_dir: str,
     platforms_dir: str,
 ) -> int:
-    """Print diagnostic info for each hash; return how many were not found."""
+    """Print diagnostic info for each hash and return how many were not found."""
     missing = 0
     files_db = db.get("files", {})
     by_md5 = db.get("indexes", {}).get("by_md5", {})
@@ -216,8 +216,8 @@ def resolve_file(
     # missing OR has a hash mismatch (wrong variant on disk)
     name = file_entry.get("name", "")
     if file_entry.get("type") == "directory" or name.endswith("/"):
-        # A tree the collection does not hold is missing, as verify says;
-        # the asset store holds files, not trees.
+        # A tree the collection does not hold is missing, as verify says,
+        # since the asset store holds files, not trees.
         return (path, status) if path else (None, "not_found")
     declared = _declared_hashes(file_entry)
     if file_entry.get("unsourceable") and not any(declared.values()):

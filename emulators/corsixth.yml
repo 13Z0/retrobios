@@ -31,7 +31,7 @@ notes: |
          QDATA/SPointer.dat
        Any missing file aborts init with "Invalid Theme Hospital
        folder specified in config file..." (:1526).
-    3. DataM/Demo.dat (:1535) marks the shareware demo install; its
+    3. DataM/Demo.dat (:1535) marks the shareware demo install. Its
        presence switches a different corruption-size check on
        ANIMS/WINLEVEL.SMK (243188), LEVELS/LEVEL.L1 (163948) and
        DATA/BUTTON01.DAT (252811) at :1559-1561. Full installs instead
@@ -51,7 +51,7 @@ notes: |
 
   The sound/music path uses the game's XMI tracks when a SoundFont is
   available (App:findSoundFont at :1589 probes GeneralUser-GS.sf2,
-  FluidR3_GM.sf2, FluidR3.sf3 and three Linux system paths); the
+  FluidR3_GM.sf2, FluidR3.sf3 and three Linux system paths), and the
   SoundFont is a user preference, not game data.
 
 files:
@@ -63,14 +63,14 @@ files:
     required: true
     description: "Theme Hospital install directory (full game or demo)"
     source_ref: "CorsixTH/Lua/filesystem.lua:64-76, CorsixTH/Lua/app.lua:1435-1447, 1454, 1499"
-    note: "Accepted as an install when it holds data, levels and qdata subdirectories; the rest of the tree is opened by name on demand."
+    note: "Accepted as an install when it holds data, levels and qdata subdirectories. The rest of the tree is opened by name on demand."
 
   - name: "VBLK-0.TAB"
     path: "corsixth/DATA/VBLK-0.TAB"
     system: theme-hospital
     category: game_data
     required: true
-    description: "Theme Hospital core sprite index; sentinel checked at startup"
+    description: "Theme Hospital core sprite index, sentinel checked at startup"
     source_ref: "CorsixTH/Lua/app.lua:1521"
     note: "Looked up as Data/VBlk-0.tab."
 
@@ -79,7 +79,7 @@ files:
     system: theme-hospital
     category: game_data
     required: true
-    description: "First Theme Hospital level file; sentinel checked at startup"
+    description: "First Theme Hospital level file, sentinel checked at startup"
     source_ref: "CorsixTH/Lua/app.lua:1522, 1560"
     note: "Looked up as Levels/Level.L1. With the demo marker present, a size more than 1024 bytes away from 163948 is reported as corrupt and the game still starts."
 
@@ -88,7 +88,7 @@ files:
     system: theme-hospital
     category: game_data
     required: true
-    description: "Sprite pointer table; sentinel checked at startup"
+    description: "Sprite pointer table, sentinel checked at startup"
     source_ref: "CorsixTH/Lua/app.lua:1523"
     note: "Looked up as QData/SPointer.dat."
 
@@ -97,7 +97,7 @@ files:
     system: theme-hospital
     category: game_data
     required: true
-    description: "Theme Hospital font; CRC32 selects charset (mik vs cp437)"
+    description: "Theme Hospital font, its CRC32 selects charset (mik vs cp437)"
     source_ref: "CorsixTH/Lua/app.lua:1576-1584"
     note: "Looked up as QData/Font00V.dat."
 
@@ -106,6 +106,6 @@ files:
     system: theme-hospital
     category: game_data
     required: false
-    description: "Demo marker; its presence selects the demo graphics set and the demo size checks"
+    description: "Demo marker: its presence selects the demo graphics set and the demo size checks"
     source_ref: "CorsixTH/Lua/app.lua:1535-1539, 1558-1561"
     note: "Looked up as DataM/Demo.dat. Absent from a full install."

@@ -25,7 +25,7 @@ notes: |
   VIRTUAL-VIRTUAL-BOY find rule, which hands the game over as an ACTION_VIEW
   intent on a content URI (MainActivity.kt:126-131, MainActivity.kt:40-45). The
   hardware sits in a Rust library packaged as libvvb.so and loaded when the
-  application starts (VvbApplication.kt:69, Cargo.toml [lib]); the Kotlin side
+  application starts (VvbApplication.kt:69, Cargo.toml [lib]), and the Kotlin side
   owns the menus, the input mapping and every file access. Display goes through
   mono, anaglyph, stereo, Google Cardboard and Leia CNSDK renderers, each
   carrying its GLSL as string constants in the Rust sources

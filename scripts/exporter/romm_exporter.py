@@ -69,7 +69,7 @@ class Exporter(BaseExporter):
         return native_id in SLUG_MAP
 
     def writable(self, fe: NativeFile, require: str = "") -> bool:  # noqa: ARG002
-        """What RomM already ships stays; the conditions gate additions.
+        """What RomM already ships stays. The conditions gate additions.
 
         An entry of theirs that could never verify is still theirs, and the
         round trip is not the place to decide otherwise. An addition whose
@@ -129,10 +129,10 @@ class Exporter(BaseExporter):
                 if not self.writable(fe):
                     continue
                 key = f"{system.native_id}:{fe.name}"
-                # Their entry keeps its fields and their order; ours fill in.
+                # Their entry keeps its fields and their order, ours fill in.
                 entry: OrderedDict[str, str] = OrderedDict(output.get(key, {}))
                 # The fixture states every value as a string, size included.
-                # Where the model settles no size, RomM's own value stands;
+                # Where the model settles no size, RomM's own value stands.
                 # str(None) wrote "None", and RomM's int() on it raised.
                 size = fe.size()
                 if size is None and fe.platform is not None:

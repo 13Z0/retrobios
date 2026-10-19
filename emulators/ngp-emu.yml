@@ -32,7 +32,7 @@ notes: |
   The TLCS-900h disassembler is left out of the build
   (NGP.emu/src/CMakeLists.txt:6-32). Content is read from .ngp, .ngc, .npc and
   .ngpc files (NGP.emu/metadata/conf.mk:5, NGP.emu/src/main/AppMeta.cc:31-34,
-  NGP.emu/src/ngp/neopop.cpp:336-337); an archive is opened by the framework,
+  NGP.emu/src/ngp/neopop.cpp:336-337). An archive is opened by the framework,
   which keeps the first entry passing that same filter
   (EmuFramework/src/EmuSystem.cc:392-412).
 

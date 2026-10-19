@@ -187,7 +187,7 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
             "retrobat": _host_path("C:/RetroBat/bios"),
         }
     if os_type == "wsl":
-        # RetroArch may be the Linux one inside the distribution; RetroBat
+        # RetroArch may be the Linux one inside the distribution, while RetroBat
         # only exists on the Windows side, reached through /mnt/c.
         return {
             "retroarch": home / ".config" / "retroarch" / "system",
@@ -220,7 +220,7 @@ def _enable_ansi() -> bool:
     """Whether escape sequences reach the terminal as colour and redraws.
 
     Windows 10 consoles interpret them once virtual terminal processing is
-    switched on; older ones print them raw, so the answer is then no.
+    switched on. Older ones print them raw, so the answer is then no.
     """
     if os.name != "nt":
         return True
@@ -240,7 +240,7 @@ def _enable_ansi() -> bool:
 class Terminal:
     """What the output stream can show: a live line, colour, or neither.
 
-    A pipe or a log gets plain lines; NO_COLOR and TERM=dumb are honoured.
+    A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb are honoured.
     """
 
     def __init__(self, stream: TextIO | None = None, quiet: bool = False) -> None:
@@ -523,7 +523,7 @@ def _steam_libraries() -> list[Path]:
     """Every Steam library, the default one first.
 
     Steam lists the others in steamapps/libraryfolders.vdf, each as a
-    "path" line; a RetroArch installed on D:/SteamLibrary was not found
+    "path" line. A RetroArch installed on D:/SteamLibrary was not found
     when only Program Files was searched.
     """
     roots: list[Path] = []
@@ -719,9 +719,9 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
 
 # Embedded systems, first match wins: Knulli also carries the Batocera
 # markers. The registry publishes the same rules as each manifest's
-# `detect`; a test holds the two equal. MiSTer is a path rule below.
+# `detect`, and a test holds the two equal. MiSTer is a path rule below.
 _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
-    # ROCKNIX writes OS_NAME and no ID since 2025 (scripts/image); older
+    # ROCKNIX writes OS_NAME and no ID since 2025 (scripts/image). Older
     # images wrote ID=rocknix.
     ("rocknix", "os_release", ("OS_NAME=rocknix", "ID=rocknix"), "/storage/roms/bios"),
     ("batocera", "file_exists", ("/etc/knulli-release",), "/userdata/bios"),
@@ -790,7 +790,7 @@ def _detect_android() -> list[tuple[str, Path]]:
 def _lnk_target(lnk_path: Path, exe_name: str) -> Path | None:
     """Read the target path of a Windows shortcut.
 
-    Shortcuts embed the target as a plain local path; scanning for it avoids
+    Shortcuts embed the target as a plain local path. Scanning for it avoids
     parsing the whole .lnk structure for the one field that matters here.
     """
     try:
@@ -847,7 +847,7 @@ def launchbox_root(os_type: str) -> Path | None:
 def launchbox_emulators(emulators_xml: Path) -> dict[str, Path]:
     """Map each emulator LaunchBox knows about to its installation directory.
 
-    LaunchBox stores its emulator list in Data/Emulators.xml; ApplicationPath
+    LaunchBox stores its emulator list in Data/Emulators.xml. ApplicationPath
     is either absolute or relative to the LaunchBox root directory. Keys are
     the lowercase executable names.
     """
@@ -858,7 +858,7 @@ def launchbox_emulators(emulators_xml: Path) -> dict[str, Path]:
         if emulators_xml.stat().st_size > 10 * 1024 * 1024:
             return found
         raw = emulators_xml.read_text(encoding="utf-8", errors="replace")
-        # ElementTree expands internal entities; LaunchBox writes no doctype
+        # ElementTree expands internal entities, and LaunchBox writes no doctype
         if "<!DOCTYPE" in raw.upper():
             return found
         tree = ET.ElementTree(ET.fromstring(raw))
@@ -951,8 +951,8 @@ def _xemu_bios_dir(emu_dir: Path) -> Path:
 def launchbox_bios_dirs(root: Path) -> dict[str, Path]:
     """Map emulator ids to the BIOS directory LaunchBox expects for them.
 
-    Only emulators whose destination LaunchBox itself computes are listed;
-    the rest keep the default locations declared in the manifest.
+    Only emulators whose destination LaunchBox itself computes are listed.
+    The rest keep the default locations declared in the manifest.
     """
     emulators = launchbox_emulators(root / "Data" / "Emulators.xml")
     dirs: dict[str, Path] = {}
@@ -990,7 +990,7 @@ def detect_frontends(os_type: str, home: Path | None = None) -> list[str]:
 # The registry's path_exists rules (platforms/_registry.yml install.detect),
 # one row each: (os, platform, path, BIOS directory when it is not the path).
 # The manifests publish them too, but detection runs before any manifest is
-# fetched; a test holds this table equal to the registry. Without it a Linux
+# fetched. A test holds this table equal to the registry. Without it a Linux
 # home holding RetroPie/BIOS or .config/BizHawk/Firmware detected nothing.
 _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("windows", "retrobat", "C:\\RetroBat\\bios", None),
@@ -1118,7 +1118,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
 
     if os_type == "darwin":
         # open_default_config_file reads <Application Support>/RetroArch/config
-        # (configuration.c); a value left at default is the documents folder,
+        # (configuration.c). A value left at default is the documents folder,
         # or Application Support itself for a portable install
         # (platform_darwin.m). The config beside it is where older builds
         # kept it.
@@ -1267,7 +1267,7 @@ def core_dirs(plat: str, bios_path: Path) -> list[Path]:
     """The directories the RetroArch writing to bios_path loads cores from.
 
     The config detection read for this system directory names them in
-    libretro_directory; without one, a retroarch.cfg beside the system
+    libretro_directory. Without one, a retroarch.cfg beside the system
     directory is the portable layout. Unset, the setting is cores/ under
     RetroArch's own directory.
     """
@@ -1308,7 +1308,7 @@ def keeps_case(directory: Path) -> bool:
 
 
 def fold_case_twins(files: list[dict]) -> tuple[list[dict], list[str]]:
-    """One file per name where the directory folds case; the others named.
+    """One file per name where the directory folds case, the others named.
 
     The first in manifest order stays, as the pack's own order places it.
     """
@@ -1495,7 +1495,7 @@ def _check_omission(entry: dict, dest: str) -> None:
 
 
 def _check_download(entry: dict, where: str, dest: str) -> int:
-    """The size, hashes, source and cores of one downloadable copy; its size."""
+    """The size, hashes, source and cores of one downloadable copy, and its size."""
     size = entry.get("size")
     if isinstance(size, bool) or not isinstance(size, int) or not (0 <= size <= MAX_DOWNLOAD_SIZE):
         raise ValueError(f"invalid size for {dest}")
@@ -1535,7 +1535,7 @@ def _check_download(entry: dict, where: str, dest: str) -> int:
 
 
 def _check_slot(entry: dict, where: str, dest: str) -> int:
-    """The copies a platform file takes as cores and systems drop; the largest size."""
+    """The copies a platform file takes as cores and systems drop, and the largest size."""
     choices = entry.get("slot_choices", [])
     declared = entry.get("declared_choices")
     if declared is None and not choices:
@@ -1578,7 +1578,7 @@ def _check_slot(entry: dict, where: str, dest: str) -> int:
 def _check_entry(
     entry: object, where: str, seen_destinations: set[str]
 ) -> tuple[int, int]:
-    """Check one file entry; return its size and the largest copy it may fetch."""
+    """Check one file entry, return its size and the largest copy it may fetch."""
     if not isinstance(entry, dict):
         raise ValueError(f"{where} must be an object")
     dest = str(_safe_relative_path(entry.get("dest"), f"{where}.dest"))
@@ -1866,7 +1866,7 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
             delay = _retry_delay(attempt, None)
             problem = str(getattr(exc, "reason", None) or exc)
         # Said, or three 30-second attempts read as a frozen program.
-        print(f"  The {label} did not arrive ({problem}); trying again "
+        print(f"  The {label} did not arrive ({problem}), trying again "
               f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
@@ -1882,7 +1882,7 @@ def fetch_manifest(plat: str) -> dict:
         sys.exit(1)
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
-            # Asked once, a 4xx being final; the name was checked before any
+            # Asked once, a 4xx being final. The name was checked before any
             # request, so the revision is what has no such list.
             print(f"  No file list for {plat} at {RELEASE_REF}.", file=sys.stderr)
             if RELEASE_REF != DEFAULT_RELEASE_REF:
@@ -2005,7 +2005,7 @@ def designated_cores(manifest: dict, names: list[str]) -> set[str]:
     """The cores a list of names designates, the way the pack builder reads it.
 
     A target list, or a core found installed, names a core the buildbot's
-    way (`mednafen_psx`); a file names the profile that reads it
+    way (`mednafen_psx`), and a file names the profile that reads it
     (`beetle_psx`). `core_names` gives each profile its other names.
     """
     wanted = set(names)
@@ -2110,11 +2110,11 @@ def region_drops(
 
     The pack builder's rule (region.resolve_region_drops), replayed over the
     groups the manifest records. Per group, the best-ranked regional file
-    stays; a world file beats unmatched regional ones the code does not search
-    before it (`priority`, lower first); when nothing matches and no world
+    stays. A world file beats unmatched regional ones the code does not search
+    before it (`priority`, lower first). When nothing matches and no world
     file exists, every regional file stays, so a group is never emptied. A file with no region never competes and always stays.
 
-    A core extra competes whatever systems are chosen; a platform's own
+    A core extra competes whatever systems are chosen, while a platform's own
     declaration competes only when its system is kept, as in the pack.
     """
     if not requested:
@@ -2170,7 +2170,7 @@ def region_drops(
 def entry_systems(entry: dict) -> list[str]:
     """The platform systems a file or an omission belongs to.
 
-    An omission's `system` is spelled the way its profile spells it; only
+    An omission's `system` is spelled the way its profile spells it. Only
     `systems` names the platform's own, the ones --system accepts.
     """
     return list(entry.get("systems") or [])
@@ -2212,7 +2212,7 @@ def _chosen(entry: dict, wanted: set[str]) -> bool:
 
 
 def records_selection(files: list[dict]) -> bool:
-    """Whether a manifest carries what narrowing reads; older ones do not."""
+    """Whether a manifest carries what narrowing reads. Older ones do not."""
     return any("systems" in entry for entry in files)
 
 
@@ -2486,7 +2486,7 @@ def _download_one(
                             counted += len(chunk)
                 if downloaded != expected_size:
                     raise ValueError(
-                        f"downloaded {downloaded} bytes; expected {expected_size}"
+                        f"downloaded {downloaded} bytes, expected {expected_size}"
                     )
 
             expected_sha256 = f.get("sha256", "")
@@ -2503,7 +2503,7 @@ def _download_one(
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
             if partial is not None and os.name == "nt":
-                # Windows renames no open file; elsewhere the lock is held
+                # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
                 partial.close()
             os.replace(tmp_path, dest)
@@ -2511,7 +2511,7 @@ def _download_one(
 
         except _Interrupted:
             # Stopped mid-transfer: a large file keeps its partial copy for
-            # the next run; a small one is dropped rather than left beside
+            # the next run, and a small one is dropped rather than left beside
             # the destination.
             if tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
@@ -2575,7 +2575,7 @@ def _download_one(
 
 
 def _partial_size(path: Path) -> int:
-    """Bytes already held by a partial copy; anything but a plain file is dropped."""
+    """Bytes already held by a partial copy. Anything but a plain file is dropped."""
     try:
         info = path.lstat()
     except FileNotFoundError:
@@ -3107,7 +3107,7 @@ def do_standalone_copies(
                 if fnmatch(f.name, entry["pattern"]) and f.is_file()
             ]
         else:
-            # `source` is where this platform's manifest put the file; `file`
+            # `source` is where this platform's manifest put the file, and `file`
             # names it as the registry does for every platform, and laid out
             # that way it was missing wherever the pack places it elsewhere.
             src = _destination_path(bios_path, entry.get("source") or entry["file"])
@@ -3281,7 +3281,7 @@ def _sized(files: list[dict]) -> str:
 
 
 def _pick(title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False) -> list[str]:
-    """Numbered list of names; an empty answer keeps every one."""
+    """Numbered list of names. An empty answer keeps every one."""
     if not rows:
         return []
     print(f"\n{title}")
@@ -3316,7 +3316,7 @@ def _prompt_custom_selection(
 
     Enter installs everything, the default most runs want. Returns None
     then, INSTALLED_ONLY for what `installed` (the files the cores found
-    installed read) holds, or the three choices; each empty list keeps
+    installed read) holds, or the three choices. Each empty list keeps
     everything on its axis.
     """
     print(f"\n{plat.capitalize()}: {_sized(files)}.")
@@ -3512,7 +3512,7 @@ def main() -> None:
         "--system",
         action="append",
         metavar="NAME",
-        help="install only these systems (repeat or comma-separate; see "
+        help="install only these systems (repeat or comma-separate, see "
              "--list-systems)",
     )
     parser.add_argument(
@@ -3541,7 +3541,7 @@ def main() -> None:
     parser.add_argument(
         "--no-input",
         action="store_true",
-        help="never ask a question; fail where an answer is needed",
+        help="never ask a question and fail where an answer is needed",
     )
     parser.add_argument(
         "--dry-run",
@@ -3752,7 +3752,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         variants = manifest.get("case_variants", [])
         case_kept = keeps_case(bios_path)
         if variants and case_kept:
-            # The list is folded for Windows and macOS; here bios.col and
+            # The list is folded for Windows and macOS, but here bios.col and
             # BIOS.col are two files that two cores open.
             files = files + variants
         if not case_kept:

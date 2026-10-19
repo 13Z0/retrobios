@@ -108,7 +108,7 @@ SYSTEMS_TREE_URL = (
 )
 SYSTEMS_DIR = "package/recalbox-romfs2/systems"
 # One raw read per system.ini made about 150 requests and GitLab throttled
-# the scrape past half an hour; GraphQL returns a batch of blobs at once.
+# the scrape past half an hour. GraphQL returns a batch of blobs at once.
 GRAPHQL_URL = "https://gitlab.com/api/graphql"
 BLOBS_QUERY = (
     "query($paths: [String!]!, $ref: String!) { project(fullPath: \"recalbox/recalbox\") "

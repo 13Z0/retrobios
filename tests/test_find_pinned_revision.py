@@ -1,7 +1,7 @@
 """A platform's pinned revision found in its upstream history.
 
 RetroArch pins ScummVM's queen.tbl and FBNeo's hiscore.dat at revisions
-today's upstream no longer carries; the bytes are in the project's history.
+today's upstream no longer carries, but the bytes are in the project's history.
 """
 
 from __future__ import annotations

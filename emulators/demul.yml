@@ -147,7 +147,7 @@ files:
     required: false
     hle_fallback: true
     category: bios_zip
-    note: "MIE (Maple-JVS bridge) Z80 MCU firmware (315-6146.bin). HLE mode available; LLE mode requires this archive."
+    note: "MIE (Maple-JVS bridge) Z80 MCU firmware (315-6146.bin). HLE mode available, LLE mode requires this archive."
 
   - name: jvs13551.zip
     required: true

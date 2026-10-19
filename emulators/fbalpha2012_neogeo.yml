@@ -57,4 +57,4 @@ notes: |
 
 files: []
 
-exclusion_note: "Neo Geo BIOS is a parent ROM set (neogeo.zip) placed in the ROM directory alongside game ZIPs. Not a system directory file — follows arcade ROM set convention."
+exclusion_note: "Neo Geo BIOS is a parent ROM set (neogeo.zip) placed in the ROM directory alongside game ZIPs. Not a system directory file, it follows the arcade ROM set convention."

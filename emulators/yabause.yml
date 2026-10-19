@@ -14,7 +14,7 @@ systems:
 
 notes: |
   Yabause is a software-rendered Sega Saturn emulator. Upstream project is
-  dead; libretro port maintained by the community on the master branch of
+  dead. The libretro port is maintained by the community on the master branch of
   libretro/yabause.
 
   Saturn BIOS search order:

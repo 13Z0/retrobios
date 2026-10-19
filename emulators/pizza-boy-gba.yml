@@ -38,7 +38,7 @@ notes: |
   eight the library does not export.
 
   The BIOS is the one file the user supplies, and it is read only while Load BIOS file
-  is on, off by default; the picker and the Run BIOS animation switch, on by default,
+  is on, off by default. The picker and the Run BIOS animation switch, on by default,
   both depend on that box (res/xml/pref_general.xml). In the free package the same
   three preferences are declared android:enabled="false".
 
@@ -65,7 +65,7 @@ files:
     description: "Game Boy Advance BIOS"
     note: >-
       Chosen from any location under any name through the document picker, or, when the
-      picked document is named .zip, taken from its first entry; the legacy browser
+      picked document is named .zip, taken from its first entry. The legacy browser
       offers .gba, .bin and .zip and writes the entry it extracts to bios.bin under the
       application directory. The absolute path is stored and handed to the library,
       which copies it into a 256 byte buffer. At load time the 16 KB BIOS area is first

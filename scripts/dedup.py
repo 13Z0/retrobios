@@ -196,7 +196,7 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
         previous = {}
     except json.JSONDecodeError as e:
         raise SystemExit(
-            f"{clone_path} is not valid JSON ({e}); restore it from git "
+            f"{clone_path} is not valid JSON ({e}). Restore it from git "
             "before deduplicating again"
         ) from e
 

@@ -89,7 +89,7 @@ def _entry_rule(emu_name: str, f: dict, checks: set[str]) -> dict:
 def warned_checks(f: dict, checks: set[str]) -> set[str]:
     """The checks of an entry the code warns about instead of refusing.
 
-    `on_mismatch: warn` covers every check; a map names them one by one, as
+    `on_mismatch: warn` covers every check, while a map names them one by one, as
     Azahar refuses a SecureInfo_A of the wrong size and only logs a bad
     signature.
     """
@@ -340,7 +340,7 @@ def check_file_validation(
     them must accept it through one of its own entries for the name, the
     way each runs its own check. Without, the checks of every core naming
     the file are merged. A check declared `on_mismatch: warn` rejects
-    nothing, since the core runs with the file; ``strict`` counts it, to
+    nothing, since the core runs with the file, while ``strict`` counts it, to
     prefer a file that passes it too.
 
     Returns None if all checks pass or no validation applies.
@@ -786,7 +786,7 @@ def validated_choice(
     """The file a platform destination ships, and the disagreement if any.
 
     A frontend's own check can pass while an emulator it runs rejects the
-    file; a held variant both accept replaces it. The pack and the install
+    file. A held variant both accept replaces it. The pack and the install
     manifest both read this, so they name the same file. A destination
     another emulator declares more precisely is that emulator's: ZEsarUX's
     48 KB cpc6128.rom check has no say over ep128emu/roms/cpc6128.rom.
@@ -816,8 +816,8 @@ def validated_choice(
 
     if not check(local_path, True):
         return local_path, None
-    # A held file every check passes, warn-level ones included, comes first;
-    # then the file itself when only a warning fails (the core runs it);
+    # A held file every check passes, warn-level ones included, comes first,
+    # then the file itself when only a warning fails (the core runs it),
     # then a held file the core at least runs.
     better = variant(True)
     if better:
@@ -839,6 +839,6 @@ def existence_discrepancy(file_entry: dict, local_path: str, platform_display: s
     declared = file_entry.get("md5", "") or file_entry.get("sha1", "")
     actual = compute_hashes(local_path)
     return (
-        f"packed per {platform_display} existence check; declared hash {declared}, "
+        f"packed per {platform_display} existence check: declared hash {declared}, "
         f"file md5 {actual['md5']} sha1 {actual['sha1']}"
     )

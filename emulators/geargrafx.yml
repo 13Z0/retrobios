@@ -24,7 +24,7 @@ notes: |
   picks the file name from the core option geargrafx_cdrom_bios
   (platforms/libretro/libretro.cpp:1568-1591): System Card 1 loads
   syscard1.pce, System Card 2 loads syscard2.pce, System Card 3 (the default)
-  and Force Game Express load syscard3.pce; the older values Auto and Game
+  and Force Game Express load syscard3.pce. The older values Auto and Game
   Express are still accepted and map to the same. The path is
   "{system_directory}/{name}" (platforms/libretro/libretro.cpp:736). When the
   card is missing the core posts "CD-ROM BIOS not found" and continues
@@ -43,7 +43,7 @@ notes: |
   (src/defines.h:53-54). CRC32 is computed over the accepted image.
   GatherBIOSInfoFromDB() (src/media.cpp:1027-1061) looks the CRC up in
   k_game_database entries flagged GG_GAMEDB_BIOS_SYSCARD or
-  GG_GAMEDB_BIOS_GAME_EXPRESS (src/game_db.h:48-56); an unknown CRC marks the
+  GG_GAMEDB_BIOS_GAME_EXPRESS (src/game_db.h:48-56). An unknown CRC marks the
   image "Unknown" and invalid but it is still used.
 
   For CD content the ROM banks map onto the System Card buffer, or onto the
@@ -64,11 +64,11 @@ notes: |
   (platforms/libretro/libretro.cpp:775-797). Media::LoadPacBiosData()
   (src/media.cpp:570-632) accepts 0x80000 bytes (GG_BIOS_LASERACTIVE_SIZE,
   src/defines.h:55), with or without a 512-byte header, and compares the
-  CRC32 with the values hardcoded for the region; an unknown CRC is logged
+  CRC32 with the values hardcoded for the region. An unknown CRC is logged
   and the image is still used. SelectPacBios() (src/media.cpp:634-660) follows
   the option, then the regionCode of the MMI image, then whichever region is
   loaded. An MMI image that names no card maps the PAC firmware
-  (src/media.cpp:1094-1103); one that names a card uses the System Card or
+  (src/media.cpp:1094-1103), and one that names a card uses the System Card or
   Game Express buffer. retro_load_game() fails when the firmware the MMI
   image needs is not loaded (platforms/libretro/libretro.cpp:534-549).
 

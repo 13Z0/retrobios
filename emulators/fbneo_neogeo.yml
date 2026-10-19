@@ -47,7 +47,7 @@ archive_prefix: fbneo
 
 files:
   # -------------------------------------------------------
-  # Neo Geo MVS/AES (neogeo.zip) — 68K BIOS ROMs
+  # Neo Geo MVS/AES (neogeo.zip), 68K BIOS ROMs
   # -------------------------------------------------------
   - name: "sp-s3.sp1"
     archive: neogeo.zip

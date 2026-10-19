@@ -13,7 +13,7 @@ verification: existence
 notes: >
   Android and desktop application by Robert Broglia built on EmuFramework,
   vendoring Mednafen's pce_fast and pce modules. Both are compiled and
-  selectable at runtime; pce_fast is what an unset core option resolves to
+  selectable at runtime, and pce_fast is what an unset core option resolves to
   (PCE.emu/src/main/system.ccm:125).
 
   HuCard content (.pce, .sgx) loads with no external file. CD content
@@ -35,7 +35,7 @@ notes: >
   member ending in .pce, .bin or .bios is used (MDFNFILE.cc:41-76).
 
   Neither module hashes the image. pce_fast skips a 512-byte copier header
-  then reads a fixed 262144 bytes (huc.cpp:299-302); pce reads
+  then reads a fixed 262144 bytes (huc.cpp:299-302), while pce reads
   min(rounded length, length) and accepts any size (huc.cpp:225-316).
   HuC_Load is always called with SYSCARD_3, or SYSCARD_ARCADE when Arcade
   Card emulation is on (pce.cpp:653).
@@ -56,7 +56,7 @@ files:
     note: >
       min_size comes from the fixed 262144-byte read in pce_fast
       (huc.cpp:302) with Stream::read throwing on a short file
-      (Stream.h:88); a 262656-byte dump passes through the copier-header
+      (Stream.h:88). A 262656-byte dump passes through the copier-header
       skip at huc.cpp:299. The pce module imposes no minimum.
 
   - name: "gecard.pce"
@@ -67,6 +67,6 @@ files:
     source_ref: "src/pce/pce.cpp:512-551 (DetectGECD), src/pce/pce.cpp:644-646 (gecdbios branch), src/pce/huc.cpp:225-316 (size-agnostic read), src/pce/pce.cpp:1095 (name)"
     note: >
       Reached only when the accurate module runs and DetectGECD matches the
-      disc; pce_fast has no Games Express branch. Served through the same
+      disc, since pce_fast has no Games Express branch. Served through the same
       System Card setting, so the user points it at this image to boot those
       discs.

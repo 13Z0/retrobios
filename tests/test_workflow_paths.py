@@ -80,7 +80,7 @@ class DeploySiteTriggers(unittest.TestCase):
         )
         self.assertIn("generate_site.py", entry_points)
         # mkdocs build runs the hooks mkdocs.yml names: a script of the build.
-        # The file carries Python tags safe_load refuses; the list is plain.
+        # The file carries Python tags safe_load refuses, but the list is plain.
         mkdocs = (REPO_ROOT / "mkdocs.yml").read_text(encoding="utf-8")
         hooks = re.search(r"^hooks:\n((?:  - .+\n)+)", mkdocs, re.M)
         entry_points += [
@@ -140,7 +140,7 @@ class DocumentedSteps(unittest.TestCase):
         self.assertEqual(silent, [])
 
     def test_the_scraper_recipe_names_every_abstract_method(self):
-        """tools.md said implement fetch_requirements(); validate_format() is
+        """tools.md said implement fetch_requirements(), but validate_format() is
         abstract too, and a scraper written from the page could not be built."""
         source = (SCRIPTS / "scraper" / "base_scraper.py").read_text(encoding="utf-8")
         abstract = re.findall(r"@abstractmethod\s+def (\w+)", source)

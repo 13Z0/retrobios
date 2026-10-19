@@ -170,7 +170,7 @@ def pinned_base(wanted: dict[str, str], scraped: dict | None) -> str:
 
 
 def _raw_url(url: str) -> str:
-    """A GitHub blob page names a revision but serves HTML; raw serves bytes."""
+    """A GitHub blob page names a revision but serves HTML, raw serves bytes."""
     marker = "/blob/"
     if url.startswith("https://github.com/") and marker in url:
         owner_repo, _, path = url[len("https://github.com/") :].partition(marker)
@@ -203,7 +203,7 @@ _RAW_GITHUB = re.compile(r"^https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/
 
 
 def _at_revision(url: str, base: str) -> str:
-    """A file of the pinned repository, read at the pinned revision; empty
+    """A file of the pinned repository, read at the pinned revision, empty
     when the URL is not a raw GitHub URL of that repository.
 
     ROCKNIX's checker sits in packages/rocknix/, the emulators it names in

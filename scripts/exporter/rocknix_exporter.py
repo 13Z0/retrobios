@@ -37,7 +37,7 @@ class Exporter(BatoceraExporter):
     def _runner_pair(self, runner: tuple[bool, str]) -> tuple[str, str | None] | None:
         """ROCKNIX registers libretro cores under `retroarch` and each
         standalone under its own emulator (`azahar azahar-sa`), in the
-        emulators package; the `libretro` Batocera writes names nothing
+        emulators package. The `libretro` Batocera writes names nothing
         there."""
         _standalone, name = runner
         emulator = self._emulator_of.get(name)

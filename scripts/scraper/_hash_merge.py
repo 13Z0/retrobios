@@ -76,7 +76,7 @@ def merge_mame_profile(
             updated_bios.append(entry)
             matched_names.add(set_name)
         elif add_new:
-            # New BIOS set — only added to the main profile
+            # New BIOS set, only added to the main profile
             entry = {
                 "name": f"{set_name}.zip",
                 "required": True,
@@ -88,7 +88,7 @@ def merge_mame_profile(
             updated_bios.append(entry)
 
     # Entries not matched by the scraper stay untouched
-    # (computer ROMs, device ROMs, etc. — outside BIOS root set scope)
+    # (computer ROMs, device ROMs, etc., outside BIOS root set scope)
     for set_name, entry in existing_by_name.items():
         if set_name not in matched_names:
             updated_bios.append(entry)
@@ -296,7 +296,7 @@ def _diff_fbneo(
     }
 
 
-# ── Helpers ──────────────────────────────────────────────────────────
+# Helpers
 
 
 def _load_yaml(path: str) -> dict[str, Any]:
@@ -399,7 +399,7 @@ def _patch_core_version(text: str, version: str) -> str:
 
 
 def _patch_scalar(text: str, key: str, value: str) -> str:
-    """Replace a top-level scalar in-place, quoted; absent value, no change."""
+    """Replace a top-level scalar in-place, quoted. An absent value changes nothing."""
     if not value:
         return text
     return re.sub(
@@ -600,7 +600,7 @@ def _patch_block_values(block: str, entry: dict) -> str:
             match = _FIELD_LINE.match(line)
             if match and match["key"] == key:
                 if match["value"].strip().strip('"') != str(value):
-                    # A size comment spells the old value; it goes with it.
+                    # A size comment spells the old value, so it goes with it.
                     lines[i] = f"    {key}: {rendered}"
                 break
         else:
@@ -619,7 +619,7 @@ def _backup_and_write_fbneo(path: str, data: dict, hashes: dict) -> None:
     FBNeo profiles have individual ROM entries with archive: field.
     Patches core_version, the content values of existing entries that
     changed, and appends new ROM entries. Advancing core_version alone left
-    a profile claiming a release whose crc32 it did not carry; comments and
+    a profile claiming a release whose crc32 it did not carry. Comments and
     curated source_refs stay as written.
     """
     p = Path(path)

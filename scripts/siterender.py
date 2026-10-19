@@ -13,7 +13,7 @@ SYSTEM_ICON_BASE = "https://raw.githubusercontent.com/libretro/retroarch-assets/
 ICON_CACHE_PATH = Path(".cache") / "system_icons.json"
 
 # Icon names confirmed to exist upstream. A name absent from this map has not
-# been checked yet; a name mapped to False has no icon and gets none rendered,
+# been checked yet. A name mapped to False has no icon and gets none rendered,
 # because a heading with a broken image reads worse than a heading without one.
 _icon_available: dict[str, bool] = {}
 
@@ -136,6 +136,12 @@ def _system_link(sys_id: str, prefix: str = "") -> str:
         return f"[{sys_id}]({prefix}systems/{slug}.md#{anchor})"
     return sys_id
 
+def _field_text(key: object, value: object) -> str:
+    """A scalar of a structured block. A source reference reads as code."""
+    text = str(value)
+    return f"`{text}`" if key == "source_ref" else text
+
+
 def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
     """Render any YAML value as indented markdown."""
     pad = " " * indent
@@ -151,7 +157,7 @@ def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
                 for item in v:
                     if isinstance(item, dict):
                         parts = [
-                            f"{ik}: {iv}"
+                            f"{ik}: {_field_text(ik, iv)}"
                             for ik, iv in item.items()
                             if not isinstance(iv, (dict, list))
                         ]
@@ -164,12 +170,12 @@ def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
                 sv = str(v)
                 if len(sv) > 200:
                     sv = sv[:200] + "..."
-                lines.append(f"{pad}- **{k}:** {sv}")
+                lines.append(f"{pad}- **{k}:** {_field_text(k, sv)}")
     elif isinstance(val, list):
         for item in val:
             if isinstance(item, dict):
                 parts = [
-                    f"{ik}: {iv}"
+                    f"{ik}: {_field_text(ik, iv)}"
                     for ik, iv in item.items()
                     if not isinstance(iv, (dict, list))
                 ]

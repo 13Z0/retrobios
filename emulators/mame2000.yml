@@ -40,7 +40,7 @@ files:
     source_ref: "src/hiscore.c:18,132-146,252-254"
     note: >-
       high score definitions, loaded from ROM directory. metadata/hiscore.dat
-      of the core repository; is_mem_range reads only "cpu:addr:len:start:end"
+      of the core repository. is_mem_range reads only "cpu:addr:len:start:end"
       lines under a "gamename:" header.
 
   - name: cheat.dat

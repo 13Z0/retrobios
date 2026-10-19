@@ -31,13 +31,13 @@ notes: |
   tape or BIN, then the configuration directory (hardware/memory/cartridge/supercharger/bios.go:53-116). Each candidate
   name is tried in turn and the content is gated on MD5 before the caller checks
   the 2048 byte length, so a file under the right name with the wrong content is
-  refused. ReqSpec selects the PAL table and the PAL hash (hardware/memory/cartridge/supercharger/bios.go:56-59);
+  refused. ReqSpec selects the PAL table and the PAL hash (hardware/memory/cartridge/supercharger/bios.go:56-59).
   ReqSpec comes from the television specification, the stella.pro entry or the
   filename (cartridgeloader/loader.go:194-201).
 
   The demo unit is recognised by MD5 of the 256 bytes at 0x300 of the loaded
   image (hardware/memory/cartridge/supercharger/demounit.go:58,78). When that image carries more than 2048 bytes it
-  holds the Schweber chip and the carousel together; otherwise the eight ROMs
+  holds the Schweber chip and the carousel together, otherwise the eight ROMs
   are read from the directory of the loaded file (demounit_controller.go:
   178-200). A read error or a length other than 8192 logs and returns nil, and
   the peripheral is left unplugged.
@@ -46,7 +46,7 @@ notes: |
   configuration directory (properties/properties.go:28,48-58). It is loaded by
   NewDebugger (debugger/debugger.go:357), which drives play as well as debug
   (gopher2600.go:261,307,326), so it applies to the plain `gopher2600 <rom>`
-  invocation. A missing file is logged and start-up continues; the ROM selector
+  invocation. A missing file is logged and start-up continues. The ROM selector
   then falls back to the filename and no television specification is inferred
   from the cartridge name.
 

@@ -53,7 +53,7 @@ class Exporter(BaseExporter):
         """No hash or size is written, so no correction is delivered.
 
         Every call holding a hash holds one BizHawk declares, the authority
-        for its cores; the calls without one are SHA1Checksum.Dummy, a
+        for its cores. The calls without one are SHA1Checksum.Dummy, a
         per-console dump (DSi firmware, NAND) BizHawk leaves unhashed on
         purpose. The rewrite this exporter had could only ever fire on a
         same-named call of another system, giving it the wrong system's hash.

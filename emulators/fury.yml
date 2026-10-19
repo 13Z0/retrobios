@@ -30,7 +30,7 @@ notes: |
   No hash or filename is validated by the engine: Ion Fury ships one GRP
   (fury.grp) that holds every map, art bank, sound and DEF the game needs,
   plus a small number of top-level files the retail installers lay down
-  alongside it. Only the GRP is listed below; the other files
+  alongside it. Only the GRP is listed below. The other files
   (fury.cfg, settings.cfg, saves, screenshots) are user state.
 
 files:

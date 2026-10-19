@@ -47,7 +47,7 @@ systems:
   - konami-twinkle
 
 notes: |
-  Universal Machine Emulator — combined MAME + MESS before the official
+  Universal Machine Emulator: combined MAME + MESS before the official
   merge at MAME 0.162. Same repo as mame2015 (mame2015-libretro), built
   with -DWANT_UME including both mame.mak and mess.mak. 69 arcade BIOS
   root sets (identical to mame2015), plus 619 MESS computer/console
@@ -73,7 +73,7 @@ files:
     size: 216250
     source_ref: "src/emu/hiscore.c:122-138,335-337"
     note: >-
-      high score definitions, external file, not embedded. metadata/hiscore.dat of the core repository; is_mem_range reads
+      high score definitions, external file, not embedded. metadata/hiscore.dat of the core repository. is_mem_range reads
       only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   # SNK Neo Geo MVS/AES

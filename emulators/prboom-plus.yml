@@ -51,7 +51,7 @@ notes: |
   snd_midiplayer picks the MIDI backend and defaults to fluidsynth on Windows,
   sdl elsewhere (prboom2/src/m_misc.c:444-450). Only the sdl value leaves
   use_experimental_music clear and routes MIDI through SDL_mixer
-  (SDL/i_sound.c:1662-1668, 1221-1225); every other value brings up the
+  (SDL/i_sound.c:1662-1668, 1221-1225), while every other value brings up the
   in-tree players. Their init results are recorded once at startup
   (SDL/i_sound.c:1383-1384) and consulted per song, a player that failed to
   init being logged and passed over for the next entry of music_player_order
@@ -74,7 +74,7 @@ files:
       neither IWAD nor PWAD (prboom2/src/w_wad.c:216-218). Hashes are those of the file
       rdatawad produces from the data/ assets at this revision, which matches
       the copy in the v2.6.66 release archive byte for byte. They identify the
-      2.6.66 build; other versions carry different lumps.
+      2.6.66 build, and other versions carry different lumps.
 
   - name: "TimGM6mb.sf2"
     system: doom

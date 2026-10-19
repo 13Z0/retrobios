@@ -1,6 +1,6 @@
 """Cross-check profile region: values against dump-catalog provenance.
 
-Advisory only. The emulator source decides what a region: value should be; this
+Advisory only. The emulator source decides what a region: value should be. This
 reports where an independent catalogue disagrees, so a hand-written value gets a
 second opinion before it is trusted.
 

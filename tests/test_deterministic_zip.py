@@ -325,7 +325,7 @@ class TestPackDeterminism(unittest.TestCase):
     def test_an_executable_source_stays_executable(self):
         """Pinning the mode stripped the bit the RetroDECK pack needs.
 
-        It ships the two Voxatron engine binaries; extracted at 644 they
+        It ships the two Voxatron engine binaries, and extracted at 644 they
         cannot be run. Git records the bit, so reading it from the source
         leaves the pack the same from any clone.
         """

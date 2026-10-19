@@ -150,7 +150,7 @@ notes: |
   "gmaster" (18 games). Driver in handheld/gmaster.cpp, in mess.flt.
 
   Fujitsu FM-7: 5 machines (fm7 parent, fmnew7 FM-NEW7, fm77av FM-77AV
-  IMPERFECT_GRAPHICS, fm7740sx FM-77AV40SX NOT_WORKING; fm8 FM-8
+  IMPERFECT_GRAPHICS, fm7740sx FM-77AV40SX NOT_WORKING, fm8 FM-8
   separate parent). M6809-based home computer family (1982-1988). fm7
   parent set has F-BASIC 3.00, sub-CPU ROM, boot ROMs and optional Kanji
   ROM. fm77av adds initiate ROM, subsys A/B/CG ROMs and requires Kanji.
@@ -185,7 +185,7 @@ notes: |
   MACHINE_IMPERFECT_GRAPHICS. mz2500 parent set has 6 ROMs: IPL, character
   generator ("hand made?" comment), kanji level 1, kanji level 2, dictionary,
   phone. mz2520 clone shares all ROMs except IPL (ipl2520.rom). cgrom region
-  declared but not dereferenced in driver code; loaded by MAME ROM system.
+  declared but not dereferenced in driver code, but loaded by MAME ROM system.
   Software lists: mz2500_flop, compatible with mz2000_flop.
   Driver in sharp/mz2500.cpp, in mess.flt.
 
@@ -193,7 +193,7 @@ notes: |
   of mz700, mz800 separate parent MZ-800 MACHINE_NOT_WORKING, mz1500 separate
   parent MZ-1500 MACHINE_NOT_WORKING). Z80-based home computer family (1982-1984).
   mz700 parent set has monitor ROM and character generator ROM. mz800 parent set
-  has monitor ROM with 4 BIOS alternatives (official 9Z-504M + 3 Willy's variants);
+  has monitor ROM with 4 BIOS alternatives (official 9Z-504M + 3 Willy's variants),
   no cgrom (uses CGRAM). mz1500 is the Japanese MZ-800 with its own monitor ROM
   and shares cgrom format from mz700. Software lists: mz700_cass (mz700),
   mz800_cass (mz800/mz1500). Driver in sharp/mz700.cpp, in mess.flt.
@@ -1789,7 +1789,7 @@ files:
   # Model I (trs80.cpp): trs80 (Level I, parent, WORKING), trs80l2 (Level II, parent),
   # eg3003 (EACA Video Genie, parent), sys80/sys80p (clones), ht1080z/ht1080z2/ht108064 (clones).
   # Model III/4/4P (trs80m3.cpp): trs80m3 (parent), trs80m4/trs80m4p/cp500 (clones).
-  # Z80-based home computers (1977-1983). Only trs80 (Level I) is MACHINE_SUPPORTS_SAVE;
+  # Z80-based home computers (1977-1983). Only trs80 (Level I) is MACHINE_SUPPORTS_SAVE,
   # all others MACHINE_NOT_WORKING. Software lists: trs80_cass, trs80_flop, trs80_quik.
   - name: trs80.zip
     required: true
@@ -2008,7 +2008,7 @@ files:
     system: trs80
     source_ref: "src/mame/trs/trs80m3.cpp:530-539"
     note: |
-      TRS-80 Model 4P (1983). Clone of trs80m3. Completely different memory map;
+      TRS-80 Model 4P (1983). Clone of trs80m3. Completely different memory map:
       Model III ROMs loaded from boot disk, only a bootloader ROM on board.
       2 BIOS variants: gate array (default) and disk loader hack.
       MACHINE_NOT_WORKING.

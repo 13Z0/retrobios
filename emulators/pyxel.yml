@@ -5,7 +5,7 @@ source: "https://github.com/kitao/pyxel"
 upstream: "https://github.com/kitao/pyxel"
 profiled_date: "2026-10-04"
 source_commit: "50f9bd77780c993aca62b5b221766bde5791081d"
-upstream_gone: "github.com/kitao/pyxel answers HTTP 404 to the API and the web, with no redirect. Observed 2026-10-18; no mirror found."
+upstream_gone: "github.com/kitao/pyxel answers HTTP 404 to the API and the web, with no redirect. Observed 2026-10-18, no mirror found."
 core_version: "v2.9.9"
 display_name: "Pyxel"
 cores: [pyxel]
@@ -28,10 +28,10 @@ notes: |
   Batocera's packaging (package/batocera/emulators/python-pyxel/python-pyxel.mk)
   installs the wheel into site-packages, drops the examples, and provides a
   pyxel.keys evmapy layout. The content run by Pyxel is the user's .pyxapp or
-  .py file, which plays the role of a cartridge; those are user content, not
+  .py file, which plays the role of a cartridge. Those are user content, not
   pack contents.
 
-  The engine refuses nothing on startup; a bare `pyxel init` plus a user
+  The engine refuses nothing on startup: a bare `pyxel init` plus a user
   script is enough to run.
 
 files: []

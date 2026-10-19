@@ -12,7 +12,7 @@ systems: [jediacademy, jediknight2]
 notes: |
   id Tech 3 source port for Star Wars Jedi Knight: Jedi Academy (JKA, single
   and multiplayer) and Star Wars Jedi Knight II: Jedi Outcast (JK2, single
-  player only; JK2 MP is not supported, upstream points users to JK2MV).
+  player only, as JK2 MP is not supported and upstream points users to JK2MV).
 
   One source tree, three binaries:
     openjk_sp     JKA SP, built from code/ with BuildSPEngine
@@ -83,7 +83,7 @@ files:
 
   # ================================================================
   # Jedi Outcast retail (base/, assets0.pk3, assets1.pk3, assets2.pk3,
-  # assets5.pk3). Loaded by openjo_sp (JK2_MODE); openjk upstream does
+  # assets5.pk3). Loaded by openjo_sp (JK2_MODE). openjk upstream does
   # not build a JK2 MP engine.
   # ================================================================
 
@@ -93,7 +93,7 @@ files:
     path: "base/assets0.pk3"
     required: true
     source_ref: "code/qcommon/files.cpp:3002-3003 (default.cfg ERR_FATAL), code/CMakeLists.txt:450-453 (JK2_MODE build)"
-    note: "Retail JK2 base archive. Carries default.cfg; openjo_sp aborts without it."
+    note: "Retail JK2 base archive. Carries default.cfg, and openjo_sp aborts without it."
 
   - name: "assets1.pk3"
     category: game_data

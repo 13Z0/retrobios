@@ -1,7 +1,7 @@
 """A file's readers are the entries that resolve to it, not those sharing its name.
 
 The site joined database files to emulators and platforms by bare name. The
-collection holds the pak0.pk3 of Quake III and of Enemy Territory; each page
+collection holds the pak0.pk3 of Quake III and of Enemy Territory, and each page
 named every engine that reads a pak0.pk3 as a reader of both, which is the
 homonym tests/test_game_data_homonyms.py forbids the resolver to serve.
 """

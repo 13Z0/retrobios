@@ -77,7 +77,7 @@ files:
       it: the gate reads usr/bin/env and bin/sh in the extracted tree beside
       libproot.so in the native library directory. Integrity comes from a
       .sha256 sidecar requested next to the asset, whose first whitespace token
-      must be 64 hex characters; the file is hashed and dropped on a mismatch,
+      must be 64 hex characters. The file is hashed and dropped on a mismatch,
       while a missing sidecar logs "No rootfs checksum sidecar available" and the
       download is kept on TLS trust alone, which is what happens today since that
       sidecar answers 404. The size and hash recorded here identify release

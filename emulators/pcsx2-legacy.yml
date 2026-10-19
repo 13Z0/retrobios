@@ -25,7 +25,7 @@ notes: |
   BIOS selection lists every file in the folder with a *.* mask and keeps the
   ones whose romdir carries a RESET entry followed by a readable ROMVER, which
   supplies the version, the zone letter and the build date. Neither size nor
-  hash is checked; the length test that would reject small images is commented
+  hash is checked, and the length test that would reject small images is commented
   out. A missing or zero-length image raises BiosLoadFailed.
   ref: pcsx2/gui/Panels/BiosSelectorPanel.cpp:151-177,
        pcsx2/ps2/BiosTools.cpp:74-167, pcsx2/ps2/BiosTools.cpp:325-341,

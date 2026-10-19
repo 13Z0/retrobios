@@ -9,8 +9,8 @@ MiSTer verification logic (MiSTer-devel/Downloader_MiSTer):
 - file_system.py:705-712, hash_file() is a plain MD5 of the file bytes
 - jobs/process_db_index_worker.py:216, an installed file is up to date when
   its MD5 equals the description hash
-- jobs/process_db_index_worker.py:242, integrity checks compare MD5 only;
-  the declared size is logged on failure but never gates the result
+- jobs/process_db_index_worker.py:242, integrity checks compare MD5 only,
+  and the declared size is logged on failure but never gates the result
 - jobs/fetch_file_worker.py:61-65, a freshly downloaded file is rejected on
   MD5 mismatch
 
@@ -51,7 +51,7 @@ SOURCE_URL = (
 
 DB_MEMBER = "bios_db.json"
 
-# Files live under games/ on the SD card; base_destination carries that prefix
+# Files live under games/ on the SD card, and base_destination carries that prefix
 DB_ROOT = "games/"
 
 # MiSTer core folder -> (retrobios system ID, display name, core repository)

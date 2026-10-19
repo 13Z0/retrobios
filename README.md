@@ -32,8 +32,8 @@ The script auto-detects your platform, downloads only missing files, and verifie
 
 ## Download BIOS packs
 
-One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions; for a bare minimum, build your own pack below.
-Files is how many the pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted; the ZIP itself downloads smaller.
+One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
+Files is how many the pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
 A pack over 2 GB comes in several parts, and every part is needed. How to open them depends on their name:
 
@@ -64,16 +64,16 @@ The RetroDECK pack already carries its own `bios/` folder, so it extracts into `
 ## What's included
 
 BIOS, firmware, and system files for consoles from Atari to PlayStation 3.
-These are the files an emulator loads from disk instead of carrying inside itself. Some are required to boot a system, others improve accuracy or unlock a feature; the packs carry both.
+These are the files an emulator loads from disk instead of carrying inside itself. Some are required to boot a system, others improve accuracy or unlock a feature, and the packs carry both.
 
 Each file is checked the way your platform checks it. Most compare a checksum, the fingerprint of a file's contents, which catches a corrupt or unexpected copy. RetroArch, Lakka and RetroPie only look for the filename, because that is all their code does: the Coverage table says which applies to you. Independently of that, the collection records five fingerprints per file, and wherever an emulator's code states an expected size or hash, that value is read from its source and rechecked here.
 
-- **425 files** the platforms' emulators load are still to be found, and 55 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made); both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
+- **425 files** the platforms' emulators load are still to be found, and 55 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
 - **12 platforms** supported with platform-specific verification
 - **530 emulators** profiled from source (RetroArch cores + standalone)
 - **513 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
 - **19,081 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,339 system files, 2,813 arcade ROM sets, 10,929 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
-- **563 of 5,339 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC); arcade sets and engine data fall outside what those catalogs index
+- **563 of 5,339 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
 - **16755 MB** total collection size
 
 ## Supported systems
@@ -147,9 +147,9 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 ## How it works
 
 Documentation and metadata can drift from what emulators actually load.
-To keep packs accurate, platform lists are checked against emulator source code, file by file where a profile exists; when the two disagree, the code wins.
+To keep packs accurate, platform lists are checked against emulator source code, file by file where a profile exists. When the two disagree, the code wins.
 
-Hashes document what emulator code loads and accepts, not dump provenance; that boundary, and how it relates to preservation catalogs such as No-Intro, is drawn in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#are-these-files-verified-against-original-hardware-dumps).
+Hashes document what emulator code loads and accepts, not dump provenance. That boundary, and how it relates to preservation catalogs such as No-Intro, is drawn in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#are-these-files-verified-against-original-hardware-dumps).
 
 1. **Read emulator source code** - trace every file the code loads, its expected hash and size
 2. **Cross-reference with platforms** - match against what each platform declares

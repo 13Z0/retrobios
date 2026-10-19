@@ -65,7 +65,7 @@ class Exporter(BaseExporter):
 
     @staticmethod
     def carries() -> frozenset[str]:
-        # The help names files; it states no hash and no requirement flag.
+        # The help names files. It states no hash and no requirement flag.
         return frozenset({"name"})
 
     @staticmethod
@@ -181,7 +181,7 @@ class Exporter(BaseExporter):
 
         Someone reading the sentence copies the files in the order it
         gives, so the one the emulator prefers is named first. The model
-        already holds them in that order; this only removes the duplicates
+        already holds them in that order, so this only removes the duplicates
         a name can pick up from several cores.
         """
         names: list[str] = []

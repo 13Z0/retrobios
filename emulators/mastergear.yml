@@ -24,7 +24,7 @@ notes: |
   MasterSystem 2, GameGear, SG1000, the keyboard-equipped SC3000 and the
   disk-based SF7000. Two builds of version 4.9 were read. The Android package
   com.fms.mg is sold on Google Play and not carried on the author's site, so it
-  came from a mirror; that copy has versionName 4.9, versionCode 4900, sha256
+  came from a mirror. That copy has versionName 4.9, versionCode 4900, sha256
   11c3f3331d6774739c11dfd604f74f545a17ceba3feb7fb294f02bd80943af35, md5
   2cb4df11254f8525e0a2253677450555, and is accepted because its v1 certificate
   is the author's own key, CN=Marat Fayzullin O=Garage Research issued 2011,
@@ -32,7 +32,7 @@ notes: |
   beside a Play distribution source stamp in the signing block. The free MG 4.9
   builds for Windows and Ubuntu, published by the author, were read next to it
   and open the same files. The native libraries keep their symbol tables, so
-  the Android readings below cite libmain.so offsets in the x86_64 slice; the
+  the Android readings below cite libmain.so offsets in the x86_64 slice, and the
   arm64-v8a, armeabi-v7a, armeabi and x86 slices carry the same filename set.
   No source has ever been published: the site states the code is not available
   to the general public and the documentation repeats it, while ColEm and fMSX
@@ -43,7 +43,7 @@ notes: |
 
   SF7000.ROM is the only system ROM either binary names, and it is read through
   the cartridge loader. ResetSMS loads it whenever the requested hardware
-  becomes SF7000; LoadROM returning zero makes ResetSMS clear the SF7000 bits
+  becomes SF7000. LoadROM returning zero makes ResetSMS clear the SF7000 bits
   and restore the previous hardware, so LoadDSK finds the machine still is not
   an SF7000, ejects the image and fails, logging "Failed switching into SF7000
   mode." when verbose output is on. Nothing about the file is checked: the size
@@ -74,7 +74,7 @@ notes: |
   <PrivateDir>/<basename>, keeping the larger of the two when both open. That
   directory is external storage joined with the application label up to its
   first space, so /sdcard/MasterGear, falling back to getExternalFilesDirs(null)
-  when it is not a writable directory; the author's own cheat file writes the
+  when it is not a writable directory, and the author's own cheat file writes the
   same path out in full. The desktop builds have no such directory and open
   every name where they stand, which the documentation states as the current
   directory. Every one of these opens ends in zlib, mopen handing the

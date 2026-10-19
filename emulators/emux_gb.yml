@@ -18,7 +18,7 @@ notes: |
   dmg_boot.bin (libretro, controllers/mapper/gb_mapper.c:35) to match RetroArch conventions.
 
   Boot ROM loaded via file_map(PATH_SYSTEM, "dmg_boot.bin", 0, 256) in
-  gb_mapper_init (controllers/mapper/gb_mapper.c:225-228). Returns false on failure — no HLE
+  gb_mapper_init (controllers/mapper/gb_mapper.c:225-228). Returns false on failure, no HLE
   fallback. Mapped at 0x0000-0x00FF, overlays ROM0 until BOOT_LOCK (0xFF50)
   is written non-zero (lock_writeb, controllers/mapper/gb_mapper.c:97-106).
 

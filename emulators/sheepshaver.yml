@@ -62,9 +62,9 @@ notes: |
   The SDL2 backend falls back to BasiliskII_keycodes in the same directory
   (video_sdl2.cpp:98,1232).
 
-  The preferences file (.sheepshaver_prefs, prefs_unix.cpp:49;
+  The preferences file (.sheepshaver_prefs, prefs_unix.cpp:49, or
   SheepShaver_prefs, prefs_windows.cpp:66) and the NVRAM file
-  (.sheepshaver_nvram, xpram_unix.cpp:30; SheepShaver_nvram.dat,
+  (.sheepshaver_nvram, xpram_unix.cpp:30, or SheepShaver_nvram.dat,
   xpram_windows.cpp:31) are written by the emulator when absent. Passing a
   .sheepvm directory on the command line reads the preferences from inside it
   instead (main_unix.cpp:371-384, prefs_unix.cpp:57-69).

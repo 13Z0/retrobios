@@ -12,15 +12,15 @@ systems: [sonic-mania]
 
 notes: |
   Full RSDKv5 decompilation of Sonic Mania (Christian Whitehead / Headcannon,
-  2017). Links against the shared RSDKv5-Decompilation engine; game code
+  2017). Links against the shared RSDKv5-Decompilation engine. Game code
   lives in SonicMania/ and the engine in the dependencies/RSDKv5
   submodule, the upstream repository. The paths below are relative to
   that repository.
 
   LoadDataPack reads an RSDK v5 container: a 4-byte "RSDK" signature,
   the letter v and a version byte, a 16-bit file count, then an MD5 name
-  hash, offset and size per entry. The signature is the only validation;
-  the engine never hashes the full pack.
+  hash, offset and size per entry. The signature is the only validation.
+  The engine never hashes the full pack.
   ref: RSDKv5/RSDK/Core/Reader.cpp:107-164 (LoadDataPack)
 
   Settings.ini key Game:dataFile overrides the default "Data.rsdk". If

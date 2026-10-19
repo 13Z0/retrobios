@@ -16,7 +16,7 @@ systems:
 notes: |
   Libretro core by beudbeud built on the Saturn/ST-V module of Mednafen
   1.32.1, with an Asia ST-V BIOS setting and a stvbios.zip fallback added
-  to ss.cpp. Recalbox runs it for ST-V; the loader also accepts Saturn
+  to ss.cpp. Recalbox runs it for ST-V, and the loader also accepts Saturn
   disc images (cue, toc, ccd, chd, m3u).
 
   retro_init() points filesys.path_firmware at the frontend system
@@ -27,12 +27,12 @@ notes: |
   A Saturn disc takes sega_101.bin for Japan and Asia NTSC and
   mpr-17933.bin otherwise (ref: mednafen/ss/ss.cpp:1447-1453).
 
-  The loose file is tried first and must be exactly 524288 bytes; when it
+  The loose file is tried first and must be exactly 524288 bytes. When it
   is missing or the wrong size, the same name is looked up at the root of
   stvbios.zip in the system directory, then without the leading slash
   (ref: mednafen/ss/ss.cpp:1455-1491). With ss.bios_sanity on, the
   default, a file named like one of the five Saturn BIOS images must
-  match its SHA-256; the ST-V images are not in that table and only the
+  match its SHA-256. The ST-V images are not in that table and only the
   size check applies (ref: mednafen/ss/ss.cpp:1493-1540, 2549).
 
   Saturn games that need the KoF 95 or Ultraman ROM cartridge, and the
@@ -80,7 +80,7 @@ files:
     required: false
     description: "ST-V BIOS archive"
     source_ref: "mednafen/ss/ss.cpp:1472-1491"
-    note: "Read only when the loose BIOS file is missing or not 524288 bytes. The member is found by the BIOS file name; its size is not checked."
+    note: "Read only when the loose BIOS file is missing or not 524288 bytes. The member is found by the BIOS file name, and its size is not checked."
     contents:
       - name: "epr-20091.ic8"
       - name: "epr-19854.ic8"
@@ -109,13 +109,13 @@ files:
     required: false
     description: "The King of Fighters '95 ROM cartridge"
     source_ref: "mednafen/ss/ss.cpp:1348, 1404-1412, 2542"
-    note: "Opened only for the game that needs the cart; that game does not start without it."
+    note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "mpr-19367-mx.ic1"
     system: "sega-saturn"
     required: false
     description: "Ultraman ROM cartridge"
     source_ref: "mednafen/ss/ss.cpp:1349, 1404-1412, 2543"
-    note: "Opened only for the game that needs the cart; that game does not start without it."
+    note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "satar4mp.bin"
     system: "sega-saturn"
     required: false

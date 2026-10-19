@@ -12,12 +12,12 @@ systems: [sony-playstation]
 notes: >
   Region-based BIOS selection: the core picks JP/NA/EU firmware based on disc region.
   SHA1 validated with warning on mismatch (does not block loading).
-  SHA1 and alternate filenames sourced from MAME (mame src/mame/sony/psx.cpp);
-  the lists and the checksum search live in libretro.c:448-502,510-602.
+  SHA1 and alternate filenames sourced from MAME (mame src/mame/sony/psx.cpp).
+  The lists and the checksum search live in libretro.c:448-502,510-602.
   Override option allows using PSP, PS3, or OpenBIOS as region-free alternative.
   Embedded OpenBIOS (512KB) compiled into the binary serves as HLE fallback when no BIOS found.
   "Skip BIOS" option patches BIOS ROM but causes compatibility issues.
-  Upstream Mednafen loads the same 3 region BIOS; override BIOS and HLE fallback are libretro additions.
+  Upstream Mednafen loads the same 3 region BIOS. Override BIOS and HLE fallback are libretro additions.
   Two BIOS geometries are accepted: the stock 512 KB kernel and the 1 MB SCPH-5903 part,
   selected by file size at load time (libretro.c:3203-3217). A 1 MB image switches Video CD
   from HLE to daughterboard emulation (libretro.c:6159). Reached through the BIOS path

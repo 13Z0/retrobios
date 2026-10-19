@@ -98,7 +98,7 @@ plugins:
 - search
 # Link rot fails the build: deploy-site.yml runs `mkdocs build --strict`.
 # omitted_files stays at its default (info) so a stale local docs/ does not
-# break a local build; CI regenerates docs/ from scratch anyway.
+# break a local build. CI regenerates docs/ from scratch anyway.
 validation:
   absolute_links: warn
   unrecognized_links: warn

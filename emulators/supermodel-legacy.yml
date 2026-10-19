@@ -16,7 +16,7 @@ systems:
 notes: |
   Supermodel at trzy/Supermodel 0eef09b of 2022-08-19, the revision Batocera
   builds as supermodel-legacy for boards without OpenGL 4.1, the version the
-  renderer moved to after it. Batocera applies five patches; 001 rewrites the
+  renderer moved to after it. Batocera applies five patches: 001 rewrites the
   fixed paths below, the others touch the INI template, the build rules, audio
   volume and an evdev light gun input system.
   ref: Src/Version.h:32
@@ -31,7 +31,7 @@ notes: |
 
   ROM sets are MAME format per game archives identified by the CRC32 values in
   Games.xml, 60 sets at this revision. A child set missing files makes the loader
-  open <parent>.zip from the same directory; parents are regional or revision
+  open <parent>.zip from the same directory. Parents are regional or revision
   variants of one game, not a shared BIOS. Each Model 3 board carries its own
   program, video, sound and drive board ROMs, so no system ROM is read outside
   those archives.
@@ -49,7 +49,7 @@ notes: |
   pass through the service menu.
   ref: Src/OSD/SDL/Main.cpp:656-688, Src/OSD/SDL/Main.cpp:900, Src/OSD/SDL/Main.cpp:1297
 
-  Crosshairs are drawn as GL primitives; no Assets/ bitmap and no Music.xml are
+  Crosshairs are drawn as GL primitives. No Assets/ bitmap and no Music.xml are
   read at this revision. External GLSL shaders are read only when a VertexShader
   or FragmentShader key names a file, and all six keys default to empty.
   ref: Src/OSD/SDL/Main.cpp:703-712, Src/OSD/SDL/Main.cpp:1420-1425,
@@ -64,7 +64,7 @@ files:
     sha1: "599a74894c61c1849e2aeff17507c233e2f459d6"
     md5: "84b66c6c9eb9370e983d88c4d187ea05"
     description: "ROM set definitions"
-    note: "Parsed by the GameLoader constructor before the ROM archive is opened. A file that fails to parse leaves no game defined, no set in the archive is recognised, and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it; Batocera's patch sets the default to /usr/share/supermodel/Games.xml. The hash is that of Config/Games.xml at the pinned revision, which Batocera installs."
+    note: "Parsed by the GameLoader constructor before the ROM archive is opened. A file that fails to parse leaves no game defined, no set in the archive is recognised, and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it, and Batocera's patch sets the default to /usr/share/supermodel/Games.xml. The hash is that of Config/Games.xml at the pinned revision, which Batocera installs."
     source_ref: "Src/OSD/SDL/Main.cpp:1321, Src/OSD/SDL/Main.cpp:1412, Src/OSD/SDL/Main.cpp:1866-1874, Src/GameLoader.cpp:492-502, Src/GameLoader.cpp:689-693, Src/GameLoader.cpp:895-898"
 
 exclusion_note: >

@@ -33,7 +33,7 @@ dispatch.
 
 The list is the set of inputs the site is generated from. A script that
 `generate_site.py`, `generate_readme.py` or another build step starts to import
-must be added to it, or the site silently goes stale;
+must be added to it, or the site silently goes stale.
 `tests/test_workflow_paths.py` computes the import closure and fails when one
 is missing.
 
@@ -107,7 +107,7 @@ of being silently ignored.
 each profile the change adds (the files `git diff --diff-filter=A` names
 against the pull request base, or against the commit a push moved main from).
 A profile written from a clone can cite lines that do not hold the value it
-declares while schemas and tests pass it; this job confronts it with its
+declares while schemas and tests pass it. This job confronts it with its
 upstream. An edited profile is not held to it.
 
 **run-tests.** Runs `python -m unittest discover -s tests -t . -v`. Must pass before a
@@ -135,13 +135,13 @@ the arcade sets over 100 MB. `.gitignore` is the authoritative list: every
 
 **Storage.** Listed in `.gitignore` so they stay out of git history. Old
 version-tagged releases are deleted by hand when a new one is published
-(see [cutting a release](#cutting-a-release)); `large-files` is never one of
+(see [cutting a release](#cutting-a-release)), and `large-files` is never one of
 them.
 
 **Restore.** No workflow builds a pack. `generate_pack.py` fetches an asset
 into `.cache/large/` when a pack needs it (`fetch_large_file()`), and
 `scripts/restore_large_files.py` puts every registered asset back at its
-`bios/` path by the SHA-1 of its content; `deploy-site.yml` runs it before
+`bios/` path by the SHA-1 of its content, and `deploy-site.yml` runs it before
 generating anything, since the site's coverage reads the disk.
 
 **Asset name.** A gitignored path whose file name no other gitignored path
@@ -149,7 +149,7 @@ shares is published under that file name. When two paths share one, each is
 published under its location below `bios/`, segments joined by `--` and any
 character outside `A-Za-z0-9._-` replaced by `_`
 (`Id_Software--Wolfenstein_Enemy_Territory--etmain--pak0.pk3`).
-`asset_names()` in `scripts/largefiles.py` is the only place that rule lives;
+`asset_names()` in `scripts/largefiles.py` is the only place that rule lives:
 the manifests, the fetcher and `check_release_assets.py` all read it.
 
 **Upload.** To add or update a large file:
@@ -169,8 +169,8 @@ from the release and caches in `.cache/large/` for subsequent runs.
 from the manifest size, and the manifest size is that of the local file. A
 file rebuilt locally after its upload therefore fails every install until it
 is uploaded again (`--clobber`). `python scripts/check_release_assets.py`
-compares every gitignored `bios/` path in the database with its asset, and the release page with the one it renders from the collection;
-the online pipeline runs it as step 2b2. To refresh the page:
+compares every gitignored `bios/` path in the database with its asset, and the release page with the one it renders from the collection.
+The online pipeline runs it as step 2b2. To refresh the page:
 
 ```bash
 python scripts/check_release_assets.py --notes tmp/notes.md
@@ -200,7 +200,7 @@ python scripts/generate_pack.py --platform retropie --verify-packs --output-dir 
 python scripts/split_pack.py dist/
 
 # 4. Checksums of the files as published, then sign the list. The checksums
-#    answer corruption; the signature answers a rewritten release, which is
+#    answer corruption, and the signature answers a rewritten release, which is
 #    the one thing a checksum published beside its own artifacts cannot
 #    answer.
 (cd dist && sha256sum *.zip > SHA256SUMS.txt)
@@ -227,7 +227,7 @@ done
 #    re-uploaded from an older build. The check holds every asset against
 #    release.json and the local checksum list, by the sha256 GitHub computes,
 #    and the parts of each pack against the download size the README prints.
-#    Publish only on a clean exit; rerun the upload for what it names.
+#    Publish only on a clean exit, otherwise rerun the upload for what it names.
 python scripts/check_release.py --tag "v${DATE}" --sums dist/SHA256SUMS.txt \
   && gh release edit "v${DATE}" --draft=false --latest
 
@@ -307,7 +307,7 @@ Until v2026.09.04 the parts were byte ranges cut by `split`, named
 opened alone is not an archive and no tool says a part is missing, so five
 reports in six months took one for a broken download (issues 45, 51, 66, 77
 and 79). The README, the download page and the troubleshooting page describe
-both layouts for as long as a release cut that way is still published; once
+both layouts for as long as a release cut that way is still published. Once
 step 7 has deleted it, the `.zip.001` paragraph leaves those three pages.
 
 The table carries a Files column, the count step 5 prints, and the

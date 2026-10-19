@@ -11,7 +11,7 @@ display_name: "Nintendo - DS (melonDS)"
 systems: [nintendo-ds, nintendo-dsi]
 
 notes: |
-  FreeBIOS fallback for DS mode (NTR); DSi mode requires all native files.
+  FreeBIOS fallback for DS mode (NTR), while DSi mode requires all native files.
   Libretro fork based on melonDS ~0.9.x era, validates size only.
   Upstream adds CRC32 validation on BIOS files (MemConstants.h).
   DSi SD card emulation controlled by melonds_dsi_sdcard core option.
@@ -27,7 +27,7 @@ files:
     validation: {core: [size], upstream: [size, crc32]}
     crc32: 2ab23573
     source_ref: "src/NDS.h:196, src/NDS.cpp:467-477, src/frontend/Util_ROM.cpp:99-111"
-    note: "FreeBIOS fallback (src/FreeBIOS.h); native needed for Key1 cartridge crypto"
+    note: "FreeBIOS fallback (src/FreeBIOS.h), native needed for Key1 cartridge crypto"
 
   - name: bios7.bin
     system: nintendo-ds
@@ -38,7 +38,7 @@ files:
     validation: {core: [size], upstream: [size, crc32]}
     crc32: 1280f0d5
     source_ref: "src/NDS.h:197, src/NDS.cpp:482-492, src/frontend/Util_ROM.cpp:117-131"
-    note: "FreeBIOS fallback (src/FreeBIOS.h); native needed for Key1 init at offset 0x0030"
+    note: "FreeBIOS fallback (src/FreeBIOS.h), native needed for Key1 init at offset 0x0030"
 
   - name: firmware.bin
     system: nintendo-ds
@@ -49,7 +49,7 @@ files:
     max_size: 524288
     validation: [size]
     source_ref: "src/SPI.cpp:192-211, src/frontend/Util_ROM.cpp:174-195"
-    note: "Generated 128KB firmware as fallback; native must be 256KB or 512KB for boot"
+    note: "Generated 128KB firmware as fallback, native must be 256KB or 512KB for boot"
 
   # --- Nintendo DSi (TWL) ---
   - name: dsi_bios9.bin
@@ -94,4 +94,4 @@ files:
     description: "DSi SD card image"
     required: false
     source_ref: "src/frontend/Util_ROM.cpp:237-243, src/libretro/libretro.cpp:837,553"
-    note: "Created if missing; requires melonds_dsi_sdcard core option enabled"
+    note: "Created if missing, requires melonds_dsi_sdcard core option enabled"

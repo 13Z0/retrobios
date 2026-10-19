@@ -48,7 +48,7 @@ class TestDeclares(unittest.TestCase):
         self.assertTrue(declares(DRIVER[1], "ekara"))
 
     def test_a_clone_naming_it_as_parent_is_not_a_declaration(self):
-        """ekara is the parent field of ekarag; most of a driver looks so."""
+        """ekara is the parent field of ekarag, and most of a driver looks so."""
         self.assertFalse(declares(DRIVER[2], "ekara"))
         self.assertTrue(declares(DRIVER[2], "ekarag"))
 

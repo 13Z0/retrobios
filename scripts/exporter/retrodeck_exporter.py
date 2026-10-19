@@ -79,7 +79,7 @@ class Exporter(BaseExporter):
 
     @staticmethod
     def needs_original() -> bool:
-        # A manifest is mostly presets and launch configuration; rebuilding
+        # A manifest is mostly presets and launch configuration, so rebuilding
         # one from BIOS data alone would throw the component away.
         return True
 
@@ -104,7 +104,7 @@ class Exporter(BaseExporter):
 
         A component is one emulator's manifest, and only the platform's
         entries name it. A system whose entries all sit in one component
-        takes the addition there; one spread over several, or with none of
+        takes the addition there. One spread over several, or with none of
         its own, cannot say which manifest is meant, and the addition is
         left out and counted as such.
         """
@@ -197,7 +197,7 @@ class Exporter(BaseExporter):
         additions: list[OrderedDict] | None = None,
         appended: set[tuple[str, str]] | None = None,
     ) -> list[OrderedDict]:
-        """Correct the component's own list; never replace it.
+        """Correct the component's own list, never replace it.
 
         Assigning our entries wholesale dropped every file RetroDECK declares
         that our model does not carry -- 177 of them across the components.

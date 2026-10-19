@@ -456,7 +456,7 @@ class Scraper(BaseScraper):
             "verification_mode": "md5",
             "cores": cores,
             # Each component is one emulator RetroDECK ships and launches on
-            # its own; retroarch is the one that runs cores.
+            # its own, and retroarch is the one that runs cores.
             "standalone_cores": [c for c in cores if c != "retroarch"],
             "systems": systems,
         }

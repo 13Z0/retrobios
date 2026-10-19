@@ -35,13 +35,13 @@ notes: |
   either drive is configured as drvAtomLite, atom.rom when drive 2 is
   drvAtom, and otherwise stays on samcoupe.rom. The default option
   atombootrom = true (Base/Options.h:46) enables this path, so a user
-  running an Atom-configured machine needs the matching ROM; a plain
+  running an Atom-configured machine needs the matching ROM, while a plain
   SAM Coupe never opens them.
 
   sp0256-al2.bin is the Microchip SP0256-AL2 allophone data loaded by
   the Blue Alpha VoiceBox device (Base/VoiceBox.cpp:35-40). VoiceBox is
   enabled by default (Base/Options.h:124, voicebox = true) and the
-  constructor opens the file at reset; if it is absent the SP0256
+  constructor opens the file at reset. If it is absent the SP0256
   stays zero-initialised and the device returns silence to any program
   that queries port 0xFF (Base/SAMIO.cpp:538-539, 760).
 

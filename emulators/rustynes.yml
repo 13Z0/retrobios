@@ -27,12 +27,12 @@ notes: |
   (crates/rustynes-libretro/src/lib.rs:921-938). A missing file, or a
   frontend without a system directory, makes retro_load_game fail with an
   error. Fds::new rejects a BIOS that is not exactly 8192 bytes
-  (crates/rustynes-mappers/src/fds.rs:1351-1357); no hash is checked. The
+  (crates/rustynes-mappers/src/fds.rs:1351-1357). No hash is checked. The
   FDS device maps the BIOS and boots from its reset vector.
 
   The version comes from the workspace Cargo.toml. The .info in
-  libretro-core-info says v2.3.5 and the copy in the repository v2.6.12;
-  the md5 in the .info notes is not enforced by the code.
+  libretro-core-info says v2.3.5 and the copy in the repository v2.6.12.
+  The md5 in the .info notes is not enforced by the code.
 
 files:
   - name: "disksys.rom"

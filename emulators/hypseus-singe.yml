@@ -23,7 +23,7 @@ notes: |
 
   Each Daphne game loads its own arcade ROM set. game::load_roms() walks the
   driver rom_def table and opens roms/<set>.zip, locating each member by name
-  case-insensitively; a member missing from the archive falls back to a loose
+  case-insensitively. A member missing from the archive falls back to a loose
   file at roms/<set>/<member> (game.cpp:636-768). The set name is the rom_def
   dir field when set, otherwise the driver shortgamename, so a variant can pull
   members out of another game's archive. roms/ resolves under -romdir when
@@ -39,13 +39,13 @@ notes: |
   Hashing is per member, never over the archive.
 
   The Dragon's Lair Enhancement and Space Ace Enhancement sets carry an extra
-  readme member checked by exact CRC32 through verify_required_file(); a
+  readme member checked by exact CRC32 through verify_required_file(). A
   missing or altered readme calls set_quitflag() and the game does not run
   (game.cpp:773-837, lair.cpp:197-205, 261-275, 373-380).
 
   Singe games are not covered by rom_def. The Lua script, framefile and video
   arrive with the content and are passed on the command line (-script, -zlua,
-  -framefile); singe_utils.cpp:35-42 only exposes the roms path to scripts.
+  -framefile). singe_utils.cpp:35-42 only exposes the roms path to scripts.
 
   The emulator asset tree ships in the source distribution and packagers
   install it beside the binary (Batocera copies pics, fonts, sound and the
@@ -61,7 +61,7 @@ notes: |
       the Thayer's Quest key overlay (video.cpp:632-635). A bezel directory,
       default bezels/, takes precedence for the bmp and png entries.
     fonts/ - default.ttf plus daphne.ttf for legacy overlay and Singe games or
-      digital.ttf otherwise; a font that fails to open calls set_quitflag()
+      digital.ttf otherwise. A font that fails to open calls set_quitflag()
       (video.cpp:271-293, splash.cpp:45).
     sound/ - the per-game wav samples named by each driver, plus grumble.wav
       loaded for every game. load_waves() failure fails sound::init() and

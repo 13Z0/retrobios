@@ -9,7 +9,7 @@ that names the right file for a slot could never win and never even be heard.
 
 The index is keyed by destination AND by name, the name carrying the union of
 what every same-named entry claims. Dolphin declares three IPL.bin separated
-only by their path, so a name-only key merges them; a path-only key answers
+only by their path, so a name-only key merges them, and a path-only key answers
 nothing when a candidate is known by name alone. Ambiguity resolves to the
 union and is never discarded, the same rule region.py already applies.
 """
@@ -476,7 +476,7 @@ def pack_overrides(
     """Full pack destination -> the file a platform pack serves there instead.
 
     Where a source-verified profile contradicts the scraped baseline on one
-    destination, the pack answers to the platform it is built for; in
+    destination, the pack answers to the platform it is built for. In
     existence mode the frontend never reads the bytes, so serving the
     emulator's file satisfies both. The ZIP builder, the install manifest and
     verify all read this: two of them deciding alone gave the one-line
@@ -508,7 +508,7 @@ def slot_choices(
     """Destination -> (core, the file it has served there) in decision order.
 
     A pack built for a set of cores serves the first choice whose core is in
-    it, None standing for the platform's own answer; no core in it leaves
+    it, None standing for the platform's own answer. No core in it leaves
     the platform's answer too. The order is arbitrate's: a core agreeing with
     the platform settles the slot whatever else is present, then the
     strongest proof decides. Read for one core set by pack_overrides and
@@ -562,7 +562,7 @@ def apply_override(
 
 
 def _strongest(claims: list[Claim]) -> Claim:
-    """The profile claim with the strongest proof; the first emulator breaks ties.
+    """The profile claim with the strongest proof, the first emulator breaking ties.
 
     yaps2 pins its GameIndex.yaml by sha1 while armsx2 and lrps2 only match a
     path: alphabetical order served armsx2's copy to all three.
@@ -575,13 +575,13 @@ def arbitrate(conflict: Conflict, mode: str, addressee: str = "platform") -> Dec
 
     A pack answers to whoever asked for it. A platform pack must leave the
     frontend's own check green, because a user reading red concludes the pack
-    is broken; a pack built for one emulator answers to that emulator. The
+    is broken. A pack built for one emulator answers to that emulator. The
     other layer is served as well whenever the destination allows it.
 
     In ``existence`` mode the frontend only looks for a path, so the emulator's
     file satisfies both sides at once and there is nothing to trade away. In a
     content-checking mode the two answers cannot share one path, and the pack's
-    addressee decides; the loss is reported rather than absorbed, because the
+    addressee decides. The loss is reported rather than absorbed, because the
     cause is an upstream declaration that needs fixing at its source.
     """
     profile = _strongest(conflict.profile_claims)
@@ -606,7 +606,7 @@ def format_decision(decision: Decision) -> str:
     if decision.serves_both:
         winner = decision.winner.local_path
         # A claim that only matched a path is answered by whatever file sits
-        # there; only one that pins content can be left wanting.
+        # there. Only one that pins content can be left wanting.
         pinned_elsewhere = _pinned_elsewhere(conflict.profile_claims, winner)
         served = sorted({
             c.emulator for c in conflict.profile_claims if c.emulator
@@ -614,7 +614,7 @@ def format_decision(decision: Decision) -> str:
         others = sorted(pinned_elsewhere)
         line = (
             f"{conflict.destination}: serve {winner} "
-            f"({', '.join(served) or 'profile'}); the frontend only "
+            f"({', '.join(served) or 'profile'}): the frontend only "
             "checks the path, so both are satisfied"
         )
         if others:
@@ -659,7 +659,7 @@ def find_collisions(
     One path holds one file, so whichever declaration the builder reaches
     first decides in silence. Declaring an archive several times to name its
     inner ROMs is the documented zipped_file pattern and resolves to one
-    archive; two declarations landing on two files is a contradiction the
+    archive. Two declarations landing on two files is a contradiction the
     upstream list carries. RetroDECK aims a PC-88 disk subsystem ROM and a
     CoCo disk ROM at one bios/disk.rom.
     """

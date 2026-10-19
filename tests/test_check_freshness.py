@@ -317,7 +317,7 @@ class RepositoryWiringTests(unittest.TestCase):
 
     def test_a_target_of_every_declared_core_does_not_age(self):
         """RetroBat, RetroDECK and RomM name one target that runs every core
-        they declare; with nothing hand-kept, there is no date to watch."""
+        they declare. With nothing hand-kept, there is no date to watch."""
         import tempfile  # noqa: PLC0415
         from pathlib import Path as _Path  # noqa: PLC0415
 
@@ -370,7 +370,7 @@ class PinsWithExtras(unittest.TestCase):
 
 
 class AStaticTargetStillNamesItsCores(unittest.TestCase):
-    """RetroBat's single target is `cores: null`; the check returned OK
+    """RetroBat's single target is `cores: null`, and the check returned OK
     before reading the names, and its 50 unprofiled emulators never showed."""
 
     def test_declared_names_are_checked(self):

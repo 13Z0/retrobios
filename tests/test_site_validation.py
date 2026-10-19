@@ -73,7 +73,7 @@ class WikiSourceHeadings(unittest.TestCase):
                     offenders.append(f"{page.name}:{number}")
                 elif not fenced and line[:1].isspace() and line.lstrip().startswith("#"):
                     # Inside a list item or an admonition an indented hash is
-                    # a heading too; code that needs one goes in a fence.
+                    # a heading too. Code that needs one goes in a fence.
                     offenders.append(f"{page.name}:{number}")
         self.assertEqual(offenders, [])
 
@@ -245,7 +245,7 @@ class TheHomeTitleSaysWhatTheSiteIs(unittest.TestCase):
 
 
 class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
-    """System.dat pins aes.zip by crc32 91e93107; the RetroArch page printed
+    """System.dat pins aes.zip by crc32 91e93107. The RetroArch page printed
     only its sha1 and md5, so the crc a clrmamepro user pastes found nothing."""
 
     def test_the_rendered_page(self):

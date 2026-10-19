@@ -98,7 +98,7 @@ class Exporter(BaseExporter):
     def _expected_md5s(
         self, systems: dict[str, NativeSystem], name: str, system_id: str
     ) -> list[str]:
-        """What a check must now hold; a refused rewrite keeps EmuDeck's own array."""
+        """What a check must now hold. A refused rewrite keeps EmuDeck's own array."""
         if name in getattr(self, "_withdrawn", {}):
             return []
         return self._md5s(systems, system_id)
@@ -187,7 +187,7 @@ class Exporter(BaseExporter):
                 # it would stop passing the check. A rewrite that withdraws one
                 # is refused and reported instead.
                 # A correction replaces the value it corrects, which is not a
-                # withdrawal; any other value missing from ours would be.
+                # withdrawal, but any other value missing from ours would be.
                 withdrawn = theirs - set(md5s) - self._corrected_away(systems, system_id)
                 if withdrawn:
                     self._withdrawn.setdefault(name, set()).update(withdrawn)

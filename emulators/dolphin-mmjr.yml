@@ -17,7 +17,7 @@ mode: standalone
 notes: |
   Android-only Dolphin fork continuing the MMJ line, published as the org.mm.jr
   package. The repositories it released from are gone, including the
-  Dolphin-MMJR1 link in its own README; this reading is taken from a surviving
+  Dolphin-MMJR1 link in its own README. This reading is taken from a surviving
   copy that carries the release build metadata of the app, applicationId
   org.mm.jr and versionCode 15808.
   ref: Source/Android/app/build.gradle:23-29,
@@ -27,7 +27,7 @@ notes: |
   storage. The Sys directory is extracted from the APK assets into the app's
   internal files directory, and the first run after a versionCode change
   deletes it and extracts it again, so nothing placed there survives an update.
-  Paths below are relative to the user directory; entries with no path are read
+  Paths below are relative to the user directory. Entries with no path are read
   only from the Sys directory and name their location in their note.
   ref: Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.java:93-134,
        Source/Core/Common/CommonPaths.h:22-24, Source/Core/Common/FileUtil.cpp:756-807
@@ -43,7 +43,7 @@ notes: |
 
   Fonts follow the IPL. When a dump is present the Shift JIS and Windows-1252
   fonts are read out of it at offsets 0x1aff00 and 0x1fcf00, for 0x4a24d and
-  0x2575 bytes; otherwise the standalone font files are loaded whole, and the
+  0x2575 bytes. Otherwise the standalone font files are loaded whole, and the
   bundled ones have different padding from the console fonts.
   ref: Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:99-127,
        Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:159-172,
@@ -147,7 +147,7 @@ files:
     adler32_pairs_with: "dsp_coef.bin"
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0x128ea7a2", "0xa4a575f5"]]
     description: "DSP instruction ROM"
-    note: "DSP LLE only, and LLE aborts when the file is absent or not 8192 bytes. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair; five replacement pairs are also accepted."
+    note: "DSP LLE only, and LLE aborts when the file is absent or not 8192 bytes. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair. Five replacement pairs are also accepted."
     source_ref: "Source/Core/Common/CommonPaths.h:108, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:120-152, Source/Core/Core/DSP/DSPCore.h:35, Source/Core/Core/DSP/DSPCore.cpp:38-80"
 
   - name: dsp_coef.bin
@@ -168,7 +168,7 @@ files:
     path: null
     required: false
     description: "Gecko code handler"
-    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds; too large a file is refused and cheats stay off."
+    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off."
     source_ref: "Source/Core/Common/CommonPaths.h:124, Source/Core/Core/GeckoCode.cpp:121-136"
 
   - name: keys.bin
@@ -190,7 +190,7 @@ files:
     size: 16384
     validation: [size]
     description: "Wii system configuration"
-    note: "Opened through the emulated filesystem and accepted only at 0x4000 bytes; anything else is replaced by a freshly generated one."
+    note: "Opened through the emulated filesystem and accepted only at 0x4000 bytes, and anything else is replaced by a freshly generated one."
     source_ref: "Source/Core/Common/CommonPaths.h:90, Source/Core/Core/SysConf.cpp:20, Source/Core/Core/SysConf.cpp:55-66"
 
   - name: setting.txt
@@ -210,7 +210,7 @@ files:
     required: false
     hle_fallback: true
     description: "Wii SD card image"
-    note: "Opened read-write when the SD device is opened; a 128 MB image is created when the file is missing."
+    note: "Opened read-write when the SD device is opened, and a 128 MB image is created when the file is missing."
     source_ref: "Source/Core/Common/CommonPaths.h:119, Source/Core/Common/FileUtil.cpp:802, Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:60-79"
 
   - name: wiitdb.txt

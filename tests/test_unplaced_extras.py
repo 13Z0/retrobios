@@ -2,7 +2,7 @@
 
 RomM files every BIOS under the slug of its system and knows no slug for
 DOS or for the arcade sets MAME 2003 reads. The builder skipped those
-entries without a word; the report counted them "in pack" and the manifest
+entries without a word: the report counted them "in pack" and the manifest
 listed them neither in files nor in omitted_files.
 """
 

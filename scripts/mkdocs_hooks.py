@@ -3,7 +3,7 @@
 The sitemap gave all 664 pages the build date as lastmod, so the field told
 a crawler nothing. A page whose content carries its own date (an emulator
 page: the day its profile was last read against the source) states it in
-its front matter; the rest get no lastmod rather than an inexact one.
+its front matter. The rest get no lastmod rather than an inexact one.
 """
 
 from __future__ import annotations

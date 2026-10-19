@@ -26,7 +26,7 @@ notes: |
   file. load_boot_file() with hardcoded ./res/boot/*.bin paths exists in
   src/gb.rs:1477 but is not called from any frontend.
 
-  Boot ROM defaults: DmgBootix (DMG), CgbBoytacean (CGB) — open-source.
+  Boot ROM defaults: DmgBootix (DMG), CgbBoytacean (CGB), both open-source.
 
 files:
   - name: dmg_boot.bin

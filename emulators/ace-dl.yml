@@ -25,14 +25,14 @@ notes: |
 
   Machines are CPC 464, 664 and 6128 plus the Plus range, which boots from a
   cartridge and covers the GX-4000. An operating system is one 32 KB file
-  holding the 16 KB firmware ROM followed by the 16 KB BASIC ROM; the AMSDOS
+  holding the 16 KB firmware ROM followed by the 16 KB BASIC ROM. The AMSDOS
   disc ROM is a separate 16 KB file mapped in slot 7. The upstream MorphOS
   release keeps the three ROMs apart under System/ and composes them at
   startup, ACE-DL ships them pre-joined under private/firmware/ with one file
   per machine and language. The pairs are exact:
 
     OS464_UK.rom        Firmware v1 + BASIC 1.00
-    OS464_FR.rom        Firmware f1 + French BASIC 1.0 (md5 824f5213…)
+    OS464_FR.rom        Firmware f1 + French BASIC 1.0 (md5 824f5213...)
     OS664_UK.rom        Firmware v2 + BASIC 1.10
     OS6128_UK.rom       Firmware v3 + BASIC 1.20
     OS6128_FR.rom       Firmware f3 + BASIC 1.23
@@ -77,8 +77,8 @@ notes: |
   snapshot, Dandanator and X-MASS images are user content the same way, and the
   Nova plugin regenerates its 32 KB private/Nova/nova.nvram when the file is
   absent. Outside emulation the binary loads its own payload: seventeen QOI
-  images, fatal with "Error loading QOI file please reinstall"; seventeen WAV
-  drive and monitor samples, each merely reported as not found; and the
+  images (fatal with "Error loading QOI file please reinstall"), seventeen WAV
+  drive and monitor samples (each merely reported as not found), and the
   private/messages catalog holding the French, English and Spanish
   translations. private/sounds/hitachi_long_seek.wav ships with every package
   but appears in no path constant and is never opened.

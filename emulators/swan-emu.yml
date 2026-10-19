@@ -36,7 +36,7 @@ notes: |
   Swan.emu/src/wswan/eeprom.cpp:164-169). The debugger and the disassembler are
   left out of the build (Swan.emu/src/CMakeLists.txt:6-22). Content is read from
   .ws, .wsc and .bin files (Swan.emu/metadata/conf.mk:5,
-  Swan.emu/src/main/AppMeta.cc:30); an archive is opened by the framework, which
+  Swan.emu/src/main/AppMeta.cc:30). An archive is opened by the framework, which
   keeps the first entry passing that same filter
   (EmuFramework/src/EmuSystem.cc:394-412).
 
@@ -59,7 +59,7 @@ notes: |
   eight identifier bytes the boot ROM would have left
   (Swan.emu/src/wswan/memory.cpp:801-808). The internal EEPROM is a built-in
   0x400 byte image copied at init, then personalized in place with the name,
-  birth date, sex and blood type of the WonderSwan User Profile menu; the
+  birth date, sex and blood type of the WonderSwan User Profile menu, and the
   language flag reaches the hardware the same way
   (Swan.emu/src/wswan/eeprom.cpp:31,33,183-214,
   Swan.emu/src/wswan/memory.cpp:748-772, Swan.emu/src/wswan/main.cpp:377,

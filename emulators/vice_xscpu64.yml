@@ -18,7 +18,7 @@ notes: >
   system/vice/SCPU64/ when SuperCPU Kernal core option is changed from Internal.
   JiffyDOS requires True Drive Emulation enabled and a non-internal SuperCPU
   kernal (the internal ROM is not JiffyDOS-compatible). The .info incorrectly
-  declares JiffyDOS_C64.bin (firmware_count=4); the C64 kernal replacement is
+  declares JiffyDOS_C64.bin (firmware_count=4), but the C64 kernal replacement is
   only loaded for x64/x64sc/x128, never for xscpu64. Correct firmware_count=5
   (2 SCPU64 kernals + 3 JiffyDOS drive DOSes).
 

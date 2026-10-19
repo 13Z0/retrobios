@@ -102,7 +102,7 @@ def yaml_load(stream: str | TextIO) -> Any:
 def yaml_load_upstream(stream: str | TextIO) -> Any:
     """Parse a third party's YAML the way its own PyYAML code reads it.
 
-    Our files refuse a repeated key; a platform's file is data we transcribe,
+    Our files refuse a repeated key, but a platform's file is data we transcribe,
     and its code keeps the last value. Batocera 43.1's configgen-defaults.yml
     names rtcw's core twice, and refusing it stopped the rescrape.
     """

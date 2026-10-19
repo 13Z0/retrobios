@@ -356,8 +356,8 @@ class RepositoryWideEvidence(unittest.TestCase):
                 )
                 if local and status == "hash_mismatch":
                     offenders.append(f"{key}:{entry.get('name', '')}")
-        # These exist; what must not happen is verify calling them covered.
-        # The unit tests above pin the reporting -- this one records the size
+        # These exist. What must not happen is verify calling them covered.
+        # The unit tests above pin the reporting, and this one records the size
         # of the surface so a regression in resolution shows up here.
         self.assertIsInstance(offenders, list)
         print(f"\n  entries resolving to hash_mismatch: {len(offenders)}")

@@ -34,7 +34,7 @@ notes: |
   ref: src/midi/midi.cpp:794-850
 
   MT-32/CM-32L: libmt32emu identifies every candidate by file size then SHA1,
-  so file names carry no meaning; a directory scan caches which ROM ids each
+  so file names carry no meaning. A directory scan caches which ROM ids each
   directory holds and logs anything unrecognised.
   ref: src/midi/mt32_lasynth_model.cpp:36-97, munt ROMInfo.cpp:206-213
   A model needs one control ROM and one PCM ROM, supplied either as a full
@@ -44,11 +44,11 @@ notes: |
   ref: src/midi/mt32_lasynth_model.cpp:114-151, munt ROMInfo.cpp:312-331
   model = auto resolves the first available of cm32l_102, cm32l_100,
   cm32ln_100, mt32_107, mt32_106, mt32_105, mt32_104, mt32_bluer, mt32_207,
-  mt32_206, mt32_204, mt32_203; the aliases cm32l, mt32, mt32_old and mt32_new
+  mt32_206, mt32_204, mt32_203. The aliases cm32l, mt32, mt32_old and mt32_new
   restrict that list. MIXER /LISTMIDI prints what was found.
   ref: src/midi/mt32.cpp:278-331, 504-557
   Search order is romdir, then mt32-roms in the configuration directory, then
-  the platform locations (C:\mt32-rom-data on Windows;
+  the platform locations (C:\mt32-rom-data on Windows,
   ~/Library/Audio/Sounds/MT32-Roms and /usr/{local/,}share/mt32-rom-data on
   macOS; $XDG_DATA_HOME/dosbox/mt32-roms, $XDG_DATA_HOME/mt32-rom-data,
   $XDG_DATA_DIRS/mt32-rom-data and $XDG_CONFIG_HOME/dosbox/mt32-roms on Linux).
@@ -60,7 +60,7 @@ notes: |
   from a plugins directory next to the executable, in the configuration
   directory or under the XDG data directories. DOSBox Staging resolves the ROM
   directory candidates, canonicalises the ones that exist and exports them as
-  SOUNDCANVAS_ROM_PATH; the plugin appends the per-model subdirectory, hashes
+  SOUNDCANVAS_ROM_PATH. The plugin appends the per-model subdirectory, hashes
   every file under 4 MB it finds there and matches SHA256 against its table.
   ref: src/midi/soundcanvas.cpp:326-373, src/misc/support.cpp:351-379,
        Nuked-SC55-CLAP nuked_sc55.cpp:117-215,
@@ -221,7 +221,7 @@ files:
     source_ref: "src/midi/mt32.cpp:145, src/midi/mt32.cpp:242-248, munt ROMInfo.cpp:79, munt ROMInfo.cpp:109"
 
   # -- MT-32 control ROM chip dumps (32768 bytes each) --
-  # The _a dump holds the even bytes, the _b dump the odd ones; munt
+  # The _a dump holds the even bytes, the _b dump the odd ones, and munt
   # interleaves the pair into the full 65536 byte image.
   # MAME dumps mt32_1.0.X.ic27.bin (_a) and mt32_1.0.X.ic26.bin (_b),
   # blue_ridge__mt32a.bin (_a) and blue_ridge__mt32b.bin (_b).
@@ -595,14 +595,14 @@ files:
     path: "soundfonts/default.sf2"
     description: "SoundFont named by the default soundfont setting"
     required: false
-    unsourceable: "a link the operating system creates to the SoundFont it installs as default, FluidR3_GM.sf2 on Fedora; no file of this name is distributed, and a same-named file of another program must not stand in"
+    unsourceable: "a link the operating system creates to the SoundFont it installs as default, FluidR3_GM.sf2 on Fedora. No file of this name is distributed, and a same-named file of another program must not stand in"
     note: >
       default value of the soundfont setting: the name picks the default
       SoundFont when the operating system installs one, usually Fluid R3.
       Where it exists the name is a link, found as soundfonts/default.sf2
-      under an XDG data directory; the link is resolved before the name
+      under an XDG data directory, and the link is resolved before the name
       test, so a link to FluidR3_GM.sf2 is identified as Fluid R3.
-      Any SoundFont loads; GeneralUser GS, Fluid R3, the AWE32 4MB GM/GS/MT
+      Any SoundFont loads. GeneralUser GS, Fluid R3, the AWE32 4MB GM/GS/MT
       bank and the Trevor0402 SC-55 SoundFont are recognised by filename or
       RIFF INFO name and get their own reverb, chorus and filter presets
     source_ref: "src/midi/fluidsynth.cpp:133-154, src/midi/fluidsynth.cpp:672-689, src/midi/fluidsynth.cpp:816-883, src/midi/fluidsynth.cpp:1227-1242"
@@ -614,7 +614,7 @@ files:
     aliases: ["GeneralUser_GS.sf2"]
     note: >
       opened only when the soundfont setting names it, with or without the
-      .sf2 extension; MIXER /LISTMIDI lists every .sf2 file found in the
+      .sf2 extension. MIXER /LISTMIDI lists every .sf2 file found in the
       SoundFont directories. A file whose stem or RIFF INFO name contains
       GeneralUser is identified as GeneralUser GS, whatever the rest of the
       name, and gets its own chorus and reverb parameters in auto mode
@@ -642,7 +642,7 @@ files:
     validation: [size]
     note: >
       read during PCjr cartridge boot from the current DOS drive, then from
-      the host working directory; bytes 0x3000 to 0xDFFF are copied to
+      the host working directory. Bytes 0x3000 to 0xDFFF are copied to
       physical F3000. A short read leaves the region untouched and the
       cartridge still boots
     source_ref: "src/dos/programs/boot.cpp:379-397, src/dos/programs/boot.cpp:83-124"
@@ -672,6 +672,6 @@ files:
     validation: [size]
     note: >
       accepted when the file is 16384 bytes or larger, starts with 55 AA,
-      has byte 3 masked to E8 and carries the string IBM at offset 0x1E;
+      has byte 3 masked to E8 and carries the string IBM at offset 0x1E,
       needs an EGA or better machine type
     source_ref: "src/dos/programs/loadrom.cpp:56-75, src/dos/programs/loadrom.cpp:88-93"

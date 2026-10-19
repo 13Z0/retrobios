@@ -11,9 +11,9 @@ systems: [soniccd]
 
 notes: |
   Retro Engine v3 decompilation of Sonic CD (2011 Christian Whitehead
-  mobile/Steam port). Single binary; one data pack per install.
+  mobile/Steam port). Single binary, one data pack per install.
 
-  CheckRSDKFile only fopen()s the pack; there is no signature test. If
+  CheckRSDKFile only fopen()s the pack. There is no signature test. If
   the file is absent the engine falls back to a loose Data/ tree. When
   GameConfig.bin cannot be loaded either way it writes usage.txt
   describing the layout it wants.
@@ -38,6 +38,6 @@ files:
     note: |
       Sonic CD assets (RSDK v3 container). Shipped with the official
       Sonic CD release (Steam, iOS, Android, Sonic Origins). The engine
-      opens the file with fopen(); content is validated by trying to
+      opens the file with fopen(). Content is validated by trying to
       load Data/Scripts/ByteCode/GlobalCode.bin or GS000.bin from
       inside, not by hashing the pack.

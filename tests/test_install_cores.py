@@ -114,7 +114,7 @@ class NarrowToCores(unittest.TestCase):
 class TheBuildersOrder(unittest.TestCase):
     """RetroPie reads megaplay.zip as advancemame (copy A), mame (copy B),
     then mame2003 (copy A). Without advancemame the builder ships mame's
-    copy; merging mame2003 into the first copy gave it A."""
+    copy, and merging mame2003 into the first copy gave it A."""
 
     ENTRY = {
         "dest": "megaplay.zip", "sha1": "a" * 40, "size": 1,
@@ -245,7 +245,7 @@ class APlatformOmissionKeepsItsClaim(unittest.TestCase):
 
 
 class APlatformFileSettledByCoresAndSystems(unittest.TestCase):
-    """RetroArch's dsi_bios9.bin ships melonds' copy where melonds runs; on
+    """RetroArch's dsi_bios9.bin ships melonds' copy where melonds runs. On
     a target without it the pack serves the platform's answer, and the
     pinned nintendo-dsi declaration gives way to the bare nintendo-ds one
     once its system drops. The installer kept melonds' copy on rpi4."""

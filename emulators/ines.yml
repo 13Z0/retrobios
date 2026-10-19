@@ -20,12 +20,12 @@ notes: |
   author publishes himself, package com.fms.ines versionName 6.1.4 versionCode
   6104, apk md5 d0e1b93b09d4b58294efd4e1509e25ca, signed CN=Marat Fayzullin
   O=Garage Research issued 2011, sha256
-  d09469e9b550cbc9005d3bd089f3df5f0ba89cba71cdd3b33736a0382d6f9848; the two
+  d09469e9b550cbc9005d3bd089f3df5f0ba89cba71cdd3b33736a0382d6f9848. The two
   download paths on that site serve the same bytes. Google Play carries the
   emulator as com.fms.ines.free, the package ES-DE launches, and inside VGBAnext
   as com.fms.ng, the author recording that Play removed the original com.fms.ines
   listing over its built-in cheats. The native libraries keep their symbol
-  tables, so the readings below cite libmain.so offsets in the x86_64 slice; the
+  tables, so the readings below cite libmain.so offsets in the x86_64 slice, and the
   arm64-v8a, armeabi-v7a, armeabi and x86 slices carry the same filename set. The
   free iNES 6.1 builds for Windows and Ubuntu were read beside it and open the
   same files under the same names. No source has ever been published: the author
@@ -90,7 +90,7 @@ files:
     min_size: 8192
     validation: [size]
     description: "Famicom Disk System BIOS"
-    note: "Opened by bare name, so it resolves against the working directory and then against the home directory. Read as 0x2000 bytes into RAM at 0xE000; a missing file reports NOT FOUND and a short read FAILED, and either aborts the disk load. Only the length of that read is checked, so a longer file passes on its first 8192 bytes and no hash is compared. The open is gzip transparent, so a compressed copy answers too."
+    note: "Opened by bare name, so it resolves against the working directory and then against the home directory. Read as 0x2000 bytes into RAM at 0xE000. A missing file reports NOT FOUND and a short read FAILED, and either aborts the disk load. Only the length of that read is checked, so a longer file passes on its first 8192 bytes and no hash is compared. The open is gzip transparent, so a compressed copy answers too."
     source_ref: "libmain.so LoadFDS 0x3bdd0-0x3c245 (open 0x3bf97, read 0x3bfc5-0x3bff7), iNES61-Ubuntu-x86-bin ines 0x38165-0x381a9"
 
   - name: iNES.pal
@@ -129,7 +129,7 @@ files:
     category: game_data
     size: 27447
     description: "cheat database read by the Cheatopedia browser"
-    note: "Looked up in the package assets first, then through the home directory, its subdirectories and Downloads, with <HomeDir>/Cheats as the default cheat directory. Include lines pull further sets through the same lookup; the package carries seven of them, battle-toads, dragon-warrior, dragon-warrior-2, fceu, final-fantasy-2, final-fantasy-3 and super-mario-brothers."
+    note: "Looked up in the package assets first, then through the home directory, its subdirectories and Downloads, with <HomeDir>/Cheats as the default cheat directory. Include lines pull further sets through the same lookup. The package carries seven of them: battle-toads, dragon-warrior, dragon-warrior-2, fceu, final-fantasy-2, final-fantasy-3 and super-mario-brothers."
     source_ref: "Cheatopedia.java:339, 448, 505-520, CheatHelper.java:14-24"
 
   - name: "<game>.ips"
@@ -165,7 +165,7 @@ exclusion_note: >
   system provides, dlopen'd by name from InitAudio and the only other literal
   filename in the binary. The twenty palettes under Palettes/ in the Windows and
   Ubuntu distributions are left out as the shipped candidates for iNES.pal, which
-  the emulator never opens under those names; four of them are the VS System
+  the emulator never opens under those names. Four of them are the VS System
   chip palettes, RP2C04-001, RP2C04-002, RP2C04-003 and RP2C05-004, and they
   reach the emulator through the palette entries above rather than a path of
   their own. Neither the VS System nor the FamilyBASIC keyboards need a file:

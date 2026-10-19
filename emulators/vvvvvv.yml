@@ -14,7 +14,7 @@ systems:
 
 notes: |
   Terry Cavanagh's VVVVVV game, desktop build. The source release holds
-  the engine, the level data, the language files and the fonts; graphics,
+  the engine, the level data, the language files and the fonts. Graphics,
   music and sounds are in data.zip, which is not in the repository.
 
   FILESYSTEM_init() mounts data.zip from the -assets argument, or from
@@ -27,7 +27,7 @@ notes: |
 
   The lang/ and fonts/ directories are mounted ahead of data.zip from
   the binary's directory (ref: desktop_version/src/FileSystemUtils.cpp:81-177,
-  312-315); Recalbox installs them from the source tree beside the
+  312-315). Recalbox installs them from the source tree beside the
   binary. gamecontrollerdb.txt is read from the binary's directory when
   present (ref: desktop_version/src/FileSystemUtils.cpp:349-353).
 
@@ -37,14 +37,14 @@ files:
     category: game_data
     path: "data.zip"
     required: true
-    unsourceable: "game data the collection does not hold; a same-named archive of another game must not stand in"
+    unsourceable: "game data the collection does not hold, and a same-named archive of another game must not stand in"
     description: "VVVVVV game assets (graphics, music, sounds)"
     source_ref: "desktop_version/src/FileSystemUtils.cpp:318-346, desktop_version/src/main.cpp:433-438"
-    note: "Path given by -assets, otherwise data.zip next to the binary. Retail and Make and Play Edition archives are both accepted; the code checks neither size nor hash."
+    note: "Path given by -assets, otherwise data.zip next to the binary. Retail and Make and Play Edition archives are both accepted, and the code checks neither size nor hash."
   - name: "gamecontrollerdb.txt"
     system: "vvvvvv"
     path: "gamecontrollerdb.txt"
     required: false
     description: "SDL game controller mappings"
     source_ref: "desktop_version/src/FileSystemUtils.cpp:349-353"
-    note: "Read from the binary's directory; a missing file is logged and ignored."
+    note: "Read from the binary's directory. A missing file is logged and ignored."

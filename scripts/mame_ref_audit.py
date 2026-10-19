@@ -14,7 +14,7 @@ declaration can sit behind one, as `/* Naomi */ GAME( 1998, naomi, ...)` does.
 
 A set no machine macro declares is not an error. Device ROMs take the
 shortname of their DEFINE_DEVICE_TYPE and some archives are bare ROM_START
-blocks; a ref there cites something this check cannot judge, and says so.
+blocks. A ref there cites something this check cannot judge, and says so.
 """
 from __future__ import annotations
 
@@ -126,7 +126,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--offline", action="store_true",
-        help="read only what the cache holds; no network access",
+        help="read only what the cache holds, no network access",
     )
     parser.add_argument(
         "--write", action="store_true",

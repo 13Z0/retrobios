@@ -18,7 +18,7 @@ notes: |
   release in 2001. ES-DE runs it from
   /Applications/sixtyforce.app/Contents/MacOS/sixtyforce and passes the ROM path.
   Everything below is read from the distributed 2.0.2 build (CFBundleVersion 87,
-  single x86_64 slice, macOS 10.9 or later); addresses are the virtual addresses
+  single x86_64 slice, macOS 10.9 or later). Addresses are the virtual addresses
   of Contents/MacOS/sixtyforce. None of it appears on the site, in the help pages
   or in the release notes.
 
@@ -47,7 +47,7 @@ notes: |
 
   64DD support stops at the IPL image. HardwareState carries a cartridge slot
   (pointer at +0x120, length at +0x128) and an IPL slot (+0x138, +0x140) and no
-  disk slot; the document types are n64, v64 and z64, and the only occurrences of
+  disk slot. The document types are n64, v64 and z64, and the only occurrences of
   the letters ndd in the whole binary are the two NDDJ immediates in the loader.
   Loading the IPL while a cartridge is open leaves the cartridge in place.
 
@@ -64,7 +64,7 @@ files:
       byte game code from the header, media format at 0x3b, then the two
       cartridge id bytes read 0x3d before 0x3c, then country at 0x3e, and keeps
       the image in the 64DD slot instead of the cartridge slot when that code
-      reads NDDJ. That is the Japanese retail IPL; the USA image reads NDDE and
+      reads NDDJ. That is the Japanese retail IPL. The USA image reads NDDE and
       the development image NDXJ, so neither can reach that slot. No code path
       opens the file by name, so the entry carries no
       alias and the name is a label. The image is mapped at 0x06000000 and read

@@ -51,7 +51,7 @@ notes: |
   non-zero multiple of 64 KB, otherwise 256 KB of 0xFF is mapped in its place.
   The MCPX image must be exactly 512 bytes, another size clears the path with an
   error, and the machine property is checked a second time and ends the process
-  when it disagrees; the bytes are overlaid on the last 512 of the mirrored flash
+  when it disagrees. The bytes are overlaid on the last 512 of the mirrored flash
   region. The EEPROM must be 256 bytes and is generated as
   XBOX_EEPROM_VERSION_R1 when the path does not exist. An empty disk path
   attaches no drive at index 0 at all, while the disc drive at index 1 is always
@@ -107,7 +107,7 @@ files:
       Copied under the fixed name mcpx.bin from whatever .bin, .rom or .img file
       the wizard is pointed at, and named by bootrom_path in the config. A size
       other than 512 bytes empties the setting and the machine property is left
-      off; when the property is set the loader checks the size again and ends the
+      off. When the property is set the loader checks the size again and ends the
       process rather than continue. The bytes are read over the last 512 of the
       flash image and the region stays writable so early retail kernels keep
       their cache quirk.
@@ -118,14 +118,14 @@ files:
     path: "x1box/flash.bin"
     config_key: "sys.files.flashrom_path"
     min_size: 65536
-    size_note: "Any non-zero multiple of 65536; 256 KB is assumed when the image cannot be read."
+    size_note: "Any non-zero multiple of 65536, and 256 KB is assumed when the image cannot be read."
     validation: [size]
     description: "Xbox flash ROM"
     note: >-
       Copied under the fixed name flash.bin and passed as -bios. A path that
       cannot be opened queues an error and clears autostart, so nothing runs
       without it. The image is mapped at 0xFF000000 and mirrored to the top of
-      the address space; a size that is zero or not a multiple of 64 KB, or a
+      the address space. A size that is zero or not a multiple of 64 KB, or a
       short read, falls back to 256 KB filled with 0xFF. A retail image cannot
       launch unsigned code, so a debug or modified image is what boots a title.
     source_ref: "system/vl.c:3057-3072, hw/xbox/xbox.c:65-124, android/app/src/main/java/com/rfandango/haku_x/SetupWizardActivity.kt:76-97, android/app/src/main/cpp/xemu_android.cpp:670, 761-773"
@@ -141,7 +141,7 @@ files:
       drive at all and an unopenable one only queues a message, but the launcher
       refuses to leave the wizard until the file resolves. The formatter builds
       FATX partitions inside an image that already exists and needs at least
-      0x1DD156000 bytes for the retail layout; it never creates the image. A
+      0x1DD156000 bytes for the retail layout, but it never creates the image. A
       qcow2 with a backing file is reported at load because the sectors it did
       not modify are read from that other file.
     source_ref: "system/vl.c:3078-3092, android/app/src/main/java/com/rfandango/haku_x/SetupWizardActivity.kt:99-120, android/app/src/main/java/com/rfandango/haku_x/XboxHddFormatter.kt:7-29, 47-79, android/app/src/main/cpp/xemu_android.cpp:176-184, 671-672, 774-795"
@@ -157,7 +157,7 @@ files:
       Always pointed at x1box/eeprom.bin, a path the wizard never asks for.
       Generated as XBOX_EEPROM_VERSION_R1 when it does not exist, so a dump is
       needed only to carry over a console serial, region or HDD key. It is
-      attached through the smbus-storage device; a size other than 256 bytes, or
+      attached through the smbus-storage device. A size other than 256 bytes, or
       a generation that fails, clears autostart. Preparing Insignia and the
       EEPROM editor write to it in place.
     source_ref: "system/vl.c:2921-2964, 3045-3055, android/app/src/main/cpp/xemu_android.cpp:671, 711, android/app/src/main/java/com/rfandango/haku_x/SettingsActivity.kt:1264-1267"
@@ -220,8 +220,8 @@ files:
       texture_replace in internal storage, and read back by the Vulkan renderer
       from the subdirectory named after the title id of the running XBE in eight
       hexadecimal digits. A name is kept only when the stem is sixteen
-      hexadecimal digits, which is the content hash of the texture it replaces;
-      each PNG is decoded to a .raw sidecar carrying width and height and mapped
+      hexadecimal digits, which is the content hash of the texture it replaces.
+      Each PNG is decoded to a .raw sidecar carrying width and height and mapped
       from there. Off unless the setting is on and the folder is set.
     source_ref: "hw/xbox/nv2a/pgraph/vk/texture_replace.c:227-320, 331-377, 388-435, android/app/src/main/java/com/rfandango/haku_x/GameLibraryActivity.kt:904-990, android/app/src/main/java/com/rfandango/haku_x/MainActivity.kt:105-113"
 
@@ -235,7 +235,7 @@ files:
       Read from the assets of the package at startup and handed to SDL as a
       memory stream. The asset manager reads inside the archive and the path is
       a constant, so there is no search order and nothing outside the package
-      replaces this copy; an added pad mapping goes in through
+      replaces this copy. An added pad mapping goes in through
       controller_map.txt instead. The revision shipped here is 589031 bytes and
       is not the one other releases carry under this name.
     source_ref: "android/app/src/main/cpp/xemu_android.cpp:193-268"

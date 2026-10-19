@@ -39,7 +39,7 @@ _REPO_URL = "https://github.com/mamedev/mame.git"
 _STALE_HOURS = 24
 
 
-# ── Cache ────────────────────────────────────────────────────────────
+# Cache
 
 
 def _load_cache() -> dict[str, Any] | None:
@@ -74,7 +74,7 @@ def _write_cache(data: dict[str, Any]) -> None:
     log.info("cache written to %s", _CACHE_PATH)
 
 
-# ── Git operations ───────────────────────────────────────────────────
+# Git operations
 
 
 def _run_git(
@@ -92,7 +92,7 @@ def _run_git(
 def _sparse_clone(tag: str) -> None:
     """Clone the release the data will be labelled with, not master.
 
-    The version comes from the latest release; cloning master gave line
+    The version comes from the latest release. Cloning master gave line
     numbers and hashes of a later revision under that release's label, and
     the profiles cited lines no declared revision holds.
     """
@@ -183,7 +183,7 @@ def _cleanup() -> None:
         shutil.rmtree(_CLONE_DIR)
 
 
-# ── Profile discovery ────────────────────────────────────────────────
+# Profile discovery
 
 
 _MAME_TREES = frozenset({
@@ -223,7 +223,7 @@ def _find_mame_profiles() -> list[Path]:
     return profiles
 
 
-# ── Diff formatting ──────────────────────────────────────────────────
+# Diff formatting
 
 
 def _format_diff(
@@ -268,7 +268,7 @@ def _format_diff(
     return lines
 
 
-# ── Main ─────────────────────────────────────────────────────────────
+# Main
 
 
 def _fetch_hashes(force: bool) -> dict[str, Any]:
@@ -355,10 +355,10 @@ def release_profile(
 ) -> dict[str, Any]:
     """A profile for one MAME release a platform builds, from its own source.
 
-    Recalbox ships libretro/mame twice, built at 0.258 and at 0.278; the
+    Recalbox ships libretro/mame twice, built at 0.258 and at 0.278. The
     BIOS root sets and their ROMs change between releases, so the current
     MAME profile does not describe them. Each set keeps the system and the
-    required flag the current profile gives it; the contents and the line
+    required flag the current profile gives it, while the contents and the line
     are the release's own.
     """
     version = release.removeprefix("mame")

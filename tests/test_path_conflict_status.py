@@ -2,7 +2,7 @@
 
 RetroArch declares SGB1.sfc as a file and SGB1.sfc/<rom> as files inside it.
 The builder ships one shape and counted every conflicting declaration OK,
-resolved or not; verify.py resolves each on its own. A required file absent
+resolved or not, while verify.py resolves each on its own. A required file absent
 from the collection read as covered in the pack report and as missing in verify.
 """
 
@@ -227,7 +227,7 @@ class TheEmulatorPackShipsWhatTheCoreAccepts(unittest.TestCase):
 class AlternativesAgreeWithThePack(unittest.TestCase):
     """Two versions declared at one path: the held one has a contradicted
     md5, the other is not held. The pack ships the held copy with a
-    discrepancy; verify took the worst status and said missing."""
+    discrepancy, but verify took the worst status and said missing."""
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
@@ -280,7 +280,7 @@ class AlternativesAgreeWithThePack(unittest.TestCase):
 
 
 class AMaskedArchiveIsMissing(unittest.TestCase):
-    """Profile a ships a loose pack.zip; profile b needs pack.zip as an
+    """Profile a ships a loose pack.zip while profile b needs pack.zip as an
     archive holding a member a's copy lacks. The pack skipped b's archive
     in silence and verify counted it OK on b's own copy."""
 

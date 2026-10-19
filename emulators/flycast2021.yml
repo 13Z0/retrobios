@@ -40,10 +40,10 @@ notes: |
 
   NAOMI and Atomiswave: a BIOS archive is opened as <system>/dc/<name> with .7z
   then .zip appended. Each member is looked for in the game archive, its parent,
-  then the BIOS archive, by CRC32 and then by name; the BIOS table carries no
+  then the BIOS archive, by CRC32 and then by name. The BIOS table carries no
   CRC32, so only the name matches. The member for the configured region is
   tried first, then the first member listed. A game whose table entry names a
-  BIOS refuses to start without it; the others default to naomi. Five archive
+  BIOS refuses to start without it, and the others default to naomi. Five archive
   names are reachable from the game table: naomi, awbios, f355bios, f355dlx,
   hod2bios. airlbios and naomigd have table entries but no game names them.
   ref: core/hw/naomi/naomi_cart.cpp:76-176, core/hw/naomi/naomi_cart.cpp:227-247,
@@ -66,7 +66,7 @@ files:
     min_size: 2097152
     validation: [size]
     description: "Dreamcast boot ROM"
-    note: "Read as 2 MB into the system ROM; a shorter file is rejected. Needed only to boot to the BIOS menu or when the HLE BIOS option is disabled."
+    note: "Read as 2 MB into the system ROM, and a shorter file is rejected. Needed only to boot to the BIOS menu or when the HLE BIOS option is disabled."
     source_ref: "core/hw/holly/sb_mem.cpp:50-65, core/hw/holly/sb_mem.cpp:215-229, core/hw/flashrom/flashrom.h:54-67, core/nullDC.cpp:420-431"
 
   - name: "dc_nvmem.bin"
@@ -77,7 +77,7 @@ files:
     min_size: 131072
     validation: [size]
     description: "Dreamcast flash ROM"
-    note: "Loaded with the boot ROM and by the HLE path; a missing file leaves the flash blank and the core runs. Written back as dc_nvmem.bin."
+    note: "Loaded with the boot ROM and by the HLE path. A missing file leaves the flash blank and the core runs. Written back as dc_nvmem.bin."
     source_ref: "core/hw/holly/sb_mem.cpp:196-213, core/hw/holly/sb_mem.cpp:231, core/hw/holly/sb_mem.cpp:236-243, core/hw/holly/sb_mem.cpp:271-278"
 
   - name: "font.bin"

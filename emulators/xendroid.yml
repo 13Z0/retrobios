@@ -35,7 +35,7 @@ notes: |
        app/src/main/java/xendroid/compose/ui/content/InstallContentViewModel.kt:127-172
 
   Releases are tagged XenDroid-<short commit> and the version name is the git
-  hash handed to the build, so 0b11201 is the current release; the two commits
+  hash handed to the build, so 0b11201 is the current release. The two commits
   main carries past it touch the README only. version.h names
   canary_experimental dc561e4df, carried over from the ax360e tree the project
   started as, and it does not describe the vendored code. The Edge revision is
@@ -91,7 +91,7 @@ files:
     note: >-
       Imported through a picker restricted to application/zip. The archive is
       read whole, meta.json names the library to keep, and a single .so is taken
-      instead when no meta.json is present; the .so files and meta.json are
+      instead when no meta.json is present. The .so files and meta.json are
       unpacked into a directory named after the archive, in internal storage.
       The configured path is read before the instance is created and opened
       through adrenotools when the file exists, otherwise the system libvulkan.so
@@ -190,7 +190,7 @@ exclusion_note: >
   never reads the file. Edge's in-binary patch bundle, its game compatibility
   bundle and its game title database are packed from build/data_repos, which
   xenia-build.py fetches and the Gradle build never runs, so the bundle compiled
-  in is empty and the APK assets are the only patch source; the locale bundle is
+  in is empty and the APK assets are the only patch source, and the locale bundle is
   guarded off when the CMake system name is Android. Two profile files sit beside
   the Account and are not listed: tile_32.png is written and never read back, and
   tile_64.png is written by the frontend from a picture the user picks and read

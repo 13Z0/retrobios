@@ -50,7 +50,7 @@ class SystemPackMatchesVerify(unittest.TestCase):
                 )
                 report = json.loads(_run("scripts/verify.py", "--system", system, "--json"))
                 pack_missing = sorted(re.findall(r"^  MISSING: (\S+)", packed, re.M))
-                # One per destination, as the pack reports them; an entry the
+                # One per destination, as the pack reports them. An entry the
                 # collection cannot hold is counted apart on both sides.
                 verify_missing = sorted({
                     (d["destination"], d["name"]) for d in report["details"]

@@ -40,7 +40,7 @@ files:
     hle_fallback: true
     sha1: "5fab786695311433602028cd89898689c5df0898"
     md5: "cb52d323b13129a2f0bc3e3e911e567f"
-    note: "embedded encrypted fallback if missing: default_keys_enc, AES-CBC with a zero key and IV; the hashes are those of the decrypted text without its PKCS#7 block"
+    note: "embedded encrypted fallback if missing: default_keys_enc, AES-CBC with a zero key and IV. The hashes are those of the decrypted text without its PKCS#7 block"
     source_ref: "src/core/hw/aes/key.cpp:283-300, src/common/common_paths.h:83, src/core/hw/default_keys.h:4-5"
 
   - name: shared_font.bin
@@ -48,7 +48,7 @@ files:
     system: nintendo-3ds
     required: false
     hle_fallback: true
-    note: "legacy load path; embedded open-source font used if missing"
+    note: "legacy load path, embedded open-source font used if missing"
     source_ref: "src/core/hle/service/apt/apt.cpp:263-278"
 
   - name: seeddb.bin
@@ -74,7 +74,7 @@ files:
     size: [288, 320]
     validation: [size, signature]
     on_mismatch: {signature: warn}
-    note: "console-unique key seed; 288 bytes without the AES MAC block, 320 with it"
+    note: "console-unique key seed, 288 bytes without the AES MAC block, 320 with it"
     source_ref: "src/core/hw/unique_data.cpp:170-200, src/core/hw/unique_data.cpp:217, src/core/hw/unique_data.h:103-133"
 
   - name: SecureInfo_A

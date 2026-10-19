@@ -389,7 +389,7 @@ class TestFreeSpaceGuard(unittest.TestCase):
 
 class AFolderThatRefusesWritesIsNamed(unittest.TestCase):
     """A read-only BIOS folder ended the run on a traceback (a subfolder to
-    create), or on three retries per file and "once that is resolved"; a
+    create), or on three retries per file and "once that is resolved", and a
     platform named but not detected was told to use sudo, which on another
     machine creates /userdata/bios on the wrong disk."""
 
@@ -893,8 +893,8 @@ class TestStandaloneCopiesExtraDirs(unittest.TestCase):
 
 
 class StandaloneCopiesReadWhereThePackPutTheFile(unittest.TestCase):
-    """The registry names Citra/sysdata/aes_keys.txt for every platform;
-    EmuDeck's manifest installs it at the root. The installer looked under
+    """The registry names Citra/sysdata/aes_keys.txt for every platform,
+    but EmuDeck's manifest installs it at the root. The installer looked under
     the registry's path, found nothing and copied nothing to Azahar."""
 
     def _copy(self, entry: dict) -> tuple[Path, tuple[int, int, int]]:
@@ -971,7 +971,7 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
 
     def test_every_config_file_read_is_published(self):
         """The registry published five RetroArch config files and the fixed
-        RetroDECK folder; the installer also read Snap, the older macOS file,
+        RetroDECK folder, but the installer also read Snap, the older macOS file,
         C:\\RetroArch, Program Files, ES-DE, Steam and RetroDECK's own
         config. A manifest reader saw a subset of what the installer does."""
         import yaml  # noqa: PLC0415
@@ -1196,7 +1196,7 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
 
         python38 = shutil.which("python3.8")
         if python38 is None:
-            self.skipTest("no python3.8 on PATH; the static checks below still run")
+            self.skipTest("no python3.8 on PATH, the static checks below still run")
         code = (
             "import importlib.util; "
             "spec = importlib.util.spec_from_file_location('install', 'install.py'); "
@@ -1224,7 +1224,7 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
         if python38 is None:
             if os.environ.get("CI"):
                 self.fail("CI must provide python3.8 for the installer's floor")
-            self.skipTest("no python3.8 on PATH; the static checks below still run")
+            self.skipTest("no python3.8 on PATH, the static checks below still run")
         handler = functools.partial(
             http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
         )
@@ -1334,7 +1334,7 @@ class InstallerStaysOnPython38AndTheStdlib(unittest.TestCase):
 
 
     def test_no_local_is_assigned_and_never_read(self):
-        """ruff --select F in py38 mode is the installer's lint gate; an
+        """ruff --select F in py38 mode is the installer's lint gate, and an
         unread `appdata` in _os_default_dests made it exit 1. The suite has
         no ruff, so the rule is read from the syntax tree."""
         import ast  # noqa: PLC0415
@@ -1472,7 +1472,7 @@ class TargetFlagIsAppliedOrRefused(unittest.TestCase):
 
 
 class TestBaseUrlScheme(unittest.TestCase):
-    """The bootstraps insist on HTTPS; the installer must not be laxer."""
+    """The bootstraps insist on HTTPS, so the installer must not be laxer."""
 
     def test_https_is_accepted(self):
         self.assertEqual(
@@ -1989,7 +1989,7 @@ class TestAvailablePlatforms(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=scratch) as directory:
             root = Path(directory)
             # A piped script must not trust a same-named file in the caller's
-            # working directory; only a real local install.sh may use its peer.
+            # working directory. Only a real local install.sh may use its peer.
             (root / "install.py").write_text(
                 "raise SystemExit('untrusted cwd installer ran')\n",
                 encoding="utf-8",
@@ -2190,7 +2190,7 @@ class TargetListFailureIsNotAnAnswer(unittest.TestCase):
 
 class RetroArchWhereItReallyLives(unittest.TestCase):
     """Windows: retroarch.cfg sits beside retroarch.exe and system defaults
-    to <exe folder>\\system; only %APPDATA% was read, and the fallback was a
+    to <exe folder>\\system. Only %APPDATA% was read, and the fallback was a
     folder RetroArch never reads. macOS: the config is under
     Application Support/RetroArch/config, the system folder in Documents."""
 
@@ -2385,7 +2385,7 @@ class AnUnreadableRetroDeckConfigIsSaid(unittest.TestCase):
 
 class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
     """Batocera, Recalbox and ROCKNIX each write the board they were built
-    for; the installer read none of them, so a Batocera RPi4 installed
+    for, but the installer read none of them, so a Batocera RPi4 installed
     every board's files (8.6 GiB where bcm2711 needs 5.5)."""
 
     def test_each_source_is_read(self):
@@ -2509,7 +2509,7 @@ class BizHawkIsFoundWhereItReads(unittest.TestCase):
 
 class RetroArchUwpIsFound(unittest.TestCase):
     """The UWP/MSIX RetroArch keeps retroarch.cfg and system/ in its
-    package's LocalState; no rule looked under %LOCALAPPDATA%\\Packages."""
+    package's LocalState, but no rule looked under %LOCALAPPDATA%\\Packages."""
 
     def _state(self) -> Path:
         local = Path(_tempdir(self))
@@ -2536,7 +2536,7 @@ class RetroArchUwpIsFound(unittest.TestCase):
 
 
 class QuitMeansNoAtTheLastQuestion(unittest.TestCase):
-    """Every menu taught q as quit; at "Download 3.2 GB ...? [Y/n]" a q
+    """Every menu taught q as quit, yet at "Download 3.2 GB ...? [Y/n]" a q
     started the download."""
 
     def test_quit_words_refuse(self):
@@ -2591,7 +2591,7 @@ class ACutFileListIsRetried(unittest.TestCase):
 
 
 class DataDirectoriesAreInstalled(unittest.TestCase):
-    """The README said the installer does what the pack does; for RetroArch
+    """The README said the installer does what the pack does, but for RetroArch
     it left out 2,640 data files (Dolphin's Sys, PPSSPP's assets) and
     --check still said "All files up to date"."""
 
@@ -2846,7 +2846,7 @@ class SteamRetroArchOnMacIsPortable(unittest.TestCase):
 
 class AMissingFileListNamesTheRef(unittest.TestCase):
     """A 404 on the manifest said three attempts were made and to check the
-    connection and proxy; it was asked once, and the cause is the ref."""
+    connection and proxy, but it was asked once, and the cause is the ref."""
 
     def _run(self, ref: str) -> str:
         error = install.urllib.error.HTTPError("u", 404, "Not Found", None, None)

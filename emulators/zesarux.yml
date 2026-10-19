@@ -61,7 +61,7 @@ notes: |
   comparison.
 
   `--romfile` (src/start.c:4876-4880) overrides the machine ROM with any file the user
-  picks (src/cpu.c:3520-3523); the ROMs under `alternate_roms/` and the extra
+  picks (src/cpu.c:3520-3523). The ROMs under `alternate_roms/` and the extra
   variants in the install root exist for that path and are documented in the
   shipped src/ALTERNATEROMS file. Interface ROMs are equally overridable
   (`--divide-rom`, `--divmmc-rom`, `--dandanator-rom`, `--ifrom-rom`,
@@ -77,7 +77,7 @@ notes: |
   `find_sharedfile` path: `keyboards/*.bmp` on-screen keyboard art
   (src/menu/menu_items.c:19480, 21784, 21805), `z88_shortcuts.bmp`
   (src/video/screen.c:11254), the `my_soft/` homebrew collection
-  (src/menu/menu_items.c:32497, 32258; src/menu/menu_items_storage.c:582), the
+  (src/menu/menu_items.c:32497, 32258 and src/menu/menu_items_storage.c:582), the
   `copiers/*.zsf` tape copier snapshots (src/menu/menu_items_storage.c:666, 742) and
   `editionnamegame.tzx` (src/cpu.h:73, src/utils.c:17885). They are application
   resources rather than system firmware and carry no entry below.
@@ -270,7 +270,7 @@ files:
     bundled: true
     system: sinclair-zx-spectrum
     source_ref: "src/cpu.c:3414-3416, src/utils.c:4116"
-    note: "ZX Evolution BaseConf ROM set. The 13.1 tree ships the Turbo 2+/PentEvo build with New ROM boot v1.06; the 13.0 release shipped the PentEvo edition 2013 image of the same size."
+    note: "ZX Evolution BaseConf ROM set. The 13.1 tree ships the Turbo 2+/PentEvo build with New ROM boot v1.06, while the 13.0 release shipped the PentEvo edition 2013 image of the same size."
 
   # ============================================================
   # ZX Spectrum Next (TBBlue)
@@ -293,7 +293,7 @@ files:
     bundled: true
     system: sinclair-zx-spectrum-next
     source_ref: "src/menu/menu_items_storage.c:12092-12110, src/configure:1921"
-    note: "SD card image carrying the Next system software. Assigned as MMC card 0 by the local-tbblue menu action; the emulator reports 'tbblue.mmc image not found' when absent."
+    note: "SD card image carrying the Next system software. Assigned as MMC card 0 by the local-tbblue menu action, and the emulator reports 'tbblue.mmc image not found' when absent."
     size_note: "64 MB, so it needs storage: large_file once the image is acquired and uploaded as a release asset."
 
   # ============================================================
@@ -452,7 +452,7 @@ files:
     bundled: true
     system: sinclair-ql
     source_ref: "src/cpu.c:3493 (commented alternative), src/start.c:4876-4880"
-    note: "JM release. Reachable through --romfile; the switch selects ql_js.rom."
+    note: "JM release. Reachable through --romfile. The switch selects ql_js.rom."
 
   - name: "tkii220.rom"
     sha1: "f364472a81352479290e388e9a5afb57a0de8249"
@@ -461,7 +461,7 @@ files:
     bundled: true
     system: sinclair-ql
     source_ref: "src/machines/ql.c:1348-1375, src/start.c:5627-5652, src/cpu.c:3862-3866"
-    note: "QJUMP Toolkit II 2.20, the ROM ql.c names as the example for --ql-rom-c000-file. ql_load_extra_roms() runs after the system ROM and reads 16K into memoria_ql at 0xC000 from the path the option gives; the read count is not checked."
+    note: "QJUMP Toolkit II 2.20, the ROM ql.c names as the example for --ql-rom-c000-file. ql_load_extra_roms() runs after the system ROM and reads 16K into memoria_ql at 0xC000 from the path the option gives. The read count is not checked."
 
   - name: "qsound_V1.94.rom"
     sha1: "622a81dce98524148f067780c17eddbaf46e27f6"
@@ -471,7 +471,7 @@ files:
     bundled: true
     system: sinclair-ql
     source_ref: "src/soundchips/qsound.h:50, src/soundchips/qsound.c:329-369, src/start.c:6799-6806, src/cpu.c:3863-3866"
-    note: "QL Qsound firmware, read into memoria_ql at 0xC0000 once --ql-qsound-enabled is set; the read count is not checked and --ql-qsound-rom points the loader at another file. QSOUND_ROM_FILE is spelled qsound_V1.94.rom while the shipped file is Qsound_V1.94.rom, so the default only resolves on a case-insensitive filesystem."
+    note: "QL Qsound firmware, read into memoria_ql at 0xC0000 once --ql-qsound-enabled is set. The read count is not checked and --ql-qsound-rom points the loader at another file. QSOUND_ROM_FILE is spelled qsound_V1.94.rom while the shipped file is Qsound_V1.94.rom, so the default only resolves on a case-insensitive filesystem."
 
   - name: "Z88OZ47.rom"
     sha1: "35e528e81d8f4e5860adf4160a3da0926525c8fa"
@@ -480,7 +480,7 @@ files:
     bundled: true
     system: cambridge-z88
     source_ref: "src/cpu.c:3460-3465, src/cpu.c:3785-3795"
-    size_note: "Reads up to 512K and errors only when nothing is read; z88_internal_rom_size is derived from the byte count, so any size is accepted."
+    size_note: "Reads up to 512K and errors only when nothing is read. z88_internal_rom_size is derived from the byte count, so any size is accepted."
 
   - name: "mk14.rom"
     sha1: "802dc637ce5391a2a6627f76f919b12a869b56ef"

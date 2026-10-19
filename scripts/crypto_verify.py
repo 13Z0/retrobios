@@ -136,7 +136,7 @@ def _rsa_verify_pkcs1v15_sha256(
 
 
 # AES-128-CBC decryption, standard library only. The build promises stdlib +
-# pyyaml; a contributor without cryptography, pycryptodome or openssl on PATH
+# pyyaml, and a contributor without cryptography, pycryptodome or openssl on PATH
 # got a RuntimeError from verify.py on otp.bin. 256 bytes need no speed.
 
 

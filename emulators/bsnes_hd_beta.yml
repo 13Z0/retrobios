@@ -67,12 +67,12 @@ files:
   - name: dsp3.program.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for SD Gundam GX"
+    note: "no HLE, required for SD Gundam GX"
     source_ref: "bsnes/sfc/cartridge/load.cpp:490-494, bsnes/sfc/cartridge/load.cpp:531-534"
   - name: dsp3.data.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for SD Gundam GX"
+    note: "no HLE, required for SD Gundam GX"
     source_ref: "bsnes/sfc/cartridge/load.cpp:498-503, bsnes/sfc/cartridge/load.cpp:531-534"
   - name: dsp4.program.rom
     system: nintendo-snes
@@ -109,12 +109,12 @@ files:
   - name: st011.program.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for Hayazashi Nidan Morita Shougi"
+    note: "no HLE, required for Hayazashi Nidan Morita Shougi"
     source_ref: "bsnes/sfc/cartridge/load.cpp:570-574, bsnes/sfc/cartridge/load.cpp:599-602"
   - name: st011.data.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for Hayazashi Nidan Morita Shougi"
+    note: "no HLE, required for Hayazashi Nidan Morita Shougi"
     source_ref: "bsnes/sfc/cartridge/load.cpp:578-583, bsnes/sfc/cartridge/load.cpp:599-602"
 
   # ARM6 coprocessor (ST018)
@@ -122,12 +122,12 @@ files:
   - name: st018.program.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for Hayazashi Nidan Morita Shougi 2"
+    note: "no HLE, required for Hayazashi Nidan Morita Shougi 2"
     source_ref: "bsnes/sfc/cartridge/load.cpp:379-384"
   - name: st018.data.rom
     system: nintendo-snes
     required: false
-    note: "no HLE — required for Hayazashi Nidan Morita Shougi 2"
+    note: "no HLE, required for Hayazashi Nidan Morita Shougi 2"
     source_ref: "bsnes/sfc/cartridge/load.cpp:387-393"
 
   # SGB cartridge ROMs (boot ROMs embedded in icd/boot-roms.cpp)

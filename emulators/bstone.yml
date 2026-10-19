@@ -33,7 +33,7 @@ notes: |
     4. the GOG install directories (Windows registry)
     5. the Steam install directories (Windows registry)
   One complete set is enough. With none the engine stops on "Content not
-  found." (src/bstone/src/jm_free.cpp:754); with several games found it asks
+  found." (src/bstone/src/jm_free.cpp:754). With several games found it asks
   which one to play. No single file is required on its own.
 
   Each file is opened under its upper-case name first, then under the
@@ -55,7 +55,7 @@ files:
       - "0c3de403b524107809fa9308b730d60e8e41ba93"
       - "e2c101f9fd4bc7e22ddbfa3f019c9303877de4e2"
     validation: [sha1]
-    note: "sha1 values in order: v1.0 and v2.0; v2.1 and v3.0"
+    note: "sha1 values in order: v1.0 and v2.0, then v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1497, 1518, 1539, 1560"
 
   - name: "AUDIOT.BS1"
@@ -67,7 +67,7 @@ files:
       - "3d4e8b62aa4683671027513ad9720f76f176ba5b"
       - "b79e7afcb4e4b29e59660ec261f72ff1ab4d3a25"
     validation: [sha1]
-    note: "sha1 values in order: v1.0 and v2.0; v2.1 and v3.0"
+    note: "sha1 values in order: v1.0 and v2.0, then v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1498, 1519, 1540, 1561"
 
   - name: "IANIM.BS1"
@@ -88,7 +88,7 @@ files:
       - "55b9eb9ed555b0f249c2cefd54ecc3f511bfcd55"
       - "04a8e4e7c360f6033dc70f7b09edbc4a6447e462"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1500, 1521, 1542, 1563"
 
   - name: "MAPTEMP.BS1"
@@ -100,7 +100,7 @@ files:
       - "293464e7143ff7e6faf5f5b20799e76a394d65bf"
       - "bbb3cd6ab3e742eada427862504eba06437036d0"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1501, 1522, 1543, 1564"
 
   - name: "SANIM.BS1"
@@ -123,7 +123,7 @@ files:
       - "ed1ab61ad2529e046f966d9c1627508f76693ef8"
       - "537676ddcafeee415c22bb9d00097b25bc7e13c5"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1503, 1524, 1545, 1566"
 
   - name: "VGAGRAPH.BS1"
@@ -137,7 +137,7 @@ files:
       - "b59cbe3793b4612b06254ece48bf8e961ab6f528"
       - "9f9f4c40c9637af472ce5e1a360e51364c3a418a"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1504, 1525, 1546, 1567"
 
   - name: "VGAHEAD.BS1"
@@ -151,7 +151,7 @@ files:
       - "0635a4a2b823eef2904ed1d590d98362fb16621d"
       - "e7fb8f241b8fa94739c3bd09ea05c1afc7bbfc95"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1505, 1526, 1547, 1568"
 
   - name: "VSWAP.BS1"
@@ -163,7 +163,7 @@ files:
       - "37412ca9139562fc31330d72470822de4d9ceb4a"
       - "dbde907ba1110bef445d6daae283c4520d6951b4"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1506, 1527, 1548, 1569"
 
   # Aliens of Gold registered
@@ -221,7 +221,7 @@ files:
       - "6f19a144d8985e90f096fc1c67ade58e9051235c"
       - "028f624e150f84ffc8336336cb0ecea0932cc22d"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1586, 1609, 1632, 1655"
 
   - name: "MAPTEMP.BS6"
@@ -233,7 +233,7 @@ files:
       - "4d00c5f5c843f99a266bd938648192a6eff17b5a"
       - "8b48e7eb859382a4c84948c5a62899194288e853"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1587, 1610, 1633, 1656"
 
   - name: "SANIM.BS6"
@@ -256,7 +256,7 @@ files:
       - "e4ae3ef9a3ac158a832092b7b5487227337c6f13"
       - "60da35e506d57753f83cca5f232a76dd1cf074ba"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1589, 1612, 1635, 1658"
 
   - name: "VGAGRAPH.BS6"
@@ -270,7 +270,7 @@ files:
       - "6868e6cc4f8cb9160a218c5bce680a11f64c675a"
       - "001037fafdff124befb5437c563d0b9c613b3c00"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1590, 1613, 1636, 1659"
 
   - name: "VGAHEAD.BS6"
@@ -284,7 +284,7 @@ files:
       - "1a3864cd12de4b8fd6be023b73d2d79e91b9018d"
       - "ff165ca5924d738853587a7e4ab1cd239e10e359"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0; v2.1; v3.0"
+    note: "sha1 values in order: v1.0, v2.0, v2.1, v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1591, 1614, 1637, 1660"
 
   - name: "VSWAP.BS6"
@@ -296,7 +296,7 @@ files:
       - "0a700732ccbc72f95318a6226a7e1ad78ac713bb"
       - "6fcc6e007b02b2e55892cfa7acfd42966ef9c9fb"
     validation: [sha1]
-    note: "sha1 values in order: v1.0; v2.0 and v2.1 and v3.0"
+    note: "sha1 values in order: v1.0, then v2.0 and v2.1 and v3.0"
     source_ref: "src/bstone/src/id_ca.cpp:1592, 1615, 1638, 1661"
 
   # Planet Strike

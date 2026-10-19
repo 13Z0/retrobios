@@ -56,7 +56,7 @@ class AgnosticScan(unittest.TestCase):
 class BundledHashIsProof(unittest.TestCase):
     """A bundled file with a declared hash is served by those bytes or flagged.
 
-    Four NetherSX2-Turnip entries named their own sha1; the collection held
+    Four NetherSX2-Turnip entries named their own sha1, but the collection held
     NetherSX2's copies, which the builder shipped in their place.
     """
 

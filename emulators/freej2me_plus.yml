@@ -20,7 +20,7 @@ notes: |
   directory, checks that freej2me_plus-lr.jar exists there and spawns
   java -jar with the file encoding and the screen size as arguments, then
   drives the Java process over pipes. Windows launches javaw through
-  CreateProcess with the system directory as starting directory; Linux and
+  CreateProcess with the system directory as starting directory, while Linux and
   macOS fork, chdir() into it and execvp() java. A Java runtime must be on
   the host PATH, and the start failure message asks for Java 6 or newer. The
   jar is built by ant from build.xml, which writes the libretro variant as
@@ -35,7 +35,7 @@ notes: |
   Only existence is tested. When the jar is absent the core posts the
   SYSTEM_NOT_FOUND message and returns from retro_init before any process is
   created, so nothing loads. The message text still names freej2me-lr.jar,
-  the file the original core opens; this core opens freej2me_plus-lr.jar.
+  the file the original core opens. This core opens freej2me_plus-lr.jar.
   ref: src/libretro/freej2me_libretro.c:339-346,
        src/libretro/freej2me_libretro.c:866-872,
        src/libretro/freej2me_libretro.h:73-79
@@ -59,10 +59,10 @@ notes: |
 
   Two files are user supplied and optional. With the freej2me_midifont core
   option on, Manager.checkCustomMidi loads the first .sf2 or .gm listed in
-  freej2me_system/customMIDI/ as the MIDI soundbank; off, or with the
+  freej2me_system/customMIDI/ as the MIDI soundbank. Off, or with the
   directory empty, the JVM default soundbank is used. With freej2me_textfont
   on, PlatformFont loads the first .ttf, .otf or .ttc in
-  freej2me_system/customFont/; off, the AWT SansSerif, Monospaced and Dialog
+  freej2me_system/customFont/. Off, the AWT SansSerif, Monospaced and Dialog
   faces are used. Both directories are created with a placeholder file when
   missing, and neither file has a fixed name.
   ref: src/libretro/freej2me_libretro.c:464-469,
@@ -82,7 +82,7 @@ files:
     required: true
     validation: [existence]
     description: "FreeJ2ME-Plus libretro Java application"
-    note: "Java program the native core launches with java -jar from the system directory root. Built by ant from build.xml at the pinned revision; the code reads no size and no hash."
+    note: "Java program the native core launches with java -jar from the system directory root. Built by ant from build.xml at the pinned revision. The code reads no size and no hash."
     source_ref: "src/libretro/freej2me_libretro.c:38-45 (freej2meapp), src/libretro/freej2me_libretro.c:859-875 (GET_SYSTEM_DIRECTORY, freej2me_present, SYSTEM_NOT_FOUND_MSG), src/libretro/freej2me_libretro.c:339-346 (access F_OK), src/libretro/freej2me_libretro.c:877-888 (java -jar argv), build.xml:86-99 (destfile)"
 
   - name: "<soundfont>.sf2"

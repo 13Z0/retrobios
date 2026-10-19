@@ -3,7 +3,7 @@
 These modules are run as scripts (``python scripts/verify.py``), as modules
 (``python -m scripts.scraper.libretro_scraper``), and imported as a package by
 the tests and the type checker. The first form puts this directory on the path
-itself; the other two do not, so importing the package adds it. Without that,
+itself. The other two do not, so importing the package adds it. Without that,
 ``import scripts.common`` fails on the first sibling import it reaches, and
 every absolute import between siblings would have to be rewritten to be
 relative -a change that would break running a script directly.

@@ -12,7 +12,7 @@ the cases that come up.
 Three things, and a few minutes:
 
 - The BIOS folder the emulator reads. The installer finds it by itself on most
-  systems; on a handheld, that usually means plugging the SD card into a
+  systems. On a handheld, that usually means plugging the SD card into a
   computer.
 - `curl` or `wget`, and Python 3.8 or newer. The command below checks for both
   and stops with a message if either is absent.
@@ -155,7 +155,7 @@ its BIOS folder, see [Getting started](getting-started.md).
 ### Error: Python 3.8 or newer is required.
 
 Python is missing from the machine. The message names the command that installs
-it, `sudo apt install python3` on Debian and Ubuntu; on a handheld running Batocera or Recalbox it is already there, so
+it, `sudo apt install python3` on Debian and Ubuntu. On a handheld running Batocera or Recalbox it is already there, so
 this message usually means the command ran on the computer rather than on the
 console.
 

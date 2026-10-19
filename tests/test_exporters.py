@@ -130,7 +130,7 @@ class Reconciliation(unittest.TestCase):
     """The platform's file corrected, not replaced by ours."""
 
     def test_a_bare_truth_name_is_not_a_path_suffix(self):
-        """fbneo's boot.bin has no path; libretro's dc/boot.bin ends in
+        """fbneo's boot.bin has no path, while libretro's dc/boot.bin ends in
         /boot.bin. The suffix paired them past the size guard and wrote the
         480-byte file's size and hashes over the 2 MB Dreamcast BIOS."""
         truth = {"systems": {"sega-dreamcast": {"files": [
@@ -161,7 +161,7 @@ class Reconciliation(unittest.TestCase):
         self.assertEqual(agreeing.size(), 955352)
 
     def test_a_size_list_keeps_the_platform_size_it_accepts(self):
-        """geargrafx accepts syscard3.pce headerless or headered; System.dat
+        """geargrafx accepts syscard3.pce headerless or headered, and System.dat
         states 262144 for the same dump. The list came first, stated no
         single size, and the rom line went out with none."""
         both = NativeFile(
@@ -323,7 +323,7 @@ class ExporterRegistry(unittest.TestCase):
                 )
 
     def test_only_a_format_with_the_field_claims_to_carry_it(self):
-        """Recalbox writes mandatory; RetroBat's entries are md5 and file."""
+        """Recalbox writes mandatory, while RetroBat's entries are md5 and file."""
         exporters = discover_exporters()
         self.assertIn("required", exporters["recalbox"].carries())
         self.assertNotIn("required", exporters["retrobat"].carries())
@@ -384,7 +384,7 @@ class SearchOrder(unittest.TestCase):
 
     def test_a_region_the_help_already_fills_gets_no_alternative(self):
         """PicoDrive loads the first file of each region's list. RetroPie
-        names one per region; the export appended three more, which the
+        names one per region, but the export appended three more, which the
         sentence reads as three more required files."""
         from exporter.baseline import NativeSystem  # noqa: PLC0415
 
@@ -415,7 +415,7 @@ class SearchOrder(unittest.TestCase):
         """Nothing is dropped on the rank here, so the best one wins.
 
         slot.py voids the choice when cores disagree because it keeps one
-        file; ordering keeps them all, and a file that is some core's first
+        file, while ordering keeps them all, and a file that is some core's first
         choice belongs early.
         """
         merged = {"name": "scph5501.bin", "priority": 2, "priority_conflict": True}
@@ -521,7 +521,7 @@ class PinnedRevision(unittest.TestCase):
         self.assertEqual(pinned_base(wanted, scraped), "")
 
     def test_every_platform_that_records_its_source_pins_the_export(self):
-        """A scraped platform states the revision; the export follows it."""
+        """A scraped platform states the revision, and the export follows it."""
         exporters = discover_exporters()
         for name in ("batocera", "recalbox", "bizhawk", "romm", "retroarch"):
             with self.subTest(platform=name):
@@ -674,7 +674,7 @@ class RecalboxExport(unittest.TestCase):
         self.assertEqual(exporter.validate(systems, produced), [])
 
     def test_an_addition_goes_where_the_core_reads_it(self):
-        """DuckStation reads scph5000.bin at the BIOS root; the export wrote
+        """DuckStation reads scph5000.bin at the BIOS root, but the export wrote
         psx/scph5000.bin, a path no core opens."""
         import copy  # noqa: PLC0415
 
@@ -693,7 +693,7 @@ class RecalboxExport(unittest.TestCase):
         """Recalbox files Pentagon and Scorpion under zxspectrum, apart.
 
         Merged, the Scorpion ROMs sat under the Pentagon name and the BIOS
-        manager lost a section; the line the maintainer commented out went
+        manager lost a section, and the line the maintainer commented out went
         with the rewrite.
         """
         old, new = "1" * 32, "2" * 32
@@ -755,7 +755,7 @@ class RommExport(unittest.TestCase):
         return exporter, systems, exporter.render(systems, report, {}, None)
 
     def test_every_entry_can_actually_verify(self):
-        """RomM matches on size and then on one hash; without both, never.
+        """RomM matches on size and then on one hash: without both, never.
         An entry no source gives a size to carries none and validate() names
         it: this test passed for one only because it held the string
         "None"."""
@@ -885,7 +885,7 @@ class SystemDatKeepsSpaceIndentedLines(unittest.TestCase):
 
 class RommSizeIsNeverNone(unittest.TestCase):
     """size() is None where the truth contradicts RomM's hash without a size
-    or names several sizes; str(None) went out as "None", validate() passed
+    or names several sizes. str(None) went out as "None", validate() passed
     it as truthy, and RomM's int("None") raised."""
 
     def _export(self, platform_size):
@@ -1223,7 +1223,7 @@ class UpstreamFidelity(unittest.TestCase):
     def setUpClass(cls):
         if not UPSTREAM_CACHE.is_dir():
             raise unittest.SkipTest(
-                "no upstream cache; run scripts/export_native.py --all --fetch"
+                "no upstream cache, run scripts/export_native.py --all --fetch"
             )
 
     def _export(self, platform: str, truth: dict | None = None) -> dict[str, str]:
@@ -1498,7 +1498,7 @@ class UpstreamFidelity(unittest.TestCase):
     }
 
     def test_retropie_keeps_every_name_its_packages_already_list(self):
-        """RetroPie's BIOS list is prose; a name it writes is never removed."""
+        """RetroPie's BIOS list is prose, and a name it writes is never removed."""
         produced, originals = self._export("retropie", self.RETROPIE_TRUTH)
         exporter = discover_exporters()["retropie"]()
         help_of = re.compile(r'rp_module_help="((?:[^"\\]|\\.)*)"')
@@ -1590,7 +1590,7 @@ class ARecordDescribesOneDump(unittest.TestCase):
 
 
 class AnAdditionCarriesItsRunner(unittest.TestCase):
-    """Batocera's apple2 entry is gated on libretro/mame; Clock Signal's
+    """Batocera's apple2 entry is gated on libretro/mame, so Clock Signal's
     apple2.rom written inside it was asked of mame users and never of clk
     users. Recalbox got core="libretro/duckstation", a core it never runs."""
 

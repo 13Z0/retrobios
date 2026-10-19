@@ -376,7 +376,7 @@ class TheOneLinerNarrows(unittest.TestCase):
 
     def test_a_pinned_ref_is_named_as_the_way_out(self):
         """RETROBIOS_REF=<tag>, which the docs suggest for reproducibility,
-        selects lists from before narrowing existed; the error said only
+        selects lists from before narrowing existed, and the error said only
         "narrowing needs a newer one"."""
         with FakeRepository(selection=False) as repo:
             proc = subprocess.run(
@@ -648,7 +648,7 @@ class InstallMatchesATargetManifest(unittest.TestCase):
 class ACoreWithNothingHeldIsAnOmission(unittest.TestCase):
     """DOSBox serves SC-55/WAVEROM3.BIN, DOSBox Pure wants it and nothing is
     held for it. A pack built for a target without DOSBox lists it as left
-    out; narrowed from the full manifest, it had vanished."""
+    out. Narrowed from the full manifest, it had vanished."""
 
     MANIFEST = {"files": [{
         "dest": "SC-55/WAVEROM3.BIN", "cores": ["dosbox"], "sha1": "1" * 40,

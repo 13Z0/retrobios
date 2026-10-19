@@ -11,7 +11,7 @@ cores: [desmume]
 systems: [nintendo-ds]
 
 notes: |
-  Full HLE of ARM7/ARM9 SWI routines; BIOS files optional for most games.
+  Full HLE of ARM7/ARM9 SWI routines, so BIOS files are optional for most games.
   External BIOS enables SWI-from-BIOS mode. Firmware boot requires both
   BIOS files loaded and interpreter mode (JIT incompatible).
   No DSi support. Core option: desmume_use_external_bios.
@@ -43,4 +43,4 @@ files:
     required: false
     hle_fallback: true
     source_ref: "desmume/src/firmware.cpp:249-280, desmume/src/frontend/libretro/libretro.cpp:765"
-    note: "Loaded only if both BIOS files present; needed for boot animation, wifi config, user settings"
+    note: "Loaded only if both BIOS files present. Needed for boot animation, wifi config, user settings"

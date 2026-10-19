@@ -100,7 +100,7 @@ def identify_romset(
     """Find which recipe rebuilds to a target archive MD5.
 
     recipes maps a label (e.g. a MAME version) to a list of
-    (member name, CRC32 hex) pairs; atoms maps CRC32 hex to ROM bytes.
+    (member name, CRC32 hex) pairs, and atoms maps CRC32 hex to ROM bytes.
     Returns the matching label, or None when no recipe reproduces the hash.
     """
     target = target_md5.lower()

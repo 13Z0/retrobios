@@ -13,12 +13,12 @@ systems: [sonic-1-2013, sonic-2-2013]
 notes: |
   Shared Retro Engine v4 decompilation driving the 2013 Christian Whitehead
   mobile ports of Sonic the Hedgehog and Sonic the Hedgehog 2. One binary
-  per build; the game identity is derived from the GameConfig.bin inside
+  per build. The game identity is derived from the GameConfig.bin inside
   the loaded data pack (gameWindowText "Sonic 1" or "Sonic 2").
   ref: RSDKv4/RetroEngine.cpp:423, RSDKv4/ModAPI.cpp:428
 
   CheckRSDKFile opens the data pack and compares its first six bytes to
-  the "RSDKvB" signature; there is no checksum test. The engine falls
+  the "RSDKvB" signature. There is no checksum test. The engine falls
   back to a loose Data/ + Bytecode/ tree if the pack is absent. When
   GameConfig.bin cannot be loaded either way it writes a usage.txt that
   asks for a pack named Engine.dataFile[0] (default "Data.rsdk").
@@ -26,7 +26,7 @@ notes: |
        RSDKv4/Userdata.cpp:251-263, RSDKv4/RetroEngine.cpp:483-520
 
   Up to four packs can be mounted (DataFile, DataFile2..4 in the Dev
-  section of settings.ini); the extras default to Data2.rsdk, Data3.rsdk,
+  section of settings.ini), and the extras default to Data2.rsdk, Data3.rsdk,
   Data4.rsdk once declared.
   ref: RSDKv4/Reader.hpp:38, RSDKv4/RetroEngine.cpp:324-331,
        RSDKv4/Userdata.cpp:396-408
@@ -40,7 +40,7 @@ files:
     note: |
       Sonic the Hedgehog (2013) assets. Shipped with the official Sonic
       Origins release and the delisted iOS/Android apps. The engine checks
-      the six-byte signature only; content identity is read from the
+      the six-byte signature only. Content identity is read from the
       embedded GameConfig.bin, not the pack hash.
 
   - name: "Data.rsdk"
@@ -51,4 +51,4 @@ files:
     note: |
       Sonic the Hedgehog 2 (2013) assets. Shipped with the official Sonic
       Origins release and the delisted iOS/Android apps. Same default
-      file name as Sonic 1; Dev:DataFile in settings.ini names another.
+      file name as Sonic 1. Dev:DataFile in settings.ini names another.

@@ -3,7 +3,7 @@
 The np2kai group declared itf.rom required, a file the core never opens
 (bios.c:579 sits behind the #else of BIOS_SIMULATE, always defined), and
 bios.rom, sound.rom and the rhythm WAVs required where the code falls back.
-System.dat masked the group; a rescrape dropping itf.rom would have brought
+System.dat masked the group: a rescrape dropping itf.rom would have brought
 it back as a required file of RetroArch, Lakka and RetroPie.
 """
 

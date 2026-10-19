@@ -51,7 +51,7 @@ class TheEmulatorContextIsChecked(unittest.TestCase):
 
 
     def test_the_standalone_layout_reaches_a_profile_without_structure(self):
-        """BBKEmu has no pack_structure; its A4980 8.BIN goes to
+        """BBKEmu has no pack_structure, and its A4980 8.BIN goes to
         system/BBKEmu/A4980/ standalone. The hash pack kept the bare name,
         then, once laid out, sent it to the A4988 folder whose entry shares
         the name."""

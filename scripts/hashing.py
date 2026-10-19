@@ -1,6 +1,6 @@
 """Content digests.
 
-SHA-1 is the collection's primary key; the rest are what the various
+SHA-1 is the collection's primary key. The rest are what the various
 frontends check against."""
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from pathlib import Path
 _ALL_ALGORITHMS = frozenset({"sha1", "md5", "sha256", "crc32", "adler32"})
 
 # (path, inode, size, mtime_ns, ctime_ns) -> the digests read so far.
-# verify --all hashed GB_dmg.bin 13 times, once per platform and entry; the
+# verify --all hashed GB_dmg.bin 13 times, once per platform and entry. The
 # bytes are still read from disk, once per file and change.
 _hash_cache: dict[tuple, dict[str, str]] = {}
 
@@ -118,7 +118,7 @@ def parse_hash_list(raw: str | list | int | None) -> list[str]:
     """Normalize any hash field into its accepted values, lowercase.
 
     A field holds one value, a YAML list, or one comma-joined string
-    (Recalbox md5, mesence's four sha256 for one entry); a crc32 may carry
+    (Recalbox md5, mesence's four sha256 for one entry), and a crc32 may carry
     a 0x prefix. Read one way here, the resolver, the gap report and
     profile_sync accept the same values.
     """

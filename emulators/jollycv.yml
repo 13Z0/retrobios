@@ -18,7 +18,7 @@ systems:
 notes: |
   JollyCV emulates the ColecoVision (with Super Game Module), the VTech
   CreatiVision and the Nichibutsu My Vision. The libretro port and the
-  Jolly Good build share the same src/ tree; only the front end differs.
+  Jolly Good build share the same src/ tree, and only the front end differs.
 
   The libretro port picks the system from the file name
   (libretro/libretro.c:670-679): ".myv" is My Vision, ".rom" and ".bin"
@@ -35,14 +35,14 @@ notes: |
   jcv_coleco_bios_load or jcv_crvision_bios_load, which keep it only when
   the size is exactly SIZE_CVBIOS (8192) or SIZE_CRVBIOS (2048). The return
   value of that size check is dropped at src/jollycv.c:427, so a file of the
-  wrong size passes the loader while the BIOS pointer stays NULL; the first
+  wrong size passes the loader while the BIOS pointer stays NULL, and the first
   BIOS read (src/jcv_coleco.c:281-282, src/jcv_crvision.c:443-444) then
   dereferences it. A missing file fails retro_load_game. My Vision loads no
   BIOS (libretro/libretro.c:717-719).
 
   The Jolly Good build reads the same two names from the front end's BIOS
   path (jg.c:463-481) and declares them through jg_get_bioslist with an
-  MD5 each (jg.c:151-156). The core never compares those MD5; the reference
+  MD5 each (jg.c:151-156). The core never compares those MD5. The reference
   front end hashes the file against them for a debug log only
   (jgrf src/jgrf.c:441-458). The md5: fields below carry these values.
 
@@ -60,7 +60,7 @@ files:
     md5: "2c66f5911e5b42b8ebe113403548eee7"
     validation: [size]
     source_ref: "libretro/libretro.c:697-703, src/jollycv.c:406-432, src/jcv_coleco.c:402-410, jg.c:151-153"
-    note: "Mapped at 0x0000-0x1FFF, replaced by the lower 8K of SGM RAM when the Super Game Module enables it. The MD5 is the value the JG bioslist declares; the core compares the size only."
+    note: "Mapped at 0x0000-0x1FFF, replaced by the lower 8K of SGM RAM when the Super Game Module enables it. The MD5 is the value the JG bioslist declares, and the core compares the size only."
 
   - name: "bioscv.rom"
     system: creativision
@@ -70,7 +70,7 @@ files:
     md5: "3b1ef759d8e3fb4071582efd33dd05f9"
     validation: [size]
     source_ref: "libretro/libretro.c:707-713, src/jollycv.c:406-432, src/jcv_crvision.c:316-324, jg.c:154-155"
-    note: "Mapped at 0xF800-0xFFFF. The MD5 is the value the JG bioslist declares; the core compares the size only."
+    note: "Mapped at 0xF800-0xFFFF. The MD5 is the value the JG bioslist declares, and the core compares the size only."
 
 platform_details:
   colecovision:

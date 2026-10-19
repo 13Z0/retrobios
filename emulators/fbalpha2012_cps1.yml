@@ -22,13 +22,13 @@ notes: |
   their ROM set (cd-q1.1k through cd-q4.4k), not as a separate DSP BIOS.
 
   Board PLDs (buf1, ioa1, prg1, rom1, sou1) are listed in ROM definitions as
-  BRF_OPT (optional). These are GAL/PAL dumps for hardware preservation —
+  BRF_OPT (optional). These are GAL/PAL dumps for hardware preservation,
   never loaded by the emulator.
 
   ROM path: ROMs are loaded from the content directory (g_rom_dir).
   system_directory (libretro.cpp:2202) is used only for hiscore.dat.
 
-  The .info note "BIOS files must be inside the ROM directory" is misleading —
+  The .info note "BIOS files must be inside the ROM directory" is misleading:
   there are no BIOS files for CPS-1. This note is generic across all FBA cores.
 
   244 ROM sets defined (488 STD_ROM_PICK/FN entries = 244 games).

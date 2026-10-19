@@ -27,17 +27,17 @@ notes: |
 
   DS BIOS: both halves or neither, the ARM9 image 4 KB and the ARM7 image 16 KB
   exactly. Without them the built-in FreeBIOS runs games by direct boot. The
-  firmware may be any non-empty file; without one a firmware is generated from
+  firmware may be any non-empty file. Without one a firmware is generated from
   the [user] settings. Booting the DS menu needs both BIOS dumps and a real
-  firmware. No hash is checked; an FNV-1a of the loaded regions only tags save
+  firmware. No hash is checked: an FNV-1a of the loaded regions only tags save
   states.
   ref: src/core/nds.cpp:101-133, src/core/mem/bus.h:121-131,
        src/frontend/sdl/main.cpp:1410, src/frontend/sdl/main.cpp:1440-1447
 
   DSi: DSiWare and --dsi-mode need the DSi BIOS pair, 64 KB each, and the DS
-  BIOS dumps as well; FreeBIOS cannot run a DSi session. dsi_firmware replaces
+  BIOS dumps as well. FreeBIOS cannot run a DSi session. dsi_firmware replaces
   firmware for a DSi session when no --firmware is given. The NAND is needed by
-  --dsi-mode and by NAND title shortcuts only; it must carry the nocash footer
+  --dsi-mode and by NAND title shortcuts only, and it must carry the nocash footer
   (at the end, or at 0x000FF800). DSiWare without a NAND runs on a generated
   console whose system font is DSperate's own unless dsi_font names a
   TWLFontTable.dat.
@@ -89,7 +89,7 @@ files:
     validation: [size]
     config_key: "paths.bios9i"
     description: "DSi ARM9 BIOS"
-    note: "Loaded only together with dsi_bios7.bin. Without the pair DSiWare and --dsi-mode are refused; DS games do not use it."
+    note: "Loaded only together with dsi_bios7.bin. Without the pair DSiWare and --dsi-mode are refused, while DS games do not use it."
     source_ref: "src/core/nds_dsi.cpp:95-106, src/core/mem/bus.h:121, src/frontend/sdl/main.cpp:1301-1308"
 
   - name: "dsi_bios7.bin"
@@ -99,7 +99,7 @@ files:
     validation: [size]
     config_key: "paths.bios7i"
     description: "DSi ARM7 BIOS"
-    note: "Loaded only together with dsi_bios9.bin. Without the pair DSiWare and --dsi-mode are refused; DS games do not use it."
+    note: "Loaded only together with dsi_bios9.bin. Without the pair DSiWare and --dsi-mode are refused, while DS games do not use it."
     source_ref: "src/core/nds_dsi.cpp:95-106, src/core/mem/bus.h:122, src/frontend/sdl/main.cpp:1301-1308"
 
   - name: "dsi_firmware.bin"
@@ -115,7 +115,7 @@ files:
     required: false
     config_key: "paths.dsi_nand"
     description: "DSi NAND image with nocash footer"
-    note: "Read only by --dsi-mode and NAND title shortcuts; DSiWare run from the game list does without it. Opened read-only, rejected without the \"DSi eMMC CID/CPU\" footer."
+    note: "Read only by --dsi-mode and NAND title shortcuts. DSiWare run from the game list does without it. Opened read-only, rejected without the \"DSi eMMC CID/CPU\" footer."
     source_ref: "src/frontend/sdl/main.cpp:1263-1272, src/core/nds_dsi.cpp:121-127, src/core/io/dsi_sd.cpp:111-140"
 
   - name: "TWLFontTable.dat"
@@ -133,5 +133,5 @@ files:
     category: game_data
     config_key: "paths.cheats"
     description: "Action Replay cheat database"
-    note: "Looked up by game code and header checksum; nothing is enabled by its presence."
+    note: "Looked up by game code and header checksum. Nothing is enabled by its presence."
     source_ref: "src/frontend/sdl/main.cpp:709-735"

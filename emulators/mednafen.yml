@@ -49,8 +49,8 @@ notes: |
 
   Modules compiled by default that load no external file: gb, snes, snes_faust,
   vb, wswan, ngp, sms, gg. The snes module (bsnes 0.059) has every coprocessor
-  ROM compiled in; snes_faust synthesises the DSP-1 and CX4 data ROMs
-  (cart/dsp1-datarom-synth.h, cart/cx4.cpp:58); ngp installs a reverse
+  ROM compiled in, snes_faust synthesises the DSP-1 and CX4 data ROMs
+  (cart/dsp1-datarom-synth.h, cart/cx4.cpp:58), and ngp installs a reverse
   engineered HLE BIOS (ngp/bios.cpp:182-239).
 
   The nes_new module is declared but never built: configure.ac:392-393 keeps
@@ -87,7 +87,7 @@ files:
     sha256: "fc3e9d41e9428534a883df5aa10eb55b73ea53d2fcbb3ee4f39bed1b07a82905"
     validation: [size]
     source_ref: "apple2/apple2.cpp:1342-1350, 1869, 2282, 1473-1476"
-    note: "System firmware for model ii+, ROM card for model ii. Read as 0x3000 bytes at $D000. The hash is in the ROMDB table and only labels the dump in the startup log; nothing rejects a mismatch."
+    note: "System firmware for model ii+, ROM card for model ii. Read as 0x3000 bytes at $D000. The hash is in the ROMDB table and only labels the dump in the startup log. Nothing rejects a mismatch."
 
   - name: "apple2-int-auto.rom"
     system: apple-ii
@@ -127,7 +127,7 @@ files:
     sha256: "68198ae95923926b0307893d03ec286f00822c93a0b6dabfca565f6718dd5a56,fbb9620e01f4f728e5a8ba86544900978d7803f6a7d577d384e288dfed9a4907"
     validation: [size]
     source_ref: "apple2/apple2.cpp:2331-2351, 1498-1506"
-    note: "The first hash is 342-0132-B, the second the revised IIe dump 342-0132-C; both are recognised at this filename and neither is checked. Read as 0x800 bytes."
+    note: "The first hash is 342-0132-B, the second the revised IIe dump 342-0132-C. Both are recognised at this filename and neither is checked. Read as 0x800 bytes."
 
   - name: "apple2e-enh.rom"
     system: apple-iie
@@ -207,7 +207,7 @@ files:
     min_size: 512
     validation: [size]
     source_ref: "lynx/system.cpp:101, lynx/rom.cpp:55-74"
-    note: "Loaded for every cartridge, before the cart itself. Throws if the file is under 512 bytes; the first 512 bytes are used. No hash check and no HLE fallback."
+    note: "Loaded for every cartridge, before the cart itself. Throws if the file is under 512 bytes, and the first 512 bytes are used. No hash check and no HLE fallback."
 
   # --- nes ---
 
@@ -226,7 +226,7 @@ files:
     required: false
     min_size: 4352
     source_ref: "nes/cart.cpp:570-597, nes/nes.cpp:298-299, nes/nes.cpp:454-455"
-    note: "Loaded only when nes.gg is enabled; that setting defaults to 0. Path comes from nes.ggrom. A raw image is read as 4352 contiguous bytes. An iNES image takes 4096 bytes of PRG after the 16-byte header, then 256 bytes of CHR at offset 16400, so it needs at least 16656 bytes. The image here is the raw form: the 4096 byte Game Genie PRG, crc 1a3a22a1, followed by the first 256 bytes of its CHR, both from the MAME ggenie set."
+    note: "Loaded only when nes.gg is enabled, and that setting defaults to 0. Path comes from nes.ggrom. A raw image is read as 4352 contiguous bytes. An iNES image takes 4096 bytes of PRG after the 16-byte header, then 256 bytes of CHR at offset 16400, so it needs at least 16656 bytes. The image here is the raw form: the 4096 byte Game Genie PRG, crc 1a3a22a1, followed by the first 256 bytes of its CHR, both from the MAME ggenie set."
 
   # --- pce and pce_fast ---
 
@@ -263,7 +263,7 @@ files:
     required: false
     min_size: 524288
     source_ref: "pcfx/pcfx.cpp:620-632, 1116"
-    note: "Path comes from pcfx.fxscsi, which defaults to \"0\" and is skipped for the values 0, none and the empty string. Mednafen names no default file and opens the path with a bare FileStream, so it is not resolved under the firmware directory; the name here is the one the dump circulates under, to point the setting at. Marked developer-only upstream. 524288 bytes are read and mapped at 0x80780000."
+    note: "Path comes from pcfx.fxscsi, which defaults to \"0\" and is skipped for the values 0, none and the empty string. Mednafen names no default file and opens the path with a bare FileStream, so it is not resolved under the firmware directory. The name here is the one the dump circulates under, to point the setting at. Marked developer-only upstream. 524288 bytes are read and mapped at 0x80780000."
 
   # --- psx ---
 
@@ -276,7 +276,7 @@ files:
     sha256: "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb"
     validation: [size, sha256]
     source_ref: "psx/psx.cpp:1764-1769, 1773-1781, 2373, 251"
-    note: "Default of psx.bios_jp. Size must be exactly 524288. With psx.bios_sanity on, which is the default, a hash listed as a bad dump or as belonging to another region throws; an unknown hash only logs a warning."
+    note: "Default of psx.bios_jp. Size must be exactly 524288. With psx.bios_sanity on, which is the default, a hash listed as a bad dump or as belonging to another region throws, while an unknown hash only logs a warning."
 
   - name: "scph5501.bin"
     system: sony-playstation
@@ -328,7 +328,7 @@ files:
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
     validation: [size, sha256]
     source_ref: "ss/ss.cpp:1431-1434, 1437-1445, 2442, 1461"
-    note: "Default of ss.bios_na_eu, read for every area but Japan and Asia NTSC; disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
+    note: "Default of ss.bios_na_eu, read for every area but Japan and Asia NTSC. Disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
 
   - name: "sega1003.bin"
     system: sega-saturn
@@ -361,7 +361,7 @@ files:
     sha256: "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73"
     validation: [size, sha256]
     source_ref: "ss/ss.cpp:1460, 1447-1492"
-    note: "Recognised alternative for ss.bios_na_eu, read for every area but Japan and Asia NTSC; disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
+    note: "Recognised alternative for ss.bios_na_eu, read for every area but Japan and Asia NTSC. Disc area E maps to EU_PAL and no Oceania area exists (ss/ss.cpp:1096, 1431-1434)."
 
   - name: "epr-20091.ic8"
     system: sega-stv
@@ -438,4 +438,4 @@ files:
     size: 16384
     validation: [size]
     source_ref: "gba/GBA.cpp:2470-2494, 3278, 772"
-    note: "Path comes from gba.bios, which defaults to the empty string and is skipped for the values 0, none and the empty string, so Mednafen names no default file; the name here is the one the dump circulates under, to point the setting at. When set, the file must be exactly 16384 bytes. Otherwise the built-in HLE BIOS myROM is used, and the setting is ignored outright for GSF playback."
+    note: "Path comes from gba.bios, which defaults to the empty string and is skipped for the values 0, none and the empty string, so Mednafen names no default file. The name here is the one the dump circulates under, to point the setting at. When set, the file must be exactly 16384 bytes. Otherwise the built-in HLE BIOS myROM is used, and the setting is ignored outright for GSF playback."

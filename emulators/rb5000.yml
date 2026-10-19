@@ -33,9 +33,9 @@ notes: |
   table and decoder.
 
   The libretro core can map a user cartridge file over 0x0000-0x3FFF
-  when one is configured (ref: source/Engine.cpp:302-316); that file is
+  when one is configured (ref: source/Engine.cpp:302-316), and that file is
   content. The on-screen display font is an Ubuntu TTF from the host
   system fonts directory (ref: source/Video.cpp:90-92).
 
-exclusion_note: "VG 5000 system ROM is encoded in a compiled-in image table and decoded on first access; no file is read"
+exclusion_note: "VG 5000 system ROM is encoded in a compiled-in image table and decoded on first access, so no file is read"
 files: []

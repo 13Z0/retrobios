@@ -24,7 +24,7 @@ notes: |
   release, 120303, forked XM6 v2.05. XM6.exe is a 32-bit MFC application whose
   import directory names mfc90u.dll and MSVCR90.dll, so the Visual C++ 2008 runtime
   carried by the DLL Package, or the redistributable, must sit beside the executable
-  for the process to start; a second non-Unicode build lives in MBCS/ and needs the
+  for the process to start. A second non-Unicode build lives in MBCS/ and needs the
   same files duplicated there. ES-DE launches it through the XM6PRO68K and
   XM6PRO68K-WINDOWS find rules with the working directory set to the emulator
   folder, on Linux under Wine or Proton. RetroBat registers it as xm6pro
@@ -63,7 +63,7 @@ notes: |
 
   Two menu tools synthesise replacements. Synthesize replacement CG-ROM builds
   CGROM.TMP from the installed MS Gothic and MS Mincho fonts and aborts when either
-  is absent; README.txt:294-296 warns that different machines produce different
+  is absent, and README.txt:294-296 warns that different machines produce different
   files. Synthesize replacement SCSI ROMs asks for a Human68k version 3.02 disk
   image, dialog default HUMAN302.XDF with filter *HUMAN*3*02*.???, extracts
   /BIN/FORMAT.X and writes SCSIINROM.DAT and SCSIEXROM.DAT.
@@ -71,7 +71,7 @@ notes: |
   The ROM Warning section of the Advanced options holds three startup checks, all
   enabled by default and individually suppressible: an IPLROM.DAT version check
   naming version 1.0 (05/07/1987) as recommended, a CGROM.DAT contents check and a
-  SCSIEXROM.DAT / SCSIINROM.DAT contents check. Each raises a dialog; none rejects
+  SCSIEXROM.DAT / SCSIINROM.DAT contents check. Each raises a dialog, but none rejects
   the file, so no hash below is enforced by the program.
 
   Reference Manual.txt ships with the program and Software Notes.txt is fetched by
@@ -97,7 +97,7 @@ files:
       present, so the emulator boots without it. The embedded copy sits at file
       offset 1337256 in .rdata of the Unicode build and 1288176 in the MBCS build,
       stored in the 16-bit pairwise swapped form the loader produces at
-      vm/memory.cpp:278-285; unswapped it is the 131072-byte dump hashed here,
+      vm/memory.cpp:278-285. Unswapped it is the 131072-byte dump hashed here,
       catalogued by TOSEC as Sharp X68000 Boot ROM (1987)(Sharp), and it is the
       version 1.0 (05/07/1987) the startup warning recommends. README.txt:23-25
       advises against installing the file at all because reading and swapping it
@@ -112,7 +112,7 @@ files:
     source_ref: "XM6 2.06 vm/memory.cpp:178-180, 261-263"
     note: >-
       Probed after the base machine loads. Its presence, together with
-      SCSIINROM.DAT, is what makes the XVI machine available; absent, the base
+      SCSIINROM.DAT, is what makes the XVI machine available. Absent, the base
       X68000 still runs. No internal copy is compiled into XM6.exe.
 
   - name: IPLROMCO.DAT
@@ -167,11 +167,11 @@ files:
     source_ref: "README.txt:277-278, Change Log.txt:129, XM6 2.06 vm/memory.cpp:287-295"
     note: >-
       Supplies the glyphs for text the X68000 renders. Stock XM6 v2.06 fails
-      initialisation when neither font file loads; XM6 Pro-68k dropped that
+      initialisation when neither font file loads, but XM6 Pro-68k dropped that
       requirement, so a missing font ROM shows garbage glyphs and the emulator
       keeps running, and what remains is the suppressible contents warning.
       The mandatory DLL Package ships this exact 786432-byte file, catalogued by
-      TOSEC as Sharp X68000 CG ROM (1987)(Sharp); the hash identifies that copy and
+      TOSEC as Sharp X68000 CG ROM (1987)(Sharp). The hash identifies that copy and
       is not verified by the program.
 
   - name: CGROM.TMP
@@ -204,7 +204,7 @@ files:
       Needed to use internal SCSI drives, and also loaded as part of the XVI and
       Compact machines, so those two models are unavailable without it whatever
       their IPL. The mandatory DLL Package ships this exact 8192-byte file and the
-      hash identifies that copy; the startup contents check only warns.
+      hash identifies that copy, while the startup contents check only warns.
 
   - name: SCSIEXROM.DAT
     system: sharp-x68000

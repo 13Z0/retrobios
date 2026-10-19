@@ -2,7 +2,7 @@
 
 RetroDECK declares bios/disk.rom for pc88 (the N88SUB ROM) and for coco (the
 CoCo disk ROM), and bios/cdibios.zip for two components with two md5. The
-pack holds one file per path; verify resolved each declaration to its own
+pack holds one file per path, but verify resolved each declaration to its own
 file and counted both OK, so three green tools described a pack whose
 frontend hashes bios/disk.rom for xroar and finds the PC-88 ROM.
 """
@@ -75,7 +75,7 @@ class TwinDeclarations(unittest.TestCase):
         self.assertEqual(statuses.count("ok"), 1, by_system)
         loser = next(d for d in by_system.values() if d["status"] != "ok")
         self.assertIn("is not met at the path", loser.get("discrepancy", ""))
-        # The path counts once, for the file it ships; the loser is a detail.
+        # The path counts once, for the file it ships. The loser is a detail.
         self.assertEqual(report["status_counts"], {"ok": 1})
 
 

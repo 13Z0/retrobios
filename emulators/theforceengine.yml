@@ -29,7 +29,7 @@ notes: |
     c_gobFileNames[]          = DARK.GOB, SOUNDS.GOB, TEXTURES.GOB, SPRITES.GOB
     c_optionalGobFileNames[]  = enhanced.gob
   The DOS retail Dark Forces floppy and CD both ship DARK.GOB, SOUNDS.GOB,
-  TEXTURES.GOB, SPRITES.GOB; enhanced.gob is the TFE-only HD asset pack.
+  TEXTURES.GOB, SPRITES.GOB, and enhanced.gob is the TFE-only HD asset pack.
 
   Dark Forces official patch v1.22 (df_patch4) is pulled by the build script as
   df_patch4.zip from df-21.net and dropped under Mods/, so the engine applies
@@ -40,7 +40,7 @@ notes: |
   Outlaws: every method of TFE_Outlaws/outlawsMain.cpp is a stub and
   runGame() returns false. The only Outlaws file the code names is
   Outlaws.lab, tested by the settings dialog before it stores the Outlaws
-  source path (TFE_FrontEndUI/frontEndUi.cpp:1340); the line that would
+  source path (TFE_FrontEndUI/frontEndUi.cpp:1340). The line that would
   make it the active source path is commented out (:1344).
 
 files:

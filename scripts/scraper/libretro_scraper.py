@@ -27,7 +27,7 @@ SOURCE_URL = (
 )
 
 # Libretro cores that expect BIOS files in a subdirectory of system/.
-# System.dat lists filenames flat; the scraper prepends the prefix.
+# System.dat lists filenames flat, and the scraper prepends the prefix.
 # ref: each core's libretro.c or equivalent -see platforms/README.md
 CORE_SUBDIR_MAP = {
     "nec-pc-98": "np2kai",  # libretro-np2kai/sdl/libretro.c

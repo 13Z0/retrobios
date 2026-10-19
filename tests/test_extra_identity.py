@@ -65,7 +65,7 @@ class IdentityTravels(unittest.TestCase):
 class UnsourceableIsNoCopy(unittest.TestCase):
     """The second pass copies a covered file to another core's path by name.
 
-    zc210 ships its own default.sf2; dosbox-staging reads a default.sf2 that
+    zc210 ships its own default.sf2, while dosbox-staging reads a default.sf2 that
     the operating system links to its SoundFont, which no collection holds.
     The name was enough to give dosbox-staging a slot, recorded as missing
     while zc210 was in the pack and absent once it was not, so a pack built
@@ -98,8 +98,8 @@ class UnsourceableIsNoCopy(unittest.TestCase):
 
 
 class BareNameIsADestination(unittest.TestCase):
-    """geargrafx reads syscard1.pce at the root of the system directory;
-    Recalbox declares it only under pcenginecd/. The declaration settles the
+    """geargrafx reads syscard1.pce at the root of the system directory,
+    but Recalbox declares it only under pcenginecd/. The declaration settles the
     core's need on the promise that the builder copies the file to the
     core's path, and the second pass skipped every entry with no path."""
 

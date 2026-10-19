@@ -13,7 +13,7 @@ verification: existence
 notes: >
   Port of Mednafen's pce_fast module with SuperGrafx and CD support.
   The card image is read from the system directory by HuC_LoadCD() at
-  CD-ROM load time (mednafen/pce_fast/huc.cpp:221-245); the load fails when
+  CD-ROM load time (mednafen/pce_fast/huc.cpp:221-245), and the load fails when
   the file cannot be opened. Core option "sgx_cdbios" selects which image
   to use (default: System Card 3). With "sgx_detect_gexpress" enabled (the
   default), DetectGECD() recognises Games Express discs and loads

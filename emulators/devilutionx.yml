@@ -28,7 +28,7 @@ notes: |
     LoadModArchives() (:703)    - mods/<name>.mpq for each active mod
 
   diabdat.mpq is matched uppercase first ("DIABDAT.MPQ", GOG/retail CD
-  convention, line 538), then lowercase (line 542); if neither is found
+  convention, line 538), then lowercase (line 542). If neither is found
   the loader falls back to spawn.mpq (line 544). Missing BOTH triggers
   the "diabdat.mpq or spawn.mpq" InsertCDDlg dialog and the game cannot
   start.
@@ -42,7 +42,7 @@ notes: |
   CMakeLists.txt:192-204). CMake/Assets.cmake:46-238 lists the packed
   files (ASSETS_VERSION, arena, data, fonts, gendata, levels, lua,
   plrgfx, txtdata and ui_art, plus data/inv/objcurs-widths.txt and the
-  ui_art PNGs outside SDL1 and Vita builds); each Translations/<lang>.po
+  ui_art PNGs outside SDL1 and Vita builds), and each Translations/<lang>.po
   is compiled with msgfmt to <lang>.gmo and appended
   (CMake/Assets.cmake:8-29, 268-272). The archive is written with
   "smpq -A -M 1 -C BZIP2 -c" from the staged assets directory
@@ -57,7 +57,7 @@ notes: |
   to fonts.mpq when it is loaded (Source/init.cpp:98-114).
 
   fonts.mpq is the CJK + language assets add-on from the
-  devilutionx-assets release; English installs do not need it.
+  devilutionx-assets release. English installs do not need it.
 
 files:
   - name: diabdat.mpq
@@ -67,7 +67,7 @@ files:
     required: true
     description: "Diablo retail or GOG MPQ (contains all game data)"
     aliases: [DIABDAT.MPQ]
-    note: "primary game archive; GOG CD convention uses uppercase"
+    note: "primary game archive, the GOG CD convention uses uppercase"
     source_ref: "Source/engine/assets.cpp:537-542"
 
   - name: spawn.mpq
@@ -76,7 +76,7 @@ files:
     category: game_data
     required: false
     description: "Diablo shareware archive, used when diabdat.mpq is absent"
-    note: "freely redistributable shareware; triggers gbIsSpawn mode"
+    note: "freely redistributable shareware, triggers gbIsSpawn mode"
     source_ref: "Source/engine/assets.cpp:544"
 
   - name: hellfire.mpq
@@ -92,7 +92,7 @@ files:
     system: diablo
     category: game_data
     required: false
-    description: "Hellfire monk class assets; mandatory when hellfire.mpq is present"
+    description: "Hellfire monk class assets, mandatory when hellfire.mpq is present"
     source_ref: "Source/engine/assets.cpp:583"
 
   - name: hfmusic.mpq
@@ -100,7 +100,7 @@ files:
     system: diablo
     category: game_data
     required: false
-    description: "Hellfire music; mandatory when hellfire.mpq is present"
+    description: "Hellfire music, mandatory when hellfire.mpq is present"
     source_ref: "Source/engine/assets.cpp:584"
 
   - name: hfvoice.mpq
@@ -108,7 +108,7 @@ files:
     system: diablo
     category: game_data
     required: false
-    description: "Hellfire voices; mandatory when hellfire.mpq is present"
+    description: "Hellfire voices, mandatory when hellfire.mpq is present"
     source_ref: "Source/engine/assets.cpp:585"
 
   - name: "hfbard.mpq"
@@ -150,7 +150,7 @@ files:
     category: game_data
     required: false
     description: "Spanish voice pack"
-    note: "The archive named after the selected language code is loaded; English loads none."
+    note: "The archive named after the selected language code is loaded. English loads none."
     source_ref: "Source/engine/assets.cpp:521-528"
 
   - name: "pl.mpq"
@@ -159,7 +159,7 @@ files:
     category: game_data
     required: false
     description: "Polish voice pack"
-    note: "The archive named after the selected language code is loaded; English loads none."
+    note: "The archive named after the selected language code is loaded. English loads none."
     source_ref: "Source/engine/assets.cpp:521-528"
 
   - name: "ru.mpq"
@@ -168,7 +168,7 @@ files:
     category: game_data
     required: false
     description: "Russian voice pack"
-    note: "The archive named after the selected language code is loaded; English loads none."
+    note: "The archive named after the selected language code is loaded. English loads none."
     source_ref: "Source/engine/assets.cpp:521-528"
 
   - name: "hf.mpq"
@@ -177,5 +177,5 @@ files:
     category: game_data
     required: false
     description: "Hellfire mod archive packed from the repository's mods/hf directory"
-    note: "mods/<name>.mpq is opened for each active mod; hf is activated when hellfire.mpq is present. A mod with no archive and no loose directory is served from the core archives. Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the hellfire_mod file list."
+    note: "mods/<name>.mpq is opened for each active mod, and hf is activated when hellfire.mpq is present. A mod with no archive and no loose directory is served from the core archives. Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the hellfire_mod file list."
     source_ref: "Source/engine/assets.cpp:748-764, Source/options.cpp:77-79, CMakeLists.txt:204, CMake/Mods.cmake:8-33, 58-66"

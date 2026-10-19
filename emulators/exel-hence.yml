@@ -30,5 +30,5 @@ notes: |
   line to auto-start the program (ref: src/libretro.c:614-686). It
   belongs to the content.
 
-exclusion_note: "BIOS, BASIC cartridges and ExelDisk DOS compiled into the core; the system directory is never read"
+exclusion_note: "BIOS, BASIC cartridges and ExelDisk DOS compiled into the core, the system directory is never read"
 files: []

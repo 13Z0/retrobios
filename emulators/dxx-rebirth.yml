@@ -41,18 +41,18 @@ notes: |
   one of the PIG graphics families (groupa.pig / alien1.pig / alien2.pig
   / fire.pig / ice.pig / water.pig for retail, d2demo.pig for shareware)
   plus the sampled sound bank (descent2.s11 for 11 kHz or descent2.s22
-  for 22 kHz; similar/main/piggy.cpp:79). Mac shareware additionally bundles exit.ham.
+  for 22 kHz, similar/main/piggy.cpp:79). Mac shareware additionally bundles exit.ham.
   d2x.hog is the Descent 2: Vertigo expansion mission, probed in the
   MISSION_DIR by similar/main/inferno.cpp:542 to toggle the "Vertigo Enhanced" title.
-  The movie libraries are named from three stems (intro, other, robots;
+  The movie libraries are named from three stems (intro, other, robots,
   d2x-rebirth/main/movie.cpp:93-95) and a resolution letter: <stem>-h.mvl
   is tried first, then <stem>-l.mvl (d2x-rebirth/main/movie.cpp:660,
-  672-677). A library that fails to mount is logged and skipped; the
+  672-677). A library that fails to mount is logged and skipped, and the
   game plays without movies.
 
   Only the free PC shareware pair (desc14sw.tar.gz = descent.hog +
-  descent.pig; d2shar10.tar.gz = d2demo.hog/pig/ham) is redistributable;
-  the retail archives listed below are commercial GOG files.
+  descent.pig, d2shar10.tar.gz = d2demo.hog/pig/ham) is redistributable.
+  The retail archives listed below are commercial GOG files.
 
 files:
   # ------ Descent 1 shareware (free) ------
@@ -86,7 +86,7 @@ files:
     validation: [size]
     description: "Descent 1 PC retail v1.5 HOG (GOG)"
     variant_group: d1-hog
-    note: "commercial; alternative sizes 6856183 (v1.5 alt), 7261423 (v1.0), 7456179 (Mac retail)"
+    note: "commercial, alternative sizes 6856183 (v1.5 alt), 7261423 (v1.0), 7456179 (Mac retail)"
     source_ref: "common/main/mission.h:61-64"
 
   - name: descent.pig
@@ -136,7 +136,7 @@ files:
     validation: [size]
     description: "Descent 2 PC full v1.1-1.2 HOG (GOG)"
     variant_group: d2-hog
-    note: "commercial; alternative sizes 7107354 (v1.0), 7110007 (Mac full), 6132957 (OEM v1.1), 4292746 (Mac shareware)"
+    note: "commercial, alternative sizes 7107354 (v1.0), 7110007 (Mac full), 6132957 (OEM v1.1), 4292746 (Mac shareware)"
     source_ref: "common/main/mission.h:73-76"
 
   - name: descent2.ham
@@ -245,7 +245,7 @@ files:
 
   # ------ Add-on archives ------
   # add_archives_to_search_path() mounts every *.dxa found at the root of
-  # the search path; the code names the extension, not the files. The names
+  # the search path. The code names the extension, not the files. The names
   # below are the add-ons the project publishes. Each build has its own data
   # directory (d1x-rebirth, d2x-rebirth), so an archive is seen by one game.
   - name: "d1xr-hires.dxa"
@@ -254,7 +254,7 @@ files:
     category: game_data
     required: false
     description: "High resolution title, briefing and ending screens for Descent 1"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d1xr-briefings-ger.dxa"
@@ -263,7 +263,7 @@ files:
     category: game_data
     required: false
     description: "German briefing texts for Descent 1"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d1xr-mac-demo-sounds.dxa"
@@ -272,7 +272,7 @@ files:
     category: game_data
     required: false
     description: "Sound set of the Macintosh Descent 1 demo"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d1xr-opl3-music.dxa"
@@ -281,7 +281,7 @@ files:
     category: game_data
     required: false
     description: "Descent 1 music as Ogg Vorbis files, OPL3 rendering"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d1xr-sc55-music.dxa"
@@ -290,7 +290,7 @@ files:
     category: game_data
     required: false
     description: "Descent 1 music as Ogg Vorbis files, Roland SC-55 rendering"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "editor.dxa"
@@ -308,7 +308,7 @@ files:
     category: game_data
     required: false
     description: "German briefing texts for Descent 2"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d2xr-opl3-music.dxa"
@@ -317,7 +317,7 @@ files:
     category: game_data
     required: false
     description: "Descent 2 music as Ogg Vorbis files, OPL3 rendering"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d2xr-sc55-music.dxa"
@@ -326,7 +326,7 @@ files:
     category: game_data
     required: false
     description: "Descent 2 music as Ogg Vorbis files, Roland SC-55 rendering"
-    note: "Mounted at startup when present; its files extend or replace the game content."
+    note: "Mounted at startup when present, and its files extend or replace the game content."
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "editor.dxa"

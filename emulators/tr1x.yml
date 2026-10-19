@@ -27,7 +27,7 @@ notes: |
 
   FMV extension probing (src/trx/game/paths.c:76-79):
     .mp4 .mkv .mpeg .avi .webm .ogv .rpl .fmv .bik
-  The retail Core/Eidos cutscenes are .rpl; the gameflow still names
+  The retail Core/Eidos cutscenes are .rpl. The gameflow still names
   them .avi, resolution picks whichever extension exists.
 
   Music backend (src/trx/game/music/backend_files.c:25-49):
@@ -43,7 +43,7 @@ files:
   # Enumerated by data/trx/ship/games/tr1/gameflow.json5 "levels" array.
   - name: "title.phd"
     path: "games/tr1/levels/title.phd"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
     required: true
     category: game_data
     source_ref: "data/trx/ship/games/tr1/gameflow.json5:38"
@@ -63,7 +63,7 @@ files:
 
   - name: "level2.phd"
     path: "games/tr1/levels/level2.phd"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
     required: true
     category: game_data
     source_ref: "data/trx/ship/games/tr1/gameflow.json5:116"
@@ -190,7 +190,7 @@ files:
 
   # FMV cutscenes
   # Enumerated by data/trx/ship/games/tr1/gameflow.json5 "fmvs" array.
-  # The retail files on disc carry a .rpl extension; the gameflow still
+  # The retail files on disc carry a .rpl extension. The gameflow still
   # lists .avi, resolution picks whichever extension is present.
   - name: "core.avi"
     aliases: [core.rpl]
@@ -668,7 +668,7 @@ files:
   # PC demo
   # Known game tr1-demo-pc, extends tr1 (src/trx/game/shell/mod.c:32-33).
   # tools/download_assets and the installer fetch tr1-demo-pc.zip from the
-  # project's host; it holds games/tr1-demo-pc/levels/{title,level2}.phd.
+  # project's host. It holds games/tr1-demo-pc/levels/{title,level2}.phd.
   - name: "title.phd"
     path: "games/tr1-demo-pc/levels/title.phd"
     required: false

@@ -55,7 +55,7 @@ notes: |
   accuracy and preservation. 41 emulators registered at this pin
   (desktop-ui/emulator/emulators.cpp).
 
-  Firmware identification uses SHA256 hashes. Filenames are user-defined; ares
+  Firmware identification uses SHA256 hashes. Filenames are user-defined: ares
   scans a configured directory and matches by hash. EmuDeck installs ares as
   Flatpak (dev.ares.ares), configures biosPath in settings.bml.
   ref: desktop-ui/settings/firmware.cpp:116-136
@@ -144,7 +144,7 @@ files:
     sha256: "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50"
     validation: [sha256]
     description: "Master System BIOS (US)"
-    note: "Picked for NTSC-U, which the code gives every export cart outside its PAL list through the Boot/Prefer setting; the header does not tell US from Europe (mia/medium/master-system.cpp:54-63, desktop-ui/emulator/emulator.cpp:40-60)."
+    note: "Picked for NTSC-U, which the code gives every export cart outside its PAL list through the Boot/Prefer setting. The header does not tell US from Europe (mia/medium/master-system.cpp:54-63, desktop-ui/emulator/emulator.cpp:40-60)."
     source_ref: "desktop-ui/emulator/master-system.cpp:14, mia/system/master-system.cpp:8 (//optional)"
 
   - name: bios_J.sms
@@ -193,7 +193,7 @@ files:
     sha256: "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb"
     validation: [sha256]
     description: "Mega CD BIOS (Europe)"
-    note: "Picked for PAL, set when the boot code matches the EU security block; the code has no other PAL branch for Australian discs (mia/medium/mega-cd.cpp:47-56, desktop-ui/emulator/mega-cd.cpp:70-74)."
+    note: "Picked for PAL, set when the boot code matches the EU security block. The code has no other PAL branch for Australian discs (mia/medium/mega-cd.cpp:47-56, desktop-ui/emulator/mega-cd.cpp:70-74)."
     source_ref: "desktop-ui/emulator/mega-cd.cpp:19"
 
   # --- Mega LD (LaserActive SEGA PAC) ---

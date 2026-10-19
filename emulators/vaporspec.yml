@@ -14,5 +14,5 @@ notes: >
   Fantasy console with fixed specs (256x192 display, 4-channel audio,
   256-color palette). Runs .vaporbin cartridge bundles containing code
   and optional ROM data. All content is self-contained in the bundle
-  passed by the frontend; no system directory files loaded.
+  passed by the frontend. No system directory files loaded.
   firmware_count=0 confirmed by code analysis.

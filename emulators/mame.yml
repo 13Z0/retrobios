@@ -86,24 +86,24 @@ notes: |
   system_dir/mame/roms. Cheats via per-game XML files.
 
   BIOS root set names follow current MAME conventions. ZN-based boards
-  renamed from legacy names (cpzn1 → coh1000c, atpsx → coh1000a, etc.).
+  renamed from legacy names (cpzn1 to coh1000c, atpsx to coh1000a, etc.).
   File structure uses vendor-based paths (src/mame/{vendor}/).
 
-  TI-99/4A: 6 machines in ti99_4x.cpp — ti99_4 parent (TI-99/4 1979),
+  TI-99/4A: 6 machines in ti99_4x.cpp: ti99_4 parent (TI-99/4 1979),
   ti99_4e clone (Europe), ti99_4a parent (TI-99/4A 1981), ti99_4ae clone
   (Europe), ti99_4qi clone (QI version 1983), ti99_4ev clone (with EVPC
   1994). 5 ROMs per parent set: 3 GROMs (u500-u502) + 2 CPU ROMs
   (u610-u611, 16-bit interleaved). Speech Synthesizer sidecar device
   (speechsyn.cpp) with 2 TMS6100 vocabulary ROMs. Software list
   "ti99_cart". Peripheral Expansion Box with optional device ROMs (FDC,
-  RS232, HFDC, P-Code, EVPC, etc.) — all PEB devices require user
+  RS232, HFDC, P-Code, EVPC, etc.). All PEB devices require user
   configuration, none loaded by default.
 
   VGMPlay: virtual driver (src/mame/virtual/vgmplay.cpp) for playing VGM
-  music files. Standalone MAME only — not included in libretro/mame build.
+  music files. Standalone MAME only, not included in libretro/mame build.
   Uses MAME sound chip devices (QSound, YM2413/OPLL, YM2608/OPNA, etc.).
 
-  V.Smile: 2 machines in vsmile.cpp — vsmile parent (V.Smile 2005),
+  V.Smile: 2 machines in vsmile.cpp: vsmile parent (V.Smile 2005),
   vsmilem clone (V.Smile Motion 2008). SunPlus SPG24x CPU, 3 BIOS
   alternatives (v100, v102, v103). Clone vsmilem has 2 alternate
   BIOSes. Software lists "vsmile_cart", "vsmilem_cart". vsmileb.cpp
@@ -3987,7 +3987,7 @@ files:
   # Model I (trs80.cpp): trs80 (Level I, parent, WORKING), trs80l2 (Level II, parent),
   # eg3003 (EACA Video Genie, parent), sys80/sys80p (clones), ht1080z/ht1080z2/ht108064 (clones).
   # Model III/4/4P (trs80m3.cpp): trs80m3 (parent), trs80m4/trs80m4p/cp500 (clones).
-  # Z80-based home computers (1977-1983). Only trs80 (Level I) is MACHINE_SUPPORTS_SAVE;
+  # Z80-based home computers (1977-1983). Only trs80 (Level I) is MACHINE_SUPPORTS_SAVE,
   # all others MACHINE_NOT_WORKING. Software lists: trs80_cass, trs80_flop, trs80_quik.
   - name: trs80.zip
     required: true
@@ -4206,7 +4206,7 @@ files:
     system: trs80
     source_ref: "src/mame/trs/trs80m3.cpp:530-539"
     note: |
-      TRS-80 Model 4P (1983). Clone of trs80m3. Completely different memory map;
+      TRS-80 Model 4P (1983). Clone of trs80m3. Completely different memory map:
       Model III ROMs loaded from boot disk, only a bootloader ROM on board.
       2 BIOS variants: gate array (default) and disk loader hack.
       MACHINE_NOT_WORKING.
@@ -4331,7 +4331,7 @@ files:
         size: 8192
         crc32: "b2f49eb3"
 
-  # Device ROMs — sound chip ROM data
+  # Device ROMs: sound chip ROM data
   - name: qsound.zip
     required: false
     category: bios_zip

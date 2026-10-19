@@ -1,7 +1,7 @@
 """Catalog entries the collection already holds in another layout.
 
 391773/391774, the two Kickstart 3.1 chips of the A1200, are the high and low
-16-bit words of the image the collection keeps, byte-swapped; TOSEC's Basic V7
+16-bit words of the image the collection keeps, byte-swapped, and TOSEC's Basic V7
 is two held ROMs end to end. The gap report listed them as acquisition targets.
 """
 
@@ -104,7 +104,7 @@ class ARomsetMemberIsASource(unittest.TestCase):
 
 
 class CombineMatchesZlib(unittest.TestCase):
-    """The operator is composed once per length; it must stay zlib's."""
+    """The operator is composed once per length, and it must stay zlib's."""
 
     def test_against_zlib(self):
         import os

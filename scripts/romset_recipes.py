@@ -391,7 +391,7 @@ def missing_report(
                         "md5": target,
                         "recipes_tried": sorted(usable),
                         "reason": (
-                            "no recipe reproduces this MD5; the pinned archive is "
+                            "no recipe reproduces this MD5: the pinned archive is "
                             "not TorrentZip or follows a recipe not documented here"
                             if usable
                             else "ROMs for every documented recipe are missing"

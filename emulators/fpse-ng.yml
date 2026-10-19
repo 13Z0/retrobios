@@ -27,12 +27,12 @@ notes: |
   signature block travels inside the copy read here: the repackager kept the
   original apk as assets/SignatureKiller/origin.apk, whose MANIFEST.MF carries
   the sha256 of all 1278 entries of the distributed build. 1274 match byte for
-  byte, among them every native library and every resource; AndroidManifest.xml,
+  byte, among them every native library and every resource. AndroidManifest.xml,
   classes.dex and resources.arsc differ, stamp-cert-sha256 is dropped and one
   class, bin/mt/signature/KillerApplication, is added. Native code and resources
   are therefore the distributed ones and the java below is the application's own,
   minus that injection. A second copy, apkvision 1.8, is signed with the Android
-  test key and ships three of the eight libraries its own core links against; it
+  test key and ships three of the eight libraries its own core links against. It
   is read only to confirm that the preference key, the two size tests and the
   checksum constant below are the application's and not the repackager's.
   ref: com.emulator.fpse64 1.13 assets/SignatureKiller/origin.apk
@@ -40,7 +40,7 @@ notes: |
 
   Two roots hold everything. The private files directory of the package is the
   one the core is given, and bios, plugin, cfg and skin are created under it
-  right after the libraries load; the emulator resolves its own paths against it.
+  right after the libraries load, and the emulator resolves its own paths against it.
   The second is a directory named FPse64 at the root of shared storage, holding
   memcards, cheats, shaders, ogl, sbi, sstates, titles, icons, videos and
   filelist.txt. Paths below are relative to the first root unless they name the
@@ -56,9 +56,9 @@ notes: |
   exists or is not exactly 524288 bytes clears the preference and the session
   runs on HLE. Slot 6 receives the empty string whenever the path is empty, the
   BIOS switch is off or the launching intent carried bios=0, which is the
-  documented way to ask for HLE; the shortcuts the application pins carry that
+  documented way to ask for HLE, and the shortcuts the application pins carry that
   same extra. On the core side the value is opened as given, then retried below
-  bios/ under the root, so a bare name resolves there; a hit is read as one block
+  bios/ under the root, so a bare name resolves there. A hit is read as one block
   of 0x80000 bytes after "Loading '%s'...", and a miss reports "Can't load
   biosfile '%s', switching to HLE", sets the HLE bit and writes
   "CEX-3000/1001/1002 by K.S.", "System ROM Version 2.2 12/04/95 A" and the Sony
@@ -85,7 +85,7 @@ notes: |
   Emulation is split across libraries the core links against. libfpse.so lists
   libopengl, libsoft1, libspuplugin, libneon, libsdl and libnfsplugin in
   DT_NEEDED, and Main names uncompress, spuplugin, soft1, nfsplugin and opengl
-  before fpse; sdl and neon are named earlier from a static block that swallows
+  before fpse. sdl and neon are named earlier from a static block that swallows
   UnsatisfiedLinkError, the rest are not guarded. All eight ship in the package
   for arm64-v8a and no other ABI. Eighteen constants naming nine plugins296
   archives on fpse.net and fpsece.net survive in the class and nothing reads
@@ -117,7 +117,7 @@ notes: |
   notes from fpse.net/games64/, overlay pad skins from fpse.net/s/ as
   padtemp.zip extracted into skin/, and vrback.zip extracted at the root of
   shared storage. Files named after a game identifier and ending in .sbi are
-  downloaded into FPse64/sbi for the titles of one internal list; no library and
+  downloaded into FPse64/sbi for the titles of one internal list. No library and
   no java path reads them back, and the string ".sbi" appears in none of the
   eight libraries.
   ref: Main.java:10505-10507, Main.java:16605, Main.java:16644,
@@ -214,7 +214,7 @@ files:
   # out of assets once storage access is granted, and a pair dropped in by
   # hand joins the list. Cartoon_A, Cartoon_B, FXAA, FXAA_natural_vision and
   # TV_HDR share one vertex shader, as do CRT-Hyllian, Grayscale and
-  # MangaToon; each pair is read by its own name.
+  # MangaToon. Each pair is read by its own name.
   - name: "4xhqglsl.vsh"
     path: "FPse64/shaders/4xhqglsl.vsh"
     required: false

@@ -21,7 +21,7 @@ notes: |
   other than the Windows editor compiles the shared source set with
   __STANDALONE__ and links libwinevbs, Wine's VBScript engine with its COM and
   ATL headers, beside SDL3, SDL3_ttf, FreeImage, hidapi, libspatialaudio and
-  libmysofa with zlib; PinMAME, AltSound,
+  libmysofa with zlib. PinMAME, AltSound,
   DMDUtil, DOF, FlexDMD, B2S, PUP, Serum, VNI and ScoreView are plugins staged
   in plugins/ next to the binary (make/CMakeLists_app.txt:533-554,605-615,
   make/CMakeLists_sources.txt:811-817, make/CMakeLists_plugins.txt:21-25,39-56).
@@ -62,7 +62,7 @@ notes: |
   table's user folder, created on demand, TablesDirectory the system documents
   folder or the installation folder when SDL reports none, MusicDirectory the
   table's music folder with an optional subfolder, ScriptsDirectory scripts/
-  under the installation folder; each fails when its directory does not exist
+  under the installation folder. Each fails when its directory does not exist
   (src/core/ScriptGlobalTable.cpp:383-424, src/core/FileLocator.cpp:251-259).
   In AppPrefData mode user/, music/, cache/ and autosave/ sit beside the table;
   a folder missing there on a read is looked up the AppOnly way, where user/
@@ -87,7 +87,7 @@ notes: |
   four (src/core/AppCommands.cpp:277-283, src/ui/live/EditorUI.cpp:338-357).
   OpenGL builds also get shaders-10.8.1/, the .glfx and .fxh sources parsed at
   runtime (src/core/FileLocator.cpp:223, src/renderer/Shader.cpp:1827-1828,2231-2234,
-  make/CMakeLists_app.txt:637-647); the directory is not copied for the BGFX
+  make/CMakeLists_app.txt:637-647), and the directory is not copied for the BGFX
   renderer. Three plugins carry resources of their own: plugins/flexdmd/assets/
   holds the bitmap fonts UltraDMD asks for by resource name, the
   FlexDMD.Resources. prefix being stripped before the lookup
@@ -124,12 +124,12 @@ notes: |
 
   A ROM set is one zip per machine, and every ROM is looked up in the game's
   zip first, then up its parent chain (pinmame src/common.c:1343-1348).
-  PinMAME carries neither GAME_IS_BIOS_ROOT nor ROM_SYSTEM_BIOS; what it has
+  PinMAME carries neither GAME_IS_BIOS_ROOT nor ROM_SYSTEM_BIOS. What it has
   are nine container sets flagged NOT_A_DRIVER, gts1, gts1s, gts80, gts80s,
   gts80a, gts80as, allied, gp_110 and recel, each the parent of its family's
   games and holding the family's system ROMs. A game declares its system ROMs
   in its own set as well, so they are read from the game zip when it carries
-  them and from the container zip otherwise; the Allied Leisure and Game Plan
+  them and from the container zip otherwise. The Allied Leisure and Game Plan
   110 games declare nothing else. The nine are listed below.
 
   Two shared data files sit outside that ROM content and are listed below as
@@ -140,12 +140,12 @@ notes: |
   (pinmame src/common.c:271), the two files that register that option live in
   src/windows/config.c and src/unix/sound.c and neither is in the libpinmame
   source list, and PinmameSetConfig zeroes the whole options struct
-  (pinmame src/libpinmame/libpinmame.cpp:1071); independently, SAMPLESINTERFACE
+  (pinmame src/libpinmame/libpinmame.cpp:1071). Independently, SAMPLESINTERFACE
   is defined in the PinMAME tree (pinmame src/wpc/wpcsam.h:23) and no driver
   references it. history.dat and mameinfo.dat (pinmame src/datafile.c:619-623,
   649-653) are read only by displayhistory, a page of the MAME on-screen menu
   (pinmame src/usrintrf.c:2846-2851), and by the listing path in
-  pinmame src/info.c:820 which libpinmame never calls; VPX passes NULL for
+  pinmame src/info.c:820 which libpinmame never calls. VPX passes NULL for
   fn_IsKeyPressed, the thirteenth member of PinmameConfig
   (plugins/pinmame/PinMAMEPlugin.cpp:304-320, pinmame src/libpinmame/libpinmame.h:422-438),
   so osd_is_key_pressed always answers 0
@@ -165,7 +165,7 @@ files:
     source_ref: "pinmame src/wpc/gts1games.c:15-22,33-34, pinmame src/wpc/gts1.h:229-233, pinmame src/common.c:1343-1348, pinmame src/fileio.c:953-966"
     note: >-
       Container set, parent of every System 1 game. The path is the layout
-      beside a table; roms/ sits the same way under the PinMAMEPath setting or
+      beside a table, and roms/ sits the same way under the PinMAMEPath setting or
       $HOME/.pinmame. Each game declares the same two ROMs and reads them from
       its own zip first, so this archive is only reached when the game zip
       lacks them. A member is matched by name, then by checksum.
@@ -376,7 +376,7 @@ files:
     source_ref: "src/audio/SpatialAudio.cpp:49-56,344-360, make/CMakeLists_app.txt:631-635"
     note: >-
       Read from assets/ under the installation folder when libspatialaudio is
-      built with libmysofa, which every build script does; the headphone and VR
+      built with libmysofa, which every build script does. The headphone and VR
       binauralizer then runs second order ambisonics on it. A missing or
       unreadable file logs "Failed to load the binaural HRTF" and audio falls
       back to loudspeaker decoding. The file sits in the repository's top-level
@@ -424,7 +424,7 @@ analysis:
         note: >-
           One zip per machine. The root is the pinmame folder beside the table
           when it holds roms/, else the PinMAMEPath setting, else $HOME/.pinmame
-          on Linux and macOS; Batocera patches that last fallback to
+          on Linux and macOS. Batocera patches that last fallback to
           <prefpath>/pinmame.
       - what: "PinMAME game aliases, <pinmame root>/alias.txt"
         source_ref: "pinmame src/libpinmame/libpinmame.cpp:304-337,343-346"
@@ -439,10 +439,10 @@ analysis:
         note: "The legacy plugin checks the file version against the B2S server version on load."
       - what: "Serum colorizations, <table folder>/serum/<rom>/<rom>.cROMc or .cRZ, else the SerumPath setting"
         source_ref: "plugins/serum/serum.cpp:49,561-602"
-        note: "A namespace folder may sit above the ROM folder; PinMAME games are also looked up in <table folder>/pinmame/altcolor."
+        note: "A namespace folder may sit above the ROM folder, and PinMAME games are also looked up in <table folder>/pinmame/altcolor."
       - what: "VNI colorizations, <table folder>/vni/<rom>/<rom>.pal with an optional .vni, else the VniPath setting"
         source_ref: "plugins/vni/vni.cpp:39,326-376"
-        note: "pin2dmd.pal and pin2dmd.vni are accepted in the same folder; PinMAME games are also looked up in <table folder>/pinmame/altcolor."
+        note: "pin2dmd.pal and pin2dmd.vni are accepted in the same folder, and PinMAME games are also looked up in <table folder>/pinmame/altcolor."
       - what: "alternative sound packages, <table folder>/altsound/<rom>, else <table folder>/pinmame/altsound/<rom>, else the plugin's Folder setting"
         source_ref: "plugins/altsound/AltSoundPlugin.cpp:28,110-143"
       - what: "PUP video packs, <table folder>/pupvideos/<rom>, else pupvideos/ under the PUPFolder setting"
@@ -461,11 +461,11 @@ analysis:
     - what: "VPinballX.ini, the settings file"
       source_ref: "src/core/VPApp.cpp:270-284, src/core/AppCommands.cpp:533-539"
       note: >-
-        Looked up in the preferences folder, then beside the binary; when
+        Looked up in the preferences folder, then beside the binary. When
         neither holds one the preferences path is kept. -Ini names another file.
         Batocera seeds it from the assets/Default_VPinballX.ini its pinned tree
         carries and rewrites it before every launch.
-    - what: "VPReg.ini, values saved by table scripts in the table's user folder; vpinball.log in the preferences folder"
+    - what: "VPReg.ini, values saved by table scripts in the table's user folder, and vpinball.log in the preferences folder"
       source_ref: "src/core/ScriptGlobalTable.cpp:527-557, src/utils/Logger.cpp:164-165"
     - what: "PinMAME state: nvram/, cfg/, hi/, inp/, memcard/ and sta/"
       source_ref: "pinmame src/libpinmame/libpinmame.cpp:1081,1083-1087"

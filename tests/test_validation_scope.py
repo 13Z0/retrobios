@@ -2,7 +2,7 @@
 
 Built over every profile, ZEsarUX (standalone, a 48K cpc6128.rom) and ePSXe
 judged RetroArch packs and the gaps page listed five hash mismatches with no
-object. verify and the builder pass resolve_platform_cores' selection; this
+object. verify and the builder pass resolve_platform_cores' selection, and this
 test fails if either hands the index the whole profile set again.
 """
 

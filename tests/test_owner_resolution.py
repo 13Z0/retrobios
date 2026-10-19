@@ -1,7 +1,7 @@
 """Every reader of a profile entry names its owner, as the builder does.
 
 The resolver prefers the owning profile's copy when a name has several. The
-builder passes `source_profile`; the site's consumer index, the slot claims
+builder passes `source_profile`. The site's consumer index, the slot claims
 and the agnostic scan did not, and resolved 95 entries to other files: the
 site credited aethersx2's game_controller_db.txt to armsx2 and left the copy
 armsx2's pack ships without a reader, and MAME's neogeo.zip without MAME.

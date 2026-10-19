@@ -17,7 +17,7 @@ notes: |
 
 exclusion_note: >
   .info declares no firmware (firmware_count absent). No source code found
-  to analyze — searched libretro-samples, RetroArch cores, libretro-super,
+  to analyze: searched libretro-samples, RetroArch cores, libretro-super,
   and the full libretro GitHub org.
 
 files: []

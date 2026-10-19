@@ -3,7 +3,7 @@
 The check took the first sorted *_BIOS_Pack.zip whose name contained the
 platform name. With a full and a regional pack side by side, --region us
 judged the full pack against the regional expectation and never opened the
-regional one; a pack built with --source truth answered SKIP and exit 0.
+regional one. A pack built with --source truth answered SKIP and exit 0.
 """
 
 from __future__ import annotations

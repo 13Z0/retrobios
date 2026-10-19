@@ -44,7 +44,7 @@ notes: |
   Two firmware images are read, and both differ from upstream in how they are
   found. Upstream opens BS-X.bin then BS-X.bios in its BIOS directory
   (bsx.cpp:1204-1236) and STBIOS.bin for a Sufami Turbo load
-  (memmap.cpp:1663-1686); the app deletes both blocks and reads a URI the user
+  (memmap.cpp:1663-1686). The app deletes both blocks and reads a URI the user
   picks instead, so no filename is compiled in
   (Snes9x/src/snes9x/bsx.cpp:1199-1203,
   Snes9x/src/snes9x/memmap.cpp:1644-1670, Snes9x/src/main/S9XApi.cc:225-253,
@@ -62,7 +62,7 @@ notes: |
   S9xInitBSX, which copies it into the BIOS area itself and asks for nothing
   (Snes9x/src/snes9x/bsx.cpp:1213-1233). Broadcast data is read per requested
   channel as BSXHHHH-D.bin under the Satellaview Files path, which defaults to
-  the content directory; a miss only leaves the stream unloaded
+  the content directory, and a miss only leaves the stream unloaded
   (Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216,
   Snes9x/src/main/system.ccm:108).
 
@@ -74,7 +74,7 @@ notes: |
   (Snes9x/src/main/S9XApi.cc:64,89-131).
 
   Per content the app writes and reads back a .srm, an .rtc for the S-RTC,
-  .frz states and a .cht cheat list under the cheats path; settings live in
+  .frz states and a .cht cheat list under the cheats path. Settings live in
   Snes9xP.config (Snes9x/src/main/Main.cc:78-90,153-172,
   Snes9x/src/snes9x/memmap.cpp:1791-1812, Snes9x/src/main/Cheats.cc:33-45,
   Snes9x/src/main/AppMeta.cc:19). A BS game with no save of its own falls back
@@ -136,7 +136,7 @@ files:
       Opened by the name the emulated unit asks for, BSXHHHH-D.bin from the
       channel registers at 0x2188 and 0x218E, under the Satellaview Files path,
       which defaults to the content directory. The file is measured to size the
-      queue and read 22 bytes at a time; a miss leaves the stream unloaded.
+      queue and read 22 bytes at a time. A miss leaves the stream unloaded.
     source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216, Snes9x/src/main/system.ccm:108, Snes9x/src/main/EmuMenuViews.cc:325-343"
 
   - name: "BSX0121-0.bin"

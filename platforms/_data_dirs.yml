@@ -18,7 +18,7 @@ data_directories:
   # https://buildbot.libretro.com/assets/system/
   # =========================================================================
 
-  # ref: DolphinLibretro/Boot.cpp:72-73 — system/dolphin-emu/Sys/
+  # ref: DolphinLibretro/Boot.cpp:72-73 (system/dolphin-emu/Sys/)
   dolphin-sys:
     source_url: "https://buildbot.libretro.com/assets/system/Dolphin.zip"
     source_type: zip
@@ -28,7 +28,7 @@ data_directories:
     exclude: [Themes]
     description: "Dolphin system data (GameSettings, DSP, fonts, shaders)"
 
-  # ref: ppsspp/ext/native/ui/ui_screen.cpp — system/PPSSPP/
+  # ref: ppsspp/ext/native/ui/ui_screen.cpp (system/PPSSPP/)
   ppsspp-assets:
     source_url: "https://buildbot.libretro.com/assets/system/PPSSPP.zip"
     source_type: zip
@@ -37,7 +37,7 @@ data_directories:
     strip_components: 1
     description: "PPSSPP fonts, backgrounds, shaders, lang files"
 
-  # ref: bluemsx-libretro/system/ — system/Databases/ + system/Machines/
+  # ref: bluemsx-libretro/system/ (system/Databases/ + system/Machines/)
   bluemsx:
     source_url: "https://buildbot.libretro.com/assets/system/blueMSX.zip"
     source_type: zip
@@ -45,7 +45,7 @@ data_directories:
     local_cache: data/bluemsx
     description: "blueMSX Databases + Machines configs"
 
-  # ref: pcsx2/libretro/main.cpp — system/pcsx2/
+  # ref: pcsx2/libretro/main.cpp (system/pcsx2/)
   lrps2:
     source_url: "https://buildbot.libretro.com/assets/system/LRPS2.zip"
     source_type: zip
@@ -75,7 +75,7 @@ data_directories:
     local_cache: data/yaps2-resources
     description: "yaps2 resources (GameIndex.yaml, RedumpDatabase.yaml, fonts, shaders, icons, sounds)"
 
-  # ref: src/Cafe/GameProfile/GameProfile.cpp:181-195 — Cemu/gameProfiles/default/
+  # ref: src/Cafe/GameProfile/GameProfile.cpp:181-195 (Cemu/gameProfiles/default/)
   cemu-gameprofiles:
     source_url: "https://github.com/cemu-project/Cemu/archive/{version}.tar.gz"
     source_type: tarball
@@ -84,14 +84,14 @@ data_directories:
     local_cache: data/cemu-gameprofiles
     description: "Cemu default game profiles (one .ini per title id)"
 
-  # ref: src/Cafe/GraphicPack/GraphicPack2.cpp:96-111 — Cemu/graphicPacks/downloadedGraphicPacks/
+  # ref: src/Cafe/GraphicPack/GraphicPack2.cpp:96-111 (Cemu/graphicPacks/downloadedGraphicPacks/)
   cemu-graphic-packs:
     source_url: "https://github.com/cemu-project/cemu_graphic_packs/releases/download/Github981/graphicPacks981.zip"
     source_type: zip
     local_cache: data/cemu-graphic-packs
     description: "Cemu community graphic packs, release Github981"
 
-  # ref: scummvm/backends/platform/libretro — system/scummvm/
+  # ref: scummvm/backends/platform/libretro (system/scummvm/)
   scummvm:
     source_url: "https://buildbot.libretro.com/assets/system/ScummVM.zip"
     source_type: zip
@@ -99,7 +99,7 @@ data_directories:
     local_cache: data/scummvm
     description: "ScummVM extra data files (themes, translations, shaders)"
 
-  # ref: nxengine-libretro — system/
+  # ref: nxengine-libretro (system/)
   nxengine:
     source_url: "https://buildbot.libretro.com/assets/system/NXEngine%20%28Cave%20Story%29.zip"
     source_type: zip
@@ -107,7 +107,7 @@ data_directories:
     local_cache: data/nxengine
     description: "NXEngine Cave Story game data"
 
-  # ref: ecwolf/src/wl_main.cpp — system/ecwolf.pk3
+  # ref: ecwolf/src/wl_main.cpp (system/ecwolf.pk3)
   ecwolf:
     source_url: "https://buildbot.libretro.com/assets/system/ECWolf.zip"
     source_type: zip
@@ -115,7 +115,7 @@ data_directories:
     local_cache: data/ecwolf
     description: "ECWolf game engine data"
 
-  # ref: prboom/src/d_main.c — system/prboom.wad
+  # ref: prboom/src/d_main.c (system/prboom.wad)
   prboom:
     source_url: "https://buildbot.libretro.com/assets/system/PrBoom.zip"
     source_type: zip
@@ -123,7 +123,7 @@ data_directories:
     local_cache: data/prboom
     description: "PrBoom Doom engine data"
 
-  # ref: xrick/src/data.c — system/xrick/data.zip
+  # ref: xrick/src/data.c (system/xrick/data.zip)
   xrick:
     source_url: "https://buildbot.libretro.com/assets/system/XRick%20%28Rick%20Dangerous%29.zip"
     source_type: zip
@@ -131,7 +131,7 @@ data_directories:
     local_cache: data/xrick
     description: "XRick Rick Dangerous game data"
 
-  # ref: dinothawr/libretro.cpp — system/dinothawr/
+  # ref: dinothawr/libretro.cpp (system/dinothawr/)
   dinothawr:
     source_url: "https://buildbot.libretro.com/assets/system/Dinothawr.zip"
     source_type: zip
@@ -139,7 +139,7 @@ data_directories:
     local_cache: data/dinothawr
     description: "Dinothawr game data"
 
-  # ref: qemu — system firmware
+  # ref: qemu (system firmware)
   qemu:
     source_url: "https://buildbot.libretro.com/assets/system/QEMU.zip"
     source_type: zip
@@ -147,7 +147,7 @@ data_directories:
     local_cache: data/qemu
     description: "QEMU firmware (SeaBIOS, VGA BIOS, OpenSBI, etc.)"
 
-  # ref: cannonball/src/main.cpp — system/
+  # ref: cannonball/src/main.cpp (system/)
   cannonball:
     source_url: "https://buildbot.libretro.com/assets/system/Cannonball%20%28ROMs%20Required%29.zip"
     source_type: zip
@@ -155,7 +155,7 @@ data_directories:
     local_cache: data/cannonball
     description: "Cannonball OutRun engine config"
 
-  # ref: fbneo hiscore.dat — system/fbneo/
+  # ref: fbneo hiscore.dat (system/fbneo/)
   fbneo-hiscore:
     source_url: "https://buildbot.libretro.com/assets/system/FinalBurn%20Neo%20%28hiscore%29.zip"
     source_type: zip
@@ -163,7 +163,7 @@ data_directories:
     local_cache: data/fbneo-hiscore
     description: "FinalBurn Neo hiscore database"
 
-  # ref: mame2003/src — system/mame2003/
+  # ref: mame2003/src (system/mame2003/)
   mame2003:
     source_url: "https://buildbot.libretro.com/assets/system/MAME%202003.zip"
     source_type: zip
@@ -171,7 +171,7 @@ data_directories:
     local_cache: data/mame2003
     description: "MAME 2003 samples + cheat"
 
-  # ref: mame2003-plus — system/mame2003-plus/
+  # ref: mame2003-plus (system/mame2003-plus/)
   mame2003-plus:
     source_url: "https://buildbot.libretro.com/assets/system/MAME%202003-Plus.zip"
     source_type: zip
@@ -179,15 +179,15 @@ data_directories:
     local_cache: data/mame2003-plus
     description: "MAME 2003-Plus samples + cheat + history"
 
-  # ref: sdlpal/main.c — system/sdlpal/ (Chinese Paladin / 仙剑奇侠传)
-  # Not on buildbot — sourced from large-files release asset
+  # ref: sdlpal/main.c (system/sdlpal/, Chinese Paladin / 仙剑奇侠传)
+  # Not on buildbot, sourced from large-files release asset
   sdlpal:
     source_url: "https://github.com/Abdess/retrobios/releases/download/large-files/sdlpal-data.zip"
     source_type: zip
     local_cache: data/sdlpal
     description: "SDLPAL Chinese Paladin game data (.mkf archives)"
 
-  # ref: OpenTyrian2000 — system/opentyrian/tyrian/
+  # ref: OpenTyrian2000 (system/opentyrian/tyrian/)
   # Tyrian 2.1 freeware data (buildbot URLs removed, sourced from release asset)
   opentyrian:
     source_url: "https://github.com/Abdess/retrobios/releases/download/large-files/opentyrian-data.zip"
@@ -196,7 +196,7 @@ data_directories:
     local_cache: data/opentyrian
     description: "OpenTyrian Tyrian 2.1 freeware game data"
 
-  # ref: syobonaction — system/syobonaction/
+  # ref: syobonaction (system/syobonaction/)
   # Freeware game data from OpenSyobonAction (BGM, res, SE directories)
   syobonaction:
     source_url: "https://github.com/akemin-dayo/OpenSyobonAction/archive/refs/heads/{version}.tar.gz"
@@ -211,12 +211,12 @@ data_directories:
   # Upstream repo sources (not on buildbot, available to all platforms)
   # =========================================================================
 
-  # ref: FreeIntv/src/libretro.c:273 — system/freeintv_overlays/<rom>.png
+  # ref: FreeIntv/src/libretro.c:273 (system/freeintv_overlays/<rom>.png)
   # 90 per-game controller overlay PNGs, loaded via stbi_load()
   # optional: core falls back to embedded default keypad image
   # freeintv overlays: Assets/Overlays.zip in repo (not a directory)
   # Already archived in bios/Mattel/Intellivision/freeintv_overlays/
-  # No buildbot source — sourced manually from core repo
+  # No buildbot source, sourced manually from core repo
   freeintv-overlays:
     source_url: "https://github.com/libretro/FreeIntv/raw/{version}/Assets/Overlays.zip"
     source_type: zip
@@ -225,8 +225,8 @@ data_directories:
     strip_components: 1
     description: "FreeIntv per-game controller overlay PNGs"
 
-  # ref: crawl-ref/source/files.cc:375-458 — datafile_path() dat/ tree
-  # Not on buildbot — sourced from libretro repo
+  # ref: crawl-ref/source/files.cc:375-458 (datafile_path() dat/ tree)
+  # Not on buildbot, sourced from libretro repo
   # 532 files (tiles, fonts, databases, lua scripts, level descriptions)
   stonesoup:
     source_url: "https://github.com/libretro/crawl-ref/archive/refs/heads/{version}.tar.gz"
@@ -236,7 +236,7 @@ data_directories:
     local_cache: data/stonesoup
     description: "DCSS game data (tiles, fonts, databases, lua, level descriptions)"
 
-  # ref: FBNeo src/burner/libretro/libretro.cpp — system/fbneo/cheats/
+  # ref: FBNeo src/burner/libretro/libretro.cpp (system/fbneo/cheats/)
   fbneo-cheats:
     source_url: "https://github.com/finalburnneo/FBNeo-cheats/archive/refs/heads/{version}.zip"
     source_type: zip
@@ -245,7 +245,7 @@ data_directories:
     strip_components: 1
     description: "FinalBurn Neo per-game cheat definitions"
 
-  # ref: FBNeo src/burn/snd/samples.cpp — system/fbneo/samples/
+  # ref: FBNeo src/burn/snd/samples.cpp (system/fbneo/samples/)
   fbneo-samples:
     source_url: "https://github.com/Abdess/retrobios/releases/download/large-files/fbneo-samples.zip"
     source_type: zip
@@ -253,7 +253,7 @@ data_directories:
     local_cache: data/fbneo-samples
     description: "FinalBurn Neo per-game audio samples (49 arcade games)"
 
-  # ref: dirksimple — system/
+  # ref: dirksimple (system/)
   dirksimple:
     source_url: "https://buildbot.libretro.com/assets/system/DirkSimple.zip"
     source_type: zip

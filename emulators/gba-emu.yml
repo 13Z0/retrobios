@@ -36,12 +36,12 @@ notes: |
   the length CPUInit tests again before copying it and setting useBios
   (GBA.emu/src/core/gba/gba.cpp:3758-3778). Nothing else about the file is
   examined: CPUIsGBABios, the extension test upstream passes to utilLoad, has no
-  caller here (GBA.emu/src/core/gba/gba.cpp:1655-1675; upstream
+  caller here (GBA.emu/src/core/gba/gba.cpp:1655-1675, upstream
   src/core/gba/gba.cpp:4975-4986).
 
   Without a file the app runs on the built-in myROM stub copied into the BIOS
   area (GBA.emu/src/core/gba/gba.cpp:131-305,3776-3778) and on the service call
-  implementations of gbaBios.cpp; useBios decides only whether an SWI enters
+  implementations of gbaBios.cpp. useBios decides only whether an SWI enters
   BIOS code or the HLE routine, and which register reset a boot performs
   (GBA.emu/src/core/gba/gba.cpp:2525-2545,4104-4112). Two settings gate the
   read: the per-content Use BIOS tristate defaults to Auto, which follows the
@@ -70,9 +70,9 @@ notes: |
   VBA-M's own file entry points reach nothing in this build. CPULoadRom, the
   battery, state, GSA snapshot and eeprom import functions and the EmulatedSystem
   table sit inside #if 0 blocks (GBA.emu/src/core/gba/gba.cpp:1301-1614,
-  1885-2134,4803-4869); CPUExportEepromFile and cheatsImportGSACodeFile keep no
+  1885-2134,4803-4869), CPUExportEepromFile and cheatsImportGSACodeFile keep no
   caller (GBA.emu/src/core/gba/gba.cpp:1276,
-  GBA.emu/src/core/gba/gbaCheats.cpp:2081); and utilOpenFile, the call all of
+  GBA.emu/src/core/gba/gbaCheats.cpp:2081), and utilOpenFile, the call all of
   them open files with, is implemented by no source in the build
   (GBA.emu/src/CMakeLists.txt:6-36, GBA.emu/src/main/VbamApi.cc:279-321). The
   e-Reader reads no dotcode either, the tree carrying its header alone and the

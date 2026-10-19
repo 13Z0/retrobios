@@ -17,7 +17,7 @@ notes: |
   missions/, dogfights/, music/, sounds/ and doc/.
 
   The data root is baked into the binary through -DCDOGS_DATA_DIR. The
-  source default is "../" ("./" on GCW0), CMakeLists.txt:141-147; Batocera
+  source default is "../" ("./" on GCW0), CMakeLists.txt:141-147. Batocera
   sets it to /userdata/roms/cdogs/. GetDataFilePath(), src/cdogs/utils.c:392,
   returns an absolute request as it is, and otherwise joins CDOGS_DATA_DIR
   (under the working directory when it is relative) with the requested path.

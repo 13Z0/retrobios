@@ -34,7 +34,7 @@ notes: |
   (source/frontends/mariani/preferences/PreferencesViewController.mm:191-193, 741-751). MemInitializeROM picks the
   system ROM from that setting (source/Memory.cpp:2052-2069). Default slots are the
   printer card in 1, Super Serial Card in 2, Mockingboard in 4 and Disk II in 6
-  (source/CardManager.cpp:325-334); the hard disk and mouse cards are chosen by the
+  (source/CardManager.cpp:325-334), while the hard disk and mouse cards are chosen by the
   user.
 
   Two names in the resource map have no file in the bundle: the Resources build
@@ -505,10 +505,10 @@ analysis:
 
   unreachable_resources:
     - filename: Mockingboard-D.rom
-      reason: "IDR_MOCKINGBOARD_D_FW appears only in the resource header and in the frontend's name table; nothing requests it"
+      reason: "IDR_MOCKINGBOARD_D_FW appears only in the resource header and in the frontend's name table, and nothing requests it"
       source_ref: "resource/resource.h:38, source/frontends/mariani/MarianiFrame.cpp:172"
     - filename: TKClock.rom
-      reason: "IDR_TKCLOCK_FW appears only in the resource header and in the frontend's name table; nothing requests it"
+      reason: "IDR_TKCLOCK_FW appears only in the resource header and in the frontend's name table, and nothing requests it"
       source_ref: "resource/resource.h:51, source/frontends/mariani/MarianiFrame.cpp:175"
     - filename: ThunderClockPlus.rom
       reason: >
@@ -541,7 +541,7 @@ analysis:
       DebugInitialize runs from InitialiseEmulator, so the preload happens even
       when the debugger window is never opened. Only APPLE2E.SYM and A2_BASIC.SYM
       are in the bundle. The user slots and the source and assembler tables have
-      no distributed content and are written by whoever needs them; a missing
+      no distributed content and are written by whoever needs them. A missing
       table leaves the debugger running without those names.
 
   debugger_scripts:
@@ -550,7 +550,7 @@ analysis:
       note: >
         Run once at the first DebugInitialize, from the current directory and
         then from the support directory. Holds debugger commands written by the
-        user; the copy in the source tree is empty.
+        user. The copy in the source tree is empty.
 
   user_supplied_roms:
     options:

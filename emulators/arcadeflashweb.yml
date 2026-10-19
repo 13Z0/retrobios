@@ -18,7 +18,7 @@ notes: |
   ArcadeFlashWeb.exe -fullscreen -source:<rom>, RetroBat adds -nodatetime,
   -savedataflash: and -picturesfolder: and sets the working directory to the
   program folder. The repository carries the Qt and QML sources and the
-  releases; arcadeflashweb.com no longer resolves and holds no archived
+  releases. arcadeflashweb.com no longer resolves and holds no archived
   capture. Every string quoted below was also read back from the shipped
   v1.0.2 executable, which matches the sources.
   ref: src/ArcadeFlashWeb.pro:1-5, src/main.qml:34-35
@@ -27,7 +27,7 @@ notes: |
   QTWEBENGINE_CHROMIUM_FLAGS to "--enable-pepper-testing
   --ppapi-flash-path=./pepflashplayer.dll" before QtWebEngine::initialize, so
   Chromium takes the plugin from that path. It is the one file resolved
-  against the process working directory; everything else below hangs off
+  against the process working directory, and everything else below hangs off
   applicationDirPath. No --ppapi-flash-version accompanies it, and nothing
   reads the manifest.json sitting beside the library: QtWebEngine builds the
   plugin entry from the two switches alone and the library never names that
@@ -85,7 +85,7 @@ files:
       Handed to Chromium as --ppapi-flash-path and resolved against the process
       working directory. Without it no plugin is registered, SWFObject finds no
       player and the movie is never embedded. The page asks for a reported
-      version of at least 32.0.0; the build that ships is the 32-bit 32.0.0.371.
+      version of at least 32.0.0, and the build that ships is the 32-bit 32.0.0.371.
     source_ref: "src/main.cpp:40, ArcadeFlashWeb-release flash/flash.html:102"
 
   - name: flash.html
@@ -150,8 +150,8 @@ files:
     bundled: true
     description: "AntiMicro mapping profile"
     note: >-
-      Passed to AntiMicro as --profile under the name -profilantimicro: gives;
-      the name that ships is the one the built-in help quotes. With
+      Passed to AntiMicro as --profile under the name -profilantimicro: gives.
+      The name that ships is the one the built-in help quotes. With
       -controleurantimicro: also set the call carries --profile-controller
       instead and no profile file is read.
     source_ref: "src/main.qml:309-312"

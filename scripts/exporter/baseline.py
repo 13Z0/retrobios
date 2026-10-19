@@ -66,7 +66,7 @@ class NativeFile:
     # An addition filed under our own slug: the platform names no such system.
     foreign_system: bool = False
     # For an addition, each core that wants it as (runs standalone, name the
-    # platform gives it); empty when no core the platform runs is named.
+    # platform gives it), empty when no core the platform runs is named.
     runners: list[tuple[bool, str]] = field(default_factory=list)
 
     @property
@@ -103,7 +103,7 @@ class NativeFile:
     def hashes(self, field_name: str) -> list[str]:
         """Accepted values for a hash, truth first when it has an opinion.
 
-        The truth is read from the emulator's source; the platform list is a
+        The truth is read from the emulator's source. The platform list is a
         secondary source. When both speak and disagree, the truth decides and
         the divergence is recorded, never silently merged: an emulator that
         rejects a file will reject it whatever the platform declares.
@@ -134,7 +134,7 @@ class NativeFile:
         with the v2.0 crc (the truth's first) beside the v2.1 md5 and sha1
         (System.dat's), a record no file satisfies. When the two sides
         agree on the dump, the platform's record is kept whole, its value
-        chosen among those the truth accepts; a field only the truth names
+        chosen among those the truth accepts. A field only the truth names
         is written when it names one value, which is then that dump's.
         """
         source = self._identity_source()
@@ -526,7 +526,7 @@ def _attach_runners(systems: dict[str, NativeSystem], scraped: dict | None) -> N
 
     The platform lists its cores by its own names (Batocera's
     `mednafen_psx`, Recalbox's `mednafen_psx`), our truth by profile key
-    (`beetle_psx`); a profile's `cores:` holds the names it answers to.
+    (`beetle_psx`), and a profile's `cores:` holds the names it answers to.
     The build a platform runs an emulator as decides the runner.
     """
     if not scraped:

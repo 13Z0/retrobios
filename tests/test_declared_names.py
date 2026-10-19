@@ -54,7 +54,7 @@ class FlatDeclaredSet(unittest.TestCase):
 
 class AnAliasIsADeclaration(unittest.TestCase):
     """RetroArch lists amiberry's cd32.rom as kick40060.CD32, an alias the
-    profile declares; the gap report still called cd32.rom undeclared."""
+    profile declares, yet the gap report still called cd32.rom undeclared."""
 
     def test_a_file_declared_under_its_alias_is_covered(self):
         profiles = {"amiberry": {

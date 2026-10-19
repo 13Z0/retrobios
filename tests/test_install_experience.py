@@ -32,7 +32,7 @@ PAYLOAD = bytes(range(256)) * 400  # 102400 bytes
 
 
 class _RangeHandler(http.server.BaseHTTPRequestHandler):
-    """Serves PAYLOAD with Range support; fails first when asked to."""
+    """Serves PAYLOAD with Range support and fails first when asked to."""
 
     ranges: list[str] = []
     fail_first: list[int] = []
@@ -312,8 +312,8 @@ class CommandLine(unittest.TestCase):
 
 
 class ReviewCases(unittest.TestCase):
-    """Saying no to the large-download question ended on Done; --quiet hid
-    fatal messages and swallowed --check; a resumed copy inflated the speed."""
+    """Saying no to the large-download question ended on Done, --quiet hid
+    fatal messages and swallowed --check, and a resumed copy inflated the speed."""
 
     def test_declining_is_not_done(self):
         buf = io.StringIO()

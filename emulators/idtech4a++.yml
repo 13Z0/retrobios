@@ -56,7 +56,7 @@ notes: |
   Game data lives under a working directory, `/sdcard/diii4a` unless the
   preference names another, and each game reads a base folder inside it. With the
   standalone-directory preference on, which is the default, the base folder sits
-  under a per-game subdirectory; with it off, games that are not marked always
+  under a per-game subdirectory. With it off, games that are not marked always
   standalone read the base folder directly under the working directory. The Dark
   Mod, UZDOOM, FTEQW, ECWolf, Xash3D, Source and both Serious Sam entries are
   always standalone and keep their subdirectory either way.
@@ -79,7 +79,7 @@ notes: |
   quake1/darkplaces/id1), UZDOOM 4.14.3 (uzdoom), Wolfenstein 3D (ECWolf 1.4.2,
   ecwolf), FTEQW 1.05 (fteqw), Xash3D 0.21 (xash/valve), Source Engine 1.16
   (srceng/hl2), Serious Sam TFE 1.10.7 (serioussamtfe) and Serious Sam TSE 1.10.7
-  (serioussamtse). Every one is built in this configuration; the F-Droid flavour
+  (serioussamtse). Every one is built in this configuration. The F-Droid flavour
   leaves out Xash3D and Source, and the idtech flavour leaves out those two and
   Serious Sam. DOOM 3 BFG carries a second library for its Vulkan renderer.
   ref: Q3E/src/main/java/com/n0n3m4/q3e/Q3EGame.java:17-291,
@@ -133,7 +133,7 @@ notes: |
   `idtech4amm.version` is written beside them and compared on the next run, so an
   engine update replaces the copy and a user edit survives otherwise. The Dark
   Mod, DOOM 3 BFG, UZDOOM, Xash3D, Source, Enemy Territory, ECWolf, Skin Deep and
-  ETQW are covered by this path; the bot, Rivensin and translation archives are
+  ETQW are covered by this path, while the bot, Rivensin and translation archives are
   extracted on request from the launcher instead.
   ref: Q3E/src/main/java/com/n0n3m4/q3e/Q3EMain.java:167,
        Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameHelper.java:667-746, 964-984,
@@ -163,7 +163,7 @@ files:
     sha1: dd2364da2cc8b49e32330ba9abff80727b4ea0a0
     description: "UZDOOM engine resource archive"
     note: >-
-      Named by BASEWAD and searched before anything else; a miss ends the process
+      Named by BASEWAD and searched before anything else. A miss ends the process
       with "Cannot find uzdoom.pk3". Carries the hex font, the widget resources
       and the script definitions the engine needs before a game is chosen. Copied
       out of the apk with the rest of the UZDOOM resource directory.
@@ -238,8 +238,8 @@ files:
     description: "SoundFont for the MIDI devices"
     note: >-
       Collected by scanning a `soundfonts` directory added to the search paths of
-      the config file (Q3E/src/main/jni/zdoom/src/gameconfigfile.cpp:220, 258);
-      every .sf2 and zipped GUS patch set found there becomes a menu entry.
+      the config file (Q3E/src/main/jni/zdoom/src/gameconfigfile.cpp:220, 258).
+      Every .sf2 and zipped GUS patch set found there becomes a menu entry.
       fluid_patchset defaults to GAMENAMELOWERCASE, "uzdoom", which
       FindSoundFont matches against the file base name.
     source_ref: "Q3E/src/main/jni/zdoom/src/version.h:110, Q3E/src/main/jni/zdoom/src/common/audio/music/music_config.cpp:119, Q3E/src/main/jni/zdoom/src/common/audio/music/i_soundfont.cpp:335-370, 458-468"
@@ -282,7 +282,7 @@ files:
     description: "ECWolf engine resource archive"
     note: >-
       Named by MAIN_PK3 and passed to the game selector with the program
-      directory (Q3E/src/main/jni/ecwolf/src/wl_main.cpp:1294-1307); failing
+      directory (Q3E/src/main/jni/ecwolf/src/wl_main.cpp:1294-1307). Failing
       to open it ends the process with "Could not open ecwolf.pk3!". It holds the IWADINFO rules that identify which Wolfenstein
       data set is present, the palettes and the actor definitions. This build
       reads it from disk after extraction, unlike the libretro core which
@@ -343,7 +343,7 @@ files:
     note: >-
       Unpacked into the ETQW base folder. The name sorts last so the entries
       override the ones the retail archives carry. ETQW_GLSL_SHADER_VERSION
-      names the set the build expects and reads .6 here; the .3 pack it
+      names the set the build expects and reads .6 here. The .3 pack it
       replaced is kept as a variant for older builds.
     source_ref: "Q3E/src/main/java/com/n0n3m4/q3e/Q3EPatchResourceManager.java:208-217, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameHelper.java:790-809, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameConstants.java:400"
 
@@ -357,7 +357,7 @@ files:
     sha1: f156945f70545e37fb5ee33a95ee97204a7f60b7
     description: "ET: Legacy mod archive matching the built engine"
     note: >-
-      Copied into the `legacy` folder, the mod the engine runs by default; the
+      Copied into the `legacy` folder, the mod the engine runs by default. The
       retail Enemy Territory data in `etmain` stays the user's to supply. The
       file name is built from the engine version, so a Legacy update lands under
       a new name.
@@ -475,8 +475,8 @@ files:
     note: >-
       Read in place from the assets, never extracted. Archives with this suffix
       are folded into the search path wherever they are found, and the
-      `controls_theme/` folders inside become named entries in the theme chooser;
-      this one carries the cs16-client and source-engine sets.
+      `controls_theme/` folders inside become named entries in the theme chooser.
+      This one carries the cs16-client and source-engine sets.
     source_ref: "Q3E/src/main/java/com/n0n3m4/q3e/Q3EGlobals.java:230, Q3E/src/main/java/com/n0n3m4/q3e/karin/KFDManager.java:44, 102, 113-129, Q3E/src/main/java/com/n0n3m4/q3e/karin/KFileDescriptor.java:56, 102"
 
   - name: btn_jump.png
@@ -513,7 +513,7 @@ files:
       writes for itself, DoomConfig.cfg, Quake4Config.cfg, preyconfig.cfg,
       q3config.cfg, wolfconfig.cfg, Darkmod.cfg, uzdoom.ini and the rest, and
       opens any of them in its editor. The config files are written by the
-      engines; this one only ever comes from the user.
+      engines, but this one only ever comes from the user.
     source_ref: "Q3E/src/main/java/com/n0n3m4/q3e/Q3EInterface.java:722-836, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameConstants.java:63-88, idTech4Amm/src/main/java/com/karin/idTech4Amm/ConfigEditorActivity.java:103"
 
   - name: description.txt
@@ -536,7 +536,7 @@ files:
       while the game controller subsystem starts, after the compiled-in mappings
       and before the ones the environment carries. It reaches the six games the
       app runs on SDL, Xash3D, Source, ECWolf, Skin Deep, Quadrilateral Cowboy
-      and Icarus; the other engines take input from the Q3E frontend instead. The
+      and Icarus. The other engines take input from the Q3E frontend instead. The
       SDL2 tree under deplibs is what the build compiles, version 2.32.5.
     source_ref: "Q3E/src/main/jni/deplibs/SDL2/src/joystick/SDL_gamecontroller.c:1873-1884, 1890-1916, Q3E/src/main/jni/deplibs/SDL2/include/SDL_version.h:59-61, Q3E/src/main/jni/CMakeLists.txt:90-102, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameConstants.java:430, 454-461"
 
@@ -649,7 +649,7 @@ exclusion_note: >
   the DOOM engine accepts as an IWAD, read from `iwadinfo.txt` in
   `game_support.pk3`, the four the launcher offers as selectable UZDOOM data
   files, and the five extensions ECWolf reports when no Wolfenstein data is
-  found; all of them are game content, held here the same way the PrBoom and
+  found. All of them are game content, held here the same way the PrBoom and
   boom3 profiles hold theirs, in the notes. `stdout.txt` and `stderr.txt` are
   opened for writing by the engine and read back only to show the last run log,
   and an `idtech4amm.version` stamp is written beside each extracted resource.

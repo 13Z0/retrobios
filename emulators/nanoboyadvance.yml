@@ -24,7 +24,7 @@ notes: |
        src/platform/core/include/platform/config.hpp:17, src/platform/sdl/main.cpp:98-102
 
   The BIOS is required. BIOSLoader refuses a missing path, a directory, and any
-  size other than 16 KB; the frontend prints the reason and exits. There is no
+  size other than 16 KB, and the frontend prints the reason and exits. There is no
   built-in replacement. bios_skip only jumps past the boot screen after the BIOS
   is loaded.
   ref: src/platform/core/src/loader/bios.cpp:17-48, src/platform/sdl/main.cpp:177-192,
@@ -43,5 +43,5 @@ files:
     validation: [size]
     config_key: "general.bios_path"
     description: "Game Boy Advance BIOS"
-    note: "Any file name through general.bios_path or --bios; bios.bin beside the executable when neither is set. ROCKNIX points the key at gba_bios.bin in its BIOS directory."
+    note: "Any file name through general.bios_path or --bios, or bios.bin beside the executable when neither is set. ROCKNIX points the key at gba_bios.bin in its BIOS directory."
     source_ref: "src/platform/core/src/loader/bios.cpp:17-48, src/platform/core/src/config.cpp:36, src/platform/sdl/main.cpp:177-192"

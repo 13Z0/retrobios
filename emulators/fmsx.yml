@@ -239,9 +239,9 @@ files:
   - name: CARTS.CRC
     required: false
     bundled: false
-    unsourceable: "no fMSX release examined ships one; the mapper database the author distributes is CARTS.SHA"
+    unsourceable: "no fMSX release examined ships one, and the mapper database the author distributes is CARTS.SHA"
     source_ref: "fMSX/MSX.c:2697-2713"
-    note: "Mapper database opened in the system directory before CARTS.SHA. Each line holds the sum of the ROM bytes as eight hexadecimal digits and a mapper number (%08X %d); a matching line sets the mapper and CARTS.SHA is not read."
+    note: "Mapper database opened in the system directory before CARTS.SHA. Each line holds the sum of the ROM bytes as eight hexadecimal digits and a mapper number (%08X %d). A matching line sets the mapper and CARTS.SHA is not read."
 
   - name: CARTS.SHA
     required: false

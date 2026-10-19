@@ -14,7 +14,7 @@ systems:
 
 notes: |
   XRick is an open-source reimplementation of the Rick Dangerous engine (Core Design, 1989),
-  ported to libretro. It is not a general-purpose emulator; it only plays Rick Dangerous.
+  ported to libretro. It is not a general-purpose emulator: it only plays Rick Dangerous.
 
   The core sets need_fullpath = true, valid_extensions = "*|zip", and supports launching
   without content (RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME = true, libretro/core/libretro-core.c:93-97).

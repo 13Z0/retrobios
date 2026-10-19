@@ -25,7 +25,7 @@ notes: |
   commented out (qcommon/files.c:24, 28, 484-489). No pak is rejected for
   its contents. The Vulkan renderer, vid_ref default "vk"
   (linux/vid_so.c:448), stops with ERR_FATAL when pics/colormap.pcx is
-  missing (ref_vk/vk_image.c:1640-1642); that file is in baseq2/pak0.pak.
+  missing (ref_vk/vk_image.c:1640-1642). That file is in baseq2/pak0.pak.
 
   Batocera 43.1 copies /usr/bin/vkquake2 (binary, ref_*.so and the game
   libraries of baseq2, ctf, rogue, smd, xatrix, zaero) into
@@ -69,7 +69,7 @@ files:
     required: false
     source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "The Reckoning data. Loaded with `+set game xatrix`."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -78,7 +78,7 @@ files:
     required: false
     source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Ground Zero data. Loaded with `+set game rogue`."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -95,7 +95,7 @@ files:
     required: false
     source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Zaero data. Loaded with `+set game zaero`."
-    unsourceable: "data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -104,4 +104,4 @@ files:
     required: false
     source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Slight Mechanical Destruction data. Loaded with `+set game smd`."
-    unsourceable: "data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "data the collection does not hold, and a same-named file of another game must not stand in"

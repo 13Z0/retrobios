@@ -16,7 +16,7 @@ mode: standalone
 notes: |
   Super Famicom emulator by zsKnight and _Demo_, written from scratch with a
   GPU-rendered PPU and unrelated to the ZSNES codebase. Shipped as binaries
-  only, for Windows, macOS, Linux and Android; the desktop builds are Unity
+  only, for Windows, macOS, Linux and Android. The desktop builds are Unity
   Mono, so the emulator is Assembly-CSharp.dll and the per-game tables are
   serialized into the level0 scene. The Windows and Linux 0.230b builds carry
   the same tables and the same emulation sources.
@@ -46,7 +46,7 @@ notes: |
 
 files:
   # NEC uPD7725 microcode, program and data ROM in one file.
-  # The name is chosen by CRC32 of the 21-byte header title; dsp1b.rom is the
+  # The name is chosen by CRC32 of the 21-byte header title, and dsp1b.rom is the
   # default when no entry in the table matches.
 
   - name: "dsp1b.rom"

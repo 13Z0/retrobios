@@ -19,7 +19,7 @@ resources_directory: "resources/"
 
 notes: |
   PlayStation 2 emulator for ARM, built on PCSX2 and carrying its own AArch64
-  recompilers. The application itself is closed source; the PCSX2-derived files
+  recompilers. The application itself is closed source. The PCSX2-derived files
   were released separately as an LGPL tarball in which pcsx2/libAetherSX2.a
   holds the parts that stayed closed, and that drop sits on an earlier code line
   than any released build, with no Vulkan renderer in its GS tree and the older
@@ -37,7 +37,7 @@ notes: |
 
   Detection is by content. The scan lists the BIOS folder with a *.* mask, keeps
   files between 4 and 8 MB, and accepts an image whose romdir carries a RESET
-  entry followed by a readable ROMVER; the fifth ROMVER character gives the
+  entry followed by a readable ROMVER, and the fifth ROMVER character gives the
   zone among T10K, Test, Japan, USA, Europe, HK, Free and China. An image named
   in the configuration is opened at its own path, without the size filter and
   without the romdir test. No name and no hash is matched anywhere. The image is
@@ -76,7 +76,7 @@ notes: |
   sources each GS backend compiles at startup, the OSD and fullscreen interface
   fonts, the flag and placeholder textures, and the achievement notification
   sounds. The macOS build keeps the folder at AetherSX2.app/Contents/Resources
-  and adds its Metal libraries; the Android build carries the shaders, fonts,
+  and adds its Metal libraries. The Android build carries the shaders, fonts,
   icons and sounds as APK assets and draws its own interface.
   ref: AetherSX2-release AetherSX2.app/Contents/Resources,
        aethersx2 v1.5-3668 xyz.aethersx2.android assets
@@ -89,7 +89,7 @@ files:
     max_size: 8388608
     validation: [size]
     description: "PS2 BIOS image"
-    note: "Any image whose romdir holds RESET and ROMVER is accepted, whatever its name. The 4 to 8 MB range gates the folder scan; an image named in the configuration skips both that range and the romdir test."
+    note: "Any image whose romdir holds RESET and ROMVER is accepted, whatever its name. The 4 to 8 MB range gates the folder scan, while an image named in the configuration skips both that range and the romdir test."
     source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, aethersx2/pcsx2/ps2/BiosTools.cpp:272-316, aethersx2 v1.5-3606 usr/share/aethersx2 0xa45ffc"
 
   - name: ps2-0230a-20080220.rom1
@@ -159,14 +159,14 @@ files:
     path: resources/cheats_ws.zip
     required: false
     description: "Widescreen patch archive"
-    note: "Per-game pnach entries matched on the disc CRC, loaded when widescreen patches are enabled. The cheats_ws folder takes precedence and the archive is skipped when it holds a match. Shipped by the Linux and Android builds; the macOS build looks for it without carrying one."
+    note: "Per-game pnach entries matched on the disc CRC, loaded when widescreen patches are enabled. The cheats_ws folder takes precedence and the archive is skipped when it holds a match. Shipped by the Linux and Android builds, while the macOS build looks for it without carrying one."
     source_ref: "aethersx2/pcsx2/Patch.cpp:202-231, AetherSX2-release MacOS/AetherSX2"
 
   - name: cheats_ni.zip
     path: resources/cheats_ni.zip
     required: false
     description: "No-interlacing patch archive"
-    note: "Same form as cheats_ws.zip, loaded when no-interlacing patches are enabled, with the cheats_ni folder taking precedence. Shipped by the Linux and Android builds; the macOS build looks for it without carrying one."
+    note: "Same form as cheats_ws.zip, loaded when no-interlacing patches are enabled, with the cheats_ni folder taking precedence. Shipped by the Linux and Android builds, while the macOS build looks for it without carrying one."
     source_ref: "aethersx2/pcsx2/Patch.cpp:202-231, AetherSX2-release MacOS/AetherSX2"
 
   - name: game_controller_db.txt

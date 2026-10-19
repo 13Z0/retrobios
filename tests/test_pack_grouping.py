@@ -1,7 +1,7 @@
 """--one-per-slot and --region read one grouping of a pack.
 
 The slot pass put each core extra under every system of its profile. PicoDrive
-ranks its Mega CD BIOSes within sega-megacd; spread across sega-megadrive,
+ranks its Mega CD BIOSes within sega-megacd. Spread across sega-megadrive,
 sega-32x and the rest, they shared a tier with unranked files, the tier was
 ruled undecidable, and the keep overrode the drop.
 """

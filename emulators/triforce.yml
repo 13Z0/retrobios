@@ -22,7 +22,7 @@ notes: |
   the serial interface, AM-Mediaboard on the disc interface) and the Wii Arcade
   boards on top of GameCube and Wii emulation. The tree self-reports Dolphin 2407
   (CMake/ScmRevGen.cmake:34-35) and builds DolphinQt. crediar publishes the source
-  on crediar.dev; the commit profiled here is the REG-Linux mirror of it, whose
+  on crediar.dev. The commit profiled here is the REG-Linux mirror of it, whose
   Data/Sys tree matches the Hancock33 and ReaverTeknoGods mirrors byte for byte.
   ES-DE looks for dolphin-emu-triforce on Linux and Triforce.exe or
   Triforce/DolphinWX.exe on Windows, RetroBat installs it as dolphin-triforce.
@@ -243,7 +243,7 @@ files:
       swaps every 16 bit word before storing it, so the Adler32 in the source is
       taken over the swapped data (Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:100-102).
       The pair is matched against seven known sets, the first being the Nintendo
-      ROMs; a miss asks the user whether to stop
+      ROMs, and a miss asks the user whether to stop
       (Source/Core/Core/DSP/DSPCore.cpp:60-84).
 
   - name: "dsp_coef.bin"

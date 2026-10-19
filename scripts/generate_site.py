@@ -152,7 +152,7 @@ def _build_system_page_map_from_data(
     Uses platform file paths to trace system_id -> bios directory -> manufacturer page.
     """
     # Every console folder a filename sits in. A name in one folder only can
-    # place a system; a name in several says nothing (MiSTer's boot.rom lives
+    # place a system, while a name in several says nothing (MiSTer's boot.rom lives
     # under a dozen consoles, and the last one written used to win).
     name_consoles: dict[str, set[tuple[str, str]]] = {}
     for mfr, consoles in manufacturers.items():
@@ -191,7 +191,7 @@ def _build_system_page_map_from_data(
             if sys_id in _system_page_map:
                 continue
             # Strategy 1: the folder holding the files the system declares,
-            # found by content; most votes win. A bare name stands in only
+            # found by content, and most votes win. A bare name stands in only
             # where the collection files it in a single console.
             place = _system_folder(system.get("files", []), db, name_consoles)
             if place is not None:
@@ -321,7 +321,7 @@ def generate_home(
         [
             "",
             "Checked by is the test each platform runs on its own, replicated "
-            "from its source code. RetroArch only looks for the filename; "
+            "from its source code. RetroArch only looks for the filename, while "
             "Batocera compares MD5 checksums, the fingerprint of a file's "
             "contents. "
             "[How each mode works](wiki/verification-modes.md).",
@@ -594,7 +594,7 @@ def build_emulator_gap_report(
     """Files a core loads that no platform declares, per emulator profile.
 
     The gap analysis page and the published gaps export must not compute this
-    twice and drift; both read this one report.
+    twice and drift. Both read this one report.
     """
     from common import _norm_system_id, merged_platform_declarations
     from cross_reference import cross_reference as run_cross_reference
@@ -810,7 +810,7 @@ def _write_sqlite_export(
             "schema_version": "1",
             "generated_at": str(db.get("generated_at") or _timestamp()),
             "source": REPO_URL,
-            "scope": "metadata only; no BIOS or firmware payload bytes",
+            "scope": "metadata only, no BIOS or firmware payload bytes",
         }
         connection.executemany(
             "INSERT INTO metadata(key, value) VALUES (?, ?)",
@@ -1091,7 +1091,7 @@ def generate_data_page(exports: list[dict]) -> str:
         "The DAT is Logiqx XML, the format clrmamepro and RomVault read: one game "
         "per `bios/<Manufacturer>/<Console>/` folder of the collection, each file a "
         "rom named by its path below that folder. It audits a copy of the "
-        "collection's `bios/` tree, or rebuilds that layout from your own dumps; a "
+        "collection's `bios/` tree, or rebuilds that layout from your own dumps. A "
         "platform pack has its own layout and is checked with `install.py --check`.",
         "",
         "## Stable JSON endpoints",
@@ -1113,7 +1113,7 @@ def generate_data_page(exports: list[dict]) -> str:
     lines.extend([
         "",
         "Every JSON document carries `schema_version`. Breaking changes use a new "
-        "URL prefix (`/api/v2/`); fields may only be added compatibly within v1.",
+        "URL prefix (`/api/v2/`), and fields may only be added compatibly within v1.",
         "",
         "One emulator profile without the whole list: "
         "`api/v1/emulators/<id>.json`, the envelope of `emulators.json` holding "
@@ -1168,8 +1168,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "catalog, or emulator compatibility is not a statement about copyright, "
         "ownership, or redistribution rights.",
         "",
-        f"The data can be newer than the [latest published pack]({RELEASE_URL}); "
-        "pack publication is manual and only occurs after all release gates pass.",
+        f"The data can be newer than the [latest published pack]({RELEASE_URL}). "
+        "A pack is published by hand, once every release check has passed.",
         "",
         "See the [data model](wiki/data-model.md), [verification modes]"
         "(wiki/verification-modes.md), and [methodology](wiki/architecture.md) "
@@ -1355,7 +1355,7 @@ def platform_structured_data(name: str, coverage: dict) -> dict:
 
     The page printed thousands of hashes while its JSON-LD named only the
     page: a crawler could not learn which md5 Batocera requires for a file.
-    The software and its version are the subject; each declared file, with
+    The software and its version are the subject, and each declared file, with
     the hashes the platform checks, is a part. Past SYSTEM_PARTS_IN_FULL the
     parts give way to the platform-files table, as system pages do.
     """
@@ -1530,8 +1530,8 @@ def emulator_structured_data(profile: dict) -> dict:
     return data
 
 
-# Working notes kept under docs/ during development, never part of the site;
-# no generated page lives in a directory of these names.
+# Working notes kept under docs/ during development, never part of the site,
+# and no generated page lives in a directory of these names.
 LOCAL_NOTE_DIRS = ("plans", "specs")
 
 
@@ -1937,7 +1937,7 @@ def generate_platform_page(
 def generate_files_page() -> str:
     """The content address of every held file: files/?sha1=<sha1>.
 
-    site.js reads api/v1/file-locations.json and goes to the card; without
+    site.js reads api/v1/file-locations.json and goes to the card. Without
     a sha1, or with one the collection does not hold, the page says so.
     """
     return "\n".join([
@@ -2061,7 +2061,7 @@ def _provenance_lines(provenance: dict, prefix: str) -> list[str]:
     """One visible line per catalog: its badge and the entry's own name.
 
     The name was only a title attribute, unreadable on a touch screen and
-    absent from the search for 793 of 803 provenances; and a TOSEC entry
+    absent from the search for 793 of 803 provenances, and a TOSEC entry
     flagged [b] or [o] wore the same green badge as a clean dump.
     """
     lines: list[str] = []
@@ -2311,7 +2311,7 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
     id_attr = f' id="{anchor}"' if anchor else ""
     lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
-    # The anchor is this page's; the second link is the file's own address,
+    # The anchor is this page's, the second link is the file's own address,
     # resolved by content wherever its card moves.
     permalink = (
         f' <a class="rb-permalink" href="#{anchor}" title="Link to this card">#</a>'
@@ -2750,7 +2750,7 @@ def _render_emulator_file(
     if fnote:
         lines.append(f"- {_escape_tags(str(fnote))}")
     if not in_repo and f.get("unsourceable"):
-        # The badge alone sent readers after a dump that cannot exist; the
+        # The badge alone sent readers after a dump that cannot exist, and the
         # reason was only on the gaps page, which the card did not link.
         lines.append(
             f"- Not collectable: {_escape_tags(str(f['unsourceable']))} "
@@ -2844,7 +2844,7 @@ def _plain_value(value: object) -> str:
     if isinstance(value, bool):
         return "yes" if value else "no"
     if value is None:
-        # A YAML null states that there is none; Python's `None` read as a gap.
+        # A YAML null states that there is none, but Python's `None` read as a gap.
         return "none"
     if isinstance(value, (list, tuple)):
         return ", ".join(_plain_value(item) for item in value)
@@ -3021,7 +3021,7 @@ def generate_emulator_page(
     source_raw = profile.get("source", "")
     source = str(source_raw) if not isinstance(source_raw, dict) else ""
     # A key set to null says there is none (the project is its own upstream,
-    # it publishes no version); an absent key says nobody wrote it down. The
+    # it publishes no version), and an absent key says nobody wrote it down. The
     # page printed `None` for the first, which read as the second.
     upstream_raw = profile.get("upstream", "")
     upstream_none = "upstream" in profile and upstream_raw is None
@@ -3100,7 +3100,7 @@ def generate_emulator_page(
     if revision:
         lines.append(f"| Revision | {revision} |")
     lines.append(f"| Profiled | {profiled} |")
-    # The YAML is the reusable document this site renders; the JSON is the
+    # The YAML is the reusable document this site renders, and the JSON is the
     # same profile for a program.
     lines.append(
         f"| Profile | [YAML]({REPO_URL}/blob/main/emulators/{name}.yml), "
@@ -3288,7 +3288,7 @@ def _render_problem_files(platform_problems: list, settled: list | None = None) 
             "",
             "A platform can declare one path twice with different hashes. The "
             "path holds the file one declaration accepts, so it is counted once, "
-            "as held; the other declaration cannot be met at the same time.",
+            "as held. The other declaration cannot be met at the same time.",
             "",
             "| File | Platform | Status | Path held for system |",
             "|------|----------|--------|--------------|",
@@ -3443,7 +3443,7 @@ def generate_gap_analysis(
         "required and optional files alike since both ship. The first column "
         "is the BIOS list the platform publishes. The second counts files its "
         "emulators load that this list never mentions, found by reading their "
-        "source code, and it is routinely several times larger; a short "
+        "source code, and it is routinely several times larger. A short "
         "fraction is flagged and named in the sections below. That second "
         "number is a floor, not a ceiling: an emulator that accepts any file "
         "handed to it names none in its code, so nothing there can be counted. "
@@ -3520,7 +3520,7 @@ def generate_gap_analysis(
         "Platform file lists are scraped as-is from each upstream project. "
         "Emulator profiles are read from source code. The two do not always "
         "agree, and this table counts the differences. Packs follow the "
-        "platform contract; these numbers show where that contract diverges "
+        "platform contract, and these numbers show where that contract diverges "
         "from what the code loads.",
         "",
         "| Platform | Missing from list | Phantom | Hash conflict | Required status |",
@@ -4003,7 +4003,7 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "",
         "`provenance` maps each catalog that lists the file to the DAT and entry "
         "it was matched against. It is present only when the file matches a "
-        "snapshot under `provenance/`; the join runs by SHA1 first, then by "
+        "snapshot under `provenance/`. The join runs by SHA1 first, then by "
         "MD5 + size. See [dump provenance](../provenance.md).",
         "",
         "### Indexes",
@@ -4020,20 +4020,20 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "",
         "`resolve_local_file` tries these steps in order:",
         "",
-        "1. SHA1 exact match; every other declared hash must agree with the record",
+        "1. SHA1 exact match: every other declared hash must agree with the record",
         "2. SHA256 exact match, with the same all-declarations-must-agree rule",
         "3. CRC32 plus declared size, only when no stronger hash is present",
         "4. MD5 direct lookup (including explicitly supported truncated MD5 values)",
-        "5. Path suffix lookup for regional variants; with hashes it is accepted only if those hashes match",
+        "5. Path suffix lookup for regional variants. With hashes it is accepted only if those hashes match",
         "6. Name and alias lookup only when no content hash was declared",
-        "7. Candidate inspection for composite ZIP MD5 or direct MD5; a named candidate with the wrong content returns `hash_mismatch`",
+        "7. Candidate inspection for composite ZIP MD5 or direct MD5. A named candidate with the wrong content returns `hash_mismatch`",
         "8. `zipped_file` content match via the inner-ROM MD5 index",
         "9. MAME clone fallback, only for declarations without a content hash",
-        "10. Data-directory scan; declared hashes are computed over the candidate before it is accepted",
+        "10. Data-directory scan: declared hashes are computed over the candidate before it is accepted",
         "11. Agnostic size/path fallback, only for declarations without a content hash",
         "",
         "A filename or destination can never override a declared hash. The first "
-        "evidence-compatible match wins; otherwise the resolver reports a mismatch "
+        "evidence-compatible match wins, otherwise the resolver reports a mismatch "
         "or absence. Steps and their return codes are described in "
         "[verification modes](verification-modes.md#file-resolution-chain).",
         "",
@@ -4075,7 +4075,7 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "",
         "The website publishes versioned JSON, CSV and SQLite metadata generated "
         "from these same structures. Start with the [Data & API](../data.md) "
-        "catalog; each downloadable artifact carries a SHA256 in "
+        "catalog. Each downloadable artifact carries a SHA256 in "
         "`api/v1/catalog.json`.",
         "",
     ]
@@ -4247,15 +4247,15 @@ everything or to choose systems, cores and regions, and `--system`, `--core`,
 [installer reference](wiki/installer.md#choosing-what-to-install)). From a
 clone of the repository, `python scripts/generate_pack.py --platform retroarch
 --region us` builds the same narrowing as a pack and `--required-only` the bare
-minimum each core needs to start; `--help` lists every way to build your own.
+minimum each core needs to start, and `--help` lists every way to build your own.
 
 ---
 
 ## After extraction
 
 Launch a game and use the emulator's firmware status screen where available.
-Most supported frontends find files in the documented directory automatically;
-standalone emulators may still need their BIOS path configured.
+Most supported frontends find files in the documented directory automatically,
+but standalone emulators may still need their BIOS path configured.
 
 If a game still asks for a missing file, check the
 [platforms section](platforms/index.md) for the full file list, or the
@@ -4385,7 +4385,7 @@ def main() -> None:
     args = parser.parse_args()
     try:
         # Two runs over one docs/ delete each other's pages and scratch
-        # files in the sweep; the second is refused instead.
+        # files in the sweep, so the second is refused instead.
         with artifact_lock(args.docs_dir):
             _generate(args)
     except ArtifactLockBusy as exc:
@@ -4725,7 +4725,7 @@ plugins:
 - search
 # Link rot fails the build: deploy-site.yml runs `mkdocs build --strict`.
 # omitted_files stays at its default (info) so a stale local docs/ does not
-# break a local build; CI regenerates docs/ from scratch anyway.
+# break a local build. CI regenerates docs/ from scratch anyway.
 validation:
   absolute_links: warn
   unrecognized_links: warn

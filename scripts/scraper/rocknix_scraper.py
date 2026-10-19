@@ -40,7 +40,7 @@ SOURCE_TEMPLATE = (
     "https://raw.githubusercontent.com/ROCKNIX/distribution/{ref}/"
     "projects/ROCKNIX/packages/rocknix/sources/scripts/rocknix-systems"
 )
-# The branch a test or a manual run can still name; a scrape reads the tag
+# The branch a test or a manual run can still name. A scrape reads the tag
 # of the release its YAML is labelled with.
 SOURCE_URL = SOURCE_TEMPLATE.format(ref="next")
 STANDALONE_TREE_URL = (
@@ -53,7 +53,7 @@ def standalone_emulators(package_names: list[str]) -> list[str]:
     """The standalone emulators ROCKNIX packages, by the names profiles use.
 
     A package is named after its emulator with an ``-sa`` suffix
-    (``duckstation-sa``), once without its hyphen (``hatarisa``); both
+    (``duckstation-sa``), once without its hyphen (``hatarisa``), and both
     spellings are kept so a profile listing either is found.
     """
     names: set[str] = set()

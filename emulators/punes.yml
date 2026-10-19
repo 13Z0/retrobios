@@ -25,7 +25,7 @@ notes: |
   the loaded image, then the bios folder of the data directory. nes20db.xml
   and dip.cfg are read from the XDG data directories under a puNES
   subdirectory, then the base of the data directory, then the application
-  directory (src/gui/nes20db.cpp:50-79, src/gui/dipswitch.cpp:61-85); the
+  directory (src/gui/nes20db.cpp:50-79, src/gui/dipswitch.cpp:61-85), and the
   installer writes both into the shared data directory
   (CMakeLists.txt:227-228).
 

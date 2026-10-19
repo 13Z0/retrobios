@@ -17,10 +17,10 @@ notes: |
   longer only uses them. Staging moved out of retro_load_game into
   stage_cart_boot_rom, which reads a file first and falls back to the
   embedded array (libretro.c:5339-5382). BT_M_SERIES tries jagboot_m.rom in
-  the system directory; BT_CUSTOM, a value the enum did not carry before,
+  the system directory. BT_CUSTOM, a value the enum did not carry before,
   searches six names across the system directory and two subdirectories
   (libretro.c:5293-5337). Either way the file has to be 0x20000 bytes, the
-  size copied to jagMemSpace + 0xE00000; anything shorter is a short read and
+  size copied to jagMemSpace + 0xE00000. Anything shorter is a short read and
   the embedded Series K takes over.
 
   The Jaguar CD BIOS is the larger change. stage_cd_bios calls
@@ -69,7 +69,7 @@ files:
     note: >-
       Searched in the system directory and under Atari - Jaguar,
       Atari - Jaguar CD, jaguar and jaguarcd. Accepted at exactly 262144
-      bytes and recognised by its CRC32; a file of the right size whose
+      bytes and recognised by its CRC32. A file of the right size whose
       checksum matches neither constant is counted as rejected and the
       embedded BIOS is used. The generic names are tried after the type the
       virtualjaguar_cd_bios_type option selects.
@@ -104,7 +104,7 @@ files:
     source_ref: "libretro.c:5293-5337, libretro.c:5339-5356"
     note: >-
       Reached only through BT_CUSTOM. Searched in the system directory and
-      under Atari - Jaguar and jaguar. No checksum is tested; a read shorter
+      under Atari - Jaguar and jaguar. No checksum is tested, and a read shorter
       than 131072 bytes leaves the embedded Series K in place.
 
   - name: jagboot_m.rom

@@ -2,7 +2,7 @@
 
 A DAT states, per set, the members an emulator version expects: name, size
 and CRC32. That is a recipe, and TorrentZip turns a recipe plus the ROM bytes
-into the exact archive. Profiles document a few hundred sets by hand; a DAT
+into the exact archive. Profiles document a few hundred sets by hand, while a DAT
 documents every set of one version at once.
 
 MAME ships its ``-listxml`` output as a release asset and FBNeo keeps its DATs
@@ -463,7 +463,7 @@ def main() -> int:
         nargs="?",
         const="latest",
         help="download upstream instead of using --pack "
-        "(a MAME tag such as mame0289; bare, the newest release)",
+        "(a MAME tag such as mame0289, or bare for the newest release)",
     )
     parser.add_argument(
         "--cache-dir", default=".cache/dats",

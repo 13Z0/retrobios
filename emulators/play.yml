@@ -25,8 +25,8 @@ systems:
 #
 # source_ref: Source/ee/Ee_SubSystem.cpp:232 (LoadBIOS commented out)
 # source_ref: Source/iop/IopBios.cpp:279-290 (HLE module table)
-# source_ref: Source/PS2VM.cpp:483-537 (ResetVM — no BIOS loading)
-# source_ref: Source/ui_libretro/main_libretro.cpp:546-568 (retro_init — no file I/O)
+# source_ref: Source/PS2VM.cpp:483-537 (ResetVM, no BIOS loading)
+# source_ref: Source/ui_libretro/main_libretro.cpp:546-568 (retro_init, no file I/O)
 # source_ref: README.md:4 ("Using an external BIOS file is not necessary or possible.")
 # source_ref: play_libretro.info (firmware_count absent = 0)
 

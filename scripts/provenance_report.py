@@ -57,7 +57,7 @@ def archive_members(db: dict) -> dict[tuple[str, int], list[tuple[str, str]]]:
 def _held_in_archive(entry: dict, members: dict) -> bool:
     """Whether a catalog entry is a member of one of the collection's ZIPs.
 
-    crc32 and size only nominate candidates; a declared sha1 must match the
+    crc32 and size only nominate candidates. A declared sha1 must match the
     member's bytes.
     """
     crc = str(entry.get("crc32") or "").lower()
@@ -99,7 +99,7 @@ def build_report(db: dict, snapshots: dict, members: dict | None = None) -> dict
 
     A DAT counts as covered when the collection holds at least one of
     its entries. Missing entries from covered DATs are acquisition
-    targets; missing entries from DATs the collection does not cover at
+    targets. Missing entries from DATs the collection does not cover at
     all are out of scope and only counted. No-Intro tags every non-game
     dump "[BIOS]", including digital title distribution, so without this
     split the target list is swamped by content the project never ships.
@@ -178,7 +178,7 @@ def main() -> int:
         "--derive",
         action="store_true",
         help="Find missing entries a held dump contains (halves, word splits, "
-        "byte swaps, concatenations); reads the collection, about 35 s",
+        "byte swaps, concatenations). Reads the collection, about 35 s",
     )
     parser.add_argument("--json", action="store_true", help="Full report as JSON")
     parser.add_argument(
@@ -189,7 +189,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     if args.write_derivable and not args.derive:
-        parser.error("--write-derivable records what --derive finds; pass both")
+        parser.error("--write-derivable records what --derive finds: pass both")
 
     db = load_database(args.db)
     snapshots = load_provenance_snapshots(args.provenance_dir)

@@ -42,7 +42,7 @@
     "target": {
       "type": "string",
       "minLength": 1,
-      "description": "Hardware target this manifest was filtered for; absent when unfiltered"
+      "description": "Hardware target this manifest was filtered for, absent when unfiltered"
     },
     "platform": {
       "type": "string",
@@ -109,7 +109,7 @@
       }
     },
     "system_cores": {
-      "description": "Each platform system with the cores whose presence keeps it; a system absent here is kept whatever cores are available.",
+      "description": "Each platform system with the cores whose presence keeps it. A system absent here is kept whatever cores are available.",
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -268,7 +268,7 @@
             "uniqueItems": true
           },
           "alternatives": {
-            "description": "Cores claiming this destination behind the platform's own declaration, in the order the pack builder tries them; a narrowing that drops every declaring system takes the first whose cores remain.",
+            "description": "Cores claiming this destination behind the platform's own declaration, in the order the pack builder tries them. A narrowing that drops every declaring system takes the first whose cores remain.",
             "type": "array",
             "items": {
               "type": "object",
@@ -298,14 +298,14 @@
       }
     },
     "case_variants": {
-      "description": "Files the folded list serves under another case; installed only where the target directory keeps case.",
+      "description": "Files the folded list serves under another case, installed only where the target directory keeps case.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/file"
       }
     },
     "data_directories": {
-      "description": "Data trees the pack carries, rebuilt by the installer from their source archive; each file is kept only when its sha1 matches.",
+      "description": "Data trees the pack carries, rebuilt by the installer from their source archive. Each file is kept only when its sha1 matches.",
       "type": "array",
       "items": {
         "type": "object",
@@ -521,7 +521,7 @@
           "type": "integer"
         },
         "alternatives": {
-          "description": "Copies other cores read at this destination when they disagree on its content, in the order the pack builder tries them; a narrowing that drops the entry's cores takes the first whose cores remain.",
+          "description": "Copies other cores read at this destination when they disagree on its content, in the order the pack builder tries them. A narrowing that drops the entry's cores takes the first whose cores remain.",
           "type": "array",
           "items": {
             "type": "object",
@@ -571,7 +571,7 @@
           }
         },
         "slot_choices": {
-          "description": "On a platform file a core's own source contradicts while the frontend only checks the path: the copy each core's presence puts there, in the order the pack builder settles the slot. A narrowing serves the first whose cores remain; one naming only cores, or none remaining, leaves `declared_choices`.",
+          "description": "On a platform file a core's own source contradicts while the frontend only checks the path: the copy each core's presence puts there, in the order the pack builder settles the slot. A narrowing serves the first whose cores remain. One naming only cores, or none remaining, leaves `declared_choices`.",
           "type": "array",
           "items": {
             "type": "object",
@@ -617,7 +617,7 @@
           }
         },
         "declared_choices": {
-          "description": "The platform's own answer at the destination by the declaring systems that remain, in the order the pack builder takes the declarations; a narrowing serves the first whose systems remain.",
+          "description": "The platform's own answer at the destination by the declaring systems that remain, in the order the pack builder takes the declarations. A narrowing serves the first whose systems remain.",
           "type": "array",
           "minItems": 1,
           "items": {
@@ -669,7 +669,7 @@
           }
         },
         "executable": {
-          "description": "The repository keeps the file executable; the installer gives it the execute bits the umask allows.",
+          "description": "The repository keeps the file executable, and the installer gives it the execute bits the umask allows.",
           "type": "boolean"
         },
         "declared_in": {

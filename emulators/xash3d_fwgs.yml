@@ -27,19 +27,19 @@ notes: |
   every .pk3, .pk3dir and .wad, each kind in sorted name order and each
   above the previous one, then the folder itself on top, so loose files
   win over packed ones (filesystem/searchpath.c:188-224). No archive name
-  is required. The engine does not hash any file; the pak header is the
+  is required. The engine does not hash any file: the pak header is the
   only sanity check (filesystem/pak.c:98-157). liblist.gam ships inside each
   retail mod and is also written out by the engine as gameinfo.txt the
   first time it imports a Valve folder (filesystem/gameinfo.c:538-544).
 
   A Quake-engine game dir is recognised separately by
   FS_CheckForQuakeGameDir (filesystem/gameinfo.c:578-603), which looks
-  for pak0.pak + progs.dat / quake.rc; Xash3D FWGS can run Quake 1 total
+  for pak0.pak + progs.dat / quake.rc, so Xash3D FWGS can run Quake 1 total
   conversions this way.
 
   Below are the folders Half-Life retail / official addon releases
   install under the Steam install root. The descriptor is what makes the
-  engine detect a folder (filesystem/gameinfo.c:614-630); the pak entries
+  engine detect a folder (filesystem/gameinfo.c:614-630), and the pak entries
   name the archives the retail releases ship. Map / model / sound trees
   that live beside them are too open-ended to enumerate and are counted
   as part of the same game data.
@@ -72,8 +72,8 @@ files:
     path: "valve/pak1.pak"
     required: false
     source_ref: "filesystem/searchpath.c:188-224, filesystem/pak.c:98-157"
-    note: "Mounted above pak0.pak when present, as any second .pak of the folder would be. The only valve/pak1.pak released is the one the Blue Shift High Definition Pack installer writes (7839196 bytes, 99 entries: HD models, sounds and sprites for Half-Life); Steam ships no .pak in valve/."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    note: "Mounted above pak0.pak when present, as any second .pak of the folder would be. The only valve/pak1.pak released is the one the Blue Shift High Definition Pack installer writes (7839196 bytes, 99 entries: HD models, sounds and sprites for Half-Life). Steam ships no .pak in valve/."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Counter-Strike 1.6 (cstrike/)
@@ -86,7 +86,7 @@ files:
     required: true
     source_ref: "filesystem/gameinfo.c:617, filesystem/searchpath.c:327 (cstrike -> valve chain)"
     note: "Declares fallback_dir \"valve\". Counter-Strike 1.6 retail descriptor."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -94,7 +94,7 @@ files:
     path: "cstrike/pak0.pak"
     required: false
     source_ref: "filesystem/pak.c"
-    note: "Loose files (maps/, sprites/, sound/, models/) are the usual retail layout; a bundled pak0.pak is optional."
+    note: "Loose files (maps/, sprites/, sound/, models/) are the usual retail layout, and a bundled pak0.pak is optional."
     unsourceable: "The Linux dedicated servers hlds_l 1.1.2.0 and hlds_l_11262003 ship cstrike/ as loose files with no .pak."
 
   # ================================================================
@@ -107,7 +107,7 @@ files:
     path: "czero/liblist.gam"
     required: true
     source_ref: "filesystem/searchpath.c:327 (czero -> cstrike -> valve chain)"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -115,7 +115,7 @@ files:
     path: "czero/pak0.pak"
     required: false
     source_ref: "filesystem/pak.c"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Condition Zero: Deleted Scenes (czeror/)
@@ -127,7 +127,7 @@ files:
     path: "czeror/liblist.gam"
     required: true
     source_ref: "filesystem/searchpath.c:327 (czeror -> czero -> cstrike -> valve chain)"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -135,7 +135,7 @@ files:
     path: "czeror/pak0.pak"
     required: false
     source_ref: "filesystem/pak.c"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Deathmatch Classic (dmc/)
@@ -187,7 +187,7 @@ files:
     path: "bshift/liblist.gam"
     required: true
     source_ref: "filesystem/gameinfo.c:617"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -195,7 +195,7 @@ files:
     path: "bshift/pak0.pak"
     required: false
     source_ref: "filesystem/pak.c"
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   # ================================================================
   # Ricochet (ricochet/)

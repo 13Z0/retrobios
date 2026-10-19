@@ -58,7 +58,7 @@ notes: |
 data_directories:
   # 302 files: 296 in Machines/ (200 machine configs + ROMs) + 6 in Databases/
   # buildbot source: https://buildbot.libretro.com/assets/system/blueMSX.zip
-  # ref: libretro.c:1118-1119 — system_dir/Machines/ + system_dir/Databases/
+  # ref: libretro.c:1118-1119: system_dir/Machines/ + system_dir/Databases/
   - ref: bluemsx
     source_ref: "libretro.c:1119-1120"
 

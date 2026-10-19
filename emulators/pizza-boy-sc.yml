@@ -47,7 +47,7 @@ notes: |
   are read from cue and chd images through components/cdrom.
 
   Four BIOS slots exist, one per machine, set in one call whose log reads
-  "jni setBIOSFiles sms: {} gg: {} cd: {} md: {}" (lib.rs:424); a fifth setter stores
+  "jni setBIOSFiles sms: {} gg: {} cd: {} md: {}" (lib.rs:424). A fifth setter stores
   a single path in a slot of its own that engine start never reads (lib.rs:416), and
   setBIOSBoot logs "TODO jni setBIOSboot" and does nothing. Each branch reads the
   slots its machines use, the Master System one reading the Game Gear slot as well,
@@ -85,12 +85,12 @@ files:
     note: >-
       Chosen from any location under any name through the document picker, or, when
       the picked document is named .zip, taken from its first entry. The stored path
-      is read at engine start and the byte count compared with 131072; the machine
+      is read at engine start and the byte count compared with 131072, and the machine
       compares it a second time and panics when it differs. An absent path ends the
       run with "MegaCD Bios not provided", an empty one with "MegaCD BIOS path is
       missing", a failed read with "Error loading BIOS file", and a wrong length with
       "Invalid BIOS len". The core holds one Mega CD slot and applies no other test,
-      so the boot ROM of any region satisfies it; the three are listed because the
+      so the boot ROM of any region satisfies it. The three are listed because the
       region of the discs decides which one has to be installed.
     source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
       (four slot handoff), :517 (SegaCD branch), :564 (absent), :567 (validation
@@ -167,7 +167,7 @@ files:
     note: >-
       Its own slot, separate from the Master System one, both read on the branch that
       serves the two machines. Picked and stored the same way, handed to the machine
-      as a path, and never examined; an empty slot is not an error.
+      as a path, and never examined. An empty slot is not an error.
     source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
       (slot), :481 (system name match, GameGear), :538 (branch reading the Master
       System and Game Gear slots)"
@@ -180,7 +180,7 @@ files:
     note: >-
       Read on the Genesis branch, the one engine start falls through to when the
       system name is neither SMS, GameGear nor SegaCD. Picked and stored the same
-      way and never examined; the machine reports it as "BIOS detected" and runs
+      way and never examined. The machine reports it as "BIOS detected" and runs
       without it when the slot is empty.
     source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
       (slot), :550 (Genesis branch and slot read),

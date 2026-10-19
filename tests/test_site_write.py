@@ -144,7 +144,7 @@ class Sweep(unittest.TestCase):
         """It is never reset, so a second run can only sweep less, never more.
 
         Deleting a page a previous run produced would be the dangerous
-        direction; sparing one is merely stale, and the next fresh process
+        direction. Sparing one is merely stale, and the next fresh process
         removes it.
         """
         self._produce("emulators/kept.md")

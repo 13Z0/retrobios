@@ -225,7 +225,7 @@ def main() -> int:
     parser.add_argument("target", type=Path, help="a pack, or a directory of packs")
     parser.add_argument(
         "--max-size", type=_size, default=ASSET_LIMIT, metavar="SIZE",
-        help="a part stays under this many bytes (K, M, G suffixes; default 2G)",
+        help="a part stays under this many bytes (K, M, G suffixes, default 2G)",
     )
     args = parser.parse_args()
     # The packs are rewritten in place by generate_pack under this lock: a

@@ -20,10 +20,10 @@ notes: |
   opens <basedir>/<dir>/pak0.pak, pak1.pak, ... and stops at the first
   index that does not open (Quake/common.c:2241-2245). Right after
   id1/pak0.pak it mounts vkquake.pak, built from Misc/vq_pak and embedded
-  in the binary (Quake/common.c:2257-2282); it carries default.cfg, three
+  in the binary (Quake/common.c:2257-2282). It carries default.cfg, three
   menu pictures and entity fixes, no gfx.wad and no palette.
 
-  gfx.wad and gfx/colormap.lmp come from id1/pak0.pak; without either the
+  gfx.wad and gfx/colormap.lmp come from id1/pak0.pak, and without either the
   engine stops with Sys_Error (Quake/wad.c:80-87, Quake/host.c:1093-1095).
   gfx/pop.lmp, present only in the registered id1/pak1.pak, sets the
   registered cvar (Quake/common.c:1458-1484).
@@ -50,7 +50,7 @@ files:
     path: "id1/pak0.pak"
     required: true
     source_ref: "Quake/common.c:2241-2245 (pak%i.pak loop), 2496 (id1 by default); Quake/wad.c:80-87 (gfx.wad fatal)"
-    note: "Shareware and registered Quake data, one file in both releases. Directory CRC compared to v1.00, v1.01, v1.06; a mismatch does not refuse the file."
+    note: "Shareware and registered Quake data, one file in both releases. Directory CRC compared to v1.00, v1.01, v1.06, but a mismatch does not refuse the file."
 
   - name: "pak1.pak"
     category: game_data
@@ -59,7 +59,7 @@ files:
     required: false
     source_ref: "Quake/common.c:2241-2245 (pak%i.pak loop), 1458-1470 (gfx/pop.lmp, registered check)"
     note: "Registered episodes 2 to 4. Read only after pak0.pak opens. Needed by -hipnotic, -rogue and -game."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -68,7 +68,7 @@ files:
     required: false
     source_ref: "Quake/common.c:2509-2510 (-hipnotic), 2241-2245 (pak%i.pak loop)"
     note: "Scourge of Armagon data. Loaded with -hipnotic."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
   - name: "pak0.pak"
     category: game_data
@@ -77,4 +77,4 @@ files:
     required: false
     source_ref: "Quake/common.c:2507-2508 (-rogue), 2241-2245 (pak%i.pak loop)"
     note: "Dissolution of Eternity data. Loaded with -rogue."
-    unsourceable: "retail data the collection does not hold; a same-named file of another game must not stand in"
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"

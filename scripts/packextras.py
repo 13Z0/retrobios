@@ -228,7 +228,7 @@ def unplaceable_extras(config: dict, undeclared: list[dict], profiles: dict) -> 
     """Keys of the report entries a slug-based platform cannot place.
 
     RomM files every BIOS under the slug of its system and knows no slug
-    for DOS or for the arcade sets MAME 2003 reads; the builder skipped
+    for DOS or for the arcade sets MAME 2003 reads. The builder skipped
     those entries and the report counted them in the pack.
     """
     from common import _norm_system_id
@@ -283,7 +283,7 @@ def _agnostic_scan_extras(
         # filename walks into whatever tree that name happens to hit: rom1.bin
         # is a PS2 ROM and a Roland SC-55 ROM, GameIndex.yaml belongs to four
         # PS2 profiles and to an Android package.  One match is not evidence
-        # of a directory; two files of the same profile agreeing is.
+        # of a directory, two files of the same profile agreeing is.
         resolved_dirs: dict[int, str] = {}
         named_only: set[int] = set()
         agnostic_votes: dict[str, int] = {}
@@ -467,7 +467,7 @@ def expand_agnostic_entries(
     in its BIOS folder, which is what the platform pack's scan carries. The
     emulator pack and verify --emulator looked the placeholder up by name,
     found nothing and shipped LRPS2 without a PS2 BIOS. The same scan
-    replaces the placeholders here; with nothing found they stay, a gap.
+    replaces the placeholders here. With nothing found they stay, a gap.
     """
     if profile.get("bios_mode") != "agnostic" and not any(f.get("agnostic") for f in files):
         return files
@@ -861,7 +861,7 @@ def _collect_emulator_extras(
                 if fname not in covered_names or f.get("unsourceable"):
                     continue
                 # A member of an archive is read inside it, never as a loose
-                # file; the archive itself is placed by the passes above.
+                # file. The archive itself is placed by the passes above.
                 if f.get("archive"):
                     continue
                 # No path: the core reads it from nowhere a pack reaches
@@ -963,12 +963,12 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
     if u.get("members"):
         extra["members"] = u["members"]
     # The archive layout the core opens ranks same-named copies by what
-    # they hold; without it the first copy indexed won.
+    # they hold. Without it the first copy indexed won.
     if u.get("contents"):
         extra["contents"] = u["contents"]
     # Keep every reproducible identity constraint carried by the source
     # profile.  Some profiles expose CRC32/SHA-256 only through their
-    # validation block; dropping those fields here would let a same-named
+    # validation block, and dropping those fields here would let a same-named
     # but different payload enter a generated pack.
     expected = u.get("expected") or {}
     for identity in PROFILE_IDENTITY_FIELDS:
@@ -983,7 +983,7 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
 def _take(
     extra: dict, full_dest: str, seen_dests: set[str], taken: dict[str, dict] | None
 ) -> bool:
-    """Whether an extra takes its destination; a taken one records the claim."""
+    """Whether an extra takes its destination. A taken one records the claim."""
     if full_dest in seen_dests:
         if taken is not None:
             _another_claim(taken.get(full_dest), extra)
@@ -998,7 +998,7 @@ def _another_claim(extra: dict | None, claim: dict) -> None:
     """Record a core that reads a destination another core's extra took.
 
     The pack ships one file per destination, so the first claimant's extra
-    stands; the others are kept on it so the manifest can name every core
+    stands. The others are kept on it so the manifest can name every core
     the file serves. A pack built for a target without the first core packs
     the next one's copy, and an installer narrowing by core must keep it.
     """

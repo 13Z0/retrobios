@@ -1,7 +1,7 @@
 emulator: "Dolphin Launcher"
 type: launcher
 core_classification: launcher
-exclusion_note: "stub core calls standalone Dolphin — all BIOS in Dolphin's own directory"
+exclusion_note: "stub core calls standalone Dolphin, all BIOS in Dolphin's own directory"
 source: "https://github.com/RobLoach/libretro-dolphin-launcher"
 upstream: "https://github.com/dolphin-emu/dolphin"
 profiled_date: "2026-03-23"

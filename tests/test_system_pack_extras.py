@@ -2,7 +2,7 @@
 
 With --platform and --system, the full source emptied the core extras, so
 `--source full` and `--source platform` built the same pack under two
-names; the split packs, built per system, carried them.
+names, while the split packs, built per system, carried them.
 """
 
 from __future__ import annotations

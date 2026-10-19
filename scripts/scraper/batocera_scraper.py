@@ -95,7 +95,7 @@ def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
     """Every core es_systems.yml offers, and those that run standalone.
 
     ES lists, per system, each emulator a user may pick and the cores under
-    it; configgen-defaults.yml only names the one picked by default, so
+    it. configgen-defaults.yml only names the one picked by default, so
     reading it alone left DOSBox Staging, melonDS DS and nine other built
     cores outside the pack.
     """
@@ -111,7 +111,7 @@ def es_systems_emulators(text: str) -> tuple[set[str], set[str]]:
         for emulator, entries in emulators.items():
             if not isinstance(entries, dict):
                 continue
-            # A standalone emulator is its own core; what it lists under it
+            # A standalone emulator is its own core. What it lists under it
             # are machines or builds, and the non-cores among them are named
             # in the overrides. Keys whose value is not a mapping
             # (archs_include) describe the entry, not a core.

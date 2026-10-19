@@ -32,7 +32,7 @@ notes: |
   $XDG_DATA_HOME/Aaron Giles/DREAMM on Linux. Paths below are relative to that
   directory. Startup writes config.json and creates install, gamedelta,
   screenshots, logs and sounddata.
-  ref: SDL_GetPrefPath; strace of DREAMM 4.0 linux-x64 with a clean HOME
+  ref: SDL_GetPrefPath, strace of DREAMM 4.0 linux-x64 with a clean HOME
 
   Audio hardware is set per game and per variant: speaker, cms, adlib, sb16,
   tandy, mt32 and gmidi. MT-32 and General MIDI output can go to an external
@@ -52,7 +52,7 @@ notes: |
   both halves. The CM-32L sets name cm32l_pcm.rom as the full image,
   mt32_pcm_l.rom as the low half and cm32l_pcm_h.rom as the high half. munt
   identifies each file by size then SHA1 before opening the synth.
-  ref: set table 0x23db4a8, id lookup 0x164d050, availability 0x164d2a8;
+  ref: set table 0x23db4a8, id lookup 0x164d050, availability 0x164d2a8,
        munt ROMInfo.cpp:206-214 ROMInfo::getROMInfo
 
   The SC-55 is emulated by the Nuked SC-55 CLAP plug-in, unpacked to
@@ -61,7 +61,7 @@ notes: |
   v1.20, v1.21, v2.00 and SC-55mk2 v1.01. The plug-in identifies a set by
   hashing the directory contents, so its own loader does not depend on the
   file names.
-  ref: strace of DREAMM 4.0 linux-x64; Nuked-SC55-CLAP nuked_sc55.cpp:145-212
+  ref: strace of DREAMM 4.0 linux-x64, Nuked-SC55-CLAP nuked_sc55.cpp:145-212
        GetRomBasePaths and Init, rom_loader.cpp:31-80 DetectRomsetsByHash
 
   Both families install by dropping files on the Manage Sound Fonts & ROMs
@@ -72,7 +72,7 @@ notes: |
   sizes agree with the bundled munt ROM table. mt32_ctrl_2_03.rom is named by
   the v2.03 set but has no manifest entry, so it loads from sounddata and
   cannot be installed by drag and drop.
-  ref: manifest 0x23daf78, name match 0x16456a0, reverse lookup 0x1645880;
+  ref: manifest 0x23daf78, name match 0x16456a0, reverse lookup 0x1645880,
        "To install Sound Fonts (.sf2 files) or ROMs for Roland MIDI emulation,
        drop them onto this screen."
 
@@ -365,7 +365,7 @@ files:
     source_ref: "DREAMM 4.0 linux-x64: ROM manifest 0x23dafb8, set table 0x23db4a8; sounddata/mt32emu-dreamm.so ROM table"
 
   # -- Roland SC-55, sounddata/Nuked-SC55-Resources/ROMs --
-  # One complete set per model directory; the plugin loads a single directory.
+  # One complete set per model directory, the plugin loads a single directory.
   - name: sc55_rom1.bin
     path: "sounddata/Nuked-SC55-Resources/ROMs/SC-55-v1.00/sc55_rom1.bin"
     description: "Roland SC-55 v1.00 program ROM (ROM1)"
