@@ -112,7 +112,7 @@ DEFAULT_EMULATORS_DIR = "emulators"
 
 class Status:
     OK = "ok"
-    UNTESTED = "untested"  # file present, hash not confirmed
+    UNTESTED = "untested"  # file present, hash not confirmed: a warning, never --strict
     MISSING = "missing"
 
 
@@ -2226,7 +2226,8 @@ def _main(held: contextlib.ExitStack) -> None:
         "--strict",
         action="store_true",
         help="Exit 1 on a required file missing: where the frontend checks "
-        "hashes for a platform, without HLE for --emulator and --system",
+        "hashes for a platform, without HLE for --emulator and --system. A file "
+        "present with an unconfirmed hash is a warning, not a failure",
     )
     args = parser.parse_args()
     if args.platform:
@@ -2374,7 +2375,11 @@ def _json_details(details: list[dict], verbose: bool) -> list[dict]:
 
 def _exit_if_strict(strict: bool, results: list[dict]) -> None:
     """Exit 1 under --strict when a platform result counts a critical file:
-    a required file missing or rejected where the frontend reads hashes."""
+    a required file missing where the frontend reads hashes.
+
+    A file present whose hash the frontend does not confirm is UNTESTED, a
+    warning (Batocera's BiosStatus calls it so): reported, not failed.
+    """
     critical = sum(r["severity_counts"].get(Severity.CRITICAL, 0) for r in results)
     if strict and critical:
         print(f"ERROR: {critical} required file(s) missing where the frontend "

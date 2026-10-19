@@ -5118,5 +5118,19 @@ class ThePipelineSummaryTimesEachStep(unittest.TestCase):
                                          "verify": True})
 
 
+class StrictFailsOnMissingOnly(unittest.TestCase):
+    """The docstring promised exit 1 on a required file missing or rejected;
+    a rejected file is UNTESTED, a warning, and --strict never saw it."""
+
+    def test_the_contract(self):
+        from scripts import verify as verify_mod
+        from scripts.verify import Severity
+
+        verify_mod._exit_if_strict(True, [{"severity_counts": {Severity.WARNING: 2}}])
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            verify_mod._exit_if_strict(True, [{"severity_counts": {Severity.CRITICAL: 1}}])
+        self.assertNotIn("or rejected", verify_mod._exit_if_strict.__doc__)
+
+
 if __name__ == "__main__":
     unittest.main()
