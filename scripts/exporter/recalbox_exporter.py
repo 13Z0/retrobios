@@ -11,6 +11,8 @@ when the platform stated it explicitly.
 
 from __future__ import annotations
 
+import html
+import re
 import sys
 from pathlib import Path
 from xml.etree.ElementTree import Comment, ParseError
@@ -31,6 +33,32 @@ SCHEMA_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
     "/recalbox/share_init/system/.emulationstation/es_bios.xsd"
 )
+
+
+_ATTRIBUTE = re.compile(r'([A-Za-z]+)\s*=\s*"([^"]*)"')
+_SYSTEM_BLOCK = re.compile(r"<system\b.*?</system>", re.S)
+_BIOS_ELEMENT = re.compile(r"[ \t]*<bios\b.*?/>", re.S)
+
+
+def _stated(text: str) -> dict[str, str]:
+    """What an element says, without its layout: attribute order, spacing,
+    line breaks inside a value and the case of a digest are not content."""
+    attrs = {k: " ".join(html.unescape(v).split()) for k, v in _ATTRIBUTE.findall(text)}
+    if "md5" in attrs:
+        attrs["md5"] = ",".join(h.strip().lower() for h in attrs["md5"].split(","))
+    return attrs
+
+
+def _original_elements(original: str) -> list[dict[str, str]]:
+    """Each system block's <bios> elements as written, by path, in order."""
+    blocks = []
+    for block in _SYSTEM_BLOCK.finditer(original):
+        elements: dict[str, str] = {}
+        for match in _BIOS_ELEMENT.finditer(block.group(0)):
+            raw = match.group(0)
+            elements.setdefault(_stated(raw).get("path", ""), raw)
+        blocks.append(elements)
+    return blocks
 
 
 class Exporter(BaseExporter):
@@ -179,17 +207,26 @@ class Exporter(BaseExporter):
             lines.extend(body)
             lines.append("  </system>")
 
-        # Each block of theirs corrects the entries it holds.
+        # Each block of theirs corrects the entries it holds. An element that
+        # states what Recalbox wrote keeps Recalbox's text: re-rendered, 222
+        # unchanged elements made 180 lines of diff the report never named.
+        written = _original_elements(original) if original else []
         blocks: list[tuple[str, str, list[str]]] = []
-        for platform, fullname, children in theirs:
+        for index, (platform, fullname, children) in enumerate(theirs):
             elements = ours.get(platform, (None, {}))[1]
+            raw = written[index] if index < len(written) else {}
             body: list[str] = []
             for child in children:
                 if isinstance(child, str):
                     body.append(f"    {child}")
                     continue
-                mine = elements.pop(child.get("path", ""), None)
-                body.append(mine[1] if mine else element(child))
+                path = child.get("path", "")
+                mine = elements.pop(path, None)
+                kept = raw.get(" ".join(path.split()))
+                if kept is not None and (mine is None or _stated(mine[1]) == _stated(kept)):
+                    body.append(kept)
+                else:
+                    body.append(mine[1] if mine else element(child))
             blocks.append((platform, fullname, body))
 
         # An addition joins the block named like its file, else the first

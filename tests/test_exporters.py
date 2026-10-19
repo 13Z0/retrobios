@@ -1764,5 +1764,34 @@ class BatoceraNotesStayWithTheirItem(unittest.TestCase):
         self.assertEqual(trailing, {("bios/bk0010.zip", "two.rom"): "# tail"})
 
 
+class RecalboxKeepsUnchangedText(unittest.TestCase):
+    """Every element the model held was re-rendered: attribute order,
+    alignment, line breaks inside md5 and digest case changed in 222
+    elements that said the same thing, 180 lines of diff nobody was told of."""
+
+    def test_an_element_that_says_the_same_keeps_its_text(self):
+        scraped = {"systems": {"sinclair-zxspectrum": {
+            "native_id": "zxspectrum",
+            "files": [{
+                "name": "128p-0.rom", "destination": "fuse/128p-0.rom",
+                "native_system": "zxspectrum", "native_name": "Pentagon",
+                "native_path": "fuse/128p-0.rom", "md5": "a" * 32,
+                "core": "libretro/fuse", "required": True,
+            }],
+        }}}
+        written = f'    <bios path="fuse/128p-0.rom"    md5="{"A" * 32}"\n          core="libretro/fuse" />'
+        original = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n<biosList>\n'
+            '  <system fullname="Pentagon" platform="zxspectrum">\n'
+            f"{written}\n"
+            "  </system>\n</biosList>\n"
+        )
+        systems, report = build_native_model({"systems": {}}, scraped)
+        produced = discover_exporters()["recalbox"]().render(
+            systems, report, {"es_bios.xml": original}, None
+        )["es_bios.xml"]
+        self.assertIn(written, produced)
+
+
 if __name__ == "__main__":
     unittest.main()
