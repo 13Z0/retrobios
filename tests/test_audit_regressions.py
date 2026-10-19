@@ -5150,5 +5150,27 @@ class TheRepairCommandWritesTheFileNamed(unittest.TestCase):
             self.assertIn(f"--output {target}", str(caught.exception))
 
 
+class VerifyPacksRefusesWhatItCannotDo(unittest.TestCase):
+    """The --verify-packs refusals lived in the --all-variants checks, which
+    return without that flag: --split and --one-per-slot went through, and
+    a run with neither --platform nor --all failed after taking the lock."""
+
+    def test_usage_errors_exit_2_before_any_lock(self):
+        cases = (
+            ["--verify-packs"],
+            ["--verify-packs", "--platform", "retroarch", "--split"],
+            ["--verify-packs", "--platform", "retroarch", "--one-per-slot"],
+        )
+        for extra in cases:
+            with self.subTest(args=extra), tempfile.TemporaryDirectory(dir=TMP_ROOT) as out:
+                result = subprocess.run(
+                    [sys.executable, "scripts/generate_pack.py", *extra, "--output-dir", out],
+                    cwd=ROOT, capture_output=True, text=True, timeout=300,
+                )
+                self.assertEqual(result.returncode, 2, result.stderr[-300:])
+                self.assertIn("--verify-packs", result.stderr)
+                self.assertFalse((Path(out) / ".lock").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

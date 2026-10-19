@@ -2256,8 +2256,32 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     print(f"Generated {count} target manifest(s) in {output_dir}")
 
 
+def _refuse_for_verify_packs(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+    """What --verify-packs cannot be combined with, refused before any lock.
+
+    These lived in the --all-variants checks, which return at once without
+    that flag: --verify-packs --manifest or --split went through, and a run
+    with neither --platform nor --all failed after locking the directory.
+    """
+    if not args.verify_packs:
+        return
+    if args.manifest:
+        parser.error("--verify-packs is incompatible with --manifest")
+    if not (args.platform or args.all):
+        parser.error("--verify-packs requires --platform or --all")
+    # The check that follows the build reads the full pack's name.
+    for flag, given in (
+        ("--system", args.system),
+        ("--one-per-slot", args.one_per_slot),
+        ("--split", args.split),
+    ):
+        if given:
+            parser.error(f"{flag} is incompatible with --verify-packs")
+
+
 def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """Validate argument combinations and mutual exclusion rules."""
+    _refuse_for_verify_packs(args, parser)
     has_platform = bool(args.platform)
     has_all = args.all
     has_emulator = bool(args.emulator)
@@ -2491,8 +2515,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
             args.platforms_dir, include_archived=args.include_archived
         )
     else:
-        print("ERROR: --verify-packs requires --platform or --all")
-        sys.exit(1)
+        raise ValueError("--verify-packs requires --platform or --all")
 
     all_ok = True
     verify_regions = getattr(args, "regions", None)
@@ -2780,17 +2803,6 @@ def _refuse_for_all_variants(args: argparse.Namespace, parser: argparse.Argument
             parser.error(f"{flag} is incompatible with --all-variants")
     if args.system and not (args.platform or args.all):
         parser.error("--all-variants requires --platform or --all")
-    if args.verify_packs and args.manifest:
-        parser.error("--verify-packs is incompatible with --manifest")
-    if args.verify_packs:
-        # The check that follows the build reads the full pack's name.
-        for flag, given in (
-            ("--system", args.system),
-            ("--one-per-slot", args.one_per_slot),
-            ("--split", args.split),
-        ):
-            if given:
-                parser.error(f"{flag} is incompatible with --verify-packs")
 
 
 def _refuse_refresh_data(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
@@ -3047,6 +3059,7 @@ def _main(held: contextlib.ExitStack) -> None:
     require_directory(args.bios_dir)
 
     _refuse_unapplied_flags(args, parser)
+    _refuse_for_verify_packs(args, parser)
     # Quick-exit modes: --verify-packs alone = verify existing packs only
     # Combined with --all-variants, generation runs first then verify
     if args.verify_packs and not args.all_variants:
