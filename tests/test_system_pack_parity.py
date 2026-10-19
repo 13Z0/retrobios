@@ -60,7 +60,12 @@ class SystemPackMatchesVerify(unittest.TestCase):
                 # Both sides reported, so an empty list is a finding and not a
                 # parse that matched nothing. Requiring missing files instead
                 # would fail the day the collection fills them.
-                summary = re.search(r"(\d+) files packed, (\d+) missing", packed)
+                # Data-tree members are counted apart in the summary
+                # ("105 files packed, 3730 from data directories, 7 missing").
+                summary = re.search(
+                    r"(\d+) files packed(?:, \d+ from data directories)?, (\d+) missing",
+                    packed,
+                )
                 self.assertIsNotNone(summary, packed[-500:])
                 self.assertGreater(report["total_files"], 0)
                 self.assertEqual(int(summary.group(2)), len(pack_missing))
