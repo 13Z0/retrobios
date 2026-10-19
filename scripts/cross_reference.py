@@ -739,6 +739,9 @@ def print_report(
 
     total_gaps = 0
     totals: dict[str, int] = {"bios": 0, "data": 0, "large_file": 0, "missing": 0}
+    # A runtime component bundled with its emulator is left out of the
+    # collection by design, as verify and the gaps page say: not a file to find.
+    bundled = 0
 
     for emu_name, data in sorted(report.items()):
         gaps = data["gaps"]
@@ -764,6 +767,8 @@ def print_report(
         for g in data["gap_details"]:
             req = "*" if g["required"] else " "
             src = g.get("source", "missing").upper()
+            if g.get("bundled") and g.get("source") == "missing":
+                src = "BUNDLED"
             # One line per file: a note spanning lines fell to column 0
             # between entries and read as an emulator heading.
             note = f": {' '.join(str(g['note']).split())}" if g["note"] else ""
@@ -777,6 +782,12 @@ def print_report(
         total_gaps += gaps
         for key in totals:
             totals[key] += data.get(f"gap_{key}", 0)
+        emulator_bundled = sum(
+            1 for g in data["gap_details"]
+            if g.get("bundled") and g.get("source") == "missing"
+        )
+        bundled += emulator_bundled
+        totals["missing"] -= emulator_bundled
 
     print(f"\n{'=' * 60}")
     print(f"Total: {total_gaps} undeclared files across {scope}")
@@ -784,6 +795,8 @@ def print_report(
     print(f"  {available} available (bios: {totals['bios']}, data: {totals['data']}, "
           f"large_file: {totals['large_file']})")
     print(f"  {totals['missing']} missing (need to be sourced)")
+    if bundled:
+        print(f"  {bundled} bundled with their emulator, not collected")
 
 
 def main() -> None:

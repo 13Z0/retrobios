@@ -5304,5 +5304,28 @@ class TheTreeKeepsStandaloneEntries(unittest.TestCase):
         self.assertGreater(int(undeclared.group(1)), 0)
 
 
+class TheCliSetsBundledFilesApart(unittest.TestCase):
+    """cross_reference counted daedalusx64's n64.psh and touchHLE's runtime
+    libraries as missing, to be sourced, though the project leaves them out
+    by design and verify and the gaps page already say so."""
+
+    def test_a_bundled_gap_is_not_missing(self):
+        from scripts.cross_reference import print_report
+
+        gap = {"name": "n64.psh", "required": True, "bundled": True, "note": "",
+               "source": "missing"}
+        report = {"emu": {
+            "emulator": "Emu", "systems": [], "total_files": 1, "platform_covered": 0,
+            "gaps": 1, "gap_missing": 1, "gap_details": [gap],
+        }}
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            print_report(report)
+        text = out.getvalue()
+        self.assertIn("0 missing (need to be sourced)", text)
+        self.assertIn("1 bundled with their emulator", text)
+        self.assertIn("n64.psh [BUNDLED]", text)
+
+
 if __name__ == "__main__":
     unittest.main()
