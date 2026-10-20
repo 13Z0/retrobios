@@ -7,8 +7,8 @@ version_source:
   url: "https://amigan.1emu.net/releases/"
   pattern: 'Download DroidArcadia ([0-9.]+) for Android'
 author: "James Jacobs (Amigan Software)"
-profiled_date: "2026-08-11"
-core_version: "4.60"
+profiled_date: "2026-10-20"
+core_version: "4.74"
 display_name: "Emerson Arcadia 2001 / Interton VC 4000 (DroidArcadia)"
 cores:
   - droidarcadia
@@ -26,17 +26,19 @@ notes: |
   by the manifest under MIME type application/octet-stream or application/zip,
   a zip yielding its first member only, and the read stops at 32768 bytes. This
   reading is taken from the author's own source archive DroidArcadia-src.rar
-  4.60, md5 5f88d8b01493a2430d2f9c94da69bf8a, and confirmed against the
-  published DroidArcadia.apk, md5 a72cf2f5e2b213577f3e185aa58f7e21.
+  4.74, md5 1407628c01a2fe87e79e027dce2097f1, and confirmed against the
+  published DroidArcadia.apk, md5 ffa7a749c1c776c4b01ed145f2428531, signed
+  by the Amigan Software key with certificate sha256
+  B4904B06F8BB0832BB90472F1655E776C4A859CEB72753C51CDDB5DD360086A5.
   ref: app/src/main/cpp/da.h:3-5, app/src/main/AndroidManifest.xml:21-37,
-       app/build.gradle:22-28, MainActivity.java:1502-1558,
+       app/build.gradle:22-28, MainActivity.java:1514-1570,
        res/values/strings.xml:5-6
 
   Fifteen memory maps over five machines: Interton VC 4000 types A to D,
   Elektor TV Games Computer basic and expanded, Emerson Arcadia 2001 types G
   (Emerson), H (Tele-Fever) and I (Palladium), and the coin-ops Astro Wars,
   Galaxia, Laser Battle and Lazarian (Zaccaria) with Malzak 1 and 2 (Kitronix).
-  ref: android.c:245-261, da.h:445-467
+  ref: android.c:245-261, da.h:453-475
 
   Every ROM those machines run is a const array compiled into
   libdroidarcadia.so and copied into memory when the machine is set up:
@@ -44,10 +46,10 @@ notes: |
   Arcadia boot stub, i_bios[287] for the Interton one, e_bios_philips[2048] and
   e_bios_hobbymodule[2048] for the two Elektor monitor ROMs, galaxia_game,
   astrowars_game, lb_game and lz_game for the Zaccaria coin-ops, m1_bios and
-  m2_bios for the Malzak pair. The first sixteen bytes of all ten arrays are
-  present in the arm64 library of the published apk.
-  ref: android.c:588-596, arcadia.h:279 with arcadia.c:426, interton.h:1 with
-       interton.c:36, elektor.h:1,131 with elektor.c:95-103,
+  m2_bios for the Malzak pair. All ten arrays are present byte for byte in the
+  arm64 library of the published apk.
+  ref: android.c:874-885, arcadia.h:279 with arcadia.c:426, interton.h:1 with
+       interton.c:36, elektor.h:1,130 with elektor.c:95-103,
        zaccaria.h:1,644,1599,3653 with zaccaria.c:243,325,423,436,
        malzak.h:1,558 with malzak.c:363,373
 
@@ -59,9 +61,9 @@ notes: |
   argument left NULL, so the file reader of the bundled rcheevos is never
   reached. A coin-op is stepped to through the machine button rather than
   loaded, and a raw binary aimed at Zaccaria or Malzak hardware is refused.
-  ref: android.c:877-894, android.c:2166-2192, android.c:2082-2096,
-       android.c:1010-1013, android.c:4592-4631, elektor.c:95-103,
-       OptionsActivity.java:455-465
+  ref: android.c:1161-1178, android.c:2450-2476, android.c:2366-2380,
+       android.c:1294-1297, android.c:5560-5599, elektor.c:95-103,
+       OptionsActivity.java:457-467
 
 exclusion_note: >
   Nothing to obtain. The app reads back only what it writes in its own private
@@ -72,8 +74,8 @@ exclusion_note: >
   traffic, login and badge and game images alike, is decoded in memory. The apk
   carries no assets directory and no raw resource, so no payload is unpacked on
   first run either.
-  ref: MainActivity.java:1123,1184,1242,1312,1340,1415,
-       OptionsActivity.java:224-235,682,742, RAActivity.java:237-238,268-269,
+  ref: MainActivity.java:1135,1196,1254,1324,1352,1427,
+       OptionsActivity.java:225-237,684,744, RAActivity.java:239-240,270-271,
        NetworkUtil.java:17-38
 
 files: []
