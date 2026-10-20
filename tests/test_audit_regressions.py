@@ -5374,5 +5374,40 @@ class ABrokenRegistryIsNotAnEmptyOne(unittest.TestCase):
             self.assertIn("rocknix", str(caught.exception))
 
 
+class AnUnansweredSearchIsNotANotFound(unittest.TestCase):
+    """auto_fetch caught every network error and reported the file as
+    needing a community contribution: offline, each file became an issue
+    asking the public for something the tool never looked for."""
+
+    def _fetch(self, error):
+        from unittest import mock
+
+        from scripts import auto_fetch
+
+        def refuse(*_args, **_kwargs):
+            raise error
+
+        entry = {"name": "nowhere.bin", "system": "test-system", "sha1": "0" * 40}
+        db = {"files": {}, "indexes": {"by_md5": {}, "by_name": {}}}
+        with mock.patch("urllib.request.urlopen", refuse), \
+                mock.patch.object(auto_fetch, "step2_scan_branches", lambda e: None), \
+                contextlib.redirect_stdout(io.StringIO()):
+            return auto_fetch.fetch_missing([entry], db, "bios")
+
+    def test_offline_is_not_searched(self):
+        import urllib.error
+
+        result = self._fetch(urllib.error.URLError("offline"))
+        self.assertEqual(result["still_missing"], [])
+        self.assertEqual(result["stats"]["errors"], 1)
+
+    def test_a_404_everywhere_is_not_found(self):
+        import urllib.error
+
+        result = self._fetch(urllib.error.HTTPError("u", 404, "missing", {}, None))
+        self.assertEqual(len(result["still_missing"]), 1)
+        self.assertEqual(result["stats"]["errors"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

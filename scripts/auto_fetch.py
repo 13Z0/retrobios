@@ -203,6 +203,18 @@ def step2_scan_branches(entry: dict) -> bytes | None:
     return None
 
 
+# Sources that did not answer during the current file's search. A 404 is an
+# answer, the file is not there. Anything else leaves the question open: an
+# offline run used to report every file as needing a community contribution.
+_UNANSWERED: list[str] = []
+
+
+def _unanswered(url: str, exc: Exception) -> None:
+    if isinstance(exc, urllib.error.HTTPError) and exc.code == 404:
+        return
+    _UNANSWERED.append(f"{url}: {exc}")
+
+
 def step3_search_public_repos(entry: dict) -> bytes | None:
     """Search public GitHub BIOS repos."""
     name = entry["name"]
@@ -220,7 +232,8 @@ def step3_search_public_repos(entry: dict) -> bytes | None:
                     continue
                 if verify_content(data, entry):
                     return data
-        except (urllib.error.URLError, urllib.error.HTTPError):
+        except urllib.error.URLError as exc:
+            _unanswered(url, exc)
             continue
 
         if "/" in destination:
@@ -235,7 +248,8 @@ def step3_search_public_repos(entry: dict) -> bytes | None:
                         continue
                     if verify_content(data, entry):
                         return data
-            except (urllib.error.URLError, urllib.error.HTTPError):
+            except urllib.error.URLError as exc:
+                _unanswered(url, exc)
                 continue
 
     return None
@@ -258,7 +272,8 @@ def step4_search_archive_org(entry: dict) -> bytes | None:
                         continue
                     if verify_content(data, entry):
                         return data
-            except (urllib.error.URLError, urllib.error.HTTPError):
+            except urllib.error.URLError as exc:
+                _unanswered(url, exc)
                 continue
 
     sha1s = sorted(_accepted(entry, "sha1"))
@@ -291,10 +306,10 @@ def step4_search_archive_org(entry: dict) -> bytes | None:
                             data = _read_limited(resp2)
                             if data is not None and verify_content(data, entry):
                                 return data
-                    except (urllib.error.URLError, urllib.error.HTTPError):
-                        pass
-    except (urllib.error.URLError, json.JSONDecodeError):
-        pass
+                    except urllib.error.URLError as exc:
+                        _unanswered(dl_url, exc)
+    except (urllib.error.URLError, json.JSONDecodeError) as exc:
+        _unanswered(search_url, exc)
 
     return None
 
@@ -342,6 +357,7 @@ def fetch_missing(
 
     for entry in missing:
         name = entry["name"]
+        _UNANSWERED.clear()
         print(f"\n  Searching: {name} ({entry['system']})")
 
         existing = step1_crossref_db(entry, db)
@@ -377,6 +393,14 @@ def fetch_missing(
             stats["found"] += 1
             continue
 
+        if _UNANSWERED:
+            # Not looked for everywhere: no issue asks the community for it.
+            print(
+                f"    [5] Search incomplete, {len(_UNANSWERED)} source(s) did not "
+                f"answer (first: {_UNANSWERED[0]})"
+            )
+            stats["errors"] += 1
+            continue
         print("    [5] Not found - needs community contribution")
         still_missing.append(entry)
         stats["not_found"] += 1
@@ -485,7 +509,10 @@ def main() -> None:
             all_still_missing[platform] = result["still_missing"]
 
         stats = result["stats"]
-        print(f"\n  Results: {stats['found']} found, {stats['not_found']} not found")
+        print(
+            f"\n  Results: {stats['found']} found, {stats['not_found']} not found, "
+            f"{stats['errors']} not fully searched"
+        )
 
     if args.create_issues and all_still_missing:
         print(f"\n{'=' * 60}")
