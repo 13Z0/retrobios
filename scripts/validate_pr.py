@@ -32,6 +32,7 @@ from common import (
     load_platform_config,
     parse_md5_list,
 )
+from hashing import parse_hash_list
 
 try:
     import yaml
@@ -138,8 +139,7 @@ def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
 
         for system_id, system in config.get("systems", {}).items():
             for file_entry in system.get("files", []):
-                sha1 = file_entry.get("sha1")
-                sha1s = [str(v).lower() for v in (sha1 if isinstance(sha1, list) else [sha1]) if v]
+                sha1s = parse_hash_list(file_entry.get("sha1"))
                 md5s = parse_md5_list(file_entry.get("md5"))
                 known["sha1"].update(sha1s)
                 known["md5"].update(md5s)
@@ -177,18 +177,27 @@ def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
     engine's data) is in no platform list: the review called every such
     contribution "not referenced, needs manual review".
     """
-    known: dict[str, dict[str, set[str]]] = {"sha1": {}, "sha256": {}, "md5": {}}
+    known: dict[str, dict] = {"sha1": {}, "sha256": {}, "md5": {}, "crc32": {}}
     for emulator, profile in load_emulator_profiles(emulators_dir).items():
         for entry in profile.get("files") or []:
             if not isinstance(entry, dict):
                 continue
-            for algo in known:
-                values = entry.get(algo)
-                if algo == "md5":
-                    values = parse_md5_list(values)
-                for value in values if isinstance(values, (list, set)) else [values]:
-                    if value:
-                        known[algo].setdefault(str(value).lower(), set()).add(emulator)
+            # The resolver's reading: comma lists split (mesence's four
+            # sha256), and a crc32 counts only where no stronger hash is
+            # declared, bounded by the declared size (626 entries name a
+            # file by crc32 alone, clk's Electron os.rom among them).
+            for algo in ("sha1", "sha256", "md5"):
+                for value in parse_hash_list(entry.get(algo)):
+                    known[algo].setdefault(value, set()).add(emulator)
+            if not any(entry.get(algo) for algo in ("sha1", "sha256", "md5")):
+                size = entry.get("size")
+                sizes = [int(v) for v in size] if isinstance(size, list) else (
+                    [int(size)] if size else [None]
+                )
+                for value in parse_hash_list(entry.get("crc32")):
+                    for accepted in sizes:
+                        key = (value.zfill(8), accepted)
+                        known["crc32"].setdefault(key, set()).add(emulator)
     return known
 
 
@@ -273,6 +282,8 @@ def validate_file(
         profile_hashes.get("sha1", {}).get(result.sha1)
         or profile_hashes.get("sha256", {}).get(hashes.get("sha256", ""))
         or profile_hashes.get("md5", {}).get(result.md5)
+        or profile_hashes.get("crc32", {}).get((result.crc32, result.size))
+        or profile_hashes.get("crc32", {}).get((result.crc32, None))
     )
 
     if sha1_known:

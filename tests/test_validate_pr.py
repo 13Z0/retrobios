@@ -361,5 +361,23 @@ class AFileOutsideBiosIsToldWhereToGo(unittest.TestCase):
         self.assertFalse(any("Duplicate" in m for _s, m in result.checks))
 
 
+class ProfileHashesReadAsTheResolverDoes(unittest.TestCase):
+    """A file a profile names by crc32 alone (clk's Electron os.rom, 626
+    entries) or by a comma list of sha256 (mesence's BS-X.bin) was reported
+    as referenced nowhere, needing manual review."""
+
+    def test_crc32_only_and_comma_lists_are_indexed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, "core.yml").write_text(
+                "emulator: Core\ntype: libretro\nsystems: [x]\nfiles:\n"
+                "  - name: os.rom\n    crc32: BF63FB1F\n    size: 16384\n"
+                "  - name: bsx.bin\n    sha256: \"aa,bb\"\n",
+                encoding="utf-8",
+            )
+            known = validate_pr.load_profile_hashes(tmp)
+        self.assertEqual(known["crc32"][("bf63fb1f", 16384)], {"core"})
+        self.assertIn("bb", known["sha256"])
+
+
 if __name__ == "__main__":
     unittest.main()
