@@ -124,7 +124,8 @@ def candidate_lines(candidates: list[dict]) -> list[str]:
     count = _plural(len(candidates), "entry", "entries")
     sentence = (
         f"{count} of the original {'is' if len(candidates) == 1 else 'are'} not "
-        "opened by any profiled emulator this platform runs. "
+        "named, by name, path or hash, in the profile of any emulator this "
+        "platform runs. "
         f"{'It stays' if len(candidates) == 1 else 'They stay'} in the updated file"
     )
     if open_question:

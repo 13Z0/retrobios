@@ -132,7 +132,7 @@ def _loads_romsets(profile: dict) -> bool:
 _ARCHIVES = (".zip", ".7z")
 
 REASONS = {
-    "candidate": "no core the platform runs opens it",
+    "candidate": "no profile of a core the platform runs names it",
     "unresolved": "a core the platform names has no profile yet",
     "romset": "a ROM set, and these cores open sets their profiles do not list",
 }

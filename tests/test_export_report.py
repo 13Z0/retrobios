@@ -418,7 +418,7 @@ class RemovalCandidatesNeedAReadingNoCoreAnswers(unittest.TestCase):
              "cores_examined": [], "unresolved_cores": []},
         ])
         page = generate_exports_page([report], {})
-        self.assertIn("1 entry of the original is not opened", page)
+        self.assertIn("1 entry of the original is not named, by name, path or hash", page)
         self.assertIn("- `Enterprise` `zt18hfnt.rom`", page)
         self.assertNotIn("no entry the platform declares is removed", page)
 
