@@ -214,12 +214,9 @@ def download_file(
                     pct = downloaded * 100 // total
                     if pct != shown:
                         shown = pct
-                        bar = "=" * (pct // 2) + " " * (50 - pct // 2)
-                        print(
-                            f"\r  {label}[{bar}] {pct}% ({downloaded:,}/{total:,})",
-                            end="",
-                            flush=True,
-                        )
+                        columns = shutil.get_terminal_size((80, 24)).columns
+                        line = _progress_line(label, downloaded, total, columns)
+                        print(f"\r\033[K{line}", end="", flush=True)
 
     if live:
         print()
@@ -227,6 +224,19 @@ def download_file(
         print(f"  {label}{downloaded:,} bytes")
     if expected_size and downloaded != expected_size:
         raise ValueError(f"downloaded {downloaded} bytes, expected {expected_size}")
+
+
+def _progress_line(label: str, done: int, total: int, columns: int) -> str:
+    """One physical line shorter than the terminal: a wrapped line leaves a
+    copy of itself on every redraw, since \\r goes back one row only. The
+    bar shrinks first, then goes."""
+    pct = done * 100 // total
+    figures = f" {pct}% ({done / 1e6:,.0f}/{total / 1e6:,.0f} MB)"
+    room = min(50, columns - 1 - len(f"  {label}[]") - len(figures))
+    if room < 10:
+        return f"  {label}{figures.strip()}"[: columns - 1]
+    filled = room * pct // 100
+    return f"  {label}[{'=' * filled}{' ' * (room - filled)}]{figures}"
 
 
 def join_volumes(parts: list[Path], dest: Path) -> None:

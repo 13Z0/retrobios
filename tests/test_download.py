@@ -252,6 +252,21 @@ class TestJoinVolumes(unittest.TestCase):
             self.assertEqual(zf.testzip(), None)
 
 
+class TestProgressLineWidth(unittest.TestCase):
+    """The bar was 98 columns for a 2 GB part: on an 80-column console each
+    redraw wrapped and left a line behind."""
+
+    def test_the_line_fits_every_width(self):
+        from download import _progress_line
+
+        for columns in (20, 40, 80, 120, 200):
+            for done in (0, 1_000_000_000, 2_000_000_000):
+                with self.subTest(columns=columns, done=done):
+                    line = _progress_line("part 1/2 ", done, 2_000_000_000, columns)
+                    self.assertLess(len(line), columns)
+                    self.assertIn("%", line)
+
+
 class TestStagingIsolation(unittest.TestCase):
     """Two downloads into one BIOS folder must not share a staging directory."""
 
