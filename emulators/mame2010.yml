@@ -39,6 +39,23 @@ systems:
   - namco-system573
   - konami-viper
   - cave-cv1000
+  - konami-gx
+  - acclaim-zn1
+  - atlus-zn1
+  - atari-zn1
+  - taito-fx1
+  - tecmo-tps
+  - eighting-zn1
+  - videosystem-zn1
+  - nintendo-aleck64
+  - taito-typezero
+  - arcadia-systems
+  - atari-system1
+  - brezzasoft-crystal
+  - ces-galaxy-games
+  - konami-twinkle
+  - imax-macs
+  - arcade
 
 notes: |
   Frozen snapshot of MAME 0.139 (mid-2010). Sourced from mame0139s.zip.
@@ -60,11 +77,12 @@ files:
     installed_on: [recalbox, retrobat]
     path: "mame2010/hiscore.dat"
     required: false
+    system: arcade
     category: game_data
     sha1: "17b8b03a89d8443927aa92ede799e117b4ab6fdb"
     md5: "bb8023a43e357b7f0cc06bf00f0470b2"
     size: 202298
-    source_ref: "source src/emu/hiscore.c:25, 136-150, 353-358"
+    source_ref: "source src/emu/hiscore.c:25, 136-150, 304-358, source src/emu/machine.c:362-363"
     note: >-
       high score definitions, embedded in binary by default, external via core
       option mame-external_hiscore. metadata/hiscore.dat of the core repository,
@@ -76,6 +94,7 @@ files:
     path: "mame2010/cheat.zip"
     required: false
     category: game_data
+    system: arcade
     source_ref: "source src/emu/cheat.c:1027"
     note: "per-game XML cheat files in ZIP, cheatpath never initialized in libretro port (non-functional)"
 
@@ -336,104 +355,125 @@ files:
   - name: konamigx.zip
     required: true
     category: bios_zip
+    system: konami-gx
     source_ref: "source src/mame/drivers/konamigx.c"
 
   - name: acpsx.zip
     required: true
     category: bios_zip
+    system: acclaim-zn1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: atluspsx.zip
     required: true
     category: bios_zip
+    system: atlus-zn1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: atpsx.zip
     required: true
     category: bios_zip
+    system: atari-zn1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: taitofx1.zip
     required: true
     category: bios_zip
+    system: taito-fx1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: tps.zip
     required: true
     category: bios_zip
+    system: tecmo-tps
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: psarc95.zip
     required: true
     category: bios_zip
+    system: eighting-zn1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: vspsx.zip
     required: true
     category: bios_zip
+    system: videosystem-zn1
     source_ref: "source src/mame/drivers/zn.c"
 
   - name: hod2bios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/drivers/naomi.c"
 
   - name: f355bios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/drivers/naomi.c"
 
   - name: airlbios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/drivers/naomi.c"
 
   - name: aleck64.zip
     required: true
     category: bios_zip
+    system: nintendo-aleck64
     source_ref: "source src/mame/drivers/aleck64.c"
 
   - name: taitotz.zip
     required: true
     category: bios_zip
+    system: taito-typezero
     source_ref: "source src/mame/drivers/taitotz.c"
 
   - name: ar_bios.zip
     required: true
     category: bios_zip
+    system: arcadia-systems
     source_ref: "source src/mame/drivers/arcadia.c"
 
   - name: atarisy1.zip
     required: true
     category: bios_zip
+    system: atari-system1
     source_ref: "source src/mame/drivers/atarisy1.c"
 
   - name: crysbios.zip
     required: true
     category: bios_zip
+    system: brezzasoft-crystal
     source_ref: "source src/mame/drivers/crystal.c"
 
   - name: galgbios.zip
     required: true
     category: bios_zip
+    system: ces-galaxy-games
     source_ref: "source src/mame/drivers/tmaster.c"
 
   - name: gq863.zip
     required: true
     category: bios_zip
+    system: konami-twinkle
     source_ref: "source src/mame/drivers/twinkle.c"
 
   - name: mac2bios.zip
     required: true
     category: bios_zip
-    source_ref: "source src/mame/drivers/suprnova.c"
+    system: imax-macs
+    source_ref: "source src/mame/drivers/macs.c:514, 740"
 
   - name: macsbios.zip
     required: true
     category: bios_zip
+    system: imax-macs
     source_ref: "source src/mame/drivers/macs.c"
 
   - name: bctvidbs.zip
     required: true
     category: bios_zip
+    system: arcade
     source_ref: "upstream src/mame/drivers/mpu4drvr.c:3116"
