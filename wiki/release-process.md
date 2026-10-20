@@ -250,7 +250,8 @@ is `allowed_signers` at the repository root, so anyone can check a download
 without trusting the release page it came from:
 
 ```bash
-gh release download --pattern 'SHA256SUMS.txt*' --pattern 'RetroArch_*BIOS_Pack*'
+gh release download -R Abdess/retrobios \
+  --pattern 'SHA256SUMS.txt*' --pattern 'RetroArch_*BIOS_Pack*'
 curl -fsSLO https://raw.githubusercontent.com/Abdess/retrobios/main/allowed_signers
 
 ssh-keygen -Y verify -f allowed_signers -I releases@retrobios -n file \
@@ -258,7 +259,12 @@ ssh-keygen -Y verify -f allowed_signers -I releases@retrobios -n file \
 sha256sum --check --ignore-missing SHA256SUMS.txt
 ```
 
-The first command must print `Good "file" signature for releases@retrobios`.
+Run it in any folder, a clone is not needed. On macOS the last line is
+`shasum -a 256 --check --ignore-missing SHA256SUMS.txt`, and on Windows
+PowerShell `Get-FileHash -Algorithm SHA256 <pack>` gives the value to compare
+with the file's line in `SHA256SUMS.txt`.
+
+The `ssh-keygen` command must print `Good "file" signature for releases@retrobios`.
 Order matters: verify the list before trusting the sums in it. The list names
 every file as published, so a single part checks on its own. Releases up to
 v2026.09.04 listed the whole ZIPs instead, and their `.zip.001` volumes have
