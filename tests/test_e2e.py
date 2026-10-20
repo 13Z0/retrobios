@@ -4226,7 +4226,11 @@ class TestE2E(unittest.TestCase):
         from exporter.baseline import build_native_model
 
         systems, report = build_native_model(truth, {"systems": {}})
-        produced = SystemDatExporter().render(systems, report, {}, {"systems": {}})
+        original = ('clrmamepro (\n\tname "System"\n)\n\ngame (\n\tname "System"\n'
+                    '\tcomment "commodore-plus4"\n)\n')
+        produced = SystemDatExporter().render(
+            systems, report, {"System.dat": original}, {"systems": {}}
+        )
         self.assertIn("crc 70295038", produced["System.dat"])
 
     # ---------------------------------------------------------------

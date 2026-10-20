@@ -275,7 +275,9 @@ class PureDataExportsKeepWhatWeDoNotModel(unittest.TestCase):
             for api, digest in (("vulkan", "a"), ("opengl", "b"))
         ]
         systems = {"Sony - PlayStation 2": NativeSystem("Sony - PlayStation 2", files=shaders)}
-        produced = SystemDat().render(systems, Report(), {})["System.dat"]
+        original = ('clrmamepro (\n\tname "System"\n)\n\ngame (\n\tname "System"\n'
+                    '\tcomment "Sony - PlayStation 2"\n)\n')
+        produced = SystemDat().render(systems, Report(), {"System.dat": original})["System.dat"]
         self.assertIn("name pcsx2/resources/shaders/vulkan/convert.glsl md5 " + "a" * 32, produced)
         self.assertIn("name pcsx2/resources/shaders/opengl/convert.glsl md5 " + "b" * 32, produced)
         self.assertEqual(SystemDat().validate(systems, {"System.dat": produced}), [])

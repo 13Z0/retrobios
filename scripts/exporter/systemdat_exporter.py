@@ -150,6 +150,7 @@ class Exporter(BaseExporter):
         quoted = frozenset(_QUOTED_NAME.findall(original))
 
         ours: dict[str, dict[str, str]] = {}
+        added: dict[str, set[str]] = {}
         for system, files in self.exportable(systems):
             rendered: dict[str, str] = {}
             for fe in files:
@@ -170,6 +171,8 @@ class Exporter(BaseExporter):
                 if sha1:
                     parts.append(f"sha1 {sha1}")
                 rendered.setdefault(name, f"\trom ( {' '.join(parts)} )")
+                if fe.platform is None:
+                    added.setdefault(system.native_id, set()).add(name)
             if rendered:
                 ours[system.native_id] = rendered
 
@@ -194,12 +197,28 @@ class Exporter(BaseExporter):
                     body.append(line)
             body.extend(rendered.values())
             section(comment, body)
+        # A section is titled with the system as libretro spells it, and we
+        # know no title for one it does not have: 20 sections came out under
+        # our slugs (commodore-c64, quake, laseractive, xrick).
+        self._untitled = {
+            id(fe)
+            for system, files in self.exportable(systems)
+            if system.native_id in ours
+            for fe in files
+            if fe.platform is None
+        }
         for comment in sorted(ours):
-            section(comment, list(ours[comment].values()))
+            own = [line for name, line in ours[comment].items()
+                   if name not in added.get(comment, set())]
+            if own:
+                section(comment, own)
 
         lines.append(")")
         lines.append("")
         return {self.native_filename(): "\n".join(lines)}
+
+    def lands(self, fe: NativeFile) -> bool:
+        return self.writable(fe) and id(fe) not in getattr(self, "_untitled", set())
 
     def validate(
         self,
@@ -213,7 +232,7 @@ class Exporter(BaseExporter):
         issues: list[str] = []
         for system in systems.values():
             for fe in system.files:
-                if not any(fe.hash(h) for h in ("crc32", "md5", "sha1")):
+                if not self.lands(fe) or not any(fe.hash(h) for h in ("crc32", "md5", "sha1")):
                     continue
                 if self._rom_name(fe) not in exported:
                     issues.append(f"absent from the DAT: {system.native_id}/{fe.name}")

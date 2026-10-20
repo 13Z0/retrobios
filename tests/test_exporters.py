@@ -1206,6 +1206,38 @@ class RommKeepsItsFixture(unittest.TestCase):
         self.assertEqual(len(changed), 2, changed)
 
 
+class SystemDatNamesNoSectionItself(unittest.TestCase):
+    """libretro titles each section with the system as it spells it,
+    "Commodore - Amiga". An addition for a system it has no section for
+    opened one under our slug: 20 such sections, commodore-c64, quake,
+    laseractive."""
+
+    def test_an_addition_without_a_libretro_section_is_left_out(self):
+        amiga = "Commodore - Amiga"
+        original = (
+            'clrmamepro (\n\tname "System"\n)\n\ngame (\n\tname "System"\n'
+            f'\tcomment "{amiga}"\n'
+            f"\trom ( name kick34005.A500 size 262144 md5 {'2' * 32} )\n"
+            ")\n"
+        )
+        scraped = {"systems": {"commodore-amiga": {"native_id": amiga, "files": [
+            {"name": "kick34005.A500", "destination": "kick34005.A500",
+             "native_system": amiga, "md5": "2" * 32, "size": 262144}]}}}
+        truth = {"systems": {
+            "commodore-amiga": {"files": [{"name": "kick40068.A1200", "md5": "3" * 32}]},
+            "laseractive": {"files": [{"name": "pac-n1.bin", "crc32": "a8cb694c"}]},
+        }}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["retroarch"]()
+        produced = exporter.render(systems, report, {"System.dat": original}, None)["System.dat"]
+        self.assertNotIn('comment "laseractive"', produced)
+        self.assertNotIn("pac-n1.bin", produced)
+        self.assertIn("kick40068.A1200", produced)
+        self.assertEqual(exporter.validate(systems, {"System.dat": produced}), [])
+        added = systems["laseractive"].files[0]
+        self.assertFalse(exporter.lands(added))
+
+
 class SystemDatKeepsSpaceIndentedLines(unittest.TestCase):
     """libretro indents 39 rom lines with four spaces. Read with a tab only,
     they left the base and came back last in their section, re-indented."""
@@ -1508,8 +1540,6 @@ class BatoceraExport(unittest.TestCase):
                 exporter = discover_exporters()[platform]
                 self.assertFalse(exporter().writable(foreign))
                 self.assertTrue(exporter().writable(own))
-        # A format that finds files by path has no system key to miss.
-        self.assertTrue(discover_exporters()["retroarch"]().writable(foreign))
         produced = discover_exporters()["batocera"]().render(
             systems, report, {"batocera-systems": self.SKELETON}, None
         )
