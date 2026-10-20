@@ -140,7 +140,6 @@ files:
     min_size: 64
     max_size: 1048576
     validation: [size]
-    aliases: [tos100fr.img, tos100us.img, tos102.img, tos102de.img, tos102fr.img, tos102uk.img, tos104.img, tos104de.img, tos104es.img, tos104fr.img, tos104uk.img, tos104us.img, tos106.img, tos106de.img, tos106es.img, tos106fr.img, tos106uk.img, tos106us.img, tos162de.img, tos162fr.img, tos162uk.img, tos162us.img, tos205de.img, tos205es.img, tos205fr.img, tos205it.img, tos205us.img, tos206.img, tos206de.img, tos206fr.img, tos206uk.img, tos206us.img, tos306de.img, tos306uk.img, tos400.img, tos402.img, tos404.img, st.img, ste.img, megaste.img, tt.img, falcon.img, emutos.img]
     source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353, upstream src/configuration.c:810-812, upstream src/paths.c:316-330, upstream CMakeLists.txt:383-394, upstream src/main.c:191-201, upstream src/reset.c:66-68, upstream src/file.c:275-308, upstream src/file.c:481-520, upstream src/CMakeLists.txt:74, upstream src/CMakeLists.txt:386-393"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. The file must
