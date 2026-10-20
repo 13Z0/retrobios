@@ -5553,5 +5553,24 @@ class AStepThatCannotFailTheRunIsNotShownFailed(unittest.TestCase):
                       (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8"))
 
 
+class AHashConflictIsReportedOnce(unittest.TestCase):
+    """check_freshness opened on six copies of one truth.py warning, one per
+    platform whose model met the same two GameIndex.yaml declarations."""
+
+    def test_the_same_pair_prints_once(self):
+        import contextlib
+        import io
+
+        import truth
+
+        truth._CONFLICTS_SHOWN.clear()
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            for _platform in range(6):
+                existing = {"name": "x.yaml", "sha1": "a" * 40}
+                truth._merge_hashes(existing, {"name": "x.yaml", "sha1": "b" * 40}, "core")
+        self.assertEqual(err.getvalue().count("WARNING"), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -18,6 +18,9 @@ from hashing import parse_md5_list
 from validation import filter_files_by_mode, read_from_system_dir
 
 
+
+_CONFLICTS_SHOWN: set[tuple[str, ...]] = set()
+
 def _serialize_source_ref(sr: object) -> str:
     """Convert a source_ref value to a clean string for serialization."""
     if isinstance(sr, str):
@@ -260,11 +263,16 @@ def _merge_hashes(
                 existing[h] = [*o_list, *added]
             continue
         if not {str(v).lower() for v in t_list} & {str(v).lower() for v in o_list}:
-            print(
-                f"WARNING: hash conflict for {file_entry['name']} "
-                f"({h}: {ours} vs {theirs}, core {emu_name})",
-                file=sys.stderr,
-            )
+            # Once per process: a run over every platform met the same pair
+            # once per platform and opened its output on six copies.
+            key = (file_entry["name"], h, str(ours), str(theirs), emu_name)
+            if key not in _CONFLICTS_SHOWN:
+                _CONFLICTS_SHOWN.add(key)
+                print(
+                    f"WARNING: hash conflict for {file_entry['name']} "
+                    f"({h}: {ours} vs {theirs}, core {emu_name})",
+                    file=sys.stderr,
+                )
 
 
 def _merge_priority(existing: dict, theirs: int | None) -> None:
