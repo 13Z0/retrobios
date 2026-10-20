@@ -212,7 +212,6 @@ files:
     source_ref: "desktop-ui/emulator/mega-ld.cpp:16"
 
   - name: mega_ld_bios_J.bin
-    aliases: ["[BIOS] LaserActive PAC-S1 (Japan) (v1.02).bin"]
     system: mega-ld
     region: [japan]
     required: true
