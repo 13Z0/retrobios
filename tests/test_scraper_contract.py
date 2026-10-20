@@ -414,6 +414,25 @@ class RocknixRunsItsStandaloneEmulators(unittest.TestCase):
             ["duckstation", "duckstation-sa", "hatari", "hatarisa", "openbor"],
         )
 
+    def test_only_an_emulator_retroarch_also_runs_is_dual(self):
+        """Every standalone package was declared launched both ways, so
+        ARMSX2's libretro layout reached ROCKNIX, whose package.mk adds it
+        as armsx2-sa only (add_emu_core ps2 armsx2 armsx2-sa true)."""
+        from scraper.rocknix_scraper import dual_mode_emulators
+
+        package_mk = (
+            "  add_emu_core psx retroarch duckstation false\n"
+            "  add_emu_core psx duckstation duckstation-sa true\n"
+            "  add_emu_core ps2 armsx2 armsx2-sa true\n"
+            "      add_emu_core atarist retroarch hatari false\n"
+        )
+        standalone = ["armsx2", "armsx2-sa", "duckstation", "duckstation-sa",
+                      "hatari", "hatarisa"]
+        self.assertEqual(
+            dual_mode_emulators(standalone, package_mk),
+            ["duckstation", "duckstation-sa", "hatari", "hatarisa"],
+        )
+
     def test_the_platform_file_is_read_at_its_release(self):
         import yaml
 

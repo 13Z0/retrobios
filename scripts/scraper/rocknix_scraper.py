@@ -43,6 +43,10 @@ SOURCE_TEMPLATE = (
 # The branch a test or a manual run can still name. A scrape reads the tag
 # of the release its YAML is labelled with.
 SOURCE_URL = SOURCE_TEMPLATE.format(ref="next")
+EMULATORS_MK_URL = (
+    "https://raw.githubusercontent.com/ROCKNIX/distribution/{ref}"
+    "/projects/ROCKNIX/packages/virtual/emulators/package.mk"
+)
 STANDALONE_TREE_URL = (
     "https://api.github.com/repos/ROCKNIX/distribution/contents/"
     "projects/ROCKNIX/packages/emulators/standalone?ref={ref}"
@@ -59,10 +63,25 @@ def standalone_emulators(package_names: list[str]) -> list[str]:
     names: set[str] = set()
     for package in package_names:
         names.add(package)
-        stripped = re.sub(r"-?sa$", "", package)
-        if stripped and stripped != package:
+        stripped = _emulator_of(package)
+        if stripped != package:
             names.add(stripped)
     return sorted(names)
+
+def _emulator_of(package: str) -> str:
+    return re.sub(r"-?sa$", "", package) or package
+
+
+def dual_mode_emulators(standalone: list[str], package_mk: str) -> list[str]:
+    """The standalone emulators RetroArch also runs as a core.
+
+    package.mk adds each launch option with `add_emu_core <system> <emulator>
+    <core> <default>`. Only an emulator also added as `retroarch <core>` is
+    launched both ways: ARMSX2 is added as armsx2-sa alone.
+    """
+    retroarch = set(re.findall(r"^\s*add_emu_core\s+\S+\s+retroarch\s+(\S+)", package_mk, re.M))
+    return sorted(name for name in standalone if _emulator_of(name) in retroarch)
+
 
 # ROCKNIX system key -> retrobios system ID
 SYSTEM_SLUG_MAP = {
@@ -171,6 +190,21 @@ class Scraper(BaseScraper):
             raise RuntimeError(f"no standalone emulator package at {url}")
         return standalone_emulators(packages)
 
+    def _fetch_emulators_mk(self) -> str:
+        """The package.mk that adds each emulator and core to es_systems."""
+        import urllib.error
+        import urllib.request
+
+        url = EMULATORS_MK_URL.format(ref=self.tag or "next")
+        try:
+            with urllib.request.urlopen(url, timeout=30) as resp:
+                text = resp.read().decode("utf-8")
+        except urllib.error.URLError as e:
+            raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+        if "add_emu_core" not in text:
+            raise RuntimeError(f"no add_emu_core line in {url}")
+        return text
+
     def validate_format(self, raw_data: str) -> bool:
         """Validate the rocknix-systems format."""
         has_dict = re.search(r"^systems\s*=\s*\{", raw_data, re.MULTILINE) is not None
@@ -236,9 +270,9 @@ class Scraper(BaseScraper):
             # emulators ROCKNIX packages beside it.
             "cores": ["retroarch", *standalone],
             "standalone_cores": standalone,
-            # RetroArch carries every libretro core beside them, so an
-            # emulator with a libretro build is launched both ways.
-            "dual_mode_cores": list(standalone),
+            # Launched both ways only where package.mk also adds the
+            # emulator as a RetroArch core.
+            "dual_mode_cores": dual_mode_emulators(standalone, self._fetch_emulators_mk()),
             "systems": systems,
         }
 
