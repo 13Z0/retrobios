@@ -539,6 +539,16 @@ def installed_with_emulator(entry: dict, platform: str = "") -> bool:
     return bool(entry.get("bundled")) and platform not in (entry.get("not_bundled_on") or [])
 
 
+def unread_on(entry: dict, platform: str) -> bool:
+    """Whether this platform's launcher points the emulator at other files.
+
+    RetroBat starts standalone BlastEm with absolute paths to its own BIOS
+    names in the config it writes, so the defaults the emulator would read
+    (cdbios.bin, colecovision_bios.col) are never opened there.
+    """
+    return bool(platform) and platform in (entry.get("unread_on") or [])
+
+
 def deliverable(entries: list[dict], standalone: bool, platform: str = "") -> list[dict]:
     """The entries of one build a pack has to bring.
 
@@ -549,7 +559,7 @@ def deliverable(entries: list[dict], standalone: bool, platform: str = "") -> li
     """
     return [
         e for e in filter_files_by_mode(entries, standalone)
-        if not installed_with_emulator(e, platform)
+        if not installed_with_emulator(e, platform) and not unread_on(e, platform)
     ]
 
 

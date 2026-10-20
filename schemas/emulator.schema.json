@@ -286,6 +286,11 @@
             "items": {"type": "string"},
             "description": "Platforms (registry keys) whose package leaves out a file the emulator's release bundles, so their packs bring it."
           },
+          "unread_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose launcher points the emulator at other files, so this entry is never opened there."
+          },
           "source_ref": {
             "type": "string"
           }
@@ -469,6 +474,11 @@
             "type": "array",
             "items": {"type": "string"},
             "description": "Platforms (registry keys) whose package leaves out a file the emulator's release bundles, so their packs bring it."
+          },
+          "unread_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose launcher points the emulator at other files, so this entry is never opened there."
           },
           "config_key": {
             "type": "string"

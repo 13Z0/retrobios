@@ -5774,5 +5774,25 @@ class TheApiSchemaHoldsTheFieldsItPromises(unittest.TestCase):
             jsonschema.validate(envelope, schema)
 
 
+class AFileTheLauncherNeverOpens(unittest.TestCase):
+    """RetroBat hands standalone BlastEm absolute paths to its own BIOS
+    names, so the defaults the emulator would read (cdbios.bin) were listed
+    as required and missing on RetroBat although nothing there opens them."""
+
+    def test_unread_on_drops_the_entry_for_that_platform_only(self):
+        from validation import deliverable, unread_on
+
+        entry = {"name": "cdbios.bin", "unread_on": ["retrobat"]}
+        self.assertTrue(unread_on(entry, "retrobat"))
+        self.assertFalse(unread_on(entry, "batocera"))
+        self.assertFalse(unread_on(entry, ""))
+        self.assertEqual(deliverable([entry], True, "retrobat"), [])
+        self.assertEqual(deliverable([entry], True, "batocera"), [entry])
+
+    def test_the_gap_report_reads_it(self):
+        source = (ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
+        self.assertIn('unread_on(f, config.get("_key", ""))', source)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -2861,6 +2861,9 @@ def _render_emulator_file(
     if f.get("not_bundled_on"):
         details.append("Left out by the platform's package, so the pack brings it, on: "
                        + ", ".join(sorted(f["not_bundled_on"])))
+    if f.get("unread_on"):
+        details.append("Never opened on these platforms, whose launcher names other files: "
+                       + ", ".join(sorted(f["unread_on"])))
     if source_ref:
         asker = requested_by(profile, source_ref)
         if asker:

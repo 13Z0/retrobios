@@ -97,6 +97,7 @@ from validation import (
     deliverable,
     filter_files_by_mode,
     installed_with_emulator,
+    unread_on,
     outside_gap_scope,
 )
 
@@ -540,7 +541,7 @@ def find_undeclared_files(
                     f.get("variant_group"),
                     region_key,
                 )
-                if not fname:
+                if not fname or unread_on(f, config.get("_key", "")):
                     continue
                 first = reported.get(seen_key)
                 duplicate = seen_key in seen_files
