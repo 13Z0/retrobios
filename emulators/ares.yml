@@ -8,6 +8,7 @@ core_version: "v147"
 display_name: "ares"
 cores: [ares]
 mode: standalone
+found_by: content
 systems:
   - arcade
   - atari-2600

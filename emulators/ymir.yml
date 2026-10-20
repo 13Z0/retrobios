@@ -15,6 +15,7 @@ core_version:
 display_name: "Sega - Saturn (Ymir)"
 cores:
   - ymir
+found_by: {standalone: content}
 systems:
   - sega-saturn
 

@@ -9,6 +9,7 @@ core_version: "v5.0.7"
 display_name: "Commodore - Amiga (FS-UAE)"
 cores:
   - fsuae
+found_by: content
 systems:
   - amiga
 
@@ -151,6 +152,7 @@ files:
 
   - name: "rom.key"
     system: amiga
+    found_by: name
     required: false
     mode: both
     note: "Cloanto Amiga Forever decryption key. Enables encrypted ROM loading."

@@ -10,6 +10,7 @@ profiled_date: "2026-08-11"
 core_version: "4.40"
 display_name: "Atari - 400/800/1200XL/XL/XE/XEGS/5200 (Altirra)"
 cores: [altirra]
+found_by: content
 systems: [atari-400-800, xegs, atari-5200]
 
 # Altirra emulates the Atari 400/800, 1200XL, 600XL/800XL, 130XE, XEGS and 5200.

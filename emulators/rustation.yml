@@ -9,6 +9,7 @@ upstream_commit: "1daf4faaade3c0fd1e9deace8e309e91303f1b46"
 core_version: "v1"
 display_name: "Sony - PlayStation (Rustation)"
 cores: [rustation]
+found_by: content
 systems: [sony-playstation]
 
 notes: >
