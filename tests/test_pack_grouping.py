@@ -75,5 +75,33 @@ class VariantGroupSpansSystems(unittest.TestCase):
             self.assertNotIn(name, names)
 
 
+class AFrontendCheckSeparatesPacks(unittest.TestCase):
+    """Two lists of the same files under different checks are two packs: a
+    hash platform drops a file whose hash disagrees, an existence one ships
+    it. The fingerprint read destination, sha1 and md5 only."""
+
+    def test_verification_mode_and_entry_fields_split_groups(self):
+        import tempfile
+
+        import yaml
+
+        import common
+
+        files = [{"name": "a.bin", "destination": "a.bin", "md5": "0" * 32}]
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, mode, extra in (("one", "existence", {}), ("two", "md5", {}),
+                                      ("three", "existence", {"required": False})):
+                entry = {**files[0], **extra}
+                Path(tmp, f"{name}.yml").write_text(yaml.dump({
+                    "platform": name, "verification_mode": mode,
+                    "systems": {"s": {"files": [entry]}},
+                }))
+            Path(tmp, "_registry.yml").write_text(yaml.dump({"platforms": {}}))
+            common._platform_config_cache.clear()
+            self.addCleanup(common._platform_config_cache.clear)
+            groups = common.group_identical_platforms(["one", "two", "three"], tmp)
+        self.assertEqual(sorted(g for g, _ in groups), [["one"], ["three"], ["two"]])
+
+
 if __name__ == "__main__":
     unittest.main()

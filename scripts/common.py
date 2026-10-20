@@ -1938,13 +1938,17 @@ def group_identical_platforms(
             inherits[platform] = False
             continue
 
-        entries = []
-        for sys_id, system in sorted(config.get("systems", {}).items()):
-            for fe in system.get("files", []):
-                dest = fe.get("destination", fe.get("name", ""))
-                sha1 = fe.get("sha1", "")
-                md5 = fe.get("md5", "")
-                entries.append(f"{dest}|{sha1}|{md5}")
+        # Every field of every entry: the builder reads required, zipped_file,
+        # size and crc32 too, so two lists that differ only there are two
+        # packs. So is the way the frontend checks a file.
+        entries = [
+            json.dumps(fe, sort_keys=True, default=str)
+            for _sys_id, system in sorted(config.get("systems", {}).items())
+            for fe in system.get("files", [])
+        ]
+        entries.append(
+            f"mode={config.get('verification_mode', '')}|rule={config.get('hash_rule', '')}"
+        )
 
         fp = hashlib.sha1("|".join(sorted(entries)).encode()).hexdigest()
         cores = config.get("cores")
