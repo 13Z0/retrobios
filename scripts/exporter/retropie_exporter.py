@@ -37,7 +37,6 @@ EMULATORS_DIR = Path(__file__).resolve().parents[2] / "emulators"
 # The longest list RetroPie writes is six names (lr-atari800). Past that the
 # sentence stops being something a reader uses, so the names are reported
 # instead of appended.
-MAX_NAMES = 6
 
 _MODULE_ID = re.compile(r'rp_module_id="([^"]+)"')
 _MODULE_HELP = re.compile(r'rp_module_help="((?:[^"\\]|\\.)*)"')
@@ -48,8 +47,8 @@ _ABBREVIATION = re.compile(r"[a-z]\.[a-z]", re.I)
 # a.bin and b.bin to $biosdir", "The Sega CD requires the BIOS files a.bin,
 # b.bin copied to $biosdir"), so the clause is found by the word BIOS rather
 # than by a sentence template, and the names in it are the list to extend.
-_BIOS_CLAUSE = re.compile(r"BIOS\b.*?(?=\\n|$)", re.DOTALL)
-_BIOS_NOUN = re.compile(r"BIOS (files?)\b")
+_BIOS_CLAUSE = re.compile(r"BIOS\b.*?(?=\\n|$)", re.DOTALL | re.I)
+_BIOS_NOUN = re.compile(r"(BIOS) (files?)\b", re.I)
 _SEPARATOR = re.compile(r"\s*(?:,\s*(?:and\s+)?|and\s+)")
 _EXAMPLES = re.compile(r"\b(?:e\.?g\b|for example|for instance|such as|like)\W*$", re.I)
 
@@ -99,17 +98,28 @@ class Exporter(BaseExporter):
                 if handle is None:
                     continue
                 text = handle.read().decode("utf-8", errors="replace")
-                if "BIOS" in text:
+                # xm7, np2pi, quasi88 and five more write "bios".
+                if "bios" in text.lower():
                     found[relative] = text
         return found
 
-    def _core_index(self) -> dict[str, str]:
-        """Module id (without its lr- prefix) to the profile it stands for."""
-        index: dict[str, str] = {}
+    def _core_index(self) -> dict[str, dict[str, str]]:
+        """Module id (without its lr- prefix) to the profile it stands for,
+        per build.
+
+        An lr- package is a libretro core and a bare one a standalone
+        emulator: the standalone minivmac package matched the libretro
+        profile, which reads MacII.ROM where Mini vMac 37 reads vMac.ROM.
+        """
+        index: dict[str, dict[str, str]] = {"libretro": {}, "standalone": {}}
         for key, profile in load_emulator_profiles(str(EMULATORS_DIR)).items():
-            index[key.replace("-", "_").lower()] = key
-            for name in profile.get("cores", []) or []:
-                index[str(name).replace("-", "_").lower()] = key
+            kind = str(profile.get("type", ""))
+            for build in ("libretro", "standalone"):
+                if build not in kind:
+                    continue
+                index[build][key.replace("-", "_").lower()] = key
+                for name in profile.get("cores", []) or []:
+                    index[build][str(name).replace("-", "_").lower()] = key
         return index
 
     @staticmethod
@@ -269,7 +279,7 @@ class Exporter(BaseExporter):
                 continue
             module = _MODULE_ID.search(text)
             help_text = _MODULE_HELP.search(text)
-            if not module or not help_text or "BIOS" not in help_text.group(1):
+            if not module or not help_text or "bios" not in help_text.group(1).lower():
                 continue
             found[relative] = (module.group(1), help_text.group(1))
         return found
@@ -289,6 +299,9 @@ class Exporter(BaseExporter):
             )
 
         index = self._core_index()
+        # A sentence grows no longer than the longest RetroPie writes itself:
+        # past that it stops reading as one, and the names are reported.
+        self._longest = max(len(self._listed(help_text)) for _, help_text in modules.values())
         by_core = self._files_by_core(systems)
         # Aliases count as names we know: RetroPie writes dc_flash.bin where
         # flycast's profile files it as an alias of another primary.
@@ -306,7 +319,8 @@ class Exporter(BaseExporter):
             self._skipped.setdefault(reason, []).append(module)
 
         for relative, (module_id, help_text) in sorted(modules.items()):
-            core = index.get(module_id.removeprefix("lr-").replace("-", "_").lower())
+            build = "libretro" if module_id.startswith("lr-") else "standalone"
+            core = index[build].get(module_id.removeprefix("lr-").replace("-", "_").lower())
             files = by_core.get(core or "", [])
             if not files:
                 skip("which no profiled core matches", module_id)
@@ -319,13 +333,17 @@ class Exporter(BaseExporter):
                     f"whose help text names a file no profile documents yet ({', '.join(unknown)})",
                     module_id,
                 )
+                continue
 
             # A file already listed under one of its other names is not
             # missing: proposing the primary would name the same bytes twice.
+            # A system RetroPie does not have is no package's: lr-geargrafx
+            # adds pcengine only, not the LaserActive its core also reads.
             candidates = [
                 fe
                 for fe in files
-                if self._required_for(fe, core)
+                if not fe.foreign_system
+                and self._required_for(fe, core)
                 and not (
                     {fe.name.lower()}
                     | {str(a).lower() for a in (fe.native("aliases", []) or [])}
@@ -350,13 +368,13 @@ class Exporter(BaseExporter):
                 skip("whose help text lists no files to add to", module_id)
                 continue
 
-            if len(listed) + len(missing) > MAX_NAMES:
+            if len(listed) + len(missing) > self._longest:
                 skip("whose help text would grow longer than any it has today", module_id)
                 continue
 
             new_help = self._extended(help_text, enumeration, missing)
             if len(listed) + len(missing) > 1:
-                new_help = _BIOS_NOUN.sub("BIOS files", new_help, count=1)
+                new_help = _BIOS_NOUN.sub(r"\1 files", new_help, count=1)
             produced[relative] = originals[relative].replace(
                 f'rp_module_help="{help_text}"',
                 f'rp_module_help="{new_help}"',
@@ -394,10 +412,10 @@ class Exporter(BaseExporter):
             if not help_text:
                 issues.append(f"{relative}: the help string is not closed")
                 continue
-            if "BIOS" not in help_text.group(1):
+            if "bios" not in help_text.group(1).lower():
                 issues.append(f"{relative}: the BIOS sentence is gone")
             names = self._listed(help_text.group(1))
-            if len(names) > MAX_NAMES:
+            if len(names) > getattr(self, "_longest", len(names)):
                 issues.append(
                     f"{relative}: {len(names)} names, past what the help enumerates"
                 )

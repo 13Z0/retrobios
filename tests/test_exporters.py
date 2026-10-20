@@ -656,9 +656,13 @@ class SearchOrder(unittest.TestCase):
         script = ('rp_module_id="lr-picodrive"\nrp_module_help="The Sega CD requires the '
                   'BIOS files us_scd1_9210.bin, eu_mcd1_9210.bin copied to $biosdir"\n')
         exporter = discover_exporters()["retropie"]()
+        # The cap is the longest list RetroPie writes: xm7 names thirteen.
+        longest = ('rp_module_id="xm7"\nrp_module_help="Copy bios files '
+                   + ", ".join(f"n{i}.rom" for i in range(12)) + ' and n12.rom to $biosdir"\n')
         produced = exporter.render(
             {"segacd": NativeSystem("segacd", files=files)}, None,
-            {"scriptmodules/libretrocores/lr-picodrive.sh": script},
+            {"scriptmodules/libretrocores/lr-picodrive.sh": script,
+             "scriptmodules/emulators/xm7.sh": longest},
         )["scriptmodules/libretrocores/lr-picodrive.sh"]
         self.assertIn("us_scd1_9210.bin, eu_mcd1_9210.bin and jp_mcd2_921222.bin copied",
                       produced)
