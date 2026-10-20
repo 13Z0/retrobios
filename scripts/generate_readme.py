@@ -187,6 +187,12 @@ def download_table(
     return lines
 
 
+def _names_list(coverages: dict) -> str:
+    """The platforms' names in reading order, the last after "and"."""
+    names = sorted(c["platform"] for c in coverages.values())
+    return ", ".join(names[:-1]) + f", and {names[-1]}" if len(names) > 1 else "".join(names)
+
+
 def collection_line(total_files: int, comp: dict) -> str:
     """The size of the whole collection, said as such.
 
@@ -340,17 +346,10 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         '<img src="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml/badge.svg" alt="Site"></a>',
         "</p>",
         "",
-        f"Complete BIOS and firmware packs for "
-        f"{', '.join(c['platform'] for c in sorted(coverages.values(), key=lambda x: x[
-                    'platform'
-                ])[:-1])}"
-        f", and {sorted(coverages.values(), key=lambda x: x[
-                'platform'
-            ])[-1]['platform']}.",
+        f"BIOS and firmware files for {_names_list(coverages)}, one pack per platform.",
         "",
-        f"Pick your platform below and extract the pack: it carries every file"
-        f" its emulators load, read from their source code. Nothing to"
-        f" configure, nothing to hunt down.",
+        "A pack holds the files its emulators read, as their source code names"
+        " them, and leaves out what the emulators install themselves.",
         "",
         "## Quick Install",
         "",
