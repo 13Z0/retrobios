@@ -4125,6 +4125,22 @@ class EmulatorPagesStateTheirDataForMachines(unittest.TestCase):
         self.assertEqual(data["hasPart"][0]["identifier"], ["sha1:" + "a" * 40, "md5:490f666e"])
         self.assertNotIn("identifier", data["hasPart"][1])
 
+    def test_every_repository_with_its_own_pin(self):
+        """xemu's libretro build lives in another repository at another
+        commit, and a port's upstream_commit was never published."""
+        from scripts.generate_site import emulator_structured_data
+
+        data = emulator_structured_data({
+            "emulator": "xemu",
+            "source": {"standalone": "https://github.com/xemu-project/xemu",
+                       "libretro": "https://github.com/LibretroAdmin/xemu-libretro"},
+            "source_commit": {"standalone": "f9b14039", "libretro": "d9804db7"},
+            "upstream": "https://github.com/mborgerson/xemu", "upstream_commit": "aa11",
+        })
+        self.assertEqual(
+            [(a["codeRepository"].rsplit("/", 1)[1], a.get("version")) for a in data["about"]],
+            [("xemu", "f9b14039"), ("xemu-libretro", "d9804db7"), ("xemu", "aa11")])
+
 
 
 class AManifestHashesAFileOnce(unittest.TestCase):

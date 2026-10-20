@@ -1498,21 +1498,30 @@ def emulator_structured_data(profile: dict) -> dict:
     the core loads, their hashes, the source read or when.
     """
     data: dict = {}
-    source = profile.get("source")
-    if isinstance(source, dict):
-        source = next(iter(source.values()), "")
-    commit = profile.get("source_commit")
-    if isinstance(commit, dict):
-        commit = next(iter(commit.values()), "")
-    if source:
-        about = {
-            "@type": "SoftwareSourceCode",
-            "name": str(profile.get("emulator", "")),
-            "codeRepository": str(source),
-        }
-        if commit:
-            about["version"] = str(commit)
-        data["about"] = about
+    # Every repository the profile reads, each with its own pin: xemu's
+    # libretro build lives in another repository at another commit, and a
+    # port's upstream_commit was never published.
+    about = []
+    seen: set[str] = set()
+    for field in ("source", "upstream"):
+        urls = profile.get(field)
+        pins = profile.get(f"{field}_commit")
+        for mode, url in (urls.items() if isinstance(urls, dict) else [("", urls)]):
+            if not url or not str(url).startswith("http") or str(url) in seen:
+                continue
+            seen.add(str(url))
+            pin = pins.get(mode) if isinstance(pins, dict) else pins
+            entry = {
+                "@type": "SoftwareSourceCode",
+                "name": str(profile.get("emulator", "")),
+                "codeRepository": str(url),
+                "description": " ".join(filter(None, [mode, field])),
+            }
+            if pin:
+                entry["version"] = str(pin)
+            about.append(entry)
+    if about:
+        data["about"] = about[0] if len(about) == 1 else about
     if profile.get("profiled_date"):
         data["dateModified"] = str(profile["profiled_date"])
     parts = []
