@@ -702,5 +702,31 @@ class ACardNamesThePacksThatInstallIt(unittest.TestCase):
         self.assertEqual(_installed_links("a" * 40, consumers, {"retrobat"}), [])
 
 
+class ProseCitationsLinkToThePin(unittest.TestCase):
+    """4,328 file:line citations in notes and platform details were plain
+    text, while profile_sync keeps each one on the profile's pin."""
+
+    PROFILE = {"source": "https://github.com/libretro/FreeChaF",
+               "source_commit": "76c7a84f1f7e80f3e6f2bba96fe100cb24e99124",
+               "files": [{"name": "x", "source_ref": "libretro.c:10"}]}
+
+    def test_a_rooted_or_structured_path_is_linked(self):
+        from sitesources import link_prose_citations
+
+        text = link_prose_citations(
+            self.PROFILE, "BIOS loading is in src/libretro.c:186-208 and libretro.c:12.")
+        self.assertIn("[`src/libretro.c:186-208`](https://github.com/libretro/FreeChaF/blob/"
+                      "76c7a84f1f7e80f3e6f2bba96fe100cb24e99124/src/libretro.c#L186-L208)", text)
+        self.assertIn("[`libretro.c:12`](", text)
+
+    def test_what_cannot_be_placed_stays_text(self):
+        from sitesources import link_prose_citations
+
+        self.assertEqual(link_prose_citations(self.PROFILE, "see memory.c:5"), "see memory.c:5")
+        self.assertEqual(link_prose_citations(self.PROFILE, "in `src/a.c:5`"), "in `src/a.c:5`")
+        two = {**self.PROFILE, "upstream": "https://github.com/x/y", "upstream_commit": "a" * 40}
+        self.assertEqual(link_prose_citations(two, "src/a.c:5"), "src/a.c:5")
+
+
 if __name__ == "__main__":
     unittest.main()

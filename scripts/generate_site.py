@@ -2793,7 +2793,7 @@ def _render_emulator_file(
         for d in details:
             lines.append(f"- {d}")
     if fnote:
-        lines.append(f"- {_escape_tags(str(fnote))}")
+        lines.append(f"- {_escape_tags(link_prose_citations(profile, str(fnote)))}")
     if not in_repo and f.get("unsourceable"):
         # The badge alone sent readers after a dump that cannot exist, and the
         # reason was only on the gaps page, which the card did not link.
@@ -2876,12 +2876,21 @@ def _render_platform_details(profile: dict) -> list[str]:
             if isinstance(pv, dict):
                 lines.append(f"    **{pk}:**")
                 for sk, sv in pv.items():
-                    lines.append(f"    - {sk}: {_plain_value(sv)}")
+                    lines.append(f"    - {sk}: {_detail_value(profile, sk, sv)}")
             else:
-                lines.append(f"    **{pk}:** {_plain_value(pv)}")
+                lines.append(f"    **{pk}:** {_detail_value(profile, pk, pv)}")
         lines.append("")
 
     return lines
+
+
+def _detail_value(profile: dict, key: object, value: object) -> str:
+    """A platform detail, its citations linked at the profile's pin."""
+    if key == "source_ref" and isinstance(value, (str, dict)):
+        return _source_ref_markdown(profile, value)
+    if isinstance(value, str):
+        return _escape_tags(link_prose_citations(profile, value))
+    return _plain_value(value)
 
 
 def _plain_value(value: object) -> str:
@@ -3176,7 +3185,7 @@ def generate_emulator_page(
 
     # Notes
     if notes:
-        indented = _admonition_body(notes)
+        indented = _admonition_body(link_prose_citations(profile, notes))
         lines.extend(['???+ note "Technical notes"', f"    {indented}", ""])
 
     if not files:
@@ -4859,6 +4868,7 @@ from sitewrite import (  # noqa: E402,F401
     _sweep_generated,
 )
 from sitesources import (  # noqa: E402,F401
+    link_prose_citations,
     revision_markdown,
     _repo_pins,
     _forge_sources,

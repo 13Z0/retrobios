@@ -162,4 +162,57 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
         if label:
             text = f"**{label}:** {text}"
         rendered_groups.append(text)
-    return "; ".join(rendered_groups)
+    return ", ".join(rendered_groups)
+
+
+def link_prose_citations(profile: dict, text: str) -> str:
+    """Prose file:line citations as pinned links, where the target is certain.
+
+    profile_sync keeps these citations on their pin, and the page printed
+    4,328 of them as plain text. A citation links only when the profile reads
+    one repository and the path is rooted (it holds a directory) or is one a
+    structured source_ref of the profile already uses: a bare name could be
+    anywhere in the tree, and a link to the wrong file is a false citation.
+    Text already in backticks or in a link is left alone.
+    """
+    from profile_sync import _prose_runs
+
+    candidates = _forge_sources(profile)
+    if len(candidates) != 1 or ":" not in text:
+        return text
+    repo, pin = candidates[0]
+    structured = {
+        part.path
+        for entry in profile.get("files") or []
+        if isinstance(entry, dict)
+        for _label, refs in source_ref_values(entry.get("source_ref"))
+        for part in split_source_ref(refs)
+    }
+    out = []
+    for line in text.split("\n"):
+        guarded = _guarded_spans(line)
+        edits = []
+        for _n, path_span, spans, parts, _run, wrapped in _prose_runs(line):
+            path = parts[0].path
+            if wrapped or " " in path or not _PATH_RE.fullmatch(path):
+                continue
+            if "/" not in path and path not in structured:
+                continue
+            if any(lo <= path_span[0] < hi for lo, hi in guarded):
+                continue
+            for index, ((lo, hi), part) in enumerate(zip(spans, parts)):
+                start = path_span[0] if index == 0 else lo
+                url = _source_permalink(repo, pin, part.path, part.start, part.end)
+                edits.append((start, hi, f"[`{line[start:hi]}`]({url})"))
+        for start, end, link in sorted(edits, reverse=True):
+            line = line[:start] + link + line[end:]
+        out.append(line)
+    return "\n".join(out)
+
+
+_PATH_RE = re.compile(r"^[A-Za-z0-9_.@/+~-]+$")
+
+
+def _guarded_spans(line: str) -> list[tuple[int, int]]:
+    """Code spans and links of a markdown line."""
+    return [m.span() for m in re.finditer(r"`[^`]*`|\[[^\]]*\]\([^)]*\)", line)]
