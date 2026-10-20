@@ -951,7 +951,8 @@ def generate_data_exports(
         "platforms.json": ("platforms", platform_items),
         "emulators.json": ("emulators", emulator_items),
         "gaps.json": ("verification-and-coverage-gaps", gap_rows),
-        "file-locations.json": ("file-locations", file_location_items(db)),
+        "file-locations.json": ("file-locations", file_location_items(
+            db, profiles, data_directory_members())),
     }
     for filename, (kind, items) in envelopes.items():
         document = {
@@ -1259,7 +1260,8 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     if key.startswith("emulators/") and relative.stem != "index":
         # Pinned only when the profile names the revision it was read at:
         # 48 pages without one called themselves source-pinned.
-        pinned = PAGE_DATA.get(key, {}).get("about", {}).get("version")
+        about = PAGE_DATA.get(key, {}).get("about", {})
+        pinned = any(a.get("version") for a in (about if isinstance(about, list) else [about]))
         kind = "source-pinned emulator firmware profile" if pinned else "emulator firmware profile"
         return f"{title}: {kind} with paths, hashes, requirements and validation behavior."
     if key.startswith("systems/") and relative.stem != "index":
@@ -1993,7 +1995,40 @@ def generate_files_page() -> str:
     ])
 
 
-def file_location_items(db: dict) -> list[dict]:
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def data_directory_members(install_dir: Path = _REPO_ROOT / "install") -> dict[str, dict[str, dict]]:
+    """Each data directory's files with their sha1 and size, as the install
+    manifests record them for the installer to check."""
+    members: dict[str, dict[str, dict]] = {}
+    for path in sorted(install_dir.glob("*.json")):
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        for tree in manifest.get("data_directories") or []:
+            members.setdefault(str(tree.get("ref", "")), {}).update(tree.get("files") or {})
+    return members
+
+
+def data_directory_revisions(data_dir: Path = _REPO_ROOT / "data") -> dict[str, dict]:
+    """The revision each data directory was fetched at, as refresh_data_dirs records it."""
+    path = data_dir / ".versions.json"
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _data_member_owners(profiles: dict) -> dict[str, str]:
+    """The emulator page that lists each data directory, the first by name."""
+    owners: dict[str, str] = {}
+    for name in sorted(profiles):
+        for tree in profiles[name].get("data_directories") or []:
+            owners.setdefault(str(tree.get("ref", "")), name)
+    return owners
+
+
+def file_location_items(
+    db: dict, profiles: dict | None = None, members: dict | None = None
+) -> list[dict]:
     """Each held file's card, keyed by its sha1.
 
     A card lives on its manufacturer's page, and a file refiled between
@@ -2008,7 +2043,20 @@ def file_location_items(db: dict) -> list[dict]:
             continue
         slug = parts[1].lower().replace(" ", "-")
         items.append({"sha1": sha1, "url": f"systems/{slug}/#sha1-{sha1[:12]}"})
-    return items
+    # A data directory's files are listed on the page of an emulator reading
+    # the tree: 2,534 hashes the packs ship were found nowhere on the site.
+    owners = _data_member_owners(profiles or {})
+    known = {item["sha1"] for item in items}
+    for ref, files in sorted((members or {}).items()):
+        if ref not in owners:
+            continue
+        for _member, info in sorted(files.items()):
+            sha1 = str(info.get("sha1", ""))
+            if sha1 and sha1 not in known:
+                known.add(sha1)
+                items.append({"sha1": sha1,
+                              "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
+    return sorted(items, key=lambda item: item["sha1"])
 
 
 def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
@@ -3089,6 +3137,11 @@ def _emulator_file_summary(
     return lines
 
 
+# Data directory members and revisions, read once per build.
+_DATA_MEMBERS: dict[str, dict[str, dict]] = {}
+_DATA_REVISIONS: dict[str, dict] = {}
+
+
 def generate_emulator_page(
     name: str,
     profile: dict,
@@ -3260,10 +3313,35 @@ def generate_emulator_page(
             lines.append(line)
             if entry.get("source_url"):
                 lines.append(f"    - Fetched from <{entry['source_url']}>")
+            fetched = _DATA_REVISIONS.get(ref) or {}
+            if fetched.get("version") or fetched.get("sha"):
+                # The URL serves whatever is current: the revision says
+                # which content the packs were built from.
+                revision = str(fetched.get("sha", "")).strip('"')
+                lines.append(f"    - Revision: {fetched.get('version', '')}"
+                             + (f" ({_code(revision)})" if revision else ""))
             if dd.get("mode"):
                 lines.append(f"    - Read by the {dd['mode']} build only")
+            if dd.get("bundled"):
+                lines.append("    - Installed with the emulator, so packs leave it out")
             if dd.get("source_ref"):
                 lines.append(f"    - Source: {_source_ref_markdown(profile, dd['source_ref'])}")
+            members = _DATA_MEMBERS.get(ref) or {}
+            if members:
+                lines.extend([
+                    "",
+                    f'    ??? info "{_count(len(members), "file")}, as the packs ship them"',
+                    "",
+                    "        | File | Size | SHA1 |",
+                    "        |------|-----:|------|",
+                ])
+                for member, info in sorted(members.items()):
+                    sha1 = str(info.get("sha1", ""))
+                    lines.append(
+                        f'        | <span id="sha1-{sha1[:12]}"></span>{_code(member)} '
+                        f"| {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |"
+                    )
+                lines.append("")
         lines.append("")
 
     lines.extend([f"*Generated on {_timestamp()}*"])
@@ -4691,6 +4769,8 @@ def _generate(args: argparse.Namespace) -> None:
         write_if_changed(str(docs / "systems" / f"{slug}.md"), page)
 
     print("Generating emulator pages...")
+    _DATA_MEMBERS.update(data_directory_members())
+    _DATA_REVISIONS.update(data_directory_revisions())
     write_if_changed(
         str(docs / "emulators" / "index.md"), generate_emulators_index(profiles)
     )

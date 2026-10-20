@@ -786,5 +786,24 @@ class AMismatchNamesTheDumpTheCollectionHolds(unittest.TestCase):
         self.assertEqual(_held_accepted("size mismatch: got 1, accepted [256]", db), "")
 
 
+class ADataDirectoryFileCanBeLookedUp(unittest.TestCase):
+    """2,534 hashes the packs ship from data directories were on no page:
+    the emulator page gave only a URL whose content moves."""
+
+    def test_a_member_resolves_to_its_emulator_page(self):
+        import json as _json
+
+        from generate_site import data_directory_members, file_location_items
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            Path(tmp, "retroarch.json").write_text(_json.dumps({"data_directories": [
+                {"ref": "dolphin-sys", "files": {"GC/font.bin": {"sha1": "c" * 40, "size": 3}}},
+            ]}))
+            members = data_directory_members(Path(tmp))
+        items = file_location_items(
+            {"files": {}}, {"dolphin": {"data_directories": [{"ref": "dolphin-sys"}]}}, members)
+        self.assertEqual(items, [{"sha1": "c" * 40, "url": "emulators/dolphin/#sha1-cccccccccccc"}])
+
+
 if __name__ == "__main__":
     unittest.main()
