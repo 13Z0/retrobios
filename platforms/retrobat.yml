@@ -3047,3 +3047,795 @@ systems:
       native_path: bios/mame/hash/xegs.xml
       native_name: Atari XEGS
     name: Atari XEGS
+launchers:
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.A500
+  - kick34005.A500.rom
+  - amiga-os-130.rom
+  - "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+  - "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick34005.A500, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:69-74, 544-548, 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick33180.A500
+  - kick33180.A500.rom
+  - amiga-os-120.rom
+  - "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A2000)[!].rom"
+  - "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A1000-A2000).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick33180.A500, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:76-81, 544-548, 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick37175.A500
+  - kick37175.A500.rom
+  - amiga-os-204.rom
+  - "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+)[!].rom"
+  - "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick37175.A500, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:83-88, 544-548, 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40063.A600
+  - kick40063.A600.rom
+  - amiga-os-310-a600.rom
+  - "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000)[!].rom"
+  - "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick40063.A600, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:90-95, 544-548, 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40068.A1200
+  - kick40068.A1200.rom
+  - amiga-os-310-a1200.rom
+  - "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200)[!].rom"
+  - "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick40068.A1200, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:97-111, 544-548,\
+    \ 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40068.A4000
+  - kick40068.A4000.rom
+  - amiga-os-310-a4000.rom
+  - "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A4000).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick40068.A4000, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:113-127, 544-548,\
+    \ 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40060.CD32
+  - kick40060.CD32.rom
+  - amiga-os-310-cd32.rom
+  - "Kickstart v3.1 rev 40.60 (1993)(Commodore)(CD32).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick40060.CD32, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:129-134, 138-143,\
+    \ 544-548, 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40060.CD32.ext
+  - kick40060.CD32.ext.rom
+  - amiga-os-310-cd32-ext.rom
+  - "CD32 Extended-ROM rev 40.60 (1993)(Commodore)(CD32).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick40060.CD32.ext, kickstart_ext_rom_file
+  fails_when_missing: warning, kickstart_ext_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:129-145, 553-557,\
+    \ 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.A500
+  - kick34005.A500.rom
+  - amiga-os-130.rom
+  - "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick34005.A500, kickstart_rom_file
+  fails_when_missing: warning, kickstart_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:147-151, 544-548,\
+    \ 686-711"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.CDTV
+  - kick34005.CDTV.rom
+  - amiga-os-130-cdtv-ext.rom
+  - "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+  - "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <amiberry roms>/kick34005.CDTV, kickstart_ext_rom_file
+  fails_when_missing: warning, kickstart_ext_rom_file not written
+  source_ref: "emulatorLauncher/Generators/Amiberry.Generator.cs:147-154, 553-557,\
+    \ 686-711"
+- emulator: ares
+  build: standalone
+  kind: names_searched
+  names:
+  - "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin"
+  - "[BIOS] LaserActive PAC-S1 (Japan) (v1.02).bin"
+  - "[BIOS] LaserActive PAC-S1 (Japan) (v1.01).bin"
+  case_insensitive: true
+  search_dir: bios/laseractive
+  passes_to: "settings.bml LaserActiveSEGAPAC/Firmware/BIOS.Japan (first found)"
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Ares.Generator.cs:518-529"
+- emulator: ares
+  build: standalone
+  kind: names_searched
+  names:
+  - "[BIOS] LaserActive PAC-S10 (US) (v1.04).bin"
+  - "[BIOS] LaserActive PAC-S10 (US) (v1.02).bin"
+  case_insensitive: true
+  search_dir: bios/laseractive
+  passes_to: "settings.bml LaserActiveSEGAPAC/Firmware/BIOS.US (first found)"
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Ares.Generator.cs:524-531"
+- emulator: duckstation
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: bios
+  passes_to: "settings.ini [BIOS] SearchDirectory = bios"
+  fails_when_missing: false
+  depends_on_option: duck_bios unset
+  source_ref: "emulatorLauncher/Generators/Duckstation.Generator.cs:202, 211-215"
+- emulator: duckstation
+  build: standalone
+  kind: core_option
+  names:
+  - psxonpsp660.bin
+  - scph5500.bin
+  - scph5501.bin
+  - scph5502.bin
+  - scph1001.bin
+  - scph7001.bin
+  - scph101.bin
+  search_dir: bios
+  passes_to: "settings.ini [BIOS] PathNTSCJ = PathNTSCU = PathPAL = <value>"
+  fails_when_missing: not checked by the launcher
+  depends_on_option: duck_bios
+  source_ref: "emulatorLauncher/Generators/Duckstation.Generator.cs:204-209, .emulationstation/es_features.cfg:11638-11646"
+- emulator: hatari
+  build: standalone
+  kind: fixed_name
+  names:
+  - tos.img
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "hatari.cfg [ROM] szTosImageFileName=<bios>/tos.img"
+  fails_when_missing: ApplicationException 'Missing TOS file <tosName> in 'bios' folder.'
+  depends_on_option: hatari_tos unset
+  source_ref: "emulatorLauncher/Generators/Hatari.Generator.cs:144-154"
+- emulator: hatari
+  build: standalone
+  kind: core_option
+  names:
+  - tos206.img
+  - tos106.img
+  - tos104.img
+  - tos102.img
+  - emutos.img
+  case_insensitive: true
+  search_dir: bios/hatari/tos
+  passes_to: "hatari.cfg [ROM] szTosImageFileName=<bios>/hatari/tos/<value>"
+  fails_when_missing: ApplicationException 'Missing TOS file <tosName> in 'bios' folder.'
+  depends_on_option: hatari_tos
+  source_ref: "emulatorLauncher/Generators/Hatari.Generator.cs:146-154, .emulationstation/es_features.cfg:12791-12797"
+- emulator: hatari
+  build: libretro
+  kind: core_option
+  names:
+  - default
+  - tos206.img
+  - tos106.img
+  - tos104.img
+  - tos102.img
+  - emutos.img
+  search_dir: bios
+  passes_to: hatari_tosimage = <value> | default
+  fails_when_missing: not checked by the launcher
+  depends_on_option: hatari_tos
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:3148-3151, .emulationstation/es_features.cfg:6610-6617"
+- emulator: hatarib
+  build: libretro
+  kind: fixed_name
+  names:
+  - tos.img
+  case_insensitive: true
+  search_dir: bios
+  passes_to: hatarib_tos = <tos.img>
+  fails_when_missing: falls back to hatarib_tos = <etos1024k>
+  depends_on_option: hatarib_tos unset
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:3191-3195"
+- emulator: hatarib
+  build: libretro
+  kind: core_option
+  names:
+  - tos206.img
+  - tos106.img
+  - tos104.img
+  - tos102.img
+  case_insensitive: true
+  search_dir: bios/hatarib
+  passes_to: hatarib_tos = hatarib/<value>
+  fails_when_missing: option not written when the file is absent
+  depends_on_option: hatarib_tos
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:3184-3187, .emulationstation/es_features.cfg:6667-6676"
+- emulator: mesen
+  build: standalone
+  kind: copies
+  names:
+  - syscard3.pce
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "copied to <mesen>/Firmware/[BIOS] Super CD-ROM System (Japan) (v3.0).pce,\
+    \ only when the target does not exist"
+  fails_when_missing: "ApplicationException 'PCE CD firmware is missing (syscard3.pce)'"
+  source_ref: "emulatorLauncher/Generators/Mesen.Generator.cs:254-269"
+- emulator: mesen
+  build: standalone
+  kind: copies
+  names:
+  - SGB1.sfc
+  - SGB2.sfc
+  case_insensitive: true
+  search_dir: bios
+  passes_to: copied to <mesen>/Firmware/SGB1.sfc, SGB2.sfc, only when the target does
+    not exist
+  fails_when_missing: "ApplicationException 'Super Gameboy firmware is missing (SGB1.sfc\
+    \ and/or SGB2.sfc)'"
+  source_ref: "emulatorLauncher/Generators/Mesen.Generator.cs:281-304"
+- emulator: mesen
+  build: standalone
+  kind: copies
+  names:
+  - gba_bios.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: copied to <mesen>/Firmware/gba_bios.bin, only when the target does not
+    exist
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Mesen.Generator.cs:307-324"
+- emulator: mesen
+  build: standalone
+  kind: copies
+  names:
+  - colecovision.rom
+  case_insensitive: true
+  search_dir: bios
+  passes_to: copied to <mesen>/Firmware/bios.col, only when the target does not exist
+  fails_when_missing: "ApplicationException 'Colecovision firmware is missing (colecovision.rom)'"
+  source_ref: "emulatorLauncher/Generators/Mesen.Generator.cs:326-346"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - cf-3300_basic-bios1.rom
+  - cf-3300_disk.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine National_CF-3300
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 459"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - fs-5500_basic-bios2.rom
+  - fs-5500_disk.rom
+  - fs-5500_kanjibasic.rom
+  - fs-5500_kanjifont.rom
+  - fs-5500_msx2sub.rom
+  - fs-5500_superimp.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine National_FS-5500F2
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 460"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - fs-a1gt_firmware.rom
+  - fs-a1gt_kanjifont.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Panasonic_FS-A1GT
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 461"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - fs-a1wsx_basic-bios2p.rom
+  - fs-a1wsx_disk.rom
+  - fs-a1wsx_firmware.rom
+  - fs-a1wsx_fmbasic.rom
+  - fs-a1wsx_kanjibasic.rom
+  - fs-a1wsx_kanjifont.rom
+  - fs-a1wsx_msx2psub.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Panasonic_FS-A1WSX
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 462"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - nms8245_basic-bios2.rom
+  - nms8245_disk.rom
+  - nms8245_disk_1.06.rom
+  - nms8245_msx2sub.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Philips_NMS_8245
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 463"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - vg8020_basic-bios1.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Philips_VG_8020
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 464"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - px-7_basic-bios1.rom
+  - px-7_pbasic.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Pioneer_PX-7
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 465"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - coleco.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine ColecoVision_SGM
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 466"
+- emulator: openmsx
+  build: standalone
+  kind: fixed_name
+  names:
+  - svi-738_disk.rom
+  - svi-738_rs232.rom
+  - svi-738_se_basic-bios1.rom
+  case_insensitive: false
+  search_dir: bios/openmsx/share/systemroms
+  passes_to: -machine Spectravideo_SVI-738_SE
+  fails_when_missing: ApplicationException '<machine> machine has missing BIOS file
+    '<c>' in 'bios\openmsx\share\systemroms' folder.'
+  source_ref: "emulatorLauncher/Generators/OpenMSX.Generator.cs:156-159, 467"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  names:
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0250e-20100415.bin
+  - ps2-0230j-20080220.bin
+  - ps3_ps2_emu_bios.bin
+  - SCPH30004R.bin
+  - scph39001.bin
+  - SCPH-39004_BIOS_V7_EUR_160.BIN
+  - SCPH-39001_BIOS_V7_USA_160.BIN
+  - SCPH-70000_BIOS_V12_JAP_200.BIN
+  case_insensitive: true
+  search_dir: "bios/pcsx2/bios (bios when bios/pcsx2/bios holds no file)"
+  passes_to: "inis/PCSX2.ini [Folders] Bios, [Filenames] BIOS"
+  fails_when_missing: ApplicationException 'No BIOS found in bios/pcsx2/bios folder.'
+  depends_on_option: pcsx2_forcebios
+  source_ref: "emulatorLauncher/Generators/Pcsx2.Generator.cs:589-590, 712-768"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  names:
+  - r27v1602f.8g
+  - r27v1602f.7d
+  case_insensitive: true
+  search_dir: "bios/pcsx2/bios (bios when bios/pcsx2/bios holds no file)"
+  passes_to: "inis/PCSX2.ini [Folders] Bios, [Filenames] BIOS"
+  fails_when_missing: ApplicationException 'No BIOS found in bios/pcsx2/bios folder.'
+  depends_on_option: pcsx2_forcebios
+  source_ref: "emulatorLauncher/Generators/Pcsx2.Generator.cs:592, 712-768"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  names:
+  - SCPH30004R.bin
+  - SCPH30004R.MEC
+  - scph39001.bin
+  - scph39001.MEC
+  - SCPH-39004_BIOS_V7_EUR_160.BIN
+  - SCPH-39001_BIOS_V7_USA_160.BIN
+  - SCPH-70000_BIOS_V12_JAP_200.BIN
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0230j-20080220.bin
+  - ps2-0250e-20100415.bin
+  - ps3_ps2_emu_bios.bin
+  case_insensitive: true
+  search_dir: bios/pcsx2/bios if any listed name is there, else bios
+  passes_to: "inis/PCSX2_ui.ini [Folders] Bios, [Filenames] BIOS"
+  fails_when_missing: "no error: BIOS name defaults to SCPH30004R.bin"
+  depends_on_option: pcsx2_forcebios
+  source_ref: "emulatorLauncher/Generators/Pcsx2.Generator.cs:200-203, 300-314"
+- emulator: pcsx2
+  build: libretro
+  kind: core_option
+  names:
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0250e-20100415.bin
+  - ps2-0230j-20080220.bin
+  - ps3_ps2_emu_bios.bin
+  case_insensitive: true
+  search_dir: <system_directory>/pcsx2/bios
+  passes_to: pcsx2_bios = <value>
+  fails_when_missing: ApplicationException 'BIOS file <pcsx2Bios> does not exist in
+    '<ps2BiosFolder>'.'
+  depends_on_option: lrps2_bios
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:3340-3349, .emulationstation/es_features.cfg:5459-5465"
+- emulator: pcsx2
+  build: libretro
+  kind: scans_dir
+  names:
+  - ps2-0230a-20080220.bin
+  - <first file 4-8 MiB, ordinal-ignore-case>
+  case_insensitive: true
+  search_dir: <system_directory>/pcsx2/bios
+  passes_to: pcsx2_bios = <chosen name>
+  fails_when_missing: ApplicationException 'No valid PS2 BIOS file found in '<ps2BiosFolder>'.'
+  depends_on_option: lrps2_bios unset
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:3307-3328, 3353-3358"
+- emulator: bizhawk
+  build: standalone
+  kind: names_searched
+  names:
+  - psxonpsp660.bin
+  - ps1_rom.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: PSX+U, PSX+J, PSX+E
+  fails_when_missing: false
+  depends_on_option: bizhawk_psx_original_bios off
+  source_ref: "emulatorLauncher/Generators/Bizhawk.Generator.cs:623-664"
+- emulator: bizhawk
+  build: standalone
+  kind: fixed_name
+  names:
+  - scph5501.bin
+  - scph5500.bin
+  - scph5502.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: PSX+U, PSX+J, PSX+E
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Bizhawk.Generator.cs:623-664"
+- emulator: mednafen
+  build: standalone
+  kind: names_searched
+  names:
+  - psxonpsp660.bin
+  - ps1_rom.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: psx.bios_eu, psx.bios_jp, psx.bios_na
+  fails_when_missing: false
+  depends_on_option: mednafen_psx_original_bios off
+  source_ref: "emulatorLauncher/Generators/Mednafen.Generator.cs:414-441"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  names:
+  - scph5502.bin
+  - scph5500.bin
+  - scph5501.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: psx.bios_eu, psx.bios_jp, psx.bios_na
+  fails_when_missing: names written without an existence check
+  source_ref: "emulatorLauncher/Generators/Mednafen.Generator.cs:414-441"
+- emulator: mednafen_psx_hw
+  build: libretro
+  kind: names_searched
+  names:
+  - psxonpsp660.bin
+  - ps1_rom.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: beetle_psx_hw_override_bios
+  fails_when_missing: false
+  depends_on_option: beetle_psx_original_bios off
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:4034-4045"
+- emulator: swanstation
+  build: libretro
+  kind: names_searched
+  names:
+  - psxonpsp660.bin
+  - ps1_rom.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: swanstation_BIOS_PathNTSCJ, swanstation_BIOS_PathNTSCU, swanstation_BIOS_PathPAL
+  fails_when_missing: false
+  depends_on_option: swanstation_original_bios off
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:5982-6009"
+- emulator: swanstation
+  build: libretro
+  kind: fixed_name
+  names:
+  - scph5500.bin
+  - scph5501.bin
+  - scph5502.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: swanstation_BIOS_PathNTSCJ, swanstation_BIOS_PathNTSCU, swanstation_BIOS_PathPAL
+  fails_when_missing: names written without an existence check
+  source_ref: "emulatorLauncher/Generators/LibRetro.CoreOptions.cs:5982-6009"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.A500
+  - kick34005.A500.rom
+  - amiga-os-130.rom
+  - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+  - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+  - "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1045-1049, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40063.A600
+  - kick40063.A600.rom
+  - amiga-os-310-a600.rom
+  - "Kickstart v3.1 r40.063 (1993-10)(Commodore)(A600HD)[!].rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1051-1053, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick37175.A500
+  - kick37175.A500.rom
+  - amiga-os-204.rom
+  - "Kickstart v2.04 r37.175 (1991-05)(Commodore)(A500+)[!].rom"
+  - "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1055-1058, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40068.A1200
+  - kick40068.A1200.rom
+  - amiga-os-310-a1200.rom
+  - "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A1200)[!].rom"
+  - "Kickstart - 391774-01 (USA, Europe) (v3.1 Rev 40.068) (A1200).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1060-1063, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40068.A4000
+  - kick40068.A4000.rom
+  - amiga-os-310-a4000.rom
+  - "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A4000)[!].rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1065-1067, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40060.CD32
+  - kick40060.CD32.rom
+  - amiga-os-310-cd32.rom
+  - "Kickstart v3.1 r40.060 (1993-05)(Commodore)(CD32)[!].rom"
+  - "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1069-1073, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick40060.CD32.ext
+  - kick40060.CD32.ext.rom
+  - amiga-os-310-cd32-ext.rom
+  - "CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_ext_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'ROM étendu introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.KickstartExt)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:211-214, 1069-1076, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.A500
+  - kick34005.A500.rom
+  - amiga-os-130.rom
+  - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+  - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'Kickstart introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.Kickstart)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:204-207, 1078-1082, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: names_searched
+  names:
+  - kick34005.CDTV
+  - kick34005.CDTV.rom
+  - amiga-os-130-cdtv-ext.rom
+  - "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+  - "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom"
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: game .uae kickstart_ext_rom_file=<found path>
+  fails_when_missing: "ApplicationException 'ROM étendu introuvable pour <key>. Placez\
+    \ l'un de ces fichiers dans \\bios : <string.Join(\", \", candidate.KickstartExt)>'"
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:211-214, 1078-1086, 1090-1113"
+- emulator: winuae
+  build: standalone
+  kind: copies
+  names:
+  - kick34005.A500
+  - kick40063.A600
+  - kick40068.A1200
+  - kick40068.A4000
+  case_insensitive: true
+  search_dir: bios, bios/amiga, bios/Amiga
+  passes_to: copied to <WHDBoot>/Devs/Kickstarts/<name> from the system's Kickstart
+    candidates
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Uae.Generator.cs:1002-1011, 1026-1032"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - mcpx_1.0.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "xemu.toml [sys.files] bootrom_path, only if the file exists"
+  fails_when_missing: bootrom_path not written
+  source_ref: "emulatorLauncher/Generators/Xemu.Generator.cs:118-119, 297"
+- emulator: xemu
+  build: standalone
+  kind: core_option
+  names:
+  - Complex_4627.bin
+  - Cerbios.bin
+  - Complex_4627v1.03.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "xemu.toml [sys.files] flashrom_path=<bios>/<value>, default Complex_4627.bin"
+  fails_when_missing: path written without an existence check
+  depends_on_option: xemu_flashrom
+  source_ref: "emulatorLauncher/Generators/Xemu.Generator.cs:286-289, .emulationstation/es_features.cfg:20472-20476"
+- emulator: xemu
+  build: standalone
+  kind: names_searched
+  names:
+  - chihiro_xbox_bios.bin
+  case_insensitive: true
+  search_dir: bios/chihiro, then bios
+  passes_to: "xemu.toml [chihiro.roms] bios_path"
+  fails_when_missing: "warning '[Generator] chihiro_xbox_bios.bin not found, Chihiro\
+    \ will not boot.', bios_path not written"
+  source_ref: "emulatorLauncher/Generators/Xemu.Generator.cs:417-444"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - ic10_g24lc64.bin
+  - ic11_24lc024.bin
+  - pc20_g24lc64.bin
+  case_insensitive: true
+  search_dir: directory of the Chihiro BIOS found
+  passes_to: "nothing passed: existence checked only"
+  fails_when_missing: warning per missing file
+  source_ref: "emulatorLauncher/Generators/Xemu.Generator.cs:432-436"
+- emulator: xemu
+  build: standalone
+  kind: names_searched
+  names:
+  - fpr21042_m29w160et.bin
+  - fpr-23887_29lv160te.ic4
+  - fpr-23887.bin
+  case_insensitive: true
+  search_dir: directory of the Chihiro BIOS found
+  passes_to: "nothing passed: warning if none exists"
+  fails_when_missing: "warning '[Generator] Chihiro media board flash missing next\
+    \ to the BIOS.'"
+  source_ref: "emulatorLauncher/Generators/Xemu.Generator.cs:438-441"
