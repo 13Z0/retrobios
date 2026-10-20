@@ -28,9 +28,12 @@ notes: |
   pak2 and mp_bin, so the extra slots are reserved for forward compatible
   server lists, never filled by id.
 
-  The ET Legacy project ships its own replacement etmain/ assets (configs,
-  presets, locale files) directly in the source tree, plus a Legacy mod
-  pk3 downloaded on first run. The user still has to supply the retail
+  fs_game defaults to the legacy mod (src/qcommon/files.c:5141-5148). The
+  build packs the cgame and ui libraries with the source tree's etmain/
+  assets (configs, presets, locale files) into legacy/legacy_<version>.pk3
+  and installs it with the engine (cmake/ETLBuildMod.cmake:301-316). The
+  client extracts its cgame and ui libraries from that pk3 at load
+  (src/sys/sys_main.c:954-966). The user still has to supply the retail
   pak0.pk3 from the free Enemy Territory 2.60b download. pak0.pk3 holds
   every id map, model, texture and sound.
 
@@ -66,3 +69,11 @@ files:
     required: false
     source_ref: "src/qcommon/files.c:4011-4018 (FS_idPak)"
     note: "Retail multiplayer QVM binaries. ET Legacy ships its own cgame/ui binaries, and the retail pack is for pure clients joining stock servers."
+
+exclusion_note: >
+  legacy/legacy_<version>.pk3 is not listed. It is the engine's own build
+  output, named after the git describe of the build and holding cgame and
+  ui libraries compiled for the host, so every release and architecture
+  ships different bytes under a different name. It arrives with every
+  install of the engine.
+  ref: cmake/ETLBuildMod.cmake:301-316, cmake/ETLVersion.cmake:120-131
