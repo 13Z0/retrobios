@@ -6,6 +6,7 @@ and diffs truth against scraped platform data to find divergences.
 
 from __future__ import annotations
 
+import copy
 import sys
 
 from common import (
@@ -208,13 +209,12 @@ def _declared(entry: dict, field: str) -> set[str]:
 
 
 def _contents_disagree(a: dict, b: dict) -> bool:
-    """A hash both declare without a value in common, or two declared sizes."""
+    """A hash both declare without a value in common, or no size both admit."""
     for field in ("sha1", "md5", "sha256", "crc32"):
         ours, theirs = _declared(a, field), _declared(b, field)
         if ours and theirs and not ours & theirs:
             return True
-    size_a, size_b = a.get("size"), b.get("size")
-    return isinstance(size_a, int) and isinstance(size_b, int) and size_a != size_b
+    return _sizes_clash(a, b)
 
 
 def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
@@ -388,6 +388,59 @@ def _archives_not_members(files: list[dict]) -> list[dict]:
     return out
 
 
+def _sizes(entry: dict) -> tuple[set[int] | None, int | None, int | None]:
+    """The sizes an entry admits: exact values, then a min and a max."""
+    raw = entry.get("size")
+    values = raw if isinstance(raw, list) else [raw]
+    exact = {int(v) for v in values if isinstance(v, int) and not isinstance(v, bool)}
+    low, high = entry.get("min_size"), entry.get("max_size")
+    return (exact or None,
+            low if isinstance(low, int) else None,
+            high if isinstance(high, int) else None)
+
+
+def _sizes_clash(a: dict, b: dict) -> bool:
+    """No size both entries admit, lists and ranges included."""
+    exact_a, low_a, high_a = _sizes(a)
+    exact_b, low_b, high_b = _sizes(b)
+
+    def fits(value: int, low: int | None, high: int | None) -> bool:
+        return (low is None or value >= low) and (high is None or value <= high)
+
+    if exact_a and exact_b:
+        return not exact_a & exact_b
+    if exact_a:
+        return not any(fits(v, low_b, high_b) for v in exact_a)
+    if exact_b:
+        return not any(fits(v, low_a, high_a) for v in exact_b)
+    return False
+
+
+def _identity_values(entry: dict, db: dict | None) -> set[str]:
+    """Every hash an entry declares, with the siblings the database knows."""
+    probe = {k: entry[k] for k in ("sha1", "md5", "crc32", "size") if entry.get(k)}
+    if db and probe and not any(isinstance(v, list) for v in probe.values()):
+        _enrich_hashes(probe, db)
+    values: set[str] = set()
+    for field in ("sha1", "md5", "sha256", "crc32"):
+        values |= _declared(entry, field) | _declared(probe, field)
+    return values
+
+
+def _declaration_verdict(entry: dict, declaration: dict, db: dict | None) -> str:
+    """same, other or undecided: can a platform declaration be this file?
+
+    A shared hash proves it. Sizes no value of which agrees refute it, as
+    name_match_size_ok refutes a candidate. Two hashes at one size are two
+    revisions of one slot, as slots.py reads them, so they refute nothing.
+    """
+    if _identity_values(entry, db) & _identity_values(declaration, db):
+        return "same"
+    if _sizes_clash(entry, declaration):
+        return "other"
+    return "undecided"
+
+
 def generate_platform_truth(
     platform_name: str,
     config: dict,
@@ -424,34 +477,58 @@ def generate_platform_truth(
     # 3. Normalized match: strip manufacturer prefix + separators
     platform_sys_ids = set(config.get("systems", {}).keys())
 
-    # File->platform_system reverse index from scraped config
-    file_to_plat_sys: dict[str, str] = {}
+    # Every platform declaration of a name, in the platform's order. The
+    # last one used to win, whatever the content.
+    declared_by_name: dict[str, list[tuple[str, dict]]] = {}
     for psid, sys_data in config.get("systems", {}).items():
         for fe in sys_data.get("files", []):
             fname = fe.get("name", "").lower()
             if fname:
-                file_to_plat_sys[fname] = psid
-            for alias in fe.get("aliases", []):
-                file_to_plat_sys[alias.lower()] = psid
+                declared_by_name.setdefault(fname, []).append((psid, fe))
 
     # Normalized ID -> platform system ID
     norm_to_platform: dict[str, str] = {}
     for psid in platform_sys_ids:
         norm_to_platform[_norm_system_id(psid)] = psid
 
-    def _map_sys_id(profile_sid: str, file_name: str = "") -> str:
+    def _map_sys_id(profile_sid: str) -> str:
         """Map a profile system ID to the platform's system ID."""
-        # 1. File-based lookup (handles composites and name mismatches)
-        if file_name:
-            plat_sys = file_to_plat_sys.get(file_name.lower())
-            if plat_sys:
-                return plat_sys
-        # 2. Exact match
         if profile_sid in platform_sys_ids:
             return profile_sid
-        # 3. Normalized match
-        normed = _norm_system_id(profile_sid)
-        return norm_to_platform.get(normed, profile_sid)
+        return norm_to_platform.get(_norm_system_id(profile_sid), profile_sid)
+
+    def _attribute(fe: dict, own: str | None, on_platform: set[str]) -> list[str]:
+        """The platform systems an entry belongs to, [] when nothing decides.
+
+        A declaration of the same name settles the system only when it can
+        be the same file: a shared hash, or no contradicting size. fmsx's
+        16 KB DISK.ROM is not quasi88's 2 KB disk.rom, and dosbox's SC-55
+        ROM1.BIN is not galaksija's. The same content declared under two
+        systems is filed under both.
+        """
+        verdicts = [
+            (psid, _declaration_verdict(fe, decl, db))
+            for psid, decl in declared_by_name.get(fe.get("name", "").lower(), [])
+        ]
+        same = sorted({psid for psid, v in verdicts if v == "same"})
+        undecided = sorted({psid for psid, v in verdicts if v == "undecided"})
+        if own is not None:
+            mapped = _map_sys_id(own)
+            if any(psid == mapped and v != "other" for psid, v in verdicts):
+                return [mapped]
+            if same:
+                return same
+            if len(undecided) == 1:
+                return undecided
+            return [mapped]
+        if same:
+            return same
+        if len(undecided) == 1:
+            return undecided
+        if undecided:
+            ours = [psid for psid in undecided if psid in on_platform]
+            return ours if len(ours) == 1 else []
+        return [next(iter(on_platform))] if len(on_platform) == 1 else []
 
     systems: dict[str, dict] = {}
     unattributed: dict[str, int] = {}
@@ -480,34 +557,42 @@ def generate_platform_truth(
             profile_sid = fe.get("system", "")
             sys_ids = profile.get("systems", [])
             if profile_sid:
-                sys_id = _map_sys_id(profile_sid, fe.get("name", ""))
-            elif len(sys_ids) <= 1:
-                sys_id = _map_sys_id(sys_ids[0] if sys_ids else "unknown", fe.get("name", ""))
+                own: str | None = profile_sid
+            elif len(sys_ids) == 1:
+                own = sys_ids[0]
+            elif not sys_ids:
+                # A profile that names no system: a platform declaration of
+                # the same file files it, and the placeholder takes only a
+                # name the platform does not declare. mess2015's hiscore.dat
+                # beside the arcade one put an "unknown" section in System.dat.
+                own = None
             else:
-                # A multi-system profile's entry without a system: the
-                # platform's own declaration of the name decides, or the one
+                # A multi-system profile's entry without a system is filed by
+                # the platform's own declaration of the same file, or the one
                 # profile system the platform has. Otherwise it is not filed:
                 # the first system was a guess, and CLK's Apple, Mac, ZX and
                 # Amiga ROMs went to RomM as Amstrad CPC firmware.
-                declared = file_to_plat_sys.get(fe.get("name", "").lower())
-                if declared:
-                    sys_id = declared
-                elif len(on_platform) == 1:
-                    sys_id = next(iter(on_platform))
-                else:
-                    unattributed[emu_name] = unattributed.get(emu_name, 0) + 1
-                    continue
-            system = systems.setdefault(sys_id, {})
-            _merge_file_into_system(system, fe, emu_name, db)
-            # Track core contribution per system
-            sys_cov = system_cores.setdefault(
-                sys_id,
-                {
-                    "profiled": set(),
-                    "unprofiled": set(),
-                },
-            )
-            sys_cov["profiled"].add(emu_name)
+                own = None
+            sys_targets = _attribute(fe, own, on_platform)
+            if not sys_ids and not profile_sid and not sys_targets \
+                    and fe.get("name", "").lower() not in declared_by_name:
+                sys_targets = [_map_sys_id("unknown")]
+            if not sys_targets:
+                unattributed[emu_name] = unattributed.get(emu_name, 0) + 1
+                continue
+            for position, sys_id in enumerate(sys_targets):
+                system = systems.setdefault(sys_id, {})
+                _merge_file_into_system(
+                    system, fe if position == 0 else copy.deepcopy(fe), emu_name, db
+                )
+                sys_cov = system_cores.setdefault(
+                    sys_id,
+                    {
+                        "profiled": set(),
+                        "unprofiled": set(),
+                    },
+                )
+                sys_cov["profiled"].add(emu_name)
 
     # Ensure all systems of resolved cores have entries (even with 0 files).
     # This documents that the system is covered: the core was analyzed and

@@ -184,5 +184,115 @@ class EveryRevisionACoreAcceptsStays(unittest.TestCase):
         )
 
 
+
+def _filed(truth: dict, name: str) -> list[str]:
+    """The systems an entry of that name was filed under."""
+    return sorted(
+        sid for sid, system in truth.get("systems", {}).items()
+        for f in system.get("files", []) if f["name"] == name
+    )
+
+
+class ADeclarationOnlyAttributesTheSameFile(unittest.TestCase):
+    """A name the platform declares filed an entry under that system before
+    anything else, and the last declaration of a name won. fmsx's 16 KB
+    DISK.ROM went to nec-pc-88 for quasi88's 2 KB disk.rom, and dosbox's
+    SC-55 ROM1.BIN to galaksija, whatever their own system said."""
+
+    @staticmethod
+    def truth(platform_systems: dict, profiles: dict) -> dict:
+        config = {"cores": list(profiles), "systems": platform_systems}
+        return generate_platform_truth("p", config, {}, profiles)
+
+    def test_a_same_named_rom_of_another_size_does_not_take_the_entry(self):
+        fmsx = {"type": "libretro", "systems": ["microsoft-msx", "microsoft-msx2"],
+                "files": [{"name": "DISK.ROM", "size": 16384}]}
+        truth = self.truth({
+            "microsoft-msx": {"files": [{"name": "DISK.ROM", "size": 16384}]},
+            "nec-pc-88": {"files": [{"name": "disk.rom", "size": 2048}]},
+        }, {"fmsx": fmsx})
+        self.assertEqual(_filed(truth, "DISK.ROM"), ["microsoft-msx"])
+
+    def test_a_refuted_declaration_leaves_the_profile_system(self):
+        dosbox = {"type": "libretro", "systems": ["dos"],
+                  "files": [{"name": "ROM1.BIN", "size": 32768}]}
+        truth = self.truth({
+            "dos": {"files": []},
+            "galaksija": {"files": [{"name": "ROM1.BIN", "size": 4096}]},
+        }, {"dosbox": dosbox})
+        self.assertEqual(_filed(truth, "ROM1.BIN"), ["dos"])
+
+    def test_an_explicit_system_is_not_moved_by_a_homonym(self):
+        clk = {"type": "libretro", "systems": ["oric", "amstrad-cpc"],
+               "files": [{"name": "basic10.rom", "system": "oric", "size": 16384}]}
+        truth = self.truth({
+            "elektronika-bk": {"files": [{"name": "BASIC10.ROM", "size": 24576}]},
+        }, {"clk": clk})
+        self.assertEqual(_filed(truth, "basic10.rom"), ["oric"])
+
+    def test_a_multi_system_entry_refuted_everywhere_is_unattributed(self):
+        oricutron = {"type": "libretro", "systems": ["oric", "oric-atmos"],
+                     "files": [{"name": "basic10.rom", "max_size": 16384}]}
+        truth = self.truth({
+            "elektronika-bk": {"files": [{"name": "BASIC10.ROM", "size": 24576}]},
+        }, {"oricutron": oricutron})
+        self.assertEqual(_filed(truth, "basic10.rom"), [])
+        self.assertEqual(truth["_coverage"]["unattributed"], {"oricutron": 1})
+
+    def test_a_rom_declared_under_two_systems_is_filed_under_both(self):
+        atari800 = {"type": "libretro", "systems": ["atari-400-800", "atari-5200"],
+                    "files": [{"name": "ATARIXL.ROM", "md5": "a" * 32}]}
+        truth = self.truth({
+            "atari-400-800": {"files": [{"name": "ATARIXL.ROM", "md5": "a" * 32}]},
+            "atari-5200": {"files": [{"name": "ATARIXL.ROM", "md5": "a" * 32}]},
+        }, {"atari800": atari800})
+        self.assertEqual(_filed(truth, "ATARIXL.ROM"), ["atari-400-800", "atari-5200"])
+
+    def test_an_equal_size_revision_is_still_the_file(self):
+        """Two md5 at one size are two revisions of one slot, as slots.py
+        reads them: atari800's ATARIOSB.ROM against System.dat's."""
+        atari800 = {"type": "libretro", "systems": ["atari-400-800", "atari-5200"],
+                    "files": [{"name": "ATARIOSB.ROM", "md5": "a" * 32, "size": 10240}]}
+        truth = self.truth({
+            "atari-400-800": {"files": [{"name": "ATARIOSB.ROM", "md5": "b" * 32,
+                                         "size": 10240}]},
+        }, {"atari800": atari800})
+        self.assertEqual(_filed(truth, "ATARIOSB.ROM"), ["atari-400-800"])
+
+    def test_a_systemless_profile_does_not_file_a_refuted_name_as_unknown(self):
+        """mess2015 declares no system. Its hiscore.dat is not the arcade
+        one the platform declares, and filing it under the placeholder put
+        an "unknown" section into System.dat."""
+        mess = {"type": "libretro", "systems": [],
+                "files": [{"name": "hiscore.dat", "size": 216250},
+                          {"name": "only_mine.dat", "size": 10}]}
+        truth = self.truth({"arcade": {"files": [{"name": "hiscore.dat", "size": 324575}]}},
+                           {"mess2015": mess})
+        self.assertEqual(_filed(truth, "hiscore.dat"), [])
+        self.assertEqual(_filed(truth, "only_mine.dat"), ["unknown"])
+
+    def test_a_bare_declaration_still_translates(self):
+        """The platform's own id for our slug, from a declaration that
+        states no content: nothing contradicts it."""
+        pcsx = {"type": "libretro", "systems": ["sony-playstation"],
+                "files": [{"name": "scph1001.bin", "md5": "a" * 32}]}
+        truth = self.truth({"psx": {"files": [{"name": "scph1001.bin"}]}}, {"pcsx": pcsx})
+        self.assertEqual(_filed(truth, "scph1001.bin"), ["psx"])
+
+
+class ASizeOutsideARangeIsAnotherFile(unittest.TestCase):
+    def test_two_cores_do_not_merge_across_a_declared_range(self):
+        """bk's 24 KB BASIC10.ROM and oricutron's basic10.rom (max_size
+        16384) merged into one entry, which took the Oric md5."""
+        from truth import _merge_file_into_system  # noqa: PLC0415
+
+        system: dict = {}
+        _merge_file_into_system(system, {"name": "BASIC10.ROM", "size": 24576,
+                                         "md5": "a" * 32}, "bk", None)
+        _merge_file_into_system(system, {"name": "basic10.rom", "max_size": 16384},
+                                "oricutron", None)
+        self.assertEqual(len(system["files"]), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
