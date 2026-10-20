@@ -5817,3 +5817,316 @@ dual_mode_cores:
 - scummvm
 - stella
 - tic80
+launchers:
+- emulator: duckstation
+  build: standalone
+  kind: names_searched
+  slot: NTSCU
+  names:
+  - scph101.bin
+  - scph1001.bin
+  - scph5501.bin
+  - scph7001.bin
+  - scph7501.bin
+  case_insensitive: true
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCU"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation/duckstationGenerator.py:115-136,\
+    \ 501-523"
+- emulator: duckstation
+  build: standalone
+  kind: names_searched
+  slot: PAL
+  names:
+  - scph1002.bin
+  - scph5502.bin
+  - scph5552.bin
+  - scph7002.bin
+  - scph7502.bin
+  - scph9002.bin
+  - scph102a.bin
+  - scph102b.bin
+  case_insensitive: true
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathPAL"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation/duckstationGenerator.py:115-136,\
+    \ 501-523"
+- emulator: duckstation
+  build: standalone
+  kind: names_searched
+  slot: NTSCJ
+  names:
+  - scph100.bin
+  - scph1000.bin
+  - scph3000.bin
+  - scph3500.bin
+  - scph5500.bin
+  - scph7000.bin
+  - scph7003.bin
+  case_insensitive: true
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCJ"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation/duckstationGenerator.py:115-136,\
+    \ 501-523"
+- emulator: duckstation
+  build: standalone
+  kind: names_searched
+  slot: Uni
+  names:
+  - psxonpsp660.bin
+  - ps1_rom.bin
+  case_insensitive: true
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCU, PathPAL, PathNTSCJ"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation/duckstationGenerator.py:115-136,\
+    \ 501-523"
+- emulator: duckstation-legacy
+  build: standalone
+  kind: names_searched
+  slot: NTSCU
+  names:
+  - scph101.bin
+  - scph1001.bin
+  - scph5501.bin
+  - scph7001.bin
+  - scph7501.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCU"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation_legacy/duckstationLegacyGenerator.py:99-133"
+- emulator: duckstation-legacy
+  build: standalone
+  kind: names_searched
+  slot: PAL
+  names:
+  - scph1002.bin
+  - scph5502.bin
+  - scph5552.bin
+  - scph7002.bin
+  - scph7502.bin
+  - scph9002.bin
+  - scph102a.bin
+  - scph102b.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathPAL"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation_legacy/duckstationLegacyGenerator.py:99-133"
+- emulator: duckstation-legacy
+  build: standalone
+  kind: names_searched
+  slot: NTSCJ
+  names:
+  - scph100.bin
+  - scph1000.bin
+  - scph3000.bin
+  - scph3500.bin
+  - scph5500.bin
+  - scph7000.bin
+  - scph7003.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCJ"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/duckstation_legacy/duckstationLegacyGenerator.py:99-133"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: st
+  names:
+  - "etos256{L}.img"
+  - "tos104{L}.img"
+  - "tos102{L}.img"
+  - "tos100{L}.img"
+  expands:
+    L: &id001
+    - us
+    - uk
+    - de
+    - es
+    - fr
+    - it
+    - nl
+    - ru
+    - se
+    - ''
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: --machine st --tos <file>
+  fails_when_missing: No bios found for machine st
+  depends_on_option: model, language
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/hatari/hatariGenerator.py:33-55,\
+    \ 67-75, 158-193"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: ste
+  names:
+  - "etos256{L}.img"
+  - "tos162{L}.img"
+  - "tos106{L}.img"
+  expands:
+    L: *id001
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: --machine ste --tos <file>
+  fails_when_missing: No bios found for machine ste
+  depends_on_option: model, language
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/hatari/hatariGenerator.py:33-55,\
+    \ 67-75, 158-193"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: megaste
+  names:
+  - "etos256{L}.img"
+  - "tos206{L}.img"
+  - "tos205{L}.img"
+  expands:
+    L: *id001
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: --machine megaste --tos <file>
+  fails_when_missing: No bios found for machine megaste
+  depends_on_option: model, language
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/hatari/hatariGenerator.py:33-55,\
+    \ 67-75, 158-193"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: tt
+  names:
+  - "etos512{L}.img"
+  - "tos306{L}.img"
+  expands:
+    L: *id001
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: --machine tt --tos <file>
+  fails_when_missing: No bios found for machine tt
+  depends_on_option: model, language
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/hatari/hatariGenerator.py:33-55,\
+    \ 67-75, 158-193"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: falcon
+  names:
+  - "etos512{L}.img"
+  - "tos404{L}.img"
+  - "tos402{L}.img"
+  - "tos400{L}.img"
+  expands:
+    L: *id001
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: --machine falcon --tos <file>
+  fails_when_missing: No bios found for machine falcon
+  depends_on_option: model, language
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/hatari/hatariGenerator.py:33-55,\
+    \ 67-75, 158-193"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - cerbios.bin
+  - Complex_4627.bin
+  - mcpx_1.0.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: "[sys.files] flashrom_path, [sys.files] bootrom_path"
+  fails_when_missing: false
+  depends_on_option: system.name == 'chihiro'
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/xemu/xemuConfig.py:74-80"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - firmware.bin
+  - bios7.bin
+  - bios9.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: DS.FirmwarePath, DS.BIOS7Path, DS.BIOS9Path
+  fails_when_missing: false
+  depends_on_option: melonds_console
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/melonds/melondsGenerator.py:51-55,\
+    \ 73-76, 151-152"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - dsi_firmware.bin
+  - dsi_bios9.bin
+  - dsi_bios7.bin
+  - dsi_nand.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: DSi.FirmwarePath, DSi.BIOS9Path, DSi.BIOS7Path, DSi.NANDPath
+  fails_when_missing: false
+  depends_on_option: melonds_console
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/melonds/melondsGenerator.py:61-76,\
+    \ 151-152"
+- emulator: mupen64plus
+  build: standalone
+  kind: fixed_name
+  names:
+  - 64DD_IPL.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: "[64DD] IPL-ROM"
+  fails_when_missing: false
+  depends_on_option: system.name == 'n64dd'
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/mupen/mupenConfig.py:188-192"
+- emulator: x16emu
+  build: standalone
+  kind: fixed_name
+  names:
+  - commanderx16/rom.bin
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: command line -rom
+  fails_when_missing: false
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/x16emu/x16emuGenerator.py:32"
+- emulator: gsplus
+  build: standalone
+  kind: fixed_name
+  names:
+  - ROM.03
+  case_insensitive: false
+  search_dir: /userdata/bios
+  passes_to: g_cfg_rom_path
+  fails_when_missing: false
+  depends_on_option: gsplus_bios_filename
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/gsplus/gsplusGenerator.py:105"
+- emulator: o2em
+  build: libretro
+  kind: core_option
+  names:
+  - g7400.bin
+  - o2rom.bin
+  passes_to: core option o2em_bios
+  fails_when_missing: false
+  depends_on_option: "o2em_bios (default by system.name == 'videopacplus')"
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/libretro/libretroOptions.py:644-645"
+- emulator: neocd
+  build: libretro
+  kind: core_option
+  names:
+  - "neocd_z.rom (CDZ)"
+  passes_to: core option neocd_bios
+  fails_when_missing: false
+  depends_on_option: neocd_bios
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/libretro/libretroOptions.py:2040-2041"

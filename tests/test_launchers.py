@@ -1,0 +1,384 @@
+#!/usr/bin/env python3
+"""Batocera's launcher layer, read from configgen with ast.
+
+The generator blocks below are copied from batocera-43.1 (155c2d8d) and
+placed at the lines they hold there, so the source_ref an extraction writes
+is checked against the revision itself.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import json
+import sys
+import unittest
+from pathlib import Path
+
+import yaml
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from scraper.batocera_launchers import (  # noqa: E402
+    CONFIGGEN,
+    GENERATORS,
+    IMPORTER,
+    PATHS_MODULE,
+    Configgen,
+    Launcher,
+    LauncherShapeError,
+    duckstation,
+    extract_launchers,
+    hatari,
+)
+
+PATHS = """from pathlib import Path
+from typing import Final
+
+USERDATA: Final = Path('/userdata')
+BIOS: Final = USERDATA / 'bios'
+"""
+
+IMPORTER_TEXT = """from typing import Final
+
+_LEGACY_GENERATOR_MAP: Final[dict[str, dict[str, tuple[str, str]]]] = {
+    'duckstation': {
+        'duckstation-legacy': ('duckstation_legacy.duckstationLegacyGenerator', 'X'),
+    },
+}
+
+_GENERATOR_MAP: Final[dict[str, tuple[str, str]]] = {
+    'gsplus': ('gsplus.gsplusGenerator', 'GSplusGenerator'),
+}
+"""
+
+DUCKSTATION = f"{GENERATORS}/duckstation/duckstationGenerator.py"
+HATARI = f"{GENERATORS}/hatari/hatariGenerator.py"
+
+DUCKSTATION_HEAD = '''from __future__ import annotations
+
+from ...batoceraPaths import BIOS
+
+
+class DuckstationGenerator(Generator):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
+        settings = CaseSensitiveConfigParser(interpolation=None)'''
+
+# duckstationGenerator.py:115-136
+DUCKSTATION_BIOS = '''        ## [BIOS]
+        if not settings.has_section("BIOS"):
+            settings.add_section("BIOS")
+        settings.set("BIOS", "SearchDirectory", "/userdata/bios")
+        # Boot Logo
+        settings.set("BIOS", "PatchFastBoot", system.config.get("duckstation_PatchFastBoot", "false"))
+        # Find & populate BIOS
+        found_bios = find_bios(bios_lists)
+
+        if not found_bios:
+            raise BatoceraException("No PSX1 BIOS found")
+
+        # Set BIOS paths
+        if "Uni" in found_bios:
+            uni_bios = found_bios["Uni"]
+            settings.set("BIOS", "PathNTSCU", uni_bios)
+            settings.set("BIOS", "PathPAL", uni_bios)
+            settings.set("BIOS", "PathNTSCJ", uni_bios)
+        else:
+            region_mapping = {"NTSCU": "PathNTSCU", "PAL": "PathPAL", "NTSCJ": "PathNTSCJ"}
+            for region, bios in found_bios.items():
+                settings.set("BIOS", region_mapping[region], bios)'''
+
+# duckstationGenerator.py:501-523
+DUCKSTATION_FIND = '''def find_bios(bios_lists: Mapping[str, Sequence[str]]):
+    found_bios: dict[str, str] = {}
+
+    try:
+        files_lower = {f.name.lower(): f.name for f in BIOS.iterdir()}
+    except OSError as e:
+        raise BatoceraException(f"Unable to read BIOS directory: {BIOS}") from e
+
+    for region, bios_list in bios_lists.items():
+        for bios in bios_list:
+            if bios.lower() in files_lower:
+                found_bios[region] = files_lower[bios.lower()]
+                break
+
+    return found_bios
+
+# Define BIOS lists
+bios_lists = {
+    "NTSCU": ["scph101.bin", "scph1001.bin", "scph5501.bin", "scph7001.bin", "scph7501.bin"],
+    "PAL": ["scph1002.bin", "scph5502.bin", "scph5552.bin", "scph7002.bin", "scph7502.bin", "scph9002.bin", "scph102a.bin", "scph102b.bin"],
+    "NTSCJ": ["scph100.bin", "scph1000.bin", "scph3000.bin", "scph3500.bin", "scph5500.bin", "scph7000.bin", "scph7003.bin"],
+    "Uni": ["psxonpsp660.bin", "ps1_rom.bin"]
+}'''
+
+HATARI_HEAD = '''from __future__ import annotations
+
+from ...batoceraPaths import BIOS
+
+
+class HatariGenerator(Generator):'''
+
+# hatariGenerator.py:32-75
+HATARI_GENERATE = '''    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
+        model_mapping = {
+            "520st_auto":       { "machine": "st",      "tos": "auto" },
+            "520st_100":        { "machine": "st",      "tos": "100"  },
+            "520st_102":        { "machine": "st",      "tos": "102"  },
+            "520st_104":        { "machine": "st",      "tos": "104"  },
+            "520st_etos256":    { "machine": "st",      "tos": "etos256"  },
+            "1040ste_auto":     { "machine": "ste",     "tos": "auto" },
+            "1040ste_106":      { "machine": "ste",     "tos": "106"  },
+            "1040ste_162":      { "machine": "ste",     "tos": "162"  },
+            "1040ste_etos256":  { "machine": "ste",     "tos": "etos256"  },
+            "megaste_auto":     { "machine": "megaste", "tos": "auto" },
+            "megaste_205":      { "machine": "megaste", "tos": "205"  },
+            "megaste_206":      { "machine": "megaste", "tos": "206"  },
+            "megaste_etos256":  { "machine": "megaste", "tos": "etos256"  },
+            "tt_auto":          { "machine": "tt",      "tos": "auto" },
+            "tt_306":           { "machine": "tt",      "tos": "306"  },
+            "tt_etos512":       { "machine": "tt",      "tos": "etos512"  },
+            "falcon_auto":      { "machine": "falcon",  "tos": "auto" },
+            "falcon_400":       { "machine": "falcon",  "tos": "400"  },
+            "falcon_402":       { "machine": "falcon",  "tos": "402"  },
+            "falcon_404":       { "machine": "falcon",  "tos": "404"  },
+            "falcon_etos512":   { "machine": "falcon",  "tos": "etos512"  },
+        }
+
+        # Start emulator fullscreen
+        commandArray: list[str | Path] = ["hatari", "--fullscreen"]
+
+        # Machine can be st (default), ste, megaste, tt, falcon
+        # st should use TOS 1.00 to TOS 1.04 (tos100 / tos102 / tos104 / emutos192k)
+        # ste should use TOS 1.06 at least (tos106 / tos162 / tos206 / emutos192K)
+        # megaste should use TOS 2.XX series (tos206 / emutos256k)
+        # tt should use tos 3.XX / emutos512k
+        # falcon should use tos 4.XX / emutos512k
+
+        model = system.config.get("model", "none")
+        mapped = model_mapping.get(model, {"machine": "st", "tos": "auto"})
+        machine = mapped["machine"]
+        tosversion = mapped["tos"]
+        toslang = system.config.get("language", "us")
+
+        commandArray += ["--machine", machine]
+        tos = HatariGenerator.findBestTos(BIOS, machine, tosversion, toslang)
+        commandArray += [ "--tos", tos]'''
+
+# hatariGenerator.py:157-193
+HATARI_FIND = '''    @staticmethod
+    def findBestTos(biosdir: Path, machine: str, tos_version: str, language: str, /) -> Path:
+        # all languages by preference, when value is "auto"
+        all_languages = ["us", "uk", "de", "es", "fr", "it", "nl", "ru", "se", ""]
+
+        # machine bioses by prefered orders, when value is "auto"
+        all_machines_bios = {
+            "st":      ["etos256", "104", "102", "100"],
+            "ste":     ["etos256", "162", "106"],
+            "megaste": ["etos256", "206", "205"],
+            "tt":      ["etos512", "306"],
+            "falcon":  ["etos512", "404", "402", "400"]
+        }
+
+        if machine in all_machines_bios:
+            l_tos = []
+            if tos_version != "auto":
+                l_tos = [tos_version]
+            l_tos.extend(all_machines_bios[machine])
+            for v_tos_version in l_tos:
+                l_lang = []
+                if language != "auto":
+                    l_lang = [language]
+                l_lang.extend(all_languages)
+                for v_language in l_lang:
+                    if "etos" in v_tos_version:
+                        biosversion = v_tos_version
+                    else:
+                        biosversion = f"tos{v_tos_version}"
+                    tos_path = biosdir / f"{biosversion}{v_language}.img"
+                    if tos_path.exists():
+                        _logger.debug("tos filename: %s", tos_path.name)
+                        return tos_path
+
+                    _logger.warning("tos filename %s not found", tos_path.name)
+
+        raise BatoceraException(f"No bios found for machine {machine}")'''
+
+
+def placed(blocks: dict[int, str]) -> str:
+    """Each block starting at its line, blank lines between."""
+    lines: list[str] = []
+    for start, block in sorted(blocks.items()):
+        if len(lines) >= start:
+            raise AssertionError(f"block at line {start} overlaps the previous one")
+        lines += [""] * (start - 1 - len(lines))
+        lines += block.splitlines()
+    return "\n".join(lines) + "\n"
+
+
+def configgen(files: dict[str, str]) -> Configgen:
+    tree = {PATHS_MODULE: PATHS, IMPORTER: IMPORTER_TEXT, **files}
+    return Configgen(tree.__getitem__)
+
+
+# The generator goes on after the [BIOS] section: code between the two cited
+# ranges keeps them apart.
+DUCKSTATION_NEXT = '''        settings.set("CPU", "ExecutionMode", "Recompiler")'''
+
+
+def duckstation_source(bios: str = DUCKSTATION_BIOS, find: str = DUCKSTATION_FIND) -> str:
+    return placed({1: DUCKSTATION_HEAD, 115: bios, 138: DUCKSTATION_NEXT, 501: find})
+
+
+def duckstation_tree(bios: str = DUCKSTATION_BIOS, find: str = DUCKSTATION_FIND) -> Configgen:
+    return configgen({DUCKSTATION: duckstation_source(bios, find)})
+
+
+def hatari_tree(generate: str = HATARI_GENERATE, find: str = HATARI_FIND) -> Configgen:
+    return configgen({HATARI: placed({1: HATARI_HEAD, 32: generate, 157: find})})
+
+
+class DuckStationSearch(unittest.TestCase):
+    def setUp(self) -> None:
+        self.records = duckstation(duckstation_tree())
+
+    def test_each_region_list_keeps_its_search_order(self):
+        self.assertEqual(
+            [(r.slot, r.names) for r in self.records],
+            [
+                ("NTSCU", ["scph101.bin", "scph1001.bin", "scph5501.bin", "scph7001.bin",
+                           "scph7501.bin"]),
+                ("PAL", ["scph1002.bin", "scph5502.bin", "scph5552.bin", "scph7002.bin",
+                         "scph7502.bin", "scph9002.bin", "scph102a.bin", "scph102b.bin"]),
+                ("NTSCJ", ["scph100.bin", "scph1000.bin", "scph3000.bin", "scph3500.bin",
+                           "scph5500.bin", "scph7000.bin", "scph7003.bin"]),
+                ("Uni", ["psxonpsp660.bin", "ps1_rom.bin"]),
+            ],
+        )
+
+    def test_the_lines_cited_are_the_search_and_the_lists(self):
+        refs = {r.source_ref for r in self.records}
+        self.assertEqual(refs, {f"{DUCKSTATION}:115-136, 501-523"})
+
+    def test_how_the_found_name_reaches_duckstation(self):
+        first, uni = self.records[0], self.records[-1]
+        self.assertEqual(first.emulator, "duckstation")
+        self.assertEqual(first.build, "standalone")
+        self.assertEqual(first.kind, "names_searched")
+        self.assertTrue(first.case_insensitive)
+        self.assertEqual(first.search_dir, "/userdata/bios")
+        self.assertEqual(first.passes_to, "[BIOS] PathNTSCU")
+        self.assertEqual(uni.passes_to, "[BIOS] PathNTSCU, PathPAL, PathNTSCJ")
+
+    def test_the_failure_is_raised_only_when_every_region_is_empty(self):
+        for record in self.records:
+            self.assertEqual(record.fails_when_missing, "No PSX1 BIOS found")
+            self.assertEqual(record.fails_scope, "emulator")
+
+    def test_an_exact_case_search_is_not_read_as_case_insensitive(self):
+        find = DUCKSTATION_FIND.replace("f.name.lower()", "f.name").replace("bios.lower()", "bios")
+        with self.assertRaises(LauncherShapeError):
+            duckstation(duckstation_tree(find=find))
+
+    def test_lists_that_are_no_longer_a_literal_raise(self):
+        find = DUCKSTATION_FIND.replace("bios_lists = {", "BIOS_LISTS = {")
+        with self.assertRaises(LauncherShapeError):
+            duckstation(duckstation_tree(find=find))
+
+    def test_paths_written_another_way_raise(self):
+        bios = DUCKSTATION_BIOS.replace("region_mapping[region]", "f'Path{region}'")
+        with self.assertRaises(LauncherShapeError):
+            duckstation(duckstation_tree(bios=bios))
+
+
+class HatariTosSearch(unittest.TestCase):
+    def setUp(self) -> None:
+        self.records = hatari(hatari_tree())
+
+    def test_each_machine_tries_its_versions_in_order(self):
+        self.assertEqual(
+            [(r.slot, r.names) for r in self.records],
+            [
+                ("st", ["etos256{L}.img", "tos104{L}.img", "tos102{L}.img", "tos100{L}.img"]),
+                ("ste", ["etos256{L}.img", "tos162{L}.img", "tos106{L}.img"]),
+                ("megaste", ["etos256{L}.img", "tos206{L}.img", "tos205{L}.img"]),
+                ("tt", ["etos512{L}.img", "tos306{L}.img"]),
+                ("falcon", ["etos512{L}.img", "tos404{L}.img", "tos402{L}.img", "tos400{L}.img"]),
+            ],
+        )
+
+    def test_every_version_is_tried_in_every_language(self):
+        for record in self.records:
+            self.assertEqual(
+                record.expands, {"L": ["us", "uk", "de", "es", "fr", "it", "nl", "ru", "se", ""]}
+            )
+
+    def test_the_lines_cited_are_the_mapping_the_call_and_the_search(self):
+        refs = {r.source_ref for r in self.records}
+        self.assertEqual(refs, {f"{HATARI}:33-55, 67-75, 158-193"})
+
+    def test_how_the_tos_reaches_hatari(self):
+        st = self.records[0]
+        self.assertEqual(st.emulator, "hatari")
+        self.assertFalse(st.case_insensitive)
+        self.assertEqual(st.search_dir, "/userdata/bios")
+        self.assertEqual(st.passes_to, "--machine st --tos <file>")
+        self.assertEqual(st.fails_when_missing, "No bios found for machine st")
+        self.assertIsNone(st.fails_scope)
+        self.assertEqual(st.depends_on_option, "model, language")
+
+    def test_a_name_built_another_way_raises(self):
+        find = HATARI_FIND.replace(
+            'biosdir / f"{biosversion}{v_language}.img"', 'biosdir / "tos.img"'
+        )
+        with self.assertRaises(LauncherShapeError):
+            hatari(hatari_tree(find=find))
+
+
+class ExtractionNeverEmpty(unittest.TestCase):
+    def test_a_generator_of_unknown_shape_stops_the_whole_scrape(self):
+        find = DUCKSTATION_FIND.replace("def find_bios(", "def locate_bios(")
+        tree = {PATHS_MODULE: PATHS, IMPORTER: IMPORTER_TEXT, DUCKSTATION: duckstation_source(find=find)}
+        with self.assertRaises(LauncherShapeError):
+            extract_launchers(tree.__getitem__)
+
+    def test_a_paths_module_without_bios_raises(self):
+        tree = {PATHS_MODULE: "from pathlib import Path\n", IMPORTER: IMPORTER_TEXT}
+        with self.assertRaises(LauncherShapeError):
+            Configgen(tree.__getitem__)
+
+
+class PlatformRecords(unittest.TestCase):
+    """The launchers platforms/batocera.yml carries, as the scraper wrote them."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.config = yaml.safe_load((REPO_ROOT / "platforms" / "batocera.yml").read_text())
+        cls.schema = json.loads((REPO_ROOT / "schemas" / "platform.schema.json").read_text())
+
+    def test_every_emulator_is_one_batocera_names(self):
+        cores = set(self.config["cores"])
+        named = {
+            name for record in self.config["launchers"]
+            for name in record["emulator"].split(", ")
+        }
+        self.assertEqual(sorted(named - cores), [])
+
+    def test_every_reference_is_in_configgen(self):
+        for record in self.config["launchers"]:
+            self.assertTrue(record["source_ref"].startswith(f"{CONFIGGEN}/"), record)
+
+    def test_the_schema_describes_what_the_scraper_writes(self):
+        fields = {f.name for f in dataclasses.fields(Launcher)}
+        described = set(self.schema["$defs"]["launcher"]["properties"])
+        self.assertEqual(fields, described)
+
+    def test_the_wiki_names_every_launcher_field(self):
+        page = (REPO_ROOT / "wiki" / "adding-a-platform.md").read_text(encoding="utf-8")
+        described = self.schema["$defs"]["launcher"]["properties"]
+        self.assertEqual(sorted(f for f in described if f"`{f}`" not in page), [])
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -26,6 +26,7 @@ from .base_scraper import (
     github_headers,
     requirement_entry,
 )
+from .batocera_launchers import extract_launchers
 
 PLATFORM_NAME = "batocera"
 
@@ -483,6 +484,9 @@ class Scraper(BaseScraper):
         if dual:
             # Launched both ways: each layout gets its files.
             result["dual_mode_cores"] = dual
+        result["launchers"] = extract_launchers(
+            lambda path: self._fetch_text(f"{_RAW_BASE}/{self.tag}/{path}")
+        )
         return result
 
 
