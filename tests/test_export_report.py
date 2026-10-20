@@ -43,6 +43,14 @@ class ExportReportIsWrittenAndRead(unittest.TestCase):
             (Path(scratch) / "recalbox").mkdir()
             self.assertEqual(load_export_reports(scratch), [report])
 
+    def test_a_report_goes_into_a_directory_not_yet_made(self):
+        """RetroPie with nothing left to correct writes no file, so its
+        output directory was never made and the report crashed --all."""
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as scratch:
+            target = Path(scratch) / "fresh" / "retropie.json"
+            export_native.write_report(target, _report("retropie", []))
+            self.assertTrue(target.exists())
+
     def test_export_keeps_every_change_not_the_printed_five(self):
         source = (ROOT / "scripts" / "export_native.py").read_text(encoding="utf-8")
         body = source[source.index("def export_platform("):source.index("def write_report(")]

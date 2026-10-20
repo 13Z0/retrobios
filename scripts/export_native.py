@@ -668,7 +668,10 @@ def write_report(path: Path, report: dict) -> None:
 
     The run prints five examples per kind of change. The page lists them
     all, so the maintainer reading it finds each line of the diff named.
+    A platform with nothing to write made no directory of its own: the
+    output directory itself may not exist yet.
     """
+    path.parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(path), json.dumps(report, indent=2) + "\n")
 
 
