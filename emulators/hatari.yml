@@ -115,11 +115,26 @@ files:
     min_size: 64
     max_size: 1048576
     validation: [size]
-    source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353"
+    aliases: [tos100fr.img, tos100us.img, tos102.img, tos102de.img, tos102fr.img, tos102uk.img, tos104.img, tos104de.img, tos104es.img, tos104fr.img, tos104uk.img, tos104us.img, tos106.img, tos106de.img, tos106es.img, tos106fr.img, tos106uk.img, tos106us.img, tos162de.img, tos162fr.img, tos162uk.img, tos162us.img, tos205de.img, tos205es.img, tos205fr.img, tos205it.img, tos205us.img, tos206.img, tos206de.img, tos206fr.img, tos206uk.img, tos206us.img, tos306de.img, tos306uk.img, tos400.img, tos402.img, tos404.img, st.img, ste.img, megaste.img, tt.img, falcon.img, emutos.img]
+    source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. The file must
-      carry this exact name: retro_init only enables emulation when
-      <system>/tos.img exists.
+      carry this exact name in the libretro build: retro_init only enables
+      emulation when <system>/tos.img exists. Hatari built as its own
+      program opens whatever file --tos or the szTosImageFileName key of
+      hatari.cfg names (src/options.c:1937-1940, src/configuration.c:489,
+      src/tos.c:983), and the aliases are the names the platform launchers
+      give it. Batocera passes tos<version><language>.img from the BIOS
+      root, trying the chosen version then each machine's list and the
+      languages us, uk, de, es, fr, it, nl, ru, se and none in turn
+      (configgen generators/hatari/hatariGenerator.py:74-75, 158-193).
+      Recalbox writes atarist/st.img, ste.img, megaste.img, tt.img or
+      falcon.img by machine, then tos.img, then emutos.img, and emutos.img
+      for any content whose path names emutos
+      (configgen generators/hatari/hatariGenerator.py:151-167). RetroBat
+      writes hatari/tos/ followed by the hatari_tos option, tos206.img,
+      tos106.img, tos104.img, tos102.img or emutos.img, and tos.img at the
+      BIOS root otherwise (emulatorlauncher Generators/Hatari.Generator.cs:144-154).
 
   - name: "tos.sym"
     path: "tos.sym"
