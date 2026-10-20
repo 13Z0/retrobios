@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,23 @@ from common import PROFILE_BACKUP_SUFFIX, write_text_atomic, yaml_load
 
 _MAME_RELEASE_RE = re.compile(r"^0\.\d+")
 _MAMEDEV = "https://github.com/mamedev/mame"
+DEVICE_SECTION = "  # --- Device ROM sets (generated from MAME -listxml) ---"
+_FILES_END = re.compile(r"^\S", re.M)
+
+
+def mame_ref_role(profile: dict[str, Any]) -> str:
+    """Role word a ref read from mamedev/mame carries in this profile.
+
+    A profile that builds from another tree (libretro/mame) cites lines of
+    mamedev/mame as "upstream <path>:<line>". Written bare, the ref was read
+    against the libretro port, and every refresh rewrote the 171 prefixed refs
+    of mame.yml into that form.
+    """
+    upstream = str(profile.get("upstream") or "").rstrip("/")
+    source = str(profile.get("source") or "").rstrip("/")
+    if upstream.startswith(_MAMEDEV) and source and source != upstream:
+        return "upstream "
+    return ""
 
 
 def merge_mame_profile(
@@ -63,9 +81,10 @@ def merge_mame_profile(
     updated_bios: list[dict] = []
     matched_names: set[str] = set()
 
+    role = mame_ref_role(profile)
     for set_name, set_data in hashes.get("bios_sets", {}).items():
         contents = _build_contents(set_data.get("roms", []))
-        source_ref = _build_source_ref(set_data)
+        source_ref = _build_source_ref(set_data, role)
 
         if set_name in existing_by_name:
             # Update existing entry: preserve manual fields, update contents
@@ -208,6 +227,7 @@ def _diff_mame(
     updated: list[str] = []
     unchanged = 0
 
+    role = mame_ref_role(profile)
     bios_sets = hashes.get("bios_sets", {})
     for set_name, set_data in bios_sets.items():
         if set_name not in existing_by_name:
@@ -217,7 +237,7 @@ def _diff_mame(
         old_entry = existing_by_name[set_name]
         new_contents = _build_contents(set_data.get("roms", []))
         old_contents = old_entry.get("contents", [])
-        new_ref = _build_source_ref(set_data)
+        new_ref = _build_source_ref(set_data, role)
 
         # A driver keeping the same ROMs still moves inside its file between
         # releases. Without this the hashes stay current while the source_ref
@@ -348,12 +368,14 @@ def _build_contents(roms: list[dict]) -> list[dict]:
     return contents
 
 
-def _build_source_ref(set_data: dict) -> str:
+def _build_source_ref(set_data: dict, role: str = "") -> str:
     source_file = set_data.get("source_file", "")
     source_line = set_data.get("source_line")
-    if source_file and source_line is not None:
-        return f"{source_file}:{source_line}"
-    return source_file
+    if not source_file:
+        return ""
+    if source_line is not None:
+        return f"{role}{source_file}:{source_line}"
+    return f"{role}{source_file}"
 
 
 def _contents_differ(old: list[dict], new: list[dict]) -> bool:
@@ -532,9 +554,188 @@ def _append_new_entries(text: str, files: list[dict], original: str) -> str:
             lines.append(_format_contents(fe["contents"]))
 
     if lines:
-        text = text.rstrip("\n") + "\n" + "\n".join(lines) + "\n"
+        # New BIOS root sets go before the generated device section, which
+        # runs to the end of the files list.
+        at = _device_section_start(text)
+        if at is None:
+            text = text.rstrip("\n") + "\n" + "\n".join(lines) + "\n"
+        else:
+            text = text[:at].rstrip("\n") + "\n" + "\n".join(lines) + "\n\n" + text[at:]
 
     return text
+
+
+def _device_section_start(text: str) -> int | None:
+    """Offset of the generated device section header, if the profile has one."""
+    match = re.search(rf"^{re.escape(DEVICE_SECTION)}$", text, re.M)
+    return match.start() if match else None
+
+
+def _device_contents(roms: list[dict], old: list[dict]) -> list[dict]:
+    """Contents of a device set, keeping the member descriptions a reader wrote."""
+    written = {str(c.get("name")): c.get("description") for c in old or []}
+    contents = _build_contents(roms)
+    for member in contents:
+        if written.get(member["name"]):
+            member["description"] = written[member["name"]]
+        elif member.get("description"):
+            # A biosset description is MAME's text, quoted as written.
+            member["description"] = f"`{member['description']}`"
+    return contents
+
+
+def _device_note(description: str) -> str:
+    """The note of a generated entry. The device name is MAME's own text,
+    quoted verbatim in backticks: `Sun-1 Workstation Monitor; PROM 1&3: Rev AJ`
+    is a name, not a sentence."""
+    return f"Device ROM set, loaded when a machine instantiates `{description}`."
+
+
+def _zip_scalar(name: str) -> str:
+    """An archive name as the written entries spell it: bare when YAML keeps it."""
+    return name if re.fullmatch(r"[a-z0-9_]+\.zip", name) else _yaml_scalar(name)
+
+
+def _format_device_entry(name: str, device: dict, role: str) -> str:
+    """One generated device entry, in the field order of the written ones."""
+    lines = [
+        f"  - name: {_zip_scalar(name)}",
+        "    required: false",
+        "    category: bios_zip",
+    ]
+    if device.get("source_line"):
+        lines.append(f'    source_ref: "{_build_source_ref(device, role)}"')
+    lines.append("    note: >-")
+    lines.extend(
+        textwrap.wrap(
+            _device_note(device.get("description") or name[:-4]),
+            width=78,
+            initial_indent="      ",
+            subsequent_indent="      ",
+            break_on_hyphens=False,
+        )
+    )
+    lines.append(_format_contents(_device_contents(device["roms"], [])))
+    return "\n".join(lines)
+
+
+def merge_mame_devices(
+    profile_path: str,
+    devices: dict[str, dict],
+    write: bool = False,
+) -> dict[str, list[str]]:
+    """Merge MAME device ROM sets into a profile.
+
+    *devices* maps a device shortname to its listxml description, its dumped
+    ROMs and, when found, source_file and source_line. A set the profile
+    already lists keeps every field a reader wrote: its contents are refreshed
+    with the member descriptions kept, and a source_ref is added only where it
+    has none. A set it lacks is written under the generated section, in name
+    order, with required false. An entry of another category under a device
+    name is reported, never touched.
+    """
+    path = Path(profile_path)
+    text = path.read_text(encoding="utf-8")
+    profile = yaml_load(text) or {}
+    role = mame_ref_role(profile)
+    entries: dict[str, list[dict]] = {}
+    for entry in profile.get("files") or []:
+        entries.setdefault(str(entry.get("name")), []).append(entry)
+
+    report: dict[str, list[str]] = {
+        "added": [], "updated": [], "unchanged": [], "conflict": [],
+    }
+    contents_patches: list[dict] = []
+    ref_patches: dict[str, str] = {}
+    new_blocks: dict[str, str] = {}
+    for set_name, device in sorted(devices.items()):
+        name = f"{set_name}.zip"
+        existing = entries.get(name)
+        if not existing:
+            new_blocks[name] = _format_device_entry(name, device, role)
+            report["added"].append(set_name)
+            continue
+        if any(e.get("category") != "bios_zip" for e in existing):
+            report["conflict"].append(set_name)
+            continue
+        old = existing[0]
+        contents = _device_contents(device["roms"], old.get("contents") or [])
+        changed = False
+        if _contents_differ(old.get("contents") or [], contents):
+            contents_patches.append({"name": name, "category": "bios_zip", "contents": contents})
+            changed = True
+        if not old.get("source_ref") and device.get("source_line"):
+            ref_patches[name] = _build_source_ref(device, role)
+            changed = True
+        report["updated" if changed else "unchanged"].append(set_name)
+
+    if write and (contents_patches or ref_patches or new_blocks):
+        patched = _add_source_refs(text, ref_patches)
+        patched = _patch_bios_entries(patched, contents_patches)
+        patched = _insert_device_entries(patched, new_blocks)
+        shutil.copy2(path, path.with_suffix(PROFILE_BACKUP_SUFFIX))
+        write_text_atomic(str(path), patched)
+    return report
+
+
+def _add_source_refs(text: str, refs: dict[str, str]) -> str:
+    """Give each named entry a source_ref line, right after its category."""
+    if not refs:
+        return text
+    lines = text.split("\n")
+    current = ""
+    out: list[str] = []
+    for line in lines:
+        head = re.match(r"^  - name:\s*(.+?)\s*$", line)
+        if head:
+            current = head.group(1).strip('"').strip("'")
+        out.append(line)
+        if current in refs and re.match(r"^    category:", line):
+            out.append(f'    source_ref: "{refs[current]}"')
+    return "\n".join(out)
+
+
+def _insert_device_entries(text: str, blocks: dict[str, str]) -> str:
+    """Place new device entries in name order inside the generated section.
+
+    The section opens at its header and runs to the end of the files list.
+    Entries already there stay in the order they are written, each new one
+    goes before the first whose name sorts after it.
+    """
+    if not blocks:
+        return text
+    start = _device_section_start(text)
+    if start is None:
+        files_at = re.search(r"^files:[ \t]*$", text, re.M)
+        if files_at is None or _FILES_END.search(text, files_at.end()):
+            raise ValueError(
+                "files: must be the last top-level key to hold a device section"
+            )
+        text = text.rstrip("\n") + "\n\n" + DEVICE_SECTION + "\n"
+        start = _device_section_start(text)
+    body_at = text.index("\n", start) + 1
+    end_match = _FILES_END.search(text, body_at)
+    end = end_match.start() if end_match else len(text)
+    section = text[body_at:end]
+    starts = [m.start() for m in re.finditer(r"^  - name:", section, re.M)]
+    lead = (section[: starts[0]] if starts else section).strip("\n")
+    present = [
+        section[a:b].rstrip("\n") for a, b in zip(starts, starts[1:] + [len(section)])
+    ]
+
+    def block_name(block: str) -> str:
+        return block.split("\n", 1)[0].split(":", 1)[1].strip().strip('"')
+
+    merged: list[str] = []
+    pending = sorted(blocks)
+    for block in present:
+        while pending and pending[0] < block_name(block):
+            merged.append(blocks[pending.pop(0)])
+        merged.append(block)
+    merged.extend(blocks[name] for name in pending)
+    body = (lead + "\n" if lead else "") + "\n\n".join(merged) + "\n"
+    rest = text[end:]
+    return text[:body_at] + body + ("\n" + rest if rest else "")
 
 
 def _yaml_scalar(value: object) -> str:

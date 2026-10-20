@@ -622,7 +622,7 @@ Further options, by script:
 | `validate_pr.py` | `--changed` takes the BIOS files the branch changes, `--markdown`, `--json` |
 | `validate_site.py` | `--site-dir` (rendered site), `--config` (mkdocs.yml), `--max-errors N` |
 | `scraper/coreinfo_scraper.py` | `--compare-db database.json` lists the `.info` firmware the database lacks |
-| `scraper/mame_hash_scraper.py` | `--release mameNNNN --profile FILE --source-commit SHA --core NAME --built-by PLATFORM` writes the profile of a MAME build a platform compiles |
+| `scraper/mame_hash_scraper.py` | `--release mameNNNN --profile FILE --source-commit SHA --core NAME --built-by PLATFORM` writes the profile of a MAME build a platform compiles. `--devices --listxml FILE` documents in `mame.yml` every device set with dumped ROMs that the release's `-listxml` names (`isdevice="yes"`), with `--dry-run` to preview |
 | `scraper/romset_dat_importer.py` | `--cache-dir` (downloaded listxml and DATs) |
 
 ## Installation tools
@@ -743,8 +743,27 @@ stand alone.
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
 | `bizhawk_scraper` | FirmwareDatabase.cs | C# source |
-| `mame_hash_scraper` | mamedev/mame source tree. `--release mameNNNN` writes the profile of one release a platform builds | C source (sparse clone) |
+| `mame_hash_scraper` | mamedev/mame source tree. `--release mameNNNN` writes the profile of one release a platform builds. `--devices --listxml FILE` adds the device ROM sets of the release's `-listxml` | C source (sparse clone), listxml |
 | `fbneo_hash_scraper` | FBNeo source tree | C source (sparse clone) |
+
+A machine that instantiates a device loads the device's ROMs from
+`<device shortname>.zip`, and a missing ROM that is neither optional nor
+undumped stops that machine. The BIOS root scan never sees these sets, so
+`--devices` reads them from the `-listxml` of the release `mame.yml` is pinned
+on and refuses another release. Each set is cited at the `ROM_START` to
+`ROM_END` block holding its ROMs, in the file the listxml names, read at the
+release tag through the upstream cache. When several blocks qualify, the one
+matching every ROM by name and CRC wins, then the one named after the set, then
+the one the device class returns from `device_rom_region`. A set still
+undecided is written without a `source_ref` and listed in the output. New sets
+go under the `Device ROM sets (generated from MAME -listxml)` comment at the end
+of `files:` with `required: false`. A set the profile already lists keeps every
+field a reader wrote and only gets its contents refreshed.
+
+```bash
+python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip --dry-run
+python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip
+```
 
 Internal modules: `base_scraper.py` (abstract base with `_fetch_raw()` caching
 and shared CLI), `dat_parser.py` (clrmamepro DAT format parser),

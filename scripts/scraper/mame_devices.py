@@ -1,0 +1,279 @@
+"""Device ROM sets of one MAME release, read from its -listxml.
+
+A machine that instantiates a device loads the device's ROMs from
+<device shortname>.zip (src/emu/device.cpp:140-152, searchpath), and a missing
+ROM that is neither optional nor undumped stops that machine
+(src/emu/romload.cpp:529-570, 667-671). The listxml names every such set with
+isdevice="yes", its ROMs and the source file defining the device. The lines
+cited for a set are the ROM_START block of that file declaring those ROMs, read
+at the release tag. A set whose block cannot be told apart is left without
+lines and reported.
+"""
+
+from __future__ import annotations
+
+import html
+import io
+import re
+import zipfile
+from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
+from pathlib import Path
+
+from .mame_parser import _collect_rom_macros, _expand_macros, _parse_rom_entries
+
+LISTXML_CHUNK = 8 * 1024 * 1024
+
+_BUILD = re.compile(rb'<mame build="[^"]*\((mame\d+)\)"')
+_MACHINE = re.compile(rb'<machine name="([^"]+)"([^>]*)>')
+_ATTR = re.compile(rb'(\w+)="([^"]*)"')
+_DESCRIPTION = re.compile(rb"<description>(.*?)</description>", re.S)
+_BIOSSET = re.compile(rb"<biosset\b([^>]*)>")
+_ROM = re.compile(rb"<rom\b([^>]*)>")
+
+_ROM_START = re.compile(r"ROM_START\s*\(\s*(\w+)\s*\)")
+_ROM_END = re.compile(r"\bROM_END\b")
+_CRC = re.compile(r"CRC\s*\(\s*([0-9a-fA-F]+)\s*\)")
+_COMMENT_OR_LITERAL = re.compile(
+    r'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\\n])*\'', re.S
+)
+_ROM_NAME = re.compile(r"\bROM_NAME\s*\(\s*(\w+)\s*\)")
+_CLASS_END = re.compile(r"^\};", re.M)
+
+# Why a set carries no line: no block of the file holds its first ROM,
+# several remain after every narrowing, or the release lacks the file.
+ABSENT = "absent"
+AMBIGUOUS = "ambiguous"
+NO_FILE = "no file"
+
+
+def _attrs(raw: bytes) -> dict[str, str]:
+    return {
+        key.decode(): html.unescape(value.decode())
+        for key, value in _ATTR.findall(raw)
+    }
+
+
+def _device_roms(body: bytes) -> list[dict]:
+    """Dumped ROMs of one machine element, first of each name kept."""
+    bios_names = {
+        attrs.get("name", ""): attrs.get("description", "")
+        for attrs in map(_attrs, _BIOSSET.findall(body))
+    }
+    roms: dict[str, dict] = {}
+    for match in _ROM.finditer(body):
+        attrs = _attrs(match.group(1))
+        name, crc = attrs.get("name", ""), attrs.get("crc", "").lower()
+        if not name or not crc or name in roms:
+            continue
+        rom: dict = {
+            "name": name,
+            "size": int(attrs.get("size", "0") or 0),
+            "crc32": crc,
+            "sha1": attrs.get("sha1", "").lower(),
+        }
+        if attrs.get("status") == "baddump":
+            rom["bad_dump"] = True
+        description = bios_names.get(attrs.get("bios", ""), "")
+        if description:
+            rom["bios_description"] = description
+        roms[name] = rom
+    return list(roms.values())
+
+
+@contextmanager
+def open_listxml(path: Path) -> Iterator[io.BufferedIOBase]:
+    """Byte stream over a -listxml document, plain or as MAME's release zip."""
+    if path.suffix.lower() != ".zip":
+        with path.open("rb") as stream:
+            yield stream
+        return
+    with zipfile.ZipFile(path) as archive:
+        names = [n for n in archive.namelist() if n.lower().endswith(".xml")]
+        if len(names) != 1:
+            raise ValueError(f"{path}: expected one .xml member, found {len(names)}")
+        with archive.open(names[0]) as stream:
+            yield stream
+
+
+def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
+    """Release tag of a -listxml document and its device sets with dumped ROMs.
+
+    The document is read through a sliding window, never whole: the 0.289
+    listxml is 311 MB.
+    """
+    tag = ""
+    devices: dict[str, dict] = {}
+    buffer = b""
+    while chunk := stream.read(LISTXML_CHUNK):
+        buffer += chunk
+        if not tag and (build := _BUILD.search(buffer)):
+            tag = build.group(1).decode()
+        position = 0
+        while match := _MACHINE.search(buffer, position):
+            end = buffer.find(b"</machine>", match.end())
+            if end == -1:
+                break
+            attrs = _attrs(match.group(2))
+            if attrs.get("isdevice") == "yes":
+                body = buffer[match.end() : end]
+                roms = _device_roms(body)
+                if roms:
+                    description = _DESCRIPTION.search(body)
+                    devices[match.group(1).decode()] = {
+                        "description": html.unescape(description.group(1).decode())
+                        if description else "",
+                        "sourcefile": attrs.get("sourcefile", ""),
+                        "roms": roms,
+                    }
+            position = end + len(b"</machine>")
+        buffer = buffer[position:] if position else buffer[-(2 * LISTXML_CHUNK) :]
+    if not tag:
+        raise ValueError("no <mame build=...> header: not a MAME -listxml document")
+    return tag, devices
+
+
+def source_path(sourcefile: str) -> str:
+    """Repository path of a listxml sourcefile.
+
+    The listxml writes device files relative to src/ and driver files
+    relative to src/mame/.
+    """
+    if sourcefile.startswith(("devices/", "emu/", "lib/")):
+        return f"src/{sourcefile}"
+    return f"src/mame/{sourcefile}"
+
+
+def blank_comments(text: str) -> str:
+    """Text with every comment blanked and its newlines kept.
+
+    Line numbers survive, so a block found in the result is cited at its
+    line in the file. A ROM_START written inside a comment is not a block.
+    """
+
+    def blank(match: re.Match[str]) -> str:
+        found = match.group(0)
+        if found[0] in "\"'":
+            return found
+        return re.sub(r"[^\n]", " ", found)
+
+    return _COMMENT_OR_LITERAL.sub(blank, text)
+
+
+def rom_region_label(text: str, set_name: str) -> str:
+    """ROM_START label the device class of *set_name* returns, or "".
+
+    DEFINE_DEVICE_TYPE names the class right before the quoted shortname, and
+    the class's device_rom_region returns ROM_NAME(label), written out of line
+    or inside the class body. A class inheriting the method gives nothing.
+    """
+    declaration = re.search(
+        r"DEFINE_DEVICE_TYPE\w*\s*\((?:[^;]*?,)?\s*(\w+)\s*,\s*\"" + re.escape(set_name) + '"',
+        text,
+    )
+    if declaration is None:
+        return ""
+    cls = re.escape(declaration.group(1))
+    method = re.search(rf"\b{cls}::device_rom_region\b[^{{]*\{{([^}}]*)\}}", text)
+    if method is None:
+        body = re.search(rf"\bclass\s+{cls}\b", text)
+        if body is None:
+            return ""
+        end = _CLASS_END.search(text, body.end())
+        scope = text[body.end() : end.start() if end else len(text)]
+        method = re.search(r"\bdevice_rom_region\b[^{;]*\{([^}]*)\}", scope)
+        if method is None:
+            return ""
+    label = _ROM_NAME.search(method.group(1))
+    return label.group(1) if label else ""
+
+
+def find_rom_block(
+    lines: list[str], set_name: str, roms: list[tuple[str, str]]
+) -> tuple[str | None, str]:
+    """Lines of the ROM_START block declaring these ROMs, or why there are none.
+
+    The span runs from ROM_START to ROM_END: its label is often not the set
+    name, and the ROM_START line alone spells neither the name nor a CRC.
+
+    *roms* are (name, crc32) pairs. A block qualifies when it holds the first
+    ROM's CRC, after comments are blanked and the file's ROM macros expanded.
+    Several qualifying, the narrowest test that leaves one wins: every ROM by
+    name and CRC, then every CRC, then the block named after the set, then the
+    block the device class returns from device_rom_region. Two blocks of one
+    file can load the same dump under different names, as the Amiga keyboards
+    do with their old and new MCU programs.
+    """
+    text = blank_comments("\n".join(lines))
+    macros = _collect_rom_macros(text)
+    wanted = {(name, int(crc, 16)) for name, crc in roms}
+    crcs = {crc for _name, crc in wanted}
+    first = int(roms[0][1], 16)
+    blocks: list[tuple[str, str, set[tuple[str, int]], set[int]]] = []
+    for start in _ROM_START.finditer(text):
+        end = _ROM_END.search(text, start.end())
+        if end is None:
+            continue
+        body = _expand_macros(text[start.end() : end.start()], macros)
+        held = {int(crc, 16) for crc in _CRC.findall(body)}
+        if first not in held:
+            continue
+        pairs = {
+            (rom["name"], int(rom["crc32"], 16))
+            for rom in _parse_rom_entries(body) if rom["crc32"]
+        }
+        first_line = text.count("\n", 0, start.start()) + 1
+        last_line = text.count("\n", 0, end.start()) + 1
+        blocks.append((f"{first_line}-{last_line}", start.group(1), pairs, held))
+    if not blocks:
+        return None, ABSENT
+    for narrowed in (
+        [b for b in blocks if wanted <= b[2]],
+        [b for b in blocks if crcs <= b[3]],
+        blocks,
+    ):
+        if len(narrowed) == 1:
+            return narrowed[0][0], ""
+        named = [b for b in narrowed if b[1] == set_name]
+        if len(named) == 1:
+            return named[0][0], ""
+        if narrowed:
+            label = rom_region_label(text, set_name)
+            returned = [b for b in narrowed if label and b[1] == label]
+            if len(returned) == 1:
+                return returned[0][0], ""
+            break
+    return None, AMBIGUOUS
+
+
+def locate_sources(
+    devices: dict[str, dict],
+    fetch: Callable[[str], list[str] | None],
+    workers: int = 8,
+) -> dict[str, str]:
+    """Write source_file and source_line into each set, return the unplaced.
+
+    *fetch* returns the lines of one repository path at the release, or None
+    when the path does not exist there. The result maps each set left without
+    a line to the reason.
+    """
+    paths = sorted({source_path(d["sourcefile"]) for d in devices.values()})
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        texts = dict(zip(paths, pool.map(fetch, paths)))
+    unplaced: dict[str, str] = {}
+    for name, device in sorted(devices.items()):
+        path = source_path(device["sourcefile"])
+        device["source_file"] = path
+        lines = texts[path]
+        if lines is None:
+            unplaced[name] = NO_FILE
+            continue
+        line, reason = find_rom_block(
+            lines, name, [(rom["name"], rom["crc32"]) for rom in device["roms"]]
+        )
+        if line is None:
+            unplaced[name] = reason
+        else:
+            device["source_line"] = line
+    return unplaced

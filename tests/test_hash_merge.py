@@ -402,7 +402,7 @@ class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
         self.assertEqual(sorted(files), ["neogeo.zip", "newset.zip"])
         self.assertEqual(files["neogeo.zip"]["system"], "snk-neogeo-mvs")
         self.assertNotIn("system", files["newset.zip"])
-        self.assertEqual(files["neogeo.zip"]["source_ref"], "src/mame/neogeo/neogeo.cpp:10")
+        self.assertEqual(files["neogeo.zip"]["source_ref"], "upstream src/mame/neogeo/neogeo.cpp:10")
 
     def test_a_release_profile_is_left_out_of_the_current_refresh(self):
         from scripts.scraper.mame_hash_scraper import _find_mame_profiles

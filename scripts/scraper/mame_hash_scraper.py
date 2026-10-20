@@ -24,7 +24,16 @@ import yaml
 
 from common import source_yaml_paths, write_text_atomic, yaml_load
 
-from ._hash_merge import _build_contents, _build_source_ref, compute_diff, merge_mame_profile
+import upstream
+
+from ._hash_merge import (
+    _build_contents,
+    _build_source_ref,
+    compute_diff,
+    merge_mame_devices,
+    merge_mame_profile,
+)
+from .mame_devices import locate_sources, open_listxml, scan_device_sets
 from .mame_parser import parse_mame_source_tree
 
 log = logging.getLogger(__name__)
@@ -377,7 +386,7 @@ def release_profile(
         }
         if known.get(name, {}).get("system"):
             entry["system"] = known[name]["system"]
-        entry["source_ref"] = _build_source_ref(data)
+        entry["source_ref"] = _build_source_ref(data, "upstream ")
         entry["contents"] = _build_contents(data.get("roms", []))
         files.append(entry)
     return {
@@ -423,6 +432,50 @@ def _write_release(args: argparse.Namespace) -> None:
     print(f"{args.profile}: {len(profile['files'])} BIOS root sets at {args.release}")
 
 
+def _merge_devices(args: argparse.Namespace) -> None:
+    """Document the device ROM sets of the release mame.yml is pinned on.
+
+    The listxml must be that release's: the lines are read at its tag and
+    have to be the lines of the profile's upstream_commit.
+    """
+    profile_path = _EMULATORS_DIR / "mame.yml"
+    profile = yaml_load(profile_path.read_text(encoding="utf-8")) or {}
+    with open_listxml(args.listxml) as stream:
+        tag, devices = scan_device_sets(stream)
+    version = _parse_version_tag(tag)
+    if str(profile.get("core_version")) != version:
+        raise RuntimeError(
+            f"{args.listxml} is MAME {version}, mame.yml is pinned on "
+            f"{profile.get('core_version')}: refresh the BIOS root sets first"
+        )
+    repo = upstream.parse_repo(_REPO_URL)
+    commit = upstream.tag_commit(repo, tag, upstream.CACHE_DIR)
+    if not commit or commit != profile.get("upstream_commit"):
+        raise RuntimeError(
+            f"{tag} is {commit}, mame.yml upstream_commit is "
+            f"{profile.get('upstream_commit')}"
+        )
+    unplaced = locate_sources(
+        devices,
+        lambda path: upstream.fetch_file(repo, commit, path, upstream.CACHE_DIR),
+    )
+    report = merge_mame_devices(str(profile_path), devices, write=not args.dry_run)
+
+    print(f"mame-devices: {len(devices)} device ROM sets in the {tag} listxml")
+    print(f"  {profile_path.name}:")
+    print(f"    + {len(report['added'])} added")
+    print(f"    ~ {len(report['updated'])} updated")
+    print(f"    = {len(report['unchanged'])} unchanged")
+    for set_name in report["conflict"]:
+        print(f"    ! {set_name}.zip is listed under another category, left as written")
+    if unplaced:
+        print(f"  {len(unplaced)} without source lines:")
+        for set_name, reason in sorted(unplaced.items()):
+            print(f"    {set_name} ({devices[set_name]['source_file']}, {reason})")
+    if args.dry_run:
+        print("(dry run, no files modified)")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -443,6 +496,19 @@ def build_parser() -> argparse.ArgumentParser:
         "--force",
         action="store_true",
         help="re-fetch even if cache is fresh",
+    )
+    devices = parser.add_argument_group(
+        "device ROM sets",
+        "document every device set with dumped ROMs from the release's "
+        "-listxml (e.g. --devices --listxml .cache/dats/mame0289lx.zip)",
+    )
+    devices.add_argument(
+        "--devices", action="store_true",
+        help="merge device ROM sets into mame.yml instead of BIOS root sets",
+    )
+    devices.add_argument(
+        "--listxml", type=Path,
+        help="MAME -listxml, plain or as the release's mameNNNNlx.zip",
     )
     release = parser.add_argument_group(
         "release profile",
@@ -468,6 +534,13 @@ def main() -> None:
     )
     parser = build_parser()
     args = parser.parse_args()
+    if args.devices or args.listxml:
+        if not (args.devices and args.listxml):
+            parser.error("--devices and --listxml go together")
+        if args.release or args.profile or args.json or args.force:
+            parser.error("--devices takes only --listxml and --dry-run")
+        _merge_devices(args)
+        return
     if args.release or args.profile:
         missing = [
             flag for flag, value in (
