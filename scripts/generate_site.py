@@ -1707,7 +1707,7 @@ def _render_platform_systems(
 
         anchor = sys_id.replace(" ", "-")
         if use_collapsible:
-            status_tag = "OK" if ok_count == total else f"{total - ok_count} issues"
+            status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
             lines.append(f'<a id="{anchor}"></a>')
             lines.append(f'??? note "{sys_id} ({ok_count}/{total} - {status_tag})"')
             lines.append("")
@@ -3052,7 +3052,7 @@ def _emulator_file_summary(
     held = f"{in_repo_count} in repo, {missing_count} missing"
     if unsourceable_count:
         held += f", {unsourceable_count} unsourceable"
-    total = f"**{len(slots)} files**"
+    total = f"**{_count(len(slots), 'file')}**"
     if len(slots) != len(files):
         total += f" ({len(files)} accepted versions)"
     parts = [
@@ -3344,7 +3344,7 @@ def _render_problem_files(
         if missing_files:
             lines.extend([
                 f'### Missing <span class="rb-badge rb-badge-danger">'
-                f"{len(missing_files)} files</span>",
+                f"{_count(len(missing_files), 'file')}</span>",
                 "",
                 "| File | Required | Platforms |",
                 "|------|----------|-----------|",
@@ -3359,7 +3359,7 @@ def _render_problem_files(
         if untested_files:
             lines.extend([
                 f'### Untested <span class="rb-badge rb-badge-warning">'
-                f"{len(untested_files)} files</span>",
+                f"{_count(len(untested_files), 'file')}</span>",
                 "",
                 "Present but hash not verified.",
                 "",
@@ -3375,7 +3375,7 @@ def _render_problem_files(
         if mismatch_files:
             lines.extend([
                 f'### Hash Mismatch <span class="rb-badge rb-badge-warning">'
-                f"{len(mismatch_files)} files</span>",
+                f"{_count(len(mismatch_files), 'file')}</span>",
                 "",
                 "Platform says OK but emulator validation disagrees.",
                 "",
@@ -3792,11 +3792,11 @@ def generate_gap_analysis(
         if src_missing_details:
             req_src = [m for m in src_missing_details if m["required"]]
             lines.extend([
-                f"### Files to Source ({len(src_missing_details)} files, "
+                f"### Files to Source ({_count(len(src_missing_details), 'file')}, "
                 f"{len(req_src)} required"
                 + (
-                    f"; {entries} entries, a file declared with the same hash "
-                    "at several places is listed once)"
+                    f", {_count(entries, 'entry', 'entries')}: "
+                    "a file declared with the same hash at several places is listed once)"
                     if entries != len(src_missing_details) else ")"
                 ),
                 "",
@@ -4932,6 +4932,7 @@ from sitesources import (  # noqa: E402,F401
 )
 from siterender import (  # noqa: E402,F401
     _by_mode,
+    _count,
     _render_yaml_value,
     _slugify_anchor,
     _system_page_map,

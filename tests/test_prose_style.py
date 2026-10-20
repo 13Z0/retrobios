@@ -27,6 +27,8 @@ GLYPHS = re.compile(
 # backticks, which are blanked before the search.
 CLAUSE_SEMICOLON = re.compile(r"[A-Za-z0-9)\]\"']; [A-Za-z(]")
 BACKTICKS = re.compile(r"`[^`\n]*`")
+# "1 files", a count the generator printed without its singular.
+ONE_PLURAL = re.compile(r"(?<![\w,./])1 (files|issues|entries|emulators|platforms|systems|cores)\b")
 FENCED = re.compile(r"^```.*?^```", re.S | re.M)
 
 SKIPPED_TREES = ("bios/", "data/", "recipes/", "provenance/", "install/")
@@ -209,7 +211,7 @@ class GeneratedSiteProse(unittest.TestCase):
             text = re.sub(r"<script.*?</script>", "", page.read_text(encoding="utf-8"), flags=re.S)
             text = FENCED.sub("", text)
             for number, line in enumerate(text.splitlines(), 1):
-                if GLYPHS.search(line) or _semicolons(line):
+                if GLYPHS.search(line) or _semicolons(line) or ONE_PLURAL.search(line):
                     offenders.append(f"{page.relative_to(ROOT)}:{number}: {line.strip()[:100]}")
         self.assertEqual(offenders, [], "\n".join(offenders[:40]))
 

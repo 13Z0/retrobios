@@ -30,6 +30,11 @@ def _code(value: object) -> str:
     return "`" + str(value).replace("`", "'") + "`"
 
 
+def _count(number: int, noun: str, plural: str = "") -> str:
+    """A count and its noun, singular for one: the site printed "1 files" 234 times."""
+    return f"{number:,} {noun if number == 1 else plural or noun + 's'}"
+
+
 def _escape_tags(text: str) -> str:
     """Show a placeholder such as ``<system_dir>`` as it was written.
 
