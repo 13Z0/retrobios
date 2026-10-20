@@ -64,9 +64,19 @@ notes: |
 
 files:
   - name: ROM
+    aliases: [mac.rom]
     required: true
     min_size: 524288
     max_size: 1048576
     validation: [size]
     description: "Macintosh ROM image, 512 KB SE/Classic or 512 KB / 1 MB 32-bit clean Mac II"
-    source_ref: "BasiliskII/src/Unix/main_unix.cpp:109,685,692, BasiliskII/src/rom_patches.cpp:830-842, BasiliskII/src/main.cpp:67"
+    source_ref: "BasiliskII/src/Unix/main_unix.cpp:109,685,692, BasiliskII/src/rom_patches.cpp:830-842, BasiliskII/src/main.cpp:67,190, BasiliskII/src/rom_patches.cpp:1187-1832"
+    note: >-
+      Opened under the name the rom prefs item gives, ROM when it is unset.
+      The code accepts 64 KB to 1 MB, and the 512 KB floor here is the
+      smallest image with a version word CheckROM takes on a stock build. The
+      version word is not the last gate. patch_rom_32 searches the image for
+      the code it patches (UniversalInfo, InitMMU, ClkNoMem, the SCC and VIA2
+      setup, the interrupt enables, the PACK 4 resource) and returns false
+      when one is missing, which InitAll at main.cpp:190 turns into a failed
+      start. No hash is involved in either gate.
