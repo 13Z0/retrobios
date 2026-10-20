@@ -1,0 +1,241 @@
+emulator: "QUASI88kai"
+type: standalone
+core_classification: enhanced_fork
+source: "https://github.com/winterheart/quasi88"
+profiled_date: "2026-10-20"
+source_commit: "0d4e171415cad7ac19ae4ff0dcf8cdcfd825947b"
+core_version: "0.7.1"
+display_name: "NEC - PC-8800 series (QUASI88kai)"
+mode: standalone
+cores: []
+systems:
+  - nec-pc-88
+  - nec-pc-80
+
+notes: |
+  Continuation of Showzoh Fukunaga's QUASI88, version 0.7.1 at the pinned
+  commit (CMakeLists.txt:3). It reads every ROM, the OPNA rhythm samples and
+  the floppy drive sound samples from one ROM directory.
+
+  The ROM directory is $QUASI88_ROM_DIR when set, else the rom folder under the
+  QUASI88 home (src/file-op.cpp:444-464,521). The home is the working
+  directory when it holds quasi88.ini, else $HOME/.quasi88 (src/file-op.cpp:
+  494-516). The -romdir option replaces it (src/getconf.cpp:282-290,529). The
+  CMake ROMDIR setting becomes the ROM_DIR macro (CMakeLists.txt:31,38), which
+  only fills the help text (src/help.h:214) and does not move the search.
+  Paths below are relative to the QUASI88 home.
+
+  load_rom tries each name of an entry in order inside the ROM directory and
+  stops at the first that opens (src/memory.cpp:175-219). A missing ROM is
+  filled with 0xFF, and a short one is padded with 0xFF, so the emulator starts
+  with any ROM missing. The machine model comes from byte 0x79D7 of N88.ROM
+  (src/memory.h:44, src/memory.cpp:503), and BASIC_AUTO, the default, boots V2
+  when that byte is "4" or higher and V1S otherwise (src/initval.h:53,
+  src/pc88main.cpp:2755-2761).
+
+  -compatrom FILE loads every main and sub ROM from one P88SR.EXE image
+  instead of the separate files (src/getconf.cpp:535, src/memory.cpp:341-369).
+  There is no default name.
+
+  With -samples (off by default, src/snddrv/quasi88/mame-quasi88.cpp:506-510,
+  src/snddrv/quasi88/SDL/audio.cpp:91-94) the drive sounds motoron.wav,
+  motoroff.wav, headdown.wav, headup.wav and seek.wav are read from the ROM
+  directory (src/snddrv/quasi88/mame-quasi88.cpp:101-108,1085-1127). Any mono
+  WAV is accepted (src/snddrv/quasi88/mame-quasi88.cpp:92). QUASI88 names no
+  particular recording.
+
+files:
+  - name: "N88.ROM"
+    system: nec-pc-88
+    path: "rom/N88.ROM"
+    aliases: ["n88.rom"]
+    required: true
+    size: 32768
+    source_ref: "src/memory.cpp:87-88,317"
+    note: >
+      N88-BASIC main ROM, read into main_rom (0x8000 bytes). Without it the
+      Z80 runs from 0xFF filled memory and nothing boots. Its byte 0x79D7
+      selects the machine model.
+
+  - name: "N88EXT0.ROM"
+    system: nec-pc-88
+    path: "rom/N88EXT0.ROM"
+    aliases: ["n88ext0.rom", "N88_0.ROM", "n88_0.rom"]
+    required: true
+    size: 8192
+    source_ref: "src/memory.cpp:89,318, src/pc88main.cpp:268-274"
+    note: >
+      N88-BASIC extension ROM bank 0, mapped at 0x6000-0x7FFF when port 0x71
+      selects the extension ROM. Bank 0 holds the N88-BASIC V2 code that
+      BASIC_AUTO boots on SR and later models.
+
+  - name: "N88EXT1.ROM"
+    system: nec-pc-88
+    path: "rom/N88EXT1.ROM"
+    aliases: ["n88ext1.rom", "N88_1.ROM", "n88_1.rom"]
+    required: false
+    size: 8192
+    source_ref: "src/memory.cpp:90,319"
+    note: "N88-BASIC extension ROM bank 1, mapped at 0x6000-0x7FFF when selected."
+
+  - name: "N88EXT2.ROM"
+    system: nec-pc-88
+    path: "rom/N88EXT2.ROM"
+    aliases: ["n88ext2.rom", "N88_2.ROM", "n88_2.rom"]
+    required: false
+    size: 8192
+    source_ref: "src/memory.cpp:91,320"
+    note: "N88-BASIC extension ROM bank 2, mapped at 0x6000-0x7FFF when selected."
+
+  - name: "N88EXT3.ROM"
+    system: nec-pc-88
+    path: "rom/N88EXT3.ROM"
+    aliases: ["n88ext3.rom", "N88_3.ROM", "n88_3.rom"]
+    required: false
+    size: 8192
+    source_ref: "src/memory.cpp:92,321"
+    note: "N88-BASIC extension ROM bank 3, mapped at 0x6000-0x7FFF when selected."
+
+  - name: "N88N.ROM"
+    system: nec-pc-80
+    path: "rom/N88N.ROM"
+    aliases: ["n88n.rom", "N80.ROM", "n80.rom"]
+    required: false
+    size: 32768
+    source_ref: "src/memory.cpp:93,322, src/pc88main.cpp:264-266"
+    note: >
+      N-BASIC ROM, mapped at 0x0000-0x7FFF in N mode, the PC-8001 compatible
+      mode.
+
+  - name: "N88SUB.ROM"
+    system: nec-pc-88
+    path: "rom/N88SUB.ROM"
+    aliases: ["n88sub.rom", "DISK.ROM", "disk.rom"]
+    required: true
+    size: [2048, 8192]
+    source_ref: "src/memory.cpp:94,324-339,371-372"
+    note: >
+      Disk subsystem ROM run by the sub CPU. 2048 bytes is the 2D type and is
+      mirrored to fill 8 KB, 8192 bytes is the 2HD type. Without it the sub
+      CPU runs 0xFF and no floppy image boots.
+
+  - name: "N88KNJ1.ROM"
+    system: nec-pc-88
+    path: "rom/N88KNJ1.ROM"
+    aliases: ["n88knj1.rom", "KANJI1.ROM", "kanji1.rom"]
+    required: false
+    size: 131072
+    source_ref: "src/memory.cpp:95,376-383"
+    note: >
+      Kanji ROM level 1. A file of exactly 0x20000 bytes sets has_kanji_rom.
+      Otherwise the menu falls back to English and the ANK font comes from the
+      built-in table.
+
+  - name: "N88KNJ2.ROM"
+    system: nec-pc-88
+    path: "rom/N88KNJ2.ROM"
+    aliases: ["n88knj2.rom", "KANJI2.ROM", "kanji2.rom"]
+    required: false
+    size: 131072
+    source_ref: "src/memory.cpp:96,385"
+    note: "Kanji ROM level 2."
+
+  - name: "N88JISHO.ROM"
+    system: nec-pc-88
+    path: "rom/N88JISHO.ROM"
+    aliases: ["n88jisho.rom", "JISYO.ROM", "jisyo.rom"]
+    required: false
+    size: 524288
+    source_ref: "src/memory.cpp:26,97,560-578, src/initval.h:57, src/getconf.cpp:377-378"
+    note: >
+      Dictionary ROM, 32 banks of 16 KB. Read only with -jisho, off by
+      default.
+
+  - name: "FONT.ROM"
+    system: nec-pc-88
+    path: "rom/FONT.ROM"
+    aliases: ["font.rom"]
+    required: false
+    hle_fallback: true
+    size: 2048
+    source_ref: "src/memory.cpp:98,388-424"
+    note: >
+      ANK font. When it is missing or not 2048 bytes the font is taken from
+      the kanji ROM, or from the built-in table without one. -nofont skips the
+      file (src/getconf.cpp:583).
+
+  - name: "FONT2.ROM"
+    system: nec-pc-88
+    path: "rom/FONT2.ROM"
+    aliases: ["font2.rom"]
+    required: false
+    hle_fallback: true
+    size: [2048, 4096]
+    source_ref: "src/memory.cpp:99,426-459"
+    note: >
+      Second font. 4096 bytes carries its own semigraphic half. Missing, the
+      built-in ANH table is used.
+
+  - name: "FONT3.ROM"
+    system: nec-pc-88
+    path: "rom/FONT3.ROM"
+    aliases: ["font3.rom"]
+    required: false
+    hle_fallback: true
+    size: [2048, 4096]
+    source_ref: "src/memory.cpp:100,461-490"
+    note: "Third font. Missing, it is left transparent."
+
+  - name: "2608_BD.WAV"
+    system: nec-pc-88
+    path: "rom/2608_BD.WAV"
+    aliases: ["2608_bd.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: >
+      OPNA rhythm bass drum sample. The six rhythm samples are read in the
+      order BD, SD, TOP, HH, TOM, RIM, the uppercase name first, and loading
+      stops at the first one missing or not mono PCM. They are read only by
+      the fmgen OPNA, used with -fmgen and sound board II (-sd2), both off by
+      default (src/snddrv/quasi88/mame-quasi88.cpp:32,529-536,
+      src/initval.h:56). Without them the fmgen rhythm channel is silent.
+
+  - name: "2608_SD.WAV"
+    system: nec-pc-88
+    path: "rom/2608_SD.WAV"
+    aliases: ["2608_sd.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: "OPNA rhythm snare drum sample, read with the bass drum sample."
+
+  - name: "2608_TOP.WAV"
+    system: nec-pc-88
+    path: "rom/2608_TOP.WAV"
+    aliases: ["2608_top.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: "OPNA rhythm top cymbal sample, read with the bass drum sample."
+
+  - name: "2608_HH.WAV"
+    system: nec-pc-88
+    path: "rom/2608_HH.WAV"
+    aliases: ["2608_hh.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: "OPNA rhythm hi-hat sample, read with the bass drum sample."
+
+  - name: "2608_TOM.WAV"
+    system: nec-pc-88
+    path: "rom/2608_TOM.WAV"
+    aliases: ["2608_tom.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: "OPNA rhythm tom sample, read with the bass drum sample."
+
+  - name: "2608_RIM.WAV"
+    system: nec-pc-88
+    path: "rom/2608_RIM.WAV"
+    aliases: ["2608_rim.wav"]
+    required: false
+    source_ref: "src/fmgen/opna.cpp:1264-1279,1344-1461"
+    note: "OPNA rhythm rim shot sample, read with the bass drum sample."
