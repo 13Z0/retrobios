@@ -14,6 +14,7 @@ Buildbot structure varies by platform:
 - wiiu:        nintendo/wiiu/latest/  -> *_libretro.rpx.zip
 - psp:         playstation/psp/latest/  -> *_libretro_psp.PBP.zip
 - ps2:         playstation/ps2/latest/  -> *_libretro_ps2.elf.zip
+- dingux/webos: {path}/latest/  -> *_libretro.so.zip
 - vita:        bundles only (VPK) - no individual cores
 """
 
@@ -59,6 +60,16 @@ TARGETS: list[tuple[str, str, str]] = [
     ("nintendo/wiiu/latest", "nintendo-wiiu", "ppc"),
     ("playstation/ps2/latest", "playstation-ps2", "mips"),
     ("playstation/psp/latest", "playstation-psp", "mips"),
+    # Handhelds and TVs the buildbot publishes as .so cores of their own:
+    # OpenDingux (RG350 and kin), its beta and RS-90 builds, RetroFW,
+    # MiyooCFW, and webOS.
+    ("dingux/mips32/latest", "opendingux-mips32", "mips"),
+    ("dingux/mips32-odbeta/latest", "opendingux-mips32-odbeta", "mips"),
+    ("dingux/rs90-mips32-odbeta/latest", "opendingux-rs90", "mips"),
+    ("dingux/retrofw-mips32/latest", "retrofw-mips32", "mips"),
+    ("dingux/miyoo-arm32/latest", "miyoo-arm32", "armv5"),
+    ("webos/armv7a/latest", "webos-armv7a", "armv7"),
+    ("webos/aarch64/latest", "webos-aarch64", "aarch64"),
     # vita: only VPK bundles on buildbot -cores listed via libretro-super recipes
 ]
 

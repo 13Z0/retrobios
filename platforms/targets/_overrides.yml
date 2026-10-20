@@ -92,6 +92,15 @@ retroarch:
       aliases: [ps2]
     playstation-psp:
       aliases: [psp]
+    # OpenDingux (RG350 and kin), RetroFW, MiyooCFW and LG webOS TVs.
+    opendingux-mips32:
+      aliases: [opendingux, dingux]
+    retrofw-mips32:
+      aliases: [retrofw]
+    miyoo-arm32:
+      aliases: [miyoo, miyoocfw]
+    webos-armv7a:
+      aliases: [webos]
 
 retrodeck:
   targets:

@@ -333,5 +333,21 @@ class HashScrapersRefuseAnUnknownVersion(unittest.TestCase):
             mame_hash_scraper._get_version()
 
 
+class RetroArchCoversEveryBuildbotFamily(unittest.TestCase):
+    """OpenDingux, RetroFW, MiyooCFW and webOS builds were published on the
+    buildbot and absent from the target list: an RG350 or Miyoo user could
+    not narrow a pack or an install to the board."""
+
+    def test_the_handheld_and_tv_families_are_listed(self):
+        from scraper.targets.retroarch_targets_scraper import TARGETS
+
+        paths = {path.split("/latest")[0] for path, _name, _arch in TARGETS}
+        for family in ("dingux/mips32", "dingux/mips32-odbeta", "dingux/rs90-mips32-odbeta",
+                       "dingux/retrofw-mips32", "dingux/miyoo-arm32",
+                       "webos/armv7a", "webos/aarch64"):
+            with self.subTest(family=family):
+                self.assertIn(family, paths)
+
+
 if __name__ == "__main__":
     unittest.main()
