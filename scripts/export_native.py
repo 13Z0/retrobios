@@ -8,7 +8,7 @@ formats that carry code are patched rather than regenerated, so the checker
 a platform ships keeps working.
 
 Usage:
-    python scripts/export_native.py --all --fetch
+    python scripts/export_native.py --all --fetch           # into exports/
     python scripts/export_native.py --platform recalbox --upstream-dir up/
     python scripts/export_native.py --platform retrobat --refresh-cache
 """
@@ -28,7 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from artifacts import file_lock, write_bytes_atomic, write_text_atomic
+from artifacts import file_lock, write_bytes_atomic, write_if_changed, write_text_atomic
 import yaml
 
 from common import (
@@ -562,7 +562,30 @@ def export_platform(
     if len(issues) > 10:
         messages.append(f"and {len(issues) - 10} more validation failures")
 
+    write_report(output_dir / f"{platform}.json", {
+        "platform": platform,
+        "originals": wanted_sources(exporter, systems, scraped),
+        "files": sorted(produced),
+        "summary": summary,
+        "hashes_corrected": applied,
+        "hashes_filled": filled,
+        "sizes_corrected": resized,
+        "sizes_removed": unsized,
+        "hashes_cleared": cleared,
+        "requirements_corrected": requirements,
+        "withheld": list(withheld),
+        "invalid": issues,
+    })
     return not issues, messages
+
+
+def write_report(path: Path, report: dict) -> None:
+    """What one platform's export changed, for the page that publishes it.
+
+    The run prints five examples per kind of change. The page lists them
+    all, so the maintainer reading it finds each line of the diff named.
+    """
+    write_if_changed(str(path), json.dumps(report, indent=2) + "\n")
 
 
 def run(
@@ -626,7 +649,7 @@ def main() -> None:
     group.add_argument("--all", action="store_true", help="every platform")
     group.add_argument("--platform", type=platform_arg, help="a single platform")
     parser.add_argument(
-        "--output-dir", default="dist/upstream",
+        "--output-dir", default="exports",
         help="directory the corrected platform files go to (default: %(default)s)",
     )
     parser.add_argument(

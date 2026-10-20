@@ -244,7 +244,7 @@ archived included.
 
 ```bash
 python scripts/export_native.py --platform batocera --fetch
-python scripts/export_native.py --all --fetch --output-dir dist/upstream/
+python scripts/export_native.py --all --fetch   # into exports/, published on the site
 ```
 
 `--fetch` downloads the platform's own file into `.cache/upstream-native/`,

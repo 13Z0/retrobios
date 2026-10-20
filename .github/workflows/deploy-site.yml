@@ -8,6 +8,7 @@ on:
       - "emulators/**"
       - "provenance/**"
       - "wiki/**"
+      - "exports/**"
       # Every script the build runs or imports, and no other
       # (tests/test_workflow_paths.py).
       - "scripts/artifacts.py"
@@ -34,6 +35,7 @@ on:
       - "scripts/restore_large_files.py"
       - "scripts/safeparse.py"
       - "scripts/sect233r1.py"
+      - "scripts/siteexports.py"
       - "scripts/siterender.py"
       - "scripts/sitesources.py"
       - "scripts/sitewrite.py"

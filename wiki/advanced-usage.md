@@ -339,10 +339,16 @@ the truth knows and the platform lacks are added.
 ```bash
 python scripts/export_native.py --platform batocera --fetch   # batocera-systems
 python scripts/export_native.py --platform recalbox --fetch   # es_bios.xml
-python scripts/export_native.py --all --fetch --output-dir dist/upstream/
+python scripts/export_native.py --all --fetch                # every platform, into exports/
 ```
 
-Seven of the formats carry code as well as data - Batocera's and ROCKNIX's
+The corrected files are committed under `exports/<platform>/`, and
+`exports/<platform>.json` names every change the run made. The site's
+[corrected platform files](../exports.md) page is built from those reports:
+one row per platform, a download link, and each corrected hash, filled hash
+and withheld correction listed in full.
+
+Seven of the formats carry code as well as data: Batocera's and ROCKNIX's
 scripts, EmuDeck's shell library, BizHawk's C# database, RetroDECK's
 component manifests, MiSTer's BiosDB, RetroPie's scriptmodules. Those are
 patched from the platform's own file, which `--fetch` downloads once into
