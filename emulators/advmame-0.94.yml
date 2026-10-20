@@ -114,6 +114,7 @@ files:
       support/hiscore.dat in the release tarball.
 
   - name: history.dat
+    bundled: true
     required: false
     category: game_data
     sha1: "5206c85cad323acb885e28e1109b8e842919b7dd"
@@ -148,6 +149,7 @@ files:
       cheat menu reads "cheat database not found" (src/cheat.c:2482).
 
   - name: event.dat
+    bundled: true
     required: false
     category: game_data
     sha1: "8c34c85f92bc6771d789e880953a1cc43341485e"

@@ -60,7 +60,8 @@ notes: |
        CI-6f32d89 src/core/hle/JVS/JVS.cpp:169-210,
        CI-6f32d89 src/core/hle/JVS/JVS.cpp:246-262
 
-  The package also carries chihiro_xbox_bios.bin, ver1305.bin, 315-6215.bin,
+  The package ships every file below except xboxdash.xbe and keys.bin. It
+  also carries chihiro_xbox_bios.bin, ver1305.bin, 315-6215.bin,
   sp5001.bin, sp5001-b.bin and sp5002-a.bin in EmuDisk\chihiro, plus a
   "chihiro (old)" copy of the folder. No string in the binaries names any of
   them and nothing opens them.
@@ -70,6 +71,9 @@ files:
     path: "EmuDisk/Chihiro/fpr21042_m29w160et.bin"
     system: sega-chihiro
     required: true
+    bundled: true
+    sha1: "a13cf9c5cdfe8605d82150b7573652f419b30197"
+    md5: "afacfb61877401f1611998d2b590dffd"
     size: 2097152
     validation: [size]
     description: "Chihiro media board flash ROM"
@@ -84,6 +88,7 @@ files:
     path: "EmuDisk/Chihiro/SEGABOOT_MBROM0.XBE"
     system: sega-chihiro
     required: false
+    bundled: true
     size: 1048576
     sha1: "2f7ac75e738e2e4f83ffb0cbc06127195a7e8336"
     md5: "853d40e7a80d659613885d93abbec463"
@@ -115,18 +120,25 @@ files:
     path: "EmuDisk/Chihiro/ic10_g24lc64.bin"
     system: sega-chihiro
     required: true
+    bundled: true
+    sha1: "98e4cb2b76b89eb5990edf786d2e45e1956beb7e"
+    md5: "ec15634cf28e8bcaf660346787f83254"
     min_size: 7937
     description: "Base board QC microcontroller firmware"
     note: >-
       Memory mapped read/write at JVS setup, the run ends when it cannot be
       opened. Byte 0x1F00 is dereferenced right after and rewritten to USA,
       export or Japan when the title's boot.id rejects the stored region.
+      Hashes are those of the copy RetroBat ships.
     source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c620"
 
   - name: pc20_g24lc64.bin
     path: "EmuDisk/Chihiro/pc20_g24lc64.bin"
     system: sega-chihiro
     required: true
+    bundled: true
+    sha1: "82dad6e2a75bab4a4840dc6939462f1fb9b95101"
+    md5: "bf1cf24f8549137c0b1ad0fa61473c7e"
     description: "Base board SC microcontroller firmware"
     note: "Memory mapped read/write at JVS setup, the run ends when it cannot be opened."
     source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c634"
@@ -135,6 +147,9 @@ files:
     path: "EmuDisk/Chihiro/ic11_24lc024.bin"
     system: sega-chihiro
     required: true
+    bundled: true
+    sha1: "7c06ccfdd8fb2f4e2d4b0d866791b21879fbd8f4"
+    md5: "da9feafc678d2476f3bf3b1049ec4b17"
     description: "Base board configuration EEPROM"
     note: >-
       Memory mapped read/write at JVS setup, the run ends when it cannot be
@@ -145,6 +160,9 @@ files:
     path: "EmuDisk/Chihiro/backup_ram.bin"
     system: sega-chihiro
     required: false
+    bundled: true
+    sha1: "50b6b204aa881dab8bf572e901ea93d7f708844d"
+    md5: "c34872828474f21cbc761febacea72df"
     has_builtin: true
     size_note: "Created as 128 KB of zeros when absent, then memory mapped"
     description: "Base board backup memory"
@@ -165,6 +183,9 @@ files:
     path: "EEPROM.bin"
     system: microsoft-xbox
     required: false
+    bundled: true
+    sha1: "de0b38f4762d09b8fc4883f3f6a04203d2c4b8e3"
+    md5: "6d497abbfb773a2e07f8ab71f2a2999d"
     has_builtin: true
     size: 256
     validation: [size]

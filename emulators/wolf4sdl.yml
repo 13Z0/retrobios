@@ -60,6 +60,7 @@ files:
 
   # Wolfenstein 3D shareware (.wl1)
   - name: "vswap.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware page file: wall textures, sprites and digitized sounds"
@@ -71,6 +72,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgadict.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware Huffman dictionary of the graphics file"
@@ -82,6 +84,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgahead.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware graphics chunk offsets"
@@ -93,6 +96,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgagraph.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware graphics chunks: pictures, fonts and text articles"
@@ -104,6 +108,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "maphead.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware map offsets and tile info"
@@ -115,6 +120,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "gamemaps.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware level maps"
@@ -126,6 +132,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "audiohed.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware audio chunk offsets"
@@ -137,6 +144,7 @@ files:
     note: "Hashes of the v1.4 shareware file in wolf3d14.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "audiot.wl1"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Wolfenstein 3D shareware AdLib sound effects and music"
@@ -442,6 +450,7 @@ files:
 
   # Spear of Destiny demo (.sdm)
   - name: "vswap.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo page file: wall textures, sprites and digitized sounds"
@@ -453,6 +462,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgadict.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo Huffman dictionary of the graphics file"
@@ -464,6 +474,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgahead.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo graphics chunk offsets"
@@ -475,6 +486,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "vgagraph.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo graphics chunks: pictures, fonts and text articles"
@@ -486,6 +498,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "maphead.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo map offsets and tile info"
@@ -497,6 +510,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "gamemaps.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo level maps"
@@ -508,6 +522,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "audiohed.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo audio chunk offsets"
@@ -519,6 +534,7 @@ files:
     note: "Hashes of the file in soddemo.zip, the archive RetroPie downloads from maniacsvault.net. The engine checks no hash."
 
   - name: "audiot.sdm"
+    installed_on: [retropie]
     category: game_data
     system: wolfenstein3d
     description: "Spear of Destiny demo AdLib sound effects and music"

@@ -72,6 +72,7 @@ notes: |
 files:
   - name: "dsda-doom.wad"
     category: game_data
+    bundled: true
     description: "dsda-doom engine data WAD"
     required: true
     size: 3674257
@@ -99,11 +100,12 @@ files:
     note: "Registered and Ultimate Doom share the name and are told apart by the E4 maps."
 
   - name: "doom1.wad"
+    installed_on: [retropie]
     category: game_data
     system: doom
     required: false
     source_ref: "prboom2/src/d_main.c:171, 198"
-    note: "Shareware Doom."
+    note: "Shareware Doom. RetroPie downloads it into its ports/doom directory when it installs dsda-doom."
 
   - name: "doomu.wad"
     category: game_data
@@ -160,16 +162,20 @@ files:
   # ---- Freedoom (free) ----
 
   - name: "freedoom1.wad"
+    installed_on: [retropie]
     category: game_data
     system: doom
     required: false
     source_ref: "prboom2/src/d_main.c:175, 201, 1099-1100"
+    note: "RetroPie unpacks Freedoom 0.13.0 into its ports/doom directory when it installs dsda-doom."
 
   - name: "freedoom2.wad"
+    installed_on: [retropie]
     category: game_data
     system: doom
     required: false
     source_ref: "prboom2/src/d_main.c:174, 1114-1116"
+    note: "RetroPie unpacks Freedoom 0.13.0 into its ports/doom directory when it installs dsda-doom."
 
   - name: "freedm.wad"
     category: game_data

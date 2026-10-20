@@ -77,6 +77,8 @@ files:
 
   - name: "aros-amiga-m68k-rom.bin"
     path: "amiga/aros-amiga-m68k-rom.bin"
+    bundled: true
+    not_bundled_on: [recalbox]
     system: commodore-amiga
     description: "AROS Kickstart replacement, main ROM (build of 2014-01-10)"
     required: false
@@ -85,10 +87,12 @@ files:
     md5: "8c9e0e3b3686c362ccf2dfd8a86669b2"
     crc32: "69bf6f2b"
     source_ref: "src/memory.cpp:34"
-    note: "Hashes are of the file in AndroidData/aros20140110.zip in the source tree."
+    note: "Hashes are of the file in AndroidData/aros20140110.zip in the source tree. RetroPie unpacks that zip into the BIOS folder on install."
 
   - name: "aros-amiga-m68k-ext.bin"
     path: "amiga/aros-amiga-m68k-ext.bin"
+    bundled: true
+    not_bundled_on: [recalbox]
     system: commodore-amiga
     description: "AROS Kickstart replacement, extended ROM (build of 2014-01-10)"
     required: false

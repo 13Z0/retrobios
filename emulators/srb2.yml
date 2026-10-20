@@ -47,6 +47,7 @@ files:
   - name: "srb2.pk3"
     path: "srb2/srb2.pk3"
     category: game_data
+    bundled: true
     description: "Main game assets"
     required: true
     size: 50115266
@@ -58,6 +59,7 @@ files:
   - name: "zones.pk3"
     path: "srb2/zones.pk3"
     category: game_data
+    bundled: true
     description: "Level data"
     required: true
     size: 18503511
@@ -69,6 +71,7 @@ files:
   - name: "characters.pk3"
     path: "srb2/characters.pk3"
     category: game_data
+    bundled: true
     description: "Playable character data"
     required: true
     size: 2044315
@@ -80,6 +83,7 @@ files:
   - name: "music.pk3"
     path: "srb2/music.pk3"
     category: game_data
+    bundled: true
     description: "Music and sound effects"
     required: false
     size: 99639560

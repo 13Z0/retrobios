@@ -44,7 +44,8 @@ notes: |
   The files below are the release-20250829 scenario archives
   (Marathon-20250829-Data.zip, Marathon2-20250829-Data.zip,
   MarathonInfinity-20250829-Data.zip), distributed freely by the Aleph One
-  project.
+  project. The engine archive AlephOne-20250829-Win.zip carries none of
+  them. RetroPie's package downloads them at install.
 
 files:
   # Marathon (Marathon/)
@@ -53,6 +54,7 @@ files:
     system: marathon
     path: "Marathon/Scripts/Marathon.mml"
     required: true
+    installed_on: [retropie]
     sha1: f40d598d451df36f123a0e4d04bf5d5896d2eb6b
     source_ref: "Source_Files/shell.cpp:1600-1610"
     note: "Names Map.scen, Shapes.shps, Sounds.sndz, Physics.phys and Marathon.appl through string set 129."
@@ -61,6 +63,7 @@ files:
     system: marathon
     path: "Marathon/Scripts/Default Preferences.xml"
     required: false
+    installed_on: [retropie]
     sha1: 7f91cdd48f7acc66221c5fac671ea353a7d80c85
     source_ref: "Source_Files/shell.cpp:1600-1610"
   - name: Map.scen
@@ -68,6 +71,7 @@ files:
     system: marathon
     path: "Marathon/Map.scen"
     required: true
+    installed_on: [retropie]
     size: 3864064
     sha1: 37f97bb2482a9bec3016100f93756707af087dcb
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
@@ -76,6 +80,7 @@ files:
     system: marathon
     path: "Marathon/Shapes.shps"
     required: true
+    installed_on: [retropie]
     size: 6481664
     sha1: 0a32105b48c117a2182440d7236f1ee91fb40e59
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
@@ -84,6 +89,7 @@ files:
     system: marathon
     path: "Marathon/Marathon.appl"
     required: true
+    installed_on: [retropie]
     size: 948096
     sha1: a7abadf86280a87c82a203af9f2ecc9aff87ccf3
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-79, Source_Files/RenderOther/images.cpp:1040-1050"
@@ -93,6 +99,7 @@ files:
     system: marathon
     path: "Marathon/Sounds.sndz"
     required: false
+    installed_on: [retropie]
     size: 1021824
     sha1: 0f4c1f1c0d1103ca79c83d862d4f50226380ce99
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
@@ -101,6 +108,7 @@ files:
     system: marathon
     path: "Marathon/Physics.phys"
     required: false
+    installed_on: [retropie]
     size: 7848
     sha1: e5ed815c253a2e6bb70b46924d38ba13f73ef484
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
@@ -111,6 +119,7 @@ files:
     system: marathon
     path: "Marathon/Music/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/Sound/Music.cpp:260-275"
     note: "Level music, 00.ogg to 15.ogg."
   - name: "Plugins/"
@@ -119,6 +128,7 @@ files:
     system: marathon
     path: "Marathon/Plugins/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/XML/Plugins.cpp:509-512"
     note: "Basic M1 HUD and Enhanced HUD plugins."
 
@@ -128,6 +138,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Scripts/Filenames.mml"
     required: true
+    installed_on: [retropie]
     sha1: b2d1fa9a65b2be0d5a647f694eb32f54101b5b37
     source_ref: "Source_Files/shell.cpp:1600-1610"
     note: "Names Shapes.shpA, Sounds.sndA, Map.sceA, Physics Models/Standard.phyA, Music.ogg and Images.imgA through string set 129."
@@ -136,6 +147,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Scripts/Marathon 2.mml"
     required: false
+    installed_on: [retropie]
     sha1: ed7726736ebc7540a396612b929f026b1005a752
     source_ref: "Source_Files/shell.cpp:1600-1610"
   - name: Default Preferences.xml
@@ -143,6 +155,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Scripts/Default Preferences.xml"
     required: false
+    installed_on: [retropie]
     sha1: 9848f63dd8a8c66c593f4c95e04cb66078d5b0a7
     source_ref: "Source_Files/shell.cpp:1600-1610"
   - name: Map.sceA
@@ -150,6 +163,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Map.sceA"
     required: true
+    installed_on: [retropie]
     size: 20478336
     sha1: 8bd51b5734013ac659c699484471baaf916ab5d9
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
@@ -158,6 +172,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Shapes.shpA"
     required: true
+    installed_on: [retropie]
     size: 10016800
     sha1: 1950a0b08cf18e6ee8d82e17d9300c8109ee7288
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
@@ -166,6 +181,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Images.imgA"
     required: true
+    installed_on: [retropie]
     size: 4060032
     sha1: 1deedb05e0db70c88e32f213df4c601fb393fa3e
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, Source_Files/RenderOther/images.cpp:990-1000"
@@ -174,6 +190,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Sounds.sndA"
     required: false
+    installed_on: [retropie]
     size: 14183536
     sha1: 965423878c7a73d893bc17793206edbfe820a3c3
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
@@ -182,6 +199,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Physics Models/Standard.phyA"
     required: false
+    installed_on: [retropie]
     size: 11102
     sha1: 64b794d5b1cef3f5eb6b8886ef720a244335bc11
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
@@ -190,6 +208,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Music.ogg"
     required: false
+    installed_on: [retropie]
     size: 763501
     sha1: afcef78a0ff02fa96bf63f904610a5abc173fb5e
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:105-108"
@@ -200,6 +219,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Demos/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/Misc/vbl.cpp:1380-1395"
   - name: "Plugins/"
     type: directory
@@ -207,6 +227,7 @@ files:
     system: marathon-2
     path: "Marathon 2/Plugins/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/XML/Plugins.cpp:509-512"
 
   # Marathon Infinity (Marathon Infinity/)
@@ -215,6 +236,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Scripts/Filenames.mml"
     required: true
+    installed_on: [retropie]
     sha1: 2595e19a67a467a06b357220a34694bf412db603
     source_ref: "Source_Files/shell.cpp:1600-1610"
     note: "Names Shapes.shpA, Sounds.sndA, Map.sceA, Physics Models/Standard.phyA, Music.ogg and Images.imgA through string set 129."
@@ -223,6 +245,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Scripts/Marathon Infinity.mml"
     required: false
+    installed_on: [retropie]
     sha1: 1f93c9e3f42c8e4b97d770ffb66e18e3ce444e5b
     source_ref: "Source_Files/shell.cpp:1600-1610"
   - name: Default Preferences.xml
@@ -230,6 +253,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Scripts/Default Preferences.xml"
     required: false
+    installed_on: [retropie]
     sha1: 4814e1b516a4a8fc4240a599c60884e4e136b293
     source_ref: "Source_Files/shell.cpp:1600-1610"
   - name: Map.sceA
@@ -237,6 +261,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Map.sceA"
     required: true
+    installed_on: [retropie]
     size: 20753920
     sha1: 9cc6bc8796102637ecdf151020a247d54dc6a3ce
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
@@ -245,6 +270,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Shapes.shpA"
     required: true
+    installed_on: [retropie]
     size: 11383292
     sha1: 11398892f9d7df0c5e5bf88d71954911229b5c3e
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
@@ -253,6 +279,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Images.imgA"
     required: true
+    installed_on: [retropie]
     size: 4783360
     sha1: e76cc2063a1dacf28bee759bb3d1a9cb41b2def8
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, Source_Files/RenderOther/images.cpp:990-1000"
@@ -261,6 +288,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Sounds.sndA"
     required: false
+    installed_on: [retropie]
     size: 18507212
     sha1: fc1c72d7dcfe957755e9f919e9e0c224fca2d4bc
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
@@ -269,6 +297,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Physics Models/Standard.phyA"
     required: false
+    installed_on: [retropie]
     size: 11102
     sha1: 64b794d5b1cef3f5eb6b8886ef720a244335bc11
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
@@ -277,6 +306,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Music.ogg"
     required: false
+    installed_on: [retropie]
     size: 834960
     sha1: aa8a88d760a4472081823a47dc83c19444a280ce
     source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:105-108"
@@ -287,6 +317,7 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Demos/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/Misc/vbl.cpp:1380-1395"
   - name: "Plugins/"
     type: directory
@@ -294,4 +325,5 @@ files:
     system: marathon-infinity
     path: "Marathon Infinity/Plugins/"
     required: false
+    installed_on: [retropie]
     source_ref: "Source_Files/XML/Plugins.cpp:509-512"

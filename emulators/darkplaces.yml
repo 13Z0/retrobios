@@ -44,9 +44,10 @@ files:
     category: game_data
     system: quake
     path: "id1/pak0.pak"
+    installed_on: [retropie]
     required: true
     source_ref: "fs.c:1266-1308, 1433-1434; common.c:1450"
-    note: "Shareware and registered Quake data, one file in both releases. RetroPie installs the shareware copy from quake106.zip."
+    note: "Shareware and registered Quake data, one file in both releases. RetroPie's install unpacks the shareware copy from quake106.zip into id1 under the base directory."
   - name: "pak1.pak"
     category: game_data
     system: quake

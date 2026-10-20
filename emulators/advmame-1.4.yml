@@ -104,6 +104,7 @@ files:
   - name: hiscore.dat
     required: false
     category: game_data
+    bundled: true
     sha1: "fd33f94a131986478bf10a1ed9ac02d63f52d4af"
     md5: "fb2013a6505d34a5a7a6d94389f3a956"
     size: 166246
@@ -112,7 +113,8 @@ files:
       High score definitions, selected by misc_hiscorefile
       (advance/osd/glue.c:743,2872,2934). Absent, no entry matches and no
       high score is restored or saved. support/hiscore.dat, installed by
-      advance/advance.mak:32.
+      advance/advance.mak:32. The Windows zip ships it at its root with CRLF
+      line ends.
 
   - name: cheat.dat
     required: false
@@ -127,6 +129,7 @@ files:
   - name: event.dat
     required: false
     category: game_data
+    bundled: true
     sha1: "8c34c85f92bc6771d789e880953a1cc43341485e"
     md5: "ee99bb541116967f8785a5bc09932475"
     size: 22066
@@ -136,7 +139,8 @@ files:
       straight from $home then $data rather than through the file type
       table. Absent, the exit menu always prompts instead of checking coin
       and play state. support/event.dat, installed by
-      advance/advance.mak:30.
+      advance/advance.mak:30. The Windows zip ships it at its root with CRLF
+      line ends.
 
   # SNK Neo Geo MVS
   - name: neogeo.zip

@@ -32,9 +32,14 @@ notes: |
   JynxEmulatorSettings.config is written by the program and read back,
   snapshots and TAP files are user content.
 
+  The author's release, Jynx.for.GitHub.1.0.8.zip, holds the two executables
+  and the readme without any ROM. RetroBat's jynx.7z package adds the six
+  ROM images beside the executables.
+
 files:
   - name: lynx48-1.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]
@@ -43,6 +48,7 @@ files:
 
   - name: lynx48-2.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]
@@ -51,6 +57,7 @@ files:
 
   - name: lynx96-1.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]
@@ -59,6 +66,7 @@ files:
 
   - name: lynx96-2.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]
@@ -67,6 +75,7 @@ files:
 
   - name: lynx96-3.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]
@@ -75,6 +84,7 @@ files:
 
   - name: lynx96-3-scorpion.rom
     system: camplynx
+    installed_on: [retrobat]
     required: true
     size: 8192
     validation: [size]

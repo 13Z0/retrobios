@@ -66,8 +66,9 @@ notes: |
   253-260).
 
   RetroPie installs lzdoom.pk3, game_support.pk3, lights.pk3, brightmaps.pk3
-  and soundfonts/ beside the binary and launches "lzdoom -iwad <file>" with
-  DOOMWADDIR set to its ports/doom directory.
+  and soundfonts/ beside the binary, leaves fm_banks/ out, and launches
+  "lzdoom -iwad <file>" with DOOMWADDIR set to its ports/doom directory, into
+  which it downloads doom1.wad and the Freedoom 0.13.0 IWADs.
 
 files:
   # ================================================================
@@ -77,6 +78,7 @@ files:
   - name: "lzdoom.pk3"
     category: game_data
     required: true
+    bundled: true
     size: 1267891
     sha1: "195596bcfc97eee8ffaa049a912c8cb54a539416"
     md5: "fa846e2dc4663d262cc52daff5bdd69a"
@@ -91,32 +93,35 @@ files:
   - name: "game_support.pk3"
     category: game_data
     required: false
+    bundled: true
     size: 223259
     sha1: "f645d7a3a00321c84490243690caa4415b3803f2"
     md5: "e11fb785ff8d616092a85154a6a19535"
     crc32: "4c14b502"
     source_ref: "src/version.h:91, src/d_main.cpp:2537, src/d_iwad.cpp:757-763, wadsrc_extra/CMakeLists.txt:3"
-    note: "Holds iwadinfo.txt and the per-game filters. Copy from the 3.88b Linux release package."
+    note: "Holds iwadinfo.txt and the per-game filters. Shipped in the 3.88b release packages."
 
   - name: "lights.pk3"
     category: game_data
     required: false
+    bundled: true
     size: 22679
     sha1: "7f64f0d306c05e7c1740da1b9e565f041449a934"
     md5: "199fa1fac48ab6be2249fb33e1190a32"
     crc32: "4a8b1d81"
     source_ref: "src/d_main.cpp:229, 2167-2172, wadsrc_lights/CMakeLists.txt:3"
-    note: "Dynamic light definitions, read when autoloadlights is set. Copy from the 3.88b Linux release package."
+    note: "Dynamic light definitions, read when autoloadlights is set. Shipped in the 3.88b release packages."
 
   - name: "brightmaps.pk3"
     category: game_data
     required: false
+    bundled: true
     size: 245255
     sha1: "e33baca425c3087b973cc87cdedb051482e7a606"
     md5: "19c17b0ccbe5568aacb4ed517524c5de"
     crc32: "a0d2703c"
     source_ref: "src/d_main.cpp:228, 2173-2178, wadsrc_bm/CMakeLists.txt:3"
-    note: "Brightmap textures, read when autoloadbrightmaps is set. Copy from the 3.88b Linux release package."
+    note: "Brightmap textures, read when autoloadbrightmaps is set. Shipped in the 3.88b release packages."
 
   - name: "game_widescreen_gfx.pk3"
     category: game_data
@@ -141,6 +146,7 @@ files:
     category: game_data
     path: "soundfonts/lzdoom.sf2"
     required: false
+    bundled: true
     size: 3283278
     sha1: "9dba9212f2e34446ab034595665809f09f303d63"
     source_ref: "src/sound/music/i_soundfont.cpp:428-431, src/sound/music/music_config.cpp:118, src/CMakeLists.txt:1223"
@@ -150,19 +156,23 @@ files:
     category: game_data
     path: "fm_banks/GENMIDI.GS.wopl"
     required: false
+    bundled: true
+    not_bundled_on: [retropie]
     size: 118767
     sha1: "538d220d87b86b997f539265eb12a6c319e17a1c"
     source_ref: "src/CMakeLists.txt:1225, src/gameconfigfile.cpp:175-202, src/sound/music/i_soundfont.cpp:352-356"
-    note: "OPL3 bank copied next to the executable, read only with adl_use_custom_bank."
+    note: "OPL3 bank copied next to the executable, read only with adl_use_custom_bank. The RetroPie package leaves it out."
 
   - name: "gs-by-papiezak-and-sneakernets.wopn"
     category: game_data
     path: "fm_banks/gs-by-papiezak-and-sneakernets.wopn"
     required: false
+    bundled: true
+    not_bundled_on: [retropie]
     size: 274864
     sha1: "12e77c61ae107b7dbcebb230fe45ec7791a07877"
     source_ref: "src/CMakeLists.txt:1227, src/gameconfigfile.cpp:175-202, src/sound/music/i_soundfont.cpp:357-361"
-    note: "OPN2 bank copied next to the executable, read only with opn_use_custom_bank."
+    note: "OPN2 bank copied next to the executable, read only with opn_use_custom_bank. The RetroPie package leaves it out."
 
   # ================================================================
   # IWADs (user-supplied). One is needed to start a game.
@@ -182,6 +192,7 @@ files:
     category: game_data
     system: doom
     required: false
+    installed_on: [retropie]
     source_ref: "wadsrc_extra/static/iwadinfo.txt:402-412, 577"
     note: "DOOM Shareware."
 
@@ -276,12 +287,14 @@ files:
     category: game_data
     system: doom
     required: false
+    installed_on: [retropie]
     source_ref: "wadsrc_extra/static/iwadinfo.txt:292, 589"
 
   - name: "freedoom2.wad"
     category: game_data
     system: doom
     required: false
+    installed_on: [retropie]
     source_ref: "wadsrc_extra/static/iwadinfo.txt:280, 590"
 
   - name: "freedm.wad"

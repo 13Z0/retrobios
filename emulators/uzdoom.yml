@@ -55,15 +55,17 @@ files:
 
   - name: "uzdoom.pk3"
     category: game_data
+    bundled: true
     required: true
     size: 7159816
     md5: "fee855c33d28648ea5e54f224decb7d2"
     sha1: "6eb2c1775651752944a6782d08d129b1d37d2fdf"
     source_ref: "src/version.h:85, src/d_main.cpp:4148-4151, wadsrc/CMakeLists.txt:1"
-    note: "Fonts, menus, zscript, textures. Fatal if absent."
+    note: "Fonts, menus, zscript, textures. Fatal if absent. Shipped with the engine resources below in the Windows zip, the AppImage and RetroBat's uzdoom.7z."
 
   - name: "game_support.pk3"
     category: game_data
+    bundled: true
     required: false
     size: 2918075
     md5: "5bc45497dee76cc183a9245abecec9a8"
@@ -73,6 +75,7 @@ files:
 
   - name: "lights.pk3"
     category: game_data
+    bundled: true
     required: false
     size: 23637
     md5: "faeb9de6a307417aa809d6055c280e85"
@@ -81,6 +84,7 @@ files:
 
   - name: "brightmaps.pk3"
     category: game_data
+    bundled: true
     required: false
     size: 246507
     md5: "3de91b4ea157b852422150156360f81a"
@@ -89,6 +93,7 @@ files:
 
   - name: "game_widescreen_gfx.pk3"
     category: game_data
+    bundled: true
     required: false
     size: 5565904
     md5: "e7dee49bb28efd9db1eb2bdb2fe7b894"
@@ -97,6 +102,7 @@ files:
 
   - name: "uzdoom.sf2"
     category: game_data
+    bundled: true
     path: "soundfonts/uzdoom.sf2"
     required: false
     size: 3299098
@@ -107,6 +113,7 @@ files:
 
   - name: "GENMIDI.GS.wopl"
     category: game_data
+    bundled: true
     path: "fm_banks/GENMIDI.GS.wopl"
     required: false
     size: 118767
@@ -117,6 +124,7 @@ files:
 
   - name: "gs-by-papiezak-and-sneakernets.wopn"
     category: game_data
+    bundled: true
     path: "fm_banks/gs-by-papiezak-and-sneakernets.wopn"
     required: false
     size: 274864
