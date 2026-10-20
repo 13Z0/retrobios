@@ -1712,12 +1712,13 @@ def _render_platform_systems(
     lines: list[str] = []
     # Per-system detail sections (collapsible for large platforms)
     use_collapsible = len(by_system) > 10
+    declared = _declared_by_system(config_files)
 
     for sys_id, files in sorted(by_system.items()):
         ok_count = sum(1 for f in files if f["status"] == "ok")
         total = len(files)
 
-        sys_emus = _system_emulators(sys_id, emulator_files)
+        sys_emus = _system_emulators(sys_id, emulator_files, declared.get(sys_id))
 
         sys_link = _system_link(sys_id, "../")
 
@@ -1944,6 +1945,7 @@ def generate_platform_page(
             "|--------|-------|--------|-----------|",
         ]
     )
+    declared = _declared_by_system(config_files)
     for sys_id, files in sorted(by_system.items()):
         ok_count = sum(1 for f in files if f["status"] == "ok")
         total = len(files)
@@ -1955,7 +1957,7 @@ def generate_platform_page(
                 f'<span class="rb-badge rb-badge-warning">'
                 f'{non_ok} issue{"s" if non_ok > 1 else ""}</span>'
             )
-        sys_emus = _system_emulators(sys_id, emulator_files)
+        sys_emus = _system_emulators(sys_id, emulator_files, declared.get(sys_id))
         emu_str = ", ".join(sys_emus[:3])
         if len(sys_emus) > 3:
             emu_str += f" +{len(sys_emus) - 3}"
@@ -4366,19 +4368,49 @@ def _build_emulator_file_index(profiles: dict) -> dict[str, dict]:
         name: {
             "systems": set(profile.get("systems", [])),
             "norm": {_norm_system_id(str(s)) for s in profile.get("systems", [])},
+            # Archive members are read inside their archive, never by name.
+            "names": {
+                str(entry["name"]).lower()
+                for entry in profile.get("files") or []
+                if isinstance(entry, dict) and entry.get("name")
+                and not entry.get("archive")
+            },
         }
         for name, profile in profiles.items()
         if profile.get("type") != "alias"
     }
 
 
-def _system_emulators(sys_id: str, emulator_files: dict | None) -> list[str]:
-    """The emulators a platform runs for one of its systems."""
+def _declared_by_system(config_files: dict) -> dict[str, list[dict]]:
+    """The platform's own entries of each system, hashes included."""
+    by_system: dict[str, list[dict]] = {}
+    for (sys_id, _name), entries in config_files.items():
+        by_system.setdefault(sys_id, []).extend(entries)
+    return by_system
+
+
+def _system_emulators(
+    sys_id: str, emulator_files: dict | None, files: list[dict] | None = None
+) -> list[str]:
+    """The emulators a platform runs for one of its systems.
+
+    A platform can group machines no profile names as one system: RetroArch
+    files NAOMI and Atomiswave as sega-dreamcast-arcade, the Enterprise 64
+    and 128 as enterprise-64-128. When no system id matches, the emulators
+    are the ones that read a file the system lists, by its name. A member of
+    an archive does not count: fbneo's boot.bin is read inside bubsys.zip,
+    and RomM's Dreamcast boot.bin is not that file.
+    """
     from common import _norm_system_id
 
     norm = _norm_system_id(sys_id)
+    by_id = [name for name, data in (emulator_files or {}).items()
+             if sys_id in data["systems"] or norm in data["norm"]]
+    if by_id or not files:
+        return by_id
+    names = {str(f.get("name", "")).lower() for f in files} - {""}
     return [name for name, data in (emulator_files or {}).items()
-            if sys_id in data["systems"] or norm in data["norm"]]
+            if names & data.get("names", set())]
 
 
 def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:

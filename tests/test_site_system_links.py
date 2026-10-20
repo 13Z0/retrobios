@@ -138,5 +138,36 @@ class AnIdNamesOneCardPerPage(unittest.TestCase):
         self.assertEqual(page.count("rb-sys-file"), 2)
 
 
+class SystemEmulatorsWhenNoIdMatches(unittest.TestCase):
+    """RetroArch files NAOMI and Atomiswave as sega-dreamcast-arcade and the
+    Enterprise as enterprise-64-128, ids no profile uses: the emulator cell
+    of both rows was empty on every platform page."""
+
+    def setUp(self):
+        self.index = gs._build_emulator_file_index({
+            "flycast": {"systems": ["sega-naomi"], "files": [{"name": "airlbios.zip"}]},
+            "fbneo": {"systems": ["arcade"], "files": [
+                {"name": "boot.bin", "archive": "bubsys.zip"}]},
+            "genesis": {"systems": ["sega-mega-drive"], "files": [{"name": "bios_MD.bin"}]},
+        })
+
+    def test_a_file_the_system_lists_names_its_emulator(self):
+        self.assertEqual(
+            gs._system_emulators("sega-dreamcast-arcade", self.index, [{"name": "airlbios.zip"}]),
+            ["flycast"],
+        )
+
+    def test_an_archive_member_is_not_a_file_by_that_name(self):
+        self.assertEqual(
+            gs._system_emulators("sega-dreamcast", self.index, [{"name": "boot.bin"}]), []
+        )
+
+    def test_an_id_match_is_kept_alone(self):
+        self.assertEqual(
+            gs._system_emulators("sega-megadrive", self.index, [{"name": "airlbios.zip"}]),
+            ["genesis"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
