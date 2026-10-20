@@ -1,0 +1,65 @@
+emulator: "Mini vMac 37"
+type: standalone
+core_classification: community_fork
+source: "https://github.com/minivmac/minivmac"
+profiled_date: "2026-10-20"
+source_commit: "6860a9a7f372c461b25dc42974b191a453ebcfb2"
+core_version: "37.03"
+display_name: "Apple - Macintosh Plus (Mini vMac 37)"
+mode: standalone
+cores: []
+systems:
+  - apple-macintosh
+
+notes: |
+  Mini vMac 37.03 (setup/SPBASDEF.i:21-24), maintained from Paul C. Pratt's
+  code (setup/SPBASDEF.i:30). The emulated model, the ROM name, the ROM size
+  and the accepted checksums are fixed when the setup tool writes the build configuration, so one binary runs
+  one model. The default model is the Macintosh Plus (setup/SPBLDOPT.i:101,108).
+  The entries below describe a build with -m Plus, which is also the default.
+
+  The setup tool names the ROM after the model (setup/SPCNFGAP.i:28-63):
+  Twig43.ROM (Twig43), Twiggy.ROM (Twiggy), Mac128K.ROM (128K),
+  MacPlusKanji.ROM (Kanji), MacSE.ROM (SE), SEFDHD.ROM (SEFDHD), Classic.ROM
+  (Classic), PB100.ROM (PB100), MacII.ROM (II), MacIIx.ROM (IIx) and vMac.ROM
+  for 512Ke and Plus. ROM sizes per model are set at setup/SPBLDOPT.i:3229-3257
+  and the per-model checksums at setup/SPCNFGAP.i:81-126. A build for another
+  model reads only the name of that model.
+
+  The SDL backend (-api sdl, sd2 or sd3, src/OSGLUSDL.c) looks for the ROM in
+  this order (src/OSGLUSDL.c:606-620): the path given by --rom or -r
+  (src/OSGLUSDL.c:4962-4968), the directory given by -d or else the directory
+  of the executable from SDL_GetBasePath (src/OSGLUSDL.c:576-604,5185), the
+  mnvm_rom folder under SDL_GetPrefPath("gryphel", "minivmac")
+  (src/OSGLUSDL.c:546-573,5187), then the working directory. The executable
+  directory and the preference folder are searched only on SDL 2 and later
+  (src/OSGLUSDL.c:67-72). The default Linux backend is X11
+  (setup/GNBLDOPT.i:1609-1621), which searches the command line path, the
+  executable directory, ~/.gryphel/mnvm_rom/ and the working directory
+  (src/OSGLUXWN.c:957-1022).
+
+  When no ROM loads, the emulator keeps running and waits for a ROM image
+  dropped on its window (src/OSGLUSDL.c:470-483,620).
+
+  At startup the SDL backend mounts disk1.dsk to disk9.dsk from the executable
+  directory, stopping at the first missing one (src/OSGLUSDL.c:486-540). These
+  are user disk images.
+
+files:
+  - name: "vMac.ROM"
+    system: apple-macintosh
+    path: "vMac.ROM"
+    required: true
+    min_size: 131072
+    validation: [size]
+    source_ref: "setup/SPCNFGAP.i:60-63,115-124, setup/SPBLDOPT.i:3240-3243, src/OSGLUSDL.c:435-468,606-620, src/CONTROLM.h:1314-1326,1344-1388"
+    note: >
+      Macintosh Plus ROM. LoadMacRomFrom reads kROM_Size bytes, 131072 for the
+      Plus (setup/SPCNFGGL.i:73-77), and rejects a shorter file. ROM_IsValid
+      then compares the first long word of the image with the three Plus
+      checksums 0x4D1EEEE1 (v1), 0x4D1EEAE1 (v2) and 0x4D1F8172 (v3), and
+      recomputes the sum of the 16-bit words from offset 4 over 131072 bytes,
+      which must equal the stored value. A ROM that fails either test is
+      refused. The -chr 0 setup option compiles both tests out
+      (setup/SPBLDOPT.i:3288-3311, setup/SPCNFGAP.i:128-130,
+      src/CONTROLM.h:1309-1310).
