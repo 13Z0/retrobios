@@ -2,9 +2,9 @@ emulator: BizHawk
 type: standalone
 core_classification: other
 source: "https://github.com/TASEmulators/BizHawk"
-source_commit: "427556b5ef3ac437eba754d90c5e7e9096c9a8df"
+source_commit: "bdddf4a58aa1a022afb11dc73294a81a5aa7bbd5"
 profiled_date: "2026-10-20"
-core_version: "2.11"
+core_version: "2.11.1"
 display_name: "Multi-system (BizHawk EmuHawk)"
 cores:
   - bizhawk
@@ -16,6 +16,7 @@ systems:
   - coleco-colecovision
   - commodore-amiga
   - commodore-c64
+  - doom
   - fairchild-channel-f
   - gce-vectrex
   - mattel-intellivision
@@ -44,10 +45,14 @@ mode: standalone
 verification: sha1
 
 notes: |
-  EmuHawk, the BizHawk front end, as RetroBat installs it: bizhawk.7z holds
-  the 2.11 release, whose assemblies carry the informational version
-  "2.11+427556b5ef3ac437eba754d90c5e7e9096c9a8df" (EmuHawk.exe,
-  dll/BizHawk.Common.dll). Its Firmware folder is empty.
+  EmuHawk, the BizHawk front end, at release 2.11.1. RetroBat's bizhawk.7z
+  holds the earlier 2.11 release, whose assemblies carry the informational
+  version "2.11+427556b5ef3ac437eba754d90c5e7e9096c9a8df" (EmuHawk.exe,
+  dll/BizHawk.Common.dll), and an empty Firmware folder. Against 2.11, the
+  2.11.1 firmware table rates one option Ideal in the A78 NTSC, Apple II,
+  GBA, Mega CD (each region), NDS firmware, PC-FX SCSI ROM, SMS and TI-83
+  slots, adds the TI-83 v1.10 ROM and the Doom 2 IWAD slot, and rates every
+  TI-83 Plus ROM Unacceptable for the TI-83 slot.
 
   Every firmware the cores can ask for is declared in FirmwareDatabase.cs as a
   slot (system and id, for example PSX+U) with one or more options, each a
@@ -82,31 +87,32 @@ notes: |
   the first two Unacceptable, so they reach the core only through that
   specification.
   ref: emulatorLauncher Generators/Bizhawk.Generator.cs:620-665,
-       src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:508-511
+       src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:511-514
 
   RetroBat writes the DSi NAND specifications as "NDS+NAND (EUR)" and so on,
   while the slots are keyed NDS+NAND_EUR. Those keys never match, the NAND
   slots have no hash to scan for, and the DSi NAND is never loaded under
   RetroBat, so no entry is listed for it.
   ref: emulatorLauncher Generators/Bizhawk.Generator.cs:568-583,
-       src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:402-407
+       src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:405-410
 
   required follows what the core does on a default configuration for that
   system's content. GetFirmwareOrThrow stops the load, GetFirmware lets the
   core continue. Slots picked by a setting (3DO and Amiga models other than
   the defaults, Channel F II, N64DD dev and USA IPLs, MSX Japan), add-on
   chips and cartridges (SNES coprocessors, Satellaview, Saturn KOF95 and
-  Ultraman carts, ST-V) and boot ROMs the cores replace by default (Game Boy
-  family, GBA, NDS with melonDS's built-in BIOS) are optional. Only the
-  preferred option of a required slot is marked required, the others are
-  alternatives. A required slot whose options are all rated Acceptable
-  (Mega CD for each region, TI-83) needs one of them and marks none. GEN+Boot, MSX+bios_test_ext, O2+BIOS-C52, PCFX+SCSIROM and
+  Ultraman carts, ST-V), boot ROMs the cores replace by default (Game Boy
+  family, GBA, NDS with melonDS's built-in BIOS) and the Doom 2 IWAD, read
+  only when the loaded WADs carry no IWAD, are optional. Every slot with a
+  real hash rates one option Ideal, and the scan prefers it. Only that
+  option of a required slot is marked required, the others are
+  alternatives. GEN+Boot, MSX+bios_test_ext, O2+BIOS-C52, PCFX+SCSIROM and
   SAT+E are declared but requested by no core at this revision.
 
   FirmwareDatabase.cs also declares three Game Boy boot ROM patch pairs.
   When a slot's option is missing but its base is present, EmuHawk writes the
   patched file next to the base and uses it, so those targets need no copy.
-  ref: src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:73-78, 215-246,
+  ref: src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:73-78, 218-249,
        src/BizHawk.Client.Common/fwmanager/FirmwareManager.cs:19-70
 
 files:
@@ -117,7 +123,7 @@ files:
     size: 524288
     sha1: "96880d1ca92a016ff054be5159bb06fe03cb4e14"
     description: "PSX on PSP"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:471, 508-510, emulatorLauncher Generators/Bizhawk.Generator.cs:623-630"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:474, 511-513, emulatorLauncher Generators/Bizhawk.Generator.cs:623-630"
     note: "Unacceptable in all three PSX slots, so the scan never takes it. RetroBat names it for PSX+U, PSX+J and PSX+E when it exists, ahead of every other PlayStation BIOS."
 
   - name: "ps1_rom.bin"
@@ -127,7 +133,7 @@ files:
     size: 524288
     sha1: "c40146361eb8cf670b19fdc9759190257803cab7"
     description: "PSX BIOS (Version 5.0 06/23/03 A)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:472, 511, emulatorLauncher Generators/Bizhawk.Generator.cs:632-638"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:475, 514, emulatorLauncher Generators/Bizhawk.Generator.cs:632-638"
     note: "Unacceptable in PSX+U. RetroBat names it for all three PSX slots when psxonpsp660.bin is absent."
 
   - name: "aes_keys.txt"
@@ -150,7 +156,7 @@ files:
     required: false
     size: 131072
     description: "DSi firmware"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:399, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:457, emulatorLauncher Generators/Bizhawk.Generator.cs:567-569"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:402, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:469, emulatorLauncher Generators/Bizhawk.Generator.cs:567-569"
     note: "Slot NDS+firmwarei has a placeholder hash, so only RetroBat's specification of this name reaches it. Read in DSi mode with real BIOS files."
 
   - name: "32X_G_BIOS.BIN"
@@ -410,7 +416,7 @@ files:
     sha1: "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
     validation: [size, sha1]
     description: "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:146, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:146, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A500."
 
   - name: "amiga-os-120.rom"
@@ -420,7 +426,7 @@ files:
     sha1: "11f9e62cf299f72184835b7b2a70a16333fc0d88"
     validation: [size, sha1]
     description: "Kickstart v1.2 r33.180 (1986-10)(Commodore)(A500-A1000-A2000)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:147, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:147, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A500. Alternative to the preferred option of the slot."
 
   - name: "amiga-os-310-a600.rom"
@@ -430,7 +436,7 @@ files:
     sha1: "3b7f1493b27e212830f989f26ca76c02049f09ca"
     validation: [size, sha1]
     description: "Kickstart v3.1 r40.063 (1993-07)(Commodore)(A500-A600-A2000)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:148, 153, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:148, 153, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A500, Amiga+A600. Alternative to the preferred option of the slot."
 
   - name: "amiga-os-205-a600.rom"
@@ -440,7 +446,7 @@ files:
     sha1: "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
     validation: [size, sha1]
     description: "Kickstart v2.05 r37.350 (1992-04)(Commodore)(A600HD)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:151, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:151, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A600."
 
   - name: "amiga-os-204.rom"
@@ -450,7 +456,7 @@ files:
     sha1: "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
     validation: [size, sha1]
     description: "Kickstart v2.04 r37.175 (1991-05)(Commodore)(A500+)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:152, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:152, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A600."
 
   - name: "amiga-os-310-a1200.rom"
@@ -460,7 +466,7 @@ files:
     sha1: "e21545723fe8374e91342617604f1b3d703094f1"
     validation: [size, sha1]
     description: "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A1200)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:156, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:156, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A1200."
 
   - name: "amiga-os-300-a1200.rom"
@@ -470,7 +476,7 @@ files:
     sha1: "70033828182fffc7ed106e5373a8b89dda76faa5"
     validation: [size, sha1]
     description: "Kickstart v3.0 r39.106 (1992-09)(Commodore)(A1200)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:157, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:157, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A1200."
 
   - name: "amiga-os-310-a4000.rom"
@@ -480,7 +486,7 @@ files:
     sha1: "5fe04842d04a489720f0f4bb0e46948199406f49"
     validation: [size, sha1]
     description: "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A4000)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:160, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:160, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A4000."
 
   - name: "amiga-os-300-a4000.rom"
@@ -490,7 +496,7 @@ files:
     sha1: "f0b4e9e29e12218c2d5bd7020e4e785297d91fd7"
     validation: [size, sha1]
     description: "Kickstart v3.0 r39.106 (1992-09)(Commodore)(A4000)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:161, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:161, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A4000."
 
   - name: "amiga-os-310-a4000t.rom"
@@ -500,7 +506,7 @@ files:
     sha1: "b0ec8b84d6768321e01209f11e6248f2f5281a21"
     validation: [size, sha1]
     description: "Kickstart v3.1 r40.070 (1994-02)(Commodore)(A4000T)[!]"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:162, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:162, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+A4000."
 
   - name: "amiga-os-310-cd32.rom"
@@ -510,7 +516,7 @@ files:
     sha1: "3525be8887f79b5929e017b42380a79edfee542d"
     validation: [size, sha1]
     description: "Kickstart v3.1 r40.060 (1993-05)(Commodore)(CD32)[!].rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:165, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:165, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+CD32."
 
   - name: "amiga-os-310-cd32-ext.rom"
@@ -520,7 +526,7 @@ files:
     sha1: "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
     validation: [size, sha1]
     description: "CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:167, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:115-117"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:167, src/BizHawk.Emulation.Cores/Computers/Amiga/UAE.cs:114-116"
     note: "Firmware slot Amiga+CD32ext."
 
   - name: "7800 BIOS (U).rom"
@@ -669,6 +675,17 @@ files:
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:199, src/BizHawk.Emulation.Cores/Consoles/Coleco/ColecoVision.cs:33, emulatorLauncher Generators/Bizhawk.Generator.cs:482"
     note: "Firmware slot Coleco+Bios. RetroBat names it in FirmwareUserSpecifications when colecovision.rom exists in the bios folder."
 
+  - name: "doom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    size: 14604584
+    sha1: "7ec7652fcfce8ddc6e801839291f0e28ef1d5ae7"
+    validation: [size, sha1]
+    description: "Base game for Doom 2 PWADs"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:202, src/BizHawk.Emulation.Cores/Computers/Doom/DSDA.cs:85-99"
+    note: "Firmware slot Doom+Doom2_IWAD. The DSDA core asks for it only when none of the loaded WADs is an IWAD, and stops the load when it is missing."
+
   - name: "gba_bios.bin"
     aliases: ["GBA_bios.rom"]
     system: nintendo-gba
@@ -677,7 +694,7 @@ files:
     sha1: "300c20df6731a33952ded8c436f7f186d25d3492"
     validation: [size, sha1]
     description: "Bios (World)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:202, 205, src/BizHawk.Emulation.Cores/Consoles/Nintendo/GBA/MGBAHawk.cs:28, emulatorLauncher Generators/Bizhawk.Generator.cs:504"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:205, 208, src/BizHawk.Emulation.Cores/Consoles/Nintendo/GBA/MGBAHawk.cs:28, emulatorLauncher Generators/Bizhawk.Generator.cs:504"
     note: "Firmware slot GBA+Bios. RetroBat names it in FirmwareUserSpecifications when gba_bios.bin exists in the bios folder."
 
   - name: "GBA_bios_Debug-(J).rom"
@@ -687,8 +704,8 @@ files:
     sha1: "aa98a2ad32b86106340665d1222d7d973a1361c7"
     validation: [size, sha1]
     description: "Bios (J Debug)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:203, 206, src/BizHawk.Emulation.Cores/Consoles/Nintendo/GBA/MGBAHawk.cs:28"
-    note: "Firmware slot GBA+Bios."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:206, 209, src/BizHawk.Emulation.Cores/Consoles/Nintendo/GBA/MGBAHawk.cs:28"
+    note: "Firmware slot GBA+Bios. Alternative to the preferred option of the slot."
 
   - name: "gb_bios.bin"
     aliases: ["GB_dmg.bin"]
@@ -698,7 +715,7 @@ files:
     sha1: "4ed31ec6b0b175bb109c0eb5fd3d193da823339f"
     validation: [size, sha1]
     description: "Game Boy Boot Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:210, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146, emulatorLauncher Generators/Bizhawk.Generator.cs:490"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:213, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143, emulatorLauncher Generators/Bizhawk.Generator.cs:490"
     note: "Firmware slot GB+World. RetroBat names it in FirmwareUserSpecifications when gb_bios.bin exists in the bios folder."
 
   - name: "GB_mgb.bin"
@@ -708,7 +725,7 @@ files:
     sha1: "4e68f9da03c310e84c523654b9026e51f26ce7f0"
     validation: [size, sha1]
     description: "Game Boy Boot Rom (Pocket)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:213, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:216, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143"
     note: "Firmware slot GB+World."
 
   - name: "sgb_boot.bin"
@@ -719,7 +736,7 @@ files:
     sha1: "aa2f50a77dfb4823da96ba99309085a3c6278515"
     validation: [size, sha1]
     description: "Super Game Boy Boot Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:223, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146, emulatorLauncher Generators/Bizhawk.Generator.cs:493"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:226, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143, emulatorLauncher Generators/Bizhawk.Generator.cs:493"
     note: "Firmware slot GB+SGB. RetroBat names it in FirmwareUserSpecifications when sgb_boot.bin exists in the bios folder."
 
   - name: "sgb2_boot.bin"
@@ -730,7 +747,7 @@ files:
     sha1: "93407ea10d2f30ab96a314d8eca44fe160aea734"
     validation: [size, sha1]
     description: "Super Game Boy 2 Boot Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:225, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146, emulatorLauncher Generators/Bizhawk.Generator.cs:496"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:228, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143, emulatorLauncher Generators/Bizhawk.Generator.cs:496"
     note: "Firmware slot GB+SGB2. RetroBat names it in FirmwareUserSpecifications when sgb2_boot.bin exists in the bios folder."
 
   - name: "gbc_bios.bin"
@@ -741,7 +758,7 @@ files:
     sha1: "1293d68bf9643bc4f36954c1e80e38f39864528d"
     validation: [size, sha1]
     description: "Game Boy Color Boot Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:233, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146, emulatorLauncher Generators/Bizhawk.Generator.cs:512"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:236, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143, emulatorLauncher Generators/Bizhawk.Generator.cs:512"
     note: "Firmware slot GBC+World. RetroBat names it in FirmwareUserSpecifications when gbc_bios.bin exists in the bios folder."
 
   - name: "GBC_cgbE.bin"
@@ -751,7 +768,7 @@ files:
     sha1: "f5f33729a956131d9c44310f0ae3bb0599e9ec3e"
     validation: [size, sha1]
     description: "Game Boy Color Boot Rom (Late Revision)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:235, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:238, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143"
     note: "Firmware slot GBC+World."
 
   - name: "GBC_agb.bin"
@@ -761,7 +778,7 @@ files:
     sha1: "fa5287e24b0fa533b3b5ef2b28a81245346c1a0f"
     validation: [size, sha1]
     description: "Game Boy Color Boot Rom (GBA)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:238, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:241, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143"
     note: "Firmware slot GBC+AGB."
 
   - name: "GBC_agb0.bin"
@@ -771,7 +788,7 @@ files:
     sha1: "0daac31acb6cb346fc954368acb02acb3adcc3ab"
     validation: [size, sha1]
     description: "Game Boy Color Boot Rom (GBA, Early Revision)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:240, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:136-146"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:243, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Gameboy/Gambatte.cs:133-143"
     note: "Firmware slot GBC+AGB."
 
   - name: "GEN_boot.md"
@@ -781,18 +798,18 @@ files:
     sha1: "3f50b76b0529db7f79c396b5e808cc0786ffc311"
     validation: [size, sha1]
     description: "Genesis Boot Rom (World)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:249"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:252"
     note: "Firmware slot GEN+Boot. No core requests GEN+Boot at this revision."
 
   - name: "MCD_eu_100.bin"
     system: sega-mega-drive
-    required: false
+    required: true
     size: 131072
     sha1: "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356"
     validation: [size, sha1]
     description: "Mega CD EU (v1.00)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:270, 300, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
-    note: "Firmware slot GEN+CD_BIOS_EU. The core needs one of the 5 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:273, 303, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
+    note: "Firmware slot GEN+CD_BIOS_EU."
 
   - name: "MCD_eu_200.bin"
     system: sega-mega-drive
@@ -801,8 +818,8 @@ files:
     sha1: "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58"
     validation: [size, sha1]
     description: "Mega CD II EU (v2.00)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:278, 301, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
-    note: "Firmware slot GEN+CD_BIOS_EU. The core needs one of the 5 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:281, 304, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
+    note: "Firmware slot GEN+CD_BIOS_EU. Alternative to the preferred option of the slot."
 
   - name: "MCD_eu_200w.bin"
     system: sega-mega-drive
@@ -811,8 +828,8 @@ files:
     sha1: "f5f60f03501908962446ee02fc27d98694dd157d"
     validation: [size, sha1]
     description: "Mega CD II EU (v2.00w)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:281, 304, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
-    note: "Firmware slot GEN+CD_BIOS_EU. The core needs one of the 5 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:284, 307, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
+    note: "Firmware slot GEN+CD_BIOS_EU. Alternative to the preferred option of the slot."
 
   - name: "MM_eu_221x.bin"
     system: sega-mega-drive
@@ -821,8 +838,8 @@ files:
     sha1: "75548ac9aaa6e81224499f9a1403b2b42433f5b7"
     validation: [size, sha1]
     description: "Multi Mega EU (v2.21x)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:284, 307, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
-    note: "Firmware slot GEN+CD_BIOS_EU. The core needs one of the 5 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:287, 310, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
+    note: "Firmware slot GEN+CD_BIOS_EU. Alternative to the preferred option of the slot."
 
   - name: "MCD_eu_221.bin"
     system: sega-mega-drive
@@ -831,8 +848,8 @@ files:
     sha1: "9de4eda59f544db2d5fd7e6514601f7b648d8eb4"
     validation: [size, sha1]
     description: "Mega CD EU (v2.21)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:298, 309, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
-    note: "Firmware slot GEN+CD_BIOS_EU. The core needs one of the 5 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:301, 312, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:70"
+    note: "Firmware slot GEN+CD_BIOS_EU. Alternative to the preferred option of the slot."
 
   - name: "MCD_aiwa_jp_211c.bin"
     system: sega-mega-drive
@@ -841,8 +858,8 @@ files:
     sha1: "219d284dcf63ce366a4dc6d1ff767a0d2eea283d"
     validation: [size, sha1]
     description: "Mega CD Aiwa JP (v2.11c)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:255, 311, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:258, 314, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_2_jp_200c.bin"
     system: sega-mega-drive
@@ -851,8 +868,8 @@ files:
     sha1: "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff"
     validation: [size, sha1]
     description: "Mega CD 2 JP (v2.00c)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:267, 312, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:270, 315, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_100g.bin"
     system: sega-mega-drive
@@ -861,8 +878,8 @@ files:
     sha1: "6a40a5cec00c3b49a4fd013505c5580baa733a29"
     validation: [size, sha1]
     description: "Mega CD JP (v1.00g)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:271, 315, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:274, 318, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_100l.bin"
     system: sega-mega-drive
@@ -871,8 +888,8 @@ files:
     sha1: "0d5485e67c3f033c41d677cc9936afd6ad618d5f"
     validation: [size, sha1]
     description: "Mega CD JP (v1.00l)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:272, 316, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:275, 319, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_100o.bin"
     system: sega-mega-drive
@@ -881,18 +898,18 @@ files:
     sha1: "9e1495e62b000e1e1c868c0f3b6982e1abbb8a94"
     validation: [size, sha1]
     description: "Mega CD JP (v1.00o)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:273, 317, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:276, 320, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_100p.bin"
     system: sega-mega-drive
-    required: false
+    required: true
     size: 131072
     sha1: "4846f448160059a7da0215a5df12ca160f26dd69"
     validation: [size, sha1]
     description: "Mega CD JP (v1.00p)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:274, 318, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:277, 321, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP."
 
   - name: "MCD_as_100s.bin"
     system: sega-mega-drive
@@ -901,8 +918,8 @@ files:
     sha1: "e4193c6ae44c3cea002707d2a88f1fbcced664de"
     validation: [size, sha1]
     description: "Mega CD AS (v1.00s)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:276, 320, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:279, 323, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_100s.bin"
     system: sega-mega-drive
@@ -911,8 +928,8 @@ files:
     sha1: "230ebfc49dc9e15422089474bcc9fa040f2c57eb"
     validation: [size, sha1]
     description: "Mega CD JP (v1.00s)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:277, 321, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:280, 324, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "WM_jp_m2.bin"
     system: sega-mega-drive
@@ -921,8 +938,8 @@ files:
     sha1: "b3f32e409bd5508c89ed8be33d41a58d791d0e5d"
     validation: [size, sha1]
     description: "Wondermega M2 JP"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:286, 322, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:289, 325, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "WM_jp_100W.bin"
     system: sega-mega-drive
@@ -931,8 +948,8 @@ files:
     sha1: "3fc9358072f74bd24e3e297ea11b2bf15a7af891"
     validation: [size, sha1]
     description: "Wondermega JP (v1.00W)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:287, 323, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:290, 326, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "LA_jp_105.bin"
     system: sega-mega-drive
@@ -941,8 +958,8 @@ files:
     sha1: "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
     validation: [size, sha1]
     description: "LaserActive JP (v1.05)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:291, 324, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:294, 327, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "LA_jp_102.bin"
     system: sega-mega-drive
@@ -951,8 +968,8 @@ files:
     sha1: "26237b333db4a4c6770297fa5e655ea95840d5d9"
     validation: [size, sha1]
     description: "LaserActive JP (v1.02)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:292, 325, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:295, 328, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_111b.bin"
     system: sega-mega-drive
@@ -961,8 +978,8 @@ files:
     sha1: "204758d5a64c24e96e1a9fe6bd82e1878fef7ade"
     validation: [size, sha1]
     description: "Mega CD JP (v1.11b)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:295, 326, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:298, 329, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_reva.bin"
     system: sega-mega-drive
@@ -971,8 +988,8 @@ files:
     sha1: "062e6a912e3683f7f127cbfd6314b44f93c42db7"
     validation: [size, sha1]
     description: "Mega CD JP (Rev A)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:296, 327, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:299, 330, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "MCD_jp_beta.bin"
     system: sega-mega-drive
@@ -981,8 +998,8 @@ files:
     sha1: "f30d109d1c2f7c9feaf38600c65834261db73d1f"
     validation: [size, sha1]
     description: "Mega CD JP (Beta)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:297, 328, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
-    note: "Firmware slot GEN+CD_BIOS_JP. The core needs one of the 15 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:300, 331, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:72"
+    note: "Firmware slot GEN+CD_BIOS_JP. Alternative to the preferred option of the slot."
 
   - name: "SCD_m1_us_100.bin"
     system: sega-mega-drive
@@ -991,18 +1008,18 @@ files:
     sha1: "c5c24e6439a148b7f4c7ea269d09b7a23fe25075"
     validation: [size, sha1]
     description: "Sega CD Model 1 US (v1.00)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:256, 330, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:259, 333, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "SCD_m1_us_110.bin"
     system: sega-mega-drive
-    required: false
+    required: true
     size: 131072
     sha1: "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed"
     validation: [size, sha1]
     description: "Sega CD Model 1 US (v1.10)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:258, 332, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:261, 335, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US."
 
   - name: "SCD_m2_us_200.bin"
     system: sega-mega-drive
@@ -1011,8 +1028,8 @@ files:
     sha1: "5a8c4b91d3034c1448aac4b5dc9a6484fce51636"
     validation: [size, sha1]
     description: "Sega CD Model 2 US (v2.00)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:259, 333, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:262, 336, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "SCD_m2_us_200w.bin"
     system: sega-mega-drive
@@ -1021,8 +1038,8 @@ files:
     sha1: "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0"
     validation: [size, sha1]
     description: "Sega CD Model 2 US (v2.00w)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:261, 335, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:264, 338, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "SCD_m2_us_211x.bin"
     system: sega-mega-drive
@@ -1031,8 +1048,8 @@ files:
     sha1: "328a3228c29fba244b9db2055adc1ec4f7a87e6b"
     validation: [size, sha1]
     description: "Sega CD Model 2 US (v2.11x)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:263, 337, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:266, 340, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "GCDX_us_221x.bin"
     system: sega-mega-drive
@@ -1041,8 +1058,8 @@ files:
     sha1: "2b125c0545afa089b617f2558e686ea723bdc06e"
     validation: [size, sha1]
     description: "Genesis CDX US (v2.21x)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:265, 339, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:268, 342, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "XEye_us.bin"
     system: sega-mega-drive
@@ -1051,8 +1068,8 @@ files:
     sha1: "651f14d5a5e0ecb974a60c0f43b1d2006323fb09"
     validation: [size, sha1]
     description: "X'Eye US"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:288, 341, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:291, 344, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "LA_us_104.bin"
     system: sega-mega-drive
@@ -1061,8 +1078,8 @@ files:
     sha1: "aa811861f8874775075bd3f53008c8aaf59b07db"
     validation: [size, sha1]
     description: "LaserActive US (v1.04)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:290, 342, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:293, 345, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "LA_us_102.bin"
     system: sega-mega-drive
@@ -1071,8 +1088,8 @@ files:
     sha1: "8af162223bb12fc19b414f126022910372790103"
     validation: [size, sha1]
     description: "LaserActive US (v1.02)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:293, 343, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
-    note: "Firmware slot GEN+CD_BIOS_US. The core needs one of the 9 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:296, 346, src/BizHawk.Emulation.Cores/Consoles/Sega/PicoDrive/PicoDrive.cs:71"
+    note: "Firmware slot GEN+CD_BIOS_US. Alternative to the preferred option of the slot."
 
   - name: "GG_majesco.gg"
     system: sega-game-gear
@@ -1081,7 +1098,7 @@ files:
     sha1: "914aa165e3d879f060be77870d345b60cfeb4ede"
     validation: [size, sha1]
     description: "GG BIOS (USA/Majesco)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:346, src/BizHawk.Emulation.Cores/Consoles/Sega/gpgx64/GPGX.cs:257, 267"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:349, src/BizHawk.Emulation.Cores/Consoles/Sega/gpgx64/GPGX.cs:257, 267"
     note: "Firmware slot GG+Majesco."
 
   - name: "exec.bin"
@@ -1092,7 +1109,7 @@ files:
     sha1: "5a65b922b562cb1f57dab51b73151283f0e20c7a"
     validation: [size, sha1]
     description: "Executive Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:349, src/BizHawk.Emulation.Cores/Consoles/Intellivision/Intellivision.cs:56, emulatorLauncher Generators/Bizhawk.Generator.cs:520"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:352, src/BizHawk.Emulation.Cores/Consoles/Intellivision/Intellivision.cs:56, emulatorLauncher Generators/Bizhawk.Generator.cs:520"
     note: "Firmware slot INTV+EROM. RetroBat names it in FirmwareUserSpecifications when exec.bin exists in the bios folder."
 
   - name: "grom.bin"
@@ -1103,7 +1120,7 @@ files:
     sha1: "f9608bb4ad1cfe3640d02844c7ad8e0bcd974917"
     validation: [size, sha1]
     description: "Graphics Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:350, src/BizHawk.Emulation.Cores/Consoles/Intellivision/Intellivision.cs:57, emulatorLauncher Generators/Bizhawk.Generator.cs:523"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:353, src/BizHawk.Emulation.Cores/Consoles/Intellivision/Intellivision.cs:57, emulatorLauncher Generators/Bizhawk.Generator.cs:523"
     note: "Firmware slot INTV+GROM. RetroBat names it in FirmwareUserSpecifications when grom.bin exists in the bios folder."
 
   - name: "lynxboot.img"
@@ -1114,7 +1131,7 @@ files:
     sha1: "e4ed47fae31693e016b081c6bda48da5b70d7ccb"
     validation: [size, sha1]
     description: "Boot Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:353, src/BizHawk.Emulation.Cores/Consoles/Atari/lynx/Lynx.cs:33, emulatorLauncher Generators/Bizhawk.Generator.cs:531"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:356, src/BizHawk.Emulation.Cores/Consoles/Atari/lynx/Lynx.cs:33, emulatorLauncher Generators/Bizhawk.Generator.cs:531"
     note: "Firmware slot Lynx+Boot. RetroBat names it in FirmwareUserSpecifications when lynxboot.img exists in the bios folder."
 
   - name: "MSX_cbios_main_msx1.rom"
@@ -1124,7 +1141,7 @@ files:
     sha1: "2f997e8a57528518c82ab3693fdae243dbbcc508"
     validation: [size, sha1]
     description: "MSX BIOS (C-BIOS v0.29a)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:356"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:359"
     note: "Firmware slot MSX+bios_test_ext. No core requests MSX+bios_test_ext at this revision."
 
   - name: "MSX.rom"
@@ -1134,7 +1151,7 @@ files:
     sha1: "409e82adac40f6bdd18eb6c84e8b2fbdc7fb5498"
     validation: [size, sha1]
     description: "MSX BIOS and BASIC"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:359, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:105-118"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:362, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:105-118"
     note: "Firmware slot MSX+bios_basic_usa."
 
   - name: "MSX_1.0.rom"
@@ -1144,7 +1161,7 @@ files:
     sha1: "3656bb3bbc17d280d2016fe4f6ff3cded3082a41"
     validation: [size, sha1]
     description: "MSX 1.0 BIOS and BASIC"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:360, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:105-118"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:363, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:105-118"
     note: "Firmware slot MSX+bios_basic_usa. Alternative to the preferred option of the slot."
 
   - name: "MSX_jpn.rom"
@@ -1154,7 +1171,7 @@ files:
     sha1: "302afb5d8be26c758309ca3df611ae69cced2821"
     validation: [size, sha1]
     description: "MSX 1.0 JPN BIOS and BASIC"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:361, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:111"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:364, src/BizHawk.Emulation.Cores/Computers/MSX/MSX.cs:111"
     note: "Firmware slot MSX+bios_basic_jpn."
 
   - name: "64DD_IPL_v12_JPN.bin"
@@ -1164,7 +1181,7 @@ files:
     sha1: "bf861922dcb78c316360e3e742f4f70ff63c9bc3"
     validation: [size, sha1]
     description: "N64DD JPN IPL v1.2 (Retail)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:367, 370, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:107-115"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:370, 373, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:132-140"
     note: "Firmware slot N64DD+IPL_JPN."
 
   - name: "64DD_IPL_DEV.bin"
@@ -1174,7 +1191,7 @@ files:
     sha1: "10c4173c2a7eb09c6579818f72ef18fa0b6d32de"
     validation: [size, sha1]
     description: "N64DD Development IPL"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:371, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:112"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:374, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:137"
     note: "Firmware slot N64DD+IPL_DEV."
 
   - name: "64DD_IPL_USA.bin"
@@ -1184,7 +1201,7 @@ files:
     sha1: "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
     validation: [size, sha1]
     description: "N64DD Prototype USA IPL"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:372, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:113"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:375, src/BizHawk.Emulation.Cores/Consoles/Nintendo/Ares64/Ares64.cs:138"
     note: "Firmware slot N64DD+IPL_USA."
 
   - name: "bios7.bin"
@@ -1195,7 +1212,7 @@ files:
     sha1: "24f67bdea115a2c847c8813a262502ee1607b7df"
     validation: [size, sha1]
     description: "ARM7 BIOS"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:375, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457, emulatorLauncher Generators/Bizhawk.Generator.cs:550"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:378, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:452-469, emulatorLauncher Generators/Bizhawk.Generator.cs:550"
     note: "Firmware slot NDS+bios7. RetroBat names it in FirmwareUserSpecifications when bios7.bin exists in the bios folder."
 
   - name: "bios9.bin"
@@ -1206,7 +1223,7 @@ files:
     sha1: "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
     validation: [size, sha1]
     description: "ARM9 BIOS"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:376, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457, emulatorLauncher Generators/Bizhawk.Generator.cs:553"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:379, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:452-469, emulatorLauncher Generators/Bizhawk.Generator.cs:553"
     note: "Firmware slot NDS+bios9. RetroBat names it in FirmwareUserSpecifications when bios9.bin exists in the bios folder."
 
   - name: "dsi_bios7.bin"
@@ -1217,7 +1234,7 @@ files:
     sha1: "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53"
     validation: [size, sha1]
     description: "ARM7i BIOS"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:379, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:129, 471, emulatorLauncher Generators/Bizhawk.Generator.cs:561"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:382, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:483, emulatorLauncher Generators/Bizhawk.Generator.cs:561"
     note: "Firmware slot NDS+bios7i. RetroBat names it in FirmwareUserSpecifications when dsi_bios7.bin exists in the bios folder."
 
   - name: "dsi_bios9.bin"
@@ -1228,7 +1245,7 @@ files:
     sha1: "719b9eef33692406d7170ff526069615759c4dfc"
     validation: [size, sha1]
     description: "ARM9i BIOS"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:381, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:470, emulatorLauncher Generators/Bizhawk.Generator.cs:564"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:384, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:482, emulatorLauncher Generators/Bizhawk.Generator.cs:564"
     note: "Firmware slot NDS+bios9i. RetroBat names it in FirmwareUserSpecifications when dsi_bios9.bin exists in the bios folder."
 
   - name: "firmware.bin"
@@ -1245,8 +1262,8 @@ files:
       - "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b"
     validation: [size, sha1]
     description: "NDS Firmware"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:384-395, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457, emulatorLauncher Generators/Bizhawk.Generator.cs:556"
-    note: "Firmware slot NDS+firmware, which accepts six dumps: three likely good and three known hacks. RetroBat names it in FirmwareUserSpecifications when firmware.bin exists in the bios folder."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:387-398, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:452-469, emulatorLauncher Generators/Bizhawk.Generator.cs:556"
+    note: "Firmware slot NDS+firmware, which accepts six dumps: three likely good and three known hacks. The scan prefers the NDS Lite dump, rated Ideal, and never takes the known hacks, rated Bad. RetroBat names it in FirmwareUserSpecifications when firmware.bin exists in the bios folder."
 
   - name: "NDS_Firmware_2.bin"
     system: nintendo-ds
@@ -1255,8 +1272,8 @@ files:
     sha1: "2ef20b45d12cf00657d4b1bd37a5cc8506923440"
     validation: [size, sha1]
     description: "NDS Firmware"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:389, 395, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457"
-    note: "Firmware slot NDS+firmware."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:392, 398, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:452-469"
+    note: "Firmware slot NDS+firmware. Alternative to the preferred option of the slot."
 
   - name: "NDS_Lite_Firmware.bin"
     system: nintendo-ds
@@ -1265,7 +1282,7 @@ files:
     sha1: "87dae2500e889737af51f4a5b5845770a62482f5"
     validation: [size, sha1]
     description: "NDS-Lite Firmware"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:390, 396, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:393, 399, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:452-469"
     note: "Firmware slot NDS+firmware."
 
   - name: "disksys.rom"
@@ -1276,7 +1293,7 @@ files:
     sha1: "57fe1bdee955bb48d357e463ccbf129496930b62"
     validation: [size, sha1]
     description: "Bios (Nintendo)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:411, 414, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NES/NES.cs:21, 372-373, emulatorLauncher Generators/Bizhawk.Generator.cs:590"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:414, 417, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NES/NES.cs:21, 372-373, emulatorLauncher Generators/Bizhawk.Generator.cs:590"
     note: "Firmware slot NES+Bios_FDS. RetroBat names it in FirmwareUserSpecifications when disksys.rom exists in the bios folder."
 
   - name: "FDS_disksys-twinfc.rom"
@@ -1286,7 +1303,7 @@ files:
     sha1: "e4e41472c454f928e53eb10e0509bf7d1146ecc1"
     validation: [size, sha1]
     description: "Bios (TwinFC)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:412, 415, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NES/NES.cs:21, 372-373"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:415, 418, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NES/NES.cs:21, 372-373"
     note: "Firmware slot NES+Bios_FDS. Alternative to the preferred option of the slot."
 
   - name: "o2rom.bin"
@@ -1297,7 +1314,7 @@ files:
     sha1: "b2e1955d957a475de2411770452eff4ea19f4cee"
     validation: [size, sha1]
     description: "Odyssey 2 Bios"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:418, src/BizHawk.Emulation.Cores/Consoles/Magnavox/Odyssey2/O2Hawk.cs:65, emulatorLauncher Generators/Bizhawk.Generator.cs:598"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:421, src/BizHawk.Emulation.Cores/Consoles/Magnavox/Odyssey2/O2Hawk.cs:65, emulatorLauncher Generators/Bizhawk.Generator.cs:598"
     note: "Firmware slot O2+BIOS-O2. RetroBat names it in FirmwareUserSpecifications when o2rom.bin exists in the bios folder."
 
   - name: "c52.bin"
@@ -1308,7 +1325,7 @@ files:
     sha1: "a6120aed50831c9c0d95dbdf707820f601d9452e"
     validation: [size, sha1]
     description: "Phillips C52 Bios"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:419, emulatorLauncher Generators/Bizhawk.Generator.cs:601"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:422, emulatorLauncher Generators/Bizhawk.Generator.cs:601"
     note: "Firmware slot O2+BIOS-C52. No core requests O2+BIOS-C52 at this revision. RetroBat names it in FirmwareUserSpecifications when c52.bin exists in the bios folder."
 
   - name: "g7400.bin"
@@ -1319,7 +1336,7 @@ files:
     sha1: "5130243429b40b01a14e1304d0394b8459a6fbae"
     validation: [size, sha1]
     description: "G7400 Bios"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:420, src/BizHawk.Emulation.Cores/Consoles/Magnavox/Odyssey2/O2Hawk.cs:65, emulatorLauncher Generators/Bizhawk.Generator.cs:604"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:423, src/BizHawk.Emulation.Cores/Consoles/Magnavox/Odyssey2/O2Hawk.cs:65, emulatorLauncher Generators/Bizhawk.Generator.cs:604"
     note: "Firmware slot O2+BIOS-G7400. RetroBat names it in FirmwareUserSpecifications when g7400.bin exists in the bios folder."
 
   - name: "PCECD_3.0-(J).pce"
@@ -1329,7 +1346,7 @@ files:
     sha1: "79f5ff55dd10187c7fd7b8daab0b3ffbd1f56a2c"
     validation: [size, sha1]
     description: "Super CD Bios (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:423, src/BizHawk.Emulation.Cores/Consoles/NEC/PCE/TurboNyma.cs:52"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:426, src/BizHawk.Emulation.Cores/Consoles/NEC/PCE/TurboNyma.cs:52"
     note: "Firmware slot PCECD+Bios."
 
   - name: "PCECD_gecard.pce"
@@ -1339,7 +1356,7 @@ files:
     sha1: "014881a959e045e00f4db8f52955200865d40280"
     validation: [size, sha1]
     description: "Games Express CD Card (Japan)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:424, src/BizHawk.Emulation.Cores/Consoles/NEC/PCE/TurboNyma.cs:54"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:427, src/BizHawk.Emulation.Cores/Consoles/NEC/PCE/TurboNyma.cs:54"
     note: "Firmware slot PCECD+GE-Bios."
 
   - name: "pcfx.rom"
@@ -1350,7 +1367,7 @@ files:
     sha1: "1a77fd83e337f906aecab27a1604db064cf10074"
     validation: [size, sha1]
     description: "PCFX BIOS 1.00"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:428, 430, src/BizHawk.Emulation.Cores/Consoles/NEC/PCFX/Tst.cs:38, emulatorLauncher Generators/Bizhawk.Generator.cs:615"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:431, 433, src/BizHawk.Emulation.Cores/Consoles/NEC/PCFX/Tst.cs:38, emulatorLauncher Generators/Bizhawk.Generator.cs:615"
     note: "Firmware slot PCFX+BIOS. RetroBat names it in FirmwareUserSpecifications when pcfx.rom exists in the bios folder."
 
   - name: "PCFX_v101.bin"
@@ -1360,7 +1377,7 @@ files:
     sha1: "8b662f7548078be52a871565e19511ccca28c5c8"
     validation: [size, sha1]
     description: "PCFX BIOS 1.01"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:429, 431, src/BizHawk.Emulation.Cores/Consoles/NEC/PCFX/Tst.cs:38"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:432, 434, src/BizHawk.Emulation.Cores/Consoles/NEC/PCFX/Tst.cs:38"
     note: "Firmware slot PCFX+BIOS. Alternative to the preferred option of the slot."
 
   - name: "fx-scsi.rom"
@@ -1371,7 +1388,7 @@ files:
     sha1: "65482a23ac5c10a6095aee1db5824cca54ead6e5"
     validation: [size, sha1]
     description: "PCFX SCSI ROM"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:433, 434, emulatorLauncher Generators/Bizhawk.Generator.cs:612"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:436, 437, emulatorLauncher Generators/Bizhawk.Generator.cs:612"
     note: "Firmware slot PCFX+SCSIROM. No core requests PCFX+SCSIROM at this revision. RetroBat names it in FirmwareUserSpecifications when fx-scsi.rom exists in the bios folder."
 
   - name: "scph5501.bin"
@@ -1382,7 +1399,7 @@ files:
     sha1: "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
     validation: [size, sha1]
     description: "PSX BIOS (Version 3.0 11/18/96 A)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:458, 476, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:641"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:461, 479, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:641"
     note: "Firmware slot PSX+U. RetroBat names it in FirmwareUserSpecifications when scph5501.bin exists in the bios folder."
 
   - name: "scph5500.bin"
@@ -1393,7 +1410,7 @@ files:
     sha1: "b05def971d8ec59f346f2d9ac21fb742e3eb6917"
     validation: [size, sha1]
     description: "PSX BIOS (Version 3.0 09/09/96 J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:457, 477, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:644"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:460, 480, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:644"
     note: "Firmware slot PSX+J. RetroBat names it in FirmwareUserSpecifications when scph5500.bin exists in the bios folder."
 
   - name: "scph5502.bin"
@@ -1404,7 +1421,7 @@ files:
     sha1: "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0"
     validation: [size, sha1]
     description: "PSX BIOS (Version 3.0 01/06/97 E)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:459, 478, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:647"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:462, 481, src/BizHawk.Emulation.Cores/Consoles/Sony/PSX/Octoshock.cs:155, emulatorLauncher Generators/Bizhawk.Generator.cs:647"
     note: "Firmware slot PSX+E. RetroBat names it in FirmwareUserSpecifications when scph5502.bin exists in the bios folder."
 
   - name: "SAT_1.00-(J).bin"
@@ -1414,7 +1431,7 @@ files:
     sha1: "2b8cb4f87580683eb4d760e4ed210813d667f0a2"
     validation: [size, sha1]
     description: "Bios v1.00 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:517, 523, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:47"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:520, 526, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:47"
     note: "Firmware slot SAT+J. Alternative to the preferred option of the slot."
 
   - name: "sega_101.bin"
@@ -1425,7 +1442,7 @@ files:
     sha1: "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
     validation: [size, sha1]
     description: "Bios v1.01 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:520, 524, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:47, emulatorLauncher Generators/Bizhawk.Generator.cs:670"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:523, 527, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:47, emulatorLauncher Generators/Bizhawk.Generator.cs:670"
     note: "Firmware slot SAT+J. RetroBat names it in FirmwareUserSpecifications when sega_101.bin exists in the bios folder."
 
   - name: "mpr-17933.bin"
@@ -1436,7 +1453,7 @@ files:
     sha1: "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3"
     validation: [size, sha1]
     description: "Bios v1.00 (U+E)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:518, 526, 529, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:48, emulatorLauncher Generators/Bizhawk.Generator.cs:673"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:521, 529, 532, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:48, emulatorLauncher Generators/Bizhawk.Generator.cs:673"
     note: "Firmware slot SAT+U, SAT+E. No core requests SAT+E at this revision. RetroBat names it in FirmwareUserSpecifications when mpr-17933.bin exists in the bios folder."
 
   - name: "SAT_1.00a-(U+E).bin"
@@ -1446,7 +1463,7 @@ files:
     sha1: "3bb41feb82838ab9a35601ac666de5aacfd17a58"
     validation: [size, sha1]
     description: "Bios v1.00a (U+E)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:519, 527, 530, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:48"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:522, 530, 533, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:48"
     note: "Firmware slot SAT+U, SAT+E. Alternative to the preferred option of the slot. No core requests SAT+E at this revision."
 
   - name: "mpr-18811-mx.ic1"
@@ -1457,7 +1474,7 @@ files:
     sha1: "a67cd4f550751f8b91de2b8b74528ab4e0c11c77"
     validation: [size, sha1]
     description: "King of Fighters cartridge"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:531, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:52, emulatorLauncher Generators/Bizhawk.Generator.cs:679"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:534, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:52, emulatorLauncher Generators/Bizhawk.Generator.cs:679"
     note: "Firmware slot SAT+KOF95. RetroBat names it in FirmwareUserSpecifications when mpr-18811-mx.ic1 exists in the bios folder."
 
   - name: "mpr-19367-mx.ic1"
@@ -1468,7 +1485,7 @@ files:
     sha1: "56c1b93da6b660bf393fbf48ca47569000ef4047"
     validation: [size, sha1]
     description: "Ultraman cartridge"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:532, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:53, emulatorLauncher Generators/Bizhawk.Generator.cs:682"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:535, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:53, emulatorLauncher Generators/Bizhawk.Generator.cs:682"
     note: "Firmware slot SAT+ULTRAMAN. RetroBat names it in FirmwareUserSpecifications when mpr-19367-mx.ic1 exists in the bios folder."
 
   - name: "SAT_STV_17740-(J).bin"
@@ -1478,7 +1495,7 @@ files:
     sha1: "06860d96923b81afbc21e0ad32ee19487d8ff6e7"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17740 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:540, 550, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:543, 553, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_17740A-(J).bin"
@@ -1488,7 +1505,7 @@ files:
     sha1: "f9b282fd27693e9891843597b2e1823da3d23c7b"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17740A (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:539, 551, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:542, 554, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_17951A-(J).bin"
@@ -1498,7 +1515,7 @@ files:
     sha1: "63cf4a6432f6c87952f9cf3ab0f977aed2367303"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17951A (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:538, 552, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:541, 555, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_19730-(J).bin"
@@ -1508,7 +1525,7 @@ files:
     sha1: "fae53107c894e0c41c49e191dbe706c9cd6e50bd"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-19730 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:537, 553, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:540, 556, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_20091-(J).bin"
@@ -1518,7 +1535,7 @@ files:
     sha1: "eff0f54c70bce05ff3a289bf30b1027e1c8cd117"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-20091 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:536, 554, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:539, 557, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_23603-(J).bin"
@@ -1528,7 +1545,7 @@ files:
     sha1: "1a31b6b1a4257fcb6ac6a91e67dd798f91505f48"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-23603 (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:535, 555, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:538, 558, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_17742A-(T).bin"
@@ -1538,7 +1555,7 @@ files:
     sha1: "23185beb1ce9c09b8719e57d1adb7b28c8141fd5"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17742A (T)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:546, 557, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:549, 560, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_17953A-(T).bin"
@@ -1548,7 +1565,7 @@ files:
     sha1: "9efc73717ec8a13417e65c54344ded9fc25bf5ef"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17953A (T)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:545, 558, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:548, 561, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_19854-(T).bin"
@@ -1558,7 +1575,7 @@ files:
     sha1: "b55cdcb45b2a5b0b35e352cf7625f0bd659084df"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-19854 (T)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:544, 559, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:547, 562, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:49"
     note: "Firmware slot SAT+STV_J."
 
   - name: "SAT_STV_17741A-(U).bin"
@@ -1568,7 +1585,7 @@ files:
     sha1: "cc41d30de06160083d77e0dc5d69e61fec7fdcb5"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17741A (U)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:542, 561, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:50"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:545, 564, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:50"
     note: "Firmware slot SAT+STV_U."
 
   - name: "SAT_STV_17952A-(U).bin"
@@ -1578,7 +1595,7 @@ files:
     sha1: "eaf1c3e5d602e1139d2090a78d7e19f04f916794"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17952A (U)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:541, 562, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:50"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:544, 565, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:50"
     note: "Firmware slot SAT+STV_U."
 
   - name: "SAT_STV_17954A-(E).bin"
@@ -1588,19 +1605,19 @@ files:
     sha1: "af79cff317e5b57d49e463af16a9f616ed1eee08"
     validation: [size, sha1]
     description: "ST-V BIOS EPR-17954A (E)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:543, 564, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:51"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:546, 567, src/BizHawk.Emulation.Cores/Consoles/Sega/Saturn/Saturnus.cs:51"
     note: "Firmware slot SAT+STV_E."
 
   - name: "[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
     aliases: ["SMS_us_1.3.sms"]
     system: sega-master-system
-    required: false
+    required: true
     size: 8192
     sha1: "c315672807d8ddb8d91443729405c766dd95cae7"
     validation: [size, sha1]
     description: "SMS BIOS 1.3 (USA, Europe)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:567, 575, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-167, emulatorLauncher Generators/Bizhawk.Generator.cs:539"
-    note: "Firmware slot SMS+Export. The core needs one of the 3 options of this slot, none of them preferred. RetroBat names it in FirmwareUserSpecifications when [BIOS] Sega Master System (USA, Europe) (v1.3).sms exists in the bios folder."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:570, 578, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-171, emulatorLauncher Generators/Bizhawk.Generator.cs:539"
+    note: "Firmware slot SMS+Export. RetroBat names it in FirmwareUserSpecifications when [BIOS] Sega Master System (USA, Europe) (v1.3).sms exists in the bios folder."
 
   - name: "SMS_us_1.0b.sms"
     system: sega-master-system
@@ -1609,8 +1626,8 @@ files:
     sha1: "29091ff60ef4c22b1ee17aa21e0e75bac6b36474"
     validation: [size, sha1]
     description: "SMS BIOS 1.0 (USA) (Proto)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:569, 576, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-167"
-    note: "Firmware slot SMS+Export. The core needs one of the 3 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:572, 579, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-171"
+    note: "Firmware slot SMS+Export. Alternative to the preferred option of the slot."
 
   - name: "SMS_m404.sms"
     system: sega-master-system
@@ -1619,8 +1636,8 @@ files:
     sha1: "4a06c8e66261611dce0305217c42138b71331701"
     validation: [size, sha1]
     description: "SMS BIOS (USA) (M404) (Proto)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:570, 577, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-167"
-    note: "Firmware slot SMS+Export. The core needs one of the 3 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:573, 580, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-171"
+    note: "Firmware slot SMS+Export. Alternative to the preferred option of the slot."
 
   - name: "[BIOS] Sega Master System (Japan) (v2.1).sms"
     aliases: ["SMS_jp_2.1.sms"]
@@ -1630,7 +1647,7 @@ files:
     sha1: "a8c1b39a2e41137835eda6a5de6d46dd9fadbaf2"
     validation: [size, sha1]
     description: "SMS BIOS 2.1 (Japan)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:568, 578, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-167, emulatorLauncher Generators/Bizhawk.Generator.cs:542"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:571, 581, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-171, emulatorLauncher Generators/Bizhawk.Generator.cs:542"
     note: "Firmware slot SMS+Japan. RetroBat names it in FirmwareUserSpecifications when [BIOS] Sega Master System (Japan) (v2.1).sms exists in the bios folder."
 
   - name: "SMS_kr.sms"
@@ -1640,7 +1657,7 @@ files:
     sha1: "2feafd8f1c40fdf1bd5668f8c5c02e5560945b17"
     validation: [size, sha1]
     description: "SMS BIOS (Kr)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:571, 579, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-167"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:574, 582, src/BizHawk.Emulation.Cores/Consoles/Sega/SMS/SMS.cs:162-171"
     note: "Firmware slot SMS+Korea."
 
   - name: "SNES_SGB_(JU).sfc"
@@ -1650,7 +1667,7 @@ files:
     sha1: "6ed55c4368333b57f6a2f8bbd70ccd87ed48058e"
     validation: [size, sha1]
     description: "Super Game Boy Rom (JU)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:582, 589, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:585, 592, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
     note: "Firmware slot SNES+Rom_SGB."
 
   - name: "SNES_SGB_RevA_(JU).sfc"
@@ -1660,7 +1677,7 @@ files:
     sha1: "6380a5913ace3041a305fbaf822b5a8847fea7ed"
     validation: [size, sha1]
     description: "Super Game Boy Rom (JU, Rev A)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:583, 590, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:586, 593, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
     note: "Firmware slot SNES+Rom_SGB."
 
   - name: "SNES_SGB_RevABeta_(JU).sfc"
@@ -1670,7 +1687,7 @@ files:
     sha1: "4ed5621a9022e1d94b673cc0f68ea24764e8d6bb"
     validation: [size, sha1]
     description: "Super Game Boy Rom (JU, Rev A Beta)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:584, 591, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:587, 594, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
     note: "Firmware slot SNES+Rom_SGB."
 
   - name: "SNES_SGB_RevB_(World).sfc"
@@ -1680,7 +1697,7 @@ files:
     sha1: "973e10840db683cf3faf61bd443090786b3a9f04"
     validation: [size, sha1]
     description: "Super Game Boy Rom (World, Rev B)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:585, 592, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:588, 595, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:45"
     note: "Firmware slot SNES+Rom_SGB."
 
   - name: "SNES_SGB2_(J).sfc"
@@ -1690,7 +1707,7 @@ files:
     sha1: "e5b2922ca137051059e4269b236d07a22c07bc84"
     validation: [size, sha1]
     description: "Super Game Boy 2 Rom (J)"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:586, 593, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:44"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:589, 596, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:44"
     note: "Firmware slot SNES+Rom_SGB2."
 
   - name: "SNES_cx4.rom"
@@ -1700,7 +1717,7 @@ files:
     sha1: "a002f4efba42775a31185d443f3ed1790b0e949a"
     validation: [size, sha1]
     description: "CX4 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:594, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:597, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+CX4."
 
   - name: "SNES_dsp1.rom"
@@ -1710,7 +1727,7 @@ files:
     sha1: "188d471fefea71eb53f0ee7064697ff0971b1014"
     validation: [size, sha1]
     description: "DSP1 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:595, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:598, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+DSP1."
 
   - name: "SNES_dsp1b.rom"
@@ -1720,7 +1737,7 @@ files:
     sha1: "78b724811f5f18d8c67669d9390397eb1a47a5e2"
     validation: [size, sha1]
     description: "DSP1b Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:596, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:599, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+DSP1b."
 
   - name: "SNES_dsp2.rom"
@@ -1730,7 +1747,7 @@ files:
     sha1: "198c4b1c3bfc6d69e734c5957af3dbfa26238dfb"
     validation: [size, sha1]
     description: "DSP2 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:597, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:600, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+DSP2."
 
   - name: "SNES_dsp3.rom"
@@ -1740,7 +1757,7 @@ files:
     sha1: "558da7cb3bd3876a6ca693661ffc6c110e948cf9"
     validation: [size, sha1]
     description: "DSP3 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:598, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:601, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+DSP3."
 
   - name: "SNES_dsp4.rom"
@@ -1750,7 +1767,7 @@ files:
     sha1: "af6478aecb6f1b67177e79c82ca04c56250a8c72"
     validation: [size, sha1]
     description: "DSP4 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:599, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:602, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+DSP4."
 
   - name: "SNES_st010.rom"
@@ -1760,7 +1777,7 @@ files:
     sha1: "6472828403de3589433a906e2c3f3d274c0ff008"
     validation: [size, sha1]
     description: "ST010 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:600, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:603, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+ST010."
 
   - name: "SNES_st011.rom"
@@ -1770,7 +1787,7 @@ files:
     sha1: "fecbae2cec76c710422486baa186ffa7ca1cf925"
     validation: [size, sha1]
     description: "ST011 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:601, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:604, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+ST011."
 
   - name: "SNES_st018.rom"
@@ -1780,7 +1797,7 @@ files:
     sha1: "91383b92745cc7cc4f15409ac5bc2c2f699a43f1"
     validation: [size, sha1]
     description: "ST018 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:602, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:166-208"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:605, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:167-209"
     note: "Firmware slot SNES+ST018."
 
   - name: "Satellaview_BS-X.sfc"
@@ -1790,7 +1807,7 @@ files:
     sha1: "604556b2e62860af18db5a77f2956ebc75450020"
     validation: [size, sha1]
     description: "BS-X Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:605, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:608, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_BSX."
 
   - name: "Satellaview_Mahjong.sfc"
@@ -1800,7 +1817,7 @@ files:
     sha1: "8417556b5ce22fb9bc4026fe28f7aee348a76fd9"
     validation: [size, sha1]
     description: "Joushou Mahjong Tenpai Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:606, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:609, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_Mahjong."
 
   - name: "Satellaview_GNEXT.sfc"
@@ -1810,7 +1827,7 @@ files:
     sha1: "356a3d60e9fabff4b4cec66277c9a6b717c958ce"
     validation: [size, sha1]
     description: "SD Gundam G-Next Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:607, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:610, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_GNEXT."
 
   - name: "Satellaview_RPG_Tsukuru.sfc"
@@ -1820,7 +1837,7 @@ files:
     sha1: "95f31dfb31200e31e80007cc66a32e2c1a7b02be"
     validation: [size, sha1]
     description: "RPG Tsukūru 2 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:608, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:611, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_RPG_Tsukuru."
 
   - name: "Satellaview_SameGame.sfc"
@@ -1830,7 +1847,7 @@ files:
     sha1: "a6ad0f89c3e75327d70aa0f0239c7b06f151e0a4"
     validation: [size, sha1]
     description: "SameGame Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:609, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:612, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_SameGame."
 
   - name: "Satellaview_Derby_Stallion_96.sfc"
@@ -1840,7 +1857,7 @@ files:
     sha1: "24af9a5a78635ec493bbbc2540ab98bd161c5798"
     validation: [size, sha1]
     description: "Derby Stallion 96 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:610, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:613, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_DS96."
 
   - name: "Satellaview_Ongaku_Tsukuru.sfc"
@@ -1850,7 +1867,7 @@ files:
     sha1: "337e0c4bdbf544787b543a1fb83afba7526191b9"
     validation: [size, sha1]
     description: "Ongaku Tsukūru: Kanadēru Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:611, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:614, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_Ongaku_Tsukuru."
 
   - name: "Satellaview_SoundNovel_Tsukuru.sfc"
@@ -1860,7 +1877,7 @@ files:
     sha1: "a9b124948a19bb5a295ec208fca8180476bdfebb"
     validation: [size, sha1]
     description: "Sound-Novel Tsukūru Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:612, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:615, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_SoundNovel_Tsukuru."
 
   - name: "Satellaview_Bass_Tsuri.sfc"
@@ -1870,7 +1887,7 @@ files:
     sha1: "357ac4826297a6496035e3951cacda55dcae4b1b"
     validation: [size, sha1]
     description: "Itoi Shigesato no Bass Tsuri No. 1 Rom"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:613, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:108-116"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:616, src/BizHawk.Emulation.Cores/Consoles/Nintendo/BSNES/BsnesCore.cs:107-115"
     note: "Firmware slot BSX+Rom_Tsuri."
 
   - name: "TI83_102.rom"
@@ -1880,8 +1897,8 @@ files:
     sha1: "ce08f6a808701fc6672230a790167ee485157561"
     validation: [size, sha1]
     description: "TI-83 Rom v1.02"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:616, 625, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:620, 636, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
   - name: "TI83_103.rom"
     system: texas-instruments-ti-83
@@ -1890,8 +1907,8 @@ files:
     sha1: "8399e384804d8d29866caa4c8763d7a61946a467"
     validation: [size, sha1]
     description: "TI-83 Rom v1.03"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:617, 626, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:621, 637, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
   - name: "TI83_104.rom"
     system: texas-instruments-ti-83
@@ -1900,8 +1917,8 @@ files:
     sha1: "33877ff637dc5f4c5388799fd7e2159b48e72893"
     validation: [size, sha1]
     description: "TI-83 Rom v1.04"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:618, 627, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:622, 638, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
   - name: "TI83_106.rom"
     system: texas-instruments-ti-83
@@ -1910,8 +1927,8 @@ files:
     sha1: "3d65c2a1b771ce8e5e5a0476ec1aa9c9cdc0e833"
     validation: [size, sha1]
     description: "TI-83 Rom v1.06"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:619, 628, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:623, 639, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
   - name: "TI83_107.rom"
     system: texas-instruments-ti-83
@@ -1920,8 +1937,8 @@ files:
     sha1: "ef66dad3e7b2b6a86f326765e7dfd7d1a308ad8f"
     validation: [size, sha1]
     description: "TI-83 Rom v1.07"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:620, 629, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:624, 640, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
   - name: "TI83_108.rom"
     system: texas-instruments-ti-83
@@ -1930,28 +1947,18 @@ files:
     sha1: "9c74f0b61655e9e160e92164db472ad7ee02b0f8"
     validation: [size, sha1]
     description: "TI-83 Rom v1.08"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:621, 630, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:625, 641, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. Alternative to the preferred option of the slot."
 
-  - name: "TI83p_103b.rom"
+  - name: "TI83_110.rom"
     system: texas-instruments-ti-83
-    required: false
+    required: true
     size: 262144
-    sha1: "37eaeeb9fb5c18fb494e322b75070e80cc4d858e"
+    sha1: "25b373b58523647bb7b904001d391615e0b79bee"
     validation: [size, sha1]
-    description: "TI-83 Plus Rom v1.03"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:622, 631, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
-
-  - name: "TI83p_112.rom"
-    system: texas-instruments-ti-83
-    required: false
-    size: 262144
-    sha1: "6615df5554076b6b81bd128bf847d2ff046e556b"
-    validation: [size, sha1]
-    description: "TI-83 Plus Rom v1.12"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:623, 632, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
-    note: "Firmware slot TI83+Rom. The core needs one of the 8 options of this slot, none of them preferred."
+    description: "TI-83 Rom v1.10"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:626, 642-649, src/BizHawk.Emulation.Cores/Calculators/TI83/TI83.cs:21"
+    note: "Firmware slot TI83+Rom. The seven TI-83 Plus ROMs the slot also lists are rated Unacceptable, so the scan never takes them."
 
   - name: "Vectrex_Bios.bin"
     aliases: ["VEC_Bios.bin"]
@@ -1961,7 +1968,7 @@ files:
     sha1: "b9bbf5bb0eac52d039a4a993a2d8064b862c9e28"
     validation: [size, sha1]
     description: "Bios"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:635, src/BizHawk.Emulation.Cores/Consoles/GCE/Vectrex/VectrexHawk.cs:56, emulatorLauncher Generators/Bizhawk.Generator.cs:704"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:652, src/BizHawk.Emulation.Cores/Consoles/GCE/Vectrex/VectrexHawk.cs:56, emulatorLauncher Generators/Bizhawk.Generator.cs:704"
     note: "Firmware slot VEC+Bios. RetroBat names it in FirmwareUserSpecifications when Vectrex_Bios.bin exists in the bios folder."
 
   - name: "VEC_Minestorm.vec"
@@ -1971,7 +1978,7 @@ files:
     sha1: "65d07426b520ddd3115d40f255511e0fd2e20ae7"
     validation: [size, sha1]
     description: "Game"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:636, src/BizHawk.Emulation.Cores/Consoles/GCE/Vectrex/VectrexHawk.cs:57, emulatorLauncher Generators/Bizhawk.Generator.cs:705"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:653, src/BizHawk.Emulation.Cores/Consoles/GCE/Vectrex/VectrexHawk.cs:57, emulatorLauncher Generators/Bizhawk.Generator.cs:705"
     note: "Firmware slot VEC+Minestorm. RetroBat names it in FirmwareUserSpecifications when VEC_Minestorm.vec exists in the bios folder."
 
   - name: "ZX_pentagon.rom"
@@ -1981,7 +1988,7 @@ files:
     sha1: "a584272f21dc82c14b7d4f1ed440e23a976e71f0"
     validation: [size, sha1]
     description: "Russian Pentagon Clone ROM"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:639, src/BizHawk.Emulation.Cores/Computers/SinclairSpectrum/ZXSpectrum.cs:200-208, 258-259"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:656, src/BizHawk.Emulation.Cores/Computers/SinclairSpectrum/ZXSpectrum.cs:221-229, 279-280"
     note: "Firmware slot ZXSpectrum+PentagonROM."
 
   - name: "ZX_trdos.rom"
@@ -1991,5 +1998,5 @@ files:
     sha1: "282eb7bc819aad2a12fd954e76f7838a4e1a7929"
     validation: [size, sha1]
     description: "TRDOS ROM"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:640, src/BizHawk.Emulation.Cores/Computers/SinclairSpectrum/ZXSpectrum.cs:200-208, 258-259"
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:657, src/BizHawk.Emulation.Cores/Computers/SinclairSpectrum/ZXSpectrum.cs:221-229, 279-280"
     note: "Firmware slot ZXSpectrum+TRDOSROM."
