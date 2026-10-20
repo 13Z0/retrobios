@@ -1546,6 +1546,45 @@ class MisterDatabaseComesBackAsWritten(unittest.TestCase):
     """The BiosDB is one line of JSON. Written with indent=2 it came out as
     1499 changed lines for a database whose content had not changed."""
 
+    def _render(self, truth: dict):
+        archive = UPSTREAM_CACHE / "misterfpga" / "bios_db.json.zip"
+        if not archive.exists():
+            self.skipTest("upstream cache not populated")
+        raw = archive.read_bytes()
+        exporter = discover_exporters()["misterfpga"]()
+        exporter.keep_archive("bios_db.json.zip", raw)
+        originals = exporter.unpack(raw)
+        config = native_layer(load_platform_config("misterfpga", str(REPO_ROOT / "platforms")))
+        systems, report = build_native_model(truth, config)
+        return raw, exporter.render(systems, report, originals, config)
+
+    def test_the_archive_mister_fetches_is_published_as_it_came(self):
+        """The Downloader fetches bios_db.json.zip, and the export gave only
+        the JSON inside it."""
+        raw, produced = self._render({"systems": {}})
+        self.assertEqual(produced["bios_db.json.zip"], raw)
+
+    def test_a_rebuilt_archive_keeps_the_member_as_mister_writes_it(self):
+        raw, _ = self._render({"systems": {}})
+        from exporter.misterfpga_exporter import rebuild_archive  # noqa: PLC0415
+
+        rebuilt = rebuild_archive(raw, "bios_db.json", '{"changed": true}')
+        with zipfile.ZipFile(io.BytesIO(raw)) as before, \
+                zipfile.ZipFile(io.BytesIO(rebuilt)) as after:
+            old, new = before.infolist()[0], after.infolist()[0]
+            self.assertEqual(after.read("bios_db.json"), b'{"changed": true}')
+            self.assertEqual(
+                (old.filename, old.date_time, old.compress_type, old.external_attr),
+                (new.filename, new.date_time, new.compress_type, new.external_attr),
+            )
+
+    def test_bytes_are_written_untouched(self):
+        import export_native  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            export_native._write_produced(Path(tmp), {"a.zip": b"PK\x03\x04\xff"}, {})
+            self.assertEqual((Path(tmp) / "a.zip").read_bytes(), b"PK\x03\x04\xff")
+
     def test_an_empty_truth_hands_back_the_database(self):
         archive = UPSTREAM_CACHE / "misterfpga" / "bios_db.json.zip"
         if not archive.exists():

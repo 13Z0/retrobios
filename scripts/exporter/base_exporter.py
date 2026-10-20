@@ -126,6 +126,15 @@ class BaseExporter(ABC):
         """
         return True
 
+    def keep_archive(self, relative: str, payload: bytes) -> None:
+        """Hold the bytes of an original archive the render may hand back."""
+        if not hasattr(self, "_archives"):
+            self._archives: dict[str, bytes] = {}
+        self._archives[relative] = payload
+
+    def archive(self, relative: str) -> bytes | None:
+        return getattr(self, "_archives", {}).get(relative)
+
     @staticmethod
     def file_modes() -> dict[str, int]:
         """The mode of each file the platform publishes other than 0644."""

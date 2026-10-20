@@ -339,6 +339,9 @@ def collect_originals(
                 continue
             if archive:
                 originals.update(_read_archive(unpack, payload))
+                keep = getattr(exporter, "keep_archive", None)
+                if callable(keep):
+                    keep(relative, payload)
             else:
                 originals[relative] = payload.decode("utf-8", errors="replace")
         # One platform's unreadable file fails that platform: raised, it
@@ -760,7 +763,9 @@ def export_platform(
     return True, messages
 
 
-def _write_produced(root: Path, produced: dict[str, str], modes: dict[str, int]) -> None:
+def _write_produced(
+    root: Path, produced: dict[str, str | bytes], modes: dict[str, int]
+) -> None:
     """Write each file as its bytes, whole or not at all, with its mode.
 
     write_text translated line ends on Windows, so FirmwareDatabase.cs's
@@ -771,7 +776,8 @@ def _write_produced(root: Path, produced: dict[str, str], modes: dict[str, int])
     for relative, content in produced.items():
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
-        write_bytes_atomic(str(path), content.encode("utf-8"))
+        data = content if isinstance(content, bytes) else content.encode("utf-8")
+        write_bytes_atomic(str(path), data)
         path.chmod(modes.get(relative, 0o644))
 
 

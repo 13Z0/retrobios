@@ -21,6 +21,27 @@ SOURCE_URL = (
 _DB_NAME = "bios_db.json"
 
 
+_ARCHIVE = "bios_db.json.zip"
+
+
+def rebuild_archive(original: bytes, member: str, text: str) -> bytes:
+    """The archive with one member's content replaced, as MiSTer writes it.
+
+    The member keeps its name, date, compression and attributes, so the
+    archive differs from MiSTer's only by the content that changed.
+    """
+    with zipfile.ZipFile(io.BytesIO(original)) as source:
+        info = source.getinfo(member)
+    rebuilt = zipfile.ZipInfo(info.filename, date_time=info.date_time)
+    rebuilt.compress_type = info.compress_type
+    rebuilt.external_attr = info.external_attr
+    rebuilt.create_system = info.create_system
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as target:
+        target.writestr(rebuilt, text.encode("utf-8"))
+    return buffer.getvalue()
+
+
 class Exporter(BaseExporter):
     """Write MiSTer's bios_db.json, corrected."""
 
@@ -82,7 +103,7 @@ class Exporter(BaseExporter):
         report: Report,
         originals: dict[str, str],
         scraped: dict | None = None,
-    ) -> dict[str, str]:
+    ) -> dict[str, str | bytes]:
         original = originals.get(_DB_NAME) or originals.get("bios_db.json.zip")
         if not original:
             raise ValueError(
@@ -111,7 +132,16 @@ class Exporter(BaseExporter):
 
         # MiSTer publishes the database as one line, without a final
         # newline: written with an indent it came out as 1499 changed lines.
-        return {_DB_NAME: json.dumps(database, ensure_ascii=False)}
+        text = json.dumps(database, ensure_ascii=False)
+        produced: dict[str, str | bytes] = {_DB_NAME: text}
+        # MiSTer's Downloader fetches the archive, not the JSON in it: handed
+        # back as it came when nothing changed, rebuilt around the new
+        # member otherwise.
+        archive = self.archive(_ARCHIVE)
+        if archive is not None:
+            unchanged = text == originals.get(_DB_NAME)
+            produced[_ARCHIVE] = archive if unchanged else rebuild_archive(archive, _DB_NAME, text)
+        return produced
 
     def validate(
         self,
