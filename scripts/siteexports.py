@@ -92,19 +92,22 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
         "",
         "Each platform keeps its own list of the BIOS files it checks: "
         "libretro's `System.dat`, Batocera's `batocera-systems`, Recalbox's "
-        "`es_bios.xml` and so on. Keeping such a list in step with every "
-        "emulator release is a lot of work. This project reads the emulators' "
-        "source code file by file, and offers each platform its own file with "
-        "those findings applied: a hash is updated where the emulator source "
-        "states another, files the platform's emulators read are added, and "
-        "nothing the platform declares is removed. Code the file carries (a "
-        "checker script, a C# database, a shell library) is patched in place "
-        "and keeps working.",
+        "`es_bios.xml` and so on. This project reads the emulators' source "
+        "code file by file, and offers each platform its own file with those "
+        "findings applied: a hash is updated where the emulator source states "
+        "another, files the platform's emulators read are added, and no entry "
+        "the platform declares is removed. Where a value of an entry is "
+        "dropped, the platform's section lists it. Code the file carries is "
+        "patched in place. With the original files on hand, the tests run "
+        "the updated Batocera and ROCKNIX scripts (`--createReadme`), parse "
+        "`checkBIOS.sh` and the RetroPie scriptmodules with `bash -n`, and "
+        "check that every Recalbox entry carries the attributes the "
+        "`es_bios.xsd` Recalbox publishes requires.",
         "",
         "Each file starts from the revision of the original that this project "
         "last read, so it compares cleanly with it, and every change can be "
-        "taken or left on its own. Each value traces back to the emulator code "
-        "cited on its profile page. If a change does not fit a platform, an "
+        "taken or left on its own. Each value comes from an emulator profile, "
+        "whose page cites where it was read. If a change does not fit a platform, an "
         "issue on the [repository](https://github.com/Abdess/retrobios/issues) "
         "is welcome: this project's profile is revised, and every platform's "
         "file follows.",
