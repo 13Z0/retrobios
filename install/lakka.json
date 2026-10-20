@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-20T15:01:06Z",
+  "generated": "2026-10-20T17:20:48Z",
   "base_destination": "system",
   "detect": [
     {
@@ -691,6 +691,7 @@
       "dinothawr"
     ],
     "doom": [
+      "bizhawk",
       "dsda-doom",
       "gzdoom",
       "idtech4a++",
@@ -84206,7 +84207,7 @@
       "sha1": "010e3c7b17b4339fce7770f6f9b2e030e0437939",
       "sha256": "e749492de779f9ae4415e15202e5a21c3bcd850161509e319ed77d72476e4f84",
       "size": 3655,
-      "repo_path": "bios/Arcade/MAME/at_keybc.zip",
+      "repo_path": "bios/Arcade/MAME/at_mb.zip",
       "cores": [
         "mame"
       ],
@@ -84305,7 +84306,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame",
         "mamemess"
@@ -84691,7 +84692,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -85139,7 +85140,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -85571,7 +85572,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -88693,7 +88694,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -88885,7 +88886,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -98213,7 +98214,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -98229,7 +98230,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -98245,7 +98246,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -98261,7 +98262,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -99588,7 +99589,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -100118,7 +100119,7 @@
       "sha1": "1338b5fc0e1cae248c0dad71494bdb0a9bb2d332",
       "sha256": "1619b888d0e624df027a02ce3ea23484159d1e3503aafbada1016f8fe2f9ac32",
       "size": 2303,
-      "repo_path": "bios/Arcade/MAME/xerox820_emii_flpy5.zip",
+      "repo_path": "bios/Arcade/MAME/xerox820_emii_rgd5.zip",
       "cores": [
         "mame"
       ],
@@ -100134,7 +100135,7 @@
       "sha1": "1338b5fc0e1cae248c0dad71494bdb0a9bb2d332",
       "sha256": "1619b888d0e624df027a02ce3ea23484159d1e3503aafbada1016f8fe2f9ac32",
       "size": 2303,
-      "repo_path": "bios/Arcade/MAME/xerox820_emii_flpy5.zip",
+      "repo_path": "bios/Arcade/MAME/xerox820_emii_rgd5.zip",
       "cores": [
         "mame"
       ],

@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T15:01:06Z",
+  "generated": "2026-10-20T17:20:48Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 5087,
-  "total_size": 8189363477,
-  "pack_files": 5089,
-  "pack_size": 8189363477,
-  "total_omitted": 180,
+  "total_files": 5114,
+  "total_size": 8196525205,
+  "pack_files": 5116,
+  "pack_size": 8196525205,
+  "total_omitted": 152,
   "omitted_files": [
     {
       "dest": "AR6002G.ROM",
@@ -457,16 +457,6 @@
       ]
     },
     {
-      "dest": "FDS_disksys-twinfc.rom",
-      "name": "FDS_disksys-twinfc.rom",
-      "system": "nintendo-nes",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
       "dest": "GANIM.BS6",
       "name": "GANIM.BS6",
       "system": "blake-stone",
@@ -474,46 +464,6 @@
       "reason": "not_found",
       "cores": [
         "bstone"
-      ]
-    },
-    {
-      "dest": "GBC_agb0.bin",
-      "name": "GBC_agb0.bin",
-      "system": "nintendo-gbc",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "GBC_cgbE.bin",
-      "name": "GBC_cgbE.bin",
-      "system": "nintendo-gbc",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "GB_mgb.bin",
-      "name": "GB_mgb.bin",
-      "system": "nintendo-gb",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "LA_us_102.bin",
-      "name": "LA_us_102.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -587,66 +537,6 @@
       ]
     },
     {
-      "dest": "MCD_aiwa_jp_211c.bin",
-      "name": "MCD_aiwa_jp_211c.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "MCD_eu_221.bin",
-      "name": "MCD_eu_221.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "MCD_jp_111b.bin",
-      "name": "MCD_jp_111b.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "MCD_jp_beta.bin",
-      "name": "MCD_jp_beta.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "MCD_jp_reva.bin",
-      "name": "MCD_jp_reva.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "MM_eu_221x.bin",
-      "name": "MM_eu_221x.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
       "dest": "NAM.CON",
       "name": "NAM.CON",
       "system": "nam",
@@ -684,16 +574,6 @@
       "reason": "not_found",
       "cores": [
         "raze"
-      ]
-    },
-    {
-      "dest": "NDS_Firmware_2.bin",
-      "name": "NDS_Firmware_2.bin",
-      "system": "nintendo-ds",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -744,46 +624,6 @@
       "reason": "not_found",
       "cores": [
         "raze"
-      ]
-    },
-    {
-      "dest": "SMS_m404.sms",
-      "name": "SMS_m404.sms",
-      "system": "sega-master-system",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "SMS_us_1.0b.sms",
-      "name": "SMS_us_1.0b.sms",
-      "system": "sega-master-system",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "SNES_SGB_RevABeta_(JU).sfc",
-      "name": "SNES_SGB_RevABeta_(JU).sfc",
-      "system": "nintendo-snes",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "SNES_SGB_RevA_(JU).sfc",
-      "name": "SNES_SGB_RevA_(JU).sfc",
-      "system": "nintendo-snes",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -844,56 +684,6 @@
       "reason": "not_found",
       "cores": [
         "theforceengine"
-      ]
-    },
-    {
-      "dest": "TI83_102.rom",
-      "name": "TI83_102.rom",
-      "system": "texas-instruments-ti-83",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "TI83_103.rom",
-      "name": "TI83_103.rom",
-      "system": "texas-instruments-ti-83",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "TI83_104.rom",
-      "name": "TI83_104.rom",
-      "system": "texas-instruments-ti-83",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "TI83_106.rom",
-      "name": "TI83_106.rom",
-      "system": "texas-instruments-ti-83",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "TI83p_103b.rom",
-      "name": "TI83p_103b.rom",
-      "system": "texas-instruments-ti-83",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -997,16 +787,6 @@
       ]
     },
     {
-      "dest": "WM_jp_m2.bin",
-      "name": "WM_jp_m2.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
       "dest": "WT.GRP",
       "name": "WT.GRP",
       "system": "shadow-warrior",
@@ -1034,26 +814,6 @@
       "reason": "not_found",
       "cores": [
         "eduke32"
-      ]
-    },
-    {
-      "dest": "XEye_us.bin",
-      "name": "XEye_us.bin",
-      "system": "sega-mega-drive",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "amiga-os-310-a4000t.rom",
-      "name": "amiga-os-310-a4000t.rom",
-      "system": "commodore-amiga",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -1927,36 +1687,6 @@
       ]
     },
     {
-      "dest": "panafz1_dev.bin",
-      "name": "panafz1_dev.bin",
-      "system": "3do",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "panafz1_dev_0.9.bin",
-      "name": "panafz1_dev_0.9.bin",
-      "system": "3do",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
-      "dest": "panafz1e-unencrypted.bin",
-      "name": "panafz1e-unencrypted.bin",
-      "system": "3do",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
-      ]
-    },
-    {
       "dest": "pcsx2x6/TeknoParrot/bios/COH-H31100.rom1",
       "name": "COH-H31100.rom1",
       "system": "namco-system246",
@@ -2014,16 +1744,6 @@
       "reason": "not_found",
       "cores": [
         "altirra"
-      ]
-    },
-    {
-      "dest": "sanyo_hc21_alpha.bin",
-      "name": "sanyo_hc21_alpha.bin",
-      "system": "3do",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "bizhawk"
       ]
     },
     {
@@ -7863,10 +7583,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "87dae2500e889737af51f4a5b5845770a62482f5",
-          "sha256": "330c59198faec64b40e96cc875b422d340fc9ab1a9e32e9bd9b7baa1dbe6ba7f",
+          "sha1": "ede9add041614eaa232059c63d8613b83fe4e954",
+          "sha256": "23250a16807e891e900004956139cebb6cb0bb66bbf5cea1cd598672a47195f6",
           "size": 262144,
-          "repo_path": "bios/Nintendo/DS/NDS_Lite_Firmware.bin",
+          "repo_path": "bios/Nintendo/DS/NDS_Firmware_1.bin",
           "cores": [
             "bizhawk"
           ]
@@ -11324,11 +11044,50 @@
       ]
     },
     {
+      "dest": "panafz1_dev_0.9.bin",
+      "sha1": "de3c55490733e6c69724d87e149b52ed955638ed",
+      "sha256": "455423b452fab4b94fdb398c23fdc12fc538ecbedd9cea56057baf3c76bc3d93",
+      "size": 1048576,
+      "repo_path": "bios/3DO Company/3DO/panafz1_dev_0.9.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
+      "dest": "panafz1_dev.bin",
+      "sha1": "4cb4ee36e0f5bc0995d34992b4f241c420d49b2e",
+      "sha256": "e39c6cc9fb50c5e3e2025862aba7337a394f0dd08db05c4405c434742dd67435",
+      "size": 1048576,
+      "repo_path": "bios/3DO Company/3DO/panafz1_dev.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
       "dest": "panafz1e.bin",
       "sha1": "1d0db81e171ebc1d07cefc8ce8ab082306186e56",
       "sha256": "6f7d03d82b33605399d8b49408477184f483409e976c46ca69c073d03e228898",
       "size": 1048576,
       "repo_path": "bios/3DO Company/3DO/3do_panafz1e.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
+      "dest": "panafz1e-unencrypted.bin",
+      "sha1": "4696951e492e5526772a860ea2c0f35411a80927",
+      "sha256": "ab01f8b3f4c55ce50664e10a586e0432597ac9c8aeb64f1fb5b85e581a1ac3d4",
+      "size": 1048576,
+      "repo_path": "bios/3DO Company/3DO/panafz1e-unencrypted.bin",
       "cores": [
         "bizhawk"
       ],
@@ -11453,6 +11212,19 @@
       "sha256": "91f61a226ab9b8fc53cb643979bd9916eaf45283a43c06f1518a0b41541a6dab",
       "size": 1048576,
       "repo_path": "bios/3DO Company/3DO/3do_sanyo_hc21_b3_unenc.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "3do"
+      ]
+    },
+    {
+      "dest": "sanyo_hc21_alpha.bin",
+      "sha1": "29c40515dc1174ff13975baa59eb532083e4a3d3",
+      "sha256": "df5c2ac4fe15c689a1daa53a0cfec767581409b79967de9ad12e9753307bcce3",
+      "size": 1048576,
+      "repo_path": "bios/3DO Company/3DO/sanyo_hc21_alpha.bin",
       "cores": [
         "bizhawk"
       ],
@@ -11647,6 +11419,19 @@
       ]
     },
     {
+      "dest": "amiga-os-310-a4000t.rom",
+      "sha1": "b0ec8b84d6768321e01209f11e6248f2f5281a21",
+      "sha256": "e5f87ea8953d840db0e05d097362ad1be98a1bf3292cf7f359190af61556d036",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a4000t.rom",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
       "dest": "amiga-os-310-cd32.rom",
       "sha1": "3525be8887f79b5929e017b42380a79edfee542d",
       "sha256": "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b",
@@ -11749,6 +11534,19 @@
       ]
     },
     {
+      "dest": "doom2.wad",
+      "sha1": "7ec7652fcfce8ddc6e801839291f0e28ef1d5ae7",
+      "sha256": "10d67824b11025ddd9198e8cfc87ca335ee6e2d3e63af4180fa9b8a471893255",
+      "size": 14604584,
+      "repo_path": "bios/Id Software/Doom/DOOM2.WAD",
+      "cores": [
+        "bizhawk",
+        "gzdoom",
+        "prboom",
+        "uzdoom"
+      ]
+    },
+    {
       "dest": "GBA_bios_Debug-(J).rom",
       "sha1": "aa98a2ad32b86106340665d1222d7d973a1361c7",
       "sha256": "9758dbf0c4c5ffefa2a710405f4df7ddc7de0399b0975e85e12fb43d8843b63d",
@@ -11762,11 +11560,50 @@
       ]
     },
     {
+      "dest": "GB_mgb.bin",
+      "sha1": "4e68f9da03c310e84c523654b9026e51f26ce7f0",
+      "sha256": "a8cb5f4f1f16f2573ed2ecd8daedb9c5d1dd2c30a481f9b179b5d725d95eafe2",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_mgb.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "nintendo-gb"
+      ]
+    },
+    {
+      "dest": "GBC_cgbE.bin",
+      "sha1": "f5f33729a956131d9c44310f0ae3bb0599e9ec3e",
+      "sha256": "c56299bedd56debdbf36442238636bf5887a65c5173b33995682052353804da9",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgbE.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "nintendo-gbc"
+      ]
+    },
+    {
       "dest": "GBC_agb.bin",
       "sha1": "fa5287e24b0fa533b3b5ef2b28a81245346c1a0f",
       "sha256": "fe3cceb79930c4cb6c6f62f742c2562fd4c96b827584ef8ea89d49b387bd6860",
       "size": 2304,
       "repo_path": "bios/Nintendo/Game Boy Color/GBC_agb.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "nintendo-gbc"
+      ]
+    },
+    {
+      "dest": "GBC_agb0.bin",
+      "sha1": "0daac31acb6cb346fc954368acb02acb3adcc3ab",
+      "sha256": "fe2d45405531756d87622abde6127c804bd675cb968081b2c052497a470ffeb2",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_agb0.bin",
       "cores": [
         "bizhawk"
       ],
@@ -11810,6 +11647,36 @@
       "sha256": "71eb86242d8d155ead2ab86721ef5ca236aba004018c500d46e55fc81ddd79b4",
       "size": 131072,
       "repo_path": "bios/Sega/Mega CD/eu_mcd2_9306.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MM_eu_221x.bin",
+      "sha1": "75548ac9aaa6e81224499f9a1403b2b42433f5b7",
+      "sha256": "90406fce43f1c44d431eba87db2eaf99847b40c13a996601d0622bcb6f98cdb9",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MM_eu_221x.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MCD_eu_221.bin",
+      "sha1": "9de4eda59f544db2d5fd7e6514601f7b648d8eb4",
+      "sha256": "e8f226369a2ba79afa7bdab412538540ca10191032c01a12da4e19b7c6065cc2",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_221.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MCD_aiwa_jp_211c.bin",
+      "sha1": "219d284dcf63ce366a4dc6d1ff767a0d2eea283d",
+      "sha256": "71cc991de845e2707ba30ba61fff661a2df51471909f47b59518be5457944387",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_aiwa_jp_211c.bin",
       "cores": [
         "bizhawk"
       ]
@@ -11885,6 +11752,16 @@
       ]
     },
     {
+      "dest": "WM_jp_m2.bin",
+      "sha1": "b3f32e409bd5508c89ed8be33d41a58d791d0e5d",
+      "sha256": "3aeccd967f34ebb678bbb7b3caa232aba11c6d6f71ce7bc21033733724c7b112",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/WM_jp_m2.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
       "dest": "WM_jp_100W.bin",
       "sha1": "3fc9358072f74bd24e3e297ea11b2bf15a7af891",
       "sha256": "f84d43ae82be5c03fa418286e8142c377869cd392c0d3a9dd5ba72b78d2075fc",
@@ -11910,6 +11787,36 @@
       "sha256": "dca942d977217f703d8d1c6eb1aeb6b32c78ecc421486bbb46c459d385161c94",
       "size": 131072,
       "repo_path": "bios/Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MCD_jp_111b.bin",
+      "sha1": "204758d5a64c24e96e1a9fe6bd82e1878fef7ade",
+      "sha256": "48399209da338188163f19c86bc2b273b11d5c22de1c5c7e5539fdd4cc123f8a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_111b.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MCD_jp_reva.bin",
+      "sha1": "062e6a912e3683f7f127cbfd6314b44f93c42db7",
+      "sha256": "ef286dc2a2f563f36f06c76c0e0628b3eadf18dd860d05f0cafa119f86f4fbdc",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_reva.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "MCD_jp_beta.bin",
+      "sha1": "f30d109d1c2f7c9feaf38600c65834261db73d1f",
+      "sha256": "5d2593cfe190d5a47732353d220540a8b14a5bd5532fec2117f132e586272c87",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_beta.bin",
       "cores": [
         "bizhawk"
       ]
@@ -11975,11 +11882,31 @@
       ]
     },
     {
+      "dest": "XEye_us.bin",
+      "sha1": "651f14d5a5e0ecb974a60c0f43b1d2006323fb09",
+      "sha256": "7cb849885f5f7acefa660675731ed40471144541b809ea62e43e146d2c6be355",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/XEye_us.bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
       "dest": "LA_us_104.bin",
       "sha1": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "sha256": "e89b5a319f66406611ec82fe5c4aa6827c175a05135bd7bd177366cba0465021",
       "size": 131072,
       "repo_path": "bios/Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.04 (1993)(Pioneer - Sega)(US).bin",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "LA_us_102.bin",
+      "sha1": "8af162223bb12fc19b414f126022910372790103",
+      "sha256": "62da6ad0b45ad6bec8bbcbf805d73017751fd674e9da266a6c357879fd95fbee",
+      "size": 131072,
+      "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S10 (US) (v1.02).bin",
       "cores": [
         "bizhawk"
       ]
@@ -12062,6 +11989,19 @@
       ]
     },
     {
+      "dest": "NDS_Firmware_2.bin",
+      "sha1": "2ef20b45d12cf00657d4b1bd37a5cc8506923440",
+      "sha256": "cbc313e21ec386fd967b498a56bcecb885c2c03e8615432bc44f7afe5bee4d66",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/DS/NDS_Firmware_2.bin",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "nintendo-ds"
+      ]
+    },
+    {
       "dest": "NDS_Lite_Firmware.bin",
       "sha1": "87dae2500e889737af51f4a5b5845770a62482f5",
       "sha256": "330c59198faec64b40e96cc875b422d340fc9ab1a9e32e9bd9b7baa1dbe6ba7f",
@@ -12072,6 +12012,16 @@
       ],
       "systems": [
         "nintendo-ds"
+      ]
+    },
+    {
+      "dest": "FDS_disksys-twinfc.rom",
+      "sha1": "e4e41472c454f928e53eb10e0509bf7d1146ecc1",
+      "sha256": "a0a9d57cbace21bf9c85c2b85e86656317f0768d7772acc90c7411ab1dbff2bf",
+      "size": 8192,
+      "repo_path": "bios/Nintendo/Famicom Disk System/FDS_disksys-twinfc.rom",
+      "cores": [
+        "bizhawk"
       ]
     },
     {
@@ -12292,6 +12242,32 @@
       ]
     },
     {
+      "dest": "SMS_us_1.0b.sms",
+      "sha1": "29091ff60ef4c22b1ee17aa21e0e75bac6b36474",
+      "sha256": "cb01de3464797a77b52e82f5f9b05398540df8c1151d31128d49584028589062",
+      "size": 8192,
+      "repo_path": "bios/Sega/Master System/SMS_us_1.0b.sms",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "sega-master-system"
+      ]
+    },
+    {
+      "dest": "SMS_m404.sms",
+      "sha1": "4a06c8e66261611dce0305217c42138b71331701",
+      "sha256": "2a4371fadb9da65037ccd622adb77fc4c6e9a993ed2034e0e08bc320b4e9b41f",
+      "size": 8192,
+      "repo_path": "bios/Sega/Master System/SMS_m404.sms",
+      "cores": [
+        "bizhawk"
+      ],
+      "systems": [
+        "sega-master-system"
+      ]
+    },
+    {
       "dest": "SMS_kr.sms",
       "sha1": "2feafd8f1c40fdf1bd5668f8c5c02e5560945b17",
       "sha256": "57abf3c00c82a8e042ebeb2bfe412adac9ba005e9009845236390de3ee645248",
@@ -12310,6 +12286,26 @@
       "sha256": "bba9c269273bedb9b38bd5eb23bfaa6e509b8decc7cb80bb5513905af04f4ceb",
       "size": 262144,
       "repo_path": "bios/Nintendo/SNES/SNES_SGB_(JU).sfc",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "SNES_SGB_RevA_(JU).sfc",
+      "sha1": "6380a5913ace3041a305fbaf822b5a8847fea7ed",
+      "sha256": "c6c4daab5c899b69900c460787de6089edabe94b760f96d9f583d30cc0a5bb30",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/SNES/SNES_SGB_RevA_(JU).sfc",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "SNES_SGB_RevABeta_(JU).sfc",
+      "sha1": "4ed5621a9022e1d94b673cc0f68ea24764e8d6bb",
+      "sha256": "dd2031cc1c510e667cb2e3d39ae1bbff8d3da6fa3f2c6c4f9352276c2da08207",
+      "size": 262144,
+      "repo_path": "bios/Nintendo/SNES/SNES_SGB_RevABeta_(JU).sfc",
       "cores": [
         "bizhawk"
       ]
@@ -12542,6 +12538,46 @@
       ]
     },
     {
+      "dest": "TI83_102.rom",
+      "sha1": "ce08f6a808701fc6672230a790167ee485157561",
+      "sha256": "9e443aa45fe8dde921c91fbebfb510afcb2a8566d3fc34e5b6bdadfa50fa42a9",
+      "size": 262144,
+      "repo_path": "bios/Texas Instruments/TI-83/TI83_102.rom",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "TI83_103.rom",
+      "sha1": "8399e384804d8d29866caa4c8763d7a61946a467",
+      "sha256": "faed05692fbb2efa86d3dc64c5e5d48de34cb761058dde8347fad8e3b185f93c",
+      "size": 262144,
+      "repo_path": "bios/Texas Instruments/TI-83/TI83_103.rom",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "TI83_104.rom",
+      "sha1": "33877ff637dc5f4c5388799fd7e2159b48e72893",
+      "sha256": "1e4b3144defa48b102e91818b0ee3b53a7e06906ba5394d7bd3ab3e8161b2e15",
+      "size": 262144,
+      "repo_path": "bios/Texas Instruments/TI-83/TI83_104.rom",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
+      "dest": "TI83_106.rom",
+      "sha1": "3d65c2a1b771ce8e5e5a0476ec1aa9c9cdc0e833",
+      "sha256": "e7d03b2701264a0af449ce87b8f6fbfb302f25cee2086ffb67b7e64bb982d1a0",
+      "size": 262144,
+      "repo_path": "bios/Texas Instruments/TI-83/TI83_106.rom",
+      "cores": [
+        "bizhawk"
+      ]
+    },
+    {
       "dest": "TI83_107.rom",
       "sha1": "ef66dad3e7b2b6a86f326765e7dfd7d1a308ad8f",
       "sha256": "f8f511f9fecff51d7561ad2cc4195fc89f2829db94616cf08c302ea1ba64d8be",
@@ -12562,11 +12598,11 @@
       ]
     },
     {
-      "dest": "TI83p_112.rom",
-      "sha1": "6615df5554076b6b81bd128bf847d2ff046e556b",
-      "sha256": "77bf908028c31353b813763c34aef7fc6a348fa0a4f530390b4c96e926dbd78d",
-      "size": 524288,
-      "repo_path": "bios/Texas Instruments/TI-83/TI83p_112.rom",
+      "dest": "TI83_110.rom",
+      "sha1": "25b373b58523647bb7b904001d391615e0b79bee",
+      "sha256": "e399506c8c473433c892be26a6ff0ac3226cb213ed0fae55c360a861f3dc4b3a",
+      "size": 262144,
+      "repo_path": "bios/Texas Instruments/TI-83/TI83_110.rom",
       "cores": [
         "bizhawk"
       ]
@@ -43380,18 +43416,6 @@
       ]
     },
     {
-      "dest": "doom2.wad",
-      "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
-      "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
-      "size": 14943400,
-      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
-      "cores": [
-        "gzdoom",
-        "prboom",
-        "uzdoom"
-      ]
-    },
-    {
       "dest": "doom2f.wad",
       "sha1": "d510c877031bbd5f3d198581a2c8651e09b9861f",
       "sha256": "ab6d457050daee95fb763040f753fce44a4852883dafdb520b00cc8426e6bda0",
@@ -54299,7 +54323,7 @@
       "sha1": "010e3c7b17b4339fce7770f6f9b2e030e0437939",
       "sha256": "e749492de779f9ae4415e15202e5a21c3bcd850161509e319ed77d72476e4f84",
       "size": 3655,
-      "repo_path": "bios/Arcade/MAME/at_keybc.zip",
+      "repo_path": "bios/Arcade/MAME/at_mb.zip",
       "cores": [
         "mame"
       ],
@@ -54563,7 +54587,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -55575,7 +55599,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -56807,7 +56831,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -57995,7 +58019,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -66576,7 +66600,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -67104,7 +67128,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -92849,7 +92873,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -92893,7 +92917,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -92937,7 +92961,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -92981,7 +93005,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30be.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
       "cores": [
         "mame"
       ],
@@ -96545,7 +96569,7 @@
       "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
       "sha256": "380728b50f1634c44990c12b08d88b336cf691e0b352b76824185eefffdb5a85",
       "size": 2019,
-      "repo_path": "bios/Arcade/MAME/bbc_detalker.zip",
+      "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
       ],
@@ -97909,7 +97933,7 @@
       "sha1": "1338b5fc0e1cae248c0dad71494bdb0a9bb2d332",
       "sha256": "1619b888d0e624df027a02ce3ea23484159d1e3503aafbada1016f8fe2f9ac32",
       "size": 2303,
-      "repo_path": "bios/Arcade/MAME/xerox820_emii_flpy5.zip",
+      "repo_path": "bios/Arcade/MAME/xerox820_emii_rgd5.zip",
       "cores": [
         "mame"
       ],
@@ -97953,7 +97977,7 @@
       "sha1": "1338b5fc0e1cae248c0dad71494bdb0a9bb2d332",
       "sha256": "1619b888d0e624df027a02ce3ea23484159d1e3503aafbada1016f8fe2f9ac32",
       "size": 2303,
-      "repo_path": "bios/Arcade/MAME/xerox820_emii_flpy5.zip",
+      "repo_path": "bios/Arcade/MAME/xerox820_emii_rgd5.zip",
       "cores": [
         "mame"
       ],
