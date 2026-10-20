@@ -4901,9 +4901,11 @@ class TheCollectionShipsADat(unittest.TestCase):
         dat = parse_logiqx(collection_dat(db, "2026-10-18T07:00:00Z"))
         self.assertEqual(dat.version, "20261018")
         roms = {(r.game, r.name): r for r in dat.roms}
-        self.assertIn(("Sony - PlayStation", "scph5501.bin"), roms)
-        self.assertIn(("Nintendo - GameCube", "GC\\USA\\IPL.bin"), roms)
-        self.assertEqual(roms[("Sony - PlayStation", "scph5501.bin")].crc32, "8d8cb7e4")
+        # The set name is the subfolder a copy of bios/ holds: named
+        # "Sony - PlayStation", clrmamepro looked beside Sony/ for it.
+        self.assertIn(("Sony\\PlayStation", "scph5501.bin"), roms)
+        self.assertIn(("Nintendo\\GameCube", "GC\\USA\\IPL.bin"), roms)
+        self.assertEqual(roms[("Sony\\PlayStation", "scph5501.bin")].crc32, "8d8cb7e4")
 
 
 

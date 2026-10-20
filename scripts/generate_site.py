@@ -1114,7 +1114,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "[Collection DAT](downloads/retrobios.dat){ .md-button }",
         "",
         "The DAT is Logiqx XML, the format clrmamepro and RomVault read: one game "
-        "per `bios/<Manufacturer>/<Console>/` folder of the collection, each file a "
+        "per `bios/<Manufacturer>/<Console>/` folder of the collection, named "
+        "`Manufacturer\\Console` so the tools look in that subfolder, each file a "
         "rom named by its path below that folder. It audits a copy of the "
         "collection's `bios/` tree, or rebuilds that layout from your own dumps. A "
         "platform pack has its own layout and is checked with `install.py --check`.",
@@ -1289,9 +1290,9 @@ SYSTEM_PARTS_IN_FULL = 1000
 def collection_dat(db: dict, generated_at: str) -> str:
     """The collection as a Logiqx DAT, the format clrmamepro and RomVault read.
 
-    One game per bios/<Manufacturer>/<Console>/ folder, each file a rom
-    named by its path below that folder, subfolders joined with a backslash
-    as Logiqx DATs write them. An auditor checking a BIOS tree against the
+    One game per bios/<Manufacturer>/<Console>/ folder, named
+    Manufacturer\\Console, each file a rom named by its path below that
+    folder, subfolders joined with a backslash as Logiqx DATs write them. An auditor checking a BIOS tree against the
     collection had JSON, CSV and SQLite, and a converter to write.
     """
     import xml.etree.ElementTree as ET  # noqa: PLC0415
@@ -1302,7 +1303,10 @@ def collection_dat(db: dict, generated_at: str) -> str:
         if len(parts) < 3 or parts[0] != "bios":
             continue
         folder = parts[1:3] if len(parts) > 3 else parts[1:2]
-        games.setdefault(" - ".join(folder), []).append(
+        # A backslash is how a Logiqx set name writes a subfolder: named
+        # "Sony - PlayStation", the set was looked for beside Sony/, and an
+        # audit of a copy of bios/ found 330 sets missing.
+        games.setdefault("\\".join(folder), []).append(
             {**entry, "_rom": "\\".join(parts[1 + len(folder):])}
         )
     root = ET.Element("datafile")
