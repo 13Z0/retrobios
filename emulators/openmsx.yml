@@ -49,7 +49,8 @@ notes: |
   Contrib/cbios/ and supports cartridge-only games. Not used by Batocera.
 
   237 machine definitions exist in total. Each machine has its own ROM
-  requirements. Only ROMs for Batocera-selected machines are listed here.
+  requirements. The ROMs for Batocera-selected machines are listed here,
+  with the machines whose ROMs RetroBat lists in its systemroms folder.
   Users selecting other machines via openMSX GUI need additional ROMs.
 
 files:
@@ -175,6 +176,17 @@ files:
     validation: [sha1]
     source_ref: "share/machines/Boosted_MSXturboR_with_IDE.xml:49"
 
+  - name: ide250.zip
+    path: "openmsx/ide250.zip"
+    required: false
+    description: "Sunrise IDE 2.50 distribution archive (IDE250.DAT, IDE250.TXT, IDEFLOAD.COM, IDEFLOAD.TXT)"
+    contents:
+      - name: IDE250.DAT
+        size: 65536
+        crc32: "073edf39"
+    source_ref: "src/file/File.cc:30-31, src/file/ZipFileAdapter.cc:14-41, src/file/FilePoolCore.cc:410-417, share/machines/Boosted_MSXturboR_with_IDE.xml:49"
+    note: "The file pool opens a .zip through ZipFileAdapter, which inflates only the first local entry, and hashes that content. The first entry of this archive is IDE250.DAT, whose SHA1 (93e41c7d479bc90c1d1f6d081af20fd9924b8ada) is the one the machine asks for, so the archive serves as ide250.dat."
+
   # -------------------------------------------------------
   # ColecoVision_SGM (colecovision)
   # ColecoVision with built-in Super Game Module
@@ -217,3 +229,94 @@ files:
     description: "Pioneer PX-7 LaserDisc PBASIC controller ROM"
     validation: [sha1]
     source_ref: "share/machines/Pioneer_PX-7.xml:82"
+
+  # -------------------------------------------------------
+  # Machines whose ROMs RetroBat lists. Each ROM is found in the
+  # file pool by SHA1: a machine's <filename> resolves against the
+  # share/machines directory only (src/config/HardwareConfig.cc:277-280,
+  # src/file/FileContext.cc:152-156), then the <sha1> values are looked up
+  # in the pool (src/memory/Rom.cc:158-172). A machine whose ROM is not
+  # found does not start (src/memory/Rom.cc:173-184).
+  # -------------------------------------------------------
+  - name: cf-3300_basic-bios1.rom
+    path: "openmsx/share/systemroms/cf-3300_basic-bios1.rom"
+    sha1: c7a2c5baee6a9f0e1c6ee7d76944c0ab1886796c
+    required: false
+    size: 32768
+    description: "National CF-3300 MSX1 BIOS and BASIC ROM (also used by CF-1200, CF-2700, CF-3000, FS-1300)"
+    validation: [sha1]
+    source_ref: "share/machines/National_CF-3300.xml:51-52"
+
+  - name: cf-3300_disk.rom
+    path: "openmsx/share/systemroms/cf-3300_disk.rom"
+    sha1: f1525de4e0b60a6687156c2a96f8a8b2044b6c56
+    required: false
+    size: 16384
+    description: "National CF-3300 disk controller ROM (also used by Gradiente Expert DD Plus)"
+    validation: [sha1]
+    source_ref: "share/machines/National_CF-3300.xml:75-76"
+
+  - name: fs-5500_basic-bios2.rom
+    path: "openmsx/share/systemroms/fs-5500_basic-bios2.rom"
+    sha1: 44e0dd215b2a9f0770dd76fb49187c05b083eed9
+    required: false
+    size: 32768
+    description: "National FS-5500 MSX2 BIOS and BASIC ROM"
+    validation: [sha1]
+    source_ref: "share/machines/National_FS-5500F2.xml:76-77, share/machines/National_FS-5500F1.xml:78"
+
+  - name: fs-5500_msx2sub.rom
+    path: "openmsx/share/systemroms/fs-5500_msx2sub.rom"
+    sha1: 4be8371f3b03e70ddaca495958345f3c4f8e2d36
+    required: false
+    size: 16384
+    description: "National FS-5500 MSX2 Sub ROM"
+    validation: [sha1]
+    source_ref: "share/machines/National_FS-5500F2.xml:100-101, share/machines/National_FS-5500F1.xml:102"
+
+  - name: fs-5500_kanjibasic.rom
+    path: "openmsx/share/systemroms/fs-5500_kanjibasic.rom"
+    sha1: 3a9a942ed888dd641cddf8deada1879c454df3c6
+    required: false
+    size: 32768
+    description: "National FS-5500 Kanji Driver ROM (also used by FS-4600F and FS-5000F2)"
+    validation: [sha1]
+    source_ref: "share/machines/National_FS-5500F2.xml:107-108, share/machines/National_FS-5500F1.xml:109"
+
+  - name: fs-5500_kanjifont.rom
+    path: "openmsx/share/systemroms/fs-5500_kanjifont.rom"
+    sha1: 9ed3ab6d893632b9246e91b412cd5db519e7586b
+    required: false
+    size: 131072
+    description: "National FS-5500 Kanji font ROM (also used by FS-4000, FS-4500 and FS-4700F)"
+    validation: [sha1]
+    source_ref: "share/machines/National_FS-5500F2.xml:20-21, share/machines/National_FS-5500F1.xml:22"
+
+  - name: fs-5500_superimp.rom
+    path: "openmsx/share/systemroms/fs-5500_superimp.rom"
+    sha1: b677a861b67e8763a11d5dcf52416b42493ade57
+    required: false
+    size: 32768
+    description: "National FS-5500 Super Impose ROM"
+    validation: [sha1]
+    source_ref: "share/machines/National_FS-5500F2.xml:117-118, share/machines/National_FS-5500F1.xml:119"
+
+  - name: nms8245_msx2sub.rom
+    path: "openmsx/share/systemroms/nms8245_msx2sub.rom"
+    sha1:
+      - 5c1f9c7fb655e43d38e5dd1fcc6b942b2ff68b02
+      - e7905d16d2ccd57a013c122dc432106cd59ef52c
+    required: false
+    size: 16384
+    description: "Philips NMS 8245 MSX2 Sub ROM (1.05/1.06 and 1.08 revisions)"
+    validation: [sha1]
+    source_ref: "share/machines/Philips_NMS_8245.xml:108-110"
+
+  - name: vg8020_basic-bios1.rom
+    path: "openmsx/share/systemroms/vg8020_basic-bios1.rom"
+    sha1: 829c00c3114f25b3dae5157c0a238b52a3ac37db
+    required: false
+    size: 32768
+    description: "Philips VG 8020 MSX1 BIOS and BASIC ROM (also used by AVT DPC-200, Goldstar FC-200, Toshiba HX-20E, HX-22I, HX-51I)"
+    validation: [sha1]
+    source_ref: "share/machines/Philips_VG_8020.xml:53-54"

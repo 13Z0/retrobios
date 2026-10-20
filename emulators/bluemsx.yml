@@ -1602,6 +1602,104 @@ files:
     note: "Shipped in blueMSXv282full.zip."
     source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-328/config.ini"
 
+  - name: svi328a.rom
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
+    path: "Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom"
+    mode: libretro
+    size: 32768
+    required: true
+    system: spectravideo
+    note: "SVI-328 MK2 BIOS ROM, the only ROM slot of the 'SVI - Spectravideo SVI-328 MK2' machine, a value of the bluemsx_msxtype core option."
+    source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-328 MK2/config.ini:26, libretro_core_options.h:59"
+
+  - name: svi328a.rom
+    path: "Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: spectravideo
+    bundled: true
+    sha1: "10349ce675f6d6d47f0976e39cb7188eba858d89"
+    md5: "352f054ab09605070bdff49d73f335cc"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-328 MK2/config.ini:26"
+
+  # ============================================================
+  # Machine-specific ROMs (Machines/<machine>/)
+  # Read only when that machine is the selected machine type. The libretro
+  # core takes the bluemsx_msxtype value as the machine name (libretro.c:924)
+  # and opens Machines/<name>/config.ini (Src/Board/Machine.c:637). Its core
+  # option list offers only the base machines (libretro_core_options.h:49-61).
+  # A ROM named in config.ini that fails to load stops the machine from
+  # initializing (Src/Board/Machine.c:1451-1463).
+  # ============================================================
+
+  - name: Msx2pe.rom
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
+    path: "Machines/MSX2+ - European/Msx2pe.rom"
+    mode: libretro
+    size: 32768
+    required: false
+    system: msx2plus
+    note: "MSX2+ European main BIOS. Used by the 'MSX2+ - European' machine config."
+    source_ref: "system/bluemsx/Machines/MSX2+ - European/config.ini:34"
+
+  - name: Msx2pe.rom
+    path: "Machines/MSX2+ - European/Msx2pe.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2plus
+    bundled: true
+    sha1: "aea0e4a635efce5336e496d36e4cb0a4b79593ff"
+    md5: "277fd57c13f301fb4b366845a32d673a"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+ - European/config.ini:34"
+
+  - name: Msx2pexte.rom
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
+    path: "Machines/MSX2+ - European/Msx2pexte.rom"
+    mode: libretro
+    size: 49152
+    required: false
+    system: msx2plus
+    note: "MSX2+ European extension BIOS (SubROM). Used by the 'MSX2+ - European' machine config."
+    source_ref: "system/bluemsx/Machines/MSX2+ - European/config.ini:39"
+
+  - name: Msx2pexte.rom
+    path: "Machines/MSX2+ - European/Msx2pexte.rom"
+    mode: standalone
+    size: 49152
+    required: false
+    system: msx2plus
+    bundled: true
+    sha1: "cf00ec60608010aac94cfe245eb7aa67cb44d110"
+    md5: "f78ab735aaad7045badbda8f4c8ac751"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+ - European/config.ini:39"
+
+  - name: pesadelo.rom
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
+    path: "Machines/Forte II Games - Pesadelo/pesadelo.rom"
+    mode: libretro
+    size: 65536
+    required: false
+    system: msx
+    note: "Forte II arcade board ROM (board type MSX-ForteII). Used by the 'Forte II Games - Pesadelo' machine config."
+    source_ref: "system/bluemsx/Machines/Forte II Games - Pesadelo/config.ini:27"
+
+  - name: pesadelo.rom
+    path: "Machines/Forte II Games - Pesadelo/pesadelo.rom"
+    mode: standalone
+    size: 65536
+    required: false
+    system: msx
+    bundled: true
+    sha1: "12880dd7ad82acf04861843fb9d4f0f926d18f6b"
+    md5: "ba53d700ec25bcb08020ce693319cd28"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/Forte II Games - Pesadelo/config.ini:27"
+
   # ============================================================
   # Databases (required for ROM identification/mapper detection)
   # ============================================================
