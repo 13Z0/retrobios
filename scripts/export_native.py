@@ -552,6 +552,13 @@ def export_platform(
         return False, ["the exporter produced no file"]
 
     issues = exporter.validate(systems, produced)
+    if issues:
+        # Written first, a file its own validator refused replaced the
+        # published export and only the exit code said so.
+        invalid = [f"INVALID: {issue}" for issue in issues[:10]]
+        if len(issues) > 10:
+            invalid.append(f"and {len(issues) - 10} more validation failures")
+        return False, invalid
 
     platform_dir = output_dir / platform
     _remove_stale(platform_dir, set(produced))
@@ -628,10 +635,6 @@ def export_platform(
     if len(cleared) > 5:
         messages.append(f"and {len(cleared) - 5} more cleared")
 
-    messages.extend(f"INVALID: {issue}" for issue in issues[:10])
-    if len(issues) > 10:
-        messages.append(f"and {len(issues) - 10} more validation failures")
-
     write_report(output_dir / f"{platform}.json", {
         "platform": platform,
         "originals": wanted_sources(exporter, systems, scraped),
@@ -652,7 +655,7 @@ def export_platform(
         "withheld": list(withheld),
         "invalid": issues,
     })
-    return not issues, messages
+    return True, messages
 
 
 def write_report(path: Path, report: dict) -> None:

@@ -1092,6 +1092,37 @@ class AnExportWithoutTruthIsRefused(unittest.TestCase):
                              ["batocera", "batocera-systems"])
 
 
+class AnInvalidExportIsNotWritten(unittest.TestCase):
+    """validate() ran after the files were written: an export its own
+    validator refused still replaced the published one, and only the exit
+    code said so."""
+
+    def test_the_published_file_stays(self):
+        from unittest import mock  # noqa: PLC0415
+
+        import export_native  # noqa: PLC0415
+
+        if not (UPSTREAM_CACHE / "romm").exists():
+            self.skipTest("upstream cache not populated")
+        exporter = discover_exporters()["romm"]
+        config = native_layer(load_platform_config("romm", str(REPO_ROOT / "platforms")))
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            output = Path(tmp) / "out"
+            published = output / "romm" / "known_bios_files.json"
+            published.parent.mkdir(parents=True)
+            published.write_text("published", encoding="utf-8")
+            with mock.patch.object(export_native, "load_inputs",
+                                   return_value=({"systems": {}}, config)), \
+                 mock.patch.object(exporter, "validate", return_value=["bad entry"]):
+                ok, messages = export_native.export_platform(
+                    "romm", exporter, Path(tmp), output,
+                    str(REPO_ROOT / "platforms"), UPSTREAM_CACHE, False,
+                )
+            self.assertFalse(ok)
+            self.assertIn("INVALID: bad entry", messages)
+            self.assertEqual(published.read_text(encoding="utf-8"), "published")
+
+
 class RommKeepsItsFixture(unittest.TestCase):
     """The export rebuilt known_bios_files.json from our model in our order:
     3 hash corrections came out as a 3116-line diff, and a key RomM had that
