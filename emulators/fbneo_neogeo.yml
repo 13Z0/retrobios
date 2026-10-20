@@ -13,6 +13,7 @@ systems:
   - snk-neogeo-mvs
   - snk-neogeo-aes
   - snk-neogeo-cd
+  - arcade
 
 notes: |
   Neo Geo subset of FinalBurn Neo, current codebase (not frozen).
@@ -490,5 +491,6 @@ files:
   - name: "hiscore.dat"
     path: "fbneo/hiscore.dat"
     required: false
+    system: arcade
     note: "High score database, enables persistent high scores"
-    source_ref: "source src/burn/hiscore.cpp:407"
+    source_ref: "source src/burn/hiscore.cpp:154-161, 407, source src/burn/burn.cpp:876"

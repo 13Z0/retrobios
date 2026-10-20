@@ -75,6 +75,50 @@ systems:
   - tandy-vis
   - trs80
   - vgmplay
+  - sega-systemsp
+  - sega-shootingzone
+  - sammy-medal
+  - sega-isgsm
+  - sielectronics-y2
+  - nintendo-aleck64
+  - konami-gx
+  - konami-bubblesystem
+  - konami-endeavour
+  - konami-python
+  - konami-python2
+  - taito-fx1
+  - acclaim-zn1
+  - atari-zn1
+  - atlus-zn1
+  - videosystem-zn1
+  - eighting-zn1
+  - tecmo-tps
+  - taito-gnet
+  - taito-typezero
+  - imax-macs
+  - arcadia-systems
+  - alg-laserdisc
+  - atari-system1
+  - exidy-maxaflex
+  - brezzasoft-crystal
+  - aristocrat-mk5
+  - aristocrat-mk6
+  - aristocrat-mk7
+  - allied-leisure-pinball
+  - gameplan-mpu1
+  - gottlieb-system1
+  - recel-system3
+  - tab-silverball
+  - nichibutsu-hrdvd
+  - efo-cedar-magnet
+  - itech-eagle
+  - virtuality-su2000
+  - pce-tourvision
+  - barcrest-mpu4
+  - miuchiz
+  - andamiro-pumpitup
+  - ym2608
+  - ces-galaxy-games
 
 notes: |
   MAME fork adding Switchres 2.2.2 for CRT modeline generation, frame delay
@@ -565,6 +609,7 @@ files:
   - name: hod2bios.zip
     required: true
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/sega/naomi.cpp:10918"
     contents:
       - name: epr-21331.ic27
@@ -599,6 +644,7 @@ files:
   - name: f355dlx.zip
     required: true
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/sega/naomi.cpp:10919"
     contents:
       - name: epr-21864.ic27
@@ -633,6 +679,7 @@ files:
   - name: f355bios.zip
     required: true
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/sega/naomi.cpp:10920"
     contents:
       - name: epr-22851.ic27
@@ -659,6 +706,7 @@ files:
   - name: airlbios.zip
     required: true
     category: bios_zip
+    system: sega-naomi
     source_ref: "source src/mame/sega/naomi.cpp:10921"
     contents:
       - name: epr-21802.ic27
@@ -778,6 +826,7 @@ files:
   - name: segasp.zip
     required: true
     category: bios_zip
+    system: sega-systemsp
     source_ref: "source src/mame/sega/segasp.cpp:1273"
     contents:
       - name: epr-24236a.ic50
@@ -910,6 +959,7 @@ files:
   - name: shtzone.zip
     required: true
     category: bios_zip
+    system: sega-shootingzone
     source_ref: "upstream src/mame/sega/shtzone.cpp:376"
     contents:
       - name: epr10894a.20
@@ -920,6 +970,7 @@ files:
   - name: sammymdl.zip
     required: true
     category: bios_zip
+    system: sammy-medal
     source_ref: "upstream src/mame/sigma/sammymdl.cpp:1025"
     contents:
       - name: vm1211l01.u2
@@ -1008,6 +1059,7 @@ files:
   - name: isgsm.zip
     required: true
     category: bios_zip
+    system: sega-isgsm
     source_ref: "upstream src/mame/sega/segas16b_isgsm.cpp:608"
     contents:
       - name: ism2006v00.u1
@@ -1018,6 +1070,7 @@ files:
   - name: systemy2.zip
     required: true
     category: bios_zip
+    system: sielectronics-y2
     source_ref: "source src/mame/sega/y2.cpp:141"
     contents:
       - name: system_y2_m25p40.u801
@@ -1349,6 +1402,7 @@ files:
   - name: aleck64.zip
     required: true
     category: bios_zip
+    system: nintendo-aleck64
     source_ref: "source src/mame/nintendo/aleck64.cpp:1417"
     contents:
       - name: pifdata.bin
@@ -1459,6 +1513,7 @@ files:
   - name: konamigx.zip
     required: true
     category: bios_zip
+    system: konami-gx
     source_ref: "source src/mame/konami/konamigx.cpp:4191"
     contents:
       - name: 300a01.34k
@@ -1480,6 +1535,7 @@ files:
   - name: kviper.zip
     required: true
     category: bios_zip
+    system: konami-viper
     source_ref: "source src/mame/konami/viper.cpp:3213"
     contents:
       - name: 941b01.u25
@@ -1513,6 +1569,7 @@ files:
   - name: bubsys.zip
     required: true
     category: bios_zip
+    system: konami-bubblesystem
     source_ref: "upstream src/mame/konami/nemesis.cpp:3140"
     contents:
       - name: boot.bin
@@ -1535,6 +1592,7 @@ files:
   - name: konendev.zip
     required: true
     category: bios_zip
+    system: konami-endeavour
     source_ref: "upstream src/mame/konami/konendev.cpp:909"
     contents:
       - name: 2v02s502_ifu.u190
@@ -1545,6 +1603,7 @@ files:
   - name: kpython.zip
     required: true
     category: bios_zip
+    system: konami-python
     source_ref: "upstream src/mame/konami/kpython.cpp:376"
     contents:
       - name: b22a01.u42
@@ -1555,6 +1614,7 @@ files:
   - name: kpython2.zip
     required: true
     category: bios_zip
+    system: konami-python2
     source_ref: "upstream src/mame/konami/kpython2.cpp:1918"
     contents:
       - name: ps2-0190j-20030822.bin
@@ -1601,6 +1661,7 @@ files:
   - name: coh1000t.zip
     required: true
     category: bios_zip
+    system: taito-fx1
     source_ref: "source src/mame/sony/zn.cpp:5989"
     contents:
       - name: m534002c-14.ic353
@@ -1615,6 +1676,7 @@ files:
   - name: coh1000a.zip
     required: true
     category: bios_zip
+    system: acclaim-zn1
     source_ref: "source src/mame/sony/zn.cpp:6015"
     contents:
       - name: m534002c-15.ic353
@@ -1629,6 +1691,7 @@ files:
   - name: coh1000w.zip
     required: true
     category: bios_zip
+    system: atari-zn1
     source_ref: "source src/mame/sony/zn.cpp:6024"
     contents:
       - name: msm27c402zb.ic353
@@ -1643,6 +1706,7 @@ files:
   - name: coh1001l.zip
     required: true
     category: bios_zip
+    system: atlus-zn1
     source_ref: "source src/mame/sony/zn.cpp:6028"
     contents:
       - name: m534002c-17.ic353
@@ -1657,6 +1721,7 @@ files:
   - name: coh1002v.zip
     required: true
     category: bios_zip
+    system: videosystem-zn1
     source_ref: "source src/mame/sony/zn.cpp:6032"
     contents:
       - name: coh-1002v.ic353
@@ -1671,6 +1736,7 @@ files:
   - name: coh1002e.zip
     required: true
     category: bios_zip
+    system: eighting-zn1
     source_ref: "source src/mame/sony/zn.cpp:6038"
     contents:
       - name: m27c402cz-54.ic353
@@ -1685,6 +1751,7 @@ files:
   - name: coh1002m.zip
     required: true
     category: bios_zip
+    system: tecmo-tps
     source_ref: "source src/mame/sony/zn.cpp:6089"
     contents:
       - name: m534002c-61.ic353
@@ -1699,6 +1766,7 @@ files:
   - name: coh3002t.zip
     required: true
     category: bios_zip
+    system: taito-gnet
     source_ref: "upstream src/mame/sony/taitogn.cpp:1341"
     contents:
       - name: m534002c-60.ic353
@@ -1741,6 +1809,7 @@ files:
   - name: coh1002t.zip
     required: true
     category: bios_zip
+    system: taito-gnet
     source_ref: "upstream src/mame/sony/taitogn.cpp:1342"
     contents:
       - name: m534002c-14.ic353
@@ -1763,6 +1832,7 @@ files:
   - name: taitotz.zip
     required: true
     category: bios_zip
+    system: taito-typezero
     source_ref: "source src/mame/taito/taitotz.cpp:3016"
     contents:
       - name: e68-05-1.ic6
@@ -1812,12 +1882,14 @@ files:
   - name: mac2bios.zip
     required: false
     category: bios_zip
+    system: imax-macs
     source_ref: "upstream src/mame/seta/macs.cpp:776"
     note: "no ROM entries in the set"
 
   - name: macsbios.zip
     required: true
     category: bios_zip
+    system: imax-macs
     source_ref: "upstream src/mame/seta/macs.cpp:775"
     contents:
       - name: am_macs_os_low.u43
@@ -1863,6 +1935,7 @@ files:
   - name: alg3do.zip
     required: true
     category: bios_zip
+    system: panasonic-3do
     source_ref: "source src/mame/misc/3do.cpp:573"
     contents:
       - name: saot_rom2.bin
@@ -1920,6 +1993,7 @@ files:
   - name: ar_bios.zip
     required: true
     category: bios_zip
+    system: arcadia-systems
     source_ref: "upstream src/mame/amiga/arsystems.cpp:1011"
     contents:
       - name: 315093-01.u2
@@ -2010,6 +2084,7 @@ files:
   - name: alg_bios.zip
     required: true
     category: bios_zip
+    system: alg-laserdisc
     source_ref: "upstream src/mame/amiga/alg.cpp:923"
     contents:
       - name: 315093-02.u2
@@ -2021,6 +2096,7 @@ files:
   - name: atarisy1.zip
     required: true
     category: bios_zip
+    system: atari-system1
     source_ref: "upstream src/mame/atari/atarisy1.cpp:2669"
     contents:
       - name: 136032.205.l13
@@ -2087,6 +2163,7 @@ files:
   - name: maxaflex.zip
     required: true
     category: bios_zip
+    system: exidy-maxaflex
     source_ref: "source src/mame/atari/maxaflex.cpp:447"
     contents:
       - name: atarixl.rom
@@ -2105,6 +2182,7 @@ files:
   - name: crysbios.zip
     required: true
     category: bios_zip
+    system: brezzasoft-crystal
     source_ref: "source src/mame/misc/crystal.cpp:845"
     contents:
       - name: mx27l1000.u14
@@ -2121,6 +2199,7 @@ files:
   - name: aristmk5.zip
     required: true
     category: bios_zip
+    system: aristocrat-mk5
     source_ref: "source src/mame/acorn/aristmk5.cpp:9298"
     contents:
       - name: setchip v4.04.09.u7
@@ -2220,6 +2299,7 @@ files:
   - name: aristmk6.zip
     required: true
     category: bios_zip
+    system: aristocrat-mk6
     source_ref: "upstream src/mame/aristocrat/aristmk6.cpp:6639"
     contents:
       - name: 24013001_right.u83
@@ -2622,6 +2702,7 @@ files:
   - name: aristmk7.zip
     required: true
     category: bios_zip
+    system: aristocrat-mk7
     source_ref: "upstream src/mame/aristocrat/aristmk7.cpp:233"
     contents:
       - name: mk7-bios_590176_01_1.00.7.u1
@@ -2632,6 +2713,7 @@ files:
   - name: allied.zip
     required: true
     category: bios_zip
+    system: allied-leisure-pinball
     source_ref: "upstream src/mame/pinball/allied.cpp:772"
     contents:
       - name: 6530-009.u5
@@ -2650,6 +2732,7 @@ files:
   - name: gp_110.zip
     required: true
     category: bios_zip
+    system: gameplan-mpu1
     source_ref: "upstream src/mame/pinball/gp_1.cpp:575"
     contents:
       - name: a-110.u12
@@ -2664,6 +2747,7 @@ files:
   - name: gts1.zip
     required: true
     category: bios_zip
+    system: gottlieb-system1
     source_ref: "upstream src/mame/pinball/gts1.cpp:1070"
     contents:
       - name: a1752cf.u5
@@ -2678,6 +2762,7 @@ files:
   - name: recel.zip
     required: true
     category: bios_zip
+    system: recel-system3
     source_ref: "upstream src/mame/pinball/recel.cpp:546"
     contents:
       - name: a2361.b1
@@ -2692,6 +2777,7 @@ files:
   - name: slvrball.zip
     required: true
     category: bios_zip
+    system: tab-silverball
     source_ref: "upstream src/mame/misc/silverball.cpp:259"
     contents:
       - name: bios47.bin
@@ -2793,6 +2879,7 @@ files:
   - name: nichidvd.zip
     required: true
     category: bios_zip
+    system: nichibutsu-hrdvd
     source_ref: "upstream src/mame/nichibutsu/hrdvd.cpp:1012"
     contents:
       - name: va1b102.u2
@@ -2811,6 +2898,7 @@ files:
   - name: cedmag.zip
     required: true
     category: bios_zip
+    system: efo-cedar-magnet
     source_ref: "source src/mame/efo/cedar_magnet.cpp:1166"
     contents:
       - name: magnet-master-vid-e03.bin
@@ -2821,6 +2909,7 @@ files:
   - name: iteagle.zip
     required: true
     category: bios_zip
+    system: itech-eagle
     source_ref: "upstream src/mame/itech/iteagle.cpp:756"
     contents:
       - name: eagle_u15_v209.u15
@@ -2907,6 +2996,7 @@ files:
   - name: su2000.zip
     required: true
     category: bios_zip
+    system: virtuality-su2000
     source_ref: "upstream src/mame/misc/su2000.cpp:302"
     contents:
       - name: hmc86304_bios_v208.u7
@@ -3089,6 +3179,7 @@ files:
   - name: tourvis.zip
     required: true
     category: bios_zip
+    system: pce-tourvision
     source_ref: "source src/mame/pce/tourvis.cpp:448"
     contents:
       - name: v4-60.ic29
@@ -3150,6 +3241,7 @@ files:
   - name: v4bios.zip
     required: true
     category: bios_zip
+    system: barcrest-mpu4
     source_ref: "source src/mame/barcrest/mpu4vid.cpp:8698"
     contents:
       - name: vid.p1
@@ -3160,6 +3252,7 @@ files:
   - name: miuchiz.zip
     required: true
     category: bios_zip
+    system: miuchiz
     source_ref: "upstream src/mame/misc/miuchiz.cpp:227"
     contents:
       - name: otp.dat
@@ -3170,6 +3263,7 @@ files:
   - name: pumpitup.zip
     required: true
     category: bios_zip
+    system: andamiro-pumpitup
     source_ref: "upstream src/mame/misc/xtom3d.cpp:997"
     contents:
       - name: mk3_1.0_bios.u22
@@ -4414,6 +4508,7 @@ files:
   - name: ym2608.zip
     required: true
     category: bios_zip
+    system: ym2608
     source_ref: "upstream src/devices/sound/ymopn.cpp:76"
     contents:
       - name: ym2608_adpcm_rom.bin
@@ -4618,6 +4713,7 @@ files:
   - name: galgames.zip
     required: true
     category: bios_zip
+    system: ces-galaxy-games
     source_ref: "source src/mame/ces/galgames.cpp:1301"
     contents:
       - name: galaxy_u2__v1.90_12-01-98.u2

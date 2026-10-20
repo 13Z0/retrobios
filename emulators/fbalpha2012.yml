@@ -57,7 +57,8 @@ files:
   - name: "hiscore.dat"
     description: "High score persistence database"
     required: false
-    source_ref: "svn-current/trunk/src/burn/hiscore.cpp:411"
+    system: arcade
+    source_ref: "svn-current/trunk/src/burn/hiscore.cpp:386-394, 411, svn-current/trunk/src/burn/burn.cpp:619"
     note: "Loaded from save directory (g_save_dir). Gated by EnableHiscores core option and per-game BDF_HISCORE_SUPPORTED flag."
 
   - name: "dkong.zip"
@@ -65,6 +66,7 @@ files:
     description: "Donkey Kong audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Donkey Kong and clones (dkongo, dkongj, dkongjo, dkongjo1, dkongf, dkongx, dkongx11)"
 
@@ -73,6 +75,7 @@ files:
     description: "Donkey Kong Jr audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Donkey Kong Jr and clones (dkongjrj, dkongjnrj, dkongjrb, jrking, dkingjr, dkongjre)"
 
@@ -81,6 +84,7 @@ files:
     description: "Galaga audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Galaga and clones (galagao, galagamw, galagamk, galagamf, gallag)"
 
@@ -89,6 +93,7 @@ files:
     description: "Rally-X audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Rally-X and clones (rallyxa, rallyxm, rallyxmr, nrallyx)"
 
@@ -97,6 +102,7 @@ files:
     description: "Ghox audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Ghox and Ghox (joystick). Substitutes undumped MCU sound."
 
@@ -105,6 +111,7 @@ files:
     description: "Fire Shark / Same! Same! Same! audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Fire Shark and clones (fireshrkd, fireshrkdh, samesame, samesame2)"
 
@@ -113,6 +120,7 @@ files:
     description: "Teki Paki audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
 
   - name: "vimana.zip"
@@ -120,6 +128,7 @@ files:
     description: "Vimana audio samples"
     required: false
     category: game_data
+    system: arcade
     source_ref: "svn-current/trunk/src/burn/snd/samples.cpp:248,262"
     note: "WAV samples for Vimana and clones (vimanan, vimanaj)"
 

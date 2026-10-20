@@ -38,6 +38,7 @@ systems:
   - exidy-maxaflex
   - brezzasoft-crystal
   - imax-macs
+  - arcade
 
 notes: |
   AdvanceMAME 0.94.0, the MAME 0.94 core (src/version.c:1) under the Advance
@@ -103,10 +104,11 @@ files:
   - name: hiscore.dat
     required: false
     category: game_data
+    system: arcade
     sha1: "f247f8a80c7669df564cf1ac6f42c8100caa406c"
     md5: "303449713237a451424cf23c9e8c09fc"
     size: 153596
-    source_ref: "src/hiscore.c:18,103,223-225"
+    source_ref: "src/hiscore.c:18,103,223-225, src/cpuexec.c:316-318"
     note: >-
       High score definitions, selected by misc_hiscorefile
       (advance/osd/glue.c:742,2873,2947). Absent, hs_open finds no entry and
@@ -117,6 +119,7 @@ files:
     bundled: true
     required: false
     category: game_data
+    system: arcade
     sha1: "5206c85cad323acb885e28e1109b8e842919b7dd"
     md5: "ef258890848afdac0c07f016c2ac9294"
     size: 4208286
@@ -131,6 +134,7 @@ files:
   - name: mameinfo.dat
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/datafile.c:331,625-629"
     note: >-
       Driver information text, selected by misc_infofile
@@ -141,6 +145,7 @@ files:
   - name: cheat.dat
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/cheat.c:8442,8619-8622"
     note: >-
       Cheat definitions, selected by misc_cheatfile
@@ -152,6 +157,7 @@ files:
     bundled: true
     required: false
     category: game_data
+    system: arcade
     sha1: "8c34c85f92bc6771d789e880953a1cc43341485e"
     md5: "ee99bb541116967f8785a5bc09932475"
     size: 22066

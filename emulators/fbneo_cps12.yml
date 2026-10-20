@@ -12,6 +12,7 @@ cores:
 systems:
   - cps1
   - cps2
+  - arcade
 
 notes: |
   CPS-1/CPS-2 subset of FinalBurn Neo, current codebase (not frozen).
@@ -39,5 +40,6 @@ files:
   - name: "hiscore.dat"
     path: "fbneo/hiscore.dat"
     required: false
+    system: arcade
     note: "High score database, enables persistent high scores across all arcade games"
-    source_ref: "source src/burn/hiscore.cpp:407"
+    source_ref: "source src/burn/hiscore.cpp:154-161, 407, source src/burn/burn.cpp:876"

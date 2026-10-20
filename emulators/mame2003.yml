@@ -30,6 +30,7 @@ systems:
   - zn1-tecmo
   - zn1-video-system
   - zn1-acclaim
+  - arcade
 
 notes: |
   Frozen snapshot of MAME 0.78 (xmame, January 2003). Stock version without
@@ -52,10 +53,11 @@ files:
     path: "mame2003/hiscore.dat"
     required: false
     category: game_data
+    system: arcade
     sha1: "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1"
     md5: "c6f35123264db9cdfb216e8fdb673679"
     size: 215475
-    source_ref: "src/hiscore.c:14,102-116,248-262"
+    source_ref: "src/hiscore.c:14,102-116,248-262, src/cpuexec.c:280-282"
     note: >-
       high score definitions, auto-generated if missing from
       precompile/hiscore_dat.h, which holds metadata/hiscore.dat with CRLF line
@@ -67,6 +69,7 @@ files:
     path: "mame2003/cheat.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/cheat.c:383,8249-8255"
     note: "cheat definitions, requires cheats core option enabled"
 
@@ -74,6 +77,7 @@ files:
     path: "mame2003/history.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/datafile.c:327, src/datafile.c:563"
     note: "game history and information database"
 
@@ -81,6 +85,7 @@ files:
     path: "mame2003/mameinfo.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/datafile.c:327, src/datafile.c:622-626"
     note: "game technical information database"
 

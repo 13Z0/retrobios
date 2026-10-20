@@ -63,6 +63,8 @@ systems:
   - exidy-maxaflex
   - brezzasoft-crystal
   - ces-galaxy-games
+  - taito-typezero
+  - barcrest-mpu4
 
 notes: |
   Android port of MAME 0.139u1 by David Valdeita (Seleuco), package
@@ -110,6 +112,7 @@ files:
     size: 219154
     sha1: "c686635c5470e4711dbf817e8196dcb169fdc68d"
     category: game_data
+    system: arcade
     description: "high score memory ranges per game"
     note: "Opened from the installation root with an empty search path, once per session, when the hiscore setting is on. That setting is off by default on Android. Seeded from the package assets on first run. The hash identifies that drop, the engine reads the file without checking it. Definitions are keyed to the 0.139 driver names, so another MAME generation's file is a different one."
     source_ref: "source src/emu/hiscore.c:29, 365, source src/emu/machine.c:379-382, source src/osd/droid-ios/osd-droid.c:89, 345"
@@ -121,6 +124,7 @@ files:
     size: 24981772
     sha1: "a737e925e3b86374da57496e3261d0303889977f"
     category: game_data
+    system: arcade
     description: "per-game XML cheat files"
     note: "cheat_list_load opens cheat/<gamename>.xml and fopen_attempt_zipped rewrites the directory component to cheat.zip. Loaded when the cheat setting is on. Seeded from the package assets on first run. The hash identifies that drop, the engine reads members without checking the container."
     source_ref: "source src/emu/cheat.c:428, 1026-1027, source src/emu/fileio.c:276-352, upstream src/emu/emuopts.c:48, source src/osd/droid-ios/osdmain.c:317"
@@ -132,6 +136,7 @@ files:
     size: 86983
     sha1: "75d31d949614b7d4e79de676c8a4b1c68b571f0a"
     category: game_data
+    system: arcade
     description: "game name to category map for the ROM list filter"
     note: "Read from the installation root with a plain fopen the first time the category filter is used, then sorted for binary search. Seeded from the package assets on first run. The hash identifies that drop, the reader checks nothing."
     source_ref: "source src/emu/uimenu.c:4600-4648"
@@ -140,6 +145,7 @@ files:
     path: ui.bdf
     required: false
     category: game_data
+    system: arcade
     description: "BDF font for the MAME menu overlay"
     note: "Opened from fontpath, which defaults to the installation root. A miss falls back to the font compiled into the binary. A successful load writes a ui.bdc cache next to it. The 0.139 tree carries no BDF: the built-in was generated from src/emu/uismall.png by png2bdc. The file here is the uismall.bdf MAME committed on 2016-03-20 from that same PNG, which differs in 8 of 191 glyphs (slashed zero, j, |, ~, 0xB4, ß, ø, ÿ) and passes every rule of render_font_load_bdf."
     source_ref: "source src/emu/ui.c:245, source src/emu/rendfont.c:139-163, 430, 453, source src/emu/emuopts.c:47"
@@ -148,6 +154,7 @@ files:
     path: crosshair/cross1.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 1"
     note: "create_bitmap looks in crosshair/<gamename>/ first, then crosshair/, and falls back to the bitmap compiled into the binary. Loaded only for players whose input has a crosshair axis. No external set was ever shipped: the files here are the compiled-in bitmap of src/emu/crsshair.c exported as 100x100 RGBA PNGs in each player colour."
     source_ref: "source src/emu/crsshair.c:169-174, source src/emu/emuopts.c:49"
@@ -156,6 +163,7 @@ files:
     path: crosshair/cross2.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 2"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -163,6 +171,7 @@ files:
     path: crosshair/cross3.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 3"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -170,6 +179,7 @@ files:
     path: crosshair/cross4.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 4"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -177,6 +187,7 @@ files:
     path: crosshair/cross5.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 5"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -184,6 +195,7 @@ files:
     path: crosshair/cross6.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 6"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -191,6 +203,7 @@ files:
     path: crosshair/cross7.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 7"
     source_ref: "source src/emu/crsshair.c:169-174"
 
@@ -198,6 +211,7 @@ files:
     path: crosshair/cross8.png
     required: false
     category: game_data
+    system: arcade
     description: "crosshair bitmap for player 8"
     note: "MAX_PLAYERS is 8 in src/emu/inptport.h:29. crosshair_colors has seven entries, so player 8 reads past the table, and the file follows the white that 0.289 assigns beyond the table."
     source_ref: "source src/emu/crsshair.c:169-174, source src/emu/inptport.h:29"
@@ -1124,8 +1138,9 @@ files:
   - name: taitotz.zip
     required: true
     category: bios_zip
+    system: taito-typezero
     description: "Type Zero BIOS"
-    source_ref: "upstream src/mame/drivers/taitotz.c:188"
+    source_ref: "upstream src/mame/drivers/taitotz.c:187"
     contents:
       - name: "e68-05-1.ic6"
         size: 524288
@@ -1371,8 +1386,9 @@ files:
   - name: bctvidbs.zip
     required: true
     category: bios_zip
+    system: barcrest-mpu4
     description: "MPU4 Video Firmware"
-    source_ref: "upstream src/mame/drivers/mpu4drvr.c:3142"
+    source_ref: "upstream src/mame/drivers/mpu4drvr.c:3116"
     contents:
       - name: "vid.p1"
         size: 65536

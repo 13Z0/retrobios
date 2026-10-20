@@ -56,6 +56,7 @@ systems:
   - konami-twinkle
   - imax-macs
   - arcade
+  - barcrest-mpu4
 
 notes: |
   Frozen snapshot of MAME 0.139 (mid-2010). Sourced from mame0139s.zip.
@@ -475,5 +476,5 @@ files:
   - name: bctvidbs.zip
     required: true
     category: bios_zip
-    system: arcade
+    system: barcrest-mpu4
     source_ref: "upstream src/mame/drivers/mpu4drvr.c:3116"

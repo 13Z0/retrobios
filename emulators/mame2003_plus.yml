@@ -34,6 +34,7 @@ systems:
   - zn1-acclaim
   - zn1-atlus
   - century-cvs
+  - arcade
 
 notes: |
   MAME 2003-Plus is a libretro port of MAME 0.78 with backported drivers, bug fixes,
@@ -67,10 +68,11 @@ files:
     path: "mame2003-plus/hiscore.dat"
     required: false
     category: game_data
+    system: arcade
     sha1: "c086306096722da7f02f624e7efb447659aca1d3"
     md5: "2f60c1ed69c152dea95e734979ca2ecb"
     size: 131878
-    source_ref: "src/hiscore.c:15,102-116,248"
+    source_ref: "src/hiscore.c:15,102-116,248, src/cpuexec.c:296-298"
     note: >-
       high score definitions, compiled into binary and spawned on first run.
       metadata/hiscore.dat of the core repository. The compiled copy
@@ -82,6 +84,7 @@ files:
     path: "mame2003-plus/cheat.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/cheat.c:383,8249-8255"
     note: "cheat definitions, requires cheats core option enabled"
 
@@ -90,6 +93,7 @@ files:
     path: "mame2003-plus/history.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/datafile.c:327,608"
     note: "game history and information database"
 
@@ -97,6 +101,7 @@ files:
     path: "mame2003-plus/mameinfo.dat"
     required: false
     category: game_data
+    system: arcade
     source_ref: "src/datafile.c:327,638"
     note: "technical driver information, appended to history display"
 
@@ -109,6 +114,7 @@ files:
     path: "mame2003-plus/artwork/blueshrk.zip"
     required: false
     category: game_data
+    system: arcade
     size: 925914
     sha1: "4317f301d6e4117dfde42b33dfaf73a2b25f43c1"
     md5: "4659968035d462be471fdfb46b604696"
@@ -122,6 +128,7 @@ files:
     path: "mame2003-plus/artwork/frogs.zip"
     required: false
     category: game_data
+    system: arcade
     size: 2832731
     sha1: "cdff29398e76b92d93825d96c0f9cae5bb6b3400"
     md5: "e30e8ef4631596e25466523b97fee19f"
@@ -132,6 +139,7 @@ files:
     path: "mame2003-plus/artwork/invaders.zip"
     required: false
     category: game_data
+    system: arcade
     size: 4324198
     sha1: "4b18db526ca907707fd888385d907a7a585935d0"
     md5: "23d65ad40ac1f2121fe35fe0c7893721"
@@ -142,6 +150,7 @@ files:
     path: "mame2003-plus/artwork/omegrace.zip"
     required: false
     category: game_data
+    system: arcade
     size: 1754523
     sha1: "1ca22afdfefcfa5943742e988c45c1fc0e1124bd"
     md5: "255155cf3f9912c92be8f813e8112a54"
@@ -152,6 +161,7 @@ files:
     path: "mame2003-plus/artwork/skydiver.zip"
     required: false
     category: game_data
+    system: arcade
     size: 117241
     sha1: "a0548e37e76a21fb37005cff944319ee63f93d1e"
     md5: "95e05db7f8fa208daafd7b0d32041db8"
@@ -162,6 +172,7 @@ files:
     path: "mame2003-plus/artwork/solarq.zip"
     required: false
     category: game_data
+    system: arcade
     size: 1342645
     sha1: "ff532cee1de69668b0c68238aff0c16813640476"
     md5: "b4b70db555dfb48b91a067eea747c771"
@@ -172,6 +183,7 @@ files:
     path: "mame2003-plus/artwork/warrior.zip"
     required: false
     category: game_data
+    system: arcade
     size: 1125335
     sha1: "57f89bbac39d8071e45c87f97e9b918f31d21994"
     md5: "29fe11717016182d446ca6af56a08f75"

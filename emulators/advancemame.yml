@@ -40,6 +40,8 @@ systems:
   - exidy-maxaflex
   - brezzasoft-crystal
   - imax-macs
+  - arcade
+  - barcrest-mpu4
 
 notes: |
   MAME 0.106 core (src/version.c:12) carrying its own video layer and driver
@@ -95,10 +97,11 @@ files:
     required: false
     bundled: true
     category: game_data
+    system: arcade
     sha1: "23e0dec66680aa4545eafe436c23d2bf5622e32e"
     md5: "2490bad5079ec0991c23c579092cca19"
     size: 176851
-    source_ref: "src/hiscore.c:28,133-147,313"
+    source_ref: "src/hiscore.c:28,133-147,313, src/mame.c:1105-1106"
     note: >-
       High score definitions, selected by misc_hiscorefile
       (advance/osd/glue.c:800,3293). Absent, hiscore_open matches no entry and
@@ -110,6 +113,7 @@ files:
     required: false
     bundled: true
     category: game_data
+    system: arcade
     sha1: "4978ecafc4634cf20b639d8801c044dc156ab162"
     md5: "69c6bbe7194e4bc62d53764dd6c6d890"
     size: 13923773
@@ -125,6 +129,7 @@ files:
     required: false
     bundled: true
     category: game_data
+    system: arcade
     sha1: "8c34c85f92bc6771d789e880953a1cc43341485e"
     md5: "ee99bb541116967f8785a5bc09932475"
     size: 22066
@@ -771,6 +776,7 @@ files:
   - name: bctvidbs.zip
     required: true
     category: bios_zip
+    system: barcrest-mpu4
     source_ref: "src/drivers/mpu4.c:2014-2017,2175"
     contents:
       - name: vid.p1

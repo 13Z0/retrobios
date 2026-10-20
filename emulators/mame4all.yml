@@ -79,6 +79,7 @@ files:
     path: "mame4all/hiscore.dat"
     required: false
     category: game_data
+    system: arcade
     bundled: true
     size: 50821
     md5: "5567b18ff76cf4406c915d9d5deac2f4"
@@ -94,6 +95,7 @@ files:
     path: "mame4all/cheat.dat"
     required: false
     category: game_data
+    system: arcade
     bundled: true
     size: 1522317
     md5: "c5b456237958c7a7c120a8ad710786a0"
@@ -110,6 +112,7 @@ files:
     path: "mame4all/history.dat"
     required: false
     category: game_data
+    system: arcade
     description: "Game history database"
     note: "Read for the game information screen. Not installed."
     source_ref: "src/datafile.cpp:52, src/datafile.cpp:541, src/rpi/config.cpp:384"
@@ -118,6 +121,7 @@ files:
     path: "mame4all/mameinfo.dat"
     required: false
     category: game_data
+    system: arcade
     description: "Driver information database"
     note: "Read with history.dat for the game information screen. Not installed."
     source_ref: "src/datafile.cpp:53, src/datafile.cpp:568, src/rpi/config.cpp:386"
