@@ -83,10 +83,10 @@ class CorrectedFilesPage(unittest.TestCase):
 
     def test_several_files_link_to_their_directory(self):
         self.assertIn("tree/main/exports/retropie", self.page)
-        self.assertIn('??? note "The 2 files this export patches"', self.page)
+        self.assertIn('??? note "The 2 original files it is based on"', self.page)
 
     def test_every_change_is_listed(self):
-        self.assertIn('??? note "Hashes corrected (12)"', self.page)
+        self.assertIn('??? note "Hashes updated to the emulator source (12)"', self.page)
         for i in range(12):
             self.assertIn(f"    - `sys/file{i}.bin md5`", self.page)
 
@@ -99,7 +99,7 @@ class CorrectedFilesPage(unittest.TestCase):
 
     def test_site_has_the_page_in_its_nav(self):
         source = (ROOT / "scripts" / "generate_site.py").read_text(encoding="utf-8")
-        self.assertIn('{"Corrected platform files": "exports.md"}', source)
+        self.assertIn('{"Updated platform files": "exports.md"}', source)
         workflow = (ROOT / ".github" / "workflows" / "deploy-site.yml").read_text(encoding="utf-8")
         self.assertIn('"exports/**"', workflow)
 
@@ -118,10 +118,35 @@ class SummariesReadAsSentences(unittest.TestCase):
         from exporter.retropie_exporter import Exporter as RetroPieExporter
 
         exporter = RetroPieExporter()
-        exporter._skipped = {"names no file to extend": ["fs-uae", "amiberry"]}
+        exporter._skipped = {"whose help text lists no files to add to": ["fs-uae", "amiberry"]}
         text = exporter.outcome({}, {"a.sh": ""})
         self.assertNotIn(";", text)
-        self.assertIn("amiberry, fs-uae: names no file to extend", text)
+        self.assertIn("Left as is: amiberry, fs-uae, whose help text lists no files to add to", text)
+
+
+class ThePageAddressesMaintainersAsPeers(unittest.TestCase):
+    """The page offers the platforms' own maintainers a file to take or
+    leave. "Their file", "corrected" and "of theirs" read as a verdict on
+    their work, which the page is not."""
+
+    def test_the_change_sentence_is_built_from_the_numbers(self):
+        from siteexports import change_text
+
+        report = _report("batocera", ["batocera-systems"],
+                         hashes_corrected=["a md5", "b md5"], requirements_corrected=3)
+        report["counts"] = {"kept": 692, "added": 253, "not_added": 10, "not_kept": 0}
+        self.assertEqual(
+            change_text(report),
+            "692 entries kept, 253 files added, 2 hashes updated, "
+            "3 required flags aligned with the code",
+        )
+
+    def test_no_wording_that_judges_the_original(self):
+        report = _report("batocera", ["batocera-systems"], hashes_corrected=["a md5"])
+        report["counts"] = {"kept": 1, "added": 0, "not_added": 4, "not_kept": 1}
+        page = generate_exports_page([report], {}).lower()
+        for word in ("their file", "theirs", "corrected", "wrong", "drift", "left out"):
+            self.assertNotIn(word, page)
 
 
 if __name__ == "__main__":

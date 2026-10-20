@@ -1251,7 +1251,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         "data.md": "Versioned RetroBIOS JSON API, CSV exports, SQLite snapshot, schemas, checksums and data interpretation guidance.",
         "cross-reference.md": "Cross-reference from retrogaming platforms to emulator cores, systems, upstream projects and profiled firmware files.",
         "gaps.md": "Current RetroBIOS verification gaps, platform-to-emulator divergences, missing files and documented source limitations.",
-        "exports.md": "Each platform's own BIOS list (System.dat, batocera-systems, es_bios.xml and the rest) rewritten with the hashes and files the emulator source code proves.",
+        "exports.md": "Each platform's own BIOS list (System.dat, batocera-systems, es_bios.xml and the rest) with the hashes and files the emulator source code shows, offered to its maintainers.",
         "provenance.md": "Hash-based comparison of RetroBIOS metadata with No-Intro, Redump and TOSEC catalog snapshots.",
         "which-pack.md": "One-line automatic RetroBIOS installation and platform-specific pack destinations, with verification and release caveats.",
     }
@@ -1899,7 +1899,7 @@ def generate_platform_page(
         note = " (a branch: the revision read is not recorded)" if moving else ""
         lines.append(f"| Transcribed from | <{transcribed}>{note} |")
     if name in _EXPORTED:
-        lines.append(f"| Corrected file | [Download it and see what changed](../exports.md#{name}) |")
+        lines.append(f"| Updated file | [Download it and see the changes](../exports.md#{name}) |")
     contrib_list = (registry or {}).get(name, {}).get("contributed_by", [])
     if contrib_list:
         for cb in contrib_list:
@@ -4683,7 +4683,7 @@ def generate_mkdocs_nav(
         {"Cross-reference": "cross-reference.md"},
         {"Gap analysis": "gaps.md"},
         {"Dump provenance": "provenance.md"},
-        {"Corrected platform files": "exports.md"},
+        {"Updated platform files": "exports.md"},
         {"Data & API": "data.md"},
         {"Wiki": wiki_nav},
         {"Contributing": "contributing.md"},
@@ -4924,7 +4924,7 @@ def _generate(args: argparse.Namespace) -> None:
         ),
     )
 
-    print("Generating corrected platform files page...")
+    print("Generating updated platform files page...")
     write_if_changed(
         str(docs / "exports.md"),
         generate_exports_page(

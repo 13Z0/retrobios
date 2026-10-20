@@ -2,7 +2,7 @@
 
 export_native.py writes the platform's own file, corrected, under
 exports/<platform>/ and what it changed beside it as exports/<platform>.json.
-This page reads those reports: the reader finds their platform, the file its
+This page reads those reports: the reader finds a platform, the file its
 maintainers keep, the corrected copy, and every change named.
 """
 
@@ -18,13 +18,40 @@ REPO_RAW = "https://raw.githubusercontent.com/Abdess/retrobios/main"
 
 # Report key, then how a line of it reads on the page.
 CHANGE_KINDS = (
-    ("hashes_corrected", "Hashes corrected"),
-    ("hashes_filled", "Hashes filled where the platform had none"),
-    ("sizes_corrected", "Sizes corrected"),
-    ("sizes_removed", "Sizes removed"),
-    ("hashes_cleared", "Hashes cleared"),
-    ("withheld", "Corrections withheld"),
+    ("hashes_corrected", "Hashes updated to the emulator source"),
+    ("hashes_filled", "Hashes added where the original lists none"),
+    ("sizes_corrected", "Sizes updated to the emulator source"),
+    ("sizes_removed", "Sizes no longer stated"),
+    ("hashes_cleared", "Hashes no longer listed"),
+    ("withheld", "Changes not applied"),
 )
+
+
+def _plural(count: int, noun: str, plural: str = "") -> str:
+    return f"{count:,} {noun if count == 1 else plural or noun + 's'}"
+
+
+def change_text(report: dict) -> str:
+    """What the updated file changes, from the report's numbers.
+
+    The command line prints its own terse summary. The page states each
+    kind of change once, in plain terms, and leaves out what did not
+    happen. RetroPie's unit is a package, so its own sentence is kept.
+    """
+    counts = report.get("counts")
+    if not counts:
+        return report["summary"]
+    parts = [f"{_plural(counts['kept'], 'entry', 'entries')} kept"]
+    extra = [
+        (counts["added"], "file", "files", "added"),
+        (len(report.get("hashes_corrected") or []), "hash", "hashes", "updated"),
+        (report.get("requirements_corrected") or 0, "required flag", "required flags",
+         "aligned with the code"),
+        (len(report.get("hashes_filled") or []), "hash", "hashes", "added"),
+        (len(report.get("sizes_corrected") or []), "size", "sizes", "updated"),
+    ]
+    parts += [f"{_plural(n, one, many)} {verb}" for n, one, many, verb in extra if n]
+    return ", ".join(parts)
 
 
 def load_export_reports(directory: str = EXPORTS_DIR) -> list[dict]:
@@ -61,38 +88,44 @@ def _original_link(report: dict) -> str:
 def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
     """The page, names mapping each platform key to the name it displays."""
     lines = [
-        "# Corrected platform files",
+        "# Updated platform files",
         "",
         "Each platform keeps its own list of the BIOS files it checks: "
         "libretro's `System.dat`, Batocera's `batocera-systems`, Recalbox's "
-        "`es_bios.xml` and so on. Those lists are written by hand and drift "
-        "from what the emulators actually read. Here is each platform's own "
-        "file again, with what the emulator source code proves applied. A "
-        "wrong hash is corrected, a file the platform's emulators need and "
-        "the list lacks is added, and nothing the platform declares is ever "
-        "removed. Code the file carries (a checker script, a C# database, a "
-        "shell library) is patched in place and keeps working.",
+        "`es_bios.xml` and so on. Keeping such a list in step with every "
+        "emulator release is a lot of work. This project reads the emulators' "
+        "source code file by file, and offers each platform its own file with "
+        "those findings applied: a hash is updated where the emulator source "
+        "states another, files the platform's emulators read are added, and "
+        "nothing the platform declares is removed. Code the file carries (a "
+        "checker script, a C# database, a shell library) is patched in place "
+        "and keeps working.",
         "",
-        "Each file is taken at the revision our data was transcribed from, "
-        "so a maintainer can diff it against theirs and take the changes "
-        "line by line.",
+        "Each file starts from the revision of the original that this project "
+        "last read, so it compares cleanly with it, and every change can be "
+        "taken or left on its own. Each value traces back to the emulator code "
+        "cited on its profile page. If a change does not fit a platform, an "
+        "issue on the [repository](https://github.com/Abdess/retrobios/issues) "
+        "is welcome: this project's profile is revised, and every platform's "
+        "file follows.",
         "",
-        "A file the emulators read and the list lacks is added only when the "
-        "format can carry it. Most platforms check an md5, so a file whose "
-        "source states no md5 is left out, and so is one filed under a system "
-        "the platform's checker never reads. Those are counted as left out.",
+        "A file is added only when the format can carry it. A platform that "
+        "checks an md5 needs one, so a file whose emulator source states no "
+        "md5 is not added, and neither is a file under a system the "
+        "platform's checker does not read. Those are counted on each "
+        "platform's section.",
         "",
     ]
     if not reports:
         lines.extend([
-            "No corrected file has been published yet. They are written by "
+            "No updated file has been published yet. They are written by "
             "`python scripts/export_native.py --all --fetch`.",
             "",
         ])
         return "\n".join(lines)
 
     lines.extend([
-        "| Platform | Their file | Corrected file | What changed |",
+        "| Platform | Original file | Updated file | Changes |",
         "|----------|------------|----------------|--------------|",
     ])
     for report in reports:
@@ -100,17 +133,32 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
         lines.append(
             f"| [{_display(platform, names)}](#{platform}) | "
             f"{_original_link(report)} | {_corrected_link(report)} | "
-            f"{report['summary']} |"
+            f"{change_text(report)} |"
         )
     lines.append("")
 
     for report in reports:
         platform = report["platform"]
         lines.extend([f"## {_display(platform, names)} {{ #{platform} }}", ""])
-        lines.extend([report["summary"][:1].upper() + report["summary"][1:] + ".", ""])
+        text = change_text(report)
+        lines.extend([text[:1].upper() + text[1:] + ".", ""])
+        counts = report.get("counts") or {}
+        if counts.get("not_added"):
+            lines.extend([
+                f"{_plural(counts['not_added'], 'other file')} the emulators read "
+                f"{'is' if counts['not_added'] == 1 else 'are'} not added, for the "
+                "reasons above.",
+                "",
+            ])
+        if counts.get("not_kept"):
+            lines.extend([
+                f"{_plural(counts['not_kept'], 'entry', 'entries')} of the original "
+                "cannot be written in this format and should be checked by hand.",
+                "",
+            ])
         if report.get("invalid"):
             lines.extend([
-                '!!! warning "The corrected file fails the platform\'s own checks"',
+                '!!! warning "The updated file does not pass the platform\'s own checks"',
                 "",
                 *[f"    - {issue}" for issue in report["invalid"]],
                 "",
@@ -121,26 +169,26 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
         raw = [f"{REPO_RAW}/{EXPORTS_DIR}/{platform}/{name}" for name in files]
         if len(files) == 1:
             lines.extend([
-                f"[Download the corrected file]({raw[0]}){{ .md-button .md-button--primary }} "
+                f"[Download the updated file]({raw[0]}){{ .md-button .md-button--primary }} "
                 f"[See it on GitHub]({REPO_BLOB}/{EXPORTS_DIR}/{platform}/{files[0]}){{ .md-button }}",
                 "",
             ])
         else:
             lines.extend([
-                f"[Browse the {len(files)} corrected files]"
+                f"[Browse the {len(files)} updated files]"
                 f"({REPO_TREE}/{EXPORTS_DIR}/{platform}){{ .md-button .md-button--primary }}",
                 "",
             ])
         if len(originals) > 1:
             lines.extend([
-                f'??? note "The {len(originals)} files this export patches"',
+                f'??? note "The {len(originals)} original files it is based on"',
                 "",
                 *[f"    - [`{name}`]({url})" for name, url in sorted(originals.items())],
                 "",
             ])
         elif originals:
             (name, url), = originals.items()
-            lines.extend([f"Patched from [`{name}`]({url}).", ""])
+            lines.extend([f"Based on [`{name}`]({url}).", ""])
 
         for key, title in CHANGE_KINDS:
             items = report.get(key) or []

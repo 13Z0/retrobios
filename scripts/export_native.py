@@ -513,7 +513,8 @@ def export_platform(
                 # it, so their own file loses a line. Worth saying out loud.
                 lost += 1
 
-    summary = exporter.outcome(systems, produced)
+    own_summary = exporter.outcome(systems, produced)
+    summary = own_summary
     if summary is None:
         summary = (
             f"{report.files_kept} kept, {landed} added, "
@@ -531,7 +532,7 @@ def export_platform(
         if refused:
             summary += f", {_count(refused, 'addition')} left out"
         if lost:
-            summary += f", {_count(lost, 'entry', 'entries')} of theirs the format drops"
+            summary += f", {_count(lost, 'platform entry', 'platform entries')} the format cannot keep"
     withheld = exporter.withheld()
     if withheld:
         summary += f", {_count(len(withheld), 'correction')} withheld"
@@ -567,6 +568,12 @@ def export_platform(
         "originals": wanted_sources(exporter, systems, scraped),
         "files": sorted(produced),
         "summary": summary,
+        "counts": None if own_summary is not None else {
+            "kept": report.files_kept,
+            "added": landed,
+            "not_added": refused,
+            "not_kept": lost,
+        },
         "hashes_corrected": applied,
         "hashes_filled": filled,
         "sizes_corrected": resized,
@@ -650,7 +657,7 @@ def main() -> None:
     group.add_argument("--platform", type=platform_arg, help="a single platform")
     parser.add_argument(
         "--output-dir", default="exports",
-        help="directory the corrected platform files go to (default: %(default)s)",
+        help="directory the updated platform files go to (default: %(default)s)",
     )
     parser.add_argument(
         "--truth-dir", default="dist/truth",

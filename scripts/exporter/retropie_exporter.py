@@ -303,14 +303,14 @@ class Exporter(BaseExporter):
             core = index.get(module_id.removeprefix("lr-").replace("-", "_").lower())
             files = by_core.get(core or "", [])
             if not files:
-                skip("no core of ours packages it", module_id)
+                skip("which no profiled core matches", module_id)
                 continue
 
             listed = self._listed(help_text)
             unknown = sorted(listed - known)
             if unknown:
                 skip(
-                    f"names a file we have never seen ({', '.join(unknown)})",
+                    f"whose help text names a file no profile documents yet ({', '.join(unknown)})",
                     module_id,
                 )
 
@@ -341,11 +341,11 @@ class Exporter(BaseExporter):
             if enumeration is None:
                 # No enumeration to extend, and a sentence we would have to
                 # write ourselves is a documentation change, not a correction.
-                skip("names no file to extend", module_id)
+                skip("whose help text lists no files to add to", module_id)
                 continue
 
             if len(listed) + len(missing) > MAX_NAMES:
-                skip("more names than the help enumerates", module_id)
+                skip("whose help text would grow longer than any it has today", module_id)
                 continue
 
             new_help = self._extended(help_text, enumeration, missing)
@@ -366,12 +366,12 @@ class Exporter(BaseExporter):
     ) -> str:
         """Packages are the unit here, not file entries."""
         skipped: dict[str, list[str]] = getattr(self, "_skipped", {})
-        parts = [f"{len(produced)} packages corrected"]
+        parts = [f"{len(produced)} packages updated"]
         for reason, modules in sorted(skipped.items()):
             shown = ", ".join(sorted(modules)[:4])
             if len(modules) > 4:
                 shown += f" and {len(modules) - 4} more"
-            parts.append(f"{shown}: {reason}")
+            parts.append(f"Left as is: {shown}, {reason}")
         return ". ".join(parts)
 
     def validate(
