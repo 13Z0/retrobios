@@ -14,24 +14,21 @@
         "system": "pico8",
         "description": "PICO-8 executable",
         "required": "Required",
-        "paths": "$bios_path/pico-8",
-        "md5": null
+        "paths": "$bios_path/pico-8"
       },
       {
         "filename": "pico8.dat",
         "system": "pico8",
         "description": "PICO-8 system data file",
         "required": "Required",
-        "paths": "$bios_path/pico-8",
-        "md5": null
+        "paths": "$bios_path/pico-8"
       },
       {
         "filename": "pico8_dyn",
         "system": "pico8",
         "description": "Dynamic library for PICO-8",
         "required": "Optional",
-        "paths": "$bios_path/pico-8",
-        "md5": null
+        "paths": "$bios_path/pico-8"
       }
     ]
   }

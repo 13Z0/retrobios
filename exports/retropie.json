@@ -3,11 +3,8 @@
   "originals": {
     "RetroPie-Setup.tar.gz": "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/46128cd252cdecae852a4d0bafa2aaf9d03ab563"
   },
-  "files": [
-    "scriptmodules/emulators/gngeopi.sh",
-    "scriptmodules/libretrocores/lr-geargrafx.sh"
-  ],
-  "summary": "2 packages updated. Left as is: dgen, lr-freechaf, which no profiled core matches. Left as is: lr-beetle-saturn, lr-bluemsx, lr-fbneo, lr-fmsx and 5 more, whose help text lists no files to add to. Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 108 entries found by content not listed",
+  "files": [],
+  "summary": "0 packages updated. Left as is: dgen, gpsp, hatari, lr-freechaf and 4 more, which no profiled core matches. Left as is: lr-fbneo, lr-fmsx, openmsx, pcsx2 and 1 more, whose help text lists no files to add to. Left as is: xm7, whose help text names a file no profile documents yet (dicrom.rom, extsub.rom, fbasic30.rom, fddseek.wav, initiate.rom, relay_on.wav, relayoff.wav, subsys_a.rom, subsys_b.rom, subsys_c.rom, subsyscg.rom). Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 108 entries found by content not listed",
   "counts": null,
   "hashes_corrected": [],
   "hashes_filled": [],

@@ -2476,28 +2476,6 @@
     "md5": "1f118b8735fcf40c20b38c3184eebfd9",
     "sha1": "e6c0050b3c67ee26198488fbbe4a5d019c15b628"
   },
-  "ngc:font_japanese.bin": {
-    "size": "259626",
-    "crc": "9ac7f0c7",
-    "md5": "a1d3c0e5a40f163f4fb00a5e0774c63c",
-    "sha1": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
-  },
-  "ngc:font_western.bin": {
-    "size": "6478",
-    "crc": "6fe1f772",
-    "md5": "9bef639b7426ef6948602a12b33522a8",
-    "sha1": "483a17ff25b68a8f18cae691da99f16beefbe370"
-  },
-  "ps2:GameIndex.yaml": {
-    "size": "2683897",
-    "sha1": "5e2d50a3376dc6a0750505bec68626d39a5bd4c1"
-  },
-  "ps2:RedumpDatabase.yaml": {
-    "size": "1917242",
-    "crc": "28709e73",
-    "md5": "0525ad1f1381152f20bfb05775cf39cd",
-    "sha1": "bf2c73d668cd671df8adfe2ec3c7074e8ba9176a"
-  },
   "psx:ps1_rom.bin": {
     "size": "524288",
     "crc": "2f53b852",

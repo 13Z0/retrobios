@@ -21,31 +21,22 @@
         "filename": "Complex.bin",
         "system": "xbox",
         "description": "XBOX Complex BIOS",
-        "required": "Required",
-        "md5": null
+        "required": "Required"
       },
       {
         "filename": "Complex_4627v1.03.bin",
         "system": "xbox",
-        "description": "XBOX Complex BIOS 1.03",
-        "md5": null
+        "description": "XBOX Complex BIOS 1.03"
       },
       {
         "filename": "Complex_4627.bin",
         "system": "xbox",
-        "description": "XBOX Complex BIOS 4627",
-        "md5": null
+        "description": "XBOX Complex BIOS 4627"
       },
       {
         "filename": "xbox_eeprom.bin",
         "system": "xbox",
         "description": "Xbox EEPROM image"
-      },
-      {
-        "filename": "xbox_hdd.qcow2",
-        "system": "xbox",
-        "description": "Xbox hard disk image, 8 GB with the retail partition layout",
-        "required": "Required"
       }
     ]
   }

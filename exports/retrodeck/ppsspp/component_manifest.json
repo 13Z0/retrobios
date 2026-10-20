@@ -86,22 +86,14 @@
           "defaults_file": "$ppsspp_rd_config_dir/ppsspp.ini"
         }
       ],
-      "bios": [
-        {
-          "filename": "ppge_atlas.zim",
-          "md5": "866855cc330b9b95cc69135fb7b41d38",
-          "sha256": "3ab7fcf6956d0281ada94d501fc6d1cfa8fc034f139e25fed6c829f723d92a95",
-          "system": "psp",
-          "description": "PSP Atlas ZIM - asset package for PSP homebrew",
-          "required": "Optional"
-        },
-        {
-          "filename": "ppge_atlas.meta",
-          "system": "psp",
-          "description": "PPGe atlas metadata (glyph positions, UV coords)",
-          "paths": "$bios_path/assets"
-        }
-      ]
+      "bios": {
+        "filename": "ppge_atlas.zim",
+        "md5": "866855cc330b9b95cc69135fb7b41d38",
+        "system": "psp",
+        "description": "PSP Atlas ZIM - asset package for PSP homebrew",
+        "required": "Optional",
+        "sha256": "3ab7fcf6956d0281ada94d501fc6d1cfa8fc034f139e25fed6c829f723d92a95"
+      }
     }
   }
 }

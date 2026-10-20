@@ -6,11 +6,11 @@
   "files": [
     "known_bios_files.json"
   ],
-  "summary": "374 kept, 101 added, 1 hash corrected, 0 requirements corrected, 323 additions left out",
+  "summary": "374 kept, 97 added, 1 hash corrected, 0 requirements corrected, 322 additions left out",
   "counts": {
     "kept": 374,
-    "added": 101,
-    "not_added": 323,
+    "added": 97,
+    "not_added": 322,
     "not_kept": 0
   },
   "hashes_corrected": [

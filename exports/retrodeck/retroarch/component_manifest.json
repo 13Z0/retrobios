@@ -1747,41 +1747,35 @@
           "filename": "a2diskiing.zip",
           "system": "apple2",
           "description": "Apple II Disk II ROM",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "apple2e.zip",
           "system": "apple2",
           "description": "Apple IIe BIOS ROM",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "d2fdc.zip",
           "system": "apple2",
           "description": "Apple II Floppy-disk controller ROM",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "votrsc01.zip",
           "system": "apple2",
-          "description": " Apple II Votrax SC-01 ROM",
-          "md5": null
+          "description": " Apple II Votrax SC-01 ROM"
         },
         {
           "filename": "votrsc01a.zip",
           "system": "apple2",
-          "description": "Apple II Alternate Votrax SC-01",
-          "md5": null
+          "description": "Apple II Alternate Votrax SC-01"
         },
         {
           "filename": "apple2gs.zip",
           "system": "apple2",
           "description": "Apple IIGS system BIOS ROM",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "JiffyDOS_C64.bin",
@@ -1810,8 +1804,7 @@
         {
           "filename": "cdimono1.zip",
           "system": "cdimono1",
-          "description": "Philips CDi",
-          "md5": null
+          "description": "Philips CDi"
         },
         {
           "filename": "cdimono2.zip",
@@ -1866,20 +1859,17 @@
         {
           "filename": "philips__cdi-220_ph3_r1.2__mb834200b-15__02f_aa__9402_z04.tc574200-le._1.7211",
           "system": "cdimono1",
-          "description": "Philips CDi",
-          "md5": null
+          "description": "Philips CDi"
         },
         {
           "filename": "zc405351p__servo_cdi_4.1__0d67p__lluk9404.mc68hc705c8a.7490",
           "system": "cdimono1",
-          "description": "Philips CDi",
-          "md5": null
+          "description": "Philips CDi"
         },
         {
           "filename": "zc405352p__slave_cdi_4.1__0d67p__lltr9403.mc68hc705c8a.7206",
           "system": "cdimono1",
-          "description": "Philips CDi",
-          "md5": null
+          "description": "Philips CDi"
         },
         {
           "filename": "tvc22_ext.rom",
@@ -1906,8 +1896,7 @@
           "filename": "gamecom.zip",
           "system": "gamecom",
           "description": "Game.com - BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "external.bin",
@@ -1925,8 +1914,7 @@
           "filename": "gmaster.zip",
           "system": "gmaster",
           "description": "Game Master  - BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "d78c11agf_e19.u1",
@@ -2058,15 +2046,13 @@
           "filename": "coleco.zip",
           "system": "fbneo",
           "description": "ColecoVision system BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "fdsbios.zip",
           "system": "fbneo",
           "description": "Nintendo Famicom Disk System BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "ngp.zip",
@@ -2086,29 +2072,25 @@
           "filename": "spectrum.zip",
           "system": "fbneo",
           "description": "ZX Spectrum BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "spec128.zip",
           "system": "fbneo",
           "description": "ZX Spectrum 128K BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "spec1282a.zip",
           "system": "fbneo",
           "description": "ZX Spectrum 128K +2A BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "channelf.zip",
           "system": "fbneo",
           "description": "Fairchild Channel-F BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "exec.bin",
@@ -2326,15 +2308,13 @@
           "filename": "bios9821.rom",
           "system": "pc98",
           "description": "PC-98 BIOS extension (model 9821)",
-          "required": "Optional",
-          "md5": null
+          "required": "Optional"
         },
         {
           "filename": "d8000.rom",
           "system": "pc98",
           "description": "PC-98 BIOS extension (model D8000)",
-          "required": "Optional",
-          "md5": null
+          "required": "Optional"
         },
         {
           "filename": "2608_BD.WAV",
@@ -2578,8 +2558,7 @@
           "filename": "aes_keys.txt",
           "system": "n3ds",
           "description": "Decryption keys for Citra 3DS / AzaharPlus",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "bios7.bin",
@@ -2642,22 +2621,19 @@
         {
           "filename": "32X_G_BIOS.BIN",
           "system": "sega32x",
-          "description": "SEGA 32X BIOS",
-          "md5": null
+          "description": "SEGA 32X BIOS"
         },
         {
           "filename": "32X_M_BIOS.BIN",
           "system": "sega32x",
           "description": "SEGA 32X BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "32X_S_BIOS.BIN",
           "system": "sega32x",
           "description": "SEGA 32X BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "bios_CD_E.bin",
@@ -3007,8 +2983,7 @@
           "filename": "xegs.zip",
           "system": "atarixe",
           "description": "Atari XE zip",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "c101687.rom",
@@ -4726,15 +4701,13 @@
           "filename": "umc6650.zip",
           "system": "supracan",
           "description": "Super A'Can - BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "supracan.zip",
           "system": "supracan",
           "description": "Super A'Can - BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "ps2-0100j-20000117.bin",
@@ -5187,21 +5160,18 @@
         {
           "filename": "Vectrex_Bios.bin",
           "system": "vectrex",
-          "description": "Vectrex BIOS",
-          "md5": null
+          "description": "Vectrex BIOS"
         },
         {
           "filename": "VEC_MineStorm.vec",
           "system": "vectrex",
-          "description": "Vectrex BIOS",
-          "md5": null
+          "description": "Vectrex BIOS"
         },
         {
           "filename": "vsmile.zip",
           "system": "vsmile",
           "description": " V.SMILE TV Learning System BIOS",
-          "required": "Required",
-          "md5": null
+          "required": "Required"
         },
         {
           "filename": "vsmile_v100.bin",

@@ -15,8 +15,20 @@
         "file": "bios/goldstar.bin"
       },
       {
+        "md5": "05435442e0b7a91a121eef6e91b112de",
+        "file": "bios/panafz1_dev_0.9.bin"
+      },
+      {
+        "md5": "5fa312e8b1315e840221c658dd71f7a5",
+        "file": "bios/panafz1_dev.bin"
+      },
+      {
         "md5": "ba3eda87fde9bd7f09c2b9db3dbb9887",
         "file": "bios/panafz1e.bin"
+      },
+      {
+        "md5": "7d5f8489f70455e5439eb7c4d5bbf609",
+        "file": "bios/panafz1e-unencrypted.bin"
       },
       {
         "md5": "a496cfdded3da562759be3561317b605",
@@ -55,6 +67,10 @@
         "file": "bios/sanyo_hc21_b3_unenc.bin"
       },
       {
+        "md5": "99ba550f1a284da0bea7f380b6e4b436",
+        "file": "bios/sanyo_hc21_alpha.bin"
+      },
+      {
         "md5": "8970fc987ab89a7f64da9f8a8c4333ff",
         "file": "bios/3do_arcade_saot.bin"
       },
@@ -84,6 +100,7 @@
       }
     ]
   },
+
   "adam": {
     "name": "Coleco Adam",
     "biosFiles": [
@@ -129,6 +146,7 @@
       }
     ]
   },
+
   "advision": {
     "name": "Adventure Vision",
     "biosFiles": [
@@ -142,6 +160,7 @@
       }
     ]
   },
+
   "amiga500": {
     "name": "Amiga 500",
     "biosFiles": [
@@ -159,6 +178,7 @@
       }
     ]
   },
+
   "amiga1200": {
     "name": "Amiga 1200",
     "biosFiles": [
@@ -259,6 +279,10 @@
         "file": "bios/amiga-os-300-a4000.rom"
       },
       {
+        "md5": "e873c43040b4d7a9c65f37cf2da2158f",
+        "file": "bios/amiga-os-310-a4000t.rom"
+      },
+      {
         "md5": "5f8924d013dd57a89cf349f4cdedc6b1",
         "file": "bios/amiga-os-310-cd32.rom"
       },
@@ -304,6 +328,7 @@
       }
     ]
   },
+
   "amiga4000": {
     "name": "Amiga 4000",
     "biosFiles": [
@@ -313,6 +338,7 @@
       }
     ]
   },
+
   "amigacdtv": {
     "name": "Amiga CDTV",
     "biosFiles": [
@@ -326,6 +352,7 @@
       }
     ]
   },
+
   "amigacd32": {
     "name": "Amiga CD32",
     "biosFiles": [
@@ -339,6 +366,7 @@
       }
     ]
   },
+
   "apfm1000": {
     "name": "APF M-1000",
     "biosFiles": [
@@ -352,6 +380,7 @@
       }
     ]
   },
+
   "apple2": {
     "name": "Apple II",
     "biosFiles": [
@@ -437,6 +466,7 @@
       }
     ]
   },
+
   "apple2gs": {
     "name": "Apple II GS",
     "biosFiles": [
@@ -462,6 +492,7 @@
       }
     ]
   },
+
   "aquarius": {
     "name": "Aquarius",
     "biosFiles": [
@@ -491,6 +522,7 @@
       }
     ]
   },
+
   "arcadia": {
     "name": "Arcadia 2001",
     "biosFiles": [
@@ -504,6 +536,7 @@
       }
     ]
   },
+
   "archimedes": {
     "name": "Acorn Archimedes",
     "biosFiles": [
@@ -521,6 +554,7 @@
       }
     ]
   },
+
   "astrocde": {
     "name": "Astrocade",
     "biosFiles": [
@@ -534,6 +568,7 @@
       }
     ]
   },
+
   "atari800": {
     "name": "Atari 800",
     "biosFiles": [
@@ -555,6 +590,7 @@
       }
     ]
   },
+
   "atari5200": {
     "name": "Atari 5200",
     "biosFiles": [
@@ -564,6 +600,7 @@
       }
     ]
   },
+
   "atari7800": {
     "name": "Atari 7800",
     "biosFiles": [
@@ -585,6 +622,7 @@
       }
     ]
   },
+
   "atarist": {
     "name": "Atari ST",
     "biosFiles": [
@@ -646,6 +684,7 @@
       }
     ]
   },
+
   "atom": {
     "name": "Acorn Atom",
     "biosFiles": [
@@ -667,6 +706,7 @@
       }
     ]
   },
+
   "atomiswave": {
     "name": "Atomiswave",
     "biosFiles": [
@@ -676,6 +716,7 @@
       }
     ]
   },
+
   "bbcmicro": {
     "name": "BBC",
     "biosFiles": [
@@ -749,6 +790,7 @@
       }
     ]
   },
+
   "bk": {
     "name": "Elektronika BK",
     "biosFiles": [
@@ -786,6 +828,7 @@
       }
     ]
   },
+
   "loopy": {
     "name": "Casio Loopy",
     "biosFiles": [
@@ -799,6 +842,7 @@
       }
     ]
   },
+
   "cdi": {
     "name": "Philips CD-I",
     "biosFiles": [
@@ -832,6 +876,7 @@
       }
     ]
   },
+
   "channelf": {
     "name": "Fairchild ChannelF",
     "biosFiles": [
@@ -849,6 +894,7 @@
       }
     ]
   },
+
   "chihiro": {
     "name": "Sega Chihiro",
     "biosFiles": [
@@ -877,14 +923,6 @@
         "file": "bios/EmuDisk/Chihiro/fpr21042_m29w160et.bin"
       },
       {
-        "md5": "853d40e7a80d659613885d93abbec463",
-        "file": "bios/EmuDisk/Chihiro/SEGABOOT_MBROM0.XBE"
-      },
-      {
-        "md5": "aff2008c8404b9661dc2f52d34c494e0",
-        "file": "bios/EmuDisk/Chihiro/SEGABOOT_MBROM1.XBE"
-      },
-      {
         "md5": "ec15634cf28e8bcaf660346787f83254",
         "file": "bios/EmuDisk/Chihiro/ic10_g24lc64.bin"
       },
@@ -902,6 +940,7 @@
       }
     ]
   },
+
   "coco": {
     "name": "Color Computer",
     "biosFiles": [
@@ -991,6 +1030,7 @@
       }
     ]
   },
+
   "colecovision": {
     "name": "ColecoVision",
     "biosFiles": [
@@ -1008,6 +1048,7 @@
       }
     ]
   },
+
   "crvision": {
     "name": "Creativision",
     "biosFiles": [
@@ -1025,6 +1066,7 @@
       }
     ]
   },
+
   "dragon32": {
     "name": "Dragon",
     "biosFiles": [
@@ -1042,6 +1084,7 @@
       }
     ]
   },
+
   "dreamcast": {
     "name": "Dreamcast",
     "biosFiles": [
@@ -1063,6 +1106,7 @@
       }
     ]
   },
+
   "electron": {
     "name": "Acorn Electron",
     "biosFiles": [
@@ -1096,6 +1140,7 @@
       }
     ]
   },
+
   "fds": {
     "name": "Nintendo Family Computer Disk System",
     "biosFiles": [
@@ -1105,6 +1150,7 @@
       }
     ]
   },
+
   "ecwolf": {
     "name": "ECWolf",
     "biosFiles": [
@@ -1114,6 +1160,7 @@
       }
     ]
   },
+
   "fm7": {
     "name": "FM-7",
     "biosFiles": [
@@ -1139,6 +1186,7 @@
       }
     ]
   },
+
   "fmtowns": {
     "name": "FMTowns",
     "biosFiles": [
@@ -1188,6 +1236,7 @@
       }
     ]
   },
+
   "gamate": {
     "name": "Gamate",
     "biosFiles": [
@@ -1201,6 +1250,7 @@
       }
     ]
   },
+
   "gamecom": {
     "name": "Game.com",
     "biosFiles": [
@@ -1214,6 +1264,7 @@
       }
     ]
   },
+
   "gamepock": {
     "name": "Game Pocket",
     "biosFiles": [
@@ -1227,15 +1278,21 @@
       }
     ]
   },
+
   "gb": {
     "name": "Game Boy",
     "biosFiles": [
       {
         "md5": "32fbbd84168d3482956eb3c5051637f5",
         "file": "bios/gb_bios.bin"
+      },
+      {
+        "md5": "71a378e71ff30b2d8a1f02bf5c7896aa",
+        "file": "bios/GB_mgb.bin"
       }
     ]
   },
+
   "gba": {
     "name": "Game Boy Advance",
     "biosFiles": [
@@ -1253,6 +1310,7 @@
       }
     ]
   },
+
   "gbc": {
     "name": "Game Boy Color",
     "biosFiles": [
@@ -1261,11 +1319,20 @@
         "file": "bios/gbc_bios.bin"
       },
       {
+        "md5": "48991ee7b1813d0cba5b099df6578668",
+        "file": "bios/GBC_cgbE.bin"
+      },
+      {
         "md5": "e6cefb5f7d352fab6681989763917c73",
         "file": "bios/GBC_agb.bin"
+      },
+      {
+        "md5": "a3bdf3d628e58cf6821fe87d3efd51a9",
+        "file": "bios/GBC_agb0.bin"
       }
     ]
   },
+
   "gmaster": {
     "name": "Game Master",
     "biosFiles": [
@@ -1279,6 +1346,7 @@
       }
     ]
   },
+
   "gp32": {
     "name": "Game Park 32",
     "biosFiles": [
@@ -1292,6 +1360,7 @@
       }
     ]
   },
+
   "hikaru": {
     "name": "Hikaru",
     "biosFiles": [
@@ -1305,6 +1374,7 @@
       }
     ]
   },
+
   "intellivision": {
     "name": "Mattel Intellivision",
     "biosFiles": [
@@ -1318,6 +1388,7 @@
       }
     ]
   },
+
   "j2me": {
     "name": "Java",
     "biosFiles": [
@@ -1327,6 +1398,7 @@
       }
     ]
   },
+
   "jaguar": {
     "name": "Jaguar",
     "biosFiles": [
@@ -1348,6 +1420,7 @@
       }
     ]
   },
+
   "laseractive": {
     "name": "Pioneer Laseractive",
     "biosFiles": [
@@ -1373,6 +1446,7 @@
       }
     ]
   },
+
   "lynx": {
     "name": "Lynx",
     "biosFiles": [
@@ -1382,6 +1456,7 @@
       }
     ]
   },
+
   "camplynx": {
     "name": "Camputers Lynx",
     "biosFiles": [
@@ -1431,6 +1506,7 @@
       }
     ]
   },
+
   "mastersystem": {
     "name": "Master System",
     "biosFiles": [
@@ -1443,15 +1519,20 @@
         "file": "bios/[BIOS] Sega Master System (Japan) (v2.1).sms"
       },
       {
-        "md5": "e49e63328c78fe3d24ae32bf903583e0",
-        "file": "bios/SMS_kr.sms"
+        "md5": "626b3453613e43d5a47908a8944ba583",
+        "file": "bios/SMS_us_1.0b.sms"
       },
       {
-        "md5": "840481177270d5642a14ca71ee72844c",
-        "file": "bios/sms.rom"
+        "md5": "3153447d155fb8bfc66a4d1c41e399b9",
+        "file": "bios/SMS_m404.sms"
+      },
+      {
+        "md5": "e49e63328c78fe3d24ae32bf903583e0",
+        "file": "bios/SMS_kr.sms"
       }
     ]
   },
+
   "msx": {
     "name": "MSX",
     "biosFiles": [
@@ -1521,6 +1602,7 @@
       }
     ]
   },
+
   "msx2": {
     "name": "MSX2",
     "biosFiles": [
@@ -1582,6 +1664,7 @@
       }
     ]
   },
+
   "msx2+": {
     "name": "MSX2+",
     "biosFiles": [
@@ -1631,6 +1714,7 @@
       }
     ]
   },
+
   "msxturbor": {
     "name": "MSX Turbo R",
     "biosFiles": [
@@ -1652,6 +1736,7 @@
       }
     ]
   },
+
   "n64dd": {
     "name": "Nintendo 64 DD",
     "biosFiles": [
@@ -1669,6 +1754,7 @@
       }
     ]
   },
+
   "namco2x6": {
     "name": "Namco2x6",
     "biosFiles": [
@@ -1682,6 +1768,7 @@
       }
     ]
   },
+
   "naomi": {
     "name": "Naomi",
     "biosFiles": [
@@ -1691,6 +1778,7 @@
       }
     ]
   },
+
   "naomi2": {
     "name": "Naomi2",
     "biosFiles": [
@@ -1700,6 +1788,7 @@
       }
     ]
   },
+
   "nds": {
     "name": "Nintendo DS",
     "biosFiles": [
@@ -1728,6 +1817,10 @@
         "file": "bios/dsi_firmware.bin"
       },
       {
+        "md5": "b8c0b3f620410591f47dafd5866760e0",
+        "file": "bios/NDS_Firmware_2.bin"
+      },
+      {
         "md5": "3c704824663ce26b6a1ed4d85238ae5b",
         "file": "bios/NDS_Lite_Firmware.bin"
       },
@@ -1741,6 +1834,7 @@
       }
     ]
   },
+
   "neogeo": {
     "name": "NeoGeo",
     "biosFiles": [
@@ -1750,6 +1844,7 @@
       }
     ]
   },
+
   "neogeo64": {
     "name": "Hyper NeoGeo 64",
     "biosFiles": [
@@ -1759,6 +1854,7 @@
       }
     ]
   },
+
   "neogeocd": {
     "name": "NeoGeo CD",
     "biosFiles": [
@@ -1813,38 +1909,20 @@
       {
         "md5": "006a881532f2caffc3fe9fb5593f2ed5",
         "file": "bios/neocd.zip"
-      },
-      {
-        "md5": "c996961db77b48b54a2daa3cda12da0d",
-        "file": "bios/hiscore.dat"
-      },
-      {
-        "md5": "4941042df918f0f1370e2b70d0f7d0de",
-        "file": "bios/history.dat"
-      },
-      {
-        "md5": "0ed03c88b93b036f2f0035f32b200f27",
-        "file": "bios/command.dat"
-      },
-      {
-        "md5": "0727c8530c51fbd030c710d2af4389cb",
-        "file": "bios/gamecontrollerdb.txt"
       }
     ]
   },
+
   "ngage": {
     "name": "Nokia N-gage",
     "biosFiles": [
       {
         "md5": "64a95a4a884cf4cc15a566b856603193",
         "file": "bios/eka2l1/data/roms/NEM-4/SYM.ROM"
-      },
-      {
-        "md5": "b1586eb09b91f65c37a2f5e7c6ef7980",
-        "file": "bios/gamecontrollerdb.txt"
       }
     ]
   },
+
   "ngp": {
     "name": "Neo Geo Pocket",
     "biosFiles": [
@@ -1854,6 +1932,7 @@
       }
     ]
   },
+
   "ngpc": {
     "name": "Neo Geo Pocket Color",
     "biosFiles": [
@@ -1863,6 +1942,7 @@
       }
     ]
   },
+
   "odyssey2": {
     "name": "Odyssey 2",
     "biosFiles": [
@@ -1884,6 +1964,7 @@
       }
     ]
   },
+
   "pc88": {
     "name": "NEC PC-8800",
     "biosFiles": [
@@ -1917,6 +1998,7 @@
       }
     ]
   },
+
   "pc98": {
     "name": "NEC PC-9800",
     "biosFiles": [
@@ -1942,6 +2024,7 @@
       }
     ]
   },
+
   "pcengine": {
     "name": "PC Engine",
     "biosFiles": [
@@ -1951,6 +2034,7 @@
       }
     ]
   },
+
   "pcenginecd": {
     "name": "PC Engine CD",
     "biosFiles": [
@@ -1964,6 +2048,7 @@
       }
     ]
   },
+
   "pcfx": {
     "name": "PC-FX",
     "biosFiles": [
@@ -1981,6 +2066,7 @@
       }
     ]
   },
+
   "pegasus": {
     "name": "Aamber Pegasus",
     "biosFiles": [
@@ -1994,6 +2080,7 @@
       }
     ]
   },
+
   "pokemini": {
     "name": "Nintendo Pokemon Mini",
     "biosFiles": [
@@ -2003,19 +2090,17 @@
       }
     ]
   },
+
   "ps2": {
     "name": "PS2",
     "biosFiles": [
       {
         "md5": "21038400dc633070a78ad53090c53017",
         "file": "bios/pcsx2/bios/ps2-0230a-20080220.bin"
-      },
-      {
-        "md5": "0525ad1f1381152f20bfb05775cf39cd",
-        "file": "bios/resources/RedumpDatabase.yaml"
       }
     ]
   },
+
   "psx": {
     "name": "PSX",
     "biosFiles": [
@@ -2045,6 +2130,7 @@
       }
     ]
   },
+
   "pv1000": {
     "name": "PV-1000",
     "biosFiles": [
@@ -2054,6 +2140,7 @@
       }
     ]
   },
+
   "satellaview": {
     "name": "Satellaview",
     "biosFiles": [
@@ -2099,6 +2186,7 @@
       }
     ]
   },
+
   "saturn": {
     "name": "Sega Saturn",
     "biosFiles": [
@@ -2180,6 +2268,7 @@
       }
     ]
   },
+
   "scummvm": {
     "name": "ScummVM",
     "biosFiles": [
@@ -2190,197 +2279,10 @@
       {
         "md5": "89e42e386e82e0cacb4a2704a03706ca",
         "file": "bios/scummvm/extra/MT32_PCM.ROM"
-      },
-      {
-        "md5": "ee71d6cd464c618c632e6fd62b430d2c",
-        "file": "bios/scummvm/theme/scummmodern.zip"
-      },
-      {
-        "md5": "8f37bd19dd51be456ac8f005fd5669a8",
-        "file": "bios/scummvm/theme/scummclassic.zip"
-      },
-      {
-        "md5": "0d990484d0dfc1680b20cfabcae373cd",
-        "file": "bios/scummvm/theme/scummremastered.zip"
-      },
-      {
-        "md5": "b2811fa9b209733b61cd49ddb21e1e95",
-        "file": "bios/scummvm/theme/residualvm.zip"
-      },
-      {
-        "md5": "9c59e0e9875434456ec1b7eb8e51666f",
-        "file": "bios/scummvm/theme/gui-icons.dat"
-      },
-      {
-        "md5": "f073f17187d0bfa3e7ebb7f328847969",
-        "file": "bios/scummvm/theme/shaders.dat"
-      },
-      {
-        "md5": "a206e54bac1af13559ac8b2d9e550577",
-        "file": "bios/scummvm/theme/translations.dat"
-      },
-      {
-        "md5": "73cf5bd61896442a990e363f284a0bc2",
-        "file": "bios/scummvm/extra/achievements.dat"
-      },
-      {
-        "md5": "d4264d4573f22d290e033e1d834d7221",
-        "file": "bios/scummvm/extra/classicmacfonts.dat"
-      },
-      {
-        "md5": "f2e88b2faec499a4914c3a0bcffc7db1",
-        "file": "bios/scummvm/extra/encoding.dat"
-      },
-      {
-        "md5": "a9584a928c0f52ef28b33d8702983c35",
-        "file": "bios/scummvm/extra/helpdialog.zip"
-      },
-      {
-        "md5": "d97f2965013b343dd3d4fdbbc7192f15",
-        "file": "bios/scummvm/extra/macgui.dat"
-      },
-      {
-        "md5": "4f9dd40b455876d5c54b5ebd93aec88c",
-        "file": "bios/scummvm/extra/access.dat"
-      },
-      {
-        "md5": "f6d90885f6962f89de02e34031111599",
-        "file": "bios/scummvm/extra/bagel.dat"
-      },
-      {
-        "md5": "fc5886ea5388f20eae299bb408da5bcc",
-        "file": "bios/scummvm/extra/cryo.dat"
-      },
-      {
-        "md5": "7224c7a94074addeb69015b1346695d2",
-        "file": "bios/scummvm/extra/cryomni3d.dat"
-      },
-      {
-        "md5": "9a9cfe40dcca517f130d4430bd1af643",
-        "file": "bios/scummvm/extra/darkseed.dat"
-      },
-      {
-        "md5": "b304979ed642a6dcaf26f43f8a37a1de",
-        "file": "bios/scummvm/extra/drascula.dat"
-      },
-      {
-        "md5": "71697f90fb0c7747616dbb0799ce966b",
-        "file": "bios/scummvm/extra/freescape.dat"
-      },
-      {
-        "md5": "d13cc3c481e84e787ec8aa86dffc565f",
-        "file": "bios/scummvm/extra/got.aud"
-      },
-      {
-        "md5": "a29f591769bd731df0d9ddd3a191fe8c",
-        "file": "bios/scummvm/extra/got.gfx"
-      },
-      {
-        "md5": "7857da7e56a11e0749fb45100c323b3c",
-        "file": "bios/scummvm/extra/hadesch_translations.dat"
-      },
-      {
-        "md5": "a865e70f1b0998a500f522dab441c8fc",
-        "file": "bios/scummvm/extra/hugo.dat"
-      },
-      {
-        "md5": "ebddd7bbd97135a427083db5daf6f9fc",
-        "file": "bios/scummvm/extra/kyra.dat"
-      },
-      {
-        "md5": "6f90cf73f36453d332d5c9cee311f81c",
-        "file": "bios/scummvm/extra/lure.dat"
-      },
-      {
-        "md5": "3b1faf40e685b955372e02f54ed70263",
-        "file": "bios/scummvm/extra/macventure.dat"
-      },
-      {
-        "md5": "01f074a6ac34dd86fcc6d1e8090614f0",
-        "file": "bios/scummvm/extra/mm.dat"
-      },
-      {
-        "md5": "3cfb16d7bab4d77606b3b1274b8ae870",
-        "file": "bios/scummvm/extra/mort.dat"
-      },
-      {
-        "md5": "54e9056211f2fff255b6f66a3fe39a8d",
-        "file": "bios/scummvm/extra/myst3.dat"
-      },
-      {
-        "md5": "eb7cfdb3f74972beb8f43196e4e44001",
-        "file": "bios/scummvm/extra/nancy.dat"
-      },
-      {
-        "md5": "dfaab12ffb265646f31f51b6904246d1",
-        "file": "bios/scummvm/extra/neverhood.dat"
-      },
-      {
-        "md5": "993adab2fd44277d5fd7aa5971e7099c",
-        "file": "bios/scummvm/extra/prince_translation.dat"
-      },
-      {
-        "md5": "93c6d6379eb0290ce93854a6888ec3f4",
-        "file": "bios/scummvm/extra/queen.tbl"
-      },
-      {
-        "md5": "9d00157b1cebd6368cbf88135c098f40",
-        "file": "bios/scummvm/extra/sky.cpt"
-      },
-      {
-        "md5": "89664136c503a30894d5c713be5bfe90",
-        "file": "bios/scummvm/extra/supernova.dat"
-      },
-      {
-        "md5": "4594620989a0bfd8b120da2de7ac30de",
-        "file": "bios/scummvm/extra/teenagent.dat"
-      },
-      {
-        "md5": "4b2fb71201dc3795cff45df6200a1918",
-        "file": "bios/scummvm/extra/titanic.dat"
-      },
-      {
-        "md5": "891022a4e2917bb54b5cdc9a46f5b3df",
-        "file": "bios/scummvm/extra/tony.dat"
-      },
-      {
-        "md5": "2b71a5d9aa19219d46711e8a77451f0f",
-        "file": "bios/scummvm/extra/toon.dat"
-      },
-      {
-        "md5": "e359fb7f14c4cb072b6e9300a23a6d62",
-        "file": "bios/scummvm/extra/ultima.dat"
-      },
-      {
-        "md5": "e5b95811b05b9f0f593b49c860391200",
-        "file": "bios/scummvm/extra/ultima8.dat"
-      },
-      {
-        "md5": "9783248899f9cb531f0a3e0a711ab8b3",
-        "file": "bios/scummvm/extra/wintermute.zip"
-      },
-      {
-        "md5": "6df29d218962e155d0a2114006af45c0",
-        "file": "bios/scummvm/extra/fonts.dat"
-      },
-      {
-        "md5": "18b8811c1bbc297be45f38c3bd6a0728",
-        "file": "bios/scummvm/extra/fonts-cjk.dat"
-      },
-      {
-        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b",
-        "file": "bios/scummvm/extra/fonts-imgui.dat"
-      },
-      {
-        "md5": "32b777b824f02b1e1259903740964058",
-        "file": "bios/scummvm/extra/grim-patch.lab"
-      },
-      {
-        "md5": "9eb7b7e7cc7dad1fe08be6e73d749abe",
-        "file": "bios/scummvm/extra/monkey4-patch.m4b"
       }
     ]
   },
+
   "scv": {
     "name": "Super Cassette Vision",
     "biosFiles": [
@@ -2398,6 +2300,7 @@
       }
     ]
   },
+
   "sega32x": {
     "name": "Sega 32X",
     "biosFiles": [
@@ -2415,6 +2318,7 @@
       }
     ]
   },
+
   "megacd": {
     "name": "Sega CD",
     "biosFiles": [
@@ -2432,6 +2336,7 @@
       }
     ]
   },
+
   "segastv": {
     "name": "Sega ST-V",
     "biosFiles": [
@@ -2441,6 +2346,7 @@
       }
     ]
   },
+
   "sgb": {
     "name": "Super Game Boy",
     "biosFiles": [
@@ -2462,6 +2368,7 @@
       }
     ]
   },
+
   "sufami": {
     "name": "Sufami",
     "biosFiles": [
@@ -2471,6 +2378,7 @@
       }
     ]
   },
+
   "supergrafx": {
     "name": "Supergrafx",
     "biosFiles": [
@@ -2480,6 +2388,7 @@
       }
     ]
   },
+
   "supracan": {
     "name": "Super A Can",
     "biosFiles": [
@@ -2497,6 +2406,7 @@
       }
     ]
   },
+
   "ti99": {
     "name": "TI/99",
     "biosFiles": [
@@ -2514,16 +2424,13 @@
       }
     ]
   },
+
   "triforce": {
     "name": "Triforce",
     "biosFiles": [
       {
         "md5": "",
         "file": "bios/triforce/segaboot.gcm"
-      },
-      {
-        "md5": "1f118b8735fcf40c20b38c3184eebfd9",
-        "file": "bios/Sys/codehandler.bin"
       },
       {
         "md5": "d063803adcced52217989bd825d69eb8",
@@ -2539,6 +2446,7 @@
       }
     ]
   },
+
   "tutor": {
     "name": "APF M-1000",
     "biosFiles": [
@@ -2552,6 +2460,7 @@
       }
     ]
   },
+
   "vc4000": {
     "name": "VC4000",
     "biosFiles": [
@@ -2561,6 +2470,7 @@
       }
     ]
   },
+
   "vectrex": {
     "name": "Vectrex",
     "biosFiles": [
@@ -2574,6 +2484,7 @@
       }
     ]
   },
+
   "vg5k": {
     "name": "VG5000",
     "biosFiles": [
@@ -2587,6 +2498,7 @@
       }
     ]
   },
+
   "vsmile": {
     "name": "V. Smile",
     "biosFiles": [
@@ -2612,6 +2524,7 @@
       }
     ]
   },
+
   "x1": {
     "name": "Sharp x1",
     "biosFiles": [
@@ -2625,6 +2538,7 @@
       }
     ]
   },
+
   "x68000": {
     "name": "Sharp x68000",
     "biosFiles": [
@@ -2635,17 +2549,10 @@
       {
         "md5": "cb0a5cfcf7247a7eab74bb2716260269",
         "file": "bios/keropi/cgrom.dat"
-      },
-      {
-        "md5": "aeb4607a14612606c833227437aaa16a",
-        "file": "bios/SCSIINROM.DAT"
-      },
-      {
-        "md5": "237be014374b74d327f15f250d4d62bf",
-        "file": "bios/SCSIEXROM.DAT"
       }
     ]
   },
+
   "xbox": {
     "name": "XBox",
     "biosFiles": [
@@ -2660,37 +2567,10 @@
       {
         "md5": "6d497abbfb773a2e07f8ab71f2a2999d",
         "file": "bios/EEPROM.bin"
-      },
-      {
-        "md5": "6b3e2bd6cfa39f267e4f862113b8e729",
-        "file": "bios/hlsl/CxbxPixelShaderTemplate.hlsl"
-      },
-      {
-        "md5": "fcf5cc618c91ed2a863134380c4b4de5",
-        "file": "bios/hlsl/FixedFunctionPixelShader.hlsl"
-      },
-      {
-        "md5": "0bbd94bdd8955212754c2f72f3ef2313",
-        "file": "bios/hlsl/FixedFunctionPixelShader.hlsli"
-      },
-      {
-        "md5": "3811e112a60371144627f918ad0adeec",
-        "file": "bios/hlsl/CxbxVertexShaderTemplate.hlsl"
-      },
-      {
-        "md5": "c21140080b783c7ee9cde28c119ef552",
-        "file": "bios/hlsl/FixedFunctionVertexShader.hlsl"
-      },
-      {
-        "md5": "8cb9260a9c921fb957e9ce1fb85218b5",
-        "file": "bios/hlsl/FixedFunctionVertexShaderState.hlsli"
-      },
-      {
-        "md5": "74681e0caa7c7ccd5e819608c868c64b",
-        "file": "bios/hlsl/CxbxVertexShaderPassthrough.hlsl"
       }
     ]
   },
+
   "xegs": {
     "name": "Atari XEGS",
     "biosFiles": [

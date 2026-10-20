@@ -24,11 +24,11 @@
     "xemu/component_manifest.json",
     "xroar/component_manifest.json"
   ],
-  "summary": "2021 kept, 43 added, 1 hash corrected, 52 requirements corrected, 94 hashes filled, 1073 additions left out, 107 entries found by content not listed",
+  "summary": "2021 kept, 37 added, 1 hash corrected, 52 requirements corrected, 95 hashes filled, 934 additions left out, 107 entries found by content not listed",
   "counts": {
     "kept": 2021,
-    "added": 43,
-    "not_added": 1073,
+    "added": 37,
+    "not_added": 934,
     "not_kept": 0
   },
   "hashes_corrected": [
@@ -49,6 +49,7 @@
     "psx/scph3000.bin sha256",
     "psx/scph3500.bin sha256",
     "mame/neogeo.zip sha256",
+    "psp/ppge_atlas.zim sha256",
     "3do/panafz1.bin sha256",
     "3do/panafz10.bin sha256",
     "3do/panafz10-norsa.bin sha256",

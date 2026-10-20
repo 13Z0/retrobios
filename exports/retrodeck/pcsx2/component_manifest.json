@@ -451,28 +451,6 @@
           "filename": "eeprom.dat",
           "system": "ps2",
           "description": "DEV9 EEPROM"
-        },
-        {
-          "filename": "RedumpDatabase.yaml",
-          "md5": "0525ad1f1381152f20bfb05775cf39cd",
-          "sha256": "302b57fdd1f9472ef590789e4b347381cc8442a04a765c7eae3d3f2e4b06394c",
-          "system": "ps2",
-          "description": "Disc track hash database",
-          "paths": "$bios_path/pcsx2/resources"
-        },
-        {
-          "filename": "patches.zip",
-          "md5": "809868f006eebec4e4615dd8bc397ef7",
-          "sha256": "8d95f1fba3acc83195bbac2d3e042b5f34c3c399856d9865e681d173f4cee609",
-          "system": "ps2",
-          "description": "Game patch archive",
-          "paths": "$bios_path/pcsx2/resources"
-        },
-        {
-          "filename": "GameIndex.yaml",
-          "system": "ps2",
-          "description": "per-title compatibility and fix database",
-          "paths": "$bios_path/resources"
         }
       ]
     }

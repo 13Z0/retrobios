@@ -7,19 +7,19 @@
     <bios path="amiga/bios/kick40063.A600"     md5="e40a5dfb3d017ba8779faba30cbd1c8e" mandatory="false" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
     <bios path="amiga/bios/kick02019.AROS.ext" md5="4fa7042d73d0f77bf5723cf8430989bf" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
     <bios path="amiga/bios/kick02019.AROS"     md5="186d23cccd9fbd6336d0f988b39dce4d" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
-    <bios path="aros-ext.bin" md5="d2ce6748e8e42222662e14359f68dad5" core="amiberry" mandatory="false" />
-    <bios path="aros-rom.bin" md5="48d38fc3fcf2ad7bca5ec5191d02e451" core="amiberry" mandatory="false" />
-    <bios path="whdboot/WHDLoad" md5="6670a9571f235ec31b8bbd48fc18f428" core="amiberry" mandatory="false" />
-    <bios path="whdboot/JST" md5="2a3a61bbd7c351751506e22a4354b76a" core="amiberry" mandatory="false" />
-    <bios path="whdboot/AmiQuit" md5="36ab26d3b855e634fdda062c052cd52b" core="amiberry" mandatory="false" />
-    <bios path="whdboot/boot-data.zip" md5="9e638f3d531eb7cd82594f49a4cf03b7" core="amiberry" mandatory="false" />
-    <bios path="whdboot/game-data/whdload_db.json" md5="14d797815aa9bbc79fe284b244ea75b1" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick33180.A500.RTB" md5="c993feb1eeddec1d2e687aa514231028" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick34005.A500.RTB" md5="7eb13d974af0992d672b67c317a7e0a1" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick40063.A600.RTB" md5="3f97c1963d82c808ef29e7c984c4c688" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick40068.A1200.RTB" md5="547b42b7b070c7f227ea45e0986d57a1" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick40068.A4000.RTB" md5="f89f19b858ea6b1a04327c6f71ee1600" core="amiberry" mandatory="false" />
-    <bios path="whdboot/save-data/Kickstarts/kick31034.A1000.RTB" md5="c5ba6165df42fc69b32942b248fca725" core="amiberry" mandatory="false" />
+    <bios path="aros-ext.bin" md5="d2ce6748e8e42222662e14359f68dad5" core="libretro/amiberry,amiberry" mandatory="false" />
+    <bios path="aros-rom.bin" md5="48d38fc3fcf2ad7bca5ec5191d02e451" core="libretro/amiberry,amiberry" mandatory="false" />
+    <bios path="whdboot/WHDLoad" md5="6670a9571f235ec31b8bbd48fc18f428" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/JST" md5="2a3a61bbd7c351751506e22a4354b76a" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/AmiQuit" md5="36ab26d3b855e634fdda062c052cd52b" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/boot-data.zip" md5="9e638f3d531eb7cd82594f49a4cf03b7" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/game-data/whdload_db.json" md5="14d797815aa9bbc79fe284b244ea75b1" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick33180.A500.RTB" md5="c993feb1eeddec1d2e687aa514231028" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick34005.A500.RTB" md5="7eb13d974af0992d672b67c317a7e0a1" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40063.A600.RTB" md5="3f97c1963d82c808ef29e7c984c4c688" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40068.A1200.RTB" md5="547b42b7b070c7f227ea45e0986d57a1" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40068.A4000.RTB" md5="f89f19b858ea6b1a04327c6f71ee1600" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick31034.A1000.RTB" md5="c5ba6165df42fc69b32942b248fca725" core="libretro/amiberry" mandatory="false" />
     <bios path="amiga-os-310.rom" md5="730888fb1bd9a3606d51f772ed136528" core="amiberry" mandatory="false" />
     <bios path="uae_data/drive_click_A500.wav" md5="6c5b44c1a2bcee664129f850bfe4ed8a" core="libretro/puae,libretro/puae2021" mandatory="false" />
     <bios path="uae_data/drive_spin_A500.wav" md5="7401f854a75f9ede18769168ab896a2a" core="libretro/puae,libretro/puae2021" mandatory="false" />
@@ -162,7 +162,7 @@
     <bios path="np2kai/2608_sd.wav"    md5="08124ccb84a9f65e2affc29581e690c9,d71004351c8bbfdad53b18222c061d49" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
     <bios path="np2kai/2608_tom.wav"   md5="0faed5664a2dd8b1b2308e8a50ac25ea,96a4ead13f364734f79b0c58af2f0e1f" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
     <bios path="np2kai/2608_top.wav"   md5="3721ace646ffd56439aebbb2154e9263,593cff6597ab9380d822b8f824fd2c28" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
-    <bios path="BeebFile/BIOS.rom" md5="de72efe184f74f1cb98f92b1fbf532bb" core="beebem,libretro/np2kai" mandatory="false" />
+    <bios path="BeebFile/BIOS.rom" md5="de72efe184f74f1cb98f92b1fbf532bb" core="libretro/np2kai" mandatory="false" />
   </system>
   <system fullname="Sega MEGA CD" platform="segacd">
     <bios path="segacd/bios_CD_E.bin" md5="e66fa1dc5820d254611fdcdba0662372" core="libretro/genesisplusgx,libretro/picodrive" />
@@ -215,10 +215,6 @@
     <bios path="msx/MSX.ROM"      md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/fmsx" />
     <bios path="msx/PAINTER.ROM" md5="403cdea1cbd2bb24fae506941f8f655e" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/RS232.ROM" md5="279efd1eae0d358eecd4edc7d9adedf3" core="libretro/fmsx" mandatory="false" />
-    <bios path="DEFAULT.FNT" md5="85b38e4128bbc300e675f55b278683a8" core="libretro/fmsx" mandatory="false" />
-    <bios path="INTERNAT.FNT" md5="ac4f4a90c1b1887db48ded39c9d9c847" core="libretro/fmsx" mandatory="false" />
-    <bios path="KOREAN.FNT" md5="73291e76638a2f5aa2eceb843df468f4" core="libretro/fmsx" mandatory="false" />
-    <bios path="JAPANESE.FNT" md5="aa28f0703b951a6be8df3e28e20d263d" core="libretro/fmsx" mandatory="false" />
   </system>
   <system fullname="Atari Lynx" platform="lynx">
     <bios path="lynx/lynxboot.img" md5="fcd403db69f54290b51035d82f835e7b" core="libretro/handy,libretro/mednafen_lynx" />
@@ -323,7 +319,6 @@
     <bios path="ps2/ps2-0230e-20080220.bin" md5="dc69f0643a3030aaa4797501b483d6c4" core="libretro/pcsx2,pcsx2" />
     <bios path="ps2/ps2-0230h-20080220.bin" md5="30d56e79d89fbddf10938fa67fe3f34e" core="libretro/pcsx2,pcsx2" />
     <bios path="ps2/ps2-0230j-20080220.bin" md5="80ac46fa7e77b8ab4366e86948e54f83" core="libretro/pcsx2,pcsx2" />
-    <bios path="resources/RedumpDatabase.yaml" md5="0525ad1f1381152f20bfb05775cf39cd" core="pcsx2" mandatory="false" />
   </system>
   <system fullname="Fairchild Channel-F" platform="channelf">
     <bios path="channelf/sl31254.bin" md5="da98f4bb3242ab80d76629021bb27585" core="libretro/freechaf" />
@@ -542,7 +537,7 @@
     <bios path="gamecube/EUR/IPL.bin" md5="0cdda509e2da83c85bfe423dd87346cc" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the European Gamecube menu and the boot animation" />
     <bios path="gamecube/JAP/IPL.bin" md5="fc924a7c879b661abc37cec4f018fdf3" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the Japanese Gamecube menu and the boot animation" />
     <bios path="gamecube/USA/IPL.bin" md5="339848a0b7c2124cf155276c1e79cbd0" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the US Gamecube menu and the boot animation" />
-    <bios path="codehandler.bin" md5="1f118b8735fcf40c20b38c3184eebfd9" core="dolphin" mandatory="false" />
+    <bios path="codehandler.bin" md5="1f118b8735fcf40c20b38c3184eebfd9" core="libretro/dolphin" mandatory="false" />
   </system>
   <system fullname="Nintendo 64DD" platform="64dd">
     <bios path="Mupen64plus/IPL.n64" md5="8d3d9f294b6e174bc7b1d2fd1c727530" core="libretro/mupen64plus_next,libretro/parallel_n64" mandatory="false" note="IPL.n64 (64DD_IPL.bin renamed) - Required for Nintendo 64 DD" />
@@ -674,53 +669,7 @@
     <bios path="scummvm/MT32_CONTROL.ROM" md5="5626206284b22c2734f3e9efefcd2675" mandatory="false" hashMatchMandatory="true" core="libretro/scummvm,scummvm" />
     <bios path="scummvm/MT32_PCM.ROM" md5="89e42e386e82e0cacb4a2704a03706ca" mandatory="false" hashMatchMandatory="true" core="libretro/scummvm,scummvm" />
     <bios path="scummvm/extra/MT32_CONTROL.ROM" md5="c5233e4594f9b7bc4f773ae6ba5aa87d" core="libretro/dosbox,libretro/dosbox_pure,libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/scummmodern.zip" md5="ee71d6cd464c618c632e6fd62b430d2c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/scummclassic.zip" md5="8f37bd19dd51be456ac8f005fd5669a8" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/scummremastered.zip" md5="0d990484d0dfc1680b20cfabcae373cd" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/residualvm.zip" md5="b2811fa9b209733b61cd49ddb21e1e95" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/gui-icons.dat" md5="9c59e0e9875434456ec1b7eb8e51666f" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/shaders.dat" md5="f073f17187d0bfa3e7ebb7f328847969" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/theme/translations.dat" md5="a206e54bac1af13559ac8b2d9e550577" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/achievements.dat" md5="73cf5bd61896442a990e363f284a0bc2" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/classicmacfonts.dat" md5="d4264d4573f22d290e033e1d834d7221" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/encoding.dat" md5="f2e88b2faec499a4914c3a0bcffc7db1" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/helpdialog.zip" md5="a9584a928c0f52ef28b33d8702983c35" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/macgui.dat" md5="d97f2965013b343dd3d4fdbbc7192f15" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/access.dat" md5="4f9dd40b455876d5c54b5ebd93aec88c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/bagel.dat" md5="f6d90885f6962f89de02e34031111599" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/cryo.dat" md5="fc5886ea5388f20eae299bb408da5bcc" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/cryomni3d.dat" md5="7224c7a94074addeb69015b1346695d2" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/darkseed.dat" md5="9a9cfe40dcca517f130d4430bd1af643" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/drascula.dat" md5="b304979ed642a6dcaf26f43f8a37a1de" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/freescape.dat" md5="71697f90fb0c7747616dbb0799ce966b" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/got.aud" md5="d13cc3c481e84e787ec8aa86dffc565f" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/got.gfx" md5="a29f591769bd731df0d9ddd3a191fe8c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/hadesch_translations.dat" md5="7857da7e56a11e0749fb45100c323b3c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/hugo.dat" md5="a865e70f1b0998a500f522dab441c8fc" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/kyra.dat" md5="ebddd7bbd97135a427083db5daf6f9fc" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/lure.dat" md5="6f90cf73f36453d332d5c9cee311f81c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/macventure.dat" md5="3b1faf40e685b955372e02f54ed70263" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/mm.dat" md5="01f074a6ac34dd86fcc6d1e8090614f0" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/mort.dat" md5="3cfb16d7bab4d77606b3b1274b8ae870" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/myst3.dat" md5="54e9056211f2fff255b6f66a3fe39a8d" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/nancy.dat" md5="eb7cfdb3f74972beb8f43196e4e44001" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/neverhood.dat" md5="dfaab12ffb265646f31f51b6904246d1" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/prince_translation.dat" md5="993adab2fd44277d5fd7aa5971e7099c" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/queen.tbl" md5="93c6d6379eb0290ce93854a6888ec3f4" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/sky.cpt" md5="9d00157b1cebd6368cbf88135c098f40" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/supernova.dat" md5="89664136c503a30894d5c713be5bfe90" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/teenagent.dat" md5="4594620989a0bfd8b120da2de7ac30de" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/titanic.dat" md5="4b2fb71201dc3795cff45df6200a1918" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/tony.dat" md5="891022a4e2917bb54b5cdc9a46f5b3df" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/toon.dat" md5="2b71a5d9aa19219d46711e8a77451f0f" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/ultima.dat" md5="e359fb7f14c4cb072b6e9300a23a6d62" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/ultima8.dat" md5="e5b95811b05b9f0f593b49c860391200" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/wintermute.zip" md5="9783248899f9cb531f0a3e0a711ab8b3" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/fonts.dat" md5="6df29d218962e155d0a2114006af45c0" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/fonts-cjk.dat" md5="18b8811c1bbc297be45f38c3bd6a0728" core="libretro/scummvm" mandatory="false" />
     <bios path="scummvm/extra/fonts-imgui.dat" md5="9eb64ec7aa31dc2f5b55541415ecdf8b" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/grim-patch.lab" md5="32b777b824f02b1e1259903740964058" core="libretro/scummvm" mandatory="false" />
-    <bios path="scummvm/extra/monkey4-patch.m4b" md5="9eb7b7e7cc7dad1fe08be6e73d749abe" core="libretro/scummvm" mandatory="false" />
   </system>
   <system fullname="ST-V" platform="stv">
     <bios path="stv/epr-20091.ic8" md5="34175c7ad31acbe44f2baccc7ea065c7" mandatory="true" core="libretro/mednafen_stv" note="Required for Japan-region ST-V games." />

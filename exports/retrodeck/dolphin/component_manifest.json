@@ -254,12 +254,6 @@
           "system": "triforce"
         },
         {
-          "filename": "codehandler.bin",
-          "md5": "1f118b8735fcf40c20b38c3184eebfd9",
-          "sha256": "2b2ff0716aeb9b806cc61181e559041312957f25f04c435bd7da80a78917b33b",
-          "system": "triforce"
-        },
-        {
           "filename": "rtl8723a_fw.bin",
           "system": "triforce",
           "paths": "$bios_path/Load/Firmware/rtl_bt"
