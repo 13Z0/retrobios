@@ -953,6 +953,31 @@ class AnExportLeavesNoStaleFile(unittest.TestCase):
         self.assertLess(body.index("_remove_stale("), body.index(".write_text("))
 
 
+class AnExportWithoutTruthIsRefused(unittest.TestCase):
+    """dist/ is not committed and exports/ is. On a fresh clone, or with a
+    mistyped --truth-dir, the export copied each platform's file back
+    uncorrected, said OK, and replaced the corrected export in exports/."""
+
+    def test_nothing_is_written_and_the_run_fails(self):
+        import export_native  # noqa: PLC0415
+
+        exporter = discover_exporters()["batocera"]
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            output = Path(tmp) / "out"
+            published = output / "batocera" / "batocera-systems"
+            published.parent.mkdir(parents=True)
+            published.write_text("corrected", encoding="utf-8")
+            ok, messages = export_native.export_platform(
+                "batocera", exporter, Path(tmp) / "no-truth", output,
+                str(REPO_ROOT / "platforms"), Path(tmp) / "no-cache", False,
+            )
+            self.assertFalse(ok)
+            self.assertIn("generate_truth.py", messages[0])
+            self.assertEqual(published.read_text(encoding="utf-8"), "corrected")
+            self.assertEqual(sorted(p.name for p in output.rglob("*")),
+                             ["batocera", "batocera-systems"])
+
+
 class RommKeepsItsFixture(unittest.TestCase):
     """The export rebuilt known_bios_files.json from our model in our order:
     3 hash corrections came out as a 3116-line diff, and a key RomM had that

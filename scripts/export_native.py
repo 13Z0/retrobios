@@ -457,8 +457,12 @@ def export_platform(
     except StaleTruth as exc:
         return False, [str(exc)]
     if truth is None:
-        truth = {}
-        messages.append(f"no truth for {platform}, only the platform's own data")
+        # Without a truth the export is the platform's file copied back, and
+        # it replaced the corrected one in exports/ on a fresh clone.
+        return False, [
+            f"{truth_dir / f'{platform}.yml'} is absent: run "
+            f"python scripts/generate_truth.py --platform {platform}"
+        ]
 
     systems, report = build_native_model(truth, scraped)
     if not systems:
