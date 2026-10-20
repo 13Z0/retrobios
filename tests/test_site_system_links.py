@@ -56,5 +56,45 @@ class LinksFollowContent(unittest.TestCase):
                 self.assertEqual(place and place[1], console)
 
 
+class OtherSpellingsOfOneSystem(unittest.TestCase):
+    """Platforms and profiles spell systems their own way: the RetroArch page
+    listed no emulator for sega-mega-drive although genesis_plus_gx declares
+    sega-megadrive, and 2,057 of 4,215 emulator system lines had no link."""
+
+    def test_a_platform_system_finds_its_emulators(self):
+        index = gs._build_emulator_file_index({
+            "genesis_plus_gx": {"systems": ["sega-megadrive"]},
+            "np2kai": {"systems": ["pc-98"]},
+        })
+        self.assertEqual(gs._system_emulators("sega-mega-drive", index), ["genesis_plus_gx"])
+        self.assertEqual(gs._system_emulators("nintendo-snes", index), [])
+
+    def test_a_profile_spelling_links_to_the_platform_page(self):
+        import siterender
+
+        saved = dict(siterender._system_page_map)
+        self.addCleanup(lambda: (siterender._system_page_map.clear(),
+                                 siterender._system_page_map.update(saved)))
+        siterender._system_page_map.clear()
+        siterender._system_page_map["sega-mega-drive"] = ("sega", "Mega Drive")
+        self.assertIn("systems/sega.md#mega-drive", siterender._system_link("sega-megadrive"))
+        siterender._system_page_map["megadrive"] = ("other", "Elsewhere")
+        self.assertEqual(siterender._system_link("sega-megadrive"), "sega-megadrive")
+
+    def test_a_system_only_profiles_name_is_placed_by_their_files(self):
+        import siterender
+
+        saved = dict(siterender._system_page_map)
+        self.addCleanup(lambda: (siterender._system_page_map.clear(),
+                                 siterender._system_page_map.update(saved)))
+        siterender._system_page_map.clear()
+        manufacturers = {"Commodore": {"PET": [{"name": "basic4.bin"}]}}
+        profiles = {"vice_xpet": {"systems": ["commodore-pet"],
+                                  "files": [{"name": "basic4.bin"}]}}
+        gs._build_system_page_map_from_data(
+            manufacturers, {}, {"files": {}, "indexes": {}}, profiles)
+        self.assertEqual(siterender._system_page_map["commodore-pet"], ("commodore", "PET"))
+
+
 if __name__ == "__main__":
     unittest.main()

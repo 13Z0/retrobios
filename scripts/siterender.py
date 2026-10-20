@@ -128,10 +128,37 @@ def _slugify_anchor(text: str) -> str:
     slug = slug.strip("-")
     return slug
 
+_norm_page_cache: dict[str, tuple[str, str] | None] = {}
+_norm_page_size = -1
+
+
+def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
+    """The page an id leads to under another spelling of the same system.
+
+    Emulator cards name sega-megadrive or sinclair-zxspectrum, the pages are
+    keyed by the platforms' spellings: 2,431 of 4,195 cards had no link. A
+    spelling two pages share leads nowhere rather than to either.
+    """
+    global _norm_page_size
+    from common import _norm_system_id
+
+    if _norm_page_size != len(_system_page_map):
+        _norm_page_cache.clear()
+        for known, page in _system_page_map.items():
+            key = _norm_system_id(known)
+            if _norm_page_cache.get(key, page) != page:
+                _norm_page_cache[key] = None
+            else:
+                _norm_page_cache[key] = page
+        _norm_page_size = len(_system_page_map)
+    return _norm_page_cache.get(_norm_system_id(sys_id))
+
+
 def _system_link(sys_id: str, prefix: str = "") -> str:
     """Generate a markdown link to a system page with anchor."""
-    if sys_id in _system_page_map:
-        slug, console = _system_page_map[sys_id]
+    page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
+    if page:
+        slug, console = page
         anchor = _slugify_anchor(console)
         return f"[{sys_id}]({prefix}systems/{slug}.md#{anchor})"
     return sys_id

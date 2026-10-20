@@ -146,6 +146,7 @@ def _build_system_page_map_from_data(
     manufacturers: dict,
     coverages: dict,
     db: dict,
+    profiles: dict | None = None,
 ) -> None:
     """Build system_id -> (manufacturer_slug, console_name) mapping.
 
@@ -209,6 +210,26 @@ def _build_system_page_map_from_data(
                     if suffix in console_norm:
                         _system_page_map[sys_id] = console_norm[suffix]
                         break
+
+    # Systems only emulator profiles name (sega-naomi, commodore-pet): placed
+    # by the files the profile files under them, as a platform's are. A
+    # profile of one system files all of its entries there.
+    for profile in (profiles or {}).values():
+        systems = [str(sid) for sid in profile.get("systems") or []]
+        for sys_id in systems:
+            if sys_id in _system_page_map:
+                continue
+            files = [
+                entry for entry in profile.get("files") or []
+                if isinstance(entry, dict)
+                and (entry.get("system") == sys_id or len(systems) == 1)
+            ]
+            place = _system_folder(files, db, name_consoles)
+            if place is not None:
+                mfr, console = place
+                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
+            elif sys_id in console_norm:
+                _system_page_map[sys_id] = console_norm[sys_id]
 
 
 
@@ -1680,11 +1701,7 @@ def _render_platform_systems(
         ok_count = sum(1 for f in files if f["status"] == "ok")
         total = len(files)
 
-        sys_emus = []
-        if emulator_files:
-            for emu_name, emu_data in emulator_files.items():
-                if sys_id in emu_data.get("systems", set()):
-                    sys_emus.append(emu_name)
+        sys_emus = _system_emulators(sys_id, emulator_files)
 
         sys_link = _system_link(sys_id, "../")
 
@@ -1914,11 +1931,7 @@ def generate_platform_page(
                 f'<span class="rb-badge rb-badge-warning">'
                 f'{non_ok} issue{"s" if non_ok > 1 else ""}</span>'
             )
-        sys_emus = []
-        if emulator_files:
-            for emu_name, emu_data in emulator_files.items():
-                if sys_id in emu_data.get("systems", set()):
-                    sys_emus.append(emu_name)
+        sys_emus = _system_emulators(sys_id, emulator_files)
         emu_str = ", ".join(sys_emus[:3])
         if len(sys_emus) > 3:
             emu_str += f" +{len(sys_emus) - 3}"
@@ -4108,12 +4121,31 @@ def _build_file_consumers(db: dict, coverages: dict, profiles: dict) -> FileCons
 
 
 def _build_emulator_file_index(profiles: dict) -> dict[str, dict]:
-    """Map emulator_name -> {systems: set}, for the platform pages."""
+    """Map emulator_name -> {systems, norm}, for the platform pages.
+
+    norm holds the systems as _norm_system_id reads them: a platform files
+    the Mega Drive as sega-mega-drive and genesis_plus_gx as sega-megadrive,
+    and an exact match left the RetroArch page with no emulator for it.
+    """
+    from common import _norm_system_id
+
     return {
-        name: {"systems": set(profile.get("systems", []))}
+        name: {
+            "systems": set(profile.get("systems", [])),
+            "norm": {_norm_system_id(str(s)) for s in profile.get("systems", [])},
+        }
         for name, profile in profiles.items()
         if profile.get("type") != "alias"
     }
+
+
+def _system_emulators(sys_id: str, emulator_files: dict | None) -> list[str]:
+    """The emulators a platform runs for one of its systems."""
+    from common import _norm_system_id
+
+    norm = _norm_system_id(sys_id)
+    return [name for name, data in (emulator_files or {}).items()
+            if sys_id in data["systems"] or norm in data["norm"]]
 
 
 def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
@@ -4533,7 +4565,7 @@ def _generate(args: argparse.Namespace) -> None:
     # Build system_id -> manufacturer page map (needed by all generators)
     print("Building system cross-reference map...")
     manufacturers = _group_by_manufacturer(db)
-    _build_system_page_map_from_data(manufacturers, coverages, db)
+    _build_system_page_map_from_data(manufacturers, coverages, db, profiles)
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
 
     # Generate platform pages
@@ -4543,9 +4575,13 @@ def _generate(args: argparse.Namespace) -> None:
         generate_platform_index(coverages, registry),
     )
     for name, cov in coverages.items():
+        # The emulators this platform runs, not every one of the system.
+        runs = resolve_platform_cores(cov["config"], profiles)
         write_if_changed(
             str(docs / "platforms" / f"{name}.md"),
-            generate_platform_page(name, cov, registry, emulator_files),
+            generate_platform_page(name, cov, registry, {
+                emu: data for emu, data in emulator_files.items() if emu in runs
+            }),
         )
         PAGE_DATA[f"platforms/{name}.md"] = platform_structured_data(name, cov)
 
