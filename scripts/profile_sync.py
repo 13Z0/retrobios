@@ -38,10 +38,12 @@ from sourceref import (  # noqa: F401  (re-exported for callers and tests)
     _LOCATED_RE,
     _REF_RE,
     _SPLIT_RE,
+    REPO_ROLES,
     RefPart,
     _trim_prose,
     parse_source_ref,
     ref_prose_text,
+    ref_role,
     source_ref_values,
     split_outside_parentheses,
     split_source_ref,
@@ -213,6 +215,9 @@ def strip_repo_word(
     """
     if " " not in path:
         return path
+    role, rest = ref_role(path)
+    if role:
+        return rest
     head, _, tail = path.partition(" ")
     if head.lower() in known and tail and "/" not in head and "." not in head:
         tail = tail.strip()
@@ -1503,8 +1508,14 @@ def build_report(
         if (repo := upstream.parse_repo(url)) is not None
     )
     refs = []
+    # The repository a part says its lines are in (`upstream src/a.c:5`).
+    cited_roles: dict[str, str] = {}
     for citation in collect_citations(profile, text):
         if citation.kind == "ref":
+            for p in split_source_ref(citation.ref):
+                role, _bare = ref_role(p.path)
+                if role:
+                    cited_roles.setdefault(strip_repo_word(p.path, known), role)
             entry = citation.entry
             display = str(entry.get("name") or "") or citation.field
             if citation.label:
@@ -1707,10 +1718,13 @@ def build_report(
                 return 2
             return 1 if line.strip() else 0
 
+        # A part that names its repository is looked up there first.
+        wanted = cited_roles.get(path, "")
+        ordered = sorted(views, key=lambda v: _view_role(v) != wanted) if wanted else views
         best = None
         for candidate in candidates:
             for sha_of in (lambda v: v.pin, lambda v: v.head):
-                for view in views:
+                for view in ordered:
                     found = fetch_from(view.repo, sha_of(view), candidate)
                     if found is None:
                         continue
@@ -1721,6 +1735,16 @@ def build_report(
                             continue
                         candidate = target
                     rank = score(found)
+                    if rank == 3 and not wanted and _view_role(view) == "source":
+                        # The port carries a copy of the emulator: when the
+                        # original holds the same value on the cited line,
+                        # the code asking for the file is the emulator's.
+                        for other in views:
+                            if _view_role(other) != "upstream":
+                                continue
+                            theirs = fetch_from(other.repo, sha_of(other), candidate)
+                            if theirs is not None and score(theirs) == 3:
+                                return other, candidate
                     if rank == 3:
                         return view, candidate
                     if best is None or rank > best[0]:
@@ -1937,6 +1961,11 @@ def build_report(
             result = verify_at_pin(
                 part, fetch(PIN, part.path, part.start, tokens), tokens, hashes
             )
+            # Checked at its own revision, the part still lies in one tree:
+            # the report names it, as a comparison does.
+            owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+            if result.repo is None and owner is not primary:
+                result = replace(result, repo=owner.repo.slug)
         else:
             result = anchor_across_views(part, tokens)
         # A forge that refused the request said nothing about the file:
@@ -2601,6 +2630,68 @@ def blocks_the_pin(report: ProfileReport, accept_changed: bool = False) -> int:
         ):
             blocked += 1
     return blocked
+
+
+def _view_role(view: RepoView) -> str:
+    """source or upstream: the profile field a repository comes from."""
+    return "upstream" if view.field == "upstream" else "source"
+
+
+ATTRIBUTED_STATUSES = ("ANCHORED", "SHIFTED", "RENAMED", "MOVED", "CHANGED")
+
+
+def attribute_refs(path: Path, report: ProfileReport, profile: dict) -> list[str]:
+    """Open each cited path with the role of the repository its lines are in.
+
+    A profile reading a libretro port and the original emulator cited both
+    trees the same way, and a reader could not tell whether the core or the
+    emulator asked for the file. The role is the one this comparison found
+    the lines in, so a word already written that disagrees is corrected.
+    Parts whose lines were found nowhere keep what they have.
+    """
+    if len(report.repos) < 2:
+        return []
+    role_of: dict[str, str] = {}
+    for field_name, _mode, url in declared_repositories(profile):
+        repo = upstream.parse_repo(url)
+        if repo is not None:
+            role_of.setdefault(repo.slug, "source" if field_name == "source_mirror"
+                               else field_name)
+    if len(set(role_of.values())) < 2:
+        return []
+    primary = role_of.get(report.repos[0], "source")
+    text = path.read_text(encoding="utf-8")
+    applied: list[str] = []
+    cursor = 0
+    for entry in report.entries:
+        if entry.kind != "ref" or entry.name.endswith("]"):
+            continue
+        if not _is_rewritable(entry.source_ref):
+            continue
+        rendered = []
+        for part in entry.parts:
+            raw = part.part.raw or _original_part(part)
+            role, bare = ref_role(raw)
+            written_path = bare.startswith(part.part.path)
+            owner = role_of.get(part.repo or "", primary) if part.repo else primary
+            if part.status in ATTRIBUTED_STATUSES and written_path and owner != role:
+                rendered.append(f"{owner} {bare}")
+            else:
+                rendered.append(raw)
+        new_ref = ", ".join(rendered)
+        if new_ref == entry.source_ref:
+            continue
+        try:
+            text, index = replace_field_line(
+                text, "source_ref", entry.source_ref, new_ref, cursor
+            )
+        except YamlWriteError:
+            continue
+        cursor = index + 1
+        applied.append(f"{entry.source_ref} -> {new_ref}")
+    if applied:
+        path.write_text(text, encoding="utf-8")
+    return applied
 
 
 def rebase_refs(
@@ -3369,6 +3460,12 @@ def build_parser() -> argparse.ArgumentParser:
         "all or nothing",
     )
     parser.add_argument(
+        "--attribute-refs",
+        action="store_true",
+        help="open each cited path with source or upstream, the repository its "
+        "lines are in, for profiles that declare both",
+    )
+    parser.add_argument(
         "--bump-commit",
         action="store_true",
         help="move source_commit to HEAD when every ref already anchors there",
@@ -3504,6 +3601,18 @@ def _apply_writes(
         return
     if args.backfill_commits:
         _backfill(args, name, profile, report, path)
+    if getattr(args, "attribute_refs", False):
+        if report.skipped:
+            return
+        with tempfile.TemporaryDirectory() as scratch:
+            target = Path(scratch) / path.name
+            target.write_bytes(path.read_bytes())
+            verb = "would attribute " if args.dry_run else ""
+            for line in attribute_refs(target, report, profile):
+                print(f"{name}: {verb}{line}")
+            if not args.dry_run:
+                path.write_bytes(target.read_bytes())
+        return
     if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(name, path, args):
         return
     with tempfile.TemporaryDirectory() as scratch:
@@ -3716,6 +3825,16 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
             file=sys.stderr,
         )
         raise SystemExit(1)
+    if args.attribute_refs and (
+        args.rebase_refs or args.bump_commit or args.backfill_commits
+        or args.realign_prose
+    ):
+        print(
+            "--attribute-refs runs alone: it rewrites the refs the report was "
+            "built from.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
     if args.realign_prose and (
         args.rebase_refs or args.bump_commit or args.backfill_commits
     ):
@@ -3786,7 +3905,7 @@ def main() -> None:
 
     writes = (
         args.backfill_commits or args.rebase_refs or args.bump_commit
-        or args.realign_prose
+        or args.realign_prose or args.attribute_refs
     )
     if writes and not args.dry_run and not args.force:
         _refuse_dirty_tree(args.emulators_dir)

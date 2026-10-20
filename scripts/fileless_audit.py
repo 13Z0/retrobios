@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
 from common import suggest_names
-from profile_sync import collect_citations, select_views, split_source_ref
+from profile_sync import collect_citations, ref_role, select_views, split_source_ref
 from safeparse import yaml_load
 
 # Ways a program asks for somewhere to read from.
@@ -45,7 +45,7 @@ def cited_paths(document: dict) -> list[str]:
     seen: list[str] = []
     for citation in collect_citations(document):
         for part in split_source_ref(citation.ref):
-            path = part.path
+            path = ref_role(part.path)[1]
             if path.endswith(SOURCE_SUFFIX) and path not in seen:
                 seen.append(path)
     return seen

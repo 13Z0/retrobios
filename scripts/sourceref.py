@@ -16,6 +16,22 @@ _ANNOTATION_RE = re.compile(r"\s*\([^)]*\)?")
 _LOCATED_RE = re.compile(r"^[^\s:]+:\d+(?:-\d+)?$")
 
 
+# A part opening with one of these words says which declared repository its
+# lines are in: `upstream src/bios.c:40` is the original emulator,
+# `source libretro.c:120` the repository the profile names as its source,
+# usually the libretro port. A reader could not tell which code asked for
+# the file when a profile declares both.
+REPO_ROLES = ("source", "upstream")
+
+
+def ref_role(path: str) -> tuple[str, str]:
+    """The role word a cited path opens with, and the path without it."""
+    word, _, rest = path.partition(" ")
+    if word in REPO_ROLES and rest.strip():
+        return word, rest.strip()
+    return "", path
+
+
 @dataclass(frozen=True)
 class RefPart:
     path: str

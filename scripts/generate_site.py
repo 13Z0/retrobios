@@ -2755,6 +2755,12 @@ def _render_emulator_file(
             for scope, checks in validation.items():
                 details.append(f"Validation ({scope}): {', '.join(checks)}")
     if source_ref:
+        asker = requested_by(profile, source_ref)
+        if asker:
+            # A profile reading a libretro core and the original emulator
+            # cited both trees alike: readers could not tell which code asks
+            # for the file.
+            details.append(f"Asked for by: {asker}")
         details.append(
             f"Source: {_source_ref_markdown(profile, source_ref)}"
         )
@@ -4869,6 +4875,7 @@ from sitewrite import (  # noqa: E402,F401
 )
 from sitesources import (  # noqa: E402,F401
     link_prose_citations,
+    requested_by,
     revision_markdown,
     _repo_pins,
     _forge_sources,

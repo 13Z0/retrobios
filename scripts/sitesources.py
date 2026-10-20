@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from siterender import _by_mode
 import re
+from sourceref import ref_role
 from sourceref import source_ref_values
 from sourceref import split_source_ref
 import upstream
@@ -118,6 +119,42 @@ def revision_markdown(profile: dict) -> str:
     return ", ".join(links)
 
 
+def role_label(profile: dict, role: str) -> str:
+    """What a reader calls the repository a role names."""
+    if role == "upstream":
+        return "upstream emulator"
+    return "libretro core" if "libretro" in str(profile.get("type", "")) else "this build"
+
+
+def role_sources(profile: dict, label: str = "") -> dict[str, tuple[upstream.Repo, str]]:
+    """The forge repository and pin behind each role a citation can name."""
+    found: dict[str, tuple[upstream.Repo, str]] = {}
+    for field in ("source", "upstream"):
+        for value, pin, _fallback in _repo_pins(profile, field, label):
+            repo = upstream.parse_repo(value)
+            if repo is not None and pin and field not in found:
+                found[field] = (repo, pin)
+    return found
+
+
+def requested_by(profile: dict, value: str | dict | None) -> str:
+    """Whose code the citations of an entry are in, said in words."""
+    roles = {
+        ref_role(part.path)[0]
+        for _label, refs in source_ref_values(value)
+        for part in split_source_ref(refs)
+    } - {""}
+    if not roles or not _two_repositories(profile):
+        return ""
+    names = [role_label(profile, role) for role in ("source", "upstream") if role in roles]
+    return " and ".join(names)
+
+
+def _two_repositories(profile: dict) -> bool:
+    source, upstream_url = profile.get("source"), profile.get("upstream")
+    return bool(source and upstream_url and source != upstream_url)
+
+
 def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     """Render source_ref values as pinned links when their forge is known.
 
@@ -132,8 +169,16 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     path_re = re.compile(r"^[A-Za-z0-9_.@/+~-]+$")
     for label, refs in source_ref_values(value):
         candidates = _forge_sources(profile, label)
+        by_role = role_sources(profile, label)
         rendered: list[str] = []
+        current_role = ""
         for part in split_source_ref(refs):
+            role, bare = ref_role(part.path)
+            if bare != part.path or role:
+                current_role = role
+            elif part.raw and not part.raw[:1].isdigit():
+                current_role = ""
+            part = type(part)(bare, part.start, part.end, part.raw)
             display = part.path
             if part.start is not None:
                 display += f":{part.start}"
@@ -146,17 +191,23 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
             # broke 470 links. Two repositories and no tree to read: no link.
             selected: tuple[upstream.Repo, str] | None = None
             real_path = part.path
-            if path_re.fullmatch(part.path) and len(candidates) == 1:
-                selected = candidates[0]
+            if path_re.fullmatch(part.path):
+                if current_role:
+                    # Only the repository the part names, or no link at all.
+                    selected = by_role.get(current_role)
+                elif len(candidates) == 1:
+                    selected = candidates[0]
 
+            tag = (f" ({role_label(profile, current_role)})"
+                   if current_role and _two_repositories(profile) else "")
             if selected is None:
-                rendered.append(f"`{display}`")
+                rendered.append(f"`{display}`{tag}")
             else:
                 repo, pin = selected
                 url = _source_permalink(
                     repo, pin, real_path, part.start, part.end
                 )
-                rendered.append(f"[`{display}`]({url})")
+                rendered.append(f"[`{display}`]({url}){tag}")
 
         text = ", ".join(rendered) if rendered else f"`{refs}`"
         if label:

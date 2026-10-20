@@ -728,5 +728,33 @@ class ProseCitationsLinkToThePin(unittest.TestCase):
         self.assertEqual(link_prose_citations(two, "src/a.c:5"), "src/a.c:5")
 
 
+class ACitationSaysWhoseCodeItIs(unittest.TestCase):
+    """Readers could not tell whether the libretro core or the emulator asked
+    for a file: both trees were cited alike, and left unlinked."""
+
+    PROFILE = {"type": "libretro", "source": "https://github.com/libretro/a5200",
+               "upstream": "https://github.com/alekmaul/a5200",
+               "source_commit": "a" * 40, "upstream_commit": "b" * 40}
+
+    def test_each_part_links_to_its_repository_with_its_label(self):
+        from sitesources import _source_ref_markdown, requested_by
+
+        ref = "source libretro.c:5, upstream emu/memory.c:46, 50-52"
+        text = _source_ref_markdown(self.PROFILE, ref)
+        self.assertIn("libretro/a5200/blob/" + "a" * 40 + "/libretro.c#L5) (libretro core)", text)
+        self.assertIn("alekmaul/a5200/blob/" + "b" * 40 + "/emu/memory.c#L50-L52) (upstream emulator)",
+                      text)
+        self.assertEqual(requested_by(self.PROFILE, ref), "libretro core and upstream emulator")
+        self.assertEqual(requested_by(self.PROFILE, "upstream emu/memory.c:46"),
+                         "upstream emulator")
+
+    def test_a_role_without_a_pin_links_nowhere_else(self):
+        from sitesources import _source_ref_markdown
+
+        profile = {**self.PROFILE, "upstream_commit": ""}
+        self.assertEqual(_source_ref_markdown(profile, "upstream emu/memory.c:46"),
+                         "`emu/memory.c:46` (upstream emulator)")
+
+
 if __name__ == "__main__":
     unittest.main()

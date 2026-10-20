@@ -4288,5 +4288,57 @@ class ARecaleKeepsTheRepositoryWord(unittest.TestCase):
                 self.assertEqual(profile_sync._rendered_part(result), expected)
 
 
+class EachCitationNamesTheCodeThatAsks(unittest.TestCase):
+    """A profile reading a libretro core and the original emulator cited both
+    trees alike, and readers could not tell which code asked for a file."""
+
+    setUp = TestBuildReport.setUp
+    tearDown = TestBuildReport.tearDown
+    MD5 = "0123456789abcdef0123456789abcdef"
+    TEXT = (
+        'emulator: T\n'
+        'source: "https://github.com/libretro/a5200"\n'
+        'upstream: "https://github.com/alekmaul/a5200"\n'
+        'source_commit: "pins"\n'
+        'upstream_commit: "pinu"\n'
+        'files:\n'
+        '  - name: 5200.rom\n'
+        f'    md5: {MD5}\n'
+        '    source_ref: "{ref}"\n'
+    )
+
+    def _attribute(self, ref: str) -> str:
+        trees = {
+            "libretro/a5200": {"emu/memory.c": ["x", f"rom {self.MD5}"],
+                               "libretro.c": [f"load {self.MD5}"]},
+            "alekmaul/a5200": {"emu/memory.c": ["y", f"rom {self.MD5}"]},
+        }
+        profile_sync.upstream.fetch_file = (
+            lambda repo, sha, path, cache_dir, offline=False:
+            trees.get(repo.slug, {}).get(path)
+        )
+        profile_sync.upstream.list_tree = (
+            lambda repo, sha, cache_dir, offline=False: (sorted(trees[repo.slug]), False)
+        )
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache_dir, offline=False, branch=None:
+            "pins" if repo.owner == "libretro" else "pinu"
+        )
+        path = Path(self.dir) / "t.yml"
+        path.write_text(self.TEXT.replace("{ref}", ref), encoding="utf-8")
+        profile = yaml.safe_load(path.read_text(encoding="utf-8"))
+        with contextlib.redirect_stderr(io.StringIO()):
+            report = build_report("t", profile, self.dir, text=path.read_text())
+        profile_sync.attribute_refs(path, report, profile)
+        return yaml.safe_load(path.read_text(encoding="utf-8"))["files"][0]["source_ref"]
+
+    def test_emulator_code_the_port_carries_is_the_emulators(self):
+        self.assertEqual(self._attribute("emu/memory.c:2, libretro.c:1"),
+                         "upstream emu/memory.c:2, source libretro.c:1")
+
+    def test_a_written_role_is_followed(self):
+        self.assertEqual(self._attribute("source emu/memory.c:2"), "source emu/memory.c:2")
+
+
 if __name__ == "__main__":
     unittest.main()
