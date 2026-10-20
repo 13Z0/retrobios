@@ -7,7 +7,8 @@ source_commit: "e29ce400a030aea29b447757eeb28fef7a0c493e"
 core_version: "0.15+K"
 display_name: "Sharp - X68000 (px68k SDL)"
 mode: standalone
-cores: []
+cores: ["px68k"]
+built_by: [retropie]
 systems:
   - sharp-x68000
 

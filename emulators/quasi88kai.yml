@@ -7,7 +7,8 @@ source_commit: "0d4e171415cad7ac19ae4ff0dcf8cdcfd825947b"
 core_version: "0.7.1"
 display_name: "NEC - PC-8800 series (QUASI88kai)"
 mode: standalone
-cores: []
+cores: ["quasi88"]
+built_by: [retropie]
 systems:
   - nec-pc-88
   - nec-pc-80
