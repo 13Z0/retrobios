@@ -5,13 +5,14 @@ was written against, so a permalink is pinned, never guessed."""
 
 from __future__ import annotations
 
-from siterender import _by_mode
 import re
-from sourceref import ref_role
-from sourceref import source_ref_values
-from sourceref import split_source_ref
-import upstream
 import urllib.request
+
+import upstream
+from siterender import _by_mode
+from sourceref import _prose_runs, ref_role, source_ref_values, split_source_ref
+
+
 def _repo_pins(profile: dict, field: str, label: str) -> list[tuple[str, str, str]]:
     """Pair each declared repository URL with its own revision.
 
@@ -226,8 +227,6 @@ def link_prose_citations(profile: dict, text: str) -> str:
     anywhere in the tree, and a link to the wrong file is a false citation.
     Text already in backticks or in a link is left alone.
     """
-    from profile_sync import _prose_runs
-
     candidates = _forge_sources(profile)
     if len(candidates) != 1 or ":" not in text:
         return text

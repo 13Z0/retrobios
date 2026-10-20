@@ -32,18 +32,30 @@ sys.path.insert(0, os.path.dirname(__file__))
 import upstream
 from common import load_emulator_profiles, suggest_names
 from hashing import parse_hash_list
-from sourceref import (  # noqa: F401  (re-exported for callers and tests)
+from sourceref import (  # noqa: F401  (re-exported for callers and tests)  # noqa: F401  (the prose grammar, re-exported)
     _ANNOTATION_RE,
     _BARE_RANGE_RE,
     _LOCATED_RE,
+    _PROJECT_WORD_RE,
+    _PROSE_LIST_DELIMITERS,
     _REF_RE,
     _SPLIT_RE,
+    PROSE_CITE_RE,
+    PROSE_CONT_RE,
+    PROSE_CONT_SPACED_RE,
+    PROSE_EXTENSIONLESS,
+    PROSE_LINKING_WORDS,
+    PROSE_LIST_ITEM_RE,
+    PROSE_WRAPPED_RANGE_RE,
     REPO_ROLES,
     RefPart,
+    _prose_external,
+    _prose_runs,
     _trim_prose,
     parse_source_ref,
     ref_prose_text,
     ref_role,
+    resolve_project_word,
     source_ref_values,
     split_outside_parentheses,
     split_source_ref,
@@ -287,47 +299,6 @@ def _anchor_tokens(entry: dict) -> list[str]:
     return tokens
 
 
-# Files a repository carries without an extension and that prose cites by
-# name. Widening the pattern to any dotless word instead would swallow the
-# hex addresses and the constants profiles write the same way: ALTERNATEROMS,
-# F000, C000 all read as `name:number`.
-PROSE_EXTENSIONLESS = (
-    "Makefile",
-    "makefile",
-    "GNUmakefile",
-    "CMakeLists",
-    "Kconfig",
-    "Dockerfile",
-    "configure",
-    "README",
-    "LICENSE",
-    "COPYING",
-    "CHANGELOG",
-)
-PROSE_CITE_RE = re.compile(
-    r"(?P<path>[A-Za-z0-9_][\w./+-]*\.[A-Za-z]\w*"
-    r"|(?:[\w./+-]*/)?(?:" + "|".join(PROSE_EXTENSIONLESS) + r"))"
-    r":(?P<range>\d+(?:-\d+)?)"
-)
-PROSE_LIST_ITEM_RE = re.compile(r"\d+[.)](?:\s|$)")
-PROSE_WRAPPED_RANGE_RE = re.compile(r":\d+(?:-\d+)?(?:[,)\s]|$)")
-PROSE_CONT_RE = re.compile(r",(?P<range>\d+(?:-\d+)?)(?![\w-])(?!\.\d)")
-# A spaced continuation is accepted only for a range: `x.c:55-71, 80-147`
-# follows the source_ref convention, while `x.c:100, 200 files` is prose.
-PROSE_CONT_SPACED_RE = re.compile(r", +(?P<range>\d+-\d+)(?![\w-])(?!\.\d)")
-# Words that read as prose before a filename. Anything else in project
-# position marks the citation external, the way `munt ROMInfo.cpp` does in
-# a source_ref: the profile does not declare that repository.
-PROSE_LINKING_WORDS = frozenset((
-    "a", "an", "and", "are", "as", "at", "before", "both", "but", "by",
-    "each", "for", "from", "in", "into", "is", "it", "its", "no", "not",
-    "of", "on", "only", "or", "over", "per", "see", "so", "than", "that",
-    "the", "their", "then", "these", "this", "those", "to", "under",
-    "upstream", "uses", "via", "was", "when", "where", "while", "with",
-))
-_PROJECT_WORD_RE = re.compile(r"[A-Za-z0-9][\w-]*")
-
-
 @dataclass(frozen=True)
 class Citation:
     """One citation carried by a profile, wherever it is written.
@@ -385,157 +356,6 @@ def _walk_document(
                 yield "str", spot, node, index, item
             else:
                 yield from _walk_document(item, spot)
-
-
-# What separates one citation from the next in prose. lynx-emu writes
-# `...:112; mednafen src/lynx/system.cpp:86-93`: without the semicolon the
-# project word read as prose and the citation was charged to the fork. A
-# sentence end separates them the same way.
-_PROSE_LIST_DELIMITERS = ",;:(."
-
-
-def _prose_external(
-    line: str, path_start: int, known: frozenset[str] | set[str] = frozenset()
-) -> bool:
-    """True when the word before the path names an undeclared project.
-
-    `munt ROMInfo.cpp:206-213` in prose follows the source_ref convention:
-    the leading word is the project, and no declared repository can confirm
-    the reference. The word counts as a project only when a list delimiter
-    or the line start precedes it, it reads as an identifier, it is not a
-    linking word, and it does not name a declared repository: in
-    `boot, in libretro.cpp:12` the candidate is prose, and in
-    `mednafen src/lynx/rom.cpp:55` it is the declared upstream itself.
-    """
-    before = line[:path_start].rstrip()
-    if not before or before[-1] in _PROSE_LIST_DELIMITERS:
-        return False
-    word_start = max(before.rfind(" "), before.rfind("\t"), before.rfind("(")) + 1
-    word = before[word_start:]
-    if not _PROJECT_WORD_RE.fullmatch(word):
-        return False
-    if word.lower() in PROSE_LINKING_WORDS or word.lower() in known:
-        return False
-    lead = before[:word_start].rstrip()
-    return not lead or lead[-1] in _PROSE_LIST_DELIMITERS
-
-
-def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | None:
-    """Path of `project file` inside a declared tree, None when out of reach.
-
-    m64plus-fz cites `rice Config.cpp` and `mupen64plus-core
-    device/pif/bootrom_hle.c`: plugins vendored in the declared repository
-    under mupen64plus-video-rice/ and mupen64plus-core/. A citation is in
-    reach when exactly one file ends with the path below a directory naming
-    the project. The first tree that answers decides.
-    """
-    word, _, rest = path.partition(" ")
-    rest = rest.strip().lstrip("/")
-    if not rest:
-        return None
-    word = word.lower()
-    suffix = "/" + rest
-    for tree in trees:
-        matches = [
-            p for p in tree or []
-            if p.endswith(suffix)
-            and any(word in seg.lower() for seg in p[: -len(suffix)].split("/"))
-        ]
-        if len(matches) == 1:
-            return matches[0]
-        if matches:
-            return None
-    return None
-
-
-def _prose_runs(
-    text: str, known: frozenset[str] | set[str] = frozenset()
-) -> Iterator[tuple[
-    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, bool
-]]:
-    """Citation runs inside one prose scalar.
-
-    A run is a path:range with its attached continuation ranges, written
-    without a space after the comma the way the corpus writes them:
-    `main.c:112,1624-1633` cites two ranges of one file, while `x.c:100, 200`
-    is a citation followed by prose. A token carrying :// is a URL, whose
-    host:port shape would otherwise pass for a citation.
-    """
-    lines = text.splitlines()
-    for number, own in enumerate(lines):
-        # A literal block keeps its line breaks, so a citation wrapped after
-        # `file:` or after a range's comma lost the ranges on the next line
-        # (gearcoleco `libretro.cpp:` then four ranges). The next line is
-        # read as the run's continuation, and a run reaching into it is wrapped.
-        line = own.rstrip()
-        boundary = len(line)
-        following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
-        if PROSE_WRAPPED_RANGE_RE.match(following) and line[-1:].isalnum():
-            # The break can fall before the colon too: jgenesis wraps
-            # `.../src/config.rs` then `:76-78,95-99` on the next line.
-            line += following
-            following = ""
-        # A numbered list after a colon (abuse: `setup.cpp:` then `1. -datadir`)
-        # is not a range.
-        if not following[:1].isdigit() or PROSE_LIST_ITEM_RE.match(following):
-            following = ""
-        if following and line.endswith(":"):
-            line += following
-        elif following and line.endswith(","):
-            line += " " + following
-        consumed = 0
-        for match in PROSE_CITE_RE.finditer(line):
-            if match.start() >= boundary:
-                break
-            if match.start() < consumed:
-                continue
-            token_start = max(line.rfind(" ", 0, match.start()),
-                              line.rfind("\t", 0, match.start())) + 1
-            token = line[token_start:].split()[0] if line[token_start:] else ""
-            if "://" in token:
-                continue
-            path = match.group("path")
-            path_start = match.start("path")
-            # A dotfile citation opens its token with the dot: `.gitlab-ci.yml`
-            # after a delimiter is the filename, while the dot of `boot.cfg`
-            # inside a word belongs to the word before it.
-            if (
-                path_start > 0
-                and line[path_start - 1] == "."
-                and (path_start == 1 or line[path_start - 2] in " \t(")
-            ):
-                path_start -= 1
-                path = "." + path
-            if _prose_external(line, path_start, known):
-                # Kept with its project word, the source_ref convention: the
-                # report looks for the project inside the declared trees
-                # (mupen64plus-ae vendors `rice Config.cpp`) and calls the
-                # citation EXTERNAL only when none carries it.
-                before = line[:path_start].rstrip()
-                word = before[max(before.rfind(" "), before.rfind("\t"),
-                                  before.rfind("(")) + 1:]
-                path = f"{word} {path}"
-            path_span = (path_start, match.end("path"))
-            spans = [(match.start("range"), match.end("range"))]
-            end = match.end()
-            while True:
-                cont = PROSE_CONT_RE.match(line, end)
-                if cont is None:
-                    cont = PROSE_CONT_SPACED_RE.match(line, end)
-                if cont is None:
-                    break
-                spans.append((cont.start("range"), cont.end("range")))
-                end = cont.end()
-            consumed = end
-            parts = []
-            for lo, hi in spans:
-                rng = line[lo:hi]
-                a, _, b = rng.partition("-")
-                parts.append(RefPart(path, int(a), int(b or a), rng))
-            yield (
-                number, path_span, tuple(spans), tuple(parts),
-                line[path_start:end], end > boundary,
-            )
 
 
 def _scalar_spans(node: yaml.Node, spans: list[tuple[int, int]]) -> None:
