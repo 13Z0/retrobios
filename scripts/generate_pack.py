@@ -4442,10 +4442,10 @@ def _target_cores_for(
     """
     if not target_name:
         return None
-    cache, _kept = build_target_cores_cache(
-        [platform_name], target_name, platforms_dir, is_all=True
-    )
-    return cache.get(platform_name)
+    try:
+        return load_target_config(platform_name, target_name, platforms_dir)
+    except (FileNotFoundError, ValueError):
+        return None
 
 
 def _expected_pack_names(
@@ -4479,9 +4479,13 @@ def _expected_pack_names(
         )
         cache = None
         if target_name:
-            cache, pool = build_target_cores_cache(
-                pool, target_name, platforms_dir, is_all=True
-            )
+            try:
+                cache, pool = build_target_cores_cache(
+                    pool, target_name, platforms_dir, is_all=True
+                )
+            except ValueError:
+                # No platform has the target: no pack was built under it.
+                continue
         for group, representative in group_identical_platforms(
             pool, platforms_dir, cache
         ):

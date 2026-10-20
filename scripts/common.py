@@ -2609,6 +2609,10 @@ def build_target_cores_cache(
     """Build target cores cache for a list of platforms.
 
     Returns (cache dict, list of platforms to keep after skipping failures).
+    A platform without a targets file cannot honour the target and is left
+    out with the others, never run unfiltered, and a target no platform knows
+    is refused: `--all --target swtich` checked BizHawk and MiSTer whole and
+    exited 0, a green run that said nothing about the Switch.
     """
     cache: dict[str, set[str] | None] = {}
     skip: list[str] = []
@@ -2616,10 +2620,10 @@ def build_target_cores_cache(
         try:
             cache[p] = load_target_config(p, target, platforms_dir)
         except FileNotFoundError:
-            if is_all:
-                cache[p] = None
-            else:
+            if not is_all:
                 raise
+            print(f"INFO: Skipping {p}: no hardware targets")
+            skip.append(p)
         except ValueError as e:
             if is_all:
                 print(f"INFO: Skipping {p}: {e}")
@@ -2627,6 +2631,8 @@ def build_target_cores_cache(
             else:
                 raise
     kept = [p for p in platforms if p not in skip]
+    if is_all and platforms and not kept:
+        raise ValueError(f"unknown target '{target}': no platform has it")
     return cache, kept
 
 

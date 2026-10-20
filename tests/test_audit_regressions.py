@@ -5438,5 +5438,23 @@ class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):
             )
 
 
+class AnUnknownTargetIsRefusedUnderAll(unittest.TestCase):
+    """--all --target swtich skipped every platform with targets and checked
+    BizHawk and MiSTer unfiltered: a green run about no Switch at all."""
+
+    def test_a_typo_is_refused_and_targetless_platforms_are_left_out(self):
+        from scripts.common import build_target_cores_cache, list_registered_platforms
+
+        platforms = list_registered_platforms(str(ROOT / "platforms"))
+        with contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(ValueError):
+                build_target_cores_cache(platforms, "swtich", str(ROOT / "platforms"), is_all=True)
+            _cache, kept = build_target_cores_cache(
+                platforms, "switch", str(ROOT / "platforms"), is_all=True
+            )
+        self.assertNotIn("bizhawk", kept)
+        self.assertIn("retroarch", kept)
+
+
 if __name__ == "__main__":
     unittest.main()
