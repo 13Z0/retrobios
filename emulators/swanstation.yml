@@ -72,7 +72,7 @@ files:
     md5: "c53ca5908936d412331790f4426c6c33"
     size: 524288
     validation: [size, md5]
-    source_ref: "source src/core/bios.cpp:67-68"
+    source_ref: "source src/core/bios.cpp:66-67"
     aliases: []
 
   - name: "ps1_rom.bin"
@@ -84,5 +84,17 @@ files:
     size: [524288, 4194304, 4089584]
     validation: [size, md5]
     note: "Accepts PS1 (512KB), PS2 (4MB), and PS3 (0x3E66F0) sizes. Only first 512KB used."
-    source_ref: "source src/core/bios.h:9, source src/core/bios.cpp:69-70, source src/core/bios.cpp:81-90"
+    source_ref: "source src/core/bios.h:9, source src/core/bios.cpp:71, source src/core/bios.cpp:81-90"
+    aliases: []
+
+  - name: "ps1_rom.bin"
+    description: "PS3 embedded PS1 BIOS (v5.0 06-23-03 A), whole 0x3E66F0 image"
+    region: [world]
+    required: false
+    hle_fallback: true
+    md5: "fbb5f59ec332451debccf1e377017237"
+    size: 4089584
+    validation: [size]
+    note: "Only the first 512 KB are read and hashed. Their md5 c02a6fbb1b27359f84e92fae8bc21316 is the first PS3 entry of the table."
+    source_ref: "source src/core/bios.h:9, source src/core/bios.cpp:70, source src/core/bios.cpp:82-99, source src/core/bios.cpp:129"
     aliases: []
