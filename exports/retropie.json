@@ -426,6 +426,15 @@
     {
       "kind": "added",
       "system": "Commodore - Amiga",
+      "name": "amiga-os-310.rom",
+      "destination": "amiga-os-310.rom",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
       "name": "rom.key",
       "destination": "amiga/rom.key",
       "field": null,
@@ -455,105 +464,6 @@
       "system": "Commodore - Amiga",
       "name": "D8039HLC.rom",
       "destination": "D8039HLC.rom",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "WHDLoad",
-      "destination": "whdboot/WHDLoad",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "JST",
-      "destination": "whdboot/JST",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "AmiQuit",
-      "destination": "whdboot/AmiQuit",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "boot-data.zip",
-      "destination": "whdboot/boot-data.zip",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "whdload_db.json",
-      "destination": "whdboot/game-data/whdload_db.json",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick33180.A500.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick34005.A500.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick40063.A600.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick40068.A1200.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick40068.A4000.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "kick31034.A1000.RTB",
-      "destination": "whdboot/save-data/Kickstarts/kick31034.A1000.RTB",
       "field": null,
       "old": null,
       "new": {}
@@ -2237,6 +2147,141 @@
       "system": "Nintendo - GameCube",
       "name": "keys.bin",
       "destination": "keys.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8723a_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8723a_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8723b_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8723b_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8723d_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8723d_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8761a_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8761a_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8761bu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8761bu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8821a_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8821a_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8821c_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8821c_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8822b_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8822b_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8822cu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8822cu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8851bu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8851bu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8852au_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8852au_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8852bu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8852bu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8852cu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8852cu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8852btu_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8852btu_fw.bin",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - GameCube",
+      "name": "rtl8922au_fw.bin",
+      "destination": "Load/Firmware/rtl_bt/rtl8922au_fw.bin",
       "field": null,
       "old": null,
       "new": {}
