@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <biosList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="es_bios.xsd">
   <system fullname="Amiga 600 (ECS/OCS)" platform="amiga600">
-    <bios path="amiga/bios/kick33180.A500" md5="85ad74194e87c08904327de1a9443b7a" core="amiberry" mandatory="false" />
-    <bios path="amiga/bios/kick34005.A500" md5="82a21c1890cae844b3df741f2762d48d" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm,libretro/uae4all" />
-    <bios path="amiga/bios/kick37175.A500" md5="dc10d7bdd1b6f450773dfb558477c230" core="amiberry,libretro/uae" mandatory="false" />
+    <bios path="amiga/bios/kick33180.A500"     md5="85ad74194e87c08904327de1a9443b7a" core="amiberry" mandatory="false" />
+    <bios path="amiga/bios/kick34005.A500"     md5="82a21c1890cae844b3df741f2762d48d" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm,libretro/uae4all" />
+    <bios path="amiga/bios/kick37175.A500"     md5="dc10d7bdd1b6f450773dfb558477c230" core="amiberry,libretro/uae" mandatory="false" />
     <bios path="amiga/bios/kick40063.A600"     md5="e40a5dfb3d017ba8779faba30cbd1c8e" mandatory="false" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
     <bios path="amiga/bios/kick02019.AROS.ext" md5="4fa7042d73d0f77bf5723cf8430989bf" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
     <bios path="amiga/bios/kick02019.AROS"     md5="186d23cccd9fbd6336d0f988b39dce4d" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
@@ -35,7 +35,7 @@
   <system fullname="Amiga 1200 (AGA)" platform="amiga1200">
     <bios path="amiga/bios/kick39106.A1200" md5="b7cc148386aa631136f510cd29e42fc3" core="amiberry" mandatory="false" />
     <bios path="amiga/bios/kick40068.A1200" md5="646773759326fbac3b2311fd8c8793ee" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
-    <bios path="amiga/bios/kick40068.A4000" md5="9bdedde6a4f33555b4a270c8ca53297d" core="amiberry,libretro/amiberry,libretro/uae" mandatory="false" note="This bios is required only for A4000 emulation" />
+    <bios path="amiga/bios/kick40068.A4000" md5="9bdedde6a4f33555b4a270c8ca53297d" core="amiberry,libretro/amiberry,libretro/uae" note="This bios is required only for A4000 emulation" mandatory="false" />
   </system>
   <system fullname="Amiga CDTV" platform="amigacdtv">
     <bios path="amiga/bios/kick34005.CDTV" md5="89da1838a24460e4b93f4f0c5d92d48d,d98112f18792ee3714df16a6eb421b89,
@@ -51,13 +51,13 @@
   </system>
   <system fullname="Apple Macintosh" platform="macintosh">
     <bios path="macintosh/MacII.ROM" md5="66223be1497460f1e60885eeb35e03cc" core="libretro/minivmac" />
-    <bios path="macintosh/MinivMacBootv2.dsk" md5="16ddb8838d48be26e471a2f2bb85a961,e66dc7952c8b9673868ad2faba3c0d20" core="libretro/minivmac" mandatory="false" hashMatchMandatory="false" />
+    <bios path="macintosh/MinivMacBootv2.dsk" md5="16ddb8838d48be26e471a2f2bb85a961,e66dc7952c8b9673868ad2faba3c0d20" hashMatchMandatory="false" core="libretro/minivmac" mandatory="false" />
   </system>
   <system fullname="Atari 8Bits" platform="atari800">
     <bios path="atari800/ATARIBAS.ROM" md5="0bac0c6a50104045d902df4503a4c30b" core="libretro/atari800" mandatory="false" />
     <bios path="atari800/ATARIOSA.ROM" md5="eb1f32f5d9f382db1bbfb8d7f9cb343a" core="libretro/atari800" mandatory="false" />
     <bios path="atari800/ATARIOSB.ROM" md5="a3e8d617c95d08031fe1b20d541434b2" core="libretro/atari800" mandatory="false" />
-    <bios path="atari800/ATARIXL.ROM" md5="06daac977823773a3eea3422fd26a703" core="libretro/atari800" mandatory="false" />
+    <bios path="atari800/ATARIXL.ROM"  md5="06daac977823773a3eea3422fd26a703" core="libretro/atari800" mandatory="false" />
   </system>
   <system fullname="Atari 5200" platform="atari5200">
     <bios path="atari5200/5200.rom" md5="281f20ea4320404ec820fb7ec0693b38" mandatory="false" core="libretro/a5200,libretro/atari800" />
@@ -72,7 +72,7 @@
     <bios path="bk/BAS11M_0.ROM" md5="946f6f23ded03c0e26187f0b3ca75993" core="libretro/bk" mandatory="false" />
     <bios path="bk/BAS11M_1.ROM" md5="1e6637f32aa7d1de03510030cac40bcf" core="libretro/bk" mandatory="false" />
     <bios path="bk/DISK_327.ROM" md5="5015228eeeb238e65da8edcd1b6dfac7" core="libretro/bk" mandatory="false" />
-    <bios path="bk/FOCAL10.ROM" md5="5737f972e8638831ab71e9139abae052" core="libretro/bk" mandatory="false" />
+    <bios path="bk/FOCAL10.ROM"  md5="5737f972e8638831ab71e9139abae052" core="libretro/bk" mandatory="false" />
     <bios path="bk/MONIT10.ROM"  md5="95f8c41c6abf7640e35a6a03cecebd01" core="libretro/bk" />
   </system>
   <system fullname="Sammy Atomiswave" platform="atomiswave">
@@ -123,7 +123,8 @@
     <bios path="vice/DRIVES/dos1581-318045-02.bin" md5="6a82f92aea2a3afa190fe32d565f39e7" core="libretro/vice_x64" mandatory="false" />
   </system>
   <system fullname="Sega Dreamcast" platform="dreamcast">
-    <bios path="dc/dc_boot.bin" md5="e10c53c2f8b90bab96ead2d368858623,d552d8b577faa079e580659cd3517f86,d407fcf70b56acb84b8c77c93b0e5327" core="libretro/flycast,reicast" mandatory="false" hashMatchMandatory="false" />
+    <bios path="dc/dc_boot.bin"  md5="e10c53c2f8b90bab96ead2d368858623,d552d8b577faa079e580659cd3517f86,
+                                      d407fcf70b56acb84b8c77c93b0e5327" hashMatchMandatory="false" core="libretro/flycast,reicast" mandatory="false" />
     <bios path="dc/dc_flash.bin" md5="d6e11a23f1fa01cddb5dfccf7e4cc8d7,93a9766f14159b403178ac77417c6b68,
                                       0a93f7940c455905bea6e392dfde92a4,23df18aa53c8b30784cd9a84e061d008,
                                       69c036adfca4ebea0b0c6fa4acfc8538,74e3f69c2bb92bc1fc5d9a53dcf6ffe2,
@@ -133,10 +134,10 @@
   <system fullname="NEC PC-8800 Series" platform="pc88">
     <bios path="quasi88/n88.rom"      md5="22be239bc0c4298bc0561252eed98633,f7cba6a308c2718dbe97e60e46ddd66a,4f984e04a99d56c4cfe36115415d6eb8" core="libretro/quasi88" note="BASIC rom" />
     <bios path="quasi88/n88_0.rom"    md5="e28fe3f520bea594350ea8fb00395370,c254685f00ca9c31b97203d6ef19f5e2,d675a2ca186c6efcd6277b835de4c7e5" core="libretro/quasi88" note="BASIC rom #1" />
-    <bios path="quasi88/n88_1.rom" md5="e844534dfe5744b381444dbe61ef1b66,a8e298da7ac947669bcb1ff25cee0a83" core="libretro/quasi88" mandatory="false" note="BASIC rom #2" />
-    <bios path="quasi88/n88_2.rom" md5="6548fa45061274dee1ea8ae1e9e93910,9d03154fd9abfc28c4e6d4dc705e6e23" core="libretro/quasi88" mandatory="false" note="BASIC rom #3" />
-    <bios path="quasi88/n88_3.rom" md5="fc4b76a402ba501e6ba6de4b3e8b4273,e1791f8154f1cdf22b576a1a365b6e1f" core="libretro/quasi88" mandatory="false" note="BASIC rom #4" />
-    <bios path="quasi88/n88n.rom" md5="5d6854624dd01cd791f58727fc43a525,93cd1d78b7b9c50b80041ed330332ece,2ff07b8769367321128e03924af668a0" core="libretro/quasi88" mandatory="false" note="N BASIC rom" />
+    <bios path="quasi88/n88_1.rom"    md5="e844534dfe5744b381444dbe61ef1b66,a8e298da7ac947669bcb1ff25cee0a83" core="libretro/quasi88" note="BASIC rom #2" mandatory="false" />
+    <bios path="quasi88/n88_2.rom"    md5="6548fa45061274dee1ea8ae1e9e93910,9d03154fd9abfc28c4e6d4dc705e6e23" core="libretro/quasi88" note="BASIC rom #3" mandatory="false" />
+    <bios path="quasi88/n88_3.rom"    md5="fc4b76a402ba501e6ba6de4b3e8b4273,e1791f8154f1cdf22b576a1a365b6e1f" core="libretro/quasi88" note="BASIC rom #4" mandatory="false" />
+    <bios path="quasi88/n88n.rom"     md5="5d6854624dd01cd791f58727fc43a525,93cd1d78b7b9c50b80041ed330332ece,2ff07b8769367321128e03924af668a0" core="libretro/quasi88" note="N BASIC rom" mandatory="false" />
     <bios path="quasi88/disk.rom"     md5="793f86784e5608352a5d7f03f03e0858,01b1af474fcabe93c40d779b234a3825" core="libretro/quasi88" note="Required to load disk images" />
     <bios path="quasi88/n88knj1.rom"  md5="d81c6d5d7ad1a4bbbd6ae22a01257603" mandatory="false" hashMatchMandatory="false" core="libretro/quasi88" note="Required to view Kanji" />
     <!--bios path="quasi88/n88knj2.rom"  md5="41d2e2c0c0edfccf76fa1c3e38bc1cf2,898a3b7b6c3326e8b2069765bca2b944" mandatory="false" hashMatchMandatory="false" core="libretro/quasi88" note="Required to view Kanji" /-->
@@ -147,7 +148,7 @@
                                             36293e23fe0c86cb115d59b653c13876,3af0ae018c5710eec6e2891064814138,
                                             50274bb5dcb707e4450011b09accffcb,c70ee9df11794bd5cc8aadb3721b4a03,
                                             cd237e16e7e77c06bb58540e9e9fca68,e246140dec5124c5e404869a84caefce" hashMatchMandatory="false" core="libretro/np2kai" />
-    <bios path="np2kai/font.bmp" md5="0c8624e9ced7cca8769e5c7b0dd4279b,7da1e5b7c482d4108d22a5b09631d967" core="libretro/np2kai" mandatory="false" hashMatchMandatory="false" />
+    <bios path="np2kai/font.bmp"       md5="0c8624e9ced7cca8769e5c7b0dd4279b,7da1e5b7c482d4108d22a5b09631d967" hashMatchMandatory="false" core="libretro/np2kai" mandatory="false" />
     <bios path="np2kai/font.rom"       md5="38d32748ae49d1815b0614970849fd40,fd0b856899aec843cbe69d2940df547f,
                                             4133b0be0d470920da60b9ed28d2614f,693fd1da3239d4bbeafc77d211718fc5,
                                             829b963e21334e0fc2092ebd58f2ab4a,add4a225048c85ca2bc588696c6ecdc5,
@@ -155,7 +156,8 @@
     <bios path="np2kai/itf.rom"        md5="1d295699ffeab0f0e24e09381299259d,72ea51443070f0e9212bfc9b793ee28e,
                                             a13d96da03a28af8418d7f86ab951f1a,b49ea39a1f730f1c966babc11961dc9a,
                                             e9fc3890963b12cf15d0a2eea5815b72" hashMatchMandatory="false" core="libretro/np2kai" />
-    <bios path="np2kai/sound.rom" md5="42c271f8b720e796a484cc1165ff4914,524473c1a5a03b17e21d86a0408ff827,a77fc2bc7c696dd68dba18e02f89d386,caf90f22197aed6f14c471c21e64658d" core="libretro/np2kai" mandatory="false" hashMatchMandatory="false" />
+    <bios path="np2kai/sound.rom"      md5="42c271f8b720e796a484cc1165ff4914,524473c1a5a03b17e21d86a0408ff827,
+                                            a77fc2bc7c696dd68dba18e02f89d386,caf90f22197aed6f14c471c21e64658d" hashMatchMandatory="false" core="libretro/np2kai" mandatory="false" />
     <bios path="np2kai/2608_bd.wav"    md5="9c6637930b1779abe00b8b63e4e41f50,d94546e70f17fd899be8df3544ab6cbb" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
     <bios path="np2kai/2608_hh.wav"    md5="73548a1391631ff54a1f7c838d67917e,08c54a0c1f774a5538a848a6665a34b4" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
     <bios path="np2kai/2608_rim.wav"   md5="43d54b3e05c081fa280c9bace3af1043,465ea0768b27da404aec45dfc501404b" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
@@ -180,7 +182,7 @@
     <bios path="satellaview/BS-X.bin" md5="96cf17bf589fcbfa6f8de2dc84f19fa2,d5af0ab2545c053b90ffa0866074ecf1,9c72de0cf4c9c88003292a79ddd0144d,fed4d8242cfbed61343d53d48432aced" mandatory="true" core="libretro/snes9x,libretro/mesen_s,libretro/bsnes,libretro/bsnes-hd" />
   </system>
   <system fullname="Nintendo Sufami Turbo" platform="sufami">
-    <bios path="sufami/STBIOS.bin" md5="d3a44ba7d42a74d3ac58cb9c14c6a5ca" core="libretro/snes9x" mandatory="false" />
+    <bios path="sufami/STBIOS.bin" md5="d3a44ba7d42a74d3ac58cb9c14c6a5ca" mandatory="false" core="libretro/snes9x" />
   </system>
   <system fullname="NEC PC-Engine" platform="pcengine">
     <bios path="pcengine/gexpress.pce" md5="6d2cb14fc3e1f65ceb135633d1694122" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast" />
@@ -200,27 +202,59 @@
     <bios path="pcfx/pcfx.rom" md5="08e36edbea28a017f79f8d4f7ff9b6d7" core="libretro/pcfx" />
   </system>
   <system fullname="MSX Familly" platform="msx1,msx2">
-    <bios path="msx/CARTS.SHA" md5="74b0f217fa0e2b8bb5a2f8e2ecc69da3,d6dedca1112ddfda94cc9b2e426b818b" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/CARTS.SHA"    md5="d6dedca1112ddfda94cc9b2e426b818b,74b0f217fa0e2b8bb5a2f8e2ecc69da3" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/CYRILLIC.FNT" md5="85b38e4128bbc300e675f55b278683a8" core="libretro/fmsx" mandatory="false" />
-    <bios path="msx/DISK.ROM" md5="80dcd1ad1a4cf65d64b7ba10504e8190" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/DISK.ROM"     md5="80dcd1ad1a4cf65d64b7ba10504e8190" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/FMPAC16.ROM"  md5="af8537262df8df267072f359399a7635" core="libretro/fmsx" />
     <bios path="msx/FMPAC.ROM"    md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/fmsx" />
-    <bios path="msx/ITALIC.FNT" md5="c83e50e9f33b8dd893c414691822740d" core="libretro/fmsx" mandatory="false" />
-    <bios path="msx/KANJI.ROM" md5="febe8782b466d7c3b16de6d104826b34" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/ITALIC.FNT"   md5="c83e50e9f33b8dd893c414691822740d" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/KANJI.ROM"    md5="febe8782b466d7c3b16de6d104826b34" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/MSX2EXT.ROM"  md5="2183c2aff17cf4297bdb496de78c2e8a" core="libretro/fmsx" />
     <bios path="msx/MSX2PEXT.ROM" md5="7c8243c71d8f143b2531f01afa6a05dc" core="libretro/fmsx" />
     <bios path="msx/MSX2P.ROM"    md5="6d8c0ca64e726c82a4b726e9b01cdf1e" core="libretro/fmsx" />
     <bios path="msx/MSX2.ROM"     md5="ec3a01c91f24fbddcbcab0ad301bc9ef" core="libretro/fmsx" />
-    <bios path="msx/MSXDOS2.ROM" md5="6418d091cd6907bbcf940324339e43bb" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/MSXDOS2.ROM"  md5="6418d091cd6907bbcf940324339e43bb" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/MSX.ROM"      md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/fmsx" />
-    <bios path="msx/PAINTER.ROM" md5="403cdea1cbd2bb24fae506941f8f655e" core="libretro/fmsx" mandatory="false" />
-    <bios path="msx/RS232.ROM" md5="279efd1eae0d358eecd4edc7d9adedf3" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/PAINTER.ROM"  md5="403cdea1cbd2bb24fae506941f8f655e" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/RS232.ROM"    md5="279efd1eae0d358eecd4edc7d9adedf3" core="libretro/fmsx" mandatory="false" />
   </system>
   <system fullname="Atari Lynx" platform="lynx">
     <bios path="lynx/lynxboot.img" md5="fcd403db69f54290b51035d82f835e7b" core="libretro/handy,libretro/mednafen_lynx" />
   </system>
   <system fullname="Atari ST/STE/MegaSTE/TT/Falcon" platform="atarist">
-    <bios path="atarist/tos.img|tos.img" md5="27ac71b59d59f65571b972e0f894054a,5d65c6a384d847a0b8013d5e22ec0887,f62bc9777f28bc6876422738758db365,d41ae4efaa2c97f632dbe75d24d51bea,c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,736adb2dc835df4d323191fdc8926cc9,992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8" core="hatari,libretro/hatari" hashMatchMandatory="false" note="Default bios" />
+    <bios path="atarist/tos.img|tos.img" md5="27ac71b59d59f65571b972e0f894054a,5d65c6a384d847a0b8013d5e22ec0887,
+                                              f62bc9777f28bc6876422738758db365,d41ae4efaa2c97f632dbe75d24d51bea,
+                                              c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,
+                                              d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,
+                                              25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,
+                                              91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,
+                                              a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,
+                                              b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,
+                                              c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,
+                                              f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,
+                                              143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,
+                                              0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,
+                                              52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,
+                                              736adb2dc835df4d323191fdc8926cc9,992bac38e01633a529121a2a65f0779e,
+                                              30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,
+                                              6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,
+                                              a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,
+                                              61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,
+                                              ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,
+                                              1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,
+                                              febb00ba8784798293a7ae709a1dafcb,4689ef3694ac86e7289923190e6cd10d,
+                                              7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,
+                                              61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,
+                                              1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,
+                                              0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,
+                                              886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,
+                                              4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,
+                                              a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,
+                                              066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,
+                                              dd1010ec566efbd71047d6c4919feba5,ed2647936ce4bd283c4d7dfd7ae09d1c,
+                                              9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,
+                                              b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,
+                                              941baac767269649f92f7918dd5740b8" hashMatchMandatory="false" core="hatari,libretro/hatari" note="Default bios" />
       <bios path="atarist/st.img" md5="c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,
                                        d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,
                                        25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,
@@ -270,16 +304,16 @@
   </system>
   <system fullname="Magnavox Odyssey²" platform="o2em">
     <bios path="o2em/o2rom.bin" md5="562d5ebf9e030a40d6fabfc2f33139fd" core="libretro/o2em" />
-    <bios path="o2em/c52.bin" md5="f1071cdb0b6b10dde94d3bc8a6146387" core="libretro/o2em" mandatory="false" />
+    <bios path="o2em/c52.bin"   md5="f1071cdb0b6b10dde94d3bc8a6146387" core="libretro/o2em" mandatory="false" />
   </system>
   <system fullname="Philips VideoPac+" platform="videopacplus">
     <bios path="o2em/g7400.bin" md5="c500ff71236068e0dc0d0603d265ae76" core="libretro/o2em" mandatory="false" />
     <bios path="o2em/jopac.bin" md5="279008e4a0db2dc5f1c048853b033828" core="libretro/o2em" mandatory="false" />
   </system>
   <system fullname="Panasonic 3DO" platform="3do">
-    <bios path="3do/panafz1.bin" md5="f47264dd47fe30f73ab3c010015c155b" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (U)" />
-    <bios path="3do/panafz1j.bin" md5="a496cfdded3da562759be3561317b605" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (J)" />
-    <bios path="3do/panafz1j-norsa.bin" md5="f6c71de7470d16abe4f71b1444883dc8" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (J) (RSA check disabled)" />
+    <bios path="3do/panafz1.bin"                 md5="f47264dd47fe30f73ab3c010015c155b" core="libretro/opera" note="Panasonic FZ-1 (U)" mandatory="false" />
+    <bios path="3do/panafz1j.bin"                md5="a496cfdded3da562759be3561317b605" core="libretro/opera" note="Panasonic FZ-1 (J)" mandatory="false" />
+    <bios path="3do/panafz1j-norsa.bin"          md5="f6c71de7470d16abe4f71b1444883dc8" core="libretro/opera" note="Panasonic FZ-1 (J) (RSA check disabled)" mandatory="false" />
     <bios path="3do/panafz10.bin"                md5="51f2f43ae2f3508a14d9f56597e2d3ce" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (U)" />
     <bios path="3do/panafz10-norsa.bin"          md5="1477bda80dc33731a65468c1f5bcbee9" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (U) (RSA check disabled)" />
     <bios path="3do/panafz10e-anvil.bin"         md5="a48e6746bd7edec0f40cff078f0bb19f" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (E) w/ ANVIL" />
@@ -300,16 +334,16 @@
     <bios path="keropi/iplromxv.dat" md5="0617321daa182c3f3d6f41fd02fb3275" core="libretro/px68k" mandatory="false" />
   </system>
   <system fullname="Sharp X1" platform="x1">
-    <bios path="xmil/IPLROM.X1" md5="eeeea1cd29c6e0e8b094790ae969bfa7,59074727a953fe965109b7dbe3298e30" core="libretro/xmil" mandatory="false" />
+    <bios path="xmil/IPLROM.X1"  md5="eeeea1cd29c6e0e8b094790ae969bfa7,59074727a953fe965109b7dbe3298e30" core="libretro/xmil" mandatory="false" />
     <bios path="xmil/IPLROM.X1T" md5="56c28adcf1f3a2f87cf3d57c378013f5" core="libretro/xmil" mandatory="false" />
   </system>
   <system fullname="Sony Playstation" platform="psx">
     <bios path="scph5500.bin" md5="8dd7d5296a650fac7319bce665a6a53c" core="libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
     <bios path="scph5501.bin" md5="490f666e1afb15b7362b406ed1cea246" core="libretro/pcsx_rearmed,libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
     <bios path="scph5502.bin" md5="32736f17079d0b2b7024407c39bd3050" core="libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
-    <bios path="scph101.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
-    <bios path="scph7001.bin" md5="1e68c231d0896b7eadcad1d7d8e76129" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
-    <bios path="scph1001.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
+    <bios path="scph101.bin"  md5="6E3735FF4C7DC899EE98981385F6F3D0" core="libretro/pcsx_rearmed" note="Recommended for better compatibility." mandatory="false" />
+    <bios path="scph7001.bin" md5="1e68c231d0896b7eadcad1d7d8e76129" core="libretro/pcsx_rearmed" note="Recommended for better compatibility." mandatory="false" />
+    <bios path="scph1001.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf" core="libretro/pcsx_rearmed" note="Recommended for better compatibility." mandatory="false" />
     <bios path="ps1_rom.bin"  md5="81bbe60ba7a3d1cea1d48c14cbcc647b" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
     <bios path="scph5903.bin" md5="81328b966e6dcf7ea1e32e55e1c104bb" core="libretro/mednafen_psx" mandatory="false" />
     <bios path="psxonpsp660.bin" md5="c53ca5908936d412331790f4426c6c33" core="libretro/mednafen_psx,libretro/pcsx_rearmed,libretro/swanstation" mandatory="false" />
@@ -333,8 +367,8 @@
     <bios path="pokemini/bios.min" md5="1e4fb124a3a886865acb574f388c803d" mandatory="false" core="libretro/pokemini" />
   </system>
   <system fullname="Nintendo DS" platform="nds">
-    <bios path="nds/bios7.bin" md5="df692a80a5b1bc90728bc3dfc76cd948" core="libretro/melonds,libretro/desmume" mandatory="false" />
-    <bios path="nds/bios9.bin" md5="a392174eb3e572fed6447e956bde4b25" core="libretro/melonds,libretro/desmume" mandatory="false" />
+    <bios path="nds/bios7.bin"    md5="df692a80a5b1bc90728bc3dfc76cd948" core="libretro/melonds,libretro/desmume" mandatory="false" />
+    <bios path="nds/bios9.bin"    md5="a392174eb3e572fed6447e956bde4b25" core="libretro/melonds,libretro/desmume" mandatory="false" />
     <bios path="nds/firmware.bin" md5="145eaef5bd3037cbc247c213bb3da1b3,e45033d9b0fa6b0de071292bba7c9d13,3ad72b2c9a736b24953f2d391da4bfcc" core="libretro/melonds,libretro/desmume" mandatory="false" />
   </system>
   <system fullname="Palm Pilot" platform="palm">
@@ -345,7 +379,7 @@
     <bios path="oricutron/basic11b.rom" md5="a330779c42ad7d0c4ac6ef9e92788ec6" core="oricutron" />
     <bios path="oricutron/basic10.rom"  md5="ebe418ec8a6c85d5ac32956c9a96c179" core="oricutron" />
     <bios path="oricutron/bd500.rom"    md5="2b6498fd29a0adbf1c529762c02c33ab" core="oricutron" mandatory="false" />
-    <bios path="oricutron/jasmin.rom" md5="5136f764a7dbd1352519351fbb53a9f3" core="oricutron" mandatory="false" />
+    <bios path="oricutron/jasmin.rom"   md5="5136f764a7dbd1352519351fbb53a9f3" core="oricutron" mandatory="false" />
     <bios path="oricutron/microdis.rom" md5="df864344d2a2091c3f952bd1c5ce1707" core="oricutron" mandatory="false" />
     <bios path="oricutron/pravetzt.rom" md5="8712a22e7e078de3343667d9fc1f2390" core="oricutron" />
     <bios path="oricutron/8dos2.rom"    md5="5f3cd5a4307fed7a9dfe8faa4c044273" core="oricutron" mandatory="false" />
@@ -372,86 +406,86 @@
     <bios path="coleco/boot.rom"                                                     md5="2c66f5911e5b42b8ebe113403548eee7" core="libretro/gearcoleco" mandatory="true" />
   </system>
   <system fullname="MSX and MSX2 Series" platform="msx1,msx2,msxturbor">
-    <bios path="Machines/Forte II Games - Pesadelo/pesadelo.rom" md5="ba53d700ec25bcb08020ce693319cd28" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX - C-BIOS/cbios_logo_msx1.rom" md5="25b5cdea5040883a206b89845cdf55f1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX - C-BIOS/cbios_main_msx1.rom" md5="87b27f48cc25e2b6f749c019587d5f23" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom" md5="659db9142e62c51f2f75fd52fac78e44" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2 - C-BIOS/cbios_main_msx2.rom" md5="98b94c2d99066f272bb5de07778f7fd1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2 - C-BIOS/cbios_sub.rom" md5="9dd9a69432cc116d0f1d4ec7a51053e0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom" md5="462d6ecb52a8c35dd7d48c2d46687f14" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom" md5="0a34c660614ead31dab78638ce7745e9" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - C-BIOS/cbios_music.rom" md5="e09783c4ec6d4770c5395c42bb0e1d91" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Forte II Games - Pesadelo/pesadelo.rom" md5="ba53d700ec25bcb08020ce693319cd28" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX - C-BIOS/cbios_logo_msx1.rom"       md5="25b5cdea5040883a206b89845cdf55f1" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX - C-BIOS/cbios_main_msx1.rom"       md5="87b27f48cc25e2b6f749c019587d5f23" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom"      md5="659db9142e62c51f2f75fd52fac78e44" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_main_msx2.rom"      md5="98b94c2d99066f272bb5de07778f7fd1" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_sub.rom"            md5="9dd9a69432cc116d0f1d4ec7a51053e0" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom"    md5="462d6ecb52a8c35dd7d48c2d46687f14" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom"    md5="0a34c660614ead31dab78638ce7745e9" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_music.rom"         md5="e09783c4ec6d4770c5395c42bb0e1d91" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/MSX2+ - C-BIOS/cbios_sub.rom"           md5="9dd9a69432cc116d0f1d4ec7a51053e0" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/KANJI.rom"             md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/MSX2PMUS.rom"          md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/MSXKANJI.rom"          md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - European/Msx2pe.rom" md5="277fd57c13f301fb4b366845a32d673a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - European/Msx2pexte.rom" md5="f78ab735aaad7045badbda8f4c8ac751" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/Msx2pe.rom"            md5="277fd57c13f301fb4b366845a32d673a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/MSX2+ - European/Msx2pexte.rom"         md5="f78ab735aaad7045badbda8f4c8ac751" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/MSX2+ - European/PANASONICDISK.rom"     md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/XBASIC2.rom"           md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/SEGA - SF-7000/sf7000.rom"              md5="561b362f9aa4cbcb240461abf83c2e0d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/ARAB1.ROM" md5="7fa0558bcec9dba310579521623d9f6a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/ARABIC.rom" md5="20c4b5d1d9469c201b145f082ec32658" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/BEERIDE.ROM" md5="b32279f2700652a5ce0a809318626763" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/FMPAC.rom" md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/GCVMX80.ROM" md5="fd0b8f1766dc6dcc03a43d9c79dc4e37" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/HANGUL.rom" md5="9baf17b190f631405b6b0eeeeb162b87" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/KANJI.rom" md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MICROSOLDISK.ROM" md5="02e8b1f96049f09d6d3a735647cbbb2a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MOONSOUND.rom" md5="42af93619160ef2116416f74a6cb12f2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/ARAB1.ROM"                  md5="7fa0558bcec9dba310579521623d9f6a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/ARABIC.rom"                 md5="20c4b5d1d9469c201b145f082ec32658" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/BEERIDE.ROM"                md5="b32279f2700652a5ce0a809318626763" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/FMPAC.rom"                  md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/GCVMX80.ROM"                md5="fd0b8f1766dc6dcc03a43d9c79dc4e37" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/HANGUL.rom"                 md5="9baf17b190f631405b6b0eeeeb162b87" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/KANJI.rom"                  md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MICROSOLDISK.ROM"           md5="02e8b1f96049f09d6d3a735647cbbb2a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MOONSOUND.rom"              md5="42af93619160ef2116416f74a6cb12f2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/Shared Roms/MSX.rom"                    md5="364a1a579fe5cb8dba54519bcfcdac0d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2.rom"                   md5="ec3a01c91f24fbddcbcab0ad301bc9ef" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2AR.ROM" md5="91764e84f977671ac7caa50b36273fd2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2AREXT.ROM" md5="be5d1ec8001d945ca1432285722e9d16" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2BR.rom" md5="d3df424728a225b301510f5384cae583" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2BREXT.rom" md5="355c6d5ee31da441d485cd89ca906413" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2AR.ROM"                 md5="91764e84f977671ac7caa50b36273fd2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2AREXT.ROM"              md5="be5d1ec8001d945ca1432285722e9d16" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2BR.rom"                 md5="d3df424728a225b301510f5384cae583" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2BREXT.rom"              md5="355c6d5ee31da441d485cd89ca906413" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/Shared Roms/MSX2EXT.rom"                md5="2183c2aff17cf4297bdb496de78c2e8a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2FR.rom" md5="7af9e84da1520a8a7fb82e73703e5075" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2FREXT.rom" md5="6ffe789cca2eca9d2e71ca7b69b97e6b" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2G.rom" md5="b6c33b7b3508d691d7872589c778f808" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2GEXT.rom" md5="4047ce143a8bf391e21991835aa65b59" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2HAN.rom" md5="7b9466546009d419ebd0dc27db90c30e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2J.rom" md5="53bec1c22b30c0a15263e04b91a7814f" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2JEXT.rom" md5="8aabde714a42256bef36ea9b04f6ef59" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2KR.rom" md5="6819a1533502261bfdd52436b8346073" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2KREXT.rom" md5="30a0b3402a0a13b516af76d39f45a365" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2FR.rom"                 md5="7af9e84da1520a8a7fb82e73703e5075" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2FREXT.rom"              md5="6ffe789cca2eca9d2e71ca7b69b97e6b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2G.rom"                  md5="b6c33b7b3508d691d7872589c778f808" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2GEXT.rom"               md5="4047ce143a8bf391e21991835aa65b59" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2HAN.rom"                md5="7b9466546009d419ebd0dc27db90c30e" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2J.rom"                  md5="53bec1c22b30c0a15263e04b91a7814f" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2JEXT.rom"               md5="8aabde714a42256bef36ea9b04f6ef59" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2KR.rom"                 md5="6819a1533502261bfdd52436b8346073" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2KREXT.rom"              md5="30a0b3402a0a13b516af76d39f45a365" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/Shared Roms/MSX2P.rom"                  md5="847cc025ffae665487940ff2639540e5" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2PEXT.rom"               md5="7c8243c71d8f143b2531f01afa6a05dc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2PMUS.rom"               md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2R.rom" md5="db56360c85ef8410dc4bcf8e8602f61e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2R2.ROM" md5="96ac231b718e88ce64d5a9b4a5e9ae12" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2REXT.rom" md5="8e4af1124e2b82fbdc74a7bc5f20dc6e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2SE.rom" md5="fb8f7ab15e32a91147204bd7f7a1b451" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2SP.rom" md5="79caefa20a0d056fb42eaeca856c6f82" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2SPEXT.rom" md5="d71842ce8f559a8aed2721766bc15f2b" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXAR.ROM" md5="793e3b833c33be7aaf834beacb8fb926" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXBR.rom" md5="d13c1fc9ad4897c322f51aab3ad3b30d" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2R.rom"                  md5="db56360c85ef8410dc4bcf8e8602f61e" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2R2.ROM"                 md5="96ac231b718e88ce64d5a9b4a5e9ae12" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2REXT.rom"               md5="8e4af1124e2b82fbdc74a7bc5f20dc6e" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2SE.rom"                 md5="fb8f7ab15e32a91147204bd7f7a1b451" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2SP.rom"                 md5="79caefa20a0d056fb42eaeca856c6f82" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSX2SPEXT.rom"              md5="d71842ce8f559a8aed2721766bc15f2b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXAR.ROM"                  md5="793e3b833c33be7aaf834beacb8fb926" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXBR.rom"                  md5="d13c1fc9ad4897c322f51aab3ad3b30d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/Shared Roms/MSXDOS23.ROM"               md5="56bf5b02fed377b7bb9d91f914965431" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXFR.rom" md5="6f43d28ac4a69182c860c2db0e18ee6d" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXG.rom" md5="4655329d3f37bf1a655d05f2abd1aa62" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXHAN.rom" md5="394efbc50fb7df1151130d8c162f85c3" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXJ.rom" md5="f005e55c680ba6e7b19f6d4dc8f73ce5" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXKANJI.rom" md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXKR.rom" md5="c84f362c44192659273d45ae97462362" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXR.rom" md5="0db9592930488259fc1a5c127215e784" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXR2.ROM" md5="704bdd980fa56c6be5c680358458eeeb" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXSE.ROM" md5="161cb768c52a13f5b38ba46e721b68c1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSXSP.rom" md5="51af5b19aeccf94eb8e03bce0b5d33c4" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXFR.rom"                  md5="6f43d28ac4a69182c860c2db0e18ee6d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXG.rom"                   md5="4655329d3f37bf1a655d05f2abd1aa62" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXHAN.rom"                 md5="394efbc50fb7df1151130d8c162f85c3" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXJ.rom"                   md5="f005e55c680ba6e7b19f6d4dc8f73ce5" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXKANJI.rom"               md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXKR.rom"                  md5="c84f362c44192659273d45ae97462362" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXR.rom"                   md5="0db9592930488259fc1a5c127215e784" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXR2.ROM"                  md5="704bdd980fa56c6be5c680358458eeeb" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXSE.ROM"                  md5="161cb768c52a13f5b38ba46e721b68c1" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/MSXSP.rom"                  md5="51af5b19aeccf94eb8e03bce0b5d33c4" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
     <bios path="Machines/Shared Roms/MSXTR.ROM"                  md5="fd9513736823e470965949f2a3ec6a43" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSXTREXT.ROM"               md5="824b1c4475a3bd3b91c5ae81ea940aa2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSXTRMUS.ROM"               md5="c688a229f834f95f8c64df7d33188cd8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSXTROPT.ROM"               md5="2cba0d812ec445cfe63ffa2cac8d42c2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/NATIONALDISK.rom" md5="86269da485e852d9f581ac27f4ba32ff" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/NOVAXIS.rom" md5="20989124671593ab04eeb01d52a1e25c" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/PAINT.rom" md5="41db0d7b37be479296ffd59fcd6775f0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/PANASONICDISK.rom" md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/PHILIPSDISK.rom" md5="01dd1d72ed9bb6afe8a9b441c198a1cd" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/RS232.ROM" md5="55cca200bbbdd0a1ec5c9d70966c05c0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/SUNRISEIDE.rom" md5="7b564497beb2c0de0847f107dec00ddf" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/SWP.rom" md5="490db04e2a3c1c993a2a9d3611949c76" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/XBASIC2.rom" md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/nowindDos1.rom" md5="8c294a75f14fc30fce0c8642d28ccec1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/nowindDos2.rom" md5="1847398c014384b833868c64f149f338" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/NATIONALDISK.rom"           md5="86269da485e852d9f581ac27f4ba32ff" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/NOVAXIS.rom"                md5="20989124671593ab04eeb01d52a1e25c" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/PAINT.rom"                  md5="41db0d7b37be479296ffd59fcd6775f0" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/PANASONICDISK.rom"          md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/PHILIPSDISK.rom"            md5="01dd1d72ed9bb6afe8a9b441c198a1cd" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/RS232.ROM"                  md5="55cca200bbbdd0a1ec5c9d70966c05c0" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/SUNRISEIDE.rom"             md5="7b564497beb2c0de0847f107dec00ddf" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/SWP.rom"                    md5="490db04e2a3c1c993a2a9d3611949c76" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/XBASIC2.rom"                md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/nowindDos1.rom"             md5="8c294a75f14fc30fce0c8642d28ccec1" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
+    <bios path="Machines/Shared Roms/nowindDos2.rom"             md5="1847398c014384b833868c64f149f338" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" mandatory="false" />
   </system>
   <system fullname="Sega GameGear" platform="gamegear">
     <bios path="gamegear/bios.gg" md5="672e104c3be3a238301aceffc3b23fd6" mandatory="false" core="libretro/genesisplusgx,libretro/gearsystem" />
@@ -481,8 +515,8 @@
     <bios path="sgb/sgb_bios.bin" md5="d574d4f9c12f305074798f54c091a8b4" mandatory="false" core="libretro/mgba,libretro/mesen_s" />
     <bios path="sgb/sgb_boot.bin" md5="be77bbd03f8675478f6e3d2176f3cb56,a43cbd0ab271990f434412fc5c500eff" mandatory="false" core="libretro/mesen_s,libretro/sameboy" />
     <bios path="sgb/sgb2_boot.bin" md5="b4331a9e612b4738867a30af9c96df52,6d507dcf3b61ce45a5717421cdd0ae95" mandatory="false" core="libretro/mesen_s,libretro/sameboy" />
-    <bios path="sgb/SGB1.sfc" md5="b15ddb15721c657d82c5bab6db982ee9" core="libretro/bsnes,libretro/mesen_s" mandatory="false" />
-    <bios path="sgb/SGB2.sfc" md5="8ecd73eb4edf7ed7e81aef1be80031d5" core="libretro/bsnes,libretro/mesen_s" mandatory="false" />
+    <bios path="sgb/SGB1.sfc" md5="b15ddb15721c657d82c5bab6db982ee9" mandatory="false" core="libretro/bsnes,libretro/mesen_s" />
+    <bios path="sgb/SGB2.sfc" md5="8ecd73eb4edf7ed7e81aef1be80031d5" mandatory="false" core="libretro/bsnes,libretro/mesen_s" />
   </system>
   <system fullname="Nintendo Gameboy Color" platform="gbc">
     <bios path="gbc/gbc_bios.bin" md5="dbfce9db9deaa2567f6a84fde55f9680" mandatory="false" core="libretro/mgba,libretro/gambatte,libretro/mesen_s" />
@@ -540,7 +574,7 @@
     <bios path="codehandler.bin" md5="1f118b8735fcf40c20b38c3184eebfd9" core="libretro/dolphin" mandatory="false" />
   </system>
   <system fullname="Nintendo 64DD" platform="64dd">
-    <bios path="Mupen64plus/IPL.n64" md5="8d3d9f294b6e174bc7b1d2fd1c727530" core="libretro/mupen64plus_next,libretro/parallel_n64" mandatory="false" note="IPL.n64 (64DD_IPL.bin renamed) - Required for Nintendo 64 DD" />
+    <bios path="Mupen64plus/IPL.n64" md5="8d3d9f294b6e174bc7b1d2fd1c727530" mandatory="false" core="libretro/mupen64plus_next,libretro/parallel_n64" note="IPL.n64 (64DD_IPL.bin renamed) - Required for Nintendo 64 DD"/>
   </system>
   <system fullname="Super Cassette Vision" platform="scv">
     <bios path="scv/upd7801g.s01" md5="635A978FD40DB9A18EE44EFF449FC126" mandatory="true" core="libretro/emuscv" />
@@ -549,8 +583,8 @@
     <bios path="saturn/saturn_bios.bin"  md5="af5828fdff51384f99b3c4926be27762" hashMatchMandatory="false" mandatory="true" core="libretro/yabause,libretro/yabasanshiro,libretro/kronos" />
     <bios path="saturn/sega_101.bin"     md5="85ec9ca47d8f6807718151cbcca8b964" core="libretro/mednafen_saturn" note="Saturn JP BIOS - Required for JP games" />
     <bios path="saturn/mpr-17933.bin"    md5="3240872c70984b6cbfda1586cab68dbe" core="libretro/mednafen_saturn" note="Saturn US/EU BIOS - Required for US/EU games" />
-    <bios path="saturn/mpr-18811-mx.ic1" md5="255113ba943c92a54facd25a10fd780c" core="libretro/mednafen_saturn,libretro/kronos" mandatory="false" note="Required for The King of Fighters '95 ROM Cartridge" />
-    <bios path="saturn/mpr-19367-mx.ic1" md5="1cd19988d1d72a3e7caa0b73234c96b4" core="libretro/mednafen_saturn,libretro/kronos" mandatory="false" note="Required for Ultraman: Hikari no Kyojin Densetsu ROM Cartridge" />
+    <bios path="saturn/mpr-18811-mx.ic1" md5="255113ba943c92a54facd25a10fd780c" core="libretro/mednafen_saturn,libretro/kronos" note="Required for The King of Fighters '95 ROM Cartridge" mandatory="false" />
+    <bios path="saturn/mpr-19367-mx.ic1" md5="1cd19988d1d72a3e7caa0b73234c96b4" core="libretro/mednafen_saturn,libretro/kronos" note="Required for Ultraman: Hikari no Kyojin Densetsu ROM Cartridge" mandatory="false" />
   </system>
   <system fullname="SNK Neo-Geo" platform="neogeo">
     <bios path="neogeo.zip|/recalbox/share/roms/neogeo/neogeo.zip" md5="e023d0a4b5249fdff2a4620c28963944,8cbdff53661f41ddbe486a98915e1ec9,
@@ -582,8 +616,8 @@
                                  b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,
                                  ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,
                                  a3b2c9a69c28ad0bd4ea07877b744bbe,00dad01abdbf8ea9e79ad2fe11bdb182" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
-    <bios path="neocdz.zip" md5="b31a246b69493c35194fe0bac120dc37" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" hashMatchMandatory="false" />
-    <bios path="neocd/neocd.bin" md5="f39572af7584cb5b3f70ae8cc848aba2" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (MAME)" />
+    <bios path="neocdz.zip" md5="b31a246b69493c35194fe0bac120dc37" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
+    <bios path="neocd/neocd.bin"                 md5="f39572af7584cb5b3f70ae8cc848aba2" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (MAME)" />
     <bios path="neocd/uni-bioscd.rom"            md5="08ca8b2dba6662e8024f9e789711c6fc" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Universe BIOS CD 3.3" />
     <bios path="neocd/top-sp1.bin"               md5="122aee210324c72e8a11116e6ef9c0d0" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Top Loader BIOS (MAME)" />
     <bios path="neocd/front-sp1.bin"             md5="5c2366f25ff92d71788468ca492ebeca" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS (MAME)" />
@@ -595,11 +629,11 @@
     <bios path="neocd/neocd_f.rom"               md5="8834880c33164ccbe6476b559f3e37de" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS" />
     <bios path="neocd/000-lo.lo"                 md5="fc7599f3f871578fe9a0453662d1c966" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
     <bios path="neocd/ng-lo.rom"                 md5="e255264d85d5765013b1b2fa8109dd53" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
-    <bios path="geolith/neocd.zip" md5="006a881532f2caffc3fe9fb5593f2ed5" core="libretro/geolith" mandatory="false" hashMatchMandatory="false" note="Neo-Geo CD Bios" />
+    <bios path="geolith/neocd.zip"               md5="006a881532f2caffc3fe9fb5593f2ed5" core="libretro/geolith" mandatory="false" hashMatchMandatory="false" note="Neo-Geo CD Bios" />
     <bios path="geolith/neocdz.zip"              md5="724bc64e63d073cf81f986adfb1f1b78" core="libretro/geolith" mandatory="true" hashMatchMandatory="false" note="Neo-Geo CDZ Bios" />
   </system>
   <system fullname="Texas Instrument TI-99/4A" platform="ti994a">
-    <bios path="ti994a/TI-994A.ctg" md5="fb1ca5c58357896a0be5d6725894845d" core="ti99sim" mandatory="true" hashMatchMandatory="false" note="System cartridge" />
+    <bios path="ti994a/TI-994A.ctg" md5="fb1ca5c58357896a0be5d6725894845d" core="ti99sim" mandatory="true"  hashMatchMandatory="false" note="System cartridge" />
     <bios path="ti994a/spchrom.bin" md5="7adcaf64272248f7a7161cfc02fd5b3f" core="ti99sim" mandatory="false" hashMatchMandatory="false" note="Speech synthesis" />
     <bios path="ti994a/ti-disk.ctg" md5="0281841b5ea4227526e7612c0bb55cbb" core="ti99sim" mandatory="false" hashMatchMandatory="false" note="Disk Operating System" />
     <bios path="Gram Kracker.ctg" md5="7551f1d578a32cccd97efd1adff15252" core="ti99sim" mandatory="false" />
@@ -609,10 +643,10 @@
   <system fullname="Dragon 32/64" platform="dragon">
     <bios path="dragon/d32.rom" md5="3420b96031078a4ef408cad7bf21a33f" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Dragon32 system rom" />
     <bios path="dragon/d64rom1.rom"    md5="5f0bee59710e55f5880e74890912ed78" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Dragon64 system rom #1" />
-    <bios path="dragon/d64rom2.rom" md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon64 system rom #2" />
+    <bios path="dragon/d64rom2.rom"    md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="false"  hashMatchMandatory="false" note="Dragon64 system rom #2" />
     <bios path="dragon/d64tano.rom"    md5="be9bc86ee5eb401d0a40d0377f65fefa" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Tano system rom #1" />
     <bios path="dragon/d64tano2.rom"   md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Tano system rom #2" />
-    <bios path="dragon/d200rom1.rom" md5="be9bc86ee5eb401d0a40d0377f65fefa" core="xroar" hashMatchMandatory="false" note="Dragon 200e system rom #1" />
+    <bios path="dragon/d200rom1.rom"   md5="be9bc86ee5eb401d0a40d0377f65fefa" core="xroar" hashMatchMandatory="false" note="Dragon 200e system rom #1" />
     <bios path="dragon/d200rom2.rom"   md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon 200e system rom #2" />
     <bios path="dragon/ddos10.rom"     md5="1c965da49b6c5459b8353630aa1482e7" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 1.0" />
     <bios path="dragon/ddos11c.rom"    md5="d8429af1a12f7438a4bf88a5b934cb3a" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 1.1" />
@@ -633,18 +667,18 @@
   </system>
   <system fullname="TRS-80 Color Computer 1/2" platform="trs80coco">
     <bios path="trs80coco/bas10.rom"     md5="a74f3d95b395dad7cdca19d560eeea74" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 BASIC" />
-    <bios path="trs80coco/bas11.rom" md5="c73fb4bff9621c5ab17f6220b20db82f" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 BASIC" />
+    <bios path="trs80coco/bas11.rom"     md5="c73fb4bff9621c5ab17f6220b20db82f" core="xroar" mandatory="false"  hashMatchMandatory="false" note="CoCo 1 BASIC" />
     <bios path="trs80coco/bas12.rom"     md5="c933316c7d939532a13648850c1c2aa6" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 2 BASIC" />
     <bios path="trs80coco/bas13.rom"     md5="c2fc43556eb6b7b25bdf5955bd9df825" core="xroar" mandatory="true"  hashMatchMandatory="false" note="CoCo 2 BASIC" />
-    <bios path="trs80coco/extbas10.rom" md5="fda72f415afe99b36f953bb9bc1253da" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 Extended BASIC" />
+    <bios path="trs80coco/extbas10.rom"  md5="fda72f415afe99b36f953bb9bc1253da" core="xroar" mandatory="false"  hashMatchMandatory="false" note="CoCo 1 Extended BASIC" />
     <bios path="trs80coco/extbas11.rom"  md5="21070aa0496142b886c562bf76d7c113" core="xroar" mandatory="true"  hashMatchMandatory="false" note="CoCo 2 Extended BASIC" />
     <bios path="trs80coco/mx1600bas.rom" md5="88d1504e93366f498105a846cdbf7fb7" core="xroar" hashMatchMandatory="false" note="MX1600 BASIC" />
     <bios path="trs80coco/disk10.rom"    md5="a64b3ef9efcc066b18d35b134068d1cc" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos 1.0" />
     <bios path="trs80coco/disk11.rom"    md5="8cab28f4b7311b8df63c07bb3b59bfd5" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos 1.1" />
     <bios path="trs80coco/hdbdw3bck.rom" md5="ef750d93d24d7bc87a8ecd6e5a15a845" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos Becker" />
-    <bios path="trs80coco/mc10.rom" md5="f29e94ff36577ffb6a787959e45bfe85" core="xroar" hashMatchMandatory="false" note="MC-10" />
-    <bios path="trs80coco/coco3.rom" md5="7233c6c429f3ce1c7392f28a933e0b6f" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
-    <bios path="trs80coco/coco3p.rom" md5="4ae57e5a8e7494e5485446fefedb580b" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
+    <bios path="trs80coco/mc10.rom"      md5="f29e94ff36577ffb6a787959e45bfe85" core="xroar" hashMatchMandatory="false" note="MC-10" />
+    <bios path="trs80coco/coco3.rom"     md5="7233c6c429f3ce1c7392f28a933e0b6f" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
+    <bios path="trs80coco/coco3p.rom"    md5="4ae57e5a8e7494e5485446fefedb580b" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
     <bios path="trs80coco/alice32.rom"   md5="79ea46603d716578d5f2b52eb4c33ca2" core="xroar" mandatory="false" hashMatchMandatory="false" note="Alice" />
     <bios path="trs80coco/alice4k.rom"   md5="78af465c2f31cf4e05dec1efda77da01" core="xroar" mandatory="false" hashMatchMandatory="false" note="Alice" />
     <bios path="deluxe.rom" md5="e27c02fd766e8710240c59ef5424a6ef" core="xroar" />
@@ -653,9 +687,9 @@
     <bios path="cp400ext.rom" md5="091581001577b4a83ccfd511829de0f1" core="xroar" />
     <bios path="orch90.rom" md5="171fb7a5d3b808565295b45c773abaaf" core="xroar" mandatory="false" />
   </system>
-  <system fullname="Philips CD-I" platform="cdi">
+    <system fullname="Philips CD-I" platform="cdi">
     <bios path="cdi/cdimono1.zip"     md5="ce590c4787460161359f2b680136cb60,bbe6636ac11d3744f0710e8e820187e7,1a7c3c98c46555ff5fc93ee3feae4b47" core="libretro/cdi2015,libretro/same_cdi" mandatory="true" hashMatchMandatory="false" />
-    <bios path="cdi/cdibios.zip" md5="9fd6b277cd877d51426427a33d1d19bb" core="libretro/same_cdi" hashMatchMandatory="false" />
+    <bios path="cdi/cdibios.zip"      md5="9fd6b277cd877d51426427a33d1d19bb" core="libretro/same_cdi" hashMatchMandatory="false" />
     <bios path="cdi/cdimono2.zip"     md5="2ac8cd5bb23287e022ca17d616949255" core="libretro/same_cdi" mandatory="false" hashMatchMandatory="false" />
   </system>
   <system fullname="Sega Naomi 2" platform="naomi2">
