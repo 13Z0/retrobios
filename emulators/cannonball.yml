@@ -32,6 +32,12 @@ notes: |
 
   The widescreen tilemap patches are compiled into the binary
   (tilemap_data.h) and loaded from memory (src/main/engine/omusic.c:50-67).
+  res/tilemap.bin and res/tilepatch.bin of the repository are their source
+  and are never opened. No config.xml is read: settings come from the core
+  options (src/main/frontend/config.c:86-87). The res/ folder beside the ROMs
+  is only a prefix for external music tracks, and the three tracks are the
+  internal YM ones (src/main/libretro/main.c:1045,
+  src/main/frontend/config.c:47-62, src/main/engine/omusic.c:283-298).
 
   The fixed PCM sample variant (opr-10188.71f) replaces opr-10188.71 when the
   "Fix Broken Samples" core option is enabled.
