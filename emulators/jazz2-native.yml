@@ -41,7 +41,7 @@ notes: |
 
 files:
   # ================================================================
-  # Content/ (bundled runtime data, shipped with each release)
+  # Content/ (runtime data, shipped with each standalone release)
   # ================================================================
 
   - name: "Animations/"
@@ -49,30 +49,63 @@ files:
     category: game_data
     path: "jazz2/Content/Animations/"
     standalone_path: "Content/Animations/"
+    mode: libretro
+    required: true
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:1164, 1294, 2837-2838"
+    note: "Native graphics, sounds and the UI fonts, opened through OpenContentFile. No libretro build is published with the release, so the tree is placed by hand."
+
+  - name: "Animations/"
+    type: directory
+    category: game_data
+    path: "jazz2/Content/Animations/"
+    standalone_path: "Content/Animations/"
+    mode: standalone
     bundled: true
     required: true
     source_ref: "Sources/Jazz2/ContentResolver.cpp:1164, 1294, 2837-2838"
-    note: "Native graphics, sounds and the UI fonts, opened through OpenContentFile."
+    note: "Native graphics, sounds and the UI fonts, opened through OpenContentFile. Shipped beside the executable in the 3.8.0 Windows and Linux zips."
 
   - name: "Metadata/"
     type: directory
     category: game_data
     path: "jazz2/Content/Metadata/"
     standalone_path: "Content/Metadata/"
+    mode: libretro
+    required: true
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:910"
+    note: "Actor .res descriptors (Common, Enemy, Player, UI, Boss, ...). No libretro build is published with the release, so the tree is placed by hand."
+
+  - name: "Metadata/"
+    type: directory
+    category: game_data
+    path: "jazz2/Content/Metadata/"
+    standalone_path: "Content/Metadata/"
+    mode: standalone
     bundled: true
     required: true
     source_ref: "Sources/Jazz2/ContentResolver.cpp:910"
-    note: "Actor .res descriptors (Common, Enemy, Player, UI, Boss, ...)."
+    note: "Actor .res descriptors (Common, Enemy, Player, UI, Boss, ...). Shipped beside the executable in the 3.8.0 Windows and Linux zips."
 
   - name: "Translations/"
     type: directory
     category: game_data
     path: "jazz2/Content/Translations/"
     standalone_path: "Content/Translations/"
+    mode: libretro
+    required: false
+    source_ref: "Sources/Main.cpp:2021-2027, Sources/Jazz2/UI/Menu/LanguageSelectSection.cpp:82-88"
+    note: "Language .mo bundles, searched in Cache/Translations/ first. Built-in English is used when none is loaded. No libretro build is published with the release, so the tree is placed by hand."
+
+  - name: "Translations/"
+    type: directory
+    category: game_data
+    path: "jazz2/Content/Translations/"
+    standalone_path: "Content/Translations/"
+    mode: standalone
     bundled: true
     required: false
     source_ref: "Sources/Main.cpp:2021-2027, Sources/Jazz2/UI/Menu/LanguageSelectSection.cpp:82-88"
-    note: "Language .mo bundles, searched in Cache/Translations/ first. Built-in English is used when none is loaded."
+    note: "Language .mo bundles, searched in Cache/Translations/ first. Built-in English is used when none is loaded. Shipped beside the executable in the 3.8.0 Windows and Linux zips."
 
   # ================================================================
   # Source/ (original Jazz Jackrabbit 2 data, user-supplied)

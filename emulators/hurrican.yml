@@ -43,6 +43,7 @@ notes: |
 
 files:
   - name: "lang/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/lang/"
     category: game_data
@@ -55,6 +56,7 @@ files:
       and aborts when it finds none.
 
   - name: "textures/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/data/textures/"
     category: game_data
@@ -67,6 +69,7 @@ files:
       ReadScaleFactorsFiles (Hurrican/src/DX8Texture.cpp:162-168).
 
   - name: "levels/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/data/levels/"
     category: game_data
@@ -76,6 +79,7 @@ files:
     source_ref: "Hurrican/src/Tileengine.cpp:330-336, Hurrican/src/Texts.cpp:127-133"
 
   - name: "shaders/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/data/shaders/"
     category: game_data
@@ -88,6 +92,7 @@ files:
       build compiles this block out.
 
   - name: "music/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/data/music/"
     category: game_data
@@ -97,6 +102,7 @@ files:
     source_ref: "Hurrican/src/DX8Sound.cpp:314-320"
 
   - name: "sfx/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hurrican/data/sfx/"
     category: game_data
@@ -106,6 +112,7 @@ files:
     source_ref: "Hurrican/src/DX8Sound.cpp:580-586"
 
   - name: "gamecontrollerdb.txt"
+    not_bundled_on: [batocera]
     path: "hurrican/data/gamecontrollerdb.txt"
     category: game_data
     description: "SDL game controller mapping database"

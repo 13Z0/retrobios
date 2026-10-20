@@ -399,6 +399,7 @@ files:
     category: game_data
     description: "Character directory"
     required: false
+    bundled: true
     source_ref: "src/system.go:5364, src/script.go:3190-3191"
     note: >
       A character path that does not resolve as given is searched under
@@ -410,7 +411,9 @@ files:
     category: game_data
     description: "Stage directory"
     required: false
+    bundled: true
     source_ref: "src/system.go:5590, src/resources/defaultConfig.ini:178, external/script/main.lua:1770-1774"
     note: >
       Debug.StartStage defaults to stages/stage0-720.def, the stage added
       when select.def lists none.
+      Release packages ship stage0-720.def and the other sample stages.

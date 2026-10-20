@@ -350,21 +350,25 @@ files:
   - name: drastic_logo_0.raw
     path: drastic_logo_0.raw
     required: false
+    bundled: true
     category: game_data
     size: 120000
+    sha1: "13c0866a8fb945e3ff8db1bb06f7f923356f7c86"
     validation: [size]
     description: "boot splash, first of two"
-    note: "Read from the root of the data directory in one 120000 byte request, so a shorter file is rejected. One of the two indices is picked at random and a missing file skips the splash."
+    note: "Read from the root of the data directory in one 120000 byte request, so a shorter file is rejected. One of the two indices is picked at random and a missing file skips the splash. Shipped in the r2.5.2.2 Linux tarball, and the Android build reads neither."
     source_ref: "drastic r2.5.2.2 load_logo 0x7fad0-0x7fb78"
 
   - name: drastic_logo_1.raw
     path: drastic_logo_1.raw
     required: false
+    bundled: true
     category: game_data
     size: 120000
+    sha1: "a5e63c52cda737f224e2772dcd91dfe5c06e9742"
     validation: [size]
     description: "boot splash, second of two"
-    note: "Same read as index 0."
+    note: "Same read as index 0, and shipped beside it."
     source_ref: "drastic r2.5.2.2 load_logo 0x7fad0-0x7fb78"
 
 exclusion_note: >

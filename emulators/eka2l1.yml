@@ -784,8 +784,8 @@ files:
     standalone_path: panic.json
     mode: standalone
     required: false
-    bundled: true
     description: "Panic category descriptions read when the system is created"
+    note: "Shipped in the desktop archives but not in the Android APK."
     source_ref: "src/emu/utils/src/panic.cpp:32-38, src/emu/system/src/epoc.cpp:653, src/emu/qt/CMakeLists.txt:269"
 
   - name: aq_crash_fix.lua

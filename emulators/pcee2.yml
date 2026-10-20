@@ -140,7 +140,6 @@ files:
     path: "pcsx2/resources/patches.zip"
     description: "Built-in game patch archive (pnach per serial and CRC)"
     required: false
-    bundled: true
     category: game_data
     source_ref: "pcsx2/Patch.cpp:117, pcsx2/Patch.cpp:289-317, pcsx2/Patch.cpp:365-405"
     note: >

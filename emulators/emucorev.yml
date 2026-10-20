@@ -142,6 +142,7 @@ files:
     path: "compatibility/app_compat_db.xml"
     system: sony-playstation-vita
     required: false
+    bundled: true
     category: game_data
     description: "per-title compatibility ratings"
     note: >-
@@ -149,19 +150,23 @@ files:
       releases, unpacked into the compatibility directory of internal storage
       and parsed for the badges the library and catalog screens draw. The native
       side looks for the same filename in the cache directory at bootstrap and
-      logs a warning when it finds none.
+      logs a warning when it finds none. The app fetches it by itself when the
+      library first asks for the snapshot and again once the refresh interval
+      has passed, with no user action.
     source_ref: "app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:18-20, app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:54-107, app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:346-350, app/src/main/cpp/vita3k/vita3k/android/jni/native_bootstrap.cpp:122, app/src/main/cpp/vita3k/vita3k/compat/src/compat.cpp:127-150"
 
   - name: commercial_list.json
     path: "compatibility/commercial_list.json"
     system: sony-playstation-vita
     required: false
+    bundled: true
     category: game_data
     description: "commercial title index"
     note: >-
       Fetched from the Vita3K web API and merged over the XML snapshot, so a
       title the database does not carry still resolves. Read only when the file
-      is present and not empty.
+      is present and not empty. Downloaded by the app in the same unattended
+      refresh as app_compat_db.xml.
     source_ref: "app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:20, app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:69-73, app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:349"
 
   - name: psvita_games.db
@@ -169,12 +174,15 @@ files:
     system: sony-playstation-vita
     required: false
     bundled: true
+    size: 3801088
+    sha1: "3c6b523e5432a892a0c284d9ba2593919b0173b7"
     category: game_data
     description: "bundled catalog of Vita titles"
     note: >-
       SQLite catalog carried in the package assets and copied into internal
       storage the first time the catalog screen opens, then reopened read only
-      from there. A copy already present is kept.
+      from there. A copy already present is kept. The hash is that of
+      assets/catalog/psvita_games.db in the v0.1.8 APK.
     source_ref: "app/src/main/java/com/sbro/emucorev/data/VitaCatalogRepository.kt:8-9, app/src/main/java/com/sbro/emucorev/data/VitaCatalogRepository.kt:276-292"
 
   - name: config.txt

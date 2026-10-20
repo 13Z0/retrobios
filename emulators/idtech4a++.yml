@@ -304,7 +304,8 @@ files:
       it. TDM_GLSL_SHADER_VERSION reads 2.14.2 here: the four SSAO programs
       moved their uniform-dependent initialisers out of global scope and cast
       their integer terms to float. The 2.14.1 pack it replaced is kept as a
-      variant.
+      variant. Hash of the copy in the universal APK, the arm64 and armv7 APKs
+      ship a 98436 byte glprogs.pk4 instead.
     source_ref: "Q3E/src/main/java/com/n0n3m4/q3e/Q3EPatchResourceManager.java:83-92, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameHelper.java:748-767, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameConstants.java:391, Q3E/src/main/jni/darkmod/glslprogs/ssao.frag.glsl:78-80, 163-166"
 
   - name: renderprogs.pk4
@@ -334,7 +335,6 @@ files:
 
   - name: zzz_etqwbase.pk4
     required: true
-    bundled: true
     category: game_data
     size: 141815
     md5: 5b72ab7bb1c295c30b9cbb274a4bd6e9
@@ -344,7 +344,9 @@ files:
       Unpacked into the ETQW base folder. The name sorts last so the entries
       override the ones the retail archives carry. ETQW_GLSL_SHADER_VERSION
       names the set the build expects and reads .6 here. The .3 pack it
-      replaced is kept as a variant for older builds.
+      replaced is kept as a variant for older builds. Only the universal
+      v1.1.0harmattan73 APK carries it in its assets, the arm64 and armv7 APKs
+      of the same release do not.
     source_ref: "Q3E/src/main/java/com/n0n3m4/q3e/Q3EPatchResourceManager.java:208-217, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameHelper.java:790-809, Q3E/src/main/java/com/n0n3m4/q3e/Q3EGameConstants.java:400"
 
   - name: legacy_v2.83.2.pk3

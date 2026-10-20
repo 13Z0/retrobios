@@ -42,7 +42,7 @@ files:
     bundled: true
     source_ref: "src/loader2.cpp:284 (lsf default), src/netcfg.cpp:204 (lsf override)"
     note: >
-      Shipped in the source tree under data/. Loader2 reads it via load(), and the
+      Shipped in Abuse-0.9.1-win32.zip. Loader2 reads it via load(), and the
       file in turn chain-loads the rest of the Lisp data (english.lsp,
       common.lsp, startup.lsp, options.lsp, input.lsp, startup).
 
@@ -52,6 +52,7 @@ files:
     required: true
     bundled: true
     source_ref: "data/abuse.lsp"
+    note: "Shipped in Abuse-0.9.1-win32.zip."
 
   - name: "english.lsp"
     path: "lisp/english.lsp"
@@ -60,3 +61,4 @@ files:
     required: true
     bundled: true
     source_ref: "data/abuse.lsp:9"
+    note: "Shipped in Abuse-0.9.1-win32.zip."

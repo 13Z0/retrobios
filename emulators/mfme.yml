@@ -529,7 +529,6 @@ files:
     system: fruitmachine
     path: "DefaultSounds/Stepper.wav"
     required: false
-    bundled: true
     category: game_data
     description: "SRU, SYS80 and MPS2 200 step reel motor"
     source_ref: "DefaultSounds/Readme.txt:55, history.txt:74"

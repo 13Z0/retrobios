@@ -60,7 +60,6 @@ files:
     sha1: "515a3d9a9e43b7902d161ba27bf67aecee922e41"
     md5: "23bf80c259f182f582beeb368aba98f5"
     required: true
-    bundled: true
     source_ref: "src/libretro.cpp:332-371, src/NuonEnvironment.cpp:595, src/NuonEnvironment.cpp:617-619, src/bios.cpp:566-582"
     note: >
       Loaded into MPE3 by InitBios through LoadCoffFile, which rejects a file
@@ -75,7 +74,6 @@ files:
     sha1: "5265dbc871ada59dbd384104c578d807438af4c7"
     md5: "1abc7f6265b82742154be881cff2cd3f"
     required: true
-    bundled: true
     source_ref: "src/media.cpp:243-321, src/bios.cpp:661, src/Bios.h:29-33"
     note: >
       Loaded by MediaInitMPE when the media MPE is MPE0, which InitBios does at
@@ -89,7 +87,6 @@ files:
     sha1: "e45a96ce18486573c4d30efbc01658ce1ff8cd55"
     md5: "ceb37f4e78c1f396b49bb6372c83fd7c"
     required: true
-    bundled: true
     source_ref: "src/media.cpp:277-296, src/Bios.h:35-38"
     note: >
       Loaded by MediaInitMPE when a program installs the minibios on an MPE
@@ -102,7 +99,6 @@ files:
     sha1: "dfbac2a22f17cf82c7cd40f3727eecf31b013d15"
     md5: "20becfdb932042f8ab47c098e92a12ed"
     required: false
-    bundled: true
     source_ref: "src/NuonEnvironment.cpp:547-563, src/NuonEnvironment.cpp:931-1070"
     note: >
       Read from the working directory, then beside the running executable.
@@ -115,7 +111,6 @@ files:
     sha1: "92fca43b92298d308e88edada93453a9ef21adbd"
     md5: "5944fea1ff20645f10aecdda06235fb7"
     required: false
-    bundled: true
     has_builtin: true
     source_ref: "src/video.cpp:129, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
@@ -130,7 +125,6 @@ files:
     sha1: "d0477bd73ba524bb74c1faf30fd8f32bd254f924"
     md5: "e23f4668fea649cb14feab840fd8377f"
     required: false
-    bundled: true
     has_builtin: true
     source_ref: "src/video.cpp:130, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
@@ -144,7 +138,6 @@ files:
     sha1: "e57671f844c3bf96f0bf77ea4d550e13e077b0d2"
     md5: "2e1335cd9b14165897eac031504abf8e"
     required: false
-    bundled: true
     has_builtin: true
     source_ref: "src/video.cpp:130, src/ShaderProgram.cpp:94-144, src/embedded_shaders.h:31-52"
     note: >
@@ -155,7 +148,6 @@ files:
     description: "Atmel AT49BV162A flash ROM image, 2 MB at 0xF0000000"
     size: 2097152
     required: false
-    bundled: true
     source_ref: "src/FlashEEPROM.h:36-51, src/FlashEEPROM.cpp:273-292, src/dma.cpp:679-693"
     note: >
       Read by the FlashEEPROM constructor from the process working directory

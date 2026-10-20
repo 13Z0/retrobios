@@ -74,52 +74,48 @@ files:
     path: "assets/shaders/common.vert.spv"
     system: pico8
     required: false
-    bundled: true
     category: game_data
     size: 748
     md5: 541e16aa5651699bb085c954ec1b043e
     sha1: 20815dcbfaff559ec0faf0f890ad473a3b784ed0
     description: "Vulkan vertex shader module"
-    note: "Opened first whenever the Vulkan backend starts, whatever the display filter. Bytes from versionCode 404."
+    note: "Opened first whenever the Vulkan backend starts, whatever the display filter. Bytes from versionCode 404, which ships it in its assets. versionCode 501 ships none, so the Vulkan backend finds nothing to open."
     source_ref: "libinfinity.so arm64 0xa7078, 0x9c780-0x9c78c"
 
   - name: none.frag.spv
     path: "assets/shaders/none.frag.spv"
     system: pico8
     required: false
-    bundled: true
     category: game_data
     size: 580
     md5: 8437c4e750da7183dffc7b98f9938377
     sha1: f3aae57c3f776d35ddf2690679221c05745dcc8b
     description: "Vulkan fragment shader module, unfiltered output"
-    note: "Chosen for any display filter value other than 1 and 2, the stored default being 0. Bytes from versionCode 404."
+    note: "Chosen for any display filter value other than 1 and 2, the stored default being 0. Bytes from versionCode 404, which ships it in its assets. versionCode 501 ships none, so the Vulkan backend finds nothing to open."
     source_ref: "libinfinity.so arm64 0xa6f04-0xa6f40, 0xa7090-0xa7098, 0x9c7ec-0x9c828"
 
   - name: crt.frag.spv
     path: "assets/shaders/crt.frag.spv"
     system: pico8
     required: false
-    bundled: true
     category: game_data
     size: 1864
     md5: c4878a2aaee2e3c26d3d4aeeeaa3ac25
     sha1: 92822c268c59f60fe9a4098768be599006f7f1ab
     description: "Vulkan fragment shader module, CRT filter"
-    note: "Chosen when the display filter is 1. Bytes from versionCode 404."
+    note: "Chosen when the display filter is 1. Bytes from versionCode 404, which ships it in its assets. versionCode 501 ships none, so the Vulkan backend finds nothing to open."
     source_ref: "libinfinity.so arm64 0xa6f34-0xa6f40, 0xa7090-0xa7098, 0x9c7ec-0x9c828"
 
   - name: lcd.frag.spv
     path: "assets/shaders/lcd.frag.spv"
     system: pico8
     required: false
-    bundled: true
     category: game_data
     size: 1700
     md5: 76f36cbe69708d631ae356bcd49274b2
     sha1: 1a3c0aa0b93cc1ee4690b2c0d593497d003b6165
     description: "Vulkan fragment shader module, LCD filter"
-    note: "Chosen when the display filter is 2. Bytes from versionCode 404."
+    note: "Chosen when the display filter is 2. Bytes from versionCode 404, which ships it in its assets. versionCode 501 ships none, so the Vulkan backend finds nothing to open."
     source_ref: "libinfinity.so arm64 0xa6f10-0xa6f30, 0xa7090-0xa7098, 0x9c7ec-0x9c828"
 
   - name: 7x7demake.p8.png

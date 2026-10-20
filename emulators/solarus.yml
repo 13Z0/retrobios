@@ -70,3 +70,4 @@ files:
       which is the default (cmake/AddOptions.cmake:51), and carried in the
       release archives (.gitlab-ci.yml:306). Both probes are guarded by an
       existence test, and neither hitting leaves SDL on its built-in mappings.
+      The v2.1.4 Windows zip ships this exact file next to solarus-run.exe.

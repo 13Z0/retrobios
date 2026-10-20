@@ -556,39 +556,37 @@ files:
     system: fpinball
     path: "plugins/DesktopCam.dll"
     required: false
-    bundled: true
     size: 3388680
     description: "Head tracking from any webcam, desktop geometry"
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
-    note: "Bound to AVICAP32 and MSVFW32 and reads the cascade files below."
+    note: "Bound to AVICAP32 and MSVFW32 and reads the cascade files below. The 1.5-408 zip moves it to removed_plugins\\, while bam-setup.exe installs it here."
 
   - name: Simple Cam.dll
     system: fpinball
     path: "plugins/Simple Cam.dll"
     required: false
-    bundled: true
     size: 3262728
     description: "Head tracking from any webcam, cabinet geometry"
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
+    note: "The 1.5-408 zip moves it to removed_plugins\\, while bam-setup.exe installs it here."
 
   - name: PS3Eye.dll
     system: fpinball
     path: "plugins/PS3Eye.dll"
     required: false
-    bundled: true
     size: 1699080
     description: "Head tracking from a PlayStation Eye"
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
-    note: "Bound to CLEyeMulticam.dll, which comes from the CL-Eye SDK."
+    note: "Bound to CLEyeMulticam.dll, which comes from the CL-Eye SDK. The 1.5-408 zip moves it to removed_plugins\\, while bam-setup.exe installs it here."
 
   - name: DesktopPS3Eye.dll
     system: fpinball
     path: "plugins/DesktopPS3Eye.dll"
     required: false
-    bundled: true
     size: 1813768
     description: "PlayStation Eye tracking with desktop geometry"
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
+    note: "The 1.5-408 zip moves it to removed_plugins\\, while bam-setup.exe installs it here."
 
   - name: HT-PS3Eyes.dll
     system: fpinball
@@ -740,17 +738,15 @@ files:
     system: fpinball
     path: "plugins/OpenVR.dll"
     required: false
-    bundled: true
     size: 419328
     description: "Renders the table to an OpenVR headset"
     source_ref: "BAM_Plugins OpenVR/main.cpp, BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
-    note: "Ships only in BAM-OpenVR.zip, which ES-DE also looks for as BAM-OpenVR\\."
+    note: "Ships only in BAM-OpenVR.zip, a separate build with its own BAM.dll, which ES-DE also looks for as BAM-OpenVR\\."
 
   - name: openvr_api.dll
     system: fpinball
     path: "plugins/openvr_api.dll"
     required: false
-    bundled: true
     size: 620760
     description: "Valve OpenVR runtime interface"
     source_ref: "OpenVR.dll import directory"

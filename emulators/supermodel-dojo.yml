@@ -108,5 +108,5 @@ files:
     required: false
     bundled: true
     description: "Custom MPEG music track map"
-    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies."
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20260528-git-77d28ee archives and absent from dojo-preview6."
     source_ref: "Src/OSD/SDL/Main.cpp:118, 967, Src/Sound/MPEG/MpegAudio.cpp:88-108"

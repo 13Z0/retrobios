@@ -110,7 +110,7 @@ files:
       - "2d16307ceb658636a05d34c7ba935b48"
       - "29fd5bc40cea222e040c1a1cfd60ea2e"
     description: "ROM set definitions, libretro copy"
-    note: "Read through the VFS from {system}/supermodel/Games.xml, or Config/Games.xml under it, and parsed from memory (Src/GameLoader.cpp:1019-1030). When the read yields nothing the bytes compiled in from Config/Games.xml are parsed instead, so the core identifies every set without a file on disk, but a file that is present takes precedence. The second hash is the embedded array, which predates the indentation cleanup of the repository copy by one tab."
+    note: "Read through the VFS from {system}/supermodel/Games.xml, or Config/Games.xml under it, and parsed from memory (Src/GameLoader.cpp:1019-1030). When neither path holds a file the core writes its embedded copy to supermodel/Games.xml at startup, and when the read still yields nothing the compiled-in bytes are parsed instead, so the core identifies every set without a file supplied, but a file that is present takes precedence. The second hash is the embedded array, which predates the indentation cleanup of the repository copy by one tab."
     source_ref: "Src/OSD/libretro/LibretroWrapper.cpp:187-206, Src/OSD/libretro/LibretroWrapper.cpp:221-222, Src/OSD/libretro/LibretroWrapper.cpp:822, Src/OSD/libretro/LibretroWrapper.cpp:834-859, Makefile:651-653"
 
   - name: Supermodel.ini
@@ -151,16 +151,27 @@ files:
     source_ref: "Src/OSD/SDL/Crosshair.cpp:35, 49-51, Src/OSD/SDL/Main.cpp:2372-2378, Src/OSD/libretro/libretroCrosshair.cpp:39, 55-58"
 
   - name: Music.xml
-    path: "supermodel/Music.xml"
     standalone_path: "Config/Music.xml"
+    mode: standalone
     required: false
     bundled: true
     size: 9224
     sha1: "b44ed959fe2948a03d81b98e67ca32f2b4c37e78"
     md5: "ddb4e23db15dda67539eee24de23de4b"
     description: "Custom MPEG music track map"
-    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. The shipped file is a commented example. The libretro core resolves it beside Games.xml and has no embedded copy."
-    source_ref: "Src/OSD/SDL/Main.cpp:118, Src/OSD/SDL/Main.cpp:943, Src/Sound/MPEG/MpegAudio.cpp:88-108, Src/OSD/libretro/LibretroWrapper.cpp:223, Src/OSD/libretro/LibretroWrapper.cpp:494"
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. The shipped file is a commented example, carried in Config of the release archives."
+    source_ref: "Src/OSD/SDL/Main.cpp:118, Src/OSD/SDL/Main.cpp:943, Src/Sound/MPEG/MpegAudio.cpp:88-108"
+
+  - name: Music.xml
+    path: "supermodel/Music.xml"
+    mode: libretro
+    required: false
+    size: 9224
+    sha1: "b44ed959fe2948a03d81b98e67ca32f2b4c37e78"
+    md5: "ddb4e23db15dda67539eee24de23de4b"
+    description: "Custom MPEG music track map, libretro copy"
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. The core resolves it beside Games.xml, has no embedded copy and never writes one, so the file is not delivered with the core."
+    source_ref: "Src/OSD/libretro/LibretroWrapper.cpp:223, Src/OSD/libretro/LibretroWrapper.cpp:494, Src/Sound/MPEG/MpegAudio.cpp:88-108"
 
 exclusion_note: >
   The Sega Model 3 arcade hardware has no shared system BIOS. Each game board

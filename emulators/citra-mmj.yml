@@ -87,8 +87,12 @@ files:
     path: sysdata/aes_keys.txt
     system: nintendo-3ds
     required: false
+    bundled: true
+    size: 2951
+    sha1: "7072caead687e95549cb75c61449ff8b45d38342"
+    md5: "a45dd9a3cb051cfecedd63c82b47ab4f"
     description: "AES key slots"
-    note: "One name=hex pair per line, slot0x<NN>Key<X|Y|N> and common<N>. Read last, so it overrides what boot9.bin and the native firm titles set."
+    note: "One name=hex pair per line, slot0x<NN>Key<X|Y|N> and common<N>. Read last, so it overrides what boot9.bin and the native firm titles set. Shipped in the assets of the 20251112 APKs and copied to sysdata/ on first run when absent, hash of that copy."
     source_ref: "src/core/hw/aes/key.cpp:428-493, src/core/hw/aes/key.cpp:497-508"
 
   - name: sector0x96.bin

@@ -123,6 +123,7 @@ files:
     path: "roms/apple2o.rom"
     description: "Apple ][ Original monitor and Integer BASIC, $D000-$FFFF"
     required: false
+    bundled: true
     priority: 1
     size: 12288
     sha256: "68d9db6bb4c305d40c3fa89fa0f2d7b7f71516a9431e3138859f23bc5bddb2d1"
@@ -134,6 +135,7 @@ files:
     path: "roms/apple2.rom"
     description: "Apple ][ generic 12 KB fallback, Autostart monitor and Applesoft"
     required: false
+    bundled: true
     priority: 2
     size: 12288
     sha256: "fc3e9d41e9428534a883df5aa10eb55b73ea53d2fcbb3ee4f39bed1b07a82905"
@@ -145,6 +147,7 @@ files:
     path: "roms/apple2p.rom"
     description: "Apple ][+ Autostart monitor and Applesoft, 4 KB pad then $C000-$FFFF"
     required: false
+    bundled: true
     priority: 1
     size: [12288, 20480]
     sha256: "92c4bef609920842ea472d21b661a0d35dbda6cd90963b8b734a205e22d84108"
@@ -156,6 +159,7 @@ files:
     path: "roms/apple2e.rom"
     description: "Apple //e Enhanced firmware, 32 KB dump with the 16 KB firmware in the upper half"
     required: true
+    bundled: true
     priority: 1
     size: 32768
     sha256: "c17bc38c75ba96c33a30c688a1efd60144811073423533fe7f8453cdd9457aab"
@@ -167,6 +171,7 @@ files:
     path: "roms/apple2e_unenh.rom"
     description: "Apple //e Unenhanced firmware, 4 KB internal $Cx00 ROM then $D000-$FFFF"
     required: false
+    bundled: true
     priority: 1
     aliases: ["342-0135-b.64.rom"]
     size: 16384
@@ -179,6 +184,7 @@ files:
     path: "roms/apple2c-32Kv0.rom"
     description: "Apple //c two-bank firmware, bank 0 in the lower 16 KB"
     required: false
+    bundled: true
     priority: 1
     size: 32768
     crc32: "323952d1"
@@ -191,6 +197,7 @@ files:
     path: "roms/apple2c-16K.rom"
     description: "Apple //c ROM 255, 16 KB, MAME apple2c a2c.128"
     required: false
+    bundled: true
     priority: 2
     size: 16384
     crc32: "f0edaa1b"
@@ -203,6 +210,7 @@ files:
     path: "roms/3420033a.256"
     description: "Apple //c ROM 0, UniDisk 3.5 firmware, MAME apple2c0 342-0033-A"
     required: false
+    bundled: true
     priority: 3
     size: 32768
     crc32: "c8b979b3"
@@ -215,6 +223,7 @@ files:
     path: "roms/apple2cp.rom"
     description: "Apple //c Plus two-bank firmware, MAME apple2cp 341-0625-a.256"
     required: false
+    bundled: true
     priority: 1
     aliases: ["apple2c-plus.rom"]
     size: 32768
@@ -228,6 +237,7 @@ files:
     path: "roms/apple2_char.rom"
     description: "Apple ][ and ][+ character generator, 2 KB uppercase set"
     required: false
+    bundled: true
     priority: 1
     size: 2048
     sha256: "08f5d22230481019844492dde0a29a018cb193712a9e4a43770a3870608f28de"
@@ -239,6 +249,7 @@ files:
     path: "roms/apple2e_char.rom"
     description: "Apple //e Enhanced character generator 342-0265-A, 4 KB with MouseText"
     required: false
+    bundled: true
     priority: 1
     aliases: ["apple2e_char_us.rom"]
     size: 4096
@@ -251,6 +262,7 @@ files:
     path: "roms/apple2e_char_us_unenh.rom"
     description: "Apple //e Unenhanced character generator 342-0133-A, 4 KB"
     required: false
+    bundled: true
     priority: 1
     aliases: ["apple2e_char_2k.rom", "341-0265-a.chr.rom"]
     size: 4096
@@ -263,6 +275,7 @@ files:
     path: "roms/apple2e_char_fr.rom"
     description: "Apple //e French character generator, 4 KB"
     required: false
+    bundled: true
     aliases: ["apple2e_char_frca_unenh.rom"]
     size: 4096
     crc32: "ab0be706"
@@ -275,6 +288,7 @@ files:
     path: "roms/apple2e_char_frca.rom"
     description: "Apple //e French Canadian Enhanced character generator, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "2c8fc403"
     sha256: "56479cbec4767651c62a4d0f61e6ed103395216f2b86eddba74d85495dd71cc4"
@@ -286,6 +300,7 @@ files:
     path: "roms/apple2e_char_uk.rom"
     description: "Apple //e UK Enhanced character generator 342-0273-A, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "dda11653"
     sha256: "d55bd5391485cd78c68c71408f09bd088e82a73d179a0a25820067a0c1554acd"
@@ -297,6 +312,7 @@ files:
     path: "roms/apple2e_char_uk_unenh.rom"
     description: "Apple //e UK Unenhanced character generator 341-0160-A, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "7a9a91ef"
     sha256: "f2199fbfb473e98a8c3fb7e7c3312faaf76b4b010b02c655b662e5f87dc997f3"
@@ -308,6 +324,7 @@ files:
     path: "roms/apple2e_char_de.rom"
     description: "Apple //e German character generator 341-0161-A, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "0d72f153"
     sha256: "b92576b4fa994384501078ff99963b53cfa98eff4bb641eb61649d484a469315"
@@ -319,6 +336,7 @@ files:
     path: "roms/apple2e_char_de_improved.rom"
     description: "Apple //e German Improved character generator, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "d345d332"
     sha256: "0e32ab131e3932fc61c0a5f0f5509b4c37ab8db6239027f5955d47feba56d39f"
@@ -330,6 +348,7 @@ files:
     path: "roms/342-0274-a.e9"
     description: "Apple //e international video ROM 342-0274-A, 8 KB, French Canadian bank then US bank, MAME apple2eefr"
     required: false
+    bundled: true
     size: 8192
     crc32: "8f342081"
     sha256: "d4d29771658372c6ab5d18ff3bdab6b3b2b02b8de30ed6b021efb8a415192432"
@@ -341,6 +360,7 @@ files:
     path: "roms/apple2e_char_ft_blockascii.rom"
     description: "French Touch Block ASCII dual-bank character generator, 8 KB"
     required: false
+    bundled: true
     size: 8192
     crc32: "1eae3944"
     sha256: "c69c8e1eb26923c5df03d3507fdf86c5f768283a924a5fffdd80377cf2339321"
@@ -352,6 +372,7 @@ files:
     path: "roms/apple2e_char_us_mt_iigs.rom"
     description: "Apple //e US Enhanced character generator with the IIgs MouseText glyphs, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "a68a4f03"
     sha1: "66eca035fd18024fceed4c30c32a4185792cb3ea"
@@ -363,6 +384,7 @@ files:
     path: "roms/apple2e_char_reactive.rom"
     description: "ReActive custom Apple //e character generator, 4 KB"
     required: false
+    bundled: true
     size: 4096
     crc32: "af19aff6"
     sha1: "02075efbfdb99af48360561323404a921b91a676"
@@ -374,6 +396,7 @@ files:
     path: "roms/Videx Lower Case Chip ROM.bin"
     description: "Videx LOWER CASE CHIP character generator for the ][ and ][+, 2 KB"
     required: false
+    bundled: true
     size: 2048
     crc32: "00f68076"
     sha256: "6a516bcd96382597af7a498fb1da7547490c830db0f9d22d541fb065b9cd048b"
@@ -385,6 +408,7 @@ files:
     path: "roms/disk2.rom"
     description: "Disk II 16-sector boot PROM 341-0027-A"
     required: false
+    bundled: true
     has_builtin: true
     size: 256
     sha256: "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d"
@@ -396,6 +420,7 @@ files:
     path: "roms/diskii_p6.rom"
     description: "Disk II 16-sector P6 logic state sequencer PROM 341-0028-A"
     required: false
+    bundled: true
     has_builtin: true
     size: 256
     sha256: "e5e30615040567c1e7a2d21599681f8dac820edbdcda177b816a64d74b3a12f2"
@@ -407,6 +432,7 @@ files:
     path: "roms/disk2_13.rom"
     description: "Disk II 13-sector boot PROM 341-0009"
     required: false
+    bundled: true
     size: 256
     sha256: "2d2599521fc5763d4e8c308c2ee7c5c4d5c93785b8fb9a4f7d0381dfd5eb60b6"
     sha1: "afd060e6f35faf3bb0146fa889fc787adf56330a"
@@ -417,6 +443,7 @@ files:
     path: "roms/diskii_p6_13.rom"
     description: "Disk II 13-sector P6 logic state sequencer PROM 341-0010"
     required: false
+    bundled: true
     size: 256
     sha256: "383c55f5333cbfde39dd41528186631e5aca2eddfec30716344f03b6a4d44655"
     sha1: "e3d6d1c30653572b49ecc2dc54ce073978411a04"
@@ -427,6 +454,7 @@ files:
     path: "roms/cffa20eec02.bin"
     description: "CFFA 2.0 firmware, 65C02 build"
     required: false
+    bundled: true
     size: 4096
     crc32: "fb3726f8"
     sha256: "a08cb25ad80054649ee5fcb620e01ed56f025acb28c753bc28dd187a1d149cab"
@@ -438,6 +466,7 @@ files:
     path: "roms/cffa20ee02.bin"
     description: "CFFA 2.0 firmware, 6502 build"
     required: false
+    bundled: true
     size: 4096
     crc32: "3ecafce5"
     sha256: "3d7f6918f9af3828f5a6299299a817df0d354ee62e547bc0238755de66162a88"
@@ -449,6 +478,7 @@ files:
     path: "roms/mouse_341-0270-c.bin"
     description: "AppleMouse II card slot EPROM 341-0270-C"
     required: false
+    bundled: true
     size: 2048
     sha256: "7f8e50c0e8a409991264201f9300f109b872b68e09c43f3e6c26af35fd8b89af"
     sha1: "3a9d881a8a8d30f55b9719aceebbcf717f829d6f"
@@ -459,6 +489,7 @@ files:
     path: "roms/mouse_341-0269.bin"
     description: "AppleMouse II card MC68705P3 MCU mask ROM 341-0269"
     required: false
+    bundled: true
     size: 2048
     sha256: "66480812edad5f6bd70349949cf8bd8fbafee2dc8bf396541d4e78bac2629ec0"
     sha1: "3a2baa6648efe4456d3ec3721216e57c64f7acfc"
@@ -469,6 +500,7 @@ files:
     path: "roms/grappler_plus.bin"
     description: "Orange Micro Grappler+ parallel printer EPROM 3.2"
     required: false
+    bundled: true
     aliases: ["grappler+.bin", "grappler.bin"]
     size: 4096
     sha256: "9be4dea7722ad8928aee64c2ae708f365a6d66c50a63bff8a3c1a4e7596d44c6"
@@ -480,6 +512,7 @@ files:
     path: "roms/ae_transwarp_1.4.bin"
     description: "Applied Engineering TransWarp accelerator ROM v1.4, MAME warprom"
     required: false
+    bundled: true
     aliases: ["ae transwarp rom v1.4.bin"]
     size: 4096
     crc32: "afe37f55"
@@ -572,6 +605,7 @@ files:
     path: "roms/thunderclock_u9_v1.3.bin"
     description: "Thunderware ThunderClock+ slot ROM rev 1.3, U9"
     required: false
+    bundled: true
     aliases: ["thunderclock_u9.bin", "thunderclock.rom", "Thunderware_REV_1.3_ROM_U9.bin"]
     size: [256, 2048]
     sha256: "ecca793179427fdd193373080bf23e49a95743bd7b5e0b218c747663938b6c03"
@@ -583,6 +617,7 @@ files:
     path: "roms/liron.rom"
     description: "Apple Liron SmartPort controller firmware, 4 KB"
     required: false
+    bundled: true
     size: 4096
     sha256: "42c1ae66c6bec932669239599eb8989a5364752d56fa5c8997bb23d8dfc0b657"
     sha1: "fa94ecc2aa23f336f7da9e18bc8f4a6cfbb4ea60"
@@ -593,6 +628,7 @@ files:
     path: "roms/341-0358-A.bin"
     description: "Apple II Workstation Card firmware 341-0358-A, 64 KB"
     required: false
+    bundled: true
     aliases: ["341-0358-a.bin"]
     size: 65536
     crc32: "63819dcb"
@@ -605,6 +641,7 @@ files:
     path: "roms/341-0438-a.bin"
     description: "Apple II 3.5 Disk Controller SuperDrive firmware 341-0438-A, MAME a2superdrive"
     required: false
+    bundled: true
     size: 32768
     crc32: "c73ff25b"
     sha256: "084587835c1d2c92f5708a9745fdd43ba32136fcdb861a12ee7d690de22dc172"
@@ -616,6 +653,7 @@ files:
     path: "roms/342-0326-a.f12"
     description: "Apple //e French keyboard decode ROM 342-0326-A, MAME apple2eefr"
     required: false
+    bundled: true
     size: 2048
     crc32: "f04970a9"
     sha256: "4ae7ff693a486b155a70a8833047b3d4363464dace6760ed64bfb68db233ed4b"
@@ -628,6 +666,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, 2 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 5336
     sha1: "2d046a880476218685ed738fe8c8381962afd74a"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -637,6 +676,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, 6 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 14860
     sha1: "6f698055fa6e9da6c5ae3fd6fb05de76b92a45a9"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -645,6 +685,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, 12 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 22764
     sha1: "fbbbb5e8724c076d194e66a4443d299d54a8efd6"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -653,6 +694,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, 20 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 30060
     sha1: "b6cd14944454c743861196edb4fcab1cc9b586d4"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -661,6 +703,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, motor running, no disk"
     category: game_data
     required: false
+    bundled: true
     size: 8864
     sha1: "4b13701d9a7f8ab0f0827f17ba80b5c32b4e0fa7"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -669,6 +712,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, motor running, disk loaded"
     category: game_data
     required: false
+    bundled: true
     size: 17708
     sha1: "875f90538a3ff5db863ad4c384e1808841ddea9b"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -677,6 +721,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, motor start, no disk"
     category: game_data
     required: false
+    bundled: true
     size: 11180
     sha1: "b87d89c4b46c36dd78dec3dc5170ca61501e7cd9"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -685,6 +730,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, motor start, disk loaded"
     category: game_data
     required: false
+    bundled: true
     size: 17708
     sha1: "510476098848e2b5cdfe9f1608f8dfa3207fe9b4"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -693,6 +739,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, motor stop"
     category: game_data
     required: false
+    bundled: true
     size: 8864
     sha1: "f8d9b94c4d92d35d9ffb1117b693fc74a93f613f"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -701,6 +748,7 @@ files:
     description: "MAME floppy sample, 5.25 inch drive, single track step"
     category: game_data
     required: false
+    bundled: true
     size: 6628
     sha1: "669ee98fb9fac4371c72ed0b60be1bc8470bc7f8"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -709,6 +757,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, 2 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 7450
     sha1: "55caafbd19486b8d517e4b33a6fa65250df55e25"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -718,6 +767,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, 6 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 22230
     sha1: "87e5dec269e67497681c15849777ebfc301131c1"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -726,6 +776,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, 12 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 26540
     sha1: "c6b34fc61496943134ac45cc836a24e743caf794"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -734,6 +785,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, 20 ms head seek"
     category: game_data
     required: false
+    bundled: true
     size: 44144
     sha1: "b2fe4c3a4185146a7d11483d92d4412dd79dbc78"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -742,6 +794,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, motor running, no disk"
     category: game_data
     required: false
+    bundled: true
     size: 17708
     sha1: "db04fc097bdd0411cff232f57525ded491b48c6c"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -750,6 +803,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, motor running, disk loaded"
     category: game_data
     required: false
+    bundled: true
     size: 17708
     sha1: "96ce04a5b02af0da6d311f06fc4906a3cf71c78f"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -758,6 +812,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, motor start, no disk"
     category: game_data
     required: false
+    bundled: true
     size: 17708
     sha1: "af770fd9261a8efee23d66cd39b27be7b2ab7853"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -766,6 +821,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, motor start, disk loaded"
     category: game_data
     required: false
+    bundled: true
     size: 35308
     sha1: "c82b1714378bf2507ed86dea1e9fe743c380abab"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -774,6 +830,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, motor stop"
     category: game_data
     required: false
+    bundled: true
     size: 17684
     sha1: "a8901b692de15eb7a9052f61283f0e7a2b63d67d"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"
@@ -782,6 +839,7 @@ files:
     description: "MAME floppy sample, 3.5 inch drive, single track step"
     category: game_data
     required: false
+    bundled: true
     size: 6878
     sha1: "40d756d0cb5f7998ca26ac1de142a96a83fa2b97"
     source_ref: "src/FloppySoundDevice.cpp:81-119, src/MainWindow.cpp:345-358"

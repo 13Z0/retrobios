@@ -156,8 +156,7 @@ files:
     hle_fallback: true
     system: enterprise-128
     has_builtin: true
-    bundled: true
-    note: "Direct file I/O extension. Loaded for EP128_FILE and EP64_FILE modes. Source included in roms/ directory."
+    note: "Direct file I/O extension. Loaded for EP128_FILE and EP64_FILE modes. The ROM sits in the source tree, but the core zip holds the library only."
     source_ref: "core/core.cpp:286-287"
 
   - name: zt19uk.rom
@@ -240,8 +239,7 @@ files:
     hle_fallback: true
     system: videoton-tvc
     has_builtin: true
-    bundled: true
-    note: "TVC direct file I/O extension. Used for TVC64_FILE mode. Source included in roms/ directory."
+    note: "TVC direct file I/O extension. Used for TVC64_FILE mode. The ROM sits in the source tree, but the core zip holds the library only."
     source_ref: "core/core.cpp:334"
 
   - name: tvc_dos12d.rom

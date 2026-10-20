@@ -17,6 +17,7 @@ systems: [nintendo-wiiu]
 data_directories:
   - ref: cemu-gameprofiles
     destination: "Cemu/gameProfiles/default"
+    mode: libretro
     source_ref: "src/Cafe/GameProfile/GameProfile.cpp:181-195, src/libretro/CemuLibretro.cpp:1699-1707"
   - ref: cemu-graphic-packs
     destination: "Cemu/graphicPacks/downloadedGraphicPacks"
@@ -242,6 +243,21 @@ files:
   - name: CafeCn.ttf
     path: Cemu/resources/sharedFonts/CafeCn.ttf
     standalone_path: resources/sharedFonts/CafeCn.ttf
+    mode: libretro
+    required: false
+    hle_fallback: true
+    size: 9664448
+    sha1: 2d95227b9b3eaf1c74d9293ecd0d190ec7ffbbe3
+    description: "Shared font replacement, Noto Sans SC Medium"
+    note: >-
+      Read only when the MLC copy is absent. The libretro core ships without
+      it and looks under <system_dir>/Cemu/resources/sharedFonts/.
+    source_ref: "src/Cafe/CafeSystem.cpp:292, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeCn.ttf"
+
+  - name: CafeCn.ttf
+    path: Cemu/resources/sharedFonts/CafeCn.ttf
+    standalone_path: resources/sharedFonts/CafeCn.ttf
+    mode: standalone
     required: false
     bundled: true
     hle_fallback: true
@@ -249,43 +265,95 @@ files:
     sha1: 2d95227b9b3eaf1c74d9293ecd0d190ec7ffbbe3
     description: "Shared font replacement, Noto Sans SC Medium"
     note: >-
-      Carried in bin/resources/sharedFonts/ of the source tree and installed
-      next to the standalone executable. Read only when the MLC copy is
-      absent. The libretro core ships without it and looks under
-      <system_dir>/Cemu/resources/sharedFonts/.
+      Shipped in resources/sharedFonts/ of the 2.6 Windows and Linux zips, read
+      only when the MLC copy is absent.
     source_ref: "src/Cafe/CafeSystem.cpp:292, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeCn.ttf"
 
   - name: CafeKr.ttf
     path: Cemu/resources/sharedFonts/CafeKr.ttf
     standalone_path: resources/sharedFonts/CafeKr.ttf
+    mode: libretro
+    required: false
+    hle_fallback: true
+    size: 5626464
+    sha1: f0ef38fcc6133c24f4f38ff9b5c06b37e970d3cc
+    description: "Shared font replacement, Noto Sans KR Medium"
+    note: >-
+      Read only when the MLC copy is absent. The libretro core ships without
+      it and looks under <system_dir>/Cemu/resources/sharedFonts/.
+    source_ref: "src/Cafe/CafeSystem.cpp:293, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeKr.ttf"
+
+  - name: CafeKr.ttf
+    path: Cemu/resources/sharedFonts/CafeKr.ttf
+    standalone_path: resources/sharedFonts/CafeKr.ttf
+    mode: standalone
     required: false
     bundled: true
     hle_fallback: true
     size: 5626464
     sha1: f0ef38fcc6133c24f4f38ff9b5c06b37e970d3cc
     description: "Shared font replacement, Noto Sans KR Medium"
+    note: >-
+      Shipped in resources/sharedFonts/ of the 2.6 Windows and Linux zips, read
+      only when the MLC copy is absent.
     source_ref: "src/Cafe/CafeSystem.cpp:293, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeKr.ttf"
 
   - name: CafeStd.ttf
     path: Cemu/resources/sharedFonts/CafeStd.ttf
     standalone_path: resources/sharedFonts/CafeStd.ttf
+    mode: libretro
+    required: false
+    hle_fallback: true
+    size: 5363768
+    sha1: da0d4bcc3b13339179bee946eba16adfd731b4d3
+    description: "Shared font replacement, Noto Sans JP Medium"
+    note: >-
+      Read only when the MLC copy is absent. The libretro core ships without
+      it and looks under <system_dir>/Cemu/resources/sharedFonts/.
+    source_ref: "src/Cafe/CafeSystem.cpp:294, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeStd.ttf"
+
+  - name: CafeStd.ttf
+    path: Cemu/resources/sharedFonts/CafeStd.ttf
+    standalone_path: resources/sharedFonts/CafeStd.ttf
+    mode: standalone
     required: false
     bundled: true
     hle_fallback: true
     size: 5363768
     sha1: da0d4bcc3b13339179bee946eba16adfd731b4d3
     description: "Shared font replacement, Noto Sans JP Medium"
+    note: >-
+      Shipped in resources/sharedFonts/ of the 2.6 Windows and Linux zips, read
+      only when the MLC copy is absent.
     source_ref: "src/Cafe/CafeSystem.cpp:294, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeStd.ttf"
 
   - name: CafeTw.ttf
     path: Cemu/resources/sharedFonts/CafeTw.ttf
     standalone_path: resources/sharedFonts/CafeTw.ttf
+    mode: libretro
+    required: false
+    hle_fallback: true
+    size: 6593548
+    sha1: 8ec796192ebc710f23ab6bd55453cae523b70444
+    description: "Shared font replacement, Noto Sans TC Medium"
+    note: >-
+      Read only when the MLC copy is absent. The libretro core ships without
+      it and looks under <system_dir>/Cemu/resources/sharedFonts/.
+    source_ref: "src/Cafe/CafeSystem.cpp:295, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeTw.ttf"
+
+  - name: CafeTw.ttf
+    path: Cemu/resources/sharedFonts/CafeTw.ttf
+    standalone_path: resources/sharedFonts/CafeTw.ttf
+    mode: standalone
     required: false
     bundled: true
     hle_fallback: true
     size: 6593548
     sha1: 8ec796192ebc710f23ab6bd55453cae523b70444
     description: "Shared font replacement, Noto Sans TC Medium"
+    note: >-
+      Shipped in resources/sharedFonts/ of the 2.6 Windows and Linux zips, read
+      only when the MLC copy is absent.
     source_ref: "src/Cafe/CafeSystem.cpp:295, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeTw.ttf"
 
   - name: shareddata.bin

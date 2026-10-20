@@ -147,11 +147,11 @@ files:
     description: "Integra-B IBOS 1.26"
     system: bbc-micro-b
     required: true
-    bundled: true
     md5: 1b57c2ba920a00d5b4ef89be68aedc43
     sha1: d0153203802c8ec3e3270443be809e23d574280b
     max_size: 131072
     validation: [size]
+    note: "Added to UserData after 4.19. The 4.19 installer and zip ship IBOS12P.rom in this folder instead."
     source_ref: "Src/RomConfigFile.cpp:64"
 
   - name: BASIC2.rom
@@ -418,13 +418,12 @@ files:
     description: "BBC Master ET MOS 4.00"
     system: bbc-master-et
     required: true
-    bundled: true
     min_size: 16384
     md5: 4d4afbf220abaa702026f42f98eb5807
     sha1: c9483ef3ebd66930e635674a3776d171785ae959
     validation: [size]
     on_mismatch: warn
-    note: "OS ROM slot for Model::MasterET."
+    note: "OS ROM slot for Model::MasterET. The Master ET folder was added after 4.19, the last release, so no installer ships it."
     source_ref: "Src/RomConfigFile.cpp:123, Src/BeebMem.cpp:1291-1308"
 
   - name: Terminal.rom
@@ -432,7 +431,6 @@ files:
     description: "Master ET Terminal emulator ROM"
     system: bbc-master-et
     required: true
-    bundled: true
     md5: 456cb9035fd3d6c9d4d98adcd65882d8
     sha1: 0b4425149ca93dddf8d03da3767635dc3f1eecb8
     max_size: 131072
@@ -445,7 +443,6 @@ files:
     description: "Acorn Advanced NFS 4.25"
     system: bbc-master-et
     required: true
-    bundled: true
     md5: 306cb8ff6622dbfc79dc487ac4e407e1
     sha1: 14f75d36ffe9af14aaac42df55b4fe3729ba75cf
     max_size: 131072
@@ -458,7 +455,6 @@ files:
     description: "BBC BASIC IV"
     system: bbc-master-et
     required: true
-    bundled: true
     md5: 63a6f43cbf491533cb03ceca2d2728d4
     sha1: c45fd3c0abdcd32b78d2288addd2a777b19e9a1d
     max_size: 131072

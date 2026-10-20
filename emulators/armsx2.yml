@@ -97,7 +97,8 @@ notes: |
   also compiles in the shaders under shaders/common, shaders/opengl and
   shaders/vulkan, GameIndex.yaml and a patches.zip fetched at configure time. The
   copy in the resources folder wins and the compiled-in one stands in when the
-  file is absent.
+  file is absent. The libretro core archive holds armsx2_libretro.so alone, so
+  the resources tree is not installed with it.
   ref: pcsx2/Pcsx2Config.cpp:2400-2414, pcsx2/Pcsx2Config.cpp:2563,
        pcsx2/Pcsx2Config.cpp:2637-2651, pcsx2-libretro/Main.cpp:180-181,
        pcsx2-libretro/Main.cpp:1101,
@@ -270,8 +271,8 @@ files:
   - name: GameIndex.yaml
     path: pcsx2/resources/GameIndex.yaml
     standalone_path: resources/GameIndex.yaml
+    mode: libretro
     required: false
-    bundled: true
     sha1: 72bfdf91fa11a86e2810a7c167cdcf11e20418a8
     size: 2690355
     description: "Game database"
@@ -281,11 +282,21 @@ files:
       libretro build falls back on a compiled-in copy when the file is absent.
     source_ref: "pcsx2/GameDatabase.cpp:47, pcsx2/GameDatabase.cpp:1373-1378, pcsx2/GameDatabase.cpp:1314-1324"
 
+  - name: GameIndex.yaml
+    path: pcsx2/resources/GameIndex.yaml
+    standalone_path: resources/GameIndex.yaml
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Game database"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GameDatabase.cpp:47, pcsx2/GameDatabase.cpp:1373-1378, pcsx2/GameDatabase.cpp:1314-1324"
+
   - name: armsx2_overrides.yaml
     path: pcsx2/resources/armsx2_overrides.yaml
     standalone_path: resources/armsx2_overrides.yaml
+    mode: libretro
     required: false
-    bundled: true
     description: "Mobile GPU game database overlay"
     note: >-
       Second pass over the game database, merged onto the entries GameIndex.yaml
@@ -294,11 +305,22 @@ files:
       iOS. The loader no-ops where it is absent.
     source_ref: "pcsx2/GameDatabase.cpp:54, pcsx2/GameDatabase.cpp:1379-1382, cmake/BuildParameters.cmake:227-240, pcsx2/CMakeLists.txt:1828-1837, platforms/android/app/build.gradle.kts:73-85"
 
+  - name: armsx2_overrides.yaml
+    path: pcsx2/resources/armsx2_overrides.yaml
+    standalone_path: resources/armsx2_overrides.yaml
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "307793f4610dfd8c55edc0920226a3f899cd618f"
+    description: "Mobile GPU game database overlay"
+    note: "Shipped in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GameDatabase.cpp:54, pcsx2/GameDatabase.cpp:1379-1382, cmake/BuildParameters.cmake:227-240, pcsx2/CMakeLists.txt:1828-1837, platforms/android/app/build.gradle.kts:73-85"
+
   - name: RedumpDatabase.yaml
     path: pcsx2/resources/RedumpDatabase.yaml
     standalone_path: resources/RedumpDatabase.yaml
+    mode: libretro
     required: false
-    bundled: true
     sha1: bf2c73d668cd671df8adfe2ec3c7074e8ba9176a
     size: 1917242
     description: "Disc track hash database"
@@ -307,11 +329,21 @@ files:
       matches a known good one. Read by the Qt game summary page.
     source_ref: "pcsx2/GameDatabase.cpp:1461, pcsx2/GameDatabase.cpp:1511-1526, pcsx2-qt/Settings/GameSummaryWidget.cpp:325"
 
+  - name: RedumpDatabase.yaml
+    path: pcsx2/resources/RedumpDatabase.yaml
+    standalone_path: resources/RedumpDatabase.yaml
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Disc track hash database"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GameDatabase.cpp:1461, pcsx2/GameDatabase.cpp:1511-1526, pcsx2-qt/Settings/GameSummaryWidget.cpp:325"
+
   - name: patches.zip
     path: pcsx2/resources/patches.zip
     standalone_path: resources/patches.zip
+    mode: libretro
     required: false
-    bundled: true
     sha1: f7d0f1606c87019f00109ebdf0f260299f0a72da
     size: 2007224
     description: "Game patch archive"
@@ -323,9 +355,20 @@ files:
       configure time and opens it when the file is absent.
     source_ref: "pcsx2/Patch.cpp:122, pcsx2/Patch.cpp:294-345, pcsx2/Patch.cpp:452-464, .github/workflows/linux_build_qt.yml:33"
 
+  - name: patches.zip
+    path: pcsx2/resources/patches.zip
+    standalone_path: resources/patches.zip
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Game patch archive"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/Patch.cpp:122, pcsx2/Patch.cpp:294-345, pcsx2/Patch.cpp:452-464, .github/workflows/linux_build_qt.yml:33"
+
   - name: game_controller_db.txt
     path: pcsx2/resources/game_controller_db.txt
     standalone_path: resources/game_controller_db.txt
+    mode: standalone
     required: false
     bundled: true
     description: "SDL controller mapping database"
@@ -338,8 +381,8 @@ files:
   - name: Roboto-Regular.ttf
     path: pcsx2/resources/fonts/Roboto-Regular.ttf
     standalone_path: resources/fonts/Roboto-Regular.ttf
+    mode: libretro
     required: false
-    bundled: true
     description: "Interface font"
     note: >-
       Seeded as the standard font when no language layer supplied one, which is
@@ -347,11 +390,22 @@ files:
       left empty.
     source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:533-543, pcsx2/ImGui/ImGuiManager.cpp:155-160, pcsx2/GS/GS.cpp:175-194"
 
+  - name: Roboto-Regular.ttf
+    path: pcsx2/resources/fonts/Roboto-Regular.ttf
+    standalone_path: resources/fonts/Roboto-Regular.ttf
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "00d62fbdc8d5dec4c659005e116d0ba2ee63b547"
+    description: "Interface font"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:533-543, pcsx2/ImGui/ImGuiManager.cpp:155-160, pcsx2/GS/GS.cpp:175-194"
+
   - name: RobotoMono-Medium.ttf
     path: pcsx2/resources/fonts/RobotoMono-Medium.ttf
     standalone_path: resources/fonts/RobotoMono-Medium.ttf
+    mode: libretro
     required: false
-    bundled: true
     description: "Fixed-width interface font"
     note: >-
       Read for the fixed-width font, the standard font standing in when it is
@@ -359,34 +413,68 @@ files:
       a custom OSD font.
     source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:565, pcsx2/ImGui/FullscreenUI_Settings.cpp:3533"
 
+  - name: RobotoMono-Medium.ttf
+    path: pcsx2/resources/fonts/RobotoMono-Medium.ttf
+    standalone_path: resources/fonts/RobotoMono-Medium.ttf
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "9056e59b69c6f1160fdfb92a0773f17f6307f3ad"
+    description: "Fixed-width interface font"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:565, pcsx2/ImGui/FullscreenUI_Settings.cpp:3533"
+
   - name: fa-solid-900.ttf
     path: pcsx2/resources/fonts/fa-solid-900.ttf
     standalone_path: resources/fonts/fa-solid-900.ttf
+    mode: libretro
     required: false
-    bundled: true
     description: "Font Awesome icon font"
     note: "Read for the interface icon glyphs. A missing file is logged and skipped."
+    source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:566"
+
+  - name: fa-solid-900.ttf
+    path: pcsx2/resources/fonts/fa-solid-900.ttf
+    standalone_path: resources/fonts/fa-solid-900.ttf
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "7f0f721265c228f2484e4924bace5a80b7826fbe"
+    description: "Font Awesome icon font"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:566"
 
   - name: promptfont.otf
     path: pcsx2/resources/fonts/promptfont.otf
     standalone_path: resources/fonts/promptfont.otf
+    mode: libretro
     required: false
-    bundled: true
     description: "Controller prompt font"
     note: "Read for the controller button glyphs. A missing file is logged and skipped."
+    source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:567"
+
+  - name: promptfont.otf
+    path: pcsx2/resources/fonts/promptfont.otf
+    standalone_path: resources/fonts/promptfont.otf
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "374ee91aeabee48013d2f090571752ec5081356f"
+    description: "Controller prompt font"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/ImGuiManager.cpp:509-525, pcsx2/ImGui/ImGuiManager.cpp:567"
 
   - name: Twemoji.Mozilla.ttf
     path: pcsx2/resources/fonts/Twemoji.Mozilla.ttf
     standalone_path: resources/fonts/Twemoji.Mozilla.ttf
+    mode: standalone
     required: false
-    bundled: true
     description: "Emoji font"
     note: >-
       First entry of the emoji script table, resolved under UserResources then the
       resources folder and downloaded into UserResources/fonts when neither holds
       it. Read by the Qt builds only, and the Android asset step leaves it out.
+      The macOS bundle ships it, the Windows zip and the APK do not.
     source_ref: "pcsx2-qt/Translations.cpp:340-347, pcsx2-qt/Translations.cpp:407-424, pcsx2-qt/Translations.cpp:541-549, platforms/android/app/build.gradle.kts:79-81"
 
   - name: NotoSansJP-Regular.ttf
@@ -451,8 +539,8 @@ files:
   - name: tfx.glsl
     path: pcsx2/resources/shaders/vulkan/tfx.glsl
     standalone_path: resources/shaders/vulkan/tfx.glsl
+    mode: libretro
     required: true
-    bundled: true
     description: "Vulkan texture function shader"
     note: >-
       Compiled at device creation. A source that cannot be read fails the
@@ -460,55 +548,115 @@ files:
       back on a compiled-in copy of every shader source.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3031-3036, pcsx2/GS/Renderers/Common/GSDevice.cpp:528-540"
 
+  - name: tfx.glsl
+    path: pcsx2/resources/shaders/vulkan/tfx.glsl
+    standalone_path: resources/shaders/vulkan/tfx.glsl
+    mode: standalone
+    required: true
+    bundled: true
+    description: "Vulkan texture function shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3031-3036, pcsx2/GS/Renderers/Common/GSDevice.cpp:528-540"
+
   - name: convert.glsl
     path: pcsx2/resources/shaders/vulkan/convert.glsl
     standalone_path: resources/shaders/vulkan/convert.glsl
+    mode: libretro
+    required: true
+    description: "Vulkan conversion shader"
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6174-6179, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6537-6542"
+
+  - name: convert.glsl
+    path: pcsx2/resources/shaders/vulkan/convert.glsl
+    standalone_path: resources/shaders/vulkan/convert.glsl
+    mode: standalone
     required: true
     bundled: true
     description: "Vulkan conversion shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6174-6179, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6537-6542"
 
   - name: present.glsl
     path: pcsx2/resources/shaders/vulkan/present.glsl
     standalone_path: resources/shaders/vulkan/present.glsl
+    mode: libretro
+    required: true
+    description: "Vulkan presentation shader"
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6366-6370"
+
+  - name: present.glsl
+    path: pcsx2/resources/shaders/vulkan/present.glsl
+    standalone_path: resources/shaders/vulkan/present.glsl
+    mode: standalone
     required: true
     bundled: true
     description: "Vulkan presentation shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6366-6370"
 
   - name: merge.glsl
     path: pcsx2/resources/shaders/vulkan/merge.glsl
     standalone_path: resources/shaders/vulkan/merge.glsl
+    mode: libretro
+    required: true
+    description: "Vulkan merge shader"
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6467-6471"
+
+  - name: merge.glsl
+    path: pcsx2/resources/shaders/vulkan/merge.glsl
+    standalone_path: resources/shaders/vulkan/merge.glsl
+    mode: standalone
     required: true
     bundled: true
     description: "Vulkan merge shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6467-6471"
 
   - name: interlace.glsl
     path: pcsx2/resources/shaders/vulkan/interlace.glsl
     standalone_path: resources/shaders/vulkan/interlace.glsl
+    mode: libretro
+    required: true
+    description: "Vulkan interlace shader"
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6416-6420"
+
+  - name: interlace.glsl
+    path: pcsx2/resources/shaders/vulkan/interlace.glsl
+    standalone_path: resources/shaders/vulkan/interlace.glsl
+    mode: standalone
     required: true
     bundled: true
     description: "Vulkan interlace shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6416-6420"
 
   - name: shadeboost.glsl
     path: pcsx2/resources/shaders/vulkan/shadeboost.glsl
     standalone_path: resources/shaders/vulkan/shadeboost.glsl
+    mode: libretro
     required: true
-    bundled: true
     description: "Vulkan shade boost shader"
     note: >-
       Compiled by the post-processing pass, which runs unconditionally in the
       device creation chain, so a source that cannot be read fails the device.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6517, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6572-6577, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3056-3061"
 
+  - name: shadeboost.glsl
+    path: pcsx2/resources/shaders/vulkan/shadeboost.glsl
+    standalone_path: resources/shaders/vulkan/shadeboost.glsl
+    mode: standalone
+    required: true
+    bundled: true
+    description: "Vulkan shade boost shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6517, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6572-6577, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3056-3061"
+
   - name: cas.glsl
     path: pcsx2/resources/shaders/vulkan/cas.glsl
     standalone_path: resources/shaders/vulkan/cas.glsl
+    mode: libretro
     sha1: "005cecf1a5e20b05407d55d0aad22cf81ad66c31"
     required: false
-    bundled: true
     description: "Vulkan contrast adaptive sharpening shader"
     note: >-
       Includes ffx_a.h and ffx_cas.h. The only shader whose compile failure is
@@ -516,11 +664,21 @@ files:
       older Adreno compilers reject the compute pipeline.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6623-6625, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3069-3076"
 
+  - name: cas.glsl
+    path: pcsx2/resources/shaders/vulkan/cas.glsl
+    standalone_path: resources/shaders/vulkan/cas.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Vulkan contrast adaptive sharpening shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6623-6625, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3069-3076"
+
   - name: fsr1.glsl
     path: pcsx2/resources/shaders/vulkan/fsr1.glsl
     standalone_path: resources/shaders/vulkan/fsr1.glsl
+    mode: libretro
     required: false
-    bundled: true
     description: "Vulkan FSR1 upscaling shader"
     note: >-
       Read twice, once per pass, with ffx_a_fsr1.h and ffx_fsr1.h substituted
@@ -528,30 +686,60 @@ files:
       creation carries on.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6672-6676, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3087-3091, pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
 
+  - name: fsr1.glsl
+    path: pcsx2/resources/shaders/vulkan/fsr1.glsl
+    standalone_path: resources/shaders/vulkan/fsr1.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Vulkan FSR1 upscaling shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6672-6676, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3087-3091, pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
+
   - name: sgsr.glsl
     path: pcsx2/resources/shaders/vulkan/sgsr.glsl
     standalone_path: resources/shaders/vulkan/sgsr.glsl
+    mode: libretro
     required: false
-    bundled: true
     description: "Vulkan SGSR upscaling shader"
     note: >-
       Read twice, once per edge-direction variant. A failure turns SGSR
       upscaling off and device creation carries on.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6720-6724, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3081-3085"
 
+  - name: sgsr.glsl
+    path: pcsx2/resources/shaders/vulkan/sgsr.glsl
+    standalone_path: resources/shaders/vulkan/sgsr.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Vulkan SGSR upscaling shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6720-6724, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3081-3085"
+
   - name: imgui.glsl
     path: pcsx2/resources/shaders/vulkan/imgui.glsl
     standalone_path: resources/shaders/vulkan/imgui.glsl
+    mode: libretro
+    required: true
+    description: "Vulkan interface shader"
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6747-6752, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3093-3094"
+
+  - name: imgui.glsl
+    path: pcsx2/resources/shaders/vulkan/imgui.glsl
+    standalone_path: resources/shaders/vulkan/imgui.glsl
+    mode: standalone
     required: true
     bundled: true
     description: "Vulkan interface shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6747-6752, pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:3093-3094"
 
   - name: fxaa.fx
     path: pcsx2/resources/shaders/common/fxaa.fx
     standalone_path: resources/shaders/common/fxaa.fx
+    mode: libretro
     required: true
-    bundled: true
     description: "FXAA shader, shared by every backend"
     note: >-
       Compiled by the Vulkan and OpenGL post-processing passes as part of device
@@ -559,51 +747,101 @@ files:
       lazily on first use and only lose the effect.
     source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6544-6549, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:686-687, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3180-3188, pcsx2/GS/Renderers/DX11/GSDevice11.cpp:1967-1974, pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3167"
 
+  - name: fxaa.fx
+    path: pcsx2/resources/shaders/common/fxaa.fx
+    standalone_path: resources/shaders/common/fxaa.fx
+    mode: standalone
+    required: true
+    bundled: true
+    description: "FXAA shader, shared by every backend"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:6544-6549, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:686-687, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3180-3188, pcsx2/GS/Renderers/DX11/GSDevice11.cpp:1967-1974, pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3167"
+
   - name: ffx_a.h
     path: pcsx2/resources/shaders/common/ffx_a.h
     standalone_path: resources/shaders/common/ffx_a.h
+    mode: libretro
     required: false
-    bundled: true
     description: "FidelityFX helper header"
     note: >-
       Read as a source file and substituted for the include line of the sharpening
       shader before compilation.
     source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1630-1641"
 
+  - name: ffx_a.h
+    path: pcsx2/resources/shaders/common/ffx_a.h
+    standalone_path: resources/shaders/common/ffx_a.h
+    mode: standalone
+    required: false
+    bundled: true
+    description: "FidelityFX helper header"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1630-1641"
+
   - name: ffx_cas.h
     path: pcsx2/resources/shaders/common/ffx_cas.h
     standalone_path: resources/shaders/common/ffx_cas.h
+    mode: libretro
+    required: false
+    description: "FidelityFX CAS header"
+    note: "Substituted the same way as ffx_a.h."
+    source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1630-1641"
+
+  - name: ffx_cas.h
+    path: pcsx2/resources/shaders/common/ffx_cas.h
+    standalone_path: resources/shaders/common/ffx_cas.h
+    mode: standalone
     required: false
     bundled: true
     description: "FidelityFX CAS header"
-    note: "Substituted the same way as ffx_a.h."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1630-1641"
 
   - name: ffx_a_fsr1.h
     path: pcsx2/resources/shaders/common/ffx_a_fsr1.h
     standalone_path: resources/shaders/common/ffx_a_fsr1.h
+    mode: libretro
     required: false
-    bundled: true
     description: "FidelityFX helper header for FSR1"
     note: >-
       Read as a source file and substituted for the include line of the FSR1
       shader before compilation.
     source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
 
+  - name: ffx_a_fsr1.h
+    path: pcsx2/resources/shaders/common/ffx_a_fsr1.h
+    standalone_path: resources/shaders/common/ffx_a_fsr1.h
+    mode: standalone
+    required: false
+    bundled: true
+    description: "FidelityFX helper header for FSR1"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
+
   - name: ffx_fsr1.h
     path: pcsx2/resources/shaders/common/ffx_fsr1.h
     standalone_path: resources/shaders/common/ffx_fsr1.h
+    mode: libretro
+    required: false
+    description: "FidelityFX FSR1 header"
+    note: "Substituted the same way as ffx_a_fsr1.h."
+    source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
+
+  - name: ffx_fsr1.h
+    path: pcsx2/resources/shaders/common/ffx_fsr1.h
+    standalone_path: resources/shaders/common/ffx_fsr1.h
+    mode: standalone
     required: false
     bundled: true
     description: "FidelityFX FSR1 header"
-    note: "Substituted the same way as ffx_a_fsr1.h."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/Common/GSDevice.cpp:1643-1660"
 
   - name: tfx_vgs.glsl
     path: pcsx2/resources/shaders/opengl/tfx_vgs.glsl
     standalone_path: resources/shaders/opengl/tfx_vgs.glsl
+    mode: libretro
     required: false
-    bundled: true
     description: "OpenGL texture function vertex and geometry shader"
     note: >-
       The OpenGL backend is one of those the renderer setting selects, and it is
@@ -611,67 +849,137 @@ files:
       creation fails without this source, while a Vulkan session is unaffected.
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895, pcsx2/GS/GS.cpp:97-133"
 
+  - name: tfx_vgs.glsl
+    path: pcsx2/resources/shaders/opengl/tfx_vgs.glsl
+    standalone_path: resources/shaders/opengl/tfx_vgs.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "OpenGL texture function vertex and geometry shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895, pcsx2/GS/GS.cpp:97-133"
+
   - name: tfx_fs.glsl
     path: pcsx2/resources/shaders/opengl/tfx_fs.glsl
     standalone_path: resources/shaders/opengl/tfx_fs.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL texture function fragment shader"
+    note: "Read with tfx_vgs.glsl. The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895"
+
+  - name: tfx_fs.glsl
+    path: pcsx2/resources/shaders/opengl/tfx_fs.glsl
+    standalone_path: resources/shaders/opengl/tfx_fs.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL texture function fragment shader"
-    note: "Read with tfx_vgs.glsl. The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:891-895"
 
   - name: convert.glsl
     path: pcsx2/resources/shaders/opengl/convert.glsl
     standalone_path: resources/shaders/opengl/convert.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL conversion shader"
+    note: "The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:517-523"
+
+  - name: convert.glsl
+    path: pcsx2/resources/shaders/opengl/convert.glsl
+    standalone_path: resources/shaders/opengl/convert.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL conversion shader"
-    note: "The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:517-523"
 
   - name: present.glsl
     path: pcsx2/resources/shaders/opengl/present.glsl
     standalone_path: resources/shaders/opengl/present.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL presentation shader"
+    note: "The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:605-610"
+
+  - name: present.glsl
+    path: pcsx2/resources/shaders/opengl/present.glsl
+    standalone_path: resources/shaders/opengl/present.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL presentation shader"
-    note: "The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:605-610"
 
   - name: merge.glsl
     path: pcsx2/resources/shaders/opengl/merge.glsl
     standalone_path: resources/shaders/opengl/merge.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL merge shader"
+    note: "The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:641-646"
+
+  - name: merge.glsl
+    path: pcsx2/resources/shaders/opengl/merge.glsl
+    standalone_path: resources/shaders/opengl/merge.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL merge shader"
-    note: "The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:641-646"
 
   - name: interlace.glsl
     path: pcsx2/resources/shaders/opengl/interlace.glsl
     standalone_path: resources/shaders/opengl/interlace.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL interlace shader"
+    note: "The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:664-669"
+
+  - name: interlace.glsl
+    path: pcsx2/resources/shaders/opengl/interlace.glsl
+    standalone_path: resources/shaders/opengl/interlace.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL interlace shader"
-    note: "The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:664-669"
 
   - name: shadeboost.glsl
     path: pcsx2/resources/shaders/opengl/shadeboost.glsl
     standalone_path: resources/shaders/opengl/shadeboost.glsl
+    mode: libretro
     required: false
-    bundled: true
     description: "OpenGL shade boost shader"
     note: >-
       Compiled with the FXAA program in the OpenGL device creation chain, so that
       device fails without it.
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:686-687, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3435-3441"
 
+  - name: shadeboost.glsl
+    path: pcsx2/resources/shaders/opengl/shadeboost.glsl
+    standalone_path: resources/shaders/opengl/shadeboost.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "OpenGL shade boost shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:686-687, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3435-3441"
+
   - name: cas.glsl
     path: pcsx2/resources/shaders/opengl/cas.glsl
     standalone_path: resources/shaders/opengl/cas.glsl
+    mode: libretro
     required: false
-    bundled: true
     description: "OpenGL contrast adaptive sharpening shader"
     note: >-
       A desktop GL compute shader, read only on a GL 4.2 context with compute
@@ -679,18 +987,39 @@ files:
       compiler crashes some drivers. A failure turns sharpening off.
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3624-3630, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:689-698"
 
+  - name: cas.glsl
+    path: pcsx2/resources/shaders/opengl/cas.glsl
+    standalone_path: resources/shaders/opengl/cas.glsl
+    mode: standalone
+    required: false
+    bundled: true
+    description: "OpenGL contrast adaptive sharpening shader"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3624-3630, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:689-698"
+
   - name: imgui.glsl
     path: pcsx2/resources/shaders/opengl/imgui.glsl
     standalone_path: resources/shaders/opengl/imgui.glsl
+    mode: libretro
+    required: false
+    description: "OpenGL interface shader"
+    note: "The OpenGL device fails without it."
+    source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:792-793, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3684-3691"
+
+  - name: imgui.glsl
+    path: pcsx2/resources/shaders/opengl/imgui.glsl
+    standalone_path: resources/shaders/opengl/imgui.glsl
+    mode: standalone
     required: false
     bundled: true
     description: "OpenGL interface shader"
-    note: "The OpenGL device fails without it."
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:792-793, pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3684-3691"
 
   - name: tfx.fx
     path: pcsx2/resources/shaders/dx11/tfx.fx
     standalone_path: resources/shaders/dx11/tfx.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D texture function shader"
@@ -703,6 +1032,7 @@ files:
   - name: convert.fx
     path: pcsx2/resources/shaders/dx11/convert.fx
     standalone_path: resources/shaders/dx11/convert.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D conversion shader"
@@ -712,6 +1042,7 @@ files:
   - name: present.fx
     path: pcsx2/resources/shaders/dx11/present.fx
     standalone_path: resources/shaders/dx11/present.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D presentation shader"
@@ -721,6 +1052,7 @@ files:
   - name: merge.fx
     path: pcsx2/resources/shaders/dx11/merge.fx
     standalone_path: resources/shaders/dx11/merge.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D merge shader"
@@ -730,6 +1062,7 @@ files:
   - name: interlace.fx
     path: pcsx2/resources/shaders/dx11/interlace.fx
     standalone_path: resources/shaders/dx11/interlace.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D interlace shader"
@@ -739,6 +1072,7 @@ files:
   - name: shadeboost.fx
     path: pcsx2/resources/shaders/dx11/shadeboost.fx
     standalone_path: resources/shaders/dx11/shadeboost.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D shade boost shader"
@@ -747,6 +1081,7 @@ files:
   - name: cas.hlsl
     path: pcsx2/resources/shaders/dx11/cas.hlsl
     standalone_path: resources/shaders/dx11/cas.hlsl
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D contrast adaptive sharpening shader"
@@ -756,6 +1091,7 @@ files:
   - name: imgui.fx
     path: pcsx2/resources/shaders/dx11/imgui.fx
     standalone_path: resources/shaders/dx11/imgui.fx
+    mode: standalone
     required: false
     bundled: true
     description: "Direct3D interface shader"
@@ -781,144 +1117,320 @@ files:
   - name: message.wav
     path: pcsx2/resources/sounds/achievements/message.wav
     standalone_path: resources/sounds/achievements/message.wav
+    mode: libretro
     required: false
-    bundled: true
     description: "Achievement notification sound"
     note: >-
       Played from the resources folder when the achievement information sound is
       enabled and no custom sound is set.
     source_ref: "pcsx2/Achievements.cpp:68, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1528"
 
+  - name: message.wav
+    path: pcsx2/resources/sounds/achievements/message.wav
+    standalone_path: resources/sounds/achievements/message.wav
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "c54f04b63ac6f04e0a0944ef260b5497e4494dbd"
+    description: "Achievement notification sound"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/Achievements.cpp:68, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1528"
+
   - name: unlock.wav
     path: pcsx2/resources/sounds/achievements/unlock.wav
     standalone_path: resources/sounds/achievements/unlock.wav
+    mode: libretro
     required: false
-    bundled: true
     sha1: da328a0a3074ec86fee2d6741bfc2e5a1f68d063
     size: 202702
     description: "Achievement unlock sound"
     source_ref: "pcsx2/Achievements.cpp:69, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1581"
 
+  - name: unlock.wav
+    path: pcsx2/resources/sounds/achievements/unlock.wav
+    standalone_path: resources/sounds/achievements/unlock.wav
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "da328a0a3074ec86fee2d6741bfc2e5a1f68d063"
+    description: "Achievement unlock sound"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/Achievements.cpp:69, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1581"
+
   - name: lbsubmit.wav
     path: pcsx2/resources/sounds/achievements/lbsubmit.wav
     standalone_path: resources/sounds/achievements/lbsubmit.wav
+    mode: libretro
+    required: false
+    description: "Leaderboard submission sound"
+    source_ref: "pcsx2/Achievements.cpp:70, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1675"
+
+  - name: lbsubmit.wav
+    path: pcsx2/resources/sounds/achievements/lbsubmit.wav
+    standalone_path: resources/sounds/achievements/lbsubmit.wav
+    mode: standalone
     required: false
     bundled: true
+    sha1: "5ad1e110dcf0ffd26405981398892a82e4f3bad1"
     description: "Leaderboard submission sound"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/Achievements.cpp:70, pcsx2/Achievements.cpp:1278-1284, pcsx2/Achievements.cpp:1675"
 
   - name: placeholder.png
     path: pcsx2/resources/fullscreenui/placeholder.png
     standalone_path: resources/fullscreenui/placeholder.png
+    mode: libretro
     required: false
-    bundled: true
     description: "Fullscreen interface placeholder texture"
     note: >-
       Named as the placeholder texture when the fullscreen interface initialises.
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:331"
 
+  - name: placeholder.png
+    path: pcsx2/resources/fullscreenui/placeholder.png
+    standalone_path: resources/fullscreenui/placeholder.png
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "25e41433147face77af96fecac4519ed11ae8072"
+    description: "Fullscreen interface placeholder texture"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:331"
+
   - name: no-save.png
     path: pcsx2/resources/fullscreenui/no-save.png
     standalone_path: resources/fullscreenui/no-save.png
+    mode: libretro
+    required: false
+    description: "Empty save slot texture"
+    source_ref: "pcsx2/ImGui/ImGuiOverlays.cpp:1689"
+
+  - name: no-save.png
+    path: pcsx2/resources/fullscreenui/no-save.png
+    standalone_path: resources/fullscreenui/no-save.png
+    mode: standalone
     required: false
     bundled: true
+    sha1: "7b0bb79d38c573648de218645c6fb16449e156e0"
     description: "Empty save slot texture"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/ImGuiOverlays.cpp:1689"
 
   - name: media-cdrom.svg
     path: pcsx2/resources/fullscreenui/media-cdrom.svg
     standalone_path: resources/fullscreenui/media-cdrom.svg
+    mode: libretro
+    required: false
+    description: "Game list menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1398, pcsx2/ImGui/FullscreenUI.cpp:3522"
+
+  - name: media-cdrom.svg
+    path: pcsx2/resources/fullscreenui/media-cdrom.svg
+    standalone_path: resources/fullscreenui/media-cdrom.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "36cc8f46014a321b7602e52c062ab23d7c256ccc"
     description: "Game list menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1398, pcsx2/ImGui/FullscreenUI.cpp:3522"
 
   - name: start-game.svg
     path: pcsx2/resources/fullscreenui/start-game.svg
     standalone_path: resources/fullscreenui/start-game.svg
+    mode: libretro
+    required: false
+    description: "Start game menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1404"
+
+  - name: start-game.svg
+    path: pcsx2/resources/fullscreenui/start-game.svg
+    standalone_path: resources/fullscreenui/start-game.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "dd8e7a8bebe509a38b803105abaf37b275f4cbb3"
     description: "Start game menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1404"
 
   - name: applications-system.svg
     path: pcsx2/resources/fullscreenui/applications-system.svg
     standalone_path: resources/fullscreenui/applications-system.svg
+    mode: libretro
+    required: false
+    description: "Settings menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1411, pcsx2/ImGui/FullscreenUI.cpp:3517"
+
+  - name: applications-system.svg
+    path: pcsx2/resources/fullscreenui/applications-system.svg
+    standalone_path: resources/fullscreenui/applications-system.svg
+    mode: standalone
     required: false
     bundled: true
     description: "Settings menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1411, pcsx2/ImGui/FullscreenUI.cpp:3517"
 
   - name: exit.svg
     path: pcsx2/resources/fullscreenui/exit.svg
     standalone_path: resources/fullscreenui/exit.svg
+    mode: libretro
+    required: false
+    description: "Exit menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1417, pcsx2/ImGui/FullscreenUI.cpp:1550"
+
+  - name: exit.svg
+    path: pcsx2/resources/fullscreenui/exit.svg
+    standalone_path: resources/fullscreenui/exit.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "8452aac0ea8adf96f52c6fc87b7bc9c038249c97"
     description: "Exit menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1417, pcsx2/ImGui/FullscreenUI.cpp:1550"
 
   - name: start-file.svg
     path: pcsx2/resources/fullscreenui/start-file.svg
     standalone_path: resources/fullscreenui/start-file.svg
+    mode: libretro
+    required: false
+    description: "Start file menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1474"
+
+  - name: start-file.svg
+    path: pcsx2/resources/fullscreenui/start-file.svg
+    standalone_path: resources/fullscreenui/start-file.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "47bd0895af12344dd80d7dc1133c26d2b5081110"
     description: "Start file menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1474"
 
   - name: drive-cdrom.svg
     path: pcsx2/resources/fullscreenui/drive-cdrom.svg
     standalone_path: resources/fullscreenui/drive-cdrom.svg
+    mode: libretro
+    required: false
+    description: "Start disc menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1480"
+
+  - name: drive-cdrom.svg
+    path: pcsx2/resources/fullscreenui/drive-cdrom.svg
+    standalone_path: resources/fullscreenui/drive-cdrom.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "6ff7f132ca2483d7e24a52eead4d3b807eb9addf"
     description: "Start disc menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1480"
 
   - name: start-bios.svg
     path: pcsx2/resources/fullscreenui/start-bios.svg
     standalone_path: resources/fullscreenui/start-bios.svg
+    mode: libretro
+    required: false
+    description: "Start BIOS menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1486"
+
+  - name: start-bios.svg
+    path: pcsx2/resources/fullscreenui/start-bios.svg
+    standalone_path: resources/fullscreenui/start-bios.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "061f35078713d8bb386d595964da7366781f98ef"
     description: "Start BIOS menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1486"
 
   - name: back-icon.svg
     path: pcsx2/resources/fullscreenui/back-icon.svg
     standalone_path: resources/fullscreenui/back-icon.svg
+    mode: libretro
+    required: false
+    description: "Back menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1492, pcsx2/ImGui/FullscreenUI.cpp:1542"
+
+  - name: back-icon.svg
+    path: pcsx2/resources/fullscreenui/back-icon.svg
+    standalone_path: resources/fullscreenui/back-icon.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "9b754fe9c868225a922dd3e6fc2f9d447ff5442c"
     description: "Back menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1492, pcsx2/ImGui/FullscreenUI.cpp:1542"
 
   - name: desktop-mode.svg
     path: pcsx2/resources/fullscreenui/desktop-mode.svg
     standalone_path: resources/fullscreenui/desktop-mode.svg
+    mode: libretro
+    required: false
+    description: "Desktop mode menu icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1558"
+
+  - name: desktop-mode.svg
+    path: pcsx2/resources/fullscreenui/desktop-mode.svg
+    standalone_path: resources/fullscreenui/desktop-mode.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "513d784434cd934048e16b2a333b4d65da099e8b"
     description: "Desktop mode menu icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1558"
 
   - name: AppBanner.svg
     path: pcsx2/resources/icons/AppBanner.svg
     standalone_path: resources/icons/AppBanner.svg
+    mode: libretro
+    required: false
+    description: "Application banner"
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:783"
+
+  - name: AppBanner.svg
+    path: pcsx2/resources/icons/AppBanner.svg
+    standalone_path: resources/icons/AppBanner.svg
+    mode: standalone
     required: false
     bundled: true
+    sha1: "cf42e9d792747ccb06ff243672ed37b30db23def"
     description: "Application banner"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:783"
 
   - name: AppIconLarge.png
     path: pcsx2/resources/icons/AppIconLarge.png
     standalone_path: resources/icons/AppIconLarge.png
+    mode: libretro
     required: false
-    bundled: true
     description: "Application icon"
     note: >-
       Drawn by the fullscreen interface, shown by the Qt setup wizard, and copied
       out when a desktop entry is written.
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1315, pcsx2-qt/SetupWizardDialog.cpp:165, pcsx2-qt/QtUtils.cpp:843"
 
+  - name: AppIconLarge.png
+    path: pcsx2/resources/icons/AppIconLarge.png
+    standalone_path: resources/icons/AppIconLarge.png
+    mode: standalone
+    required: false
+    bundled: true
+    sha1: "bd9262879f8a72ec610a9554b503d747194a0f49"
+    description: "Application icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:1315, pcsx2-qt/SetupWizardDialog.cpp:165, pcsx2-qt/QtUtils.cpp:843"
+
   - name: AppIconLarge.ico
     path: pcsx2/resources/icons/AppIconLarge.ico
     standalone_path: resources/icons/AppIconLarge.ico
+    mode: standalone
     required: false
     bundled: true
     description: "Windows application icon"
@@ -928,36 +1440,67 @@ files:
   - name: ra-icon.svg
     path: pcsx2/resources/icons/ra-icon.svg
     standalone_path: resources/icons/ra-icon.svg
+    mode: libretro
+    required: false
+    description: "RetroAchievements icon"
+    source_ref: "pcsx2/ImGui/FullscreenUI_Settings.cpp:4503, pcsx2-qt/SetupWizardDialog.cpp:428, pcsx2-qt/Settings/AchievementLoginDialog.cpp:21"
+
+  - name: ra-icon.svg
+    path: pcsx2/resources/icons/ra-icon.svg
+    standalone_path: resources/icons/ra-icon.svg
+    mode: standalone
     required: false
     bundled: true
     description: "RetroAchievements icon"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
     source_ref: "pcsx2/ImGui/FullscreenUI_Settings.cpp:4503, pcsx2-qt/SetupWizardDialog.cpp:428, pcsx2-qt/Settings/AchievementLoginDialog.cpp:21"
 
   - name: "star-<rating>.svg"
     path: "pcsx2/resources/icons/star-<rating>.svg"
     standalone_path: "resources/icons/star-<rating>.svg"
+    mode: libretro
     required: false
-    bundled: true
     description: "Compatibility rating icons"
     note: >-
       Six files, star-0.svg through star-5.svg, named from the compatibility
       rating of the entry.
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:788, pcsx2-qt/GameList/GameListModel.cpp:529"
 
+  - name: "star-<rating>.svg"
+    path: "pcsx2/resources/icons/star-<rating>.svg"
+    standalone_path: "resources/icons/star-<rating>.svg"
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Compatibility rating icons"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:788, pcsx2-qt/GameList/GameListModel.cpp:529"
+
   - name: "<region>.svg"
     path: "pcsx2/resources/icons/flags/<region>.svg"
     standalone_path: "resources/icons/flags/<region>.svg"
+    mode: libretro
     required: false
-    bundled: true
     description: "Region flag icons"
     note: >-
       Forty-eight files, named from the region of the entry through
       RegionToFlagFilename.
     source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2881"
 
+  - name: "<region>.svg"
+    path: "pcsx2/resources/icons/flags/<region>.svg"
+    standalone_path: "resources/icons/flags/<region>.svg"
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Region flag icons"
+    note: "Shipped in the 20261019 Windows and macOS nightlies and in the assets of the 2.8.4 APK."
+    source_ref: "pcsx2/ImGui/FullscreenUI.cpp:2881"
+
   - name: cover-placeholder.png
     path: pcsx2/resources/cover-placeholder.png
     standalone_path: resources/cover-placeholder.png
+    mode: standalone
     required: false
     bundled: true
     description: "Game list cover placeholder"

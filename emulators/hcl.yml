@@ -33,14 +33,17 @@ notes: |
 
 files:
   - name: "bmp.qda"
+    not_bundled_on: [batocera]
     path: "hcl/data/bmp.qda"
     category: game_data
     description: "Packed graphics (QDA archive of all bitmaps)"
     required: true
     bundled: true
     source_ref: "src/qda.c:19-28, src/sdl2/graphics.c:223"
+    note: "The v0.1.0 release zips and AppImages ship the whole data/ tree next to the hcl binary."
 
   - name: "en.dat"
+    not_bundled_on: [batocera]
     path: "hcl/data/en.dat"
     category: game_data
     description: "English localization"
@@ -49,6 +52,7 @@ files:
     source_ref: "src/text.c:79-93"
 
   - name: "jp.dat"
+    not_bundled_on: [batocera]
     path: "hcl/data/jp.dat"
     category: game_data
     description: "Japanese localization"
@@ -57,6 +61,7 @@ files:
     source_ref: "src/text.c:79-93"
 
   - name: "map/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hcl/data/map/"
     category: game_data
@@ -66,6 +71,7 @@ files:
     source_ref: "src/game.c:1195-1209"
 
   - name: "obj/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hcl/data/obj/"
     category: game_data
@@ -75,6 +81,7 @@ files:
     source_ref: "src/game.c:1290-1306"
 
   - name: "midi/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hcl/data/midi/"
     category: game_data
@@ -87,6 +94,7 @@ files:
       A track that fails to load is not played.
 
   - name: "wav/"
+    not_bundled_on: [batocera]
     type: directory
     path: "hcl/data/wav/"
     category: game_data

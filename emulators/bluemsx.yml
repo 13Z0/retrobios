@@ -21,7 +21,7 @@ systems:
   - spectravideo
 
 # blueMSX is a multi-system emulator covering MSX (1/2/2+/turboR), ColecoVision,
-# SVI (Spectravideo), and SEGA SG-1000/SC-3000/SF-7000. The core ships its entire
+# SVI (Spectravideo), and SEGA SG-1000/SC-3000/SF-7000. The core repository carries its entire
 # machine database (config.ini per machine model) plus ROM files under
 # <system_dir>/Machines/. Each machine config.ini references ROM paths relative
 # to the Machines directory.
@@ -31,7 +31,7 @@ systems:
 #   then switches based on file extension: .dsk/.cas/.rom/.mx1/.mx2 -> MSX2+,
 #   .col -> ColecoVision, .sg -> SG-1000, .sc -> SC-3000, .sf/.sf7 -> SF-7000.
 #
-# C-BIOS (open source MSX BIOS replacement) is bundled for MSX, MSX2, MSX2+.
+# C-BIOS (open source MSX BIOS replacement) is provided for MSX, MSX2, MSX2+.
 #   Machines: "MSX - C-BIOS", "MSX2 - C-BIOS", "MSX2+ - C-BIOS"
 #   These allow running cartridge ROMs without copyrighted BIOS files.
 #   Disk and tape software requires real BIOS ROMs.
@@ -55,6 +55,11 @@ notes: |
   C-BIOS machines work for cartridge-based games without any copyrighted BIOS.
   For disk/tape support, real BIOS ROMs are required.
 
+  The libretro core zip holds the library only, and the Machines/ and Databases/
+  trees come from the buildbot's blueMSX.zip system files. The standalone
+  blueMSXv282full.zip ships both trees, machine ROMs included, so every file
+  below has a libretro entry and a bundled standalone entry.
+
 data_directories:
   # 302 files: 296 in Machines/ (200 machine configs + ROMs) + 6 in Databases/
   # buildbot source: https://buildbot.libretro.com/assets/system/blueMSX.zip
@@ -71,535 +76,1454 @@ files:
   # -- MSX1 main BIOS variants --
 
   - name: MSX.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX.rom"
+    mode: libretro
     size: 32768
     required: true
     system: msx
     note: "MSX1 generic BIOS. Used by default 'MSX' machine config."
     source_ref: "system/bluemsx/Machines/MSX/config.ini"
 
+  - name: MSX.rom
+    path: "Machines/Shared Roms/MSX.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: msx
+    bundled: true
+    sha1: "e998f0c441f4f1800ef44e42cd1659150206cf79"
+    md5: "364a1a579fe5cb8dba54519bcfcdac0d"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX/config.ini"
+
   - name: MSXJ.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXJ.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Japanese BIOS. Used by 'MSX - Japanese' machine."
     source_ref: "system/bluemsx/Machines/MSX - Japanese/config.ini"
 
+  - name: MSXJ.rom
+    path: "Machines/Shared Roms/MSXJ.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "df48902f5f12af8867ae1a87f255145f0e5e0774"
+    md5: "f005e55c680ba6e7b19f6d4dc8f73ce5"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX - Japanese/config.ini"
+
   - name: MSXBR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXBR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Brazilian BIOS."
 
+  - name: MSXBR.rom
+    path: "Machines/Shared Roms/MSXBR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "d6720845928ee848cfa88a86accb067397685f02"
+    md5: "d13c1fc9ad4897c322f51aab3ad3b30d"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXFR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXFR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 French BIOS."
 
+  - name: MSXFR.rom
+    path: "Machines/Shared Roms/MSXFR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "9eaad185efc8e224368d1db4949eb9659c26fb2c"
+    md5: "6f43d28ac4a69182c860c2db0e18ee6d"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXG.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXG.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 German BIOS."
 
+  - name: MSXG.rom
+    path: "Machines/Shared Roms/MSXG.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "38a645febd0e0fe86d594f27c2d14be995acc730"
+    md5: "4655329d3f37bf1a655d05f2abd1aa62"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXKR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXKR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Korean BIOS."
 
+  - name: MSXKR.rom
+    path: "Machines/Shared Roms/MSXKR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "171b587bd5a947a13f3114120b6e7baca3b57d78"
+    md5: "c84f362c44192659273d45ae97462362"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Russian BIOS."
 
+  - name: MSXR.rom
+    path: "Machines/Shared Roms/MSXR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "4f3114e96d7b892911e3dccf1eece712be26f396"
+    md5: "0db9592930488259fc1a5c127215e784"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXSE.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXSE.ROM"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Swedish BIOS."
 
+  - name: MSXSE.ROM
+    path: "Machines/Shared Roms/MSXSE.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "87f4d0fa58cfe9cef818a3185df2735e6da6168c"
+    md5: "161cb768c52a13f5b38ba46e721b68c1"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXSP.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXSP.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Spanish BIOS."
 
+  - name: MSXSP.rom
+    path: "Machines/Shared Roms/MSXSP.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "342e7d4bd86f3351766f460f6de3c89a40791ee0"
+    md5: "51af5b19aeccf94eb8e03bce0b5d33c4"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXAR.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXAR.ROM"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Arabic BIOS."
 
+  - name: MSXAR.ROM
+    path: "Machines/Shared Roms/MSXAR.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "5e094fca95ab8e91873ee372a3f1239b9a48a48d"
+    md5: "793e3b833c33be7aaf834beacb8fb926"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXR2.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXR2.ROM"
+    mode: libretro
     size: 32768
     required: false
     system: msx
     note: "MSX1 Russian BIOS (variant 2)."
 
+  - name: MSXR2.ROM
+    path: "Machines/Shared Roms/MSXR2.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "04990aa1c3a3fc7294ec884b81deaa89832df614"
+    md5: "704bdd980fa56c6be5c680358458eeeb"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSXHAN.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXHAN.rom"
+    mode: libretro
     size: 8192
     required: false
     system: msx
     note: "MSX1 Korean Hangul extension ROM."
 
+  - name: MSXHAN.rom
+    path: "Machines/Shared Roms/MSXHAN.rom"
+    mode: standalone
+    size: 8192
+    required: false
+    system: msx
+    bundled: true
+    sha1: "d41676fde0a3047792f93c4a41509b8749e55e74"
+    md5: "394efbc50fb7df1151130d8c162f85c3"
+    note: "Shipped in blueMSXv282full.zip."
+
   # -- MSX2 main BIOS + extension --
 
   - name: MSX2.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2.rom"
+    mode: libretro
     size: 32768
     required: true
     system: msx2
     note: "MSX2 generic main BIOS. Used by default 'MSX2' machine config."
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
+  - name: MSX2.rom
+    path: "Machines/Shared Roms/MSX2.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: msx2
+    bundled: true
+    sha1: "6103b39f1e38d1aa2d84b1c3219c44f1abb5436e"
+    md5: "ec3a01c91f24fbddcbcab0ad301bc9ef"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2/config.ini"
+
   - name: MSX2EXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2EXT.rom"
+    mode: libretro
     size: 16384
     required: true
     system: msx2
     note: "MSX2 extension BIOS (SubROM). Required alongside MSX2.rom."
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
+  - name: MSX2EXT.rom
+    path: "Machines/Shared Roms/MSX2EXT.rom"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msx2
+    bundled: true
+    sha1: "5c1f9c7fb655e43d38e5dd1fcc6b942b2ff68b02"
+    md5: "2183c2aff17cf4297bdb496de78c2e8a"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2/config.ini"
+
   - name: MSX2J.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2J.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Japanese main BIOS."
 
+  - name: MSX2J.rom
+    path: "Machines/Shared Roms/MSX2J.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd"
+    md5: "53bec1c22b30c0a15263e04b91a7814f"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2JEXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2JEXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 Japanese extension BIOS."
 
+  - name: MSX2JEXT.rom
+    path: "Machines/Shared Roms/MSX2JEXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "0fbd45ef3dd7bb82d4c31f1947884f411f1ca344"
+    md5: "8aabde714a42256bef36ea9b04f6ef59"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2BR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2BR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Brazilian main BIOS."
 
+  - name: MSX2BR.rom
+    path: "Machines/Shared Roms/MSX2BR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "9c43106dba3ae2829e9a11dffa9d000ed6d6454c"
+    md5: "d3df424728a225b301510f5384cae583"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2BREXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2BREXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 Brazilian extension BIOS."
 
+  - name: MSX2BREXT.rom
+    path: "Machines/Shared Roms/MSX2BREXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "4f2a7e0172f0214f025f23845f6e053d0ffd28e8"
+    md5: "355c6d5ee31da441d485cd89ca906413"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2FR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2FR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 French main BIOS."
 
+  - name: MSX2FR.rom
+    path: "Machines/Shared Roms/MSX2FR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "3926cdd91fa89657a811463e48cfbdb350676e51"
+    md5: "7af9e84da1520a8a7fb82e73703e5075"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2FREXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2FREXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 French extension BIOS."
 
+  - name: MSX2FREXT.rom
+    path: "Machines/Shared Roms/MSX2FREXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "792e6b2814ab783d06c7576c1e3ccd6a9bbac34a"
+    md5: "6ffe789cca2eca9d2e71ca7b69b97e6b"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2G.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2G.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 German main BIOS."
 
+  - name: MSX2G.rom
+    path: "Machines/Shared Roms/MSX2G.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "b17d9bea0eb16a1aa2d0ccbd7c9488da9f57698e"
+    md5: "b6c33b7b3508d691d7872589c778f808"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2GEXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2GEXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 German extension BIOS."
 
+  - name: MSX2GEXT.rom
+    path: "Machines/Shared Roms/MSX2GEXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "4ab7b2030d022f5486abaab22aaeaf8aa23e05f3"
+    md5: "4047ce143a8bf391e21991835aa65b59"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2KR.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2KR.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Korean main BIOS."
 
+  - name: MSX2KR.rom
+    path: "Machines/Shared Roms/MSX2KR.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "affa3c5cd8db79a1450ad8a7f405a425b251653d"
+    md5: "6819a1533502261bfdd52436b8346073"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2KREXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2KREXT.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Korean extension BIOS."
 
+  - name: MSX2KREXT.rom
+    path: "Machines/Shared Roms/MSX2KREXT.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "b6d3649a6647fa9f6bd61efc317485a20901128f"
+    md5: "30a0b3402a0a13b516af76d39f45a365"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2R.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2R.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Russian main BIOS."
 
+  - name: MSX2R.rom
+    path: "Machines/Shared Roms/MSX2R.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "0f851ee7a1cf79819f61cc89e9948ee72a413802"
+    md5: "db56360c85ef8410dc4bcf8e8602f61e"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2REXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2REXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 Russian extension BIOS."
 
+  - name: MSX2REXT.rom
+    path: "Machines/Shared Roms/MSX2REXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "03bf6d2ac86f5c9ab618e155442787c700f99fed"
+    md5: "8e4af1124e2b82fbdc74a7bc5f20dc6e"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2R2.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2R2.ROM"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Russian main BIOS (variant 2)."
 
+  - name: MSX2R2.ROM
+    path: "Machines/Shared Roms/MSX2R2.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "ebb7eb540a390509edfd36c84288ba85e63f2d1f"
+    md5: "96ac231b718e88ce64d5a9b4a5e9ae12"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2SE.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2SE.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Swedish main BIOS."
 
+  - name: MSX2SE.rom
+    path: "Machines/Shared Roms/MSX2SE.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "1b70a195a00b1fc4995766390f39d3ba884b5148"
+    md5: "fb8f7ab15e32a91147204bd7f7a1b451"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2SP.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2SP.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Spanish main BIOS."
 
+  - name: MSX2SP.rom
+    path: "Machines/Shared Roms/MSX2SP.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "4811956f878c3e03da46317f787cdc4bebc86f47"
+    md5: "79caefa20a0d056fb42eaeca856c6f82"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2SPEXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2SPEXT.rom"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 Spanish extension BIOS."
 
+  - name: MSX2SPEXT.rom
+    path: "Machines/Shared Roms/MSX2SPEXT.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "1e9a955943aeea9b1807ddf1250ba6436d8dd276"
+    md5: "d71842ce8f559a8aed2721766bc15f2b"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2AR.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2AR.ROM"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Arabic main BIOS."
 
+  - name: MSX2AR.ROM
+    path: "Machines/Shared Roms/MSX2AR.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "35195ab67c289a0b470883464df66bc6ea5b00d3"
+    md5: "91764e84f977671ac7caa50b36273fd2"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2AREXT.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2AREXT.ROM"
+    mode: libretro
     size: 16384
     required: false
     system: msx2
     note: "MSX2 Arabic extension BIOS."
 
+  - name: MSX2AREXT.ROM
+    path: "Machines/Shared Roms/MSX2AREXT.ROM"
+    mode: standalone
+    size: 16384
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "ebb76f9061e875365023523607db610f2eda1d26"
+    md5: "be5d1ec8001d945ca1432285722e9d16"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MSX2HAN.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2HAN.rom"
+    mode: libretro
     size: 32768
     required: false
     system: msx2
     note: "MSX2 Korean Hangul BIOS."
 
+  - name: MSX2HAN.rom
+    path: "Machines/Shared Roms/MSX2HAN.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx2
+    bundled: true
+    sha1: "87936f808423dddfd00629056d6807b4be1dc63e"
+    md5: "7b9466546009d419ebd0dc27db90c30e"
+    note: "Shipped in blueMSXv282full.zip."
+
   # -- MSX2+ main BIOS + extension --
 
   - name: MSX2P.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2P.rom"
+    mode: libretro
     size: 32768
     required: true
     system: msx2plus
     note: "MSX2+ main BIOS. Used by default 'MSX2+' machine config (auto-selected for .dsk/.cas/.rom)."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: MSX2P.rom
+    path: "Machines/Shared Roms/MSX2P.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: msx2plus
+    bundled: true
+    sha1: "e90f80a61d94c617850c415e12ad70ac41e66bb7"
+    md5: "847cc025ffae665487940ff2639540e5"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   - name: MSX2PEXT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2PEXT.rom"
+    mode: libretro
     size: 16384
     required: true
     system: msx2plus
     note: "MSX2+ extension BIOS (SubROM)."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: MSX2PEXT.rom
+    path: "Machines/Shared Roms/MSX2PEXT.rom"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msx2plus
+    bundled: true
+    sha1: "fe0254cbfc11405b79e7c86c7769bd6322b04995"
+    md5: "7c8243c71d8f143b2531f01afa6a05dc"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   - name: MSX2PMUS.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSX2PMUS.rom"
+    mode: libretro
     size: 16384
     required: true
     system: msx2plus
     note: "MSX2+ MSX-MUSIC BIOS (FM-PAC built-in). Used by MSX2+ and MSX2 default configs."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: MSX2PMUS.rom
+    path: "Machines/Shared Roms/MSX2PMUS.rom"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msx2plus
+    bundled: true
+    sha1: "6354ccc5c100b1c558c9395fa8c00784d2e9b0a3"
+    md5: "f877f32e6d8687474ac5ee83e40de23b"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   # -- MSX turboR BIOS set --
 
   - name: MSXTR.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXTR.ROM"
+    mode: libretro
     size: 32768
     required: true
     system: msxturboR
     note: "MSX turboR main BIOS."
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
+  - name: MSXTR.ROM
+    path: "Machines/Shared Roms/MSXTR.ROM"
+    mode: standalone
+    size: 32768
+    required: true
+    system: msxturboR
+    bundled: true
+    sha1: "242e73d8284a012b275c0a266844ebbc4269d787"
+    md5: "fd9513736823e470965949f2a3ec6a43"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
+
   - name: MSXTREXT.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXTREXT.ROM"
+    mode: libretro
     size: 16384
     required: true
     system: msxturboR
     note: "MSX turboR extension BIOS."
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
+  - name: MSXTREXT.ROM
+    path: "Machines/Shared Roms/MSXTREXT.ROM"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msxturboR
+    bundled: true
+    sha1: "018d7a5222f28514908fb1b1513286a6558a6d05"
+    md5: "824b1c4475a3bd3b91c5ae81ea940aa2"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
+
   - name: MSXTRMUS.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXTRMUS.ROM"
+    mode: libretro
     size: 16384
     required: true
     system: msxturboR
     note: "MSX turboR MSX-MUSIC BIOS."
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
+  - name: MSXTRMUS.ROM
+    path: "Machines/Shared Roms/MSXTRMUS.ROM"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msxturboR
+    bundled: true
+    sha1: "6aea1aef5ec31c1826c22edf580525f93baad425"
+    md5: "c688a229f834f95f8c64df7d33188cd8"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
+
   - name: MSXTROPT.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXTROPT.ROM"
+    mode: libretro
     size: 16384
     required: true
     system: msxturboR
     note: "MSX turboR option ROM (firmware utilities)."
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
+  - name: MSXTROPT.ROM
+    path: "Machines/Shared Roms/MSXTROPT.ROM"
+    mode: standalone
+    size: 16384
+    required: true
+    system: msxturboR
+    bundled: true
+    sha1: "b4433a3975c57dd440d6bf12dbd28b2ac1b90ef4"
+    md5: "2cba0d812ec445cfe63ffa2cac8d42c2"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
+
   - name: MSXDOS23.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXDOS23.ROM"
+    mode: libretro
     size: 65536
     required: true
     system: msxturboR
     note: "MSX-DOS 2.3 ROM. Used by turboR default config for disk operations."
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
+  - name: MSXDOS23.ROM
+    path: "Machines/Shared Roms/MSXDOS23.ROM"
+    mode: standalone
+    size: 65536
+    required: true
+    system: msxturboR
+    bundled: true
+    sha1: "0527fb75775caa76c7eca8d449938ace83d36e96"
+    md5: "56bf5b02fed377b7bb9d91f914965431"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
+
   # -- Shared utility/extension ROMs --
 
   - name: KANJI.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/KANJI.rom"
+    mode: libretro
     size: 262144
     required: false
     note: "Kanji font ROM (256 KB). Used by MSX2+, turboR, and Japanese MSX2 machines."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: KANJI.rom
+    path: "Machines/Shared Roms/KANJI.rom"
+    mode: standalone
+    size: 262144
+    required: false
+    bundled: true
+    sha1: "5aff2d9b6efc723bc395b0f96f0adfa83cc54a49"
+    md5: "acf53887c2d2783dc059a9b442c86b90"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   - name: MSXKANJI.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MSXKANJI.rom"
+    mode: libretro
     size: 32768
     required: false
     note: "MSX-Kanji driver ROM. Used by MSX2+, turboR, and Japanese MSX2 for kanji display."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: MSXKANJI.rom
+    path: "Machines/Shared Roms/MSXKANJI.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    bundled: true
+    sha1: "dcc3a67732aa01c4f2ee8d1ad886444a4dbafe06"
+    md5: "9dfdebfaa6b547222a40aab8bb2e29f8"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   - name: FMPAC.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/FMPAC.rom"
+    mode: libretro
     size: 65536
     required: false
     hle_fallback: true
     note: "FM-PAC cartridge ROM (YM2413 FM synthesis). If missing, core uses built-in minimal ROM stub."
     source_ref: "Src/Memory/MegaromCartridge.c:290-306"
 
+  - name: FMPAC.rom
+    path: "Machines/Shared Roms/FMPAC.rom"
+    mode: standalone
+    size: 65536
+    required: false
+    bundled: true
+    sha1: "9d789166e3caf28e4742fe933d962e99618c633d"
+    md5: "6f69cc8b5ed761b03afd78000dfb0e19"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:290-306"
+
   - name: XBASIC2.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/XBASIC2.rom"
+    mode: libretro
     size: 16384
     required: false
     note: "MSX-BASIC 2 extension ROM. Used by MSX2, MSX2+, and turboR default configs."
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
+  - name: XBASIC2.rom
+    path: "Machines/Shared Roms/XBASIC2.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "47370bec7ca1f0615a54eda548b07fbc0c7ef398"
+    md5: "0b6120f289336538bc564548109f97c6"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2/config.ini"
+
   - name: PAINT.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/PAINT.rom"
+    mode: libretro
     size: 65536
     required: false
     note: "Paint utility ROM. Loaded by the MSX2 - Arabic machine config."
     source_ref: "system/bluemsx/Machines/MSX2 - Arabic/config.ini"
 
+  - name: PAINT.rom
+    path: "Machines/Shared Roms/PAINT.rom"
+    mode: standalone
+    size: 65536
+    required: false
+    bundled: true
+    sha1: "ace202e87337fbc54fea21e22c0b3af0abe6f4ae"
+    md5: "41db0d7b37be479296ffd59fcd6775f0"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2 - Arabic/config.ini"
+
   - name: SWP.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/SWP.rom"
+    mode: libretro
     size: 32768
     required: false
     note: "Software World Processor ROM. Used by Al Alamiah MSX2 machines."
 
+  - name: SWP.rom
+    path: "Machines/Shared Roms/SWP.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    bundled: true
+    sha1: "4b4508131dca6d811694ae6379f41364c477de58"
+    md5: "490db04e2a3c1c993a2a9d3611949c76"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: ARABIC.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/ARABIC.rom"
+    mode: libretro
     size: 32768
     required: false
     note: "Arabic character set extension ROM."
 
+  - name: ARABIC.rom
+    path: "Machines/Shared Roms/ARABIC.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    bundled: true
+    sha1: "2c9600c6e0025fee10d249e97448ecaa37e38c42"
+    md5: "20c4b5d1d9469c201b145f082ec32658"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: HANGUL.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/HANGUL.rom"
+    mode: libretro
     size: 131072
     required: false
     note: "Korean Hangul font ROM (128 KB)."
 
+  - name: HANGUL.rom
+    path: "Machines/Shared Roms/HANGUL.rom"
+    mode: standalone
+    size: 131072
+    required: false
+    bundled: true
+    sha1: "965f4982790f1817bcbabbb38c8777183b231a55"
+    md5: "9baf17b190f631405b6b0eeeeb162b87"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: RS232.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/RS232.ROM"
+    mode: libretro
     size: 8192
     required: false
     note: "RS-232C serial interface ROM."
 
+  - name: RS232.ROM
+    path: "Machines/Shared Roms/RS232.ROM"
+    mode: standalone
+    size: 8192
+    required: false
+    bundled: true
+    sha1: "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7"
+    md5: "55cca200bbbdd0a1ec5c9d70966c05c0"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MOONSOUND.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MOONSOUND.rom"
+    mode: libretro
     size: 2097152
     required: false
     note: "MoonSound (OPL4) wavetable ROM (2 MB). Used by MSX2, MSX2+, and turboR configs."
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
+  - name: MOONSOUND.rom
+    path: "Machines/Shared Roms/MOONSOUND.rom"
+    mode: standalone
+    size: 2097152
+    required: false
+    bundled: true
+    sha1: "32760893ce06dbe3930627755ba065cc3d8ec6ca"
+    md5: "42af93619160ef2116416f74a6cb12f2"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2/config.ini"
+
   # -- Disk controller ROMs --
 
   - name: PANASONICDISK.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/PANASONICDISK.rom"
+    mode: libretro
     size: 16384
     required: false
     note: "Panasonic disk controller ROM. Used by MSX2+ and turboR default configs."
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
+  - name: PANASONICDISK.rom
+    path: "Machines/Shared Roms/PANASONICDISK.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "7ed7c55e0359737ac5e68d38cb6903f9e5d7c2b6"
+    md5: "00aa02b6077de40a0b51d71a3c3e1d5f"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
+
   - name: PHILIPSDISK.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/PHILIPSDISK.rom"
+    mode: libretro
     size: 16384
     required: false
     note: "Philips disk controller ROM. Used by MSX1 and MSX2 default configs."
     source_ref: "system/bluemsx/Machines/MSX/config.ini"
 
+  - name: PHILIPSDISK.rom
+    path: "Machines/Shared Roms/PHILIPSDISK.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "c3efedda7ab947a06d9345f7b8261076fa7ceeef"
+    md5: "01dd1d72ed9bb6afe8a9b441c198a1cd"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/MSX/config.ini"
+
   - name: NATIONALDISK.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/NATIONALDISK.rom"
+    mode: libretro
     size: 16384
     required: false
     note: "National disk controller ROM."
 
+  - name: NATIONALDISK.rom
+    path: "Machines/Shared Roms/NATIONALDISK.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "78cd7f847e77fd8cd51a647efb2725ba93f4c471"
+    md5: "86269da485e852d9f581ac27f4ba32ff"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: MICROSOLDISK.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/MICROSOLDISK.ROM"
+    mode: libretro
     size: 16384
     required: false
     note: "Microsol disk controller ROM."
 
+  - name: MICROSOLDISK.ROM
+    path: "Machines/Shared Roms/MICROSOLDISK.ROM"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "f59d33311c95edc0168445f74eddd8a6772aa6a0"
+    md5: "02e8b1f96049f09d6d3a735647cbbb2a"
+    note: "Shipped in blueMSXv282full.zip."
+
   # -- Expansion hardware ROMs --
 
   - name: SUNRISEIDE.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/SUNRISEIDE.rom"
+    mode: libretro
     size: 65536
     required: false
     note: "Sunrise IDE interface ROM. Loaded as expansion cartridge."
     source_ref: "Src/Memory/MegaromCartridge.c:311"
 
+  - name: SUNRISEIDE.rom
+    path: "Machines/Shared Roms/SUNRISEIDE.rom"
+    mode: standalone
+    size: 65536
+    required: false
+    bundled: true
+    sha1: "1c79c8fcfd661394f91be94b218955c84cabd742"
+    md5: "7b564497beb2c0de0847f107dec00ddf"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:311"
+
   - name: BEERIDE.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/BEERIDE.ROM"
+    mode: libretro
     size: 16384
     required: false
     note: "Beer IDE interface ROM."
     source_ref: "Src/Memory/MegaromCartridge.c:319"
 
+  - name: BEERIDE.ROM
+    path: "Machines/Shared Roms/BEERIDE.ROM"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "077bdfff644b931b6a13bab8ab847aee766d163e"
+    md5: "b32279f2700652a5ce0a809318626763"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:319"
+
   - name: NOVAXIS.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/NOVAXIS.rom"
+    mode: libretro
     size: 16384
     required: false
     note: "Novaxis SCSI interface ROM."
     source_ref: "Src/Memory/MegaromCartridge.c:327"
 
+  - name: NOVAXIS.rom
+    path: "Machines/Shared Roms/NOVAXIS.rom"
+    mode: standalone
+    size: 16384
+    required: false
+    bundled: true
+    sha1: "352ec8c99fe1397a88ecb3aee6dbb4d121c818e9"
+    md5: "20989124671593ab04eeb01d52a1e25c"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:327"
+
   - name: nowindDos1.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/nowindDos1.rom"
+    mode: libretro
     size: 524288
     required: false
     note: "Nowind USB disk interface with MSX-DOS 1."
     source_ref: "Src/Memory/MegaromCartridge.c:335"
 
+  - name: nowindDos1.rom
+    path: "Machines/Shared Roms/nowindDos1.rom"
+    mode: standalone
+    size: 524288
+    required: false
+    bundled: true
+    sha1: "1d4c09166755c6569ff0ed3878bbf1b22d7e3864"
+    md5: "8c294a75f14fc30fce0c8642d28ccec1"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:335"
+
   - name: nowindDos2.rom
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/nowindDos2.rom"
+    mode: libretro
     size: 524288
     required: false
     note: "Nowind USB disk interface with MSX-DOS 2."
     source_ref: "Src/Memory/MegaromCartridge.c:339"
 
+  - name: nowindDos2.rom
+    path: "Machines/Shared Roms/nowindDos2.rom"
+    mode: standalone
+    size: 524288
+    required: false
+    bundled: true
+    sha1: "8afd1ec5843ecfdcbff11497fa8c55b870c0c6f5"
+    md5: "1847398c014384b833868c64f149f338"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "Src/Memory/MegaromCartridge.c:339"
+
   - name: GCVMX80.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/GCVMX80.ROM"
+    mode: libretro
     size: 8192
     required: false
     note: "GCV MX-80 printer interface ROM."
 
+  - name: GCVMX80.ROM
+    path: "Machines/Shared Roms/GCVMX80.ROM"
+    mode: standalone
+    size: 8192
+    required: false
+    bundled: true
+    sha1: "977fed1135b6cc73e765b47f51570fc00acd5b79"
+    md5: "fd0b8f1766dc6dcc03a43d9c79dc4e37"
+    note: "Shipped in blueMSXv282full.zip."
+
   - name: ARAB1.ROM
+    installed_on: [batocera, retropie]
     path: "Machines/Shared Roms/ARAB1.ROM"
+    mode: libretro
     size: 32768
     required: false
     note: "Arabic support ROM (variant 1)."
 
+  - name: ARAB1.ROM
+    path: "Machines/Shared Roms/ARAB1.ROM"
+    mode: standalone
+    size: 32768
+    required: false
+    bundled: true
+    sha1: "0287b2ec897b9196788cd9f10c99e1487d7adbbb"
+    md5: "7fa0558bcec9dba310579521623d9f6a"
+    note: "Shipped in blueMSXv282full.zip."
+
   # ============================================================
-  # C-BIOS ROMs (open source, bundled with core)
-  # These are pre-installed and do not require user-supplied files.
+  # C-BIOS ROMs (open source)
   # ============================================================
 
   - name: cbios_main_msx1.rom
+    installed_on: [batocera, retropie]
     path: "Machines/MSX - C-BIOS/cbios_main_msx1.rom"
+    mode: libretro
     size: 32768
     required: false
-    bundled: true
     system: msx
-    note: "C-BIOS MSX1 main ROM (open source). Bundled with core. Cartridge games only."
+    note: "C-BIOS MSX1 main ROM (open source). In the source tree under system/bluemsx, not in the core zip. Cartridge games only."
+
+  - name: cbios_main_msx1.rom
+    path: "Machines/MSX - C-BIOS/cbios_main_msx1.rom"
+    mode: standalone
+    size: 32768
+    required: false
+    system: msx
+    bundled: true
+    sha1: "a49bcf7a5a1115815f730782a1fd7d1c79ce29e7"
+    md5: "87b27f48cc25e2b6f749c019587d5f23"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: cbios_logo_msx1.rom
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX - C-BIOS/cbios_logo_msx1.rom"
+    mode: libretro
+    size: 16384
+    required: false
+    system: msx
+    note: "C-BIOS MSX1 logo ROM (open source). In the source tree under system/bluemsx, not in the core zip."
 
   - name: cbios_logo_msx1.rom
     path: "Machines/MSX - C-BIOS/cbios_logo_msx1.rom"
+    mode: standalone
     size: 16384
     required: false
-    bundled: true
     system: msx
-    note: "C-BIOS MSX1 logo ROM (open source). Bundled with core."
+    bundled: true
+    sha1: "95fe138745f5e627b021085c7e4629a6dfe6f93a"
+    md5: "25b5cdea5040883a206b89845cdf55f1"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: cbios_main_msx2.rom
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2 - C-BIOS/cbios_main_msx2.rom"
+    mode: libretro
+    size: 32768
+    required: false
+    system: msx2
+    note: "C-BIOS MSX2 main ROM (open source). In the source tree under system/bluemsx, not in the core zip. Cartridge games only."
 
   - name: cbios_main_msx2.rom
     path: "Machines/MSX2 - C-BIOS/cbios_main_msx2.rom"
+    mode: standalone
     size: 32768
     required: false
-    bundled: true
     system: msx2
-    note: "C-BIOS MSX2 main ROM (open source). Bundled with core. Cartridge games only."
+    bundled: true
+    sha1: "0808d0486f77a44d3aa08cd77828a3748a356b8d"
+    md5: "98b94c2d99066f272bb5de07778f7fd1"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: cbios_logo_msx2.rom
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom"
+    mode: libretro
+    size: 16384
+    required: false
+    system: msx2
+    note: "C-BIOS MSX2 logo ROM (open source). In the source tree under system/bluemsx, not in the core zip."
 
   - name: cbios_logo_msx2.rom
     path: "Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom"
+    mode: standalone
     size: 16384
     required: false
-    bundled: true
     system: msx2
-    note: "C-BIOS MSX2 logo ROM (open source). Bundled with core."
+    bundled: true
+    sha1: "6fc989ae715fe8492700a9d15934113d910aed36"
+    md5: "659db9142e62c51f2f75fd52fac78e44"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: cbios_sub.rom
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2 - C-BIOS/cbios_sub.rom"
+    mode: libretro
+    size: 16384
+    required: false
+    system: msx2
+    note: "C-BIOS MSX2/MSX2+ sub ROM (open source). In the source tree under system/bluemsx, not in the core zip."
 
   - name: cbios_sub.rom
     path: "Machines/MSX2 - C-BIOS/cbios_sub.rom"
+    mode: standalone
     size: 16384
     required: false
-    bundled: true
     system: msx2
-    note: "C-BIOS MSX2/MSX2+ sub ROM (open source). Bundled with core."
+    bundled: true
+    sha1: "565143f7c6fe0ffa12ec3069048113f44759d91a"
+    md5: "9dd9a69432cc116d0f1d4ec7a51053e0"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: "cbios_main_msx2+.rom"
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom"
+    mode: libretro
+    size: 32768
+    required: false
+    system: msx2plus
+    note: "C-BIOS MSX2+ main ROM (open source). In the source tree under system/bluemsx, not in the core zip. Cartridge games only."
 
   - name: "cbios_main_msx2+.rom"
     path: "Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom"
+    mode: standalone
     size: 32768
     required: false
-    bundled: true
     system: msx2plus
-    note: "C-BIOS MSX2+ main ROM (open source). Bundled with core. Cartridge games only."
+    bundled: true
+    sha1: "c5edc3b289dea120fe60ad38596a51c2e28838aa"
+    md5: "0a34c660614ead31dab78638ce7745e9"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: "cbios_logo_msx2+.rom"
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom"
+    mode: libretro
+    size: 16384
+    required: false
+    system: msx2plus
+    note: "C-BIOS MSX2+ logo ROM (open source). In the source tree under system/bluemsx, not in the core zip."
 
   - name: "cbios_logo_msx2+.rom"
     path: "Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom"
+    mode: standalone
     size: 16384
     required: false
-    bundled: true
     system: msx2plus
-    note: "C-BIOS MSX2+ logo ROM (open source). Bundled with core."
+    bundled: true
+    sha1: "6e55cfc48d0d6ee57b041cb09427f614fb6a1910"
+    md5: "462d6ecb52a8c35dd7d48c2d46687f14"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: cbios_music.rom
+    installed_on: [batocera, retropie]
+    path: "Machines/MSX2+ - C-BIOS/cbios_music.rom"
+    mode: libretro
+    size: 16384
+    required: false
+    system: msx2plus
+    note: "C-BIOS MSX2+ music ROM (open source). In the source tree under system/bluemsx, not in the core zip."
 
   - name: cbios_music.rom
     path: "Machines/MSX2+ - C-BIOS/cbios_music.rom"
+    mode: standalone
     size: 16384
     required: false
-    bundled: true
     system: msx2plus
-    note: "C-BIOS MSX2+ music ROM (open source). Bundled with core."
+    bundled: true
+    sha1: "5c5eb001e6a1fe29edb7abd428a3967bb388e5db"
+    md5: "e09783c4ec6d4770c5395c42bb0e1d91"
+    note: "Shipped in blueMSXv282full.zip."
 
   # ============================================================
   # ColecoVision BIOS
   # ============================================================
 
   - name: coleco.rom
+    installed_on: [batocera, retropie]
     path: "Machines/COL - ColecoVision/coleco.rom"
+    mode: libretro
     size: 8192
     required: true
     system: colecovision
     note: "ColecoVision BIOS ROM. Required for ColecoVision mode."
+    source_ref: "system/bluemsx/Machines/COL - ColecoVision/config.ini"
+
+  - name: coleco.rom
+    path: "Machines/COL - ColecoVision/coleco.rom"
+    mode: standalone
+    size: 8192
+    required: true
+    system: colecovision
+    bundled: true
+    sha1: "45bedc4cbdeac66c7df59e9e599195c778d86a92"
+    md5: "2c66f5911e5b42b8ebe113403548eee7"
+    note: "Shipped in blueMSXv282full.zip."
     source_ref: "system/bluemsx/Machines/COL - ColecoVision/config.ini"
 
   # ============================================================
@@ -608,11 +1532,25 @@ files:
   # ============================================================
 
   - name: sf7000.rom
+    installed_on: [batocera, retropie]
     path: "Machines/SEGA - SF-7000/sf7000.rom"
+    mode: libretro
     size: 8192
     required: true
     system: sega-sf7000
     note: "Sega SF-7000 BIOS ROM. SG-1000 and SC-3000 have no BIOS requirement."
+    source_ref: "system/bluemsx/Machines/SEGA - SF-7000/config.ini"
+
+  - name: sf7000.rom
+    path: "Machines/SEGA - SF-7000/sf7000.rom"
+    mode: standalone
+    size: 8192
+    required: true
+    system: sega-sf7000
+    bundled: true
+    sha1: "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
+    md5: "561b362f9aa4cbcb240461abf83c2e0d"
+    note: "Shipped in blueMSXv282full.zip."
     source_ref: "system/bluemsx/Machines/SEGA - SF-7000/config.ini"
 
   # ============================================================
@@ -620,61 +1558,154 @@ files:
   # ============================================================
 
   - name: svi318.rom
+    installed_on: [batocera, retropie]
     path: "Machines/SVI - Spectravideo SVI-318/svi318.rom"
+    mode: libretro
     size: 32768
     required: true
     system: spectravideo
     note: "SVI-318 BIOS ROM."
     source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-318/config.ini"
 
+  - name: svi318.rom
+    path: "Machines/SVI - Spectravideo SVI-318/svi318.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: spectravideo
+    bundled: true
+    sha1: "07758272df475e5e06187aa3574241df1b14035b"
+    md5: "ee6ad7ea29e791b03a28a9443e622648"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-318/config.ini"
+
   - name: svi328.rom
+    installed_on: [batocera, retropie]
     path: "Machines/SVI - Spectravideo SVI-328/svi328.rom"
+    mode: libretro
     size: 32768
     required: true
     system: spectravideo
     note: "SVI-328 BIOS ROM."
     source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-328/config.ini"
 
+  - name: svi328.rom
+    path: "Machines/SVI - Spectravideo SVI-328/svi328.rom"
+    mode: standalone
+    size: 32768
+    required: true
+    system: spectravideo
+    bundled: true
+    sha1: "7d8daf52f78371ca2c9443e04827c8e1f98c8f2c"
+    md5: "2cebd1db9dda475a011b7bce65c984a2"
+    note: "Shipped in blueMSXv282full.zip."
+    source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-328/config.ini"
+
   # ============================================================
   # Databases (required for ROM identification/mapper detection)
-  # Shipped with the core, not user-supplied.
   # ============================================================
 
   - name: msxromdb.xml
+    installed_on: [batocera, retropie]
     path: "Databases/msxromdb.xml"
+    mode: libretro
+    required: false
+    note: "MSX ROM database for mapper auto-detection. In the source tree under system/bluemsx, not in the core zip."
+
+  - name: msxromdb.xml
+    path: "Databases/msxromdb.xml"
+    mode: standalone
+    size: 633294
     required: false
     bundled: true
-    note: "MSX ROM database for mapper auto-detection. Bundled with core."
+    sha1: "64f8a99a3df780b8e6ab5956311e8c4298a63095"
+    md5: "cc4466273fed63d0b6cb49f0ae47cefe"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: msxsysromdb.xml
+    installed_on: [batocera, retropie]
+    path: "Databases/msxsysromdb.xml"
+    mode: libretro
+    required: false
+    note: "MSX system ROM database. In the source tree under system/bluemsx, not in the core zip."
 
   - name: msxsysromdb.xml
     path: "Databases/msxsysromdb.xml"
+    mode: standalone
+    size: 138671
     required: false
     bundled: true
-    note: "MSX system ROM database. Bundled with core."
+    sha1: "9b24600e42637d0d5adbc6f72f11b6b6a71d5e78"
+    md5: "f5ca0a4d421a20e079d806f67bd74183"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: colecodb.xml
+    installed_on: [batocera, retropie]
+    path: "Databases/colecodb.xml"
+    mode: libretro
+    required: false
+    note: "ColecoVision ROM database. In the source tree under system/bluemsx, not in the core zip."
 
   - name: colecodb.xml
     path: "Databases/colecodb.xml"
+    mode: standalone
+    size: 110367
     required: false
     bundled: true
-    note: "ColecoVision ROM database. Bundled with core."
+    sha1: "48dbc32bb1498c8a21f3c22050081111a36cc370"
+    md5: "08b5140156f58857297168061df96c7d"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: msxcaswavdb.xml
+    installed_on: [batocera, retropie]
+    path: "Databases/msxcaswavdb.xml"
+    mode: libretro
+    required: false
+    note: "MSX cassette/WAV media database. In the source tree under system/bluemsx, not in the core zip."
 
   - name: msxcaswavdb.xml
     path: "Databases/msxcaswavdb.xml"
+    mode: standalone
+    size: 852856
     required: false
     bundled: true
-    note: "MSX cassette/WAV media database. Bundled with core."
+    sha1: "a101f1b7542efc9159e730d8e7aabe2b79955fc2"
+    md5: "59b5fab64cde2670b73a652535b1a8f6"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: segadb.xml
+    installed_on: [batocera, retropie]
+    path: "Databases/segadb.xml"
+    mode: libretro
+    required: false
+    note: "Sega SG-1000/SC-3000/SF-7000 ROM database. In the source tree under system/bluemsx, not in the core zip."
 
   - name: segadb.xml
     path: "Databases/segadb.xml"
+    mode: standalone
+    size: 42324
     required: false
     bundled: true
-    note: "Sega SG-1000/SC-3000/SF-7000 ROM database. Bundled with core."
+    sha1: "6dadc212d94bd7a51c0e0c5c2b87695e4be6eb2f"
+    md5: "5ba42ef3df2d1d6d602606d0ca5118f6"
+    note: "Shipped in blueMSXv282full.zip."
+
+  - name: svidb.xml
+    installed_on: [batocera, retropie]
+    path: "Databases/svidb.xml"
+    mode: libretro
+    required: false
+    note: "Spectravideo SVI ROM database. In the source tree under system/bluemsx, not in the core zip."
 
   - name: svidb.xml
     path: "Databases/svidb.xml"
+    mode: standalone
+    size: 265281
     required: false
     bundled: true
-    note: "Spectravideo SVI ROM database. Bundled with core."
+    sha1: "eac39a92f06a6ad00eed3c96ab0bd7624bc29563"
+    md5: "8c89c9f546e8cbee8f0fe698efd97dc3"
+    note: "Shipped in blueMSXv282full.zip."
 
 # Machine count: 170+ machine configurations covering dozens of regional MSX
 # variants from manufacturers like Panasonic, Sony, Philips, Yamaha, Sanyo,
