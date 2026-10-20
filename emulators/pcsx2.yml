@@ -21,6 +21,7 @@ notes: |
 
 files:
   - name: ps2-0230a-20080220.bin
+    aliases: [ps2-0250j-20100415.bin, SCPH-70004_BIOS_V12_EUR_200.BIN]
     required: true
     min_size: 4194304
     max_size: 8388608
@@ -29,13 +30,15 @@ files:
     note: "Accepts any file 4-8 MB with valid romdir (RESET + ROMVER). Naming convention ps2-VVVVr-YYYYMMDD.bin (version, region, date)."
 
   - name: ps2-0230a-20080220.rom1
+    aliases: [SCPH-70004_BIOS_V12_EUR_200.ROM1]
     required: false
     max_size: 4194304
     description: "DVD player ROM"
-    note: "Tried as {bios}.rom1 then {biosbase}.rom1, opened case-insensitively. Copied to the ROM1 region. Logged and skipped when absent."
-    source_ref: "pcsx2/ps2/BiosTools.cpp:214-241, pcsx2/ps2/BiosTools.cpp:366"
+    note: "Tried as {bios}.rom1 then {biosbase}.rom1. Each name is first checked with stat, so on a case-sensitive filesystem only the lowercase extension is found, then opened case-insensitively. Copied to the ROM1 region. Logged and skipped when absent."
+    source_ref: "pcsx2/ps2/BiosTools.cpp:214-241, pcsx2/ps2/BiosTools.cpp:366, common/FileSystem.cpp:1145-1152, common/FileSystem.cpp:2312-2320"
 
   - name: ps2-0230a-20080220.rom2
+    aliases: [SCPH-70004_BIOS_V12_EUR_200.ROM2]
     required: false
     max_size: 4194304
     description: "Chinese ROM extension"
