@@ -2972,5 +2972,33 @@ class TheInstallerSaysWhatItFound(unittest.TestCase):
         self.assertNotIn("Traceback", err)
 
 
+class NoFallbackOutsideWhatAPlatformReads(unittest.TestCase):
+    """A forced platform not found here fell back to ~/bios for RetroBat on
+    Linux and for BizHawk from the menu, and on Windows to /userdata/bios,
+    which resolves to the root of the current drive. Each run reported done."""
+
+    def test_the_fallback_is_none_where_nothing_is_read(self):
+        self.assertIsNone(install._default_dest("linux", "retrobat"))
+        self.assertIsNone(install._default_dest("linux", "bizhawk"))
+        self.assertIsNone(install._default_dest("windows", "batocera"))
+        self.assertIsNone(install._default_dest("windows", "retropie"))
+        self.assertEqual(install._default_dest("linux", "batocera"), Path("/userdata/bios"))
+        self.assertEqual(
+            install._default_dest("windows", "emudeck"), install.DEFAULT_DESTS["emudeck"]
+        )
+
+    def test_a_forced_platform_without_a_folder_is_refused(self):
+        with unittest.mock.patch.object(install, "detect_platforms", return_value=[]), \
+                unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch("sys.argv", ["install.py", "--platform", "retrobat",
+                                                 "--no-input"]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit) as caught:
+            install.main()
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn("--dest", err.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

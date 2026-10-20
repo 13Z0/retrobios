@@ -3205,11 +3205,18 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
             print(f"  Type a number from 1 to {len(AVAILABLE_PLATFORMS)}, a platform name, "
                   "or q to quit.")
     default_dest = _default_dest(os_type, plat)
-    try:
-        raw = input(f"BIOS directory [{default_dest}]: ").strip()
-    except (EOFError, KeyboardInterrupt):
-        print()
-        sys.exit(0)
+    raw = ""
+    while not raw:
+        try:
+            raw = input(
+                f"BIOS directory [{default_dest}]: " if default_dest
+                else "BIOS directory (no default on this system): "
+            ).strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            sys.exit(0)
+        if default_dest is not None:
+            break
     dest = Path(raw).expanduser() if raw else default_dest
     if os_type == "windows" and raw:
         dest = Path(os.path.expandvars(raw))
@@ -3223,17 +3230,29 @@ PORTABLE_ONLY = {
 }
 
 
-def _default_dest(os_type: str, platform_name: str) -> Path:
-    """Fall back path for a platform named on the command line but not found.
+def _default_dest(os_type: str, platform_name: str) -> Path | None:
+    """Fall back path for a platform named on the command line but not found,
+    or None where no folder on this OS is one the platform reads.
 
     A home directory is meaningless for RetroArch on Android, where Termux
-    owns the home and the frontend reads from shared storage.
+    owns the home and the frontend reads from shared storage. ~/bios is read
+    by no platform, RetroBat lives on Windows only, and a Batocera or Recalbox
+    path on Windows resolved to the root of the current drive: 8.7 GB under
+    C:\\userdata\\bios, reported done.
     """
     if os_type == "android" and platform_name == "retroarch":
         return _android_storage_root() / "RetroArch" / "system"
-    return _os_default_dests(os_type).get(
-        platform_name, DEFAULT_DESTS.get(platform_name, Path.home() / "bios")
-    )
+    if platform_name in PORTABLE_ONLY:
+        return None
+    own = _os_default_dests(os_type).get(platform_name)
+    if own is not None:
+        return own
+    if os_type == "windows":
+        # EmuDeck's Windows edition keeps the same folder under the profile.
+        return DEFAULT_DESTS["emudeck"] if platform_name == "emudeck" else None
+    if platform_name == "retrobat":
+        return None
+    return DEFAULT_DESTS.get(platform_name)
 
 
 def _manual_usage_hint(os_type: str) -> list[str]:
@@ -3670,6 +3689,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             sys.exit(1)
         else:
             default_dest = _default_dest(os_type, args.platform)
+            if default_dest is None:
+                print(
+                    f"  Platform '{args.platform}' not found, and no folder on this "
+                    f"system is one it reads. Name it with --dest, for example: "
+                    f"--platform {args.platform} --dest <its BIOS folder>",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
             print(
                 f"  Platform '{args.platform}' not detected, "
                 f"using default path: {default_dest}"
