@@ -2285,6 +2285,66 @@
     "md5": "2b04cc6c472e2d405092dd10b26b074e",
     "sha1": "285cfd583b69b4a50cd1bf2d0ce2a2eb2e5863ec"
   },
+  "amiga:drive_click_A500.wav": {
+    "size": "3313326",
+    "crc": "27324b7d",
+    "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
+    "sha1": "34f05541606ee8acd033eadbda082b90051253cc"
+  },
+  "amiga:drive_click_LOUD.wav": {
+    "size": "3308526",
+    "crc": "59069982",
+    "md5": "b64bee23f356635f67fb08b543df9797",
+    "sha1": "fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2"
+  },
+  "amiga:drive_snatch_A500.wav": {
+    "size": "34450",
+    "crc": "4ac3c05e",
+    "md5": "1a4b2d6254918ff769f26beeede75655",
+    "sha1": "b8dd63077e12bdeacd3ad70ba41614dc52aa8023"
+  },
+  "amiga:drive_snatch_LOUD.wav": {
+    "size": "39864",
+    "crc": "b015251a",
+    "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
+    "sha1": "0417e6e7fee2aebae972ce4d00101a0ce363af32"
+  },
+  "amiga:drive_spin_A500.wav": {
+    "size": "134294",
+    "crc": "5f7cb73b",
+    "md5": "7401f854a75f9ede18769168ab896a2a",
+    "sha1": "a117647990e2e9debb7ac65a0db429a59bb630f0"
+  },
+  "amiga:drive_spin_LOUD.wav": {
+    "size": "20216",
+    "crc": "1969eea0",
+    "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c",
+    "sha1": "5b1d8c880f8d8fcd9309a7889817611cc27e16e0"
+  },
+  "amiga:drive_spinnd_A500.wav": {
+    "size": "352430",
+    "crc": "2c673174",
+    "md5": "f9d954879fee8e96baa93d6139077cdb",
+    "sha1": "786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634"
+  },
+  "amiga:drive_spinnd_LOUD.wav": {
+    "size": "241790",
+    "crc": "49e72ce7",
+    "md5": "43ab05c6d969cb40805970a5b2352875",
+    "sha1": "d1709931cfe05b3bd31b6ef3d9697a22c934549b"
+  },
+  "amiga:drive_startup_A500.wav": {
+    "size": "34450",
+    "crc": "cb552e00",
+    "md5": "aebeacc7e7bc52ef890785c835bec3d0",
+    "sha1": "db8de831a59a44dc6070166e2005c330a793a48d"
+  },
+  "amiga:drive_startup_LOUD.wav": {
+    "size": "43492",
+    "crc": "d746cc1e",
+    "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
+    "sha1": "38e63f700ee6a5be71ded6c057267562c00f3e31"
+  },
   "atari-st:tos100.img": {
     "size": "196608",
     "crc": "1a586c64",
@@ -2370,8 +2430,6 @@
   },
   "ps2:GameIndex.yaml": {
     "size": "2683897",
-    "crc": "a7541e89",
-    "md5": "fc3c14208a929c386445635b19baa3f2",
     "sha1": "5e2d50a3376dc6a0750505bec68626d39a5bd4c1"
   },
   "ps2:RedumpDatabase.yaml": {

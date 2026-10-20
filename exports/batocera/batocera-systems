@@ -280,7 +280,7 @@ systems = {
 
     # https://pcsx2.net/config-guide/official-english-pcsx2-configuration-guide.html#Bios
     # use the last USA bios which can run NTSC and PAL games
-    "ps2": { "name": "PS2", "biosFiles": [ { "md5": "21038400dc633070a78ad53090c53017", "file": "bios/ps2/ps2-0230a-20080220.bin" }, { "md5": "fc3c14208a929c386445635b19baa3f2", "file": "bios/resources/GameIndex.yaml", "emulator": "pcsx2" }, { "md5": "0525ad1f1381152f20bfb05775cf39cd", "file": "bios/resources/RedumpDatabase.yaml", "emulator": "pcsx2" } ] },
+    "ps2": { "name": "PS2", "biosFiles": [ { "md5": "21038400dc633070a78ad53090c53017", "file": "bios/ps2/ps2-0230a-20080220.bin" }, { "md5": "0525ad1f1381152f20bfb05775cf39cd", "file": "bios/resources/RedumpDatabase.yaml", "emulator": "pcsx2" } ] },
 
     # https://www.playstation.com/en-us/support/system-updates/ps3/
     "ps3": { "name": "PS3", "biosFiles": [  { "md5": "05fe32f5dc8c78acbcd84d36ee7fdc5b", "file": "bios/PS3UPDAT.PUP" } ] },
@@ -347,7 +347,38 @@ systems = {
         { "md5": "e40a5dfb3d017ba8779faba30cbd1c8e", "file": "bios/amiga/amiga-os-310-a600.rom" },
         { "md5": "d2ce6748e8e42222662e14359f68dad5", "file": "bios/aros-ext.bin", "emulator": "amiberry" },
         { "md5": "48d38fc3fcf2ad7bca5ec5191d02e451", "file": "bios/aros-rom.bin", "emulator": "amiberry" },
-        { "md5": "1c8bbf475d1adf52ef01b24f50becf37", "file": "bios/cd32fmv.rom", "emulator": "fsuae" }
+        { "md5": "6670a9571f235ec31b8bbd48fc18f428", "file": "bios/whdboot/WHDLoad", "emulator": "amiberry" },
+        { "md5": "2a3a61bbd7c351751506e22a4354b76a", "file": "bios/whdboot/JST", "emulator": "amiberry" },
+        { "md5": "36ab26d3b855e634fdda062c052cd52b", "file": "bios/whdboot/AmiQuit", "emulator": "amiberry" },
+        { "md5": "9e638f3d531eb7cd82594f49a4cf03b7", "file": "bios/whdboot/boot-data.zip", "emulator": "amiberry" },
+        { "md5": "14d797815aa9bbc79fe284b244ea75b1", "file": "bios/whdboot/game-data/whdload_db.json", "emulator": "amiberry" },
+        { "md5": "c993feb1eeddec1d2e687aa514231028", "file": "bios/whdboot/save-data/Kickstarts/kick33180.A500.RTB", "emulator": "amiberry" },
+        { "md5": "7eb13d974af0992d672b67c317a7e0a1", "file": "bios/whdboot/save-data/Kickstarts/kick34005.A500.RTB", "emulator": "amiberry" },
+        { "md5": "3f97c1963d82c808ef29e7c984c4c688", "file": "bios/whdboot/save-data/Kickstarts/kick40063.A600.RTB", "emulator": "amiberry" },
+        { "md5": "547b42b7b070c7f227ea45e0986d57a1", "file": "bios/whdboot/save-data/Kickstarts/kick40068.A1200.RTB", "emulator": "amiberry" },
+        { "md5": "f89f19b858ea6b1a04327c6f71ee1600", "file": "bios/whdboot/save-data/Kickstarts/kick40068.A4000.RTB", "emulator": "amiberry" },
+        { "md5": "c5ba6165df42fc69b32942b248fca725", "file": "bios/whdboot/save-data/Kickstarts/kick31034.A1000.RTB", "emulator": "amiberry" },
+        { "md5": "1c8bbf475d1adf52ef01b24f50becf37", "file": "bios/cd32fmv.rom", "emulator": "fsuae" },
+        { "md5": "6c5b44c1a2bcee664129f850bfe4ed8a", "file": "bios/uae_data/drive_click_A500.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "6c5b44c1a2bcee664129f850bfe4ed8a", "file": "bios/uae_data/drive_click_A500.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "7401f854a75f9ede18769168ab896a2a", "file": "bios/uae_data/drive_spin_A500.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "7401f854a75f9ede18769168ab896a2a", "file": "bios/uae_data/drive_spin_A500.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "f9d954879fee8e96baa93d6139077cdb", "file": "bios/uae_data/drive_spinnd_A500.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "f9d954879fee8e96baa93d6139077cdb", "file": "bios/uae_data/drive_spinnd_A500.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "aebeacc7e7bc52ef890785c835bec3d0", "file": "bios/uae_data/drive_startup_A500.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "aebeacc7e7bc52ef890785c835bec3d0", "file": "bios/uae_data/drive_startup_A500.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "1a4b2d6254918ff769f26beeede75655", "file": "bios/uae_data/drive_snatch_A500.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "1a4b2d6254918ff769f26beeede75655", "file": "bios/uae_data/drive_snatch_A500.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "b64bee23f356635f67fb08b543df9797", "file": "bios/uae_data/drive_click_LOUD.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "b64bee23f356635f67fb08b543df9797", "file": "bios/uae_data/drive_click_LOUD.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c", "file": "bios/uae_data/drive_spin_LOUD.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c", "file": "bios/uae_data/drive_spin_LOUD.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "43ab05c6d969cb40805970a5b2352875", "file": "bios/uae_data/drive_spinnd_LOUD.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "43ab05c6d969cb40805970a5b2352875", "file": "bios/uae_data/drive_spinnd_LOUD.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "743b4b9f0ca645c4c2a34953b5e01e45", "file": "bios/uae_data/drive_startup_LOUD.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "743b4b9f0ca645c4c2a34953b5e01e45", "file": "bios/uae_data/drive_startup_LOUD.wav", "emulator": "libretro", "core": "puae2021" },
+        { "md5": "40cdf89f35b68cfefd4df5fb0256e02f", "file": "bios/uae_data/drive_snatch_LOUD.wav", "emulator": "libretro", "core": "puae" },
+        { "md5": "40cdf89f35b68cfefd4df5fb0256e02f", "file": "bios/uae_data/drive_snatch_LOUD.wav", "emulator": "libretro", "core": "puae2021" }
     ] },
 
     "amigacdtv": { "name": "Amiga CDTV",   "biosFiles": [  { "md5": "82a21c1890cae844b3df741f2762d48d", "file": "bios/amiga/kick34005.A500"          },
@@ -415,6 +446,7 @@ systems = {
         { "md5": "08cdcfa0ed93e9cb16afa76e6ac5f0a4", "file": "bios/CM32L_PCM.ROM", "emulator": "dosbox-x" },
         { "md5": "268affbc64edb845b5e4f3c8200629d6", "file": "bios/FREECG98.BMP", "emulator": "dosbox-x" },
         { "md5": "5b5dd2bc68764c7204dc4fe69118f2a4", "file": "bios/SarasaGothicFixed.ttf", "emulator": "dosbox-x" },
+        { "md5": "af3bd30eb752a50f47811c699aded99f", "file": "bios/Nouveau_IBM.ttf", "emulator": "dosbox-x" },
         { "md5": "77a0129e238cee7d2ec3bc92285b8c12", "file": "bios/TRIO64 (Ver. 1.5-07) [VGA] (S3 Incorporated).bin", "emulator": "dosbox-x" },
         { "md5": "95ba6f4b418b2a5f34a4ed13d90dd04f", "file": "bios/ibm-vga.bin", "emulator": "dosbox-x" },
         { "md5": "eb28f0e8d3f641f2b58a3677b3b998cc", "file": "bios/IBMROMBASIC-F6000h-1982-10-27.ROM", "emulator": "dosbox-x" }

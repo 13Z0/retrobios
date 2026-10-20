@@ -2657,12 +2657,14 @@
           "filename": "32X_M_BIOS.BIN",
           "system": "sega32x",
           "description": "SEGA 32X BIOS",
+          "required": "Required",
           "md5": null
         },
         {
           "filename": "32X_S_BIOS.BIN",
           "system": "sega32x",
           "description": "SEGA 32X BIOS",
+          "required": "Required",
           "md5": null
         },
         {
@@ -2834,8 +2836,7 @@
           "md5": "2c66f5911e5b42b8ebe113403548eee7",
           "system": "colecovision",
           "description": "ColecoVision ROM image Alternative name - BIOS.col",
-          "required": "Required",
-          "sha256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad"
+          "required": "Required"
         },
         {
           "filename": "coleco.rom",
@@ -3094,8 +3095,7 @@
           "md5": "72ae1b47820fcc93cc0df9c428d0face",
           "system": "doom",
           "description": "PrBoom WAD ",
-          "required": "Yes, PRBoom RetroArch Core",
-          "sha256": "b4dd3642932193cc42bca0ee98bf30004888ca4850d69e85023b8baacfba1d1d"
+          "required": "Yes, PRBoom RetroArch Core"
         },
         {
           "filename": "freej2me-lr.jar",

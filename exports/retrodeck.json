@@ -24,7 +24,7 @@
     "xemu/component_manifest.json",
     "xroar/component_manifest.json"
   ],
-  "summary": "2021 kept, 133 added, 3 hashes corrected, 43 requirements corrected, 127 hashes filled, 977 additions left out",
+  "summary": "2021 kept, 133 added, 3 hashes corrected, 45 requirements corrected, 125 hashes filled, 1009 additions left out",
   "hashes_corrected": [
     "psx/scph5000.bin md5",
     "fbneo/neocdz.zip md5",
@@ -112,7 +112,6 @@
     "dreamcast/flash.bin sha256",
     "mastersystem/bios.sms sha256",
     "gamegear/bios.gg sha256",
-    "colecovision/colecovision.rom sha256",
     "saturn/sega_101.bin sha256",
     "saturn/mpr-17933.bin sha256",
     "zxspectrum/128p-1.rom sha256",
@@ -128,7 +127,6 @@
     "zxspectrum/tc2048.rom sha256",
     "zxspectrum/tc2068-0.rom sha256",
     "zxspectrum/tc2068-1.rom sha256",
-    "doom/prboom.wad sha256",
     "pcfx/pcfx.rom sha256",
     "snes/BS-X.bin sha256",
     "snes/SGB2.sfc sha256",
@@ -162,7 +160,7 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 43,
+  "requirements_corrected": 45,
   "withheld": [],
   "invalid": []
 }

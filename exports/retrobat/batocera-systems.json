@@ -175,6 +175,50 @@
         "file": "bios/aros-rom.bin"
       },
       {
+        "md5": "6670a9571f235ec31b8bbd48fc18f428",
+        "file": "bios/whdboot/WHDLoad"
+      },
+      {
+        "md5": "2a3a61bbd7c351751506e22a4354b76a",
+        "file": "bios/whdboot/JST"
+      },
+      {
+        "md5": "36ab26d3b855e634fdda062c052cd52b",
+        "file": "bios/whdboot/AmiQuit"
+      },
+      {
+        "md5": "9e638f3d531eb7cd82594f49a4cf03b7",
+        "file": "bios/whdboot/boot-data.zip"
+      },
+      {
+        "md5": "14d797815aa9bbc79fe284b244ea75b1",
+        "file": "bios/whdboot/game-data/whdload_db.json"
+      },
+      {
+        "md5": "c993feb1eeddec1d2e687aa514231028",
+        "file": "bios/whdboot/save-data/Kickstarts/kick33180.A500.RTB"
+      },
+      {
+        "md5": "7eb13d974af0992d672b67c317a7e0a1",
+        "file": "bios/whdboot/save-data/Kickstarts/kick34005.A500.RTB"
+      },
+      {
+        "md5": "3f97c1963d82c808ef29e7c984c4c688",
+        "file": "bios/whdboot/save-data/Kickstarts/kick40063.A600.RTB"
+      },
+      {
+        "md5": "547b42b7b070c7f227ea45e0986d57a1",
+        "file": "bios/whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
+      },
+      {
+        "md5": "f89f19b858ea6b1a04327c6f71ee1600",
+        "file": "bios/whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
+      },
+      {
+        "md5": "c5ba6165df42fc69b32942b248fca725",
+        "file": "bios/whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
+      },
+      {
         "md5": "e40a5dfb3d017ba8779faba30cbd1c8e",
         "file": "bios/amiga-os-310-a600.rom"
       },
@@ -197,6 +241,46 @@
       {
         "md5": "9b8bdd5a3fd32c2a5a6f5b1aefc799a5",
         "file": "bios/amiga-os-300-a4000.rom"
+      },
+      {
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
+        "file": "bios/uae_data/drive_click_A500.wav"
+      },
+      {
+        "md5": "7401f854a75f9ede18769168ab896a2a",
+        "file": "bios/uae_data/drive_spin_A500.wav"
+      },
+      {
+        "md5": "f9d954879fee8e96baa93d6139077cdb",
+        "file": "bios/uae_data/drive_spinnd_A500.wav"
+      },
+      {
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0",
+        "file": "bios/uae_data/drive_startup_A500.wav"
+      },
+      {
+        "md5": "1a4b2d6254918ff769f26beeede75655",
+        "file": "bios/uae_data/drive_snatch_A500.wav"
+      },
+      {
+        "md5": "b64bee23f356635f67fb08b543df9797",
+        "file": "bios/uae_data/drive_click_LOUD.wav"
+      },
+      {
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c",
+        "file": "bios/uae_data/drive_spin_LOUD.wav"
+      },
+      {
+        "md5": "43ab05c6d969cb40805970a5b2352875",
+        "file": "bios/uae_data/drive_spinnd_LOUD.wav"
+      },
+      {
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
+        "file": "bios/uae_data/drive_startup_LOUD.wav"
+      },
+      {
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
+        "file": "bios/uae_data/drive_snatch_LOUD.wav"
       }
     ]
   },
@@ -2207,10 +2291,6 @@
         "file": "bios/pcsx2/bios/ps2-0230a-20080220.bin"
       },
       {
-        "md5": "fc3c14208a929c386445635b19baa3f2",
-        "file": "bios/resources/GameIndex.yaml"
-      },
-      {
         "md5": "0525ad1f1381152f20bfb05775cf39cd",
         "file": "bios/resources/RedumpDatabase.yaml"
       }
@@ -3050,6 +3130,34 @@
       {
         "md5": "2f60c1ed69c152dea95e734979ca2ecb",
         "file": "bios/mame2003-plus/hiscore.dat"
+      },
+      {
+        "md5": "4659968035d462be471fdfb46b604696",
+        "file": "bios/mame2003-plus/artwork/blueshrk.zip"
+      },
+      {
+        "md5": "e30e8ef4631596e25466523b97fee19f",
+        "file": "bios/mame2003-plus/artwork/frogs.zip"
+      },
+      {
+        "md5": "23d65ad40ac1f2121fe35fe0c7893721",
+        "file": "bios/mame2003-plus/artwork/invaders.zip"
+      },
+      {
+        "md5": "255155cf3f9912c92be8f813e8112a54",
+        "file": "bios/mame2003-plus/artwork/omegrace.zip"
+      },
+      {
+        "md5": "95e05db7f8fa208daafd7b0d32041db8",
+        "file": "bios/mame2003-plus/artwork/skydiver.zip"
+      },
+      {
+        "md5": "b4b70db555dfb48b91a067eea747c771",
+        "file": "bios/mame2003-plus/artwork/solarq.zip"
+      },
+      {
+        "md5": "29fe11717016182d446ca6af56a08f75",
+        "file": "bios/mame2003-plus/artwork/warrior.zip"
       }
     ]
   },
@@ -3272,6 +3380,34 @@
       {
         "md5": "6d497abbfb773a2e07f8ab71f2a2999d",
         "file": "bios/EEPROM.bin"
+      },
+      {
+        "md5": "6b3e2bd6cfa39f267e4f862113b8e729",
+        "file": "bios/hlsl/CxbxPixelShaderTemplate.hlsl"
+      },
+      {
+        "md5": "fcf5cc618c91ed2a863134380c4b4de5",
+        "file": "bios/hlsl/FixedFunctionPixelShader.hlsl"
+      },
+      {
+        "md5": "0bbd94bdd8955212754c2f72f3ef2313",
+        "file": "bios/hlsl/FixedFunctionPixelShader.hlsli"
+      },
+      {
+        "md5": "3811e112a60371144627f918ad0adeec",
+        "file": "bios/hlsl/CxbxVertexShaderTemplate.hlsl"
+      },
+      {
+        "md5": "c21140080b783c7ee9cde28c119ef552",
+        "file": "bios/hlsl/FixedFunctionVertexShader.hlsl"
+      },
+      {
+        "md5": "8cb9260a9c921fb957e9ce1fb85218b5",
+        "file": "bios/hlsl/FixedFunctionVertexShaderState.hlsli"
+      },
+      {
+        "md5": "74681e0caa7c7ccd5e819608c868c64b",
+        "file": "bios/hlsl/CxbxVertexShaderPassthrough.hlsl"
       }
     ]
   },

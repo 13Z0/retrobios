@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T05:16:59Z",
+  "generated": "2026-10-20T09:22:56Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 3795,
-  "total_size": 7713231204,
-  "pack_files": 3797,
-  "pack_size": 7713231204,
-  "total_omitted": 177,
+  "total_files": 3833,
+  "total_size": 7895602591,
+  "pack_files": 3835,
+  "pack_size": 7895602591,
+  "total_omitted": 179,
   "omitted_files": [
     {
       "dest": "AR6002G.ROM",
@@ -1297,6 +1297,16 @@
       ]
     },
     {
+      "dest": "doomu.wad",
+      "name": "doomu.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
       "dest": "doomunity.wad",
       "name": "doomunity.wad",
       "system": "doom",
@@ -1334,6 +1344,16 @@
       "reason": "not_found",
       "cores": [
         "gzdoom"
+      ]
+    },
+    {
+      "dest": "freedoom.wad",
+      "name": "freedoom.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "prboom"
       ]
     },
     {
@@ -2429,6 +2449,9 @@
     "triforce": [
       "dolphin-triforce"
     ],
+    "uae4all-rpi": [
+      "uae4all"
+    ],
     "vbam": [
       "vba-m"
     ],
@@ -2605,6 +2628,7 @@
     "coleco-colecovision": [
       "ares",
       "bizhawk",
+      "blastem",
       "bluemsx",
       "clk",
       "colem",
@@ -2628,6 +2652,7 @@
       "puae",
       "puae2021",
       "uae4all",
+      "uae4all-rpi",
       "uae4arm",
       "winuae"
     ],
@@ -2753,6 +2778,7 @@
     ],
     "megacd": [
       "ares",
+      "blastem",
       "clownmdemu",
       "genesis_plus_gx",
       "genesis_plus_gx_expanded",
@@ -3077,6 +3103,7 @@
     "sega32x": [
       "ares",
       "bizhawk",
+      "blastem",
       "jgenesis",
       "kega-fusion",
       "picodrive"
@@ -10152,6 +10179,149 @@
       ]
     },
     {
+      "dest": "whdboot/WHDLoad",
+      "sha1": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
+      "sha256": "5e66d140e12b09769ba0bba87dc5a6f683261fd40eb43b94c390d1c62db1adb5",
+      "size": 161031,
+      "repo_path": "bios/Commodore/Amiga/whdboot/WHDLoad",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/JST",
+      "sha1": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
+      "sha256": "173e866329e4d91e1c03db79687b96f6011b2c4940c358b01ad921f22b5c7112",
+      "size": 89108,
+      "repo_path": "bios/Commodore/Amiga/whdboot/JST",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/AmiQuit",
+      "sha1": "faaaa08b29b391381771222f10b7b22c3b99f4ca",
+      "sha256": "40acff2a2425a223e4e2ad2e3c16ad76ce7ed303d9801835aaf028db0e96f0b0",
+      "size": 76,
+      "repo_path": "bios/Commodore/Amiga/whdboot/AmiQuit",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/boot-data.zip",
+      "sha1": "18a9dba5cfe2f375f111dd5148691ecaecc6293b",
+      "sha256": "88f9528b168604036afd0091efbb496534cd276fe7b1d3276896d53403ef1837",
+      "size": 357265,
+      "repo_path": "bios/Commodore/Amiga/whdboot/boot-data.zip",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/game-data/whdload_db.json",
+      "sha1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
+      "sha256": "b8236b706395e302702e53da623ece2fdbdd73f04ebc1db80673703b13c008e3",
+      "size": 6680181,
+      "repo_path": "bios/Commodore/Amiga/whdboot/game-data/whdload_db.json",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
+      "sha1": "1d1c557f4a0f5ea88aeb96d68b09f41990340f70",
+      "sha256": "703637372f6cfec06dc802759bf8907c9a01ba259e0fae5f347d13d4265b0216",
+      "size": 3882,
+      "repo_path": "bios/Commodore/Amiga/kick33180.A500.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
+      "sha1": "209c109855f94c935439b60950d049527d2f2484",
+      "sha256": "644bda440d30919e5b4aa9d24b95c6b72a709c871d3a1a5d746d99bd41d08986",
+      "size": 4020,
+      "repo_path": "bios/Commodore/Amiga/kick34005.A500.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
+      "sha1": "ca2d6e1e2b4883929447a05e29418533723a419c",
+      "sha256": "69809575d9f631eccb3f6d7b3dfa23017a33d9c1a911a5f7f8e5a4246cf8cbac",
+      "size": 5000,
+      "repo_path": "bios/Commodore/Amiga/kick40063.A600.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
+      "sha1": "1ad1b55e7226bd5cd66def8370a69f19244da796",
+      "sha256": "c1176e7b7b9860a8cded820e824677163cf1cc7c674883896a7f32dca5437736",
+      "size": 5008,
+      "repo_path": "bios/Commodore/Amiga/kick40068.A1200.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
+      "sha1": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
+      "sha256": "7cedf931e8b30620ba69954a30f037260325ff57282833fa557b4b0f2a2689f9",
+      "size": 4976,
+      "repo_path": "bios/Commodore/Amiga/kick40068.A4000.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick31034.A1000.RTB",
+      "sha1": "f5af033455ed80997ca1f4b56f36ac621c78ab9e",
+      "sha256": "70f611fae5dc289d73d9795bf28bd73d96b6a54aaf112b351dc2592ac2279e80",
+      "size": 3736,
+      "repo_path": "bios/Commodore/Amiga/kick31034.A1000.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
       "dest": "bios.gg",
       "sha1": "914aa165e3d879f060be77870d345b60cfeb4ede",
       "sha256": "8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2",
@@ -10407,7 +10577,8 @@
       "size": 4194304,
       "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
       "cores": [
-        "ares"
+        "ares",
+        "bizhawk"
       ],
       "systems": [
         "nintendo-64dd"
@@ -11882,6 +12053,16 @@
       "repo_path": "bios/Sinclair/ZX Spectrum/ZX_trdos.rom",
       "cores": [
         "bizhawk"
+      ]
+    },
+    {
+      "dest": "laseractive_dyw_1322a.bin",
+      "sha1": "b1e48d1f5e494a6cbece61cfca4469dea33fba4b",
+      "sha256": "02a4a82c4f5abfe2c7e15d3682be9590be96607cb9213ce88e335f34db95d76f",
+      "size": 65536,
+      "repo_path": "bios/Pioneer/LaserActive/laseractive_dyw_1322a.bin",
+      "cores": [
+        "blastem"
       ]
     },
     {
@@ -30621,6 +30802,97 @@
       ]
     },
     {
+      "dest": "mame2003-plus/artwork/blueshrk.zip",
+      "sha1": "4317f301d6e4117dfde42b33dfaf73a2b25f43c1",
+      "sha256": "1cab240e62d93be9368c9754606de1cdc8076264ab36d1b6d142a7a57342f788",
+      "size": 925914,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/frogs.zip",
+      "sha1": "cdff29398e76b92d93825d96c0f9cae5bb6b3400",
+      "sha256": "82fa5450089399b1c5b6f85b0d80b25c7c615deb09697d28f48b57b91501cb8c",
+      "size": 2832731,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/frogs.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/invaders.zip",
+      "sha1": "4b18db526ca907707fd888385d907a7a585935d0",
+      "sha256": "e457d6d50cbd670b77000efabd2eb6cef4f0d977b6d8fa629376c986af94f80c",
+      "size": 4324198,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/invaders.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/omegrace.zip",
+      "sha1": "1ca22afdfefcfa5943742e988c45c1fc0e1124bd",
+      "sha256": "bb9354a16024c68f931e0277fd92db7e0a14018ed36c46c390d703f6a505447b",
+      "size": 1754523,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/omegrace.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/skydiver.zip",
+      "sha1": "a0548e37e76a21fb37005cff944319ee63f93d1e",
+      "sha256": "f5f51050fd365500a8a153794dfa07ff0a1e4b3af05edb93446a3f04276088a9",
+      "size": 117241,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/skydiver.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/solarq.zip",
+      "sha1": "ff532cee1de69668b0c68238aff0c16813640476",
+      "sha256": "4bc431701918910a815c568f3aac891f5dfaa22fb079e3b3eb9f6b1aeed5c54b",
+      "size": 1342645,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/solarq.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/warrior.zip",
+      "sha1": "57f89bbac39d8071e45c87f97e9b918f31d21994",
+      "sha256": "2dd51895e2a10f2e1ab41f193d4c8e1b4e78e23ee064b27d70882ab2bd62c424",
+      "size": 1125335,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/warrior.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "segastv"
+      ]
+    },
+    {
       "dest": "apple2e.rom",
       "sha1": "61fa9254628e5bb7236fb474006116d67684d747",
       "sha256": "1fb812584c6633fa16b77b20915986ed1178d1e6fc07a647f7ee8d4e6ab9d40b",
@@ -35074,6 +35346,136 @@
       ]
     },
     {
+      "dest": "uae_data/drive_click_A500.wav",
+      "sha1": "34f05541606ee8acd033eadbda082b90051253cc",
+      "sha256": "6cc7803ff56edbae3b3c2c045c5e65f37822eded5ef86326cba83cc812eb1ae4",
+      "size": 3313326,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_click_A500.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spin_A500.wav",
+      "sha1": "a117647990e2e9debb7ac65a0db429a59bb630f0",
+      "sha256": "1082264bc2ca654c5dc8f315094484bcb9d0d13f6ff0dd88a32547304c178ca6",
+      "size": 134294,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_spin_A500.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spinnd_A500.wav",
+      "sha1": "786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634",
+      "sha256": "6fed3a0cc1063e5e84f6fdaa29f2060f3babadd3dd72322972442e22fce54eef",
+      "size": 352430,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_spinnd_A500.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_startup_A500.wav",
+      "sha1": "db8de831a59a44dc6070166e2005c330a793a48d",
+      "sha256": "40a71730ad58c8d9b5065a0193472dd0af7ee3f540740072ba57f4e1e8aee3b3",
+      "size": 34450,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_startup_A500.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_snatch_A500.wav",
+      "sha1": "b8dd63077e12bdeacd3ad70ba41614dc52aa8023",
+      "sha256": "89a1f8be36c314346a647d5e6ebaee22989d48441506eccdd3cc10c054894652",
+      "size": 34450,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_snatch_A500.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_click_LOUD.wav",
+      "sha1": "fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2",
+      "sha256": "efca54777f3dbe0489643f18eb46d4817f9757f76766519f002d7ad6e9dd5945",
+      "size": 3308526,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_click_LOUD.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spin_LOUD.wav",
+      "sha1": "5b1d8c880f8d8fcd9309a7889817611cc27e16e0",
+      "sha256": "4933396f3e2aa11bd29159c6f6cc4aed126de4c3e7438060bc6514439831de00",
+      "size": 20216,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_spin_LOUD.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spinnd_LOUD.wav",
+      "sha1": "d1709931cfe05b3bd31b6ef3d9697a22c934549b",
+      "sha256": "7e5238abc799590b3770ab8813c2d49a068ef239d042ec0129a6bdad6ec93782",
+      "size": 241790,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_spinnd_LOUD.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_startup_LOUD.wav",
+      "sha1": "38e63f700ee6a5be71ded6c057267562c00f3e31",
+      "sha256": "db98bbdea142379ed60466cd3a9d8d0160f91d9549cf155e8f320d7d1ddde29c",
+      "size": 43492,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_startup_LOUD.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_snatch_LOUD.wav",
+      "sha1": "0417e6e7fee2aebae972ce4d00101a0ce363af32",
+      "sha256": "c45fc2e49e16d56916e91bad4441fb7d9286d8e9168ff5bb4f4242e3c4ffb73b",
+      "size": 39864,
+      "repo_path": "bios/Commodore/Amiga/uae_data/drive_snatch_LOUD.wav",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
       "dest": "BLOOD.RFF",
       "sha1": "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57",
       "sha256": "a5f46ec0a2dc8472195de3364f22681cada2a65d8eaebf645021cf6cab8c1e32",
@@ -35173,6 +35575,38 @@
       ],
       "region_groups": [
         "triforce"
+      ]
+    },
+    {
+      "dest": "quoth/pak0.pak",
+      "sha1": "be18095be10b1c45afb0f51cfaa7341fae639d0f",
+      "sha256": "ddace91ad8a3e3d436c95efea430f5dbd8a319f511a6f7d2d05ac6fffc68ffe6",
+      "size": 48226771,
+      "repo_path": "bios/Id Software/Quake/quoth/pak0.pak",
+      "cores": [
+        "tyrquake"
+      ]
+    },
+    {
+      "dest": "quoth/pak1.pak",
+      "sha1": "a14f1351e38c9df3eb03ef7e47f7aae9c29b8df2",
+      "sha256": "fdc0703ba7a16def597892eacb384bbe137c20ef6034f5038d9f748791f5c14c",
+      "size": 84961704,
+      "repo_path": "bios/Id Software/Quake/quoth/pak1.pak",
+      "cores": [
+        "tyrquake"
+      ],
+      "storage": "release",
+      "release_asset": "pak1.pak"
+    },
+    {
+      "dest": "quoth/pak2.pak",
+      "sha1": "c022a1062e9f8f99d8071c2fde297458499d302e",
+      "sha256": "be17936386a4f842d59cb8f509348acce924e6da64ec4b999f7079cdca9cbd83",
+      "size": 8021749,
+      "repo_path": "bios/Id Software/Quake/quoth/pak2.pak",
+      "cores": [
+        "tyrquake"
       ]
     },
     {
@@ -43399,6 +43833,7 @@
       "repo_path": "bios/Id Software/Doom/DOOM.WAD",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43410,6 +43845,7 @@
       "repo_path": "bios/Game Engines/DOOM/doom2.wad",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43421,6 +43857,7 @@
       "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43432,6 +43869,7 @@
       "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43443,6 +43881,7 @@
       "repo_path": "bios/Id Software/Doom/TNT.WAD",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43454,6 +43893,7 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43465,6 +43905,7 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43487,6 +43928,7 @@
       "repo_path": "bios/Id Software/Doom/HERETIC.WAD",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -43498,6 +43940,7 @@
       "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
       "cores": [
         "gzdoom",
+        "prboom",
         "uzdoom"
       ]
     },
@@ -46007,6 +46450,46 @@
       ]
     },
     {
+      "dest": "doom1.wad",
+      "sha1": "5b2e249b9c5133ec987b3ea77596381dc0d6bc1d",
+      "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771",
+      "size": 4196020,
+      "repo_path": "bios/Id Software/Doom/DOOM1.WAD",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
+      "dest": "heretic1.wad",
+      "sha1": "b4c50ca9bea07f7c35250a1a11906091971c05ae",
+      "sha256": "3ab2f21828877e49e5eb3220785aaf8798050b7c4132003b5db7b8f3678bede4",
+      "size": 5120920,
+      "repo_path": "bios/Id Software/Doom/HERETIC1.WAD",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
+      "dest": "gzdoom.pk3",
+      "sha1": "810ed9968c5b3bdc2c348c9bc76e9f80fbe31308",
+      "sha256": "2d5233e37ac699cd75607eac87be2bae87bd288b54374f11e8cf5b43c0ec2f9c",
+      "size": 3612904,
+      "repo_path": "bios/Game Engines/GZDoom/gzdoom.pk3",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
+      "dest": "zdoom.pk3",
+      "sha1": "a5a784afbdf6e0fad68483c622ada621e042a389",
+      "sha256": "e2d2cc1e6bc725be68b2608e50c7c5889721ca267faf8d1ae3068f95ead18926",
+      "size": 619127,
+      "repo_path": "bios/Game Engines/ZDoom/zdoom.pk3",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
       "dest": "kick31034.A1000",
       "sha1": "4192c505d130f446b2ada6bdc91dae730acafb4c",
       "sha256": "879a7b2dc9735fd628dc0c52e8d97fb30713fa52a6d90856113610c2ea936e14",
@@ -46091,6 +46574,33 @@
       "sha256": "8b4b332c97dab28fb751ef79529d2472119b223d6885f8a885c42cdc84e88400",
       "size": 1935,
       "repo_path": "bios/Commodore/Amiga/WHDLoad.prefs",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "capsimg.so",
+      "sha1": "6c1889c75ffa990468ca365973a344dae3d39e2c",
+      "sha256": "c601624e60ed58dfdb93d6d1f599feed5e4153823696de59982304f89e91ed55",
+      "size": 95460,
+      "repo_path": "bios/Commodore/Amiga/capsimg.so",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "capsimg.dll",
+      "sha1": "c2728eaba6603a0a997697730c0520d3781e1584",
+      "sha256": "0b0faab5bd29634259030bc5327c72e4d6025b1d3199792d71b804ef6cafea18",
+      "size": 191488,
+      "repo_path": "bios/Commodore/Amiga/capsimg.dll",
       "cores": [
         "puae"
       ],
@@ -46948,6 +47458,17 @@
       ]
     },
     {
+      "dest": "id1/pak0.pak",
+      "sha1": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
+      "sha256": "35a9c55e5e5a284a159ad2a62e0e8def23d829561fe2f54eb402dbc0a9a946af",
+      "size": 18689235,
+      "repo_path": "bios/Id Software/Quake/id1/pak0.pak",
+      "cores": [
+        "tyrquake",
+        "vkquake"
+      ]
+    },
+    {
       "dest": "JiffyDOS_C128.bin",
       "sha1": "7d1898f32beae4b2ae610d469ce578a588efaa7c",
       "sha256": "1c60cff72b21c63509c2de8fb0cbab3568f3b71b70f910e0f31af92ba45696ae",
@@ -47193,16 +47714,6 @@
       ],
       "storage": "release",
       "release_asset": "PSP2UPDAT.PUP"
-    },
-    {
-      "dest": "id1/pak0.pak",
-      "sha1": "36b42dc7b6313fd9cabc0be8b9e9864840929735",
-      "sha256": "35a9c55e5e5a284a159ad2a62e0e8def23d829561fe2f54eb402dbc0a9a946af",
-      "size": 18689235,
-      "repo_path": "bios/Id Software/Quake/id1/pak0.pak",
-      "cores": [
-        "vkquake"
-      ]
     },
     {
       "dest": "baseq2/pak0.pak",

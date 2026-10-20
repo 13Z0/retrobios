@@ -470,8 +470,6 @@
         },
         {
           "filename": "GameIndex.yaml",
-          "md5": "fc3c14208a929c386445635b19baa3f2",
-          "sha256": "6531239315d759d0588985b31576696d2672c1a0e192633ea2d4f3d011bfdb37",
           "system": "ps2",
           "description": "per-title compatibility and fix database",
           "paths": "$bios_path/resources"

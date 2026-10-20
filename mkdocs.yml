@@ -126,7 +126,6 @@ nav:
   - 3DO Company: systems/3do-company.md
   - APF: systems/apf.md
   - Acorn: systems/acorn.md
-  - Adobe: systems/adobe.md
   - Amstrad: systems/amstrad.md
   - Apogee: systems/apogee.md
   - Apple: systems/apple.md
@@ -142,9 +141,7 @@ nav:
   - Camputers: systems/camputers.md
   - Casio: systems/casio.md
   - Coleco: systems/coleco.md
-  - Commander X16: systems/commander-x16.md
   - Commodore: systems/commodore.md
-  - Crack dot Com: systems/crack-dot-com.md
   - DOS: systems/dos.md
   - Dinothawr: systems/dinothawr.md
   - Dragon: systems/dragon.md
@@ -171,13 +168,9 @@ nav:
   - Interact: systems/interact.md
   - Interplay: systems/interplay.md
   - Java: systems/java.md
-  - Jupiter: systems/jupiter.md
-  - Lambda: systems/lambda.md
   - Lexaloffle: systems/lexaloffle.md
-  - MGT: systems/mgt.md
   - Magnavox: systems/magnavox.md
   - Mattel: systems/mattel.md
-  - Microdigital: systems/microdigital.md
   - Microsoft: systems/microsoft.md
   - Monolith: systems/monolith.md
   - NEC: systems/nec.md
@@ -192,7 +185,6 @@ nav:
   - QEMU: systems/qemu.md
   - RCA: systems/rca.md
   - RPG Maker: systems/rpg-maker.md
-  - Ringo: systems/ringo.md
   - Roland: systems/roland.md
   - SDL: systems/sdl.md
   - SNK: systems/snk.md
@@ -210,7 +202,6 @@ nav:
   - Thomson: systems/thomson.md
   - Tiger: systems/tiger.md
   - TimeTop: systems/timetop.md
-  - Timex: systems/timex.md
   - Tomy: systems/tomy.md
   - Toys for Bob: systems/toys-for-bob.md
   - VTech: systems/vtech.md
@@ -301,7 +292,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (185):
+  - Community forks (186):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -459,6 +450,7 @@ nav:
     - TGB Dual: emulators/tgbdual.md
     - trident: emulators/trident.md
     - UAE4All2: emulators/uae4all.md
+    - UAE4ALL (libretro, Chips-fr): emulators/uae4all-rpi.md
     - uae4arm: emulators/uae4arm.md
     - UXN: emulators/uxn.md
     - vecx: emulators/vecx.md
@@ -836,6 +828,7 @@ nav:
 - Cross-reference: cross-reference.md
 - Gap analysis: gaps.md
 - Dump provenance: provenance.md
+- Corrected platform files: exports.md
 - Data & API: data.md
 - Wiki:
   - Overview: wiki/index.md

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T08:34:55Z",
-  "total_files": 19454,
-  "total_size": 16770546188,
+  "generated_at": "2026-10-20T09:22:56Z",
+  "total_files": 19452,
+  "total_size": 16769497612,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -161367,26 +161367,6 @@
       "crc32": "9489e5a8",
       "adler32": "0c2b972a"
     },
-    "cc5404e22099ca4064622bb836db439589e378b4": {
-      "path": "bios/Other/uae4all/aros-amiga-m68k-ext.bin",
-      "name": "aros-amiga-m68k-ext.bin",
-      "size": 524288,
-      "sha1": "cc5404e22099ca4064622bb836db439589e378b4",
-      "md5": "272c1306032674b4fa120d56a0b1b99a",
-      "sha256": "af08579b075cb7836c21812e81b15fde3d3532a21355a5b2afdb53254de1cbb8",
-      "crc32": "6aa2b4d2",
-      "adler32": "a8bfa96d"
-    },
-    "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f": {
-      "path": "bios/Other/uae4all/aros-amiga-m68k-rom.bin",
-      "name": "aros-amiga-m68k-rom.bin",
-      "size": 524288,
-      "sha1": "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f",
-      "md5": "8c9e0e3b3686c362ccf2dfd8a86669b2",
-      "sha256": "f5b5f0726658aed7d8018c8b908b6e13fdbe833ebcbacb2e27c02915d663c474",
-      "crc32": "69bf6f2b",
-      "adler32": "11827350"
-    },
     "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6": {
       "path": "bios/Other/xemu/wpcap.dll",
       "name": "wpcap.dll",
@@ -215395,8 +215375,6 @@
       "a10001250bba63ee09abc0b9e545f2bf": "09de0c832fdf8ad2db9a62c0c2c4bb5b2a746fda",
       "ef00c2f8b623b2cc9189afefca3615fd": "aa56e03c13ff0bd4f6404106c9f1488b33bf4cd9",
       "2cc415ce59f0b08586cb366df3224b11": "b623379d6059cd877c6734fb289f59493b99fbea",
-      "272c1306032674b4fa120d56a0b1b99a": "cc5404e22099ca4064622bb836db439589e378b4",
-      "8c9e0e3b3686c362ccf2dfd8a86669b2": "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f",
       "8e460d9ace38fdb5945a3aa7f624e3b6": "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6",
       "de8cf43e4ed5c8c7f9111414f508b268": "a5e152373fa6cc91fa6953dee562ebce6868eb94",
       "d3d5beb92a7b1c711dbdc83a92639099": "c6efd59349c430969f68fbeb86fa5328e96dc08b",
@@ -258989,12 +258967,6 @@
       "tekifire.ogg": [
         "b623379d6059cd877c6734fb289f59493b99fbea"
       ],
-      "aros-amiga-m68k-ext.bin": [
-        "cc5404e22099ca4064622bb836db439589e378b4"
-      ],
-      "aros-amiga-m68k-rom.bin": [
-        "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f"
-      ],
       "wpcap.dll": [
         "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6"
       ],
@@ -291473,8 +291445,6 @@
       "f3941d3a": "09de0c832fdf8ad2db9a62c0c2c4bb5b2a746fda",
       "ddf31a86": "aa56e03c13ff0bd4f6404106c9f1488b33bf4cd9",
       "9489e5a8": "b623379d6059cd877c6734fb289f59493b99fbea",
-      "6aa2b4d2": "cc5404e22099ca4064622bb836db439589e378b4",
-      "69bf6f2b": "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f",
       "fd8a7059": "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6",
       "8fbfe50d": "a5e152373fa6cc91fa6953dee562ebce6868eb94",
       "d456be19": "c6efd59349c430969f68fbeb86fa5328e96dc08b",
@@ -310928,8 +310898,6 @@
       "166c50315fce00360976be3b4963ae5db9d232ba18ab660b4fed9eca15d60bec": "09de0c832fdf8ad2db9a62c0c2c4bb5b2a746fda",
       "7c3a60277701decff36f4e88bc0ecc9dbe06cf8bf0c4408e56d43a1beb81bb55": "aa56e03c13ff0bd4f6404106c9f1488b33bf4cd9",
       "ce50cb5d5624244d1c4c3e2b8c696bc42dd21772979f7d284608a308f1e2b8a4": "b623379d6059cd877c6734fb289f59493b99fbea",
-      "af08579b075cb7836c21812e81b15fde3d3532a21355a5b2afdb53254de1cbb8": "cc5404e22099ca4064622bb836db439589e378b4",
-      "f5b5f0726658aed7d8018c8b908b6e13fdbe833ebcbacb2e27c02915d663c474": "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f",
       "160efaeb4bea94e7a12b24da0414c88d7fff7db9531104b93d6ae7b01ab858ea": "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6",
       "9e47f236fd3244ad88443a61f7d549eced052b42cb9bd78bbeb35a5918c25bb9": "a5e152373fa6cc91fa6953dee562ebce6868eb94",
       "0840ff2fbb677fc0019200d85eaf4bfe401b37b151e38311090f8dda47ea9173": "c6efd59349c430969f68fbeb86fa5328e96dc08b",
@@ -505990,18 +505958,6 @@
       ],
       "syobonaction/tekifire.ogg": [
         "b623379d6059cd877c6734fb289f59493b99fbea"
-      ],
-      "Other/uae4all/aros-amiga-m68k-ext.bin": [
-        "cc5404e22099ca4064622bb836db439589e378b4"
-      ],
-      "uae4all/aros-amiga-m68k-ext.bin": [
-        "cc5404e22099ca4064622bb836db439589e378b4"
-      ],
-      "Other/uae4all/aros-amiga-m68k-rom.bin": [
-        "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f"
-      ],
-      "uae4all/aros-amiga-m68k-rom.bin": [
-        "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f"
       ],
       "Other/xemu/wpcap.dll": [
         "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6"

@@ -65,7 +65,7 @@ game (
 	rom ( name mame2003/hiscore.dat size 215475 crc E929973F md5 c6f35123264db9cdfb216e8fdb673679 sha1 a22ec279222ec6aeb3249932f7d377b7cf1e7bf1 )
 	rom ( name mame2003-plus/hiscore.dat size 131878 crc 14F27ED1 md5 2f60c1ed69c152dea95e734979ca2ecb sha1 c086306096722da7f02f624e7efb447659aca1d3 )
 	rom ( name mame2010/hiscore.dat size 202298 crc 88A4F0E3 md5 bb8023a43e357b7f0cc06bf00f0470b2 sha1 17b8b03a89d8443927aa92ede799e117b4ab6fdb )
-	rom ( name mame2015/hiscore.dat size 216250 crc 8213E86A md5 7e31f0b84f6ea6f9ffec0cd968decf9f sha1 68e94fb579f46f3255ef7c34c0322f3f0f3c8e20 )
+	rom ( name mess2015/hiscore.dat size 216250 crc 8213E86A md5 7e31f0b84f6ea6f9ffec0cd968decf9f sha1 68e94fb579f46f3255ef7c34c0322f3f0f3c8e20 )
 
 	comment "Atari - 400-800"
 	rom ( name ATARIBAS.ROM size 8192 crc 7D684184 md5 0bac0c6a50104045d902df4503a4c30b sha1 3693c9cb9bf3b41bae1150f7a8264992468fc8c0 )
@@ -110,10 +110,31 @@ game (
     rom ( name kick39106.A4000 size 524288 crc 9E6AC152 md5 9b8bdd5a3fd32c2a5a6f5b1aefc799a5 sha1 f0b4e9e29e12218c2d5bd7020e4e785297d91fd7 )
     rom ( name kick40068.A4000 size 524288 crc D6BAE334 md5 9bdedde6a4f33555b4a270c8ca53297d sha1 5fe04842d04a489720f0f4bb0e46948199406f49 )
     rom ( name kick40060.CD32.ext size 524288 crc 87746BE2 md5 bb72565701b1b6faece07d68ea5da639 sha1 5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f )
+	rom ( name whdboot/WHDLoad size 161031 crc 9DF148C1 md5 6670a9571f235ec31b8bbd48fc18f428 sha1 c3ecdaf43cc554026c8ef1c440a08c81144f810b )
+	rom ( name whdboot/JST size 89108 crc 8FF26CF8 md5 2a3a61bbd7c351751506e22a4354b76a sha1 55dd3ecd5086528fa984e82db6474b954fc54ad5 )
+	rom ( name whdboot/AmiQuit size 76 crc CC190C8A md5 36ab26d3b855e634fdda062c052cd52b sha1 faaaa08b29b391381771222f10b7b22c3b99f4ca )
+	rom ( name whdboot/boot-data.zip size 357265 crc 16433B36 md5 9e638f3d531eb7cd82594f49a4cf03b7 sha1 18a9dba5cfe2f375f111dd5148691ecaecc6293b )
+	rom ( name whdboot/game-data/whdload_db.json size 6680181 crc 52E9FF41 md5 14d797815aa9bbc79fe284b244ea75b1 sha1 bcb18c1016cbb1c748d39254e7f94fbf875b1c0b )
+	rom ( name whdboot/save-data/Kickstarts/kick33180.A500.RTB size 3882 crc C61D5663 md5 c993feb1eeddec1d2e687aa514231028 sha1 1d1c557f4a0f5ea88aeb96d68b09f41990340f70 )
+	rom ( name whdboot/save-data/Kickstarts/kick34005.A500.RTB size 4020 crc AE7A9AC7 md5 7eb13d974af0992d672b67c317a7e0a1 sha1 209c109855f94c935439b60950d049527d2f2484 )
+	rom ( name whdboot/save-data/Kickstarts/kick40063.A600.RTB size 5000 crc 71180C7F md5 3f97c1963d82c808ef29e7c984c4c688 sha1 ca2d6e1e2b4883929447a05e29418533723a419c )
+	rom ( name whdboot/save-data/Kickstarts/kick40068.A1200.RTB size 5008 crc CF631E0B md5 547b42b7b070c7f227ea45e0986d57a1 sha1 1ad1b55e7226bd5cd66def8370a69f19244da796 )
+	rom ( name whdboot/save-data/Kickstarts/kick40068.A4000.RTB size 4976 crc 3B46F0CB md5 f89f19b858ea6b1a04327c6f71ee1600 sha1 973b42dcaf8d6cb111484b3c4d3b719b15f6792d )
+	rom ( name whdboot/save-data/Kickstarts/kick31034.A1000.RTB size 3736 crc 9BE2734C md5 c5ba6165df42fc69b32942b248fca725 sha1 f5af033455ed80997ca1f4b56f36ac621c78ab9e )
 	rom ( name amiga-os-310-a1200.rom size 524288 crc 1483A091 md5 646773759326fbac3b2311fd8c8793ee sha1 e21545723fe8374e91342617604f1b3d703094f1 )
 	rom ( name amiga-os-310-a3000.rom size 524288 crc EFB239CC md5 413590e50098a056cfec418d3df0212d sha1 f8e210d72b4c4853e0c9b85d223ba20e3d1b36ee )
 	rom ( name amiga-os-310-a4000.rom size 524288 crc D6BAE334 md5 9bdedde6a4f33555b4a270c8ca53297d sha1 5fe04842d04a489720f0f4bb0e46948199406f49 )
 	rom ( name cd32fmv.rom size 262144 crc C35C37BF md5 1c8bbf475d1adf52ef01b24f50becf37 sha1 03ca81c7a7b259cf64bc9582863eca0f6529f435 )
+	rom ( name uae_data/drive_click_A500.wav size 3313326 crc 27324B7D md5 6c5b44c1a2bcee664129f850bfe4ed8a sha1 34f05541606ee8acd033eadbda082b90051253cc )
+	rom ( name uae_data/drive_spin_A500.wav size 134294 crc 5F7CB73B md5 7401f854a75f9ede18769168ab896a2a sha1 a117647990e2e9debb7ac65a0db429a59bb630f0 )
+	rom ( name uae_data/drive_spinnd_A500.wav size 352430 crc 2C673174 md5 f9d954879fee8e96baa93d6139077cdb sha1 786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634 )
+	rom ( name uae_data/drive_startup_A500.wav size 34450 crc CB552E00 md5 aebeacc7e7bc52ef890785c835bec3d0 sha1 db8de831a59a44dc6070166e2005c330a793a48d )
+	rom ( name uae_data/drive_snatch_A500.wav size 34450 crc 4AC3C05E md5 1a4b2d6254918ff769f26beeede75655 sha1 b8dd63077e12bdeacd3ad70ba41614dc52aa8023 )
+	rom ( name uae_data/drive_click_LOUD.wav size 3308526 crc 59069982 md5 b64bee23f356635f67fb08b543df9797 sha1 fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2 )
+	rom ( name uae_data/drive_spin_LOUD.wav size 20216 crc 1969EEA0 md5 56d8e36a2f04b5e8c5a1f1530cfc886c sha1 5b1d8c880f8d8fcd9309a7889817611cc27e16e0 )
+	rom ( name uae_data/drive_spinnd_LOUD.wav size 241790 crc 49E72CE7 md5 43ab05c6d969cb40805970a5b2352875 sha1 d1709931cfe05b3bd31b6ef3d9697a22c934549b )
+	rom ( name uae_data/drive_startup_LOUD.wav size 43492 crc D746CC1E md5 743b4b9f0ca645c4c2a34953b5e01e45 sha1 38e63f700ee6a5be71ded6c057267562c00f3e31 )
+	rom ( name uae_data/drive_snatch_LOUD.wav size 39864 crc B015251A md5 40cdf89f35b68cfefd4df5fb0256e02f sha1 0417e6e7fee2aebae972ce4d00101a0ce363af32 )
 
 	comment "Commodore - C128"
 	rom ( name scpu-dos-1.4.bin md5 cda2fcd2e1f0412029383e51dd472095 )
@@ -986,9 +1007,17 @@ game (
 	rom ( name Cemu/resources/sharedFonts/CafeStd.ttf size 5363768 crc BC7F3500 md5 8ca7dae3bd89ce56087d437932c33656 sha1 da0d4bcc3b13339179bee946eba16adfd731b4d3 )
 	rom ( name Cemu/resources/sharedFonts/CafeTw.ttf size 6593548 crc AAF8DF7B md5 bf8fbf9a200affc4428bf4fc2bb22b67 sha1 8ec796192ebc710f23ab6bd55453cae523b70444 )
 
+	comment "pioneer-laseractive"
+	rom ( name laseractive_dyw_1322a.bin size 65536 crc 3D6F6ED3 md5 d6ccd1da5c4a1b22c64e6eec899e0daf sha1 b1e48d1f5e494a6cbece61cfca4469dea33fba4b )
+
+	comment "quake"
+	rom ( name quoth/pak0.pak size 48226771 crc D631776F md5 00480ea1008b9fe2e134896a015a31fd sha1 be18095be10b1c45afb0f51cfaa7341fae639d0f )
+	rom ( name quoth/pak1.pak size 84961704 crc 0CEEEB76 md5 7e67039da2527d95f61c215ef6f879cd sha1 a14f1351e38c9df3eb03ef7e47f7aae9c29b8df2 )
+	rom ( name quoth/pak2.pak size 8021749 crc C0D92C29 md5 ae0a13119175f9b26b039d9bae508591 sha1 c022a1062e9f8f99d8071c2fde297458499d302e )
+
 	comment "sega-model3"
 	rom ( name supermodel/Games.xml md5 2d16307ceb658636a05d34c7ba935b48 sha1 fa334ab5ba6366bd28168860c913e6365b9fec96 )
-	rom ( name supermodel/Supermodel.ini size 9421 crc 6742A106 md5 06533608174992f6ea180ae190011778 sha1 cbda2b3fa65e37c5c2824a4630f95f145533c360 )
+	rom ( name supermodel/Supermodel.ini size 9421 md5 06533608174992f6ea180ae190011778 sha1 cbda2b3fa65e37c5c2824a4630f95f145533c360 )
 	rom ( name supermodel/Music.xml size 9224 crc 76B28F83 md5 ddb4e23db15dda67539eee24de23de4b sha1 b44ed959fe2948a03d81b98e67ca32f2b4c37e78 )
 
 	comment "sega-outrun"

@@ -9,8 +9,27 @@
     <bios path="amiga/bios/kick02019.AROS"     md5="186d23cccd9fbd6336d0f988b39dce4d" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
     <bios path="aros-ext.bin" md5="d2ce6748e8e42222662e14359f68dad5" core="amiberry" mandatory="false" />
     <bios path="aros-rom.bin" md5="48d38fc3fcf2ad7bca5ec5191d02e451" core="amiberry" mandatory="false" />
-    <bios path="amiga/aros-amiga-m68k-rom.bin" md5="8c9e0e3b3686c362ccf2dfd8a86669b2" core="libretro/uae4all" mandatory="false" />
-    <bios path="amiga/aros-amiga-m68k-ext.bin" md5="272c1306032674b4fa120d56a0b1b99a" core="libretro/uae4all" mandatory="false" />
+    <bios path="whdboot/WHDLoad" md5="6670a9571f235ec31b8bbd48fc18f428" core="amiberry" mandatory="false" />
+    <bios path="whdboot/JST" md5="2a3a61bbd7c351751506e22a4354b76a" core="amiberry" mandatory="false" />
+    <bios path="whdboot/AmiQuit" md5="36ab26d3b855e634fdda062c052cd52b" core="amiberry" mandatory="false" />
+    <bios path="whdboot/boot-data.zip" md5="9e638f3d531eb7cd82594f49a4cf03b7" core="amiberry" mandatory="false" />
+    <bios path="whdboot/game-data/whdload_db.json" md5="14d797815aa9bbc79fe284b244ea75b1" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick33180.A500.RTB" md5="c993feb1eeddec1d2e687aa514231028" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick34005.A500.RTB" md5="7eb13d974af0992d672b67c317a7e0a1" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40063.A600.RTB" md5="3f97c1963d82c808ef29e7c984c4c688" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40068.A1200.RTB" md5="547b42b7b070c7f227ea45e0986d57a1" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick40068.A4000.RTB" md5="f89f19b858ea6b1a04327c6f71ee1600" core="amiberry" mandatory="false" />
+    <bios path="whdboot/save-data/Kickstarts/kick31034.A1000.RTB" md5="c5ba6165df42fc69b32942b248fca725" core="amiberry" mandatory="false" />
+    <bios path="uae_data/drive_click_A500.wav" md5="6c5b44c1a2bcee664129f850bfe4ed8a" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_spin_A500.wav" md5="7401f854a75f9ede18769168ab896a2a" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_spinnd_A500.wav" md5="f9d954879fee8e96baa93d6139077cdb" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_startup_A500.wav" md5="aebeacc7e7bc52ef890785c835bec3d0" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_snatch_A500.wav" md5="1a4b2d6254918ff769f26beeede75655" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_click_LOUD.wav" md5="b64bee23f356635f67fb08b543df9797" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_spin_LOUD.wav" md5="56d8e36a2f04b5e8c5a1f1530cfc886c" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_spinnd_LOUD.wav" md5="43ab05c6d969cb40805970a5b2352875" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_startup_LOUD.wav" md5="743b4b9f0ca645c4c2a34953b5e01e45" core="libretro/puae,libretro/puae2021" mandatory="false" />
+    <bios path="uae_data/drive_snatch_LOUD.wav" md5="40cdf89f35b68cfefd4df5fb0256e02f" core="libretro/puae,libretro/puae2021" mandatory="false" />
   </system>
   <system fullname="Amiga 1200 (AGA)" platform="amiga1200">
     <bios path="amiga/bios/kick39106.A1200" md5="b7cc148386aa631136f510cd29e42fc3" core="amiberry" mandatory="false" />
@@ -400,7 +419,6 @@
     <bios path="ps2/ps2-0230e-20080220.bin" md5="dc69f0643a3030aaa4797501b483d6c4" core="libretro/pcsx2,pcsx2" />
     <bios path="ps2/ps2-0230h-20080220.bin" md5="30d56e79d89fbddf10938fa67fe3f34e" core="libretro/pcsx2,pcsx2" />
     <bios path="ps2/ps2-0230j-20080220.bin" md5="80ac46fa7e77b8ab4366e86948e54f83" core="libretro/pcsx2,pcsx2" />
-    <bios path="resources/GameIndex.yaml" md5="fc3c14208a929c386445635b19baa3f2" core="pcsx2" mandatory="false" />
     <bios path="resources/RedumpDatabase.yaml" md5="0525ad1f1381152f20bfb05775cf39cd" core="pcsx2" mandatory="false" />
   </system>
   <system fullname="Fairchild Channel-F" platform="channelf">
@@ -791,5 +809,12 @@
     <bios path="event.dat" md5="ee99bb541116967f8785a5bc09932475" core="advancemame" mandatory="false" />
     <bios path="mame2003/hiscore.dat" md5="c6f35123264db9cdfb216e8fdb673679" core="libretro/mame2003" mandatory="false" />
     <bios path="mame2003-plus/hiscore.dat" md5="2f60c1ed69c152dea95e734979ca2ecb" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/blueshrk.zip" md5="4659968035d462be471fdfb46b604696" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/frogs.zip" md5="e30e8ef4631596e25466523b97fee19f" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/invaders.zip" md5="23d65ad40ac1f2121fe35fe0c7893721" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/omegrace.zip" md5="255155cf3f9912c92be8f813e8112a54" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/skydiver.zip" md5="95e05db7f8fa208daafd7b0d32041db8" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/solarq.zip" md5="b4b70db555dfb48b91a067eea747c771" core="libretro/mame2003_plus" mandatory="false" />
+    <bios path="mame2003-plus/artwork/warrior.zip" md5="29fe11717016182d446ca6af56a08f75" core="libretro/mame2003_plus" mandatory="false" />
   </system>
 </biosList>

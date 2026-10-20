@@ -6,7 +6,7 @@
   "files": [
     "known_bios_files.json"
   ],
-  "summary": "374 kept, 81 added, 4 hashes corrected, 0 requirements corrected, 308 additions left out",
+  "summary": "374 kept, 91 added, 4 hashes corrected, 0 requirements corrected, 309 additions left out",
   "hashes_corrected": [
     "atari8bit/ATARIOSB.ROM sha1",
     "atari8bit/ATARIOSB.ROM md5",

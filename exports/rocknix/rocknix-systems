@@ -22,17 +22,13 @@ systems = {
         { "md5": "1f118b8735fcf40c20b38c3184eebfd9", "file": "bios/codehandler.bin", "emulator": "dolphin", "core": "dolphin-qt-gc" }
     ] },
 
-    "nds": { "name": "Nintendo DS", "biosFiles": [
-        { "md5": "94bc5094607c5e6598d50472c52f27f2", "file": "bios/firmware.bin" },
-        { "md5": "df692a80a5b1bc90728bc3dfc76cd948", "file": "bios/bios7.bin" },
-        { "md5": "a392174eb3e572fed6447e956bde4b25", "file": "bios/bios9.bin" },
-        { "md5": "559dae4ea78eb9d67702c56c1d791e81", "file": "bios/dsi_bios7.bin" },
-        { "md5": "87b665fce118f76251271c3732532777", "file": "bios/dsi_bios9.bin" },
-        { "md5": "74f23348012d7b3e1cc216c47192ffeb", "file": "bios/dsi_firmware.bin" },
-        { "md5": "d71edf897ddd06bf335feeb68edeb272", "file": "bios/dsi_nand.bin" },
-        { "md5": "4986e446825453695d2e0b22dca6affe", "file": "bios/drastic_logo_0.raw", "emulator": "drastic", "core": "drastic-sa" },
-        { "md5": "f590deaba5027125ff1fcfd8f0922503", "file": "bios/drastic_logo_1.raw", "emulator": "drastic", "core": "drastic-sa" }
-    ] },
+    "nds":        { "name": "Nintendo DS", "biosFiles": [ { "md5": "94bc5094607c5e6598d50472c52f27f2", "file": "bios/firmware.bin" },
+                                                          { "md5": "df692a80a5b1bc90728bc3dfc76cd948", "file": "bios/bios7.bin" },
+                                                          { "md5": "a392174eb3e572fed6447e956bde4b25", "file": "bios/bios9.bin" },
+                                                          { "md5": "559dae4ea78eb9d67702c56c1d791e81", "file": "bios/dsi_bios7.bin" },
+                                                          { "md5": "87b665fce118f76251271c3732532777", "file": "bios/dsi_bios9.bin" },
+                                                          { "md5": "74f23348012d7b3e1cc216c47192ffeb", "file": "bios/dsi_firmware.bin" },
+                                                          { "md5": "d71edf897ddd06bf335feeb68edeb272", "file": "bios/dsi_nand.bin" } ] },
 
     "gb":         { "name": "Nintendo Gameboy", "biosFiles": [ { "md5": "32fbbd84168d3482956eb3c5051637f5", "file": "bios/gb_bios.bin" } ] },
 

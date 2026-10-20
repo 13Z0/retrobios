@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-20T05:16:59Z",
+  "generated": "2026-10-20T08:34:55Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -15,11 +15,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 443,
-  "total_size": 729933775,
-  "pack_files": 445,
-  "pack_size": 729933775,
-  "total_omitted": 719,
+  "total_files": 455,
+  "total_size": 872558818,
+  "pack_files": 457,
+  "pack_size": 872558818,
+  "total_omitted": 741,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -1722,6 +1722,16 @@
       ]
     },
     {
+      "dest": "blasphem.wad",
+      "name": "blasphem.wad",
+      "system": "heretic",
+      "required": false,
+      "reason": "no_platform_slug",
+      "cores": [
+        "PrBoom"
+      ]
+    },
+    {
       "dest": "chargen-901460-02.bin",
       "name": "chargen-901460-02.bin",
       "system": "",
@@ -1839,6 +1849,26 @@
       "reason": "below_platform_folder",
       "cores": [
         "Dolphin"
+      ]
+    },
+    {
+      "dest": "doom/doomu.wad",
+      "name": "doomu.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "prboom"
+      ]
+    },
+    {
+      "dest": "doom/freedoom.wad",
+      "name": "freedoom.wad",
+      "system": "doom",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "prboom"
       ]
     },
     {
@@ -2362,6 +2392,26 @@
       ]
     },
     {
+      "dest": "heretic.wad",
+      "name": "heretic.wad",
+      "system": "heretic",
+      "required": false,
+      "reason": "no_platform_slug",
+      "cores": [
+        "PrBoom"
+      ]
+    },
+    {
+      "dest": "heretic1.wad",
+      "name": "heretic1.wad",
+      "system": "heretic",
+      "required": false,
+      "reason": "no_platform_slug",
+      "cores": [
+        "PrBoom"
+      ]
+    },
+    {
       "dest": "jagboot.rom",
       "name": "jagboot.rom",
       "system": "atari-jaguar",
@@ -2549,6 +2599,76 @@
       "reason": "no_platform_slug",
       "cores": [
         "MAME 2003"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/blueshrk.zip",
+      "name": "blueshrk.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/frogs.zip",
+      "name": "frogs.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/invaders.zip",
+      "name": "invaders.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/omegrace.zip",
+      "name": "omegrace.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/skydiver.zip",
+      "name": "skydiver.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/solarq.zip",
+      "name": "solarq.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
+      ]
+    },
+    {
+      "dest": "mame2003-plus/artwork/warrior.zip",
+      "name": "warrior.zip",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "MAME 2003-Plus"
       ]
     },
     {
@@ -4439,6 +4559,106 @@
       "reason": "no_platform_slug",
       "cores": [
         "MAME 2003"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_click_A500.wav",
+      "name": "drive_click_A500.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_click_LOUD.wav",
+      "name": "drive_click_LOUD.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_snatch_A500.wav",
+      "name": "drive_snatch_A500.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_snatch_LOUD.wav",
+      "name": "drive_snatch_LOUD.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spin_A500.wav",
+      "name": "drive_spin_A500.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spin_LOUD.wav",
+      "name": "drive_spin_LOUD.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spinnd_A500.wav",
+      "name": "drive_spinnd_A500.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_spinnd_LOUD.wav",
+      "name": "drive_spinnd_LOUD.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_startup_A500.wav",
+      "name": "drive_startup_A500.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
+      ]
+    },
+    {
+      "dest": "uae_data/drive_startup_LOUD.wav",
+      "name": "drive_startup_LOUD.wav",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "PUAE (P-UAE)"
       ]
     },
     {
@@ -7568,6 +7788,9 @@
     "triforce": [
       "dolphin-triforce"
     ],
+    "uae4all-rpi": [
+      "uae4all"
+    ],
     "vbam": [
       "vba-m"
     ],
@@ -7656,6 +7879,7 @@
     "coleco-colecovision": [
       "ares",
       "bizhawk",
+      "blastem",
       "bluemsx",
       "clk",
       "colem",
@@ -7679,6 +7903,7 @@
       "puae",
       "puae2021",
       "uae4all",
+      "uae4all-rpi",
       "uae4arm",
       "winuae"
     ],
@@ -7992,6 +8217,7 @@
     "sega-game-gear": [
       "ares",
       "bizhawk",
+      "blastem",
       "gearsystem",
       "genesis_plus_gx",
       "genesis_plus_gx_expanded",
@@ -8029,6 +8255,7 @@
     ],
     "sega-mega-cd": [
       "ares",
+      "blastem",
       "clownmdemu",
       "genesis_plus_gx",
       "genesis_plus_gx_expanded",
@@ -12866,6 +13093,136 @@
       "priority": 3
     },
     {
+      "dest": "doom/doom.wad",
+      "sha1": "7742089b4468a736cadb659a7deca3320fe6dcbd",
+      "sha256": "ff2c301b8719465a6e386a512bfa319931b7f64ea517d337c5a47afe03951902",
+      "size": 11159840,
+      "repo_path": "bios/Id Software/Doom/DOOM.WAD",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/freedoom1.wad",
+      "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
+      "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
+      "size": 28795076,
+      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/doom1.wad",
+      "sha1": "5b2e249b9c5133ec987b3ea77596381dc0d6bc1d",
+      "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771",
+      "size": 4196020,
+      "repo_path": "bios/Id Software/Doom/DOOM1.WAD",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/doom2.wad",
+      "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
+      "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
+      "size": 14943400,
+      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/doom2f.wad",
+      "sha1": "d510c877031bbd5f3d198581a2c8651e09b9861f",
+      "sha256": "ab6d457050daee95fb763040f753fce44a4852883dafdb520b00cc8426e6bda0",
+      "size": 14607420,
+      "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/plutonia.wad",
+      "sha1": "90361e2a538d2388506657252ae41aceeb1ba360",
+      "sha256": "a83b00c636fa3308286e76b1b3153fc14507caf994b0450770421260b08efed8",
+      "size": 17420824,
+      "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/tnt.wad",
+      "sha1": "9fbc66aedef7fe3bae0986cdb9323d2b8db4c9d3",
+      "sha256": "c0a9c29d023af2737953663d0e03177d9b7b7b64146c158dcc2a07f9ec18f353",
+      "size": 18195736,
+      "repo_path": "bios/Id Software/Doom/TNT.WAD",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/freedoom2.wad",
+      "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
+      "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
+      "size": 28787748,
+      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/gzdoom.pk3",
+      "sha1": "810ed9968c5b3bdc2c348c9bc76e9f80fbe31308",
+      "sha256": "2d5233e37ac699cd75607eac87be2bae87bd288b54374f11e8cf5b43c0ec2f9c",
+      "size": 3612904,
+      "repo_path": "bios/Game Engines/GZDoom/gzdoom.pk3",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
+      "dest": "doom/zdoom.pk3",
+      "sha1": "a5a784afbdf6e0fad68483c622ada621e042a389",
+      "sha256": "e2d2cc1e6bc725be68b2608e50c7c5889721ca267faf8d1ae3068f95ead18926",
+      "size": 619127,
+      "repo_path": "bios/Game Engines/ZDoom/zdoom.pk3",
+      "cores": [
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ]
+    },
+    {
       "dest": "amiga/kick31034.A1000",
       "sha1": "4192c505d130f446b2ada6bdc91dae730acafb4c",
       "sha256": "879a7b2dc9735fd628dc0c52e8d97fb30713fa52a6d90856113610c2ea936e14",
@@ -12988,6 +13345,33 @@
       "sha256": "8b4b332c97dab28fb751ef79529d2472119b223d6885f8a885c42cdc84e88400",
       "size": 1935,
       "repo_path": "bios/Commodore/Amiga/WHDLoad.prefs",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga/capsimg.so",
+      "sha1": "6c1889c75ffa990468ca365973a344dae3d39e2c",
+      "sha256": "c601624e60ed58dfdb93d6d1f599feed5e4153823696de59982304f89e91ed55",
+      "size": 95460,
+      "repo_path": "bios/Commodore/Amiga/capsimg.so",
+      "cores": [
+        "puae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ],
+      "executable": true
+    },
+    {
+      "dest": "amiga/capsimg.dll",
+      "sha1": "c2728eaba6603a0a997697730c0520d3781e1584",
+      "sha256": "0b0faab5bd29634259030bc5327c72e4d6025b1d3199792d71b804ef6cafea18",
+      "size": 191488,
+      "repo_path": "bios/Commodore/Amiga/capsimg.dll",
       "cores": [
         "puae"
       ],
