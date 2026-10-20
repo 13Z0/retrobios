@@ -177,7 +177,7 @@ files:
     source_ref: "share/machines/Boosted_MSXturboR_with_IDE.xml:49"
 
   - name: ide250.zip
-    path: "openmsx/ide250.zip"
+    path: "openmsx/share/systemroms/ide250.zip"
     required: false
     description: "Sunrise IDE 2.50 distribution archive (IDE250.DAT, IDE250.TXT, IDEFLOAD.COM, IDEFLOAD.TXT)"
     contents:
