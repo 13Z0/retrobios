@@ -21,6 +21,9 @@ SOURCE_URL = (
 
 _ENTRY_START = re.compile(r'^(\s{4})"([^"]+)":\s*\{')
 _INDENT = " " * 4
+# One BIOS item: a dict literal with no nested braces.
+_ITEM = re.compile(r"\{[^{}\n]*\}")
+_MD5_VALUE = re.compile(r'("md5"\s*:\s*")[^"]*(")')
 
 
 def _note_key(text: str) -> tuple[str, str]:
@@ -283,6 +286,89 @@ class Exporter(BaseExporter):
         lines.append(f"{_INDENT}] }},")
         return lines
 
+    def _patched_entry(
+        self,
+        system: NativeSystem,
+        files: list[NativeFile],
+        original: list[str],
+    ) -> list[str] | None:
+        """The entry with only its changed values replaced, None if it cannot be.
+
+        Written again whole, an entry with one md5 to correct lost atarist's
+        eight blank lines and turned every '"x"},' into '"x" },': 941 lines
+        of Batocera's diff were layout. Each item keeps its own text and
+        only the md5 inside it changes, and an addition follows the last
+        item in its form. The result must read as the entry that would have
+        been written, or the caller writes that one.
+        """
+        before = self._parse_entry(original)
+        own = self._own_entry(system, before)
+        wanted: dict[tuple, list[dict]] = {}
+        order: list[tuple[tuple, dict]] = []
+        for text in self._bios_items(files, own):
+            item = ast.literal_eval(text)
+            key = tuple(item.get(k) for k in ("file", "zippedFile", "emulator", "core"))
+            wanted.setdefault(key, []).append(item)
+            order.append((key, text))
+
+        joined = "\n".join(original)
+        edits: list[tuple[int, int, str]] = []
+        last: re.Match[str] | None = None
+        consumed: dict[tuple, int] = {}
+        for match in _ITEM.finditer(joined):
+            try:
+                theirs = ast.literal_eval(match.group(0))
+            except (SyntaxError, ValueError):
+                continue
+            if not isinstance(theirs, dict) or "file" not in theirs:
+                continue
+            key = tuple(theirs.get(k) for k in ("file", "zippedFile", "emulator", "core"))
+            queue = wanted.get(key, [])
+            used = consumed.get(key, 0)
+            if used >= len(queue):
+                return None
+            ours = queue[used]
+            consumed[key] = used + 1
+            last = match
+            if ours == theirs:
+                continue
+            if {k for k in {*ours, *theirs} if ours.get(k) != theirs.get(k)} - {"md5"}:
+                return None
+            patched = _MD5_VALUE.sub(
+                lambda m: m.group(1) + str(ours["md5"]) + m.group(2), match.group(0), count=1
+            )
+            edits.append((match.start(), match.end(), patched))
+        if last is None:
+            return None
+
+        added = []
+        seen: dict[tuple, int] = {}
+        for key, text in order:
+            seen[key] = seen.get(key, 0) + 1
+            if seen[key] > consumed.get(key, 0):
+                added.append(text)
+        if added:
+            # Their spacing before the closing brace: '"x"}' or '"x" }'.
+            tight = not last.group(0).endswith(" }")
+            added = [a[:-2] + "}" if tight and a.endswith(" }") else a for a in added]
+            if len(original) == 1:
+                insert = ", " + ", ".join(added)
+            else:
+                line_start = joined.rfind("\n", 0, last.start()) + 1
+                indent = joined[line_start:last.start()]
+                insert = "," + "".join(
+                    f"\n{indent}{a}" + ("," if i < len(added) - 1 else "")
+                    for i, a in enumerate(added)
+                )
+            edits.append((last.end(), last.end(), insert))
+
+        for start, end, text in sorted(edits, reverse=True):
+            joined = joined[:start] + text + joined[end:]
+        lines = joined.split("\n")
+        if self._parse_entry(lines) != self._parse_entry([self._entry_line(system, files, before)]):
+            return None
+        return lines
+
     @staticmethod
     def _split_original(original: str) -> tuple[list[str], list[str], list[str]]:
         """Cut the script into what precedes the dict, the dict, what follows."""
@@ -393,7 +479,10 @@ class Exporter(BaseExporter):
                 # and alignment included, so the diff shows only corrections.
                 rebuilt.extend(original_lines)
             else:
-                rebuilt.extend(self._entry_block(*pair, original_lines))
+                patched = self._patched_entry(*pair, original_lines)
+                rebuilt.extend(
+                    patched if patched is not None else self._entry_block(*pair, original_lines)
+                )
         rebuilt.extend(body[index:])
 
         added = [

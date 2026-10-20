@@ -1569,6 +1569,55 @@ class RetrodeckExport(unittest.TestCase):
         self.assertEqual(set(written), {self.A, self.B, self.C})
 
 
+class BatoceraPatchesValuesNotEntries(unittest.TestCase):
+    """An entry with one md5 to correct was written again whole: atarist's
+    eight blank lines went, each '"x"},' became '"x" },', and 941 lines of
+    Batocera's diff were layout."""
+
+    ORIGINAL = (
+        "#!/usr/bin/env python\n"
+        "systems = {\n"
+        '    "atarist": { "name": "Atari ST", "biosFiles": [\n'
+        '        # ST\n'
+        '        { "md5": "' + "1" * 32 + '", "file": "bios/tos102.img"},\n'
+        "\n"
+        '        { "md5": "' + "2" * 32 + '", "file": "bios/tos104.img"}\n'
+        "    ] },\n"
+        "}\n"
+        "def checkBios(systems, prefix, filterROMs):\n"
+        "    return {}\n"
+    )
+
+    def render(self, truth_files):
+        scraped = {"cores": ["hatari"], "systems": {"atari-st": {"native_id": "atarist", "files": [
+            {"name": "tos102.img", "destination": "tos102.img", "native_system": "atarist",
+             "native_name": "Atari ST", "native_path": "bios/tos102.img", "md5": "1" * 32},
+            {"name": "tos104.img", "destination": "tos104.img", "native_system": "atarist",
+             "native_name": "Atari ST", "native_path": "bios/tos104.img", "md5": "2" * 32},
+        ]}}}
+        systems, report = build_native_model({"systems": {"atari-st": {"files": truth_files}}},
+                                             scraped)
+        exporter = discover_exporters()["batocera"]()
+        return exporter.render(systems, report, {"batocera-systems": self.ORIGINAL}, scraped)[
+            "batocera-systems"]
+
+    def test_a_corrected_md5_changes_that_value_only(self):
+        produced = self.render([{"name": "tos104.img", "path": "tos104.img",
+                                 "md5": "3" * 32, "_cores": ["hatari"]}])
+        expected = self.ORIGINAL.replace("2" * 32, "3" * 32)
+        self.assertEqual(produced, expected)
+
+    def test_an_addition_follows_the_last_item_in_its_form(self):
+        produced = self.render([{"name": "tos206.img", "path": "tos206.img",
+                                 "md5": "4" * 32, "_cores": ["hatari"]}])
+        self.assertIn('"file": "bios/tos104.img"},\n'
+                      '        { "md5": "' + "4" * 32 + '", "file": "bios/tos206.img",'
+                      ' "emulator": "libretro", "core": "hatari"}\n'
+                      "    ] },", produced)
+        self.assertIn("# ST\n", produced)
+        self.assertIn('"file": "bios/tos102.img"},\n\n', produced)
+
+
 class BatoceraExport(unittest.TestCase):
     def _render(self, originals):
         systems, report = model()
