@@ -72,7 +72,7 @@ files:
   # -------------------------------------------------------
   - name: bios_CD_U.bin
     system: sega-megacd
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     mode: libretro
     note: "Sega CD BIOS for discs whose header allows the default region U, or that carry neither E nor J (segacd.c:1573-1593). An empty file counts as missing (segacd.c:1599-1602). Without it a CD image fails to load (segacd.c:1644-1647). A Mode 1 cartridge runs without it as a plain cartridge (genesis.c:3156-3162)."
