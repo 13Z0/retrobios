@@ -610,6 +610,7 @@ Further options, by script:
 | `migrate.py` | `--dry-run`, `--include-branches` also reads BIOS files from every remote branch |
 | `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
 | `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
+| `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains), `--json`, `--install-dir` |
 | `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
 | `release_notes.py` | `--whats-new FILE` (required, appended as written), `--record`, `--platforms-dir`, `--output` |
 | `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |

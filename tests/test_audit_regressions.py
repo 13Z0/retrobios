@@ -5627,5 +5627,36 @@ class TheReleaseBuildsEveryServedPackInOneRun(unittest.TestCase):
         self.assertNotIn("generate_pack.py --platform retropie", page)
 
 
+class WhatOnlyAnInstallProvidesIsListed(unittest.TestCase):
+    """A file installed with its emulator is already on the user's machine.
+    A copy nothing else asks for is dead weight in the collection."""
+
+    def test_only_the_bundled_only_copy_is_listed(self):
+        import tempfile
+
+        import bundled_only
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp, \
+                mock.patch.object(bundled_only, "list_registered_platforms", return_value=[]):
+            def entry(sha1, name):
+                path = Path(tmp, name)
+                path.write_bytes(name.encode())
+                return {"path": str(path), "name": name, "sha1": sha1,
+                        "md5": sha1[:32], "size": path.stat().st_size}
+
+            db = {"files": {"a" * 40: entry("a" * 40, "icon.png"),
+                            "b" * 40: entry("b" * 40, "bios.rom")},
+                  "indexes": {"by_name": {"icon.png": ["a" * 40], "bios.rom": ["b" * 40]},
+                              "by_md5": {}, "by_crc32": {}, "by_sha256": {},
+                              "by_path_suffix": {}}}
+            profiles = {
+                "app": {"files": [{"name": "icon.png", "sha1": "a" * 40, "bundled": True},
+                                  {"name": "bios.rom", "sha1": "b" * 40, "bundled": True}]},
+                "core": {"files": [{"name": "bios.rom", "sha1": "b" * 40}]},
+            }
+            rows = bundled_only.bundled_only(db, profiles, tmp, Path(tmp))
+            self.assertEqual([row["path"] for row in rows], [str(Path(tmp, "icon.png"))])
+
+
 if __name__ == "__main__":
     unittest.main()
