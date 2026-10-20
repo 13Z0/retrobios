@@ -53,7 +53,7 @@ files:
   - name: us_scd1_9210.bin
     aliases: [bios_CD_U.bin]
     system: sega-megacd
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     description: "Sega CD (USA) boot ROM"
     note: "Opened from SCDUSABIOS when a disc starts in the USA region and read as 128 KB. A failed open shows \"Please configure USA BIOS in OPTIONS->SET CONFIG->SEGA CD\" under the title \"BIOS Not Found\" and writes 60 FE, a branch to itself, at the reset vector, so nothing boots."

@@ -1236,11 +1236,17 @@ files:
     system: nintendo-ds
     required: false
     size: 262144
-    sha1: "ede9add041614eaa232059c63d8613b83fe4e954"
+    sha1:
+      - "ede9add041614eaa232059c63d8613b83fe4e954"
+      - "2ef20b45d12cf00657d4b1bd37a5cc8506923440"
+      - "87dae2500e889737af51f4a5b5845770a62482f5"
+      - "22a7547dbc302bcbfb4005cfb5a2d426d3f85ac6"
+      - "ae22de59fbf3f35ccfbeacaeba6fa87ac5e7b14b"
+      - "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b"
     validation: [size, sha1]
     description: "NDS Firmware"
-    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:388, 394, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457, emulatorLauncher Generators/Bizhawk.Generator.cs:556"
-    note: "Firmware slot NDS+firmware. RetroBat names it in FirmwareUserSpecifications when firmware.bin exists in the bios folder."
+    source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:384-395, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:440-457, emulatorLauncher Generators/Bizhawk.Generator.cs:556"
+    note: "Firmware slot NDS+firmware, which accepts six dumps: three likely good and three known hacks. RetroBat names it in FirmwareUserSpecifications when firmware.bin exists in the bios folder."
 
   - name: "NDS_Firmware_2.bin"
     system: nintendo-ds

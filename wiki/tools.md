@@ -45,6 +45,7 @@ Pipeline steps:
 | 6/8 | Pack integrity (extract + hash) | `--skip-packs` |
 | 7/8 | Generate README | `--skip-docs` |
 | 8/8 | Generate site | `--skip-docs` |
+| 8b | Render the site with `mkdocs build --strict`, then `validate_site.py`, as the deploy does | `--skip-docs`, or no `mkdocs` installed |
 
 Pipeline flags:
 

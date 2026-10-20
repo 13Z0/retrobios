@@ -170,6 +170,10 @@ class ProfileContradictionsAreKnown(unittest.TestCase):
             for entry in profile.get("files", []):
                 if not isinstance(entry, dict) or entry.get("unsourceable"):
                     continue
+                # Installed with the emulator on every platform: no pack
+                # ships it, so the collection's copy answers nobody.
+                if entry.get("bundled") and not entry.get("not_bundled_on"):
+                    continue
                 if not _declared_digests(entry):
                     continue
                 path, status = common.resolve_local_file(

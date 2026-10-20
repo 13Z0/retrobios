@@ -2366,10 +2366,21 @@ class CaseVariants(unittest.TestCase):
         self.assertIn("bios.col", variants)
         lakka = json.loads((REPO_ROOT / "install" / "lakka.json").read_text())
         folded = {e["dest"] for e in manifest["files"]}
-        self.assertEqual(
-            {e["dest"] for e in lakka["files"]}, folded | variants,
-            "a case-keeping RetroArch install equals the Lakka list",
-        )
+        # A case-keeping RetroArch install is the Lakka list, less what
+        # Lakka's own core packages install (installed_on: lakka).
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from common import load_emulator_profiles
+
+        installed = {
+            entry.get("path") or entry.get("name")
+            for profile in load_emulator_profiles(str(REPO_ROOT / "emulators")).values()
+            for entry in profile.get("files") or []
+            if isinstance(entry, dict) and "lakka" in (entry.get("installed_on") or [])
+        }
+        lakka_dests = {e["dest"] for e in lakka["files"]}
+        self.assertEqual(lakka_dests - (folded | variants), set())
+        self.assertEqual((folded | variants) - lakka_dests - installed, set(),
+                         "a case-keeping RetroArch install equals the Lakka list")
 
 
 
