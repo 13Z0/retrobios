@@ -34,8 +34,10 @@ Full walkthrough: [profiling guide](https://abdess.github.io/retrobios/wiki/prof
 
 - `bios/Manufacturer/Console/filename` for canonical files
 - `bios/Manufacturer/Console/.variants/filename.sha1prefix` for alternate versions
-- Files >50 MB go in GitHub release assets (`large-files` release)
-- RPG Maker and ScummVM directories are excluded from deduplication
+- A file too large for git goes to the `large-files` GitHub release and its
+  path into `.gitignore`, the list that decides what is served from the release
+- Trees addressed by path are kept out of deduplication (`NODEDUP_DIRS` in
+  `scripts/dedup.py`)
 - Two paths differing only by case break clones on Windows and macOS,
   and `tests/test_no_case_collisions.py` enforces this
 

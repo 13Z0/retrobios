@@ -411,7 +411,7 @@ partitions), and `game_count`.
 | `description` | what this file is |
 | `note` | additional context |
 | `contents` | structure of files inside a BIOS ZIP (`name`, `description`, `size`, `crc32`) |
-| `storage` | `embedded` (default), `external`, `user_provided`, or `large_file`/`release` for files > 50 MB stored as release assets |
+| `storage` | `embedded` (default), `external`, `user_provided`, or `large_file`/`release` for files stored as release assets (listed in `.gitignore`) |
 | `agnostic` | true if any file under the system path within size constraints satisfies the requirement |
 | `unsourceable` | reason why the file cannot be sourced (acknowledged gap) |
 | `destination` | target path within the BIOS directory |

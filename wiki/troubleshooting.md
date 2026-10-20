@@ -154,7 +154,7 @@ in [verification modes](verification-modes.md#severity-matrix).
 Focus on CRITICAL issues first. WARNING files improve the experience but aren't
 strictly necessary. INFO files are nice to have.
 
-**Large files (over 50 MB):**
+**Large files (release assets):**
 
 Files like PS3UPDAT.PUP, PSVUPDAT.PUP, and Switch firmware are too large for the
 git repository. They are stored as GitHub release assets under the `large-files`

@@ -5456,5 +5456,32 @@ class AnUnknownTargetIsRefusedUnderAll(unittest.TestCase):
         self.assertIn("retroarch", kept)
 
 
+class DocsDescribeTheRegistriesTheyName(unittest.TestCase):
+    """The contributing guide said files over 50 MB are release assets and that
+    RPG Maker and ScummVM were the trees kept out of dedup. `.gitignore`
+    decides the first, four committed files exceed 50 MB, and NODEDUP_DIRS
+    holds eleven trees."""
+
+    SIZE_RULE = re.compile(r"(over|larger than|>)\s*50\s*MB[^\n]*(release|asset)", re.I)
+
+    def _texts(self):
+        paths = sorted((ROOT / "wiki").glob("*.md"))
+        paths += [ROOT / "scripts" / "generate_readme.py", ROOT / "CONTRIBUTING.md"]
+        return [(p, p.read_text(encoding="utf-8")) for p in paths]
+
+    def test_no_page_says_size_decides_a_release_asset(self):
+        offenders = [str(p.relative_to(ROOT)) for p, text in self._texts()
+                     if self.SIZE_RULE.search(text)]
+        self.assertEqual(offenders, [])
+
+    def test_the_dedup_list_is_named_whole_or_by_its_constant(self):
+        from dedup import NODEDUP_DIRS
+        tools = (ROOT / "wiki" / "tools.md").read_text(encoding="utf-8")
+        line = next(l for l in tools.splitlines() if "NODEDUP_DIRS" in l)
+        self.assertEqual(sorted(d for d in NODEDUP_DIRS if d not in line), [])
+        readme_gen = (ROOT / "scripts" / "generate_readme.py").read_text(encoding="utf-8")
+        self.assertIn("NODEDUP_DIRS", readme_gen)
+
+
 if __name__ == "__main__":
     unittest.main()

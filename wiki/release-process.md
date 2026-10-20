@@ -124,8 +124,10 @@ merge, and again on the commit a direct push puts at the head of main.
 
 ## Large files management
 
-Files larger than 50 MB are stored as assets on a permanent GitHub release
-named `large-files` (to keep the git repository lightweight).
+Files too large for git are stored as assets on a permanent GitHub release
+named `large-files`. Size does not decide it: four committed files are over
+50 MB (`history.xml`, `default-GM.sf3`, `5.avi`, `tbblue.mmc`) and are served
+from the repository like any other.
 
 Examples: PS3UPDAT.PUP, PSVUPDAT.PUP, PSP2UPDAT.PUP, the DSi NAND images,
 maclc3.zip, Firmware.19.0.0.zip (Switch), the QEMU EDK2 firmware, the ScummVM

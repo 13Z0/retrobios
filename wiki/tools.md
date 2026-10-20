@@ -709,8 +709,10 @@ at. Writing is explicit: the pipeline only ever reports.
 
 ## Large files
 
-Files over 50 MB are stored as assets on the `large-files` GitHub release.
-They are listed in `.gitignore` to keep the git repository lightweight.
+Files too large for git are stored as assets on the `large-files` GitHub
+release. `.gitignore` is the list of them: a `bios/` path listed there is a
+release asset, whatever its size, and a committed file is served from the
+repository even past 50 MB.
 `generate_db.py` downloads them from the release when rebuilding the database,
 using `fetch_large_file()` from `common.py`. The same function is used by
 `generate_pack.py` when a file has a hash mismatch with the local variant.
