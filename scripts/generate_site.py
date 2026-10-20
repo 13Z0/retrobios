@@ -2325,6 +2325,18 @@ def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
     return links
 
 
+def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) -> list[str]:
+    """Each pack installing the file that its platform's list does not name,
+    with the place the pack gives it."""
+    links = []
+    for platform, dests in sorted(getattr(consumers, "installed", {}).get(sha1, {}).items()):
+        if platform in declared:
+            continue
+        where = ", ".join(_code(d) for d in sorted(dests) if d)
+        links.append(f"[{platform}](../platforms/{platform}.md)" + (f" {where}" if where else ""))
+    return links
+
+
 def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     """One file of a system page: hashes, who reads it, its provenance."""
     name = f["name"]
@@ -2364,6 +2376,12 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
         # that platform puts the file: from the card, retrodeck sent the
         # reader to the top of a 2,000-file page.
         lines.append(f"- Platforms: {', '.join(_platform_links(sha1_full, consumers))}")
+    installed = _installed_links(sha1_full, consumers, set(plats))
+    if installed:
+        # The packs that carry the file for their cores: a RetroBat user
+        # looking up scph5501.bin found every platform but RetroBat, whose
+        # pack installs it for six cores.
+        lines.append(f"- Also installed by: {', '.join(installed)}")
     if emus:
         lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
     provenance = f.get("provenance", {})
@@ -4117,6 +4135,7 @@ def _build_file_consumers(db: dict, coverages: dict, profiles: dict) -> FileCons
     consumers = FileConsumers(db, build_zip_contents_index(db))
     consumers.add_platforms({name: cov["config"] for name, cov in coverages.items()})
     consumers.add_emulators(profiles)
+    consumers.add_manifests(Path(__file__).resolve().parent.parent / "install")
     return consumers
 
 

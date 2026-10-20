@@ -341,6 +341,9 @@ class FileConsumers:
         # Where each platform puts the file in its BIOS directory.
         self.platform_destinations: dict[str, dict[str, set[str]]] = {}
         self.emulators: dict[str, set[str]] = {}
+        # Where each platform's pack installs the file, its cores' files
+        # included: the platform's own list names a fraction of them.
+        self.installed: dict[str, dict[str, set[str]]] = {}
 
     def sha1_of(self, entry: dict, dest: str = "", owner: str = "") -> str | None:
         """The collected file an entry resolves to, or None.
@@ -377,6 +380,22 @@ class FileConsumers:
                             self.platform_destinations.setdefault(sha1, {}).setdefault(
                                 name, set()
                             ).add(where)
+
+    def add_manifests(self, install_dir: str | Path) -> None:
+        """Read what each install manifest places, alternatives included."""
+        for path in sorted(Path(install_dir).glob("*.json")):
+            try:
+                manifest = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                print(f"WARNING: {path}: {exc}", file=sys.stderr)
+                continue
+            platform = str(manifest.get("platform") or path.stem)
+            for entry in manifest.get("files") or []:
+                for sha1 in {entry.get("sha1"), *(
+                    alt.get("sha1") for alt in entry.get("alternatives") or []
+                )} - {None, ""}:
+                    self.installed.setdefault(sha1, {}).setdefault(
+                        platform, set()).add(str(entry.get("dest", "")))
 
     def path_of(self, sha1: str) -> str:
         """The collection path the database records for a file."""

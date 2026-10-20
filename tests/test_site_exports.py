@@ -678,5 +678,29 @@ class AFileHasAnAddressByContent(unittest.TestCase):
         self.assertIn("../../files/?sha1=" + "ab" * 20, card)
 
 
+class ACardNamesThePacksThatInstallIt(unittest.TestCase):
+    """A file card named only the platforms whose own list declares the
+    file: a RetroBat user found no RetroBat on scph5501.bin, which its pack
+    installs for six cores."""
+
+    def test_a_manifest_destination_reaches_the_card(self):
+        import json as _json
+
+        from cross_reference import FileConsumers
+        from generate_site import _installed_links
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            Path(tmp, "retrobat.json").write_text(_json.dumps({
+                "platform": "retrobat",
+                "files": [{"dest": "scph5501.bin", "sha1": "b" * 40,
+                           "alternatives": [{"sha1": "a" * 40}]}],
+            }))
+            consumers = FileConsumers({"files": {}})
+            consumers.add_manifests(tmp)
+        links = _installed_links("a" * 40, consumers, set())
+        self.assertEqual(links, ["[retrobat](../platforms/retrobat.md) `scph5501.bin`"])
+        self.assertEqual(_installed_links("a" * 40, consumers, {"retrobat"}), [])
+
+
 if __name__ == "__main__":
     unittest.main()
