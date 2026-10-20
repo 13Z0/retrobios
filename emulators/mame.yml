@@ -116,6 +116,285 @@ notes: |
   using these chips, not specific to vgmplay.
 
 files:
+  # Support trees under system_dir/mame/, the paths Set_Path_Option passes
+  # as -hashpath, -pluginspath and -samplepath
+
+  - name: "hash/"
+    path: "mame/hash/"
+    type: directory
+    mode: libretro
+    category: game_data
+    required: false
+    description: "Software list definitions"
+    source_ref: "source src/emu/softlist_dev.cpp:281-313, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580, source src/osd/libretro/libretro-internal/retro_init.cpp:641-662, source src/osd/libretro/libretro-internal/libretro_core_options.h:226-253"
+    note: >
+      software_list_device::parse opens <list>.xml for each software list the
+      machine declares. A missing list is logged and its software cannot be named.
+      Arcade content is passed as a driver name and does not go through them.
+      Console and computer content is passed as a software name under its system
+      while the Softlists and Softlist Automatic Media Type core options keep
+      their enabled default, and only loads through these lists. Tree of the core
+      repository at source_commit, the same lists as the MAME 0.289 release. The
+      core zip carries the library alone.
+
+  - name: "hash/"
+    path: "hash/"
+    type: directory
+    mode: standalone
+    category: game_data
+    required: false
+    bundled: true
+    description: "Software list definitions"
+    source_ref: "upstream src/emu/softlist_dev.cpp:281-313, upstream src/emu/emuopts.cpp:45"
+    note: >
+      Read from hash under the working directory, the -hashpath default. Ships in
+      hash/ of the 0.289 Windows packages.
+
+  - name: "plugins/"
+    path: "mame/plugins/"
+    type: directory
+    mode: libretro
+    category: game_data
+    required: false
+    description: "Lua plugins and their bootstrap script"
+    source_ref: "source src/frontend/mame/mame.cpp:216-307, source plugins/boot.lua:11-29, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+    note: >
+      start_luaengine scans every plugin directory, then runs boot.lua, which
+      starts each plugin whose plugin.json says start true, data and layout in
+      this tree. A boot.lua that fails to load is fatal, a missing one leaves
+      every plugin stopped and the machine running. Tree of the core repository at
+      source_commit, which adds keypress, offscreenreload and vector to the MAME
+      set. The core zip carries the library alone.
+
+  - name: "plugins/"
+    path: "plugins/"
+    type: directory
+    mode: standalone
+    category: game_data
+    required: false
+    bundled: true
+    description: "Lua plugins and their bootstrap script"
+    source_ref: "upstream src/frontend/mame/mame.cpp:137-228, upstream src/emu/emuopts.cpp:53"
+    note: >
+      Read from plugins under the working directory, the -pluginspath default.
+      Ships in plugins/ of the 0.289 Windows packages.
+
+  # Floppy drive sounds, the default sample list of floppy_sound_device.
+  # Each name is tried as <machine>/<name>.flac, floppy/<name>.flac, then the
+  # same as .wav, directly or inside floppy.zip. One sample missing and
+  # load_samples fails, so the drives stay silent.
+  # ref: source src/devices/imagedev/floppy.cpp:1656-1685, 1709-1738,
+  #      source src/devices/sound/samples.cpp:594-637
+
+  - name: "35_spin_start_empty.wav"
+    path: "mame/samples/floppy/35_spin_start_empty.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17708
+    sha1: "af770fd9261a8efee23d66cd39b27be7b2ab7853"
+    md5: "803b6cdf5baeca233588424c62919213"
+    note: >
+      Recorded from a Sony MPF420-1 3.5 inch drive and a Chinon FZ502 5.25 inch
+      drive, except 35_seek_2ms, which is constructed. The samples/floppy tree of
+      the core repository at source_commit, the same files as the MAME 0.289
+      release. The core zip carries the library alone.
+    source_ref: "source src/devices/imagedev/floppy.cpp:1665, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_spin_start_loaded.wav"
+    path: "mame/samples/floppy/35_spin_start_loaded.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 35308
+    sha1: "c82b1714378bf2507ed86dea1e9fe743c380abab"
+    md5: "53cf5b1f444f8ba9f775520ad0b84613"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1666, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_spin_empty.wav"
+    path: "mame/samples/floppy/35_spin_empty.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17708
+    sha1: "db04fc097bdd0411cff232f57525ded491b48c6c"
+    md5: "08cafd2255c7a0bf07050f16cc4a0960"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1667, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_spin_loaded.wav"
+    path: "mame/samples/floppy/35_spin_loaded.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17708
+    sha1: "96ce04a5b02af0da6d311f06fc4906a3cf71c78f"
+    md5: "53270dd078877e0a3931da4b1eacd0b6"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1668, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_spin_end.wav"
+    path: "mame/samples/floppy/35_spin_end.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17684
+    sha1: "a8901b692de15eb7a9052f61283f0e7a2b63d67d"
+    md5: "1d31fb23cb53a73dbc4e661c373c25f8"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1669, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_step_1_1.wav"
+    path: "mame/samples/floppy/35_step_1_1.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 6878
+    sha1: "40d756d0cb5f7998ca26ac1de142a96a83fa2b97"
+    md5: "19801aca9dafe86e0625d80cd54d5041"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1670, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_seek_2ms.wav"
+    path: "mame/samples/floppy/35_seek_2ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 7450
+    sha1: "55caafbd19486b8d517e4b33a6fa65250df55e25"
+    md5: "a8b357d6d5a7ad8e908efe075629de1c"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1671, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_seek_6ms.wav"
+    path: "mame/samples/floppy/35_seek_6ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 22230
+    sha1: "87e5dec269e67497681c15849777ebfc301131c1"
+    md5: "07ffab62a3e15bb725834d4e7ecf773f"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1672, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_seek_12ms.wav"
+    path: "mame/samples/floppy/35_seek_12ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 26540
+    sha1: "c6b34fc61496943134ac45cc836a24e743caf794"
+    md5: "ed17d90d1b8667ad1e8f0e774ce42b24"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1673, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "35_seek_20ms.wav"
+    path: "mame/samples/floppy/35_seek_20ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 44144
+    sha1: "b2fe4c3a4185146a7d11483d92d4412dd79dbc78"
+    md5: "ffa59cb209831d8b8277b9c1079bba26"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1674, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_spin_start_empty.wav"
+    path: "mame/samples/floppy/525_spin_start_empty.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 11180
+    sha1: "b87d89c4b46c36dd78dec3dc5170ca61501e7cd9"
+    md5: "9174c33dcdf90278de73bb181968ec71"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1677, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_spin_start_loaded.wav"
+    path: "mame/samples/floppy/525_spin_start_loaded.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17708
+    sha1: "510476098848e2b5cdfe9f1608f8dfa3207fe9b4"
+    md5: "dc339bb490c6636068ea5dfe37066a35"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1678, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_spin_empty.wav"
+    path: "mame/samples/floppy/525_spin_empty.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 8864
+    sha1: "4b13701d9a7f8ab0f0827f17ba80b5c32b4e0fa7"
+    md5: "e7faacbafd450f435fdbd9cf34451b48"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1679, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_spin_loaded.wav"
+    path: "mame/samples/floppy/525_spin_loaded.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 17708
+    sha1: "875f90538a3ff5db863ad4c384e1808841ddea9b"
+    md5: "76452ca73fb17ddd6cb04ac85ba318f1"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1680, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_spin_end.wav"
+    path: "mame/samples/floppy/525_spin_end.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 8864
+    sha1: "f8d9b94c4d92d35d9ffb1117b693fc74a93f613f"
+    md5: "f8399a06c8e34f05a35f5c6f25bc5adf"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1681, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_step_1_1.wav"
+    path: "mame/samples/floppy/525_step_1_1.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 6628
+    sha1: "669ee98fb9fac4371c72ed0b60be1bc8470bc7f8"
+    md5: "1840cb146a17022e1e60d63667793700"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1682, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_seek_6ms.wav"
+    path: "mame/samples/floppy/525_seek_6ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 14860
+    sha1: "6f698055fa6e9da6c5ae3fd6fb05de76b92a45a9"
+    md5: "e54ff7988c2c8a89a7cdf3f8db9bada7"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1683, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_seek_12ms.wav"
+    path: "mame/samples/floppy/525_seek_12ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 22764
+    sha1: "fbbbb5e8724c076d194e66a4443d299d54a8efd6"
+    md5: "bebcaa730102d09091f903efeba1de3b"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1684, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "525_seek_20ms.wav"
+    path: "mame/samples/floppy/525_seek_20ms.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 30060
+    sha1: "b6cd14944454c743861196edb4fcab1cc9b586d4"
+    md5: "ef949610b4b5be40d7eb125973a626ec"
+    source_ref: "source src/devices/imagedev/floppy.cpp:1685, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+
+  - name: "floppy/"
+    path: "samples/floppy/"
+    type: directory
+    mode: standalone
+    category: game_data
+    required: false
+    bundled: true
+    description: "Floppy drive sound samples"
+    source_ref: "upstream src/devices/imagedev/floppy.cpp:1656-1685, upstream src/devices/sound/samples.cpp:594-637, upstream src/emu/emuopts.cpp:46"
+    note: >
+      Read from samples/floppy under the working directory, the -samplepath
+      default. Ships in samples/floppy of the 0.289 Windows packages, which also
+      carry 525_seek_2ms.wav, a name the sample list does not hold.
+
   # SNK Neo Geo MVS/AES
   - name: neogeo.zip
     required: true

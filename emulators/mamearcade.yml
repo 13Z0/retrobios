@@ -66,6 +66,38 @@ notes: |
   ROM search: content_dir + system_dir/mame/bios + system_dir/mame/roms.
 
 files:
+  # Support trees under system_dir/mame/, the paths Set_Path_Option passes
+  # as -hashpath, -pluginspath and -samplepath
+
+  - name: "hash/"
+    path: "mame/hash/"
+    type: directory
+    category: game_data
+    required: false
+    description: "Software list definitions"
+    source_ref: "source src/emu/softlist_dev.cpp:281-313, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580, source src/osd/libretro/libretro-internal/retro_init.cpp:641-662, source src/osd/libretro/libretro-internal/libretro_core_options.h:226-253"
+    note: >
+      software_list_device::parse opens <list>.xml for each software list the
+      machine declares. A missing list is logged and its software cannot be named.
+      Arcade content is passed as a driver name and does not go through them. Tree
+      of the core repository at source_commit, the same lists as the MAME 0.289
+      release.
+
+  - name: "plugins/"
+    path: "mame/plugins/"
+    type: directory
+    category: game_data
+    required: false
+    description: "Lua plugins and their bootstrap script"
+    source_ref: "source src/frontend/mame/mame.cpp:216-307, source plugins/boot.lua:11-29, source src/osd/libretro/libretro-internal/retro_init.cpp:111-155, source src/osd/libretro/libretro-internal/retro_init.cpp:550-580"
+    note: >
+      start_luaengine scans every plugin directory, then runs boot.lua, which
+      starts each plugin whose plugin.json says start true, data and layout in
+      this tree. A boot.lua that fails to load is fatal, a missing one leaves
+      every plugin stopped and the machine running. Tree of the core repository at
+      source_commit, which adds keypress, offscreenreload and vector to the MAME
+      set.
+
   # SNK Neo Geo MVS (AES excluded via arcade.flt)
   - name: neogeo.zip
     required: true
