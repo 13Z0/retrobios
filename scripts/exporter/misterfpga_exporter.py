@@ -105,7 +105,9 @@ class Exporter(BaseExporter):
             if size:
                 entry["size"] = size
 
-        return {_DB_NAME: json.dumps(database, indent=2, ensure_ascii=False) + "\n"}
+        # MiSTer publishes the database as one line, without a final
+        # newline: written with an indent it came out as 1499 changed lines.
+        return {_DB_NAME: json.dumps(database, ensure_ascii=False)}
 
     def validate(
         self,

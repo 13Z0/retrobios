@@ -1420,6 +1420,22 @@ class BizhawkExport(unittest.TestCase):
         self.assertFalse(exporter.states(entry, "sha1"))
 
 
+class MisterDatabaseComesBackAsWritten(unittest.TestCase):
+    """The BiosDB is one line of JSON. Written with indent=2 it came out as
+    1499 changed lines for a database whose content had not changed."""
+
+    def test_an_empty_truth_hands_back_the_database(self):
+        archive = UPSTREAM_CACHE / "misterfpga" / "bios_db.json.zip"
+        if not archive.exists():
+            self.skipTest("upstream cache not populated")
+        exporter = discover_exporters()["misterfpga"]()
+        originals = exporter.unpack(archive.read_bytes())
+        config = native_layer(load_platform_config("misterfpga", str(REPO_ROOT / "platforms")))
+        systems, report = build_native_model({"systems": {}}, config)
+        produced = exporter.render(systems, report, originals, config)
+        self.assertEqual(produced, originals)
+
+
 class RetrodeckManifestsComeBackAsWritten(unittest.TestCase):
     """With nothing to correct, a manifest is the platform's own bytes. The
     export added a final newline to nine of ten, wrote "md5": null where no
