@@ -665,11 +665,14 @@ def _parse_bash_var(path: Path, key: str) -> str | None:
 # Where an embedded system names the board it was built for, in the words
 # of our target lists: batocera-system.mk writes BATOCERA_SYSTEM_ARCH,
 # recalbox-system.mk RECALBOX_SYSTEM_PLATFORM, ROCKNIX's scripts/image puts
-# HW_DEVICE in os-release (RK3326, our rk3326).
+# HW_DEVICE in os-release (RK3326, our rk3326). Lakka's scripts/image writes
+# LIBREELEC_DEVICE when the image is built for a device (RPi4) and always
+# LIBREELEC_PROJECT (Generic): the first one set is the board.
 _BOARD_SOURCES: dict[str, tuple[str, str]] = {
     "batocera": ("file", "/usr/share/batocera/batocera.arch"),
     "recalbox": ("file", "/recalbox/recalbox.arch"),
     "rocknix": ("os_release", "HW_DEVICE"),
+    "lakka": ("os_release", "LIBREELEC_DEVICE|LIBREELEC_PROJECT"),
 }
 
 
@@ -682,7 +685,8 @@ def detect_board(platform: str) -> str | None:
         except OSError:
             return None
     elif kind == "os_release":
-        value = _parse_os_release().get(where, "")
+        release = _parse_os_release()
+        value = next((release[key] for key in where.split("|") if release.get(key)), "")
     else:
         return None
     return value.strip().lower() or None
@@ -3476,7 +3480,7 @@ def main() -> None:
     parser.add_argument(
         "--target",
         help="hardware target for core filtering (switch, rpi4, ...); "
-        "on Batocera, Recalbox and ROCKNIX the board is read from the system",
+        "on Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system",
     )
     parser.add_argument(
         "--every-board",

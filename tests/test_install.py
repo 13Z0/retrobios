@@ -2399,6 +2399,18 @@ class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
             self.assertEqual(install.detect_board("rocknix"), "rk3326")
         self.assertIsNone(install.detect_board("retroarch"))
 
+    def test_lakka_names_its_device_or_its_project(self):
+        # An RPi4 Lakka installed 5.7 GB of every board's files: its board
+        # was in os-release and never read.
+        for release, board in (
+            ({"LIBREELEC_PROJECT": "RPi", "LIBREELEC_DEVICE": "RPi4"}, "rpi4"),
+            ({"LIBREELEC_PROJECT": "Generic"}, "generic"),
+        ):
+            with self.subTest(board=board), unittest.mock.patch.object(
+                install, "_parse_os_release", return_value=release
+            ):
+                self.assertEqual(install.detect_board("lakka"), board)
+
     def test_every_board_and_target_are_refused_together(self):
         result = subprocess.run(
             [sys.executable, str(REPO_ROOT / "install.py"), "--every-board",
