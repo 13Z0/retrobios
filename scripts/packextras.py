@@ -19,7 +19,7 @@ from common import platform_layouts
 from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
-from validation import read_from_system_dir
+from validation import deliverable, read_from_system_dir
 from region import FILE_GROUP
 
 
@@ -955,6 +955,10 @@ def _collect_emulator_extras(
                 # An unsourceable entry is a file no collection holds: the name
                 # covered elsewhere belongs to another program's file.
                 if fname not in covered_names or f.get("unsourceable"):
+                    continue
+                # Installed with the emulator or by the platform's package,
+                # as the first pass already decided for the same entry.
+                if not deliverable([f], is_standalone, config.get("_key", "")):
                     continue
                 # A member of an archive is read inside it, never as a loose
                 # file. The archive itself is placed by the passes above.
