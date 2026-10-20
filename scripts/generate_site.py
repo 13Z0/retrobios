@@ -2677,8 +2677,11 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
             f'<span class="rb-badge rb-badge-muted">{storage}</span>'
         )
     if bundled:
+        # Said in words: the pack leaves the file out because the emulator,
+        # in the build the entry names, already installs it.
+        build = f" {f['mode']}" if f.get("mode") in ("standalone", "libretro") else ""
         badges.append(
-            '<span class="rb-badge rb-badge-muted">bundled</span>'
+            f'<span class="rb-badge rb-badge-muted">installed with the{build} emulator</span>'
         )
     if embedded:
         badges.append(
@@ -2832,6 +2835,12 @@ def _render_emulator_file(
         elif isinstance(validation, dict):
             for scope, checks in validation.items():
                 details.append(f"Validation ({scope}): {', '.join(checks)}")
+    if f.get("installed_on"):
+        details.append("Installed by the platform's own package on: "
+                       + ", ".join(sorted(f["installed_on"])))
+    if f.get("not_bundled_on"):
+        details.append("Left out by the platform's package, so the pack brings it, on: "
+                       + ", ".join(sorted(f["not_bundled_on"])))
     if source_ref:
         asker = requested_by(profile, source_ref)
         if asker:

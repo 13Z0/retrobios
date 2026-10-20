@@ -397,7 +397,9 @@ partitions), and `game_count`.
 | `fast_boot` | BIOS generation label the core uses to decide whether fast boot is available |
 | `priority` | preference order when several BIOS satisfy the same slot, **lowest wins**. DuckStation's `FindBIOSImageInDirectory` keeps the image whose priority is lower, and its table de-prioritizes by raising the number: the buggy launch console sits at 50 and PS2 images at 100, while `scph5501` sits at 5. A core that walks an ordered search list, as PicoDrive does with `biosfiles_us/eu/jp`, maps onto the same field as 1, 2, 3. Only set it from the source. `--one-per-slot` reads it |
 | `embedded` | true if the data is compiled into the binary and the external file is optional |
-| `bundled` | true if the file ships with the emulator rather than being user-provided |
+| `bundled` | true if the emulator's own release installs the file where it reads it, for the build `mode` names (all builds when `mode` is absent). Packs and the installer leave it out: the user already has it. A file the standalone release ships but the libretro core does not (PPSSPP's assets, Dolphin's Sys) is bundled with `mode: standalone` only |
+| `not_bundled_on` | platforms (registry keys) whose package leaves out a file the release bundles: their packs bring it (Batocera installs hcl without its data) |
+| `installed_on` | platforms whose own package installs the file beside the emulator although the release does not: their packs leave it out (Batocera and RetroPie copy blueMSX's machines beside the core) |
 | `has_builtin` | true if the core falls back to a built-in copy when the file is absent |
 | `config_key` | configuration key the emulator exposes to point at the file |
 | `load_from` | directory the core reads the file from when it is not the system directory |

@@ -805,5 +805,16 @@ class ADataDirectoryFileCanBeLookedUp(unittest.TestCase):
         self.assertEqual(items, [{"sha1": "c" * 40, "url": "emulators/dolphin/#sha1-cccccccccccc"}])
 
 
+class ACardSaysWhyAFileIsLeftOut(unittest.TestCase):
+    """The badge said "bundled" and nothing about which build, so a reader
+    could not tell why a RetroArch pack carried PPSSPP's assets."""
+
+    def test_the_build_and_the_platforms_are_named(self):
+        from generate_site import _file_badges
+
+        badges = " ".join(_file_badges({"name": "a", "bundled": True, "mode": "standalone"}, True))
+        self.assertIn("installed with the standalone emulator", badges)
+
+
 if __name__ == "__main__":
     unittest.main()

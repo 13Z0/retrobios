@@ -142,6 +142,17 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 On Windows the arguments need a script block, since `iex` would read them as
 its own. The form is on the [Installer](installer.md#passing-options) page.
 
+## Why is a file the emulator reads not in the pack?
+
+A pack brings what the user has to obtain. A file the emulator installs itself, a
+font, a shader, a game database, a free replacement BIOS, is already on the
+machine once the emulator is installed, so the pack leaves it out. This is decided
+per build and per platform: the PPSSPP standalone release ships its `assets/`
+folder, the PPSSPP libretro core does not, so RetroArch packs carry those files and
+a standalone PPSSPP pack does not. When a platform's own package installs data
+beside a core (Batocera with blueMSX), that platform's pack leaves it out too. The
+emulator's page on the site marks these files as installed with the emulator.
+
 ## Is this legal?
 
 Redistributing firmware is not settled law, and this page does not pretend otherwise. What follows is the reasoning the project acts on, with the strength of each argument stated plainly so anyone can weigh it. None of it is legal advice, and none of it has been tested in court.
