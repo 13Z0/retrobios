@@ -525,7 +525,21 @@ def filter_files_by_mode(files: list[dict], standalone: bool) -> list[dict]:
     return result
 
 
-def deliverable(entries: list[dict], standalone: bool) -> list[dict]:
+def installed_with_emulator(entry: dict, platform: str = "") -> bool:
+    """Whether the emulator as this platform installs it already brings the entry.
+
+    `bundled` describes the emulator's own release. A platform package can
+    differ both ways: Batocera's hcl package installs the binary alone and
+    sends users to fetch the data (`not_bundled_on`), while its blueMSX core
+    package copies the machines and databases beside the core
+    (`installed_on`).
+    """
+    if platform and platform in (entry.get("installed_on") or []):
+        return True
+    return bool(entry.get("bundled")) and platform not in (entry.get("not_bundled_on") or [])
+
+
+def deliverable(entries: list[dict], standalone: bool, platform: str = "") -> list[dict]:
     """The entries of one build a pack has to bring.
 
     A file or tree installed with the emulator is already on the user's
@@ -533,7 +547,10 @@ def deliverable(entries: list[dict], standalone: bool) -> list[dict]:
     `mode` like any entry, so PPSSPP's assets, shipped by the standalone
     release and not by the libretro core, still reach a RetroArch pack.
     """
-    return [e for e in filter_files_by_mode(entries, standalone) if not e.get("bundled")]
+    return [
+        e for e in filter_files_by_mode(entries, standalone)
+        if not installed_with_emulator(e, platform)
+    ]
 
 
 def find_validated_variant(

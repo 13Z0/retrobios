@@ -353,6 +353,9 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
             for sys_id, system in config.get("systems", {}).items()
         }
 
+    # The registry key, which per-platform profile fields (installed_on,
+    # not_bundled_on) name: the display name differs (MiSTer FPGA).
+    config["_key"] = platform_name
     _platform_config_cache[cache_key] = config
     return config
 

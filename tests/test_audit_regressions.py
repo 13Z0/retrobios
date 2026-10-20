@@ -4579,6 +4579,36 @@ class BundledFilesAreNotToSource(unittest.TestCase):
                          ["ppsspp-assets"])
         self.assertEqual(deliverable(entries, True), [])
 
+    def test_a_platform_package_can_differ_both_ways(self):
+        """Batocera's hcl package installs the binary alone, its blueMSX core
+        package copies the machines beside the core."""
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from validation import installed_with_emulator
+
+        hcl = {"name": "data.pak", "bundled": True, "not_bundled_on": ["batocera"]}
+        machines = {"name": "Machines/MSX/config.ini", "installed_on": ["batocera", "retropie"]}
+        self.assertTrue(installed_with_emulator(hcl, "retrobat"))
+        self.assertFalse(installed_with_emulator(hcl, "batocera"))
+        self.assertTrue(installed_with_emulator(machines, "retropie"))
+        self.assertFalse(installed_with_emulator(machines, "retroarch"))
+        self.assertTrue(installed_with_emulator(hcl))
+
+    def test_every_platform_named_is_registered(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from common import list_registered_platforms, load_emulator_profiles
+
+        known = set(list_registered_platforms(str(ROOT / "platforms"), include_archived=True))
+        unknown = sorted({
+            (name, platform)
+            for name, profile in load_emulator_profiles(str(ROOT / "emulators")).items()
+            for entry in (profile.get("files") or []) + (profile.get("data_directories") or [])
+            if isinstance(entry, dict)
+            for field in ("installed_on", "not_bundled_on")
+            for platform in entry.get(field) or []
+            if platform not in known
+        })
+        self.assertEqual(unknown, [])
+
     def test_the_pack_builder_skips_it(self):
         source = (ROOT / "scripts" / "packextras.py").read_text(encoding="utf-8")
         self.assertIn('if u.get("bundled"):', source)

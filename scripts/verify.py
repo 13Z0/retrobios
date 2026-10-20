@@ -96,6 +96,7 @@ from validation import (
     check_file_validation,
     deliverable,
     filter_files_by_mode,
+    installed_with_emulator,
     outside_gap_scope,
 )
 
@@ -650,7 +651,7 @@ def find_undeclared_files(
                     "path": dest,
                     "required": f.get("required", False),
                     "hle_fallback": f.get("hle_fallback", False),
-                    "bundled": f.get("bundled", False),
+                    "bundled": installed_with_emulator(f, config.get("_key", "")),
                     "category": f.get("category", "bios"),
                     "in_repo": in_repo,
                     "note": f.get("note", ""),

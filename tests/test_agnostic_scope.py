@@ -80,7 +80,9 @@ class BundledHashIsProof(unittest.TestCase):
         wrong = []
         for name, profile in sorted(load_emulator_profiles("emulators", skip_aliases=False).items()):
             for entry in profile.get("files") or []:
-                if not entry.get("bundled") or entry.get("unsourceable"):
+                # A bundled entry is packed only where a platform's package
+                # leaves it out: there the copy has to be the declared bytes.
+                if not entry.get("not_bundled_on") or entry.get("unsourceable"):
                     continue
                 if not any(entry.get(k) for k in ("sha1", "md5", "sha256", "crc32")):
                     continue

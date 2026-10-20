@@ -276,6 +276,16 @@
             "type": "boolean",
             "description": "Installed with the emulator for the build mode names, so packs leave the tree out."
           },
+          "installed_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose own package installs this beside the emulator, so their packs leave it out."
+          },
+          "not_bundled_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose package leaves out a file the emulator's release bundles, so their packs bring it."
+          },
           "source_ref": {
             "type": "string"
           }
@@ -449,6 +459,16 @@
           "bundled": {
             "type": "boolean",
             "description": "Installed with the emulator for the build mode names (all builds when mode is absent): already on the user's machine, so packs and install manifests leave it out."
+          },
+          "installed_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose own package installs this beside the emulator, so their packs leave it out."
+          },
+          "not_bundled_on": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Platforms (registry keys) whose package leaves out a file the emulator's release bundles, so their packs bring it."
           },
           "config_key": {
             "type": "string"
