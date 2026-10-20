@@ -122,5 +122,24 @@ class AnEmulatorLaunchedBothWaysGetsBothLayouts(unittest.TestCase):
         )
 
 
+class DualModeNameReachesTheLibretroBuild(unittest.TestCase):
+    """Batocera runs pcsx2 standalone and as LRPS2. The name matched the
+    standalone profile's key and lrps2, which lists pcsx2 in cores:, was
+    left out of the platform."""
+
+    def test_both_builds_of_a_dual_mode_name_resolve(self):
+        from common import resolve_platform_cores
+
+        profiles = {
+            "pcsx2": {"type": "standalone", "cores": ["pcsx2"]},
+            "lrps2": {"type": "libretro", "cores": ["lrps2", "pcsx2"]},
+            "mame0278": {"type": "libretro", "cores": ["pcsx2"], "built_by": ["x"]},
+        }
+        config = {"cores": ["pcsx2"], "standalone_cores": ["pcsx2"]}
+        self.assertEqual(resolve_platform_cores(config, profiles), {"pcsx2"})
+        config["dual_mode_cores"] = ["pcsx2"]
+        self.assertEqual(resolve_platform_cores(config, profiles), {"pcsx2", "lrps2"})
+
+
 if __name__ == "__main__":
     unittest.main()

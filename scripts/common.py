@@ -2250,6 +2250,17 @@ def resolve_platform_cores(
             for c in core_set
             if (profile := preferred_profile(index, c)) is not None
         }
+        # A name the platform launches both ways designates its libretro
+        # build too. Batocera, Recalbox and RetroBat run pcsx2 standalone and
+        # as LRPS2, two profiles: the key match kept the standalone one and
+        # LRPS2's files never reached their packs.
+        result |= {
+            profile
+            for c in config.get("dual_mode_cores") or []
+            for profile in index.get(str(c), set())
+            if "libretro" in str(profiles[profile].get("type", ""))
+            and not profiles[profile].get("built_by")
+        }
         # Support "all_libretro" as a list element: combines all libretro
         # profiles with explicitly listed standalone cores (e.g. RetroDECK
         # ships RetroArch + standalone emulators)
