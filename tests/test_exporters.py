@@ -477,6 +477,31 @@ class ExporterRegistry(unittest.TestCase):
             with self.subTest(platform=name):
                 self.assertTrue(discover_exporters()[name].needs_original())
 
+    def test_every_exporter_with_an_original_needs_it(self):
+        """System.dat, RomM, Recalbox and RetroBat were rebuilt from our data
+        when their file was not cached: libretro's quoted names, Recalbox's
+        comments and its second zxspectrum block were lost, and the run
+        said OK."""
+        for name, exporter in discover_exporters().items():
+            if exporter.native_sources():
+                with self.subTest(platform=name):
+                    self.assertTrue(exporter.needs_original())
+
+    def test_an_export_without_its_original_writes_nothing(self):
+        import export_native  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            output = Path(tmp) / "out"
+            ok, messages = export_native.export_platform(
+                "retroarch", discover_exporters()["retroarch"],
+                REPO_ROOT / "dist" / "truth", output,
+                str(REPO_ROOT / "platforms"), Path(tmp) / "no-cache", False,
+            )
+            if not (REPO_ROOT / "dist" / "truth" / "retroarch.yml").exists():
+                self.skipTest("dist/truth not generated")
+            self.assertFalse(ok, messages)
+            self.assertFalse(output.exists())
+
 
 class SearchOrder(unittest.TestCase):
     """A list is read in the order the code looks, best first."""

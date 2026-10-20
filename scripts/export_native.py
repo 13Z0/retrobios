@@ -472,11 +472,8 @@ def export_platform(
     originals, missing = collect_originals(
         exporter, systems, upstream_dir, allow_fetch, scraped
     )
-    if missing and exporter.needs_original():
+    if missing:
         return False, [f"the platform's own file is required: {m}" for m in missing]
-    messages.extend(
-        f"original unavailable, written from our data: {m}" for m in missing
-    )
 
     try:
         produced = exporter.render(systems, report, originals, scraped)

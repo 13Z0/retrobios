@@ -50,10 +50,15 @@ class BaseExporter(ABC):
         """
         return {}
 
-    @staticmethod
-    def needs_original() -> bool:
-        """Whether a faithful export requires the platform's own file."""
-        return False
+    @classmethod
+    def needs_original(cls) -> bool:
+        """Whether a faithful export requires the platform's own file.
+
+        Any format we patch does: System.dat rebuilt from our data lost
+        libretro's quoted names, es_bios.xml its comments and one of its two
+        zxspectrum blocks, and both runs said OK.
+        """
+        return bool(cls.native_sources())
 
     @staticmethod
     def may_write_nothing() -> bool:
