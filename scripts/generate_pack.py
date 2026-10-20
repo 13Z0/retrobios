@@ -91,6 +91,7 @@ from validation import (
     validated_choice,
     agnostic_substitute,
     _build_validation_index,
+    deliverable,
     filter_files_by_mode,
 )
 
@@ -1449,7 +1450,7 @@ def generate_emulator_pack(
             pack_structure = profile.get("pack_structure")
             files = expand_agnostic_entries(
                 expand_directory_entries(
-                    filter_files_by_mode(profile.get("files", []), standalone),
+                    deliverable(profile.get("files", []), standalone),
                     db,
                     standalone,
                 ),
@@ -1675,7 +1676,7 @@ def generate_emulator_pack(
             # profile declares wins over the copy a tree bundles at the same
             # path (Dolphin's real dsp_rom.bin over Sys/GC's free one).
             # A tree only one build reads follows that build, like a file.
-            for dd in filter_files_by_mode(
+            for dd in deliverable(
                 profile.get("data_directories", []), standalone
             ):
                 ref_key = dd.get("ref", "")

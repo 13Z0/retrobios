@@ -94,6 +94,7 @@ from validation import (
     _parse_validation,
     build_ground_truth,
     check_file_validation,
+    deliverable,
     filter_files_by_mode,
     outside_gap_scope,
 )
@@ -774,6 +775,12 @@ def _mark_unplaced(config: dict, undeclared: list[dict], profiles: dict) -> None
 
     unplaced = unplaceable_extras(config, undeclared, profiles)
     for u in undeclared:
+        if u.get("bundled"):
+            # Installed with the emulator, so already on the user's machine:
+            # the pack leaves it out, held or not.
+            u["in_pack"] = False
+            u["omitted"] = "installed with its emulator"
+            continue
         reason = unplaced.get(
             (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
         )
@@ -1713,7 +1720,7 @@ def verify_emulator(
     for emu_name, profile in sorted(selected):
         files = expand_agnostic_entries(
             expand_directory_entries(
-                filter_files_by_mode(profile.get("files", []), standalone),
+                deliverable(profile.get("files", []), standalone),
                 db,
                 standalone,
             ),
@@ -1733,7 +1740,7 @@ def verify_emulator(
             ]
 
         # Check data directories (only notice if not cached)
-        for dd in filter_files_by_mode(
+        for dd in deliverable(
             profile.get("data_directories", []), standalone
         ):
             ref = dd.get("ref", "")
@@ -2010,7 +2017,7 @@ def verify_emulator(
                     file_severity[dest] = sev
 
         # The profile's data trees follow its files in the pack.
-        for dd in filter_files_by_mode(profile.get("data_directories", []), standalone):
+        for dd in deliverable(profile.get("data_directories", []), standalone):
             cache = (data_registry or {}).get(dd.get("ref", ""), {}).get("local_cache", "")
             if not cache or not os.path.isdir(cache):
                 continue

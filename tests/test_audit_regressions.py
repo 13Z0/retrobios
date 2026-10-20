@@ -4553,6 +4553,36 @@ class BundledFilesAreNotToSource(unittest.TestCase):
         }})
         self.assertEqual([row["status"] for row in rows], ["bundled"])
 
+    def test_a_held_bundled_file_is_not_packed(self):
+        """A file installed with the emulator is already on the user's
+        machine, so the pack leaves it out even when the collection holds it."""
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import verify
+
+        entry = {"name": "n64.psh", "required": True, "in_repo": True,
+                 "emulator": "daedalusx64", "category": "bios", "bundled": True}
+        with mock.patch("packextras.unplaceable_extras", return_value={}):
+            verify._mark_unplaced({}, [entry], {})
+        self.assertFalse(entry["in_pack"])
+        self.assertIn("installed with its emulator", entry["omitted"])
+
+    def test_a_build_scope_keeps_it_for_the_other_build(self):
+        """PPSSPP's standalone release ships assets/, its libretro core does
+        not: bundled for one build, the entry still reaches a core's pack."""
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from validation import deliverable
+
+        entries = [{"ref": "ppsspp-assets", "mode": "libretro"},
+                   {"name": "a.bin", "bundled": True, "mode": "standalone"},
+                   {"name": "b.bin", "bundled": True}]
+        self.assertEqual([e.get("ref") or e["name"] for e in deliverable(entries, False)],
+                         ["ppsspp-assets"])
+        self.assertEqual(deliverable(entries, True), [])
+
+    def test_the_pack_builder_skips_it(self):
+        source = (ROOT / "scripts" / "packextras.py").read_text(encoding="utf-8")
+        self.assertIn('if u.get("bundled"):', source)
+
 
 
 class AdlerValuesReadLikeTheDownloads(unittest.TestCase):

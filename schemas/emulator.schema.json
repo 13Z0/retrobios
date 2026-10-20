@@ -272,6 +272,10 @@
               "both"
             ]
           },
+          "bundled": {
+            "type": "boolean",
+            "description": "Installed with the emulator for the build mode names, so packs leave the tree out."
+          },
           "source_ref": {
             "type": "string"
           }
@@ -443,7 +447,8 @@
             "type": "boolean"
           },
           "bundled": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Installed with the emulator for the build mode names (all builds when mode is absent): already on the user's machine, so packs and install manifests leave it out."
           },
           "config_key": {
             "type": "string"

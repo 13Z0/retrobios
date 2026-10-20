@@ -875,6 +875,11 @@ def _collect_emulator_extras(
         for destination in seen:
             taken[destination] = baseline_claims.setdefault(destination, {})
     for u in undeclared:
+        if u.get("bundled"):
+            # Installed with the emulator for this build: already on the
+            # user's machine. The mode a file is bundled for was settled
+            # upstream, an entry scoped to another build never gets here.
+            continue
         if not u["in_repo"] and absent is None:
             continue
         # For archive entries, use the archive name for resolution

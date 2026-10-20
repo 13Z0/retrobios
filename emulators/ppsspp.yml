@@ -16,6 +16,7 @@ pack_structure:
 
 data_directories:
   - ref: ppsspp-assets
+    mode: libretro
     destination: ""
     source_ref: "libretro/libretro.cpp:537,549"
 

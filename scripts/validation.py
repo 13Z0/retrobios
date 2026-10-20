@@ -525,6 +525,17 @@ def filter_files_by_mode(files: list[dict], standalone: bool) -> list[dict]:
     return result
 
 
+def deliverable(entries: list[dict], standalone: bool) -> list[dict]:
+    """The entries of one build a pack has to bring.
+
+    A file or tree installed with the emulator is already on the user's
+    machine: shipping it again only weighs the pack. `bundled` is scoped by
+    `mode` like any entry, so PPSSPP's assets, shipped by the standalone
+    release and not by the libretro core, still reach a RetroArch pack.
+    """
+    return [e for e in filter_files_by_mode(entries, standalone) if not e.get("bundled")]
+
+
 def find_validated_variant(
     file_entry: dict,
     db: dict,

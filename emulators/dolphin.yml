@@ -27,6 +27,7 @@ pack_structure:
 
 data_directories:
   - ref: dolphin-sys
+    mode: libretro
     destination: "Sys"
     source_ref: "Source/Core/Common/CommonPaths.h:128-141"
 
