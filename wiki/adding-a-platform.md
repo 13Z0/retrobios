@@ -234,11 +234,29 @@ launchers:
 | `fails_when_missing` | `false`, or the message the launcher raises |
 | `fails_scope` | `emulator` when the failure needs every record of the emulator to come up empty |
 | `depends_on_option` | Options or conditions that decide whether the record applies |
+| `device` | Devices whose shipped config the record reads, set only where a package ships configs that differ between devices |
 | `source_ref` | `path:lines` at the revision `source` pins |
 
-Each record is read with `ast` from the generator. An extractor that no longer
-recognises the shape of the code raises: an empty list would read as a
-launcher that looks for nothing.
+Batocera's generators are read with `ast`, RetroBat's C# generators as text.
+ROCKNIX and EmuDeck launch from shell scripts and configs shipped with each
+package, so `scripts/scraper/shell_launchers.py` reads assignments, `for`
+loops, `ln -s` commands and `key = value` lines. A ROCKNIX package can ship
+one config per device: the configs are grouped by the value read, and
+`device` appears only when there is more than one group. melonDS writes its
+seven BIOS paths on every device but AMD64, where the keys are left empty:
+
+```yaml
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names: []
+  passes_to: melonDS.ini BIOS9Path, BIOS7Path, FirmwarePath, DSiBIOS9Path,
+    DSiBIOS7Path, DSiFirmwarePath, DSiNANDPath left empty
+  device: AMD64
+```
+
+An extractor that no longer recognises the shape of the code raises: an
+empty list would read as a launcher that looks for nothing.
 
 ### Inheritance
 

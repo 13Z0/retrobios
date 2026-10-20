@@ -24,6 +24,8 @@ try:
         fetch_github_latest_version,
         requirement_entry,
     )
+    from .rocknix_launchers import extract_launchers
+    from .shell_launchers import RepoTree
 except ImportError:
     from base_scraper import (
         BaseScraper,
@@ -31,6 +33,8 @@ except ImportError:
         fetch_github_latest_version,
         requirement_entry,
     )
+    from rocknix_launchers import extract_launchers
+    from shell_launchers import RepoTree
 
 PLATFORM_NAME = "rocknix"
 
@@ -51,6 +55,14 @@ STANDALONE_TREE_URL = (
     "https://api.github.com/repos/ROCKNIX/distribution/contents/"
     "projects/ROCKNIX/packages/emulators/standalone?ref={ref}"
 )
+
+
+def launcher_revision(url: str) -> str:
+    """The tag or commit a rocknix-systems URL is read at."""
+    found = re.search(r"/ROCKNIX/distribution/([^/]+)/projects/", url)
+    if found is None:
+        raise ValueError(f"{url} names no ROCKNIX/distribution revision")
+    return found.group(1)
 
 
 def standalone_emulators(package_names: list[str]) -> list[str]:
@@ -274,6 +286,10 @@ class Scraper(BaseScraper):
             # emulator as a RetroArch core.
             "dual_mode_cores": dual_mode_emulators(standalone, self._fetch_emulators_mk()),
             "systems": systems,
+            # Read at the revision the BIOS list comes from.
+            "launchers": extract_launchers(
+                RepoTree.github(GITHUB_REPO, launcher_revision(self.url))
+            ),
         }
 
 

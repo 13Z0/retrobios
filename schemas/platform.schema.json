@@ -212,6 +212,10 @@
           "type": "string",
           "description": "Options or conditions in the launcher code that decide whether this record applies"
         },
+        "device": {
+          "type": "string",
+          "description": "Devices whose shipped config this record reads, comma-separated, set only where the configs of a package differ between devices"
+        },
         "source_ref": {
           "type": "string",
           "description": "path:lines in the platform's repository at the pinned revision"
