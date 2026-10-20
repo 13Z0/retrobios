@@ -55,9 +55,12 @@ class ReadersNameTheOwner(unittest.TestCase):
         held = {
             claim.destination.rsplit("/", 1)[-1]: claim.local_path for claim in claims
         }
+        # pcem declares ide_xt.bin and the collection holds it: an unclaimed
+        # file here is a claiming defect, not missing data.
+        if not any(e.get("path", "").endswith("/ide_xt.bin") for e in self.db["files"].values()):
+            self.skipTest("ide_xt.bin is not collected")
         local = held.get("ide_xt.bin")
-        if local is None:
-            self.skipTest("ide_xt.bin is not claimed")
+        self.assertIsNotNone(local, "pcem's ide_xt.bin is not claimed")
         self.assertTrue(local.startswith("bios/Other/pcem/"), local)
 
 
