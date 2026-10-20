@@ -1186,7 +1186,7 @@ def verify_at_pin(
         return PartResult(part, "ANCHORED", None, None, None, [])
     # A ref that cites loading logic never spells the value out, so its absence
     # here proves nothing. Only finding the value somewhere else in the file
-    # shows the ref points at the wrong place -- and only a hash carries that
+    # shows the ref points at the wrong place, and only a hash carries that
     # weight. A filename fragment matches by coincidence: `tyrian2` hits every
     # line naming `tyrian2.c`, and a name built at runtime from a format
     # string appears nowhere at all.

@@ -1877,7 +1877,7 @@ def verify_emulator(
                 # An entry the profile documents as unsourceable is absent by
                 # design: a per-user key, a slot the user fills, a dump nobody
                 # has made. Counting it beside a file somebody could still
-                # find invites the wrong repair -- dropping the flag, or
+                # find invites the wrong repair: dropping the flag, or
                 # chasing a vendor's whole install tree.
                 unsourceable = file_entry.get("unsourceable")
                 if unsourceable:
@@ -1911,7 +1911,7 @@ def verify_emulator(
                     # Nothing in validation: caught it, but the name matched
                     # while the bytes contradict the hash the profile
                     # declares. That is a different file wearing the right
-                    # name -- config.ini and ROM collide across systems -- so
+                    # name (config.ini and ROM collide across systems), so
                     # calling it covered reports the collection as holding
                     # something it does not. Validation runs first because it
                     # names the specific field that disagrees.

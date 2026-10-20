@@ -361,7 +361,7 @@ def generate_home(
             ]
         )
 
-    # Quick start (collapsible -- secondary info)
+    # Quick start, collapsed: secondary information
     lines.extend(
         [
             "",
@@ -398,11 +398,11 @@ def generate_home(
             "Documentation and metadata can drift from actual runtime behavior, "
             "so the source is the primary reference.",
             "",
-            "    1. **Upstream emulator source** -- what the original project "
+            "    1. **Upstream emulator source**: what the original project "
             "loads (Dolphin, PCSX2, Mednafen...)",
-            "    2. **Libretro core source** -- the RetroArch port, which may "
+            "    2. **Libretro core source**: the RetroArch port, which may "
             "adapt paths or add files",
-            "    3. **`.info` declarations** -- metadata that platforms rely on, "
+            "    3. **`.info` declarations**: metadata that platforms rely on, "
             "checked for accuracy",
             "",
         ]
@@ -3511,9 +3511,9 @@ def generate_gap_analysis(
     provenance (from cross_reference) into a single truth dashboard.
 
     Sections:
-    1. Verification status -- aggregated across all platforms
-    2. Problem files -- missing, untested, hash mismatch
-    3. Core complement -- emulator files not declared by any platform
+    1. Verification status, aggregated across all platforms
+    2. Problem files: missing, untested, hash mismatch
+    3. Core complement: emulator files not declared by any platform
     """
 
     from common import resolve_platform_cores

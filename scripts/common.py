@@ -2205,7 +2205,7 @@ def resolve_platform_cores(
     Resolution strategies (by priority):
     1. cores: "all_libretro" -- all profiles with libretro in type
     2. cores: [list] -- profiles whose dict key matches a core name
-    3. cores: absent -- fallback to systems intersection
+    3. cores: absent, fallback to systems intersection
 
     Alias profiles are always excluded (they point to another profile).
     If target_cores is provided, result is intersected with it.

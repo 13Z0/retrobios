@@ -20,8 +20,8 @@ is reported undecidable and every candidate is kept: picking one would be the
 arbitrary selection this exists to remove.
 
 The scale is only meaningful inside one emulator's candidate set. When two
-profiles rank the same file differently -- pcsx1 walks scph1001 first while
-DuckStation prefers scph5501 -- the pack serves both cores, so neither order
+profiles rank the same file differently (pcsx1 walks scph1001 first while
+DuckStation prefers scph5501), the pack serves both cores, so neither order
 may win: the file is marked conflicting and its group stays undecidable.
 The same holds when one profile ranks a file and another declares it with no
 rank: the second core reads it by its own rule, which no rank expresses.
