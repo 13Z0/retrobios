@@ -1784,6 +1784,16 @@ def load_emulator_profiles(
     cache_key = (os.path.realpath(emulators_dir), skip_aliases)
     if cache_key in _emulator_profiles_cache:
         return _emulator_profiles_cache[cache_key]
+    if skip_aliases:
+        # A filter over the full set: parsed once, 534 YAML files cost 1.6 s
+        # every time a process asked for both variants.
+        profiles = {
+            name: profile
+            for name, profile in load_emulator_profiles(emulators_dir, False).items()
+            if profile.get("type") != "alias"
+        }
+        _emulator_profiles_cache[cache_key] = profiles
+        return profiles
     try:
         import yaml
     except ImportError:
@@ -1807,8 +1817,6 @@ def load_emulator_profiles(
         with open(f) as fh:
             profile = yaml_load(fh) or {}
         if "emulator" not in profile:
-            continue
-        if skip_aliases and profile.get("type") == "alias":
             continue
         _normalize_hash_fields(profile)
         profiles[f.stem] = profile
