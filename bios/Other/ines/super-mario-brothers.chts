@@ -1,0 +1,66 @@
+[Super Mario Brothers]
+Code=0007EEFF : Have 255 Coins
+Code=0007FA04 : Stop Time
+Code=000756FF : Invincibility (AR)
+Code=00075A02 : Infinite Lives
+Code=ZZZSSO : Invincibility
+Code=EEESKA : Invincibility, plow enemies over
+Code=PUESUE : Invincibility, plow enemies over (type 2)
+Code=SUEISA : Invincibility, thrive on enemies
+Code=GANINE : Invincibility, thrive on enemies (type 2)
+Code=OEPSKA : Invincibility, run through enemies
+Code=IOEOIO : Become starman for 120 seconds
+Menu=Become invincible starman
+Code=ZZZLTT : Infinite firepower
+Code=PNAPZO : More time
+Code=VZTLTN : Infinite time
+Code=All holes filled in
+Code=PSSSSO : Everything you stomp turns into a 1-up
+Code=USNUKS : Every gold block contains a 1-up
+Code=EXYSEA : Perform the 100-man trick on every enemy
+Code=SEIING : Hit a block, and it becomes night time
+Menu=Always night time
+Code=AEPISP : No enemies bounce when you stomp them
+Code=SOIIEA : All nemies bounce when you hit them
+Code=NVOLNN : Enemies fly away when you hit them
+Menu=Super mega float
+Code=SEPUEG : Score keeps rising after hitting a mushroom block
+Code=ATAPIX : Always restart at the beginning of the level
+Code=GIXPIG : World 1 has world 2 backgrounds
+Code=NIYPIT : Remove all unnecessary plants
+Code=NUKISA : Many 1-ups
+Code=IVYIVY : Super fast enemies
+Menu=Access to world -1
+Code=GISPTG : Always underwater
+Menu=Super challenge
+Menu=Come back after a fall
+
+[Access to world -1]
+Note=Go to the usual spot near the end of level 1-2.
+KKOOPK
+
+[Come back after a fall]
+Note=Avoid going to the very top when on level 1-2 ramps.
+PXYLUN
+APZLGG
+
+[Super challenge]
+STAGEO
+SPEPNY
+
+[Always night time]
+Note=Do not lose a life in level 2-2 waterworld or the game will freeze.
+SPOATV
+
+[Super mega float]
+Note=You must touch ground at some point during level 7-3, or it will go forever.
+NTKOTP
+
+[Become invincible starman]
+PKAOZO
+STAPGO
+
+[All holes filled in]
+Note=Especially useful in world 8.
+GOAOSU
+APZLGG

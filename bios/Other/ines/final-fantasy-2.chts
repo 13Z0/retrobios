@@ -1,0 +1,59 @@
+[Final Fantasy 2 (Japanese)]
+Code=SUNXKESO : Infinite items outside of battle
+Code=IOSZZKGO : Get a lot of gold after each battle
+Code=SXXPTAST : Get a lot of gold after buying an item in shop
+Code=XGVKNNEY : No random battles in caves
+Code=SAKGPIEP : No random battles overworld
+Menu=Start with 800 gold
+Menu=Start with 2000 gold
+Menu=Start with 10000 gold
+Menu=Start with 65000 gold
+Menu=All items free
+Menu=Easier Enemies
+Menu=Free Items
+
+[Start with 800 gold]
+AXNEKZEP
+LENESZPA
+
+[Start with 2000 gold]
+ESNEKZEP
+YENESZPA
+
+[Start with 10000 gold]
+AONEKZEP
+YXNESZPA
+
+[Start with 65000 gold]
+EVNEKZEO
+SNNESZPE
+
+[Free Items]
+Code=AESAZPZL : Potions
+Menu=XPotions
+Menu=EchoScns
+Menu=Elixirs
+
+[XPotions / Free Items]
+AEVAGPKY
+AEVAIPPA
+
+[EchoScns / Free Items]
+AENAAPEI
+AENAPPYA
+
+[Elixirs / Free Items]
+AEKEZPAI
+AEKELPUG
+
+[All items free]
+XVOOTASV
+VXXPTAST
+
+[Easier Enemies]
+Code=AEKASGTA : Goblins, Hornets, LegEaters, Jellys
+Code=AEKEOGGP : Ballons, Souls, Yetis, Borgans, WzOrges
+Code=AEKEUKTP : DesAngels, QueenBees, Sprinters, Zombies, Captains, Ghasts, Mages, Mines, R.Souls
+Code=AEKESKIZ : DeathHeads, Jellys, Pirates, Shadows, Snowmen, Soldiers, Mallows
+Code=AEKENKGL : Ghouls, Grenades, Icicles, Wererats, Wraiths, G.Souls, Lamias, Sorcerers
+Code=AESAUGGT : Ghasts, KilrFish, Mallows, Ogres, Stunners, Brains, Imps, Spectres, VmpGirls

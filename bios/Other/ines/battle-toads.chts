@@ -1,0 +1,90 @@
+[Battletoads]
+Menu=Select Level
+Code=00047505 : Hovering
+Code=00043905 : Invisibility
+Menu=Enemies Have No Health
+Menu=Select Player 1
+Code=00051A2F : Infinite Health for Player 1
+Code=00001105 : Infinite Lives for Player 1
+Code=0005740A : Invincibility for Player 1
+Menu=Select Player 2
+Code=00001205 : Infinite Lives for Player 2
+Code=0005750A : Invincibility for Player 2
+
+[Enemies Have No Health / Battletoads]
+00051C00
+00051D00
+00051E00
+00051F00
+00052000
+00052100
+
+[Select Player 1 / Battletoads]
+Code=00009E00 : Green Toad
+Code=00009E01 : Invisible Toad
+
+[Select Player 2 / Battletoads]
+Code=00009F00 : Invisible Toad
+Code=00009F01 : Brown Toad
+
+[Select Level / Battletoads]
+Code=00000D00 : Level 1 - Ragnarok's Canyon (with SS Vulture Intro)
+Code=00000D01 : Level 1 - Ragnarok's Canyon (with no Intro)
+Code=00000D02 : Level 2 - Wookie Hole (Impact Crater - Trench Downwards)
+Code=00000D03 : Level 3 - Turbo Tunnel (Chasm)
+Code=00000D04 : Level 4 - Arctic Caverns (Ice Cavern)
+Code=00000D05 : Level 5 - Surf City (Water Rapids)
+Code=00000D06 : Level 6 - Karnath's Lair (Snake Pit)
+Code=00000D07 : Level 7 - Volkmire's Inferno (Fire Zone)
+Code=00000D08 : Level 8 - Intruder Excluder (Elevator Shaft)
+Code=00000D09 : Level 9 - Terra Tubes (Gargantva Ducts)
+Code=00000D0A : Level 10 - Rat Race
+Code=00000D0B : Level 11 - Clinger-Winger
+Code=00000D0C : Level 12 - Fight Against Dark Queen
+Code=00000D0D : Level 13 - Armageddon
+
+[Battletoads And Double Dragon]
+Menu=Select Level
+Menu=Enemies Have No Health
+Menu=Select Player 1
+Code=00001105 : Infinite Lives for Player 1
+Code=00051B4F : Infinite Health for Player 1
+Menu=Select Player 2
+Code=00001205 : Infinite Lives for Player 2
+Code=00051C4F : Infinite Health for Player 2
+
+[Select Level / Battletoads And Double Dragon]
+Code=00001000 : Level 1 - Tail Of The Ratship
+Code=00001001 : Level 2 - Blag Alley
+Code=00001002 : Level 3 - Ropes 'N' Roper
+Code=00001003 : Level 4 - Ratship Rumble
+Code=00001004 : Level 5 - Missile Mayhem
+Code=00001005 : Level 6 - Shadow-Boss Showdown
+Code=00001006 : Level 7 - Armageddon II
+Code=00001007 : Ending - Part I
+Code=00001008 : Introduction Part I
+Code=00001009 : Introduction Part II
+Code=0000100A : Introduction Part III
+Code=0000100B : Ending - Part II
+
+[Select Player 1 / Battletoads And Double Dragon]
+Code=0005F000 : Rash
+Code=0005F001 : Zitz
+Code=0005F002 : Pimple
+Code=0005F003 : Billy
+Code=0005F004 : Jimmy
+
+[Select Player 2 / Battletoads And Double Dragon]
+Code=0005F100 : Rash
+Code=0005F101 : Zitz
+Code=0005F102 : Pimple
+Code=0005F103 : Billy
+Code=0005F104 : Jimmy
+
+[Enemies Have No Health / Battletoads And Double Dragon]
+00051C00
+00051D00
+00051E00
+00051F00
+00052000
+00052100

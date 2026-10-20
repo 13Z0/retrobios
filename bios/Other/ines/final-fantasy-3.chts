@@ -1,0 +1,126 @@
+[Final Fantasy 3 (Japanese)]
+Code=SLUXTUVS : Infinite potions outside of battle
+Code=AAVOKPPA : Infinite MP outside of battle
+Code=SXOXUUSE : Infinite capacity points
+Code=XVULAASV : Free items in shops
+Code=GZKUXTIZ : Everyone levels up after battle
+Code=IPEUVSGO : Get a lot of gold after battle
+Code=NNXOLYEE : Enemies do nothing
+Code=OZOGIYVV : No random battles
+Code=VPKOXXPP : Stronger FIRE1
+Code=IISPXXPP : Strogner ICE1
+Code=KLVPXXZZ : Stronger CURE1
+Menu=Modify weapon spells
+Menu=Modify character stats
+Menu=Modify magic spells
+Menu=Modify bounty
+Menu=Items
+
+Code=GTEPPGAI : it% Is Increased From 80% To 100% When You Are Bare-Handed (No Weapons Equipped) 1
+Code=ILEPZGPA : Makes Any Character (Any Job) Do Lots of Damage When Bare-Handed (No Weapons Equipped) 2
+Code=GTEPZGPA : Makes Any Character (Any Job) Do MEGA Damage When Bare-Handed (No Weapons Equipped) 3
+Code=AXUOZTAA : Have 98 Def (Defense) When All Armor Is Removed. Works With Any Character (Any Job) 4
+Code=AKUOZTAA : Have 194 Def (Defense) When All Armor Is Removed. Works With Any Character (Any Job)
+Code=AUUOPTAA : Have 99% Evade When All Armor Is Removed. Works With Any Character (Any Job)
+Code=AXUOGTAA : Have 96 M.Def (Magic Defense) When All Armor Is Removed. Works With Any Character (Any Job)
+Code=AKUOGTAA : Have 192 M.Def (Magic Defense) When All Armor Is Removed. Works With Any Character (Any Job)
+
+Code=GZOAZEZA : When You Change Jobs To A MONK, You Will Have 39 Strength (Instead of Only 13) 1
+Code=ATOAZEZA : When You Change Jobs To A MONK, You Will Have 99 Strength (Instead of Only 13) (Also, The MONK's Attack (Att.) Will Increase)
+Code=GZOALEZA : When You Change Jobs To A MONK, You Will Have 39 Agility (Instead of Only 13)
+Code=ATOALEZA : When You Change Jobs To A MONK, You Will Have 99 Agility (Instead of Only 13) 2
+Code=ATOAGAYA : When You Change Jobs To A MONK, You Will Have 99 Vitality (Instead of Only 7) 3
+Code=ATOAIAPA : When You Change Jobs To A MONK, You Will Have About 99 Intellect (Instead of Only 1) 4
+Code=ATOATAZA : When You Change Jobs To A MONK, You Will Have About 99 Spirit (Instead of Only 2) 5
+Special Note 6 	N/A 	N/A
+Code=AAXEYAZE : When You Change Jobs To A RED WIZ, He Will Have 64 MP Instead of Only 8 MP! 7
+Code=NYXEYAZE : When You Change Jobs To A RED WIZ, He Will Have 194 MP Instead of Only 8 MP!! 8
+
+[Modify weapon spells]
+Code=PUNPGKYY : Knife casts FIRE 
+Code=TENPGKYN : Knife casts FIRE3
+Code=IONPGKYY : Knife casts BOLT3
+Code=IONPGKYN : Knife casts ICE3
+Code=PENPGKYY : Knife casts DEATH
+Code=ZENPGKYY : Knife casts METEO
+Code=LENPGKYN : Knife casts HEAL 
+Code=ZENPGKYN : Knife casts CURE4
+Code=TENOGKYN : Dagger casts FIRE3
+Code=IONOGKYY : Dagger casts BOLT3
+Code=IONOGKYN : Dagger casts ICE3
+Code=PENOGKYY : Dagger casts DEATH
+Code=ZENOGKYY : Dagger casts METEO
+Code=LENOGKYN : Dagger casts HEAL 
+Code=ZENOGKYN : Dagger casts CURE4
+Code=TAXPGSYN : Long Sword casts FIRE3
+Code=IPXPGSYY : Long Sword casts BOLT3
+Code=IPXPGSYN : Long Sword casts ICE3
+Code=PAXPGSYY : Long Sword casts DEATH
+Code=ZAXPGSYY : Long Sword casts METEO
+Code=LAXPGSYN : Long Sword casts HEAL 
+Code=ZAXPGSYN : Long Sword casts CURE4
+
+[Modify character stats]
+Code=YAEZZAIE : Start with triple Strength
+Code=YAEZLAIE : Start with triple Agility
+Code=YAEZGAIE : Start with triple Vitality
+Code=YAEZIAIE : Start with triple Intellect
+Code=YAEZTAIE : Start with triple Sspirit
+Code=LTEZZAIA : Start with 99 Strength
+Code=LTEZLAIA : Start with 99 Agility
+Code=LTEZGAIA : Start with 99 Vitality
+Code=LTEZIAIA : Start with 99 Intellect
+Code=LTEZTAIA : Start with 99 Spirit
+Code=LKSUELAX : Start with 75 HP
+Code=VOSUELAZ : Start with 150 HP
+Code=NNSUELAX : Start with 255 HP
+
+[Modify magic spells]
+Code=LUNLNLAA : Start game with Level1 spells: Fire, Ice, And Sight
+Code=ISNLNLAA : Start game with Level1 spells: Fire, Sleep, And Chocb
+Code=GONLNLAE : Start game with Level1 spells: Sleep, Cure, And Pure
+Code=LUNUELAA : Start game with Level2 spells: Bolt, Venom, And Mini
+Code=ISNUELAA : Start game with Level2 spells: Bolt, Blind, And Shiva
+Code=GONUELAE : Start game with Level2 spells: Blind, Aero, And Toad
+Code=LUNUOLAA : Start game with Level3 spells: Fire2, Ice 2, And Wash
+Code=ISNUOLAA : Start game with Level3 spells: Fire2, Bolt2, And Ramuh
+Code=GONUOLAE : Start game with Level3 spells: Bolt2, Cure2, And Exit
+Code=LUNUXLAA : Start game with Level4 spells: Break, Ice 3, And Mute
+Code=ISNUXLAA : Start game with Level4 spells: Break, Shade, And Ifrit
+Code=GONUXLAE : Start game with Level4 spells: Shade, Libra, And Confu
+Code=LUNUULAA : Start game with Level5 spells: Bolt3, Kill, And Safe
+Code=ISNUULAA : Start game with Level5 spells: Bolt3, Erase, And Titan
+Code=GONUULAE : Start game with Level5 spells: Erase, Cure3, And Life
+Code=LUNUKLAA : Start game with Level6 spells: Fire3, Bio, And Haste
+Code=ISNUKLAA : Start game with Level6 spells: Fire3, Warp, And Odin
+Code=GONUKLAE : Start game with Level6 spells: Warp, Aero2, And Soft
+Code=LUNUSLAA : Start game with Level7 spells: Quake, Brak2, And Wall
+Code=ISNUSLAA : Start game with Level7 spells: Quake, Drain, And Levia
+Code=GONUSLAE : Start game with Level7 spells: Drain, Cure4, And Heal
+Code=LUNUVLAA : Start game with Level8 spells: Flare, Death, And Holy
+Code=ISNUVLAA : Start game with Level8 spells: Flare, Meteo, And Baham
+Code=GONUVLAE : Start game with Level8 spells: Meteo, WWind, And Life2
+
+[Items]
+Code=AAUOKTGP : Knives (free)
+Code=AAUOVVGL : Daggers (free)
+Code=AAKOETGT : Long Swords (free)
+Code=AASOKNAZ : Eyedrops (free)
+Code=AASOVYAI : Antidotes (free)
+Code=AAKOKYVP : Potions (free)
+Code=AASPSYPA : Soft ($44)
+Menu=HiPotions (free)
+
+[HiPotions (free) / Items]
+AAKOVYEL
+AAKONYGA
+
+[Modify bounty]
+Code=NYSOEGLE : Get $255 for each Goblin    
+Code=NYVPEKGE : Get $255 for each Killer Bee
+Code=NYVPXKTE : Get $255 for each Werewolf  
+Code=NYVPKGAO : Get $255 for each Berserker 
+Code=YZSOOGAA : Get $10000 for each Goblin     
+Code=YZVPOGAA : Get $10000 for each Killer Bee 
+Code=YZVPUGAA : Get $10000 for each Werewolf   
+Code=YZVPSGAA : Get $10000 for each Berserker  

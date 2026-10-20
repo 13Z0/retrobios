@@ -1,0 +1,105 @@
+[Adventures Of Lolo]
+Code=00005763 : Infinite Lives
+Code=00005863 : Infinite Shots
+
+[Adventures Of Lolo 2]
+Code=00007A63 : Infinite Lives
+Code=00007D63 : Infinite Shots
+
+[Adventures Of Lolo 3]
+Code=00005763 : Infinite Shots
+
+[Air Fortress]
+Code=00004609 : Infinite Lives
+
+[Airwolf]
+Code=0000A709 : Infinite Lives
+
+[Arkanoid '98]
+Code=00008109 : Ball Respawns
+
+[Attack Of The Killer Tomatoes]
+Code=00071809 : Infinite Lives
+Code=000722C0 : Infinite Health
+
+[Boulder Dash]
+Code=00007709 : Infinite Lives
+Menu=Infinite Time
+Menu=One Crystal Remaining
+
+[One Crystal Remaining / Boulder Dash]
+0000AE01
+0000AF00
+0000B000
+
+[Infinite Time / Boulder Dash]
+0000B109
+0000B209
+0000B309
+
+[Castlevania]
+Code=00007163 : Infinite Hearts
+Code=00004232 : Infinite Time
+Code=0000453D : Infinite Health
+Code=00002A05 : Infinite Lives
+Code=0001A900 : Single Hit Kills Boss
+Code=00005B02 : Invincible
+Code=00007002 : Best Whip
+Menu=Select Weapon
+
+[Select Weapon / Castlevania]
+Code=00015B08 : Knive
+Code=00015B09 : Cross
+Code=00015B11 : Holy Water
+Code=00015B13 : Axe
+Code=00015B15 : Clock
+
+[Castlevania 3]
+Code=00008002 : Invincibility
+Code=00001A00 : No Flicker When Invincible
+Code=00003C40 : Infinite Energy
+Code=00003599 : Infinite Lives
+Code=00008499 : Infinite Hearts
+Code=00008E02 : Best Whip for Simon
+Code=00008F02 : Best Attack for Alucard
+Code=00008702 : Have "III"
+Code=00003D00 : Bosses Have No Health
+Menu=Infinite Time
+Menu=Max Points
+Menu=Select Stage
+Menu=Select Partner
+Menu=Select Simon's Weapon
+Menu=Select Partner's Weapon
+
+[Max Points / Castlevania 3]
+00003670
+00003799
+
+[Infinite Time / Castlevania 3]
+00007E99
+00007F99
+
+[Select Simon's Weapon / Castlevania 3]
+Code=00008501 : Axe
+Code=00008502 : Cross
+Code=00008503 : Dagger
+Code=00008504 : Holy Water
+
+[Select Partner's Weapon / Castlevania 3]
+Code=00008605 : Fire Spell
+Code=00008606 : Ice Spell
+Code=00008607 : Lightning Spell
+Code=00008608 : Dagger
+Code=00008609 : Axe
+Code=0000860B : Clock
+
+[Select Stage / Castlevania 3]
+Code=00003300 : Stage 1-01
+Code=00003301 : Stage 1-02
+Code=00003302 : Stage 1-03
+Code=00003303 : Stage 1-04
+
+[Select Partner / Castlevania 3]
+Code=00003A01 : Sypha
+Code=00003A02 : Grant
+Code=00003A03 : Alucard

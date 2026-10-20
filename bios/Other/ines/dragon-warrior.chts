@@ -1,0 +1,52 @@
+[Dragon Warrior]
+Code=SXOIVLSA : Infinite magic power
+Code=AEVGUIZA : Take no damage in swamp
+Code=SZUTXISA : Take no damage in combat
+Code=YAKKEVYA : Barriers cause half usual damage
+Code=VKOIVLSA : Spells use only one magic point
+Code=SKOIVLSA : Spells use no magic points
+Code=VVOYYTSA : Start with 2034GP
+Code=VVPYAT   : Start fully equipped character, game won
+Code=VVOYYTSA : Start with extra stuff, princess saved
+Code=VVPYZT   : Start well equipped character
+Code=VKVLPP   : Walk through walls (may get stuck)
+Code=ZTZTLT   : Excellent hit on every attack
+Code=AKPOOA   : No enemies in caves
+Code=IYSPOTPE : Slimes award 255EXP
+Code=NYSPXTZE : Slimes award 200GP
+Code=IYVPOTPE : Red Slimes award 255EXP
+Code=NYVPXTLE : Red Slimes award 200GP
+Menu=Items
+
+[Items]
+Code=AAVOOOAP : Herb (free)
+Code=AAVOSOAA : Torch (free)
+Code=AAKPNOZA : Bamboo Pole (free)
+Code=AAKOOOGL : Club (free)
+Code=AAKOVPZA : Hand Axe (48 GP)
+Code=AAKOUPKL : Copper Sword (free)
+Menu=Broad Sword (free)
+Code=AASPXPTZ : Flame Sword (72GP)
+Code=TEOPNPAA : Erdrick's Sword (2GP in Brecconary)
+Code=AASPNPTG : Leather Armor (free)
+Menu=Half Plate (free)
+Code=AASOVOLA : Full Plate (184GP)
+Code=AASOXPPA : Chain Mail (44GP)
+Code=AANPUPGP : Dragon Scale (free)
+Code=AAVPEOTP : Magic Armor (20GP)
+Code=IEOOXPYE : Erdrick's Armor (2GP in Brecconary)
+Code=AAVPUOZI : Small Shield (free)
+Code=AAVPVPLA : Large Shield (32GP)
+Menu=Silver Shield (free)
+
+[Broad Sword (free) / Items]
+AASPEPIA
+AAKONOKI
+
+[Half Plate (free) / Items]
+AASOKPLA
+AASOUOET
+
+[Silver Shield (free) / Items]
+AAVOEOPL
+AAVPNPEI

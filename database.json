@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T01:30:36Z",
-  "total_files": 20375,
-  "total_size": 17638951392,
+  "generated_at": "2026-10-20T02:57:31Z",
+  "total_files": 20382,
+  "total_size": 17638973255,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -139073,6 +139073,66 @@
       "crc32": "d2814640",
       "adler32": "9ce01f0e"
     },
+    "fc59b7662bdf8b888e4de42f788ac989fe6fab2a": {
+      "path": "bios/Other/ines/battle-toads.chts",
+      "name": "battle-toads.chts",
+      "size": 2768,
+      "sha1": "fc59b7662bdf8b888e4de42f788ac989fe6fab2a",
+      "md5": "579c461a0060eae90c4f350e32dc6e56",
+      "sha256": "050d5124a1ccef32a61dc3db7dc6a855159fe842eb2405611e5810490869a618",
+      "crc32": "d8b4ca90",
+      "adler32": "4b0b2273"
+    },
+    "c7199183d8f392bda14a8f8765bc6b3dd1951475": {
+      "path": "bios/Other/ines/dragon-warrior-2.chts",
+      "name": "dragon-warrior-2.chts",
+      "size": 5596,
+      "sha1": "c7199183d8f392bda14a8f8765bc6b3dd1951475",
+      "md5": "3231f15a1434d039aeb101801a9ab807",
+      "sha256": "32f379d264811d931cfe67647ebdc6f321de52c3f3de38c2ee345615b6fe0b4e",
+      "crc32": "1d7327b8",
+      "adler32": "65e0ba9e"
+    },
+    "47767cd5557c166b2bd5255a9a2857a4a1288e03": {
+      "path": "bios/Other/ines/dragon-warrior.chts",
+      "name": "dragon-warrior.chts",
+      "size": 1617,
+      "sha1": "47767cd5557c166b2bd5255a9a2857a4a1288e03",
+      "md5": "9dcd487b3c3c0b18a5264285e3c9868c",
+      "sha256": "60f73afe109981a0aa04d5d2fbb10769557e142d0af4becb2a06747e0f0f0923",
+      "crc32": "56462991",
+      "adler32": "554fee60"
+    },
+    "7eac0cb88829e5d89645803fd6256049348ab593": {
+      "path": "bios/Other/ines/fceu.chts",
+      "name": "fceu.chts",
+      "size": 2295,
+      "sha1": "7eac0cb88829e5d89645803fd6256049348ab593",
+      "md5": "80ba1e0d24df2ae8a334492fcdf80ac9",
+      "sha256": "466168fff6db355099f5a8562eaf6f2dd98e443d251bce23f8eb7078fb94b44d",
+      "crc32": "8a6d479b",
+      "adler32": "b51e8f83"
+    },
+    "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69": {
+      "path": "bios/Other/ines/final-fantasy-2.chts",
+      "name": "final-fantasy-2.chts",
+      "size": 1399,
+      "sha1": "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69",
+      "md5": "9f5604c53f5e61611e0f5fc86bd12eda",
+      "sha256": "83daebfeba1c4c79c3820b3bf80817fb73cb948c43a31e07d2cdb3ff73d9a082",
+      "crc32": "0b26c1d3",
+      "adler32": "edc3b592"
+    },
+    "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae": {
+      "path": "bios/Other/ines/final-fantasy-3.chts",
+      "name": "final-fantasy-3.chts",
+      "size": 6189,
+      "sha1": "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae",
+      "md5": "d5e68a35ac2d17b48bf1604d03e4602d",
+      "sha256": "16952aa58d752e92fe3f6a2bbfe7b8bb77f3897a15fb79dce1c5b9599ac909c5",
+      "crc32": "f1060bef",
+      "adler32": "571c8524"
+    },
     "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15": {
       "path": "bios/Other/ines/names.dat",
       "name": "names.dat",
@@ -139082,6 +139142,16 @@
       "sha256": "39a9c99bb666c9fcf0533997151af2659e8b7b02a5894b55b915d0a3ae4a1fe3",
       "crc32": "07465cc4",
       "adler32": "8d7d235c"
+    },
+    "c1116b7e520541cf2925b30053106d85a4bae62e": {
+      "path": "bios/Other/ines/super-mario-brothers.chts",
+      "name": "super-mario-brothers.chts",
+      "size": 1999,
+      "sha1": "c1116b7e520541cf2925b30053106d85a4bae62e",
+      "md5": "51beb6f9722b3c8a22f9d97c1401622c",
+      "sha256": "83ef501f94118f1d757f328a5e596d5ebeb2074675d24737ebb4730f45d62c62",
+      "crc32": "42e09138",
+      "adler32": "d5c68980"
     },
     "35ec298b803b29b6bee6d89f46507c50a3461b35": {
       "path": "bios/Other/infinity/assets/7x7demake.p8.png",
@@ -222601,7 +222671,14 @@
       "5b72ab7bb1c295c30b9cbb274a4bd6e9": "e37810f05cc9a2e40b47a274184fe9347fef1393",
       "c1db31a2aa8a12432705fc8bd3c1156a": "486eede1bb748d95efc8a2a3d46ef1a530100559",
       "f8a3b82f873132e312764807346182c6": "dbbaa1e149d1e3bbf62b1b16c9e23ecf5924636d",
+      "579c461a0060eae90c4f350e32dc6e56": "fc59b7662bdf8b888e4de42f788ac989fe6fab2a",
+      "3231f15a1434d039aeb101801a9ab807": "c7199183d8f392bda14a8f8765bc6b3dd1951475",
+      "9dcd487b3c3c0b18a5264285e3c9868c": "47767cd5557c166b2bd5255a9a2857a4a1288e03",
+      "80ba1e0d24df2ae8a334492fcdf80ac9": "7eac0cb88829e5d89645803fd6256049348ab593",
+      "9f5604c53f5e61611e0f5fc86bd12eda": "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69",
+      "d5e68a35ac2d17b48bf1604d03e4602d": "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae",
       "d4323f40067263496f19ab7745481fd7": "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15",
+      "51beb6f9722b3c8a22f9d97c1401622c": "c1116b7e520541cf2925b30053106d85a4bae62e",
       "1d6416a591c99b03c58b41f0dd5537b0": "35ec298b803b29b6bee6d89f46507c50a3461b35",
       "06f4dfd96b1e7f0b6d5cc7f7163c7904": "14d28015d8a8c902d219b6a24d2241aa061dda09",
       "86d3f3a95c324c9479bd8986968f4327": "7df059597099bb7dcf25d2a9aedfaf4465f72d8d",
@@ -264422,9 +264499,30 @@
         "dbbaa1e149d1e3bbf62b1b16c9e23ecf5924636d",
         "0b53d51635a2ce3d4e12c2077df9aeffeac02517"
       ],
+      "battle-toads.chts": [
+        "fc59b7662bdf8b888e4de42f788ac989fe6fab2a"
+      ],
+      "dragon-warrior-2.chts": [
+        "c7199183d8f392bda14a8f8765bc6b3dd1951475"
+      ],
+      "dragon-warrior.chts": [
+        "47767cd5557c166b2bd5255a9a2857a4a1288e03"
+      ],
+      "fceu.chts": [
+        "7eac0cb88829e5d89645803fd6256049348ab593"
+      ],
+      "final-fantasy-2.chts": [
+        "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69"
+      ],
+      "final-fantasy-3.chts": [
+        "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae"
+      ],
       "names.dat": [
         "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15",
         "15f93bd7b0e58cc1ee8c5ff06cb5a085c686ace4"
+      ],
+      "super-mario-brothers.chts": [
+        "c1116b7e520541cf2925b30053106d85a4bae62e"
       ],
       "7x7demake.p8.png": [
         "35ec298b803b29b6bee6d89f46507c50a3461b35"
@@ -303750,7 +303848,14 @@
       "317423f7": "e37810f05cc9a2e40b47a274184fe9347fef1393",
       "2e03cb7f": "486eede1bb748d95efc8a2a3d46ef1a530100559",
       "d2814640": "dbbaa1e149d1e3bbf62b1b16c9e23ecf5924636d",
+      "d8b4ca90": "fc59b7662bdf8b888e4de42f788ac989fe6fab2a",
+      "1d7327b8": "c7199183d8f392bda14a8f8765bc6b3dd1951475",
+      "56462991": "47767cd5557c166b2bd5255a9a2857a4a1288e03",
+      "8a6d479b": "7eac0cb88829e5d89645803fd6256049348ab593",
+      "0b26c1d3": "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69",
+      "f1060bef": "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae",
       "07465cc4": "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15",
+      "42e09138": "c1116b7e520541cf2925b30053106d85a4bae62e",
       "f23147aa": "35ec298b803b29b6bee6d89f46507c50a3461b35",
       "48ae2c1d": "14d28015d8a8c902d219b6a24d2241aa061dda09",
       "7b5d04bc": "7df059597099bb7dcf25d2a9aedfaf4465f72d8d",
@@ -324127,7 +324232,14 @@
       "9e413f84695823fb04e4628b0c52f1a5bbdf04492b00e708cc77e850df98938a": "e37810f05cc9a2e40b47a274184fe9347fef1393",
       "942f36376246dbdff99a0b94aad930b2cccf1f534e5390468ac9c0d50752d7dd": "486eede1bb748d95efc8a2a3d46ef1a530100559",
       "17da9c5feeba7177f19159d9e835242daeff0c829e61e203d82e5f540bb123f3": "dbbaa1e149d1e3bbf62b1b16c9e23ecf5924636d",
+      "050d5124a1ccef32a61dc3db7dc6a855159fe842eb2405611e5810490869a618": "fc59b7662bdf8b888e4de42f788ac989fe6fab2a",
+      "32f379d264811d931cfe67647ebdc6f321de52c3f3de38c2ee345615b6fe0b4e": "c7199183d8f392bda14a8f8765bc6b3dd1951475",
+      "60f73afe109981a0aa04d5d2fbb10769557e142d0af4becb2a06747e0f0f0923": "47767cd5557c166b2bd5255a9a2857a4a1288e03",
+      "466168fff6db355099f5a8562eaf6f2dd98e443d251bce23f8eb7078fb94b44d": "7eac0cb88829e5d89645803fd6256049348ab593",
+      "83daebfeba1c4c79c3820b3bf80817fb73cb948c43a31e07d2cdb3ff73d9a082": "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69",
+      "16952aa58d752e92fe3f6a2bbfe7b8bb77f3897a15fb79dce1c5b9599ac909c5": "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae",
       "39a9c99bb666c9fcf0533997151af2659e8b7b02a5894b55b915d0a3ae4a1fe3": "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15",
+      "83ef501f94118f1d757f328a5e596d5ebeb2074675d24737ebb4730f45d62c62": "c1116b7e520541cf2925b30053106d85a4bae62e",
       "27910543e2e4f1750a8752edfbdf9a729bc1ae2b22380cf88af66548b8af5fc0": "35ec298b803b29b6bee6d89f46507c50a3461b35",
       "5b8507b42497bbb61ed59a11974da52e47d5c143476ad957cc997345184b7260": "14d28015d8a8c902d219b6a24d2241aa061dda09",
       "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4": "7df059597099bb7dcf25d2a9aedfaf4465f72d8d",
@@ -498206,11 +498318,53 @@
       "ines/ROOT.chts": [
         "dbbaa1e149d1e3bbf62b1b16c9e23ecf5924636d"
       ],
+      "Other/ines/battle-toads.chts": [
+        "fc59b7662bdf8b888e4de42f788ac989fe6fab2a"
+      ],
+      "ines/battle-toads.chts": [
+        "fc59b7662bdf8b888e4de42f788ac989fe6fab2a"
+      ],
+      "Other/ines/dragon-warrior-2.chts": [
+        "c7199183d8f392bda14a8f8765bc6b3dd1951475"
+      ],
+      "ines/dragon-warrior-2.chts": [
+        "c7199183d8f392bda14a8f8765bc6b3dd1951475"
+      ],
+      "Other/ines/dragon-warrior.chts": [
+        "47767cd5557c166b2bd5255a9a2857a4a1288e03"
+      ],
+      "ines/dragon-warrior.chts": [
+        "47767cd5557c166b2bd5255a9a2857a4a1288e03"
+      ],
+      "Other/ines/fceu.chts": [
+        "7eac0cb88829e5d89645803fd6256049348ab593"
+      ],
+      "ines/fceu.chts": [
+        "7eac0cb88829e5d89645803fd6256049348ab593"
+      ],
+      "Other/ines/final-fantasy-2.chts": [
+        "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69"
+      ],
+      "ines/final-fantasy-2.chts": [
+        "5d467c4da5bd62051b1732351ecb1bfb8ad2bf69"
+      ],
+      "Other/ines/final-fantasy-3.chts": [
+        "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae"
+      ],
+      "ines/final-fantasy-3.chts": [
+        "a76c50557b35cf28b2f7456ac9f282ab3a0af3ae"
+      ],
       "Other/ines/names.dat": [
         "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15"
       ],
       "ines/names.dat": [
         "bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15"
+      ],
+      "Other/ines/super-mario-brothers.chts": [
+        "c1116b7e520541cf2925b30053106d85a4bae62e"
+      ],
+      "ines/super-mario-brothers.chts": [
+        "c1116b7e520541cf2925b30053106d85a4bae62e"
       ],
       "Other/infinity/assets/7x7demake.p8.png": [
         "35ec298b803b29b6bee6d89f46507c50a3461b35"

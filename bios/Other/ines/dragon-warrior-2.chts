@@ -1,0 +1,218 @@
+[Dragon Warrior 2]
+Code=EPLANE   : Skip battles
+Code=UPYOUS   : When in Rhone (last area), rise to highest level after battle
+Code=NAZUGV   : High experience from fighting enemies (1)
+Code=YAZUGV   : High experience from fighting enemies (2)
+Code=OPEOGNXO : High experience after battle
+Code=AAAULA   : Town and castle designs are different
+Code=ATOITGSA : Walk through walls
+Code=NYVZLAAE : Sell lottery tickets for $49013
+Code=OXOOVVPX : Increase all stats by 15 when levelling up
+Code=YEUOUNLU : Buy Sword Of Erdrick for $2
+Code=LOUOKYAE : Buy Armor Of Erdrick for $4
+Code=AEUEAAPA : No random battles
+Code=AEXOEAIA : Get $65535 after winning a battle
+Code=PAXEKSOX : First treasure chest has $12850
+Menu=First treasure chest has Sword of Thunder
+Code=AESPGYZY : Get treasure chest after each battle
+Code=SEKXAPST : Infinite MP in battle
+Code=OZEPOASX : Wizard Ring never breaks when used
+Menu=Lottery ticket behaves like Dragon Potion
+Menu=Any character can equip any weapon or armor
+Menu=Infinite HP in battle
+Menu=Stay at inns for free
+Menu=Modify Enemies in Battle
+Menu=Free Items
+Menu=Free Spells
+Menu=Free Mysterious Hat Spells
+Menu=Prince of Midenhall
+Menu=Prince of Cannock
+Menu=Princess Moonbrooke
+
+[Lottery ticket behaves like Dragon Potion]
+ENVOIYAZ
+GXVOTNTZ
+
+[Any character can equip any weapon or armor]
+SXXXZUSU
+VUXXLUSU
+
+[First treasure chest has Sword of Thunder]
+APUPOTTA
+APVOOGTA
+
+[Infinite HP in battle]
+ALUZOYSX
+ZGUZUYSE
+
+[Stay at inns for free]
+SZKAKSSE
+SZKEOSSE
+
+[Free Spells]
+Code=AEVAVGLA : Heal
+Code=AEVEEGIA : Healmore
+Code=AEVEXKAA : Healall
+Code=AEVESGLA : Antidote
+Code=AEVENGTA : Outside
+Code=AENAOGTA : Return
+Code=AENAUGGA : Stepguard
+Code=AENAKKYA : Revive
+
+[Free Mysterious Hat Spells]
+Code=AENUZGZA : Fireball
+Code=AENULGZA : Sleep
+Code=AENUGGGA : Firebane
+Code=AENUIGGA : Defeat
+Code=AENUTGGA : Infernos
+Code=AENUYGLA : Stopspell
+Code=AAELYSAA : Explode
+Code=AAEUASYA : Chance
+Code=AAELZILA : Heal
+Code=AAELGIIA : Healmore
+Code=AAELTSAA : Healall
+
+[Prince of Midenhall]
+Code=LSEKYYIS : Start with Armor of Erdrick
+Code=NNKLUSGO : Start with 255 HP
+Code=NNKLOOIE : Start with 255 Strength
+Code=NNKLXIGE : Start with 255 Agility
+
+[Prince of Cannock]
+Code=PKOGYYIK : Start with Falcon Sword
+Code=LSOKAYII : Start with Water Flying Cloth
+Code=NNKLNSYO : Start with 255 HP
+Code=NNKLSIGE : Start with 255 Strength
+Code=NNKLVIGE : Start with 255 Agility
+Code=NNKUEITE : Start With 255 MP
+
+[Princess Moonbrooke]
+Code=GKOKYYPG : Start With Staff of Thunder
+Code=LSXGAYPI : Start With Water Flying Cloth
+Code=NNKUUIAX : Start With 255 HP
+Code=NNKUOIZE : Start With 255 Strength
+Code=NNKUXITO : Start With 255 Agility
+Code=NNKUKSGO : Start With 255 MP
+
+[Free Items]
+Code=AAEZTEGL : Club
+Code=AAEZAEEG : Magic Knife
+Code=AAUZGEZI : Leather Shield
+Code=AANZZEAA : Antidote Herb
+Code=AANZGEYA : Medical Herb
+Code=AAVZGEAZ : Fairy Water
+Code=AAVZTAAI : Wyvern Wing
+Menu=Chain Sickle
+Menu=Chain Mail
+Menu=Wizard Wand
+Menu=Broad Sword
+Menu=Dragon Killer
+Menu=Dragon Bane
+
+[Chain Sickle / Free Items]
+AAEXZAVA
+AAEXLAPA
+
+[Chain Mail / Free Items]
+AAXXAAET
+AAXXPAPA
+
+[Wizard Wand / Free Items]
+AAEZZAKG
+AAEZLEPA
+
+[Broad Sword / Free Items]
+AAOZAEKI
+AAOZPAIA
+
+[Dragon Killer / Free Items]
+AAOZYEYP
+AAOZTAAG
+
+[Dragon Bane / Free Items]
+AASXIAZA
+AASXGAEA
+
+[Modify Enemies in Battle]
+Code=PANEYUNY : Slimes
+Code=ZANEYUNY : Slugs
+Code=LANEYUNY : Iron Ants
+Code=GANEYUNY : Drakees
+Code=IANEYUNY : Wild Mouse
+Code=TANEYUNY : Healer
+Code=YANEYUNY : Ghost Mouse
+Code=AANEYUNN : Babble
+Code=PANEYUNN : Army Ants
+Code=ZANEYUNN : Magicians
+Code=LANEYUNN : Big Rats
+Code=GANEYUNN : Big Cobras
+Code=IANEYUNN : Magic Ants
+Code=TANEYUNN : Magidrakees
+Code=YANEYUNN : Centipods
+Code=APNEYUNY : Man O War
+Code=PPNEYUNY : Lizard
+Code=ZPNEYUNY : Zombie
+Code=LPNEYUNY : Smoke
+Code=GPNEYUNY : Ghost Rat
+Code=IPNEYUNY : Baboon
+Code=TPNEYUNY : Carnivog
+Code=YPNEYUNY : Megapede
+Code=APNEYUNN : Sea Slug
+Code=PPNEYUNN : Medusa Ball
+Code=ZPNEYUNN : Enchanter
+Code=LPNEYUNN : Mud Man
+Code=GPNEYUNN : Magic Baboon
+Code=IPNEYUNN : Demi Ghost
+Code=TPNEYUNN : Gremlin
+Code=YPNEYUNN : Poison Lily
+Code=AZNEYUNY : Mummy Man
+Code=PZNEYUNY : Gorgon
+Code=ZZNEYUNY : Sabre Tiger
+Code=LZNEYUNY : Dragon Fly
+Code=GZNEYUNY : Titan Tree
+Code=IZNEYUNY : Undead
+Code=TZNEYUNY : Basilisk
+Code=YZNEYUNY : Goppi
+Code=AZNEYUNN : Orc
+Code=PZNEYUNN : Puppet Man
+Code=ZZNEYUNN : Mummy
+Code=LZNEYUNN : Evil Tree
+Code=GZNEYUNN : Gas
+Code=IZNEYUNN : Hork
+Code=TZNEYUNN : Hawkman
+Code=YZNEYUNN : Sorcerer
+Code=ALNEYUNY : Metal Slime
+Code=PLNEYUNY : Hunter
+Code=ZLNEYUNY : Evil Eye
+Code=LLNEYUNY : Hibababango
+Code=GLNEYUNY : Graboopi
+Code=ILNEYUNY : Gold Orc
+Code=TLNEYUNY : Evil Clown
+Code=YLNEYUNY : Ghoul
+Code=ALNEYUNN : Vampirus
+Code=PLNEYUNN : Megaknight
+Code=ZLNEYUNN : Sabre Lion
+Code=LLNEYUNN : Metal Hunter
+Code=GLNEYUNN : Ozwarg
+Code=ILNEYUNN : Dark Eye
+Code=TLNEYUNN : Gargoyle
+Code=YLNEYUNN : Orc King
+Code=AGNEYUNY : Magic Vampirus
+Code=PGNEYUNY : Berserkers
+Code=ZGNEYUNY : Metal Babbles
+Code=LGNEYUNY : Hargon's Knight
+Code=GGNEYUNY : Cyclops
+Code=IGNEYUNY : Attackbots
+Code=TGNEYUNY : Green Dragon
+Code=YGNEYUNY : Mace Master
+Code=AGNEYUNN : Flames
+Code=PGNEYUNN : Silver Batboon
+Code=ZGNEYUNN : Blizzard
+Code=LGNEYUNN : Giant
+Code=GGNEYUNN : Gold Batboon
+Code=IGNEYUNN : Bull Warg
+Code=TGNEYUNN : Atlas
+Code=YGNEYUNN : Bazuzu
+Code=AINEYUNY : Zarlox
+Code=PINEYUNY : Hargon
+Code=ZINEYUNY : Malroth
