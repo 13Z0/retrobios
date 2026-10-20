@@ -10,6 +10,8 @@ traceback after every pack had been written.
 from __future__ import annotations
 
 import sys
+import contextlib
+import io
 import tempfile
 import unittest
 from pathlib import Path
@@ -23,11 +25,12 @@ from generate_pack import _target_cores_for  # noqa: E402
 
 class CheckReadsTheTargetLikeTheBuild(unittest.TestCase):
     def test_a_platform_without_a_target_file(self):
-        with tempfile.TemporaryDirectory() as platforms:
-            built, kept = build_target_cores_cache(
-                ["recalbox"], "x86_64", platforms, is_all=True
-            )
-            self.assertEqual((built, kept), ({"recalbox": None}, ["recalbox"]))
+        # Left out of a targeted --all run rather than built unfiltered, and
+        # a run where no platform has the target is refused.
+        with tempfile.TemporaryDirectory() as platforms, \
+                contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(ValueError):
+                build_target_cores_cache(["recalbox"], "x86_64", platforms, is_all=True)
             self.assertIsNone(_target_cores_for("recalbox", "x86_64", platforms))
 
     def test_a_platform_with_a_target_file_is_narrowed(self):
