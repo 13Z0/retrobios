@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-20T13:08:19Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 3366,
-  "total_size": 4406515578,
-  "pack_files": 3368,
-  "pack_size": 4406515578,
-  "total_omitted": 11,
+  "total_files": 3372,
+  "total_size": 4407255726,
+  "pack_files": 3374,
+  "pack_size": 4407255726,
+  "total_omitted": 12,
   "omitted_files": [
     {
       "dest": "caesar3/The_empire.555",
@@ -384,6 +384,16 @@
       "reason": "not_found",
       "cores": [
         "prboom"
+      ]
+    },
+    {
+      "dest": "prestige.ttf",
+      "name": "prestige.ttf",
+      "system": "apple-iigs",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gsplus-legacy"
       ]
     }
   ],
@@ -503,6 +513,9 @@
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
       "genesisplusgxwide"
+    ],
+    "gsplus-legacy": [
+      "gsplus"
     ],
     "hypseus-singe": [
       "hypseus",
@@ -1033,6 +1046,7 @@
       "beetle_gba",
       "bizhawk",
       "dolphin",
+      "fbneo",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -24611,9 +24625,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24624,9 +24635,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/frogs.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24637,9 +24645,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/invaders.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24650,9 +24655,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/omegrace.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24663,9 +24665,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/skydiver.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24676,9 +24675,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/solarq.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -24689,9 +24685,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/warrior.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -31171,9 +31164,6 @@
       "cores": [
         "advancemame",
         "mame2010"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -32353,13 +32343,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "donpachi.zip"
     },
@@ -32372,13 +32355,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "sfz3mix.zip"
     },
@@ -32390,13 +32366,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "twotiger.zip"
@@ -32677,13 +32646,83 @@
       ]
     },
     {
+      "dest": "ROM",
+      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
+      "size": 131072,
+      "repo_path": "bios/Apple/Apple IIGS/ROM",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
       "dest": "c600.rom",
       "sha1": "d4181c9f046aafc3fb326b381baac809d9e38d16",
       "sha256": "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d",
       "size": 256,
       "repo_path": "bios/Apple/Apple II/AppleIIe_DiskII.rom",
       "cores": [
-        "gsplus"
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "parallel.rom",
+      "sha1": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
+      "sha256": "e1b91e0156cabc879663f4c3936b3866bda74182fb0506667cd2d01e19d9e471",
+      "size": 256,
+      "repo_path": "bios/Apple/Apple IIGS/parallel.rom",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "lib/letgothl.ttf",
+      "sha1": "328b2ec7402df86add5c9cd68692c126b7e79707",
+      "sha256": "3b6b7288c186e4b8265cb1996af0e3620267ada9faf38f57d6f87b759ad804b7",
+      "size": 36356,
+      "repo_path": "bios/Other/gsplus-legacy/letgothl.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "sansserif.ttf",
+      "sha1": "2c5cb7cfa19eea5d90c375dc0f9f8e502ea97f0c",
+      "sha256": "35c0f3559d8db569e36c31095b8a60d441643d95f59139de40e23fada819b833",
+      "size": 275572,
+      "repo_path": "bios/Other/dosbox-x/FONTS/sansserif.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "courier.ttf",
+      "sha1": "9c5be4c1f151257798602aa74a7937dcead5db1f",
+      "sha256": "6715838c52f813f3821549d3f645db9a768bd6f3a43d8f85a89cb6875a546c61",
+      "size": 302688,
+      "repo_path": "bios/Other/dosbox-x/FONTS/courier.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "script.ttf",
+      "sha1": "e1f0296ed8f9e912fbafa652c752af613a7e1111",
+      "sha256": "2e131823861483b966f87ca23063ba6f3c0cecf9ac5d785d71ed1710dab477d5",
+      "size": 69876,
+      "repo_path": "bios/Other/dosbox-x/FONTS/script.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "ocra.ttf",
+      "sha1": "ba06d81504a4d769dcd4dd9282443d7946fe3fda",
+      "sha256": "2b058a75ff9336c703e48b618ef759906dc9e37712e27698f74aa3ec0b949346",
+      "size": 55400,
+      "repo_path": "bios/Other/dosbox-x/FONTS/ocra.ttf",
+      "cores": [
+        "gsplus-legacy"
       ]
     },
     {
@@ -34669,9 +34708,6 @@
       "repo_path": "bios/Arcade/MAME/history.dat",
       "cores": [
         "mame2003"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -34682,9 +34718,6 @@
       "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2003"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -34706,9 +34739,6 @@
       "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "stv"
       ]
     },
     {
@@ -34766,12 +34796,6 @@
       "repo_path": "bios/Arcade/Arcade/mk6nsw11.zip",
       "cores": [
         "mame2015"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "naomi2",
-        "stv"
       ]
     },
     {
@@ -34783,12 +34807,6 @@
       "cores": [
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "naomi2",
-        "stv"
       ]
     },
     {
@@ -34800,12 +34818,6 @@
       "cores": [
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "naomi2",
-        "stv"
       ]
     },
     {
@@ -36211,13 +36223,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -36710,13 +36715,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -37653,16 +37651,6 @@
       ],
       "systems": [
         "nintendo-gba"
-      ]
-    },
-    {
-      "dest": "ROM",
-      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
-      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
-      "size": 131072,
-      "repo_path": "bios/Apple/Apple IIGS/ROM",
-      "cores": [
-        "gsplus"
       ]
     },
     {
@@ -38979,13 +38967,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -38996,13 +38977,6 @@
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -39568,13 +39542,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {

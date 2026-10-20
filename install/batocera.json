@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-20T13:34:23Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -272,11 +272,11 @@
       }
     }
   ],
-  "total_files": 14478,
-  "total_size": 9772359136,
-  "pack_files": 14480,
-  "pack_size": 9772359136,
-  "total_omitted": 397,
+  "total_files": 14484,
+  "total_size": 9773100322,
+  "pack_files": 14486,
+  "pack_size": 9773100322,
+  "total_omitted": 398,
   "omitted_files": [
     {
       "dest": "AUDIO.APC",
@@ -4179,6 +4179,16 @@
       ]
     },
     {
+      "dest": "prestige.ttf",
+      "name": "prestige.ttf",
+      "system": "apple-iigs",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
       "dest": "robots-h.mvl",
       "name": "robots-h.mvl",
       "system": "descent2",
@@ -4370,6 +4380,9 @@
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
       "genesisplusgxwide"
+    ],
+    "gsplus-legacy": [
+      "gsplus"
     ],
     "higan_sfc_balanced": [
       "nside_sfc_balanced"
@@ -4711,6 +4724,7 @@
     "apple-iigs": [
       "clk",
       "gsplus",
+      "gsplus-legacy",
       "kegs"
     ],
     "apple-macintosh-ii": [
@@ -5047,6 +5061,7 @@
     "nintendo-gba": [
       "beetle_gba",
       "bizhawk",
+      "fbneo",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -7459,16 +7474,16 @@
       "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
       "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
       "size": 7438,
-      "repo_path": "bios/Tandy/CoCo/coco.zip",
+      "repo_path": "bios/Tandy/CoCo/.variants/coco.zip.b0b96aad",
       "cores": null,
       "systems": [
         "coco"
       ],
       "alternatives": [
         {
-          "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-          "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-          "size": 7438,
+          "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+          "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+          "size": 36592,
           "repo_path": "bios/Tandy/CoCo/coco.zip",
           "cores": [
             "mame"
@@ -171021,9 +171036,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "alternatives": [
         {
           "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
@@ -171053,9 +171065,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkong.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -171066,9 +171075,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkongjr.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -171079,9 +171085,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/galaga.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -171092,9 +171095,6 @@
       "repo_path": "bios/Other/fbalpha2012/fba2012/samples/rallyx.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -171105,9 +171105,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/ghox.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "ghox.zip"
@@ -171121,9 +171118,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "fireshrk.zip"
     },
@@ -171135,9 +171129,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/tekipaki.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "tekipaki.zip"
@@ -171151,9 +171142,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "vimana.zip"
     },
@@ -171165,13 +171153,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/donpachi.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "donpachi.zip"
@@ -171185,13 +171166,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "sfz3mix.zip"
     },
@@ -171203,13 +171177,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "twotiger.zip"
@@ -171643,26 +171610,91 @@
       ]
     },
     {
-      "dest": "ROM",
-      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
-      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
-      "size": 131072,
-      "repo_path": "bios/Apple/Apple IIGS/ROM",
-      "cores": [
-        "gsplus"
-      ],
-      "systems": [
-        "apple-iigs"
-      ]
-    },
-    {
       "dest": "c600.rom",
       "sha1": "d4181c9f046aafc3fb326b381baac809d9e38d16",
       "sha256": "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d",
       "size": 256,
       "repo_path": "bios/Apple/Apple II/AppleIIe_DiskII.rom",
       "cores": [
-        "gsplus"
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "parallel.rom",
+      "sha1": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
+      "sha256": "e1b91e0156cabc879663f4c3936b3866bda74182fb0506667cd2d01e19d9e471",
+      "size": 256,
+      "repo_path": "bios/Apple/Apple IIGS/parallel.rom",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "lib/letgothl.ttf",
+      "sha1": "328b2ec7402df86add5c9cd68692c126b7e79707",
+      "sha256": "3b6b7288c186e4b8265cb1996af0e3620267ada9faf38f57d6f87b759ad804b7",
+      "size": 36356,
+      "repo_path": "bios/Other/gsplus-legacy/letgothl.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "sansserif.ttf",
+      "sha1": "2c5cb7cfa19eea5d90c375dc0f9f8e502ea97f0c",
+      "sha256": "35c0f3559d8db569e36c31095b8a60d441643d95f59139de40e23fada819b833",
+      "size": 275572,
+      "repo_path": "bios/Other/dosbox-x/FONTS/sansserif.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "courier.ttf",
+      "sha1": "9c5be4c1f151257798602aa74a7937dcead5db1f",
+      "sha256": "6715838c52f813f3821549d3f645db9a768bd6f3a43d8f85a89cb6875a546c61",
+      "size": 302688,
+      "repo_path": "bios/Other/dosbox-x/FONTS/courier.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "script.ttf",
+      "sha1": "e1f0296ed8f9e912fbafa652c752af613a7e1111",
+      "sha256": "2e131823861483b966f87ca23063ba6f3c0cecf9ac5d785d71ed1710dab477d5",
+      "size": 69876,
+      "repo_path": "bios/Other/dosbox-x/FONTS/script.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "ocra.ttf",
+      "sha1": "ba06d81504a4d769dcd4dd9282443d7946fe3fda",
+      "sha256": "2b058a75ff9336c703e48b618ef759906dc9e37712e27698f74aa3ec0b949346",
+      "size": 55400,
+      "repo_path": "bios/Other/dosbox-x/FONTS/ocra.ttf",
+      "cores": [
+        "gsplus-legacy"
       ],
       "systems": [
         "apple-iigs"
@@ -176565,10 +176597,10 @@
     },
     {
       "dest": "scv.zip",
-      "sha1": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
-      "sha256": "d517d15204d28dd50dfefe51351e62e58e1cfd1452dd23071b2cc1bed485acf1",
-      "size": 4073,
-      "repo_path": "bios/Epoch/Super Cassette Vision/scv.zip",
+      "sha1": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
+      "sha256": "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7",
+      "size": 5111,
+      "repo_path": "bios/Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e",
       "cores": [
         "mame"
       ],
@@ -243533,13 +243565,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -243954,6 +243979,19 @@
       ],
       "systems": [
         "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ROM",
+      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
+      "size": 131072,
+      "repo_path": "bios/Apple/Apple IIGS/ROM",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
       ]
     },
     {
@@ -244385,13 +244423,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -244402,13 +244433,6 @@
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -244974,13 +244998,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {

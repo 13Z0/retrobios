@@ -5,7 +5,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-20T13:34:23Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,9 +16,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8448,
-  "total_size": 8767601220,
+  "total_size": 8767631412,
   "pack_files": 11004,
-  "pack_size": 8800968290,
+  "pack_size": 8800998482,
   "total_omitted": 211,
   "omitted_files": [
     {
@@ -2616,6 +2616,9 @@
       "minivmac"
     ],
     "arcade": [
+      "advancemame",
+      "advmame-0.94",
+      "advmame-1.4",
       "ares",
       "droidarcadia",
       "fba2x",
@@ -2625,12 +2628,19 @@
       "fbneo_cps12",
       "fbneo_neogeo",
       "hbmame",
+      "mame2000",
+      "mame2003",
+      "mame2003_midway",
+      "mame2003_plus",
       "mame2010",
+      "mame2014",
+      "mame2015",
       "mame4all",
       "mame4droid",
       "mame4droid-2024",
       "psxmame",
-      "raine"
+      "raine",
+      "ume2015"
     ],
     "atari-400-800": [
       "altirra",
@@ -2876,6 +2886,7 @@
     "nintendo-gba": [
       "beetle_gba",
       "bizhawk",
+      "fbneo",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -49697,6 +49708,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49707,6 +49721,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/frogs.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49717,6 +49734,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/invaders.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49727,6 +49747,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/omegrace.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49737,6 +49760,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/skydiver.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49747,6 +49773,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/solarq.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -49757,6 +49786,9 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/warrior.zip",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -79710,6 +79742,9 @@
       "cores": [
         "advmame-0.94",
         "mame2000"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -81338,12 +81373,7 @@
         "fbneo"
       ],
       "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
+        "arcade"
       ],
       "storage": "release",
       "release_asset": "donpachi.zip"
@@ -81358,12 +81388,7 @@
         "fbneo"
       ],
       "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
+        "arcade"
       ],
       "storage": "release",
       "release_asset": "sfz3mix.zip"
@@ -81376,14 +81401,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "twotiger.zip"
@@ -85055,9 +85072,9 @@
     },
     {
       "dest": "coco.zip",
-      "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-      "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-      "size": 7438,
+      "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+      "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+      "size": 36592,
       "repo_path": "bios/Tandy/CoCo/coco.zip",
       "cores": [
         "mame"
@@ -85135,10 +85152,10 @@
     },
     {
       "dest": "scv.zip",
-      "sha1": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
-      "sha256": "d517d15204d28dd50dfefe51351e62e58e1cfd1452dd23071b2cc1bed485acf1",
-      "size": 4073,
-      "repo_path": "bios/Epoch/Super Cassette Vision/scv.zip",
+      "sha1": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
+      "sha256": "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7",
+      "size": 5111,
+      "repo_path": "bios/Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e",
       "cores": [
         "mame"
       ],
@@ -105181,6 +105198,9 @@
       "repo_path": "bios/Arcade/MAME/cheat.dat",
       "cores": [
         "mame2000"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -105192,6 +105212,9 @@
       "cores": [
         "mame2003",
         "mame2003_midway"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -105203,6 +105226,9 @@
       "cores": [
         "mame2003",
         "mame2003_midway"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -105224,6 +105250,9 @@
       "repo_path": "bios/Arcade/MAME/history.dat",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -105234,6 +105263,9 @@
       "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -105310,10 +105342,6 @@
       "cores": [
         "mame2015",
         "ume2015"
-      ],
-      "systems": [
-        "3do",
-        "philips-cdi"
       ]
     },
     {
@@ -105326,10 +105354,6 @@
         "mame2015",
         "mame2016",
         "ume2015"
-      ],
-      "systems": [
-        "3do",
-        "philips-cdi"
       ]
     },
     {
@@ -105342,10 +105366,6 @@
         "mame2015",
         "mame2016",
         "ume2015"
-      ],
-      "systems": [
-        "3do",
-        "philips-cdi"
       ]
     },
     {
@@ -110473,12 +110493,7 @@
         "fbneo"
       ],
       "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
+        "nintendo-snes"
       ]
     },
     {
@@ -110644,6 +110659,9 @@
       "cores": [
         "advmame-0.94"
       ],
+      "systems": [
+        "arcade"
+      ],
       "alternatives": [
         {
           "sha1": "7381472bf046126257e51a0124e4553282f020e5",
@@ -110684,6 +110702,9 @@
       "cores": [
         "advmame-0.94",
         "advmame-1.4"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -111161,6 +111182,9 @@
       "repo_path": "bios/Arcade/MAME/history.dat",
       "cores": [
         "mame2000"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -111171,6 +111195,9 @@
       "repo_path": "bios/Arcade/Arcade/hiscore.dat",
       "cores": [
         "mame2003_midway"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -111181,6 +111208,9 @@
       "repo_path": "bios/Arcade/MAME/cheat.dat",
       "cores": [
         "mame2003_midway"
+      ],
+      "systems": [
+        "arcade"
       ]
     },
     {
@@ -111712,8 +111742,7 @@
         "ume2015"
       ],
       "systems": [
-        "3do",
-        "philips-cdi"
+        "arcade"
       ]
     },
     {
@@ -111800,14 +111829,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -111818,14 +111839,6 @@
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -112189,12 +112202,7 @@
         "fbneo"
       ],
       "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-cd"
+        "nintendo-snes"
       ]
     },
     {

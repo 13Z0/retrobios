@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-20T13:34:23Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -279,9 +279,9 @@
     }
   ],
   "total_files": 8185,
-  "total_size": 7839679793,
+  "total_size": 7839709985,
   "pack_files": 8187,
-  "pack_size": 7839679793,
+  "pack_size": 7839709985,
   "total_omitted": 10,
   "omitted_files": [
     {
@@ -16704,10 +16704,6 @@
       "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.30c6ad69",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ],
       "alternatives": [
         {
@@ -57627,9 +57623,6 @@
       "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
       "cores": [
         "ume2015"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -58834,8 +58827,8 @@
     },
     {
       "dest": "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
-      "sha1": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
-      "sha256": "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c",
+      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
       "size": 131072,
       "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "cores": [
@@ -61448,9 +61441,6 @@
         "fbalpha2012",
         "fbalpha2012_cps3"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "alternatives": [
         {
           "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
@@ -61480,9 +61470,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkong.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -61493,9 +61480,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkongjr.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -61506,9 +61490,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/galaga.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -61519,9 +61500,6 @@
       "repo_path": "bios/Other/fbalpha2012/fba2012/samples/rallyx.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -61532,9 +61510,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/ghox.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "ghox.zip"
@@ -61548,9 +61523,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "fireshrk.zip"
     },
@@ -61563,9 +61535,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "tekipaki.zip"
     },
@@ -61577,9 +61546,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/vimana.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "vimana.zip"
@@ -61894,10 +61860,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "donpachi.zip"
     },
@@ -61910,10 +61872,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "sfz3mix.zip"
     },
@@ -61925,10 +61883,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "twotiger.zip"
@@ -65350,9 +65304,9 @@
     },
     {
       "dest": "coco.zip",
-      "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-      "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-      "size": 7438,
+      "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+      "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+      "size": 36592,
       "repo_path": "bios/Tandy/CoCo/coco.zip",
       "cores": [
         "mame"
@@ -65430,10 +65384,10 @@
     },
     {
       "dest": "scv.zip",
-      "sha1": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
-      "sha256": "d517d15204d28dd50dfefe51351e62e58e1cfd1452dd23071b2cc1bed485acf1",
-      "size": 4073,
-      "repo_path": "bios/Epoch/Super Cassette Vision/scv.zip",
+      "sha1": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
+      "sha256": "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7",
+      "size": 5111,
+      "repo_path": "bios/Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e",
       "cores": [
         "mame"
       ]
@@ -82113,9 +82067,6 @@
       "cores": [
         "mame2015",
         "ume2015"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -82128,9 +82079,6 @@
         "mame2015",
         "mame2016",
         "ume2015"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -82143,9 +82091,6 @@
         "mame2015",
         "mame2016",
         "ume2015"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -87987,10 +87932,6 @@
       "repo_path": "bios/Arcade/Arcade/gba.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -88301,10 +88242,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -88572,10 +88509,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -88586,10 +88519,6 @@
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -88713,10 +88642,6 @@
       "repo_path": "bios/Arcade/Arcade/gba.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -89162,10 +89087,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "snk-neogeo-cd"
       ]
     },
     {

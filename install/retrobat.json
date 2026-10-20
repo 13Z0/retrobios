@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T13:34:23Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 5082,
-  "total_size": 8188594431,
-  "pack_files": 5084,
-  "pack_size": 8188594431,
-  "total_omitted": 179,
+  "total_files": 5087,
+  "total_size": 8189363477,
+  "pack_files": 5089,
+  "pack_size": 8189363477,
+  "total_omitted": 180,
   "omitted_files": [
     {
       "dest": "AR6002G.ROM",
@@ -1997,6 +1997,16 @@
       ]
     },
     {
+      "dest": "prestige.ttf",
+      "name": "prestige.ttf",
+      "system": "apple-iigs",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "gsplus-legacy"
+      ]
+    },
+    {
       "dest": "rapidus-core-pbi.rom",
       "name": "rapidus-core-pbi.rom",
       "system": "atari-400-800",
@@ -2195,6 +2205,9 @@
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
       "genesisplusgxwide"
+    ],
+    "gsplus-legacy": [
+      "gsplus"
     ],
     "higan_sfc_balanced": [
       "nside_sfc_balanced"
@@ -2541,6 +2554,7 @@
     "apple-iigs": [
       "clk",
       "gsplus",
+      "gsplus-legacy",
       "kegs"
     ],
     "archimedes": [
@@ -2952,6 +2966,7 @@
     "nintendo-gba": [
       "beetle_gba",
       "bizhawk",
+      "fbneo",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -5362,9 +5377,9 @@
     },
     {
       "dest": "coco.zip",
-      "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-      "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-      "size": 7438,
+      "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+      "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+      "size": 36592,
       "repo_path": "bios/Tandy/CoCo/coco.zip",
       "cores": null,
       "systems": [
@@ -5372,9 +5387,9 @@
       ],
       "alternatives": [
         {
-          "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-          "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-          "size": 7438,
+          "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+          "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+          "size": 36592,
           "repo_path": "bios/Tandy/CoCo/coco.zip",
           "cores": [
             "mame"
@@ -6117,36 +6132,6 @@
       "repo_path": "bios/Sega/Saturn/ar_bios.zip",
       "cores": null,
       "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "emerson-arcadia-2001",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
-      "declared_in": [
         "emerson-arcadia-2001"
       ],
       "alternatives": [
@@ -6773,8 +6758,8 @@
     },
     {
       "dest": "laseractive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
-      "sha1": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
-      "sha256": "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c",
+      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
       "size": 131072,
       "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "cores": null,
@@ -8414,10 +8399,10 @@
       ],
       "alternatives": [
         {
-          "sha1": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
-          "sha256": "d517d15204d28dd50dfefe51351e62e58e1cfd1452dd23071b2cc1bed485acf1",
-          "size": 4073,
-          "repo_path": "bios/Epoch/Super Cassette Vision/scv.zip",
+          "sha1": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
+          "sha256": "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7",
+          "size": 5111,
+          "repo_path": "bios/Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e",
           "cores": [
             "mame"
           ]
@@ -11914,7 +11899,7 @@
       "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
       "size": 131072,
-      "repo_path": "bios/Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773",
+      "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "cores": [
         "bizhawk"
       ]
@@ -31362,9 +31347,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31375,9 +31357,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/frogs.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31388,9 +31367,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/invaders.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31401,9 +31377,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/omegrace.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31414,9 +31387,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/skydiver.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31427,9 +31397,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/solarq.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -31440,9 +31407,6 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/warrior.zip",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -39842,9 +39806,6 @@
         "fbalpha2012",
         "fbalpha2012_cps3"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "alternatives": [
         {
           "sha1": "6f730abe0d76161336f09229f54e9f9ac7619d63",
@@ -39901,9 +39862,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkong.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -39914,9 +39872,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkongjr.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -39927,9 +39882,6 @@
       "repo_path": "bios/Arcade/FBAlpha 2012/samples/galaga.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -39940,9 +39892,6 @@
       "repo_path": "bios/Other/fbalpha2012/fba2012/samples/rallyx.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ]
     },
     {
@@ -39953,9 +39902,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/ghox.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "ghox.zip"
@@ -39969,9 +39915,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "fireshrk.zip"
     },
@@ -39984,9 +39927,6 @@
       "cores": [
         "fbalpha2012"
       ],
-      "systems": [
-        "snk-neogeo"
-      ],
       "storage": "release",
       "release_asset": "tekipaki.zip"
     },
@@ -39998,9 +39938,6 @@
       "repo_path": "bios/Arcade/fba2012/samples/vimana.zip",
       "cores": [
         "fbalpha2012"
-      ],
-      "systems": [
-        "snk-neogeo"
       ],
       "storage": "release",
       "release_asset": "vimana.zip"
@@ -40025,13 +39962,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "donpachi.zip"
     },
@@ -40044,13 +39974,6 @@
       "cores": [
         "fbneo"
       ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
-      ],
       "storage": "release",
       "release_asset": "sfz3mix.zip"
     },
@@ -40062,13 +39985,6 @@
       "repo_path": "bios/Other/fbneo/fbneo/samples/twotiger.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ],
       "storage": "release",
       "release_asset": "twotiger.zip"
@@ -40551,35 +40467,6 @@
       "cores": [
         "groovymame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "d08a271feaab04ac904e6357c23bca95c1cf57f1",
@@ -40610,35 +40497,6 @@
       "repo_path": "bios/Arcade/Arcade/sammymdl.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -40731,35 +40589,6 @@
       "cores": [
         "groovymame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -40792,35 +40621,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -40941,35 +40741,6 @@
       "repo_path": "bios/Arcade/Arcade/aleck64.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -41098,35 +40869,6 @@
       "cores": [
         "groovymame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "a97c0579198d88d4db3f7f1b7707ddc6a86ab084",
@@ -41160,35 +40902,6 @@
       "repo_path": "bios/Arcade/Arcade/kviper.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -41257,35 +40970,6 @@
         "mame2014",
         "mame2016",
         "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41297,35 +40981,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41337,35 +40992,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41377,35 +41003,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41438,35 +41035,6 @@
       "cores": [
         "groovymame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "119fbb7632b13834f36e7da45a22b662f52ffe1a",
@@ -41488,35 +41056,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41527,35 +41066,6 @@
       "repo_path": "bios/Arcade/Arcade/taitotz.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -41643,35 +41153,6 @@
         "mame2010",
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -41682,35 +41163,6 @@
       "repo_path": "bios/Arcade/Arcade/macsbios.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -41762,33 +41214,7 @@
         "mame"
       ],
       "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
+        "3do"
       ]
     },
     {
@@ -41816,35 +41242,6 @@
       "repo_path": "bios/Arcade/Arcade/alg_bios.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -41879,35 +41276,6 @@
         "groovymame",
         "mame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
@@ -41939,35 +41307,6 @@
       "repo_path": "bios/Arcade/Arcade/maxaflex.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42004,35 +41343,6 @@
         "mame2010",
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42046,35 +41356,6 @@
         "mame",
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42088,35 +41369,6 @@
         "mame",
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42128,35 +41380,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42167,35 +41390,6 @@
       "repo_path": "bios/Arcade/Arcade/allied.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42227,35 +41421,6 @@
       "repo_path": "bios/Arcade/Arcade/gp_110.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42289,35 +41454,6 @@
         "groovymame",
         "mame"
       ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
-      ],
       "alternatives": [
         {
           "sha1": "346cbf24af08f5bfd96e6a77abf27595477aace8",
@@ -42340,35 +41476,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42380,35 +41487,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42420,35 +41498,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42460,35 +41509,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42499,35 +41519,6 @@
       "repo_path": "bios/Arcade/Arcade/iteagle.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42559,35 +41550,6 @@
       "repo_path": "bios/Arcade/Arcade/su2000.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42622,35 +41584,6 @@
         "mame",
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42661,35 +41594,6 @@
       "repo_path": "bios/Arcade/Arcade/v4bios.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -42722,35 +41626,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -42762,35 +41637,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -43286,35 +42132,6 @@
       "repo_path": "bios/Arcade/Arcade/ym2608.zip",
       "cores": [
         "groovymame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ],
       "alternatives": [
         {
@@ -44106,35 +42923,6 @@
       "cores": [
         "groovymame",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "crvision",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile"
       ]
     },
     {
@@ -44489,13 +43277,91 @@
       ]
     },
     {
-      "dest": "c600.rom",
-      "sha1": "d4181c9f046aafc3fb326b381baac809d9e38d16",
-      "sha256": "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d",
-      "size": 256,
-      "repo_path": "bios/Apple/Apple II/AppleIIe_DiskII.rom",
+      "dest": "ROM",
+      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
+      "size": 131072,
+      "repo_path": "bios/Apple/Apple IIGS/ROM",
       "cores": [
-        "gsplus"
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "parallel.rom",
+      "sha1": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
+      "sha256": "e1b91e0156cabc879663f4c3936b3866bda74182fb0506667cd2d01e19d9e471",
+      "size": 256,
+      "repo_path": "bios/Apple/Apple IIGS/parallel.rom",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "lib/letgothl.ttf",
+      "sha1": "328b2ec7402df86add5c9cd68692c126b7e79707",
+      "sha256": "3b6b7288c186e4b8265cb1996af0e3620267ada9faf38f57d6f87b759ad804b7",
+      "size": 36356,
+      "repo_path": "bios/Other/gsplus-legacy/letgothl.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "sansserif.ttf",
+      "sha1": "2c5cb7cfa19eea5d90c375dc0f9f8e502ea97f0c",
+      "sha256": "35c0f3559d8db569e36c31095b8a60d441643d95f59139de40e23fada819b833",
+      "size": 275572,
+      "repo_path": "bios/Other/dosbox-x/FONTS/sansserif.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "courier.ttf",
+      "sha1": "9c5be4c1f151257798602aa74a7937dcead5db1f",
+      "sha256": "6715838c52f813f3821549d3f645db9a768bd6f3a43d8f85a89cb6875a546c61",
+      "size": 302688,
+      "repo_path": "bios/Other/dosbox-x/FONTS/courier.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "script.ttf",
+      "sha1": "e1f0296ed8f9e912fbafa652c752af613a7e1111",
+      "sha256": "2e131823861483b966f87ca23063ba6f3c0cecf9ac5d785d71ed1710dab477d5",
+      "size": 69876,
+      "repo_path": "bios/Other/dosbox-x/FONTS/script.ttf",
+      "cores": [
+        "gsplus-legacy"
+      ],
+      "systems": [
+        "apple-iigs"
+      ]
+    },
+    {
+      "dest": "ocra.ttf",
+      "sha1": "ba06d81504a4d769dcd4dd9282443d7946fe3fda",
+      "sha256": "2b058a75ff9336c703e48b618ef759906dc9e37712e27698f74aa3ec0b949346",
+      "size": 55400,
+      "repo_path": "bios/Other/dosbox-x/FONTS/ocra.ttf",
+      "cores": [
+        "gsplus-legacy"
       ],
       "systems": [
         "apple-iigs"
@@ -99584,17 +98450,6 @@
       "repo_path": "bios/Arcade/MAME/history.dat",
       "cores": [
         "mame2000"
-      ],
-      "alternatives": [
-        {
-          "sha1": "ce810602b74214726059bbd12e8010dc077aef3d",
-          "sha256": "54a940f70a3b8fa8316adc3dd445cee8fcca6f3570811dca2d1b640d7c7f0bc2",
-          "size": 1991177,
-          "repo_path": "bios/Other/raine/history.dat",
-          "cores": [
-            "raine"
-          ]
-        }
       ]
     },
     {
@@ -99616,9 +98471,6 @@
       "cores": [
         "mame2003",
         "mame2003_midway"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -99630,9 +98482,6 @@
       "cores": [
         "mame2003",
         "mame2003_midway"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -99744,9 +98593,6 @@
       "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2003_plus"
-      ],
-      "systems": [
-        "segastv"
       ]
     },
     {
@@ -99857,16 +98703,6 @@
       "repo_path": "bios/Arcade/Arcade/mk6nsw11.zip",
       "cores": [
         "mame2014"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "chihiro",
-        "hikaru",
-        "namco-system246",
-        "neogeo64",
-        "segastv",
-        "triforce"
       ]
     },
     {
@@ -99878,16 +98714,6 @@
       "cores": [
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "chihiro",
-        "hikaru",
-        "namco-system246",
-        "neogeo64",
-        "segastv",
-        "triforce"
       ]
     },
     {
@@ -99899,16 +98725,6 @@
       "cores": [
         "mame2014",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "cdi",
-        "chihiro",
-        "hikaru",
-        "namco-system246",
-        "neogeo64",
-        "segastv",
-        "triforce"
       ]
     },
     {
@@ -103008,13 +101824,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -103029,8 +101838,8 @@
     },
     {
       "dest": "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
-      "sha1": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
-      "sha256": "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c",
+      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
       "size": 131072,
       "repo_path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "cores": [
@@ -103260,19 +102069,6 @@
       ]
     },
     {
-      "dest": "ROM",
-      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
-      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
-      "size": 131072,
-      "repo_path": "bios/Apple/Apple IIGS/ROM",
-      "cores": [
-        "gsplus"
-      ],
-      "systems": [
-        "apple-iigs"
-      ]
-    },
-    {
       "dest": "samples/bbc.zip",
       "sha1": "46d4a5a34443506160457db43f79d766e5383820",
       "sha256": "17f1f77b51d82d1bf50e8e1333846aa35a71620a21bca1cec47a7cce5faacd86",
@@ -103444,13 +102240,6 @@
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -103461,13 +102250,6 @@
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {
@@ -104033,13 +102815,6 @@
       "repo_path": "bios/Arcade/Arcade/st018.zip",
       "cores": [
         "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "snk-neogeo-cd"
       ]
     },
     {

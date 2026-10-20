@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-20T13:08:19Z",
+  "generated": "2026-10-20T15:01:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -15,11 +15,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 467,
-  "total_size": 872718562,
-  "pack_files": 469,
-  "pack_size": 872718562,
-  "total_omitted": 742,
+  "total_files": 465,
+  "total_size": 872654387,
+  "pack_files": 467,
+  "pack_size": 872654387,
+  "total_omitted": 744,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -1722,6 +1722,26 @@
       ]
     },
     {
+      "dest": "astrocde.zip",
+      "name": "astrocde.zip",
+      "system": "bally-astrocade",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "FinalBurn Neo"
+      ]
+    },
+    {
+      "dest": "atarisy1.zip",
+      "name": "atarisy1.zip",
+      "system": "atari-system1",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "FinalBurn Neo"
+      ]
+    },
+    {
       "dest": "blasphem.wad",
       "name": "blasphem.wad",
       "system": "heretic",
@@ -1974,7 +1994,7 @@
     {
       "dest": "fbneo/hiscore.dat",
       "name": "hiscore.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -1984,7 +2004,7 @@
     {
       "dest": "fbneo/samples/donpachi.zip",
       "name": "donpachi.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -1994,7 +2014,7 @@
     {
       "dest": "fbneo/samples/sfz3mix.zip",
       "name": "sfz3mix.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2004,7 +2024,7 @@
     {
       "dest": "fbneo/samples/twotiger.zip",
       "name": "twotiger.zip",
-      "system": "",
+      "system": "midway-mcr",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2614,7 +2634,7 @@
     {
       "dest": "mame2003-plus/artwork/blueshrk.zip",
       "name": "blueshrk.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2624,7 +2644,7 @@
     {
       "dest": "mame2003-plus/artwork/frogs.zip",
       "name": "frogs.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2634,7 +2654,7 @@
     {
       "dest": "mame2003-plus/artwork/invaders.zip",
       "name": "invaders.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2644,7 +2664,7 @@
     {
       "dest": "mame2003-plus/artwork/omegrace.zip",
       "name": "omegrace.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2654,7 +2674,7 @@
     {
       "dest": "mame2003-plus/artwork/skydiver.zip",
       "name": "skydiver.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2664,7 +2684,7 @@
     {
       "dest": "mame2003-plus/artwork/solarq.zip",
       "name": "solarq.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2674,7 +2694,7 @@
     {
       "dest": "mame2003-plus/artwork/warrior.zip",
       "name": "warrior.zip",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2684,7 +2704,7 @@
     {
       "dest": "mame2003-plus/cheat.dat",
       "name": "cheat.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2694,7 +2714,7 @@
     {
       "dest": "mame2003-plus/hiscore.dat",
       "name": "hiscore.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2704,7 +2724,7 @@
     {
       "dest": "mame2003-plus/history.dat",
       "name": "history.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2714,7 +2734,7 @@
     {
       "dest": "mame2003-plus/mameinfo.dat",
       "name": "mameinfo.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2724,7 +2744,7 @@
     {
       "dest": "mame2003/cheat.dat",
       "name": "cheat.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2734,7 +2754,7 @@
     {
       "dest": "mame2003/hiscore.dat",
       "name": "hiscore.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2744,7 +2764,7 @@
     {
       "dest": "mame2003/history.dat",
       "name": "history.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2754,7 +2774,7 @@
     {
       "dest": "mame2003/mameinfo.dat",
       "name": "mameinfo.dat",
-      "system": "",
+      "system": "arcade",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -7523,6 +7543,9 @@
     "doublecherrygb": [
       "DoubleCherryGB"
     ],
+    "droidarcadia": [
+      "com.amigan.droidarcadia"
+    ],
     "dsperate": [
       "dsperate-sa"
     ],
@@ -7534,6 +7557,9 @@
     ],
     "fba2x": [
       "pifba"
+    ],
+    "fbalpha2012": [
+      "fbalpha"
     ],
     "fpse-ng": [
       "fpse64",
@@ -7857,6 +7883,33 @@
       "mame",
       "minivmac"
     ],
+    "arcade": [
+      "advancemame",
+      "advmame-0.94",
+      "advmame-1.4",
+      "ares",
+      "droidarcadia",
+      "fba2x",
+      "fbalpha2012",
+      "fbalpha2019",
+      "fbneo",
+      "fbneo_cps12",
+      "fbneo_neogeo",
+      "hbmame",
+      "mame2000",
+      "mame2003",
+      "mame2003_midway",
+      "mame2003_plus",
+      "mame2010",
+      "mame2014",
+      "mame2015",
+      "mame4all",
+      "mame4droid",
+      "mame4droid-2024",
+      "psxmame",
+      "raine",
+      "ume2015"
+    ],
     "atari-400-800": [
       "altirra",
       "atari800"
@@ -8071,6 +8124,7 @@
       "beetle_gba",
       "bizhawk",
       "dolphin",
+      "fbneo",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -13742,46 +13796,6 @@
       ]
     },
     {
-      "dest": "colecovision/astrocde.zip",
-      "sha1": "8641b09be090c0dc45f4ee5459fec3cc6fb9d78e",
-      "sha256": "520606125ae26a0a6f6b35d2573a4719882da6f6213cc030c487f2303c07360e",
-      "size": 6800,
-      "repo_path": "bios/Bally/Astrocade/astrocde.zip",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-aes",
-        "snk-neogeo-cd",
-        "snk-neogeo-mvs"
-      ]
-    },
-    {
-      "dest": "colecovision/atarisy1.zip",
-      "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-      "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-      "size": 57375,
-      "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-aes",
-        "snk-neogeo-cd",
-        "snk-neogeo-mvs"
-      ]
-    },
-    {
       "dest": "fairchild-channel-f/channelf.zip",
       "sha1": "1cb23b462b990241013deb4b5e07ce741af28267",
       "sha256": "c158f7c177c61c7b441eb1061e5148737597e871cbcfa1e2d60ace15e90c8e70",
@@ -13912,7 +13926,7 @@
       ]
     },
     {
-      "dest": "colecovision/st018.zip",
+      "dest": "snes/st018.zip",
       "sha1": "268af28171e79f6ed8391b98c84c075a2d0c76ea",
       "sha256": "f7e49b880e2f126be296d93d14bf181311bceb48b0d788846af86c7f9d198d2d",
       "size": 62579,
@@ -13921,14 +13935,7 @@
         "fbneo"
       ],
       "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-fds",
-        "nintendo-snes",
-        "snk-neogeo-aes",
-        "snk-neogeo-cd",
-        "snk-neogeo-mvs"
+        "nintendo-snes"
       ]
     }
   ]

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T13:34:23Z",
-  "total_files": 19485,
-  "total_size": 16770423992,
+  "generated_at": "2026-10-20T15:02:35Z",
+  "total_files": 19488,
+  "total_size": 16768511130,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -1253,6 +1253,16 @@
       "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
       "crc32": "42f124b0",
       "adler32": "dcb38beb"
+    },
+    "c75c751589cbcc1ad4ab4f63676af7abadd86f5b": {
+      "path": "bios/Apple/Apple IIGS/parallel.rom",
+      "name": "parallel.rom",
+      "size": 256,
+      "sha1": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
+      "md5": "5902996f16dc78fc013f6e1db14805b3",
+      "sha256": "e1b91e0156cabc879663f4c3936b3866bda74182fb0506667cd2d01e19d9e471",
+      "crc32": "2813909e",
+      "adler32": "a05d6743"
     },
     "9c27bba32c0c7c70a87512282acd6729744a36f9": {
       "path": "bios/Apple/Macintosh/.variants/macos608.img.516164c0",
@@ -42724,6 +42734,16 @@
       "sha256": "48a0cdb1062d863d469fe5a64357f56ba21f77ee43e941345fbabbe5ef6fadd8",
       "crc32": "9a06cba0",
       "adler32": "6de0acbf"
+    },
+    "48a67b02680d2789f91c9c8f322b70267e5c3cb2": {
+      "path": "bios/Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e",
+      "name": "scv.zip",
+      "size": 5111,
+      "sha1": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
+      "md5": "2f5d468e53640b06c30ae0bf8eecdbc2",
+      "sha256": "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7",
+      "crc32": "e65f0b13",
+      "adler32": "d521b5d3"
     },
     "e5808cb1f96b39a0d52d67de79a626072f80ef12": {
       "path": "bios/Epoch/Super Cassette Vision/boot.rom",
@@ -137839,6 +137859,16 @@
       "crc32": "b8f57432",
       "adler32": "fbd6dfd5"
     },
+    "328b2ec7402df86add5c9cd68692c126b7e79707": {
+      "path": "bios/Other/gsplus-legacy/letgothl.ttf",
+      "name": "letgothl.ttf",
+      "size": 36356,
+      "sha1": "328b2ec7402df86add5c9cd68692c126b7e79707",
+      "md5": "d87d6498c9e36a69907038e9198b7efb",
+      "sha256": "3b6b7288c186e4b8265cb1996af0e3620267ada9faf38f57d6f87b759ad804b7",
+      "crc32": "4d47ad9b",
+      "adler32": "991208da"
+    },
     "f957c9aedd8ea478dafd98babe41faec7f339d8a": {
       "path": "bios/Other/hakux/C/xbox.xtf",
       "name": "xbox.xtf",
@@ -156927,16 +156957,6 @@
       "crc32": "fa987c32",
       "adler32": "c8714744"
     },
-    "ce810602b74214726059bbd12e8010dc077aef3d": {
-      "path": "bios/Other/raine/history.dat",
-      "name": "history.dat",
-      "size": 1991177,
-      "sha1": "ce810602b74214726059bbd12e8010dc077aef3d",
-      "md5": "4941042df918f0f1370e2b70d0f7d0de",
-      "sha256": "54a940f70a3b8fa8316adc3dd445cee8fcca6f3570811dca2d1b640d7c7f0bc2",
-      "crc32": "b9916f8f",
-      "adler32": "610d2772"
-    },
     "a44f65d6318582501d22e27831eb2b1f0df58f79": {
       "path": "bios/Other/rpix86/4DOS.COM",
       "name": "4DOS.COM",
@@ -162934,27 +162954,15 @@
         }
       }
     },
-    "b3b1d880e288b6dc79eec0ff1b0480c229ec141d": {
-      "path": "bios/Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773",
+    "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec": {
+      "path": "bios/Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.51563677",
       "name": "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "size": 131072,
-      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
-      "md5": "927df773f9a1c7de94a72420b2d538dd",
-      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
-      "crc32": "474aaa44",
-      "adler32": "04fa4128",
-      "provenance": {
-        "no-intro": {
-          "dat": "Sega - Mega Drive - Genesis",
-          "name": "[BIOS] LaserActive (Japan) (v1.05).md",
-          "description": "[BIOS] LaserActive (Japan) (v1.05)"
-        },
-        "tosec": {
-          "dat": "Pioneer LaserActive - Firmware",
-          "name": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
-          "description": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja)"
-        }
-      }
+      "sha1": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
+      "md5": "515636778430c8e01027234c38c4ddf8",
+      "sha256": "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c",
+      "crc32": "1493522c",
+      "adler32": "9e972082"
     },
     "26237b333db4a4c6770297fa5e655ea95840d5d9": {
       "path": "bios/Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
@@ -163030,15 +163038,27 @@
       "crc32": "24ad336e",
       "adler32": "6993a1dd"
     },
-    "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec": {
+    "b3b1d880e288b6dc79eec0ff1b0480c229ec141d": {
       "path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "name": "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin",
       "size": 131072,
-      "sha1": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
-      "md5": "515636778430c8e01027234c38c4ddf8",
-      "sha256": "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c",
-      "crc32": "1493522c",
-      "adler32": "9e972082"
+      "sha1": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "md5": "927df773f9a1c7de94a72420b2d538dd",
+      "sha256": "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3",
+      "crc32": "474aaa44",
+      "adler32": "04fa4128",
+      "provenance": {
+        "no-intro": {
+          "dat": "Sega - Mega Drive - Genesis",
+          "name": "[BIOS] LaserActive (Japan) (v1.05).md",
+          "description": "[BIOS] LaserActive (Japan) (v1.05)"
+        },
+        "tosec": {
+          "dat": "Pioneer LaserActive - Firmware",
+          "name": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja).bin",
+          "description": "Pioneer LaserActive Sega PAC Boot ROM v1.05 (1993)(Pioneer - Sega)(JP)(en-ja)"
+        }
+      }
     },
     "c1b9202cbe072db12114b223a9ba5374b30718fb": {
       "path": "bios/Pioneer/LaserActive/[BIOS] LaserActive PCE-LP1 (Japan) (v1.02).bin",
@@ -198338,6 +198358,16 @@
       "crc32": "31c53421",
       "adler32": "3c15cd74"
     },
+    "e31fbbb831f32886e57410183bc4e85d36c2dc7a": {
+      "path": "bios/Tandy/CoCo/.variants/coco.zip.b0b96aad",
+      "name": "coco.zip",
+      "size": 7438,
+      "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
+      "md5": "b0b96aadef063b07f079fca138b79e28",
+      "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
+      "crc32": "d25f9837",
+      "adler32": "9e7e5c30"
+    },
     "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44": {
       "path": "bios/Tandy/CoCo/.variants/coco2.zip",
       "name": "coco2.zip",
@@ -198488,15 +198518,15 @@
       "crc32": "cbdc1ba2",
       "adler32": "586c8993"
     },
-    "e31fbbb831f32886e57410183bc4e85d36c2dc7a": {
+    "edc5e86ca93d1161618d44a959ae7ecd0bf0f006": {
       "path": "bios/Tandy/CoCo/coco.zip",
       "name": "coco.zip",
-      "size": 7438,
-      "sha1": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
-      "md5": "b0b96aadef063b07f079fca138b79e28",
-      "sha256": "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168",
-      "crc32": "d25f9837",
-      "adler32": "9e7e5c30"
+      "size": 36592,
+      "sha1": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
+      "md5": "2dcdc83d5983bc856653ebe084c51a5d",
+      "sha256": "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131",
+      "crc32": "73cf0951",
+      "adler32": "64ef4e76"
     },
     "a4ec389d7ecffdcc741ea79064dc9dbc12ccbc5a": {
       "path": "bios/Tandy/CoCo/coco2.zip",
@@ -199931,6 +199961,7 @@
       "1c34d21c9fdbf71d9dd8ae263d792982": "19f69011ed7d2551c39d5c1cac1f5a2defc8f8fb",
       "c835eab06842e3c1d6e2e7dc19289828": "a57f14469867ce0d0865995a645b69f41a0ea718",
       "20a0334c447cb069a040ae5be1d938df": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "5902996f16dc78fc013f6e1db14805b3": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
       "0d4b090d85e995ae8ce724b910c8cc15": "9c27bba32c0c7c70a87512282acd6729744a36f9",
       "cc480c35c9e946b98ba73777c45ab59d": "d2b9531a4c1a9f50fe636264950bccf8375eb2b0",
       "08fd735f8183014b63060af2331a9e5e": "ff49f73d2641024c7ec9a787ecadc7f4890ab60e",
@@ -203951,6 +203982,7 @@
       "a3ef27a92211497dae4692f1c1100373": "5615245c2f2289113b7771c0fa174df7a923cd60",
       "5242745c70d9bbbc8cf0c3ed0336a93e": "3c6f956dfdceeab4883ec85cde936ad57d48ff9d",
       "887479fe3c69a0b935c57a7a738e26c4": "83e94c56f2fc4ab60de94021a1283cca09d65ee5",
+      "2f5d468e53640b06c30ae0bf8eecdbc2": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
       "b596975be2e0360232bbeb1e492ab873": "e5808cb1f96b39a0d52d67de79a626072f80ef12",
       "33df021613fb12abe2ad14b9eb17c7fe": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
       "635a978fd40db9a18ee44eff449fc126": "6e89d1227581c76441a53d605f9e324185f1da33",
@@ -213355,6 +213387,7 @@
       "9ca4bfb05c82b470916c2af93fb0bf1f": "15c230c22dd61bbf35c979902e7f9dd1f543f856",
       "a5518586f9c4c0bebc9fd6f322c6f501": "72ea5f869695d13dc8f3bf4806ee384aa766ab09",
       "2f355f03254e572dd32e6fe7232f5ccc": "8881159097cd92f67bfec5250bc061626d87cf04",
+      "d87d6498c9e36a69907038e9198b7efb": "328b2ec7402df86add5c9cd68692c126b7e79707",
       "0466dd6c19ec9c1785e8aadfc8c5269e": "f957c9aedd8ea478dafd98babe41faec7f339d8a",
       "8da4d816604e9b9d5aa69d1fd395a48e": "8b6e63f86dfd31821df210f5da73f8428b4fff15",
       "41eed0bf6aad777e6583ecb2ff0907b8": "231b29ef9d6314930eb18e57240e27ae81a6e88f",
@@ -215261,7 +215294,6 @@
       "dc9b1b5be4f7df13729ef825e68c3239": "883a1a8d38a26c609273092c97756999006228b7",
       "8d699c97d164d406c2912aece164cd32": "aaa9833c3de2213f2b0326769b715651fd13fd84",
       "c996961db77b48b54a2daa3cda12da0d": "4c1d58f7c1830694933e472ec1289060f7083fa9",
-      "4941042df918f0f1370e2b70d0f7d0de": "ce810602b74214726059bbd12e8010dc077aef3d",
       "fc3a0078a13d98e611a62c1d6724f8c5": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "76a2309db9eef5b633c6ebc0243c6a23": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "2f1bdc689878416c12190513ef4ff64f": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -215852,13 +215884,13 @@
       "c500ff71236068e0dc0d0603d265ae76": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "f1071cdb0b6b10dde94d3bc8a6146387": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "279008e4a0db2dc5f1c048853b033828": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "927df773f9a1c7de94a72420b2d538dd": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "515636778430c8e01027234c38c4ddf8": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
       "a5a2f9aae57d464bc66b80ee79c3da6e": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "0e7393cd0951d6dde818fcd4cd819466": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "f69f173b251d8bf7649b10a9167a10bf": "6973e2593e66fd21627fedccec98d4a364afaaff",
       "f0fb8a4605ac7eefbafd4f2d5a793cc8": "f7412aa822d70a55b2ff3d7095137263dc54f6b6",
       "219dc2aa7cb8d1ad5142c86d50c2ffa5": "bc746df0c5d2b779ca41a94954b60d6ac6a7c2a3",
-      "515636778430c8e01027234c38c4ddf8": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
+      "927df773f9a1c7de94a72420b2d538dd": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "761fea207d0eafd4cfd78da7c44cac88": "c1b9202cbe072db12114b223a9ba5374b30718fb",
       "d6ccd1da5c4a1b22c64e6eec899e0daf": "b1e48d1f5e494a6cbece61cfca4469dea33fba4b",
       "69489153dde910a69d5ae6de5dd65323": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
@@ -219157,6 +219189,7 @@
       "466c33583113d61fce0f04bfb1707eca": "ac042c4ae8272ad6abe09ae83492ef9a0026d0b2",
       "e59fdf56762c480ba4dfe1b3ec5fb86d": "b184f1c1febf66c8168fcae0b8aa37a5754f79db",
       "1d33d70f35b33873fc75941d95ad1ffa": "567c5b5054552a2771eafa7966844a146f0dde96",
+      "b0b96aadef063b07f079fca138b79e28": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
       "b81dc552536796d234c08587bac7be43": "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44",
       "2c395ad58a842711931679b554483a90": "9943ef391ff1ca1b412fd68f7c5efaeaefd8a467",
       "a17397fb5408647a11d23bab959d1f97": "c0a04b87ad138e6754a6688ad757004467950c08",
@@ -219172,7 +219205,7 @@
       "c933316c7d939532a13648850c1c2aa6": "0f14dc46c647510eb0b7bd3f53e33da07907d04f",
       "c2fc43556eb6b7b25bdf5955bd9df825": "28b92bebe35fa4f026a084416d6ea3b1552b63d3",
       "ac33e16f677b4db52548d426174b1aaa": "0b75ade7bc5e5658e1920a4c9717c47f7fb910ef",
-      "b0b96aadef063b07f079fca138b79e28": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
+      "2dcdc83d5983bc856653ebe084c51a5d": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
       "e3f77c0e71716399ed93d556c73532e7": "a4ec389d7ecffdcc741ea79064dc9dbc12ccbc5a",
       "381f86c34f916632f9722f847ebdf6c5": "e08fe575f3329d6af01ab119a575ef70f2a59cc6",
       "7233c6c429f3ce1c7392f28a933e0b6f": "e0d82953fb6fd03768604933df1ce8bc51fc427d",
@@ -219643,6 +219676,9 @@
       ],
       "ROM": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+      ],
+      "parallel.rom": [
+        "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
       ],
       "macos608.img": [
         "9c27bba32c0c7c70a87512282acd6729744a36f9",
@@ -222829,8 +222865,7 @@
       "history.dat": [
         "1429a6517dc70e4b532c8ffd9c872fd8d837e8c4",
         "c75e7bbfe18c70a9d3c0c2a07ca335ab81318024",
-        "42d6d9ac933a7819adfd686f629a8e43aea4e880",
-        "ce810602b74214726059bbd12e8010dc077aef3d"
+        "42d6d9ac933a7819adfd686f629a8e43aea4e880"
       ],
       "nss_tvinterface.zip": [
         "1759656e21be20d25f6a64edf4706aefde71aba0",
@@ -231765,6 +231800,7 @@
         "83e94c56f2fc4ab60de94021a1283cca09d65ee5"
       ],
       "scv.zip": [
+        "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
         "ecd670080c4163c6c16d218ef35c8141c4a8a290"
       ],
       "upd7801g.s01": [
@@ -254795,6 +254831,9 @@
       "sysinfo.dat": [
         "8881159097cd92f67bfec5250bc061626d87cf04"
       ],
+      "letgothl.ttf": [
+        "328b2ec7402df86add5c9cd68692c126b7e79707"
+      ],
       "xbox.xtf": [
         "f957c9aedd8ea478dafd98babe41faec7f339d8a"
       ],
@@ -259674,8 +259713,8 @@
         "54b8d2c1317628de51a85fc1c424423a986775e4"
       ],
       "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin": [
-        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
-        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
+        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
       "Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin": [
         "26237b333db4a4c6770297fa5e655ea95840d5d9"
@@ -268610,7 +268649,8 @@
       ],
       "coco.zip": [
         "567c5b5054552a2771eafa7966844a146f0dde96",
-        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+        "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
+        "edc5e86ca93d1161618d44a959ae7ecd0bf0f006"
       ],
       "coco2.zip": [
         "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44",
@@ -273731,6 +273771,15 @@
       "APPLE2GS.ROM": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
       ],
+      "ROM3": [
+        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+      ],
+      "ROM01": [
+        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+      ],
+      "ROM03": [
+        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+      ],
       "ROM.01": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
       ],
@@ -275474,6 +275523,9 @@
       "apple2_char.rom": [
         "f9d312f128c9557d9d6ac03bfad6c3ddf83e5659"
       ],
+      "Parallel.rom": [
+        "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
+      ],
       "FdsBios.bin": [
         "af5af53f66982e749643fdf8b2acbb7d4d3ed229"
       ],
@@ -276249,6 +276301,7 @@
       "5776fa24": "19f69011ed7d2551c39d5c1cac1f5a2defc8f8fb",
       "6105d2ee": "a57f14469867ce0d0865995a645b69f41a0ea718",
       "42f124b0": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "2813909e": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
       "516164c0": "9c27bba32c0c7c70a87512282acd6729744a36f9",
       "6f3f026e": "d2b9531a4c1a9f50fe636264950bccf8375eb2b0",
       "1cc952f6": "ff49f73d2641024c7ec9a787ecadc7f4890ab60e",
@@ -280269,6 +280322,7 @@
       "65f533aa": "5615245c2f2289113b7771c0fa174df7a923cd60",
       "f8855557": "3c6f956dfdceeab4883ec85cde936ad57d48ff9d",
       "9a06cba0": "83e94c56f2fc4ab60de94021a1283cca09d65ee5",
+      "e65f0b13": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
       "65ed17b9": "e5808cb1f96b39a0d52d67de79a626072f80ef12",
       "c2f0462d": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
       "7ac06182": "6e89d1227581c76441a53d605f9e324185f1da33",
@@ -289673,6 +289727,7 @@
       "a37faf7f": "15c230c22dd61bbf35c979902e7f9dd1f543f856",
       "54fa92ab": "72ea5f869695d13dc8f3bf4806ee384aa766ab09",
       "b8f57432": "8881159097cd92f67bfec5250bc061626d87cf04",
+      "4d47ad9b": "328b2ec7402df86add5c9cd68692c126b7e79707",
       "b12ee192": "f957c9aedd8ea478dafd98babe41faec7f339d8a",
       "4e78e0ae": "8b6e63f86dfd31821df210f5da73f8428b4fff15",
       "bef6e55c": "231b29ef9d6314930eb18e57240e27ae81a6e88f",
@@ -291579,7 +291634,6 @@
       "7fc967f2": "883a1a8d38a26c609273092c97756999006228b7",
       "1a3a22a1": "aaa9833c3de2213f2b0326769b715651fd13fd84",
       "fa987c32": "4c1d58f7c1830694933e472ec1289060f7083fa9",
-      "b9916f8f": "ce810602b74214726059bbd12e8010dc077aef3d",
       "8300d4cb": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "df8ab696": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "3a738aa9": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -292170,13 +292224,13 @@
       "e20a9f41": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "a318e8d6": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "11647ca5": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "474aaa44": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "1493522c": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
       "00eedb3a": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "50cd3d23": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "a8cb694c": "6973e2593e66fd21627fedccec98d4a364afaaff",
       "01223dd5": "f7412aa822d70a55b2ff3d7095137263dc54f6b6",
       "24ad336e": "bc746df0c5d2b779ca41a94954b60d6ac6a7c2a3",
-      "1493522c": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
+      "474aaa44": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "76116a02": "c1b9202cbe072db12114b223a9ba5374b30718fb",
       "3d6f6ed3": "b1e48d1f5e494a6cbece61cfca4469dea33fba4b",
       "4e70e3c0": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
@@ -295474,6 +295528,7 @@
       "78848d39": "ac042c4ae8272ad6abe09ae83492ef9a0026d0b2",
       "44295096": "b184f1c1febf66c8168fcae0b8aa37a5754f79db",
       "31c53421": "567c5b5054552a2771eafa7966844a146f0dde96",
+      "d25f9837": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
       "d13aefe2": "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44",
       "301b3948": "9943ef391ff1ca1b412fd68f7c5efaeaefd8a467",
       "4d222ced": "c0a04b87ad138e6754a6688ad757004467950c08",
@@ -295489,7 +295544,7 @@
       "54368805": "0f14dc46c647510eb0b7bd3f53e33da07907d04f",
       "d8f4d15e": "28b92bebe35fa4f026a084416d6ea3b1552b63d3",
       "cbdc1ba2": "0b75ade7bc5e5658e1920a4c9717c47f7fb910ef",
-      "d25f9837": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
+      "73cf0951": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
       "b145236b": "a4ec389d7ecffdcc741ea79064dc9dbc12ccbc5a",
       "b88e97cb": "e08fe575f3329d6af01ab119a575ef70f2a59cc6",
       "b4c88d6c": "e0d82953fb6fd03768604933df1ce8bc51fc427d",
@@ -295735,6 +295790,7 @@
       "420da3867e489824f5fc0377c287c48a125296f19e1306df764e8f63bd23b00a": "19f69011ed7d2551c39d5c1cac1f5a2defc8f8fb",
       "14217ca8e25435ea8497b272d8963ebc79ae29cdc21e972817ab09115e2f1b2d": "a57f14469867ce0d0865995a645b69f41a0ea718",
       "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "e1b91e0156cabc879663f4c3936b3866bda74182fb0506667cd2d01e19d9e471": "c75c751589cbcc1ad4ab4f63676af7abadd86f5b",
       "2e9751fb87d0057e3e47ce9cd4eb3115f739d19206a01179b973a6430f9b4a79": "9c27bba32c0c7c70a87512282acd6729744a36f9",
       "fd1a78635b99aa77905b8f8ab1f280a072a8ab37192f083023cc8796d394b790": "d2b9531a4c1a9f50fe636264950bccf8375eb2b0",
       "a9a828987b872186cfe6666cbae4e53c48a7997fd1877d2a9395ab08037b4a04": "ff49f73d2641024c7ec9a787ecadc7f4890ab60e",
@@ -299755,6 +299811,7 @@
       "fba0daa1131e9ea8bed1a1abe8e256f17dd022b72df2678f9f3f6bd69754e5dc": "5615245c2f2289113b7771c0fa174df7a923cd60",
       "419a6fe26001699b28ce4e89a906f1b574d0d84a835c5d03653b26e2ab68a370": "3c6f956dfdceeab4883ec85cde936ad57d48ff9d",
       "48a0cdb1062d863d469fe5a64357f56ba21f77ee43e941345fbabbe5ef6fadd8": "83e94c56f2fc4ab60de94021a1283cca09d65ee5",
+      "a5a37cfdae0827505af3c09510bb17320c09cd358581192835794d6ffe4ce5b7": "48a67b02680d2789f91c9c8f322b70267e5c3cb2",
       "25c7ff2d735d1ae895af9262f31e083c5c1bd99a8f31b5b378dfbc0f166ec97f": "e5808cb1f96b39a0d52d67de79a626072f80ef12",
       "d517d15204d28dd50dfefe51351e62e58e1cfd1452dd23071b2cc1bed485acf1": "ecd670080c4163c6c16d218ef35c8141c4a8a290",
       "248ec2f28294316558475ba0e416da19cfff0a5dd8ad3525a484a9be67b8a290": "6e89d1227581c76441a53d605f9e324185f1da33",
@@ -309159,6 +309216,7 @@
       "e3510367e5819b7e44b679d1bf0575b95520414fdd474c7e405a3a5224ccd012": "15c230c22dd61bbf35c979902e7f9dd1f543f856",
       "52fab6a73204dc9bbb09d5c8c85c283f4d6bf25220a3bae3573c268908751f2b": "72ea5f869695d13dc8f3bf4806ee384aa766ab09",
       "cd260d1c420dec2ad2d9511b522d88a72f820d2ca2ff63ded2cd95854d4748dd": "8881159097cd92f67bfec5250bc061626d87cf04",
+      "3b6b7288c186e4b8265cb1996af0e3620267ada9faf38f57d6f87b759ad804b7": "328b2ec7402df86add5c9cd68692c126b7e79707",
       "21c6207d02009a78767783679b6e74da3d4ca6e077c4808007f79dfe083d7489": "f957c9aedd8ea478dafd98babe41faec7f339d8a",
       "3ae2f3eae3917e0130d1e1a5c8e1c5df207ea31703646a174d98f7be9a769495": "8b6e63f86dfd31821df210f5da73f8428b4fff15",
       "c8dd1e361ab3219a956b9b7879a17658b10273cc3569bf23cb9ffb23f55e5152": "231b29ef9d6314930eb18e57240e27ae81a6e88f",
@@ -311065,7 +311123,6 @@
       "00c23cba41b1f225f53e074ac22818341b06e162351c9b15107dc70252895709": "883a1a8d38a26c609273092c97756999006228b7",
       "503ed886914c5ae1ec0b256515a6b0248f4b27cf78cb7b86fc438410420cdb87": "aaa9833c3de2213f2b0326769b715651fd13fd84",
       "17b7b2424c984531b770571f958e71a9d0bbb578cd0f16c7a1a9ecacccd1140d": "4c1d58f7c1830694933e472ec1289060f7083fa9",
-      "54a940f70a3b8fa8316adc3dd445cee8fcca6f3570811dca2d1b640d7c7f0bc2": "ce810602b74214726059bbd12e8010dc077aef3d",
       "727966e19c97c142633b6b00d4e52c4d87e4f9e3d167a6ea04651443832c8e81": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "010fd04e1a7b48583685a5554f12ecff8db681c926caa1814f148d552ca53708": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "6c1e5d5ccd280ee01d9f852b60ddec07e719a45699a6220eabd50df9999632c6": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -311656,13 +311713,13 @@
       "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1": "5130243429b40b01a14e1304d0394b8459a6fbae",
       "2ab1b2c7f4b28a74d0ecf3e073088fac19ce40866404420c70576e1862bb5502": "a6120aed50831c9c0d95dbdf707820f601d9452e",
       "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074": "54b8d2c1317628de51a85fc1c424423a986775e4",
-      "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
+      "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
       "dca942d977217f703d8d1c6eb1aeb6b32c78ecc421486bbb46c459d385161c94": "26237b333db4a4c6770297fa5e655ea95840d5d9",
       "e89b5a319f66406611ec82fe5c4aa6827c175a05135bd7bd177366cba0465021": "aa811861f8874775075bd3f53008c8aaf59b07db",
       "459325690a458baebd77495c91e37c4dddfdd542ba13a821ce954e5bb245627f": "6973e2593e66fd21627fedccec98d4a364afaaff",
       "0e87a3385a27b3a4cac51934819b7eefa5b3d690768d2495633838488cd0e2e4": "f7412aa822d70a55b2ff3d7095137263dc54f6b6",
       "3300e3771b468b41818b90c2358ff288da69bada92b8247acd793a437b30731c": "bc746df0c5d2b779ca41a94954b60d6ac6a7c2a3",
-      "369c1e699abbaecd231a3ab7b98443d28097366ff3cdd978698417195d54ca3c": "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec",
+      "61943363038bd94887255b23c4b40a9583011945b8edb5986b688a8bb6ab7db3": "b3b1d880e288b6dc79eec0ff1b0480c229ec141d",
       "3f43b3b577117d84002e99cb0baeb97b0d65b1d70b4adadc68817185c6a687f0": "c1b9202cbe072db12114b223a9ba5374b30718fb",
       "02a4a82c4f5abfe2c7e15d3682be9590be96607cb9213ce88e335f34db95d76f": "b1e48d1f5e494a6cbece61cfca4469dea33fba4b",
       "05ad753fb594e656cf078023ec189e09e2a7655a780de993b75b8c51ed6b09ca": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
@@ -314961,6 +315018,7 @@
       "1289e87a1c14a4b5a93db50dd482efe453ad15e445cbd82bb859a5e0520100e5": "ac042c4ae8272ad6abe09ae83492ef9a0026d0b2",
       "d55b4a31e2f1beb9e90e3953db9ff83cb7d93e784cef17c64768c455f8f8ca74": "b184f1c1febf66c8168fcae0b8aa37a5754f79db",
       "5ca479520d28ab438c93f24a8678bd051bf7014fa3658f5ef84e4acfdf78b00b": "567c5b5054552a2771eafa7966844a146f0dde96",
+      "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
       "d4b43705987796ed57c12eeda3b682605371ad98a81fb872c9175775387503a2": "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44",
       "6e729b18957ffbe3eaff17bdd969f5ed54afd41bf5ff1707dec2eb71333ece36": "9943ef391ff1ca1b412fd68f7c5efaeaefd8a467",
       "cda669a4f86710891b89ffb05fc3d1b4c85426e26b50b05a57f91050bfaae878": "c0a04b87ad138e6754a6688ad757004467950c08",
@@ -314976,7 +315034,7 @@
       "40413d0f8bc1bb345ffe49404b3bf645a5417b02f32266536f6566dbf9ca70fb": "0f14dc46c647510eb0b7bd3f53e33da07907d04f",
       "5375b1caef9df815b781d9cd6df81ecdaddd2642b06a01adac521e40f1329751": "28b92bebe35fa4f026a084416d6ea3b1552b63d3",
       "f573633ef857b64203e7038b3fd94747d7590128a47742cbce43cc322216e4ee": "0b75ade7bc5e5658e1920a4c9717c47f7fb910ef",
-      "d07024ce59c63dd1fc0a2ca095072d0892f736fb56cdcc15626a94a30c084168": "e31fbbb831f32886e57410183bc4e85d36c2dc7a",
+      "414371a6a1ffc8fd068a8013873ae2bd83df167b212b51b51417246dba77e131": "edc5e86ca93d1161618d44a959ae7ecd0bf0f006",
       "34d424cb0b6c117d92ef7782ed8fe81f72976c79fefe379bce87f03945497538": "a4ec389d7ecffdcc741ea79064dc9dbc12ccbc5a",
       "6c15958f032eee71eb8f618abb7c109655901528f3cabd71c076492cb0313e6b": "e08fe575f3329d6af01ab119a575ef70f2a59cc6",
       "ad358430568250eb8330a37f85361d9ce67e5ae6d5a28c17b31802cd3953a5d2": "e0d82953fb6fd03768604933df1ce8bc51fc427d",
@@ -315860,6 +315918,12 @@
       ],
       "Apple IIGS/ROM": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+      ],
+      "Apple/Apple IIGS/parallel.rom": [
+        "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
+      ],
+      "Apple IIGS/parallel.rom": [
+        "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
       ],
       "Apple/Macintosh/.variants/macos608.img.516164c0": [
         "9c27bba32c0c7c70a87512282acd6729744a36f9"
@@ -351898,6 +351962,15 @@
       ],
       "Game Pocket/gamepock.zip": [
         "83e94c56f2fc4ab60de94021a1283cca09d65ee5"
+      ],
+      "Epoch/Super Cassette Vision/.variants/scv.zip.2f5d468e": [
+        "48a67b02680d2789f91c9c8f322b70267e5c3cb2"
+      ],
+      "Super Cassette Vision/.variants/scv.zip.2f5d468e": [
+        "48a67b02680d2789f91c9c8f322b70267e5c3cb2"
+      ],
+      ".variants/scv.zip.2f5d468e": [
+        "48a67b02680d2789f91c9c8f322b70267e5c3cb2"
       ],
       "Epoch/Super Cassette Vision/boot.rom": [
         "e5808cb1f96b39a0d52d67de79a626072f80ef12"
@@ -482944,6 +483017,12 @@
       "history/sysinfo.dat": [
         "8881159097cd92f67bfec5250bc061626d87cf04"
       ],
+      "Other/gsplus-legacy/letgothl.ttf": [
+        "328b2ec7402df86add5c9cd68692c126b7e79707"
+      ],
+      "gsplus-legacy/letgothl.ttf": [
+        "328b2ec7402df86add5c9cd68692c126b7e79707"
+      ],
       "Other/hakux/C/xbox.xtf": [
         "f957c9aedd8ea478dafd98babe41faec7f339d8a"
       ],
@@ -500225,12 +500304,6 @@
       "raine/hiscore.dat": [
         "4c1d58f7c1830694933e472ec1289060f7083fa9"
       ],
-      "Other/raine/history.dat": [
-        "ce810602b74214726059bbd12e8010dc077aef3d"
-      ],
-      "raine/history.dat": [
-        "ce810602b74214726059bbd12e8010dc077aef3d"
-      ],
       "Other/rpix86/4DOS.COM": [
         "a44f65d6318582501d22e27831eb2b1f0df58f79"
       ],
@@ -507599,14 +507672,14 @@
       "Videopac+/jopac.bin": [
         "54b8d2c1317628de51a85fc1c424423a986775e4"
       ],
-      "Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
-        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
+      "Pioneer/LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.51563677": [
+        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
       ],
-      "LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
-        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
+      "LaserActive/.variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.51563677": [
+        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
       ],
-      ".variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.927df773": [
-        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
+      ".variants/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin.51563677": [
+        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
       ],
       "Pioneer/LaserActive/Pioneer LaserActive Sega PAC Boot ROM v1.02 (1993)(Pioneer - Sega)(JP)(en-ja).bin": [
         "26237b333db4a4c6770297fa5e655ea95840d5d9"
@@ -507639,10 +507712,10 @@
         "bc746df0c5d2b779ca41a94954b60d6ac6a7c2a3"
       ],
       "Pioneer/LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin": [
-        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
       "LaserActive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin": [
-        "f7101b40cae0484a0f43f3bbee2d55033ff1e3ec"
+        "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
       ],
       "Pioneer/LaserActive/[BIOS] LaserActive PCE-LP1 (Japan) (v1.02).bin": [
         "c1b9202cbe072db12114b223a9ba5374b30718fb"
@@ -555686,6 +555759,15 @@
       ".variants/coco.zip": [
         "567c5b5054552a2771eafa7966844a146f0dde96"
       ],
+      "Tandy/CoCo/.variants/coco.zip.b0b96aad": [
+        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+      ],
+      "CoCo/.variants/coco.zip.b0b96aad": [
+        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+      ],
+      ".variants/coco.zip.b0b96aad": [
+        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+      ],
       "Tandy/CoCo/.variants/coco2.zip": [
         "f2fa8d8e940f1d91a1b1624013df5dca0bb1ee44"
       ],
@@ -555780,10 +555862,10 @@
         "0b75ade7bc5e5658e1920a4c9717c47f7fb910ef"
       ],
       "Tandy/CoCo/coco.zip": [
-        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+        "edc5e86ca93d1161618d44a959ae7ecd0bf0f006"
       ],
       "CoCo/coco.zip": [
-        "e31fbbb831f32886e57410183bc4e85d36c2dc7a"
+        "edc5e86ca93d1161618d44a959ae7ecd0bf0f006"
       ],
       "Tandy/CoCo/coco2.zip": [
         "a4ec389d7ecffdcc741ea79064dc9dbc12ccbc5a"
