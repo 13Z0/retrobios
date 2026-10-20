@@ -266,6 +266,8 @@ files:
     source_ref: "source NEO.emu/res/romsets/irrmaze.drv, source NEO.emu/src/gngeo/roms.h:9, 62"
 
   - name: "gngeo_data.zip"
+    size: 94360
+    sha1: a110c33cdb3bbe17f8dd561f6a5c0160a7dd9dfa
     system: snk-neogeo-mvs
     required: true
     bundled: true
@@ -280,6 +282,7 @@ files:
     source_ref: "source NEO.emu/src/main/Main.cc:64-67, 198-206, 217-221, 321-355, source imagine/src/base/linux/ApplicationContext.cc:44-47"
 
   - name: "cmc42.xor"
+    sha1: 4b1b4ba452735c55b39d215d926a5d9a55fec754
     path: "rom/cmc42.xor"
     archive: gngeo_data.zip
     system: snk-neogeo-mvs
@@ -294,6 +297,7 @@ files:
     source_ref: "source NEO.emu/src/gngeo/neocrypt.c:617-634, source NEO.emu/src/main/Main.cc:357-369"
 
   - name: "cmc50.xor"
+    sha1: e947c634549a63a746725a1330df7ae778dde305
     path: "rom/cmc50.xor"
     archive: gngeo_data.zip
     system: snk-neogeo-mvs

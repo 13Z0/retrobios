@@ -105,6 +105,8 @@ files:
     source_ref: "My Boy! 2.0.3 g.java:66-68 (size test), g.java:80-100 (zip walk and direct open), settings/EmulatorSettings.java:65-73,121-135 (picker and validation), EmulatorActivity.java:1564-1599 (read and loadBios), libgba.so 0x165fbc-0x166070 (bridge), 0x15faf0-0x15fb5c (install), 0x15ec0c-0x15ec60 (replacement); 1.8.0 settings/EmulatorSettings.java:478-486, libgba.so 0x10b680-0x10b76f, 0x10b770-0x10b783, 0x10a1e0-0x10a38d"
 
   - name: rom_config.ini
+    size: 5929
+    sha1: c939bb0c356b3388ee371959e0af2d71ffbfb6dc
     system: nintendo-gba
     required: false
     bundled: true

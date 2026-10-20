@@ -142,6 +142,7 @@ files:
     source_ref: "drastic r2.5.2.2 initialize_memory 0x1c398-0x1c3b0, drastic r2.5.2.2 load_system_file 0xea80-0xebe4, libdrastic_arm64.so 0x2b6d0-0x2b6ec"
 
   - name: drastic_bios_arm9.bin
+    sha1: 4dc29a1560e1cbd7afef1998f7a6c25c5db1cc3a
     path: system/drastic_bios_arm9.bin
     system: nintendo-ds
     required: false
@@ -164,6 +165,7 @@ files:
     source_ref: "drastic r2.5.2.2 initialize_memory 0x1c3bc-0x1c3d4, drastic r2.5.2.2 gamecard_load_program 0x6fb98-0x6fbac, libdrastic_arm64.so 0x2b724-0x2b73c"
 
   - name: drastic_bios_arm7.bin
+    sha1: 31ae916c85d012582c7cdf47de6943ac6778253b
     path: system/drastic_bios_arm7.bin
     system: nintendo-ds
     required: false
@@ -199,6 +201,8 @@ files:
     source_ref: "libdrastic_arm64.so 0x2b768-0x2b790, libdrastic_arm64.so 0x774e0-0x7751c"
 
   - name: game_database.xml
+    size: 1686069
+    sha1: b0ae5480c61bdb701b9a444a1a81c4970db06d77
     path: game_database.xml
     system: nintendo-ds
     required: false
@@ -229,6 +233,8 @@ files:
     source_ref: "drastic r2.5.2.2 initialize_gamecard 0x70a0c-0x70a30, libdrastic_arm64.so 0x76b34-0x76b58, DraSticActivity.smali:5974"
 
   - name: drastic_bios.zip
+    size: 15583
+    sha1: bb2e4f588db69ec6d6ccf4fd6fe20a5fbbe9c5b0
     path: drastic_bios.zip
     required: false
     bundled: true
@@ -238,6 +244,8 @@ files:
     source_ref: "DraSticActivity.smali:5189-5200, drastic_bios_readme.txt:1-31"
 
   - name: LC_default.dat
+    size: 76
+    sha1: 9a0f96436ad7f0d6f3ee8338b5eb7cef23d0a46a
     path: config/LC_default.dat
     required: false
     bundled: true

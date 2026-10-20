@@ -117,6 +117,7 @@ files:
     source_ref: "Cheatopedia.java:504-508, 565-584, MasterGear-Cheats.zip ROOT.chts, EmuAndroid \"I want to add my own cheats to the Cheatopedia\""
 
   - name: names.dat
+    sha1: 15f93bd7b0e58cc1ee8c5ff06cb5a085c686ace4
     required: false
     bundled: true
     category: game_data
@@ -126,6 +127,7 @@ files:
     source_ref: "FileInfo.java:260-308"
 
   - name: changelog.html
+    sha1: fbd74bab1bda04cd8ea4d313057813a6916d1cef
     required: false
     bundled: true
     category: game_data

@@ -78,6 +78,8 @@ notes: |
 
 files:
   - name: Games.xml
+    size: 152643
+    sha1: 681e3362f0251d2e26e6bc2e06157c027f5f3116
     path: "Config/Games.xml"
     required: true
     bundled: true

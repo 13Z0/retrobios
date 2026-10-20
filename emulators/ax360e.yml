@@ -145,6 +145,8 @@ files:
     source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:175-257, source app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:1900-1903"
 
   - name: Account
+    size: 404
+    sha1: 99fc2a4d8107c36ee3075c9cff24872d2a98e37a
     required: false
     bundled: true
     load_from: content_dir

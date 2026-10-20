@@ -6,7 +6,7 @@ each resolved by its bare name to whatever shared it: the patched ROM at the
 original's slot, the Wii U disc keys at the 3DS key slot, the OpenGL shader
 at the Vulkan one. An entry with a hash resolves by content first.
 
-512 bundled entries still carry neither a hash nor `unsourceable:`. The
+135 bundled entries still carry neither a hash nor `unsourceable:`. The
 count per profile may only fall, and the table records each fall: a new
 entry is written with the hash of the file the emulator ships.
 """
@@ -27,49 +27,27 @@ from common import load_database, resolve_local_file  # noqa: E402
 
 UNIDENTIFIED = {
     "abuse": 3,
-    "aethersx2": 1,
-    "altirra": 2,
-    "arcadeflashweb": 8,
-    "armsx2": 42,
-    "ax360e": 2,
-    "c64-emu": 8,
+    "armsx2": 31,
+    "ax360e": 1,
     "cdogs": 16,
-    "citra-mmj": 9,
-    "drastic": 10,
-    "eka2l1": 88,
-    "emucorev": 2,
-    "emucorex": 23,
-    "epsxe": 2,
-    "fpse": 7,
-    "fpse-ng": 7,
-    "future-pinball": 18,
-    "future-pinball-fploader": 46,
-    "gba-emu": 1,
-    "hakux": 1,
+    "citra-mmj": 3,
+    "drastic": 5,
+    "emucorex": 5,
     "hcl": 3,
     "hurrican": 1,
     "idtech4a++": 1,
     "ikemen": 32,
-    "ines": 1,
-    "jl-mod": 22,
-    "kemulator": 4,
-    "mastergear": 2,
-    "mfme": 57,
+    "jl-mod": 9,
     "msx-emu": 9,
-    "my-boy": 1,
-    "neo-emu": 3,
     "nethersx2": 2,
     "nethersx2-turnip": 2,
     "nethersx2-turnip-classic": 2,
     "pcsx2": 1,
-    "project64": 9,
-    "sixtyforce": 5,
-    "skyline": 9,
+    "project64": 3,
     "ssf": 1,
-    "supermodel-dojo": 4,
+    "supermodel-dojo": 3,
     "x1-box": 1,
     "xendroid": 1,
-    "xm6pro68k": 2,
 }
 
 

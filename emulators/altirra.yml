@@ -1035,6 +1035,8 @@ files:
   # -- Files shipped inside the Altirra archive --
 
   - name: Altirra.chm
+    size: 526384
+    sha1: b90150f34a3a1b70e69388d2060afe75a95aeba9
     description: "Altirra help file"
     system: atari-400-800
     required: false
@@ -1043,6 +1045,8 @@ files:
     source_ref: "src/Altirra/source/oshelper.cpp:509-529"
 
   - name: Additions.atr
+    size: 92176
+    sha1: 9ac3be202a83af0a75285a576951d2eef7e02037
     description: "Altirra Additions disk"
     system: atari-400-800
     required: false

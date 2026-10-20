@@ -216,6 +216,8 @@ files:
     source_ref: "source C64.emu/src/vice/c64/c64rom.h:61, source C64.emu/src/vice/c64/c64model.c:148-151, 323"
 
   - name: "gtk3_sym.vkm"
+    size: 8140
+    sha1: 7fe8d706b2b2434fb276709c5f509dc1453429a3
     path: "C64/gtk3_sym.vkm"
     system: commodore-c64
     required: false
@@ -263,6 +265,8 @@ files:
     source_ref: "source C64.emu/src/vice/scpu64/scpu64model.c:303, source C64.emu/src/vice/c64/c64rom.h:61"
 
   - name: "gtk3_sym.vkm"
+    size: 8140
+    sha1: 7fe8d706b2b2434fb276709c5f509dc1453429a3
     path: "SCPU64/gtk3_sym.vkm"
     system: commodore-c64-supercpu
     required: false
@@ -322,6 +326,8 @@ files:
     source_ref: "source C64.emu/src/vice/c64dtv/c64dtvflash.c:59-64, 643-656, 471, 486-500"
 
   - name: "gtk3_sym.vkm"
+    size: 8140
+    sha1: 7fe8d706b2b2434fb276709c5f509dc1453429a3
     path: "C64DTV/gtk3_sym.vkm"
     system: commodore-c64dtv
     required: false
@@ -504,6 +510,8 @@ files:
     source_ref: "source C64.emu/src/vice/c128/c128rom.h:107, source C64.emu/src/vice/c128/c128-resources.c:656, source C64.emu/src/vice/c128/c128rom.c:710, 801, source C64.emu/src/vice/c64/c64rom.h:88"
 
   - name: "gtk3_sym.vkm"
+    size: 10535
+    sha1: 7d3bf4a533a1a90312d65c0cadcd35192847787d
     path: "C128/gtk3_sym.vkm"
     system: commodore-c128
     required: false
@@ -586,6 +594,8 @@ files:
     source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:57, source C64.emu/src/vice/vic20/vic20model.c:60, 139"
 
   - name: "gtk3_sym.vkm"
+    size: 8343
+    sha1: 0f32563c47d06ec13acd5713319626ef40a1c203
     path: "VIC20/gtk3_sym.vkm"
     system: commodore-vic20
     required: false
@@ -676,6 +686,8 @@ files:
     source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:43, source C64.emu/src/vice/plus4/plus4model.c:70, 161, source C64.emu/src/vice/plus4/plus4memrom.c:187"
 
   - name: "gtk3_sym.vkm"
+    size: 8744
+    sha1: 3a5b6619d9d0728cb4de1ce132a3b59a5e22a09e
     path: "PLUS4/gtk3_sym.vkm"
     system: commodore-plus4
     required: false
@@ -896,6 +908,8 @@ files:
     source_ref: "source C64.emu/src/vice/pet/petrom.h:80, source C64.emu/src/vice/pet/petmodel.c:310, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "gtk3_sym.vkm"
+    size: 10016
+    sha1: 7605bb4c225657240ff851a38f282e304376fd3a
     path: "PET/gtk3_sym.vkm"
     system: commodore-pet
     required: false
@@ -986,6 +1000,8 @@ files:
     source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:37, source C64.emu/src/vice/cbm2/cbm2model.c:64-65, 162, source C64.emu/src/vice/cbm2/cbm5x0rom.c:83"
 
   - name: "gtk3_sym.vkm"
+    size: 11743
+    sha1: 6652f5bfa1ade4dcdaa9f08032ebeba9d38ac284
     path: "CBM-II/gtk3_sym.vkm"
     system: commodore-cbm-ii
     required: false

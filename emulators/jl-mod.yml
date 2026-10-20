@@ -50,6 +50,8 @@ notes: |
 
 files:
   - name: system.props
+    size: 827
+    sha1: 4b371578278811a84fd717cb726c58e3e258baaf
     system: j2me
     required: true
     bundled: true
@@ -131,6 +133,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/j2me/micro3d/Program.java:314, source app/src/main/java/ru/woesss/j2me/micro3d/Program.java:330-337"
 
   - name: m3d.vsh
+    size: 193
+    sha1: 51d4ddc7cd594b20a9019abf9c23904b64819498
     system: j2me
     required: true
     bundled: true
@@ -140,6 +144,8 @@ files:
     source_ref: "source app/src/main/java/com/nokia/mid/m3d/ShaderProgram.java:28, source app/src/main/java/com/nokia/mid/m3d/ShaderProgram.java:38, source app/src/main/java/com/nokia/mid/m3d/M3D.java:132"
 
   - name: m3d.fsh
+    size: 206
+    sha1: fd91f8c1337962197f5058dc9fbea5da2bac5ae6
     system: j2me
     required: true
     bundled: true
@@ -149,6 +155,8 @@ files:
     source_ref: "source app/src/main/java/com/nokia/mid/m3d/ShaderProgram.java:29, source app/src/main/java/com/nokia/mid/m3d/ShaderProgram.java:39-76"
 
   - name: patches.bin
+    size: 363
+    sha1: 3bdf93cd0ea795e98f4195c5898d3ab0f9b918cf
     system: j2me
     required: true
     bundled: true
@@ -158,6 +166,8 @@ files:
     source_ref: "source dexlib/src/main/java/org/microemu/android/asm/AndroidProducer.java:41, source dexlib/src/main/java/org/microemu/android/asm/AndroidProducer.java:62-90, source dexlib/src/main/java/com/android/dx/command/dexer/Main.java:468, source dexlib/src/main/java/org/microemu/android/asm/BinaryPatcher.java:49-71"
 
   - name: licenses.html
+    size: 2621
+    sha1: 87db7f2faca0bbc79c8b4acbca878eef521bfce9
     system: j2me
     required: false
     bundled: true
@@ -176,6 +186,8 @@ files:
     source_ref: "source app/src/main/java/ru/playsoftware/j2meloader/crashes/AppCenterSender.java:68-75"
 
   - name: libc++_shared.so
+    size: 1039112
+    sha1: f2e861b1229d5d520ce2fc0dc70deb11eeb7cfe2
     system: j2me
     required: true
     bundled: true
@@ -185,6 +197,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/gles/GLESUtils.java:31, source app/src/main/java/ru/woesss/j2me/micro3d/Utils.java:103, source app/src/main/java/javax/microedition/m3g/Platform.java:86, source app/src/main/java/ru/woesss/j2me/mmapi/synth/eas/LibEAS.java:70, source app/src/main/java/ru/woesss/j2me/mmapi/synth/tsf/LibTSF.java:70"
 
   - name: libgles_utils.so
+    size: 8600
+    sha1: b5e287339fbdfbb44751abb76dfbf485419c06f4
     system: j2me
     required: true
     bundled: true
@@ -194,6 +208,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/gles/GLESUtils.java:30-33, source app/src/main/java/com/nokia/mid/m3d/M3D.java:323, source app/src/main/java/com/mexa/opgl/OpglGraphics.java:493, source app/src/main/cpp/gles_utils/Android.mk:5-11"
 
   - name: libjavam3g.so
+    size: 427240
+    sha1: 440745ef16d14f15cb2047956d217526a51440f2
     system: j2me
     required: true
     bundled: true
@@ -203,6 +219,8 @@ files:
     source_ref: "source app/src/main/java/javax/microedition/m3g/Platform.java:85-89, source app/src/main/java/javax/microedition/m3g/Interface.java:314, source app/src/main/cpp/m3g/Android.mk:5-15"
 
   - name: libmicro3d.so
+    size: 8808
+    sha1: cd68cd2124ca9d7921be018d1e55d4db830e10d9
     system: j2me
     required: true
     bundled: true
@@ -212,6 +230,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/j2me/micro3d/Utils.java:97-105, source app/src/main/cpp/micro3d/Android.mk:5-10"
 
   - name: liboboe.so
+    size: 278376
+    sha1: 6d58884ad4a8cf37087ee2e24e6c12383325090a
     system: j2me
     required: false
     bundled: true
@@ -221,6 +241,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/j2me/mmapi/synth/eas/LibEAS.java:71, source app/src/main/java/ru/woesss/j2me/mmapi/synth/tsf/LibTSF.java:71, source app/src/main/java/ru/woesss/j2me/mmapi/synth/SynthPluginFactory.java:40-53"
 
   - name: libmmapi_common.so
+    size: 16488
+    sha1: 63624552130454ee4ca0c7c7aadb7b5b6bc0ebca
     system: j2me
     required: false
     bundled: true
@@ -230,6 +252,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/j2me/mmapi/synth/eas/LibEAS.java:72, source app/src/main/java/ru/woesss/j2me/mmapi/synth/tsf/LibTSF.java:72, source app/src/main/cpp/mmapi_common/Android.mk:5-12"
 
   - name: libmmapi_eas.so
+    size: 611768
+    sha1: 52ca5b835fdc54ea0bcb5b214ad45a246c01f101
     system: j2me
     required: false
     bundled: true
@@ -239,6 +263,8 @@ files:
     source_ref: "source app/src/main/java/ru/woesss/j2me/mmapi/synth/eas/LibEAS.java:69-74, source app/src/main/cpp/mmapi_eas/Android.mk:5-22, source app/src/main/cpp/sonivox/Android.mk:134"
 
   - name: libmmapi_tsf.so
+    size: 61392
+    sha1: 9e675c073cc065cd89359410717a94ffaf8515cb
     system: j2me
     required: false
     bundled: true

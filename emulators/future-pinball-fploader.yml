@@ -157,6 +157,7 @@ files:
   # -- Tools shipped beside the loader --
 
   - name: BAM-Tracker.exe
+    sha1: c4fc4467ccec0c9c2852a9342b5b500511b6c886
     system: fpinball
     required: false
     bundled: true
@@ -169,6 +170,7 @@ files:
       rather than by Future Pinball.
 
   - name: ModelImporter.exe
+    sha1: dd3874742bfe5f9c2828cb9c4e249c2f4722bd51
     system: fpinball
     required: false
     bundled: true
@@ -205,6 +207,7 @@ files:
       "default.cfg saved".
 
   - name: default.seq
+    sha1: bcc92f9af26afb64a885ef789cbb10d6f3c7f453
     system: fpinball
     required: false
     bundled: true
@@ -279,6 +282,7 @@ files:
   # -- Ball and room packs, walked as balls\*.zip --
 
   - name: axis.zip
+    sha1: b701f91eae625a5e8f7bf56f104be506c8d1c8d8
     system: fpinball
     path: "Balls/axis.zip"
     required: false
@@ -289,6 +293,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Baseball.zip
+    sha1: badfe5b7ab16c88f3fe255143546932c09fc2097
     system: fpinball
     path: "Balls/Baseball.zip"
     required: false
@@ -299,6 +304,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Basketball 1.zip
+    sha1: 5aff2d72c317d58a6f1951811a31ec1b99dfdfe4
     system: fpinball
     path: "Balls/Basketball 1.zip"
     required: false
@@ -309,6 +315,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Basketball 2.zip
+    sha1: 1fa517b848c69c0b2c2f3a32e4097a157fff3aa2
     system: fpinball
     path: "Balls/Basketball 2.zip"
     required: false
@@ -319,6 +326,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Cue Black.zip
+    sha1: 9238286e57f346fd9b9ed3d8ffa977083b9d3feb
     system: fpinball
     path: "Balls/Cue Black.zip"
     required: false
@@ -329,6 +337,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Cue White.zip
+    sha1: 948eec0af66150dc908622bd48e867e85fb0d6c5
     system: fpinball
     path: "Balls/Cue White.zip"
     required: false
@@ -339,6 +348,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: earth.zip
+    sha1: 0b30d717df74d90c26769d58055b507b89fdc1fc
     system: fpinball
     path: "Balls/earth.zip"
     required: false
@@ -349,6 +359,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: EYETOY.zip
+    sha1: 89d8f29048176e8faff89cd48d0eda7b4875bf49
     system: fpinball
     path: "Balls/EYETOY.zip"
     required: false
@@ -359,6 +370,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Fireball.zip
+    sha1: 28a08c3911ef46aca8880587bed56dfa4f99062a
     system: fpinball
     path: "Balls/Fireball.zip"
     required: false
@@ -369,6 +381,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Knight.zip
+    sha1: 969d38e02a6759629cc827501a049c60582d9531
     system: fpinball
     path: "Balls/Knight.zip"
     required: false
@@ -379,6 +392,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: latlong.zip
+    sha1: d2f65f0f32e21dfc65d61a384df525dedbc57a8a
     system: fpinball
     path: "Balls/latlong.zip"
     required: false
@@ -389,6 +403,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x1002d513-0x1002d52d"
 
   - name: Soccer Ball 1.zip
+    sha1: 0a1e886e991d88761502d8434248e986bf9c238f
     system: fpinball
     path: "Balls/Soccer Ball 1.zip"
     required: false
@@ -401,6 +416,7 @@ files:
   # -- Physics documents, reached through XML_Presets.txt --
 
   - name: fp-p1.0.xml
+    sha1: 534a239cb7ae954fb9ad43de7fd79c0e5ee6473a
     system: fpinball
     path: "XML/fp-p1.0.xml"
     required: false
@@ -411,6 +427,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.0.xml
+    sha1: db023400242b4e5c34a14876e64dc9bfc3b6e3e1
     system: fpinball
     path: "XML/fp-p2.0.xml"
     required: false
@@ -421,6 +438,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.1.xml
+    sha1: 22ffd7dc5541bbf0048b7ad4af5bbc76034cad8f
     system: fpinball
     path: "XML/fp-p2.1.xml"
     required: false
@@ -431,6 +449,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.2.xml
+    sha1: fd56e59a4d36c8f3dbccd0ee7c24abc9e66c0495
     system: fpinball
     path: "XML/fp-p2.2.xml"
     required: false
@@ -441,6 +460,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.3 Version 1.xml
+    sha1: 33970a777762fc53908499b8a0bfe2b5cbc50b99
     system: fpinball
     path: "XML/fp-p2.3 Version 1.xml"
     required: false
@@ -451,6 +471,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.3 Version 2.xml
+    sha1: 2b0792a18766a7750b6b5da8dc9607ed63e8dc77
     system: fpinball
     path: "XML/fp-p2.3 Version 2.xml"
     required: false
@@ -461,6 +482,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.4.xml
+    sha1: ce9ab342ac870f9c5bcd53671cca05263ef27f0d
     system: fpinball
     path: "XML/fp-p2.4.xml"
     required: false
@@ -471,6 +493,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.5.xml
+    sha1: 716e15712d968f9ce0b94126bb7e0ec8a7862c29
     system: fpinball
     path: "XML/fp-p2.5.xml"
     required: false
@@ -481,6 +504,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.5 slamtilt rubbers.xml
+    sha1: b1e1764011daa11017b571428b4cd82c12eabd2e
     system: fpinball
     path: "XML/fp-p2.5 slamtilt rubbers.xml"
     required: false
@@ -491,6 +515,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.6.xml
+    sha1: f6abf69d826b5daef686c7ed15dd4349b47621a2
     system: fpinball
     path: "XML/fp-p2.6.xml"
     required: false
@@ -501,6 +526,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: fp-p2.7.xml
+    sha1: 468826d947e599ec79d9bc44ddbff75fbf60ede2
     system: fpinball
     path: "XML/fp-p2.7.xml"
     required: false
@@ -511,6 +537,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: Zendonius_v1.0.xml
+    sha1: 694f2c0efa61c934345161c61782202bac208f9b
     system: fpinball
     path: "XML/Zendonius_v1.0.xml"
     required: false
@@ -521,6 +548,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: Zendonius_v1.1.xml
+    sha1: 213244dc655fec822218a8780668bc74b80ac8ff
     system: fpinball
     path: "XML/Zendonius_v1.1.xml"
     required: false
@@ -531,6 +559,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100fba6a-0x100fbb73"
 
   - name: zedonius_v1_0.zip
+    sha1: 2563528f492e39b947f8836d10eefa1fd278f033
     system: fpinball
     path: "XML/zedonius_v1_0.zip"
     required: false
@@ -541,6 +570,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100ae8ec-0x100ae990"
 
   - name: zedonius_v1_1.zip
+    sha1: f585911868919bbf4f6d185a468ab01982ad1878
     system: fpinball
     path: "XML/zedonius_v1_1.zip"
     required: false
@@ -589,6 +619,7 @@ files:
     note: "The 1.5-408 zip moves it to removed_plugins\\, while bam-setup.exe installs it here."
 
   - name: HT-PS3Eyes.dll
+    sha1: 61b0ff6832769f300c4278e279ce5bd4ce878827
     system: fpinball
     path: "plugins/HT-PS3Eyes.dll"
     required: false
@@ -601,6 +632,7 @@ files:
       beside itself, both produced by the calibration pass.
 
   - name: Kinect.dll
+    sha1: f7a2c21d2acc82eb9ff700fa426cc0b37edd851a
     system: fpinball
     path: "plugins/Kinect.dll"
     required: false
@@ -611,6 +643,7 @@ files:
     note: "Bound to Kinect10.dll and FaceTrackLib.dll."
 
   - name: DesktopKinect.dll
+    sha1: 19a04dbf9f43c9fc4ddb1d1357bff64526c3fec9
     system: fpinball
     path: "plugins/DesktopKinect.dll"
     required: false
@@ -620,6 +653,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
 
   - name: Kinect2.dll
+    sha1: 22e32cd595f825b004c10d46746cd28c973f649b
     system: fpinball
     path: "plugins/Kinect2.dll"
     required: false
@@ -630,6 +664,7 @@ files:
     note: "Bound to Kinect20.dll."
 
   - name: FaceTrackLib.dll
+    sha1: 3e96611e075c0ffb82232b36b44dc6650627d9b3
     system: fpinball
     path: "plugins/FaceTrackLib.dll"
     required: false
@@ -639,6 +674,7 @@ files:
     source_ref: "DesktopKinect.dll, Kinect.dll import directories"
 
   - name: FaceTrackData.dll
+    sha1: aeb806a4330ce8716feffdd844e71084a86b2f88
     system: fpinball
     path: "plugins/FaceTrackData.dll"
     required: false
@@ -648,6 +684,7 @@ files:
     source_ref: "FaceTrackLib.dll .rdata, wide literal FaceTrackData.dll"
 
   - name: FreeTrack.dll
+    sha1: 8bb00560edc99048cda818cb81afa823e8d1a682
     system: fpinball
     path: "plugins/FreeTrack.dll"
     required: false
@@ -657,6 +694,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
 
   - name: TrackIR.dll
+    sha1: 000deaf4533b239cd3c22f250dcbb0d55123dc16
     system: fpinball
     path: "plugins/TrackIR.dll"
     required: false
@@ -670,6 +708,7 @@ files:
       client library is resolved as a plain module name.
 
   - name: PostFX.dll
+    sha1: 52a49fdbb9328a54e9add344def6636be3d151e1
     system: fpinball
     path: "plugins/PostFX.dll"
     required: false
@@ -685,6 +724,7 @@ files:
       BAM-OpenVR.zip.
 
   - name: PinballHighScore.dll
+    sha1: 7734aecaa3cd1d019db365aecfd9df2a5ef8efbe
     system: fpinball
     path: "plugins/PinballHighScore.dll"
     required: false
@@ -694,6 +734,7 @@ files:
     source_ref: "BAM.dll 1.5-408 .text:0x100cf400-0x100cf75c"
 
   - name: PinballHighScore.cfg
+    sha1: 852b39ba5db64e8a84e4b0612521caa5bd44fe02
     system: fpinball
     path: "plugins/PinballHighScore.cfg"
     required: false
@@ -712,6 +753,7 @@ files:
     note: "Only BAM-OpenVR.zip carries a copy. The plugin creates one otherwise."
 
   - name: PuPPlugin.dll
+    sha1: 972607482b16139d1d53d919d3499a61e5ece7f8
     system: fpinball
     path: "plugins/PuPPlugin.dll"
     required: false
@@ -722,6 +764,7 @@ files:
     note: "Takes BAM_GetTextureId and BAM_ReplaceTexture from the plugin API."
 
   - name: icom.dll
+    sha1: 83a3b55b2cc1b29997d50cf38108f6725d9a0df2
     system: fpinball
     path: "plugins/icom.dll"
     required: false
@@ -752,6 +795,7 @@ files:
     source_ref: "OpenVR.dll import directory"
 
   - name: haarcascade_frontalface_alt.xml
+    sha1: 035eef24478ebf4b16c788dbd02f8b3a3f9b8951
     system: fpinball
     path: "plugins/haarcascades/haarcascade_frontalface_alt.xml"
     required: false
@@ -762,6 +806,7 @@ files:
     source_ref: "DesktopCam.dll, PS3Eye.dll, Simple Cam.dll .rdata"
 
   - name: haarcascade_frontalface_default.xml
+    sha1: 85a317ce2fc0415741a41736e99bd281d2437568
     system: fpinball
     path: "plugins/haarcascades/haarcascade_frontalface_default.xml"
     required: false
@@ -772,6 +817,7 @@ files:
     source_ref: "DesktopCam.dll, PS3Eye.dll, Simple Cam.dll .rdata"
 
   - name: lbpcascade_frontalface.xml
+    sha1: d668cbe8712f062bcc6af898ebb2937b73dcfd2d
     system: fpinball
     path: "plugins/lbpcascades/lbpcascade_frontalface.xml"
     required: false

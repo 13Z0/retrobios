@@ -241,6 +241,8 @@ files:
     source_ref: "source android/app/src/main/cpp/xemu_android.cpp:193-268"
 
   - name: X1_Covers.txt
+    size: 34350
+    sha1: 2e8d9f0a8ff08896674badeba8aa3ac5245304c3
     required: false
     bundled: true
     description: "Cover art index for the game library"

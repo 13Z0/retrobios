@@ -139,6 +139,8 @@ files:
     source_ref: "source app/src/main/java/com/sbro/emucorev/core/FirmwareSource.kt:25-31, source app/src/main/cpp/vita3k/vita3k/packages/src/pup.cpp:296-297, source app/src/main/cpp/vita3k/vita3k/renderer/src/renderer.cpp:121-127, source app/src/main/java/com/sbro/emucorev/core/VitaLaunchBridge.kt:28-30"
 
   - name: app_compat_db.xml
+    size: 633566
+    sha1: 9e5a68ae992578d62f2d429863cb8506ee40e3b0
     path: "compatibility/app_compat_db.xml"
     system: sony-playstation-vita
     required: false
@@ -156,6 +158,8 @@ files:
     source_ref: "source app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:18-20, source app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:54-107, source app/src/main/java/com/sbro/emucorev/data/VitaCompatibilityRepository.kt:346-350, source app/src/main/cpp/vita3k/vita3k/android/jni/native_bootstrap.cpp:122, source app/src/main/cpp/vita3k/vita3k/compat/src/compat.cpp:127-150"
 
   - name: commercial_list.json
+    size: 350615
+    sha1: ea7d6bce6d0b871f40e57c792480f4912b93f247
     path: "compatibility/commercial_list.json"
     system: sony-playstation-vita
     required: false

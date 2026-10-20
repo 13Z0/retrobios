@@ -366,6 +366,8 @@ files:
     source_ref: "source pcsx2/Patch.cpp:122, source pcsx2/Patch.cpp:294-345, source pcsx2/Patch.cpp:452-464, source .github/workflows/linux_build_qt.yml:33"
 
   - name: game_controller_db.txt
+    size: 513961
+    sha1: 5c0b3ecf27cd6dff60b5e038adf1c923386a2cba
     path: pcsx2/resources/game_controller_db.txt
     standalone_path: resources/game_controller_db.txt
     mode: standalone
@@ -1017,6 +1019,8 @@ files:
     source_ref: "source pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:792-793, source pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3684-3691"
 
   - name: tfx.fx
+    size: 52018
+    sha1: d061eb8ad3d56a5dc6ab653236b2a0c9324fb595
     path: pcsx2/resources/shaders/dx11/tfx.fx
     standalone_path: resources/shaders/dx11/tfx.fx
     mode: standalone
@@ -1030,6 +1034,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:215-218, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:1008, source platforms/android/app/build.gradle.kts:73-78"
 
   - name: convert.fx
+    size: 15850
+    sha1: 773e6b9177ac20ec4f80181c2ebdcaa33d71c91a
     path: pcsx2/resources/shaders/dx11/convert.fx
     standalone_path: resources/shaders/dx11/convert.fx
     mode: standalone
@@ -1040,6 +1046,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:229-231, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:2893"
 
   - name: present.fx
+    size: 10945
+    sha1: 84b000485929698392676e8e7915bfcce15291ee
     path: pcsx2/resources/shaders/dx11/present.fx
     standalone_path: resources/shaders/dx11/present.fx
     mode: standalone
@@ -1050,6 +1058,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:267, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3041"
 
   - name: merge.fx
+    size: 538
+    sha1: 8dba66121f3bbc4b2bdf67722ef4c2b6b6b23ee6
     path: pcsx2/resources/shaders/dx11/merge.fx
     standalone_path: resources/shaders/dx11/merge.fx
     mode: standalone
@@ -1060,6 +1070,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:319, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3120"
 
   - name: interlace.fx
+    size: 7205
+    sha1: f3d1e30101e58143282085bc6330db33a0f77a85
     path: pcsx2/resources/shaders/dx11/interlace.fx
     standalone_path: resources/shaders/dx11/interlace.fx
     mode: standalone
@@ -1070,6 +1082,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:354, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3084"
 
   - name: shadeboost.fx
+    size: 1311
+    sha1: 568f01644e02944fe3d48cfb751e71ebe504c0be
     path: pcsx2/resources/shaders/dx11/shadeboost.fx
     standalone_path: resources/shaders/dx11/shadeboost.fx
     mode: standalone
@@ -1079,6 +1093,8 @@ files:
     source_ref: "upstream pcsx2/GS/Renderers/DX11/GSDevice11.cpp:374, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:3190"
 
   - name: cas.hlsl
+    size: 2597
+    sha1: a15cc4dce1edcd3db4c4e022d2a3b78e11c18a8c
     path: pcsx2/resources/shaders/dx11/cas.hlsl
     standalone_path: resources/shaders/dx11/cas.hlsl
     mode: standalone
@@ -1089,6 +1105,8 @@ files:
     source_ref: "source pcsx2/GS/Renderers/DX11/GSDevice11.cpp:2305, source pcsx2/GS/Renderers/DX12/GSDevice12.cpp:2365"
 
   - name: imgui.fx
+    size: 736
+    sha1: 47491eaf3ba082383305b3d958794409cb0f5476
     path: pcsx2/resources/shaders/dx11/imgui.fx
     standalone_path: resources/shaders/dx11/imgui.fx
     mode: standalone
@@ -1428,6 +1446,8 @@ files:
     source_ref: "source pcsx2/ImGui/FullscreenUI.cpp:1315, upstream pcsx2-qt/SetupWizardDialog.cpp:165, upstream pcsx2-qt/QtUtils.cpp:843"
 
   - name: AppIconLarge.ico
+    size: 372526
+    sha1: 0f37f2795ca071eb712d5243247675f140897c50
     path: pcsx2/resources/icons/AppIconLarge.ico
     standalone_path: resources/icons/AppIconLarge.ico
     mode: standalone
@@ -1498,6 +1518,8 @@ files:
     source_ref: "source pcsx2/ImGui/FullscreenUI.cpp:2881"
 
   - name: cover-placeholder.png
+    size: 56075
+    sha1: 620b40ff921876175550bb976f0428274853fe27
     path: pcsx2/resources/cover-placeholder.png
     standalone_path: resources/cover-placeholder.png
     mode: standalone

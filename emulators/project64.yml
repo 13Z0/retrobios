@@ -114,6 +114,8 @@ files:
 
   # -- Per game databases shipped in the installer --
   - name: "Project64.rdb"
+    size: 228331
+    sha1: 72d5e026ced46c1e3704843a0e899cadf313fa15
     path: "Config/Project64.rdb"
     system: nintendo-64
     required: false
@@ -129,6 +131,8 @@ files:
     source_ref: "Source/Project64-core/Settings.cpp:87-88,134-145,151-188, Source/Project64-core/Settings/SettingType/SettingsType-RomDatabase.cpp:63,117, Source/Project64-core/RomList/RomList.cpp:47,52,58-61, Source/Project64-core/N64System/N64Rom.cpp:722,914"
 
   - name: "Video.rdb"
+    size: 77657
+    sha1: 92ff4de91fa931054949444647649d32c8ba48bc
     path: "Config/Video.rdb"
     system: nintendo-64
     required: false
@@ -142,6 +146,8 @@ files:
     source_ref: "Source/Project64-core/Settings.cpp:89-90, Source/Project64-core/Settings/SettingType/SettingsType-RomDatabase.cpp:64,118"
 
   - name: "Audio.rdb"
+    size: 1233
+    sha1: 54aef0ff19895ecc21d7c207bc049a57e6c355ea
     path: "Config/Audio.rdb"
     system: nintendo-64
     required: false
@@ -153,6 +159,8 @@ files:
     source_ref: "Source/Project64-core/Settings.cpp:91-92, Source/Project64-core/Settings/SettingType/SettingsType-RomDatabase.cpp:65,119"
 
   - name: "Project64.rdx"
+    size: 149036
+    sha1: 92b11dbe0333c6d79010bcc92aeb53a34270b241
     path: "Config/Project64.rdx"
     system: nintendo-64
     required: false
@@ -202,6 +210,8 @@ files:
 
   # -- Prebuilt plugins with no source in the tree --
   - name: "Jabo_Direct3D8.dll"
+    size: 390144
+    sha1: c3b201b1020cb822af09b9b71784dab2a40dc36b
     path: "Plugin/GFX/Jabo_Direct3D8.dll"
     system: nintendo-64
     required: false
@@ -215,6 +225,8 @@ files:
     source_ref: "Source/Project64-core/Settings.cpp:383, Source/Installer/Installer.iss:36, Source/Script/package_zip.cmd:60"
 
   - name: "Jabo_Dsound.dll"
+    size: 45056
+    sha1: c451926ac48bbc9db0f44db749205848f4f37ffb
     path: "Plugin/Audio/Jabo_Dsound.dll"
     system: nintendo-64
     required: false

@@ -96,6 +96,8 @@ files:
     source_ref: "source GBA.emu/src/main/Main.cc:190-197 (read and size check), source GBA.emu/src/core/gba/gba.cpp:3758-3778 (second check, copy, useBios), source GBA.emu/src/main/EmuMenuViews.cc:485-510 (picker and extension filter)"
 
   - name: "Motocross Challenge.7z"
+    size: 664170
+    sha1: d87747718c1aa06a9ddd8504b2581eb0034b754a
     aliases: ["MotocrossChallenge.7z"]
     system: nintendo-gba
     required: false

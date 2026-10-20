@@ -600,6 +600,8 @@ files:
     source_ref: "ePSXe 2.0.5 Linux x64 LoadPadPlugins 0x51927e, ePSXe 2.0.5 Linux x64 write_configfiledefault 0x42ae57-0x42ae6e"
 
   - name: liboglplugin2.so
+    size: 395568
+    sha1: ffd1b06e223e82e1ffdda1cbafbaa617a1c692f1
     path: plugins/liboglplugin2.so
     system: sony-playstation
     required: false
@@ -610,6 +612,8 @@ files:
     source_ref: "ePSXe.java:847-886"
 
   - name: libogl2extplugin.so
+    size: 362864
+    sha1: 5a3f9cd77b43dac61c48f15a813128d4eff56601
     path: plugins/libogl2extplugin.so
     system: sony-playstation
     required: false

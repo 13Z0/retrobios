@@ -357,6 +357,8 @@ files:
     source_ref: "source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:393-400, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:402-411"
 
   - name: tfx.glsl
+    size: 52705
+    sha1: 373792e3bc3c89226bff1852dca3eaf5a8ae4a80
     path: resources/shaders/vulkan/tfx.glsl
     system: sony-playstation-2
     required: true
@@ -368,6 +370,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:404-407, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2531-2535"
 
   - name: convert.glsl
+    size: 14941
+    sha1: 705d20d39a910d58a070fb86780ac58c8007591c
     path: resources/shaders/vulkan/convert.glsl
     system: sony-playstation-2
     required: true
@@ -379,6 +383,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:4901-4905, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5247-5251"
 
   - name: present.glsl
+    size: 13440
+    sha1: a848aad1840c7d85bfcdd552521a7181b00331cc
     path: resources/shaders/vulkan/present.glsl
     system: sony-playstation-2
     required: true
@@ -387,6 +393,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5076-5080"
 
   - name: interlace.glsl
+    size: 6329
+    sha1: 268f43cd946eea999c62f63a24eb00cb2fdc342c
     path: resources/shaders/vulkan/interlace.glsl
     system: sony-playstation-2
     required: true
@@ -395,6 +403,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5126-5130"
 
   - name: merge.glsl
+    size: 759
+    sha1: 808b7b46bfb033c7fe4d94d0dbf5a271de30dedc
     path: resources/shaders/vulkan/merge.glsl
     system: sony-playstation-2
     required: true
@@ -403,6 +413,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5177-5181"
 
   - name: shadeboost.glsl
+    size: 1831
+    sha1: 9b2704655a893ff1675d28df4bd9ffc9e15d3dd5
     path: resources/shaders/vulkan/shadeboost.glsl
     system: sony-playstation-2
     required: true
@@ -424,6 +436,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2569-2570, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5333-5335, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205"
 
   - name: imgui.glsl
+    size: 791
+    sha1: 276d984150c2fd2fb5ba287f2e5ceb7262dc5a95
     path: resources/shaders/vulkan/imgui.glsl
     system: sony-playstation-2
     required: true
@@ -432,6 +446,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5359-5362"
 
   - name: tfx_vgs.glsl
+    size: 14156
+    sha1: cb02fa6503183c313aa8d7c278bb9fbfe3d1a943
     path: resources/shaders/opengl/tfx_vgs.glsl
     system: sony-playstation-2
     required: true
@@ -442,6 +458,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:404-407, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:918-924"
 
   - name: tfx_fs.glsl
+    size: 37479
+    sha1: f1c97200cb5b571a1ed6d33b5a2f854cebbfb528
     path: resources/shaders/opengl/tfx_fs.glsl
     system: sony-playstation-2
     required: true
@@ -450,6 +468,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:919-924"
 
   - name: convert.glsl
+    size: 16416
+    sha1: 35910b67070342cdd6ec4d68eb2e56b39d350543
     path: resources/shaders/opengl/convert.glsl
     system: sony-playstation-2
     required: true
@@ -458,6 +478,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:602-606"
 
   - name: present.glsl
+    size: 14894
+    sha1: 4abe45e59dc9286321a115c76c31cc7fe85e58d5
     path: resources/shaders/opengl/present.glsl
     system: sony-playstation-2
     required: true
@@ -466,6 +488,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:688-692"
 
   - name: interlace.glsl
+    size: 5983
+    sha1: be39a049af0b8ab0c2168ad6d8cf636e15ae0dd2
     path: resources/shaders/opengl/interlace.glsl
     system: sony-playstation-2
     required: true
@@ -474,6 +498,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:747-751"
 
   - name: merge.glsl
+    size: 579
+    sha1: c8eb9c1926baad8bbba25f97be54abae233fe715
     path: resources/shaders/opengl/merge.glsl
     system: sony-playstation-2
     required: true
@@ -482,6 +508,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:724-728"
 
   - name: shadeboost.glsl
+    size: 1548
+    sha1: 03c8b0d3ebeb0ecdc7f594ba6f7242a6f6e4d564
     path: resources/shaders/opengl/shadeboost.glsl
     system: sony-playstation-2
     required: true
@@ -490,6 +518,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:767-768, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:2868-2872"
 
   - name: cas.glsl
+    size: 2483
+    sha1: cb0d4276f9947762af0841a8af75efa6cbe9109c
     path: resources/shaders/opengl/cas.glsl
     system: sony-playstation-2
     required: false
@@ -502,6 +532,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3068-3088, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205"
 
   - name: imgui.glsl
+    size: 637
+    sha1: ca149058af89d8f612aaa529661e8267d9569875
     path: resources/shaders/opengl/imgui.glsl
     system: sony-playstation-2
     required: true
@@ -510,6 +542,8 @@ files:
     source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3152-3156"
 
   - name: fxaa.fx
+    size: 17432
+    sha1: 81c56a54bde692fb15fca4efe6db508b7d09bf6e
     path: resources/shaders/common/fxaa.fx
     system: sony-playstation-2
     required: true
@@ -593,6 +627,8 @@ files:
     source_ref: "source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:83, source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:1458-1463"
 
   - name: games.db
+    size: 6025216
+    sha1: 0e2ee74d1f9ebc3a6faf9dbaebbacc2ff053f4df
     path: "games.db"
     system: sony-playstation-2
     required: false

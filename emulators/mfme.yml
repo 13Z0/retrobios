@@ -81,6 +81,8 @@ files:
   # -- Output hardware library --
 
   - name: PacDrive32.dll
+    size: 71168
+    sha1: f77e7836ee114947f38bfd854843c0b987399f0e
     system: fruitmachine
     required: true
     bundled: true
@@ -96,6 +98,8 @@ files:
   # -- Fonts, scanned from the Fonts folder beside MFME.exe --
 
   - name: LITHOGRB.TTF
+    size: 49152
+    sha1: 82f91b0c82ee8ea289f729625961ad5ebdc51758
     system: fruitmachine
     path: "Fonts/LITHOGRB.TTF"
     required: false
@@ -110,6 +114,8 @@ files:
       the name in red in the properties screen and renders with a substitute.
 
   - name: LITHOGRL.TTF
+    size: 61484
+    sha1: 5d9d28246d2976cdd75adc66524ce9de5e623af0
     system: fruitmachine
     path: "Fonts/LITHOGRL.TTF"
     required: false
@@ -120,6 +126,8 @@ files:
     note: "Same mechanism as LITHOGRB.TTF, the light weight of the same family."
 
   - name: MFME.ttf
+    size: 264428
+    sha1: 646068483c6f5c7d0eb2f76038b9e5dd25f0f01d
     system: fruitmachine
     path: "Fonts/MFME.ttf"
     required: false
@@ -132,6 +140,8 @@ files:
   # -- Reel masks, applied when the Default option is selected --
 
   - name: ReelGradientMask.bmp
+    size: 522214
+    sha1: 16e3c6698a10547c228b8ab474b817ff1d64c216
     system: fruitmachine
     path: "DefaultMasks/ReelGradientMask.bmp"
     required: false
@@ -144,6 +154,8 @@ files:
       window. A custom mask stored in the layout replaces it.
 
   - name: ReelLampMask.bmp
+    size: 108734
+    sha1: e3df9d90adb0d44c43cb70b4fd3887c7ddbef1cf
     system: fruitmachine
     path: "DefaultMasks/ReelLampMask.bmp"
     required: false
@@ -156,6 +168,8 @@ files:
   # -- Payout solenoid slides --
 
   - name: 2pSlide.wav
+    size: 60834
+    sha1: f92d854f017d154c9ae0a2351629876515ba48d7
     system: fruitmachine
     path: "DefaultSounds/2pSlide.wav"
     required: false
@@ -165,6 +179,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:9, history.txt:44"
 
   - name: 10pSlide.wav
+    size: 60834
+    sha1: f92d854f017d154c9ae0a2351629876515ba48d7
     system: fruitmachine
     path: "DefaultSounds/10pSlide.wav"
     required: false
@@ -174,6 +190,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:10"
 
   - name: 20pSlide.wav
+    size: 60834
+    sha1: f92d854f017d154c9ae0a2351629876515ba48d7
     system: fruitmachine
     path: "DefaultSounds/20pSlide.wav"
     required: false
@@ -183,6 +201,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:11"
 
   - name: 50pSlide.wav
+    size: 60834
+    sha1: f92d854f017d154c9ae0a2351629876515ba48d7
     system: fruitmachine
     path: "DefaultSounds/50pSlide.wav"
     required: false
@@ -192,6 +212,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:12"
 
   - name: PoundSlide.wav
+    size: 60834
+    sha1: f92d854f017d154c9ae0a2351629876515ba48d7
     system: fruitmachine
     path: "DefaultSounds/PoundSlide.wav"
     required: false
@@ -201,6 +223,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:13"
 
   - name: TokenSlide.wav
+    size: 84928
+    sha1: cd6d260ae5083ec6d4b9f5dc51253e275d6defff
     system: fruitmachine
     path: "DefaultSounds/TokenSlide.wav"
     required: false
@@ -210,6 +234,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:14"
 
   - name: MiscSlide.wav
+    size: 63898
+    sha1: 4dee3153c5a4cdf9d286387232fa89fbf381fa28
     system: fruitmachine
     path: "DefaultSounds/MiscSlide.wav"
     required: false
@@ -221,6 +247,8 @@ files:
   # -- Meters and buttons --
 
   - name: meter.wav
+    size: 9260
+    sha1: d4c70ecc12d3be10d5a07784b6d07e9e3880e39a
     system: fruitmachine
     path: "DefaultSounds/meter.wav"
     required: false
@@ -231,6 +259,8 @@ files:
     note: "Listed as Meter.wav in the readme, shipped as meter.wav."
 
   - name: ButtonDown.wav
+    size: 3264
+    sha1: cdb40079f4c0ce29793dd2a16fb53bec421ba1fd
     system: fruitmachine
     path: "DefaultSounds/ButtonDown.wav"
     required: false
@@ -241,6 +271,8 @@ files:
     note: "PROCONN ships its own copy under DefaultSounds/Custom/PROCONN/."
 
   - name: ButtonUp.wav
+    size: 2638
+    sha1: ae019c3258f01fdc847a4902bf550432c67aeb48
     system: fruitmachine
     path: "DefaultSounds/ButtonUp.wav"
     required: false
@@ -253,6 +285,8 @@ files:
   # -- Hoppers --
 
   - name: HopperMotor1.wav
+    size: 86884
+    sha1: d826ef5ce08a1cf8ca69523416fdfd6829ac985e
     system: fruitmachine
     path: "DefaultSounds/HopperMotor1.wav"
     required: false
@@ -266,6 +300,8 @@ files:
       SCORPION5/Eclipse.
 
   - name: HopperCoin1.wav
+    size: 25936
+    sha1: 2b6785096da1b9139140a9286e56e208be5d9c28
     system: fruitmachine
     path: "DefaultSounds/HopperCoin1.wav"
     required: false
@@ -276,6 +312,8 @@ files:
     note: "Same cabinet specific copies as HopperMotor1.wav."
 
   - name: HopperMotor2.wav
+    size: 86884
+    sha1: d826ef5ce08a1cf8ca69523416fdfd6829ac985e
     system: fruitmachine
     path: "DefaultSounds/HopperMotor2.wav"
     required: false
@@ -286,6 +324,8 @@ files:
     note: "Same cabinet specific copies as HopperMotor1.wav."
 
   - name: HopperCoin2.wav
+    size: 24290
+    sha1: 20d2187d4ae844dd8726eb6f723b5118c4c46738
     system: fruitmachine
     path: "DefaultSounds/HopperCoin2.wav"
     required: false
@@ -300,6 +340,8 @@ files:
   # -- Note acceptor --
 
   - name: NoteIn.wav
+    size: 156204
+    sha1: 19d18a2b547885a4f01a2c47f611ed36236d83f0
     system: fruitmachine
     path: "DefaultSounds/NoteIn.wav"
     required: false
@@ -309,6 +351,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:27"
 
   - name: NoteInReject.wav
+    size: 96688
+    sha1: 703d6187f35a1b1c044534c0a826d91afd1dd4e1
     system: fruitmachine
     path: "DefaultSounds/NoteInReject.wav"
     required: false
@@ -318,6 +362,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:28"
 
   - name: NoteInStack.wav
+    size: 254880
+    sha1: abe07a5cf9eaea9e190374af381d8d1d97d122cd
     system: fruitmachine
     path: "DefaultSounds/NoteInStack.wav"
     required: false
@@ -329,6 +375,8 @@ files:
   # -- Roll down electronic coin mech --
 
   - name: CoinIn.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/CoinIn.wav"
     required: false
@@ -338,6 +386,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:31"
 
   - name: CoinInSwitch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/CoinInSwitch.wav"
     required: false
@@ -347,6 +397,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:32"
 
   - name: CoinInRejected.wav
+    size: 88144
+    sha1: 37f8acd9778cbc81f11c08f129f3f726cc9964f4
     system: fruitmachine
     path: "DefaultSounds/CoinInRejected.wav"
     required: false
@@ -356,6 +408,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:33"
 
   - name: TokenIn.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/TokenIn.wav"
     required: false
@@ -365,6 +419,8 @@ files:
     source_ref: "history.txt:80, DefaultSounds/Readme.txt:35"
 
   - name: TokenInSwitch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/TokenInSwitch.wav"
     required: false
@@ -374,6 +430,8 @@ files:
     source_ref: "history.txt:80, DefaultSounds/Readme.txt:36"
 
   - name: TokenInRejected.wav
+    size: 88144
+    sha1: 37f8acd9778cbc81f11c08f129f3f726cc9964f4
     system: fruitmachine
     path: "DefaultSounds/TokenInRejected.wav"
     required: false
@@ -385,6 +443,8 @@ files:
   # -- S1 and S10 mechs --
 
   - name: CoinInS1.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/CoinInS1.wav"
     required: false
@@ -394,6 +454,8 @@ files:
     source_ref: "history.txt:148"
 
   - name: CoinInS1Switch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/CoinInS1Switch.wav"
     required: false
@@ -403,6 +465,8 @@ files:
     source_ref: "history.txt:148"
 
   - name: CoinInS1Token.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/CoinInS1Token.wav"
     required: false
@@ -412,6 +476,8 @@ files:
     source_ref: "history.txt:148"
 
   - name: CoinInS1TokenSwitch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/CoinInS1TokenSwitch.wav"
     required: false
@@ -421,6 +487,8 @@ files:
     source_ref: "history.txt:148"
 
   - name: CoinInS10.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/CoinInS10.wav"
     required: false
@@ -430,6 +498,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:39"
 
   - name: CoinInS10Rejected.wav
+    size: 80834
+    sha1: 540c94981d0ad7cb1fdcc2368ec84bb2f433cbab
     system: fruitmachine
     path: "DefaultSounds/CoinInS10Rejected.wav"
     required: false
@@ -439,6 +509,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:40, history.txt:47, 153"
 
   - name: CoinInS10Switch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/CoinInS10Switch.wav"
     required: false
@@ -448,6 +520,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:41, history.txt:47"
 
   - name: CoinInS10Token.wav
+    size: 60816
+    sha1: 224464d31a8bd2fe2b1b53a59660c6f03cb9c2a5
     system: fruitmachine
     path: "DefaultSounds/CoinInS10Token.wav"
     required: false
@@ -457,6 +531,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:43"
 
   - name: CoinInS10TokenRejected.wav
+    size: 80834
+    sha1: 949c411f569a7f697f6a1062198740361a1fc37b
     system: fruitmachine
     path: "DefaultSounds/CoinInS10TokenRejected.wav"
     required: false
@@ -466,6 +542,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:44, history.txt:47, 153"
 
   - name: CoinInS10TokenSwitch.wav
+    size: 33008
+    sha1: 0646e2157ea1d6996909b26e560b5193eff8da32
     system: fruitmachine
     path: "DefaultSounds/CoinInS10TokenSwitch.wav"
     required: false
@@ -475,6 +553,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:45, history.txt:47"
 
   - name: S1Locked.wav
+    size: 7596
+    sha1: 9384d9503e201c417fb6907b30935511b4875476
     system: fruitmachine
     path: "DefaultSounds/S1Locked.wav"
     required: false
@@ -486,6 +566,8 @@ files:
   # -- Comparator mech --
 
   - name: CoinInDrop.wav
+    size: 21286
+    sha1: ffde5b0a714785c772c8062d56ebae304f9c4ac3
     system: fruitmachine
     path: "DefaultSounds/CoinInDrop.wav"
     required: false
@@ -495,6 +577,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:47"
 
   - name: CoinDropReject.wav
+    size: 12018
+    sha1: 3f356d3508ac2d2cd2c8293d8e40034f78b92646
     system: fruitmachine
     path: "DefaultSounds/CoinDropReject.wav"
     required: false
@@ -506,6 +590,8 @@ files:
   # -- Lockout solenoid --
 
   - name: LockoutOn.wav
+    size: 11994
+    sha1: dddd90b8fb4091420a4b98b97d869d561ae922f2
     system: fruitmachine
     path: "DefaultSounds/LockoutOn.wav"
     required: false
@@ -515,6 +601,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:52"
 
   - name: LockoutOff.wav
+    size: 9204
+    sha1: 97bb2ddd2186b410dc7848ebdc4a6748c0b2c9cc
     system: fruitmachine
     path: "DefaultSounds/LockoutOff.wav"
     required: false
@@ -540,6 +628,8 @@ files:
   # -- Prize vend --
 
   - name: PrizeMotor.wav
+    size: 41076
+    sha1: 164582df699f64554f1c8cea6e295c1f6da9a5bb
     system: fruitmachine
     path: "DefaultSounds/PrizeMotor.wav"
     required: false
@@ -549,6 +639,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:57"
 
   - name: PrizeVend.wav
+    size: 62288
+    sha1: 3eeb7861d1ad0b4305864490573aebf592306db1
     system: fruitmachine
     path: "DefaultSounds/PrizeVend.wav"
     required: false
@@ -561,6 +653,8 @@ files:
   # -- Pull handle --
 
   - name: PullHandleSlow.wav
+    size: 159972
+    sha1: 85c2523977bc191f33d38af7121bac676cfdffa0
     system: fruitmachine
     path: "DefaultSounds/PullHandleSlow.wav"
     required: false
@@ -570,6 +664,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:60, history.txt:207"
 
   - name: PullHandleNormal.wav
+    size: 70700
+    sha1: 7d0601cb6668cbf6e28dd04fd2595d73aed2a431
     system: fruitmachine
     path: "DefaultSounds/PullHandleNormal.wav"
     required: false
@@ -579,6 +675,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:61, history.txt:207"
 
   - name: PullHandleFast.wav
+    size: 30252
+    sha1: 83a39aa65dbc6986f36a4a544d05122dffd82ee9
     system: fruitmachine
     path: "DefaultSounds/PullHandleFast.wav"
     required: false
@@ -588,6 +686,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:62, history.txt:207"
 
   - name: PullHandleRelease.wav
+    size: 43372
+    sha1: 340f9aee4133f9885f1b722b80881f10a55bbab2
     system: fruitmachine
     path: "DefaultSounds/PullHandleRelease.wav"
     required: false
@@ -599,6 +699,8 @@ files:
   # -- Electromechanical cabinets --
 
   - name: MotorOn.wav
+    size: 481324
+    sha1: d1bdf707afe393153e48301694e573d44a2ce5c1
     system: fruitmachine
     path: "DefaultSounds/MotorOn.wav"
     required: false
@@ -608,6 +710,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:68"
 
   - name: Wiper.wav
+    size: 117804
+    sha1: a5f677b33e306810b76dbe83464e71d21d8e8fee
     system: fruitmachine
     path: "DefaultSounds/Wiper.wav"
     required: false
@@ -617,6 +721,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:69"
 
   - name: SolenoidOn.wav
+    size: 5450
+    sha1: d7e478cede532a4468e3158a3e974d4209437cfd
     system: fruitmachine
     path: "DefaultSounds/SolenoidOn.wav"
     required: false
@@ -626,6 +732,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:70"
 
   - name: SolenoidOff.wav
+    size: 17766
+    sha1: cc9840193bc6e21337dcbdcdeb52ad57090a4db6
     system: fruitmachine
     path: "DefaultSounds/SolenoidOff.wav"
     required: false
@@ -635,6 +743,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:71"
 
   - name: BellOn.wav
+    size: 97512
+    sha1: a4af119db1fdf63cf410ef27db13f5c022761823
     system: fruitmachine
     path: "DefaultSounds/BellOn.wav"
     required: false
@@ -644,6 +754,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:72"
 
   - name: BellOff.wav
+    size: 13702
+    sha1: f26a91c46089635aa214f152330b75892bdebb18
     system: fruitmachine
     path: "DefaultSounds/BellOff.wav"
     required: false
@@ -653,6 +765,8 @@ files:
     source_ref: "DefaultSounds/Readme.txt:73"
 
   - name: Buzzer.wav
+    size: 9082
+    sha1: 4a65cd52f4ba634c3fa419ce7707337cc9da7dcc
     system: fruitmachine
     path: "DefaultSounds/Buzzer.wav"
     required: false

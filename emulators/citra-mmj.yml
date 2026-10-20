@@ -160,6 +160,8 @@ files:
     source_ref: "src/core/hle/service/apt/apt.cpp:230-246, src/core/hle/service/apt/apt.cpp:256-272"
 
   - name: cbf_std.bcfnt
+    size: 3196272
+    sha1: c6578caffb1a57f6c18979dc596f3fb9cb986706
     path: sysdata/cbf_std.bcfnt
     system: nintendo-3ds
     required: false
@@ -171,6 +173,8 @@ files:
     source_ref: "src/core/hle/service/apt/apt.cpp:184-228, src/core/file_sys/archive_ncch.cpp:143-148"
 
   - name: cbf_zh-Hans-CN.bcfnt
+    size: 2937484
+    sha1: 1fbd073bbd6cb906a0c0678767fab81feb552173
     path: sysdata/cbf_zh-Hans-CN.bcfnt
     system: nintendo-3ds
     required: false
@@ -181,6 +185,8 @@ files:
     source_ref: "src/core/hle/service/apt/apt.cpp:184-228, src/core/hle/service/apt/apt.cpp:256-272"
 
   - name: cbf_ko-Hang-KR.bcfnt
+    size: 1400192
+    sha1: 25e546319c72dae1e0f3ebd6a842008c300e4462
     path: sysdata/cbf_ko-Hang-KR.bcfnt
     system: nintendo-3ds
     required: false
@@ -191,6 +197,8 @@ files:
     source_ref: "src/core/hle/service/apt/apt.cpp:184-228, src/core/hle/service/apt/apt.cpp:256-272"
 
   - name: cbf_zh-Hant-TW.bcfnt
+    size: 3350100
+    sha1: 62a877bfffb3e690044520f52120c5cd48b97545
     path: sysdata/cbf_zh-Hant-TW.bcfnt
     system: nintendo-3ds
     required: false
@@ -231,6 +239,8 @@ files:
     source_ref: "src/core/file_sys/ncch_container.cpp:726-741, src/core/file_sys/archive_ncch.cpp:150-157"
 
   - name: "00000000.tmd"
+    size: 2868
+    sha1: ee9bd492a692301aef0fa93af654598bee70730e
     path: nand/00000000000000000000000000000000/title/00040130/00002802/content/00000000.tmd
     system: nintendo-3ds
     required: false
@@ -241,6 +251,8 @@ files:
     source_ref: "src/core/hle/service/am/am.cpp:428-464, src/core/hle/service/am/am.cpp:466-501, src/core/file_sys/title_metadata.cpp:19-34"
 
   - name: "0000001f.app"
+    size: 66048
+    sha1: 7269ebba3858fce1f6915dd30b74b7c4f915b670
     path: nand/00000000000000000000000000000000/title/00040130/00002802/content/0000001f.app
     system: nintendo-3ds
     required: false

@@ -78,6 +78,8 @@ notes: |
 
 files:
   - name: pepflashplayer.dll
+    size: 17933368
+    sha1: dfdfa207f4a5e6f059c428a06f46adc4ff8f3e14
     required: true
     bundled: true
     description: "Adobe Pepper Flash Player runtime"
@@ -89,6 +91,8 @@ files:
     source_ref: "src/main.cpp:40, ArcadeFlashWeb-release flash/flash.html:102"
 
   - name: flash.html
+    size: 2601
+    sha1: b20794d88ce27c62200267631c9b019fd78b58da
     path: flash/flash.html
     required: true
     bundled: true
@@ -100,6 +104,8 @@ files:
     source_ref: "src/main.qml:327,334, src/Navigateur.qml:150"
 
   - name: swfobject.js
+    size: 10220
+    sha1: 5847ed101f55d51c53538a7078971e7de8fb6762
     path: flash/swfobject/swfobject.js
     required: true
     bundled: true
@@ -112,6 +118,8 @@ files:
     source_ref: "ArcadeFlashWeb-release flash/flash.html:38, ArcadeFlashWeb-release flash/swfobject/swfobject.js:1-4"
 
   - name: background.jpg
+    size: 161988
+    sha1: f34bde188a8eb9eaf78358834725740d6ab60fb3
     path: flash/images/background.jpg
     required: false
     bundled: true
@@ -122,6 +130,8 @@ files:
     source_ref: "ArcadeFlashWeb-release flash/flash.html:110, src/qml.qrc:23"
 
   - name: swfdump.exe
+    size: 541095
+    sha1: 2aecffd21f141d6664c7119eed7b5493762e938f
     required: false
     bundled: true
     description: "SWFTools swfdump, reads the movie's natural size"
@@ -134,6 +144,8 @@ files:
     source_ref: "src/main.qml:324-325, src/Navigateur.qml:147-148"
 
   - name: antimicro.exe
+    size: 3961583
+    sha1: 51c6beb0bf32da2fd79f0970d7752b12dcd8fac0
     path: antimicro/antimicro.exe
     required: false
     bundled: true
@@ -145,6 +157,8 @@ files:
     source_ref: "src/main.qml:309,311"
 
   - name: arcadeflashweb.gamecontroller.amgp
+    size: 2416
+    sha1: 3dd5ca0934fe293b158cb56e1f99bea28ac74f06
     path: antimicro/profiles/arcadeflashweb.gamecontroller.amgp
     required: false
     bundled: true
@@ -157,6 +171,8 @@ files:
     source_ref: "src/main.qml:309-312"
 
   - name: pepper.vch
+    size: 451499
+    sha1: 37ae3a152e27aa2de2a685e0b9d884bf499311e4
     required: false
     bundled: true
     description: "Adobe Flash Access blob shipped with the runtime"

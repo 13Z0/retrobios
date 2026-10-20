@@ -105,6 +105,7 @@ files:
   #    nothing else, in the program directory.
 
   - name: Newton.dll
+    sha1: f41672abeef6b9751b0ef4f341b973a60cb03a7a
     system: fpinball
     required: true
     bundled: true
@@ -116,6 +117,7 @@ files:
       binary. The process does not start without it.
 
   - name: fmod.dll
+    sha1: ee8f68d94645de24be930d6f453297d5b7b4d052
     system: fpinball
     required: true
     bundled: true
@@ -128,6 +130,7 @@ files:
       buffers rather than reading files.
 
   - name: devil.dll
+    sha1: 313a23600a169adbe130b1ae1784d8de437ce7d9
     system: fpinball
     aliases:
       - DevIL.dll
@@ -142,6 +145,7 @@ files:
       as one name.
 
   - name: ilu.dll
+    sha1: d3534cd62d312fe28988c6229c47ab81a3ae1f9e
     system: fpinball
     aliases:
       - ILU.dll
@@ -155,6 +159,7 @@ files:
       iluImageParameter, used to fit imported artwork to texture dimensions.
 
   - name: ilut.dll
+    sha1: 30566eda672fef3036fbd3998af3cc9fdcef38e7
     system: fpinball
     aliases:
       - ILUT.dll
@@ -168,6 +173,7 @@ files:
       which produce the preview bitmaps the editor's manager windows draw.
 
   - name: libcurl.dll
+    sha1: 8189136493d48adc2bdeff1e77297ab988ae789d
     system: fpinball
     required: true
     bundled: true
@@ -182,6 +188,7 @@ files:
       still refuses to start without the file.
 
   - name: SciLexer.dll
+    sha1: 661675f4d8539e14f2be10d144ab986fc5fccb46
     system: fpinball
     required: false
     bundled: true
@@ -199,6 +206,7 @@ files:
   #    designers not to modify them, because a release replaces them.
 
   - name: fpModels.fpl
+    sha1: 81f809456ad9fba296eff46f035a607a3d2cfba2
     system: fpinball
     path: "Libraries/fpModels.fpl"
     required: false
@@ -214,6 +222,7 @@ files:
       table still loads and every model it linked is missing.
 
   - name: fpTextures.fpl
+    sha1: 255cb14da5f49c7aaa210135638cfdc924130397
     system: fpinball
     path: "Libraries/fpTextures.fpl"
     required: false
@@ -227,6 +236,7 @@ files:
       plungers and the rest. Resolved the same way as every other library.
 
   - name: fpRamps.fpl
+    sha1: 07f48f32a7a08cff94121908205b2f02fcf3724b
     system: fpinball
     path: "Libraries/fpRamps.fpl"
     required: false
@@ -240,6 +250,7 @@ files:
       and so on, with a left and a right variant of each.
 
   - name: fpSounds.fpl
+    sha1: ff2d159b4dcdb5ff9896b025288e40b76466eaa5
     system: fpinball
     path: "Libraries/fpSounds.fpl"
     required: false
@@ -250,6 +261,7 @@ files:
     source_ref: "Future Pinball.exe 1.9.1.20101231 .text:0x004e6cf0-0x004e6ebf, Future Pinball Manual.chm SoundManager.html"
 
   - name: fpSphereMaps.fpl
+    sha1: 04efb8fe46d0ba6381b160afa92b87bb213ba461
     system: fpinball
     path: "Libraries/fpSphereMaps.fpl"
     required: false
@@ -263,6 +275,7 @@ files:
       which is how a material references one.
 
   - name: fpDmdFonts.fpl
+    sha1: ec526ca156ae8c639aefcc2552914fc70950b69a
     system: fpinball
     path: "Libraries/fpDmdFonts.fpl"
     required: false
@@ -276,6 +289,7 @@ files:
       nothing.
 
   - name: fpPlayfields.fpl
+    sha1: 9df8f5cca648e61cb1f92d6f3cfa150a9db58692
     system: fpinball
     path: "Libraries/fpPlayfields.fpl"
     required: false
@@ -286,6 +300,7 @@ files:
     source_ref: "Future Pinball.exe 1.9.1.20101231 .text:0x004e6cf0-0x004e6ebf"
 
   - name: fpScripts.fpl
+    sha1: 5a928b81cb1a3364605158e0c0b573c51b0f468f
     system: fpinball
     path: "Libraries/fpScripts.fpl"
     required: false
@@ -303,6 +318,7 @@ files:
   # -- Named individually elsewhere in the binary --
 
   - name: NewTable.fpt
+    sha1: 6d9d44450b8d76791373b727b699cad4446abd07
     system: fpinball
     required: false
     bundled: true
@@ -316,6 +332,7 @@ files:
       a full table with a playfield and a plunger, not an empty document.
 
   - name: Future Pinball Manual.chm
+    sha1: ce2fb04c3c68eb6874527821853c6180ddc237df
     system: fpinball
     path: "Help/Future Pinball Manual.chm"
     required: false
@@ -343,6 +360,7 @@ files:
       Help beside the manual.
 
   - name: fpLatestTables.xml
+    sha1: bd9de21def48b65b5382c403971a9062928b9345
     system: fpinball
     path: "Feeds/fpLatestTables.xml"
     required: false

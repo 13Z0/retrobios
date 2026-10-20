@@ -145,6 +145,8 @@ files:
     source_ref: "micro3d_dll/src/com/mascotcapsule/micro3d/v3/Figure.java:163"
 
   - name: s60snr.ttf
+    size: 442068
+    sha1: f077ba595d9a01218ef1d4fa6730d1cb6edf61ae
     system: j2me
     required: false
     bundled: true
@@ -155,6 +157,8 @@ files:
     source_ref: "src/main/emulator/graphics2D/awt/FontAWT.java:20-28"
 
   - name: Nokia.ttf
+    size: 3022720
+    sha1: d808da42aa5ba6a9b5333703e48bd0ec03fbcd90
     system: j2me
     required: false
     bundled: true
@@ -165,6 +169,8 @@ files:
     source_ref: "src/main/emulator/graphics2D/awt/FontAWT.java:29-37"
 
   - name: presets.xml
+    size: 19938
+    sha1: 88b2affba2dfef410dc7e460a249f1cb0c34d3fb
     system: j2me
     required: false
     bundled: true
@@ -175,6 +181,8 @@ files:
     source_ref: "src/main/emulator/Settings.java:131, src/main/emulator/Devices.java:25-50, src/main/emulator/Emulator.java:644"
 
   - name: en.txt
+    size: 12394
+    sha1: e62cb71098c6c255064b439b95242df5bb2b0001
     system: j2me
     required: false
     bundled: true

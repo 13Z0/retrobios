@@ -248,6 +248,8 @@ files:
   # -- Optional libraries loaded by name at runtime, shipped in the DLL Package --
 
   - name: 7z.dll
+    size: 1316352
+    sha1: 8337c8056455aa25a4c2f14e53ae7e5e704d4f16
     system: sharp-x68000
     required: false
     bundled: true
@@ -260,6 +262,8 @@ files:
       writing XZ-compressed state files.
 
   - name: zlib1.dll
+    size: 130831
+    sha1: 697f3d391f013adbb27dd767a6b956c3b32229b6
     system: sharp-x68000
     required: false
     bundled: true

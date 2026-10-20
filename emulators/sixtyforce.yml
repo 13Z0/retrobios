@@ -80,6 +80,7 @@ files:
     source_ref: "sixtyforce 2.0.2 MacOS/sixtyforce 0x100026b18-0x100026b64 (game code test, 64DD slot), 0x10006e470-0x10006e4a7 (game code), 0x100081942-0x1000819b1 (memory map), 0x1000831b2-0x100083285 (PI DMA), 0x100071d62-0x100071d7d (drive flag)"
 
   - name: Overrides.plist
+    sha1: 010db2adfc6f895f6b21762b213dfcf379117883
     path: "Contents/Resources/Overrides.plist"
     system: nintendo-64
     required: false
@@ -95,6 +96,7 @@ files:
     source_ref: "sixtyforce 2.0.2 MacOS/sixtyforce 0x100039336 (resource name), 0x1000392d0-0x1000393fa (lookup by game code, CIC key), 0x100026e67-0x100026e89 (called with the game code), 0x100071c78-0x100071c8f (CIC read at boot), 0x1000d21a0 (expanded memory log)"
 
   - name: Controller-Devices.plist
+    sha1: 696ef278a51c6a4ceb9d3009925aef835cac58f4
     path: "Contents/Resources/Controller-Devices.plist"
     required: false
     bundled: true
@@ -109,6 +111,7 @@ files:
     source_ref: "sixtyforce 2.0.2 MacOS/sixtyforce 0x100013494-0x1000134e6 (bundle load into supportedDevices), 0x10001918e (read on device arrival), 0x100013870-0x100013a87 (user mappings, separate read)"
 
   - name: HID-Usage-Names.plist
+    sha1: 24fcb060636de11dca0c3b1655c8acbb270fbe39
     path: "Contents/Resources/HID-Usage-Names.plist"
     required: false
     bundled: true
@@ -120,6 +123,7 @@ files:
     source_ref: "sixtyforce 2.0.2 MacOS/sixtyforce 0x10001cc6d-0x10001cc81 (resource name and load)"
 
   - name: Key-Names.plist
+    sha1: 938a04199c4e8584497d05551061f571e3a8e359
     path: "Contents/Resources/Base.lproj/Key-Names.plist"
     required: false
     bundled: true
@@ -131,6 +135,7 @@ files:
     source_ref: "sixtyforce 2.0.2 MacOS/sixtyforce 0x100010c8d-0x100010ca1 (resource name and load)"
 
   - name: Unit.data
+    sha1: 1f951f63da303e19d0c3a723b22fa509b44afb9b
     path: "Contents/Resources/Unit.data"
     required: false
     bundled: true

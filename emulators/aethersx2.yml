@@ -172,6 +172,8 @@ files:
     source_ref: "source aethersx2/pcsx2/Patch.cpp:202-231, AetherSX2-release MacOS/AetherSX2"
 
   - name: game_controller_db.txt
+    size: 163503
+    sha1: 042ce2001fb438a0a34e0c5d0001a9d95d5516df
     path: resources/game_controller_db.txt
     required: false
     bundled: true

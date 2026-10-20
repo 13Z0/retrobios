@@ -157,6 +157,8 @@ files:
     source_ref: "Main.java:27334, Main.java:33974-33977, libfpse.so 0x71074-0x710b4, libfpse.so 0x95ce0-0x95ce8"
 
   - name: libsoft1.so
+    size: 477896
+    sha1: 216c354d7d2e6369917991507ed713e95c35a1d0
     required: true
     bundled: true
     category: game_data
@@ -165,6 +167,8 @@ files:
     source_ref: "Main.java:27302, libfpse.so readelf -d"
 
   - name: libspuplugin.so
+    size: 51120
+    sha1: 6eb3c0786e7a6c1896aba4568dd5843be3b793b1
     required: true
     bundled: true
     category: game_data
@@ -173,6 +177,8 @@ files:
     source_ref: "Main.java:27301, libfpse.so readelf -d"
 
   - name: libopengl.so
+    size: 688072
+    sha1: 5d53b8622056b2cf2e58455a8b7adcbe24caf626
     required: true
     bundled: true
     category: game_data
@@ -182,6 +188,8 @@ files:
     source_ref: "Main.java:27304, Main.java:9985, libfpse.so readelf -d"
 
   - name: libnfsplugin.so
+    size: 300944
+    sha1: 73fc328ddfaa5cec953107904e006c0d9d0de6dc
     required: true
     bundled: true
     category: game_data
@@ -190,6 +198,8 @@ files:
     source_ref: "Main.java:27303, Main.java:25670, libfpse.so readelf -d"
 
   - name: libsdl.so
+    size: 67536
+    sha1: d231e81a87837f272c43e573081bf63db8ef4933
     required: true
     bundled: true
     category: game_data
@@ -198,6 +208,8 @@ files:
     source_ref: "Main.java:25134, libfpse.so readelf -d"
 
   - name: libneon.so
+    size: 5688
+    sha1: 0e58ba824648028514e0f954e504eaf76f64c562
     required: true
     bundled: true
     category: game_data
@@ -206,6 +218,8 @@ files:
     source_ref: "Main.java:25135, libfpse.so readelf -d"
 
   - name: libuncompress.so
+    size: 1512392
+    sha1: e9b108ae47b5ef9e23498611629b123af5850a13
     required: true
     bundled: true
     category: game_data

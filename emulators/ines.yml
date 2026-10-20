@@ -134,6 +134,7 @@ files:
     source_ref: "MainActivity.java:1092-1105, libmain.so jniStart 0x17684-0x176a2, libmain.so Application 0x38278-0x38286"
 
   - name: names.dat
+    sha1: bb1a86caeb1b6351da6e7d46ed2051e8e5ec5a15
     required: false
     bundled: true
     category: game_data
