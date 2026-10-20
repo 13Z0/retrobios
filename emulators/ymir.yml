@@ -90,3 +90,21 @@ files:
     source_ref:
       standalone: "apps/ymir-sdl3/src/app/rom_manager.cpp:96-131, libs/ymir-core/include/ymir/db/rom_cart_db.hpp:25-28"
       libretro: "apps/ymir-libretro/src/libretro.cpp:622, 598-618"
+
+  - name: "gamecontrollerdb.txt"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    bundled: true
+    sha1: ["eb06dba857f50e613c997198e4bd2da8e2c9fb21", "4a1981a3ff91352c4de50fbc82e8cc960c49183b"]
+    md5: ["2d76f311eecb0cdab270bf3fc5547173", "ec570b054019676c6b20144cbd47e562"]
+    description: "SDL game controller mapping database"
+    note: >
+      Passed to SDL_AddGamepadMappingsFromFile from the working directory, then
+      from the profile root. A missing file or a load failure is logged and SDL
+      keeps its built-in mappings. The release packages copy the file from
+      mdqinc/SDL_GameControllerDB at build time. Hashes of the copies in the
+      v0.2.1 Linux and macOS packages and, with CRLF line ends, the Windows
+      zips.
+    source_ref:
+      standalone: "apps/ymir-sdl3/src/app/settings.hpp:41, apps/ymir-sdl3/src/app/app.cpp:5084-5119, apps/ymir-sdl3/src/app/profile.cpp:36-41, .github/workflows/build.yaml:198-230"
