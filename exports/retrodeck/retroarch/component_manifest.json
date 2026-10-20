@@ -1706,7 +1706,7 @@
           ],
           "system": "atari5200",
           "description": "Atari 400/800 NTSC BIOS",
-          "required": "Optional"
+          "required": "Required"
         },
         {
           "filename": "tos.img",
@@ -2132,8 +2132,7 @@
             "videopac"
           ],
           "description": "Odyssey 2 / Videopac G7000 BIOS",
-          "required": "Required",
-          "sha256": "cb0c5d9ed64f7c1d8870333451832638885b9aa3d7013f0c05fd2a20a5e5bfef"
+          "required": "Required"
         },
         {
           "filename": "c52.bin",
@@ -2143,8 +2142,7 @@
             "videopac"
           ],
           "description": "Videopac+ French BIOS (G7000 model)",
-          "required": "Required",
-          "sha256": "2ab1b2c7f4b28a74d0ecf3e073088fac19ce40866404420c70576e1862bb5502"
+          "required": "Optional"
         },
         {
           "filename": "g7400.bin",
@@ -2154,8 +2152,7 @@
             "videopac"
           ],
           "description": "Videopac+ European BIOS (G7400 model)",
-          "required": "Required",
-          "sha256": "8e0413c324a748ca2e493652b8089aa1db129e1ba115b5f58a99e32cebe063e1"
+          "required": "Optional"
         },
         {
           "filename": "jopac.bin",
@@ -2165,8 +2162,7 @@
             "videopac"
           ],
           "description": "Videopac+ French BIOS (G7400 model)",
-          "required": "Required",
-          "sha256": "dd48b75c56dbe1524dee18defa448a74f648653eb209ccba93066a7a0fe6a074"
+          "required": "Optional"
         },
         {
           "filename": "MSX.ROM",
@@ -2220,7 +2216,8 @@
           ],
           "system": "msx",
           "description": "MSX Disk ROM / BDOS",
-          "required": "Required"
+          "required": "Optional",
+          "sha256": "31740a761447d7590c304338d389b0ae114546a8b9f79c9ffd5e374f80b7d354"
         },
         {
           "filename": "FMPAC.ROM",
@@ -2722,8 +2719,7 @@
           ],
           "system": "dreamcast",
           "description": "Naomi 2 BIOS",
-          "paths": "$bios_path/dc",
-          "required": "Required"
+          "paths": "$bios_path/dc"
         },
         {
           "filename": "naomi_boot.bin",

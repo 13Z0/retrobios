@@ -7,11 +7,11 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 250 added, 4 hashes corrected, 134 requirements corrected, 573 additions left out",
+  "summary": "357 kept, 139 added, 4 hashes corrected, 129 requirements corrected, 600 additions left out, 102 entries found by content not listed",
   "counts": {
     "kept": 357,
-    "added": 250,
-    "not_added": 573,
+    "added": 139,
+    "not_added": 600,
     "not_kept": 0
   },
   "hashes_corrected": [
@@ -24,7 +24,8 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 134,
+  "requirements_corrected": 129,
   "withheld": [],
+  "found_by_content": 102,
   "invalid": []
 }

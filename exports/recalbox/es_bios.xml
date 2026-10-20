@@ -274,11 +274,11 @@
   </system>
   <system fullname="Magnavox Odyssey²" platform="o2em">
     <bios path="o2em/o2rom.bin" md5="562d5ebf9e030a40d6fabfc2f33139fd" core="libretro/o2em" />
-    <bios path="o2em/c52.bin"   md5="f1071cdb0b6b10dde94d3bc8a6146387" core="libretro/o2em" />
+    <bios path="o2em/c52.bin" md5="f1071cdb0b6b10dde94d3bc8a6146387" core="libretro/o2em" mandatory="false" />
   </system>
   <system fullname="Philips VideoPac+" platform="videopacplus">
-    <bios path="o2em/g7400.bin" md5="c500ff71236068e0dc0d0603d265ae76" core="libretro/o2em" />
-    <bios path="o2em/jopac.bin" md5="279008e4a0db2dc5f1c048853b033828" core="libretro/o2em" />
+    <bios path="o2em/g7400.bin" md5="c500ff71236068e0dc0d0603d265ae76" core="libretro/o2em" mandatory="false" />
+    <bios path="o2em/jopac.bin" md5="279008e4a0db2dc5f1c048853b033828" core="libretro/o2em" mandatory="false" />
   </system>
   <system fullname="Panasonic 3DO" platform="3do">
     <bios path="3do/panafz1.bin" md5="f47264dd47fe30f73ab3c010015c155b" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (U)" />
@@ -314,106 +314,7 @@
     <bios path="scph101.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
     <bios path="scph7001.bin" md5="1e68c231d0896b7eadcad1d7d8e76129" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
     <bios path="scph1001.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
-    <bios path="ps1_rom.bin" md5="81bbe60ba7a3d1cea1d48c14cbcc647b,fbb5f59ec332451debccf1e377017237" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
-    <bios path="scph5000.bin" md5="57a06303dfa9cf9351222dfcbb4a29d9" core="duckstation" mandatory="false" />
-    <bios path="scph1002a.bin" md5="54847e693405ffeb0359c6287434cbef" core="duckstation" mandatory="false" />
-    <bios path="scph1002b.bin" md5="417b34706319da7cf001e76e40136c23" core="duckstation" mandatory="false" />
-    <bios path="scph1002c.bin" md5="e2110b8a2b97a8e0b857a45d32f7e187" core="duckstation" mandatory="false" />
-    <bios path="scph3000.bin" md5="849515939161e62f6b866f6853006780" core="duckstation" mandatory="false" />
-    <bios path="scph1001_v20.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d" core="duckstation" mandatory="false" />
-    <bios path="scph3500.bin" md5="cba733ceeff5aef5c32254f1d617fa62" core="duckstation" mandatory="false" />
-    <bios path="scph1001_v21.bin" md5="da27e8b6dab242d8f91a9b25d80c63b8" core="duckstation" mandatory="false" />
-    <bios path="scph7000.bin" md5="8e4c14f567745eff2f0408c8129f72a6" core="duckstation" mandatory="false" />
-    <bios path="scph7000w.bin" md5="b84be139db3ee6cbd075630aa20a6553" core="duckstation" mandatory="false" />
-    <bios path="scph7002.bin" md5="b9d9a0286c33dc6b7237bb13cd46fdee" core="duckstation" mandatory="false" />
-    <bios path="scph100.bin" md5="8abc1b549a4a80954addc48ef02c4521" core="duckstation" mandatory="false" />
-    <bios path="scph101_v44.bin" md5="9a09ab7e49b422c007e6d54d7c49b965" core="duckstation" mandatory="false" />
-    <bios path="scph101_v45.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="duckstation" mandatory="false" />
-    <bios path="scph1000r.bin" md5="476d68a94ccec3b9c8303bbd1daf2810" core="duckstation" mandatory="false" />
-    <bios path="dtlh1100.bin" md5="ca5cfc321f916756e3f0effbfaeba13b" core="duckstation" mandatory="false" />
-    <bios path="scph102_v44.bin" md5="b10f5e0e3d9eb60e5159690680b1e774" core="duckstation" mandatory="false" />
-    <bios path="scph102_v45.bin" md5="de93caec13d1a141a40a79f5c86168d6" core="duckstation" mandatory="false" />
-    <bios path="scph1000.bin" md5="239665b1a3dade1b5a52c06338011044" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph18000.bin" md5="d8f485717a5237285e4d7c5f881b7f32" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh10000_0117.bin" md5="32f2e4d5ff5ee11072a6bc45530f5765" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph10000_0117.bin" md5="acf4730ceb38ac9d8c7d8e21f2614600" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh10000_0217.bin" md5="acf9968c8f596d2b15f42272082513d1" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph10000_15000.bin" md5="b1459d7446c69e3e97e6ace3ae23dd1c" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh10000_0224.bin" md5="d3f1853a16c2ec18f3cd1ae655213308" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30001.bin" md5="63e6fd9b3c72e0d7b920e80cf76645cd" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001_0727.bin" md5="a20c97c02210f16678ca3010127caf36" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001_0902.bin" md5="8db2fbbac7413bf3e7154c1e0715e565" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30002_0902.bin" md5="b7fa11e87d51752a98b38e3e691cbf17" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph18000_gh003.bin" md5="f63bc530bd7ad7c026fcd6f7bd0d9525" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph18000_gh008.bin" md5="cee06bd68c333fc5768244eae77e4495" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30101.bin" md5="0bf988e9c7aaa4c051805b0fa6eb3387" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001_35001.bin" md5="8accc3c49ac45f5ae2c5db0adc854633" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30002_1228.bin" md5="838544f12de9b0abc90811279ee223c8" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30000.bin" md5="bb6bbc850458fff08af30e969ffd0175" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30000_35000.bin" md5="815ac991d8bc3b364696bead3457de7d" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001r_0427.bin" md5="b107b5710042abe887c0f6175f6e94bb" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30000_0427.bin" md5="ab55cceea548303c22c72570cfd4dd71" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001r_0704.bin" md5="18bcaadb9ff74ed3add26cdf709fff2e" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30002r_0704.bin" md5="491209dd815ceee9de02dbbc408c06d6" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30001r_1004.bin" md5="7200a03d51cacc4c14fcdfdbc4898431" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30002r_1004.bin" md5="8359638e857c8bc18c3c18ac17d9cc3c" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30005r.bin" md5="352d2ff9b3f68be7e6fa7e6dd8389346" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph39001.bin" md5="d5ce2c7d119f563ce04bc04dbc3a323e" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph39002.bin" md5="0d2228e6fd4fb639c9c39d077a9ec10c" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph37000_39000.bin" md5="72da56fccb8fcd77bba16d1b6f479914" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph39005.bin" md5="315a4003535dfda689752cb25f24785c" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh50000.bin" md5="54ecde087258557e2ddb5c3ddb004028" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50000_55000.bin" md5="312ad4816c232a9606e56f946bc0678a" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50002_0227.bin" md5="6e69920fa6eef8522a1d688a11e41bc6" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh50001_0325.bin" md5="eb960de68f0c0f7f9fa083e9f79d0360" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50001_0325.bin" md5="8aa12ce243210128c5074552d3b86251" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh50009.bin" md5="240d4c5ddd4b54069bdc4a3cd2faf99d" core="duckstation" mandatory="false" />
-    <bios path="ps2_desr5000.bin" md5="1c6cd089e6c83da618fbf2a081eb4888" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph55000_0623.bin" md5="463d87789c555a4a7604e97d7db545d1" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh50001_0623.bin" md5="ab9d49ad40ae49f19856ad187777b1b3" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50001_0623.bin" md5="35461cecaa51712b300b2d6798825048" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50002_0623.bin" md5="bd6415094e1ce9e05daabe85de807666" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50006.bin" md5="2e70ad008d4ec8549aada8002fdf42fb" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50005.bin" md5="50d5b97b57d8c9b6534adcb46c2027d4" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50009.bin" md5="1b6e631b536247756287b916f9396872" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50000_0822.bin" md5="00da1b177096cfd2532c8fa22b43e667" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50011.bin" md5="81f4336c1de607dd0865011c0447052e" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph70000.bin" md5="0eee5d1c779aa50e94edd168b4ebf42e" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph70001.bin" md5="d333558cc14561c1fdc334c75d5f37b7" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph70002.bin" md5="dc752f160044f2ed5fc1f4964db2a095" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph70005.bin" md5="3e3e030c0f600442fa05b94f87a1e238" core="duckstation" mandatory="false" />
-    <bios path="ps2_desr5500.bin" md5="1ad977bb539fc9448a08ab276a836bbc" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh75000.bin" md5="bf0078ba5e19d57eae18047407f3b6e5" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph75000.bin" md5="eb4f40fcf4911ede39c1bbfe91e7a89a" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh75000a.bin" md5="9959ad7a8685cad66206e7752ca23f8b" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph75001.bin" md5="929a14baca1776b00869f983aa6e14d2" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph75002.bin" md5="573f7d4a430c32b3cc0fd0c41e104bbd" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph75006.bin" md5="df63a604e8bff5b0599bd1a6c2721bd0" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph77000.bin" md5="5b1ba4bb914406fae75ab8e38901684d" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph77001.bin" md5="cb801b7920a7d536ba07b6534d2433ca" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph77002.bin" md5="af60e6d1a939019d55e5b330d24b1c25" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph77006.bin" md5="549a66d0c698635ca9fa3ab012da7129" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh90000_j.bin" md5="5e2014472c88f74f7547d8c2c60eca45" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph79000_90000.bin" md5="5de9d0d730ff1e7ad122806335332524" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh90000_a.bin" md5="21fe4cad111f7dc0f9af29477057f88d" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph79001_90001.bin" md5="40c11c063b3b9409aa5e4058e984e30c" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph79002_90002.bin" md5="80bbb237a6af9c611df43b16b930b683" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph79006_90006.bin" md5="c37bce95d32b2be480f87dd32704e664" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph90000_0220.bin" md5="80ac46fa7e77b8ab4366e86948e54f83" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph90001_0220.bin" md5="21038400dc633070a78ad53090c53017" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph90002_0220.bin" md5="dc69f0643a3030aaa4797501b483d6c4" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph90005_0220.bin" md5="30d56e79d89fbddf10938fa67fe3f34e" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph30003.bin" md5="71f50ef4f4e17c163c78908e16244f7d" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30002.bin" md5="91c87cb2f2eb6ce529a2360f80ce2457" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30102_0902.bin" md5="3016b3dd42148a67e2c048595ca4d7ce" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh30102_1228.bin" md5="6f9a6feb749f0533aaae2cc45090b0ed" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph39008.bin" md5="5b1f47fbeb277c6be2fccdd6344ff2fd" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh50002.bin" md5="666018ffec65c5c7e04796081295c6c7" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50008.bin" md5="b53d51edc7fc086685e31b811dc32aad" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph50004_0822.bin" md5="afde410bd026c16be605a1ae4bd651fd" core="duckstation" mandatory="false" />
-    <bios path="ps2_scph70002_alt.bin" md5="7ebb4fc5eab6f79a27d76ac9aad392b2" core="duckstation" mandatory="false" />
-    <bios path="ps2_dtlh70002.bin" md5="63ead1d74893bf7f36880af81f68a82d" core="duckstation" mandatory="false" />
-    <bios path="ps2_kdl22px300.bin" md5="93ea3bcee4252627919175ff1b16a1d9" core="duckstation" mandatory="false" />
+    <bios path="ps1_rom.bin"  md5="81bbe60ba7a3d1cea1d48c14cbcc647b" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
     <bios path="scph5903.bin" md5="81328b966e6dcf7ea1e32e55e1c104bb" core="libretro/mednafen_psx" mandatory="false" />
     <bios path="psxonpsp660.bin" md5="c53ca5908936d412331790f4426c6c33" core="libretro/mednafen_psx,libretro/pcsx_rearmed,libretro/swanstation" mandatory="false" />
   </system>
@@ -594,10 +495,21 @@
     <bios path="gbc/agb_boot.bin" md5="8e29ae4f331830d54ae764f3e10cebae" mandatory="false" core="libretro/sameboy" />
   </system>
   <system fullname="Pentagon 128/512/1024 (ZX Spectrum clone)" platform="zxspectrum">
-    <bios path="fuse/128p-0.rom" md5="a249565f03b98d004ee7f019570069cd" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
-    <bios path="fuse/128p-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
-    <bios path="fuse/gluck.rom" md5="d5869034604dbfd2c1d54170e874fd0a" core="libretro/fuse" note="Only required if you want to emulate Pentagon 512/1024 machine" />
-    <bios path="fuse/trdos.rom" md5="b6d8db853c24621cbd5fef3c892c976c,5c097b0fb75bb7147104d6e77db0300a,dd70541ed6a6e8176e8dace64f9344ad,b08fa49b5de8448e94936a9d061dc0f5,4a3e2b04982ac6c594adb6793be4d6e7,4123fd0b5c218ef704770596dc6533e1,6459c606ff23a610e504d0387383148a,aa9f9acf05382aff569dfdadde4ef8f2,48b5da4079ff8394852429e53cfc607f,14399030d8228ca1b16872ed426a5835,7031f2610845d39c54c97097afa8fa03,4da473775c4badcc83ab5d86dc8231de,3f8a2a239a10b6694ec79148a292cfb4,62cbbdca554c8c23676618d4c83ef40e,c511eaa8fcc968cc13baf7ad80f3aea3,a92db09c9aa3cfda478a9bf1eec7ff90,0da70a5d2a0e733398e005b96b7e4ba6,a701f54355b53fa93fb8599933d518b7,0c42e3b9ab8dd91ea096f1d0c07c55e5,b4c9634312b796063015450daef13dfa,d6f43c70c003f07d0a694f81ff55db95,a3242d31a0624a64a56f3a6cb5484e7c,cc46c7bacbbaf528a864113c76d9b9c9,53e2f417c6996df9af170e147df8e369" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/128p-0.rom" md5="a249565f03b98d004ee7f019570069cd" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/128p-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/gluck.rom"  md5="d5869034604dbfd2c1d54170e874fd0a" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon 512/1024 machine" />
+    <bios path="fuse/trdos.rom"  md5="b6d8db853c24621cbd5fef3c892c976c,5c097b0fb75bb7147104d6e77db0300a,
+                                      dd70541ed6a6e8176e8dace64f9344ad,b08fa49b5de8448e94936a9d061dc0f5,
+                                      4a3e2b04982ac6c594adb6793be4d6e7,4123fd0b5c218ef704770596dc6533e1,
+                                      6459c606ff23a610e504d0387383148a,aa9f9acf05382aff569dfdadde4ef8f2,
+                                      48b5da4079ff8394852429e53cfc607f,14399030d8228ca1b16872ed426a5835,
+                                      7031f2610845d39c54c97097afa8fa03,4da473775c4badcc83ab5d86dc8231de,
+                                      3f8a2a239a10b6694ec79148a292cfb4,62cbbdca554c8c23676618d4c83ef40e,
+                                      c511eaa8fcc968cc13baf7ad80f3aea3,a92db09c9aa3cfda478a9bf1eec7ff90,
+                                      0da70a5d2a0e733398e005b96b7e4ba6,a701f54355b53fa93fb8599933d518b7,
+                                      0c42e3b9ab8dd91ea096f1d0c07c55e5,b4c9634312b796063015450daef13dfa,
+                                      d6f43c70c003f07d0a694f81ff55db95,a3242d31a0624a64a56f3a6cb5484e7c,
+                                      cc46c7bacbbaf528a864113c76d9b9c9,53e2f417c6996df9af170e147df8e369" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
     <bios path="fuse/48.rom" md5="4c42a2f075212361c3117015b107ff68" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/128-0.rom" md5="b4d2692115a9f2924df92a3cbfb358fb" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/128-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" core="libretro/fuse" mandatory="false" />
@@ -621,10 +533,10 @@
     <bios path="fuse/speccyboot-1.4.rom" md5="c54aa8f374b0971f51546c29d5d1eba1" core="libretro/fuse" mandatory="false" />
   </system>
   <system fullname="Scorpion 256K (ZX Spectrum clone)" platform="zxspectrum">
-    <bios path="fuse/256s-0.rom" md5="b9fda5b6a747ff037365b0e2d8c4379a" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
-    <bios path="fuse/256s-1.rom" md5="643861ad34831b255bf2eb64e8b6ecb8" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
-    <bios path="fuse/256s-2.rom" md5="d8ad507b1c915a9acfe0d73957082926" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
-    <bios path="fuse/256s-3.rom" md5="ce0723f9bc02f4948c15d3b3230ae831" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-0.rom" md5="b9fda5b6a747ff037365b0e2d8c4379a" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-1.rom" md5="643861ad34831b255bf2eb64e8b6ecb8" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-2.rom" md5="d8ad507b1c915a9acfe0d73957082926" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-3.rom" md5="ce0723f9bc02f4948c15d3b3230ae831" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
   </system>
   <system fullname="Nintendo Gamecube" platform="gamecube">
     <bios path="gamecube/EUR/IPL.bin" md5="0cdda509e2da83c85bfe423dd87346cc" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the European Gamecube menu and the boot animation" />
@@ -663,7 +575,18 @@
                                          b2c8175567ab9e0bd72d4e2633f2c650" mandatory="true" hashMatchMandatory="false" core="libretro/geolith" />
   </system>
   <system fullname="SNK Neo-Geo CD" platform="neogeocd">
-    <bios path="neogeo.zip" md5="00dad01abdbf8ea9e79ad2fe11bdb182,e023d0a4b5249fdff2a4620c28963944,8cbdff53661f41ddbe486a98915e1ec9,42e359e394f0be1d61b94ddca0efbe6c,c1e0a738d266926f604186aa9d63e4db,d12bba59121229ff13702878b415cb7c,2b4ffdf24d5d4f24c4b116c50c4bafc3,005b843b6e70b939c2cca41887cbc371,42e359e394f0be1d61b94ddca0efbe6c,4b9432a4571d03cc8bae9d24d8d6eb40,4cd64313e26537c04cdb561b8f84b0e4,50bbfd6bf297038b085e29265c65723a,76ee7390ccd537cddea1018025ca29a8,84d6c35aad790a77ba3cfc1b319e1061,912c0a56bafe0fba39d0c668b139b250,94748719c0ef31e7375b0c357d82fc89,ab25b9e25052a6064901a7a221037eb6,ae9e5825cde82c58e39dfd48534f7060,b18f83feef474b8a1306ef199cd810a2,b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,a3b2c9a69c28ad0bd4ea07877b744bbe" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" hashMatchMandatory="false" />
+    <bios path="neogeo.zip" md5="e023d0a4b5249fdff2a4620c28963944,8cbdff53661f41ddbe486a98915e1ec9,
+                                 42e359e394f0be1d61b94ddca0efbe6c,c1e0a738d266926f604186aa9d63e4db,
+                                 d12bba59121229ff13702878b415cb7c,2b4ffdf24d5d4f24c4b116c50c4bafc3,
+                                 005b843b6e70b939c2cca41887cbc371,42e359e394f0be1d61b94ddca0efbe6c,
+                                 4b9432a4571d03cc8bae9d24d8d6eb40,4cd64313e26537c04cdb561b8f84b0e4,
+                                 50bbfd6bf297038b085e29265c65723a,76ee7390ccd537cddea1018025ca29a8,
+                                 84d6c35aad790a77ba3cfc1b319e1061,912c0a56bafe0fba39d0c668b139b250,
+                                 94748719c0ef31e7375b0c357d82fc89,ab25b9e25052a6064901a7a221037eb6,
+                                 ae9e5825cde82c58e39dfd48534f7060,b18f83feef474b8a1306ef199cd810a2,
+                                 b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,
+                                 ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,
+                                 a3b2c9a69c28ad0bd4ea07877b744bbe,00dad01abdbf8ea9e79ad2fe11bdb182" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
     <bios path="neocdz.zip" md5="b31a246b69493c35194fe0bac120dc37" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" hashMatchMandatory="false" />
     <bios path="neocd/neocd.bin" md5="f39572af7584cb5b3f70ae8cc848aba2" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (MAME)" />
     <bios path="neocd/uni-bioscd.rom"            md5="08ca8b2dba6662e8024f9e789711c6fc" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Universe BIOS CD 3.3" />
@@ -808,17 +731,5 @@
                                               4cb34733b741ada074f11e3abcdc56d8,6b6d422a6c392eaec178b64b92987e99,
                                               88b9da6cda268ba1d9e37dd82d038801,8c34608cc140e1bfbf9c945a12fed0e8,
                                               b876d86e244d00b336980b4e26e94132" hashMatchMandatory="false" mandatory="true" core="libretro/kronos" />
-    <bios path="hiscore.dat" md5="2490bad5079ec0991c23c579092cca19" core="advancemame" mandatory="false" />
-    <bios path="mame2003/cheat.dat" md5="69c6bbe7194e4bc62d53764dd6c6d890" core="advancemame,libretro/mame2003,libretro/mame2003_plus" mandatory="false" />
-    <bios path="event.dat" md5="ee99bb541116967f8785a5bc09932475" core="advancemame" mandatory="false" />
-    <bios path="mame2003/hiscore.dat" md5="c6f35123264db9cdfb216e8fdb673679" core="libretro/mame2003" mandatory="false" />
-    <bios path="mame2003-plus/hiscore.dat" md5="2f60c1ed69c152dea95e734979ca2ecb" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/blueshrk.zip" md5="4659968035d462be471fdfb46b604696" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/frogs.zip" md5="e30e8ef4631596e25466523b97fee19f" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/invaders.zip" md5="23d65ad40ac1f2121fe35fe0c7893721" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/omegrace.zip" md5="255155cf3f9912c92be8f813e8112a54" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/skydiver.zip" md5="95e05db7f8fa208daafd7b0d32041db8" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/solarq.zip" md5="b4b70db555dfb48b91a067eea747c771" core="libretro/mame2003_plus" mandatory="false" />
-    <bios path="mame2003-plus/artwork/warrior.zip" md5="29fe11717016182d446ca6af56a08f75" core="libretro/mame2003_plus" mandatory="false" />
   </system>
 </biosList>

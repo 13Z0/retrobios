@@ -5,10 +5,9 @@
   },
   "files": [
     "scriptmodules/emulators/gngeopi.sh",
-    "scriptmodules/libretrocores/lr-geargrafx.sh",
-    "scriptmodules/libretrocores/lr-o2em.sh"
+    "scriptmodules/libretrocores/lr-geargrafx.sh"
   ],
-  "summary": "3 packages updated. Left as is: dgen, lr-freechaf, which no profiled core matches. Left as is: lr-beetle-saturn, lr-bluemsx, lr-fbneo, lr-fmsx and 5 more, whose help text lists no files to add to. Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin)",
+  "summary": "2 packages updated. Left as is: dgen, lr-freechaf, which no profiled core matches. Left as is: lr-beetle-saturn, lr-bluemsx, lr-fbneo, lr-fmsx and 5 more, whose help text lists no files to add to. Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 108 entries found by content not listed",
   "counts": null,
   "hashes_corrected": [],
   "hashes_filled": [],
@@ -17,5 +16,6 @@
   "hashes_cleared": [],
   "requirements_corrected": 0,
   "withheld": [],
+  "found_by_content": 108,
   "invalid": []
 }

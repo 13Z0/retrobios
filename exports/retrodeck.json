@@ -24,17 +24,15 @@
     "xemu/component_manifest.json",
     "xroar/component_manifest.json"
   ],
-  "summary": "2021 kept, 135 added, 3 hashes corrected, 53 requirements corrected, 98 hashes filled, 1046 additions left out",
+  "summary": "2021 kept, 43 added, 1 hash corrected, 52 requirements corrected, 94 hashes filled, 1073 additions left out, 107 entries found by content not listed",
   "counts": {
     "kept": 2021,
-    "added": 135,
-    "not_added": 1046,
+    "added": 43,
+    "not_added": 1073,
     "not_kept": 0
   },
   "hashes_corrected": [
-    "psx/scph5000.bin md5",
-    "fbneo/neocdz.zip md5",
-    "coco/disk.rom md5"
+    "fbneo/neocdz.zip md5"
   ],
   "hashes_filled": [
     "psx/psxonpsp660.bin sha256",
@@ -50,7 +48,7 @@
     "psx/scph102B.bin sha256",
     "psx/scph3000.bin sha256",
     "psx/scph3500.bin sha256",
-    "psx/scph5000.bin sha256",
+    "mame/neogeo.zip sha256",
     "3do/panafz1.bin sha256",
     "3do/panafz10.bin sha256",
     "3do/panafz10-norsa.bin sha256",
@@ -87,10 +85,7 @@
     "enterprise/tvcfileio.rom sha256",
     "neogeo/aes.zip md5",
     "neogeo/aes.zip sha256",
-    "odyssey2/o2rom.bin sha256",
-    "odyssey2/c52.bin sha256",
-    "odyssey2/g7400.bin sha256",
-    "odyssey2/jopac.bin sha256",
+    "msx/DISK.ROM sha256",
     "msx/MSXDOS2.ROM sha256",
     "msx/PAINTER.ROM sha256",
     "msx/KANJI.ROM sha256",
@@ -133,13 +128,13 @@
     "coco/extbas11.rom sha256",
     "coco/disk10.rom sha256",
     "coco/disk11.rom sha256",
-    "coco/coco3p.rom sha256",
-    "coco/disk.rom sha256"
+    "coco/coco3p.rom sha256"
   ],
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 53,
+  "requirements_corrected": 52,
   "withheld": [],
+  "found_by_content": 107,
   "invalid": []
 }

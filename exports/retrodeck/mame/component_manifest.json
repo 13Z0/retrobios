@@ -7061,7 +7061,8 @@
         "md5": "00dad01abdbf8ea9e79ad2fe11bdb182",
         "system": "mame",
         "description": "NeoGeo - Arcade system with advanced graphics.",
-        "required": "Required"
+        "required": "Required",
+        "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc"
       },
       {
         "filename": "newbrain_fdc.zip",
@@ -7264,7 +7265,7 @@
         "md5": "d429f6eaf5918b2b4175c8d70ff084b3",
         "system": "mame",
         "description": "P1 ROM - System ROM for P1 arcade platform.",
-        "required": "Required"
+        "required": "Optional"
       },
       {
         "filename": "pc1512kb.zip",

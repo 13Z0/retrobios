@@ -2351,6 +2351,54 @@
     "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
     "sha1": "38e63f700ee6a5be71ded6c057267562c00f3e31"
   },
+  "arcade:blueshrk.zip": {
+    "size": "925914",
+    "crc": "7481c2ea",
+    "md5": "4659968035d462be471fdfb46b604696",
+    "sha1": "4317f301d6e4117dfde42b33dfaf73a2b25f43c1"
+  },
+  "arcade:frogs.zip": {
+    "size": "2832731",
+    "crc": "99541e86",
+    "md5": "e30e8ef4631596e25466523b97fee19f",
+    "sha1": "cdff29398e76b92d93825d96c0f9cae5bb6b3400"
+  },
+  "arcade:hiscore.dat": {
+    "size": "328397",
+    "crc": "ab7b721a",
+    "md5": "f5cdce5b3749d673ad8f073ccc7371e4",
+    "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e"
+  },
+  "arcade:invaders.zip": {
+    "size": "4324198",
+    "crc": "02546fd3",
+    "md5": "23d65ad40ac1f2121fe35fe0c7893721",
+    "sha1": "4b18db526ca907707fd888385d907a7a585935d0"
+  },
+  "arcade:omegrace.zip": {
+    "size": "1754523",
+    "crc": "04dbbb0a",
+    "md5": "255155cf3f9912c92be8f813e8112a54",
+    "sha1": "1ca22afdfefcfa5943742e988c45c1fc0e1124bd"
+  },
+  "arcade:skydiver.zip": {
+    "size": "117241",
+    "crc": "143797a3",
+    "md5": "95e05db7f8fa208daafd7b0d32041db8",
+    "sha1": "a0548e37e76a21fb37005cff944319ee63f93d1e"
+  },
+  "arcade:solarq.zip": {
+    "size": "1342645",
+    "crc": "92998e66",
+    "md5": "b4b70db555dfb48b91a067eea747c771",
+    "sha1": "ff532cee1de69668b0c68238aff0c16813640476"
+  },
+  "arcade:warrior.zip": {
+    "size": "1125335",
+    "crc": "82a68bb4",
+    "md5": "29fe11717016182d446ca6af56a08f75",
+    "sha1": "57f89bbac39d8071e45c87f97e9b918f31d21994"
+  },
   "atari-st:tos100.img": {
     "size": "196608",
     "crc": "1a586c64",
