@@ -6,8 +6,9 @@ upstream: closed-source
 version_source:
   url: "https://play.google.com/store/apps/details?id=com.fastemulator.gbc&hl=en"
   pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
+  no_genuine_copy: "2.0.3"
 author: "Pixel Respawn LLC"
-profiled_date: "2026-08-12"
+profiled_date: "2026-10-20"
 core_version: "2.0.0"
 display_name: "Nintendo - Game Boy / Game Boy Color (My OldBoy!)"
 mode: standalone
@@ -29,8 +30,9 @@ notes: |
   signer and the Play source stamp) and 1.5.1 (versionCode 90020, minSdk 9, armeabi,
   v1 signature verified entry by entry). Line numbers below are those of 2.0.0 and
   native addresses are arm64-v8a of the same build; 1.5.1 addresses are its armeabi
-  library. 2.0.2 (versionCode 90024) is the current Play build, offered by no mirror
-  reached here.
+  library. 2.0.3 is the current Play build, offered genuine by no mirror reached here.
+  One rebuilt copy was rejected on its certificate: 2.0.1 (C=IN), served under a 2.0.3
+  page.
 
   Emulation runs in libgbc.so behind a JNI bridge (Link.java:23,29-97). Content is a
   .gb, .gbc, .cgb or .dmg document, or the first entry with one of those extensions in a

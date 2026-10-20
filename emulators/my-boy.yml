@@ -6,8 +6,9 @@ upstream: closed-source
 version_source:
   url: "https://play.google.com/store/apps/details?id=com.fastemulator.gba&hl=en"
   pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
+  no_genuine_copy: "2.1.1"
 author: "Pixel Respawn LLC"
-profiled_date: "2026-08-12"
+profiled_date: "2026-10-20"
 core_version: "2.0.3"
 display_name: "Nintendo - Game Boy Advance (My Boy!)"
 mode: standalone
@@ -26,9 +27,12 @@ notes: |
   are read here: 2.0.3 (versionCode 90053, minSdk 21, targetSdk 33, arm64-v8a and
   armeabi-v7a, bundletool v1 signer and the Play source stamp) and 1.8.0 (versionCode
   90048, armeabi and x86). Line numbers below are those of 2.0.3 and native addresses
-  are arm64-v8a of the same build; 1.8.0 addresses are its x86 library. Four rebuilt
-  copies were rejected on their certificate: 2.0.9 (CN=APKVISION.ORG), 2.0.8 (C=RU,
-  O=A1), 2.0.6 (C=IN) and a second 1.8.0 (O=jojoy.mod).
+  are arm64-v8a of the same build, and 1.8.0 addresses are its x86 library. 2.1.1
+  (versionCode 90062) is the current Play build, and every copy of it reached here is
+  rebuilt. Seven rebuilt copies were rejected on their certificate: 2.1.1
+  (CN=APKVISION.ORG, with an injected second dex), 2.1.1 (the AOSP test key), 2.0.9
+  (CN=APKVISION.ORG), 2.0.8 (C=RU, O=A1), 2.0.6 (C=IN), 2.0.6 (O=APKMODY) and a second
+  1.8.0 (O=jojoy.mod).
 
   One system is emulated, Game Boy Advance, in libgba.so behind a JNI bridge
   (Link.java:21-23,83). Content is a .gba or .bin document, or the first entry with one
