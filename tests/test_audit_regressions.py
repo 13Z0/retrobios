@@ -5721,7 +5721,8 @@ class WhatOnlyAnInstallProvidesIsListed(unittest.TestCase):
                 return {"path": str(path), "name": name, "sha1": sha1,
                         "md5": sha1[:32], "size": path.stat().st_size}
 
-            db = {"files": {"a" * 40: entry("a" * 40, "icon.png"),
+            db = {"bios_dir": tmp,
+                  "files": {"a" * 40: entry("a" * 40, "icon.png"),
                             "b" * 40: entry("b" * 40, "bios.rom")},
                   "indexes": {"by_name": {"icon.png": ["a" * 40], "bios.rom": ["b" * 40]},
                               "by_md5": {}, "by_crc32": {}, "by_sha256": {},
@@ -5733,6 +5734,24 @@ class WhatOnlyAnInstallProvidesIsListed(unittest.TestCase):
             }
             rows = bundled_only.bundled_only(db, profiles, tmp, Path(tmp))
             self.assertEqual([row["path"] for row in rows], [str(Path(tmp, "icon.png"))])
+
+    def test_every_copy_of_the_listed_bytes_is_listed(self):
+        """The database keeps one path per content: splitwolf's sprite
+        folders hold one file several times and took five passes to empty."""
+        import hashlib
+        import tempfile
+
+        import bundled_only
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            for name in ("dir1/a.bmp", "dir2/a.bmp", "dir2/b.bmp"):
+                Path(tmp, name).parent.mkdir(exist_ok=True)
+                Path(tmp, name).write_bytes(b"same" if "a.bmp" in name else b"diff")
+            sha1 = hashlib.sha1(b"same").hexdigest()
+            row = {"sha1": sha1, "path": Path(tmp, "dir1/a.bmp").as_posix(), "size": 4,
+                   "emulators": ["splitwolf"]}
+            copies = bundled_only.other_copies([row], Path(tmp))
+            self.assertEqual([c["path"] for c in copies], [Path(tmp, "dir2/a.bmp").as_posix()])
 
 
 class TheApiSchemaHoldsTheFieldsItPromises(unittest.TestCase):

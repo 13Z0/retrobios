@@ -30,12 +30,6 @@
     ],
     "transform": "mirrored twice"
   },
-  "09fc005625589ef5992515957ce7a3167dec24b2": {
-    "from": [
-      "bios/Other/zesarux/p2as.rom"
-    ],
-    "transform": "quarter 3"
-  },
   "0a2f67455166f8dac101f8f8564a1c0364cb456a": {
     "from": [
       "bios/Commodore/C128/vice/C128/kernalfr"
@@ -157,12 +151,6 @@
     ],
     "transform": "concatenated"
   },
-  "3eba870bcb2c5efa906f2ca3febe960fc35d66bb": {
-    "from": [
-      "bios/Other/zesarux/plus2c.rom"
-    ],
-    "transform": "first half"
-  },
   "3fcdfa96f862b0cb7603fb6c2af84cac59527b05": {
     "from": [
       "bios/Philips/CD-i/cdi910.zip/cdi910.rom"
@@ -208,12 +196,6 @@
     ],
     "transform": "concatenated"
   },
-  "4990536c7f77e1025c90f0541a73bd157210efc9": {
-    "from": [
-      "bios/Other/zesarux/plus2b.rom"
-    ],
-    "transform": "first half"
-  },
   "4b0a38b5af525aa598907683f0dcfeaa90d242e0": {
     "from": [
       "bios/Arcade/Arcade/channelf.zip/sl31253.rom",
@@ -227,12 +209,6 @@
     ],
     "transform": "quarter 3"
   },
-  "4e48f196427596c7990c175d135c15a039c274a4": {
-    "from": [
-      "bios/Other/zesarux/p2as.rom"
-    ],
-    "transform": "quarter 2"
-  },
   "4f41f85124a682b0243e9d64a5f7f6a99258ea20": {
     "from": [
       "bios/Arcade/Arcade/msx_cart_bm_012.zip/midi_v1.00.u4"
@@ -245,11 +221,12 @@
     ],
     "transform": "even bytes"
   },
-  "56684c4c85a616e726a50707483b9a42d8e724ed": {
+  "57c0b6681224378ce1d279fde13d644478423783": {
     "from": [
-      "bios/Other/zesarux/p2f.rom"
+      "bios/Sinclair/ZX Spectrum/128-spanish-0.rom",
+      "bios/Sinclair/ZX Spectrum/128-spanish-1.rom"
     ],
-    "transform": "first half"
+    "transform": "concatenated"
   },
   "5ab17ee70467152bf2130e3f48a2aa81e9df93c9": {
     "from": [
@@ -301,18 +278,6 @@
     ],
     "transform": "concatenated"
   },
-  "7e398f62689c9d90a36d3a101351ec9987207308": {
-    "from": [
-      "bios/Other/zesarux/p2f.rom"
-    ],
-    "transform": "second half"
-  },
-  "8259241b28ff85441f1bedc2bee53445767c51c5": {
-    "from": [
-      "bios/Other/zesarux/p2s.rom"
-    ],
-    "transform": "first half"
-  },
   "89639e3dbf517eeac7b307ba59df708c99728e66": {
     "from": [
       "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
@@ -344,35 +309,17 @@
     ],
     "transform": "first half"
   },
-  "97f5916d9877b5bac9fa7bc1dd724a4d10212208": {
-    "from": [
-      "bios/Other/zesarux/plus2b.rom"
-    ],
-    "transform": "quarter 3"
-  },
   "999eb81c65dfd07a71ee19315d99c7eb858ab186": {
     "from": [
       "bios/Commodore/Amiga/kick39106.A1200"
     ],
     "transform": "even words, byte-swapped"
   },
-  "a7f06facc6f0a3713215f4befc307914836706a4": {
-    "from": [
-      "bios/Other/speccy/COUPE.ROM"
-    ],
-    "transform": "second half"
-  },
   "ad676ac04c6e7861924093654bd67ff4807ebc53": {
     "from": [
       "bios/Other/citron/switch/key_retail.bin"
     ],
     "transform": "second half"
-  },
-  "b1caa56044db8731f9959d78abd7d4194fb39c0a": {
-    "from": [
-      "bios/Other/zesarux/plus2b.rom"
-    ],
-    "transform": "quarter 4"
   },
   "b8800f5f909298109ea69690b1b8523fa22ddb37": {
     "from": [
@@ -397,12 +344,6 @@
       "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin"
     ],
     "transform": "second half"
-  },
-  "d92e3fd2a65dbf439d7050d9cea732a63640d567": {
-    "from": [
-      "bios/Other/zesarux/samcoupe.rom"
-    ],
-    "transform": "first half"
   },
   "dcd18397dd2a691118aaacf2b087d08e3782f81a": {
     "from": [
@@ -429,24 +370,6 @@
     ],
     "transform": "mirrored twice"
   },
-  "e9b0a60a1a8def511d59090b945d175bdc646346": {
-    "from": [
-      "bios/Other/zesarux/p2as.rom"
-    ],
-    "transform": "quarter 1"
-  },
-  "ec0d5a158842d20601b4fbeaefc6668db979d0e1": {
-    "from": [
-      "bios/Other/zesarux/p2s.rom"
-    ],
-    "transform": "second half"
-  },
-  "ec8f644a81e2e9bcb58ace974103ea960361bad2": {
-    "from": [
-      "bios/Other/zesarux/p2as.rom"
-    ],
-    "transform": "quarter 4"
-  },
   "ecbddfa12ca44bc7aae7a12d13c6c0bd10066362": {
     "from": [
       "bios/Microsoft/MSX/MSX2R2.ROM"
@@ -464,12 +387,6 @@
       "bios/Commodore/C128/vice/C128/kernalit"
     ],
     "transform": "second half"
-  },
-  "f69252609e587d4fb5713ef834b63e8a70ffd82a": {
-    "from": [
-      "bios/Other/zesarux/plus2b.rom"
-    ],
-    "transform": "quarter 1"
   },
   "f71be031a5dfa837de225081b2ddc8dcb74a0552": {
     "from": [

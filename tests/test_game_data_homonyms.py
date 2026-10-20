@@ -378,6 +378,9 @@ class ControllerDatabasesAreTheirOwn(unittest.TestCase):
             )
             with self.subTest(profile=key):
                 path, status = resolve_local_file(entry, db)
+                if entry.get("bundled") and entry.get("sha1") not in db["files"]:
+                    self.assertNotIn(status, ("sha1_exact", "md5_exact"))
+                    continue
                 self.assertIn(status, ("sha1_exact", "md5_exact"))
                 self.assertNotIn("C-Dogs", path or "")
 
@@ -447,10 +450,15 @@ class BundledFilesComeFromTheirOwnTree(unittest.TestCase):
         for owner, name in self.CASES:
             entry = next(e for e in profiles[owner]["files"] if e["name"] == name)
             with self.subTest(profile=owner, file=name):
-                path, _status = resolve_local_file(
+                path, status = resolve_local_file(
                     dict(entry, source_profile=owner), db,
                     dest_hint=entry.get("path") or entry.get("standalone_path") or "",
                 )
+                if entry.get("bundled") and entry.get("sha1") not in db["files"]:
+                    # Its own copy left the collection with the other
+                    # bundled-only files: another tree's file is a mismatch.
+                    self.assertEqual(status, "hash_mismatch" if path else "not_found")
+                    continue
                 self.assertIn(f"/{owner}/", path or "")
 
 

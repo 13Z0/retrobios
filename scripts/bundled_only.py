@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 
 from common import (
+    compute_hashes,
     expand_directory_entries,
     list_registered_platforms,
     load_database,
@@ -70,12 +71,39 @@ def bundled_only(db: dict, profiles: dict, platforms_dir: str, install_dir: Path
             else:
                 needed.add(sha1)
     files = db.get("files", {})
-    return [
+    rows = [
         {"sha1": sha1, "path": files[sha1]["path"], "size": files[sha1].get("size", 0),
          "emulators": sorted(emulators)}
         for sha1, emulators in sorted(bundled.items(), key=lambda kv: files[kv[0]]["path"])
         if sha1 not in needed and sha1 in files
     ]
+    return rows + other_copies(rows, Path(db.get("bios_dir") or "bios"))
+
+
+def other_copies(rows: list[dict], bios_dir: Path) -> list[dict]:
+    """The same bytes under other paths of the collection.
+
+    The database keeps one path per sha1, and the trees kept whole
+    (NODEDUP: splitwolf's sprite directories, c64-emu's machine folders)
+    hold the same file several times. Listing only the indexed path took
+    five passes to empty splitwolf. A file is hashed only when its size is
+    one a listed file has.
+    """
+    by_size: dict[int, dict[str, dict]] = {}
+    for row in rows:
+        by_size.setdefault(int(row["size"]), {})[row["sha1"]] = row
+    listed = {row["path"] for row in rows}
+    found = []
+    for path in sorted(bios_dir.rglob("*")):
+        if not path.is_file() or path.is_symlink() or path.as_posix() in listed:
+            continue
+        same_size = by_size.get(path.stat().st_size)
+        if not same_size:
+            continue
+        sha1 = compute_hashes(path, frozenset({"sha1"}))["sha1"]
+        if sha1 in same_size:
+            found.append({**same_size[sha1], "path": path.as_posix()})
+    return found
 
 
 def main() -> int:

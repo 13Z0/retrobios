@@ -20,6 +20,7 @@ Steps, numbered as the run prints them:
   4    generate_pack.py --all       ZIP packs
   4b   generate_pack.py --manifest  install manifests
   4c   --manifest-targets           per-target core lists
+  4d   bundled_only.py --strict     copies only an emulator install provides
   5    consistency check            verify counts == pack counts
   6    --verify-packs               pack integrity, extraction and hashes
   7    generate_readme.py           README.md and CONTRIBUTING.md
@@ -727,6 +728,17 @@ def main() -> None:
     else:
         print("\n--- 4c/8 generate target manifests: SKIPPED (--skip-packs) ---")
         results["generate_target_manifests"] = SKIPPED
+
+    # Step 4d: A collected copy that only an emulator's own install provides.
+    # Packs leave such files out, so a copy nothing else asks for is weight
+    # the collection carries for nobody. Read after the manifests, which say
+    # what an installation ships.
+    ok, _ = run(
+        [sys.executable, "scripts/bundled_only.py", "--strict"],
+        "4d/8 copies only an emulator install provides",
+    )
+    results["bundled_only"] = ok
+    all_ok &= ok
 
     # Step 5: Consistency check. verify describes the full pack, and a run that
     # built only a reduced one (--source platform or truth) has nothing to

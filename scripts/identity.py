@@ -51,10 +51,6 @@ KNOWN_SHARED: dict[str, tuple[frozenset[str], str]] = {
         frozenset({"Oric", "Tangerine"}),
         "Oric Microdisc ROM, the Oric being a Tangerine machine",
     ),
-    "0334b35f164089df7b2a82d46fa0ec6e43fafa90": (
-        frozenset({"Sinclair", "Timex"}),
-        "ZX81 overlay, the TS1500 being the same machine for Timex",
-    ),
     "286b2e1fb21cc79851da01666db6c0b0e88f25e3": (
         frozenset({"Infocom", "ZC"}),
         "one soundfont shipped by two interpreters",

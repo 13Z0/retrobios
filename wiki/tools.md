@@ -41,6 +41,7 @@ Pipeline steps:
 | 4/8 | Generate packs | `--skip-packs` |
 | 4b | Generate install manifests | `--skip-packs` |
 | 4c | Generate target manifests | `--skip-packs` |
+| 4d | Collected copies only an emulator install provides (`bundled_only.py --strict`, gates the run) | - |
 | 5/8 | Consistency check | if verify or pack skipped |
 | 6/8 | Pack integrity (extract + hash) | `--skip-packs` |
 | 7/8 | Generate README | `--skip-docs` |
@@ -611,7 +612,7 @@ Further options, by script:
 | `migrate.py` | `--dry-run`, `--include-branches` also reads BIOS files from every remote branch |
 | `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
 | `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
-| `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains), `--json`, `--install-dir` |
+| `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains, pipeline step 4d), `--json`, `--install-dir`. Lists every copy of such a file, the database keeping one path per content |
 | `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
 | `release_notes.py` | `--whats-new FILE` (required, appended as written), `--record`, `--platforms-dir`, `--output` |
 | `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |
@@ -780,7 +781,7 @@ marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
 quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
 or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
-this way: 79 entries on the current snapshots, recorded in `derivable.json`
+this way: 65 entries on the current snapshots, recorded in `derivable.json`
 by pipeline step 1b.
 
 | Catalog | Acquisition | Notes |

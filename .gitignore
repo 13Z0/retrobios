@@ -27,7 +27,6 @@ bios/Sony/PlayStation Vita/PSP2UPDAT.PUP
 /data/
 
 # Large files stored as GitHub Release assets (additional)
-bios/Other/mame4droid-2024/data/history.db
 bios/Other/mame4droid-2024/data/.variants/history.db.615619e8
 bios/Interplay/Descent/d1x-rebirth/d1xr-opl3-music.dxa
 bios/Interplay/Descent/d1x-rebirth/d1xr-sc55-music.dxa
@@ -87,7 +86,6 @@ bios/Nintendo/Wii/nand.bin
 bios/Other/fbneo/fbneo/samples/donpachi.zip
 bios/Other/fbneo/fbneo/samples/sfz3mix.zip
 bios/Other/fbneo/fbneo/samples/twotiger.zip
-bios/Other/starboard/starboard-rootfs.tar.gz
 bios/Other/cspect/cspect-next-8gb.zip
 
 # Wenquxing NC3000 NAND image (66MB, fetched from large-files release)

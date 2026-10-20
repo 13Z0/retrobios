@@ -106,9 +106,14 @@ class TheFixedEntriesGetTheirOwnBytes(unittest.TestCase):
                     e for e in document["files"]
                     if (e.get("path") or e["name"]) == destination
                 )
-                local, _status = resolve_local_file(
+                local, status = resolve_local_file(
                     {**entry, "source_profile": profile}, db, dest_hint=destination
                 )
+                if entry.get("bundled") and entry["sha1"] not in db["files"]:
+                    # A bundled copy nothing else needs left the collection:
+                    # no other bytes may then claim to be it.
+                    self.assertIn(status, ("not_found", "hash_mismatch"))
+                    continue
                 self.assertIsNotNone(local)
                 self.assertEqual(
                     hashlib.sha1((REPO_ROOT / local).read_bytes()).hexdigest(),
