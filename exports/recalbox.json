@@ -2284,44 +2284,6 @@
   "found_by_content": 102,
   "removal_candidates": [
     {
-      "system": "apple2gs",
-      "name": "apple2gs1.rom",
-      "destination": "apple2gs1.rom",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
-      "cores_examined": [
-        "mame0258",
-        "mame0278"
-      ],
-      "unresolved_cores": [
-        "glide64mk2",
-        "gliden64",
-        "gliden64_20",
-        "n64_gles2",
-        "rice",
-        "rice_gles2"
-      ]
-    },
-    {
-      "system": "apple2gs",
-      "name": "apple2gs3.rom",
-      "destination": "apple2gs3.rom",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
-      "cores_examined": [
-        "mame0258",
-        "mame0278"
-      ],
-      "unresolved_cores": [
-        "glide64mk2",
-        "gliden64",
-        "gliden64_20",
-        "n64_gles2",
-        "rice",
-        "rice_gles2"
-      ]
-    },
-    {
       "system": "pc98",
       "name": "itf.rom",
       "destination": "np2kai/itf.rom",

@@ -9280,18 +9280,6 @@
       "unresolved_cores": []
     },
     {
-      "system": "doom",
-      "name": "prboom.wad",
-      "destination": "bios/prboom.wad",
-      "verdict": "candidate",
-      "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [
-        "gzdoom",
-        "prboom"
-      ],
-      "unresolved_cores": []
-    },
-    {
       "system": "j2me",
       "name": "freej2me-sdl.jar",
       "destination": "bios/freej2me-sdl.jar",

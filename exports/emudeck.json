@@ -379,45 +379,6 @@
         "ppsspp"
       ],
       "unresolved_cores": []
-    },
-    {
-      "system": "nintendo-64",
-      "name": "64DD_IPL_US.n64",
-      "destination": "64DD_IPL_US.n64",
-      "verdict": "candidate",
-      "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [
-        "ares",
-        "mupen64plus_next",
-        "parallel_n64"
-      ],
-      "unresolved_cores": []
-    },
-    {
-      "system": "nintendo-64",
-      "name": "64DD_IPL_JP.n64",
-      "destination": "64DD_IPL_JP.n64",
-      "verdict": "candidate",
-      "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [
-        "ares",
-        "mupen64plus_next",
-        "parallel_n64"
-      ],
-      "unresolved_cores": []
-    },
-    {
-      "system": "nintendo-64",
-      "name": "64DD_IPL_DEV.n64",
-      "destination": "64DD_IPL_DEV.n64",
-      "verdict": "candidate",
-      "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [
-        "ares",
-        "mupen64plus_next",
-        "parallel_n64"
-      ],
-      "unresolved_cores": []
     }
   ],
   "invalid": []
