@@ -338,7 +338,7 @@ which CI validates every profile against.
 | `source_commit` | no | commit SHA of `source` the code was read at. Anchors every `source_ref` line number |
 | `upstream_commit` | no | same, for `upstream` |
 | `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch). profile_sync follows it |
-| `built_by` | no | platforms that compile this libretro build themselves (Recalbox's `mame0278`). Such a profile is reached only by a platform naming it in `cores:`, never by `all_libretro`: the buildbot does not publish it |
+| `built_by` | no | platforms that ship this build under its core name, compiled by them or installed from the project's own release (Recalbox's `mame0278`, the GSplus legacy build). On those platforms the name resolves to this profile, never through `all_libretro`: the buildbot does not publish it |
 | `bios_mode` | no | `agnostic` when the core takes any file of the right shape in its BIOS folder instead of a fixed name (PCSX2). Packs then carry every matching dump, and a `<bios>.bin` placeholder stands for them |
 | `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`). A scan never seeds from files outside it |
 | `display_name` | no | full display name (e.g. "Sega - Mega Drive (BlastEm)") |
