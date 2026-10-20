@@ -111,8 +111,10 @@ Checking existing files...
 ```
 
 When the manifest leaves entries out (a file the collection cannot supply, or
-one that failed a safety check), a `Safety notice:` line under the index count
-says how many and why.
+one that failed its hash check), a `Not installable:` line under the index count
+says how many and why. `--check` also names the required ones missing from the
+folder. They do not change its exit code, since no run of the installer can
+fetch them.
 
 ## Choosing what to install
 

@@ -2816,6 +2816,22 @@ def _omission_lines(count: int, entries: list[dict]) -> list[str]:
     return lines
 
 
+def _absent_required(omitted: list[dict], bios_path: Path) -> list[str]:
+    """Required files the manifest leaves out that the user has not placed."""
+    names = set()
+    for entry in omitted:
+        dest = entry.get("dest") or entry.get("name", "")
+        if not entry.get("required", True) or not dest:
+            continue
+        try:
+            placed = _destination_path(bios_path, dest).is_file()
+        except ValueError:
+            placed = False  # a path climbing out of the folder is never one we read
+        if not placed:
+            names.add(dest)
+    return sorted(names)
+
+
 # Asked before, in an interactive run: past this size a download is worth a
 # second thought, and --system, --core or --region can make it smaller.
 CONFIRM_FROM_BYTES = 1024 * 1024 * 1024
@@ -3960,8 +3976,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for reason, count in sorted(reasons.items())
             )
             print(
-                f"  Safety notice: {len(omitted_files)} unavailable or unsafe "
-                f"entries omitted ({required_omitted} required; {reason_summary})."
+                f"  Not installable: {_plural(len(omitted_files), 'file')} "
+                f"({required_omitted} required, {reason_summary})."
             )
             total_omitted += len(omitted_files)
             omitted_seen.extend(omitted_files)
@@ -4016,6 +4032,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
+            absent = _absent_required(omitted_files, bios_path)
+            if absent:
+                # The collection cannot supply these, so they leave the exit
+                # code alone, but a user asking why a game will not start
+                # needs their names.
+                print(f"  Not in the collection and absent here, needed to start "
+                      f"an emulator: {', '.join(absent[:10])}"
+                      + (f" and {len(absent) - 10} more" if len(absent) > 10 else ""))
             for entry in data_dirs:
                 _root, needed, present = data_directory_state(entry, bios_path)
                 if needed:

@@ -2808,6 +2808,50 @@ class AResumedCopyIsNotSpeed(unittest.TestCase):
 
 
 
+class ACheckNamesWhatTheCollectionLacks(unittest.TestCase):
+    """--check counted the required files the manifest leaves out and named
+    none, then said all files were up to date: on Recalbox, c3.555 stayed
+    unnamed for a user asking why Caesar III would not start."""
+
+    def test_recalbox_caesar3(self):
+        import shutil  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+
+        manifest = json.loads((REPO_ROOT / "install" / "recalbox.json").read_text())
+        lacking = sorted(
+            e["dest"] for e in manifest.get("omitted_files", [])
+            if e.get("required") and e.get("system") == "caesar3"
+        )
+        if not lacking:
+            self.skipTest("the Recalbox manifest omits no required caesar3 file")
+        handler = functools.partial(
+            http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
+        )
+        handler.log_message = lambda *args: None
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        home = Path(tempfile.mkdtemp(dir=str(REPO_ROOT / "tmp")))
+        self.addCleanup(shutil.rmtree, home, True)
+        env = {
+            **os.environ, "HOME": str(home), "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+        proc = subprocess.run(
+            [sys.executable, "-I", "install.py", "--platform", "recalbox",
+             "--no-input", "--dest", str(home / "bios"), "--check"],
+            cwd=REPO_ROOT, env=env, capture_output=True, text=True, timeout=300,
+            check=False,
+        )
+        self.assertNotIn("Traceback", proc.stderr)
+        for dest in lacking:
+            self.assertIn(dest, proc.stdout)
+        self.assertNotIn("unsafe", proc.stdout)
+
+
+
 class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
     """The installer page and the FAQ quoted "install.py SHA-256 mismatch",
     a message the bootstraps no longer print."""
