@@ -23,6 +23,7 @@ Pipeline steps:
 
 | Step | Description | Skipped by |
 |------|-------------|------------|
+| 0/8 | Validate profiles and platform YAMLs against the schemas | - (no `jsonschema` installed) |
 | 1/8 | Generate database | - |
 | 1b | Dump-catalog coverage report | - (offline, reads `provenance/`) |
 | 1c | Romset recipes: identify archives, list rebuild targets | - (offline, reads `recipes/`) |

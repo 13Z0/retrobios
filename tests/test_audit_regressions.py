@@ -5572,5 +5572,20 @@ class AHashConflictIsReportedOnce(unittest.TestCase):
         self.assertEqual(err.getvalue().count("WARNING"), 1)
 
 
+class ThePipelineRunsTheSchemaCheckCIRuns(unittest.TestCase):
+    """The pipeline the repository asks for after every change never ran
+    validate_schemas.py, which PR validation does: a profile with an
+    unquoted numeric core name passed it and failed CI on push."""
+
+    def test_the_ci_command_is_a_pipeline_step(self):
+        workflow = (ROOT / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8")
+        command = re.search(r"python (scripts/validate_schemas\.py[^\n]*)", workflow).group(1)
+        script, *flags = command.split()
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        self.assertIn(f'"{script}"', source)
+        for flag in flags:
+            self.assertIn(f'"{flag}"', source)
+
+
 if __name__ == "__main__":
     unittest.main()

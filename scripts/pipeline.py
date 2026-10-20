@@ -2,6 +2,7 @@
 """Run the full retrobios pipeline.
 
 Steps, numbered as the run prints them:
+  0    validate_schemas.py          profiles and platform YAMLs, as PR CI checks them
   1    generate_db.py --force       rebuild database.json from bios/
   1b   provenance_report.py         dump-catalog coverage, derivable.json
   1c   romset_recipes.py            archive identification, reconstruction targets
@@ -39,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import importlib.util
 import os
 import re
 import subprocess
@@ -468,6 +470,20 @@ def main() -> None:
     all_ok = True
     total_start = time.monotonic()
     results = StepResults(total_start)
+
+    # Step 0: the schema check PR validation runs. Without it a profile with
+    # `cores: [81]` unquoted passed the whole pipeline and failed CI on push.
+    # jsonschema is tooling only, so its absence skips the step.
+    if importlib.util.find_spec("jsonschema") is None:
+        print("\n--- 0/8 validate schemas: SKIPPED (jsonschema not installed) ---")
+        results["validate_schemas"] = SKIPPED
+    else:
+        ok, _ = run(
+            [sys.executable, "scripts/validate_schemas.py", "--source-only"],
+            "0/8 validate schemas",
+        )
+        results["validate_schemas"] = ok
+        all_ok = all_ok and ok
 
     # Step 1: Generate database
     ok, out = run(

@@ -365,6 +365,7 @@ python scripts/pipeline.py --offline
 
 This executes in sequence:
 
+0. `validate_schemas.py --source-only` - the schema check PR validation runs
 1. `generate_db.py` - rebuild `database.json` from `bios/`
 1b. `provenance_report.py` - dump-catalog coverage from `provenance/`
 2. `refresh_data_dirs.py` - update data directories (skipped with `--offline`)
