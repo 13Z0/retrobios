@@ -800,7 +800,7 @@ marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
 quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
 or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
-this way: 65 entries on the current snapshots, recorded in `derivable.json`
+this way: 67 entries on the current snapshots, recorded in `derivable.json`
 by pipeline step 1b.
 
 | Catalog | Acquisition | Notes |

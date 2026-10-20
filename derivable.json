@@ -321,11 +321,23 @@
     ],
     "transform": "second half"
   },
+  "b3806edacb3362fc16a154ce1eeec5bf5bc24789": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a4000t.rom"
+    ],
+    "transform": "even words, byte-swapped"
+  },
   "b8800f5f909298109ea69690b1b8523fa22ddb37": {
     "from": [
       "bios/Commodore/Amiga/amiga-os-310-a1200.rom"
     ],
     "transform": "even words, byte-swapped"
+  },
+  "cd7a706c431b04d87814d3a2d8b397100cf44c0c": {
+    "from": [
+      "bios/Commodore/Amiga/amiga-os-310-a4000t.rom"
+    ],
+    "transform": "odd words, byte-swapped"
   },
   "d234a031caf59a0f66871f2babe1644783e66cf7": {
     "from": [
