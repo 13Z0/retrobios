@@ -19,10 +19,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 7118,
-  "total_size": 8396253301,
-  "pack_files": 7120,
-  "pack_size": 8396253301,
+  "total_files": 7119,
+  "total_size": 8396253557,
+  "pack_files": 7121,
+  "pack_size": 8396253557,
   "total_omitted": 40,
   "omitted_files": [
     {
@@ -48041,6 +48041,19 @@
       "repo_path": "bios/Other/xrick/data.zip",
       "cores": [
         "xrick"
+      ]
+    },
+    {
+      "dest": "xemu/eeprom/eeprom.bin",
+      "sha1": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
+      "sha256": "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2",
+      "size": 256,
+      "repo_path": "bios/Microsoft/Xbox/xbox_eeprom.bin",
+      "cores": [
+        "xemu"
+      ],
+      "systems": [
+        "microsoft-xbox"
       ]
     },
     {
