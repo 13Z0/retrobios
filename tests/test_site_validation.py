@@ -306,5 +306,19 @@ class PlainHouseStyle(unittest.TestCase):
                 self.assertFalse(first.endswith(" - RetroBIOS"), first)
 
 
+class APreviewLeavesTheTrackedConfig(unittest.TestCase):
+    """--docs-dir moved the pages but still rewrote the tracked mkdocs.yml."""
+
+    def test_another_folder_gets_its_own_config(self):
+        from generate_site import _mkdocs_config
+
+        path, text = _mkdocs_config(Path("docs"), "hooks:\n  - scripts/mkdocs_hooks.py\n")
+        self.assertEqual(path, Path("mkdocs.yml"))
+        path, text = _mkdocs_config(Path("tmp/preview"), "hooks:\n  - scripts/mkdocs_hooks.py\n")
+        self.assertEqual(path, Path("tmp/preview.mkdocs.yml"))
+        self.assertTrue(text.startswith("docs_dir: preview\n"))
+        self.assertIn("../scripts/mkdocs_hooks.py", text)
+
+
 if __name__ == "__main__":
     unittest.main()

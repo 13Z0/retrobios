@@ -4116,6 +4116,22 @@ def _build_emulator_file_index(profiles: dict) -> dict[str, dict]:
     }
 
 
+def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
+    """Where the site's config goes, and its text for that place.
+
+    The tracked mkdocs.yml belongs to docs/. A preview into another folder
+    rewrote it anyway, with the navigation of work in progress, and mkdocs
+    kept reading docs/. Another folder gets its own config beside it, its
+    paths taken from there.
+    """
+    if os.path.normpath(str(docs)) == DOCS_DIR:
+        return Path("mkdocs.yml"), text
+    where = docs.parent
+    for relative in ("scripts/mkdocs_hooks.py", "docs_assets/overrides"):
+        text = text.replace(relative, os.path.relpath(relative, where).replace(os.sep, "/"))
+    return where / f"{docs.name}.mkdocs.yml", f"docs_dir: {docs.name}\n" + text
+
+
 # mkdocs.yml nav generator
 
 
@@ -4752,7 +4768,8 @@ validation:
   unrecognized_links: warn
   anchors: warn
 """
-    write_if_changed("mkdocs.yml", mkdocs_static + nav_yaml)
+    config_path, config_text = _mkdocs_config(Path(docs), mkdocs_static + nav_yaml)
+    write_if_changed(str(config_path), config_text)
 
     total_pages = (
         1  # home
