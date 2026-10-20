@@ -33,10 +33,14 @@ notes: |
   Every path below is relative to the data directory, picked on first run
   between the folder holding cxbx.exe, %APPDATA%\Cxbx-Reloaded and a custom
   location. EmuDisk, EmuMediaBoard and EmuMu are created under it at startup.
+  The HLSL shaders are the exception: they are read from the hlsl folder
+  beside cxbx.exe, where the build copies them along with a backup folder.
   ref: src/common/Settings.cpp:82,
        src/common/Settings.cpp:902-937,
        src/common/Settings.cpp:968-996,
-       src/common/FilePaths.cpp:81-137
+       src/common/FilePaths.cpp:81-137,
+       src/core/hle/D3D8/Direct3D9/Shader.cpp:846-849,
+       CMakeLists.txt:510-522
 
   A title counts as Chihiro when its XBE type says so or a boot.id sits beside
   it. Launching one directly requires the media board ROM: its absence ends the
@@ -210,6 +214,115 @@ files:
       EEPROM key checks the EEPROM header and is read again by the EEPROM editor
       to recompute the checksum it writes.
     source_ref: "src/common/FilePaths.cpp:139-172, src/core/kernel/common/types.h:2232, src/core/kernel/init/CxbxKrnl.cpp:113-132, src/common/EmuEEPROM.cpp:184-191, src/gui/DlgEepromConfig.cpp:200-207"
+
+  - name: CxbxPixelShaderTemplate.hlsl
+    path: "hlsl/CxbxPixelShaderTemplate.hlsl"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 29893
+    sha1: "4b23d771d1e1431607d9d206bec3a5a3fdc5a960"
+    md5: "6b3e2bd6cfa39f267e4f862113b8e729"
+    description: "Pixel shader template"
+    note: >-
+      Split on its two insertion markers, and every converted Xbox pixel
+      shader is compiled inside it. Read when the Direct3D device is created
+      and again whenever the hlsl folder changes, and the run ends when the
+      file cannot be opened.
+    source_ref: "src/core/hle/D3D8/Direct3D9/Shader.cpp:852-879, src/core/hle/D3D8/Direct3D9/Shader.cpp:812-825, src/core/hle/D3D8/Direct3D9/Shader.cpp:829-844, src/core/hle/D3D8/Direct3D9/Direct3D9.cpp:691-692"
+
+  - name: FixedFunctionPixelShader.hlsl
+    path: "hlsl/FixedFunctionPixelShader.hlsl"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 13700
+    sha1: "b3691aa041ded53c153668e12e0577715275c60a"
+    md5: "fcf5cc618c91ed2a863134380c4b4de5"
+    description: "Fixed function pixel shader"
+    note: >-
+      Compiled once per fixed function texture stage setup, under a name in
+      the same folder so its include resolves there. Read when the Direct3D
+      device is created and again whenever the hlsl folder changes, and the
+      run ends when the file cannot be opened.
+    source_ref: "src/core/hle/D3D8/Direct3D9/Shader.cpp:881-888, src/core/hle/D3D8/XbPixelShader.cpp:887-968"
+
+  - name: FixedFunctionPixelShader.hlsli
+    path: "hlsl/FixedFunctionPixelShader.hlsli"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 5770
+    sha1: "3a6d77bf7a7f591bb2092ad818044df8478d61da"
+    md5: "0bbd94bdd8955212754c2f72f3ef2313"
+    description: "Fixed function pixel shader state"
+    note: >-
+      Read by the shader compiler through the include at the top of
+      FixedFunctionPixelShader.hlsl, resolved beside that file. Without it the
+      fixed function pixel shader does not compile.
+    source_ref: "src/core/hle/D3D8/Direct3D9/FixedFunctionPixelShader.hlsl:1, src/core/hle/D3D8/Direct3D9/Shader.cpp:486-490, src/core/hle/D3D8/Direct3D9/Shader.cpp:704-709"
+
+  - name: CxbxVertexShaderTemplate.hlsl
+    path: "hlsl/CxbxVertexShaderTemplate.hlsl"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 11698
+    sha1: "806679920284d274b40d6e578fbffeb6e491951e"
+    md5: "3811e112a60371144627f918ad0adeec"
+    description: "Vertex shader template"
+    note: >-
+      Split on its insertion marker, and every converted Xbox vertex shader is
+      compiled inside it. Read when the Direct3D device is created and again
+      whenever the hlsl folder changes, and the run ends when the file cannot
+      be opened.
+    source_ref: "src/core/hle/D3D8/Direct3D9/Shader.cpp:890-911, src/core/hle/D3D8/Direct3D9/VertexShader.cpp:293-300"
+
+  - name: FixedFunctionVertexShader.hlsl
+    path: "hlsl/FixedFunctionVertexShader.hlsl"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 22764
+    sha1: "250a936d82710257ce1a10a046269b50c4a0b2fc"
+    md5: "c21140080b783c7ee9cde28c119ef552"
+    description: "Fixed function vertex shader"
+    note: >-
+      Compiled as the fixed function vertex shader under its own path, so its
+      include resolves in the same folder. Read when the Direct3D device is
+      created and again whenever the hlsl folder changes, and the run ends
+      when the file cannot be opened.
+    source_ref: "src/core/hle/D3D8/Direct3D9/Shader.cpp:914-920, src/core/hle/D3D8/Direct3D9/VertexShader.cpp:313-316"
+
+  - name: FixedFunctionVertexShaderState.hlsli
+    path: "hlsl/FixedFunctionVertexShaderState.hlsli"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 4884
+    sha1: "20c7a4d50147571d03e8d480614c65305a201203"
+    md5: "8cb9260a9c921fb957e9ce1fb85218b5"
+    description: "Fixed function vertex shader state"
+    note: >-
+      Read by the shader compiler through the include at the top of
+      FixedFunctionVertexShader.hlsl, resolved beside that file. Without it
+      the fixed function vertex shader does not compile.
+    source_ref: "src/core/hle/D3D8/Direct3D9/FixedFunctionVertexShader.hlsl:1, src/core/hle/D3D8/Direct3D9/Shader.cpp:704-709"
+
+  - name: CxbxVertexShaderPassthrough.hlsl
+    path: "hlsl/CxbxVertexShaderPassthrough.hlsl"
+    system: microsoft-xbox
+    required: true
+    bundled: true
+    size: 3854
+    sha1: "3c9e70571fe85ab8092b6419b98c1cda7581e3b2"
+    md5: "74681e0caa7c7ccd5e819608c868c64b"
+    description: "Passthrough vertex shader"
+    note: >-
+      Compiled for draws whose vertices the title has already transformed.
+      Read when the Direct3D device is created and again whenever the hlsl
+      folder changes, and the run ends when the file cannot be opened.
+    source_ref: "src/core/hle/D3D8/Direct3D9/Shader.cpp:922-929, src/core/hle/D3D8/Direct3D9/VertexShader.cpp:318-321"
 
   - name: dokan2.dll
     required: false
