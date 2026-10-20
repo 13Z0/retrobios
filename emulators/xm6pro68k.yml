@@ -7,8 +7,8 @@ version_source:
   url: "https://mijet.eludevisibility.org/XM6%20Pro-68k/Version.txt"
   pattern: '^(\d+)'
 based_on: "XM6 v2.06 by PI."
-profiled_date: "2026-08-10"
-core_version: "260726"
+profiled_date: "2026-10-20"
+core_version: "260920"
 display_name: "XM6 Pro-68k (Sharp X68000)"
 mode: standalone
 cores:
@@ -23,7 +23,8 @@ notes: |
   Closed-source Windows fork of PI's XM6 v2.06 (README.txt:6) by M.I.J.E.T.,
   distributed only from mijet.eludevisibility.org as three 7-Zip packages: the
   program, a mandatory DLL Package and an optional Web Package that adds signed
-  update downloads. Version.txt in the build analysed here reads 260726. The first
+  update downloads. Version.txt in the build analysed here reads 260920, and the
+  DLL Package it pairs with is version 260101. The first
   release, 120303, forked XM6 v2.05. XM6.exe is a 32-bit MFC application whose
   import directory names mfc90u.dll and MSVCR90.dll, so the Visual C++ 2008 runtime
   carried by the DLL Package, or the redistributable, must sit beside the executable
@@ -58,24 +59,27 @@ notes: |
 
   Two files diverge from XM6 v2.06. The base IPL ROM is compiled into the
   executable: "The program now includes an internal copy of the basic IPL ROM. It
-  will still try to load IPL ROMs externally first" (Change Log.txt:125-126), and
+  will still try to load IPL ROMs externally first" (Change Log.txt:124-125), and
   README.txt:23-25 tells users to leave IPLROM.DAT out because loading it only costs
-  startup time. The hard CG ROM requirement was dropped (Change Log.txt:129), so a
+  startup time. The hard CG ROM requirement was dropped (Change Log.txt:128), so a
   missing font ROM yields garbage glyphs instead of failing initialisation
-  (README.txt:277-278).
+  (README.txt:278-281).
 
   Two menu tools synthesise replacements. Synthesize replacement CG-ROM builds
   CGROM.TMP from the installed MS Gothic and MS Mincho fonts and aborts when either
-  is absent, and README.txt:294-296 warns that different machines produce different
+  is absent, and README.txt:295-299 warns that different machines produce different
   files. Synthesize replacement SCSI ROMs asks for a Human68k version 3.02 disk
   image, dialog default HUMAN302.XDF with filter *HUMAN*3*02*.???, extracts
   /BIN/FORMAT.X and writes SCSIINROM.DAT and SCSIEXROM.DAT.
 
-  The ROM Warning section of the Advanced options holds three startup checks, all
-  enabled by default and individually suppressible: an IPLROM.DAT version check
-  naming version 1.0 (05/07/1987) as recommended, a CGROM.DAT contents check and a
-  SCSIEXROM.DAT / SCSIINROM.DAT contents check. Each raises a dialog, but none rejects
-  the file, so no hash below is enforced by the program.
+  The ROM Warning section of the Advanced options holds three checks, all enabled
+  by default and individually suppressible: an IPLROM.DAT version check naming
+  version 1.0 (05/07/1987) as recommended, a CGROM.DAT contents check and a
+  SCSIEXROM.DAT / SCSIINROM.DAT contents check. Since release 78 the SCSI ROMs are
+  read at startup only when the saved configuration needs them, and their check
+  otherwise runs from the SCSI page of the options (Change Log.txt:3093-3096).
+  Each check raises a dialog, but none rejects the file, so no hash below is
+  enforced by the program.
 
   Reference Manual.txt ships with the program and Software Notes.txt is fetched by
   the Web Package through Scripts\Update Notes.bat. Both are prose documents that
@@ -94,11 +98,11 @@ files:
     md5: 7fd4caabac1d9169e289f0f7bbf71d8e
     sha1: 0ed038ed2133b9f78c6e37256807424e0d927560
     description: "X68000 boot ROM, base SASI model"
-    source_ref: "Change Log.txt:125-126, README.txt:23-25, XM6 2.06 vm/memory.cpp:256-276"
+    source_ref: "Change Log.txt:124-125, README.txt:23-25, XM6 2.06 vm/memory.cpp:256-276"
     note: >-
       XM6.exe carries this ROM internally and only reads the file when it is
       present, so the emulator boots without it. The embedded copy sits at file
-      offset 1337256 in .rdata of the Unicode build and 1288176 in the MBCS build,
+      offset 1382488 in .rdata of the Unicode build and 1332664 in the MBCS build,
       stored in the 16-bit pairwise swapped form the loader produces at
       vm/memory.cpp:278-285. Unswapped it is the 131072-byte dump hashed here,
       catalogued by TOSEC as Sharp X68000 Boot ROM (1987)(Sharp), and it is the
@@ -167,7 +171,7 @@ files:
     md5: cb0a5cfcf7247a7eab74bb2716260269
     sha1: 8d72c5b4d63bb14c5dbdac495244d659aa1498b6
     description: "X68000 character generator ROM"
-    source_ref: "README.txt:277-278, Change Log.txt:129, XM6 2.06 vm/memory.cpp:287-295"
+    source_ref: "README.txt:278-281, Change Log.txt:128, XM6 2.06 vm/memory.cpp:287-295"
     note: >-
       Supplies the glyphs for text the X68000 renders. Stock XM6 v2.06 fails
       initialisation when neither font file loads, but XM6 Pro-68k dropped that
@@ -183,7 +187,7 @@ files:
     min_size: 786432
     validation: [size]
     description: "Synthesised font ROM, fallback when CGROM.DAT is absent"
-    source_ref: "README.txt:292-296, XM6 2.06 vm/memory.cpp:290-294"
+    source_ref: "README.txt:295-299, XM6 2.06 vm/memory.cpp:290-294"
     note: >-
       Read only when CGROM.DAT is missing, at the same size. Tools > Synthesize
       replacement CG-ROM writes it from the installed MS Gothic and MS Mincho fonts
@@ -260,8 +264,9 @@ files:
     required: false
     bundled: true
     description: "zlib, used for PNG output and deflate archives"
-    source_ref: "README.txt:322-323, XM6.exe strings 7z.dll or zlib1.dll"
+    source_ref: "XM6.exe strings 7z.dll or zlib1.dll, ZLIB1.DLL, deflateInit2_, deflate, deflateReset, deflateEnd"
     note: >-
       Looked up by name at runtime alongside 7z.dll and named in the same Optional
-      DLL Not Present dialog. README.txt:322-323 credits the PNG Reference Library
-      and zlib for the screenshot support.
+      DLL Not Present dialog. XM6.exe resolves deflateInit2_, deflate,
+      deflateReset and deflateEnd from it, and the display capture commands
+      write PNG files.
