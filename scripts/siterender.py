@@ -170,55 +170,57 @@ def _system_link(sys_id: str, prefix: str = "") -> str:
 
 def _field_text(key: object, value: object) -> str:
     """A scalar of a structured block. A source reference reads as code."""
-    text = str(value)
+    if isinstance(value, bool):
+        text = "yes" if value else "no"
+    elif value is None:
+        text = "none"
+    else:
+        text = str(value)
+        if len(text) > 200:
+            text = text[:200] + "..."
     return f"`{text}`" if key == "source_ref" else text
 
 
+def _field_label(key: object) -> str:
+    """A YAML key as the page shows it: words, not an identifier."""
+    return str(key).replace("_", " ")
+
+
 def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
-    """Render any YAML value as indented markdown."""
+    """Render any YAML value as a nested markdown list.
+
+    Every level is a list item and its children a sublist four spaces in.
+    A key written as a paragraph with its children indented below it read as
+    an indented code block: the clownmdemu page showed the raw asterisks.
+    """
     pad = " " * indent
     if isinstance(val, dict):
         for k, v in val.items():
-            if isinstance(v, dict):
-                lines.append(f"{pad}**{k}:**")
+            if isinstance(v, (dict, list)) and v:
+                lines.append(f"{pad}- {_field_label(k)}:")
                 lines.append("")
                 _render_yaml_value(lines, v, indent + 4)
-            elif isinstance(v, list):
-                lines.append(f"{pad}**{k}:**")
-                lines.append("")
-                for item in v:
-                    if isinstance(item, dict):
-                        parts = [
-                            f"{ik}: {_field_text(ik, iv)}"
-                            for ik, iv in item.items()
-                            if not isinstance(iv, (dict, list))
-                        ]
-                        lines.append(f"{pad}- {', '.join(parts)}")
-                    else:
-                        lines.append(f"{pad}- {item}")
-                lines.append("")
             else:
-                # Truncate very long strings in tables
-                sv = str(v)
-                if len(sv) > 200:
-                    sv = sv[:200] + "..."
-                lines.append(f"{pad}- **{k}:** {_field_text(k, sv)}")
+                lines.append(f"{pad}- {_field_label(k)}: {_field_text(k, v)}")
+        lines.append("")
     elif isinstance(val, list):
         for item in val:
             if isinstance(item, dict):
                 parts = [
-                    f"{ik}: {_field_text(ik, iv)}"
+                    f"{_field_label(ik)}: {_field_text(ik, iv)}"
                     for ik, iv in item.items()
                     if not isinstance(iv, (dict, list))
                 ]
                 lines.append(f"{pad}- {', '.join(parts)}")
             else:
-                lines.append(f"{pad}- {item}")
+                lines.append(f"{pad}- {_field_text(None, item)}")
+        lines.append("")
     elif isinstance(val, str) and "\n" in val:
         for line in val.split("\n"):
             lines.append(f"{pad}{line}")
     else:
-        lines.append(f"{pad}{val}")
+        lines.append(f"{pad}{_field_text(None, val)}")
+
 
 def _platform_link(name: str, display: str, prefix: str = "") -> str:
     """Generate a markdown link to a platform page."""

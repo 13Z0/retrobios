@@ -835,5 +835,38 @@ class AnEmulatorPageOffersItsInstall(unittest.TestCase):
         self.assertIn('"--emulator"', source)
 
 
+class NestedProfileBlocksRenderAsLists(unittest.TestCase):
+    """The clownmdemu page showed "- **external_required:** False" in a code
+    block: a key written as a paragraph left its children indented eight
+    spaces inside the admonition, which Markdown reads as code."""
+
+    def _html(self, value: object) -> str:
+        try:
+            import markdown
+            import pymdownx.details  # noqa: F401
+        except ImportError:
+            self.skipTest("markdown and pymdown-extensions are not installed")
+        from siterender import _render_yaml_value
+
+        lines = ['???+ abstract "Analysis"', ""]
+        _render_yaml_value(lines, value, 4)
+        return markdown.markdown(
+            "\n".join(lines), extensions=["admonition", "pymdownx.details"]
+        )
+
+    def test_a_nested_mapping_is_a_nested_list(self):
+        html = self._html({"megacd_bios": {"external_required": False, "source_ref": "a.c:1"},
+                           "tmss": {"supported": True}})
+        self.assertNotIn("<pre>", html)
+        self.assertNotIn("**", html)
+        self.assertIn("external required: no", html)
+        self.assertIn("<code>a.c:1</code>", html)
+
+    def test_a_list_under_a_key_is_a_sublist(self):
+        html = self._html({"roms": [{"name": "a.bin", "size": 2}, "b.bin"]})
+        self.assertNotIn("<pre>", html)
+        self.assertIn("name: a.bin, size: 2", html)
+
+
 if __name__ == "__main__":
     unittest.main()
