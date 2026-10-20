@@ -2794,7 +2794,9 @@ class AResumedCopyIsNotSpeed(unittest.TestCase):
         term = install.Terminal(out)
         term.live = True
         progress = install.Progress(1, 4_000_000_000, term)
-        progress.start -= 10
+        # Ten seconds exactly: read from the clock, a slow runner added a few
+        # milliseconds and moved the last digit of the speed.
+        progress.elapsed = lambda: 10.0
         progress.bytes = 3_000_000_000 + 10_000_000
         progress.resumed = 3_000_000_000
         with unittest.mock.patch.object(

@@ -5683,6 +5683,16 @@ class ThePipelineRunsTheSchemaCheckCIRuns(unittest.TestCase):
         for flag in flags:
             self.assertIn(f'"{flag}"', source)
 
+    def test_the_site_is_rendered_as_the_deploy_renders_it(self):
+        """The pipeline generated pages without rendering them: 20 pages with
+        duplicate ids passed it and failed the deploy."""
+        workflow = (ROOT / ".github" / "workflows" / "deploy-site.yml").read_text(encoding="utf-8")
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        self.assertIn("mkdocs build --strict", workflow)
+        self.assertIn('["mkdocs", "build", "--strict"]', source)
+        self.assertIn("scripts/validate_site.py", workflow)
+        self.assertIn('"scripts/validate_site.py"', source)
+
 
 class TheReleaseBuildsEveryServedPackInOneRun(unittest.TestCase):
     """The release ran the pipeline, then built and checked RetroPie by hand:

@@ -24,6 +24,7 @@ Steps, numbered as the run prints them:
   6    --verify-packs               pack integrity, extraction and hashes
   7    generate_readme.py           README.md and CONTRIBUTING.md
   8    generate_site.py             MkDocs pages
+  8b   mkdocs build --strict        rendered as the site deploy renders it, then validate_site.py
 
 --offline skips 2 to 2b2 and the network side of 2e and 4: release assets
 come from .cache/large/ only.
@@ -43,6 +44,7 @@ import contextlib
 import importlib.util
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -800,6 +802,21 @@ def main() -> None:
     else:
         print("\n--- 8/8 generate site: SKIPPED (--skip-docs) ---")
         results["generate_site"] = SKIPPED
+
+    # Step 8b: the render the site deploy runs. Generating the pages without
+    # rendering them let 20 pages with duplicate ids through to CI.
+    if args.skip_docs:
+        print("\n--- 8b render site: SKIPPED (--skip-docs) ---")
+        results["render_site"] = SKIPPED
+    elif shutil.which("mkdocs") is None:
+        print("\n--- 8b render site: SKIPPED (mkdocs not installed) ---")
+        results["render_site"] = SKIPPED
+    else:
+        ok, _ = run(["mkdocs", "build", "--strict"], "8b render site")
+        if ok:
+            ok, _ = run([sys.executable, "scripts/validate_site.py"], "8b validate site")
+        results["render_site"] = ok
+        all_ok = all_ok and ok
 
     # Summary
     total_elapsed = time.monotonic() - total_start

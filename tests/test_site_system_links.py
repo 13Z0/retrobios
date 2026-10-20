@@ -123,5 +123,20 @@ class ACopyIsOnItsOwnFoldersPage(unittest.TestCase):
         self.assertRegex(gs.generate_systems_index(groups), r"2 consoles, 1 files? ")
 
 
+class AnIdNamesOneCardPerPage(unittest.TestCase):
+    """A copy filed under two consoles of one maker was listed twice with
+    the same id, and the deployed site refused 20 pages."""
+
+    def test_the_second_card_has_no_id(self):
+        from cross_reference import FileConsumers
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
+                 "path": "bios/Nintendo/DS/a.bin"}
+        page = gs.generate_system_page(
+            "Nintendo", {"DS": [entry], "DSi": [entry]}, FileConsumers({"files": {}}))
+        self.assertEqual(page.count('id="sha1-aaaaaaaaaaaa"'), 1)
+        self.assertEqual(page.count("rb-sys-file"), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

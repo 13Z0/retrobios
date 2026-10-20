@@ -2415,7 +2415,9 @@ def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) ->
     return links
 
 
-def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
+def _system_file_card(
+    f: dict, consumers: FileConsumers, anchored: set[str] | None = None
+) -> list[str]:
     """One file of a system page: hashes, who reads it, its provenance."""
     name = f["name"]
     sha1_full = f.get("sha1", "unknown")
@@ -2426,6 +2428,13 @@ def _system_file_card(f: dict, consumers: FileConsumers) -> list[str]:
     emus = sorted(consumers.emulators.get(sha1_full, ()))
 
     anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
+    # A copy filed under two consoles of one maker is listed twice on its
+    # page: the first card holds the anchor, as an id names one element.
+    if anchored is not None:
+        if anchor in anchored:
+            anchor = ""
+        else:
+            anchored.add(anchor)
     id_attr = f' id="{anchor}"' if anchor else ""
     lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
     # The anchor is this page's, the second link is the file's own address,
@@ -2479,6 +2488,7 @@ def generate_system_page(
         f"# {manufacturer}",
         "",
     ]
+    anchored: set[str] = set()
 
     for console_name in sorted(consoles.keys()):
         files = consoles[console_name]
@@ -2490,7 +2500,7 @@ def generate_system_page(
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
         for f in sorted(main_files, key=lambda x: x["name"]):
-            lines.extend(_system_file_card(f, consumers))
+            lines.extend(_system_file_card(f, consumers, anchored))
 
         if variant_files:
             # A variant gets the same card as a primary: the revision a
@@ -2501,7 +2511,7 @@ def generate_system_page(
             for v in sorted(variant_files, key=lambda x: (x["name"], x["path"])):
                 lines.extend(
                     f"    {line}" if line else ""
-                    for line in _system_file_card(v, consumers)
+                    for line in _system_file_card(v, consumers, anchored)
                 )
             lines.append("")
 
@@ -3309,6 +3319,7 @@ def generate_emulator_page(
 
     if data_dirs:
         lines.extend(["## Data directories", ""])
+        member_anchors: set[str] = set()
         # Each tree with what it holds, where it comes from, which build reads
         # it and the code that does: these trees put thousands of files in
         # the packs, and the page said only `dolphin-sys` > `Sys`.
@@ -3346,8 +3357,13 @@ def generate_emulator_page(
                 ])
                 for member, info in sorted(members.items()):
                     sha1 = str(info.get("sha1", ""))
+                    # One id per page: two members can hold the same bytes
+                    # (every empty file), and Dolphin's trees share Sys.
+                    anchor = f"sha1-{sha1[:12]}"
+                    span = "" if anchor in member_anchors else f'<span id="{anchor}"></span>'
+                    member_anchors.add(anchor)
                     lines.append(
-                        f'        | <span id="sha1-{sha1[:12]}"></span>{_code(member)} '
+                        f"        | {span}{_code(member)} "
                         f"| {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |"
                     )
                 lines.append("")
