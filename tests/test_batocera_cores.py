@@ -141,5 +141,22 @@ class DualModeNameReachesTheLibretroBuild(unittest.TestCase):
         self.assertEqual(resolve_platform_cores(config, profiles), {"pcsx2", "lrps2"})
 
 
+class APlatformsOwnBuildWinsItsName(unittest.TestCase):
+    """Recalbox's uae4all is the libretro uae4all-rpi it compiles, RetroPie's
+    the standalone uae4all2: one name, two programs."""
+
+    def test_built_by_beats_the_key_match_for_that_platform_only(self):
+        from common import resolve_platform_cores
+
+        profiles = {
+            "uae4all": {"type": "standalone", "cores": ["uae4all"]},
+            "uae4all-rpi": {"type": "libretro", "cores": ["uae4all"], "built_by": ["recalbox"]},
+        }
+        recalbox = {"_key": "recalbox", "cores": ["uae4all"]}
+        retropie = {"_key": "retropie", "cores": ["uae4all"]}
+        self.assertEqual(resolve_platform_cores(recalbox, profiles), {"uae4all-rpi"})
+        self.assertEqual(resolve_platform_cores(retropie, profiles), {"uae4all"})
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -2245,10 +2245,22 @@ def resolve_platform_cores(
     elif isinstance(cores_config, list):
         core_set = {str(c) for c in cores_config}
         index = upstream_profile_index(profiles)
+        platform = str(config.get("_key") or "")
+
+        def designated(name: str) -> str | None:
+            # A build the platform compiles itself (built_by) is what its
+            # name means there: Recalbox's uae4all is Chips-fr/uae4all-rpi,
+            # RetroPie's the standalone uae4all2 under the same name.
+            own = sorted(
+                p for p in index.get(name, ())
+                if platform and platform in (profiles[p].get("built_by") or [])
+            )
+            return own[0] if own else preferred_profile(index, name)
+
         result = {
             profile
             for c in core_set
-            if (profile := preferred_profile(index, c)) is not None
+            if (profile := designated(c)) is not None
         }
         # A name the platform launches both ways designates its libretro
         # build too. Batocera, Recalbox and RetroBat run pcsx2 standalone and
