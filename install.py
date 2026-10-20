@@ -3677,6 +3677,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         matched = [(n, p) for n, p in detected if n == args.platform]
         if matched:
             platforms = matched
+        elif listing:
+            # A listing reads the manifest and writes nothing: no folder is
+            # needed, and asking BizHawk's for one refused a question asked
+            # before downloading BizHawk.
+            platforms = [(args.platform, _default_dest(os_type, args.platform) or Path.cwd())]
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.

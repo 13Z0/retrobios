@@ -665,5 +665,25 @@ class ACoreWithNothingHeldIsAnOmission(unittest.TestCase):
         self.assertEqual(omitted, [])
 
 
+class AListingNeedsNoInstall(unittest.TestCase):
+    """--list-systems with --platform bizhawk stopped on "not found, name it
+    with --dest": a question asked before downloading BizHawk was refused."""
+
+    def test_bizhawk_lists_without_a_folder(self):
+        with FakeRepository() as repo:
+            manifest = json.loads((repo.root / "install" / "retroarch.json").read_text())
+            manifest["platform"] = "bizhawk"
+            (repo.root / "install" / "bizhawk.json").write_text(json.dumps(manifest))
+            env = {**repo.env(), "HOME": str(repo.root / "home"), "USERPROFILE": str(repo.root / "home")}
+            proc = subprocess.run(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "bizhawk",
+                 "--list-systems"],
+                env=env, capture_output=True, text=True, timeout=60, check=False,
+                stdin=subprocess.DEVNULL,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("nintendo-gba", proc.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
