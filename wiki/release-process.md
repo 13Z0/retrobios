@@ -37,7 +37,7 @@ must be added to it, or the site silently goes stale.
 `tests/test_workflow_paths.py` computes the import closure and fails when one
 is missing.
 
-**Steps:**
+### Steps
 
 1. Checkout, Python 3.12
 2. Install `pyyaml`, `jsonschema[format-nongpl]==4.26.0`,

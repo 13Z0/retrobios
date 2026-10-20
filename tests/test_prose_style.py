@@ -176,6 +176,17 @@ class NoClauseSemicolons(unittest.TestCase):
         files = [p for p in _tracked() if p.suffix == ".md"]
         self._check(files, lambda text: FENCED.sub("", text))
 
+    def test_markdown_headings_are_headings(self):
+        """Troubleshooting carried 21 bold lines in place of headings: no
+        anchor to link from an issue, no entry in the page's contents."""
+        pseudo = re.compile(r"^\*\*[^*]+:\*\*$", re.M)
+        offenders = [
+            f"{p.relative_to(ROOT)}: {m.group(0)}"
+            for p in _tracked() if p.suffix == ".md"
+            for m in pseudo.finditer(FENCED.sub("", p.read_text(encoding="utf-8")))
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders[:20]))
+
     def test_yaml_prose_and_comments(self):
         files = [p for p in _tracked() if p.suffix in (".yml", ".yaml")]
         self._check(files, _yaml_prose)

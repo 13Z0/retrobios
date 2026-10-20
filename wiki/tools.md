@@ -184,7 +184,7 @@ existence platform reads no bytes, so the file is packed and the divergence is
 reported instead: an upstream list error must not remove a file the frontend
 would have loaded.
 
-**Granular options:**
+### Granular options
 
 - `--system` with `--platform`: filter to specific systems within a platform pack
 - `--required-only`: exclude optional files, keep only required

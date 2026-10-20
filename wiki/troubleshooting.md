@@ -6,7 +6,7 @@ Diagnosis guide organized by symptom. Each section describes what to check and h
 
 Most launch failures are caused by a missing or incorrect BIOS file.
 
-**Check what is in your BIOS folder:**
+### Check what is in your BIOS folder
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
@@ -25,7 +25,7 @@ python scripts/verify.py --platform retroarch --verbose
 python scripts/verify.py --system sony-playstation
 ```
 
-**Check if the hash matches:**
+### Check if the hash matches
 
 Look for `untested` entries in the verify output. This means the file exists but
 its hash does not match the expected value. Common causes:
@@ -37,7 +37,7 @@ its hash does not match the expected value. Common causes:
 Each system page on the site lists the expected hashes. Compare your file's
 MD5 or SHA1 against those values.
 
-**Wrong region BIOS:**
+### Wrong region BIOS
 
 Some cores require region-specific BIOS files. A Japanese BIOS won't boot
 North American games on cores that enforce region matching. Check the emulator
@@ -48,7 +48,7 @@ correspond to each.
 
 The file exists on disk, but the emulator reports it as missing.
 
-**Wrong directory:**
+### Wrong directory
 
 Each platform expects BIOS files in a specific base directory:
 
@@ -68,7 +68,7 @@ Some cores expect files in subdirectories (e.g. `dc/` for Dreamcast, `pcsx2/bios
 for PlayStation 2). Check the `path:` field in the emulator profile for the exact
 expected location relative to the base directory.
 
-**Wrong filename:**
+### Wrong filename
 
 Cores match BIOS files by exact filename. If a core expects `scph5501.bin` and your
 file is named `SCPH-5501.BIN`, it won't be found on platforms that do exact name matching.
@@ -76,7 +76,7 @@ file is named `SCPH-5501.BIN`, it won't be found on platforms that do exact name
 Check the emulator profile for the expected filename and any aliases listed under
 `aliases:`. Aliases are alternative names that the core also accepts.
 
-**Case sensitivity:**
+### Case sensitivity
 
 Linux filesystems are case-sensitive. A file named `Bios.ROM` won't match a lookup
 for `bios.rom`. Windows and macOS are case-insensitive by default, so the same
@@ -115,7 +115,7 @@ or emulator expects. The reason field shows the expected vs actual hash prefix.
 To find the correct version, check the system page on the site. It lists every
 known BIOS file with its expected MD5 and SHA1.
 
-**Existence-mode platforms never report UNTESTED:**
+### Existence-mode platforms never report UNTESTED
 
 On RetroArch, Lakka and RetroPie, verification only asks whether the file is
 there, so the only outcomes are OK and MISSING. A wrong-region or corrupt file
@@ -124,7 +124,7 @@ run `verify.py --verbose`: it adds the emulator ground truth from the profiles
 and flags a `DISCREPANCY` when the file passes the platform check but fails the
 emulator's own size or hash validation.
 
-**The .variants/ directory:**
+### The .variants/ directory
 
 When multiple versions of the same BIOS exist (different revisions, regions, or
 dumps), the primary version lives in the main directory and alternatives live in
@@ -138,7 +138,7 @@ just not the preferred version. Some cores accept multiple versions.
 
 A generated pack doesn't contain all the files you expected.
 
-**Severity levels:**
+### Severity levels
 
 `verify.py` assigns a severity to each issue. Not all missing files are equally
 important:
@@ -156,7 +156,7 @@ in [verification modes](verification-modes.md#severity-matrix).
 Focus on CRITICAL issues first. WARNING files improve the experience but aren't
 strictly necessary. INFO files are nice to have.
 
-**Large files (release assets):**
+### Large files (release assets)
 
 Files like PS3UPDAT.PUP, PSVUPDAT.PUP, and Switch firmware are too large for the
 git repository. They are stored as GitHub release assets under the `large-files`
@@ -166,7 +166,7 @@ If a pack build fails to include these, check your network connection. In offlin
 mode (`--offline`), large files are only included if already cached locally in
 `.cache/large/`.
 
-**Data directories:**
+### Data directories
 
 Some cores need entire directory trees rather than individual files (e.g. Dolphin's
 `Sys/` directory, PPSSPP's `assets/`). These are fetched by `refresh_data_dirs.py`
@@ -179,7 +179,7 @@ Run `python scripts/refresh_data_dirs.py` to fetch them.
 
 How to read and interpret `verify.py` output.
 
-**Status codes:**
+### Status codes
 
 | Status | Meaning |
 |--------|---------|
@@ -190,7 +190,7 @@ How to read and interpret `verify.py` output.
 Hash and size mismatches are reported as `untested` with a reason field
 showing expected vs actual values (e.g., `expected abc123... got def456...`).
 
-**Reading the output:**
+### Reading the output
 
 Each line shows the file path, its status, and severity. In verbose mode, ground
 truth data from emulator profiles is appended, showing which cores reference the
@@ -202,7 +202,7 @@ dc_boot.bin         missing  [CRITICAL]
 gba_bios.bin        untested [WARNING]
 ```
 
-**Cross-reference section:**
+### Cross-reference section
 
 After per-file results, `verify.py` prints a cross-reference report. This lists
 files that emulator cores need but that the platform YAML doesn't declare. These
@@ -213,7 +213,7 @@ The cross-reference uses `resolve_platform_cores()` to determine which emulator
 profiles are relevant for each platform, then checks whether each profile's files
 appear in the platform config.
 
-**Filtering output:**
+### Filtering output
 
 ```bash
 # By platform
@@ -238,7 +238,7 @@ python scripts/verify.py --platform retroarch --json --verbose
 
 Problems with `install.py`, `install.sh`, or `download.sh`.
 
-**Network issues:**
+### Network issues
 
 The installer fetches its manifest, then downloads only the repository or
 `large-files` release objects it needs. If a download fails:
@@ -248,7 +248,7 @@ The installer fetches its manifest, then downloads only the repository or
 - If behind a proxy, set `HTTPS_PROXY` in your environment
 - Try again later if GitHub is experiencing issues
 
-**Permission denied:**
+### Permission denied
 
 The installer needs write access to the target directory.
 
@@ -256,7 +256,7 @@ The installer needs write access to the target directory.
   permissions. Avoid running as root unless the target directory requires it.
 - On Windows: run PowerShell as Administrator if installing to a protected directory.
 
-**Platform not detected:**
+### Platform not detected
 
 `install.py` auto-detects your platform by checking for known config files. If
 detection fails, specify the platform manually:
@@ -269,7 +269,7 @@ python install.py --platform batocera --dest /userdata/bios/
 `python install.py --list-platforms` lists the platforms the installer knows
 and the ones it detects here, and `--help` lists the options.
 
-**Manifest or file not found:**
+### Manifest or file not found
 
 The one-line bootstrap verifies the downloaded installer before running it, and
 the installer reads its manifests from the same revision. A platform name is
@@ -279,7 +279,7 @@ than the platform. Unset it, or pick a tag from the releases page.
 `RETROBIOS_REF` pins an installation to a published tag when a reproducible
 file set matters more than the newest one.
 
-**Manual pack not found in release:**
+### Manual pack not found in release
 
 If the installer reports that no pack exists for your platform, check available
 releases:
@@ -296,7 +296,7 @@ Lakka its own, since Lakka runs on Linux where two names that differ by case
 are two files. The installer and the download scripts find the right pack
 either way.
 
-**A pack in several parts will not extract:**
+### A pack in several parts will not extract
 
 Parts named `Pack.part1of2.zip` are ordinary ZIPs: extract each one into the
 same folder, and check that all of them were downloaded, the name says how
