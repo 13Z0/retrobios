@@ -373,6 +373,48 @@ class Reconciliation(unittest.TestCase):
                                 "_cores": ["duckstation"], "_named_by": []}]}
         self.assertNotIn("missing", _diff_system(truth_sys, {"files": []}))
 
+    def test_a_bundled_truth_entry_is_never_added(self):
+        truth = {"systems": {"neogeo": {"files": [
+            {"name": "gngeo_data.zip", "md5": "a" * 32, "bundled": True,
+             "_cores": ["gngeopi"], "_named_by": ["gngeopi"], "_brought_by": []},
+            {"name": "neogeo.zip", "md5": "b" * 32,
+             "_cores": ["gngeopi"], "_named_by": ["gngeopi"],
+             "_brought_by": ["gngeopi:standalone"]},
+        ]}}}
+        systems, report = build_native_model(truth, {"systems": {}})
+        self.assertEqual([fe.name for fe in systems["neogeo"].files], ["neogeo.zip"])
+        self.assertEqual(report.files_added, 1)
+
+    def test_a_bundled_entry_the_platform_declares_is_kept(self):
+        truth = {"systems": {"neogeo": {"files": [
+            {"name": "gngeo_data.zip", "md5": "a" * 32, "bundled": True,
+             "_cores": ["gngeopi"], "_named_by": ["gngeopi"], "_brought_by": []}]}}}
+        scraped = {"systems": {"neogeo": {"native_id": "neogeo", "files": [
+            {"name": "gngeo_data.zip", "destination": "gngeo_data.zip",
+             "native_system": "neogeo", "md5": "c" * 32}]}}}
+        systems, _ = build_native_model(truth, scraped)
+        (kept,) = systems["neogeo"].files
+        self.assertIsNotNone(kept.truth)
+
+    def test_the_runner_is_the_build_that_needs_the_file(self):
+        """ROCKNIX runs ARMSX2 standalone only, and the libretro build's
+        pcsx2/resources entries went out as armsx2-sa files."""
+        truth = {"systems": {"sony-playstation-2": {"files": [
+            {"name": "GameIndex.yaml", "md5": "a" * 32,
+             "_cores": ["armsx2"], "_named_by": ["armsx2"],
+             "_brought_by": ["armsx2:libretro"]}]}}}
+        scraped = {"cores": ["armsx2"], "standalone_cores": ["armsx2"], "systems": {}}
+        systems, _ = build_native_model(truth, scraped)
+        (added,) = systems["sony-playstation-2"].files
+        self.assertEqual(added.runners, [(False, "armsx2")])
+
+    def test_the_diff_names_no_missing_bundled_file(self):
+        from truth import _diff_system
+        truth_sys = {"files": [{"name": "gngeo_data.zip", "md5": "a" * 32, "bundled": True,
+                                "_cores": ["gngeopi"], "_named_by": ["gngeopi"],
+                                "_brought_by": []}]}
+        self.assertNotIn("missing", _diff_system(truth_sys, {"files": []}))
+
     def test_the_diff_pairs_by_the_same_rule(self):
         """diff_truth reads the same pairing, or it names a mismatch the
         export does not correct."""

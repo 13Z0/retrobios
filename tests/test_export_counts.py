@@ -596,6 +596,20 @@ class RetroPieProposals(unittest.TestCase):
         self.assertTrue(RetroPie._required_for(fe, "beetle_psx"))
         self.assertFalse(RetroPie._required_for(fe, "pcsx_rearmed"))
 
+    def test_a_file_the_package_installs_is_not_proposed(self):
+        """gngeopi's help asked to copy gngeo_data.zip, which make install
+        puts in the package's data directory (gngeopi.yml)."""
+        installed = NativeFile("gngeo_data.zip", "gngeo_data.zip", "neogeo",
+                               truth={"required": True, "_required_by": ["gngeopi"],
+                                      "_cores": ["gngeopi"], "_brought_by": [],
+                                      "bundled": True})
+        brought = NativeFile("neogeo.zip", "neogeo.zip", "neogeo",
+                             truth={"required": True, "_required_by": ["gngeopi"],
+                                    "_cores": ["gngeopi"],
+                                    "_brought_by": ["gngeopi:standalone"]})
+        self.assertFalse(RetroPie._required_for(installed, "gngeopi"))
+        self.assertTrue(RetroPie._required_for(brought, "gngeopi"))
+
     def test_a_list_of_alternatives_is_not_extended(self):
         alternatives = "Copy the required BIOS file a.rom or b.rom to $biosdir"
         enumeration = "Copy the required BIOS files a.rom and b.rom to $biosdir"

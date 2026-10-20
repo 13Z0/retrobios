@@ -228,7 +228,13 @@ class Exporter(BaseExporter):
         runs in HLE without a BIOS, yet four were proposed as required for
         its package because other PSX cores require them.
         """
-        required_by = (fe.truth or {}).get("_required_by")
+        truth = fe.truth or {}
+        # A file the package installs is not one to copy: gngeopi's
+        # gngeo_data.zip lands in its data directory with make install.
+        brought = truth.get("_brought_by")
+        if brought is not None and not any(b.startswith(f"{core}:") for b in brought):
+            return False
+        required_by = truth.get("_required_by")
         if required_by is None:
             return fe.required
         return core in required_by

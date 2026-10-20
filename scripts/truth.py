@@ -16,7 +16,13 @@ from common import (
     standalone_set as platform_standalone_set,
 )
 from hashing import parse_md5_list
-from validation import filter_files_by_mode, opens_by_name, read_from_system_dir
+from validation import (
+    filter_files_by_mode,
+    installed_with_emulator,
+    opens_by_name,
+    read_from_system_dir,
+    unread_on,
+)
 
 
 
@@ -209,6 +215,14 @@ def _same_file(files: list[dict], file_entry: dict, emu_name: str) -> dict | Non
     )
 
 
+def _brought(file_entry: dict, emu_name: str) -> set[str]:
+    """The core and build that need the file brought, empty when the
+    emulator installs it. An entry read without layer (a test, a caller of
+    its own) is brought by its core's libretro build."""
+    brought = file_entry.get("_brought", f"{emu_name}:libretro")
+    return {brought} if brought else set()
+
+
 def _shares_hash(a: dict, b: dict) -> bool:
     return any(
         _declared(a, field) & _declared(b, field)
@@ -238,6 +252,7 @@ def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
     existing["_cores"] = existing.get("_cores", set()) | {emu_name}
     if file_entry.get("_opens_by_name", True):
         existing["_named_by"] = existing.get("_named_by", set()) | {emu_name}
+    existing["_brought_by"] = existing.get("_brought_by", set()) | _brought(file_entry, emu_name)
     sr = file_entry.get("source_ref")
     if sr is not None:
         sr_key = _serialize_source_ref(sr)
@@ -335,6 +350,7 @@ def _new_truth_entry(file_entry: dict, emu_name: str, db: dict | None) -> dict:
     entry["_cores"] = {emu_name}
     entry["_required_by"] = {emu_name} if file_entry.get("required") else set()
     entry["_named_by"] = {emu_name} if file_entry.get("_opens_by_name", True) else set()
+    entry["_brought_by"] = _brought(file_entry, emu_name)
     sr = file_entry.get("source_ref")
     entry["_source_refs"] = {_serialize_source_ref(sr)} if sr is not None else set()
     if db:
@@ -389,7 +405,8 @@ def _archives_not_members(files: list[dict]) -> list[dict]:
         key = (archive, fe.get("system", ""))
         entry = archives.get(key)
         if entry is None:
-            entry = {"name": archive, "category": "bios_zip", "contents": []}
+            entry = {"name": archive, "category": "bios_zip", "contents": [],
+                     "_brought": None}
             if fe.get("system"):
                 entry["system"] = fe["system"]
             if fe.get("source_ref") is not None:
@@ -398,6 +415,12 @@ def _archives_not_members(files: list[dict]) -> list[dict]:
             out.append(entry)
         if fe.get("required"):
             entry["required"] = True
+        # The archive is brought when one member is: gngeo_data.zip, every
+        # member of it installed by make install, is not a file to copy.
+        if "_brought" not in fe:
+            entry.pop("_brought", None)
+        elif "_brought" in entry and entry["_brought"] is None:
+            entry["_brought"] = fe["_brought"]
         entry["contents"].append({
             field: fe[field]
             for field in ("name", "size", "crc32", "sha1", "md5")
@@ -562,10 +585,19 @@ def generate_platform_truth(
             continue
         cores_profiled.add(emu_name)
 
+        # The pack's rule (validation.deliverable), per build: a file the
+        # emulator installs is kept and marked, one the launcher never opens
+        # is left out.
         filtered = _archives_not_members([
-            {**fe, "_opens_by_name": opens_by_name(fe, profile, standalone)}
+            {
+                **fe,
+                "_opens_by_name": opens_by_name(fe, profile, standalone),
+                "_brought": None if installed_with_emulator(fe, platform_name)
+                else f"{emu_name}:{'standalone' if standalone else 'libretro'}",
+            }
             for view, standalone in platform_layouts(emu_name, profile, standalone_set)
             for fe in _system_dir_files(view, standalone)
+            if not unread_on(fe, platform_name)
         ])
 
         on_platform = {
@@ -656,6 +688,9 @@ def generate_platform_truth(
             fe["_cores"] = sorted(fe.get("_cores", set()))
             fe["_required_by"] = sorted(fe.get("_required_by", set()))
             fe["_named_by"] = sorted(fe.get("_named_by", set()))
+            fe["_brought_by"] = sorted(fe.get("_brought_by", set()))
+            if not fe["_brought_by"]:
+                fe["bundled"] = True
             fe["_source_refs"] = sorted(fe.get("_source_refs", set()))
         # Add per-system coverage
         cov = system_cores.get(sys_id, {})
@@ -756,7 +791,8 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
     for t_index, t_entry in enumerate(truth_files):
         s_position = pairs.get(t_index)
         if s_position is None:
-            if not is_label(t_entry) and not platform_declares(t_entry, scraped_files):
+            if (not is_label(t_entry) and not t_entry.get("bundled")
+                    and not platform_declares(t_entry, scraped_files)):
                 missing.append(
                     {
                         "name": t_entry["name"],

@@ -564,6 +564,9 @@ def build_native_model(
             if is_label(truth_entry):
                 report.labels += 1
                 continue
+            # The emulator installs it: no user is asked to bring it.
+            if truth_entry.get("bundled"):
+                continue
 
             # A file another core's entry already claimed is still the
             # platform's file, not a new one: scph101.bin, declared by two
@@ -616,7 +619,9 @@ def _attach_runners(systems: dict[str, NativeSystem], scraped: dict | None) -> N
     The platform lists its cores by its own names (Batocera's
     `mednafen_psx`, Recalbox's `mednafen_psx`), our truth by profile key
     (`beetle_psx`), and a profile's `cores:` holds the names it answers to.
-    The build a platform runs an emulator as decides the runner.
+    The build a platform runs an emulator as decides the runner, and the
+    truth says which build needs the file (`_brought_by`): ROCKNIX's
+    armsx2-sa installs pcsx2/resources itself, the libretro build does not.
     """
     if not scraped:
         return
@@ -631,10 +636,18 @@ def _attach_runners(systems: dict[str, NativeSystem], scraped: dict | None) -> N
             if fe.platform is not None or not fe.truth:
                 continue
             runners: list[tuple[bool, str]] = []
-            for key in sorted(fe.truth.get("_cores") or ()):
+            brought = fe.truth.get("_brought_by")
+            layers = (
+                sorted((key, build == "standalone") for key, _, build in
+                       (b.partition(":") for b in brought))
+                if brought is not None
+                else [(key, runs_standalone(key, profiles.get(key, {}), standalone))
+                      for key in sorted(fe.truth.get("_cores") or ())]
+            )
+            for key, as_standalone in layers:
                 profile = profiles.get(key, {})
                 names = [key, *(str(c) for c in profile.get("cores") or [])]
-                if runs_standalone(key, profile, standalone):
+                if as_standalone:
                     name = next((n for n in names if n in standalone), None)
                     runner = (True, name) if name else None
                 else:

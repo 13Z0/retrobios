@@ -339,5 +339,66 @@ class TruthRecordsWhoOpensByName(unittest.TestCase):
         self.assertEqual(standalone["systems"]["sega-saturn"]["files"][0]["_named_by"], [])
 
 
+class TruthKnowsWhatTheEmulatorInstalls(unittest.TestCase):
+    """The pack leaves out a file the emulator installs itself (validation.
+    deliverable). The truth did not, so RetroPie's gngeopi help asked users
+    to copy gngeo_data.zip, which make install puts beside the package, and
+    RetroDECK's manifests listed xemu's xbox_hdd.qcow2."""
+
+    @staticmethod
+    def truth(files: list[dict], platform: str = "p", standalone: list | None = None,
+              profile_type: str = "libretro") -> dict:
+        profile = {"type": profile_type, "systems": ["neogeo"], "files": files}
+        config = {"cores": ["emu"], "standalone_cores": standalone or [],
+                  "systems": {"neogeo": {"files": []}}}
+        return generate_platform_truth(platform, config, {}, {"emu": profile})
+
+    @staticmethod
+    def entry(truth: dict, name: str) -> dict:
+        return next(f for f in truth["systems"]["neogeo"]["files"] if f["name"] == name)
+
+    def test_a_bundled_entry_is_kept_and_marked(self):
+        truth = self.truth([{"name": "data.zip", "md5": "a" * 32, "bundled": True},
+                            {"name": "bios.zip", "md5": "b" * 32}])
+        self.assertTrue(self.entry(truth, "data.zip")["bundled"])
+        self.assertNotIn("bundled", self.entry(truth, "bios.zip"))
+        self.assertEqual(self.entry(truth, "bios.zip")["_brought_by"], ["emu:libretro"])
+
+    def test_installed_on_scopes_to_the_platform(self):
+        files = [{"name": "data.zip", "md5": "a" * 32, "installed_on": ["retropie"]}]
+        self.assertTrue(self.entry(self.truth(files, "retropie"), "data.zip")["bundled"])
+        self.assertNotIn("bundled", self.entry(self.truth(files, "batocera"), "data.zip"))
+
+    def test_not_bundled_on_brings_it_back(self):
+        files = [{"name": "data.zip", "md5": "a" * 32, "bundled": True,
+                  "not_bundled_on": ["batocera"]}]
+        self.assertNotIn("bundled", self.entry(self.truth(files, "batocera"), "data.zip"))
+
+    def test_bundled_for_one_build_only(self):
+        """PPSSPP's standalone release ships its assets, the core does not."""
+        files = [{"name": "assets.zip", "md5": "a" * 32, "bundled": True, "mode": "standalone"},
+                 {"name": "assets.zip", "md5": "a" * 32, "mode": "libretro"}]
+        standalone = self.truth(files, standalone=["emu"], profile_type="standalone + libretro")
+        self.assertTrue(self.entry(standalone, "assets.zip")["bundled"])
+        libretro = self.truth(files, profile_type="standalone + libretro")
+        self.assertNotIn("bundled", self.entry(libretro, "assets.zip"))
+
+    def test_an_archive_is_installed_when_every_member_is(self):
+        """gngeopi declares gngeo_data.zip and its members, all bundled. The
+        archive rebuilt from its members carried no mark, counted as brought,
+        and RetroPie's help named it as a file to copy."""
+        files = [{"name": "data.zip", "md5": "a" * 32, "bundled": True},
+                 {"name": "cmc42.xor", "archive": "data.zip", "crc32": "11111111",
+                  "bundled": True}]
+        self.assertTrue(self.entry(self.truth(files), "data.zip")["bundled"])
+        files[1] = {**files[1], "bundled": False}
+        self.assertNotIn("bundled", self.entry(self.truth(files), "data.zip"))
+
+    def test_unread_on_leaves_the_entry_out(self):
+        files = [{"name": "cdbios.bin", "md5": "a" * 32, "unread_on": ["retrobat"]}]
+        names = [f["name"] for f in self.truth(files, "retrobat")["systems"]["neogeo"].get("files", [])]
+        self.assertEqual(names, [])
+
+
 if __name__ == "__main__":
     unittest.main()
