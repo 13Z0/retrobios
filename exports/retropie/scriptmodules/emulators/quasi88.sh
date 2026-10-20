@@ -11,7 +11,7 @@
 
 rp_module_id="quasi88"
 rp_module_desc="NEC PC-8801 emulator"
-rp_module_help="ROM Extensions: .d88 .88d .cmt .t88\n\nCopy your pc88 games to to $romdir/pc88\n\nCopy bios files FONT.ROM, N88.ROM, N88KNJ1.ROM, N88KNJ2.ROM, N88SUB.ROM and N88EXT0.ROM to $biosdir/pc88"
+rp_module_help="ROM Extensions: .d88 .88d .cmt .t88\n\nCopy your pc88 games to to $romdir/pc88\n\nCopy bios files FONT.ROM, N88.ROM, N88KNJ1.ROM, N88KNJ2.ROM, N88SUB.ROM, and N88EXT0.ROM to $biosdir/pc88"
 rp_module_repo="git https://github.com/winterheart/quasi88.git master"
 rp_module_licence="BSD https://raw.githubusercontent.com/winterheart/quasi88/master/LICENSE.txt"
 rp_module_section="exp"
