@@ -97,6 +97,19 @@ notes: |
   (src/FloppySoundDevice.cpp:166-187). The packaging manifest keeps the
   directory out of release packages (packaging/bundle.manifest:75-78).
 
+  The nine takes come from Contents/Resources/ of Virtual ][.app in
+  VirtualII.dmg, the free download on virtualii.com (Virtual ][ 13.3).
+  The five .aiff files are copied unchanged. The four .wav files are the
+  headerless Boot.raw, Disk Rotation.raw, I-O Error.raw and Matrix
+  Printer.raw behind a 44-byte RIFF header, the data chunk being the .raw
+  file byte for byte. The header states PCM, one channel, 44100 Hz, signed
+  16-bit little-endian. That is the stream Virtual ][ builds for these
+  files: every playWithSoundFile:sampleRate:sampleSize: call passes 44100.0
+  and 16, and SoundRepeater fills an lpcm AudioStreamBasicDescription with
+  one channel, the signed-integer flag for 16 bits and no big-endian flag.
+  POM2 decodes all nine through miniaudio into mono float at the file's own
+  rate (src/FloppySoundDevice.cpp:133-164, src/PrinterSoundDevice.cpp:272-299).
+
   Media named by the code are not firmware and are not listed here: the
   browser demo boots floppyemu/DIX.po (wasm/shell.html:89) or, when the
   shell passes no disk, floppyemu/Total Replay v6.1.hdv
@@ -777,65 +790,87 @@ files:
     description: "Virtual ][ recording, drive motor loop"
     category: game_data
     required: false
+    size: 18420
+    sha1: "553e664b2f41f1cc74e2525c966e9c71f9e3bd2f"
     source_ref: "src/FloppySoundDevice.cpp:196, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "The Virtual ][ bank is offered only when this file and the arm, insertion and removal takes have loaded."
+    note: "The Virtual ][ bank is offered only when this file and the arm, insertion and removal takes have loaded. Virtual ][ Disk Rotation.raw (sha1 993b054ee6ecf3778186937593d591eba332bdd6) behind a mono 44100 Hz 16-bit PCM RIFF header."
   - name: "Boot.wav"
     path: "roms/virtual_ii_sons/lecteur/Boot.wav"
     description: "Virtual ][ recording, boot one-shot"
     category: game_data
     required: false
+    size: 6806
+    sha1: "15c67468555494a9336d8f1981806ecd05a47da4"
     source_ref: "src/FloppySoundDevice.cpp:197, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
+    note: "Virtual ][ Boot.raw (sha1 06db331ec01064661bf64ed39b58a9b35aaec067) behind a mono 44100 Hz 16-bit PCM RIFF header."
   - name: "Move arm.aiff"
     path: "roms/virtual_ii_sons/lecteur/Move arm.aiff"
     description: "Virtual ][ recording, head arm step"
     category: game_data
     required: false
+    size: 36510
+    sha1: "3e03cfef6a327adf9e2c09dd329a4c5b8e0aac52"
     aliases: ["Move arm.wav"]
     source_ref: "src/FloppySoundDevice.cpp:198, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode. Virtual ][ Move arm.aiff unchanged."
   - name: "Disk Insertion.aiff"
     path: "roms/virtual_ii_sons/lecteur/Disk Insertion.aiff"
     description: "Virtual ][ recording, drive lid, disk inserted"
     category: game_data
     required: false
+    size: 69146
+    sha1: "3da6c2e5986c38b6c7200bacc95ef076d0429152"
     aliases: ["Disk Insertion.wav"]
     source_ref: "src/FloppySoundDevice.cpp:199, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode. Virtual ][ Disk Insertion.aiff unchanged."
   - name: "Disk Removal.aiff"
     path: "roms/virtual_ii_sons/lecteur/Disk Removal.aiff"
     description: "Virtual ][ recording, drive lid, disk removed"
     category: game_data
     required: false
+    size: 243894
+    sha1: "9c33c1c1d793c8b9d6ff2e7867ae3c51f2556355"
     aliases: ["Disk Removal.wav"]
     source_ref: "src/FloppySoundDevice.cpp:200, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
-    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode."
+    note: "Needed for the bank. The .wav name is tried when the .aiff does not decode. Virtual ][ Disk Removal.aiff unchanged."
   - name: "I-O Error.wav"
     path: "roms/virtual_ii_sons/lecteur/I-O Error.wav"
     description: "Virtual ][ recording, read error one-shot"
     category: game_data
     required: false
+    size: 4014
+    sha1: "464e3d8f9b50d21cef706503058cef63a5d73995"
     source_ref: "src/FloppySoundDevice.cpp:201, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
+    note: "Virtual ][ I-O Error.raw (sha1 b123ef605fa977bcda49617cb96c7bc898281dbc) behind a mono 44100 Hz 16-bit PCM RIFF header."
   - name: "PopOn2.aiff"
     path: "roms/virtual_ii_sons/interface/PopOn2.aiff"
     description: "Virtual ][ recording, power switch on"
     category: game_data
     required: false
+    size: 172338
+    sha1: "7473f2ade668f9155729e6dfc56775f998bb9ac3"
     aliases: ["PopOn2.wav"]
     source_ref: "src/FloppySoundDevice.cpp:202, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
+    note: "Virtual ][ PopOn2.aiff unchanged."
   - name: "PopOff2.aiff"
     path: "roms/virtual_ii_sons/interface/PopOff2.aiff"
     description: "Virtual ][ recording, power switch off"
     category: game_data
     required: false
+    size: 144702
+    sha1: "60b4b8bb589bcc3e4c6876a09d4aa4b391390798"
     aliases: ["PopOff2.wav"]
     source_ref: "src/FloppySoundDevice.cpp:203, src/FloppySoundDevice.cpp:166-187, src/FloppySoundDevice.cpp:205-225, src/MainWindow.cpp:362-376"
+    note: "Virtual ][ PopOff2.aiff unchanged."
   - name: "Matrix Printer.wav"
     path: "roms/virtual_ii_sons/imprimante/Matrix Printer.wav"
     description: "Virtual ][ recording, dot-matrix printer loop"
     category: game_data
     required: false
+    size: 1316870
+    sha1: "0b0363772efc684ea0d21cb79e62a0df63f0c094"
     source_ref: "src/MainWindow.cpp:372-374, src/PrinterSoundDevice.cpp:272-299"
-    note: "Loaded when present, otherwise the printer sound is generated."
+    note: "Loaded when present, otherwise the printer sound is generated. Virtual ][ Matrix Printer.raw (sha1 6f6d26237389435693469b4dd0e0b69083797bff) behind a mono 44100 Hz 16-bit PCM RIFF header."
   - name: "DejaVuSans.ttf"
     path: "fonts/DejaVuSans.ttf"
     description: "DejaVu Sans, the frontend text font"
