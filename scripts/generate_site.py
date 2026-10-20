@@ -4205,7 +4205,7 @@ open them depends on their name:
 | RetroArch (native) | Installed via package manager or AppImage | [RetroArch]({rel}) | `~/.config/retroarch/system/` |
 | RetroArch (Flatpak) | Installed from Flathub | [RetroArch]({rel}) | `~/.var/app/org.libretro.RetroArch/config/retroarch/system/` |
 | [Batocera](https://batocera.org/) | Bootable OS dedicated to gaming, runs from USB or full install, supports PC and SBC | [Batocera]({rel}) | `/userdata/bios/` |
-| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming, streamlined interface, auto-configured | [Recalbox]({rel}) | `/recalbox/share/bios/` |
+| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming that configures its emulators itself | [Recalbox]({rel}) | `/recalbox/share/bios/` |
 
 ### macOS
 

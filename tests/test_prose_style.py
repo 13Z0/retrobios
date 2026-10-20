@@ -120,6 +120,27 @@ class NoGeneratedTypography(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders[:40]))
 
 
+class NoMarketingVocabulary(unittest.TestCase):
+    """The project bans these words in published text, and nothing checked
+    it: "streamlined interface" reached the site's platform table."""
+
+    WORDS = re.compile(
+        r"\b(comprehensive|robust|seamless(ly)?|leverag\w*|streamlin\w*|delv(e|ing))\b",
+        re.IGNORECASE,
+    )
+
+    def test_no_tracked_text_uses_them(self):
+        offenders = []
+        for path in _tracked():
+            if path.name == "test_prose_style.py":
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for number, line in enumerate(text.splitlines(), 1):
+                if self.WORDS.search(line):
+                    offenders.append(f"{path.relative_to(ROOT)}:{number}: {line.strip()[:100]}")
+        self.assertEqual(offenders, [], "\n".join(offenders[:40]))
+
+
 class NoClauseSemicolons(unittest.TestCase):
     def _check(self, files: list[Path], extract) -> None:
         offenders = []
