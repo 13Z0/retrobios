@@ -57,8 +57,22 @@ notes: |
     3. TOSEC modified naming (with [!] suffix)
     4. TOSEC naming (without [!] suffix)
 
-  capsimg.so/capsimg.dll is an optional shared library for IPF floppy image
-  support (SPS/CAPS format). Not a BIOS file, loaded dynamically at runtime.
+  The CAPS library is opened at run time on the first IPF image, from
+  system/capsimg.so (capsimg.dll on Windows), then by its bare name through
+  the loader search path. Android builds look only in the RetroArch cores
+  directories. Without it IPF images are refused with a message and every
+  other format works (sources/src/caps/caps.c:37-41, 71-96, 467-487).
+
+  Data files are read from system/uae_data/, or system/uae/ when uae_data/
+  does not exist (libretro/libretro-core.c:747-752). The "Floppy Sound
+  Type" option picks the floppy drive samples embedded in the core
+  (internal, the default) or the external A500 or LOUD set from that folder
+  (libretro/libretro-core.c:1850-1864, libretro/libretro-core.c:4124-4152).
+  Each sample is drive_<click|spin|spinnd|startup|snatch>_<set>, with .wav
+  appended when the bare name does not open. When none of the five opens,
+  floppy sound is turned off for that drive (sources/src/driveclick.c:77-104,
+  sources/src/driveclick.c:200-235). The same folder is scanned for files
+  ending in rom, offered as cartridge images by the Cartridge option.
 
   Source: libretro/libretro-core.h:140-245, libretro/libretro-core.c:5533-5701,
   libretro/libretro-core.c:5788-5879
@@ -261,6 +275,134 @@ files:
     required: false
     note: "WHDLoad preferences. Copied to saves/WHDLoad/S/ when present."
     source_ref: "libretro/libretro-core.c:5919-5942"
+
+  # -------------------------------------------------------
+  # CAPS library for IPF floppy images
+  # -------------------------------------------------------
+  - name: "capsimg.so"
+    system: commodore-amiga
+    required: false
+    source_ref: "sources/src/caps/caps.c:37-41, sources/src/caps/caps.c:71-96, sources/src/caps/caps.c:467-487"
+    note: "Linux, macOS and Android builds. Opened on the first IPF image. Android reads it from the RetroArch cores directory only."
+
+  - name: "capsimg.dll"
+    system: commodore-amiga
+    required: false
+    source_ref: "sources/src/caps/caps.c:37-41, sources/src/caps/caps.c:71-96, sources/src/caps/caps.c:467-487"
+    note: "Windows build. Opened on the first IPF image."
+
+  # -------------------------------------------------------
+  # External floppy drive samples (Floppy Sound Type A500 or LOUD)
+  # -------------------------------------------------------
+  - name: "drive_click_A500.wav"
+    path: "uae_data/drive_click_A500.wav"
+    system: commodore-amiga
+    required: false
+    size: 3313326
+    sha1: "34f05541606ee8acd033eadbda082b90051253cc"
+    md5: "6c5b44c1a2bcee664129f850bfe4ed8a"
+    crc32: "27324b7d"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "A500 set, head step. Hashes are those of sources/uae_data/drive_click_A500.wav in the core repository."
+
+  - name: "drive_spin_A500.wav"
+    path: "uae_data/drive_spin_A500.wav"
+    system: commodore-amiga
+    required: false
+    size: 134294
+    sha1: "a117647990e2e9debb7ac65a0db429a59bb630f0"
+    md5: "7401f854a75f9ede18769168ab896a2a"
+    crc32: "5f7cb73b"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "A500 set, motor with a disk. Hashes are those of sources/uae_data/drive_spin_A500.wav in the core repository."
+
+  - name: "drive_spinnd_A500.wav"
+    path: "uae_data/drive_spinnd_A500.wav"
+    system: commodore-amiga
+    required: false
+    size: 352430
+    sha1: "786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634"
+    md5: "f9d954879fee8e96baa93d6139077cdb"
+    crc32: "2c673174"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "A500 set, motor without a disk. Hashes are those of sources/uae_data/drive_spinnd_A500.wav in the core repository."
+
+  - name: "drive_startup_A500.wav"
+    path: "uae_data/drive_startup_A500.wav"
+    system: commodore-amiga
+    required: false
+    size: 34450
+    sha1: "db8de831a59a44dc6070166e2005c330a793a48d"
+    md5: "aebeacc7e7bc52ef890785c835bec3d0"
+    crc32: "cb552e00"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "A500 set, motor start. Hashes are those of sources/uae_data/drive_startup_A500.wav in the core repository."
+
+  - name: "drive_snatch_A500.wav"
+    path: "uae_data/drive_snatch_A500.wav"
+    system: commodore-amiga
+    required: false
+    size: 34450
+    sha1: "b8dd63077e12bdeacd3ad70ba41614dc52aa8023"
+    md5: "1a4b2d6254918ff769f26beeede75655"
+    crc32: "4ac3c05e"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "A500 set, disk insertion. Hashes are those of sources/uae_data/drive_snatch_A500.wav in the core repository."
+
+  - name: "drive_click_LOUD.wav"
+    path: "uae_data/drive_click_LOUD.wav"
+    system: commodore-amiga
+    required: false
+    size: 3308526
+    sha1: "fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2"
+    md5: "b64bee23f356635f67fb08b543df9797"
+    crc32: "59069982"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "LOUD set, head step. Hashes are those of sources/uae_data/drive_click_LOUD.wav in the core repository."
+
+  - name: "drive_spin_LOUD.wav"
+    path: "uae_data/drive_spin_LOUD.wav"
+    system: commodore-amiga
+    required: false
+    size: 20216
+    sha1: "5b1d8c880f8d8fcd9309a7889817611cc27e16e0"
+    md5: "56d8e36a2f04b5e8c5a1f1530cfc886c"
+    crc32: "1969eea0"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "LOUD set, motor with a disk. Hashes are those of sources/uae_data/drive_spin_LOUD.wav in the core repository."
+
+  - name: "drive_spinnd_LOUD.wav"
+    path: "uae_data/drive_spinnd_LOUD.wav"
+    system: commodore-amiga
+    required: false
+    size: 241790
+    sha1: "d1709931cfe05b3bd31b6ef3d9697a22c934549b"
+    md5: "43ab05c6d969cb40805970a5b2352875"
+    crc32: "49e72ce7"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "LOUD set, motor without a disk. Hashes are those of sources/uae_data/drive_spinnd_LOUD.wav in the core repository."
+
+  - name: "drive_startup_LOUD.wav"
+    path: "uae_data/drive_startup_LOUD.wav"
+    system: commodore-amiga
+    required: false
+    size: 43492
+    sha1: "38e63f700ee6a5be71ded6c057267562c00f3e31"
+    md5: "743b4b9f0ca645c4c2a34953b5e01e45"
+    crc32: "d746cc1e"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "LOUD set, motor start. Hashes are those of sources/uae_data/drive_startup_LOUD.wav in the core repository."
+
+  - name: "drive_snatch_LOUD.wav"
+    path: "uae_data/drive_snatch_LOUD.wav"
+    system: commodore-amiga
+    required: false
+    size: 39864
+    sha1: "0417e6e7fee2aebae972ce4d00101a0ce363af32"
+    md5: "40cdf89f35b68cfefd4df5fb0256e02f"
+    crc32: "b015251a"
+    source_ref: "libretro/libretro-core.c:747-752, libretro/libretro-core.c:4124-4152, sources/src/driveclick.c:77-104, sources/src/driveclick.c:200-235"
+    note: "LOUD set, disk insertion. Hashes are those of sources/uae_data/drive_snatch_LOUD.wav in the core repository."
 
 model_kickstart_map:
   A500:     {kickstart: "kick34005.A500", ext: null}
