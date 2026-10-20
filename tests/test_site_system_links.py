@@ -96,5 +96,32 @@ class OtherSpellingsOfOneSystem(unittest.TestCase):
         self.assertEqual(siterender._system_page_map["commodore-pet"], ("commodore", "PET"))
 
 
+class ACopyIsOnItsOwnFoldersPage(unittest.TestCase):
+    """The database keeps one path per content: the Channel F BIOS was on the
+    Arcade page only, and Fairchild had no system page at all."""
+
+    def test_every_folder_holding_a_copy_lists_it(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            for rel in ("Arcade/FBNeo/sl31253.rom", "Fairchild/Channel F/sl31253.bin"):
+                (Path(tmp) / rel).parent.mkdir(parents=True, exist_ok=True)
+                (Path(tmp) / rel).write_bytes(b"x")
+            db = {
+                "bios_dir": tmp,
+                "files": {"s": {"path": "bios/Arcade/FBNeo/sl31253.rom", "sha1": "s",
+                                "name": "sl31253.rom"}},
+                "indexes": {"by_path_suffix": {
+                    "Arcade/FBNeo/sl31253.rom": ["s"], "FBNeo/sl31253.rom": ["s"],
+                    "Fairchild/Channel F/sl31253.bin": ["s"], "Channel F/sl31253.bin": ["s"],
+                }},
+            }
+            groups = gs._group_by_manufacturer(db)
+        self.assertEqual(sorted(groups), ["Arcade", "Fairchild"])
+        self.assertEqual(list(groups["Fairchild"]), ["Channel F"])
+        # The copy is listed twice and counted once.
+        self.assertRegex(gs.generate_systems_index(groups), r"2 consoles, 1 files? ")
+
+
 if __name__ == "__main__":
     unittest.main()

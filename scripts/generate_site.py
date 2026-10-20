@@ -2001,25 +2001,41 @@ def file_location_items(db: dict) -> list[dict]:
 
 
 def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
-    """Group files by manufacturer -> console -> files."""
-    manufacturers: dict[str, dict[str, list]] = {}
-    for sha1, entry in db.get("files", {}).items():
-        path = entry.get("path", "")
-        parts = path.split("/")
-        if len(parts) < 3 or parts[0] != "bios":
+    """Group files by manufacturer -> console -> files.
+
+    The database keeps one path per content, and a copy filed elsewhere was
+    on no page of its own: the Channel F BIOS sat under Arcade > FBNeo only,
+    and Fairchild had no system page. Every folder holding a copy lists it,
+    read from the full paths by_path_suffix records.
+    """
+    files = db.get("files", {})
+    bios_dir = Path(str(db.get("bios_dir") or "bios"))
+    places: dict[str, set[tuple[str, str]]] = {}
+    for sha1, entry in files.items():
+        parts = str(entry.get("path", "")).split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
+            places.setdefault(sha1, set()).add((parts[1], parts[2]))
+    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
+        parts = tail.split("/")
+        if len(parts) < 3 or parts[1].startswith(".") or len(sha1s) != 1:
             continue
-        manufacturer = parts[1]
-        console = parts[2]
-        manufacturers.setdefault(manufacturer, {}).setdefault(console, []).append(entry)
+        if sha1s[0] in files and (bios_dir / tail).is_file():
+            places.setdefault(sha1s[0], set()).add((parts[0], parts[1]))
+    manufacturers: dict[str, dict[str, list]] = {}
+    for sha1, where in places.items():
+        for manufacturer, console in sorted(where):
+            manufacturers.setdefault(manufacturer, {}).setdefault(console, []).append(files[sha1])
     return manufacturers
 
 
 def generate_systems_index(manufacturers: dict) -> str:
     total_mfr = len(manufacturers)
     total_consoles = sum(len(c) for c in manufacturers.values())
-    total_files = sum(
-        len(files) for consoles in manufacturers.values() for files in consoles.values()
-    )
+    # A copy filed under two folders appears on both pages, counted once here.
+    total_files = len({
+        f.get("sha1") for consoles in manufacturers.values()
+        for files in consoles.values() for f in files
+    })
 
     lines = [
         "# Systems",
