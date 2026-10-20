@@ -634,9 +634,15 @@ class InstallMatchesATargetManifest(unittest.TestCase):
                 full = self._manifest(platform)
                 built = self._manifest(platform, set(cores), target)
                 files, omitted = install.narrow_to_cores(full, cores)
+                # A case-insensitive platform reads one file under both
+                # spellings (BlastEm's 32X_M_BIOS.bin, PicoDrive's .BIN).
+                from common import load_platform_config
+
+                config = load_platform_config(platform, str(REPO_ROOT / "platforms"))
+                fold = str.lower if config.get("case_insensitive_fs") else str
                 self.assertEqual(
-                    {(f["dest"], f["sha1"]) for f in files},
-                    {(f["dest"], f["sha1"]) for f in built["files"]},
+                    {(fold(f["dest"]), f["sha1"]) for f in files},
+                    {(fold(f["dest"]), f["sha1"]) for f in built["files"]},
                 )
                 self.assertEqual(
                     {o["dest"] for o in omitted},

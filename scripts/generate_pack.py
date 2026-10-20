@@ -3658,6 +3658,29 @@ def _manifest_core_entries(
         else:
             full_dest = dest
 
+        if (
+            case_insensitive
+            and full_dest not in seen_destinations
+            and full_dest.lower() in seen_lower
+        ):
+            # One file under two spellings: BlastEm opens 32X_M_BIOS.bin and
+            # PicoDrive 32X_M_BIOS.BIN. The second core's claim joins the
+            # entry kept, or a pack built without the first core loses the
+            # file the installer would still have to place. Collisions are
+            # rare, so the entry is looked up only when one happens.
+            held = next(
+                (e for e in manifest_files
+                 if e["dest"].lower() == _manifest_dest_of(full_dest, base_dest).lower()),
+                None,
+            )
+            if held is not None and held.get("cores") is not None:
+                _attach_claims(
+                    held, [fe], db, bios_dir, zip_contents, offline, required_only,
+                    validation_index, owners, dest, held["dest"], repo_root,
+                    data_registry,
+                )
+            continue
+
         if placement_block(
             full_dest, seen_destinations, seen_lower, seen_parents,
             case_insensitive,
@@ -3700,9 +3723,7 @@ def _manifest_core_entries(
 
         # Manifest dests are relative to base_destination. Keep the inferred
         # extras prefix when it is an internal layout dir (RetroDECK bios/).
-        manifest_dest = full_dest
-        if base_dest and manifest_dest.startswith(f"{base_dest}/"):
-            manifest_dest = manifest_dest[len(base_dest) + 1:]
+        manifest_dest = _manifest_dest_of(full_dest, base_dest)
 
         entry, file_size = _manifest_entry(
             local_path, manifest_dest, [source_emu] if source_emu else [],
@@ -3744,6 +3765,13 @@ def _manifest_core_entries(
             seen_lower.add(full_dest.lower())
 
     return total_size
+
+
+def _manifest_dest_of(full_dest: str, base_dest: str) -> str:
+    """A pack destination as the manifest writes it, below base_destination."""
+    if base_dest and full_dest.startswith(f"{base_dest}/"):
+        return full_dest[len(base_dest) + 1:]
+    return full_dest
 
 
 def _claim_platform_omission(held: dict | None, emulator: str) -> bool:
