@@ -455,6 +455,35 @@ class AReleasePageMakesAProfileStale(unittest.TestCase):
         self.assertEqual(found["altirra"], check_freshness.STALE)
         self.assertEqual(found["mednafen"], check_freshness.OK)
 
+    def test_a_release_with_no_genuine_copy_waits_for_the_next(self):
+        """FPse 13.0 exists only as rebuilt copies: the profile stays on 12.1
+        and flagging it on every run said nothing new. 13.1 would."""
+        import check_freshness
+
+        rows = [
+            {"name": "fpse", "skipped": "unsupported host: x", "declared_version": "12.1",
+             "page_version": "13.0", "no_genuine_copy": "13.0"},
+            {"name": "later", "skipped": "unsupported host: x", "declared_version": "12.1",
+             "page_version": "13.1", "no_genuine_copy": "13.0"},
+        ]
+        found = {f.subject: f for f in check_freshness.summarize_profile_sync(rows)}
+        self.assertEqual(found["fpse"].status, check_freshness.OK)
+        self.assertIn("no genuine copy", found["fpse"].detail)
+        self.assertEqual(found["later"].status, check_freshness.STALE)
+
+    def test_no_genuine_copy_is_never_the_profiled_version(self):
+        """The field names a release the profile could not read."""
+        import yaml
+
+        for path in sorted((REPO_ROOT / "emulators").glob("*.yml")):
+            text = path.read_text(encoding="utf-8")
+            if "no_genuine_copy" not in text:
+                continue
+            profile = yaml.safe_load(text)
+            source = profile["version_source"]
+            with self.subTest(profile=path.stem):
+                self.assertNotEqual(source["no_genuine_copy"], str(profile["core_version"]))
+
 
 if __name__ == "__main__":
     unittest.main()

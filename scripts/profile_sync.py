@@ -1118,6 +1118,8 @@ class ProfileReport:
     # (version_source): the version read there, beside the one declared.
     declared_version: str | None = None
     page_version: str | None = None
+    # An announced version searched for and found only rebuilt or re-signed.
+    no_genuine_copy: str | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -2040,6 +2042,9 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         lines.append(
             f"  version page: declared {report.declared_version or '-'}, "
             f"announced {report.page_version or 'unreadable'}"
+            + (" (no genuine copy found)"
+               if report.page_version and report.page_version == report.no_genuine_copy
+               else "")
         )
     if report.skipped:
         lines.append(f"  skipped: {report.skipped}")
@@ -3841,6 +3846,8 @@ def main() -> None:
         if args.check_version and profile.get("version_source"):
             report.declared_version = str(profile.get("core_version") or "") or None
             report.page_version = page_version(profile, args.cache_dir, args.offline)
+            report.no_genuine_copy = str(
+                profile["version_source"].get("no_genuine_copy") or "") or None
         reports.append(report)
         if writes:
             try:

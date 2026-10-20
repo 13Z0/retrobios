@@ -815,7 +815,8 @@
       "required": ["url", "pattern"],
       "properties": {
         "url": {"type": "string", "format": "uri"},
-        "pattern": {"type": "string", "description": "Regular expression whose first group is the latest version the page announces."}
+        "pattern": {"type": "string", "description": "Regular expression whose first group is the latest version the page announces."},
+        "no_genuine_copy": {"type": "string", "description": "An announced version a search found only rebuilt or re-signed copies of. While the page announces it, the profile is not stale. A later version makes it stale again."}
       },
       "description": "For a project published outside any forge, the page that announces its releases. profile_sync --check-version compares the version read there with core_version."
     },

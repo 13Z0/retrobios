@@ -1110,11 +1110,16 @@ def summarize_profile_sync(report: object) -> list[Finding]:
             # Off any forge, the release page is the feed: a version there
             # beyond the declared one is a release the profile does not cover.
             declared, announced = str(row.get("declared_version") or ""), str(row["page_version"])
-            findings.append(Finding(
-                "profiles", name, OK if announced == declared else STALE,
-                local=declared, remote=announced,
-                detail="" if announced == declared else "a newer release is announced",
-            ))
+            if announced == declared:
+                status, detail = OK, ""
+            elif announced == str(row.get("no_genuine_copy") or ""):
+                # Searched for and found only rebuilt: the profile covers the
+                # newest build that can be read, until the page moves on.
+                status, detail = OK, "no genuine copy of the announced release"
+            else:
+                status, detail = STALE, "a newer release is announced"
+            findings.append(Finding("profiles", name, status, local=declared,
+                                    remote=announced, detail=detail))
             continue
         if row.get("skipped"):
             findings.append(Finding("profiles", name, UNKNOWN, detail=str(row["skipped"])))
