@@ -157,5 +157,99 @@ class ThePageAddressesMaintainersAsPeers(unittest.TestCase):
             self.assertNotIn(word, page)
 
 
+class RemovalCandidatesNeedAReadingNoCoreAnswers(unittest.TestCase):
+    """An entry the truth does not pair can still be read: by an alias, by its
+    content, under a directory a core walks. Of 2776 such entries, 1189
+    were read that way. Only what no core answers is listed, and nothing is
+    removed."""
+
+    PROFILES = {
+        "corea": {
+            "type": "libretro",
+            "systems": ["sys-one"],
+            "files": [
+                {"name": "main.rom", "aliases": ["Alt.ROM"]},
+                {"name": "other.bin", "md5": "0123456789abcdef0123456789abcdef"},
+                {"name": "rtp/2000/", "path": "rtp/2000/", "type": "directory"},
+                {"name": "set.zip", "category": "bios_zip"},
+            ],
+        },
+    }
+
+    def _scraped(self, names: list[dict], cores: list[str]) -> dict:
+        return {
+            "_key": "fake",
+            "cores": cores,
+            "systems": {"sys-one": {"files": names}},
+        }
+
+    def _candidates(self, files: list[dict], cores: list[str] | None = None) -> list[dict]:
+        from exporter.baseline import build_native_model
+        from exporter.candidates import removal_candidates
+
+        scraped = self._scraped(files, cores or ["corea"])
+        systems, _ = build_native_model({"systems": {}}, scraped)
+        found = removal_candidates(systems, scraped, self.PROFILES)
+        kept = [f.name for s in systems.values() for f in s.files]
+        self.assertEqual(kept, [f["name"] for f in files])
+        return found
+
+    def test_an_alias_is_a_reading(self):
+        self.assertEqual(self._candidates([{"name": "alt.rom"}]), [])
+
+    def test_a_hash_is_a_reading(self):
+        found = self._candidates([
+            {"name": "renamed.bin", "md5": "0123456789ABCDEF0123456789ABCDEF"},
+        ])
+        self.assertEqual(found, [])
+
+    def test_a_directory_entry_covers_its_members(self):
+        found = self._candidates([
+            {"name": "x.png", "destination": "easyrpg/rtp/2000/x.png"},
+        ])
+        self.assertEqual(found, [])
+
+    def test_an_entry_nothing_answers_is_a_candidate(self):
+        found = self._candidates([{"name": "nobody.rom"}])
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]["verdict"], "candidate")
+        self.assertEqual(found[0]["cores_examined"], ["corea"])
+        self.assertEqual(found[0]["unresolved_cores"], [])
+
+    def test_an_unprofiled_core_leaves_it_undetermined(self):
+        found = self._candidates([{"name": "nobody.rom"}], ["corea", "mystery-sa"])
+        self.assertEqual(found[0]["verdict"], "undetermined")
+        self.assertEqual(found[0]["unresolved_cores"], ["mystery-sa"])
+
+    def test_a_romset_under_a_romset_core_is_undetermined(self):
+        found = self._candidates([{"name": "device.zip"}])
+        self.assertEqual(found[0]["verdict"], "undetermined")
+        self.assertIn("corea", found[0]["reason"])
+
+    def test_unresolved_names_skip_the_all_libretro_markers(self):
+        from common import unresolved_platform_cores
+
+        config = {"cores": ["retroarch", "all_libretro", "corea", "nope"]}
+        self.assertEqual(unresolved_platform_cores(config, self.PROFILES), {"nope"})
+        self.assertEqual(unresolved_platform_cores({"cores": "all_libretro"}, {}), set())
+
+    def test_the_page_gives_the_count_and_each_entry(self):
+        report = _report("retroarch", ["System.dat"], removal_candidates=[
+            {"system": "Enterprise", "name": "zt18hfnt.rom",
+             "destination": "zt18hfnt.rom", "verdict": "candidate",
+             "reason": "no core the platform runs opens it",
+             "cores_examined": [], "unresolved_cores": []},
+        ])
+        page = generate_exports_page([report], {})
+        self.assertIn("1 entry of the original is not opened", page)
+        self.assertIn("- `Enterprise` `zt18hfnt.rom`", page)
+        self.assertNotIn("no entry the platform declares is removed", page)
+
+    def test_the_report_carries_the_list(self):
+        source = (ROOT / "scripts" / "export_native.py").read_text(encoding="utf-8")
+        body = source[source.index("def export_platform("):source.index("def write_report(")]
+        self.assertIn('"removal_candidates": candidates,', body)
+
+
 if __name__ == "__main__":
     unittest.main()

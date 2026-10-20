@@ -38,6 +38,7 @@ import yaml
 from common import (
     platform_arg,
     list_registered_platforms,
+    load_data_dir_registry,
     load_database,
     load_emulator_profiles,
     load_platform_config,
@@ -47,6 +48,7 @@ from common import (
 )
 from exporter import discover_exporters
 from exporter.baseline import HASH_FIELDS, _hash_values, _single_size, build_native_model
+from exporter.candidates import removal_candidates
 from truth import generate_platform_truth
 
 DEFAULT_CACHE = ".cache/upstream-native"
@@ -613,7 +615,19 @@ def export_platform(
         # A content-scanning core's names are labels: a list checked by path
         # cannot hold them.
         summary += f", {_count(report.labels, 'entry', 'entries')} found by content not listed"
+    # Reported, never removed: the platform's file keeps every entry.
+    candidates = removal_candidates(
+        systems, scraped, load_emulator_profiles("emulators"),
+        load_data_dir_registry(platforms_dir),
+    )
     messages.append(summary)
+    if candidates:
+        open_question = sum(c["verdict"] == "undetermined" for c in candidates)
+        messages.append(
+            f"{_count(len(candidates), 'entry', 'entries')} no examined core is known to open"
+            + (f" ({open_question} undetermined)" if open_question else "")
+            + ", listed in the report"
+        )
     messages.extend(f"withheld: {reason}" for reason in withheld)
     for correction in applied[:5]:
         messages.append(f"hash corrected: {correction}")
@@ -655,6 +669,7 @@ def export_platform(
         "requirements_corrected": requirements,
         "withheld": list(withheld),
         "found_by_content": report.labels,
+        "removal_candidates": candidates,
         "invalid": issues,
     })
     return True, messages

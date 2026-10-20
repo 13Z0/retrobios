@@ -2294,6 +2294,26 @@ def resolve_platform_cores(
     return result
 
 
+def unresolved_platform_cores(config: dict, profiles: dict[str, dict]) -> set[str]:
+    """The core names a platform lists that no profile answers to.
+
+    resolve_platform_cores drops them without a word: ROCKNIX's `dolphin-sa`
+    or Batocera's `wine` designate no profile, so nothing is known of the
+    files they open. `retroarch` and `all_libretro` stand for every libretro
+    profile and are never unresolved. A platform without a `cores:` list
+    names no core.
+    """
+    cores_config = config.get("cores")
+    if not isinstance(cores_config, list):
+        return set()
+    index = upstream_profile_index(profiles)
+    return {
+        name
+        for name in (str(c) for c in cores_config)
+        if name not in ("retroarch", "all_libretro") and not index.get(name)
+    }
+
+
 MANUFACTURER_PREFIXES = (
     "acorn-",
     "apple-",

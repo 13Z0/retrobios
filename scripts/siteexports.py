@@ -54,6 +54,49 @@ def change_text(report: dict) -> str:
     return ", ".join(parts)
 
 
+# Beyond this many entries a reason's list folds away.
+LONG_LIST = 10
+
+
+def candidate_lines(candidates: list[dict]) -> list[str]:
+    """The entries no emulator the platform runs is known to open.
+
+    Each stays in the updated file. The count comes first, then the entries
+    grouped by reason, a long group in a block the reader opens.
+    """
+    if not candidates:
+        return []
+    open_question = sum(c.get("verdict") == "undetermined" for c in candidates)
+    count = _plural(len(candidates), "entry", "entries")
+    sentence = (
+        f"{count} of the original {'is' if len(candidates) == 1 else 'are'} not "
+        "opened by any profiled emulator this platform runs. "
+        f"{'It stays' if len(candidates) == 1 else 'They stay'} in the updated file"
+    )
+    if open_question:
+        sentence += (
+            f", and {open_question} of them may still be read by an emulator "
+            "this project has not profiled in full"
+        )
+    lines = [sentence + ".", ""]
+    groups: dict[str, list[dict]] = {}
+    for candidate in candidates:
+        groups.setdefault(candidate.get("reason", ""), []).append(candidate)
+    for reason, entries in groups.items():
+        title = (reason[:1].upper() + reason[1:]).replace('"', "'")
+        items = [f"`{c['system']}` `{c['destination']}`" for c in entries]
+        if len(entries) > LONG_LIST:
+            lines.extend([
+                f'??? note "{title} ({len(entries)})"',
+                "",
+                *[f"    - {item}" for item in items],
+                "",
+            ])
+        else:
+            lines.extend([f"{title}:", "", *[f"- {item}" for item in items], ""])
+    return lines
+
+
 def load_export_reports(directory: str = EXPORTS_DIR) -> list[dict]:
     """Every platform report the export wrote, by platform name."""
     root = Path(directory)
@@ -95,8 +138,12 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
         "`es_bios.xml` and so on. This project reads the emulators' source "
         "code file by file, and offers each platform its own file with those "
         "findings applied: a hash is updated where the emulator source states "
-        "another, files the platform's emulators read are added, and no entry "
-        "the platform declares is removed. Where a value of an entry is "
+        "another, and files the platform's emulators read are added. An entry "
+        "that no emulator the platform runs is known to open stays in the "
+        "file and is listed as a removal candidate, with the reason, on the "
+        "platform's section. It would leave the file only once the code of "
+        "every emulator that platform runs for the system is shown not to "
+        "read it. Where a value of an entry is "
         "dropped, the platform's section lists it. Code the file carries is "
         "patched in place. With the original files on hand, the tests run "
         "the updated Batocera and ROCKNIX scripts (`--createReadme`), parse "
@@ -159,6 +206,7 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
                 "cannot be written in this format and should be checked by hand.",
                 "",
             ])
+        lines.extend(candidate_lines(report.get("removal_candidates") or []))
         if report.get("invalid"):
             lines.extend([
                 '!!! warning "The updated file does not pass the platform\'s own checks"',

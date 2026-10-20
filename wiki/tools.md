@@ -271,6 +271,17 @@ state is reported rather than written: EmuDeck's arrays are shared
 between emulators its file does not name, so a hash is corrected in place
 and never added.
 
+No entry the platform declares is removed. One the truth does not pair is
+looked for in the profiles of every core the platform runs: by name or
+alias, by the basename or tail of a `path:`, by any hash (archive members
+included), under a `type: directory` entry or a data directory. An entry
+none of them answers is written to `exports/<platform>.json` under
+`removal_candidates`, with the cores examined for its system and a reason.
+The verdict is `undetermined` when a core the platform names has no
+profile (`common.unresolved_platform_cores`) or when the entry is a ROM set
+and a core of the system opens sets its profile does not list. BizHawk and
+MiSTer resolve no core, so nothing is examined and nothing is listed.
+
 MAME and FBNeo entries are `.zip` ROM sets: their meaningful hashes belong
 to the files inside the archive, so the exported DAT lists those entries
 without a container sha1. Anyone submitting the DAT upstream should mention
