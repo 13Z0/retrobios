@@ -102,6 +102,7 @@ files:
     required: true
     bundled: true
     size: 3981
+    sha1: 94861a3fa25583581146898160a78e9c1326e7af
     source_ref: "code/qcommon/files.c:4364-4368, code/qcommon/files.c:4403-4422, code/qcommon/common.c:1939-1941"
     note: "Default bindings and settings. FS_InitFilesystem and FS_Restart stop with a fatal error when it cannot be read, and Com_ExecuteCfg executes it first at startup."
 
@@ -112,6 +113,7 @@ files:
     required: false
     bundled: true
     size: 174
+    sha1: 40f25a7d6434fadf07a8cb642f8413c323352284
     source_ref: "code/qcommon/common.c:1949-1955"
     note: "Executed after realrtcwconfig.cfg unless safe mode is on. The 5.2 copy executes xbox.cfg and dlc1.cfg."
 
@@ -123,6 +125,7 @@ files:
     required: false
     bundled: true
     size: 56031325
+    sha1: 382ce141f9e2f4823eab11f3d7940a6b630d7ee2
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -134,6 +137,7 @@ files:
     required: false
     bundled: true
     size: 105504914
+    sha1: 2e5b8d28bf2b433d73c51ede8eecf2d84dd4e642
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -145,6 +149,7 @@ files:
     required: false
     bundled: true
     size: 207704226
+    sha1: f8bb353657e76a277387b0d13b85b9f4e80591fc
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -156,6 +161,7 @@ files:
     required: false
     bundled: true
     size: 312770218
+    sha1: a31a1e5d2d29197c9329ea41a9f8318a3eb06c0c
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -167,6 +173,7 @@ files:
     required: false
     bundled: true
     size: 90678014
+    sha1: 31958b5ca4dd05412bfa10dfe8314356e87e774d
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -178,6 +185,7 @@ files:
     required: false
     bundled: true
     size: 437827343
+    sha1: 5cc30ffe317f178d15c2321df3496ef0b78f1166
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -189,6 +197,7 @@ files:
     required: false
     bundled: true
     size: 487884661
+    sha1: 5ab5eef819aec87631b7feba4071fec47c0ae835
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -200,6 +209,7 @@ files:
     required: false
     bundled: true
     size: 3802225
+    sha1: b00a3d82bc9139bae385b435c6f6e24a421ecbdf
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -211,6 +221,7 @@ files:
     required: false
     bundled: true
     size: 18699203
+    sha1: a598a567a62f4d6810bac11cb34edbac2c4653a6
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -222,6 +233,7 @@ files:
     required: false
     bundled: true
     size: 533510
+    sha1: 787d90c2cf7aa870cd9c602cec835045af572bc4
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
 
@@ -233,5 +245,6 @@ files:
     required: false
     bundled: true
     size: 66528063
+    sha1: c8a6f12b369d13480954b4771d79796c9e569609
     source_ref: "code/qcommon/files.c:3241-3248, 3300-3340"
     note: "Shipped in the RealRTCW 5.2 package, so installed with the mod. Loaded by the pak scan of main/, never named by the code."
