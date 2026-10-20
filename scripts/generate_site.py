@@ -1712,13 +1712,13 @@ def _render_platform_systems(
     lines: list[str] = []
     # Per-system detail sections (collapsible for large platforms)
     use_collapsible = len(by_system) > 10
-    declared = _declared_by_system(config_files)
+    by_system_declared = _declared_by_system(config_files)
 
     for sys_id, files in sorted(by_system.items()):
         ok_count = sum(1 for f in files if f["status"] == "ok")
         total = len(files)
 
-        sys_emus = _system_emulators(sys_id, emulator_files, declared.get(sys_id))
+        sys_emus = _system_emulators(sys_id, emulator_files, by_system_declared.get(sys_id))
 
         sys_link = _system_link(sys_id, "../")
 
@@ -1945,7 +1945,7 @@ def generate_platform_page(
             "|--------|-------|--------|-----------|",
         ]
     )
-    declared = _declared_by_system(config_files)
+    by_system_declared = _declared_by_system(config_files)
     for sys_id, files in sorted(by_system.items()):
         ok_count = sum(1 for f in files if f["status"] == "ok")
         total = len(files)
@@ -1957,7 +1957,7 @@ def generate_platform_page(
                 f'<span class="rb-badge rb-badge-warning">'
                 f'{non_ok} issue{"s" if non_ok > 1 else ""}</span>'
             )
-        sys_emus = _system_emulators(sys_id, emulator_files, declared.get(sys_id))
+        sys_emus = _system_emulators(sys_id, emulator_files, by_system_declared.get(sys_id))
         emu_str = ", ".join(sys_emus[:3])
         if len(sys_emus) > 3:
             emu_str += f" +{len(sys_emus) - 3}"
