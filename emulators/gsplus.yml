@@ -21,6 +21,10 @@ notes: |
   Batocera configgen (gsplusGenerator.py) sets g_cfg_rom_path to bios/ROM.03
   by default (configurable via gsplus_bios_filename system setting).
 
+  Recalbox configgen (gsplusGenerator.py) sets g_cfg_rom_path to
+  bios/apple2gs1.rom when that file exists, else to bios/apple2gs3.rom. A
+  .gsplus config file can pick either with %1 or %3.
+
   Built-in Disk II controller PROM derived via XOR diffs from main ROM.
   Built-in HD SmartPort PROM (slot 7) hardcoded in source.
   Built-in character font (kegsfont.h), optional ROMX-compatible charrom
@@ -28,7 +32,7 @@ notes: |
 
 files:
   - name: ROM
-    aliases: [ROM.01, ROM.03, APPLE2GS.ROM, APPLE2GS.ROM2, xgs.rom, XGS.ROM, Rom03gd, 342-0077-b]
+    aliases: [ROM.01, ROM.03, APPLE2GS.ROM, APPLE2GS.ROM2, xgs.rom, XGS.ROM, Rom03gd, 342-0077-b, apple2gs1.rom, apple2gs3.rom]
     required: true
     description: "Apple IIGS system ROM"
     source_ref: "gsplus/src/config.c:136, gsplus/src/config.c:477-480, gsplus/src/config.c:1260-1317"
