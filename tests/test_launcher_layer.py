@@ -186,6 +186,21 @@ class LauncherLayerTest(unittest.TestCase):
         self.assertIn("sub/fix.bin", added)
         self.assertEqual(added["sub/fix.bin"]["md5"], _md5(CONTENT["core.bin"]))
 
+    def test_a_file_the_emulator_installs_is_not_brought(self) -> None:
+        """ROCKNIX installs xemu's xbox_hdd.qcow2 (installed_on), and the
+        layer packed one under the launcher's hdd/ path all the same."""
+        profile = {
+            "emulator": "FixEmu", "type": "standalone", "systems": ["test-sys"],
+            "files": [{"name": "core.bin", "aliases": ["fix.bin"], "required": True,
+                       "installed_on": ["launchertest"]}],
+        }
+        with open(os.path.join(self.emulators_dir, "fixemu.yml"), "w") as fh:
+            yaml.dump(profile, fh)
+        _emulator_profiles_cache.clear()
+        self.profiles = load_emulator_profiles(self.emulators_dir)
+        added = [u["path"] for u in self._report() if u.get("launcher")]
+        self.assertNotIn("sub/fix.bin", added)
+
     def test_no_place_is_filled_twice(self) -> None:
         added = [u["path"] for u in self._report() if u.get("launcher")]
         self.assertEqual(sorted(added), ["e.bin", "sub/fix.bin"])

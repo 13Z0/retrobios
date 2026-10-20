@@ -399,6 +399,11 @@ class LauncherLayer:
                 return True
             if not place.anchored:
                 continue
+            # The emulator as this platform installs it brings the file: the
+            # place is filled, nothing is packed (ROCKNIX's xemu hdd image).
+            if any(key in candidate.names and report.get("bundled")
+                   for candidate, report in matched):
+                return True
             source = self._content_for(place, name, key, matched, resolve_held)
             if source is None:
                 continue
