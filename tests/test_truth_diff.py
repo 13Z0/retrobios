@@ -120,6 +120,21 @@ class OneNameSeveralFiles(unittest.TestCase):
         self.assertEqual(_diff_system(self._system(), scraped), {})
 
 
+class ADestinationIsThePath(unittest.TestCase):
+    def test_a_profile_destination_reaches_the_truth(self):
+        """redream names its BIOS dc_bios.bin and reads it at dc/boot.bin.
+        The truth dropped `destination:`, so the export never saw that
+        System.dat declares dc/boot.bin and added a dc_bios.bin line."""
+        system: dict = {}
+        _merge_file_into_system(system, {"name": "dc_bios.bin",
+                                         "destination": "dc/boot.bin",
+                                         "md5": "a" * 32}, "redream", None)
+        self.assertEqual(system["files"][0]["path"], "dc/boot.bin")
+        scraped = {"files": [{"name": "dc/boot.bin", "destination": "dc/boot.bin",
+                              "md5": "a" * 32}]}
+        self.assertEqual(_diff_system(system, scraped), {})
+
+
 class DifferentContentsStayApart(unittest.TestCase):
     def test_two_cores_same_name_different_contents(self):
         """beebem's BBC BIOS.rom and np2kai's PC-98 bios.rom merged into one."""

@@ -155,6 +155,11 @@ def _merge_file_into_system(
     Dolphin's three IPL.bin differ only by GC/USA, GC/EUR, GC/JAP. Under
     one path or none, its declarations are revisions of one file.
     """
+    # A profile states where the code reads a file as `path:` or as
+    # `destination:` (redream's dc_bios.bin at dc/boot.bin), as the resolver
+    # reads them.
+    if not file_entry.get("path") and file_entry.get("destination"):
+        file_entry = {**file_entry, "path": file_entry["destination"]}
     files = system.setdefault("files", [])
     existing = _same_file(files, file_entry, emu_name)
     if existing is None:
