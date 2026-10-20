@@ -5409,5 +5409,34 @@ class AnUnansweredSearchIsNotANotFound(unittest.TestCase):
         self.assertEqual(result["stats"]["errors"], 0)
 
 
+class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):
+    """This host has computed a wrong SHA-1 under load. The pipeline's forced
+    rebuild threw the previous digests away and wrote whatever it read."""
+
+    def test_a_reading_the_cache_and_a_second_reading_contradict_is_outvoted(self):
+        from unittest import mock
+
+        from scripts import generate_db
+
+        cached = {"sha1": "a" * 40, "mtime": 1.0, "size": 4}
+        readings = iter([{"sha1": "b" * 40}, {"sha1": "a" * 40}])
+        with mock.patch.object(generate_db, "compute_hashes", lambda *a, **k: next(readings)), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            settled = generate_db._settled_hashes(Path("x.bin"), cached, 1.0, 4)
+        self.assertEqual(settled["sha1"], "a" * 40)
+        self.assertIn("WARNING", err.getvalue())
+
+    def test_a_changed_file_takes_its_new_digest(self):
+        from unittest import mock
+
+        from scripts import generate_db
+
+        cached = {"sha1": "a" * 40, "mtime": 1.0, "size": 4}
+        with mock.patch.object(generate_db, "compute_hashes", lambda *a, **k: {"sha1": "c" * 40}):
+            self.assertEqual(
+                generate_db._settled_hashes(Path("x.bin"), cached, 2.0, 4)["sha1"], "c" * 40
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

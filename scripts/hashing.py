@@ -24,9 +24,15 @@ _hash_cache: dict[tuple, dict[str, str]] = {}
 def compute_hashes(
     filepath: str | Path,
     algorithms: frozenset[str] | None = None,
+    cache: bool = True,
 ) -> dict[str, str]:
-    """Compute file hashes. Pass *algorithms* to limit which are computed."""
+    """Compute file hashes. Pass *algorithms* to limit which are computed.
+
+    cache=False reads the file again, for a second opinion on a digest.
+    """
     algos = frozenset(algorithms) if algorithms else _ALL_ALGORITHMS
+    if not cache:
+        return _compute_hashes(filepath, algos)
     try:
         stat = os.stat(filepath)
         key: tuple | None = (

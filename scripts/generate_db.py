@@ -71,6 +71,34 @@ def _canonical_name(filepath: Path) -> str:
     return filepath.name
 
 
+def _settled_hashes(
+    filepath: Path, cached: dict | None, mtime: float, size: int
+) -> dict:
+    """The file's digests, computed again when they contradict the cache.
+
+    A forced run rehashes everything, and this host has given a wrong SHA-1
+    under load (DSi_Nand_USA.bin read as 834b140f, not ef08ae02). An entry
+    whose mtime and size did not move but whose digest did is hashed a
+    second time, and the two computations that agree win. The previous run's
+    value is the independent check the forced run used to throw away.
+    """
+    hashes = compute_hashes(filepath)
+    if not cached or cached.get("mtime") != mtime or cached.get("size") != size:
+        return hashes
+    if cached.get("sha1") in (None, hashes["sha1"]):
+        return hashes
+    again = compute_hashes(filepath, cache=False)
+    if again["sha1"] == hashes["sha1"]:
+        # Two fresh readings agree: the bytes changed under an unchanged mtime.
+        return hashes
+    print(
+        f"  WARNING: {filepath}: sha1 read as {hashes['sha1'][:8]} then "
+        f"{again['sha1'][:8]}, cached {cached['sha1'][:8]}",
+        file=sys.stderr,
+    )
+    return again if again["sha1"] == cached["sha1"] else hashes
+
+
 def scan_bios_dir(bios_dir: Path, cache: dict, force: bool) -> tuple[dict, dict, dict]:
     """Scan bios directory and compute hashes, using cache when possible."""
     files = {}
@@ -132,7 +160,7 @@ def scan_bios_dir(bios_dir: Path, cache: dict, force: bool) -> tuple[dict, dict,
                 new_cache[cache_key] = {**hashes, "mtime": mtime, "size": size}
                 continue
 
-        hashes = compute_hashes(filepath)
+        hashes = _settled_hashes(filepath, cache.get(cache_key), mtime, size)
         sha1 = hashes["sha1"]
         is_variant = "/.variants/" in rel_path or "\\.variants\\" in rel_path
         if sha1 in files:
@@ -362,7 +390,9 @@ def main() -> int:
         print(f"Error: BIOS directory '{bios_dir}' not found", file=sys.stderr)
         sys.exit(1)
 
-    cache = {} if args.force else load_cache(CACHE_FILE)
+    # A forced run rehashes every file but keeps the previous digests to
+    # check the new ones against.
+    cache = load_cache(CACHE_FILE)
 
     print(f"Scanning {bios_dir}/ ...")
     files, aliases, new_cache = scan_bios_dir(bios_dir, cache, args.force)
