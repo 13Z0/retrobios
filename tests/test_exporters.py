@@ -34,6 +34,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from common import (  # noqa: E402
     list_registered_platforms,
     load_platform_config,
+    native_layer,
     parse_untrusted_xml,
 )
 from exporter import discover_exporters  # noqa: E402
@@ -696,6 +697,35 @@ class PinnedRevision(unittest.TestCase):
                 config = load_platform_config(name, str(REPO_ROOT / "platforms"))
                 base = pinned_base(dict(exporters[name].native_sources()), config)
                 self.assertTrue(base.startswith("https://"), base)
+
+    def test_every_file_of_every_platform_is_read_at_the_pinned_revision(self):
+        """Checked on five platforms by their base only: ROCKNIX's second
+        file, RetroDECK's manifests and RetroPie's tarball were never
+        looked at, and a URL that fell back to a branch passed."""
+        import export_native  # noqa: PLC0415
+
+        for name, exporter_class in discover_exporters().items():
+            with self.subTest(platform=name):
+                config = native_layer(load_platform_config(name, str(REPO_ROOT / "platforms")))
+                systems, _ = build_native_model({}, config)
+                wanted = export_native.wanted_sources(exporter_class(), systems, config)
+                self.assertTrue(wanted)
+                self.assertEqual(export_native.unpinned(wanted, config), [])
+
+    def test_a_file_read_off_the_pinned_revision_is_named(self):
+        import export_native  # noqa: PLC0415
+
+        pinned = {"source": "https://raw.githubusercontent.com/o/r/v1.0/list.txt"}
+        self.assertEqual(export_native.unpinned(
+            {"list.txt": "https://raw.githubusercontent.com/o/r/v1.0/list.txt"}, pinned), [])
+        moved = export_native.unpinned(
+            {"list.txt": "https://raw.githubusercontent.com/o/r/master/list.txt"}, pinned)
+        self.assertEqual(len(moved), 1)
+        self.assertIn("v1.0", moved[0])
+        bare = export_native.unpinned(
+            {"x.json": "https://raw.githubusercontent.com/o/r/main/x.json"},
+            {"source": "https://github.com/RetroDECK/components"})
+        self.assertIn("names no revision", bare[0])
 
 
 class _OneFileExporter:

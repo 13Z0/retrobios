@@ -236,6 +236,41 @@ def wanted_sources(
     }
 
 
+_REVISION = (
+    re.compile(r"^https://raw\.githubusercontent\.com/[^/]+/[^/]+/([^/]+)/"),
+    re.compile(r"^https://github\.com/[^/]+/[^/]+/(?:tree|blob)/([^/]+)"),
+    re.compile(r"^https://gitlab\.com/.+?/-/(?:raw|archive)/([^/]+)/"),
+    re.compile(r"^https://codeload\.github\.com/[^/]+/[^/]+/tar\.gz/([^/]+)$"),
+)
+
+
+def source_revision(source: str) -> str:
+    """The revision a platform YAML's source: URL names, '' when none."""
+    for pattern in _REVISION:
+        match = pattern.match(source)
+        if match:
+            return match.group(1)
+    return ""
+
+
+def unpinned(wanted: dict[str, str], scraped: dict | None) -> list[str]:
+    """Every file the export would read off the revision the YAML records.
+
+    pinned_base() returned '' when the source named no revision or no
+    longer ended in the file, and the exporter's own branch URL was then
+    patched without a word: a file our transcription never described.
+    """
+    source = str((scraped or {}).get("source", ""))
+    revision = source_revision(source)
+    if not revision:
+        return [f"the platform's source names no revision ({source or 'none'}): rescrape it"]
+    return [
+        f"{relative} would be read at {url}, not at {revision}: rescrape the platform"
+        for relative, url in wanted.items()
+        if f"/{revision}/" not in url and not url.endswith(f"/{revision}")
+    ]
+
+
 _CODELOAD = re.compile(r"^https://codeload\.github\.com/([^/]+)/([^/]+)/tar\.gz/")
 
 
@@ -381,6 +416,9 @@ def refresh_cache(
     systems, _ = build_native_model(truth or {}, scraped)
     exporter = exporter_class()
     wanted = wanted_sources(exporter, systems, scraped)
+    off_pin = unpinned(wanted, scraped)
+    if off_pin:
+        return False, off_pin
     _, missing = collect_originals(
         exporter, systems, upstream_dir, True, scraped, refresh=True
     )
@@ -496,6 +534,9 @@ def export_platform(
         return False, ["nothing to write: neither the platform nor the truth has data"]
 
     exporter = exporter_class()
+    off_pin = unpinned(wanted_sources(exporter, systems, scraped), scraped)
+    if off_pin:
+        return False, off_pin
     originals, missing = collect_originals(
         exporter, systems, upstream_dir, allow_fetch, scraped
     )
