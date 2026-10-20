@@ -6,21 +6,17 @@
   "files": [
     "batocera-systems.json"
   ],
-  "summary": "360 kept, 372 added, 7 hashes corrected, 0 requirements corrected, 13 hashes filled, 1483 additions left out",
+  "summary": "360 kept, 388 added, 3 hashes corrected, 0 requirements corrected, 13 hashes filled, 1512 additions left out",
   "counts": {
     "kept": 360,
-    "added": 372,
-    "not_added": 1483,
+    "added": 388,
+    "not_added": 1512,
     "not_kept": 0
   },
   "hashes_corrected": [
-    "bk/BASIC10.ROM md5",
-    "colecovision/coleco.rom md5",
     "dragon32/d64_1.rom md5",
-    "msx/MSX.ROM md5",
     "neogeocd/neogeo.zip md5",
-    "neogeocd/neocdz.zip md5",
-    "scummvm/MT32_CONTROL.ROM md5"
+    "neogeocd/neocdz.zip md5"
   ],
   "hashes_filled": [
     "apple2/AppleIIe_DiskII.rom md5",

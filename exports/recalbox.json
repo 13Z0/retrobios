@@ -7,17 +7,14 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 246 added, 7 hashes corrected, 129 requirements corrected, 573 additions left out",
+  "summary": "357 kept, 250 added, 4 hashes corrected, 134 requirements corrected, 573 additions left out",
   "counts": {
     "kept": 357,
-    "added": 246,
+    "added": 250,
     "not_added": 573,
     "not_kept": 0
   },
   "hashes_corrected": [
-    "atari800/ATARIOSB.ROM md5",
-    "msx1,msx2,msxturbor/MSX.rom md5",
-    "msx1,msx2,msxturbor/MSX2P.rom md5",
     "neogeocd/neocdz.zip md5",
     "neogeocd/neocd.zip md5",
     "ti994a/TI-994A.ctg md5",
@@ -27,7 +24,7 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 129,
+  "requirements_corrected": 134,
   "withheld": [],
   "invalid": []
 }

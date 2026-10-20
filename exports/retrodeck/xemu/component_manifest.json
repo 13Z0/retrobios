@@ -21,6 +21,7 @@
         "filename": "Complex.bin",
         "system": "xbox",
         "description": "XBOX Complex BIOS",
+        "required": "Required",
         "md5": null
       },
       {
@@ -33,7 +34,6 @@
         "filename": "Complex_4627.bin",
         "system": "xbox",
         "description": "XBOX Complex BIOS 4627",
-        "required": "Required",
         "md5": null
       },
       {

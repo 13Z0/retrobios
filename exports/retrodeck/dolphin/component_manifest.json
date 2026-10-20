@@ -227,8 +227,7 @@
           "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
           "system": "gba",
           "description": "Game Boy Advance BIOS",
-          "required": "Optional, for boot logo",
-          "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570"
+          "required": "Optional, for boot logo"
         },
         {
           "filename": "dsp_rom.bin",

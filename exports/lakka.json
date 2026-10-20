@@ -6,26 +6,17 @@
   "files": [
     "System.dat"
   ],
-  "summary": "516 kept, 384 added, 94 hashes corrected, 0 requirements corrected, 25 sizes corrected, 1 size removed, 3 hashes cleared, 654 additions left out",
+  "summary": "516 kept, 395 added, 85 hashes corrected, 0 requirements corrected, 25 sizes corrected, 1 size removed, 2 hashes cleared, 702 additions left out",
   "counts": {
     "kept": 516,
-    "added": 384,
-    "not_added": 654,
+    "added": 395,
+    "not_added": 702,
     "not_kept": 0
   },
   "hashes_corrected": [
     "Arcade/aes.zip sha1",
     "Arcade/aes.zip md5",
     "Arcade/aes.zip crc32",
-    "Atari - 400-800/ATARIOSB.ROM sha1",
-    "Atari - 400-800/ATARIOSB.ROM md5",
-    "Atari - 400-800/ATARIOSB.ROM crc32",
-    "DOS/MT32_CONTROL.ROM md5",
-    "DOS/MT32_CONTROL.ROM crc32",
-    "DOS/CM32L_CONTROL.ROM md5",
-    "DOS/CM32L_CONTROL.ROM crc32",
-    "Microsoft - MSX/MSX.rom sha1",
-    "Microsoft - MSX/MSX.rom md5",
     "Nintendo - Nintendo DSi/dsi_bios7.bin sha1",
     "Nintendo - Nintendo DSi/dsi_bios7.bin md5",
     "Nintendo - Nintendo DSi/dsi_bios7.bin crc32",
@@ -141,7 +132,6 @@
     "SNK - NeoGeo CD/neocdz.zip"
   ],
   "hashes_cleared": [
-    "Microsoft - MSX/MSX.rom crc32",
     "SNK - NeoGeo CD/neocdz.zip sha1",
     "SNK - NeoGeo CD/neocdz.zip crc32"
   ],

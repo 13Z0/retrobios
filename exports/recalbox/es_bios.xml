@@ -20,6 +20,7 @@
     <bios path="whdboot/save-data/Kickstarts/kick40068.A1200.RTB" md5="547b42b7b070c7f227ea45e0986d57a1" core="amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick40068.A4000.RTB" md5="f89f19b858ea6b1a04327c6f71ee1600" core="amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick31034.A1000.RTB" md5="c5ba6165df42fc69b32942b248fca725" core="amiberry" mandatory="false" />
+    <bios path="amiga-os-310.rom" md5="730888fb1bd9a3606d51f772ed136528" core="amiberry" mandatory="false" />
     <bios path="uae_data/drive_click_A500.wav" md5="6c5b44c1a2bcee664129f850bfe4ed8a" core="libretro/puae,libretro/puae2021" mandatory="false" />
     <bios path="uae_data/drive_spin_A500.wav" md5="7401f854a75f9ede18769168ab896a2a" core="libretro/puae,libretro/puae2021" mandatory="false" />
     <bios path="uae_data/drive_spinnd_A500.wav" md5="f9d954879fee8e96baa93d6139077cdb" core="libretro/puae,libretro/puae2021" mandatory="false" />
@@ -50,12 +51,12 @@
   </system>
   <system fullname="Apple Macintosh" platform="macintosh">
     <bios path="macintosh/MacII.ROM" md5="66223be1497460f1e60885eeb35e03cc" core="libretro/minivmac" />
-    <bios path="macintosh/MinivMacBootv2.dsk" md5="16ddb8838d48be26e471a2f2bb85a961,e66dc7952c8b9673868ad2faba3c0d20" hashMatchMandatory="false" core="libretro/minivmac" />
+    <bios path="macintosh/MinivMacBootv2.dsk" md5="16ddb8838d48be26e471a2f2bb85a961,e66dc7952c8b9673868ad2faba3c0d20" core="libretro/minivmac" mandatory="false" hashMatchMandatory="false" />
   </system>
   <system fullname="Atari 8Bits" platform="atari800">
     <bios path="atari800/ATARIBAS.ROM" md5="0bac0c6a50104045d902df4503a4c30b" core="libretro/atari800" mandatory="false" />
     <bios path="atari800/ATARIOSA.ROM" md5="eb1f32f5d9f382db1bbfb8d7f9cb343a" core="libretro/atari800" mandatory="false" />
-    <bios path="atari800/ATARIOSB.ROM" md5="4177f386a3bac989a981d3fe3388cb6c" core="libretro/atari800" mandatory="false" />
+    <bios path="atari800/ATARIOSB.ROM" md5="a3e8d617c95d08031fe1b20d541434b2" core="libretro/atari800" mandatory="false" />
     <bios path="atari800/ATARIXL.ROM" md5="06daac977823773a3eea3422fd26a703" core="libretro/atari800" mandatory="false" />
   </system>
   <system fullname="Atari 5200" platform="atari5200">
@@ -214,6 +215,7 @@
     <bios path="msx/MSX.ROM"      md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/fmsx" />
     <bios path="msx/PAINTER.ROM" md5="403cdea1cbd2bb24fae506941f8f655e" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/RS232.ROM" md5="279efd1eae0d358eecd4edc7d9adedf3" core="libretro/fmsx" mandatory="false" />
+    <bios path="DEFAULT.FNT" md5="85b38e4128bbc300e675f55b278683a8" core="libretro/fmsx" mandatory="false" />
     <bios path="INTERNAT.FNT" md5="ac4f4a90c1b1887db48ded39c9d9c847" core="libretro/fmsx" mandatory="false" />
     <bios path="KOREAN.FNT" md5="73291e76638a2f5aa2eceb843df468f4" core="libretro/fmsx" mandatory="false" />
     <bios path="JAPANESE.FNT" md5="aa28f0703b951a6be8df3e28e20d263d" core="libretro/fmsx" mandatory="false" />
@@ -311,8 +313,8 @@
     <bios path="scph5502.bin" md5="32736f17079d0b2b7024407c39bd3050" core="libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
     <bios path="scph101.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
     <bios path="scph7001.bin" md5="1e68c231d0896b7eadcad1d7d8e76129" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
-    <bios path="scph1001.bin" md5="924e392ed05558ffdb115408c263dccf,dc2b9bf8da62ec93e868cfd29f0d067d" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
-    <bios path="ps1_rom.bin"  md5="81bbe60ba7a3d1cea1d48c14cbcc647b" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
+    <bios path="scph1001.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d,924e392ed05558ffdb115408c263dccf" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
+    <bios path="ps1_rom.bin" md5="81bbe60ba7a3d1cea1d48c14cbcc647b,fbb5f59ec332451debccf1e377017237" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
     <bios path="scph5000.bin" md5="57a06303dfa9cf9351222dfcbb4a29d9" core="duckstation" mandatory="false" />
     <bios path="scph1002a.bin" md5="54847e693405ffeb0359c6287434cbef" core="duckstation" mandatory="false" />
     <bios path="scph1002b.bin" md5="417b34706319da7cf001e76e40136c23" core="duckstation" mandatory="false" />
@@ -326,6 +328,7 @@
     <bios path="scph7002.bin" md5="b9d9a0286c33dc6b7237bb13cd46fdee" core="duckstation" mandatory="false" />
     <bios path="scph100.bin" md5="8abc1b549a4a80954addc48ef02c4521" core="duckstation" mandatory="false" />
     <bios path="scph101_v44.bin" md5="9a09ab7e49b422c007e6d54d7c49b965" core="duckstation" mandatory="false" />
+    <bios path="scph101_v45.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="duckstation" mandatory="false" />
     <bios path="scph1000r.bin" md5="476d68a94ccec3b9c8303bbd1daf2810" core="duckstation" mandatory="false" />
     <bios path="dtlh1100.bin" md5="ca5cfc321f916756e3f0effbfaeba13b" core="duckstation" mandatory="false" />
     <bios path="scph102_v44.bin" md5="b10f5e0e3d9eb60e5159690680b1e774" core="duckstation" mandatory="false" />
@@ -473,7 +476,7 @@
     <bios path="coleco/boot.rom"                                                     md5="2c66f5911e5b42b8ebe113403548eee7" core="libretro/gearcoleco" mandatory="true" />
   </system>
   <system fullname="MSX and MSX2 Series" platform="msx1,msx2,msxturbor">
-    <bios path="Machines/Forte II Games - Pesadelo/pesadelo.rom" md5="ba53d700ec25bcb08020ce693319cd28" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Forte II Games - Pesadelo/pesadelo.rom" md5="ba53d700ec25bcb08020ce693319cd28" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX - C-BIOS/cbios_logo_msx1.rom" md5="25b5cdea5040883a206b89845cdf55f1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX - C-BIOS/cbios_main_msx1.rom" md5="87b27f48cc25e2b6f749c019587d5f23" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom" md5="659db9142e62c51f2f75fd52fac78e44" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
@@ -486,8 +489,8 @@
     <bios path="Machines/MSX2+ - European/KANJI.rom"             md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/MSX2PMUS.rom"          md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/MSXKANJI.rom"          md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - European/Msx2pe.rom"            md5="277fd57c13f301fb4b366845a32d673a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/MSX2+ - European/Msx2pexte.rom"         md5="f78ab735aaad7045badbda8f4c8ac751" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/Msx2pe.rom" md5="277fd57c13f301fb4b366845a32d673a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/Msx2pexte.rom" md5="f78ab735aaad7045badbda8f4c8ac751" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/PANASONICDISK.rom"     md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/MSX2+ - European/XBASIC2.rom"           md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/SEGA - SF-7000/sf7000.rom"              md5="561b362f9aa4cbcb240461abf83c2e0d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
@@ -500,7 +503,7 @@
     <bios path="Machines/Shared Roms/KANJI.rom" md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MICROSOLDISK.ROM" md5="02e8b1f96049f09d6d3a735647cbbb2a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MOONSOUND.rom" md5="42af93619160ef2116416f74a6cb12f2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX.rom" md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX.rom"                    md5="364a1a579fe5cb8dba54519bcfcdac0d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2.rom"                   md5="ec3a01c91f24fbddcbcab0ad301bc9ef" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2AR.ROM" md5="91764e84f977671ac7caa50b36273fd2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2AREXT.ROM" md5="be5d1ec8001d945ca1432285722e9d16" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
@@ -516,7 +519,7 @@
     <bios path="Machines/Shared Roms/MSX2JEXT.rom" md5="8aabde714a42256bef36ea9b04f6ef59" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2KR.rom" md5="6819a1533502261bfdd52436b8346073" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2KREXT.rom" md5="30a0b3402a0a13b516af76d39f45a365" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
-    <bios path="Machines/Shared Roms/MSX2P.rom" md5="6d8c0ca64e726c82a4b726e9b01cdf1e" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2P.rom"                  md5="847cc025ffae665487940ff2639540e5" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2PEXT.rom"               md5="7c8243c71d8f143b2531f01afa6a05dc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2PMUS.rom"               md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
     <bios path="Machines/Shared Roms/MSX2R.rom" md5="db56360c85ef8410dc4bcf8e8602f61e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
@@ -592,11 +595,12 @@
   </system>
   <system fullname="Pentagon 128/512/1024 (ZX Spectrum clone)" platform="zxspectrum">
     <bios path="fuse/128p-0.rom" md5="a249565f03b98d004ee7f019570069cd" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
-    <bios path="fuse/128p-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/128p-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
     <bios path="fuse/gluck.rom" md5="d5869034604dbfd2c1d54170e874fd0a" core="libretro/fuse" note="Only required if you want to emulate Pentagon 512/1024 machine" />
     <bios path="fuse/trdos.rom" md5="b6d8db853c24621cbd5fef3c892c976c,5c097b0fb75bb7147104d6e77db0300a,dd70541ed6a6e8176e8dace64f9344ad,b08fa49b5de8448e94936a9d061dc0f5,4a3e2b04982ac6c594adb6793be4d6e7,4123fd0b5c218ef704770596dc6533e1,6459c606ff23a610e504d0387383148a,aa9f9acf05382aff569dfdadde4ef8f2,48b5da4079ff8394852429e53cfc607f,14399030d8228ca1b16872ed426a5835,7031f2610845d39c54c97097afa8fa03,4da473775c4badcc83ab5d86dc8231de,3f8a2a239a10b6694ec79148a292cfb4,62cbbdca554c8c23676618d4c83ef40e,c511eaa8fcc968cc13baf7ad80f3aea3,a92db09c9aa3cfda478a9bf1eec7ff90,0da70a5d2a0e733398e005b96b7e4ba6,a701f54355b53fa93fb8599933d518b7,0c42e3b9ab8dd91ea096f1d0c07c55e5,b4c9634312b796063015450daef13dfa,d6f43c70c003f07d0a694f81ff55db95,a3242d31a0624a64a56f3a6cb5484e7c,cc46c7bacbbaf528a864113c76d9b9c9,53e2f417c6996df9af170e147df8e369" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
     <bios path="fuse/48.rom" md5="4c42a2f075212361c3117015b107ff68" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/128-0.rom" md5="b4d2692115a9f2924df92a3cbfb358fb" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/128-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/plus2-0.rom" md5="4ed7af4636308b8a48d7a35e6c5b546b" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/plus2-1.rom" md5="b3db95931cc844efaeb82db9c171b9f3" core="libretro/fuse" mandatory="false" />
     <bios path="fuse/plus3-0.rom" md5="9833b8b73384dd5fa3678377ff00a2bb" core="libretro/fuse" mandatory="false" />

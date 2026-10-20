@@ -81,7 +81,8 @@
         "md5": "1c965da49b6c5459b8353630aa1482e7",
         "system": "tanodragon",
         "description": "Tano Dragon DOS OS firmware (version 10)",
-        "required": "Required"
+        "required": "Optional",
+        "sha256": "6dfc01c48e325032a025dbba7539796e0e56452a98fa6eece87f259cb9e4284f"
       },
       {
         "filename": "ddos11c.rom",
@@ -99,7 +100,8 @@
         "filename": "ddos40.rom",
         "md5": "9ddc388632cd3c376b164ba5cfc64329",
         "system": "tanodragon",
-        "description": "Tano Dragon DOS OS firmware (version 40)"
+        "description": "Tano Dragon DOS OS firmware (version 40)",
+        "sha256": "9764f572f13ae4f174fb01c7f0276bbf10d64d85775fa638d55080a5449d10b8"
       },
       {
         "filename": "ddos42.rom",
@@ -118,7 +120,8 @@
         "filename": "dplus48.rom",
         "md5": "ee6f24d893a52b8efea9f787855456b5",
         "system": "tanodragon",
-        "description": "Tano Dragon DOS OS firmware (plus 48)"
+        "description": "Tano Dragon DOS OS firmware (plus 48)",
+        "sha256": "ad369a86c3cf5353250784e4a01ba36d9858daa68e8eeb49ee7b54b3798a1c19"
       },
       {
         "filename": "dplus49b.rom",
@@ -242,7 +245,8 @@
         "filename": "disk10.rom",
         "md5": "a64b3ef9efcc066b18d35b134068d1cc",
         "system": "coco",
-        "description": "Disk Operating System (DOS) ROM for CoCo 1/2"
+        "description": "Disk Operating System (DOS) ROM for CoCo 1/2",
+        "sha256": "8c86c83720043525029797dd3defd0fd285651549a373117304cc470e8e61f91"
       },
       {
         "filename": "disk11.rom",

@@ -150,8 +150,7 @@
           "md5": "1e68c231d0896b7eadcad1d7d8e76129",
           "system": "psx",
           "description": "PlayStation BIOS - SCPH-7001 - Japan",
-          "required": "At least one BIOS file required",
-          "sha256": "39dcc1a0717036c9b6ac52fefd1ee7a57d3808e8cfbc755879fa685a0a738278"
+          "required": "At least one BIOS file required"
         },
         {
           "filename": "scph7002.bin",
@@ -184,7 +183,10 @@
         },
         {
           "filename": "ps1_rom.bin",
-          "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b",
+          "md5": [
+            "81bbe60ba7a3d1cea1d48c14cbcc647b",
+            "fbb5f59ec332451debccf1e377017237"
+          ],
           "system": "psx",
           "description": "Generic PlayStation BIOS from the Playstation 3",
           "required": "At least one BIOS file required",
@@ -203,8 +205,7 @@
           "md5": "924e392ed05558ffdb115408c263dccf",
           "system": "psx",
           "description": "PlayStation 1 BIOS - EUROPE",
-          "required": "At least one BIOS file required",
-          "sha256": "71af94d1e47a68c11e8fdb9f8368040601514a42a5a399cda48c7d3bff1e99d3"
+          "required": "At least one BIOS file required"
         },
         {
           "filename": "scph1002.bin",
@@ -227,8 +228,7 @@
           "md5": "6e3735ff4c7dc899ee98981385f6f3d0",
           "system": "psx",
           "description": "PlayStation 1 BIOS - USA",
-          "required": "At least one BIOS file required",
-          "sha256": "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8"
+          "required": "At least one BIOS file required"
         },
         {
           "filename": "scph102A.bin",
@@ -278,6 +278,13 @@
           "sha256": "0c8359870cbac0ea091f1c87f188cd332dcc709753b91cafd9fd44a4a6188197"
         },
         {
+          "filename": "scph1002a.bin",
+          "md5": "54847e693405ffeb0359c6287434cbef",
+          "sha256": "0af2be3468d30b6018b3c3b0d98b8b64347e255e16d874d55f0363648973dbf0",
+          "system": "psx",
+          "description": "SCPH-1002, DTL-H1002 (v2.0 05-10-95 E)"
+        },
+        {
           "filename": "scph1002b.bin",
           "md5": "417b34706319da7cf001e76e40136c23",
           "sha256": "1efb0cfc5db8a8751a884c5312e9c6265ca1bc580dc0c2663eb2dea3bde9fcf7",
@@ -325,6 +332,13 @@
           "sha256": "8434528690df0d444dfe4e931eb5501be53df70497e63f4c9a21184631cdbb87",
           "system": "psx",
           "description": "SCPH-101 (v4.4 03-24-00 A)"
+        },
+        {
+          "filename": "scph101_v45.bin",
+          "md5": "6e3735ff4c7dc899ee98981385f6f3d0",
+          "sha256": "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8",
+          "system": "psx",
+          "description": "SCPH-101 (v4.5 05-25-00 A)"
         },
         {
           "filename": "scph1000r.bin",

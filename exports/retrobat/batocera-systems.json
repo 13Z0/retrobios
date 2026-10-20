@@ -219,12 +219,28 @@
         "file": "bios/whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
       },
       {
+        "md5": "730888fb1bd9a3606d51f772ed136528",
+        "file": "bios/amiga-os-310.rom"
+      },
+      {
+        "md5": "82a21c1890cae844b3df741f2762d48d",
+        "file": "bios/amiga-os-130.rom"
+      },
+      {
+        "md5": "85ad74194e87c08904327de1a9443b7a",
+        "file": "bios/amiga-os-120.rom"
+      },
+      {
         "md5": "e40a5dfb3d017ba8779faba30cbd1c8e",
         "file": "bios/amiga-os-310-a600.rom"
       },
       {
         "md5": "465646c9b6729f77eea5314d1f057951",
         "file": "bios/amiga-os-205-a600.rom"
+      },
+      {
+        "md5": "dc10d7bdd1b6f450773dfb558477c230",
+        "file": "bios/amiga-os-204.rom"
       },
       {
         "md5": "646773759326fbac3b2311fd8c8793ee",
@@ -241,6 +257,10 @@
       {
         "md5": "9b8bdd5a3fd32c2a5a6f5b1aefc799a5",
         "file": "bios/amiga-os-300-a4000.rom"
+      },
+      {
+        "md5": "5f8924d013dd57a89cf349f4cdedc6b1",
+        "file": "bios/amiga-os-310-cd32.rom"
       },
       {
         "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
@@ -542,8 +562,16 @@
         "file": "bios/atari-basic-rev-b.rom"
       },
       {
+        "md5": "0bac0c6a50104045d902df4503a4c30b",
+        "file": "bios/atari-basic-rev-c.rom"
+      },
+      {
         "md5": "a3c1585b5d19719f8acfa2b093bea75f",
         "file": "bios/atari-800-os-a-ntsc.rom"
+      },
+      {
+        "md5": "eb1f32f5d9f382db1bbfb8d7f9cb343a",
+        "file": "bios/atari-800-os-a-pal.rom"
       },
       {
         "md5": "4177f386a3bac989a981d3fe3388cb6c",
@@ -564,6 +592,10 @@
       {
         "md5": "9aea45e724d2588fbbeda658c7dc53ee",
         "file": "bios/atari-xl-os-ver-1.rom"
+      },
+      {
+        "md5": "06daac977823773a3eea3422fd26a703",
+        "file": "bios/atari-xl-os-ver-2.rom"
       },
       {
         "md5": "54e704558a6aedfc45cebf8f8ac9c312",
@@ -1061,7 +1093,7 @@
         "file": "bios/bk/DISK_327.ROM"
       },
       {
-        "md5": "ebe418ec8a6c85d5ac32956c9a96c179",
+        "md5": "3fa774326d75410a065659aea80252f0",
         "file": "bios/bk/BASIC10.ROM"
       },
       {
@@ -1270,6 +1302,10 @@
         "file": "bios/disk11.rom"
       },
       {
+        "md5": "a64b3ef9efcc066b18d35b134068d1cc",
+        "file": "bios/disk10.rom"
+      },
+      {
         "md5": "171fb7a5d3b808565295b45c773abaaf",
         "file": "bios/orch90.rom"
       }
@@ -1287,7 +1323,7 @@
         "file": "bios/colecovision.rom"
       },
       {
-        "md5": "00fd13b66d39c69706aa48eb84a78411",
+        "md5": "2c66f5911e5b42b8ebe113403548eee7",
         "file": "bios/openMSX/share/systemroms/coleco.rom"
       }
     ]
@@ -1343,7 +1379,7 @@
       },
       {
         "md5": "e10c53c2f8b90bab96ead2d368858623",
-        "file": "bios/dc_bios.bin"
+        "file": "bios/dc/boot.bin"
       }
     ]
   },
@@ -1740,7 +1776,7 @@
     "name": "MSX",
     "biosFiles": [
       {
-        "md5": "aa95aea2563cd5ec0a0919b44cc17d47",
+        "md5": "364a1a579fe5cb8dba54519bcfcdac0d",
         "file": "bios/MSX.ROM"
       },
       {
@@ -1798,6 +1834,10 @@
       {
         "md5": "95c94878c0ecf0b4c0d8bc8deaa9d7f3",
         "file": "bios/MSX_1.0.rom"
+      },
+      {
+        "md5": "9218f6dd89f7ba01e3090d44721b4260",
+        "file": "bios/MSX_jpn.rom"
       }
     ]
   },
@@ -2722,10 +2762,6 @@
       {
         "md5": "81328b966e6dcf7ea1e32e55e1c104bb",
         "file": "bios/scph5903.bin"
-      },
-      {
-        "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b",
-        "file": "bios/ps1_rom.bin"
       }
     ]
   },
@@ -2861,6 +2897,22 @@
       {
         "md5": "ba2cb634c15e59d7ea5552729306f2ef",
         "file": "bios/SAT_STV_17954A-(E).bin"
+      },
+      {
+        "md5": "3ea3202e2634cb47cb90f3a05c015010",
+        "file": "bios/hisaturn.bin"
+      },
+      {
+        "md5": "cb2cebc1b6e573b7c44523d037edcd45",
+        "file": "bios/mpr-18100.bin"
+      },
+      {
+        "md5": "0306c0e408d6682dd2d86324bd4ac661",
+        "file": "bios/hisaturn_v103.bin"
+      },
+      {
+        "md5": "ac4e4b6522e200c0d23d371a8cecbfd3",
+        "file": "bios/vsaturn.bin"
       }
     ]
   },
@@ -2868,7 +2920,7 @@
     "name": "ScummVM",
     "biosFiles": [
       {
-        "md5": "c5233e4594f9b7bc4f773ae6ba5aa87d",
+        "md5": "5626206284b22c2734f3e9efefcd2675",
         "file": "bios/scummvm/extra/MT32_CONTROL.ROM"
       },
       {
@@ -3113,6 +3165,18 @@
       {
         "md5": "278a9397d192149e84e820ac621a8edd",
         "file": "bios/bios_CD_J.bin"
+      },
+      {
+        "md5": "683a8a9e273662561172468dfa2858eb",
+        "file": "bios/jp_mcd2_921222.bin"
+      },
+      {
+        "md5": "310a9081d2edf2d316ab38813136725e",
+        "file": "bios/SegaCDBIOS9303.bin"
+      },
+      {
+        "md5": "9b562ebf2d095bf1dabadbc1881f519a",
+        "file": "bios/eu_mcd2_9303.bin"
       }
     ]
   },

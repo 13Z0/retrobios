@@ -141,7 +141,7 @@ systems = {
 
     # ---------- Sega ---------- #
     # https://docs.libretro.com/library/flycast/#bios
-    "dreamcast": { "name": "Dreamcast", "biosFiles": [ { "md5": "e10c53c2f8b90bab96ead2d368858623", "file": "bios/dc/dc_boot.bin" }, { "md5": "0a93f7940c455905bea6e392dfde92a4", "file": "bios/dc_flash.bin", "emulator": "demul" }, { "md5": "0a93f7940c455905bea6e392dfde92a4", "file": "bios/dc_flash.bin", "emulator": "libretro", "core": "redream" }, { "md5": "e10c53c2f8b90bab96ead2d368858623", "file": "bios/dc_bios.bin", "emulator": "libretro", "core": "redream" } ] },
+    "dreamcast": { "name": "Dreamcast", "biosFiles": [ { "md5": "e10c53c2f8b90bab96ead2d368858623", "file": "bios/dc/dc_boot.bin" }, { "md5": "0a93f7940c455905bea6e392dfde92a4", "file": "bios/dc/flash.bin", "emulator": "demul" }, { "md5": "0a93f7940c455905bea6e392dfde92a4", "file": "bios/dc/flash.bin", "emulator": "libretro", "core": "redream" }, { "md5": "e10c53c2f8b90bab96ead2d368858623", "file": "bios/dc/boot.bin", "emulator": "libretro", "core": "redream" } ] },
 
     # https://github.com/libretro/libretro-super/blob/master/dist/info/flycast_libretro.info
     "naomi":        { "name": "Naomi", "biosFiles":       [ { "md5": "eb4099aeb42ef089cfe94f8fe95e51f6", "file": "bios/dc/naomi.zip"   } ] },
@@ -159,18 +159,26 @@ systems = {
 
     # https://docs.libretro.com/library/beetle_saturn/#bios
     # https://github.com/libretro/libretro-super/blob/master/dist/info/yabasanshiro_libretro.info
-    "saturn":       { "name": "Sega Saturn", "biosFiles": [ { "md5": "85ec9ca47d8f6807718151cbcca8b964", "file": "bios/sega_101.bin"     },
-                                                            { "md5": "3240872c70984b6cbfda1586cab68dbe", "file": "bios/mpr-17933.bin"    },
-                                                            { "md5": "255113ba943c92a54facd25a10fd780c", "file": "bios/mpr-18811-mx.ic1" },
-                                                            { "md5": "1cd19988d1d72a3e7caa0b73234c96b4", "file": "bios/mpr-19367-mx.ic1" },
-                                                            { "md5": "af5828fdff51384f99b3c4926be27762", "file": "bios/saturn_bios.bin" } ] },
+    "saturn": { "name": "Sega Saturn", "biosFiles": [
+        { "md5": "85ec9ca47d8f6807718151cbcca8b964", "file": "bios/sega_101.bin" },
+        { "md5": "3240872c70984b6cbfda1586cab68dbe", "file": "bios/mpr-17933.bin" },
+        { "md5": "255113ba943c92a54facd25a10fd780c", "file": "bios/mpr-18811-mx.ic1" },
+        { "md5": "1cd19988d1d72a3e7caa0b73234c96b4", "file": "bios/mpr-19367-mx.ic1" },
+        { "md5": "af5828fdff51384f99b3c4926be27762", "file": "bios/saturn_bios.bin" },
+        { "md5": "af5828fdff51384f99b3c4926be27762", "file": "bios/SAT_1.00-(J).bin", "emulator": "ymir" },
+        { "md5": "f273555d7d91e8a5a6bfd9bcf066331c", "file": "bios/SAT_1.00a-(U+E).bin", "emulator": "ymir" },
+        { "md5": "3ea3202e2634cb47cb90f3a05c015010", "file": "bios/hisaturn.bin", "emulator": "ymir" },
+        { "md5": "cb2cebc1b6e573b7c44523d037edcd45", "file": "bios/mpr-18100.bin", "emulator": "ymir" },
+        { "md5": "0306c0e408d6682dd2d86324bd4ac661", "file": "bios/hisaturn_v103.bin", "emulator": "ymir" },
+        { "md5": "ac4e4b6522e200c0d23d371a8cecbfd3", "file": "bios/vsaturn.bin", "emulator": "ymir" }
+    ] },
 
     # ---------- Sony Computer Entertainment ---------- #
     # https://docs.libretro.com/library/pcsx_rearmed/#bios
     "psx": { "name": "PSX", "biosFiles": [
         { "md5": "c53ca5908936d412331790f4426c6c33", "file": "bios/psxonpsp660.bin" },
         { "md5": "6e3735ff4c7dc899ee98981385f6f3d0", "file": "bios/scph101.bin" },
-        { "md5": "924e392ed05558ffdb115408c263dccf", "file": "bios/scph1001.bin" },
+        { "md5": "dc2b9bf8da62ec93e868cfd29f0d067d", "file": "bios/scph1001.bin" },
         { "md5": "8dd7d5296a650fac7319bce665a6a53c", "file": "bios/scph5500.bin" },
         { "md5": "490f666e1afb15b7362b406ed1cea246", "file": "bios/scph5501.bin" },
         { "md5": "32736f17079d0b2b7024407c39bd3050", "file": "bios/scph5502.bin" },
@@ -180,7 +188,6 @@ systems = {
         { "md5": "417b34706319da7cf001e76e40136c23", "file": "bios/scph1002b.bin", "emulator": "duckstation" },
         { "md5": "e2110b8a2b97a8e0b857a45d32f7e187", "file": "bios/scph1002c.bin", "emulator": "duckstation" },
         { "md5": "849515939161e62f6b866f6853006780", "file": "bios/scph3000.bin", "emulator": "duckstation" },
-        { "md5": "dc2b9bf8da62ec93e868cfd29f0d067d", "file": "bios/scph1001_v20.bin", "emulator": "duckstation" },
         { "md5": "cba733ceeff5aef5c32254f1d617fa62", "file": "bios/scph3500.bin", "emulator": "duckstation" },
         { "md5": "da27e8b6dab242d8f91a9b25d80c63b8", "file": "bios/scph1001_v21.bin", "emulator": "duckstation" },
         { "md5": "8e4c14f567745eff2f0408c8129f72a6", "file": "bios/scph7000.bin", "emulator": "duckstation" },
@@ -188,6 +195,7 @@ systems = {
         { "md5": "b9d9a0286c33dc6b7237bb13cd46fdee", "file": "bios/scph7002.bin", "emulator": "duckstation" },
         { "md5": "8abc1b549a4a80954addc48ef02c4521", "file": "bios/scph100.bin", "emulator": "duckstation" },
         { "md5": "9a09ab7e49b422c007e6d54d7c49b965", "file": "bios/scph101_v44.bin", "emulator": "duckstation" },
+        { "md5": "6e3735ff4c7dc899ee98981385f6f3d0", "file": "bios/scph101_v45.bin", "emulator": "duckstation" },
         { "md5": "476d68a94ccec3b9c8303bbd1daf2810", "file": "bios/scph1000r.bin", "emulator": "duckstation" },
         { "md5": "ca5cfc321f916756e3f0effbfaeba13b", "file": "bios/dtlh1100.bin", "emulator": "duckstation" },
         { "md5": "b10f5e0e3d9eb60e5159690680b1e774", "file": "bios/scph102_v44.bin", "emulator": "duckstation" },
@@ -273,9 +281,7 @@ systems = {
         { "md5": "7ebb4fc5eab6f79a27d76ac9aad392b2", "file": "bios/ps2_scph70002_alt.bin", "emulator": "duckstation" },
         { "md5": "63ead1d74893bf7f36880af81f68a82d", "file": "bios/ps2_dtlh70002.bin", "emulator": "duckstation" },
         { "md5": "93ea3bcee4252627919175ff1b16a1d9", "file": "bios/ps2_kdl22px300.bin", "emulator": "duckstation" },
-        { "md5": "81328b966e6dcf7ea1e32e55e1c104bb", "file": "bios/scph5903.bin", "emulator": "libretro", "core": "mednafen_psx" },
-        { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "mednafen_psx" },
-        { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "swanstation" }
+        { "md5": "81328b966e6dcf7ea1e32e55e1c104bb", "file": "bios/scph5903.bin", "emulator": "libretro", "core": "mednafen_psx" }
     ] },
 
     # https://pcsx2.net/config-guide/official-english-pcsx2-configuration-guide.html#Bios
@@ -437,7 +443,7 @@ systems = {
     # ---------- NEC PC-9800 ---------- #
     # https://github.com/RetroPie/RetroPie-Setup/wiki/PC-9800#bios
     "pc98": { "name": "NEC PC-9800", "biosFiles": [
-        { "md5": "c66b49cd7082d1b81442fb2704542401", "file": "bios/np2kai/BIOS.ROM" },
+        { "md5": "e246140dec5124c5e404869a84caefce", "file": "bios/np2kai/BIOS.ROM" },
         { "md5": "2af6179d7de4893ea0b705c00e9a98d6", "file": "bios/np2kai/FONT.ROM" },
         { "md5": "caf90f22197aed6f14c471c21e64658d", "file": "bios/np2kai/SOUND.ROM" },
         { "md5": "e9fc3890963b12cf15d0a2eea5815b72", "file": "bios/np2kai/ITF.ROM" },
@@ -608,6 +614,7 @@ systems = {
         { "md5": "6fc82178ae8abe07fa8f6939062291dc", "file": "bios/mx1600extbas.rom", "emulator": "xroar" },
         { "md5": "f73da4d73d6db5cdb8b3cb6a50415e38", "file": "bios/cp400bas.rom", "emulator": "xroar" },
         { "md5": "091581001577b4a83ccfd511829de0f1", "file": "bios/cp400ext.rom", "emulator": "xroar" },
+        { "md5": "a64b3ef9efcc066b18d35b134068d1cc", "file": "bios/disk10.rom", "emulator": "xroar" },
         { "md5": "171fb7a5d3b808565295b45c773abaaf", "file": "bios/orch90.rom", "emulator": "xroar" }
     ] },
 
@@ -628,7 +635,10 @@ systems = {
         { "md5": "283726f0f22603d3e60c27865babccf4", "file": "bios/alpha-boot-v1.0.rom", "emulator": "xroar" },
         { "md5": "01e5577ef5dd9eac00bba3698e046afb", "file": "bios/alpha-boot-v0.4.rom", "emulator": "xroar" },
         { "md5": "be9bc86ee5eb401d0a40d0377f65fefa", "file": "bios/alpha-basic.rom", "emulator": "xroar" },
+        { "md5": "9ddc388632cd3c376b164ba5cfc64329", "file": "bios/ddos40.rom", "emulator": "xroar" },
+        { "md5": "1c965da49b6c5459b8353630aa1482e7", "file": "bios/ddos10.rom", "emulator": "xroar" },
         { "md5": "56f1b97314e4ca82491c465bb887059e", "file": "bios/dplus49b.rom", "emulator": "xroar" },
+        { "md5": "ee6f24d893a52b8efea9f787855456b5", "file": "bios/dplus48.rom", "emulator": "xroar" },
         { "md5": "9d85e6b7133f915c021156f4b9cdb512", "file": "bios/sdose6.rom", "emulator": "xroar" },
         { "md5": "024eac3db20f1b5cf98c30a0e4743201", "file": "bios/delta2.rom", "emulator": "xroar" }
     ] },
@@ -1064,7 +1074,7 @@ systems = {
     # ---------- ScummVM ---------- #
     "scummvm": { "name": "ScummVM", "biosFiles": [
         { "md5": "89e42e386e82e0cacb4a2704a03706ca", "file": "bios/scummvm/extra/MT32_PCM.ROM" },
-        { "md5": "c5233e4594f9b7bc4f773ae6ba5aa87d", "file": "bios/scummvm/extra/MT32_CONTROL.ROM" },
+        { "md5": "5626206284b22c2734f3e9efefcd2675", "file": "bios/scummvm/extra/MT32_CONTROL.ROM" },
         { "md5": "ee71d6cd464c618c632e6fd62b430d2c", "file": "bios/scummvm/theme/scummmodern.zip", "emulator": "libretro", "core": "scummvm" },
         { "md5": "8f37bd19dd51be456ac8f005fd5669a8", "file": "bios/scummvm/theme/scummclassic.zip", "emulator": "libretro", "core": "scummvm" },
         { "md5": "0d990484d0dfc1680b20cfabcae373cd", "file": "bios/scummvm/theme/scummremastered.zip", "emulator": "libretro", "core": "scummvm" },
@@ -1198,6 +1208,7 @@ systems = {
         { "md5": "eaa21cf569e494ef4ed5cab71b781209", "file": "bios/Enterprise/BASIC 1.0 - EPROM 2-2 (198x)(Enterprise).bin", "emulator": "clk" },
         { "md5": "7cd7268b9e4a4357fe401021df0335b5", "file": "bios/Enterprise/basic11.bin", "emulator": "clk" },
         { "md5": "fbfb53de61b3f53d9dde804833fc8087", "file": "bios/Enterprise/BASIC 1.1 - EPROM 1.1 (198x)(Enterprise).bin", "emulator": "clk" },
+        { "md5": "e972fe42b398c9ff1d93ff014786aec6", "file": "bios/Enterprise/basic21.bin", "emulator": "clk" },
         { "md5": "e390d30bfafed9d34714fa748dab3890", "file": "bios/Enterprise/epdos.bin", "emulator": "clk" },
         { "md5": "849d8796d8d3e3fcf89f151b57db73b0", "file": "bios/Enterprise/exdos.bin", "emulator": "clk" }
     ] },
