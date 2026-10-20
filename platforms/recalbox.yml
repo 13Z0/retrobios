@@ -3409,3 +3409,977 @@ systems:
       mandatory_declared: true
       native_name: ST-V
     native_id: stv
+launchers:
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: st
+  names:
+  - atarist/st.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: megast
+  names:
+  - atarist/st.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: ste
+  names:
+  - atarist/ste.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: megaste
+  names:
+  - atarist/megaste.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: tt
+  names:
+  - atarist/tt.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: names_searched
+  slot: falcon
+  names:
+  - atarist/falcon.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: hatari
+  build: standalone
+  kind: fixed_name
+  slot: emutos
+  names:
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: '"emutos" in the rom path'
+  source_ref: "projects/configgen/configgen/generators/hatari/hatariGenerator.py:108-138,\
+    \ 151-167"
+- emulator: gsplus
+  build: standalone
+  kind: names_searched
+  names:
+  - apple2gs1.rom
+  - apple2gs3.rom
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: g_cfg_rom_path
+  fails_when_missing: false
+  depends_on_option: rom path without ".gsplus"
+  source_ref: "projects/configgen/configgen/generators/gsplus/gsplusGenerator.py:140-148"
+- emulator: gsplus
+  build: standalone
+  kind: fixed_name
+  slot: '%1'
+  names:
+  - apple2gs1.rom
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: g_cfg_rom_path
+  fails_when_missing: false
+  depends_on_option: '".gsplus" game file whose g_cfg_rom_path is %1'
+  source_ref: "projects/configgen/configgen/generators/gsplus/gsplusGenerator.py:107-108"
+- emulator: gsplus
+  build: standalone
+  kind: fixed_name
+  slot: '%3'
+  names:
+  - apple2gs3.rom
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: g_cfg_rom_path
+  fails_when_missing: false
+  depends_on_option: '".gsplus" game file whose g_cfg_rom_path is %3'
+  source_ref: "projects/configgen/configgen/generators/gsplus/gsplusGenerator.py:109-110"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  slot: amiga600
+  names:
+  - kick37175.A500
+  - kick34005.A500
+  - kick33180.A500
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: kickstart_rom_file
+  fails_when_missing: false
+  depends_on_option: rom type WHDL, HDF, PACKAGE, CDROM, HDDFS
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 50-53, 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  slot: amiga600
+  names:
+  - kick34005.A500
+  - kick33180.A500
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: kickstart_rom_file
+  fails_when_missing: false
+  depends_on_option: rom type DISK
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 54-57, 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: amiberry
+  build: standalone
+  kind: names_searched
+  slot: amiga1200
+  names:
+  - kick40068.A1200
+  - kick39106.A1200
+  - kick40068.A4000
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: kickstart_rom_file
+  fails_when_missing: false
+  depends_on_option: rom type WHDL, HDF, PACKAGE, CDROM, HDDFS, DISK
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 61-64, 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: amiberry
+  build: standalone
+  kind: fixed_name
+  slot: amigacd32
+  names:
+  - kick40060.CD32
+  - kick40060.CD32.ext
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: kickstart_rom_file, kickstart_ext_rom_file
+  fails_when_missing: No BIOS found, Extended BIOS not found
+  depends_on_option: rom type CDROM
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 68-71, 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: amiberry
+  build: standalone
+  kind: fixed_name
+  slot: amigacdtv
+  names:
+  - kick34005.A500
+  - kick34005.CDTV
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: kickstart_rom_file, kickstart_ext_rom_file
+  fails_when_missing: No BIOS found, Extended BIOS not found
+  depends_on_option: rom type CDROM
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 75-78, 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: amiberry
+  build: standalone
+  kind: fixed_name
+  slot: amiga600, amiga1200
+  names:
+  - kick02019.AROS
+  - kick02019.AROS.ext
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: "kickstart_rom_file, kickstart_ext_rom_file (:AROS built in when either\
+    \ is missing)"
+  fails_when_missing: false
+  depends_on_option: none of the listed kickstarts found
+  source_ref: "projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:9-10,\
+    \ 94-142, projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  slot: EU
+  names:
+  - ps2-0230e-20080220.bin
+  - ps2-0230a-20080220.bin
+  - ps2-0230j-20080220.bin
+  - ps2-0230h-20080220.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/ps2
+  passes_to: "[Filenames] BIOS"
+  fails_when_missing: false
+  depends_on_option: rom name contains europe, france, ireland, germany, belgium,
+    italy, greece, croatia, denmark, spain, portugal, poland, finland, russia, austria,
+    netherlands, switzerland, norway, sweden, scandinavia, australia, india, south
+    africa, uk
+  source_ref: "projects/configgen/configgen/generators/pcsx2/pcsx2Generator.py:37-40,\
+    \ 56-107, 166"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  slot: USA
+  names:
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0230j-20080220.bin
+  - ps2-0230h-20080220.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/ps2
+  passes_to: "[Filenames] BIOS"
+  fails_when_missing: false
+  depends_on_option: rom name contains canada, brazil, latin america, usa
+  source_ref: "projects/configgen/configgen/generators/pcsx2/pcsx2Generator.py:37-40,\
+    \ 56-107, 166"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  slot: JP
+  names:
+  - ps2-0230j-20080220.bin
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0230h-20080220.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/ps2
+  passes_to: "[Filenames] BIOS"
+  fails_when_missing: false
+  depends_on_option: rom name contains japan, korea, asia
+  source_ref: "projects/configgen/configgen/generators/pcsx2/pcsx2Generator.py:37-40,\
+    \ 56-107, 166"
+- emulator: pcsx2
+  build: standalone
+  kind: fixed_name
+  slot: HK
+  names:
+  - ps2-0230h-20080220.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/ps2
+  passes_to: "[Filenames] BIOS"
+  fails_when_missing: false
+  depends_on_option: rom name contains china, taiwan and ps2-0230j-20080220.bin is
+    present
+  source_ref: "projects/configgen/configgen/generators/pcsx2/pcsx2Generator.py:37-40,\
+    \ 56-107, 166"
+- emulator: pcsx2
+  build: standalone
+  kind: names_searched
+  slot: default
+  names:
+  - ps2-0230a-20080220.bin
+  - ps2-0230e-20080220.bin
+  - ps2-0230j-20080220.bin
+  - ps2-0230h-20080220.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios/ps2
+  passes_to: "[Filenames] BIOS"
+  fails_when_missing: false
+  depends_on_option: rom name with no region token, or its BIOS absent
+  source_ref: "projects/configgen/configgen/generators/pcsx2/pcsx2Generator.py:37-40,\
+    \ 56-107, 166"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - xbox/Complex_4627.bin
+  - xbox/mcpx_1.0.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[sys.files] flashrom_path, [sys.files] bootrom_path"
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/xemu/xemuGenerator.py:16, 26,\
+    \ 58-59"
+- emulator: mupen64plus
+  build: standalone
+  kind: fixed_name
+  names:
+  - 64DD_IPL.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[64DD] IPL-ROM"
+  fails_when_missing: false
+  depends_on_option: system 64dd
+  source_ref: "projects/configgen/configgen/generators/mupen/mupenConfig.py:118-121"
+- emulator: dolphin, dolphin-gui
+  build: standalone
+  kind: fixed_name
+  names:
+  - gamecube/EUR/IPL.bin
+  - gamecube/JP/IPL.bin
+  - gamecube/USA/IPL.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[Core] SkipIpl (False when one is present, else True)"
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/dolphin/dolphinGenerator.py:154-163,\
+    \ 236-237, 273"
+- emulator: dolphin
+  build: libretro
+  kind: fixed_name
+  names:
+  - gamecube/EUR/IPL.bin
+  - gamecube/JP/IPL.bin
+  - gamecube/USA/IPL.bin
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option dolphin_skip_gc_bios (disabled when one is present, else\
+    \ enabled)"
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:496-504"
+- emulator: a5200
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/atari5200
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:434-435"
+- emulator: bsnes
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/sgb
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system gb, gbc
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:436-438"
+- emulator: bsnes
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/satellaview
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system satellaview
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:436,\
+    \ 439-440"
+- emulator: bsnes
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system other than gb, gbc, satellaview
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:436,\
+    \ 441-442"
+- emulator: bsneshd
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/sgb
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system gb, gbc
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:443-445"
+- emulator: bsneshd
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/satellaview
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system satellaview
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:443,\
+    \ 446-447"
+- emulator: bsneshd
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system other than gb, gbc, satellaview
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:443,\
+    \ 448-449"
+- emulator: cdi2015
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/cdi
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:450-451"
+- emulator: dolphin
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/gamecube
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:452-453"
+- emulator: emuscv
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/scv
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:454-455"
+- emulator: fmsx
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/msx
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:456-457"
+- emulator: freechaf
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/channelf
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:458-459"
+- emulator: freeintv
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/intellivision
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:460-461"
+- emulator: gambatte
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:462-463"
+- emulator: gearsystem
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:464-465"
+- emulator: genesisplusgx
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:466-467"
+- emulator: genesisplusgxwide
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:468-469"
+- emulator: geolith
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/geolith
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:470-471"
+- emulator: gpsp
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/gba
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:472-473"
+- emulator: mednafen_pce_fast
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:474-475"
+- emulator: mednafen_pcfx
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/pcfx
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:476-477"
+- emulator: mednafen_supergrafx
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:478-479"
+- emulator: geargrafx
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/pcenginecd
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:480-481"
+- emulator: mesen_s
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/sgb
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system flag SuperGameBoy
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:482-484"
+- emulator: mesen_s
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: without system flag SuperGameBoy
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:482,\
+    \ 485-486"
+- emulator: minivmac
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/macintosh
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:487-488"
+- emulator: mu
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/palm
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:489-490"
+- emulator: o2em
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/o2em
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:491-492"
+- emulator: opera
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/3do
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:493-494"
+- emulator: picodrive
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:495-496"
+- emulator: pokemini
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/pokemini
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:497-498"
+- emulator: prosystem
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/atari7800
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:499-500"
+- emulator: sameboy
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/sgb
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system flag SuperGameBoy
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:501-503"
+- emulator: sameboy
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/<system>
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: without system flag SuperGameBoy
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:501,\
+    \ 504-505"
+- emulator: snes9x
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/satellaview
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system satellaview
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:506-508"
+- emulator: snes9x
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/sufami
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system sufami
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:506,\
+    \ 509-510"
+- emulator: snes9x
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system other than satellaview, sufami
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:506,\
+    \ 511-512"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: core with no case of its own
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:513-514"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/amiga/bios
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system amiga600, amiga1200, amigacdtv, amigacd32, replacing the
+    directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:516-519"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/fds
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system fds, replacing the directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:520-521"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/lynx
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system lynx, replacing the directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:522-523"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/nds
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system nds, replacing the directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:524-525"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/saturn
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system saturn, replacing the directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:526-527"
+- emulator: libretro
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/stv
+  passes_to: retroarch system_directory
+  fails_when_missing: false
+  depends_on_option: system stv, replacing the directory chosen by core
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:528-529"
+- emulator: dolphin
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: /recalbox/share/bios/dolphin-emu
+  passes_to: retroarch core_assets_directory
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroRetroarch.py:423-424"
+- emulator: hatari
+  build: libretro
+  kind: names_searched
+  slot: st
+  names:
+  - atarist/st.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatari
+  build: libretro
+  kind: names_searched
+  slot: ste
+  names:
+  - atarist/ste.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatari
+  build: libretro
+  kind: names_searched
+  slot: tt
+  names:
+  - atarist/tt.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatari
+  build: libretro
+  kind: names_searched
+  slot: falcon
+  names:
+  - atarist/falcon.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatari
+  build: libretro
+  kind: names_searched
+  slot: megaste
+  names:
+  - atarist/megaste.img
+  - atarist/tos.img
+  - tos.img
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatari
+  build: libretro
+  kind: fixed_name
+  slot: emutos
+  names:
+  - atarist/emutos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "[ROM] szTosImageFileName"
+  fails_when_missing: false
+  depends_on_option: '"emutos" in the rom path'
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:235-239,\
+    \ 249-267, 280-294"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: st
+  names:
+  - atarist/st.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: megast
+  names:
+  - atarist/st.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: ste
+  names:
+  - atarist/ste.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: megaste
+  names:
+  - atarist/megaste.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: tt
+  names:
+  - atarist/tt.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: hatarib
+  build: libretro
+  kind: names_searched
+  slot: falcon
+  names:
+  - atarist/falcon.img
+  - atarist/tos.img
+  - tos.img
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: "core option hatarib_tos (<etos1024k> when none is found)"
+  fails_when_missing: false
+  depends_on_option: machine read from the rom path through machines, else option
+    hatarib_machine
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:168-198,\
+    \ 211-212, 214-229"
+- emulator: minivmac
+  build: libretro
+  kind: fixed_name
+  names:
+  - macintosh/MinivMacBootv2.dsk
+  case_insensitive: false
+  search_dir: /recalbox/share/bios
+  passes_to: written into /tmp/minivmac.cmd, which is loaded as the content
+  fails_when_missing: false
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroGenerator.py:877-882,\
+    \ projects/configgen/configgen/recalboxFiles.py:174"
+- emulator: o2em
+  build: libretro
+  kind: core_option
+  names:
+  - o2rom.bin
+  search_dir: /recalbox/share/bios/o2em
+  passes_to: core option o2em_bios
+  fails_when_missing: false
+  depends_on_option: system odyssey2
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:350-351,\
+    \ 695, projects/configgen/configgen/generators/libretro/libretroRetroarch.py:491-492"
+- emulator: o2em
+  build: libretro
+  kind: core_option
+  names:
+  - g7400.bin
+  search_dir: /recalbox/share/bios/o2em
+  passes_to: core option o2em_bios
+  fails_when_missing: false
+  depends_on_option: system videopacplus
+  source_ref: "projects/configgen/configgen/generators/libretro/libretroCores.py:354-355,\
+    \ 696, projects/configgen/configgen/generators/libretro/libretroRetroarch.py:491-492"
