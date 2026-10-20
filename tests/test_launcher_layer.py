@@ -1,0 +1,233 @@
+"""The launcher layer read by verify and by the pack builder.
+
+A platform's launcher decides which name a file is read under. The fixtures
+give a synthetic platform three launcher records: a region list tried in
+order (Batocera's DuckStation shape), a second list no declared file fills,
+and a fixed path the launcher passes (Batocera's x16emu shape).
+"""
+
+from __future__ import annotations
+
+import hashlib
+import inspect
+import os
+import shutil
+import sys
+import tempfile
+import unittest
+import zipfile
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+
+import yaml  # noqa: E402
+
+from common import _emulator_profiles_cache, load_emulator_profiles, load_platform_config  # noqa: E402
+from launchers import LauncherLayer, launcher_places  # noqa: E402
+from verify import find_undeclared_files, verify_platform  # noqa: E402
+
+CONTENT = {
+    "b.bin": b"REGION_B_IMAGE",
+    "e.bin": b"IMAGE_KNOWN_AS_E",
+    "core.bin": b"CORE_DEFAULT_ROM",
+    "plain.bin": b"PLAIN_CORE_FILE",
+}
+
+
+def _md5(data: bytes) -> str:
+    return hashlib.md5(data).hexdigest()
+
+
+class LauncherLayerTest(unittest.TestCase):
+    def setUp(self) -> None:
+        _emulator_profiles_cache.clear()
+        self.root = tempfile.mkdtemp()
+        self.bios_dir = os.path.join(self.root, "bios")
+        self.platforms_dir = os.path.join(self.root, "platforms")
+        self.emulators_dir = os.path.join(self.root, "emulators")
+        for d in (self.bios_dir, self.platforms_dir, self.emulators_dir):
+            os.makedirs(d)
+        files: dict[str, dict] = {}
+        by_md5: dict[str, str] = {}
+        by_name: dict[str, list[str]] = {}
+        for name, data in CONTENT.items():
+            path = os.path.join(self.bios_dir, name)
+            with open(path, "wb") as fh:
+                fh.write(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            files[sha1] = {
+                "path": path, "name": name, "md5": _md5(data), "sha1": sha1,
+                "size": len(data), "crc32": "",
+            }
+            by_md5[_md5(data)] = sha1
+            by_name.setdefault(name, []).append(sha1)
+        self.db = {
+            "files": files,
+            "indexes": {
+                "by_md5": by_md5, "by_name": by_name, "by_crc32": {},
+                "by_path_suffix": {},
+            },
+        }
+        platform = {
+            "platform": "LauncherTest",
+            "verification_mode": "md5",
+            "base_destination": "bios",
+            "standalone_cores": ["psxemu", "fixemu"],
+            "systems": {
+                "test-sys": {
+                    "files": [
+                        {"name": "plain.bin", "destination": "plain.bin",
+                         "md5": _md5(CONTENT["plain.bin"]), "required": True},
+                    ],
+                },
+            },
+            "launchers": [
+                {
+                    "emulator": "psxemu", "build": "standalone",
+                    "kind": "names_searched", "slot": "NTSCU",
+                    "names": ["a.bin", "b.bin", "c.bin"],
+                    "case_insensitive": True, "search_dir": "/userdata/bios",
+                    "source_ref": "gen/psx.py:10-20",
+                },
+                {
+                    "emulator": "psxemu", "build": "standalone",
+                    "kind": "names_searched", "slot": "PAL",
+                    "names": ["d.bin", "e.bin"],
+                    "case_insensitive": True, "search_dir": "/userdata/bios",
+                    "source_ref": "gen/psx.py:21-30",
+                },
+                {
+                    "emulator": "fixemu", "build": "standalone",
+                    "kind": "fixed_name", "names": ["sub/fix.bin"],
+                    "search_dir": "/userdata/bios",
+                    "source_ref": "gen/fix.py:5",
+                },
+            ],
+        }
+        with open(os.path.join(self.platforms_dir, "launchertest.yml"), "w") as fh:
+            yaml.dump(platform, fh)
+        profiles = {
+            "psxemu": {
+                "emulator": "PsxEmu", "type": "standalone", "found_by": "content",
+                "systems": ["test-sys"],
+                "files": [
+                    {"name": "a.bin", "required": True,
+                     "md5": "0" * 32, "validation": ["md5"]},
+                    {"name": "b.bin", "required": True,
+                     "md5": _md5(CONTENT["b.bin"]), "validation": ["md5"]},
+                    {"name": "label_pal.bin", "required": True,
+                     "md5": _md5(CONTENT["e.bin"]), "validation": ["md5"]},
+                ],
+            },
+            "fixemu": {
+                "emulator": "FixEmu", "type": "standalone", "systems": ["test-sys"],
+                "files": [
+                    {"name": "core.bin", "aliases": ["fix.bin"], "required": True},
+                ],
+            },
+        }
+        for key, profile in profiles.items():
+            with open(os.path.join(self.emulators_dir, f"{key}.yml"), "w") as fh:
+                yaml.dump(profile, fh)
+        self.config = load_platform_config("launchertest", self.platforms_dir)
+        self.profiles = load_emulator_profiles(self.emulators_dir)
+
+    def tearDown(self) -> None:
+        shutil.rmtree(self.root)
+
+    def _report(self) -> list[dict]:
+        return find_undeclared_files(
+            self.config, self.emulators_dir, self.db, self.profiles,
+        )
+
+    def _pack_names(self) -> set[str]:
+        from generate_pack import generate_pack
+
+        output = os.path.join(self.root, "dist")
+        os.makedirs(output)
+        zip_path = generate_pack(
+            "launchertest", self.platforms_dir, self.db, self.bios_dir, output,
+            emulators_dir=self.emulators_dir, emu_profiles=self.profiles,
+            offline=True,
+        )
+        self.assertIsNotNone(zip_path)
+        with zipfile.ZipFile(zip_path) as zf:
+            return set(zf.namelist())
+
+    def test_places_follow_the_launcher_order(self) -> None:
+        places = launcher_places(self.config)
+        self.assertEqual(places[0].paths, ("a.bin", "b.bin", "c.bin"))
+        self.assertEqual(places[2].paths, ("sub/fix.bin",))
+        self.assertTrue(places[0].stands_for_default)
+
+    def test_held_alternative_settles_the_others(self) -> None:
+        """b.bin fills the NTSCU list, so a.bin is not missing there."""
+        report = self._report()
+        names = {u["name"]: u for u in report}
+        self.assertNotIn("a.bin", names)
+        self.assertTrue(names["b.bin"]["in_repo"])
+
+    def test_without_the_layer_the_alternative_is_missing(self) -> None:
+        config = {**self.config, "launchers": []}
+        names = {
+            u["name"]: u
+            for u in find_undeclared_files(config, self.emulators_dir, self.db, self.profiles)
+        }
+        self.assertFalse(names["a.bin"]["in_repo"])
+
+    def test_accepted_content_lands_under_the_launcher_name(self) -> None:
+        """No declared file fills PAL: the image the core accepts goes in as e.bin."""
+        added = {u["path"]: u for u in self._report() if u.get("launcher")}
+        self.assertIn("e.bin", added)
+        self.assertEqual(added["e.bin"]["md5"], _md5(CONTENT["e.bin"]))
+        self.assertEqual(added["e.bin"]["launcher_of"], "label_pal.bin")
+
+    def test_fixed_name_receives_the_held_file(self) -> None:
+        added = {u["path"]: u for u in self._report() if u.get("launcher")}
+        self.assertIn("sub/fix.bin", added)
+        self.assertEqual(added["sub/fix.bin"]["md5"], _md5(CONTENT["core.bin"]))
+
+    def test_no_place_is_filled_twice(self) -> None:
+        added = [u["path"] for u in self._report() if u.get("launcher")]
+        self.assertEqual(sorted(added), ["e.bin", "sub/fix.bin"])
+
+    def test_a_declared_name_fills_the_place(self) -> None:
+        layer = LauncherLayer(
+            self.config, self.profiles, self.profiles, self.db, {"B.BIN"},
+        )
+        self.assertTrue(layer.platform_holds(layer.places[0]))
+        self.assertFalse(layer.platform_holds(layer.places[1]))
+
+    def test_verify_and_pack_agree(self) -> None:
+        result = verify_platform(self.config, self.db, self.emulators_dir, self.profiles)
+        missing = [
+            u["name"] for u in result["undeclared_files"]
+            if not u["in_repo"] and u.get("category", "bios") != "game_data"
+        ]
+        self.assertEqual(missing, [])
+        names = self._pack_names() - {"README.txt"}
+        for expected in ("e.bin", "sub/fix.bin", "b.bin"):
+            self.assertIn(expected, names)
+        self.assertNotIn("a.bin", names)
+        self.assertEqual(result["packed_extras"]["bios"], len(names - {"plain.bin"}))
+
+    def test_one_decision_for_verify_and_pack(self) -> None:
+        """The layer is applied once, in the report both sides read."""
+        import generate_pack
+        import packextras
+        import verify
+
+        self.assertIn("LauncherLayer(", inspect.getsource(verify.find_undeclared_files))
+        self.assertIn(".settle(", inspect.getsource(verify.find_undeclared_files))
+        self.assertIn(
+            "find_undeclared_files(", inspect.getsource(packextras._collect_emulator_extras)
+        )
+        for module in (generate_pack, packextras, verify):
+            source = inspect.getsource(module)
+            with self.subTest(module=module.__name__):
+                self.assertNotIn("launcher_places(", source)
+            if module is not verify:
+                self.assertNotIn("LauncherLayer(", source)
+
+
+if __name__ == "__main__":
+    unittest.main()

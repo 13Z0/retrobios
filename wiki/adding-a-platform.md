@@ -283,6 +283,23 @@ they copy, with `$bios_path` as the framework names it. In both, every line
 that names the BIOS directory must match a known construct, else the scrape
 stops with `LauncherPatternMissing`.
 
+`verify.py` and the pack builder read the records through one function,
+`LauncherLayer.settle()` in `scripts/launchers.py`, applied inside the
+cross-reference both of them consume. A `names_searched` list is one place:
+the names are tried in order and one held file fills it, so a core file the
+launcher would never open once another name of the list is there is not
+reported missing. A `fixed_name` or `core_option` name is a place of its own.
+Only a record that applies without condition settles the core's own name: a
+core option the user may never set, or a record tied to one system, leaves
+the core's default in use elsewhere.
+A place that no declared file and no packed core file fills receives, under
+the launcher's name, a file the core accepts: the file the collection knows
+under that name when the core takes its content, otherwise the copy held for
+the core entry read under that name. Records that only hand over a directory
+(`passes_path`, `scans_dir`) or copy a file the platform already names
+(`links`, `copies`) place nothing, and a `search_dir` the code describes
+rather than names ("directory of the Chihiro BIOS found") is skipped.
+
 ### Inheritance
 
 If the new platform inherits from an existing one (e.g. Lakka inherits RetroArch),

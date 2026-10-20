@@ -75,6 +75,7 @@ from common import (
 )
 
 yaml = require_yaml()
+from launchers import LauncherLayer, declared_destinations
 from nativemode import (
     SIZE_AND_ANY_HASH,
     digest_algorithm,
@@ -447,6 +448,17 @@ def _identity_of(entry: dict) -> dict:
     }
 
 
+def _held_record(report: dict, db: dict) -> dict | None:
+    """The database record of the file the collection holds for a report entry."""
+    local, status = resolve_local_file(report, db, dest_hint=report.get("path") or "")
+    if local is None or status in ("not_found", "hash_mismatch"):
+        return None
+    for record in db.get("files", {}).values():
+        if record.get("path") == local:
+            return record
+    return None
+
+
 def find_undeclared_files(
     config: dict,
     emulators_dir: str,
@@ -491,6 +503,12 @@ def find_undeclared_files(
 
     relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
     standalone_set = platform_standalone_set(config)
+    # What the platform's own launchers open, matched to the cores it runs:
+    # the one decision the builder and this report both read.
+    launcher_layer = LauncherLayer(
+        config, profiles, relevant, db, declared_destinations(config)
+    )
+    launcher_candidates: list[tuple[str, bool, dict, dict]] = []
     undeclared = []
     seen_files: set[tuple] = set()
     # Key -> the entry reported for it. A later profile reading the same
@@ -665,11 +683,20 @@ def find_undeclared_files(
                 }
                 if f.get("contents"):
                     entry["contents"] = f["contents"]
+                if launcher_layer:
+                    launcher_candidates.append((emu_name, is_standalone, f, entry))
                 if duplicate:
                     first.setdefault("other_claims", []).append(entry)
                     continue
                 reported[seen_key] = entry
                 undeclared.append(entry)
+
+    if launcher_layer:
+        added, settled = launcher_layer.settle(
+            launcher_candidates, lambda report: _held_record(report, db)
+        )
+        undeclared = [u for u in undeclared if id(u) not in settled]
+        undeclared.extend(added)
 
     # Append grouped archive entries
     for entry in sorted(archive_entries.values(), key=lambda e: e["name"]):
