@@ -1768,10 +1768,13 @@ def _render_platform_systems(
             sha256 = str(cfg_entry.get("sha256") or "")
             if sha1 or md5 or crc32 or sha256:
                 hash_parts = []
+                # One code span per value: Recalbox lists accepted md5s joined
+                # by commas, and the search indexed the joined run as a single
+                # word, so the second and later values were never found.
                 if sha1:
-                    hash_parts.append(f"SHA1: `{sha1}`")
+                    hash_parts.append(f"SHA1: {_hash_spans(sha1)}")
                 if md5:
-                    hash_parts.append(f"MD5: `{md5}`")
+                    hash_parts.append(f"MD5: {_hash_spans(md5)}")
                 if crc32:
                     hash_parts.append(f"CRC32: `{crc32}`")
                 if sha256:

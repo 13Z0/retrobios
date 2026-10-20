@@ -756,5 +756,18 @@ class ACitationSaysWhoseCodeItIs(unittest.TestCase):
                          "`emu/memory.c:46` (upstream emulator)")
 
 
+class EveryAcceptedHashIsItsOwnWord(unittest.TestCase):
+    """Recalbox md5 lists rendered as one comma-joined code span: the site
+    search made one token of it and found none but the first."""
+
+    def test_a_list_is_split(self):
+        from generate_site import _hash_spans
+
+        md5s = ["96cf" + "0" * 28, "d5af" + "0" * 28]
+        text = _hash_spans(",".join(md5s))
+        for md5 in md5s:
+            self.assertIn(f"`{md5}`</span>", text)
+
+
 if __name__ == "__main__":
     unittest.main()
