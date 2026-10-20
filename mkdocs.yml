@@ -298,7 +298,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (175):
+  - Community forks (176):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -357,6 +357,7 @@ nav:
     - FS-UAE: emulators/fsuae.md
     - Fuse: emulators/fuse.md
     - Gambatte: emulators/gambatte.md
+    - GameTank: emulators/gametank.md
     - GBA.emu: emulators/gba-emu.md
     - GBC.emu: emulators/gbc-emu.md
     - Genesis Plus GX: emulators/genesis_plus_gx.md
