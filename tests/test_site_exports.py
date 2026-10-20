@@ -769,5 +769,22 @@ class EveryAcceptedHashIsItsOwnWord(unittest.TestCase):
             self.assertIn(f"`{md5}`</span>", text)
 
 
+class AMismatchNamesTheDumpTheCollectionHolds(unittest.TestCase):
+    """The gaps table printed the hash an emulator accepts and stopped, while
+    the collection held that exact dump for every row."""
+
+    def test_the_held_copy_is_named(self):
+        from generate_site import _held_accepted
+
+        db = {"files": {"s1": {"path": "bios/Microsoft/MSX/CLK/msx-japanese.rom"}},
+              "indexes": {"by_sha256": {"ab" * 32: "s1"}, "by_crc32": {"84f68bf9": "s1"}}}
+        text = ("RetroBat says OK but ares says sha256 mismatch: got " + "cd" * 32
+                + ", accepted [" + "ab" * 32 + "]")
+        self.assertEqual(_held_accepted(text, db), "bios/Microsoft/MSX/CLK/msx-japanese.rom")
+        self.assertEqual(_held_accepted("xroar says crc32 mismatch: got 1, accepted [84f68bf9]", db),
+                         "bios/Microsoft/MSX/CLK/msx-japanese.rom")
+        self.assertEqual(_held_accepted("size mismatch: got 1, accepted [256]", db), "")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3265,7 +3265,34 @@ def generate_emulator_page(
 # Contributing page
 
 
-def _render_problem_files(platform_problems: list, settled: list | None = None) -> list[str]:
+_ACCEPTED_RE = re.compile(r"\b(sha1|sha256|md5|crc32) mismatch: got \S+, accepted \[([^\]]*)\]")
+
+
+def _held_accepted(discrepancy: str, db: dict | None) -> str:
+    """Where the collection keeps a dump the emulator accepts, if it does.
+
+    The table printed the hash the emulator wants and stopped there, while
+    the collection held that exact dump for every one of the ten rows.
+    """
+    match = _ACCEPTED_RE.search(discrepancy or "")
+    if not match or not db:
+        return ""
+    algo, accepted = match.group(1), match.group(2)
+    indexes = db.get("indexes", {})
+    for value in re.split(r"[\s,]+", accepted.lower()):
+        if algo == "sha1":
+            sha1 = value if value in db.get("files", {}) else None
+        else:
+            sha1 = indexes.get(f"by_{algo}", {}).get(value)
+        path = db.get("files", {}).get(sha1 or "", {}).get("path")
+        if path:
+            return path
+    return ""
+
+
+def _render_problem_files(
+    platform_problems: list, settled: list | None = None, db: dict | None = None
+) -> list[str]:
     """Files a platform declares that its own check then rejects.
 
     Split out of generate_gap_analysis, which reached complexity 56. This
@@ -3352,13 +3379,15 @@ def _render_problem_files(platform_problems: list, settled: list | None = None) 
                 "",
                 "Platform says OK but emulator validation disagrees.",
                 "",
-                "| File | Platforms | Discrepancy |",
-                "|------|----------|-------------|",
+                "| File | Platforms | Discrepancy | Accepted dump in the collection |",
+                "|------|----------|-------------|-------------------|",
             ])
             for fname in sorted(mismatch_files):
                 f = mismatch_files[fname]
                 plats = ", ".join(sorted(set(f["platforms"])))
-                lines.append(f"| `{fname}` | {plats} | {f['discrepancy']} |")
+                held = _held_accepted(f["discrepancy"], db)
+                cell = f"[{_code(held)}]({_fetch_url(held)})" if held else "-"
+                lines.append(f"| `{fname}` | {plats} | {f['discrepancy']} | {cell} |")
             lines.append("")
 
     if settled:
@@ -3621,7 +3650,7 @@ def generate_gap_analysis(
         "",
     ])
 
-    lines.extend(_render_problem_files(platform_problems, settled_problems))
+    lines.extend(_render_problem_files(platform_problems, settled_problems, db))
 
     # ---- Section 3: Core complement (cross-reference provenance) ----
 
