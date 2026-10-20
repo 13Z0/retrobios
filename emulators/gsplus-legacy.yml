@@ -1,0 +1,126 @@
+emulator: GSplus (legacy)
+type: standalone
+core_classification: community_fork
+cores: ["gsplus"]
+built_by: [recalbox, batocera, retrobat]
+source: "https://github.com/digarok/gsplus-legacy-archive"
+profiled_date: "2026-10-20"
+source_commit: "480572054518112647c8fae5d7ea7046a6d6ecfb"
+core_version: "0.14"
+display_name: "Apple - Apple IIGS (GSplus legacy)"
+systems:
+  - apple-iigs
+mode: standalone
+
+notes: |
+  The first GSplus, a GSport descendant of KEGS 0.91 kept by digarok as
+  gsplus-legacy-archive. It shares no history with digarok/gsplus, a new
+  import of KEGS 1.38 profiled as gsplus. It reports itself as 0.14
+  (src/sim65816.c:184).
+
+  Recalbox builds this commit (recalbox package/gsplus/gsplus.mk:8-9 at tag
+  10.1.1). Batocera builds applemu/gsplus dc1835d6, a fork that descends
+  from this commit and leaves the ROM and font loading untouched
+  (batocera package/batocera/emulators/gsplus/gsplus.mk:7-8 at tag
+  batocera-43.1). RetroBat runs the gsplus-win-sdl release build
+  (emulatorlauncher emulatorLauncher/Generators/GsPlus.Generator.cs:26-30).
+
+  Every file is looked up by setup_gsplus_file, which tries each name in
+  order inside each directory of g_gsplus_default_paths before moving to the
+  next directory (src/sim65816.c:56-70, 1018-1046). The directories are the
+  name as given, ./, $HOME/, $PWD/, $HOME/Library/GSplus/, /usr/local/lib/,
+  /usr/lib/gsplus/, /usr/local/gsplus/, /usr/local/lib/gsplus/,
+  /usr/share/gsplus/, /var/lib/ and the executable directory, which is ./
+  outside macOS (src/sim65816.c:54, 987-988).
+
+  The config file is the first of config.txt, config.gsp and .config.gsp
+  found on that path, and GSplus creates $HOME/.config.gsp when none exists
+  (src/config.c:177-179, 650, src/sim65816.c:1060-1090). It carries
+  g_cfg_rom_path, the disk assignments and the battery RAM.
+
+  Slot 6 gets a Disk II PROM rebuilt from the IIGS ROM through
+  g_rom_c600_rom01_diffs[] (src/config.c:542, 918-929). Slots 2 to 5 and 7
+  have empty name lists, so only slots 1 and 6 read a card ROM from disk
+  (src/config.c:527-533, 932-959).
+
+files:
+  - name: ROM
+    aliases: [ROM1, ROM3, ROM01, ROM03, ROM.01, ROM.03]
+    required: true
+    description: "Apple IIGS system ROM"
+    size: [131072, 262144]
+    validation: [size]
+    source_ref: "src/config.c:207, 524-525, 863-908"
+    note: >
+      g_cfg_rom_path, ROM unless the config file sets it, is tried first, then
+      ROM, ROM1, ROM3, ROM01, ROM03, ROM.01 and ROM.03. A 131072-byte file runs
+      as a ROM 01 machine and a 262144-byte file as a ROM 03 machine. Any other
+      size is refused. Without a ROM, GSplus shows a missing ROM alert and opens
+      its config panel instead of starting (src/config.c:868-872,
+      src/sim65816.c:1053-1063).
+
+  - name: c600.rom
+    aliases: [controller.rom, disk.rom, DISK.ROM, diskII.prom]
+    required: false
+    hle_fallback: true
+    min_size: 256
+    validation: [size]
+    description: "Disk II controller PROM for slot 6"
+    source_ref: "src/config.c:532, 932-959"
+    note: >
+      Replaces the built-in PROM. The first 256 bytes are read into slot 6
+      and a shorter file is rejected.
+
+  - name: parallel.rom
+    required: false
+    min_size: 256
+    validation: [size]
+    description: "Parallel printer card ROM for slot 1"
+    source_ref: "src/config.c:527, 916, 932-959"
+    note: >
+      The first 256 bytes are read into slot 1 and a shorter file is rejected.
+      Without it the slot 1 ROM space stays zeroed. The project keeps the file
+      at src/parallel.rom and ships it beside gsplus.exe in its Windows
+      release.
+
+  - name: letgothl.ttf
+    path: "lib/letgothl.ttf"
+    required: false
+    description: "Default printer font (Epson LQ Roman, ImageWriter fixed and proportional)"
+    source_ref: "src/sim65816.c:166, 178-179, src/imagewriter.cpp:343-360, src/printer.cpp:331-359"
+    note: >
+      Opened with FreeType from the working directory when a printed page is
+      rendered. A font that fails to open is logged and its characters are not
+      drawn (src/printer.cpp:1320, src/imagewriter.cpp:1238). The config panel can point each font at another file
+      (src/config.c:407-412, 438-440). The project keeps the file at
+      lib/letgothl.ttf.
+
+  - name: sansserif.ttf
+    required: false
+    description: "Epson LQ Sans Serif printer font"
+    source_ref: "src/sim65816.c:167, src/printer.cpp:335-359"
+    note: "Opened from the working directory when the Epson LQ selects this typeface."
+
+  - name: courier.ttf
+    required: false
+    description: "Epson LQ Courier printer font"
+    source_ref: "src/sim65816.c:168, src/printer.cpp:338-359"
+    note: "Opened from the working directory when the Epson LQ selects this typeface."
+
+  - name: prestige.ttf
+    required: false
+    description: "Epson LQ Prestige printer font"
+    source_ref: "src/sim65816.c:169, src/printer.cpp:341-359"
+    note: "Opened from the working directory when the Epson LQ selects this typeface."
+
+  - name: script.ttf
+    required: false
+    description: "Epson LQ Script printer font"
+    source_ref: "src/sim65816.c:170, src/printer.cpp:344-359"
+    note: "Opened from the working directory when the Epson LQ selects this typeface."
+
+  - name: ocra.ttf
+    required: false
+    description: "Epson LQ OCR-A and OCR-B printer font"
+    source_ref: "src/sim65816.c:171, src/printer.cpp:347-359"
+    note: "Opened from the working directory when the Epson LQ selects OCR-A or OCR-B."
