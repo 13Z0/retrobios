@@ -5,8 +5,8 @@ upstream: "https://www.richwhitehouse.com/jaguar/"
 version_source:
   url: "https://www.richwhitehouse.com/jaguar/index.php?content=download"
   pattern: 'Current Version: <strong>([0-9.]+)</strong>'
-profiled_date: "2026-03-26"
-core_version: "1.12"
+profiled_date: "2026-10-20"
+core_version: "1.221"
 display_name: "BigPEmu (Atari Jaguar)"
 cores:
   - bigpemu
@@ -16,11 +16,53 @@ systems:
 mode: standalone
 
 notes: |
-  Closed-source Atari Jaguar and Jaguar CD emulator by Rich Whitehouse.
-  Built-in boot ROM emulation for both cartridge and CD. No external
-  BIOS or firmware files required. The emulator supports optional
-  "custom boot ROM images" via the UI (loading mode for specific
-  homebrew demos), but no fixed file path or file name is expected.
-  EmuDeck confirms: "No BIOS are required to play BigPEmu."
+  Closed-source Atari Jaguar and Jaguar CD emulator by Rich Whitehouse. Read
+  from the Linux x64 binary of BigPEmu_Linux64_v1221.tar.gz (sha1
+  11e8188481ec3dd6508f2497fb35c6ae15907975, from the author's builds page),
+  decompiled with Ghidra at its default image base of 0x100000. The Windows
+  archive BigPEmu_v1221.zip (sha1 879cf1c2ecb426a066703b742f626e14f37d683e)
+  carries the same settings and strings.
 
-files: []
+  Both firmware images are optional settings, BootROM and CDBIOS, each holding
+  a path the user picks in the menu (Boot ROM Image, CD BIOS Image). Nothing
+  is searched by name. A set path is read whole into memory when an image is
+  booted, through the same reader that loads software images, which also
+  accepts a zip. No size is checked.
+  ref: bigpemu FUN_006d8be0 (BootROM and CDBIOS read at boot),
+       FUN_006f4e20 (setting path to buffer), FUN_007d7e20 (image reader),
+       FUN_00762210 and FUN_00761d50 (CDBIOS path setting and browser)
+
+  Without a boot ROM a cartridge runs from its own entry point. Without a CD
+  BIOS a disc boots on three replacement blocks decompressed from the
+  executable, 4 KB, 8 KB and 4 KB. The CD BIOS is read only when a disc is mounted. Audio discs
+  refuse to load without one, and the System Audio virtual disc asks for one.
+  ref: bigpemu FUN_006d8be0 (embedded CD boot blocks), FUN_0075f5a0
+       (STR_AUDIO_CD_NO_BIOS), FUN_00762550 (STR_VDISC_NEEDBIOS)
+
+  EEPROM and memory track files are written by the emulator itself, named
+  game<hash>_eeprom.bigpeep and game<hash>_memtrack.bigpmt, beside the image
+  or in user data. Scripts, screen effects, VR lenses and cheat_codes.json
+  ship in the archive.
+  ref: bigpemu FUN_007d55b0, FUN_007d5690
+
+files:
+  - name: "[BIOS] Atari Jaguar (World).j64"
+    system: atari-jaguar
+    required: false
+    config_key: BootROM
+    description: "Jaguar cartridge boot ROM, read when the Boot ROM Image setting is set"
+    source_ref: "bigpemu FUN_006d8be0 (BootROM read), FUN_006a0c30 (handed to the machine)"
+    note: >-
+      The setting accepts any image under any name and no content is checked.
+      The name is a label for the retail boot ROM.
+
+  - name: "[BIOS] Atari Jaguar CD (World).j64"
+    system: atari-jaguarcd
+    required: false
+    config_key: CDBIOS
+    description: "Jaguar CD BIOS, read when the CD BIOS Image setting is set and a disc is mounted"
+    source_ref: "bigpemu FUN_006d8be0 (CDBIOS read), FUN_006a8ae0 (FNV-1a check), FUN_0075f5a0 (audio discs)"
+    note: >-
+      Any image is used. The retail CD BIOS is recognised by the 64-bit FNV-1a
+      of its first 16384 bytes, 0x7000d38f77b6d407, which installs a dedicated
+      handler set for it. Needed to play audio discs.
