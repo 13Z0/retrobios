@@ -550,8 +550,9 @@ def _windows_retroarch_dirs() -> list[Path]:
     """Folders holding retroarch.exe where its installers put it.
 
     C:/RetroArch-Win64 by default, C:/RetroArch for 32-bit builds, the same
-    names under Program Files, every Steam library, and the Emulators folder
-    of an installed ES-DE (es_find_rules.xml lists all of them).
+    names under Program Files, every Steam library, the Emulators folder of
+    an installed ES-DE (es_find_rules.xml lists all of them), and a Scoop
+    install, user or global.
     """
     candidates = [_host_path("C:/RetroArch-Win64"), _host_path("C:/RetroArch")]
     for var in ("ProgramFiles", "ProgramFiles(x86)"):
@@ -564,6 +565,21 @@ def _windows_retroarch_dirs() -> list[Path]:
             ]
     candidates += [
         library / "steamapps" / "common" / "RetroArch" for library in _steam_libraries()
+    ]
+    # Scoop's Extras bucket: <root>\apps\retroarch\current, the root being
+    # %SCOOP% or ~\scoop for a user install, %SCOOP_GLOBAL% or
+    # %ProgramData%\scoop for a global one. Its system folder is persisted
+    # through a junction, so the folder beside retroarch.exe is the real one.
+    scoop_roots = [
+        os.environ.get("SCOOP") or (
+            str(Path(os.environ["USERPROFILE"]) / "scoop") if os.environ.get("USERPROFILE") else ""
+        ),
+        os.environ.get("SCOOP_GLOBAL") or (
+            str(Path(os.environ["ProgramData"]) / "scoop") if os.environ.get("ProgramData") else ""
+        ),
+    ]
+    candidates += [
+        Path(root) / "apps" / "retroarch" / "current" for root in scoop_roots if root
     ]
     return [folder for folder in candidates if (folder / "retroarch.exe").is_file()]
 

@@ -1133,6 +1133,17 @@ class RetroArchIsFoundWhereWindowsInstallsPutIt(unittest.TestCase):
         found = self._exe(program_files / "RetroArch-Win64")
         self.assertIn(found, install._windows_retroarch_dirs())
 
+    def test_a_scoop_install(self):
+        # `scoop install retroarch` puts it under ~/scoop/apps/retroarch/current,
+        # which none of the searched folders covered.
+        program_files = Path(_tempdir(self))
+        self._env(program_files)
+        home = Path(_tempdir(self))
+        found = self._exe(home / "scoop" / "apps" / "retroarch" / "current")
+        with unittest.mock.patch.dict(os.environ, {"USERPROFILE": str(home)}):
+            os.environ.pop("SCOOP", None)
+            self.assertIn(found, install._windows_retroarch_dirs())
+
     def test_a_steam_library_on_another_drive(self):
         program_files = Path(_tempdir(self))
         library = Path(_tempdir(self))
