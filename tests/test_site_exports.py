@@ -843,16 +843,15 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
     def _html(self, value: object) -> str:
         try:
             import markdown
-            import pymdownx.details  # noqa: F401
         except ImportError:
-            self.skipTest("markdown and pymdown-extensions are not installed")
+            self.skipTest("markdown is not installed")
         from siterender import _render_yaml_value
 
-        lines = ['???+ abstract "Analysis"', ""]
+        # The page opens the block with ???+ (pymdownx.details). An admonition
+        # nests its body by the same four spaces, and needs nothing CI lacks.
+        lines = ['!!! abstract "Analysis"', ""]
         _render_yaml_value(lines, value, 4)
-        return markdown.markdown(
-            "\n".join(lines), extensions=["admonition", "pymdownx.details"]
-        )
+        return markdown.markdown("\n".join(lines), extensions=["admonition"])
 
     def test_a_nested_mapping_is_a_nested_list(self):
         html = self._html({"megacd_bios": {"external_required": False, "source_ref": "a.c:1"},
