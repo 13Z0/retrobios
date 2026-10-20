@@ -4,10 +4,21 @@
   "title": "RetroBIOS static API v1 envelope",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "generated_at", "kind", "count", "items"],
+  "required": [
+    "schema_version",
+    "generated_at",
+    "kind",
+    "count",
+    "items"
+  ],
   "properties": {
-    "schema_version": { "const": 1 },
-    "generated_at": { "type": "string", "format": "date-time" },
+    "schema_version": {
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "kind": {
       "type": "string",
       "enum": [
@@ -18,10 +29,238 @@
         "file-locations"
       ]
     },
-    "count": { "type": "integer", "minimum": 0 },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
     "items": {
       "type": "array",
-      "items": { "type": "object" }
+      "items": {
+        "type": "object"
+      }
     }
-  }
+  },
+  "description": "Every endpoint shares this envelope. Within v1 an item keeps the fields listed for its kind and their types: fields may be added, never renamed or removed. A breaking change takes a new prefix.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "catalog"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "bytes",
+                "media_type",
+                "sha256",
+                "title",
+                "url"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "media_type": {
+                  "type": "string"
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "emulators"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "profile"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "profile": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "platforms"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "contract",
+                "coverage",
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "contract": {
+                  "type": "object"
+                },
+                "coverage": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "verification-and-coverage-gaps"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "destination",
+                "discrepancy",
+                "emulator",
+                "expected",
+                "in_repo",
+                "layer",
+                "name",
+                "platform",
+                "platform_id",
+                "reason",
+                "required",
+                "status",
+                "system"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "platform": {
+                  "type": "string"
+                },
+                "platform_id": {
+                  "type": "string"
+                },
+                "system": {
+                  "type": "string"
+                },
+                "emulator": {
+                  "type": "string"
+                },
+                "destination": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "layer": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                },
+                "discrepancy": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "in_repo": {
+                  "type": [
+                    "boolean",
+                    "string"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "file-locations"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "sha1",
+                "url"
+              ],
+              "properties": {
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

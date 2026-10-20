@@ -5706,5 +5706,25 @@ class WhatOnlyAnInstallProvidesIsListed(unittest.TestCase):
             self.assertEqual([row["path"] for row in rows], [str(Path(tmp, "icon.png"))])
 
 
+class TheApiSchemaHoldsTheFieldsItPromises(unittest.TestCase):
+    """The data page promises fields are only added within v1, and the
+    published schema left items unconstrained: renaming url in
+    file-locations.json passed validation and broke consumers silently."""
+
+    def test_a_renamed_field_is_refused(self):
+        try:
+            import jsonschema
+        except ImportError:
+            self.skipTest("jsonschema is tooling only")
+        schema = json.loads((ROOT / "schemas" / "site-api-envelope.schema.json").read_text())
+        envelope = {"schema_version": 1, "generated_at": "2026-10-20T00:00:00Z",
+                    "kind": "file-locations", "count": 1,
+                    "items": [{"sha1": "a" * 40, "url": "https://x/y"}]}
+        jsonschema.validate(envelope, schema)
+        envelope["items"] = [{"sha1": "a" * 40, "href": "https://x/y"}]
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.validate(envelope, schema)
+
+
 if __name__ == "__main__":
     unittest.main()
