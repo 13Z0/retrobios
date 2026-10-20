@@ -371,6 +371,21 @@ class RemovalCandidatesNeedAReadingNoCoreAnswers(unittest.TestCase):
         self.assertEqual(kept, [f["name"] for f in files])
         return found
 
+    def test_a_name_the_platform_launcher_opens_is_a_reading(self):
+        """Batocera's DuckStation generator walks 22 names (bios_lists,
+        duckstationGenerator.py:501-515): a name it opens is read on
+        Batocera whatever the profiles call it."""
+        from exporter.baseline import build_native_model
+        from exporter.candidates import removal_candidates
+
+        scraped = self._scraped([{"name": "scph7502.bin"}], ["corea"])
+        scraped["launchers"] = [{
+            "emulator": "corea", "build": "libretro", "kind": "names_searched",
+            "names": ["scph1001.bin", "scph7502.bin"], "source_ref": "gen.py:1-2",
+        }]
+        systems, _ = build_native_model({"systems": {}}, scraped)
+        self.assertEqual(removal_candidates(systems, scraped, self.PROFILES), [])
+
     def test_an_alias_is_a_reading(self):
         self.assertEqual(self._candidates([{"name": "alt.rom"}]), [])
 

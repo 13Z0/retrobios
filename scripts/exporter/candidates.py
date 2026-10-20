@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import _norm_system_id, resolve_platform_cores, unresolved_platform_cores
 from exporter.baseline import HASH_FIELDS, NativeSystem, _hash_values
+from launchers import _names as launcher_names
 
 # Batocera cuts some md5 to 29 characters: the prefix still names the dump.
 _FULL_MD5 = 32
@@ -49,6 +50,19 @@ class ReadEvidence:
     directories: set[str] = field(default_factory=set)
     trees: set[str] = field(default_factory=set)
     tree_members: set[str] = field(default_factory=set)
+    launched: set[str] = field(default_factory=set)
+
+    def add_launchers(self, records: list[dict]) -> None:
+        """Every name the platform's own launch code opens, links or copies.
+
+        Batocera's DuckStation generator walks 22 names (bios_lists,
+        duckstationGenerator.py:501-515): each is read on Batocera whatever
+        the profiles call it.
+        """
+        for record in records:
+            if isinstance(record, dict):
+                for name in launcher_names(record):
+                    self.launched.update(_tails(name))
 
     def add_profile(self, profile: dict, data_registry: dict) -> None:
         for entry in profile.get("files") or []:
@@ -100,6 +114,8 @@ class ReadEvidence:
         tails = _tails(destination)
         if any(t in self.tails for t in tails[:-1]):
             return "path"
+        if names & self.launched or (tails and tails[-1] in self.launched):
+            return "launcher"
         if names & self.names or (tails and tails[-1] in self.names):
             return "name"
         hashes = {
@@ -164,6 +180,7 @@ def removal_candidates(
     evidence = ReadEvidence()
     for key in sorted(examined):
         evidence.add_profile(profiles[key], data_registry or {})
+    evidence.add_launchers(scraped.get("launchers") or [])
 
     system_of = {
         id(file_entry): sys_key
