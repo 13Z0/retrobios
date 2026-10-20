@@ -6,9 +6,10 @@ upstream: closed-source
 version_source:
   url: "https://play.google.com/store/apps/details?id=it.dbtecno.pizzaboyscpro&hl=en"
   pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
+  no_genuine_copy: "1.4.34"
 author: "Pizza Emulators"
-profiled_date: "2026-08-12"
-core_version: "1.2.4"
+profiled_date: "2026-10-20"
+core_version: "1.2.14"
 display_name: "Sega - MS/GG/MD/CD (Pizza Boy SC)"
 mode: standalone
 cores:
@@ -28,41 +29,45 @@ notes: |
   Pizza Boy SC name, reached by ES-DE through its PIZZA-BOY-SC find rule and started
   with the game passed as the rom_uri extra: it.dbtecno.pizzaboyscpro, the paid build
   the rule names first, and it.dbtecno.pizzaboyscbasic, the free one. The build read
-  here is Basic 1.2.4 (versionCode 33), a Play distribution drop carrying the source
-  stamp and signed by the Play App Signing certificate sha256
-  5ae32245362ccafab6977e759f658dda66bac81cebdd804581cb55db2f219149. The Pro on the
-  store is 1.4.25 and no genuine copy of it is reachable: apkcombo bounces the
-  download page of a paid app back to the app page, apkmirror carries no SC build,
-  archive.org holds none, and the one apkvision copy, labelled Pro 1.3.7, is signed
-  CN=APKVISION.ORG with no source stamp and was rejected. The Basic library serves
-  both packages: besides its own entry points it exports
-  Java_it_dbtecno_pizzaboyscpro_MainActivity_jniEnableCallback.
+  here is Basic 1.2.14 (versionCode 43), the Play split set Uptodown serves as an XAPK,
+  every split carrying the source stamp and signed by the Play App Signing certificate
+  sha256 5ae32245362ccafab6977e759f658dda66bac81cebdd804581cb55db2f219149, the one
+  Basic 1.2.4 carried. The Pro on the store is 1.4.34 and no genuine copy of it is
+  reachable: apkcombo no longer resolves, the APKPure API holds no entry for either
+  package, APKMirror and Uptodown carry no Pro build, archive.org holds none, and the
+  one apkvision copy, labelled Pro 1.3.7, is signed CN=APKVISION.ORG with no source
+  stamp and was rejected. The Basic library serves both packages: besides its own
+  entry points it exports Java_it_dbtecno_pizzaboyscpro_MainActivity_jniEnableCallback
+  and Java_it_dbtecno_pizzaboyscpro_MainActivity_jniEnableMultiplayerCallback.
 
   The core is libsc.so, a Rust tree built as one workspace whose compilation units
   are named in its own panic and log records: emulated/systems/genesis,
   emulated/systems/sms, emulated/systems/mega_cd, emulated/components/cdrom,
-  emulated/common and frontend/android. The armeabi-v7a build shipped in the split
-  is stripped and carries no DWARF, so the file and line of every reference below
-  comes from the Location records the Rust log and panic paths embed. Four machines
-  run: engine start compares the system name against SMS, GameGear and SegaCD and
-  falls through to Genesis (lib.rs:481, 517, 538, 550), which covers Master System
-  and Mark III, Game Gear, Mega Drive and Genesis, and Mega CD and Sega CD. Discs
-  are read from cue and chd images through components/cdrom.
+  emulated/common and frontend/android. The arm64-v8a build shipped in the split is
+  stripped and carries no DWARF, so the file and line of every reference below comes
+  from the file and line constants the Rust log calls load and the Location records
+  the panic paths embed. Four machines run: engine start compares the system name
+  against SMS, GameGear and SegaCD and falls through to Genesis, the branches logging
+  at lib.rs:569, 590 and 602, which covers Master System and Mark III, Game Gear, Mega
+  Drive and Genesis, and Mega CD and Sega CD. Discs are read from cue and chd images
+  through components/cdrom.
 
   Four BIOS slots exist, one per machine, set in one call whose log reads
-  "jni setBIOSFiles sms: {} gg: {} cd: {} md: {}" (lib.rs:424). A fifth setter stores
-  a single path in a slot of its own that engine start never reads (lib.rs:416), and
-  setBIOSBoot logs "TODO jni setBIOSboot" and does nothing. Each branch reads the
-  slots its machines use, the Master System one reading the Game Gear slot as well,
-  and an empty slot is an ordinary case for Master System, Game Gear and Mega Drive.
+  "jni setBIOSFiles sms: {} gg: {} cd: {} md: {}" (lib.rs:475). A fifth setter stores
+  a single path in a slot of its own that engine start never reads (lib.rs:467), and
+  setBIOSBoot logs "TODO jni setBIOSboot" and does nothing (lib.rs:493). Each branch
+  reads the slots its machines use, the Master System one reading the Game Gear slot
+  as well, and an empty slot is an ordinary case for Master System, Game Gear and Mega
+  Drive.
   Only the Mega CD slot is mandatory: without it the run stops at "MegaCD Bios not
-  provided" (lib.rs:564) and engine start returns its failure code.
+  provided" (lib.rs:616) and engine start returns its failure code.
 
-  The Mega CD image is the only file the core examines. It is read and its length
-  compared with 131072, then handed to the machine, which repeats the same
-  comparison and panics on a mismatch (megacd_main_machine.rs:156-157). Nothing else
-  about it is tested: no name, no header, no hash, and no region, the Game Region
-  setting being passed separately as jap, usa or eu and never selecting a file.
+  The Mega CD image is the only file the core examines. It is read as a plain file and
+  its length compared with 131072, then handed to the machine, which reads it again,
+  repeats the same comparison and panics on a mismatch
+  (megacd_main_machine.rs:169-178). Nothing else about it is tested: no name, no
+  header, no hash, and no region, the Game Region setting being passed separately as
+  jap, usa or eu and never selecting a file.
 
   The user supplies each file through the document picker, which filters nothing:
   the chosen document is copied into the application temp directory under the name
@@ -95,12 +100,13 @@ files:
       "Invalid BIOS len". The core holds one Mega CD slot and applies no other test,
       so the boot ROM of any region satisfies it. The three are listed because the
       region of the discs decides which one has to be installed.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
-      (four slot handoff), :517 (SegaCD branch), :564 (absent), :567 (validation
-      entry), :573 (empty path), :580 (read failure), :592 (length), :596 (accepted);
-      emulated/systems/mega_cd/src/megacd_main_machine.rs:156-157 (second length test
-      and panic); SettingsActivity.java:177-219 (picker, zip entry, stored path),
-      res/xml/pref_general.xml:105-123 (preferences and defaults)"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:475
+      (four slot handoff), :569 (SegaCD branch), :616 (absent), :619 (validation
+      entry), :625 (empty path), :632 (read failure), :644 (length), :648 (accepted);
+      emulated/systems/mega_cd/src/megacd_main_machine.rs:169-178 (second read, length
+      test and panic); SettingsActivity.java:176-224 (picker, zip entry, stored path),
+      yg.java:1591-1626 (first file entry), res/xml/pref_general.xml:129-152
+      (preferences and defaults)"
 
   - name: bios_CD_E.bin
     system: sega-megacd
@@ -112,8 +118,8 @@ files:
     description: "Mega CD boot ROM"
     note: >-
       Same slot, same picker and same length test as the other Mega CD boot ROMs.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:567-596,
-      emulated/systems/mega_cd/src/megacd_main_machine.rs:156-157"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:619-648,
+      emulated/systems/mega_cd/src/megacd_main_machine.rs:169-178"
 
   - name: bios_CD_J.bin
     system: sega-megacd
@@ -125,8 +131,8 @@ files:
     description: "Mega CD boot ROM (Japan)"
     note: >-
       Same slot, same picker and same length test as the other Mega CD boot ROMs.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:567-596,
-      emulated/systems/mega_cd/src/megacd_main_machine.rs:156-157"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:619-648,
+      emulated/systems/mega_cd/src/megacd_main_machine.rs:169-178"
 
   - name: bios_U.sms
     system: sega-mastersystem
@@ -138,9 +144,10 @@ files:
       Picked and stored like the Mega CD image and handed to the machine as a path.
       Nothing about the file is examined on either side of the bridge, and an empty
       slot is not an error: the cartridge runs with the boot sequence skipped.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
-      (slot), :538 (branch reading the Master System and Game Gear slots),
-      emulated/systems/sms/src/system.rs:202 (path logged into the machine)"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:475
+      (slot), :590 (branch reading the Master System and Game Gear slots),
+      emulated/systems/sms/src/system.rs:200 (path logged into the machine),
+      emulated/systems/sms/src/sms_machine.rs:95 (detection)"
 
   - name: bios_E.sms
     system: sega-mastersystem
@@ -149,8 +156,8 @@ files:
     variant_group: "mastersystem-boot-rom"
     description: "Master System boot ROM (Europe)"
     note: "Same slot and same absence of tests as the other Master System boot ROMs."
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:538,
-      emulated/systems/sms/src/system.rs:202"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:590,
+      emulated/systems/sms/src/system.rs:200"
 
   - name: bios_J.sms
     system: sega-mastersystem
@@ -159,8 +166,8 @@ files:
     variant_group: "mastersystem-boot-rom"
     description: "Master System boot ROM (Japan)"
     note: "Same slot and same absence of tests as the other Master System boot ROMs."
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:538,
-      emulated/systems/sms/src/system.rs:202"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:590,
+      emulated/systems/sms/src/system.rs:200"
 
   - name: bios.gg
     system: sega-gamegear
@@ -171,9 +178,8 @@ files:
       Its own slot, separate from the Master System one, both read on the branch that
       serves the two machines. Picked and stored the same way, handed to the machine
       as a path, and never examined. An empty slot is not an error.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
-      (slot), :481 (system name match, GameGear), :538 (branch reading the Master
-      System and Game Gear slots)"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:475
+      (slot), :590 (branch reading the Master System and Game Gear slots)"
 
   - name: bios_MD.bin
     system: sega-megadrive
@@ -185,7 +191,7 @@ files:
       system name is neither SMS, GameGear nor SegaCD. Picked and stored the same
       way and never examined. The machine reports it as "BIOS detected" and runs
       without it when the slot is empty.
-    source_ref: "Pizza Boy SC Basic 1.2.4 libsc.so frontend/android/src/lib.rs:424
-      (slot), :550 (Genesis branch and slot read),
-      emulated/systems/genesis/src/system.rs:270 (path logged into the machine),
-      emulated/systems/genesis/src/genesis_machine.rs:135 (detection)"
+    source_ref: "Pizza Boy SC Basic 1.2.14 libsc.so frontend/android/src/lib.rs:475
+      (slot), :602 (Genesis branch and slot read),
+      emulated/systems/genesis/src/system.rs:268 (path logged into the machine),
+      emulated/systems/genesis/src/genesis_machine.rs:134 (detection)"

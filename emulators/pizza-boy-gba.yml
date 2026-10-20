@@ -6,8 +6,9 @@ upstream: closed-source
 version_source:
   url: "https://play.google.com/store/apps/details?id=it.dbtecno.pizzaboygbapro&hl=en"
   pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
+  no_genuine_copy: "3.8.24"
 author: "Pizza Emulators"
-profiled_date: "2026-08-12"
+profiled_date: "2026-10-20"
 core_version: "2.8.13"
 display_name: "Nintendo - Game Boy Advance (Pizza Boy GBA)"
 mode: standalone
@@ -26,30 +27,39 @@ notes: |
   builds are read here, both carrying the source stamp: Pro 2.8.13 (versionCode 343,
   Play App Signing certificate sha256
   6b5547246e41921f25eba8abb1bc018729c4f0b8db029debbd3380a2b1ec2fe1), which supplies the
-  Java and the resources, and Basic 2.3.3 (versionCode 236, developer certificate sha256
+  Java and the resources, and Basic 2.3.20 (versionCode 253, an APKMirror bundle whose
+  base and arm64-v8a splits carry the developer certificate sha256
   b3ee584096acf4667bb9346daa9cce19237ef7ce95c99e9260ac89be0f7d6130, CN=Davide Berra,
   O=DBTecno), whose arm64-v8a libpizzaboy-jni.so ships DWARF and an unstripped symbol
   table and supplies every native reference below as its own file and line. Java line
   numbers are those of Pro 2.8.13. Two rebuilt copies of Pro 1.35.11 were rejected on
   their certificate, one signed C=debugging with no source stamp and one signed
   O=APKMODY. 69 of the 77 native methods the Pro declares are exported by the Basic
-  core, the three BIOS entry points among them: one core, compiled per package.
+  2.3.3 core, the three BIOS entry points among them: one core, compiled per package.
+  The Pro on the store is 3.8.24 and no genuine copy of it is reachable: apkcombo no
+  longer resolves, the APKPure API holds no entry for either package, APKMirror and
+  Uptodown carry the Basic package alone, apkvision stops at Basic 1.9.5, and the
+  newest archive.org item, labelled Pro 2.8.14, holds no file.
 
   One system is emulated, Game Boy Advance: the core is built from a tree named
   pizzaboyadvance whose compilation units carry gba.c and no Game Boy core, and the
   three Game Boy Color and Super Game Boy methods the Pro still declares are among the
-  eight the library does not export.
+  eight the Basic 2.3.3 library does not export.
 
   The BIOS is the one file the user supplies, and it is read only while Load BIOS file
   is on, off by default. The picker and the Run BIOS animation switch, on by default,
   both depend on that box (res/xml/pref_general.xml). In the free package the same
-  three preferences are declared android:enabled="false".
+  three preferences are declared android:enabled="false". The Basic 2.3.20 Java keeps
+  the whole handoff to the core behind them, and its document picker copies the
+  chosen file as it is, with no zip extraction.
 
   A per rom Low precision BIOS set to On clears the stored path and makes the core keep
   its own replacement, and one cartridge, checksum 0xc7d89508, forces the same at load
   time. When a real image is installed the boot animation starts execution at 0 rather
   than at the cartridge entry, and a multiplayer session exchanges the CRC32 of the file
-  so that both peers run the same one.
+  so that both peers run the same one. In Basic 2.3.20 a save state records the CRC32
+  of the 16 KB BIOS area, and a state written under another image is refused with
+  "Cannot restore stat: saved with another BIOS".
 
   Everything else the app opens it makes itself: boxart.db and cheat.db are created by
   their own CREATE TABLE, the default skins, the shaders and the cheat descriptors are
@@ -77,12 +87,19 @@ files:
       that a real image is installed. Nothing about the file is examined: any read
       returning at least one byte is accepted, and no size, name or hash test exists on
       either side of the bridge. A read of zero bytes leaves the replacement in place
-      and logs "Cannot read BIOS file".
+      and logs "Cannot read BIOS file". In Basic 2.3.20 the document picker copies the
+      file into the temp directory under the name the picker reports without opening
+      a zip, and the legacy browser extracts a picked zip entry under its own name to
+      the uncompressed directory.
     source_ref: "Pizza Boy GBA Pro 2.8.13 SettingsActivity.java:116-140 (import), :143-183
       (preference and picker), FileDialog.java:57,72,77,846-857 (legacy browser, zip entry
       to bios.bin), Common.java:85-105 (copy to temp), :160-190 (single entry unzip),
       MainActivity.java:833,835,865 (bridge), :10936-10941 (gate and handoff),
-      res/xml/pref_general.xml (defaults); Pizza Boy A Basic 2.3.3 libpizzaboy-jni.so
-      pizza.c:932-938 (path buffer), :945-946 (boot flag), :632-642 (low precision BIOS),
-      global.c:93-95 (defaults), mmu.c:1522-1543 (replacement, gate, read, flag),
-      :2106-2110 (forced HLE), cpu.c:40 (boot vector)"
+      res/xml/pref_general.xml (defaults); Pizza Boy A Basic 2.3.20
+      SettingsActivity.java:206-236, xw.java:2531-2554 (copy without zip extraction),
+      yj.java:279-300 (legacy browser zip entry), h3.java:123-128 (gate and handoff),
+      lt.java:76-80 (state refused), libpizzaboy-jni.so pizza.c:931-937 (path buffer),
+      :944-945 (boot flag), :637-646 (low precision BIOS), global.c:22-24, :97-99
+      (defaults), mmu.c:1840-1853 (replacement, gate, read, flag), :2422-2426 (forced
+      HLE), cpu.c:34-40 (boot vector), gba.c:2739-2743 (CRC32 in the save state),
+      :2194-2203 (restore refused)"
