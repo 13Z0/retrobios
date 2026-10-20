@@ -26,6 +26,8 @@ try:
         github_headers,
         requirement_entry,
     )
+    from .emudeck_launchers import emulator_of_script, extract_launchers
+    from .shell_launchers import RepoTree
 except ImportError:
     from base_scraper import (
         BaseScraper,
@@ -35,6 +37,8 @@ except ImportError:
         github_headers,
         requirement_entry,
     )
+    from emudeck_launchers import emulator_of_script, extract_launchers
+    from shell_launchers import RepoTree
 
 PLATFORM_NAME = "emudeck"
 
@@ -217,6 +221,14 @@ def _fetch_url(url: str) -> str:
             return resp.read().decode("utf-8")
     except urllib.error.URLError as e:
         raise ConnectionError(f"Failed to fetch {url}: {e}") from e
+
+
+def launcher_revision(url: str) -> str:
+    """The commit a checkBIOS.sh URL is read at."""
+    found = re.search(r"/dragoonDorise/EmuDeck/([0-9a-f]{40})/", url)
+    if found is None:
+        raise ValueError(f"{url} names no EmuDeck commit")
+    return found.group(1)
 
 
 class Scraper(BaseScraper):
@@ -459,6 +471,10 @@ class Scraper(BaseScraper):
             # standalone build keeps its layout (runs_standalone).
             "standalone_cores": [core for core in cores if core != "retroarch"],
             "systems": systems,
+            # Read at the commit checkBIOS.sh comes from.
+            "launchers": extract_launchers(
+                RepoTree.github(EMUDECK_REPO, launcher_revision(self.checkbios_url))
+            ),
         }
 
     def _fetch_installed_emulators(self) -> list[str]:
@@ -472,15 +488,6 @@ class Scraper(BaseScraper):
             "https://api.github.com/repos/dragoonDorise/EmuDeck/"
             "contents/functions/EmuScripts"
         )
-        name_overrides = {
-            "pcsx2qt": "pcsx2",
-            "rpcs3legacy": "rpcs3",
-            "cemuproton": "cemu",
-            "rmg": "mupen64plus_next",
-        }
-        # The main RetroArch config script installs no emulator.
-        skip = {"retroarch_maincfg"}
-
         try:
             req = urllib.request.Request(api_url, headers=github_headers())
             with urllib.request.urlopen(req, timeout=30) as resp:
@@ -491,17 +498,9 @@ class Scraper(BaseScraper):
         cores: list[str] = []
         seen: set[str] = set()
         for entry in data if isinstance(data, list) else []:
-            name = entry.get("name", "")
-            if not name.endswith(".sh"):
+            core = emulator_of_script(entry.get("name", ""))
+            if core is None:
                 continue
-            name = re.sub(r"\.sh$", "", name)
-            name = re.sub(r"^emuDeck", "", name, flags=re.IGNORECASE)
-            if not name:
-                continue
-            key = name.lower()
-            if key in skip:
-                continue
-            core = name_overrides.get(key, key)
             if core not in seen:
                 seen.add(core)
                 cores.append(core)
