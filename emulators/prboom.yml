@@ -8,49 +8,149 @@ source_commit: "b3e47ff5dec483d788e068e7b7fe21be700b5048"
 core_version: "v2.5.0"
 display_name: "Doom (PrBoom)"
 cores: [prboom]
-systems: [doom]
+systems: [doom, heretic]
 
 notes: |
   PrBoom is a Doom source port based on MBF (Marine's Best Friend), itself
   derived from Boom. The libretro port plays Doom, Doom II, Final Doom,
-  FreeDoom, and custom WADs/PWADs.
+  FreeDoom, Heretic, and custom WADs/PWADs.
 
-  The core requires prboom.wad, a small engine data WAD containing internal
-  resources: font glyphs, palette, colormaps, sine/tangent tables, gamma
-  tables, menu graphics, and a null sprite (TNT1A0). It is NOT a game WAD.
-  The file is generated at build time by the rdatawad tool from raw PPM
-  graphics and LMP lumps (see Makefile.prboomdata), but ships pre-built
-  in the repository root.
+  prboom.wad, the engine data WAD (font glyphs, palette, colormaps,
+  sine/tangent tables, gamma tables, menu graphics), is compiled into the
+  core from src/prboom_wad_data.h, 143312 bytes, the same bytes as the
+  prboom.wad at the repository root (md5 72ae1b47820fcc93cc0df9c428d0face).
+  D_DoomMainSetup adds it as an embedded WAD after the IWAD and never opens
+  prboom.wad on disk (src/d_main.c:1449-1465).
 
-  Without prboom.wad the core falls back to hardcoded internal defaults
-  (src/d_main.c:1109-1110), so the file is technically optional but expected
-  for correct rendering of menus, HUD digits, and extended features.
+  Content is a .wad, .iwad, .pwad, .lmp, .m3u, .pk3, .ipk3 or .zip file
+  (libretro/libretro.c:1029). An IWAD is passed as -iwad and needs nothing
+  else (libretro/libretro.c:2488-2492). A PWAD with map markers, or a PK3,
+  is paired with an IWAD of the matching generation searched next to the
+  content, then in system/prboom/, then in system/ (find_iwad_for_kind,
+  libretro/libretro.c:2069-2133, 2514-2560, 2600-2621). A PK3 also loads
+  gzdoom.pk3, or else zdoom.pk3, from the same places before the mod
+  (find_base_resource, libretro/libretro.c:2141-2172, 2623-2657). When no
+  IWAD is paired, FindIWADFile tries the standard_iwads list through
+  I_FindFile and the core stops with "IWAD not found" if none is found
+  (src/d_main.c:146-158, src/d_main.c:1020-1038, src/d_main.c:1123-1124).
+  File names are matched case-insensitively (libretro/libretro.c:787-836).
 
-  File search order (I_FindFile, libretro/libretro.c:4176-4252):
-  1. WAD directory (same folder as the loaded game WAD)
+  I_FindFile search order (libretro/libretro.c:4176-4252):
+  1. WAD directory (same folder as the loaded content)
   2. system/prboom/ subdirectory
   3. system/ directory directly
-  4. Parent folders of WAD directory (recursive, if enabled)
+  4. Parent folders of the WAD directory (recursive, if enabled)
 
-  The core accepts .wad, .iwad, .pwad, and .lmp extensions. Game IWADs
-  it recognizes (src/d_main.c:147-159): doom2f.wad, doom2.wad, plutonia.wad,
-  tnt.wad, freedoom2.wad, doom.wad, doomu.wad, freedoom1.wad,
-  freedoom.wad, doom1.wad.
-
-  The src/ directory contains a second, larger prboom.wad (228743 bytes,
-  md5 23afd6143cb1ffec99a46755f9209ea6) which is the upstream PrBoom
-  original. The root copy (143312 bytes) is the libretro-specific build.
+  A baseconfig is read from <content>.prboom.cfg beside the content, else
+  prboom.cfg through I_FindFile (libretro/libretro.c:2461-2466,
+  libretro/libretro.c:2678-2683).
 
 files:
-  - name: "prboom.wad"
-    installed_on: [lakka, recalbox, retrobat, retrodeck, retropie]
+  # ---- Doom 1 generation, in search order ----
+  - name: "doom.wad"
+    category: game_data
     system: doom
-    description: "PrBoom engine data WAD (fonts, palette, colormaps, tables, menu graphics)"
     required: false
-    hle_fallback: true
-    size: 143312
-    md5: "72ae1b47820fcc93cc0df9c428d0face"
-    sha1: "5f4aed208301449c2e9514edfd325fe9dead76fa"
-    crc32: "a5751b99"
-    source_ref: "src/d_main.c:1449-1465 (PACKAGE .wad load), libretro/libretro.c:4171-4252 (I_FindFile search), src/config.h:39 (PACKAGE=prboom)"
-    note: "Searched in system/prboom/ then system/. Falls back to internal defaults if missing, but menus and HUD may render incorrectly without it."
+    source_ref: "libretro/libretro.c:2071-2073, libretro/libretro.c:2117-2128, src/d_main.c:153"
+    note: "Registered or Ultimate Doom. Paired with a Doom 1 PWAD."
+
+  - name: "doomu.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:154"
+
+  - name: "freedoom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:155"
+
+  - name: "freedoom.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:156"
+
+  - name: "doom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:157"
+    note: "Shareware Doom."
+
+  # ---- Doom 2 generation, in search order ----
+  - name: "doom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2074-2076, libretro/libretro.c:2117-2128, src/d_main.c:149"
+    note: "Paired with a Doom II PWAD or a PK3, and tried first when the PWAD's maps are not recognised."
+
+  - name: "doom2f.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:148, src/d_main.c:1106-1107"
+    note: "French Doom II. The name selects the French language."
+
+  - name: "plutonia.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:150, src/d_main.c:1110-1111"
+
+  - name: "tnt.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:151, src/d_main.c:1108-1109"
+
+  - name: "freedoom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:152"
+
+  # ---- Heretic ----
+  - name: "heretic.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "libretro/libretro.c:2081-2083, libretro/libretro.c:2117-2128, libretro/libretro.c:2534-2546"
+    note: "Paired only with a PWAD recognised as a Heretic add-on, never with a Doom one."
+
+  - name: "heretic1.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "libretro/libretro.c:2081-2083"
+    note: "Shareware Heretic."
+
+  - name: "blasphem.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "libretro/libretro.c:2081-2083"
+
+  # ---- ZDoom base resources for PK3 content ----
+  - name: "gzdoom.pk3"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2141-2172, libretro/libretro.c:2623-2657"
+    note: "Loaded before a PK3 mod so the stock ZDoom assets it names resolve."
+
+  - name: "zdoom.pk3"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "libretro/libretro.c:2141-2172, libretro/libretro.c:2623-2657"
+    note: "Loaded before a PK3 mod when gzdoom.pk3 is not found."
+
+  - name: "prboom.cfg"
+    system: doom
+    required: false
+    unsourceable: "user settings in PrBoom's config format, with no canonical contents"
+    source_ref: "libretro/libretro.c:2461-2466, libretro/libretro.c:2678-2683, libretro/libretro.c:4176-4252"
+    note: "Passed as -baseconfig when no <content>.prboom.cfg sits beside the content."
