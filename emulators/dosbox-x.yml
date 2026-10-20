@@ -373,6 +373,22 @@ files:
       missing. Ships in the resource directory
     source_ref: "src/output/output_ttf.cpp:655-668, src/hardware/parport/printer.cpp:354-380, src/Makefile.am:21"
 
+  - name: "Nouveau_IBM.ttf"
+    description: "IBM VGA style TrueType font"
+    required: false
+    bundled: true
+    sha1: "5f91e42aed6cbc7db7197181a378b4e4e2a41b6f"
+    md5: "af3bd30eb752a50f47811c699aded99f"
+    size: 69540
+    hle_fallback: true
+    note: >
+      read by the TTF output when ttf.font is Nouveau_IBM, the value the Windows
+      installer writes when its Nouveau IBM font option is picked. The name is
+      tried with .ttf appended, then as given, through the same directories as
+      any ttf.font. Without it the built-in font is used. Ships in the resource
+      directory
+    source_ref: "src/output/output_ttf.cpp:318-386, src/output/output_ttf.cpp:663-668, src/Makefile.am:20, contrib/windows/installer/DOSBox-X-installer.iss:113, contrib/windows/installer/DOSBox-X-installer.iss:907-908"
+
   # -- Printer typefaces --
   # Read from the directory named by the printer fontpath setting, default
   # FONTS, then from the configuration, resource and program directories.
