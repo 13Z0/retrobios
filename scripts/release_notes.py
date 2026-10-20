@@ -112,8 +112,10 @@ def main() -> int:
                         help="release record (default: %(default)s)")
     parser.add_argument("--whats-new", required=True, type=Path,
                         help="what changed since the previous release, written by hand")
-    parser.add_argument("--platforms-dir", default="platforms")
-    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--platforms-dir", default="platforms",
+                        help="registry read for each pack's extract folder (default: %(default)s)")
+    parser.add_argument("--output", required=True, type=Path,
+                        help="notes file to write, passed to gh release create --notes-file")
     args = parser.parse_args()
 
     record = release_record.load_record(args.record)
