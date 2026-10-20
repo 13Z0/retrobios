@@ -919,3 +919,383 @@ systems:
       destination: colecovision.rom
       required: true
       native_system: coleco-colecovision
+launchers:
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: ColecoVision
+  names:
+  - colecovision.rom
+  search_dir: "${biosPath}"
+  passes_to: settings.bml ColecoVision/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:270, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: MSX
+  names:
+  - MSX.ROM
+  search_dir: "${biosPath}"
+  passes_to: settings.bml MSX/Firmware/BIOS.Japan
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:278, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: MSX2
+  names:
+  - MSX2.ROM
+  search_dir: "${biosPath}"
+  passes_to: settings.bml MSX2/Firmware/BIOS.Japan
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:283, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: PCEngineCD
+  names:
+  - syscard3u.pce
+  - syscard3.pce
+  search_dir: "${biosPath}"
+  passes_to: settings.bml PCEngineCD/Firmware/BIOS.US, PCEngineCD/Firmware/BIOS.Japan
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:291-292, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: SuperGrafxCD
+  names:
+  - syscard3.pce
+  search_dir: "${biosPath}"
+  passes_to: settings.bml SuperGrafxCD/Firmware/BIOS.Japan
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:300, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: FamicomDiskSystem
+  names:
+  - disksys.rom
+  search_dir: "${biosPath}"
+  passes_to: settings.bml FamicomDiskSystem/Firmware/BIOS.Japan
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:308, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: Nintendo64DD
+  names:
+  - 64DD_IPL_JP.n64
+  - 64DD_IPL_US.n64
+  - 64DD_IPL_DEV.n64
+  search_dir: "${biosPath}"
+  passes_to: settings.bml Nintendo64DD/Firmware/BIOS.Japan, Nintendo64DD/Firmware/BIOS.US,
+    Nintendo64DD/Firmware/BIOS.DEV
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:319-321, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: GameBoyAdvance
+  names:
+  - gba_bios.bin
+  search_dir: "${biosPath}"
+  passes_to: settings.bml GameBoyAdvance/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:332, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: MasterSystem
+  names:
+  - bios_U.sms
+  - bios_J.sms
+  - bios_E.sms
+  search_dir: "${biosPath}"
+  passes_to: settings.bml MasterSystem/Firmware/BIOS.US, MasterSystem/Firmware/BIOS.Japan,
+    MasterSystem/Firmware/BIOS.Europe
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:340-342, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: GameGear
+  names:
+  - bios.gg
+  search_dir: "${biosPath}"
+  passes_to: settings.bml GameGear/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:347, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: MegaCD
+  names:
+  - bios_CD_U.bin
+  - bios_CD_J.bin
+  - bios_CD_E.bin
+  search_dir: "${biosPath}"
+  passes_to: settings.bml MegaCD/Firmware/BIOS.US, MegaCD/Firmware/BIOS.Japan, MegaCD/Firmware/BIOS.Europe
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:358-360, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: NeoGeoAES
+  names:
+  - neo-po.bin
+  search_dir: "${biosPath}"
+  passes_to: settings.bml NeoGeoAES/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:368, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: NeoGeoPocket
+  names:
+  - "[BIOS] SNK Neo Geo Pocket (Japan, Europe).ngp"
+  search_dir: "${biosPath}"
+  passes_to: settings.bml NeoGeoPocket/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:378, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: NeoGeoPocketColor
+  names:
+  - "[BIOS] SNK Neo Geo Pocket Color (World) (En,Ja).ngp"
+  search_dir: "${biosPath}"
+  passes_to: settings.bml NeoGeoPocketColor/Firmware/BIOS.World
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:383, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: ares
+  build: standalone
+  kind: fixed_name
+  slot: PlayStation
+  names:
+  - scph5501.bin
+  - scph5500.bin
+  - scph5502.bin
+  search_dir: "${biosPath}"
+  passes_to: settings.bml PlayStation/Firmware/BIOS.US, PlayStation/Firmware/BIOS.Japan,
+    PlayStation/Firmware/BIOS.Europe
+  fails_when_missing: false
+  source_ref: "configs/dev.ares.ares/data/ares/settings.bml:388-390, functions/EmuScripts/emuDeckares.sh:6,\
+    \ 63-64"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios9.bin
+  - bios7.bin
+  - firmware.bin
+  - dsi_bios9.bin
+  - dsi_bios7.bin
+  - dsi_firmware.bin
+  - dsi_nand.bin
+  search_dir: "${biosPath}"
+  passes_to: melonDS.ini BIOS9Path, BIOS7Path, FirmwarePath, DSiBIOS9Path, DSiBIOS7Path,
+    DSiFirmwarePath, DSiNANDPath
+  fails_when_missing: false
+  depends_on_option: ExternalBIOSEnable = 0 in the shipped melonDS.ini
+  source_ref: "functions/EmuScripts/emuDeckMelonDS.sh:7, 62-68, 71-77, configs/net.kuribo64.melonDS/config/melonDS/melonDS.ini:77"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - firmware.bin
+  - bios7.bin
+  - bios9.bin
+  - dsi_firmware.bin
+  - dsi_nand.bin
+  - dsi_bios7.bin
+  - dsi_bios9.bin
+  search_dir: "${emulationPath}/bios"
+  passes_to: "melonDS.toml [DS] FirmwarePath, BIOS7Path, BIOS9Path [DSi] FirmwarePath,\
+    \ NANDPath, BIOS7Path, BIOS9Path"
+  fails_when_missing: false
+  depends_on_option: ExternalBIOSEnable = false in the shipped melonDS.toml
+  source_ref: "configs/net.kuribo64.melonDS/config/melonDS/melonDS.toml:176, 181-183,\
+    \ 186-189, functions/EmuScripts/emuDeckMelonDS.sh:8, 32"
+- emulator: mupen64plus_next
+  build: standalone
+  kind: fixed_name
+  names:
+  - 64DD_IPL_US.n64
+  - 64DD_IPL_JP.n64
+  - 64DD_IPL_DEV.n64
+  search_dir: "${biosPath}"
+  passes_to: mupen64plus.cfg 64DD_AmericanIPL, 64DD_JapaneseIPL, 64DD_DevelopmentIPL
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckRMG.sh:6, 65-73"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - mcpx_1.0.bin
+  - Complex_4627v1.03.bin
+  search_dir: "${biosPath}"
+  passes_to: xemu.toml bootrom_path, flashrom_path
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckXemu.sh:6, 60-61, 65-66, 70-71"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - eeprom.bin
+  - xbox_hdd.qcow2
+  search_dir: "${storagePath}/xemu"
+  passes_to: xemu.toml eeprom_path, hdd_path
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckXemu.sh:6, 62-63, 67-68, 72-73"
+- emulator: duckstation
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: "${biosPath}"
+  passes_to: settings.ini SearchDirectory
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckDuckStation.sh:9, 70-71, 80"
+- emulator: pcsx2
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: "${biosPath}"
+  passes_to: "PCSX2.ini [Folders] Bios"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckPCSX2QT.sh:6, 88"
+- emulator: armsx2
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: "${biosPath}"
+  passes_to: "PCSX2.ini [Folders] Bios"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckARMSX2.sh:6, 82"
+- emulator: mame
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: "${romsPath}/arcade;${biosPath};${biosPath}/mame"
+  passes_to: mame.ini rompath
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckMAME.sh:7, 66-68"
+- emulator: retroarch
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: "${biosPath}"
+  passes_to: retroarch.cfg system_directory
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckRetroArch.sh:8, 224"
+- emulator: flycast
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/flycast/bios"
+  passes_to: "symlink ${biosPath}/flycast/bios -> ${HOME}/.var/app/org.flycast.Flycast/data/flycast/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckFlycast.sh:59"
+- emulator: azahar
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/azahar/keys"
+  passes_to: "symlink ${biosPath}/azahar/keys -> ${HOME}/.local/share/azahar-emu/sysdata"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckAzahar.sh:203"
+- emulator: citron
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/citron/keys"
+  passes_to: "symlink ${biosPath}/citron/keys -> ${HOME}/.local/share/citron/keys/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckCitron.sh:153"
+- emulator: citron
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/citron/firmware"
+  passes_to: "symlink ${biosPath}/citron/firmware -> ${HOME}/.local/share/citron/nand/system/Contents/registered/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckCitron.sh:154"
+- emulator: eden
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/eden/keys"
+  passes_to: "symlink ${biosPath}/eden/keys -> ${HOME}/.local/share/eden/keys/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckEden.sh:153"
+- emulator: eden
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/eden/firmware"
+  passes_to: "symlink ${biosPath}/eden/firmware -> ${HOME}/.local/share/eden/nand/system/Contents/registered/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckEden.sh:154"
+- emulator: suyu
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/suyu/keys"
+  passes_to: "symlink ${biosPath}/suyu/keys -> ${HOME}/.local/share/suyu/keys/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckSuyu.sh:144"
+- emulator: suyu
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/suyu/firmware"
+  passes_to: "symlink ${biosPath}/suyu/firmware -> ${storagePath}/suyu/nand/system/Contents/registered/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckSuyu.sh:145"
+- emulator: yuzu
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/yuzu/keys"
+  passes_to: "symlink ${biosPath}/yuzu/keys -> ${HOME}/.local/share/yuzu/keys/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckYuzu.sh:162"
+- emulator: yuzu
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/yuzu/firmware"
+  passes_to: "symlink ${biosPath}/yuzu/firmware -> ${storagePath}/yuzu/nand/system/Contents/registered/"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckYuzu.sh:163"
+- emulator: ryujinx
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/ryujinx/keys"
+  passes_to: "symlink ${biosPath}/ryujinx/keys -> ${HOME}/.config/Ryujinx/system"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckRyujinx.sh:129"
+- emulator: shadps4
+  build: standalone
+  kind: links
+  names: []
+  search_dir: "${biosPath}/shadps4/sys_modules"
+  passes_to: "symlink ${biosPath}/shadps4/sys_modules -> ${HOME}/.local/share/shadPS4/sys_modules"
+  fails_when_missing: false
+  source_ref: "functions/EmuScripts/emuDeckShadPS4.sh:11, 78"

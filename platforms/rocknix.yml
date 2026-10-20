@@ -440,3 +440,396 @@ systems:
       native_name: PS3
     native_id: ps3
     name: PS3
+launchers:
+- emulator: retroarch
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: ~/roms/bios
+  passes_to: retroarch.cfg system_directory = "~/roms/bios", systemfiles_in_content_dir
+    = "false"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/AMD64/retroarch.cfg:3395-3396,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/H700/retroarch.cfg:711-712,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/RK3326/retroarch.cfg:716-717,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/RK3399/retroarch.cfg:720-721,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/RK3566/retroarch.cfg:716-717,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/RK3576/retroarch.cfg:716-717,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/RK3588/retroarch.cfg:716-717,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/S922X/retroarch.cfg:714-715,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM4450/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM6115/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM8250/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM8550/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM8650/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/sources/SM8750/retroarch.cfg:780-781,\
+    \ projects/ROCKNIX/packages/emulators/libretro/retroarch/package.mk:130"
+- emulator: amiberry
+  build: standalone
+  kind: fixed_name
+  slot: A1200
+  names:
+  - kick40068.A1200.rom
+  search_dir: /storage/roms/bios
+  passes_to: "AmigaA1200-default.uae kickstart_rom_file (amiberry -f)"
+  fails_when_missing: false
+  depends_on_option: game name matches AGA|CD32
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/amiberry/scripts/start_amiberry.sh:17,\
+    \ 62-69, projects/ROCKNIX/packages/emulators/standalone/amiberry/config/conf/AmigaA1200-default.uae:114"
+- emulator: amiberry
+  build: standalone
+  kind: fixed_name
+  slot: A500
+  names:
+  - kick34005.A500.rom
+  search_dir: /storage/roms/bios
+  passes_to: "AmigaA500-default.uae kickstart_rom_file (amiberry -f)"
+  fails_when_missing: false
+  depends_on_option: game name does not match AGA|CD32
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/amiberry/scripts/start_amiberry.sh:17,\
+    \ 62-69, projects/ROCKNIX/packages/emulators/standalone/amiberry/config/conf/AmigaA500-default.uae:114"
+- emulator: amiberry
+  build: standalone
+  kind: links
+  names: []
+  search_dir: /storage/roms/bios
+  passes_to: symlink /usr/config/amiberry/kickstarts -> /storage/roms/bios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/amiberry/package.mk:36"
+- emulator: hatari
+  build: standalone
+  kind: fixed_name
+  names:
+  - tos.img
+  search_dir: /storage/roms/bios
+  passes_to: "Atari-ST-default.cfg [ROM] szTosImageFileName (--configfile)"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/hatarisa/config/conf/Atari-ST-default.cfg:200,\
+    \ projects/ROCKNIX/packages/emulators/standalone/hatarisa/scripts/start_hatari.sh:34,\
+    \ 64"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names: []
+  passes_to: melonDS.ini BIOS9Path, BIOS7Path, FirmwarePath, DSiBIOS9Path, DSiBIOS7Path,
+    DSiFirmwarePath, DSiNANDPath left empty
+  fails_when_missing: false
+  depends_on_option: direct_boot = 0 sets ExternalBIOSEnable=1, otherwise 0
+  device: AMD64
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/AMD64/melonDS.ini:84-90,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/package.mk:60, projects/ROCKNIX/packages/emulators/standalone/melonds-sa/scripts/start_melonds.sh:41,\
+    \ 71-73"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios9.bin
+  - bios7.bin
+  - firmware.bin
+  - dsi_bios9.bin
+  - dsi_bios7.bin
+  - dsi_firmware.bin
+  - dsi_nand.bin
+  search_dir: /storage/roms/bios
+  passes_to: melonDS.ini BIOS9Path, BIOS7Path, FirmwarePath, DSiBIOS9Path, DSiBIOS7Path,
+    DSiFirmwarePath, DSiNANDPath
+  fails_when_missing: false
+  depends_on_option: direct_boot = 0 sets ExternalBIOSEnable=1, otherwise 0
+  device: RK3399, RK3566, RK3576, RK3588, S922X, SM4450, SM6115, SM8250, SM8550, SM8650,
+    SM8750
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/InputPlumber/melonDS.ini:91-97,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/RK3399/melonDS.ini:93-99,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/RK3566/melonDS.ini:93-99,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/RK3588/melonDS.ini:93-99,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/S922X/melonDS.ini:95-101,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/config/SM4450/melonDS.ini:90-96,\
+    \ projects/ROCKNIX/packages/emulators/standalone/melonds-sa/package.mk:60, projects/ROCKNIX/packages/emulators/standalone/melonds-sa/scripts/start_melonds.sh:41,\
+    \ 71-73"
+- emulator: dsperate
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios9.bin
+  - bios7.bin
+  - firmware.bin
+  - dsi_bios9.bin
+  - dsi_bios7.bin
+  - dsi_firmware.bin
+  - dsi_nand.bin
+  search_dir: /storage/roms/bios
+  passes_to: "dsperate.ini [paths] bios9, bios7, firmware, bios9i, bios7i, dsi_firmware,\
+    \ dsi_nand (--config)"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/H700/dsperate.ini:11-17,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/InputPlumber/dsperate.ini:11-17,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/RK3326/dsperate.ini:11-17,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/RK3399/dsperate.ini:11-17,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/RK3566/dsperate.ini:11-17,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/RK3588/dsperate.ini:13-19,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/config/S922X/dsperate.ini:13-19,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/package.mk:21-22,\
+    \ projects/ROCKNIX/packages/emulators/standalone/dsperate-sa/scripts/start_dsperate.sh:163"
+- emulator: nanoboyadvance
+  build: standalone
+  kind: fixed_name
+  names:
+  - gba_bios.bin
+  search_dir: /storage/roms/bios
+  passes_to: "config.toml [general] bios_path"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/nanoboyadvance-sa/config/config.toml:2,\
+    \ projects/ROCKNIX/packages/emulators/standalone/nanoboyadvance-sa/package.mk:30"
+- emulator: xemu
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios/mcpx_1.0.bin
+  - bios/Complex_4627v1.03.bin
+  - eeprom/eeprom.bin
+  - hdd/xbox_hdd.qcow2
+  search_dir: /storage/roms/bios/xemu
+  passes_to: "xemu.toml [sys.files] bootrom_path, flashrom_path, eeprom_path, hdd_path\
+    \ (copied at each launch)"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/AMD64/xemu.toml:28-31,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/SM4450/xemu.toml:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/SM8250/xemu.toml:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/SM8550/xemu.toml:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/SM8650/xemu.toml:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/config/SM8750/xemu.toml:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/xemu-sa/package.mk:120, projects/ROCKNIX/packages/emulators/standalone/xemu-sa/scripts/start_xemu.sh:19"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: gba
+  names:
+  - gba_bios.bin
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg gba.bios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 729, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: md
+  names:
+  - us_scd1_9210.bin
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg md.cdbios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 1050, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: nes
+  names:
+  - gg.rom
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg nes.ggrom
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 2292, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: pce
+  names:
+  - syscard3.pce
+  - gecard.pce
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg pce.cdbios, pce.gecdbios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 3309, 3342, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: pce_fast
+  names:
+  - syscard3.pce
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg pce_fast.cdbios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 4128, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: pcfx
+  names:
+  - pcfx.rom
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg pcfx.bios
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 4611, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: psx
+  names:
+  - scph5502.bin
+  - scph5500.bin
+  - scph5501.bin
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg psx.bios_eu, psx.bios_jp, psx.bios_na
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 7366-7370, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: mednafen
+  build: standalone
+  kind: fixed_name
+  slot: ss
+  names:
+  - sega_101.bin
+  - mpr-17933.bin
+  - epr-17954a.ic8
+  - epr-20091.ic8
+  - epr-17952a.ic8
+  - mpr-18811-mx.ic1
+  - mpr-19367-mx.ic1
+  search_dir: /storage/roms/bios/
+  passes_to: mednafen.cfg ss.bios_jp, ss.bios_na_eu, ss.bios_stv_eu, ss.bios_stv_jp,
+    ss.bios_stv_na, ss.cart.kof95_path, ss.cart.ultraman_path
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/mednafen/config/common/mednafen.template:570,\
+    \ 9818-9820, 9824-9828, 9834-9836, projects/ROCKNIX/packages/emulators/standalone/mednafen/scripts/start_mednafen.sh:19-21"
+- emulator: yabasanshiro
+  build: standalone
+  kind: names_searched
+  names:
+  - saturn_bios.bin
+  - sega_101.bin
+  - mpr-17933.bin
+  - mpr-18811-mx.ic1
+  - mpr-19367-mx.ic1
+  - stvbios.zip
+  case_insensitive: false
+  search_dir: "/storage/roms/bios (recursive)"
+  passes_to: yabasanshiro -b <first path found>
+  fails_when_missing: false
+  depends_on_option: "use_hlebios = 1 (game, then platform)"
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/yabasanshiro-sa/scripts/start_yabasanshiro.sh:74,\
+    \ 80-90"
+- emulator: duckstation
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: /storage/roms/bios
+  passes_to: "settings.ini [BIOS] SearchDirectory = /storage/roms/bios, [BIOS] PathNTSCU,\
+    \ PathNTSCJ, PathPAL unset"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/AMD64/settings.ini:134,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/H700/settings.ini:24,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/InputPlumber/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/RK3326/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/RK3399/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/RK3566/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/RK3588/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/S922X/settings.ini:136-139,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/config/SM4450/settings.ini:29-32,\
+    \ projects/ROCKNIX/packages/emulators/standalone/duckstation-sa/package.mk:33"
+- emulator: aethersx2
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: /storage/roms/bios/aethersx2/bios
+  passes_to: "PCSX2.ini [Folders] Bios = /storage/roms/bios/aethersx2/bios, [Filenames]\
+    \ BIOS unset"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/InputPlumber/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/RK3399/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/RK3566/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/RK3588/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/S922X/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/config/SM4450/aethersx2/inis/PCSX2.ini:273,\
+    \ 302, projects/ROCKNIX/packages/emulators/standalone/aethersx2-sa/package.mk:31"
+- emulator: armsx2
+  build: standalone
+  kind: scans_dir
+  names: []
+  search_dir: /storage/roms/bios/armsx2
+  passes_to: "PCSX2.ini [Folders] Bios = /storage/roms/bios/armsx2, [Filenames] BIOS\
+    \ unset"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/config/S922X/ARMSX2/inis/PCSX2.ini:21,\
+    \ 475, projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/config/inputplumber/ARMSX2/inis/PCSX2.ini:21,\
+    \ 473, projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/package.mk:117-118"
+- emulator: drastic
+  build: standalone
+  kind: links
+  names:
+  - nds_bios_arm9.bin
+  - nds_bios_arm7.bin
+  case_insensitive: false
+  search_dir: /storage/roms/bios
+  passes_to: symlink /storage/.config/drastic/system/<name> -> /storage/roms/bios/<name>
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/drastic-sa/scripts/start_drastic.sh:37,\
+    \ 40-41"
+- emulator: dolphin
+  build: standalone
+  kind: links
+  names:
+  - EUR
+  - JAP
+  - USA
+  search_dir: /storage/roms/bios/GC
+  passes_to: symlink /storage/.config/dolphin-emu/GC/<name> -> /storage/roms/bios/GC/<name>
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/dolphin-sa/scripts/start_dolphin_gc.sh:24,\
+    \ 89, 93"
+- emulator: dolphin
+  build: standalone
+  kind: links
+  names:
+  - "MemoryCard{SLOT}.{REGION}.raw"
+  expands:
+    REGION:
+    - EUR
+    - JAP
+    - USA
+    SLOT:
+    - A
+    - B
+  search_dir: /storage/roms/bios/GC
+  passes_to: "symlink /storage/.config/dolphin-emu/GC/MemoryCard{SLOT}.{REGION}.raw\
+    \ -> /storage/roms/bios/GC/MemoryCard{SLOT}.{REGION}.raw"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/dolphin-sa/scripts/start_dolphin_gc.sh:24,\
+    \ 89, 96-100, 105, 109"
+- emulator: flycast
+  build: standalone
+  kind: links
+  names: []
+  search_dir: /storage/roms/bios/dc
+  passes_to: symlink /storage/roms/dreamcast/data -> /storage/roms/bios/dc
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/flycast-sa/scripts/start_flycast.sh:35"
+- emulator: cemu
+  build: standalone
+  kind: links
+  names:
+  - online
+  - mlc01
+  - keys
+  search_dir: /storage/roms/bios/cemu
+  passes_to: symlink /storage/.config/Cemu/share/<name> -> /storage/roms/bios/cemu/<name>
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/cemu-sa/scripts/start_cemu.sh:24,\
+    \ 27-32, 60, 73, 86"
+- emulator: rpcs3
+  build: standalone
+  kind: links
+  names:
+  - dev_flash
+  - dev_hdd0
+  - dev_hdd1
+  - custom_configs
+  search_dir: /storage/roms/bios/rpcs3
+  passes_to: symlink /storage/.config/rpcs3/<name> -> /storage/roms/bios/rpcs3/<name>
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/rpcs3-sa/scripts/start_rpcs3.sh:14-17,\
+    \ 28"
