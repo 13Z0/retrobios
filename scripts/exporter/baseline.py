@@ -35,6 +35,32 @@ def _hash_values(entry: dict, field_name: str) -> list[str]:
     return [v.strip().lower() for v in str(raw).split(",") if v.strip()]
 
 
+def checked_hashes(entry: dict | None) -> dict | None:
+    """The truth entry with only the hashes its code checks.
+
+    `validation:` names what the code verifies. Where a checked hash names
+    one value, the content is pinned and every hash describes it. Where
+    the code checks no hash, or accepts several values, a hash it does not
+    name describes one revision among those it accepts: dosbox checks
+    MT32_CONTROL.ROM against nine sha1, and the one md5 beside them
+    replaced System.dat's, another accepted revision. Such a value still
+    pairs a renamed file, it never corrects or fills one.
+    """
+    if not entry or entry.get("validation") is None:
+        return entry
+    raw = entry["validation"]
+    if isinstance(raw, dict):
+        kinds = {str(k) for values in raw.values() for k in values or ()}
+    elif isinstance(raw, list):
+        kinds = {str(k) for k in raw}
+    else:
+        kinds = {str(raw)}
+    checked = [f for f in HASH_FIELDS if f in kinds and _hash_values(entry, f)]
+    if checked and all(len(set(_hash_values(entry, f))) == 1 for f in checked):
+        return entry
+    return {k: v for k, v in entry.items() if k not in HASH_FIELDS or k in kinds}
+
+
 def _is_placeholder(name: str) -> bool:
     return "<" in name or ">" in name or "*" in name
 
@@ -76,6 +102,14 @@ class NativeFile:
             return "both"
         return "platform" if self.platform is not None else "truth"
 
+    @property
+    def _checked_truth(self) -> dict:
+        """The truth's hashes that can overrule the platform's. An addition
+        has no platform value to overrule and keeps them all."""
+        if self.platform is None:
+            return self.truth or {}
+        return checked_hashes(self.truth) or {}
+
     def _identity_source(self) -> str:
         """Which side's content fields describe the file: one side, or both.
 
@@ -86,7 +120,7 @@ class NativeFile:
         truth's crc32 beside Batocera's md5 for bios7.bin is one dump, and
         reading it as a contradiction emptied the md5 the frontend checks.
         """
-        truth, plat = _field_sets(self.truth), _field_sets(self.platform)
+        truth, plat = _field_sets(self._checked_truth), _field_sets(self.platform)
         if not any(truth.values()):
             return "platform"
         if not any(plat.values()):
@@ -109,7 +143,7 @@ class NativeFile:
         the divergence is recorded, never silently merged: an emulator that
         rejects a file will reject it whatever the platform declares.
         """
-        truth_values = _hash_values(self.truth or {}, field_name)
+        truth_values = _hash_values(self._checked_truth, field_name)
         platform_values = _hash_values(self.platform or {}, field_name)
         source = self._identity_source()
         if source == "platform":
@@ -139,7 +173,7 @@ class NativeFile:
         is written when it names one value, which is then that dump's.
         """
         source = self._identity_source()
-        truth_values = _hash_values(self.truth or {}, field_name)
+        truth_values = _hash_values(self._checked_truth, field_name)
         platform_values = _hash_values(self.platform or {}, field_name)
         if source == "truth":
             return truth_values[0] if truth_values else ""
@@ -491,8 +525,9 @@ def build_native_model(
 
             if matched is not None:
                 matched.truth = truth_entry
+                checked = checked_hashes(truth_entry) or {}
                 for field_name in HASH_FIELDS:
-                    ours = set(_hash_values(truth_entry, field_name))
+                    ours = set(_hash_values(checked, field_name))
                     theirs = set(_hash_values(matched.platform or {}, field_name))
                     if ours and theirs and not ours & theirs:
                         matched.corrections.append(field_name)

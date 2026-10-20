@@ -258,6 +258,75 @@ class Reconciliation(unittest.TestCase):
         self.assertEqual(added.destination, "fuse/128-1.rom")
         self.assertEqual(report.files_added, 1)
 
+    def test_a_hash_the_code_does_not_check_corrects_nothing(self):
+        """dosbox checks MT32_CONTROL.ROM by sha1 and size. The truth accepts
+        System.dat's sha1 but carries the md5 and crc of another revision,
+        and the export wrote those beside System.dat's sha1: a record no
+        file satisfies, counted as a correction."""
+        truth = {"systems": {"dos": {"files": [
+            {"name": "MT32_CONTROL.ROM", "sha1": ["1" * 40, "2" * 40],
+             "md5": "a" * 32, "crc32": "aaaaaaaa", "size": 65536,
+             "validation": ["sha1", "size"]},
+        ]}}}
+        scraped = {"systems": {"dos": {"native_id": "dos", "files": [
+            {"name": "MT32_CONTROL.ROM", "destination": "MT32_CONTROL.ROM",
+             "native_system": "dos", "sha1": "2" * 40, "md5": "b" * 32,
+             "crc32": "bbbbbbbb", "size": 65536},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        entry = systems["dos"].files[0]
+        self.assertEqual(
+            [entry.record_hash(f) for f in ("crc32", "md5", "sha1")],
+            ["bbbbbbbb", "b" * 32, "2" * 40],
+        )
+        self.assertEqual(entry.hashes("md5"), ["b" * 32])
+        self.assertEqual(report.hashes_corrected, [])
+
+    def test_a_size_checked_file_keeps_the_dump_the_platform_names(self):
+        """pcsx_rearmed and DuckStation check scph1001.bin by size. The
+        truth's md5 is v4.1's, Batocera names v2.0: the export replaced it
+        and the frontend then refused the v2.0 the cores load. Nor is a
+        blank md5 filled with one revision the code does not require."""
+        truth = {"systems": {"sony-playstation": {"files": [
+            {"name": "scph1001.bin", "md5": "a" * 32, "size": 524288,
+             "validation": ["size"]},
+            {"name": "scph5500.bin", "md5": "c" * 32, "size": 524288,
+             "validation": ["size"]},
+        ]}}}
+        scraped = {"systems": {"sony-playstation": {"native_id": "psx", "files": [
+            {"name": "scph1001.bin", "destination": "scph1001.bin",
+             "native_system": "psx", "md5": "b" * 32},
+            {"name": "scph5500.bin", "destination": "scph5500.bin",
+             "native_system": "psx"},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        v20, blank = systems["psx"].files
+        self.assertEqual(v20.hash("md5"), "b" * 32)
+        self.assertEqual(blank.hash("md5"), "")
+        self.assertEqual((report.hashes_corrected, blank.filled), ([], []))
+
+    def test_a_hash_beside_one_checked_value_still_corrects(self):
+        """A core that checks one crc32 pins one dump, and the md5 of that
+        dump is no less true: a platform md5 against it is corrected."""
+        truth = {"systems": {"coco": {"files": [
+            {"name": "bas12.rom", "crc32": "aaaaaaaa", "md5": "a" * 32,
+             "validation": ["crc32"]},
+        ]}}}
+        scraped = {"systems": {"coco": {"native_id": "coco", "files": [
+            {"name": "bas12.rom", "destination": "bas12.rom",
+             "native_system": "coco", "md5": "b" * 32},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        self.assertEqual(systems["coco"].files[0].hash("md5"), "a" * 32)
+        self.assertEqual(report.hashes_corrected, ["coco/bas12.rom md5"])
+
+    def test_the_diff_names_no_mismatch_the_code_does_not_check(self):
+        from truth import _diff_system
+        truth_sys = {"files": [{"name": "scph1001.bin", "md5": "a" * 32,
+                                "validation": ["size"]}]}
+        scraped_sys = {"files": [{"name": "scph1001.bin", "md5": "b" * 32}]}
+        self.assertNotIn("hash_mismatch", _diff_system(truth_sys, scraped_sys))
+
     def test_the_diff_pairs_by_the_same_rule(self):
         """diff_truth reads the same pairing, or it names a mismatch the
         export does not correct."""

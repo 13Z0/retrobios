@@ -602,9 +602,13 @@ def _hash_mismatch(t_entry: dict, s_entry: dict) -> dict | None:
 
     A value shared on any field settles it: the truth holds every revision a
     core accepts, and a profile may give one revision's sha1 without its md5.
+    A hash the code does not check contradicts nothing (checked_hashes).
     """
+    from exporter.baseline import checked_hashes
+
     if _hash_set(t_entry) & _hash_set(s_entry):
         return None
+    t_entry = checked_hashes(t_entry) or {}
     for h in ("sha1", "md5", "crc32"):
         t_hash = t_entry.get(h, "")
         s_hash = s_entry.get(h, "")
