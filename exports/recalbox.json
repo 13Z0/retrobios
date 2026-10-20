@@ -8,6 +8,12 @@
     "es_bios.xml"
   ],
   "summary": "357 kept, 246 added, 7 hashes corrected, 129 requirements corrected, 573 additions left out",
+  "counts": {
+    "kept": 357,
+    "added": 246,
+    "not_added": 573,
+    "not_kept": 0
+  },
   "hashes_corrected": [
     "atari800/ATARIOSB.ROM md5",
     "msx1,msx2,msxturbor/MSX.rom md5",

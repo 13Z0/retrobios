@@ -7,6 +7,12 @@
     "FirmwareDatabase.cs"
   ],
   "summary": "121 kept, 0 added, 0 hashes corrected, 0 requirements corrected",
+  "counts": {
+    "kept": 121,
+    "added": 0,
+    "not_added": 0,
+    "not_kept": 0
+  },
   "hashes_corrected": [],
   "hashes_filled": [],
   "sizes_corrected": [],

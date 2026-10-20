@@ -7,6 +7,12 @@
     "System.dat"
   ],
   "summary": "516 kept, 384 added, 94 hashes corrected, 0 requirements corrected, 25 sizes corrected, 1 size removed, 3 hashes cleared, 654 additions left out",
+  "counts": {
+    "kept": 516,
+    "added": 384,
+    "not_added": 654,
+    "not_kept": 0
+  },
   "hashes_corrected": [
     "Arcade/aes.zip sha1",
     "Arcade/aes.zip md5",

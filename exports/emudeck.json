@@ -7,6 +7,12 @@
     "checkBIOS.sh"
   ],
   "summary": "170 kept, 0 added, 0 hashes corrected, 0 requirements corrected, 1475 additions left out",
+  "counts": {
+    "kept": 170,
+    "added": 0,
+    "not_added": 1475,
+    "not_kept": 0
+  },
   "hashes_corrected": [],
   "hashes_filled": [],
   "sizes_corrected": [],

@@ -7,6 +7,12 @@
     "batocera-systems.json"
   ],
   "summary": "360 kept, 372 added, 7 hashes corrected, 0 requirements corrected, 13 hashes filled, 1483 additions left out",
+  "counts": {
+    "kept": 360,
+    "added": 372,
+    "not_added": 1483,
+    "not_kept": 0
+  },
   "hashes_corrected": [
     "bk/BASIC10.ROM md5",
     "colecovision/coleco.rom md5",
