@@ -9,6 +9,7 @@ Hash: MD5 primary
 from __future__ import annotations
 
 import json
+import re
 import urllib.error
 import urllib.request
 
@@ -17,19 +18,25 @@ try:
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        fetch_bytes,
         fetch_github_latest_version,
         requirement_entry,
     )
     from .batocera_scraper import SYSTEM_SLUG_MAP as BATOCERA_SLUGS
+    from .retrobat_launchers import SOURCE_FILES as LAUNCHER_FILES
+    from .retrobat_launchers import extract_launchers
 except ImportError:
     from base_scraper import (
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        fetch_bytes,
         fetch_github_latest_version,
         requirement_entry,
     )
     from batocera_scraper import SYSTEM_SLUG_MAP as BATOCERA_SLUGS
+    from retrobat_launchers import SOURCE_FILES as LAUNCHER_FILES
+    from retrobat_launchers import extract_launchers
 
 PLATFORM_NAME = "retrobat"
 
@@ -37,6 +44,10 @@ LAUNCHER_REPO = "RetroBat-Official/emulatorlauncher"
 SOURCE_URL = (
     "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/"
     "{rev}/batocera-systems/Resources/batocera-systems.json"
+)
+
+LAUNCHER_FILE_URL = (
+    "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/{rev}/{path}"
 )
 
 GITHUB_REPO = "RetroBat-Official/retrobat"
@@ -86,6 +97,24 @@ def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
             cores.add(name)
             standalone.add(name)
     return cores, standalone
+
+
+def launcher_revision(url: str) -> str:
+    """The emulatorLauncher commit a source URL is pinned to."""
+    found = re.search(r"/emulatorlauncher/([0-9a-f]{40})/", url)
+    if found is None:
+        raise ValueError(f"{url} names no emulatorLauncher commit")
+    return found.group(1)
+
+
+def fetch_launchers(rev: str) -> list[dict]:
+    """Launcher records read from the generators at the commit the BIOS list comes from."""
+    texts = {
+        path: fetch_bytes(LAUNCHER_FILE_URL.format(rev=rev, path=path)).decode("utf-8-sig")
+        for path in LAUNCHER_FILES
+    }
+    return extract_launchers(texts)
+
 
 # RetroBat's system keys are Batocera's (its emulatorlauncher reads the same
 # batocera-systems.json format): psx, nds and atari800 met no profile system
@@ -249,6 +278,7 @@ class Scraper(BaseScraper):
             # Launched both ways: each layout gets its files.
             **({"dual_mode_cores": sorted(dual)} if dual else {}),
             "systems": systems,
+            "launchers": fetch_launchers(launcher_revision(self.url)),
         }
 
 
