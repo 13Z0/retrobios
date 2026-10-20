@@ -196,6 +196,50 @@ systems:
 when the upstream destinations already carry their own root, as RetroDECK does
 with `bios/` and `roms/`.
 
+### Launchers
+
+Between the file a user drops in the BIOS folder and the emulator, a
+platform's own launch code often decides which name is read and where it is
+handed over. Batocera's DuckStation generator tries 22 names per region, first
+found wins, and writes the hit into `settings.ini`. That behaviour belongs to
+the platform, not to the emulator, so the scraper records it from the
+platform's code under `launchers:`, never as an alias in an emulator profile.
+
+```yaml
+launchers:
+- emulator: duckstation        # as the platform names it
+  build: standalone            # standalone or libretro
+  kind: names_searched
+  slot: NTSCU                  # the key the code files this list under
+  names: [scph101.bin, scph1001.bin, scph5501.bin, scph7001.bin, scph7501.bin]
+  case_insensitive: true
+  search_dir: /userdata/bios
+  passes_to: "[BIOS] PathNTSCU"
+  fails_when_missing: No PSX1 BIOS found
+  fails_scope: emulator        # raised only when every slot found nothing
+  source_ref: "package/.../duckstationGenerator.py:115-136, 501-523"
+```
+
+| Field | Meaning |
+|-------|---------|
+| `emulator` | Emulator or core as the platform names it |
+| `build` | `standalone` or `libretro` |
+| `kind` | `names_searched` (tried in order, first found wins), `fixed_name` (one path per name), `core_option` (an option value names the file), `passes_path`, `links`, `copies`, `scans_dir` |
+| `slot` | The key the code files the list under: a region, a machine |
+| `names` | In the order the code tries or writes them, relative to `search_dir` |
+| `expands` | Values a `{X}` placeholder in `names` takes, in the order tried (Hatari tries each TOS in ten languages) |
+| `case_insensitive` | Whether the launcher matches names regardless of case |
+| `search_dir` | Directory the launcher reads, as the code resolves it |
+| `passes_to` | Config key, command-line flag or core option that receives the file |
+| `fails_when_missing` | `false`, or the message the launcher raises |
+| `fails_scope` | `emulator` when the failure needs every record of the emulator to come up empty |
+| `depends_on_option` | Options or conditions that decide whether the record applies |
+| `source_ref` | `path:lines` at the revision `source` pins |
+
+Each record is read with `ast` from the generator. An extractor that no longer
+recognises the shape of the code raises: an empty list would read as a
+launcher that looks for nothing.
+
 ### Inheritance
 
 If the new platform inherits from an existing one (e.g. Lakka inherits RetroArch),

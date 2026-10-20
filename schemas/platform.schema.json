@@ -100,6 +100,13 @@
         "$ref": "#/$defs/system"
       }
     },
+    "launchers": {
+      "type": "array",
+      "description": "What the platform's own launch code looks for and hands to each emulator or core, read by its scraper at the revision `source` pins",
+      "items": {
+        "$ref": "#/$defs/launcher"
+      }
+    },
     "overrides": {
       "type": "object",
       "additionalProperties": false,
@@ -115,6 +122,102 @@
     }
   },
   "$defs": {
+    "launcher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "emulator",
+        "build",
+        "kind",
+        "names",
+        "source_ref"
+      ],
+      "properties": {
+        "emulator": {
+          "type": "string",
+          "description": "Emulator or core as the platform names it (comma-separated when one code path serves several)"
+        },
+        "build": {
+          "type": "string",
+          "enum": [
+            "standalone",
+            "libretro"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "names_searched",
+            "fixed_name",
+            "core_option",
+            "passes_path",
+            "links",
+            "copies",
+            "scans_dir"
+          ],
+          "description": "names_searched: tries the names in order, first found wins. fixed_name: writes or opens one path per name. core_option: sets a core option whose value names the file. passes_path: hands over a directory. links, copies: links or copies a file to where the emulator reads it. scans_dir: the emulator picks from a directory"
+        },
+        "slot": {
+          "type": "string",
+          "description": "The key the launcher files this list under, such as a region or a machine"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names relative to search_dir, in the order the code tries or writes them. A {X} placeholder is expanded from `expands`"
+        },
+        "expands": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Values a placeholder in `names` takes, in the order the code tries them for each name"
+        },
+        "case_insensitive": {
+          "type": "boolean",
+          "description": "Whether the launcher matches names regardless of case"
+        },
+        "search_dir": {
+          "type": "string",
+          "description": "Directory the launcher looks in, as the code resolves it"
+        },
+        "passes_to": {
+          "type": "string",
+          "description": "Where the found file is handed to the emulator: config key, command-line flag or core option"
+        },
+        "fails_when_missing": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "False when the launcher starts without the file, else the message it raises"
+        },
+        "fails_scope": {
+          "type": "string",
+          "enum": [
+            "emulator"
+          ],
+          "description": "emulator: the failure is raised only when every record of this emulator with the same source_ref found nothing"
+        },
+        "depends_on_option": {
+          "type": "string",
+          "description": "Options or conditions in the launcher code that decide whether this record applies"
+        },
+        "source_ref": {
+          "type": "string",
+          "description": "path:lines in the platform's repository at the pinned revision"
+        }
+      }
+    },
     "system": {
       "type": "object",
       "additionalProperties": false,
