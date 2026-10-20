@@ -150,11 +150,19 @@ scriptmodule, and any manual change is overwritten on the next scrape.
 The `cores` field determines which emulator profiles are resolved for this platform.
 Three strategies exist:
 
-- **Explicit list**: `cores: [beetle_psx, dolphin, ...]` - match by profile key name.
-  Used by Batocera, Recalbox, RetroBat, RomM.
+- **Explicit list**: `cores: [beetle_psx, dolphin, ...]` - match by profile key name
+  or by any name in a profile's `cores:`. Used by Batocera, Recalbox, RetroBat, RomM,
+  RetroPie, EmuDeck, RetroDECK, ROCKNIX. A list that names `retroarch` (the last four)
+  also takes every libretro profile.
 - **all_libretro**: `cores: all_libretro` - include every profile with `type: libretro`
-  or `type: standalone + libretro`. Used by RetroArch, Lakka, RetroPie.
-- **Omitted**: fallback to system ID intersection. Used by EmuDeck.
+  or `type: standalone + libretro`. Used by RetroArch and Lakka.
+- **Omitted**: fallback to system ID intersection.
+
+Two lists say how each resolved emulator is laid out. `standalone_cores` names the
+ones the platform launches as standalone apps: their files go to `standalone_path`.
+`dual_mode_cores` names those it launches both ways (RetroPie packages `lr-hatari`
+and `hatari`): both layouts are packed. A profile without a standalone build keeps
+its libretro layout whatever the platform calls it.
 
 ### Optional fields
 

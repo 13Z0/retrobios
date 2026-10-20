@@ -146,7 +146,13 @@ class Scraper(BaseScraper):
         """
         # A libretro package is lr-<core>; a standalone package is named
         # after the emulator itself.
-        cores = sorted({module.removeprefix("lr-") for module in self.module_ids()})
+        modules = self.module_ids()
+        cores = sorted({module.removeprefix("lr-") for module in modules})
+        libretro = {m.removeprefix("lr-") for m in modules if m.startswith("lr-")}
+        # The retroarch package is the frontend that runs the lr- cores.
+        standalone = sorted(
+            m for m in modules if not m.startswith("lr-") and m != "retroarch"
+        )
         if not self._version:
             raise ValueError(f"{self.url}: no __version in {_VERSION_FILE}")
 
@@ -158,6 +164,9 @@ class Scraper(BaseScraper):
             "source": self.url,
             "base_destination": "BIOS",
             "cores": cores,
+            "standalone_cores": standalone,
+            # Shipped both as lr-<name> and as <name>: each layout gets its files.
+            "dual_mode_cores": [m for m in standalone if m in libretro],
             "launchers": extract_launchers(self._scripts),
         }
 

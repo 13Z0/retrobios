@@ -289,6 +289,22 @@ class RetroPiePackageList(unittest.TestCase):
         self.assertEqual(config["inherits"], "retroarch")
         self.assertEqual(config["base_destination"], "BIOS")
 
+    def test_a_package_built_outside_libretro_runs_standalone(self):
+        """hatari ships as lr-hatari and as hatari: both layouts are read."""
+        scraper = self._scraper(
+            {
+                "retropie_packages.sh": '__version="4.8.12"\n',
+                "scriptmodules/libretrocores/lr-hatari.sh": 'rp_module_id="lr-hatari"\n',
+                "scriptmodules/libretrocores/lr-mgba.sh": 'rp_module_id="lr-mgba"\n',
+                "scriptmodules/emulators/hatari.sh": 'rp_module_id="hatari"\n',
+                "scriptmodules/emulators/openmsx.sh": 'rp_module_id="openmsx"\n',
+                "scriptmodules/emulators/retroarch.sh": 'rp_module_id="retroarch"\n',
+            }
+        )
+        config = scraper.generate_platform_yaml()
+        self.assertEqual(config["standalone_cores"], ["hatari", "openmsx"])
+        self.assertEqual(config["dual_mode_cores"], ["hatari"])
+
     def test_the_version_is_the_one_the_setup_script_declares(self):
         scraper = self._scraper(
             {
