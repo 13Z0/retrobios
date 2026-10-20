@@ -5587,5 +5587,15 @@ class ThePipelineRunsTheSchemaCheckCIRuns(unittest.TestCase):
             self.assertIn(f'"{flag}"', source)
 
 
+class TheReleaseBuildsEveryServedPackInOneRun(unittest.TestCase):
+    """The release ran the pipeline, then built and checked RetroPie by hand:
+    the consistency check between verify and the pack never covered it."""
+
+    def test_the_pipeline_step_includes_archived_platforms(self):
+        page = (ROOT / "wiki" / "release-process.md").read_text(encoding="utf-8")
+        self.assertIn("python scripts/pipeline.py --include-archived", page)
+        self.assertNotIn("generate_pack.py --platform retropie", page)
+
+
 if __name__ == "__main__":
     unittest.main()

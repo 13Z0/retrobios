@@ -188,27 +188,25 @@ Releasing is deliberate and local. Nothing on GitHub builds a pack: the
 pipeline runs here, the archives are checked here, and `gh` uploads them.
 
 ```bash
-# 1. Full pipeline, online, so data directories and MAME/FBNeo hashes are fresh
-python scripts/pipeline.py
+# 1. Full pipeline, online, so data directories and MAME/FBNeo hashes are
+#    fresh. --include-archived builds RetroPie too, archived but still served,
+#    and holds its pack to the same consistency and integrity checks.
+python scripts/pipeline.py --include-archived
 
-# 2. RetroPie, which is archived but still served
-python scripts/generate_pack.py --platform retropie --output-dir dist/
-python scripts/generate_pack.py --platform retropie --verify-packs --output-dir dist/
-
-# 3. A release file must be under 2 GiB. A larger pack becomes parts that are
+# 2. A release file must be under 2 GiB. A larger pack becomes parts that are
 #    each a ZIP of whole files (Pack.part1of2.zip): any tool opens one, and
 #    the parts extracted into one folder are the pack. Each part is read back
 #    and the set compared with the pack before the pack is removed.
 python scripts/split_pack.py dist/
 
-# 4. Checksums of the files as published, then sign the list. The checksums
+# 3. Checksums of the files as published, then sign the list. The checksums
 #    answer corruption, and the signature answers a rewritten release, which is
 #    the one thing a checksum published beside its own artifacts cannot
 #    answer.
 (cd dist && sha256sum *.zip > SHA256SUMS.txt)
 ssh-keygen -Y sign -f ~/.ssh/retrobios_signing -n file dist/SHA256SUMS.txt
 
-# 5. Record what each pack holds, read from the archives just checked:
+# 4. Record what each pack holds, read from the archives just checked:
 #    file count, extracted size, download size, published files. The README
 #    and the site print these beside the download links, and the notes table
 #    takes its Size and Files columns from the same lines. The command stops
@@ -218,7 +216,7 @@ python scripts/release_record.py dist/ --tag "v${DATE}"
 python scripts/generate_readme.py --db database.json --platforms-dir platforms
 python scripts/generate_site.py
 
-# 6. Write the notes: install commands, the parts sentence and the pack table
+# 5. Write the notes: install commands, the parts sentence and the pack table
 #    come from release.json, and what changed since the previous tag is the
 #    maintainer's own text in tmp/whats-new.md, appended as written.
 python scripts/release_notes.py --whats-new tmp/whats-new.md --output tmp/notes.md
@@ -243,7 +241,7 @@ python scripts/check_release.py --tag "v${DATE}" --sums dist/SHA256SUMS.txt \
 git add release.json README.md mkdocs.yml
 git commit -m "chore: record release v${DATE}" && git push
 
-# 7. Keep only the new release plus large-files: an older pack carries hashes
+# 6. Keep only the new release plus large-files: an older pack carries hashes
 #    the platforms no longer check, so it misleads more than it helps
 gh release list --json tagName,createdAt \
   --jq 'sort_by(.createdAt) | reverse | .[].tagName' | grep -v '^large-files$' \
@@ -301,13 +299,13 @@ The release notes are written by `release_notes.py`: the install commands,
 the pack table and its parts sentence come from `release.json`, then what
 changed since the previous tag and the contributors of the closed issues,
 written by hand. A pack has two sizes and they are far apart: Batocera
-downloads as 2.4 GB and extracts to 4.0 GB. Step 5 prints both, and whichever
+downloads as 2.4 GB and extracts to 4.0 GB. Step 4 prints both, and whichever
 one the table carries, the header names it. Someone sizing a USB drive is
 reading that column. The README table is the extracted size of the released
 pack, from `release.json`. `SHA256SUMS.txt` lists the checksums of the files
 as published, parts included.
 
-`release.json` is the record step 5 writes: per pack, the files it holds, its
+`release.json` is the record step 4 writes: per pack, the files it holds, its
 two sizes and the files it is published in. It exists because the pages are
 regenerated on every push while a release is cut every few weeks. Read from
 the install manifests, the table gave the count main would build that day:
@@ -322,9 +320,9 @@ opened alone is not an archive and no tool says a part is missing, so five
 reports in six months took one for a broken download (issues 45, 51, 66, 77
 and 79). The README, the download page and the troubleshooting page describe
 both layouts for as long as a release cut that way is still published. Once
-step 7 has deleted it, the `.zip.001` paragraph leaves those three pages.
+step 6 has deleted it, the `.zip.001` paragraph leaves those three pages.
 
-The table carries a Files column, the count step 5 prints, and the
+The table carries a Files column, the count step 4 prints, and the
 notes never open on the size of the collection. That total covers every
 platform and emulator together and no pack holds it: v2026.09.04 led with
 "10,330 files" right after "one pack per platform", and someone who extracted
