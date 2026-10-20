@@ -93,7 +93,9 @@ Windows or macOS would overwrite one with the other. On Linux, Mesen-CE opens
 only holds as `BIOS.col` and `2608_*.WAV`. The installer checks whether the
 BIOS directory keeps case and, if it does, also fetches these names. If you
 extract the ZIP on Linux by hand, take the Lakka pack instead: it is the
-RetroArch pack with both spellings.
+RetroArch pack with both spellings. Releases up to v2026.10.10 have no Lakka
+pack of their own (`RetroArch_Lakka_*_BIOS_Pack.zip` serves both and holds one
+spelling), so with those use the installer.
 
 The reverse happens on Batocera and Recalbox, whose lists hold both spellings
 because their systems keep case: NP2kai reads `np2kai/bios.rom` and

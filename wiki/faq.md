@@ -79,7 +79,9 @@ MAME 2003-Plus, MAME 2009 (0.135u4), MAME 2010 (0.139), MAME 2015
 version's own source tree, because the BIOS root sets differ between
 versions. Derivatives and ports carry their own profiles on top of those
 generations: `mamearcade`, `mamemess`, `mame2003_midway`, the three
-`mame4droid` drops, `advancemame`, `groovymame` and `hbmame`. The pack
+`mame4droid` drops, `advancemame`, `groovymame` and `hbmame`. Recalbox
+compiles two MAME versions of its own, 0.258 and 0.278, profiled as
+`mame0258` and `mame0278`. The pack
 ships the sets matching the core you run, and a generic unversioned arcade
 pack cannot do that.
 
