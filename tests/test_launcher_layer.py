@@ -201,6 +201,36 @@ class LauncherLayerTest(unittest.TestCase):
         added = [u["path"] for u in self._report() if u.get("launcher")]
         self.assertNotIn("sub/fix.bin", added)
 
+    def test_a_hashless_entry_takes_a_launcher_file_of_a_size_it_checks(self) -> None:
+        """EmuDeck passes Complex_4627v1.03.bin as xemu's flash ROM
+        (emuDeckXemu.sh:60-61), and xemu's Complex_4627.bin entry checks only
+        a size: matched neither by name nor by content, the default name was
+        still asked for."""
+        data = b"F" * 64
+        self.db["files"]["f" * 40] = {"path": os.path.join(self.bios_dir, "v103.bin"),
+                                      "name": "v103.bin", "md5": _md5(data), "sha1": "f" * 40,
+                                      "size": len(data), "crc32": ""}
+        with open(os.path.join(self.bios_dir, "v103.bin"), "wb") as fh:
+            fh.write(data)
+        self.db["indexes"]["by_name"]["v103.bin"] = ["f" * 40]
+        profile = {
+            "emulator": "FixEmu", "type": "standalone", "systems": ["test-sys"],
+            "files": [{"name": "flash.bin", "required": True, "size": [32, 64],
+                       "validation": ["size"]},
+                      {"name": "boot.bin", "required": True, "size": 8,
+                       "validation": ["size"]}],
+        }
+        with open(os.path.join(self.emulators_dir, "fixemu.yml"), "w") as fh:
+            yaml.dump(profile, fh)
+        self.config["launchers"][2]["names"] = ["v103.bin"]
+        self.config["launchers"][2]["search_dir"] = "/userdata/bios"
+        _emulator_profiles_cache.clear()
+        self.profiles = load_emulator_profiles(self.emulators_dir)
+        report = {u["path"]: u for u in self._report()}
+        self.assertNotIn("flash.bin", report)
+        self.assertIn("v103.bin", report)
+        self.assertIn("boot.bin", report)
+
     def test_no_place_is_filled_twice(self) -> None:
         added = [u["path"] for u in self._report() if u.get("launcher")]
         self.assertEqual(sorted(added), ["e.bin", "sub/fix.bin"])

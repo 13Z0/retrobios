@@ -233,6 +233,8 @@ class _Candidate:
     entry: dict
     names: set[str]
     by_content: bool
+    # Matched by the size the code checks, the entry naming no hash.
+    by_shape: bool = False
 
 
 class LauncherLayer:
@@ -314,6 +316,22 @@ class LauncherLayer:
         }
         if content:
             return _Candidate(entry, content, True)
+        # A hashless entry the code checks by size: EmuDeck passes
+        # Complex_4627v1.03.bin as xemu's flash ROM, and xemu's entry
+        # Complex_4627.bin states only the sizes it maps.
+        checks = entry.get("validation") or []
+        sized = any(entry.get(k) for k in ("size", "min_size", "max_size"))
+        if not _hashes(entry) and sized and "size" in checks:
+            shaped = {
+                place.fold(path.rsplit("/", 1)[-1])
+                for path in place.paths
+                if any(
+                    name_match_size_ok(entry, record.get("size"))
+                    for record in self.files_named(place, path.rsplit("/", 1)[-1])
+                )
+            }
+            if shaped:
+                return _Candidate(entry, shaped, False, by_shape=True)
         return None
 
     def platform_holds(self, place: LauncherPlace) -> bool:
@@ -360,6 +378,10 @@ class LauncherLayer:
                     for entry, report in members
                     if (candidate := self.match(place, entry)) is not None
                 ]
+                # A size names one entry only when no other of the core's
+                # entries takes that size too.
+                if sum(c.by_shape for c, _ in matched) > 1:
+                    matched = [(c, r) for c, r in matched if not c.by_shape]
                 if not matched:
                     continue
                 filled = self._fill(place, matched, reported_at, resolve_held, placed)
