@@ -35,6 +35,7 @@ import generate_db  # noqa: E402
 import generate_pack as builder  # noqa: E402
 import generate_readme  # noqa: E402
 import generate_site  # noqa: E402
+import release_notes  # noqa: E402
 import release_record  # noqa: E402
 import split_pack  # noqa: E402
 
@@ -472,6 +473,48 @@ class RefusedFilesAreNotPresent(unittest.TestCase):
                 "hashy", "platforms", db, emulators_dir="emulators"
             )
         self.assertEqual((coverage["present"], coverage["total"]), (1, 2))
+
+
+class TheReleaseNotesReadTheRecord(unittest.TestCase):
+    """The notes' pack table was typed by hand from release.json: a copied
+    cell or an old collection total at the top reproduced issue 81."""
+
+    RECORD = {"tag": "v2026.10.10", "packs": {
+        "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip": {
+            "files": 8504, "extracted_size": 6_400_000_000, "download_size": 4_000_000_000,
+            "assets": ["RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip",
+                       "RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip"]},
+        "EmuDeck_2.7EA_BIOS_Pack.zip": {
+            "files": 620, "extracted_size": 3_500_000_000, "download_size": 3_000_000_000,
+            "assets": ["EmuDeck_2.7EA_BIOS_Pack.zip"]},
+    }}
+
+    def render(self, record=None):
+        return release_notes.render(record or self.RECORD, str(REPO_ROOT / "platforms"),
+                                    "### What changed\n\n- x\n")
+
+    def test_each_pack_row_carries_the_record(self):
+        text = self.render()
+        row = next(line for line in text.splitlines() if line.startswith("| RetroArch"))
+        self.assertIn("8,504", row)
+        self.assertIn("part1of2.zip", row)
+        self.assertIn("part2of2.zip", row)
+        self.assertIn("`system/`", row)
+        self.assertIn("| Platform | Download | Extracted size | Files |", text)
+
+    def test_the_parts_sentence_sits_above_the_table_only_when_needed(self):
+        text = self.render()
+        self.assertLess(text.index("ordinary ZIP"), text.index("| Platform"))
+        whole = {"tag": "v1", "packs": {"EmuDeck_2.7EA_BIOS_Pack.zip":
+                                        self.RECORD["packs"]["EmuDeck_2.7EA_BIOS_Pack.zip"]}}
+        self.assertNotIn("ordinary ZIP", self.render(whole))
+
+    def test_the_notes_never_open_on_the_collection(self):
+        self.assertNotIn("collection", self.render().split("### What changed")[0])
+
+    def test_the_release_process_runs_it(self):
+        page = (REPO_ROOT / "wiki" / "release-process.md").read_text(encoding="utf-8")
+        self.assertIn("scripts/release_notes.py", page)
 
 
 if __name__ == "__main__":

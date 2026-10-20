@@ -218,10 +218,15 @@ python scripts/release_record.py dist/ --tag "v${DATE}"
 python scripts/generate_readme.py --db database.json --platforms-dir platforms
 python scripts/generate_site.py
 
-# 6. Create the release as a DRAFT, upload every asset, and only then publish it.
+# 6. Write the notes: install commands, the parts sentence and the pack table
+#    come from release.json, and what changed since the previous tag is the
+#    maintainer's own text in tmp/whats-new.md, appended as written.
+python scripts/release_notes.py --whats-new tmp/whats-new.md --output tmp/notes.md
+
+#    Create the release as a DRAFT, upload every asset, and only then publish it.
 #    A public release with half its assets is a broken download for everyone
 #    during the whole upload.
-gh release create "v${DATE}" --draft --title "BIOS Pack v${DATE}" --notes-file notes.md
+gh release create "v${DATE}" --draft --title "BIOS Pack v${DATE}" --notes-file tmp/notes.md
 for f in dist/SHA256SUMS.txt dist/SHA256SUMS.txt.sig dist/*.zip; do
   [ -f "$f" ] && gh release upload "v${DATE}" "$f#$(basename "$f")" --clobber
 done
@@ -292,9 +297,10 @@ and keeping the retired line, so signatures on past releases keep verifying.
 One pack per platform, the full one: the platform's list plus everything its
 cores load. Platform-only and per-emulator packs are build options, not
 release assets, since a lighter pack means a core that fails with no message.
-The release notes follow the previous release: the quick install commands,
-the pack table, what changed since the previous tag, and the contributors of
-the closed issues. A pack has two sizes and they are far apart: Batocera
+The release notes are written by `release_notes.py`: the install commands,
+the pack table and its parts sentence come from `release.json`, then what
+changed since the previous tag and the contributors of the closed issues,
+written by hand. A pack has two sizes and they are far apart: Batocera
 downloads as 2.4 GB and extracts to 4.0 GB. Step 5 prints both, and whichever
 one the table carries, the header names it. Someone sizing a USB drive is
 reading that column. The README table is the extracted size of the released
