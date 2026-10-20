@@ -292,7 +292,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (188):
+  - Community forks (189):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -361,6 +361,7 @@ nav:
     - GnGeo-Pi: emulators/gngeopi.md
     - gpSP: emulators/gpsp.md
     - GSplus: emulators/gsplus.md
+    - GSplus (legacy): emulators/gsplus-legacy.md
     - hakuX: emulators/hakux.md
     - Handy: emulators/handy.md
     - hatariB: emulators/hatarib.md

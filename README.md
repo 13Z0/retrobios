@@ -68,13 +68,13 @@ These are the files an emulator loads from disk instead of carrying inside itsel
 
 Each file is checked the way your platform checks it. Most compare a checksum, the fingerprint of a file's contents, which catches a corrupt or unexpected copy. RetroArch, Lakka and RetroPie only look for the filename, because that is all their code does: the Coverage table says which applies to you. Independently of that, the collection records five fingerprints per file, and wherever an emulator's code states an expected size or hash, that value is read from its source and rechecked here.
 
-- **960 files** the platforms' emulators load are still to be found, and 136 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
+- **962 files** the platforms' emulators load are still to be found, and 136 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
 - **12 platforms** supported with platform-specific verification
-- **605 emulators** profiled from source (RetroArch cores + standalone)
+- **606 emulators** profiled from source (RetroArch cores + standalone)
 - **534 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
-- **19,485 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,702 system files, 2,851 arcade ROM sets, 10,932 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
-- **531 of 5,702 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
-- **15994 MB** total collection size
+- **19,488 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,705 system files, 2,851 arcade ROM sets, 10,932 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
+- **531 of 5,705 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
+- **15992 MB** total collection size
 
 ## Supported systems
 
@@ -86,18 +86,18 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| Batocera | 353/353 | 13,919/15,004 | MD5 hash |
+| Batocera | 353/353 | 13,924/15,010 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,026/8,099 | MD5 hash |
-| Lakka | 532/532 | 7,463/7,520 | file presence |
+| EmuDeck | 168/168 | 8,039/8,112 | MD5 hash |
+| Lakka | 532/532 | 7,474/7,531 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 6,978/8,237 | MD5 hash |
-| Recalbox | 351/351 | 2,727/2,886 | MD5 hash |
-| RetroArch | 526/526 | 7,492/7,532 | file presence |
-| RetroBat | 348/348 | 4,636/9,125 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,239/6,488 | MD5 hash |
-| RetroPie * | 532/532 | 7,715/12,193 | file presence |
-| RomM | 383/383 | 85/841 | MD5 hash |
+| ROCKNIX | 38/38 | 6,991/8,250 | MD5 hash |
+| Recalbox | 351/351 | 2,749/2,909 | MD5 hash |
+| RetroArch | 526/526 | 7,503/7,543 | file presence |
+| RetroBat | 348/348 | 4,675/9,166 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,242/6,491 | MD5 hash |
+| RetroPie * | 532/532 | 7,726/12,204 | file presence |
+| RomM | 383/383 | 83/841 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
 That second number is a floor, not a ceiling: an emulator that accepts any file handed to it names none in its code, so nothing there can be counted.
@@ -141,7 +141,7 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 - **Per-emulator profiles** with source code references for every file
 - **Per-system pages** showing which emulators and platforms cover each console
 - **Gap analysis** identifying missing files and undeclared core requirements
-- **Cross-reference** mapping files across 12 platforms and 605 emulators
+- **Cross-reference** mapping files across 12 platforms and 606 emulators
 - **Versioned data access** through JSON, CSV and SQLite exports with published SHA-256 checksums
 
 ## How it works
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-20T13:38:16Z*
+*Auto-generated on 2026-10-20T15:04:25Z*
