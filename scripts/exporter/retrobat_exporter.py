@@ -7,6 +7,7 @@ state md5 then file, in that order.
 from __future__ import annotations
 
 import json
+import re
 from collections import OrderedDict
 
 from .base_exporter import BaseExporter
@@ -16,6 +17,33 @@ SOURCE_URL = (
     "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/master"
     "/batocera-systems/Resources/batocera-systems.json"
 )
+
+
+_TOP_KEY = re.compile(r'^  "((?:[^"\\]|\\.)*)":', re.MULTILINE)
+
+
+def keep_blank_lines(original: str, produced: str) -> str:
+    """The blank line RetroBat writes before each system, written again.
+
+    json.dumps has no blank lines, and the original separates every system
+    after the first with one: dropped, they were 100 hunks of a diff meant
+    to show corrections. A system the original separates is separated, and
+    where it separates them all, an added one is too.
+    """
+    keys = _TOP_KEY.findall(original)
+    separated = set(re.findall(r'\n\n  "((?:[^"\\]|\\.)*)":', original))
+    every = bool(keys) and separated == set(keys[1:])
+    first = True
+
+    def separate(match: re.Match[str]) -> str:
+        nonlocal first
+        key, was_first = match.group(1), first
+        first = False
+        if not was_first and (key in separated or (every and key not in keys)):
+            return "\n" + match.group(0)
+        return match.group(0)
+
+    return _TOP_KEY.sub(separate, produced)
 
 
 class Exporter(BaseExporter):
@@ -105,7 +133,8 @@ class Exporter(BaseExporter):
             output[key] = system_entry
 
         text = json.dumps(output, indent=2, ensure_ascii=False) + "\n"
-        return {self.native_filename(): text}
+        original = (originals or {}).get(self.native_filename(), "")
+        return {self.native_filename(): keep_blank_lines(original, text) if original else text}
 
     def validate(
         self,

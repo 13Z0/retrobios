@@ -1420,6 +1420,31 @@ class BizhawkExport(unittest.TestCase):
         self.assertFalse(exporter.states(entry, "sha1"))
 
 
+class RetrobatListComesBackAsWritten(unittest.TestCase):
+    """RetroBat separates each system with a blank line. json.dumps dropped
+    all 100 of them, 100 hunks of noise in a diff meant to show
+    corrections."""
+
+    def test_an_empty_truth_hands_back_the_list(self):
+        original_path = UPSTREAM_CACHE / "retrobat" / "batocera-systems.json"
+        if not original_path.exists():
+            self.skipTest("upstream cache not populated")
+        original = original_path.read_text(encoding="utf-8")
+        exporter = discover_exporters()["retrobat"]()
+        config = native_layer(load_platform_config("retrobat", str(REPO_ROOT / "platforms")))
+        systems, report = build_native_model({"systems": {}}, config)
+        produced = exporter.render(systems, report, {"batocera-systems.json": original}, config)
+        self.assertEqual(produced["batocera-systems.json"], original)
+
+    def test_an_added_system_takes_the_same_separator(self):
+        from exporter.retrobat_exporter import keep_blank_lines  # noqa: PLC0415
+
+        original = '{\n  "a": {},\n\n  "b": {}\n}\n'
+        produced = '{\n  "a": {},\n  "b": {},\n  "c": {}\n}\n'
+        self.assertEqual(keep_blank_lines(original, produced),
+                         '{\n  "a": {},\n\n  "b": {},\n\n  "c": {}\n}\n')
+
+
 class MisterDatabaseComesBackAsWritten(unittest.TestCase):
     """The BiosDB is one line of JSON. Written with indent=2 it came out as
     1499 changed lines for a database whose content had not changed."""
