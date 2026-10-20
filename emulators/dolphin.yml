@@ -30,7 +30,7 @@ data_directories:
     installed_on: [batocera, lakka, retrobat, retrodeck]
     mode: libretro
     destination: "Sys"
-    source_ref: "Source/Core/Common/CommonPaths.h:128-141"
+    source_ref: "source Source/Core/Common/CommonPaths.h:128-141"
 
 files:
   # -- GameCube IPL (Boot ROM) --
@@ -46,7 +46,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts"
-    source_ref: "Source/Core/Common/CommonPaths.h:139, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:108"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:139, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:108"
 
   - name: "IPL.bin"
     path: "dolphin-emu/Sys/GC/EUR/IPL.bin"
@@ -57,7 +57,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube PAL boot ROM"
-    source_ref: "Source/Core/Core/Config/MainSettings.cpp:776-782"
+    source_ref: "source Source/Core/Core/Config/MainSettings.cpp:776-782"
 
   - name: "IPL.bin"
     path: "dolphin-emu/Sys/GC/JAP/IPL.bin"
@@ -68,7 +68,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube NTSC-J boot ROM. JAP is the legacy directory name"
-    source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:185"
+    source_ref: "source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:185"
 
   # -- DSP ROMs --
   # Used by DSP LLE for accurate audio.
@@ -86,7 +86,7 @@ files:
     adler32_pairs_with: "dsp_coef.bin"
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     note: "DSP instruction ROM for LLE audio. Free replacement (v0.4) included"
-    source_ref: "Source/Core/Common/CommonPaths.h:136, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:84-117, Source/Core/Core/DSP/DSPCore.cpp:28-102"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:136, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:84-117, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
 
   - name: "dsp_coef.bin"
     path: "dolphin-emu/Sys/GC/dsp_coef.bin"
@@ -100,7 +100,7 @@ files:
     adler32_pairs_with: "dsp_rom.bin"
     adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0xe789b5a5"]]
     note: "DSP coefficient ROM for LLE audio and HLE polyphase resampling. Free replacement included"
-    source_ref: "Source/Core/Common/CommonPaths.h:137, Source/Core/Core/DSP/DSPCore.cpp:32-33, Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:55-62, Source/Core/Core/DSP/DSPCore.cpp:28-102"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:137, source Source/Core/Core/DSP/DSPCore.cpp:32-33, source Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:55-62, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
 
   # -- GameCube Fonts --
   # Bundled free alternatives exist but have padding differences causing misplaced text.
@@ -113,7 +113,7 @@ files:
     required: false
     hle_fallback: true
     note: "Windows-1252 font for GC/Wii text rendering. Free alternative bundled, real one from IPL dump preferred"
-    source_ref: "Source/Core/Common/CommonPaths.h:133, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130,202-239"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:133, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130, 202-239"
 
   - name: "font_japanese.bin"
     path: "dolphin-emu/Sys/GC/font_japanese.bin"
@@ -122,7 +122,7 @@ files:
     required: false
     hle_fallback: true
     note: "Shift-JIS font for Japanese text. Free alternative bundled, real one from IPL dump preferred"
-    source_ref: "Source/Core/Common/CommonPaths.h:134, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:129,234"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:134, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:129, 234"
 
   # -- Triforce firmware --
   # Loaded from User/Triforce/ only, no Sys fallback.
@@ -132,7 +132,7 @@ files:
     system: sega-triforce
     required: true
     note: "SegaBoot, the Triforce system disc image. Read on every Triforce boot, min(size, 2 MiB) copied into the firmware buffer, nothing validated"
-    source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:163, Source/Core/Core/HW/DVD/AMMediaboard.cpp:521, Source/Core/Core/HW/DVD/AMMediaboard.cpp:551-571, Source/Core/Core/HW/DVD/DVDInterface.cpp:292-294, Source/Core/Core/System.h:147"
+    source_ref: "source Source/Core/Core/HW/DVD/AMMediaboard.cpp:163, source Source/Core/Core/HW/DVD/AMMediaboard.cpp:521, source Source/Core/Core/HW/DVD/AMMediaboard.cpp:551-571, source Source/Core/Core/HW/DVD/DVDInterface.cpp:292-294, source Source/Core/Core/System.h:147"
 
   # -- GBA BIOS (for GC-GBA link) --
   # Used by integrated mGBA core for GameCube-GBA connectivity.
@@ -144,7 +144,7 @@ files:
     required: false
     hle_fallback: true
     note: "GBA BIOS for GC-GBA link feature (uses integrated mGBA). Path configurable in settings"
-    source_ref: "Source/Core/Common/CommonPaths.h:145, Source/Core/Core/HW/GBACore.cpp:346-363"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:145, source Source/Core/Core/HW/GBACore.cpp:346-363"
 
   # -- Wii System Files --
   # Generated/managed by Dolphin's Wii NAND emulation.
@@ -157,7 +157,7 @@ files:
     required: false
     hle_fallback: true
     note: "Wii system configuration. Auto-generated by Dolphin, can be imported from NAND backup"
-    source_ref: "Source/Core/Common/CommonPaths.h:118, Source/Core/Common/FileUtil.cpp:905"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:118, source Source/Core/Common/FileUtil.cpp:905"
 
   - name: "setting.txt"
     path: "Wii/title/00000001/00000002/data/setting.txt"
@@ -167,7 +167,7 @@ files:
     required: false
     hle_fallback: true
     note: "Wii region/language settings. Auto-generated by Dolphin during Wii boot emulation"
-    source_ref: "Source/Core/Common/CommonPaths.h:153, Source/Core/Core/Boot/Boot_BS2Emu.cpp:384-460"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:153, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:384-460"
 
   # -- Wii NAND Backup (BootMii) --
   - name: "nand.bin"
@@ -175,7 +175,7 @@ files:
     required: false
     hle_fallback: true
     note: "BootMii NAND backup. Can be imported to populate Wii NAND with channels, saves, system menu"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:27-45,47-92"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:27-45, 47-92"
 
   - name: "keys.bin"
     path: null
@@ -183,7 +183,7 @@ files:
     required: false
     hle_fallback: true
     note: "OTP/SEEPROM dump (Wii encryption keys). Needed if not appended to nand.bin for NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:20, Source/Core/DiscIO/NANDImporter.cpp:77-91, Source/Core/DiscIO/NANDImporter.h:35-38"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:20, source Source/Core/DiscIO/NANDImporter.cpp:77-91, source Source/Core/DiscIO/NANDImporter.h:35-38"
 
   # -- Wii SD Card Image --
   - name: "WiiSD.raw"
@@ -193,7 +193,7 @@ files:
     required: false
     hle_fallback: true
     note: "Virtual SD card image for Wii homebrew. Auto-created by Dolphin, supports SD/SDHC up to 4GB"
-    source_ref: "Source/Core/Common/CommonPaths.h:150"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:150"
 
   # -- Gecko Code Handler --
   - name: "codehandler.bin"
@@ -206,7 +206,7 @@ files:
     md5: "1f118b8735fcf40c20b38c3184eebfd9"
     hle_fallback: true
     note: "Gecko/Ocarina cheat code handler. Shipped in Sys/ of the standalone release (dolphin-2512-x64.7z)"
-    source_ref: "Source/Core/Common/CommonPaths.h:155, Source/Core/Core/GeckoCode.cpp:120"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:155, source Source/Core/Core/GeckoCode.cpp:120"
 
   - name: "codehandler.bin"
     path: null
@@ -215,7 +215,7 @@ files:
     installed_on: [batocera, lakka, retrobat, retrodeck]
     hle_fallback: true
     note: "Gecko/Ocarina cheat code handler, read from the Sys data directory the core zip does not contain. The Batocera and Lakka packages copy Data/Sys beside the core, and RetroBat installs it as bios/dolphin-emu/Sys"
-    source_ref: "Source/Core/Common/CommonPaths.h:155, Source/Core/Core/GeckoCode.cpp:120"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:155, source Source/Core/Core/GeckoCode.cpp:120"
 
   # -- Wii System Menu (WAD) --
   - name: "Wii System Menu"
@@ -224,7 +224,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "Wii System Menu WAD. Installed to NAND via Tools > Install WAD, needed for Wii Menu boot"
-    source_ref: "Source/Core/DolphinQt/MainWindow.cpp:1629-1631, Source/Core/DolphinQt/MenuBar.cpp:1218-1232"
+    source_ref: "source Source/Core/DolphinQt/MainWindow.cpp:1629-1631, source Source/Core/DolphinQt/MenuBar.cpp:1218-1232"
 
   # -- NAND Certificates (auto-extracted) --
   - name: "clientca.pem"
@@ -234,7 +234,7 @@ files:
     required: false
     hle_fallback: true
     note: "SSL client certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:220-304"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:220-304"
 
   - name: "clientcakey.pem"
     path: "Wii/clientcakey.pem"
@@ -243,7 +243,7 @@ files:
     required: false
     hle_fallback: true
     note: "SSL client private key. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:256"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:256"
 
   - name: "rootca.pem"
     path: "Wii/rootca.pem"
@@ -252,7 +252,7 @@ files:
     required: false
     hle_fallback: true
     note: "SSL root CA certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:257"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:257"
 
   # -- Realtek Bluetooth firmware (Wiimote passthrough) --
   # Required for real Wiimote connectivity via USB Bluetooth adapters with Realtek chipsets.
@@ -266,105 +266,105 @@ files:
     required: false
     mode: standalone
     note: "Realtek 8723A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:414"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:414"
 
   - name: "rtl8723b_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8723b_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8723B BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:389"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:389"
 
   - name: "rtl8723d_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8723d_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8723D BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:418"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:418"
 
   - name: "rtl8761a_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8761a_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8761A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:393"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:393"
 
   - name: "rtl8761bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8761bu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8761BU BT firmware for Wiimote passthrough (most common USB dongle)"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:395"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:395"
 
   - name: "rtl8821a_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8821a_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8821A BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:397"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:397"
 
   - name: "rtl8821c_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8821c_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8821C BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:426"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:426"
 
   - name: "rtl8822b_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8822b_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8822B BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:430"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:430"
 
   - name: "rtl8822cu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8822cu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8822CU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:401"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:401"
 
   - name: "rtl8851bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8851bu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8851BU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:405"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:405"
 
   - name: "rtl8852au_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852au_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8852AU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:407"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:407"
 
   - name: "rtl8852bu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852bu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8852BU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:409"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:409"
 
   - name: "rtl8852cu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852cu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8852CU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:411"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:411"
 
   - name: "rtl8852btu_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8852btu_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8852BT/8852BE-VT BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:413"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:413"
 
   - name: "rtl8922au_fw.bin"
     path: "Load/Firmware/rtl_bt/rtl8922au_fw.bin"
     required: false
     mode: standalone
     note: "Realtek 8922AU BT firmware for Wiimote passthrough"
-    source_ref: "Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:415"
+    source_ref: "source Source/Core/Core/IOS/USB/Bluetooth/RealtekFirmwareLoader.cpp:415"
 
 notes:
   hle_available: true

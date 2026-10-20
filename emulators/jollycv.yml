@@ -59,7 +59,7 @@ files:
     size: 8192
     md5: "2c66f5911e5b42b8ebe113403548eee7"
     validation: [size]
-    source_ref: "libretro/libretro.c:697-703, src/jollycv.c:406-432, src/jcv_coleco.c:402-410, jg.c:151-153"
+    source_ref: "source libretro/libretro.c:697-703, source src/jollycv.c:406-432, source src/jcv_coleco.c:402-410, source jg.c:151-153"
     note: "Mapped at 0x0000-0x1FFF, replaced by the lower 8K of SGM RAM when the Super Game Module enables it. The MD5 is the value the JG bioslist declares, and the core compares the size only."
 
   - name: "bioscv.rom"
@@ -69,7 +69,7 @@ files:
     size: 2048
     md5: "3b1ef759d8e3fb4071582efd33dd05f9"
     validation: [size]
-    source_ref: "libretro/libretro.c:707-713, src/jollycv.c:406-432, src/jcv_crvision.c:316-324, jg.c:154-155"
+    source_ref: "source libretro/libretro.c:707-713, source src/jollycv.c:406-432, source src/jcv_crvision.c:316-324, upstream jg.c:154-155"
     note: "Mapped at 0xF800-0xFFFF. The MD5 is the value the JG bioslist declares, and the core compares the size only."
 
 platform_details:

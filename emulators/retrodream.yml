@@ -43,7 +43,7 @@ files:
       - f2cd29d09f3e29984bcea22ab2e006fe
       - e10c53c2f8b90bab96ead2d368858623
     note: "Dreamcast boot ROM. Four known variants accepted."
-    source_ref: "src/guest/rom/boot.c:12-80"
+    source_ref: "source src/guest/rom/boot.c:12-80"
 
   - name: "flash.bin"
     system: sega-dreamcast
@@ -52,4 +52,4 @@ files:
     size: 131072
     validation: [size]
     note: "Dreamcast flash memory. Written back on shutdown."
-    source_ref: "src/guest/rom/flash.c:25-71"
+    source_ref: "source src/guest/rom/flash.c:25-71"

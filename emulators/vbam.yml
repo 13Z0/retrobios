@@ -30,7 +30,7 @@ files:
     size: 16384
     validation: [size]
     description: "GBA BIOS"
-    source_ref: "src/gba/GBA.cpp:3262-3272 (CPUInit size check), src/libretro/libretro.cpp:846-851 (gba_init)"
+    source_ref: "source src/gba/GBA.cpp:3262-3272 (CPUInit size check), source src/libretro/libretro.cpp:846-851 (gba_init)"
 
   - name: gb_bios.bin
     system: nintendo-gb
@@ -39,7 +39,7 @@ files:
     size: 256
     validation: [size]
     description: "Game Boy boot ROM"
-    source_ref: "src/gb/GB.cpp:2172-2192 (gbCPUInit size check), src/libretro/libretro.cpp:861-879 (gb_init)"
+    source_ref: "source src/gb/GB.cpp:2172-2192 (gbCPUInit size check), source src/libretro/libretro.cpp:861-879 (gb_init)"
 
   - name: gbc_bios.bin
     system: nintendo-gbc
@@ -48,4 +48,4 @@ files:
     size: 2304
     validation: [size]
     description: "Game Boy Color boot ROM"
-    source_ref: "src/gb/GB.cpp:2172-2192 (gbCPUInit size check), src/libretro/libretro.cpp:861-879 (gb_init)"
+    source_ref: "source src/gb/GB.cpp:2172-2192 (gbCPUInit size check), source src/libretro/libretro.cpp:861-879 (gb_init)"

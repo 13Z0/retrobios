@@ -37,94 +37,94 @@ files:
     system: nintendo-snes
     required: false
     size: 6144
-    source_ref: "ananke/heuristics/super-famicom.hpp:381"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:381"
 
   - name: dsp1b.data.rom
     system: nintendo-snes
     required: false
     size: 2048
-    source_ref: "ananke/heuristics/super-famicom.hpp:382"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:382"
 
   - name: dsp2.program.rom
     system: nintendo-snes
     required: false
     size: 6144
-    source_ref: "ananke/heuristics/super-famicom.hpp:403"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:403"
 
   - name: dsp2.data.rom
     system: nintendo-snes
     required: false
     size: 2048
-    source_ref: "ananke/heuristics/super-famicom.hpp:404"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:404"
 
   - name: dsp3.program.rom
     system: nintendo-snes
     required: false
     size: 6144
-    source_ref: "ananke/heuristics/super-famicom.hpp:417"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:417"
 
   - name: dsp3.data.rom
     system: nintendo-snes
     required: false
     size: 2048
-    source_ref: "ananke/heuristics/super-famicom.hpp:418"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:418"
 
   - name: dsp4.program.rom
     system: nintendo-snes
     required: false
     size: 6144
-    source_ref: "ananke/heuristics/super-famicom.hpp:431"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:431"
 
   - name: dsp4.data.rom
     system: nintendo-snes
     required: false
     size: 2048
-    source_ref: "ananke/heuristics/super-famicom.hpp:432"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:432"
 
   - name: cx4.data.rom
     system: nintendo-snes
     required: false
     size: 3072
-    source_ref: "ananke/heuristics/super-famicom.hpp:146"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:146"
 
   - name: st010.program.rom
     system: nintendo-snes
     required: false
     size: 49152
-    source_ref: "ananke/heuristics/super-famicom.hpp:445"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:445"
 
   - name: st010.data.rom
     system: nintendo-snes
     required: false
     size: 4096
-    source_ref: "ananke/heuristics/super-famicom.hpp:446"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:446"
 
   - name: st011.program.rom
     system: nintendo-snes
     required: false
     size: 49152
-    source_ref: "ananke/heuristics/super-famicom.hpp:460"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:460"
 
   - name: st011.data.rom
     system: nintendo-snes
     required: false
     size: 4096
-    source_ref: "ananke/heuristics/super-famicom.hpp:461"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:461"
 
   - name: st018.program.rom
     system: nintendo-snes
     required: false
     size: 131072
-    source_ref: "ananke/heuristics/super-famicom.hpp:475"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:475"
 
   - name: st018.data.rom
     system: nintendo-snes
     required: false
     size: 32768
-    source_ref: "ananke/heuristics/super-famicom.hpp:476"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:476"
 
   - name: sgb.boot.rom
     system: nintendo-sgb
     required: false
     size: 256
-    source_ref: "ananke/heuristics/super-famicom.hpp:133"
+    source_ref: "source ananke/heuristics/super-famicom.hpp:133"

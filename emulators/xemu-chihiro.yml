@@ -67,7 +67,7 @@ files:
     validation: [size, sha1]
     description: "Chihiro BIOS"
     note: "RetroBat also looks for it at the root of the bios folder. The other Chihiro files are then read from the same folder."
-    source_ref: "hw/xbox/chihiro/chihiro.c:2280-2292, system/vl.c:3169-3190"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2280-2292, source system/vl.c:3169-3190"
 
   - name: fpr21042_m29w160et.bin
     path: "chihiro/fpr21042_m29w160et.bin"
@@ -77,7 +77,7 @@ files:
     validation: [size]
     description: "Media board flash ROM (SEGABOOT)"
     note: "First of the three names tried. The SEGABOOT version is read from the second megabyte and the board serial from the MBDT header at 0xFFE00."
-    source_ref: "hw/xbox/chihiro/chihiro.c:2259-2333, 485-489, system/vl.c:3201-3214"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2259-2333, 485-489, source system/vl.c:3201-3214"
 
   - name: fpr-23887_29lv160te.ic4
     path: "chihiro/fpr-23887_29lv160te.ic4"
@@ -88,7 +88,7 @@ files:
     aliases: [fpr-23887.bin]
     description: "Media board flash ROM, later revision"
     note: "Read in place of fpr21042_m29w160et.bin when that one is absent, under either name."
-    source_ref: "hw/xbox/chihiro/chihiro.c:2320-2332"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2320-2332"
 
   - name: ic10_g24lc64.bin
     path: "chihiro/ic10_g24lc64.bin"
@@ -97,7 +97,7 @@ files:
     size: 8192
     validation: [size]
     description: "Base board QC EEPROM"
-    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3215-3217"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2336-2401, source system/vl.c:3215-3217"
 
   - name: pc20_g24lc64.bin
     path: "chihiro/pc20_g24lc64.bin"
@@ -106,7 +106,7 @@ files:
     size: 8192
     validation: [size]
     description: "Base board SC EEPROM"
-    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3218-3220"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2336-2401, source system/vl.c:3218-3220"
 
   - name: ic11_24lc024.bin
     path: "chihiro/ic11_24lc024.bin"
@@ -115,11 +115,11 @@ files:
     size: 128
     validation: [size]
     description: "Base board configuration EEPROM"
-    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3221-3223"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:2336-2401, source system/vl.c:3221-3223"
 
   - name: ver1305.bin
     system: sega-chihiro
     required: false
     description: "DIMM board network firmware 13.05"
     note: "Opened only from the path set in the settings. Its version is the word after the FIRM_VERSION is here! mark."
-    source_ref: "hw/xbox/chihiro/chihiro.c:363-400, 491-513, hw/xbox/chihiro/chihiro-netboard.c:1257-1270"
+    source_ref: "source hw/xbox/chihiro/chihiro.c:363-400, 491-513, source hw/xbox/chihiro/chihiro-netboard.c:1257-1270"

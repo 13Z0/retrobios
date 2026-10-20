@@ -49,7 +49,7 @@ files:
       PC-9801 system BIOS ROM. The first 0x18000 bytes are read to 0xe8000.
       A file shorter than that is ignored and the built-in BIOS simulator
       is used, as when the file is absent.
-    source_ref: "bios/bios.c:440-447, pccore.c:129, common/strres.c:67"
+    source_ref: "source bios/bios.c:440-447, source pccore.c:129, upstream common/strres.c:67"
 
   # -- Font file --
   # Path set in libretro.c:1813 as "<system>/np2kai/font.bmp".
@@ -65,7 +65,7 @@ files:
       PC-98 font bitmap. Required for correct Japanese kanji display.
       Without this, only basic ASCII renders using built-in 8x8 data.
       FONT.ROM (V98 format) is also accepted.
-    source_ref: "sdl/libretro/libretro.c:1830, font/font.c:86-125, font/fontdata.c:11"
+    source_ref: "source sdl/libretro/libretro.c:1830, source font/font.c:86-125, upstream font/fontdata.c:11"
 
   # -- Sound BIOS ROM --
   # Loaded by soundrom_load() in soundrom.c:93-106 via loadsoundrom().
@@ -82,7 +82,7 @@ files:
       Board-specific variants are tried first: sound26.rom (PC-9801-26K),
       sound86.rom (86), sound118.rom (118), soundSPB.rom (Speak Board),
       soundMO.rom (MO), sound14.rom (14).
-    source_ref: "sound/soundrom.c:15-16,21-55,93-106"
+    source_ref: "source sound/soundrom.c:15-16, 21-55, 93-106"
 
   # -- YM2608 OPNA rhythm samples --
   # Two engines, two sets of names: the built-in rhythm engine (rhythmc.c:60-71)
@@ -93,67 +93,67 @@ files:
     path: "np2kai/2608_bd.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: bass drum"
-    source_ref: "sound/rhythmc.c:11, 60-71"
+    source_ref: "upstream sound/rhythmc.c:11, 60-71"
 
   - name: "2608_sd.wav"
     path: "np2kai/2608_sd.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: snare drum"
-    source_ref: "sound/rhythmc.c:12, 60-71"
+    source_ref: "upstream sound/rhythmc.c:12, 60-71"
 
   - name: "2608_top.wav"
     path: "np2kai/2608_top.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: top cymbal"
-    source_ref: "sound/rhythmc.c:13, 60-71"
+    source_ref: "upstream sound/rhythmc.c:13, 60-71"
 
   - name: "2608_hh.wav"
     path: "np2kai/2608_hh.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: hi-hat"
-    source_ref: "sound/rhythmc.c:14, 60-71"
+    source_ref: "upstream sound/rhythmc.c:14, 60-71"
 
   - name: "2608_tom.wav"
     path: "np2kai/2608_tom.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: tom"
-    source_ref: "sound/rhythmc.c:15, 60-71"
+    source_ref: "upstream sound/rhythmc.c:15, 60-71"
 
   - name: "2608_rim.wav"
     path: "np2kai/2608_rim.wav"
     required: false
     note: "YM2608 OPNA rhythm sample: rim shot"
-    source_ref: "sound/rhythmc.c:16, 60-71"
+    source_ref: "upstream sound/rhythmc.c:16, 60-71"
 
   - name: "2608_BD.WAV"
     path: "np2kai/2608_BD.WAV"
     required: false
     note: "YM2608 OPNA rhythm sample for the fmgen engine: bass drum"
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   - name: "2608_SD.WAV"
     path: "np2kai/2608_SD.WAV"
     required: false
     note: "YM2608 OPNA rhythm sample for the fmgen engine: snare drum"
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   - name: "2608_TOP.WAV"
     path: "np2kai/2608_TOP.WAV"
     required: false
     note: "YM2608 OPNA rhythm sample for the fmgen engine: top cymbal"
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   - name: "2608_HH.WAV"
     path: "np2kai/2608_HH.WAV"
     required: false
     note: "YM2608 OPNA rhythm sample for the fmgen engine: hi-hat"
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   - name: "2608_TOM.WAV"
     path: "np2kai/2608_TOM.WAV"
     required: false
     note: "YM2608 OPNA rhythm sample for the fmgen engine: tom"
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   - name: "2608_RIM.WAV"
     path: "np2kai/2608_RIM.WAV"
@@ -162,7 +162,7 @@ files:
       YM2608 OPNA rhythm sample for the fmgen engine: rim shot. When it is
       missing fmgen tries 2608_RYM.WAV, but strncpy drops the directory, so
       that name is opened from the working directory, not from np2kai/.
-    source_ref: "sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, sound/opna.c:124-125"
+    source_ref: "source sound/fmgen/fmgen_opna.cpp:1417-1420, 1431-1444, source sound/opna.c:124-125"
 
   # -- IDE BIOS ROM --
   # Loaded by ideio_reset (cbus/ideio.c:1944-1981). Tried in order:
@@ -182,7 +182,7 @@ files:
       first 0x2000 bytes of the first name found are read to
       idebaddr << 12 and nothing past them. A shorter file is dropped.
       Without a loaded ROM the emulated IDE BIOS is used.
-    source_ref: "cbus/ideio.c:1928-1930, cbus/ideio.c:1944-1981"
+    source_ref: "source cbus/ideio.c:1928-1930, source cbus/ideio.c:1944-1981"
 
   # -- SCSI BIOS ROM --
   # Read into a 0x4000 buffer, and any non-empty read is kept. Falls back to the
@@ -196,7 +196,7 @@ files:
       SCSI controller BIOS ROM, up to 16 KB: the full-size test is commented
       out and a shorter file is used as read. The core includes a built-in
       SCSI BIOS stub as fallback.
-    source_ref: "cbus/scsiio.c:720-732"
+    source_ref: "upstream cbus/scsiio.c:720-732"
 
   # -- SASI BIOS ROM --
   # Loaded by sasiio.c:455. 4 KB (0x1000). Falls back to sasibios[] stub.
@@ -208,7 +208,7 @@ files:
     note: >
       SASI controller BIOS ROM (4 KB). The core includes a built-in
       SASI BIOS stub as fallback.
-    source_ref: "cbus/sasiio.c:451-467"
+    source_ref: "source cbus/sasiio.c:451-467"
 
   # -- PCI BIOS ROM --
   # Loaded by pcidev.c:360-382. Tries pci.rom then bank0.bin.
@@ -222,7 +222,7 @@ files:
     note: >
       PCI BIOS ROM (32 KB). For PC-9821 PCI bus emulation.
       Without this, the built-in PCI BIOS simulator is used.
-    source_ref: "io/pcidev.c:356-382"
+    source_ref: "source io/pcidev.c:356-382"
 
   # -- GPIB BIOS ROM --
   # Loaded by gpibio.c:327-356. 8 KB (0x2000). No built-in fallback:
@@ -235,7 +235,7 @@ files:
     note: >
       GP-IB interface BIOS ROM (8 KB). If missing, GP-IB emulation
       is disabled entirely.
-    source_ref: "cbus/gpibio.c:320-356"
+    source_ref: "source cbus/gpibio.c:320-356"
 
   # -- Keyboard remapping config --
   # Loaded by keystat_initialize() in keystat.c:43 via getbiospath().
@@ -249,4 +249,4 @@ files:
     note: >
       Keyboard remapping configuration (text file). User-created file
       for custom keyboard layout. The core uses built-in defaults if absent.
-    source_ref: "keystat.c:46,116-151"
+    source_ref: "upstream keystat.c:46, 116-151"

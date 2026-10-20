@@ -42,7 +42,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts"
-    source_ref: "Source/Core/Core/ConfigManager.cpp:876-883, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105"
+    source_ref: "source Source/Core/Core/ConfigManager.cpp:876-883, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105"
 
   - name: "IPL.bin"
     path: "dolphin-emu/Sys/GC/EUR/IPL.bin"
@@ -53,7 +53,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube PAL boot ROM"
-    source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:185"
+    source_ref: "source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:185"
 
   - name: "IPL.bin"
     path: "dolphin-emu/Sys/GC/JAP/IPL.bin"
@@ -64,7 +64,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube NTSC-J boot ROM"
-    source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:187"
+    source_ref: "source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:187"
 
   # -- DSP ROMs --
   # Used by DSP LLE for accurate audio. dsp_coef.bin also used by HLE for polyphase resampling.
@@ -81,7 +81,7 @@ files:
     adler32_pairs_with: "dsp_coef.bin"
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0x128ea7a2", "0xa4a575f5"]]
     note: "DSP instruction ROM for LLE audio. Free replacement included"
-    source_ref: "Source/Core/Common/CommonPaths.h:112, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:142-150, Source/Core/Core/DSP/DSPCore.cpp:48,67, Source/Core/Core/DSP/DSPCore.cpp:38-105"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:112, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:142-150, source Source/Core/Core/DSP/DSPCore.cpp:48, 67, source Source/Core/Core/DSP/DSPCore.cpp:38-105"
 
   - name: "dsp_coef.bin"
     path: "dolphin-emu/Sys/GC/dsp_coef.bin"
@@ -95,7 +95,7 @@ files:
     adler32_pairs_with: "dsp_rom.bin"
     adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0x128ea7a2"]]
     note: "DSP coefficient ROM for LLE audio and HLE polyphase resampling. Free replacement included"
-    source_ref: "Source/Core/Common/CommonPaths.h:113, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:143-153, Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:43-72, Source/Core/Core/DSP/DSPCore.cpp:48,68, Source/Core/Core/DSP/DSPCore.cpp:38-105"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:113, upstream Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:143-153, source Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:43-72, source Source/Core/Core/DSP/DSPCore.cpp:48, 68, source Source/Core/Core/DSP/DSPCore.cpp:38-105"
 
   # -- GameCube Fonts --
   # Bundled free alternatives exist but have padding differences causing misplaced text.
@@ -108,7 +108,7 @@ files:
     required: false
     hle_fallback: true
     note: "Windows-1252 font for GC/Wii text rendering. Free alternative bundled, real one from IPL dump preferred"
-    source_ref: "Source/Core/Common/CommonPaths.h:109, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:123,193-227"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:109, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:123, 193-227"
 
   - name: "font_japanese.bin"
     path: "dolphin-emu/Sys/GC/font_japanese.bin"
@@ -117,7 +117,7 @@ files:
     required: false
     hle_fallback: true
     note: "Shift-JIS font for Japanese text. Free alternative bundled, real one from IPL dump preferred"
-    source_ref: "Source/Core/Common/CommonPaths.h:110, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:122,193-227"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:110, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:122, 193-227"
 
   # -- Gecko Code Handler --
   - name: "codehandler.bin"
@@ -125,7 +125,7 @@ files:
     required: false
     hle_fallback: true
     note: "Gecko/Ocarina cheat code handler. Shipped with Ishiiruka in Sys/"
-    source_ref: "Source/Core/Common/CommonPaths.h:127, Source/Core/Core/GeckoCode.cpp:86"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:127, source Source/Core/Core/GeckoCode.cpp:86"
 
   # -- Wii System Files --
   # Auto-generated/managed by Dolphin's Wii emulation.
@@ -136,7 +136,7 @@ files:
     required: false
     hle_fallback: true
     note: "Wii system configuration. Auto-generated, can be imported from NAND backup"
-    source_ref: "Source/Core/Common/CommonPaths.h:59,95, Source/Core/Common/SysConf.cpp:40"
+    source_ref: "source Source/Core/Common/CommonPaths.h:59, 95, source Source/Core/Common/SysConf.cpp:40"
 
   - name: "setting.txt"
     path: "Wii/title/00000001/00000002/data/setting.txt"
@@ -146,7 +146,7 @@ files:
     required: false
     hle_fallback: true
     note: "Wii region/language settings. Auto-generated during Wii boot emulation"
-    source_ref: "Source/Core/Common/CommonPaths.h:125, Source/Core/Core/Boot/Boot_BS2Emu.cpp:229-266"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:125, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:229-266"
 
   # -- Wii SD Card Image --
   - name: "sd.raw"
@@ -156,7 +156,7 @@ files:
     required: false
     hle_fallback: true
     note: "Virtual SD card image for Wii homebrew. Auto-created (128MB) if not present"
-    source_ref: "Source/Core/Common/CommonPaths.h:122, Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:63-73"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:122, source Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:63-73"
 
   # -- Wii NAND Backup (BootMii) --
   - name: "nand.bin"
@@ -165,7 +165,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "BootMii NAND backup. Can be imported to populate Wii NAND with channels, saves, system menu"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:29-47"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:29-47"
 
   - name: "keys.bin"
     path: null
@@ -174,7 +174,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "OTP/SEEPROM dump (Wii encryption keys). Needed if not appended to nand.bin for NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:23-24,82-93"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:23-24, 82-93"
 
   # -- NAND Certificates (auto-extracted) --
   - name: "clientca.pem"
@@ -183,7 +183,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "SSL client certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:199-264"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:199-264"
 
   - name: "clientcakey.pem"
     path: "Wii/clientcakey.pem"
@@ -191,7 +191,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "SSL client private key. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:235"
+    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:235"
 
   - name: "rootca.pem"
     path: "Wii/rootca.pem"
@@ -199,7 +199,7 @@ files:
     hle_fallback: true
     mode: standalone
     note: "SSL root CA certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:236"
+    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:236"
 
 notes:
   hle_available: true

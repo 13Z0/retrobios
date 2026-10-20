@@ -93,7 +93,7 @@ files:
       names as the exception. The folder scan reaches an image only under the
       name bios.bin. [bios].override_file, -b and the Android picker open a
       path directly.
-    source_ref: "psx/dev/bios.c:21-54, psx/dev/bios.h:8-10, frontend/config.c:292-357, frontend/config.c:1540-1559, frontend/main.cpp:2529-2535"
+    source_ref: "source psx/dev/bios.c:21-54, source psx/dev/bios.h:8-10, source frontend/config.c:292-357, source frontend/config.c:1540-1559, source frontend/main.cpp:2529-2535"
 
   - name: "<expansion>.rom"
     required: false
@@ -106,4 +106,4 @@ files:
       no path is set. Named by [paths].expansion_rom, -e, or the Advanced tab of
       the Android settings. A path that is set and cannot be opened fails
       psx_init and stops the boot.
-    source_ref: "psx/dev/exp1.c:12-44, psx/dev/exp1.h:8-10, psx/psx.c:260-261, frontend/config.c:681, frontend/main.cpp:1906, android/app/src/main/java/com/armsx2/ui/settings/Ps1AdvancedTab.kt:96-100"
+    source_ref: "source psx/dev/exp1.c:12-44, source psx/dev/exp1.h:8-10, source psx/psx.c:260-261, source frontend/config.c:681, source frontend/main.cpp:1906, source android/app/src/main/java/com/armsx2/ui/settings/Ps1AdvancedTab.kt:96-100"

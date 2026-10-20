@@ -50,7 +50,7 @@ files:
     validation: [crc32]
     aliases: [epr-10381b.132]
     note: "Master 68K, high byte, upper bank"
-    source_ref: "src/main/roms.cpp:39"
+    source_ref: "upstream src/main/roms.cpp:39"
 
   - name: "epr-10383b.117"
     path: "cannonball/epr-10383b.117"
@@ -61,7 +61,7 @@ files:
     crc32: "10a2014a"
     validation: [crc32]
     note: "Master 68K, low byte, upper bank"
-    source_ref: "src/main/roms.cpp:40"
+    source_ref: "upstream src/main/roms.cpp:40"
 
   - name: "epr-10380b.133"
     path: "cannonball/epr-10380b.133"
@@ -72,7 +72,7 @@ files:
     crc32: "1f6cadad"
     validation: [crc32]
     note: "Master 68K, high byte, lower bank"
-    source_ref: "src/main/roms.cpp:39"
+    source_ref: "upstream src/main/roms.cpp:39"
 
   - name: "epr-10382b.118"
     path: "cannonball/epr-10382b.118"
@@ -83,7 +83,7 @@ files:
     crc32: "c4c3fa1a"
     validation: [crc32]
     note: "Master 68K, low byte, lower bank"
-    source_ref: "src/main/roms.cpp:40"
+    source_ref: "upstream src/main/roms.cpp:40"
 
   # -------------------------------------------------------
   # Slave CPU ROMs (68000, Rev A)
@@ -97,7 +97,7 @@ files:
     crc32: "e28a5baf"
     validation: [crc32]
     note: "Slave 68K, high byte, lower bank"
-    source_ref: "src/main/roms.cpp:44"
+    source_ref: "upstream src/main/roms.cpp:44"
 
   - name: "epr-10329a.58"
     path: "cannonball/epr-10329a.58"
@@ -108,7 +108,7 @@ files:
     crc32: "da131c81"
     validation: [crc32]
     note: "Slave 68K, low byte, lower bank"
-    source_ref: "src/main/roms.cpp:45"
+    source_ref: "upstream src/main/roms.cpp:45"
 
   - name: "epr-10328a.75"
     path: "cannonball/epr-10328a.75"
@@ -119,7 +119,7 @@ files:
     crc32: "d5ec5e5d"
     validation: [crc32]
     note: "Slave 68K, high byte, upper bank"
-    source_ref: "src/main/roms.cpp:46"
+    source_ref: "upstream src/main/roms.cpp:46"
 
   - name: "epr-10330a.57"
     path: "cannonball/epr-10330a.57"
@@ -130,7 +130,7 @@ files:
     crc32: "ba9ec82a"
     validation: [crc32]
     note: "Slave 68K, low byte, upper bank"
-    source_ref: "src/main/roms.cpp:47"
+    source_ref: "upstream src/main/roms.cpp:47"
 
   # -------------------------------------------------------
   # Tile ROMs
@@ -144,7 +144,7 @@ files:
     crc32: "95344b04"
     validation: [crc32]
     note: "Tile ROM bank 0"
-    source_ref: "src/main/roms.cpp:51"
+    source_ref: "upstream src/main/roms.cpp:51"
 
   - name: "opr-10232.102"
     path: "cannonball/opr-10232.102"
@@ -155,7 +155,7 @@ files:
     crc32: "776ba1eb"
     validation: [crc32]
     note: "Tile ROM bank 1"
-    source_ref: "src/main/roms.cpp:52"
+    source_ref: "upstream src/main/roms.cpp:52"
 
   - name: "opr-10267.100"
     path: "cannonball/opr-10267.100"
@@ -166,7 +166,7 @@ files:
     crc32: "a85bb823"
     validation: [crc32]
     note: "Tile ROM bank 2"
-    source_ref: "src/main/roms.cpp:53"
+    source_ref: "upstream src/main/roms.cpp:53"
 
   - name: "opr-10231.103"
     path: "cannonball/opr-10231.103"
@@ -177,7 +177,7 @@ files:
     crc32: "8908bcbf"
     validation: [crc32]
     note: "Tile ROM bank 3"
-    source_ref: "src/main/roms.cpp:54"
+    source_ref: "upstream src/main/roms.cpp:54"
 
   - name: "opr-10266.101"
     path: "cannonball/opr-10266.101"
@@ -188,7 +188,7 @@ files:
     crc32: "9f6f1a74"
     validation: [crc32]
     note: "Tile ROM bank 4"
-    source_ref: "src/main/roms.cpp:55"
+    source_ref: "upstream src/main/roms.cpp:55"
 
   - name: "opr-10230.104"
     path: "cannonball/opr-10230.104"
@@ -199,7 +199,7 @@ files:
     crc32: "686f5e50"
     validation: [crc32]
     note: "Tile ROM bank 5"
-    source_ref: "src/main/roms.cpp:56"
+    source_ref: "upstream src/main/roms.cpp:56"
 
   # -------------------------------------------------------
   # Road ROMs (identical pair, one per road layer)
@@ -213,7 +213,7 @@ files:
     crc32: "22794426"
     validation: [crc32]
     note: "Road ROM, layer 1"
-    source_ref: "src/main/roms.cpp:60"
+    source_ref: "upstream src/main/roms.cpp:60"
 
   - name: "opr-10186.47"
     path: "cannonball/opr-10186.47"
@@ -224,7 +224,7 @@ files:
     crc32: "22794426"
     validation: [crc32]
     note: "Road ROM, layer 2 (identical to opr-10185.11)"
-    source_ref: "src/main/roms.cpp:61"
+    source_ref: "upstream src/main/roms.cpp:61"
 
   # -------------------------------------------------------
   # Sprite ROMs (interleaved 4-way)
@@ -238,7 +238,7 @@ files:
     crc32: "7cc86208"
     validation: [crc32]
     note: "Sprite ROM, bank 0 byte 0"
-    source_ref: "src/main/roms.cpp:65"
+    source_ref: "upstream src/main/roms.cpp:65"
 
   - name: "mpr-10373.10"
     path: "cannonball/mpr-10373.10"
@@ -249,7 +249,7 @@ files:
     crc32: "b0d26ac9"
     validation: [crc32]
     note: "Sprite ROM, bank 0 byte 1"
-    source_ref: "src/main/roms.cpp:66"
+    source_ref: "upstream src/main/roms.cpp:66"
 
   - name: "mpr-10375.11"
     path: "cannonball/mpr-10375.11"
@@ -260,7 +260,7 @@ files:
     crc32: "59b60bd7"
     validation: [crc32]
     note: "Sprite ROM, bank 0 byte 2"
-    source_ref: "src/main/roms.cpp:67"
+    source_ref: "upstream src/main/roms.cpp:67"
 
   - name: "mpr-10377.12"
     path: "cannonball/mpr-10377.12"
@@ -271,7 +271,7 @@ files:
     crc32: "17a1b04a"
     validation: [crc32]
     note: "Sprite ROM, bank 0 byte 3"
-    source_ref: "src/main/roms.cpp:68"
+    source_ref: "upstream src/main/roms.cpp:68"
 
   - name: "mpr-10372.13"
     path: "cannonball/mpr-10372.13"
@@ -282,7 +282,7 @@ files:
     crc32: "b557078c"
     validation: [crc32]
     note: "Sprite ROM, bank 1 byte 0"
-    source_ref: "src/main/roms.cpp:69"
+    source_ref: "upstream src/main/roms.cpp:69"
 
   - name: "mpr-10374.14"
     path: "cannonball/mpr-10374.14"
@@ -293,7 +293,7 @@ files:
     crc32: "8051e517"
     validation: [crc32]
     note: "Sprite ROM, bank 1 byte 1"
-    source_ref: "src/main/roms.cpp:70"
+    source_ref: "upstream src/main/roms.cpp:70"
 
   - name: "mpr-10376.15"
     path: "cannonball/mpr-10376.15"
@@ -304,7 +304,7 @@ files:
     crc32: "f3b8f318"
     validation: [crc32]
     note: "Sprite ROM, bank 1 byte 2"
-    source_ref: "src/main/roms.cpp:71"
+    source_ref: "upstream src/main/roms.cpp:71"
 
   - name: "mpr-10378.16"
     path: "cannonball/mpr-10378.16"
@@ -315,7 +315,7 @@ files:
     crc32: "a1062984"
     validation: [crc32]
     note: "Sprite ROM, bank 1 byte 3"
-    source_ref: "src/main/roms.cpp:72"
+    source_ref: "upstream src/main/roms.cpp:72"
 
   # -------------------------------------------------------
   # Z80 Sound ROM
@@ -329,7 +329,7 @@ files:
     crc32: "a10abaa9"
     validation: [crc32]
     note: "Z80 sound program"
-    source_ref: "src/main/roms.cpp:77"
+    source_ref: "upstream src/main/roms.cpp:77"
 
   # -------------------------------------------------------
   # Sega PCM samples
@@ -343,7 +343,7 @@ files:
     crc32: "bcd10dde"
     validation: [crc32]
     note: "PCM sample bank 0"
-    source_ref: "src/main/roms.cpp:81"
+    source_ref: "upstream src/main/roms.cpp:81"
 
   - name: "opr-10192.67"
     path: "cannonball/opr-10192.67"
@@ -354,7 +354,7 @@ files:
     crc32: "770f1270"
     validation: [crc32]
     note: "PCM sample bank 1"
-    source_ref: "src/main/roms.cpp:81"
+    source_ref: "upstream src/main/roms.cpp:81"
 
   - name: "opr-10191.68"
     path: "cannonball/opr-10191.68"
@@ -365,7 +365,7 @@ files:
     crc32: "20a284ab"
     validation: [crc32]
     note: "PCM sample bank 2"
-    source_ref: "src/main/roms.cpp:83"
+    source_ref: "upstream src/main/roms.cpp:83"
 
   - name: "opr-10190.69"
     path: "cannonball/opr-10190.69"
@@ -376,7 +376,7 @@ files:
     crc32: "7cab70e2"
     validation: [crc32]
     note: "PCM sample bank 3"
-    source_ref: "src/main/roms.cpp:83"
+    source_ref: "upstream src/main/roms.cpp:83"
 
   - name: "opr-10189.70"
     path: "cannonball/opr-10189.70"
@@ -387,7 +387,7 @@ files:
     crc32: "01366b54"
     validation: [crc32]
     note: "PCM sample bank 4"
-    source_ref: "src/main/roms.cpp:85"
+    source_ref: "upstream src/main/roms.cpp:85"
 
   - name: "opr-10188.71"
     path: "cannonball/opr-10188.71"
@@ -398,7 +398,7 @@ files:
     crc32: "bad30ad9"
     validation: [crc32]
     note: "PCM sample bank 5"
-    source_ref: "src/main/roms.cpp:85"
+    source_ref: "upstream src/main/roms.cpp:85"
 
   # -------------------------------------------------------
   # Optional: fixed PCM sample
@@ -412,7 +412,7 @@ files:
     crc32: "37598616"
     validation: [crc32]
     note: "PCM sample bank 5, fixed version (replaces opr-10188.71)"
-    source_ref: "src/main/roms.cpp:123"
+    source_ref: "upstream src/main/roms.cpp:123"
 
   # -------------------------------------------------------
   # Japanese ROM variants (loaded when jap option enabled)
@@ -426,7 +426,7 @@ files:
     crc32: "e339e87a"
     validation: [crc32]
     note: "Master 68K Japan, high byte, lower bank"
-    source_ref: "src/main/roms.cpp:106"
+    source_ref: "upstream src/main/roms.cpp:106"
 
   - name: "epr-10382.118"
     path: "cannonball/epr-10382.118"
@@ -437,7 +437,7 @@ files:
     crc32: "65248dd5"
     validation: [crc32]
     note: "Master 68K Japan, low byte, lower bank"
-    source_ref: "src/main/roms.cpp:107"
+    source_ref: "upstream src/main/roms.cpp:107"
 
   - name: "epr-10381.132"
     path: "cannonball/epr-10381.132"
@@ -448,7 +448,7 @@ files:
     crc32: "be8c412b"
     validation: [crc32]
     note: "Master 68K Japan, high byte, upper bank"
-    source_ref: "src/main/roms.cpp:106"
+    source_ref: "upstream src/main/roms.cpp:106"
 
   - name: "epr-10383.117"
     path: "cannonball/epr-10383.117"
@@ -459,7 +459,7 @@ files:
     crc32: "dcc586e7"
     validation: [crc32]
     note: "Master 68K Japan, low byte, upper bank"
-    source_ref: "src/main/roms.cpp:107"
+    source_ref: "upstream src/main/roms.cpp:107"
 
   - name: "epr-10327.76"
     path: "cannonball/epr-10327.76"
@@ -470,7 +470,7 @@ files:
     crc32: "da99d855"
     validation: [crc32]
     note: "Slave 68K Japan, high byte, lower bank"
-    source_ref: "src/main/roms.cpp:112"
+    source_ref: "upstream src/main/roms.cpp:112"
 
   - name: "epr-10329.58"
     path: "cannonball/epr-10329.58"
@@ -481,7 +481,7 @@ files:
     crc32: "fe0fa5e2"
     validation: [crc32]
     note: "Slave 68K Japan, low byte, lower bank"
-    source_ref: "src/main/roms.cpp:113"
+    source_ref: "upstream src/main/roms.cpp:113"
 
   - name: "epr-10328.75"
     path: "cannonball/epr-10328.75"
@@ -492,7 +492,7 @@ files:
     crc32: "3c0e9a7f"
     validation: [crc32]
     note: "Slave 68K Japan, high byte, upper bank"
-    source_ref: "src/main/roms.cpp:112"
+    source_ref: "upstream src/main/roms.cpp:112"
 
   - name: "epr-10330.57"
     path: "cannonball/epr-10330.57"
@@ -503,4 +503,4 @@ files:
     crc32: "59786e99"
     validation: [crc32]
     note: "Slave 68K Japan, low byte, upper bank"
-    source_ref: "src/main/roms.cpp:113"
+    source_ref: "upstream src/main/roms.cpp:113"

@@ -105,7 +105,7 @@ files:
       padded with spaces.
       The name is the user's: the app compiles none in and only the .bin and
       .bios endings limit what the picker offers.
-    source_ref: "Snes9x/src/snes9x/memmap.cpp:2065 (run on every load), Snes9x/src/snes9x/bsx.cpp:1240-1274 (BS branch calls the loader), Snes9x/src/snes9x/bsx.cpp:1199-1203 (loader is the app hook), Snes9x/src/main/S9XApi.cc:218-253 (path, archive, size and header checks), Snes9x/src/main/EmuMenuViews.cc:345-365 (picker), Snes9x/src/main/system.ccm:110 (setting), Snes9x/src/main/options.cc:46,79 (config key)"
+    source_ref: "source Snes9x/src/snes9x/memmap.cpp:2065 (run on every load), source Snes9x/src/snes9x/bsx.cpp:1240-1274 (BS branch calls the loader), source Snes9x/src/snes9x/bsx.cpp:1199-1203 (loader is the app hook), source Snes9x/src/main/S9XApi.cc:218-253 (path, archive, size and header checks), source Snes9x/src/main/EmuMenuViews.cc:345-365 (picker), source Snes9x/src/main/system.ccm:110 (setting), source Snes9x/src/main/options.cc:46, 79 (config key)"
 
   - name: "STBIOS.bin"
     system: nintendo-sufami-turbo
@@ -122,7 +122,7 @@ files:
       the length must be exactly 262144, with "BANDAI SFC-ADX" at 0 and
       "SFC-ADX BACKUP" at 0x10. The name is the user's, the picker accepting any
       .bin or .bios.
-    source_ref: "Snes9x/src/main/Main.cc:250-260 (cart routes through the BIOS read), Snes9x/src/main/Main.cc:183-187,194-219 (path, archive, size and header checks), Snes9x/src/snes9x/memmap.cpp:1018-1025,1575-1608 (second check and placement), Snes9x/src/main/EmuMenuViews.cc:367-387 (picker), Snes9x/src/main/system.ccm:109 (setting), Snes9x/src/main/options.cc:45,78 (config key)"
+    source_ref: "source Snes9x/src/main/Main.cc:250-260 (cart routes through the BIOS read), source Snes9x/src/main/Main.cc:183-187, 194-219 (path, archive, size and header checks), source Snes9x/src/snes9x/memmap.cpp:1018-1025, 1575-1608 (second check and placement), source Snes9x/src/main/EmuMenuViews.cc:367-387 (picker), source Snes9x/src/main/system.ccm:109 (setting), source Snes9x/src/main/options.cc:45, 78 (config key)"
 
   - name: "BSX0120-0.bin"
     system: nintendo-satellaview
@@ -137,7 +137,7 @@ files:
       channel registers at 0x2188 and 0x218E, under the Satellaview Files path,
       which defaults to the content directory. The file is measured to size the
       queue and read 22 bytes at a time. A miss leaves the stream unloaded.
-    source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216, Snes9x/src/main/system.ccm:108, Snes9x/src/main/EmuMenuViews.cc:325-343"
+    source_ref: "source Snes9x/src/snes9x/bsx.cpp:736-790, source Snes9x/src/main/S9XApi.cc:203-216, source Snes9x/src/main/system.ccm:108, source Snes9x/src/main/EmuMenuViews.cc:325-343"
 
   - name: "BSX0121-0.bin"
     system: nintendo-satellaview
@@ -147,7 +147,7 @@ files:
     size: 34
     validation: [existence]
     config_key: "CFGKEY_SATELLAVIEW_PATH"
-    source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216"
+    source_ref: "source Snes9x/src/snes9x/bsx.cpp:736-790, source Snes9x/src/main/S9XApi.cc:203-216"
 
   - name: "BSX0122-0.bin"
     system: nintendo-satellaview
@@ -157,7 +157,7 @@ files:
     size: 1031
     validation: [existence]
     config_key: "CFGKEY_SATELLAVIEW_PATH"
-    source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216"
+    source_ref: "source Snes9x/src/snes9x/bsx.cpp:736-790, source Snes9x/src/main/S9XApi.cc:203-216"
 
   - name: "BSX0123-0.bin"
     system: nintendo-satellaview
@@ -167,7 +167,7 @@ files:
     size: 16
     validation: [existence]
     config_key: "CFGKEY_SATELLAVIEW_PATH"
-    source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216"
+    source_ref: "source Snes9x/src/snes9x/bsx.cpp:736-790, source Snes9x/src/main/S9XApi.cc:203-216"
 
   - name: "BSX0124-0.bin"
     system: nintendo-satellaview
@@ -177,7 +177,7 @@ files:
     size: 97
     validation: [existence]
     config_key: "CFGKEY_SATELLAVIEW_PATH"
-    source_ref: "Snes9x/src/snes9x/bsx.cpp:736-790, Snes9x/src/main/S9XApi.cc:203-216"
+    source_ref: "source Snes9x/src/snes9x/bsx.cpp:736-790, source Snes9x/src/main/S9XApi.cc:203-216"
 
   - name: "Bio Worm.7z"
     aliases: ["BioWorm.7z"]
@@ -192,4 +192,4 @@ files:
     note: >-
       Opened from the application bundle by the name the build gives it, the
       Linux build dropping the space, and loaded as content.
-    source_ref: "Snes9x/src/main/AppMeta.cc:20-21 (names), EmuFramework/src/gui/BundledGamesView.cc:41,47 (open and load)"
+    source_ref: "source Snes9x/src/main/AppMeta.cc:20-21 (names), source EmuFramework/src/gui/BundledGamesView.cc:41, 47 (open and load)"

@@ -54,7 +54,7 @@ files:
     size: 524288
     validation: [size]
     note: "Primary Saturn BIOS. Any region accepted. Searched in kronos/ subdir first."
-    source_ref: "yabause/src/libretro/libretro.c:1619-1623"
+    source_ref: "source yabause/src/libretro/libretro.c:1619-1623"
 
   # -----------------------------------------------------------
   # Saturn BIOS - Japan v1.01 (fallback)
@@ -66,7 +66,7 @@ files:
     size: 524288
     validation: [size]
     note: "Saturn BIOS v1.01 (Japan). Fallback if saturn_bios.bin missing."
-    source_ref: "yabause/src/libretro/libretro.c:1627"
+    source_ref: "source yabause/src/libretro/libretro.c:1627"
 
   # -----------------------------------------------------------
   # Saturn BIOS - NA/EU (fallback)
@@ -78,7 +78,7 @@ files:
     size: 524288
     validation: [size]
     note: "Saturn BIOS (NA/EU). Last fallback for Saturn mode."
-    source_ref: "yabause/src/libretro/libretro.c:1631"
+    source_ref: "source yabause/src/libretro/libretro.c:1631"
 
   # -----------------------------------------------------------
   # ST-V Arcade BIOS (stvbios.zip) - MAME romset
@@ -87,7 +87,7 @@ files:
     system: sega-stv
     required: true
     note: "MAME-style ZIP containing ST-V region BIOS EPROMs. Searched in kronos/ subdir first."
-    source_ref: "yabause/src/libretro/libretro.c:1608-1617, yabause/src/ctrl/src/stv.c:112-136"
+    source_ref: "source yabause/src/libretro/libretro.c:1608-1617, source yabause/src/ctrl/src/stv.c:112-136"
 
   # -----------------------------------------------------------
   # ST-V BIOS blobs inside stvbios.zip
@@ -102,7 +102,7 @@ files:
     size: 524288
     crc32: "f688ae60"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:120"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:120"
 
   - name: "epr-20091.ic8"
     archive: stvbios.zip
@@ -112,7 +112,7 @@ files:
     size: 524288
     crc32: "59ed40f4"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:121"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:121"
 
   - name: "epr-19730.ic8"
     archive: stvbios.zip
@@ -122,7 +122,7 @@ files:
     size: 524288
     crc32: "d0e0889d"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:122"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:122"
 
   - name: "epr-17951a.ic8"
     archive: stvbios.zip
@@ -132,7 +132,7 @@ files:
     size: 524288
     crc32: "2672f9d8"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:123"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:123"
 
   - name: "epr-17740a.ic8"
     archive: stvbios.zip
@@ -142,7 +142,7 @@ files:
     size: 524288
     crc32: "3e23c81f"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:124"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:124"
 
   - name: "epr-17740.ic8"
     archive: stvbios.zip
@@ -152,7 +152,7 @@ files:
     size: 524288
     crc32: "5c5aa63d"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:125"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:125"
 
   # Europe
   - name: "epr-17954a.ic8"
@@ -164,7 +164,7 @@ files:
     size: 524288
     crc32: "f7722da3"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:126"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:126"
 
   # USA
   - name: "epr-17952a.ic8"
@@ -175,7 +175,7 @@ files:
     size: 524288
     crc32: "d1be2adf"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:127"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:127"
 
   - name: "epr-17741a.ic8"
     archive: stvbios.zip
@@ -185,7 +185,7 @@ files:
     size: 524288
     crc32: "4166c663"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:128"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:128"
 
   # Taiwan
   - name: "epr-19854.ic8"
@@ -196,7 +196,7 @@ files:
     size: 524288
     crc32: "e09d1f60"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:129"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:129"
 
   - name: "epr-17953a.ic8"
     archive: stvbios.zip
@@ -206,7 +206,7 @@ files:
     size: 524288
     crc32: "a4c47570"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:130"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:130"
 
   - name: "epr-17742a.ic8"
     archive: stvbios.zip
@@ -216,7 +216,7 @@ files:
     size: 524288
     crc32: "02daf123"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:131"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:131"
 
   # Debug / Dev
   - name: "stv110.bin"
@@ -226,7 +226,7 @@ files:
     size: 524288
     crc32: "3dfeda92"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:132"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:132"
 
   - name: "stv1061.bin"
     archive: stvbios.zip
@@ -235,7 +235,7 @@ files:
     size: 524288
     crc32: "728dbca3"
     validation: [crc32]
-    source_ref: "yabause/src/ctrl/src/stv.c:133"
+    source_ref: "upstream yabause/src/ctrl/src/stv.c:133"
 
   # -----------------------------------------------------------
   # ROM Cartridges (game-specific, loaded from system_dir)
@@ -246,7 +246,7 @@ files:
     size: 2097152
     validation: [size]
     note: "ROM cartridge for The King of Fighters '95. Auto-detected via game DB."
-    source_ref: "yabause/src/utils/src/db.c:43-44, yabause/src/sys/memory/src/cs0.c:1526-1535"
+    source_ref: "upstream yabause/src/utils/src/db.c:43-44, source yabause/src/sys/memory/src/cs0.c:1526-1535"
 
   - name: "mpr-19367-mx.ic1"
     system: sega-saturn
@@ -254,4 +254,4 @@ files:
     size: 2097152
     validation: [size]
     note: "ROM cartridge for Ultraman: Hikari no Kyojin Densetsu. Auto-detected via game DB."
-    source_ref: "yabause/src/utils/src/db.c:45, yabause/src/sys/memory/src/cs0.c:1526-1535"
+    source_ref: "upstream yabause/src/utils/src/db.c:45, source yabause/src/sys/memory/src/cs0.c:1526-1535"

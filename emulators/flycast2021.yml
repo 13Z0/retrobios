@@ -67,7 +67,7 @@ files:
     validation: [size]
     description: "Dreamcast boot ROM"
     note: "Read as 2 MB into the system ROM, and a shorter file is rejected. Needed only to boot to the BIOS menu or when the HLE BIOS option is disabled."
-    source_ref: "core/hw/holly/sb_mem.cpp:50-65, core/hw/holly/sb_mem.cpp:215-229, core/hw/flashrom/flashrom.h:54-67, core/nullDC.cpp:420-431"
+    source_ref: "source core/hw/holly/sb_mem.cpp:50-65, source core/hw/holly/sb_mem.cpp:215-229, source core/hw/flashrom/flashrom.h:54-67, source core/nullDC.cpp:420-431"
 
   - name: "dc_nvmem.bin"
     path: "dc/dc_nvmem.bin"
@@ -78,7 +78,7 @@ files:
     validation: [size]
     description: "Dreamcast flash ROM"
     note: "Loaded with the boot ROM and by the HLE path. A missing file leaves the flash blank and the core runs. Written back as dc_nvmem.bin."
-    source_ref: "core/hw/holly/sb_mem.cpp:196-213, core/hw/holly/sb_mem.cpp:231, core/hw/holly/sb_mem.cpp:236-243, core/hw/holly/sb_mem.cpp:271-278"
+    source_ref: "source core/hw/holly/sb_mem.cpp:196-213, source core/hw/holly/sb_mem.cpp:231, source core/hw/holly/sb_mem.cpp:236-243, source core/hw/holly/sb_mem.cpp:271-278"
 
   - name: "font.bin"
     path: "dc/font.bin"
@@ -86,7 +86,7 @@ files:
     required: false
     description: "Dreamcast system font for the HLE BIOS"
     note: "Read whole into the font table of the reios ROM image. Absent, a built-in font is copied there."
-    source_ref: "core/reios/reios.cpp:736-755"
+    source_ref: "source core/reios/reios.cpp:736-755"
 
   - name: "naomi.zip"
     path: "dc/naomi.zip"
@@ -95,7 +95,7 @@ files:
     required: true
     description: "NAOMI BIOS archive"
     note: "Default BIOS of every NAOMI game whose table entry names none, cartridge, .lst, .bin and .dat images alike. One member is loaded: the one for the configured region, else epr-21576h.ic27."
-    source_ref: "core/hw/naomi/naomi_roms.h:132-189, core/hw/naomi/naomi_cart.cpp:227-247, core/hw/naomi/naomi_cart.cpp:472-484"
+    source_ref: "source core/hw/naomi/naomi_roms.h:132-189, upstream core/hw/naomi/naomi_cart.cpp:227-247, upstream core/hw/naomi/naomi_cart.cpp:472-484"
     contents:
       - name: "epr-21576h.ic27"
         size: 2097152
@@ -117,7 +117,7 @@ files:
     required: true
     description: "Atomiswave BIOS archive"
     note: "Named by all 34 Atomiswave games. Loaded into the flash chip, whose writable part is then reloaded from the save directory."
-    source_ref: "core/hw/naomi/naomi_roms.h:86-94, core/hw/naomi/naomi_cart.cpp:89-92, core/hw/naomi/naomi_cart.cpp:171-173"
+    source_ref: "source core/hw/naomi/naomi_roms.h:86-94, source core/hw/naomi/naomi_cart.cpp:89-92, source core/hw/naomi/naomi_cart.cpp:171-173"
     contents:
       - name: "bios0.ic23"
         size: 131072
@@ -129,7 +129,7 @@ files:
     required: true
     description: "Ferrari F355 Challenge BIOS archive"
     note: "Named by three Ferrari F355 Challenge entries, which refuse to start without it."
-    source_ref: "core/hw/naomi/naomi_roms.h:95-103, core/hw/naomi/naomi_cart.cpp:238-243"
+    source_ref: "source core/hw/naomi/naomi_roms.h:95-103, source core/hw/naomi/naomi_cart.cpp:238-243"
     contents:
       - name: "epr-22851.ic27"
         size: 2097152
@@ -148,7 +148,7 @@ files:
     required: true
     description: "Ferrari F355 Challenge Deluxe BIOS archive"
     note: "Named by the f355 entry, which refuses to start without it."
-    source_ref: "core/hw/naomi/naomi_roms.h:104-119, core/hw/naomi/naomi_roms.h:1701, core/hw/naomi/naomi_cart.cpp:238-243"
+    source_ref: "source core/hw/naomi/naomi_roms.h:104-119, upstream core/hw/naomi/naomi_roms.h:1701, source core/hw/naomi/naomi_cart.cpp:238-243"
     contents:
       - name: "epr-21864.ic27"
         size: 2097152
@@ -167,7 +167,7 @@ files:
     required: true
     description: "The House of the Dead 2 BIOS archive"
     note: "Named by four House of the Dead 2 entries, which refuse to start without it."
-    source_ref: "core/hw/naomi/naomi_roms.h:120-131, core/hw/naomi/naomi_cart.cpp:238-243"
+    source_ref: "source core/hw/naomi/naomi_roms.h:120-131, source core/hw/naomi/naomi_cart.cpp:238-243"
     contents:
       - name: "epr-21331.ic27"
         size: 2097152

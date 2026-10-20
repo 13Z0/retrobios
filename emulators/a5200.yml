@@ -42,4 +42,4 @@ files:
     note: >
       Atari 5200 OS ROM. Core option "a5200_bios" controls official vs internal.
       Altirra replacement has lower compatibility with some titles.
-    source_ref: "libretro/libretro.c:58-59, libretro/libretro.c:416-507, libretro/libretro.c:456-468, emu/memory.c:46"
+    source_ref: "source libretro/libretro.c:58-59, source libretro/libretro.c:416-507, source libretro/libretro.c:456-468, source emu/memory.c:46"

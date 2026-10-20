@@ -63,7 +63,7 @@ files:
     crc32: "3c14fc70"
     description: "OS 1.20"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window. The B/Acorn 1770 configuration is the one b2 falls back to when no saved configuration loads, so a missing file stops startup."
-    source_ref: "src/b2/roms.cpp:16, src/b2/BeebConfig.cpp:220, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57, src/b2/b2.cpp:1599-1607"
+    source_ref: "upstream src/b2/roms.cpp:16, upstream src/b2/BeebConfig.cpp:220, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57, source src/b2/b2.cpp:1599-1607"
 
   - name: "B+MOS.rom"
     standalone_path: "assets/roms/B+MOS.rom"
@@ -77,7 +77,7 @@ files:
     crc32: "66c8d893"
     description: "B+ MOS"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:17, src/b2/BeebConfig.cpp:243, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:17, source src/b2/BeebConfig.cpp:243, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "BASIC2.ROM"
     standalone_path: "assets/roms/BASIC2.ROM"
@@ -91,7 +91,7 @@ files:
     crc32: "79434781"
     description: "BASIC II"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:19, src/b2/BeebConfig.cpp:221, src/b2/BeebConfig.cpp:244, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:19, upstream src/b2/BeebConfig.cpp:221, upstream src/b2/BeebConfig.cpp:244, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "DFS-2.26.rom"
     standalone_path: "assets/roms/DFS-2.26.rom"
@@ -105,7 +105,7 @@ files:
     crc32: "5ae33e94"
     description: "Acorn 1770 DFS"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:20, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:245, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:20, source src/b2/BeebConfig.cpp:222, source src/b2/BeebConfig.cpp:245, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "DDFS-1.53.rom"
     standalone_path: "assets/roms/DDFS-1.53.rom"
@@ -119,7 +119,7 @@ files:
     crc32: "e1be4ee4"
     description: "Watford DDFS (DDB2)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:21, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:21, source src/b2/BeebConfig.cpp:222, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "DDFS-1.54T.rom"
     standalone_path: "assets/roms/DDFS-1.54T.rom"
@@ -133,7 +133,7 @@ files:
     crc32: "6504c1ed"
     description: "Watford DDFS (DDB3)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:22, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:22, source src/b2/BeebConfig.cpp:222, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "OPUS-DDOS-3.45.rom"
     standalone_path: "assets/roms/OPUS-DDOS-3.45.rom"
@@ -147,7 +147,7 @@ files:
     crc32: "c0163b95"
     description: "Opus DDOS"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:23, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:23, source src/b2/BeebConfig.cpp:222, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "challenger-1.01.rom"
     standalone_path: "assets/roms/challenger-1.01.rom"
@@ -161,7 +161,7 @@ files:
     crc32: "2f64503d"
     description: "Opus Challenger"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:24, src/b2/BeebConfig.cpp:222, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:24, source src/b2/BeebConfig.cpp:222, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "MasterTurboParasite.rom"
     standalone_path: "assets/roms/MasterTurboParasite.rom"
@@ -175,7 +175,7 @@ files:
     crc32: "da634682"
     description: "65C102 TUBE 1.20 (Master Turbo)"
     note: "Second processor OS ROM, read only by configurations with that parasite. A failed load, or an image over 4 KiB, aborts loading the configuration."
-    source_ref: "src/b2/roms.cpp:26, src/b2/BeebConfig.cpp:460, src/b2/BeebConfig.cpp:613-619"
+    source_ref: "upstream src/b2/roms.cpp:26, upstream src/b2/BeebConfig.cpp:460, upstream src/b2/BeebConfig.cpp:613-619"
 
   - name: "TUBE110.rom"
     standalone_path: "assets/roms/TUBE110.rom"
@@ -189,7 +189,7 @@ files:
     crc32: "9ec2dbd0"
     description: "6502 TUBE 1.10 (6502 Second Processor)"
     note: "Second processor OS ROM, read only by configurations with that parasite. A failed load, or an image over 4 KiB, aborts loading the configuration."
-    source_ref: "src/b2/roms.cpp:27, src/b2/BeebConfig.cpp:459, src/b2/BeebConfig.cpp:613-619"
+    source_ref: "upstream src/b2/roms.cpp:27, upstream src/b2/BeebConfig.cpp:459, upstream src/b2/BeebConfig.cpp:613-619"
 
   - name: "dfs.rom"
     standalone_path: "assets/roms/m128/3.20/dfs.rom"
@@ -203,7 +203,7 @@ files:
     crc32: "5e5d82ca"
     description: "MOS 3.20 DFS (9)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:32, src/b2/BeebConfig.cpp:273, src/b2/BeebConfig.cpp:321, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:32, upstream src/b2/BeebConfig.cpp:273, upstream src/b2/BeebConfig.cpp:321, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "viewsht.rom"
     standalone_path: "assets/roms/m128/3.20/viewsht.rom"
@@ -217,7 +217,7 @@ files:
     crc32: "1a831564"
     description: "MOS 3.20 Viewsheet (a)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:33, src/b2/BeebConfig.cpp:272, src/b2/BeebConfig.cpp:320, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:33, source src/b2/BeebConfig.cpp:272, source src/b2/BeebConfig.cpp:320, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "edit.rom"
     standalone_path: "assets/roms/m128/3.20/edit.rom"
@@ -231,7 +231,7 @@ files:
     crc32: "1a4a1113"
     description: "MOS 3.20 Edit (b)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:34, src/b2/BeebConfig.cpp:271, src/b2/BeebConfig.cpp:319, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:34, upstream src/b2/BeebConfig.cpp:271, upstream src/b2/BeebConfig.cpp:319, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/m128/3.20/basic4.rom"
@@ -245,7 +245,7 @@ files:
     crc32: "805529c7"
     description: "MOS 3.20 BASIC (c)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:35, src/b2/BeebConfig.cpp:270, src/b2/BeebConfig.cpp:318, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:35, upstream src/b2/BeebConfig.cpp:270, upstream src/b2/BeebConfig.cpp:318, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/m128/3.20/adfs.rom"
@@ -259,7 +259,7 @@ files:
     crc32: "10583dfe"
     description: "MOS 3.20 ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:36, src/b2/BeebConfig.cpp:269, src/b2/BeebConfig.cpp:317, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:36, upstream src/b2/BeebConfig.cpp:269, upstream src/b2/BeebConfig.cpp:317, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "view.rom"
     standalone_path: "assets/roms/m128/3.20/view.rom"
@@ -273,7 +273,7 @@ files:
     crc32: "bdc9b5df"
     description: "MOS 3.20 View (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:37, src/b2/BeebConfig.cpp:268, src/b2/BeebConfig.cpp:316, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:37, upstream src/b2/BeebConfig.cpp:268, upstream src/b2/BeebConfig.cpp:316, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "terminal.rom"
     standalone_path: "assets/roms/m128/3.20/terminal.rom"
@@ -287,7 +287,7 @@ files:
     crc32: "353b46b0"
     description: "MOS 3.20 Terminal (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:38, src/b2/BeebConfig.cpp:267, src/b2/BeebConfig.cpp:315, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:38, upstream src/b2/BeebConfig.cpp:267, upstream src/b2/BeebConfig.cpp:315, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/m128/3.20/mos.rom"
@@ -301,7 +301,7 @@ files:
     crc32: "aa317ef5"
     description: "MOS 3.20 MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:39, src/b2/BeebConfig.cpp:266, src/b2/BeebConfig.cpp:314, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:39, source src/b2/BeebConfig.cpp:266, source src/b2/BeebConfig.cpp:314, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "dfs.rom"
     standalone_path: "assets/roms/m128/3.50/dfs.rom"
@@ -315,7 +315,7 @@ files:
     crc32: "3537cd95"
     description: "MOS 3.50 DFS (9)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:44, src/b2/BeebConfig.cpp:297, src/b2/BeebConfig.cpp:347, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:44, upstream src/b2/BeebConfig.cpp:297, source src/b2/BeebConfig.cpp:347, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "viewsht.rom"
     standalone_path: "assets/roms/m128/3.50/viewsht.rom"
@@ -329,7 +329,7 @@ files:
     crc32: "976f7beb"
     description: "MOS 3.50 Viewsheet (a)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:45, src/b2/BeebConfig.cpp:296, src/b2/BeebConfig.cpp:346, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:45, source src/b2/BeebConfig.cpp:296, source src/b2/BeebConfig.cpp:346, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "edit.rom"
     standalone_path: "assets/roms/m128/3.50/edit.rom"
@@ -343,7 +343,7 @@ files:
     crc32: "5ba2edce"
     description: "MOS 3.50 Edit (b)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:46, src/b2/BeebConfig.cpp:295, src/b2/BeebConfig.cpp:345, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:46, upstream src/b2/BeebConfig.cpp:295, source src/b2/BeebConfig.cpp:345, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/m128/3.50/basic4.rom"
@@ -357,7 +357,7 @@ files:
     crc32: "6c6f5cd8"
     description: "MOS 3.50 BASIC (c)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:47, src/b2/BeebConfig.cpp:294, src/b2/BeebConfig.cpp:344, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:47, upstream src/b2/BeebConfig.cpp:294, source src/b2/BeebConfig.cpp:344, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/m128/3.50/adfs.rom"
@@ -371,7 +371,7 @@ files:
     crc32: "55c22377"
     description: "MOS 3.50 ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:48, src/b2/BeebConfig.cpp:293, src/b2/BeebConfig.cpp:343, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:48, upstream src/b2/BeebConfig.cpp:293, source src/b2/BeebConfig.cpp:343, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "view.rom"
     standalone_path: "assets/roms/m128/3.50/view.rom"
@@ -385,7 +385,7 @@ files:
     crc32: "55846c15"
     description: "MOS 3.50 View (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:49, src/b2/BeebConfig.cpp:292, src/b2/BeebConfig.cpp:342, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:49, upstream src/b2/BeebConfig.cpp:292, source src/b2/BeebConfig.cpp:342, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "terminal.rom"
     standalone_path: "assets/roms/m128/3.50/terminal.rom"
@@ -399,7 +399,7 @@ files:
     crc32: "9f375368"
     description: "MOS 3.50 Terminal (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:50, src/b2/BeebConfig.cpp:291, src/b2/BeebConfig.cpp:341, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:50, upstream src/b2/BeebConfig.cpp:291, source src/b2/BeebConfig.cpp:341, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/m128/3.50/mos.rom"
@@ -413,7 +413,7 @@ files:
     crc32: "f8b84874"
     description: "MOS 3.50 MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:51, src/b2/BeebConfig.cpp:290, src/b2/BeebConfig.cpp:340, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:51, source src/b2/BeebConfig.cpp:290, source src/b2/BeebConfig.cpp:340, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/mcompact/5.00/adfs.rom"
@@ -427,7 +427,7 @@ files:
     crc32: "a3ca7f75"
     description: "MOS 5.00 ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:56, src/b2/BeebConfig.cpp:380, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:56, source src/b2/BeebConfig.cpp:380, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/mcompact/5.00/basic4.rom"
@@ -441,7 +441,7 @@ files:
     crc32: "c0ddabc4"
     description: "MOS 5.00 BASIC (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:57, src/b2/BeebConfig.cpp:379, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:57, source src/b2/BeebConfig.cpp:379, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "utils.rom"
     standalone_path: "assets/roms/mcompact/5.00/utils.rom"
@@ -455,7 +455,7 @@ files:
     crc32: "3fb619a5"
     description: "MOS 5.00 UTILS (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:58, src/b2/BeebConfig.cpp:378, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:58, source src/b2/BeebConfig.cpp:378, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/mcompact/5.00/mos.rom"
@@ -469,7 +469,7 @@ files:
     crc32: "12c5f709"
     description: "MOS 5.00 MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:59, src/b2/BeebConfig.cpp:377, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:59, upstream src/b2/BeebConfig.cpp:377, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/mcompact/5.10/adfs.rom"
@@ -483,7 +483,7 @@ files:
     crc32: "45408fbb"
     description: "MOS 5.10 ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:64, src/b2/BeebConfig.cpp:401, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:64, source src/b2/BeebConfig.cpp:401, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/mcompact/5.10/basic4.rom"
@@ -497,7 +497,7 @@ files:
     crc32: "c0ddabc4"
     description: "MOS 5.10 BASIC (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:65, src/b2/BeebConfig.cpp:400, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:65, source src/b2/BeebConfig.cpp:400, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "utils.rom"
     standalone_path: "assets/roms/mcompact/5.10/utils.rom"
@@ -511,7 +511,7 @@ files:
     crc32: "9a742d06"
     description: "MOS 5.10 UTILS (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:66, src/b2/BeebConfig.cpp:399, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:66, source src/b2/BeebConfig.cpp:399, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/mcompact/5.10/mos.rom"
@@ -525,7 +525,7 @@ files:
     crc32: "56c83755"
     description: "MOS 5.10 MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:67, src/b2/BeebConfig.cpp:398, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:67, upstream src/b2/BeebConfig.cpp:398, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/mcompact/I5.10C/adfs.rom"
@@ -539,7 +539,7 @@ files:
     crc32: "e87dde0c"
     description: "MOS I5.10C ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:72, src/b2/BeebConfig.cpp:445, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:72, source src/b2/BeebConfig.cpp:445, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/mcompact/I5.10C/basic4.rom"
@@ -553,7 +553,7 @@ files:
     crc32: "7890765a"
     description: "MOS I5.10C BASIC (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:73, src/b2/BeebConfig.cpp:444, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:73, source src/b2/BeebConfig.cpp:444, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "utils.rom"
     standalone_path: "assets/roms/mcompact/I5.10C/utils.rom"
@@ -567,7 +567,7 @@ files:
     crc32: "ad58045f"
     description: "MOS I5.10C UTILS (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:74, src/b2/BeebConfig.cpp:443, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:74, source src/b2/BeebConfig.cpp:443, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/mcompact/I5.10C/mos.rom"
@@ -581,7 +581,7 @@ files:
     crc32: "440f411f"
     description: "MOS I5.10C MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:75, src/b2/BeebConfig.cpp:442, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:75, upstream src/b2/BeebConfig.cpp:442, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "adfs.rom"
     standalone_path: "assets/roms/mcompact/5.11i/adfs.rom"
@@ -595,7 +595,7 @@ files:
     crc32: "1a9f470e"
     description: "MOS 5.11i ADFS (d)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:80, src/b2/BeebConfig.cpp:422, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:80, source src/b2/BeebConfig.cpp:422, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "basic4.rom"
     standalone_path: "assets/roms/mcompact/5.11i/basic4.rom"
@@ -609,7 +609,7 @@ files:
     crc32: "45d76a23"
     description: "MOS 5.11i BASIC (e)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:81, src/b2/BeebConfig.cpp:421, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:81, source src/b2/BeebConfig.cpp:421, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "utils.rom"
     standalone_path: "assets/roms/mcompact/5.11i/utils.rom"
@@ -623,7 +623,7 @@ files:
     crc32: "c30fc8cd"
     description: "MOS 5.11i UTILS (f)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:82, src/b2/BeebConfig.cpp:420, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:82, source src/b2/BeebConfig.cpp:420, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "mos.rom"
     standalone_path: "assets/roms/mcompact/5.11i/mos.rom"
@@ -637,7 +637,7 @@ files:
     crc32: "3f81574e"
     description: "MOS 5.11i MOS (OS)"
     note: "OS ROM of the configurations that select it. A failed load, or an image over 16 KiB, aborts loading the configuration, while a shorter image is placed at the top of the 16 KiB window."
-    source_ref: "src/b2/roms.cpp:83, src/b2/BeebConfig.cpp:419, src/b2/BeebConfig.cpp:542-546, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:83, upstream src/b2/BeebConfig.cpp:419, source src/b2/BeebConfig.cpp:542-546, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "arabic.rom"
     standalone_path: "assets/roms/mcompact/5.11i/arabic.rom"
@@ -651,7 +651,7 @@ files:
     crc32: "4f3aadff"
     description: "MOS 5.11i ARABIC (usually 8)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:84, src/b2/BeebConfig.cpp:423, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:84, upstream src/b2/BeebConfig.cpp:423, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"
 
   - name: "international.rom"
     standalone_path: "assets/roms/mcompact/5.11i/international.rom"
@@ -665,4 +665,4 @@ files:
     crc32: "0ef527b1"
     description: "MOS 5.11i INTERNATIONAL (usually 2)"
     note: "Sideways ROM bank of the configurations that select it. A failed load is reported and the configuration loads with the bank empty."
-    source_ref: "src/b2/roms.cpp:85, src/b2/BeebConfig.cpp:428, src/b2/BeebConfig.cpp:584-593, src/b2/BeebConfig.cpp:35-57"
+    source_ref: "upstream src/b2/roms.cpp:85, upstream src/b2/BeebConfig.cpp:428, upstream src/b2/BeebConfig.cpp:584-593, source src/b2/BeebConfig.cpp:35-57"

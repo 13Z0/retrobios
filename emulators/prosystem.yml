@@ -38,7 +38,7 @@ files:
     hle_fallback: true
     size: 4096
     description: "NTSC/US BIOS, loaded when cartridge_region != REGION_PAL"
-    source_ref: "core/libretro.c:585"
+    source_ref: "source core/libretro.c:585"
 
   - name: "7800 BIOS (E).rom"
     system: atari-7800
@@ -46,4 +46,4 @@ files:
     hle_fallback: true
     size: 16384
     description: "PAL/EU BIOS, loaded when cartridge_region == REGION_PAL"
-    source_ref: "core/libretro.c:583"
+    source_ref: "source core/libretro.c:583"

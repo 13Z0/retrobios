@@ -159,7 +159,7 @@ files:
     category: game_data
     description: "GNU Unifont, the UI font used for CJK and for the low-resolution OSD"
     note: "Passed as -uifont when the language is Chinese, Japanese or Korean on the low-resolution OSD, or when the unifont setting is on. render_font opens it from fontpath, which defaults to the installation root, and a miss falls back to the font compiled into the binary. Seeded from the package assets on first run. The hash identifies that drop, the loader checks nothing."
-    source_ref: "src/osd/myosd/droid/myosd_droid.cpp:1620-1624, src/emu/rendfont.cpp:526-534,853-863"
+    source_ref: "source src/osd/myosd/droid/myosd_droid.cpp:1620-1624, upstream src/emu/rendfont.cpp:526-534, 853-863"
 
   - name: unifont.bdc
     path: unifont.bdc
@@ -170,7 +170,7 @@ files:
     category: game_data
     description: "compiled glyph cache for unifont.bdf"
     note: "load_cached_bdf derives the name by swapping the BDF extension and opens it before parsing the 9 MB source font, accepting it only when its stored size and hash match unifont.bdf. Shipped prebuilt, though MAME writes it itself when it is absent."
-    source_ref: "src/emu/rendfont.cpp:888-905,1303-1325"
+    source_ref: "upstream src/emu/rendfont.cpp:888-905, 1303-1325"
 
   - name: uismall.bdf
     path: uismall.bdf
@@ -181,7 +181,7 @@ files:
     category: game_data
     description: "MAME's own UI font, used for the low-resolution OSD"
     note: "Passed as -uifont for the low-resolution OSD in a Latin language. Same content as MAME 0.289's uismall.bdf, with CRLF line endings. The identical font is also compiled into the binary as the last fallback."
-    source_ref: "src/osd/myosd/droid/myosd_droid.cpp:1625-1629, src/emu/rendfont.cpp:537-540"
+    source_ref: "source src/osd/myosd/droid/myosd_droid.cpp:1625-1629, upstream src/emu/rendfont.cpp:537-540"
 
   - name: hiscore.dat
     path: plugins/hiscore/hiscore.dat
@@ -192,7 +192,7 @@ files:
     category: game_data
     description: "high score memory ranges per game"
     note: "read_hiscore_dat opens hiscore.dat from the installation root first, then the copy in the plugin's own directory, once per session when the hiscore plugin runs. Same content as MAME 0.289's plugins/hiscore/hiscore.dat, with CRLF line endings. Definitions are keyed to driver names, so another MAME generation's file is a different one."
-    source_ref: "plugins/hiscore/init.lua:105,151-155, src/osd/myosd/droid/myosd_droid.cpp:1640-1652"
+    source_ref: "upstream plugins/hiscore/init.lua:105, 151-155, source src/osd/myosd/droid/myosd_droid.cpp:1640-1652"
 
   - name: history.db
     path: data/history.db
@@ -203,7 +203,7 @@ files:
     category: game_data
     description: "SQLite database of the info files MAME's right panel shows"
     note: "The data plugin opens homepath/data/history.db, homepath defaulting to the installation root, and creates it when absent. Each info file is imported once and then read from the database, so the plugin needs no dat file next to it: this drop carries history.xml 2.88d, mameinfo.dat 0.290GIT, command.dat 0.273, gameinit.dat v0.250 and messinfo.dat. The plugin autostarts, its plugin.json declaring start true."
-    source_ref: "plugins/data/database.lua:12-14,38-44,46-64, plugins/data/data_history.lua:8-25, plugins/data/plugin.json"
+    source_ref: "upstream plugins/data/database.lua:12-14, 38-44, 46-64, upstream plugins/data/data_history.lua:8-25, upstream plugins/data/plugin.json"
 
   - name: cheat.7z
     path: cheat.7z
@@ -214,7 +214,7 @@ files:
     category: game_data
     description: "per-game XML cheat files"
     note: "cheat_manager::load_cheats opens <basename>.xml over cheatpath, which defaults to cheat, and emu_file's archive fallback rewrites the directory component to cheat.7z or cheat.zip before looking inside. It runs when -cheat is on, which the app passes from its cheats setting, and the Lua cheat plugin reads the same collection when it is enabled. The collection distributed with it dates itself 03 April 2024, base release for MAME 0.264."
-    source_ref: "src/frontend/mame/cheat.cpp:1143-1190,1400-1412, plugins/cheat/init.lua:96-122, src/emu/fileio.cpp:713-716, src/emu/emuopts.cpp:51, src/osd/myosd/droid/myosd_droid.cpp:1536-1538"
+    source_ref: "upstream src/frontend/mame/cheat.cpp:1143-1190, 1400-1412, upstream plugins/cheat/init.lua:96-122, upstream src/emu/fileio.cpp:713-716, upstream src/emu/emuopts.cpp:51, source src/osd/myosd/droid/myosd_droid.cpp:1536-1538"
 
   - name: boot.lua
     path: plugins/boot.lua
@@ -225,7 +225,7 @@ files:
     category: game_data
     description: "bootstrap script that starts the enabled Lua plugins"
     note: "Opened by name from pluginspath after the plugin directories are scanned. Without it no plugin runs, so hiscore, autofire, inputmacro and data stay silent, but the emulator itself is unaffected. A script that is present but fails to load is fatal."
-    source_ref: "src/frontend/mame/mame.cpp:139-221"
+    source_ref: "upstream src/frontend/mame/mame.cpp:139-221"
 
   - name: shaders.cfg
     path: shaders.cfg
@@ -236,7 +236,7 @@ files:
     category: game_data
     description: "index of the GLES effect shaders, one per line as file, name, filtering and format version"
     note: "load_filters reads it from the installation root and opens each shader it lists under shaders/. A missing file means no effect shaders, while a listed shader that cannot be opened raises. 53 of the 65 shipped shaders are loaded: ten more are commented out, and stock.glsl and vector_halo-fringe - copia.glsl are named nowhere."
-    source_ref: "src/osd/myosd/renderer/filter_shader.cpp:106-183"
+    source_ref: "source src/osd/myosd/renderer/filter_shader.cpp:106-183"
 
   - name: cross1.png
     path: crosshair/cross1.png
@@ -244,56 +244,56 @@ files:
     category: game_data
     description: "crosshair bitmap for player 1"
     note: "create_bitmap looks for the name set on the input, then crosshair/<gamename>/cross<N>.png, then crosshair/cross<N>.png, and falls back to the bitmap compiled into the binary. crosshair_manager builds one per player and MAX_PLAYERS is 10. No crosshair directory ships with the app: the files here are the compiled-in bitmap of src/emu/crsshair.cpp exported as 100x100 RGBA PNGs in each player colour, white from player 7 on."
-    source_ref: "src/emu/crsshair.cpp:174-215,346-358, src/emu/ioport.h:48"
+    source_ref: "upstream src/emu/crsshair.cpp:174-215, 346-358, upstream src/emu/ioport.h:48"
 
   - name: cross2.png
     path: crosshair/cross2.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 2"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross3.png
     path: crosshair/cross3.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 3"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross4.png
     path: crosshair/cross4.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 4"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross5.png
     path: crosshair/cross5.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 5"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross6.png
     path: crosshair/cross6.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 6"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross7.png
     path: crosshair/cross7.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 7"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
 
   - name: cross8.png
     path: crosshair/cross8.png
     required: false
     category: game_data
     description: "crosshair bitmap for player 8"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
     aliases: ["cross7.png"]
 
   - name: cross9.png
@@ -301,7 +301,7 @@ files:
     required: false
     category: game_data
     description: "crosshair bitmap for player 9"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
     aliases: ["cross7.png"]
 
   - name: cross10.png
@@ -309,7 +309,7 @@ files:
     required: false
     category: game_data
     description: "crosshair bitmap for player 10"
-    source_ref: "src/emu/crsshair.cpp:201-215"
+    source_ref: "upstream src/emu/crsshair.cpp:201-215"
     aliases: ["cross7.png"]
 
   # BIOS root sets, one MAME archive each under the ROMs path
@@ -318,7 +318,7 @@ files:
     category: bios_zip
     system: panasonic-3do
     description: "3DO BIOS"
-    source_ref: "src/mame/misc/3do.cpp:565"
+    source_ref: "upstream src/mame/misc/3do.cpp:565"
     contents:
       - name: "panafz10.bin"
         size: 1048576
@@ -341,7 +341,7 @@ files:
     category: bios_zip
     system: sega-naomi
     description: "NAOMI Airline Pilots (deluxe) BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10921"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10921"
     contents:
       - name: "epr-21802.ic27"
         size: 2097152
@@ -364,7 +364,7 @@ files:
     category: bios_zip
     system: nintendo-aleck64
     description: "Aleck64 PIF BIOS"
-    source_ref: "src/mame/nintendo/aleck64.cpp:1417"
+    source_ref: "upstream src/mame/nintendo/aleck64.cpp:1417"
     contents:
       - name: "pifdata.bin"
         size: 2048
@@ -383,7 +383,7 @@ files:
     category: bios_zip
     system: panasonic-3do
     description: "ALG 3DO BIOS"
-    source_ref: "src/mame/misc/3do.cpp:573"
+    source_ref: "upstream src/mame/misc/3do.cpp:573"
     contents:
       - name: "saot_rom2.bin"
         size: 524288
@@ -394,7 +394,7 @@ files:
     category: bios_zip
     system: alg-laserdisc
     description: "American Laser Games BIOS"
-    source_ref: "src/mame/amiga/alg.cpp:923"
+    source_ref: "upstream src/mame/amiga/alg.cpp:923"
     contents:
       - name: "315093-02.u2"
         size: 262144
@@ -405,7 +405,7 @@ files:
     category: bios_zip
     system: allied-leisure-pinball
     description: "Allied System"
-    source_ref: "src/mame/pinball/allied.cpp:772"
+    source_ref: "upstream src/mame/pinball/allied.cpp:772"
     contents:
       - name: "6530-009.u5"
         size: 1024
@@ -424,7 +424,7 @@ files:
     category: bios_zip
     system: arcadia-systems
     description: "Arcadia System BIOS"
-    source_ref: "src/mame/amiga/arsystems.cpp:1011"
+    source_ref: "upstream src/mame/amiga/arsystems.cpp:1011"
     contents:
       - name: "315093-01.u2"
         size: 262144
@@ -515,7 +515,7 @@ files:
     category: bios_zip
     system: aristocrat-mk5
     description: "MKV Set/Clear Chips (US)"
-    source_ref: "src/mame/acorn/aristmk5.cpp:9298"
+    source_ref: "upstream src/mame/acorn/aristmk5.cpp:9298"
     contents:
       - name: "setchip v4.04.09.u7"
         size: 524288
@@ -615,7 +615,7 @@ files:
     category: bios_zip
     system: aristocrat-mk6
     description: "MK6 System Software/Setchips"
-    source_ref: "src/mame/aristocrat/aristmk6.cpp:6639"
+    source_ref: "upstream src/mame/aristocrat/aristmk6.cpp:6639"
     contents:
       - name: "24013001_right.u83"
         size: 2097152
@@ -1018,7 +1018,7 @@ files:
     category: bios_zip
     system: aristocrat-mk7
     description: "Aristocrat MK-7 BIOS"
-    source_ref: "src/mame/aristocrat/aristmk7.cpp:233"
+    source_ref: "upstream src/mame/aristocrat/aristmk7.cpp:233"
     contents:
       - name: "mk7-bios_590176_01_1.00.7.u1"
         size: 1048576
@@ -1029,7 +1029,7 @@ files:
     category: bios_zip
     system: atari-system1
     description: "Atari System 1 BIOS"
-    source_ref: "src/mame/atari/atarisy1.cpp:2669"
+    source_ref: "upstream src/mame/atari/atarisy1.cpp:2669"
     contents:
       - name: "136032.205.l13"
         size: 16384
@@ -1096,7 +1096,7 @@ files:
     category: bios_zip
     system: sammy-atomiswave
     description: "Atomiswave BIOS"
-    source_ref: "src/mame/sega/dc_atomiswave.cpp:1480"
+    source_ref: "upstream src/mame/sega/dc_atomiswave.cpp:1480"
     contents:
       - name: "bios0.ic23"
         size: 131072
@@ -1115,7 +1115,7 @@ files:
     category: bios_zip
     system: konami-bubblesystem
     description: "Bubble System BIOS"
-    source_ref: "src/mame/konami/nemesis.cpp:3140"
+    source_ref: "upstream src/mame/konami/nemesis.cpp:3140"
     contents:
       - name: "boot.bin"
         size: 480
@@ -1138,7 +1138,7 @@ files:
     category: bios_zip
     system: philips-cdi
     description: "CD-i (Mono-I) (PAL) BIOS"
-    source_ref: "src/mame/philips/cdi.cpp:922"
+    source_ref: "upstream src/mame/philips/cdi.cpp:922"
     contents:
       - name: "cdi200.rom"
         size: 524288
@@ -1158,7 +1158,7 @@ files:
     category: bios_zip
     system: efo-cedar-magnet
     description: "Magnet System"
-    source_ref: "src/mame/efo/cedar_magnet.cpp:1166"
+    source_ref: "upstream src/mame/efo/cedar_magnet.cpp:1166"
     contents:
       - name: "magnet-master-vid-e03.bin"
         size: 8192
@@ -1169,7 +1169,7 @@ files:
     category: bios_zip
     system: sega-chihiro
     description: "Chihiro BIOS"
-    source_ref: "src/mame/sega/chihiro.cpp:2614"
+    source_ref: "upstream src/mame/sega/chihiro.cpp:2614"
     contents:
       - name: "chihiro_xbox_bios.bin"
         size: 524288
@@ -1204,7 +1204,7 @@ files:
     category: bios_zip
     system: acclaim-zn1
     description: "Acclaim ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:6015"
+    source_ref: "upstream src/mame/sony/zn.cpp:6015"
     contents:
       - name: "m534002c-15.ic353"
         size: 524288
@@ -1219,7 +1219,7 @@ files:
     category: bios_zip
     system: capcom-zn1
     description: "Capcom ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:5969"
+    source_ref: "upstream src/mame/sony/zn.cpp:5969"
     contents:
       - name: "m534002c-13.ic353"
         size: 524288
@@ -1238,7 +1238,7 @@ files:
     category: bios_zip
     system: taito-fx1
     description: "Taito FX-1"
-    source_ref: "src/mame/sony/zn.cpp:5989"
+    source_ref: "upstream src/mame/sony/zn.cpp:5989"
     contents:
       - name: "m534002c-14.ic353"
         size: 524288
@@ -1253,7 +1253,7 @@ files:
     category: bios_zip
     system: atari-zn1
     description: "Time Warner ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:6024"
+    source_ref: "upstream src/mame/sony/zn.cpp:6024"
     contents:
       - name: "msm27c402zb.ic353"
         size: 524288
@@ -1268,7 +1268,7 @@ files:
     category: bios_zip
     system: atlus-zn1
     description: "Atlus ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:6028"
+    source_ref: "upstream src/mame/sony/zn.cpp:6028"
     contents:
       - name: "m534002c-17.ic353"
         size: 524288
@@ -1283,7 +1283,7 @@ files:
     category: bios_zip
     system: eighting-zn1
     description: "Eighting / Raizing ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:6038"
+    source_ref: "upstream src/mame/sony/zn.cpp:6038"
     contents:
       - name: "m27c402cz-54.ic353"
         size: 524288
@@ -1298,7 +1298,7 @@ files:
     category: bios_zip
     system: tecmo-tps
     description: "Tecmo TPS System"
-    source_ref: "src/mame/sony/zn.cpp:6089"
+    source_ref: "upstream src/mame/sony/zn.cpp:6089"
     contents:
       - name: "m534002c-61.ic353"
         size: 524288
@@ -1313,7 +1313,7 @@ files:
     category: bios_zip
     system: taito-gnet
     description: "Taito G NET (COH-1002T)"
-    source_ref: "src/mame/sony/taitogn.cpp:1342"
+    source_ref: "upstream src/mame/sony/taitogn.cpp:1342"
     contents:
       - name: "m534002c-14.ic353"
         size: 524288
@@ -1336,7 +1336,7 @@ files:
     category: bios_zip
     system: videosystem-zn1
     description: "Video System ZN-1"
-    source_ref: "src/mame/sony/zn.cpp:6032"
+    source_ref: "upstream src/mame/sony/zn.cpp:6032"
     contents:
       - name: "coh-1002v.ic353"
         size: 524288
@@ -1351,7 +1351,7 @@ files:
     category: bios_zip
     system: capcom-zn2
     description: "Capcom ZN-2"
-    source_ref: "src/mame/sony/zn.cpp:6055"
+    source_ref: "upstream src/mame/sony/zn.cpp:6055"
     contents:
       - name: "m534002c-59.ic353"
         size: 524288
@@ -1366,7 +1366,7 @@ files:
     category: bios_zip
     system: taito-gnet
     description: "Taito G NET (COH-3002T)"
-    source_ref: "src/mame/sony/taitogn.cpp:1341"
+    source_ref: "upstream src/mame/sony/taitogn.cpp:1341"
     contents:
       - name: "m534002c-60.ic353"
         size: 524288
@@ -1405,7 +1405,7 @@ files:
     category: bios_zip
     system: brezzasoft-crystal
     description: "Crystal System BIOS"
-    source_ref: "src/mame/misc/crystal.cpp:845"
+    source_ref: "upstream src/mame/misc/crystal.cpp:845"
     contents:
       - name: "mx27l1000.u14"
         size: 131072
@@ -1420,7 +1420,7 @@ files:
     category: bios_zip
     system: commodore-cubo
     description: "Cubo BIOS"
-    source_ref: "src/mame/amiga/cubo.cpp:1435"
+    source_ref: "upstream src/mame/amiga/cubo.cpp:1435"
     contents:
       - name: "391640-03.u6a"
         size: 1048576
@@ -1431,7 +1431,7 @@ files:
     category: bios_zip
     system: deco-cassette
     description: "DECO Cassette System"
-    source_ref: "src/mame/dataeast/decocass.cpp:2131"
+    source_ref: "upstream src/mame/dataeast/decocass.cpp:2131"
     contents:
       - name: "v0a-.7e"
         size: 4096
@@ -1618,7 +1618,7 @@ files:
     category: bios_zip
     system: sega-naomi
     description: "NAOMI Ferrari F355 Challenge (twin/deluxe) BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10920"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10920"
     contents:
       - name: "epr-22851.ic27"
         size: 2097152
@@ -1645,7 +1645,7 @@ files:
     category: bios_zip
     system: sega-naomi
     description: "NAOMI Ferrari F355 Challenge (deluxe) BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10919"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10919"
     contents:
       - name: "epr-21864.ic27"
         size: 2097152
@@ -1680,7 +1680,7 @@ files:
     category: bios_zip
     system: ces-galaxy-games
     description: "Galaxy Games"
-    source_ref: "src/mame/ces/galgames.cpp:1301"
+    source_ref: "upstream src/mame/ces/galgames.cpp:1301"
     contents:
       - name: "galaxy_u2__v1.90_12-01-98.u2"
         size: 1048576
@@ -1711,7 +1711,7 @@ files:
     category: bios_zip
     system: gameplan-mpu1
     description: "Model 110"
-    source_ref: "src/mame/pinball/gp_1.cpp:575"
+    source_ref: "upstream src/mame/pinball/gp_1.cpp:575"
     contents:
       - name: "a-110.u12"
         size: 2048
@@ -1726,7 +1726,7 @@ files:
     category: bios_zip
     system: konami-twinkle
     description: "Twinkle System"
-    source_ref: "src/mame/konami/twinkle.cpp:1643"
+    source_ref: "upstream src/mame/konami/twinkle.cpp:1643"
     contents:
       - name: "863a03.7b"
         size: 524288
@@ -1741,7 +1741,7 @@ files:
     category: bios_zip
     system: gottlieb-system1
     description: "System 1"
-    source_ref: "src/mame/pinball/gts1.cpp:1070"
+    source_ref: "upstream src/mame/pinball/gts1.cpp:1070"
     contents:
       - name: "a1752cf.u5"
         size: 2048
@@ -1756,7 +1756,7 @@ files:
     category: bios_zip
     system: sega-hikaru
     description: "Hikaru BIOS"
-    source_ref: "src/mame/sega/hikaru.cpp:1482"
+    source_ref: "upstream src/mame/sega/hikaru.cpp:1482"
     contents:
       - name: "epr-23400a.ic94"
         size: 2097152
@@ -1788,7 +1788,7 @@ files:
     category: bios_zip
     system: hyper-neogeo64
     description: "Hyper NeoGeo 64 BIOS"
-    source_ref: "src/mame/snk/hng64.cpp:3238"
+    source_ref: "upstream src/mame/snk/hng64.cpp:3238"
     contents:
       - name: "brom1.bin"
         size: 524288
@@ -1835,7 +1835,7 @@ files:
     category: bios_zip
     system: sega-naomi
     description: "NAOMI The House of the Dead 2 BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10918"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10918"
     contents:
       - name: "epr-21331.ic27"
         size: 2097152
@@ -1870,7 +1870,7 @@ files:
     category: bios_zip
     system: sega-isgsm
     description: "ISG Selection Master Type 2006 BIOS"
-    source_ref: "src/mame/sega/segas16b_isgsm.cpp:608"
+    source_ref: "upstream src/mame/sega/segas16b_isgsm.cpp:608"
     contents:
       - name: "ism2006v00.u1"
         size: 131072
@@ -1881,7 +1881,7 @@ files:
     category: bios_zip
     system: itech-eagle
     description: "Eagle BIOS"
-    source_ref: "src/mame/itech/iteagle.cpp:756"
+    source_ref: "upstream src/mame/itech/iteagle.cpp:756"
     contents:
       - name: "eagle_u15_v209.u15"
         size: 1048576
@@ -1956,7 +1956,7 @@ files:
     category: bios_zip
     system: konami-gv
     description: "Baby Phoenix/GV System"
-    source_ref: "src/mame/konami/konamigv.cpp:1447"
+    source_ref: "upstream src/mame/konami/konamigv.cpp:1447"
     contents:
       - name: "999a01.7e"
         size: 524288
@@ -1967,7 +1967,7 @@ files:
     category: bios_zip
     system: konami-gx
     description: "System GX"
-    source_ref: "src/mame/konami/konamigx.cpp:4191"
+    source_ref: "upstream src/mame/konami/konamigx.cpp:4191"
     contents:
       - name: "300a01.34k"
         size: 131072
@@ -1978,7 +1978,7 @@ files:
     category: bios_zip
     system: konami-endeavour
     description: "Konami Endeavour BIOS"
-    source_ref: "src/mame/konami/konendev.cpp:909"
+    source_ref: "upstream src/mame/konami/konendev.cpp:909"
     contents:
       - name: "2v02s502_ifu.u190"
         size: 524288
@@ -1989,7 +1989,7 @@ files:
     category: bios_zip
     system: konami-python
     description: "Konami Python BIOS"
-    source_ref: "src/mame/konami/kpython.cpp:376"
+    source_ref: "upstream src/mame/konami/kpython.cpp:376"
     contents:
       - name: "b22a01.u42"
         size: 524288
@@ -2000,7 +2000,7 @@ files:
     category: bios_zip
     system: konami-python2
     description: "Konami Python 2 BIOS"
-    source_ref: "src/mame/konami/kpython2.cpp:1918"
+    source_ref: "upstream src/mame/konami/kpython2.cpp:1918"
     contents:
       - name: "ps2-0190j-20030822.bin"
         size: 4194304
@@ -2011,7 +2011,7 @@ files:
     category: bios_zip
     system: konami-viper
     description: "Konami Viper BIOS"
-    source_ref: "src/mame/konami/viper.cpp:3213"
+    source_ref: "upstream src/mame/konami/viper.cpp:3213"
     contents:
       - name: "941b01.u25"
         size: 262144
@@ -2030,7 +2030,7 @@ files:
     category: bios_zip
     system: sega-lindbergh
     description: "Sega Lindbergh BIOS"
-    source_ref: "src/mame/sega/lindbergh.cpp:639"
+    source_ref: "upstream src/mame/sega/lindbergh.cpp:639"
     contents:
       - name: "6.0.0010a.bin"
         size: 1048576
@@ -2058,13 +2058,13 @@ files:
     system: imax-macs
     description: "Multi Amenity Cassette System 2 BIOS"
     note: "Both halves of the BIOS, macs2os_l.bin and macs2os_h.bin, are NO_DUMP, so handle_missing_file counts them as known-bad rather than errors and the machine still runs."
-    source_ref: "src/mame/seta/macs.cpp:776"
+    source_ref: "upstream src/mame/seta/macs.cpp:776"
   - name: macsbios.zip
     required: true
     category: bios_zip
     system: imax-macs
     description: "Multi Amenity Cassette System BIOS"
-    source_ref: "src/mame/seta/macs.cpp:775"
+    source_ref: "upstream src/mame/seta/macs.cpp:775"
     contents:
       - name: "am_macs_os_low.u43"
         size: 524288
@@ -2083,7 +2083,7 @@ files:
     category: bios_zip
     system: exidy-maxaflex
     description: "Max-A-Flex"
-    source_ref: "src/mame/atari/maxaflex.cpp:447"
+    source_ref: "upstream src/mame/atari/maxaflex.cpp:447"
     contents:
       - name: "atarixl.rom"
         size: 16384
@@ -2102,7 +2102,7 @@ files:
     category: bios_zip
     system: sega-megaplay
     description: "Mega Play BIOS"
-    source_ref: "src/mame/sega/megaplay.cpp:1018"
+    source_ref: "upstream src/mame/sega/megaplay.cpp:1018"
     contents:
       - name: "ep15294.ic2"
         size: 131072
@@ -2142,7 +2142,7 @@ files:
     category: bios_zip
     system: sega-megatech
     description: "Mega-Tech"
-    source_ref: "src/mame/sega/megatech.cpp:1430"
+    source_ref: "upstream src/mame/sega/megatech.cpp:1430"
     contents:
       - name: "epr-12664.20"
         size: 32768
@@ -2165,7 +2165,7 @@ files:
     category: bios_zip
     system: miuchiz
     description: "Miuchiz Virtual Companions common BIOS"
-    source_ref: "src/mame/misc/miuchiz.cpp:227"
+    source_ref: "upstream src/mame/misc/miuchiz.cpp:227"
     contents:
       - name: "otp.dat"
         size: 16384
@@ -2176,7 +2176,7 @@ files:
     category: bios_zip
     system: sega-naomi
     description: "NAOMI BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10917"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10917"
     contents:
       - name: "epr-21576h.ic27"
         size: 2097152
@@ -2313,7 +2313,7 @@ files:
     category: bios_zip
     system: sega-naomi2
     description: "NAOMI 2 BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10922"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10922"
     contents:
       - name: "epr-23605c.ic27"
         size: 2097152
@@ -2384,7 +2384,7 @@ files:
     category: bios_zip
     system: sega-naomigd
     description: "NAOMI GD-ROM BIOS"
-    source_ref: "src/mame/sega/naomi.cpp:10923"
+    source_ref: "upstream src/mame/sega/naomi.cpp:10923"
     contents:
       - name: "epr-21576e.ic27"
         size: 2097152
@@ -2435,7 +2435,7 @@ files:
     category: bios_zip
     system: snk-neogeo-mvs
     description: "Neo-Geo MV-6F"
-    source_ref: "src/mame/snk/neogeo.cpp:2428"
+    source_ref: "upstream src/mame/snk/neogeo.cpp:2428"
     contents:
       - name: "sp-s2.sp1"
         size: 131072
@@ -2582,7 +2582,7 @@ files:
     category: bios_zip
     system: nichibutsu-hrdvd
     description: "Nichibutsu High Rate DVD BIOS"
-    source_ref: "src/mame/nichibutsu/hrdvd.cpp:1012"
+    source_ref: "upstream src/mame/nichibutsu/hrdvd.cpp:1012"
     contents:
       - name: "va1b102.u2"
         size: 131072
@@ -2601,7 +2601,7 @@ files:
     category: bios_zip
     system: nintendo-nss
     description: "Nintendo Super System BIOS"
-    source_ref: "src/mame/nintendo/nss.cpp:1099"
+    source_ref: "upstream src/mame/nintendo/nss.cpp:1099"
     contents:
       - name: "nss-ic14.02.ic14"
         size: 32768
@@ -2620,7 +2620,7 @@ files:
     category: bios_zip
     system: igs-pgm
     description: "PGM (Polygame Master) System BIOS"
-    source_ref: "src/mame/igs/pgm.cpp:5545"
+    source_ref: "upstream src/mame/igs/pgm.cpp:5545"
     contents:
       - name: "pgm_p02s.u20"
         size: 131072
@@ -2643,7 +2643,7 @@ files:
     category: bios_zip
     system: nintendo-playch10
     description: "PlayChoice-10 BIOS"
-    source_ref: "src/mame/nintendo/playch10.cpp:2980"
+    source_ref: "upstream src/mame/nintendo/playch10.cpp:2980"
     contents:
       - name: "pch1-c__8t_e-2.8t"
         size: 16384
@@ -2734,7 +2734,7 @@ files:
     category: bios_zip
     system: andamiro-pumpitup
     description: "Pump It Up BIOS"
-    source_ref: "src/mame/misc/xtom3d.cpp:997"
+    source_ref: "upstream src/mame/misc/xtom3d.cpp:997"
     contents:
       - name: "mk3_1.0_bios.u22"
         size: 131072
@@ -2757,7 +2757,7 @@ files:
     category: bios_zip
     system: recel-system3
     description: "Recel BIOS"
-    source_ref: "src/mame/pinball/recel.cpp:546"
+    source_ref: "upstream src/mame/pinball/recel.cpp:546"
     contents:
       - name: "a2361.b1"
         size: 1024
@@ -2772,7 +2772,7 @@ files:
     category: bios_zip
     system: sammy-medal
     description: "Sammy Medal Game System BIOS"
-    source_ref: "src/mame/sigma/sammymdl.cpp:1025"
+    source_ref: "upstream src/mame/sigma/sammymdl.cpp:1025"
     contents:
       - name: "vm1211l01.u2"
         size: 524288
@@ -2791,7 +2791,7 @@ files:
     category: bios_zip
     system: sega-systemsp
     description: "Sega System SP (Spider) BIOS"
-    source_ref: "src/mame/sega/segasp.cpp:1273"
+    source_ref: "upstream src/mame/sega/segasp.cpp:1273"
     contents:
       - name: "epr-24236a.ic50"
         size: 2097152
@@ -2846,7 +2846,7 @@ files:
     category: bios_zip
     system: nintendo-sfcbox
     description: "Super Famicom Box BIOS"
-    source_ref: "src/mame/nintendo/sfcbox.cpp:586"
+    source_ref: "upstream src/mame/nintendo/sfcbox.cpp:586"
     contents:
       - name: "krom2.00.ic1"
         size: 131072
@@ -2865,7 +2865,7 @@ files:
     category: bios_zip
     system: sega-shootingzone
     description: "Shooting Zone System BIOS"
-    source_ref: "src/mame/sega/shtzone.cpp:376"
+    source_ref: "upstream src/mame/sega/shtzone.cpp:376"
     contents:
       - name: "epr10894a.20"
         size: 16384
@@ -2876,7 +2876,7 @@ files:
     category: bios_zip
     system: super-kaneko-nova
     description: "Super Kaneko Nova System BIOS"
-    source_ref: "src/mame/kaneko/suprnova.cpp:2135"
+    source_ref: "upstream src/mame/kaneko/suprnova.cpp:2135"
     contents:
       - name: "sknsj1.u10"
         size: 524288
@@ -2911,7 +2911,7 @@ files:
     category: bios_zip
     system: tab-silverball
     description: "Silverball BIOS"
-    source_ref: "src/mame/misc/silverball.cpp:259"
+    source_ref: "upstream src/mame/misc/silverball.cpp:259"
     contents:
       - name: "bios47.bin"
         size: 262144
@@ -2994,7 +2994,7 @@ files:
     category: bios_zip
     system: sega-stv
     description: "ST-V BIOS"
-    source_ref: "src/mame/sega/stv.cpp:3948"
+    source_ref: "upstream src/mame/sega/stv.cpp:3948"
     contents:
       - name: "epr-23603.ic8"
         size: 524288
@@ -3061,7 +3061,7 @@ files:
     category: bios_zip
     system: virtuality-su2000
     description: "SU2000"
-    source_ref: "src/mame/misc/su2000.cpp:302"
+    source_ref: "upstream src/mame/misc/su2000.cpp:302"
     contents:
       - name: "hmc86304_bios_v208.u7"
         size: 32768
@@ -3244,7 +3244,7 @@ files:
     category: bios_zip
     system: namco-system246
     description: "System 246 BIOS"
-    source_ref: "src/mame/namco/namcops2.cpp:1716"
+    source_ref: "upstream src/mame/namco/namcops2.cpp:1716"
     contents:
       - name: "r27v1602f.7d"
         size: 2097152
@@ -3255,7 +3255,7 @@ files:
     category: bios_zip
     system: namco-system256
     description: "System 256 BIOS"
-    source_ref: "src/mame/namco/namcops2.cpp:1761"
+    source_ref: "upstream src/mame/namco/namcops2.cpp:1761"
     contents:
       - name: "r27v1602f.8g"
         size: 2097152
@@ -3266,7 +3266,7 @@ files:
     category: bios_zip
     system: namco-system573
     description: "System 573 BIOS"
-    source_ref: "src/mame/konami/ksys573.cpp:6415"
+    source_ref: "upstream src/mame/konami/ksys573.cpp:6415"
     contents:
       - name: "700a01.22g"
         size: 524288
@@ -3297,7 +3297,7 @@ files:
     category: bios_zip
     system: sielectronics-y2
     description: "System Board Y2"
-    source_ref: "src/mame/sega/y2.cpp:141"
+    source_ref: "upstream src/mame/sega/y2.cpp:141"
     contents:
       - name: "system_y2_m25p40.u801"
         size: 524288
@@ -3308,7 +3308,7 @@ files:
     category: bios_zip
     system: taito-typezero
     description: "Type Zero BIOS"
-    source_ref: "src/mame/taito/taitotz.cpp:3016"
+    source_ref: "upstream src/mame/taito/taitotz.cpp:3016"
     contents:
       - name: "e68-05-1.ic6"
         size: 524288
@@ -3323,7 +3323,7 @@ files:
     category: bios_zip
     system: pce-tourvision
     description: "TourVisión (PC Engine bootleg)"
-    source_ref: "src/mame/pce/tourvis.cpp:448"
+    source_ref: "upstream src/mame/pce/tourvis.cpp:448"
     contents:
       - name: "v4-60.ic29"
         size: 32768
@@ -3374,7 +3374,7 @@ files:
     category: bios_zip
     system: sega-triforce
     description: "Triforce BIOS"
-    source_ref: "src/mame/sega/triforce.cpp:1310"
+    source_ref: "upstream src/mame/sega/triforce.cpp:1310"
     contents:
       - name: "triforce_bootrom.bin"
         size: 2097152
@@ -3385,7 +3385,7 @@ files:
     category: bios_zip
     system: barcrest-mpu4
     description: "MPU4 Video Firmware"
-    source_ref: "src/mame/barcrest/mpu4vid.cpp:8698"
+    source_ref: "upstream src/mame/barcrest/mpu4vid.cpp:8698"
     contents:
       - name: "vid.p1"
         size: 65536

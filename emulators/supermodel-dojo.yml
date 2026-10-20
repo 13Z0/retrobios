@@ -83,7 +83,7 @@ files:
     bundled: true
     description: "ROM set definitions"
     note: "Parsed at startup into the game database. Every ROM region, file name and CRC32 the loader matches against comes from here, so an unreadable file leaves no set to resolve and the launch returns before the emulator is built. The path is a config key, so -game-xml-file moves it."
-    source_ref: "Src/OSD/SDL/Main.cpp:117, 1684, 2143, 2509-2520, Src/GameLoader.cpp:551-561, 1016-1019, Src/OSD/Windows/FileSystemPath.cpp:28-32"
+    source_ref: "source Src/OSD/SDL/Main.cpp:117, 1684, 2143, 2509-2520, source Src/GameLoader.cpp:551-561, 1016-1019, source Src/OSD/Windows/FileSystemPath.cpp:28-32"
 
   - name: p1crosshair.bmp
     path: "Assets/p1crosshair.bmp"
@@ -92,7 +92,7 @@ files:
     bundled: true
     description: "Player 1 light gun crosshair texture"
     note: "Both bitmaps are read on every launch whatever CrosshairStyle holds, since the load runs before the style decides anything, and a null surface aborts startup ahead of the Model 3 object. 32 bit BMP with alpha, sides a multiple of 2."
-    source_ref: "Src/OSD/SDL/Crosshair.cpp:34-51, Src/OSD/SDL/Main.cpp:2563-2569, Assets/DIR.txt"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2563-2569, source Assets/DIR.txt"
 
   - name: p2crosshair.bmp
     path: "Assets/p2crosshair.bmp"
@@ -101,7 +101,7 @@ files:
     bundled: true
     description: "Player 2 light gun crosshair texture"
     note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load."
-    source_ref: "Src/OSD/SDL/Crosshair.cpp:35, 49-51, Src/OSD/SDL/Main.cpp:2563-2569"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, 49-51, source Src/OSD/SDL/Main.cpp:2563-2569"
 
   - name: Music.xml
     path: "Config/Music.xml"
@@ -109,4 +109,4 @@ files:
     bundled: true
     description: "Custom MPEG music track map"
     note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20260528-git-77d28ee archives and absent from dojo-preview6."
-    source_ref: "Src/OSD/SDL/Main.cpp:118, 967, Src/Sound/MPEG/MpegAudio.cpp:88-108"
+    source_ref: "source Src/OSD/SDL/Main.cpp:118, 967, source Src/Sound/MPEG/MpegAudio.cpp:88-108"

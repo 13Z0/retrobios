@@ -75,7 +75,7 @@ files:
     md5: "f2f5f09ca0a275696319176b4f41b8d6"
     description: "ROM set definitions"
     note: "Parsed by the GameLoader constructor. Without it no game is defined, the archive name matches nothing and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it. The hash is that of Config/Games.xml at the pinned revision, 64 sets, which RetroPie copies on every install. Shipped in the 377d259 Linux, macOS and Windows release archives."
-    source_ref: "Src/OSD/SDL/Main.cpp:121, Src/OSD/SDL/Main.cpp:1534, Src/OSD/SDL/Main.cpp:2444-2449, Src/GameLoader.cpp:601-610, Src/GameLoader.cpp:1066-1071, Src/GameLoader.cpp:1111-1113"
+    source_ref: "upstream Src/OSD/SDL/Main.cpp:121, source Src/OSD/SDL/Main.cpp:1534, source Src/OSD/SDL/Main.cpp:2444-2449, source Src/GameLoader.cpp:601-610, source Src/GameLoader.cpp:1066-1071, source Src/GameLoader.cpp:1111-1113"
 
   - name: "p1crosshair.bmp"
     path: "Assets/p1crosshair.bmp"
@@ -86,7 +86,7 @@ files:
     md5: "9012018f50f707c1707009346eb5d18b"
     description: "Player 1 light gun crosshair texture"
     note: "Both bitmaps are loaded whatever CrosshairStyle holds, and a failed load aborts startup before the machine is created."
-    source_ref: "Src/OSD/SDL/Crosshair.cpp:34-51, Src/OSD/SDL/Main.cpp:2499-2506"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2499-2506"
 
   - name: "p2crosshair.bmp"
     path: "Assets/p2crosshair.bmp"
@@ -97,7 +97,7 @@ files:
     md5: "866dbf59a0e2d849de2365e1c953cc97"
     description: "Player 2 light gun crosshair texture"
     note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load. Both bitmaps are shipped in the 377d259 release archives."
-    source_ref: "Src/OSD/SDL/Crosshair.cpp:35, Src/OSD/SDL/Crosshair.cpp:48-51"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, source Src/OSD/SDL/Crosshair.cpp:48-51"
 
   - name: "Music.xml"
     path: "Config/Music.xml"
@@ -108,7 +108,7 @@ files:
     md5: "ddb4e23db15dda67539eee24de23de4b"
     description: "Custom MPEG music track map"
     note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when absent. RetroPie does not copy it. Shipped in the 377d259 release archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
-    source_ref: "Src/OSD/SDL/Main.cpp:122, Src/OSD/SDL/Main.cpp:947, Src/Sound/MPEG/MpegAudio.cpp:88-102"
+    source_ref: "upstream Src/OSD/SDL/Main.cpp:122, source Src/OSD/SDL/Main.cpp:947, source Src/Sound/MPEG/MpegAudio.cpp:88-102"
 
   - name: "pro1000.zip"
     required: true
@@ -116,7 +116,7 @@ files:
     system: real3d-pro1000
     description: "Real3D Pro-1000 firmware set (SDK flash update, loop code 5.4, INIT ROM 54)"
     note: "Loaded as the content of the pro1000 machine, named after the set. Required to run the Pro-1000 only, Model 3 games never read it."
-    source_ref: "Config/Games.xml:1404-1428, Src/Pro1000/Pro1000.cpp:2114-2125, Src/GameLoader.cpp:1066-1071"
+    source_ref: "upstream Config/Games.xml:1404-1428, source Src/Pro1000/Pro1000.cpp:2114-2125, source Src/GameLoader.cpp:1066-1071"
     contents:
       - name: "p1_p4.bin"
         description: "Flash parts 1 and 4, boot stub and loop code, loaded at 0xFFF00000"
@@ -131,11 +131,11 @@ files:
     system: real3d-pro1000
     description: "Pro-1000 SDK logo model, culling data"
     note: "Read with 3dlogo.pmem into the synthetic SCSI ROM when the set has no scsi_rom region. Both files or neither, one alone is rejected with an error. The machine boots without them."
-    source_ref: "Src/Pro1000/SyntheticSCSIROM.cpp:102-125, Src/Pro1000/SyntheticSCSIROM.cpp:232"
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:102-125, source Src/Pro1000/SyntheticSCSIROM.cpp:232"
 
   - name: "3dlogo.pmem"
     path: "Assets/3dlogo.pmem"
     required: false
     system: real3d-pro1000
     description: "Pro-1000 SDK logo model, polygon data"
-    source_ref: "Src/Pro1000/SyntheticSCSIROM.cpp:104-106, Src/Pro1000/SyntheticSCSIROM.cpp:119-125"
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:104-106, source Src/Pro1000/SyntheticSCSIROM.cpp:119-125"

@@ -39,10 +39,10 @@ archive_prefix: fbneo
 data_directories:
   - ref: fbneo-cheats
     destination: fbneo/cheats
-    source_ref: "src/burner/conc.cpp:167"
+    source_ref: "source src/burner/conc.cpp:167"
   - ref: fbneo-samples
     destination: fbneo
-    source_ref: "src/burn/snd/samples.cpp:21-35"
+    source_ref: "source src/burn/snd/samples.cpp:21-35"
 
 notes: |
   FinalBurn Neo is a multi-system arcade and console emulator. BIOS files are
@@ -95,7 +95,7 @@ files:
     size: 131072  # 0x20000
     crc32: "91b64be3"
     note: "MVS Asia/Europe ver. 6 (1 slot) - default BIOS"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1624"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1624"
 
   - name: "sp-s2.sp1"
     archive: neogeo.zip
@@ -104,7 +104,7 @@ files:
     size: 131072
     crc32: "9036d879"
     note: "MVS Asia/Europe ver. 5 (1 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1625"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1625"
 
   - name: "sp-s.sp1"
     archive: neogeo.zip
@@ -113,7 +113,7 @@ files:
     size: 131072
     crc32: "c7f2fa45"
     note: "MVS Asia/Europe ver. 3 (4 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1626"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1626"
 
   - name: "sp-u2.sp1"
     aliases: ["usa_2slt.bin"]
@@ -123,7 +123,7 @@ files:
     size: 131072
     crc32: "e72943de"
     note: "MVS USA ver. 5 (2 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1627"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1627"
 
   - name: "sp1-u2"
     archive: neogeo.zip
@@ -132,7 +132,7 @@ files:
     size: 131072
     crc32: "62f021f4"
     note: "MVS USA ver. 5 (4 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1628"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1628"
 
   - name: "sp-e.sp1"
     archive: neogeo.zip
@@ -141,7 +141,7 @@ files:
     size: 131072
     crc32: "2723a5b5"
     note: "MVS USA ver. 5 (6 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1629"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1629"
 
   - name: "sp1-u4.bin"
     archive: neogeo.zip
@@ -150,7 +150,7 @@ files:
     size: 131072
     crc32: "1179a30f"
     note: "MVS USA (U4)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1630"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1630"
 
   - name: "sp1-u3.bin"
     archive: neogeo.zip
@@ -159,7 +159,7 @@ files:
     size: 131072
     crc32: "2025b7a2"
     note: "MVS USA (U3)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1631"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1631"
 
   - name: "vs-bios.rom"
     archive: neogeo.zip
@@ -168,7 +168,7 @@ files:
     size: 131072
     crc32: "f0e8f27d"
     note: "MVS Japan ver. 6"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1632"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1632"
 
   - name: "sp-j2.sp1"
     archive: neogeo.zip
@@ -177,7 +177,7 @@ files:
     size: 131072
     crc32: "acede59c"
     note: "MVS Japan ver. 5"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1633"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1633"
 
   - name: "sp1.jipan.1024"
     archive: neogeo.zip
@@ -186,7 +186,7 @@ files:
     size: 131072
     crc32: "9fb0abe4"
     note: "MVS Japan ver. 3 (4 slot)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1634"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1634"
 
   - name: "sp-45.sp1"
     archive: neogeo.zip
@@ -195,7 +195,7 @@ files:
     size: 524288  # 0x80000
     crc32: "03cc9f6a"
     note: "NEO-MVH MV1C (Asia)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1635"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1635"
 
   - name: "sp-j3.sp1"
     archive: neogeo.zip
@@ -204,7 +204,7 @@ files:
     size: 524288
     crc32: "486cb450"
     note: "NEO-MVH MV1C (Japan)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1636"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1636"
 
   - name: "japan-j3.bin"
     archive: neogeo.zip
@@ -213,7 +213,7 @@ files:
     size: 131072
     crc32: "dff6d41f"
     note: "MVS Japan (J3)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1637"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1637"
 
   - name: "sp1-j3.bin"
     archive: neogeo.zip
@@ -222,7 +222,7 @@ files:
     size: 131072
     crc32: "fbc6d469"
     note: "MVS Japan (J3, alt)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1638"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1638"
 
   # AES BIOS ROMs (not in MAME ROM_VERIFY builds)
   - name: "neo-po.bin"
@@ -232,7 +232,7 @@ files:
     size: 131072
     crc32: "16d0c132"
     note: "AES Japan"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1640"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1640"
 
   - name: "neo-epo.bin"
     archive: neogeo.zip
@@ -241,7 +241,7 @@ files:
     size: 131072
     crc32: "d27a71f1"
     note: "AES Asia"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1641"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1641"
 
   - name: "neodebug.bin"
     archive: neogeo.zip
@@ -250,7 +250,7 @@ files:
     size: 131072
     crc32: "698ebb7d"
     note: "Development Kit BIOS"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1642"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1642"
 
   - name: "sp-1v1_3db8c.bin"
     archive: neogeo.zip
@@ -259,7 +259,7 @@ files:
     size: 131072
     crc32: "162f0ebe"
     note: "Deck ver. 6 (Git Ver 1.3)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1648"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1648"
 
   # Universe BIOS (third-party, multiple versions)
   - name: "uni-bios_4_0.rom"
@@ -269,7 +269,7 @@ files:
     size: 131072
     crc32: "a7aab458"
     note: "Universe BIOS ver. 4.0 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1649"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1649"
 
   - name: "uni-bios_3_3.rom"
     archive: neogeo.zip
@@ -278,7 +278,7 @@ files:
     size: 131072
     crc32: "24858466"
     note: "Universe BIOS ver. 3.3 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1650"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1650"
 
   - name: "uni-bios_3_2.rom"
     archive: neogeo.zip
@@ -287,7 +287,7 @@ files:
     size: 131072
     crc32: "a4e8b9b3"
     note: "Universe BIOS ver. 3.2 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1651"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1651"
 
   - name: "uni-bios_3_1.rom"
     archive: neogeo.zip
@@ -296,7 +296,7 @@ files:
     size: 131072
     crc32: "0c58093f"
     note: "Universe BIOS ver. 3.1 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1652"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1652"
 
   - name: "uni-bios_3_0.rom"
     archive: neogeo.zip
@@ -305,7 +305,7 @@ files:
     size: 131072
     crc32: "a97c89a9"
     note: "Universe BIOS ver. 3.0 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1653"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1653"
 
   - name: "uni-bios_2_3.rom"
     archive: neogeo.zip
@@ -314,7 +314,7 @@ files:
     size: 131072
     crc32: "27664eb5"
     note: "Universe BIOS ver. 2.3 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1654"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1654"
 
   - name: "uni-bios_2_3o.rom"
     archive: neogeo.zip
@@ -323,7 +323,7 @@ files:
     size: 131072
     crc32: "601720ae"
     note: "Universe BIOS ver. 2.3 older (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1655"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1655"
 
   - name: "uni-bios_2_2.rom"
     archive: neogeo.zip
@@ -332,7 +332,7 @@ files:
     size: 131072
     crc32: "2d50996a"
     note: "Universe BIOS ver. 2.2 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1656"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1656"
 
   - name: "uni-bios_2_1.rom"
     archive: neogeo.zip
@@ -341,7 +341,7 @@ files:
     size: 131072
     crc32: "8dabf76b"
     note: "Universe BIOS ver. 2.1 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1657"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1657"
 
   - name: "uni-bios_2_0.rom"
     archive: neogeo.zip
@@ -350,7 +350,7 @@ files:
     size: 131072
     crc32: "0c12c2ad"
     note: "Universe BIOS ver. 2.0 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1658"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1658"
 
   - name: "uni-bios_1_3.rom"
     archive: neogeo.zip
@@ -359,7 +359,7 @@ files:
     size: 131072
     crc32: "b24b44a0"
     note: "Universe BIOS ver. 1.3 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1659"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1659"
 
   - name: "uni-bios_1_2.rom"
     archive: neogeo.zip
@@ -368,7 +368,7 @@ files:
     size: 131072
     crc32: "4fa698e9"
     note: "Universe BIOS ver. 1.2 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1660"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1660"
 
   - name: "uni-bios_1_2o.rom"
     archive: neogeo.zip
@@ -377,7 +377,7 @@ files:
     size: 131072
     crc32: "e19d3ce9"
     note: "Universe BIOS ver. 1.2 older (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1661"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1661"
 
   - name: "uni-bios_1_1.rom"
     archive: neogeo.zip
@@ -386,7 +386,7 @@ files:
     size: 131072
     crc32: "5dda0d84"
     note: "Universe BIOS ver. 1.1 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1662"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1662"
 
   - name: "uni-bios_1_0.rom"
     archive: neogeo.zip
@@ -395,7 +395,7 @@ files:
     size: 131072
     crc32: "0ce453a0"
     note: "Universe BIOS ver. 1.0 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1663"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1663"
 
   - name: "neopen.sp1"
     archive: neogeo.zip
@@ -404,7 +404,7 @@ files:
     size: 131072
     crc32: "cb915e76"
     note: "NeoOpen BIOS v0.1 beta (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1665"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1665"
 
   # Neo Geo shared ROMs (always required)
   - name: "sm1.sm1"
@@ -414,7 +414,7 @@ files:
     size: 131072
     crc32: "94416d67"
     note: "Z80 sound BIOS"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1672"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1672"
 
   - name: "sfix.sfix"
     archive: neogeo.zip
@@ -423,7 +423,7 @@ files:
     size: 131072
     crc32: "c2ea0cfd"
     note: "Text layer fix tiles"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1673"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1673"
 
   - name: "000-lo.lo"
     archive: neogeo.zip
@@ -432,7 +432,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1674"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1674"
 
   # -------------------------------------------------------
   # Neo Geo Trackball BIOS (for irrmaze)
@@ -444,7 +444,7 @@ files:
     size: 131072
     crc32: "853e6b96"
     note: "Trackball BIOS / Asia MV1B 263"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1764"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1764"
 
   - name: "236-bios_japan_hack.sp1"
     archive: neogeo.zip
@@ -453,7 +453,7 @@ files:
     size: 131072
     crc32: "02bf4426"
     note: "Trackball BIOS / Japan (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1765"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1765"
 
   # -------------------------------------------------------
   # Neo Geo PCB BIOS (for ms5pcb, svcpcb, kf2k3pcb)
@@ -465,7 +465,7 @@ files:
     size: 524288
     crc32: "b4590283"
     note: "PCB BIOS for Metal Slug 5 PCB and SVC Chaos PCB"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1811"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1811"
 
   - name: "spj.sp1"
     archive: neogeo.zip
@@ -474,7 +474,7 @@ files:
     size: 524288
     crc32: "148dd727"
     note: "PCB BIOS for KOF 2003 PCB"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1899"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1899"
 
   # -------------------------------------------------------
   # Neo Geo CDZ (neocdz.zip)
@@ -486,7 +486,7 @@ files:
     size: 524288  # 0x80000
     crc32: "df9de490"
     note: "Neo Geo CD/CDZ top-loading BIOS"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1983"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1983"
 
   - name: "neocd_sz.rom"
     archive: neocdz.zip
@@ -495,7 +495,7 @@ files:
     size: 524288
     crc32: "42f6b6c4"
     note: "Neo Geo CDZ custom BIOS by SMKDan"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1984"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1984"
 
   - name: "uni-bioscd33.rom"
     archive: neocdz.zip
@@ -504,7 +504,7 @@ files:
     size: 524288
     crc32: "ff3abc59"
     note: "Universe BIOS CD ver. 3.3 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1985"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1985"
 
   - name: "uni-bioscd32.rom"
     archive: neocdz.zip
@@ -513,7 +513,7 @@ files:
     size: 524288
     crc32: "0ffb3127"
     note: "Universe BIOS CD ver. 3.2 (hack)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1986"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1986"
 
   - name: "000-lo.lo"
     archive: neocdz.zip
@@ -522,7 +522,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table (shared with MVS)"
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1988"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1988"
 
   # -------------------------------------------------------
   # IGS PGM (pgm.zip)
@@ -534,7 +534,7 @@ files:
     size: 2097152  # 0x200000
     crc32: "1a7123a0"
     note: "8x8 text layer tiles"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:880"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:880"
 
   - name: "pgm_m01s.rom"
     archive: pgm.zip
@@ -543,7 +543,7 @@ files:
     size: 2097152
     crc32: "45ae7159"
     note: "ICS2115 sound samples"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:881"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:881"
 
   - name: "pgm_p01s.u20"
     archive: pgm.zip
@@ -552,7 +552,7 @@ files:
     size: 131072  # 0x20000
     crc32: "e42b166e"
     note: "68K BIOS V0001 older (02/26/97)"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:883"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:883"
 
   - name: "pgm_p02s.u20"
     archive: pgm.zip
@@ -561,7 +561,7 @@ files:
     size: 131072
     crc32: "78c15fa2"
     note: "68K BIOS V0001 newer (07/10/97)"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:884"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:884"
 
   - name: "ddp3_bios.u37"
     archive: pgm.zip
@@ -570,7 +570,7 @@ files:
     size: 524288  # 0x80000
     crc32: "b3cc5c8f"
     note: "68K BIOS V0001 custom (07/17/97) for DoDonPachi III"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:886"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:886"
 
   - name: "bios.u42"
     archive: pgm.zip
@@ -579,7 +579,7 @@ files:
     size: 131072
     crc32: "517cf7a2"
     note: "68K BIOS V0001-01J custom (02/25/03) for The Gladiator"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:887"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:887"
 
   - name: "svg_bios.u49"
     archive: pgm.zip
@@ -588,7 +588,7 @@ files:
     size: 131072
     crc32: "3346401f"
     note: "68K BIOS V0001 custom (05/13/05) for SVG PCB"
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:928"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:928"
 
   # -------------------------------------------------------
   # Capcom CPS-3 (per-game BIOS, no shared archive)
@@ -602,7 +602,7 @@ files:
     size: 524288  # 0x80000
     crc32: "27699ddc"
     note: "SH-2 BIOS, SF3 1st Impact Europe"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:336"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:336"
 
   - name: "sfiii_usa_region_b1.29f400.u2"
     archive: sfiiiu.zip
@@ -611,7 +611,7 @@ files:
     size: 524288
     crc32: "fb172a8e"
     note: "SH-2 BIOS, SF3 1st Impact USA"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:351"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:351"
 
   - name: "sfiii_asia_region_bd.29f400.u2"
     archive: sfiiia.zip
@@ -620,7 +620,7 @@ files:
     size: 524288
     crc32: "cbd28de7"
     note: "SH-2 BIOS, SF3 1st Impact Asia"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:366"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:366"
 
   - name: "sfiii_japan.29f400.u2"
     archive: sfiiij.zip
@@ -629,7 +629,7 @@ files:
     size: 524288
     crc32: "74205250"
     note: "SH-2 BIOS, SF3 1st Impact Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:381"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:381"
 
   - name: "sfiii_hispanic.29f400.u2"
     archive: sfiiih.zip
@@ -638,7 +638,7 @@ files:
     size: 524288
     crc32: "d2b3cd48"
     note: "SH-2 BIOS, SF3 1st Impact Hispanic"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:396"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:396"
 
   - name: "sfiii_asia_nocd.29f400.u2"
     archive: sfiiin.zip
@@ -647,7 +647,7 @@ files:
     size: 524288
     crc32: "ca2b715f"
     note: "SH-2 BIOS, SF3 1st Impact Asia (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:411"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:411"
 
   # Street Fighter III 2nd Impact
   - name: "sfiii2_usa.29f400.u2"
@@ -657,7 +657,7 @@ files:
     size: 524288
     crc32: "75dd72e0"
     note: "SH-2 BIOS, SF3 2nd Impact USA"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:475"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:475"
 
   - name: "sfiii2_japan.29f400.u2"
     archive: sfiii2j.zip
@@ -666,7 +666,7 @@ files:
     size: 524288
     crc32: "faea0a3e"
     note: "SH-2 BIOS, SF3 2nd Impact Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:490"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:490"
 
   - name: "sfiii2_hispanic.29f400.u2"
     archive: sfiii2h.zip
@@ -675,7 +675,7 @@ files:
     size: 524288
     crc32: "5c799526"
     note: "SH-2 BIOS, SF3 2nd Impact Hispanic"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:505"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:505"
 
   - name: "sfiii2_asia_nocd.29f400.u2"
     archive: sfiii2n.zip
@@ -684,7 +684,7 @@ files:
     size: 524288
     crc32: "fd297c0d"
     note: "SH-2 BIOS, SF3 2nd Impact Asia (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:520"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:520"
 
   # Street Fighter III 3rd Strike
   - name: "sfiii3_euro.29f400.u2"
@@ -694,7 +694,7 @@ files:
     size: 524288
     crc32: "30bbf293"
     note: "SH-2 BIOS, SF3 3rd Strike Europe"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:579"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:579"
 
   - name: "sfiii3_usa.29f400.u2"
     archive: sfiii3u.zip
@@ -703,7 +703,7 @@ files:
     size: 524288
     crc32: "ecc545c1"
     note: "SH-2 BIOS, SF3 3rd Strike USA"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:594"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:594"
 
   - name: "sfiii3_japan.29f400.u2"
     archive: sfiii3j.zip
@@ -712,7 +712,7 @@ files:
     size: 524288
     crc32: "63f23d1f"
     note: "SH-2 BIOS, SF3 3rd Strike Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:609"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:609"
 
   - name: "sfiii3_japan_nocd.29f400.u2"
     archive: sfiii3n.zip
@@ -721,7 +721,7 @@ files:
     size: 524288
     crc32: "1edc6366"
     note: "SH-2 BIOS, SF3 3rd Strike Japan (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:624"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:624"
 
   - name: "sfiii3_asia_nocd.29f400.u2"
     archive: sfiii3na.zip
@@ -730,7 +730,7 @@ files:
     size: 524288
     crc32: "a12ebcd1"
     note: "SH-2 BIOS, SF3 3rd Strike Asia (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:637"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:637"
 
   # JoJo's Bizarre Adventure
   - name: "jojo_euro.29f400.u2"
@@ -740,7 +740,7 @@ files:
     size: 524288
     crc32: "513e40ec"
     note: "SH-2 BIOS, JoJo's Venture Europe"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:799"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:799"
 
   - name: "jojo_usa.29f400.u2"
     archive: jojou.zip
@@ -749,7 +749,7 @@ files:
     size: 524288
     crc32: "8d40f7be"
     note: "SH-2 BIOS, JoJo's Venture USA"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:814"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:814"
 
   - name: "jojo_asia.29f400.u2"
     archive: jojoa.zip
@@ -758,7 +758,7 @@ files:
     size: 524288
     crc32: "789aa72a"
     note: "SH-2 BIOS, JoJo's Venture Asia"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:829"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:829"
 
   - name: "jojo_japan.29f400.u2"
     archive: jojoj.zip
@@ -767,7 +767,7 @@ files:
     size: 524288
     crc32: "02778f60"
     note: "SH-2 BIOS, JoJo's Venture Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:844"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:844"
 
   - name: "jojo_asia_nocd.29f400.u2"
     archive: jojon.zip
@@ -776,7 +776,7 @@ files:
     size: 524288
     crc32: "05b4f953"
     note: "SH-2 BIOS, JoJo's Venture Asia (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:859"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:859"
 
   # JoJo's Bizarre Adventure: Heritage for the Future
   - name: "jojoba_euro.29f400.u2"
@@ -786,7 +786,7 @@ files:
     size: 524288
     crc32: "63cc8800"
     note: "SH-2 BIOS, JoJo's BA: Heritage Europe"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1184"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1184"
 
   - name: "jojoba_japan.29f400.u2"
     archive: jojobajr1.zip
@@ -795,7 +795,7 @@ files:
     size: 524288
     crc32: "3085478c"
     note: "SH-2 BIOS, JoJo's BA: Heritage Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1199"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1199"
 
   - name: "jojoba_euro_nocd.29f400.u2"
     archive: jojoba.zip
@@ -804,7 +804,7 @@ files:
     size: 524288
     crc32: "1ee2d679"
     note: "SH-2 BIOS, JoJo's BA: Heritage Europe (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1120"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1120"
 
   - name: "jojoba_japan_nocd.29f400.u2"
     archive: jojoban.zip
@@ -813,7 +813,7 @@ files:
     size: 524288
     crc32: "4dab19f5"
     note: "SH-2 BIOS, JoJo's BA: Heritage Japan (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1133"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1133"
 
   # Red Earth / Warzard
   - name: "redearth_euro.29f400.u2"
@@ -823,7 +823,7 @@ files:
     size: 524288
     crc32: "02e0f336"
     note: "SH-2 BIOS, Red Earth Europe"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1362"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1362"
 
   - name: "warzard_japan.29f400.u2"
     archive: warzard.zip
@@ -832,7 +832,7 @@ files:
     size: 524288
     crc32: "f8e2f0c6"
     note: "SH-2 BIOS, Warzard Japan"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1377"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1377"
 
   - name: "redearth_asia_nocd.29f400.u2"
     archive: redearthn.zip
@@ -841,7 +841,7 @@ files:
     size: 524288
     crc32: "7a4f0851"
     note: "SH-2 BIOS, Red Earth Asia (No CD)"
-    source_ref: "src/burn/drv/cps3/d_cps3.cpp:1392"
+    source_ref: "upstream src/burn/drv/cps3/d_cps3.cpp:1392"
 
   # -------------------------------------------------------
   # Super Kaneko Nova System (skns.zip)
@@ -853,7 +853,7 @@ files:
     size: 524288  # 0x80000
     crc32: "7e2b836c"
     note: "SKNS BIOS Japan"
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1846"
+    source_ref: "upstream src/burn/drv/pst90s/d_suprnova.cpp:1846"
 
   - name: "sknse2.u10"
     archive: skns.zip
@@ -862,7 +862,7 @@ files:
     size: 524288
     crc32: "e2b9d7d1"
     note: "SKNS BIOS Europe"
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1847"
+    source_ref: "upstream src/burn/drv/pst90s/d_suprnova.cpp:1847"
 
   - name: "sknsa1.u10"
     archive: skns.zip
@@ -871,7 +871,7 @@ files:
     size: 524288
     crc32: "745e5212"
     note: "SKNS BIOS Asia"
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1848"
+    source_ref: "upstream src/burn/drv/pst90s/d_suprnova.cpp:1848"
 
   - name: "sknsu1.u10"
     archive: skns.zip
@@ -880,7 +880,7 @@ files:
     size: 524288
     crc32: "384d21ec"
     note: "SKNS BIOS USA"
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1849"
+    source_ref: "upstream src/burn/drv/pst90s/d_suprnova.cpp:1849"
 
   - name: "sknsk1.u10"
     archive: skns.zip
@@ -889,7 +889,7 @@ files:
     size: 524288
     crc32: "ff1c9f79"
     note: "SKNS BIOS Korea"
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1850"
+    source_ref: "upstream src/burn/drv/pst90s/d_suprnova.cpp:1850"
 
   # -------------------------------------------------------
   # Fairchild Channel F (channelf.zip)
@@ -901,7 +901,7 @@ files:
     size: 1024  # 0x400
     crc32: "9c047ba3"
     note: "Channel F BIOS bottom half"
-    source_ref: "src/burn/drv/channelf/d_channelf.cpp:538"
+    source_ref: "upstream src/burn/drv/channelf/d_channelf.cpp:538"
 
   - name: "sl31253.rom"
     archive: channelf.zip
@@ -910,7 +910,7 @@ files:
     size: 1024
     crc32: "04694ed9"
     note: "Channel F BIOS top half"
-    source_ref: "src/burn/drv/channelf/d_channelf.cpp:540"
+    source_ref: "upstream src/burn/drv/channelf/d_channelf.cpp:540"
 
   - name: "sl90025.rom"
     archive: channelf.zip
@@ -919,7 +919,7 @@ files:
     size: 1024
     crc32: "015c1e38"
     note: "Luxor Video Entertainment System BIOS (top half)"
-    source_ref: "src/burn/drv/channelf/d_channelf.cpp:541"
+    source_ref: "upstream src/burn/drv/channelf/d_channelf.cpp:541"
 
   # -------------------------------------------------------
   # ColecoVision (coleco.zip)
@@ -931,7 +931,7 @@ files:
     size: 8192  # 0x2000
     crc32: "3aa93ef3"
     note: "ColecoVision BIOS (Coleco, 1982)"
-    source_ref: "src/burn/drv/coleco/d_coleco.cpp:1070"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1070"
 
   - name: "colecoa.rom"
     archive: coleco.zip
@@ -940,7 +940,7 @@ files:
     size: 8192
     crc32: "39bb16fc"
     note: "ColecoVision BIOS thick characters (Coleco, 1982)"
-    source_ref: "src/burn/drv/coleco/d_coleco.cpp:1071"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1071"
 
   - name: "svi603.rom"
     archive: coleco.zip
@@ -949,7 +949,7 @@ files:
     size: 8192
     crc32: "19e91b82"
     note: "SVI-603 Coleco Game Adapter (Spectravideo, 1983)"
-    source_ref: "src/burn/drv/coleco/d_coleco.cpp:1072"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1072"
 
   - name: "czz50.rom"
     archive: coleco.zip
@@ -958,7 +958,7 @@ files:
     size: 16384  # 0x4000
     crc32: "4999abc6"
     note: "Chuang Zao Zhe 50 (Bit Corporation, 1986)"
-    source_ref: "src/burn/drv/coleco/d_coleco.cpp:1073"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1073"
 
   # -------------------------------------------------------
   # ZX Spectrum (spectrum.zip, spec128.zip)
@@ -970,7 +970,7 @@ files:
     size: 16384  # 0x4000
     crc32: "ddee531f"
     note: "ZX Spectrum 48K BIOS"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:181"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:181"
 
   - name: "zx128_0.rom"
     archive: spec128.zip
@@ -979,7 +979,7 @@ files:
     size: 16384
     crc32: "e76799d2"
     note: "ZX Spectrum 128K BIOS bank 0"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:188"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:188"
 
   - name: "zx128_1.rom"
     archive: spec128.zip
@@ -988,7 +988,7 @@ files:
     size: 16384
     crc32: "b96a36be"
     note: "ZX Spectrum 128K BIOS bank 1"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:189"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:189"
 
   - name: "zx128_2a_0.rom"
     archive: spec1282a.zip
@@ -997,7 +997,7 @@ files:
     size: 16384
     crc32: "30c9f490"
     note: "ZX Spectrum +2A BIOS bank 0"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:196"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:196"
 
   - name: "zx128_2a_1.rom"
     archive: spec1282a.zip
@@ -1006,7 +1006,7 @@ files:
     size: 16384
     crc32: "a7916b3f"
     note: "ZX Spectrum +2A BIOS bank 1"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:197"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:197"
 
   - name: "zx128_2a_2.rom"
     archive: spec1282a.zip
@@ -1015,7 +1015,7 @@ files:
     size: 16384
     crc32: "c9a0b748"
     note: "ZX Spectrum +2A BIOS bank 2"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:198"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:198"
 
   - name: "zx128_2a_3.rom"
     archive: spec1282a.zip
@@ -1024,7 +1024,7 @@ files:
     size: 16384
     crc32: "b88fd6e3"
     note: "ZX Spectrum +2A BIOS bank 3"
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:199"
+    source_ref: "upstream src/burn/drv/spectrum/d_spectrum.cpp:199"
 
   # -------------------------------------------------------
   # MSX (msx.zip)
@@ -1036,7 +1036,7 @@ files:
     size: 32768  # 0x8000
     crc32: "a317e6b4"
     note: "MSX1 standard BIOS"
-    source_ref: "src/burn/drv/msx/d_msx.cpp:1773"
+    source_ref: "upstream src/burn/drv/msx/d_msx.cpp:1773"
 
   - name: "msxj.rom"
     archive: msx.zip
@@ -1045,7 +1045,7 @@ files:
     size: 32768
     crc32: "071135e0"
     note: "MSX1 Japanese BIOS"
-    source_ref: "src/burn/drv/msx/d_msx.cpp:1774"
+    source_ref: "upstream src/burn/drv/msx/d_msx.cpp:1774"
 
   - name: "kanji.rom"
     archive: msx.zip
@@ -1054,7 +1054,7 @@ files:
     size: 262144  # 0x40000
     crc32: "1f6406fb"
     note: "MSX Kanji character support"
-    source_ref: "src/burn/drv/msx/d_msx.cpp:1775"
+    source_ref: "upstream src/burn/drv/msx/d_msx.cpp:1775"
 
   # -------------------------------------------------------
   # NES Famicom Disk System (fdsbios.zip)
@@ -1066,7 +1066,7 @@ files:
     size: 8192  # 0x2000
     crc32: "5e607dcf"
     note: "Famicom Disk System BIOS"
-    source_ref: "src/burn/drv/nes/d_nes.cpp:517"
+    source_ref: "upstream src/burn/drv/nes/d_nes.cpp:517"
 
   # -------------------------------------------------------
   # Neo Geo Pocket / Pocket Color (ngp.zip)
@@ -1078,7 +1078,7 @@ files:
     size: 65536  # 0x10000
     crc32: "6232df8d"
     note: "Neo Geo Pocket (b&w) BIOS"
-    source_ref: "src/burn/drv/pst90s/d_ngp.cpp:964"
+    source_ref: "source src/burn/drv/pst90s/d_ngp.cpp:964"
 
   - name: "SNK Neo-Geo Pocket Color BIOS (1999)(SNK)(en-ja).bin"
     archive: ngp.zip
@@ -1087,7 +1087,7 @@ files:
     size: 65536
     crc32: "6eeb6f40"
     note: "Neo Geo Pocket Color BIOS"
-    source_ref: "src/burn/drv/pst90s/d_ngp.cpp:965"
+    source_ref: "source src/burn/drv/pst90s/d_ngp.cpp:965"
 
   # -------------------------------------------------------
   # DECO Cassette System (decocass.zip)
@@ -1101,7 +1101,7 @@ files:
     size: 4096  # 0x1000
     crc32: "3d33ac34"
     note: "BIOS A Japan, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3596"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3596"
 
   - name: "v1-.5a"
     archive: decocass.zip
@@ -1110,7 +1110,7 @@ files:
     size: 2048  # 0x800
     crc32: "b66b2c2a"
     note: "BIOS A Japan, Sound M6502 (shared across regions)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3599"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3599"
 
   - name: "v2.3m"
     archive: decocass.zip
@@ -1119,7 +1119,7 @@ files:
     size: 32  # 0x20
     crc32: "238fdb40"
     note: "BIOS PROM (shared across regions)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3601"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3601"
 
   - name: "v4.10d"
     archive: decocass.zip
@@ -1128,7 +1128,7 @@ files:
     size: 32
     crc32: "3b5836b4"
     note: "BIOS PROM (shared across regions)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3602"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3602"
 
   - name: "v3.3j"
     archive: decocass.zip
@@ -1137,7 +1137,7 @@ files:
     size: 32
     crc32: "51eef657"
     note: "BIOS PROM (shared across regions)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3603"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3603"
 
   # BIOS "A" Japan, Older
   - name: "dsp-3_p0-a.m9"
@@ -1147,7 +1147,7 @@ files:
     size: 2048
     crc32: "2541e34b"
     note: "BIOS A Japan Older, Main M6502 (part 1)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3608"
+    source_ref: "upstream src/burn/drv/dataeast/d_decocass.cpp:3608"
 
   - name: "dsp-3_p1-.l9"
     archive: decocass.zip
@@ -1156,7 +1156,7 @@ files:
     size: 2048
     crc32: "3bfff5f3"
     note: "BIOS A Japan Older, Main M6502 (part 2, shared)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3609"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3609"
 
   - name: "rms-3_p2-.c9"
     archive: decocass.zip
@@ -1165,7 +1165,7 @@ files:
     size: 1024  # 0x400
     crc32: "6c4a891f"
     note: "BIOS A Japan Older, Sound M6502 (shared)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3611"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3611"
 
   - name: "dsp-3_p3-.e5"
     archive: decocass.zip
@@ -1174,7 +1174,7 @@ files:
     size: 32
     crc32: "539a5a64"
     note: "BIOS Older PROM (shared)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3613"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3613"
 
   - name: "rms-3_p4-.f6"
     archive: decocass.zip
@@ -1183,7 +1183,7 @@ files:
     size: 32
     crc32: "9014c0fd"
     note: "BIOS Older PROM (shared)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3614"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3614"
 
   - name: "dsp-3_p5-.m4"
     archive: decocass.zip
@@ -1192,7 +1192,7 @@ files:
     size: 32
     crc32: "e52089a0"
     note: "BIOS Older PROM (shared)"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3615"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3615"
 
   # BIOS "B" USA
   - name: "v0b-.7e"
@@ -1202,7 +1202,7 @@ files:
     size: 4096
     crc32: "23d929b7"
     note: "BIOS B USA, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3620"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3620"
 
   - name: "dsp-3_p0-b.m9"
     archive: decocass.zip
@@ -1211,7 +1211,7 @@ files:
     size: 2048
     crc32: "b67a91d9"
     note: "BIOS B USA Older, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3632"
+    source_ref: "upstream src/burn/drv/dataeast/d_decocass.cpp:3632"
 
   # BIOS "C" UK
   - name: "v0c-.7e"
@@ -1221,7 +1221,7 @@ files:
     size: 4096
     crc32: "9f505709"
     note: "BIOS C UK, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3644"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3644"
 
   - name: "dsp-3_p0-c.m9"
     archive: decocass.zip
@@ -1230,7 +1230,7 @@ files:
     size: 2048
     crc32: "c76c4057"
     note: "BIOS C UK Older, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3656"
+    source_ref: "upstream src/burn/drv/dataeast/d_decocass.cpp:3656"
 
   # BIOS "D" Europe
   - name: "v0d-.7e"
@@ -1240,7 +1240,7 @@ files:
     size: 4096
     crc32: "1e0c22b1"
     note: "BIOS D Europe, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3668"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3668"
 
   - name: "dsp-3_p0-d.m9"
     archive: decocass.zip
@@ -1249,7 +1249,7 @@ files:
     size: 2048
     crc32: "4b7d72bc"
     note: "BIOS D Europe Older, Main M6502"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3680"
+    source_ref: "upstream src/burn/drv/dataeast/d_decocass.cpp:3680"
 
   # MCU BIOS (shared)
   - name: "cassmcu.1c"
@@ -1259,7 +1259,7 @@ files:
     size: 1024
     crc32: "a6df18fd"
     note: "MCU BIOS, shared across all DECO Cassette regions"
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3692"
+    source_ref: "upstream src/burn/drv/dataeast/d_decocass.cpp:3692"
 
   # -------------------------------------------------------
   # Namco NA-1 / NA-2 (namcoc69.zip, namcoc70.zip, namcoc75.zip)
@@ -1271,7 +1271,7 @@ files:
     size: 16384  # 0x4000
     crc32: "349134d9"
     note: "C69 MCU internal ROM for Namco NA-1"
-    source_ref: "src/burn/drv/pst90s/d_namcona1.cpp:1346"
+    source_ref: "upstream src/burn/drv/pst90s/d_namcona1.cpp:1346"
 
   - name: "c70.bin"
     archive: namcoc70.zip
@@ -1280,7 +1280,7 @@ files:
     size: 16384
     crc32: "b4015f23"
     note: "C70 MCU internal ROM for Namco NA-2"
-    source_ref: "src/burn/drv/pst90s/d_namcona1.cpp:1367"
+    source_ref: "upstream src/burn/drv/pst90s/d_namcona1.cpp:1367"
 
   - name: "c75.bin"
     archive: namcoc75.zip
@@ -1289,7 +1289,7 @@ files:
     size: 16384
     crc32: "42f539a5"
     note: "C75 MCU internal ROM for Namco NB-1"
-    source_ref: "src/burn/drv/pst90s/d_namconb1.cpp:1978"
+    source_ref: "upstream src/burn/drv/pst90s/d_namconb1.cpp:1978"
 
   # -------------------------------------------------------
   # Konami Bubble System (bubsys.zip)
@@ -1301,7 +1301,7 @@ files:
     size: 480  # 0x1e0
     crc32: "f0774fc2"
     note: "M68000 vectors"
-    source_ref: "src/burn/drv/konami/d_nemesis.cpp:4526"
+    source_ref: "source src/burn/drv/konami/d_nemesis.cpp:4526"
 
   - name: "400b03.8g"
     archive: bubsys.zip
@@ -1310,7 +1310,7 @@ files:
     size: 8192  # 0x2000
     crc32: "85c2afc5"
     note: "Z80 code"
-    source_ref: "src/burn/drv/konami/d_nemesis.cpp:4528"
+    source_ref: "source src/burn/drv/konami/d_nemesis.cpp:4528"
 
   - name: "400a1.2b"
     archive: bubsys.zip
@@ -1319,7 +1319,7 @@ files:
     size: 256  # 0x100
     crc32: "5827b1e8"
     note: "K005289 wavetable 1"
-    source_ref: "src/burn/drv/konami/d_nemesis.cpp:4530"
+    source_ref: "source src/burn/drv/konami/d_nemesis.cpp:4530"
 
   - name: "400a2.1b"
     archive: bubsys.zip
@@ -1328,7 +1328,7 @@ files:
     size: 256
     crc32: "2f44f970"
     note: "K005289 wavetable 2"
-    source_ref: "src/burn/drv/konami/d_nemesis.cpp:4531"
+    source_ref: "source src/burn/drv/konami/d_nemesis.cpp:4531"
 
   # -------------------------------------------------------
   # Sega ISG System (isgsm.zip)
@@ -1340,7 +1340,7 @@ files:
     size: 131072  # 0x20000
     crc32: "2292585c"
     note: "ISG Selection Master Type 2006 BIOS"
-    source_ref: "src/burn/drv/sega/d_sys16b.cpp:11270"
+    source_ref: "source src/burn/drv/sega/d_sys16b.cpp:11270"
 
   # -------------------------------------------------------
   # NMK16 (nmk004.zip)
@@ -1352,7 +1352,7 @@ files:
     size: 8192  # 0x2000
     crc32: "8ae61a09"
     note: "NMK004 TLCS90 internal ROM"
-    source_ref: "src/burn/drv/pst90s/d_nmk16.cpp:6123"
+    source_ref: "upstream src/burn/drv/pst90s/d_nmk16.cpp:6123"
 
   # -------------------------------------------------------
   # Taito C-Chip (cchip.zip)
@@ -1364,7 +1364,7 @@ files:
     size: 4096  # 0x1000
     crc32: "43021521"
     note: "Taito C-Chip UPD78C11 internal ROM"
-    source_ref: "src/burn/drv/taito/d_taitof2.cpp:4392"
+    source_ref: "upstream src/burn/drv/taito/d_taitof2.cpp:4392"
 
   # -------------------------------------------------------
   # Midway MCR SSIO (midssio.zip)
@@ -1376,7 +1376,7 @@ files:
     size: 32  # 0x20
     crc32: "e1281ee9"
     note: "Midway SSIO sound PROM"
-    source_ref: "src/burn/drv/pre90s/d_mcr.cpp:1630"
+    source_ref: "source src/burn/drv/pre90s/d_mcr.cpp:1630"
 
   # -------------------------------------------------------
   # YM2608 ADPCM ROM (ym2608.zip, shared by multiple drivers)
@@ -1388,7 +1388,7 @@ files:
     size: 8192  # 0x2000
     crc32: "23c9e0d8"
     note: "YM2608 internal ADPCM-A rhythm samples, used by multiple drivers"
-    source_ref: "src/burn/drv/pst90s/d_pipedrm.cpp:876"
+    source_ref: "upstream src/burn/drv/pst90s/d_pipedrm.cpp:876"
 
   # -------------------------------------------------------
   # SNES coprocessor BIOS (per-game boardrom ZIPs)
@@ -1400,7 +1400,7 @@ files:
     size: 69632  # 0x11000
     crc32: "aa11ee2d"
     note: "Seta ST010 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:574"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:574"
 
   - name: "st011.bin"
     archive: st011.zip
@@ -1409,7 +1409,7 @@ files:
     size: 69632  # 0x11000
     crc32: "34d2952c"
     note: "Seta ST011 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:593"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:593"
 
   - name: "dsp1.bin"
     archive: dsp1.zip
@@ -1418,7 +1418,7 @@ files:
     size: 10240  # 0x2800
     crc32: "2838f9f5"
     note: "DSP-1 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:632"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:632"
 
   - name: "dsp1b.bin"
     archive: dsp1b.zip
@@ -1427,7 +1427,7 @@ files:
     size: 10240  # 0x2800
     crc32: "453557e0"
     note: "DSP-1B coprocessor microcode (revised)"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:651"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:651"
 
   - name: "dsp2.bin"
     archive: dsp2.zip
@@ -1436,7 +1436,7 @@ files:
     size: 10240  # 0x2800
     crc32: "8e9fbd9b"
     note: "DSP-2 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:670"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:670"
 
   - name: "dsp3.bin"
     archive: dsp3.zip
@@ -1445,7 +1445,7 @@ files:
     size: 10240  # 0x2800
     crc32: "6b86728a"
     note: "DSP-3 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:689"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:689"
 
   - name: "dsp4.bin"
     archive: dsp4.zip
@@ -1454,7 +1454,7 @@ files:
     size: 10240  # 0x2800
     crc32: "ce0c7783"
     note: "DSP-4 coprocessor microcode"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:708"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:708"
 
   # -------------------------------------------------------
   # System support files (fbneo/)
@@ -1466,7 +1466,7 @@ files:
     sha1: "30c6ad697439de7c2158192ecdb48f5edd37478e"
     md5: "f5cdce5b3749d673ad8f073ccc7371e4"
     note: "High score database, enables persistent high scores across all arcade games. The hash is that of metadata/hiscore.dat at source_commit."
-    source_ref: "src/burn/hiscore.cpp:407"
+    source_ref: "source src/burn/hiscore.cpp:407"
 
   # Large audio samples (>50MB, stored as release assets)
   - name: "donpachi.zip"
@@ -1476,7 +1476,7 @@ files:
     storage: release
     size: 209000000
     note: "DonPachi CD-quality soundtrack samples (14 WAVs)"
-    source_ref: "src/burn/snd/samples.cpp"
+    source_ref: "source src/burn/snd/samples.cpp"
 
   - name: "sfz3mix.zip"
     path: "fbneo/samples/sfz3mix.zip"
@@ -1485,7 +1485,7 @@ files:
     storage: release
     size: 116000000
     note: "Street Fighter Zero 3 Mix custom audio samples (43 WAVs)"
-    source_ref: "src/burn/snd/samples.cpp"
+    source_ref: "source src/burn/snd/samples.cpp"
 
   - name: "twotiger.zip"
     path: "fbneo/samples/twotiger.zip"
@@ -1494,130 +1494,130 @@ files:
     storage: release
     size: 155000000
     note: "Two Tigers with Journey CD audio samples (2 WAVs)"
-    source_ref: "src/burn/snd/samples.cpp"
+    source_ref: "source src/burn/snd/samples.cpp"
 
   - name: "gba_bios.bin"
     archive: gba.zip
     required: true
     size: 16384
     crc32: "81977335"
-    source_ref: "src/burn/drv/gba/d_gba.cpp:540"
+    source_ref: "source src/burn/drv/gba/d_gba.cpp:540"
 
   - name: "st018.bin"
     archive: st018.zip
     required: true
     size: 163840
     crc32: "5c403cc5"
-    source_ref: "src/burn/drv/snes/d_snes.cpp:612"
+    source_ref: "source src/burn/drv/snes/d_snes.cpp:612"
 
   - name: "136032.205.l13"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "88d0be26"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1196"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1196"
 
   - name: "136032.206.l12"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "3c79ef05"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1197"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1197"
 
   - name: "136032.104.f5"
     archive: atarisy1.zip
     required: true
     size: 8192
     crc32: "7a29dc07"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1198"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1198"
 
   - name: "136032.101.e3"
     archive: atarisy1.zip
     required: true
     size: 256
     crc32: "7e84972a"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1199"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1199"
 
   - name: "136032.102.e5"
     archive: atarisy1.zip
     required: true
     size: 256
     crc32: "ebf1e0ae"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1200"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1200"
 
   - name: "136032.103.f7"
     archive: atarisy1.zip
     required: true
     size: 235
     crc32: "92d6a0b4"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1201"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1201"
 
   - name: "136032.105.l13"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "79021d3c"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1205"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1205"
 
   - name: "136032.106.l12"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "76ee86c4"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1206"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1206"
 
   - name: "136032.104.f5"
     archive: atarisy1.zip
     required: true
     size: 8192
     crc32: "7a29dc07"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1207"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1207"
 
   - name: "136032.101.e3"
     archive: atarisy1.zip
     required: true
     size: 256
     crc32: "7e84972a"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1208"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1208"
 
   - name: "136032.102.e5"
     archive: atarisy1.zip
     required: true
     size: 256
     crc32: "ebf1e0ae"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1209"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1209"
 
   - name: "136032.103.f7"
     archive: atarisy1.zip
     required: true
     size: 235
     crc32: "92d6a0b4"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1210"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1210"
 
   - name: "136032.114.j11"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "195c54ad"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1214"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1214"
 
   - name: "136032.115.j10"
     archive: atarisy1.zip
     required: true
     size: 16384
     crc32: "7275b4dc"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1215"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1215"
 
   - name: "136032.107.b2"
     archive: atarisy1.zip
     required: true
     size: 8192
     crc32: "7a29dc07"
-    source_ref: "src/burn/drv/atari/d_atarisy1.cpp:1216"
+    source_ref: "source src/burn/drv/atari/d_atarisy1.cpp:1216"
 
   - name: "astro.bin"
     archive: astrocde.zip
     required: true
     size: 8192
     crc32: "ebc77f3a"
-    source_ref: "src/burn/drv/pre90s/d_astrocde.cpp:3034"
+    source_ref: "source src/burn/drv/pre90s/d_astrocde.cpp:3034"

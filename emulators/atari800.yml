@@ -44,7 +44,7 @@ files:
     note: >
       Atari 5200 BIOS (original). Mapped at $F800-$FFFF.
       Altirra 5200 OS is used when this file is absent.
-    source_ref: "atari800/src/sysrom.c:103-104, atari800/src/sysrom.c:290"
+    source_ref: "source atari800/src/sysrom.c:103-104, source atari800/src/sysrom.c:290"
 
   # -- Atari BASIC ROM --
   # Atari BASIC interpreter (8 KB). Three known revisions:
@@ -64,7 +64,7 @@ files:
     note: >
       Atari BASIC Rev C. Required for 400/800 software that needs BASIC.
       Altirra BASIC is used as fallback. Enable via core option atari800_opt2.
-    source_ref: "atari800/src/sysrom.c:105-107, atari800/src/sysrom.c:292"
+    source_ref: "source atari800/src/sysrom.c:105-107, source atari800/src/sysrom.c:292"
 
   # -- Atari 400/800 OS A --
   # Original Atari 400/800 OS (10 KB). Two known CRC32 values:
@@ -82,7 +82,7 @@ files:
     note: >
       Atari 400/800 OS Rev A. Altirra OS 800 is used as fallback.
       Auto-select order: OS B NTSC, OS A NTSC, OS A PAL, custom, Altirra.
-    source_ref: "atari800/src/sysrom.c:89-90, atari800/src/sysrom.c:285"
+    source_ref: "source atari800/src/sysrom.c:89-90, source atari800/src/sysrom.c:285"
 
   # -- Atari 400/800 OS B --
   # OS revision B (10 KB), NTSC: CRC32 0x0e86d61d
@@ -103,7 +103,7 @@ files:
       Note: .info lists md5 a3e8d617c95d08031fe1b20d541434b2 which is a
       different dump (crc32 3e28a1fe) -- both in repo, the CRC32-matched
       version is the one sysrom.c auto-detects.
-    source_ref: "atari800/src/sysrom.c:91, atari800/src/sysrom.c:286"
+    source_ref: "source atari800/src/sysrom.c:91, source atari800/src/sysrom.c:286"
 
   # -- Atari XL/XE OS --
   # XL/XE OS (16 KB). Many revisions known by CRC32 in sysrom.c:
@@ -124,7 +124,7 @@ files:
     note: >
       Atari XL/XE OS. Used for 800XL, 130XE, and XEGS modes.
       Altirra XL OS is used as fallback.
-    source_ref: "atari800/src/sysrom.c:92-101, atari800/src/sysrom.c:288"
+    source_ref: "source atari800/src/sysrom.c:92-101, source atari800/src/sysrom.c:288"
 
   # -- Atari XL/XE/XEGS OS v4 (BB01R4) --
   # XEGS-specific OS revision BB01R4 (16 KB), CRC32: 0x1eaf4002
@@ -140,7 +140,7 @@ files:
     validation: [size, crc32]
     note: >
       Atari XEGS OS Rev 4 (BB01R4). Preferred OS for XEGS machine mode.
-    source_ref: "atari800/src/sysrom.c:100"
+    source_ref: "source atari800/src/sysrom.c:100"
 
   # -- XEGS Missile Command built-in game --
   # The XEGS had Missile Command in ROM (8 KB), CRC32: 0xbdca01fb
@@ -156,7 +156,7 @@ files:
     note: >
       XEGS built-in Missile Command ROM. Only used in XEGS machine mode.
       No built-in replacement exists for this ROM.
-    source_ref: "atari800/src/sysrom.c:108"
+    source_ref: "source atari800/src/sysrom.c:108"
 
 # Known ROM revisions from sysrom.c (CRC32 identifiers):
 #

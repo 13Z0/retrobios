@@ -31,7 +31,7 @@ files:
     category: game_data
     path: "mkxp-z/RTP/Standard/"
     required: false
-    source_ref: "src/core.cpp:1081-1124, src/core.cpp:1126-1197"
+    source_ref: "source src/core.cpp:1081-1124, source src/core.cpp:1126-1197"
 
   - name: "RPGVX"
     type: directory
@@ -39,7 +39,7 @@ files:
     category: game_data
     path: "mkxp-z/RTP/RPGVX/"
     required: false
-    source_ref: "src/core.cpp:1081-1124, src/core.cpp:1126-1197"
+    source_ref: "source src/core.cpp:1081-1124, source src/core.cpp:1126-1197"
 
   - name: "RPGVXAce"
     type: directory
@@ -47,7 +47,7 @@ files:
     category: game_data
     path: "mkxp-z/RTP/RPGVXAce/"
     required: false
-    source_ref: "src/core.cpp:1081-1124, src/core.cpp:1126-1197"
+    source_ref: "source src/core.cpp:1081-1124, source src/core.cpp:1126-1197"
 
   - name: "Fonts"
     type: directory
@@ -56,7 +56,7 @@ files:
     path: "mkxp-z/Fonts/"
     required: false
     unsourceable: "the core creates this directory empty and mounts it for fonts the user adds, and the fallback font is compiled into the binary"
-    source_ref: "src/core.cpp:1199-1211, src/display/font.cpp:61-90"
+    source_ref: "source src/core.cpp:1199-1211, source src/display/font.cpp:61-90"
 
   - name: "Preload"
     type: directory
@@ -65,7 +65,7 @@ files:
     path: "mkxp-z/Scripts/Preload/"
     required: false
     unsourceable: "the core creates this directory empty for the user's own scripts, and its default preload scripts are mounted from memory"
-    source_ref: "src/core.cpp:891-934"
+    source_ref: "source src/core.cpp:891-934"
 
   - name: "Postload"
     type: directory
@@ -74,4 +74,4 @@ files:
     path: "mkxp-z/Scripts/Postload/"
     required: false
     unsourceable: "the core creates this directory empty for the user's own scripts"
-    source_ref: "src/core.cpp:901-956"
+    source_ref: "source src/core.cpp:901-956"

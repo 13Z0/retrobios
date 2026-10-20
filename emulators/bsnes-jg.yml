@@ -40,59 +40,59 @@ files:
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:429, src/cartridge.cpp:781, src/cartridge.cpp:805-811"
+    source_ref: "source libretro/libretro.cpp:429, source src/cartridge.cpp:781, source src/cartridge.cpp:805-811"
 
   - name: dsp1.data.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:432, src/cartridge.cpp:793, src/cartridge.cpp:805-811"
+    source_ref: "source libretro/libretro.cpp:432, source src/cartridge.cpp:793, source src/cartridge.cpp:805-811"
 
   - name: dsp1b.program.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:435, src/cartridge.cpp:781, src/cartridge.cpp:805-811"
+    source_ref: "source libretro/libretro.cpp:435, source src/cartridge.cpp:781, source src/cartridge.cpp:805-811"
 
   - name: dsp1b.data.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:438, src/cartridge.cpp:793, src/cartridge.cpp:805-811"
+    source_ref: "source libretro/libretro.cpp:438, source src/cartridge.cpp:793, source src/cartridge.cpp:805-811"
 
   - name: dsp2.program.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:441, src/cartridge.cpp:781, src/cartridge.cpp:813-818"
+    source_ref: "source libretro/libretro.cpp:441, source src/cartridge.cpp:781, source src/cartridge.cpp:813-818"
 
   - name: dsp2.data.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:444, src/cartridge.cpp:793, src/cartridge.cpp:813-818"
+    source_ref: "source libretro/libretro.cpp:444, source src/cartridge.cpp:793, source src/cartridge.cpp:813-818"
 
   - name: dsp3.program.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:447-448, src/cartridge.cpp:781, src/cartridge.cpp:829-835"
+    source_ref: "source libretro/libretro.cpp:447-448, source src/cartridge.cpp:781, source src/cartridge.cpp:829-835"
 
   - name: dsp3.data.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:451-452, src/cartridge.cpp:793, src/cartridge.cpp:829-835"
+    source_ref: "source libretro/libretro.cpp:451-452, source src/cartridge.cpp:793, source src/cartridge.cpp:829-835"
 
   - name: dsp4.program.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:455, src/cartridge.cpp:781, src/cartridge.cpp:820-825"
+    source_ref: "source libretro/libretro.cpp:455, source src/cartridge.cpp:781, source src/cartridge.cpp:820-825"
 
   - name: dsp4.data.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:458, src/cartridge.cpp:793, src/cartridge.cpp:820-825"
+    source_ref: "source libretro/libretro.cpp:458, source src/cartridge.cpp:793, source src/cartridge.cpp:820-825"
 
   # uPD96050 coprocessor firmware (ST010, ST011)
   # HLE fallback available for ST010, not for ST011
@@ -101,23 +101,23 @@ files:
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:461, src/cartridge.cpp:858, src/cartridge.cpp:879-889"
+    source_ref: "source libretro/libretro.cpp:461, source src/cartridge.cpp:858, source src/cartridge.cpp:879-889"
 
   - name: st010.data.rom
     system: nintendo-snes
     required: false
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:464, src/cartridge.cpp:870, src/cartridge.cpp:879-889"
+    source_ref: "source libretro/libretro.cpp:464, source src/cartridge.cpp:870, source src/cartridge.cpp:879-889"
 
   - name: st011.program.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:467-468, src/cartridge.cpp:858, src/cartridge.cpp:891-908"
+    source_ref: "source libretro/libretro.cpp:467-468, source src/cartridge.cpp:858, source src/cartridge.cpp:891-908"
 
   - name: st011.data.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:471-472, src/cartridge.cpp:870, src/cartridge.cpp:891-908"
+    source_ref: "source libretro/libretro.cpp:471-472, source src/cartridge.cpp:870, source src/cartridge.cpp:891-908"
 
   # ARM6 coprocessor firmware (ST018)
   # Internal name arm6, mapped to st018 by libretro wrapper. No HLE.
@@ -125,13 +125,13 @@ files:
   - name: st018.program.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:475-476, src/cartridge.cpp:647"
+    source_ref: "source libretro/libretro.cpp:475-476, source src/cartridge.cpp:647"
     aliases: [arm6.program.rom]
 
   - name: st018.data.rom
     system: nintendo-snes
     required: false
-    source_ref: "libretro/libretro.cpp:479-480, src/cartridge.cpp:657"
+    source_ref: "source libretro/libretro.cpp:479-480, source src/cartridge.cpp:657"
     aliases: [arm6.data.rom]
 
 # Embedded (no external file needed):

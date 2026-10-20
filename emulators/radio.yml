@@ -77,4 +77,4 @@ files:
       radio-browser.info API and then to the eight built-in SomaFM streams.
       A file put here replaces those two fallbacks for every start without
       content.
-    source_ref: "libretro-radio.c:2437-2461, libretro-radio.c:2278-2291, libretro-radio.c:2464-2481"
+    source_ref: "source libretro-radio.c:2437-2461, source libretro-radio.c:2278-2291, source libretro-radio.c:2464-2481"

@@ -43,7 +43,7 @@ files:
     system: quake2
     path: "baseq2/pak0.pak"
     required: true
-    source_ref: "qcommon/files.c:872 (baseq2 mounted), 537-542 (pak%i.pak loop); ref_vk/vk_image.c:1640-1642 (pics/colormap.pcx fatal)"
+    source_ref: "source qcommon/files.c:872 (baseq2 mounted), 537-542 (pak%i.pak loop), source ref_vk/vk_image.c:1640-1642 (pics/colormap.pcx fatal)"
     note: "Retail Quake II data. Not hash-checked."
 
   - name: "pak1.pak"
@@ -51,7 +51,7 @@ files:
     system: quake2
     path: "baseq2/pak1.pak"
     required: false
-    source_ref: "qcommon/files.c:537-542"
+    source_ref: "source qcommon/files.c:537-542"
     note: "Shipped by the 3.20 point release."
 
   - name: "pak2.pak"
@@ -59,7 +59,7 @@ files:
     system: quake2
     path: "baseq2/pak2.pak"
     required: false
-    source_ref: "qcommon/files.c:537-542"
+    source_ref: "source qcommon/files.c:537-542"
     note: "Shipped by the 3.20 point release."
 
   - name: "pak0.pak"
@@ -67,7 +67,7 @@ files:
     system: xatrix
     path: "xatrix/pak0.pak"
     required: false
-    source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
+    source_ref: "source qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "The Reckoning data. Loaded with `+set game xatrix`."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -76,7 +76,7 @@ files:
     system: rogue
     path: "rogue/pak0.pak"
     required: false
-    source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
+    source_ref: "source qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Ground Zero data. Loaded with `+set game rogue`."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -85,7 +85,7 @@ files:
     system: ctf
     path: "ctf/pak0.pak"
     required: false
-    source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
+    source_ref: "source qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Three Wave CTF data from the 3.20 point release. Loaded with `+set game ctf`."
 
   - name: "pak0.pak"
@@ -93,7 +93,7 @@ files:
     system: quake2
     path: "zaero/pak0.pak"
     required: false
-    source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
+    source_ref: "source qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Zaero data. Loaded with `+set game zaero`."
     unsourceable: "data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -102,6 +102,6 @@ files:
     system: quake2
     path: "smd/pak0.pak"
     required: false
-    source_ref: "qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
+    source_ref: "source qcommon/files.c:878-880 (game cvar), 640 (game dir mounted), 537-542"
     note: "Slight Mechanical Destruction data. Loaded with `+set game smd`."
     unsourceable: "data the collection does not hold, and a same-named file of another game must not stand in"

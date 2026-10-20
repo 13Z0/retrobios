@@ -86,61 +86,61 @@ files:
     system: nintendo-snes
     size: 2048
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:115, icarus/heuristics/super-famicom.cpp:534"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:115, source icarus/heuristics/super-famicom.cpp:534"
 
   - name: "dsp1.program.rom"
     system: nintendo-snes
     size: 6144
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:114, icarus/heuristics/super-famicom.cpp:534"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:114, source icarus/heuristics/super-famicom.cpp:534"
 
   - name: "dsp1b.data.rom"
     system: nintendo-snes
     size: 2048
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:115, icarus/heuristics/super-famicom.cpp:539"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:115, source icarus/heuristics/super-famicom.cpp:539"
 
   - name: "dsp1b.program.rom"
     system: nintendo-snes
     size: 6144
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:114, icarus/heuristics/super-famicom.cpp:539"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:114, source icarus/heuristics/super-famicom.cpp:539"
 
   - name: "dsp2.data.rom"
     system: nintendo-snes
     size: 2048
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:115, icarus/heuristics/super-famicom.cpp:535"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:115, source icarus/heuristics/super-famicom.cpp:535"
 
   - name: "dsp2.program.rom"
     system: nintendo-snes
     size: 6144
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:114, icarus/heuristics/super-famicom.cpp:535"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:114, source icarus/heuristics/super-famicom.cpp:535"
 
   - name: "dsp3.data.rom"
     system: nintendo-snes
     size: 2048
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:115, icarus/heuristics/super-famicom.cpp:536"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:115, source icarus/heuristics/super-famicom.cpp:536"
 
   - name: "dsp3.program.rom"
     system: nintendo-snes
     size: 6144
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:114, icarus/heuristics/super-famicom.cpp:536"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:114, source icarus/heuristics/super-famicom.cpp:536"
 
   - name: "dsp4.data.rom"
     system: nintendo-snes
     size: 2048
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:115, icarus/heuristics/super-famicom.cpp:537-538"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:115, source icarus/heuristics/super-famicom.cpp:537-538"
 
   - name: "dsp4.program.rom"
     system: nintendo-snes
     size: 6144
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:457-501, icarus/heuristics/super-famicom.cpp:114, icarus/heuristics/super-famicom.cpp:537-538"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:457-501, source icarus/heuristics/super-famicom.cpp:114, source icarus/heuristics/super-famicom.cpp:537-538"
 
   # Hitachi HG51BS169 (Cx4): 1024 x 24-bit data words
   - name: "cx4.data.rom"
@@ -148,7 +148,7 @@ files:
     size: 3072
     sha1: "a002f4efba42775a31185d443f3ed1790b0e949a"
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:405-454, icarus/heuristics/super-famicom.cpp:110, icarus/heuristics/super-famicom.cpp:529-531"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:405-454, source icarus/heuristics/super-famicom.cpp:110, source icarus/heuristics/super-famicom.cpp:529-531"
 
   # NEC uPD96050 (ST010, ST011): 16384 x 24-bit program words,
   # 2048 x 16-bit data words
@@ -156,38 +156,38 @@ files:
     system: nintendo-snes
     size: 4096
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:504-548, icarus/heuristics/super-famicom.cpp:99, icarus/heuristics/super-famicom.cpp:516-521"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:504-548, source icarus/heuristics/super-famicom.cpp:99, source icarus/heuristics/super-famicom.cpp:516-521"
 
   - name: "st010.program.rom"
     system: nintendo-snes
     size: 49152
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:504-548, icarus/heuristics/super-famicom.cpp:98, icarus/heuristics/super-famicom.cpp:516-521"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:504-548, source icarus/heuristics/super-famicom.cpp:98, source icarus/heuristics/super-famicom.cpp:516-521"
 
   - name: "st011.data.rom"
     system: nintendo-snes
     size: 4096
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:504-548, icarus/heuristics/super-famicom.cpp:99, icarus/heuristics/super-famicom.cpp:519"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:504-548, source icarus/heuristics/super-famicom.cpp:99, source icarus/heuristics/super-famicom.cpp:519"
 
   - name: "st011.program.rom"
     system: nintendo-snes
     size: 49152
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:504-548, icarus/heuristics/super-famicom.cpp:98, icarus/heuristics/super-famicom.cpp:519"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:504-548, source icarus/heuristics/super-famicom.cpp:98, source icarus/heuristics/super-famicom.cpp:519"
 
   # SETA ARM6 (ST018): 128 KiB program, 32 KiB data
   - name: "st018.data.rom"
     system: nintendo-snes
     size: 32768
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:362-402, icarus/heuristics/super-famicom.cpp:92, icarus/heuristics/super-famicom.cpp:512-514"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:362-402, source icarus/heuristics/super-famicom.cpp:92, source icarus/heuristics/super-famicom.cpp:512-514"
 
   - name: "st018.program.rom"
     system: nintendo-snes
     size: 131072
     required: false
-    source_ref: "nSide/sfc-balanced/cartridge/load.cpp:362-402, icarus/heuristics/super-famicom.cpp:91, icarus/heuristics/super-famicom.cpp:512-514"
+    source_ref: "source nSide/sfc-balanced/cartridge/load.cpp:362-402, source icarus/heuristics/super-famicom.cpp:91, source icarus/heuristics/super-famicom.cpp:512-514"
 
   # Super Game Boy: cartridge ROM and boot ROM per folder
   - name: "program.rom"
@@ -195,7 +195,7 @@ files:
     system: nintendo-sgb
     required: false
     note: "Also looked up as SGB.sfc/program.rom and Super GameBoy.sfc/program.rom."
-    source_ref: "nSide/target-libretro/libretro-sfc.cpp:179-215, nSide/sfc-balanced/cartridge/load.cpp:159-162"
+    source_ref: "source nSide/target-libretro/libretro-sfc.cpp:179-215, source nSide/sfc-balanced/cartridge/load.cpp:159-162"
 
   - name: "lr35902.boot.rom"
     path: "SGB1.sfc/lr35902.boot.rom"
@@ -204,14 +204,14 @@ files:
     sha1: "aa2f50a77dfb4823da96ba99309085a3c6278515"
     required: false
     note: "Falls back to lr35902.boot.rom at the system directory root."
-    source_ref: "nSide/gb/system/system.cpp:54-65, nSide/emulator/game.hpp:101-104, icarus/heuristics/super-famicom.cpp:103, icarus/heuristics/super-famicom.cpp:523-527"
+    source_ref: "source nSide/gb/system/system.cpp:54-65, source nSide/emulator/game.hpp:101-104, source icarus/heuristics/super-famicom.cpp:103, source icarus/heuristics/super-famicom.cpp:523-527"
 
   - name: "program.rom"
     path: "SGB2.sfc/program.rom"
     system: nintendo-sgb
     required: false
     note: "Selected by the higan_sfc_sgb_bios option."
-    source_ref: "nSide/target-libretro/libretro-sfc.cpp:179-215, nSide/sfc-balanced/cartridge/load.cpp:159-162"
+    source_ref: "source nSide/target-libretro/libretro-sfc.cpp:179-215, source nSide/sfc-balanced/cartridge/load.cpp:159-162"
 
   - name: "lr35902.boot.rom"
     path: "SGB2.sfc/lr35902.boot.rom"
@@ -220,4 +220,4 @@ files:
     sha1: "93407ea10d2f30ab96a314d8eca44fe160aea734"
     required: false
     note: "Falls back to lr35902.boot.rom at the system directory root."
-    source_ref: "nSide/gb/system/system.cpp:54-65, nSide/emulator/game.hpp:101-104, icarus/heuristics/super-famicom.cpp:103, icarus/heuristics/super-famicom.cpp:523-527"
+    source_ref: "source nSide/gb/system/system.cpp:54-65, source nSide/emulator/game.hpp:101-104, source icarus/heuristics/super-famicom.cpp:103, source icarus/heuristics/super-famicom.cpp:523-527"

@@ -41,7 +41,7 @@ files:
     description: "TI-83 Plus Silver Edition ROM dump"
     priority: 1
     required: false
-    source_ref: "libnumero/libretro/libretronew.cpp:576-578"
+    source_ref: "source libnumero/libretro/libretronew.cpp:576-578"
     note: "Checked first. Recommended for largest storage capacity."
 
   - name: "ti83plus.rom"
@@ -49,7 +49,7 @@ files:
     description: "TI-83 Plus ROM dump"
     priority: 2
     required: false
-    source_ref: "libnumero/libretro/libretronew.cpp:583-585"
+    source_ref: "source libnumero/libretro/libretronew.cpp:583-585"
     note: "Checked second, used if ti83se.rom is missing."
 
   - name: "ti83.rom"
@@ -57,5 +57,5 @@ files:
     description: "TI-83 ROM dump"
     priority: 3
     required: false
-    source_ref: "libnumero/libretro/libretronew.cpp:591-593"
+    source_ref: "source libnumero/libretro/libretronew.cpp:591-593"
     note: "Checked last. Original TI-83 (non-Plus)."

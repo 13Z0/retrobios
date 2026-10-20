@@ -106,7 +106,7 @@ files:
       .gen or .sms, or inside a .zip, .7z or .rar holding one. The tests are the
       length and the "BOOT" text at 0x124 or 0x128, and a file failing either aborts
       the load rather than falling back.
-    source_ref: "MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), MD.emu/src/main/EmuMenuViews.cc:290-295,317-345 (picker and filter)"
+    source_ref: "source MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), source MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), source MD.emu/src/main/EmuMenuViews.cc:290-295, 317-345 (picker and filter)"
 
   - name: bios_CD_J.bin
     system: sega-megacd
@@ -120,7 +120,7 @@ files:
     note: >-
       Taken by the default branch: USA and Europe go to the other two paths and
       every other region code lands here, both Japanese ones included.
-    source_ref: "MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), MD.emu/src/main/EmuMenuViews.cc:290-295,317-345 (picker and filter)"
+    source_ref: "source MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), source MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), source MD.emu/src/main/EmuMenuViews.cc:290-295, 317-345 (picker and filter)"
 
   - name: bios_CD_E.bin
     system: sega-megacd
@@ -134,4 +134,4 @@ files:
     note: >-
       Reached when the boot sector byte at 0x20b is 0x64 or the Game Region
       setting is Europe.
-    source_ref: "MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), MD.emu/src/main/EmuMenuViews.cc:290-295,317-345 (picker and filter)"
+    source_ref: "source MD.emu/src/main/Main.cc:311-344 (region choice, read, checks), source MD.emu/src/genplus-gx/loadrom.cc:426-432 (size and signature), source MD.emu/src/main/EmuMenuViews.cc:290-295, 317-345 (picker and filter)"

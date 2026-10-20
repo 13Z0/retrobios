@@ -21,7 +21,7 @@ files:
     system: philips-cdi
     required: true
     category: bios_zip
-    source_ref: "src/osd/retro/retromain.c:1989, src/mame/drivers/cdi.c:421"
+    source_ref: "source src/osd/retro/retromain.c:1989, upstream src/mame/drivers/cdi.c:421"
     contents:
       - name: cdi200.rom
         description: Magnavox CD-i 200 BIOS (default)

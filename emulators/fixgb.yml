@@ -35,5 +35,5 @@ files:
     validation: [size]
     md5: "dbfce9db9deaa2567f6a84fde55f9680"
     sha1: "1293d68bf9643bc4f36954c1e80e38f39864528d"
-    source_ref: "libretro/libretro.c:246-254 (doOpenCGBBootrom), mem.c:567-586 (memInitCGBBootrom)"
+    source_ref: "source libretro/libretro.c:246-254 (doOpenCGBBootrom), source mem.c:567-586 (memInitCGBBootrom)"
     note: "Minimum 0x900 (2304) bytes. Only first 0x900 bytes read. Disabled via memDisableCGBBootrom() on register write."

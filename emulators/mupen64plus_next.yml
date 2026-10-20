@@ -18,14 +18,14 @@ files:
     size: 4194304
     required: false
     description: "64DD IPL ROM"
-    source_ref: "mupen64plus-core/src/main/main.c:940-1024"
+    source_ref: "source mupen64plus-core/src/main/main.c:940-1024"
 
   - name: "font.ttf"
     path: "Mupen64plus/font.ttf"
     required: false
     description: "TrueType font for on-screen display text"
     note: "Fallback font for OSD text rendering (FPS counter, messages). System fonts tried first. No impact on emulation."
-    source_ref: "GLideN64/src/TextDrawer.cpp:165-170"
+    source_ref: "source GLideN64/src/TextDrawer.cpp:165-170"
 
 notes:
   hle_available: true

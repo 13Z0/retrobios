@@ -136,7 +136,7 @@ files:
       load is refused outright when the file is not there. The Kotlin launcher parses the same copy out of the assets for its game
       list and its per-game input hints. Byte identical to the copy in the repository
       root Config directory.
-    source_ref: "android/app/src/main/cpp/native-lib.cpp:568-580, 1096-1114, Src/Util/ConfigBuilders.cpp:60-73, android/app/src/main/java/com/izzy2lost/super3/GameXml.kt:23-24, android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1211"
+    source_ref: "source android/app/src/main/cpp/native-lib.cpp:568-580, 1096-1114, source Src/Util/ConfigBuilders.cpp:60-73, source android/app/src/main/java/com/izzy2lost/super3/GameXml.kt:23-24, source android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1211"
 
   - name: Supermodel.ini
     path: "Config/Supermodel.ini"
@@ -156,7 +156,7 @@ files:
       describe the file as shipped, since AssetInstaller rewrites it on first run,
       substituting the Android control defaults, and the in-app editor writes per-game
       keys such as LegacyReal3DTiming afterwards.
-    source_ref: "android/app/src/main/cpp/native-lib.cpp:531-566, 620-621, Src/Util/ConfigBuilders.cpp:134-142, android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt:17, 43-159, android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt:880-884"
+    source_ref: "source android/app/src/main/cpp/native-lib.cpp:531-566, 620-621, source Src/Util/ConfigBuilders.cpp:134-142, source android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt:17, 43-159, source android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt:880-884"
 
   - name: gamecontrollerdb.txt
     path: "Config/gamecontrollerdb.txt"
@@ -173,7 +173,7 @@ files:
       its own, and a handle that cannot be opened is passed over, leaving SDL on its
       built-in mappings. Byte identical to the copy in the repository root Config
       directory.
-    source_ref: "android/app/src/main/cpp/android_input_system.cpp:291-311, 207-213"
+    source_ref: "source android/app/src/main/cpp/android_input_system.cpp:291-311, 207-213"
 
 exclusion_note: >
   No BIOS or firmware file is loaded. Sega Model 3 hardware has no shared system ROM:

@@ -48,7 +48,7 @@ files:
     system: quake3
     path: "baseq3/pak0.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:180 (pak_checksums[0]=1566731103u), 3486 (checksum compare), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:180 (pak_checksums[0]=1566731103u), 3486 (checksum compare), 3596-3619 (fatal when a baseq3 pak is absent)"
     note: "Retail Quake III Arena pak. A checksum mismatch prints a warning, the file is not refused."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -57,63 +57,63 @@ files:
     system: quake3
     path: "baseq3/pak1.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:181 (pak_checksums[1]=298122907u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:181 (pak_checksums[1]=298122907u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak2.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak2.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:182 (pak_checksums[2]=412165236u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:182 (pak_checksums[2]=412165236u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak3.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak3.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:183 (pak_checksums[3]=2991495316u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:183 (pak_checksums[3]=2991495316u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak4.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak4.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:184 (pak_checksums[4]=1197932710u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:184 (pak_checksums[4]=1197932710u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak5.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak5.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:185 (pak_checksums[5]=4087071573u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:185 (pak_checksums[5]=4087071573u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak6.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak6.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:186 (pak_checksums[6]=3709064859u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:186 (pak_checksums[6]=3709064859u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak7.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak7.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:187 (pak_checksums[7]=908855077u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:187 (pak_checksums[7]=908855077u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak8.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak8.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:188 (pak_checksums[8]=977125798u), 3596-3619 (fatal when a baseq3 pak is absent)"
+    source_ref: "source code/qcommon/files.c:188 (pak_checksums[8]=977125798u), 3596-3619 (fatal when a baseq3 pak is absent)"
 
   - name: "pak0.pk3"
     category: game_data
     system: quake3
     path: "demoq3/pak0.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:178 (DEMO_PAK0_CHECKSUM=2985612116u), 3475-3479 (demoq3 pak0 checksum compare), 3580-3590 (counted as baseq3/pak0.pk3)"
+    source_ref: "source code/qcommon/files.c:178 (DEMO_PAK0_CHECKSUM=2985612116u), 3475-3479 (demoq3 pak0 checksum compare), 3580-3590 (counted as baseq3/pak0.pk3)"
     note: "Demo pak. Recognised only under demoq3/ with this checksum, and the engine then prints a warning and counts baseq3/pak0.pk3 as found."
 
   - name: "pak0.pk3"
@@ -121,7 +121,7 @@ files:
     system: teamarena
     path: "missionpack/pak0.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:193 (missionpak_checksums[0]=2430342401u), 3622-3640 (fatal when a Team Arena pak is absent)"
+    source_ref: "source code/qcommon/files.c:193 (missionpak_checksums[0]=2430342401u), 3622-3640 (fatal when a Team Arena pak is absent)"
     note: "Team Arena pak. Read with `+set fs_game missionpack`."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -130,18 +130,18 @@ files:
     system: teamarena
     path: "missionpack/pak1.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:194 (missionpak_checksums[1]=511014160u), 3622-3640 (fatal when a Team Arena pak is absent)"
+    source_ref: "source code/qcommon/files.c:194 (missionpak_checksums[1]=511014160u), 3622-3640 (fatal when a Team Arena pak is absent)"
 
   - name: "pak2.pk3"
     category: game_data
     system: teamarena
     path: "missionpack/pak2.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:195 (missionpak_checksums[2]=2662638993u), 3622-3640 (fatal when a Team Arena pak is absent)"
+    source_ref: "source code/qcommon/files.c:195 (missionpak_checksums[2]=2662638993u), 3622-3640 (fatal when a Team Arena pak is absent)"
 
   - name: "pak3.pk3"
     category: game_data
     system: teamarena
     path: "missionpack/pak3.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:196 (missionpak_checksums[3]=1438664554u), 3622-3640 (fatal when a Team Arena pak is absent)"
+    source_ref: "source code/qcommon/files.c:196 (missionpak_checksums[3]=1438664554u), 3622-3640 (fatal when a Team Arena pak is absent)"

@@ -95,7 +95,7 @@ files:
       configured path is read before the instance is created and opened through
       adrenotools when it exists, otherwise the system libvulkan.so is used. The
       setting is greyed out on devices without /dev/kgsl-3d0.
-    source_ref: "app/src/main/java/aenu/ax360e/EmulatorSettings.java:732-736, app/src/main/java/aenu/ax360e/Utils.java:165-230, app/src/main/cpp/xenia-canary/src/xenia/ui/vulkan/vulkan_instance.cc:34, app/src/main/cpp/xenia-canary/src/xenia/ui/vulkan/vulkan_instance.cc:71-91, app/src/main/java/aenu/emulator/Emulator.java:116-122"
+    source_ref: "source app/src/main/java/aenu/ax360e/EmulatorSettings.java:732-736, source app/src/main/java/aenu/ax360e/Utils.java:165-230, source app/src/main/cpp/xenia-canary/src/xenia/ui/vulkan/vulkan_instance.cc:34, source app/src/main/cpp/xenia-canary/src/xenia/ui/vulkan/vulkan_instance.cc:71-91, source app/src/main/java/aenu/emulator/Emulator.java:116-122"
 
   - name: "<font>.ttf"
     required: false
@@ -107,7 +107,7 @@ files:
       Supplement, Extended Latin, Greek, Cyrillic, punctuation, superscript,
       letterlike and number form ranges. A face that fails to build is cleared and
       the embedded ProggyTiny is used instead, so the absence is covered.
-    source_ref: "app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:43-45, app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:355-394, app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:527-534"
+    source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:43-45, source app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:355-394, source app/src/main/cpp/xenia-canary/src/xenia/ui/imgui_drawer.cc:527-534"
 
   - name: "<title_id> - <title>.patch.toml"
     required: false
@@ -120,7 +120,7 @@ files:
       without them, and each entry of the patch array is applied only when its
       is_enabled flag is set and the module hash matches. Patching is on by
       default.
-    source_ref: "app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.cc:17-18, app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.cc:30-98, app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.h:121-122, app/src/main/cpp/xenia-canary/src/xenia/patcher/patcher.cc:22-35, app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:308"
+    source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.cc:17-18, source app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.cc:30-98, source app/src/main/cpp/xenia-canary/src/xenia/patcher/patch_db.h:121-122, source app/src/main/cpp/xenia-canary/src/xenia/patcher/patcher.cc:22-35, source app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:308"
 
   - name: plugins.toml
     required: false
@@ -132,7 +132,7 @@ files:
       name is eight hexadecimal digits. Each entry of the plugin array needs a
       hash node, and an entry without one is skipped. Plugin loading is off by
       default, so nothing under plugins is scanned until it is turned on.
-    source_ref: "app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:16-21, app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:40-127, app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:324-325"
+    source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:16-21, source app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:40-127, source app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:324-325"
 
   - name: "<plugin>.xex"
     required: false
@@ -142,7 +142,7 @@ files:
       The title directory is mounted as the plugins device and each enabled entry
       whose hash matches the running module is loaded as a user module on its own
       thread. A directory that cannot be mounted is a fatal error.
-    source_ref: "app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:175-257, app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:1900-1903"
+    source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/patcher/plugin_loader.cc:175-257, source app/src/main/cpp/xenia-canary/src/xenia/emulator.cc:1900-1903"
 
   - name: Account
     required: false
@@ -156,7 +156,7 @@ files:
       bytes carry. The application extracts the one it ships for XUID
       E0300000A360E000 on first run, and the emulator writes its own when a
       profile is created.
-    source_ref: "app/src/main/cpp/xenia-canary/src/xenia/kernel/xam/profile_manager.cc:187-229, app/src/main/cpp/xenia-canary/src/xenia/kernel/xam/profile_manager.cc:39-67, app/src/main/java/aenu/ax360e/Application.java:30-34, app/src/main/java/aenu/ax360e/Application.java:92-96"
+    source_ref: "source app/src/main/cpp/xenia-canary/src/xenia/kernel/xam/profile_manager.cc:187-229, source app/src/main/cpp/xenia-canary/src/xenia/kernel/xam/profile_manager.cc:39-67, source app/src/main/java/aenu/ax360e/Application.java:30-34, source app/src/main/java/aenu/ax360e/Application.java:92-96"
 
 exclusion_note: >
   Six file loads present in the vendored tree are not reached by this build and

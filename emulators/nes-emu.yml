@@ -99,7 +99,7 @@ files:
       entry with one of those extensions is used. The size must be exactly 8192
       bytes, and a mismatch or an unset path ends the load of any .fds content.
       The image is never hashed.
-    source_ref: "NES.emu/src/main/FceuApi.cc:221-265, NES.emu/src/fceu/fds.cpp:915-926, NES.emu/src/main/EmuMenuViews.cc:609-624, NES.emu/src/main/system.ccm:107"
+    source_ref: "source NES.emu/src/main/FceuApi.cc:221-265, source NES.emu/src/fceu/fds.cpp:915-926, source NES.emu/src/main/EmuMenuViews.cc:609-624, source NES.emu/src/main/system.ccm:107"
 
   - name: "Digital Prime (FBX).pal"
     path: "palette/Digital Prime (FBX).pal"
@@ -110,7 +110,7 @@ files:
     size: 192
     sha1: "e37da23fa2c644a40fb6c08dd885a96fd65bf4e5"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:311,339, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:311, 339, source NES.emu/src/main/Main.cc:134-147, 159-163"
 
   - name: "Smooth V2 (FBX).pal"
     path: "palette/Smooth V2 (FBX).pal"
@@ -121,7 +121,7 @@ files:
     size: 192
     sha1: "1e1993f917ec098268a0af15e79b1002bf425e47"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:312,340, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:312, 340, source NES.emu/src/main/Main.cc:134-147, 159-163"
 
   - name: "Magnum (FBX).pal"
     path: "palette/Magnum (FBX).pal"
@@ -132,7 +132,7 @@ files:
     size: 192
     sha1: "04d7490bb3a284ab266a555c02526f6743756661"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:313,341, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:313, 341, source NES.emu/src/main/Main.cc:134-147, 159-163"
 
   - name: "Classic (FBX).pal"
     path: "palette/Classic (FBX).pal"
@@ -143,7 +143,7 @@ files:
     size: 192
     sha1: "37027d92e1015b82a7dc5c43e9f1649a961577ab"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:314,342, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:314, 342, source NES.emu/src/main/Main.cc:134-147, 159-163"
 
   - name: "Wavebeam.pal"
     path: "palette/Wavebeam.pal"
@@ -154,7 +154,7 @@ files:
     size: 192
     sha1: "a33356beefeb0b110464e7d77b3238fc1fb90230"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:315,343, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:315, 343, source NES.emu/src/main/Main.cc:134-147, 159-163"
 
   - name: "Five Reality.pal"
     path: "palette/Five Reality.pal"
@@ -165,4 +165,4 @@ files:
     size: 192
     sha1: "5008c37920c614e8b471b45ac23118d00162b804"
     description: "Default Palette option, 64 colors"
-    source_ref: "NES.emu/src/main/EmuMenuViews.cc:318,344, NES.emu/src/main/Main.cc:134-147,159-163"
+    source_ref: "source NES.emu/src/main/EmuMenuViews.cc:318, 344, source NES.emu/src/main/Main.cc:134-147, 159-163"

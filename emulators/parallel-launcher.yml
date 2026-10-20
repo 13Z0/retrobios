@@ -61,11 +61,11 @@ files:
     required: false
     description: "64DD IPL ROM"
     note: "Read from the system directory root when disk content is loaded, with no size or hash check. The core drops into its dead-emulator loop when it is absent. Content counts as disk when its header carries a 64DD magic word, or when it arrives on the second slot of the cart-and-disk subsystem."
-    source_ref: "libretro/libretro.c:622-666"
+    source_ref: "upstream libretro/libretro.c:622-666"
 
   - name: "gles2n64rom.conf"
     system: nintendo-64
     required: false
     description: "glN64 per-ROM settings database"
     note: "Read at plugin init when the glN64 graphics plugin is selected, keyed on the name in the ROM header. Global settings stand when absent."
-    source_ref: "gles2n64/src/glN64Config.c:185-228"
+    source_ref: "upstream gles2n64/src/glN64Config.c:185-228"

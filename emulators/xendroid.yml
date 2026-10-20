@@ -96,7 +96,7 @@ files:
       The configured path is read before the instance is created and opened
       through adrenotools when the file exists, otherwise the system libvulkan.so
       is used. The row is hidden on devices without /dev/kgsl-3d0.
-    source_ref: "app/src/main/java/xendroid/compose/ui/settings/SettingRows.kt:175-200, app/src/main/java/xendroid/compose/settings/SettingsRepository.kt:34-35, 140, emulator-core/src/main/java/xendroid/compose/Utils.java:164-236, emulator-core/src/main/java/xendroid/compose/Application.java:21-24, emulator-core/src/main/cpp/xenia/src/xenia/ui/vulkan/vulkan_instance.cc:106, 236-260, 271"
+    source_ref: "source app/src/main/java/xendroid/compose/ui/settings/SettingRows.kt:175-200, source app/src/main/java/xendroid/compose/settings/SettingsRepository.kt:34-35, 140, source emulator-core/src/main/java/xendroid/compose/Utils.java:164-236, source emulator-core/src/main/java/xendroid/compose/Application.java:21-24, source emulator-core/src/main/cpp/xenia/src/xenia/ui/vulkan/vulkan_instance.cc:106, 236-260, 271"
 
   - name: "<font>.ttf"
     required: false
@@ -107,7 +107,7 @@ files:
       Loaded when the configured path exists, over the glyph ranges the atlas is
       built with. A path that does not resolve, or a face that fails to build,
       leaves the embedded Inter face in place, so the absence is covered.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/ui/imgui_drawer.cc:39-44, 353-366, 367-376"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/ui/imgui_drawer.cc:39-44, 353-366, 367-376"
 
   - name: "<sound>.wav"
     required: false
@@ -120,7 +120,7 @@ files:
       leaves the notification silent. Config written under the older key
       General|notification_sound_path is carried to this cvar when the file is
       read, and that is the key the shipped template still carries.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/ui/audio_helper.cc:21-24, 38-80, 97-101, emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/achievement_manager.cc:163-166, emulator-core/src/main/cpp/xenia/src/xenia/config.cc:174-190, emulator-core/src/main/cpp/xenia/src/xenia/ui/config_helpers.h:47"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/ui/audio_helper.cc:21-24, 38-80, 97-101, source emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/achievement_manager.cc:163-166, source emulator-core/src/main/cpp/xenia/src/xenia/config.cc:174-190, source emulator-core/src/main/cpp/xenia/src/xenia/ui/config_helpers.h:47"
 
   - name: "<title_id> - <title>.patch.toml"
     required: false
@@ -134,7 +134,7 @@ files:
       without them, and each entry of the patch array is applied only when its
       is_enabled flag is set and the module hash matches. Patching is on by
       default.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/patcher/patch_db.h:124-125, emulator-core/src/main/cpp/xenia/src/xenia/patcher/patch_db.cc:34-60, 63-105, emulator-core/src/main/cpp/xenia/src/xenia/patcher/patcher.cc:22-37, emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:415"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/patcher/patch_db.h:124-125, source emulator-core/src/main/cpp/xenia/src/xenia/patcher/patch_db.cc:34-60, 63-105, source emulator-core/src/main/cpp/xenia/src/xenia/patcher/patcher.cc:22-37, source emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:415"
 
   - name: plugins.toml
     required: false
@@ -146,7 +146,7 @@ files:
       name is eight hexadecimal digits. Each entry of the plugin array needs a
       hash node, and an entry without one is skipped. Plugin loading is off by
       default, so nothing under plugins is scanned until it is turned on.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/patcher/plugin_loader.cc:16-21, 27-37, 40-56, 58-125, emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:431-432"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/patcher/plugin_loader.cc:16-21, 27-37, 40-56, 58-125, source emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:431-432"
 
   - name: "<plugin>.xex"
     required: false
@@ -156,7 +156,7 @@ files:
       The title directory is mounted as the plugins device and each enabled entry
       whose hash matches the running module is loaded as a user module on its own
       thread.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/patcher/plugin_loader.cc:175-233, 235-252, emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:2622-2627"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/patcher/plugin_loader.cc:175-233, 235-252, source emulator-core/src/main/cpp/xenia/src/xenia/emulator.cc:2622-2627"
 
   - name: Account
     required: false
@@ -171,7 +171,7 @@ files:
       first and the devkit key second, against the HMAC the first sixteen bytes
       carry. The frontend creates one for the gamertag XenDroid on first run when
       the tree holds none, and writes its XUID to the slot 0 setting.
-    source_ref: "emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/profile_standalone.cc:24-52, 72-99, 129-141, emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/profile_manager.cc:256-296, app/src/main/java/xendroid/compose/core/ProfileBootstrap.kt:13-28, app/src/main/java/xendroid/compose/core/ProfilePaths.kt:6-13"
+    source_ref: "source emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/profile_standalone.cc:24-52, 72-99, 129-141, source emulator-core/src/main/cpp/xenia/src/xenia/kernel/xam/profile_manager.cc:256-296, source app/src/main/java/xendroid/compose/core/ProfileBootstrap.kt:13-28, source app/src/main/java/xendroid/compose/core/ProfilePaths.kt:6-13"
 
 exclusion_note: >
   The file loads present in the vendored tree that this build does not reach are

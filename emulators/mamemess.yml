@@ -240,7 +240,7 @@ files:
   - name: miuchiz.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/misc/miuchiz.cpp:227"
+    source_ref: "upstream src/mame/misc/miuchiz.cpp:227"
     contents:
       - name: otp.dat
         size: 16384
@@ -251,7 +251,7 @@ files:
   - name: ekara.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2904"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2904"
     contents:
       - name: ekara.bin
         size: 1048576
@@ -261,7 +261,7 @@ files:
   - name: ekaraa.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2905"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2905"
     contents:
       - name: ekara2.bin
         size: 1048576
@@ -271,7 +271,7 @@ files:
   - name: ekaraj.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2906"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2906"
     contents:
       - name: ekarajapan.bin
         size: 1048576
@@ -281,7 +281,7 @@ files:
   - name: ekarag.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2907"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2907"
     contents:
       - name: ekaragermany.bin
         size: 2097152
@@ -291,7 +291,7 @@ files:
   - name: ekaras.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2908"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2908"
     contents:
       - name: ekaraspanish.bin
         size: 2097152
@@ -301,7 +301,7 @@ files:
   - name: isinger.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2910"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2910"
     contents:
       - name: kr_isinger.bin
         size: 1048576
@@ -311,7 +311,7 @@ files:
   - name: ekaraphs.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2913"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2913"
     contents:
       - name: ekaraheadset.bin
         size: 2097152
@@ -321,7 +321,7 @@ files:
   - name: epitch.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2916"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2916"
     contents:
       - name: ekarajapan.bin
         size: 1048576
@@ -331,7 +331,7 @@ files:
   - name: ekaramix.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2919"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2919"
     contents:
       - name: ekaramix.bin
         size: 2097152
@@ -342,7 +342,7 @@ files:
   - name: ddrfammt.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2922"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2922"
     contents:
       - name: ekara_ddr_ha010_81947.bin
         size: 2097152
@@ -352,7 +352,7 @@ files:
   - name: popira.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2925"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2925"
     contents:
       - name: popira.bin
         size: 1048576
@@ -362,7 +362,7 @@ files:
   - name: popirak.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2927"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2927"
     contents:
       - name: kr_main.u2
         size: 1048576
@@ -372,7 +372,7 @@ files:
   - name: popira2.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2930"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2930"
     contents:
       - name: popira2.bin
         size: 2097152
@@ -382,7 +382,7 @@ files:
   - name: taikodp.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2933"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2933"
     contents:
       - name: taikodepopira.bin
         size: 2097152
@@ -392,7 +392,7 @@ files:
   - name: jpopira.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2936"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2936"
     contents:
       - name: jumpingpopira.bin
         size: 2097152
@@ -406,7 +406,7 @@ files:
   - name: evio.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2939"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2939"
     contents:
       - name: evio.bin
         size: 2097152
@@ -416,7 +416,7 @@ files:
   - name: tak_daig.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2944"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2944"
     contents:
       - name: robottransformer_unit.bin
         size: 2097152
@@ -426,7 +426,7 @@ files:
   - name: gcslottv.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2946"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2946"
     contents:
       - name: sammyslotunit.bin
         size: 2097152
@@ -436,7 +436,7 @@ files:
   - name: hikara.zip
     required: true
     category: bios_zip
-    source_ref: "src/mame/tvgames/xavix.cpp:2951"
+    source_ref: "source src/mame/tvgames/xavix.cpp:2951"
     contents:
       - name: hikara.u3
         size: 1048576
@@ -448,7 +448,7 @@ files:
     required: true
     category: bios_zip
     system: astrocde
-    source_ref: "src/mame/bally/astrohome.cpp:244-247"
+    source_ref: "upstream src/mame/bally/astrohome.cpp:244-247"
     contents:
       - name: astro.bin
         description: On-board BIOS ROM (Bally Professional Arcade)
@@ -459,7 +459,7 @@ files:
     required: false
     category: bios_zip
     system: astrocde
-    source_ref: "src/mame/bally/astrohome.cpp:249-251"
+    source_ref: "upstream src/mame/bally/astrohome.cpp:249-251"
     contents:
       - name: ballyhlc.bin
         description: Bally Home Library Computer BIOS
@@ -470,7 +470,7 @@ files:
     required: false
     category: bios_zip
     system: astrocde
-    source_ref: "src/mame/bally/astrohome.cpp:254-257"
+    source_ref: "upstream src/mame/bally/astrohome.cpp:254-257"
     contents:
       - name: bioswhit.bin
         description: Bally Computer System BIOS
@@ -482,7 +482,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/mame/apple/apple2.cpp:1206"
+    source_ref: "source src/mame/apple/apple2.cpp:1206"
     contents:
       - name: a2.chr
         description: Character generator ROM
@@ -513,7 +513,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/mame/apple/apple2.cpp:1207"
+    source_ref: "source src/mame/apple/apple2.cpp:1207"
     contents:
       - name: 341-0036.chr
         description: Character generator ROM
@@ -548,7 +548,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/mame/apple/apple2e.cpp:6364"
+    source_ref: "source src/mame/apple/apple2e.cpp:6364"
     contents:
       - name: 342-0133-a.chr
         description: Character generator ROM
@@ -571,7 +571,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/mame/apple/apple2e.cpp:6371"
+    source_ref: "source src/mame/apple/apple2e.cpp:6371"
     contents:
       - name: 342-0265-a.chr
         description: Enhanced character generator ROM
@@ -595,7 +595,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/devices/bus/a2bus/a2diskiing.cpp:40"
+    source_ref: "source src/devices/bus/a2bus/a2diskiing.cpp:40"
     note: "Disk II NG 16-sector controller, default floppy device"
     contents:
       - name: 341-0027-a.p5
@@ -607,7 +607,7 @@ files:
     required: true
     category: bios_zip
     system: apple2
-    source_ref: "src/devices/machine/wozfdc.cpp:31"
+    source_ref: "source src/devices/machine/wozfdc.cpp:31"
     note: "Disk II FDC (Woz machine), alternative floppy controller"
     contents:
       - name: 341-0028-a.rom
@@ -619,7 +619,7 @@ files:
     required: false
     category: bios_zip
     system: apple2
-    source_ref: "src/devices/bus/a2bus/a2cffa.cpp:33"
+    source_ref: "source src/devices/bus/a2bus/a2cffa.cpp:33"
     note: "CFFA 2.0 CompactFlash adapter (6502 firmware)"
     contents:
       - name: cffa20ee02.bin
@@ -631,7 +631,7 @@ files:
     required: false
     category: bios_zip
     system: apple2
-    source_ref: "src/devices/sound/votrax.cpp:46"
+    source_ref: "upstream src/devices/sound/votrax.cpp:46"
     note: "Votrax SC-01 speech synthesis chip, shared device"
     contents:
       - name: sc01.bin
@@ -643,7 +643,7 @@ files:
     required: false
     category: bios_zip
     system: apple2
-    source_ref: "src/devices/sound/votrax.cpp:51"
+    source_ref: "upstream src/devices/sound/votrax.cpp:51"
     note: "Votrax SC-01A speech synthesis chip, shared device"
     contents:
       - name: sc01a.bin
@@ -656,7 +656,7 @@ files:
     required: true
     category: bios_zip
     system: apple2gs
-    source_ref: "src/mame/apple/apple2gs.cpp:3893-3907"
+    source_ref: "source src/mame/apple/apple2gs.cpp:3893-3907"
     contents:
       - name: 341s0632-2.bin
         description: ADB microcontroller ROM (M50740/50741)
@@ -680,7 +680,7 @@ files:
     required: true
     category: bios_zip
     system: casio-loopy
-    source_ref: "src/mame/casio/casloopy.cpp:2097-2105"
+    source_ref: "upstream src/mame/casio/casloopy.cpp:2097-2105"
     contents:
       - name: hd6437021.lsi302
         description: SH-1 CPU internal mask ROM
@@ -696,7 +696,7 @@ files:
     required: true
     category: bios_zip
     system: casio-pv2000
-    source_ref: "src/mame/casio/pv2000.cpp:416-419"
+    source_ref: "upstream src/mame/casio/pv2000.cpp:416-419"
     contents:
       - name: hn613128pc64.bin
         description: Z80 BASIC ROM
@@ -708,7 +708,7 @@ files:
     required: true
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/mame/coleco/adam.cpp:1114-1128"
+    source_ref: "upstream src/mame/coleco/adam.cpp:1114-1128"
     contents:
       - name: os7.u2
         description: OS7 operating system ROM
@@ -743,7 +743,7 @@ files:
     required: true
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/kb.cpp:33-36"
+    source_ref: "upstream src/devices/bus/adamnet/kb.cpp:33-36"
     contents:
       - name: keyboard.u2
         description: Keyboard 6801 MCU ROM
@@ -754,7 +754,7 @@ files:
     required: true
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/printer.cpp:33-36"
+    source_ref: "upstream src/devices/bus/adamnet/printer.cpp:33-36"
     contents:
       - name: printer.u2
         description: Printer 6801 MCU ROM
@@ -765,7 +765,7 @@ files:
     required: true
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/ddp.cpp:35-38"
+    source_ref: "upstream src/devices/bus/adamnet/ddp.cpp:35-38"
     contents:
       - name: tape rev a 8865.u24
         description: Digital Data Pack 6801 MCU ROM
@@ -776,7 +776,7 @@ files:
     required: true
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/fdc.cpp:65-69"
+    source_ref: "upstream src/devices/bus/adamnet/fdc.cpp:65-69"
     contents:
       - name: adam disk u10 ad 31 rev a 09-27-84.u10
         description: FDC 160KB SSDD 6801 MCU ROM
@@ -787,38 +787,38 @@ files:
     required: false
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/fdc.cpp:76-85"
+    source_ref: "upstream src/devices/bus/adamnet/fdc.cpp:76-85"
 
   - name: adam_fdc_a720dipi.zip
     required: false
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/fdc.cpp:92-96"
+    source_ref: "upstream src/devices/bus/adamnet/fdc.cpp:92-96"
 
   - name: adam_fdc_fp720at.zip
     required: false
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/fdc.cpp:103-107"
+    source_ref: "upstream src/devices/bus/adamnet/fdc.cpp:103-107"
 
   - name: adam_fdc_mihddd.zip
     required: false
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/fdc.cpp:114-117"
+    source_ref: "upstream src/devices/bus/adamnet/fdc.cpp:114-117"
 
   - name: adam_spi.zip
     required: false
     category: bios_zip
     system: coleco-adam
-    source_ref: "src/devices/bus/adamnet/spi.cpp:25-28"
+    source_ref: "upstream src/devices/bus/adamnet/spi.cpp:25-28"
 
   # Entex Adventure Vision
   - name: advision.zip
     required: true
     category: bios_zip
     system: entex-advision
-    source_ref: "src/mame/entex/advision.cpp:471"
+    source_ref: "upstream src/mame/entex/advision.cpp:471"
     contents:
       - name: ins8048-11kdp_n.u5
         description: Intel 8048 main CPU ROM
@@ -834,7 +834,7 @@ files:
     required: true
     category: bios_zip
     system: bandai-rx78
-    source_ref: "src/mame/bandai/rx78.cpp:577"
+    source_ref: "upstream src/mame/bandai/rx78.cpp:577"
     note: "MACHINE_NOT_WORKING."
     contents:
       - name: ipl.rom
@@ -847,7 +847,7 @@ files:
     required: true
     category: bios_zip
     system: crvision
-    source_ref: "src/mame/vtech/crvision.cpp:934-937"
+    source_ref: "source src/mame/vtech/crvision.cpp:934-937"
     contents:
       - name: crvision.u20
         description: Microsoft BASIC ROM
@@ -858,7 +858,7 @@ files:
     required: false
     category: bios_zip
     system: crvision
-    source_ref: "src/mame/vtech/crvision.cpp:939-942"
+    source_ref: "source src/mame/vtech/crvision.cpp:939-942"
     note: "FunVision clone with alternate BIOS"
     contents:
       - name: funboot.rom
@@ -870,7 +870,7 @@ files:
     required: false
     category: bios_zip
     system: crvision
-    source_ref: "src/mame/vtech/crvision.cpp:950-953"
+    source_ref: "source src/mame/vtech/crvision.cpp:950-953"
     note: "VTech Laser 2001 home computer (CreatiVision successor)"
     contents:
       - name: laser2001.rom
@@ -882,7 +882,7 @@ files:
     required: false
     category: bios_zip
     system: crvision
-    source_ref: "src/mame/vtech/crvision.cpp:955-959"
+    source_ref: "source src/mame/vtech/crvision.cpp:955-959"
     note: "Salora Manager (Finnish variant)"
     contents:
       - name: "01"
@@ -899,7 +899,7 @@ files:
     required: true
     category: bios_zip
     system: laser310
-    source_ref: "src/mame/vtech/vtech1.cpp:602-608"
+    source_ref: "source src/mame/vtech/vtech1.cpp:602-608"
     note: "Z80-based home computer (1984). Clones: VZ-300, Laser 310 SHRG."
     contents:
       - name: vtechv20.u12
@@ -916,7 +916,7 @@ files:
     required: true
     category: bios_zip
     system: vtech-socrates
-    source_ref: "src/mame/vtech/socrates.cpp:1546-1596"
+    source_ref: "source src/mame/vtech/socrates.cpp:1546-1596"
     note: "MACHINE_NOT_WORKING | MACHINE_IMPERFECT_SOUND. Clones: socratfc (French Canadian), profweis (German PAL)."
     contents:
       - name: 27-00817-000-000.u1
@@ -945,7 +945,7 @@ files:
     required: true
     category: bios_zip
     system: mattel-aquarius
-    source_ref: "src/mame/mattel/aquarius.cpp:487-500"
+    source_ref: "upstream src/mame/mattel/aquarius.cpp:487-500"
     contents:
       - name: aq_s2.u2
         description: S2 BASIC ROM
@@ -964,7 +964,7 @@ files:
     required: true
     category: bios_zip
     system: mattel-aquarius
-    source_ref: "src/mame/mattel/aquarius.cpp:504-514"
+    source_ref: "upstream src/mame/mattel/aquarius.cpp:504-514"
     contents:
       - name: aq2_1.rom
         description: BASIC ROM
@@ -983,7 +983,7 @@ files:
     required: true
     category: bios_zip
     system: mattel-aquarius
-    source_ref: "src/mame/mattel/aquarius.cpp:516-525"
+    source_ref: "upstream src/mame/mattel/aquarius.cpp:516-525"
     contents:
       - name: aq_s2.u2
         description: BASIC ROM
@@ -999,7 +999,7 @@ files:
     required: true
     category: bios_zip
     system: camplynx
-    source_ref: "src/mame/camputers/camplynx.cpp:995-1004"
+    source_ref: "upstream src/mame/camputers/camplynx.cpp:995-1004"
     contents:
       - name: lynx48-1.ic46
         description: BASIC ROM bank 1 (Set1)
@@ -1023,7 +1023,7 @@ files:
     required: true
     category: bios_zip
     system: camplynx
-    source_ref: "src/mame/camputers/camplynx.cpp:1006-1018"
+    source_ref: "upstream src/mame/camputers/camplynx.cpp:1006-1018"
     contents:
       - name: lynx9646.ic46
         description: BASIC ROM bank 1
@@ -1055,7 +1055,7 @@ files:
     required: true
     category: bios_zip
     system: camplynx
-    source_ref: "src/mame/camputers/camplynx.cpp:1020-1026"
+    source_ref: "upstream src/mame/camputers/camplynx.cpp:1020-1026"
     contents:
       - name: lynx128-1.ic1
         description: BASIC ROM bank 1
@@ -1079,7 +1079,7 @@ files:
     required: true
     category: bios_zip
     system: cgenie
-    source_ref: "src/mame/eaca/cgenie.cpp:498-510"
+    source_ref: "upstream src/mame/eaca/cgenie.cpp:498-510"
     contents:
       - name: cg_rom1.z1
         description: BASIC/system ROM bank 1
@@ -1111,7 +1111,7 @@ files:
     required: false
     category: bios_zip
     system: cgenie
-    source_ref: "src/mame/eaca/cgenie.cpp:512-521"
+    source_ref: "upstream src/mame/eaca/cgenie.cpp:512-521"
     contents:
       - name: cg-basic-rom-v1-pal-en.rom
         description: BASIC ROM (old)
@@ -1131,7 +1131,7 @@ files:
     required: false
     category: bios_zip
     system: cgenie
-    source_ref: "src/devices/bus/cgenie/expansion/floppy.cpp:61-77"
+    source_ref: "upstream src/devices/bus/cgenie/expansion/floppy.cpp:61-77"
     note: "Optional expansion slot device, not default"
     contents:
       - name: cgdos.rom
@@ -1156,7 +1156,7 @@ files:
     required: true
     category: bios_zip
     system: atom
-    source_ref: "src/mame/acorn/atom.cpp:1271-1276"
+    source_ref: "source src/mame/acorn/atom.cpp:1271-1276"
     contents:
       - name: abasic.ic20
         description: Atom BASIC + kernel ROM (split-loaded)
@@ -1172,7 +1172,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/mame/acorn/atom.cpp:1278-1289"
+    source_ref: "source src/mame/acorn/atom.cpp:1278-1289"
     contents:
       - name: mos3.rom
         description: BBC mode MOS ROM
@@ -1188,7 +1188,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/mame/acorn/atom.cpp:1291-1300"
+    source_ref: "source src/mame/acorn/atom.cpp:1291-1300"
     contents:
       - name: p2fp.ic21
         description: Prophet 2 floating point ROM
@@ -1208,7 +1208,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/devices/bus/acorn/atom/discpack.cpp:77-80"
+    source_ref: "source src/devices/bus/acorn/atom/discpack.cpp:77-80"
     note: "Default slot device on pl6, loaded automatically"
     contents:
       - name: dosrom.ic15
@@ -1221,7 +1221,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/devices/bus/acorn/atom/gdos.cpp:85-89"
+    source_ref: "source src/devices/bus/acorn/atom/gdos.cpp:85-89"
     contents:
       - name: gdos166.rom
         description: GDOS 1.66 DOS ROM
@@ -1233,7 +1233,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/devices/bus/acorn/atom/gdos2015.cpp:130-133"
+    source_ref: "source src/devices/bus/acorn/atom/gdos2015.cpp:130-133"
     contents:
       - name: gdos2015_15.ic8
         description: GDOS-2015 flash ROM
@@ -1245,7 +1245,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/devices/bus/acorn/atom/speech.cpp:61-63"
+    source_ref: "source src/devices/bus/acorn/atom/speech.cpp:61-63"
     contents:
       - name: sp0256a-al2.bin
         description: SP0256A-AL2 speech synthesis ROM
@@ -1257,7 +1257,7 @@ files:
     required: false
     category: bios_zip
     system: atom
-    source_ref: "src/devices/bus/acorn/atom/vdu80.cpp:76-78"
+    source_ref: "upstream src/devices/bus/acorn/atom/vdu80.cpp:76-78"
     contents:
       - name: charset.rom
         description: EF9345 character ROM (BAD_DUMP)
@@ -1269,7 +1269,7 @@ files:
     required: true
     category: bios_zip
     system: tiger-game-com
-    source_ref: "src/mame/tiger/gamecom.cpp:293-299"
+    source_ref: "upstream src/mame/tiger/gamecom.cpp:293-299"
     contents:
       - name: internal.bin
         description: SM8521 CPU internal ROM
@@ -1285,7 +1285,7 @@ files:
     required: true
     category: bios_zip
     system: gamate
-    source_ref: "src/mame/bitcorp/gamate.cpp:228-234"
+    source_ref: "upstream src/mame/bitcorp/gamate.cpp:228-234"
     contents:
       - name: gamate_bios_umc.bin
         description: UMC/NCR ICASC00002 BIOS (default)
@@ -1301,7 +1301,7 @@ files:
     required: true
     category: bios_zip
     system: gamepock
-    source_ref: "src/mame/epoch/gamepock.cpp:248-251"
+    source_ref: "upstream src/mame/epoch/gamepock.cpp:248-251"
     contents:
       - name: egpcboot.bin
         description: NEC uPD78C06AG internal ROM
@@ -1313,7 +1313,7 @@ files:
     required: true
     category: bios_zip
     system: hartung-game-master
-    source_ref: "src/mame/handheld/gmaster.cpp:261-263"
+    source_ref: "upstream src/mame/handheld/gmaster.cpp:261-263"
     contents:
       - name: d78c11agf_e19.u1
         description: NEC D78C11AGF internal ROM
@@ -1325,7 +1325,7 @@ files:
     required: true
     category: bios_zip
     system: fm7
-    source_ref: "src/mame/fujitsu/fm7.cpp:2184-2205"
+    source_ref: "source src/mame/fujitsu/fm7.cpp:2184-2205"
     contents:
       - name: fbasic300.rom
         description: F-BASIC 3.00 ROM
@@ -1352,7 +1352,7 @@ files:
     required: true
     category: bios_zip
     system: fm7
-    source_ref: "src/mame/fujitsu/fm7.cpp:2207-2228"
+    source_ref: "source src/mame/fujitsu/fm7.cpp:2207-2228"
     contents:
       - name: initiate.rom
         description: Initiate ROM (boot sequencer)
@@ -1379,7 +1379,7 @@ files:
     required: false
     category: bios_zip
     system: fm7
-    source_ref: "src/mame/fujitsu/fm7.cpp:2168-2183"
+    source_ref: "source src/mame/fujitsu/fm7.cpp:2168-2183"
     note: "FM-NEW7 clone, inherits shared ROMs from fm7.zip parent"
     contents:
       - name: fbasic302.rom
@@ -1396,7 +1396,7 @@ files:
     required: true
     category: bios_zip
     system: mz80k
-    source_ref: "src/mame/sharp/mz80.cpp:359-369"
+    source_ref: "upstream src/mame/sharp/mz80.cpp:359-369"
     contents:
       - name: sp1002.rom
         description: Monitor ROM SP-1002
@@ -1420,7 +1420,7 @@ files:
     required: true
     category: bios_zip
     system: mz80k
-    source_ref: "src/mame/sharp/mz80.cpp:343-357"
+    source_ref: "upstream src/mame/sharp/mz80.cpp:343-357"
     contents:
       - name: sp1002.rom
         description: Monitor ROM SP-1002 (default BIOS)
@@ -1452,7 +1452,7 @@ files:
     required: true
     category: bios_zip
     system: mz2000
-    source_ref: "src/mame/sharp/mz2000.cpp:1465-1474"
+    source_ref: "upstream src/mame/sharp/mz2000.cpp:1465-1474"
     contents:
       - name: mz20ipl.bin
         description: IPL ROM
@@ -1468,7 +1468,7 @@ files:
     required: true
     category: bios_zip
     system: mz2500
-    source_ref: "src/mame/sharp/mz2500.cpp:1881-1900"
+    source_ref: "source src/mame/sharp/mz2500.cpp:1881-1900"
     contents:
       - name: ipl.rom
         description: IPL ROM
@@ -1500,7 +1500,7 @@ files:
     required: true
     category: bios_zip
     system: mz700
-    source_ref: "src/mame/sharp/mz700.cpp:463-469"
+    source_ref: "upstream src/mame/sharp/mz700.cpp:463-469"
     contents:
       - name: 1z-013a.rom
         description: Monitor ROM 1Z-013A
@@ -1516,7 +1516,7 @@ files:
     required: true
     category: bios_zip
     system: mz800
-    source_ref: "src/mame/sharp/mz700.cpp:480-490"
+    source_ref: "upstream src/mame/sharp/mz700.cpp:480-490"
     contents:
       - name: mz800.rom
         description: Monitor 9Z-504M (default BIOS)
@@ -1540,7 +1540,7 @@ files:
     required: true
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1714-1726"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1714-1726"
     contents:
       - name: basicrom.60
         description: BASIC ROM
@@ -1559,7 +1559,7 @@ files:
     required: false
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1728-1740"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1728-1740"
     contents:
       - name: basicrom.60a
         description: BASIC ROM (US)
@@ -1578,7 +1578,7 @@ files:
     required: true
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1742-1765"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1742-1765"
     contents:
       - name: basicrom.62
         description: BASIC ROM
@@ -1605,7 +1605,7 @@ files:
     required: false
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1768-1791"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1768-1791"
     contents:
       - name: basicrom.66
         description: BASIC ROM
@@ -1632,7 +1632,7 @@ files:
     required: true
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1793-1824"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1793-1824"
     contents:
       - name: systemrom1.64
         description: System ROM 1
@@ -1651,7 +1651,7 @@ files:
     required: false
     category: bios_zip
     system: pc60
-    source_ref: "src/mame/nec/pc6001.cpp:1826-1870"
+    source_ref: "upstream src/mame/nec/pc6001.cpp:1826-1870"
     contents:
       - name: systemrom1.68
         description: System ROM 1
@@ -1695,7 +1695,7 @@ files:
     required: true
     category: bios_zip
     system: pegasus
-    source_ref: "src/mame/ausnz/pegasus.cpp:544-565"
+    source_ref: "upstream src/mame/ausnz/pegasus.cpp:544-565"
     note: "6809-based home computer (1981, New Zealand). 8 monitor BIOS variants, 5 cartridge expansion slots."
     contents:
       - name: mon11_2674.bin
@@ -1740,7 +1740,7 @@ files:
     required: true
     category: bios_zip
     system: supracan
-    source_ref: "src/mame/umc/supracan.cpp:2458-2467"
+    source_ref: "source src/mame/umc/supracan.cpp:2458-2467"
     contents:
       - name: internal_68k.bin
         description: 68000 internal security ROM
@@ -1759,7 +1759,7 @@ files:
     required: true
     category: bios_zip
     system: supracan
-    source_ref: "src/mame/umc/umc6650.cpp:32-36"
+    source_ref: "upstream src/mame/umc/umc6650.cpp:32-36"
     note: "UMC 6650 cartridge lockout chip device ROM."
     contents:
       - name: umc6650.bin
@@ -1774,7 +1774,7 @@ files:
     required: true
     category: bios_zip
     system: tandy-vis
-    source_ref: "src/mame/trs/vis.cpp:1062-1066"
+    source_ref: "upstream src/mame/trs/vis.cpp:1062-1066"
     contents:
       - name: p513bk0b.bin
         description: BIOS bank 0
@@ -1795,7 +1795,7 @@ files:
     required: true
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:567-584"
+    source_ref: "upstream src/mame/trs/trs80.cpp:567-584"
     note: "TRS-80 Model I Level I Basic (1977). Only fully working TRS-80 machine in MAME."
     contents:
       - name: level1.rom
@@ -1811,7 +1811,7 @@ files:
     required: true
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:587-603"
+    source_ref: "upstream src/mame/trs/trs80.cpp:587-603"
     note: |
       TRS-80 Model I Level II Basic (1978). Separate parent machine from trs80 (Level I).
       2 BIOS variants: Radio Shack Level II and R/S L2 (alternate dumps).
@@ -1850,7 +1850,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:608-617"
+    source_ref: "upstream src/mame/trs/trs80.cpp:608-617"
     note: |
       EACA Video Genie EG3003 (1980). TRS-80 Level II compatible clone.
       Parent for sys80/sys80p/ht1080z/ht1080z2/ht108064 clones.
@@ -1881,7 +1881,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:620-632"
+    source_ref: "upstream src/mame/trs/trs80.cpp:620-632"
     note: "EACA System-80 (1980). Clone of eg3003 with different extension ROM. sys80p (50 Hz) shares ROMs."
     contents:
       - name: sys80.z13
@@ -1897,7 +1897,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:637-646"
+    source_ref: "source src/mame/trs/trs80.cpp:637-646"
     note: "Hiradastechnika HT-1080Z Series I (1983). Hungarian clone of eg3003."
     contents:
       - name: ht1080z.z25
@@ -1909,7 +1909,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:649-658"
+    source_ref: "upstream src/mame/trs/trs80.cpp:649-658"
     note: "Hiradastechnika HT-1080Z Series II (1984). Clone of eg3003."
     contents:
       - name: ht1080z2.z13
@@ -1925,7 +1925,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80.cpp:661-670"
+    source_ref: "upstream src/mame/trs/trs80.cpp:661-670"
     note: "Hiradastechnika HT-1080Z/64 (1985). 64-column clone of eg3003."
     contents:
       - name: 3001_64.z10
@@ -1949,7 +1949,7 @@ files:
     required: true
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80m3.cpp:483-519"
+    source_ref: "upstream src/mame/trs/trs80m3.cpp:483-519"
     note: |
       TRS-80 Model III (1980). Parent for trs80m4/trs80m4p/cp500 clones.
       4 BIOS variants: Level 2 ROM C Rev C (default), Rev B, Network III v2 (student),
@@ -1988,7 +1988,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80m3.cpp:522-528"
+    source_ref: "upstream src/mame/trs/trs80m3.cpp:522-528"
     note: |
       TRS-80 Model 4 (1980). Clone of trs80m3. BAD_DUMP combined ROM
       (should be split into 3 like trs80m3). MACHINE_NOT_WORKING.
@@ -2006,7 +2006,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80m3.cpp:530-539"
+    source_ref: "upstream src/mame/trs/trs80m3.cpp:530-539"
     note: |
       TRS-80 Model 4P (1983). Clone of trs80m3. Completely different memory map:
       Model III ROMs loaded from boot disk, only a bootloader ROM on board.
@@ -2030,7 +2030,7 @@ files:
     required: false
     category: bios_zip
     system: trs80
-    source_ref: "src/mame/trs/trs80m3.cpp:541-550"
+    source_ref: "upstream src/mame/trs/trs80m3.cpp:541-550"
     note: "Prologica CP-500 (1982). Brazilian TRS-80 Model III clone. MACHINE_NOT_WORKING."
     contents:
       - name: s_8407_cn62516n_cp500a_prologica_83.ci111
@@ -2047,7 +2047,7 @@ files:
     required: true
     category: bios_zip
     system: ti99
-    source_ref: "src/mame/ti/ti99_4x.cpp:1153-1166"
+    source_ref: "source src/mame/ti/ti99_4x.cpp:1153-1166"
     note: "TI-99/4A Home Computer (1981). Parent machine ROM set."
     contents:
       - name: 994a_grom0.u500
@@ -2075,7 +2075,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/mame/ti/ti99_4x.cpp:1138-1151"
+    source_ref: "source src/mame/ti/ti99_4x.cpp:1138-1151"
     note: "TI-99/4 Home Computer (1979). Earlier model with smaller keyboard."
     contents:
       - name: 994_grom0.u500
@@ -2104,7 +2104,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/sidecar/speechsyn.cpp:242-246"
+    source_ref: "upstream src/devices/bus/ti99/sidecar/speechsyn.cpp:242-246"
     note: "TI-99 Speech Synthesizer sidecar. 2 TMS6100 vocabulary ROMs."
     contents:
       - name: cd2325a.u2a
@@ -2120,7 +2120,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/ti_fdc.cpp:389"
+    source_ref: "source src/devices/bus/ti99/peb/ti_fdc.cpp:389"
     note: "TI Standard DSSD Floppy Controller."
     contents:
       - name: fdc_dsr.u26
@@ -2136,7 +2136,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/bwg.cpp:597"
+    source_ref: "source src/devices/bus/ti99/peb/bwg.cpp:597"
     note: "SNUG BwG Floppy Controller."
     contents:
       - name: bwg_dsr.u15
@@ -2148,7 +2148,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/cc_fdc.cpp:567"
+    source_ref: "source src/devices/bus/ti99/peb/cc_fdc.cpp:567"
     note: "CorComp Disk Controller Card."
     contents:
       - name: ccdcc_v89.u3
@@ -2164,7 +2164,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/cc_fdc.cpp:730"
+    source_ref: "source src/devices/bus/ti99/peb/cc_fdc.cpp:730"
     note: "CorComp Floppy Disk Controller Card Rev A."
     contents:
       - name: ccfdc_v89mg.u1
@@ -2180,7 +2180,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/ti_rs232.cpp:1071"
+    source_ref: "source src/devices/bus/ti99/peb/ti_rs232.cpp:1071"
     note: "TI RS232/PIO Interface."
     contents:
       - name: rs232pio_dsr.u1
@@ -2192,7 +2192,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/evpc.cpp:453"
+    source_ref: "upstream src/devices/bus/ti99/peb/evpc.cpp:453"
     note: "SNUG Enhanced Video Processor Card."
     contents:
       - name: evpc_dsr.u21
@@ -2204,7 +2204,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/hfdc.cpp:1047"
+    source_ref: "upstream src/devices/bus/ti99/peb/hfdc.cpp:1047"
     note: "Myarc Hard and Floppy Disk Controller."
     contents:
       - name: hfdc_dsr.u34
@@ -2216,7 +2216,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/pcode.cpp:322"
+    source_ref: "upstream src/devices/bus/ti99/peb/pcode.cpp:322"
     note: "TI P-Code Card. 8 GROMs + 2 ROMs for UCSD Pascal support."
     contents:
       - name: pcode_grom0.u11
@@ -2264,7 +2264,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/myarcfdc.cpp:426"
+    source_ref: "source src/devices/bus/ti99/peb/myarcfdc.cpp:426"
     note: "Myarc Disk Controller Card (DDCC-1)."
     contents:
       - name: ddcc1.u3
@@ -2276,7 +2276,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/myarcmem.cpp:193"
+    source_ref: "source src/devices/bus/ti99/peb/myarcmem.cpp:193"
     note: "Myarc Memory Expansion Card (MEXP-1, 512KB with XB2 DSR)."
     contents:
       - name: myarc512k_xb2_dsr.bin
@@ -2288,7 +2288,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/tipi.cpp:697"
+    source_ref: "source src/devices/bus/ti99/peb/tipi.cpp:697"
     note: "TIPI card (Raspberry Pi interface). 3 BIOS variants (2021/2023/2025)."
     contents:
       - name: tipidsr.u2
@@ -2308,7 +2308,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/peb/scsicard.cpp:473"
+    source_ref: "source src/devices/bus/ti99/peb/scsicard.cpp:473"
     note: "Western Horizon Technologies SCSI host adapter."
     contents:
       - name: scsidsr150.u6
@@ -2320,7 +2320,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/sidecar/arcturus.cpp:74-80"
+    source_ref: "upstream src/devices/bus/ti99/sidecar/arcturus.cpp:74-80"
     note: "Arcturus sidecar cartridge."
     contents:
       - name: arcturus.u1
@@ -2340,7 +2340,7 @@ files:
     required: false
     category: bios_zip
     system: ti99
-    source_ref: "src/devices/bus/ti99/gromport/gkracker.cpp:409-413"
+    source_ref: "source src/devices/bus/ti99/gromport/gkracker.cpp:409-413"
     note: "Miller's Graphics GRAM Kracker."
     contents:
       - name: gkracker.bin

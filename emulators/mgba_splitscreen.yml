@@ -38,4 +38,4 @@ files:
     size: 16384  # 16 KB (GBA_SIZE_BIOS)
     validation: [size]
     note: "GBA BIOS, same file upstream mGBA uses. HLE replacement built in."
-    source_ref: "src/platform/libretro-splitscreen/mgba_splitscreen_libretro.info:34-37 (firmware0_desc/path/opt); src/gba/gba.c:520-551 (GBALoadBIOS, inherited from mGBA core)"
+    source_ref: "source src/platform/libretro-splitscreen/mgba_splitscreen_libretro.info:34-37 (firmware0_desc/path/opt), source src/gba/gba.c:520-551 (GBALoadBIOS, inherited from mGBA core)"

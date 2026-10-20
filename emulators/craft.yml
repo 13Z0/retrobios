@@ -22,4 +22,4 @@ notes: >
   Upstream loads textures from external PNG files, while the libretro port compiles them in.
   Uses system directory only for craft.db/auth.db (core-generated save data).
   Source has zero fopen calls. .info declares no firmware.
-source_ref: "libretro/libretro.c, src/main.c:2680-2698, src/main.c:3315-3345"
+source_ref: "source libretro/libretro.c, src/main.c:2680-2698, src/main.c:3315-3345"

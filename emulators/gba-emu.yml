@@ -93,7 +93,7 @@ files:
       Picked by the user from any path, under any name ending in .bin or .rom.
       The only test is the length, and a file of another length aborts the load
       rather than falling back.
-    source_ref: "GBA.emu/src/main/Main.cc:190-197 (read and size check), GBA.emu/src/core/gba/gba.cpp:3758-3778 (second check, copy, useBios), GBA.emu/src/main/EmuMenuViews.cc:485-510 (picker and extension filter)"
+    source_ref: "source GBA.emu/src/main/Main.cc:190-197 (read and size check), source GBA.emu/src/core/gba/gba.cpp:3758-3778 (second check, copy, useBios), source GBA.emu/src/main/EmuMenuViews.cc:485-510 (picker and extension filter)"
 
   - name: "Motocross Challenge.7z"
     aliases: ["MotocrossChallenge.7z"]
@@ -105,4 +105,4 @@ files:
     note: >-
       Opened from the application bundle by the name the build gives it, the
       Linux build dropping the space.
-    source_ref: "GBA.emu/src/main/AppMeta.cc:32-33 (names), EmuFramework/src/gui/BundledGamesView.cc:41,47 (open and load)"
+    source_ref: "source GBA.emu/src/main/AppMeta.cc:32-33 (names), source EmuFramework/src/gui/BundledGamesView.cc:41, 47 (open and load)"

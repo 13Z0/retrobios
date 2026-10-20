@@ -120,7 +120,7 @@ files:
       SCEPKG keys and their inner TARs extracted over dev_flash. The Java layer
       creates dev_flash/.installed once the native call returns true. No digest
       of the file itself is compared against anything.
-    source_ref: "app/src/main/cpp/aps3e_emu.cpp:664-835, app/src/main/cpp/emulator_aps3e.cpp:1078, app/src/main/java/aenu/aps3e/MainActivity.java:591-623, app/src/main/res/values/strings.xml:120-122"
+    source_ref: "source app/src/main/cpp/aps3e_emu.cpp:664-835, source app/src/main/cpp/emulator_aps3e.cpp:1078, source app/src/main/java/aenu/aps3e/MainActivity.java:591-623, source app/src/main/res/values/strings.xml:120-122"
 
   - name: "<game>.dkey"
     aliases: ["<game>.key"]
@@ -136,7 +136,7 @@ files:
       32-byte read is taken as a hex string and converted, a 16-byte file as raw.
       Any other length fails the key check. An image whose odd regions are
       encrypted does not boot without it.
-    source_ref: "app/src/main/java/aenu/aps3e/Utils.java:185-205, app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:362-408, app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:855-882"
+    source_ref: "source app/src/main/java/aenu/aps3e/Utils.java:185-205, source app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:362-408, source app/src/main/cpp/rpcs3/rpcs3/Loader/iso.cpp:855-882"
 
   - name: "<content_id>.rap"
     required: false
@@ -151,7 +151,7 @@ files:
       matching file up by content id, with a lowercase extension, in the exdata
       folder of each user under dev_hdd0/home, and rejects a content id longer
       than 0x30 characters or outside A-Z, a-z, 0-9, - and _.
-    source_ref: "app/src/main/java/aenu/aps3e/MainActivity.java:649-653, app/src/main/java/aenu/aps3e/Emulator.java:820-845, app/src/main/cpp/rpcs3/rpcs3/Crypto/unself.cpp:1312-1343, app/src/main/cpp/rpcs3/rpcs3/Emu/system_utils.cpp:396-421"
+    source_ref: "source app/src/main/java/aenu/aps3e/MainActivity.java:649-653, source app/src/main/java/aenu/aps3e/Emulator.java:820-845, source app/src/main/cpp/rpcs3/rpcs3/Crypto/unself.cpp:1312-1343, source app/src/main/cpp/rpcs3/rpcs3/Emu/system_utils.cpp:396-421"
 
   - name: "<content_id>.edat"
     required: false
@@ -163,7 +163,7 @@ files:
       Imported through the same entry. The NPD header is read and the file
       refused below 0x90 bytes or when the magic is not NPD, then written whole
       to dev_hdd0/home/00000001/exdata under the content id the header declares.
-    source_ref: "app/src/main/java/aenu/aps3e/MainActivity.java:654-658, app/src/main/cpp/aps3e_emu.cpp:878-906, app/src/main/cpp/emulator_aps3e.cpp:1085, app/src/main/cpp/rpcs3/rpcs3/Emu/system_utils.cpp:440"
+    source_ref: "source app/src/main/java/aenu/aps3e/MainActivity.java:654-658, source app/src/main/cpp/aps3e_emu.cpp:878-906, source app/src/main/cpp/emulator_aps3e.cpp:1085, source app/src/main/cpp/rpcs3/rpcs3/Emu/system_utils.cpp:440"
 
   - name: "<font>.ttf"
     aliases: ["<font>.ttc", "<font>.otf"]
@@ -177,7 +177,7 @@ files:
       classes at once, and only while Font File Selection is Custom. The setting
       reverts to From Firmware when the stored path no longer resolves, so the
       firmware faces cover the absence.
-    source_ref: "app/src/main/java/aenu/aps3e/EmulatorSettings.java:1329-1349, app/src/main/cpp/aps3e_rp3_impl.cpp:215-227, app/src/main/cpp/rpcs3/rpcs3/Emu/system_config.h:402-403"
+    source_ref: "source app/src/main/java/aenu/aps3e/EmulatorSettings.java:1329-1349, source app/src/main/cpp/aps3e_rp3_impl.cpp:215-227, source app/src/main/cpp/rpcs3/rpcs3/Emu/system_config.h:402-403"
 
   - name: "<driver>.so"
     aliases: ["<driver>.zip"]
@@ -192,7 +192,7 @@ files:
       through libadrenotools in place of the system loader. The system
       libvulkan.so is used when Use Custom Driver is off, the path is empty, or
       the file is gone.
-    source_ref: "app/src/main/java/aenu/aps3e/EmulatorSettings.java:1232-1327, app/src/main/cpp/aps3e_emu.cpp:952-976, app/src/main/cpp/vkapi.cpp:18-33, app/src/main/cpp/rpcs3/rpcs3/Emu/system_config.h:209-211"
+    source_ref: "source app/src/main/java/aenu/aps3e/EmulatorSettings.java:1232-1327, source app/src/main/cpp/aps3e_emu.cpp:952-976, source app/src/main/cpp/vkapi.cpp:18-33, source app/src/main/cpp/rpcs3/rpcs3/Emu/system_config.h:209-211"
 
 # Layout produced by extracting PS3UPDAT.PUP, and the paths this tree reads from it.
 dev_flash:

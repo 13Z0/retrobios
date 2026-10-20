@@ -41,14 +41,14 @@ files:
     required: true
     system: bbk-longman-4980
     note: "Font ROM (2 MB). Loaded at 0x800000."
-    source_ref: "src/libretro.c:730-737"
+    source_ref: "source src/libretro.c:730-737"
 
   - name: "gam4980/E.BIN"
     size: 2097152
     required: true
     system: bbk-longman-4980
     note: "OS ROM (2 MB). Loaded at 0xE00000."
-    source_ref: "src/libretro.c:739-746"
+    source_ref: "source src/libretro.c:739-746"
 
 platform_details:
   bios_mapping:

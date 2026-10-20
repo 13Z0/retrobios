@@ -123,7 +123,7 @@ files:
       Opened from the directory holding the content, as .zip then .7z then .rar.
       A failure to open it ends the load with "Can't open BIOS archive
       (neogeo.zip)" before any content runs. The container is never hashed.
-    source_ref: "NEO.emu/src/gngeo/roms.c:1202-1211, NEO.emu/src/main/unzip.cc:113-132, NEO.emu/src/main/Main.cc:465-471"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1202-1211, source NEO.emu/src/main/unzip.cc:113-132, source NEO.emu/src/main/Main.cc:465-471"
 
   - name: "000-lo.lo"
     archive: neogeo.zip
@@ -132,7 +132,7 @@ files:
     crc32: "5a86cff2"
     description: "Zoom lookup table"
     note: "Read for every game, and a miss ends the load."
-    source_ref: "NEO.emu/src/gngeo/roms.c:1213-1218, NEO.emu/src/gngeo/video.c:757"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1213-1218, source NEO.emu/src/gngeo/video.c:757"
 
   - name: "sfix.sfx"
     aliases: ["sfix.sfix"]
@@ -146,7 +146,7 @@ files:
       Read as sfix.sfx then retried as sfix.sfix under the same CRC. Read for
       every game, the guard that would skip it never being raised, and 0x20000
       bytes are converted from the buffer.
-    source_ref: "NEO.emu/src/gngeo/roms.c:1220-1235,1419-1423,1432-1436"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1220-1235, 1419-1423, 1432-1436"
 
   - name: "uni-bios_2_3.rom"
     archive: neogeo.zip
@@ -155,7 +155,7 @@ files:
     crc32: "27664eb5"
     description: "Universe BIOS 2.3"
     note: "Default BIOS Type, so the 68K image an untouched install asks for."
-    source_ref: "NEO.emu/src/gngeo/roms.c:1239-1243, NEO.emu/src/main/system.ccm:74-77, NEO.emu/src/main/EmuMenuViews.cc:129"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1239-1243, source NEO.emu/src/main/system.ccm:74-77, source NEO.emu/src/main/EmuMenuViews.cc:129"
 
   - name: "uni-bios_3_0.rom"
     archive: neogeo.zip
@@ -163,7 +163,7 @@ files:
     required: false
     crc32: "a97c89a9"
     description: "Universe BIOS 3.0"
-    source_ref: "NEO.emu/src/gngeo/roms.c:1244-1248, NEO.emu/src/main/EmuMenuViews.cc:130"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1244-1248, source NEO.emu/src/main/EmuMenuViews.cc:130"
 
   - name: "uni-bios_3_1.rom"
     archive: neogeo.zip
@@ -171,7 +171,7 @@ files:
     required: false
     crc32: "0c58093f"
     description: "Universe BIOS 3.1"
-    source_ref: "NEO.emu/src/gngeo/roms.c:1249-1253, NEO.emu/src/main/EmuMenuViews.cc:131"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1249-1253, source NEO.emu/src/main/EmuMenuViews.cc:131"
 
   - name: "uni-bios_3_2.rom"
     archive: neogeo.zip
@@ -179,7 +179,7 @@ files:
     required: false
     crc32: "a4e8b9b3"
     description: "Universe BIOS 3.2"
-    source_ref: "NEO.emu/src/gngeo/roms.c:1254-1258, NEO.emu/src/main/EmuMenuViews.cc:132"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1254-1258, source NEO.emu/src/main/EmuMenuViews.cc:132"
 
   - name: "uni-bios_3_3.rom"
     archive: neogeo.zip
@@ -187,7 +187,7 @@ files:
     required: false
     crc32: "24858466"
     description: "Universe BIOS 3.3"
-    source_ref: "NEO.emu/src/gngeo/roms.c:1259-1263, NEO.emu/src/main/EmuMenuViews.cc:133"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1259-1263, source NEO.emu/src/main/EmuMenuViews.cc:133"
 
   - name: "uni-bios_4_0.rom"
     archive: neogeo.zip
@@ -195,7 +195,7 @@ files:
     required: false
     crc32: "a7aab458"
     description: "Universe BIOS 4.0"
-    source_ref: "NEO.emu/src/gngeo/roms.c:1264-1268, NEO.emu/src/main/EmuMenuViews.cc:134"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1264-1268, source NEO.emu/src/main/EmuMenuViews.cc:134"
 
   - name: "usa_2slt.bin"
     aliases: ["sp-u2.sp1"]
@@ -207,7 +207,7 @@ files:
     note: >-
       Read when BIOS Type is MVS and MVS Region is USA, the default region. The
       CRC branch also finds it under the name sp-u2.sp1.
-    source_ref: "NEO.emu/src/gngeo/roms.c:1279-1282, NEO.emu/src/main/unzip.cc:49-50, NEO.emu/src/main/EmuMenuViews.cc:107"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1279-1282, source NEO.emu/src/main/unzip.cc:49-50, source NEO.emu/src/main/EmuMenuViews.cc:107"
 
   - name: "vs-bios.rom"
     archive: neogeo.zip
@@ -216,7 +216,7 @@ files:
     crc32: "f0e8f27d"
     description: "MVS 68K BIOS, Japan"
     note: "Read when BIOS Type is MVS and MVS Region is Japan."
-    source_ref: "NEO.emu/src/gngeo/roms.c:1275-1278, NEO.emu/src/main/EmuMenuViews.cc:105"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1275-1278, source NEO.emu/src/main/EmuMenuViews.cc:105"
 
   - name: "asia-s3.rom"
     aliases: ["sp-s3.sp1"]
@@ -228,7 +228,7 @@ files:
     note: >-
       Read when BIOS Type is MVS and MVS Region is Asia. The CRC branch also
       finds it under the name sp-s3.sp1.
-    source_ref: "NEO.emu/src/gngeo/roms.c:1283-1286, NEO.emu/src/main/unzip.cc:49-50, NEO.emu/src/main/EmuMenuViews.cc:108"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1283-1286, source NEO.emu/src/main/unzip.cc:49-50, source NEO.emu/src/main/EmuMenuViews.cc:108"
 
   - name: "sp-s2.sp1"
     archive: neogeo.zip
@@ -237,7 +237,7 @@ files:
     crc32: "9036d879"
     description: "MVS 68K BIOS, Europe"
     note: "Read when BIOS Type is MVS and MVS Region is Europe or any other value."
-    source_ref: "NEO.emu/src/gngeo/roms.c:1287-1291, NEO.emu/src/main/EmuMenuViews.cc:106"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1287-1291, source NEO.emu/src/main/EmuMenuViews.cc:106"
 
   - name: "aes-bios.bin"
     archive: neogeo.zip
@@ -248,7 +248,7 @@ files:
       Read on the SYS_HOME branch, which no menu entry selects but which a stored
       BIOS Type of 1 reaches. No CRC is passed for it, so it is found by name
       alone and cannot be found at all while Strict ROM Checking is on.
-    source_ref: "NEO.emu/src/gngeo/roms.c:1270-1272, NEO.emu/src/gngeo/emu.h:34-43, NEO.emu/src/main/system.ccm:58,74-77, NEO.emu/src/main/unzip.cc:49-50"
+    source_ref: "source NEO.emu/src/gngeo/roms.c:1270-1272, source NEO.emu/src/gngeo/emu.h:34-43, source NEO.emu/src/main/system.ccm:58, 74-77, source NEO.emu/src/main/unzip.cc:49-50"
 
   - name: "sm1.sm1"
     archive: neogeo.zip
@@ -263,7 +263,7 @@ files:
       irrmaze. The region is exempt from the fatal path and the buffer it lands
       in is never read by the emulation
       (NEO.emu/src/gngeo/roms.c:1034-1039,1413-1418,1440-1461).
-    source_ref: "NEO.emu/res/romsets/irrmaze.drv, NEO.emu/src/gngeo/roms.h:9,62"
+    source_ref: "source NEO.emu/res/romsets/irrmaze.drv, source NEO.emu/src/gngeo/roms.h:9, 62"
 
   - name: "gngeo_data.zip"
     system: snk-neogeo-mvs
@@ -277,7 +277,7 @@ files:
       "This game isn't recognized". On Android the members are read as assets
       through the asset manager. Elsewhere they are read from this archive at the
       executable's own directory.
-    source_ref: "NEO.emu/src/main/Main.cc:64-67,198-206,217-221,321-355, imagine/src/base/linux/ApplicationContext.cc:44-47"
+    source_ref: "source NEO.emu/src/main/Main.cc:64-67, 198-206, 217-221, 321-355, source imagine/src/base/linux/ApplicationContext.cc:44-47"
 
   - name: "cmc42.xor"
     path: "rom/cmc42.xor"
@@ -291,7 +291,7 @@ files:
     note: >-
       Read whole and cut into nine 256-byte tables for the CMC42 sprite
       descrambler.
-    source_ref: "NEO.emu/src/gngeo/neocrypt.c:617-634, NEO.emu/src/main/Main.cc:357-369"
+    source_ref: "source NEO.emu/src/gngeo/neocrypt.c:617-634, source NEO.emu/src/main/Main.cc:357-369"
 
   - name: "cmc50.xor"
     path: "rom/cmc50.xor"
@@ -305,4 +305,4 @@ files:
     note: >-
       Read whole and cut into eleven 256-byte tables, the last two addressing the
       M1 descrambler.
-    source_ref: "NEO.emu/src/gngeo/neocrypt.c:635-655, NEO.emu/src/main/Main.cc:357-369"
+    source_ref: "source NEO.emu/src/gngeo/neocrypt.c:635-655, source NEO.emu/src/main/Main.cc:357-369"

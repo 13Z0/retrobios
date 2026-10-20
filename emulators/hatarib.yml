@@ -106,7 +106,7 @@ files:
     min_size: 64
     max_size: 1048576
     validation: [size]
-    source_ref: "core/core_file.c:791-851, core/core_config.c:68-92, core/core_config.c:1112-1135, core/core_config.c:1325-1340, hatari/src/tos.c:1028-1160"
+    source_ref: "source core/core_file.c:791-851, source core/core_config.c:68-92, source core/core_config.c:1112-1135, source core/core_config.c:1325-1340, source hatari/src/tos.c:1028-1160"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. Further images
       go in system/hatarib/ with an .img, .rom, .bin or .tos extension and
@@ -122,7 +122,7 @@ files:
     sha1: 38dc8baf5224229df55e7d0804b6b7b6bacfc7a0
     sha256: 757c571b98b955887ea6d9034513555f4263040420e9d2195cd0c6f8de06c451
     crc32: 118b35b4
-    source_ref: "emutos/bin_to_h.py:1-30, hatari/src/tos.c:45-63, hatari/src/tos.c:1038-1046, core/core_config.c:76, core/core_config.c:1114-1134"
+    source_ref: "source emutos/bin_to_h.py:1-30, source hatari/src/tos.c:45-63, source hatari/src/tos.c:1038-1046, source core/core_config.c:76, source core/core_config.c:1114-1134"
     note: >
       Compiled into the core from emutos/etos1024k.img and never opened at
       run time. Built from the hatarib-custom-140 branch of
@@ -137,7 +137,7 @@ files:
     sha1: ef3a3ccffcb317bff7d0dceca0abacefc3a58abc
     sha256: 5c679e6b1b8ed178fa079e4957ed66f9277094f0fe0a5b50c8cbea041e220250
     crc32: fe4c3ff1
-    source_ref: "emutos/bin_to_h.py:1-30, hatari/src/tos.c:45-63, hatari/src/tos.c:1038-1046, core/core_config.c:77, core/core_config.c:91, core/core_config.c:1114-1134"
+    source_ref: "source emutos/bin_to_h.py:1-30, source hatari/src/tos.c:45-63, source hatari/src/tos.c:1038-1046, source core/core_config.c:77, source core/core_config.c:91, source core/core_config.c:1114-1134"
     note: >
       Compiled into the core from emutos/etos192uk.img and never opened at
       run time. Selected when no tos.img exists and no other image is
@@ -153,7 +153,7 @@ files:
     sha1: bb98cd8a50df53afecfe183b049eda4014fc0d05
     sha256: ccccc420908012e03b4b38b8ed4530923bb04f27ab189eb2c694bf7e8509b666
     crc32: 18030f9a
-    source_ref: "emutos/bin_to_h.py:1-30, hatari/src/tos.c:45-63, hatari/src/tos.c:1038-1046, core/core_config.c:78, core/core_config.c:1114-1134"
+    source_ref: "source emutos/bin_to_h.py:1-30, source hatari/src/tos.c:45-63, source hatari/src/tos.c:1038-1046, source core/core_config.c:78, source core/core_config.c:1114-1134"
     note: >
       Compiled into the core from emutos/etos192us.img and never opened at
       run time. Built from the hatarib-custom-140 branch of
@@ -167,7 +167,7 @@ files:
     min_size: 40
     max_size: 131076
     validation: [size]
-    source_ref: "core/core_config.c:166-185, core/core_config.c:1163-1167, core/core_config.c:1351-1363, core/core_file.c:256-259, hatari/src/cart.c:40, hatari/src/cart.c:57-100, hatari/src/cart.c:108-147"
+    source_ref: "source core/core_config.c:166-185, source core/core_config.c:1163-1167, source core/core_config.c:1351-1363, source core/core_file.c:256-259, source hatari/src/cart.c:40, source hatari/src/cart.c:57-100, source hatari/src/cart.c:108-147"
     note: >
       Any file of system/hatarib/ with an .img, .rom, .bin or .cart
       extension. Raw images up to 0x20000 bytes or .stc images of exactly
@@ -184,7 +184,7 @@ files:
     validation: [size]
     storage: user_provided
     unsourceable: "machine state the emulator writes itself when the content closes, with no canonical contents"
-    source_ref: "hatari/src/falcon/nvram.c:97, hatari/src/falcon/nvram.c:111-117, hatari/src/falcon/nvram.c:127-170, hatari/src/falcon/nvram.c:178-205, hatari/src/falcon/nvram.c:317-330, hatari/src/falcon/nvram.c:371-374, hatari/src/falcon/nvram.h:54-58, core/core_file.c:273-277, core/core_file.c:319-322"
+    source_ref: "source hatari/src/falcon/nvram.c:97, source hatari/src/falcon/nvram.c:111-117, source hatari/src/falcon/nvram.c:127-170, source hatari/src/falcon/nvram.c:178-205, source hatari/src/falcon/nvram.c:317-330, source hatari/src/falcon/nvram.c:371-374, source hatari/src/falcon/nvram.h:54-58, source core/core_file.c:273-277, source core/core_file.c:319-322"
     note: >
       Read from the system directory at NvRam_Init for the TT and Falcon
       machines only. A read shorter than 50 bytes keeps the built-in
@@ -194,7 +194,7 @@ files:
     path: null
     description: "CAPSImage 5.1 shared library for IPF and CTR floppy images, Linux, macOS, Android and Raspberry Pi builds"
     required: false
-    source_ref: "hatari/src/floppy_ipf.c:320-331, hatari/src/floppy_ipf.c:637-645, hatari/src/floppy_ipf.c:733-783, hatari/src/floppy_ipf.c:791-803, hatari/CMakeLists.txt:246, hatari/cmake/config-cmake.h:99-101, DEVELOP.md:56, DEVELOP.md:59"
+    source_ref: "source hatari/src/floppy_ipf.c:320-331, source hatari/src/floppy_ipf.c:637-645, source hatari/src/floppy_ipf.c:733-783, source hatari/src/floppy_ipf.c:791-803, source hatari/CMakeLists.txt:246, source hatari/cmake/config-cmake.h:99-101, source DEVELOP.md:56, source DEVELOP.md:59"
     note: >
       Opened with dlopen on the first IPF or CTR read, from the dlopen
       search path or next to the core, and required to export the CAPS
@@ -207,7 +207,7 @@ files:
     path: null
     description: "CAPSImage 5.1 shared library for IPF and CTR floppy images, Windows build"
     required: false
-    source_ref: "hatari/src/floppy_ipf.c:320-331, hatari/src/floppy_ipf.c:637-645, hatari/src/floppy_ipf.c:733-783, hatari/src/floppy_ipf.c:791-803, DEVELOP.md:56"
+    source_ref: "source hatari/src/floppy_ipf.c:320-331, source hatari/src/floppy_ipf.c:637-645, source hatari/src/floppy_ipf.c:733-783, source hatari/src/floppy_ipf.c:791-803, source DEVELOP.md:56"
     note: >
       Opened with LoadLibrary on the first IPF or CTR read, from the
       RetroArch directory or the library search path. Without it those

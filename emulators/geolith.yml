@@ -64,35 +64,35 @@ files:
     required: true
     md5: "ad9585c72130c56f04ae26aae87c289d"
     note: "Neo Geo AES System ROMs. Opened when System Type is AES (default)."
-    source_ref: "libretro/libretro.c:1222-1225, jg.c:221-222"
+    source_ref: "source libretro/libretro.c:1222-1225, upstream jg.c:221-222"
 
   - name: "neogeo.zip"
     system: snk-neogeo-mvs
     required: true
     md5: "00dad01abdbf8ea9e79ad2fe11bdb182"
     note: "Neo Geo MVS System ROMs. Opened for MVS and Universe BIOS modes."
-    source_ref: "libretro/libretro.c:1222-1225, jg.c:223-224"
+    source_ref: "source libretro/libretro.c:1222-1225, upstream jg.c:223-224"
 
   - name: "neocd.zip"
     system: snk-neogeo-cd
     required: false
     md5: "006a881532f2caffc3fe9fb5593f2ed5"
     note: "Neo Geo CD Front/Top Loader System ROMs. Opened only when CD System is front or top loader."
-    source_ref: "libretro/libretro.c:1213-1220, jg.c:225-226"
+    source_ref: "source libretro/libretro.c:1213-1220, upstream jg.c:225-226"
 
   - name: "neocdz.zip"
     system: snk-neogeo-cd
     required: true
     md5: "b31a246b69493c35194fe0bac120dc37"
     note: "Neo Geo CDZ System ROMs. Opened for CDZ (default) and CD Universe BIOS, and also supplies 000-lo.lo to Front/Top Loader mode."
-    source_ref: "libretro/libretro.c:1213-1239, jg.c:227-228"
+    source_ref: "source libretro/libretro.c:1213-1239, upstream jg.c:227-228"
 
   - name: "irrmaze.zip"
     system: snk-neogeo-mvs
     required: false
     md5: "0e369df30a70e45547cef9e4078dc511"
     note: "The Irritating Maze auxiliary BIOS. Loaded in MVS mode for trackball support. On failure the game runs without trackball."
-    source_ref: "libretro/libretro.c:1281-1292, jg.c:229-230"
+    source_ref: "source libretro/libretro.c:1281-1292, upstream jg.c:229-230"
 
   # -----------------------------------------------------------
   # aes.zip members
@@ -104,7 +104,7 @@ files:
     size: 131072
     crc32: "d27a71f1"
     note: "AES 68K BIOS, non-Japan regions. Default for Region USA."
-    source_ref: "src/geo.c:178-181"
+    source_ref: "source src/geo.c:178-181"
 
   - name: "neo-po.bin"
     archive: aes.zip
@@ -113,7 +113,7 @@ files:
     size: 131072
     crc32: "16d0c132"
     note: "AES 68K BIOS, Japan region."
-    source_ref: "src/geo.c:178-181"
+    source_ref: "source src/geo.c:178-181"
 
   - name: "000-lo.lo"
     archive: aes.zip
@@ -122,7 +122,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table."
-    source_ref: "src/geo.c:234-243"
+    source_ref: "source src/geo.c:234-243"
 
   # -----------------------------------------------------------
   # neogeo.zip members
@@ -134,7 +134,7 @@ files:
     size: 131072
     crc32: "e72943de"
     note: "MVS 68K BIOS, USA. Default for Region USA."
-    source_ref: "src/geo.c:183-198"
+    source_ref: "source src/geo.c:183-198"
 
   - name: "japan-j3.bin"
     archive: neogeo.zip
@@ -143,7 +143,7 @@ files:
     size: 131072
     crc32: "dff6d41f"
     note: "MVS 68K BIOS, Japan."
-    source_ref: "src/geo.c:183-198"
+    source_ref: "source src/geo.c:183-198"
 
   - name: "sp-45.sp1"
     archive: neogeo.zip
@@ -152,7 +152,7 @@ files:
     size: 524288
     crc32: "03cc9f6a"
     note: "MVS 68K BIOS, Asia."
-    source_ref: "src/geo.c:183-198"
+    source_ref: "source src/geo.c:183-198"
 
   - name: "sp-s2.sp1"
     archive: neogeo.zip
@@ -161,7 +161,7 @@ files:
     size: 131072
     crc32: "9036d879"
     note: "MVS 68K BIOS, Europe."
-    source_ref: "src/geo.c:183-198"
+    source_ref: "source src/geo.c:183-198"
 
   - name: "uni-bios_4_0.rom"
     archive: neogeo.zip
@@ -170,7 +170,7 @@ files:
     size: 131072
     crc32: "a7aab458"
     note: "Universe BIOS 4.0, loaded when System Type is Universe BIOS. Emulated hardware type set by the geolith_unibios_hw option."
-    source_ref: "src/geo.c:200-203"
+    source_ref: "source src/geo.c:200-203"
 
   - name: "000-lo.lo"
     archive: neogeo.zip
@@ -179,7 +179,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table."
-    source_ref: "src/geo.c:234-243"
+    source_ref: "source src/geo.c:234-243"
 
   - name: "sfix.sfix"
     archive: neogeo.zip
@@ -188,7 +188,7 @@ files:
     size: 131072
     crc32: "c2ea0cfd"
     note: "System FIX layer tiles. Loaded for MVS and Universe BIOS modes."
-    source_ref: "src/geo.c:245-255"
+    source_ref: "source src/geo.c:245-255"
 
   - name: "sm1.sm1"
     archive: neogeo.zip
@@ -197,7 +197,7 @@ files:
     size: 131072
     crc32: "94416d67"
     note: "Z80 sound BIOS. Loaded for MVS and Universe BIOS modes."
-    source_ref: "src/geo.c:257-267"
+    source_ref: "upstream src/geo.c:257-267"
 
   # -----------------------------------------------------------
   # neocd.zip members
@@ -207,14 +207,14 @@ files:
     system: snk-neogeo-cd
     required: false
     note: "Neo Geo CD Front Loader 68K BIOS."
-    source_ref: "src/geo.c:204-207"
+    source_ref: "source src/geo.c:204-207"
 
   - name: "top-sp1.bin"
     archive: neocd.zip
     system: snk-neogeo-cd
     required: false
     note: "Neo Geo CD Top Loader 68K BIOS."
-    source_ref: "src/geo.c:208-211"
+    source_ref: "source src/geo.c:208-211"
 
   - name: "000-lo.lo"
     archive: neocd.zip
@@ -223,7 +223,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table. Extraction is attempted but absence is tolerated in Front/Top Loader mode, where the copy in neocdz.zip is used instead."
-    source_ref: "src/geo.c:234-243"
+    source_ref: "source src/geo.c:234-243"
 
   # -----------------------------------------------------------
   # neocdz.zip members
@@ -233,14 +233,14 @@ files:
     system: snk-neogeo-cd
     required: true
     note: "Neo Geo CDZ 68K BIOS. Default for CD content."
-    source_ref: "src/geo.c:212-215"
+    source_ref: "source src/geo.c:212-215"
 
   - name: "uni-bioscd33.rom"
     archive: neocdz.zip
     system: snk-neogeo-cd
     required: false
     note: "Universe BIOS CD 3.3, loaded when CD System is CD Universe BIOS."
-    source_ref: "src/geo.c:216-219"
+    source_ref: "source src/geo.c:216-219"
 
   - name: "000-lo.lo"
     archive: neocdz.zip
@@ -249,7 +249,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table. Read from neocdz.zip in every CD mode, including Front/Top Loader."
-    source_ref: "src/geo.c:234-243, 273-285, libretro/libretro.c:1232-1239"
+    source_ref: "source src/geo.c:234-243, 273-285, source libretro/libretro.c:1232-1239"
 
   # -----------------------------------------------------------
   # irrmaze.zip member
@@ -259,4 +259,4 @@ files:
     system: snk-neogeo-mvs
     required: false
     note: "The Irritating Maze auxiliary 68K BIOS, replaces the MVS BIOS to enable trackball input."
-    source_ref: "src/geo.c:286-299, libretro/libretro.c:1281-1292"
+    source_ref: "source src/geo.c:286-299, source libretro/libretro.c:1281-1292"

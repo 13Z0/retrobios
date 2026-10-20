@@ -68,7 +68,7 @@ files:
     hle_fallback: true
     size: 2097152
     note: "Dreamcast boot ROM. HLE BIOS (reios) used as fallback. Code searches prefix + boot.bin, boot.bin.bin, bios.bin, bios.bin.bin sequentially."
-    source_ref: "core/hw/holly/sb_mem.cpp:219,55-57"
+    source_ref: "upstream core/hw/holly/sb_mem.cpp:219, 55-57"
 
   - name: "dc_nvmem.bin"
     path: "dc/dc_nvmem.bin"
@@ -78,14 +78,14 @@ files:
     hle_fallback: true
     size: 131072
     note: "Dreamcast flash memory / NVRAM. Created if not found. Code searches prefix + nvmem.bin, flash_wb.bin, flash.bin, flash.bin.bin sequentially."
-    source_ref: "core/hw/holly/sb_mem.cpp:231,196-213"
+    source_ref: "upstream core/hw/holly/sb_mem.cpp:231, 196-213"
 
   - name: "font.bin"
     path: "dc/font.bin"
     system: sega-dreamcast
     required: false
     note: "Dreamcast system font for HLE BIOS text rendering. Built-in font used as fallback."
-    source_ref: "core/reios/reios.cpp:737-753"
+    source_ref: "upstream core/reios/reios.cpp:737-753"
 
   # -------------------------------------------------------
   # Sega NAOMI
@@ -97,7 +97,7 @@ files:
     required: false
     size: 2097152
     note: "NAOMI boot ROM (flat binary). Alternative to naomi.zip. epr-21576d.bin is searched without prefix."
-    source_ref: "core/hw/holly/sb_mem.cpp:219,58-59"
+    source_ref: "upstream core/hw/holly/sb_mem.cpp:219, 58-59"
 
   - name: "naomi.zip"
     path: "dc/naomi.zip"
@@ -108,7 +108,7 @@ files:
       BIOS ROMs: epr-21576h.ic27 (Japan), epr-21577h.ic27 (USA),
       epr-21578h.ic27 (Export), epr-21579d.ic27 (Korea).
       Also used for NAOMI 2 games in the libretro port (no separate naomi2.zip).
-    source_ref: "core/hw/naomi/naomi_roms.h:133-188"
+    source_ref: "source core/hw/naomi/naomi_roms.h:133-188"
     contents:
       - name: "epr-21576h.ic27"
         size: 2097152
@@ -124,7 +124,7 @@ files:
     system: sega-naomi
     required: false
     note: "Ferrari F355 Challenge BIOS. Japan/USA/Export variants."
-    source_ref: "core/hw/naomi/naomi_roms.h:96-103"
+    source_ref: "source core/hw/naomi/naomi_roms.h:96-103"
     contents:
       - name: "epr-22851.ic27"
         size: 2097152
@@ -138,7 +138,7 @@ files:
     system: sega-naomi
     required: false
     note: "Ferrari F355 Challenge Deluxe BIOS. Japan/USA/Export variants."
-    source_ref: "core/hw/naomi/naomi_roms.h:105-119"
+    source_ref: "source core/hw/naomi/naomi_roms.h:105-119"
     contents:
       - name: "epr-21864.ic27"
         size: 2097152
@@ -152,7 +152,7 @@ files:
     system: sega-naomi
     required: false
     note: "House of the Dead 2 BIOS. Japan/USA/Export variants."
-    source_ref: "core/hw/naomi/naomi_roms.h:121-131"
+    source_ref: "source core/hw/naomi/naomi_roms.h:121-131"
     contents:
       - name: "epr-21331.ic27"
         size: 2097152
@@ -169,7 +169,7 @@ files:
     system: sega-atomiswave
     required: true
     note: "Atomiswave system BIOS archive (MAME format). Contains bios0.ic23 (Sammy, 128 KB)."
-    source_ref: "core/hw/naomi/naomi_roms.h:87-94"
+    source_ref: "upstream core/hw/naomi/naomi_roms.h:87-94"
     contents:
       - name: "bios0.ic23"
         size: 131072
@@ -189,14 +189,14 @@ platform_details:
     flash_size: 131072
     ram_size: 16777216
     hle_available: true
-    source_ref: "core/nullDC.cpp:333-345"
+    source_ref: "source core/nullDC.cpp:333-345"
 
   naomi:
     bios_size: 2097152
     sram_size: 32768
     ram_size: 33554432
     hle_available: false
-    source_ref: "core/nullDC.cpp:346-354"
+    source_ref: "source core/nullDC.cpp:346-354"
 
   naomi2:
     bios_size: 2097152
@@ -204,11 +204,11 @@ platform_details:
     ram_size: 33554432
     hle_available: false
     note: "Treated as NAOMI in the libretro port. Separate platform only in upstream."
-    source_ref: "core/nullDC.cpp:355-363"
+    source_ref: "source core/nullDC.cpp:355-363"
 
   atomiswave:
     bios_size: 131072
     sram_size: 131072
     ram_size: 16777216
     hle_available: false
-    source_ref: "core/nullDC.cpp:364-375"
+    source_ref: "source core/nullDC.cpp:364-375"

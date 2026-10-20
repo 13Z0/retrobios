@@ -55,7 +55,7 @@ files:
     required: true
     validation: [size]
     note: "BK-0010 monitor ROM (8 KB). Loaded at address 0100000. Required for all BK-0010 models (0, 1, 2)."
-    source_ref: "main.c:53, boot.c:107"
+    source_ref: "source main.c:53, source boot.c:107"
     aliases: ["monit10.rom"]
 
   # -- BK-0010 language ROMs (model-dependent) --
@@ -66,7 +66,7 @@ files:
     required: false
     validation: [size]
     note: "FOCAL interpreter ROM (24448-24576 bytes). Loaded at 0120000. Used by BK-0010 (model 0, default)."
-    source_ref: "libretro.c:15, boot.c:110"
+    source_ref: "source libretro.c:15, source boot.c:110"
     aliases: ["focal10.rom"]
 
   - name: BASIC10.ROM
@@ -75,7 +75,7 @@ files:
     required: false
     validation: [size]
     note: "BASIC interpreter ROM (24448-24576 bytes). Loaded at 0120000. Used by BK-0010.01 (model 1)."
-    source_ref: "libretro.c:16, boot.c:110"
+    source_ref: "source libretro.c:16, source boot.c:110"
     aliases: ["basic10.rom"]
 
   # -- Disk controller ROM (BK-0010.01+FDD and BK-0011M) --
@@ -86,7 +86,7 @@ files:
     required: false
     validation: [size]
     note: "Floppy disk controller ROM (4 KB). Loaded at 0160000 for BK-0010.01+FDD (model 2), or into system_rom for BK-0011M (model 3/4)."
-    source_ref: "main.c:54, boot.c:99,113"
+    source_ref: "source main.c:54, source boot.c:99, 113"
     aliases: ["disk_327.rom"]
 
   # -- BK-0011M ROMs --
@@ -97,7 +97,7 @@ files:
     required: false
     validation: [size]
     note: "BK-0011M system ROM / BOS (8 KB). Loaded into system_rom at offset 0. Required for BK-0011M (model 3/4)."
-    source_ref: "main.c:55, boot.c:98"
+    source_ref: "source main.c:55, source boot.c:98"
     aliases: ["b11m_bos.rom"]
 
   - name: B11M_EXT.ROM
@@ -106,7 +106,7 @@ files:
     required: false
     validation: [size]
     note: "BK-0011M extended BOS ROM (8 KB). Loaded into rom[1] at offset 8192. Required for BK-0011M (model 3/4)."
-    source_ref: "main.c:56, boot.c:102"
+    source_ref: "source main.c:56, source boot.c:102"
     aliases: ["b11m_ext.rom"]
 
   - name: BAS11M_0.ROM
@@ -115,7 +115,7 @@ files:
     required: false
     validation: [size]
     note: "BK-0011M BASIC ROM part 0 (16 KB). Loaded into rom[0]. Required for BK-0011M (model 3/4)."
-    source_ref: "main.c:57, boot.c:100"
+    source_ref: "source main.c:57, source boot.c:100"
     aliases: ["bas11m_0.rom"]
 
   - name: BAS11M_1.ROM
@@ -124,7 +124,7 @@ files:
     required: false
     validation: [size]
     note: "BK-0011M BASIC ROM part 1 (8 KB). Loaded into rom[1] at offset 0. Required for BK-0011M (model 3/4)."
-    source_ref: "main.c:58, boot.c:101"
+    source_ref: "source main.c:58, source boot.c:101"
     aliases: ["bas11m_1.rom"]
 
   # -- Terak 8510/a ROM --
@@ -135,7 +135,7 @@ files:
     required: false
     validation: [size]
     note: "Terak 8510/a boot ROM (128 bytes). Used when model is set to Terak 8510/a (model 9)."
-    source_ref: "boot.c:94"
+    source_ref: "source boot.c:94"
     aliases: ["terak.rom"]
 
 platform_details:

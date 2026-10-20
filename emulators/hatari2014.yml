@@ -82,7 +82,7 @@ files:
     required: true
     max_size: 1048576
     validation: [size]
-    source_ref: "libretro/libretro.c:393-411, libretro/libretro.c:640-649, libretro/libretro.c:1602-1607, src/main.c:905-907, src/tos.c:48-53, src/tos.c:575-651"
+    source_ref: "source libretro/libretro.c:393-411, source libretro/libretro.c:640-649, source libretro/libretro.c:1602-1607, source src/main.c:905-907, source src/tos.c:48-53, source src/tos.c:575-651"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. Additional images
       are read from <system>/hatari/tos and selected with the hatari_tosimage
@@ -96,7 +96,7 @@ files:
     min_size: 40
     max_size: 131076
     validation: [size]
-    source_ref: "src/cart.c:40-46, src/cart.c:53-88, src/cart.c:121-133, src/configuration.c:336, src/configuration.c:592, libretro/gui-retro/dlgRom.c:82-89"
+    source_ref: "source src/cart.c:40-46, source src/cart.c:53-88, source src/cart.c:121-133, source src/configuration.c:336, source src/configuration.c:592, source libretro/gui-retro/dlgRom.c:82-89"
     note: >
       Raw images up to 0x20000 bytes or .stc images of exactly 0x20004 bytes
       whose 4-byte header is skipped. Any other size is refused. Extensions
@@ -106,7 +106,7 @@ files:
     path: "hatari/BOOT.ST"
     description: "Boot floppy inserted with GEMDOS hard disk folders"
     required: false
-    source_ref: "libretro/libretro.c:1663-1671"
+    source_ref: "source libretro/libretro.c:1663-1671"
     note: "Added as the first disk when the content is a .gem file."
 
   - name: "floppy.raw"
@@ -116,7 +116,7 @@ files:
     has_builtin: true
     storage: user_provided
     unsourceable: "any headerless s16le stereo 44100 Hz sample the user records, with no name or version the code expects beyond the filename"
-    source_ref: "libretro/floppy_sound.c:118-170, libretro/libretro.c:844-852, libretro/libretro.c:1379"
+    source_ref: "source libretro/floppy_sound.c:118-170, source libretro/libretro.c:844-852, source libretro/libretro.c:1379"
     note: >
       Read whole at retro_init. An empty or short read falls back to the
       synthesised click (libretro/floppy_sound.c:31-95). Played on each drive
@@ -128,7 +128,7 @@ files:
     required: false
     storage: user_provided
     unsourceable: "user settings in Hatari's INI format, with no canonical contents"
-    source_ref: "libretro/libretro.c:945-951, src/main.c:805-831, src/main.c:892-894, src/configuration.c:630-633, src/configuration.c:768-777, src/paths.c:283-284"
+    source_ref: "source libretro/libretro.c:945-951, source src/main.c:805-831, source src/main.c:892-894, source src/configuration.c:630-633, source src/configuration.c:768-777, source src/paths.c:283-284"
     note: >
       Read only when the hatari_autoload_config option is on (off by default):
       <system>/hatari/hatari.cfg first, then hatari.cfg in the Hatari home
@@ -141,7 +141,7 @@ files:
     required: false
     storage: user_provided
     unsourceable: "user-written mapping in the doc/keymap-sample.txt format, with no canonical contents"
-    source_ref: "src/keymap.c:53-59, src/keymap.c:605-658, src/change.c:359, src/configuration.c:188, src/configuration.c:504"
+    source_ref: "source src/keymap.c:53-59, source src/keymap.c:605-658, source src/change.c:359, source src/configuration.c:188, source src/configuration.c:504"
     note: "Empty by default. Loaded at Keymap_Init and on configuration change when the path is set."
 
   - name: "hatari.nvram"
@@ -152,7 +152,7 @@ files:
     min_size: 50
     validation: [size]
     unsourceable: "machine state the emulator writes itself at exit, with no canonical contents"
-    source_ref: "src/falcon/nvram.c:63-85, src/falcon/nvram.c:186-216, src/falcon/nvram.c:223-226, src/main.c:752, src/paths.c:283-284"
+    source_ref: "source src/falcon/nvram.c:63-85, source src/falcon/nvram.c:186-216, source src/falcon/nvram.c:223-226, source src/main.c:752, source src/paths.c:283-284"
     note: >
       Read from the Hatari home directory at NvRam_Init. A short read keeps
       the built-in defaults adjusted to the monitor type. Saved back on exit.

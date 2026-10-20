@@ -123,7 +123,7 @@ files:
     sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
     validation: [size, sha1]
     description: "C64 kernal Rev 3, default kernal and default model"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:52,93 (name, hash), C64.emu/src/vice/c64/c64-resources.c:378,245, C64.emu/src/vice/c64/c64rom.c:226"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:52, 93 (name, hash), source C64.emu/src/vice/c64/c64-resources.c:378, 245, source C64.emu/src/vice/c64/c64rom.c:226"
 
   - name: "kernal-901227-02.bin"
     path: "C64/kernal-901227-02.bin"
@@ -133,7 +133,7 @@ files:
     sha1: "0e2e4ee3f2d41f00bed72f9ab588b83e306fdb13"
     validation: [size, sha1]
     description: "C64 kernal Rev 2, C64 old PAL model"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:51,92, C64.emu/src/vice/c64/c64model.c:113-116, C64.emu/src/vice/c64/c64-resources.c:244"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:51, 92, source C64.emu/src/vice/c64/c64model.c:113-116, source C64.emu/src/vice/c64/c64-resources.c:244"
 
   - name: "kernal-901227-01.bin"
     path: "C64/kernal-901227-01.bin"
@@ -143,7 +143,7 @@ files:
     sha1: "87cc04d61fc748b82df09856847bb5c2754a2033"
     validation: [size, sha1]
     description: "C64 kernal Rev 1, C64 old NTSC model"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:50,91, C64.emu/src/vice/c64/c64model.c:128-131, C64.emu/src/vice/c64/c64-resources.c:243"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:50, 91, source C64.emu/src/vice/c64/c64model.c:128-131, source C64.emu/src/vice/c64/c64-resources.c:243"
 
   - name: "kernal-251104-04.bin"
     path: "C64/kernal-251104-04.bin"
@@ -153,7 +153,7 @@ files:
     sha1: "aa136e91ecf3c5ac64f696b3dbcbfc5ba0871c98"
     validation: [size, sha1]
     description: "SX-64 kernal, C64 SX PAL and NTSC models"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:54,95, C64.emu/src/vice/c64/c64model.c:138-146, C64.emu/src/vice/c64/c64-resources.c:247"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:54, 95, source C64.emu/src/vice/c64/c64model.c:138-146, source C64.emu/src/vice/c64/c64-resources.c:247"
 
   - name: "kernal-906145-02.bin"
     path: "C64/kernal-906145-02.bin"
@@ -164,7 +164,7 @@ files:
     validation: [size, sha1]
     region: [japan]
     description: "Japanese C64 kernal"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:49,90, C64.emu/src/vice/c64/c64model.c:148-151, C64.emu/src/vice/c64/c64-resources.c:246"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:49, 90, source C64.emu/src/vice/c64/c64model.c:148-151, source C64.emu/src/vice/c64/c64-resources.c:246"
 
   - name: "kernal-390852-01.bin"
     path: "C64/kernal-390852-01.bin"
@@ -174,7 +174,7 @@ files:
     sha1: "3ad6cc1837c679a11f551ad1cf1a32dd84ace719"
     validation: [size, sha1]
     description: "C64 GS kernal"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:53,94, C64.emu/src/vice/c64/c64model.c:153-156, C64.emu/src/vice/c64/c64-resources.c:248"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:53, 94, source C64.emu/src/vice/c64/c64model.c:153-156, source C64.emu/src/vice/c64/c64-resources.c:248"
 
   - name: "kernal-901246-01.bin"
     path: "C64/kernal-901246-01.bin"
@@ -184,7 +184,7 @@ files:
     sha1: "6c4fa9465f6091b174df27dfe679499df447503c"
     validation: [size, sha1]
     description: "Educator 64 kernal, PET64 PAL and NTSC models"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:55,96, C64.emu/src/vice/c64/c64model.c:158-166, C64.emu/src/vice/c64/c64-resources.c:249"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:55, 96, source C64.emu/src/vice/c64/c64model.c:158-166, source C64.emu/src/vice/c64/c64-resources.c:249"
 
   - name: "basic-901226-01.bin"
     path: "C64/basic-901226-01.bin"
@@ -194,7 +194,7 @@ files:
     sha1: "79015323128650c742a3694c9429aa91f355905e"
     validation: [size]
     description: "C64 BASIC"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:31,88, C64.emu/src/vice/c64/c64-resources.c:381, C64.emu/src/vice/c64/c64rom.c:279"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:31, 88, source C64.emu/src/vice/c64/c64-resources.c:381, source C64.emu/src/vice/c64/c64rom.c:279"
 
   - name: "chargen-901225-01.bin"
     path: "C64/chargen-901225-01.bin"
@@ -203,7 +203,7 @@ files:
     size: 4096
     validation: [size]
     description: "C64 character generator"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:60, C64.emu/src/vice/c64/c64-resources.c:375, C64.emu/src/vice/c64/c64rom.c:295"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:60, source C64.emu/src/vice/c64/c64-resources.c:375, source C64.emu/src/vice/c64/c64rom.c:295"
 
   - name: "chargen-906143-02.bin"
     path: "C64/chargen-906143-02.bin"
@@ -213,7 +213,7 @@ files:
     validation: [size]
     region: [japan]
     description: "Japanese C64 character generator"
-    source_ref: "C64.emu/src/vice/c64/c64rom.h:61, C64.emu/src/vice/c64/c64model.c:148-151,323"
+    source_ref: "source C64.emu/src/vice/c64/c64rom.h:61, source C64.emu/src/vice/c64/c64model.c:148-151, 323"
 
   - name: "gtk3_sym.vkm"
     path: "C64/gtk3_sym.vkm"
@@ -222,7 +222,7 @@ files:
     bundled: true
     category: game_data
     description: "C64 symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704,1386-1392"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704, 1386-1392"
 
   - name: "pepto-pal.vpl"
     path: "C64/pepto-pal.vpl"
@@ -230,7 +230,7 @@ files:
     required: false
     category: game_data
     description: "VIC-II default external palette"
-    source_ref: "C64.emu/src/vice/vicii/vicii-resources.c:170, C64.emu/src/vice/viciisc/vicii-resources.c:186, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vicii/vicii-resources.c:170, source C64.emu/src/vice/viciisc/vicii-resources.c:186, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- SCPU64/
   - name: "scpu64"
@@ -241,7 +241,7 @@ files:
     max_size: 524288
     validation: [size]
     description: "SuperCPU64 firmware"
-    source_ref: "C64.emu/src/vice/scpu64/scpu64-resources.c:234, C64.emu/src/vice/scpu64/scpu64rom.c:80, C64.emu/src/vice/scpu64/scpu64mem.h:39-40"
+    source_ref: "source C64.emu/src/vice/scpu64/scpu64-resources.c:234, source C64.emu/src/vice/scpu64/scpu64rom.c:80, source C64.emu/src/vice/scpu64/scpu64mem.h:39-40"
 
   - name: "chargen-901225-01.bin"
     path: "SCPU64/chargen-901225-01.bin"
@@ -250,7 +250,7 @@ files:
     size: 4096
     validation: [size]
     description: "Character generator for the SuperCPU machine"
-    source_ref: "C64.emu/src/vice/scpu64/scpu64-resources.c:231, C64.emu/src/vice/scpu64/scpu64rom.c:63, C64.emu/src/vice/scpu64/scpu64mem.h:38"
+    source_ref: "source C64.emu/src/vice/scpu64/scpu64-resources.c:231, source C64.emu/src/vice/scpu64/scpu64rom.c:63, source C64.emu/src/vice/scpu64/scpu64mem.h:38"
 
   - name: "chargen-906143-02.bin"
     path: "SCPU64/chargen-906143-02.bin"
@@ -260,7 +260,7 @@ files:
     validation: [size]
     region: [japan]
     description: "Japanese character generator, Japanese SuperCPU model"
-    source_ref: "C64.emu/src/vice/scpu64/scpu64model.c:303, C64.emu/src/vice/c64/c64rom.h:61"
+    source_ref: "source C64.emu/src/vice/scpu64/scpu64model.c:303, source C64.emu/src/vice/c64/c64rom.h:61"
 
   - name: "gtk3_sym.vkm"
     path: "SCPU64/gtk3_sym.vkm"
@@ -269,7 +269,7 @@ files:
     bundled: true
     category: game_data
     description: "SuperCPU symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "pepto-pal.vpl"
     path: "SCPU64/pepto-pal.vpl"
@@ -277,7 +277,7 @@ files:
     required: false
     category: game_data
     description: "VIC-II default external palette"
-    source_ref: "C64.emu/src/vice/viciisc/vicii-resources.c:186, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/viciisc/vicii-resources.c:186, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- C64DTV/
   - name: "kernal-901227-03.bin"
@@ -288,7 +288,7 @@ files:
     sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
     validation: [size, sha1]
     description: "C64 kernal Rev 3 for the DTV machine"
-    source_ref: "C64.emu/src/vice/c64dtv/c64dtv-resources.c:154, C64.emu/src/vice/c64/c64rom.h:52,93, C64.emu/src/vice/c64/c64rom.c:226"
+    source_ref: "source C64.emu/src/vice/c64dtv/c64dtv-resources.c:154, source C64.emu/src/vice/c64/c64rom.h:52, 93, source C64.emu/src/vice/c64/c64rom.c:226"
 
   - name: "basic-901226-01.bin"
     path: "C64DTV/basic-901226-01.bin"
@@ -298,7 +298,7 @@ files:
     sha1: "79015323128650c742a3694c9429aa91f355905e"
     validation: [size]
     description: "C64 BASIC for the DTV machine"
-    source_ref: "C64.emu/src/vice/c64dtv/c64dtv-resources.c:157, C64.emu/src/vice/c64/c64rom.h:31,88, C64.emu/src/vice/c64/c64rom.c:279"
+    source_ref: "source C64.emu/src/vice/c64dtv/c64dtv-resources.c:157, source C64.emu/src/vice/c64/c64rom.h:31, 88, source C64.emu/src/vice/c64/c64rom.c:279"
 
   - name: "chargen-901225-01.bin"
     path: "C64DTV/chargen-901225-01.bin"
@@ -307,7 +307,7 @@ files:
     size: 4096
     validation: [size]
     description: "Character generator for the DTV machine"
-    source_ref: "C64.emu/src/vice/c64dtv/c64dtv-resources.c:151, C64.emu/src/vice/c64/c64rom.c:295"
+    source_ref: "source C64.emu/src/vice/c64dtv/c64dtv-resources.c:151, source C64.emu/src/vice/c64/c64rom.c:295"
 
   - name: "dtvrom.bin"
     path: "C64DTV/dtvrom.bin"
@@ -319,7 +319,7 @@ files:
     note: >-
       Read into the 2 MB flash. When the file is absent the emulator builds the
       flash from the loaded kernal, BASIC and chargen instead.
-    source_ref: "C64.emu/src/vice/c64dtv/c64dtvflash.c:59-64,643-656,471,486-500"
+    source_ref: "source C64.emu/src/vice/c64dtv/c64dtvflash.c:59-64, 643-656, 471, 486-500"
 
   - name: "gtk3_sym.vkm"
     path: "C64DTV/gtk3_sym.vkm"
@@ -328,7 +328,7 @@ files:
     bundled: true
     category: game_data
     description: "DTV symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "spiff.vpl"
     path: "C64DTV/spiff.vpl"
@@ -336,7 +336,7 @@ files:
     required: false
     category: game_data
     description: "VIC-II default external palette on the DTV machine"
-    source_ref: "C64.emu/src/vice/vicii/vicii-resources.c:167-168, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vicii/vicii-resources.c:167-168, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- C128/
   - name: "kernal-318020-05.bin"
@@ -346,7 +346,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 international kernal, editor and Z80 BIOS"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:93, C64.emu/src/vice/c128/c128-resources.c:658, C64.emu/src/vice/c128/c128rom.c:343,770"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:93, source C64.emu/src/vice/c128/c128-resources.c:658, source C64.emu/src/vice/c128/c128rom.c:343, 770"
 
   - name: "kernal-315078-03.bin"
     path: "C128/kernal-315078-03.bin"
@@ -355,7 +355,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 German kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:95, C64.emu/src/vice/c128/c128-resources.c:662, C64.emu/src/vice/c128/c128rom.c:771"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:95, source C64.emu/src/vice/c128/c128-resources.c:662, source C64.emu/src/vice/c128/c128rom.c:771"
 
   - name: "kernal-325172-01.bin"
     path: "C128/kernal-325172-01.bin"
@@ -364,7 +364,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 Swiss kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:94, C64.emu/src/vice/c128/c128-resources.c:660, C64.emu/src/vice/c128/c128rom.c:777"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:94, source C64.emu/src/vice/c128/c128-resources.c:660, source C64.emu/src/vice/c128/c128rom.c:777"
 
   - name: "kernal-318034-01.bin"
     path: "C128/kernal-318034-01.bin"
@@ -373,7 +373,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 Swedish kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:100, C64.emu/src/vice/c128/c128-resources.c:672, C64.emu/src/vice/c128/c128rom.c:776"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:100, source C64.emu/src/vice/c128/c128-resources.c:672, source C64.emu/src/vice/c128/c128rom.c:776"
 
   - name: "kernalfi"
     path: "C128/kernalfi"
@@ -382,7 +382,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 Finnish kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:96, C64.emu/src/vice/c128/c128-resources.c:664, C64.emu/src/vice/c128/c128rom.c:772"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:96, source C64.emu/src/vice/c128/c128-resources.c:664, source C64.emu/src/vice/c128/c128rom.c:772"
 
   - name: "kernalfr"
     path: "C128/kernalfr"
@@ -391,7 +391,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 French kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:97, C64.emu/src/vice/c128/c128-resources.c:666, C64.emu/src/vice/c128/c128rom.c:773"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:97, source C64.emu/src/vice/c128/c128-resources.c:666, source C64.emu/src/vice/c128/c128rom.c:773"
 
   - name: "kernalit"
     path: "C128/kernalit"
@@ -400,7 +400,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 Italian kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:98, C64.emu/src/vice/c128/c128-resources.c:668, C64.emu/src/vice/c128/c128rom.c:774"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:98, source C64.emu/src/vice/c128/c128-resources.c:668, source C64.emu/src/vice/c128/c128rom.c:774"
 
   - name: "kernalno"
     path: "C128/kernalno"
@@ -409,7 +409,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 Norwegian kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:99, C64.emu/src/vice/c128/c128-resources.c:670, C64.emu/src/vice/c128/c128rom.c:775"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:99, source C64.emu/src/vice/c128/c128-resources.c:670, source C64.emu/src/vice/c128/c128rom.c:775"
 
   - name: "basiclo-318018-04.bin"
     path: "C128/basiclo-318018-04.bin"
@@ -418,7 +418,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 BASIC low half"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:103, C64.emu/src/vice/c128/c128-resources.c:650, C64.emu/src/vice/c128/c128rom.c:434,763"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:103, source C64.emu/src/vice/c128/c128-resources.c:650, source C64.emu/src/vice/c128/c128rom.c:434, 763"
 
   - name: "basichi-318019-04.bin"
     path: "C128/basichi-318019-04.bin"
@@ -427,7 +427,7 @@ files:
     size: 16384
     validation: [size]
     description: "C128 BASIC high half, holds the editor"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:104, C64.emu/src/vice/c128/c128-resources.c:652, C64.emu/src/vice/c128/c128rom.c:443,764"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:104, source C64.emu/src/vice/c128/c128-resources.c:652, source C64.emu/src/vice/c128/c128rom.c:443, 764"
 
   - name: "chargen-390059-01.bin"
     path: "C128/chargen-390059-01.bin"
@@ -436,7 +436,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 international character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:82, C64.emu/src/vice/c128/c128-resources.c:634, C64.emu/src/vice/c128/c128rom.c:529,783"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:82, source C64.emu/src/vice/c128/c128-resources.c:634, source C64.emu/src/vice/c128/c128rom.c:529, 783"
 
   - name: "chargen-315079-01.bin"
     path: "C128/chargen-315079-01.bin"
@@ -445,7 +445,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 German character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:85, C64.emu/src/vice/c128/c128-resources.c:638, C64.emu/src/vice/c128/c128rom.c:784"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:85, source C64.emu/src/vice/c128/c128-resources.c:638, source C64.emu/src/vice/c128/c128rom.c:784"
 
   - name: "chargen-325167-02.bin"
     path: "C128/chargen-325167-02.bin"
@@ -454,7 +454,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 Italian, French and Belgian character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:87-88, C64.emu/src/vice/c128/c128-resources.c:642,644, C64.emu/src/vice/c128/c128rom.c:785,790"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:87-88, source C64.emu/src/vice/c128/c128-resources.c:642, 644, source C64.emu/src/vice/c128/c128rom.c:785, 790"
 
   - name: "chargen-325181-01.bin"
     path: "C128/chargen-325181-01.bin"
@@ -463,7 +463,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 Swedish and Finnish character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:86,90, C64.emu/src/vice/c128/c128-resources.c:640,648, C64.emu/src/vice/c128/c128rom.c:786,789"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:86, 90, source C64.emu/src/vice/c128/c128-resources.c:640, 648, source C64.emu/src/vice/c128/c128rom.c:786, 789"
 
   - name: "chargen-325173-01D.bin"
     path: "C128/chargen-325173-01D.bin"
@@ -472,7 +472,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 Swiss character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:84, C64.emu/src/vice/c128/c128-resources.c:636, C64.emu/src/vice/c128/c128rom.c:787"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:84, source C64.emu/src/vice/c128/c128-resources.c:636, source C64.emu/src/vice/c128/c128rom.c:787"
 
   - name: "chargen-325078-02.bin"
     path: "C128/chargen-325078-02.bin"
@@ -481,7 +481,7 @@ files:
     size: 8192
     validation: [size]
     description: "C128 Norwegian character generator"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:89, C64.emu/src/vice/c128/c128-resources.c:646, C64.emu/src/vice/c128/c128rom.c:788"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:89, source C64.emu/src/vice/c128/c128-resources.c:646, source C64.emu/src/vice/c128/c128rom.c:788"
 
   - name: "kernal64-901227-03.bin"
     path: "C128/kernal64-901227-03.bin"
@@ -491,7 +491,7 @@ files:
     sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
     validation: [size]
     description: "C64 mode kernal"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:110, C64.emu/src/vice/c128/c128-resources.c:654, C64.emu/src/vice/c128/c128rom.c:672,796, C64.emu/src/vice/c64/c64rom.h:93"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:110, source C64.emu/src/vice/c128/c128-resources.c:654, source C64.emu/src/vice/c128/c128rom.c:672, 796, source C64.emu/src/vice/c64/c64rom.h:93"
 
   - name: "basic64-901226-01.bin"
     path: "C128/basic64-901226-01.bin"
@@ -501,7 +501,7 @@ files:
     sha1: "79015323128650c742a3694c9429aa91f355905e"
     validation: [size]
     description: "C64 mode BASIC"
-    source_ref: "C64.emu/src/vice/c128/c128rom.h:107, C64.emu/src/vice/c128/c128-resources.c:656, C64.emu/src/vice/c128/c128rom.c:710,801, C64.emu/src/vice/c64/c64rom.h:88"
+    source_ref: "source C64.emu/src/vice/c128/c128rom.h:107, source C64.emu/src/vice/c128/c128-resources.c:656, source C64.emu/src/vice/c128/c128rom.c:710, 801, source C64.emu/src/vice/c64/c64rom.h:88"
 
   - name: "gtk3_sym.vkm"
     path: "C128/gtk3_sym.vkm"
@@ -510,7 +510,7 @@ files:
     bundled: true
     category: game_data
     description: "C128 symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "pepto-pal.vpl"
     path: "C128/pepto-pal.vpl"
@@ -518,7 +518,7 @@ files:
     required: false
     category: game_data
     description: "VIC-II default external palette"
-    source_ref: "C64.emu/src/vice/vicii/vicii-resources.c:170, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vicii/vicii-resources.c:170, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   - name: "vdc_deft.vpl"
     path: "C128/vdc_deft.vpl"
@@ -526,7 +526,7 @@ files:
     required: false
     category: game_data
     description: "VDC default external palette"
-    source_ref: "C64.emu/src/vice/vdc/vdc-resources.c:127, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vdc/vdc-resources.c:127, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- VIC20/
   - name: "kernal.901486-07.bin"
@@ -536,7 +536,7 @@ files:
     size: 8192
     validation: [size]
     description: "VIC-20 PAL kernal, default kernal resource"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:53, C64.emu/src/vice/vic20/vic20-resources.c:183, C64.emu/src/vice/vic20/vic20rom.c:112"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:53, source C64.emu/src/vice/vic20/vic20-resources.c:183, source C64.emu/src/vice/vic20/vic20rom.c:112"
 
   - name: "kernal.901486-06.bin"
     path: "VIC20/kernal.901486-06.bin"
@@ -545,7 +545,7 @@ files:
     size: 8192
     validation: [size]
     description: "VIC-20 NTSC kernal, default model and VIC-21"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:52, C64.emu/src/vice/vic20/vic20model.c:58-59,140"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:52, source C64.emu/src/vice/vic20/vic20model.c:58-59, 140"
 
   - name: "kernal.901486-02.bin"
     path: "VIC20/kernal.901486-02.bin"
@@ -555,7 +555,7 @@ files:
     validation: [size]
     region: [japan]
     description: "VIC-1001 kernal"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:51, C64.emu/src/vice/vic20/vic20model.c:60,140"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:51, source C64.emu/src/vice/vic20/vic20model.c:60, 140"
 
   - name: "basic-901486-01.bin"
     path: "VIC20/basic-901486-01.bin"
@@ -564,7 +564,7 @@ files:
     size: 8192
     validation: [size]
     description: "VIC-20 BASIC"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:43, C64.emu/src/vice/vic20/vic20-resources.c:185, C64.emu/src/vice/vic20/vic20rom.c:156"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:43, source C64.emu/src/vice/vic20/vic20-resources.c:185, source C64.emu/src/vice/vic20/vic20rom.c:156"
 
   - name: "chargen-901460-03.bin"
     path: "VIC20/chargen-901460-03.bin"
@@ -573,7 +573,7 @@ files:
     size: 4096
     validation: [size]
     description: "VIC-20 character generator"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:56, C64.emu/src/vice/vic20/vic20-resources.c:181, C64.emu/src/vice/vic20/vic20rom.c:175"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:56, source C64.emu/src/vice/vic20/vic20-resources.c:181, source C64.emu/src/vice/vic20/vic20rom.c:175"
 
   - name: "chargen-901460-02.bin"
     path: "VIC20/chargen-901460-02.bin"
@@ -583,7 +583,7 @@ files:
     validation: [size]
     region: [japan]
     description: "VIC-1001 character generator"
-    source_ref: "C64.emu/src/vice/vic20/vic20rom.h:57, C64.emu/src/vice/vic20/vic20model.c:60,139"
+    source_ref: "source C64.emu/src/vice/vic20/vic20rom.h:57, source C64.emu/src/vice/vic20/vic20model.c:60, 139"
 
   - name: "gtk3_sym.vkm"
     path: "VIC20/gtk3_sym.vkm"
@@ -592,7 +592,7 @@ files:
     bundled: true
     category: game_data
     description: "VIC-20 symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "mike-pal.vpl"
     path: "VIC20/mike-pal.vpl"
@@ -600,7 +600,7 @@ files:
     required: false
     category: game_data
     description: "VIC default external palette"
-    source_ref: "C64.emu/src/vice/vic20/vic-resources.c:90, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vic20/vic-resources.c:90, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- PLUS4/
   - name: "kernal-318005-05.bin"
@@ -610,7 +610,7 @@ files:
     size: 16384
     validation: [size]
     description: "Plus/4 NTSC kernal, default model"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:37, C64.emu/src/vice/plus4/plus4model.c:67,69,153, C64.emu/src/vice/plus4/plus4rom.c:89"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:37, source C64.emu/src/vice/plus4/plus4model.c:67, 69, 153, source C64.emu/src/vice/plus4/plus4rom.c:89"
 
   - name: "kernal-318004-05.bin"
     path: "PLUS4/kernal-318004-05.bin"
@@ -619,7 +619,7 @@ files:
     size: 16384
     validation: [size]
     description: "Plus/4 PAL kernal, default kernal resource"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:36, C64.emu/src/vice/plus4/plus4-resources.c:186, C64.emu/src/vice/plus4/plus4model.c:66,68"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:36, source C64.emu/src/vice/plus4/plus4-resources.c:186, source C64.emu/src/vice/plus4/plus4model.c:66, 68"
 
   - name: "kernal-318004-01.bin"
     path: "PLUS4/kernal-318004-01.bin"
@@ -628,7 +628,7 @@ files:
     size: 16384
     validation: [size]
     description: "C232 prototype kernal"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:35, C64.emu/src/vice/plus4/plus4model.c:71,153"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:35, source C64.emu/src/vice/plus4/plus4model.c:71, 153"
 
   - name: "kernal-364.bin"
     path: "PLUS4/kernal-364.bin"
@@ -637,7 +637,7 @@ files:
     size: 16384
     validation: [size]
     description: "V364 prototype kernal"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:38, C64.emu/src/vice/plus4/plus4model.c:70,153"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:38, source C64.emu/src/vice/plus4/plus4model.c:70, 153"
 
   - name: "basic-318006-01.bin"
     path: "PLUS4/basic-318006-01.bin"
@@ -646,7 +646,7 @@ files:
     size: 16384
     validation: [size]
     description: "Plus/4 BASIC"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:33, C64.emu/src/vice/plus4/plus4-resources.c:188, C64.emu/src/vice/plus4/plus4rom.c:111"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:33, source C64.emu/src/vice/plus4/plus4-resources.c:188, source C64.emu/src/vice/plus4/plus4rom.c:111"
 
   - name: "3plus1-317053-01.bin"
     path: "PLUS4/3plus1-317053-01.bin"
@@ -655,7 +655,7 @@ files:
     size: 16384
     validation: [size]
     description: "3-plus-1 low function ROM, Plus/4 and V364 models"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:40, C64.emu/src/vice/plus4/plus4-resources.c:190, C64.emu/src/vice/plus4/plus4memrom.c:146"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:40, source C64.emu/src/vice/plus4/plus4-resources.c:190, source C64.emu/src/vice/plus4/plus4memrom.c:146"
 
   - name: "3plus1-317054-01.bin"
     path: "PLUS4/3plus1-317054-01.bin"
@@ -664,7 +664,7 @@ files:
     size: 16384
     validation: [size]
     description: "3-plus-1 high function ROM, Plus/4 and V364 models"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:41, C64.emu/src/vice/plus4/plus4-resources.c:192, C64.emu/src/vice/plus4/plus4memrom.c:166"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:41, source C64.emu/src/vice/plus4/plus4-resources.c:192, source C64.emu/src/vice/plus4/plus4memrom.c:166"
 
   - name: "c2lo-364.bin"
     path: "PLUS4/c2lo-364.bin"
@@ -673,7 +673,7 @@ files:
     size: 16384
     validation: [size]
     description: "V364 speech ROM"
-    source_ref: "C64.emu/src/vice/plus4/plus4rom.h:43, C64.emu/src/vice/plus4/plus4model.c:70,161, C64.emu/src/vice/plus4/plus4memrom.c:187"
+    source_ref: "source C64.emu/src/vice/plus4/plus4rom.h:43, source C64.emu/src/vice/plus4/plus4model.c:70, 161, source C64.emu/src/vice/plus4/plus4memrom.c:187"
 
   - name: "gtk3_sym.vkm"
     path: "PLUS4/gtk3_sym.vkm"
@@ -682,7 +682,7 @@ files:
     bundled: true
     category: game_data
     description: "Plus/4 symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "yape-pal.vpl"
     path: "PLUS4/yape-pal.vpl"
@@ -690,7 +690,7 @@ files:
     required: false
     category: game_data
     description: "TED default external palette"
-    source_ref: "C64.emu/src/vice/plus4/ted-resources.c:90, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/plus4/ted-resources.c:90, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- PET/
   - name: "kernal-4.901465-22.bin"
@@ -700,7 +700,7 @@ files:
     size: 4096
     validation: [size]
     description: "BASIC 4 kernal, default model PET 8032"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:53, C64.emu/src/vice/pet/pet-resources.c:406, C64.emu/src/vice/pet/petrom.c:581"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:53, source C64.emu/src/vice/pet/pet-resources.c:406, source C64.emu/src/vice/pet/petrom.c:581"
 
   - name: "kernal-2.901465-03.bin"
     path: "PET/kernal-2.901465-03.bin"
@@ -709,7 +709,7 @@ files:
     size: 4096
     validation: [size]
     description: "BASIC 2 kernal, PET 3008 to 3032B models"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:52, C64.emu/src/vice/pet/petmodel.c:108,371"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:52, source C64.emu/src/vice/pet/petmodel.c:108, 371"
 
   - name: "kernal-1.901439-04-07.bin"
     path: "PET/kernal-1.901439-04-07.bin"
@@ -718,7 +718,7 @@ files:
     size: 4096
     validation: [size]
     description: "BASIC 1 kernal, PET 2001-8N model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:51, C64.emu/src/vice/pet/petmodel.c:89,371"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:51, source C64.emu/src/vice/pet/petmodel.c:89, 371"
 
   - name: "basic-4.901465-23-20-21.bin"
     path: "PET/basic-4.901465-23-20-21.bin"
@@ -728,7 +728,7 @@ files:
     max_size: 12288
     validation: [size]
     description: "BASIC 4, default model PET 8032"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:57, C64.emu/src/vice/pet/pet-resources.c:410, C64.emu/src/vice/pet/petrom.c:534"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:57, source C64.emu/src/vice/pet/pet-resources.c:410, source C64.emu/src/vice/pet/petrom.c:534"
 
   - name: "basic-2.901465-01-02.bin"
     path: "PET/basic-2.901465-01-02.bin"
@@ -738,7 +738,7 @@ files:
     max_size: 12288
     validation: [size]
     description: "BASIC 2, PET 3008 to 3032B models"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:56, C64.emu/src/vice/pet/petmodel.c:110,372"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:56, source C64.emu/src/vice/pet/petmodel.c:110, 372"
 
   - name: "basic-1.901439-09-05-02-06.bin"
     path: "PET/basic-1.901439-09-05-02-06.bin"
@@ -748,7 +748,7 @@ files:
     max_size: 12288
     validation: [size]
     description: "BASIC 1, PET 2001-8N model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:55, C64.emu/src/vice/pet/petmodel.c:91,372"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:55, source C64.emu/src/vice/pet/petmodel.c:91, 372"
 
   - name: "edit-4-80-b-50Hz.901474-04_.bin"
     path: "PET/edit-4-80-b-50Hz.901474-04_.bin"
@@ -758,7 +758,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 4 business 80 column editor, default model PET 8032"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:63, C64.emu/src/vice/pet/pet-resources.c:408, C64.emu/src/vice/pet/petrom.c:612"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:63, source C64.emu/src/vice/pet/pet-resources.c:408, source C64.emu/src/vice/pet/petrom.c:612"
 
   - name: "edit-4-40-n-50Hz.901498-01.bin"
     path: "PET/edit-4-40-n-50Hz.901498-01.bin"
@@ -768,7 +768,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 4 graphics 40 column editor, PET 4016 and 4032 models"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:62, C64.emu/src/vice/pet/petmodel.c:373"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:62, source C64.emu/src/vice/pet/petmodel.c:373"
 
   - name: "edit-4-40-b-50Hz.ts.bin"
     path: "PET/edit-4-40-b-50Hz.ts.bin"
@@ -778,7 +778,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 4 business 40 column editor, PET 4032B model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:65, C64.emu/src/vice/pet/petmodel.c:373"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:65, source C64.emu/src/vice/pet/petmodel.c:373"
 
   - name: "edit-2-n.901447-24.bin"
     path: "PET/edit-2-n.901447-24.bin"
@@ -788,7 +788,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 2 graphics 40 column editor, PET 3008 to 3032 models"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:60, C64.emu/src/vice/pet/petmodel.c:109,373"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:60, source C64.emu/src/vice/pet/petmodel.c:109, 373"
 
   - name: "edit-2-b.901474-01.bin"
     path: "PET/edit-2-b.901474-01.bin"
@@ -798,7 +798,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 2 business editor, PET 3032B model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:61, C64.emu/src/vice/pet/petmodel.c:373"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:61, source C64.emu/src/vice/pet/petmodel.c:373"
 
   - name: "edit-1-n.901439-03.bin"
     path: "PET/edit-1-n.901439-03.bin"
@@ -808,7 +808,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "BASIC 1 graphics 40 column editor, PET 2001-8N model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:59, C64.emu/src/vice/pet/petmodel.c:90,373"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:59, source C64.emu/src/vice/pet/petmodel.c:90, 373"
 
   - name: "characters-2.901447-10.bin"
     path: "PET/characters-2.901447-10.bin"
@@ -818,7 +818,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "Second generation character generator, default model PET 8032"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:47, C64.emu/src/vice/pet/pet-resources.c:404, C64.emu/src/vice/pet/petrom.c:506"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:47, source C64.emu/src/vice/pet/pet-resources.c:404, source C64.emu/src/vice/pet/petrom.c:506"
 
   - name: "characters-1.901447-08.bin"
     path: "PET/characters-1.901447-08.bin"
@@ -828,7 +828,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "First generation character generator, PET 2001-8N model"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:46, C64.emu/src/vice/pet/petmodel.c:88,370"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:46, source C64.emu/src/vice/pet/petmodel.c:88, 370"
 
   - name: "characters.901640-01.bin"
     path: "PET/characters.901640-01.bin"
@@ -838,7 +838,7 @@ files:
     max_size: 4096
     validation: [size]
     description: "SuperPET character generator"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:48, C64.emu/src/vice/pet/petmodel.c:370"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:48, source C64.emu/src/vice/pet/petmodel.c:370"
 
   - name: "waterloo-a000.901898-01.bin"
     path: "PET/waterloo-a000.901898-01.bin"
@@ -847,7 +847,7 @@ files:
     size: 4096
     validation: [size]
     description: "SuperPET 6809 ROM at a000"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:75, C64.emu/src/vice/pet/petmodel.c:305, C64.emu/src/vice/pet/petrom.c:747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:75, source C64.emu/src/vice/pet/petmodel.c:305, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "waterloo-b000.901898-02.bin"
     path: "PET/waterloo-b000.901898-02.bin"
@@ -856,7 +856,7 @@ files:
     size: 4096
     validation: [size]
     description: "SuperPET 6809 ROM at b000"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:76, C64.emu/src/vice/pet/petmodel.c:306, C64.emu/src/vice/pet/petrom.c:747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:76, source C64.emu/src/vice/pet/petmodel.c:306, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "waterloo-c000.901898-03.bin"
     path: "PET/waterloo-c000.901898-03.bin"
@@ -865,7 +865,7 @@ files:
     size: 4096
     validation: [size]
     description: "SuperPET 6809 ROM at c000"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:77, C64.emu/src/vice/pet/petmodel.c:307, C64.emu/src/vice/pet/petrom.c:747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:77, source C64.emu/src/vice/pet/petmodel.c:307, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "waterloo-d000.901898-04.bin"
     path: "PET/waterloo-d000.901898-04.bin"
@@ -874,7 +874,7 @@ files:
     size: 4096
     validation: [size]
     description: "SuperPET 6809 ROM at d000"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:78, C64.emu/src/vice/pet/petmodel.c:308, C64.emu/src/vice/pet/petrom.c:747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:78, source C64.emu/src/vice/pet/petmodel.c:308, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "waterloo-e000.901897-01.bin"
     path: "PET/waterloo-e000.901897-01.bin"
@@ -884,7 +884,7 @@ files:
     max_size: 8192
     validation: [size]
     description: "SuperPET 6809 ROM at e000, the one slot the loader accepts at 2 KB"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:79, C64.emu/src/vice/pet/petmodel.c:309, C64.emu/src/vice/pet/petrom.c:745,747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:79, source C64.emu/src/vice/pet/petmodel.c:309, source C64.emu/src/vice/pet/petrom.c:745, 747"
 
   - name: "waterloo-f000.901898-05.bin"
     path: "PET/waterloo-f000.901898-05.bin"
@@ -893,7 +893,7 @@ files:
     size: 4096
     validation: [size]
     description: "SuperPET 6809 ROM at f000"
-    source_ref: "C64.emu/src/vice/pet/petrom.h:80, C64.emu/src/vice/pet/petmodel.c:310, C64.emu/src/vice/pet/petrom.c:747"
+    source_ref: "source C64.emu/src/vice/pet/petrom.h:80, source C64.emu/src/vice/pet/petmodel.c:310, source C64.emu/src/vice/pet/petrom.c:747"
 
   - name: "gtk3_sym.vkm"
     path: "PET/gtk3_sym.vkm"
@@ -902,7 +902,7 @@ files:
     bundled: true
     category: game_data
     description: "PET symbolic keymap, US layout and the fallback for every keyboard type"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263-1269,1386-1392, C64.emu/src/vice/pet/pet.c:169-176"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263-1269, 1386-1392, source C64.emu/src/vice/pet/pet.c:169-176"
 
   - name: "green.vpl"
     path: "PET/green.vpl"
@@ -910,7 +910,7 @@ files:
     required: false
     category: game_data
     description: "CRTC default external palette"
-    source_ref: "C64.emu/src/vice/crtc/crtc-resources.c:102, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/crtc/crtc-resources.c:102, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- CBM-II/
   - name: "kernal-901244-04a.bin"
@@ -920,7 +920,7 @@ files:
     size: 8192
     validation: [size]
     description: "CBM-II 6x0 and 7x0 kernal, default model CBM 610"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:45, C64.emu/src/vice/cbm2/cbm2model.c:66-74,160, C64.emu/src/vice/cbm2/cbm2rom.c:155"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:45, source C64.emu/src/vice/cbm2/cbm2model.c:66-74, 160, source C64.emu/src/vice/cbm2/cbm2rom.c:155"
 
   - name: "kernal-901234-02.bin"
     path: "CBM-II/kernal-901234-02.bin"
@@ -929,7 +929,7 @@ files:
     size: 8192
     validation: [size]
     description: "CBM 510 kernal, default model of the cbm5x0 plugin"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:46, C64.emu/src/vice/cbm2/cbm2model.c:64-65,160, C64.emu/src/vice/cbm2/cbm5x0rom.c:125"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:46, source C64.emu/src/vice/cbm2/cbm2model.c:64-65, 160, source C64.emu/src/vice/cbm2/cbm5x0rom.c:125"
 
   - name: "basic-901242+3-04a.bin"
     path: "CBM-II/basic-901242+3-04a.bin"
@@ -938,7 +938,7 @@ files:
     size: 16384
     validation: [size]
     description: "CBM-II 128 KB BASIC, CBM 610 and 710 models"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:41, C64.emu/src/vice/cbm2/cbm2model.c:66-67,72,161, C64.emu/src/vice/cbm2/cbm2rom.c:171"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:41, source C64.emu/src/vice/cbm2/cbm2model.c:66-67, 72, 161, source C64.emu/src/vice/cbm2/cbm2rom.c:171"
 
   - name: "basic-901240+1-03.bin"
     path: "CBM-II/basic-901240+1-03.bin"
@@ -947,7 +947,7 @@ files:
     size: 16384
     validation: [size]
     description: "CBM-II 256 KB BASIC, CBM 620, 620+, 720 and 720+ models"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:42, C64.emu/src/vice/cbm2/cbm2model.c:68-71,73-74,161"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:42, source C64.emu/src/vice/cbm2/cbm2model.c:68-71, 73-74, 161"
 
   - name: "basic-901235+6-02.bin"
     path: "CBM-II/basic-901235+6-02.bin"
@@ -956,7 +956,7 @@ files:
     size: 16384
     validation: [size]
     description: "CBM 510 BASIC"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:43, C64.emu/src/vice/cbm2/cbm2model.c:64-65,161, C64.emu/src/vice/cbm2/cbm5x0rom.c:141"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:43, source C64.emu/src/vice/cbm2/cbm2model.c:64-65, 161, source C64.emu/src/vice/cbm2/cbm5x0rom.c:141"
 
   - name: "chargen-901237-01.bin"
     path: "CBM-II/chargen-901237-01.bin"
@@ -965,7 +965,7 @@ files:
     size: 4096
     validation: [size]
     description: "CBM-II 600 series character generator, default model CBM 610"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:38, C64.emu/src/vice/cbm2/cbm2model.c:66-71,162, C64.emu/src/vice/cbm2/cbm2rom.c:100-101"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:38, source C64.emu/src/vice/cbm2/cbm2model.c:66-71, 162, source C64.emu/src/vice/cbm2/cbm2rom.c:100-101"
 
   - name: "chargen-901232-01.bin"
     path: "CBM-II/chargen-901232-01.bin"
@@ -974,7 +974,7 @@ files:
     size: 4096
     validation: [size]
     description: "CBM-II 700 series character generator"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:39, C64.emu/src/vice/cbm2/cbm2model.c:72-74,162"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:39, source C64.emu/src/vice/cbm2/cbm2model.c:72-74, 162"
 
   - name: "chargen-901225-01.bin"
     path: "CBM-II/chargen-901225-01.bin"
@@ -983,7 +983,7 @@ files:
     size: 4096
     validation: [size]
     description: "CBM 510 character generator"
-    source_ref: "C64.emu/src/vice/cbm2/cbm2rom.h:37, C64.emu/src/vice/cbm2/cbm2model.c:64-65,162, C64.emu/src/vice/cbm2/cbm5x0rom.c:83"
+    source_ref: "source C64.emu/src/vice/cbm2/cbm2rom.h:37, source C64.emu/src/vice/cbm2/cbm2model.c:64-65, 162, source C64.emu/src/vice/cbm2/cbm5x0rom.c:83"
 
   - name: "gtk3_sym.vkm"
     path: "CBM-II/gtk3_sym.vkm"
@@ -992,7 +992,7 @@ files:
     bundled: true
     category: game_data
     description: "CBM-II symbolic keymap, US layout"
-    source_ref: "C64.emu/src/config/kbd.h:7, C64.emu/src/vice/keymap.c:1263,704"
+    source_ref: "source C64.emu/src/config/kbd.h:7, source C64.emu/src/vice/keymap.c:1263, 704"
 
   - name: "green.vpl"
     path: "CBM-II/green.vpl"
@@ -1000,7 +1000,7 @@ files:
     required: false
     category: game_data
     description: "CRTC default external palette, 6x0 and 7x0 models"
-    source_ref: "C64.emu/src/vice/crtc/crtc-resources.c:102, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/crtc/crtc-resources.c:102, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   - name: "pepto-pal.vpl"
     path: "CBM-II/pepto-pal.vpl"
@@ -1008,7 +1008,7 @@ files:
     required: false
     category: game_data
     description: "VIC-II default external palette, 5x0 models"
-    source_ref: "C64.emu/src/vice/vicii/vicii-resources.c:170, C64.emu/src/vice/video/video-resources.c:916-923"
+    source_ref: "source C64.emu/src/vice/vicii/vicii-resources.c:170, source C64.emu/src/vice/video/video-resources.c:916-923"
 
   # ---------------------------------------------------------------- DRIVES/
   - name: "dos1541ii-251968-03.bin"
@@ -1018,7 +1018,7 @@ files:
     max_size: 32768
     validation: [size]
     description: "1541-II DOS, default unit 8 on C64, SuperCPU and DTV"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:40-41,90, C64.emu/src/vice/drive/iec/iecrom.c:107,182, C64.emu/src/vice/c64/c64drive.c:43"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:40-41, 90, source C64.emu/src/vice/drive/iec/iecrom.c:107, 182, source C64.emu/src/vice/c64/c64drive.c:43"
 
   - name: "dos1541-325302-01+901229-05.bin"
     path: "DRIVES/dos1541-325302-01+901229-05.bin"
@@ -1027,7 +1027,7 @@ files:
     max_size: 32768
     validation: [size]
     description: "1541 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:38-39,89, C64.emu/src/vice/drive/iec/iecrom.c:100,172"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:38-39, 89, source C64.emu/src/vice/drive/iec/iecrom.c:100, 172"
 
   - name: "dos1540-325302+3-01.bin"
     path: "DRIVES/dos1540-325302+3-01.bin"
@@ -1036,7 +1036,7 @@ files:
     max_size: 32768
     validation: [size]
     description: "1540 DOS, default unit 8 on VIC-20"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:36-37,88, C64.emu/src/vice/drive/iec/iecrom.c:93,162, C64.emu/src/vice/vic20/vic20drive.c:44"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:36-37, 88, source C64.emu/src/vice/drive/iec/iecrom.c:93, 162, source C64.emu/src/vice/vic20/vic20drive.c:44"
 
   - name: "dos1570-315090-01.bin"
     path: "DRIVES/dos1570-315090-01.bin"
@@ -1044,7 +1044,7 @@ files:
     size: 32768
     validation: [size]
     description: "1570 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:43,93, C64.emu/src/vice/drive/iec/iecrom.c:115,193"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:43, 93, source C64.emu/src/vice/drive/iec/iecrom.c:115, 193"
 
   - name: "dos1571-310654-05.bin"
     path: "DRIVES/dos1571-310654-05.bin"
@@ -1052,7 +1052,7 @@ files:
     size: 32768
     validation: [size]
     description: "1571 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:44,94, C64.emu/src/vice/drive/iec/iecrom.c:121,198"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:44, 94, source C64.emu/src/vice/drive/iec/iecrom.c:121, 198"
 
   - name: "dos1571cr-318047-01.bin"
     path: "DRIVES/dos1571cr-318047-01.bin"
@@ -1060,7 +1060,7 @@ files:
     size: 32768
     validation: [size]
     description: "1571CR DOS, default unit 8 on C128"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:45,95, C64.emu/src/vice/drive/iec128dcr/iec128dcrrom.c:51,68, C64.emu/src/vice/c128/c128drive.c:56"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:45, 95, source C64.emu/src/vice/drive/iec128dcr/iec128dcrrom.c:51, 68, source C64.emu/src/vice/c128/c128drive.c:56"
 
   - name: "dos1581-318045-02.bin"
     path: "DRIVES/dos1581-318045-02.bin"
@@ -1068,7 +1068,7 @@ files:
     size: 32768
     validation: [size]
     description: "1581 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:46,96, C64.emu/src/vice/drive/iec/iecrom.c:127,203"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:46, 96, source C64.emu/src/vice/drive/iec/iecrom.c:127, 203"
 
   - name: "dos1551-318008-01.bin"
     path: "DRIVES/dos1551-318008-01.bin"
@@ -1076,7 +1076,7 @@ files:
     size: 16384
     validation: [size]
     description: "1551 DOS, default unit 8 on Plus/4"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:42,92, C64.emu/src/vice/drive/tcbm/tcbmrom.c:50,66, C64.emu/src/vice/plus4/plus4drive.c:46"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:42, 92, source C64.emu/src/vice/drive/tcbm/tcbmrom.c:50, 66, source C64.emu/src/vice/plus4/plus4drive.c:46"
 
   - name: "dos2000-cs-33cc6f.bin"
     aliases:
@@ -1086,7 +1086,7 @@ files:
     size: 32768
     validation: [size]
     description: "CMD FD-2000 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:47,98, C64.emu/src/vice/drive/iec/iecrom.c:133,208"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:47, 98, source C64.emu/src/vice/drive/iec/iecrom.c:133, 208"
 
   - name: "dos4000-fd-350022.bin"
     aliases:
@@ -1096,7 +1096,7 @@ files:
     size: 32768
     validation: [size]
     description: "CMD FD-4000 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:48,99, C64.emu/src/vice/drive/iec/iecrom.c:139,213"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:48, 99, source C64.emu/src/vice/drive/iec/iecrom.c:139, 213"
 
   - name: "bootromCMDHD-v2-80.bin"
     path: "DRIVES/bootromCMDHD-v2-80.bin"
@@ -1108,7 +1108,7 @@ files:
       The MAME dump cmd_hd_bootrom_v280.bin reads the chip over 32 KB and its
       two halves are identical. The image here is the first half, the 16 KB the
       loader asks for.
-    source_ref: "C64.emu/src/vice/drive/driverom.h:49,100, C64.emu/src/vice/drive/iec/iecrom.c:145,218"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:49, 100, source C64.emu/src/vice/drive/iec/iecrom.c:145, 218"
 
   - name: "dos2031-901484-03+05.bin"
     path: "DRIVES/dos2031-901484-03+05.bin"
@@ -1116,7 +1116,7 @@ files:
     size: 16384
     validation: [size]
     description: "2031 DOS, default unit 8 on PET and CBM-II"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:50,73, C64.emu/src/vice/drive/ieee/ieeerom.c:56,107, C64.emu/src/vice/pet/petdrive.c:42"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:50, 73, source C64.emu/src/vice/drive/ieee/ieeerom.c:56, 107, source C64.emu/src/vice/pet/petdrive.c:42"
 
   - name: "dos2040-901468-06+07.bin"
     path: "DRIVES/dos2040-901468-06+07.bin"
@@ -1124,7 +1124,7 @@ files:
     size: 8192
     validation: [size]
     description: "2040 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:53,76, C64.emu/src/vice/drive/ieee/ieeerom.c:63,115"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:53, 76, source C64.emu/src/vice/drive/ieee/ieeerom.c:63, 115"
 
   - name: "dos3040-901468-11-13.bin"
     path: "DRIVES/dos3040-901468-11-13.bin"
@@ -1132,7 +1132,7 @@ files:
     size: 12288
     validation: [size]
     description: "3040 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:54,79, C64.emu/src/vice/drive/ieee/ieeerom.c:70,123"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:54, 79, source C64.emu/src/vice/drive/ieee/ieeerom.c:70, 123"
 
   - name: "dos4040-901468-14-16.bin"
     path: "DRIVES/dos4040-901468-14-16.bin"
@@ -1140,7 +1140,7 @@ files:
     size: 12288
     validation: [size]
     description: "4040 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:55,82, C64.emu/src/vice/drive/ieee/ieeerom.c:77,131"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:55, 82, source C64.emu/src/vice/drive/ieee/ieeerom.c:77, 131"
 
   - name: "dos1001-901887+8-01.bin"
     path: "DRIVES/dos1001-901887+8-01.bin"
@@ -1148,7 +1148,7 @@ files:
     size: 16384
     validation: [size]
     description: "1001, 8050 and 8250 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:51,70, C64.emu/src/vice/drive/ieee/ieeerom.c:84,141"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:51, 70, source C64.emu/src/vice/drive/ieee/ieeerom.c:84, 141"
 
   - name: "dos9000-300516+7-revC.bin"
     path: "DRIVES/dos9000-300516+7-revC.bin"
@@ -1156,4 +1156,4 @@ files:
     size: 16384
     validation: [size]
     description: "D9090 and D9060 DOS"
-    source_ref: "C64.emu/src/vice/drive/driverom.h:52,85, C64.emu/src/vice/drive/ieee/ieeerom.c:91,149"
+    source_ref: "source C64.emu/src/vice/drive/driverom.h:52, 85, source C64.emu/src/vice/drive/ieee/ieeerom.c:91, 149"

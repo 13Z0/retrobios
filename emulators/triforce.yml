@@ -99,7 +99,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [retrobat]
-    source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:215-233, Source/Core/Core/HW/DVD/DVDInterface.cpp:289-294"
+    source_ref: "source Source/Core/Core/HW/DVD/AMMediaboard.cpp:215-233, source Source/Core/Core/HW/DVD/DVDInterface.cpp:289-294"
     note: >
       Read on every Triforce launch, Sys/Triforce only with no User fallback.
       Nothing is validated, min(file size, 2 MiB) is copied into the firmware
@@ -121,7 +121,7 @@ files:
     validation: [crc32]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:149, Source/Core/Core/Config/MainSettings.cpp:614-625, Source/Core/Core/Boot/Boot.cpp:400,415-436"
+    source_ref: "source Source/Core/Common/CommonPaths.h:149, source Source/Core/Core/Config/MainSettings.cpp:614-625, source Source/Core/Core/Boot/Boot.cpp:400, 415-436"
     note: >
       CRC32 is computed over the first 2 MiB and compared against the Redump
       table, 0xD1883221 being the Triforce revision. An unknown value warns and
@@ -138,7 +138,7 @@ files:
     validation: [crc32]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Core/Config/MainSettings.cpp:620-623"
+    source_ref: "source Source/Core/Core/Config/MainSettings.cpp:620-623"
 
   - name: "IPL_TRI.bin"
     path: "GC/JAP/IPL_TRI.bin"
@@ -150,7 +150,7 @@ files:
     validation: [crc32]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Core/Config/MainSettings.cpp:587-612,620-623"
+    source_ref: "source Source/Core/Core/Config/MainSettings.cpp:587-612, 620-623"
     note: "JAP is the directory the legacy naming style returns for NTSC-J."
 
   # -- AM-Mediaboard system state --
@@ -160,7 +160,7 @@ files:
     system: sega-triforce
     required: false
     unsourceable: "created empty by the emulator on first Triforce launch, written by the guest, no hardware dump equivalent"
-    source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177,198"
+    source_ref: "source Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177, 198"
 
   - name: "trinetctrl.bin"
     path: "Triforce/trinetctrl.bin"
@@ -168,7 +168,7 @@ files:
     system: sega-triforce
     required: false
     unsourceable: "created empty by the emulator on first Triforce launch, written by the guest, no hardware dump equivalent"
-    source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177,199"
+    source_ref: "source Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177, 199"
 
   - name: "triextra.bin"
     path: "Triforce/triextra.bin"
@@ -176,7 +176,7 @@ files:
     system: sega-triforce
     required: false
     unsourceable: "created empty by the emulator on first Triforce launch, written by the guest, no hardware dump equivalent"
-    source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177,200"
+    source_ref: "source Source/Core/Core/HW/DVD/AMMediaboard.cpp:169-177, 200"
 
   # -- Wii Arcade --
   - name: "RVA.txt"
@@ -185,7 +185,7 @@ files:
     system: nintendo-wii-arcade
     required: false
     unsourceable: "user-created marker inside the emulated NAND, only its presence is tested, no file is distributed"
-    source_ref: "Source/Core/Common/CommonPaths.h:165, Source/Core/Core/Boot/Boot_BS2Emu.cpp:387-397"
+    source_ref: "source Source/Core/Common/CommonPaths.h:165, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:387-397"
     note: >
       Opened for read inside the System Menu title data. Success sets console type
       RVA and forces the RGB region settings. The RVA expansion device in slot A
@@ -203,7 +203,7 @@ files:
     size: 2097152
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:148, Source/Core/Core/Config/MainSettings.cpp:627-630, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-118,182-183"
+    source_ref: "source Source/Core/Common/CommonPaths.h:148, source Source/Core/Core/Config/MainSettings.cpp:627-630, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-118, 182-183"
     note: "Needed to boot the GameCube menu and to take the fonts from a real dump."
 
   - name: "IPL.bin"
@@ -214,7 +214,7 @@ files:
     size: 2097152
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:184-185"
+    source_ref: "source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:184-185"
 
   - name: "IPL.bin"
     path: "GC/JAP/IPL.bin"
@@ -224,7 +224,7 @@ files:
     size: 2097152
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:186-187"
+    source_ref: "source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:186-187"
 
   # -- DSP ROMs --
   # User/GC/ then Sys/GC/. Used by DSP LLE, and dsp_coef.bin also by the HLE
@@ -240,7 +240,7 @@ files:
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:145, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105,109-118, Source/Core/Core/DSP/DSPCore.h:44, Source/Core/Core/DSP/DSPCore.cpp:36-38, Source/Core/Core/DSP/DSPCore.cpp:28-102"
+    source_ref: "source Source/Core/Common/CommonPaths.h:145, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105, 109-118, source Source/Core/Core/DSP/DSPCore.h:44, source Source/Core/Core/DSP/DSPCore.cpp:36-38, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
     note: >
       LoadDSPRom rejects any file whose length differs from DSP_IROM_BYTE_SIZE and
       swaps every 16 bit word before storing it, so the Adler32 in the source is
@@ -260,7 +260,7 @@ files:
     adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0xe789b5a5"]]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:146, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105,110-119, Source/Core/Core/DSP/DSPCore.h:58, Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:61-62, Source/Core/Core/DSP/DSPCore.cpp:28-102"
+    source_ref: "source Source/Core/Common/CommonPaths.h:146, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-105, 110-119, source Source/Core/Core/DSP/DSPCore.h:58, upstream Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:61-62, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
     note: >
       Also read by the HLE AX ucode for polyphase resampling. Adler32 is taken over
       the byte-swapped data (Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:100-102).
@@ -275,7 +275,7 @@ files:
     required: false
     installed_on: [retrobat]
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:142, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131,203-247"
+    source_ref: "source Source/Core/Common/CommonPaths.h:142, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131, 203-247"
     note: >
       Size is the official font length the code reads from an IPL dump, 0x2575
       (Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:234-236). A standalone file is
@@ -289,7 +289,7 @@ files:
     required: false
     installed_on: [retrobat]
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:143, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130,203-247"
+    source_ref: "source Source/Core/Common/CommonPaths.h:143, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130, 203-247"
     note: "Size is the official font length read from an IPL dump, 0x4a24d. The fork's tree carries no font, RetroBat's dolphin-triforce package installs the free replacement here."
 
   # -- GBA BIOS --
@@ -298,7 +298,7 @@ files:
     description: "GBA BIOS for the GameCube to Game Boy Advance link"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:155, Source/Core/Common/FileUtil.cpp:917-919, Source/Core/Core/HW/GBACore.cpp:202-206,336-353"
+    source_ref: "source Source/Core/Common/CommonPaths.h:155, source Source/Core/Common/FileUtil.cpp:917-919, source Source/Core/Core/HW/GBACore.cpp:202-206, 336-353"
     note: >
       Loaded into the integrated mGBA core, which fails to start without it. The
       path is overridable by the Main.GBA BIOS setting
@@ -312,7 +312,7 @@ files:
     validation: [size]
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:87,127, Source/Core/Core/SysConf.cpp:19,54-65"
+    source_ref: "source Source/Core/Common/CommonPaths.h:87, 127, source Source/Core/Core/SysConf.cpp:19, 54-65"
     note: >
       SysConf::Load rejects any size other than SYSCONF_SIZE and falls back to
       built-in defaults. Generated by the emulator, can come from a NAND backup
@@ -324,7 +324,7 @@ files:
     size: 256
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:163, Source/Core/Core/Boot/Boot_BS2Emu.cpp:412-424, Source/Core/Common/SettingsHandler.h:21,26"
+    source_ref: "source Source/Core/Common/CommonPaths.h:163, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:412-424, source Source/Core/Common/SettingsHandler.h:21, 26"
     note: >
       Read into a fixed 256 byte buffer, then rewritten during Wii boot emulation
       from the region settings table.
@@ -334,7 +334,7 @@ files:
     description: "BootMii NAND backup, imported through the NAND importer"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:26-40,42-57"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:26-40, 42-57"
     note: >
       Accepted at 0x21000000 bytes, or 0x21000400 when the OTP and SEEPROM dump is
       appended. Any other size is rejected.
@@ -345,7 +345,7 @@ files:
     size: 1024
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:19,76-88,288-298, Source/Core/Core/IOS/IOSC.cpp:639-665"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:19, 76-88, 288-298, upstream Source/Core/Core/IOS/IOSC.cpp:639-665"
     note: >
       Asked for at import time when not appended to the NAND image, and written to
       the Wii root. Read at every boot, absence falls back to the built-in default
@@ -356,7 +356,7 @@ files:
     description: "SSL client certificate extracted from IOS13"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:201-286"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:201-286"
     note: "Located inside the IOS13 content during NAND import by its leading bytes."
 
   - name: "clientcakey.pem"
@@ -364,21 +364,21 @@ files:
     description: "SSL client private key extracted from IOS13"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:237"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:237"
 
   - name: "rootca.pem"
     path: "Wii/rootca.pem"
     description: "SSL root certificate extracted from IOS13"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DiscIO/NANDImporter.cpp:238"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:238"
 
   - name: "WiiSD.raw"
     path: "Load/WiiSD.raw"
     description: "Virtual SD card image for the Wii SD slot"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:160, Source/Core/Common/FileUtil.cpp:909"
+    source_ref: "source Source/Core/Common/CommonPaths.h:160, source Source/Core/Common/FileUtil.cpp:909"
     note: "Created by the emulator, path overridable by the General WiiSDCardPath setting."
 
   - name: "Wii System Menu"
@@ -386,7 +386,7 @@ files:
     description: "Wii System Menu WAD, installed into the emulated NAND"
     required: false
     hle_fallback: true
-    source_ref: "Source/Core/DolphinQt/MenuBar.cpp:290,1098-1112"
+    source_ref: "source Source/Core/DolphinQt/MenuBar.cpp:290, 1098-1112"
     note: "Needed to boot the Wii Menu. Installed through Tools, Install WAD."
 
   - name: "codehandler.bin"
@@ -395,7 +395,7 @@ files:
     required: false
     installed_on: [retrobat]
     hle_fallback: true
-    source_ref: "Source/Core/Common/CommonPaths.h:167, Source/Core/Core/GeckoCode.cpp:121-134"
+    source_ref: "source Source/Core/Common/CommonPaths.h:167, source Source/Core/Core/GeckoCode.cpp:121-134"
     note: >
       Read from the Sys root. Cheats are refused when it is missing and when it
       exceeds the installer window. Absent from the fork's tree, installed by

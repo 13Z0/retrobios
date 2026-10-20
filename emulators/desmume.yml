@@ -24,7 +24,7 @@ files:
     hle_fallback: true
     size: 16384
     validation: [size]
-    source_ref: "desmume/src/NDSSystem.cpp:2156-2166, desmume/src/frontend/libretro/libretro.cpp:763"
+    source_ref: "source desmume/src/NDSSystem.cpp:2156-2166, source desmume/src/frontend/libretro/libretro.cpp:763"
     note: "Native file needed for firmware boot and SWI-from-BIOS accuracy"
 
   - name: "bios9.bin"
@@ -34,7 +34,7 @@ files:
     hle_fallback: true
     size: 4096
     validation: [size]
-    source_ref: "desmume/src/NDSSystem.cpp:2214-2224, desmume/src/frontend/libretro/libretro.cpp:764"
+    source_ref: "source desmume/src/NDSSystem.cpp:2214-2224, source desmume/src/frontend/libretro/libretro.cpp:764"
     note: "Native file needed for firmware boot and logo comparison (Pal Park)"
 
   - name: "firmware.bin"
@@ -42,5 +42,5 @@ files:
     description: "NDS firmware image"
     required: false
     hle_fallback: true
-    source_ref: "desmume/src/firmware.cpp:249-280, desmume/src/frontend/libretro/libretro.cpp:765"
+    source_ref: "source desmume/src/firmware.cpp:249-280, source desmume/src/frontend/libretro/libretro.cpp:765"
     note: "Loaded only if both BIOS files present. Needed for boot animation, wifi config, user settings"

@@ -42,21 +42,21 @@ files:
     region: [north-america, latin-america]
     required: true
     note: "Sega CD (NTSC-U) boot ROM. Loaded for REGION_USA, which get_region sets for every disc whose security byte is neither 0x64 (Europe) nor 0xa1 (Japan) (core/loadrom.c:1065-1078)."
-    source_ref: "core/loadrom.c:409"
+    source_ref: "source core/loadrom.c:409"
 
   - name: bios_CD_E.bin
     system: sega-megacd
     region: [europe, oceania]
     required: true
     note: "Mega CD (PAL) boot ROM. Loaded for REGION_EUROPE, set by security byte 0x64 at 0x20b, the only PAL branch for Australian discs (core/loadrom.c:1065-1069)."
-    source_ref: "core/loadrom.c:412"
+    source_ref: "source core/loadrom.c:412"
 
   - name: bios_CD_J.bin
     system: sega-megacd
     region: [japan]
     required: true
     note: "Mega CD (NTSC-J) boot ROM. Loaded for default/Japan region."
-    source_ref: "core/loadrom.c:415"
+    source_ref: "source core/loadrom.c:415"
 
   # -------------------------------------------------------
   # Sega Master System - boot ROMs (optional, behind config.bios)
@@ -66,20 +66,20 @@ files:
     region: [north-america, europe]
     required: false
     note: "Master System (NTSC-U) boot ROM. Snail maze game built in. REGION_USA is the default of sms_cart_region_detect for any export header outside the PAL CRC list, so European cartridges load it too (core/cart_hw/sms_cart.c:831-874)."
-    source_ref: "core/loadrom.c:511"
+    source_ref: "source core/loadrom.c:511"
 
   - name: bios_E.sms
     system: sega-mastersystem
     required: false
     note: "Master System (PAL) boot ROM. Snail maze / Sonic built in. REGION_EUROPE comes only from CRC lists of Codemasters and PAL-timing games, Brazilian ones included, or the PAL option (core/cart_hw/sms_cart.c:167-171, 245-264, core/loadrom.c:1161-1164)."
-    source_ref: "core/loadrom.c:514"
+    source_ref: "source core/loadrom.c:514"
 
   - name: bios_J.sms
     system: sega-mastersystem
     region: [japan]
     required: false
     note: "Master System (NTSC-J) boot ROM."
-    source_ref: "core/loadrom.c:517"
+    source_ref: "source core/loadrom.c:517"
 
   # -------------------------------------------------------
   # Sega Game Gear - boot ROM (optional, behind config.bios)
@@ -88,7 +88,7 @@ files:
     system: sega-gamegear
     required: false
     note: "Game Gear boot ROM (Majesco 1KB or standard). Shows startup logo."
-    source_ref: "core/loadrom.c:480"
+    source_ref: "source core/loadrom.c:480"
 
   # -------------------------------------------------------
   # Sega Mega Drive / Genesis - TMSS boot ROM (optional)
@@ -97,7 +97,7 @@ files:
     system: sega-megadrive
     required: false
     note: "Mega Drive TMSS boot ROM. Shows 'Produced by or under license' screen."
-    source_ref: "libretro/libretro.c:3780"
+    source_ref: "source libretro/libretro.c:3780"
 
   # -------------------------------------------------------
   # Lock-on ROMs (optional, feature-gated)
@@ -106,13 +106,13 @@ files:
     system: sega-megadrive
     required: false
     note: "Game Genie ROM. Loaded when Game Genie lock-on is enabled."
-    source_ref: "core/cart_hw/ggenie.c:64, libretro/libretro.c:3516"
+    source_ref: "source core/cart_hw/ggenie.c:64, source libretro/libretro.c:3516"
 
   - name: areplay.bin
     system: sega-megadrive
     required: false
     note: "Action Replay (Pro) ROM. Loaded when Action Replay lock-on is enabled."
-    source_ref: "core/cart_hw/areplay.c:64, libretro/libretro.c:3517"
+    source_ref: "source core/cart_hw/areplay.c:64, source libretro/libretro.c:3517"
 
   - name: sk.bin
     system: sega-megadrive
@@ -120,7 +120,7 @@ files:
     size: 2097152
     validation: [size]
     note: "Sonic & Knuckles ROM. Required for S&K lock-on feature."
-    source_ref: "core/cart_hw/md_cart.c:867"
+    source_ref: "source core/cart_hw/md_cart.c:867"
 
   - name: sk2chip.bin
     system: sega-megadrive
@@ -128,12 +128,12 @@ files:
     size: 262144
     validation: [size]
     note: "Sonic & Knuckles UPMEM ROM. Used by Sonic 2 & Knuckles lock-on."
-    source_ref: "core/cart_hw/md_cart.c:873"
+    source_ref: "source core/cart_hw/md_cart.c:873"
 
 platform_details:
   megacd:
     bootrom_size: 131072      # 128 KB
-    source_ref: "core/cd_hw/scd.h:73"
+    source_ref: "source core/cd_hw/scd.h:73"
     note: |
       CD boot ROM region is auto-detected from disc image header.
       Hardware model detected from boot ROM string at offset 0x120:
@@ -143,14 +143,14 @@ platform_details:
 
   megadrive:
     tmss_rom_size: 2048       # 2 KB
-    source_ref: "libretro/libretro.c:3648-3666"
+    source_ref: "source libretro/libretro.c:3648-3666"
     note: |
       TMSS boot ROM validated by checking "GENESIS OS" at offset 0x120.
       Only loaded when genesis_plus_gx_bios core option is enabled.
 
   mastersystem:
     bios_max_size: 4194304    # 4 MB (stored above cart ROM)
-    source_ref: "core/loadrom.c:504-527"
+    source_ref: "source core/loadrom.c:504-527"
     note: |
       BIOS ROM loaded into cart.rom + 0x400000. SEGA mapper assumed
       for ROMs larger than 48KB, otherwise no mapper.
@@ -158,7 +158,7 @@ platform_details:
 
   gamegear:
     bios_max_size: 4194304    # 4 MB (stored above cart ROM)
-    source_ref: "core/loadrom.c:467-489"
+    source_ref: "source core/loadrom.c:467-489"
     note: |
       Handles 1KB Majesco GG BIOS (mapped to $0000-$03FF) and
       standard larger BIOS ROMs.

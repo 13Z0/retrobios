@@ -71,5 +71,5 @@ files:
     required: true
     validation: [existence]
     description: "Omicron libretro Java backend: engine, libGDX, LWJGL and their natives"
-    source_ref: "libretro/LibretroOmicronCore/omicron_libretro.c:364-387 (GET_SYSTEM_DIRECTORY, omicron/omicron.jar, fileExists), libretro/LibretroOmicronCore/ejava.c:258-287 (Bootstrap main with the jar path), libretro/omicron-libretro-java/src/Bootstrap.java:33-39 (URLClassLoader, EntryPoint), libretro/omicron-libretro-java/pom.xml:13-61"
+    source_ref: "source libretro/LibretroOmicronCore/omicron_libretro.c:364-387 (GET_SYSTEM_DIRECTORY, omicron/omicron.jar, fileExists), source libretro/LibretroOmicronCore/ejava.c:258-287 (Bootstrap main with the jar path), source libretro/omicron-libretro-java/src/Bootstrap.java:33-39 (URLClassLoader, EntryPoint), source libretro/omicron-libretro-java/pom.xml:13-61"
     note: "Built with mvn package assembly:single in libretro/omicron-libretro-java after the omicron-api, omicron-loader and omicron-engine Gradle modules are published to the local Maven repository. The jar-with-dependencies output is renamed omicron.jar. Only its presence is checked."

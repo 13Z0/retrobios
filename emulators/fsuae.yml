@@ -40,7 +40,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 500 Kickstart 1.3 r34.5. Default model ROM."
-    source_ref: "rommgr.cpp:150-151 (id=6, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:150-151 (id=6, ROMTYPE_KICK)"
 
   - name: "amiga-os-204.rom"
     system: amiga
@@ -51,7 +51,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 500+ Kickstart 2.04 r37.175."
-    source_ref: "rommgr.cpp:158-159 (id=7, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:158-159 (id=7, ROMTYPE_KICK)"
 
   - name: "amiga-os-205.rom"
     system: amiga
@@ -62,7 +62,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 600 Kickstart 2.05 r37.350."
-    source_ref: "rommgr.cpp:164-165 (id=10, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:164-165 (id=10, ROMTYPE_KICK)"
 
   - name: "amiga-os-120.rom"
     system: amiga
@@ -73,7 +73,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 1000 Kickstart 1.2 r33.180."
-    source_ref: "rommgr.cpp:148-149 (id=5, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:148-149 (id=5, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a1200.rom"
     system: amiga
@@ -84,7 +84,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 1200 Kickstart 3.1 r40.68."
-    source_ref: "rommgr.cpp:185-186 (id=15, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:185-186 (id=15, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a3000.rom"
     system: amiga
@@ -95,7 +95,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 3000 Kickstart 3.1 r40.68."
-    source_ref: "rommgr.cpp:189-190 (id=61, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:189-190 (id=61, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a4000.rom"
     system: amiga
@@ -106,7 +106,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga 4000 Kickstart 3.1 r40.68."
-    source_ref: "rommgr.cpp:195-196 (id=16, ROMTYPE_KICK)"
+    source_ref: "upstream rommgr.cpp:195-196 (id=16, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-cd32.rom"
     system: amiga
@@ -117,7 +117,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Amiga CD32 Kickstart 3.1 r40.60."
-    source_ref: "rommgr.cpp:312-313 (id=18, ROMTYPE_KICKCD32)"
+    source_ref: "upstream rommgr.cpp:312-313 (id=18, ROMTYPE_KICKCD32)"
 
   - name: "amiga-ext-310-cd32.rom"
     system: amiga
@@ -127,7 +127,7 @@ files:
     validation: [sha1]
     mode: both
     note: "CD32 extended ROM r40.60. Required for CD32 mode."
-    source_ref: "rommgr.cpp:314-315 (id=19, ROMTYPE_EXTCD32)"
+    source_ref: "upstream rommgr.cpp:314-315 (id=19, ROMTYPE_EXTCD32)"
 
   - name: "cd32fmv.rom"
     system: amiga
@@ -137,7 +137,7 @@ files:
     validation: [sha1]
     mode: both
     note: "CD32 Full Motion Video cartridge ROM v40.30. Also accepts v40.22 (391777-01)."
-    source_ref: "rommgr.cpp:323-326 (id=23/74, ROMTYPE_CD32CART)"
+    source_ref: "upstream rommgr.cpp:323-326 (id=23/74, ROMTYPE_CD32CART)"
 
   - name: "amiga-ext-130-cdtv.rom"
     system: amiga
@@ -147,11 +147,11 @@ files:
     validation: [sha1]
     mode: both
     note: "CDTV extended ROM v1.0. Required for CDTV mode. Also accepts v2.30 and v2.7."
-    source_ref: "rommgr.cpp:328-329 (id=20, ROMTYPE_EXTCDTV)"
+    source_ref: "upstream rommgr.cpp:328-329 (id=20, ROMTYPE_EXTCDTV)"
 
   - name: "rom.key"
     system: amiga
     required: false
     mode: both
     note: "Cloanto Amiga Forever decryption key. Enables encrypted ROM loading."
-    source_ref: "rommgr.cpp:119-124 (ROMTYPE_KEY), rommgr.cpp:1397-1412 (addkeydir)"
+    source_ref: "upstream rommgr.cpp:119-124 (ROMTYPE_KEY), upstream rommgr.cpp:1397-1412 (addkeydir)"

@@ -45,7 +45,7 @@ files:
     on_mismatch: warn
     md5: "ca30b50f880eb660a320674ed365ef7a"
     sha1: "57fe1bdee955bb48d357e463ccbf129496930b62"
-    source_ref: "libretro/libretro.cpp:2169-2197 (FDS load), source/core/NstFds.cpp:57-127 (Bios class, CRC32 logged), source/core/api/NstApiFds.cpp:101-150 (iNES header skipped)"
+    source_ref: "source libretro/libretro.cpp:2169-2197 (FDS load), source source/core/NstFds.cpp:57-127 (Bios class, CRC32 logged), source source/core/api/NstApiFds.cpp:101-150 (iNES header skipped)"
     note: "Mapped at 0xE000-0xFFFF (8 KB). retro_load_game returns false if missing when loading .fds files. CRC32 checked: Famicom 0x5E607DCF, Twin Famicom 0x4DF24A6C."
 
   # --- NES game database (optional, overrides baked-in copy) ---
@@ -55,7 +55,7 @@ files:
     required: false
     installed_on: [batocera]
     hle_fallback: true
-    source_ref: "libretro/libretro.cpp:2121-2151 (database load), libretro/nstdatabase.hpp (baked-in fallback)"
+    source_ref: "source libretro/libretro.cpp:2121-2151 (database load), source libretro/nstdatabase.hpp (baked-in fallback)"
     note: "XML database matching games by SHA1+CRC32. Used for region, mapper, mirroring, and 4-player adapter detection. Built-in fallback exists so this file is optional."
 
   # --- Custom palette (optional, core option nestopia_palette = Custom) ---
@@ -65,7 +65,7 @@ files:
     required: false
     hle_fallback: true
     size: 192
-    source_ref: "libretro/libretro.cpp:2099-2120 (palette load)"
+    source_ref: "source libretro/libretro.cpp:2099-2120 (palette load)"
     note: "64 RGB triplets (64 x 3 bytes = 192 bytes). Loaded unconditionally at startup, applied only when nestopia_palette core option is set to Custom. Falls back to built-in Royaltea palette. Multiple valid palettes exist so no canonical hash."
 
   # --- ADPCM audio samples (optional, game-specific) ---
@@ -75,7 +75,7 @@ files:
     description: "Moero Pro Yakyuu audio samples (16 .wav files, 00.wav-15.wav)"
     required: false
     category: game_data
-    source_ref: "libretro/libretro.cpp:183-391 (load_wav), libretro/libretro.cpp:451 (LOAD_SAMPLE_MOERO_PRO_YAKYUU callback), source/core/NstSoundPlayer.hpp:49 (16 samples)"
+    source_ref: "source libretro/libretro.cpp:183-391 (load_wav), source libretro/libretro.cpp:451 (LOAD_SAMPLE_MOERO_PRO_YAKYUU callback), source source/core/NstSoundPlayer.hpp:49 (16 samples)"
 
   - name: "nestopia/samples/moepro88/"
     type: directory
@@ -83,7 +83,7 @@ files:
     description: "Moero Pro Yakyuu '88 audio samples (20 .wav files, 00.wav-19.wav)"
     required: false
     category: game_data
-    source_ref: "libretro/libretro.cpp:183-391 (load_wav), libretro/libretro.cpp:453 (LOAD_SAMPLE_MOERO_PRO_YAKYUU_88 callback), source/core/NstSoundPlayer.hpp:50 (20 samples)"
+    source_ref: "source libretro/libretro.cpp:183-391 (load_wav), source libretro/libretro.cpp:453 (LOAD_SAMPLE_MOERO_PRO_YAKYUU_88 callback), source source/core/NstSoundPlayer.hpp:50 (20 samples)"
 
   - name: "nestopia/samples/mptennis/"
     type: directory
@@ -91,7 +91,7 @@ files:
     description: "Moero Pro Tennis audio samples (19 .wav files, 00.wav-18.wav)"
     required: false
     category: game_data
-    source_ref: "libretro/libretro.cpp:183-391 (load_wav), libretro/libretro.cpp:455 (LOAD_SAMPLE_MOERO_PRO_TENNIS callback), source/core/NstSoundPlayer.hpp:51 (19 samples)"
+    source_ref: "source libretro/libretro.cpp:183-391 (load_wav), source libretro/libretro.cpp:455 (LOAD_SAMPLE_MOERO_PRO_TENNIS callback), source source/core/NstSoundPlayer.hpp:51 (19 samples)"
 
   - name: "nestopia/samples/terao/"
     type: directory
@@ -99,7 +99,7 @@ files:
     description: "Terao no Dosukoi Oozumou audio samples (6 .wav files, 00.wav-05.wav)"
     required: false
     category: game_data
-    source_ref: "libretro/libretro.cpp:183-391 (load_wav), libretro/libretro.cpp:457 (LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU callback), source/core/NstSoundPlayer.hpp:52 (6 samples)"
+    source_ref: "source libretro/libretro.cpp:183-391 (load_wav), source libretro/libretro.cpp:457 (LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU callback), source source/core/NstSoundPlayer.hpp:52 (6 samples)"
 
   - name: "nestopia/samples/ftaerobi/"
     type: directory
@@ -107,4 +107,4 @@ files:
     description: "Aerobics Studio audio samples (8 .wav files, 00.wav-07.wav)"
     required: false
     category: game_data
-    source_ref: "libretro/libretro.cpp:183-391 (load_wav), libretro/libretro.cpp:459 (LOAD_SAMPLE_AEROBICS_STUDIO callback), source/core/NstSoundPlayer.hpp:53 (8 samples)"
+    source_ref: "source libretro/libretro.cpp:183-391 (load_wav), source libretro/libretro.cpp:459 (LOAD_SAMPLE_AEROBICS_STUDIO callback), source source/core/NstSoundPlayer.hpp:53 (8 samples)"

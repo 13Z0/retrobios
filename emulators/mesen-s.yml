@@ -35,7 +35,7 @@ files:
     hle_fallback: true
     validation: [size]
     note: "DSP-1 program ROM. HLE fallback in libretro port only"
-    source_ref: "Core/NecDsp.cpp:95, Core/FirmwareHelper.h:17-35"
+    source_ref: "upstream Core/NecDsp.cpp:95, source Core/FirmwareHelper.h:17-35"
 
   - name: "dsp1.data.rom"
     size: 2048
@@ -43,7 +43,7 @@ files:
     hle_fallback: true
     validation: [size]
     note: "DSP-1 data ROM"
-    source_ref: "Core/NecDsp.cpp:95, Core/FirmwareHelper.h:17-35"
+    source_ref: "upstream Core/NecDsp.cpp:95, source Core/FirmwareHelper.h:17-35"
 
   - name: "dsp1b.program.rom"
     size: 6144
@@ -51,7 +51,7 @@ files:
     hle_fallback: true
     validation: [size]
     note: "DSP-1B program ROM. HLE fallback in libretro port only"
-    source_ref: "Core/NecDsp.cpp:96"
+    source_ref: "upstream Core/NecDsp.cpp:96"
 
   - name: "dsp1b.data.rom"
     size: 2048
@@ -59,49 +59,49 @@ files:
     hle_fallback: true
     validation: [size]
     note: "DSP-1B data ROM"
-    source_ref: "Core/NecDsp.cpp:96"
+    source_ref: "upstream Core/NecDsp.cpp:96"
 
   - name: "dsp2.program.rom"
     size: 6144
     required: false
     validation: [size]
     note: "DSP-2 program ROM"
-    source_ref: "Core/NecDsp.cpp:97"
+    source_ref: "upstream Core/NecDsp.cpp:97"
 
   - name: "dsp2.data.rom"
     size: 2048
     required: false
     validation: [size]
     note: "DSP-2 data ROM"
-    source_ref: "Core/NecDsp.cpp:97"
+    source_ref: "upstream Core/NecDsp.cpp:97"
 
   - name: "dsp3.program.rom"
     size: 6144
     required: false
     validation: [size]
     note: "DSP-3 program ROM"
-    source_ref: "Core/NecDsp.cpp:98"
+    source_ref: "upstream Core/NecDsp.cpp:98"
 
   - name: "dsp3.data.rom"
     size: 2048
     required: false
     validation: [size]
     note: "DSP-3 data ROM"
-    source_ref: "Core/NecDsp.cpp:98"
+    source_ref: "upstream Core/NecDsp.cpp:98"
 
   - name: "dsp4.program.rom"
     size: 6144
     required: false
     validation: [size]
     note: "DSP-4 program ROM"
-    source_ref: "Core/NecDsp.cpp:99"
+    source_ref: "upstream Core/NecDsp.cpp:99"
 
   - name: "dsp4.data.rom"
     size: 2048
     required: false
     validation: [size]
     note: "DSP-4 data ROM"
-    source_ref: "Core/NecDsp.cpp:99"
+    source_ref: "upstream Core/NecDsp.cpp:99"
 
   # -- NEC uPD96050 coprocessor firmware (split format) --
   # Combined format also accepted: st010.rom (53248), st011.rom (53248)
@@ -111,28 +111,28 @@ files:
     required: false
     validation: [size]
     note: "ST-010 program ROM"
-    source_ref: "Core/NecDsp.cpp:100"
+    source_ref: "upstream Core/NecDsp.cpp:100"
 
   - name: "st010.data.rom"
     size: 4096
     required: false
     validation: [size]
     note: "ST-010 data ROM"
-    source_ref: "Core/NecDsp.cpp:100"
+    source_ref: "upstream Core/NecDsp.cpp:100"
 
   - name: "st011.program.rom"
     size: 49152
     required: false
     validation: [size]
     note: "ST-011 program ROM"
-    source_ref: "Core/NecDsp.cpp:101"
+    source_ref: "upstream Core/NecDsp.cpp:101"
 
   - name: "st011.data.rom"
     size: 4096
     required: false
     validation: [size]
     note: "ST-011 data ROM"
-    source_ref: "Core/NecDsp.cpp:101"
+    source_ref: "upstream Core/NecDsp.cpp:101"
 
   # -- Game Boy boot ROMs --
 
@@ -143,7 +143,7 @@ files:
     aliases: [gb_bios.bin]
     validation: [size]
     note: "Game Boy (DMG) boot ROM. Falls back to embedded SameBoy open-source boot ROM"
-    source_ref: "Core/FirmwareHelper.h:148, Core/Gameboy.cpp:108-114, Core/GbBootRom.h:7"
+    source_ref: "source Core/FirmwareHelper.h:148, source Core/Gameboy.cpp:108-114, source Core/GbBootRom.h:7"
 
   - name: "cgb_boot.bin"
     size: 2304
@@ -152,7 +152,7 @@ files:
     aliases: [gbc_bios.bin]
     validation: [size]
     note: "Game Boy Color boot ROM. Falls back to embedded SameBoy open-source boot ROM"
-    source_ref: "Core/FirmwareHelper.h:149, Core/Gameboy.cpp:108-119, Core/GbBootRom.h:83"
+    source_ref: "source Core/FirmwareHelper.h:149, source Core/Gameboy.cpp:108-119, source Core/GbBootRom.h:83"
 
   - name: "sgb_boot.bin"
     size: 256
@@ -161,7 +161,7 @@ files:
     aliases: [sgb_bios.bin]
     validation: [size]
     note: "Super Game Boy boot ROM for GB CPU. Falls back to embedded SameBoy open-source boot ROM"
-    source_ref: "Core/FirmwareHelper.h:150, Core/Gameboy.cpp:108-127, Core/GbBootRom.h:32"
+    source_ref: "source Core/FirmwareHelper.h:150, source Core/Gameboy.cpp:108-127, source Core/GbBootRom.h:32"
 
   - name: "sgb2_boot.bin"
     size: 256
@@ -170,7 +170,7 @@ files:
     aliases: [sgb_bios.bin]
     validation: [size]
     note: "Super Game Boy 2 boot ROM for GB CPU. Falls back to embedded SameBoy open-source boot ROM"
-    source_ref: "Core/FirmwareHelper.h:151, Core/Gameboy.cpp:108-127, Core/GbBootRom.h:57"
+    source_ref: "source Core/FirmwareHelper.h:151, source Core/Gameboy.cpp:108-127, source Core/GbBootRom.h:57"
 
   # -- Super Game Boy cartridge ROMs --
 
@@ -179,14 +179,14 @@ files:
     required: false
     validation: [size]
     note: "Super Game Boy SNES cartridge ROM. Without it, SGB mode falls back to regular GB"
-    source_ref: "Core/FirmwareHelper.h:118-133, Core/BaseCartridge.cpp:630-638"
+    source_ref: "upstream Core/FirmwareHelper.h:118-133, source Core/BaseCartridge.cpp:630-638"
 
   - name: "SGB2.sfc"
     size: 524288
     required: false
     validation: [size]
     note: "Super Game Boy 2 SNES cartridge ROM. Core option mesen-s_sgb2 selects SGB version"
-    source_ref: "Core/FirmwareHelper.h:118-133, Core/BaseCartridge.cpp:630-638"
+    source_ref: "upstream Core/FirmwareHelper.h:118-133, source Core/BaseCartridge.cpp:630-638"
 
   # -- Satellaview --
 
@@ -195,4 +195,4 @@ files:
     required: false
     validation: [size]
     note: "Satellaview BS-X BIOS ROM. Minimum accepted size is 32768 bytes"
-    source_ref: "Core/FirmwareHelper.h:39-47,96-113, Core/BaseCartridge.cpp:65"
+    source_ref: "source Core/FirmwareHelper.h:39-47, 96-113, source Core/BaseCartridge.cpp:65"

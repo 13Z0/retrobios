@@ -90,7 +90,7 @@ files:
     on_mismatch: warn
     description: "GameCube boot ROM, NTSC-U directory"
     note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted, and the four non-PAL dumps pass here without complaint."
-    source_ref: "Source/Core/Core/ConfigManager.cpp:861-868, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:99-112, Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, Source/Core/Core/Boot/Boot.cpp:296-330"
+    source_ref: "source Source/Core/Core/ConfigManager.cpp:861-868, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:99-112, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, source Source/Core/Core/Boot/Boot.cpp:296-330"
 
   - name: IPL.bin
     path: GC/EUR/IPL.bin
@@ -104,7 +104,7 @@ files:
     on_mismatch: warn
     description: "GameCube boot ROM, PAL directory"
     note: "The two PAL dumps are the ones this directory takes without a mismatch warning."
-    source_ref: "Source/Core/Core/ConfigManager.cpp:835-849, Source/Core/Core/Boot/Boot.cpp:298-337"
+    source_ref: "source Source/Core/Core/ConfigManager.cpp:835-849, source Source/Core/Core/Boot/Boot.cpp:298-337"
 
   - name: IPL.bin
     path: GC/JAP/IPL.bin
@@ -118,7 +118,7 @@ files:
     on_mismatch: warn
     description: "GameCube boot ROM, NTSC-J directory"
     note: "JAP is the only Japanese directory name this fork knows. FindIPLDump, which serves the font path, scans USA then EUR then JAP and stops at the first hit."
-    source_ref: "Source/Core/Common/CommonPaths.h:32-34, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:174-186"
+    source_ref: "source Source/Core/Common/CommonPaths.h:32-34, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:174-186"
 
   - name: font_western.bin
     path: null
@@ -130,7 +130,7 @@ files:
     hle_fallback: true
     description: "Windows-1252 font, loaded at 0x1fcf00"
     note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
-    source_ref: "Source/Core/Common/CommonPaths.h:105, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:126, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
+    source_ref: "source Source/Core/Common/CommonPaths.h:105, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:126, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
 
   - name: font_japanese.bin
     path: null
@@ -142,7 +142,7 @@ files:
     hle_fallback: true
     description: "Shift JIS font, loaded at 0x1aff00"
     note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
-    source_ref: "Source/Core/Common/CommonPaths.h:106, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:125, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
+    source_ref: "source Source/Core/Common/CommonPaths.h:106, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:125, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
 
   - name: dsp_rom.bin
     path: GC/dsp_rom.bin
@@ -156,7 +156,7 @@ files:
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0x128ea7a2", "0xa4a575f5"]]
     description: "DSP instruction ROM"
     note: "DSP LLE only, and LLE aborts when the file is absent or not 8192 bytes. The adler32 is taken over the byte-swapped image and the value here is the Nintendo pair. Five replacement pairs are also accepted."
-    source_ref: "Source/Core/Common/CommonPaths.h:108, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:120-152, Source/Core/Core/DSP/DSPCore.h:35, Source/Core/Core/DSP/DSPCore.cpp:38-80"
+    source_ref: "source Source/Core/Common/CommonPaths.h:108, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:120-152, source Source/Core/Core/DSP/DSPCore.h:35, source Source/Core/Core/DSP/DSPCore.cpp:38-80"
 
   - name: dsp_coef.bin
     path: GC/dsp_coef.bin
@@ -170,7 +170,7 @@ files:
     adler32_pairs: [["0xf3b93527", "0x66f334fe"], ["0xa4a575f5", "0x128ea7a2"]]
     description: "DSP coefficient ROM"
     note: "Read by DSP LLE alongside the instruction ROM, and by the AX ucode under HLE for polyphase resampling, which drops any file that is not 0x1000 bytes and plays on without it."
-    source_ref: "Source/Core/Common/CommonPaths.h:109, Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:120-152, Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:45-70, Source/Core/Core/DSP/DSPCore.h:49, Source/Core/Core/DSP/DSPCore.cpp:38-105"
+    source_ref: "source Source/Core/Common/CommonPaths.h:109, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:120-152, source Source/Core/Core/HW/DSPHLE/UCodes/AX.cpp:45-70, source Source/Core/Core/DSP/DSPCore.h:49, source Source/Core/Core/DSP/DSPCore.cpp:38-105"
 
   - name: codehandler.bin
     path: null
@@ -181,7 +181,7 @@ files:
     md5: "5b79fad600c6257c928c108cef7034a7"
     description: "Gecko code handler"
     note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
-    source_ref: "Source/Core/Common/CommonPaths.h:124, Source/Core/Core/GeckoCode.cpp:121-136"
+    source_ref: "source Source/Core/Common/CommonPaths.h:124, source Source/Core/Core/GeckoCode.cpp:121-136"
 
   - name: keys.bin
     path: Wii/keys.bin
@@ -192,7 +192,7 @@ files:
     validation: [size]
     description: "BootMii key dump, console keys and identity"
     note: "Read at every key store construction, so on every Wii title. Supplies the console private key and signature, the MS and CA identifiers, the NAND key and HMAC and the backup key. A short read leaves the built-in keys in place, the structure being fixed at 0x400 bytes."
-    source_ref: "Source/Core/Core/IOS/IOSC.cpp:94, Source/Core/Core/IOS/IOSC.cpp:136-140, Source/Core/Core/IOS/IOSC.cpp:559-584"
+    source_ref: "source Source/Core/Core/IOS/IOSC.cpp:94, source Source/Core/Core/IOS/IOSC.cpp:136-140, source Source/Core/Core/IOS/IOSC.cpp:559-584"
 
   - name: SYSCONF
     path: Wii/shared2/sys/SYSCONF
@@ -203,7 +203,7 @@ files:
     validation: [size]
     description: "Wii system configuration"
     note: "Opened through the emulated filesystem and accepted only at 0x4000 bytes, and anything else is replaced by a freshly generated one."
-    source_ref: "Source/Core/Common/CommonPaths.h:90, Source/Core/Core/SysConf.cpp:20, Source/Core/Core/SysConf.cpp:55-66"
+    source_ref: "source Source/Core/Common/CommonPaths.h:90, source Source/Core/Core/SysConf.cpp:20, upstream Source/Core/Core/SysConf.cpp:55-66"
 
   - name: setting.txt
     path: Wii/title/00000001/00000002/data/setting.txt
@@ -214,7 +214,7 @@ files:
     validation: [size]
     description: "Wii region and language settings"
     note: "Read for its serial number at Wii boot, then deleted and written again from the emulated region settings. The read fills a fixed 0x100 byte buffer, so a shorter file yields nothing."
-    source_ref: "Source/Core/Common/CommonPaths.h:122, Source/Core/Common/SettingsHandler.h:22-27, Source/Core/Core/Boot/Boot_BS2Emu.cpp:228-256"
+    source_ref: "source Source/Core/Common/CommonPaths.h:122, source Source/Core/Common/SettingsHandler.h:22-27, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:228-256"
 
   - name: sd.raw
     path: Wii/sd.raw
@@ -223,7 +223,7 @@ files:
     hle_fallback: true
     description: "Wii SD card image"
     note: "Opened read-write when the SD device is opened, and a 128 MB image is created when the file is missing."
-    source_ref: "Source/Core/Common/CommonPaths.h:119, Source/Core/Common/FileUtil.cpp:802, Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:60-79"
+    source_ref: "source Source/Core/Common/CommonPaths.h:119, source Source/Core/Common/FileUtil.cpp:802, source Source/Core/Core/IOS/SDIO/SDIOSlot0.cpp:60-79"
 
   - name: wiitdb.txt
     path: Load/wiitdb.txt
@@ -231,14 +231,14 @@ files:
     required: false
     description: "user title database"
     note: "One title id equals name pair per line, ids of four characters and up. titles.txt is read only when wiitdb.txt yields nothing. Overlays the per-language databases shipped in the Sys directory."
-    source_ref: "Source/Core/Core/TitleDatabase.cpp:26-48, Source/Core/Core/TitleDatabase.cpp:50-63, Source/Core/Core/TitleDatabase.cpp:86-94"
+    source_ref: "source Source/Core/Core/TitleDatabase.cpp:26-48, source Source/Core/Core/TitleDatabase.cpp:50-63, source Source/Core/Core/TitleDatabase.cpp:86-94"
 
   - name: mios-ipl.map
     path: Maps/mios-ipl.map
     required: false
     description: "MIOS symbol map"
     note: "Read from Maps/ in the user directory when MIOS starts, and a successful load re-applies the HLE function patches against the symbols it names."
-    source_ref: "Source/Core/Core/IOS/MIOS.cpp:47, Source/Core/Core/IOS/MIOS.cpp:55-66"
+    source_ref: "source Source/Core/Core/IOS/MIOS.cpp:47, source Source/Core/Core/IOS/MIOS.cpp:55-66"
 
   - name: GFZE01.map
     path: null
@@ -249,7 +249,7 @@ files:
     md5: "672ef9ca67e0fcbe4b3aa23a05720c25"
     description: "symbol map for game id GFZE01"
     note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
-    source_ref: "Source/Core/Core/Boot/Boot.cpp:253-290"
+    source_ref: "source Source/Core/Core/Boot/Boot.cpp:253-290"
 
   - name: GMBE8P.map
     path: null
@@ -260,7 +260,7 @@ files:
     md5: "43e5f1631e9bbcf84cc3c4fb90ec8ade"
     description: "symbol map for game id GMBE8P"
     note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
-    source_ref: "Source/Core/Core/Boot/Boot.cpp:253-290"
+    source_ref: "source Source/Core/Core/Boot/Boot.cpp:253-290"
 
 valid_bios_crc32:
   ipl_ntsc:

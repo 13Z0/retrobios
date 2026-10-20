@@ -80,7 +80,7 @@ files:
     sha1: "002308e952d454a2efdfd6ebf5f5817f1d742637"
     md5: "b65d86f7bdb0041b8891e064ff7933e4"
     description: "Arcade set, board and firmware database"
-    source_ref: "src/core/arcade/arcade_database.cpp:28, 1137-1154, src/arcadeduck-qt/qthost.cpp:1944-1951"
+    source_ref: "source src/core/arcade/arcade_database.cpp:28, 1137-1154, source src/arcadeduck-qt/qthost.cpp:1944-1951"
     note: "Hashes are those of the copy in the release archive, written with CRLF line endings. The repository copy at 26caf9c holds the same text with LF endings."
 
   - name: "konamigv.zip"
@@ -88,7 +88,7 @@ files:
     required: true
     category: bios_zip
     description: "Konami GV BIOS"
-    source_ref: "src/core/bios.cpp:169-176, 233-358, src/core/arcade/arcade_machine_handler.cpp:36-38"
+    source_ref: "source src/core/bios.cpp:169-176, 233-358, source src/core/arcade/arcade_machine_handler.cpp:36-38"
     contents:
       - name: "999a01.7e"
         size: 524288
@@ -100,7 +100,7 @@ files:
     required: true
     category: bios_zip
     description: "Namco System 11 C76 firmware"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:140-145, src/core/arcade/systems/namco/system11/namco_system11.cpp:198-240, 548-556, data/resources/arcadedb.yaml:69"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:140-145, source src/core/arcade/systems/namco/system11/namco_system11.cpp:198-240, 548-556, source data/resources/arcadedb.yaml:69"
     note: "c76.bin is the internal ROM of the C76 sound and I/O MCU."
     contents:
       - name: "c76.bin"
@@ -113,7 +113,7 @@ files:
     required: true
     category: bios_zip
     description: "Capcom ZN-1 (COH-1000C) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:227-233, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2836-2844, data/resources/arcadedb.yaml:110"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:227-233, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2836-2844, source data/resources/arcadedb.yaml:110"
     note: "The handler always asks for BIOS variant j, the Japanese mask ROM m534002c-13.ic353. msm27c402zb.ic353, the e variant listed beside it, is never read."
     contents:
       - name: "m534002c-13.ic353"
@@ -130,7 +130,7 @@ files:
     required: true
     category: bios_zip
     description: "Video System ZN-1 (COH-1002V) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:300-303, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2961-2969, data/resources/arcadedb.yaml:294"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:300-303, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2961-2969, source data/resources/arcadedb.yaml:294"
     contents:
       - name: "coh-1002v.ic353"
         size: 524288
@@ -146,7 +146,7 @@ files:
     required: true
     category: bios_zip
     description: "Atlus ZN-1 (COH-1001L) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:367-370, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3063, data/resources/arcadedb.yaml:264"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:367-370, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3063, source data/resources/arcadedb.yaml:264"
     contents:
       - name: "m534002c-17.ic353"
         size: 524288
@@ -162,7 +162,7 @@ files:
     required: true
     category: bios_zip
     description: "Eighting/Raizing ZN-1 (COH-1002E) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:451-454, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3219, 3352, data/resources/arcadedb.yaml:324"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:451-454, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3219, 3352, source data/resources/arcadedb.yaml:324"
     contents:
       - name: "m27c402cz-54.ic353"
         size: 524288
@@ -178,7 +178,7 @@ files:
     required: true
     category: bios_zip
     description: "Time Warner / Atari ZN-1 (COH-1000W) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:539-542, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3435, data/resources/arcadedb.yaml:235"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:539-542, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3435, source data/resources/arcadedb.yaml:235"
     contents:
       - name: "msm27c402zb.ic353"
         size: 524288
@@ -194,7 +194,7 @@ files:
     required: true
     category: bios_zip
     description: "Acclaim ZN-1 (COH-1000A) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:614-617, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3574, data/resources/arcadedb.yaml:206"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:614-617, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3574, source data/resources/arcadedb.yaml:206"
     contents:
       - name: "m534002c-15.ic353"
         size: 524288
@@ -210,7 +210,7 @@ files:
     required: true
     category: bios_zip
     description: "Tecmo TPS (COH-1002M) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:709-712, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3905, data/resources/arcadedb.yaml:355"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:709-712, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3905, source data/resources/arcadedb.yaml:355"
     contents:
       - name: "m534002c-61.ic353"
         size: 524288
@@ -226,7 +226,7 @@ files:
     required: true
     category: bios_zip
     description: "Taito FX-1 (COH-1000T) BIOS"
-    source_ref: "src/core/arcade/arcade_machine_handler.cpp:836-839, src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3687, 3795, data/resources/arcadedb.yaml:175"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:836-839, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3687, 3795, source data/resources/arcadedb.yaml:175"
     contents:
       - name: "m534002c-14.ic353"
         size: 524288

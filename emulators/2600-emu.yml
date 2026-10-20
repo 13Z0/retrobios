@@ -81,46 +81,46 @@ files:
     required: false
     category: game_data
     description: "KidVid Voice Module shared samples, tested for both games"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:273,299"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:273, 299"
 
   - name: KVS1.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Smurfs Save the Day, Harmony Smurf"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:244,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:244, 247-249, 272"
 
   - name: KVS2.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Smurfs Save the Day, Handy Smurf"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:244,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:244, 247-249, 272"
 
   - name: KVS3.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Smurfs Save the Day, Greedy Smurf"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:244,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:244, 247-249, 272"
 
   - name: KVB1.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Berenstain Bears, Big Number Hunt"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:245,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:245, 247-249, 272"
 
   - name: KVB2.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Berenstain Bears, Great Letter Roundup"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:245,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:245, 247-249, 272"
 
   - name: KVB3.WAV
     system: atari-2600
     required: false
     category: game_data
     description: "KidVid tape for Berenstain Bears, Spooky Spelling Bee"
-    source_ref: "2600.emu/src/stella/emucore/KidVid.cxx:245,247-249,272"
+    source_ref: "source 2600.emu/src/stella/emucore/KidVid.cxx:245, 247-249, 272"

@@ -91,7 +91,7 @@ files:
       skips it. Named after the board model by the dumper, extension rom0. The
       aliases are the three board dumps held here, COH-H31000, System 246C and
       System 256. Each carries its romdir at 0x2740 and answers the same test.
-    source_ref: "pcsx2/ps2/BiosTools.cpp:268-292, pcsx2/ps2/BiosTools.cpp:80-207, pcsx2/ps2/BiosTools.cpp:327-379"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:268-292, source pcsx2/ps2/BiosTools.cpp:80-207, source pcsx2/ps2/BiosTools.cpp:327-379"
 
   - name: COH-H31100.rom1
     system: namco-system246
@@ -99,7 +99,7 @@ files:
     max_size: 4194304
     description: "ROM1 board region"
     note: "Tried as {bios}.rom1 then {biosbase}.rom1. Read into the 4 MB ROM1 region and truncated to it. Logged and skipped when absent. Mapped at 0xB0000000, where rom0:ACDEV declares rom1: on a COH-H."
-    source_ref: "pcsx2/ps2/BiosTools.cpp:224-251, pcsx2/ps2/BiosTools.cpp:376, pcsx2/MemoryTypes.h:14, pcsx2/Memory.cpp:416"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:224-251, source pcsx2/ps2/BiosTools.cpp:376, source pcsx2/MemoryTypes.h:14, source pcsx2/Memory.cpp:416"
 
   - name: COH-H31100.rom2
     system: namco-system246
@@ -107,7 +107,7 @@ files:
     max_size: 4194304
     description: "ROM2 board region"
     note: "Tried as {bios}.rom2 then {biosbase}.rom2. Read into the 4 MB ROM2 region and truncated to it. The dumper reads 512 KB off the board."
-    source_ref: "pcsx2/ps2/BiosTools.cpp:224-251, pcsx2/ps2/BiosTools.cpp:377, pcsx2/MemoryTypes.h:15"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:224-251, source pcsx2/ps2/BiosTools.cpp:377, source pcsx2/MemoryTypes.h:15"
 
   - name: COH-H31100.nvm
     aliases:
@@ -120,7 +120,7 @@ files:
     size: 1024
     description: "Board NVRAM"
     note: "Read from the BIOS path with the extension replaced by nvm. Carries the iLinkId the 256 games read as a regional signature, and a hardcoded id stands in when the file is missing or blank there. A default image is built when the file cannot be read."
-    source_ref: "pcsx2/CDVD/CDVD.cpp:47, pcsx2/CDVD/CDVD.cpp:140-178, pcsx2/CDVD/CDVD.cpp:2608"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:47, source pcsx2/CDVD/CDVD.cpp:140-178, source pcsx2/CDVD/CDVD.cpp:2608"
 
   - name: COH-H31100.mec
     aliases:
@@ -133,7 +133,7 @@ files:
     size: 4
     description: "Mechacon version"
     note: "Read from the BIOS path with the extension replaced by mec. Written with 0x0104020A, the version of a COH-H31100, when absent."
-    source_ref: "pcsx2/CDVD/CDVD.cpp:51-52, pcsx2/CDVD/CDVD.cpp:196-209"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:51-52, source pcsx2/CDVD/CDVD.cpp:196-209"
 
   - name: eeprom.dat
     system: namco-system246
@@ -142,7 +142,7 @@ files:
     size: 64
     description: "DEV9 EEPROM"
     note: "Opened from the working directory at DEV9 init and mapped over 64 bytes. A compiled-in 64 byte image stands in when the file is missing or cannot be mapped."
-    source_ref: "pcsx2/DEV9/DEV9.cpp:67-77, pcsx2/DEV9/DEV9.cpp:116-167"
+    source_ref: "source pcsx2/DEV9/DEV9.cpp:67-77, source pcsx2/DEV9/DEV9.cpp:116-167"
 
   - name: flash.dat
     system: namco-system246
@@ -151,7 +151,7 @@ files:
     max_size: 8650752
     description: "DEV9 SmartMedia flash image"
     note: "Opened from the working directory at DEV9 init and read as 1024 blocks of 16 pages of 512 bytes plus 16 ECC bytes. The card is filled with 0xFF when the file is absent or short."
-    source_ref: "pcsx2/DEV9/flash.cpp:9-16, pcsx2/DEV9/flash.cpp:62-86, pcsx2/DEV9/DEV9.cpp:114"
+    source_ref: "source pcsx2/DEV9/flash.cpp:9-16, source pcsx2/DEV9/flash.cpp:62-86, source pcsx2/DEV9/DEV9.cpp:114"
 
   - name: GameIndex.yaml
     path: bin/resources/GameIndex.yaml
@@ -162,7 +162,7 @@ files:
     size: 7941
     description: "Arcade game database"
     note: "Keyed by NM gameid, one entry per arcade title, carrying the board variant, the media type, the boot program and the GS fixes. Supplies the platform and media values a minimal .acgame leaves out. Console error when missing."
-    source_ref: "pcsx2/GameDatabase.cpp:39, pcsx2/GameDatabase.cpp:979-990, pcsx2/VMManager.cpp:1385-1415"
+    source_ref: "upstream pcsx2/GameDatabase.cpp:39, source pcsx2/GameDatabase.cpp:979-990, source pcsx2/VMManager.cpp:1385-1415"
 
   - name: RedumpDatabase.yaml
     path: bin/resources/RedumpDatabase.yaml
@@ -173,7 +173,7 @@ files:
     size: 1976895
     description: "Disc hash database"
     note: "Read on demand to match a disc against its catalogue entry in the game summary. Console error when missing."
-    source_ref: "pcsx2/GameDatabase.cpp:1086, pcsx2/GameDatabase.cpp:1143-1152"
+    source_ref: "source pcsx2/GameDatabase.cpp:1086, source pcsx2/GameDatabase.cpp:1143-1152"
 
   - name: patches.zip
     path: bin/resources/patches.zip
@@ -184,7 +184,7 @@ files:
     size: 1312
     description: "Bundled patch archive"
     note: "Opened read-only from the resources folder. Built-in patches are unavailable and an on-screen error is shown when it cannot be opened. Fetched from the patches repository at build time, not committed."
-    source_ref: "pcsx2/Patch.cpp:117, pcsx2/Patch.cpp:289-315, .github/workflows/linux_build_qt.yml:129"
+    source_ref: "upstream pcsx2/Patch.cpp:117, source pcsx2/Patch.cpp:289-315, upstream .github/workflows/linux_build_qt.yml:129"
 
   - name: game_controller_db.txt
     path: bin/resources/game_controller_db.txt
@@ -195,4 +195,4 @@ files:
     size: 515563
     description: "SDL controller mapping database"
     note: "A copy in the user data root takes precedence over the one in resources. Fed to SDL as a hint. Without either, SDL falls back to its built-in mappings and an error is logged."
-    source_ref: "pcsx2/Input/SDLInputSource.cpp:24, pcsx2/Input/SDLInputSource.cpp:614-629"
+    source_ref: "upstream pcsx2/Input/SDLInputSource.cpp:24, source pcsx2/Input/SDLInputSource.cpp:614-629"

@@ -69,14 +69,14 @@ files:
     required: true
     size: 262144
     note: "A500 Kickstart v1.3 rev 34.005, default for A500 model"
-    source_ref: "libretro/libretro.cpp:1799 (candidates_a500)"
+    source_ref: "source libretro/libretro.cpp:1799 (candidates_a500)"
 
   - name: kick12.rom
     system: commodore-amiga
     required: false
     size: 262144
     note: "A500 Kickstart v1.2 rev 33.180, for A500OG model"
-    source_ref: "libretro/libretro.cpp:1798 (candidates_a500og)"
+    source_ref: "source libretro/libretro.cpp:1798 (candidates_a500og)"
 
   - name: kick20.rom
     system: commodore-amiga
@@ -84,41 +84,41 @@ files:
     size: 524288
     aliases: [kick204.rom]
     note: "A500+ Kickstart v2.04 rev 37.175"
-    source_ref: "libretro/libretro.cpp:1800 (candidates_a500p)"
+    source_ref: "source libretro/libretro.cpp:1800 (candidates_a500p)"
 
   - name: kick205.rom
     system: commodore-amiga
     required: false
     size: 524288
     note: "A600 Kickstart v2.05 rev 37.350, also used for WHDLoad"
-    source_ref: "libretro/libretro.cpp:1801 (candidates_a600)"
+    source_ref: "source libretro/libretro.cpp:1801 (candidates_a600)"
 
   - name: kick31.rom
     system: commodore-amiga
     required: false
     size: 524288
     note: "Kickstart v3.1 (generic), first candidate for A1200 and A4000"
-    source_ref: "libretro/libretro.cpp:1802-1803 (candidate arrays)"
+    source_ref: "source libretro/libretro.cpp:1802-1803 (candidate arrays)"
 
   - name: kick40068.A1200
     system: commodore-amiga
     required: false
     size: 524288
     note: "A1200 Kickstart v3.1 rev 40.68, fallback after kick31.rom"
-    source_ref: "libretro/libretro.cpp:767 (option label), libretro/libretro.cpp:1802 (candidates_a1200)"
+    source_ref: "source libretro/libretro.cpp:767 (option label), source libretro/libretro.cpp:1802 (candidates_a1200)"
 
   - name: kick40068.A4000
     system: commodore-amiga
     required: false
     size: 524288
     note: "A4000 Kickstart v3.1 rev 40.68, fallback after kick31.rom"
-    source_ref: "libretro/libretro.cpp:768 (option label), libretro/libretro.cpp:1803 (candidates_a4000)"
+    source_ref: "source libretro/libretro.cpp:768 (option label), source libretro/libretro.cpp:1803 (candidates_a4000)"
 
   - name: kick.rom
     system: commodore-amiga
     required: false
     note: "Generic name, any Kickstart ROM. Last resort fallback for all models."
-    source_ref: "libretro/libretro.cpp:1792-1797 (candidates_generic)"
+    source_ref: "source libretro/libretro.cpp:1792-1797 (candidates_generic)"
 
   # --- CD32 ROMs ---
 
@@ -128,7 +128,7 @@ files:
     size: 524288
     aliases: [amiga-os-310-cd32.rom, kick40060.CD32]
     note: "CD32 Kickstart v3.1 rev 40.60"
-    source_ref: "libretro/libretro.cpp:1804 (candidates_cd32)"
+    source_ref: "source libretro/libretro.cpp:1804 (candidates_cd32)"
 
   - name: cd32ext.rom
     system: commodore-cd32
@@ -136,7 +136,7 @@ files:
     size: 524288
     aliases: [amiga-ext-310-cd32.rom, "CD32 Extended.ROM"]
     note: "CD32 extended ROM rev 40.60. Not needed if using a combined 1MB ROM."
-    source_ref: "libretro/libretro.cpp:1862 (candidates_cd32 in find_ext_rom_in_system_dir)"
+    source_ref: "source libretro/libretro.cpp:1862 (candidates_cd32 in find_ext_rom_in_system_dir)"
 
   # --- CDTV ROMs ---
 
@@ -145,14 +145,14 @@ files:
     required: false
     aliases: [kick34005.CDTV]
     note: "CDTV extended ROM v1.00, used as kickstart candidate"
-    source_ref: "libretro/libretro.cpp:1805 (candidates_cdtv)"
+    source_ref: "source libretro/libretro.cpp:1805 (candidates_cdtv)"
 
   - name: cdtvext.rom
     system: commodore-cdtv
     required: false
     aliases: ["CDTV Extended.ROM"]
     note: "CDTV extended ROM file"
-    source_ref: "libretro/libretro.cpp:1864 (candidates_cdtv in find_ext_rom_in_system_dir)"
+    source_ref: "source libretro/libretro.cpp:1864 (candidates_cdtv in find_ext_rom_in_system_dir)"
 
   # --- AROS replacement ROMs ---
   # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,
@@ -169,7 +169,7 @@ files:
       AROS extended ROM replacement, used when no Kickstart ROM is found. Looked
       up in the configured ROM directories, and only in a directory that also
       holds aros-rom.bin. The core zip carries the library alone.
-    source_ref: "src/memory.cpp:1933 (paired existence check), src/memory.cpp:1958-1959 (load)"
+    source_ref: "source src/memory.cpp:1933 (paired existence check), source src/memory.cpp:1958-1959 (load)"
 
   - name: aros-ext.bin
     mode: standalone
@@ -186,7 +186,7 @@ files:
       up in the configured ROM directories, and only in a directory that also
       holds aros-rom.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb. The
       Recalbox and ROCKNIX packages leave it out.
-    source_ref: "src/memory.cpp:1933 (paired existence check), src/memory.cpp:1958-1959 (load)"
+    source_ref: "source src/memory.cpp:1933 (paired existence check), source src/memory.cpp:1958-1959 (load)"
 
   - name: aros-rom.bin
     mode: libretro
@@ -197,7 +197,7 @@ files:
       AROS main ROM replacement, used with aros-ext.bin as Kickstart fallback.
       Looked up in the configured ROM directories, and only in a directory that
       also holds aros-ext.bin. The core zip carries the library alone.
-    source_ref: "src/memory.cpp:1934 (paired existence check), src/memory.cpp:1987-1988 (load)"
+    source_ref: "source src/memory.cpp:1934 (paired existence check), source src/memory.cpp:1987-1988 (load)"
 
   - name: aros-rom.bin
     mode: standalone
@@ -214,7 +214,7 @@ files:
       Looked up in the configured ROM directories, and only in a directory that
       also holds aros-ext.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb.
       The Recalbox and ROCKNIX packages leave it out.
-    source_ref: "src/memory.cpp:1934 (paired existence check), src/memory.cpp:1987-1988 (load)"
+    source_ref: "source src/memory.cpp:1934 (paired existence check), source src/memory.cpp:1987-1988 (load)"
 
   # --- Cloanto key ---
 
@@ -222,7 +222,7 @@ files:
     system: commodore-amiga
     required: false
     note: "Decryption key for Cloanto Amiga Forever encrypted ROMs"
-    source_ref: "src/rommgr.cpp:1444-1525"
+    source_ref: "source src/rommgr.cpp:1444-1525"
 
   # --- Keyboard MCU ROMs ---
   # Loaded when keyboard_mode is set to MCU emulation.
@@ -234,21 +234,21 @@ files:
     required: false
     size: 2048
     note: "6500-1/6570-036 keyboard MCU ROM for A500/A600/A1000 models"
-    source_ref: "src/kbmcu/keyboard_mcu_6500_1.cpp:385-408, src/rommgr.cpp:136-137"
+    source_ref: "source src/kbmcu/keyboard_mcu_6500_1.cpp:385-408, source src/rommgr.cpp:136-137"
 
   - name: "68HC05.rom"
     system: commodore-amiga
     required: false
     size: 8192
     note: "68HC05 keyboard MCU ROM for A1200"
-    source_ref: "src/kbmcu/keyboard_mcu_6805.cpp:544-567, src/rommgr.cpp:138-139"
+    source_ref: "source src/kbmcu/keyboard_mcu_6805.cpp:544-567, source src/rommgr.cpp:138-139"
 
   - name: "D8039HLC.rom"
     system: commodore-amiga
     required: false
     size: 2048
     note: "D8039HLC keyboard MCU ROM for A2000"
-    source_ref: "src/kbmcu/keyboard_mcu_d8039hlc.cpp:235-258, src/rommgr.cpp:140-141"
+    source_ref: "source src/kbmcu/keyboard_mcu_d8039hlc.cpp:235-258, source src/rommgr.cpp:140-141"
 
   # --- Munt MT-32/CM-32L MIDI ROMs ---
   # Located in mt32-roms/ subdirectory of the ROM path.
@@ -271,14 +271,14 @@ files:
       - mt32-roms/ctrl_mt32_2_06.rom
       - mt32-roms/ctrl_mt32_2_03.rom
     note: "Roland MT-32 control ROM for Munt MIDI emulation"
-    source_ref: "src/midiemu.cpp:38-62, src/midiemu.cpp:159-164"
+    source_ref: "source src/midiemu.cpp:38-62, source src/midiemu.cpp:159-164"
 
   - name: mt32-roms/pcm_mt32.rom
     system: commodore-amiga
     required: false
     aliases: [mt32-roms/mt32_pcm.rom]
     note: "Roland MT-32 PCM ROM for Munt MIDI emulation"
-    source_ref: "src/midiemu.cpp:140-148"
+    source_ref: "source src/midiemu.cpp:140-148"
 
   - name: mt32-roms/cm32l_control.rom
     system: commodore-amiga
@@ -289,11 +289,11 @@ files:
       - mt32-roms/ctrl_cm32l_1_02.rom
       - mt32-roms/ctrl_cm32l_1_00.rom
     note: "Roland CM-32L control ROM for Munt MIDI emulation"
-    source_ref: "src/midiemu.cpp:25-37, src/midiemu.cpp:159-164"
+    source_ref: "source src/midiemu.cpp:25-37, source src/midiemu.cpp:159-164"
 
   - name: mt32-roms/pcm_cm32l.rom
     system: commodore-amiga
     required: false
     aliases: [mt32-roms/cm32l_pcm.rom]
     note: "Roland CM-32L PCM ROM for Munt MIDI emulation"
-    source_ref: "src/midiemu.cpp:149-158"
+    source_ref: "source src/midiemu.cpp:149-158"

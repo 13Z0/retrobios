@@ -50,65 +50,65 @@ files:
     region: [north-america, latin-america]
     required: true
     note: "Sega CD (NTSC-U) boot ROM. Loaded for REGION_USA, which get_region sets for every disc whose security byte at 0x20b is neither 0x64 nor 0xa1 (core/loadrom.c:1056-1070)."
-    source_ref: "core/loadrom.c:408"
+    source_ref: "source core/loadrom.c:408"
 
   - name: bios_CD_E.bin
     system: sega-megacd
     region: [europe, oceania]
     required: true
     note: "Mega CD (PAL) boot ROM. Loaded for REGION_EUROPE, set by security byte 0x64 (core/loadrom.c:1059-1061)."
-    source_ref: "core/loadrom.c:411"
+    source_ref: "source core/loadrom.c:411"
 
   - name: bios_CD_J.bin
     system: sega-megacd
     region: [japan]
     required: true
     note: "Mega CD (NTSC-J) boot ROM. Loaded for every other region code."
-    source_ref: "core/loadrom.c:414"
+    source_ref: "source core/loadrom.c:414"
 
   - name: bios_U.sms
     system: sega-mastersystem
     region: [north-america, europe]
     required: false
     note: "Master System (NTSC-U) boot ROM, loaded for REGION_USA when the bios option is on."
-    source_ref: "core/loadrom.c:510"
+    source_ref: "source core/loadrom.c:510"
 
   - name: bios_E.sms
     system: sega-mastersystem
     required: false
     note: "Master System (PAL) boot ROM, loaded for REGION_EUROPE when the bios option is on."
-    source_ref: "core/loadrom.c:513"
+    source_ref: "source core/loadrom.c:513"
 
   - name: bios_J.sms
     system: sega-mastersystem
     region: [japan]
     required: false
     note: "Master System (NTSC-J) boot ROM, loaded for the Japanese region codes when the bios option is on."
-    source_ref: "core/loadrom.c:516"
+    source_ref: "source core/loadrom.c:516"
 
   - name: bios.gg
     system: sega-gamegear
     required: false
     note: "Game Gear boot ROM, 1 KB Majesco image or a larger one, loaded when the bios option is on."
-    source_ref: "core/loadrom.c:479"
+    source_ref: "source core/loadrom.c:479"
 
   - name: bios_MD.bin
     system: sega-megadrive
     required: false
     note: "Mega Drive TMSS boot ROM. 2 KB read, accepted when \"GENESIS OS\" sits at 0x120."
-    source_ref: "libretro/libretro.c:3713-3721"
+    source_ref: "source libretro/libretro.c:3713-3721"
 
   - name: ggenie.bin
     system: sega-megadrive
     required: false
     note: "Game Genie ROM, read when the Game Genie lock-on is selected."
-    source_ref: "core/cart_hw/ggenie.c:64, libretro/libretro.c:3581"
+    source_ref: "source core/cart_hw/ggenie.c:64, source libretro/libretro.c:3581"
 
   - name: areplay.bin
     system: sega-megadrive
     required: false
     note: "Action Replay (Pro) ROM, read when the Action Replay lock-on is selected."
-    source_ref: "core/cart_hw/areplay.c:64, libretro/libretro.c:3582"
+    source_ref: "source core/cart_hw/areplay.c:64, source libretro/libretro.c:3582"
 
   - name: sk.bin
     system: sega-megadrive
@@ -116,7 +116,7 @@ files:
     size: 2097152
     validation: [size]
     note: "Sonic & Knuckles ROM for the lock-on cartridge, kept only when the read fills 2 MB."
-    source_ref: "core/cart_hw/md_cart.c:762"
+    source_ref: "source core/cart_hw/md_cart.c:762"
 
   - name: sk2chip.bin
     system: sega-megadrive
@@ -124,4 +124,4 @@ files:
     size: 262144
     validation: [size]
     note: "Sonic & Knuckles UPMEM ROM, read after sk.bin and kept only when the read fills 256 KB."
-    source_ref: "core/cart_hw/md_cart.c:768"
+    source_ref: "source core/cart_hw/md_cart.c:768"

@@ -130,7 +130,7 @@ files:
       named in the configuration skips both that range and the romdir test. The
       sixth ROMVER character is not examined here, the patch having replaced the
       test that rejected images carrying D.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, nethersx2 v2.1-4248 libemucore.so 0x828d80-0x828f10, nethersx2 v2.1-4248 libemucore.so 0x829244-0x829248"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, upstream aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, nethersx2 v2.1-4248 libemucore.so 0x828d80-0x828f10, nethersx2 v2.1-4248 libemucore.so 0x829244-0x829248"
 
   - name: ps2-0230a-20080220.rom1
     path: bios/ps2-0230a-20080220.rom1
@@ -140,7 +140,7 @@ files:
     note: >-
       Tried as {bios}.rom1 then {biosbase}.rom1. Read at 0x2404000 of the EE
       memory block and truncated to 4 MB. Logged and skipped when absent.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2 v2.1-4248 libemucore.so 0x8288b0-0x828a24"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2 v2.1-4248 libemucore.so 0x8288b0-0x828a24"
 
   - name: ps2-0230a-20080220.rom2
     aliases:
@@ -152,7 +152,7 @@ files:
     note: >-
       Same two-step naming as rom1. Read at 0x2804000 of the EE memory block and
       truncated to 512 KB. Only present on Chinese region consoles.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2 v2.1-4248 libemucore.so 0x828a34-0x828b90"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2 v2.1-4248 libemucore.so 0x828a34-0x828b90"
 
   - name: ps2-0230a-20080220.nvm
     path: bios/ps2-0230a-20080220.nvm
@@ -168,7 +168,7 @@ files:
       shorter, zeroed except for a fixed iLink id and the language defaults of
       the BIOS region, and it is rewritten when the language block reads back
       blank.
-    source_ref: "aethersx2/pcsx2/CDVD/CDVD.cpp:158-214, nethersx2 v2.1-4248 libemucore.so 0x79b930-0x79bb90, nethersx2 v2.1-4248 libemucore.so 0x79bce0"
+    source_ref: "upstream aethersx2/pcsx2/CDVD/CDVD.cpp:158-214, nethersx2 v2.1-4248 libemucore.so 0x79b930-0x79bb90, nethersx2 v2.1-4248 libemucore.so 0x79bce0"
 
   - name: ps2-0230a-20080220.mec
     path: bios/ps2-0230a-20080220.mec
@@ -180,7 +180,7 @@ files:
     note: >-
       Read at the BIOS path with the extension replaced by mec. Written as
       03 06 02 00 when the file is missing or shorter than 4 bytes.
-    source_ref: "aethersx2/pcsx2/CDVD/CDVD.cpp:120-144, nethersx2 v2.1-4248 libemucore.so 0x79cbc0-0x79cdc4"
+    source_ref: "upstream aethersx2/pcsx2/CDVD/CDVD.cpp:120-144, nethersx2 v2.1-4248 libemucore.so 0x79cbc0-0x79cdc4"
 
   - name: eeprom.dat
     required: false
@@ -191,7 +191,7 @@ files:
       Opened O_RDWR by bare name when the network adapter starts and mapped over
       64 bytes. A compiled-in image stands in when the file is missing or cannot
       be mapped.
-    source_ref: "aethersx2/pcsx2/DEV9/DEV9.cpp:146-161, nethersx2 v2.1-4248 libemucore.so 0x7c5c40-0x7c5ca0"
+    source_ref: "upstream aethersx2/pcsx2/DEV9/DEV9.cpp:146-161, nethersx2 v2.1-4248 libemucore.so 0x7c5c40-0x7c5ca0"
 
   - name: flash.dat
     required: false
@@ -202,7 +202,7 @@ files:
       Opened rb by bare name at network adapter init and read as 1024 blocks of
       16 pages of 512 bytes plus 16 ECC bytes. The card is filled with 0xFF when
       the file is absent.
-    source_ref: "aethersx2/pcsx2/DEV9/flash.cpp:76-104, nethersx2 v2.1-4248 libemucore.so 0x7c5bec-0x7c5c40"
+    source_ref: "upstream aethersx2/pcsx2/DEV9/flash.cpp:76-104, nethersx2 v2.1-4248 libemucore.so 0x7c5bec-0x7c5c40"
 
   - name: "<module>.irx"
     required: false
@@ -212,7 +212,7 @@ files:
       Opened at the path the configuration holds once it is longer than three
       characters, and read into the ROM region at 0x3C0000, capped at 0x40000
       bytes. The field is empty by default and names no file of its own.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:220-233, aethersx2/pcsx2/ps2/BiosTools.cpp:327-328, nethersx2 v2.1-4248 libemucore.so 0x828bc0-0x828ca0"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:220-233, upstream aethersx2/pcsx2/ps2/BiosTools.cpp:327-328, nethersx2 v2.1-4248 libemucore.so 0x828bc0-0x828ca0"
 
   - name: GameIndex.yaml
     path: assets/GameIndex.yaml
@@ -227,7 +227,7 @@ files:
       fixes, patches and settings overrides. Parsed into gamedb.cache in the
       cache folder. The project maintains its own copy with entries specific to
       this build.
-    source_ref: "aethersx2/pcsx2/GameDatabase.cpp:35, aethersx2/pcsx2/GameDatabase.cpp:226, nethersx2 v2.1-4248 libemucore.so 0x2e35ec"
+    source_ref: "upstream aethersx2/pcsx2/GameDatabase.cpp:35, upstream aethersx2/pcsx2/GameDatabase.cpp:226, nethersx2 v2.1-4248 libemucore.so 0x2e35ec"
 
   - name: cheats_ws.zip
     path: assets/cheats_ws.zip

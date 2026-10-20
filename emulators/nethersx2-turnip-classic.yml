@@ -173,7 +173,7 @@ files:
       Any image whose romdir holds RESET and a readable ROMVER is accepted,
       whatever its name. The 4 to 8 MB range gates the folder scan, and an image
       named in the configuration skips both that range and the romdir test.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, nethersx2-turnip-classic v0.7 libemucore.so 0x81bc00-0x81bc24 (size window), nethersx2-turnip-classic v0.7 libemucore.so 0x81c1c0 (acceptance flag set outright)"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:27-28, upstream aethersx2/pcsx2/ps2/BiosTools.cpp:235-260, nethersx2-turnip-classic v0.7 libemucore.so 0x81bc00-0x81bc24 (size window), nethersx2-turnip-classic v0.7 libemucore.so 0x81c1c0 (acceptance flag set outright)"
 
   - name: ps2-0230a-20080220.rom1
     path: bios/ps2-0230a-20080220.rom1
@@ -183,7 +183,7 @@ files:
     note: >-
       Tried as {bios}.rom1 then {biosbase}.rom1. Read at 0x2404000 of the EE
       memory block and truncated to 4 MB. Logged and skipped when absent.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2-turnip-classic v0.7 libemucore.so 0x81b688-0x81b810"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2-turnip-classic v0.7 libemucore.so 0x81b688-0x81b810"
 
   - name: ps2-0230a-20080220.rom2
     aliases:
@@ -195,7 +195,7 @@ files:
     note: >-
       Same two-step naming as rom1. Read at 0x2804000 of the EE memory block and
       truncated to 512 KB. Only present on Chinese region consoles.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2-turnip-classic v0.7 libemucore.so 0x81b820-0x81b994"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:193-218, nethersx2-turnip-classic v0.7 libemucore.so 0x81b820-0x81b994"
 
   - name: ps2-0230a-20080220.nvm
     path: bios/ps2-0230a-20080220.nvm
@@ -210,7 +210,7 @@ files:
       configuration. A 1024 byte image is written when the file is missing or
       shorter, zeroed except for a fixed iLink id and the language defaults of
       the BIOS region.
-    source_ref: "aethersx2/pcsx2/CDVD/CDVD.cpp:158-226, nethersx2-turnip-classic v0.7 libemucore.so 0x790470-0x7906c8, nethersx2-turnip-classic v0.7 libemucore.so 0x790820-0x790944"
+    source_ref: "upstream aethersx2/pcsx2/CDVD/CDVD.cpp:158-226, nethersx2-turnip-classic v0.7 libemucore.so 0x790470-0x7906c8, nethersx2-turnip-classic v0.7 libemucore.so 0x790820-0x790944"
 
   - name: ps2-0230a-20080220.mec
     path: bios/ps2-0230a-20080220.mec
@@ -222,7 +222,7 @@ files:
     note: >-
       Read at the BIOS path with the extension replaced by mec. Written as
       03 06 02 00 when the file is missing or shorter than 4 bytes.
-    source_ref: "aethersx2/pcsx2/CDVD/CDVD.cpp:120-144, nethersx2-turnip-classic v0.7 libemucore.so 0x791700-0x7918f4"
+    source_ref: "upstream aethersx2/pcsx2/CDVD/CDVD.cpp:120-144, nethersx2-turnip-classic v0.7 libemucore.so 0x791700-0x7918f4"
 
   - name: eeprom.dat
     required: false
@@ -233,7 +233,7 @@ files:
       Opened O_RDWR by bare name when the network adapter starts and mapped over
       64 bytes. A compiled-in image stands in when the file is missing or cannot
       be mapped.
-    source_ref: "aethersx2/pcsx2/DEV9/DEV9.cpp:73, aethersx2/pcsx2/DEV9/DEV9.cpp:145-160, nethersx2-turnip-classic v0.7 libemucore.so 0x7bb620-0x7bb680"
+    source_ref: "upstream aethersx2/pcsx2/DEV9/DEV9.cpp:73, upstream aethersx2/pcsx2/DEV9/DEV9.cpp:145-160, nethersx2-turnip-classic v0.7 libemucore.so 0x7bb620-0x7bb680"
 
   - name: flash.dat
     required: false
@@ -244,7 +244,7 @@ files:
       Opened rb by bare name at network adapter init and read as 1024 blocks of
       16 pages of 512 bytes plus 16 ECC bytes. The card is filled with 0xFF when
       the file is absent.
-    source_ref: "aethersx2/pcsx2/DEV9/flash.cpp:76-103, nethersx2-turnip-classic v0.7 libemucore.so 0x7bb5cc-0x7bb61c"
+    source_ref: "upstream aethersx2/pcsx2/DEV9/flash.cpp:76-103, nethersx2-turnip-classic v0.7 libemucore.so 0x7bb5cc-0x7bb61c"
 
   - name: "<module>.irx"
     required: false
@@ -254,7 +254,7 @@ files:
       Opened at the path the configuration holds once it is four characters or
       longer, and read into the ROM region at 0x3C0000, capped at 0x40000 bytes.
       The field is empty by default and names no file of its own.
-    source_ref: "aethersx2/pcsx2/ps2/BiosTools.cpp:220-233, aethersx2/pcsx2/ps2/BiosTools.cpp:327-328, nethersx2-turnip-classic v0.7 libemucore.so 0x81b9a4-0x81bac4"
+    source_ref: "upstream aethersx2/pcsx2/ps2/BiosTools.cpp:220-233, upstream aethersx2/pcsx2/ps2/BiosTools.cpp:327-328, nethersx2-turnip-classic v0.7 libemucore.so 0x81b9a4-0x81bac4"
 
   - name: libvulkad.so
     path: lib/arm64-v8a/libvulkad.so
@@ -270,7 +270,7 @@ files:
       Vulkan backend does not open and the message names the shim. This package
       carries the build committed for v0.6, one revision behind the emulator
       library beside it.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:969-1272 (the constructor that runs on load), nethersx2-turnip-classic v0.7 libemucore.so 0x8a45ec-0x8a4624"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:969-1272 (the constructor that runs on load), nethersx2-turnip-classic v0.7 libemucore.so 0x8a45ec-0x8a4624"
 
   - name: libhook_impl.so
     path: lib/arm64-v8a/libhook_impl.so
@@ -285,7 +285,7 @@ files:
       init_hook_param, which receives the driver directory and driver name. Its
       hook_android_dlopen_ext is what replaces the vendor driver with the Turnip
       one, and it reopens itself in each driver namespace it creates.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1138-1156, VulkanShim2/hook_impl.cpp:38-140"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1138-1156, source VulkanShim2/hook_impl.cpp:38-140"
 
   - name: libmain_hook.so
     path: lib/arm64-v8a/libmain_hook.so
@@ -299,7 +299,7 @@ files:
       Loaded RTLD_GLOBAL into the same namespace before the system Vulkan
       library, so its android_dlopen_ext and android_load_sphal_library are the
       ones that library binds to.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1159-1160, VulkanShim2/main_hook.c:3-9"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1159-1160, source VulkanShim2/main_hook.c:3-9"
 
   - name: libvulkan_freedreno_T28.so
     path: lib/arm64-v8a/libvulkan_freedreno_T28.so
@@ -313,7 +313,7 @@ files:
       Chosen when no other branch matches. Loaded by name from the library
       directory through the hook. A load failure falls back to the vendor
       driver.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1011, VulkanShim2/vulkan_shim.cpp:1079-1080, VulkanShim2/hook_impl.cpp:127-135"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1011, source VulkanShim2/vulkan_shim.cpp:1079-1080, source VulkanShim2/hook_impl.cpp:127-135"
 
   - name: libvulkan_freedreno_a8xx-turnip-gen8-V31.so
     path: lib/arm64-v8a/libvulkan_freedreno_a8xx-turnip-gen8-V31.so
@@ -326,7 +326,7 @@ files:
     note: >-
       Chosen whenever the Adreno model reads non-zero, model 810 and 825
       included. Model 825 also turns off framebuffer fetch.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1010, VulkanShim2/vulkan_shim.cpp:1037-1052, nethersx2-turnip-classic v0.7 libvulkad.so 0x22770-0x23108"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1010, source VulkanShim2/vulkan_shim.cpp:1037-1052, nethersx2-turnip-classic v0.7 libvulkad.so 0x22770-0x23108"
 
   - name: libvulkan_freedreno_T24.so
     path: lib/arm64-v8a/libvulkan_freedreno_T24.so
@@ -341,7 +341,7 @@ files:
       overwrites it with the 8xx driver before anything reads it, so this
       revision never opens the file. The branch gained its own exit after the
       revision this package was built from.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1039-1043, nethersx2-turnip-classic v0.7 libvulkad.so 0x22784-0x230d4"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1039-1043, nethersx2-turnip-classic v0.7 libvulkad.so 0x22784-0x230d4"
 
   - name: libvulkan_freedreno_25.3.0_R6_Gmem.so
     path: lib/arm64-v8a/libvulkan_freedreno_25.3.0_R6_Gmem.so
@@ -353,7 +353,7 @@ files:
     description: "Turnip driver, Adreno 710 and 720 branch"
     note: >-
       Chosen when the model is unreadable and the GPU name holds 710 or 720.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1056-1059"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1056-1059"
 
   - name: libvulkan_freedreno_v24.1.0_R18.a6xx-Patched.so
     path: lib/arm64-v8a/libvulkan_freedreno_v24.1.0_R18.a6xx-Patched.so
@@ -366,7 +366,7 @@ files:
     note: >-
       Chosen when the platform reads SM8250, kona, SM8350, lahaina, sdm845 or
       napali.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1027-1033"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1027-1033"
 
   - name: libvulkan_freedreno_T19.so
     path: lib/arm64-v8a/libvulkan_freedreno_T19.so
@@ -377,7 +377,7 @@ files:
     sha1: 4dc276dfd5842302c978ce9b2996f961dc6452f1
     description: "Turnip driver, SM6125 branch"
     note: "Chosen when the platform reads SM6125 or trinket."
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1020-1023"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1020-1023"
 
   - name: libvulkan_freedreno.so
     path: data/local/tmp/libvulkan_freedreno.so
@@ -388,7 +388,7 @@ files:
       Tested with access before any detection runs. When it exists it becomes
       the driver and the driver directory becomes /data/local/tmp/, so none of
       the six packed drivers is consulted.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1009, VulkanShim2/vulkan_shim.cpp:1012-1017"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1009, source VulkanShim2/vulkan_shim.cpp:1012-1017"
 
   - name: libbase.so
     path: lib/arm64-v8a/libbase.so
@@ -402,7 +402,7 @@ files:
       Opened RTLD_GLOBAL from the library directory only when the namespace
       approach failed and the shim falls back to patching the global offset
       table.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1179-1194"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1179-1194"
 
   - name: libcutils.so
     path: lib/arm64-v8a/libcutils.so
@@ -413,7 +413,7 @@ files:
     sha1: 63e55bcae5ee690cf6bc7db69a5077c5502e4334
     description: "Platform support library for the fallback path"
     note: "Same fallback list as libbase.so, and a dependency of every packed driver."
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1179-1194, VulkanShim2/vulkan_shim.cpp:1248-1255"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1179-1194, source VulkanShim2/vulkan_shim.cpp:1248-1255"
 
   - name: libvndksupport.so
     path: lib/arm64-v8a/libvndksupport.so
@@ -426,7 +426,7 @@ files:
     note: >-
       Same fallback list as libbase.so. Its android_load_sphal_library is the
       call the shim stubs so a vendor load can be redirected.
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1179-1194, VulkanShim2/vulkan_shim.cpp:1257-1269"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1179-1194, source VulkanShim2/vulkan_shim.cpp:1257-1269"
 
   - name: libhardware.so
     path: lib/arm64-v8a/libhardware.so
@@ -437,7 +437,7 @@ files:
     sha1: 555a6203cd7c23c2b49916d70615e5df7973aa87
     description: "Platform support library for the fallback path"
     note: "Same fallback list as libbase.so, and a dependency of every packed driver."
-    source_ref: "VulkanShim2/vulkan_shim.cpp:1179-1194, VulkanShim2/vulkan_shim.cpp:1235-1246"
+    source_ref: "source VulkanShim2/vulkan_shim.cpp:1179-1194, source VulkanShim2/vulkan_shim.cpp:1235-1246"
 
   - name: GameIndex.yaml
     path: assets/GameIndex.yaml
@@ -451,7 +451,7 @@ files:
       Read from the package by name, keyed by serial, and carrying the per-game
       fixes, patches and settings overrides. Parsed into gamedb.cache in the
       cache folder.
-    source_ref: "aethersx2/pcsx2/GameDatabase.cpp:35, nethersx2-turnip-classic v0.7 libemucore.so 0x2e45fc"
+    source_ref: "upstream aethersx2/pcsx2/GameDatabase.cpp:35, nethersx2-turnip-classic v0.7 libemucore.so 0x2e45fc"
 
   - name: cheats_ws.zip
     path: assets/cheats_ws.zip

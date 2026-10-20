@@ -64,7 +64,7 @@ files:
     validation: [size]
     description: "Satellaview BS-X BIOS"
     note: "Required for BS-X carts. BS-X.bios is accepted by the slot code in bsx.cpp only."
-    source_ref: "libretro/libretro.cpp:1145-1176, libretro/libretro.cpp:1308-1311, bsx.cpp:1204-1235"
+    source_ref: "source libretro/libretro.cpp:1145-1176, source libretro/libretro.cpp:1308-1311, source bsx.cpp:1204-1235"
 
   - name: "STBIOS.bin"
     system: nintendo-sufami-turbo
@@ -73,7 +73,7 @@ files:
     validation: [size]
     description: "Sufami Turbo BIOS"
     note: "Required for Sufami Turbo carts. The Sufami Turbo subsystem reads 1 MB and rejects a 256 KB file."
-    source_ref: "libretro/libretro.cpp:1145-1176, libretro/libretro.cpp:1302-1305, libretro/libretro.cpp:1445-1455"
+    source_ref: "source libretro/libretro.cpp:1145-1176, source libretro/libretro.cpp:1302-1305, source libretro/libretro.cpp:1445-1455"
 
   - name: "sgb2.sfc"
     aliases: ["SGB2.sfc", "Super Game Boy 2 (Japan).sfc"]
@@ -81,7 +81,7 @@ files:
     required: false
     description: "Super Game Boy 2 SNES BIOS"
     note: "Preferred over sgb.sfc in auto mode. Header at 0x7FC0 must read \"Super GAMEBOY2\". Without an SGB BIOS, GB content runs on the BIOS-less core."
-    source_ref: "memmap.cpp:1088-1155, memmap.cpp:1655-1665"
+    source_ref: "source memmap.cpp:1088-1155, source memmap.cpp:1655-1665"
 
   - name: "sgb.sfc"
     aliases: ["SGB.sfc", "sgb1.sfc", "SGB1.sfc", "Super Game Boy (World).sfc"]
@@ -89,7 +89,7 @@ files:
     required: false
     description: "Super Game Boy SNES BIOS"
     note: "Used when no SGB2 BIOS is found, or alone with the option set to sgb1. Header at 0x7FC0 must read \"Super GAMEBOY\" not followed by '2'."
-    source_ref: "memmap.cpp:1088-1155, memmap.cpp:1655-1665"
+    source_ref: "source memmap.cpp:1088-1155, source memmap.cpp:1655-1665"
 
   - name: "sgb2.boot.rom"
     aliases: ["sgb2_bios.bin"]
@@ -100,7 +100,7 @@ files:
     validation: [size]
     description: "Super Game Boy 2 GB-side boot ROM"
     note: "Read in SGB2 BIOS mode and used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
-    source_ref: "memmap.cpp:1165-1213, memmap.cpp:1858-1883"
+    source_ref: "source memmap.cpp:1165-1213, source memmap.cpp:1858-1883"
 
   - name: "sgb.boot.rom"
     aliases: ["sgb1.boot.rom", "sgb_bios.bin"]
@@ -111,7 +111,7 @@ files:
     validation: [size]
     description: "Super Game Boy GB-side boot ROM"
     note: "Read in SGB1 BIOS mode and used only when it contains the 3E F1 handshake bytes, else the embedded boot ROM runs."
-    source_ref: "memmap.cpp:1165-1213, memmap.cpp:1858-1883"
+    source_ref: "source memmap.cpp:1165-1213, source memmap.cpp:1858-1883"
 
   - name: "KROM1.BIN"
     aliases: ["KROM.BIN", "krom1.bin"]
@@ -121,7 +121,7 @@ files:
     validation: [size]
     description: "Super Famicom Box supervisor ROM (HD64180)"
     note: "Required for Super Famicom Box images: LoadSFCBox returns false without it."
-    source_ref: "sfcbox.cpp:1350-1398, sfcbox.h:20, memmap.cpp:2561-2562"
+    source_ref: "source sfcbox.cpp:1350-1398, source sfcbox.h:20, source memmap.cpp:2561-2562"
 
   - name: "MB90082.BIN"
     system: nintendo-sfcbox
@@ -130,4 +130,4 @@ files:
     validation: [size]
     description: "Super Famicom Box OSD character ROM"
     note: "Absent, the supervisor overlay is not drawn."
-    source_ref: "sfcbox.cpp:1400-1403, sfcbox.h:25"
+    source_ref: "source sfcbox.cpp:1400-1403, source sfcbox.h:25"

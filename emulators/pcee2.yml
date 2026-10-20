@@ -89,7 +89,7 @@ files:
     max_size: 8388608
     required: true
     validation: [size]
-    source_ref: "pcee2-libretro/Libretro.cpp:578-618, pcsx2/ps2/BiosTools.cpp:16-17, pcsx2/ps2/BiosTools.cpp:80-197, pcsx2/ps2/BiosTools.cpp:258-294, pcsx2/ps2/BiosTools.cpp:317-369"
+    source_ref: "source pcee2-libretro/Libretro.cpp:578-618, source pcsx2/ps2/BiosTools.cpp:16-17, source pcsx2/ps2/BiosTools.cpp:80-197, source pcsx2/ps2/BiosTools.cpp:258-294, source pcsx2/ps2/BiosTools.cpp:317-369"
     note: >
       Any file of pcsx2/bios whose romdir carries RESET and ROMVER. The 4 to
       8 MB filter applies in FindBiosImage only. The core option scan and the
@@ -100,7 +100,7 @@ files:
     description: "DVD player ROM"
     max_size: 4194304
     required: false
-    source_ref: "pcsx2/ps2/BiosTools.cpp:214-241, pcsx2/ps2/BiosTools.cpp:366, pcsx2/MemoryTypes.h:13"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:214-241, source pcsx2/ps2/BiosTools.cpp:366, source pcsx2/MemoryTypes.h:13"
     note: >
       Tried as <bios>.bin.rom1 then <bios>.rom1, opened case-insensitively,
       skipped with a console line when absent.
@@ -110,7 +110,7 @@ files:
     description: "Chinese ROM extension"
     max_size: 4194304
     required: false
-    source_ref: "pcsx2/ps2/BiosTools.cpp:214-241, pcsx2/ps2/BiosTools.cpp:367, pcsx2/MemoryTypes.h:14"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:214-241, source pcsx2/ps2/BiosTools.cpp:367, source pcsx2/MemoryTypes.h:14"
     note: >
       Same lookup as rom1. Present on Chinese region consoles only.
 
@@ -120,7 +120,7 @@ files:
     size: 1024
     required: false
     hle_fallback: true
-    source_ref: "pcsx2/CDVD/CDVD.cpp:47, pcsx2/CDVD/CDVD.cpp:136-188, pcsx2/CDVD/CDVD.cpp:207-238"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:47, source pcsx2/CDVD/CDVD.cpp:136-188, source pcsx2/CDVD/CDVD.cpp:207-238"
     note: >
       Read at <bios>.nvm, rebuilt in memory with region and language defaults
       when it is missing, short, or has a blank config block, and written back
@@ -132,7 +132,7 @@ files:
     size: 4
     required: false
     hle_fallback: true
-    source_ref: "pcsx2/CDVD/CDVD.cpp:49, pcsx2/CDVD/CDVD.cpp:190-204"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:49, source pcsx2/CDVD/CDVD.cpp:190-204"
     note: >
       Read at <bios>.mec, written as 0x00020603 when it cannot be read.
 
@@ -141,7 +141,7 @@ files:
     description: "Built-in game patch archive (pnach per serial and CRC)"
     required: false
     category: game_data
-    source_ref: "pcsx2/Patch.cpp:117, pcsx2/Patch.cpp:289-317, pcsx2/Patch.cpp:365-405"
+    source_ref: "upstream pcsx2/Patch.cpp:117, source pcsx2/Patch.cpp:289-317, source pcsx2/Patch.cpp:365-405"
     note: >
       Opened read only from the resources directory when a game's patches are
       enumerated and searched for <serial>_<crc>.pnach, then <crc>.pnach. Files
@@ -154,7 +154,7 @@ files:
     size: 64
     required: false
     hle_fallback: true
-    source_ref: "pcsx2/DEV9/DEV9.cpp:60-73, pcsx2/DEV9/DEV9.cpp:97-158"
+    source_ref: "upstream pcsx2/DEV9/DEV9.cpp:60-73, source pcsx2/DEV9/DEV9.cpp:97-158"
     note: >
       Opened read-write and mapped from the process working directory by
       DEV9init. The built-in eeprom table is used when it cannot be opened.

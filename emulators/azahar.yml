@@ -41,7 +41,7 @@ files:
     sha1: "5fab786695311433602028cd89898689c5df0898"
     md5: "cb52d323b13129a2f0bc3e3e911e567f"
     note: "embedded encrypted fallback if missing: default_keys_enc, AES-CBC with a zero key and IV. The hashes are those of the decrypted text without its PKCS#7 block"
-    source_ref: "src/core/hw/aes/key.cpp:283-300, src/common/common_paths.h:83, src/core/hw/default_keys.h:4-5"
+    source_ref: "source src/core/hw/aes/key.cpp:283-300, upstream src/common/common_paths.h:83, source src/core/hw/default_keys.h:4-5"
 
   - name: shared_font.bin
     path: sysdata/shared_font.bin
@@ -49,14 +49,14 @@ files:
     required: false
     hle_fallback: true
     note: "legacy load path, embedded open-source font used if missing"
-    source_ref: "src/core/hle/service/apt/apt.cpp:263-278"
+    source_ref: "source src/core/hle/service/apt/apt.cpp:263-278"
 
   - name: seeddb.bin
     path: sysdata/seeddb.bin
     system: nintendo-3ds
     required: false
     note: "game seed database for 9.6+ titles"
-    source_ref: "src/core/file_sys/seed_db.cpp:15"
+    source_ref: "upstream src/core/file_sys/seed_db.cpp:15"
 
   - name: otp.bin
     path: sysdata/otp.bin
@@ -65,7 +65,7 @@ files:
     size: 256
     validation: [size, crypto]
     note: "OTP data for console key derivation"
-    source_ref: "src/core/hw/unique_data.cpp:126-167, src/core/hw/unique_data.cpp:213"
+    source_ref: "source src/core/hw/unique_data.cpp:126-167, source src/core/hw/unique_data.cpp:213"
 
   - name: movable.sed
     path: nand/private/movable.sed
@@ -75,7 +75,7 @@ files:
     validation: [size, signature]
     on_mismatch: {signature: warn}
     note: "console-unique key seed, 288 bytes without the AES MAC block, 320 with it"
-    source_ref: "src/core/hw/unique_data.cpp:170-200, src/core/hw/unique_data.cpp:217, src/core/hw/unique_data.h:103-133"
+    source_ref: "source src/core/hw/unique_data.cpp:170-200, source src/core/hw/unique_data.cpp:217, source src/core/hw/unique_data.h:103-133"
 
   - name: SecureInfo_A
     path: nand/rw/sys/SecureInfo_A
@@ -85,7 +85,7 @@ files:
     validation: [size, signature]
     on_mismatch: {signature: warn}
     note: "console serial and region data"
-    source_ref: "src/core/hw/unique_data.cpp:43-92, src/core/hw/unique_data.cpp:205"
+    source_ref: "source src/core/hw/unique_data.cpp:43-92, source src/core/hw/unique_data.cpp:205"
 
   - name: LocalFriendCodeSeed_B
     path: nand/rw/sys/LocalFriendCodeSeed_B
@@ -95,4 +95,4 @@ files:
     validation: [size, signature]
     on_mismatch: {signature: warn}
     note: "friend code generation seed"
-    source_ref: "src/core/hw/unique_data.cpp:94-123, src/core/hw/unique_data.cpp:209, src/core/hw/unique_data.h:76"
+    source_ref: "source src/core/hw/unique_data.cpp:94-123, source src/core/hw/unique_data.cpp:209, source src/core/hw/unique_data.h:76"

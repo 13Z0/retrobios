@@ -37,7 +37,7 @@ files:
     category: game_data
     system: sonic-mania
     required: true
-    source_ref: "RSDKv5/RSDK/User/Core/UserCore.cpp:313 (Game:dataFile default), RSDKv5/RSDK/User/Core/UserCore.cpp:557 (no Settings.ini), RSDKv5/RSDK/Core/Reader.cpp:107-121 (LoadDataPack signature check)"
+    source_ref: "upstream RSDKv5/RSDK/User/Core/UserCore.cpp:313 (Game:dataFile default), upstream RSDKv5/RSDK/User/Core/UserCore.cpp:557 (no Settings.ini), upstream RSDKv5/RSDK/Core/Reader.cpp:107-121 (LoadDataPack signature check)"
     note: |
       Sonic Mania game assets (RSDK v5 container, "RSDK" signature). Shipped
       inside the official Sonic Mania release (Steam, Epic, consoles).

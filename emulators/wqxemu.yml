@@ -96,7 +96,7 @@ files:
       is kept whole. Each 32 KiB bank is stored with its 16 KiB halves
       swapped and is swapped back on load, and the BBS pages are mapped
       from it.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc1020.rs:61-98, crates/wqxemu-core/src/memory.rs:24"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc1020.rs:61-98, source crates/wqxemu-core/src/memory.rs:24"
 
   - name: nc1020.fls
     path: WQXEmu/nc1020/nc1020.fls
@@ -111,7 +111,7 @@ files:
       1 MiB is used, with the same 16 KiB half swap as the ROM. Writes go
       to the in-memory copy and are persisted in the .wqxs session file,
       never to this file.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc1020.rs:101-122, crates/wqxemu-core/src/memory.rs:26"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc1020.rs:101-122, source crates/wqxemu-core/src/memory.rs:26"
 
   - name: pc1000.rom
     path: WQXEmu/pc1000/pc1000.rom
@@ -126,7 +126,7 @@ files:
       (the PC1000EMUX and Android layout, obj3 at 12 MiB with 8 to 12 MiB
       unused) is accepted. Any other size fails the loader. The volume
       tables are rebuilt for the layout found.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/pc1000.rs:38-40, crates/wqxemu-core/src/machines/pc1000.rs:236-283"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/pc1000.rs:38-40, source crates/wqxemu-core/src/machines/pc1000.rs:236-283"
 
   - name: pc1000.nor
     path: WQXEmu/pc1000/pc1000.nor
@@ -141,7 +141,7 @@ files:
       512 KiB is used. A dump stored with swapped 16 KiB halves is
       recognised by the info-block signature at bank 0 offset 0x4000 and
       unswapped. The libretro-core-info file names it pc1000.fls.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/pc1000.rs:42, crates/wqxemu-core/src/machines/pc1000.rs:284-313"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/pc1000.rs:42, source crates/wqxemu-core/src/machines/pc1000.rs:284-313"
 
   - name: obj.bin
     path: WQXEmu/cc800/obj.bin
@@ -156,7 +156,7 @@ files:
       used. Each 32 KiB bank is stored with its 16 KiB halves swapped and
       is swapped back on load. Volume 0 is banks 0 to 255, volume 1 banks
       256 to 511.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/cc800.rs:38, crates/wqxemu-core/src/machines/cc800.rs:229-251"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/cc800.rs:38, source crates/wqxemu-core/src/machines/cc800.rs:229-251"
 
   - name: cc800.fls
     path: WQXEmu/cc800/cc800.fls
@@ -169,7 +169,7 @@ files:
       The .fls/.nor file of {system}/WQXEmu/cc800/, read whole. The image must be
       at least 0x80000 bytes or the loader fails. Only the first 512 KiB
       is used, with the same 16 KiB half swap as the ROM.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/cc800.rs:40, crates/wqxemu-core/src/machines/cc800.rs:252-267"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/cc800.rs:40, source crates/wqxemu-core/src/machines/cc800.rs:252-267"
 
   - name: nc2000.nor
     path: WQXEmu/nc2000/nc2000.nor
@@ -183,7 +183,7 @@ files:
       no bank swap. The image must be at least 16 * 0x8000 bytes or the
       loader fails. Only the first 512 KiB is used. Bank 0 is the fixed
       BIOS page at 0xE000.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc2000.rs:20, crates/wqxemu-core/src/machines/nc2000.rs:28, crates/wqxemu-core/src/machines/nc2000.rs:265-277"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc2000.rs:20, source crates/wqxemu-core/src/machines/nc2000.rs:28, source crates/wqxemu-core/src/machines/nc2000.rs:265-277"
 
   - name: nc2000.nand
     path: WQXEmu/nc2000/nc2000.nand
@@ -196,7 +196,7 @@ files:
       the 64-page first plane, up to 65536 pages of 512 data plus 16
       spare bytes. No size check: bytes beyond that are ignored and a
       shorter file leaves the remainder erased at 0xFF.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc2000.rs:22-26, crates/wqxemu-core/src/machines/nc2000.rs:278-282, crates/wqxemu-core/src/machines/nc2000.rs:292-296"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc2000.rs:22-26, source crates/wqxemu-core/src/machines/nc2000.rs:278-282, source crates/wqxemu-core/src/machines/nc2000.rs:292-296"
 
   - name: nc2000.nand0
     path: WQXEmu/nc2000/nc2000.nand0
@@ -209,7 +209,7 @@ files:
       64 pages of the NAND array. No size check. validate_for_model
       requires a NAND0 dump for this model in both frontends, so a missing
       file stops the start.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machine.rs:193-198, crates/wqxemu-core/src/machines/nc2000.rs:24, crates/wqxemu-core/src/machines/nc2000.rs:283-288, crates/wqxemu-core/src/machines/nc2000.rs:298-301"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, upstream crates/wqxemu-core/src/machine.rs:193-198, source crates/wqxemu-core/src/machines/nc2000.rs:24, source crates/wqxemu-core/src/machines/nc2000.rs:283-288, source crates/wqxemu-core/src/machines/nc2000.rs:298-301"
 
   - name: nc3000.nor
     path: WQXEmu/nc3000/nc3000.nor
@@ -223,7 +223,7 @@ files:
       no bank swap. The image must be at least 32 * 0x8000 bytes or the
       loader fails. Only the first 1 MiB is used. Bank 0 is the fixed
       BIOS page at 0xE000.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc3000.rs:23, crates/wqxemu-core/src/machines/nc3000.rs:33, crates/wqxemu-core/src/machines/nc3000.rs:272-284"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc3000.rs:23, source crates/wqxemu-core/src/machines/nc3000.rs:33, source crates/wqxemu-core/src/machines/nc3000.rs:272-284"
 
   - name: nc3000.nand
     path: WQXEmu/nc3000/nc3000.nand
@@ -237,7 +237,7 @@ files:
       the 64-page first plane, up to 131072 pages of 512 data plus 16
       spare bytes. No size check: bytes beyond that are ignored and a
       shorter file leaves the remainder erased at 0xFF.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machines/nc3000.rs:25-29, crates/wqxemu-core/src/machines/nc3000.rs:285-289, crates/wqxemu-core/src/machines/nc3000.rs:336-340"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, source crates/wqxemu-core/src/machines/nc3000.rs:25-29, source crates/wqxemu-core/src/machines/nc3000.rs:285-289, source crates/wqxemu-core/src/machines/nc3000.rs:336-340"
 
   - name: nc3000.nand0
     path: WQXEmu/nc3000/nc3000.nand0
@@ -251,4 +251,4 @@ files:
       does not require it for this model. Without it the core writes the
       marker "ggv nc3000" at offset 528 of an erased first plane and the
       machine boots the same way.
-    source_ref: "crates/wqxemu-core/src/machine.rs:119-123, crates/wqxemu-core/src/machine.rs:199-203, crates/wqxemu-core/src/machines/nc3000.rs:27-31, crates/wqxemu-core/src/machines/nc3000.rs:290-297, crates/wqxemu-core/src/machines/nc3000.rs:342-350"
+    source_ref: "source crates/wqxemu-core/src/machine.rs:119-123, upstream crates/wqxemu-core/src/machine.rs:199-203, source crates/wqxemu-core/src/machines/nc3000.rs:27-31, source crates/wqxemu-core/src/machines/nc3000.rs:290-297, source crates/wqxemu-core/src/machines/nc3000.rs:342-350"

@@ -40,4 +40,4 @@ files:
     path: "fbneo/hiscore.dat"
     required: false
     note: "High score database, enables persistent high scores across all arcade games"
-    source_ref: "src/burn/hiscore.cpp:407"
+    source_ref: "source src/burn/hiscore.cpp:407"

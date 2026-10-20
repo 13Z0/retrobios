@@ -38,7 +38,7 @@ files:
     note: >
       SeaBIOS legacy BIOS for x86/x86_64 PC emulation. Default firmware
       loaded by pc_sysfw.c for standard PC machine types.
-    source_ref: "hw/i386/pc_sysfw.c:222,243"
+    source_ref: "source hw/i386/pc_sysfw.c:222, 243"
 
   - name: "SeaBIOS (256 KB)"
     installed_on: [retrodeck]
@@ -50,7 +50,7 @@ files:
     note: >
       SeaBIOS 256 KB variant. Some machine types or configurations
       may prefer this larger image.
-    source_ref: "pc-bios/meson.build:30"
+    source_ref: "source pc-bios/meson.build:30"
 
   - name: "SeaBIOS microvm"
     installed_on: [retrodeck]
@@ -62,7 +62,7 @@ files:
     note: >
       Minimal SeaBIOS for the microvm machine type, a stripped-down
       x86 virtual machine with reduced device set.
-    source_ref: "hw/i386/microvm.c:58"
+    source_ref: "source hw/i386/microvm.c:58"
 
   - name: "qboot ROM"
     installed_on: [retrodeck]
@@ -72,7 +72,7 @@ files:
     size: 16384
     required: false
     note: "Minimal x86 firmware for fast Linux kernel booting."
-    source_ref: "pc-bios/meson.build:32"
+    source_ref: "source pc-bios/meson.build:32"
 
   # ========================================================
   # x86 VGA BIOS (SeaVGABIOS / LGPL VGA BIOS)
@@ -87,7 +87,7 @@ files:
     note: >
       Standard VGA BIOS from LGPL VGA BIOS project. Loaded by ISA VGA
       device (vga-isa). Default VGA for older machine types.
-    source_ref: "hw/display/vga-isa.c:88, hw/display/vga_int.h:191"
+    source_ref: "source hw/display/vga-isa.c:88, source hw/display/vga_int.h:191"
 
   - name: "VGA BIOS Cirrus"
     installed_on: [retrodeck]
@@ -97,7 +97,7 @@ files:
     size: 38912
     required: false
     note: "Cirrus Logic GD5446 VGA BIOS."
-    source_ref: "hw/display/cirrus_vga.c:3001, hw/display/cirrus_vga_isa.c:67"
+    source_ref: "source hw/display/cirrus_vga.c:3001, source hw/display/cirrus_vga_isa.c:67"
 
   - name: "VGA BIOS stdvga"
     installed_on: [retrodeck]
@@ -107,7 +107,7 @@ files:
     size: 39424
     required: false
     note: "Standard VGA PCI BIOS (Bochs VBE extensions)."
-    source_ref: "hw/display/vga-pci.c:387"
+    source_ref: "source hw/display/vga-pci.c:387"
 
   - name: "VGA BIOS bochs-display"
     installed_on: [retrodeck]
@@ -117,7 +117,7 @@ files:
     size: 28672
     required: false
     note: "Bochs display device VGA BIOS."
-    source_ref: "hw/display/bochs-display.c:365"
+    source_ref: "source hw/display/bochs-display.c:365"
 
   - name: "VGA BIOS ramfb"
     installed_on: [retrodeck]
@@ -127,7 +127,7 @@ files:
     size: 28672
     required: false
     note: "RAM framebuffer VGA BIOS."
-    source_ref: "hw/display/ramfb.c:150"
+    source_ref: "source hw/display/ramfb.c:150"
 
   - name: "VGA BIOS ATI"
     installed_on: [retrodeck]
@@ -137,7 +137,7 @@ files:
     size: 39424
     required: false
     note: "ATI VGA BIOS for emulated ATI display adapter."
-    source_ref: "hw/display/ati.c:1066"
+    source_ref: "source hw/display/ati.c:1066"
 
   - name: "VGA BIOS QXL"
     installed_on: [retrodeck]
@@ -147,7 +147,7 @@ files:
     size: 39424
     required: false
     note: "QXL paravirtual display VGA BIOS."
-    source_ref: "hw/display/qxl.c:2512"
+    source_ref: "source hw/display/qxl.c:2512"
 
   - name: "VGA BIOS VirtIO"
     installed_on: [retrodeck]
@@ -157,7 +157,7 @@ files:
     size: 39424
     required: false
     note: "VirtIO GPU VGA BIOS."
-    source_ref: "hw/display/virtio-vga.c:233"
+    source_ref: "source hw/display/virtio-vga.c:233"
 
   - name: "VGA BIOS VMware"
     installed_on: [retrodeck]
@@ -167,7 +167,7 @@ files:
     size: 39424
     required: false
     note: "VMware SVGA II display VGA BIOS."
-    source_ref: "hw/display/vmware_vga.c:1349"
+    source_ref: "source hw/display/vmware_vga.c:1349"
 
   # ========================================================
   # x86 OPTION ROMs
@@ -180,7 +180,7 @@ files:
     size: 9216
     required: false
     note: "KVM virtual APIC option ROM for APIC acceleration on x86."
-    source_ref: "hw/i386/vapic.c:733"
+    source_ref: "source hw/i386/vapic.c:733"
 
   - name: "Linux boot ROM"
     installed_on: [retrodeck]
@@ -190,7 +190,7 @@ files:
     size: 1024
     required: false
     note: "Option ROM for direct Linux kernel booting via -kernel."
-    source_ref: "hw/i386/x86-common.c:964"
+    source_ref: "source hw/i386/x86-common.c:964"
 
   - name: "Linux boot DMA ROM"
     installed_on: [retrodeck]
@@ -200,7 +200,7 @@ files:
     size: 1536
     required: false
     note: "DMA-capable option ROM for direct Linux kernel booting."
-    source_ref: "hw/i386/x86-common.c:966"
+    source_ref: "source hw/i386/x86-common.c:966"
 
   - name: "Multiboot ROM"
     installed_on: [retrodeck]
@@ -210,7 +210,7 @@ files:
     size: 1024
     required: false
     note: "Option ROM for Multiboot kernel loading."
-    source_ref: "hw/i386/multiboot.c:408"
+    source_ref: "source hw/i386/multiboot.c:408"
 
   - name: "Multiboot DMA ROM"
     installed_on: [retrodeck]
@@ -220,7 +220,7 @@ files:
     size: 1024
     required: false
     note: "DMA-capable Multiboot option ROM."
-    source_ref: "hw/i386/multiboot.c:406"
+    source_ref: "source hw/i386/multiboot.c:406"
 
   - name: "PVH boot ROM"
     installed_on: [retrodeck]
@@ -230,7 +230,7 @@ files:
     size: 2048
     required: false
     note: "Option ROM for PVH (paravirtualized hardware) ELF booting."
-    source_ref: "hw/i386/x86-common.c:735"
+    source_ref: "source hw/i386/x86-common.c:735"
 
   # ========================================================
   # PXE NETWORK BOOT ROMs (iPXE legacy BIOS)
@@ -243,7 +243,7 @@ files:
     size: 67072
     required: false
     note: "iPXE PXE boot ROM for Intel e1000 NIC (8086:100e)."
-    source_ref: "pc-bios/meson.build:47"
+    source_ref: "source pc-bios/meson.build:47"
 
   - name: "PXE eepro100"
     installed_on: [retrodeck]
@@ -253,7 +253,7 @@ files:
     size: 61440
     required: false
     note: "iPXE PXE boot ROM for Intel eepro100 NIC (8086:1209). Device default romfile."
-    source_ref: "hw/net/eepro100.c:2077"
+    source_ref: "source hw/net/eepro100.c:2077"
 
   - name: "PXE ne2k_pci"
     installed_on: [retrodeck]
@@ -263,7 +263,7 @@ files:
     size: 61440
     required: false
     note: "iPXE PXE boot ROM for NE2000 PCI NIC (1050:0940)."
-    source_ref: "pc-bios/meson.build:49"
+    source_ref: "source pc-bios/meson.build:49"
 
   - name: "PXE pcnet"
     installed_on: [retrodeck]
@@ -273,7 +273,7 @@ files:
     size: 61440
     required: false
     note: "iPXE PXE boot ROM for AMD PCnet NIC (1022:2000)."
-    source_ref: "pc-bios/meson.build:50"
+    source_ref: "source pc-bios/meson.build:50"
 
   - name: "PXE rtl8139"
     installed_on: [retrodeck]
@@ -283,7 +283,7 @@ files:
     size: 61440
     required: false
     note: "iPXE PXE boot ROM for Realtek RTL8139 NIC (10ec:8139)."
-    source_ref: "pc-bios/meson.build:51"
+    source_ref: "source pc-bios/meson.build:51"
 
   - name: "PXE virtio"
     installed_on: [retrodeck]
@@ -293,7 +293,7 @@ files:
     size: 60416
     required: false
     note: "iPXE PXE boot ROM for VirtIO NIC (1af4:1000)."
-    source_ref: "pc-bios/meson.build:52"
+    source_ref: "source pc-bios/meson.build:52"
 
   # ========================================================
   # EFI NETWORK BOOT ROMs (iPXE UEFI)
@@ -306,7 +306,7 @@ files:
     size: 159232
     required: false
     note: "iPXE EFI boot ROM for Intel e1000 NIC. Device default romfile."
-    source_ref: "hw/net/e1000.c:1708"
+    source_ref: "source hw/net/e1000.c:1708"
 
   - name: "EFI e1000e"
     installed_on: [retrodeck]
@@ -316,7 +316,7 @@ files:
     size: 159232
     required: false
     note: "iPXE EFI boot ROM for Intel e1000e NIC. Device default romfile."
-    source_ref: "hw/net/e1000e.c:689"
+    source_ref: "source hw/net/e1000e.c:689"
 
   - name: "EFI eepro100"
     installed_on: [retrodeck]
@@ -326,7 +326,7 @@ files:
     size: 159232
     required: false
     note: "iPXE EFI boot ROM for Intel eepro100 NIC."
-    source_ref: "pc-bios/meson.build:54"
+    source_ref: "source pc-bios/meson.build:54"
 
   - name: "EFI ne2k_pci"
     installed_on: [retrodeck]
@@ -336,7 +336,7 @@ files:
     size: 157696
     required: false
     note: "iPXE EFI boot ROM for NE2000 PCI NIC. Device default romfile."
-    source_ref: "hw/net/ne2000-pci.c:111"
+    source_ref: "source hw/net/ne2000-pci.c:111"
 
   - name: "EFI pcnet"
     installed_on: [retrodeck]
@@ -346,7 +346,7 @@ files:
     size: 157696
     required: false
     note: "iPXE EFI boot ROM for AMD PCnet NIC. Device default romfile."
-    source_ref: "hw/net/pcnet-pci.c:267"
+    source_ref: "source hw/net/pcnet-pci.c:267"
 
   - name: "EFI rtl8139"
     installed_on: [retrodeck]
@@ -356,7 +356,7 @@ files:
     size: 160768
     required: false
     note: "iPXE EFI boot ROM for Realtek RTL8139 NIC. Device default romfile."
-    source_ref: "hw/net/rtl8139.c:3423"
+    source_ref: "source hw/net/rtl8139.c:3423"
 
   - name: "EFI virtio"
     installed_on: [retrodeck]
@@ -366,7 +366,7 @@ files:
     size: 160768
     required: false
     note: "iPXE EFI boot ROM for VirtIO NIC. Device default romfile."
-    source_ref: "hw/virtio/virtio-net-pci.c:73"
+    source_ref: "source hw/virtio/virtio-net-pci.c:73"
 
   - name: "EFI vmxnet3"
     installed_on: [retrodeck]
@@ -376,7 +376,7 @@ files:
     size: 156672
     required: false
     note: "iPXE EFI boot ROM for VMware vmxnet3 NIC. Device default romfile."
-    source_ref: "hw/net/vmxnet3.c:2508"
+    source_ref: "source hw/net/vmxnet3.c:2508"
 
   # ========================================================
   # EDK2 UEFI FIRMWARE
@@ -387,7 +387,7 @@ files:
     size: 3653632
     required: false
     note: "TianoCore UEFI firmware for x86_64. Built from edk2-stable202302."
-    source_ref: "pc-bios/meson.build:12"
+    source_ref: "source pc-bios/meson.build:12"
 
   - name: "EDK2 x86_64 Secure Boot UEFI"
     path: "qemu/edk2-x86_64-secure-code.fd"
@@ -395,7 +395,7 @@ files:
     size: 3653632
     required: false
     note: "TianoCore UEFI firmware for x86_64 with Secure Boot support."
-    source_ref: "pc-bios/meson.build:13"
+    source_ref: "source pc-bios/meson.build:13"
 
   - name: "EDK2 i386 UEFI"
     path: "qemu/edk2-i386-code.fd"
@@ -403,7 +403,7 @@ files:
     size: 3653632
     required: false
     note: "TianoCore UEFI firmware for i386."
-    source_ref: "pc-bios/meson.build:9"
+    source_ref: "source pc-bios/meson.build:9"
 
   - name: "EDK2 i386 Secure Boot UEFI"
     path: "qemu/edk2-i386-secure-code.fd"
@@ -411,7 +411,7 @@ files:
     size: 3653632
     required: false
     note: "TianoCore UEFI firmware for i386 with Secure Boot support."
-    source_ref: "pc-bios/meson.build:10"
+    source_ref: "source pc-bios/meson.build:10"
 
   - name: "EDK2 i386 UEFI vars template"
     path: "qemu/edk2-i386-vars.fd"
@@ -419,7 +419,7 @@ files:
     size: 540672
     required: false
     note: "UEFI variable store template for i386/x86_64 EDK2 firmware."
-    source_ref: "pc-bios/meson.build:11"
+    source_ref: "source pc-bios/meson.build:11"
 
   - name: "EDK2 AArch64 UEFI"
     path: "qemu/edk2-aarch64-code.fd"
@@ -427,7 +427,7 @@ files:
     size: 67108864
     required: false
     note: "TianoCore UEFI firmware for AArch64 (ARM 64-bit)."
-    source_ref: "pc-bios/meson.build:4"
+    source_ref: "source pc-bios/meson.build:4"
 
   - name: "EDK2 ARM UEFI"
     path: "qemu/edk2-arm-code.fd"
@@ -435,7 +435,7 @@ files:
     size: 67108864
     required: false
     note: "TianoCore UEFI firmware for ARM (32-bit)."
-    source_ref: "pc-bios/meson.build:5"
+    source_ref: "source pc-bios/meson.build:5"
 
   - name: "EDK2 ARM UEFI vars template"
     path: "qemu/edk2-arm-vars.fd"
@@ -443,7 +443,7 @@ files:
     size: 67108864
     required: false
     note: "UEFI variable store template for ARM/AArch64 EDK2 firmware."
-    source_ref: "pc-bios/meson.build:6"
+    source_ref: "source pc-bios/meson.build:6"
 
   - name: "EDK2 RISC-V UEFI"
     path: "qemu/edk2-riscv-code.fd"
@@ -451,7 +451,7 @@ files:
     size: 33554432
     required: false
     note: "TianoCore UEFI firmware for RISC-V 64-bit."
-    source_ref: "pc-bios/meson.build:7"
+    source_ref: "source pc-bios/meson.build:7"
 
   - name: "EDK2 RISC-V UEFI vars template"
     path: "qemu/edk2-riscv-vars.fd"
@@ -459,7 +459,7 @@ files:
     size: 33554432
     required: false
     note: "UEFI variable store template for RISC-V EDK2 firmware."
-    source_ref: "pc-bios/meson.build:8"
+    source_ref: "source pc-bios/meson.build:8"
 
   # ========================================================
   # POWERPC FIRMWARE
@@ -473,7 +473,7 @@ files:
     note: >
       OpenBIOS (IEEE 1275 Open Firmware) for PowerPC emulation.
       Default for -M mac99, -M g3beige and other PPC machines.
-    source_ref: "hw/ppc/mac_oldworld.c:60, hw/ppc/mac_newworld.c:86"
+    source_ref: "source hw/ppc/mac_oldworld.c:60, source hw/ppc/mac_newworld.c:86"
 
   - name: "SLOF (Slimline Open Firmware)"
     installed_on: [retrodeck]
@@ -482,7 +482,7 @@ files:
     size: 995000
     required: false
     note: "IBM SLOF firmware for pSeries (POWER) machine type. Built from qemu-slof-20230918."
-    source_ref: "hw/ppc/spapr.c:106"
+    source_ref: "source hw/ppc/spapr.c:106"
 
   - name: "skiboot"
     installed_on: [retrodeck]
@@ -491,7 +491,7 @@ files:
     size: 2527328
     required: false
     note: "OPAL firmware for OpenPOWER PowerNV (non-virtualized) machine type."
-    source_ref: "hw/ppc/pnv.c:63"
+    source_ref: "source hw/ppc/pnv.c:63"
 
   - name: "VOF (Virtual Open Firmware)"
     installed_on: [retrodeck]
@@ -500,7 +500,7 @@ files:
     size: 3456
     required: false
     note: "Minimal Open Firmware shim for -machine pseries,x-vof=on. Also default for Pegasos II."
-    source_ref: "hw/ppc/spapr.c:107, hw/ppc/pegasos2.c:43"
+    source_ref: "source hw/ppc/spapr.c:107, source hw/ppc/pegasos2.c:43"
 
   - name: "VOF NVRAM"
     installed_on: [retrodeck]
@@ -509,7 +509,7 @@ files:
     size: 16384
     required: false
     note: "NVRAM template for VOF (Virtual Open Firmware)."
-    source_ref: "pc-bios/meson.build:83"
+    source_ref: "source pc-bios/meson.build:83"
 
   - name: "U-Boot e500"
     installed_on: [retrodeck]
@@ -518,7 +518,7 @@ files:
     size: 421720
     required: false
     note: "U-Boot for PowerPC e500 (qemu-ppce500 target). Built from upstream denx u-boot, commit 2072e72."
-    source_ref: "hw/ppc/e500.c:1184"
+    source_ref: "source hw/ppc/e500.c:1184"
 
   - name: "U-Boot SAM460"
     installed_on: [retrodeck]
@@ -527,7 +527,7 @@ files:
     size: 524288
     required: false
     note: "U-Boot for Sam460ex (AmigaOne) PowerPC board."
-    source_ref: "pc-bios/meson.build:74"
+    source_ref: "source pc-bios/meson.build:74"
 
   - name: "QEMU VGA Mac driver"
     installed_on: [retrodeck]
@@ -536,7 +536,7 @@ files:
     size: 18752
     required: false
     note: "QemuMacDrivers VGA driver for PPC MacOS guests."
-    source_ref: "hw/ppc/mac_oldworld.c:58, hw/ppc/mac_newworld.c:84"
+    source_ref: "source hw/ppc/mac_oldworld.c:58, source hw/ppc/mac_newworld.c:84"
 
   # ========================================================
   # SPARC FIRMWARE
@@ -548,7 +548,7 @@ files:
     size: 382080
     required: false
     note: "OpenBIOS for Sparc32 emulation (sun4m)."
-    source_ref: "hw/sparc/sun4m.c:79"
+    source_ref: "source hw/sparc/sun4m.c:79"
 
   - name: "OpenBIOS Sparc64"
     installed_on: [retrodeck]
@@ -557,7 +557,7 @@ files:
     size: 1593408
     required: false
     note: "OpenBIOS for Sparc64 (UltraSPARC) emulation (sun4u)."
-    source_ref: "hw/sparc64/sun4u.c:67"
+    source_ref: "source hw/sparc64/sun4u.c:67"
 
   - name: "QEMU TCX display"
     installed_on: [retrodeck]
@@ -566,7 +566,7 @@ files:
     size: 1402
     required: false
     note: "TCX framebuffer FCode driver for Sparc32 OpenBIOS."
-    source_ref: "hw/display/tcx.c:38,827"
+    source_ref: "source hw/display/tcx.c:38, 827"
 
   - name: "QEMU cgthree display"
     installed_on: [retrodeck]
@@ -575,14 +575,14 @@ files:
     size: 850
     required: false
     note: "CG3 framebuffer FCode driver for Sparc32 OpenBIOS."
-    source_ref: "hw/display/cg3.c:44,303"
+    source_ref: "source hw/display/cg3.c:44, 303"
 
   - name: "U-Boot LEON3"
     path: "qemu/u-boot.bin"
 
     required: false
     note: "U-Boot for LEON3 SPARC board. Not shipped with QEMU, user-supplied."
-    source_ref: "hw/sparc/leon3.c:53"
+    source_ref: "source hw/sparc/leon3.c:53"
 
   # ========================================================
   # ALPHA FIRMWARE
@@ -594,7 +594,7 @@ files:
     size: 153728
     required: false
     note: "PALcode firmware for Alpha (Clipper/DP264) machine emulation."
-    source_ref: "hw/alpha/dp264.c:139"
+    source_ref: "source hw/alpha/dp264.c:139"
 
   # ========================================================
   # RISC-V FIRMWARE
@@ -606,7 +606,7 @@ files:
     size: 268312
     required: false
     note: "OpenSBI (Supervisor Binary Interface) firmware for RISC-V 32-bit."
-    source_ref: "hw/riscv/boot.c:92"
+    source_ref: "source hw/riscv/boot.c:92"
 
   - name: "OpenSBI RISC-V 64"
     installed_on: [retrodeck]
@@ -615,7 +615,7 @@ files:
     size: 272504
     required: false
     note: "OpenSBI firmware for RISC-V 64-bit."
-    source_ref: "hw/riscv/boot.c:92"
+    source_ref: "source hw/riscv/boot.c:92"
 
   # ========================================================
   # S390X FIRMWARE
@@ -627,7 +627,7 @@ files:
     size: 42608
     required: false
     note: "Channel Command Word boot firmware for s390x emulation."
-    source_ref: "hw/s390x/ipl.c:149"
+    source_ref: "source hw/s390x/ipl.c:149"
 
   - name: "S390 network boot"
     installed_on: [retrodeck]
@@ -636,7 +636,7 @@ files:
     size: 67232
     required: false
     note: "Network boot firmware for s390x emulation."
-    source_ref: "hw/s390x/ipl.c:497"
+    source_ref: "source hw/s390x/ipl.c:497"
 
   # ========================================================
   # HP-PA FIRMWARE
@@ -648,7 +648,7 @@ files:
     size: 167820
     required: false
     note: "SeaBIOS-hppa firmware for 32-bit HP-PARISC emulation."
-    source_ref: "hw/hppa/machine.c:424"
+    source_ref: "source hw/hppa/machine.c:424"
 
   - name: "HP-PA firmware (64-bit)"
     installed_on: [retrodeck]
@@ -657,7 +657,7 @@ files:
     size: 206024
     required: false
     note: "SeaBIOS-hppa firmware for 64-bit HP-PARISC emulation."
-    source_ref: "hw/hppa/machine.c:424"
+    source_ref: "source hw/hppa/machine.c:424"
 
   # ========================================================
   # MIPS FIRMWARE (not shipped, user-supplied)
@@ -667,28 +667,28 @@ files:
 
     required: false
     note: "Default BIOS for big-endian MIPS machines (Malta, MIPSsim, Jazz). Not shipped with QEMU."
-    source_ref: "hw/mips/malta.c:97"
+    source_ref: "source hw/mips/malta.c:97"
 
   - name: "MIPS BIOS (little-endian)"
     path: "qemu/mipsel_bios.bin"
 
     required: false
     note: "Default BIOS for little-endian MIPS machines (Malta, MIPSsim, Jazz). Not shipped with QEMU."
-    source_ref: "hw/mips/malta.c:99"
+    source_ref: "source hw/mips/malta.c:99"
 
   - name: "Loongson3 BIOS"
     path: "qemu/bios_loongson3.bin"
 
     required: false
     note: "Default BIOS for Loongson3 virtual MIPS machine. Not shipped with QEMU."
-    source_ref: "hw/mips/loongson3_virt.c:63"
+    source_ref: "source hw/mips/loongson3_virt.c:63"
 
   - name: "PMON Fuloong2e"
     path: "qemu/pmon_2e.bin"
 
     required: false
     note: "PMON monitor for Fuloong2e MIPS board. Not shipped with QEMU."
-    source_ref: "hw/mips/fuloong2e.c:58"
+    source_ref: "source hw/mips/fuloong2e.c:58"
 
   # ========================================================
   # M68K FIRMWARE (not shipped, user-supplied)
@@ -698,7 +698,7 @@ files:
 
     required: false
     note: "Apple Macintosh ROM for Quadra 800 emulation. Not shipped with QEMU."
-    source_ref: "hw/m68k/q800.c:62"
+    source_ref: "source hw/m68k/q800.c:62"
 
   # ========================================================
   # ARM FIRMWARE (non-NPCM7xx, not shipped)
@@ -708,7 +708,7 @@ files:
 
     required: false
     note: "Canon PowerShot A1100 IS DIGIC camera ROM. Not shipped with QEMU."
-    source_ref: "hw/arm/digic_boards.c:131"
+    source_ref: "source hw/arm/digic_boards.c:131"
 
   - name: "NPCM7xx boot ROM"
     installed_on: [retrodeck]
@@ -717,7 +717,7 @@ files:
     size: 768
     required: false
     note: "Boot ROM for Nuvoton NPCM7xx BMC (ARM Cortex-A9)."
-    source_ref: "hw/arm/npcm7xx_boards.c:56"
+    source_ref: "source hw/arm/npcm7xx_boards.c:56"
 
   # ========================================================
   # DEVICE TREE BLOBS
@@ -729,7 +729,7 @@ files:
     size: 3211
     required: false
     note: "Device tree blob for PowerPC Bamboo (440EP) board."
-    source_ref: "hw/ppc/ppc440_bamboo.c:38"
+    source_ref: "source hw/ppc/ppc440_bamboo.c:38"
 
   - name: "Canyonlands DTB (PPC)"
     installed_on: [retrodeck]
@@ -738,7 +738,7 @@ files:
     size: 9779
     required: false
     note: "Device tree blob for PowerPC Canyonlands (460EX) / Sam460ex board."
-    source_ref: "hw/ppc/sam460ex.c:45"
+    source_ref: "source hw/ppc/sam460ex.c:45"
 
   - name: "Petalogix ML605 DTB (MicroBlaze)"
     installed_on: [retrodeck]
@@ -747,7 +747,7 @@ files:
     size: 9882
     required: false
     note: "Device tree blob for Xilinx Petalogix ML605 MicroBlaze board. MicroBlaze target not built in libretro core."
-    source_ref: "pc-bios/meson.build:91"
+    source_ref: "source pc-bios/meson.build:91"
 
   - name: "Petalogix S3ADSP1800 DTB (MicroBlaze)"
     installed_on: [retrodeck]
@@ -756,14 +756,14 @@ files:
     size: 8161
     required: false
     note: "Device tree blob for Xilinx Petalogix S3ADSP1800 MicroBlaze board. MicroBlaze target not built in libretro core."
-    source_ref: "pc-bios/meson.build:90"
+    source_ref: "source pc-bios/meson.build:90"
 
   - name: "Virtex ML507 DTB (PPC)"
     path: "qemu/virtex-ml507.dtb"
 
     required: false
     note: "Device tree blob for Xilinx Virtex ML507 PowerPC board. Not shipped with QEMU."
-    source_ref: "hw/ppc/virtex_ml507.c:148"
+    source_ref: "source hw/ppc/virtex_ml507.c:148"
 
 notes:
   bios_directory: >

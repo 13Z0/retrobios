@@ -57,7 +57,7 @@ files:
   - name: "carthw.cfg"
     required: false
     note: "Cartridge hardware database for special mapper and EEPROM detection. Built-in fallback compiled into the core."
-    source_ref: "platform/libretro/libretro.c:1627, pico/cart.c:1020-1022"
+    source_ref: "source platform/libretro/libretro.c:1627, source pico/cart.c:1020-1022"
 
   # -------------------------------------------------------
   # Mega CD / Sega CD - US region
@@ -70,7 +70,7 @@ files:
     required: true
     size: 131072  # 128 KB (0x20000)
     note: "US Sega CD Model 2 BIOS (September 1993). First in US search order. The US list serves every disc whose security byte is neither 0x64 nor 0xa1 (pico/cd/cd_image.c:190, 247-248)."
-    source_ref: "platform/libretro/libretro.c:1273"
+    source_ref: "source platform/libretro/libretro.c:1273"
 
   - name: "SegaCDBIOS9303.bin"
     system: sega-megacd
@@ -80,7 +80,7 @@ files:
     required: false
     size: 131072
     note: "US Sega CD BIOS (March 1993). Second in US search order."
-    source_ref: "platform/libretro/libretro.c:1273"
+    source_ref: "source platform/libretro/libretro.c:1273"
 
   - name: "us_scd1_9210.bin"
     system: sega-megacd
@@ -90,7 +90,7 @@ files:
     required: false
     size: 131072
     note: "US Sega CD Model 1 BIOS (October 1992). Third in US search order."
-    source_ref: "platform/libretro/libretro.c:1273"
+    source_ref: "source platform/libretro/libretro.c:1273"
 
   - name: "bios_CD_U.bin"
     system: sega-megacd
@@ -100,7 +100,7 @@ files:
     required: false
     size: 131072
     note: "US Sega CD BIOS (generic name). Last in US search order."
-    source_ref: "platform/libretro/libretro.c:1273"
+    source_ref: "source platform/libretro/libretro.c:1273"
 
   # -------------------------------------------------------
   # Mega CD / Sega CD - EU region
@@ -113,7 +113,7 @@ files:
     required: true
     size: 131072
     note: "EU Mega CD Model 2 BIOS (June 1993). First in EU search order, used when security byte 0x20b is 0x64, the only PAL branch for Australian discs (pico/media.c:243-247, platform/libretro/libretro.c:1306-1308)."
-    source_ref: "platform/libretro/libretro.c:1276"
+    source_ref: "source platform/libretro/libretro.c:1276"
 
   - name: "eu_mcd2_9303.bin"
     system: sega-megacd
@@ -123,7 +123,7 @@ files:
     required: false
     size: 131072
     note: "EU Mega CD Model 2 BIOS (March 1993). Second in EU search order."
-    source_ref: "platform/libretro/libretro.c:1276"
+    source_ref: "source platform/libretro/libretro.c:1276"
 
   - name: "eu_mcd1_9210.bin"
     system: sega-megacd
@@ -133,7 +133,7 @@ files:
     required: false
     size: 131072
     note: "EU Mega CD Model 1 BIOS (October 1992). Third in EU search order."
-    source_ref: "platform/libretro/libretro.c:1276"
+    source_ref: "source platform/libretro/libretro.c:1276"
 
   - name: "bios_CD_E.bin"
     system: sega-megacd
@@ -143,7 +143,7 @@ files:
     required: false
     size: 131072
     note: "EU Mega CD BIOS (generic name). Last in EU search order."
-    source_ref: "platform/libretro/libretro.c:1276"
+    source_ref: "source platform/libretro/libretro.c:1276"
 
   # -------------------------------------------------------
   # Mega CD / Sega CD - JP region
@@ -156,7 +156,7 @@ files:
     required: true
     size: 131072
     note: "JP Mega CD Model 2 BIOS (December 1992). First in JP search order."
-    source_ref: "platform/libretro/libretro.c:1279"
+    source_ref: "source platform/libretro/libretro.c:1279"
 
   - name: "jp_mcd1_9112.bin"
     system: sega-megacd
@@ -166,7 +166,7 @@ files:
     required: false
     size: 131072
     note: "JP Mega CD Model 1 BIOS (December 1991). Second in JP search order."
-    source_ref: "platform/libretro/libretro.c:1279"
+    source_ref: "source platform/libretro/libretro.c:1279"
 
   - name: "jp_mcd1_9111.bin"
     system: sega-megacd
@@ -176,7 +176,7 @@ files:
     required: false
     size: 131072
     note: "JP Mega CD Model 1 BIOS (November 1991). Third in JP search order."
-    source_ref: "platform/libretro/libretro.c:1279"
+    source_ref: "source platform/libretro/libretro.c:1279"
 
   - name: "bios_CD_J.bin"
     system: sega-megacd
@@ -186,7 +186,7 @@ files:
     required: false
     size: 131072
     note: "JP Mega CD BIOS (generic name). Last in JP search order."
-    source_ref: "platform/libretro/libretro.c:1279"
+    source_ref: "source platform/libretro/libretro.c:1279"
 
   # -------------------------------------------------------
   # Sega 32X - HLE available, no frontend loads these
@@ -197,7 +197,7 @@ files:
     hle_fallback: true
     size: 256  # 0x100
     note: "32X 68K (Genesis-side) BIOS. HLE replacement generated when NULL."
-    source_ref: "pico/32x/memory.c:2208-2245"
+    source_ref: "source pico/32x/memory.c:2208-2245"
 
   - name: "32X_M_BIOS.BIN"
     system: sega-32x
@@ -205,7 +205,7 @@ files:
     hle_fallback: true
     size: 2048  # 0x800
     note: "32X Master SH2 BIOS. HLE replacement generated when NULL."
-    source_ref: "pico/32x/memory.c:2251-2278"
+    source_ref: "source pico/32x/memory.c:2251-2278"
 
   - name: "32X_S_BIOS.BIN"
     system: sega-32x
@@ -213,7 +213,7 @@ files:
     hle_fallback: true
     size: 1024  # 0x400
     note: "32X Slave SH2 BIOS. HLE replacement generated when NULL."
-    source_ref: "pico/32x/memory.c:2281-2299"
+    source_ref: "source pico/32x/memory.c:2281-2299"
 
 platform_details:
   megacd:

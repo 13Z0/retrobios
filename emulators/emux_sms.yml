@@ -32,5 +32,5 @@ files:
     required: true
     size: 8192
     validation: [size]
-    source_ref: "controllers/mapper/sms_mapper.c:12 (BIOS_SIZE=0x2000), :61 (bios_path), :162-170 (file_map, then false on a NULL map)"
+    source_ref: "source controllers/mapper/sms_mapper.c:12 (BIOS_SIZE=0x2000), :61 (bios_path), :162-170 (file_map, then false on a NULL map)"
     note: "Mapped at 0x0000, overlays cartridge ROM until bios_disable bit set. file_map rejects files < 8192 bytes (main/file.c:59)."

@@ -38,7 +38,7 @@ analysis:
     build_system: "CMake add_resources() in resource/CMakeLists.txt"
     storage: "apple2roms static library linked into core binary"
     accessor: "GNUFrame::GetResourceData() -> apple2roms::data map"
-    source_ref: "source/frontends/common2/gnuframe.cpp:83"
+    source_ref: "source source/frontends/common2/gnuframe.cpp:83"
 
     system_roms:
       - id: IDR_APPLE2_ROM

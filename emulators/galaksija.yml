@@ -47,7 +47,7 @@ files:
       Character generator ROM. Defines the 128-character bitmap font (8x13 pixels
       each). The core has this embedded compressed in rom.c and only loads the
       external file if all firmware files are present in the system directory.
-    source_ref: "src/rom.h:5, src/libretro.c:95-99, src/external/galaksija-emulator/src/init.c:55-67"
+    source_ref: "source src/rom.h:5, source src/libretro.c:95-99, source src/external/galaksija-emulator/src/init.c:55-67"
 
   - name: "ROM1.BIN"
     path: "galaksija/ROM1.BIN"
@@ -58,7 +58,7 @@ files:
     note: >
       System ROM / BASIC interpreter. Mapped at 0x0000-0x0FFF. Contains the
       Galaksija BASIC language and boot routines. Embedded in rom.c as fallback.
-    source_ref: "src/rom.h:8, src/libretro.c:101-105, src/external/galaksija-emulator/src/init.c:69-81"
+    source_ref: "source src/rom.h:8, source src/libretro.c:101-105, source src/external/galaksija-emulator/src/init.c:69-81"
 
   - name: "ROM2.BIN"
     path: "galaksija/ROM2.BIN"
@@ -71,7 +71,7 @@ files:
       functions (SIN, COS, TG, SQR, LN, EXP, POW, etc). Optional even when
       loading from disk -- missing ROM2 only triggers a warning. Embedded in
       rom.c as fallback.
-    source_ref: "src/rom.h:11, src/libretro.c:107-110, src/external/galaksija-emulator/src/init.c:83-92"
+    source_ref: "source src/rom.h:11, source src/libretro.c:107-110, source src/external/galaksija-emulator/src/init.c:83-92"
 
 notes:
   embedded_firmware: >

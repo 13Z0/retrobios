@@ -69,7 +69,7 @@ files:
     md5: 3c406514b9806a7c57ee65fb0b0c39b4
     sha1: 09288be705464b608ff190519ab008d3dfcd1b05
     validation: [size]
-    source_ref: "source/Memory.cpp:2054, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:177"
+    source_ref: "source source/Memory.cpp:2054, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:177"
     note: "Loaded when the machine type is Apple II (original)."
 
   - name: Apple2_Plus.rom
@@ -80,7 +80,7 @@ files:
     md5: 572b3005a4fa49bc54917b069b82c1ab
     sha1: 33a24f5489ba9195b44be77d9afb2252594cb5c7
     validation: [size]
-    source_ref: "source/Memory.cpp:2055, 2065-2069, 2126-2137, source/frontends/mariani/MarianiFrame.cpp:178"
+    source_ref: "source source/Memory.cpp:2055, 2065-2069, 2126-2137, source source/frontends/mariani/MarianiFrame.cpp:178"
     note: >
       Also read on an original Apple II with a language card in slot 0, where
       MemInitializeCustomF8ROM copies its last 2 KB over the autostart F8 area.
@@ -93,7 +93,7 @@ files:
     md5: f3e8237eca3809bec2a42b984a1332a8
     sha1: ad200b3263d08e7235d0871c8595963a07adc905
     validation: [size]
-    source_ref: "source/Memory.cpp:2056, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:179"
+    source_ref: "source source/Memory.cpp:2056, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:179"
     note: "Loaded when the machine type is Apple II J-Plus."
 
   - name: Apple2e.rom
@@ -104,7 +104,7 @@ files:
     md5: 346bc782c6a08a531c460e33bc03daf4
     sha1: 61fa9254628e5bb7236fb474006116d67684d747
     validation: [size]
-    source_ref: "source/Memory.cpp:2057, source/Memory.cpp:2065-2069, source/Memory.cpp:2100-2117, source/frontends/mariani/MarianiFrame.cpp:180"
+    source_ref: "source source/Memory.cpp:2057, source source/Memory.cpp:2065-2069, source source/Memory.cpp:2100-2117, source source/frontends/mariani/MarianiFrame.cpp:180"
     note: "Loaded when the machine type is Apple //e (original)."
 
   - name: Apple2e_Enhanced.rom
@@ -115,7 +115,7 @@ files:
     md5: 38063e08c778503fc03ecebb979769e9
     sha1: b8ea90abe135a0031065e01697c4a3a20d51198b
     validation: [size]
-    source_ref: "source/Memory.cpp:2058, source/Memory.cpp:2065-2069, source/Memory.cpp:2100-2117, source/frontends/mariani/MarianiFrame.cpp:181"
+    source_ref: "source source/Memory.cpp:2058, source source/Memory.cpp:2065-2069, source source/Memory.cpp:2100-2117, source source/frontends/mariani/MarianiFrame.cpp:181"
     note: "Default machine type."
 
   - name: PRAVETS82.ROM
@@ -126,7 +126,7 @@ files:
     md5: c619b7edfcf021f3b8fd20d9386676ba
     sha1: 8bd7ced83e209a15e9b19a05a5ef4b8e996dc1a5
     validation: [size]
-    source_ref: "source/Memory.cpp:2059, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:182"
+    source_ref: "source source/Memory.cpp:2059, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:182"
     note: "Loaded when the machine type is Pravets 82."
 
   - name: PRAVETS8M.ROM
@@ -137,7 +137,7 @@ files:
     md5: 76c79535f7cf77973e2c711aa977a124
     sha1: f1b4ff018acf95f3355f0d575b66a188d728b687
     validation: [size]
-    source_ref: "source/Memory.cpp:2060, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:183"
+    source_ref: "source source/Memory.cpp:2060, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:183"
     note: "Loaded when the machine type is Pravets 8M."
 
   - name: PRAVETS8C.ROM
@@ -148,7 +148,7 @@ files:
     md5: 1896d7b98dd940c89f7c8ea899b71006
     sha1: c976fe56e57706c161f513a82ba3e0d8cda83904
     validation: [size]
-    source_ref: "source/Memory.cpp:2061, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:184"
+    source_ref: "source source/Memory.cpp:2061, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:184"
     note: "Loaded when the machine type is Pravets 8A."
 
   - name: TK3000e.rom
@@ -159,7 +159,7 @@ files:
     md5: 8d84b614b545d4eec8799d3f325332cb
     sha1: f163e5753c18ff0e812a448e8da406f102600edf
     validation: [size]
-    source_ref: "source/Memory.cpp:2062, source/Memory.cpp:2065-2069, source/frontends/mariani/MarianiFrame.cpp:185"
+    source_ref: "source source/Memory.cpp:2062, source source/Memory.cpp:2065-2069, source source/frontends/mariani/MarianiFrame.cpp:185"
     note: "Loaded when the machine type is TK3000 //e."
 
   - name: Base64A.rom
@@ -170,7 +170,7 @@ files:
     md5: 352fdbcae14c6a8c0398822c7a273309
     sha1: f1c779af480b5bda2bdd03950c1201a5c5143bea
     validation: [size]
-    source_ref: "source/Memory.cpp:2063, source/Memory.cpp:2065-2069, source/Memory.cpp:2114-2117, source/frontends/mariani/MarianiFrame.cpp:186"
+    source_ref: "source source/Memory.cpp:2063, source source/Memory.cpp:2065-2069, source source/Memory.cpp:2114-2117, source source/frontends/mariani/MarianiFrame.cpp:186"
     note: "Loaded when the machine type is Base64A. Copied into memrom as MaxRomPages pages of 12 KB."
 
   - name: Freezes_Non-autostart_F8_Rom.rom
@@ -180,7 +180,7 @@ files:
     md5: d0a61e95ed1e1dc37c8e4801326aa79e
     sha1: 3180be6b555ee9ef1f59c4fc3f25c5aab8c39c81
     validation: [size]
-    source_ref: "source/Memory.cpp:2163-2168, source/Utilities.cpp:188-189, source/Common.h:94, source/frontends/mariani/MarianiFrame.cpp:187"
+    source_ref: "source source/Memory.cpp:2163-2168, source source/Utilities.cpp:188-189, source source/Common.h:94, source source/frontends/mariani/MarianiFrame.cpp:187"
     note: >
       MemInitializeCustomF8ROM copies it over $F800 to $FFFF when the
       configuration value "The Freeze's F8 Rom" is set and the machine is an
@@ -195,7 +195,7 @@ files:
     md5: 9ac0dc8c4d0002eb45b0b84be0bde5ec
     sha1: f9d312f128c9557d9d6ac03bfad6c3ddf83e5659
     validation: [size]
-    source_ref: "source/NTSC_CharSet.cpp:249-256, 296, source/frontends/mariani/MarianiFrame.cpp:189"
+    source_ref: "source source/NTSC_CharSet.cpp:249-256, 296, source source/frontends/mariani/MarianiFrame.cpp:189"
     note: "make_csbits reads it on every start, whatever the machine type."
 
   - name: Apple2_JPlus_Video.rom
@@ -206,7 +206,7 @@ files:
     md5: 271e2c9bf928b95e7baeff391db45495
     sha1: 0a382be58db5215c4a3de53b19a72fab660d5da2
     validation: [size]
-    source_ref: "source/NTSC_CharSet.cpp:258-266, 303, source/frontends/mariani/MarianiFrame.cpp:190"
+    source_ref: "source source/NTSC_CharSet.cpp:258-266, 303, source source/frontends/mariani/MarianiFrame.cpp:190"
     note: "Read on every start. Fills the two J-Plus character sets selected by AN2."
 
   - name: Apple2e_Enhanced_Video.rom
@@ -217,7 +217,7 @@ files:
     md5: 9123fff3442c0e688cc6816be88dd4ab
     sha1: b2b5d87f52693817fc747df087a4aa1ddcdb1f10
     validation: [size]
-    source_ref: "source/NTSC_CharSet.cpp:278-285, 297, 299-301, source/frontends/mariani/MarianiFrame.cpp:191"
+    source_ref: "source source/NTSC_CharSet.cpp:278-285, 297, 299-301, source source/frontends/mariani/MarianiFrame.cpp:191"
     note: >
       Read on every start. The original //e set is derived from it by putting
       the non-alt characters back over the 32 mousetext slots.
@@ -230,7 +230,7 @@ files:
     md5: 4b45852b369e2afd864a02d0d91f70dc
     sha1: 87ca8135f7526ddf829f9c2c4f7dbe4d568818fc
     validation: [size]
-    source_ref: "source/NTSC_CharSet.cpp:268-276, 304, source/frontends/mariani/MarianiFrame.cpp:192"
+    source_ref: "source source/NTSC_CharSet.cpp:268-276, 304, source source/frontends/mariani/MarianiFrame.cpp:192"
     note: "Read on every start. Split in two 2 KB halves for the two character sets."
 
   - name: CHARSET82.bmp
@@ -240,7 +240,7 @@ files:
     size: 8254
     md5: 5b4866713477fdb08bb2a78d2d86ceb0
     sha1: 34718c242ccc539c54b456eca84286421ad24166
-    source_ref: "source/NTSC_CharSet.cpp:291, source/frontends/mariani/MarianiFrame.cpp:52-61"
+    source_ref: "source source/NTSC_CharSet.cpp:291, source source/frontends/mariani/MarianiFrame.cpp:52-61"
     note: >
       Read through GetBitmap on every start, decoded with ImageIO and packed
       eight pixels to the octet. No size check: the copy stops at the shorter of
@@ -253,7 +253,7 @@ files:
     size: 8254
     md5: f2720f70859026c76e07fc598fbe435f
     sha1: cfbdbc1d76542f2a60dbbbdf9deb218ee197351e
-    source_ref: "source/NTSC_CharSet.cpp:292, source/frontends/mariani/MarianiFrame.cpp:52-61"
+    source_ref: "source source/NTSC_CharSet.cpp:292, source source/frontends/mariani/MarianiFrame.cpp:52-61"
     note: "Read through GetBitmap on every start."
 
   - name: CHARSET8C.bmp
@@ -263,7 +263,7 @@ files:
     size: 16446
     md5: 9248c1f19f3d3277a031f46a19b2e350
     sha1: 0ec9ebe6542ca8f89ed4a7c417716b287a75b48e
-    source_ref: "source/NTSC_CharSet.cpp:293-294, source/frontends/mariani/MarianiFrame.cpp:52-61"
+    source_ref: "source source/NTSC_CharSet.cpp:293-294, source source/frontends/mariani/MarianiFrame.cpp:52-61"
     note: "Read twice, at row 0 for the alt character set off and at row 16 for on."
 
   - name: DISK2.rom
@@ -274,7 +274,7 @@ files:
     md5: 2020aa1413ff77fe29353f3ee72dc295
     sha1: d4181c9f046aafc3fb326b381baac809d9e38d16
     validation: [size]
-    source_ref: "source/Disk.cpp:2074-2082, source/Disk.cpp:2104-2108, source/frontends/mariani/MarianiFrame.cpp:166"
+    source_ref: "source source/Disk.cpp:2074-2082, source source/Disk.cpp:2104-2108, source source/frontends/mariani/MarianiFrame.cpp:166"
     note: >
       Read when the Disk II card initialises, which is slot 6 by default. Both
       firmware images are read up front and the one installed at $C600 follows
@@ -288,7 +288,7 @@ files:
     md5: 4f80448507cf43ab40c17ac08d89e278
     sha1: afd060e6f35faf3bb0146fa889fc787adf56330a
     validation: [size]
-    source_ref: "source/Disk.cpp:2074-2082, source/Disk.cpp:2104-2106, source/frontends/mariani/MarianiFrame.cpp:165"
+    source_ref: "source source/Disk.cpp:2074-2082, source source/Disk.cpp:2104-2106, source source/frontends/mariani/MarianiFrame.cpp:165"
     note: "Read alongside the 16 sector image when the Disk II card initialises."
 
   - name: SSC.rom
@@ -299,7 +299,7 @@ files:
     md5: 67c0d61ab0911183faf05270f881a97e
     sha1: 6dab633470c6bc4cb3e81d09fda46597caf8ee57
     validation: [size]
-    source_ref: "source/SerialComms.cpp:957-970, source/frontends/mariani/MarianiFrame.cpp:167"
+    source_ref: "source source/SerialComms.cpp:957-970, source source/frontends/mariani/MarianiFrame.cpp:167"
     note: >
       Read when the card initialises, slot 2 by default. The 256 bytes at
       offset 0x700 go to the slot ROM and the whole 2 KB stays as expansion ROM.
@@ -312,7 +312,7 @@ files:
     md5: 5902996f16dc78fc013f6e1db14805b3
     sha1: c75c751589cbcc1ad4ab4f63676af7abadd86f5b
     validation: [size]
-    source_ref: "source/ParallelPrinter.cpp:43-52, source/frontends/mariani/MarianiFrame.cpp:171"
+    source_ref: "source source/ParallelPrinter.cpp:43-52, source source/frontends/mariani/MarianiFrame.cpp:171"
     note: "Read when the printer card initialises, slot 1 by default."
 
   - name: MouseInterface.rom
@@ -323,7 +323,7 @@ files:
     md5: 22563ab338024dac7b03510371d49c57
     sha1: 3a9d881a8a8d30f55b9719aceebbcf717f829d6f
     validation: [size]
-    source_ref: "source/MouseInterface.cpp:163-176, source/frontends/mariani/MarianiFrame.cpp:173"
+    source_ref: "source source/MouseInterface.cpp:163-176, source source/frontends/mariani/MarianiFrame.cpp:173"
     note: "Read only when the user puts the mouse card in a slot. No default slot holds it."
 
   - name: HDC-SmartPort.bin
@@ -334,7 +334,7 @@ files:
     md5: 2592efa1d34ade55d490a1b39911c9b2
     sha1: fd557998fd5823ad69a42ad1282e4fe47db02dca
     validation: [size]
-    source_ref: "source/Harddisk.cpp:222-241, source/frontends/mariani/MarianiFrame.cpp:170"
+    source_ref: "source source/Harddisk.cpp:222-241, source source/frontends/mariani/MarianiFrame.cpp:170"
     note: >
       Default firmware of the hard disk card, which no slot holds until the user
       adds it. Block mode and drive count are patched into the copy afterwards.
@@ -347,7 +347,7 @@ files:
     md5: e0a40e9166af27b16f60beb83c9233f0
     sha1: 69667800c54da1d4466e7b2168c0e418a4cf586c
     validation: [size]
-    source_ref: "source/Harddisk.cpp:227, source/Harddisk.cpp:237, source/Harddisk.cpp:1439-1441, source/frontends/mariani/MarianiFrame.cpp:168"
+    source_ref: "source source/Harddisk.cpp:227, source source/Harddisk.cpp:237, source source/Harddisk.cpp:1439-1441, source source/frontends/mariani/MarianiFrame.cpp:168"
     note: "Selected over the SmartPort firmware when a save state carries a hard disk card older than version 4."
 
   - name: Hddrvr-v2.bin
@@ -357,7 +357,7 @@ files:
     md5: a49e45e7a6d4de23e0845a59c7e31e0c
     sha1: 06115eebb4d58221b5c062a42bf3e41e137447ed
     validation: [size]
-    source_ref: "source/Harddisk.cpp:228, source/Harddisk.cpp:237, source/Harddisk.cpp:1439-1443, source/frontends/mariani/MarianiFrame.cpp:169"
+    source_ref: "source source/Harddisk.cpp:228, source source/Harddisk.cpp:237, source source/Harddisk.cpp:1439-1443, source source/frontends/mariani/MarianiFrame.cpp:169"
     note: >
       Selected when a save state carries hard disk card version 4. The
       application bundle does not ship it, so it has to be placed in
@@ -371,7 +371,7 @@ files:
     md5: 6ab4d0a20071dad38154a7c0278beee6
     sha1: 3b0d57ff9abb3302cc949f7e0cc71d38ea5a89ce
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:832-836, source/frontends/mariani/MarianiFrame.cpp:194"
+    source_ref: "source source/ProDOS_Utils.cpp:832-836, source source/frontends/mariani/MarianiFrame.cpp:194"
     note: "Read by the Disk Maker window when it formats an image without copying DOS 3.3."
 
   - name: bootsector_prodos243.bin
@@ -382,7 +382,7 @@ files:
     md5: 2695dc5458076eb747b9f245dd1a7ed9
     sha1: e2f1b6342efff3a39fafd239f200707bc7494592
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:792-796, source/frontends/mariani/MarianiFrame.cpp:195"
+    source_ref: "source source/ProDOS_Utils.cpp:792-796, source source/frontends/mariani/MarianiFrame.cpp:195"
     note: "Read by the Disk Maker window when it creates a ProDOS image."
 
   - name: dos33c.bin
@@ -393,7 +393,7 @@ files:
     md5: 46a02fc4775b3d959f3f949a70eaa616
     sha1: 52d1bbeed17f2a2240cb38249dba3663ad0b8a1f
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:774-778, source/frontends/mariani/MarianiFrame.cpp:196"
+    source_ref: "source source/ProDOS_Utils.cpp:774-778, source source/frontends/mariani/MarianiFrame.cpp:196"
     note: "Read by the Disk Maker window when DOS 3.3 is copied onto the new image."
 
   - name: prodos243.bin
@@ -404,7 +404,7 @@ files:
     md5: 90644bd658fd0922d28eccb7cfb7cb76
     sha1: 17c354249ddbfaf20b570d3c5e33b693e36646aa
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:595-599, source/frontends/mariani/MarianiFrame.cpp:197"
+    source_ref: "source source/ProDOS_Utils.cpp:595-599, source source/frontends/mariani/MarianiFrame.cpp:197"
     note: "Read by the Disk Maker window when the ProDOS system file is copied."
 
   - name: bitsy.boot.bin
@@ -415,7 +415,7 @@ files:
     md5: e6e8f7edc3ae48f827a97090cdca741c
     sha1: 474c2b0c666239c76fce07e1c96471650431a2d6
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:509-513, source/frontends/mariani/MarianiFrame.cpp:198"
+    source_ref: "source source/ProDOS_Utils.cpp:509-513, source source/frontends/mariani/MarianiFrame.cpp:198"
     note: "Read by the Disk Maker window when Bitsy Boot is copied."
 
   - name: quit.system.bin
@@ -426,7 +426,7 @@ files:
     md5: 6a32c39d8ac24bd56a03d79299b0a8f1
     sha1: dbda9a9fd882af929b17cd2de1a975e7f1b93361
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:552-556, source/frontends/mariani/MarianiFrame.cpp:199"
+    source_ref: "source source/ProDOS_Utils.cpp:552-556, source source/frontends/mariani/MarianiFrame.cpp:199"
     note: "Read by the Disk Maker window when Bitsy Bye is copied."
 
   - name: basic17.system.bin
@@ -437,7 +437,7 @@ files:
     md5: a8d8c08f5cb4a9480389477c6c2f2834
     sha1: 6ba0571dee8da75f5c1736854e206eb9d2601fac
     validation: [size]
-    source_ref: "source/ProDOS_Utils.cpp:467-471, source/frontends/mariani/MarianiFrame.cpp:200"
+    source_ref: "source source/ProDOS_Utils.cpp:467-471, source source/frontends/mariani/MarianiFrame.cpp:200"
     note: "Read by the Disk Maker window when BASIC.SYSTEM is copied."
 
   - name: APPLE2E.SYM
@@ -447,7 +447,7 @@ files:
     size: 13444
     md5: 034527d42a96d0f39977cb85c6a8f2d8
     sha1: fcfbbb25e06f58d13e762b02bfd468c834d98fc8
-    source_ref: "source/Debugger/Debugger_Symbols.cpp:46, 774, 814-817, source/Debugger/Debug.cpp:9495-9496"
+    source_ref: "upstream source/Debugger/Debugger_Symbols.cpp:46, 774, 814-817, source source/Debugger/Debug.cpp:9495-9496"
     note: >
       Preloaded into the Main table when the emulator starts. Read from the
       support directory first, then from the bundle. Parsed as lines of address
@@ -460,7 +460,7 @@ files:
     size: 15378
     md5: 7253a9ba7d7ca807016f5adc0207dd7b
     sha1: 496a0bd1af463fce81b362da9e4757a993e355d5
-    source_ref: "source/Debugger/Debugger_Symbols.cpp:47, 774, 814-817, source/Debugger/Debug.cpp:9498-9499"
+    source_ref: "upstream source/Debugger/Debugger_Symbols.cpp:47, 774, 814-817, source source/Debugger/Debug.cpp:9498-9499"
     note: "Preloaded into the Basic table when the emulator starts."
 
   - name: A2_DOS33.SYM2
@@ -469,7 +469,7 @@ files:
     size: 2380
     md5: 88bd69906b4b3109b3f31472fb4b47f4
     sha1: 51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c
-    source_ref: "source/Debugger/Debugger_Symbols.cpp:53, 774-806, source/Debugger/Debug.cpp:9502-9503"
+    source_ref: "upstream source/Debugger/Debugger_Symbols.cpp:53, 774-806, source source/Debugger/Debug.cpp:9502-9503"
     note: >
       Preloaded into the DOS33 table when the emulator starts. The .SYM2
       extension routes it through the debugger script reader instead of the
@@ -483,7 +483,7 @@ files:
     size: 501992
     md5: 972ce55fa7b905a494de16a7e8ec1949
     sha1: c66c1955dac84a253a661720a7947150c109f315
-    source_ref: "source/frontends/mariani/debugger/ConsoleViewController.mm:74, source/frontends/mariani/debugger/InspectorOutlineViewController.mm:356, source/frontends/mariani/debugger/CharacterMappings.mm:13-142, source/frontends/mariani/Mariani-Info.plist:5-6"
+    source_ref: "source source/frontends/mariani/debugger/ConsoleViewController.mm:74, source source/frontends/mariani/debugger/InspectorOutlineViewController.mm:356, source source/frontends/mariani/debugger/CharacterMappings.mm:13-142, source source/frontends/mariani/Mariani-Info.plist:5-6"
     note: >
       Registered from the resource folder by ATSApplicationFontsPath and asked
       for by family name. CharacterMappings maps Apple II character values to

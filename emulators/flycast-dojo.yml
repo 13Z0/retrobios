@@ -93,7 +93,7 @@ files:
     min_size: 2097152
     validation: [size]
     note: "Boot ROM. reios takes over when it is absent, and is forced under netplay, match playback and match recording. Read fails below 2 MB."
-    source_ref: "core/hw/holly/sb_mem.cpp:269, core/emulator.cpp:566-569, core/hw/flashrom/flashrom.cpp:23-33"
+    source_ref: "source core/hw/holly/sb_mem.cpp:269, source core/emulator.cpp:566-569, source core/hw/flashrom/flashrom.cpp:23-33"
 
   - name: dc_nvmem.bin
     system: sega-dreamcast
@@ -101,7 +101,7 @@ files:
     min_size: 131072
     validation: [size]
     note: "Flash memory. Created and filled with factory settings when absent."
-    source_ref: "core/hw/holly/sb_mem.cpp:214, core/hw/holly/sb_mem.cpp:111-187"
+    source_ref: "source core/hw/holly/sb_mem.cpp:214, source core/hw/holly/sb_mem.cpp:111-187"
 
   - name: dc_nvmem.bin.net
     system: sega-dreamcast
@@ -109,13 +109,13 @@ files:
     min_size: 131072
     validation: [size]
     note: "Flash memory used once Dojo mode is enabled, keeping netplay settings apart from local ones. Absent, the emulator logs that the flash is missing and creates it: the factory partition is rewritten, the user partition erased and ISP blocks and a random console id seeded (core/hw/flashrom/flashrom.h:494-524). Nothing distributed seeds it, and SaveRomFiles writes dc_nvmem.bin, never this name (core/hw/holly/sb_mem.cpp:279-286)."
-    source_ref: "core/hw/holly/sb_mem.cpp:189-230"
+    source_ref: "source core/hw/holly/sb_mem.cpp:189-230"
 
   - name: font.bin
     system: sega-dreamcast
     required: false
     note: "System font served by the reios font syscall. A built-in font is used when absent."
-    source_ref: "core/reios/reios.cpp:741-764, core/oslib/oslib.cpp:195-198"
+    source_ref: "source core/reios/reios.cpp:741-764, source core/oslib/oslib.cpp:195-198"
 
   # -------------------------------------------------------
   # Sega NAOMI
@@ -127,14 +127,14 @@ files:
     min_size: 2097152
     validation: [size]
     note: "Flat boot ROM. Games whose bios field is null run from it when naomi.zip is missing."
-    source_ref: "core/hw/holly/sb_mem.cpp:269, core/hw/naomi/naomi_cart.cpp:202-207"
+    source_ref: "source core/hw/holly/sb_mem.cpp:269, source core/hw/naomi/naomi_cart.cpp:202-207"
 
   - name: naomi.zip
     system: sega-naomi
     required: true
     category: bios_zip
     note: "System BIOS archive. 89 game entries name it and abort without it."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:84-140, core/hw/naomi/naomi_cart.cpp:194-208"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:84-140, upstream core/hw/naomi/naomi_cart.cpp:194-208"
     contents:
       - name: epr-21576h.ic27
         description: Japan
@@ -154,7 +154,7 @@ files:
     required: false
     category: bios_zip
     note: "Ferrari F355 Challenge twin. Required by f355twin, f355twinp and f355twn2."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:47-54, core/hw/naomi/naomi_roms.cpp:1689,1725,1761"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:47-54, source core/hw/naomi/naomi_roms.cpp:1689, 1725, 1761"
     contents:
       - name: epr-22849.ic27
         description: Japan
@@ -171,7 +171,7 @@ files:
     required: false
     category: bios_zip
     note: "Ferrari F355 Challenge deluxe. Required by f355."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:56-70, core/hw/naomi/naomi_roms.cpp:1645"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:56-70, source core/hw/naomi/naomi_roms.cpp:1645"
     contents:
       - name: epr-21862.ic27
         description: Japan
@@ -188,7 +188,7 @@ files:
     required: false
     category: bios_zip
     note: "House of the Dead 2. Required by hotd2, hotd2o, hotd2e and hotd2p."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:72-82, core/hw/naomi/naomi_roms.cpp:2003,2042,2081,2120"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:72-82, source core/hw/naomi/naomi_roms.cpp:2003, 2042, 2081, 2120"
     contents:
       - name: epr-21329.ic27
         description: Japan
@@ -210,14 +210,14 @@ files:
     min_size: 2097152
     validation: [size]
     note: "Flat boot ROM for the NAOMI 2 platform."
-    source_ref: "core/hw/holly/sb_mem.cpp:35-36,269"
+    source_ref: "source core/hw/holly/sb_mem.cpp:35-36, 269"
 
   - name: naomi2.zip
     system: sega-naomi2
     required: true
     category: bios_zip
     note: "System BIOS archive. All 43 NAOMI 2 game entries name it and abort without it."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:166-172, core/hw/naomi/naomi_cart.cpp:646-657"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:166-172, source core/hw/naomi/naomi_cart.cpp:646-657"
     contents:
       - name: epr-23605c.ic27
         description: Japan
@@ -237,7 +237,7 @@ files:
     required: true
     category: bios_zip
     note: "System BIOS archive. All 34 Atomiswave game entries name it and abort without it."
-    source_ref: "core/hw/naomi/naomi_roms.cpp:38-45, core/hw/naomi/naomi_cart.cpp:194-208"
+    source_ref: "source core/hw/naomi/naomi_roms.cpp:38-45, source core/hw/naomi/naomi_cart.cpp:194-208"
     contents:
       - name: bios0.ic23
         size: 131072
@@ -249,7 +249,7 @@ files:
     required: false
     category: game_data
     note: "SDL controller mapping database, read from the data directory then the config directory. Not part of the release archive. SDL built-in mappings are used when absent."
-    source_ref: "core/sdl/sdl.cpp:183-191"
+    source_ref: "source core/sdl/sdl.cpp:183-191"
 
 platform_details:
   dreamcast:

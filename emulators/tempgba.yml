@@ -25,4 +25,4 @@ files:
     system: nintendo-gba
     required: true
     size: 16384
-    source_ref: "memory.c:3308-3323 (load_bios), libretro.c:238-314 (retro_load_game returns false if missing)"
+    source_ref: "source memory.c:3308-3323 (load_bios), source libretro.c:238-314 (retro_load_game returns false if missing)"

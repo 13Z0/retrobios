@@ -35,4 +35,4 @@ files:
     mode: both
     size: 8192
     validation: [size]
-    source_ref: "mapper.c:87-110 (mapperInitFDS), libretro/libretro.c:277-285 (doOpenFDSBIOS)"
+    source_ref: "source mapper.c:87-110 (mapperInitFDS), source libretro/libretro.c:277-285 (doOpenFDSBIOS)"

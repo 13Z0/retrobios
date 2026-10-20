@@ -31,7 +31,7 @@ files:
     description: "Palm m515 ROM, Palm OS 4.1 English"
     required: true
     note: "Default ROM. Selected when core option is 'Palm m515/Palm OS 4.1'."
-    source_ref: "libretroBuildSystem/libretro.c:173-176 (check_variables), 744-763 (retro_load_game ROM loading)"
+    source_ref: "source libretroBuildSystem/libretro.c:173-176 (check_variables), 744-763 (retro_load_game ROM loading)"
 
   # --- Palm m500 / Palm OS 4.0 ---
   - name: "palmos40-en-m500.rom"
@@ -39,7 +39,7 @@ files:
     description: "Palm m500 ROM, Palm OS 4.0 English"
     required: false
     note: "Selected when core option is 'Palm m500/Palm OS 4.0'."
-    source_ref: "libretroBuildSystem/libretro.c:169-172"
+    source_ref: "source libretroBuildSystem/libretro.c:169-172"
 
   # --- Tungsten T3 / Palm OS 5.2.1 (requires EMU_SUPPORT_PALM_OS5) ---
   - name: "palmos52-en-t3.rom"
@@ -47,7 +47,7 @@ files:
     description: "Tungsten T3 ROM, Palm OS 5.2.1 English"
     required: false
     note: "Selected when core option is 'Tungsten T3/Palm OS 5.2.1'. Requires EMU_SUPPORT_PALM_OS5 compile flag."
-    source_ref: "libretroBuildSystem/libretro.c:178-181"
+    source_ref: "source libretroBuildSystem/libretro.c:178-181"
 
   # --- Tungsten T3 / Palm OS 6.0 (requires EMU_SUPPORT_PALM_OS5) ---
   - name: "palmos60-en-t3.rom"
@@ -55,7 +55,7 @@ files:
     description: "Tungsten T3 ROM, Palm OS 6.0 English"
     required: false
     note: "Selected when core option is 'Tungsten T3/Palm OS 6.0'. Requires EMU_SUPPORT_PALM_OS5 compile flag."
-    source_ref: "libretroBuildSystem/libretro.c:182-185"
+    source_ref: "source libretroBuildSystem/libretro.c:182-185"
 
   # --- MC68VZ328 bootloader ---
   - name: "bootloader-dbvz.rom"
@@ -63,14 +63,14 @@ files:
     description: "MC68VZ328 UART bootloader"
     required: false
     note: "Optional for m500/m515. Ignored for Tungsten T3."
-    source_ref: "libretroBuildSystem/libretro.c:766-782, src/dbvz.c:1408-1423 (dbvzLoadBootloader)"
+    source_ref: "source libretroBuildSystem/libretro.c:766-782, source src/dbvz.c:1408-1423 (dbvzLoadBootloader)"
 
 platform_details:
   palm_m5xx:
     rom_size: 4194304       # 4 MB (M5XX_ROM_SIZE)
     bootloader_size: 512    # DBVZ_BOOTLOADER_SIZE (0x200)
     cpu: "MC68VZ328"
-    source_ref: "include/m5XXBus.h:23,28, src/emulator.c:191-212"
+    source_ref: "include/m5XXBus.h:23, 28, src/emulator.c:191-212"
 
   tungsten_t3:
     rom_size: 16777216      # 16 MB (TUNGSTEN_T3_ROM_SIZE)

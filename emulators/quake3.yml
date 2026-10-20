@@ -44,7 +44,7 @@ files:
     system: quake3
     path: "baseq3/pak0.pk3"
     required: true
-    source_ref: "code/qcommon/files.c:179 (pak_checksums[0]=1566731103u), 2890 (per-index checksum compare), 3328-3329 (fatal without default.cfg)"
+    source_ref: "source code/qcommon/files.c:179 (pak_checksums[0]=1566731103u), 2890 (per-index checksum compare), 3328-3329 (fatal without default.cfg)"
     note: "Retail Quake III Arena base pak. Engine prints a warning on checksum mismatch, does not refuse the file."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -54,7 +54,7 @@ files:
     system: quake3
     path: "baseq3/pak1.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:180 (pak_checksums[1]=298122907u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:180 (pak_checksums[1]=298122907u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak2.pk3"
@@ -63,7 +63,7 @@ files:
     system: quake3
     path: "baseq3/pak2.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:181 (pak_checksums[2]=412165236u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:181 (pak_checksums[2]=412165236u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak3.pk3"
@@ -72,7 +72,7 @@ files:
     system: quake3
     path: "baseq3/pak3.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:182 (pak_checksums[3]=2991495316u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:182 (pak_checksums[3]=2991495316u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak4.pk3"
@@ -81,7 +81,7 @@ files:
     system: quake3
     path: "baseq3/pak4.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:183 (pak_checksums[4]=1197932710u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:183 (pak_checksums[4]=1197932710u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak5.pk3"
@@ -90,7 +90,7 @@ files:
     system: quake3
     path: "baseq3/pak5.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:184 (pak_checksums[5]=4087071573u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:184 (pak_checksums[5]=4087071573u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak6.pk3"
@@ -99,7 +99,7 @@ files:
     system: quake3
     path: "baseq3/pak6.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:185 (pak_checksums[6]=3709064859u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:185 (pak_checksums[6]=3709064859u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak7.pk3"
@@ -108,7 +108,7 @@ files:
     system: quake3
     path: "baseq3/pak7.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:186 (pak_checksums[7]=908855077u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:186 (pak_checksums[7]=908855077u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak8.pk3"
@@ -117,7 +117,7 @@ files:
     system: quake3
     path: "baseq3/pak8.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:187 (pak_checksums[8]=977125798u), 2918-2943 (absence reported, not fatal)"
+    source_ref: "source code/qcommon/files.c:187 (pak_checksums[8]=977125798u), 2918-2943 (absence reported, not fatal)"
     note: "Point release pak that RetroPie's quake3 package extracts from Q3DemoPaks.zip on install."
 
   - name: "pak0.pk3"
@@ -125,5 +125,5 @@ files:
     system: quake3
     path: "demoq3/pak0.pk3"
     required: false
-    source_ref: "code/qcommon/files.c:177 (DEMO_PAK0_CHECKSUM=2985612116u), 2870-2884 (demoq3 pak0 checksum compare)"
+    source_ref: "source code/qcommon/files.c:177 (DEMO_PAK0_CHECKSUM=2985612116u), 2870-2884 (demoq3 pak0 checksum compare)"
     note: "Demo pak, recognised under demoq3/ by this checksum and counted as baseq3/pak0.pk3."

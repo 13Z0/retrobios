@@ -50,7 +50,7 @@ files:
     size: 16384
     validation: [size]
     crc32: 1280f0d5
-    source_ref: "src/libretro/config/config.hpp:326, src/libretro/config/console.cpp:379, src/libretro/config/console.cpp:526-529, src/libretro/config/console.cpp:1098-1103, src/MemConstants.h:31, src/MemConstants.h:36"
+    source_ref: "source src/libretro/config/config.hpp:326, source src/libretro/config/console.cpp:379, source src/libretro/config/console.cpp:526-529, source src/libretro/config/console.cpp:1098-1103, source src/MemConstants.h:31, upstream src/MemConstants.h:36"
     note: "Required in DSi mode."
 
   - name: bios9.bin
@@ -61,7 +61,7 @@ files:
     size: 4096
     validation: [size]
     crc32: 2ab23573
-    source_ref: "src/libretro/config/config.hpp:325, src/libretro/config/console.cpp:380, src/libretro/config/console.cpp:531-534, src/libretro/config/console.cpp:1098-1103, src/MemConstants.h:30, src/MemConstants.h:37"
+    source_ref: "source src/libretro/config/config.hpp:325, source src/libretro/config/console.cpp:380, source src/libretro/config/console.cpp:531-534, source src/libretro/config/console.cpp:1098-1103, source src/MemConstants.h:30, upstream src/MemConstants.h:37"
     note: "Required in DSi mode."
 
   - name: firmware.bin
@@ -69,7 +69,7 @@ files:
     description: "NDS firmware image"
     required: false
     hle_fallback: true
-    source_ref: "src/libretro/config/console.cpp:337-364, src/libretro/config/console.cpp:1136-1182, src/libretro/config/constants.cpp:102-176, src/libretro/config/constants.hpp:288"
+    source_ref: "source src/libretro/config/console.cpp:337-364, source src/libretro/config/console.cpp:1136-1182, source src/libretro/config/constants.cpp:102-176, source src/libretro/config/constants.hpp:288"
     note: "Any file name: the core lists every file of 131072, 262144 or 524288 bytes with a valid firmware header and the user picks one. A generated firmware is used as fallback."
 
   # --- Nintendo DSi (TWL) ---
@@ -80,7 +80,7 @@ files:
     size: 65536
     validation: [size]
     crc32: 4316cc42
-    source_ref: "src/libretro/config/config.hpp:328, src/libretro/config/console.cpp:516-519, src/libretro/config/console.cpp:1098-1103, src/MemConstants.h:32, src/MemConstants.h:44"
+    source_ref: "source src/libretro/config/config.hpp:328, source src/libretro/config/console.cpp:516-519, source src/libretro/config/console.cpp:1098-1103, source src/MemConstants.h:32, upstream src/MemConstants.h:44"
     note: "The eMMC key-Y at offset 0x8308 is used to open the NAND image (src/libretro/config/console.cpp:586)."
 
   - name: dsi_bios9.bin
@@ -90,18 +90,18 @@ files:
     size: 65536
     validation: [size]
     crc32: bae84f6c
-    source_ref: "src/libretro/config/config.hpp:327, src/libretro/config/console.cpp:521-524, src/libretro/config/console.cpp:1098-1103, src/MemConstants.h:32, src/MemConstants.h:45"
+    source_ref: "source src/libretro/config/config.hpp:327, source src/libretro/config/console.cpp:521-524, source src/libretro/config/console.cpp:1098-1103, source src/MemConstants.h:32, upstream src/MemConstants.h:45"
 
   - name: dsi_firmware.bin
     system: nintendo-dsi
     description: "DSi firmware image"
     required: true
-    source_ref: "src/libretro/config/console.cpp:497-499, src/libretro/config/console.cpp:536-551, src/libretro/config/constants.cpp:102-176"
+    source_ref: "source src/libretro/config/console.cpp:497-499, source src/libretro/config/console.cpp:536-551, source src/libretro/config/constants.cpp:102-176"
     note: "Any file name, selected through a core option, and the firmware header must declare the DSi console type."
 
   - name: dsi_nand.bin
     system: nintendo-dsi
     description: "DSi NAND dump"
     required: true
-    source_ref: "src/libretro/config/console.cpp:490-495, src/libretro/config/console.cpp:564-592, src/libretro/config/console.cpp:1401-1416, src/libretro/config/constants.cpp:44-100, src/libretro/config/constants.hpp:283-287"
+    source_ref: "source src/libretro/config/console.cpp:490-495, source src/libretro/config/console.cpp:564-592, source src/libretro/config/console.cpp:1401-1416, source src/libretro/config/constants.cpp:44-100, source src/libretro/config/constants.hpp:283-287"
     note: "Any file name, selected through a core option or picked automatically by region. 251658240 or 257425408 bytes, plus 64 when the no$gba footer is appended. The footer magic must be present at the end or at offset 0xFF800."

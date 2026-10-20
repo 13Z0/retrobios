@@ -77,7 +77,7 @@ files:
     description: "Neo Geo system BIOS ROM set"
     required: true
     note: "sm1.sm1, sfix.sfix and 000-lo.lo are required. sp-s3.sp1 is required unless one of the other 68K BIOS images is present. All other members are BRF_OPT."
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:930-981, src/burn/drv/neogeo/d_neogeo.cpp:1207-1216, src/burner/libretro/libretro.cpp:733-748"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:930-981, source src/burn/drv/neogeo/d_neogeo.cpp:1207-1216, source src/burner/libretro/libretro.cpp:733-748"
     contents:
       - name: "sp-s3.sp1"
         size: 131072
@@ -197,7 +197,7 @@ files:
     description: "Neo Geo CDZ system ROM set"
     required: true
     note: "Both members are required. Matching is by CRC32 across neocdz.zip and neogeo.zip, so a neogeo.zip that also holds neocd.bin stands in for this archive."
-    source_ref: "src/burn/drv/neogeo/d_neogeo.cpp:1283-1299, src/burner/libretro/libretro.cpp:1316-1317"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1283-1299, source src/burner/libretro/libretro.cpp:1316-1317"
     contents:
       - name: "neocd.bin"
         size: 524288
@@ -212,7 +212,7 @@ files:
     description: "IGS PolyGame Master system BIOS ROM set"
     required: true
     note: "No member carries BRF_OPT, so all six are required for every PGM game, ddp3_bios.u37 and bios.u42 included."
-    source_ref: "src/burn/drv/pgm/d_pgm.cpp:511-524, src/burn/drv/pgm/d_pgm.cpp:529-538"
+    source_ref: "source src/burn/drv/pgm/d_pgm.cpp:511-524, source src/burn/drv/pgm/d_pgm.cpp:529-538"
     contents:
       - name: "pgm_t01s.rom"
         size: 2097152
@@ -239,7 +239,7 @@ files:
     description: "Super Kaneko Nova System BIOS ROM set"
     required: true
     note: "The five regional BIOS images are all required: none carries BRF_OPT."
-    source_ref: "src/burn/drv/pst90s/d_suprnova.cpp:1788-1799, src/burn/drv/pst90s/d_suprnova.cpp:1808-1817"
+    source_ref: "source src/burn/drv/pst90s/d_suprnova.cpp:1788-1799, source src/burn/drv/pst90s/d_suprnova.cpp:1808-1817"
     contents:
       - name: "sknsj1.u10"
         size: 524288
@@ -262,7 +262,7 @@ files:
     system: midway-mcr
     description: "Midway SSIO sound board PROM"
     required: true
-    source_ref: "src/burn/drv/pre90s/d_mcr.cpp:1615-1621, src/burn/drv/pre90s/d_mcr.cpp:1626-1635"
+    source_ref: "source src/burn/drv/pre90s/d_mcr.cpp:1615-1621, source src/burn/drv/pre90s/d_mcr.cpp:1626-1635"
     contents:
       - name: "82s123.12d"
         size: 32
@@ -275,7 +275,7 @@ files:
     description: "Midway SSIO sound board PROM, board name used by four games"
     required: true
     note: "Opened for kickman, kickc, wacko and nflfoot, whose driver names \"ssio\" as board ROM set. They pick the same SsiopromRomDesc entry as midssio."
-    source_ref: "src/burn/drv/pre90s/d_mcr.cpp:1615-1621, src/burn/drv/pre90s/d_mcr.cpp:1778-1782"
+    source_ref: "source src/burn/drv/pre90s/d_mcr.cpp:1615-1621, source src/burn/drv/pre90s/d_mcr.cpp:1778-1782"
     contents:
       - name: "82s123.12d"
         size: 32
@@ -287,7 +287,7 @@ files:
     description: "ColecoVision system BIOS ROM set"
     required: true
     note: "coleco.rom is required, while colecoa.rom, svi603.rom and czz50.rom are BRF_OPT. Archive name from CVGetZipName, which drops the cv_ prefix of cv_coleco."
-    source_ref: "src/burn/drv/coleco/d_coleco.cpp:638-670, src/burn/drv/coleco/d_coleco.cpp:675-680"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:638-670, source src/burn/drv/coleco/d_coleco.cpp:675-680"
     contents:
       - name: "coleco.rom"
         size: 8192
@@ -308,7 +308,7 @@ files:
     description: "MSX1 system BIOS ROM set"
     required: true
     note: "msx.rom is required, while msxj.rom and kanji.rom are BRF_OPT. Archive name from MSXGetZipName, which drops the msx_ prefix of msx_msx."
-    source_ref: "src/burn/drv/msx/d_msx.cpp:1680-1712, src/burn/drv/msx/d_msx.cpp:1716-1720"
+    source_ref: "source src/burn/drv/msx/d_msx.cpp:1680-1712, source src/burn/drv/msx/d_msx.cpp:1716-1720"
     contents:
       - name: "msx.rom"
         size: 32768
@@ -326,7 +326,7 @@ files:
     description: "ZX Spectrum 48K ROM set"
     required: true
     note: "Archive name from SpectrumGetZipName, which drops the spec_ prefix of spec_spectrum."
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:202-235, src/burn/drv/spectrum/d_spectrum.cpp:237-239"
+    source_ref: "source src/burn/drv/spectrum/d_spectrum.cpp:202-235, source src/burn/drv/spectrum/d_spectrum.cpp:237-239"
     contents:
       - name: "spectrum.rom"
         size: 16384
@@ -338,7 +338,7 @@ files:
     description: "ZX Spectrum 128 ROM set"
     required: true
     note: "Opened by the 128K games. Archive name from SpectrumGetZipName, which drops the spec_ prefix of spec_spec128."
-    source_ref: "src/burn/drv/spectrum/d_spectrum.cpp:202-235, src/burn/drv/spectrum/d_spectrum.cpp:244-247"
+    source_ref: "source src/burn/drv/spectrum/d_spectrum.cpp:202-235, source src/burn/drv/spectrum/d_spectrum.cpp:244-247"
     contents:
       - name: "zx128_0.rom"
         size: 16384
@@ -352,7 +352,7 @@ files:
     system: nmk16
     description: "NMK004 sound MCU internal ROM"
     required: true
-    source_ref: "src/burn/drv/pst90s/d_nmk16.cpp:5982-5988, src/burn/drv/pst90s/d_nmk16.cpp:5993-6002"
+    source_ref: "source src/burn/drv/pst90s/d_nmk16.cpp:5982-5988, source src/burn/drv/pst90s/d_nmk16.cpp:5993-6002"
     contents:
       - name: "nmk004.bin"
         size: 8192
@@ -364,7 +364,7 @@ files:
     description: "DECO Cassette System BIOS ROM set"
     required: true
     note: "The program ROMs and cassmcu.1c are required, while the six PROMs (v2.3m, v4.10d, v3.3j, dsp-3_p3-.e5, rms-3_p4-.f6, dsp-3_p5-.m4) are BRF_OPT."
-    source_ref: "src/burn/drv/dataeast/d_decocass.cpp:3392-3446, src/burn/drv/dataeast/d_decocass.cpp:3456-3465"
+    source_ref: "source src/burn/drv/dataeast/d_decocass.cpp:3392-3446, source src/burn/drv/dataeast/d_decocass.cpp:3456-3465"
     contents:
       - name: "v0a-.7e"
         size: 4096
@@ -414,7 +414,7 @@ files:
     system: sega-system16b
     description: "ISG Selection Master Type 2006 system BIOS"
     required: true
-    source_ref: "src/burn/drv/sega/d_sys16b.cpp:10631-10633, src/burn/drv/sega/d_sys16b.cpp:11202-11211"
+    source_ref: "source src/burn/drv/sega/d_sys16b.cpp:10631-10633, source src/burn/drv/sega/d_sys16b.cpp:11202-11211"
     contents:
       - name: "ism2006v00.u1"
         size: 131072
@@ -426,7 +426,7 @@ files:
     description: "Taito C-Chip uPD78C11 internal ROM"
     required: true
     note: "Named as board ROM set by Operation Wolf, Rainbow Islands, Volfied and others. There is no BurnDriver called cchip, the name comes from szBoardROM."
-    source_ref: "src/burn/drv/taito/d_taitomisc.cpp:1369-1373, src/burn/drv/taito/d_taitomisc.cpp:6250"
+    source_ref: "source src/burn/drv/taito/d_taitomisc.cpp:1369-1373, upstream src/burn/drv/taito/d_taitomisc.cpp:6250"
     contents:
       - name: "cchip_upd78c11.bin"
         size: 4096
@@ -437,7 +437,7 @@ files:
     system: ym2608
     description: "Yamaha YM2608 internal ADPCM ROM"
     required: true
-    source_ref: "src/burn/drv/pre90s/d_wc90.cpp:186-192, src/burn/drv/pre90s/d_wc90.cpp:1261-1270"
+    source_ref: "source src/burn/drv/pre90s/d_wc90.cpp:186-192, source src/burn/drv/pre90s/d_wc90.cpp:1261-1270"
     contents:
       - name: "ym2608_adpcm_rom.bin"
         size: 8192
@@ -449,4 +449,4 @@ files:
     required: false
     description: "High score address database"
     note: "Read when the fba-hiscores option is enabled, which is the default. Without it no high score is kept."
-    source_ref: "src/burn/hiscore.cpp:400-420, src/burner/libretro/libretro.cpp:1158"
+    source_ref: "source src/burn/hiscore.cpp:400-420, source src/burner/libretro/libretro.cpp:1158"

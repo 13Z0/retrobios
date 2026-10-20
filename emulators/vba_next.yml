@@ -41,4 +41,4 @@ files:
     validation: [size]
     description: "GBA BIOS"
     note: "Optional. HLE replacement handles all standard SWI calls. Real BIOS adds startup logo and may improve edge-case accuracy."
-    source_ref: "libretro/libretro.c:213-218, src/gba.c:12954-12963"
+    source_ref: "source libretro/libretro.c:213-218, source src/gba.c:12954-12963"
