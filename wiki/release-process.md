@@ -1,4 +1,4 @@
-# Release Process
+# Release process
 
 This page documents the CI/CD pipeline: what each workflow does, how releases
 are built, and how to run the process manually.
@@ -23,7 +23,7 @@ maintainer's machine and uploaded with `gh`, see
 [cutting a release](#cutting-a-release): the packs weigh 25 GB, more than a
 hosted runner should rebuild and re-upload.
 
-## deploy-site.yml - Deploy Documentation Site
+## deploy-site.yml - Deploy documentation site
 
 **Trigger.** Push to `main` when any of these paths change: `platforms/`,
 `emulators/`, `provenance/`, `wiki/`, `schemas/`, `tests/`, `docs_assets/`,

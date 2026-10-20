@@ -1,4 +1,4 @@
-# Testing Guide
+# Testing guide
 
 This page covers how to run, understand, and extend the test suite.
 

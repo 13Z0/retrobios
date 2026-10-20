@@ -4,7 +4,7 @@ Projects built on RetroBIOS data.
 
 ---
 
-## BIOS Preservation Tool
+## BIOS preservation tool
 
 **Author:** [monster-penguin](https://github.com/monster-penguin)
 **Repository:** [github.com/monster-penguin/BIOS-Preservation-Tool](https://github.com/monster-penguin/BIOS-Preservation-Tool)

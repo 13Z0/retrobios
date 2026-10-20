@@ -1,10 +1,10 @@
-# Verification Modes
+# Verification modes
 
 Each platform verifies BIOS files differently. `verify.py` replicates the native behavior
 of each platform so that verification results match what the platform itself would report.
 
 
-## Existence Mode
+## Existence mode
 
 **Platforms**: RetroArch, Lakka, RetroPie
 
@@ -26,7 +26,7 @@ Lakka and RetroPie inherit this behavior through platform config inheritance
 (`inherits: retroarch` in the platform YAML).
 
 
-## MD5 Mode
+## MD5 mode
 
 **Platforms**: Batocera, RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, MiSTer FPGA
 
@@ -127,7 +127,7 @@ The 208 `games/` files shipped by the `Distribution_MiSTer` repository carry no
 URL and install themselves, so they are not part of the pack.
 
 
-## SHA1 Mode
+## SHA1 mode
 
 **Platforms**: BizHawk
 
@@ -141,7 +141,7 @@ via `compute_hashes()` and compares case-insensitively.
 | File missing | MISSING | CRITICAL | WARNING |
 
 
-## Emulator-Level Validation
+## Emulator-level validation
 
 Independent of platform verification mode, `verify.py` runs emulator-level validation
 from `validation.py`. This layer uses data from emulator profiles (YAML files in
@@ -199,7 +199,7 @@ This catches cases where a file has the right name but wrong content, which exis
 platforms cannot detect.
 
 
-## Severity Matrix
+## Severity matrix
 
 `compute_severity()` maps the combination of status, required flag, verification mode,
 and HLE fallback to a severity level.
@@ -221,7 +221,7 @@ is still included in packs (better accuracy with the real BIOS), but its absence
 actionable.
 
 
-## File Resolution Chain
+## File resolution chain
 
 Before verification, each file entry is resolved to a local path by `resolve_local_file()`.
 The function tries these steps in order, returning the first
@@ -259,7 +259,7 @@ the divergence is printed as a discrepancy: an error in an upstream BIOS list
 must not remove a file the frontend would have loaded.
 
 
-## Discrepancy Detection
+## Discrepancy detection
 
 When platform verification passes but emulator validation fails, the file has a discrepancy.
 This happens most often in existence-mode platforms where any file with the right name is

@@ -111,6 +111,37 @@ def _yaml_prose(text: str) -> str:
     return "\n".join(parts)
 
 
+# Words a heading keeps capitalized: names of platforms, systems and programs.
+_HEADING_KEEP = set("""Batocera Recalbox Lakka Dolphin Redump Linux Windows Android Python Steam Deck
+macOS Termux Flatpak Switch Raspberry Pi Mega Drive Genesis Saturn Dreamcast Amiga Atari Sega
+Nintendo Sony Neo Geo Lynx Jaguar Commodore Apple Mac Spectrum Sinclair Amstrad MSX GameCube Wii
+Game Boy Advance Famicom Disk System Super Master PlayStation Vita Xbox Arcade English French
+Spanish I Lua Unity Qt Kodi Discord Pages Actions Docker Windows Mac Ubuntu Debian Arch
+SteamOS Chihiro NAOMI Triforce Lindbergh Model PinMAME ScummVM Dinothawr Cemu Citra Yuzu Ryujinx
+Mednafen Beetle Stella Hatari Caprice Vice Fuse Daphne Hypseus Singe Supermodel Flycast Redream
+DuckStation SwanStation Opera Gearsystem Picodrive Snes9x Nestopia Mesen Gambatte SameBoy
+mGBA melonDS DeSmuME Azahar Eden Sudachi Torzu Xemu Cxbx PCSX2 AetherSX2 NetherSX2 ARMSX2
+RPCS3 Vita3K Zinc Raine FBNeo FinalBurn Neo MAME Clrmamepro RomVault""".split())
+
+
+def _sentence_case(title: str) -> str:
+    words = title.split(" ")
+    out = []
+    starts = True
+    for w in words:
+        core = w.strip("()[],:.")
+        if starts:
+            # The first word of a heading or of a clause after ":", "." or " - ".
+            head, sep, tail = core.partition("-")
+            if sep and re.fullmatch(r"[A-Z][a-z]+", tail) and tail not in _HEADING_KEEP:
+                w = w.replace(core, f"{head}-{tail.lower()}", 1)
+        elif re.fullmatch(r"[A-Z][a-z]+(-[A-Z]?[a-z]+)*", core) and core not in _HEADING_KEEP:
+            w = w.replace(core, core.lower(), 1)
+        out.append(w)
+        starts = w.endswith((":", ".")) or w == "-" or re.fullmatch(r"\d+[a-z]?\.?", w) is not None
+    return " ".join(out)
+
+
 class NoGeneratedTypography(unittest.TestCase):
     def test_no_dash_arrow_ellipsis_or_banner_glyphs(self):
         offenders = []
@@ -186,6 +217,17 @@ class NoClauseSemicolons(unittest.TestCase):
             for m in pseudo.finditer(FENCED.sub("", p.read_text(encoding="utf-8")))
         ]
         self.assertEqual(offenders, [], "\n".join(offenders[:20]))
+
+    def test_wiki_headings_use_sentence_case(self):
+        """The gaps page and two wiki pages titled in Title Case ("What Each
+        Pack Contains") beside sentence-case pages ("Quick install")."""
+        offenders = []
+        for page in sorted((ROOT / "wiki").glob("*.md")):
+            text = FENCED.sub("", page.read_text(encoding="utf-8"))
+            for title in re.findall(r"(?m)^#{1,4} (.+)$", text):
+                if _sentence_case(title) != title:
+                    offenders.append(f"{page.name}: {title}")
+        self.assertEqual(offenders, [], "\n".join(offenders))
 
     def test_yaml_prose_and_comments(self):
         files = [p for p in _tracked() if p.suffix in (".yml", ".yaml")]

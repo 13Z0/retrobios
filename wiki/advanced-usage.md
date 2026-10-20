@@ -1,8 +1,8 @@
-# Advanced Usage
+# Advanced usage
 
 Fine-grained control over pack generation, hardware filtering, truth analysis, and verification.
 
-## Custom Packs
+## Custom packs
 
 ### Build from hash
 
@@ -188,7 +188,7 @@ under the name the platform files the target by, whichever alias was typed:
 never overwrite the full one.
 
 
-## Pack Source Variants
+## Pack source variants
 
 A pack is built from two file sources: the platform's own declared list
 (layer 1) and the requirements of the emulator profiles that apply to it
@@ -223,7 +223,7 @@ visible.
 Variants compose with `--split`, `--target` and `--manifest`.
 
 
-## Hardware Target Filtering
+## Hardware target filtering
 
 ### What targets are
 
@@ -291,7 +291,7 @@ treat `--target <their-only-target>` as a no-op: the output is identical to runn
 without `--target`.
 
 
-## Truth Generation and Diffing
+## Truth generation and diffing
 
 ### What truth is
 
@@ -360,7 +360,7 @@ makes md5 and core required on every element, and RomM compares the file
 size before any hash, so an entry missing either could never verify.
 
 
-## Emulator-Level Verification
+## Emulator-level verification
 
 ### Per-emulator checks
 
@@ -410,7 +410,7 @@ emulator profiles. Files without ground truth rely solely on platform-level veri
 JSON output (`--json`) always includes the full per-emulator detail regardless of verbosity.
 
 
-## Offline Workflow
+## Offline workflow
 
 ### Full offline pipeline
 

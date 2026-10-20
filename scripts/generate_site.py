@@ -417,7 +417,7 @@ def generate_home(
             "[Systems](systems/index.md){ .md-button } "
             "[Emulators](emulators/index.md){ .md-button } "
             "[Cross-reference](cross-reference.md){ .md-button } "
-            "[Gap Analysis](gaps.md){ .md-button } "
+            "[Gap analysis](gaps.md){ .md-button } "
             "[Dump provenance](provenance.md){ .md-button } "
             "[Data & API](data.md){ .md-button } "
             "[Contributing](contributing.md){ .md-button .md-button--primary }",
@@ -3334,7 +3334,7 @@ def _render_problem_files(
 
     if total_problems > 0:
         lines.extend([
-            "## Problem Files",
+            "## Problem files",
             "",
             f"{len(missing_files)} missing, {len(untested_files)} untested, "
             f"{len(mismatch_files)} hash mismatch.",
@@ -3374,7 +3374,7 @@ def _render_problem_files(
 
         if mismatch_files:
             lines.extend([
-                f'### Hash Mismatch <span class="rb-badge rb-badge-warning">'
+                f'### Hash mismatch <span class="rb-badge rb-badge-warning">'
                 f"{_count(len(mismatch_files), 'file')}</span>",
                 "",
                 "Platform says OK but emulator validation disagrees.",
@@ -3476,7 +3476,7 @@ def generate_gap_analysis(
     )
 
     lines = [
-        "# Gap Analysis",
+        "# Gap analysis",
         "",
         "Unified view of BIOS verification, file provenance, and coverage gaps.",
         "",
@@ -3513,7 +3513,7 @@ def generate_gap_analysis(
     # ---- Verification per platform ----
 
     lines.extend([
-        "## What Each Pack Contains",
+        "## What each pack contains",
         "",
         "| Platform | On its BIOS list | Files its emulators load | Checked by |",
         "|----------|-----------------:|-------------------------:|------------|",
@@ -3559,7 +3559,7 @@ def generate_gap_analysis(
         "from its source code "
         "([how each one works](wiki/verification-modes.md)).",
         "",
-        "## Corroboration Against Emulator Source",
+        "## Corroboration against emulator source",
         "",
         "| Platform | On its BIOS list | Documented in a profile | Content the code checks |",
         "|----------|-----------------:|------------------------:|------------------------:|",
@@ -3623,7 +3623,7 @@ def generate_gap_analysis(
             )
 
     lines.extend([
-        "## Platform Lists vs Emulator Source",
+        "## Platform lists vs emulator source",
         "",
         "Platform file lists are scraped as-is from each upstream project. "
         "Emulator profiles are read from source code. The two do not always "
@@ -3691,7 +3691,7 @@ def generate_gap_analysis(
         )
 
         lines.extend([
-            "## Core Complement",
+            "## Core complement",
             "",
             f"Files loaded by emulators but not declared by any platform. "
             f"{total_undeclared:,} files across {len(emulator_gaps)} emulators, "
@@ -3714,7 +3714,7 @@ def generate_gap_analysis(
             "| GitHub release assets (large files) |",
             f"| missing | {src_totals['missing']} | Not available, needs sourcing |",
             "",
-            "### Per Emulator",
+            "### Per emulator",
             "",
             "| Emulator | Undeclared | bios | data | release | Missing |",
             "|----------|----------:|-----:|-----:|--------:|--------:|",
@@ -3792,7 +3792,7 @@ def generate_gap_analysis(
         if src_missing_details:
             req_src = [m for m in src_missing_details if m["required"]]
             lines.extend([
-                f"### Files to Source ({_count(len(src_missing_details), 'file')}, "
+                f"### Files to source ({_count(len(src_missing_details), 'file')}, "
                 f"{len(req_src)} required"
                 + (
                     f", {_count(entries, 'entry', 'entries')}: "
@@ -3856,7 +3856,7 @@ def generate_gap_analysis(
 
     if all_unsourceable:
         lines.extend([
-            "## Acknowledged Gaps",
+            "## Acknowledged gaps",
             "",
             f"{len(all_unsourceable)} files documented as unsourceable "
             "(verified from source code).",
@@ -4494,7 +4494,7 @@ def generate_mkdocs_nav(
         {"Systems": system_nav},
         {"Emulators": emu_nav},
         {"Cross-reference": "cross-reference.md"},
-        {"Gap Analysis": "gaps.md"},
+        {"Gap analysis": "gaps.md"},
         {"Dump provenance": "provenance.md"},
         {"Data & API": "data.md"},
         {"Wiki": wiki_nav},
