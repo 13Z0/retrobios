@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-20T08:34:55Z",
+  "generated": "2026-10-20T13:08:19Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,10 +270,10 @@
       }
     }
   ],
-  "total_files": 3335,
-  "total_size": 4387705044,
-  "pack_files": 3337,
-  "pack_size": 4387705044,
+  "total_files": 3366,
+  "total_size": 4406515578,
+  "pack_files": 3368,
+  "pack_size": 4406515578,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -849,6 +849,7 @@
       "ume2015"
     ],
     "coco": [
+      "mame",
       "xroar"
     ],
     "coleco-colecovision": [
@@ -892,6 +893,7 @@
       "x64sdl"
     ],
     "dragon64": [
+      "mame",
       "xroar"
     ],
     "elektronika-bk": [
@@ -1102,7 +1104,8 @@
       "mu"
     ],
     "pc88": [
-      "quasi88"
+      "quasi88",
+      "quasi88kai"
     ],
     "pc98": [
       "dosbox-x",
@@ -1138,7 +1141,8 @@
       "scummvm-sdl1"
     ],
     "scv": [
-      "emuscv"
+      "emuscv",
+      "mame"
     ],
     "sega-dreamcast": [
       "demul",
@@ -1233,6 +1237,7 @@
     ],
     "sharp-x68000": [
       "px68k",
+      "px68k-sdl",
       "xm6pro68k",
       "xm6typeg"
     ],
@@ -2648,6 +2653,17 @@
       "cores": null,
       "systems": [
         "macintosh"
+      ],
+      "alternatives": [
+        {
+          "sha1": "20bb0271d02b1ab3b4cfe7c8d6b599abdbc5324e",
+          "sha256": "90dceaece71be101bf709ee20691c9e8486969417ffc51e4d1fb3c11e567f796",
+          "size": 25165824,
+          "repo_path": "bios/Apple/Macintosh II/MinivMacBootv2.dsk",
+          "cores": [
+            "minivmac"
+          ]
+        }
       ]
     },
     {
@@ -6304,6 +6320,33 @@
       ]
     },
     {
+      "dest": "amiga-os-310.rom",
+      "sha1": "c3c481160866e60d085e436a24db3617ff60b5f9",
+      "sha256": "a591a46f69d02875e4ff6e8efe8c7e90b63e3ca41ca7cf5715bf7b3b9a25e241",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "atari-5200-os-2port.rom",
+      "sha1": "1d2a3f00109d75d2d79fecb565775eb95b7d04d5",
+      "sha256": "e6ffcda0c9178f24c34f3751619203bba9b0789e5a5dc7f3814bd0f57937c817",
+      "size": 2048,
+      "repo_path": "bios/Atari/5200/ROM_5200_A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
       "dest": "BB01R4_OS.ROM",
       "sha1": "decde89fbae90adb591ad2fc553d35f49030c129",
       "sha256": "cd4ff8302e379b6645ad14b22b5f3862c6b13d31414a5e788132b83b83e06237",
@@ -6323,6 +6366,160 @@
       "sha256": "ea68d6abe371993811537931db616d0c16f4a16a4934582af5c7db1b4b76056f",
       "size": 8192,
       "repo_path": "bios/Atari/400-800/XEGAME.ROM",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-800-os-a-ntsc.rom",
+      "sha1": "f821911f16ed613d72d4b255b3e68ab2d07041ac",
+      "sha256": "8cde79281d2ea7aa872c41c8d8b46242a179d3e43c894ef440a1228e157f651c",
+      "size": 10240,
+      "repo_path": "bios/Atari/400-800/ROM_OS_A_NTSC",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-1200xl-os-rev-10.rom",
+      "sha1": "83c9afee8828a4026c55f10f920c42f76ad9ff65",
+      "sha256": "a904ce4b3aa61a0dd32f6bc2350fc3ffb8a98f4fb3c94d37c9dfaa346c62844a",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_AA00R10",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-1200xl-os-rev-11.rom",
+      "sha1": "5833e3a51d3a966a42baea37c40c01186e8a89cc",
+      "sha256": "fd56422e23f3cb99b5f732a1963fb1518c90b982fad3e68e2411d550440bea0d",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_AA00R11",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-xl-os-ver-1.rom",
+      "sha1": "881d030656b40bbe48f15a696b28f22c0b752ab0",
+      "sha256": "01fd400f0cb80eb786a219bc637ff7e99b0b227c1cee1c5e3c7bf2af7a994a11",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB00R1",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "ROM_OS_BB02R3V4",
+      "sha1": "c130c948eba71a5878efa3b62a76d336f684808c",
+      "sha256": "93bb60921ad8cd4259693bc53adc4b78a9a6e9c56f362ebe72b2a0b5b437681d",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB02R3V4",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "ROM_OS_CC01R4",
+      "sha1": "4e7fdcfaaa84fe3de728f5a74394502fb0f3c6cb",
+      "sha256": "98f69ad9c6b583d6456f9d7fd6fbbb4938c8657ca74e4ff83f2d04f14c883d2e",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_CC01R4",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-xl-os-ver-3.rom",
+      "sha1": "f03b9b93000ee84abb9cf8d6367241006f172182",
+      "sha256": "942b8038a8b88f4914bd624ce107835058ddaa7c85ce9d431c667e5813ff4ffb",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R3",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "ROM_OS_BB01R59",
+      "sha1": "a36b8b20f657580f172749bb0625c08706ed824c",
+      "sha256": "97ca78b74c319879732aee70747d61c0f2d09771f9e6804d109ab7afe06fd7f6",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R59",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "ROM_OS_BB01R59A",
+      "sha1": "1597e1d271ec280f084299bcef8a3e7197f8c69a",
+      "sha256": "4b5ed8cb2472013c19021fea99352fee6a50a116295cc38d4c040514c2eb39f1",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R59A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-basic-rev-a.rom",
+      "sha1": "70cdf57469a208528f78a14275837352e90e20f1",
+      "sha256": "0ace07d4ed099d700d63b3220a7f6bcfc5e2627975b2b0bb3157796bb12852da",
+      "size": 8192,
+      "repo_path": "bios/Atari/400-800/ROM_BASIC_A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari-basic-rev-b.rom",
+      "sha1": "7ad88dd99ff4a6ee66f6d162074db6f8bef7a9b6",
+      "sha256": "43de6502b77d3e7058fce6f4ed261cafbec37926b797bb1ae24470d39c998ea9",
+      "size": 8192,
+      "repo_path": "bios/Atari/400-800/ROM_BASIC_B",
       "cores": [
         "atari800"
       ],
@@ -24318,14 +24515,11 @@
       "cores": [
         "geargrafx"
       ],
-      "systems": [
-        "nec-pc-engine"
-      ],
       "regions": [
         "japan"
       ],
       "region_groups": [
-        "Geargrafx:file:pac-n1.bin"
+        "laseractive"
       ]
     },
     {
@@ -24337,14 +24531,11 @@
       "cores": [
         "geargrafx"
       ],
-      "systems": [
-        "nec-pc-engine"
-      ],
       "regions": [
         "japan"
       ],
       "region_groups": [
-        "Geargrafx:file:pce-lp1.bin"
+        "laseractive"
       ]
     },
     {
@@ -24356,14 +24547,11 @@
       "cores": [
         "geargrafx"
       ],
-      "systems": [
-        "nec-pc-engine"
-      ],
       "regions": [
         "north-america"
       ],
       "region_groups": [
-        "Geargrafx:file:pac-n10.bin"
+        "laseractive"
       ]
     },
     {
@@ -32489,16 +32677,6 @@
       ]
     },
     {
-      "dest": "ROM",
-      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
-      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
-      "size": 131072,
-      "repo_path": "bios/Apple/Apple IIGS/ROM",
-      "cores": [
-        "gsplus"
-      ]
-    },
-    {
       "dest": "c600.rom",
       "sha1": "d4181c9f046aafc3fb326b381baac809d9e38d16",
       "sha256": "de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d",
@@ -34578,11 +34756,6 @@
         "mame2010",
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "cdi",
-        "naomi2",
-        "stv"
       ]
     },
     {
@@ -36635,6 +36808,32 @@
       ]
     },
     {
+      "dest": "kick02019.AROS",
+      "sha1": "f1952b97e0fa7661e99efb4954e0a86371952c1d",
+      "sha256": "2bca61323950fbbe2472bb1cdab99311a5df6a78c8f7ae6a8819656629bf9dd2",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/kick02019.AROS",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kick02019.AROS.ext",
+      "sha1": "8b193a6515e0c8b3555ef4142417208dbbdb025e",
+      "sha256": "ba7965b27c553a517de3c7c81988a6bb6b3a12ceef465a0a4f6d30a6ff811b7c",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/kick02019.AROS.ext",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
       "dest": "ATARIBAS.ROM",
       "sha1": "3693c9cb9bf3b41bae1150f7a8264992468fc8c0",
       "sha256": "4988cb41121921f997ab17a59dd1909fece9273699eba0c6fbaafae104aa27b0",
@@ -37232,9 +37431,6 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
-      ],
-      "systems": [
-        "nec-pc-engine"
       ]
     },
     {
@@ -37247,9 +37443,6 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
-      ],
-      "systems": [
-        "nec-pc-engine"
       ]
     },
     {
@@ -37262,9 +37455,6 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
-      ],
-      "systems": [
-        "nec-pc-engine"
       ]
     },
     {
@@ -37277,9 +37467,6 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
-      ],
-      "systems": [
-        "nec-pc-engine"
       ]
     },
     {
@@ -37466,6 +37653,16 @@
       ],
       "systems": [
         "nintendo-gba"
+      ]
+    },
+    {
+      "dest": "ROM",
+      "sha1": "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37",
+      "sha256": "34cd454c6201bfd26839d6ace2ff6b1231e09d6279e49b4890311756dc3825fb",
+      "size": 131072,
+      "repo_path": "bios/Apple/Apple IIGS/ROM",
+      "cores": [
+        "gsplus"
       ]
     },
     {
@@ -38657,6 +38854,19 @@
       ]
     },
     {
+      "dest": "disk10.rom",
+      "sha1": "04115be3f97952b9d9310b52f806d04f80b40d03",
+      "sha256": "8c86c83720043525029797dd3defd0fd285651549a373117304cc470e8e61f91",
+      "size": 8192,
+      "repo_path": "bios/Tandy/CoCo/disk10.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "coco"
+      ]
+    },
+    {
       "dest": "hdbdw3bck.rom",
       "sha1": "8fd64f1c246489e0bf2b3743ae76332ff324716a",
       "sha256": "ae0c32bf1c4c7eda9682acaaf1cf693ff890305263b69dda18150d779d043b19",
@@ -38683,11 +38893,50 @@
       ]
     },
     {
+      "dest": "ddos40.rom",
+      "sha1": "89f38825ddf72b9863c04d8066d5ab8cabb9197a",
+      "sha256": "9764f572f13ae4f174fb01c7f0276bbf10d64d85775fa638d55080a5449d10b8",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/ddos40.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "dragon64"
+      ]
+    },
+    {
+      "dest": "ddos10.rom",
+      "sha1": "a8918c71d319237c1e3155bb38620acb114a80bc",
+      "sha256": "6dfc01c48e325032a025dbba7539796e0e56452a98fa6eece87f259cb9e4284f",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/ddos10.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "dragon64"
+      ]
+    },
+    {
       "dest": "dplus49b.rom",
       "sha1": "73ae74978a78ec2b97ebb1b0c808238779529bfa",
       "sha256": "a36d5534851140b48642ea1fa37a2865bb6e598a84bcd4c1610bed0207948cd8",
       "size": 8192,
       "repo_path": "bios/Dragon/Dragon/dplus49b.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "dragon64"
+      ]
+    },
+    {
+      "dest": "dplus48.rom",
+      "sha1": "e72ca68061267692b01034005c2804aeee8e5cd0",
+      "sha256": "ad369a86c3cf5353250784e4a01ba36d9858daa68e8eeb49ee7b54b3798a1c19",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/dplus48.rom",
       "cores": [
         "xroar"
       ],
@@ -40876,11 +41125,89 @@
       ]
     },
     {
+      "dest": "GameIndex.yaml",
+      "sha1": "57369df9ca82a460e596cea7835c5a0797dee668",
+      "sha256": "efa94cb7b9208dc6812bb9407dc986560e523cce57f511eff30942f76b7288bf",
+      "size": 1737799,
+      "repo_path": "bios/Sony/PlayStation 2/.variants/GameIndex.yaml.57369df9",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
       "dest": "SCPH30004R.nvm",
       "sha1": "1d3caaed7411425c16aee8c35db47b928e31f60b",
       "sha256": "c598dea13e5bba2fcae69de5b051c15fcd5b25842978be1bb20a86cfff243eaf",
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/.variants/SCPH30004R.nvm.5e0200d0",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "patches.zip",
+      "sha1": "2562e542d66db945ccf158d7a221c2a28e3b6be4",
+      "sha256": "df2b384ec29221155e8151fa2ff2dc8f0eef2409a8dce5ee7f7514352ae4058a",
+      "size": 2165576,
+      "repo_path": "bios/Sony/PlayStation 2/.variants/patches.zip.5a4d0a00",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "EROM.BIN",
+      "sha1": "adb4dbb7feb8247811506a38896ddcb789c4b477",
+      "sha256": "f7c4944e3001e3849cdead743e200e009d4d07bd5afb20fb937a7b201895f713",
+      "size": 247968,
+      "repo_path": "bios/Sony/PlayStation 2/EROM.BIN",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "SCPH-50009_BIOS_V10_CHN_190.EROM",
+      "sha1": "2ed11fd9333e62e36659565a744330a5902ed5e3",
+      "sha256": "67a6b2779e9320abe24f75ce811acf29e54d6dc06ce65b11341b6d84103de7f8",
+      "size": 3145728,
+      "repo_path": "bios/Sony/PlayStation 2/SCPH-50009_BIOS_V10_CHN_190.EROM",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "SCPH-70004.EROM",
+      "sha1": "ec0121bb8e2a209044309780d2efc2559c9a0ef1",
+      "sha256": "e5bcd5925c1f22de48d49c3895dd421d167faddc033aac628f5facfba90ceef3",
+      "size": 3145728,
+      "repo_path": "bios/Sony/PlayStation 2/SCPH-70004.EROM",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "SCPH-70004_BIOS_V12_EUR_200.ROM2",
+      "sha1": "1bae895fbdd658cfb56c53cc2139282cc1e778de",
+      "sha256": "9fc01e6beab84e61e0267fa39e23c649cdf2ccd25ad1cbfc2de0facfd160e723",
+      "size": 8192,
+      "repo_path": "bios/Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2",
       "cores": [
         "pcsx2"
       ],
@@ -40928,6 +41255,19 @@
       ]
     },
     {
+      "dest": "SCPH-90006_BIOS_VX_HK _230.EROM",
+      "sha1": "6b357e8624095770952fc408cdc6647fa62e0d28",
+      "sha256": "8801922f614b365d9d37557d7a375d06d385e936804943cb2c52abff55a3d254",
+      "size": 3145728,
+      "repo_path": "bios/Sony/PlayStation 2/SCPH-90006_BIOS_VX_HK _230.EROM",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
       "dest": "SCPH-90006_BIOS_VX_HK _230.NVM",
       "sha1": "465c2738c280eb1864f679c80b55e468bf670057",
       "sha256": "d218113ad67d0c178123b797d31baf7f4ae4a9466251d98b9db4192434d3a5e8",
@@ -40954,11 +41294,89 @@
       ]
     },
     {
+      "dest": "cheats_ni.zip",
+      "sha1": "dec5e4f137890c338babe13cfb9d41ff869fa721",
+      "sha256": "91d5ae704ff8b6d90165a65f69e9e2be8a9ab9c588c525dc1c9c4ecbbdef1ffd",
+      "size": 42525,
+      "repo_path": "bios/Sony/PlayStation 2/cheats_ni.zip",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "cheats_ws.zip",
+      "sha1": "773b4279d8c8e182dc57e444dbf448a1d115e7e0",
+      "sha256": "d07e3adde4da6a3220363b12d7b066168918225546122643ef7d19fece53b8b1",
+      "size": 1273296,
+      "repo_path": "bios/Sony/PlayStation 2/cheats_ws.zip",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "eeprom.dat",
+      "sha1": "ffc6261e487efa8c7442069f71acfc4aa826993d",
+      "sha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
+      "size": 64,
+      "repo_path": "bios/Sony/PlayStation 2/eeprom.dat",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
       "dest": "ps2-0230a-20080220.nvm",
       "sha1": "258ad0f26b0b269462bbd9acbb5506d5dfbcc3d5",
       "sha256": "e017efa804f1f7d4d3da82b67d7370c5be062b4860f1cff4f898f93437d691a0",
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.nvm",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "RedumpDatabase.yaml",
+      "sha1": "bf2c73d668cd671df8adfe2ec3c7074e8ba9176a",
+      "sha256": "302b57fdd1f9472ef590789e4b347381cc8442a04a765c7eae3d3f2e4b06394c",
+      "size": 1917242,
+      "repo_path": "bios/Sony/PlayStation 2/resources/RedumpDatabase.yaml",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "message.wav",
+      "sha1": "c54f04b63ac6f04e0a0944ef260b5497e4494dbd",
+      "sha256": "dfd8035387a463722ad07af3c91934e0a685f2afa57e31d305f0602656d1edb1",
+      "size": 15696,
+      "repo_path": "bios/Sony/PlayStation 2/resources/sounds/achievements/message.wav",
+      "cores": [
+        "pcsx2"
+      ],
+      "systems": [
+        "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "rom1.bin",
+      "sha1": "47d2ec4b342649e4c391043ab915d4435f9d180d",
+      "sha256": "41de2047af8382988bfd568035ff26eec5f1cabc3efe773680546aa00a82857d",
+      "size": 199680,
+      "repo_path": "bios/Sony/PlayStation 2/rom1.bin",
       "cores": [
         "pcsx2"
       ],
@@ -40985,19 +41403,6 @@
       "sha256": "c4527ec1c2a3aafc6a6b31d3c455d352f28a21ea905ba7df7d7247c9cb4b9e9b",
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/scph39001.nvm",
-      "cores": [
-        "pcsx2"
-      ],
-      "systems": [
-        "sony-playstation-2"
-      ]
-    },
-    {
-      "dest": "eeprom.dat",
-      "sha1": "ffc6261e487efa8c7442069f71acfc4aa826993d",
-      "sha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
-      "size": 64,
-      "repo_path": "bios/Sony/PlayStation 2/eeprom.dat",
       "cores": [
         "pcsx2"
       ],

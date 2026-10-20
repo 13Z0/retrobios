@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-20T08:34:55Z",
+  "generated": "2026-10-20T13:08:19Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -15,11 +15,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 455,
-  "total_size": 872558818,
-  "pack_files": 457,
-  "pack_size": 872558818,
-  "total_omitted": 741,
+  "total_files": 467,
+  "total_size": 872718562,
+  "pack_files": 469,
+  "pack_size": 872718562,
+  "total_omitted": 742,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -2035,7 +2035,7 @@
       "dest": "fuse/128p-0.rom",
       "name": "fuse/128p-0.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2045,7 +2045,7 @@
       "dest": "fuse/128p-1.rom",
       "name": "fuse/128p-1.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2055,7 +2055,7 @@
       "dest": "fuse/256s-0.rom",
       "name": "fuse/256s-0.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2065,7 +2065,7 @@
       "dest": "fuse/256s-1.rom",
       "name": "fuse/256s-1.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2075,7 +2075,7 @@
       "dest": "fuse/256s-2.rom",
       "name": "fuse/256s-2.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2085,7 +2085,7 @@
       "dest": "fuse/256s-3.rom",
       "name": "fuse/256s-3.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2125,7 +2125,7 @@
       "dest": "fuse/gluck.rom",
       "name": "fuse/gluck.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2355,7 +2355,7 @@
       "dest": "fuse/trdos.rom",
       "name": "fuse/trdos.rom",
       "system": "sinclair-zxspectrum",
-      "required": true,
+      "required": false,
       "reason": "below_platform_folder",
       "cores": [
         "Fuse"
@@ -2599,6 +2599,16 @@
       "reason": "no_platform_slug",
       "cores": [
         "MAME 2003"
+      ]
+    },
+    {
+      "dest": "macintosh/MinivMacBootv2.dsk",
+      "name": "MinivMacBootv2.dsk",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Mini vMac"
       ]
     },
     {
@@ -7844,6 +7854,7 @@
     ],
     "apple-macintosh-ii": [
       "basiliskii",
+      "mame",
       "minivmac"
     ],
     "atari-400-800": [
@@ -8301,6 +8312,7 @@
     ],
     "sharp-x68000": [
       "px68k",
+      "px68k-sdl",
       "xm6pro68k",
       "xm6typeg"
     ],
@@ -12719,6 +12731,20 @@
       ]
     },
     {
+      "dest": "atari8bit/atari-5200-os-2port.rom",
+      "sha1": "1d2a3f00109d75d2d79fecb565775eb95b7d04d5",
+      "sha256": "e6ffcda0c9178f24c34f3751619203bba9b0789e5a5dc7f3814bd0f57937c817",
+      "size": 2048,
+      "repo_path": "bios/Atari/5200/ROM_5200_A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
       "dest": "atari8bit/BB01R4_OS.ROM",
       "sha1": "decde89fbae90adb591ad2fc553d35f49030c129",
       "sha256": "cd4ff8302e379b6645ad14b22b5f3862c6b13d31414a5e788132b83b83e06237",
@@ -12738,6 +12764,160 @@
       "sha256": "ea68d6abe371993811537931db616d0c16f4a16a4934582af5c7db1b4b76056f",
       "size": 8192,
       "repo_path": "bios/Atari/400-800/XEGAME.ROM",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-800-os-a-ntsc.rom",
+      "sha1": "f821911f16ed613d72d4b255b3e68ab2d07041ac",
+      "sha256": "8cde79281d2ea7aa872c41c8d8b46242a179d3e43c894ef440a1228e157f651c",
+      "size": 10240,
+      "repo_path": "bios/Atari/400-800/ROM_OS_A_NTSC",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-1200xl-os-rev-10.rom",
+      "sha1": "83c9afee8828a4026c55f10f920c42f76ad9ff65",
+      "sha256": "a904ce4b3aa61a0dd32f6bc2350fc3ffb8a98f4fb3c94d37c9dfaa346c62844a",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_AA00R10",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-1200xl-os-rev-11.rom",
+      "sha1": "5833e3a51d3a966a42baea37c40c01186e8a89cc",
+      "sha256": "fd56422e23f3cb99b5f732a1963fb1518c90b982fad3e68e2411d550440bea0d",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_AA00R11",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-xl-os-ver-1.rom",
+      "sha1": "881d030656b40bbe48f15a696b28f22c0b752ab0",
+      "sha256": "01fd400f0cb80eb786a219bc637ff7e99b0b227c1cee1c5e3c7bf2af7a994a11",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB00R1",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/ROM_OS_BB02R3V4",
+      "sha1": "c130c948eba71a5878efa3b62a76d336f684808c",
+      "sha256": "93bb60921ad8cd4259693bc53adc4b78a9a6e9c56f362ebe72b2a0b5b437681d",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB02R3V4",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/ROM_OS_CC01R4",
+      "sha1": "4e7fdcfaaa84fe3de728f5a74394502fb0f3c6cb",
+      "sha256": "98f69ad9c6b583d6456f9d7fd6fbbb4938c8657ca74e4ff83f2d04f14c883d2e",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_CC01R4",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-xl-os-ver-3.rom",
+      "sha1": "f03b9b93000ee84abb9cf8d6367241006f172182",
+      "sha256": "942b8038a8b88f4914bd624ce107835058ddaa7c85ce9d431c667e5813ff4ffb",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R3",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/ROM_OS_BB01R59",
+      "sha1": "a36b8b20f657580f172749bb0625c08706ed824c",
+      "sha256": "97ca78b74c319879732aee70747d61c0f2d09771f9e6804d109ab7afe06fd7f6",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R59",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/ROM_OS_BB01R59A",
+      "sha1": "1597e1d271ec280f084299bcef8a3e7197f8c69a",
+      "sha256": "4b5ed8cb2472013c19021fea99352fee6a50a116295cc38d4c040514c2eb39f1",
+      "size": 16384,
+      "repo_path": "bios/Atari/400-800/ROM_OS_BB01R59A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-basic-rev-a.rom",
+      "sha1": "70cdf57469a208528f78a14275837352e90e20f1",
+      "sha256": "0ace07d4ed099d700d63b3220a7f6bcfc5e2627975b2b0bb3157796bb12852da",
+      "size": 8192,
+      "repo_path": "bios/Atari/400-800/ROM_BASIC_A",
+      "cores": [
+        "atari800"
+      ],
+      "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ]
+    },
+    {
+      "dest": "atari8bit/atari-basic-rev-b.rom",
+      "sha1": "7ad88dd99ff4a6ee66f6d162074db6f8bef7a9b6",
+      "sha256": "43de6502b77d3e7058fce6f4ed261cafbec37926b797bb1ae24470d39c998ea9",
+      "size": 8192,
+      "repo_path": "bios/Atari/400-800/ROM_BASIC_B",
       "cores": [
         "atari800"
       ],
