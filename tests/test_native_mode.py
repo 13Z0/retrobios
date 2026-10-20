@@ -260,7 +260,7 @@ class CandidateVerdict(unittest.TestCase):
     """Whether a profile entry can be a gap, and whether it is settled.
 
     The filter chain mixed two kinds of skip. A settled entry is answered for
-    -the platform declares it, the profile calls it unsourceable -so the same
+    (the platform declares it, the profile calls it unsourceable), so the same
     requirement reached from another profile must not be reconsidered. A
     skipped one merely does not apply here: the same file can be libretro-only
     in one profile and standalone-only in another, and recording it from the

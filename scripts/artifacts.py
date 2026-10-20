@@ -31,8 +31,8 @@ def write_if_changed(
     Compares new and existing content after stripping timestamp lines.
     Returns True if the file was written, False if skipped (unchanged).
 
-    A caller that writes a file in two passes -a body, then the same body
-    wrapped in front matter -passes ``normalize`` to reduce both sides to the
+    A caller that writes a file in two passes (a body, then the same body
+    wrapped in front matter) passes ``normalize`` to reduce both sides to the
     part it owns. Without it the second pass always sees a difference, the
     file is rewritten, and the fresh timestamp defeats the comparison.
     """

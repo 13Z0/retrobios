@@ -184,7 +184,7 @@ def _resolve_path(p: str) -> str:
 def _extract_bios_entries(component_val: dict) -> list[dict]:
     """Extract BIOS entries from all three possible locations in a component.
 
-    No dedup here -dedup is done in fetch_requirements() with full
+    No dedup here: dedup is done in fetch_requirements() with full
     (system, filename) key to avoid dropping valid same-filename entries
     across different systems.
     """
@@ -368,13 +368,13 @@ class Scraper(BaseScraper):
                     if resolved.startswith("saves"):
                         continue
 
-                    # Build destination -default to bios/ if no path specified
+                    # Build destination: default to bios/ if no path specified
                     if resolved:
                         destination = f"{resolved}/{filename}"
                     else:
                         destination = f"bios/{filename}"
 
-                    # MD5 handling -sanitize upstream errors
+                    # MD5 handling: sanitize upstream errors
                     md5_raw = entry.get("md5", "")
                     if isinstance(md5_raw, list):
                         parts = [str(m).strip().lower() for m in md5_raw if m]

@@ -847,7 +847,7 @@ def _resolve_agnostic(
     """Any file of the right shape under the declared prefix.
 
     Some cores accept whatever filename sits in their BIOS directory, so the
-    shape -a size or a size range -is all that identifies a candidate. A
+    shape (a size or a size range) is all that identifies a candidate. A
     declared hash outranks that, and stops this step being reached.
     """
     if not file_entry.get("agnostic") or has_strong_hash:
@@ -1557,7 +1557,7 @@ def resolve_local_file(
             if valid:
                 primary = [c[0] for c in valid if "/.variants/" not in c[0]]
                 return (primary[0] if primary else valid[0][0]), "hash_mismatch"
-            # No candidate contains the zipped_file -fall through to step 5
+            # No candidate contains the zipped_file: fall through to step 5
         elif not unsourceable:
             ordered = _by_affinity([c[0] for c in candidates], file_entry, dest_hint)
             primary = [c for c in ordered if "/.variants/" not in c]
@@ -2557,7 +2557,7 @@ import re
 
 
 
-# Validation and mode filtering -extracted to validation.py for SoC.
+# Validation and mode filtering: extracted to validation.py for SoC.
 # Re-exported below for backward compatibility.
 
 

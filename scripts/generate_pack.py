@@ -994,7 +994,7 @@ def generate_pack(
 
                 # Emulator-level validation: informational only for platform packs.
                 # Platform verification (existence/md5) is the authority for pack status.
-                # Emulator checks are supplementary -logged but don't downgrade.
+                # Emulator checks are supplementary: logged but don't downgrade.
                 # When a discrepancy is found, try to find a file satisfying both.
                 if file_status.get(dedup_key) == "ok":
                     local_path, disagreement = validated_choice(
@@ -1145,7 +1145,7 @@ def generate_pack(
           seen_parents,
       )
 
-      # README.txt for users -personalized step-by-step per platform
+      # README.txt for users: personalized step-by-step per platform
       num_systems = len(pack_systems)
       _registry_path = Path(platforms_dir) / "_registry.yml"
       _pack_registry: dict = {}

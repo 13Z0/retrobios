@@ -212,7 +212,7 @@ def resolve_file(
     if path and status != "hash_mismatch":
         return path, status
 
-    # Large files from GitHub release assets -tried when local file is
+    # Large files from GitHub release assets: tried when local file is
     # missing OR has a hash mismatch (wrong variant on disk)
     name = file_entry.get("name", "")
     if file_entry.get("type") == "directory" or name.endswith("/"):

@@ -286,8 +286,8 @@ diff .cache/upstream-native/myplatform/<their file> \
 ```
 
 The export must not lose anything the platform already declares. If your
-format carries code as well as data - a script, a C# database, a manifest
-whose BIOS list sits beside launch configuration - say so with
+format carries code as well as data (a script, a C# database, a manifest
+whose BIOS list sits beside launch configuration), say so with
 `needs_original()` and patch their file rather than writing a new one. An
 exporter that regenerates such a file from BIOS data alone hands the
 maintainer something that no longer runs.

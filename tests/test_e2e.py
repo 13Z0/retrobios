@@ -574,7 +574,7 @@ class TestE2E(unittest.TestCase):
             "type": "libretro",
             "systems": ["console-a", "sys-md5"],
             "files": [
-                # Size validation -correct size (16 bytes = len(b"PRESENT_REQUIRED"))
+                # Size validation: correct size (16 bytes = len(b"PRESENT_REQUIRED"))
                 {
                     "name": "present_req.bin",
                     "required": True,
@@ -582,14 +582,14 @@ class TestE2E(unittest.TestCase):
                     "size": 16,
                     "source_ref": "test.c:10-20",
                 },
-                # Size validation -wrong expected size
+                # Size validation: wrong expected size
                 {
                     "name": "present_opt.bin",
                     "required": False,
                     "validation": ["size"],
                     "size": 9999,
                 },
-                # CRC32 validation -correct crc32
+                # CRC32 validation: correct crc32
                 {
                     "name": "correct_hash.bin",
                     "required": True,
@@ -597,7 +597,7 @@ class TestE2E(unittest.TestCase):
                     "crc32": "91d0b1d3",
                     "source_ref": "hash.c:42",
                 },
-                # CRC32 validation -wrong crc32
+                # CRC32 validation: wrong crc32
                 {
                     "name": "no_md5.bin",
                     "required": False,
@@ -611,28 +611,28 @@ class TestE2E(unittest.TestCase):
                     "validation": ["crc32"],
                     "crc32": "0179e92e",
                 },
-                # MD5 validation -correct md5
+                # MD5 validation: correct md5
                 {
                     "name": "correct_hash.bin",
                     "required": True,
                     "validation": ["md5"],
                     "md5": "4a8db431e3b1a1acacec60e3424c4ce8",
                 },
-                # SHA1 validation -correct sha1
+                # SHA1 validation: correct sha1
                 {
                     "name": "correct_hash.bin",
                     "required": True,
                     "validation": ["sha1"],
                     "sha1": "a2ab6c95c5bbd191b9e87e8f4e85205a47be5764",
                 },
-                # MD5 validation -wrong md5
+                # MD5 validation: wrong md5
                 {
                     "name": "alias_target.bin",
                     "required": False,
                     "validation": ["md5"],
                     "md5": "0000000000000000000000000000dead",
                 },
-                # Adler32 -known_hash_adler32 field
+                # Adler32: known_hash_adler32 field
                 {
                     "name": "present_req.bin",
                     "required": True,
@@ -646,7 +646,7 @@ class TestE2E(unittest.TestCase):
                     "min_size": 10,
                     "max_size": 100,
                 },
-                # Signature -crypto check we can't reproduce, but size applies
+                # Signature: crypto check we can't reproduce, but size applies
                 {
                     "name": "correct_hash.bin",
                     "required": True,
@@ -747,7 +747,7 @@ class TestE2E(unittest.TestCase):
             yaml.dump(emu_mixed_agnostic, fh)
 
     # ---------------------------------------------------------------
-    # THE TEST -one method per feature area, all using same fixtures
+    # THE TEST: one method per feature area, all using same fixtures
     # ---------------------------------------------------------------
 
     def test_01_resolve_sha1(self):
@@ -999,7 +999,7 @@ class TestE2E(unittest.TestCase):
             config, self.emulators_dir, self.db, profiles
         )
         names = {u["name"] for u in undeclared}
-        # dd_covered.bin is a file entry, not data_dir content -still undeclared
+        # dd_covered.bin is a file entry, not data_dir content: still undeclared
         self.assertIn("dd_covered.bin", names)
 
     def test_44_cross_ref_skips_launchers(self):
@@ -2197,7 +2197,7 @@ class TestE2E(unittest.TestCase):
         config = load_platform_config("test_existence", self.platforms_dir)
         profiles = load_emulator_profiles(self.emulators_dir)
         result = verify_platform(config, self.db, self.emulators_dir, profiles)
-        # Simulate --json filtering (non-OK only) -ground_truth must survive
+        # Simulate --json filtering (non-OK only): ground_truth must survive
         filtered = [d for d in result["details"] if d["status"] != Status.OK]
         for d in filtered:
             self.assertIn("ground_truth", d)

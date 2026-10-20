@@ -23,7 +23,7 @@ from nativemode import SIZE_AND_ANY_HASH, digest_algorithm, hash_mismatch_exclud
 from ziptools import check_inside_zip
 
 # Validation types that require console-specific cryptographic keys.
-# verify.py cannot reproduce these -size checks still apply if combined.
+# verify.py cannot reproduce these: size checks still apply if combined.
 _CRYPTO_CHECKS = frozenset({"signature", "crypto"})
 
 
@@ -216,7 +216,7 @@ def _build_validation_index(profiles: dict) -> dict[str, dict]:
                     index[fname]["max_size"] = (
                         max(cur, f["max_size"]) if cur is not None else f["max_size"]
                     )
-            # Hash checks -collect all accepted hashes as sets (multiple valid
+            # Hash checks: collect all accepted hashes as sets (multiple valid
             # versions of the same file, e.g. MT-32 ROM versions)
             if "crc32" in checks and f.get("crc32"):
                 crc_val = f["crc32"]
@@ -235,7 +235,7 @@ def _build_validation_index(profiles: dict) -> dict[str, dict]:
                     for h in values:
                         if str(h).strip():
                             index[fname][hash_type].add(str(h).strip().lower())
-            # Adler32 -stored as known_hash_adler32 field (not in validation: list
+            # Adler32: stored as known_hash_adler32 field (not in validation: list
             # for Dolphin, but support it in both forms for future profiles)
             adler_val = f.get("known_hash_adler32") or f.get("adler32")
             for value in adler_val if isinstance(adler_val, list) else [adler_val] if adler_val else []:
@@ -370,7 +370,7 @@ def check_file_validation(
     checks = entry["checks"]
     pe = entry.get("per_emulator", {})
 
-    # Size checks -sizes is a set of accepted values
+    # Size checks: sizes is a set of accepted values
     if "size" in checks:
         actual_size = os.path.getsize(local_path)
         if entry["sizes"] and actual_size not in entry["sizes"]:
@@ -384,7 +384,7 @@ def check_file_validation(
             emus = _emulators_for_check("size", pe)
             return f"size too large: max {entry['max_size']}, got {actual_size}", emus
 
-    # Hash checks -compute once, reuse for all hash types.
+    # Hash checks: compute once, reuse for all hash types.
     # Each hash field is a set of accepted values (multiple valid ROM versions).
     need_hashes = any(
         h in checks and entry.get(h) for h in ("crc32", "md5", "sha1", "sha256")

@@ -122,7 +122,7 @@ def _plan_group_removals(
     Records clone groups in *mame_clones* and returns the paths to remove.
     """
     true_dupes_to_remove: list[str] = []
-    # Separate by filename -same name = true duplicate, different name = clone
+    # Separate by filename: same name = true duplicate, different name = clone
     by_name: dict[str, list[str]] = defaultdict(list)
     for p in paths:
         by_name[os.path.basename(p)].append(p)
@@ -147,7 +147,7 @@ def _plan_group_removals(
         ]
         true_dupes_to_remove.extend(p for p in variants if p not in holders)
 
-    # Different filenames, same content -need special handling
+    # Different filenames, same content: need special handling
     unique_names = sorted(by_name.keys())
     if len(unique_names) > 1:
         # Check if these are all in MAME/Arcade dirs AND all ZIPs
@@ -171,7 +171,7 @@ def _plan_group_removals(
                         true_dupes_to_remove.append(p)
         else:
             # Non-MAME different names (e.g., 64DD_IPL_US.n64 vs IPL_USA.n64)
-            # Keep ALL -each name may be needed by a different emulator
+            # Keep ALL: each name may be needed by a different emulator
             # Only remove true duplicates (same name in multiple dirs)
             pass
 
@@ -223,7 +223,7 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
         # Find the best canonical across all paths
         all_paths = [p for p in paths if p not in true_dupes_to_remove]
         if not all_paths:
-            # All copies were marked for removal -keep the best one
+            # All copies were marked for removal: keep the best one
             all_paths_sorted = sorted(paths, key=path_priority)
             all_paths = [all_paths_sorted[0]]
             true_dupes_to_remove = [p for p in paths if p != all_paths[0]]

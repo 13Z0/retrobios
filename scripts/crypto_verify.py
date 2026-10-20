@@ -75,7 +75,7 @@ def _rsa_verify_pkcs1v15_sha256(
 ) -> bool:
     """Verify RSA-2048 PKCS#1 v1.5 with SHA-256.
 
-    Pure Python -uses Python's native int for modular exponentiation.
+    Pure Python: uses Python's native int for modular exponentiation.
     Reproduces CryptoPP::RSASS<PKCS1v15, SHA256>::Verifier.
     """
     n = int.from_bytes(modulus, "big")

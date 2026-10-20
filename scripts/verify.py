@@ -109,7 +109,7 @@ _REPO_PLATFORMS = os.path.join(os.path.dirname(__file__), "..", "platforms")
 DEFAULT_EMULATORS_DIR = "emulators"
 
 
-# Status model -aligned with Batocera BiosStatus (batocera-systems:967-969)
+# Status model: aligned with Batocera BiosStatus (batocera-systems:967-969)
 
 
 class Status:
@@ -420,8 +420,8 @@ def _candidate_verdict(
     """Whether a profile entry can be a gap, and whether it is settled.
 
     Three answers. "keep" means it is a candidate. "settled" means something
-    has answered for it -the platform declares it, or the profile documents
-    it as unsourceable -so the same requirement reached from another profile
+    has answered for it (the platform declares it, or the profile documents
+    it as unsourceable), so the same requirement reached from another profile
     must not be reconsidered. "skip" means it does not apply in this context,
     which leaves it open for a profile where it does: the same file can be
     libretro-only here and standalone-only there.
@@ -735,7 +735,7 @@ def find_exclusion_notes(
             )
             continue
 
-        # Count standalone-only files -but only report as excluded if the
+        # Count standalone-only files, but only report as excluded if the
         # platform does NOT use this emulator in standalone mode
         standalone_set = platform_standalone_set(config)
         is_standalone = runs_standalone(emu_name, profile, standalone_set)

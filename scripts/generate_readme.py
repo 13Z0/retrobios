@@ -689,7 +689,7 @@ def contributing_text(
 1. Fork this repository
 2. Place the file in `bios/Manufacturer/Console/filename`
 3. Variants (alternate hashes for the same file): `bios/Manufacturer/Console/.variants/`
-4. Open a Pull Request - hashes are verified automatically and reported as a comment
+4. Open a pull request. Its hashes are checked automatically and reported in a comment
 
 The [dump provenance]({link("provenance")}) page lists catalogued dumps still
 missing from the collection, with their hashes. A file matching one of those is

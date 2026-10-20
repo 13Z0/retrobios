@@ -1,8 +1,8 @@
 """Scraper for EmuDeck emulator targets.
 
 Sources:
-  SteamOS: dragoonDorise/EmuDeck -functions/EmuScripts/*.sh
-  Windows: EmuDeck/emudeck-we -functions/EmuScripts/*.ps1
+  SteamOS: dragoonDorise/EmuDeck, functions/EmuScripts/*.sh
+  Windows: EmuDeck/emudeck-we, functions/EmuScripts/*.ps1
 """
 
 from __future__ import annotations

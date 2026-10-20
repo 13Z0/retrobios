@@ -505,7 +505,7 @@ def generate_platform_truth(
             sys_cov["profiled"].add(emu_name)
 
     # Ensure all systems of resolved cores have entries (even with 0 files).
-    # This documents that the system is covered -the core was analyzed and
+    # This documents that the system is covered: the core was analyzed and
     # needs no external files for this system.
     for emu_name in cores_profiled:
         profile = profiles[emu_name]
@@ -778,7 +778,7 @@ def diff_platform_truth(truth: dict, scraped: dict) -> dict:
         else:
             summary["systems_fully_covered"] += 1
 
-    # Truth systems not matched by any scraped system -all files missing
+    # Truth systems not matched by any scraped system: all files missing
     for t_sid in sorted(truth_systems):
         if t_sid in matched_truth:
             continue

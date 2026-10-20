@@ -70,7 +70,7 @@ TARGETS: list[tuple[str, str, str]] = [
     ("dingux/miyoo-arm32/latest", "miyoo-arm32", "armv5"),
     ("webos/armv7a/latest", "webos-armv7a", "armv7"),
     ("webos/aarch64/latest", "webos-aarch64", "aarch64"),
-    # vita: only VPK bundles on buildbot -cores listed via libretro-super recipes
+    # vita: only VPK bundles on buildbot, cores listed via libretro-super recipes
 ]
 
 # Recipe-based targets: (recipe_path_under_RECIPE_BASE_URL, target_name, architecture)

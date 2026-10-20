@@ -30,12 +30,12 @@ SOURCE_URL = (
 
 # Libretro cores that expect BIOS files in a subdirectory of system/.
 # System.dat lists filenames flat, and the scraper prepends the prefix.
-# ref: each core's libretro.c or equivalent -see platforms/README.md
+# ref: each core's libretro.c or equivalent: see platforms/README.md
 CORE_SUBDIR_MAP = {
     "nec-pc-98": "np2kai",  # libretro-np2kai/sdl/libretro.c
     "sharp-x68000": "keropi",  # px68k/libretro/libretro.c
     "sega-dreamcast": "dc",  # flycast/shell/libretro/libretro.cpp
-    "sega-dreamcast-arcade": "dc",  # flycast -same subfolder
+    "sega-dreamcast-arcade": "dc",  # flycast: same subfolder
 }
 
 SYSTEM_SLUG_MAP = {
@@ -252,11 +252,11 @@ class Scraper(BaseScraper):
 
             systems[req.system]["files"].append(requirement_entry(req))
 
-        # Systems not in System.dat but needed for RetroArch -added via
+        # Systems not in System.dat but needed for RetroArch: added via
         # shared groups in _shared.yml. The includes directive is resolved
         # at load time by load_platform_config().
         EXTRA_SYSTEMS = {
-            # ref: Vircon32/libretro.c -virtual console, single BIOS
+            # ref: Vircon32/libretro.c, virtual console, single BIOS
             "vircon32": {
                 "files": [
                     {
@@ -269,7 +269,7 @@ class Scraper(BaseScraper):
                 "manufacturer": "Vircon",
                 "docs": "https://docs.libretro.com/library/vircon32/",
             },
-            # ref: xrick/src/sysvid.c, xrick/src/data.c -game data archive
+            # ref: xrick/src/sysvid.c, xrick/src/data.c, game data archive
             "xrick": {
                 "files": [
                     {
@@ -295,7 +295,7 @@ class Scraper(BaseScraper):
         # Arcade BIOS present in the repo but absent from System.dat.
         # FBNeo expects them in system/ or system/fbneo/.
         # ref: fbneo/src/burner/libretro/libretro.cpp
-        # ref: fbneo/src/burner/libretro/libretro.cpp -search order:
+        # ref: fbneo/src/burner/libretro/libretro.cpp, search order:
         # 1) romset dir 2) system/fbneo/ 3) system/
         EXTRA_ARCADE_FILES = [
             {"name": "namcoc69.zip", "destination": "namcoc69.zip", "required": True},
@@ -339,7 +339,7 @@ class Scraper(BaseScraper):
         # Extra files missing from System.dat for specific systems.
         # Each traced to the core's source code.
         EXTRA_SYSTEM_FILES = {
-            # melonDS DS DSi mode -ref: JesseTG/melonds-ds/src/libretro.cpp
+            # melonDS DS DSi mode, ref: JesseTG/melonds-ds/src/libretro.cpp
             "nintendo-ds": [
                 {
                     "name": "dsi_bios7.bin",
@@ -362,7 +362,7 @@ class Scraper(BaseScraper):
                     "required": True,
                 },
             ],
-            # bsnes SGB naming -ref: bsnes/target-libretro/libretro.cpp
+            # bsnes SGB naming, ref: bsnes/target-libretro/libretro.cpp
             "nintendo-sgb": [
                 {
                     "name": "sgb.boot.rom",
@@ -370,13 +370,13 @@ class Scraper(BaseScraper):
                     "required": False,
                 },
             ],
-            # JollyCV -ref: jollycv/libretro.c
+            # JollyCV, ref: jollycv/libretro.c
             "coleco-colecovision": [
                 {"name": "BIOS.col", "destination": "BIOS.col", "required": True},
                 {"name": "coleco.rom", "destination": "coleco.rom", "required": True},
                 {"name": "bioscv.rom", "destination": "bioscv.rom", "required": True},
             ],
-            # Kronos ST-V -ref: libretro-kronos/libretro/libretro.c
+            # Kronos ST-V, ref: libretro-kronos/libretro/libretro.c
             "sega-saturn": [
                 {
                     "name": "stvbios.zip",
@@ -384,7 +384,7 @@ class Scraper(BaseScraper):
                     "required": True,
                 },
             ],
-            # PCSX ReARMed / Beetle PSX alt BIOS -ref: pcsx_rearmed/libpcsxcore/misc.c
+            # PCSX ReARMed / Beetle PSX alt BIOS, ref: pcsx_rearmed/libpcsxcore/misc.c
             # docs say PSXONPSP660.bin (uppercase) but core accepts any case
             "sony-playstation": [
                 {
@@ -393,7 +393,7 @@ class Scraper(BaseScraper):
                     "required": False,
                 },
             ],
-            # Dolphin GC -ref: DolphinLibretro/Boot.cpp:72-73,
+            # Dolphin GC, ref: DolphinLibretro/Boot.cpp:72-73,
             # BootManager.cpp:200-217, CommonPaths.h:139 GC_IPL="IPL.bin"
             # Core searches system/dolphin-emu/Sys/ for data and BIOS.
             # System.dat gc-ntsc-*.bin names are NOT what Dolphin loads.
@@ -414,7 +414,7 @@ class Scraper(BaseScraper):
                     "destination": "dolphin-emu/Sys/GC/JAP/IPL.bin",
                     "required": False,
                 },
-                # DSP firmware -ref: Source/Core/Core/HW/DSPLLE/DSPHost.cpp
+                # DSP firmware, ref: Source/Core/Core/HW/DSPLLE/DSPHost.cpp
                 {
                     "name": "dsp_coef.bin",
                     "destination": "dolphin-emu/Sys/GC/dsp_coef.bin",
@@ -425,7 +425,7 @@ class Scraper(BaseScraper):
                     "destination": "dolphin-emu/Sys/GC/dsp_rom.bin",
                     "required": True,
                 },
-                # Fonts -ref: Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp
+                # Fonts, ref: Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp
                 {
                     "name": "font_western.bin",
                     "destination": "dolphin-emu/Sys/GC/font_western.bin",
@@ -437,8 +437,8 @@ class Scraper(BaseScraper):
                     "required": False,
                 },
             ],
-            # minivmac casing -ref: minivmac/src/MYOSGLUE.c
-            # doc says MacII.rom, repo has MacII.ROM -both work on case-insensitive FS
+            # minivmac casing, ref: minivmac/src/MYOSGLUE.c
+            # doc says MacII.rom, repo has MacII.ROM: both work on case-insensitive FS
             "apple-macintosh-ii": [
                 {"name": "MacII.ROM", "destination": "MacII.ROM", "required": True},
             ],
@@ -458,7 +458,7 @@ class Scraper(BaseScraper):
         # Inject shared group references for systems that have core-specific
         # subdirectory requirements already defined in _shared.yml.
         # Note: fuse/ prefix NOT injected for sinclair-zx-spectrum.
-        # Verified in fuse-libretro/src/compat/paths.c -core searches
+        # Verified in fuse-libretro/src/compat/paths.c, core searches
         # system/ flat, not fuse/ subfolder. Docs are wrong on this.
         # A group System.dat already covers entry for entry injects nothing
         # (ep128emu, keropi and kronos were), and a correction made there
@@ -484,12 +484,12 @@ class Scraper(BaseScraper):
                 {"ref": "ppsspp-assets", "destination": "PPSSPP"},
             ],
             # single buildbot ZIP contains both Databases/ and Machines/
-            # ref: libretro.c:1118-1119 -system_dir/Machines + system_dir/Databases
+            # ref: libretro.c:1118-1119, system_dir/Machines + system_dir/Databases
             "microsoft-msx": [
                 {"ref": "bluemsx", "destination": ""},
             ],
-            # FreeIntv overlays -system/freeintv_overlays/<rom>.png
-            # ref: FreeIntv/src/libretro.c:273 -stbi_load from system dir
+            # FreeIntv overlays: system/freeintv_overlays/<rom>.png
+            # ref: FreeIntv/src/libretro.c:273, stbi_load from system dir
             # ZIP contains FreeIntvTS_Overlays/ subfolder, cache preserves it
             # pack destination maps cache root to system/freeintv_overlays
             # so final path is system/freeintv_overlays/FreeIntvTS_Overlays/<rom>.png

@@ -238,6 +238,24 @@ class NoClauseSemicolons(unittest.TestCase):
         self._check(files, _python_prose)
 
 
+    def test_python_prose_has_no_lone_dash_asides(self):
+        """Removing " -- " asides left 72 comments reading "shape -a size or
+        a size range -is all": half a dash glued to the next word. A command
+        line flag quoted in prose (MAME's -listxml) is not an aside, and a
+        quotation is left alone."""
+        lone = re.compile(r"[A-Za-z0-9,)] -(?!listxml\b|lr\b|sa\b)[a-z]{2,}")
+        offenders = [
+            f"{path.relative_to(ROOT)}: {line.strip()[:100]}"
+            for path in _tracked() if path.suffix == ".py"
+            for line in re.sub(
+                r'`[^`]*`|"[^"\n]*\n?[^"\n]*"',
+                "",
+                _python_prose(path.read_text(encoding="utf-8")).replace('"""', ""),
+            ).splitlines()
+            if lone.search(line) and not re.search(r"\b(python|curl|unittest|sh)\b .* -", line)
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders[:40]))
+
     def test_schema_descriptions(self):
         offenders = []
         for path in sorted((ROOT / "schemas").glob("*.json")):

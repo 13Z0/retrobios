@@ -3,7 +3,7 @@
 Implements GF(2^233) field arithmetic, elliptic curve point operations,
 and ECDSA-SHA256 verification for Nintendo 3DS OTP certificate checking.
 
-Zero external dependencies -uses only Python stdlib.
+Zero external dependencies: uses only Python stdlib.
 
 Curve: sect233r1 (NIST B-233, SEC 2 v2)
 Field: GF(2^233) with irreducible polynomial t^233 + t^74 + 1
@@ -83,7 +83,7 @@ def _gf_inv(a: int) -> int:
             q ^= 1 << shift
             temp ^= r << shift
         remainder = temp
-        # Multiply q * s in GF(2)[x] (no reduction -working in polynomial ring)
+        # Multiply q * s in GF(2)[x] (no reduction: working in polynomial ring)
         qs = 0
         qt = q
         st = s

@@ -171,7 +171,7 @@ class TestPackDeterminism(unittest.TestCase):
         sha1 = hashlib.sha1(payload).hexdigest()
         # A romset goes through the deterministic rebuild, which stages the
         # archive in a temporary file. Copying that file into the pack took
-        # its mtime -the wall clock -so 348 members of the real Recalbox
+        # its mtime, the wall clock, so 348 members of the real Recalbox
         # pack moved between two builds while every byte matched. Without a
         # romset here the fixture never reaches that path.
         romset = self.bios / "romset.zip"
