@@ -81,6 +81,7 @@ notes: |
 
 files:
   - name: "syscard3.pce"
+    system: nec-pc-engine-cd
     description: "Super CD-ROM System Card 3.0"
     size: [262144, 262656]
     required: true
@@ -95,6 +96,7 @@ files:
       and USA (CRC32 2B5B75FE).
 
   - name: "syscard2.pce"
+    system: nec-pc-engine-cd
     description: "CD-ROM System Card 2.0 / 2.1"
     size: [262144, 262656]
     required: false
@@ -107,6 +109,7 @@ files:
       (CRC32 FF2A5EC3).
 
   - name: "syscard1.pce"
+    system: nec-pc-engine-cd
     description: "CD-ROM System Card 1.0 (Japan)"
     size: [262144, 262656]
     crc32: "3F9F95A4"
@@ -116,6 +119,7 @@ files:
     note: "Loaded when geargrafx_cdrom_bios is System Card 1."
 
   - name: "gexpress.pce"
+    system: nec-pc-engine-cd
     description: "Games Express CD Card"
     size: [32768, 33280]
     required: false
@@ -132,19 +136,21 @@ files:
       once zero-padded to 32768 bytes.
 
   - name: "pac-n1.bin"
+    system: laseractive
     description: "LaserActive NEC PAC-N1 v1.02 (Japan)"
     size: [524288, 524800]
     crc32: "A8CB694C"
     region: [japan]
     required: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:780-784, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
+    source_ref: "platforms/libretro/libretro.cpp:507, platforms/libretro/libretro.cpp:521-522, platforms/libretro/libretro.cpp:780-784, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
     note: >
       Japanese PAC firmware, read for MMI content when
       geargrafx_laseractive_region is Auto or Japan. The Japanese slot
       accepts the PAC-N1 and PCE-LP1 images under either file name.
 
   - name: "pce-lp1.bin"
+    system: laseractive
     description: "LaserActive NEC PCE-LP1 v1.02 (Japan)"
     size: [524288, 524800]
     crc32: "76116A02"
@@ -155,13 +161,14 @@ files:
     note: "Read only when pac-n1.bin did not load."
 
   - name: "pac-n10.bin"
+    system: laseractive
     description: "LaserActive NEC PAC-N10 v1.02 (US)"
     size: [524288, 524800]
     crc32: "01223DD5"
     region: [north-america]
     required: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:792-796, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
+    source_ref: "platforms/libretro/libretro.cpp:507, platforms/libretro/libretro.cpp:521-522, platforms/libretro/libretro.cpp:792-796, platforms/libretro/libretro.cpp:534-549, src/media.cpp:570-632, src/defines.h:55"
     note: >
       US PAC firmware, read for MMI content when
       geargrafx_laseractive_region is Auto or US.
