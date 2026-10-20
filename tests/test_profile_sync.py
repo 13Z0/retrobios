@@ -4234,5 +4234,24 @@ class TheUnknownProfileHintCountsTheListing(unittest.TestCase):
         self.assertIn(f"lists all {count}.", hint.stderr + hint.stdout)
 
 
+class StrictRefusesAnUncheckableProfile(unittest.TestCase):
+    """A new profile whose repository answered 404, or with no pin at all,
+    was skipped with empty counts and --strict passed it in CI."""
+
+    def test_defects_are_told_from_the_profiles_nature(self):
+        from profile_sync import ProfileReport
+
+        def report(reason):
+            return ProfileReport(name="p", entries=[], counts={}, skipped=reason)
+
+        self.assertTrue(report("no declared repository answers (moved)").uncheckable())
+        self.assertTrue(report(
+            "no source_commit and no resolvable profiled_date on any declared repository"
+        ).uncheckable())
+        self.assertFalse(report("unsupported host: https://example.org").uncheckable())
+        self.assertFalse(report("upstream gone (declared): taken down").uncheckable())
+        self.assertFalse(report("no source_ref").uncheckable())
+
+
 if __name__ == "__main__":
     unittest.main()

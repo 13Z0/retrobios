@@ -1115,6 +1115,21 @@ class ProfileReport:
     # tracks: history was rewritten, or the pin lies on another branch.
     orphaned: list[str] = field(default_factory=list)
 
+    # Skips that say the profile cannot be checked as written: a repository
+    # that no longer answers, no pin to read, a death the forge contradicts.
+    # --strict passed them, and the CI job meant to stop an unchecked profile
+    # let a mistyped repository through.
+    UNCHECKABLE = (
+        "no declared repository answers",
+        "no source_commit and no resolvable profiled_date",
+        "upstream_gone is declared but the forge answers",
+        "upstream gone:",
+    )
+
+    def uncheckable(self) -> bool:
+        """Whether the skip is a defect of the profile rather than its nature."""
+        return bool(self.skipped) and self.skipped.startswith(self.UNCHECKABLE)
+
     def needs_review(self) -> int:
         counts = self.counts or {}
         return sum(counts.get(status, 0) for status in REVIEW_STATUSES) + len(
@@ -3255,7 +3270,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="exit 1 when a profile has refs to review, as for a new profile in CI",
+        help="exit 1 when a profile has refs to review or cannot be checked as "
+        "written (no repository answers, no pin), as for a new profile in CI",
     )
     parser.add_argument(
         "--json", action="store_true", dest="as_json",
@@ -3810,7 +3826,9 @@ def main() -> None:
         if not args.changed_only or report.needs_review() or report.name in failed
     ]
     _emit(args, selected, reports, shown)
-    if failed or (args.strict and any(report.needs_review() for report in reports)):
+    if failed or (args.strict and any(
+        report.needs_review() or report.uncheckable() for report in reports
+    )):
         raise SystemExit(1)
 
 
