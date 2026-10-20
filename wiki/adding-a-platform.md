@@ -224,7 +224,10 @@ launchers:
 |-------|---------|
 | `emulator` | Emulator or core as the platform names it |
 | `build` | `standalone` or `libretro` |
-| `kind` | `names_searched` (tried in order, first found wins), `fixed_name` (one path per name), `core_option` (an option value names the file), `passes_path`, `links`, `copies`, `scans_dir` |
+| `kind` | `names_searched` (tried in order, first found wins), `fixed_name` (one path per name), `core_option` (an option value names the file), `passes_path`, `links`, `copies`, `moves` (a file left in one folder is moved to the one the launcher links from), `scans_dir`, `package` (no file: what a package builds and registers) |
+| `package` | The platform package whose script the record comes from (RetroPie's `rp_module_id`) |
+| `repo` | What the package fetches and builds, as the script writes it (`rp_module_repo`: method, URL, branch or commit) |
+| `systems` | Systems the package registers, under the platform's names (`addSystem`, `addPort` for ports) |
 | `slot` | The key the code files the list under: a region, a machine |
 | `names` | In the order the code tries or writes them, relative to `search_dir` |
 | `expands` | Values a `{X}` placeholder in `names` takes, in the order tried (Hatari tries each TOS in ten languages) |
@@ -264,6 +267,21 @@ choice as a `passes_path` entry with no `names`. Recalbox gives gpsp
 reads it from there. `emulator: libretro` stands for every core Recalbox runs,
 for the default directory and for the per-system overrides applied after the
 per-core choice, and `<system>` in `search_dir` is the system's own name.
+
+Shell platforms are read as text. RetroPie's scriptmodules are walked the way
+RetroPie runs them, one shell for every package: local assignments, arrays,
+`for` loops, brace expansion, `$md_id` and calls into another package's
+functions (`dosbox-sdl2` runs `configure_dosbox`). Paths keep the variables
+the scripts write, `$biosdir` being `~/RetroPie/BIOS` (`retropie_packages.sh:48-49`).
+Each package also gets one `kind: package` record, and that record is what
+maps a package to the profile of the build it compiles: `repo` names the
+project (`minivmac` builds github.com/minivmac/minivmac, Mini vMac 37, not the
+libretro port), so the mapping never rests on stripping `lr-` from a name.
+RetroDECK's records come from each component's `component_prepare.sh`,
+`component_launcher.sh` and `component_functions.sh`, and from the presets
+they copy, with `$bios_path` as the framework names it. In both, every line
+that names the BIOS directory must match a known construct, else the scrape
+stops with `LauncherPatternMissing`.
 
 ### Inheritance
 

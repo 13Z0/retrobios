@@ -186,3 +186,2502 @@ cores:
 - yabause
 - yquake2
 - zesarux
+launchers:
+- emulator: advmame-0.94
+  package: advmame-0.94
+  repo: file $__archive_url/advancemame-0.94.0.tar.gz
+  systems:
+  - arcade
+  - mame-advmame
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/advmame-0.94.sh:12, 16, scriptmodules/emulators/advmame.sh:147-148"
+- emulator: advmame-1.4
+  package: advmame-1.4
+  repo: file $__archive_url/advancemame-1.4.tar.gz
+  systems:
+  - arcade
+  - mame-advmame
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/advmame-1.4.sh:12, 16, scriptmodules/emulators/advmame.sh:147-148"
+- emulator: advmame
+  package: advmame
+  repo: "git https://github.com/amadvance/advancemame"
+  systems:
+  - arcade
+  - mame-advmame
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/advmame.sh:12, 16, 147-148"
+- emulator: ags
+  package: ags
+  repo: "git https://github.com/adventuregamestudio/ags.git release-3.6.0"
+  systems:
+  - ags
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/ags.sh:12, 16, 55"
+- emulator: amiberry
+  package: amiberry
+  repo: "git https://github.com/BlitterStudio/amiberry :_get_branch_amiberry"
+  systems:
+  - amiga
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/amiberry.sh:12, 16, 118"
+- emulator: amiberry
+  package: amiberry
+  build: standalone
+  kind: moves
+  names:
+  - kick13.rom
+  - kick20.rom
+  - kick31.rom
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $biosdir/amiga
+  fails_when_missing: false
+  depends_on_option: "[[ -f \"$biosdir/$rom\" && ! -h \"$biosdir/$rom\" ]]"
+  source_ref: "scriptmodules/emulators/amiberry.sh:26"
+- emulator: amiberry
+  package: amiberry
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/amiga
+  passes_to: rom_path in $md_inst/conf/amiberry.conf
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/amiberry.sh:135"
+- emulator: amiberry
+  package: amiberry
+  build: standalone
+  kind: links
+  names: []
+  search_dir: $biosdir/amiga
+  passes_to: $md_inst/kickstarts is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/amiberry.sh:147"
+- emulator: atari800
+  package: atari800
+  repo: "git https://github.com/atari800/atari800.git ATARI800_5_2_0"
+  systems:
+  - atari800
+  - atari5200
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/atari800.sh:12, 16, 102-103"
+- emulator: basilisk
+  package: basilisk
+  repo: "git https://github.com/cebix/macemu.git master"
+  systems:
+  - macintosh
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/basilisk.sh:12, 16, 57"
+- emulator: basilisk
+  package: basilisk
+  build: standalone
+  kind: fixed_name
+  names:
+  - mac.rom
+  case_insensitive: false
+  search_dir: $romdir/macintosh
+  passes_to: command line --rom
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/basilisk.sh:56"
+- emulator: capricerpi
+  package: capricerpi
+  repo: "git https://github.com/KaosOverride/CapriceRPI.git master"
+  systems:
+  - amstradcpc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/capricerpi.sh:12, 16, 46"
+- emulator: coolcv
+  package: coolcv
+  repo: file $__archive_url/coolcv.tar.gz
+  systems:
+  - coleco
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/coolcv.sh:12, 16, 35"
+- emulator: daphne
+  package: daphne
+  repo: "git https://github.com/RetroPie/daphne-emu.git retropie"
+  systems:
+  - daphne
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/daphne.sh:12, 16, 54"
+- emulator: dgen
+  package: dgen
+  repo: file $__archive_url/dgen-sdl-1.33.tar.gz
+  systems:
+  - megadrive
+  - segacd
+  - sega32x
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/dgen.sh:12, 16, 53"
+- emulator: dolphin
+  package: dolphin
+  repo: "git https://github.com/dolphin-emu/dolphin.git master :_get_commit_dolphin"
+  systems:
+  - gc
+  - wii
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/dolphin.sh:12, 16, 87-88"
+- emulator: dosbox-sdl2
+  package: dosbox-sdl2
+  repo: "git https://github.com/duganchen/dosbox.git master"
+  systems:
+  - pc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/dosbox-sdl2.sh:12, 16, scriptmodules/emulators/dosbox.sh:94"
+- emulator: dosbox-staging
+  package: dosbox-staging
+  repo: "git https://github.com/dosbox-staging/dosbox-staging.git :_get_branch_dosbox-staging"
+  systems:
+  - pc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/dosbox-staging.sh:12, 16, scriptmodules/emulators/dosbox.sh:94"
+- emulator: dosbox
+  package: dosbox
+  repo: "svn https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk - 4252"
+  systems:
+  - pc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/dosbox.sh:12, 16, 94"
+- emulator: drastic
+  package: drastic
+  systems:
+  - nds
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/drastic.sh:12, 40"
+- emulator: fbzx
+  package: fbzx
+  repo: "git https://github.com/rastersoft/fbzx :_get_branch_fbzx"
+  systems:
+  - zxspectrum
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/fbzx.sh:12, 16, 57"
+- emulator: flycast
+  package: flycast
+  repo: "git https://github.com/flyinghead/flycast.git master"
+  systems:
+  - arcade
+  - dreamcast
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/flycast.sh:12, 16, 66"
+- emulator: flycast
+  package: flycast
+  build: standalone
+  kind: links
+  names: []
+  search_dir: $biosdir/dc
+  passes_to: $home/.local/share/flycast is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/flycast.sh:77"
+- emulator: flycast
+  package: flycast
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/dc
+  passes_to: Dreamcast.BiosPath in $md_conf_root/dreamcast/emu.cfg
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/flycast.sh:144"
+- emulator: frotz
+  package: frotz
+  systems:
+  - zmachine
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/frotz.sh:12, 53"
+- emulator: fs-uae
+  package: fs-uae
+  systems:
+  - amiga
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/fs-uae.sh:12, 80"
+- emulator: fuse
+  package: fuse
+  repo: file $__archive_url/fuse-1.5.7.tar.gz
+  systems:
+  - zxspectrum
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/fuse.sh:12, 16, 56"
+- emulator: gngeopi
+  package: gngeopi
+  repo: "git https://github.com/ymartel06/GnGeo-Pi.git master"
+  systems:
+  - arcade
+  - neogeo
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/gngeopi.sh:12, 16, 62-63"
+- emulator: gngeopi
+  package: gngeopi
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $md_inst/neogeobios
+  passes_to: command line -B
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/gngeopi.sh:60-61"
+- emulator: gpsp
+  package: gpsp
+  repo: "git https://github.com/gizmo98/gpsp.git master"
+  systems:
+  - gba
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/gpsp.sh:12, 16, 59"
+- emulator: gpsp
+  package: gpsp
+  build: standalone
+  kind: links
+  names:
+  - gba_bios.bin
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/gpsp.sh:53"
+- emulator: hatari
+  package: hatari
+  repo: "git https://github.com/hatari/hatari v2.4.1"
+  systems:
+  - atarist
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/hatari.sh:12, 16, 92"
+- emulator: hatari
+  package: hatari
+  build: standalone
+  kind: links
+  names:
+  - tos.img
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/share/hatari/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/hatari.sh:99"
+- emulator: hypseus
+  package: hypseus
+  repo: "git https://github.com/DirtBagXon/hypseus-singe.git RetroPie"
+  systems:
+  - daphne
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/hypseus.sh:12, 16, 56"
+- emulator: jzintv
+  package: jzintv
+  repo: file $__archive_url/jzintv-20200712-src.zip
+  systems:
+  - intellivision
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/jzintv.sh:12, 16, 125"
+- emulator: jzintv
+  package: jzintv
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $biosdir
+  passes_to: --rom-path in $md_inst/jzintv_launcher.sh
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/jzintv.sh:113"
+- emulator: linapple
+  package: linapple
+  repo: "git https://github.com/dabonetn/linapple-pie.git master"
+  systems:
+  - apple2
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/linapple.sh:12, 16, 52"
+- emulator: mame
+  package: mame
+  repo: "git https://github.com/mamedev/mame.git :_get_branch_mame"
+  systems:
+  - arcade
+  - mame
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/mame.sh:12, 16, 187-188"
+- emulator: mame
+  package: mame
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $romdir/mame;$romdir/arcade;$biosdir/mame
+  passes_to: rompath in $md_conf_root/mame/mame.ini
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/mame.sh:133"
+- emulator: mame4all
+  package: mame4all
+  repo: "git https://github.com/RetroPie/mame4all-pi.git master"
+  systems:
+  - arcade
+  - mame-mame4all
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/mame4all.sh:12, 16, 91-92"
+- emulator: minivmac
+  package: minivmac
+  repo: "git https://github.com/minivmac/minivmac.git master"
+  systems:
+  - macintosh
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/minivmac.sh:12, 16, 90"
+- emulator: minivmac
+  package: minivmac
+  build: standalone
+  kind: links
+  names:
+  - vMac.ROM
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/minivmac.sh:87"
+- emulator: mupen64plus
+  package: mupen64plus
+  repo: ":_pkg_info_mupen64plus"
+  systems:
+  - n64
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/mupen64plus.sh:12, 16, 314"
+- emulator: np2pi
+  package: np2pi
+  repo: "git https://github.com/eagle0wl/np2pi.git master"
+  systems:
+  - pc98
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/np2pi.sh:12, 15, 60"
+- emulator: np2pi
+  package: np2pi
+  build: standalone
+  kind: links
+  names:
+  - 2608_bd.wav
+  - 2608_hh.wav
+  - 2608_rim.wav
+  - 2608_sd.wav
+  - 2608_tom.wav
+  - 2608_top.wav
+  - bios.rom
+  - FONT.ROM
+  - sound.rom
+  case_insensitive: false
+  search_dir: $biosdir/pc98
+  passes_to: $md_conf_root/pc98/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/np2pi.sh:53"
+- emulator: openmsx
+  package: openmsx
+  repo: "git https://github.com/openMSX/openMSX.git RELEASE_19_1 :_get_commit_openmsx"
+  systems:
+  - msx
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/openmsx.sh:12, 16, 66"
+- emulator: openmsx
+  package: openmsx
+  build: standalone
+  kind: links
+  names: []
+  search_dir: $home/RetroPie/BIOS/openmsx
+  passes_to: $configdir/msx/openmsx/share/systemroms is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/openmsx.sh:77"
+- emulator: oricutron
+  package: oricutron
+  repo: "git https://github.com/HerbFargus/oricutron.git extras"
+  systems:
+  - oric
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/oricutron.sh:12, 16, 67"
+- emulator: osmose
+  package: osmose
+  repo: "git https://github.com/RetroPie/osmose-rpi.git master"
+  systems:
+  - gamegear
+  - mastersystem
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/osmose.sh:12, 16, 49-50"
+- emulator: pcsx-rearmed
+  package: pcsx-rearmed
+  repo: "git https://github.com/notaz/pcsx_rearmed.git master"
+  systems:
+  - psx
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/pcsx-rearmed.sh:12, 16, 70"
+- emulator: pcsx-rearmed
+  package: pcsx-rearmed
+  build: standalone
+  kind: links
+  names:
+  - SCPH1001.BIN
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/bios/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/pcsx-rearmed.sh:62"
+- emulator: pcsx2
+  package: pcsx2
+  systems:
+  - ps2
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/pcsx2.sh:12, 86"
+- emulator: pifba
+  package: pifba
+  repo: "git https://github.com/RetroPie/pifba.git master"
+  systems:
+  - arcade
+  - neogeo
+  - fba
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/pifba.sh:12, 16, 69-71"
+- emulator: pisnes
+  package: pisnes
+  repo: "git https://github.com/RetroPie/pisnes.git master"
+  systems:
+  - snes
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/pisnes.sh:12, 16, 53"
+- emulator: ppsspp-1.5.4
+  package: ppsspp-1.5.4
+  repo: "git https://github.com/hrydgard/ppsspp.git v1.5.4"
+  systems:
+  - psp
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/ppsspp-1.5.4.sh:12, 16, scriptmodules/emulators/ppsspp.sh:211"
+- emulator: ppsspp
+  package: ppsspp
+  repo: "git https://github.com/hrydgard/ppsspp.git :_get_release_ppsspp"
+  systems:
+  - psp
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/ppsspp.sh:12, 16, 211"
+- emulator: px68k
+  package: px68k
+  repo: "git https://github.com/TurtleBazooka/px68k.git master"
+  systems:
+  - x68000
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/px68k.sh:12, 15, 62"
+- emulator: px68k
+  package: px68k
+  build: standalone
+  kind: moves
+  names:
+  - cgrom.dat
+  - iplrom30.dat
+  - iplromco.dat
+  - iplrom.dat
+  - iplromxv.dat
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $biosdir/keropi
+  fails_when_missing: false
+  depends_on_option: "[[ -f \"$biosdir/$bios\" ]]"
+  source_ref: "scriptmodules/emulators/px68k.sh:56"
+- emulator: px68k
+  package: px68k
+  build: standalone
+  kind: links
+  names:
+  - cgrom.dat
+  - iplrom30.dat
+  - iplromco.dat
+  - iplrom.dat
+  - iplromxv.dat
+  case_insensitive: false
+  search_dir: $biosdir/keropi
+  passes_to: $md_conf_root/x68000/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/px68k.sh:58"
+- emulator: quasi88
+  package: quasi88
+  repo: "git https://github.com/winterheart/quasi88.git master"
+  systems:
+  - pc88
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/quasi88.sh:12, 15, 53"
+- emulator: quasi88
+  package: quasi88
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/pc88
+  passes_to: build option -DROMDIR
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/quasi88.sh:32"
+- emulator: quasi88
+  package: quasi88
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/pc88
+  passes_to: -romdir in $md_conf_root/pc88/quasi88.ini
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$md_conf_root/pc88/quasi88.ini\" ]]"
+  source_ref: "scriptmodules/emulators/quasi88.sh:67"
+- emulator: redream
+  package: redream
+  systems:
+  - dreamcast
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/redream.sh:12, 35"
+- emulator: redream
+  package: redream
+  build: standalone
+  kind: links
+  names:
+  - dc_boot.bin
+  - dc_flash.bin
+  case_insensitive: false
+  search_dir: $biosdir/dc
+  passes_to: $md_inst/boot.bin, $md_inst/flash.bin
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/redream.sh:58-59"
+- emulator: reicast
+  package: reicast
+  repo: "git https://github.com/reicast/reicast-emulator.git master"
+  systems:
+  - dreamcast
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/reicast.sh:12, 16, 145"
+- emulator: reicast
+  package: reicast
+  build: standalone
+  kind: links
+  names:
+  - dc_boot.bin
+  - dc_flash.bin
+  case_insensitive: false
+  search_dir: $biosdir/dc
+  passes_to: $md_conf_root/dreamcast/data/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/reicast.sh:114"
+- emulator: retroarch
+  package: retroarch
+  repo: "git https://github.com/retropie/RetroArch.git retropie-v1.19.0"
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/retroarch.sh:12, 15"
+- emulator: retroarch
+  package: retroarch
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: $biosdir
+  passes_to: system_directory in $configdir/all/retroarch.cfg
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/retroarch.sh:177"
+- emulator: rpix86
+  package: rpix86
+  systems:
+  - pc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/rpix86.sh:12, 46"
+- emulator: scummvm-sdl1
+  package: scummvm-sdl1
+  repo: "git https://github.com/scummvm/scummvm.git v2026.3.0"
+  systems:
+  - scummvm
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/scummvm-sdl1.sh:12, 16, scriptmodules/emulators/scummvm.sh:98"
+- emulator: scummvm
+  package: scummvm
+  repo: "git https://github.com/scummvm/scummvm.git v2026.3.0"
+  systems:
+  - scummvm
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/scummvm.sh:12, 16, 98"
+- emulator: sdltrs
+  package: sdltrs
+  repo: "git https://gitlab.com/jengun/sdltrs.git sdl2"
+  systems:
+  - trs-80
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/sdltrs.sh:12, 17, 53"
+- emulator: sdltrs-model1
+  package: sdltrs
+  build: standalone
+  kind: fixed_name
+  names:
+  - level2.rom
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: command line -romfile
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/sdltrs.sh:49"
+- emulator: sdltrs-model3
+  package: sdltrs
+  build: standalone
+  kind: fixed_name
+  names:
+  - level3.rom
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: command line -romfile3
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/sdltrs.sh:50"
+- emulator: sdltrs-model4
+  package: sdltrs
+  build: standalone
+  kind: fixed_name
+  names:
+  - level4.rom
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: command line -romfile3
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/sdltrs.sh:51"
+- emulator: sdltrs-model4p
+  package: sdltrs
+  build: standalone
+  kind: fixed_name
+  names:
+  - level4p.rom
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: command line -romfile4p
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/sdltrs.sh:52"
+- emulator: simcoupe
+  package: simcoupe
+  repo: "git https://github.com/simonowen/simcoupe.git :_get_branch_simcoupe"
+  systems:
+  - samcoupe
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/simcoupe.sh:12, 16, 65"
+- emulator: snes9x
+  package: snes9x
+  repo: "git https://github.com/RetroPie/snes9x-rpi.git retropie"
+  systems:
+  - snes
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/snes9x.sh:12, 16, 51"
+- emulator: stella
+  package: stella
+  repo: "git https://github.com/stella-emu/stella.git :_get_version_stella"
+  systems:
+  - atari2600
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/stella.sh:12, 16, 54"
+- emulator: stratagus
+  package: stratagus
+  repo: "git https://github.com/Wargus/stratagus.git v2.4.3"
+  systems:
+  - stratagus
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/stratagus.sh:12, 16, 47"
+- emulator: supermodel3
+  package: supermodel3
+  repo: "git https://github.com/DirtBagXon/model3emu-code-sinden.git :_get_branch_supermodel3\
+    \ :_get_commit_supermodel3"
+  systems:
+  - arcade
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/supermodel3.sh:12, 16, 69"
+- emulator: ti99sim-sdl1
+  package: ti99sim-sdl1
+  repo: file $__archive_url/ti99sim-0.15.0.src.tar.gz
+  systems:
+  - ti99
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/ti99sim-sdl1.sh:12, 16, 42"
+- emulator: ti99sim-sdl1
+  package: ti99sim-sdl1
+  build: standalone
+  kind: links
+  names:
+  - TI-994A.ctg
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/ti99sim-sdl1.sh:49"
+- emulator: ti99sim
+  package: ti99sim
+  repo: file $__archive_url/ti99sim-0.16.0.src.tar.gz
+  systems:
+  - ti99
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/ti99sim.sh:12, 16, 54"
+- emulator: ti99sim
+  package: ti99sim
+  build: standalone
+  kind: links
+  names:
+  - TI-994A.ctg
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/ti99sim.sh:59"
+- emulator: uae4all
+  package: uae4all
+  repo: "git https://github.com/RetroPie/uae4all2.git retropie"
+  systems:
+  - amiga
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/uae4all.sh:12, 16, 103"
+- emulator: uae4all
+  package: uae4all
+  build: standalone
+  kind: links
+  names: []
+  search_dir: $biosdir/amiga
+  passes_to: $md_inst/kickstarts is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/uae4all.sh:79"
+- emulator: uae4all
+  package: uae4all
+  build: standalone
+  kind: copies
+  names: []
+  search_dir: aros20140110.zip
+  passes_to: $biosdir/amiga
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$biosdir/aros-amiga-m68k-ext.bin\" ]]"
+  source_ref: "scriptmodules/emulators/uae4all.sh:85"
+- emulator: uae4arm
+  package: uae4arm
+  repo: "git https://github.com/Chips-fr/uae4arm-rpi.git master"
+  systems:
+  - amiga
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/uae4arm.sh:12, 16, 49"
+- emulator: uae4arm
+  package: uae4arm
+  build: standalone
+  kind: links
+  names: []
+  search_dir: $biosdir/amiga
+  passes_to: $md_inst/kickstarts is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/uae4arm.sh:64"
+- emulator: vice
+  package: vice
+  repo: "svn svn://svn.code.sf.net/p/vice-emu/code/tags/v3.7.1/vice - HEAD"
+  systems:
+  - c64
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/vice.sh:12, 16, 84"
+- emulator: xm7
+  package: xm7
+  repo: "git https://github.com/nakatamaho/XM7-for-SDL.git master"
+  systems:
+  - fm7
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/xm7.sh:12, 16, 67"
+- emulator: xm7
+  package: xm7
+  build: standalone
+  kind: links
+  names:
+  - DICROM.ROM
+  - EXTSUB.ROM
+  - FBASIC30.ROM
+  - INITIATE.ROM
+  - KANJI1.ROM
+  - KANJI2.ROM
+  - SUBSYS_A.ROM
+  - SUBSYS_B.ROM
+  - SUBSYSCG.ROM
+  - SUBSYS_C.ROM
+  - fddseek.wav
+  - relayoff.wav
+  - relay_on.wav
+  case_insensitive: false
+  search_dir: $biosdir/fm7
+  passes_to: $md_conf_root/fm7/<name>
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/xm7.sh:77"
+- emulator: xroar
+  package: xroar
+  repo: "git http://www.6809.org.uk/git/xroar.git 1.11"
+  systems:
+  - dragon32
+  - coco
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/xroar.sh:12, 16, 64-65"
+- emulator: xroar
+  package: xroar
+  build: standalone
+  kind: links
+  names: []
+  case_insensitive: false
+  search_dir: $biosdir
+  passes_to: $md_inst/share/xroar/roms is a symlink to it
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/xroar.sh:52"
+- emulator: yabasanshiro
+  package: yabasanshiro
+  repo: "git https://github.com/retropie/yabause.git pi4-1-9-0"
+  systems:
+  - saturn
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/yabasanshiro.sh:12, 16, 58"
+- emulator: zesarux
+  package: zesarux
+  repo: "git https://github.com/chernandezba/zesarux.git ZEsarUX-12.1"
+  systems:
+  - zxspectrum
+  - samcoupe
+  - amstradcpc
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/emulators/zesarux.sh:12, 16, 107-109"
+- emulator: lr-81
+  package: lr-81
+  repo: "git https://github.com/libretro/81-libretro.git master"
+  systems:
+  - zx81
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-81.sh:12, 16, 41"
+- emulator: lr-atari800
+  package: lr-atari800
+  repo: "git https://github.com/libretro/libretro-atari800.git master"
+  systems:
+  - atari800
+  - atari5200
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-atari800.sh:12, 16, 48-49"
+- emulator: lr-beetle-lynx
+  package: lr-beetle-lynx
+  repo: "git https://github.com/libretro/beetle-lynx-libretro.git master"
+  systems:
+  - atarilynx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-lynx.sh:12, 16, 40"
+- emulator: lr-beetle-ngp
+  package: lr-beetle-ngp
+  repo: "git https://github.com/libretro/beetle-ngp-libretro.git master"
+  systems:
+  - ngp
+  - ngpc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-ngp.sh:12, 16, 46"
+- emulator: lr-beetle-pce-fast
+  package: lr-beetle-pce-fast
+  repo: "git https://github.com/libretro/beetle-pce-fast-libretro.git master"
+  systems:
+  - pcengine
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-pce-fast.sh:12, 16, 47"
+- emulator: lr-beetle-pce
+  package: lr-beetle-pce
+  repo: "git https://github.com/libretro/beetle-pce-libretro.git master"
+  systems:
+  - pcengine
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-pce.sh:12, 16, 43"
+- emulator: lr-beetle-pcfx
+  package: lr-beetle-pcfx
+  repo: "git https://github.com/libretro/beetle-pcfx-libretro master"
+  systems:
+  - pcfx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-pcfx.sh:12, 16, 40"
+- emulator: lr-beetle-psx
+  package: lr-beetle-psx
+  repo: "git https://github.com/libretro/beetle-psx-libretro.git master"
+  systems:
+  - psx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-psx.sh:12, 16, 48"
+- emulator: lr-beetle-saturn
+  package: lr-beetle-saturn
+  repo: "git https://github.com/libretro/beetle-saturn-libretro.git master"
+  systems:
+  - saturn
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-saturn.sh:12, 16, 41"
+- emulator: lr-beetle-supergrafx
+  package: lr-beetle-supergrafx
+  repo: "git https://github.com/libretro/beetle-supergrafx-libretro.git master"
+  systems:
+  - pcengine
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-supergrafx.sh:12, 16, 41"
+- emulator: lr-beetle-vb
+  package: lr-beetle-vb
+  repo: "git https://github.com/libretro/beetle-vb-libretro.git master"
+  systems:
+  - virtualboy
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-vb.sh:12, 16, 43"
+- emulator: lr-beetle-wswan
+  package: lr-beetle-wswan
+  repo: "git https://github.com/libretro/beetle-wswan-libretro.git master"
+  systems:
+  - wonderswan
+  - wonderswancolor
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-beetle-wswan.sh:12, 16, 48-49"
+- emulator: lr-bennugd
+  package: lr-bennugd
+  repo: "git https://github.com/diekleinekuh/BennuGD_libretro.git master"
+  systems:
+  - bennugd
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-bennugd.sh:12, 16, 49"
+- emulator: lr-bluemsx
+  package: lr-bluemsx
+  repo: "git https://github.com/libretro/blueMSX-libretro.git master"
+  systems:
+  - msx
+  - coleco
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-bluemsx.sh:12, 16, 40, 43"
+- emulator: lr-bluemsx
+  package: lr-bluemsx
+  build: libretro
+  kind: copies
+  names:
+  - Databases
+  - Machines
+  search_dir: $md_inst
+  passes_to: $biosdir
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-bluemsx.sh:59"
+- emulator: lr-bsnes
+  package: lr-bsnes
+  repo: "git https://github.com/libretro/bsnes.git master"
+  systems:
+  - snes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-bsnes.sh:12, 16, 46"
+- emulator: lr-caprice32
+  package: lr-caprice32
+  repo: "git https://github.com/libretro/libretro-cap32.git master"
+  systems:
+  - amstradcpc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-caprice32.sh:12, 16, 45"
+- emulator: lr-desmume
+  package: lr-desmume
+  repo: "git https://github.com/libretro/desmume.git master"
+  systems:
+  - nds
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-desmume.sh:12, 16, 52"
+- emulator: lr-desmume2015
+  package: lr-desmume2015
+  repo: "git https://github.com/libretro/desmume2015.git master"
+  systems:
+  - nds
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-desmume2015.sh:12, 16, 45"
+- emulator: lr-dinothawr
+  package: lr-dinothawr
+  repo: "git https://github.com/libretro/Dinothawr.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-dinothawr.sh:12, 16, 45"
+- emulator: lr-dirksimple
+  package: lr-dirksimple
+  repo: "git https://github.com/icculus/DirkSimple.git main"
+  systems:
+  - daphne
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-dirksimple.sh:12, 16, 53"
+- emulator: lr-dirksimple
+  package: lr-dirksimple
+  build: libretro
+  kind: copies
+  names:
+  - data
+  search_dir: $md_inst
+  passes_to: $biosdir/DirkSimple
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-dirksimple.sh:49"
+- emulator: lr-dolphin
+  package: lr-dolphin
+  repo: "git https://github.com/libretro/dolphin master"
+  systems:
+  - gc
+  - wii
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-dolphin.sh:12, 16, 53-54"
+- emulator: lr-dosbox-pure
+  package: lr-dosbox-pure
+  repo: "git https://github.com/libretro/dosbox-pure.git main"
+  systems:
+  - pc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-dosbox-pure.sh:12, 16, 49"
+- emulator: lr-dosbox
+  package: lr-dosbox
+  repo: "git https://github.com/libretro/dosbox-libretro.git master"
+  systems:
+  - pc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-dosbox.sh:12, 16, 52"
+- emulator: lr-ep128emu
+  package: lr-ep128emu
+  repo: "git https://github.com/libretro/ep128emu-core.git core"
+  systems:
+  - enterprise
+  - tvc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-ep128emu.sh:12, 16, 38"
+- emulator: lr-fbalpha2012
+  package: lr-fbalpha2012
+  repo: "git https://github.com/libretro/fbalpha2012.git master"
+  systems:
+  - arcade
+  - fba
+  - neogeo
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-fbalpha2012.sh:12, 16, 54"
+- emulator: lr-fbneo
+  package: lr-fbneo
+  repo: "git https://github.com/libretro/FBNeo.git master"
+  systems:
+  - arcade
+  - neogeo
+  - fba
+  - pcengine
+  - gamegear
+  - mastersystem
+  - megadrive
+  - sg-1000
+  - coleco
+  - msx
+  - zxspectrum
+  - fds
+  - nes
+  - ngp
+  - ngpc
+  - channelf
+  - snes
+  - gba
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-fbneo.sh:12, 16, 103"
+- emulator: lr-fbneo
+  package: lr-fbneo
+  build: libretro
+  kind: copies
+  names:
+  - hiscore.dat
+  search_dir: $md_inst/metadata
+  passes_to: $biosdir/fbneo
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-fbneo.sh:124"
+- emulator: lr-fceumm
+  package: lr-fceumm
+  repo: "git https://github.com/libretro/libretro-fceumm.git master"
+  systems:
+  - nes
+  - fds
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-fceumm.sh:12, 16, 51-52"
+- emulator: lr-flycast-dev
+  package: lr-flycast-dev
+  repo: "git https://github.com/flyinghead/flycast.git master"
+  systems:
+  - arcade
+  - dreamcast
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-flycast-dev.sh:12, 16, 63"
+- emulator: lr-flycast
+  package: lr-flycast
+  repo: "git https://github.com/libretro/flycast.git master"
+  systems:
+  - dreamcast
+  - arcade
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-flycast.sh:12, 16, 87"
+- emulator: lr-fmsx
+  package: lr-fmsx
+  repo: "git https://github.com/libretro/fmsx-libretro.git master"
+  systems:
+  - msx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-fmsx.sh:12, 16, 45"
+- emulator: lr-fmsx
+  package: lr-fmsx
+  build: libretro
+  kind: copies
+  names:
+  - CARTS.SHA
+  search_dir: $md_inst
+  passes_to: $biosdir
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-fmsx.sh:50"
+- emulator: lr-freechaf
+  package: lr-freechaf
+  repo: "git https://github.com/libretro/FreeChaF.git master"
+  systems:
+  - channelf
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-freechaf.sh:12, 16, 42"
+- emulator: lr-freeintv
+  package: lr-freeintv
+  repo: "git https://github.com/libretro/FreeIntv.git master"
+  systems:
+  - intellivision
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-freeintv.sh:12, 16, 42"
+- emulator: lr-fuse
+  package: lr-fuse
+  repo: "git https://github.com/libretro/fuse-libretro.git master"
+  systems:
+  - zxspectrum
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-fuse.sh:12, 16, 45"
+- emulator: lr-gambatte
+  package: lr-gambatte
+  repo: "git https://github.com/libretro/gambatte-libretro.git master"
+  systems:
+  - gb
+  - gbc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-gambatte.sh:12, 16, 51-52"
+- emulator: lr-gambatte
+  package: lr-gambatte
+  build: libretro
+  kind: copies
+  names:
+  - default.pal
+  search_dir: $md_data
+  passes_to: $biosdir/palettes
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-gambatte.sh:41"
+- emulator: lr-geargrafx
+  package: lr-geargrafx
+  repo: "git https://github.com/drhelius/Geargrafx.git main"
+  systems:
+  - pcengine
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-geargrafx.sh:12, 16, 42"
+- emulator: lr-gearsystem
+  package: lr-gearsystem
+  repo: "git https://github.com/drhelius/Gearsystem.git master"
+  systems:
+  - gamegear
+  - mastersystem
+  - sg-1000
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-gearsystem.sh:12, 16, 44"
+- emulator: lr-genesis-plus-gx
+  package: lr-genesis-plus-gx
+  repo: "git https://github.com/libretro/Genesis-Plus-GX.git master"
+  systems:
+  - gamegear
+  - mastersystem
+  - megadrive
+  - sg-1000
+  - segacd
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-genesis-plus-gx.sh:12, 16, 49"
+- emulator: lr-gpsp
+  package: lr-gpsp
+  repo: "git https://github.com/libretro/gpsp.git master"
+  systems:
+  - gba
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-gpsp.sh:12, 16, 50"
+- emulator: lr-gw
+  package: lr-gw
+  repo: "git https://github.com/libretro/gw-libretro.git master"
+  systems:
+  - gameandwatch
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-gw.sh:12, 16, 42"
+- emulator: lr-handy
+  package: lr-handy
+  repo: "git https://github.com/libretro/libretro-handy.git master"
+  systems:
+  - atarilynx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-handy.sh:12, 16, 41"
+- emulator: lr-hatari
+  package: lr-hatari
+  repo: "git https://github.com/libretro/hatari.git hitari2014-mercurial"
+  systems:
+  - atarist
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-hatari.sh:12, 16, 56"
+- emulator: lr-kronos
+  package: lr-kronos
+  repo: "git https://github.com/libretro/yabause.git kronos"
+  systems:
+  - saturn
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-kronos.sh:12, 16, 48"
+- emulator: lr-mame
+  package: lr-mame
+  repo: "git https://github.com/libretro/mame.git :_get_version_lr-mame"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame.sh:12, 16, 74"
+- emulator: lr-mame
+  package: lr-mame
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/mame/plugins
+  passes_to: pluginspath in $biosdir/mame/ini/mame.ini
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame.sh:87"
+- emulator: lr-mame
+  package: lr-mame
+  build: libretro
+  kind: copies
+  names:
+  - mame.ini
+  passes_to: $biosdir/mame/ini
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame.sh:88"
+- emulator: lr-mame
+  package: lr-mame
+  build: libretro
+  kind: copies
+  names:
+  - plugin.ini
+  passes_to: $biosdir/mame/ini
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame.sh:94"
+- emulator: lr-mame
+  package: lr-mame
+  build: libretro
+  kind: copies
+  names:
+  - plugins
+  search_dir: $md_inst
+  passes_to: $biosdir/mame
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame.sh:97"
+- emulator: lr-mame2000
+  package: lr-mame2000
+  repo: "git https://github.com/libretro/mame2000-libretro.git master"
+  systems:
+  - arcade
+  - mame-mame4all
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2000.sh:12, 16, 52"
+- emulator: lr-mame2003-plus
+  package: lr-mame2003-plus
+  repo: "git https://github.com/libretro/mame2003-plus-libretro.git master"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2003-plus.sh:12, 16, scriptmodules/libretrocores/lr-mame2003.sh:54-55"
+- emulator: lr-mame2003-plus
+  package: lr-mame2003-plus
+  build: libretro
+  kind: copies
+  names:
+  - hiscore.dat
+  - cheat.dat
+  search_dir: $md_inst/metadata
+  passes_to: $biosdir/mame2003-plus
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame2003.sh:77"
+- emulator: lr-mame2003-plus
+  package: lr-mame2003-plus
+  build: libretro
+  kind: copies
+  names:
+  - '*'
+  search_dir: $md_inst/metadata/artwork
+  passes_to: $biosdir/mame2003-plus/artwork
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame2003.sh:83"
+- emulator: lr-mame2003
+  package: lr-mame2003
+  repo: "git https://github.com/libretro/mame2003-libretro.git master"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2003.sh:12, 16, 54-55"
+- emulator: lr-mame2003
+  package: lr-mame2003
+  build: libretro
+  kind: copies
+  names:
+  - hiscore.dat
+  - cheat.dat
+  search_dir: $md_inst/metadata
+  passes_to: $biosdir/mame2003
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mame2003.sh:77"
+- emulator: lr-mame2010
+  package: lr-mame2010
+  repo: "git https://github.com/libretro/mame2010-libretro.git master"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2010.sh:12, 16, 58"
+- emulator: lr-mame2015
+  package: lr-mame2015
+  repo: "git https://github.com/libretro/mame2015-libretro.git master"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2015.sh:12, 16, 50"
+- emulator: lr-mame2016
+  package: lr-mame2016
+  repo: "git https://github.com/libretro/mame2016-libretro.git master"
+  systems:
+  - arcade
+  - mame-libretro
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mame2016.sh:12, 16, 49"
+- emulator: lr-mesen
+  package: lr-mesen
+  repo: "git https://github.com/libretro/Mesen.git master"
+  systems:
+  - nes
+  - fds
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mesen.sh:12, 16, 44"
+- emulator: lr-mess
+  package: lr-mess
+  repo: "git https://github.com/libretro/mame.git :_get_version_lr-mame"
+  systems:
+  - nes
+  - gb
+  - coleco
+  - arcadia
+  - crvision
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mess.sh:12, 16, 59"
+- emulator: lr-mess
+  package: lr-mess
+  build: libretro
+  kind: copies
+  names:
+  - hash
+  search_dir: $md_inst
+  passes_to: $biosdir/mame
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mess.sh:69"
+- emulator: lr-mess2016
+  package: lr-mess2016
+  repo: "git https://github.com/libretro/mame2016-libretro.git master"
+  systems:
+  - nes
+  - gb
+  - coleco
+  - arcadia
+  - crvision
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mess2016.sh:12, 16, scriptmodules/libretrocores/lr-mess.sh:59"
+- emulator: lr-mess2016
+  package: lr-mess2016
+  build: libretro
+  kind: copies
+  names:
+  - hash
+  search_dir: $md_inst
+  passes_to: $biosdir/mame
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-mess.sh:69"
+- emulator: lr-mgba
+  package: lr-mgba
+  repo: "git https://github.com/libretro/mgba.git master"
+  systems:
+  - gb
+  - gbc
+  - gba
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mgba.sh:12, 16, 54"
+- emulator: lr-mrboom
+  package: lr-mrboom
+  repo: "git https://github.com/libretro/mrboom-libretro.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mrboom.sh:12, 16, 46"
+- emulator: lr-mupen64plus-next
+  package: lr-mupen64plus-next
+  repo: "git https://github.com/libretro/mupen64plus-libretro-nx.git develop"
+  systems:
+  - n64
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mupen64plus-next.sh:12, 16, 103"
+- emulator: lr-mupen64plus
+  package: lr-mupen64plus
+  repo: "git https://github.com/RetroPie/mupen64plus-libretro.git master"
+  systems:
+  - n64
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-mupen64plus.sh:12, 16, 99"
+- emulator: lr-neocd
+  package: lr-neocd
+  repo: "git https://github.com/libretro/neocd_libretro.git master"
+  systems:
+  - neogeo
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-neocd.sh:12, 16, 42"
+- emulator: lr-nestopia
+  package: lr-nestopia
+  repo: "git https://github.com/libretro/nestopia.git master"
+  systems:
+  - nes
+  - fds
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-nestopia.sh:12, 16, 47-48"
+- emulator: lr-np2kai
+  package: lr-np2kai
+  repo: "git https://github.com/AZO234/NP2kai.git master"
+  systems:
+  - pc98
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-np2kai.sh:12, 16, 41"
+- emulator: lr-nxengine
+  package: lr-nxengine
+  repo: "git https://github.com/libretro/nxengine-libretro.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-nxengine.sh:12, 16, 39"
+- emulator: lr-o2em
+  package: lr-o2em
+  repo: "git https://github.com/libretro/libretro-o2em master"
+  systems:
+  - videopac
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-o2em.sh:12, 16, 41"
+- emulator: lr-opera
+  package: lr-opera
+  repo: "git https://github.com/libretro/opera-libretro.git master"
+  systems:
+  - 3do
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-opera.sh:12, 16, 44"
+- emulator: lr-parallel-n64
+  package: lr-parallel-n64
+  repo: "git https://github.com/RetroPie/parallel-n64.git retropie"
+  systems:
+  - n64
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-parallel-n64.sh:12, 16, 177"
+- emulator: lr-parallel-n64
+  package: lr-parallel-n64
+  build: libretro
+  kind: copies
+  names:
+  - gles2n64rom.conf
+  passes_to: $home/RetroPie/BIOS
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-parallel-n64.sh:72"
+- emulator: lr-pcsx-rearmed
+  package: lr-pcsx-rearmed
+  repo: "git https://github.com/libretro/pcsx_rearmed.git master"
+  systems:
+  - psx
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-pcsx-rearmed.sh:12, 16, 64"
+- emulator: lr-picodrive
+  package: lr-picodrive
+  repo: "git https://github.com/libretro/picodrive.git master"
+  systems:
+  - megadrive
+  - mastersystem
+  - segacd
+  - sega32x
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-picodrive.sh:12, 16, 61"
+- emulator: lr-pokemini
+  package: lr-pokemini
+  repo: "git https://github.com/libretro/pokemini.git master"
+  systems:
+  - pokemini
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-pokemini.sh:12, 16, 40"
+- emulator: lr-ppsspp
+  package: lr-ppsspp
+  repo: "git https://github.com/hrydgard/ppsspp.git :_get_release_ppsspp"
+  systems:
+  - psp
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-ppsspp.sh:12, 16, 66"
+- emulator: lr-ppsspp
+  package: lr-ppsspp
+  build: libretro
+  kind: copies
+  names:
+  - '*'
+  search_dir: $md_inst/assets
+  passes_to: $biosdir/PPSSPP
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-ppsspp.sh:56"
+- emulator: lr-prboom
+  package: lr-prboom
+  repo: "git https://github.com/libretro/libretro-prboom.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-prboom.sh:12, 15, 86, 88"
+- emulator: lr-prosystem
+  package: lr-prosystem
+  repo: "git https://github.com/libretro/prosystem-libretro.git master"
+  systems:
+  - atari7800
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-prosystem.sh:12, 16, 42"
+- emulator: lr-puae
+  package: lr-puae
+  repo: "git https://github.com/libretro/libretro-uae.git master"
+  systems:
+  - amiga
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-puae.sh:12, 16, 39"
+- emulator: lr-puae2021
+  package: lr-puae2021
+  repo: "git https://github.com/libretro/libretro-uae.git 2.6.1"
+  systems:
+  - amiga
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-puae2021.sh:12, 16, 39"
+- emulator: lr-px68k
+  package: lr-px68k
+  repo: "git https://github.com/libretro/px68k-libretro.git master"
+  systems:
+  - x68000
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-px68k.sh:12, 15, 44"
+- emulator: lr-quasi88
+  package: lr-quasi88
+  repo: "git https://github.com/libretro/quasi88-libretro.git master"
+  systems:
+  - pc88
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-quasi88.sh:12, 16, 40"
+- emulator: lr-quicknes
+  package: lr-quicknes
+  repo: "git https://github.com/libretro/QuickNES_Core.git master"
+  systems:
+  - nes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-quicknes.sh:12, 16, 43"
+- emulator: lr-retro8
+  package: lr-retro8
+  repo: "git https://github.com/libretro/retro8.git master"
+  systems:
+  - pico8
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-retro8.sh:12, 16, 41"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  repo: "git https://github.com/libretro/scummvm.git master"
+  systems:
+  - scummvm
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:12, 16, 47"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  build: libretro
+  kind: copies
+  names: []
+  search_dir: $md_inst/scummvm.zip
+  passes_to: $biosdir
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:55"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  build: libretro
+  kind: copies
+  names:
+  - scummvm.ini
+  passes_to: $biosdir
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$biosdir/scummvm.ini\" ]]"
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:60"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/scummvm/extra
+  passes_to: extrapath in $biosdir/scummvm.ini
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$biosdir/scummvm.ini\" ]]"
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:62"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  build: libretro
+  kind: passes_path
+  names: []
+  search_dir: $biosdir/scummvm/theme
+  passes_to: themepath in $biosdir/scummvm.ini
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$biosdir/scummvm.ini\" ]]"
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:63"
+- emulator: lr-scummvm
+  package: lr-scummvm
+  build: libretro
+  kind: fixed_name
+  names:
+  - Roland_SC-55.sf2
+  case_insensitive: false
+  search_dir: $biosdir/scummvm/extra
+  passes_to: soundfont in $biosdir/scummvm.ini
+  fails_when_missing: false
+  depends_on_option: "[[ ! -f \"$biosdir/scummvm.ini\" ]]"
+  source_ref: "scriptmodules/libretrocores/lr-scummvm.sh:64"
+- emulator: lr-smsplus-gx
+  package: lr-smsplus-gx
+  repo: "git https://github.com/libretro/smsplus-gx.git master"
+  systems:
+  - gamegear
+  - mastersystem
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-smsplus-gx.sh:12, 16, 43"
+- emulator: lr-snes9x
+  package: lr-snes9x
+  repo: "git https://github.com/libretro/snes9x.git master"
+  systems:
+  - snes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-snes9x.sh:12, 16, 48"
+- emulator: lr-snes9x2002
+  package: lr-snes9x2002
+  repo: "git https://github.com/libretro/snes9x2002.git master"
+  systems:
+  - snes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-snes9x2002.sh:12, 16, 49"
+- emulator: lr-snes9x2005
+  package: lr-snes9x2005
+  repo: "git https://github.com/libretro/snes9x2005.git master"
+  systems:
+  - snes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-snes9x2005.sh:12, 16, 45"
+- emulator: lr-snes9x2010
+  package: lr-snes9x2010
+  repo: "git https://github.com/libretro/snes9x2010.git master"
+  systems:
+  - snes
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-snes9x2010.sh:12, 16, 55"
+- emulator: lr-stella
+  package: lr-stella
+  repo: "git https://github.com/stella-emu/stella.git master :_get_commit_lr-stella"
+  systems:
+  - atari2600
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-stella.sh:12, 16, 53"
+- emulator: lr-stella2014
+  package: lr-stella2014
+  repo: "git https://github.com/libretro/stella2014-libretro.git master"
+  systems:
+  - atari2600
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-stella2014.sh:12, 16, 42"
+- emulator: lr-superflappybirds
+  package: lr-superflappybirds
+  repo: "git https://github.com/IgniparousTempest/libretro-superflappybirds.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-superflappybirds.sh:12, 16, 45"
+- emulator: lr-tgbdual
+  package: lr-tgbdual
+  repo: "git https://github.com/libretro/tgbdual-libretro.git master"
+  systems:
+  - gb
+  - gbc
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-tgbdual.sh:12, 16, 46-47"
+- emulator: lr-theodore
+  package: lr-theodore
+  repo: "git https://github.com/Zlika/theodore master"
+  systems:
+  - moto
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-theodore.sh:12, 16, 44"
+- emulator: lr-tic80
+  package: lr-tic80
+  repo: "git https://github.com/libretro/TIC-80.git master"
+  systems:
+  - tic80
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-tic80.sh:12, 16, 49"
+- emulator: lr-tyrquake
+  package: lr-tyrquake
+  repo: "git https://github.com/libretro/tyrquake.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-tyrquake.sh:12, 15, 68"
+- emulator: lr-uae4arm
+  package: lr-uae4arm
+  repo: "git https://github.com/Chips-fr/uae4arm-rpi.git master"
+  systems:
+  - amiga
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-uae4arm.sh:12, 16, 48"
+- emulator: lr-vba-next
+  package: lr-vba-next
+  repo: "git https://github.com/libretro/vba-next.git master"
+  systems:
+  - gba
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-vba-next.sh:12, 16, 45"
+- emulator: lr-vecx
+  package: lr-vecx
+  repo: "git https://github.com/libretro/libretro-vecx.git master"
+  systems:
+  - vectrex
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-vecx.sh:12, 16, 62"
+- emulator: lr-vecx
+  package: lr-vecx
+  build: libretro
+  kind: copies
+  names:
+  - fast.bin
+  - skip.bin
+  - system.bin
+  search_dir: $md_inst
+  passes_to: $biosdir
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-vecx.sh:55"
+- emulator: lr-vice
+  package: lr-vice
+  repo: "git https://github.com/libretro/vice-libretro.git master"
+  systems:
+  - c64
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-vice.sh:12, 16, 67"
+- emulator: lr-vice
+  package: lr-vice
+  build: libretro
+  kind: copies
+  names:
+  - data
+  search_dir: $md_inst
+  passes_to: $biosdir
+  fails_when_missing: false
+  source_ref: "scriptmodules/libretrocores/lr-vice.sh:76"
+- emulator: lr-virtualjaguar
+  package: lr-virtualjaguar
+  repo: "git https://github.com/libretro/virtualjaguar-libretro.git master"
+  systems:
+  - atarijaguar
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-virtualjaguar.sh:12, 16, 44"
+- emulator: lr-x1
+  package: lr-x1
+  repo: "git https://github.com/libretro/xmil-libretro.git master"
+  systems:
+  - x1
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-x1.sh:12, 15, 41"
+- emulator: lr-xrick
+  package: lr-xrick
+  repo: "git https://github.com/libretro/xrick-libretro.git master"
+  systems:
+  - ports
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-xrick.sh:12, 16, 40"
+- emulator: lr-yabause
+  package: lr-yabause
+  repo: "git https://github.com/libretro/yabause.git master"
+  systems:
+  - saturn
+  build: libretro
+  kind: package
+  names: []
+  source_ref: "scriptmodules/libretrocores/lr-yabause.sh:12, 16, 49"
+- emulator: alephone
+  package: alephone
+  repo: "git https://github.com/Aleph-One-Marathon/alephone.git :_get_branch_alephone"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/alephone.sh:12, 16, 78-80"
+- emulator: cannonball
+  package: cannonball
+  repo: "git https://github.com/djyt/cannonball.git master 2b3839dd34c1b4263ec5006fdeeb1ae2689cd401"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/cannonball.sh:12, 16, 60"
+- emulator: cdogs-sdl
+  package: cdogs-sdl
+  repo: "git https://github.com/cxong/cdogs-sdl.git 1.4.1"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/cdogs-sdl.sh:12, 15, 48"
+- emulator: cgenius
+  package: cgenius
+  repo: "git https://gitlab.com/Dringgstein/Commander-Genius.git v3.6.1"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/cgenius.sh:12, 15, 44"
+- emulator: darkplaces-quake
+  package: darkplaces-quake
+  repo: "git https://github.com/xonotic/darkplaces.git div0-stable"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/darkplaces-quake.sh:12, 15, scriptmodules/libretrocores/lr-tyrquake.sh:68"
+- emulator: dsda-doom
+  package: dsda-doom
+  repo: "git https://github.com/kraflab/dsda-doom :_get_branch_dsda-doom"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/dsda-doom.sh:12, 15, scriptmodules/libretrocores/lr-prboom.sh:86,\
+    \ 88"
+- emulator: dxx-rebirth
+  package: dxx-rebirth
+  repo: "git https://github.com/dxx-rebirth/dxx-rebirth master :_get_commit_dxx-rebirth"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/dxx-rebirth.sh:12, 15, 156"
+- emulator: eduke32
+  package: eduke32
+  repo: "git https://voidpoint.io/terminx/eduke32.git master dfc16b08"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/eduke32.sh:12, 15, 153"
+- emulator: gemrb
+  package: gemrb
+  repo: "git https://github.com/gemrb/gemrb.git v0.8.6"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/gemrb.sh:12, 15, 49-53"
+- emulator: giana
+  package: giana
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/giana.sh:12, 30"
+- emulator: gzdoom
+  package: gzdoom
+  repo: "git https://github.com/ZDoom/gzdoom :_get_version_gzdoom"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/gzdoom.sh:12, 15, scriptmodules/libretrocores/lr-prboom.sh:86,\
+    \ 88"
+- emulator: ionfury
+  package: ionfury
+  repo: "git https://voidpoint.io/terminx/eduke32.git master dfc16b08"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/ionfury.sh:12, 15, scriptmodules/ports/eduke32.sh:153"
+- emulator: ioquake3
+  package: ioquake3
+  repo: "git https://github.com/ioquake/ioq3 main :_get_commit_ioquake3"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/ioquake3.sh:12, 15, 71"
+- emulator: jumpnbump
+  package: jumpnbump
+  repo: "git https://gitlab.com/LibreGames/jumpnbump.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/jumpnbump.sh:12, 16, 58"
+- emulator: kodi
+  package: kodi
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/kodi.sh:12, 91"
+- emulator: lincity-ng
+  package: lincity-ng
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/lincity-ng.sh:12, 38"
+- emulator: love-0.10.2
+  package: love-0.10.2
+  repo: "git https://github.com/love2d/love 0.10.2"
+  systems:
+  - love
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/love-0.10.2.sh:12, 16, scriptmodules/ports/love.sh:67"
+- emulator: love
+  package: love
+  repo: "git https://github.com/love2d/love 11.5"
+  systems:
+  - love
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/love.sh:12, 16, 67"
+- emulator: lzdoom
+  package: lzdoom
+  repo: "git https://github.com/drfrag666/gzdoom 3.88b"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/lzdoom.sh:12, 15, scriptmodules/libretrocores/lr-prboom.sh:86,\
+    \ 88"
+- emulator: micropolis
+  package: micropolis
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/micropolis.sh:12, 34"
+- emulator: minecraft
+  package: minecraft
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/minecraft.sh:12, 32"
+- emulator: mysticmine
+  package: mysticmine
+  repo: "git https://github.com/dewitters/MysticMine.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/mysticmine.sh:12, 15, 36"
+- emulator: openblok
+  package: openblok
+  repo: "git https://github.com/mmatyas/openblok.git v0.8.7"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/openblok.sh:12, 15, 39"
+- emulator: openbor
+  package: openbor
+  repo: "git https://github.com/rofl0r/openbor.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/openbor.sh:12, 16, 47"
+- emulator: openpht
+  package: openpht
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/openpht.sh:12, 45"
+- emulator: openttd
+  package: openttd
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/openttd.sh:12, 32"
+- emulator: opentyrian
+  package: opentyrian
+  repo: "git https://github.com/opentyrian/opentyrian.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/opentyrian.sh:12, 15, 51"
+- emulator: quake3
+  package: quake3
+  repo: "git https://github.com/raspberrypi/quake3.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/quake3.sh:12, 15, 49"
+- emulator: sdlpop
+  package: sdlpop
+  repo: "git https://github.com/NagyD/SDLPoP.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/sdlpop.sh:12, 15, 44"
+- emulator: smw
+  package: smw
+  repo: "git https://github.com/mmatyas/supermariowar master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/smw.sh:12, 15, 48"
+- emulator: solarus
+  package: solarus
+  repo: "git https://gitlab.com/solarus-games/solarus.git :_get_branch_solarus"
+  systems:
+  - solarus
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/solarus.sh:12, 16, 78"
+- emulator: splitwolf
+  package: splitwolf
+  repo: "git https://bitbucket.org/linuxwolf6/splitwolf.git scrubbed"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/splitwolf.sh:12, 16, scriptmodules/ports/wolf4sdl.sh:57"
+- emulator: srb2
+  package: srb2
+  repo: "git https://git.do.srb2.org/STJr/SRB2 :_get_branch_srb2"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/srb2.sh:12, 15, 63"
+- emulator: steamlink
+  package: steamlink
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/steamlink.sh:12, 47"
+- emulator: supertux
+  package: supertux
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/supertux.sh:12, 32"
+- emulator: tyrquake
+  package: tyrquake
+  repo: "git https://github.com/RetroPie/tyrquake.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/tyrquake.sh:12, 15, scriptmodules/libretrocores/lr-tyrquake.sh:68"
+- emulator: uqm
+  package: uqm
+  repo: "file :_get_archive_uqm"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/uqm.sh:12, 15, 59"
+- emulator: vvvvvv
+  package: vvvvvv
+  repo: "git https://github.com/TerryCavanagh/VVVVVV master 39abcfa8"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/vvvvvv.sh:12, 15, 47"
+- emulator: wolf4sdl
+  package: wolf4sdl
+  repo: "git https://github.com/AryanWolf3D/Wolf4SDL.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/wolf4sdl.sh:12, 15, 57"
+- emulator: xrick
+  package: xrick
+  repo: "git https://github.com/RetroPie/xrick.git master"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/xrick.sh:12, 16, 42"
+- emulator: yquake2
+  package: yquake2
+  repo: "git https://github.com/yquake2/yquake2.git QUAKE2_8_70"
+  systems:
+  - ports
+  build: standalone
+  kind: package
+  names: []
+  source_ref: "scriptmodules/ports/yquake2.sh:12, 15, 86"
+- emulator: fs-uae
+  package: fs-uae
+  build: standalone
+  kind: fixed_name
+  names:
+  - kick13.rom
+  case_insensitive: false
+  search_dir: $HOME/RetroPie/BIOS
+  passes_to: command line --kickstart_file
+  fails_when_missing: "You need to copy the Amiga kickstart file (kick13.rom) to the\
+    \ folder $biosdir to boot the Amiga emulator."
+  source_ref: "scriptmodules/emulators/fs-uae/fs-uae.sh:23-26, 41"
+- emulator: reicast
+  package: reicast
+  build: standalone
+  kind: fixed_name
+  names:
+  - dc_boot.bin
+  case_insensitive: false
+  search_dir: $HOME/RetroPie/BIOS/dc
+  fails_when_missing: "You need to copy the Dreamcast BIOS files (dc_boot.bin and\
+    \ dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator."
+  source_ref: "scriptmodules/emulators/reicast/reicast.sh:22-25"

@@ -31,6 +31,7 @@ from scraper.batocera_launchers import (  # noqa: E402
     extract_launchers,
     hatari,
 )
+from scraper.retropie_launchers import Launcher as PackageLauncher  # noqa: E402
 
 PATHS = """from pathlib import Path
 from typing import Final
@@ -372,7 +373,10 @@ class PlatformRecords(unittest.TestCase):
     def test_the_schema_describes_what_the_scraper_writes(self):
         fields = {f.name for f in dataclasses.fields(Launcher)}
         described = set(self.schema["$defs"]["launcher"]["properties"])
-        self.assertEqual(fields, described)
+        # package, repo and systems are written by package platforms (RetroPie).
+        package_fields = {f.name for f in dataclasses.fields(PackageLauncher)} - {"lines"}
+        self.assertEqual(sorted(fields - described), [])
+        self.assertEqual(fields | package_fields, described)
 
     def test_the_wiki_names_every_launcher_field(self):
         page = (REPO_ROOT / "wiki" / "adding-a-platform.md").read_text(encoding="utf-8")

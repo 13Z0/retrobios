@@ -153,9 +153,26 @@
             "passes_path",
             "links",
             "copies",
-            "scans_dir"
+            "moves",
+            "scans_dir",
+            "package"
           ],
-          "description": "names_searched: tries the names in order, first found wins. fixed_name: writes or opens one path per name. core_option: sets a core option whose value names the file. passes_path: hands over a directory. links, copies: links or copies a file to where the emulator reads it. scans_dir: the emulator picks from a directory"
+          "description": "names_searched: tries the names in order, first found wins. fixed_name: writes or opens one path per name. core_option: sets a core option whose value names the file. passes_path: hands over a directory. links, copies: links or copies a file to where the emulator reads it. moves: moves a file the user left in one folder to the folder the launcher links from. scans_dir: the emulator picks from a directory. package: names no file, records what a package builds (`repo`) and the systems it registers (`systems`)"
+        },
+        "package": {
+          "type": "string",
+          "description": "The platform package whose script this record comes from, when the platform installs emulators as packages"
+        },
+        "repo": {
+          "type": "string",
+          "description": "What the package fetches and builds, as its script declares it: method, URL, then branch or commit"
+        },
+        "systems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Systems the package registers, under the platform's own names, in the order the script adds them"
         },
         "slot": {
           "type": "string",
