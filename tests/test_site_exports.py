@@ -741,10 +741,12 @@ class ACitationSaysWhoseCodeItIs(unittest.TestCase):
 
         ref = "source libretro.c:5, upstream emu/memory.c:46, 50-52"
         text = _source_ref_markdown(self.PROFILE, ref)
-        self.assertIn("libretro/a5200/blob/" + "a" * 40 + "/libretro.c#L5) (libretro core)", text)
+        self.assertIn("libretro/a5200/blob/" + "a" * 40 + "/libretro.c#L5) (libretro glue)", text)
         self.assertIn("alekmaul/a5200/blob/" + "b" * 40 + "/emu/memory.c#L50-L52) (upstream emulator)",
                       text)
-        self.assertEqual(requested_by(self.PROFILE, ref), "libretro core and upstream emulator")
+        self.assertEqual(requested_by(self.PROFILE, ref), "libretro glue and upstream emulator")
+        self.assertEqual(requested_by(self.PROFILE, "source src/mem.c:107"),
+                         "emulator code, libretro port")
         self.assertEqual(requested_by(self.PROFILE, "upstream emu/memory.c:46"),
                          "upstream emulator")
 

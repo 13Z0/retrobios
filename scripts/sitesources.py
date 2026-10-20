@@ -120,11 +120,22 @@ def revision_markdown(profile: dict) -> str:
     return ", ".join(links)
 
 
-def role_label(profile: dict, role: str) -> str:
-    """What a reader calls the repository a role names."""
+_GLUE_RE = re.compile(r"(^|/)(libretro|retro_)[^/]*$|(^|/)libretro[^/]*/", re.IGNORECASE)
+
+
+def role_label(profile: dict, role: str, path: str = "") -> str:
+    """Whose code a cited path is, said the way a reader asks it.
+
+    A libretro port carries the emulator's own sources beside its glue: pcem
+    cites src/mem.c in the port, which is PCem's code, not the core's.
+    """
     if role == "upstream":
         return "upstream emulator"
-    return "libretro core" if "libretro" in str(profile.get("type", "")) else "this build"
+    if "libretro" not in str(profile.get("type", "")):
+        return "this build"
+    if _GLUE_RE.search(path):
+        return "libretro glue"
+    return "emulator code, libretro port"
 
 
 def role_sources(profile: dict, label: str = "") -> dict[str, tuple[upstream.Repo, str]]:
@@ -140,15 +151,17 @@ def role_sources(profile: dict, label: str = "") -> dict[str, tuple[upstream.Rep
 
 def requested_by(profile: dict, value: str | dict | None) -> str:
     """Whose code the citations of an entry are in, said in words."""
-    roles = {
-        ref_role(part.path)[0]
-        for _label, refs in source_ref_values(value)
-        for part in split_source_ref(refs)
-    } - {""}
-    if not roles or not _two_repositories(profile):
+    labels = []
+    for _label, refs in source_ref_values(value):
+        for part in split_source_ref(refs):
+            role, bare = ref_role(part.path)
+            if role:
+                label = role_label(profile, role, bare)
+                if label not in labels:
+                    labels.append(label)
+    if not labels or not _two_repositories(profile):
         return ""
-    names = [role_label(profile, role) for role in ("source", "upstream") if role in roles]
-    return " and ".join(names)
+    return labels[0] if len(labels) == 1 else ", ".join(labels[:-1]) + f" and {labels[-1]}"
 
 
 def _two_repositories(profile: dict) -> bool:
@@ -199,7 +212,7 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
                 elif len(candidates) == 1:
                     selected = candidates[0]
 
-            tag = (f" ({role_label(profile, current_role)})"
+            tag = (f" ({role_label(profile, current_role, part.path)})"
                    if current_role and _two_repositories(profile) else "")
             if selected is None:
                 rendered.append(f"`{display}`{tag}")
