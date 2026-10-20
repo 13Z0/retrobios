@@ -5,7 +5,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-20T17:20:48Z",
+  "generated": "2026-10-20T19:45:33Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -15,11 +15,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8448,
-  "total_size": 8767631412,
-  "pack_files": 11004,
-  "pack_size": 8800998482,
-  "total_omitted": 211,
+  "total_files": 8475,
+  "total_size": 8770146888,
+  "pack_files": 11031,
+  "pack_size": 8803513958,
+  "total_omitted": 214,
   "omitted_files": [
     {
       "dest": "Assets/3dlogo.cmem",
@@ -389,6 +389,26 @@
       "reason": "not_found",
       "cores": [
         "dsda-doom"
+      ]
+    },
+    {
+      "dest": "cgrom.tmp",
+      "name": "cgrom.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k-sdl"
+      ]
+    },
+    {
+      "dest": "cgrom30.tmp",
+      "name": "cgrom30.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k-sdl"
       ]
     },
     {
@@ -1309,6 +1329,16 @@
       "reason": "not_found",
       "cores": [
         "jazz2-native"
+      ]
+    },
+    {
+      "dest": "keropi/cgrom.tmp",
+      "name": "cgrom.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k"
       ]
     },
     {
@@ -2378,6 +2408,9 @@
     "mgba": [
       "mgba_fork"
     ],
+    "minivmac37": [
+      "minivmac"
+    ],
     "mkxp_z": [
       "mkxp-z"
     ],
@@ -2485,6 +2518,12 @@
     ],
     "puae": [
       "uae"
+    ],
+    "px68k-sdl": [
+      "px68k"
+    ],
+    "quasi88kai": [
+      "quasi88"
     ],
     "real3doplayer": [
       "REAL3DOPLAYER",
@@ -105753,6 +105792,16 @@
       ]
     },
     {
+      "dest": "vMac.ROM",
+      "sha1": "32daf772960c7ed31f41b95055968532b81d0896",
+      "sha256": "a86d539aab1af6352fc05752ec2e3d143f805219880822843c627c6184318def",
+      "size": 138576,
+      "repo_path": "bios/Apple/Macintosh/vMac.ROM",
+      "cores": [
+        "minivmac37"
+      ]
+    },
+    {
       "dest": "Mupen64plus/font.ttf",
       "sha1": "1d7f6fa0c34e3d50be52c16a0816bebac309fe41",
       "sha256": "c4c45690b345435b2cba52ecabe275f05e49b389b39fe68ad03afbb551288d3d",
@@ -108194,13 +108243,39 @@
       ]
     },
     {
-      "dest": "keropi/cgrom.tmp",
-      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
-      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
+      "dest": "cgrom30.dat",
+      "sha1": "8a2979601632867388e0f208712b7886c0015018",
+      "sha256": "7e3b814e531a847ddea1a1e5f6b329bc38c43ad843e0053ee4172f6d3737380c",
       "size": 786432,
-      "repo_path": "bios/Sharp/X68000/cgrom.dat",
+      "repo_path": "bios/Sharp/X68000/cgrom30.dat",
       "cores": [
-        "px68k"
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "scsiinrom.dat",
+      "sha1": "15a17798839a3f7f361119205aebc301c2df5967",
+      "sha256": "fe6e700b91c290b19da9aa4d35985f2d8f9686442e250686a95da959088121fa",
+      "size": 8192,
+      "repo_path": "bios/Sharp/X68000/scsiinrom.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "scsiexrom.dat",
+      "sha1": "49616c09a8986ffe6a12ad600febe512f7ba8ae4",
+      "sha256": "063efb1faaa160dad2d236b560243d98274c1089a275b74c257a85e5dbefd04b",
+      "size": 8192,
+      "repo_path": "bios/Sharp/X68000/scsiexrom.dat",
+      "cores": [
+        "px68k-sdl"
       ],
       "systems": [
         "sharp-x68000"
@@ -108320,6 +108395,107 @@
       "repo_path": "bios/NEC/PC-88/font3.rom",
       "cores": [
         "quasi88"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88.ROM",
+      "sha1": "3518193b8207bdebf22c1380c2db8c554baff329",
+      "sha256": "d76f9118f9994eb391a0dc9c1fbfbfa2e9bc584a65da75f3ba7065d3c03cab76",
+      "size": 32768,
+      "repo_path": "bios/NEC/PC-88/n88.rom",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88N.ROM",
+      "sha1": "063609dd518c124a4fc9ba35d1bae35771666a34",
+      "sha256": "4db0b25bf25fd063b08fde9e76d7504440cd322a8ab6b72c4ee7d8ea98ce0839",
+      "size": 32768,
+      "repo_path": "bios/NEC/PC-88/n88n.rom",
+      "cores": [
+        "quasi88kai"
+      ]
+    },
+    {
+      "dest": "rom/N88SUB.ROM",
+      "sha1": "bb7103a0818850a039c67ff666a31ce49a8d516f",
+      "sha256": "9dc63118728a171ce2ed437ad38ef280b8b7bcf4a5a95fedf18946501b010456",
+      "size": 2048,
+      "repo_path": "bios/NEC/PC-88/N88SUB.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88KNJ1.ROM",
+      "sha1": "82e11a177af6a5091dd67f50a2f4bafda84d6556",
+      "sha256": "7608040cffb1951e5cc567abb63f75b5746777a1ba96196c1b75606b793bb4bb",
+      "size": 131072,
+      "repo_path": "bios/NEC/PC-88/KANJI1.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88KNJ2.ROM",
+      "sha1": "b86b932cb4ce34472e0fe0f01a4a4350e15dcb53",
+      "sha256": "5c31df4b892e730d1ba7f80fd5583e838ae5583ba52408088da74b9ff422e5fe",
+      "size": 131072,
+      "repo_path": "bios/NEC/PC-88/n88knj2.rom",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88JISHO.ROM",
+      "sha1": "deef0cc2a9734ba891a6d6c022aa70ffc66f783e",
+      "sha256": "25773eaee3af617db08d26602d8f4cdc7d42ed946ca510d3b1d96fe1645af63c",
+      "size": 524288,
+      "repo_path": "bios/NEC/PC-88/n88jisho.rom",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/FONT2.ROM",
+      "sha1": "0a056b6d28b4b9e29a2d255bdaa25c24f176cf1e",
+      "sha256": "d35d380c8a716c086cdee9f821c879a01196eeec4e52c94a93f79631248c11ba",
+      "size": 2048,
+      "repo_path": "bios/NEC/PC-88/font2.rom",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/FONT3.ROM",
+      "sha1": "aff9959b402ae0ead377b87566cf0e7b889e3d9e",
+      "sha256": "4c5da1098f71dd9d8f7e1c4852b749766389571dbcddf7526a85f02f35440791",
+      "size": 2048,
+      "repo_path": "bios/NEC/PC-88/font3.rom",
+      "cores": [
+        "quasi88kai"
       ],
       "systems": [
         "nec-pc-88"
@@ -111482,6 +111658,214 @@
       ],
       "systems": [
         "sony-playstation-2"
+      ]
+    },
+    {
+      "dest": "iplrom.dat",
+      "sha1": "0ed038ed2133b9f78c6e37256807424e0d927560",
+      "sha256": "8ead1d0f4ebb9c59a7fa118596f819e191c310442a00c56ab5ec5e9e7a189677",
+      "size": 131072,
+      "repo_path": "bios/Sharp/X68000/iplrom.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "iplromxv.dat",
+      "sha1": "e33cdcdb69cd257b0b211ef46e7a8b144637db57",
+      "sha256": "743436ba571b73ba7d9e12cde2767d05f2885e1ec275fbc3cd0904994675b79a",
+      "size": 131072,
+      "repo_path": "bios/Sharp/X68000/iplromxv.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "iplromco.dat",
+      "sha1": "77511fc58798404701f66b6bbc9cbde06596eba7",
+      "sha256": "02ee212ef089924e760056dd5a481dc634da614a5c377899f1e379cec87b2e22",
+      "size": 131072,
+      "repo_path": "bios/Sharp/X68000/iplromco.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "iplrom30.dat",
+      "sha1": "239e9124568c862c31d9ec0605e32373ea74b86a",
+      "sha256": "bdba942ab9c633a3172fbf1a8579849df52c0eeb0da8a3411402f4564d035a27",
+      "size": 131072,
+      "repo_path": "bios/Sharp/X68000/iplrom30.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "cgrom.dat",
+      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
+      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
+      "size": 786432,
+      "repo_path": "bios/Sharp/X68000/cgrom.dat",
+      "cores": [
+        "px68k-sdl"
+      ],
+      "systems": [
+        "sharp-x68000"
+      ]
+    },
+    {
+      "dest": "rom/N88EXT0.ROM",
+      "sha1": "d239c26ad7ac5efac6e947b0e9549b1534aa970d",
+      "sha256": "290286a513c39af02581481958b8f1291c0ee8409b3940ae808352e0c3a2e2f8",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-88/N88EXT0.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88EXT1.ROM",
+      "sha1": "8528eef7946edf6501a6ccb1f416b60c64efac7c",
+      "sha256": "bbb6283a0810eb4468909a364ccbc6d9cec51024aa0a2afa2e72a7af6d23049b",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-88/N88EXT1.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88EXT2.ROM",
+      "sha1": "b7c8bcea219b77d9cc3ee0efafe343cc307425d1",
+      "sha256": "ad0f26064f44718eedd0103fde3d41bd29e60317680611e784dc9c1943e7574b",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-88/N88EXT2.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/N88EXT3.ROM",
+      "sha1": "efce0b51cab9f0da6cf68507757f1245a2867a72",
+      "sha256": "8580fecc6574b40a082aaf227afc3c1dbd06f333ba7549278ff73647b02b2303",
+      "size": 8192,
+      "repo_path": "bios/NEC/PC-88/N88EXT3.ROM",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/FONT.ROM",
+      "sha1": "84b90f69671d4b72e8f219e1fe7cd667e976cf7f",
+      "sha256": "3227087599afd9304f260cdeb3bf1533e39e425cf444ceb3c24f55f561e71a0c",
+      "size": 2048,
+      "repo_path": "bios/NEC/PC-88/font.rom",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_BD.WAV",
+      "sha1": "0a56c142ef40cec50f3ee56a6e42d0029c9e2818",
+      "sha256": "802fb0ce40878e98335fc56d11eff6382982e9f09ebc83055b0a469df13f7900",
+      "size": 19192,
+      "repo_path": "bios/NEC/PC-98/2608_bd.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_SD.WAV",
+      "sha1": "3c79663ef74c0b0439d13351326eb1c52a657008",
+      "sha256": "e5877cd1e4821cbbc9a450491a189032c82906c05f7fc9f2e48ee0d06b3ad18c",
+      "size": 15558,
+      "repo_path": "bios/NEC/PC-98/2608_sd.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_TOP.WAV",
+      "sha1": "aa4a8f766a86b830687d5083fd3b9db0652f46fc",
+      "sha256": "d7bcf2da99a09589096e9bcee98da43303c588cca4e89b1a263adace52038cd3",
+      "size": 57016,
+      "repo_path": "bios/NEC/PC-98/2608_top.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_HH.WAV",
+      "sha1": "12f676cef249b82480b6f19c454e234b435ca7b6",
+      "sha256": "216c81ff9a84af0dfbf21dd8df6827c25fca9fdeefe9bc8426f7a00d6ff2264e",
+      "size": 36722,
+      "repo_path": "bios/NEC/PC-98/2608_hh.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_TOM.WAV",
+      "sha1": "9513fb4a3f41e75a972a273a5104cbd834c1e2c5",
+      "sha256": "8e2c9ccfa8caff03dbd0d945d7c1d4de15292817409fe6fabda07f008f97dbc6",
+      "size": 23092,
+      "repo_path": "bios/NEC/PC-98/2608_tom.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "rom/2608_RIM.WAV",
+      "sha1": "c65592330c9dd84011151daed52f9aec926b7e56",
+      "sha256": "6f7d1996001c74452a9ca68b41a2767925b5b947c699096a8ad15bbc658af5a3",
+      "size": 5288,
+      "repo_path": "bios/NEC/PC-98/2608_rim.wav",
+      "cores": [
+        "quasi88kai"
+      ],
+      "systems": [
+        "nec-pc-88"
       ]
     },
     {

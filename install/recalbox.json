@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-20T15:01:06Z",
+  "generated": "2026-10-20T19:45:33Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 3372,
-  "total_size": 4407255726,
-  "pack_files": 3374,
-  "pack_size": 4407255726,
-  "total_omitted": 12,
+  "total_files": 3371,
+  "total_size": 4406469294,
+  "pack_files": 3373,
+  "pack_size": 4406469294,
+  "total_omitted": 13,
   "omitted_files": [
     {
       "dest": "caesar3/The_empire.555",
@@ -384,6 +384,16 @@
       "reason": "not_found",
       "cores": [
         "prboom"
+      ]
+    },
+    {
+      "dest": "keropi/cgrom.tmp",
+      "name": "cgrom.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k"
       ]
     },
     {
@@ -696,6 +706,12 @@
     ],
     "puae": [
       "uae"
+    ],
+    "px68k-sdl": [
+      "px68k"
+    ],
+    "quasi88kai": [
+      "quasi88"
     ],
     "real3doplayer": [
       "REAL3DOPLAYER",
@@ -35620,19 +35636,6 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "keropi/cgrom.tmp",
-      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
-      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
-      "size": 786432,
-      "repo_path": "bios/Sharp/X68000/cgrom.dat",
-      "cores": [
-        "px68k"
-      ],
-      "systems": [
-        "sharp-x68000"
       ]
     },
     {

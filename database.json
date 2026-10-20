@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T17:20:48Z",
+  "generated_at": "2026-10-20T19:45:33Z",
   "total_files": 19529,
   "total_size": 16788599450,
   "bios_dir": "bios",
@@ -273501,12 +273501,6 @@
       "sega-saturn:85ec9ca47d8f6807718151cbcca8b964": [
         "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
       ],
-      "cgrom.tmp": [
-        "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
-      ],
-      "CGROM.DAT": [
-        "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
-      ],
       "zx81.rom": [
         "7b143ee964e9ada89d1f9e88f0bd48d919184cfc"
       ],
@@ -276845,6 +276839,9 @@
       ],
       "IPLROM.DAT": [
         "0ed038ed2133b9f78c6e37256807424e0d927560"
+      ],
+      "CGROM.DAT": [
+        "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
       ],
       "SCSIEXROM.DAT": [
         "49616c09a8986ffe6a12ad600febe512f7ba8ae4"
@@ -588972,12 +588969,6 @@
       ],
       "Saturn/sega_101.bin": [
         "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
-      ],
-      "Sharp/X68000/cgrom.tmp": [
-        "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
-      ],
-      "X68000/cgrom.tmp": [
-        "8d72c5b4d63bb14c5dbdac495244d659aa1498b6"
       ],
       "Sinclair/ZX 81/zx81.rom": [
         "7b143ee964e9ada89d1f9e88f0bd48d919184cfc"

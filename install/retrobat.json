@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T17:20:48Z",
+  "generated": "2026-10-20T19:45:33Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,11 +270,11 @@
       }
     }
   ],
-  "total_files": 5114,
-  "total_size": 8196525205,
-  "pack_files": 5116,
-  "pack_size": 8196525205,
-  "total_omitted": 152,
+  "total_files": 5112,
+  "total_size": 8194952341,
+  "pack_files": 5114,
+  "pack_size": 8194952341,
+  "total_omitted": 154,
   "omitted_files": [
     {
       "dest": "AR6002G.ROM",
@@ -344,6 +344,16 @@
       "reason": "not_found",
       "cores": [
         "raze"
+      ]
+    },
+    {
+      "dest": "CGROM.TMP",
+      "name": "CGROM.TMP",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "xm6pro68k"
       ]
     },
     {
@@ -1657,6 +1667,16 @@
       ]
     },
     {
+      "dest": "keropi/cgrom.tmp",
+      "name": "cgrom.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k"
+      ]
+    },
+    {
       "dest": "main/sp_pak1.pk3",
       "name": "sp_pak1.pk3",
       "system": "return-to-castle-wolfenstein",
@@ -2134,6 +2154,12 @@
     ],
     "puae": [
       "uae"
+    ],
+    "px68k-sdl": [
+      "px68k"
+    ],
+    "quasi88kai": [
+      "quasi88"
     ],
     "real3doplayer": [
       "REAL3DOPLAYER",
@@ -99858,19 +99884,6 @@
       ]
     },
     {
-      "dest": "keropi/cgrom.tmp",
-      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
-      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
-      "size": 786432,
-      "repo_path": "bios/Sharp/X68000/cgrom.dat",
-      "cores": [
-        "px68k"
-      ],
-      "systems": [
-        "sharp-x68000"
-      ]
-    },
-    {
       "dest": "quasi88/n88knj1.rom",
       "sha1": "82e11a177af6a5091dd67f50a2f4bafda84d6556",
       "sha256": "7608040cffb1951e5cc567abb63f75b5746777a1ba96196c1b75606b793bb4bb",
@@ -101224,19 +101237,6 @@
       "sha256": "a67c392e734172f56465ac0f5b36caab08d1e3ba377fa97582b47ea33de330d0",
       "size": 131072,
       "repo_path": "bios/Sharp/X68000/rom30.dat",
-      "cores": [
-        "xm6pro68k"
-      ],
-      "systems": [
-        "sharp-x68000"
-      ]
-    },
-    {
-      "dest": "CGROM.TMP",
-      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
-      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
-      "size": 786432,
-      "repo_path": "bios/Sharp/X68000/cgrom.dat",
       "cores": [
         "xm6pro68k"
       ],

@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-20T17:20:48Z",
+  "generated": "2026-10-20T19:45:33Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -278,11 +278,11 @@
       }
     }
   ],
-  "total_files": 8185,
-  "total_size": 7839709985,
-  "pack_files": 8187,
-  "pack_size": 7839709985,
-  "total_omitted": 10,
+  "total_files": 8184,
+  "total_size": 7838923553,
+  "pack_files": 8186,
+  "pack_size": 7838923553,
+  "total_omitted": 11,
   "omitted_files": [
     {
       "dest": "doomu.wad",
@@ -382,6 +382,16 @@
       "reason": "not_found",
       "cores": [
         "jazz2-native"
+      ]
+    },
+    {
+      "dest": "keropi/cgrom.tmp",
+      "name": "cgrom.tmp",
+      "system": "sharp-x68000",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "px68k"
       ]
     }
   ],
@@ -85404,16 +85414,6 @@
     },
     {
       "dest": "keropi/cgrom.dat",
-      "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
-      "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
-      "size": 786432,
-      "repo_path": "bios/Sharp/X68000/cgrom.dat",
-      "cores": [
-        "px68k"
-      ]
-    },
-    {
-      "dest": "keropi/cgrom.tmp",
       "sha1": "8d72c5b4d63bb14c5dbdac495244d659aa1498b6",
       "sha256": "c4e47e1480af0b00b330a49650480c8caa34054a6e97db7ae03cbade9890185d",
       "size": 786432,
