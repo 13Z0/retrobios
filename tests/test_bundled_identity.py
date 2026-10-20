@@ -51,7 +51,7 @@ UNIDENTIFIED = {
     "hurrican": 1,
     "idtech4a++": 1,
     "ikemen": 32,
-    "ines": 2,
+    "ines": 1,
     "jl-mod": 22,
     "kemulator": 4,
     "mastergear": 2,
