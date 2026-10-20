@@ -14,6 +14,2261 @@
     "not_added": 527,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "requirement_corrected",
+      "system": "amiga600",
+      "name": "kick33180.A500",
+      "destination": "amiga/bios/kick33180.A500",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "amiga600",
+      "name": "kick34005.A500",
+      "destination": "amiga/bios/kick34005.A500",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "amiga600",
+      "name": "kick37175.A500",
+      "destination": "amiga/bios/kick37175.A500",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "aros-ext.bin",
+      "destination": "aros-ext.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d2ce6748e8e42222662e14359f68dad5",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "aros-rom.bin",
+      "destination": "aros-rom.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "48d38fc3fcf2ad7bca5ec5191d02e451",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "WHDLoad",
+      "destination": "whdboot/WHDLoad",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6670a9571f235ec31b8bbd48fc18f428",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "JST",
+      "destination": "whdboot/JST",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "2a3a61bbd7c351751506e22a4354b76a",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "AmiQuit",
+      "destination": "whdboot/AmiQuit",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "36ab26d3b855e634fdda062c052cd52b",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "boot-data.zip",
+      "destination": "whdboot/boot-data.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9e638f3d531eb7cd82594f49a4cf03b7",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "whdload_db.json",
+      "destination": "whdboot/game-data/whdload_db.json",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "14d797815aa9bbc79fe284b244ea75b1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick33180.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c993feb1eeddec1d2e687aa514231028",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick34005.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7eb13d974af0992d672b67c317a7e0a1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick40063.A600.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3f97c1963d82c808ef29e7c984c4c688",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick40068.A1200.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "547b42b7b070c7f227ea45e0986d57a1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick40068.A4000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f89f19b858ea6b1a04327c6f71ee1600",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "kick31034.A1000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick31034.A1000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c5ba6165df42fc69b32942b248fca725",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "amiga-os-310.rom",
+      "destination": "amiga-os-310.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "730888fb1bd9a3606d51f772ed136528",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_click_A500.wav",
+      "destination": "uae_data/drive_click_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_spin_A500.wav",
+      "destination": "uae_data/drive_spin_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7401f854a75f9ede18769168ab896a2a",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_spinnd_A500.wav",
+      "destination": "uae_data/drive_spinnd_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f9d954879fee8e96baa93d6139077cdb",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_startup_A500.wav",
+      "destination": "uae_data/drive_startup_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_snatch_A500.wav",
+      "destination": "uae_data/drive_snatch_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1a4b2d6254918ff769f26beeede75655",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_click_LOUD.wav",
+      "destination": "uae_data/drive_click_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b64bee23f356635f67fb08b543df9797",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_spin_LOUD.wav",
+      "destination": "uae_data/drive_spin_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_spinnd_LOUD.wav",
+      "destination": "uae_data/drive_spinnd_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "43ab05c6d969cb40805970a5b2352875",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_startup_LOUD.wav",
+      "destination": "uae_data/drive_startup_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "drive_snatch_LOUD.wav",
+      "destination": "uae_data/drive_snatch_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "amiga1200",
+      "name": "kick39106.A1200",
+      "destination": "amiga/bios/kick39106.A1200",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "amiga1200",
+      "name": "kick40068.A4000",
+      "destination": "amiga/bios/kick40068.A4000",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "amigacd32",
+      "name": "kick40060.CD32.ext",
+      "destination": "amiga/bios/kick40060.CD32.ext",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "macintosh",
+      "name": "MinivMacBootv2.dsk",
+      "destination": "macintosh/MinivMacBootv2.dsk",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "atari800",
+      "name": "ATARIBAS.ROM",
+      "destination": "atari800/ATARIBAS.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "atari800",
+      "name": "ATARIOSA.ROM",
+      "destination": "atari800/ATARIOSA.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "atari800",
+      "name": "ATARIOSB.ROM",
+      "destination": "atari800/ATARIOSB.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "atari800",
+      "name": "ATARIXL.ROM",
+      "destination": "atari800/ATARIXL.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "B11M_BOS.ROM",
+      "destination": "bk/B11M_BOS.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "B11M_EXT.ROM",
+      "destination": "bk/B11M_EXT.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "BAS11M_0.ROM",
+      "destination": "bk/BAS11M_0.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "BAS11M_1.ROM",
+      "destination": "bk/BAS11M_1.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "DISK_327.ROM",
+      "destination": "bk/DISK_327.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "bk",
+      "name": "FOCAL10.ROM",
+      "destination": "bk/FOCAL10.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/basic-901226-01.bin",
+      "destination": "vice/C64/basic-901226-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "57af4ae21d4b705c2991d98ed5c1f7b8",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-901227-03.bin",
+      "destination": "vice/C64/kernal-901227-03.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "39065497630802346bce17963f13c092",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-901227-01.bin",
+      "destination": "vice/C64/kernal-901227-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1ae0ea224f2b291dafa2c20b990bb7d4",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-901227-02.bin",
+      "destination": "vice/C64/kernal-901227-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7360b296d64e18b88f6cf52289fd99a1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-390852-01.bin",
+      "destination": "vice/C64/kernal-390852-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ddee89b0fed19572da5245ea68ff11b5",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-251104-04.bin",
+      "destination": "vice/C64/kernal-251104-04.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "187b8c713b51931e070872bd390b472a",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-901246-01.bin",
+      "destination": "vice/C64/kernal-901246-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "da92801e3a03b005b746a4dd0b639c7c",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/kernal-906145-02.bin",
+      "destination": "vice/C64/kernal-906145-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "479553fd53346ec84054f0b1c6237397",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/chargen-901225-01.bin",
+      "destination": "vice/C64/chargen-901225-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "12a4202f5331d45af846af6c58fba946",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/C64/chargen-906143-02.bin",
+      "destination": "vice/C64/chargen-906143-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "cf32a93c0a693ed359a4f483ef6db53d",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/SCPU64/scpu64",
+      "destination": "vice/SCPU64/scpu64",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "006862e9a52d987970435988e3803c71",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/SCPU64/chargen-901225-01.bin",
+      "destination": "vice/SCPU64/chargen-901225-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "12a4202f5331d45af846af6c58fba946",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/SCPU64/chargen-906143-02.bin",
+      "destination": "vice/SCPU64/chargen-906143-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "cf32a93c0a693ed359a4f483ef6db53d",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1540-325302+3-01.bin",
+      "destination": "vice/DRIVES/dos1540-325302+3-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "87e849da3c87549848550fe4dd4d1aae",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1541-325302-01+901229-05.bin",
+      "destination": "vice/DRIVES/dos1541-325302-01+901229-05.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a0ce8439d1b8dcf2e1430461f7233a72",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1541ii-251968-03.bin",
+      "destination": "vice/DRIVES/dos1541ii-251968-03.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ada295382a1f2df772a7e5c5c6f34215",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1570-315090-01.bin",
+      "destination": "vice/DRIVES/dos1570-315090-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f0799353f0e22cf7d783e447adcafde2",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1571-310654-05.bin",
+      "destination": "vice/DRIVES/dos1571-310654-05.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "dae964d64b7843ff86c008d396dda208",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "c64",
+      "name": "vice/DRIVES/dos1581-318045-02.bin",
+      "destination": "vice/DRIVES/dos1581-318045-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6a82f92aea2a3afa190fe32d565f39e7",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "dreamcast",
+      "name": "dc_boot.bin",
+      "destination": "dc/dc_boot.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "dreamcast",
+      "name": "boot.bin",
+      "destination": "boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a5c6a00818f97c5e3e91569ee22416dc,37c921eb47532cae8fb70e5d987ce91c,f2cd29d09f3e29984bcea22ab2e006fe,e10c53c2f8b90bab96ead2d368858623",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc88",
+      "name": "n88_1.rom",
+      "destination": "quasi88/n88_1.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc88",
+      "name": "n88_2.rom",
+      "destination": "quasi88/n88_2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc88",
+      "name": "n88_3.rom",
+      "destination": "quasi88/n88_3.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc88",
+      "name": "n88n.rom",
+      "destination": "quasi88/n88n.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc98",
+      "name": "font.bmp",
+      "destination": "np2kai/font.bmp",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc98",
+      "name": "sound.rom",
+      "destination": "np2kai/sound.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "pc98",
+      "name": "BIOS.rom",
+      "destination": "BeebFile/BIOS.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "de72efe184f74f1cb98f92b1fbf532bb",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "sufami",
+      "name": "STBIOS.bin",
+      "destination": "sufami/STBIOS.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "CARTS.SHA",
+      "destination": "msx/CARTS.SHA",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "CYRILLIC.FNT",
+      "destination": "msx/CYRILLIC.FNT",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "DISK.ROM",
+      "destination": "msx/DISK.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "ITALIC.FNT",
+      "destination": "msx/ITALIC.FNT",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "KANJI.ROM",
+      "destination": "msx/KANJI.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "MSXDOS2.ROM",
+      "destination": "msx/MSXDOS2.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "PAINTER.ROM",
+      "destination": "msx/PAINTER.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "RS232.ROM",
+      "destination": "msx/RS232.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "pesadelo.rom",
+      "destination": "Machines/Forte II Games - Pesadelo/pesadelo.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_logo_msx1.rom",
+      "destination": "Machines/MSX - C-BIOS/cbios_logo_msx1.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_main_msx1.rom",
+      "destination": "Machines/MSX - C-BIOS/cbios_main_msx1.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_logo_msx2.rom",
+      "destination": "Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_main_msx2.rom",
+      "destination": "Machines/MSX2 - C-BIOS/cbios_main_msx2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_sub.rom",
+      "destination": "Machines/MSX2 - C-BIOS/cbios_sub.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_logo_msx2+.rom",
+      "destination": "Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_main_msx2+.rom",
+      "destination": "Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "cbios_music.rom",
+      "destination": "Machines/MSX2+ - C-BIOS/cbios_music.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "Msx2pe.rom",
+      "destination": "Machines/MSX2+ - European/Msx2pe.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "Msx2pexte.rom",
+      "destination": "Machines/MSX2+ - European/Msx2pexte.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "ARAB1.ROM",
+      "destination": "Machines/Shared Roms/ARAB1.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "ARABIC.rom",
+      "destination": "Machines/Shared Roms/ARABIC.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "BEERIDE.ROM",
+      "destination": "Machines/Shared Roms/BEERIDE.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "FMPAC.rom",
+      "destination": "Machines/Shared Roms/FMPAC.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "GCVMX80.ROM",
+      "destination": "Machines/Shared Roms/GCVMX80.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "HANGUL.rom",
+      "destination": "Machines/Shared Roms/HANGUL.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "KANJI.rom",
+      "destination": "Machines/Shared Roms/KANJI.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MICROSOLDISK.ROM",
+      "destination": "Machines/Shared Roms/MICROSOLDISK.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MOONSOUND.rom",
+      "destination": "Machines/Shared Roms/MOONSOUND.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2AR.ROM",
+      "destination": "Machines/Shared Roms/MSX2AR.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2AREXT.ROM",
+      "destination": "Machines/Shared Roms/MSX2AREXT.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2BR.rom",
+      "destination": "Machines/Shared Roms/MSX2BR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2BREXT.rom",
+      "destination": "Machines/Shared Roms/MSX2BREXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2FR.rom",
+      "destination": "Machines/Shared Roms/MSX2FR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2FREXT.rom",
+      "destination": "Machines/Shared Roms/MSX2FREXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2G.rom",
+      "destination": "Machines/Shared Roms/MSX2G.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2GEXT.rom",
+      "destination": "Machines/Shared Roms/MSX2GEXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2HAN.rom",
+      "destination": "Machines/Shared Roms/MSX2HAN.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2J.rom",
+      "destination": "Machines/Shared Roms/MSX2J.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2JEXT.rom",
+      "destination": "Machines/Shared Roms/MSX2JEXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2KR.rom",
+      "destination": "Machines/Shared Roms/MSX2KR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2KREXT.rom",
+      "destination": "Machines/Shared Roms/MSX2KREXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2R.rom",
+      "destination": "Machines/Shared Roms/MSX2R.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2R2.ROM",
+      "destination": "Machines/Shared Roms/MSX2R2.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2REXT.rom",
+      "destination": "Machines/Shared Roms/MSX2REXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2SE.rom",
+      "destination": "Machines/Shared Roms/MSX2SE.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2SP.rom",
+      "destination": "Machines/Shared Roms/MSX2SP.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSX2SPEXT.rom",
+      "destination": "Machines/Shared Roms/MSX2SPEXT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXAR.ROM",
+      "destination": "Machines/Shared Roms/MSXAR.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXBR.rom",
+      "destination": "Machines/Shared Roms/MSXBR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXFR.rom",
+      "destination": "Machines/Shared Roms/MSXFR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXG.rom",
+      "destination": "Machines/Shared Roms/MSXG.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXHAN.rom",
+      "destination": "Machines/Shared Roms/MSXHAN.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXJ.rom",
+      "destination": "Machines/Shared Roms/MSXJ.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXKANJI.rom",
+      "destination": "Machines/Shared Roms/MSXKANJI.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXKR.rom",
+      "destination": "Machines/Shared Roms/MSXKR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXR.rom",
+      "destination": "Machines/Shared Roms/MSXR.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXR2.ROM",
+      "destination": "Machines/Shared Roms/MSXR2.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXSE.ROM",
+      "destination": "Machines/Shared Roms/MSXSE.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "MSXSP.rom",
+      "destination": "Machines/Shared Roms/MSXSP.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "NATIONALDISK.rom",
+      "destination": "Machines/Shared Roms/NATIONALDISK.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "NOVAXIS.rom",
+      "destination": "Machines/Shared Roms/NOVAXIS.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "PAINT.rom",
+      "destination": "Machines/Shared Roms/PAINT.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "PANASONICDISK.rom",
+      "destination": "Machines/Shared Roms/PANASONICDISK.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "PHILIPSDISK.rom",
+      "destination": "Machines/Shared Roms/PHILIPSDISK.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "RS232.ROM",
+      "destination": "Machines/Shared Roms/RS232.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "SUNRISEIDE.rom",
+      "destination": "Machines/Shared Roms/SUNRISEIDE.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "SWP.rom",
+      "destination": "Machines/Shared Roms/SWP.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "XBASIC2.rom",
+      "destination": "Machines/Shared Roms/XBASIC2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "nowindDos1.rom",
+      "destination": "Machines/Shared Roms/nowindDos1.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2,msxturbor",
+      "name": "nowindDos2.rom",
+      "destination": "Machines/Shared Roms/nowindDos2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "lynx",
+      "name": "lynxboot.img",
+      "destination": "lynx/lynxboot.img",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "atarist",
+      "name": "tos.img",
+      "destination": "atarist/tos.img",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos1024k.img",
+      "destination": "etos1024k.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1cb3775c4775bad75d24447a90a2890b",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192uk.img",
+      "destination": "etos192uk.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5f5730d9b557c44ddb9bc410ce2925d8",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192us.img",
+      "destination": "etos192us.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "796f62574413bc59ca767063b3184f90",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "o2em",
+      "name": "c52.bin",
+      "destination": "o2em/c52.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "videopacplus",
+      "name": "g7400.bin",
+      "destination": "o2em/g7400.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "videopacplus",
+      "name": "jopac.bin",
+      "destination": "o2em/jopac.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "3do",
+      "name": "panafz1.bin",
+      "destination": "3do/panafz1.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "3do",
+      "name": "panafz1j.bin",
+      "destination": "3do/panafz1j.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "3do",
+      "name": "panafz1j-norsa.bin",
+      "destination": "3do/panafz1j-norsa.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "opera-boot.bin",
+      "destination": "opera-boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "x1",
+      "name": "IPLROM.X1",
+      "destination": "xmil/IPLROM.X1",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "x1",
+      "name": "IPLROM.X1T",
+      "destination": "xmil/IPLROM.X1T",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "psx",
+      "name": "scph101.bin",
+      "destination": "scph101.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "psx",
+      "name": "scph7001.bin",
+      "destination": "scph7001.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "psx",
+      "name": "scph1001.bin",
+      "destination": "scph1001.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5903.bin",
+      "destination": "scph5903.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "psxonpsp660.bin",
+      "destination": "psxonpsp660.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c53ca5908936d412331790f4426c6c33",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "nds",
+      "name": "bios7.bin",
+      "destination": "nds/bios7.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "nds",
+      "name": "bios9.bin",
+      "destination": "nds/bios9.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "nds",
+      "name": "firmware.bin",
+      "destination": "nds/firmware.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "oricatmos",
+      "name": "jasmin.rom",
+      "destination": "oricutron/jasmin.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "oricatmos",
+      "name": "microdis.rom",
+      "destination": "oricutron/microdis.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "gb,gbc",
+      "name": "SGB1.sfc",
+      "destination": "sgb/SGB1.sfc",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "gb,gbc",
+      "name": "SGB2.sfc",
+      "destination": "sgb/SGB2.sfc",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/48.rom",
+      "destination": "fuse/48.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4c42a2f075212361c3117015b107ff68",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/128-0.rom",
+      "destination": "fuse/128-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b4d2692115a9f2924df92a3cbfb358fb",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/128-1.rom",
+      "destination": "fuse/128-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6e09e5d3c4aef166601669feaaadc01c",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus2-0.rom",
+      "destination": "fuse/plus2-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4ed7af4636308b8a48d7a35e6c5b546b",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus2-1.rom",
+      "destination": "fuse/plus2-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b3db95931cc844efaeb82db9c171b9f3",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3-0.rom",
+      "destination": "fuse/plus3-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9833b8b73384dd5fa3678377ff00a2bb",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3-1.rom",
+      "destination": "fuse/plus3-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "0f711ceb5ab801b4701989982e0f334c",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3-2.rom",
+      "destination": "fuse/plus3-2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3b6dd659d5e4ec97f0e2f7878152c987",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3-3.rom",
+      "destination": "fuse/plus3-3.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a148bcc575e51389e84fdf5d555c3196",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3e-0.rom",
+      "destination": "fuse/plus3e-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "bc123f625e245c225f92ef05933ed134",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3e-1.rom",
+      "destination": "fuse/plus3e-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "617364264c587d20c9fc4746c29679f2",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3e-2.rom",
+      "destination": "fuse/plus3e-2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c363e95dcd0a90e6e7f847e6e47e0179",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plus3e-3.rom",
+      "destination": "fuse/plus3e-3.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a148bcc575e51389e84fdf5d555c3196",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/se-0.rom",
+      "destination": "fuse/se-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fb3f86eb1e5a695d9c50c124e7cfb875",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/se-1.rom",
+      "destination": "fuse/se-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "88de4a3129086f34bb9ca559acc51e6c",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/tc2048.rom",
+      "destination": "fuse/tc2048.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9dd7ecf784a6c04265c073c236f5fadb",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/tc2068-0.rom",
+      "destination": "fuse/tc2068-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "55d462fccc6c536037404ef4ced08bec",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/tc2068-1.rom",
+      "destination": "fuse/tc2068-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "575d203c6e15e679fba0b73f854ec7a2",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/disciple.rom",
+      "destination": "fuse/disciple.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "78e61a2a02121873c1756b21fd1398b1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/plusd.rom",
+      "destination": "fuse/plusd.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "42e5de16fb5e50082bb954ec7ce45851",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxspectrum",
+      "name": "fuse/speccyboot-1.4.rom",
+      "destination": "fuse/speccyboot-1.4.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c54aa8f374b0971f51546c29d5d1eba1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gamecube",
+      "name": "codehandler.bin",
+      "destination": "codehandler.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1f118b8735fcf40c20b38c3184eebfd9",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "64dd",
+      "name": "IPL.n64",
+      "destination": "Mupen64plus/IPL.n64",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "saturn",
+      "name": "mpr-18811-mx.ic1",
+      "destination": "saturn/mpr-18811-mx.ic1",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "saturn",
+      "name": "mpr-19367-mx.ic1",
+      "destination": "saturn/mpr-19367-mx.ic1",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "neogeocd",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "md5",
+      "old": "f39572af7584cb5b3f70ae8cc848aba2,389dbeb0cb857c130414747462cf9d71,c85b8132799f1b2ad3754a97947809d2,b9ab07a79997fc044ca164fc72cd5680",
+      "new": "b31a246b69493c35194fe0bac120dc37"
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "neogeocd",
+      "name": "neocd.bin",
+      "destination": "neocd/neocd.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "neogeocd",
+      "name": "neocd.zip",
+      "destination": "geolith/neocd.zip",
+      "field": "md5",
+      "old": "3711783a59ef875c31076512e3f9f0e5",
+      "new": "006a881532f2caffc3fe9fb5593f2ed5"
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "neogeocd",
+      "name": "neocd.zip",
+      "destination": "geolith/neocd.zip",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ti994a",
+      "name": "TI-994A.ctg",
+      "destination": "ti994a/TI-994A.ctg",
+      "field": "md5",
+      "old": "412ecbf991edcb68edd0e76c2caa4a59",
+      "new": "fb1ca5c58357896a0be5d6725894845d"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ti994a",
+      "name": "ti-disk.ctg",
+      "destination": "ti994a/ti-disk.ctg",
+      "field": "md5",
+      "old": "04714f43347cefb2a051a77116344b3f",
+      "new": "0281841b5ea4227526e7612c0bb55cbb"
+    },
+    {
+      "kind": "added",
+      "system": "ti994a",
+      "name": "Gram Kracker.ctg",
+      "destination": "Gram Kracker.ctg",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7551f1d578a32cccd97efd1adff15252",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ti994a",
+      "name": "ti-pcard.ctg",
+      "destination": "ti-pcard.ctg",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "63f161f0d634e6092a1729b97efb00d1",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ti994a",
+      "name": "cf7+.ctg",
+      "destination": "cf7+.ctg",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d3fd9bc1fcaf48e5ed681c5ac31bc194",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "dragon",
+      "name": "d64rom2.rom",
+      "destination": "dragon/d64rom2.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "dragon",
+      "name": "d200rom1.rom",
+      "destination": "dragon/d200rom1.rom",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "added",
+      "system": "dragon",
+      "name": "d200e_1.rom",
+      "destination": "d200e_1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "03f25edd487df4c98a79b2d504469653",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon",
+      "name": "d200e_2.rom",
+      "destination": "d200e_2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b5f63a88710fbe6e22579fbc8d72393a",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon",
+      "name": "d200e_26.rom",
+      "destination": "d200e_26.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "eef971f21318759f15cc9f0328557140",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon",
+      "name": "alpha-boot-v1.0.rom",
+      "destination": "alpha-boot-v1.0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "283726f0f22603d3e60c27865babccf4",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon",
+      "name": "alpha-boot-v0.4.rom",
+      "destination": "alpha-boot-v0.4.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "01e5577ef5dd9eac00bba3698e046afb",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "bas11.rom",
+      "destination": "trs80coco/bas11.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "extbas10.rom",
+      "destination": "trs80coco/extbas10.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "mx1600bas.rom",
+      "destination": "trs80coco/mx1600bas.rom",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "mc10.rom",
+      "destination": "trs80coco/mc10.rom",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "coco3.rom",
+      "destination": "trs80coco/coco3.rom",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "trs80coco",
+      "name": "coco3p.rom",
+      "destination": "trs80coco/coco3p.rom",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "added",
+      "system": "trs80coco",
+      "name": "deluxe.rom",
+      "destination": "deluxe.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e27c02fd766e8710240c59ef5424a6ef",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "trs80coco",
+      "name": "mx1600extbas.rom",
+      "destination": "mx1600extbas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6fc82178ae8abe07fa8f6939062291dc",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "trs80coco",
+      "name": "cp400bas.rom",
+      "destination": "cp400bas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f73da4d73d6db5cdb8b3cb6a50415e38",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "trs80coco",
+      "name": "cp400ext.rom",
+      "destination": "cp400ext.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "091581001577b4a83ccfd511829de0f1",
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "trs80coco",
+      "name": "orch90.rom",
+      "destination": "orch90.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "171fb7a5d3b808565295b45c773abaaf",
+        "required": false
+      }
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "cdi",
+      "name": "cdibios.zip",
+      "destination": "cdi/cdibios.zip",
+      "field": "required",
+      "old": false,
+      "new": true
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "MT32_CONTROL.ROM",
+      "destination": "scummvm/extra/MT32_CONTROL.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c5233e4594f9b7bc4f773ae6ba5aa87d",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts-imgui.dat",
+      "destination": "scummvm/extra/fonts-imgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b",
+        "required": false
+      }
+    }
+  ],
   "hashes_corrected": [
     "neogeocd/neocdz.zip md5",
     "neogeocd/neocd.zip md5",
@@ -27,5 +2282,290 @@
   "requirements_corrected": 129,
   "withheld": [],
   "found_by_content": 102,
+  "removal_candidates": [
+    {
+      "system": "apple2gs",
+      "name": "apple2gs1.rom",
+      "destination": "apple2gs1.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame0258",
+        "mame0278"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "apple2gs",
+      "name": "apple2gs3.rom",
+      "destination": "apple2gs3.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame0258",
+        "mame0278"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "pc98",
+      "name": "itf.rom",
+      "destination": "np2kai/itf.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "np2kai"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "gba",
+      "name": "open_gba_bios.bin",
+      "destination": "gba/open_gba_bios.bin",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "fbneo",
+        "gpsp",
+        "meteor",
+        "mgba"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "msx1,msx2",
+      "name": "FMPAC16.ROM",
+      "destination": "msx/FMPAC16.ROM",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "bluemsx",
+        "fbneo",
+        "fmsx"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "gb",
+      "name": "mgb_boot.bin",
+      "destination": "gb/mgb_boot.bin",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "gambatte",
+        "mesen-s",
+        "mgba",
+        "sameboy",
+        "tgbdual"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "neogeocd",
+      "name": "ng-lo.rom",
+      "destination": "neocd/ng-lo.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "fbneo",
+        "geolith",
+        "neocd"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "d64tano2.rom",
+      "destination": "dragon/d64tano2.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "d200rom2.rom",
+      "destination": "dragon/d200rom2.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "ddos11c.rom",
+      "destination": "dragon/ddos11c.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "ddos42.rom",
+      "destination": "dragon/ddos42.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "dplus50.rom",
+      "destination": "dragon/dplus50.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "dragon",
+      "name": "sdose8.rom",
+      "destination": "dragon/sdose8.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "trs80coco",
+      "name": "alice32.rom",
+      "destination": "trs80coco/alice32.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    },
+    {
+      "system": "trs80coco",
+      "name": "alice4k.rom",
+      "destination": "trs80coco/alice4k.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "glide64mk2",
+        "gliden64",
+        "gliden64_20",
+        "n64_gles2",
+        "rice",
+        "rice_gles2"
+      ]
+    }
+  ],
   "invalid": []
 }

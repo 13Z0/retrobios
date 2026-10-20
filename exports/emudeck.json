@@ -13,6 +13,7 @@
     "not_added": 2634,
     "not_kept": 0
   },
+  "changes": [],
   "hashes_corrected": [],
   "hashes_filled": [],
   "sizes_corrected": [],
@@ -21,5 +22,403 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 118,
+  "removal_candidates": [
+    {
+      "system": "sony-playstation",
+      "name": "sony-playstation:2118230527a9f51bd9216e32fa912842",
+      "destination": "sony-playstation:2118230527a9f51bd9216e32fa912842",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "beetle_psx",
+        "duckstation",
+        "pcsx1",
+        "pcsx_rearmed",
+        "rustation",
+        "swanstation"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sony-playstation-2",
+      "name": "SCPH-70004_BIOS_V12_EUR_200.EROM",
+      "destination": "SCPH-70004_BIOS_V12_EUR_200.EROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "armsx2",
+        "lrps2",
+        "pcee2",
+        "pcsx2",
+        "play",
+        "yaps2"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sony-playstation-2",
+      "name": "sony-playstation-2:d3e81e95db25f5a86a7b7474550a2155",
+      "destination": "sony-playstation-2:d3e81e95db25f5a86a7b7474550a2155",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "armsx2",
+        "lrps2",
+        "pcee2",
+        "pcsx2",
+        "play",
+        "yaps2"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:bc6ae4e1db01a2f349d9af392bf7e2bd",
+      "destination": "sega-mega-cd:bc6ae4e1db01a2f349d9af392bf7e2bd",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:29ad9ce848b49d0f9cefc294137f653c",
+      "destination": "sega-mega-cd:29ad9ce848b49d0f9cefc294137f653c",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:cc049159d7e744c15eee080c241273b4",
+      "destination": "sega-mega-cd:cc049159d7e744c15eee080c241273b4",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:278a9397d192149e84e820ac621a8edd",
+      "destination": "sega-mega-cd:278a9397d192149e84e820ac621a8edd",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:a3ddcc8483b0368141adfd99d9a1e466",
+      "destination": "sega-mega-cd:a3ddcc8483b0368141adfd99d9a1e466",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:bdeb4c47da613946d422d97d98b21cda",
+      "destination": "sega-mega-cd:bdeb4c47da613946d422d97d98b21cda",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:96ea588d647f2ab1f291279fc691663c",
+      "destination": "sega-mega-cd:96ea588d647f2ab1f291279fc691663c",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:2efd74e3232ff260e371b99f84024f7f",
+      "destination": "sega-mega-cd:2efd74e3232ff260e371b99f84024f7f",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:e66fa1dc5820d254611fdcdba0662372",
+      "destination": "sega-mega-cd:e66fa1dc5820d254611fdcdba0662372",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:854b9150240a198070150e4566ae1290",
+      "destination": "sega-mega-cd:854b9150240a198070150e4566ae1290",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:b10c0a97abc57b758497d3fae6ab35a4",
+      "destination": "sega-mega-cd:b10c0a97abc57b758497d3fae6ab35a4",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:ecc837c31d77b774c6e27e38f828aa9a",
+      "destination": "sega-mega-cd:ecc837c31d77b774c6e27e38f828aa9a",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-mega-cd",
+      "name": "sega-mega-cd:baca1df271d7c11fe50087c0358f4eb5",
+      "destination": "sega-mega-cd:baca1df271d7c11fe50087c0358f4eb5",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "blastem",
+        "clownmdemu",
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-dreamcast",
+      "name": "sega-dreamcast:d407fcf70b56acb84b8c77c93b0e5327",
+      "destination": "sega-dreamcast:d407fcf70b56acb84b8c77c93b0e5327",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "flycast",
+        "flycast2021",
+        "redream",
+        "retrodream"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sega-dreamcast",
+      "name": "sega-dreamcast:93a9766f14159b403178ac77417c6b68",
+      "destination": "sega-dreamcast:93a9766f14159b403178ac77417c6b68",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "flycast",
+        "flycast2021",
+        "redream",
+        "retrodream"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-ds",
+      "name": "nintendo-ds:145eaef5bd3037cbc247c213bb3da1b3",
+      "destination": "nintendo-ds:145eaef5bd3037cbc247c213bb3da1b3",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "desmume",
+        "desmume2015",
+        "melonds",
+        "melonds_ds",
+        "noods",
+        "skyemu"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-ds",
+      "name": "nintendo-ds:df692a80a5b1bc90728bc3dfc76cd948",
+      "destination": "nintendo-ds:df692a80a5b1bc90728bc3dfc76cd948",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "desmume",
+        "desmume2015",
+        "melonds",
+        "melonds_ds",
+        "noods",
+        "skyemu"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-ds",
+      "name": "nintendo-ds:a392174eb3e572fed6447e956bde4b25",
+      "destination": "nintendo-ds:a392174eb3e572fed6447e956bde4b25",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "desmume",
+        "desmume2015",
+        "melonds",
+        "melonds_ds",
+        "noods",
+        "skyemu"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "sony-psp",
+      "name": "ppsspp.zip",
+      "destination": "ppsspp.zip",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ppsspp"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-64",
+      "name": "64DD_IPL_US.n64",
+      "destination": "64DD_IPL_US.n64",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "mupen64plus_next",
+        "parallel_n64"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-64",
+      "name": "64DD_IPL_JP.n64",
+      "destination": "64DD_IPL_JP.n64",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "mupen64plus_next",
+        "parallel_n64"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "nintendo-64",
+      "name": "64DD_IPL_DEV.n64",
+      "destination": "64DD_IPL_DEV.n64",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "ares",
+        "mupen64plus_next",
+        "parallel_n64"
+      ],
+      "unresolved_cores": []
+    }
+  ],
   "invalid": []
 }

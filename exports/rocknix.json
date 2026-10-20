@@ -14,6 +14,19 @@
     "not_added": 1362,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "added",
+      "system": "gamecube",
+      "name": "codehandler.bin",
+      "destination": "codehandler.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1f118b8735fcf40c20b38c3184eebfd9"
+      }
+    }
+  ],
   "hashes_corrected": [],
   "hashes_filled": [],
   "sizes_corrected": [],
@@ -22,5 +35,6 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 142,
+  "removal_candidates": [],
   "invalid": []
 }

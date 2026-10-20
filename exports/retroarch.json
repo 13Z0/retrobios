@@ -13,6 +13,2990 @@
     "not_added": 854,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "added",
+      "system": "3DO Company, The - 3DO",
+      "name": "opera-boot.bin",
+      "destination": "opera-boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec",
+        "crc32": "dacb21ad",
+        "size": 131072
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Arcade",
+      "name": "aes.zip",
+      "destination": "aes.zip",
+      "field": "sha1",
+      "old": "43c6aa6ba46adbeefb2b014899bcb4b2db7986af",
+      "new": "23c66caa80b93199914fae246a5ea6e84db1be29"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Arcade",
+      "name": "aes.zip",
+      "destination": "aes.zip",
+      "field": "md5",
+      "old": "9d2ff2333e23910cf56f7f785609d36a",
+      "new": "ad9585c72130c56f04ae26aae87c289d"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Arcade",
+      "name": "aes.zip",
+      "destination": "aes.zip",
+      "field": "crc32",
+      "old": "91e93107",
+      "new": "12c66621"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "Arcade",
+      "name": "aes.zip",
+      "destination": "aes.zip",
+      "field": "size",
+      "old": 850591,
+      "new": 850311
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "fbalpha2012/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+        "md5": "f5cdce5b3749d673ad8f073ccc7371e4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+        "md5": "9b262149ec70cbda741a8ba55784f8e1",
+        "crc32": "cd9f4a9c",
+        "size": 36182
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "mame2003/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
+        "md5": "c6f35123264db9cdfb216e8fdb673679",
+        "crc32": "e929973f",
+        "size": 215475
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "mame2003-plus/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c086306096722da7f02f624e7efb447659aca1d3",
+        "md5": "2f60c1ed69c152dea95e734979ca2ecb",
+        "crc32": "14f27ed1",
+        "size": 131878
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "blueshrk.zip",
+      "destination": "mame2003-plus/artwork/blueshrk.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4317f301d6e4117dfde42b33dfaf73a2b25f43c1",
+        "md5": "4659968035d462be471fdfb46b604696",
+        "crc32": "7481c2ea",
+        "size": 925914
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "frogs.zip",
+      "destination": "mame2003-plus/artwork/frogs.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "cdff29398e76b92d93825d96c0f9cae5bb6b3400",
+        "md5": "e30e8ef4631596e25466523b97fee19f",
+        "crc32": "99541e86",
+        "size": 2832731
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "invaders.zip",
+      "destination": "mame2003-plus/artwork/invaders.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4b18db526ca907707fd888385d907a7a585935d0",
+        "md5": "23d65ad40ac1f2121fe35fe0c7893721",
+        "crc32": "02546fd3",
+        "size": 4324198
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "omegrace.zip",
+      "destination": "mame2003-plus/artwork/omegrace.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1ca22afdfefcfa5943742e988c45c1fc0e1124bd",
+        "md5": "255155cf3f9912c92be8f813e8112a54",
+        "crc32": "04dbbb0a",
+        "size": 1754523
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "skydiver.zip",
+      "destination": "mame2003-plus/artwork/skydiver.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a0548e37e76a21fb37005cff944319ee63f93d1e",
+        "md5": "95e05db7f8fa208daafd7b0d32041db8",
+        "crc32": "143797a3",
+        "size": 117241
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "solarq.zip",
+      "destination": "mame2003-plus/artwork/solarq.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ff532cee1de69668b0c68238aff0c16813640476",
+        "md5": "b4b70db555dfb48b91a067eea747c771",
+        "crc32": "92998e66",
+        "size": 1342645
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "warrior.zip",
+      "destination": "mame2003-plus/artwork/warrior.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "57f89bbac39d8071e45c87f97e9b918f31d21994",
+        "md5": "29fe11717016182d446ca6af56a08f75",
+        "crc32": "82a68bb4",
+        "size": 1125335
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "mame2010/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "17b8b03a89d8443927aa92ede799e117b4ab6fdb",
+        "md5": "bb8023a43e357b7f0cc06bf00f0470b2",
+        "crc32": "88a4f0e3",
+        "size": 202298
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Arcade",
+      "name": "hiscore.dat",
+      "destination": "ume2015/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+        "md5": "7e31f0b84f6ea6f9ffec0cd968decf9f",
+        "crc32": "8213e86a",
+        "size": 216250
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Atari - ST",
+      "name": "etos1024k.img",
+      "destination": "etos1024k.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "38dc8baf5224229df55e7d0804b6b7b6bacfc7a0",
+        "md5": "1cb3775c4775bad75d24447a90a2890b",
+        "crc32": "118b35b4",
+        "size": 1048576
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Atari - ST",
+      "name": "etos192uk.img",
+      "destination": "etos192uk.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ef3a3ccffcb317bff7d0dceca0abacefc3a58abc",
+        "md5": "5f5730d9b557c44ddb9bc410ce2925d8",
+        "crc32": "fe4c3ff1",
+        "size": 196608
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Atari - ST",
+      "name": "etos192us.img",
+      "destination": "etos192us.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "bb98cd8a50df53afecfe183b049eda4014fc0d05",
+        "md5": "796f62574413bc59ca767063b3184f90",
+        "crc32": "18030f9a",
+        "size": 196608
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "WHDLoad",
+      "destination": "whdboot/WHDLoad",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
+        "md5": "6670a9571f235ec31b8bbd48fc18f428",
+        "crc32": "9df148c1",
+        "size": 161031
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "JST",
+      "destination": "whdboot/JST",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
+        "md5": "2a3a61bbd7c351751506e22a4354b76a",
+        "crc32": "8ff26cf8",
+        "size": 89108
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "AmiQuit",
+      "destination": "whdboot/AmiQuit",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "faaaa08b29b391381771222f10b7b22c3b99f4ca",
+        "md5": "36ab26d3b855e634fdda062c052cd52b",
+        "crc32": "cc190c8a",
+        "size": 76
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "boot-data.zip",
+      "destination": "whdboot/boot-data.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "18a9dba5cfe2f375f111dd5148691ecaecc6293b",
+        "md5": "9e638f3d531eb7cd82594f49a4cf03b7",
+        "crc32": "16433b36",
+        "size": 357265
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "whdload_db.json",
+      "destination": "whdboot/game-data/whdload_db.json",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
+        "md5": "14d797815aa9bbc79fe284b244ea75b1",
+        "crc32": "52e9ff41",
+        "size": 6680181
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick33180.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1d1c557f4a0f5ea88aeb96d68b09f41990340f70",
+        "md5": "c993feb1eeddec1d2e687aa514231028",
+        "crc32": "c61d5663",
+        "size": 3882
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick34005.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "209c109855f94c935439b60950d049527d2f2484",
+        "md5": "7eb13d974af0992d672b67c317a7e0a1",
+        "crc32": "ae7a9ac7",
+        "size": 4020
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick40063.A600.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ca2d6e1e2b4883929447a05e29418533723a419c",
+        "md5": "3f97c1963d82c808ef29e7c984c4c688",
+        "crc32": "71180c7f",
+        "size": 5000
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick40068.A1200.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1ad1b55e7226bd5cd66def8370a69f19244da796",
+        "md5": "547b42b7b070c7f227ea45e0986d57a1",
+        "crc32": "cf631e0b",
+        "size": 5008
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick40068.A4000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
+        "md5": "f89f19b858ea6b1a04327c6f71ee1600",
+        "crc32": "3b46f0cb",
+        "size": 4976
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "kick31034.A1000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick31034.A1000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "f5af033455ed80997ca1f4b56f36ac621c78ab9e",
+        "md5": "c5ba6165df42fc69b32942b248fca725",
+        "crc32": "9be2734c",
+        "size": 3736
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_click_A500.wav",
+      "destination": "uae_data/drive_click_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "34f05541606ee8acd033eadbda082b90051253cc",
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
+        "crc32": "27324b7d",
+        "size": 3313326
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_spin_A500.wav",
+      "destination": "uae_data/drive_spin_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a117647990e2e9debb7ac65a0db429a59bb630f0",
+        "md5": "7401f854a75f9ede18769168ab896a2a",
+        "crc32": "5f7cb73b",
+        "size": 134294
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_spinnd_A500.wav",
+      "destination": "uae_data/drive_spinnd_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634",
+        "md5": "f9d954879fee8e96baa93d6139077cdb",
+        "crc32": "2c673174",
+        "size": 352430
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_startup_A500.wav",
+      "destination": "uae_data/drive_startup_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "db8de831a59a44dc6070166e2005c330a793a48d",
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0",
+        "crc32": "cb552e00",
+        "size": 34450
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_snatch_A500.wav",
+      "destination": "uae_data/drive_snatch_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b8dd63077e12bdeacd3ad70ba41614dc52aa8023",
+        "md5": "1a4b2d6254918ff769f26beeede75655",
+        "crc32": "4ac3c05e",
+        "size": 34450
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_click_LOUD.wav",
+      "destination": "uae_data/drive_click_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2",
+        "md5": "b64bee23f356635f67fb08b543df9797",
+        "crc32": "59069982",
+        "size": 3308526
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_spin_LOUD.wav",
+      "destination": "uae_data/drive_spin_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5b1d8c880f8d8fcd9309a7889817611cc27e16e0",
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c",
+        "crc32": "1969eea0",
+        "size": 20216
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_spinnd_LOUD.wav",
+      "destination": "uae_data/drive_spinnd_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d1709931cfe05b3bd31b6ef3d9697a22c934549b",
+        "md5": "43ab05c6d969cb40805970a5b2352875",
+        "crc32": "49e72ce7",
+        "size": 241790
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_startup_LOUD.wav",
+      "destination": "uae_data/drive_startup_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "38e63f700ee6a5be71ded6c057267562c00f3e31",
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
+        "crc32": "d746cc1e",
+        "size": 43492
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - Amiga",
+      "name": "drive_snatch_LOUD.wav",
+      "destination": "uae_data/drive_snatch_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0417e6e7fee2aebae972ce4d00101a0ce363af32",
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
+        "crc32": "b015251a",
+        "size": 39864
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal-318020-05.bin",
+      "destination": "vice/C128/kernal-318020-05.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ceb6e1a1bf7e08eb9cbc651afa29e26adccf38ab",
+        "md5": "01f6903033b90cd506cde7802ec743c3",
+        "crc32": "ba456b8e",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal-315078-03.bin",
+      "destination": "vice/C128/kernal-315078-03.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "3629b3fa28b6a30bcc027b647f26654929ed1b0f",
+        "md5": "9837409b6bdb7ce055409fa3eb3e9cf0",
+        "crc32": "bff7550b",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal-325172-01.bin",
+      "destination": "vice/C128/kernal-325172-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "98c34e0dec9f52d7862b56bb287d2573eb3f6364",
+        "md5": "90907477d39db1b8fe1732692278a0e9",
+        "crc32": "d311dab1",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal-318034-01.bin",
+      "destination": "vice/C128/kernal-318034-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "925177c99ee7e02870c32ad62a054db1327cf0c2",
+        "md5": "7852922295c103f067ba3c0f56378a95",
+        "crc32": "1cf7f729",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernalfi",
+      "destination": "vice/C128/kernalfi",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d08e7991a6df14a843e92daafaf6756337959ba4",
+        "md5": "0a0eb549ec08624de11cf1f249f6f3dc",
+        "crc32": "d3ecea84",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernalfr",
+      "destination": "vice/C128/kernalfr",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a0680d04db3232fa9f58598e5c9f09c4fe94f601",
+        "md5": "7a7747aa70fd63402c6a95fba0bd6806",
+        "crc32": "2df282b8",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernalit",
+      "destination": "vice/C128/kernalit",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "592a626eb2b5372596ac374d3505c3ce78dd040f",
+        "md5": "142c8bd5934e9d97addb6776a2f2e8b8",
+        "crc32": "74d6b084",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernalno",
+      "destination": "vice/C128/kernalno",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "00fe2fd610a812121befab1e7238fa882c0f8257",
+        "md5": "498fdedaeab458931b6103d52d5a3ea1",
+        "crc32": "a5406848",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/basiclo-318018-04.bin",
+      "destination": "vice/C128/basiclo-318018-04.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d53a7884404f7d18ebd60dd3080c8f8d71067441",
+        "md5": "b86ce827c9108fbc7b9e02c690e81a23",
+        "crc32": "9f9c355b",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/basichi-318019-04.bin",
+      "destination": "vice/C128/basichi-318019-04.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c4fb4a714e48a7bf6c28659de0302183a0e0d6c0",
+        "md5": "87bb251707d0a2c915d6e0c69fdb0fed",
+        "crc32": "6e2c91a7",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal64-325179-01.bin",
+      "destination": "vice/C128/kernal64-325179-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b4862cac7b9319d8e912887c97fc270d4c239349",
+        "md5": "8fa940c39225d40f37ddf7082fba8b21",
+        "crc32": "dd2976d2",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/kernal64-325182-01.bin",
+      "destination": "vice/C128/kernal64-325182-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e4f52d9b36c030eb94524eb49f6f0774c1d02e5e",
+        "md5": "27e26dbb267c8ebf1cd47105a6ca71e7",
+        "crc32": "f10c2c25",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-390059-01.bin",
+      "destination": "vice/C128/chargen-390059-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "29ed066d513f2d5c09ff26d9166ba23c2afb2b3f",
+        "md5": "46b3cb2140f244c0ed1150c819e7bdc4",
+        "crc32": "6aaaafe6",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-315079-01.bin",
+      "destination": "vice/C128/chargen-315079-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "638f8aff51c2ac4f99a55b12c4f8c985ef4bebd3",
+        "md5": "ec9e71614010c4efb851b83bcd685e9c",
+        "crc32": "fe5a2db1",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-325167-02.bin",
+      "destination": "vice/C128/chargen-325167-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9119b27a1bf885fa4c76fff5d858c74c194dd2b8",
+        "md5": "de3e110a48de76457dbc9ad320e2caa5",
+        "crc32": "bad36b88",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-325173-01D.bin",
+      "destination": "vice/C128/chargen-325173-01D.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "70eccd8b944146f6b60f1519b830a4ee8928d4fa",
+        "md5": "5cc3635e434fdc7023d0035e965ce76f",
+        "crc32": "c8def186",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-325078-02.bin",
+      "destination": "vice/C128/chargen-325078-02.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5a87faa457979e7b6f434251a9e32f4483b337b3",
+        "md5": "7eead22a114154c809b33320c9250e26",
+        "crc32": "ba95c625",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/C128/chargen-325181-01.bin",
+      "destination": "vice/C128/chargen-325181-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "aca3f7321ee7e6152f1f0afad646ae41964de4fb",
+        "md5": "06e46af13d13aa869218275e64d48b00",
+        "crc32": "7a70d9b8",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Commodore - C128",
+      "name": "vice/DRIVES/dos1571cr-318047-01.bin",
+      "destination": "vice/DRIVES/dos1571cr-318047-01.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "14ee7a0fb7e1c59c51fbf781f944387037daa3ee",
+        "md5": "f9158328494b3e269f86ef419792c2e5",
+        "crc32": "f24efcc4",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "DOS",
+      "name": "CM32LN_CONTROL.ROM",
+      "destination": "CM32LN_CONTROL.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
+        "md5": "88f459121acf32923b1d85742c67e9c9",
+        "crc32": "4a3bb4ef",
+        "size": 65536
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Microsoft - MSX",
+      "name": "DEFAULT.FNT",
+      "destination": "DEFAULT.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "000ac11b702a4c42e40f135df12fa5f2f13e20a1",
+        "md5": "85b38e4128bbc300e675f55b278683a8",
+        "crc32": "73af9bc3",
+        "size": 2048
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Microsoft - MSX",
+      "name": "INTERNAT.FNT",
+      "destination": "INTERNAT.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e2127084f40f9d19fe9bf4e35b5a7470f95ea4ab",
+        "md5": "ac4f4a90c1b1887db48ded39c9d9c847",
+        "crc32": "b6a01b07",
+        "size": 2048
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Microsoft - MSX",
+      "name": "KOREAN.FNT",
+      "destination": "KOREAN.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0ef27e3599370e179b6fceaa22431fb97f5e7e61",
+        "md5": "73291e76638a2f5aa2eceb843df468f4",
+        "crc32": "7ac42370",
+        "size": 2048
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Microsoft - MSX",
+      "name": "JAPANESE.FNT",
+      "destination": "JAPANESE.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c9377d76adedee1ba581ef71f263f35402980448",
+        "md5": "aa28f0703b951a6be8df3e28e20d263d",
+        "crc32": "1f8f9709",
+        "size": 2048
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios7.bin",
+      "destination": "dsi_bios7.bin",
+      "field": "sha1",
+      "old": "a3aa751eb6bdaaf8a827ba9e03576a6f1ab0f547",
+      "new": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios7.bin",
+      "destination": "dsi_bios7.bin",
+      "field": "md5",
+      "old": "559dae4ea78eb9d67702c56c1d791e81",
+      "new": "322ceeafb77b0cc96a1fcc6271e0e0ae"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios7.bin",
+      "destination": "dsi_bios7.bin",
+      "field": "crc32",
+      "old": "9f1840d9",
+      "new": "4316cc42"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios9.bin",
+      "destination": "dsi_bios9.bin",
+      "field": "sha1",
+      "old": "7bf549b8be9e48ab0cdc9b0fdadd49a5131f97eb",
+      "new": "719b9eef33692406d7170ff526069615759c4dfc"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios9.bin",
+      "destination": "dsi_bios9.bin",
+      "field": "md5",
+      "old": "87b665fce118f76251271c3732532777",
+      "new": "23031f25602a52c2df32c39554b0c55e"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Nintendo - Nintendo DSi",
+      "name": "dsi_bios9.bin",
+      "destination": "dsi_bios9.bin",
+      "field": "crc32",
+      "old": "3d64d498",
+      "new": "bae84f6c"
+    },
+    {
+      "kind": "added",
+      "system": "Nintendo - Super Game Boy",
+      "name": "lr35902.boot.rom",
+      "destination": "SGB1.sfc/lr35902.boot.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "aa2f50a77dfb4823da96ba99309085a3c6278515",
+        "md5": "d574d4f9c12f305074798f54c091a8b4",
+        "crc32": "ec8a83b9",
+        "size": 256
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "SNK - NeoGeo CD",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "md5",
+      "old": "66bf2aeb1b870eac603925601e48af82",
+      "new": "b31a246b69493c35194fe0bac120dc37"
+    },
+    {
+      "kind": "size_removed",
+      "system": "SNK - NeoGeo CD",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "size",
+      "old": 953078,
+      "new": null
+    },
+    {
+      "kind": "hash_cleared",
+      "system": "SNK - NeoGeo CD",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "sha1",
+      "old": "29380243b6f6c8e67816cf518a272cc8d932e2b5",
+      "new": null
+    },
+    {
+      "kind": "hash_cleared",
+      "system": "SNK - NeoGeo CD",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "crc32",
+      "old": "a034e470",
+      "new": null
+    },
+    {
+      "kind": "added",
+      "system": "SNK - NeoGeo CD",
+      "name": "neocd.zip",
+      "destination": "neocd.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "cef6a6e78989a595700337c15b79155523935333",
+        "md5": "006a881532f2caffc3fe9fb5593f2ed5",
+        "crc32": "85e8e171",
+        "size": 429431
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation",
+      "name": "scph5903.bin",
+      "destination": "scph5903.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "15c94da3cc5a38a582429575af4198c487fe893c",
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb",
+        "crc32": "446ec5b2",
+        "size": 1048576
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Sony - PlayStation 2",
+      "name": "GameIndex.yaml",
+      "destination": "pcsx2/resources/GameIndex.yaml",
+      "field": "sha1",
+      "old": "57369df9ca82a460e596cea7835c5a0797dee668",
+      "new": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Sony - PlayStation 2",
+      "name": "GameIndex.yaml",
+      "destination": "pcsx2/resources/GameIndex.yaml",
+      "field": "md5",
+      "old": "526291c9c9bae8b184b0e5f4bfa94eb9",
+      "new": "ec65dbfe7379cfac816b4d02259c0ca5"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "Sony - PlayStation 2",
+      "name": "GameIndex.yaml",
+      "destination": "pcsx2/resources/GameIndex.yaml",
+      "field": "crc32",
+      "old": "20b4ea53",
+      "new": "1a8e4cf7"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "Sony - PlayStation 2",
+      "name": "GameIndex.yaml",
+      "destination": "pcsx2/resources/GameIndex.yaml",
+      "field": "size",
+      "old": 1737799,
+      "new": 2690355
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "RedumpDatabase.yaml",
+      "destination": "pcsx2/resources/RedumpDatabase.yaml",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "bf2c73d668cd671df8adfe2ec3c7074e8ba9176a",
+        "md5": "0525ad1f1381152f20bfb05775cf39cd",
+        "crc32": "28709e73",
+        "size": 1917242
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "patches.zip",
+      "destination": "pcsx2/resources/patches.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "f7d0f1606c87019f00109ebdf0f260299f0a72da",
+        "md5": "809868f006eebec4e4615dd8bc397ef7",
+        "crc32": "5120eae7",
+        "size": 2007224
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "Roboto-Regular.ttf",
+      "destination": "pcsx2/resources/fonts/Roboto-Regular.ttf",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "00d62fbdc8d5dec4c659005e116d0ba2ee63b547",
+        "size": 305608
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "RobotoMono-Medium.ttf",
+      "destination": "pcsx2/resources/fonts/RobotoMono-Medium.ttf",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9056e59b69c6f1160fdfb92a0773f17f6307f3ad",
+        "size": 86820
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "fa-solid-900.ttf",
+      "destination": "pcsx2/resources/fonts/fa-solid-900.ttf",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7f0f721265c228f2484e4924bace5a80b7826fbe",
+        "size": 414664
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "promptfont.otf",
+      "destination": "pcsx2/resources/fonts/promptfont.otf",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "374ee91aeabee48013d2f090571752ec5081356f",
+        "size": 263548
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "tfx.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/tfx.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0a16f66d7816d73af3b28dea2bb292415695f6f7",
+        "size": 52493
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "convert.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/convert.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0cb56397052613612faf8d5eedfc77066b1fea16",
+        "size": 13888
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "present.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/present.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9d9e1f89d20576251c49519974cefc0ce88554ec",
+        "size": 10324
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "merge.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/merge.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e84aa516874350f414e95d3891ce480fe2958aae",
+        "size": 759
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "interlace.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/interlace.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d5ba24ba836c418f7f2d9d8b44bd337baa9e45a3",
+        "size": 7289
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "shadeboost.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/shadeboost.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "bef69d202c6e21f2ec0d6930e439a9498642ba6b",
+        "size": 1914
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "cas.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/cas.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "005cecf1a5e20b05407d55d0aad22cf81ad66c31",
+        "md5": "deb7394a31184990c78c9753a293ff60",
+        "crc32": "e00e7479",
+        "size": 2637
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "imgui.glsl",
+      "destination": "pcsx2/resources/shaders/vulkan/imgui.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b8d20aa6884878ba72c080d3f2107e09606963d3",
+        "size": 791
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "fxaa.fx",
+      "destination": "pcsx2/resources/shaders/common/fxaa.fx",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9d7012f8bb7bb4599ed2518f12ed540655cdd8d8",
+        "size": 17432
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "ffx_a.h",
+      "destination": "pcsx2/resources/shaders/common/ffx_a.h",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "726370c10154ad092c15c251b98c79185e980c7c",
+        "size": 161481
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "ffx_cas.h",
+      "destination": "pcsx2/resources/shaders/common/ffx_cas.h",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a1d1a687577f7a607fda35bc88950f57c2129ca5",
+        "size": 63512
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "tfx_vgs.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/tfx_vgs.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "fc40fc49de1cd8ed7d60df0394dd6367ae82b85f",
+        "size": 14414
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "tfx_fs.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/tfx_fs.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "554160d31bb97aca0e9f367f4de811dd8ad1fb21",
+        "size": 36862
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "convert.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/convert.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d26608762bfca4a470facc15c378b901ef27e249",
+        "size": 14077
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "present.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/present.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "96e5e75b66e31e577816bdea65ac976fb4e45d58",
+        "size": 11721
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "merge.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/merge.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7f476bffdc19d7ba2806eef40c2e8e40bdf0896c",
+        "size": 579
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "interlace.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/interlace.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "60d6562c205ed9179ab092c37568c06b64b00ee5",
+        "size": 6912
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "shadeboost.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/shadeboost.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "511dc6bb2f81d0ad61fe46c6e91dce8b344fd934",
+        "size": 1623
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "cas.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/cas.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b478ce9d1343b8dd201c045f010bd1b64ba158ae",
+        "size": 2413
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "imgui.glsl",
+      "destination": "pcsx2/resources/shaders/opengl/imgui.glsl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "04bfcabf518320593dcda8198475c7f39295ef1f",
+        "size": 637
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "message.wav",
+      "destination": "pcsx2/resources/sounds/achievements/message.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c54f04b63ac6f04e0a0944ef260b5497e4494dbd",
+        "size": 15696
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "unlock.wav",
+      "destination": "pcsx2/resources/sounds/achievements/unlock.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "da328a0a3074ec86fee2d6741bfc2e5a1f68d063",
+        "md5": "d5a884f20ade826001ea9fd93be86345",
+        "crc32": "d1a532a3",
+        "size": 202702
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "lbsubmit.wav",
+      "destination": "pcsx2/resources/sounds/achievements/lbsubmit.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5ad1e110dcf0ffd26405981398892a82e4f3bad1",
+        "size": 82096
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "placeholder.png",
+      "destination": "pcsx2/resources/fullscreenui/placeholder.png",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "25e41433147face77af96fecac4519ed11ae8072",
+        "size": 2668
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "no-save.png",
+      "destination": "pcsx2/resources/fullscreenui/no-save.png",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7b0bb79d38c573648de218645c6fb16449e156e0",
+        "size": 9655
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "media-cdrom.svg",
+      "destination": "pcsx2/resources/fullscreenui/media-cdrom.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "36cc8f46014a321b7602e52c062ab23d7c256ccc",
+        "size": 3318
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "start-game.svg",
+      "destination": "pcsx2/resources/fullscreenui/start-game.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "dd8e7a8bebe509a38b803105abaf37b275f4cbb3",
+        "size": 2839
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "applications-system.svg",
+      "destination": "pcsx2/resources/fullscreenui/applications-system.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "280834f689b9ab157d29026caed47fcc5da9fe40",
+        "size": 3797
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "exit.svg",
+      "destination": "pcsx2/resources/fullscreenui/exit.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "8452aac0ea8adf96f52c6fc87b7bc9c038249c97",
+        "size": 4042
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "start-file.svg",
+      "destination": "pcsx2/resources/fullscreenui/start-file.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "47bd0895af12344dd80d7dc1133c26d2b5081110",
+        "size": 1120
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "drive-cdrom.svg",
+      "destination": "pcsx2/resources/fullscreenui/drive-cdrom.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "6ff7f132ca2483d7e24a52eead4d3b807eb9addf",
+        "size": 1037
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "start-bios.svg",
+      "destination": "pcsx2/resources/fullscreenui/start-bios.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "061f35078713d8bb386d595964da7366781f98ef",
+        "size": 1295
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "back-icon.svg",
+      "destination": "pcsx2/resources/fullscreenui/back-icon.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9b754fe9c868225a922dd3e6fc2f9d447ff5442c",
+        "size": 1364
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "desktop-mode.svg",
+      "destination": "pcsx2/resources/fullscreenui/desktop-mode.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "513d784434cd934048e16b2a333b4d65da099e8b",
+        "size": 1269
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "AppBanner.svg",
+      "destination": "pcsx2/resources/icons/AppBanner.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "cf42e9d792747ccb06ff243672ed37b30db23def",
+        "size": 2649
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "AppIconLarge.png",
+      "destination": "pcsx2/resources/icons/AppIconLarge.png",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4ecf41cbd6df0d5e454ff01d9b92b4e7b0bc65c7",
+        "size": 93501
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "ra-icon.svg",
+      "destination": "pcsx2/resources/icons/ra-icon.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7d21ec2d411d63137e5352544aa74e0b8bb04199",
+        "size": 2092
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-0.svg",
+      "destination": "pcsx2/resources/icons/star-0.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "431b06f0504fa004e4d3b46808c56432b5965d9f",
+        "size": 5315
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-1.svg",
+      "destination": "pcsx2/resources/icons/star-1.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "34a1b02a508ad17cf6e6f356ae779c60d32df46d",
+        "size": 5300
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-2.svg",
+      "destination": "pcsx2/resources/icons/star-2.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5d14c6a473c67e4c4105182830645f1d7ec14a70",
+        "size": 5285
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-3.svg",
+      "destination": "pcsx2/resources/icons/star-3.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "6a662a918addfb384c56ab3194ec64c96f7e7ab5",
+        "size": 5270
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-4.svg",
+      "destination": "pcsx2/resources/icons/star-4.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "58d8acd1fab6a4ac1647b5798f727c28b390ae1b",
+        "size": 5255
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "star-5.svg",
+      "destination": "pcsx2/resources/icons/star-5.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b7bbd4dd268bbda347fec8b1749e355f55581251",
+        "size": 5240
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "at.svg",
+      "destination": "pcsx2/resources/icons/flags/at.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "3268e79c513366efae9889e345bb04748eac322f",
+        "size": 183
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "au.svg",
+      "destination": "pcsx2/resources/icons/flags/au.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "630d3cc1a29b86023ab331836acd7ae3791aec07",
+        "size": 1296
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "be.svg",
+      "destination": "pcsx2/resources/icons/flags/be.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a509c1a94f2c5808e7eedf2cfbbc6235588aa97a",
+        "size": 284
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "br.svg",
+      "destination": "pcsx2/resources/icons/flags/br.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "00d4d90a54e0cd40122df3763b5b20161d433abd",
+        "size": 6978
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "ch.svg",
+      "destination": "pcsx2/resources/icons/flags/ch.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "dab53e761a0f21523f2714df9b5c58fd35a21a0d",
+        "size": 262
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "cn.svg",
+      "destination": "pcsx2/resources/icons/flags/cn.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "863b0360572b2d7c9b1a08ce6fbb32ffa1ce3644",
+        "size": 775
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "de.svg",
+      "destination": "pcsx2/resources/icons/flags/de.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9003c2aa29d2869772266e9b56c869387541999a",
+        "size": 209
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "es.svg",
+      "destination": "pcsx2/resources/icons/flags/es.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "674a3b81dc17c092c26e94b3ede351619854680e",
+        "size": 80294
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "eu.svg",
+      "destination": "pcsx2/resources/icons/flags/eu.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ebbe870f77114dc2a12e385c56a5a7c993b3f22d",
+        "size": 1295
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "fi.svg",
+      "destination": "pcsx2/resources/icons/flags/fi.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b10db9c6d1271076effc0c451ad2ce64fa511fa8",
+        "size": 216
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "fr.svg",
+      "destination": "pcsx2/resources/icons/flags/fr.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4250bebf6de8e988e864342934beb72c510ea382",
+        "size": 220
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "gb.svg",
+      "destination": "pcsx2/resources/icons/flags/gb.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "161ee20a0a75bb06d4f2ca9acdbb137d9a963cec",
+        "size": 504
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "gr.svg",
+      "destination": "pcsx2/resources/icons/flags/gr.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7fa4815d8ad260e10afb5e9e3f10531a169017df",
+        "size": 814
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "hk.svg",
+      "destination": "pcsx2/resources/icons/flags/hk.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "74008ed4de892e7028f393138b4fd15a94e71eb8",
+        "size": 727
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "in.svg",
+      "destination": "pcsx2/resources/icons/flags/in.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "fa2a2b11f6d78ef7ea1aee9ae341b26a0f398dc8",
+        "size": 1090
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "it.svg",
+      "destination": "pcsx2/resources/icons/flags/it.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7415b7fed9a98587f62ea65ceff5f9ea0689d33e",
+        "size": 273
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "jp.svg",
+      "destination": "pcsx2/resources/icons/flags/jp.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7b40bd2022d8b824d22ee3f480e82aa18d462b28",
+        "size": 438
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "kr.svg",
+      "destination": "pcsx2/resources/icons/flags/kr.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "09f0d9286160100831513846a1425ff3cf526c5b",
+        "size": 1016
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "nl.svg",
+      "destination": "pcsx2/resources/icons/flags/nl.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "eac8781372854f4ce2b7fe100257b714503ac6ff",
+        "size": 212
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "no.svg",
+      "destination": "pcsx2/resources/icons/flags/no.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "8083fdbbd0f5dcfb1a044b17c934c640dc2c16be",
+        "size": 302
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "Other.svg",
+      "destination": "pcsx2/resources/icons/flags/Other.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d168d39632798f8be799d21bd0a0c9ca13533272",
+        "size": 656
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "pl.svg",
+      "destination": "pcsx2/resources/icons/flags/pl.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "12edefd7e07dfc56da5840a767d8f346d754741d",
+        "size": 204
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "pt.svg",
+      "destination": "pcsx2/resources/icons/flags/pt.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "27aa81654a49de86b9bdc5fa803509eac8c6eb1d",
+        "size": 7890
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "ru.svg",
+      "destination": "pcsx2/resources/icons/flags/ru.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "2a502ee04c295946091a85800c634af684e04119",
+        "size": 212
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "scn.svg",
+      "destination": "pcsx2/resources/icons/flags/scn.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ffaf4b51ff1512ef60f9b13ef3eaeaeecf3a5256",
+        "size": 527
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "se.svg",
+      "destination": "pcsx2/resources/icons/flags/se.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d4e52e7b15063ba562cafe525610e7cc6ad0e4ab",
+        "size": 199
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "tw.svg",
+      "destination": "pcsx2/resources/icons/flags/tw.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a9014bf94727050ce0c1670debbda2aba22d348c",
+        "size": 2450
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "us.svg",
+      "destination": "pcsx2/resources/icons/flags/us.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "141d1636ceff28ecd7762b37ee7f4818137fa7b3",
+        "size": 2524
+      }
+    },
+    {
+      "kind": "added",
+      "system": "Sony - PlayStation 2",
+      "name": "za.svg",
+      "destination": "pcsx2/resources/icons/flags/za.svg",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b8e39cc07766388f5d2759604692c1789f4fb1a8",
+        "size": 860
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": "sha1",
+      "old": "2b0cc66a507a159a3a44160cc80c561171798f85",
+      "new": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": "md5",
+      "old": "f1925ac548f9551d9d8f648dbc92c897",
+      "new": "4f9dd40b455876d5c54b5ebd93aec88c"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": "crc32",
+      "old": "c21aaf8f",
+      "new": "f63ddcc5"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": "size",
+      "old": 409472,
+      "new": 520352
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": "sha1",
+      "old": "32a9e6f7a80e585c679b7e09df90bf2d2d20e8ad",
+      "new": "3971847e26be0abad8196caf03e5852a81ddbdea"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": "md5",
+      "old": "474e9a57b74c368acc8d19e8d63e3288",
+      "new": "7224c7a94074addeb69015b1346695d2"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": "crc32",
+      "old": "3f109488",
+      "new": "5956e0e9"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": "size",
+      "old": 34576,
+      "new": 70416
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": "sha1",
+      "old": "16a45d421e92b74cbc8cfe53486474700cc176d7",
+      "new": "05c97e92439b67aea8f6eb7fc96db023edf62124"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": "md5",
+      "old": "2647b6dff6d117b217dd9896cd25b34e",
+      "new": "b304979ed642a6dcaf26f43f8a37a1de"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": "crc32",
+      "old": "e4d1d147",
+      "new": "b36f7b0e"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": "size",
+      "old": 259619,
+      "new": 259625
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": "sha1",
+      "old": "1f194d6a55882967e4c4d4e4692fb4aa5c992069",
+      "new": "1eaef39122559500fbbc705c9425500311d23e03"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": "md5",
+      "old": "65025f90c134e4538efd306e36341aa1",
+      "new": "6df29d218962e155d0a2114006af45c0"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": "crc32",
+      "old": "099d83fd",
+      "new": "f59313fa"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": "size",
+      "old": 1996401,
+      "new": 6449829
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": "sha1",
+      "old": "4ed259b5b27d8dfcf4815a73a9946f4ed709457e",
+      "new": "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": "md5",
+      "old": "30ca162d03b65f46997fa43e1093839e",
+      "new": "71697f90fb0c7747616dbb0799ce966b"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": "crc32",
+      "old": "b02f9abb",
+      "new": "54f0350e"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": "size",
+      "old": 55245,
+      "new": 30124
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": "sha1",
+      "old": "932c0d6f73effea91a6fca7ac73439e104952205",
+      "new": "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": "md5",
+      "old": "0856a20f18b3319c92b710ef80d886cd",
+      "new": "a865e70f1b0998a500f522dab441c8fc"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": "crc32",
+      "old": "e8d147ef",
+      "new": "fc0dd1cb"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": "size",
+      "old": 189584,
+      "new": 186866
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": "sha1",
+      "old": "dda6002f09035101a4bf004c1623f8490d739aa1",
+      "new": "31b0b9418af2f9dd4e4094aada05d48eb355975b"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": "md5",
+      "old": "21a57f79886e46f410cfb50186ed8d77",
+      "new": "ebddd7bbd97135a427083db5daf6f9fc"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": "crc32",
+      "old": "75cbdf42",
+      "new": "6b7229ce"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": "size",
+      "old": 1696846,
+      "new": 2028520
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": "sha1",
+      "old": "22c05c0a49c218a4194ccfb670604c8277b9a1f2",
+      "new": "516347ec0ec2a397265d1b2fb053aa3758382e09"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": "md5",
+      "old": "75a83c781ac7024fc9c1b6f7ecc5b936",
+      "new": "6f90cf73f36453d332d5c9cee311f81c"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": "crc32",
+      "old": "8b7dc57f",
+      "new": "d616bea5"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": "size",
+      "old": 637824,
+      "new": 768832
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": "sha1",
+      "old": "156d1b9a18e5bd3b90b1b2820acf198af1f65ead",
+      "new": "e431e718e3c784532422ea2654d5fc6042a95c09"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": "md5",
+      "old": "d855abc95d2b7c03b748631c08603ebb",
+      "new": "3b1faf40e685b955372e02f54ed70263"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": "crc32",
+      "old": "3cf789f2",
+      "new": "24a09690"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": "size",
+      "old": 4167,
+      "new": 4146
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": "sha1",
+      "old": "d3ae68a09f8c60a32ce42736ed8d276825fbf446",
+      "new": "0816fe29b57911b28cbf774348f5492062326a85"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": "md5",
+      "old": "fc20f5064386a19d39bd5f9df0a542fa",
+      "new": "01f074a6ac34dd86fcc6d1e8090614f0"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": "crc32",
+      "old": "e8217e0e",
+      "new": "f007671e"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": "size",
+      "old": 266845,
+      "new": 280803
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": "sha1",
+      "old": "18fb24c236adb974ade847794044914a81d539aa",
+      "new": "7c8907d33da59afd4e4b62eee67541910e0b78d9"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": "md5",
+      "old": "e482c84f583783b4b9dea5374aa232da",
+      "new": "eb7cfdb3f74972beb8f43196e4e44001"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": "crc32",
+      "old": "05e6dbc9",
+      "new": "d7976af8"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": "size",
+      "old": 251046,
+      "new": 255042
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": "sha1",
+      "old": "800ed1a38a1ba46c3e57281c6d50671dd62d44ff",
+      "new": "7bafa28dfd9b3be17430d467d8787d8204437ba0"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": "md5",
+      "old": "4f5b513b52c4ef6fb1c46e984760a3b7",
+      "new": "93c6d6379eb0290ce93854a6888ec3f4"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": "crc32",
+      "old": "ee33b23c",
+      "new": "d713b1ab"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": "size",
+      "old": 1084522,
+      "new": 1100505
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": "sha1",
+      "old": "f81b0a129e7ac35bd0e9e29a3205eb2c7f26bfbb",
+      "new": "8a571cfc431b5fe794f0262f0e55f72927ab27b4"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": "md5",
+      "old": "f6af52d51152447f43cf3cf9a50bc144",
+      "new": "89664136c503a30894d5c713be5bfe90"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": "crc32",
+      "old": "b5e601a3",
+      "new": "9643ad1a"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": "size",
+      "old": 420725,
+      "new": 523211
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": "sha1",
+      "old": "6a5c43732e30e25ace6b6ba2b28f038b24cc497f",
+      "new": "0d488164930332bae3aa1ad38cef44abbe3d00a6"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": "md5",
+      "old": "aaaf8792af40c80122d7dbecaf1dee20",
+      "new": "4594620989a0bfd8b120da2de7ac30de"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": "crc32",
+      "old": "6ae16bb9",
+      "new": "90b9e752"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": "size",
+      "old": 141090,
+      "new": 403315
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": "sha1",
+      "old": "6f8a60b0d51de1e86ab3a51c932a78a642c1567a",
+      "new": "85bb688125d66f2797a41f153ce1fa177027a83f"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": "md5",
+      "old": "730f63ea46169f56bb4f9fa0637baef0",
+      "new": "2b71a5d9aa19219d46711e8a77451f0f"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": "crc32",
+      "old": "c8ceacc9",
+      "new": "7731190d"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": "size",
+      "old": 17986,
+      "new": 20996
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": "sha1",
+      "old": "c9207e9c33264134e94cfaf28c638431fdcd8772",
+      "new": "e049932518390257f4d49b1691cad229e6060079"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": "md5",
+      "old": "420ef1f96eee6dc15395330f28923be2",
+      "new": "e359fb7f14c4cb072b6e9300a23a6d62"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": "crc32",
+      "old": "f2699208",
+      "new": "c15f9059"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": "size",
+      "old": 15979622,
+      "new": 15981464
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": "sha1",
+      "old": "9f4b31838c16baf518ae14dd44dc54973a3508df",
+      "new": "5302f543384b21fb55466118a6966e5ef46b85f6"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": "md5",
+      "old": "46ab65cb137a4fc8710a8f3b9455e50e",
+      "new": "9783248899f9cb531f0a3e0a711ab8b3"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": "crc32",
+      "old": "972efe9a",
+      "new": "f7dc9bc4"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": "size",
+      "old": 4057,
+      "new": 4520
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": "sha1",
+      "old": "7fd69a142d0333e1514a8c819b610a7471162d9e",
+      "new": "38e74e6994924781487a0d39cc53dc4708a90c1c"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": "md5",
+      "old": "17150a7a6ed5c4d5c0384b95c5fce479",
+      "new": "9c59e0e9875434456ec1b7eb8e51666f"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": "crc32",
+      "old": "9b4519e8",
+      "new": "0aa0c87d"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": "size",
+      "old": 3300128,
+      "new": 3315855
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": "sha1",
+      "old": "f1bcabae2c99b34bc88975c89d042a179caef9d8",
+      "new": "589b622f55c9944c4883e4163d4d49508e22e056"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": "md5",
+      "old": "9cbffee094a6bfa1765e2f6ba15a268e",
+      "new": "b2811fa9b209733b61cd49ddb21e1e95"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": "crc32",
+      "old": "8a482338",
+      "new": "93296840"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": "size",
+      "old": 90553,
+      "new": 94555
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": "sha1",
+      "old": "8e5aff75e4aa42b365e8f32223d6fef0b789d646",
+      "new": "69836fb392710f2182df07bab8960e8a2d92c1a9"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": "md5",
+      "old": "57aaebd10238ffe3863192254629aaa9",
+      "new": "8f37bd19dd51be456ac8f005fd5669a8"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": "crc32",
+      "old": "8387238f",
+      "new": "103168ea"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": "size",
+      "old": 15872,
+      "new": 16488
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": "sha1",
+      "old": "132dcce3ea2f9b6c33b17e55fa2e75f5ee34a33a",
+      "new": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": "md5",
+      "old": "b470c7205246a0bb4718ca0a27d25055",
+      "new": "ee71d6cd464c618c632e6fd62b430d2c"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": "crc32",
+      "old": "a641843b",
+      "new": "00194297"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": "size",
+      "old": 283299,
+      "new": 68087
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": "sha1",
+      "old": "6016da4b71e5f46f5866f5acf824c337a0e3ee5c",
+      "new": "03e53349eefc39ce25220bfcb1ae4a580704d29d"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": "md5",
+      "old": "15600f0b0274f2ab4dd0c181e4ae3e95",
+      "new": "0d990484d0dfc1680b20cfabcae373cd"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": "crc32",
+      "old": "f1d52065",
+      "new": "6fa86fae"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": "size",
+      "old": 283227,
+      "new": 93901
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": "sha1",
+      "old": "e3e3470ff75afa10b7cbdebbd41fba45a7fe0f94",
+      "new": "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": "md5",
+      "old": "1ca707498f9024c292ca745c5727a751",
+      "new": "a206e54bac1af13559ac8b2d9e550577"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "ScummVM",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": "crc32",
+      "old": "bd7a5f25",
+      "new": "14689714"
+    },
+    {
+      "kind": "size_corrected",
+      "system": "ScummVM",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": "size",
+      "old": 3191299,
+      "new": 3693914
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "classicmacfonts.dat",
+      "destination": "scummvm/extra/classicmacfonts.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1",
+        "md5": "d4264d4573f22d290e033e1d834d7221",
+        "crc32": "c75b019e",
+        "size": 626103
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "helpdialog.zip",
+      "destination": "scummvm/extra/helpdialog.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "386d8a89e180f8abab53e5d5926b6a81ee4b31dd",
+        "md5": "a9584a928c0f52ef28b33d8702983c35",
+        "crc32": "80075ee5",
+        "size": 207764
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "bagel.dat",
+      "destination": "scummvm/extra/bagel.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835",
+        "md5": "f6d90885f6962f89de02e34031111599",
+        "crc32": "299496de",
+        "size": 20584
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "darkseed.dat",
+      "destination": "scummvm/extra/darkseed.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "343172f1bfff8cb8c4abefa95e211379f39583b7",
+        "md5": "9a9cfe40dcca517f130d4430bd1af643",
+        "crc32": "c7ecb1dd",
+        "size": 37183
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "got.aud",
+      "destination": "scummvm/extra/got.aud",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "209ab6d86a7c44f241689c5511b2027f7ad2c7c4",
+        "md5": "d13cc3c481e84e787ec8aa86dffc565f",
+        "crc32": "0b61b41f",
+        "size": 11313
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "got.gfx",
+      "destination": "scummvm/extra/got.gfx",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0c9603da78b980bcf391bbf5f9103a5a642c4ee8",
+        "md5": "a29f591769bd731df0d9ddd3a191fe8c",
+        "crc32": "395cc89b",
+        "size": 288199
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "prince_translation.dat",
+      "destination": "scummvm/extra/prince_translation.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "57403a286c4d251384442a507d285b2dc5ce330e",
+        "md5": "993adab2fd44277d5fd7aa5971e7099c",
+        "crc32": "7f92430d",
+        "size": 168060
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "ultima8.dat",
+      "destination": "scummvm/extra/ultima8.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "6319d3a245297697c1e4def78dc231a3f30708bb",
+        "md5": "e5b95811b05b9f0f593b49c860391200",
+        "crc32": "b0b33433",
+        "size": 238149
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "fonts-cjk.dat",
+      "destination": "scummvm/extra/fonts-cjk.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b46f5a744387d1991d66a06292811f217ae063e2",
+        "md5": "18b8811c1bbc297be45f38c3bd6a0728",
+        "crc32": "408b4855",
+        "size": 38277312
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ScummVM",
+      "name": "fonts-imgui.dat",
+      "destination": "scummvm/extra/fonts-imgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "659a025dfa39a8caada7dac6e69b4d7c88217b3f",
+        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b",
+        "crc32": "ef97328a",
+        "size": 4000965
+      }
+    }
+  ],
   "hashes_corrected": [
     "Arcade/aes.zip sha1",
     "Arcade/aes.zip md5",
@@ -135,5 +3119,578 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 108,
+  "removal_candidates": [
+    {
+      "system": "Dinothawr",
+      "name": "Dinothawr.zip",
+      "destination": "Dinothawr.zip",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dinothawr"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Enterprise - 64/128",
+      "name": "zt18hfnt.rom",
+      "destination": "zt18hfnt.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Enterprise - 64/128",
+      "name": "epd19hft.rom",
+      "destination": "ep128emu/roms/epd19hft.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Enterprise - 64/128",
+      "name": "zt19hfnt.rom",
+      "destination": "ep128emu/roms/zt19hfnt.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Id Software - Doom",
+      "name": "prboom.wad",
+      "destination": "prboom.wad",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "J2ME",
+      "name": "freej2me-sdl.jar",
+      "destination": "freej2me-sdl.jar",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "freej2me",
+        "freej2me_plus",
+        "squirreljme"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "J2ME",
+      "name": "freej2me.jar",
+      "destination": "freej2me.jar",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "freej2me",
+        "freej2me_plus",
+        "squirreljme"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Microsoft - MSX",
+      "name": "FMPAC16.ROM",
+      "destination": "FMPAC16.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "bluemsx",
+        "fbalpha2019",
+        "fbneo",
+        "fmsx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "NEC - PC-98",
+      "name": "itf.rom",
+      "destination": "np2kai/itf.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "nekop2",
+        "np2kai"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "NEC - PC-FX",
+      "name": "fx-scsi.rom",
+      "destination": "fx-scsi.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "NEC - PC-FX",
+      "name": "pcfxga.rom",
+      "destination": "pcfxga.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "NEC - PC-FX",
+      "name": "pcfxv101.bin",
+      "destination": "pcfxv101.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-dvd-20010608.bin",
+      "destination": "gc-dvd-20010608.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-dvd-20010831.bin",
+      "destination": "gc-dvd-20010831.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-dvd-20020402.bin",
+      "destination": "gc-dvd-20020402.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-dvd-20020823.bin",
+      "destination": "gc-dvd-20020823.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-ntsc-10.bin",
+      "destination": "gc-ntsc-10.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-ntsc-11.bin",
+      "destination": "gc-ntsc-11.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-ntsc-12.bin",
+      "destination": "gc-ntsc-12.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-pal-10.bin",
+      "destination": "gc-pal-10.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-pal-11.bin",
+      "destination": "gc-pal-11.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - GameCube",
+      "name": "gc-pal-12.bin",
+      "destination": "gc-pal-12.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "ishiiruka"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - Satellaview",
+      "name": "BS-X (En).bin",
+      "destination": "BS-X (En).bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "bsnes",
+        "bsnes-jg",
+        "bsnes2014",
+        "bsnes_cplusplus98",
+        "bsnes_hd_beta",
+        "bsnes_mercury",
+        "chimerasnes",
+        "mesen-s",
+        "mesence",
+        "snes9x",
+        "snes9x2002",
+        "snes9x2005",
+        "snes9x2005_plus",
+        "snes9x2010",
+        "supersnes9x"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Nintendo - Satellaview",
+      "name": "BS-X (En) (DRM-Free).bin",
+      "destination": "BS-X (En) (DRM-Free).bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "bsnes",
+        "bsnes-jg",
+        "bsnes2014",
+        "bsnes_cplusplus98",
+        "bsnes_hd_beta",
+        "bsnes_mercury",
+        "chimerasnes",
+        "mesen-s",
+        "mesence",
+        "snes9x",
+        "snes9x2002",
+        "snes9x2005",
+        "snes9x2005_plus",
+        "snes9x2010",
+        "supersnes9x"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sega - Saturn",
+      "name": "sega1003.bin",
+      "destination": "sega1003.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_saturn",
+        "kronos",
+        "mednafen_stv",
+        "yabasanshiro",
+        "yabause",
+        "ymir"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "128-spanish-0.rom",
+      "destination": "128-spanish-0.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "128-spanish-1.rom",
+      "destination": "128-spanish-1.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "disk_plus3.szx",
+      "destination": "disk_plus3.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_128.szx",
+      "destination": "tape_128.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_16.szx",
+      "destination": "tape_16.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_2048.szx",
+      "destination": "tape_2048.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_2068.szx",
+      "destination": "tape_2068.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_48.szx",
+      "destination": "tape_48.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_pentagon.szx",
+      "destination": "tape_pentagon.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_plus2.szx",
+      "destination": "tape_plus2.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_plus2a.szx",
+      "destination": "tape_plus2a.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_plus3.szx",
+      "destination": "tape_plus3.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_plus3e.szx",
+      "destination": "tape_plus3e.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_scorpion.szx",
+      "destination": "tape_scorpion.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_se.szx",
+      "destination": "tape_se.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "Sinclair - ZX Spectrum",
+      "name": "tape_ts2068.szx",
+      "destination": "tape_ts2068.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "81",
+        "eightyone",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ScummVM",
+      "name": "scummvm.zip",
+      "destination": "scummvm.zip",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "scummvm"
+      ],
+      "unresolved_cores": []
+    }
+  ],
   "invalid": []
 }

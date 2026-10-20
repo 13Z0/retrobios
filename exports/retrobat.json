@@ -13,6 +13,1661 @@
     "not_added": 1069,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1_dev_0.9.bin",
+      "destination": "panafz1_dev_0.9.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "05435442e0b7a91a121eef6e91b112de"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1_dev.bin",
+      "destination": "panafz1_dev.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5fa312e8b1315e840221c658dd71f7a5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1e.bin",
+      "destination": "panafz1e.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ba3eda87fde9bd7f09c2b9db3dbb9887"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1e-unencrypted.bin",
+      "destination": "panafz1e-unencrypted.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7d5f8489f70455e5439eb7c4d5bbf609"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j.bin",
+      "destination": "panafz1j.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a496cfdded3da562759be3561317b605"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j - norsa.bin",
+      "destination": "panafz1j - norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f6c71de7470d16abe4f71b1444883dc8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10-norsa.bin",
+      "destination": "panafz10-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1477bda80dc33731a65468c1f5bcbee9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10e-anvil.bin",
+      "destination": "panafz10e-anvil.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a48e6746bd7edec0f40cff078f0bb19f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10e-anvil-norsa.bin",
+      "destination": "panafz10e-anvil-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "cf11bbb5a16d7af9875cca9de9a15e09"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10j.bin",
+      "destination": "panafz10j.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "20706f726c22d79d3c385e215d7428e2"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "goldstar_fc1_enc.bin",
+      "destination": "goldstar_fc1_enc.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b42a2207226a669415886007a9dbcad5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "sanyotry.bin",
+      "destination": "sanyotry.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "35fa1a1ebaaeea286dc5cd15487c13ea"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "sanyo_hc21_b3_unenc.bin",
+      "destination": "sanyo_hc21_b3_unenc.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4ca4a976237b6c8fd3abfb393d072469"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "sanyo_hc21_alpha.bin",
+      "destination": "sanyo_hc21_alpha.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "99ba550f1a284da0bea7f380b6e4b436"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "3do_arcade_saot.bin",
+      "destination": "3do_arcade_saot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8970fc987ab89a7f64da9f8a8c4333ff"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "3do_devkit_1.0fc2.bin",
+      "destination": "3do_devkit_1.0fc2.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "45a010f04b1df9c072983378c318b259"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1-kanji.bin",
+      "destination": "panafz1-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b8dc97f778a6245c58e064b0312e8281"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j-kanji.bin",
+      "destination": "panafz1j-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c23fb5d5e6bb1c240d02cf968972be37"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10ja-anvil-kanji.bin",
+      "destination": "panafz10ja-anvil-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "428577250f43edc902ea239c50d2240d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "opera-boot.bin",
+      "destination": "opera-boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j-norsa.bin",
+      "destination": "panafz1j-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f6c71de7470d16abe4f71b1444883dc8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "adam",
+      "name": "eos.rom",
+      "destination": "eos.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "01df3140909f09aa9aac4f88890f676c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "adam",
+      "name": "writer.rom",
+      "destination": "writer.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4fe4f6800076ea3d897d4285653447bd"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "aros-ext.bin",
+      "destination": "aros-ext.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d2ce6748e8e42222662e14359f68dad5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "aros-rom.bin",
+      "destination": "aros-rom.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "48d38fc3fcf2ad7bca5ec5191d02e451"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "WHDLoad",
+      "destination": "whdboot/WHDLoad",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6670a9571f235ec31b8bbd48fc18f428"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "JST",
+      "destination": "whdboot/JST",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "2a3a61bbd7c351751506e22a4354b76a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "AmiQuit",
+      "destination": "whdboot/AmiQuit",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "36ab26d3b855e634fdda062c052cd52b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "boot-data.zip",
+      "destination": "whdboot/boot-data.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9e638f3d531eb7cd82594f49a4cf03b7"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "whdload_db.json",
+      "destination": "whdboot/game-data/whdload_db.json",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "14d797815aa9bbc79fe284b244ea75b1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick33180.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c993feb1eeddec1d2e687aa514231028"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick34005.A500.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7eb13d974af0992d672b67c317a7e0a1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick40063.A600.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3f97c1963d82c808ef29e7c984c4c688"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick40068.A1200.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "547b42b7b070c7f227ea45e0986d57a1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick40068.A4000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f89f19b858ea6b1a04327c6f71ee1600"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "kick31034.A1000.RTB",
+      "destination": "whdboot/save-data/Kickstarts/kick31034.A1000.RTB",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c5ba6165df42fc69b32942b248fca725"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310.rom",
+      "destination": "amiga-os-310.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "730888fb1bd9a3606d51f772ed136528"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-130.rom",
+      "destination": "amiga-os-130.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "82a21c1890cae844b3df741f2762d48d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-120.rom",
+      "destination": "amiga-os-120.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "85ad74194e87c08904327de1a9443b7a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310-a600.rom",
+      "destination": "amiga-os-310-a600.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e40a5dfb3d017ba8779faba30cbd1c8e"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-205-a600.rom",
+      "destination": "amiga-os-205-a600.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "465646c9b6729f77eea5314d1f057951"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-204.rom",
+      "destination": "amiga-os-204.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "dc10d7bdd1b6f450773dfb558477c230"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310-a1200.rom",
+      "destination": "amiga-os-310-a1200.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "646773759326fbac3b2311fd8c8793ee"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-300-a1200.rom",
+      "destination": "amiga-os-300-a1200.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b7cc148386aa631136f510cd29e42fc3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310-a4000.rom",
+      "destination": "amiga-os-310-a4000.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9bdedde6a4f33555b4a270c8ca53297d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-300-a4000.rom",
+      "destination": "amiga-os-300-a4000.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9b8bdd5a3fd32c2a5a6f5b1aefc799a5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310-a4000t.rom",
+      "destination": "amiga-os-310-a4000t.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e873c43040b4d7a9c65f37cf2da2158f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "amiga-os-310-cd32.rom",
+      "destination": "amiga-os-310-cd32.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5f8924d013dd57a89cf349f4cdedc6b1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_click_A500.wav",
+      "destination": "uae_data/drive_click_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_spin_A500.wav",
+      "destination": "uae_data/drive_spin_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7401f854a75f9ede18769168ab896a2a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_spinnd_A500.wav",
+      "destination": "uae_data/drive_spinnd_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f9d954879fee8e96baa93d6139077cdb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_startup_A500.wav",
+      "destination": "uae_data/drive_startup_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_snatch_A500.wav",
+      "destination": "uae_data/drive_snatch_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1a4b2d6254918ff769f26beeede75655"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_click_LOUD.wav",
+      "destination": "uae_data/drive_click_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b64bee23f356635f67fb08b543df9797"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_spin_LOUD.wav",
+      "destination": "uae_data/drive_spin_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_spinnd_LOUD.wav",
+      "destination": "uae_data/drive_spinnd_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "43ab05c6d969cb40805970a5b2352875"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_startup_LOUD.wav",
+      "destination": "uae_data/drive_startup_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga1200",
+      "name": "drive_snatch_LOUD.wav",
+      "destination": "uae_data/drive_snatch_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "apple2",
+      "name": "AppleIIe_DiskII.rom",
+      "destination": "AppleIIe_DiskII.rom",
+      "field": "md5",
+      "old": null,
+      "new": "2020aa1413ff77fe29353f3ee72dc295"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "apple2",
+      "name": "AppleIIe.rom",
+      "destination": "AppleIIe.rom",
+      "field": "md5",
+      "old": null,
+      "new": "38063e08c778503fc03ecebb979769e9"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "atari7800",
+      "name": "A78_highscore.bin",
+      "destination": "A78_highscore.bin",
+      "field": "md5",
+      "old": null,
+      "new": "c8a73288ab97226c52602204ab894286"
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos1024k.img",
+      "destination": "etos1024k.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1cb3775c4775bad75d24447a90a2890b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192uk.img",
+      "destination": "etos192uk.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5f5730d9b557c44ddb9bc410ce2925d8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192us.img",
+      "destination": "etos192us.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "796f62574413bc59ca767063b3184f90"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "chihiro",
+      "name": "chihiro_xbox_bios.bin",
+      "destination": "chihiro/chihiro_xbox_bios.bin",
+      "field": "md5",
+      "old": null,
+      "new": "4bbbda157dcf922619da1046df10e216"
+    },
+    {
+      "kind": "added",
+      "system": "chihiro",
+      "name": "fpr21042_m29w160et.bin",
+      "destination": "EmuDisk/Chihiro/fpr21042_m29w160et.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "afacfb61877401f1611998d2b590dffd"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "chihiro",
+      "name": "ic10_g24lc64.bin",
+      "destination": "EmuDisk/Chihiro/ic10_g24lc64.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ec15634cf28e8bcaf660346787f83254"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "chihiro",
+      "name": "pc20_g24lc64.bin",
+      "destination": "EmuDisk/Chihiro/pc20_g24lc64.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "bf1cf24f8549137c0b1ad0fa61473c7e"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "chihiro",
+      "name": "ic11_24lc024.bin",
+      "destination": "EmuDisk/Chihiro/ic11_24lc024.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "da9feafc678d2476f3bf3b1049ec4b17"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "chihiro",
+      "name": "backup_ram.bin",
+      "destination": "EmuDisk/Chihiro/backup_ram.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c34872828474f21cbc761febacea72df"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "bas13.rom",
+      "destination": "bas13.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c2fc43556eb6b7b25bdf5955bd9df825"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "bas12.rom",
+      "destination": "bas12.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c933316c7d939532a13648850c1c2aa6"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "bas11.rom",
+      "destination": "bas11.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c73fb4bff9621c5ab17f6220b20db82f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "bas10.rom",
+      "destination": "bas10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a74f3d95b395dad7cdca19d560eeea74"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "extbas11.rom",
+      "destination": "extbas11.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "21070aa0496142b886c562bf76d7c113"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "extbas10.rom",
+      "destination": "extbas10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fda72f415afe99b36f953bb9bc1253da"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "deluxe.rom",
+      "destination": "deluxe.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e27c02fd766e8710240c59ef5424a6ef"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "mx1600bas.rom",
+      "destination": "mx1600bas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "88d1504e93366f498105a846cdbf7fb7"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "mx1600extbas.rom",
+      "destination": "mx1600extbas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6fc82178ae8abe07fa8f6939062291dc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "cp400bas.rom",
+      "destination": "cp400bas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f73da4d73d6db5cdb8b3cb6a50415e38"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "cp400ext.rom",
+      "destination": "cp400ext.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "091581001577b4a83ccfd511829de0f1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "disk11.rom",
+      "destination": "disk11.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8cab28f4b7311b8df63c07bb3b59bfd5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "disk10.rom",
+      "destination": "disk10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a64b3ef9efcc066b18d35b134068d1cc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "orch90.rom",
+      "destination": "orch90.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "171fb7a5d3b808565295b45c773abaaf"
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "dragon32",
+      "name": "d64_1.rom",
+      "destination": "dragon/d64_1.rom",
+      "field": "md5",
+      "old": "5f0bee59710e55f5880e74890912ed78",
+      "new": "be9bc86ee5eb401d0a40d0377f65fefa"
+    },
+    {
+      "kind": "added",
+      "system": "dreamcast",
+      "name": "dc_bios.bin",
+      "destination": "dc/boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e10c53c2f8b90bab96ead2d368858623"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gb",
+      "name": "GB_mgb.bin",
+      "destination": "GB_mgb.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "71a378e71ff30b2d8a1f02bf5c7896aa"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gba",
+      "name": "GBA_bios_Debug-(J).rom",
+      "destination": "GBA_bios_Debug-(J).rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e60e599135009129b288988a1cba91df"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gba",
+      "name": "BIOSGBA.ROM",
+      "destination": "BIOSGBA.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gbc",
+      "name": "GBC_cgbE.bin",
+      "destination": "GBC_cgbE.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "48991ee7b1813d0cba5b099df6578668"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gbc",
+      "name": "GBC_agb.bin",
+      "destination": "GBC_agb.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e6cefb5f7d352fab6681989763917c73"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gbc",
+      "name": "GBC_agb0.bin",
+      "destination": "GBC_agb0.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a3bdf3d628e58cf6821fe87d3efd51a9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "jaguar",
+      "name": "[BIOS] Atari Jaguar CD (World).j64",
+      "destination": "[BIOS] Atari Jaguar CD (World).j64",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "77cd95c7ad06a39f4c59995094aa10f9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "jaguar",
+      "name": "[BIOS] Atari Jaguar Developer CD (World).j64",
+      "destination": "[BIOS] Atari Jaguar Developer CD (World).j64",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "578de34498cb9a40c5368b6f5ca80484"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "jaguar",
+      "name": "jagboot_m.rom",
+      "destination": "jagboot_m.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6e844759720226e58d55ecaf33608a13"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "mastersystem",
+      "name": "[BIOS] Sega Master System (USA, Europe) (v1.3).sms",
+      "destination": "[BIOS] Sega Master System (USA, Europe) (v1.3).sms",
+      "field": "md5",
+      "old": null,
+      "new": "840481177270d5642a14ca71ee72844c"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "mastersystem",
+      "name": "[BIOS] Sega Master System (Japan) (v2.1).sms",
+      "destination": "[BIOS] Sega Master System (Japan) (v2.1).sms",
+      "field": "md5",
+      "old": null,
+      "new": "24a519c53f67b00640d0048ef7089105"
+    },
+    {
+      "kind": "added",
+      "system": "mastersystem",
+      "name": "SMS_us_1.0b.sms",
+      "destination": "SMS_us_1.0b.sms",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "626b3453613e43d5a47908a8944ba583"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mastersystem",
+      "name": "SMS_m404.sms",
+      "destination": "SMS_m404.sms",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3153447d155fb8bfc66a4d1c41e399b9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mastersystem",
+      "name": "SMS_kr.sms",
+      "destination": "SMS_kr.sms",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e49e63328c78fe3d24ae32bf903583e0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "MSX_cbios_main_msx1.rom",
+      "destination": "MSX_cbios_main_msx1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8514a6af538e0fadbe660a206dcb5652"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "MSX_1.0.rom",
+      "destination": "MSX_1.0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "95c94878c0ecf0b4c0d8bc8deaa9d7f3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "MSX_jpn.rom",
+      "destination": "MSX_jpn.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9218f6dd89f7ba01e3090d44721b4260"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "nds",
+      "name": "dsi_bios9.bin",
+      "destination": "dsi_bios9.bin",
+      "field": "md5",
+      "old": null,
+      "new": "23031f25602a52c2df32c39554b0c55e"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "nds",
+      "name": "dsi_bios7.bin",
+      "destination": "dsi_bios7.bin",
+      "field": "md5",
+      "old": null,
+      "new": "322ceeafb77b0cc96a1fcc6271e0e0ae"
+    },
+    {
+      "kind": "added",
+      "system": "nds",
+      "name": "NDS_Firmware_2.bin",
+      "destination": "NDS_Firmware_2.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b8c0b3f620410591f47dafd5866760e0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "nds",
+      "name": "NDS_Lite_Firmware.bin",
+      "destination": "NDS_Lite_Firmware.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3c704824663ce26b6a1ed4d85238ae5b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "nds",
+      "name": "BIOSNDS7.ROM",
+      "destination": "BIOSNDS7.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "df692a80a5b1bc90728bc3dfc76cd948"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "nds",
+      "name": "BIOSNDS9.ROM",
+      "destination": "BIOSNDS9.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a392174eb3e572fed6447e956bde4b25"
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "neogeocd",
+      "name": "neocdz.zip",
+      "destination": "neocdz.zip",
+      "field": "md5",
+      "old": "c733b4b7bd30fa849874d96c591c8639",
+      "new": "b31a246b69493c35194fe0bac120dc37"
+    },
+    {
+      "kind": "added",
+      "system": "neogeocd",
+      "name": "neocd.zip",
+      "destination": "neocd.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "006a881532f2caffc3fe9fb5593f2ed5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "pcenginecd",
+      "name": "PCECD_gecard.pce",
+      "destination": "PCECD_gecard.pce",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6d2cb14fc3e1f65ceb135633d1694122"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "pcfx",
+      "name": "fx-scsi.rom",
+      "destination": "fx-scsi.rom",
+      "field": "md5",
+      "old": null,
+      "new": "430e9745f9235c515bc8e652d6ca3004"
+    },
+    {
+      "kind": "added",
+      "system": "pcfx",
+      "name": "PCFX_v101.bin",
+      "destination": "PCFX_v101.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e2fb7c7220e3a7838c2dd7e401a7f3d8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5501.bin",
+      "destination": "scph5501.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "490f666e1afb15b7362b406ed1cea246"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5500.bin",
+      "destination": "scph5500.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8dd7d5296a650fac7319bce665a6a53c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5502.bin",
+      "destination": "scph5502.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "32736f17079d0b2b7024407c39bd3050"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5500.bin",
+      "destination": "scph5500.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8dd7d5296a650fac7319bce665a6a53c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5903.bin",
+      "destination": "scph5903.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5501.bin",
+      "destination": "scph5501.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "490f666e1afb15b7362b406ed1cea246"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5502.bin",
+      "destination": "scph5502.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "32736f17079d0b2b7024407c39bd3050"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "ps1_rom.bin",
+      "destination": "ps1_rom.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_BS-X.sfc",
+      "destination": "Satellaview_BS-X.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fed4d8242cfbed61343d53d48432aced"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_Mahjong.sfc",
+      "destination": "Satellaview_Mahjong.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a859f13ed1a497e34f94d80e49861fa4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_GNEXT.sfc",
+      "destination": "Satellaview_GNEXT.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c87f0ed9f204464bb03200cea5bd290f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_RPG_Tsukuru.sfc",
+      "destination": "Satellaview_RPG_Tsukuru.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "12f1e82f2251eee4b754611887e89821"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_SameGame.sfc",
+      "destination": "Satellaview_SameGame.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "35a61b2ec6e63d16799c09e1957fcdb4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_Derby_Stallion_96.sfc",
+      "destination": "Satellaview_Derby_Stallion_96.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e1a6cfe35640ee9eb661c2239ccc0717"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_Ongaku_Tsukuru.sfc",
+      "destination": "Satellaview_Ongaku_Tsukuru.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5797c69fdc9e92284089128d6794efe4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_SoundNovel_Tsukuru.sfc",
+      "destination": "Satellaview_SoundNovel_Tsukuru.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "92504988268c3888f0e7041a1f9567ae"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "satellaview",
+      "name": "Satellaview_Bass_Tsuri.sfc",
+      "destination": "Satellaview_Bass_Tsuri.sfc",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b6aecd4135d37c402a9e4512615c6b6b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_1.00a-(U+E).bin",
+      "destination": "SAT_1.00a-(U+E).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f273555d7d91e8a5a6bfd9bcf066331c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17740-(J).bin",
+      "destination": "SAT_STV_17740-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a36acd9ac53b668bebbd98bd192c43e9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17740A-(J).bin",
+      "destination": "SAT_STV_17740A-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6193c4357b39916066d810bc0b2cb153"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17951A-(J).bin",
+      "destination": "SAT_STV_17951A-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4bee9b193799bd221a7482c7d7765295"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_19730-(J).bin",
+      "destination": "SAT_STV_19730-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "099c908e4af55d6602bb5fddbbc2d0b3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_20091-(J).bin",
+      "destination": "SAT_STV_20091-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "34175c7ad31acbe44f2baccc7ea065c7"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_23603-(J).bin",
+      "destination": "SAT_STV_23603-(J).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "202226db8648ef036b57bc64a4180c92"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17742A-(T).bin",
+      "destination": "SAT_STV_17742A-(T).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "858fc8d8ad62059ea912ec09e9a38111"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17953A-(T).bin",
+      "destination": "SAT_STV_17953A-(T).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "251f89478034d93abdf54d05b43c16c0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_19854-(T).bin",
+      "destination": "SAT_STV_19854-(T).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fa6117a16a7df94dcc6e9e12896c66f2"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17741A-(U).bin",
+      "destination": "SAT_STV_17741A-(U).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4c51a40cd3d0eec13c3b25c6b70ad632"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17952A-(U).bin",
+      "destination": "SAT_STV_17952A-(U).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "249b67334cfae53810c1d1e3b93957a3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "saturn",
+      "name": "SAT_STV_17954A-(E).bin",
+      "destination": "SAT_STV_17954A-(E).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ba2cb634c15e59d7ea5552729306f2ef"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "sega32x",
+      "name": "32X_G_BIOS.BIN",
+      "destination": "32X_G_BIOS.BIN",
+      "field": "md5",
+      "old": null,
+      "new": "6a5433f6a132a2b683635819a6dcf085"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "sega32x",
+      "name": "32X_M_BIOS.BIN",
+      "destination": "32X_M_BIOS.BIN",
+      "field": "md5",
+      "old": null,
+      "new": "f88354ec482be09aeccd76a97bb75868"
+    },
+    {
+      "kind": "hash_filled",
+      "system": "sega32x",
+      "name": "32X_S_BIOS.BIN",
+      "destination": "32X_S_BIOS.BIN",
+      "field": "md5",
+      "old": null,
+      "new": "7f041b6a55cd7423a6c08a219335269e"
+    },
+    {
+      "kind": "added",
+      "system": "triforce",
+      "name": "IPL_TRI.bin",
+      "destination": "GC/USA/IPL_TRI.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d063803adcced52217989bd825d69eb8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "triforce",
+      "name": "IPL_TRI.bin",
+      "destination": "GC/EUR/IPL_TRI.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d063803adcced52217989bd825d69eb8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "triforce",
+      "name": "IPL_TRI.bin",
+      "destination": "GC/JAP/IPL_TRI.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d063803adcced52217989bd825d69eb8"
+      }
+    },
+    {
+      "kind": "hash_filled",
+      "system": "vectrex",
+      "name": "Vectrex_Bios.bin",
+      "destination": "Vectrex_Bios.bin",
+      "field": "md5",
+      "old": null,
+      "new": "ba9260bb961d60e718378cc16a8051d7"
+    },
+    {
+      "kind": "added",
+      "system": "vectrex",
+      "name": "VEC_Minestorm.vec",
+      "destination": "VEC_Minestorm.vec",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ab082fa8c8e632dd68589a8c7741388f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "xbox",
+      "name": "EEPROM.bin",
+      "destination": "EEPROM.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6d497abbfb773a2e07f8ab71f2a2999d"
+      }
+    }
+  ],
   "hashes_corrected": [
     "dragon32/d64_1.rom md5",
     "neogeocd/neocdz.zip md5"
@@ -38,5 +1693,518 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 248,
+  "removal_candidates": [
+    {
+      "system": "apple2",
+      "name": "apple2.zip",
+      "destination": "apple2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "bizhawk",
+        "mednafen"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "bizhawk",
+        "mednafen"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "bizhawk",
+        "mednafen"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "bizhawk",
+        "mednafen"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "apple2gs",
+      "name": "APPLE2GS.ROM",
+      "destination": "APPLE2GS.ROM",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "gsplus-legacy"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "aquarius",
+      "name": "aquarius.zip",
+      "destination": "aquarius.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "aquarius",
+      "name": "aquariusp.zip",
+      "destination": "aquariusp.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "aquarius",
+      "name": "aquarius2.zip",
+      "destination": "aquarius2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "aquarius",
+      "name": "aquarius_ar.zip",
+      "destination": "aquarius_ar.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "atari7800",
+      "name": "ProSystem.dat",
+      "destination": "ProSystem.dat",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "bizhawk",
+        "prosystem"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "atom",
+      "name": "atom.zip",
+      "destination": "atom.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "bbcmicro",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "coco",
+      "name": "coco2.zip",
+      "destination": "coco2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "dreamcast",
+      "name": "dc.zip",
+      "destination": "dc/dc.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "demul",
+        "flycast",
+        "redream"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "msx",
+      "name": "MSXDOS2.ROM",
+      "destination": "MSXDOS2.ROM",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ares",
+        "bizhawk",
+        "bluemsx",
+        "fbneo",
+        "openmsx",
+        "zesarux"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "msx",
+      "name": "PAINTER.ROM",
+      "destination": "PAINTER.ROM",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ares",
+        "bizhawk",
+        "bluemsx",
+        "fbneo",
+        "openmsx",
+        "zesarux"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "msx2",
+      "name": "nms8245_disk.rom",
+      "destination": "openMSX/share/systemroms/nms8245_disk.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ares",
+        "bizhawk",
+        "bluemsx",
+        "fbneo",
+        "openmsx",
+        "zesarux"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "msx2",
+      "name": "nms8245_disk_1.06.rom",
+      "destination": "openMSX/share/systemroms/nms8245_disk_1.06.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ares",
+        "bizhawk",
+        "bluemsx",
+        "fbneo",
+        "openmsx",
+        "zesarux"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "namco2x6",
+      "name": "r27v1602f.7d",
+      "destination": "pcsx2/bios/r27v1602f.7d",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "groovymame",
+        "mame",
+        "mame2010",
+        "mame2014",
+        "mame2016",
+        "pcsx2x6",
+        "teknoparrot"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "namco2x6",
+      "name": "r27v1602f.8g",
+      "destination": "pcsx2/bios/r27v1602f.8g",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "groovymame",
+        "mame",
+        "mame2010",
+        "mame2014",
+        "mame2016",
+        "pcsx2x6",
+        "teknoparrot"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "pc98",
+      "name": "ITF.ROM",
+      "destination": "np2kai/ITF.ROM",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "nekop2",
+        "np2kai"
+      ],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    },
+    {
+      "system": "supracan",
+      "name": "supracan.zip",
+      "destination": "supracan.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "amigaforever",
+        "exodos",
+        "mugen",
+        "pinballfx",
+        "powerbomberman",
+        "quiverlauncher",
+        "windows",
+        "zaccariapinball"
+      ]
+    }
+  ],
   "invalid": []
 }

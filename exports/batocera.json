@@ -13,6 +13,1553 @@
     "not_added": 1411,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos1024k.img",
+      "destination": "etos1024k.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1cb3775c4775bad75d24447a90a2890b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192uk.img",
+      "destination": "etos192uk.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "5f5730d9b557c44ddb9bc410ce2925d8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atarist",
+      "name": "etos192us.img",
+      "destination": "etos192us.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "796f62574413bc59ca767063b3184f90"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "opera-boot.bin",
+      "destination": "opera-boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j.bin",
+      "destination": "panafz1j.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a496cfdded3da562759be3561317b605"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j-norsa.bin",
+      "destination": "panafz1j-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f6c71de7470d16abe4f71b1444883dc8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10-norsa.bin",
+      "destination": "panafz10-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1477bda80dc33731a65468c1f5bcbee9"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10e-anvil.bin",
+      "destination": "panafz10e-anvil.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a48e6746bd7edec0f40cff078f0bb19f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10e-anvil-norsa.bin",
+      "destination": "panafz10e-anvil-norsa.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "cf11bbb5a16d7af9875cca9de9a15e09"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "sanyotry.bin",
+      "destination": "sanyotry.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "35fa1a1ebaaeea286dc5cd15487c13ea"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "3do_arcade_saot.bin",
+      "destination": "3do_arcade_saot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8970fc987ab89a7f64da9f8a8c4333ff"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1-kanji.bin",
+      "destination": "panafz1-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b8dc97f778a6245c58e064b0312e8281"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz1j-kanji.bin",
+      "destination": "panafz1j-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c23fb5d5e6bb1c240d02cf968972be37"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "panafz10ja-anvil-kanji.bin",
+      "destination": "panafz10ja-anvil-kanji.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "428577250f43edc902ea239c50d2240d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dreamcast",
+      "name": "dc_flash.bin",
+      "destination": "dc/flash.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "0a93f7940c455905bea6e392dfde92a4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dreamcast",
+      "name": "dc_bios.bin",
+      "destination": "dc/boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e10c53c2f8b90bab96ead2d368858623"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5903.bin",
+      "destination": "scph5903.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "ps1_rom.bin",
+      "destination": "ps1_rom.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b"
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "nds",
+      "name": "dsi_bios7.bin",
+      "destination": "dsi_bios7.bin",
+      "field": "md5",
+      "old": "559dae4ea78eb9d67702c56c1d791e81",
+      "new": "322ceeafb77b0cc96a1fcc6271e0e0ae"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "nds",
+      "name": "dsi_bios9.bin",
+      "destination": "dsi_bios9.bin",
+      "field": "md5",
+      "old": "87b665fce118f76251271c3732532777",
+      "new": "23031f25602a52c2df32c39554b0c55e"
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "msx",
+      "name": "MSX.ROM",
+      "destination": "MSX.ROM",
+      "field": "md5",
+      "old": "364a1a579fe5cb8dba54519bcfcdac0d",
+      "new": "aa95aea2563cd5ec0a0919b44cc17d47"
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "DISK.ROM",
+      "destination": "DISK.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "80dcd1ad1a4cf65d64b7ba10504e8190"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "FMPAC.ROM",
+      "destination": "FMPAC.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "KANJI.ROM",
+      "destination": "KANJI.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "febe8782b466d7c3b16de6d104826b34"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "MSXDOS2.ROM",
+      "destination": "MSXDOS2.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6418d091cd6907bbcf940324339e43bb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "PAINTER.ROM",
+      "destination": "PAINTER.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "403cdea1cbd2bb24fae506941f8f655e"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "RS232.ROM",
+      "destination": "RS232.ROM",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "279efd1eae0d358eecd4edc7d9adedf3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "DEFAULT.FNT",
+      "destination": "DEFAULT.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "85b38e4128bbc300e675f55b278683a8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "ITALIC.FNT",
+      "destination": "ITALIC.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c83e50e9f33b8dd893c414691822740d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "INTERNAT.FNT",
+      "destination": "INTERNAT.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ac4f4a90c1b1887db48ded39c9d9c847"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "CYRILLIC.FNT",
+      "destination": "CYRILLIC.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "85b38e4128bbc300e675f55b278683a8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "KOREAN.FNT",
+      "destination": "KOREAN.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "73291e76638a2f5aa2eceb843df468f4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "JAPANESE.FNT",
+      "destination": "JAPANESE.FNT",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "aa28f0703b951a6be8df3e28e20d263d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "CARTS.SHA",
+      "destination": "CARTS.SHA",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "74b0f217fa0e2b8bb5a2f8e2ecc69da3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "px-7_basic-bios1.rom",
+      "destination": "openmsx/share/systemroms/px-7_basic-bios1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9218f6dd89f7ba01e3090d44721b4260"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_click_A500.wav",
+      "destination": "uae_data/drive_click_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_spin_A500.wav",
+      "destination": "uae_data/drive_spin_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7401f854a75f9ede18769168ab896a2a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_spinnd_A500.wav",
+      "destination": "uae_data/drive_spinnd_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f9d954879fee8e96baa93d6139077cdb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_startup_A500.wav",
+      "destination": "uae_data/drive_startup_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_snatch_A500.wav",
+      "destination": "uae_data/drive_snatch_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1a4b2d6254918ff769f26beeede75655"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_click_LOUD.wav",
+      "destination": "uae_data/drive_click_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b64bee23f356635f67fb08b543df9797"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_spin_LOUD.wav",
+      "destination": "uae_data/drive_spin_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_spinnd_LOUD.wav",
+      "destination": "uae_data/drive_spinnd_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "43ab05c6d969cb40805970a5b2352875"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_startup_LOUD.wav",
+      "destination": "uae_data/drive_startup_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga500",
+      "name": "drive_snatch_LOUD.wav",
+      "destination": "uae_data/drive_snatch_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gsplus",
+      "name": "apple2gs.rom",
+      "destination": "AppleIIgs/apple2gs.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "20a0334c447cb069a040ae5be1d938df"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "gsplus",
+      "name": "apple2gs.rom2",
+      "destination": "AppleIIgs/apple2gs.rom2",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ba89edf2729a28a17cd9e0f7a0ac9a39"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "macintosh",
+      "name": "mac128k.rom",
+      "destination": "Macintosh/mac128k.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1d7f52d2d490524954f6afce083d9593"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "macintosh",
+      "name": "mac512k.rom",
+      "destination": "Macintosh/mac512k.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "db7e6d3205a2b48023fba5aa867ac6d6"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "macintosh",
+      "name": "macplus.rom",
+      "destination": "Macintosh/macplus.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8a41e0754ffd1bb00d8183875c55164c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "bas11.rom",
+      "destination": "bas11.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "c73fb4bff9621c5ab17f6220b20db82f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "extbas10.rom",
+      "destination": "extbas10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fda72f415afe99b36f953bb9bc1253da"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "deluxe.rom",
+      "destination": "deluxe.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e27c02fd766e8710240c59ef5424a6ef"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "mx1600bas.rom",
+      "destination": "mx1600bas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "88d1504e93366f498105a846cdbf7fb7"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "mx1600extbas.rom",
+      "destination": "mx1600extbas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6fc82178ae8abe07fa8f6939062291dc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "cp400bas.rom",
+      "destination": "cp400bas.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f73da4d73d6db5cdb8b3cb6a50415e38"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "cp400ext.rom",
+      "destination": "cp400ext.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "091581001577b4a83ccfd511829de0f1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "disk10.rom",
+      "destination": "disk10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a64b3ef9efcc066b18d35b134068d1cc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "coco",
+      "name": "orch90.rom",
+      "destination": "orch90.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "171fb7a5d3b808565295b45c773abaaf"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "d64_1.rom",
+      "destination": "d64_1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "be9bc86ee5eb401d0a40d0377f65fefa"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "d200e_1.rom",
+      "destination": "d200e_1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "03f25edd487df4c98a79b2d504469653"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "d200e_2.rom",
+      "destination": "d200e_2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b5f63a88710fbe6e22579fbc8d72393a"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "d200e_26.rom",
+      "destination": "d200e_26.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "eef971f21318759f15cc9f0328557140"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "alpha-boot-v1.0.rom",
+      "destination": "alpha-boot-v1.0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "283726f0f22603d3e60c27865babccf4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "alpha-boot-v0.4.rom",
+      "destination": "alpha-boot-v0.4.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "01e5577ef5dd9eac00bba3698e046afb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "alpha-basic.rom",
+      "destination": "alpha-basic.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "be9bc86ee5eb401d0a40d0377f65fefa"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "ddos40.rom",
+      "destination": "ddos40.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9ddc388632cd3c376b164ba5cfc64329"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "ddos10.rom",
+      "destination": "ddos10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "1c965da49b6c5459b8353630aa1482e7"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "dplus49b.rom",
+      "destination": "dplus49b.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "56f1b97314e4ca82491c465bb887059e"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "dplus48.rom",
+      "destination": "dplus48.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ee6f24d893a52b8efea9f787855456b5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "sdose6.rom",
+      "destination": "sdose6.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9d85e6b7133f915c021156f4b9cdb512"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "dragon64",
+      "name": "delta2.rom",
+      "destination": "delta2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "024eac3db20f1b5cf98c30a0e4743201"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "adam",
+      "name": "eos.rom",
+      "destination": "eos.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "01df3140909f09aa9aac4f88890f676c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "bbc",
+      "name": "adfs-1.30.rom",
+      "destination": "BBCMicro/adfs-1.30.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "831ee90ac5d49ba5507252faf0c12536"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "bbc",
+      "name": "ADT-1.40.rom",
+      "destination": "BBCMicro/ADT-1.40.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "06c4104c60e6eacd29cc87d54aa7d224"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "bbc",
+      "name": "TUBE110.rom",
+      "destination": "BBCMicro/TUBE110.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a77c7946128ca0b2c5e5a66b17c99dae"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "bbc",
+      "name": "Z80_122.rom",
+      "destination": "BBCMicro/Z80_122.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "816827c1c5c7e2a3427599282acf072f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "archimedes",
+      "name": "ROM311",
+      "destination": "Archimedes/ROM311",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b7e46ab8c832d720942fcd2c8a66c294"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "electron",
+      "name": "os.rom",
+      "destination": "Electron/os.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "98ae4d1fe95f831e56dd70a3bfda6099"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "electron",
+      "name": "ADFS-E00_1.rom",
+      "destination": "Electron/ADFS-E00_1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "92fc37df3597722d312600b800fee790"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "electron",
+      "name": "ADFS-E00_2.rom",
+      "destination": "Electron/ADFS-E00_2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d4cb1d6cdebd720dc653f64e988c36eb"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "electron",
+      "name": "DFS-1770-2.20.rom",
+      "destination": "Electron/DFS-1770-2.20.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "45cb2472c83dae680d8b667a43e0f857"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "electron",
+      "name": "AP6v133.rom",
+      "destination": "Electron/AP6v133.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "bf4a5c24707df0b6be8611fb41722cec"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ee71d6cd464c618c632e6fd62b430d2c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "8f37bd19dd51be456ac8f005fd5669a8"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "0d990484d0dfc1680b20cfabcae373cd"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b2811fa9b209733b61cd49ddb21e1e95"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9c59e0e9875434456ec1b7eb8e51666f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "shaders.dat",
+      "destination": "scummvm/theme/shaders.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f073f17187d0bfa3e7ebb7f328847969"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a206e54bac1af13559ac8b2d9e550577"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "achievements.dat",
+      "destination": "scummvm/extra/achievements.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "73cf5bd61896442a990e363f284a0bc2"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "classicmacfonts.dat",
+      "destination": "scummvm/extra/classicmacfonts.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d4264d4573f22d290e033e1d834d7221"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "encoding.dat",
+      "destination": "scummvm/extra/encoding.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f2e88b2faec499a4914c3a0bcffc7db1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "helpdialog.zip",
+      "destination": "scummvm/extra/helpdialog.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a9584a928c0f52ef28b33d8702983c35"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "macgui.dat",
+      "destination": "scummvm/extra/macgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d97f2965013b343dd3d4fdbbc7192f15"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4f9dd40b455876d5c54b5ebd93aec88c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "bagel.dat",
+      "destination": "scummvm/extra/bagel.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "f6d90885f6962f89de02e34031111599"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "cryo.dat",
+      "destination": "scummvm/extra/cryo.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fc5886ea5388f20eae299bb408da5bcc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7224c7a94074addeb69015b1346695d2"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "darkseed.dat",
+      "destination": "scummvm/extra/darkseed.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9a9cfe40dcca517f130d4430bd1af643"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "b304979ed642a6dcaf26f43f8a37a1de"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "71697f90fb0c7747616dbb0799ce966b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "got.aud",
+      "destination": "scummvm/extra/got.aud",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "d13cc3c481e84e787ec8aa86dffc565f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "got.gfx",
+      "destination": "scummvm/extra/got.gfx",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a29f591769bd731df0d9ddd3a191fe8c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "hadesch_translations.dat",
+      "destination": "scummvm/extra/hadesch_translations.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7857da7e56a11e0749fb45100c323b3c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "a865e70f1b0998a500f522dab441c8fc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ebddd7bbd97135a427083db5daf6f9fc"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6f90cf73f36453d332d5c9cee311f81c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3b1faf40e685b955372e02f54ed70263"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "01f074a6ac34dd86fcc6d1e8090614f0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "mort.dat",
+      "destination": "scummvm/extra/mort.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "3cfb16d7bab4d77606b3b1274b8ae870"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "myst3.dat",
+      "destination": "scummvm/extra/myst3.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "54e9056211f2fff255b6f66a3fe39a8d"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "eb7cfdb3f74972beb8f43196e4e44001"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "neverhood.dat",
+      "destination": "scummvm/extra/neverhood.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "dfaab12ffb265646f31f51b6904246d1"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "prince_translation.dat",
+      "destination": "scummvm/extra/prince_translation.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "993adab2fd44277d5fd7aa5971e7099c"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "93c6d6379eb0290ce93854a6888ec3f4"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "sky.cpt",
+      "destination": "scummvm/extra/sky.cpt",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9d00157b1cebd6368cbf88135c098f40"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "89664136c503a30894d5c713be5bfe90"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4594620989a0bfd8b120da2de7ac30de"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "titanic.dat",
+      "destination": "scummvm/extra/titanic.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4b2fb71201dc3795cff45df6200a1918"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "tony.dat",
+      "destination": "scummvm/extra/tony.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "891022a4e2917bb54b5cdc9a46f5b3df"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "2b71a5d9aa19219d46711e8a77451f0f"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e359fb7f14c4cb072b6e9300a23a6d62"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "ultima8.dat",
+      "destination": "scummvm/extra/ultima8.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e5b95811b05b9f0f593b49c860391200"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9783248899f9cb531f0a3e0a711ab8b3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "6df29d218962e155d0a2114006af45c0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts-cjk.dat",
+      "destination": "scummvm/extra/fonts-cjk.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "18b8811c1bbc297be45f38c3bd6a0728"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts-imgui.dat",
+      "destination": "scummvm/extra/fonts-imgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "grim-patch.lab",
+      "destination": "scummvm/extra/grim-patch.lab",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "32b777b824f02b1e1259903740964058"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "monkey4-patch.m4b",
+      "destination": "scummvm/extra/monkey4-patch.m4b",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "9eb7b7e7cc7dad1fe08be6e73d749abe"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exos10.bin",
+      "destination": "Enterprise/exos10.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "96e8d757c46fcc0d0ccabadd9eaad470"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exos23.bin",
+      "destination": "Enterprise/exos23.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "80115adf36136f30b23c10ea2dd83bef"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "basic10.bin",
+      "destination": "Enterprise/basic10.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "50164616abb582d0bc798e66193a9674"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.0 - EPROM 1-2 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.0 - EPROM 1-2 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "4379a91ff2d02096ad31a2dde6285cd3"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.0 - EPROM 2-2 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.0 - EPROM 2-2 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "eaa21cf569e494ef4ed5cab71b781209"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "basic11.bin",
+      "destination": "Enterprise/basic11.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "7cd7268b9e4a4357fe401021df0335b5"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.1 - EPROM 1.1 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.1 - EPROM 1.1 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "fbfb53de61b3f53d9dde804833fc8087"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "basic21.bin",
+      "destination": "Enterprise/basic21.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e972fe42b398c9ff1d93ff014786aec6"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "epdos.bin",
+      "destination": "Enterprise/epdos.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "e390d30bfafed9d34714fa748dab3890"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exdos.bin",
+      "destination": "Enterprise/exdos.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "849d8796d8d3e3fcf89f151b57db73b0"
+      }
+    },
+    {
+      "kind": "added",
+      "system": "bk",
+      "name": "basic10.rom",
+      "destination": "Oric/basic10.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "ebe418ec8a6c85d5ac32956c9a96c179"
+      }
+    }
+  ],
   "hashes_corrected": [
     "nds/dsi_bios7.bin md5",
     "nds/dsi_bios9.bin md5",
@@ -25,5 +1572,1484 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 115,
+  "removal_candidates": [
+    {
+      "system": "pc60",
+      "name": "pc6001.zip",
+      "destination": "pc6001.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001.zip",
+      "destination": "pc6001.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001.zip",
+      "destination": "pc6001.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001a.zip",
+      "destination": "pc6001a.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001a.zip",
+      "destination": "pc6001a.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2.zip",
+      "destination": "pc6001mk2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2.zip",
+      "destination": "pc6001mk2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2.zip",
+      "destination": "pc6001mk2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2.zip",
+      "destination": "pc6001mk2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2.zip",
+      "destination": "pc6001mk2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2sr.zip",
+      "destination": "pc6001mk2sr.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2sr.zip",
+      "destination": "pc6001mk2sr.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "pc60",
+      "name": "pc6001mk2sr.zip",
+      "destination": "pc6001mk2sr.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtmarty.zip",
+      "destination": "fmtmarty.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtmarty.zip",
+      "destination": "fmtmarty.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtmarty.zip",
+      "destination": "fmtmarty.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtowns.zip",
+      "destination": "fmtowns.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "fmtowns",
+      "name": "fmtownsux.zip",
+      "destination": "fmtownsux.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "tsugaru"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "zc210",
+      "name": "zcsf.sf2",
+      "destination": "zcsf.sf2",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "zc210"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "macos3.img",
+      "destination": "macos3.img",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "macos608.img",
+      "destination": "macos608.img",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "macos701.img",
+      "destination": "macos701.img",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "macos75.img",
+      "destination": "macos75.img",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "mac608.chd",
+      "destination": "mac608.chd",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "mac701.chd",
+      "destination": "mac701.chd",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "macintosh",
+      "name": "mac755.chd",
+      "destination": "mac755.chd",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "minivmac"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "coco",
+      "name": "coco2.zip",
+      "destination": "coco2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "coco",
+      "name": "coco2.zip",
+      "destination": "coco2.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "coco",
+      "name": "coco_fdc_v11.zip",
+      "destination": "coco_fdc_v11.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "cgenie",
+      "name": "cgenie.zip",
+      "destination": "cgenie.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "dragon64",
+      "name": "dragon32.zip",
+      "destination": "dragon32.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "dragon64",
+      "name": "dragon32.zip",
+      "destination": "dragon32.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "mame",
+        "xroar"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "bbc",
+      "name": "bbcb.zip",
+      "destination": "bbcb.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "atom",
+      "name": "atom.zip",
+      "destination": "atom.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "atom",
+      "name": "atom.zip",
+      "destination": "atom.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "atom",
+      "name": "atom.zip",
+      "destination": "atom.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "atom",
+      "name": "atom.zip",
+      "destination": "atom.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2e.zip",
+      "destination": "apple2e.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2ee.zip",
+      "destination": "apple2ee.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "apple2",
+      "name": "apple2p.zip",
+      "destination": "apple2p.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "applewin",
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80k.zip",
+      "destination": "mz80k.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80k.zip",
+      "destination": "mz80k.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80k.zip",
+      "destination": "mz80k.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80kj.zip",
+      "destination": "mz80kj.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80kj.zip",
+      "destination": "mz80kj.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz80k",
+      "name": "mz80kj.zip",
+      "destination": "mz80kj.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz700",
+      "name": "mz700.zip",
+      "destination": "mz700.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz700",
+      "name": "mz700.zip",
+      "destination": "mz700.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz700",
+      "name": "mz700.zip",
+      "destination": "mz700.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz800",
+      "name": "mz800.zip",
+      "destination": "mz800.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz800",
+      "name": "mz800.zip",
+      "destination": "mz800.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2000",
+      "name": "mz2000.zip",
+      "destination": "mz2000.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2000",
+      "name": "mz2000.zip",
+      "destination": "mz2000.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2000",
+      "name": "mz2000.zip",
+      "destination": "mz2000.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "mz2500",
+      "name": "mz2500.zip",
+      "destination": "mz2500.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "supracan",
+      "name": "supracan.zip",
+      "destination": "supracan.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "supracan",
+      "name": "supracan.zip",
+      "destination": "supracan.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "enterprise",
+      "name": "epd19hft.rom",
+      "destination": "ep128emu/roms/epd19hft.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "enterprise",
+      "name": "zt19hfnt.rom",
+      "destination": "ep128emu/roms/zt19hfnt.rom",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    },
+    {
+      "system": "tvc",
+      "name": "tvc64.zip",
+      "destination": "tvc64.zip",
+      "verdict": "undetermined",
+      "reason": "a core the platform names has no profile yet",
+      "cores_examined": [
+        "ep128emu_core"
+      ],
+      "unresolved_cores": [
+        "duckstation-legacy",
+        "mugen",
+        "wine"
+      ]
+    }
+  ],
   "invalid": []
 }

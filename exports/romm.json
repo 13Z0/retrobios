@@ -13,6 +13,1374 @@
     "not_added": 322,
     "not_kept": 0
   },
+  "changes": [
+    {
+      "kind": "added",
+      "system": "3do",
+      "name": "opera-boot.bin",
+      "destination": "opera-boot.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ee0916093b6ed22ce1d4694faa4c1430269c4d0a",
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec",
+        "crc32": "dacb21ad",
+        "size": 131072
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "hiscore.dat",
+      "destination": "fbneo/hiscore.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e",
+        "md5": "f5cdce5b3749d673ad8f073ccc7371e4",
+        "crc32": "ab7b721a",
+        "size": 328397
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "blueshrk.zip",
+      "destination": "mame2003-plus/artwork/blueshrk.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4317f301d6e4117dfde42b33dfaf73a2b25f43c1",
+        "md5": "4659968035d462be471fdfb46b604696",
+        "crc32": "7481c2ea",
+        "size": 925914
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "frogs.zip",
+      "destination": "mame2003-plus/artwork/frogs.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "cdff29398e76b92d93825d96c0f9cae5bb6b3400",
+        "md5": "e30e8ef4631596e25466523b97fee19f",
+        "crc32": "99541e86",
+        "size": 2832731
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "invaders.zip",
+      "destination": "mame2003-plus/artwork/invaders.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "4b18db526ca907707fd888385d907a7a585935d0",
+        "md5": "23d65ad40ac1f2121fe35fe0c7893721",
+        "crc32": "02546fd3",
+        "size": 4324198
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "omegrace.zip",
+      "destination": "mame2003-plus/artwork/omegrace.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1ca22afdfefcfa5943742e988c45c1fc0e1124bd",
+        "md5": "255155cf3f9912c92be8f813e8112a54",
+        "crc32": "04dbbb0a",
+        "size": 1754523
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "skydiver.zip",
+      "destination": "mame2003-plus/artwork/skydiver.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a0548e37e76a21fb37005cff944319ee63f93d1e",
+        "md5": "95e05db7f8fa208daafd7b0d32041db8",
+        "crc32": "143797a3",
+        "size": 117241
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "solarq.zip",
+      "destination": "mame2003-plus/artwork/solarq.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "ff532cee1de69668b0c68238aff0c16813640476",
+        "md5": "b4b70db555dfb48b91a067eea747c771",
+        "crc32": "92998e66",
+        "size": 1342645
+      }
+    },
+    {
+      "kind": "added",
+      "system": "arcade",
+      "name": "warrior.zip",
+      "destination": "mame2003-plus/artwork/warrior.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "57f89bbac39d8071e45c87f97e9b918f31d21994",
+        "md5": "29fe11717016182d446ca6af56a08f75",
+        "crc32": "82a68bb4",
+        "size": 1125335
+      }
+    },
+    {
+      "kind": "added",
+      "system": "atari-st",
+      "name": "tos100.img",
+      "destination": "AtariST/tos100.img",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "9a6e4c88533a9eaa4d55cdc040e47443e0226eb2",
+        "md5": "c87a52c277f7952b41c639fc7bf0a43b",
+        "crc32": "1a586c64",
+        "size": 196608
+      }
+    },
+    {
+      "kind": "added",
+      "system": "colecovision",
+      "name": "coleco.rom",
+      "destination": "ColecoVision/coleco.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "45bedc4cbdeac66c7df59e9e599195c778d86a92",
+        "md5": "2c66f5911e5b42b8ebe113403548eee7",
+        "crc32": "3aa93ef3",
+        "size": 8192
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+      "destination": "Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
+        "md5": "82a21c1890cae844b3df741f2762d48d",
+        "crc32": "c4f0f55f",
+        "size": 262144
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_click_A500.wav",
+      "destination": "uae_data/drive_click_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "34f05541606ee8acd033eadbda082b90051253cc",
+        "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
+        "crc32": "27324b7d",
+        "size": 3313326
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_spin_A500.wav",
+      "destination": "uae_data/drive_spin_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a117647990e2e9debb7ac65a0db429a59bb630f0",
+        "md5": "7401f854a75f9ede18769168ab896a2a",
+        "crc32": "5f7cb73b",
+        "size": 134294
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_spinnd_A500.wav",
+      "destination": "uae_data/drive_spinnd_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "786cf1cbd8eabaeb150dabb6b8a1aeca0ed71634",
+        "md5": "f9d954879fee8e96baa93d6139077cdb",
+        "crc32": "2c673174",
+        "size": 352430
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_startup_A500.wav",
+      "destination": "uae_data/drive_startup_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "db8de831a59a44dc6070166e2005c330a793a48d",
+        "md5": "aebeacc7e7bc52ef890785c835bec3d0",
+        "crc32": "cb552e00",
+        "size": 34450
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_snatch_A500.wav",
+      "destination": "uae_data/drive_snatch_A500.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b8dd63077e12bdeacd3ad70ba41614dc52aa8023",
+        "md5": "1a4b2d6254918ff769f26beeede75655",
+        "crc32": "4ac3c05e",
+        "size": 34450
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_click_LOUD.wav",
+      "destination": "uae_data/drive_click_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "fa5df7c9fe3ee70cafbe232ff4f453982c6d1ce2",
+        "md5": "b64bee23f356635f67fb08b543df9797",
+        "crc32": "59069982",
+        "size": 3308526
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_spin_LOUD.wav",
+      "destination": "uae_data/drive_spin_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5b1d8c880f8d8fcd9309a7889817611cc27e16e0",
+        "md5": "56d8e36a2f04b5e8c5a1f1530cfc886c",
+        "crc32": "1969eea0",
+        "size": 20216
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_spinnd_LOUD.wav",
+      "destination": "uae_data/drive_spinnd_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d1709931cfe05b3bd31b6ef3d9697a22c934549b",
+        "md5": "43ab05c6d969cb40805970a5b2352875",
+        "crc32": "49e72ce7",
+        "size": 241790
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_startup_LOUD.wav",
+      "destination": "uae_data/drive_startup_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "38e63f700ee6a5be71ded6c057267562c00f3e31",
+        "md5": "743b4b9f0ca645c4c2a34953b5e01e45",
+        "crc32": "d746cc1e",
+        "size": 43492
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga",
+      "name": "drive_snatch_LOUD.wav",
+      "destination": "uae_data/drive_snatch_LOUD.wav",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0417e6e7fee2aebae972ce4d00101a0ce363af32",
+        "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
+        "crc32": "b015251a",
+        "size": 39864
+      }
+    },
+    {
+      "kind": "added",
+      "system": "msx",
+      "name": "msx-japanese.rom",
+      "destination": "MSX/msx-japanese.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "302afb5d8be26c758309ca3df611ae69cced2821",
+        "md5": "9218f6dd89f7ba01e3090d44721b4260",
+        "crc32": "ee229390",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "ngc",
+      "name": "codehandler.bin",
+      "destination": "codehandler.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
+        "md5": "1f118b8735fcf40c20b38c3184eebfd9",
+        "size": 2880
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "128.rom",
+      "destination": "ZXSpectrum/128.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "16375d42ea109b47edded7a16028de7fdb3013a1",
+        "md5": "85fede415f4294cc777517d7eada482e",
+        "crc32": "2cbe8995",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "plus2.rom",
+      "destination": "ZXSpectrum/plus2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "8cafb292af58617907b9e6b9093d3588a75849b8",
+        "md5": "238f77692156a5c49d20c0aa2862e8bb",
+        "crc32": "e7a517dc",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "plus3.rom",
+      "destination": "ZXSpectrum/plus3.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "929bf1a5e5687ebd8d7245f9b513a596c0ec21a4",
+        "md5": "05de80a055b5e7866f55769db0584d6e",
+        "crc32": "96e3c17a",
+        "size": 65536
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "zx128.rom",
+      "destination": "ep128emu/roms/zx128.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "16375d42ea109b47edded7a16028de7fdb3013a1",
+        "md5": "85fede415f4294cc777517d7eada482e",
+        "crc32": "2cbe8995",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "zx48.rom",
+      "destination": "ep128emu/roms/zx48.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5ea7c2b824672e914525d1d5c419d71b84a426a2",
+        "md5": "4c42a2f075212361c3117015b107ff68",
+        "crc32": "ddee531f",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "fuse/48.rom",
+      "destination": "fuse/48.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5ea7c2b824672e914525d1d5c419d71b84a426a2",
+        "md5": "4c42a2f075212361c3117015b107ff68",
+        "crc32": "ddee531f",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "fuse/plus3e-0.rom",
+      "destination": "fuse/plus3e-0.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "649fbd233490bf58b35350b0123d36caaaa011eb",
+        "md5": "bc123f625e245c225f92ef05933ed134",
+        "crc32": "7f4a5482",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "fuse/plus3e-1.rom",
+      "destination": "fuse/plus3e-1.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "f12198108cbb14de4f03c6695bc16d08c85ee214",
+        "md5": "617364264c587d20c9fc4746c29679f2",
+        "crc32": "5aeb4675",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "zxs",
+      "name": "fuse/plus3e-2.rom",
+      "destination": "fuse/plus3e-2.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "773633dce5ba323a9e00d9d0f9e4d8c295df7c87",
+        "md5": "c363e95dcd0a90e6e7f847e6e47e0179",
+        "crc32": "504755cb",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "scph5903.bin",
+      "destination": "scph5903.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "15c94da3cc5a38a582429575af4198c487fe893c",
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb",
+        "crc32": "446ec5b2",
+        "size": 1048576
+      }
+    },
+    {
+      "kind": "added",
+      "system": "psx",
+      "name": "ps1_rom.bin",
+      "destination": "ps1_rom.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c40146361eb8cf670b19fdc9759190257803cab7",
+        "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b",
+        "crc32": "2f53b852",
+        "size": 524288
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummmodern.zip",
+      "destination": "scummvm/theme/scummmodern.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
+        "md5": "ee71d6cd464c618c632e6fd62b430d2c",
+        "crc32": "00194297",
+        "size": 68087
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummclassic.zip",
+      "destination": "scummvm/theme/scummclassic.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "69836fb392710f2182df07bab8960e8a2d92c1a9",
+        "md5": "8f37bd19dd51be456ac8f005fd5669a8",
+        "crc32": "103168ea",
+        "size": 16488
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "scummremastered.zip",
+      "destination": "scummvm/theme/scummremastered.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
+        "md5": "0d990484d0dfc1680b20cfabcae373cd",
+        "crc32": "6fa86fae",
+        "size": 93901
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "residualvm.zip",
+      "destination": "scummvm/theme/residualvm.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "589b622f55c9944c4883e4163d4d49508e22e056",
+        "md5": "b2811fa9b209733b61cd49ddb21e1e95",
+        "crc32": "93296840",
+        "size": 94555
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "gui-icons.dat",
+      "destination": "scummvm/theme/gui-icons.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "38e74e6994924781487a0d39cc53dc4708a90c1c",
+        "md5": "9c59e0e9875434456ec1b7eb8e51666f",
+        "crc32": "0aa0c87d",
+        "size": 3315855
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "shaders.dat",
+      "destination": "scummvm/theme/shaders.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c",
+        "md5": "f073f17187d0bfa3e7ebb7f328847969",
+        "crc32": "cb68c12e",
+        "size": 657234
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "translations.dat",
+      "destination": "scummvm/theme/translations.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4",
+        "md5": "a206e54bac1af13559ac8b2d9e550577",
+        "crc32": "14689714",
+        "size": 3693914
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "achievements.dat",
+      "destination": "scummvm/extra/achievements.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "379f9def6d0de4b4bad18b0177df81783a51f17b",
+        "md5": "73cf5bd61896442a990e363f284a0bc2",
+        "crc32": "6b35801f",
+        "size": 249239
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "classicmacfonts.dat",
+      "destination": "scummvm/extra/classicmacfonts.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1",
+        "md5": "d4264d4573f22d290e033e1d834d7221",
+        "crc32": "c75b019e",
+        "size": 626103
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "encoding.dat",
+      "destination": "scummvm/extra/encoding.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "11d3873337827195bc16c3d3175ad00f1777ed95",
+        "md5": "f2e88b2faec499a4914c3a0bcffc7db1",
+        "crc32": "d3235017",
+        "size": 179670
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "helpdialog.zip",
+      "destination": "scummvm/extra/helpdialog.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "386d8a89e180f8abab53e5d5926b6a81ee4b31dd",
+        "md5": "a9584a928c0f52ef28b33d8702983c35",
+        "crc32": "80075ee5",
+        "size": 207764
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "macgui.dat",
+      "destination": "scummvm/extra/macgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1eed577281b8819367d1ee99b1a76ff3e1920735",
+        "md5": "d97f2965013b343dd3d4fdbbc7192f15",
+        "crc32": "858d3d40",
+        "size": 65656
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "access.dat",
+      "destination": "scummvm/extra/access.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
+        "md5": "4f9dd40b455876d5c54b5ebd93aec88c",
+        "crc32": "f63ddcc5",
+        "size": 520352
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "bagel.dat",
+      "destination": "scummvm/extra/bagel.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835",
+        "md5": "f6d90885f6962f89de02e34031111599",
+        "crc32": "299496de",
+        "size": 20584
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "cryo.dat",
+      "destination": "scummvm/extra/cryo.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "220c2fe52d26b8607abeb2ad4a8ea4324daea5ba",
+        "md5": "fc5886ea5388f20eae299bb408da5bcc",
+        "crc32": "34b2202c",
+        "size": 12499
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "cryomni3d.dat",
+      "destination": "scummvm/extra/cryomni3d.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "3971847e26be0abad8196caf03e5852a81ddbdea",
+        "md5": "7224c7a94074addeb69015b1346695d2",
+        "crc32": "5956e0e9",
+        "size": 70416
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "darkseed.dat",
+      "destination": "scummvm/extra/darkseed.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "343172f1bfff8cb8c4abefa95e211379f39583b7",
+        "md5": "9a9cfe40dcca517f130d4430bd1af643",
+        "crc32": "c7ecb1dd",
+        "size": 37183
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "drascula.dat",
+      "destination": "scummvm/extra/drascula.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "05c97e92439b67aea8f6eb7fc96db023edf62124",
+        "md5": "b304979ed642a6dcaf26f43f8a37a1de",
+        "crc32": "b36f7b0e",
+        "size": 259625
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "freescape.dat",
+      "destination": "scummvm/extra/freescape.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd",
+        "md5": "71697f90fb0c7747616dbb0799ce966b",
+        "crc32": "54f0350e",
+        "size": 30124
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "got.aud",
+      "destination": "scummvm/extra/got.aud",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "209ab6d86a7c44f241689c5511b2027f7ad2c7c4",
+        "md5": "d13cc3c481e84e787ec8aa86dffc565f",
+        "crc32": "0b61b41f",
+        "size": 11313
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "got.gfx",
+      "destination": "scummvm/extra/got.gfx",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0c9603da78b980bcf391bbf5f9103a5a642c4ee8",
+        "md5": "a29f591769bd731df0d9ddd3a191fe8c",
+        "crc32": "395cc89b",
+        "size": 288199
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "hadesch_translations.dat",
+      "destination": "scummvm/extra/hadesch_translations.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "17aae444b3010e72e092635d25d3b93c104b0ad2",
+        "md5": "7857da7e56a11e0749fb45100c323b3c",
+        "crc32": "2bde2e57",
+        "size": 431
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "hugo.dat",
+      "destination": "scummvm/extra/hugo.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9",
+        "md5": "a865e70f1b0998a500f522dab441c8fc",
+        "crc32": "fc0dd1cb",
+        "size": 186866
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "kyra.dat",
+      "destination": "scummvm/extra/kyra.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "31b0b9418af2f9dd4e4094aada05d48eb355975b",
+        "md5": "ebddd7bbd97135a427083db5daf6f9fc",
+        "crc32": "6b7229ce",
+        "size": 2028520
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "lure.dat",
+      "destination": "scummvm/extra/lure.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "516347ec0ec2a397265d1b2fb053aa3758382e09",
+        "md5": "6f90cf73f36453d332d5c9cee311f81c",
+        "crc32": "d616bea5",
+        "size": 768832
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "macventure.dat",
+      "destination": "scummvm/extra/macventure.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e431e718e3c784532422ea2654d5fc6042a95c09",
+        "md5": "3b1faf40e685b955372e02f54ed70263",
+        "crc32": "24a09690",
+        "size": 4146
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "mm.dat",
+      "destination": "scummvm/extra/mm.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0816fe29b57911b28cbf774348f5492062326a85",
+        "md5": "01f074a6ac34dd86fcc6d1e8090614f0",
+        "crc32": "f007671e",
+        "size": 280803
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "mort.dat",
+      "destination": "scummvm/extra/mort.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0b9d0fa2a18eadf61aeddc19128ef90898ab7206",
+        "md5": "3cfb16d7bab4d77606b3b1274b8ae870",
+        "crc32": "6d234148",
+        "size": 76302
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "myst3.dat",
+      "destination": "scummvm/extra/myst3.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5fbf7b1a596219f0daab60a8ceb2f1e59e042243",
+        "md5": "54e9056211f2fff255b6f66a3fe39a8d",
+        "crc32": "316151a0",
+        "size": 358287
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "nancy.dat",
+      "destination": "scummvm/extra/nancy.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
+        "md5": "eb7cfdb3f74972beb8f43196e4e44001",
+        "crc32": "d7976af8",
+        "size": 255042
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "neverhood.dat",
+      "destination": "scummvm/extra/neverhood.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "490012c996ba0c56dd8d077e1418ee53b1e96397",
+        "md5": "dfaab12ffb265646f31f51b6904246d1",
+        "crc32": "25b76433",
+        "size": 23804
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "prince_translation.dat",
+      "destination": "scummvm/extra/prince_translation.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "57403a286c4d251384442a507d285b2dc5ce330e",
+        "md5": "993adab2fd44277d5fd7aa5971e7099c",
+        "crc32": "7f92430d",
+        "size": 168060
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "queen.tbl",
+      "destination": "scummvm/extra/queen.tbl",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "7bafa28dfd9b3be17430d467d8787d8204437ba0",
+        "md5": "93c6d6379eb0290ce93854a6888ec3f4",
+        "crc32": "d713b1ab",
+        "size": 1100505
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "sky.cpt",
+      "destination": "scummvm/extra/sky.cpt",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "fa03ede717223eaf011491d2066e37eb112e735b",
+        "md5": "9d00157b1cebd6368cbf88135c098f40",
+        "crc32": "a7957203",
+        "size": 419427
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "supernova.dat",
+      "destination": "scummvm/extra/supernova.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "8a571cfc431b5fe794f0262f0e55f72927ab27b4",
+        "md5": "89664136c503a30894d5c713be5bfe90",
+        "crc32": "9643ad1a",
+        "size": 523211
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "teenagent.dat",
+      "destination": "scummvm/extra/teenagent.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0d488164930332bae3aa1ad38cef44abbe3d00a6",
+        "md5": "4594620989a0bfd8b120da2de7ac30de",
+        "crc32": "90b9e752",
+        "size": 403315
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "titanic.dat",
+      "destination": "scummvm/extra/titanic.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "15f51828f08fdbe01b56123e96312b5859a968c0",
+        "md5": "4b2fb71201dc3795cff45df6200a1918",
+        "crc32": "96ce1712",
+        "size": 3197968
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "tony.dat",
+      "destination": "scummvm/extra/tony.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "a5e19f364bda6a0d2330495114c9ad665bb79ad0",
+        "md5": "891022a4e2917bb54b5cdc9a46f5b3df",
+        "crc32": "d525aac3",
+        "size": 24584
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "toon.dat",
+      "destination": "scummvm/extra/toon.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "85bb688125d66f2797a41f153ce1fa177027a83f",
+        "md5": "2b71a5d9aa19219d46711e8a77451f0f",
+        "crc32": "7731190d",
+        "size": 20996
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "ultima.dat",
+      "destination": "scummvm/extra/ultima.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "e049932518390257f4d49b1691cad229e6060079",
+        "md5": "e359fb7f14c4cb072b6e9300a23a6d62",
+        "crc32": "c15f9059",
+        "size": 15981464
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "ultima8.dat",
+      "destination": "scummvm/extra/ultima8.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "6319d3a245297697c1e4def78dc231a3f30708bb",
+        "md5": "e5b95811b05b9f0f593b49c860391200",
+        "crc32": "b0b33433",
+        "size": 238149
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "wintermute.zip",
+      "destination": "scummvm/extra/wintermute.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "5302f543384b21fb55466118a6966e5ef46b85f6",
+        "md5": "9783248899f9cb531f0a3e0a711ab8b3",
+        "crc32": "f7dc9bc4",
+        "size": 4520
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts.dat",
+      "destination": "scummvm/extra/fonts.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "1eaef39122559500fbbc705c9425500311d23e03",
+        "md5": "6df29d218962e155d0a2114006af45c0",
+        "crc32": "f59313fa",
+        "size": 6449829
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts-cjk.dat",
+      "destination": "scummvm/extra/fonts-cjk.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "b46f5a744387d1991d66a06292811f217ae063e2",
+        "md5": "18b8811c1bbc297be45f38c3bd6a0728",
+        "crc32": "408b4855",
+        "size": 38277312
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "fonts-imgui.dat",
+      "destination": "scummvm/extra/fonts-imgui.dat",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "659a025dfa39a8caada7dac6e69b4d7c88217b3f",
+        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b",
+        "crc32": "ef97328a",
+        "size": 4000965
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "grim-patch.lab",
+      "destination": "scummvm/extra/grim-patch.lab",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "3c43b7a0125f88a9f83ae4307dca57867ffd637c",
+        "md5": "32b777b824f02b1e1259903740964058",
+        "crc32": "d4ccf3ab",
+        "size": 9341
+      }
+    },
+    {
+      "kind": "added",
+      "system": "scummvm",
+      "name": "monkey4-patch.m4b",
+      "destination": "scummvm/extra/monkey4-patch.m4b",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "49fc530e77b61f326f6e1d5a5147daa2fd67d1e2",
+        "md5": "9eb7b7e7cc7dad1fe08be6e73d749abe",
+        "crc32": "a229c4cf",
+        "size": 2990
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "os464.rom",
+      "destination": "AmstradCPC/os464.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "475c8080065a7aa9984daca0415a3d70a5305be2",
+        "md5": "a175623be3162846c46eae2ca1723031",
+        "crc32": "815752df",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "basic464.rom",
+      "destination": "AmstradCPC/basic464.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "0e414c79f7d4458c68ddc0fc2fec96b0045fda88",
+        "md5": "f7f3b668537b135dd42195e76c5d490e",
+        "crc32": "7d9a3bac",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "os664.rom",
+      "destination": "AmstradCPC/os664.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "285cfd583b69b4a50cd1bf2d0ce2a2eb2e5863ec",
+        "md5": "2b04cc6c472e2d405092dd10b26b074e",
+        "crc32": "3f5a6dc4",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "basic664.rom",
+      "destination": "AmstradCPC/basic664.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "471b8068f29e6e9c43723864e220c0b0387f5cbe",
+        "md5": "d81ab6eb0fa175124329bf56eec0a272",
+        "crc32": "32fee492",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "os6128.rom",
+      "destination": "AmstradCPC/os6128.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "732ac62865052d7526a0a1a93f5beb66fa18f67d",
+        "md5": "9ba1b052c77713024bf2eb224cad2062",
+        "crc32": "0219bb74",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "acpc",
+      "name": "basic6128.rom",
+      "destination": "AmstradCPC/basic6128.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "d7d03755099d0aff501fa5fffc9c0b14c0825448",
+        "md5": "2cc1ba759f835c98a480a152d786b877",
+        "crc32": "ca6af63d",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exos10.bin",
+      "destination": "Enterprise/exos10.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "dbe6ceeb5a5d7f2a3ef9777478b26a7fbc2ba0f6",
+        "md5": "96e8d757c46fcc0d0ccabadd9eaad470",
+        "crc32": "30b26387",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exos23.bin",
+      "destination": "Enterprise/exos23.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c6241e1c248193108ce38b9a8e9dd33972cf47ba",
+        "md5": "80115adf36136f30b23c10ea2dd83bef",
+        "crc32": "24838410",
+        "size": 65536
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "basic10.bin",
+      "destination": "Enterprise/basic10.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "36e12c4ea782ca769225178f61b55bc9a9afb927",
+        "md5": "50164616abb582d0bc798e66193a9674",
+        "crc32": "d62e4fb7",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.0 - EPROM 1-2 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.0 - EPROM 1-2 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "6116382b057d29c2b8d308edaab367bd1ec8f797",
+        "md5": "4379a91ff2d02096ad31a2dde6285cd3",
+        "crc32": "37bf48e1",
+        "size": 8193
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.0 - EPROM 2-2 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.0 - EPROM 2-2 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "c5d929677e163a068df92c1640b218979bac9270",
+        "md5": "eaa21cf569e494ef4ed5cab71b781209",
+        "crc32": "c5298c79",
+        "size": 8193
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "basic11.bin",
+      "destination": "Enterprise/basic11.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "50a548d1df3ea86f9b5fa669afd8ff124050e776",
+        "md5": "7cd7268b9e4a4357fe401021df0335b5",
+        "crc32": "683cf455",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "BASIC 1.1 - EPROM 1.1 (198x)(Enterprise).bin",
+      "destination": "Enterprise/BASIC 1.1 - EPROM 1.1 (198x)(Enterprise).bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "16232fa105df04b02b657dbd98a0c07bf474c0aa",
+        "md5": "fbfb53de61b3f53d9dde804833fc8087",
+        "crc32": "c96b7602",
+        "size": 16385
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "epdos.bin",
+      "destination": "Enterprise/epdos.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "08da5017cb95c9f5edf07a66903eef414621cd7d",
+        "md5": "e390d30bfafed9d34714fa748dab3890",
+        "crc32": "201319eb",
+        "size": 32768
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "exdos.bin",
+      "destination": "Enterprise/exdos.bin",
+      "field": null,
+      "old": null,
+      "new": {
+        "sha1": "05ba161aa8796c04f227eb2d52496943ada814f2",
+        "md5": "849d8796d8d3e3fcf89f151b57db73b0",
+        "crc32": "e6daa0e9",
+        "size": 16384
+      }
+    },
+    {
+      "kind": "hash_corrected",
+      "system": "doom",
+      "name": "PLUTONIA.WAD",
+      "destination": "doom/PLUTONIA.WAD",
+      "field": "sha1",
+      "old": " 816c7c6b0098f66c299c9253f62bd908456efb63",
+      "new": "816c7c6b0098f66c299c9253f62bd908456efb63"
+    }
+  ],
   "hashes_corrected": [
     "doom/PLUTONIA.WAD sha1"
   ],
@@ -23,5 +1391,2216 @@
   "requirements_corrected": 0,
   "withheld": [],
   "found_by_content": 0,
+  "removal_candidates": [
+    {
+      "system": "arcade",
+      "name": "airlbios.zip",
+      "destination": "arcade/airlbios.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "awbios.zip",
+      "destination": "arcade/awbios.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "f355bios.zip",
+      "destination": "arcade/f355bios.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "f355dlx.zip",
+      "destination": "arcade/f355dlx.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "hod2bios.zip",
+      "destination": "arcade/hod2bios.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "naomi.zip",
+      "destination": "arcade/naomi.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "arcade",
+      "name": "naomi2.zip",
+      "destination": "arcade/naomi2.zip",
+      "verdict": "undetermined",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame2003, mame2003_plus",
+      "cores_examined": [
+        "fbneo",
+        "mame2003",
+        "mame2003_plus"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "prboom.wad",
+      "destination": "doom/prboom.wad",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "DOOM64.WAD",
+      "destination": "doom/DOOM64.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "HEXEN.WAD",
+      "destination": "doom/HEXEN.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "HEXDD.WAD",
+      "destination": "doom/HEXDD.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "STRIFE0.WAD",
+      "destination": "doom/STRIFE0.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "STRIFE1.WAD",
+      "destination": "doom/STRIFE1.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "VOICES.WAD",
+      "destination": "doom/VOICES.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "doom",
+      "name": "CHEX.WAD",
+      "destination": "doom/CHEX.WAD",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "prboom"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "j2me",
+      "name": "freej2me-sdl.jar",
+      "destination": "j2me/freej2me-sdl.jar",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "freej2me",
+        "squirreljme"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "j2me",
+      "name": "freej2me.jar",
+      "destination": "j2me/freej2me.jar",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "freej2me",
+        "squirreljme"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "CARTS.SHA",
+      "destination": "msx/CARTS.SHA",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "CYRILLIC.FNT",
+      "destination": "msx/CYRILLIC.FNT",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "FMPAC16.ROM",
+      "destination": "msx/FMPAC16.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "ITALIC.FNT",
+      "destination": "msx/ITALIC.FNT",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "MSX2P.ROM",
+      "destination": "msx/MSX2P.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "MSX2PEXT.ROM",
+      "destination": "msx/MSX2PEXT.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "MSXDOS2.ROM",
+      "destination": "msx/MSXDOS2.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "PAINTER.ROM",
+      "destination": "msx/PAINTER.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "msx",
+      "name": "RS232.ROM",
+      "destination": "msx/RS232.ROM",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "pc-9800-series",
+      "name": "itf.rom",
+      "destination": "pc-9800-series/itf.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "nekop2",
+        "np2kai"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "pc-fx",
+      "name": "fx-scsi.rom",
+      "destination": "pc-fx/fx-scsi.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "pc-fx",
+      "name": "pcfxga.rom",
+      "destination": "pc-fx/pcfxga.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "pc-fx",
+      "name": "pcfxv101.bin",
+      "destination": "pc-fx/pcfxv101.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_pcfx"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-dvd-20010608.bin",
+      "destination": "ngc/gc-dvd-20010608.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-dvd-20010831.bin",
+      "destination": "ngc/gc-dvd-20010831.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-dvd-20020402.bin",
+      "destination": "ngc/gc-dvd-20020402.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-dvd-20020823.bin",
+      "destination": "ngc/gc-dvd-20020823.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-ntsc-10.bin",
+      "destination": "ngc/gc-ntsc-10.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-ntsc-11.bin",
+      "destination": "ngc/gc-ntsc-11.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-ntsc-12.bin",
+      "destination": "ngc/gc-ntsc-12.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-pal-10.bin",
+      "destination": "ngc/gc-pal-10.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-pal-11.bin",
+      "destination": "ngc/gc-pal-11.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ngc",
+      "name": "gc-pal-12.bin",
+      "destination": "ngc/gc-pal-12.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "dolphin",
+        "dolphin_launcher",
+        "ishiiruka",
+        "primehack"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "satellaview",
+      "name": "BS-X (En).bin",
+      "destination": "satellaview/BS-X (En).bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "bsnes",
+        "snes9x"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "satellaview",
+      "name": "BS-X (En) (DRM-Free).bin",
+      "destination": "satellaview/BS-X (En) (DRM-Free).bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "bsnes",
+        "snes9x"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "super-gb",
+      "name": "sgb1.program.rom",
+      "destination": "super-gb/sgb1.program.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "mgba"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "super-gb",
+      "name": "sgb2.program.rom",
+      "destination": "super-gb/sgb2.program.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "mgba"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "dc",
+      "name": "dc_boot.bin",
+      "destination": "dc/dc_boot.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "dc",
+      "name": "dc_flash.bin",
+      "destination": "dc/dc_flash.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "dc",
+      "name": "flash.bin",
+      "destination": "dc/flash.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "dc",
+      "name": "naomi_boot.bin",
+      "destination": "dc/naomi_boot.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [],
+      "unresolved_cores": []
+    },
+    {
+      "system": "genesis",
+      "name": "rom.db",
+      "destination": "genesis/rom.db",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "genesis_plus_gx",
+        "genesis_plus_gx_wide",
+        "picodrive"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "hisaturn.bin",
+      "destination": "saturn/hisaturn.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "mpr-18100.bin",
+      "destination": "saturn/mpr-18100.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "mpr-18811-mx.ic1",
+      "destination": "saturn/mpr-18811-mx.ic1",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "mpr-19367-mx.ic1",
+      "destination": "saturn/mpr-19367-mx.ic1",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "sega1003.bin",
+      "destination": "saturn/sega1003.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "sega_100.bin",
+      "destination": "saturn/sega_100.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "sega_100a.bin",
+      "destination": "saturn/sega_100a.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "saturn",
+      "name": "vsaturn.bin",
+      "destination": "saturn/vsaturn.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "yabause"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "128-spanish-0.rom",
+      "destination": "zxs/128-spanish-0.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "128-spanish-1.rom",
+      "destination": "zxs/128-spanish-1.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "128p-0.rom",
+      "destination": "zxs/128p-0.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "256s-0.rom",
+      "destination": "zxs/256s-0.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "256s-1.rom",
+      "destination": "zxs/256s-1.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "256s-2.rom",
+      "destination": "zxs/256s-2.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "256s-3.rom",
+      "destination": "zxs/256s-3.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "disk_plus3.szx",
+      "destination": "zxs/disk_plus3.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "gluck.rom",
+      "destination": "zxs/gluck.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "if1-1.rom",
+      "destination": "zxs/if1-1.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "if1-2.rom",
+      "destination": "zxs/if1-2.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "plus3e-0.rom",
+      "destination": "zxs/plus3e-0.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "plus3e-1.rom",
+      "destination": "zxs/plus3e-1.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "plus3e-2.rom",
+      "destination": "zxs/plus3e-2.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_128.szx",
+      "destination": "zxs/tape_128.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_16.szx",
+      "destination": "zxs/tape_16.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_2048.szx",
+      "destination": "zxs/tape_2048.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_2068.szx",
+      "destination": "zxs/tape_2068.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_48.szx",
+      "destination": "zxs/tape_48.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_pentagon.szx",
+      "destination": "zxs/tape_pentagon.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_plus2.szx",
+      "destination": "zxs/tape_plus2.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_plus2a.szx",
+      "destination": "zxs/tape_plus2a.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_plus3.szx",
+      "destination": "zxs/tape_plus3.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_plus3e.szx",
+      "destination": "zxs/tape_plus3e.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_scorpion.szx",
+      "destination": "zxs/tape_scorpion.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_se.szx",
+      "destination": "zxs/tape_se.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "tape_ts2068.szx",
+      "destination": "zxs/tape_ts2068.szx",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "zxs",
+      "name": "trdos.rom",
+      "destination": "zxs/trdos.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk",
+        "ep128emu",
+        "ep128emu_core",
+        "fuse"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "front-sp1.bin",
+      "destination": "neo-geo-cd/front-sp1.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "neocd_f.rom",
+      "destination": "neo-geo-cd/neocd_f.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "neocd_sf.rom",
+      "destination": "neo-geo-cd/neocd_sf.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "neocd_st.rom",
+      "destination": "neo-geo-cd/neocd_st.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "neocd_t.rom",
+      "destination": "neo-geo-cd/neocd_t.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "neocd_z.rom",
+      "destination": "neo-geo-cd/neocd_z.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "neo-geo-cd",
+      "name": "top-sp1.bin",
+      "destination": "neo-geo-cd/top-sp1.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "fbneo"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph1000.bin",
+      "destination": "psx/scph1000.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph1002.bin",
+      "destination": "psx/scph1002.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph100.bin",
+      "destination": "psx/scph100.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph102A.bin",
+      "destination": "psx/scph102A.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph102B.bin",
+      "destination": "psx/scph102B.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph102C.bin",
+      "destination": "psx/scph102C.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph3000.bin",
+      "destination": "psx/scph3000.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph3500.bin",
+      "destination": "psx/scph3500.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph5000.bin",
+      "destination": "psx/scph5000.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph7002.bin",
+      "destination": "psx/scph7002.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph7502.bin",
+      "destination": "psx/scph7502.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "psx",
+      "name": "scph9002(7502).bin",
+      "destination": "psx/scph9002(7502).bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "beetle_psx",
+        "pcsx_rearmed"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "scummvm",
+      "name": "scummvm.zip",
+      "destination": "scummvm/scummvm.zip",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "scummvm"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "enterprise",
+      "name": "epd19hft.rom",
+      "destination": "enterprise/epd19hft.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "enterprise",
+      "name": "zt18hfnt.rom",
+      "destination": "enterprise/zt18hfnt.rom",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "clk"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0100jd-20000117.bin",
+      "destination": "ps2/ps2-0100jd-20000117.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0100j-20000117.bin",
+      "destination": "ps2/ps2-0100j-20000117.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0101jd-20000217.bin",
+      "destination": "ps2/ps2-0101jd-20000217.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0101j-20000217.bin",
+      "destination": "ps2/ps2-0101j-20000217.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0101xd-20000224.bin",
+      "destination": "ps2/ps2-0101xd-20000224.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0110ad-20000727.bin",
+      "destination": "ps2/ps2-0110ad-20000727.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0110a-20000727.bin",
+      "destination": "ps2/ps2-0110a-20000727.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120a-20000902.bin",
+      "destination": "ps2/ps2-0120a-20000902.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120ed-20000902.bin",
+      "destination": "ps2/ps2-0120ed-20000902.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120ed-20000902-20030110.bin",
+      "destination": "ps2/ps2-0120ed-20000902-20030110.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120e-20000902.bin",
+      "destination": "ps2/ps2-0120e-20000902.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120j-20001027-185015.bin",
+      "destination": "ps2/ps2-0120j-20001027-185015.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0120j-20001027-191435.bin",
+      "destination": "ps2/ps2-0120j-20001027-191435.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150ad-20001228-20030520.bin",
+      "destination": "ps2/ps2-0150ad-20001228-20030520.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150a-20001228.bin",
+      "destination": "ps2/ps2-0150a-20001228.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150ed-20001228-20030520.bin",
+      "destination": "ps2/ps2-0150ed-20001228-20030520.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150e-20001228.bin",
+      "destination": "ps2/ps2-0150e-20001228.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150jd-20010118.bin",
+      "destination": "ps2/ps2-0150jd-20010118.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0150j-20010118.bin",
+      "destination": "ps2/ps2-0150j-20010118.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160a-20010427.bin",
+      "destination": "ps2/ps2-0160a-20010427.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160j-20010427.bin",
+      "destination": "ps2/ps2-0160j-20010427.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160a-20010704.bin",
+      "destination": "ps2/ps2-0160a-20010704.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160e-20010704.bin",
+      "destination": "ps2/ps2-0160e-20010704.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160a-20011004.bin",
+      "destination": "ps2/ps2-0160a-20011004.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160e-20011004.bin",
+      "destination": "ps2/ps2-0160e-20011004.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160h-20010730.bin",
+      "destination": "ps2/ps2-0160h-20010730.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160a-20020207.bin",
+      "destination": "ps2/ps2-0160a-20020207.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160e-20020319.bin",
+      "destination": "ps2/ps2-0160e-20020319.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160j-20020426.bin",
+      "destination": "ps2/ps2-0160j-20020426.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160e-20020426.bin",
+      "destination": "ps2/ps2-0160e-20020426.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0160h-20020426.bin",
+      "destination": "ps2/ps2-0160h-20020426.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0170j-20030206.bin",
+      "destination": "ps2/ps2-0170j-20030206.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0170ed-20030227.bin",
+      "destination": "ps2/ps2-0170ed-20030227.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0170e-20030227.bin",
+      "destination": "ps2/ps2-0170e-20030227.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0170ad-20030325.bin",
+      "destination": "ps2/ps2-0170ad-20030325.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0170a-20030325.bin",
+      "destination": "ps2/ps2-0170a-20030325.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0180cd-20030224.bin",
+      "destination": "ps2/ps2-0180cd-20030224.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0180j-20031028.bin",
+      "destination": "ps2/ps2-0180j-20031028.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190j-20030623.bin",
+      "destination": "ps2/ps2-0190j-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190a-20030623.bin",
+      "destination": "ps2/ps2-0190a-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190e-20030623.bin",
+      "destination": "ps2/ps2-0190e-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190h-20030623.bin",
+      "destination": "ps2/ps2-0190h-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190r-20030623.bin",
+      "destination": "ps2/ps2-0190r-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190c-20030623.bin",
+      "destination": "ps2/ps2-0190c-20030623.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190j-20030822.bin",
+      "destination": "ps2/ps2-0190j-20030822.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190e-20030822.bin",
+      "destination": "ps2/ps2-0190e-20030822.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0190a-20040329.bin",
+      "destination": "ps2/ps2-0190a-20040329.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0200ed-20040614.bin",
+      "destination": "ps2/ps2-0200ed-20040614.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0200h-20040614.bin",
+      "destination": "ps2/ps2-0200h-20040614.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0210j-20040917.bin",
+      "destination": "ps2/ps2-0210j-20040917.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220j-20050620.bin",
+      "destination": "ps2/ps2-0220j-20050620.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220ad-20050620.bin",
+      "destination": "ps2/ps2-0220ad-20050620.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220a-20050620.bin",
+      "destination": "ps2/ps2-0220a-20050620.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220e-20050620.bin",
+      "destination": "ps2/ps2-0220e-20050620.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220h-20050620.bin",
+      "destination": "ps2/ps2-0220h-20050620.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220j-20060210.bin",
+      "destination": "ps2/ps2-0220j-20060210.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220a-20060210.bin",
+      "destination": "ps2/ps2-0220a-20060210.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220e-20060210.bin",
+      "destination": "ps2/ps2-0220e-20060210.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220h-20060210.bin",
+      "destination": "ps2/ps2-0220h-20060210.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220j-20060905.bin",
+      "destination": "ps2/ps2-0220j-20060905.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220ad-20060905.bin",
+      "destination": "ps2/ps2-0220ad-20060905.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220a-20060905.bin",
+      "destination": "ps2/ps2-0220a-20060905.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220e-20060905.bin",
+      "destination": "ps2/ps2-0220e-20060905.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0220h-20060905.bin",
+      "destination": "ps2/ps2-0220h-20060905.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0230j-20080220.bin",
+      "destination": "ps2/ps2-0230j-20080220.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0230e-20080220.bin",
+      "destination": "ps2/ps2-0230e-20080220.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0230h-20080220.bin",
+      "destination": "ps2/ps2-0230h-20080220.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "ps2",
+      "name": "ps2-0250e-20100415.bin",
+      "destination": "ps2/ps2-0250e-20100415.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "lrps2",
+        "pcsx2",
+        "play"
+      ],
+      "unresolved_cores": []
+    }
+  ],
   "invalid": []
 }
