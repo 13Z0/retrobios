@@ -40,16 +40,20 @@ try:
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        github_headers,
         requirement_entry,
     )
+    from .retrodeck_launchers import extract_launchers
 except ImportError:
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from scraper.base_scraper import (
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        github_headers,
         requirement_entry,
     )
+    from scraper.retrodeck_launchers import extract_launchers
 
 PLATFORM_NAME = "retrodeck"
 COMPONENTS_REPO = "RetroDECK/components"
@@ -233,6 +237,7 @@ class Scraper(BaseScraper):
         super().__init__()
         self.manifests_dir = manifests_dir
         self._manifests: list[tuple[str, dict]] | None = None
+        self._files: dict[str, str | None] = {}
         # The manifests are read from main: one commit for the tree and for
         # every file, and that commit is the one recorded.
         self.revision = (
@@ -316,6 +321,32 @@ class Scraper(BaseScraper):
             except (json.JSONDecodeError, OSError) as e:
                 print(f"  WARNING: {mf}: {e}", file=sys.stderr)
         return manifests
+
+    def component_file(self, path: str) -> str | None:
+        """A file of the components repo at the scraped revision, None when it has none.
+
+        Only a 404 says the file is absent: any other failure stops the
+        scrape, as for the manifests.
+        """
+        if path in self._files:
+            return self._files[path]
+        if self.manifests_dir:
+            local = Path(self.manifests_dir) / path
+            text = local.read_text(encoding="utf-8") if local.is_file() else None
+        else:
+            url = f"{RAW_BASE.format(rev=self.revision)}/{path}"
+            try:
+                req = urllib.request.Request(url, headers=github_headers())
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    text = resp.read().decode("utf-8")
+            except urllib.error.HTTPError as e:
+                if e.code != 404:
+                    raise ConnectionError(f"{url}: HTTP {e.code}") from e
+                text = None
+            except urllib.error.URLError as e:
+                raise ConnectionError(f"{url}: {e.reason}") from e
+        self._files[path] = text
+        return text
 
     def validate_format(self, raw_data: str) -> bool:
         try:
@@ -478,6 +509,7 @@ class Scraper(BaseScraper):
             # its own, and retroarch is the one that runs cores.
             "standalone_cores": [c for c in cores if c != "retroarch"],
             "systems": systems,
+            "launchers": extract_launchers(cores, self.component_file),
         }
 
 
