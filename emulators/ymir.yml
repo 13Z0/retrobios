@@ -58,6 +58,104 @@ files:
       standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:9-22, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56, libs/ymir-core/include/ymir/sys/memory_defs.hpp:9"
       libretro: "apps/ymir-libretro/src/libretro.cpp:260-263,534-558"
 
+  # IPL images named by the standalone XXH128 database. The md5 is that of
+  # the image whose seeded XXH128 matches the database row.
+  - name: "SAT_1.00-(J).bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "af5828fdff51384f99b3c4926be27762"
+    description: "Saturn IPL ROM 1.00 (1994-09-21), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:9, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "sega_101.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "85ec9ca47d8f6807718151cbcca8b964"
+    description: "Saturn IPL ROM 1.01 (1994-12-28), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:10, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "SAT_1.00a-(U+E).bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "f273555d7d91e8a5a6bfd9bcf066331c"
+    description: "Saturn IPL ROM 1.00a (1994-11-15), North America and Europe."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:11, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "mpr-17933.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "3240872c70984b6cbfda1586cab68dbe"
+    description: "Saturn IPL ROM 1.01a (1994-11-15), North America and Europe."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:12, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "hisaturn.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "3ea3202e2634cb47cb90f3a05c015010"
+    description: "HiSaturn IPL ROM 1.01 (1995-01-30), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:14, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "mpr-18100.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "cb2cebc1b6e573b7c44523d037edcd45"
+    description: "HiSaturn IPL ROM 1.02 (1995-05-19), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:15, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "hisaturn_v103.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "0306c0e408d6682dd2d86324bd4ac661"
+    description: "HiSaturn IPL ROM 1.03 (1995-07-20), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:16, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
+  - name: "vsaturn.bin"
+    system: sega-saturn
+    required: false
+    mode: standalone
+    size: 524288
+    validation: [size]
+    md5: "ac4e4b6522e200c0d23d371a8cecbfd3"
+    description: "V-Saturn IPL ROM 1.01 (1995-07-03), Japan."
+    note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
+    source_ref:
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:17, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+
   - name: "cdb/cdb_rom.bin"
     system: sega-saturn
     required: false
