@@ -3,33 +3,50 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/libretro/blastem"
 upstream: "https://www.retrodev.com/blastem/"
-profiled_date: "2026-03-23"
+profiled_date: "2026-10-20"
 source_commit: "1e0de94dc7e669c0925a22c0fccf6cdc837af0a0"
-core_version: "v0.6.3-pre"
+core_version: "1.0.1-pre"
 display_name: "Sega - Mega Drive - Genesis (BlastEm)"
 cores:
   - blastem
 systems:
   - sega-megadrive
+  - sega-megacd
+  - sega-32x
   - sega-mastersystem
+  - sega-gamegear
+  - sega-sg1000
+  - sega-sc3000
+  - sega-pico
+  - colecovision
+  - pioneer-laseractive
 
 notes: |
-  BlastEm is a cycle-accurate Sega Mega Drive/Genesis emulator with basic
-  Master System support. In standalone mode it supports TMSS ROM loading and
-  multiple hardware models (MD1 VA0 through MD3 VA2, Teradrive). The Jaguar
-  emulator (blastjag) is a separate standalone binary, not part of the
-  libretro core.
+  BlastEm emulates the Mega Drive/Genesis, Sega CD, 32X, Master System, Game
+  Gear, SG-1000, SC-3000, Pico, Copera, ColecoVision and the Pioneer LaserActive
+  player. The libretro port lives in libblastem.c and offers every machine the
+  standalone can force except the Jaguar (libblastem.c:20-44).
 
-  The libretro port (libblastem.c) does NOT expose any core options and
-  defaults to model md1va3 which has TMSS disabled. There is no way to
-  select a TMSS-enabled model through the libretro interface.
+  Each firmware path is a config key. The libretro core writes
+  <system_dir>/<name> into those keys before any machine is built
+  (libblastem.c:497-530). The names are opened exactly as written, with no
+  hash or size check.
 
-  Even if a TMSS-enabled model were forced, read_bundled_file() in the
-  libretro build only serves rom.db and returns NULL for tmss.md, so TMSS
-  ROM loading would fail (fatal_error at genesis.c:3043).
+  The standalone build leaves the keys unset by default (default.cfg), so
+  each loader falls back to its own default name. The Sega CD BIOS, the
+  ColecoVision BIOS, the LaserActive firmware and the TMSS ROM are then read
+  beside the executable through read_bundled_file() (paths.c:596-631). The 32X
+  BIOS ROMs are opened by bare name, relative to the working directory
+  (32x.c:1072, 1417, 1449).
 
-  Sega CD / Mega CD is not supported (only a TODO comment in system.c:16).
-  No BIOS files are required or loaded by the libretro core.
+  A fatal error while a game loads unwinds to retro_load_game(), which reports
+  the failure to the frontend (libblastem.c:975-989, 1053-1058). Missing Sega
+  CD BIOS and missing TMSS ROM end there.
+
+  The default Mega Drive model is md1va3, which has no TMSS
+  (libblastem.c:355-359, systems.cfg:12-20). md1va6, md2va1, md2va2, md3va1
+  and md3va2 enable it (systems.cfg:23-75) and can be picked with the
+  blastem_model option (libblastem.c:185-187).
 
 files:
   # rom.db is embedded in the libretro binary (libblastem.c:1436-1455,
@@ -48,10 +65,110 @@ files:
     md5: "48b457c7e2df6ec7c16ae34d8f24c4b6"
     hle_fallback: true
     note: "ROM feature database (game-specific mapper/save config). Shipped beside the executable in the 1.0.0 Windows and Linux archives, whose copy the hashes describe. The libretro core compiles it in and reads no external copy."
-    source_ref: "romdb.c:44-53 get_rom_db(), libblastem.c:1436-1455 read_bundled_file()"
+    source_ref: "source romdb.c:44-53, source libblastem.c:1436-1455"
 
-  # TMSS ROM, only used in standalone mode with tmss-enabled model
-  # libretro build returns NULL for tmss.md (libblastem.c:541)
+  # -------------------------------------------------------
+  # Sega CD / Mega CD BIOS
+  # -------------------------------------------------------
+  - name: bios_CD_U.bin
+    system: sega-megacd
+    region: [north-america]
+    required: true
+    mode: libretro
+    note: "Sega CD BIOS for discs whose header allows the default region U, or that carry neither E nor J (segacd.c:1573-1593). An empty file counts as missing (segacd.c:1599-1602). Without it a CD image fails to load (segacd.c:1644-1647). A Mode 1 cartridge runs without it as a plain cartridge (genesis.c:3156-3162)."
+    source_ref: "source libblastem.c:501, source segacd.c:1573-1615"
+
+  - name: bios_CD_E.bin
+    system: sega-megacd
+    region: [europe]
+    required: true
+    mode: libretro
+    note: "Mega CD BIOS for discs whose region resolves to E (segacd.c:1587-1588). Same load rules as bios_CD_U.bin."
+    source_ref: "source libblastem.c:502, source segacd.c:1573-1615"
+
+  - name: bios_CD_J.bin
+    system: sega-megacd
+    region: [japan]
+    required: true
+    mode: libretro
+    note: "Mega CD BIOS for discs whose region resolves to J (segacd.c:1589-1590). Same load rules as bios_CD_U.bin."
+    source_ref: "source libblastem.c:503, source segacd.c:1573-1615"
+
+  - name: cdbios.bin
+    system: sega-megacd
+    required: true
+    mode: standalone
+    unread_on: [retrobat]
+    note: "Default name of all three regional Sega CD BIOS keys when the config sets none. Read beside the executable, whatever the disc region. Without it a CD image stops with a fatal error (segacd.c:1644-1647). RetroBat writes absolute paths to bios_CD_U/E/J.bin into the config (emulatorlauncher Blastem.Generator.cs:256-269), so this name is never opened there."
+    source_ref: "source segacd.c:1594, source segacd.c:1607-1609"
+
+  # -------------------------------------------------------
+  # 32X BIOS
+  # -------------------------------------------------------
+  - name: 32X_G_BIOS.bin
+    system: sega-32x
+    required: false
+    hle_fallback: true
+    note: "68K side BIOS. Only the first 0x100 bytes are read. Without it the core writes its own vector table and warns that some games need the real one (32x.c:1072-1086)."
+    source_ref: "source libblastem.c:508, source 32x.c:1072-1086"
+
+  - name: 32X_M_BIOS.bin
+    system: sega-32x
+    required: true
+    note: "Master SH2 BIOS, read into the 16 KiB boot ROM area (32x.c:1399-1400, 1417-1425). The libretro core refuses a 32X load when the file is missing or its reset vector is zero (libblastem.c:998-1017, 1098-1104). The standalone runs the SH2 on zeroed ROM and stops at an unimplemented instruction."
+    source_ref: "source libblastem.c:509, source libblastem.c:1098-1104, source 32x.c:1417-1425"
+
+  - name: 32X_S_BIOS.bin
+    system: sega-32x
+    required: true
+    note: "Slave SH2 BIOS, read into the 16 KiB boot ROM area (32x.c:1449-1457). Same refusal rule as 32X_M_BIOS.bin in the libretro core (libblastem.c:1098-1104)."
+    source_ref: "source libblastem.c:510, source libblastem.c:1098-1104, source 32x.c:1449-1457"
+
+  # -------------------------------------------------------
+  # ColecoVision BIOS
+  # -------------------------------------------------------
+  - name: colecovision.rom
+    system: colecovision
+    required: true
+    mode: libretro
+    size: 8192
+    note: "Read into the 8 KiB BIOS area mapped at 0x0000 (coleco.h:13, coleco.c:513). Without it the core only warns and runs a zeroed BIOS, so no game starts (coleco.c:485-492)."
+    source_ref: "source libblastem.c:504, source coleco.c:485-492"
+
+  - name: colecovision_bios.col
+    system: colecovision
+    required: true
+    mode: standalone
+    unread_on: [retrobat]
+    size: 8192
+    note: "Default name of the ColecoVision BIOS key when the config sets none. Read beside the executable, truncated to 8 KiB (coleco.c:496-505). RetroBat points the key at colecovision.rom (emulatorlauncher Blastem.Generator.cs:256-269)."
+    source_ref: "source coleco.c:485, source coleco.c:496-505"
+
+  # -------------------------------------------------------
+  # Pioneer LaserActive player firmware
+  # -------------------------------------------------------
+  - name: laseractive_dyw_1322a.bin
+    system: pioneer-laseractive
+    required: true
+    size: 65536
+    crc32: "3d6f6ed3"
+    md5: "d6ccd1da5c4a1b22c64e6eec899e0daf"
+    sha1: "b1e48d1f5e494a6cbece61cfca4469dea33fba4b"
+    sha256: "02a4a82c4f5abfe2c7e15d3682be9590be96607cb9213ce88e335f34db95d76f"
+    note: "uPD78237 mode controller ROM of the CLD-A100 player. Only the first 0xE000 bytes are mapped (laseractive.h:16, laseractive.c:533-534). Without it the core warns and the controller runs a zeroed ROM. The hashes describe the 64 KiB dump the BlastEm author published, whose last 8 KiB are 0xFF."
+    source_ref: "source libblastem.c:513, source laseractive.c:504-531"
+
+  # -------------------------------------------------------
+  # TMSS ROM
+  # -------------------------------------------------------
+  - name: tmss.md
+    system: sega-megadrive
+    required: false
+    mode: libretro
+    aliases: [bios_MD.bin]
+    note: "Read only for a model with TMSS. tmss.md is tried first, then bios_MD.bin (libblastem.c:514-529). With a TMSS model selected and neither file present, the load fails (genesis.c:3036-3051). Any size is accepted and mirrored to fill the TMSS space (genesis.c:3054-3065)."
+    source_ref: "source libblastem.c:514-529, source genesis.c:3036-3065"
+
   - name: tmss.md
     system: sega-megadrive
     required: false
@@ -61,31 +178,39 @@ files:
     sha1: "d0fd0c163b693d819fc907538fbdec76d7ec669d"
     md5: "1929426a8888785411d30f24bd0f8139"
     note: "TMSS startup ROM for models md1va6, md2va1 and later. The 1.0.0 Windows and Linux archives ship BlastEm's own replacement, built from tmss.s68, under this name. Any size is accepted: the image is padded and mirrored to fill the TMSS space."
-    source_ref: "genesis.c:3036-3065"
+    source_ref: "source genesis.c:3036-3065"
 
 analysis:
   tmss:
-    standalone_support: true
-    libretro_support: false
     default_model: md1va3
-    default_tmss: "off"
+    tmss_models: [md1va6, md2va1, md2va2, md3va1, md3va2]
     rom_filename: tmss.md
-    rom_size: 2048  # 2 KB
+    libretro_fallback_name: bios_MD.bin
     config_path: "system\0tmss_path\0"
-    source_ref: "genesis.c:1919-1929"
+    source_ref: "source libblastem.c:355-359, source libblastem.c:514-529, source genesis.c:3036-3051"
     note: |
-      TMSS ROM is loaded from tmss.md (configurable via system/tmss_path).
-      Models with tmss=on: md1va6, md2va1, md2va2, md3va1, md3va2.
-      Models with tmss=off: md1va0, md1va3 (default), teradrive.
-      The libretro build uses md1va3 (tmss off) with no option to change.
+      The libretro core exposes the model as blastem_model and points
+      system/tmss_path at the system directory. The standalone falls back to
+      tmss.md beside the executable.
 
   sega_cd:
-    supported: false
-    source_ref: "system.c:16"
-    note: "TODO comment only: 'Differentiate between vanilla Genesis and Sega CD/32X games'"
+    region_keys: [scd_bios_us, scd_bios_eu, scd_bios_jp]
+    standalone_default: cdbios.bin
+    source_ref: "source segacd.c:1573-1615, source segacd.c:1644-1647"
+    note: |
+      The region comes from the disc header, or from the default region when
+      the header allows it. A Mode 1 cartridge that finds no BIOS runs without
+      the Sega CD (genesis.c:3156-3162).
+
+  s32x:
+    source_ref: "source libblastem.c:998-1017, source libblastem.c:1098-1104"
+    note: |
+      The libretro core checks that both SH2 BIOS files exist and carry a
+      non-zero reset vector before it builds a 32X machine.
 
   jaguar_bios:
     libretro_relevant: false
+    source_ref: "source jaguar.c:571-575"
     note: |
-      blastjag (jaguar.c) is a separate standalone binary, not compiled
-      into the libretro core. Requires BIOS as first CLI argument.
+      blastjag is a separate standalone binary, not compiled into the
+      libretro core. It reads the BIOS from its first command line argument.
