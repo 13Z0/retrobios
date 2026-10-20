@@ -163,6 +163,11 @@ class NativeFile:
             return platform_values
         if not set(truth_values) & set(platform_values):
             return truth_values
+        # Nothing to add: the platform's own order stands. Truth first
+        # rewrote Recalbox's msx/CARTS.SHA md5 list with the same two values
+        # swapped, a diff line that changes nothing the frontend checks.
+        if set(truth_values) <= set(platform_values):
+            return platform_values
         # Keep the platform's extra accepted revisions alongside ours.
         return truth_values + [v for v in platform_values if v not in truth_values]
 
