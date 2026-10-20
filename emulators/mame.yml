@@ -75,11 +75,21 @@ systems:
   - tutor
   - tandy-vis
   - trs80
+  - coco
+  - scv
+  - apple-macintosh-ii
+  - electron
+  - mc10
+  - pc80
+  - xegs
+  - dragon64
+  - acorn-archimedes
   - vgmplay
 
 notes: |
-  Rolling release tracking mamedev/mame upstream (currently 0.286).
-  81 BIOS root sets + 28 system ROM sets + 3 device ROMs (apple2gs, astrocade, adam, advision, apfm1000, beena, camplynx, casloopy, crvision, fm7, gamate, gamecom, gamepock, gmaster, gp32, laser310, pcw, pegasus, pv2000, rx78, segaai, socrates, ti99_4a, trs80, tutor, vg5k, vis, vsmile). romload.cpp
+  Rolling release tracking mamedev/mame upstream (0.289 at the pinned commits).
+  The archives below are the BIOS root sets, the ROM sets of the machines of the
+  systems listed above, and the device ROM sets those machines load. romload.cpp
   unmodified. No hiscore support.
   Paths under system_dir/mame/ (artwork, cheat, hash, ini, plugins,
   samples, crosshair). ROM search: content_dir + system_dir/mame/bios +
@@ -3560,6 +3570,417 @@ files:
         size: 131072
         crc32: "18190283"
 
+  # Apple Macintosh, machines and the devices they instantiate
+  - name: mac128k.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/mac128.cpp:1452-1483, source src/mame/apple/mac128.cpp:1213, source src/mame/apple/mac128.cpp:1230-1232"
+    note: >-
+      Macintosh 128k. Built on mac512ke, whose keyboard port defaults to the
+      M0120 keypad (mac128.cpp:1213), and the keypad defaults its own port to
+      the M0110 keyboard (keyboard.cpp:434).
+    contents:
+      - name: "342-0220-a.u6d"
+        size: 32768
+        crc32: "198210ad"
+      - name: "342-0221-a.u8d"
+        size: 32768
+        crc32: "fd2665c2"
+
+  - name: mac512k.zip
+    required: false
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/mac128.cpp:1485-1498"
+    note: >-
+      Macintosh 512k, clone of mac128k with its own ROM pair. Same keyboard
+      devices as mac128k.
+    contents:
+      - name: "342-0220-b.u6d"
+        size: 32768
+        crc32: "0dce9a3f"
+      - name: "342-0221-b.u8d"
+        size: 32768
+        crc32: "d51f376e"
+
+  - name: macplus.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/mac128.cpp:1572-1603, source src/mame/apple/mac128.cpp:1264"
+    note: >-
+      Macintosh Plus. Five ROM_SYSTEM_BIOS options, v3 first. The keyboard
+      port defaults to the M0110A (mac128.cpp:1264).
+    contents:
+      - name: "342-0341-c.u6d"
+        description: "BIOS option Loud Harmonicas"
+        size: 65536
+        crc32: "f69697e6"
+      - name: "342-0342-b.u8d"
+        description: "BIOS option Loud Harmonicas"
+        size: 65536
+        crc32: "49f25913"
+      - name: "342-0341-b.u6d"
+        description: "BIOS option Lonely Heifers"
+        size: 65536
+        crc32: "65341487"
+      - name: "342-0342-a.u8d"
+        description: "BIOS option Lonely Heifers"
+        size: 65536
+        crc32: "fb766270"
+      - name: "342-0341-a.u6d"
+        description: "BIOS option Lonely Hearts"
+        size: 65536
+        crc32: "5095fe39"
+      - name: "modplus-harp2.bin"
+        description: "BIOS option mac68k.info self-boot (1/1/2015)"
+        size: 163840
+        crc32: "ba56078d"
+      - name: "rominator-20150225-lo.bin"
+        description: "BIOS option bigmessofwires.com ROMinator (2/25/2015)"
+        size: 524288
+        crc32: "62cf2a0b"
+      - name: "rominator-20150225-hi.bin"
+        description: "BIOS option bigmessofwires.com ROMinator (2/25/2015)"
+        size: 524288
+        crc32: "a28ba8ec"
+
+  - name: macse.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/mac128.cpp:1611-1615, source src/mame/apple/mac128.cpp:1306-1345"
+    note: >-
+      Macintosh SE. Removes the keyboard port and adds the adbmodem ADB
+      controller (mac128.cpp:1314, 1339).
+    contents:
+      - name: "macse.rom"
+        size: 262144
+        crc32: "0f7ff80c"
+
+  - name: macclasc.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/mac128.cpp:1623-1627, source src/mame/apple/mac128.cpp:1384-1386"
+    note: >-
+      Macintosh Classic, built on macsefd and so on macse, adbmodem included
+      (mac128.cpp:1370-1372, 1384-1386).
+    contents:
+      - name: "341-0813__=c=1983-90_apple__japan__910d_d.27c4096_be.ue1"
+        size: 524288
+        crc32: "510d7d38"
+
+  - name: mac2fdhd.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/macii.cpp:1153-1156, source src/mame/apple/macii.cpp:995, source src/mame/apple/macii.cpp:1016, source src/mame/apple/macii.cpp:1049-1051"
+    note: >-
+      Macintosh II FDHD. NuBus slot nb9 defaults to the Macintosh Display Card
+      8/24 and the ADB controller is adbmodem (macii.cpp:995, 1016).
+    contents:
+      - name: "97221136.rom"
+        size: 262144
+        crc32: "ce3b966f"
+
+  - name: maciix.zip
+    required: false
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/macii.cpp:1158-1161, source src/mame/apple/macii.cpp:1067-1069"
+    note: >-
+      Macintosh IIx, clone of mac2fdhd built on the same config
+      (macii.cpp:1067-1069). Its only ROM is the 97221136.rom of the parent,
+      so a split set loads it from mac2fdhd.zip.
+    contents:
+      - name: "97221136.rom"
+        size: 262144
+        crc32: "ce3b966f"
+
+  - name: maclc3.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/maclc3.cpp:416-419, source src/mame/apple/maclc3.cpp:340-341"
+    note: >-
+      Macintosh LC III. ADB through the Egret controller with its 341s0851
+      BIOS selected (maclc3.cpp:340-341).
+    contents:
+      - name: "ecbbc41c.rom"
+        size: 1048576
+        crc32: "e578f5f3"
+
+  - name: adbmodem.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/adbmodem.cpp:30-33, source src/mame/apple/adbmodem.cpp:28"
+    note: >-
+      ADB modem microcontroller of macse, macclasc, mac2fdhd and maciix
+      (mac128.cpp:1339, macii.cpp:1016).
+    contents:
+      - name: "342s0440-b.bin"
+        size: 1024
+        crc32: "cffb33eb"
+
+  - name: egret.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/mame/apple/egret.cpp:67-79, source src/mame/apple/egret.cpp:65"
+    note: >-
+      Egret ADB/I2C microcontroller, three ROM_SYSTEM_BIOS options. maclc3
+      selects 341s0851 (maclc3.cpp:341), the only member that machine loads.
+    contents:
+      - name: "344s0100.bin"
+        description: "BIOS option Egret 1.00 (344S0100)"
+        size: 4352
+        crc32: "59e2b6b6"
+      - name: "341s0850.bin"
+        description: "BIOS option Egret 1.01 (earlier) (341S0850)"
+        size: 4352
+        crc32: "4906ecd0"
+      - name: "341s0851.bin"
+        description: "BIOS option Egret 1.01 (341S0851)"
+        size: 4352
+        crc32: "ea9ea6e4"
+
+  - name: mackbd_m0110.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/devices/bus/mackbd/keyboard.cpp:228-231, source src/devices/bus/mackbd/keyboard.cpp:264-266, source src/devices/bus/mackbd/keyboard.cpp:967"
+    note: >-
+      M0110 keyboard, plugged into the M0120 keypad that mac128k and mac512k
+      start with (keyboard.cpp:434).
+    contents:
+      - name: "ip8021h_2173.bin"
+        size: 1024
+        crc32: "5fbd9a94"
+
+  - name: mackbd_m0110a.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/devices/bus/mackbd/pluskbd.cpp:101-104, source src/devices/bus/mackbd/pluskbd.cpp:124-126, source src/devices/bus/mackbd/pluskbd.cpp:506"
+    note: >-
+      M0110A keyboard, the macplus default (mac128.cpp:1264).
+    contents:
+      - name: "341-0332-a.bin"
+        size: 1024
+        crc32: "6554f5b6"
+
+  - name: mackbd_m0120.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/devices/bus/mackbd/keyboard.cpp:228-231, source src/devices/bus/mackbd/keyboard.cpp:264-266, source src/devices/bus/mackbd/keyboard.cpp:973"
+    note: >-
+      M0120 numeric keypad, the default of the mac128k and mac512k keyboard
+      port (mac128.cpp:1213). Same ROM as the M0110.
+    contents:
+      - name: "ip8021h_2173.bin"
+        size: 1024
+        crc32: "5fbd9a94"
+
+  - name: nb_mdc824.zip
+    required: true
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/devices/bus/nubus/nubus_48gc.cpp:238-241, source src/devices/bus/nubus/nubus_48gc.cpp:1170"
+    note: >-
+      Macintosh Display Card 8/24, the default card in NuBus slot nb9 of
+      mac2fdhd and maciix (macii.cpp:995).
+    contents:
+      - name: "3410868.bin"
+        size: 32768
+        crc32: "57f925fa"
+
+  - name: nb_image.zip
+    required: false
+    category: bios_zip
+    system: apple-macintosh-ii
+    source_ref: "source src/devices/bus/nubus/nubus_image.cpp:171-174, source src/devices/bus/nubus/nubus_image.cpp:387"
+    note: >-
+      Disk image pseudo-card. Loaded only when a NuBus slot is set to the
+      image option (cards.cpp:40), no slot defaults to it.
+    contents:
+      - name: "nb_fake.bin"
+        size: 8192
+        crc32: "9264bac5"
+
+  # Acorn Electron
+  - name: electron.zip
+    required: true
+    category: bios_zip
+    system: electron
+    source_ref: "source src/mame/acorn/electron.cpp:730-733, source src/mame/acorn/electron.cpp:661-662"
+    note: >-
+      Acorn Electron. The expansion port defaults to the Plus 3, whose own
+      port defaults to the Plus 1 (electron.cpp:620-623, 661-662). Parent of
+      electron64.
+    contents:
+      - name: "os_basic.ic2"
+        size: 32768
+        crc32: "b997f9cb"
+
+  - name: electron64.zip
+    required: false
+    category: bios_zip
+    system: electron
+    source_ref: "source src/mame/acorn/electron.cpp:742-746, source src/mame/acorn/electron.cpp:693-695"
+    note: >-
+      Electron with the Slogger 64K Master RAM Board, clone of electron with
+      its own OS ROM. Same expansion devices as electron
+      (electron.cpp:693-695).
+    contents:
+      - name: "basic.rom"
+        size: 16384
+        crc32: "79434781"
+      - name: "os_300.rom"
+        size: 16384
+        crc32: "f80a0cea"
+
+  - name: electron_plus1.zip
+    required: true
+    category: bios_zip
+    system: electron
+    source_ref: "source src/devices/bus/electron/plus1.cpp:34-41, source src/devices/bus/electron/plus1.cpp:25"
+    note: >-
+      Acorn Plus 1 expansion, the default device on the Plus 3 expansion port
+      (electron.cpp:620-623).
+    contents:
+      - name: "plus1.rom"
+        description: "BIOS option Expansion 1.00"
+        size: 4096
+        crc32: "ac30b0ed"
+
+  - name: electron_plus3.zip
+    required: true
+    category: bios_zip
+    system: electron
+    source_ref: "source src/devices/bus/electron/plus3.cpp:53-69, source src/devices/bus/electron/plus3.cpp:27"
+    note: >-
+      Acorn Plus 3 disc expansion, the default device on the Electron
+      expansion port (electron.cpp:661). Five ROM_SYSTEM_BIOS options, ADFS
+      1.00 first.
+    contents:
+      - name: "adfs.rom"
+        description: "BIOS option Acorn ADFS 1.00"
+        size: 16384
+        crc32: "3289bdc6"
+      - name: "pres_adfs_113.rom"
+        description: "BIOS option PRES ADFS 1.13"
+        size: 16384
+        crc32: "f06ca04a"
+      - name: "pres_adfs_115.rom"
+        description: "BIOS option PRES ADFS 1.15"
+        size: 16384
+        crc32: "8f81edc3"
+      - name: "acp_dfs1770_200.rom"
+        description: "BIOS option Advanced 1770 DFS 2.00"
+        size: 16384
+        crc32: "5a3a13c7"
+      - name: "acp_dfs1770_210.rom"
+        description: "BIOS option Advanced 1770 DFS 2.10"
+        size: 16384
+        crc32: "b0661992"
+
+  # Tandy MC-10
+  - name: mc10.zip
+    required: true
+    category: bios_zip
+    system: mc10
+    source_ref: "source src/mame/trs/mc10.cpp:599-602"
+    note: >-
+      Tandy MC-10. Parent of alice.
+    contents:
+      - name: "mc10.rom"
+        size: 8192
+        crc32: "11fda97e"
+
+  - name: alice.zip
+    required: false
+    category: bios_zip
+    system: mc10
+    source_ref: "source src/mame/trs/mc10.cpp:604-607"
+    note: >-
+      Matra & Hachette Alice, clone of mc10 with its own ROM.
+    contents:
+      - name: "alice.rom"
+        size: 8192
+        crc32: "f876abe9"
+
+  # NEC PC-8001
+  - name: pc8001.zip
+    required: true
+    category: bios_zip
+    system: pc80
+    source_ref: "source src/mame/nec/pc8001.cpp:1368-1387"
+    note: >-
+      NEC PC-8001. Three ROM_SYSTEM_BIOS options, v110 by default. exprom.ic13
+      is NO_DUMP. Parent of pc8001mk2sr, whose fontkata.rom carries the crc32
+      of font.rom here, so a split pc8001mk2sr set loads it from this archive.
+    contents:
+      - name: "n80v101.rom"
+        description: "BIOS option N-BASIC v1.01, BAD_DUMP"
+        size: 24576
+        crc32: "a2cc9f22"
+      - name: "n80v102.rom"
+        description: "BIOS option N-BASIC v1.02, BAD_DUMP"
+        size: 24576
+        crc32: "ed01ca3f"
+      - name: "n80v110.rom"
+        description: "BIOS option N-BASIC v1.10, BAD_DUMP"
+        size: 24576
+        crc32: "1e02d93f"
+      - name: "font.rom"
+        size: 2048
+        crc32: "56653188"
+
+  - name: pc8001mk2sr.zip
+    required: false
+    category: bios_zip
+    system: pc80
+    source_ref: "source src/mame/nec/pc8001.cpp:1402-1420"
+    note: >-
+      NEC PC-8001mkIISR, clone of pc8001. n80_3.rom is BAD_DUMP.
+    contents:
+      - name: "n80_2sr.rom"
+        size: 32768
+        crc32: "dcb71282"
+      - name: "n80_3.rom"
+        description: "BAD_DUMP"
+        size: 40960
+        crc32: "d99ef247"
+      - name: "font80sr.rom"
+        size: 4096
+        crc32: "784c0b17"
+      - name: "fonthira.rom"
+        size: 2048
+        crc32: "fe7059d5"
+      - name: "fontkata.rom"
+        size: 2048
+        crc32: "56653188"
+      - name: "kanji1.rom"
+        size: 131072
+        crc32: "6178bd43"
+
+  # Atari XE Game System
+  - name: xegs.zip
+    required: true
+    category: bios_zip
+    system: xegs
+    source_ref: "source src/mame/atari/atari400.cpp:2403-2406"
+    note: >-
+      Atari XE Game System. One ROM holding the OS, BASIC and Missile Command.
+    contents:
+      - name: "c101687.rom"
+        size: 32768
+        crc32: "d50260d1"
+
   # Casio Loopy
   - name: casloopy.zip
     required: true
@@ -4053,10 +4474,12 @@ files:
         description: "SM8521 CPU internal ROM"
         size: 4096
         crc32: "a0cec361"
+        sha1: "03368237e8fed4a8724f3b4a1596cf4b17c96d33"
       - name: "external.bin"
         description: "External flash ROM (PDA software)"
         size: 262144
         crc32: "e235a589"
+        sha1: "97f782e72d738f4d7b861363266bf46b438d9b50"
 
   # GamePark GP32
   - name: gp32.zip
@@ -4519,6 +4942,334 @@ files:
         size: 2048
         crc32: "1765931e"
 
+  # Tandy Color Computer family
+  # coco12.cpp: coco (parent, Color Computer 1/2), coco2b and other clones.
+  # coco3.cpp: coco3 and coco3p, clones of coco. Every machine fills its
+  # cartridge slot with the "fdc" option by default, the coco_fdc device.
+  # Software lists: coco_cart, coco_flop.
+  - name: coco.zip
+    required: true
+    category: bios_zip
+    system: coco
+    source_ref: "source src/mame/trs/coco12.cpp:667-694, source src/mame/trs/coco12.cpp:764"
+    note: >-
+      Color Computer 1/2. Nine BIOS options pair a Color BASIC ROM with an
+      optional Extended Color BASIC ROM. The default b12e11 loads bas12.rom and
+      extbas11.rom, the other options load the members they name.
+    contents:
+      - name: "bas10.rom"
+        description: "Color BASIC 1.0"
+        size: 8192
+        crc32: "00b50aaa"
+      - name: "bas11.rom"
+        description: "Color BASIC 1.1"
+        size: 8192
+        crc32: "6270955a"
+      - name: "bas12.rom"
+        description: "Color BASIC 1.2 (default)"
+        size: 8192
+        crc32: "54368805"
+      - name: "extbas10.rom"
+        description: "Extended Color BASIC 1.0"
+        size: 8192
+        crc32: "6111a086"
+      - name: "extbas11.rom"
+        description: "Extended Color BASIC 1.1 (default)"
+        size: 8192
+        crc32: "a82a6254"
+
+  - name: coco2b.zip
+    required: true
+    category: bios_zip
+    system: coco
+    source_ref: "source src/mame/trs/coco12.cpp:704-708, source src/mame/trs/coco12.cpp:767"
+    note: "Color Computer 2B, clone of coco."
+    contents:
+      - name: "bas13.rom"
+        description: "Color BASIC 1.3"
+        size: 8192
+        crc32: "d8f4d15e"
+      - name: "extbas11.rom"
+        description: "Extended Color BASIC 1.1"
+        size: 8192
+        crc32: "a82a6254"
+
+  - name: coco3.zip
+    required: true
+    category: bios_zip
+    system: coco
+    source_ref: "source src/mame/trs/coco3.cpp:361-364, source src/mame/trs/coco3.cpp:383"
+    note: "Color Computer 3 (NTSC), clone of coco."
+    contents:
+      - name: "coco3.rom"
+        description: "Color Computer 3 system ROM"
+        size: 32768
+        crc32: "b4c88d6c"
+
+  - name: coco3p.zip
+    required: true
+    category: bios_zip
+    system: coco
+    source_ref: "source src/mame/trs/coco3.cpp:366-369, source src/mame/trs/coco3.cpp:384"
+    note: "Color Computer 3 (PAL), clone of coco."
+    contents:
+      - name: "coco3p.rom"
+        description: "Color Computer 3 PAL system ROM"
+        size: 32768
+        crc32: "ff050d80"
+
+  - name: coco_fdc.zip
+    required: true
+    category: bios_zip
+    system: coco
+    source_ref: "source src/devices/bus/coco/coco_fdc.cpp:403-466, source src/devices/bus/coco/coco_fdc.cpp:822, source src/devices/bus/coco/cococart.cpp:863, source src/mame/trs/coco12.cpp:559, source src/mame/trs/coco3.cpp:324"
+    note: >-
+      ROMs of the coco_fdc device, the cartridge every Color Computer machine
+      inserts by default. Ten BIOS options, the default v11 loads disk11.rom.
+    contents:
+      - name: "disk10.rom"
+        description: "RSDOS 1.0"
+        size: 8192
+        crc32: "b4f9968e"
+      - name: "disk11.rom"
+        description: "RSDOS 1.1 (default)"
+        size: 8192
+        crc32: "0b9c5415"
+      - name: "ados.rom"
+        description: "ADOS 1.02 for CoCo 1/2"
+        size: 8192
+        crc32: "24e807cf"
+      - name: "ados2b.rom"
+        description: "ADOS 1.02 for CoCo 2B"
+        size: 8192
+        crc32: "47a59ad4"
+      - name: "ados3.rom"
+        description: "ADOS3 1.01.01"
+        size: 8192
+        crc32: "6f824cd1"
+      - name: "ados3-40.rom"
+        description: "ADOS3 1.01.01, 40 track drives"
+        size: 8192
+        crc32: "8afe1a04"
+      - name: "ados3-80.rom"
+        description: "ADOS3 1.01.01, 80 track drives"
+        size: 8192
+        crc32: "859762f5"
+      - name: "rgbdos_mess.rom"
+        description: "Hard Disk Basic for Emudsk"
+        size: 8192
+        crc32: "0b0e64db"
+      - name: "hdbdw3bck.rom"
+        description: "Hard Disk Basic for Becker Port and DriveWire 3, CoCo 1/2"
+        size: 8192
+        crc32: "867a3f42"
+      - name: "hdbdw3bc3.rom"
+        description: "Hard Disk Basic for Becker Port and DriveWire 3, CoCo 3"
+        size: 8192
+        crc32: "309a9efd"
+
+  # Dragon 64
+  - name: dragon64.zip
+    required: true
+    category: bios_zip
+    system: dragon64
+    source_ref: "upstream src/mame/trs/dragon.cpp:660-664, upstream src/mame/trs/dragon.cpp:702, upstream src/emu/driver.cpp:31-39"
+    note: >-
+      Dragon 64, clone of dragon32. Its ROMs are searched in dragon64.zip, then
+      in dragon32.zip.
+    contents:
+      - name: "d64_1.rom"
+        size: 16384
+        crc32: "60a4634c"
+      - name: "d64_2.rom"
+        size: 16384
+        crc32: "17893a42"
+
+  # Acorn Archimedes
+  - name: aa310.zip
+    required: true
+    category: bios_zip
+    system: acorn-archimedes
+    source_ref: "upstream src/mame/acorn/aa310.cpp:1787-1838, upstream src/mame/acorn/aa310.cpp:1863-1900, upstream src/mame/acorn/aa310.cpp:2053-2061, upstream src/emu/driver.cpp:31-39"
+    note: >-
+      Archimedes 310, parent of aa305, aa440, aa3000, aa4101, aa4201 and aa4401,
+      whose ROMs are also searched in this archive. Eight BIOS options, Arthur
+      1.20 first, each four ROMs and a CMOS image. aa4401 takes the aa3000
+      options, RISC OS 2.00 first, whose members this archive also holds.
+    contents:
+      - name: "0277,022-02.rom"
+        description: "BIOS option Arthur 1.20"
+        size: 131072
+        crc32: "03bfe550"
+      - name: "0277,023-02.rom"
+        description: "BIOS option Arthur 1.20"
+        size: 131072
+        crc32: "89ece77c"
+      - name: "0277,024-02.rom"
+        description: "BIOS option Arthur 1.20"
+        size: 131072
+        crc32: "2302db86"
+      - name: "0277,025-02.rom"
+        description: "BIOS option Arthur 1.20"
+        size: 131072
+        crc32: "1546a0da"
+      - name: "0276,322-01.rom"
+        description: "BIOS option Arthur 0.30"
+        size: 131072
+        crc32: "e6862d4c"
+      - name: "0276,323-01.rom"
+        description: "BIOS option Arthur 0.30"
+        size: 131072
+        crc32: "a9aeb4cf"
+      - name: "0276,324-01.rom"
+        description: "BIOS option Arthur 0.30"
+        size: 131072
+        crc32: "7a175186"
+      - name: "0276,325-01.rom"
+        description: "BIOS option Arthur 0.30"
+        size: 131072
+        crc32: "7a8811b8"
+      - name: "0283,022-01.rom"
+        description: "BIOS option RISC OS 2.00"
+        size: 131072
+        crc32: "24291ebf"
+      - name: "0283,023-01.rom"
+        description: "BIOS option RISC OS 2.00"
+        size: 131072
+        crc32: "44a134f1"
+      - name: "0283,024-01.rom"
+        description: "BIOS option RISC OS 2.00"
+        size: 131072
+        crc32: "997f42b6"
+      - name: "0283,025-01.rom"
+        description: "BIOS option RISC OS 2.00"
+        size: 131072
+        crc32: "6335dba2"
+      - name: "0270,601-01.rom"
+        description: "BIOS option RISC OS 2.01"
+        size: 131072
+        crc32: "29e2890b"
+      - name: "0270,602-01.rom"
+        description: "BIOS option RISC OS 2.01"
+        size: 131072
+        crc32: "dd1e4893"
+      - name: "0270,603-01.rom"
+        description: "BIOS option RISC OS 2.01"
+        size: 131072
+        crc32: "985a8703"
+      - name: "0270,604-01.rom"
+        description: "BIOS option RISC OS 2.01"
+        size: 131072
+        crc32: "f23e4c8d"
+      - name: "0270,251-01.rom"
+        description: "BIOS option RISC OS 3.00"
+        size: 524288
+        crc32: "023115a9"
+      - name: "0270,252-01.rom"
+        description: "BIOS option RISC OS 3.00"
+        size: 524288
+        crc32: "6db01129"
+      - name: "0270,253-01.rom"
+        description: "BIOS option RISC OS 3.00"
+        size: 524288
+        crc32: "d749a9f2"
+      - name: "0270,254-01.rom"
+        description: "BIOS option RISC OS 3.00"
+        size: 524288
+        crc32: "5b13c523"
+      - name: "0296,041-01.rom"
+        description: "BIOS option RISC OS 3.10"
+        size: 524288
+        crc32: "b7499ef8"
+      - name: "0296,042-01.rom"
+        description: "BIOS option RISC OS 3.10"
+        size: 524288
+        crc32: "d55a854c"
+      - name: "0296,043-01.rom"
+        description: "BIOS option RISC OS 3.10"
+        size: 524288
+        crc32: "19bc549a"
+      - name: "0296,044-01.rom"
+        description: "BIOS option RISC OS 3.10"
+        size: 524288
+        crc32: "bf86f497"
+      - name: "0296,041-02.rom"
+        description: "BIOS option RISC OS 3.11"
+        size: 524288
+        crc32: "84185879"
+      - name: "0296,042-02.rom"
+        description: "BIOS option RISC OS 3.11"
+        size: 524288
+        crc32: "c7584553"
+      - name: "0296,043-02.rom"
+        description: "BIOS option RISC OS 3.11"
+        size: 524288
+        crc32: "ff5acf17"
+      - name: "0296,044-02.rom"
+        description: "BIOS option RISC OS 3.11"
+        size: 524288
+        crc32: "e2a3480e"
+      - name: "0276,146-01.rom"
+        description: "BIOS option Diagnostic Test ROMs"
+        size: 65536
+        crc32: "9c45283c"
+      - name: "0276,147-01.rom"
+        description: "BIOS option Diagnostic Test ROMs"
+        size: 65536
+        crc32: "ad94e17f"
+      - name: "0276,148-01.rom"
+        description: "BIOS option Diagnostic Test ROMs"
+        size: 65536
+        crc32: "1ab02f2d"
+      - name: "0276,149-01.rom"
+        description: "BIOS option Diagnostic Test ROMs"
+        size: 65536
+        crc32: "5fd6a406"
+      - name: "cmos_arthur.bin"
+        description: "CMOS image, Arthur options"
+        size: 256
+        crc32: "4fc66ddc"
+      - name: "cmos_riscos2.bin"
+        description: "CMOS image, RISC OS 2 options"
+        size: 256
+        crc32: "1ecf3369"
+      - name: "cmos_riscos3.bin"
+        description: "CMOS image, RISC OS 3 options"
+        size: 256
+        crc32: "96ed59b2"
+
+  - name: archimedes_keyboard.zip
+    required: true
+    category: bios_zip
+    system: acorn-archimedes
+    source_ref: "upstream src/devices/machine/archimedes_keyb.cpp:33, upstream src/devices/machine/archimedes_keyb.cpp:299-302, upstream src/mame/acorn/aa310.cpp:1052, upstream src/mame/acorn/aa310.cpp:1072, upstream src/emu/device.cpp:140-151"
+    note: "Keyboard device of every Archimedes machine. Its 8051 program is opened under the device shortname."
+    contents:
+      - name: "acorn_0280,022-01_philips_8051ah-2.bin"
+        size: 4096
+        crc32: "95095d38"
+
+  # Epoch Super Cassette Vision
+  - name: scv.zip
+    required: true
+    category: bios_zip
+    system: scv
+    source_ref: "source src/mame/epoch/scv.cpp:598-607, source src/mame/epoch/scv.cpp:625"
+    note: "Super Cassette Vision (1984). Clone: scv_pal (Yeno). Software list scv."
+    contents:
+      - name: "upd7801g.s01"
+        description: "uPD7801G internal program ROM"
+        size: 4096
+        crc32: "7ac06182"
+      - name: "epochtv.chr.s02"
+        description: "Character ROM (BAD_DUMP)"
+        size: 1024
+        crc32: "db521533"
+      - name: "upd1771c-017.s03"
+        description: "uPD1771C sound program ROM"
+        size: 1024
+        crc32: "975bd68d"
+
   # TI-99/4A
   - name: ti99_4a.zip
     required: true
@@ -4609,6 +5360,216 @@ files:
         description: "EF9345 character generator (BAD_DUMP, from DCVG5K)"
         size: 8192
         crc32: "b2f49eb3"
+
+  # Acorn BBC Micro and BBC Master
+  # bbcm.cpp: bbcm (parent, BBC Master 128) with clones bbcmt and bbcm512.
+  # bbcmc.cpp: bbcmc (parent, BBC Master Compact). Software lists bbc_flop,
+  # bbc_cass and bbc_rom among others.
+  - name: bbcm.zip
+    required: true
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/mame/acorn/bbcm.cpp:1066-1104, upstream src/mame/acorn/bbcm.cpp:1452"
+    note: >-
+      BBC Master 128. Four MOS BIOS choices, 3.20 by default. The CMOS
+      defaults image follows the BIOS: mos320.cmos with 3.20, mos350.cmos
+      with the others. bbcm512 and bbcmt share this ROM set.
+    contents:
+      - name: "mos320.ic24"
+        description: "MOS 3.20 (default BIOS)"
+        size: 131072
+        crc32: "0f747ebe"
+        sha1: "eacacbec3892dc4809ad5800e6c8299ff9eb528f"
+      - name: "mos329.ic24"
+        description: "MOS 3.29"
+        size: 131072
+        crc32: "8dd7338b"
+        sha1: "4604203c70c04a9fd003103deec438fc5bd44839"
+      - name: "caspl_mos343_89.bin"
+        description: "MOS 3.43, pages 8-9"
+        size: 32768
+        crc32: "fa2b881f"
+        sha1: "eb7c09d942f9dac378337094416053df16cb3fe2"
+      - name: "caspl_mos343_ab.bin"
+        description: "MOS 3.43, pages A-B"
+        size: 32768
+        crc32: "704d86e9"
+        sha1: "c3ee6018230c7201a6dfa10162f25d630f12c795"
+      - name: "caspl_mos343_cd.bin"
+        description: "MOS 3.43, pages C-D"
+        size: 32768
+        crc32: "953b7530"
+        sha1: "19c1a59abd817f7011b142177417f7abb9eb3f64"
+      - name: "caspl_mos343_ef.bin"
+        description: "MOS 3.43, pages E-F"
+        size: 32768
+        crc32: "ebc09359"
+        sha1: "24ff90709495adda8a01858c60275193e70b2690"
+      - name: "mos350.ic24"
+        description: "MOS 3.50"
+        size: 131072
+        crc32: "141027b9"
+        sha1: "85211b5bc7c7a269952d2b063b7ec0e1f0196803"
+      - name: "mos320.cmos"
+        description: "CMOS RAM defaults for MOS 3.20"
+        size: 64
+        crc32: "c7f9e85a"
+        sha1: "f24cc9db0525910689219f7204bf8b864033ee94"
+      - name: "mos350.cmos"
+        description: "CMOS RAM defaults for the other MOS versions"
+        size: 64
+        crc32: "e84c1854"
+        sha1: "f3cb7f12b7432caba28d067f01af575779220aac"
+
+  - name: bbcmc.zip
+    required: true
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/mame/acorn/bbcmc.cpp:707-728, upstream src/mame/acorn/bbcmc.cpp:805"
+    note: "BBC Master Compact. Two MOS BIOS choices, 5.10 by default."
+    contents:
+      - name: "mos510.ic49"
+        description: "MOS 5.10 (default BIOS)"
+        size: 65536
+        crc32: "9a2a6086"
+        sha1: "094ab37b0b6437c4f1653eaa0602ef102737adb6"
+      - name: "mos500.ic49"
+        description: "MOS 5.00"
+        size: 65536
+        crc32: "f6170023"
+        sha1: "140d002d2d9cd34b47197a2ba823505af2a84633"
+
+  - name: saa5050.zip
+    required: true
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/devices/video/saa5050.cpp:29, upstream src/devices/video/saa5050.cpp:43-46, upstream src/mame/acorn/bbcb.cpp:449, upstream src/mame/acorn/bbcm.cpp:701, upstream src/mame/acorn/bbcmc.cpp:549"
+    note: >-
+      SAA5050 teletext character generator, the Mode 7 font of every BBC
+      Micro and Master machine.
+    contents:
+      - name: "saa5050"
+        description: "Character generator ROM"
+        size: 960
+        crc32: "201490f3"
+        sha1: "6c8daba70374e5aa3a6402f24cdc5f8677d58a0f"
+
+  - name: bbc_tube_80186.zip
+    required: false
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/devices/bus/bbc/tube/tube_80186.cpp:110-114, upstream src/devices/bus/bbc/tube/tube_80186.cpp:220, upstream src/mame/acorn/bbcm.cpp:888-893"
+    note: >-
+      Acorn 80186 co-processor. Fixed in the internal tube of bbcm512 and
+      selectable as the 80186 option of the BBC tube slots.
+    contents:
+      - name: "m512_lo_ic31.rom"
+        description: "Bootstrap ROM, even bytes"
+        size: 8192
+        crc32: "c0df8707"
+        sha1: "7f6d843d5aea6bdb36cbd4623ae942b16b96069d"
+      - name: "m512_hi_ic32.rom"
+        description: "Bootstrap ROM, odd bytes"
+        size: 8192
+        crc32: "e47f10b2"
+        sha1: "45dc8d7e7936afbec6de423569d9005a1c350316"
+
+  - name: bbc_bitstik1.zip
+    required: false
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/devices/bus/bbc/analogue/bitstik.cpp:82-86, upstream src/devices/bus/bbc/analogue/bitstik.cpp:137, upstream src/devices/bus/bbc/analogue/analogue.cpp:104"
+    note: "Acorn Bitstik, the bitstik1 option of the analogue port."
+    contents:
+      - name: "bitstik1.rom"
+        size: 8192
+        crc32: "a3c539f8"
+        sha1: "c6f2cf2f6d1e48819a8381c6a1c97ca8fa5ab117"
+
+  - name: bbc_bitstik2.zip
+    required: false
+    category: bios_zip
+    system: acorn-bbc-micro
+    source_ref: "upstream src/devices/bus/bbc/analogue/bitstik.cpp:88-92, upstream src/devices/bus/bbc/analogue/bitstik.cpp:138, upstream src/devices/bus/bbc/analogue/analogue.cpp:105"
+    note: "Robo Bitstik 2, the bitstik2 option of the analogue port."
+    contents:
+      - name: "bitstik2.rom"
+        size: 8192
+        crc32: "a2b5a743"
+        sha1: "4d0040af6bdc6a587e42d4aa36d528b768cf9549"
+
+  - name: bbc.zip
+    path: "mame/samples/bbc.zip"
+    standalone_path: "samples/bbc.zip"
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+    source_ref: "upstream src/mame/acorn/bbcb.cpp:416-422, upstream src/mame/acorn/bbcb.cpp:485-488, upstream src/mame/acorn/bbcm.cpp:669, upstream src/mame/acorn/bbcm.cpp:768-771, upstream src/mame/acorn/bbc_m.cpp:86, source src/devices/sound/samples.cpp:594-637"
+    note: >-
+      Cassette relay samples motoroff and motoron, played when the motor
+      switches. The list opens with *bbc, so the set is read from bbc.zip or
+      a bbc directory under the sample path, as .flac or .wav. A missing
+      sample leaves the relay silent.
+
+  # Elektronika BK
+  # bk.cpp: bk0010 (parent) with clones bk001001, bk0010fd, bk0011 and
+  # bk0011m. A clone looks for its ROMs in its own set, then in bk0010.zip.
+  - name: bk0010.zip
+    required: true
+    category: bios_zip
+    system: elektronika-bk
+    source_ref: "upstream src/mame/ussr/bk.cpp:241-246, upstream src/mame/ussr/bk.cpp:283"
+    contents:
+      - name: "monit10.rom"
+        description: "Monitor ROM"
+        size: 8192
+        crc32: "26c6e8a0"
+        sha1: "4e83a94ae5155bbea14d7331a5a8db82457bd5ae"
+      - name: "focal.rom"
+        description: "FOCAL interpreter"
+        size: 8192
+        crc32: "717149b7"
+        sha1: "75df26f81ebd281bcb5c55ba81a7d97f31e388b2"
+      - name: "tests.rom"
+        description: "Test ROM"
+        size: 8064
+        crc32: "91aecb4d"
+        sha1: "6b14d552045194a3004bb6b795a2538110921519"
+
+  # GCE Vectrex
+  - name: vectrex.zip
+    required: true
+    category: bios_zip
+    system: vectrex
+    source_ref: "upstream src/mame/miltonbradley/vectrex.cpp:145-158, upstream src/mame/miltonbradley/vectrex.cpp:249"
+    note: "Two executive ROM BIOS choices, exec_rom.bin by default. Software list vectrex."
+    contents:
+      - name: "exec_rom.bin"
+        description: "Executive ROM (default BIOS)"
+        size: 8192
+        crc32: "ba13fb57"
+        sha1: "65d07426b520ddd3115d40f255511e0fd2e20ae7"
+      - name: "exec_rom_intl_284001-1.bin"
+        description: "Executive ROM, international 284001-1"
+        size: 8192
+        crc32: "6d2bd167"
+        sha1: "77a220d5d98846b606dff608f7b5d00183ec3bab"
+
+  # Enterprise 64/128
+  - name: ep64_exdos.zip
+    required: false
+    category: bios_zip
+    system: enterprise-64-128
+    source_ref: "upstream src/devices/bus/ep64/exdos.cpp:67, upstream src/devices/bus/ep64/exdos.cpp:74-77, upstream src/devices/bus/ep64/exp.cpp:79, upstream src/mame/enterprise/ep64.cpp:607"
+    note: >-
+      EXDOS floppy controller card, the exdos option of the expansion slot,
+      which ep64 and ep128 leave empty by default.
+    contents:
+      - name: "exdos13.rom"
+        description: "EXDOS 1.3"
+        size: 32768
+        crc32: "d1d7e157"
+        sha1: "31c8be089526aa8aa019c380cdf51ddd3ee76454"
 
   # Device ROMs: sound chip ROM data
   - name: qsound.zip
