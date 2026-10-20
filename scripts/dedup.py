@@ -67,6 +67,9 @@ NODEDUP_DIRS = {
     # Abyss shareware bytes under the retail names, and each game opens
     # its own copy.
     "Softdisk",
+    # MAME's support trees (hash, plugins) are read by path as a whole, and
+    # two MAME versions share most of their software lists byte for byte.
+    "mame",
 }
 
 
