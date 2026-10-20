@@ -1779,6 +1779,24 @@ def source_yaml_paths(directory: str | Path) -> list[Path]:
     ]
 
 
+def installed_data_refs(platform: str, emulators_dir: str = "") -> frozenset[str]:
+    """Data directories a platform's own packages install beside the cores.
+
+    The platform layer names trees for its systems (retroarch.yml carries
+    dolphin-sys and ppsspp-assets, and Lakka inherits them), while Lakka's
+    core packages put both into the system directory themselves. A profile
+    records that with installed_on on its data directory reference.
+    """
+    emulators_dir = emulators_dir or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "emulators")
+    return frozenset(
+        str(tree.get("ref", ""))
+        for profile in load_emulator_profiles(emulators_dir, skip_aliases=False).values()
+        for tree in profile.get("data_directories") or []
+        if isinstance(tree, dict) and platform in (tree.get("installed_on") or [])
+    )
+
+
 def load_emulator_profiles(
     emulators_dir: str,
     skip_aliases: bool = True,

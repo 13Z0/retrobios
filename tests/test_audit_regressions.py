@@ -4625,6 +4625,25 @@ class BundledFilesAreNotToSource(unittest.TestCase):
         })
         self.assertEqual(unknown, [])
 
+    def test_a_tree_the_platform_installs_leaves_its_pack(self):
+        """retroarch.yml names dolphin-sys and ppsspp-assets and Lakka
+        inherits them, while Lakka's core packages install both trees."""
+        import tempfile
+
+        import yaml as _yaml
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import common
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            Path(tmp, "dolphin.yml").write_text(_yaml.safe_dump({
+                "emulator": "Dolphin", "type": "libretro", "files": [],
+                "data_directories": [{"ref": "dolphin-sys", "installed_on": ["lakka"]}]}))
+            self.assertEqual(common.installed_data_refs("lakka", tmp), frozenset({"dolphin-sys"}))
+            self.assertEqual(common.installed_data_refs("retroarch", tmp), frozenset())
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertIn("if ref_key in installed_data_refs(platform_name):", source)
+
     def test_the_pack_builder_skips_it(self):
         source = (ROOT / "scripts" / "packextras.py").read_text(encoding="utf-8")
         self.assertIn('if u.get("bundled"):', source)

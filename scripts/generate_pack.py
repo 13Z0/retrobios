@@ -33,6 +33,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import resolve_platform_cores as _platform_cores
 from common import (
+    installed_data_refs,
     platform_arg,
     require_directory,
     target_listing_line,
@@ -399,6 +400,8 @@ def _data_directory_members(
         for dd in system.get("data_directories", []):
             ref_key = dd.get("ref", "")
             if not ref_key or not data_registry or ref_key not in data_registry:
+                continue
+            if ref_key in installed_data_refs(platform_name):
                 continue
             entry = data_registry[ref_key]
             allowed = entry.get("for_platforms")
