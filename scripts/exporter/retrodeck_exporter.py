@@ -222,6 +222,9 @@ class Exporter(BaseExporter):
 
         merged: list[OrderedDict] = []
         corrected: set[tuple[str, str]] = set()
+        # PPSSPP writes its one BIOS as an object, not a list of one.
+        if isinstance(existing, dict):
+            existing = [existing]
         entries = [e for e in existing if isinstance(e, dict)] if isinstance(existing, list) else []
         # A name and system declared several times are several revisions (the
         # 64DD IPL USA and Dev): one entry of ours corrects the revision it
@@ -260,7 +263,12 @@ class Exporter(BaseExporter):
                 if field in cls.carries() and field not in by_key[keys[0]]:
                     combined.pop(field, None)
             if _md5_set(entry.get("md5")) == _md5_set(combined.get("md5")):
-                combined["md5"] = entry.get("md5")
+                # Their own spelling, and no key where they wrote none: an
+                # equal empty set wrote "md5": null 39 times.
+                if "md5" in entry:
+                    combined["md5"] = entry["md5"]
+                else:
+                    combined.pop("md5", None)
             elif isinstance(entry.get("md5"), list) and isinstance(combined.get("md5"), str):
                 combined["md5"] = [combined["md5"]]
             merged.append(combined)
@@ -322,8 +330,11 @@ class Exporter(BaseExporter):
                     )
                 else:
                     container, key = holder
-                    container[key] = self._merge(
-                        container.get(key), entries, additions, appended
+                    written = container.get(key)
+                    merged = self._merge(written, entries, additions, appended)
+                    # A single object stays one while nothing is added to it.
+                    container[key] = (
+                        merged[0] if isinstance(written, dict) and len(merged) == 1 else merged
                     )
                 break
             # A declared entry whose revision the platform does not hold is
@@ -334,7 +345,10 @@ class Exporter(BaseExporter):
                 and (str(fe.name), str(fe.native_system)) in appended
             )
 
-            produced[path] = json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+            # Nine of ten manifests end without a newline: the file ends as
+            # theirs does.
+            ending = "\n" if original.endswith("\n") else ""
+            produced[path] = json.dumps(manifest, indent=2, ensure_ascii=False) + ending
 
         return produced
 
@@ -366,7 +380,8 @@ class Exporter(BaseExporter):
                 if holder is None:
                     continue
                 container, key = holder
-                for entry in container[key]:
+                listed = container[key]
+                for entry in [listed] if isinstance(listed, dict) else listed:
                     declared.add(entry.get("filename", ""))
                     placed.add((entry.get("filename", ""), _paths_key(entry)))
                 if not component_value.get("name") and not component_value.get(

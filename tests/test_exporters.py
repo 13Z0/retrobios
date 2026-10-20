@@ -1420,6 +1420,42 @@ class BizhawkExport(unittest.TestCase):
         self.assertFalse(exporter.states(entry, "sha1"))
 
 
+class RetrodeckManifestsComeBackAsWritten(unittest.TestCase):
+    """With nothing to correct, a manifest is the platform's own bytes. The
+    export added a final newline to nine of ten, wrote "md5": null where no
+    md5 key was, and turned PPSSPP's single bios object into a list."""
+
+    def test_an_empty_truth_hands_back_every_manifest(self):
+        cache = UPSTREAM_CACHE / "retrodeck"
+        manifests = sorted(cache.glob("*/component_manifest.json"))
+        if not manifests:
+            self.skipTest("upstream cache not populated")
+        exporter = discover_exporters()["retrodeck"]()
+        config = native_layer(load_platform_config("retrodeck", str(REPO_ROOT / "platforms")))
+        systems, report = build_native_model({"systems": {}}, config)
+        originals = {f"{m.parent.name}/component_manifest.json": m.read_text(encoding="utf-8")
+                     for m in manifests}
+        produced = exporter.render(systems, report, originals, config)
+        for path, text in produced.items():
+            with self.subTest(manifest=path):
+                self.assertEqual(text, originals[path])
+
+    def test_no_md5_key_is_made_up(self):
+        from exporter.retrodeck_exporter import Exporter  # noqa: PLC0415
+
+        mine = OrderedDict([("filename", "bios.bin"), ("system", "xbox"), ("required", "Yes")])
+        (merged,) = Exporter._merge([OrderedDict(mine)], [OrderedDict(mine)])
+        self.assertNotIn("md5", merged)
+
+    def test_a_single_bios_object_stays_an_object(self):
+        from exporter.retrodeck_exporter import Exporter  # noqa: PLC0415
+
+        theirs = OrderedDict([("filename", "ppge_atlas.zim"), ("system", "psp"),
+                              ("md5", "a" * 32)])
+        merged = Exporter._merge(OrderedDict(theirs), [])
+        self.assertEqual(merged, [theirs])
+
+
 class RetrodeckExport(unittest.TestCase):
     A, B, C = "a" * 32, "b" * 32, "c" * 32
 
