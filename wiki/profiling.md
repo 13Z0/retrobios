@@ -399,6 +399,7 @@ partitions), and `game_count`.
 | `embedded` | true if the data is compiled into the binary and the external file is optional |
 | `bundled` | true if the emulator's own release installs the file where it reads it, for the build `mode` names (all builds when `mode` is absent). Packs and the installer leave it out: the user already has it. A file the standalone release ships but the libretro core does not (PPSSPP's assets, Dolphin's Sys) is bundled with `mode: standalone` only |
 | `not_bundled_on` | platforms (registry keys) whose package leaves out a file the release bundles: their packs bring it (Batocera installs hcl without its data) |
+| `unread_on` | platforms (registry keys) whose launcher points the emulator at other files, so the entry is never opened there and leaves that platform's report and pack (RetroBat gives standalone BlastEm absolute BIOS paths) |
 | `installed_on` | platforms whose own package installs the file beside the emulator although the release does not: their packs leave it out (Batocera and RetroPie copy blueMSX's machines beside the core) |
 | `has_builtin` | true if the core falls back to a built-in copy when the file is absent |
 | `config_key` | configuration key the emulator exposes to point at the file |
