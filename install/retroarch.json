@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-20T01:30:36Z",
+  "generated": "2026-10-20T05:16:59Z",
   "base_destination": "system",
   "detect": [
     {
@@ -398,10 +398,10 @@
       }
     }
   ],
-  "total_files": 5886,
-  "total_size": 6135053965,
-  "pack_files": 8528,
-  "pack_size": 6175602168,
+  "total_files": 5884,
+  "total_size": 6134896180,
+  "pack_files": 8526,
+  "pack_size": 6175444383,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -498,6 +498,9 @@
     "armsx2": [
       "armsx2_libretro"
     ],
+    "basiliskii": [
+      "basilisk"
+    ],
     "beetle_gba": [
       "mednafen_gba"
     ],
@@ -550,6 +553,7 @@
       "dolphin-gui"
     ],
     "dosbox-pure-unleashed": [
+      "dosbox-pure",
       "dosboxpure"
     ],
     "dosbox-staging": [
@@ -601,9 +605,11 @@
     ],
     "genesis_plus_gx": [
       "genesisplusgx",
-      "genesisplusgx-expanded",
       "genesisplusgx_ex",
       "genplus"
+    ],
+    "genesis_plus_gx_expanded": [
+      "genesisplusgx-expanded"
     ],
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
@@ -647,6 +653,9 @@
       "org.mupen64plusae.v3.fzurita.pro"
     ],
     "mame": [
+      "mame64"
+    ],
+    "mame2000": [
       "imame4all"
     ],
     "mame2003_plus": [
@@ -783,11 +792,15 @@
       "pceemu"
     ],
     "pcsx2-legacy": [
-      "PCSX2-LEGACY"
+      "PCSX2-LEGACY",
+      "pcsx2-16"
     ],
     "pcsx_rearmed": [
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
+    ],
+    "pcsx_rearmed_standalone": [
+      "pcsx-rearmed"
     ],
     "pizza-boy-gba": [
       "PIZZA-BOY-GBA",
@@ -818,7 +831,8 @@
     ],
     "rosalies-mupen-gui": [
       "RMG",
-      "com.github.Rosalie241.RMG"
+      "com.github.Rosalie241.RMG",
+      "mupen64"
     ],
     "saturn-emu": [
       "SATURN-EMU",
@@ -902,20 +916,25 @@
   },
   "system_cores": {
     "3do": [
+      "bizhawk",
       "groovymame",
       "mame",
       "mame0258",
       "mame0278",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
       "opera",
+      "phoenix",
       "real3doplayer",
       "ume2015"
     ],
     "amstrad-cpc": [
       "ace-dl",
       "cap32",
+      "capriceforever",
+      "capricerpi",
       "clk",
       "cpcemu",
       "crocods",
@@ -938,8 +957,11 @@
       "fbneo_cps12",
       "fbneo_neogeo",
       "hbmame",
+      "mame4all",
       "mame4droid",
-      "mame4droid-2024"
+      "mame4droid-2024",
+      "psxmame",
+      "raine"
     ],
     "atari-400-800": [
       "altirra",
@@ -953,10 +975,12 @@
     ],
     "atari-7800": [
       "a7800",
+      "bizhawk",
       "prosystem"
     ],
     "atari-lynx": [
       "beetle_lynx",
+      "bizhawk",
       "gearlynx",
       "handy",
       "holani",
@@ -971,9 +995,11 @@
     ],
     "coleco-colecovision": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "colem",
+      "coolcv",
       "fbalpha2019",
       "fbneo",
       "gearcoleco",
@@ -986,11 +1012,15 @@
     ],
     "commodore-amiga": [
       "amiberry",
+      "bizhawk",
       "clk",
+      "fs-uae",
       "fsuae",
       "puae",
       "puae2021",
-      "uae4arm"
+      "uae4all",
+      "uae4arm",
+      "winuae"
     ],
     "commodore-c128": [
       "c64-emu",
@@ -1001,14 +1031,18 @@
       "dinothawr"
     ],
     "doom": [
+      "dsda-doom",
       "gzdoom",
       "idtech4a++",
+      "lzdoom",
       "prboom",
-      "prboom-plus"
+      "prboom-plus",
+      "uzdoom"
     ],
     "dos": [
       "dosbox",
       "dosbox-pure-unleashed",
+      "dosbox-sdl2",
       "dosbox-staging",
       "dosbox-x",
       "dosbox_core",
@@ -1016,6 +1050,7 @@
       "dosbox_svn",
       "dosbox_svn_ce",
       "dreamm",
+      "rpix86",
       "rust_dos"
     ],
     "elektronika-bk": [
@@ -1025,6 +1060,7 @@
       "emuscv"
     ],
     "fairchild-channel-f": [
+      "bizhawk",
       "fbneo",
       "freechaf"
     ],
@@ -1043,10 +1079,13 @@
       "o2em"
     ],
     "mattel-intellivision": [
-      "freeintv"
+      "bizhawk",
+      "freeintv",
+      "jzintv"
     ],
     "microsoft-msx": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "fbalpha2019",
@@ -1062,13 +1101,15 @@
     "nec-pc-98": [
       "dosbox-x",
       "nekop2",
-      "np2kai"
+      "np2kai",
+      "np2pi"
     ],
     "nec-pc-engine": [
       "ares",
       "beetle_pce",
       "geargrafx",
       "jgenesis",
+      "magicengine",
       "mednafen",
       "mednafen_pce",
       "mednafen_pce_fast",
@@ -1078,10 +1119,12 @@
     ],
     "nec-pc-fx": [
       "beetle_pcfx",
+      "bizhawk",
       "mednafen"
     ],
     "nintendo-64dd": [
       "ares",
+      "bizhawk",
       "m64plus-fz",
       "mupen64plus-ae",
       "mupen64plus_next",
@@ -1092,6 +1135,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "bizhawk",
       "desmume",
       "desmume2015",
       "drastic",
@@ -1100,13 +1144,15 @@
       "melonds-nightly",
       "melonds_ds",
       "noods",
+      "nosgba",
       "skyemu"
     ],
     "nintendo-dsi": [
       "dsperate",
       "melonds",
       "melonds-nightly",
-      "melonds_ds"
+      "melonds_ds",
+      "nosgba"
     ],
     "nintendo-fds": [
       "fbneo",
@@ -1132,6 +1178,7 @@
       "triforce"
     ],
     "nintendo-gb": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "emux_gb",
@@ -1155,6 +1202,7 @@
     ],
     "nintendo-gba": [
       "beetle_gba",
+      "bizhawk",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -1168,6 +1216,7 @@
       "my-boy",
       "nanoboyadvance",
       "noods",
+      "nosgba",
       "pizza-boy-gba",
       "skyemu",
       "tempgba",
@@ -1175,6 +1224,7 @@
       "vbam"
     ],
     "nintendo-gbc": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "fixgb",
@@ -1198,6 +1248,7 @@
     ],
     "nintendo-nes": [
       "3dsen",
+      "bizhawk",
       "bnes",
       "emux_nes",
       "fceumm",
@@ -1220,6 +1271,7 @@
       "pokemini"
     ],
     "nintendo-satellaview": [
+      "bizhawk",
       "bsnes",
       "bsnes-jg",
       "bsnes2014",
@@ -1252,6 +1304,7 @@
       "supersnes9x"
     ],
     "nintendo-snes": [
+      "bizhawk",
       "bsnes",
       "bsnes-jg",
       "bsnes2014",
@@ -1268,6 +1321,7 @@
       "mednafen_supafaust",
       "mesen-s",
       "mesence",
+      "pisnes",
       "snes9x",
       "snes9x-explus",
       "snes9x2002",
@@ -1303,6 +1357,7 @@
       "mame0258",
       "mame0278",
       "mame2010",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid",
@@ -1312,10 +1367,12 @@
       "ume2015"
     ],
     "philips-videopac": [
+      "bizhawk",
       "o2em"
     ],
     "scummvm": [
-      "scummvm"
+      "scummvm",
+      "scummvm-sdl1"
     ],
     "sega-dreamcast": [
       "demul",
@@ -1328,29 +1385,37 @@
     ],
     "sega-game-gear": [
       "ares",
+      "bizhawk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus"
     ],
     "sega-master-system": [
       "ares",
+      "bizhawk",
       "blastem",
       "clk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "md-emu",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus",
@@ -1360,8 +1425,10 @@
       "ares",
       "clownmdemu",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -1369,11 +1436,15 @@
     ],
     "sega-mega-drive": [
       "ares",
+      "bizhawk",
       "blastem",
       "clownmdemu",
+      "dgen",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -1382,6 +1453,7 @@
     "sega-saturn": [
       "ares",
       "beetle_saturn",
+      "bizhawk",
       "kronos",
       "mednafen",
       "mednafen_stv",
@@ -1402,11 +1474,13 @@
     "sinclair-zx-spectrum": [
       "81",
       "ares",
+      "bizhawk",
       "clk",
       "cspect",
       "eightyone",
       "ep128emu",
       "ep128emu_core",
+      "fbzx",
       "fuse",
       "speccy",
       "zesarux"
@@ -1416,12 +1490,14 @@
       "fbneo",
       "fbneo_neogeo",
       "geolith",
-      "neocd"
+      "neocd",
+      "raine"
     ],
     "sony-playstation": [
       "ares",
       "armsx1",
       "beetle_psx",
+      "bizhawk",
       "duckstation",
       "epsxe",
       "fpse",
@@ -1429,6 +1505,7 @@
       "mednafen",
       "pcsx1",
       "pcsx_rearmed",
+      "pcsx_rearmed_standalone",
       "rustation",
       "swanstation"
     ],
@@ -1447,9 +1524,11 @@
       "yaps2"
     ],
     "sony-psp": [
-      "ppsspp"
+      "ppsspp",
+      "ppsspp-1.5.4"
     ],
     "ti-83": [
+      "bizhawk",
       "numero"
     ],
     "videoton-tvc": [
@@ -1461,7 +1540,9 @@
     ],
     "wolfenstein-3d": [
       "ecwolf",
-      "idtech4a++"
+      "idtech4a++",
+      "splitwolf",
+      "wolf4sdl"
     ],
     "xrick": [
       "xrick"
@@ -1926,10 +2007,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2009"
           ]
@@ -1944,10 +2025,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2015"
           ]
@@ -1967,7 +2048,15 @@
           "size": 1859335,
           "repo_path": "bios/Arcade/Arcade/neogeo.zip",
           "cores": [
-            "mamearcade",
+            "mamearcade"
+          ]
+        },
+        {
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
+          "cores": [
             "ume2015"
           ]
         }
@@ -9533,17 +9622,6 @@
       "cores": null,
       "systems": [
         "sega-mega-drive"
-      ],
-      "alternatives": [
-        {
-          "sha1": "02c287d10da6de579af7a4ce73b134bbdf23c970",
-          "sha256": "bbd576bfb7acb4f7eee0c0717768275482feb0bed6d1e6d0f5fa7b6c05e8bee8",
-          "size": 17742,
-          "repo_path": "bios/Sega/Mega Drive/rom.db",
-          "cores": [
-            "blastem"
-          ]
-        }
       ]
     },
     {
@@ -58649,26 +58727,6 @@
       "repo_path": "bios/Other/spmp8000emu/tonelib.bin",
       "cores": [
         "spmp8000emu"
-      ]
-    },
-    {
-      "dest": "supermodel/Games.xml",
-      "sha1": "fa334ab5ba6366bd28168860c913e6365b9fec96",
-      "sha256": "275832cdb077c22883192f5aaeb8f76547f4dce786370f10b2d54c46a8ed3c5e",
-      "size": 148364,
-      "repo_path": "bios/Sega/Model 3/supermodel/Games.xml",
-      "cores": [
-        "supermodel"
-      ]
-    },
-    {
-      "dest": "supermodel/Supermodel.ini",
-      "sha1": "cbda2b3fa65e37c5c2824a4630f95f145533c360",
-      "sha256": "3c910e7aa207ea55d1946fedaf12718115c21be5e67abf35b1220080c6c67919",
-      "size": 9421,
-      "repo_path": "bios/Sega/Model 3/supermodel/Supermodel.ini",
-      "cores": [
-        "supermodel"
       ]
     },
     {

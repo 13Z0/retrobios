@@ -5,7 +5,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-20T02:57:31Z",
+  "generated": "2026-10-20T05:16:59Z",
   "base_destination": "",
   "detect": [
     {
@@ -251,7 +251,7 @@
           "$HOME/Library/Application Support/PPSSPP/PSP/SYSTEM"
         ]
       },
-      "source": "bios/PPSSPP/ppge_atlas.zim"
+      "source": "bios/ppge_atlas.zim"
     },
     {
       "file": "dc/dc_boot.bin",
@@ -285,10 +285,10 @@
       }
     }
   ],
-  "total_files": 7696,
-  "total_size": 8436163096,
-  "pack_files": 7698,
-  "pack_size": 8436163096,
+  "total_files": 7482,
+  "total_size": 8249180909,
+  "pack_files": 7484,
+  "pack_size": 8249180909,
   "total_omitted": 29,
   "omitted_files": [
     {
@@ -596,6 +596,9 @@
     "armsx2": [
       "armsx2_libretro"
     ],
+    "basiliskii": [
+      "basilisk"
+    ],
     "beetle_gba": [
       "mednafen_gba"
     ],
@@ -644,8 +647,14 @@
     "cap32": [
       "caprice32"
     ],
+    "chihiro-ds": [
+      "chihiro-gun"
+    ],
     "cxbx-reloaded": [
       "cxbx"
+    ],
+    "cxbx-reloaded-2023": [
+      "chihiro"
     ],
     "desmume2015": [
       "desmume_2015"
@@ -702,9 +711,11 @@
     ],
     "genesis_plus_gx": [
       "genesisplusgx",
-      "genesisplusgx-expanded",
       "genesisplusgx_ex",
       "genplus"
+    ],
+    "genesis_plus_gx_expanded": [
+      "genesisplusgx-expanded"
     ],
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
@@ -757,6 +768,9 @@
       "org.mupen64plusae.v3.fzurita.pro"
     ],
     "mame": [
+      "mame64"
+    ],
+    "mame2000": [
       "imame4all"
     ],
     "mame2003_plus": [
@@ -900,11 +914,15 @@
       "pceemu"
     ],
     "pcsx2-legacy": [
-      "PCSX2-LEGACY"
+      "PCSX2-LEGACY",
+      "pcsx2-16"
     ],
     "pcsx_rearmed": [
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
+    ],
+    "pcsx_rearmed_standalone": [
+      "pcsx-rearmed"
     ],
     "pizza-boy-gba": [
       "PIZZA-BOY-GBA",
@@ -935,7 +953,8 @@
     ],
     "rosalies-mupen-gui": [
       "RMG",
-      "com.github.Rosalie241.RMG"
+      "com.github.Rosalie241.RMG",
+      "mupen64"
     ],
     "saturn-emu": [
       "SATURN-EMU",
@@ -1022,20 +1041,25 @@
   },
   "system_cores": {
     "3do": [
+      "bizhawk",
       "groovymame",
       "mame",
       "mame0258",
       "mame0278",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
       "opera",
+      "phoenix",
       "real3doplayer",
       "ume2015"
     ],
     "amstrad-cpc": [
       "ace-dl",
       "cap32",
+      "capriceforever",
+      "capricerpi",
       "clk",
       "cpcemu",
       "crocods",
@@ -1046,6 +1070,7 @@
     ],
     "apple-ii": [
       "applewin",
+      "bizhawk",
       "clk",
       "izapple2",
       "kegs",
@@ -1065,8 +1090,11 @@
       "fbalpha2012",
       "fbalpha2019",
       "hbmame",
+      "mame4all",
       "mame4droid",
-      "mame4droid-2024"
+      "mame4droid-2024",
+      "psxmame",
+      "raine"
     ],
     "atari-400-800": [
       "altirra",
@@ -1080,15 +1108,18 @@
     ],
     "atari-7800": [
       "a7800",
+      "bizhawk",
       "prosystem"
     ],
     "atari-jaguar": [
       "bigpemu",
       "iratajaguar",
+      "phoenix",
       "virtualjaguar"
     ],
     "atari-lynx": [
       "beetle_lynx",
+      "bizhawk",
       "gearlynx",
       "handy",
       "holani",
@@ -1106,9 +1137,11 @@
     ],
     "coleco-colecovision": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "colem",
+      "coolcv",
       "fbalpha2019",
       "fbneo",
       "gearcoleco",
@@ -1121,13 +1154,18 @@
     ],
     "commodore-amiga": [
       "amiberry",
+      "bizhawk",
       "clk",
+      "fs-uae",
       "fsuae",
       "puae",
       "puae2021",
-      "uae4arm"
+      "uae4all",
+      "uae4arm",
+      "winuae"
     ],
     "commodore-c64": [
+      "bizhawk",
       "c64-emu",
       "frodo",
       "vice",
@@ -1136,10 +1174,13 @@
       "x64sdl"
     ],
     "doom": [
+      "dsda-doom",
       "gzdoom",
       "idtech4a++",
+      "lzdoom",
       "prboom",
-      "prboom-plus"
+      "prboom-plus",
+      "uzdoom"
     ],
     "dragon64": [
       "xroar"
@@ -1148,6 +1189,7 @@
       "emuscv"
     ],
     "fairchild-channel-f": [
+      "bizhawk",
       "fbneo",
       "freechaf"
     ],
@@ -1167,10 +1209,13 @@
       "squirreljme"
     ],
     "mattel-intellivision": [
-      "freeintv"
+      "bizhawk",
+      "freeintv",
+      "jzintv"
     ],
     "microsoft-msx": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "fbalpha2019",
@@ -1182,7 +1227,9 @@
       "zesarux"
     ],
     "microsoft-xbox": [
+      "chihiro-ds",
       "cxbx-reloaded",
+      "cxbx-reloaded-2023",
       "directxbox",
       "hakux",
       "x1-box",
@@ -1194,13 +1241,15 @@
     "nec-pc-98": [
       "dosbox-x",
       "nekop2",
-      "np2kai"
+      "np2kai",
+      "np2pi"
     ],
     "nec-pc-engine": [
       "ares",
       "beetle_pce",
       "geargrafx",
       "jgenesis",
+      "magicengine",
       "mednafen",
       "mednafen_pce",
       "mednafen_pce_fast",
@@ -1210,6 +1259,7 @@
     ],
     "nec-pc-fx": [
       "beetle_pcfx",
+      "bizhawk",
       "mednafen"
     ],
     "neogeo": [
@@ -1232,6 +1282,7 @@
     "nintendo-3ds": [
       "azahar",
       "azaharplus",
+      "bizhawk",
       "citra",
       "citra-mmj",
       "citra2018",
@@ -1243,6 +1294,7 @@
     ],
     "nintendo-64dd": [
       "ares",
+      "bizhawk",
       "m64plus-fz",
       "mupen64plus-ae",
       "mupen64plus_next",
@@ -1253,6 +1305,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "bizhawk",
       "desmume",
       "desmume2015",
       "drastic",
@@ -1261,9 +1314,11 @@
       "melonds-nightly",
       "melonds_ds",
       "noods",
+      "nosgba",
       "skyemu"
     ],
     "nintendo-gb": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "emux_gb",
@@ -1287,6 +1342,7 @@
     ],
     "nintendo-gba": [
       "beetle_gba",
+      "bizhawk",
       "gba-emu",
       "gpsp",
       "jgenesis",
@@ -1300,6 +1356,7 @@
       "my-boy",
       "nanoboyadvance",
       "noods",
+      "nosgba",
       "pizza-boy-gba",
       "skyemu",
       "tempgba",
@@ -1307,6 +1364,7 @@
       "vbam"
     ],
     "nintendo-gbc": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "fixgb",
@@ -1330,6 +1388,7 @@
     ],
     "nintendo-nes": [
       "3dsen",
+      "bizhawk",
       "bnes",
       "emux_nes",
       "fceumm",
@@ -1352,6 +1411,7 @@
       "pokemini"
     ],
     "nintendo-snes": [
+      "bizhawk",
       "bsnes",
       "bsnes-jg",
       "bsnes2014",
@@ -1368,6 +1428,7 @@
       "mednafen_supafaust",
       "mesen-s",
       "mesence",
+      "pisnes",
       "snes9x",
       "snes9x-explus",
       "snes9x2002",
@@ -1387,6 +1448,7 @@
       "mame0258",
       "mame0278",
       "mame2010",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid",
@@ -1402,7 +1464,8 @@
       "retro8"
     ],
     "scummvm": [
-      "scummvm"
+      "scummvm",
+      "scummvm-sdl1"
     ],
     "sega-dreamcast": [
       "demul",
@@ -1415,29 +1478,37 @@
     ],
     "sega-game-gear": [
       "ares",
+      "bizhawk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus"
     ],
     "sega-master-system": [
       "ares",
+      "bizhawk",
       "blastem",
       "clk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "md-emu",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus",
@@ -1447,8 +1518,10 @@
       "ares",
       "clownmdemu",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -1456,11 +1529,15 @@
     ],
     "sega-mega-drive": [
       "ares",
+      "bizhawk",
       "blastem",
       "clownmdemu",
+      "dgen",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -1469,6 +1546,7 @@
     "sega-saturn": [
       "ares",
       "beetle_saturn",
+      "bizhawk",
       "kronos",
       "mednafen",
       "mednafen_stv",
@@ -1480,17 +1558,21 @@
     ],
     "sega32x": [
       "ares",
+      "bizhawk",
       "jgenesis",
+      "kega-fusion",
       "picodrive"
     ],
     "sinclair-zx-spectrum": [
       "81",
       "ares",
+      "bizhawk",
       "clk",
       "cspect",
       "eightyone",
       "ep128emu",
       "ep128emu_core",
+      "fbzx",
       "fuse",
       "speccy",
       "zesarux"
@@ -1500,12 +1582,14 @@
       "fbneo",
       "fbneo_neogeo",
       "geolith",
-      "neocd"
+      "neocd",
+      "raine"
     ],
     "sony-playstation": [
       "ares",
       "armsx1",
       "beetle_psx",
+      "bizhawk",
       "duckstation",
       "epsxe",
       "fpse",
@@ -1513,6 +1597,7 @@
       "mednafen",
       "pcsx1",
       "pcsx_rearmed",
+      "pcsx_rearmed_standalone",
       "rustation",
       "swanstation"
     ],
@@ -1531,7 +1616,8 @@
       "yaps2"
     ],
     "sony-psp": [
-      "ppsspp"
+      "ppsspp",
+      "ppsspp-1.5.4"
     ],
     "supracan": [
       "mamemess"
@@ -1551,14 +1637,17 @@
       "mame0278",
       "mame2009",
       "mame2010",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid",
       "mame4droid-2024",
+      "teknoparrot",
       "triforce",
       "ume2015"
     ],
     "vectrex": [
+      "bizhawk",
       "vecx"
     ],
     "vtech-vsmile": [
@@ -1571,7 +1660,9 @@
     ],
     "wolfenstein-3d": [
       "ecwolf",
-      "idtech4a++"
+      "idtech4a++",
+      "splitwolf",
+      "wolf4sdl"
     ],
     "x68000": [
       "px68k",
@@ -14491,10 +14582,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2009"
           ]
@@ -14509,10 +14600,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2015"
           ]
@@ -14532,7 +14623,15 @@
           "size": 1859335,
           "repo_path": "bios/Arcade/Arcade/neogeo.zip",
           "cores": [
-            "mamearcade",
+            "mamearcade"
+          ]
+        },
+        {
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
+          "cores": [
             "ume2015"
           ]
         }
@@ -22033,17 +22132,6 @@
       "cores": null,
       "systems": [
         "doom"
-      ],
-      "alternatives": [
-        {
-          "sha1": "5f4aed208301449c2e9514edfd325fe9dead76fa",
-          "sha256": "b4dd3642932193cc42bca0ee98bf30004888ca4850d69e85023b8baacfba1d1d",
-          "size": 143312,
-          "repo_path": "bios/Id Software/Doom/prboom.wad",
-          "cores": [
-            "prboom"
-          ]
-        }
       ]
     },
     {
@@ -26231,17 +26319,6 @@
       "cores": null,
       "systems": [
         "sega-mega-drive"
-      ],
-      "alternatives": [
-        {
-          "sha1": "02c287d10da6de579af7a4ce73b134bbdf23c970",
-          "sha256": "bbd576bfb7acb4f7eee0c0717768275482feb0bed6d1e6d0f5fa7b6c05e8bee8",
-          "size": 17742,
-          "repo_path": "bios/Sega/Mega Drive/rom.db",
-          "cores": [
-            "blastem"
-          ]
-        }
       ]
     },
     {
@@ -42674,35 +42751,6 @@
       ]
     },
     {
-      "dest": "bios/fbneo/hiscore.dat",
-      "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e",
-      "sha256": "efd00af9a44241c2aa094d5f1977aa68fc0bb8467dbcf82f32762977d37a6f17",
-      "size": 328397,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.30c6ad69",
-      "cores": [
-        "fbneo"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "fairchild-channel-f",
-        "microsoft-msx",
-        "nintendo-snes",
-        "snk-neogeo-cd"
-      ],
-      "alternatives": [
-        {
-          "sha1": "ae3329abbcb7b445d979321a1f67733aa3f023d0",
-          "sha256": "d9c51a13ec2c6db6c9ba0f955c8a8fd8fe54fc2ec05cd82226f4ddf53d500182",
-          "size": 314122,
-          "repo_path": "bios/Arcade/FBNeo/hiscore.dat",
-          "cores": [
-            "fbneo_cps12",
-            "fbneo_neogeo"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "bios/amiga-os-130.rom",
       "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
       "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
@@ -46945,37 +46993,6 @@
       "repo_path": "bios/VTech/CreatiVision/bioscv.rom",
       "cores": [
         "jollycv"
-      ]
-    },
-    {
-      "dest": "bios/mame2003/hiscore.dat",
-      "sha1": "a22ec279222ec6aeb3249932f7d377b7cf1e7bf1",
-      "sha256": "b95bbae8b1be197aea6d9b896a37bead6212852303b9f85559699da92c883832",
-      "size": 215475,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.a22ec279",
-      "cores": [
-        "mame2003"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-          "size": 322458,
-          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-          "cores": [
-            "mame2003_midway"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "bios/mame2003-plus/hiscore.dat",
-      "sha1": "c086306096722da7f02f624e7efb447659aca1d3",
-      "sha256": "ed444310ec543bf42acaf48fcab956f30c4c97268f4145dc36e5ad2980f19823",
-      "size": 131878,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.c0863060",
-      "cores": [
-        "mame2003_plus"
       ]
     },
     {
@@ -69223,16 +69240,6 @@
       ]
     },
     {
-      "dest": "bios/nxengine/Doukutsu.exe",
-      "sha1": "bb2d0441e073da9c584f23c2ad8c7ab8aac293bf",
-      "sha256": "fa18379fe942ecb5fd69360ede81675ad6bb8b743bef2120305c4b439c732218",
-      "size": 1478656,
-      "repo_path": "bios/Other/NXEngine/Doukutsu.exe",
-      "cores": [
-        "nxengine"
-      ]
-    },
-    {
       "dest": "bios/voice/E480.WAV",
       "sha1": "e9f05f46c50e4372aa491afdac554c9334df4fae",
       "sha256": "c11de9c9b472e55dad1b878261edf878f463895c87e9fe7cca0e929573bf23cf",
@@ -72756,336 +72763,6 @@
       ]
     },
     {
-      "dest": "bios/qemu/bios.bin",
-      "sha1": "f402170ee4f374c304a7ce0b139d6cecb1732aff",
-      "sha256": "8244f3e5eaca828cc0a6a963f1fad15d68d8d3c0b5c80b8451b3067a85f14ae1",
-      "size": 131072,
-      "repo_path": "bios/QEMU/bios.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/bios-256k.bin",
-      "sha1": "5fe6078506094333106e6b3f33c7185dea7f0268",
-      "sha256": "f1d4f396011197eb989029659cde250751cc711c336b8fbbe6f77cfe0dc5dcd8",
-      "size": 262144,
-      "repo_path": "bios/QEMU/bios-256k.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/bios-microvm.bin",
-      "sha1": "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257",
-      "sha256": "42780e1ab9161752848475529a25c39d7c76baee82a1b2ddff666c2f7de7bbee",
-      "size": 131072,
-      "repo_path": "bios/QEMU/bios-microvm.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/qboot.rom",
-      "sha1": "339d3a93c967491c9f1fffe963484386f48bd22c",
-      "sha256": "9b9dfc6c25740d6225625570d71cab6805cc9216e68c8932e343266daaeb8c4b",
-      "size": 65536,
-      "repo_path": "bios/QEMU/qboot.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios.bin",
-      "sha1": "63d87e2a6618c3a9b2aabecf03ac2456e5e63410",
-      "sha256": "f0defab87465236d0d22b6000bd2c270e05a56ff3bb7fd209a56069caed86d57",
-      "size": 38912,
-      "repo_path": "bios/QEMU/vgabios.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-cirrus.bin",
-      "sha1": "883eb2657ce29661a0466b6b41ce75411f37aad9",
-      "sha256": "305d3b15f67e65f1899a1664621f6b471e4345d33fd9eb4f6320b4559f6a04f2",
-      "size": 38912,
-      "repo_path": "bios/QEMU/vgabios-cirrus.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-stdvga.bin",
-      "sha1": "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5",
-      "sha256": "651513519f9e0d5b99d3b051a8f5c68db69e987339b59a441d371068c34c146b",
-      "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-stdvga.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-bochs-display.bin",
-      "sha1": "9e2edd3d835219cde63a20e2cd58107d7e96ef5b",
-      "sha256": "d5fd6992dfdf0c980996b79c5ea13b9c8b36342c1dc94fcd682a6c3e8df850ff",
-      "size": 28672,
-      "repo_path": "bios/QEMU/vgabios-bochs-display.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-ramfb.bin",
-      "sha1": "49df9be557f0f0277c8fedb889257e279586d536",
-      "sha256": "31b26b2288ed5594b65a234e797ee7105d225d48086170b27ab518c3fb69b7de",
-      "size": 28672,
-      "repo_path": "bios/QEMU/vgabios-ramfb.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-ati.bin",
-      "sha1": "ded141cacdebf557ec552597cbf57cd989cec3e2",
-      "sha256": "9d4d1f32a7e059de82c09c19fc25e276a39d96a1a516605a32ba704596e10d8e",
-      "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-ati.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-qxl.bin",
-      "sha1": "527227abd5f3348c382d4b02703389fbeb83b067",
-      "sha256": "e81cc2807ebb9a1467b1933d192a4313424b499b73e7674257f07cd2171e01c7",
-      "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-qxl.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-virtio.bin",
-      "sha1": "cddc53b94793609d1e837d78cd5468fcc1ed9164",
-      "sha256": "746f38c2023dbbc071503113f970bcf69d49c6e7c55fa8c0e3748dbccba42772",
-      "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-virtio.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vgabios-vmware.bin",
-      "sha1": "c54901ab8f526ab201ebf1b3ecdf711e38e6c259",
-      "sha256": "c12841eb2b057b6d99bfbc7ab72bea896e2b5cd694c93b026d7510de2b68ca11",
-      "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-vmware.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/kvmvapic.bin",
-      "sha1": "670c9cc79b4859944705eece710dc332188b79b4",
-      "sha256": "cdf057a71b07e3b52b19cbe210bdefa59250d01a9810b960f7fe1f98eed95a27",
-      "size": 9216,
-      "repo_path": "bios/QEMU/kvmvapic.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/linuxboot.bin",
-      "sha1": "fd19bef7f5647960952520389f448364762ed948",
-      "sha256": "1ecfb26c19da9dc00cdec0d0d738db69aeea4f1231c0c0ffc483ff69b3cda6ce",
-      "size": 1024,
-      "repo_path": "bios/QEMU/linuxboot.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/linuxboot_dma.bin",
-      "sha1": "0bff50c10727bd9c85c831ea92b7a52699959992",
-      "sha256": "9c49e255340c78fc12e54ed043462bca02fb7fca29b7cfab62ff88a5344b6950",
-      "size": 1536,
-      "repo_path": "bios/QEMU/linuxboot_dma.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/multiboot.bin",
-      "sha1": "a8b58ae464fc6fb26799432ae867bf57c546ff80",
-      "sha256": "13a3f9f119797b8776105f020f36572ce6a20fa2c60d3b8112818bfaefcdd348",
-      "size": 1024,
-      "repo_path": "bios/QEMU/multiboot.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/multiboot_dma.bin",
-      "sha1": "32ab1cf336b674bfb154eb7a939a3e3275a92647",
-      "sha256": "e01667420ee78a318ea44627d2dd68058d3377d024e6eb7237700afe2e86507d",
-      "size": 1024,
-      "repo_path": "bios/QEMU/multiboot_dma.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pvh.bin",
-      "sha1": "c2191e6495103c1f43e9b6ca8930e44c2245e476",
-      "sha256": "918ff03a118615c2f4611a5df2d9496aabe099b5cfaaf69e544ebf973305d59d",
-      "size": 1536,
-      "repo_path": "bios/QEMU/pvh.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-e1000.rom",
-      "sha1": "368e8e9827ae8757a7449319831078b6d5efb83f",
-      "sha256": "981a728f95b7a01645645e9b753cfb764c9eb59266fa888ac58d7008fbb48c10",
-      "size": 67072,
-      "repo_path": "bios/QEMU/pxe-e1000.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-eepro100.rom",
-      "sha1": "b19572c9c2a11f03282df81c0397aceed409a86c",
-      "sha256": "07b89a742e0f6d0e92dafe57b0f28c493436d0e1e07b7b77e728490c1f7b45dd",
-      "size": 61440,
-      "repo_path": "bios/QEMU/pxe-eepro100.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-ne2k_pci.rom",
-      "sha1": "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6",
-      "sha256": "bb9c0eaad36b9b4ce26c5f348bd05a832c8bf83ef38391db0ce9b51de8523ac7",
-      "size": 61440,
-      "repo_path": "bios/QEMU/pxe-ne2k_pci.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-pcnet.rom",
-      "sha1": "13a039bf9916f1db42d3a019591d372b4cf4aee9",
-      "sha256": "92358396c05b3346c6bfd52bbf2a47978d0a8c6ddea932ee091a24faefbd489e",
-      "size": 61440,
-      "repo_path": "bios/QEMU/pxe-pcnet.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-rtl8139.rom",
-      "sha1": "7b512c0a7a13bc3c254a25237e4d4612170f4391",
-      "sha256": "d491351e37a50eb5a40e98a9f6b4d85010ee60fb9e64129d65ea10839287f138",
-      "size": 61440,
-      "repo_path": "bios/QEMU/pxe-rtl8139.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/pxe-virtio.rom",
-      "sha1": "3e3f77cfe70af904133db94f27ec24e3c9c43648",
-      "sha256": "6994337fe07783a6233072e33771dc4f58260edc3269debe677a5227b264bfdc",
-      "size": 60416,
-      "repo_path": "bios/QEMU/pxe-virtio.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-e1000.rom",
-      "sha1": "a3df5fc33ab0190f470b34104ff3c0679cecbab6",
-      "sha256": "f37222fcdf0481bfbaf7a16d9aaf740aeb41d3d24c187801eb6e9a628cec0fc8",
-      "size": 159232,
-      "repo_path": "bios/QEMU/efi-e1000.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-e1000e.rom",
-      "sha1": "1d37f3ae6748d4deefe9fd5188a2f557bf265d61",
-      "sha256": "102c20348be2d0ebe45a77b076b31848182c2f7b4364775b6bc2ece6e97b4024",
-      "size": 159232,
-      "repo_path": "bios/QEMU/efi-e1000e.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-eepro100.rom",
-      "sha1": "956d9592fea33374ef0f1900a185b6e1109ea765",
-      "sha256": "2b5b55ba8afae7b5ef7116606babf60e6ceaa531c345d54542857cc3fbe3912e",
-      "size": 159232,
-      "repo_path": "bios/QEMU/efi-eepro100.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-ne2k_pci.rom",
-      "sha1": "adb7199f545fdb66c325b142c8dbc4cddb99a20d",
-      "sha256": "9925e0a34547118110479d8fc4e01092a0a73e0a236416e9ff862655b46751f7",
-      "size": 157696,
-      "repo_path": "bios/QEMU/efi-ne2k_pci.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-pcnet.rom",
-      "sha1": "9e5a4bb247c6a1777c89117ca091f94342b9046d",
-      "sha256": "71c494fde94efa9871cf43868d7e3c8f4190e406d47a5102a2a21b36ded8a162",
-      "size": 157696,
-      "repo_path": "bios/QEMU/efi-pcnet.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-rtl8139.rom",
-      "sha1": "99a1e431cc0cb0a78d5803875dfa687e12a947f4",
-      "sha256": "4cdd69a7f5c6ce7aec3a3f20a034dc80e1d22aa37a739c364378952d997a32c7",
-      "size": 160768,
-      "repo_path": "bios/QEMU/efi-rtl8139.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-virtio.rom",
-      "sha1": "1596e9b97f0bc8b5ff3e444235690a549ee982c6",
-      "sha256": "26be36901db7f8181c306cc62bd74891d8646528965a78e40cceadba5dd7c8e7",
-      "size": 160768,
-      "repo_path": "bios/QEMU/efi-virtio.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/efi-vmxnet3.rom",
-      "sha1": "6557242402387a6319a0db6abb916ada48e1391c",
-      "sha256": "33e833123ad9831df94b2d623a17f91e4c779e3cb799baa97058f5972676a32a",
-      "size": 156672,
-      "repo_path": "bios/QEMU/efi-vmxnet3.rom",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
       "dest": "bios/qemu/edk2-x86_64-code.fd",
       "sha1": "eac1a94b8e0d7c53fd5df001c36794ec34c7c724",
       "sha256": "2df617a6fd1bae41ec7c0e3bceca96c928a5a88d8dc198468d34733393ab2792",
@@ -73192,255 +72869,6 @@
       ]
     },
     {
-      "dest": "bios/qemu/openbios-ppc",
-      "sha1": "0ef5051dcb318c0bc45d1908f8318d6eece8686a",
-      "sha256": "f1d9bdb018e59ff65e39ce60cc0f9199af73d1770c34137ce423e04662cf96c8",
-      "size": 677196,
-      "repo_path": "bios/QEMU/openbios-ppc",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/slof.bin",
-      "sha1": "a03a94acfe555804d66cc6c74760ae1375a71a64",
-      "sha256": "9a9047e0d949097724dec83260f04fc1dd1e55af0b7debbcad3889ff7114ffb7",
-      "size": 995000,
-      "repo_path": "bios/QEMU/slof.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/skiboot.lid",
-      "sha1": "8052069aa9714c23be05b4e62fb245a3d572cb0f",
-      "sha256": "6de4771f2f686482d387532115004cddaaa9d2bb39ef18d81e9629b11195c106",
-      "size": 2527328,
-      "repo_path": "bios/QEMU/skiboot.lid",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vof.bin",
-      "sha1": "fc737b34a390f5752cb7e35b33d71f4f438ab607",
-      "sha256": "8c88070f252075111468e7b2a8043209e7798c3fb136326227390ea50f168f13",
-      "size": 3456,
-      "repo_path": "bios/QEMU/vof.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/vof-nvram.bin",
-      "sha1": "5d1184609b87f78635f0575467a1c3f440900ff0",
-      "sha256": "cf97201f9403212ab75287bf209bfb7710cb5f253e8fe80723cf43760a9e8a12",
-      "size": 16384,
-      "repo_path": "bios/QEMU/vof-nvram.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/u-boot.e500",
-      "sha1": "9ea03f249f856cdcb4399cc1f5a5031729379911",
-      "sha256": "f0250e391566bca7b5e643c43b761ab9629a0b82427792a772e80c8b97836425",
-      "size": 421720,
-      "repo_path": "bios/QEMU/u-boot.e500",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/u-boot-sam460-20100605.bin",
-      "sha1": "0399a79ac0cf77f0da70af9baec7548a3b368f0a",
-      "sha256": "be88ed96a6f50d5ba8ad7bf019f48e7f73acee95402d90d0dac3775d9c7a8d03",
-      "size": 524288,
-      "repo_path": "bios/QEMU/u-boot-sam460-20100605.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/qemu_vga.ndrv",
-      "sha1": "638c6262a6eb579ec3d1c9292566ac94c942dc15",
-      "sha256": "d8697354bde8a7ac9e6fe3a5fbca03698de623e95433a59c248e8e09b882c6b8",
-      "size": 18752,
-      "repo_path": "bios/QEMU/qemu_vga.ndrv",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/openbios-sparc32",
-      "sha1": "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26",
-      "sha256": "6ca2ed8f39e6e4fe3a88e84c0153836a8811cbb8c6a2019c33b63de372706733",
-      "size": 382080,
-      "repo_path": "bios/QEMU/openbios-sparc32",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/openbios-sparc64",
-      "sha1": "c6e215fe460629d35688ab8e51faf6f765827cd6",
-      "sha256": "9c976bc634115fee073e788b8812aed263213380e16fbee55ca04d4c3cb4def8",
-      "size": 1593408,
-      "repo_path": "bios/QEMU/openbios-sparc64",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/QEMU,tcx.bin",
-      "sha1": "5f1792a73ee47d78b2160191ecb2c92f353f93ad",
-      "sha256": "92da99a770ab24f96c33c78382940cac8b25e88cb110634c1b32aa2d8cb852e7",
-      "size": 1402,
-      "repo_path": "bios/QEMU/QEMU,tcx.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/QEMU,cgthree.bin",
-      "sha1": "619b86fb02faf8f682474be3f0653b58015008ba",
-      "sha256": "a99f3a06fdac5cf5d72bd0fd24647d897302c3ff8e918add65168185f8cbdf4d",
-      "size": 850,
-      "repo_path": "bios/QEMU/QEMU,cgthree.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/palcode-clipper",
-      "sha1": "47b0870aaa45a7aa0d48847fd905908fb06f3e9f",
-      "sha256": "9f8da7264c7438fe4a24a2215e81893586f5cfafcd6e5fd0059fccc31a4e8839",
-      "size": 153728,
-      "repo_path": "bios/QEMU/palcode-clipper",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/opensbi-riscv32-generic-fw_dynamic.bin",
-      "sha1": "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f",
-      "sha256": "1ebbd077b2b4c0f26dc0649124f8d5d56f925279dc6fc66c8adca9bb5f7855fc",
-      "size": 268312,
-      "repo_path": "bios/QEMU/opensbi-riscv32-generic-fw_dynamic.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/opensbi-riscv64-generic-fw_dynamic.bin",
-      "sha1": "6883bfd1991c0ef0d67b0967e7dcbd60420dd480",
-      "sha256": "f61451043f3ab1bb83eef32100678fde818508c682b97591a08a46683705a167",
-      "size": 272504,
-      "repo_path": "bios/QEMU/opensbi-riscv64-generic-fw_dynamic.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/s390-ccw.img",
-      "sha1": "7b4fa888d32ca8ddbc752f7442e4d055cee1871a",
-      "sha256": "0985865e94e3a4f2a4db9c62a2cc2cf32075d4df8e7ddf641633e92840683b65",
-      "size": 42608,
-      "repo_path": "bios/QEMU/s390-ccw.img",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/s390-netboot.img",
-      "sha1": "f6cec671408117bd9a31e982682662f27ef4fb2c",
-      "sha256": "ef4ef1630a8111dfe132be467818f121537c7e86c94238273a2073b114ab256e",
-      "size": 67232,
-      "repo_path": "bios/QEMU/s390-netboot.img",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/hppa-firmware.img",
-      "sha1": "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0",
-      "sha256": "3dd2013c37f9468d3c905a2efd607bf317686e7a2aa7d139baee772b0f70b74c",
-      "size": 167820,
-      "repo_path": "bios/QEMU/hppa-firmware.img",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/hppa-firmware64.img",
-      "sha1": "b42f6d4ca74073de6c038579b4a9323ad0a6b398",
-      "sha256": "a531f03a9f982a7e8811cdf3bc670f3c40d6d8b12c465f637247b16b18b851e0",
-      "size": 206024,
-      "repo_path": "bios/QEMU/hppa-firmware64.img",
-      "cores": [
-        "qemu"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/qemu/npcm7xx_bootrom.bin",
-      "sha1": "22a75d26a0591d2c7763765b6381fa2f73de43e1",
-      "sha256": "1e643db3e209e801f30f4492fdbdafca3e8f251a7b8e12239249eb480f081003",
-      "size": 768,
-      "repo_path": "bios/QEMU/npcm7xx_bootrom.bin",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/bamboo.dtb",
-      "sha1": "ebdf1745479f4ec88459bbd9ef16ee1114018508",
-      "sha256": "36a49d253e2bd907a54ca5e61965438b65fac0cf152c9b11f83c0c965203f218",
-      "size": 3211,
-      "repo_path": "bios/QEMU/bamboo.dtb",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/canyonlands.dtb",
-      "sha1": "8a2fda0b4f23a92eb44776b5d7ffe951987062da",
-      "sha256": "3e7ed2ed8637d8c8a1e619d8a280bc2da853e7a17eab689597c7b69770e503b0",
-      "size": 9779,
-      "repo_path": "bios/QEMU/canyonlands.dtb",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/petalogix-ml605.dtb",
-      "sha1": "892d265838866869b8a8ef104252ff5b2fda156f",
-      "sha256": "37bda496b0b4216cce70626492b43d9aaf0d5fcdefcce45efa09d5c583770c69",
-      "size": 9882,
-      "repo_path": "bios/QEMU/petalogix-ml605.dtb",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
-      "dest": "bios/qemu/petalogix-s3adsp1800.dtb",
-      "sha1": "976600e3f89ecc1f3564b7077f53c58e0b565280",
-      "sha256": "ef9f3112b7d9258cfad362dba8338ce9a8bdce59dec4d47c690b28fbefc841d7",
-      "size": 8161,
-      "repo_path": "bios/QEMU/petalogix-s3adsp1800.dtb",
-      "cores": [
-        "qemu"
-      ]
-    },
-    {
       "dest": "bios/dc_bios.bin",
       "sha1": "8951d1bb219ab2ff8583033d2119c899cc81f18c",
       "sha256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
@@ -73464,92 +72892,6 @@
       ],
       "systems": [
         "sega-dreamcast"
-      ]
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-linux64.7.so",
-      "sha1": "9bc9e3697b7472f418faba7336285edfd3061681",
-      "sha256": "1392d21466bc638e68151b716d5b2086d54cd812afd43253f1adb5b6e0185f51",
-      "size": 1731112,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-linux64.7.so",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-linux-arm64.7.so",
-      "sha1": "1a9ffeb58df30fabb9a9a803836041360c444105",
-      "sha256": "e8ea7e42855ceb4a90e7bd0b3abeba0c58b5f97166e8b0a30eefd58e099557a4",
-      "size": 1496120,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-linux-arm64.7.so",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-linux-arm.7.so",
-      "sha1": "f6c44be9613a88905bbae726e62513a0ab7bf1bb",
-      "sha256": "fd1dfb27d30bb72e903c9d2b4c650104a4369d2e7ffe8a4a533e8db2e7e9b19e",
-      "size": 1419664,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-linux-arm.7.so",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-linux32.7.so",
-      "sha1": "9aae3f3b152cbf328aeeb0a7353155be13807d04",
-      "sha256": "b7cf0e407f99056d90cbf62787a34820a7595b2129b165319d50766e00a66704",
-      "size": 1596612,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-linux32.7.so",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-mac-arm64.dylib",
-      "sha1": "26841faf08ded1bfabf3ff19e41ad28fe2a19b97",
-      "sha256": "213ff93831cfa3dd6d7ad0c3a3403a6ceedf4ac1341e1278b5b869d42fefb496",
-      "size": 1191520,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-mac-arm64.dylib",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/libopenh264-2.4.1-mac-x64.dylib",
-      "sha1": "3057520a3b6e3f68dbe8d05ebaa7544ffea322d1",
-      "sha256": "cc0ba518a63791c37571f3c851f0aa03a4fbda5410acc214ecd4f24f8d1c478e",
-      "size": 1381104,
-      "repo_path": "bios/Adobe/Flash/libopenh264-2.4.1-mac-x64.dylib",
-      "cores": [
-        "ruffle"
-      ],
-      "executable": true
-    },
-    {
-      "dest": "bios/video/openh264-2.4.1-win64.dll",
-      "sha1": "cd6b460b9990814fb1d8e48affe6f09542d4ad14",
-      "sha256": "081b0c081480d177cbfddfbc90b1613640e702f875897b30d8de195cde73dd34",
-      "size": 974944,
-      "repo_path": "bios/Adobe/Flash/openh264-2.4.1-win64.dll",
-      "cores": [
-        "ruffle"
-      ]
-    },
-    {
-      "dest": "bios/video/openh264-2.4.1-win32.dll",
-      "sha1": "def47ccd0802e858bd07429e48e604971771bf0c",
-      "sha256": "83270149640469c994a62cc32a6d8c0413cd7b802b7f1f2f532159f5bdc1cedd",
-      "size": 814176,
-      "repo_path": "bios/Adobe/Flash/openh264-2.4.1-win32.dll",
-      "cores": [
-        "ruffle"
       ]
     },
     {
@@ -73853,617 +73195,6 @@
       ]
     },
     {
-      "dest": "bios/scummvm/theme/scummmodern.zip",
-      "sha1": "aa2dfd12c11c6e6f3baaf7bf199bd6bcd71a520c",
-      "sha256": "1152e03f0bca45724ad6dd5dbc987a99abd0ffcfb09c7c9c7a0504980c12297c",
-      "size": 68087,
-      "repo_path": "bios/Other/ScummVM/.variants/scummmodern.zip.ee71d6cd",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/scummclassic.zip",
-      "sha1": "69836fb392710f2182df07bab8960e8a2d92c1a9",
-      "sha256": "39b823b709213006b00246e2d0c5c49f5475dc2257434fb2e860b442892e2fe1",
-      "size": 16488,
-      "repo_path": "bios/Other/ScummVM/scummclassic.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/scummremastered.zip",
-      "sha1": "03e53349eefc39ce25220bfcb1ae4a580704d29d",
-      "sha256": "0a3df174f3a271cfa384ce524e423cf25f35ee6c873772372ae954f2973e477a",
-      "size": 93901,
-      "repo_path": "bios/Other/ScummVM/.variants/scummremastered.zip.0d990484",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/residualvm.zip",
-      "sha1": "589b622f55c9944c4883e4163d4d49508e22e056",
-      "sha256": "fa8530078efef1719566c6d88edcc87ab3654994ad2a56617e82a77608a36b4b",
-      "size": 94555,
-      "repo_path": "bios/Other/ScummVM/.variants/residualvm.zip.b2811fa9",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/gui-icons.dat",
-      "sha1": "38e74e6994924781487a0d39cc53dc4708a90c1c",
-      "sha256": "e772a8bb64ad3d7a807e859ad55c6b41269e66e32dfc78cdb4e583e183b5d828",
-      "size": 3315855,
-      "repo_path": "bios/Other/ScummVM/gui-icons.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/shaders.dat",
-      "sha1": "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c",
-      "sha256": "1e7839515c92b0e55198a6c96666dcd369ac3d4efab0190a265d244fda65f9e9",
-      "size": 657234,
-      "repo_path": "bios/Other/ScummVM/shaders.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/theme/translations.dat",
-      "sha1": "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4",
-      "sha256": "88e4a57aa5d58b213f6a066518eb8a1cb1046132770987cc7dd8b06ce80e0156",
-      "size": 3693914,
-      "repo_path": "bios/Other/ScummVM/translations.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/achievements.dat",
-      "sha1": "379f9def6d0de4b4bad18b0177df81783a51f17b",
-      "sha256": "6f5394edee3a2ed9165d1ac0611a5e02aabe40e7ceca9e51926d01b23f157493",
-      "size": 249239,
-      "repo_path": "bios/Other/ScummVM/achievements.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/classicmacfonts.dat",
-      "sha1": "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1",
-      "sha256": "d33aa56fbbe119a1567a843df9bb759cb6589f236926b93a78dc033b2f4221d1",
-      "size": 626103,
-      "repo_path": "bios/Other/ScummVM/classicmacfonts.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/encoding.dat",
-      "sha1": "11d3873337827195bc16c3d3175ad00f1777ed95",
-      "sha256": "175689478e2acfe66a106e2df53c5707c49271183cfc7b5e65cd05c6b65c57f8",
-      "size": 179670,
-      "repo_path": "bios/Other/ScummVM/encoding.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/helpdialog.zip",
-      "sha1": "386d8a89e180f8abab53e5d5926b6a81ee4b31dd",
-      "sha256": "9ff3c7964a63b18ffa0e9cfcf60d4d8b4a77d7a583b2e66173716a825c777f81",
-      "size": 207764,
-      "repo_path": "bios/Other/ScummVM/helpdialog.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/macgui.dat",
-      "sha1": "1eed577281b8819367d1ee99b1a76ff3e1920735",
-      "sha256": "5e55c29903809bf5297a28fee22e203b6dc6f56240900036b9bd8036c0a67660",
-      "size": 65656,
-      "repo_path": "bios/Other/ScummVM/macgui.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/access.dat",
-      "sha1": "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef",
-      "sha256": "c108b691e81f8b9ac54feac3538ad7f26ab32b49777a34b47ee477aa464f0b30",
-      "size": 520352,
-      "repo_path": "bios/Other/ScummVM/access.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/bagel.dat",
-      "sha1": "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835",
-      "sha256": "cdab7aae2ef073f074bb4a1da691ad6895dd8de5c7a719a5d10d654abee8295c",
-      "size": 20584,
-      "repo_path": "bios/Other/ScummVM/bagel.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/cryo.dat",
-      "sha1": "220c2fe52d26b8607abeb2ad4a8ea4324daea5ba",
-      "sha256": "71b5e3d68848e67ae3d17eb63ed168d2fce788d3e408b79f025107eab082aa43",
-      "size": 12499,
-      "repo_path": "bios/Other/ScummVM/cryo.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/cryomni3d.dat",
-      "sha1": "3971847e26be0abad8196caf03e5852a81ddbdea",
-      "sha256": "d9fe2368aa9d5ecb4d3ddf1868ea71c7bfeb64f15422156051c449558ba561ae",
-      "size": 70416,
-      "repo_path": "bios/Other/ScummVM/cryomni3d.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/darkseed.dat",
-      "sha1": "343172f1bfff8cb8c4abefa95e211379f39583b7",
-      "sha256": "e4462b43eb16bb5c687fbe21cf8a09943b9be1ddcda508ebf3de6bfff434dd0e",
-      "size": 37183,
-      "repo_path": "bios/Other/ScummVM/darkseed.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/drascula.dat",
-      "sha1": "05c97e92439b67aea8f6eb7fc96db023edf62124",
-      "sha256": "6da45e0e6d8eb04f5f826836f0ddf85c7e41ed32c64c587cea985974b2f76975",
-      "size": 259625,
-      "repo_path": "bios/Other/ScummVM/drascula.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/freescape.dat",
-      "sha1": "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd",
-      "sha256": "5bd36bf848d73be0810f03adebfee105ef1c992fb8689618ef0aec882a6046f9",
-      "size": 30124,
-      "repo_path": "bios/Other/ScummVM/freescape.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/got.aud",
-      "sha1": "209ab6d86a7c44f241689c5511b2027f7ad2c7c4",
-      "sha256": "9b253aedf06bd49159e4241b22d1047aadb1453d125dd961a8d0c458ae3c889a",
-      "size": 11313,
-      "repo_path": "bios/Other/ScummVM/got.aud",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/got.gfx",
-      "sha1": "0c9603da78b980bcf391bbf5f9103a5a642c4ee8",
-      "sha256": "83f5d7681e92daaad63370505ff24d9bea468cbd898fc9628c62b299e707e768",
-      "size": 288199,
-      "repo_path": "bios/Other/ScummVM/got.gfx",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/hadesch_translations.dat",
-      "sha1": "17aae444b3010e72e092635d25d3b93c104b0ad2",
-      "sha256": "55f7bd06cbe7b6503fee3ec3243887450e804deaa9e5a026ff9821496624e630",
-      "size": 431,
-      "repo_path": "bios/Other/ScummVM/hadesch_translations.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/hugo.dat",
-      "sha1": "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9",
-      "sha256": "228dd029399ce7318a60aebed762ee628b9092ece36a824cb005a55534b9995f",
-      "size": 186866,
-      "repo_path": "bios/Other/ScummVM/hugo.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/kyra.dat",
-      "sha1": "31b0b9418af2f9dd4e4094aada05d48eb355975b",
-      "sha256": "6b2cc168d3201305039e78bc067f3cd10c1267d3c12a8aad12ab0656920318a8",
-      "size": 2028520,
-      "repo_path": "bios/Other/ScummVM/kyra.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/lure.dat",
-      "sha1": "516347ec0ec2a397265d1b2fb053aa3758382e09",
-      "sha256": "9c17cfb5349c4bd13e56b0652f81fd2bdec849de7bd875bfedf654a08916b568",
-      "size": 768832,
-      "repo_path": "bios/Other/ScummVM/lure.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/macventure.dat",
-      "sha1": "e431e718e3c784532422ea2654d5fc6042a95c09",
-      "sha256": "21d3194c3f43061055f7ac8f5e1ffbf09ee4aaba0ab22eff1780a45b46eb794d",
-      "size": 4146,
-      "repo_path": "bios/Other/ScummVM/macventure.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/mm.dat",
-      "sha1": "0816fe29b57911b28cbf774348f5492062326a85",
-      "sha256": "76cee02268017112ec6794c18394541ae8241ac4593abf904294daba43c3e78b",
-      "size": 280803,
-      "repo_path": "bios/Other/ScummVM/mm.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/mort.dat",
-      "sha1": "0b9d0fa2a18eadf61aeddc19128ef90898ab7206",
-      "sha256": "ed4f797fd4aff885000ebe589bbac9faa3dd09dd2bee1dee7b20c0d82636f4c1",
-      "size": 76302,
-      "repo_path": "bios/Other/ScummVM/mort.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/myst3.dat",
-      "sha1": "5fbf7b1a596219f0daab60a8ceb2f1e59e042243",
-      "sha256": "a02b766efef65d403577c4aa06f2679d911e05e0da807dcfa195833b55419b1e",
-      "size": 358287,
-      "repo_path": "bios/Other/ScummVM/myst3.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/nancy.dat",
-      "sha1": "7c8907d33da59afd4e4b62eee67541910e0b78d9",
-      "sha256": "efea15651895e7223d3b867f361d938dff9fff2c1643282103ecc89247e50d17",
-      "size": 255042,
-      "repo_path": "bios/Other/ScummVM/.variants/nancy.dat.eb7cfdb3",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/neverhood.dat",
-      "sha1": "490012c996ba0c56dd8d077e1418ee53b1e96397",
-      "sha256": "b86cb788237ace2988f7a8b7b02fddd213f29e2cac4e19764e6e3b29342894c6",
-      "size": 23804,
-      "repo_path": "bios/Other/ScummVM/neverhood.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/prince_translation.dat",
-      "sha1": "57403a286c4d251384442a507d285b2dc5ce330e",
-      "sha256": "e9e0647b4d364ed05fce3e9b7a640edc3a59fac72c2e92d9725111ab5c33a543",
-      "size": 168060,
-      "repo_path": "bios/Other/ScummVM/prince_translation.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/queen.tbl",
-      "sha1": "7bafa28dfd9b3be17430d467d8787d8204437ba0",
-      "sha256": "b104d1a01e3ea552b63d98da9365f6beaba40864baa74b5b53159f17fc8f1149",
-      "size": 1100505,
-      "repo_path": "bios/Other/ScummVM/queen.tbl",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/sky.cpt",
-      "sha1": "fa03ede717223eaf011491d2066e37eb112e735b",
-      "sha256": "4c457373415325ea039d7a3d4f1211f7bbedd83d5bf85b94afd14cb4bdd263d2",
-      "size": 419427,
-      "repo_path": "bios/Other/ScummVM/sky.cpt",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/supernova.dat",
-      "sha1": "8a571cfc431b5fe794f0262f0e55f72927ab27b4",
-      "sha256": "f778cb20eca2451220dd7dddf4b96f267e66f378f068f81d9c3f4962dbb1791f",
-      "size": 523211,
-      "repo_path": "bios/Other/ScummVM/supernova.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/teenagent.dat",
-      "sha1": "0d488164930332bae3aa1ad38cef44abbe3d00a6",
-      "sha256": "1c60a898b61bc39b38fa4e5ec5c3d78de666c10d1af7a3ffd36e9bbc234488ab",
-      "size": 403315,
-      "repo_path": "bios/Other/ScummVM/teenagent.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/titanic.dat",
-      "sha1": "15f51828f08fdbe01b56123e96312b5859a968c0",
-      "sha256": "463c1d1460993a1a404f6cece6f8f50706814b97f2b5ee5d2c3b32f480abacd8",
-      "size": 3197968,
-      "repo_path": "bios/Other/ScummVM/titanic.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/tony.dat",
-      "sha1": "a5e19f364bda6a0d2330495114c9ad665bb79ad0",
-      "sha256": "5537b209e5243f0a1c5e7f1e5024585caa9a63c959339dbdb2402038bcedf58c",
-      "size": 24584,
-      "repo_path": "bios/Other/ScummVM/tony.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/toon.dat",
-      "sha1": "85bb688125d66f2797a41f153ce1fa177027a83f",
-      "sha256": "eb7d5855ea3f69f0d1f618baf8e6c8e580c019b6f2fd2c0937dc664740baa252",
-      "size": 20996,
-      "repo_path": "bios/Other/ScummVM/toon.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/ultima.dat",
-      "sha1": "e049932518390257f4d49b1691cad229e6060079",
-      "sha256": "e52cb8c261d747ac4203a0d929bd5cb8f44e80e61a97ee2957b2508824f01358",
-      "size": 15981464,
-      "repo_path": "bios/Other/ScummVM/ultima.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/ultima8.dat",
-      "sha1": "6319d3a245297697c1e4def78dc231a3f30708bb",
-      "sha256": "eb00526c19ff1d878754f27632c29bfecdb9c906764fc4328d76bb708146f4fc",
-      "size": 238149,
-      "repo_path": "bios/Other/ScummVM/ultima8.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/wintermute.zip",
-      "sha1": "5302f543384b21fb55466118a6966e5ef46b85f6",
-      "sha256": "7559d45435dee4b49c339a892b73078a3123b33632567b02282847bed0e70060",
-      "size": 4520,
-      "repo_path": "bios/Other/ScummVM/wintermute.zip",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/fonts.dat",
-      "sha1": "1eaef39122559500fbbc705c9425500311d23e03",
-      "sha256": "b25946aa6ff9c7bbef9d6e5a8fa7b33cf1230fbddfaa5262e19288387c493b95",
-      "size": 6449829,
-      "repo_path": "bios/Other/ScummVM/fonts.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/fonts-cjk.dat",
-      "sha1": "b46f5a744387d1991d66a06292811f217ae063e2",
-      "sha256": "96900e574f5f7b100b63b538f74ac7c8a6ae0f56b5a2fc4131fb070a4d914a7e",
-      "size": 38277312,
-      "repo_path": "bios/Other/ScummVM/fonts-cjk.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/fonts-imgui.dat",
-      "sha1": "659a025dfa39a8caada7dac6e69b4d7c88217b3f",
-      "sha256": "f38eca5a71b33c267cfd909ddda2a859e0e5d4a70976e2cbba03cf9fcb0509d2",
-      "size": 4000965,
-      "repo_path": "bios/Other/ScummVM/fonts-imgui.dat",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/grim-patch.lab",
-      "sha1": "3c43b7a0125f88a9f83ae4307dca57867ffd637c",
-      "sha256": "7928ca5d5bd7d27cf4a386c696d78c01fc92bed7156ac9d381a42648fdd66710",
-      "size": 9341,
-      "repo_path": "bios/Other/ScummVM/grim-patch.lab",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/monkey4-patch.m4b",
-      "sha1": "49fc530e77b61f326f6e1d5a5147daa2fd67d1e2",
-      "sha256": "6d0141a132bf34eb4c81d7db958fc4bbff65ee972056e5bf01ce0105c09bdb95",
-      "size": 2990,
-      "repo_path": "bios/Other/ScummVM/monkey4-patch.m4b",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
       "dest": "bios/gamecontrollerdb.txt",
       "sha1": "ab035b7804089690018318e4a05f9a8fc59421ff",
       "sha256": "eb002773dc8a16aa96f9ee2609798e231a9deb60c45e21fbdd4e221c9e8b7d77",
@@ -74481,26 +73212,6 @@
       "repo_path": "bios/Other/spmp8000emu/tonelib.bin",
       "cores": [
         "spmp8000emu"
-      ]
-    },
-    {
-      "dest": "bios/supermodel/Games.xml",
-      "sha1": "fa334ab5ba6366bd28168860c913e6365b9fec96",
-      "sha256": "275832cdb077c22883192f5aaeb8f76547f4dce786370f10b2d54c46a8ed3c5e",
-      "size": 148364,
-      "repo_path": "bios/Sega/Model 3/supermodel/Games.xml",
-      "cores": [
-        "supermodel"
-      ]
-    },
-    {
-      "dest": "bios/supermodel/Supermodel.ini",
-      "sha1": "cbda2b3fa65e37c5c2824a4630f95f145533c360",
-      "sha256": "3c910e7aa207ea55d1946fedaf12718115c21be5e67abf35b1220080c6c67919",
-      "size": 9421,
-      "repo_path": "bios/Sega/Model 3/supermodel/Supermodel.ini",
-      "cores": [
-        "supermodel"
       ]
     },
     {
@@ -75555,16 +74266,6 @@
       ]
     },
     {
-      "dest": "bios/xrick/data.zip",
-      "sha1": "ecfc092fe6371dbf38e238a8ba5f90785b5db52d",
-      "sha256": "2a86458696e83eb924fc6c6fda3ca5d320ca90885bd6c2f32d121757ade389bb",
-      "size": 1457440,
-      "repo_path": "bios/Other/xrick/data.zip",
-      "cores": [
-        "xrick"
-      ]
-    },
-    {
       "dest": "bios/d64_1.rom",
       "sha1": "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69",
       "sha256": "0486c51d3b6f7b6b4bcdde661d54f076278fd6a4ee92cbf9d1bc791554e16bd7",
@@ -76322,341 +75023,6 @@
       "repo_path": "bios/Elektronika/BK/TERAK.ROM",
       "cores": [
         "bk"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX.rom",
-      "sha1": "e998f0c441f4f1800ef44e42cd1659150206cf79",
-      "sha256": "1c85dac5536fa3ba6f2cb70deba02ff680b34ac6cc787d2977258bd663a99555",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX_8020-20bios.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXSP.rom",
-      "sha1": "342e7d4bd86f3351766f460f6de3c89a40791ee0",
-      "sha256": "cf2a04ab1fb9c859811e8ff2f6c0a5ec6042e812e576e6f5f3558c841beb9c70",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXSP.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXR2.ROM",
-      "sha1": "04990aa1c3a3fc7294ec884b81deaa89832df614",
-      "sha256": "21bdad83858a3c52913546b26906892df69f77dfd85e5741cd1dab0ab145b18a",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSXR2.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2.rom",
-      "sha1": "6103b39f1e38d1aa2d84b1c3219c44f1abb5436e",
-      "sha256": "4bc4ae85ca5f28246cd3e7b7e017d298ddd375603657f84ef2c7954bc2d9b919",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX2.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2EXT.rom",
-      "sha1": "5c1f9c7fb655e43d38e5dd1fcc6b942b2ff68b02",
-      "sha256": "6c6f421a10c428d960b7ecc990f99af1c638147f747bddca7b0bf0e2ab738300",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2EXT.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2P.rom",
-      "sha1": "e90f80a61d94c617850c415e12ad70ac41e66bb7",
-      "sha256": "ca45b50d49a8199a2b8f74300556367a776df1bb28bf8af24d33e65f0fe37a99",
-      "size": 32768,
-      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/MSX2P.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2PEXT.rom",
-      "sha1": "fe0254cbfc11405b79e7c86c7769bd6322b04995",
-      "sha256": "36000685128f95ff515a128973f8d439116c1a1a8e38c1777293a428894434a2",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2PEXT.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/KANJI.rom",
-      "sha1": "5aff2d9b6efc723bc395b0f96f0adfa83cc54a49",
-      "sha256": "d87ce758a7171870a2a3e7893e09cbba2bd68ee70b4d0f0e49dd2ecd60aafdd1",
-      "size": 262144,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_kanjifont.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/FMPAC.rom",
-      "sha1": "9d789166e3caf28e4742fe933d962e99618c633d",
-      "sha256": "3cfe44646b69a622656b96305f1b975f48ca018839f7946895f7a1352d9720aa",
-      "size": 65536,
-      "repo_path": "bios/Microsoft/MSX/FMPAC.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/nowindDos1.rom",
-      "sha1": "1d4c09166755c6569ff0ed3878bbf1b22d7e3864",
-      "sha256": "086a8fb824f97fae60a37edf602875bd0b3e9a59366af5e00b1282b3cd936f84",
-      "size": 524288,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/nowindDos1.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/nowindDos2.rom",
-      "sha1": "8afd1ec5843ecfdcbff11497fa8c55b870c0c6f5",
-      "sha256": "4ead27806ebec667561e5806c7791891f64f155b37bbe11f3123e00a204eaf5f",
-      "size": 524288,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/nowindDos2.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX - C-BIOS/cbios_main_msx1.rom",
-      "sha1": "a49bcf7a5a1115815f730782a1fd7d1c79ce29e7",
-      "sha256": "b7cec7c09c4381675050313e822f3e1fe5af07ee83ee58a2fb304afab2f5c8aa",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX - C-BIOS/cbios_main_msx1.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX - C-BIOS/cbios_logo_msx1.rom",
-      "sha1": "95fe138745f5e627b021085c7e4629a6dfe6f93a",
-      "sha256": "0859615554861142a8262354e1347e67a45016448322f8180f24ea1976a368d2",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX - C-BIOS/cbios_logo_msx1.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2 - C-BIOS/cbios_main_msx2.rom",
-      "sha1": "0808d0486f77a44d3aa08cd77828a3748a356b8d",
-      "sha256": "0172ae8c78d7164fd2283214e6702ca8812574ec2e1299a3d10096b91c6cfea2",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX2 - C-BIOS/cbios_main_msx2.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom",
-      "sha1": "6fc989ae715fe8492700a9d15934113d910aed36",
-      "sha256": "ba26b4fa1f47912351dedfb26f883c55d0ec370ca96f745d6fc808bcafe8141d",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2 - C-BIOS/cbios_logo_msx2.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2 - C-BIOS/cbios_sub.rom",
-      "sha1": "565143f7c6fe0ffa12ec3069048113f44759d91a",
-      "sha256": "fa89daa803d4f1f284c530d3e396a3a88ce74f3a45c459339c6ed154f2d836df",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2 - C-BIOS/cbios_sub.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom",
-      "sha1": "c5edc3b289dea120fe60ad38596a51c2e28838aa",
-      "sha256": "ca2814c8f28d745fba3ba0730d63c29ceb1e18da10747582735dc95d99a11aa1",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX2+ - C-BIOS/cbios_main_msx2+.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom",
-      "sha1": "6e55cfc48d0d6ee57b041cb09427f614fb6a1910",
-      "sha256": "3436ed432f8afca2da51e004b895f6e7d3120fbb43ba45e864cc5a4af7e17754",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2+ - C-BIOS/cbios_logo_msx2+.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/MSX2+ - C-BIOS/cbios_music.rom",
-      "sha1": "5c5eb001e6a1fe29edb7abd428a3967bb388e5db",
-      "sha256": "8b4adaea1893d8176f32f64fbb87603663b070ee7c0c3f028d141a37d7ed4bc4",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/MSX2+ - C-BIOS/cbios_music.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/SEGA - SF-7000/sf7000.rom",
-      "sha1": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
-      "sha256": "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa",
-      "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/SEGA - SF-7000/sf7000.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/SVI - Spectravideo SVI-318/svi318.rom",
-      "sha1": "07758272df475e5e06187aa3574241df1b14035b",
-      "sha256": "75b7d8fb77591e903650c0a9773fe0dd501901a651b419ea5244fd5407b6b272",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/SVI - Spectravideo SVI-318/svi318.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/SVI - Spectravideo SVI-328/svi328.rom",
-      "sha1": "7d8daf52f78371ca2c9443e04827c8e1f98c8f2c",
-      "sha256": "f26339802bccd3c09657a8c1de89005570c3a23bcf8a5e8d4b5b23904c2f2e29",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/SVI - Spectravideo SVI-328/svi328.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/msxromdb.xml",
-      "sha1": "573aa830b7bef4452808b40df883469907db2fed",
-      "sha256": "e78ad4b290fa26705605dfd1d8245cc81beede9cb3e74b9cded15948fe70d5d6",
-      "size": 930986,
-      "repo_path": "bios/Other/bluemsx/msxromdb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/msxsysromdb.xml",
-      "sha1": "4053159367d4c65c559cd500fdd05c9717dbfe06",
-      "sha256": "60a950a01e11f8852b5b4bc83172d7b18d76b0a41e4d4c786b60f9ea28d0a0f2",
-      "size": 157542,
-      "repo_path": "bios/Microsoft/MSX/Databases/msxsysromdb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/colecodb.xml",
-      "sha1": "7a812f277cf2440421044a7acde1c47abd01951e",
-      "sha256": "b59745c9fb79e0c467958385ac27924e7da61b997b4c240d1b661defadc3f0a5",
-      "size": 158187,
-      "repo_path": "bios/Microsoft/MSX/Databases/colecodb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/msxcaswavdb.xml",
-      "sha1": "a9b28b650d2104cd06cef55e4c1de25e1ea6ff8d",
-      "sha256": "a520c49efe0701c3c415aea779eb3abe531a5eaceeca2c31c960528994fc6367",
-      "size": 819679,
-      "repo_path": "bios/Microsoft/MSX/Databases/msxcaswavdb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/segadb.xml",
-      "sha1": "ddc2b4877813256de3439d54fc5f474bd64c3996",
-      "sha256": "8eeabab42b3fcfc6c0af59592d182a5ddbebc95fb2c56cd8d3523ce42a4a1677",
-      "size": 82318,
-      "repo_path": "bios/Microsoft/MSX/Databases/segadb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Databases/svidb.xml",
-      "sha1": "d83168b0b5abf8df0ceb8a147b6708823957a71a",
-      "sha256": "84c8aa742f1cbd00b60650ddde0e7c3a142a4e41d4600676338ec4963f9cb166",
-      "size": 261070,
-      "repo_path": "bios/Microsoft/MSX/Databases/svidb.xml",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
       ]
     },
     {
@@ -78262,110 +76628,6 @@
       ],
       "systems": [
         "sega-master-system"
-      ]
-    },
-    {
-      "dest": "bios/gzdoom.pk3",
-      "sha1": "810ed9968c5b3bdc2c348c9bc76e9f80fbe31308",
-      "sha256": "2d5233e37ac699cd75607eac87be2bae87bd288b54374f11e8cf5b43c0ec2f9c",
-      "size": 3612904,
-      "repo_path": "bios/Game Engines/GZDoom/gzdoom.pk3",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/game_support.pk3",
-      "sha1": "3d4678183a20c235edda73f089bf4572d066255b",
-      "sha256": "6347f8b79a91b41fdbd8aa81a62b213128f7aaef5a24213c926bfa56f4fcd0ce",
-      "size": 2380108,
-      "repo_path": "bios/Game Engines/GZDoom/game_support.pk3",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/lights.pk3",
-      "sha1": "be3e3c3024ded9ceb53f9322abb35b1fc1d18e15",
-      "sha256": "4afd4a39a19adc826b96aed563df2496db0caa265b18fd82db39dd58727ca349",
-      "size": 24179,
-      "repo_path": "bios/Game Engines/GZDoom/lights.pk3",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/brightmaps.pk3",
-      "sha1": "d87823a7d2f4bf3935ab0b3d20fe8a533a4afeb5",
-      "sha256": "c8a75ff8a26ca532e72903cbf5367335446e13c0b91bb2aa0f53e4078191489b",
-      "size": 246598,
-      "repo_path": "bios/Game Engines/GZDoom/brightmaps.pk3",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/game_widescreen_gfx.pk3",
-      "sha1": "97936990801a287443dce75a7b3ee74b201dd698",
-      "sha256": "180c109fd5794baeb9cf99ccc0a2b2a1826ddfc87fc55614bb1a2dc5f32770b6",
-      "size": 5565936,
-      "repo_path": "bios/Game Engines/GZDoom/game_widescreen_gfx.pk3",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/soundfonts/gzdoom.sf2",
-      "sha1": "4394193fb95c1e59916efe9ac3a47952ab5002f5",
-      "sha256": "a9058609b07c1f0e0c1f420e76c2e80ba78136e6173e836caab51ffb13e552f1",
-      "size": 3299098,
-      "repo_path": "bios/Other/idtech4a++/uzdoom/soundfonts/uzdoom.sf2",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/fm_banks/GENMIDI.GS.wopl",
-      "sha1": "538d220d87b86b997f539265eb12a6c319e17a1c",
-      "sha256": "3e90b1e13007fb97c29d4a6f819519f1065892495c259961913317402a779514",
-      "size": 118767,
-      "repo_path": "bios/Other/idtech4a++/uzdoom/fm_banks/GENMIDI.GS.wopl",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
-      ]
-    },
-    {
-      "dest": "bios/fm_banks/gs-by-papiezak-and-sneakernets.wopn",
-      "sha1": "eaca5d7a9fe1db6094990be0d8916b7f97920db1",
-      "sha256": "488327960374b95dcc302e5586622a62fc21bdda7082f92a40258002ed267f40",
-      "size": 274864,
-      "repo_path": "bios/Other/idtech4a++/uzdoom/fm_banks/gs-by-papiezak-and-sneakernets.wopn",
-      "cores": [
-        "gzdoom"
-      ],
-      "systems": [
-        "doom"
       ]
     },
     {
@@ -80012,17 +78274,6 @@
       ]
     },
     {
-      "dest": "bios/mame2003/cheat.dat",
-      "sha1": "32fc78415114a976af9c2ee53ea13de9f40b55ee",
-      "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
-      "size": 7971360,
-      "repo_path": "bios/Arcade/MAME/cheat.dat",
-      "cores": [
-        "mame2003",
-        "mame2003_midway"
-      ]
-    },
-    {
       "dest": "bios/mame2003/history.dat",
       "sha1": "42d6d9ac933a7819adfd686f629a8e43aea4e880",
       "sha256": "e768148656d564487c765ee673b57f5b14f09c062e71eceafd1c9b0610689be8",
@@ -80144,26 +78395,6 @@
         "mame2015",
         "mame2016",
         "ume2015"
-      ]
-    },
-    {
-      "dest": "bios/mame2003-plus/cheat.dat",
-      "sha1": "32fc78415114a976af9c2ee53ea13de9f40b55ee",
-      "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
-      "size": 7971360,
-      "repo_path": "bios/Arcade/MAME/cheat.dat",
-      "cores": [
-        "mame2003_plus"
-      ]
-    },
-    {
-      "dest": "bios/mame2003-plus/history.dat",
-      "sha1": "42d6d9ac933a7819adfd686f629a8e43aea4e880",
-      "sha256": "e768148656d564487c765ee673b57f5b14f09c062e71eceafd1c9b0610689be8",
-      "size": 38635890,
-      "repo_path": "bios/Arcade/MAME/history.dat",
-      "cores": [
-        "mame2003_plus"
       ]
     },
     {
@@ -81085,16 +79316,6 @@
       "repo_path": "bios/Texas Instruments/TI-83/ti83.rom",
       "cores": [
         "numero"
-      ]
-    },
-    {
-      "dest": "bios/nxengine/data/npc.tbl",
-      "sha1": "19555d2f5f72a66d6beddb4acc5ca00d634ac9c4",
-      "sha256": "75b38bb4ab57b50bfc6c3ba77fe670a2eb67301f425aefe96bb1ed87c2b9e2db",
-      "size": 8664,
-      "repo_path": "bios/Other/NXEngine/nxengine/data/npc.tbl",
-      "cores": [
-        "nxengine"
       ]
     },
     {
@@ -83131,19 +81352,6 @@
       ]
     },
     {
-      "dest": "bios/PPSSPP/ppge_atlas.meta",
-      "sha1": "f99a13464a4dae347628f0ebb320e767e48e3a96",
-      "sha256": "e3e8ab044b973137c9864f473f345849ecb4c0a9a3234eaba399dfa16c5f06f0",
-      "size": 1119232,
-      "repo_path": "bios/Other/ppsspp/PPSSPP/ppge_atlas.meta",
-      "cores": [
-        "ppsspp"
-      ],
-      "systems": [
-        "sony-psp"
-      ]
-    },
-    {
       "dest": "bios/kick31034.A1000",
       "sha1": "4192c505d130f446b2ada6bdc91dae730acafb4c",
       "sha256": "879a7b2dc9735fd628dc0c52e8d97fb30713fa52a6d90856113610c2ea936e14",
@@ -83525,45 +81733,6 @@
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
       "repo_path": "bios/Roland/CM32L_PCM.ROM",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/Roland_SC-55.sf2",
-      "sha1": "9dba9212f2e34446ab034595665809f09f303d63",
-      "sha256": "fca3e514b635a21789d4224e84865d2954a2a914d46b64aa8219ddb565c44869",
-      "size": 3283278,
-      "repo_path": "bios/Other/ScummVM/Roland_SC-55.sf2",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/pred.dic",
-      "sha1": "20f9a6a9838e3189774ea7ac6b8e62d6720dc683",
-      "sha256": "cd367e0ef51fe79dae4b90cef9c7bf1566e092419ebec6a625d7a666d7b97287",
-      "size": 126481,
-      "repo_path": "bios/Other/ScummVM/pred.dic",
-      "cores": [
-        "scummvm"
-      ],
-      "systems": [
-        "scummvm"
-      ]
-    },
-    {
-      "dest": "bios/scummvm/extra/vkeybd_default.zip",
-      "sha1": "4d787bd5a071c729c4f374e6e7c7d7b06d7f9f63",
-      "sha256": "2704048b87cc4a0915cdbffa98cd7b4ba7a195a96a76c57d5912fbcc24cc2cd2",
-      "size": 184946,
-      "repo_path": "bios/Other/ScummVM/vkeybd_default.zip",
       "cores": [
         "scummvm"
       ],
@@ -85167,19 +83336,6 @@
       ]
     },
     {
-      "dest": "bios/xbox_hdd.qcow2",
-      "sha1": "9da5f9ecfb1c9c32efa616f0300d02e8f702244d",
-      "sha256": "c5ec3e0fbc4f31d36c13211ded7f070f3b5f04e99a367fbe5d8c2d8c6e4f925d",
-      "size": 1638400,
-      "repo_path": "bios/Microsoft/Xbox/xbox_hdd.qcow2",
-      "cores": [
-        "xemu"
-      ],
-      "systems": [
-        "microsoft-xbox"
-      ]
-    },
-    {
       "dest": "bios/wpcap.dll",
       "sha1": "c2a606a0151b4ba55fa204cf5e013afc9dcc89a6",
       "sha256": "160efaeb4bea94e7a12b24da0414c88d7fff7db9531104b93d6ae7b01ab858ea",
@@ -85948,624 +84104,6 @@
       ]
     },
     {
-      "dest": "bios/Machines/Shared Roms/MSXJ.rom",
-      "sha1": "df48902f5f12af8867ae1a87f255145f0e5e0774",
-      "sha256": "f6e9614bd14e048615bcd1518626a331ab65fa7bd14b239fe7f52d9885b8e6c3",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX_4000bios.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXBR.rom",
-      "sha1": "d6720845928ee848cfa88a86accb067397685f02",
-      "sha256": "992b1fb91abd833c6c35e20e5278f35d4411551c02187129b8fb2e872455600a",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXBR.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXFR.rom",
-      "sha1": "9eaad185efc8e224368d1db4949eb9659c26fb2c",
-      "sha256": "6b64e772f5a655ff052a8b7bc4e66912bf2acef207a94996f70ec6fc51781413",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXFR.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXG.rom",
-      "sha1": "38a645febd0e0fe86d594f27c2d14be995acc730",
-      "sha256": "0571b0d49f8a0df42203d16e3590128949dabba4db2e32773eec79f2f3afd710",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXG.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXKR.rom",
-      "sha1": "171b587bd5a947a13f3114120b6e7baca3b57d78",
-      "sha256": "cda1e25c0859d33441f2c39485e98d31d13c0e82b7761213512c554e32fcaaab",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXKR.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXR.rom",
-      "sha1": "4f3114e96d7b892911e3dccf1eece712be26f396",
-      "sha256": "fc425ee1282bf8dbaa6b2f0144e2a54f9f6cf17c81d1896adfdbe9516b639161",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXR.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXSE.ROM",
-      "sha1": "87f4d0fa58cfe9cef818a3185df2735e6da6168c",
-      "sha256": "62ff34891880af12b41294b35ce86f90c8b10f6593fd36e05da9490f50c6d811",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXSE.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXAR.ROM",
-      "sha1": "5e094fca95ab8e91873ee372a3f1239b9a48a48d",
-      "sha256": "7c94a655f8c5a135a1f08bb5f54887612a58fa810787a9002e50993105542696",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXAR.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXHAN.rom",
-      "sha1": "d41676fde0a3047792f93c4a41509b8749e55e74",
-      "sha256": "974bb2dfca1a6da6cf19a11d3370a8dab96e42e329b395c82eb5ab9d2da0196c",
-      "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXHAN.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2J.rom",
-      "sha1": "0081ea0d25bc5cd8d70b60ad8cfdc7307812c0fd",
-      "sha256": "0c672d86ead61a97f49a583b88b7c1905da120645cd44f0c9f2baf4f4631e0b1",
-      "size": 32768,
-      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/MSX2J.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2JEXT.rom",
-      "sha1": "0fbd45ef3dd7bb82d4c31f1947884f411f1ca344",
-      "sha256": "fb6daa38e31431b81971eb5618241685447e23b1450051008a1deb5023513ce9",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2JEXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2BR.rom",
-      "sha1": "9c43106dba3ae2829e9a11dffa9d000ed6d6454c",
-      "sha256": "0a89f2a084d18c470b148ecea91e5be34f4ab242ba0828f5f011553fa556ca30",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2BR.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2BREXT.rom",
-      "sha1": "4f2a7e0172f0214f025f23845f6e053d0ffd28e8",
-      "sha256": "d129d2e265fa51686455771e4ab05369a19b449fe731b9911715e40e0fa0b36e",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2BREXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2FR.rom",
-      "sha1": "3926cdd91fa89657a811463e48cfbdb350676e51",
-      "sha256": "2c495e1c4d84171f28ac3e6fe1b462cff5e960040ca4f41edba353206312916d",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2FR.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2FREXT.rom",
-      "sha1": "792e6b2814ab783d06c7576c1e3ccd6a9bbac34a",
-      "sha256": "3d431ef60adc1524ed8c7e293084b245d40f210480b1d5711e8f9e5254448e4a",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2FREXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2G.rom",
-      "sha1": "b17d9bea0eb16a1aa2d0ccbd7c9488da9f57698e",
-      "sha256": "e0fa7138fe887ef672994f1d397b2e9afbc8e9cdfdf0d651bc75b77d30527f53",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2G.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2GEXT.rom",
-      "sha1": "4ab7b2030d022f5486abaab22aaeaf8aa23e05f3",
-      "sha256": "2564b28a0c82fcf3c9a84c3131da93f9fb6ca78185eabecd12b2224ff9367d1c",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2GEXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2KR.rom",
-      "sha1": "affa3c5cd8db79a1450ad8a7f405a425b251653d",
-      "sha256": "d359eaa3f82758d546f121c9b2dacea0587cc231db1f40f51bc20dc118ad57a9",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2KR.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2KREXT.rom",
-      "sha1": "b6d3649a6647fa9f6bd61efc317485a20901128f",
-      "sha256": "c0aa4a95a5d6eefafd2f191058d6c675b9ca87bf29d88fc20b05aa45a5d1475e",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2KREXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2R.rom",
-      "sha1": "0f851ee7a1cf79819f61cc89e9948ee72a413802",
-      "sha256": "52673f35702a43ae6650c0b2d4b3cf447245b8ac4d121cf839ae92e054e67fa0",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2R.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2REXT.rom",
-      "sha1": "03bf6d2ac86f5c9ab618e155442787c700f99fed",
-      "sha256": "482a822df0111c09bb74d67e89eda62b7dfb47ff9672fa838a96da0237d987e8",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2REXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2R2.ROM",
-      "sha1": "ebb7eb540a390509edfd36c84288ba85e63f2d1f",
-      "sha256": "e6a99ffc28b07a1ee8fd48cf09cdd9adbb3f54ab1bad74e2252c37ace30794ec",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/MSX2R2.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2SE.rom",
-      "sha1": "1b70a195a00b1fc4995766390f39d3ba884b5148",
-      "sha256": "8040485c8b31824f2a054ce2e21f03ba3e9074872b4323bd67e8459336b03887",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SE.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2SP.rom",
-      "sha1": "4811956f878c3e03da46317f787cdc4bebc86f47",
-      "sha256": "47a6aa250d58973c175d82597de12a72d4b82251ee4b316cd45a5be8fb466bf4",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SP.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2SPEXT.rom",
-      "sha1": "1e9a955943aeea9b1807ddf1250ba6436d8dd276",
-      "sha256": "8bec5c46af4dfde9bb64ac0b383d590ffcccae7b828c7f3dc1ca21b68d8e34fb",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2SPEXT.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2AR.ROM",
-      "sha1": "35195ab67c289a0b470883464df66bc6ea5b00d3",
-      "sha256": "169a45c439dad87574aae9f9a5b36bc147e4b1984d5fff1a54e0c53cb958a818",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2AR.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2AREXT.ROM",
-      "sha1": "ebb76f9061e875365023523607db610f2eda1d26",
-      "sha256": "1083d84573a2de5555c8ad96a8f2e9f22ad7da3c6b90124c9ef24f6a04b4368f",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2AREXT.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2HAN.rom",
-      "sha1": "87936f808423dddfd00629056d6807b4be1dc63e",
-      "sha256": "092a9b5157e0d4703955584f388f0f44035e4991e21b8e1499db8f333076bca7",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2HAN.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSX2PMUS.rom",
-      "sha1": "6354ccc5c100b1c558c9395fa8c00784d2e9b0a3",
-      "sha256": "e49cc4f1ad9de4df6c965d92fc631175c1d004e647d680d884ec6971a824eebc",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSX2PMUS.rom",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXTR.ROM",
-      "sha1": "242e73d8284a012b275c0a266844ebbc4269d787",
-      "sha256": "e101bd0f95ab8b566dae60e699cf88d4e3db1f445a28ca195f34b1bf8c5627e8",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXTR.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXTREXT.ROM",
-      "sha1": "018d7a5222f28514908fb1b1513286a6558a6d05",
-      "sha256": "730e2e6e64cf8919308105365dd902eec984fcd61b3307eccdc0744b4407531d",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXTREXT.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXTRMUS.ROM",
-      "sha1": "6aea1aef5ec31c1826c22edf580525f93baad425",
-      "sha256": "ddb783c9792af34afd58dfed611926deafa6eba225d62ab9dfdb2d49cc6ef1f8",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXTRMUS.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXTROPT.ROM",
-      "sha1": "b4433a3975c57dd440d6bf12dbd28b2ac1b90ef4",
-      "sha256": "af602b457b73d1c04275e02e07ed0b9561a3d4f523812890a8f6faf2ec01a810",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXTROPT.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXDOS23.ROM",
-      "sha1": "0527fb75775caa76c7eca8d449938ace83d36e96",
-      "sha256": "bd60f7e2d146f7b90ff1a9a7967c9ee4906f40e5deb91692948410dc40303aee",
-      "size": 65536,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MSXDOS23.ROM",
-      "cores": [
-        "bluemsx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MSXKANJI.rom",
-      "sha1": "dcc3a67732aa01c4f2ee8d1ad886444a4dbafe06",
-      "sha256": "9fb7ef5003fcb953f46ffe5bab399832d8175f53cccb763d8c454a91bc2429fd",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_kanjibasic.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/XBASIC2.rom",
-      "sha1": "47370bec7ca1f0615a54eda548b07fbc0c7ef398",
-      "sha256": "6bd7e4b1afafa49136084147301905417472675416cbd30a5c68e116a2a59f9b",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/XBASIC2.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/PAINT.rom",
-      "sha1": "ace202e87337fbc54fea21e22c0b3af0abe6f4ae",
-      "sha256": "f90caee0fca8ab50308ca65339c647a07998f31e75132c9feb8fd609461a20fd",
-      "size": 65536,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/PAINT.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/SWP.rom",
-      "sha1": "4b4508131dca6d811694ae6379f41364c477de58",
-      "sha256": "9ced6187b238a4c44a6f41596177a10ff8b6325a374dc7756c3032e7e6318ddd",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/SWP.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/ARABIC.rom",
-      "sha1": "2c9600c6e0025fee10d249e97448ecaa37e38c42",
-      "sha256": "c530b4749986b0384fd4a0a2c0d6841a6aa229e745a7f40a27d67b29f872d43e",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/ARABIC.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/HANGUL.rom",
-      "sha1": "965f4982790f1817bcbabbb38c8777183b231a55",
-      "sha256": "0ba0a8e4c4fc4635621170faef6866b630aac7680aa13f044ed3becbccaca0a5",
-      "size": 131072,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/HANGUL.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/RS232.ROM",
-      "sha1": "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7",
-      "sha256": "696da03345b9fd27799b8fd92024050a201c020ef730e9006cb8f10bbbf68004",
-      "size": 8192,
-      "repo_path": "bios/Other/msx-emu/Machines/Shared Roms/RS232.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MOONSOUND.rom",
-      "sha1": "32760893ce06dbe3930627755ba065cc3d8ec6ca",
-      "sha256": "0481e861f639fa3d6a64a75b735035a54b0875d57aaae33fdbe400146c80423f",
-      "size": 2097152,
-      "repo_path": "bios/Microsoft/MSX/openmsx/yrw801.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/PANASONICDISK.rom",
-      "sha1": "7ed7c55e0359737ac5e68d38cb6903f9e5d7c2b6",
-      "sha256": "bbddc2492147a3e1c3585962cae02036ef269dcdc99038e613534cb2b8334460",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/openmsx/fs-a1wsx_disk.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/PHILIPSDISK.rom",
-      "sha1": "c3efedda7ab947a06d9345f7b8261076fa7ceeef",
-      "sha256": "26cf5bbdde918cafb4605267dc415528424ed5b5dcd028076bf72157ed5c37cb",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/nms8250_disk.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/NATIONALDISK.rom",
-      "sha1": "78cd7f847e77fd8cd51a647efb2725ba93f4c471",
-      "sha256": "954e13823e232e745bf527fc5b2d80d6dd55df28593f3d71fc2f4ba6a569ab21",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/share/systemroms/fs-5500_disk.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/MICROSOLDISK.ROM",
-      "sha1": "f59d33311c95edc0168445f74eddd8a6772aa6a0",
-      "sha256": "6bf8131271b409e1da8edc694cb6411d26cc9486a4352d5e3524c844d1dafbd2",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/MICROSOLDISK.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/SUNRISEIDE.rom",
-      "sha1": "1c79c8fcfd661394f91be94b218955c84cabd742",
-      "sha256": "bcec49242e97df4cf68d7bcb687565f6c76ad4b3ebddbe3afa81594231cd0ae7",
-      "size": 65536,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/SUNRISEIDE.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/BEERIDE.ROM",
-      "sha1": "077bdfff644b931b6a13bab8ab847aee766d163e",
-      "sha256": "48f08f1532cb1e9be54e584382c099d067ceb13a949a630916baf515aa1cf50f",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/BEERIDE.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/NOVAXIS.rom",
-      "sha1": "352ec8c99fe1397a88ecb3aee6dbb4d121c818e9",
-      "sha256": "9b57b6bfb8958d435ba34bcbbcd44b46710fa7ed7b9d41bcd2485fac05a602ce",
-      "size": 16384,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/NOVAXIS.rom",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/GCVMX80.ROM",
-      "sha1": "977fed1135b6cc73e765b47f51570fc00acd5b79",
-      "sha256": "531537e092df40ae8ae5728e58dd9224521fe98cde7c5af53f38007ed1b0353b",
-      "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/GCVMX80.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/Shared Roms/ARAB1.ROM",
-      "sha1": "0287b2ec897b9196788cd9f10c99e1487d7adbbb",
-      "sha256": "91c33f3304c437c151b9ad877019463d1b68e1dbaa792a6b42a7a890f8c55c34",
-      "size": 32768,
-      "repo_path": "bios/Microsoft/MSX/Shared Roms/ARAB1.ROM",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision",
-        "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "bios/Machines/COL - ColecoVision/coleco.rom",
-      "sha1": "45bedc4cbdeac66c7df59e9e599195c778d86a92",
-      "sha256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad",
-      "size": 8192,
-      "repo_path": "bios/Coleco/ColecoVision/BIOS.col",
-      "cores": [
-        "bluemsx"
-      ],
-      "systems": [
-        "coleco-colecovision"
-      ]
-    },
-    {
       "dest": "bios/Citra/sysdata/aes_keys.txt",
       "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
       "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
@@ -86827,6 +84365,17 @@
       ]
     },
     {
+      "dest": "bios/fbneo/hiscore.dat",
+      "sha1": "ae3329abbcb7b445d979321a1f67733aa3f023d0",
+      "sha256": "d9c51a13ec2c6db6c9ba0f955c8a8fd8fe54fc2ec05cd82226f4ddf53d500182",
+      "size": 314122,
+      "repo_path": "bios/Arcade/FBNeo/hiscore.dat",
+      "cores": [
+        "fbneo_cps12",
+        "fbneo_neogeo"
+      ]
+    },
+    {
       "dest": "bios/kronos/saturn_bios.bin",
       "sha1": "2b8cb4f87580683eb4d760e4ed210813d667f0a2",
       "sha256": "ae4058627bb5db9be6d8d83c6be95a4aa981acc8a89042e517e73317886c8bc2",
@@ -86837,6 +84386,26 @@
       ],
       "systems": [
         "sega-saturn"
+      ]
+    },
+    {
+      "dest": "bios/mame2003/hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "mame2003_midway"
+      ]
+    },
+    {
+      "dest": "bios/mame2003/cheat.dat",
+      "sha1": "32fc78415114a976af9c2ee53ea13de9f40b55ee",
+      "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
+      "size": 7971360,
+      "repo_path": "bios/Arcade/MAME/cheat.dat",
+      "cores": [
+        "mame2003_midway"
       ]
     },
     {
@@ -87136,19 +84705,6 @@
       ],
       "systems": [
         "nec-pc-98"
-      ]
-    },
-    {
-      "dest": "bios/PPSSPP/ppge_atlas.zim",
-      "sha1": "30a33f3651f8e1b0967a5dfe6ff714baebcce41a",
-      "sha256": "3ab7fcf6956d0281ada94d501fc6d1cfa8fc034f139e25fed6c829f723d92a95",
-      "size": 666530,
-      "repo_path": "bios/Sony/PlayStation Portable/ppge_atlas.zim",
-      "cores": [
-        "ppsspp"
-      ],
-      "systems": [
-        "sony-psp"
       ]
     },
     {

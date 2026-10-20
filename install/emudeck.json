@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-20T02:57:31Z",
+  "generated": "2026-10-20T05:16:59Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -278,10 +278,10 @@
       }
     }
   ],
-  "total_files": 6012,
-  "total_size": 7046025551,
-  "pack_files": 6014,
-  "pack_size": 7046025551,
+  "total_files": 6001,
+  "total_size": 7014685025,
+  "pack_files": 6003,
+  "pack_size": 7014685025,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -413,8 +413,14 @@
       "bsnes_mercury_balanced",
       "bsnes_mercury_performance"
     ],
+    "chihiro-ds": [
+      "chihiro-gun"
+    ],
     "cxbx-reloaded": [
       "cxbx"
+    ],
+    "cxbx-reloaded-2023": [
+      "chihiro"
     ],
     "daedalusx64": [
       "daedalusx64-sa"
@@ -451,9 +457,11 @@
     ],
     "genesis_plus_gx": [
       "genesisplusgx",
-      "genesisplusgx-expanded",
       "genesisplusgx_ex",
       "genplus"
+    ],
+    "genesis_plus_gx_expanded": [
+      "genesisplusgx-expanded"
     ],
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
@@ -484,6 +492,9 @@
       "org.mupen64plusae.v3.fzurita.pro"
     ],
     "mame": [
+      "mame64"
+    ],
+    "mame2000": [
       "imame4all"
     ],
     "mame2003_plus": [
@@ -590,11 +601,15 @@
       "parallel_n64_debug"
     ],
     "pcsx2-legacy": [
-      "PCSX2-LEGACY"
+      "PCSX2-LEGACY",
+      "pcsx2-16"
     ],
     "pcsx_rearmed": [
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
+    ],
+    "pcsx_rearmed_standalone": [
+      "pcsx-rearmed"
     ],
     "pizza-boy-sc": [
       "PIZZA-BOY-SC",
@@ -617,7 +632,8 @@
     ],
     "rosalies-mupen-gui": [
       "RMG",
-      "com.github.Rosalie241.RMG"
+      "com.github.Rosalie241.RMG",
+      "mupen64"
     ],
     "saturn-emu": [
       "SATURN-EMU",
@@ -690,9 +706,11 @@
   "system_cores": {
     "coleco-colecovision": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "colem",
+      "coolcv",
       "fbalpha2019",
       "fbneo",
       "gearcoleco",
@@ -706,6 +724,7 @@
     "nintendo-3ds": [
       "azahar",
       "azaharplus",
+      "bizhawk",
       "citra",
       "citra-mmj",
       "citra2018",
@@ -730,6 +749,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "bizhawk",
       "desmume",
       "desmume2015",
       "drastic",
@@ -738,6 +758,7 @@
       "melonds-nightly",
       "melonds_ds",
       "noods",
+      "nosgba",
       "skyemu"
     ],
     "nintendo-gamecube": [
@@ -751,6 +772,7 @@
     ],
     "nintendo-nes": [
       "3dsen",
+      "bizhawk",
       "bnes",
       "emux_nes",
       "fceumm",
@@ -775,6 +797,7 @@
       "kenji-nx",
       "ryujinx",
       "skyline",
+      "sudachi",
       "suyu",
       "yuzu"
     ],
@@ -782,14 +805,17 @@
       "cemu"
     ],
     "panasonic-3do": [
+      "bizhawk",
       "groovymame",
       "mame",
       "mame0258",
       "mame0278",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
       "opera",
+      "phoenix",
       "real3doplayer",
       "ume2015"
     ],
@@ -806,8 +832,10 @@
       "ares",
       "clownmdemu",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -816,6 +844,7 @@
     "sega-saturn": [
       "ares",
       "beetle_saturn",
+      "bizhawk",
       "kronos",
       "mednafen",
       "mednafen_stv",
@@ -835,12 +864,14 @@
       "fbneo",
       "fbneo_neogeo",
       "geolith",
-      "neocd"
+      "neocd",
+      "raine"
     ],
     "sony-playstation": [
       "ares",
       "armsx1",
       "beetle_psx",
+      "bizhawk",
       "duckstation",
       "epsxe",
       "fpse",
@@ -848,6 +879,7 @@
       "mednafen",
       "pcsx1",
       "pcsx_rearmed",
+      "pcsx_rearmed_standalone",
       "rustation",
       "swanstation"
     ],
@@ -866,10 +898,13 @@
       "yaps2"
     ],
     "sony-psp": [
-      "ppsspp"
+      "ppsspp",
+      "ppsspp-1.5.4"
     ],
     "xbox": [
+      "chihiro-ds",
       "cxbx-reloaded",
+      "cxbx-reloaded-2023",
       "directxbox",
       "hakux",
       "x1-box",
@@ -1370,10 +1405,10 @@
     },
     {
       "dest": "neogeo.zip",
-      "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-      "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-      "size": 1859335,
-      "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+      "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+      "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+      "size": 1952551,
+      "repo_path": "bios/Arcade/MAME/neogeo.zip",
       "cores": null,
       "systems": [
         "snk-neogeo",
@@ -1427,10 +1462,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2009"
           ]
@@ -1445,10 +1480,10 @@
           ]
         },
         {
-          "sha1": "deb62b0074b8cae4f162c257662136733cfc76ad",
-          "sha256": "bf05cc848e403f8ae457bfe26faa8135cf4725cfff956fa030f5c0a00a26adcc",
-          "size": 1859335,
-          "repo_path": "bios/Arcade/Arcade/neogeo.zip",
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
             "mame2015"
           ]
@@ -1468,7 +1503,15 @@
           "size": 1859335,
           "repo_path": "bios/Arcade/Arcade/neogeo.zip",
           "cores": [
-            "mamearcade",
+            "mamearcade"
+          ]
+        },
+        {
+          "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
+          "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
+          "size": 1952551,
+          "repo_path": "bios/Arcade/MAME/neogeo.zip",
+          "cores": [
             "ume2015"
           ]
         }
@@ -2620,58 +2663,6 @@
       "repo_path": "bios/Sega/Arcade/epr-10330.57",
       "cores": [
         "cannonball"
-      ]
-    },
-    {
-      "dest": "resources/sharedFonts/CafeCn.ttf",
-      "sha1": "2d95227b9b3eaf1c74d9293ecd0d190ec7ffbbe3",
-      "sha256": "6afd751a9bb76bc788efb50a138c6f3765624ee84d8d8203be04d871ade40a6a",
-      "size": 9664448,
-      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeCn.ttf",
-      "cores": [
-        "cemu"
-      ],
-      "systems": [
-        "nintendo-wii-u"
-      ]
-    },
-    {
-      "dest": "resources/sharedFonts/CafeKr.ttf",
-      "sha1": "f0ef38fcc6133c24f4f38ff9b5c06b37e970d3cc",
-      "sha256": "c3c326f6ce1899e391dc4996b10a0c30558c5b8f36dfbaa418976862b3e2dffb",
-      "size": 5626464,
-      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeKr.ttf",
-      "cores": [
-        "cemu"
-      ],
-      "systems": [
-        "nintendo-wii-u"
-      ]
-    },
-    {
-      "dest": "resources/sharedFonts/CafeStd.ttf",
-      "sha1": "da0d4bcc3b13339179bee946eba16adfd731b4d3",
-      "sha256": "59e2494727b8e7a7bbf48c8749f2dbc07d438c9fabeaa9847a08ec690f9888a1",
-      "size": 5363768,
-      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeStd.ttf",
-      "cores": [
-        "cemu"
-      ],
-      "systems": [
-        "nintendo-wii-u"
-      ]
-    },
-    {
-      "dest": "resources/sharedFonts/CafeTw.ttf",
-      "sha1": "8ec796192ebc710f23ab6bd55453cae523b70444",
-      "sha256": "c8f9e16345dbc3b6e165fe12435486a748e730ebe6002b5d713efe73d171d51c",
-      "size": 6593548,
-      "repo_path": "bios/Nintendo/Wii U/resources/sharedFonts/CafeTw.ttf",
-      "cores": [
-        "cemu"
-      ],
-      "systems": [
-        "nintendo-wii-u"
       ]
     },
     {
@@ -47528,36 +47519,6 @@
       ]
     },
     {
-      "dest": "Config/Games.xml",
-      "sha1": "6871a47de90ca67f9ff8e4e280416851a8164563",
-      "sha256": "48c56b24ea720fb66188c0b2d94579a110be24971ac215ea808c563c665cf655",
-      "size": 151626,
-      "repo_path": "bios/Sega/Model 3/Config/Games.xml",
-      "cores": [
-        "supermodel"
-      ]
-    },
-    {
-      "dest": "Assets/p1crosshair.bmp",
-      "sha1": "581cea232c296c7bd76f3101c3ae1bffdf5abf08",
-      "sha256": "60920f5a98f37f1e0348df0bda0430e20327bea86bced7024f72f4ffddafc930",
-      "size": 295992,
-      "repo_path": "bios/Sega/Model 3/Assets/p1crosshair.bmp",
-      "cores": [
-        "supermodel"
-      ]
-    },
-    {
-      "dest": "Assets/p2crosshair.bmp",
-      "sha1": "13c5e692c7acf2ec8243ac421d58fdf69c6c2370",
-      "sha256": "3dcc570b7728cfbff314a6305c9c0f933c5fa82153c6d50c3b1e780c3615f33e",
-      "size": 295992,
-      "repo_path": "bios/Sega/Model 3/Assets/p2crosshair.bmp",
-      "cores": [
-        "supermodel"
-      ]
-    },
-    {
       "dest": "Config/Music.xml",
       "sha1": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "sha256": "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c",
@@ -49264,16 +49225,6 @@
       "repo_path": "bios/Elektronika/BK/TERAK.ROM",
       "cores": [
         "bk"
-      ]
-    },
-    {
-      "dest": "rom.db",
-      "sha1": "02c287d10da6de579af7a4ce73b134bbdf23c970",
-      "sha256": "bbd576bfb7acb4f7eee0c0717768275482feb0bed6d1e6d0f5fa7b6c05e8bee8",
-      "size": 17742,
-      "repo_path": "bios/Sega/Mega Drive/rom.db",
-      "cores": [
-        "blastem"
       ]
     },
     {
@@ -58910,32 +58861,6 @@
       ]
     },
     {
-      "dest": "PPSSPP/ppge_atlas.zim",
-      "sha1": "30a33f3651f8e1b0967a5dfe6ff714baebcce41a",
-      "sha256": "3ab7fcf6956d0281ada94d501fc6d1cfa8fc034f139e25fed6c829f723d92a95",
-      "size": 666530,
-      "repo_path": "bios/Sony/PlayStation Portable/ppge_atlas.zim",
-      "cores": [
-        "ppsspp"
-      ],
-      "systems": [
-        "sony-psp"
-      ]
-    },
-    {
-      "dest": "PPSSPP/ppge_atlas.meta",
-      "sha1": "f99a13464a4dae347628f0ebb320e767e48e3a96",
-      "sha256": "e3e8ab044b973137c9864f473f345849ecb4c0a9a3234eaba399dfa16c5f06f0",
-      "size": 1119232,
-      "repo_path": "bios/Other/ppsspp/PPSSPP/ppge_atlas.meta",
-      "cores": [
-        "ppsspp"
-      ],
-      "systems": [
-        "sony-psp"
-      ]
-    },
-    {
       "dest": "7800 BIOS (U).rom",
       "sha1": "d9d134bb6b36907c615a594cc7688f7bfcef5b43",
       "sha256": "7d94551defcd8e7b045a34255654d6d169a683f63062d51dee3eedabf2042db0",
@@ -61365,19 +61290,6 @@
       "sha256": "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2",
       "size": 256,
       "repo_path": "bios/Microsoft/Xbox/xbox_eeprom.bin",
-      "cores": [
-        "xemu"
-      ],
-      "systems": [
-        "xbox"
-      ]
-    },
-    {
-      "dest": "xbox_hdd.qcow2",
-      "sha1": "9da5f9ecfb1c9c32efa616f0300d02e8f702244d",
-      "sha256": "c5ec3e0fbc4f31d36c13211ded7f070f3b5f04e99a367fbe5d8c2d8c6e4f925d",
-      "size": 1638400,
-      "repo_path": "bios/Microsoft/Xbox/xbox_hdd.qcow2",
       "cores": [
         "xemu"
       ],

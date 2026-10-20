@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T05:16:59Z",
+  "generated_at": "2026-10-20T06:29:41Z",
   "total_files": 22630,
   "total_size": 17927230437,
   "bios_dir": "bios",
@@ -318506,6 +318506,10 @@
       ],
       "LA_jp_105.bin": [
         "b3b1d880e288b6dc79eec0ff1b0480c229ec141d"
+      ],
+      "NDS_Firmware_1.bin": [
+        "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b",
+        "87dae2500e889737af51f4a5b5845770a62482f5"
       ],
       "PCFX_v101.bin": [
         "8b662f7548078be52a871565e19511ccca28c5c8"

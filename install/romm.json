@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-20T01:30:36Z",
+  "generated": "2026-10-20T05:16:59Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,7 +19,7 @@
   "total_size": 729933775,
   "pack_files": 445,
   "pack_size": 729933775,
-  "total_omitted": 721,
+  "total_omitted": 719,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -704,26 +704,6 @@
     {
       "dest": "GC/dsp_rom.bin",
       "name": "dsp_rom.bin",
-      "system": "",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "PrimeHack"
-      ]
-    },
-    {
-      "dest": "GC/font_japanese.bin",
-      "name": "font_japanese.bin",
-      "system": "",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "PrimeHack"
-      ]
-    },
-    {
-      "dest": "GC/font_western.bin",
-      "name": "font_western.bin",
       "system": "",
       "required": false,
       "reason": "below_platform_folder",
@@ -7248,6 +7228,9 @@
     "armsx2": [
       "armsx2_libretro"
     ],
+    "basiliskii": [
+      "basilisk"
+    ],
     "beetle_gba": [
       "mednafen_gba"
     ],
@@ -7289,8 +7272,14 @@
     "cap32": [
       "caprice32"
     ],
+    "chihiro-ds": [
+      "chihiro-gun"
+    ],
     "cxbx-reloaded": [
       "cxbx"
+    ],
+    "cxbx-reloaded-2023": [
+      "chihiro"
     ],
     "desmume2015": [
       "desmume_2015"
@@ -7333,9 +7322,11 @@
     ],
     "genesis_plus_gx": [
       "genesisplusgx",
-      "genesisplusgx-expanded",
       "genesisplusgx_ex",
       "genplus"
+    ],
+    "genesis_plus_gx_expanded": [
+      "genesisplusgx-expanded"
     ],
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
@@ -7376,6 +7367,9 @@
       "org.mupen64plusae.v3.fzurita.pro"
     ],
     "mame": [
+      "mame64"
+    ],
+    "mame2000": [
       "imame4all"
     ],
     "mame2003_plus": [
@@ -7504,11 +7498,15 @@
       "pceemu"
     ],
     "pcsx2-legacy": [
-      "PCSX2-LEGACY"
+      "PCSX2-LEGACY",
+      "pcsx2-16"
     ],
     "pcsx_rearmed": [
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
+    ],
+    "pcsx_rearmed_standalone": [
+      "pcsx-rearmed"
     ],
     "pizza-boy-gba": [
       "PIZZA-BOY-GBA",
@@ -7536,7 +7534,8 @@
     ],
     "rosalies-mupen-gui": [
       "RMG",
-      "com.github.Rosalie241.RMG"
+      "com.github.Rosalie241.RMG",
+      "mupen64"
     ],
     "saturn-emu": [
       "SATURN-EMU",
@@ -7593,20 +7592,25 @@
   },
   "system_cores": {
     "3do": [
+      "bizhawk",
       "groovymame",
       "mame",
       "mame0258",
       "mame0278",
+      "mame2014",
       "mame2015",
       "mame2016",
       "mame4droid-2024",
       "opera",
+      "phoenix",
       "real3doplayer",
       "ume2015"
     ],
     "amstrad-cpc": [
       "ace-dl",
       "cap32",
+      "capriceforever",
+      "capricerpi",
       "clk",
       "cpcemu",
       "crocods",
@@ -7631,10 +7635,12 @@
     ],
     "atari-7800": [
       "a7800",
+      "bizhawk",
       "prosystem"
     ],
     "atari-lynx": [
       "beetle_lynx",
+      "bizhawk",
       "gearlynx",
       "handy",
       "holani",
@@ -7649,9 +7655,11 @@
     ],
     "coleco-colecovision": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "colem",
+      "coolcv",
       "fbalpha2019",
       "fbneo",
       "gearcoleco",
@@ -7664,22 +7672,30 @@
     ],
     "commodore-amiga": [
       "amiberry",
+      "bizhawk",
       "clk",
+      "fs-uae",
       "fsuae",
       "puae",
       "puae2021",
-      "uae4arm"
+      "uae4all",
+      "uae4arm",
+      "winuae"
     ],
     "doom": [
+      "dsda-doom",
       "gzdoom",
       "idtech4a++",
+      "lzdoom",
       "prboom",
-      "prboom-plus"
+      "prboom-plus",
+      "uzdoom"
     ],
     "enterprise-64-128": [
       "clk"
     ],
     "fairchild-channel-f": [
+      "bizhawk",
       "fbneo",
       "freechaf"
     ],
@@ -7695,10 +7711,13 @@
       "o2em"
     ],
     "mattel-intellivision": [
-      "freeintv"
+      "bizhawk",
+      "freeintv",
+      "jzintv"
     ],
     "microsoft-msx": [
       "ares",
+      "bizhawk",
       "bluemsx",
       "clk",
       "fbalpha2019",
@@ -7709,7 +7728,9 @@
       "zesarux"
     ],
     "microsoft-xbox": [
+      "chihiro-ds",
       "cxbx-reloaded",
+      "cxbx-reloaded-2023",
       "directxbox",
       "hakux",
       "x1-box",
@@ -7718,13 +7739,15 @@
     "nec-pc-98": [
       "dosbox-x",
       "nekop2",
-      "np2kai"
+      "np2kai",
+      "np2pi"
     ],
     "nec-pc-engine": [
       "ares",
       "beetle_pce",
       "geargrafx",
       "jgenesis",
+      "magicengine",
       "mednafen",
       "mednafen_pce",
       "mednafen_pce_fast",
@@ -7734,10 +7757,12 @@
     ],
     "nec-pc-fx": [
       "beetle_pcfx",
+      "bizhawk",
       "mednafen"
     ],
     "nintendo-64dd": [
       "ares",
+      "bizhawk",
       "m64plus-fz",
       "mupen64plus-ae",
       "mupen64plus_next",
@@ -7748,6 +7773,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "bizhawk",
       "desmume",
       "desmume2015",
       "drastic",
@@ -7756,6 +7782,7 @@
       "melonds-nightly",
       "melonds_ds",
       "noods",
+      "nosgba",
       "skyemu"
     ],
     "nintendo-fds": [
@@ -7782,6 +7809,7 @@
       "triforce"
     ],
     "nintendo-gb": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "emux_gb",
@@ -7805,6 +7833,7 @@
     ],
     "nintendo-gba": [
       "beetle_gba",
+      "bizhawk",
       "dolphin",
       "gba-emu",
       "gpsp",
@@ -7819,6 +7848,7 @@
       "my-boy",
       "nanoboyadvance",
       "noods",
+      "nosgba",
       "pizza-boy-gba",
       "primehack",
       "skyemu",
@@ -7828,6 +7858,7 @@
       "vbam"
     ],
     "nintendo-gbc": [
+      "bizhawk",
       "boytacean",
       "doublecherrygb",
       "fixgb",
@@ -7851,6 +7882,7 @@
     ],
     "nintendo-nes": [
       "3dsen",
+      "bizhawk",
       "bnes",
       "emux_nes",
       "fceumm",
@@ -7873,6 +7905,7 @@
       "pokemini"
     ],
     "nintendo-satellaview": [
+      "bizhawk",
       "bsnes",
       "bsnes-jg",
       "bsnes2014",
@@ -7905,6 +7938,7 @@
       "supersnes9x"
     ],
     "nintendo-snes": [
+      "bizhawk",
       "bsnes",
       "bsnes-jg",
       "bsnes2014",
@@ -7921,6 +7955,7 @@
       "mednafen_supafaust",
       "mesen-s",
       "mesence",
+      "pisnes",
       "snes9x",
       "snes9x-explus",
       "snes9x2002",
@@ -7947,36 +7982,46 @@
       "supersnes9x"
     ],
     "philips-videopac": [
+      "bizhawk",
       "o2em"
     ],
     "scummvm": [
-      "scummvm"
+      "scummvm",
+      "scummvm-sdl1"
     ],
     "sega-game-gear": [
       "ares",
+      "bizhawk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus"
     ],
     "sega-master-system": [
       "ares",
+      "bizhawk",
       "blastem",
       "clk",
       "gearsystem",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "mastergear",
       "md-emu",
       "mednafen",
       "mesence",
+      "osmose",
       "picodrive",
       "pizza-boy-sc",
       "smsplus",
@@ -7986,8 +8031,10 @@
       "ares",
       "clownmdemu",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -7995,11 +8042,15 @@
     ],
     "sega-mega-drive": [
       "ares",
+      "bizhawk",
       "blastem",
       "clownmdemu",
+      "dgen",
       "genesis_plus_gx",
+      "genesis_plus_gx_expanded",
       "genesis_plus_gx_wide",
       "jgenesis",
+      "kega-fusion",
       "md-emu",
       "mednafen",
       "picodrive",
@@ -8008,6 +8059,7 @@
     "sega-saturn": [
       "ares",
       "beetle_saturn",
+      "bizhawk",
       "kronos",
       "mednafen",
       "mednafen_stv",
@@ -8028,11 +8080,13 @@
     "sinclair-zx-spectrum": [
       "81",
       "ares",
+      "bizhawk",
       "clk",
       "cspect",
       "eightyone",
       "ep128emu",
       "ep128emu_core",
+      "fbzx",
       "fuse",
       "speccy",
       "zesarux"
@@ -8042,6 +8096,7 @@
       "fbneo",
       "fbneo_neogeo",
       "geolith",
+      "gngeopi",
       "groovymame",
       "mame",
       "mame0258",
@@ -8050,6 +8105,7 @@
       "mame2003_plus",
       "mame2009",
       "mame2010",
+      "mame2014",
       "mame2015",
       "mame2016",
       "neo-emu",
@@ -8060,15 +8116,19 @@
       "fbneo",
       "fbneo_neogeo",
       "geolith",
-      "neocd"
+      "neocd",
+      "raine"
     ],
     "snk-neogeo-mvs": [
       "advancemame",
+      "advmame-0.94",
+      "advmame-1.4",
       "fba2x",
       "fbalpha2019",
       "fbneo",
       "fbneo_neogeo",
       "geolith",
+      "gngeopi",
       "groovymame",
       "mame",
       "mame0258",
@@ -8078,18 +8138,22 @@
       "mame2003_plus",
       "mame2009",
       "mame2010",
+      "mame2014",
       "mame2015",
       "mame2016",
+      "mame4all",
       "mame4droid",
       "mame4droid-2024",
       "mamearcade",
       "neo-emu",
+      "raine",
       "ume2015"
     ],
     "sony-playstation": [
       "ares",
       "armsx1",
       "beetle_psx",
+      "bizhawk",
       "duckstation",
       "epsxe",
       "fpse",
@@ -8097,6 +8161,7 @@
       "mednafen",
       "pcsx1",
       "pcsx_rearmed",
+      "pcsx_rearmed_standalone",
       "rustation",
       "swanstation"
     ],
@@ -8115,7 +8180,8 @@
       "yaps2"
     ],
     "sony-psp": [
-      "ppsspp"
+      "ppsspp",
+      "ppsspp-1.5.4"
     ],
     "videoton-tvc": [
       "ep128emu",
@@ -8123,7 +8189,9 @@
     ],
     "wolfenstein-3d": [
       "ecwolf",
-      "idtech4a++"
+      "idtech4a++",
+      "splitwolf",
+      "wolf4sdl"
     ]
   },
   "files": [
