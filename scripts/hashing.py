@@ -10,6 +10,7 @@ import os
 import zipfile
 import zlib
 from pathlib import Path
+from typing import BinaryIO
 
 
 _ALL_ALGORITHMS = frozenset({"sha1", "md5", "sha256", "crc32", "adler32"})
@@ -102,7 +103,18 @@ def md5_composite(filepath: str | Path) -> str:
     cached = _md5_composite_cache.get(key)
     if cached is not None:
         return cached
-    with zipfile.ZipFile(filepath) as zf:
+    result = md5_composite_of(filepath)
+    _md5_composite_cache[key] = result
+    return result
+
+
+def md5_composite_of(source: str | Path | BinaryIO) -> str:
+    """md5_composite without the cache, for an archive held in memory.
+
+    A buffer has no stable name: keyed by its repr, a later buffer at the
+    same address read back another archive's digest.
+    """
+    with zipfile.ZipFile(source) as zf:
         names = sorted(n for n in zf.namelist() if not n.endswith("/"))
         h = hashlib.md5()
         for name in names:
@@ -110,9 +122,7 @@ def md5_composite(filepath: str | Path) -> str:
             if info.file_size > 512 * 1024 * 1024:
                 continue  # skip oversized entries
             h.update(zf.read(name))
-        result = h.hexdigest()
-    _md5_composite_cache[key] = result
-    return result
+        return h.hexdigest()
 
 def parse_hash_list(raw: str | list | int | None) -> list[str]:
     """Normalize any hash field into its accepted values, lowercase.

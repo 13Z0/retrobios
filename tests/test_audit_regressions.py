@@ -5327,5 +5327,33 @@ class TheCliSetsBundledFilesApart(unittest.TestCase):
         self.assertIn("n64.psh [BUNDLED]", text)
 
 
+class ThePackCheckAppliesTheFrontendRule(unittest.TestCase):
+    """The integrity step compared a member's md5 alone. Under RomM's rule
+    (size, then any of md5, sha1 and crc32) the builder ships a revision
+    matched on its sha1, and the check then refused a correct pack."""
+
+    def test_romm_accepts_on_size_and_sha1(self):
+        import hashlib
+        import zipfile
+
+        from scripts.packverify import _check_member_hash
+
+        payload = b"revision B"
+        entry = {
+            "md5": "0" * 32,
+            "sha1": hashlib.sha1(payload).hexdigest(),
+            "size": len(payload),
+        }
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            pack = Path(tmp) / "p.zip"
+            with zipfile.ZipFile(pack, "w") as zf:
+                zf.writestr("bios/x.bin", payload)
+            with zipfile.ZipFile(pack) as zf:
+                self.assertIsNone(
+                    _check_member_hash(zf, "bios/x.bin", entry, "md5", "size_and_any_hash")
+                )
+                self.assertIsNotNone(_check_member_hash(zf, "bios/x.bin", entry, "md5"))
+
+
 if __name__ == "__main__":
     unittest.main()

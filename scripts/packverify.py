@@ -17,12 +17,14 @@ from packpaths import _register_path
 from ziptools import build_zip_contents_index
 from ziptools import check_inside_zip
 from nativemode import digest_algorithm
-from validation import baseline_verdict
+from validation import baseline_verdict, digest_verdict
 from nativemode import hash_mismatch_excludes_file
 import functools
 import hashlib
+import zlib
+import sys
 from common import filter_systems_by_target
-from hashing import parse_md5_list
+from hashing import md5_composite_of, parse_md5_list
 import io
 from common import load_emulator_profiles
 from common import load_platform_config
@@ -328,7 +330,7 @@ def _hash_matches(declared: str, actual: str) -> bool:
     return False
 
 def _check_member_hash(
-    zf: zipfile.ZipFile, member: str, file_entry: dict, mode: str
+    zf: zipfile.ZipFile, member: str, file_entry: dict, mode: str, rule: str = ""
 ) -> str | None:
     """Verify a pack member against its platform-declared hash.
 
@@ -363,31 +365,35 @@ def _check_member_hash(
             )
         return None
 
-    h = hashlib.md5() if mode == "md5" else hashlib.sha1()
+    # The frontend's own rule, as the builder and verify apply it: RomM's
+    # size-then-any-hash included, which a bare md5 comparison refused.
+    digests = {"md5": hashlib.md5(), "sha1": hashlib.sha1()}
+    crc = 0
     with zf.open(member) as f:
         for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
-    actual = h.hexdigest()
-    if _hash_matches(declared, actual):
-        return None
+            for h in digests.values():
+                h.update(chunk)
+            crc = zlib.crc32(chunk, crc)
+    actual = {name: h.hexdigest() for name, h in digests.items()}
+    actual["crc32"] = format(crc & 0xFFFFFFFF, "08x")
 
-    # Recalbox Md5Composite: MD5 over sorted inner contents of a ZIP,
-    # independent of compression and metadata (Zip::Md5Composite()).
-    if mode == "md5" and member.endswith(".zip"):
+    def composite() -> str | None:
+        # Recalbox's Md5Composite, over the sorted members of a ZIP.
+        if not member.endswith(".zip"):
+            return None
         import io
 
         try:
-            with zipfile.ZipFile(io.BytesIO(zf.read(member))) as inner:
-                names = sorted(n for n in inner.namelist() if not n.endswith("/"))
-                ch = hashlib.md5()
-                for n in names:
-                    ch.update(inner.read(n))
-            if _hash_matches(declared, ch.hexdigest()):
-                return None
-        except (zipfile.BadZipFile, OSError):
-            pass
+            return md5_composite_of(io.BytesIO(zf.read(member)))
+        except (zipfile.BadZipFile, OSError) as exc:
+            print(f"  {member}: no member digest ({exc})", file=sys.stderr)
+            return None
 
-    return f"{member}: {mode} {actual} != declared {declared}"
+    if digest_verdict(
+        file_entry, zf.getinfo(member).file_size, lambda: actual, mode, rule, composite
+    ):
+        return None
+    return f"{member}: {mode} {actual[mode]} != declared {declared}"
 
 def _repo_satisfies_declaration(
     entries: list[dict], db: dict, mode: str
@@ -666,6 +672,7 @@ def verify_pack_against_platform(
         # one, the pack ships its best effort and the gap is a data issue
         # reported by verify.py, not a generation bug.
         digest = digest_algorithm(verification_mode)
+        hash_rule = config.get("hash_rule", "")
         if reads_file_contents(verification_mode) and digest:
             for member, decl_entries in decl_by_member.items():
                 checkable = [
@@ -682,13 +689,13 @@ def verify_pack_against_platform(
                 for fe in checkable:
                     if not fe.get("zipped_file"):
                         continue
-                    err = _check_member_hash(zf, member, fe, digest)
+                    err = _check_member_hash(zf, member, fe, digest, hash_rule)
                     if err is not None and (db is None or _repo_holds_member(fe, db)):
                         errors.append(err)
                 member_errors = []
                 satisfied = False
                 for fe in checkable:
-                    err = _check_member_hash(zf, member, fe, digest)
+                    err = _check_member_hash(zf, member, fe, digest, hash_rule)
                     if err is None:
                         satisfied = True
                         break

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import zipfile
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 
 from common import (
     adler32_of,
@@ -652,13 +652,43 @@ def frontend_digest_matches(
     match and then any one of md5, sha1 and crc32 does: a mistyped hash next
     to a right one does not withhold the file, a wrong size does.
     """
+    if not local_path:
+        return False
+
+    def composite() -> str | None:
+        if ".zip" not in os.path.basename(local_path):
+            return None
+        try:
+            return md5_composite(local_path)
+        except (zipfile.BadZipFile, OSError):
+            return None
+
+    return digest_verdict(
+        file_entry, os.path.getsize(local_path), lambda: compute_hashes(local_path),
+        algorithm, rule, composite,
+    )
+
+
+def digest_verdict(
+    file_entry: dict,
+    size: int,
+    hashes: Callable[[], dict[str, str]],
+    algorithm: str,
+    rule: str = "",
+    composite: Callable[[], str | None] = lambda: None,
+) -> bool:
+    """The frontend's acceptance rule over content given by its size, its
+    digests and, for an archive, its member digest.
+
+    One rule for a file on disk and for a member of a built pack: the pack
+    check once compared only the md5 and refused, under RomM's rule, the
+    revision the builder had rightly shipped on its sha1 and size.
+    """
     if rule == SIZE_AND_ANY_HASH:
-        if not local_path:
-            return False
         # RomM reads an absent size as 0: such an entry never verifies.
-        if os.path.getsize(local_path) != int(file_entry.get("size") or 0):
+        if size != int(file_entry.get("size") or 0):
             return False
-        actual = compute_hashes(local_path)
+        actual = hashes()
         return any(
             actual[field].lower() == str(file_entry[field]).strip().lower()
             for field in ("md5", "sha1", "crc32")
@@ -670,19 +700,15 @@ def frontend_digest_matches(
         value = file_entry.get(algorithm)
         values = value if isinstance(value, list) else [value]
         declared = [str(v).strip().lower() for v in values if v]
-    if not declared or not local_path:
+    if not declared:
         return False
-    actual = compute_hashes(local_path)[algorithm].lower()
+    actual = hashes()[algorithm].lower()
     if algorithm != "md5":
         return actual in declared
     if any(actual == d or (len(d) < 32 and actual.startswith(d)) for d in declared):
         return True
-    if ".zip" not in os.path.basename(local_path):
-        return False
-    try:
-        return md5_composite(local_path).lower() in declared
-    except (zipfile.BadZipFile, OSError):
-        return False
+    member_digest = composite()
+    return bool(member_digest) and member_digest.lower() in declared
 
 
 def inner_rom_check(file_entry: dict, local_path: str) -> str:
