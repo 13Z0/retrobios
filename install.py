@@ -3505,6 +3505,49 @@ def _older_list_advice() -> str:
             "installer again to fetch the current one.")
 
 
+def _narrow_to_emulators(
+    names: list[str], manifest: dict, plat: str,
+    files: list[dict], omitted: list[dict],
+) -> tuple[list[dict], list[dict]]:
+    """Keep what the named emulators read, as the pack built for them.
+
+    An emulator page offers this as one command, so a name the platform
+    does not run is refused rather than read as nothing to install.
+    """
+    if "system_cores" not in manifest:
+        print(f"Error: the {plat} file list does not say which emulators read "
+              "which systems, which --emulator needs.", file=sys.stderr)
+        print(_older_list_advice(), file=sys.stderr)
+        sys.exit(1)
+    known = sorted({
+        name
+        for profile, aliases in (manifest.get("core_names") or {}).items()
+        for name in [profile, *aliases]
+    } | set(available_choices(files, omitted)["cores"]))
+    try:
+        chosen = resolve_choices(names, known, "emulator")
+    except ValueError as exc:
+        print(f"Error: {plat}: {exc}", file=sys.stderr)
+        sys.exit(1)
+    before = len(files)
+    files, omitted = narrow_to_cores(manifest, chosen, files, omitted)
+    # A whole-platform install keeps the platform's files of a system no
+    # core is mapped to. Here only the named emulators' systems are wanted.
+    cores = designated_cores(manifest, chosen)
+    reached = {
+        system for system, readers in (manifest.get("system_cores") or {}).items()
+        if cores.intersection(readers)
+    }
+
+    def theirs(entry: dict) -> bool:
+        return entry.get("cores") is not None or bool(reached.intersection(entry_systems(entry)))
+
+    files = [entry for entry in files if theirs(entry)]
+    omitted = [entry for entry in omitted if theirs(entry)]
+    print(f"  Narrowed {before} -> {len(files)} files to {', '.join(chosen)}")
+    return files, omitted
+
+
 def _requested_narrowing(
     args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict]
 ) -> tuple[list[str], list[str], list[str]] | None:
@@ -3587,6 +3630,13 @@ def main() -> None:
         "--standalone-copies",
         action="store_true",
         help="opt in to copies into detected standalone-emulator directories",
+    )
+    parser.add_argument(
+        "--emulator",
+        action="append",
+        metavar="NAME",
+        help="install what these emulators read on the platform, as a pack "
+             "built for them carries (names: --list-cores)",
     )
     parser.add_argument(
         "--installed-cores",
@@ -3945,6 +3995,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 manifest, found_cores, files, omitted_files
             )
             print(f"  Narrowed {before} -> {len(files)} files to the installed cores")
+
+        if args.emulator:
+            files, omitted_files = _narrow_to_emulators(
+                args.emulator, manifest, plat_name, files, omitted_files
+            )
 
         selection = _requested_narrowing(args, plat_name, files, omitted_files)
         if (

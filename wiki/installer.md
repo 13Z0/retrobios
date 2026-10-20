@@ -219,6 +219,7 @@ what the options name, everything by default.
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
+| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-cores` prints the names |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |

@@ -818,5 +818,22 @@ class ACardSaysWhyAFileIsLeftOut(unittest.TestCase):
         self.assertIn("installed with the standalone emulator", badges)
 
 
+class AnEmulatorPageOffersItsInstall(unittest.TestCase):
+    """An emulator page linked each file one by one and offered no way to
+    install them together."""
+
+    def test_the_command_names_the_emulator(self):
+        from generate_site import _install_block
+
+        text = "\n".join(_install_block("pcem", {"type": "libretro"}))
+        self.assertIn("install.sh | sh -s -- --emulator pcem", text)
+        self.assertIn("install.ps1))) --emulator pcem", text)
+        self.assertEqual(_install_block("x", {"type": "alias"}), [])
+
+    def test_the_installer_takes_the_option(self):
+        source = (ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn('"--emulator"', source)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -2969,6 +2969,37 @@ def _render_metadata_rows(profile: dict) -> list[str]:
     return lines
 
 
+def _install_block(name: str, profile: dict) -> list[str]:
+    """One command that installs this emulator's files where it reads them.
+
+    The installer finds the platform and its BIOS folder, then keeps what
+    this emulator reads there: its own files and the platform's files of
+    the systems it runs. Each file is also linked one by one below.
+    """
+    if profile.get("type") in ("alias", "launcher", "test"):
+        return []
+    base = "https://raw.githubusercontent.com/Abdess/retrobios/main"
+    return [
+        '??? tip "Install this emulator\'s files"',
+        "",
+        "    The installer finds your platform and its BIOS folder, then downloads "
+        "only the files this emulator reads there and checks each one.",
+        "",
+        "    Linux, macOS, Steam Deck:",
+        "",
+        "    ```sh",
+        f"    curl -fsSL {base}/install.sh | sh -s -- --emulator {name}",
+        "    ```",
+        "",
+        "    Windows (PowerShell):",
+        "",
+        "    ```powershell",
+        f"    &([scriptblock]::Create((irm {base}/install.ps1))) --emulator {name}",
+        "    ```",
+        "",
+    ]
+
+
 def _render_platform_details(profile: dict) -> list[str]:
     """The per-platform block, one level of nesting deep."""
     lines: list[str] = []
@@ -3286,6 +3317,8 @@ def generate_emulator_page(
     lines.append("")
     lines.append("</div>")
     lines.append("")
+
+    lines.extend(_install_block(name, profile))
 
     lines.extend(_render_platform_details(profile))
 

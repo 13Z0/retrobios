@@ -2902,6 +2902,39 @@ class ARefusedStandaloneCopyIsNamed(unittest.TestCase):
 
 
 
+class OneEmulatorsFilesInOneCommand(unittest.TestCase):
+    """An emulator page offers one command for that emulator's files.
+    --core kept the platform's whole list, and narrowing to cores kept the
+    platform files of every system no core is mapped to."""
+
+    MANIFEST = {
+        "system_cores": {"ibm-pc": ["pcem"], "nintendo-nes": ["fceumm"]},
+        "core_names": {"pcem": ["pcem"], "fceumm": ["fceumm"]},
+        "files": [],
+    }
+
+    def test_only_its_files_and_its_systems(self):
+        import contextlib  # noqa: PLC0415
+
+        files = [
+            {"dest": "pcem/ibmpc.bin", "cores": ["pcem"], "systems": ["ibm-pc"]},
+            {"dest": "disksys.rom", "cores": None, "systems": ["nintendo-nes"]},
+            {"dest": "ep128emu/exos.rom", "cores": None, "systems": ["enterprise"]},
+            {"dest": "ibm.rom", "cores": None, "systems": ["ibm-pc"]},
+        ]
+        with contextlib.redirect_stdout(io.StringIO()):
+            kept, _omitted = install._narrow_to_emulators(
+                ["PCem"], self.MANIFEST, "retroarch", files, [])
+        self.assertEqual(sorted(e["dest"] for e in kept), ["ibm.rom", "pcem/ibmpc.bin"])
+
+    def test_an_unknown_name_is_refused(self):
+        import contextlib  # noqa: PLC0415
+
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            install._narrow_to_emulators(["nope"], self.MANIFEST, "retroarch", [], [])
+
+
+
 class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
     """The installer page and the FAQ quoted "install.py SHA-256 mismatch",
     a message the bootstraps no longer print."""
