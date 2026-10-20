@@ -30,9 +30,14 @@ notes: |
   The upstream standalone supports SGB boot ROM loading, but the libretro
   port does not implement this.
 
-  Custom palette files (palettes/*.pal) are user-created colorization
-  configs loaded when GB Colorization is set to "custom". These are
-  user-generated content, not distributable files.
+  With GB Colorization set to "custom", a DMG game reads the first of
+  palettes/<rom name>.pal, palettes/<header title>.pal and
+  palettes/default.pal under the system directory. Each line sets one of
+  the twelve background and sprite colours as Background0= to Sprite%2023=
+  with a 24-bit RGB value. Colours the file leaves out keep their previous
+  value (libgambatte/libretro/libretro.cpp:2012-2191,
+  libgambatte/libretro/libretro.cpp:2521-2522,
+  libgambatte/libretro/libretro.cpp:2582-2583).
 
 files:
   - name: "gb_bios.bin"
@@ -54,3 +59,12 @@ files:
     validation: [size]
     source_ref: "source libgambatte/libretro/libretro.cpp:1426-1486 (get_bootloader_from_file), source libgambatte/libretro/libretro.cpp:1734-1742, source libgambatte/src/bootloader.cpp:30-65 (load)"
     note: "Mapped at 0x0000-0x08FF with cartridge data preserved at 0x0100-0x01FF. Also used for GBA mode with a patch at 0xF2. Presence required for FORCE_CGB flag when hw mode is GBC or GBA."
+
+  - name: "default.pal"
+    path: "palettes/default.pal"
+    system: nintendo-gb
+    description: "Custom DMG colour palette"
+    required: false
+    unsourceable: "user-created palette, the core and its repository distribute none"
+    source_ref: "source libgambatte/libretro/libretro.cpp:2012-2091, source libgambatte/libretro/libretro.cpp:2521-2522, source libgambatte/libretro/libretro.cpp:2582-2583"
+    note: "Read only when GB Colorization is custom and no palette named after the ROM file or the header title exists."
