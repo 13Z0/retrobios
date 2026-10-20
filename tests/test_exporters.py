@@ -15,6 +15,7 @@ and skip when it has not been populated (python scripts/export_native.py
 from __future__ import annotations
 
 import difflib
+import io
 import json
 import os
 import re
@@ -23,6 +24,7 @@ import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+import zipfile
 from collections import OrderedDict
 from pathlib import Path
 
@@ -709,6 +711,18 @@ class _OneFileExporter:
         return {"list.txt": self._url}
 
 
+class _ArchiveExporter(_OneFileExporter):
+    """One whose original is an archive it unpacks, as MiSTer's is."""
+
+    def native_sources(self) -> dict[str, str]:
+        return {"db.zip": self._url}
+
+    @staticmethod
+    def unpack(raw: bytes) -> dict[str, str]:
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            return {"db.json": archive.read("db.json").decode("utf-8")}
+
+
 class CachedOriginal(unittest.TestCase):
     """The cached original is the file the platform data was read from."""
 
@@ -791,6 +805,51 @@ class CachedOriginal(unittest.TestCase):
         with mock.patch.object(export_native, "write_bytes_atomic", probing):
             fetch(url, target, self.index)
         self.assertEqual(held, [True])
+
+    def test_an_unreadable_cached_archive_fails_its_platform_only(self):
+        """A cached bios_db.json.zip that was not a zip raised BadZipFile
+        out of run(): --all stopped and the next platforms were never
+        exported."""
+        target = self.cache / "plat" / "db.zip"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"<html>not a zip</html>")
+        originals, missing = collect_originals(
+            _ArchiveExporter("file:///nowhere/db.zip"), {}, self.cache, False
+        )
+        self.assertEqual(originals, {})
+        self.assertEqual(len(missing), 1)
+        self.assertIn("--refresh-cache", missing[0])
+
+    def test_a_download_that_is_not_the_archive_keeps_the_cache(self):
+        """fetch() cached any 200 reply, so an error page replaced a good
+        archive and was served on every later run."""
+        good = self.root / "db.zip"
+        with zipfile.ZipFile(good, "w") as archive:
+            archive.writestr("db.json", "{}")
+        url = good.as_uri()
+        exporter = _ArchiveExporter(url)
+        collect_originals(exporter, {}, self.cache, True)
+        cached = (self.cache / "plat" / "db.zip").read_bytes()
+        good.write_bytes(b"<html>error</html>")
+        originals, missing = collect_originals(exporter, {}, self.cache, True, refresh=True)
+        self.assertEqual(originals, {})
+        self.assertIn("--refresh-cache", missing[0])
+        self.assertEqual((self.cache / "plat" / "db.zip").read_bytes(), cached)
+
+    def test_an_incomplete_read_is_reported(self):
+        import http.client  # noqa: PLC0415
+        from unittest import mock  # noqa: PLC0415
+
+        import export_native  # noqa: PLC0415
+
+        def cut(*_args, **_kwargs):
+            raise http.client.IncompleteRead(b"par")
+
+        with mock.patch.object(export_native, "fetch", cut):
+            originals, missing = collect_originals(
+                _OneFileExporter("https://example.invalid/list.txt"), {}, self.cache, True
+            )
+        self.assertEqual((originals, len(missing)), ({}, 1))
 
     def test_the_index_names_a_file_the_same_from_any_directory(self):
         target = self.cache / "plat" / "list.txt"

@@ -18,11 +18,15 @@ from __future__ import annotations
 import argparse
 import contextlib
 import functools
+import http.client
 import re
 import json
 import sys
-import urllib.error
+import tarfile
 import urllib.request
+import zipfile
+import zlib
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -82,8 +86,26 @@ def load_sources(upstream_dir: Path) -> dict[str, str]:
     return _load_sources(upstream_dir / SOURCES_INDEX)
 
 
+class OriginalUnreadable(ValueError):
+    """A platform's file that is not what its format says it is."""
+
+
+def _read_archive(unpack: Callable[[bytes], dict[str, str]], payload: bytes) -> dict[str, str]:
+    """Unpack an original, naming the remedy when its bytes are not one."""
+    try:
+        return unpack(payload)
+    except (zipfile.BadZipFile, tarfile.TarError, EOFError, zlib.error, KeyError) as exc:
+        raise OriginalUnreadable(
+            f"archive unreadable ({exc}): --refresh-cache downloads it again"
+        ) from exc
+
+
 def fetch(
-    url: str, destination: Path, index: Path | None = None, refresh: bool = False
+    url: str,
+    destination: Path,
+    index: Path | None = None,
+    refresh: bool = False,
+    check: Callable[[bytes], object] | None = None,
 ) -> bytes:
     """Download an original once, then read it from the cache.
 
@@ -122,7 +144,11 @@ def fetch(
     with urllib.request.urlopen(request, timeout=60) as response:
         payload = response.read(_MAX_BYTES + 1)
     if len(payload) > _MAX_BYTES:
-        raise ValueError(f"{url}: response larger than {_MAX_BYTES} bytes")
+        raise OriginalUnreadable(f"{url}: response larger than {_MAX_BYTES} bytes")
+    # An error page served with 200 replaced a good archive and was then
+    # served on every run: what does not read is never cached.
+    if check is not None:
+        check(payload)
     destination.parent.mkdir(parents=True, exist_ok=True)
     with locked():
         write_bytes_atomic(str(destination), payload)
@@ -261,26 +287,27 @@ def collect_originals(
     index = upstream_dir / SOURCES_INDEX
     originals: dict[str, str] = {}
     missing: list[str] = []
+    unpack = getattr(exporter, "unpack", None)
     for relative, url in wanted.items():
         path = root / relative
-        payload: bytes | None = None
-        if allow_fetch:
-            try:
-                payload = fetch(url, path, index, refresh)
-            except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
-                missing.append(f"{relative}: {exc}")
+        archive = callable(unpack) and relative.endswith((".zip", ".tar.gz"))
+        check = (lambda raw: _read_archive(unpack, raw)) if archive else None
+        try:
+            if allow_fetch:
+                payload = fetch(url, path, index, refresh, check)
+            elif path.exists():
+                payload = path.read_bytes()
+            else:
+                missing.append(f"{relative}: absent and fetching is off")
                 continue
-        elif path.exists():
-            payload = path.read_bytes()
-        else:
-            missing.append(f"{relative}: absent and fetching is off")
-            continue
-
-        unpack = getattr(exporter, "unpack", None)
-        if callable(unpack) and relative.endswith((".zip", ".tar.gz")):
-            originals.update(unpack(payload))
-        else:
-            originals[relative] = payload.decode("utf-8", errors="replace")
+            if archive:
+                originals.update(_read_archive(unpack, payload))
+            else:
+                originals[relative] = payload.decode("utf-8", errors="replace")
+        # One platform's unreadable file fails that platform: raised, it
+        # stopped --all before the platforms after it.
+        except (OSError, http.client.HTTPException, OriginalUnreadable) as exc:
+            missing.append(f"{relative}: {exc}")
 
     return originals, missing
 
