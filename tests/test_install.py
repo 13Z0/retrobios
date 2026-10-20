@@ -3000,5 +3000,24 @@ class NoFallbackOutsideWhatAPlatformReads(unittest.TestCase):
         self.assertIn("--dest", err.getvalue())
 
 
+class EveryStandaloneCopyNamesItsMacFolder(unittest.TestCase):
+    """--standalone-copies copied Azahar's keys and Flycast's boot ROM on
+    Linux and Windows and silently skipped them on macOS, where both
+    emulators read a fixed Application Support folder."""
+
+    def test_each_copy_has_a_darwin_target(self):
+        import yaml
+
+        registry = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
+        )
+        missing = [
+            entry.get("file") or entry.get("pattern")
+            for entry in registry["_standalone_copies"]
+            if entry.get("targets") and "darwin" not in entry["targets"]
+        ]
+        self.assertEqual(missing, [])
+
+
 if __name__ == "__main__":
     unittest.main()
