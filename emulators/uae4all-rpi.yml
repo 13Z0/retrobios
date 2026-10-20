@@ -1,0 +1,63 @@
+emulator: UAE4ALL (libretro, Chips-fr)
+type: libretro
+core_classification: community_fork
+cores: ["uae4all"]
+built_by: [recalbox]
+source: "https://github.com/Chips-fr/uae4all-rpi"
+profiled_date: "2026-10-20"
+source_commit: "ae7eb74cfbe726a45f5b791484948676dcba1aef"
+core_version: "0.7"
+display_name: "Commodore - Amiga (UAE4ALL)"
+systems:
+  - commodore-amiga
+
+notes: |
+  Chips-fr's libretro port of UAE4ALL, an Amiga 500 emulator with the FAME
+  68000 core. It reports itself as uae4all 0.7 and loads adf, adz and zip
+  images (libretro/core/libretro-core.cpp:425-428). Recalbox builds it from
+  this commit with Makefile.libretro at tag 10.1.1
+  (recalbox package/libretro-uae4all/libretro-uae4all.mk:8-9, 19-22).
+  Its two patches switch the CPU core to Cyclone and lower the cycle unit,
+  neither touches file loading.
+
+  The Kickstart path is fixed: retro_init takes the frontend system
+  directory (libretro/core/libretro-core.cpp:309-313) and the option update
+  joins it with A500_ROM, kick34005.A500 (libretro/core/libretro-core.cpp:76,
+  85-88, 284). No other name is tried. The joined path is cut at 63
+  characters (romfile[64], src/disk.cpp:50). Recalbox sets the system
+  directory of every Amiga system to bios/amiga/bios
+  (recalbox projects/configgen/configgen/generators/libretro/libretroRetroarch.py:517-519).
+
+  read_kickstart (src/memory.cpp:853-888) fills a 512 KB ROM space
+  (src/include/memory.h:53). It accepts 8 KB (A1000 bootstrap), 256 KB
+  (mirrored) or 512 KB, and rejects any other size. A checksum mismatch only
+  writes a log line (src/memory.cpp:836-851). No hash is checked, so any
+  Kickstart of an accepted size works under that name. An AMIROMTYPE1
+  header is skipped but decode_cloanto_rom is empty (src/memory.cpp:831-834,
+  860-865), so encrypted Amiga Forever ROMs do not boot and rom.key is never
+  read. extfile is never set, so no extended ROM is loaded
+  (src/memory.cpp:890-896).
+
+  Without the ROM the core shows "No Kickstart file found." and runs the
+  UAE ersatz replacement (src/memory.cpp:1234-1240, src/ersatz.cpp:35-41).
+  It stubs a few exec calls and boots the bootblock in DF0 with read-only
+  trackdisk access, so only self-booting trackloader disks start, and the
+  core quits with no disk in DF0 (src/ersatz.cpp:75-112).
+
+  A .uae content file is read for its floppy0= and floppy1= lines only
+  (libretro/core/libretro-core.cpp:101-128, 281-282). The data/ assets
+  (menu images, click.wav, music.mod, vkbd bitmaps) belong to the
+  standalone GUI. Makefile.libretro defines NO_VKBD (Makefile.libretro:28),
+  which stubs vkbd_init (src/vkbd/vkbd.cpp:17-23), and does not compile
+  src/menu/menu.cpp or src/sound.cpp (Makefile.libretro:100-132). The
+  bios/uae_data folder the Recalbox package creates is never opened by this
+  core (recalbox package/libretro-uae4all/libretro-uae4all.mk:27).
+
+files:
+  - name: "kick34005.A500"
+    system: commodore-amiga
+    description: "Kickstart 1.3 rev 34.5, A500"
+    required: true
+    hle_fallback: true
+    size: 262144
+    source_ref: "libretro/core/libretro-core.cpp:76, libretro/core/libretro-core.cpp:284, src/memory.cpp:954-978, src/memory.cpp:1234-1240"
