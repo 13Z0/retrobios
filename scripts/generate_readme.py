@@ -608,10 +608,10 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             f" [FAQ]({SITE_URL}wiki/faq/"
             "#are-these-files-verified-against-original-hardware-dumps).",
             "",
-            "1. **Read emulator source code** - trace every file the code loads, its expected hash and size",
-            "2. **Cross-reference with platforms** - match against what each platform declares",
-            "3. **Build packs** - include baseline files plus what each platform's cores need",
-            "4. **Verify** - run platform-native checks and emulator-level validation",
+            "1. **Read emulator source code**: trace every file the code loads, its expected hash and size",
+            "2. **Cross-reference with platforms**: match against what each platform declares",
+            "3. **Build packs**: include baseline files plus what each platform's cores need",
+            "4. **Verify**: run platform-native checks and emulator-level validation",
             "",
         ]
     )

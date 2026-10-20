@@ -151,10 +151,10 @@ To keep packs accurate, platform lists are checked against emulator source code,
 
 Hashes document what emulator code loads and accepts, not dump provenance. That boundary, and how it relates to preservation catalogs such as No-Intro, is drawn in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#are-these-files-verified-against-original-hardware-dumps).
 
-1. **Read emulator source code** - trace every file the code loads, its expected hash and size
-2. **Cross-reference with platforms** - match against what each platform declares
-3. **Build packs** - include baseline files plus what each platform's cores need
-4. **Verify** - run platform-native checks and emulator-level validation
+1. **Read emulator source code**: trace every file the code loads, its expected hash and size
+2. **Cross-reference with platforms**: match against what each platform declares
+3. **Build packs**: include baseline files plus what each platform's cores need
+4. **Verify**: run platform-native checks and emulator-level validation
 
 ## Contributors
 
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-20T10:09:05Z*
+*Auto-generated on 2026-10-20T10:43:25Z*
