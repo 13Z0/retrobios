@@ -58,7 +58,7 @@ files:
     size: 16384
     crc32: "84f68bf9"
     validation: [crc32]
-    aliases: [d64rom1, dragrom, "Dragon Data Ltd - Dragon 64 - IC17", "Dragon Data Ltd - TANO IC18", "Eurohard S.A. - Dragon 200 IC18"]
+    aliases: [d64rom1, d64rom1.rom, dragrom, "Dragon Data Ltd - Dragon 64 - IC17", "Dragon Data Ltd - TANO IC18", "Eurohard S.A. - Dragon 200 IC18"]
     source_ref: "src/xroar.c:647 (romlist d64_1), src/xroar.c:653 (romlist dragon64), src/dragon/dragon64.c:151-157,169-171 (load + CRC)"
     note: "IC17 ROM. Required for the machine to start."
 
@@ -341,6 +341,15 @@ files:
     source_ref: "src/xroar.c:714 (romlist rsdos), src/rsdos.c:176 (default @rsdos), src/rom.c:150 (0x0b9c5415 = Disk Extended Colour BASIC 1.1)"
     note: "Primary CoCo disk controller ROM. disk10.rom (RS-DOS 1.0) is an earlier version used as fallback."
 
+  - name: "disk10.rom"
+    system: coco
+    description: "Tandy RS-DOS 1.0 (CoCo floppy disk controller)"
+    required: false
+    size: 8192
+    crc32: "b4f9968e"
+    source_ref: "src/xroar.c:714 (romlist rsdos), src/rsdos.c:176 (default @rsdos), src/rom.c:149 (0xb4f9968e = Disk Extended Colour BASIC 1.0)"
+    note: "Second name in the rsdos romlist, opened when disk11.rom is absent."
+
   - name: "hdbdw3bck.rom"
     system: coco
     description: "RS-DOS with Becker port (DriveWire)"
@@ -355,6 +364,25 @@ files:
     source_ref: "src/xroar.c:708 (romlist dragondos), src/dragondos.c:173 (default @dragondos_compat)"
     note: "Latest DragonDOS version. Fallback chain tries DOSPlus -> SuperDOS -> DragonDOS -> Cumana. Older versions: ddos12, ddos40, ddos15, ddos10."
 
+  - name: "ddos40.rom"
+    system: dragon64
+    description: "DragonDOS 4.0 (Eurohard S.A.)"
+    required: false
+    size: 8192
+    crc32: "14f4c54a"
+    source_ref: "src/xroar.c:708 (romlist dragondos), src/xroar.c:712 (romlist dragondos_compat), src/dragondos.c:173 (default @dragondos_compat), src/rom.c:134 (0x14f4c54a = DragonDOS 4.0)"
+    note: "Third name in the dragondos romlist, which @dragondos_compat tries after the dosplus and superdos lists."
+
+  - name: "ddos10.rom"
+    system: dragon64
+    description: "DragonDOS 1.0 (Dragon Data Ltd)"
+    required: false
+    size: 8192
+    crc32: "b44536f6"
+    aliases: ["Dragon Data Ltd - DragonDOS 1.0"]
+    source_ref: "src/xroar.c:708 (romlist dragondos), src/xroar.c:712 (romlist dragondos_compat), src/dragondos.c:173 (default @dragondos_compat), src/rom.c:131 (0xb44536f6 = DragonDOS 1.0)"
+    note: "Fifth name in the dragondos romlist, which @dragondos_compat tries after the dosplus and superdos lists."
+
   - name: "dplus49b.rom"
     system: dragon64
     description: "DOSPlus 4.9b (Dragon compatible DOS)"
@@ -363,6 +391,16 @@ files:
     crc32: "7c6dfca8"
     source_ref: "src/xroar.c:709 (romlist dosplus), src/rom.c:138 (0x7c6dfca8 = DOSplus 4.9B)"
     note: "First tried in DragonDOS-compatible cartridge. Enhanced Dragon DOS. Older version: dplus48 (alias: dosplus-4.8, DOSPLUS)."
+
+  - name: "dplus48.rom"
+    system: dragon64
+    description: "DOSPlus 4.8 (Dragon compatible DOS)"
+    required: false
+    size: 8192
+    crc32: "d4d954a0"
+    aliases: [dosplus-4.8, DOSPLUS]
+    source_ref: "src/xroar.c:709 (romlist dosplus), src/xroar.c:712 (romlist dragondos_compat), src/dragondos.c:173 (default @dragondos_compat), src/rom.c:137 (0xd4d954a0 = DOSplus 4.8)"
+    note: "Second name in the dosplus romlist, the first list @dragondos_compat tries."
 
   - name: "sdose6.rom"
     system: dragon64
