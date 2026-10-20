@@ -127,6 +127,11 @@ class BaseExporter(ABC):
         return True
 
     @staticmethod
+    def file_modes() -> dict[str, int]:
+        """The mode of each file the platform publishes other than 0644."""
+        return {}
+
+    @staticmethod
     def keys_by_system() -> bool:
         """Whether the platform finds a file through its system's own name.
 

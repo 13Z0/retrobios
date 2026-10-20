@@ -78,5 +78,10 @@ class Exporter(BatoceraExporter):
         return "rocknix-systems"
 
     @staticmethod
+    def file_modes() -> dict[str, int]:
+        # 100755 in ROCKNIX's tree at the pinned tag (git/trees 20261001).
+        return {"rocknix-systems": 0o755}
+
+    @staticmethod
     def native_sources() -> dict[str, str]:
         return {"rocknix-systems": SOURCE_URL, EMULATORS_MK: EMULATORS_URL}

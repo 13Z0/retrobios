@@ -1153,7 +1153,35 @@ class AnExportLeavesNoStaleFile(unittest.TestCase):
     def test_the_export_clears_before_it_writes(self):
         source = (REPO_ROOT / "scripts" / "export_native.py").read_text()
         body = source[source.index("def export_platform("):]
-        self.assertLess(body.index("_remove_stale("), body.index(".write_text("))
+        self.assertLess(body.index("_remove_stale("), body.index("_write_produced("))
+
+
+class AnExportIsWrittenAsItsBytes(unittest.TestCase):
+    """write_text translated line ends on Windows (FirmwareDatabase.cs is
+    CRLF, it would have become CR CR LF), replaced the published file in
+    place, and dropped the mode: rocknix-systems is 100755 upstream."""
+
+    def test_bytes_mode_and_atomicity(self):
+        import stat  # noqa: PLC0415
+
+        import export_native  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            root = Path(tmp)
+            export_native._write_produced(root, {
+                "FirmwareDatabase.cs": "a\r\nb\r\n",
+                "rocknix-systems": "#!/usr/bin/python\n",
+            }, {"rocknix-systems": 0o755})
+            self.assertEqual((root / "FirmwareDatabase.cs").read_bytes(), b"a\r\nb\r\n")
+            mode = lambda name: stat.S_IMODE((root / name).stat().st_mode)  # noqa: E731
+            self.assertEqual(mode("rocknix-systems"), 0o755)
+            self.assertEqual(mode("FirmwareDatabase.cs"), 0o644)
+            self.assertEqual(sorted(p.name for p in root.iterdir()),
+                             ["FirmwareDatabase.cs", "rocknix-systems"])
+
+    def test_rocknix_says_its_script_is_executable(self):
+        self.assertEqual(discover_exporters()["rocknix"].file_modes(),
+                         {"rocknix-systems": 0o755})
 
 
 class AnExportWithoutTruthIsRefused(unittest.TestCase):

@@ -562,10 +562,7 @@ def export_platform(
 
     platform_dir = output_dir / platform
     _remove_stale(platform_dir, set(produced))
-    for relative, content in produced.items():
-        path = platform_dir / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+    _write_produced(platform_dir, produced, exporter.file_modes())
 
     changes = landed_changes(exporter, systems)
     applied, filled = changes.applied, changes.filled
@@ -661,6 +658,21 @@ def export_platform(
         "invalid": issues,
     })
     return True, messages
+
+
+def _write_produced(root: Path, produced: dict[str, str], modes: dict[str, int]) -> None:
+    """Write each file as its bytes, whole or not at all, with its mode.
+
+    write_text translated line ends on Windows, so FirmwareDatabase.cs's
+    CRLF would have come out CR CR LF, and a run stopped mid-write left a
+    truncated file in exports/. The scratch file mkstemp makes is 0600: the
+    mode is set from what the platform's own file has.
+    """
+    for relative, content in produced.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        write_bytes_atomic(str(path), content.encode("utf-8"))
+        path.chmod(modes.get(relative, 0o644))
 
 
 def write_report(path: Path, report: dict) -> None:
