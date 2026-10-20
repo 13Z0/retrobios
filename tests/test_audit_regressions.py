@@ -5483,5 +5483,48 @@ class DocsDescribeTheRegistriesTheyName(unittest.TestCase):
         self.assertIn("NODEDUP_DIRS", readme_gen)
 
 
+class AScraperThatCannotStartSaysWhy(unittest.TestCase):
+    """Scrapers resolve their tag or branch head in the constructor, and
+    scraper_cli built the scraper outside its try: a refused API call ended
+    in a traceback instead of a message saying to set GITHUB_TOKEN."""
+
+    def _run(self, scraper_class, token: str | None):
+        import contextlib
+        import io
+        from unittest import mock
+
+        from scraper.base_scraper import scraper_cli
+
+        env = {k: v for k, v in os.environ.items() if k != "GITHUB_TOKEN"}
+        if token:
+            env["GITHUB_TOKEN"] = token
+        err = io.StringIO()
+        with mock.patch.dict(os.environ, env, clear=True), \
+                mock.patch.object(sys, "argv", ["x", "--dry-run"]), \
+                contextlib.redirect_stderr(err), \
+                self.assertRaises(SystemExit) as stop:
+            scraper_cli(scraper_class)
+        return stop.exception.code, err.getvalue()
+
+    def test_a_failing_constructor_exits_with_a_hint(self):
+        class Refused:
+            def __init__(self):
+                raise RuntimeError("cannot read the head of a/b@main: HTTP 403")
+
+        code, err = self._run(Refused, None)
+        self.assertEqual(code, 1)
+        self.assertIn("HTTP 403", err)
+        self.assertIn("GITHUB_TOKEN", err)
+
+    def test_with_a_token_the_hint_points_elsewhere(self):
+        class Offline:
+            def fetch_requirements(self):
+                raise ConnectionError("no route to host")
+
+        code, err = self._run(Offline, "t")
+        self.assertEqual(code, 1)
+        self.assertNotIn("GITHUB_TOKEN", err)
+
+
 if __name__ == "__main__":
     unittest.main()

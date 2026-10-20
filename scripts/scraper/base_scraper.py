@@ -14,7 +14,7 @@ import yaml
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, NoReturn
 
 from common import write_text_atomic, yaml_load
 
@@ -334,6 +334,21 @@ def _quoted_str(dumper: yaml.SafeDumper, data: str) -> yaml.ScalarNode:
 _PlatformDumper.add_representer(str, _quoted_str)
 
 
+def _exit_on_scrape_error(error: Exception) -> NoReturn:
+    """Print what failed and what to try, then exit 1 without a traceback."""
+    print(f"Error: {error}", file=sys.stderr)
+    refused = re.search(r"\b(403|429)\b|rate limit", str(error), re.I)
+    if refused and not os.environ.get("GITHUB_TOKEN"):
+        print(
+            "Anonymous GitHub API calls are limited to 60 an hour. "
+            "Run again with GITHUB_TOKEN=$(gh auth token) set.",
+            file=sys.stderr,
+        )
+    else:
+        print("Check the network and the URL above, then run again.", file=sys.stderr)
+    sys.exit(1)
+
+
 def scraper_cli(
     scraper_class: type, description: str = "Scrape BIOS requirements"
 ) -> None:
@@ -346,12 +361,11 @@ def scraper_cli(
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
-    scraper = scraper_class()
     try:
+        scraper = scraper_class()
         reqs = scraper.fetch_requirements()
-    except (ConnectionError, ValueError) as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    except (OSError, ValueError, RuntimeError) as e:
+        _exit_on_scrape_error(e)
 
     if args.dry_run:
         by_system: dict[str, list] = {}
@@ -385,7 +399,10 @@ def scraper_cli(
         # Use scraper's generate_platform_yaml() if available (includes
         # platform metadata, cores list, standalone_cores, etc.)
         if hasattr(scraper, "generate_platform_yaml"):
-            config = scraper.generate_platform_yaml()
+            try:
+                config = scraper.generate_platform_yaml()
+            except (OSError, ValueError, RuntimeError) as e:
+                _exit_on_scrape_error(e)
         else:
             # Generic fallback: just systems from requirements
             config = {"systems": {}}
