@@ -1,0 +1,151 @@
+emulator: "px68k (SDL)"
+type: standalone
+core_classification: community_fork
+source: "https://github.com/TurtleBazooka/px68k"
+profiled_date: "2026-10-20"
+source_commit: "e29ce400a030aea29b447757eeb28fef7a0c493e"
+core_version: "0.15+K"
+display_name: "Sharp - X68000 (px68k SDL)"
+mode: standalone
+cores: []
+systems:
+  - sharp-x68000
+
+notes: |
+  SDL build of Kenjo's WinX68k (Keropi) by TurtleBazooka, forked from
+  kenyahiro/px68k and hissorii/px68k. The Makefile builds the SDL3 front end by
+  default and the SDL2 one with SDL2=1 (Makefile:21-24,236-243). Both read the
+  same files: the SDL3 lists are at SDL/SDL3/winx68k.cpp:189-190,273-278.
+
+  Every file is opened by name inside one folder. set_modulepath builds it as
+  $HOME/.keropi, or ./.keropi when HOME is unset, and creates it when missing
+  (SDL/prop.c:172-194). WinMain hands it to File_Setcd
+  (SDL/SDL2/winx68k.cpp:713-717), and File_OpenCurDir joins each name to it
+  (win32api/dosio.c:170-194). The same folder holds the config file
+  (SDL/prop.c:196). Android uses /sdcard/px68k or the folder named in dir.txt,
+  iOS /var/mobile/px68k (SDL/prop.c:112-170). Paths below are relative to that
+  folder.
+
+  When no IPL or no font loads, WinX68k_LoadROMs returns false and WinMain
+  shows an error and never starts the CPU loop
+  (SDL/SDL2/winx68k.cpp:798-800,811,866-868).
+
+  sram.dat is the 16 KB battery backed SRAM. It is read when present and
+  written back on exit (x68k/sram.c:25,151-201), so the emulator creates it.
+  keyconf.dat is an optional key table read on start (SDL/keyboard.c:49,85-114),
+  and the repository ships a US layout as "keyconf.dat(us)". The printer output
+  goes to a file in the same folder (x68k/ioc.c:33-35).
+
+  With FLUID=1 MIDI goes through FluidSynth, which loads the SoundFont named by
+  SoundFontFile in the config, else /usr/local/share/soundfonts/default.sf2
+  (x68k/midi_fluid.c:27,52-66, SDL/prop.c:358-362, Makefile:165-195). Any
+  General MIDI SoundFont works. The Mercury unit is compiled out
+  (Makefile:120-123).
+
+files:
+  - name: "iplrom.dat"
+    system: sharp-x68000
+    path: "iplrom.dat"
+    priority: 1
+    required: true
+    size: 131072
+    source_ref: "SDL/SDL2/winx68k.cpp:277-279,288-307"
+    note: >
+      X68000 IPL ROM. The four IPL names are tried in the order iplrom.dat,
+      iplromxv.dat, iplromco.dat, iplrom30.dat and the first that opens is
+      read, 0x20000 bytes into the upper half of the IPL area. The name sets
+      the window title and iplrom30.dat marks the X68030.
+
+  - name: "iplromxv.dat"
+    system: sharp-x68000
+    path: "iplromxv.dat"
+    priority: 2
+    required: false
+    size: 131072
+    source_ref: "SDL/SDL2/winx68k.cpp:277-279,288-307"
+    note: "X68000 XVI IPL ROM, read when iplrom.dat is absent."
+
+  - name: "iplromco.dat"
+    system: sharp-x68000
+    path: "iplromco.dat"
+    priority: 3
+    required: false
+    size: 131072
+    source_ref: "SDL/SDL2/winx68k.cpp:277-279,288-307"
+    note: "X68000 Compact IPL ROM, read when the first two names are absent."
+
+  - name: "iplrom30.dat"
+    system: sharp-x68000
+    path: "iplrom30.dat"
+    priority: 4
+    required: false
+    size: 131072
+    source_ref: "SDL/SDL2/winx68k.cpp:277-279,288-307"
+    note: "X68030 IPL ROM, read when the three other names are absent."
+
+  - name: "cgrom30.dat"
+    system: sharp-x68000
+    path: "cgrom30.dat"
+    priority: 1
+    required: false
+    size: 786432
+    source_ref: "SDL/SDL2/winx68k.cpp:280-282,317-331"
+    note: >
+      X68030 character generator ROM. The font names are tried in the order
+      cgrom30.dat, cgrom30.tmp, cgrom.dat, cgrom.tmp whatever IPL was loaded,
+      and the first that opens is read, 0xC0000 bytes.
+
+  - name: "cgrom30.tmp"
+    system: sharp-x68000
+    path: "cgrom30.tmp"
+    priority: 2
+    required: false
+    size: 786432
+    source_ref: "SDL/SDL2/winx68k.cpp:280-282,317-331"
+    note: "Substitute X68030 font, read when cgrom30.dat is absent."
+
+  - name: "cgrom.dat"
+    system: sharp-x68000
+    path: "cgrom.dat"
+    priority: 3
+    required: true
+    size: 786432
+    source_ref: "SDL/SDL2/winx68k.cpp:280-282,317-331"
+    note: "X68000 character generator ROM, read when neither X68030 font is present."
+
+  - name: "cgrom.tmp"
+    system: sharp-x68000
+    path: "cgrom.tmp"
+    priority: 4
+    required: false
+    size: 786432
+    source_ref: "SDL/SDL2/winx68k.cpp:280-282,317-331, SDL/tool/create_cgrom.c:20"
+    note: >
+      Substitute font, read last. The separate mkcgrom tool (make cgrom)
+      renders it from TrueType fonts.
+
+  - name: "scsiinrom.dat"
+    system: sharp-x68000
+    path: "scsiinrom.dat"
+    required: false
+    hle_fallback: true
+    size: 8192
+    source_ref: "SDL/SDL2/winx68k.cpp:140-271"
+    note: >
+      Built-in SCSI IPL of the XVI, Compact and X68030. It is read only when
+      the loaded IPL points at the built-in SCSI ROM at 0xFC0000, 0x2000 bytes,
+      and its IOCS entry is patched. Absent, a stub carrying the Human68k
+      signature is placed there instead.
+
+  - name: "scsiexrom.dat"
+    system: sharp-x68000
+    path: "scsiexrom.dat"
+    required: false
+    size: 8192
+    source_ref: "SDL/SDL2/winx68k.cpp:140-271"
+    note: >
+      CZ-6BS1 external SCSI board IPL, mapped at 0xEA0000 with any IPL. The
+      code reads 0x1FD0 bytes and accepts a dump taken from 0xEA0020 or from
+      0xEA0000, located by the SCSIEX signature, then patches the IOCS entry
+      after the NuSCSI tag. Absent, the board ROM area is left empty and no
+      external SCSI drive boots.
