@@ -14,7 +14,8 @@ Mapping (stale -> command):
                             the export patches must be the one just scraped
     native/<name>           python scripts/generate_truth.py --platform <name>, then
                             python scripts/export_native.py --platform <name>
-                            --refresh-cache
+                            --refresh-cache, then the export itself, which
+                            rewrites exports/<name>
     targets/<name>          python -m scripts.scraper.targets.<module>
                             -o platforms/targets/<name>.yml
     data/<key>              python scripts/refresh_data_dirs.py --key <key>
@@ -172,9 +173,13 @@ def plan_jobs(
         if area == "platforms":
             # The truth reads the platform file: regenerated first, or the
             # native refresh refuses it as older than the profiles.
-            then = (tuple(_truth_refresh(subject)), tuple(_native_refresh(subject)))
+            then = (
+                tuple(_truth_refresh(subject)),
+                tuple(_native_refresh(subject)),
+                tuple(_export_refresh(subject)),
+            )
         elif area == "native":
-            then = (tuple(_native_refresh(subject)),)
+            then = (tuple(_native_refresh(subject)), tuple(_export_refresh(subject)))
         jobs.append(
             Job(area=area, subject=subject, command=command, log_path=log, then=then)
         )
@@ -194,6 +199,11 @@ def _native_refresh(platform: str) -> list[str]:
         platform,
         "--refresh-cache",
     ]
+
+
+def _export_refresh(platform: str) -> list[str]:
+    """Rewrite the published export from the refreshed original."""
+    return [sys.executable, "scripts/export_native.py", "--platform", platform]
 
 
 def _command_for(

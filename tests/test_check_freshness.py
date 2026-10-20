@@ -12,6 +12,7 @@ import os
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -85,6 +86,39 @@ class NativeCacheTests(unittest.TestCase):
         self.assertEqual({r.area for r in rows}, {"native"})
         self.assertEqual({r.status for r in rows}, {cf.STALE})
         self.assertIn("batocera", {r.subject for r in rows})
+
+
+class PublishedExportTests(unittest.TestCase):
+    """exports/ is committed and published, and CI cannot rebuild it."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.published = Path(self._tmp.name)
+        (self.published / "plat").mkdir()
+        (self.published / "plat" / "list.txt").write_text("a", encoding="utf-8")
+        (self.published / "plat.json").write_text("{}", encoding="utf-8")
+
+    def _state(self, written: str, ok: bool = True) -> str:
+        def fake(platform, _cls, _truth, output, *_rest):
+            (output / platform).mkdir(parents=True)
+            (output / platform / "list.txt").write_text(written, encoding="utf-8")
+            (output / f"{platform}.json").write_text("{}", encoding="utf-8")
+            return ok, [] if ok else ["the platform's own file is required"]
+
+        with mock.patch.object(cf.export_native, "export_platform", fake):
+            return cf.published_export_state(
+                "plat", object, Path("t"), Path("p"), Path("c"), self.published
+            )
+
+    def test_the_same_bytes_are_fresh(self):
+        self.assertEqual(self._state("a"), "")
+
+    def test_a_moved_hash_is_named(self):
+        self.assertIn("is not what the export writes now", self._state("b"))
+
+    def test_an_export_that_fails_is_named(self):
+        self.assertIn("the export fails", self._state("a", ok=False))
 
 
 class PlatformDiffTests(unittest.TestCase):

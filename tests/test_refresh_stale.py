@@ -46,7 +46,8 @@ class Planning(unittest.TestCase):
         self.assertEqual(
             [list(c[1:]) for c in jobs[0].then],
             [["scripts/generate_truth.py", "--platform", "retrobat"],
-             ["scripts/export_native.py", "--platform", "retrobat", "--refresh-cache"]],
+             ["scripts/export_native.py", "--platform", "retrobat", "--refresh-cache"],
+             ["scripts/export_native.py", "--platform", "retrobat"]],
         )
 
     def test_a_native_row_of_a_rescraped_platform_is_not_a_second_job(self):
@@ -64,7 +65,10 @@ class Planning(unittest.TestCase):
         )
         self.assertEqual(
             [list(c[1:]) for c in jobs[0].then],
-            [["scripts/export_native.py", "--platform", "lakka", "--refresh-cache"]],
+            # exports/ is published: the corrected file is written again
+            # from the refreshed original.
+            [["scripts/export_native.py", "--platform", "lakka", "--refresh-cache"],
+             ["scripts/export_native.py", "--platform", "lakka"]],
         )
 
     def test_a_platform_without_a_scraper_is_surfaced(self):

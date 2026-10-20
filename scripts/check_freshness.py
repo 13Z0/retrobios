@@ -374,6 +374,48 @@ def native_cache_state(
     return ""
 
 
+def _export_tree(root: Path, platform: str) -> dict[str, bytes]:
+    """A platform's published export: its directory and its report."""
+    tree = {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in (root / platform).rglob("*") if path.is_file()
+    }
+    report = root / f"{platform}.json"
+    if report.is_file():
+        tree[report.name] = report.read_bytes()
+    return tree
+
+
+def published_export_state(
+    platform: str,
+    exporter_class: type,
+    truth_dir: Path,
+    platforms_dir: Path,
+    cache_dir: Path,
+    published: Path,
+) -> str:
+    """Why the committed export is not what the export writes now, '' when it is.
+
+    exports/ is committed and the site publishes it, but CI cannot rebuild
+    it: the originals it patches live in the local cache. A profile change
+    that moves a hash leaves the published file behind until someone runs
+    the export again, and this is what says so.
+    """
+    scratch_root = Path("tmp")
+    scratch_root.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=scratch_root) as scratch:
+        with contextlib.redirect_stdout(io.StringIO()):
+            ok, messages = export_native.export_platform(
+                platform, exporter_class, truth_dir, Path(scratch),
+                str(platforms_dir), cache_dir, False,
+            )
+        if not ok:
+            return f"the export fails: {messages[0] if messages else 'no message'}"
+        if _export_tree(Path(scratch), platform) != _export_tree(published, platform):
+            return f"{published.as_posix()}/{platform} is not what the export writes now"
+    return ""
+
+
 def _transcribed_at(platforms_dir: Path, platform: str) -> float:
     """Last rewrite of the platform file or of any file it inherits."""
     newest = 0.0
@@ -390,7 +432,10 @@ def _transcribed_at(platforms_dir: Path, platform: str) -> float:
     return newest
 
 
-def check_native(platforms_dir: Path, cache_dir: Path, truth_dir: Path) -> list[Finding]:
+def check_native(
+    platforms_dir: Path, cache_dir: Path, truth_dir: Path,
+    published: Path = Path("exports"),
+) -> list[Finding]:
     exporters = discover_exporters()
     index = cache_dir / export_native.SOURCES_INDEX
     recorded = export_native.load_sources(cache_dir)
@@ -409,13 +454,21 @@ def check_native(platforms_dir: Path, cache_dir: Path, truth_dir: Path) -> list[
         reason = native_cache_state(
             wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
         )
+        if reason:
+            reason += ", export_native.py --refresh-cache fetches it"
+        else:
+            reason = published_export_state(
+                name, exporter_class, truth_dir, platforms_dir, cache_dir, published
+            )
+            if reason:
+                reason += f", export_native.py --platform {name} writes it again"
         findings.append(
             Finding(
                 "native",
                 name,
                 STALE if reason else OK,
                 local=f"{len(wanted)} file(s)",
-                detail=f"{reason}, export_native.py --refresh-cache fetches it" if reason else "",
+                detail=reason,
             )
         )
     return sorted(findings, key=lambda f: f.subject)
