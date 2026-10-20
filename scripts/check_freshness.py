@@ -473,7 +473,7 @@ def check_targets(
         with overrides_path.open(encoding="utf-8") as fh:
             overrides = yaml_load(fh) or {}
     index = profile_name_index(profiles)
-    scrapers = {} if offline else _target_scrapers()
+    scrapers = _target_scrapers()
     findings: list[Finding] = []
     today = datetime.now(timezone.utc)
 
@@ -485,6 +485,15 @@ def check_targets(
             old = yaml_load(fh) or {}
         module = scrapers.get(platform)
         targets = old.get("targets") or {}
+        if module is not None and offline:
+            # Scraped, so offline means not compared: SKIPPED, as every other
+            # section says it. Labelled static and OK, a list 400 days old
+            # read as current.
+            stamp = str(old.get("scraped_at", ""))[:10]
+            out = [Finding("targets", platform, SKIPPED, local=stamp, detail="offline")]
+            missing = unresolved_target_cores(old, index, _platform_overrides(overrides, platform))
+            out.extend(_unresolved_findings(platform, missing))
+            return out
         if module is None and targets and all(
             (t or {}).get("cores", []) is None for t in targets.values()
         ):

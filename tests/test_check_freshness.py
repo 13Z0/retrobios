@@ -330,6 +330,25 @@ class RepositoryWiringTests(unittest.TestCase):
         solo = [f for f in findings if f.subject == "solo"]
         self.assertEqual([(f.status, f.detail) for f in solo], [(cf.OK, "every declared core")])
 
+    def test_a_scraped_target_offline_is_skipped_not_ok(self):
+        """Offline, scraped target lists were labelled static and counted OK
+        without any comparison, so a list 400 days old read as current."""
+        import tempfile  # noqa: PLC0415
+        from pathlib import Path as _Path  # noqa: PLC0415
+
+        scraped = sorted(cf._target_scrapers())
+        self.assertTrue(scraped)
+        platform = scraped[0]
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            targets = _Path(tmp) / "targets"
+            targets.mkdir()
+            (targets / f"{platform}.yml").write_text(
+                f"platform: {platform}\nscraped_at: '2025-01-01'\n"
+                "targets:\n  one:\n    cores: []\n")
+            findings = cf.check_targets(_Path(tmp), _Path(tmp), {}, 1, True)
+        row = [f for f in findings if f.subject == platform]
+        self.assertEqual([(f.status, f.detail) for f in row], [(cf.SKIPPED, "offline")])
+
     def test_romm_emulatorjs_pin_is_read_from_its_dockerfile(self):
         """emulatorjs.yml is no registered platform: a RomM image moving to
         another EmulatorJS changed the cores its users run, unnoticed."""
