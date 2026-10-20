@@ -347,7 +347,9 @@ class Progress:
     def _draw(self) -> None:
         share = min(self.bytes / self.total_bytes, 1.0)
         elapsed = self.elapsed()
-        speed = self.bytes / elapsed if elapsed > 0 else 0
+        # A resumed partial copy was on disk before the run started: counted
+        # in the share, never in the speed.
+        speed = self.transferred() / elapsed if elapsed > 0 else 0
         left = (self.total_bytes - self.bytes) / speed if speed > 0 else 0
         parts = [
             f"{share * 100:5.1f}%",

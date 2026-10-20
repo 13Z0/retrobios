@@ -2782,6 +2782,32 @@ class TheProgressLineFitsTheTerminal(unittest.TestCase):
 
 
 
+class AResumedCopyIsNotSpeed(unittest.TestCase):
+    """The live line divided every byte by the run's time, the 3 GB a
+    resumed partial copy already held included: 2.5 GB/s and 0:00 left on a
+    1 MB/s link."""
+
+    def test_speed_counts_only_what_this_run_fetched(self):
+        import os as _os
+
+        out = io.StringIO()
+        term = install.Terminal(out)
+        term.live = True
+        progress = install.Progress(1, 4_000_000_000, term)
+        progress.start -= 10
+        progress.bytes = 3_000_000_000 + 10_000_000
+        progress.resumed = 3_000_000_000
+        with unittest.mock.patch.object(
+            install.shutil, "get_terminal_size",
+            return_value=_os.terminal_size((120, 24)),
+        ):
+            progress._draw()
+        line = out.getvalue()
+        self.assertIn(f"{install.format_size(1_000_000)}/s", line)
+        self.assertNotIn("0:00 left", line)
+
+
+
 class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
     """The installer page and the FAQ quoted "install.py SHA-256 mismatch",
     a message the bootstraps no longer print."""
