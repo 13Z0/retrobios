@@ -422,5 +422,20 @@ class RowsSayAllTheyStandFor(unittest.TestCase):
         self.assertIn("--json lists all 50", row.detail)
 
 
+class AReleasePageMakesAProfileStale(unittest.TestCase):
+    def test_a_newer_announced_version_is_stale(self):
+        import check_freshness
+
+        rows = [
+            {"name": "altirra", "skipped": "unsupported host: x",
+             "declared_version": "4.40", "page_version": "4.50"},
+            {"name": "mednafen", "skipped": "unsupported host: y",
+             "declared_version": "1.32.1", "page_version": "1.32.1"},
+        ]
+        found = {f.subject: f.status for f in check_freshness.summarize_profile_sync(rows)}
+        self.assertEqual(found["altirra"], check_freshness.STALE)
+        self.assertEqual(found["mednafen"], check_freshness.OK)
+
+
 if __name__ == "__main__":
     unittest.main()

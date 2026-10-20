@@ -4253,5 +4253,20 @@ class StrictRefusesAnUncheckableProfile(unittest.TestCase):
         self.assertFalse(report("no source_ref").uncheckable())
 
 
+class AnOffForgeProfileWatchesItsReleasePage(unittest.TestCase):
+    """Profiles of projects outside any forge were skipped as an unsupported
+    host, and a new release of Altirra or mednafen went unseen."""
+
+    def test_the_page_version_is_read(self):
+        from unittest import mock
+
+        profile = {"emulator": "Altirra", "core_version": "4.40", "version_source": {
+            "url": "https://example.test/altirra", "pattern": r"Altirra (\d+\.\d+) released",
+        }}
+        with mock.patch.object(profile_sync.upstream, "fetch_page",
+                               return_value="<p>Altirra 4.50 released</p>"):
+            self.assertEqual(profile_sync.page_version(profile, "cache", False), "4.50")
+
+
 if __name__ == "__main__":
     unittest.main()

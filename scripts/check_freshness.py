@@ -1097,6 +1097,16 @@ def summarize_profile_sync(report: object) -> list[Finding]:
         if not isinstance(row, dict):
             continue
         name = str(row.get("name") or "?")
+        if row.get("skipped") and row.get("page_version"):
+            # Off any forge, the release page is the feed: a version there
+            # beyond the declared one is a release the profile does not cover.
+            declared, announced = str(row.get("declared_version") or ""), str(row["page_version"])
+            findings.append(Finding(
+                "profiles", name, OK if announced == declared else STALE,
+                local=declared, remote=announced,
+                detail="" if announced == declared else "a newer release is announced",
+            ))
+            continue
         if row.get("skipped"):
             findings.append(Finding("profiles", name, UNKNOWN, detail=str(row["skipped"])))
             continue

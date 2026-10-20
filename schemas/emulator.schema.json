@@ -809,6 +809,16 @@
       "type": "string",
       "description": "Why source_commit is held on purpose rather than followed. The profile is then judged against its own revision, like one pinned to a superseded tag: comparing it to HEAD says nothing and recaling would repoint its refs at code the build it documents never had."
     },
+    "version_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "pattern"],
+      "properties": {
+        "url": {"type": "string", "format": "uri"},
+        "pattern": {"type": "string", "description": "Regular expression whose first group is the latest version the page announces."}
+      },
+      "description": "For a project published outside any forge, the page that announces its releases. profile_sync --check-version compares the version read there with core_version."
+    },
     "upstream_gone": {
       "type": "string",
       "description": "Why the declared upstream can no longer be reached, when that is settled rather than transient. Records the death instead of leaving the profile failing every pass. profile_sync reports the contradiction if the forge answers again."

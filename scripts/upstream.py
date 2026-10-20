@@ -400,6 +400,26 @@ def _api(
     return payload
 
 
+def fetch_page(url: str, cache_dir: str, offline: bool) -> str | None:
+    """A web page's text, cached like a moving API answer (MOVING_TTL).
+
+    A project published outside a forge (Altirra, mednafen, ePSXe) says its
+    version on a download page: that page is the only release feed there is.
+    """
+    key = hashlib.sha256(url.encode()).hexdigest()
+    target = Path(cache_dir) / "_pages" / f"{key}.txt"
+    if target.is_file():
+        fresh = time.time() - target.stat().st_mtime <= MOVING_TTL
+        if fresh or offline:
+            raw = target.read_text(encoding="utf-8")
+            return None if raw == ABSENT else raw
+    if offline:
+        return None
+    text = _http_text(url)
+    write_cache(target, ABSENT if text is None else text)
+    return text
+
+
 def _project(repo: Repo) -> str:
     return urllib.parse.quote(f"{repo.owner}/{repo.name}", safe="")
 

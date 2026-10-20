@@ -1114,6 +1114,10 @@ class ProfileReport:
     # Repositories whose pin is no ancestor of the branch the profile
     # tracks: history was rewritten, or the pin lies on another branch.
     orphaned: list[str] = field(default_factory=list)
+    # A profile off any forge names the page announcing its releases
+    # (version_source): the version read there, beside the one declared.
+    declared_version: str | None = None
+    page_version: str | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -2032,6 +2036,11 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         lines.append(f"  not read (unsupported host): {url}")
     for line in report.orphaned:
         lines.append(f"  orphaned pin: {line}")
+    if report.declared_version or report.page_version:
+        lines.append(
+            f"  version page: declared {report.declared_version or '-'}, "
+            f"announced {report.page_version or 'unreadable'}"
+        )
     if report.skipped:
         lines.append(f"  skipped: {report.skipped}")
         return "\n".join(lines)
@@ -2135,6 +2144,25 @@ def check_version(
         matches,
         commit,
     )
+
+
+def page_version(profile: dict, cache_dir: str, offline: bool) -> str | None:
+    """The latest version a profile's version_source page announces.
+
+    Forty-odd profiles live off any forge: profile_sync could only say
+    "unsupported host", and a new Altirra or mednafen release went unseen.
+    """
+    source = profile.get("version_source") or {}
+    url, pattern = str(source.get("url") or ""), str(source.get("pattern") or "")
+    if not url or not pattern:
+        return None
+    try:
+        text = upstream.fetch_page(url, cache_dir, offline)
+    except upstream.UpstreamError as exc:
+        print(f"{profile.get('emulator', '?')}: {url}: {exc}", file=sys.stderr)
+        return None
+    match = re.search(pattern, text or "")
+    return match.group(1) if match else None
 
 
 def version_warning(report: VersionReport | None, pin: str | None) -> str | None:
@@ -3810,6 +3838,9 @@ def main() -> None:
                 name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
             )
             failed.add(name)
+        if args.check_version and profile.get("version_source"):
+            report.declared_version = str(profile.get("core_version") or "") or None
+            report.page_version = page_version(profile, args.cache_dir, args.offline)
         reports.append(report)
         if writes:
             try:
