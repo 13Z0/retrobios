@@ -17,10 +17,10 @@ from dataclasses import dataclass, field
 
 try:
     from .base_scraper import fetch_bytes, github_headers
-    from .batocera_launchers import LauncherShapeError
+    from .configgen_launchers import LauncherShapeError
 except ImportError:
     from base_scraper import fetch_bytes, github_headers
-    from batocera_launchers import LauncherShapeError
+    from configgen_launchers import LauncherShapeError
 
 NAME = r"[A-Za-z_][A-Za-z0-9_]*"
 # A single-quoted "$" is literal: it is carried as this mark through expansion.

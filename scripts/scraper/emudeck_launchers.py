@@ -15,7 +15,7 @@ import re
 from collections.abc import Callable
 
 try:
-    from .batocera_launchers import Launcher
+    from .configgen_launchers import Launcher
     from .shell_launchers import (
         LauncherPatternMissing,
         RepoTree,
@@ -26,7 +26,7 @@ try:
         words,
     )
 except ImportError:
-    from batocera_launchers import Launcher
+    from configgen_launchers import Launcher
     from shell_launchers import (
         LauncherPatternMissing,
         RepoTree,

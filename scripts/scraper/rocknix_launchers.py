@@ -17,7 +17,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 try:
-    from .batocera_launchers import Launcher
+    from .configgen_launchers import Launcher
     from .shell_launchers import (
         LauncherPatternMissing,
         Link,
@@ -29,7 +29,7 @@ try:
         source_ref,
     )
 except ImportError:
-    from batocera_launchers import Launcher
+    from configgen_launchers import Launcher
     from shell_launchers import (
         LauncherPatternMissing,
         Link,
