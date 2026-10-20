@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-18T18:08:38Z",
+  "generated": "2026-10-20T01:30:36Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,7 +19,7 @@
   "total_size": 729933775,
   "pack_files": 445,
   "pack_size": 729933775,
-  "total_omitted": 716,
+  "total_omitted": 721,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -1339,6 +1339,56 @@
       "reason": "below_platform_folder",
       "cores": [
         "Clock Signal (CLK)"
+      ]
+    },
+    {
+      "dest": "SC-55-v1.00/sc55_rom1.bin",
+      "name": "sc55_rom1.bin",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "DOSBox Pure"
+      ]
+    },
+    {
+      "dest": "SC-55-v1.00/sc55_rom2.bin",
+      "name": "sc55_rom2.bin",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "DOSBox Pure"
+      ]
+    },
+    {
+      "dest": "SC-55-v1.00/sc55_waverom1.bin",
+      "name": "sc55_waverom1.bin",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "DOSBox Pure"
+      ]
+    },
+    {
+      "dest": "SC-55-v1.00/sc55_waverom2.bin",
+      "name": "sc55_waverom2.bin",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "DOSBox Pure"
+      ]
+    },
+    {
+      "dest": "SC-55-v1.00/sc55_waverom3.bin",
+      "name": "sc55_waverom3.bin",
+      "system": "",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "DOSBox Pure"
       ]
     },
     {
