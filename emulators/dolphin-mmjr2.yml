@@ -159,17 +159,21 @@ files:
   - name: font_western.bin
     path: null
     required: false
+    bundled: true
+    sha1: "483a17ff25b68a8f18cae691da99f16beefbe370"
     hle_fallback: true
     description: "Windows-1252 font, loaded at 0x1fcf00"
-    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found."
+    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK carries the free replacement in its Sys assets."
     source_ref: "Source/Core/Common/CommonPaths.h:117, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:200-241"
 
   - name: font_japanese.bin
     path: null
     required: false
+    bundled: true
+    sha1: "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
     hle_fallback: true
     description: "Shift JIS font, loaded at 0x1aff00"
-    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found."
+    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK carries the free replacement in its Sys assets."
     source_ref: "Source/Core/Common/CommonPaths.h:118, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:129, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:200-241"
 
   - name: dsp_rom.bin
@@ -203,8 +207,10 @@ files:
   - name: codehandler.bin
     path: null
     required: false
+    bundled: true
+    sha1: "e6c0050b3c67ee26198488fbbe4a5d019c15b628"
     description: "Gecko code handler"
-    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off."
+    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off. The APK carries it in its Sys assets."
     source_ref: "Source/Core/Common/CommonPaths.h:139, Source/Core/Core/GeckoCode.cpp:120-134, Source/Core/Core/GeckoCode.cpp:142-144"
 
   - name: keys.bin
@@ -304,6 +310,8 @@ files:
     path: Wii/shared2/wc24/nwc24msg.cfg
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "caf8a96a36573d7e67f086f73fec675a5d1c4245"
     size: 1024
     validation: [size]
     description: "WiiConnect24 account configuration"
@@ -314,6 +322,8 @@ files:
     path: Wii/shared2/wc24/nwc24dl.bin
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "27d53b55779a0db2e76dea50f51e633a53609cd5"
     size: 63488
     validation: [size]
     description: "WiiConnect24 download task list"
@@ -324,6 +334,8 @@ files:
     path: Wii/shared2/wc24/nwc24fl.bin
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "472c670d701bd233bc03afe4c9f18e22a6fd15c1"
     description: "WiiConnect24 friend list"
     note: "Placed in the NAND by the Sys/Wii copy and read from there by the running title. Titles such as Mario Kart Wii expect the WiiConnect24 files to exist even on a first launch, which is why the copy happens without the system menu ever running."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Source/Core/Core/WiiRoot.cpp:330-335"
@@ -332,6 +344,8 @@ files:
     path: Wii/shared2/wc24/nwc24fls.bin
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "c0bb6540f7f888bd60be958d7c1de3b221d51a33"
     description: "WiiConnect24 friend list backup"
     note: "Placed in the NAND by the Sys/Wii copy, which never overwrites a file the NAND already holds."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Source/Core/Core/WiiRoot.cpp:334"
@@ -340,6 +354,8 @@ files:
     path: Wii/shared2/wc24/nwc24msg.cbk
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "caf8a96a36573d7e67f086f73fec675a5d1c4245"
     description: "WiiConnect24 account configuration backup"
     note: "Placed in the NAND by the Sys/Wii copy, which never overwrites a file the NAND already holds."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Source/Core/Core/WiiRoot.cpp:334"
@@ -348,6 +364,8 @@ files:
     path: Wii/shared2/wc24/misc.bin
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "08509dd4567fa61baa2bae01ba8361e8ca439659"
     description: "WiiConnect24 miscellaneous state"
     note: "Placed in the NAND by the Sys/Wii copy. The time device carries a note about writing it but no code path does."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Source/Core/Core/IOS/Network/KD/NetKDTime.cpp:34"
@@ -356,6 +374,8 @@ files:
     path: Wii/shared2/wc24/mbox/wc24recv.ctl
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "18cc21df587d9cd9302f38a00ed9a23d619f5673"
     description: "WiiConnect24 receive mailbox index"
     note: "Placed in the NAND by the Sys/Wii copy, which recurses into mbox and never overwrites a file the NAND already holds."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322"
@@ -364,6 +384,8 @@ files:
     path: Wii/shared2/wc24/mbox/wc24recv.mbx
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "5aad884478da3c4495e033567c68e29bd8e9e783"
     description: "WiiConnect24 receive mailbox"
     note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub, and the note shipped beside it gives 0x700000 as the size on a console."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Data/Sys/Wii/shared2/wc24/mbox/Readme.txt"
@@ -372,6 +394,8 @@ files:
     path: Wii/shared2/wc24/mbox/wc24send.ctl
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "8fcee88c8cf818e5d2a6a8ad0cc1c4168c93694e"
     description: "WiiConnect24 send mailbox index"
     note: "Placed in the NAND by the Sys/Wii copy, which recurses into mbox and never overwrites a file the NAND already holds."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322"
@@ -380,6 +404,8 @@ files:
     path: Wii/shared2/wc24/mbox/wc24send.mbx
     system: nintendo-wii
     required: false
+    bundled: true
+    sha1: "704a576c5f18a8ce4729f4dfc7f8814d6ac09802"
     description: "WiiConnect24 send mailbox"
     note: "Placed in the NAND by the Sys/Wii copy. The bundled file is a stub, and the note shipped beside it gives 0x200000 as the size on a console."
     source_ref: "Source/Core/Core/WiiRoot.cpp:288-322, Data/Sys/Wii/shared2/wc24/mbox/Readme.txt"
@@ -388,6 +414,7 @@ files:
     path: Wii/shared2/wc24/mbox/Readme.txt
     system: nintendo-wii
     required: false
+    bundled: true
     size: 103
     sha256: "e5a888912968050c6c1d46d1c364c324684e1d15aaa62cfe36cf7fce2c687b21"
     description: "note on the truncated mailboxes, copied into the NAND"

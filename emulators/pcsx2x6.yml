@@ -157,6 +157,9 @@ files:
     path: bin/resources/GameIndex.yaml
     system: namco-system246
     required: false
+    bundled: true
+    sha1: 74747a2ca67a70b3b7208ae6bd33bf324181c957
+    size: 7941
     description: "Arcade game database"
     note: "Keyed by NM gameid, one entry per arcade title, carrying the board variant, the media type, the boot program and the GS fixes. Supplies the platform and media values a minimal .acgame leaves out. Console error when missing."
     source_ref: "pcsx2/GameDatabase.cpp:39, pcsx2/GameDatabase.cpp:979-990, pcsx2/VMManager.cpp:1385-1415"
@@ -165,6 +168,9 @@ files:
     path: bin/resources/RedumpDatabase.yaml
     system: namco-system246
     required: false
+    bundled: true
+    sha1: a3506d52c6bcdd81d1d8dd7b2cc86210adc696e9
+    size: 1976895
     description: "Disc hash database"
     note: "Read on demand to match a disc against its catalogue entry in the game summary. Console error when missing."
     source_ref: "pcsx2/GameDatabase.cpp:1086, pcsx2/GameDatabase.cpp:1143-1152"
@@ -173,6 +179,9 @@ files:
     path: bin/resources/patches.zip
     system: namco-system246
     required: false
+    bundled: true
+    sha1: 21637a90ff79984b907876b1ac6b4d482a5444e0
+    size: 1312
     description: "Bundled patch archive"
     note: "Opened read-only from the resources folder. Built-in patches are unavailable and an on-screen error is shown when it cannot be opened. Fetched from the patches repository at build time, not committed."
     source_ref: "pcsx2/Patch.cpp:117, pcsx2/Patch.cpp:289-315, .github/workflows/linux_build_qt.yml:129"
@@ -181,6 +190,9 @@ files:
     path: bin/resources/game_controller_db.txt
     system: namco-system246
     required: false
+    bundled: true
+    sha1: 35a77f91d4333bafeb2edc2971fe87049077b1c3
+    size: 515563
     description: "SDL controller mapping database"
     note: "A copy in the user data root takes precedence over the one in resources. Fed to SDL as a hint. Without either, SDL falls back to its built-in mappings and an error is logged."
     source_ref: "pcsx2/Input/SDLInputSource.cpp:24, pcsx2/Input/SDLInputSource.cpp:614-629"

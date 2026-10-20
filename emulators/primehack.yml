@@ -99,18 +99,24 @@ files:
   # Searched in: Sys/GC/
   - name: "font_western.bin"
     path: "GC/font_western.bin"
-    size: 9589
+    size: 6478
     required: false
+    bundled: true
     hle_fallback: true
-    note: "Windows-1252 font for GC/Wii text rendering. Free alternative bundled, real one from IPL dump preferred"
+    sha1: "483a17ff25b68a8f18cae691da99f16beefbe370"
+    md5: "9bef639b7426ef6948602a12b33522a8"
+    note: "Windows-1252 font for GC/Wii text rendering. The free alternative ships in Sys/GC/ of the 1.0.8 Windows and macOS releases, and the real one from an IPL dump is preferred"
     source_ref: "Source/Core/Common/CommonPaths.h:132, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131,203-218"
 
   - name: "font_japanese.bin"
     path: "GC/font_japanese.bin"
-    size: 303693
+    size: 259626
     required: false
+    bundled: true
     hle_fallback: true
-    note: "Shift-JIS font for Japanese text. Free alternative bundled, real one from IPL dump preferred"
+    sha1: "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
+    md5: "a1d3c0e5a40f163f4fb00a5e0774c63c"
+    note: "Shift-JIS font for Japanese text. The free alternative ships in Sys/GC/ of the 1.0.8 Windows and macOS releases, and the real one from an IPL dump is preferred"
     source_ref: "Source/Core/Common/CommonPaths.h:135, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130"
 
   # -- GBA BIOS (for GC-GBA link) --
@@ -167,8 +173,12 @@ files:
   - name: "codehandler.bin"
     path: null
     required: false
+    bundled: true
     hle_fallback: true
-    note: "Gecko/Ocarina cheat code handler. Shipped with PrimeHack in Sys/"
+    size: 2880
+    sha1: "e6c0050b3c67ee26198488fbbe4a5d019c15b628"
+    md5: "1f118b8735fcf40c20b38c3184eebfd9"
+    note: "Gecko/Ocarina cheat code handler. Shipped in Sys/ of the 1.0.8 Windows and macOS releases"
     source_ref: "Source/Core/Common/CommonPaths.h:154, Source/Core/Core/GeckoCode.cpp:121"
 
   # -- Wii System Menu (WAD) --

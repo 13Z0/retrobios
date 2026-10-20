@@ -20,6 +20,7 @@ data_directories:
     mode: libretro
     source_ref: "src/Cafe/GameProfile/GameProfile.cpp:181-195, src/libretro/CemuLibretro.cpp:1699-1707"
   - ref: cemu-graphic-packs
+    installed_on: [retrobat]
     destination: "Cemu/graphicPacks/downloadedGraphicPacks"
     mode: standalone
     source_ref: "src/Cafe/GraphicPack/GraphicPack2.cpp:96-111, src/gui/wxgui/DownloadGraphicPacksWindow.cpp:234-238"
@@ -255,6 +256,7 @@ files:
     source_ref: "src/Cafe/CafeSystem.cpp:292, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeCn.ttf"
 
   - name: CafeCn.ttf
+    not_bundled_on: [retrodeck]
     path: Cemu/resources/sharedFonts/CafeCn.ttf
     standalone_path: resources/sharedFonts/CafeCn.ttf
     mode: standalone
@@ -284,6 +286,7 @@ files:
     source_ref: "src/Cafe/CafeSystem.cpp:293, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeKr.ttf"
 
   - name: CafeKr.ttf
+    not_bundled_on: [retrodeck]
     path: Cemu/resources/sharedFonts/CafeKr.ttf
     standalone_path: resources/sharedFonts/CafeKr.ttf
     mode: standalone
@@ -313,6 +316,7 @@ files:
     source_ref: "src/Cafe/CafeSystem.cpp:294, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeStd.ttf"
 
   - name: CafeStd.ttf
+    not_bundled_on: [retrodeck]
     path: Cemu/resources/sharedFonts/CafeStd.ttf
     standalone_path: resources/sharedFonts/CafeStd.ttf
     mode: standalone
@@ -342,6 +346,7 @@ files:
     source_ref: "src/Cafe/CafeSystem.cpp:295, src/Cafe/CafeSystem.cpp:329-334, bin/resources/sharedFonts/CafeTw.ttf"
 
   - name: CafeTw.ttf
+    not_bundled_on: [retrodeck]
     path: Cemu/resources/sharedFonts/CafeTw.ttf
     standalone_path: resources/sharedFonts/CafeTw.ttf
     mode: standalone

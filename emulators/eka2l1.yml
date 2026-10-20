@@ -781,6 +781,7 @@ files:
     source_ref: "src/emu/config/src/app_settings.cpp:82-114, src/emu/qt/CMakeLists.txt:276"
 
   - name: panic.json
+    installed_on: [retrobat]
     standalone_path: panic.json
     mode: standalone
     required: false

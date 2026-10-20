@@ -65,6 +65,7 @@ data_directories:
   # buildbot source: https://buildbot.libretro.com/assets/system/blueMSX.zip
   # ref: libretro.c:1118-1119: system_dir/Machines/ + system_dir/Databases/
   - ref: bluemsx
+    installed_on: [batocera, recalbox, retrobat, retrodeck]
     source_ref: "libretro.c:1119-1120"
 
 files:
@@ -76,7 +77,7 @@ files:
   # -- MSX1 main BIOS variants --
 
   - name: MSX.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX.rom"
     mode: libretro
     size: 32768
@@ -98,7 +99,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX/config.ini"
 
   - name: MSXJ.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXJ.rom"
     mode: libretro
     size: 32768
@@ -120,7 +121,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX - Japanese/config.ini"
 
   - name: MSXBR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXBR.rom"
     mode: libretro
     size: 32768
@@ -140,7 +141,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXFR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXFR.rom"
     mode: libretro
     size: 32768
@@ -160,7 +161,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXG.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXG.rom"
     mode: libretro
     size: 32768
@@ -180,7 +181,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXKR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXKR.rom"
     mode: libretro
     size: 32768
@@ -200,7 +201,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXR.rom"
     mode: libretro
     size: 32768
@@ -220,7 +221,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXSE.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXSE.ROM"
     mode: libretro
     size: 32768
@@ -240,7 +241,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXSP.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXSP.rom"
     mode: libretro
     size: 32768
@@ -260,7 +261,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXAR.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXAR.ROM"
     mode: libretro
     size: 32768
@@ -280,7 +281,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXR2.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXR2.ROM"
     mode: libretro
     size: 32768
@@ -300,7 +301,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSXHAN.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXHAN.rom"
     mode: libretro
     size: 8192
@@ -322,7 +323,7 @@ files:
   # -- MSX2 main BIOS + extension --
 
   - name: MSX2.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2.rom"
     mode: libretro
     size: 32768
@@ -344,7 +345,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
   - name: MSX2EXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2EXT.rom"
     mode: libretro
     size: 16384
@@ -366,7 +367,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
   - name: MSX2J.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2J.rom"
     mode: libretro
     size: 32768
@@ -386,7 +387,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2JEXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2JEXT.rom"
     mode: libretro
     size: 16384
@@ -406,7 +407,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2BR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2BR.rom"
     mode: libretro
     size: 32768
@@ -426,7 +427,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2BREXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2BREXT.rom"
     mode: libretro
     size: 16384
@@ -446,7 +447,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2FR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2FR.rom"
     mode: libretro
     size: 32768
@@ -466,7 +467,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2FREXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2FREXT.rom"
     mode: libretro
     size: 16384
@@ -486,7 +487,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2G.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2G.rom"
     mode: libretro
     size: 32768
@@ -506,7 +507,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2GEXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2GEXT.rom"
     mode: libretro
     size: 16384
@@ -526,7 +527,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2KR.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2KR.rom"
     mode: libretro
     size: 32768
@@ -546,7 +547,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2KREXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2KREXT.rom"
     mode: libretro
     size: 32768
@@ -566,7 +567,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2R.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2R.rom"
     mode: libretro
     size: 32768
@@ -586,7 +587,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2REXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2REXT.rom"
     mode: libretro
     size: 16384
@@ -606,7 +607,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2R2.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2R2.ROM"
     mode: libretro
     size: 32768
@@ -626,7 +627,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2SE.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2SE.rom"
     mode: libretro
     size: 32768
@@ -646,7 +647,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2SP.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2SP.rom"
     mode: libretro
     size: 32768
@@ -666,7 +667,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2SPEXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2SPEXT.rom"
     mode: libretro
     size: 16384
@@ -686,7 +687,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2AR.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2AR.ROM"
     mode: libretro
     size: 32768
@@ -706,7 +707,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2AREXT.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2AREXT.ROM"
     mode: libretro
     size: 16384
@@ -726,7 +727,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MSX2HAN.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2HAN.rom"
     mode: libretro
     size: 32768
@@ -748,7 +749,7 @@ files:
   # -- MSX2+ main BIOS + extension --
 
   - name: MSX2P.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2P.rom"
     mode: libretro
     size: 32768
@@ -770,7 +771,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
   - name: MSX2PEXT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2PEXT.rom"
     mode: libretro
     size: 16384
@@ -792,7 +793,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
   - name: MSX2PMUS.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSX2PMUS.rom"
     mode: libretro
     size: 16384
@@ -816,7 +817,7 @@ files:
   # -- MSX turboR BIOS set --
 
   - name: MSXTR.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXTR.ROM"
     mode: libretro
     size: 32768
@@ -838,7 +839,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
   - name: MSXTREXT.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXTREXT.ROM"
     mode: libretro
     size: 16384
@@ -860,7 +861,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
   - name: MSXTRMUS.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXTRMUS.ROM"
     mode: libretro
     size: 16384
@@ -882,7 +883,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
   - name: MSXTROPT.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXTROPT.ROM"
     mode: libretro
     size: 16384
@@ -904,7 +905,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSXturboR/config.ini"
 
   - name: MSXDOS23.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXDOS23.ROM"
     mode: libretro
     size: 65536
@@ -928,7 +929,7 @@ files:
   # -- Shared utility/extension ROMs --
 
   - name: KANJI.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/KANJI.rom"
     mode: libretro
     size: 262144
@@ -948,7 +949,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
   - name: MSXKANJI.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MSXKANJI.rom"
     mode: libretro
     size: 32768
@@ -968,7 +969,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
   - name: FMPAC.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/FMPAC.rom"
     mode: libretro
     size: 65536
@@ -989,7 +990,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:290-306"
 
   - name: XBASIC2.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/XBASIC2.rom"
     mode: libretro
     size: 16384
@@ -1009,7 +1010,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2/config.ini"
 
   - name: PAINT.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/PAINT.rom"
     mode: libretro
     size: 65536
@@ -1029,7 +1030,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2 - Arabic/config.ini"
 
   - name: SWP.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/SWP.rom"
     mode: libretro
     size: 32768
@@ -1047,7 +1048,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: ARABIC.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/ARABIC.rom"
     mode: libretro
     size: 32768
@@ -1065,7 +1066,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: HANGUL.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/HANGUL.rom"
     mode: libretro
     size: 131072
@@ -1083,7 +1084,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: RS232.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/RS232.ROM"
     mode: libretro
     size: 8192
@@ -1101,7 +1102,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MOONSOUND.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MOONSOUND.rom"
     mode: libretro
     size: 2097152
@@ -1123,7 +1124,7 @@ files:
   # -- Disk controller ROMs --
 
   - name: PANASONICDISK.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/PANASONICDISK.rom"
     mode: libretro
     size: 16384
@@ -1143,7 +1144,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX2+/config.ini"
 
   - name: PHILIPSDISK.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/PHILIPSDISK.rom"
     mode: libretro
     size: 16384
@@ -1163,7 +1164,7 @@ files:
     source_ref: "system/bluemsx/Machines/MSX/config.ini"
 
   - name: NATIONALDISK.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/NATIONALDISK.rom"
     mode: libretro
     size: 16384
@@ -1181,7 +1182,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: MICROSOLDISK.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/MICROSOLDISK.ROM"
     mode: libretro
     size: 16384
@@ -1201,7 +1202,7 @@ files:
   # -- Expansion hardware ROMs --
 
   - name: SUNRISEIDE.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/SUNRISEIDE.rom"
     mode: libretro
     size: 65536
@@ -1221,7 +1222,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:311"
 
   - name: BEERIDE.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/BEERIDE.ROM"
     mode: libretro
     size: 16384
@@ -1241,7 +1242,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:319"
 
   - name: NOVAXIS.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/NOVAXIS.rom"
     mode: libretro
     size: 16384
@@ -1261,7 +1262,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:327"
 
   - name: nowindDos1.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/nowindDos1.rom"
     mode: libretro
     size: 524288
@@ -1281,7 +1282,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:335"
 
   - name: nowindDos2.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/nowindDos2.rom"
     mode: libretro
     size: 524288
@@ -1301,7 +1302,7 @@ files:
     source_ref: "Src/Memory/MegaromCartridge.c:339"
 
   - name: GCVMX80.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/GCVMX80.ROM"
     mode: libretro
     size: 8192
@@ -1319,7 +1320,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: ARAB1.ROM
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/Shared Roms/ARAB1.ROM"
     mode: libretro
     size: 32768
@@ -1341,7 +1342,7 @@ files:
   # ============================================================
 
   - name: cbios_main_msx1.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX - C-BIOS/cbios_main_msx1.rom"
     mode: libretro
     size: 32768
@@ -1361,7 +1362,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: cbios_logo_msx1.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX - C-BIOS/cbios_logo_msx1.rom"
     mode: libretro
     size: 16384
@@ -1381,7 +1382,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: cbios_main_msx2.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2 - C-BIOS/cbios_main_msx2.rom"
     mode: libretro
     size: 32768
@@ -1401,7 +1402,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: cbios_logo_msx2.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom"
     mode: libretro
     size: 16384
@@ -1421,7 +1422,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: cbios_sub.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2 - C-BIOS/cbios_sub.rom"
     mode: libretro
     size: 16384
@@ -1441,7 +1442,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: "cbios_main_msx2+.rom"
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom"
     mode: libretro
     size: 32768
@@ -1461,7 +1462,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: "cbios_logo_msx2+.rom"
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom"
     mode: libretro
     size: 16384
@@ -1481,7 +1482,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: cbios_music.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/MSX2+ - C-BIOS/cbios_music.rom"
     mode: libretro
     size: 16384
@@ -1505,7 +1506,7 @@ files:
   # ============================================================
 
   - name: coleco.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/COL - ColecoVision/coleco.rom"
     mode: libretro
     size: 8192
@@ -1532,7 +1533,7 @@ files:
   # ============================================================
 
   - name: sf7000.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/SEGA - SF-7000/sf7000.rom"
     mode: libretro
     size: 8192
@@ -1558,7 +1559,7 @@ files:
   # ============================================================
 
   - name: svi318.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/SVI - Spectravideo SVI-318/svi318.rom"
     mode: libretro
     size: 32768
@@ -1580,7 +1581,7 @@ files:
     source_ref: "system/bluemsx/Machines/SVI - Spectravideo SVI-318/config.ini"
 
   - name: svi328.rom
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Machines/SVI - Spectravideo SVI-328/svi328.rom"
     mode: libretro
     size: 32768
@@ -1606,7 +1607,7 @@ files:
   # ============================================================
 
   - name: msxromdb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/msxromdb.xml"
     mode: libretro
     required: false
@@ -1623,7 +1624,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: msxsysromdb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/msxsysromdb.xml"
     mode: libretro
     required: false
@@ -1640,7 +1641,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: colecodb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/colecodb.xml"
     mode: libretro
     required: false
@@ -1657,7 +1658,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: msxcaswavdb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/msxcaswavdb.xml"
     mode: libretro
     required: false
@@ -1674,7 +1675,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: segadb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/segadb.xml"
     mode: libretro
     required: false
@@ -1691,7 +1692,7 @@ files:
     note: "Shipped in blueMSXv282full.zip."
 
   - name: svidb.xml
-    installed_on: [batocera, retropie]
+    installed_on: [batocera, recalbox, retrobat, retrodeck, retropie]
     path: "Databases/svidb.xml"
     mode: libretro
     required: false

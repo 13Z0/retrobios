@@ -68,6 +68,9 @@ files:
   - name: libCg2.so
     system: sega-lindbergh
     required: true
+    bundled: true
+    not_bundled_on: [batocera]
+    sha1: "23b85ca78122d862553c1b54200158cbccf30d65"
     validation: [signature]
     description: "NVIDIA Cg 2.0.0.12 runtime used to recompile the game shaders"
     source_ref: "src/lindbergh/shaderPatches.c:1028-1108, src/lindbergh/shaderPatches.c:1110-1170"
@@ -80,10 +83,14 @@ files:
       cgDestroyProgram each call exit(EXIT_FAILURE). Upstream vendors the build
       as libs/libCg.so and both installers rename it to libCg2.so so it can sit
       beside the Cg 3.1 library of the same original name that the games link.
+      The v2.1.4 AppImage and build.tar.gz carry it in usr/lib32 with the other
+      five libraries. The Batocera package installs no copy.
 
   - name: libCgGL.so
     system: sega-lindbergh
     required: true
+    bundled: true
+    sha1: "b2ca278a7c4dd446ce1b16d90e24648b9d2b819e"
     description: "NVIDIA Cg 3.1 OpenGL runtime linked by the game binaries"
     source_ref: "src/lindbergh/lindbergh.c:336-378, scripts/flatpak/com.github.lindberghloader.yml:181-189"
     note: >-
@@ -96,6 +103,8 @@ files:
   - name: libCg.so
     system: sega-lindbergh
     required: true
+    bundled: true
+    sha1: "9637cd9d774db008018851ab0889701d3dd74df4"
     description: "NVIDIA Cg 3.1 runtime linked by the game binaries"
     source_ref: "src/lindbergh/lindbergh.c:336-378, scripts/flatpak/com.github.lindberghloader.yml:181-189"
     note: >-
@@ -110,6 +119,8 @@ files:
   - name: libcrypto.so.0.9.7
     system: sega-lindbergh
     required: false
+    bundled: true
+    sha1: "0ee8ed2a8fb49926b96f1e5237f573dcfb8ed67e"
     description: "OpenSSL 0.9.7 crypto library linked by the networked games"
     source_ref: "src/lindbergh/lindbergh.c:336-378, scripts/flatpak/com.github.lindberghloader.yml:244"
     note: >-
@@ -120,6 +131,8 @@ files:
   - name: libssl.so.0.9.7
     system: sega-lindbergh
     required: false
+    bundled: true
+    sha1: "60c2838da6cd97810ff11c5c7e7fdc203a4c2762"
     description: "OpenSSL 0.9.7 TLS library linked by the networked games"
     source_ref: "src/lindbergh/lindbergh.c:336-378, scripts/flatpak/com.github.lindberghloader.yml:245"
     note: "Vendored as libs/libssl.so.0.9.7, paired with libcrypto.so.0.9.7."
@@ -127,6 +140,8 @@ files:
   - name: libopenal.so.0
     system: sega-lindbergh
     required: false
+    bundled: true
+    sha1: "91d69bba438f321d6e3ebb60b3e89b1edd63de17"
     description: "OpenAL runtime preloaded for Quiz Answer x Answer"
     source_ref: "src/lindbergh/lindbergh.c:22, src/lindbergh/lindbergh.c:315-328, src/lindbergh/lindbergh.c:882-890"
     note: >-

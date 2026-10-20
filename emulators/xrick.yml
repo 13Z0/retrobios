@@ -52,6 +52,7 @@ notes: |
 
 files:
   - name: "xrick/data.zip"
+    installed_on: [lakka, recalbox, retrobat, retrodeck]
     category: game_data
     system: xrick
     description: "Rick Dangerous sound data (29 WAV files: sfx and music tracks)"

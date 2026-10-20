@@ -42,6 +42,7 @@ files:
   # iplrom30.dat is X68030, iplromco.dat is X68000 Compact, iplromxv.dat is X68000 XVI.
 
   - name: "iplrom.dat"
+    installed_on: [recalbox]
     path: "keropi/iplrom.dat"
     priority: 1
     size: 131072
@@ -85,6 +86,7 @@ files:
   # Font ROM -- character generator ROM for text rendering.
 
   - name: "cgrom.dat"
+    installed_on: [recalbox]
     path: "keropi/cgrom.dat"
     size: 786432
     required: true

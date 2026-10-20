@@ -24,10 +24,16 @@ files:
   - name: rom.bin
     path: commanderx16/rom.bin
     required: true
-    size: 524288
+    bundled: true
+    sha1: "eaa7b491d412c735a03952405a1112c079948950"
+    md5: "c3b8d740e5d0260ebc35ff9f28d81cd0"
+    max_size: 524288
     description: "Commander X16 system ROM (KERNAL, BASIC, DOS, charset)"
     source_ref: "src/main.c:602, 626, 1163, src/glue.h:24"
     note: >
       Default filename "rom.bin", loaded from executable directory or via -rom flag.
       ROM_SIZE = NUM_ROM_BANKS(32) * 16384 = 524288 bytes. exit(1) if file not found.
       Built from x16-rom repo (open source, derived from C64 KERNAL/BASIC).
+      Shipped beside the executable in every release zip. The hashes are those of
+      the r49 release, whose rom.bin is 262144 bytes: the loader reads up to
+      ROM_SIZE and does not check the length.

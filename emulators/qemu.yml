@@ -29,6 +29,7 @@ files:
   # x86 SYSTEM BIOS (SeaBIOS)
   # ========================================================
   - name: "SeaBIOS (128 KB)"
+    installed_on: [retrodeck]
     path: "qemu/bios.bin"
     sha1: "f402170ee4f374c304a7ce0b139d6cecb1732aff"
     md5: "e9ca30100c47a26b66488444c5b0bd15"
@@ -40,6 +41,7 @@ files:
     source_ref: "hw/i386/pc_sysfw.c:222,243"
 
   - name: "SeaBIOS (256 KB)"
+    installed_on: [retrodeck]
     path: "qemu/bios-256k.bin"
     sha1: "5fe6078506094333106e6b3f33c7185dea7f0268"
     md5: "d3dab3095c73cad67afd3cc16a88479c"
@@ -51,6 +53,7 @@ files:
     source_ref: "pc-bios/meson.build:30"
 
   - name: "SeaBIOS microvm"
+    installed_on: [retrodeck]
     path: "qemu/bios-microvm.bin"
     sha1: "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257"
     md5: "9f0ddaf6f3b213798bd414273505f2ff"
@@ -62,6 +65,7 @@ files:
     source_ref: "hw/i386/microvm.c:58"
 
   - name: "qboot ROM"
+    installed_on: [retrodeck]
     path: "qemu/qboot.rom"
     sha1: "339d3a93c967491c9f1fffe963484386f48bd22c"
     md5: "387c48aef9497c6c2b914b1e6b9bc7aa"
@@ -74,6 +78,7 @@ files:
   # x86 VGA BIOS (SeaVGABIOS / LGPL VGA BIOS)
   # ========================================================
   - name: "VGA BIOS (ISA)"
+    installed_on: [retrodeck]
     path: "qemu/vgabios.bin"
     sha1: "63d87e2a6618c3a9b2aabecf03ac2456e5e63410"
     md5: "ecef0b49f8f4e61874f012eb12ba0e36"
@@ -85,6 +90,7 @@ files:
     source_ref: "hw/display/vga-isa.c:88, hw/display/vga_int.h:191"
 
   - name: "VGA BIOS Cirrus"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-cirrus.bin"
     sha1: "883eb2657ce29661a0466b6b41ce75411f37aad9"
     md5: "fcd3d3c0b07a9096693d69425cd940f6"
@@ -94,6 +100,7 @@ files:
     source_ref: "hw/display/cirrus_vga.c:3001, hw/display/cirrus_vga_isa.c:67"
 
   - name: "VGA BIOS stdvga"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-stdvga.bin"
     sha1: "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5"
     md5: "8117c3fd986fbbe327badfe38e77db1d"
@@ -103,6 +110,7 @@ files:
     source_ref: "hw/display/vga-pci.c:387"
 
   - name: "VGA BIOS bochs-display"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-bochs-display.bin"
     sha1: "9e2edd3d835219cde63a20e2cd58107d7e96ef5b"
     md5: "83e39bd3e056291ee50d2b5d937bab3e"
@@ -112,6 +120,7 @@ files:
     source_ref: "hw/display/bochs-display.c:365"
 
   - name: "VGA BIOS ramfb"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-ramfb.bin"
     sha1: "49df9be557f0f0277c8fedb889257e279586d536"
     md5: "c55512e313c4cb08ec5a36198fdfef33"
@@ -121,6 +130,7 @@ files:
     source_ref: "hw/display/ramfb.c:150"
 
   - name: "VGA BIOS ATI"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-ati.bin"
     sha1: "ded141cacdebf557ec552597cbf57cd989cec3e2"
     md5: "013cb287a295dc6c039921c6883a767e"
@@ -130,6 +140,7 @@ files:
     source_ref: "hw/display/ati.c:1066"
 
   - name: "VGA BIOS QXL"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-qxl.bin"
     sha1: "527227abd5f3348c382d4b02703389fbeb83b067"
     md5: "558420a5ad839b10906d5d73e92a4160"
@@ -139,6 +150,7 @@ files:
     source_ref: "hw/display/qxl.c:2512"
 
   - name: "VGA BIOS VirtIO"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-virtio.bin"
     sha1: "cddc53b94793609d1e837d78cd5468fcc1ed9164"
     md5: "8f1e5e497342c503f62a50912f0447e0"
@@ -148,6 +160,7 @@ files:
     source_ref: "hw/display/virtio-vga.c:233"
 
   - name: "VGA BIOS VMware"
+    installed_on: [retrodeck]
     path: "qemu/vgabios-vmware.bin"
     sha1: "c54901ab8f526ab201ebf1b3ecdf711e38e6c259"
     md5: "6635fe944eab228ae01c814107674199"
@@ -160,6 +173,7 @@ files:
   # x86 OPTION ROMs
   # ========================================================
   - name: "KVM VAPIC"
+    installed_on: [retrodeck]
     path: "qemu/kvmvapic.bin"
     sha1: "670c9cc79b4859944705eece710dc332188b79b4"
     md5: "b8cec9572e408a3259914f9aba8664cb"
@@ -169,6 +183,7 @@ files:
     source_ref: "hw/i386/vapic.c:733"
 
   - name: "Linux boot ROM"
+    installed_on: [retrodeck]
     path: "qemu/linuxboot.bin"
     sha1: "fd19bef7f5647960952520389f448364762ed948"
     md5: "ab40dea9ff35ec29b506fdae5bf11463"
@@ -178,6 +193,7 @@ files:
     source_ref: "hw/i386/x86-common.c:964"
 
   - name: "Linux boot DMA ROM"
+    installed_on: [retrodeck]
     path: "qemu/linuxboot_dma.bin"
     sha1: "0bff50c10727bd9c85c831ea92b7a52699959992"
     md5: "8cb622dc1c9290a019a801e972c9e4f9"
@@ -187,6 +203,7 @@ files:
     source_ref: "hw/i386/x86-common.c:966"
 
   - name: "Multiboot ROM"
+    installed_on: [retrodeck]
     path: "qemu/multiboot.bin"
     sha1: "a8b58ae464fc6fb26799432ae867bf57c546ff80"
     md5: "552a0c03c40bb3ec292f5349ea29cf86"
@@ -196,6 +213,7 @@ files:
     source_ref: "hw/i386/multiboot.c:408"
 
   - name: "Multiboot DMA ROM"
+    installed_on: [retrodeck]
     path: "qemu/multiboot_dma.bin"
     sha1: "32ab1cf336b674bfb154eb7a939a3e3275a92647"
     md5: "e942cc4f612050c7331d33a34b0d5192"
@@ -205,6 +223,7 @@ files:
     source_ref: "hw/i386/multiboot.c:406"
 
   - name: "PVH boot ROM"
+    installed_on: [retrodeck]
     path: "qemu/pvh.bin"
     sha1: "c2191e6495103c1f43e9b6ca8930e44c2245e476"
     md5: "bb045d6f0380ad2af3531edeff92a117"
@@ -217,6 +236,7 @@ files:
   # PXE NETWORK BOOT ROMs (iPXE legacy BIOS)
   # ========================================================
   - name: "PXE e1000"
+    installed_on: [retrodeck]
     path: "qemu/pxe-e1000.rom"
     sha1: "368e8e9827ae8757a7449319831078b6d5efb83f"
     md5: "898d7d0b3ed4a030c877b9185b4ef6be"
@@ -226,6 +246,7 @@ files:
     source_ref: "pc-bios/meson.build:47"
 
   - name: "PXE eepro100"
+    installed_on: [retrodeck]
     path: "qemu/pxe-eepro100.rom"
     sha1: "b19572c9c2a11f03282df81c0397aceed409a86c"
     md5: "2f8279177fdc2ce5abc47d9f1e303db1"
@@ -235,6 +256,7 @@ files:
     source_ref: "hw/net/eepro100.c:2077"
 
   - name: "PXE ne2k_pci"
+    installed_on: [retrodeck]
     path: "qemu/pxe-ne2k_pci.rom"
     sha1: "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6"
     md5: "095cdf2b26084ce22adb883e9c43fc5a"
@@ -244,6 +266,7 @@ files:
     source_ref: "pc-bios/meson.build:49"
 
   - name: "PXE pcnet"
+    installed_on: [retrodeck]
     path: "qemu/pxe-pcnet.rom"
     sha1: "13a039bf9916f1db42d3a019591d372b4cf4aee9"
     md5: "15e38b82922a058c6df6eaffbad1b916"
@@ -253,6 +276,7 @@ files:
     source_ref: "pc-bios/meson.build:50"
 
   - name: "PXE rtl8139"
+    installed_on: [retrodeck]
     path: "qemu/pxe-rtl8139.rom"
     sha1: "7b512c0a7a13bc3c254a25237e4d4612170f4391"
     md5: "22f4b6ae5650988f999ee651a3734462"
@@ -262,6 +286,7 @@ files:
     source_ref: "pc-bios/meson.build:51"
 
   - name: "PXE virtio"
+    installed_on: [retrodeck]
     path: "qemu/pxe-virtio.rom"
     sha1: "3e3f77cfe70af904133db94f27ec24e3c9c43648"
     md5: "91ad9770f5717a89d518534f45f1332d"
@@ -274,6 +299,7 @@ files:
   # EFI NETWORK BOOT ROMs (iPXE UEFI)
   # ========================================================
   - name: "EFI e1000"
+    installed_on: [retrodeck]
     path: "qemu/efi-e1000.rom"
     sha1: "a3df5fc33ab0190f470b34104ff3c0679cecbab6"
     md5: "d8330b99643e31b51e7710fa26c7e859"
@@ -283,6 +309,7 @@ files:
     source_ref: "hw/net/e1000.c:1708"
 
   - name: "EFI e1000e"
+    installed_on: [retrodeck]
     path: "qemu/efi-e1000e.rom"
     sha1: "1d37f3ae6748d4deefe9fd5188a2f557bf265d61"
     md5: "a55bf3f4988d4a736c71a1300636cd69"
@@ -292,6 +319,7 @@ files:
     source_ref: "hw/net/e1000e.c:689"
 
   - name: "EFI eepro100"
+    installed_on: [retrodeck]
     path: "qemu/efi-eepro100.rom"
     sha1: "956d9592fea33374ef0f1900a185b6e1109ea765"
     md5: "d2a2f92710f5a9f77281e9492a249afb"
@@ -301,6 +329,7 @@ files:
     source_ref: "pc-bios/meson.build:54"
 
   - name: "EFI ne2k_pci"
+    installed_on: [retrodeck]
     path: "qemu/efi-ne2k_pci.rom"
     sha1: "adb7199f545fdb66c325b142c8dbc4cddb99a20d"
     md5: "10b66275b3644af301c64a3c545c3daf"
@@ -310,6 +339,7 @@ files:
     source_ref: "hw/net/ne2000-pci.c:111"
 
   - name: "EFI pcnet"
+    installed_on: [retrodeck]
     path: "qemu/efi-pcnet.rom"
     sha1: "9e5a4bb247c6a1777c89117ca091f94342b9046d"
     md5: "374696f4fffa83c9cf18272212c21d83"
@@ -319,6 +349,7 @@ files:
     source_ref: "hw/net/pcnet-pci.c:267"
 
   - name: "EFI rtl8139"
+    installed_on: [retrodeck]
     path: "qemu/efi-rtl8139.rom"
     sha1: "99a1e431cc0cb0a78d5803875dfa687e12a947f4"
     md5: "f81dbbd7001a8db631f2a548b7d08c4e"
@@ -328,6 +359,7 @@ files:
     source_ref: "hw/net/rtl8139.c:3423"
 
   - name: "EFI virtio"
+    installed_on: [retrodeck]
     path: "qemu/efi-virtio.rom"
     sha1: "1596e9b97f0bc8b5ff3e444235690a549ee982c6"
     md5: "d3887f04c23035cae3f0e1075deea459"
@@ -337,6 +369,7 @@ files:
     source_ref: "hw/virtio/virtio-net-pci.c:73"
 
   - name: "EFI vmxnet3"
+    installed_on: [retrodeck]
     path: "qemu/efi-vmxnet3.rom"
     sha1: "6557242402387a6319a0db6abb916ada48e1391c"
     md5: "ea1ba222dbd5aa356ea1f29393ae55e1"
@@ -432,6 +465,7 @@ files:
   # POWERPC FIRMWARE
   # ========================================================
   - name: "OpenBIOS PowerPC"
+    installed_on: [retrodeck]
     path: "qemu/openbios-ppc"
     sha1: "0ef5051dcb318c0bc45d1908f8318d6eece8686a"
     size: 677196
@@ -442,6 +476,7 @@ files:
     source_ref: "hw/ppc/mac_oldworld.c:60, hw/ppc/mac_newworld.c:86"
 
   - name: "SLOF (Slimline Open Firmware)"
+    installed_on: [retrodeck]
     path: "qemu/slof.bin"
     sha1: "a03a94acfe555804d66cc6c74760ae1375a71a64"
     size: 995000
@@ -450,6 +485,7 @@ files:
     source_ref: "hw/ppc/spapr.c:106"
 
   - name: "skiboot"
+    installed_on: [retrodeck]
     path: "qemu/skiboot.lid"
     sha1: "8052069aa9714c23be05b4e62fb245a3d572cb0f"
     size: 2527328
@@ -458,6 +494,7 @@ files:
     source_ref: "hw/ppc/pnv.c:63"
 
   - name: "VOF (Virtual Open Firmware)"
+    installed_on: [retrodeck]
     path: "qemu/vof.bin"
     sha1: "fc737b34a390f5752cb7e35b33d71f4f438ab607"
     size: 3456
@@ -466,6 +503,7 @@ files:
     source_ref: "hw/ppc/spapr.c:107, hw/ppc/pegasos2.c:43"
 
   - name: "VOF NVRAM"
+    installed_on: [retrodeck]
     path: "qemu/vof-nvram.bin"
     sha1: "5d1184609b87f78635f0575467a1c3f440900ff0"
     size: 16384
@@ -474,6 +512,7 @@ files:
     source_ref: "pc-bios/meson.build:83"
 
   - name: "U-Boot e500"
+    installed_on: [retrodeck]
     path: "qemu/u-boot.e500"
     sha1: "9ea03f249f856cdcb4399cc1f5a5031729379911"
     size: 421720
@@ -482,6 +521,7 @@ files:
     source_ref: "hw/ppc/e500.c:1184"
 
   - name: "U-Boot SAM460"
+    installed_on: [retrodeck]
     path: "qemu/u-boot-sam460-20100605.bin"
     sha1: "0399a79ac0cf77f0da70af9baec7548a3b368f0a"
     size: 524288
@@ -490,6 +530,7 @@ files:
     source_ref: "pc-bios/meson.build:74"
 
   - name: "QEMU VGA Mac driver"
+    installed_on: [retrodeck]
     path: "qemu/qemu_vga.ndrv"
     sha1: "638c6262a6eb579ec3d1c9292566ac94c942dc15"
     size: 18752
@@ -501,6 +542,7 @@ files:
   # SPARC FIRMWARE
   # ========================================================
   - name: "OpenBIOS Sparc32"
+    installed_on: [retrodeck]
     path: "qemu/openbios-sparc32"
     sha1: "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26"
     size: 382080
@@ -509,6 +551,7 @@ files:
     source_ref: "hw/sparc/sun4m.c:79"
 
   - name: "OpenBIOS Sparc64"
+    installed_on: [retrodeck]
     path: "qemu/openbios-sparc64"
     sha1: "c6e215fe460629d35688ab8e51faf6f765827cd6"
     size: 1593408
@@ -517,6 +560,7 @@ files:
     source_ref: "hw/sparc64/sun4u.c:67"
 
   - name: "QEMU TCX display"
+    installed_on: [retrodeck]
     path: "qemu/QEMU,tcx.bin"
     sha1: "5f1792a73ee47d78b2160191ecb2c92f353f93ad"
     size: 1402
@@ -525,6 +569,7 @@ files:
     source_ref: "hw/display/tcx.c:38,827"
 
   - name: "QEMU cgthree display"
+    installed_on: [retrodeck]
     path: "qemu/QEMU,cgthree.bin"
     sha1: "619b86fb02faf8f682474be3f0653b58015008ba"
     size: 850
@@ -543,6 +588,7 @@ files:
   # ALPHA FIRMWARE
   # ========================================================
   - name: "Alpha PALcode"
+    installed_on: [retrodeck]
     path: "qemu/palcode-clipper"
     sha1: "47b0870aaa45a7aa0d48847fd905908fb06f3e9f"
     size: 153728
@@ -554,6 +600,7 @@ files:
   # RISC-V FIRMWARE
   # ========================================================
   - name: "OpenSBI RISC-V 32"
+    installed_on: [retrodeck]
     path: "qemu/opensbi-riscv32-generic-fw_dynamic.bin"
     sha1: "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f"
     size: 268312
@@ -562,6 +609,7 @@ files:
     source_ref: "hw/riscv/boot.c:92"
 
   - name: "OpenSBI RISC-V 64"
+    installed_on: [retrodeck]
     path: "qemu/opensbi-riscv64-generic-fw_dynamic.bin"
     sha1: "6883bfd1991c0ef0d67b0967e7dcbd60420dd480"
     size: 272504
@@ -573,6 +621,7 @@ files:
   # S390X FIRMWARE
   # ========================================================
   - name: "S390 CCW firmware"
+    installed_on: [retrodeck]
     path: "qemu/s390-ccw.img"
     sha1: "7b4fa888d32ca8ddbc752f7442e4d055cee1871a"
     size: 42608
@@ -581,6 +630,7 @@ files:
     source_ref: "hw/s390x/ipl.c:149"
 
   - name: "S390 network boot"
+    installed_on: [retrodeck]
     path: "qemu/s390-netboot.img"
     sha1: "f6cec671408117bd9a31e982682662f27ef4fb2c"
     size: 67232
@@ -592,6 +642,7 @@ files:
   # HP-PA FIRMWARE
   # ========================================================
   - name: "HP-PA firmware (32-bit)"
+    installed_on: [retrodeck]
     path: "qemu/hppa-firmware.img"
     sha1: "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0"
     size: 167820
@@ -600,6 +651,7 @@ files:
     source_ref: "hw/hppa/machine.c:424"
 
   - name: "HP-PA firmware (64-bit)"
+    installed_on: [retrodeck]
     path: "qemu/hppa-firmware64.img"
     sha1: "b42f6d4ca74073de6c038579b4a9323ad0a6b398"
     size: 206024
@@ -659,6 +711,7 @@ files:
     source_ref: "hw/arm/digic_boards.c:131"
 
   - name: "NPCM7xx boot ROM"
+    installed_on: [retrodeck]
     path: "qemu/npcm7xx_bootrom.bin"
     sha1: "22a75d26a0591d2c7763765b6381fa2f73de43e1"
     size: 768
@@ -670,6 +723,7 @@ files:
   # DEVICE TREE BLOBS
   # ========================================================
   - name: "Bamboo DTB (PPC)"
+    installed_on: [retrodeck]
     path: "qemu/bamboo.dtb"
     sha1: "ebdf1745479f4ec88459bbd9ef16ee1114018508"
     size: 3211
@@ -678,6 +732,7 @@ files:
     source_ref: "hw/ppc/ppc440_bamboo.c:38"
 
   - name: "Canyonlands DTB (PPC)"
+    installed_on: [retrodeck]
     path: "qemu/canyonlands.dtb"
     sha1: "8a2fda0b4f23a92eb44776b5d7ffe951987062da"
     size: 9779
@@ -686,6 +741,7 @@ files:
     source_ref: "hw/ppc/sam460ex.c:45"
 
   - name: "Petalogix ML605 DTB (MicroBlaze)"
+    installed_on: [retrodeck]
     path: "qemu/petalogix-ml605.dtb"
     sha1: "892d265838866869b8a8ef104252ff5b2fda156f"
     size: 9882
@@ -694,6 +750,7 @@ files:
     source_ref: "pc-bios/meson.build:91"
 
   - name: "Petalogix S3ADSP1800 DTB (MicroBlaze)"
+    installed_on: [retrodeck]
     path: "qemu/petalogix-s3adsp1800.dtb"
     sha1: "976600e3f89ecc1f3564b7077f53c58e0b565280"
     size: 8161

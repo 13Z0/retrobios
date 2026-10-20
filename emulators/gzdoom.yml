@@ -48,51 +48,96 @@ files:
   - name: "gzdoom.pk3"
     category: game_data
     required: true
+    bundled: true
+    size: 3132275
+    sha1: "5eca7aae47b5851de06303c48165f9d75145da4c"
+    md5: "5772f907fdee4284f6332d89c0c5609c"
+    crc32: "3c4dfe79"
     source_ref: "src/version.h:90, src/d_main.cpp:3757-3761, wadsrc/CMakeLists.txt:1"
-    note: "Fonts, menus, zscript, textures. Fatal if absent."
+    note: "Fonts, menus, zscript, textures. Fatal if absent. Built from the tree at each release. The hash is the copy in the 4.14.2 Windows zip."
 
   - name: "game_support.pk3"
     category: game_data
     required: false
+    bundled: true
+    size: 2379443
+    sha1: "fe656e64f872450e5d691f0c19a174a4aea5050d"
+    md5: "c679df011fca562cfb20f9a3a4b0d80f"
+    crc32: "56e96007"
     source_ref: "src/version.h:92, src/d_main.cpp:3794-3796, wadsrc_extra/CMakeLists.txt:1"
-    note: "Per-game filters under static/filter/ (doom.id, strife, hexen, heretic, chex...)."
+    note: "Per-game filters under static/filter/ (doom.id, strife, hexen, heretic, chex...). The hash is the copy in the 4.14.2 Windows zip."
 
   - name: "lights.pk3"
     category: game_data
     required: false
+    bundled: true
+    size: 24030
+    sha1: "c7f7cc23d223938700ad38ee2888062f35f97dbb"
+    md5: "0b9deffc98788ee19c7da017c1ad4680"
+    crc32: "089159b5"
     source_ref: "src/d_main.cpp:2053-2058, wadsrc_lights/CMakeLists.txt:1"
+    note: "The hash is the copy in the 4.14.2 Windows zip."
 
   - name: "brightmaps.pk3"
     category: game_data
     required: false
+    bundled: true
+    size: 246181
+    sha1: "a0854eeea281741a9f2491f9f04ba5c7cfc0a3a7"
+    md5: "448d065ef519e5763a6598329ea875da"
+    crc32: "40da9ce8"
     source_ref: "src/d_main.cpp:2059-2064, wadsrc_bm/CMakeLists.txt:1"
+    note: "The hash is the copy in the 4.14.2 Windows zip."
 
   - name: "game_widescreen_gfx.pk3"
     category: game_data
     required: false
+    bundled: true
+    size: 5565936
+    sha1: "218e77f4850cf596e1cdf3abb80d2720dc16c5e4"
+    md5: "2530586849630cd131da80a9112af2a2"
+    crc32: "b06e58e3"
     source_ref: "src/d_main.cpp:2065-2070, wadsrc_widepix/CMakeLists.txt:1"
+    note: "The hash is the copy in the 4.14.2 Windows zip."
 
   - name: "gzdoom.sf2"
     aliases: ["uzdoom.sf2"]
     category: game_data
     path: "soundfonts/gzdoom.sf2"
     required: false
+    bundled: true
+    size: 3299098
+    sha1: "4394193fb95c1e59916efe9ac3a47952ab5002f5"
+    md5: "f306ebc541a428d296cd3b7ee996d872"
+    crc32: "408ab422"
     source_ref: "src/common/audio/music/i_soundfont.cpp:334-352, 427-430, 439-459, src/CMakeLists.txt:1429"
-    note: "Default soundfont, used when the soundfont directories hold none. Every file of those directories is taken by its content. When no soundfont is named gzdoom the first SF2 found is used."
+    note: "Default soundfont, used when the soundfont directories hold none. Every file of those directories is taken by its content. When no soundfont is named gzdoom the first SF2 found is used. Shipped in the 4.14.2 Windows zip."
 
   - name: "GENMIDI.GS.wopl"
     category: game_data
     path: "fm_banks/GENMIDI.GS.wopl"
     required: false
+    bundled: true
+    not_bundled_on: [retropie]
+    size: 118767
+    sha1: "538d220d87b86b997f539265eb12a6c319e17a1c"
+    md5: "29570afc6ccea3d9ef7d2734f02e6cab"
+    crc32: "d18f9d56"
     source_ref: "src/CMakeLists.txt:1431, src/gameconfigfile.cpp:165-195, src/common/audio/music/i_soundfont.cpp:355-359"
-    note: "OPL3 bank copied next to the executable. fm_banks is one of the scanned soundfont directories."
+    note: "OPL3 bank copied next to the executable. fm_banks is one of the scanned soundfont directories. The RetroPie package leaves it out."
 
   - name: "gs-by-papiezak-and-sneakernets.wopn"
     category: game_data
     path: "fm_banks/gs-by-papiezak-and-sneakernets.wopn"
     required: false
+    bundled: true
+    not_bundled_on: [retropie]
+    size: 274864
+    sha1: "eaca5d7a9fe1db6094990be0d8916b7f97920db1"
+    md5: "4978fd39a6d78de1cf1021e24424f822"
+    crc32: "887a8ba3"
     source_ref: "src/CMakeLists.txt:1433, src/gameconfigfile.cpp:165-195, src/common/audio/music/i_soundfont.cpp:360-364"
-    note: "OPN2 bank copied next to the executable."
+    note: "OPN2 bank copied next to the executable. The RetroPie package leaves it out."
 
   # ================================================================
   # IWADs (user-supplied). At least one is needed to launch a game.
@@ -251,12 +296,14 @@ files:
     category: game_data
     system: doom
     required: false
+    installed_on: [retropie]
     source_ref: "wadsrc_extra/static/iwadinfo.txt:307, 676"
 
   - name: "freedoom2.wad"
     category: game_data
     system: doom
     required: false
+    installed_on: [retropie]
     source_ref: "wadsrc_extra/static/iwadinfo.txt:294, 677"
 
   - name: "freedm.wad"

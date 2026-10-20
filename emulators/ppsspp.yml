@@ -16,6 +16,7 @@ pack_structure:
 
 data_directories:
   - ref: ppsspp-assets
+    installed_on: [batocera, emudeck, lakka, recalbox, retrobat, retrodeck, retropie]
     mode: libretro
     destination: ""
     source_ref: "libretro/libretro.cpp:537,549"
@@ -32,15 +33,41 @@ notes: |
 
 files:
   - name: "ppge_atlas.zim"
+    installed_on: [batocera, emudeck, lakka, recalbox, retrobat, retrodeck, retropie]
+    mode: libretro
     path: "PPSSPP/ppge_atlas.zim"
     description: "PPGe dialog texture atlas for save/load dialogs, on-screen keyboard, system UI"
     required: false
     source_ref: "Core/Util/PPGeDraw.cpp:227-228"
-    note: "PanicAlert if missing. System dialogs render without graphics but core continues running."
+    note: "PanicAlert if missing. System dialogs render without graphics but core continues running. Batocera, Recalbox, Lakka, RetroPie, RetroBat, EmuDeck and RetroDECK install the assets folder where their core reads it."
 
   - name: "ppge_atlas.meta"
+    installed_on: [batocera, emudeck, lakka, recalbox, retrobat, retrodeck, retropie]
+    mode: libretro
     path: "PPSSPP/ppge_atlas.meta"
     description: "PPGe atlas metadata (glyph positions, UV coords)"
     required: false
     source_ref: "Core/Util/PPGeDraw.cpp:235-237"
-    note: "Loaded after ppge_atlas.zim. Without it, dialog UI has no glyph layout."
+    note: "Loaded after ppge_atlas.zim. Without it, dialog UI has no glyph layout. Batocera, Recalbox, Lakka, RetroPie, RetroBat, EmuDeck and RetroDECK install the assets folder where their core reads it."
+
+  - name: "ppge_atlas.zim"
+    mode: standalone
+    path: "assets/ppge_atlas.zim"
+    description: "PPGe dialog texture atlas for save/load dialogs, on-screen keyboard, system UI"
+    required: false
+    size: 666530
+    sha1: "30a33f3651f8e1b0967a5dfe6ff714baebcce41a"
+    bundled: true
+    source_ref: "Core/Util/PPGeDraw.cpp:227-228"
+    note: "Shipped in assets/ of the PPSSPP 1.20.4 Windows zip, which the standalone reads it from."
+
+  - name: "ppge_atlas.meta"
+    mode: standalone
+    path: "assets/ppge_atlas.meta"
+    description: "PPGe atlas metadata (glyph positions, UV coords)"
+    required: false
+    size: 50242
+    sha1: "ab398f667d6fd778859307c105fe16388b8fdf63"
+    bundled: true
+    source_ref: "Core/Util/PPGeDraw.cpp:235-237"
+    note: "Shipped in assets/ of the PPSSPP 1.20.4 Windows zip, beside ppge_atlas.zim."

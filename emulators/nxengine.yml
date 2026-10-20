@@ -37,6 +37,7 @@ notes: |
 
 files:
   - name: "Doukutsu.exe"
+    installed_on: [lakka, retrobat, retrodeck]
     path: "nxengine/Doukutsu.exe"
     category: game_data
     system: cave-story
@@ -49,6 +50,7 @@ files:
     note: "Placed in system/nxengine/. The core extracts ORG music, PXT sounds, stage tile attributes, BMP graphics, and wavetable from this binary at each launch."
 
   - name: "data/"
+    installed_on: [lakka, retrobat, retrodeck]
     path: "nxengine/data/"
     type: directory
     category: game_data
@@ -59,6 +61,7 @@ files:
     note: "Must contain root assets (Arms.pbm, MyChar.pbm, etc.), Npc/ (36 sprite sheets), and Stage/ (333 map/script/tileset files). All files from the original freeware release."
 
   - name: "data/npc.tbl"
+    installed_on: [lakka, retrobat, retrodeck]
     path: "nxengine/data/npc.tbl"
     category: game_data
     system: cave-story

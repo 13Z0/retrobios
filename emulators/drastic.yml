@@ -286,10 +286,11 @@ files:
     path: microphone/microphone.wav
     system: nintendo-ds
     required: false
+    installed_on: [rocknix]
     category: game_data
     unsourceable: "audio the user records to stand in for the console microphone"
     description: "default microphone input"
-    note: "Read when no per-title file answers, and logged as the default fake microphone audio file."
+    note: "Read when no per-title file answers, and logged as the default fake microphone audio file. ROCKNIX packages a microphone.wav of its own into microphone/ under the data root it launches DraStic from."
     source_ref: "drastic r2.5.2.2 reset_spu 0x6dc30-0x6dc5c"
 
   - name: "<game>.wav"

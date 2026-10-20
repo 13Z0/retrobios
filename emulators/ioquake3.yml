@@ -60,56 +60,72 @@ files:
     system: quake3
     path: "baseq3/pak1.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:181 (pak_checksums[1]=298122907u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak2.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak2.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:182 (pak_checksums[2]=412165236u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak3.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak3.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:183 (pak_checksums[3]=2991495316u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak4.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak4.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:184 (pak_checksums[4]=1197932710u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak5.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak5.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:185 (pak_checksums[5]=4087071573u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak6.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak6.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:186 (pak_checksums[6]=3709064859u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak7.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak7.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:187 (pak_checksums[7]=908855077u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   - name: "pak8.pk3"
     category: game_data
     system: quake3
     path: "baseq3/pak8.pk3"
     required: true
+    installed_on: [retropie]
     source_ref: "code/qcommon/files.c:188 (pak_checksums[8]=977125798u), 3697 (fatal when a baseq3 pak is absent)"
+    note: "RetroPie's ioquake3 scriptmodule installs it into baseq3 from Q3DemoPaks.zip (quake3.sh game_data_quake3)."
 
   # ================================================================
   # Quake III Arena demo (demoq3/)

@@ -66,6 +66,9 @@ files:
     validation: [size]
     description: "OS7 ColecoVision BIOS, read into the 8kB ROM_OS7 window"
     source_ref: "ColEm/Coleco.c:266-273, 306; ColEm/Coleco.h:78-79"
+    sha1: "45bedc4cbdeac66c7df59e9e599195c778d86a92"
+    bundled: true
+    note: "Shipped beside the executable in the Windows zip and the Ubuntu tarball of ColEm 5.6."
 
   - name: WRITER.ROM
     system: coleco-adam
@@ -74,6 +77,9 @@ files:
     validation: [size]
     description: "Adam SmartWriter ROM, read into the 32kB ROM_WRITER window"
     source_ref: "ColEm/Coleco.c:275-285, 300, 749; ColEm/Coleco.h:75"
+    sha1: "d4aec4efe1431e56fe52d83baf9118542c525255"
+    bundled: true
+    note: "Shipped beside the executable in the Windows zip and the Ubuntu tarball of ColEm 5.6."
 
   - name: EOS.ROM
     system: coleco-adam
@@ -82,3 +88,6 @@ files:
     validation: [size]
     description: "Adam EOS, read into the 8kB ROM_EOS window"
     source_ref: "ColEm/Coleco.c:287-297, 300, 749; ColEm/Coleco.h:83"
+    sha1: "ad3c20ef444f10af7ae8eb75c81e500d9b1bba3d"
+    bundled: true
+    note: "Shipped beside the executable in the Windows zip and the Ubuntu tarball of ColEm 5.6."

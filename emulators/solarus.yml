@@ -54,6 +54,7 @@ notes: |
 
 files:
   - name: gamecontrollerdb.txt
+    not_bundled_on: [retrodeck]
     system: solarus
     category: game_data
     required: false

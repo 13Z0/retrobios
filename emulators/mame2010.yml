@@ -57,6 +57,7 @@ notes: |
 files:
   # Data files (system_dir/mame2010/)
   - name: hiscore.dat
+    installed_on: [recalbox, retrobat]
     path: "mame2010/hiscore.dat"
     required: false
     category: game_data
@@ -71,6 +72,7 @@ files:
       reads only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.zip
+    installed_on: [recalbox, retrobat]
     path: "mame2010/cheat.zip"
     required: false
     category: game_data

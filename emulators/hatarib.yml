@@ -203,6 +203,7 @@ files:
       rsn8887/capsimg publishes one build per platform under this name.
 
   - name: "capsimg.dll"
+    installed_on: [retrobat]
     path: null
     description: "CAPSImage 5.1 shared library for IPF and CTR floppy images, Windows build"
     required: false
@@ -211,4 +212,5 @@ files:
       Opened with LoadLibrary on the first IPF or CTR read, from the
       RetroArch directory or the library search path. Without it those
       images are refused with a notification and every other format still
-      works.
+      works. RetroBat installs it in its bios folder, and its launcher copies
+      it into the RetroArch directory before starting an IPF image.

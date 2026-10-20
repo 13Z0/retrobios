@@ -51,17 +51,19 @@ notes: |
 files:
   - name: "ProDOS_2.4.3_TJ.po"
     required: false
+    sha1: "14c67801efd773f6a4ddc1699c8bcb8f7d09d1df"
     description: "ProDOS ROM Drive card image, a 1 MB solid state disk by Terence Boldt"
     source_ref: "cardProDOSRomDrive.go:31,39,46"
-    note: "Fetched from https://github.com/Alex-Kw/ProDOS-ROM-Drive-Images/raw/main/ProDOS_2.4.3_TJ.po when the card is added with no image parameter. The card slot ROM is read at offset 0x300. No size or hash check."
+    note: "Fetched from https://github.com/Alex-Kw/ProDOS-ROM-Drive-Images/raw/main/ProDOS_2.4.3_TJ.po when the card is added with no image parameter. The card slot ROM is read at offset 0x300. No size or hash check. Offline, or before the card is first added, the file has to be in place."
 
   - name: "ProDOS-ROMCARD3_4MB_A2D.v1.4_v37.po"
     required: false
+    sha1: "76c19651094167b94b1e168d1542e82ed517a8d7"
     size: 4194304
     validation: [size]
     description: "ProDOS ROM Card 3 image, a 4 MB ROM card by Ralle Palaveev"
     source_ref: "cardProDOSRomCard3.go:29,37,42-44,48"
-    note: "Fetched from https://github.com/rallepalaveev/ProDOS-Romcard3/raw/main/ProDOS-ROMCARD3_4MB_A2D.v1.4_v37.po when the card is added with no image parameter. The card slot ROM is read at offset 0x200. Rejected unless exactly 4 MB."
+    note: "Fetched from https://github.com/rallepalaveev/ProDOS-Romcard3/raw/main/ProDOS-ROMCARD3_4MB_A2D.v1.4_v37.po when the card is added with no image parameter. The card slot ROM is read at offset 0x200. Rejected unless exactly 4 MB. Offline, or before the card is first added, the file has to be in place."
 
 analysis:
   embedded_resources:

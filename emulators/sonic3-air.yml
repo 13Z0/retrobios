@@ -99,6 +99,10 @@ files:
     category: game_data
     system: sonic3-air
     required: true
+    bundled: true
+    size: 508007
+    sha1: "8b54d9f850288325b5bac6e5a0cd4b496d6310d4"
+    md5: "760334d49c9bd08309e12b8841731576"
     source_ref: "Oxygen/sonic3air/source/sonic3air/EngineDelegate.cpp:115, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:603-617, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:643-651, Oxygen/sonic3air/source/sonic3air/helper/PackageBuilder.cpp:57-62"
     note: |
       Oxygen Engine data package, packed from Oxygen/oxygenengine/data/
@@ -106,32 +110,47 @@ files:
       package that cannot be opened closes the application, unless the
       data is present unpacked (data/images/icon.png exists). The engine
       then checks for oxygen_icon.png in the engine data and stops when it
-      is absent (EngineMain.cpp:584-593).
+      is absent (EngineMain.cpp:584-593). Shipped under data/ in the
+      v26.03.28.0 Windows zip, Linux tar.gz and APK. Batocera installs
+      data/ unpacked from the source tree instead (sonic3-air.mk:40).
 
   - name: "gamedata.bin"
     path: "sonic3-air/data/gamedata.bin"
     category: game_data
     system: sonic3-air
     required: true
+    bundled: true
+    size: 3705612
+    sha1: "7e84e6798d6bf2196b14eeac5f96d4b9e37a27a4"
+    md5: "793157701edac935c1662832b93b92cb"
     source_ref: "Oxygen/sonic3air/source/sonic3air/EngineDelegate.cpp:116, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:603-617, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:643-651, Oxygen/sonic3air/source/sonic3air/helper/PackageBuilder.cpp:36-41"
     note: |
       Game data package, packed from Oxygen/sonic3air/data/ without the
       audio directory and metadata.json (binary tables, fonts, images,
       rawdata, sprites). A required package that cannot be opened closes
       the application, unless the data is present unpacked
-      (data/images/icon.png exists).
+      (data/images/icon.png exists). Shipped under data/ in the
+      v26.03.28.0 Windows zip, Linux tar.gz and APK. Batocera installs
+      data/ unpacked from the source tree instead (sonic3-air.mk:40).
 
   - name: "audiodata.bin"
     path: "sonic3-air/data/audiodata.bin"
     category: game_data
     system: sonic3-air
     required: true
+    bundled: true
+    size: 2289447
+    sha1: "2f8e0e046a60b75229d90e1f1b7b02823ec05d90"
+    md5: "9b6aa7442bbac1053b91ab72a889b0b1"
     source_ref: "Oxygen/sonic3air/source/sonic3air/EngineDelegate.cpp:117, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:603-617, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:643-651, Oxygen/sonic3air/source/sonic3air/helper/PackageBuilder.cpp:43-48"
     note: |
       Audio data package, packed from Oxygen/sonic3air/data/audio/original/
       (emulated soundtrack definitions and prototype SMPS tracks). A
       required package that cannot be opened closes the application,
       unless the data is present unpacked (data/images/icon.png exists).
+      Shipped under data/ in the v26.03.28.0 Windows zip, Linux tar.gz
+      and APK. Batocera installs data/ unpacked from the source tree
+      instead (sonic3-air.mk:40).
 
   - name: "audioremaster.bin"
     path: "sonic3-air/data/audioremaster.bin"

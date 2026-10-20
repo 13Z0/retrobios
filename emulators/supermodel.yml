@@ -151,6 +151,7 @@ files:
     source_ref: "Src/OSD/SDL/Crosshair.cpp:35, 49-51, Src/OSD/SDL/Main.cpp:2372-2378, Src/OSD/libretro/libretroCrosshair.cpp:39, 55-58"
 
   - name: Music.xml
+    not_bundled_on: [batocera, emudeck, recalbox]
     standalone_path: "Config/Music.xml"
     mode: standalone
     required: false

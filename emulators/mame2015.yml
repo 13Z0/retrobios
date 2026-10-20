@@ -59,6 +59,7 @@ notes: |
 files:
   # Data files (system_dir/mame2015/)
   - name: hiscore.dat
+    installed_on: [recalbox]
     path: "mame2015/hiscore.dat"
     required: false
     category: game_data

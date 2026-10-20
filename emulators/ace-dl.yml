@@ -97,6 +97,7 @@ files:
     path: "private/firmware/OS6128_UK.rom"
     system: amstrad-cpc
     required: true
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: b96280dc6c95a48857b4b8eb931533ae
@@ -111,6 +112,7 @@ files:
     system: amstrad-cpc
     region: [france]
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: 5ee871d5600eb9b5a22989c295f902a5
@@ -123,6 +125,7 @@ files:
     system: amstrad-cpc
     region: [spain]
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: 0246740371010333385665dfeb7cd0ec
@@ -135,6 +138,7 @@ files:
     system: amstrad-cpc
     region: [denmark]
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: ca1635fd992e2aa7a776b30da13467e5
@@ -146,6 +150,7 @@ files:
     path: "private/firmware/OS464_UK.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: a993f85b88ac4350cf4d41554e87fe4f
@@ -157,6 +162,7 @@ files:
     path: "private/firmware/OS464_FR.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: a588b7c9e1c142b5d8ebec65ac7713d8
@@ -170,6 +176,7 @@ files:
     path: "private/firmware/OS664_UK.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: 5a384a2310f472c7857888371c00ed66
@@ -181,6 +188,7 @@ files:
     path: "private/firmware/XMEM_FW_3_15_UK.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: 85accc17e98c79dbbdde826cbfaf4692
@@ -192,6 +200,7 @@ files:
     path: "private/firmware/XMEM_FW_3_15_FR.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size]
     md5: 046fa182f7574bde3ab97ee873f6e736
@@ -204,6 +213,7 @@ files:
     path: "private/amsdos/Amsdos.rom"
     system: amstrad-cpc
     required: true
+    bundled: true
     size: 16384
     md5: 25629dfe870d097469c217b95fdc1c95
     sha1: 39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb
@@ -217,6 +227,7 @@ files:
     path: "private/firmware/Amstrad_v4.cpr"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 131156
     md5: 39b565e648172980aa552293e667070f
     sha1: 405e341437fab8db477606238af0c20eca2e39ee
@@ -227,6 +238,7 @@ files:
     path: "private/firmware/Amstrad_f4.cpr"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 131156
     md5: e7159fd674022ba05f9b347ae3cdafc6
     sha1: e5aa80c501cfb435e2cba35ad92e427240394164
@@ -237,6 +249,7 @@ files:
     path: "private/firmware/Amstrad_s4.cpr"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 131156
     md5: 6eeed3fdd4abc98a2a932da810410128
     sha1: 05fb14df24b2b504a3ae463a086f02f0adcc07b9
@@ -248,6 +261,7 @@ files:
     path: "private/multiface2/multiface2.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 8192
     md5: 4c9f014e91d407cc6509fad0095ab909
     sha1: 1431ec628d38f000715545dd2186b684c5fe5a6f
@@ -258,6 +272,7 @@ files:
     path: "private/hacker/hackit400uk.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 16384
     md5: 9a293eaaebca601f671070ad56cb81b6
     sha1: 56306e7234bcffd14b4f977d42d237c4ad9c12d5
@@ -269,6 +284,7 @@ files:
     path: "private/hacker/hacker481fr.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 16384
     md5: dfdd9924295f491d54f30569874287f8
     sha1: 0c15d6753cf0ae2a1737b6e857e8e82ee135a697

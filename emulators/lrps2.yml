@@ -34,6 +34,7 @@ notes: |
 
 data_directories:
   - ref: lrps2
+    installed_on: [batocera, lakka, recalbox, retrobat, retrodeck]
     destination: ""
     source_ref: "pcsx2/GameDatabase.cpp:49, pcsx2/GameDatabase.cpp:979"
 

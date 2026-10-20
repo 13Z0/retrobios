@@ -111,12 +111,14 @@ files:
     source_ref: "share/machines/Boosted_MSX2+_JP.xml:155"
 
   - name: fs-a1wsx_msx2psub.rom
+    installed_on: [retropie]
     path: "openmsx/share/systemroms/fs-a1wsx_msx2psub.rom"
     sha1: fe0254cbfc11405b79e7c86c7769bd6322b04995
     required: true
     description: "FS-A1WSX MSX2+ Sub ROM"
     validation: [sha1]
     source_ref: "share/machines/Boosted_MSX2+_JP.xml:218"
+    note: "RetroPie unpacks openmsxroms.tar.gz into the installed share/systemroms, which the file pool scans. This ROM is in it as MSX2PEXT.ROM and is found by its SHA1."
 
   - name: fs-a1wsx_kanjibasic.rom
     path: "openmsx/share/systemroms/fs-a1wsx_kanjibasic.rom"

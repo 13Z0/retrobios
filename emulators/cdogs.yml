@@ -45,6 +45,7 @@ files:
     description: "Ammo type definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:228, src/cdogs/ammo.c:77-84"
 
   - name: "bullets.json"
@@ -53,6 +54,7 @@ files:
     description: "Bullet behaviour definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:230-232, src/cdogs/weapon_class.c:739-746"
 
   - name: "guns.json"
@@ -61,6 +63,7 @@ files:
     description: "Weapon definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:230-232, src/cdogs/weapon_class.c:757-763"
 
   - name: "character_classes.json"
@@ -69,6 +72,7 @@ files:
     description: "Character class definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:234-235, src/cdogs/character_class.c:353-360"
 
   - name: "map_objects.json"
@@ -77,6 +81,7 @@ files:
     description: "Interactive map object definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:244-245, src/cdogs/map_object.c:231-238"
 
   - name: "particles.json"
@@ -85,6 +90,7 @@ files:
     description: "Particle effect definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:226, src/cdogs/particle.c:61-64"
 
   - name: "pickups.json"
@@ -93,6 +99,7 @@ files:
     description: "Pickup item definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:241-242, src/cdogs/pickup_class.c:246-252"
 
   - name: "prefixes.txt"
@@ -101,6 +108,7 @@ files:
     description: "Random name generation prefixes"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/prep.c:324-327, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
@@ -110,6 +118,7 @@ files:
     description: "Random name generation suffixes"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/prep.c:325-327, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
@@ -119,6 +128,7 @@ files:
     description: "Random name generation name suffixes"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/prep.c:326-327, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
@@ -128,6 +138,7 @@ files:
     description: "SDL gamecontroller mapping database"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/joystick.c:43-48"
     note: "A load failure is logged and the built-in SDL mappings stay in use."
 
@@ -137,6 +148,7 @@ files:
     description: "Controller button names and colours"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/joystick.c:49-54"
     note: "A load failure is logged."
 
@@ -147,6 +159,7 @@ files:
     description: "Campaign templates for Wolfenstein 3D, Spear of Destiny and Super 3D Noah's Ark"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/map_wolf.c:50, src/cdogs/map_wolf.c:110-134, src/cdogs/map_wolf.c:781-793"
     note: >
       Read only when the game data of one of these titles is found in a
@@ -159,6 +172,7 @@ files:
     description: "Sprites, tiles, HUD and character body definitions"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:189, src/cdogs/pic_manager.c:181-254, src/cdogs/draw/char_sprites.c:55-115"
     note: >
       PicManagerLoad walks the directory and loads every .png.
@@ -171,6 +185,7 @@ files:
     description: "Main bitmap font"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:156, src/cdogs/font.c:54-60"
 
   - name: "font.json"
@@ -179,6 +194,7 @@ files:
     description: "Main bitmap font layout"
     required: true
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:156, src/cdogs/font_utils.c:35-41"
 
   - name: "cdogs_icon.bmp"
@@ -187,6 +203,7 @@ files:
     description: "Window icon"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/grafx.c:92-93"
 
   - name: "missions/"
@@ -196,6 +213,7 @@ files:
     description: "Campaigns"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/sys_config.h.cmake:38, src/cdogs/campaigns.c:203-206, src/cdogs/campaigns.c:257-298"
     note: >
       Every entry of the directory is tried as a campaign and subdirectories
@@ -208,6 +226,7 @@ files:
     description: "Dogfight arenas"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/sys_config.h.cmake:39, src/cdogs/campaigns.c:208-211"
 
   - name: "music/"
@@ -217,6 +236,7 @@ files:
     description: "Music tracks: menu, briefing, game, end, lose, victory"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs/music.c:45-50, src/cdogs/music.c:52-64"
     note: "Every file of each of the six directories is loaded as a track."
 
@@ -227,6 +247,7 @@ files:
     description: "Sound effects"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/cdogs.c:213, src/cdogs/sounds.c:187-198, src/cdogs/sounds.c:199-244"
     note: "SoundLoadDir walks the directory and loads every .ogg, .wav and .mp3."
 
@@ -236,4 +257,5 @@ files:
     description: "Credits shown in the main menu"
     required: false
     bundled: true
+    not_bundled_on: [batocera]
     source_ref: "src/credits.c:47-53"

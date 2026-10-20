@@ -97,12 +97,15 @@ files:
     size: 2097152
     sha1: "87918619c632ac9de270d4fdf396a57eb57fc620"
     required: true
+    bundled: true
+    not_bundled_on: [retrobat]
     source_ref: "Source/Core/Core/HW/DVD/AMMediaboard.cpp:215-233, Source/Core/Core/HW/DVD/DVDInterface.cpp:289-294"
     note: >
       Read on every Triforce launch, Sys/Triforce only with no User fallback.
       Nothing is validated, min(file size, 2 MiB) is copied into the firmware
       buffer. The hash is the copy the fork's own Data/Sys tree carries, SegaBoot
-      v3.11.
+      v3.11. A build installs it with the rest of Data/Sys (CMakeLists.txt:1039).
+      The older build RetroBat ships as dolphin-triforce has no Sys/Triforce.
 
   # -- Triforce GameCube boot ROM --
   # Region-specific directory, User/GC/<region>/ then Sys/GC/<region>/.
@@ -270,21 +273,24 @@ files:
     description: "Windows-1252 font used by GameCube and Wii text rendering"
     size: 9589
     required: false
+    installed_on: [retrobat]
     hle_fallback: true
     source_ref: "Source/Core/Common/CommonPaths.h:142, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131,203-247"
     note: >
       Size is the official font length the code reads from an IPL dump, 0x2575
       (Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:234-236). A standalone file is
-      read without any check.
+      read without any check. The fork's tree carries no font, RetroBat's
+      dolphin-triforce package installs the free replacement here.
 
   - name: "font_japanese.bin"
     path: "Sys/GC/font_japanese.bin"
     description: "Shift-JIS font used by GameCube and Wii text rendering"
     size: 303693
     required: false
+    installed_on: [retrobat]
     hle_fallback: true
     source_ref: "Source/Core/Common/CommonPaths.h:143, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:130,203-247"
-    note: "Size is the official font length read from an IPL dump, 0x4a24d."
+    note: "Size is the official font length read from an IPL dump, 0x4a24d. The fork's tree carries no font, RetroBat's dolphin-triforce package installs the free replacement here."
 
   # -- GBA BIOS --
   - name: "gba_bios.bin"
@@ -387,8 +393,10 @@ files:
     path: "Sys/codehandler.bin"
     description: "Gecko code handler used to apply cheat codes"
     required: false
+    installed_on: [retrobat]
     hle_fallback: true
     source_ref: "Source/Core/Common/CommonPaths.h:167, Source/Core/Core/GeckoCode.cpp:121-134"
     note: >
       Read from the Sys root. Cheats are refused when it is missing and when it
-      exceeds the installer window.
+      exceeds the installer window. Absent from the fork's tree, installed by
+      RetroBat's dolphin-triforce package.

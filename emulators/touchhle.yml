@@ -43,7 +43,6 @@ notes: |
 
 files:
   - name: "libgcc_s.1.dylib"
-    not_bundled_on: [rocknix]
     path: "touchHLE_dylibs/libgcc_s.1.dylib"
     system: apple-ios
     required: false
@@ -55,7 +54,6 @@ files:
     source_ref: "src/fs.rs:588-622, src/environment.rs:384-413"
 
   - name: "libstdc++.6.0.9.dylib"
-    not_bundled_on: [rocknix]
     path: "touchHLE_dylibs/libstdc++.6.0.9.dylib"
     system: apple-ios
     required: false
@@ -67,7 +65,6 @@ files:
     source_ref: "src/fs.rs:588-622, src/environment.rs:384-413"
 
   - name: "libz.1.2.3.dylib"
-    not_bundled_on: [rocknix]
     path: "touchHLE_dylibs/libz.1.2.3.dylib"
     system: apple-ios
     required: false
@@ -243,7 +240,6 @@ files:
     source_ref: "src/font.rs:70-85, src/font.rs:127-129"
 
   - name: "touchHLE_default_options.txt"
-    not_bundled_on: [rocknix]
     path: "touchHLE_default_options.txt"
     system: apple-ios
     required: false

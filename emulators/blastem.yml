@@ -32,18 +32,23 @@ notes: |
   No BIOS files are required or loaded by the libretro core.
 
 files:
-  # rom.db is embedded in the libretro binary (libblastem.c:1295,1302-1303,
-  # extern const char rom_db_data[]). The external file is an optional
-  # override. The .info lists it as firmware0_opt=true.
+  # rom.db is embedded in the libretro binary (libblastem.c:1436-1455,
+  # extern const char rom_db_data[]) and no external copy is read there.
+  # The standalone build reads it beside the executable. The .info lists it
+  # as firmware0_opt=true.
   # .info sha1 E5414FB1C4CC7D7F5101C07E4547316779BA3D97 does not match
   # the version in our repo (sha1 02c287d1...): rom.db changes between
   # BlastEm releases.
   - name: rom.db
     system: sega-megadrive
     required: false
+    mode: standalone
+    bundled: true
+    sha1: "9109da664801e8ba02e790c085cbdca58068e50a"
+    md5: "48b457c7e2df6ec7c16ae34d8f24c4b6"
     hle_fallback: true
-    note: "ROM feature database (game-specific mapper/save config). Embedded in core, external is optional override."
-    source_ref: "libblastem.c:1438-1455 read_bundled_file()"
+    note: "ROM feature database (game-specific mapper/save config). Shipped beside the executable in the 1.0.0 Windows and Linux archives, whose copy the hashes describe. The libretro core compiles it in and reads no external copy."
+    source_ref: "romdb.c:44-53 get_rom_db(), libblastem.c:1436-1455 read_bundled_file()"
 
   # TMSS ROM, only used in standalone mode with tmss-enabled model
   # libretro build returns NULL for tmss.md (libblastem.c:541)
@@ -51,9 +56,12 @@ files:
     system: sega-megadrive
     required: false
     mode: standalone
-    size: 2048
-    note: "TMSS startup ROM. Standalone only (models md1va6, md2va1+). Libretro core uses md1va3 (tmss off), no way to change."
-    source_ref: "genesis.c:3037-3050"
+    bundled: true
+    size: 4014
+    sha1: "d0fd0c163b693d819fc907538fbdec76d7ec669d"
+    md5: "1929426a8888785411d30f24bd0f8139"
+    note: "TMSS startup ROM for models md1va6, md2va1 and later. The 1.0.0 Windows and Linux archives ship BlastEm's own replacement, built from tmss.s68, under this name. Any size is accepted: the image is padded and mirrored to fill the TMSS space."
+    source_ref: "genesis.c:3036-3065"
 
 analysis:
   tmss:

@@ -672,13 +672,23 @@ files:
   - name: "title.phd"
     path: "games/tr1-demo-pc/levels/title.phd"
     required: false
+    bundled: true
+    not_bundled_on: [batocera]
+    size: 316138
+    sha1: "27f7a95739e373d06365fb8b60613885c9d36bd8"
+    md5: "20e22cddfb4b796e58c0a2b9fc8b1268"
     category: game_data
     source_ref: "data/trx/ship/games/tr1-demo-pc/gameflow.json5:38, src/trx/game/game_flow/reader.c:903-909, src/trx/game/paths.c:123-132, tools/download_assets:67, tools/installer/TRX_Installer/InstallComponentFactory.cs:83-87"
-    note: "Title level of the PC demo. A title level is also looked up in the levels directory of the game it extends, so games/tr1/levels/title.phd is used when this one is absent."
+    note: "Title level of the PC demo. A title level is also looked up in the levels directory of the game it extends, so games/tr1/levels/title.phd is used when this one is absent. Shipped in the TRX 1.11.1 Windows and Linux zips, not in the Batocera TR1X package."
 
   - name: "level2.phd"
     path: "games/tr1-demo-pc/levels/level2.phd"
     required: false
+    bundled: true
+    not_bundled_on: [batocera]
+    size: 2873406
+    sha1: "f0fc40ca8df563191dda683bae76522f16f0f535"
+    md5: "3c41eefbd43d477991bee10e4568322b"
     category: game_data
     source_ref: "data/trx/ship/games/tr1-demo-pc/gameflow.json5:56, src/trx/game/level/format/format_tr1.c:74-99, 186-191, tools/download_assets:67, tools/installer/TRX_Installer/InstallComponentFactory.cs:83-87"
-    note: "City of Vilcabamba in the PC demo layout, which stores the palette before the cameras. The demo game does not load without it."
+    note: "City of Vilcabamba in the PC demo layout, which stores the palette before the cameras. The demo game does not load without it. Shipped in the TRX 1.11.1 Windows and Linux zips, not in the Batocera TR1X package."

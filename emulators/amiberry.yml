@@ -161,23 +161,59 @@ files:
   # the search accepts a directory only when it holds both of them.
 
   - name: aros-ext.bin
+    mode: libretro
     system: commodore-amiga
     required: false
     hle_fallback: true
     note: >
       AROS extended ROM replacement, used when no Kickstart ROM is found. Looked
       up in the configured ROM directories, and only in a directory that also
-      holds aros-rom.bin.
+      holds aros-rom.bin. The core zip carries the library alone.
+    source_ref: "src/memory.cpp:1933 (paired existence check), src/memory.cpp:1958-1959 (load)"
+
+  - name: aros-ext.bin
+    mode: standalone
+    system: commodore-amiga
+    required: false
+    hle_fallback: true
+    bundled: true
+    not_bundled_on: [recalbox, rocknix]
+    size: 524288
+    sha1: "e8b274faca7ffa4c064706ba15318885d8645695"
+    md5: "d2ce6748e8e42222662e14359f68dad5"
+    note: >
+      AROS extended ROM replacement, used when no Kickstart ROM is found. Looked
+      up in the configured ROM directories, and only in a directory that also
+      holds aros-rom.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb. The
+      Recalbox and ROCKNIX packages leave it out.
     source_ref: "src/memory.cpp:1933 (paired existence check), src/memory.cpp:1958-1959 (load)"
 
   - name: aros-rom.bin
+    mode: libretro
     system: commodore-amiga
     required: false
     hle_fallback: true
     note: >
       AROS main ROM replacement, used with aros-ext.bin as Kickstart fallback.
       Looked up in the configured ROM directories, and only in a directory that
-      also holds aros-ext.bin.
+      also holds aros-ext.bin. The core zip carries the library alone.
+    source_ref: "src/memory.cpp:1934 (paired existence check), src/memory.cpp:1987-1988 (load)"
+
+  - name: aros-rom.bin
+    mode: standalone
+    system: commodore-amiga
+    required: false
+    hle_fallback: true
+    bundled: true
+    not_bundled_on: [recalbox, rocknix]
+    size: 524288
+    sha1: "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e"
+    md5: "48d38fc3fcf2ad7bca5ec5191d02e451"
+    note: >
+      AROS main ROM replacement, used with aros-ext.bin as Kickstart fallback.
+      Looked up in the configured ROM directories, and only in a directory that
+      also holds aros-ext.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb.
+      The Recalbox and ROCKNIX packages leave it out.
     source_ref: "src/memory.cpp:1934 (paired existence check), src/memory.cpp:1987-1988 (load)"
 
   # --- Cloanto key ---

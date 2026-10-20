@@ -60,6 +60,7 @@ files:
   # -- MSX1 BIOS --
 
   - name: MSX.ROM
+    installed_on: [recalbox]
     size: 32768
     md5: aa95aea2563cd5ec0a0919b44cc17d47
     sha1: 409e82adac40f6bdd18eb6c84e8b2fbdc7fb5498
@@ -71,6 +72,7 @@ files:
   # -- MSX2 BIOS --
 
   - name: MSX2.ROM
+    installed_on: [recalbox]
     size: 32768
     md5: ec3a01c91f24fbddcbcab0ad301bc9ef
     sha1: 6103b39f1e38d1aa2d84b1c3219c44f1abb5436e
@@ -80,6 +82,7 @@ files:
     source_ref: "fMSX/ROMs/MSX2.ROM"
 
   - name: MSX2EXT.ROM
+    installed_on: [recalbox]
     size: 16384
     md5: 2183c2aff17cf4297bdb496de78c2e8a
     sha1: 5c1f9c7fb655e43d38e5dd1fcc6b942b2ff68b02
@@ -91,6 +94,7 @@ files:
   # -- MSX2+ BIOS (default model) --
 
   - name: MSX2P.ROM
+    installed_on: [recalbox]
     size: 32768
     md5: 6d8c0ca64e726c82a4b726e9b01cdf1e
     sha1: e2fbd56e42da637609d23ae9df9efd1b4241b18a
@@ -100,6 +104,7 @@ files:
     source_ref: "fMSX/ROMs/MSX2P.ROM"
 
   - name: MSX2PEXT.ROM
+    installed_on: [recalbox]
     size: 16384
     md5: 7c8243c71d8f143b2531f01afa6a05dc
     sha1: fe0254cbfc11405b79e7c86c7769bd6322b04995
@@ -111,6 +116,7 @@ files:
   # -- Disk support --
 
   - name: DISK.ROM
+    installed_on: [recalbox]
     size: 16384
     md5: 80dcd1ad1a4cf65d64b7ba10504e8190
     sha1: 032cb1c1c75b9a191fa1230978971698d9d2a17f
@@ -121,6 +127,7 @@ files:
   # -- Optional expansion ROMs --
 
   - name: FMPAC.ROM
+    installed_on: [recalbox]
     size: 65536
     md5: 6f69cc8b5ed761b03afd78000dfb0e19
     sha1: 9d789166e3caf28e4742fe933d962e99618c633d
@@ -129,6 +136,7 @@ files:
     source_ref: "fMSX/ROMs/FMPAC.ROM"
 
   - name: KANJI.ROM
+    installed_on: [recalbox]
     size: 131072
     md5: febe8782b466d7c3b16de6d104826b34
     sha1: 84a645becec0a25d3ab7a909cde1b242699a8662
@@ -137,6 +145,7 @@ files:
     source_ref: "fMSX/ROMs/KANJI.ROM"
 
   - name: MSXDOS2.ROM
+    installed_on: [recalbox]
     size: 65536
     md5: 6418d091cd6907bbcf940324339e43bb
     sha1: c36c9e0f96738a340381e23b4f97245388801a46
@@ -145,6 +154,7 @@ files:
     source_ref: "fMSX/ROMs/MSXDOS2.ROM"
 
   - name: PAINTER.ROM
+    installed_on: [recalbox]
     size: 65536
     md5: 403cdea1cbd2bb24fae506941f8f655e
     sha1: 7fd2a28c4fdaeb140f3c8c8fb90271b1472c97b9
@@ -153,6 +163,7 @@ files:
     source_ref: "fMSX/ROMs/PAINTER.ROM"
 
   - name: RS232.ROM
+    installed_on: [recalbox]
     size: 16640
     md5: 279efd1eae0d358eecd4edc7d9adedf3
     sha1: 7aec0134ad6a5177f4056fcb6047083e8e00529b
@@ -182,36 +193,42 @@ files:
   # -- Text fonts (selectable via fmsx_font core option) --
 
   - name: DEFAULT.FNT
+    installed_on: [recalbox]
     required: false
     md5: 85b38e4128bbc300e675f55b278683a8
     note: "Default text font. Loaded by LoadFNT() (fMSX/MSX.c:527). Same content as CYRILLIC.FNT."
     source_ref: "fMSX/ROMs/DEFAULT.FNT, libretro.c:1547"
 
   - name: ITALIC.FNT
+    installed_on: [recalbox]
     required: false
     md5: c83e50e9f33b8dd893c414691822740d
     note: "Italic text font."
     source_ref: "fMSX/ROMs/ITALIC.FNT, libretro.c:1547"
 
   - name: INTERNAT.FNT
+    installed_on: [recalbox]
     required: false
     md5: ac4f4a90c1b1887db48ded39c9d9c847
     note: "International text font."
     source_ref: "fMSX/ROMs/INTERNAT.FNT, libretro.c:1547"
 
   - name: CYRILLIC.FNT
+    installed_on: [recalbox]
     required: false
     md5: 85b38e4128bbc300e675f55b278683a8
     note: "Cyrillic text font. Same content as DEFAULT.FNT."
     source_ref: "fMSX/ROMs/CYRILLIC.FNT, libretro.c:1547"
 
   - name: KOREAN.FNT
+    installed_on: [recalbox]
     required: false
     md5: 73291e76638a2f5aa2eceb843df468f4
     note: "Korean text font."
     source_ref: "fMSX/ROMs/KOREAN.FNT, libretro.c:1547"
 
   - name: JAPANESE.FNT
+    installed_on: [recalbox]
     required: false
     md5: aa28f0703b951a6be8df3e28e20d263d
     note: "Japanese text font."
@@ -227,7 +244,7 @@ files:
     note: "Mapper database opened in the system directory before CARTS.SHA. Each line holds the sum of the ROM bytes as eight hexadecimal digits and a mapper number (%08X %d). A matching line sets the mapper and CARTS.SHA is not read."
 
   - name: CARTS.SHA
-    installed_on: [retropie]
+    installed_on: [recalbox, retropie]
     required: false
     md5: 74b0f217fa0e2b8bb5a2f8e2ecc69da3
     note: "SHA1 database for cartridge identification and mapper detection. Read when CARTS.CRC is absent or holds no matching line (fMSX/MSX.c:2716)."

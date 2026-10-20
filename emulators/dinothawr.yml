@@ -26,6 +26,7 @@ notes: |
 
 data_directories:
   - ref: dinothawr
+    installed_on: [lakka, recalbox, retrobat, retrodeck, retropie]
     source_ref: "libretro.c:479"
 
 files: []

@@ -51,9 +51,11 @@ files:
     system: ur-quan-masters
     category: game_data
     required: true
+    installed_on: [retropie]
     md5: "6cbc9d51fa63e07c0f4d1d061136d816"
     validation: [md5]
     description: "UQM core game data archive"
+    note: "Published apart from the source release. The RetroPie scriptmodule downloads it into content/packages."
     source_ref: "build/win32_install/packages.nsh:3-5; sc2/build/win32_install/uqm-installer.nsi:289-306"
 
   - name: uqm-0.8.0-3domusic.uqm

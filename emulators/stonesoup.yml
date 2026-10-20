@@ -36,6 +36,7 @@ notes: |
 
 data_directories:
   - ref: stonesoup
+    installed_on: [recalbox]
     source_ref: "source/files.cc:375-458"
 
 files: []

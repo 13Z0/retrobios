@@ -4649,9 +4649,11 @@ files:
   - name: hiscore.dat
     path: "hiscore.dat"
     required: false
+    bundled: true
+    sha1: "6f730abe0d76161336f09229f54e9f9ac7619d63"
     category: game_data
     source_ref: "plugins/hiscore/init.lua:105,152-155"
-    note: "high score definitions, read from the working directory then from the plugin directory, where a copy ships"
+    note: "high score definitions, read from the working directory then from the plugin directory. The 0288.222d Windows 7z and the RetroBat groovymame package both ship this copy in plugins/hiscore."
 
   - name: cheat.7z
     aliases: [cheat.zip]

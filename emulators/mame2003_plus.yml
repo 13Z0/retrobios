@@ -63,6 +63,7 @@ notes: |
 files:
   # Data files (system_dir/mame2003-plus/)
   - name: hiscore.dat
+    installed_on: [batocera, lakka, recalbox, retrobat, retrodeck, retropie]
     path: "mame2003-plus/hiscore.dat"
     required: false
     category: game_data
@@ -77,6 +78,7 @@ files:
       only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.dat
+    installed_on: [batocera, lakka, recalbox, retrobat, retrodeck, retropie]
     path: "mame2003-plus/cheat.dat"
     required: false
     category: game_data
@@ -84,6 +86,7 @@ files:
     note: "cheat definitions, requires cheats core option enabled"
 
   - name: history.dat
+    installed_on: [batocera, lakka, recalbox, retrobat, retrodeck]
     path: "mame2003-plus/history.dat"
     required: false
     category: game_data

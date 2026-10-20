@@ -122,6 +122,7 @@ files:
   - name: "pif.ntsc.rom"
     system: nintendo-64
     required: false
+    bundled: true
     hle_fallback: true
     region: [world]
     size: 1984
@@ -144,11 +145,13 @@ files:
       kept for compatibility. On a match the image is byteswapped into PIF
       memory and the reset vector moves to 0xbfc00000. On a mismatch the core
       logs "Invalid PIF ROM" and boots through the HLE bootrom instead.
+      Shipped beside simple64-gui.exe in simple64-win64-b49e10e.zip.
     source_ref: "mupen64plus-core/src/main/main.c:1565-1580,1624-1633,2097-2135, mupen64plus-core/src/main/rom.c:502-525, mupen64plus-core/src/device/pif/pif.h:36"
 
   - name: "pif.pal.rom"
     system: nintendo-64
     required: false
+    bundled: true
     hle_fallback: true
     region: [europe, oceania]
     size: 1984
@@ -164,4 +167,5 @@ files:
       NTSC image. The current digest is the image shipped in data/ and the
       No-Intro entry "[BIOS] Nintendo 64 - PIF (Europe).bin" at 1984 bytes, and the
       second value is the earlier dump the fork still accepts.
+      Shipped beside simple64-gui.exe in simple64-win64-b49e10e.zip.
     source_ref: "mupen64plus-core/src/main/main.c:1565-1580,1624-1633,2097-2135, mupen64plus-core/src/main/rom.c:502-525, mupen64plus-core/src/device/pif/pif.h:36"

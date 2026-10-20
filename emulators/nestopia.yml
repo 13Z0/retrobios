@@ -53,6 +53,7 @@ files:
     system: nintendo-nes
     description: "Nestopia game database for region and mapper autodetection"
     required: false
+    installed_on: [batocera]
     hle_fallback: true
     source_ref: "libretro/libretro.cpp:2121-2151 (database load), libretro/nstdatabase.hpp (baked-in fallback)"
     note: "XML database matching games by SHA1+CRC32. Used for region, mapper, mirroring, and 4-player adapter detection. Built-in fallback exists so this file is optional."

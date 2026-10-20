@@ -1460,6 +1460,7 @@ files:
   # System support files (fbneo/)
   # -------------------------------------------------------
   - name: "hiscore.dat"
+    installed_on: [batocera, lakka, recalbox, retrobat, retrodeck, retropie]
     path: "fbneo/hiscore.dat"
     required: false
     sha1: "30c6ad697439de7c2158192ecdb48f5edd37478e"

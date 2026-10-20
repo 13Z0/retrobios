@@ -54,9 +54,15 @@ notes: |
   descent.pig, d2shar10.tar.gz = d2demo.hog/pig/ham) is redistributable.
   The retail archives listed below are commercial GOG files.
 
+  RetroPie's dxx-rebirth package downloads the two shareware sets,
+  d1xr-hires.dxa and both SC-55 music packs into roms/ports/descent1 and
+  descent2 on install (scriptmodules/ports/dxx-rebirth.sh,
+  game_data_dxx-rebirth).
+
 files:
   # ------ Descent 1 shareware (free) ------
   - name: descent.hog
+    installed_on: [retropie]
     path: descent.hog
     system: descent
     category: game_data
@@ -69,6 +75,7 @@ files:
     source_ref: "similar/main/mission.cpp:80; common/main/mission.h:67"
 
   - name: descent.pig
+    installed_on: [retropie]
     path: descent.pig
     system: descent
     category: game_data
@@ -99,6 +106,7 @@ files:
 
   # ------ Descent 2 shareware (free) ------
   - name: d2demo.hog
+    installed_on: [retropie]
     path: d2demo.hog
     system: descent2
     category: game_data
@@ -111,6 +119,7 @@ files:
     source_ref: "similar/main/mission.cpp:107-108; common/main/mission.h:71"
 
   - name: d2demo.pig
+    installed_on: [retropie]
     path: d2demo.pig
     system: descent2
     category: game_data
@@ -119,6 +128,7 @@ files:
     source_ref: "similar/main/piggy.cpp:73"
 
   - name: d2demo.ham
+    installed_on: [retropie]
     path: d2demo.ham
     system: descent2
     category: game_data
@@ -249,6 +259,7 @@ files:
   # below are the add-ons the project publishes. Each build has its own data
   # directory (d1x-rebirth, d2x-rebirth), so an archive is seen by one game.
   - name: "d1xr-hires.dxa"
+    installed_on: [retropie]
     path: "d1x-rebirth/d1xr-hires.dxa"
     system: descent
     category: game_data
@@ -285,6 +296,7 @@ files:
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d1xr-sc55-music.dxa"
+    installed_on: [retropie]
     path: "d1x-rebirth/d1xr-sc55-music.dxa"
     system: descent
     category: game_data
@@ -321,6 +333,7 @@ files:
     source_ref: "common/misc/physfsx.cpp:23, 377-394, similar/main/inferno.cpp:603, SConstruct:4362"
 
   - name: "d2xr-sc55-music.dxa"
+    installed_on: [retropie]
     path: "d2x-rebirth/d2xr-sc55-music.dxa"
     system: descent2
     category: game_data

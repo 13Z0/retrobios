@@ -72,12 +72,16 @@ files:
     system: nintendo-nes
     description: "NES 2.0 header database, matched by ROM hash"
     required: false
+    bundled: true
+    sha1: "8ed9fb83d8e4d73217d347e3b7965cb640cb8395"
     source_ref: "src/gui/nes20db.cpp:31,49-81 (nes20db_search); src/core/ines.c:276-278, src/core/unif.c:316 (callers); CMakeLists.txt:227 (install)"
-    note: "Supplies mapper, submapper, mirroring, region, RAM sizes and Vs. System hardware for dumps whose own header is absent or wrong. A miss leaves info.mapper.nes20db.in_use false and the header carried by the ROM is used."
+    note: "Supplies mapper, submapper, mirroring, region, RAM sizes and Vs. System hardware for dumps whose own header is absent or wrong. A miss leaves info.mapper.nes20db.in_use false and the header carried by the ROM is used. Installed by CMakeLists.txt:227 and shipped beside the executable in the Windows zip. The hash is the copy at the profiled revision."
 
   - name: "dip.cfg"
     system: nintendo-nes
     description: "DIP switch database for multicart and Vs. System boards, keyed by CRC32"
     required: false
+    bundled: true
+    sha1: "0f25848f73705328ca03b02905e95e3a5d087d8c"
     source_ref: "src/gui/dipswitch.cpp:30,60-86 (dipswitch_search); src/core/mappers.c:44 (caller); CMakeLists.txt:228 (install)"
-    note: "Read on every mapper init. A miss leaves dipswitch.used false, which mappers 001, 043, 045, 176, 215, 412 and 447 and the selection dialog at src/gui/qt.cpp:754 all guard on, so the board runs on its reset value."
+    note: "Read on every mapper init. A miss leaves dipswitch.used false, which mappers 001, 043, 045, 176, 215, 412 and 447 and the selection dialog at src/gui/qt.cpp:754 all guard on, so the board runs on its reset value. Installed by CMakeLists.txt:228 and shipped beside the executable in the Windows zip. The hash is the copy at the profiled revision, the 0.111 zip carries an older one."

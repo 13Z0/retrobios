@@ -49,43 +49,51 @@ files:
   - name: samcoupe.rom
     system: sam-coupe
     required: true
+    bundled: true
     size: 32768  # 32 kB, two 16 kB ROM pages
     md5: "ad08ed47b07b0d7047fd3d0b5e7d90b3"
     sha1: "c86601633fb61a8c517f7657aad9af4e6870f2ee"
     crc32: "0b7e3585"
     validation: [size]
     description: "SAM Coupe ROM v3.0 (ROM0 + ROM1 pages)"
+    note: "Shipped in the 1.2.17 Windows zip and deb, copied from the Resource directory."
     source_ref: "Base/Memory.cpp:167-229 (LoadRoms); Resource/samcoupe.rom"
 
   - name: atom.rom
     system: sam-coupe
     required: false
+    bundled: true
     size: 32768
     md5: "fcb5d837f996efaaece074c3ceec2b55"
     sha1: "cd342579f066c0863e4f769c2e6757085e21b0a1"
     crc32: "dec75f58"
     validation: [size]
     description: "SAMBUS Atom IDE boot ROM, loaded when drive 2 is drvAtom"
+    note: "Shipped in the 1.2.17 Windows zip and deb, copied from the Resource directory."
     source_ref: "Base/Memory.cpp:186-188; Resource/atom.rom"
 
   - name: atomlite.rom
     system: sam-coupe
     required: false
+    bundled: true
     size: 32768
     md5: "ec1e8290da040307d6b3174b7ace9453"
     sha1: "b2303b7200f5a17b54b841af9f0604db7bbdd1ab"
     crc32: "9cf316a8"
     validation: [size]
     description: "SAMBUS Atom Lite IDE boot ROM, loaded when either drive is drvAtomLite"
+    note: "Shipped in the 1.2.17 Windows zip and deb, copied from the Resource directory."
     source_ref: "Base/Memory.cpp:183-184; Resource/atomlite.rom"
 
   - name: sp0256-al2.bin
     system: sam-coupe
     required: false
+    bundled: true
     size: 2048
     md5: "c6fe422a12d834b34c54956782ec5f81"
     sha1: "e60fcb5fa16ff3f3b69d36c7a6e955744d3feafc"
     crc32: "b504ac15"
     validation: [size]
     description: "Microchip SP0256-AL2 allophone data for the Blue Alpha VoiceBox"
+    note: "Shipped in the 1.2.17 Windows zip and deb, copied from the Resource directory."
     source_ref: "Base/VoiceBox.cpp:35-40 (VoiceBoxDevice::VoiceBoxDevice); Base/Options.h:124 (voicebox default on); Resource/sp0256-al2.bin"

@@ -132,8 +132,11 @@ files:
     system: diablo
     category: game_data
     required: true
+    bundled: true
+    sha1: "f1ac6ba3a04f51f51e0e8bc2254742c70905f62b"
+    md5: "5afe4d6624064b41e25a36ac55da29fa"
     description: "Engine assets (UI art, fonts, data tables, Lua scripts, compiled translations) packed from the repository's assets/ directory"
-    note: "Loaded first on every platform except Android, Apple, 3DS and Switch. Its files are also found in an assets/ directory next to the binary when the build installs them loose. The engine aborts when the asset ASSETS_VERSION is absent or is not \"1\\n\". Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the file list of CMake/Assets.cmake plus one <lang>.gmo per translation."
+    note: "Loaded first on every platform except Android, Apple, 3DS and Switch. Its files are also found in an assets/ directory next to the binary when the build installs them loose. The engine aborts when the asset ASSETS_VERSION is absent or is not \"1\\n\". Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the file list of CMake/Assets.cmake plus one <lang>.gmo per translation. Shipped beside the binary in the Windows zip and the Linux tarball, and loose under assets/ in the APK. The hashes are those of the 1.5.5 release."
     source_ref: "Source/engine/assets.cpp:509-516, 223-226, Source/init.cpp:54, 79-85, Source/diablo.cpp:1225-1239, CMake/Assets.cmake:46-224, 287-294"
 
   - name: "fonts.mpq"
@@ -177,5 +180,5 @@ files:
     category: game_data
     required: false
     description: "Hellfire mod archive packed from the repository's mods/hf directory"
-    note: "mods/<name>.mpq is opened for each active mod, and hf is activated when hellfire.mpq is present. A mod with no archive and no loose directory is served from the core archives. Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the hellfire_mod file list."
-    source_ref: "Source/engine/assets.cpp:748-764, Source/options.cpp:77-79, CMakeLists.txt:204, CMake/Mods.cmake:8-33, 58-66"
+    note: "mods/<name>.mpq is opened for each active mod, and hf is activated when hellfire.mpq is present. A mod with no archive and no loose directory is served from the core archives. Built by CMake with smpq (MPQ version 1, BZIP2, no attributes) from the hellfire_mod file list. The Windows and Linux packaging of this revision installs it under mods/ beside devilutionx.mpq, and no release carries it yet."
+    source_ref: "Source/engine/assets.cpp:748-764, Source/options.cpp:77-79, CMakeLists.txt:204, 638-643, 702-707, CMake/Mods.cmake:8-33, 58-66"

@@ -120,41 +120,73 @@ files:
   - name: "Gargoyle-Mono.ttf"
     description: "Gargoyle Mono regular (Go Mono)"
     required: true
+    bundled: true
+    size: 164304
+    sha1: "f2b956a6ab8cd903de974bbe2deb59a45ab36984"
+    md5: "f32a4d2aee1927349c80e471e791949f"
     source_ref: "garglk/draw.cpp:657 (make_entry monor), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Mono-Bold.ttf"
     description: "Gargoyle Mono bold (Go Mono)"
     required: true
+    bundled: true
+    size: 168396
+    sha1: "2025696a7049a27ee1cec2a9faf5fcd1cfe6201d"
+    md5: "750428793e9a7f74484cef5029f1e9e9"
     source_ref: "garglk/draw.cpp:658 (make_entry monob), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Mono-Italic.ttf"
     description: "Gargoyle Mono italic (Go Mono)"
     required: true
+    bundled: true
+    size: 173600
+    sha1: "3319148d0e3c9575e379f53e5dd0d9a45efea109"
+    md5: "873e8ea7a53a81f16ff3d77205964efd"
     source_ref: "garglk/draw.cpp:659 (make_entry monoi), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Mono-Bold-Italic.ttf"
     description: "Gargoyle Mono bold italic (Go Mono)"
     required: true
+    bundled: true
+    size: 176888
+    sha1: "afce1f28df995726b7c9e49c4bf64c9b427c2ce0"
+    md5: "d534b7b59e44c0b71b924e7c3899b5b4"
     source_ref: "garglk/draw.cpp:660 (make_entry monoz), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Serif.ttf"
     description: "Gargoyle Serif regular (Charis SIL)"
     required: true
+    bundled: true
+    size: 1504176
+    sha1: "23c9ac25750606f506d4c841f4efb0b33f596d09"
+    md5: "b43719e0af7d587d2b9b274458a793ff"
     source_ref: "garglk/draw.cpp:661 (make_entry propr), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Serif-Bold.ttf"
     description: "Gargoyle Serif bold (Charis SIL)"
     required: true
+    bundled: true
+    size: 1439752
+    sha1: "7deeaf8ff5d86b63d1def4e47f5998c351db3eb8"
+    md5: "35a62c77d2a64dfd3a35807554685500"
     source_ref: "garglk/draw.cpp:662 (make_entry propb), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Serif-Italic.ttf"
     description: "Gargoyle Serif italic (Charis SIL)"
     required: true
+    bundled: true
+    size: 1505932
+    sha1: "2544395d0eda03d605678790ed1f6cbadf5578e5"
+    md5: "80c584701955add719913197713b884f"
     source_ref: "garglk/draw.cpp:663 (make_entry propi), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   - name: "Gargoyle-Serif-Bold-Italic.ttf"
     description: "Gargoyle Serif bold italic (Charis SIL)"
     required: true
+    bundled: true
+    size: 1500764
+    sha1: "e561b7565fc1aeb945ffb7da355d321b43318510"
+    md5: "84d0a6059796703ba8b95e7092670abc"
     source_ref: "garglk/draw.cpp:664 (make_entry propz), garglk/draw.cpp:421-471 (make_font, winabort)"
 
   # -- Glyph substitution fonts, data directory root --
@@ -162,6 +194,10 @@ files:
   - name: "unifont.otf"
     description: "GNU Unifont, Basic Multilingual Plane glyph fallback"
     required: false
+    bundled: true
+    size: 5321400
+    sha1: "a550da89f2b7b4a6844842a50094569d67c6e8b0"
+    md5: "9edf66ff1c62ec9e8f20126e5660d516"
     source_ref: "garglk/draw.cpp:473-496 (make_substitution_fonts), garglk/draw.cpp:642-644"
     note: >
       Covers glyphs missing from the text fonts. Loaded directly rather than
@@ -170,6 +206,10 @@ files:
   - name: "unifont_upper.otf"
     description: "GNU Unifont, planes above the BMP"
     required: false
+    bundled: true
+    size: 5971416
+    sha1: "5dbe31ade8ebda982ba41dbd4311407ba88ff16a"
+    md5: "863db23db082ef13d809f142d35411c9"
     source_ref: "garglk/draw.cpp:473-496 (make_substitution_fonts), garglk/draw.cpp:642-644"
 
   # -- Color themes, themes subdirectory --
@@ -178,48 +218,80 @@ files:
     path: "themes/Blue.json"
     description: "Blue color theme"
     required: false
+    bundled: true
+    size: 358
+    sha1: "6b47d1e68e79c258d8b733d0525beee7e567a776"
+    md5: "4a2fc2266fb1c4139617e88722b5c6f9"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:564"
 
   - name: "Breeze Darker.json"
     path: "themes/Breeze Darker.json"
     description: "Breeze Darker color theme"
     required: false
+    bundled: true
+    size: 367
+    sha1: "6c389838c66c13397cc3c7096b31fca994bbb34c"
+    md5: "597f5b89772b9660d732a5122d159d6b"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:565"
 
   - name: "Lectrote Dark.json"
     path: "themes/Lectrote Dark.json"
     description: "Lectrote Dark color theme"
     required: false
+    bundled: true
+    size: 474
+    sha1: "225049ddfa6ce2c4b7198ca6c889c81d65b7946f"
+    md5: "83b81c33ec97dbc100c850de7b04a694"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:566"
 
   - name: "Lectrote Sepia.json"
     path: "themes/Lectrote Sepia.json"
     description: "Lectrote Sepia color theme"
     required: false
+    bundled: true
+    size: 474
+    sha1: "813f91ff7f0a0b95fcd37e541414cdc29bbc2968"
+    md5: "d766895891ccec110e15a044af6194c7"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:567"
 
   - name: "Lectrote Slate.json"
     path: "themes/Lectrote Slate.json"
     description: "Lectrote Slate color theme"
     required: false
+    bundled: true
+    size: 474
+    sha1: "8032208eab8f10874f448c39bdc5a85b83d539b3"
+    md5: "3a06a19b8441d931ddef2359116e405a"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:568"
 
   - name: "Pencil.json"
     path: "themes/Pencil.json"
     description: "Pencil color theme"
     required: false
+    bundled: true
+    size: 360
+    sha1: "976b37a0451fb3cbed9a85ccf3c242ae768a4bc5"
+    md5: "6e1743b8b40eaf3a85015013dcea7701"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:569"
 
   - name: "Zoom.json"
     path: "themes/Zoom.json"
     description: "Zoom color theme"
     required: false
+    bundled: true
+    size: 358
+    sha1: "d312b25c5f3a92178a185de122aeb222a32d4096"
+    md5: "641c88ce7f5e1a9a7ac4c18b90a9f38d"
     source_ref: "garglk/theme.cpp:304-316, garglk/CMakeLists.txt:570"
 
   - name: "dark.json"
     path: "themes/dark.json"
     description: "Dark color theme"
     required: false
+    bundled: true
+    size: 358
+    sha1: "3757750cd3052b8d23f379aba22d7ee3d9353bc9"
+    md5: "2614becc041fc813cf87397aa47e8210"
     source_ref: "garglk/theme.cpp:268-282, garglk/theme.cpp:304-316, garglk/CMakeLists.txt:81-86, garglk/CMakeLists.txt:571"
     note: "Also compiled in as the built-in dark theme."
 
@@ -227,5 +299,9 @@ files:
     path: "themes/light.json"
     description: "Light color theme"
     required: false
+    bundled: true
+    size: 412
+    sha1: "049412d56a41865539faadcd86408d5107a1dbef"
+    md5: "37c78cb6e0105b946627038dcbfc8c64"
     source_ref: "garglk/theme.cpp:268-282, garglk/theme.cpp:304-316, garglk/CMakeLists.txt:88-93, garglk/CMakeLists.txt:572"
     note: "Also compiled in as the built-in light theme."

@@ -48,6 +48,7 @@ notes: |
 files:
   # Data files (system_dir/mame2003/)
   - name: hiscore.dat
+    installed_on: [recalbox, retrobat, retrodeck, retropie]
     path: "mame2003/hiscore.dat"
     required: false
     category: game_data
@@ -62,6 +63,7 @@ files:
       "gamename:" header.
 
   - name: cheat.dat
+    installed_on: [recalbox, retrobat, retrodeck, retropie]
     path: "mame2003/cheat.dat"
     required: false
     category: game_data

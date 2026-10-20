@@ -158,13 +158,15 @@ files:
   - name: cheats_ws.zip
     path: resources/cheats_ws.zip
     required: false
+    installed_on: [rocknix]
     description: "Widescreen patch archive"
-    note: "Per-game pnach entries matched on the disc CRC, loaded when widescreen patches are enabled. The cheats_ws folder takes precedence and the archive is skipped when it holds a match. Shipped by the Linux and Android builds, while the macOS build looks for it without carrying one."
+    note: "Per-game pnach entries matched on the disc CRC, loaded when widescreen patches are enabled. The cheats_ws folder takes precedence and the archive is skipped when it holds a match. Shipped by the Linux and Android builds, while the macOS build looks for it without carrying one. ROCKNIX installs the Linux build's resources folder beside the binary."
     source_ref: "aethersx2/pcsx2/Patch.cpp:202-231, AetherSX2-release MacOS/AetherSX2"
 
   - name: cheats_ni.zip
     path: resources/cheats_ni.zip
     required: false
+    installed_on: [rocknix]
     description: "No-interlacing patch archive"
     note: "Same form as cheats_ws.zip, loaded when no-interlacing patches are enabled, with the cheats_ni folder taking precedence. Shipped by the Linux and Android builds, while the macOS build looks for it without carrying one."
     source_ref: "aethersx2/pcsx2/Patch.cpp:202-231, AetherSX2-release MacOS/AetherSX2"

@@ -26,6 +26,7 @@ notes: |
 
 files:
   - name: hiscore.dat
+    installed_on: [retrobat]
     path: "mame2003/hiscore.dat"
     required: false
     category: game_data
@@ -33,6 +34,7 @@ files:
     note: "high score definitions, loaded from system_dir/mame2003/"
 
   - name: cheat.dat
+    installed_on: [retrobat]
     path: "mame2003/cheat.dat"
     required: false
     category: game_data

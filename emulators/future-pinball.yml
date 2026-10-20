@@ -329,6 +329,7 @@ files:
       link mechanism and of LoadExternalScript.
 
   - name: Script56.chm
+    installed_on: [retrobat]
     system: fpinball
     path: "Help/Script56.chm"
     required: false

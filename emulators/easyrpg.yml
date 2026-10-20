@@ -106,6 +106,7 @@ files:
     category: game_data
     path: "rtp/2000/"
     required: false
+    installed_on: [rocknix]
     type: directory
     source_ref: "src/filefinder_rtp.cpp:73-74"
     note: >
@@ -114,7 +115,10 @@ files:
       needed by games that reference RTP assets instead of bundling them.
       Multiple RTP variants exist (Japanese official, English official,
       Don Miguel English translation). EasyRPG auto-detects which variant
-      a game expects.
+      a game expects. ROCKNIX launches the core through a script that, when
+      bios/rtp is empty, downloads the English official installers from
+      Degica, checks their SHA-256 and extracts them into rtp/2000 and
+      rtp/2003.
 
   # ================================================================
   # RPG Maker 2003 RTP (optional, game-dependent)
@@ -125,6 +129,7 @@ files:
     category: game_data
     path: "rtp/2003/"
     required: false
+    installed_on: [rocknix]
     type: directory
     source_ref: "src/filefinder_rtp.cpp:73-74"
     note: >

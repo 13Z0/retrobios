@@ -47,6 +47,7 @@ files:
     category: game_data
     system: duke3d
     required: false
+    installed_on: [retropie]
     source_ref: "source/duke3d/src/common.cpp:36 (defaultgamegrp GAME_DUKE), source/duke3d/src/grpscan.cpp:41-50 (CRC-indexed variants)"
     note: >
       Any retail variant plays: Atomic Edition / Plus / World Tour
@@ -58,6 +59,8 @@ files:
       censored (DUKEKR_CRC 0xAA4F6A40, grpscan.h:34). CRC32 identifies
       the variant and selects the matching entry in internalgrpfiles[],
       and no MD5 or SHA1 is read.
+      The RetroPie package extracts the shareware v1.3D GRP into
+      roms/ports/duke3d when no duke3d.grp is there.
 
   - name: "EDUKE.CON"
     category: game_data
@@ -70,8 +73,9 @@ files:
     category: game_data
     system: duke3d
     required: false
+    installed_on: [retropie]
     source_ref: "source/duke3d/src/grpscan.cpp:39-76 (rtsname field)"
-    note: "Remote Ridicule speech. Not loaded if absent."
+    note: "Remote Ridicule speech. Not loaded if absent. The RetroPie package extracts the shareware copy beside the shareware GRP."
 
   # ---- Duke 3D addons ----
 

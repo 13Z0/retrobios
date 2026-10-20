@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T04:10:52Z",
-  "total_files": 22631,
-  "total_size": 17927238166,
+  "generated_at": "2026-10-20T05:16:59Z",
+  "total_files": 22630,
+  "total_size": 17927230437,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -221114,16 +221114,6 @@
       "crc32": "698ebb7d",
       "adler32": "862fa908"
     },
-    "df89ef91bbaf84f2a109377fd4b17b0050a163e8": {
-      "path": "bios/SNK/Neo Geo/neogeo.zip",
-      "name": "neogeo.zip",
-      "size": 7729,
-      "sha1": "df89ef91bbaf84f2a109377fd4b17b0050a163e8",
-      "md5": "266c7454616da286c1a7de54181834c2",
-      "sha256": "ab842ad87b0504123b400bfdf7c398d57088d2600df918ff5108a9dc8d97dd7b",
-      "crc32": "bd34bfad",
-      "adler32": "16358dce"
-    },
     "11f95ee6c73b1bcc11d03d5b3127ba5948920c76": {
       "path": "bios/SNK/Neo Geo/neopen.sp1",
       "name": "neopen.sp1",
@@ -253334,7 +253324,6 @@
       "b11751ad42879c461d64ad2b7b2b0129": "1b3b22092f30c4d1b2c15f04d1670eb1e9fbea07",
       "1ec68104095d4b7236e8c18c77ea501b": "4e4a440cae46f3889d20234aebd7f8d5f522e22c",
       "3089166a89d9735d038e8e7da36e5bc2": "081c49aa8cc7dad5939833dc1b18338321ea0a07",
-      "266c7454616da286c1a7de54181834c2": "df89ef91bbaf84f2a109377fd4b17b0050a163e8",
       "fb5070239588630de48838e0d92ce526": "11f95ee6c73b1bcc11d03d5b3127ba5948920c76",
       "aa2b5d0eae4158ffc0d7d63481c7830b": "fd4a618cdcdbf849374f0a50dd8efe9dbab706c3",
       "8c26241f9f5beb3a55c8d6ab638d250e": "42f9d7ddd6c0931fd64226a60dc73602b2819dcf",
@@ -254881,8 +254870,7 @@
         "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
         "0c3418b4f20bd497f419acff26e182020cd71a11",
         "cdbde4e73d49ed3a682b99f66c231eb3dfd90dc7",
-        "fc398ab4e13ca6bfef3366ed3391b1050e0eb5e8",
-        "df89ef91bbaf84f2a109377fd4b17b0050a163e8"
+        "fc398ab4e13ca6bfef3366ed3391b1050e0eb5e8"
       ],
       "nmk004.zip": [
         "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
@@ -318873,6 +318861,9 @@
       "SUPERCHARGER_BIOS_PAL.bin": [
         "41691d8f56bf2adb3c0f127e729563c9fba5d99d"
       ],
+      "gzdoom.sf2": [
+        "4394193fb95c1e59916efe9ac3a47952ab5002f5"
+      ],
       "blasphemer.wad": [
         "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb"
       ],
@@ -318892,6 +318883,9 @@
         "37027d92e1015b82a7dc5c43e9f1649a961577ab"
       ],
       "lzdoom.sf2": [
+        "9dba9212f2e34446ab034595665809f09f303d63"
+      ],
+      "raze.sf2": [
         "9dba9212f2e34446ab034595665809f09f303d63"
       ],
       "Apple2_Plus.rom": [
@@ -341419,7 +341413,6 @@
       "d27a71f1": "1b3b22092f30c4d1b2c15f04d1670eb1e9fbea07",
       "16d0c132": "4e4a440cae46f3889d20234aebd7f8d5f522e22c",
       "698ebb7d": "081c49aa8cc7dad5939833dc1b18338321ea0a07",
-      "bd34bfad": "df89ef91bbaf84f2a109377fd4b17b0050a163e8",
       "cb915e76": "11f95ee6c73b1bcc11d03d5b3127ba5948920c76",
       "c2ea0cfd": "fd4a618cdcdbf849374f0a50dd8efe9dbab706c3",
       "94416d67": "42f9d7ddd6c0931fd64226a60dc73602b2819dcf",
@@ -364051,7 +364044,6 @@
       "70f7906d68acbc3630b6e7792ebb485288b05ca72c6d4c243e07e230aae8d1e4": "1b3b22092f30c4d1b2c15f04d1670eb1e9fbea07",
       "b6e770df3f83ec559e2727357224eb8d31666402fc673f5b77586a465fdfbde3": "4e4a440cae46f3889d20234aebd7f8d5f522e22c",
       "8a73093fa53e68043120f65c4224c9bc49a6b1a383fd04c3780662886b752dc6": "081c49aa8cc7dad5939833dc1b18338321ea0a07",
-      "ab842ad87b0504123b400bfdf7c398d57088d2600df918ff5108a9dc8d97dd7b": "df89ef91bbaf84f2a109377fd4b17b0050a163e8",
       "9c16c0c161503152d68209dd27c7c3cffac035a482c55752793cb070a4018c54": "11f95ee6c73b1bcc11d03d5b3127ba5948920c76",
       "fcf51e688c006408be92c5adaf37d4302d05e7e681193dd0623072e53915c90e": "fd4a618cdcdbf849374f0a50dd8efe9dbab706c3",
       "fdc811988098d008d1aa6aed6fdc4e5c9ba034c5505ceb6808eef3af66fc95ab": "42f9d7ddd6c0931fd64226a60dc73602b2819dcf",
@@ -659445,12 +659437,6 @@
       ],
       "Neo Geo/neodebug.bin": [
         "081c49aa8cc7dad5939833dc1b18338321ea0a07"
-      ],
-      "SNK/Neo Geo/neogeo.zip": [
-        "df89ef91bbaf84f2a109377fd4b17b0050a163e8"
-      ],
-      "Neo Geo/neogeo.zip": [
-        "df89ef91bbaf84f2a109377fd4b17b0050a163e8"
       ],
       "SNK/Neo Geo/neopen.sp1": [
         "11f95ee6c73b1bcc11d03d5b3127ba5948920c76"

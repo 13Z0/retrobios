@@ -54,6 +54,7 @@ notes: |
 
 files:
   - name: "dmg_boot.bin"
+    installed_on: [recalbox]
     system: nintendo-gb
     description: "Game Boy (DMG) boot ROM"
     required: false
@@ -62,6 +63,7 @@ files:
     source_ref: "libretro/libretro.c:519, libretro/libretro.c:530, libretro/libretro.c:556 (boot_rom_load), Core/gb.c:1594 (request_boot_rom)"
 
   - name: "sgb_boot.bin"
+    installed_on: [recalbox]
     system: nintendo-sgb
     description: "Super Game Boy (SGB) boot ROM"
     required: false
@@ -71,6 +73,7 @@ files:
     note: "Used for SGB_NTSC, SGB_PAL models. Also loaded when borrowing SGB border (Core/gb.c:264)."
 
   - name: "sgb2_boot.bin"
+    installed_on: [recalbox]
     system: nintendo-sgb
     description: "Super Game Boy 2 (SGB2) boot ROM"
     required: false
@@ -79,6 +82,7 @@ files:
     source_ref: "libretro/libretro.c:522, libretro/libretro.c:533, libretro/libretro.c:556, Core/gb.c:1607"
 
   - name: "cgb_boot.bin"
+    installed_on: [recalbox]
     system: nintendo-gbc
     description: "Game Boy Color (CGB) boot ROM"
     required: false
@@ -88,6 +92,7 @@ files:
     note: "Used for CGB revisions A through E in the libretro port."
 
   - name: "agb_boot.bin"
+    installed_on: [recalbox]
     system: nintendo-gbc
     description: "Game Boy Advance in GBC mode (AGB) boot ROM"
     required: false

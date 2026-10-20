@@ -64,6 +64,7 @@ files:
     system: doom
     description: "PrBoom+ engine data WAD"
     required: true
+    bundled: true
     size: 357768
     md5: "1164ae723c9181698cc41dde6a341132"
     sha1: "8a799c6615702aac72016b784e30ea1abd3e197b"

@@ -163,7 +163,10 @@ files:
     path: "main/mp_bin0.pk3"
     required: false
     source_ref: "MP/code/qcommon/files.c:210, 1596-1613"
-    note: "VM/binary pak, 1.51c variant."
+    sha1: "e03e68b2929e543a3fac91addb6a57d63825a38b"
+    bundled: true
+    not_bundled_on: [batocera]
+    note: "VM/binary pak, 1.51c variant. Shipped in main/ of every iortcw 1.51c release zip. The Batocera package installs the binaries and libraries only."
 
   # ================================================================
   # demomain/ - demo paks, one per build

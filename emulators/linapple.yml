@@ -99,6 +99,7 @@ notes: |
 files:
   - name: Master.dsk
     required: false
+    bundled: true
     description: "Boot floppy inserted into slot 6 drive 1 at startup"
     min_size: 143105
     max_size: 143364
@@ -114,9 +115,13 @@ files:
       check is performed at run time. The hashes are those of res/Master.dsk,
       which a build test pins. LinApple and Batocera ship different images
       under this name, both 143360 bytes.
+      Shipped in share/linapple/ of the v3.0-beta-3 archives and .deb,
+      and installed by the RetroPie linapple scriptmodule.
 
   - name: icon.bmp
     required: false
+    bundled: true
+    not_bundled_on: [retropie]
     description: "Window icon read from disk by the SDL frontends"
     size: 2102
     md5: be7a389c5aa678f5e6ce4748593b0a29
@@ -127,6 +132,8 @@ files:
       prints a warning to stderr when no search path holds it and returns
       nullptr. The sdl1, sdl2 and sdl3 frontends each load it when the window
       is created. Absence costs the window its icon and nothing else.
+      Shipped in share/linapple/ of the v3.0-beta-3 archives. The RetroPie
+      scriptmodule installs Master.dsk and not this file.
 
   - name: APPLE2E.SYM
     required: false

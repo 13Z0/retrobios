@@ -620,8 +620,13 @@ files:
   - name: "57.mp3"
     path: "games/tr2/music/57.mp3"
     required: false
+    bundled: true
+    size: 386864
+    sha1: "0873bc661731f6daa8c8a76af4259228b1cbf8ef"
+    md5: "423c7e39256ef8fd82193fefacdb14aa"
     category: game_data
     source_ref: "src/trx/game/music/backend_files.c:48"
+    note: "The one music track the TRX 1.11.1 Windows and Linux zips ship."
 
   - name: "58.mp3"
     path: "games/tr2/music/58.mp3"
@@ -653,12 +658,18 @@ files:
   # Its FMVs and music fall back to games/tr2.
   # tools/download_assets and the installer fetch tr2-gm.zip from the
   # project's host. It holds games/tr2-gm/main.sfx and games/tr2-gm/levels/*.tr2.
+  # The TRX 1.11.1 Windows and Linux zips ship those seven files, so they
+  # arrive with the install.
   # Installing from a retail directory maps data/main_gm.sfx to
   # games/tr2-gm/main_gm.sfx and data/*.tr2 to games/tr2-gm/levels/.
   - name: "main.sfx"
     path: "games/tr2-gm/main.sfx"
     aliases: ["main_gm.sfx"]
     required: false
+    bundled: true
+    size: 7609670
+    sha1: "9de9423b6f12875b8d02dd783d5c1547f15e36fc"
+    md5: "b9045310d16b80638970978a9ce8489e"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:34, src/trx/game/game_flow/reader.c:198-219, src/trx/game/paths.c:203-212, tools/download_assets:71, tools/installer/TRX_Installer/InstallMappings.cs:35-40"
     note: "Sample bank of the expansion. main_gm.sfx is tried first, each name in the expansion directory then in games/tr2."
@@ -667,6 +678,10 @@ files:
     path: "games/tr2-gm/levels/title.tr2"
     aliases: ["title_gm.tr2"]
     required: false
+    bundled: true
+    size: 611892
+    sha1: "b7dadcbaf38cefdc89a692e85b290caf6409b163"
+    md5: "c5a329491190227bc09ec19317b45f56"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:16, src/trx/game/game_flow/reader.c:198-219, 903-909, src/trx/game/paths.c:123-132, tools/download_assets:71, tools/installer/TRX_Installer/InstallMappings.cs:35-40"
     note: "Title level of the expansion. title_gm.tr2 is tried first, each name in the expansion levels directory then in games/tr2/levels."
@@ -674,6 +689,10 @@ files:
   - name: "level1.tr2"
     path: "games/tr2-gm/levels/level1.tr2"
     required: false
+    bundled: true
+    size: 4134916
+    sha1: "8d8109c1afbb2b443c1c1f57add4676f17b5dc84"
+    md5: "04ad2f33e48081a6b27a7f0ebf90968d"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:56"
     note: "The Cold War"
@@ -681,6 +700,10 @@ files:
   - name: "level2.tr2"
     path: "games/tr2-gm/levels/level2.tr2"
     required: false
+    bundled: true
+    size: 4128016
+    sha1: "6c9417d3b03cc2fd9fac62cea0910d9ef107ee1b"
+    md5: "d9b53b88dd70eec1e4b31182f3286bf5"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:88"
     note: "Fool's Gold"
@@ -688,6 +711,10 @@ files:
   - name: "level3.tr2"
     path: "games/tr2-gm/levels/level3.tr2"
     required: false
+    bundled: true
+    size: 4357268
+    sha1: "e92f045520d6e0aaec2c42dd2c28d34a0677df70"
+    md5: "ca4294e3bd8835ebf06e114b479a22c2"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:113"
     note: "Furnace of the Gods"
@@ -695,6 +722,10 @@ files:
   - name: "level4.tr2"
     path: "games/tr2-gm/levels/level4.tr2"
     required: false
+    bundled: true
+    size: 4165986
+    sha1: "83ffcd559e656186bc807e1040485f72956dbc00"
+    md5: "63ff8be5c7abf37d7065456afeda029f"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:138"
     note: "Kingdom"
@@ -702,6 +733,10 @@ files:
   - name: "level5.tr2"
     path: "games/tr2-gm/levels/level5.tr2"
     required: false
+    bundled: true
+    size: 4098568
+    sha1: "4508d23e8475ef6afd7a1756763dd606f23c15a9"
+    md5: "88c8124b6d152b9f3fe1c4eeec4428a5"
     category: game_data
     source_ref: "data/trx/ship/games/tr2-gm/gameflow.json5:175"
     note: "Nightmare in Vegas"

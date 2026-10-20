@@ -93,6 +93,7 @@ files:
   # Support files ($home or $data)
   - name: hiscore.dat
     required: false
+    bundled: true
     category: game_data
     sha1: "23e0dec66680aa4545eafe436c23d2bf5622e32e"
     md5: "2490bad5079ec0991c23c579092cca19"
@@ -107,23 +108,33 @@ files:
 
   - name: cheat.dat
     required: false
+    bundled: true
     category: game_data
+    sha1: "4978ecafc4634cf20b639d8801c044dc156ab162"
+    md5: "69c6bbe7194e4bc62d53764dd6c6d890"
+    size: 13923773
     source_ref: "src/cheat.c:8682,8751"
     note: >-
       Cheat definitions, selected by misc_cheatfile
       (advance/osd/glue.c:799,3291) and read only when misc_cheat is on, which
       it is not by default. Absent, the cheat menu reads "cheat database not
-      found" (src/cheat.c:2536).
+      found" (src/cheat.c:2536). Installed beside hiscore.dat by
+      MAME_INSTALL_DATAFILES, and shipped in the 5.0 Windows zip and .deb.
 
   - name: event.dat
     required: false
+    bundled: true
     category: game_data
+    sha1: "8c34c85f92bc6771d789e880953a1cc43341485e"
+    md5: "ee99bb541116967f8785a5bc09932475"
+    size: 22066
     source_ref: "advance/osd/safequit.c:165-180,260"
     note: >-
       Event and safequit definitions, selected by misc_eventfile and read
       straight from $home then $data rather than through the file type table.
       Absent, the exit menu always prompts instead of checking coin and play
-      state.
+      state. The hash is support/event.dat as make install copies it. The
+      Windows zip carries the same file with CRLF line endings.
 
   # SNK Neo Geo MVS
   - name: neogeo.zip

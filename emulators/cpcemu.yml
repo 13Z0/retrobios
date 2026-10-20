@@ -84,11 +84,14 @@ notes: |
   M4 SD card folder hold user content.
 
 files:
+  # The 3.0.2 Windows, macOS and Android packages ship every ROM below in ROM/
+  # (assets/DATA/ROM/ in the APK). The 2.5 Linux archive ships all but XDDOS210.ROM.
   # -- Firmware, lower ROM in block 0 and foreground ROM in block 1 --
   - name: CPC6128.ROM
     path: "ROM/CPC6128.ROM"
     system: amstrad-cpc
     required: true
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: b96280dc6c95a48857b4b8eb931533ae
@@ -102,6 +105,7 @@ files:
     path: "ROM/CPC464.ROM"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: a993f85b88ac4350cf4d41554e87fe4f
@@ -115,6 +119,7 @@ files:
     path: "ROM/CPC664.ROM"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: 5a384a2310f472c7857888371c00ed66
@@ -129,6 +134,7 @@ files:
     path: "ROM/CPCADOS.ROM"
     system: amstrad-cpc
     required: true
+    bundled: true
     size: 16384
     md5: aa2fb251814bd971b2b9874ab0971b3f
     sha1: 0e247123b9d3204784eeadb4629b9d35b9dfd984
@@ -145,6 +151,7 @@ files:
     path: "ROM/M4.ROM"
     system: amstrad-cpc
     required: true
+    bundled: true
     size: 16384
     validation: [signature]
     md5: 28a7e368badca8299ba24a15bb4ebe9b
@@ -159,6 +166,7 @@ files:
     path: "ROM/HACK.ROM"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 7994
     md5: ffcbcbce32223a152753d30766ad6215
     sha1: 582dd1706391f6f0161ad3486ae75a04fb0f7d5b
@@ -173,6 +181,7 @@ files:
     path: "ROM/National/CPC6128.ROM.UK"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: b96280dc6c95a48857b4b8eb931533ae
@@ -186,6 +195,7 @@ files:
     path: "ROM/National/CPC6128.ROM.FR"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: 5ee871d5600eb9b5a22989c295f902a5
@@ -197,6 +207,7 @@ files:
     path: "ROM/National/CPC6128.ROM.ES"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: 0246740371010333385665dfeb7cd0ec
@@ -208,6 +219,7 @@ files:
     path: "ROM/National/CPC6128.ROM.DK"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: ca1635fd992e2aa7a776b30da13467e5
@@ -219,6 +231,7 @@ files:
     path: "ROM/National/CPC6128.ROM.SE"
     system: amstrad-cpc
     required: false
+    bundled: true
     min_size: 32768
     validation: [size, signature]
     md5: 8ca256a832e83c875f5432b3dee8a36f
@@ -234,6 +247,7 @@ files:
     path: "ROM/XDDOS210.ROM"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 16384
     md5: 1d91a9ef315b302d335cd7e04e8d8d86
     sha1: 2f1bd4d6e2d2e62818b01e6e7a26488362a7a8ee
@@ -247,6 +261,7 @@ files:
     path: "ROM/COPYMATE.ROM"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 16512
     md5: e9c4288eab8885a1e6ae7504a4736115
     sha1: 15d52de01320d9b954e03b4c2e71ec75fd301bbb
@@ -260,6 +275,7 @@ files:
     path: "ROM/multface.rom"
     system: amstrad-cpc
     required: false
+    bundled: true
     size: 8192
     md5: 4c9f014e91d407cc6509fad0095ab909
     sha1: 1431ec628d38f000715545dd2186b684c5fe5a6f

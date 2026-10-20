@@ -27,6 +27,7 @@ pack_structure:
 
 data_directories:
   - ref: dolphin-sys
+    installed_on: [batocera, lakka, retrobat, retrodeck]
     mode: libretro
     destination: "Sys"
     source_ref: "Source/Core/Common/CommonPaths.h:128-141"
@@ -197,9 +198,23 @@ files:
   # -- Gecko Code Handler --
   - name: "codehandler.bin"
     path: null
+    mode: standalone
     required: false
+    bundled: true
+    size: 2880
+    sha1: "e6c0050b3c67ee26198488fbbe4a5d019c15b628"
+    md5: "1f118b8735fcf40c20b38c3184eebfd9"
     hle_fallback: true
-    note: "Gecko/Ocarina cheat code handler. Shipped with Dolphin in Sys/, not user-supplied"
+    note: "Gecko/Ocarina cheat code handler. Shipped in Sys/ of the standalone release (dolphin-2512-x64.7z)"
+    source_ref: "Source/Core/Common/CommonPaths.h:155, Source/Core/Core/GeckoCode.cpp:120"
+
+  - name: "codehandler.bin"
+    path: null
+    mode: libretro
+    required: false
+    installed_on: [batocera, lakka, retrobat, retrodeck]
+    hle_fallback: true
+    note: "Gecko/Ocarina cheat code handler, read from the Sys data directory the core zip does not contain. The Batocera and Lakka packages copy Data/Sys beside the core, and RetroBat installs it as bios/dolphin-emu/Sys"
     source_ref: "Source/Core/Common/CommonPaths.h:155, Source/Core/Core/GeckoCode.cpp:120"
 
   # -- Wii System Menu (WAD) --

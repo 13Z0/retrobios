@@ -531,12 +531,25 @@ files:
 
   - name: "MesenNesDB.txt"
     path: "MesenNesDB.txt"
+    mode: libretro
     category: game_data
     system: nintendo-nes
     required: false
     size: 548608
     sha256: "7eee6516f351ccc7db286587917bec415a1d8042ff5ef87c279f38200a3418dd"
-    note: "NES game database for mapper and input detection, read from the home folder root on the first lookup. Standalone deploys it from the application's embedded Dependencies.zip, while the libretro build starts from a 6213-line embedded copy and merges this file over it when present."
+    note: "NES game database for mapper and input detection, read from the home folder root on the first lookup. The libretro build starts from a 6213-line embedded copy and merges this file over it when present. Nothing deploys it."
+    source_ref: "Core/NES/GameDatabase.cpp:92-103, UI/Utilities/DependencyHelper.cs:14-67, Libretro/libretro.cpp:85-86,592-594"
+
+  - name: "MesenNesDB.txt"
+    standalone_path: "MesenNesDB.txt"
+    mode: standalone
+    category: game_data
+    system: nintendo-nes
+    required: false
+    bundled: true
+    size: 548608
+    sha256: "7eee6516f351ccc7db286587917bec415a1d8042ff5ef87c279f38200a3418dd"
+    note: "NES game database for mapper and input detection. The application extracts it from its embedded Dependencies.zip (UI/Dependencies) into the home folder at startup."
     source_ref: "Core/NES/GameDatabase.cpp:92-103, UI/Utilities/DependencyHelper.cs:14-67, Libretro/libretro.cpp:85-86,592-594"
 
   - name: "MesenPalette.pal"
@@ -650,52 +663,117 @@ files:
   # -------------------------------------------------------
   - name: "BSX0120-0.bin"
     path: "Satellaview/BSX0120-0.bin"
+    mode: libretro
     category: game_data
     system: nintendo-satellaview
     required: false
     size: 34
     sha256: "ba0c17b5786724959bc206714fc18f708c16fdcd77f8fb19aaf9768338e3ce01"
-    note: "Satellaview data stream for channel 0120 (time channel), read from <home>/Satellaview/. Standalone deploys it from the application's embedded Dependencies.zip and preserves user replacements, while the libretro build reads it from system/Satellaview/ and deploys nothing."
+    note: "Satellaview data stream for channel 0120 (time channel), read from system/Satellaview/. Nothing deploys it for libretro."
+    source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
+
+  - name: "BSX0120-0.bin"
+    standalone_path: "Satellaview/BSX0120-0.bin"
+    mode: standalone
+    category: game_data
+    system: nintendo-satellaview
+    required: false
+    bundled: true
+    size: 34
+    sha256: "ba0c17b5786724959bc206714fc18f708c16fdcd77f8fb19aaf9768338e3ce01"
+    note: "Satellaview data stream for channel 0120 (time channel). The application extracts it from its embedded Dependencies.zip into <home>/Satellaview/ at startup and preserves user replacements."
     source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
 
   - name: "BSX0121-0.bin"
     path: "Satellaview/BSX0121-0.bin"
+    mode: libretro
     category: game_data
     system: nintendo-satellaview
     required: false
     size: 34
     sha256: "fbe51a53638dd366b50ea53adf92f54447667d7767c502e508d89b008e31c53f"
-    note: "Satellaview data stream for channel 0121. Deployed by the standalone UI, and user replacements are preserved."
+    note: "Satellaview data stream for channel 0121, read from system/Satellaview/. Nothing deploys it for libretro."
+    source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
+
+  - name: "BSX0121-0.bin"
+    standalone_path: "Satellaview/BSX0121-0.bin"
+    mode: standalone
+    category: game_data
+    system: nintendo-satellaview
+    required: false
+    bundled: true
+    size: 34
+    sha256: "fbe51a53638dd366b50ea53adf92f54447667d7767c502e508d89b008e31c53f"
+    note: "Satellaview data stream for channel 0121. The application extracts it from its embedded Dependencies.zip into <home>/Satellaview/ at startup and preserves user replacements."
     source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
 
   - name: "BSX0122-0.bin"
     path: "Satellaview/BSX0122-0.bin"
+    mode: libretro
     category: game_data
     system: nintendo-satellaview
     required: false
     size: 1031
     sha256: "a0329450e1d42cd18d30070a86e0e481a876cb5c9cfbaab4a0d8895150976ee7"
-    note: "Satellaview data stream for channel 0122. Deployed by the standalone UI, and user replacements are preserved."
+    note: "Satellaview data stream for channel 0122, read from system/Satellaview/. Nothing deploys it for libretro."
+    source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
+
+  - name: "BSX0122-0.bin"
+    standalone_path: "Satellaview/BSX0122-0.bin"
+    mode: standalone
+    category: game_data
+    system: nintendo-satellaview
+    required: false
+    bundled: true
+    size: 1031
+    sha256: "a0329450e1d42cd18d30070a86e0e481a876cb5c9cfbaab4a0d8895150976ee7"
+    note: "Satellaview data stream for channel 0122. The application extracts it from its embedded Dependencies.zip into <home>/Satellaview/ at startup and preserves user replacements."
     source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
 
   - name: "BSX0123-0.bin"
     path: "Satellaview/BSX0123-0.bin"
+    mode: libretro
     category: game_data
     system: nintendo-satellaview
     required: false
     size: 16
     sha256: "dbf5ef12ce586712ee666fc5805e6dfcaa1e253fdd36644f773909514868a590"
-    note: "Satellaview data stream for channel 0123. Deployed by the standalone UI, and user replacements are preserved."
+    note: "Satellaview data stream for channel 0123, read from system/Satellaview/. Nothing deploys it for libretro."
+    source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
+
+  - name: "BSX0123-0.bin"
+    standalone_path: "Satellaview/BSX0123-0.bin"
+    mode: standalone
+    category: game_data
+    system: nintendo-satellaview
+    required: false
+    bundled: true
+    size: 16
+    sha256: "dbf5ef12ce586712ee666fc5805e6dfcaa1e253fdd36644f773909514868a590"
+    note: "Satellaview data stream for channel 0123. The application extracts it from its embedded Dependencies.zip into <home>/Satellaview/ at startup and preserves user replacements."
     source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
 
   - name: "BSX0124-0.bin"
     path: "Satellaview/BSX0124-0.bin"
+    mode: libretro
     category: game_data
     system: nintendo-satellaview
     required: false
     size: 97
     sha256: "4d7d7bf5afe5c4f71b96965e58003816c70c13e8af9b581431504d5e52a0cec1"
-    note: "Satellaview data stream for channel 0124. Deployed by the standalone UI, and user replacements are preserved."
+    note: "Satellaview data stream for channel 0124, read from system/Satellaview/. Nothing deploys it for libretro."
+    source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
+
+  - name: "BSX0124-0.bin"
+    standalone_path: "Satellaview/BSX0124-0.bin"
+    mode: standalone
+    category: game_data
+    system: nintendo-satellaview
+    required: false
+    bundled: true
+    size: 97
+    sha256: "4d7d7bf5afe5c4f71b96965e58003816c70c13e8af9b581431504d5e52a0cec1"
+    note: "Satellaview data stream for channel 0124. The application extracts it from its embedded Dependencies.zip into <home>/Satellaview/ at startup and preserves user replacements."
     source_ref: "Core/SNES/Coprocessors/BSX/BsxStream.cpp:68-74, UI/Utilities/DependencyHelper.cs:44-48"
 
 platform_details:

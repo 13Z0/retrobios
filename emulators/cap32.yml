@@ -54,11 +54,13 @@ notes: |
   and loads it via snapshot_load_mem() in cap32/slots.c:71-90.
 
 files:
-  # Standalone loads from rom_path/, libretro embeds all as C arrays
+  # Standalone loads from rom_path/, libretro embeds all as C arrays.
+  # The standalone Windows and macOS zips ship all six in rom/.
   - name: cpc464.rom
     system: amstrad-cpc
     required: false
     mode: standalone
+    bundled: true
     size: 32768
     md5: a993f85b88ac4350cf4d41554e87fe4f
     sha1: 56d39c463da60968d93e58b4ba0e675829412a20
@@ -68,6 +70,7 @@ files:
     system: amstrad-cpc
     required: false
     mode: standalone
+    bundled: true
     size: 32768
     md5: 5a384a2310f472c7857888371c00ed66
     sha1: 073a7665527b5bd8a148747a3947dbd3328682c8
@@ -77,6 +80,7 @@ files:
     system: amstrad-cpc
     required: true
     mode: standalone
+    bundled: true
     size: 32768
     md5: b96280dc6c95a48857b4b8eb931533ae
     sha1: 5977adbad3f7c1e0e082cd02fe76a700d9860c30
@@ -86,6 +90,7 @@ files:
     system: amstrad-cpc
     required: false
     mode: standalone
+    bundled: true
     size: 16384
     md5: 25629dfe870d097469c217b95fdc1c95
     sha1: 39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb
@@ -95,6 +100,7 @@ files:
     system: amstrad-cpc
     required: false
     mode: standalone
+    bundled: true
     size: 131156
     md5: 39b565e648172980aa552293e667070f
     sha1: 405e341437fab8db477606238af0c20eca2e39ee
@@ -104,6 +110,7 @@ files:
     system: amstrad-cpc
     required: false
     mode: standalone
+    bundled: true
     size: 8192
     md5: 4c9f014e91d407cc6509fad0095ab909
     sha1: 1431ec628d38f000715545dd2186b684c5fe5a6f

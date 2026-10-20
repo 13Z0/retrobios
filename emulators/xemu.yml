@@ -128,6 +128,7 @@ files:
   - name: xbox_hdd.qcow2
     path: xbox_hdd.qcow2
     required: true
+    installed_on: [batocera, emudeck, recalbox, retrodeck, rocknix]
     config_key: sys.files.hdd_path
     description: "Xbox hard disk image, 8 GB with the retail partition layout"
     note: >-
@@ -139,6 +140,12 @@ files:
       file, default xbox_hdd.qcow2, with xbox_hdd_8gb.qcow2, hdd.qcow2 and
       xbox_hdd.img offered as alternatives. The core refuses to load when the
       chosen file is absent.
+      The xemu release does not carry the image. Batocera and Recalbox
+      package the 1.0 xemu-hdd-image and copy it into the saves folder at
+      launch when none is there, RetroDECK copies its packaged copy into the
+      BIOS folder during setup, and EmuDeck downloads it while setting xemu
+      up. ROCKNIX packages the same image and unzips it at launch into
+      bios/xemu/hdd/, the path its xemu.toml gives hdd_path.
     source_ref:
       standalone: "system/vl.c:3060-3074, ui/xemu-snapshots.c:156"
       libretro: "ui/xemu-libretro.c:121-123, ui/xemu-libretro.c:200-202, ui/xemu-libretro.c:210-236"

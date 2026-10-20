@@ -83,7 +83,8 @@ files:
     system: arcade-laserdisc
     category: game_data
     required: false
-    note: "SDL gamepad mappings, read under -gamepad when present. Not shipped with the emulator"
+    installed_on: [retrobat]
+    note: "SDL gamepad mappings, read under -gamepad when present. Shipped in the Windows zip, not in the Linux AppImage tarball."
     source_ref: "src/io/input.cpp:981-996"
 
   - name: ace.zip
@@ -603,7 +604,7 @@ files:
     system: arcade-laserdisc
     category: bios_zip
     required: true
-    note: "Z80 CPU test programs, shipped under roms/cputest/ in the emulator source. Loaded by cputest, mcputest"
+    note: "Z80 CPU test programs, shipped under roms/cputest/ in the emulator source. Loaded by cputest, mcputest. The Linux AppImage tarball carries them loose under roms/cputest/, the Windows zip does not."
     source_ref: "src/game/multicputest.cpp:61"
     contents:
       - name: "branchtest.bin"

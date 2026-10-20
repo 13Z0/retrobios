@@ -326,6 +326,9 @@ files:
   - name: "FREECG98.BMP"
     description: "PC-98 character generator, free generated bitmap"
     required: false
+    bundled: true
+    sha1: "e00b77cabd5960646abc5dbce5568f121d37ae48"
+    md5: "268affbc64edb845b5e4f3c8200629d6"
     hle_fallback: true
     note: >
       same bitmap layout as ANEX86.BMP and tried after it, ships in the resource
@@ -340,20 +343,29 @@ files:
   - name: "wqy_12pt.bdf"
     description: "WenQuanYi 16-pixel bitmap font"
     required: false
+    bundled: true
+    sha1: ["fefcb49cb13ea191d2c87b406c141a957020432c", "2f7b4de77e5d768f979989e2d127b1fded207cf8"]
+    md5: ["77b5b2d0c1c3a4200a9cda047f74f957", "fa0dfab6dd87e09060e5d6a44d43fef3"]
     aliases: ["wqy_12pt.pcf"]
-    note: "ships in the resource directory"
+    note: "Ships in the resource directory, with CRLF line ends in the Windows zips."
     source_ref: "src/ints/int_dosv.cpp:1197-1218, src/Makefile.am:19"
 
   - name: "wqy_11pt.bdf"
     description: "WenQuanYi 14-pixel bitmap font"
     required: false
+    bundled: true
+    sha1: ["723b0c61428321b0aca4c43fcd91406807d4f815", "ac0c9c68c3528ea039d4cd081a3754a500c67317"]
+    md5: ["4e10a27e6b3ceac0b3e2df4fadc48bb4", "0f5f6d27dc657538e1f566fe55d507f5"]
     aliases: ["wqy_11pt.pcf"]
-    note: "ships in the resource directory"
+    note: "Ships in the resource directory, with CRLF line ends in the Windows zips."
     source_ref: "src/ints/int_dosv.cpp:1296-1316, src/Makefile.am:18"
 
   - name: "SarasaGothicFixed.ttf"
     description: "CJK fixed-width TrueType font"
     required: false
+    bundled: true
+    sha1: "2a15dfa682df1ff841e2092348aa6a2460e40810"
+    md5: "5b5dd2bc68764c7204dc4fe69118f2a4"
     hle_fallback: true
     note: >
       tried by the TTF output on PC-98 and on double-byte code pages when

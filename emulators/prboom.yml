@@ -43,6 +43,7 @@ notes: |
 
 files:
   - name: "prboom.wad"
+    installed_on: [lakka, recalbox, retrobat, retrodeck, retropie]
     system: doom
     description: "PrBoom engine data WAD (fonts, palette, colormaps, tables, menu graphics)"
     required: false

@@ -57,16 +57,26 @@ files:
   - name: "raze.pk3"
     category: game_data
     required: true
+    bundled: true
+    size: 8787429
+    sha1: "fe0845841db22735cc23e47eb432c009c771346e"
+    md5: "70732877e125a081246fe29f0e9ec90b"
+    crc32: "4fdff78a"
     source_ref: "source/core/version.h:66, source/core/gamecontrol.cpp:1020-1023"
-    note: "I_FatalError(\"Cannot find raze.pk3\") if absent."
+    note: "I_FatalError(\"Cannot find raze.pk3\") if absent. Built from the tree at each release. The hash is the copy in the 1.11.0b Windows zip."
 
   - name: "raze.sf2"
     aliases: ["Roland_SC-55.sf2"]
     category: game_data
     path: "soundfonts/raze.sf2"
     required: false
+    bundled: true
+    size: 3283278
+    sha1: "9dba9212f2e34446ab034595665809f09f303d63"
+    md5: "dbb97c34404b753724a66fe0108a32e1"
+    crc32: "2f280fcc"
     source_ref: "source/common/audio/music/i_soundfont.cpp:334-352, 427-430, 439-459, source/CMakeLists.txt:1452"
-    note: "Default soundfont, used when the soundfont directories hold none. Every file of those directories is taken by its content, and when no soundfont is named raze the first SF2 found is used."
+    note: "Default soundfont, used when the soundfont directories hold none. Every file of those directories is taken by its content, and when no soundfont is named raze the first SF2 found is used. Shipped in the 1.11.0b Windows zip."
 
   # ================================================================
   # Duke Nukem 3D family

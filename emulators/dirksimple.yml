@@ -35,6 +35,7 @@ notes: |
 
 data_directories:
   - ref: dirksimple
+    installed_on: [recalbox, retrodeck, retropie]
     source_ref: "dirksimple_libretro.c:794"
 
 files: []

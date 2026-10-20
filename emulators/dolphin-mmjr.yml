@@ -123,17 +123,25 @@ files:
   - name: font_western.bin
     path: null
     required: false
+    bundled: true
+    size: 6478
+    sha1: "483a17ff25b68a8f18cae691da99f16beefbe370"
+    md5: "9bef639b7426ef6948602a12b33522a8"
     hle_fallback: true
     description: "Windows-1252 font, loaded at 0x1fcf00"
-    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found."
+    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
     source_ref: "Source/Core/Common/CommonPaths.h:105, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:126, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
 
   - name: font_japanese.bin
     path: null
     required: false
+    bundled: true
+    size: 259626
+    sha1: "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
+    md5: "a1d3c0e5a40f163f4fb00a5e0774c63c"
     hle_fallback: true
     description: "Shift JIS font, loaded at 0x1aff00"
-    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found."
+    note: "Read from GC/ in the Sys directory, with no user directory fallback. Skipped in favour of the IPL dump whenever one is found. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
     source_ref: "Source/Core/Common/CommonPaths.h:106, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:125, Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:199-240"
 
   - name: dsp_rom.bin
@@ -167,8 +175,12 @@ files:
   - name: codehandler.bin
     path: null
     required: false
+    bundled: true
+    size: 2880
+    sha1: "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d"
+    md5: "5b79fad600c6257c928c108cef7034a7"
     description: "Gecko code handler"
-    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off."
+    note: "Read from the root of the Sys directory when cheats are enabled, and written into guest memory between the installer bounds. Too large a file is refused and cheats stay off. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
     source_ref: "Source/Core/Common/CommonPaths.h:124, Source/Core/Core/GeckoCode.cpp:121-136"
 
   - name: keys.bin
@@ -231,15 +243,23 @@ files:
   - name: GFZE01.map
     path: null
     required: false
+    bundled: true
+    size: 1777
+    sha1: "5af13901953eb108c29db978d31e9036fbe4e9bc"
+    md5: "672ef9ca67e0fcbe4b3aa23a05720c25"
     description: "symbol map for game id GFZE01"
-    note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory."
+    note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
     source_ref: "Source/Core/Core/Boot/Boot.cpp:253-290"
 
   - name: GMBE8P.map
     path: null
     required: false
+    bundled: true
+    size: 1563
+    sha1: "c777cfefd12baac6aa9d39a1e3f29c2fc141f74c"
+    md5: "43e5f1631e9bbcf84cc3c4fb90ec8ade"
     description: "symbol map for game id GMBE8P"
-    note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory."
+    note: "Reached by the per-title lookup, which reads Maps/<game id>.map from the user directory then the Sys directory. Ships in Maps/ inside the Sys directory. The APK assets carry it, copied from Data/Sys by Source/Android/jni/CMakeLists.txt:26-28."
     source_ref: "Source/Core/Core/Boot/Boot.cpp:253-290"
 
 valid_bios_crc32:
