@@ -2995,8 +2995,8 @@ class APackNoteBesideItsSlotIsANote(unittest.TestCase):
 
 
 class NoHandlerSwallowsEverything(unittest.TestCase):
-    """CLAUDE.md forbids `except Exception: pass`, but the edit hook missed the
-    two-line form and nothing in CI checked it."""
+    """The project forbids `except Exception: pass`, but the edit hook missed
+    the two-line form and nothing in CI checked it."""
 
     def test_no_catch_all_handler_only_passes(self):
         import ast

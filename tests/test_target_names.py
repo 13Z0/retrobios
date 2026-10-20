@@ -158,7 +158,7 @@ class TheListingCountsWhatTheFilterUses(unittest.TestCase):
 
 
 class ASingleTargetFiltersNothing(unittest.TestCase):
-    """CLAUDE.md's rule, held on the real data: RetroBat, RetroDECK and RomM
+    """The single-target rule, held on the real data: RetroBat, RetroDECK and RomM
     have one target each, and hand-kept lists dropped 98, 300 and 132 cores
     from a pack the user had only asked to name."""
 

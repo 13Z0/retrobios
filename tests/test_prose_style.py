@@ -141,6 +141,26 @@ class NoMarketingVocabulary(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders[:40]))
 
 
+class NoToolingNames(unittest.TestCase):
+    """Nothing committed names the private notes or the agent tooling the
+    maintainer works with. Two test docstrings did, and history keeps them."""
+
+    NAMES = re.compile(
+        r"(?i)\b(claude|anthropic)\b|prompt\.md|\.claude/"
+    )
+
+    def test_no_tracked_file_names_them(self):
+        offenders = []
+        for path in _tracked():
+            if path.name == "test_prose_style.py":
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for number, line in enumerate(text.splitlines(), 1):
+                if self.NAMES.search(line):
+                    offenders.append(f"{path.relative_to(ROOT)}:{number}")
+        self.assertEqual(offenders, [], "\n".join(offenders[:20]))
+
+
 class NoClauseSemicolons(unittest.TestCase):
     def _check(self, files: list[Path], extract) -> None:
         offenders = []
