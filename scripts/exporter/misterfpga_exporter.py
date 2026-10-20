@@ -64,6 +64,10 @@ class Exporter(BaseExporter):
             return False
         return super().states(fe, field_name)
 
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        """An entry is checked against one md5, the first accepted."""
+        return fe.hash(field_name)
+
     def _by_path(self, systems: dict[str, NativeSystem]) -> dict[str, object]:
         indexed: dict[str, object] = {}
         for system in systems.values():

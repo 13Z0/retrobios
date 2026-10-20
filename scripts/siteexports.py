@@ -27,6 +27,60 @@ CHANGE_KINDS = (
 )
 
 
+# Report key, then the kind each line of `changes` carries.
+CHANGE_RECORDS = {
+    "hashes_corrected": "hash_corrected",
+    "hashes_filled": "hash_filled",
+    "sizes_corrected": "size_corrected",
+    "sizes_removed": "size_removed",
+    "hashes_cleared": "hash_cleared",
+}
+
+
+def _value(value: object) -> str:
+    return f"`{value}`"
+
+
+def describe_change(change: dict) -> str:
+    """One change in words, with the value before and after it."""
+    label = f"`{change['system']}/{change['name']}` {change['field']}"
+    kind, old, new = change["kind"], change["old"], change["new"]
+    if kind in ("hash_corrected", "size_corrected"):
+        return f"{label} {_value(old)} becomes {_value(new)}"
+    if kind == "hash_filled":
+        return f"{label} {_value(new)} added"
+    if kind == "requirement_corrected":
+        return f"`{change['system']}/{change['name']}` becomes {'required' if new else 'optional'}"
+    return f"{label} {_value(old)} no longer listed"
+
+
+def change_items(report: dict, key: str) -> list[str]:
+    """The lines a kind of change shows. A report written before values
+    were recorded names the entries only."""
+    kind = CHANGE_RECORDS.get(key)
+    changes = report.get("changes")
+    if kind and changes is not None:
+        return [describe_change(c) for c in changes if c["kind"] == kind]
+    items = report.get(key) or []
+    return [str(i) if key == "withheld" else f"`{i}`" for i in items]
+
+
+def requirement_lines(report: dict) -> list[str]:
+    """Each required flag aligned with the code, and what it is now."""
+    items = [
+        describe_change(c) for c in report.get("changes") or []
+        if c["kind"] == "requirement_corrected"
+    ]
+    if not items:
+        return []
+    return [
+        f'??? note "Required flags aligned with the code ({len(items)})"',
+        "",
+        *[f"    - {item}" for item in items],
+        "",
+    ]
+
+
 def _plural(count: int, noun: str, plural: str = "") -> str:
     return f"{count:,} {noun if count == 1 else plural or noun + 's'}"
 
@@ -241,14 +295,15 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
             (name, url), = originals.items()
             lines.extend([f"Based on [`{name}`]({url}).", ""])
 
+        lines.extend(requirement_lines(report))
         for key, title in CHANGE_KINDS:
-            items = report.get(key) or []
+            items = change_items(report, key)
             if not items:
                 continue
             lines.extend([
                 f'??? note "{title} ({len(items)})"',
                 "",
-                *[f"    - {item}" if key == "withheld" else f"    - `{item}`" for item in items],
+                *[f"    - {item}" for item in items],
                 "",
             ])
     return "\n".join(lines)

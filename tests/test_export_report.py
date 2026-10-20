@@ -8,6 +8,7 @@ file from and no list to check the diff against.
 from __future__ import annotations
 
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -155,6 +156,182 @@ class ThePageAddressesMaintainersAsPeers(unittest.TestCase):
         page = generate_exports_page([report], {}).lower()
         for word in ("their file", "theirs", "corrected", "wrong", "drift", "left out"):
             self.assertNotIn(word, page)
+
+
+UPSTREAM_CACHE = ROOT / ".cache" / "upstream-native"
+_DAT_ROM = re.compile(r"^\trom \( name (\"[^\"]+\"|\S+) (.*) \)$")
+_DAT_FIELDS = {"size": "size", "crc": "crc32", "md5": "md5", "sha1": "sha1"}
+_HASH_KINDS = {
+    "hash_corrected", "hash_filled", "hash_cleared", "size_corrected", "size_removed",
+}
+
+
+def _norm(value: object) -> str | None:
+    """A value as the frontend reads it: a list split on commas, each value
+    stripped, so the layout of a wrapped attribute is not a change."""
+    if value in (None, ""):
+        return None
+    return ",".join(v.strip() for v in str(value).casefold().split(","))
+
+
+def _parse_dat(text: str) -> dict[tuple[str, str], dict[str, str]]:
+    """Each rom line of a System.dat, keyed by its section and rom name."""
+    roms: dict[tuple[str, str], dict[str, str]] = {}
+    section = ""
+    for line in text.splitlines():
+        if line.startswith('\tcomment "'):
+            section = line.split('"')[1]
+            continue
+        match = _DAT_ROM.match(line)
+        if not match:
+            continue
+        tokens = match.group(2).split()
+        fields = {
+            _DAT_FIELDS[tokens[i]]: tokens[i + 1]
+            for i in range(0, len(tokens) - 1, 2) if tokens[i] in _DAT_FIELDS
+        }
+        roms.setdefault((section, match.group(1).strip('"')), fields)
+    return roms
+
+
+def _parse_es_bios(text: str) -> dict[tuple[str, str], dict[str, str]]:
+    """Each bios element of an es_bios.xml, keyed by system and path."""
+    from common import parse_untrusted_xml
+
+    root = parse_untrusted_xml(text)
+    elements: dict[tuple[str, str], dict[str, str]] = {}
+    for system in root.iter("system"):
+        for bios in system.iter("bios"):
+            elements.setdefault((system.get("platform", ""), bios.get("path", "")), {
+                "md5": bios.get("md5", ""),
+                "required": "false" if bios.get("mandatory") == "false" else "true",
+            })
+    return elements
+
+
+class ReportedChangesAreTheDiff(unittest.TestCase):
+    """The report gives each change its value before and after. Read back
+    from the original and the updated file, the two must agree entry by
+    entry, or a maintainer checks the diff against a list that differs."""
+
+    def _run(self, platform: str, filename: str) -> tuple[list[dict], str, str, dict]:
+        from common import load_platform_config, native_layer
+        from exporter import discover_exporters
+        from exporter.baseline import build_native_model
+
+        original_path = UPSTREAM_CACHE / platform / filename
+        if not original_path.is_file():
+            self.skipTest(f"no cached original for {platform}")
+        config = load_platform_config(platform, str(ROOT / "platforms"))
+        truth = export_native.current_truth(platform, config, str(ROOT / "platforms"))
+        scraped = native_layer(config)
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()[platform]()
+        original = original_path.read_text(encoding="utf-8")
+        originals = {
+            p.name: p.read_text(encoding="utf-8")
+            for p in (UPSTREAM_CACHE / platform).iterdir() if p.is_file()
+        }
+        produced = exporter.render(systems, report, originals, scraped)[filename]
+        changes = export_native.landed_changes(exporter, systems).records
+        return changes, original, produced, {"exporter": exporter, "systems": systems}
+
+    @staticmethod
+    def _diff(before: dict, after: dict) -> tuple[set, set]:
+        changed = {
+            (key, name, _norm(before[key].get(name)), _norm(after[key].get(name)))
+            for key in before.keys() & after.keys()
+            for name in before[key].keys() | after[key].keys()
+            if _norm(before[key].get(name)) != _norm(after[key].get(name))
+        }
+        return changed, set(after) - set(before)
+
+    def test_system_dat(self):
+        changes, original, produced, ctx = self._run("retroarch", "System.dat")
+        exporter = ctx["exporter"]
+        rom_name = {
+            (fe.native_system, fe.name, fe.destination): exporter._rom_name(fe)
+            for system in ctx["systems"].values() for fe in system.files
+        }
+        changed, added = self._diff(_parse_dat(original), _parse_dat(produced))
+        reported = {
+            ((c["system"], rom_name[(c["system"], c["name"], c["destination"])]),
+             c["field"], _norm(c["old"]), _norm(c["new"]))
+            for c in changes if c["kind"] in _HASH_KINDS
+        }
+        self.assertTrue(changed, "nothing changed, the comparison proves nothing")
+        self.assertEqual(reported, changed)
+        reported_added = {
+            (c["system"], rom_name[(c["system"], c["name"], c["destination"])])
+            for c in changes if c["kind"] == "added"
+        }
+        self.assertEqual(reported_added, added)
+
+    def test_recalbox(self):
+        changes, original, produced, ctx = self._run("recalbox", "es_bios.xml")
+        exporter = ctx["exporter"]
+        path_of = {
+            (fe.native_system, fe.name, fe.destination): exporter._path(fe)
+            for system in ctx["systems"].values() for fe in system.files
+        }
+        changed, added = self._diff(_parse_es_bios(original), _parse_es_bios(produced))
+        reported = {
+            ((c["system"], path_of[(c["system"], c["name"], c["destination"])]),
+             c["field"], _norm(c["old"]), _norm(c["new"]))
+            for c in changes
+            if c["kind"] in _HASH_KINDS or c["kind"] == "requirement_corrected"
+        }
+        self.assertTrue(changed, "nothing changed, the comparison proves nothing")
+        self.assertEqual(reported, changed)
+        reported_added = {
+            (c["system"], path_of[(c["system"], c["name"], c["destination"])])
+            for c in changes if c["kind"] == "added"
+        }
+        self.assertEqual(reported_added, added)
+
+
+class ThePageShowsEachValueBeforeAndAfter(unittest.TestCase):
+    """A list of names gave a maintainer nothing to check a correction
+    against: each line now says what the value was and what it becomes."""
+
+    def setUp(self):
+        def change(kind: str, field: str | None, old: object, new: object) -> dict:
+            return {"kind": kind, "system": "psx", "name": "scph5501.bin",
+                    "destination": "scph5501.bin", "field": field,
+                    "old": old, "new": new}
+
+        self.report = _report(
+            "recalbox", ["es_bios.xml"],
+            hashes_corrected=["psx/scph5501.bin md5"], requirements_corrected=1,
+            changes=[
+                change("hash_corrected", "md5", "5626" + "0" * 28, "c523" + "1" * 28),
+                change("requirement_corrected", "required", True, False),
+                change("hash_filled", "sha1", None, "f" * 40),
+            ],
+        )
+        self.page = generate_exports_page([self.report], {})
+
+    def test_a_corrected_hash_shows_both_values(self):
+        self.assertIn(
+            f"    - `psx/scph5501.bin` md5 `5626{'0' * 28}` becomes `c523{'1' * 28}`",
+            self.page,
+        )
+
+    def test_a_requirement_names_the_entry_and_its_value(self):
+        self.assertIn('??? note "Required flags aligned with the code (1)"', self.page)
+        self.assertIn("    - `psx/scph5501.bin` becomes optional", self.page)
+
+    def test_a_filled_hash_shows_its_value(self):
+        self.assertIn(f"    - `psx/scph5501.bin` sha1 `{'f' * 40}` added", self.page)
+
+    def test_no_arrow_glyph(self):
+        for glyph in (chr(0x2192), "->", "=>"):
+            self.assertNotIn(glyph, self.page)
+
+    def test_the_report_carries_every_change(self):
+        source = (ROOT / "scripts" / "export_native.py").read_text(encoding="utf-8")
+        body = source[source.index("def export_platform("):source.index("def write_report(")]
+        self.assertIn('"changes": changes.records,', body)
 
 
 class RemovalCandidatesNeedAReadingNoCoreAnswers(unittest.TestCase):

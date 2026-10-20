@@ -90,6 +90,12 @@ class Exporter(BaseExporter):
             return False
         return super().writable(fe, require)
 
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        """md5 is a list of every accepted dump, sha256 a single value."""
+        if field_name == "sha256":
+            return fe.hash(field_name)
+        return super().written(fe, field_name)
+
     def states(self, fe: NativeFile, field_name: str) -> bool:
         if id(fe) in getattr(self, "_appended", ()):
             return False

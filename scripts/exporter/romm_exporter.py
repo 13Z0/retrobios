@@ -113,6 +113,7 @@ class Exporter(BaseExporter):
         }
         self._first_addition = {}
         self.normalized: list[str] = []
+        self.normalized_values: list[tuple[NativeFile, str, str, str]] = []
         for system in sorted(systems.values(), key=lambda s: s.native_id):
             for fe in sorted(system.files, key=lambda f: f.name):
                 key = (fe.native_system, fe.name)
@@ -159,6 +160,10 @@ class Exporter(BaseExporter):
         does not keep."""
         return bool(_hash_values(fe.platform or {}, name)) and not fe.hashes(name)
 
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        """A record holds one value per field, the one record_hash names."""
+        return fe.record_hash(field_name)
+
     def fills(self, fe: NativeFile, field_name: str) -> bool:
         return self.states(fe, field_name) and self.record_fills(fe, field_name)
 
@@ -179,6 +184,7 @@ class Exporter(BaseExporter):
             and name not in fe.corrections
         ):
             self.normalized.append(f"{fe.native_system}/{fe.name} {name}")
+            self.normalized_values.append((fe, name, str(theirs), value))
         entry[field] = value
 
     def validate(

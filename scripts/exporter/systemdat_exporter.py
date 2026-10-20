@@ -154,6 +154,10 @@ class Exporter(BaseExporter):
         )
         return lines
 
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        """A record holds one value per field, the one record_hash names."""
+        return fe.record_hash(field_name)
+
     def fills(self, fe: NativeFile, field_name: str) -> bool:
         return self.states(fe, field_name) and self.record_fills(fe, field_name)
 

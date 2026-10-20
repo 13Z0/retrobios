@@ -429,26 +429,89 @@ def refresh_cache(
     return True, [f"{len(wanted)} file(s) fetched"]
 
 
-@dataclass
-class LandedChanges:
-    """What an export changed in the platform's file, field by field."""
-
-    applied: list[str] = field(default_factory=list)
-    filled: list[str] = field(default_factory=list)
-    resized: list[str] = field(default_factory=list)
-    unsized: list[str] = field(default_factory=list)
-    cleared: list[str] = field(default_factory=list)
-    requirements: int = 0
-
-
 def _count(number: int, noun: str, plural: str = "") -> str:
     """"1 hash", "2 hashes": a count with its noun in the right number."""
     plural = plural or noun + ("es" if noun.endswith(("sh", "ch", "s", "x")) else "s")
     return f"{number} {noun if number == 1 else plural}"
 
 
+@dataclass
+class LandedChanges:
+    """What an export changed in the platform's file, field by field.
+
+    `records` holds each change with its value before and after, so a
+    maintainer can check it against the diff. The lists of labels are read
+    from it, for the summary and the page.
+    """
+
+    records: list[dict] = field(default_factory=list)
+
+    def _labels(self, kind: str) -> list[str]:
+        return [
+            f"{r['system']}/{r['name']} {r['field']}"
+            for r in self.records if r["kind"] == kind
+        ]
+
+    @property
+    def applied(self) -> list[str]:
+        return self._labels("hash_corrected")
+
+    @property
+    def filled(self) -> list[str]:
+        return self._labels("hash_filled")
+
+    @property
+    def cleared(self) -> list[str]:
+        return self._labels("hash_cleared")
+
+    @property
+    def resized(self) -> list[str]:
+        return [label.removesuffix(" size") for label in self._labels("size_corrected")]
+
+    @property
+    def unsized(self) -> list[str]:
+        return [label.removesuffix(" size") for label in self._labels("size_removed")]
+
+    @property
+    def requirements(self) -> int:
+        return sum(r["kind"] == "requirement_corrected" for r in self.records)
+
+
+def _change(
+    kind: str, entry: object, field_name: str | None, old: object, new: object
+) -> dict:
+    return {
+        "kind": kind,
+        "system": entry.native_system,
+        "name": entry.name,
+        "destination": entry.destination,
+        "field": field_name,
+        "old": old,
+        "new": new,
+    }
+
+
+def _platform_value(entry: object, field_name: str) -> str:
+    return ",".join(_hash_values(entry.platform or {}, field_name))
+
+
+def _added_fields(exporter: object, entry: object) -> dict:
+    """The fields an addition is written with, as the render chooses them."""
+    carried = exporter.carries()
+    written: dict[str, object] = {
+        name: value
+        for name in HASH_FIELDS
+        if name in carried and (value := exporter.written(entry, name))
+    }
+    if "size" in carried and entry.size() is not None:
+        written["size"] = entry.size()
+    if "required" in carried:
+        written["required"] = entry.required
+    return written
+
+
 def landed_changes(exporter: object, systems: dict) -> LandedChanges:
-    """The changes the written file carries.
+    """The changes the written file carries, with their values.
 
     Only what the format states: a correction to a field the file has no
     place for, or one its render keeps out, is not a change the maintainer
@@ -456,26 +519,39 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
     did not do. A hash written where the platform left none changes the
     check from existence to content, so it is counted too. The truth taking
     over an entry also rewrites its size and drops the platform's hashes it
-    does not declare: both are in the diff.
+    does not declare: both are in the diff. An addition carries the fields
+    it is written with as its new value.
     """
     changes = LandedChanges()
+    records = changes.records
     for system in systems.values():
         for entry in system.files:
-            label = f"{entry.native_system}/{entry.name}"
+            if entry.platform is None:
+                if entry.name and exporter.lands(entry):
+                    records.append(_change(
+                        "added", entry, None, None, _added_fields(exporter, entry)
+                    ))
+                continue
             for field_name in entry.corrections:
                 if not exporter.states(entry, field_name):
                     continue
                 if field_name == "required":
-                    changes.requirements += 1
+                    records.append(_change(
+                        "requirement_corrected", entry, "required",
+                        bool(entry.platform.get("required")), entry.required,
+                    ))
                 else:
-                    changes.applied.append(f"{label} {field_name}")
-            changes.filled.extend(
-                f"{label} {field_name}"
+                    records.append(_change(
+                        "hash_corrected", entry, field_name,
+                        _platform_value(entry, field_name),
+                        exporter.written(entry, field_name),
+                    ))
+            records.extend(
+                _change("hash_filled", entry, field_name, None,
+                        exporter.written(entry, field_name))
                 for field_name in entry.filled
                 if exporter.fills(entry, field_name)
             )
-            if entry.platform is None:
-                continue
             theirs = entry.platform.get("size")
             ours = entry.size()
             if (
@@ -484,7 +560,9 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                 and _single_size(theirs) not in (None, ours)
                 and exporter.states(entry, "size")
             ):
-                changes.resized.append(label)
+                records.append(_change(
+                    "size_corrected", entry, "size", _single_size(theirs), ours
+                ))
             elif (
                 theirs
                 and ours is None
@@ -493,9 +571,12 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
             ):
                 # The truth took the entry over without a size of its own:
                 # System.dat's neocdz.zip line went out without size 953078.
-                changes.unsized.append(label)
-            changes.cleared.extend(
-                f"{label} {field_name}"
+                records.append(_change(
+                    "size_removed", entry, "size", _single_size(theirs), None
+                ))
+            records.extend(
+                _change("hash_cleared", entry, field_name,
+                        _platform_value(entry, field_name), None)
                 for field_name in HASH_FIELDS
                 if _hash_values(entry.platform, field_name)
                 and not entry.hashes(field_name)
@@ -503,7 +584,10 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
             )
     # A value the render rewrote though the model reads it as the
     # platform's own (RomM's sha1 with a leading space).
-    changes.applied.extend(getattr(exporter, "normalized", []))
+    records.extend(
+        _change("hash_corrected", entry, field_name, old, new)
+        for entry, field_name, old, new in getattr(exporter, "normalized_values", [])
+    )
     return changes
 
 
@@ -661,6 +745,7 @@ def export_platform(
             "not_added": refused,
             "not_kept": lost,
         },
+        "changes": changes.records,
         "hashes_corrected": applied,
         "hashes_filled": filled,
         "sizes_corrected": resized,

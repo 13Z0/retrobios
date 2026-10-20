@@ -180,6 +180,17 @@ class BaseExporter(ABC):
             return ""
         return fe.hash(field_name)
 
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        """The value the render writes for one hash field, comma-joined.
+
+        The report gives each change its value before and after, so it reads
+        the value the way the render chooses it: one md5 where the format
+        checks one, every accepted value where it lists them.
+        """
+        if field_name == self.SINGLE_HASH_FIELD:
+            return self.single_value(fe, field_name)
+        return ",".join(fe.hashes(field_name))
+
     def states(self, fe: NativeFile, field_name: str) -> bool:
         """Whether the written file carries this entry's corrected field.
 

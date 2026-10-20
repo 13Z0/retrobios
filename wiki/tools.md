@@ -271,6 +271,12 @@ state is reported rather than written: EmuDeck's arrays are shared
 between emulators its file does not name, so a hash is corrected in place
 and never added.
 
+`exports/<platform>.json` lists every change under `changes`, each with
+its kind, entry, field and the value before and after (an addition carries
+the fields it is written with). The exports page shows both values, and a
+test reads the original and the updated System.dat and es_bios.xml back to
+check that the list is the diff.
+
 No entry the platform declares is removed. One the truth does not pair is
 looked for in the profiles of every core the platform runs: by name or
 alias, by the basename or tail of a `path:`, by any hash (archive members
