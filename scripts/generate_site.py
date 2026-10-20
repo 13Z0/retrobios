@@ -3021,11 +3021,12 @@ def _render_platform_details(profile: dict) -> list[str]:
         lines.extend(['???+ info "Platform details"', ""])
         for pk, pv in platform_details.items():
             if isinstance(pv, dict):
-                lines.append(f"    **{pk}:**")
+                lines.extend([f"    - **{pk}:**", ""])
                 for sk, sv in pv.items():
-                    lines.append(f"    - {sk}: {_detail_value(profile, sk, sv)}")
+                    lines.append(f"        - {sk}: {_detail_value(profile, sk, sv)}")
+                lines.append("")
             else:
-                lines.append(f"    **{pk}:** {_detail_value(profile, pk, pv)}")
+                lines.append(f"    - **{pk}:** {_detail_value(profile, pk, pv)}")
         lines.append("")
 
     return lines

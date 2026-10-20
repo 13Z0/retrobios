@@ -197,11 +197,11 @@ def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
     if isinstance(val, dict):
         for k, v in val.items():
             if isinstance(v, (dict, list)) and v:
-                lines.append(f"{pad}- {_field_label(k)}:")
+                lines.append(f"{pad}- **{_field_label(k)}:**")
                 lines.append("")
                 _render_yaml_value(lines, v, indent + 4)
             else:
-                lines.append(f"{pad}- {_field_label(k)}: {_field_text(k, v)}")
+                lines.append(f"{pad}- **{_field_label(k)}:** {_field_text(k, v)}")
         lines.append("")
     elif isinstance(val, list):
         for item in val:

@@ -858,8 +858,23 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
                            "tmss": {"supported": True}})
         self.assertNotIn("<pre>", html)
         self.assertNotIn("**", html)
-        self.assertIn("external required: no", html)
+        self.assertIn("<strong>external required:</strong> no", html)
         self.assertIn("<code>a.c:1</code>", html)
+
+    def test_platform_details_are_a_list(self):
+        import generate_site
+
+        lines = generate_site._render_platform_details(
+            {"platform_details": {"megacd": {"root": "x"}, "note": "y"}}
+        )
+        lines[0] = lines[0].replace("???+", "!!!")
+        try:
+            import markdown
+        except ImportError:
+            self.skipTest("markdown is not installed")
+        html = markdown.markdown("\n".join(lines), extensions=["admonition"])
+        self.assertIn("<li>root: x</li>", html)
+        self.assertNotIn("**", html)
 
     def test_a_list_under_a_key_is_a_sublist(self):
         html = self._html({"roms": [{"name": "a.bin", "size": 2}, "b.bin"]})

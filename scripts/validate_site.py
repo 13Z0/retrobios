@@ -32,6 +32,11 @@ class Page:
     links: list[str] = field(default_factory=list)
     missing_alt: list[str] = field(default_factory=list)
     jsonld: list[str] = field(default_factory=list)
+    unrendered: list[str] = field(default_factory=list)
+
+
+# Text inside these is shown as written, so markup there is not a leftover.
+_LITERAL_TAGS = frozenset({"pre", "code", "script", "style", "textarea"})
 
 
 class _PageParser(HTMLParser):
@@ -42,9 +47,12 @@ class _PageParser(HTMLParser):
         self._title_parts: list[str] = []
         self._jsonld_depth = 0
         self._jsonld_parts: list[str] = []
+        self._literal_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = dict(attrs)
+        if tag in _LITERAL_TAGS:
+            self._literal_depth += 1
         if tag == "html":
             self.page.lang = data.get("lang", "")
         elif tag == "title":
@@ -73,6 +81,8 @@ class _PageParser(HTMLParser):
             self.page.canonical.append(data.get("href", ""))
 
     def handle_endtag(self, tag: str) -> None:
+        if tag in _LITERAL_TAGS and self._literal_depth:
+            self._literal_depth -= 1
         if tag == "title":
             self._title_depth -= 1
         elif tag == "script" and self._jsonld_depth:
@@ -85,6 +95,8 @@ class _PageParser(HTMLParser):
             self._title_parts.append(data)
         if self._jsonld_depth:
             self._jsonld_parts.append(data)
+        if not self._literal_depth and "**" in data:
+            self.page.unrendered.append(data.strip()[:60])
 
     def close(self) -> None:
         super().close()
@@ -192,6 +204,10 @@ def _check_pages(
             report(path, f"duplicate IDs: {duplicate_ids[:5]}")
         if page.missing_alt:
             report(path, f"images missing alt: {page.missing_alt[:5]}")
+        if page.unrendered:
+            # Bold that reached the reader as asterisks: a block indented
+            # one level too deep is read as code (the clownmdemu analysis).
+            report(path, f"markdown left unrendered: {page.unrendered[:3]}")
 
         if not is_404 and len(page.jsonld) != 1:
             report(path, f"expected one JSON-LD block, got {len(page.jsonld)}")

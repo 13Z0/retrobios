@@ -100,9 +100,9 @@ class PlatformDetails(unittest.TestCase):
                 "root": "<system_dir>/x",
             }}}
         )
-        self.assertIn("    - extensions_tried: .bin, .zip", lines)
-        self.assertIn("    - hle_available: no", lines)
-        self.assertIn("    - root: &lt;system_dir>/x", lines)
+        self.assertIn("        - extensions_tried: .bin, .zip", lines)
+        self.assertIn("        - hle_available: no", lines)
+        self.assertIn("        - root: &lt;system_dir>/x", lines)
 
 
 class RenderedSiteValidation(unittest.TestCase):
@@ -163,6 +163,28 @@ class RenderedSiteValidation(unittest.TestCase):
         self.assertTrue(any("duplicate title" in issue for issue in issues))
         self.assertTrue(any("duplicate description" in issue for issue in issues))
 
+
+
+class UnrenderedMarkdown(unittest.TestCase):
+    """The clownmdemu analysis block reached readers as "- **bios_hle:**
+    True": a list indented one level too deep, read as code."""
+
+    setUp = RenderedSiteValidation.setUp
+    tearDown = RenderedSiteValidation.tearDown
+
+    def test_asterisks_in_prose_fail_and_in_code_pass(self):
+        (self.site / "index.html").write_text(
+            _page("Home", "Unique home description.", "<p>- **bios_hle:** True</p>"),
+            encoding="utf-8",
+        )
+        issues = validate_site(self.site, self.config)
+        self.assertTrue(any("markdown left unrendered" in issue for issue in issues))
+        (self.site / "index.html").write_text(
+            _page("Home", "Unique home description.",
+                  "<pre><code>a = 2 ** 8</code></pre><code>**/*.py</code>"),
+            encoding="utf-8",
+        )
+        self.assertEqual(validate_site(self.site, self.config), [])
 
 
 class EveryTestDependencyIsInstalledInCi(unittest.TestCase):
