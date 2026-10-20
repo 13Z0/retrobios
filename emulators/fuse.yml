@@ -245,75 +245,75 @@ files:
   # Pentagon family
   - name: "fuse/128p-0.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Pentagon 128K/512K/1024 ROM 0. Required for Pentagon machines."
+    note: "Pentagon 128K/512K/1024 ROM 0, loaded by the Pentagon resets (fuse/machines/pentagon.c:131-133). Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:226, fuse/settings.c:230, fuse/settings.c:234, fuse/machines/pentagon.c:131"
 
   - name: "fuse/128p-1.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Pentagon 128K/512K/1024 ROM 1. Required for Pentagon machines."
+    note: "Pentagon 128K/512K/1024 ROM 1, loaded by the Pentagon resets (fuse/machines/pentagon.c:134-136). Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:227, fuse/settings.c:231, fuse/settings.c:235, fuse/machines/pentagon.c:134"
 
   - name: "fuse/trdos.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "TR-DOS ROM (Beta 128 disk interface). Used by Pentagon and Scorpion."
+    note: "TR-DOS ROM (Beta 128 disk interface), loaded by the Pentagon resets (fuse/machines/pentagon.c:137-139) and by the Beta 128 interface (rom_beta128, fuse/settings.dat:253). Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:228, fuse/settings.c:232, fuse/settings.c:236, fuse/machines/pentagon.c:137"
 
   - name: "fuse/gluck.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Gluck ROM. Required for Pentagon 512K and 1024."
+    note: "Gluck ROM, loaded by the Pentagon 512K and 1024 resets (fuse/machines/pentagon512.c:82-84, pentagon1024.c:78-80). Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:229, fuse/settings.c:233, fuse/machines/pentagon512.c:82"
 
   # Scorpion
   - name: "fuse/256s-0.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Scorpion 256K ROM 0. Required for Scorpion machine."
+    note: "Scorpion 256K ROM 0, loaded by the Scorpion reset (fuse/machines/scorpion.c:76-78). Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:252, fuse/machines/scorpion.c:76"
 
   - name: "fuse/256s-1.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Scorpion 256K ROM 1. Required for Scorpion machine."
+    note: "Scorpion 256K ROM 1, loaded by the Scorpion reset. Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:253, fuse/machines/scorpion.c:79"
 
   - name: "fuse/256s-2.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Scorpion 256K ROM 2. Required for Scorpion machine."
+    note: "Scorpion 256K ROM 2, loaded by the Scorpion reset. Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:254, fuse/machines/scorpion.c:82"
 
   - name: "fuse/256s-3.rom"
     system: sinclair-zxspectrum
-    required: true
+    required: false
 
     size: 16384
     validation: [size]
-    note: "Scorpion 256K ROM 3 (TR-DOS). Required for Scorpion machine."
+    note: "Scorpion 256K ROM 3 (TR-DOS), loaded by the Scorpion reset. Without it that model cannot be selected and the core falls back to its built-in 48K machine (fuse/machine.c:150-162)."
     source_ref: "fuse/settings.c:255, fuse/machines/scorpion.c:85"
 
   # Peripheral ROMs (optional, only needed if peripheral is enabled)
