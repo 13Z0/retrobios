@@ -61,6 +61,15 @@ def checked_hashes(entry: dict | None) -> dict | None:
     return {k: v for k, v in entry.items() if k not in HASH_FIELDS or k in kinds}
 
 
+def is_label(entry: dict) -> bool:
+    """A name only content-scanning cores give: no core opens that file.
+
+    DuckStation identifies its BIOS by MD5 in a folder it scans, so
+    scph1001_v20.bin names nothing a platform could check by path.
+    """
+    return bool(entry.get("_cores")) and "_named_by" in entry and not entry["_named_by"]
+
+
 def _is_placeholder(name: str) -> bool:
     return "<" in name or ">" in name or "*" in name
 
@@ -282,6 +291,8 @@ class Report:
     files_added: int = 0
     hashes_corrected: list[str] = field(default_factory=list)
     required_corrected: list[str] = field(default_factory=list)
+    # Entries only content-scanning cores name: never written as files.
+    labels: int = 0
 
     @property
     def corrections(self) -> int:
@@ -394,7 +405,8 @@ def pair_entries(truth_entries: list[dict], candidates: list[dict]) -> dict[int,
     claimed: set[int] = set()
     for test in _PAIRING_TESTS:
         for t_index, truth_entry in enumerate(truth_entries):
-            if t_index in pairs:
+            # A label answers for no name or path, only for its content.
+            if t_index in pairs or (test is not by_hash and is_label(truth_entry)):
                 continue
             for index, candidate in enumerate(candidates):
                 if index not in claimed and test(truth_entry, candidate):
@@ -547,6 +559,10 @@ def build_native_model(
                     report.required_corrected.append(
                         f"{matched.native_system}/{matched.name}"
                     )
+                continue
+
+            if is_label(truth_entry):
+                report.labels += 1
                 continue
 
             # A file another core's entry already claimed is still the

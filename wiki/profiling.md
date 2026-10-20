@@ -404,6 +404,7 @@ partitions), and `game_count`.
 | `has_builtin` | true if the core falls back to a built-in copy when the file is absent |
 | `config_key` | configuration key the emulator exposes to point at the file |
 | `load_from` | directory the core reads the file from when it is not the system directory |
+| `found_by` | `name` when the code opens the file by its name (the default), `content` when it scans a folder and identifies the file by hash, so the name is only a label (DuckStation by MD5, `bios.cpp:208`). Set on the profile or on one file, a dict splits `standalone` from `libretro`. A label is never written into a platform file as a name to hold, and pairs with a platform entry only by hash |
 | `source_ref` | source file and line number (e.g. `boot.cpp:42`), read at the profile's `source_commit` when set. A dict splits `standalone` from `libretro` when they diverge. In a profile that declares both `source` and `upstream`, each cited path opens with the one its lines are in: `source libretro.c:120` for the port's own code, `upstream emu/memory.c:46` for the emulator's, including the copy a port carries. `profile_sync --attribute-refs` writes these words from where the lines are found, and the site labels each citation with them |
 | `path` | destination path relative to system directory |
 | `standalone_path` | where the standalone build reads the file, under its own data folder, when it differs from `path` (the libretro destination). Packs for a platform running the emulator standalone use it |

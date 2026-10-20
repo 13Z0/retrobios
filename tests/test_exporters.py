@@ -330,6 +330,49 @@ class Reconciliation(unittest.TestCase):
         scraped_sys = {"files": [{"name": "scph1001.bin", "md5": "b" * 32}]}
         self.assertNotIn("hash_mismatch", _diff_system(truth_sys, scraped_sys))
 
+    def test_a_label_is_never_added(self):
+        """A name only a content-scanning core gives is no file to hold."""
+        truth = {"systems": {"sony-playstation": {"files": [
+            {"name": "scph1001_v20.bin", "md5": "a" * 32,
+             "_cores": ["duckstation"], "_named_by": []},
+            {"name": "scph5903.bin", "md5": "c" * 32,
+             "_cores": ["beetle_psx"], "_named_by": ["beetle_psx"]},
+        ]}}}
+        scraped = {"systems": {"sony-playstation": {"native_id": "psx", "files": [
+            {"name": "scph5501.bin", "destination": "scph5501.bin",
+             "native_system": "psx", "md5": "d" * 32}]}}}
+        systems, report = build_native_model(truth, scraped)
+        self.assertEqual([fe.name for fe in systems["psx"].files],
+                         ["scph5501.bin", "scph5903.bin"])
+        self.assertEqual(report.files_added, 1)
+
+    def test_a_label_pairs_by_content_only(self):
+        """DuckStation's and rustation's scph5000.bin labels carried another
+        dump's md5 and, paired by name, replaced System.dat's scph5000.bin."""
+        truth = {"systems": {"sony-playstation": {"files": [
+            {"name": "scph5000.bin", "md5": "a" * 32,
+             "_cores": ["duckstation"], "_named_by": []},
+            {"name": "other_label.bin", "md5": "e" * 32, "sha256": "f" * 64,
+             "_cores": ["duckstation"], "_named_by": []},
+        ]}}}
+        scraped = {"systems": {"sony-playstation": {"native_id": "psx", "files": [
+            {"name": "scph5000.bin", "destination": "scph5000.bin",
+             "native_system": "psx", "md5": "b" * 32},
+            {"name": "scph7001.bin", "destination": "scph7001.bin",
+             "native_system": "psx", "md5": "e" * 32},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        scph5000, scph7001 = systems["psx"].files
+        self.assertIsNone(scph5000.truth)
+        self.assertEqual(scph7001.truth["name"], "other_label.bin")
+        self.assertEqual(report.hashes_corrected, [])
+
+    def test_the_diff_names_no_missing_label(self):
+        from truth import _diff_system
+        truth_sys = {"files": [{"name": "scph1001_v20.bin", "md5": "a" * 32,
+                                "_cores": ["duckstation"], "_named_by": []}]}
+        self.assertNotIn("missing", _diff_system(truth_sys, {"files": []}))
+
     def test_the_diff_pairs_by_the_same_rule(self):
         """diff_truth reads the same pairing, or it names a mismatch the
         export does not correct."""

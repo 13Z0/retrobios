@@ -294,5 +294,50 @@ class ASizeOutsideARangeIsAnotherFile(unittest.TestCase):
         self.assertEqual(len(system["files"]), 2)
 
 
+class TruthRecordsWhoOpensByName(unittest.TestCase):
+    """DuckStation finds its BIOS by MD5 in a folder it scans (bios.cpp:208,
+    397-427): its names are labels. The export wrote them into Batocera's
+    list as files to hold, and a user with only scph5501.bin read 104
+    missing BIOS where DuckStation boots."""
+
+    DUCK = {"type": "libretro", "systems": ["sony-playstation"], "found_by": "content",
+            "files": [{"name": "scph1001_v20.bin", "md5": "a" * 32},
+                      {"name": "scph1001.bin", "md5": "b" * 32}]}
+    PCSX = {"type": "libretro", "systems": ["sony-playstation"],
+            "files": [{"name": "scph1001.bin", "size": 524288}]}
+
+    def truth(self, profiles: dict) -> dict:
+        config = {"cores": list(profiles), "systems": {"sony-playstation": {"files": []}}}
+        return generate_platform_truth("p", config, {}, profiles)
+
+    def entries(self, truth: dict) -> list[dict]:
+        return truth["systems"]["sony-playstation"]["files"]
+
+    def test_a_content_scanning_core_names_nothing(self):
+        truth = self.truth({"duckstation": self.DUCK})
+        self.assertEqual({f["name"]: f["_named_by"] for f in self.entries(truth)},
+                         {"scph1001_v20.bin": [], "scph1001.bin": []})
+
+    def test_a_label_lends_no_hash_to_a_name_another_core_opens(self):
+        """pcsx_rearmed opens scph1001.bin by name, with no hash: it took the
+        md5 of DuckStation's label of that name."""
+        truth = self.truth({"duckstation": self.DUCK, "pcsx": self.PCSX})
+        named = [f for f in self.entries(truth) if f["_named_by"] == ["pcsx"]]
+        self.assertEqual(len(named), 1)
+        self.assertNotIn("md5", named[0])
+
+    def test_the_build_decides(self):
+        ymir = {"type": "standalone + libretro", "systems": ["sega-saturn"],
+                "found_by": {"standalone": "content"},
+                "files": [{"name": "sega_101.bin", "md5": "c" * 32}]}
+        config = {"cores": ["ymir"], "standalone_cores": [],
+                  "systems": {"sega-saturn": {"files": []}}}
+        libretro = generate_platform_truth("p", config, {}, {"ymir": ymir})
+        self.assertEqual(libretro["systems"]["sega-saturn"]["files"][0]["_named_by"], ["ymir"])
+        config["standalone_cores"] = ["ymir"]
+        standalone = generate_platform_truth("p", config, {}, {"ymir": ymir})
+        self.assertEqual(standalone["systems"]["sega-saturn"]["files"][0]["_named_by"], [])
+
+
 if __name__ == "__main__":
     unittest.main()

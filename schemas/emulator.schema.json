@@ -233,6 +233,21 @@
     "bios_identical_to": {
       "type": "string"
     },
+    "found_by": {
+      "description": "How the code finds the file: by the name it opens, or by content in a folder it scans, the name then being a label. Keyed by build when the libretro and standalone builds differ.",
+      "oneOf": [
+        {"type": "string", "enum": ["name", "content"]},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "libretro": {"type": "string", "enum": ["name", "content"]},
+            "standalone": {"type": "string", "enum": ["name", "content"]}
+          }
+        }
+      ]
+    },
     "bios_mode": {
       "type": "string"
     },
@@ -491,6 +506,21 @@
           },
           "has_builtin": {
             "type": "boolean"
+          },
+          "found_by": {
+            "description": "How the code finds the file: by the name it opens, or by content in a folder it scans, the name then being a label. Keyed by build when the libretro and standalone builds differ.",
+            "oneOf": [
+              {"type": "string", "enum": ["name", "content"]},
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "libretro": {"type": "string", "enum": ["name", "content"]},
+                  "standalone": {"type": "string", "enum": ["name", "content"]}
+                }
+              }
+            ]
           },
           "load_from": {
             "description": "Where the emulator reads the file when not from the system directory, keyed by build when the libretro and standalone builds read it from different places.",

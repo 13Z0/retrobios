@@ -612,6 +612,10 @@ def export_platform(
     withheld = exporter.withheld()
     if withheld:
         summary += f", {_count(len(withheld), 'correction')} withheld"
+    if report.labels:
+        # A content-scanning core's names are labels: a list checked by path
+        # cannot hold them.
+        summary += f", {_count(report.labels, 'entry', 'entries')} found by content not listed"
     messages.append(summary)
     messages.extend(f"withheld: {reason}" for reason in withheld)
     for correction in applied[:5]:
@@ -653,6 +657,7 @@ def export_platform(
         "hashes_cleared": cleared,
         "requirements_corrected": requirements,
         "withheld": list(withheld),
+        "found_by_content": report.labels,
         "invalid": issues,
     })
     return True, messages

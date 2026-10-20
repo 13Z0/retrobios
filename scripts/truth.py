@@ -16,7 +16,7 @@ from common import (
     standalone_set as platform_standalone_set,
 )
 from hashing import parse_md5_list
-from validation import filter_files_by_mode, read_from_system_dir
+from validation import filter_files_by_mode, opens_by_name, read_from_system_dir
 
 
 
@@ -177,7 +177,15 @@ def _same_file(files: list[dict], file_entry: dict, emu_name: str) -> dict | Non
     def other_path(f: dict) -> str:
         return str(f.get("path") or "").casefold()
 
-    same_name = [f for f in files if f["name"].lower() == name_lower]
+    # A label and a name a core opens are one file only on a shared hash:
+    # pcsx_rearmed's hashless scph1001.bin took the md5 of DuckStation's
+    # label of that name, another dump.
+    labelled = not file_entry.get("_opens_by_name", True)
+    same_name = [
+        f for f in files
+        if f["name"].lower() == name_lower
+        and (labelled == (not f.get("_named_by", True)) or _shares_hash(f, file_entry))
+    ]
     return (
         next((f for f in same_name if path and other_path(f) == path), None)
         # Another core's file of the same name is the same file unless their
@@ -201,6 +209,13 @@ def _same_file(files: list[dict], file_entry: dict, emu_name: str) -> dict | Non
     )
 
 
+def _shares_hash(a: dict, b: dict) -> bool:
+    return any(
+        _declared(a, field) & _declared(b, field)
+        for field in ("sha1", "md5", "sha256", "crc32")
+    )
+
+
 def _declared(entry: dict, field: str) -> set[str]:
     """The values an entry declares for a hash field, one or a list."""
     value = entry.get(field)
@@ -221,6 +236,8 @@ def _fold_into(existing: dict, file_entry: dict, emu_name: str) -> None:
     """Add one core's declaration to the entry that already stands for it."""
     revision = emu_name in existing.get("_cores", ())
     existing["_cores"] = existing.get("_cores", set()) | {emu_name}
+    if file_entry.get("_opens_by_name", True):
+        existing["_named_by"] = existing.get("_named_by", set()) | {emu_name}
     sr = file_entry.get("source_ref")
     if sr is not None:
         sr_key = _serialize_source_ref(sr)
@@ -317,6 +334,7 @@ def _new_truth_entry(file_entry: dict, emu_name: str, db: dict | None) -> dict:
         entry["crc32"] = crc.removeprefix("0x").lower()
     entry["_cores"] = {emu_name}
     entry["_required_by"] = {emu_name} if file_entry.get("required") else set()
+    entry["_named_by"] = {emu_name} if file_entry.get("_opens_by_name", True) else set()
     sr = file_entry.get("source_ref")
     entry["_source_refs"] = {_serialize_source_ref(sr)} if sr is not None else set()
     if db:
@@ -545,7 +563,7 @@ def generate_platform_truth(
         cores_profiled.add(emu_name)
 
         filtered = _archives_not_members([
-            fe
+            {**fe, "_opens_by_name": opens_by_name(fe, profile, standalone)}
             for view, standalone in platform_layouts(emu_name, profile, standalone_set)
             for fe in _system_dir_files(view, standalone)
         ])
@@ -637,6 +655,7 @@ def generate_platform_truth(
         for fe in sys_data.get("files", []):
             fe["_cores"] = sorted(fe.get("_cores", set()))
             fe["_required_by"] = sorted(fe.get("_required_by", set()))
+            fe["_named_by"] = sorted(fe.get("_named_by", set()))
             fe["_source_refs"] = sorted(fe.get("_source_refs", set()))
         # Add per-system coverage
         cov = system_cores.get(sys_id, {})
@@ -717,7 +736,7 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
     correct while the export corrected hashes the diff never named. An entry
     never answers for two.
     """
-    from exporter.baseline import _is_placeholder, pair_entries, platform_declares
+    from exporter.baseline import _is_placeholder, is_label, pair_entries, platform_declares
 
     truth_files = [
         fe for fe in truth_sys.get("files", [])
@@ -737,7 +756,7 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
     for t_index, t_entry in enumerate(truth_files):
         s_position = pairs.get(t_index)
         if s_position is None:
-            if not platform_declares(t_entry, scraped_files):
+            if not is_label(t_entry) and not platform_declares(t_entry, scraped_files):
                 missing.append(
                     {
                         "name": t_entry["name"],

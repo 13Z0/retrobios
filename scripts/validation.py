@@ -512,6 +512,23 @@ def declaration_settles(
     return False
 
 
+def opens_by_name(file_entry: dict, profile: dict, standalone: bool = False) -> bool:
+    """Whether the code opens this entry by its name.
+
+    A core that scans a folder and identifies firmware by content
+    (DuckStation by MD5, bios.cpp:208) gives its entries names that are
+    labels. `found_by` says which, on the file or the profile, keyed by
+    build when the two builds differ.
+    """
+    for source in (file_entry, profile):
+        value = source.get("found_by")
+        if isinstance(value, dict):
+            value = value.get("standalone" if standalone else "libretro")
+        if value:
+            return value != "content"
+    return True
+
+
 def filter_files_by_mode(files: list[dict], standalone: bool) -> list[dict]:
     """Filter file entries by libretro/standalone mode."""
     result = []
