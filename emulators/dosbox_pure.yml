@@ -212,23 +212,26 @@ files:
       name and is also auto-detected when placed inside game content on C: drive.
 
   # -- Roland SC-55 family ROMs (Nuked-SC55 driver) --
+  # Each selectable set is the ROM1.BIN the user picks plus the companions the
+  # driver names from it, so every model is its own group of files.
 
   - name: "ROM1.BIN"
     path: "SC-55/ROM1.BIN"
     aliases: ["rom1.bin"]
-    description: "SC-55 family program ROM 1"
+    description: "SC-55mkII program ROM 1"
     required: false
     size: 32768
     validation: [size]
     source_ref: "dosbox_pure_libretro.cpp:1405, src/gui/midi_sc55.h:71-75, src/gui/midi_sc55.h:97-101"
     note: >-
       Any name ending in ROM1.BIN anywhere under the system directory is
-      listed. Byte 67 selects the emulated model.
+      listed. Byte 67 selects the emulated model, 0x12 for SC-55mkII/SC-55st.
+      This set's companions are named without a prefix.
 
   - name: "ROM2.BIN"
     path: "SC-55/ROM2.BIN"
     aliases: ["rom2.bin", "ROM2_ST.BIN", "rom2_st.bin"]
-    description: "SC-55 family program ROM 2"
+    description: "SC-55mkII program ROM 2"
     required: false
     size: [262144, 524288]
     validation: [size]
@@ -247,26 +250,68 @@ files:
   - name: "WAVEROM1.BIN"
     path: "SC-55/WAVEROM1.BIN"
     aliases: ["waverom1.bin"]
-    description: "SC-55 family wave ROM 1"
+    description: "SC-55mkII wave ROM 1 (16 Mbit)"
     required: false
-    size: [1048576, 2097152]
+    size: 2097152
     validation: [size]
-    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:111-134"
+    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:113-116"
 
   - name: "WAVEROM2.BIN"
     path: "SC-55/WAVEROM2.BIN"
     aliases: ["waverom2.bin"]
-    description: "SC-55 family wave ROM 2"
-    required: false
-    size: [1048576, 2097152]
-    validation: [size]
-    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:111-134"
-
-  - name: "WAVEROM3.BIN"
-    path: "SC-55/WAVEROM3.BIN"
-    aliases: ["waverom3.bin"]
-    description: "SC-55/SC-155/CM-300 wave ROM 3"
+    description: "SC-55mkII wave ROM 2 (8 Mbit)"
     required: false
     size: 1048576
     validation: [size]
-    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:117-125"
+    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:113-116"
+    note: "The mkII branch checks ROM_SM, WAVEROM1 and WAVEROM2 only. A WAVEROM3 beside it is opened and ignored."
+
+  - name: "sc55_rom1.bin"
+    path: "SC-55-v1.00/sc55_rom1.bin"
+    description: "SC-55 v1.00 program ROM 1"
+    required: false
+    size: 32768
+    validation: [size]
+    source_ref: "dosbox_pure_libretro.cpp:1405, src/gui/midi_sc55.h:71-75, src/gui/midi_sc55.h:97-101, src/gui/midi_sc55.h:117-120"
+    note: >-
+      Byte 67 is 0x50, the SC-55/SC-155 branch. The driver builds each
+      companion name from the ROM1.BIN name the user picks: the text before
+      ROM1.BIN is kept, the first letter of the companion name takes the case
+      of the R of ROM1 and the other letters the case of the O, and the
+      extension is copied. Picking sc55_rom1.bin opens
+      sc55_rom2.bin, sc55_waverom1.bin, sc55_waverom2.bin and
+      sc55_waverom3.bin beside it. The directory name selects SC-155 only
+      when it contains 155.
+
+  - name: "sc55_rom2.bin"
+    path: "SC-55-v1.00/sc55_rom2.bin"
+    description: "SC-55 v1.00 program ROM 2"
+    required: false
+    size: 262144
+    validation: [size]
+    source_ref: "src/gui/midi_sc55.h:78-95, src/gui/midi_sc55.h:117-120"
+
+  - name: "sc55_waverom1.bin"
+    path: "SC-55-v1.00/sc55_waverom1.bin"
+    description: "SC-55 wave ROM 1 (8 Mbit)"
+    required: false
+    size: 1048576
+    validation: [size]
+    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:117-120"
+
+  - name: "sc55_waverom2.bin"
+    path: "SC-55-v1.00/sc55_waverom2.bin"
+    description: "SC-55 wave ROM 2 (8 Mbit)"
+    required: false
+    size: 1048576
+    validation: [size]
+    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:117-120"
+
+  - name: "sc55_waverom3.bin"
+    path: "SC-55-v1.00/sc55_waverom3.bin"
+    description: "SC-55 wave ROM 3 (8 Mbit)"
+    required: false
+    size: 1048576
+    validation: [size]
+    source_ref: "src/gui/midi_sc55.h:43-45, src/gui/midi_sc55.h:78-93, src/gui/midi_sc55.h:117-124"
+    note: "The SC-55/SC-155 and CM-300/SCC-1 branches refuse the set without a third 8 Mbit wave ROM."
