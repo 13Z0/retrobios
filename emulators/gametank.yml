@@ -1,0 +1,24 @@
+emulator: GameTank
+type: libretro
+core_classification: community_fork
+source: "https://github.com/Sundownersport/gametank-libretro"
+upstream: "https://github.com/clydeshaffer/GameTankEmulator"
+profiled_date: "2026-10-20"
+source_commit: "1a6f2608ae302d613ac17ae8584c7239ae47044b"
+upstream_commit: "9896544460d5bb7dd89c2d2bc0f5c97a6f31d2e0"
+core_version: "1.0.1"
+display_name: "Clydeware - GameTank (GameTank)"
+cores:
+  - gametank
+systems:
+  - gametank
+
+notes: |
+  Libretro port by SundownerSport of Clyde Shaffer's GameTankEmulator. The
+  GameTank has no boot ROM: the cartridge image (.gtr) is the whole program,
+  loaded from the frontend's buffer (src/libretro.cpp:257-258, 320-361).
+  The only files the core opens are its own: a flash cartridge's writes go to
+  <rom>.xor in the save directory, read back at load and written at unload
+  (src/libretro.cpp:113-154). Nothing is read from the system directory.
+
+files: []
