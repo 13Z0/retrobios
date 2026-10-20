@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T01:18:55Z",
-  "total_files": 20374,
-  "total_size": 17637006060,
+  "generated_at": "2026-10-20T01:30:36Z",
+  "total_files": 20375,
+  "total_size": 17638951392,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -2280,6 +2280,16 @@
       "sha256": "a86d539aab1af6352fc05752ec2e3d143f805219880822843c627c6184318def",
       "crc32": "e133094a",
       "adler32": "8af25f35"
+    },
+    "5f1519bea6fc4122604363149e9f9c7214886d99": {
+      "path": "bios/Apple/Power Macintosh/Mac OS ROM",
+      "name": "Mac OS ROM",
+      "size": 1945332,
+      "sha1": "5f1519bea6fc4122604363149e9f9c7214886d99",
+      "md5": "1bf445c27513dba473cca51219184b07",
+      "sha256": "c330f76ed369ba6d023e41bd22bb0e1910eccaa63bc2d10020129bacdbdf603c",
+      "crc32": "fcce2265",
+      "adler32": "ddccbc4b"
     },
     "57eb74ac395ddba35ac0f2a6ddc30917d7771fae": {
       "path": "bios/Aquaplus/PIECE/.variants/piece.pfi.9a1c9d3d",
@@ -209147,6 +209157,7 @@
       "c54b17f59168048eb5bf99f83a1f0f4d": "d2c4be29ed5b86c083b5283abc8461127d88395f",
       "8ffe31f1ee8164f6c1dfd95ffb79feff": "734efa75815502d58898599359cf55f8003a03a5",
       "4a89c35e11d0bcb3c174cabfa4b1cd09": "32daf772960c7ed31f41b95055968532b81d0896",
+      "1bf445c27513dba473cca51219184b07": "5f1519bea6fc4122604363149e9f9c7214886d99",
       "9a1c9d3d1f497911be4101d19cb8e485": "57eb74ac395ddba35ac0f2a6ddc30917d7771fae",
       "a22bbfea7c1bdab0a3728dd1012e866f": "9d77b27f974b88127e82612ed09cb1ab88c9db70",
       "6ec651784e3f0b5e66ef2e14389ebcf5": "112a9dbd01ebef485a164b0020c3677b9f8bbc83",
@@ -229923,6 +229934,9 @@
       ],
       "vMac.ROM": [
         "32daf772960c7ed31f41b95055968532b81d0896"
+      ],
+      "Mac OS ROM": [
+        "5f1519bea6fc4122604363149e9f9c7214886d99"
       ],
       "piece.pfi": [
         "57eb74ac395ddba35ac0f2a6ddc30917d7771fae",
@@ -287718,9 +287732,6 @@
       "342-0077-b": [
         "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
       ],
-      "Mac OS ROM": [
-        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
-      ],
       "MSXR2.ROM": [
         "04990aa1c3a3fc7294ec884b81deaa89832df614"
       ],
@@ -290295,6 +290306,7 @@
       "0074341f": "d2c4be29ed5b86c083b5283abc8461127d88395f",
       "8473ae12": "734efa75815502d58898599359cf55f8003a03a5",
       "e133094a": "32daf772960c7ed31f41b95055968532b81d0896",
+      "fcce2265": "5f1519bea6fc4122604363149e9f9c7214886d99",
       "f9d5f747": "57eb74ac395ddba35ac0f2a6ddc30917d7771fae",
       "d39512f1": "9d77b27f974b88127e82612ed09cb1ab88c9db70",
       "f9dbea00": "112a9dbd01ebef485a164b0020c3677b9f8bbc83",
@@ -310671,6 +310683,7 @@
       "39eb14cd026b70822f4536e957e11fe3f103c8d694dafb8afd22f64a23482640": "d2c4be29ed5b86c083b5283abc8461127d88395f",
       "0f1035b16cc1ea6b34620c879eee76405a09e7a3ae9a1096880174cd82d1a456": "734efa75815502d58898599359cf55f8003a03a5",
       "a86d539aab1af6352fc05752ec2e3d143f805219880822843c627c6184318def": "32daf772960c7ed31f41b95055968532b81d0896",
+      "c330f76ed369ba6d023e41bd22bb0e1910eccaa63bc2d10020129bacdbdf603c": "5f1519bea6fc4122604363149e9f9c7214886d99",
       "ddc99cec66679f23a335e65c45c99ff8a621fe4f7c85db5bf378c391c0d58cc2": "57eb74ac395ddba35ac0f2a6ddc30917d7771fae",
       "541ac3283df869bce49c9e2e01bd8810dc85f87357b07f99d082392304a94e5c": "9d77b27f974b88127e82612ed09cb1ab88c9db70",
       "4437c496ce0b3ec55f02d42d18bfb458886da098dbcaa842b362881fa9eb8d8f": "112a9dbd01ebef485a164b0020c3677b9f8bbc83",
@@ -332540,6 +332553,12 @@
       ],
       "Macintosh II/vMac.ROM": [
         "32daf772960c7ed31f41b95055968532b81d0896"
+      ],
+      "Apple/Power Macintosh/Mac OS ROM": [
+        "5f1519bea6fc4122604363149e9f9c7214886d99"
+      ],
+      "Power Macintosh/Mac OS ROM": [
+        "5f1519bea6fc4122604363149e9f9c7214886d99"
       ],
       "Aquaplus/PIECE/.variants/piece.pfi.9a1c9d3d": [
         "57eb74ac395ddba35ac0f2a6ddc30917d7771fae"

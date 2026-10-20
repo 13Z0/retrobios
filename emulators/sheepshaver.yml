@@ -73,12 +73,19 @@ files:
   - name: ROM
     aliases: ["Mac OS ROM"]
     required: true
-    validation: [signature]
+    validation: [size, signature]
+    min_size: 377670
     description: "PowerPC Macintosh ROM, 4 MB PCI PowerMac image or CHRP-BOOT Mac OS ROM"
-    source_ref: "SheepShaver/src/Unix/main_unix.cpp:162-163,585-593,987, SheepShaver/src/Windows/main_windows.cpp:58-59,330-344, SheepShaver/src/rom_patches.cpp:148-200,671-695, SheepShaver/src/main.cpp:161"
+    source_ref: "SheepShaver/src/Unix/main_unix.cpp:162-163,585-610,987, SheepShaver/src/Windows/main_windows.cpp:58-59,330-344, SheepShaver/src/rom_patches.cpp:80-120,148-200,671-707, SheepShaver/src/main.cpp:161"
     note: >
-      No size is enforced on its own: DecodeROM takes a 4 MB read as a plain
-      image and any other length only through the <CHRP-BOOT> header. The check
-      every accepted image passes is the nanokernel ID at offset 0x30d064 of
-      the decoded 4 MB image, which PatchROM matches against Boot TNT, Boot
-      Alchemy, Boot Zanzibar, Boot Gazelle, Boot Gossamer and NewWorld.
+      DecodeROM takes a 4 MB read as a plain image and any shorter file only
+      through the <CHRP-BOOT> header. The check every accepted image passes is
+      the nanokernel ID at offset 0x30d064 of the decoded 4 MB image, which
+      PatchROM matches against Boot TNT, Boot Alchemy, Boot Zanzibar, Boot
+      Gazelle, Boot Gossamer and NewWorld. That bounds the size from below.
+      decode_lzss turns 17 input bytes into at most 144 output bytes, so a
+      stream that reaches the end of the shortest ID (0x30d06c bytes) is at
+      least 377670 bytes long. A 128 KB or 256 KB file is never a SheepShaver
+      ROM. The Mac OS ROM file of a Mac OS 8.5 or 8.6 System Folder is used as
+      it is: its data fork is the <CHRP-BOOT> image, the resource fork carries
+      only icons and version strings.
