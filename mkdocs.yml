@@ -292,7 +292,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (186):
+  - Community forks (188):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -390,6 +390,7 @@ nav:
     - Meteor GBA: emulators/meteor.md
     - mGBA Splitscreen: emulators/mgba_splitscreen.md
     - Mini vMac: emulators/minivmac.md
+    - Mini vMac 37: emulators/minivmac37.md
     - Moonlight: emulators/moonlight.md
     - mpv: emulators/mpv.md
     - MSX.emu: emulators/msx-emu.md
@@ -423,6 +424,7 @@ nav:
     - ProSystem: emulators/prosystem.md
     - PUAE (P-UAE): emulators/puae.md
     - px68k: emulators/px68k.md
+    - px68k (SDL): emulators/px68k-sdl.md
     - QEMU: emulators/qemu.md
     - QUASI88: emulators/quasi88.md
     - QuickNES: emulators/quicknes.md
@@ -641,7 +643,7 @@ nav:
     - Zelda Classic v2.10: emulators/zc210.md
     - Zelda Classic 2.55 Prototype: emulators/zc255.md
     - ZQuest Classic: emulators/zquestclassic.md
-  - Enhanced forks (33):
+  - Enhanced forks (34):
     - A7800: emulators/a7800.md
     - AdvanceMAME: emulators/advancemame.md
     - bsnes-hd beta: emulators/bsnes_hd_beta.md
@@ -667,6 +669,7 @@ nav:
     - PCSX2x6: emulators/pcsx2x6.md
     - PrimeHack: emulators/primehack.md
     - pSxMAME: emulators/psxmame.md
+    - QUASI88kai: emulators/quasi88kai.md
     - RealRTCW: emulators/realrtcw.md
     - SMS Plus GX: emulators/smsplus.md
     - Supermodel Dojo: emulators/supermodel-dojo.md
