@@ -1,5 +1,5 @@
 emulator: Hatari
-type: libretro
+type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/libretro/hatari"
 upstream: "https://github.com/hatari/hatari"
@@ -107,6 +107,31 @@ notes: |
   (src/retro/vfs.c:17-48, src/file.c:253-302, src/file.c:479-492), and a
   device-prefixed path such as ux0:/ counts as absolute (src/file.c:152-164).
 
+  The standalone program is the SDL build of the upstream tree. Its default
+  TOS image is tos.img in the data directory (src/configuration.c:810-812),
+  which is the directory of the executable on Windows, ../Resources in the
+  macOS bundle and ../share/hatari beside the bin directory elsewhere
+  (src/paths.c:316-330, CMakeLists.txt:383-394). --tos and the
+  szTosImageFileName key replace it. When no image loads, Main_InitSubsystems
+  opens the settings dialog to pick one and exits with Failed to load TOS
+  image if none is chosen (src/main.c:191-201). Nothing is compiled in as a
+  fallback. The install rule copies a src/tos.img into the data directory
+  when one is present at build time, the source tree carries none, and the
+  release checklist puts the latest EmuTOS 1024k image in the binary
+  packages (doc/release-checklist.txt:85-86). The Hatari home directory is
+  ~/.config/hatari, Library/Application Support/Hatari or
+  AppData\Local\Hatari under the user's home (src/paths.c:24-29,
+  src/paths.c:201-274). hatari.cfg is read from <CONFDIR> and then from that
+  home directory, or from the file -c names (src/main.c:256-278,
+  src/configuration.c:862-867, src/options.c:1283-1289). hatari.nvram and
+  auto.sav, restored only when bAutoSave is on, are kept there
+  (src/falcon/nvram.c:282-294, src/configuration.c:727-733). The window
+  icon is hatari-icon.bmp in the data directory (src/sdl/screen.c:707-716).
+  --lilo boots a Linux kernel instead of TOS, vmlinuz and initrd in the data
+  directory by default (src/configuration.c:816-824, src/options.c:2309-2323).
+  IPF, RAW and CTR images need the capsimage library found at build time
+  (CMakeLists.txt:185-188).
+
 files:
   - name: "tos.img"
     path: "tos.img"
@@ -116,14 +141,18 @@ files:
     max_size: 1048576
     validation: [size]
     aliases: [tos100fr.img, tos100us.img, tos102.img, tos102de.img, tos102fr.img, tos102uk.img, tos104.img, tos104de.img, tos104es.img, tos104fr.img, tos104uk.img, tos104us.img, tos106.img, tos106de.img, tos106es.img, tos106fr.img, tos106uk.img, tos106us.img, tos162de.img, tos162fr.img, tos162uk.img, tos162us.img, tos205de.img, tos205es.img, tos205fr.img, tos205it.img, tos205us.img, tos206.img, tos206de.img, tos206fr.img, tos206uk.img, tos206us.img, tos306de.img, tos306uk.img, tos400.img, tos402.img, tos404.img, st.img, ste.img, megaste.img, tt.img, falcon.img, emutos.img]
-    source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353"
+    source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353, upstream src/configuration.c:810-812, upstream src/paths.c:316-330, upstream CMakeLists.txt:383-394, upstream src/main.c:191-201, upstream src/reset.c:66-68, upstream src/file.c:275-308, upstream src/file.c:481-520, upstream src/CMakeLists.txt:74, upstream src/CMakeLists.txt:386-393"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. The file must
       carry this exact name in the libretro build: retro_init only enables
-      emulation when <system>/tos.img exists. Hatari built as its own
-      program opens whatever file --tos or the szTosImageFileName key of
-      hatari.cfg names (src/options.c:1937-1940, src/configuration.c:489,
-      src/tos.c:983), and the aliases are the names the platform launchers
+      emulation when <system>/tos.img exists. The standalone program opens
+      tos.img in its data directory unless --tos or the szTosImageFileName
+      key of hatari.cfg names another file. A missing name is retried with
+      its extension replaced by .img, .rom and .tos, so tos.rom and tos.tos
+      stand in for the default, and a .gz or archive is unpacked first. The
+      program exits when no image loads and none is picked in the settings
+      dialog (src/options.c:1937-1940, src/configuration.c:489,
+      src/tos.c:983, src/main.c:191-201). The aliases are the names the platform launchers
       give it. Batocera passes tos<version><language>.img from the BIOS
       root, trying the chosen version then each machine's list and the
       languages us, uk, de, es, fr, it, nl, ru, se and none in turn
@@ -150,7 +179,9 @@ files:
       loader, so a table named after another image, emutos.sym beside
       emutos.img, is never opened. nSymbolsAutoLoad gates the read. Its
       default is not off and no core option changes it, so the table is read
-      at every TOS load when present. The symbols serve the built-in
+      at every TOS load when present. The standalone program derives the
+      name the same way from the image it opens, tos.sym beside the default
+      tos.img in its data directory. The symbols serve the built-in
       debugger.
 
   - name: "cartridge ROM"
@@ -161,9 +192,10 @@ files:
     min_size: 40
     max_size: 131076
     validation: [size]
-    source_ref: "source src/cart.c:41-47, source src/cart.c:53-88, source src/cart.c:97-104, source src/cart.c:114-142, source src/configuration.c:487-493, source src/configuration.c:814"
+    source_ref: "source src/cart.c:41-47, source src/cart.c:53-88, source src/cart.c:97-104, source src/cart.c:114-142, source src/configuration.c:487-493, source src/configuration.c:814, upstream src/options.c:1951-1959"
     note: >
-      Set through hatari.cfg. Raw images up to 0x20000 bytes or .stc
+      Set through hatari.cfg, or with --cartridge in the standalone
+      program. Raw images up to 0x20000 bytes or .stc
       images of exactly 0x20004 bytes whose 4-byte header is skipped.
       Extensions .img, .rom and .stc are tried when the configured path is
       missing. Replaced by the built-in GEMDOS trampoline whenever GEMDOS
@@ -174,6 +206,7 @@ files:
     path: "hatari/BOOT.ST"
     description: "Boot floppy inserted with GEMDOS hard disk folders"
     required: false
+    mode: libretro
     source_ref: "source src/retro/harddisk.c:78-129, source src/retro/main_retro.c:391-395"
     note: "Inserted into drive A when the content is a .gem file."
 
@@ -183,11 +216,13 @@ files:
     required: false
     storage: user_provided
     unsourceable: "user settings in Hatari's INI format, with no canonical contents"
-    source_ref: "upstream src/main.c:260-282, source src/main.c:319-322, source src/main.c:328-330, source src/configuration.c:862-867, source src/configuration.c:1061-1071, upstream src/paths.c:236-250, source CMakeLists.txt:444-461"
+    source_ref: "upstream src/main.c:260-282, source src/main.c:319-322, source src/main.c:328-330, source src/configuration.c:862-867, source src/configuration.c:1061-1071, upstream src/paths.c:236-250, source CMakeLists.txt:444-461, upstream src/options.c:1283-1289, upstream src/paths.c:24-29"
     note: >
       Read from <CONFDIR>/hatari.cfg and then from hatari.cfg in the
       RetroArch save directory, before the --tos argument and the boot
-      core options are applied.
+      core options are applied. The standalone program reads the second
+      file from its home directory, ~/.config/hatari on Linux, or from the
+      file -c names.
 
   - name: "hatari.nvram"
     path: null
@@ -198,7 +233,39 @@ files:
     validation: [size]
     storage: user_provided
     unsourceable: "machine state the emulator writes itself at exit, with no canonical contents"
-    source_ref: "source src/falcon/nvram.c:96-97, source src/falcon/nvram.c:116-141, source src/falcon/nvram.c:148-171, source src/falcon/nvram.c:282-294, source src/falcon/nvram.c:334-337, upstream src/paths.c:236-250, source src/main.c:208"
+    source_ref: "source src/falcon/nvram.c:96-97, source src/falcon/nvram.c:116-141, source src/falcon/nvram.c:148-171, source src/falcon/nvram.c:282-294, source src/falcon/nvram.c:334-337, upstream src/paths.c:236-250, source src/main.c:208, upstream src/paths.c:24-29"
     note: >
-      Read from the RetroArch save directory at NvRam_Init. A short read
-      keeps the built-in defaults. Saved back on exit.
+      Read from the RetroArch save directory at NvRam_Init, and from the
+      Hatari home directory in the standalone program. A short read keeps
+      the built-in defaults. Saved back on exit.
+
+  - name: "keymap file"
+    path: null
+    mode: standalone
+    config_key: "szMappingFileName"
+    description: "Host key to ST scancode remapping table, text"
+    required: false
+    storage: user_provided
+    unsourceable: "user settings in Hatari's keymap text format, with no canonical contents"
+    source_ref: "upstream src/configuration.c:256, upstream src/configuration.c:719, upstream src/options.c:2236-2242, upstream src/main.c:178, upstream src/change.c:419-422, upstream src/sdl/keymap.c:47, upstream src/sdl/keymap.c:701-725"
+    note: >
+      Named by --keymap or the szMappingFileName key, empty by default.
+      Read at start and again when the setting changes. A missing file logs a
+      warning and keeps the default mapping.
+
+  - name: "hatari-icon.bmp"
+    path: null
+    mode: standalone
+    description: "Window icon"
+    required: false
+    bundled: true
+    size: 630
+    md5: f5e9c46fbbdc660d024a1bdd286a05ef
+    sha1: 48be1de23a980bca15a8ed3cb92917340e43bbee
+    sha256: 0e083a340ad2e522de94e5121565a4730f99d6ee3638c74f5a2c3be579529155
+    crc32: 1639262c
+    source_ref: "upstream src/sdl/screen.c:707-716, upstream src/CMakeLists.txt:386-389"
+    note: >
+      Loaded with SDL_LoadBMP from the data directory when the window is
+      created. Without it the window keeps the default icon. Installed
+      from src/hatari-icon.bmp, whose hashes these are.
