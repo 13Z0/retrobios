@@ -270,7 +270,6 @@ def generate_home(
     unique = unique_emulator_profiles(profiles)
     emulator_count = len(unique)
 
-    # Classification stats
     classifications: dict[str, int] = {}
     for p in unique.values():
         cls = p.get("core_classification", "other")
@@ -1829,7 +1828,6 @@ def generate_platform_page(
             ]
         )
 
-    # Stat cards
     lines.extend(
         [
             '<div class="rb-stats" markdown>',
@@ -3208,7 +3206,6 @@ def generate_emulator_page(
 
     lines.extend(_render_structured_blocks(profile))
 
-    # Notes
     if notes:
         indented = _admonition_body(link_prose_citations(profile, notes))
         lines.extend(['???+ note "Technical notes"', f"    {indented}", ""])
@@ -3228,7 +3225,6 @@ def generate_emulator_page(
 
         lines.extend(_emulator_file_summary(files, _file_available))
 
-        # File table
         for f, anchor in zip(files, emulator_file_anchors(files)):
             lines.extend(
                 _render_emulator_file(
@@ -3236,7 +3232,6 @@ def generate_emulator_page(
                 )
             )
 
-    # Data directories
     if data_dirs:
         lines.extend(["## Data directories", ""])
         # Each tree with what it holds, where it comes from, which build reads
@@ -3882,7 +3877,6 @@ def _render_xref_by_platform(
 ) -> list[str]:
     """Which cores each platform pulls in, and what they need."""
     lines: list[str] = []
-    # Per platform
     for pname in sorted(coverages.keys(), key=lambda x: coverages[x]["platform"]):
         cov = coverages[pname]
         display = cov["platform"]
@@ -4549,7 +4543,6 @@ def _generate(args: argparse.Namespace) -> None:
     db = load_database(args.db)
     docs = Path(args.docs_dir)
 
-    # Ensure output dirs
     for d in GENERATED_DIRS:
         (docs / d).mkdir(parents=True, exist_ok=True)
 
@@ -4621,7 +4614,6 @@ def _generate(args: argparse.Namespace) -> None:
     consumers = _build_file_consumers(db, coverages, profiles)
     emulator_files = _build_emulator_file_index(profiles)
 
-    # Generate home
     print("Generating home page...")
     write_if_changed(
         str(docs / "index.md"), generate_home(
@@ -4650,7 +4642,6 @@ def _generate(args: argparse.Namespace) -> None:
     _build_system_page_map_from_data(manufacturers, coverages, db, profiles)
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
 
-    # Generate platform pages
     print("Generating platform pages...")
     write_if_changed(
         str(docs / "platforms" / "index.md"),
@@ -4667,7 +4658,6 @@ def _generate(args: argparse.Namespace) -> None:
         )
         PAGE_DATA[f"platforms/{name}.md"] = platform_structured_data(name, cov)
 
-    # Generate system pages
     print("Generating system pages...")
 
     prime_system_icons({
@@ -4687,7 +4677,6 @@ def _generate(args: argparse.Namespace) -> None:
         PAGE_DATA[f"systems/{slug}.md"] = system_structured_data(slug, consoles)
         write_if_changed(str(docs / "systems" / f"{slug}.md"), page)
 
-    # Generate emulator pages
     print("Generating emulator pages...")
     write_if_changed(
         str(docs / "emulators" / "index.md"), generate_emulators_index(profiles)
@@ -4723,13 +4712,11 @@ def _generate(args: argparse.Namespace) -> None:
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)
 
-    # Generate cross-reference page
     print("Generating cross-reference page...")
     write_if_changed(
         str(docs / "cross-reference.md"), generate_cross_reference(coverages, profiles)
     )
 
-    # Generate gap analysis page
     print("Generating gap analysis page...")
     write_if_changed(
         str(docs / "gaps.md"),
@@ -4738,7 +4725,6 @@ def _generate(args: argparse.Namespace) -> None:
         ),
     )
 
-    # Generate dump provenance page
     print("Generating dump provenance page...")
     provenance_report = build_report(db, load_provenance_snapshots())
     write_if_changed(
@@ -4760,11 +4746,9 @@ def _generate(args: argparse.Namespace) -> None:
         str(wiki_dest / "data-model.md"), generate_wiki_data_model(db, profiles)
     )
 
-    # Generate which-pack page
     print("Generating which-pack page...")
     write_if_changed(str(docs / "which-pack.md"), generate_which_pack())
 
-    # Generate contributing
     print("Generating contributing page...")
     write_if_changed(str(docs / "contributing.md"), generate_contributing())
 

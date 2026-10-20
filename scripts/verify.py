@@ -1242,7 +1242,6 @@ def verify_platform(
                 for result in results_at.get(dest, []):
                     result["status"] = Status.OK
 
-    # Count by severity
     counts = {
         Severity.OK: 0,
         Severity.INFO: 0,
@@ -2373,7 +2372,6 @@ def _main(held: contextlib.ExitStack) -> None:
 
     db = load_database(args.db)
 
-    # Emulator mode
     if args.emulator:
         names = [n.strip() for n in args.emulator.split(",") if n.strip()]
         result = verify_emulator(
@@ -2388,7 +2386,6 @@ def _main(held: contextlib.ExitStack) -> None:
         _exit_if_strict_emulator(args.strict, result)
         return
 
-    # System mode
     if args.system:
         system_ids = [s.strip() for s in args.system.split(",") if s.strip()]
         result = verify_system(
