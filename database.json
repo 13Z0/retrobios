@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T09:22:56Z",
+  "generated_at": "2026-10-20T12:20:30Z",
   "total_files": 19452,
   "total_size": 16769497612,
   "bios_dir": "bios",
@@ -268527,7 +268527,8 @@
         "bc32bc0e8902946663998f56aea52be597d9e361"
       ],
       "apple2gs3.rom": [
-        "bc32bc0e8902946663998f56aea52be597d9e361"
+        "bc32bc0e8902946663998f56aea52be597d9e361",
+        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
       ],
       "ROM03.ROM": [
         "bc32bc0e8902946663998f56aea52be597d9e361"
@@ -268608,13 +268609,16 @@
         "9a6e4c88533a9eaa4d55cdc040e47443e0226eb2"
       ],
       "tos102uk.img": [
-        "87900a40a890fdf03bd08be6c60cc645855cbce5"
+        "87900a40a890fdf03bd08be6c60cc645855cbce5",
+        "735793fdba07fe8d5295caa03484f6ef3de931f5"
       ],
       "tos104uk.img": [
-        "9526ef63b9cb1d2a7109e278547ae78a5c1db6c6"
+        "9526ef63b9cb1d2a7109e278547ae78a5c1db6c6",
+        "735793fdba07fe8d5295caa03484f6ef3de931f5"
       ],
       "tos106uk.img": [
-        "06f9ea322e74b682df0396acfaee8cb4d9c90cad"
+        "06f9ea322e74b682df0396acfaee8cb4d9c90cad",
+        "735793fdba07fe8d5295caa03484f6ef3de931f5"
       ],
       "score-panel_green.png": [
         "8f627c7d7a1358c0b3f278d05516958c2ed8020d"
@@ -272388,7 +272392,8 @@
         "b6a11579caef3875504fcf3831b8e3922746df2c"
       ],
       "SCPH-70004_BIOS_V12_EUR_200.BIN": [
-        "434bc0b4eb4827da0773ec0795aadc5162569a07"
+        "434bc0b4eb4827da0773ec0795aadc5162569a07",
+        "f9229fe159d0353b9f0632f3fdc66819c9030458"
       ],
       "ps2-0200e-20040614.bin": [
         "434bc0b4eb4827da0773ec0795aadc5162569a07"
@@ -272871,10 +272876,12 @@
         "286b2e1fb21cc79851da01666db6c0b0e88f25e3"
       ],
       "tos106de.img": [
-        "3b8cf5ffa41b252eb67f8824f94608fa4005d6dd"
+        "3b8cf5ffa41b252eb67f8824f94608fa4005d6dd",
+        "735793fdba07fe8d5295caa03484f6ef3de931f5"
       ],
       "tos206us.img": [
-        "ee58768bdfc602c9b14942ce5481e97dd24e7c83"
+        "ee58768bdfc602c9b14942ce5481e97dd24e7c83",
+        "735793fdba07fe8d5295caa03484f6ef3de931f5"
       ],
       "saturn_bios.bin": [
         "2b8cb4f87580683eb4d760e4ed210813d667f0a2"
@@ -274513,6 +274520,27 @@
       "atari_os_b.rom": [
         "db1031585968cfc6ec2ecda5c9a5a52f61444a3b"
       ],
+      "atari-800-os-a-ntsc.rom": [
+        "f821911f16ed613d72d4b255b3e68ab2d07041ac"
+      ],
+      "atari-1200xl-os-rev-10.rom": [
+        "83c9afee8828a4026c55f10f920c42f76ad9ff65"
+      ],
+      "atari-1200xl-os-rev-11.rom": [
+        "5833e3a51d3a966a42baea37c40c01186e8a89cc"
+      ],
+      "atari-xl-os-ver-1.rom": [
+        "881d030656b40bbe48f15a696b28f22c0b752ab0"
+      ],
+      "atari-xl-os-ver-3.rom": [
+        "f03b9b93000ee84abb9cf8d6367241006f172182"
+      ],
+      "atari-basic-rev-a.rom": [
+        "70cdf57469a208528f78a14275837352e90e20f1"
+      ],
+      "atari-basic-rev-b.rom": [
+        "7ad88dd99ff4a6ee66f6d162074db6f8bef7a9b6"
+      ],
       "OS12.ROM": [
         "0d9bcaf6a393c9ce2359ed700ddb53c232c2c45d"
       ],
@@ -275518,6 +275546,15 @@
       ],
       "mx1600bas_zephyr": [
         "70a464edf3a654ed4ffe687e6dee4f0d2acc758b"
+      ],
+      "Dragon Data Ltd - DragonDOS 1.0": [
+        "a8918c71d319237c1e3155bb38620acb114a80bc"
+      ],
+      "dosplus-4.8": [
+        "e72ca68061267692b01034005c2804aeee8e5cd0"
+      ],
+      "DOSPLUS": [
+        "e72ca68061267692b01034005c2804aeee8e5cd0"
       ],
       "PNP - SuperDOS E6": [
         "ef157016386ed463374de6bac84d1f8ce654ed80"
