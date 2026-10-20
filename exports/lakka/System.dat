@@ -167,7 +167,7 @@ game (
 	rom ( name vice/DRIVES/dos1571cr-318047-01.bin size 32768 crc F24EFCC4 md5 f9158328494b3e269f86ef419792c2e5 sha1 14ee7a0fb7e1c59c51fbf781f944387037daa3ee )
 
 	comment "Dinothawr"
-	rom ( name Dinothawr.zip size 5763199 crc 683ED4AD md5 a2e891e330d146c4046c2b622fc31462 sha1 693d8bb4d992c645e6413a57195acf4eca2f5a2e )
+	rom ( name Dinothawr.zip size 5763199 crc 683ed4ad md5 a2e891e330d146c4046c2b622fc31462 sha1 693d8bb4d992c645e6413a57195acf4eca2f5a2e )
 
 	comment "DOS"
     rom ( name MT32_CONTROL.ROM size 65536 crc A7C1531B md5 5626206284b22c2734f3e9efefcd2675 sha1 b083518fffb7f66b03c23b7eb4f868e62dc5a987 )

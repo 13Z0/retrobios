@@ -42,6 +42,26 @@ def _quote(name: str, quoted: frozenset[str] = frozenset()) -> str:
 _ROM_NAME = re.compile(r'^(\s+)rom \( name ("[^"]+"|\S+)')
 
 
+_CRC = re.compile(r" crc (\S+)")
+
+
+def _patch(line: str, indent: str, ours: str) -> str:
+    """The original line where our values agree with it, else ours in its form.
+
+    libretro writes one crc in lower case (Dinothawr.zip's 683ed4ad) and the
+    others in upper case. A line whose values did not change keeps its bytes,
+    and a corrected crc takes the case of the line it lands on. The
+    indentation stays libretro's.
+    """
+    ours = indent + ours.lstrip("\t")
+    if line.lower() == ours.lower():
+        return line
+    theirs = _CRC.search(line)
+    if theirs and theirs.group(1) != theirs.group(1).upper():
+        ours = _CRC.sub(lambda m: f" crc {m.group(1).lower()}", ours, count=1)
+    return ours
+
+
 def _sections(original: str) -> list[tuple[str, list[str]]]:
     """The system sections of a System.dat, each comment with its rom lines."""
     _, sep, body = original.partition("\ngame (")
@@ -191,8 +211,7 @@ class Exporter(BaseExporter):
             for line in roms:
                 match = _ROM_NAME.match(line)
                 if match and match.group(2) in rendered:
-                    # The values are ours, the indentation stays libretro's.
-                    body.append(match.group(1) + rendered.pop(match.group(2)).lstrip("\t"))
+                    body.append(_patch(line, match.group(1), rendered.pop(match.group(2))))
                 else:
                     body.append(line)
             body.extend(rendered.values())

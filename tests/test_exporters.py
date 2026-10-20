@@ -1343,6 +1343,67 @@ class SystemDatKeepsSpaceIndentedLines(unittest.TestCase):
         self.assertEqual(produced.count("kick33180.A500"), 1)
 
 
+class SystemDatComesBackAsWritten(unittest.TestCase):
+    """libretro writes one crc in lower case, Dinothawr.zip's 683ed4ad, and
+    the 513 others in upper case. Rendered upper case without condition,
+    that line changed with no correction behind it."""
+
+    SECTION = "Dinothawr"
+    ORIGINAL = (
+        'clrmamepro (\n\tname "System"\n)\n\ngame (\n\tname "System"\n'
+        '\tcomment "System"\n\n'
+        '\tcomment "Dinothawr"\n'
+        f"\trom ( name lower.zip size 10 crc 683ed4ad md5 {'1' * 32} sha1 {'1' * 40} )\n"
+        f"\trom ( name upper.zip size 10 crc 0BCDEF12 md5 {'2' * 32} sha1 {'2' * 40} )\n"
+        ")\n"
+    )
+
+    def _render(self, truth_files: list[dict]) -> str:
+        scraped = {"systems": {"dinothawr": {"native_id": self.SECTION, "files": [
+            {"name": "lower.zip", "destination": "lower.zip", "native_system": self.SECTION,
+             "size": 10, "crc32": "683ed4ad", "md5": "1" * 32, "sha1": "1" * 40},
+            {"name": "upper.zip", "destination": "upper.zip", "native_system": self.SECTION,
+             "size": 10, "crc32": "0BCDEF12", "md5": "2" * 32, "sha1": "2" * 40},
+        ]}}}
+        truth = {"systems": {"dinothawr": {"files": truth_files}}} if truth_files else {"systems": {}}
+        systems, report = build_native_model(truth, scraped)
+        return discover_exporters()["retroarch"]().render(
+            systems, report, {"System.dat": self.ORIGINAL}, None
+        )["System.dat"]
+
+    def test_an_empty_truth_hands_back_the_lines(self):
+        self.assertEqual(self._render([]), self.ORIGINAL)
+
+    def test_a_corrected_crc_follows_the_case_of_its_line(self):
+        produced = self._render([
+            {"name": "lower.zip", "size": 10, "crc32": "abcdef01", "md5": "3" * 32, "sha1": "3" * 40},
+            {"name": "upper.zip", "size": 10, "crc32": "fedcba98", "md5": "4" * 32, "sha1": "4" * 40},
+        ])
+        self.assertIn(" crc abcdef01 ", produced)
+        self.assertIn(" crc FEDCBA98 ", produced)
+
+    def test_an_added_line_takes_the_case_of_the_file(self):
+        produced = self._render([
+            {"name": "new.zip", "size": 10, "crc32": "abcdef01", "md5": "5" * 32, "sha1": "5" * 40},
+        ])
+        self.assertIn("name new.zip size 10 crc ABCDEF01 ", produced)
+
+    def test_an_empty_truth_hands_back_system_dat(self):
+        for platform in ("retroarch", "lakka"):
+            original_path = UPSTREAM_CACHE / platform / "System.dat"
+            if not original_path.exists():
+                self.skipTest("upstream cache not populated")
+            original = original_path.read_bytes()
+            exporter = discover_exporters()[platform]()
+            config = native_layer(load_platform_config(platform, str(REPO_ROOT / "platforms")))
+            systems, report = build_native_model({"systems": {}}, config)
+            produced = exporter.render(
+                systems, report, {"System.dat": original.decode("utf-8")}, config
+            )
+            with self.subTest(platform=platform):
+                self.assertEqual(produced["System.dat"].encode("utf-8"), original)
+
+
 class RommSizeIsNeverNone(unittest.TestCase):
     """size() is None where the truth contradicts RomM's hash without a size
     or names several sizes. str(None) went out as "None", validate() passed
