@@ -1,0 +1,20 @@
+{
+  "platform": "retropie",
+  "originals": {
+    "RetroPie-Setup.tar.gz": "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/46128cd252cdecae852a4d0bafa2aaf9d03ab563"
+  },
+  "files": [
+    "scriptmodules/emulators/gngeopi.sh",
+    "scriptmodules/libretrocores/lr-geargrafx.sh",
+    "scriptmodules/libretrocores/lr-o2em.sh"
+  ],
+  "summary": "3 packages corrected. amiberry, fs-uae, uae4all, uae4arm: names a file we have never seen (kick13.rom). sdltrs: names a file we have never seen (level3.rom, level4.rom, level4p.rom). lr-opera: names a file we have never seen (panazf10.bin). amiberry, fs-uae, lr-beetle-saturn, lr-bluemsx and 7 more: names no file to extend. dgen, lr-freechaf: no core of ours packages it",
+  "hashes_corrected": [],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

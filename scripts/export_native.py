@@ -374,9 +374,9 @@ class LandedChanges:
     requirements: int = 0
 
 
-def _count(number: int, noun: str) -> str:
+def _count(number: int, noun: str, plural: str = "") -> str:
     """"1 hash", "2 hashes": a count with its noun in the right number."""
-    plural = noun + ("es" if noun.endswith(("sh", "ch", "s", "x")) else "s")
+    plural = plural or noun + ("es" if noun.endswith(("sh", "ch", "s", "x")) else "s")
     return f"{number} {noun if number == 1 else plural}"
 
 
@@ -529,9 +529,9 @@ def export_platform(
         if cleared:
             summary += f", {_count(len(cleared), 'hash')} cleared"
         if refused:
-            summary += f", {refused} the format cannot state"
+            summary += f", {_count(refused, 'addition')} left out"
         if lost:
-            summary += f", {lost} of theirs dropped"
+            summary += f", {_count(lost, 'entry', 'entries')} of theirs the format drops"
     withheld = exporter.withheld()
     if withheld:
         summary += f", {_count(len(withheld), 'correction')} withheld"

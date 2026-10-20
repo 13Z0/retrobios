@@ -1,0 +1,18 @@
+{
+  "platform": "bizhawk",
+  "originals": {
+    "FirmwareDatabase.cs": "https://raw.githubusercontent.com/TASEmulators/BizHawk/2.11.1/src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs"
+  },
+  "files": [
+    "FirmwareDatabase.cs"
+  ],
+  "summary": "121 kept, 0 added, 0 hashes corrected, 0 requirements corrected",
+  "hashes_corrected": [],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

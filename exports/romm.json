@@ -1,0 +1,23 @@
+{
+  "platform": "romm",
+  "originals": {
+    "known_bios_files.json": "https://raw.githubusercontent.com/rommapp/romm/5.4.0/backend/models/fixtures/known_bios_files.json"
+  },
+  "files": [
+    "known_bios_files.json"
+  ],
+  "summary": "374 kept, 81 added, 4 hashes corrected, 0 requirements corrected, 308 additions left out",
+  "hashes_corrected": [
+    "atari8bit/ATARIOSB.ROM sha1",
+    "atari8bit/ATARIOSB.ROM md5",
+    "atari8bit/ATARIOSB.ROM crc32",
+    "doom/PLUTONIA.WAD sha1"
+  ],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

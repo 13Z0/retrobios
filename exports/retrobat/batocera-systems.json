@@ -1,0 +1,3299 @@
+{
+  "3do": {
+    "name": "3DO",
+    "biosFiles": [
+      {
+        "md5": "f47264dd47fe30f73ab3c010015c155b",
+        "file": "bios/panafz1.bin"
+      },
+      {
+        "md5": "51f2f43ae2f3508a14d9f56597e2d3ce",
+        "file": "bios/panafz10.bin"
+      },
+      {
+        "md5": "8639fd5e549bd6238cfee79e3e749114",
+        "file": "bios/goldstar.bin"
+      },
+      {
+        "md5": "ba3eda87fde9bd7f09c2b9db3dbb9887",
+        "file": "bios/panafz1e.bin"
+      },
+      {
+        "md5": "a496cfdded3da562759be3561317b605",
+        "file": "bios/panafz1j.bin"
+      },
+      {
+        "md5": "f6c71de7470d16abe4f71b1444883dc8",
+        "file": "bios/panafz1j - norsa.bin"
+      },
+      {
+        "md5": "1477bda80dc33731a65468c1f5bcbee9",
+        "file": "bios/panafz10-norsa.bin"
+      },
+      {
+        "md5": "a48e6746bd7edec0f40cff078f0bb19f",
+        "file": "bios/panafz10e-anvil.bin"
+      },
+      {
+        "md5": "cf11bbb5a16d7af9875cca9de9a15e09",
+        "file": "bios/panafz10e-anvil-norsa.bin"
+      },
+      {
+        "md5": "20706f726c22d79d3c385e215d7428e2",
+        "file": "bios/panafz10j.bin"
+      },
+      {
+        "md5": "b42a2207226a669415886007a9dbcad5",
+        "file": "bios/goldstar_fc1_enc.bin"
+      },
+      {
+        "md5": "35fa1a1ebaaeea286dc5cd15487c13ea",
+        "file": "bios/sanyotry.bin"
+      },
+      {
+        "md5": "4ca4a976237b6c8fd3abfb393d072469",
+        "file": "bios/sanyo_hc21_b3_unenc.bin"
+      },
+      {
+        "md5": "8970fc987ab89a7f64da9f8a8c4333ff",
+        "file": "bios/3do_arcade_saot.bin"
+      },
+      {
+        "md5": "45a010f04b1df9c072983378c318b259",
+        "file": "bios/3do_devkit_1.0fc2.bin"
+      },
+      {
+        "md5": "b8dc97f778a6245c58e064b0312e8281",
+        "file": "bios/panafz1-kanji.bin"
+      },
+      {
+        "md5": "c23fb5d5e6bb1c240d02cf968972be37",
+        "file": "bios/panafz1j-kanji.bin"
+      },
+      {
+        "md5": "428577250f43edc902ea239c50d2240d",
+        "file": "bios/panafz10ja-anvil-kanji.bin"
+      },
+      {
+        "md5": "ad43f7905ba53da48c0b8d9643fb8cec",
+        "file": "bios/opera-boot.bin"
+      },
+      {
+        "md5": "f6c71de7470d16abe4f71b1444883dc8",
+        "file": "bios/panafz1j-norsa.bin"
+      }
+    ]
+  },
+  "adam": {
+    "name": "Coleco Adam",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/adam.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/adam_ddp.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/adam_fdc.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/adam_kb.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/adam_prn.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/adam_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/adam_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/adam_flop.xml"
+      },
+      {
+        "md5": "01df3140909f09aa9aac4f88890f676c",
+        "file": "bios/eos.rom"
+      },
+      {
+        "md5": "4fe4f6800076ea3d897d4285653447bd",
+        "file": "bios/writer.rom"
+      }
+    ]
+  },
+  "advision": {
+    "name": "Adventure Vision",
+    "biosFiles": [
+      {
+        "md5": "1c08606408029751fd30ac91d2bf30d5",
+        "file": "bios/advision.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/advision.xml"
+      }
+    ]
+  },
+  "amiga500": {
+    "name": "Amiga 500",
+    "biosFiles": [
+      {
+        "md5": "85ad74194e87c08904327de1a9443b7a",
+        "file": "bios/kick33180.A500"
+      },
+      {
+        "md5": "82a21c1890cae844b3df741f2762d48d",
+        "file": "bios/kick34005.A500"
+      },
+      {
+        "md5": "dc10d7bdd1b6f450773dfb558477c230",
+        "file": "bios/kick37175.A500"
+      }
+    ]
+  },
+  "amiga1200": {
+    "name": "Amiga 1200",
+    "biosFiles": [
+      {
+        "md5": "646773759326fbac3b2311fd8c8793ee",
+        "file": "bios/kick40068.A1200"
+      },
+      {
+        "md5": "d2ce6748e8e42222662e14359f68dad5",
+        "file": "bios/aros-ext.bin"
+      },
+      {
+        "md5": "48d38fc3fcf2ad7bca5ec5191d02e451",
+        "file": "bios/aros-rom.bin"
+      },
+      {
+        "md5": "e40a5dfb3d017ba8779faba30cbd1c8e",
+        "file": "bios/amiga-os-310-a600.rom"
+      },
+      {
+        "md5": "465646c9b6729f77eea5314d1f057951",
+        "file": "bios/amiga-os-205-a600.rom"
+      },
+      {
+        "md5": "646773759326fbac3b2311fd8c8793ee",
+        "file": "bios/amiga-os-310-a1200.rom"
+      },
+      {
+        "md5": "b7cc148386aa631136f510cd29e42fc3",
+        "file": "bios/amiga-os-300-a1200.rom"
+      },
+      {
+        "md5": "9bdedde6a4f33555b4a270c8ca53297d",
+        "file": "bios/amiga-os-310-a4000.rom"
+      },
+      {
+        "md5": "9b8bdd5a3fd32c2a5a6f5b1aefc799a5",
+        "file": "bios/amiga-os-300-a4000.rom"
+      }
+    ]
+  },
+  "amiga4000": {
+    "name": "Amiga 4000",
+    "biosFiles": [
+      {
+        "md5": "9bdedde6a4f33555b4a270c8ca53297d",
+        "file": "bios/kick40068.A4000"
+      }
+    ]
+  },
+  "amigacdtv": {
+    "name": "Amiga CDTV",
+    "biosFiles": [
+      {
+        "md5": "bb72565701b1b6faece07d68ea5da639",
+        "file": "bios/kick40060.CD32.ext"
+      },
+      {
+        "md5": "89da1838a24460e4b93f4f0c5d92d48d",
+        "file": "bios/kick34005.CDTV"
+      }
+    ]
+  },
+  "amigacd32": {
+    "name": "Amiga CD32",
+    "biosFiles": [
+      {
+        "md5": "bb72565701b1b6faece07d68ea5da639",
+        "file": "bios/kick40060.CD32.ext"
+      },
+      {
+        "md5": "5f8924d013dd57a89cf349f4cdedc6b1",
+        "file": "bios/kick40060.CD32"
+      }
+    ]
+  },
+  "apfm1000": {
+    "name": "APF M-1000",
+    "biosFiles": [
+      {
+        "md5": "b197db12f7a13827717bbeb7cfd9542a",
+        "file": "bios/apfm1000.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apfm1000.xml"
+      }
+    ]
+  },
+  "apple2": {
+    "name": "Apple II",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/apple2.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2e.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2ee.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2p.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/a2diskiing.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/votrsc01a.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/votrsc01.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/d2fdc.zip"
+      },
+      {
+        "md5": "2020aa1413ff77fe29353f3ee72dc295",
+        "file": "bios/AppleIIe_DiskII.rom"
+      },
+      {
+        "md5": "38063e08c778503fc03ecebb979769e9",
+        "file": "bios/AppleIIe.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2-int-auto.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2-asoft-auto.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/disk2-13boot.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/disk2-13seq.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/disk2-16boot.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/disk2-16seq.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2_flop_clcracked.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2_flop_misc.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2_flop_orig.xml"
+      }
+    ]
+  },
+  "apple2gs": {
+    "name": "Apple II GS",
+    "biosFiles": [
+      {
+        "md5": "20a0334c447cb069a040ae5be1d938df",
+        "file": "bios/APPLE2GS.ROM"
+      },
+      {
+        "md5": "",
+        "file": "bios/apple2gs.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2gs_flop_clcracked.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2gs_flop_misc.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/apple2gs_flop_orig.xml"
+      }
+    ]
+  },
+  "aquarius": {
+    "name": "Aquarius",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/aquarius.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/aquariusp.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/aquarius2.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/aquarius_ar.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/aquarius_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/aquarius_cass.xml"
+      }
+    ]
+  },
+  "arcadia": {
+    "name": "Arcadia 2001",
+    "biosFiles": [
+      {
+        "md5": "37e9746f4491aa2df9a83729d1a93620",
+        "file": "bios/ar_bios.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/arcadia.xml"
+      }
+    ]
+  },
+  "archimedes": {
+    "name": "Acorn Archimedes",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/aa310.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/archimedes_keyboard.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/archimedes.xml"
+      }
+    ]
+  },
+  "astrocde": {
+    "name": "Astrocade",
+    "biosFiles": [
+      {
+        "md5": "f58a3823ab308ef0a02b498d126e5d96",
+        "file": "bios/astrocde.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/astrocde.xml"
+      }
+    ]
+  },
+  "atari800": {
+    "name": "Atari 800",
+    "biosFiles": [
+      {
+        "md5": "06daac977823773a3eea3422fd26a703",
+        "file": "bios/ATARIXL.ROM"
+      },
+      {
+        "md5": "0bac0c6a50104045d902df4503a4c30b",
+        "file": "bios/ATARIBAS.ROM"
+      },
+      {
+        "md5": "eb1f32f5d9f382db1bbfb8d7f9cb343a",
+        "file": "bios/ATARIOSA.ROM"
+      },
+      {
+        "md5": "a3e8d617c95d08031fe1b20d541434b2",
+        "file": "bios/ATARIOSB.ROM"
+      },
+      {
+        "md5": "a4dc52536d526ecc51ea857b9fa2b90f",
+        "file": "bios/atari-basic-rev-a.rom"
+      },
+      {
+        "md5": "04ea6a4e386601445ca5bfc8e37fb620",
+        "file": "bios/atari-basic-rev-b.rom"
+      },
+      {
+        "md5": "a3c1585b5d19719f8acfa2b093bea75f",
+        "file": "bios/atari-800-os-a-ntsc.rom"
+      },
+      {
+        "md5": "4177f386a3bac989a981d3fe3388cb6c",
+        "file": "bios/atari-800-os-b-ntsc.rom"
+      },
+      {
+        "md5": "89d5e5f4713267667ab713449944f8a9",
+        "file": "bios/atari-800-os-b-pal.rom"
+      },
+      {
+        "md5": "e3e8c74bfe1dcd6b56af50bd9a82dc15",
+        "file": "bios/atari-1200xl-os-rev-10.rom"
+      },
+      {
+        "md5": "eacb8069c45e2ec4e0a19978bf2fc334",
+        "file": "bios/atari-1200xl-os-rev-11.rom"
+      },
+      {
+        "md5": "9aea45e724d2588fbbeda658c7dc53ee",
+        "file": "bios/atari-xl-os-ver-1.rom"
+      },
+      {
+        "md5": "54e704558a6aedfc45cebf8f8ac9c312",
+        "file": "bios/atari-xl-os-ver-3.rom"
+      },
+      {
+        "md5": "b56c7ec73b7ccccd3aba7ef2fe0852a9",
+        "file": "bios/blackbox-1.34.rom"
+      },
+      {
+        "md5": "b4b1cbd14c552d1e07f774bd463c9ff7",
+        "file": "bios/blackbox-1.41.rom"
+      },
+      {
+        "md5": "23c1e460b81b34bdc04ee9ba36134d0d",
+        "file": "bios/blackbox-2.16.rom"
+      },
+      {
+        "md5": "c04830006203beaa1a8f2feb97394ae0",
+        "file": "bios/blackbox-floppy-board-1.5.rom"
+      },
+      {
+        "md5": "c097647638dcd7b251d86a36715a764d",
+        "file": "bios/mio-1.1k-128kbit.rom"
+      },
+      {
+        "md5": "49e6ecbde2dcd4771e9dc48a3f65b4b0",
+        "file": "bios/mio-1.1m-128kbit.rom"
+      },
+      {
+        "md5": "e66dc082193d617323bec98ef5037888",
+        "file": "bios/mio-1.41-64kbit.rom"
+      },
+      {
+        "md5": "87bb8eb9d82f96c01daf4db536d68c30",
+        "file": "bios/mio-1.41-128kbit.rom"
+      },
+      {
+        "md5": "bd45a8c8cd0e0aa7f601d80346e15160",
+        "file": "bios/mio-1.41-256kbit.rom"
+      },
+      {
+        "md5": "4c2e5277ced9cf946d25ab7145ed93a5",
+        "file": "bios/atari-810-rev-b.rom"
+      },
+      {
+        "md5": "e2b7d8e3a45fe72a75671a018945376a",
+        "file": "bios/atari-810-rev-c.rom"
+      },
+      {
+        "md5": "d2cf18468aa7d74773eaf9aea78eb0c9",
+        "file": "bios/atari-810-rev-e.rom"
+      },
+      {
+        "md5": "a2df383c55d6457e9028548a334c622e",
+        "file": "bios/atari-1050-rev-e.rom"
+      },
+      {
+        "md5": "ab79b267f5e7ea2c9acbd45e1f4fbd57",
+        "file": "bios/atari-1050-rev-h.rom"
+      },
+      {
+        "md5": "dd296b6e2aacfd89cc94cc7e6dcebfd3",
+        "file": "bios/atari-1050-rev-j.rom"
+      },
+      {
+        "md5": "5acf59fff75d36a079771b34d7c7d349",
+        "file": "bios/atari-1050-rev-k.rom"
+      },
+      {
+        "md5": "2575d0514c5fe2dd6f5bd3f0ec434eb7",
+        "file": "bios/atari-1050-rev-l.rom"
+      },
+      {
+        "md5": "4255eceaaa4e51a5ecf5ec078ae213e7",
+        "file": "bios/happy-810-v7-6k-modified.rom"
+      },
+      {
+        "md5": "fd7edc1f7070d7664bffb4c0211ede17",
+        "file": "bios/happy-810-v7-6k.rom"
+      },
+      {
+        "md5": "552e91f6595dcaa91afd69f6bbf1db9c",
+        "file": "bios/happy-810-v7-8k.rom"
+      },
+      {
+        "md5": "0cc5e137f9e5bca81de6d15f34777325",
+        "file": "bios/happy-1050-rev-1.rom"
+      },
+      {
+        "md5": "85acbb5bcfb3f4cbad765373df5eeb1e",
+        "file": "bios/happy-1050-rev-2.rom"
+      },
+      {
+        "md5": "bca4ebac77e8b516a8e34f1674ecbee7",
+        "file": "bios/atr8000-3.02.rom"
+      },
+      {
+        "md5": "2e4e3eae95188c1c47715270a812feea",
+        "file": "bios/indus-gt-1.1.rom"
+      },
+      {
+        "md5": "f5aadbfe23e09084a2ee0f386c2ed13a",
+        "file": "bios/indus-gt-1.2.rom"
+      },
+      {
+        "md5": "d182078af7dc997ebcd9f30029d58b5b",
+        "file": "bios/us-doubler-rev-l.rom"
+      },
+      {
+        "md5": "0258c5ef008195ceca59b18a6dfd8f07",
+        "file": "bios/810-turbo-1.2.rom"
+      },
+      {
+        "md5": "051bf309e1291c3b53bfd183d1462e75",
+        "file": "bios/percom-rfd-1.00.rom"
+      },
+      {
+        "md5": "b0b0e45d558ee0d1154989d06b3c0a5f",
+        "file": "bios/percom-rfd-1.10.rom"
+      },
+      {
+        "md5": "b19ebaab52d777fba41f92b5e4ba41ee",
+        "file": "bios/percom-rfd-1.20.rom"
+      },
+      {
+        "md5": "bea56f552a1c71e7beaeb2fa057a7e35",
+        "file": "bios/percom-rfd-2.10.rom"
+      },
+      {
+        "md5": "584f03b36d8124e6edb6a6f9938cec4b",
+        "file": "bios/astra-1001-1620.rom"
+      },
+      {
+        "md5": "ce79fdc98475aafd825fe6731157858b",
+        "file": "bios/percom-at-88-1.2.rom"
+      },
+      {
+        "md5": "8bae03c0f6be717740065a969029c863",
+        "file": "bios/percom-at-88-1.2-damaged.rom"
+      },
+      {
+        "md5": "2b18410d87c4624bf572e62ba16cc5d2",
+        "file": "bios/percom-at88-spd-1.01.rom"
+      },
+      {
+        "md5": "4a3afdb13bcd0f60775f5b707e3c51dc",
+        "file": "bios/percom-at88-spd-1.11.rom"
+      },
+      {
+        "md5": "93db454984aa93d295fda984c6bbf68b",
+        "file": "bios/percom-at88-spd-1.21.rom"
+      },
+      {
+        "md5": "888b281fa986de2eaccb0f9c8b591395",
+        "file": "bios/1050-turbo-ii-3.4.rom"
+      },
+      {
+        "md5": "35be2c58f1e0b04ab5a1f2459e5515bd",
+        "file": "bios/1050-turbo-ii-3.5.rom"
+      },
+      {
+        "md5": "8fd02196b8e58b3796f31d66b535327f",
+        "file": "bios/atari-815.rom"
+      },
+      {
+        "md5": "64d0c3850901249ef7268831ddd4b083",
+        "file": "bios/atari-1090-firmware-rev-9.rom"
+      },
+      {
+        "md5": "e5c5020c923acb496249bff1e9d403a0",
+        "file": "bios/atari-1090-charset.rom"
+      },
+      {
+        "md5": "c22452916222a905f185f0a99891ffe9",
+        "file": "bios/bit3-full-view-80-firmware.rom"
+      },
+      {
+        "md5": "d47f995152e53394cfe0bb2c37c3f6b4",
+        "file": "bios/bit3-full-view-80-charset.rom"
+      },
+      {
+        "md5": "4e7c4cad76f79169a597a50e5558249b",
+        "file": "bios/bit3-full-view-80-charset-4k.rom"
+      },
+      {
+        "md5": "8f8a55c22b8daa52db127eeb8aa535e0",
+        "file": "bios/xf551-7.4.rom"
+      },
+      {
+        "md5": "dc9fcf6525261cbac3e1d90ec0357d8f",
+        "file": "bios/xf551-7.7.rom"
+      },
+      {
+        "md5": "0b435bb09192a3a4582b1b5b16d3e808",
+        "file": "bios/xf551-7.7-density-hack.rom"
+      },
+      {
+        "md5": "b36334d2c174c7516cdc36287a7f43d1",
+        "file": "bios/xf551-7.7-720k.rom"
+      },
+      {
+        "md5": "aaa31fad7739a066cd620c48e278a81e",
+        "file": "bios/1400xl-handler-v1.rom"
+      },
+      {
+        "md5": "d302d5fcd7abc1db933b9894ae8e5f8e",
+        "file": "bios/1400xl-handler-v2.rom"
+      },
+      {
+        "md5": "20f0b5f3c0d2493085d39f5de7b1d3c0",
+        "file": "bios/1450xld-disk-controller.rom"
+      },
+      {
+        "md5": "73b8aadcd094f455612257ac4ef2e0ae",
+        "file": "bios/1450xld-tong-disk-controller.rom"
+      },
+      {
+        "md5": "267b03813bee0472f3a54b7ab3910b5e",
+        "file": "bios/1450xld-disk-handler-rev-e.rom"
+      },
+      {
+        "md5": "154a9e2f41df9252e4a7c5f3a576fe86",
+        "file": "bios/1450xld-disk-handler-rev-f.rom"
+      },
+      {
+        "md5": "636df2bffbe77f3b3c8868c240e24e91",
+        "file": "bios/1450xld-disk-handler-post-rev-f.rom"
+      },
+      {
+        "md5": "29fffcedee77ab13c9e0745b3711aaa6",
+        "file": "bios/atari-835-internal.rom"
+      },
+      {
+        "md5": "43bcf0966660c0d0ea63e2268626c7fc",
+        "file": "bios/atari-1030-internal.rom"
+      },
+      {
+        "md5": "3d1189523b424f2e6862bea956f5dd7d",
+        "file": "bios/atari-1030-external.rom"
+      },
+      {
+        "md5": "1af8072e738d722ec0f96d34da13febb",
+        "file": "bios/atari-820.rom"
+      },
+      {
+        "md5": "b05919fd26ceacf222e5ef49a873f45e",
+        "file": "bios/atari-1025.rom"
+      },
+      {
+        "md5": "6bfed92202c170b861a691d3df0c3380",
+        "file": "bios/atari-1029-english.rom"
+      },
+      {
+        "md5": "1939537f3349650d2b2aa4ed3facecb1",
+        "file": "bios/atari-850.rom"
+      },
+      {
+        "md5": "9e1b075e8882e47ffce2fe5c8fc66e93",
+        "file": "bios/atari-850-early.rom"
+      },
+      {
+        "md5": "7c4cc9682b070896cfac1c606886fa27",
+        "file": "bios/speedy-xf-1.7.rom"
+      },
+      {
+        "md5": "94b62feb3fb7b3bbc0b9da88b28849eb",
+        "file": "bios/speedy-xf-1.8.rom"
+      }
+    ]
+  },
+  "atari5200": {
+    "name": "Atari 5200",
+    "biosFiles": [
+      {
+        "md5": "281f20ea4320404ec820fb7ec0693b38",
+        "file": "bios/5200.rom"
+      },
+      {
+        "md5": "281f20ea4320404ec820fb7ec0693b38",
+        "file": "bios/atari-5200-os-4port.rom"
+      },
+      {
+        "md5": "ee7b85f5ca384dcb1f284946f3c12ac4",
+        "file": "bios/atari-5200-os-2port.rom"
+      }
+    ]
+  },
+  "atari7800": {
+    "name": "Atari 7800",
+    "biosFiles": [
+      {
+        "md5": "397bb566584be7b9764e7a68974c4263",
+        "file": "bios/7800 BIOS (E).rom"
+      },
+      {
+        "md5": "0763f1ffb006ddbe32e52d497ee848ae",
+        "file": "bios/7800 BIOS (U).rom"
+      },
+      {
+        "md5": "ce6a86574d0c9de9075705f14e99d090",
+        "file": "bios/ProSystem.dat"
+      },
+      {
+        "md5": "c8a73288ab97226c52602204ab894286",
+        "file": "bios/A78_highscore.bin"
+      }
+    ]
+  },
+  "atarist": {
+    "name": "Atari ST",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/tos.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatari/tos/emutos.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatari/tos/tos102.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatari/tos/tos106.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatari/tos/tos104.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatari/tos/tos206.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatarib/emutos.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatarib/tos102.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatarib/tos106.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatarib/tos104.img"
+      },
+      {
+        "md5": "",
+        "file": "bios/hatarib/tos206.img"
+      },
+      {
+        "md5": "1cb3775c4775bad75d24447a90a2890b",
+        "file": "bios/etos1024k.img"
+      },
+      {
+        "md5": "5f5730d9b557c44ddb9bc410ce2925d8",
+        "file": "bios/etos192uk.img"
+      },
+      {
+        "md5": "796f62574413bc59ca767063b3184f90",
+        "file": "bios/etos192us.img"
+      }
+    ]
+  },
+  "atom": {
+    "name": "Acorn Atom",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/atom.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/atom_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/atom_flop.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/atom_rom.xml"
+      }
+    ]
+  },
+  "atomiswave": {
+    "name": "Atomiswave",
+    "biosFiles": [
+      {
+        "md5": "0ec5ae5b5a5c4959fa8b43fcf8687f7c",
+        "file": "bios/dc/awbios.zip"
+      }
+    ]
+  },
+  "bbcmicro": {
+    "name": "BBC",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/bbcb.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbc_acorn8271.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/saa5050.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbc_tube_80186.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbcm.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbcmc.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbc_bitstik1.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/bbc_bitstik2.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/samples/bbc.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbc_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbc_rom.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcb_flop.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcb_flop_orig.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcb_flop_us.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcm_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcm_flop.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/bbcmc_flop.xml"
+      }
+    ]
+  },
+  "bk": {
+    "name": "Elektronika BK",
+    "biosFiles": [
+      {
+        "md5": "fe4627d1e3a1535874085050733263e7",
+        "file": "bios/bk/B11M_BOS.ROM"
+      },
+      {
+        "md5": "dc52f365d56fa1951f5d35b1101b9e3f",
+        "file": "bios/bk/B11M_EXT.ROM"
+      },
+      {
+        "md5": "946f6f23ded03c0e26187f0b3ca75993",
+        "file": "bios/bk/BAS11M_0.ROM"
+      },
+      {
+        "md5": "1e6637f32aa7d1de03510030cac40bcf",
+        "file": "bios/bk/BAS11M_1.ROM"
+      },
+      {
+        "md5": "5015228eeeb238e65da8edcd1b6dfac7",
+        "file": "bios/bk/DISK_327.ROM"
+      },
+      {
+        "md5": "ebe418ec8a6c85d5ac32956c9a96c179",
+        "file": "bios/bk/BASIC10.ROM"
+      },
+      {
+        "md5": "5737f972e8638831ab71e9139abae052",
+        "file": "bios/bk/FOCAL10.ROM"
+      },
+      {
+        "md5": "95f8c41c6abf7640e35a6a03cecebd01",
+        "file": "bios/bk/MONIT10.ROM"
+      }
+    ]
+  },
+  "loopy": {
+    "name": "Casio Loopy",
+    "biosFiles": [
+      {
+        "md5": "0e1d8dc0110ecf8201c0cef11ef4a858",
+        "file": "bios/casloopy.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/casloopy.xml"
+      }
+    ]
+  },
+  "cdi": {
+    "name": "Philips CD-I",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/cdibios.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/cdimono1.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/cdimono2.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/cdi.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/same_cdi/bios/cdibios.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/same_cdi/bios/cdimono1.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/same_cdi/bios/cdimono2.zip"
+      }
+    ]
+  },
+  "channelf": {
+    "name": "Fairchild ChannelF",
+    "biosFiles": [
+      {
+        "md5": "ac9804d4c0e9d07e33472e3726ed15c3",
+        "file": "bios/sl31253.bin"
+      },
+      {
+        "md5": "da98f4bb3242ab80d76629021bb27585",
+        "file": "bios/sl31254.bin"
+      },
+      {
+        "md5": "95d339631d867c8f1d15a5f2ec26069d",
+        "file": "bios/sl90025.bin"
+      }
+    ]
+  },
+  "chihiro": {
+    "name": "Sega Chihiro",
+    "biosFiles": [
+      {
+        "md5": "4bbbda157dcf922619da1046df10e216",
+        "file": "bios/chihiro/chihiro_xbox_bios.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/chihiro/fpr21042_m29w160et.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/chihiro/ic10_g24lc64.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/chihiro/ic11_24lc024.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/chihiro/pc20_g24lc64.bin"
+      },
+      {
+        "md5": "afacfb61877401f1611998d2b590dffd",
+        "file": "bios/EmuDisk/Chihiro/fpr21042_m29w160et.bin"
+      },
+      {
+        "md5": "853d40e7a80d659613885d93abbec463",
+        "file": "bios/EmuDisk/Chihiro/SEGABOOT_MBROM0.XBE"
+      },
+      {
+        "md5": "aff2008c8404b9661dc2f52d34c494e0",
+        "file": "bios/EmuDisk/Chihiro/SEGABOOT_MBROM1.XBE"
+      },
+      {
+        "md5": "ec15634cf28e8bcaf660346787f83254",
+        "file": "bios/EmuDisk/Chihiro/ic10_g24lc64.bin"
+      },
+      {
+        "md5": "bf1cf24f8549137c0b1ad0fa61473c7e",
+        "file": "bios/EmuDisk/Chihiro/pc20_g24lc64.bin"
+      },
+      {
+        "md5": "da9feafc678d2476f3bf3b1049ec4b17",
+        "file": "bios/EmuDisk/Chihiro/ic11_24lc024.bin"
+      },
+      {
+        "md5": "c34872828474f21cbc761febacea72df",
+        "file": "bios/EmuDisk/Chihiro/backup_ram.bin"
+      }
+    ]
+  },
+  "coco": {
+    "name": "Color Computer",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/coco.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/coco2.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/coco2b.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/coco3.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/coco3p.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/coco_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/coco_flop.xml"
+      },
+      {
+        "md5": "c2fc43556eb6b7b25bdf5955bd9df825",
+        "file": "bios/bas13.rom"
+      },
+      {
+        "md5": "c933316c7d939532a13648850c1c2aa6",
+        "file": "bios/bas12.rom"
+      },
+      {
+        "md5": "c73fb4bff9621c5ab17f6220b20db82f",
+        "file": "bios/bas11.rom"
+      },
+      {
+        "md5": "a74f3d95b395dad7cdca19d560eeea74",
+        "file": "bios/bas10.rom"
+      },
+      {
+        "md5": "21070aa0496142b886c562bf76d7c113",
+        "file": "bios/extbas11.rom"
+      },
+      {
+        "md5": "fda72f415afe99b36f953bb9bc1253da",
+        "file": "bios/extbas10.rom"
+      },
+      {
+        "md5": "e27c02fd766e8710240c59ef5424a6ef",
+        "file": "bios/deluxe.rom"
+      },
+      {
+        "md5": "88d1504e93366f498105a846cdbf7fb7",
+        "file": "bios/mx1600bas.rom"
+      },
+      {
+        "md5": "6fc82178ae8abe07fa8f6939062291dc",
+        "file": "bios/mx1600extbas.rom"
+      },
+      {
+        "md5": "f73da4d73d6db5cdb8b3cb6a50415e38",
+        "file": "bios/cp400bas.rom"
+      },
+      {
+        "md5": "091581001577b4a83ccfd511829de0f1",
+        "file": "bios/cp400ext.rom"
+      },
+      {
+        "md5": "8cab28f4b7311b8df63c07bb3b59bfd5",
+        "file": "bios/disk11.rom"
+      },
+      {
+        "md5": "171fb7a5d3b808565295b45c773abaaf",
+        "file": "bios/orch90.rom"
+      }
+    ]
+  },
+  "colecovision": {
+    "name": "ColecoVision",
+    "biosFiles": [
+      {
+        "md5": "2c66f5911e5b42b8ebe113403548eee7",
+        "file": "bios/coleco.rom"
+      },
+      {
+        "md5": "2c66f5911e5b42b8ebe113403548eee7",
+        "file": "bios/colecovision.rom"
+      },
+      {
+        "md5": "00fd13b66d39c69706aa48eb84a78411",
+        "file": "bios/openMSX/share/systemroms/coleco.rom"
+      }
+    ]
+  },
+  "crvision": {
+    "name": "Creativision",
+    "biosFiles": [
+      {
+        "md5": "3b1ef759d8e3fb4071582efd33dd05f9",
+        "file": "bios/bioscv.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/crvision.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/crvision.xml"
+      }
+    ]
+  },
+  "dragon32": {
+    "name": "Dragon",
+    "biosFiles": [
+      {
+        "md5": "3420b96031078a4ef408cad7bf21a33f",
+        "file": "bios/dragon/d32.rom"
+      },
+      {
+        "md5": "be9bc86ee5eb401d0a40d0377f65fefa",
+        "file": "bios/dragon/d64_1.rom"
+      },
+      {
+        "md5": "fd91edce7be5e7c2d88e46b76956a8aa",
+        "file": "bios/dragon/d64_2.rom"
+      }
+    ]
+  },
+  "dreamcast": {
+    "name": "Dreamcast",
+    "biosFiles": [
+      {
+        "md5": "e10c53c2f8b90bab96ead2d368858623",
+        "file": "bios/dc/dc_boot.bin"
+      },
+      {
+        "md5": "0a93f7940c455905bea6e392dfde92a4",
+        "file": "bios/dc/dc_flash.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/dc/dc.zip"
+      },
+      {
+        "md5": "e10c53c2f8b90bab96ead2d368858623",
+        "file": "bios/dc_bios.bin"
+      }
+    ]
+  },
+  "electron": {
+    "name": "Acorn Electron",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/electron.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/electron_plus1.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/electron_plus3.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/electron64.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/electron_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/electron_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/electron_flop.xml"
+      }
+    ]
+  },
+  "fds": {
+    "name": "Nintendo Family Computer Disk System",
+    "biosFiles": [
+      {
+        "md5": "ca30b50f880eb660a320674ed365ef7a",
+        "file": "bios/disksys.rom"
+      }
+    ]
+  },
+  "ecwolf": {
+    "name": "ECWolf",
+    "biosFiles": [
+      {
+        "md5": "dbaa5c4e20a11000d1c4db3a2a28f374",
+        "file": "bios/ecwolf.pk3"
+      }
+    ]
+  },
+  "fm7": {
+    "name": "FM-7",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/fm7.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/fm77av.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fm7_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fm7_disk.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fm77av.xml"
+      }
+    ]
+  },
+  "fmtowns": {
+    "name": "FMTowns",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/fmtowns.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/fmtownsux.zip"
+      },
+      {
+        "md5": "8fa4e553f28cfc0c30a0a1e589799942",
+        "file": "bios/fmtowns/FMT_DIC.ROM"
+      },
+      {
+        "md5": "0585b19930d4a7f4c71bcc8a33746588",
+        "file": "bios/fmtowns/FMT_DOS.ROM"
+      },
+      {
+        "md5": "ac0c7021e9bf48ca84b51ab651169a88",
+        "file": "bios/fmtowns/FMT_F20.ROM"
+      },
+      {
+        "md5": "b91300e55b70227ce98b59c5f02fa8dd",
+        "file": "bios/fmtowns/FMT_FNT.ROM"
+      },
+      {
+        "md5": "86fb6f7280689259f0ca839dd3dd6cde",
+        "file": "bios/fmtowns/FMT_SYS.ROM"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fmtowns_cd.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fmtowns_flop_cracked.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fmtowns_flop_misc.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/fmtowns_flop_orig.xml"
+      }
+    ]
+  },
+  "gamate": {
+    "name": "Gamate",
+    "biosFiles": [
+      {
+        "md5": "320bf3d4142fa1043255db7ff87d17c7",
+        "file": "bios/gamate.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/gamate.xml"
+      }
+    ]
+  },
+  "gamecom": {
+    "name": "Game.com",
+    "biosFiles": [
+      {
+        "md5": "f2087ed09f7fa8d8856cfafb20dd00dc",
+        "file": "bios/gamecom.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/gamecom.xml"
+      }
+    ]
+  },
+  "gamepock": {
+    "name": "Game Pocket",
+    "biosFiles": [
+      {
+        "md5": "887479fe3c69a0b935c57a7a738e26c4",
+        "file": "bios/gamepock.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/gamepock.xml"
+      }
+    ]
+  },
+  "gb": {
+    "name": "Game Boy",
+    "biosFiles": [
+      {
+        "md5": "32fbbd84168d3482956eb3c5051637f5",
+        "file": "bios/gb_bios.bin"
+      }
+    ]
+  },
+  "gba": {
+    "name": "Game Boy Advance",
+    "biosFiles": [
+      {
+        "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
+        "file": "bios/gba_bios.bin"
+      },
+      {
+        "md5": "e60e599135009129b288988a1cba91df",
+        "file": "bios/GBA_bios_Debug-(J).rom"
+      },
+      {
+        "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
+        "file": "bios/BIOSGBA.ROM"
+      }
+    ]
+  },
+  "gbc": {
+    "name": "Game Boy Color",
+    "biosFiles": [
+      {
+        "md5": "dbfce9db9deaa2567f6a84fde55f9680",
+        "file": "bios/gbc_bios.bin"
+      },
+      {
+        "md5": "e6cefb5f7d352fab6681989763917c73",
+        "file": "bios/GBC_agb.bin"
+      }
+    ]
+  },
+  "gmaster": {
+    "name": "Game Master",
+    "biosFiles": [
+      {
+        "md5": "4239d6f44a0d78d27c69f9b95885f48e",
+        "file": "bios/gmaster.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/gmaster.xml"
+      }
+    ]
+  },
+  "gp32": {
+    "name": "Game Park 32",
+    "biosFiles": [
+      {
+        "md5": "8c392f475834218d88533150d36cc84c",
+        "file": "bios/gp32.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/gp32.xml"
+      }
+    ]
+  },
+  "hikaru": {
+    "name": "Hikaru",
+    "biosFiles": [
+      {
+        "md5": "aac601811a25d7b31a3d5f3f1f82f338",
+        "file": "bios/hikaru.zip"
+      },
+      {
+        "md5": "e95415b161121bef35ade12367138c63",
+        "file": "bios/mie.zip"
+      }
+    ]
+  },
+  "intellivision": {
+    "name": "Mattel Intellivision",
+    "biosFiles": [
+      {
+        "md5": "62e761035cb657903761800f4437b8af",
+        "file": "bios/exec.bin"
+      },
+      {
+        "md5": "0cd5946c6473e42e8e4c2137785e427f",
+        "file": "bios/grom.bin"
+      }
+    ]
+  },
+  "j2me": {
+    "name": "Java",
+    "biosFiles": [
+      {
+        "md5": "a6f31483d1da4558cc19025e21f95c1d",
+        "file": "bios/freej2me-lr.jar"
+      }
+    ]
+  },
+  "jaguar": {
+    "name": "Jaguar",
+    "biosFiles": [
+      {
+        "md5": "bcfe348c565d9dedb173822ee6850dea",
+        "file": "bios/[BIOS] Atari Jaguar (World).j64"
+      },
+      {
+        "md5": "77cd95c7ad06a39f4c59995094aa10f9",
+        "file": "bios/[BIOS] Atari Jaguar CD (World).j64"
+      },
+      {
+        "md5": "578de34498cb9a40c5368b6f5ca80484",
+        "file": "bios/[BIOS] Atari Jaguar Developer CD (World).j64"
+      },
+      {
+        "md5": "6e844759720226e58d55ecaf33608a13",
+        "file": "bios/jagboot_m.rom"
+      }
+    ]
+  },
+  "laseractive": {
+    "name": "Pioneer Laseractive",
+    "biosFiles": [
+      {
+        "md5": "f69f173b251d8bf7649b10a9167a10bf",
+        "file": "bios/laseractive/[BIOS] LaserActive PAC-N1 (Japan) (v1.02).bin"
+      },
+      {
+        "md5": "f0fb8a4605ac7eefbafd4f2d5a793cc8",
+        "file": "bios/laseractive/[BIOS] LaserActive PAC-N10 (US) (v1.02).bin"
+      },
+      {
+        "md5": "761fea207d0eafd4cfd78da7c44cac88",
+        "file": "bios/laseractive/[BIOS] LaserActive PCE-LP1 (Japan) (v1.02).bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/laseractive/[BIOS] LaserActive PAC-S10 (US) (v1.04).bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/laseractive/[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin"
+      }
+    ]
+  },
+  "lynx": {
+    "name": "Lynx",
+    "biosFiles": [
+      {
+        "md5": "fcd403db69f54290b51035d82f835e7b",
+        "file": "bios/lynxboot.img"
+      }
+    ]
+  },
+  "camplynx": {
+    "name": "Camputers Lynx",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/lynx48k.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/lynx96k.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/lynx128k.zip"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx48-1.rom"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx48-2.rom"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx96-1.rom"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx96-2.rom"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx96-3.rom"
+      },
+      {
+        "md5": "",
+        "file": "emulators/jynx/lynx96-3-scorpion.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/camplynx_cass.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/camplynx_flop.xml"
+      }
+    ]
+  },
+  "mastersystem": {
+    "name": "Master System",
+    "biosFiles": [
+      {
+        "md5": "840481177270d5642a14ca71ee72844c",
+        "file": "bios/[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
+      },
+      {
+        "md5": "24a519c53f67b00640d0048ef7089105",
+        "file": "bios/[BIOS] Sega Master System (Japan) (v2.1).sms"
+      },
+      {
+        "md5": "e49e63328c78fe3d24ae32bf903583e0",
+        "file": "bios/SMS_kr.sms"
+      },
+      {
+        "md5": "840481177270d5642a14ca71ee72844c",
+        "file": "bios/sms.rom"
+      }
+    ]
+  },
+  "msx": {
+    "name": "MSX",
+    "biosFiles": [
+      {
+        "md5": "aa95aea2563cd5ec0a0919b44cc17d47",
+        "file": "bios/MSX.ROM"
+      },
+      {
+        "md5": "80dcd1ad1a4cf65d64b7ba10504e8190",
+        "file": "bios/DISK.ROM"
+      },
+      {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19",
+        "file": "bios/FMPAC.ROM"
+      },
+      {
+        "md5": "6418d091cd6907bbcf940324339e43bb",
+        "file": "bios/MSXDOS2.ROM"
+      },
+      {
+        "md5": "403cdea1cbd2bb24fae506941f8f655e",
+        "file": "bios/PAINTER.ROM"
+      },
+      {
+        "md5": "febe8782b466d7c3b16de6d104826b34",
+        "file": "bios/KANJI.ROM"
+      },
+      {
+        "md5": "f873f1260b14f1468fa118778ae1c3d2",
+        "file": "bios/openMSX/share/systemroms/cf-3300_basic-bios1.rom"
+      },
+      {
+        "md5": "318b6aa76da71c54ccad7734356e1902",
+        "file": "bios/openMSX/share/systemroms/cf-3300_disk.rom"
+      },
+      {
+        "md5": "a0452dbf5ace7d2e49d0a8029efed09a",
+        "file": "bios/openMSX/share/systemroms/vg8020_basic-bios1.rom"
+      },
+      {
+        "md5": "9218f6dd89f7ba01e3090d44721b4260",
+        "file": "bios/openMSX/share/systemroms/px-7_basic-bios1.rom"
+      },
+      {
+        "md5": "281809cafe63437fc4bffb3033fbd0db",
+        "file": "bios/openMSX/share/systemroms/px-7_pbasic.rom"
+      },
+      {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19",
+        "file": "bios/openMSX/share/systemroms/fmpac.rom"
+      },
+      {
+        "md5": "42af93619160ef2116416f74a6cb12f2",
+        "file": "bios/openMSX/share/systemroms/yrw801.rom"
+      },
+      {
+        "md5": "8514a6af538e0fadbe660a206dcb5652",
+        "file": "bios/MSX_cbios_main_msx1.rom"
+      },
+      {
+        "md5": "95c94878c0ecf0b4c0d8bc8deaa9d7f3",
+        "file": "bios/MSX_1.0.rom"
+      }
+    ]
+  },
+  "msx2": {
+    "name": "MSX2",
+    "biosFiles": [
+      {
+        "md5": "ec3a01c91f24fbddcbcab0ad301bc9ef",
+        "file": "bios/MSX2.ROM"
+      },
+      {
+        "md5": "2183c2aff17cf4297bdb496de78c2e8a",
+        "file": "bios/MSX2EXT.ROM"
+      },
+      {
+        "md5": "5bf4fdfd3c3ffea3e573b386550cb3fa",
+        "file": "bios/openMSX/share/systemroms/fs-5500_basic-bios2.rom"
+      },
+      {
+        "md5": "86269da485e852d9f581ac27f4ba32ff",
+        "file": "bios/openMSX/share/systemroms/fs-5500_disk.rom"
+      },
+      {
+        "md5": "afbe6ba903453902540ae988cc89dc7b",
+        "file": "bios/openMSX/share/systemroms/fs-5500_kanjibasic.rom"
+      },
+      {
+        "md5": "090539674630c1338a90a1df943a93e2",
+        "file": "bios/openMSX/share/systemroms/fs-5500_kanjifont.rom"
+      },
+      {
+        "md5": "dcd5e2388115172f2fb48875b2089dbf",
+        "file": "bios/openMSX/share/systemroms/fs-5500_msx2sub.rom"
+      },
+      {
+        "md5": "7eb6ae0fbe9736b20dda8dcbd5064f67",
+        "file": "bios/openMSX/share/systemroms/fs-5500_superimp.rom"
+      },
+      {
+        "md5": "ec3a01c91f24fbddcbcab0ad301bc9ef",
+        "file": "bios/openMSX/share/systemroms/nms8245_basic-bios2.rom"
+      },
+      {
+        "md5": "3525ea046ddedc66991790eeae32acfd",
+        "file": "bios/openMSX/share/systemroms/nms8245_disk.rom"
+      },
+      {
+        "md5": "57509815f93e2817d3eb57e20286c7fb",
+        "file": "bios/openMSX/share/systemroms/nms8245_disk_1.06.rom"
+      },
+      {
+        "md5": "248514aba82a0ec7fe2a9106862b05cd",
+        "file": "bios/openMSX/share/systemroms/nms8245_msx2sub.rom"
+      },
+      {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19",
+        "file": "bios/openMSX/share/systemroms/fmpac.rom"
+      },
+      {
+        "md5": "42af93619160ef2116416f74a6cb12f2",
+        "file": "bios/openMSX/share/systemroms/yrw801.rom"
+      }
+    ]
+  },
+  "msx2+": {
+    "name": "MSX2+",
+    "biosFiles": [
+      {
+        "md5": "847cc025ffae665487940ff2639540e5",
+        "file": "bios/MSX2P.ROM"
+      },
+      {
+        "md5": "7c8243c71d8f143b2531f01afa6a05dc",
+        "file": "bios/MSX2PEXT.ROM"
+      },
+      {
+        "md5": "c5c26c3e8bc6c485424818057f0507b9",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_basic-bios2p.rom"
+      },
+      {
+        "md5": "00aa02b6077de40a0b51d71a3c3e1d5f",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_disk.rom"
+      },
+      {
+        "md5": "fa8e7d4b999af058fe2864a5f2e014ec",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_firmware.rom"
+      },
+      {
+        "md5": "0c40e7db1c1fcc2405e4d0cdd215adb4",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_fmbasic.rom"
+      },
+      {
+        "md5": "9dfdebfaa6b547222a40aab8bb2e29f8",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_kanjibasic.rom"
+      },
+      {
+        "md5": "acf53887c2d2783dc059a9b442c86b90",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_kanjifont.rom"
+      },
+      {
+        "md5": "7c8243c71d8f143b2531f01afa6a05dc",
+        "file": "bios/openMSX/share/systemroms/fs-a1wsx_msx2psub.rom"
+      },
+      {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19",
+        "file": "bios/openMSX/share/systemroms/fmpac.rom"
+      },
+      {
+        "md5": "42af93619160ef2116416f74a6cb12f2",
+        "file": "bios/openMSX/share/systemroms/yrw801.rom"
+      }
+    ]
+  },
+  "msxturbor": {
+    "name": "MSX Turbo R",
+    "biosFiles": [
+      {
+        "md5": "af17a344bcc177b97a4888c4c559f3ae",
+        "file": "bios/openMSX/share/systemroms/fs-a1gt_firmware.rom"
+      },
+      {
+        "md5": "acf53887c2d2783dc059a9b442c86b90",
+        "file": "bios/openMSX/share/systemroms/fs-a1gt_kanjifont.rom"
+      },
+      {
+        "md5": "6f69cc8b5ed761b03afd78000dfb0e19",
+        "file": "bios/openMSX/share/systemroms/fmpac.rom"
+      },
+      {
+        "md5": "42af93619160ef2116416f74a6cb12f2",
+        "file": "bios/openMSX/share/systemroms/yrw801.rom"
+      }
+    ]
+  },
+  "n64dd": {
+    "name": "Nintendo 64 DD",
+    "biosFiles": [
+      {
+        "md5": "8d3d9f294b6e174bc7b1d2fd1c727530",
+        "file": "bios/Mupen64plus/IPL_JAP.n64"
+      },
+      {
+        "md5": "37c36e4286d36892a9fc70eafe4104be",
+        "file": "bios/Mupen64plus/IPL_USA.n64"
+      },
+      {
+        "md5": "aad37b1492886b892f1821f37fd3ae34",
+        "file": "bios/Mupen64plus/IPL_DEV.n64"
+      }
+    ]
+  },
+  "namco2x6": {
+    "name": "Namco2x6",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/pcsx2/bios/r27v1602f.7d"
+      },
+      {
+        "md5": "",
+        "file": "bios/pcsx2/bios/r27v1602f.8g"
+      }
+    ]
+  },
+  "naomi": {
+    "name": "Naomi",
+    "biosFiles": [
+      {
+        "md5": "eb4099aeb42ef089cfe94f8fe95e51f6",
+        "file": "bios/dc/naomi.zip"
+      }
+    ]
+  },
+  "naomi2": {
+    "name": "Naomi2",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/dc/naomi2.zip"
+      }
+    ]
+  },
+  "nds": {
+    "name": "Nintendo DS",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/firmware.bin"
+      },
+      {
+        "md5": "df692a80a5b1bc90728bc3dfc76cd948",
+        "file": "bios/bios7.bin"
+      },
+      {
+        "md5": "a392174eb3e572fed6447e956bde4b25",
+        "file": "bios/bios9.bin"
+      },
+      {
+        "md5": "23031f25602a52c2df32c39554b0c55e",
+        "file": "bios/dsi_bios9.bin"
+      },
+      {
+        "md5": "322ceeafb77b0cc96a1fcc6271e0e0ae",
+        "file": "bios/dsi_bios7.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/dsi_firmware.bin"
+      },
+      {
+        "md5": "3c704824663ce26b6a1ed4d85238ae5b",
+        "file": "bios/NDS_Lite_Firmware.bin"
+      },
+      {
+        "md5": "df692a80a5b1bc90728bc3dfc76cd948",
+        "file": "bios/BIOSNDS7.ROM"
+      },
+      {
+        "md5": "a392174eb3e572fed6447e956bde4b25",
+        "file": "bios/BIOSNDS9.ROM"
+      }
+    ]
+  },
+  "neogeo": {
+    "name": "NeoGeo",
+    "biosFiles": [
+      {
+        "md5": "dffb72f116d36d025068b23970a4f6df",
+        "file": "bios/neogeo.zip"
+      }
+    ]
+  },
+  "neogeo64": {
+    "name": "Hyper NeoGeo 64",
+    "biosFiles": [
+      {
+        "md5": "dffb72f116d36d025068b23970a4f6df",
+        "file": "bios/neogeo.zip"
+      }
+    ]
+  },
+  "neogeocd": {
+    "name": "NeoGeo CD",
+    "biosFiles": [
+      {
+        "md5": "00dad01abdbf8ea9e79ad2fe11bdb182",
+        "file": "bios/neogeo.zip"
+      },
+      {
+        "md5": "b31a246b69493c35194fe0bac120dc37",
+        "file": "bios/neocdz.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_f.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_sf.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_t.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_st.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_z.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd_sz.rom"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/front-sp1.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/top-sp1.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/neocd.bin"
+      },
+      {
+        "md5": "",
+        "file": "bios/neocd/uni-bioscd.rom"
+      },
+      {
+        "md5": "006a881532f2caffc3fe9fb5593f2ed5",
+        "file": "bios/neocd.zip"
+      },
+      {
+        "md5": "c996961db77b48b54a2daa3cda12da0d",
+        "file": "bios/hiscore.dat"
+      },
+      {
+        "md5": "4941042df918f0f1370e2b70d0f7d0de",
+        "file": "bios/history.dat"
+      },
+      {
+        "md5": "0ed03c88b93b036f2f0035f32b200f27",
+        "file": "bios/command.dat"
+      },
+      {
+        "md5": "0727c8530c51fbd030c710d2af4389cb",
+        "file": "bios/gamecontrollerdb.txt"
+      }
+    ]
+  },
+  "ngage": {
+    "name": "Nokia N-gage",
+    "biosFiles": [
+      {
+        "md5": "64a95a4a884cf4cc15a566b856603193",
+        "file": "bios/eka2l1/data/roms/NEM-4/SYM.ROM"
+      },
+      {
+        "md5": "b1586eb09b91f65c37a2f5e7c6ef7980",
+        "file": "bios/gamecontrollerdb.txt"
+      }
+    ]
+  },
+  "ngp": {
+    "name": "Neo Geo Pocket",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/[BIOS] SNK Neo Geo Pocket (Japan, Europe) (En,Ja).ngp"
+      }
+    ]
+  },
+  "ngpc": {
+    "name": "Neo Geo Pocket Color",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/[BIOS] SNK Neo Geo Pocket (Japan, Europe) (En,Ja).ngp"
+      }
+    ]
+  },
+  "odyssey2": {
+    "name": "Odyssey 2",
+    "biosFiles": [
+      {
+        "md5": "562d5ebf9e030a40d6fabfc2f33139fd",
+        "file": "bios/o2rom.bin"
+      },
+      {
+        "md5": "f1071cdb0b6b10dde94d3bc8a6146387",
+        "file": "bios/c52.bin"
+      },
+      {
+        "md5": "c500ff71236068e0dc0d0603d265ae76",
+        "file": "bios/g7400.bin"
+      },
+      {
+        "md5": "279008e4a0db2dc5f1c048853b033828",
+        "file": "bios/jopac.bin"
+      }
+    ]
+  },
+  "pc88": {
+    "name": "NEC PC-8800",
+    "biosFiles": [
+      {
+        "md5": "4f984e04a99d56c4cfe36115415d6eb8",
+        "file": "bios/quasi88/N88.ROM"
+      },
+      {
+        "md5": "793f86784e5608352a5d7f03f03e0858",
+        "file": "bios/quasi88/N88SUB.ROM"
+      },
+      {
+        "md5": "2ff07b8769367321128e03924af668a0",
+        "file": "bios/quasi88/N88N.ROM"
+      },
+      {
+        "md5": "d675a2ca186c6efcd6277b835de4c7e5",
+        "file": "bios/quasi88/N88EXT0.ROM"
+      },
+      {
+        "md5": "e844534dfe5744b381444dbe61ef1b66",
+        "file": "bios/quasi88/N88EXT1.ROM"
+      },
+      {
+        "md5": "6548fa45061274dee1ea8ae1e9e93910",
+        "file": "bios/quasi88/N88EXT2.ROM"
+      },
+      {
+        "md5": "fc4b76a402ba501e6ba6de4b3e8b4273",
+        "file": "bios/quasi88/N88EXT3.ROM"
+      }
+    ]
+  },
+  "pc98": {
+    "name": "NEC PC-9800",
+    "biosFiles": [
+      {
+        "md5": "e246140dec5124c5e404869a84caefce",
+        "file": "bios/np2kai/BIOS.ROM"
+      },
+      {
+        "md5": "2af6179d7de4893ea0b705c00e9a98d6",
+        "file": "bios/np2kai/FONT.ROM"
+      },
+      {
+        "md5": "caf90f22197aed6f14c471c21e64658d",
+        "file": "bios/np2kai/SOUND.ROM"
+      },
+      {
+        "md5": "e9fc3890963b12cf15d0a2eea5815b72",
+        "file": "bios/np2kai/ITF.ROM"
+      },
+      {
+        "md5": "7da1e5b7c482d4108d22a5b09631d967",
+        "file": "bios/np2kai/font.bmp"
+      }
+    ]
+  },
+  "pcengine": {
+    "name": "PC Engine",
+    "biosFiles": [
+      {
+        "md5": "38179df8f4ac870017db21ebcbf53114",
+        "file": "bios/syscard3.pce"
+      }
+    ]
+  },
+  "pcenginecd": {
+    "name": "PC Engine CD",
+    "biosFiles": [
+      {
+        "md5": "38179df8f4ac870017db21ebcbf53114",
+        "file": "bios/syscard3.pce"
+      },
+      {
+        "md5": "6d2cb14fc3e1f65ceb135633d1694122",
+        "file": "bios/PCECD_gecard.pce"
+      }
+    ]
+  },
+  "pcfx": {
+    "name": "PC-FX",
+    "biosFiles": [
+      {
+        "md5": "08e36edbea28a017f79f8d4f7ff9b6d7",
+        "file": "bios/pcfx.rom"
+      },
+      {
+        "md5": "430e9745f9235c515bc8e652d6ca3004",
+        "file": "bios/fx-scsi.rom"
+      },
+      {
+        "md5": "e2fb7c7220e3a7838c2dd7e401a7f3d8",
+        "file": "bios/PCFX_v101.bin"
+      }
+    ]
+  },
+  "pegasus": {
+    "name": "Aamber Pegasus",
+    "biosFiles": [
+      {
+        "md5": "fee37d8140e4fab48aac4fdab2847f7d",
+        "file": "bios/pegasus.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/pegasus_cart.xml"
+      }
+    ]
+  },
+  "pokemini": {
+    "name": "Nintendo Pokemon Mini",
+    "biosFiles": [
+      {
+        "md5": "1e4fb124a3a886865acb574f388c803d",
+        "file": "bios/bios.min"
+      }
+    ]
+  },
+  "ps2": {
+    "name": "PS2",
+    "biosFiles": [
+      {
+        "md5": "21038400dc633070a78ad53090c53017",
+        "file": "bios/pcsx2/bios/ps2-0230a-20080220.bin"
+      },
+      {
+        "md5": "fc3c14208a929c386445635b19baa3f2",
+        "file": "bios/resources/GameIndex.yaml"
+      },
+      {
+        "md5": "0525ad1f1381152f20bfb05775cf39cd",
+        "file": "bios/resources/RedumpDatabase.yaml"
+      }
+    ]
+  },
+  "psx": {
+    "name": "PSX",
+    "biosFiles": [
+      {
+        "md5": "c53ca5908936d412331790f4426c6c33",
+        "file": "bios/psxonpsp660.bin"
+      },
+      {
+        "md5": "490f666e1afb15b7362b406ed1cea246",
+        "file": "bios/scph5501.bin"
+      },
+      {
+        "md5": "8dd7d5296a650fac7319bce665a6a53c",
+        "file": "bios/scph5500.bin"
+      },
+      {
+        "md5": "32736f17079d0b2b7024407c39bd3050",
+        "file": "bios/scph5502.bin"
+      },
+      {
+        "md5": "57a06303dfa9cf9351222dfcbb4a29d9",
+        "file": "bios/scph5000.bin"
+      },
+      {
+        "md5": "924e392ed05558ffdb115408c263dccf",
+        "file": "bios/scph1001.bin"
+      },
+      {
+        "md5": "54847e693405ffeb0359c6287434cbef",
+        "file": "bios/scph1002a.bin"
+      },
+      {
+        "md5": "417b34706319da7cf001e76e40136c23",
+        "file": "bios/scph1002b.bin"
+      },
+      {
+        "md5": "e2110b8a2b97a8e0b857a45d32f7e187",
+        "file": "bios/scph1002c.bin"
+      },
+      {
+        "md5": "849515939161e62f6b866f6853006780",
+        "file": "bios/scph3000.bin"
+      },
+      {
+        "md5": "dc2b9bf8da62ec93e868cfd29f0d067d",
+        "file": "bios/scph1001_v20.bin"
+      },
+      {
+        "md5": "cba733ceeff5aef5c32254f1d617fa62",
+        "file": "bios/scph3500.bin"
+      },
+      {
+        "md5": "da27e8b6dab242d8f91a9b25d80c63b8",
+        "file": "bios/scph1001_v21.bin"
+      },
+      {
+        "md5": "8e4c14f567745eff2f0408c8129f72a6",
+        "file": "bios/scph7000.bin"
+      },
+      {
+        "md5": "b84be139db3ee6cbd075630aa20a6553",
+        "file": "bios/scph7000w.bin"
+      },
+      {
+        "md5": "1e68c231d0896b7eadcad1d7d8e76129",
+        "file": "bios/scph7001.bin"
+      },
+      {
+        "md5": "b9d9a0286c33dc6b7237bb13cd46fdee",
+        "file": "bios/scph7002.bin"
+      },
+      {
+        "md5": "8abc1b549a4a80954addc48ef02c4521",
+        "file": "bios/scph100.bin"
+      },
+      {
+        "md5": "9a09ab7e49b422c007e6d54d7c49b965",
+        "file": "bios/scph101_v44.bin"
+      },
+      {
+        "md5": "6e3735ff4c7dc899ee98981385f6f3d0",
+        "file": "bios/scph101_v45.bin"
+      },
+      {
+        "md5": "476d68a94ccec3b9c8303bbd1daf2810",
+        "file": "bios/scph1000r.bin"
+      },
+      {
+        "md5": "ca5cfc321f916756e3f0effbfaeba13b",
+        "file": "bios/dtlh1100.bin"
+      },
+      {
+        "md5": "b10f5e0e3d9eb60e5159690680b1e774",
+        "file": "bios/scph102_v44.bin"
+      },
+      {
+        "md5": "de93caec13d1a141a40a79f5c86168d6",
+        "file": "bios/scph102_v45.bin"
+      },
+      {
+        "md5": "239665b1a3dade1b5a52c06338011044",
+        "file": "bios/scph1000.bin"
+      },
+      {
+        "md5": "d8f485717a5237285e4d7c5f881b7f32",
+        "file": "bios/ps2_scph18000.bin"
+      },
+      {
+        "md5": "32f2e4d5ff5ee11072a6bc45530f5765",
+        "file": "bios/ps2_dtlh10000_0117.bin"
+      },
+      {
+        "md5": "acf4730ceb38ac9d8c7d8e21f2614600",
+        "file": "bios/ps2_scph10000_0117.bin"
+      },
+      {
+        "md5": "acf9968c8f596d2b15f42272082513d1",
+        "file": "bios/ps2_dtlh10000_0217.bin"
+      },
+      {
+        "md5": "b1459d7446c69e3e97e6ace3ae23dd1c",
+        "file": "bios/ps2_scph10000_15000.bin"
+      },
+      {
+        "md5": "d3f1853a16c2ec18f3cd1ae655213308",
+        "file": "bios/ps2_dtlh10000_0224.bin"
+      },
+      {
+        "md5": "63e6fd9b3c72e0d7b920e80cf76645cd",
+        "file": "bios/ps2_dtlh30001.bin"
+      },
+      {
+        "md5": "a20c97c02210f16678ca3010127caf36",
+        "file": "bios/ps2_scph30001_0727.bin"
+      },
+      {
+        "md5": "8db2fbbac7413bf3e7154c1e0715e565",
+        "file": "bios/ps2_scph30001_0902.bin"
+      },
+      {
+        "md5": "b7fa11e87d51752a98b38e3e691cbf17",
+        "file": "bios/ps2_scph30002_0902.bin"
+      },
+      {
+        "md5": "f63bc530bd7ad7c026fcd6f7bd0d9525",
+        "file": "bios/ps2_scph18000_gh003.bin"
+      },
+      {
+        "md5": "cee06bd68c333fc5768244eae77e4495",
+        "file": "bios/ps2_scph18000_gh008.bin"
+      },
+      {
+        "md5": "0bf988e9c7aaa4c051805b0fa6eb3387",
+        "file": "bios/ps2_dtlh30101.bin"
+      },
+      {
+        "md5": "8accc3c49ac45f5ae2c5db0adc854633",
+        "file": "bios/ps2_scph30001_35001.bin"
+      },
+      {
+        "md5": "838544f12de9b0abc90811279ee223c8",
+        "file": "bios/ps2_scph30002_1228.bin"
+      },
+      {
+        "md5": "bb6bbc850458fff08af30e969ffd0175",
+        "file": "bios/ps2_dtlh30000.bin"
+      },
+      {
+        "md5": "815ac991d8bc3b364696bead3457de7d",
+        "file": "bios/ps2_scph30000_35000.bin"
+      },
+      {
+        "md5": "b107b5710042abe887c0f6175f6e94bb",
+        "file": "bios/ps2_scph30001r_0427.bin"
+      },
+      {
+        "md5": "ab55cceea548303c22c72570cfd4dd71",
+        "file": "bios/ps2_scph30000_0427.bin"
+      },
+      {
+        "md5": "18bcaadb9ff74ed3add26cdf709fff2e",
+        "file": "bios/ps2_scph30001r_0704.bin"
+      },
+      {
+        "md5": "491209dd815ceee9de02dbbc408c06d6",
+        "file": "bios/ps2_scph30002r_0704.bin"
+      },
+      {
+        "md5": "7200a03d51cacc4c14fcdfdbc4898431",
+        "file": "bios/ps2_scph30001r_1004.bin"
+      },
+      {
+        "md5": "8359638e857c8bc18c3c18ac17d9cc3c",
+        "file": "bios/ps2_scph30002r_1004.bin"
+      },
+      {
+        "md5": "352d2ff9b3f68be7e6fa7e6dd8389346",
+        "file": "bios/ps2_scph30005r.bin"
+      },
+      {
+        "md5": "d5ce2c7d119f563ce04bc04dbc3a323e",
+        "file": "bios/ps2_scph39001.bin"
+      },
+      {
+        "md5": "0d2228e6fd4fb639c9c39d077a9ec10c",
+        "file": "bios/ps2_scph39002.bin"
+      },
+      {
+        "md5": "72da56fccb8fcd77bba16d1b6f479914",
+        "file": "bios/ps2_scph37000_39000.bin"
+      },
+      {
+        "md5": "315a4003535dfda689752cb25f24785c",
+        "file": "bios/ps2_scph39005.bin"
+      },
+      {
+        "md5": "54ecde087258557e2ddb5c3ddb004028",
+        "file": "bios/ps2_dtlh50000.bin"
+      },
+      {
+        "md5": "312ad4816c232a9606e56f946bc0678a",
+        "file": "bios/ps2_scph50000_55000.bin"
+      },
+      {
+        "md5": "6e69920fa6eef8522a1d688a11e41bc6",
+        "file": "bios/ps2_scph50002_0227.bin"
+      },
+      {
+        "md5": "eb960de68f0c0f7f9fa083e9f79d0360",
+        "file": "bios/ps2_dtlh50001_0325.bin"
+      },
+      {
+        "md5": "8aa12ce243210128c5074552d3b86251",
+        "file": "bios/ps2_scph50001_0325.bin"
+      },
+      {
+        "md5": "240d4c5ddd4b54069bdc4a3cd2faf99d",
+        "file": "bios/ps2_dtlh50009.bin"
+      },
+      {
+        "md5": "1c6cd089e6c83da618fbf2a081eb4888",
+        "file": "bios/ps2_desr5000.bin"
+      },
+      {
+        "md5": "463d87789c555a4a7604e97d7db545d1",
+        "file": "bios/ps2_scph55000_0623.bin"
+      },
+      {
+        "md5": "ab9d49ad40ae49f19856ad187777b1b3",
+        "file": "bios/ps2_dtlh50001_0623.bin"
+      },
+      {
+        "md5": "35461cecaa51712b300b2d6798825048",
+        "file": "bios/ps2_scph50001_0623.bin"
+      },
+      {
+        "md5": "bd6415094e1ce9e05daabe85de807666",
+        "file": "bios/ps2_scph50002_0623.bin"
+      },
+      {
+        "md5": "2e70ad008d4ec8549aada8002fdf42fb",
+        "file": "bios/ps2_scph50006.bin"
+      },
+      {
+        "md5": "50d5b97b57d8c9b6534adcb46c2027d4",
+        "file": "bios/ps2_scph50005.bin"
+      },
+      {
+        "md5": "1b6e631b536247756287b916f9396872",
+        "file": "bios/ps2_scph50009.bin"
+      },
+      {
+        "md5": "00da1b177096cfd2532c8fa22b43e667",
+        "file": "bios/ps2_scph50000_0822.bin"
+      },
+      {
+        "md5": "81f4336c1de607dd0865011c0447052e",
+        "file": "bios/ps2_scph50011.bin"
+      },
+      {
+        "md5": "0eee5d1c779aa50e94edd168b4ebf42e",
+        "file": "bios/ps2_scph70000.bin"
+      },
+      {
+        "md5": "d333558cc14561c1fdc334c75d5f37b7",
+        "file": "bios/ps2_scph70001.bin"
+      },
+      {
+        "md5": "dc752f160044f2ed5fc1f4964db2a095",
+        "file": "bios/ps2_scph70002.bin"
+      },
+      {
+        "md5": "3e3e030c0f600442fa05b94f87a1e238",
+        "file": "bios/ps2_scph70005.bin"
+      },
+      {
+        "md5": "1ad977bb539fc9448a08ab276a836bbc",
+        "file": "bios/ps2_desr5500.bin"
+      },
+      {
+        "md5": "bf0078ba5e19d57eae18047407f3b6e5",
+        "file": "bios/ps2_dtlh75000.bin"
+      },
+      {
+        "md5": "eb4f40fcf4911ede39c1bbfe91e7a89a",
+        "file": "bios/ps2_scph75000.bin"
+      },
+      {
+        "md5": "9959ad7a8685cad66206e7752ca23f8b",
+        "file": "bios/ps2_dtlh75000a.bin"
+      },
+      {
+        "md5": "929a14baca1776b00869f983aa6e14d2",
+        "file": "bios/ps2_scph75001.bin"
+      },
+      {
+        "md5": "573f7d4a430c32b3cc0fd0c41e104bbd",
+        "file": "bios/ps2_scph75002.bin"
+      },
+      {
+        "md5": "df63a604e8bff5b0599bd1a6c2721bd0",
+        "file": "bios/ps2_scph75006.bin"
+      },
+      {
+        "md5": "5b1ba4bb914406fae75ab8e38901684d",
+        "file": "bios/ps2_scph77000.bin"
+      },
+      {
+        "md5": "cb801b7920a7d536ba07b6534d2433ca",
+        "file": "bios/ps2_scph77001.bin"
+      },
+      {
+        "md5": "af60e6d1a939019d55e5b330d24b1c25",
+        "file": "bios/ps2_scph77002.bin"
+      },
+      {
+        "md5": "549a66d0c698635ca9fa3ab012da7129",
+        "file": "bios/ps2_scph77006.bin"
+      },
+      {
+        "md5": "5e2014472c88f74f7547d8c2c60eca45",
+        "file": "bios/ps2_dtlh90000_j.bin"
+      },
+      {
+        "md5": "5de9d0d730ff1e7ad122806335332524",
+        "file": "bios/ps2_scph79000_90000.bin"
+      },
+      {
+        "md5": "21fe4cad111f7dc0f9af29477057f88d",
+        "file": "bios/ps2_dtlh90000_a.bin"
+      },
+      {
+        "md5": "40c11c063b3b9409aa5e4058e984e30c",
+        "file": "bios/ps2_scph79001_90001.bin"
+      },
+      {
+        "md5": "80bbb237a6af9c611df43b16b930b683",
+        "file": "bios/ps2_scph79002_90002.bin"
+      },
+      {
+        "md5": "c37bce95d32b2be480f87dd32704e664",
+        "file": "bios/ps2_scph79006_90006.bin"
+      },
+      {
+        "md5": "80ac46fa7e77b8ab4366e86948e54f83",
+        "file": "bios/ps2_scph90000_0220.bin"
+      },
+      {
+        "md5": "21038400dc633070a78ad53090c53017",
+        "file": "bios/ps2_scph90001_0220.bin"
+      },
+      {
+        "md5": "dc69f0643a3030aaa4797501b483d6c4",
+        "file": "bios/ps2_scph90002_0220.bin"
+      },
+      {
+        "md5": "30d56e79d89fbddf10938fa67fe3f34e",
+        "file": "bios/ps2_scph90005_0220.bin"
+      },
+      {
+        "md5": "71f50ef4f4e17c163c78908e16244f7d",
+        "file": "bios/ps2_scph30003.bin"
+      },
+      {
+        "md5": "91c87cb2f2eb6ce529a2360f80ce2457",
+        "file": "bios/ps2_dtlh30002.bin"
+      },
+      {
+        "md5": "3016b3dd42148a67e2c048595ca4d7ce",
+        "file": "bios/ps2_dtlh30102_0902.bin"
+      },
+      {
+        "md5": "6f9a6feb749f0533aaae2cc45090b0ed",
+        "file": "bios/ps2_dtlh30102_1228.bin"
+      },
+      {
+        "md5": "5b1f47fbeb277c6be2fccdd6344ff2fd",
+        "file": "bios/ps2_scph39008.bin"
+      },
+      {
+        "md5": "666018ffec65c5c7e04796081295c6c7",
+        "file": "bios/ps2_dtlh50002.bin"
+      },
+      {
+        "md5": "b53d51edc7fc086685e31b811dc32aad",
+        "file": "bios/ps2_scph50008.bin"
+      },
+      {
+        "md5": "afde410bd026c16be605a1ae4bd651fd",
+        "file": "bios/ps2_scph50004_0822.bin"
+      },
+      {
+        "md5": "7ebb4fc5eab6f79a27d76ac9aad392b2",
+        "file": "bios/ps2_scph70002_alt.bin"
+      },
+      {
+        "md5": "63ead1d74893bf7f36880af81f68a82d",
+        "file": "bios/ps2_dtlh70002.bin"
+      },
+      {
+        "md5": "93ea3bcee4252627919175ff1b16a1d9",
+        "file": "bios/ps2_kdl22px300.bin"
+      },
+      {
+        "md5": "81328b966e6dcf7ea1e32e55e1c104bb",
+        "file": "bios/scph5903.bin"
+      },
+      {
+        "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b",
+        "file": "bios/ps1_rom.bin"
+      }
+    ]
+  },
+  "pv1000": {
+    "name": "PV-1000",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/mame/hash/pv1000.xml"
+      }
+    ]
+  },
+  "satellaview": {
+    "name": "Satellaview",
+    "biosFiles": [
+      {
+        "md5": "fed4d8242cfbed61343d53d48432aced",
+        "file": "bios/BS-X.bin"
+      },
+      {
+        "md5": "fed4d8242cfbed61343d53d48432aced",
+        "file": "bios/Satellaview_BS-X.sfc"
+      },
+      {
+        "md5": "a859f13ed1a497e34f94d80e49861fa4",
+        "file": "bios/Satellaview_Mahjong.sfc"
+      },
+      {
+        "md5": "c87f0ed9f204464bb03200cea5bd290f",
+        "file": "bios/Satellaview_GNEXT.sfc"
+      },
+      {
+        "md5": "12f1e82f2251eee4b754611887e89821",
+        "file": "bios/Satellaview_RPG_Tsukuru.sfc"
+      },
+      {
+        "md5": "35a61b2ec6e63d16799c09e1957fcdb4",
+        "file": "bios/Satellaview_SameGame.sfc"
+      },
+      {
+        "md5": "e1a6cfe35640ee9eb661c2239ccc0717",
+        "file": "bios/Satellaview_Derby_Stallion_96.sfc"
+      },
+      {
+        "md5": "5797c69fdc9e92284089128d6794efe4",
+        "file": "bios/Satellaview_Ongaku_Tsukuru.sfc"
+      },
+      {
+        "md5": "92504988268c3888f0e7041a1f9567ae",
+        "file": "bios/Satellaview_SoundNovel_Tsukuru.sfc"
+      },
+      {
+        "md5": "b6aecd4135d37c402a9e4512615c6b6b",
+        "file": "bios/Satellaview_Bass_Tsuri.sfc"
+      }
+    ]
+  },
+  "saturn": {
+    "name": "Sega Saturn",
+    "biosFiles": [
+      {
+        "md5": "85ec9ca47d8f6807718151cbcca8b964",
+        "file": "bios/sega_101.bin"
+      },
+      {
+        "md5": "3240872c70984b6cbfda1586cab68dbe",
+        "file": "bios/mpr-17933.bin"
+      },
+      {
+        "md5": "255113ba943c92a54facd25a10fd780c",
+        "file": "bios/mpr-18811-mx.ic1"
+      },
+      {
+        "md5": "1cd19988d1d72a3e7caa0b73234c96b4",
+        "file": "bios/mpr-19367-mx.ic1"
+      },
+      {
+        "md5": "af5828fdff51384f99b3c4926be27762",
+        "file": "bios/saturn_bios.bin"
+      },
+      {
+        "md5": "af5828fdff51384f99b3c4926be27762",
+        "file": "bios/kronos/saturn_bios.bin"
+      },
+      {
+        "md5": "f273555d7d91e8a5a6bfd9bcf066331c",
+        "file": "bios/SAT_1.00a-(U+E).bin"
+      },
+      {
+        "md5": "a36acd9ac53b668bebbd98bd192c43e9",
+        "file": "bios/SAT_STV_17740-(J).bin"
+      },
+      {
+        "md5": "6193c4357b39916066d810bc0b2cb153",
+        "file": "bios/SAT_STV_17740A-(J).bin"
+      },
+      {
+        "md5": "4bee9b193799bd221a7482c7d7765295",
+        "file": "bios/SAT_STV_17951A-(J).bin"
+      },
+      {
+        "md5": "099c908e4af55d6602bb5fddbbc2d0b3",
+        "file": "bios/SAT_STV_19730-(J).bin"
+      },
+      {
+        "md5": "34175c7ad31acbe44f2baccc7ea065c7",
+        "file": "bios/SAT_STV_20091-(J).bin"
+      },
+      {
+        "md5": "202226db8648ef036b57bc64a4180c92",
+        "file": "bios/SAT_STV_23603-(J).bin"
+      },
+      {
+        "md5": "858fc8d8ad62059ea912ec09e9a38111",
+        "file": "bios/SAT_STV_17742A-(T).bin"
+      },
+      {
+        "md5": "251f89478034d93abdf54d05b43c16c0",
+        "file": "bios/SAT_STV_17953A-(T).bin"
+      },
+      {
+        "md5": "fa6117a16a7df94dcc6e9e12896c66f2",
+        "file": "bios/SAT_STV_19854-(T).bin"
+      },
+      {
+        "md5": "4c51a40cd3d0eec13c3b25c6b70ad632",
+        "file": "bios/SAT_STV_17741A-(U).bin"
+      },
+      {
+        "md5": "249b67334cfae53810c1d1e3b93957a3",
+        "file": "bios/SAT_STV_17952A-(U).bin"
+      },
+      {
+        "md5": "ba2cb634c15e59d7ea5552729306f2ef",
+        "file": "bios/SAT_STV_17954A-(E).bin"
+      }
+    ]
+  },
+  "scummvm": {
+    "name": "ScummVM",
+    "biosFiles": [
+      {
+        "md5": "c5233e4594f9b7bc4f773ae6ba5aa87d",
+        "file": "bios/scummvm/extra/MT32_CONTROL.ROM"
+      },
+      {
+        "md5": "89e42e386e82e0cacb4a2704a03706ca",
+        "file": "bios/scummvm/extra/MT32_PCM.ROM"
+      },
+      {
+        "md5": "ee71d6cd464c618c632e6fd62b430d2c",
+        "file": "bios/scummvm/theme/scummmodern.zip"
+      },
+      {
+        "md5": "8f37bd19dd51be456ac8f005fd5669a8",
+        "file": "bios/scummvm/theme/scummclassic.zip"
+      },
+      {
+        "md5": "0d990484d0dfc1680b20cfabcae373cd",
+        "file": "bios/scummvm/theme/scummremastered.zip"
+      },
+      {
+        "md5": "b2811fa9b209733b61cd49ddb21e1e95",
+        "file": "bios/scummvm/theme/residualvm.zip"
+      },
+      {
+        "md5": "9c59e0e9875434456ec1b7eb8e51666f",
+        "file": "bios/scummvm/theme/gui-icons.dat"
+      },
+      {
+        "md5": "f073f17187d0bfa3e7ebb7f328847969",
+        "file": "bios/scummvm/theme/shaders.dat"
+      },
+      {
+        "md5": "a206e54bac1af13559ac8b2d9e550577",
+        "file": "bios/scummvm/theme/translations.dat"
+      },
+      {
+        "md5": "73cf5bd61896442a990e363f284a0bc2",
+        "file": "bios/scummvm/extra/achievements.dat"
+      },
+      {
+        "md5": "d4264d4573f22d290e033e1d834d7221",
+        "file": "bios/scummvm/extra/classicmacfonts.dat"
+      },
+      {
+        "md5": "f2e88b2faec499a4914c3a0bcffc7db1",
+        "file": "bios/scummvm/extra/encoding.dat"
+      },
+      {
+        "md5": "a9584a928c0f52ef28b33d8702983c35",
+        "file": "bios/scummvm/extra/helpdialog.zip"
+      },
+      {
+        "md5": "d97f2965013b343dd3d4fdbbc7192f15",
+        "file": "bios/scummvm/extra/macgui.dat"
+      },
+      {
+        "md5": "4f9dd40b455876d5c54b5ebd93aec88c",
+        "file": "bios/scummvm/extra/access.dat"
+      },
+      {
+        "md5": "f6d90885f6962f89de02e34031111599",
+        "file": "bios/scummvm/extra/bagel.dat"
+      },
+      {
+        "md5": "fc5886ea5388f20eae299bb408da5bcc",
+        "file": "bios/scummvm/extra/cryo.dat"
+      },
+      {
+        "md5": "7224c7a94074addeb69015b1346695d2",
+        "file": "bios/scummvm/extra/cryomni3d.dat"
+      },
+      {
+        "md5": "9a9cfe40dcca517f130d4430bd1af643",
+        "file": "bios/scummvm/extra/darkseed.dat"
+      },
+      {
+        "md5": "b304979ed642a6dcaf26f43f8a37a1de",
+        "file": "bios/scummvm/extra/drascula.dat"
+      },
+      {
+        "md5": "71697f90fb0c7747616dbb0799ce966b",
+        "file": "bios/scummvm/extra/freescape.dat"
+      },
+      {
+        "md5": "d13cc3c481e84e787ec8aa86dffc565f",
+        "file": "bios/scummvm/extra/got.aud"
+      },
+      {
+        "md5": "a29f591769bd731df0d9ddd3a191fe8c",
+        "file": "bios/scummvm/extra/got.gfx"
+      },
+      {
+        "md5": "7857da7e56a11e0749fb45100c323b3c",
+        "file": "bios/scummvm/extra/hadesch_translations.dat"
+      },
+      {
+        "md5": "a865e70f1b0998a500f522dab441c8fc",
+        "file": "bios/scummvm/extra/hugo.dat"
+      },
+      {
+        "md5": "ebddd7bbd97135a427083db5daf6f9fc",
+        "file": "bios/scummvm/extra/kyra.dat"
+      },
+      {
+        "md5": "6f90cf73f36453d332d5c9cee311f81c",
+        "file": "bios/scummvm/extra/lure.dat"
+      },
+      {
+        "md5": "3b1faf40e685b955372e02f54ed70263",
+        "file": "bios/scummvm/extra/macventure.dat"
+      },
+      {
+        "md5": "01f074a6ac34dd86fcc6d1e8090614f0",
+        "file": "bios/scummvm/extra/mm.dat"
+      },
+      {
+        "md5": "3cfb16d7bab4d77606b3b1274b8ae870",
+        "file": "bios/scummvm/extra/mort.dat"
+      },
+      {
+        "md5": "54e9056211f2fff255b6f66a3fe39a8d",
+        "file": "bios/scummvm/extra/myst3.dat"
+      },
+      {
+        "md5": "eb7cfdb3f74972beb8f43196e4e44001",
+        "file": "bios/scummvm/extra/nancy.dat"
+      },
+      {
+        "md5": "dfaab12ffb265646f31f51b6904246d1",
+        "file": "bios/scummvm/extra/neverhood.dat"
+      },
+      {
+        "md5": "993adab2fd44277d5fd7aa5971e7099c",
+        "file": "bios/scummvm/extra/prince_translation.dat"
+      },
+      {
+        "md5": "93c6d6379eb0290ce93854a6888ec3f4",
+        "file": "bios/scummvm/extra/queen.tbl"
+      },
+      {
+        "md5": "9d00157b1cebd6368cbf88135c098f40",
+        "file": "bios/scummvm/extra/sky.cpt"
+      },
+      {
+        "md5": "89664136c503a30894d5c713be5bfe90",
+        "file": "bios/scummvm/extra/supernova.dat"
+      },
+      {
+        "md5": "4594620989a0bfd8b120da2de7ac30de",
+        "file": "bios/scummvm/extra/teenagent.dat"
+      },
+      {
+        "md5": "4b2fb71201dc3795cff45df6200a1918",
+        "file": "bios/scummvm/extra/titanic.dat"
+      },
+      {
+        "md5": "891022a4e2917bb54b5cdc9a46f5b3df",
+        "file": "bios/scummvm/extra/tony.dat"
+      },
+      {
+        "md5": "2b71a5d9aa19219d46711e8a77451f0f",
+        "file": "bios/scummvm/extra/toon.dat"
+      },
+      {
+        "md5": "e359fb7f14c4cb072b6e9300a23a6d62",
+        "file": "bios/scummvm/extra/ultima.dat"
+      },
+      {
+        "md5": "e5b95811b05b9f0f593b49c860391200",
+        "file": "bios/scummvm/extra/ultima8.dat"
+      },
+      {
+        "md5": "9783248899f9cb531f0a3e0a711ab8b3",
+        "file": "bios/scummvm/extra/wintermute.zip"
+      },
+      {
+        "md5": "6df29d218962e155d0a2114006af45c0",
+        "file": "bios/scummvm/extra/fonts.dat"
+      },
+      {
+        "md5": "18b8811c1bbc297be45f38c3bd6a0728",
+        "file": "bios/scummvm/extra/fonts-cjk.dat"
+      },
+      {
+        "md5": "9eb64ec7aa31dc2f5b55541415ecdf8b",
+        "file": "bios/scummvm/extra/fonts-imgui.dat"
+      },
+      {
+        "md5": "32b777b824f02b1e1259903740964058",
+        "file": "bios/scummvm/extra/grim-patch.lab"
+      },
+      {
+        "md5": "9eb7b7e7cc7dad1fe08be6e73d749abe",
+        "file": "bios/scummvm/extra/monkey4-patch.m4b"
+      }
+    ]
+  },
+  "scv": {
+    "name": "Super Cassette Vision",
+    "biosFiles": [
+      {
+        "md5": "33df021613fb12abe2ad14b9eb17c7fe",
+        "file": "bios/scv.zip"
+      },
+      {
+        "md5": "635a978fd40db9a18ee44eff449fc126",
+        "file": "bios/upd7801g.s01"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/scv.xml"
+      }
+    ]
+  },
+  "sega32x": {
+    "name": "Sega 32X",
+    "biosFiles": [
+      {
+        "md5": "6a5433f6a132a2b683635819a6dcf085",
+        "file": "bios/32X_G_BIOS.BIN"
+      },
+      {
+        "md5": "f88354ec482be09aeccd76a97bb75868",
+        "file": "bios/32X_M_BIOS.BIN"
+      },
+      {
+        "md5": "7f041b6a55cd7423a6c08a219335269e",
+        "file": "bios/32X_S_BIOS.BIN"
+      }
+    ]
+  },
+  "megacd": {
+    "name": "Sega CD",
+    "biosFiles": [
+      {
+        "md5": "e66fa1dc5820d254611fdcdba0662372",
+        "file": "bios/bios_CD_E.bin"
+      },
+      {
+        "md5": "854b9150240a198070150e4566ae1290",
+        "file": "bios/bios_CD_U.bin"
+      },
+      {
+        "md5": "278a9397d192149e84e820ac621a8edd",
+        "file": "bios/bios_CD_J.bin"
+      }
+    ]
+  },
+  "segastv": {
+    "name": "Sega ST-V",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/kronos/stvbios.zip"
+      },
+      {
+        "md5": "c6f35123264db9cdfb216e8fdb673679",
+        "file": "bios/mame2003/hiscore.dat"
+      },
+      {
+        "md5": "2f60c1ed69c152dea95e734979ca2ecb",
+        "file": "bios/mame2003-plus/hiscore.dat"
+      }
+    ]
+  },
+  "sgb": {
+    "name": "Super Game Boy",
+    "biosFiles": [
+      {
+        "md5": "d574d4f9c12f305074798f54c091a8b4",
+        "file": "bios/sgb_boot.bin"
+      },
+      {
+        "md5": "e0430bca9925fb9882148fd2dc2418c1",
+        "file": "bios/sgb2_boot.bin"
+      },
+      {
+        "md5": "b15ddb15721c657d82c5bab6db982ee9",
+        "file": "bios/SGB1.sfc"
+      },
+      {
+        "md5": "8ecd73eb4edf7ed7e81aef1be80031d5",
+        "file": "bios/SGB2.sfc"
+      }
+    ]
+  },
+  "sufami": {
+    "name": "Sufami",
+    "biosFiles": [
+      {
+        "md5": "d3a44ba7d42a74d3ac58cb9c14c6a5ca",
+        "file": "bios/STBIOS.bin"
+      }
+    ]
+  },
+  "supergrafx": {
+    "name": "Supergrafx",
+    "biosFiles": [
+      {
+        "md5": "38179df8f4ac870017db21ebcbf53114",
+        "file": "bios/syscard3.pce"
+      }
+    ]
+  },
+  "supracan": {
+    "name": "Super A Can",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/supracan.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/umc6650.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/supracan.xml"
+      }
+    ]
+  },
+  "ti99": {
+    "name": "TI/99",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/ti99_4a.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/ti99_speech.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/ti99_cart.xml"
+      }
+    ]
+  },
+  "triforce": {
+    "name": "Triforce",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/triforce/segaboot.gcm"
+      },
+      {
+        "md5": "1f118b8735fcf40c20b38c3184eebfd9",
+        "file": "bios/Sys/codehandler.bin"
+      },
+      {
+        "md5": "d063803adcced52217989bd825d69eb8",
+        "file": "bios/GC/USA/IPL_TRI.bin"
+      },
+      {
+        "md5": "d063803adcced52217989bd825d69eb8",
+        "file": "bios/GC/EUR/IPL_TRI.bin"
+      },
+      {
+        "md5": "d063803adcced52217989bd825d69eb8",
+        "file": "bios/GC/JAP/IPL_TRI.bin"
+      }
+    ]
+  },
+  "tutor": {
+    "name": "APF M-1000",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/tutor.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/tutor.xml"
+      }
+    ]
+  },
+  "vc4000": {
+    "name": "VC4000",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vc4000.xml"
+      }
+    ]
+  },
+  "vectrex": {
+    "name": "Vectrex",
+    "biosFiles": [
+      {
+        "md5": "ba9260bb961d60e718378cc16a8051d7",
+        "file": "bios/Vectrex_Bios.bin"
+      },
+      {
+        "md5": "ab082fa8c8e632dd68589a8c7741388f",
+        "file": "bios/VEC_Minestorm.vec"
+      }
+    ]
+  },
+  "vg5k": {
+    "name": "VG5000",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/vg5k.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vg5k.xml"
+      }
+    ]
+  },
+  "vsmile": {
+    "name": "V. Smile",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/vsmile.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vsmile_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vsmile_cd.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vsmilem_cart.xml"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/vsmileb_cart.xml"
+      }
+    ]
+  },
+  "x1": {
+    "name": "Sharp x1",
+    "biosFiles": [
+      {
+        "md5": "eeeea1cd29c6e0e8b094790ae969bfa7",
+        "file": "bios/xmil/IPLROM.X1"
+      },
+      {
+        "md5": "56c28adcf1f3a2f87cf3d57c378013f5",
+        "file": "bios/xmil/iplrom.x1t"
+      }
+    ]
+  },
+  "x68000": {
+    "name": "Sharp x68000",
+    "biosFiles": [
+      {
+        "md5": "7fd4caabac1d9169e289f0f7bbf71d8e",
+        "file": "bios/keropi/iplrom.dat"
+      },
+      {
+        "md5": "cb0a5cfcf7247a7eab74bb2716260269",
+        "file": "bios/keropi/cgrom.dat"
+      },
+      {
+        "md5": "aeb4607a14612606c833227437aaa16a",
+        "file": "bios/SCSIINROM.DAT"
+      },
+      {
+        "md5": "237be014374b74d327f15f250d4d62bf",
+        "file": "bios/SCSIEXROM.DAT"
+      }
+    ]
+  },
+  "xbox": {
+    "name": "XBox",
+    "biosFiles": [
+      {
+        "md5": "d49c52a4102f6df7bcf8d0617ac475ed",
+        "file": "bios/mcpx_1.0.bin"
+      },
+      {
+        "md5": "39cee882148a87f93cb440b99dde3ceb",
+        "file": "bios/Complex_4627.bin"
+      },
+      {
+        "md5": "6d497abbfb773a2e07f8ab71f2a2999d",
+        "file": "bios/EEPROM.bin"
+      }
+    ]
+  },
+  "xegs": {
+    "name": "Atari XEGS",
+    "biosFiles": [
+      {
+        "md5": "",
+        "file": "bios/xegs.zip"
+      },
+      {
+        "md5": "",
+        "file": "bios/mame/hash/xegs.xml"
+      },
+      {
+        "md5": "b7a2a04677d34f069eeb643d5238bf86",
+        "file": "bios/atari-xegs-os-ver-4.rom"
+      },
+      {
+        "md5": "d7eb37aec6960cba36bc500e0e5d00bc",
+        "file": "bios/atari-xegs-missile-command.rom"
+      }
+    ]
+  }
+}

@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<biosList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="es_bios.xsd">
+  <system fullname="Amiga 600 (ECS/OCS)" platform="amiga600">
+    <bios path="amiga/bios/kick33180.A500" md5="85ad74194e87c08904327de1a9443b7a" core="amiberry" mandatory="false" />
+    <bios path="amiga/bios/kick34005.A500" md5="82a21c1890cae844b3df741f2762d48d" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm,libretro/uae4all" />
+    <bios path="amiga/bios/kick37175.A500" md5="dc10d7bdd1b6f450773dfb558477c230" core="amiberry,libretro/uae" mandatory="false" />
+    <bios path="amiga/bios/kick40063.A600"     md5="e40a5dfb3d017ba8779faba30cbd1c8e" mandatory="false" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
+    <bios path="amiga/bios/kick02019.AROS.ext" md5="4fa7042d73d0f77bf5723cf8430989bf" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
+    <bios path="amiga/bios/kick02019.AROS"     md5="186d23cccd9fbd6336d0f988b39dce4d" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
+    <bios path="aros-ext.bin" md5="d2ce6748e8e42222662e14359f68dad5" core="amiberry" mandatory="false" />
+    <bios path="aros-rom.bin" md5="48d38fc3fcf2ad7bca5ec5191d02e451" core="amiberry" mandatory="false" />
+    <bios path="amiga/aros-amiga-m68k-rom.bin" md5="8c9e0e3b3686c362ccf2dfd8a86669b2" core="libretro/uae4all" mandatory="false" />
+    <bios path="amiga/aros-amiga-m68k-ext.bin" md5="272c1306032674b4fa120d56a0b1b99a" core="libretro/uae4all" mandatory="false" />
+  </system>
+  <system fullname="Amiga 1200 (AGA)" platform="amiga1200">
+    <bios path="amiga/bios/kick39106.A1200" md5="b7cc148386aa631136f510cd29e42fc3" core="amiberry" mandatory="false" />
+    <bios path="amiga/bios/kick40068.A1200" md5="646773759326fbac3b2311fd8c8793ee" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
+    <bios path="amiga/bios/kick40068.A4000" md5="9bdedde6a4f33555b4a270c8ca53297d" core="amiberry,libretro/amiberry,libretro/uae" mandatory="false" note="This bios is required only for A4000 emulation" />
+  </system>
+  <system fullname="Amiga CDTV" platform="amigacdtv">
+    <bios path="amiga/bios/kick34005.CDTV" md5="89da1838a24460e4b93f4f0c5d92d48d,d98112f18792ee3714df16a6eb421b89,
+                                                d1145ab3a0f89340f94c9e734762c198" hashMatchMandatory="true" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" mandatory="true" note="This bios is required only for CDTV emulation" />
+  </system>
+  <system fullname="Amiga CD32" platform="amigacd32">
+    <bios path="amiga/bios/kick40060.CD32"     md5="f2f241bf094168cfb9e7805dc2856433,5f8924d013dd57a89cf349f4cdedc6b1" hashMatchMandatory="false" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" mandatory="true" note="Use the combined ROM 'KS + extended v3.1 rev 40.060' or separate ROMs 'KS v3.1 rev 40.060 + Extended ROM rev 40.060'" />
+    <bios path="amiga/bios/kick40060.CD32.ext" md5="bb72565701b1b6faece07d68ea5da639" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" note="Extended ROM rev 40.060" />
+  </system>
+  <system fullname="Apple IIGS" platform="apple2gs">
+    <bios path="apple2gs1.rom" md5="20a0334c447cb069a040ae5be1d938df" core="gsplus" />
+    <bios path="apple2gs3.rom" md5="ba89edf2729a28a17cd9e0f7a0ac9a39" core="gsplus" />
+  </system>
+  <system fullname="Apple Macintosh" platform="macintosh">
+    <bios path="macintosh/MacII.ROM" md5="66223be1497460f1e60885eeb35e03cc" core="libretro/minivmac" />
+    <bios path="macintosh/MinivMacBootv2.dsk" md5="16ddb8838d48be26e471a2f2bb85a961,e66dc7952c8b9673868ad2faba3c0d20" hashMatchMandatory="false" core="libretro/minivmac" />
+  </system>
+  <system fullname="Atari 8Bits" platform="atari800">
+    <bios path="atari800/ATARIBAS.ROM" md5="0bac0c6a50104045d902df4503a4c30b" core="libretro/atari800" mandatory="false" />
+    <bios path="atari800/ATARIOSA.ROM" md5="eb1f32f5d9f382db1bbfb8d7f9cb343a" core="libretro/atari800" mandatory="false" />
+    <bios path="atari800/ATARIOSB.ROM" md5="4177f386a3bac989a981d3fe3388cb6c" core="libretro/atari800" mandatory="false" />
+    <bios path="atari800/ATARIXL.ROM" md5="06daac977823773a3eea3422fd26a703" core="libretro/atari800" mandatory="false" />
+  </system>
+  <system fullname="Atari 5200" platform="atari5200">
+    <bios path="atari5200/5200.rom" md5="281f20ea4320404ec820fb7ec0693b38" mandatory="false" core="libretro/a5200,libretro/atari800" />
+  </system>
+  <system fullname="Atari 7800" platform="atari7800">
+    <bios path="atari7800/7800 BIOS (U).rom" md5="0763f1ffb006ddbe32e52d497ee848ae" mandatory="false" core="libretro/prosystem" note="RUN ONLY US GAMES! Display official Atari logo." />
+    <bios path="atari7800/7800 BIOS (E).rom" md5="397bb566584be7b9764e7a68974c4263" mandatory="false" core="libretro/prosystem" note="RUN ONLY EUROPEAN GAMES! Display official Atari logo." />
+  </system>
+  <system fullname="Elektronika BK" platform="bk">
+    <bios path="bk/B11M_BOS.ROM" md5="fe4627d1e3a1535874085050733263e7" core="libretro/bk" mandatory="false" />
+    <bios path="bk/B11M_EXT.ROM" md5="dc52f365d56fa1951f5d35b1101b9e3f" core="libretro/bk" mandatory="false" />
+    <bios path="bk/BAS11M_0.ROM" md5="946f6f23ded03c0e26187f0b3ca75993" core="libretro/bk" mandatory="false" />
+    <bios path="bk/BAS11M_1.ROM" md5="1e6637f32aa7d1de03510030cac40bcf" core="libretro/bk" mandatory="false" />
+    <bios path="bk/DISK_327.ROM" md5="5015228eeeb238e65da8edcd1b6dfac7" core="libretro/bk" mandatory="false" />
+    <bios path="bk/FOCAL10.ROM" md5="5737f972e8638831ab71e9139abae052" core="libretro/bk" mandatory="false" />
+    <bios path="bk/MONIT10.ROM"  md5="95f8c41c6abf7640e35a6a03cecebd01" core="libretro/bk" />
+  </system>
+  <system fullname="Sammy Atomiswave" platform="atomiswave">
+    <bios path="dc/awbios.zip" md5="a420c0e56135c2e7e87399c887d7ef4a,abb0a508c83e689fc5e9230c623dabd0,
+                                    042a0adecf2d616ccfb915a5cd71fde5,27fb8181fd9a0df18c7f6f941e9d60ab,
+                                    74f5e994ecff655f18f0f9f998c9b1d9" core="libretro/flycast" />
+  </system>
+  <system fullname="Sega Naomi" platform="naomi">
+    <bios path="dc/naomi.zip"    md5="7300a99a4fc856d1a3c36b4485789897,40ae83a9552df0f340d5eeeadc5436ea,
+                                      7ed453bda92b25156536ff055b8685b6,a48e7a735b9036be8f150018155370ad,
+                                      e1dcb105789296b93bf58e37b7f38fc6,3c6b0fb04ab3eae5dc6a99f63507dbd4" core="libretro/flycast" />
+    <bios path="dc/airlbios.zip" md5="06dd41b614a6d6d079ec1ee73e2bf87d,5b7de05fb2dea6fb0408149c9bada27c,
+                                      987e08b1786a93653281ca8a5b21dc7f" mandatory="false" hashMatchMandatory="false" core="libretro/flycast" note="Required only for the game 'Airline Pilots'" />
+    <bios path="dc/hod2bios.zip" md5="09b92ad1240fba7954985bdee59d1741,2c08c42cc8c6eb3a4e07bff07db5102f,
+                                      9e1f4846028b18b5ef8a6bd8efd6c67d,fbdf7e1cef86d3ffd23754c0a303a4af,
+                                      729A623576CB9D8F7FD7C4E44ECE3066" mandatory="false" hashMatchMandatory="false" core="libretro/flycast" note="Required only for the game 'The House of the Dead 2'" />
+  </system>
+  <system fullname="Sega Naomi GD-Rom" platform="naomigd">
+    <bios path="dc/naomigd.zip" md5="288cde03a112e7726fa8093e05d46853,416b5914acb3d0b4a190a1d358c8710d,
+                                     bd9f19b4be0692e92e272d0eb82402f7,be57d3744e71a3396fb8dc59830e880a" core="libretro/flycast" />
+  </system>
+  <system fullname="Commodore 64" platform="c64">
+    <bios path="vice/JiffyDOS_C64.bin"             md5="be09394f0576cf81fa8bacf634daf9a2" mandatory="false" core="libretro/vice_x64,libretro/vice_x64sc,libretro/vice_x128" note="JiffyDOS support" />
+    <bios path="vice/JiffyDOS_C128.bin"            md5="cbbd1bbcb5e4fd8046b6030ab71fc021" mandatory="false" core="libretro/vice_x64,libretro/vice_x64sc,libretro/vice_x128" note="JiffyDOS support" />
+    <bios path="vice/JiffyDOS_1541-II.bin"         md5="1b1e985ea5325a1f46eb7fd9681707bf" mandatory="false" core="libretro/vice_x64,libretro/vice_x64sc,libretro/vice_x128" note="JiffyDOS support" />
+    <bios path="vice/JiffyDOS_1571_repl310654.bin" md5="41c6cc528e9515ffd0ed9b180f8467c0" mandatory="false" core="libretro/vice_x64,libretro/vice_x64sc,libretro/vice_x128" note="JiffyDOS support" />
+    <bios path="vice/JiffyDOS_1581.bin"            md5="20b6885c6dc2d42c38754a365b043d71" mandatory="false" core="libretro/vice_x64,libretro/vice_x64sc,libretro/vice_x128" note="JiffyDOS support" />
+    <bios path="vice/SCPU64/scpu-dos-1.4.bin"      md5="cda2fcd2e1f0412029383e51dd472095" mandatory="false" core="libretro/xscpu64" note="1.4 SuperCPU dos from SuperCPU64" />
+    <bios path="vice/SCPU64/scpu-dos-2.04.bin"     md5="b2869f8678b8b274227f35aad26ba509" mandatory="false" core="libretro/xscpu64" note="2.04 SuperCPU dos from SuperCPU128" />
+    <bios path="vice/C64/basic-901226-01.bin" md5="57af4ae21d4b705c2991d98ed5c1f7b8" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-901227-03.bin" md5="39065497630802346bce17963f13c092" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-901227-01.bin" md5="1ae0ea224f2b291dafa2c20b990bb7d4" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-901227-02.bin" md5="7360b296d64e18b88f6cf52289fd99a1" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-390852-01.bin" md5="ddee89b0fed19572da5245ea68ff11b5" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-251104-04.bin" md5="187b8c713b51931e070872bd390b472a" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-901246-01.bin" md5="da92801e3a03b005b746a4dd0b639c7c" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/kernal-906145-02.bin" md5="479553fd53346ec84054f0b1c6237397" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/chargen-901225-01.bin" md5="12a4202f5331d45af846af6c58fba946" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/C64/chargen-906143-02.bin" md5="cf32a93c0a693ed359a4f483ef6db53d" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/SCPU64/scpu64" md5="006862e9a52d987970435988e3803c71" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/SCPU64/chargen-901225-01.bin" md5="12a4202f5331d45af846af6c58fba946" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/SCPU64/chargen-906143-02.bin" md5="cf32a93c0a693ed359a4f483ef6db53d" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1540-325302+3-01.bin" md5="87e849da3c87549848550fe4dd4d1aae" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1541-325302-01+901229-05.bin" md5="a0ce8439d1b8dcf2e1430461f7233a72" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1541ii-251968-03.bin" md5="ada295382a1f2df772a7e5c5c6f34215" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1570-315090-01.bin" md5="f0799353f0e22cf7d783e447adcafde2" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1571-310654-05.bin" md5="dae964d64b7843ff86c008d396dda208" core="libretro/vice_x64" mandatory="false" />
+    <bios path="vice/DRIVES/dos1581-318045-02.bin" md5="6a82f92aea2a3afa190fe32d565f39e7" core="libretro/vice_x64" mandatory="false" />
+  </system>
+  <system fullname="Sega Dreamcast" platform="dreamcast">
+    <bios path="dc/dc_boot.bin" md5="e10c53c2f8b90bab96ead2d368858623,d552d8b577faa079e580659cd3517f86,d407fcf70b56acb84b8c77c93b0e5327" core="libretro/flycast,reicast" mandatory="false" hashMatchMandatory="false" />
+    <bios path="dc/dc_flash.bin" md5="d6e11a23f1fa01cddb5dfccf7e4cc8d7,93a9766f14159b403178ac77417c6b68,
+                                      0a93f7940c455905bea6e392dfde92a4,23df18aa53c8b30784cd9a84e061d008,
+                                      69c036adfca4ebea0b0c6fa4acfc8538,74e3f69c2bb92bc1fc5d9a53dcf6ffe2,
+                                      2f818338f47701c606ade664a3e16a8a" hashMatchMandatory="false" core="libretro/flycast,reicast" />
+    <bios path="boot.bin" md5="a5c6a00818f97c5e3e91569ee22416dc,37c921eb47532cae8fb70e5d987ce91c,f2cd29d09f3e29984bcea22ab2e006fe,e10c53c2f8b90bab96ead2d368858623" core="libretro/retrodream" mandatory="false" />
+  </system>
+  <system fullname="NEC PC-8800 Series" platform="pc88">
+    <bios path="quasi88/n88.rom"      md5="22be239bc0c4298bc0561252eed98633,f7cba6a308c2718dbe97e60e46ddd66a,4f984e04a99d56c4cfe36115415d6eb8" core="libretro/quasi88" note="BASIC rom" />
+    <bios path="quasi88/n88_0.rom"    md5="e28fe3f520bea594350ea8fb00395370,c254685f00ca9c31b97203d6ef19f5e2,d675a2ca186c6efcd6277b835de4c7e5" core="libretro/quasi88" note="BASIC rom #1" />
+    <bios path="quasi88/n88_1.rom" md5="e844534dfe5744b381444dbe61ef1b66,a8e298da7ac947669bcb1ff25cee0a83" core="libretro/quasi88" mandatory="false" note="BASIC rom #2" />
+    <bios path="quasi88/n88_2.rom" md5="6548fa45061274dee1ea8ae1e9e93910,9d03154fd9abfc28c4e6d4dc705e6e23" core="libretro/quasi88" mandatory="false" note="BASIC rom #3" />
+    <bios path="quasi88/n88_3.rom" md5="fc4b76a402ba501e6ba6de4b3e8b4273,e1791f8154f1cdf22b576a1a365b6e1f" core="libretro/quasi88" mandatory="false" note="BASIC rom #4" />
+    <bios path="quasi88/n88n.rom" md5="5d6854624dd01cd791f58727fc43a525,93cd1d78b7b9c50b80041ed330332ece,2ff07b8769367321128e03924af668a0" core="libretro/quasi88" mandatory="false" note="N BASIC rom" />
+    <bios path="quasi88/disk.rom"     md5="793f86784e5608352a5d7f03f03e0858,01b1af474fcabe93c40d779b234a3825" core="libretro/quasi88" note="Required to load disk images" />
+    <bios path="quasi88/n88knj1.rom"  md5="d81c6d5d7ad1a4bbbd6ae22a01257603" mandatory="false" hashMatchMandatory="false" core="libretro/quasi88" note="Required to view Kanji" />
+    <!--bios path="quasi88/n88knj2.rom"  md5="41d2e2c0c0edfccf76fa1c3e38bc1cf2,898a3b7b6c3326e8b2069765bca2b944" mandatory="false" hashMatchMandatory="false" core="libretro/quasi88" note="Required to view Kanji" /-->
+    <!--bios path="quasi88/n88jisho.rom" md5="2e548679423370262f36cbde38a22789" core="libretro/quasi88" mandatory="false" /-->
+  </system>
+  <system fullname="NEC PC-9800 Series" platform="pc98">
+    <bios path="np2kai/bios.rom"       md5="052f5f6010877522f78803498a625727,0c052b1f1bfd0ece11286d2ff45d296f,
+                                            36293e23fe0c86cb115d59b653c13876,3af0ae018c5710eec6e2891064814138,
+                                            50274bb5dcb707e4450011b09accffcb,c70ee9df11794bd5cc8aadb3721b4a03,
+                                            cd237e16e7e77c06bb58540e9e9fca68,e246140dec5124c5e404869a84caefce" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/font.bmp" md5="0c8624e9ced7cca8769e5c7b0dd4279b,7da1e5b7c482d4108d22a5b09631d967" core="libretro/np2kai" mandatory="false" hashMatchMandatory="false" />
+    <bios path="np2kai/font.rom"       md5="38d32748ae49d1815b0614970849fd40,fd0b856899aec843cbe69d2940df547f,
+                                            4133b0be0d470920da60b9ed28d2614f,693fd1da3239d4bbeafc77d211718fc5,
+                                            829b963e21334e0fc2092ebd58f2ab4a,add4a225048c85ca2bc588696c6ecdc5,
+                                            ca87908a99ea423093f6d497fc367f7d" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/itf.rom"        md5="1d295699ffeab0f0e24e09381299259d,72ea51443070f0e9212bfc9b793ee28e,
+                                            a13d96da03a28af8418d7f86ab951f1a,b49ea39a1f730f1c966babc11961dc9a,
+                                            e9fc3890963b12cf15d0a2eea5815b72" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/sound.rom" md5="42c271f8b720e796a484cc1165ff4914,524473c1a5a03b17e21d86a0408ff827,a77fc2bc7c696dd68dba18e02f89d386,caf90f22197aed6f14c471c21e64658d" core="libretro/np2kai" mandatory="false" hashMatchMandatory="false" />
+    <bios path="np2kai/2608_bd.wav"    md5="9c6637930b1779abe00b8b63e4e41f50,d94546e70f17fd899be8df3544ab6cbb" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/2608_hh.wav"    md5="73548a1391631ff54a1f7c838d67917e,08c54a0c1f774a5538a848a6665a34b4" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/2608_rim.wav"   md5="43d54b3e05c081fa280c9bace3af1043,465ea0768b27da404aec45dfc501404b" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/2608_sd.wav"    md5="08124ccb84a9f65e2affc29581e690c9,d71004351c8bbfdad53b18222c061d49" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/2608_tom.wav"   md5="0faed5664a2dd8b1b2308e8a50ac25ea,96a4ead13f364734f79b0c58af2f0e1f" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="np2kai/2608_top.wav"   md5="3721ace646ffd56439aebbb2154e9263,593cff6597ab9380d822b8f824fd2c28" mandatory="false" hashMatchMandatory="false" core="libretro/np2kai" />
+    <bios path="BeebFile/BIOS.rom" md5="de72efe184f74f1cb98f92b1fbf532bb" core="beebem,libretro/np2kai" mandatory="false" />
+  </system>
+  <system fullname="Sega MEGA CD" platform="segacd">
+    <bios path="segacd/bios_CD_E.bin" md5="e66fa1dc5820d254611fdcdba0662372" core="libretro/genesisplusgx,libretro/picodrive" />
+    <bios path="segacd/bios_CD_U.bin" md5="2efd74e3232ff260e371b99f84024f7f" core="libretro/genesisplusgx,libretro/picodrive" />
+    <bios path="segacd/bios_CD_J.bin" md5="278a9397d192149e84e820ac621a8edd,bdeb4c47da613946d422d97d98b21cda" core="libretro/genesisplusgx,libretro/picodrive" />
+  </system>
+  <system fullname="Nintendo Family Computer Disk System" platform="fds">
+    <bios path="fds/disksys.rom" md5="ca30b50f880eb660a320674ed365ef7a" core="libretro/fceumm,libretro/nestopia,libretro/mesen" />
+  </system>
+  <system fullname="Nintendo Gameboy Advance" platform="gba">
+    <bios path="gba/gba_bios.bin" md5="a860e8c0b6d573d191e4ec7db1b1e4f6" mandatory="false" core="libretro/gpsp,libretro/mgba,libretro/meteor" />
+    <bios path="gba/open_gba_bios.bin" md5="1876f71b0d8c65eef3454547896ffb11" mandatory="false" core="libretro/gpsp" />
+  </system>
+  <system fullname="Nintendo Satellaview" platform="satellaview">
+    <bios path="satellaview/BS-X.bin" md5="96cf17bf589fcbfa6f8de2dc84f19fa2,d5af0ab2545c053b90ffa0866074ecf1,9c72de0cf4c9c88003292a79ddd0144d,fed4d8242cfbed61343d53d48432aced" mandatory="true" core="libretro/snes9x,libretro/mesen_s,libretro/bsnes,libretro/bsnes-hd" />
+  </system>
+  <system fullname="Nintendo Sufami Turbo" platform="sufami">
+    <bios path="sufami/STBIOS.bin" md5="d3a44ba7d42a74d3ac58cb9c14c6a5ca" core="libretro/snes9x" mandatory="false" />
+  </system>
+  <system fullname="NEC PC-Engine" platform="pcengine">
+    <bios path="pcengine/gexpress.pce" md5="6d2cb14fc3e1f65ceb135633d1694122" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast" />
+  </system>
+  <system fullname="NEC SuperGrafx" platform="supergrafx">
+    <bios path="pcengine/gexpress.pce" md5="6d2cb14fc3e1f65ceb135633d1694122" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast,libretro/geargrafx" />
+  </system>
+  <system fullname="NEC PC-Engine CD" platform="pcenginecd">
+	  <bios path="pcenginecd/syscard3.pce" md5="ff1a674273fe3540ccef576376407d1d,1e47a1780aaa7e277a3896c1ba00e317,38179df8f4ac870017db21ebcbf53114" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast,libretro/geargrafx" />
+    <bios path="pcenginecd/syscard1.pce" md5="9f770275393b8627cf9d24e5c56d2ab9" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast,libretro/geargrafx" />
+    <bios path="pcenginecd/syscard2.pce" md5="424f1d6bf93259bf255afa7d1dc9f721" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast,libretro/geargrafx" />
+    <bios path="pcenginecd/syscard2u.pce" md5="94279f315e8b52904f65ab3108542afe" mandatory="false" core="libretro/mednafen_pce_fast" />
+    <bios path="pcenginecd/syscard3u.pce" md5="0754f903b52e3b3342202bdafb13efa5" mandatory="false" core="libretro/mednafen_pce_fast" />
+    <bios path="pcengine/gexpress.pce" md5="6d2cb14fc3e1f65ceb135633d1694122" mandatory="false" core="libretro/mednafen_supergrafx,libretro/mednafen_pce_fast,libretro/geargrafx" />
+  </system>
+  <system fullname="NEC PC-FX" platform="pcfx">
+    <bios path="pcfx/pcfx.rom" md5="08e36edbea28a017f79f8d4f7ff9b6d7" core="libretro/pcfx" />
+  </system>
+  <system fullname="MSX Familly" platform="msx1,msx2">
+    <bios path="msx/CARTS.SHA" md5="74b0f217fa0e2b8bb5a2f8e2ecc69da3,d6dedca1112ddfda94cc9b2e426b818b" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/CYRILLIC.FNT" md5="85b38e4128bbc300e675f55b278683a8" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/DISK.ROM" md5="80dcd1ad1a4cf65d64b7ba10504e8190" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/FMPAC16.ROM"  md5="af8537262df8df267072f359399a7635" core="libretro/fmsx" />
+    <bios path="msx/FMPAC.ROM"    md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/fmsx" />
+    <bios path="msx/ITALIC.FNT" md5="c83e50e9f33b8dd893c414691822740d" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/KANJI.ROM" md5="febe8782b466d7c3b16de6d104826b34" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/MSX2EXT.ROM"  md5="2183c2aff17cf4297bdb496de78c2e8a" core="libretro/fmsx" />
+    <bios path="msx/MSX2PEXT.ROM" md5="7c8243c71d8f143b2531f01afa6a05dc" core="libretro/fmsx" />
+    <bios path="msx/MSX2P.ROM"    md5="6d8c0ca64e726c82a4b726e9b01cdf1e" core="libretro/fmsx" />
+    <bios path="msx/MSX2.ROM"     md5="ec3a01c91f24fbddcbcab0ad301bc9ef" core="libretro/fmsx" />
+    <bios path="msx/MSXDOS2.ROM" md5="6418d091cd6907bbcf940324339e43bb" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/MSX.ROM"      md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/fmsx" />
+    <bios path="msx/PAINTER.ROM" md5="403cdea1cbd2bb24fae506941f8f655e" core="libretro/fmsx" mandatory="false" />
+    <bios path="msx/RS232.ROM" md5="279efd1eae0d358eecd4edc7d9adedf3" core="libretro/fmsx" mandatory="false" />
+    <bios path="INTERNAT.FNT" md5="ac4f4a90c1b1887db48ded39c9d9c847" core="libretro/fmsx" mandatory="false" />
+    <bios path="KOREAN.FNT" md5="73291e76638a2f5aa2eceb843df468f4" core="libretro/fmsx" mandatory="false" />
+    <bios path="JAPANESE.FNT" md5="aa28f0703b951a6be8df3e28e20d263d" core="libretro/fmsx" mandatory="false" />
+  </system>
+  <system fullname="Atari Lynx" platform="lynx">
+    <bios path="lynx/lynxboot.img" md5="fcd403db69f54290b51035d82f835e7b" core="libretro/handy,libretro/mednafen_lynx" />
+  </system>
+  <system fullname="Atari ST/STE/MegaSTE/TT/Falcon" platform="atarist">
+    <bios path="atarist/tos.img|tos.img" md5="27ac71b59d59f65571b972e0f894054a,5d65c6a384d847a0b8013d5e22ec0887,f62bc9777f28bc6876422738758db365,d41ae4efaa2c97f632dbe75d24d51bea,c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,736adb2dc835df4d323191fdc8926cc9,992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,dd1010ec566efbd71047d6c4919feba5,ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8" core="hatari,libretro/hatari" hashMatchMandatory="false" note="Default bios" />
+      <bios path="atarist/st.img" md5="c87a52c277f7952b41c639fc7bf0a43b,e0444d8c51a8093a3f09665d8099c0af,
+                                       d0f682ee6237497004339fb02172638b,5491b3755992feaf743ceecaa3b18f34,
+                                       25789a649faff0a1176dc7d9b98105c0,b9e37f0f0a700fc673049794870bdb85,
+                                       91ce7c1903006da75c823ff3c938e5d2,091a4d95f6c600231a3f1391a309ac26,
+                                       a622cc35d8d78703905592dfaa4d2ccb,d6521785627d20c51edc566808a6bf28,
+                                       b2a8570de2e850c5acf81cb80512d9f6,696ba04b3bc963aee2ba769298e342de,
+                                       c1c57ce48e8ee4135885cee9e63a68a2,91fb61080d27d0376e1a3da409727468,
+                                       f6a8fa31d0d1bac1a08d47502244408d,41b7dae4e24735f330b63ad923a0bfbc,
+                                       143343f7b8e0b1162af206fe8f46b002,800d48825be45ec7f39ba7bb2c3f0b59,
+                                       0087e2707c57efa2106a0aa7576655c0,036c5ae4f885cbf62c9bed651c6c58a8,
+                                       52248cc70ae48b3050e197e270917130,7c040857bdcfcd7d748ca82205463efa,
+                                       0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,
+                                       886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,
+                                       4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,
+                                       a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4,
+                                       736adb2dc835df4d323191fdc8926cc9" mandatory="true" hashMatchMandatory="false" core="hatari,libretro/hatari" note="Atari ST/Mega-ST (not STE!) bios." />
+      <bios path="atarist/ste.img" md5="992bac38e01633a529121a2a65f0779e,30f69d70fe7c210300ed83f991b12de9,
+                                        bc7b224d0dc3f0cc14c8897db89c5787,6033f2b9364edfed321c6931a8181fd2,
+                                        f3f92cd4e2c331aef8970a156be03b7c,a0982e760f9807d82667ff5a69e78f6b,
+                                        94a75c1c65408d9f974b0463e15a3b11,61168619b5109d314638c9409f44bca2,
+                                        4759f2c7bace6c2f440d27acd2ab6ed4,ed5fbaabe0219092df74c6c14cea3f8e,
+                                        a4cfd3c7412002dd693f69a15d4d961c,1cbc4f55295e469fc8cd72b7efdea1da,
+                                        6f9471098a521214fad1e2c6f2dd3d08,febb00ba8784798293a7ae709a1dafcb,
+                                        0604dbb85928f0598d04144a8b554bbe,b2873004a408b8db36321f98daafa251,
+                                        886b9b6bb6afa287211a594e16f6ca67,e690bec90d902024beed549d22150755,
+                                        4a0d4f282c3f2a0196681adf88862dd4,332fe3803a7e20cd625b27a69f07ae69,
+                                        a7dc40dc5c1086bce1a8f3d44fd29051,c9093f27159e7d13ac0d1501a95e53d4" mandatory="true" hashMatchMandatory="false" core="hatari,libretro/hatari" note="Atari STE bios." />
+      <bios path="atarist/megaste.img" md5="4689ef3694ac86e7289923190e6cd10d,7aeabdc25f8134590e25643a405210ca,
+                                            7449b131681f1dfe62ebed1392847057,61b620ad951815a25cb37895c81a947c,
+                                            7e87d8fe7e24e0b4c55ad1b7955beae3,1c92855316a33faee602b8007f22d2cb,
+                                            7cdd45b6aac66a21bfb357d9334e46db,0604dbb85928f0598d04144a8b554bbe,
+                                            b2873004a408b8db36321f98daafa251,886b9b6bb6afa287211a594e16f6ca67,
+                                            e690bec90d902024beed549d22150755,4a0d4f282c3f2a0196681adf88862dd4,
+                                            332fe3803a7e20cd625b27a69f07ae69,a7dc40dc5c1086bce1a8f3d44fd29051,
+                                            c9093f27159e7d13ac0d1501a95e53d4" mandatory="false" hashMatchMandatory="true" core="hatari,libretro/hatari" note="Atari Mega-STE bios." />
+      <bios path="atarist/tt.img" md5="066f39a7ea5789d5afd59dd7b3104fa6,2a8e39c60317b921eabd7e25b5d74395,
+                                       dd1010ec566efbd71047d6c4919feba5,19cd81e1c3049bf408ad426dc5c3b2e0,
+                                       ac6ca0f0ed42a1603dfd409c4bf8eb89" mandatory="false" hashMatchMandatory="true" core="hatari,libretro/hatari" note="Atari TT bios." />
+      <bios path="atarist/falcon.img" md5="ed2647936ce4bd283c4d7dfd7ae09d1c,9e880168d0a004f7f5e852be758f39e4,
+                                           919fd0f045299f101cf7757e5e058c41,b2ecabc15b65afef96331be46f2a2cd4,
+                                           e5ea0f216fb446f1c4a4f476bc5f03d4,941baac767269649f92f7918dd5740b8,
+                                           b338bacb2fc453bab61bcc1e2cf5076b" core="hatari,libretro-hatari" note="FALCON 30/40 bios." />
+      <bios path="atarist/emutos.img" md5="e2c861c588fca2d0cf6be3df3aaf05f2" mandatory="true" hashMatchMandatory="true" core="hatari,libretro/hatari" note="EMUTOS Open-source bios. 99% Compatible with all Atari machines." />
+    <bios path="etos1024k.img" md5="1cb3775c4775bad75d24447a90a2890b" core="libretro/hatarib" mandatory="false" />
+    <bios path="etos192uk.img" md5="5f5730d9b557c44ddb9bc410ce2925d8" core="libretro/hatarib" mandatory="false" />
+    <bios path="etos192us.img" md5="796f62574413bc59ca767063b3184f90" core="libretro/hatarib" mandatory="false" />
+  </system>
+  <system fullname="Magnavox Odyssey²" platform="o2em">
+    <bios path="o2em/o2rom.bin" md5="562d5ebf9e030a40d6fabfc2f33139fd" core="libretro/o2em" />
+    <bios path="o2em/c52.bin"   md5="f1071cdb0b6b10dde94d3bc8a6146387" core="libretro/o2em" />
+  </system>
+  <system fullname="Philips VideoPac+" platform="videopacplus">
+    <bios path="o2em/g7400.bin" md5="c500ff71236068e0dc0d0603d265ae76" core="libretro/o2em" />
+    <bios path="o2em/jopac.bin" md5="279008e4a0db2dc5f1c048853b033828" core="libretro/o2em" />
+  </system>
+  <system fullname="Panasonic 3DO" platform="3do">
+    <bios path="3do/panafz1.bin" md5="f47264dd47fe30f73ab3c010015c155b" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (U)" />
+    <bios path="3do/panafz1j.bin" md5="a496cfdded3da562759be3561317b605" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (J)" />
+    <bios path="3do/panafz1j-norsa.bin" md5="f6c71de7470d16abe4f71b1444883dc8" core="libretro/opera" mandatory="false" note="Panasonic FZ-1 (J) (RSA check disabled)" />
+    <bios path="3do/panafz10.bin"                md5="51f2f43ae2f3508a14d9f56597e2d3ce" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (U)" />
+    <bios path="3do/panafz10-norsa.bin"          md5="1477bda80dc33731a65468c1f5bcbee9" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (U) (RSA check disabled)" />
+    <bios path="3do/panafz10e-anvil.bin"         md5="a48e6746bd7edec0f40cff078f0bb19f" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (E) w/ ANVIL" />
+    <bios path="3do/panafz10e-anvil-norsa.bin"   md5="cf11bbb5a16d7af9875cca9de9a15e09" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (E) w/ ANVIL (RSA check disabled)" />
+    <bios path="3do/goldstar.bin"                md5="8639fd5e549bd6238cfee79e3e749114" mandatory="false" core="libretro/opera" note="Goldstar GDO-101M" />
+    <bios path="3do/sanyotry.bin"                md5="35fa1a1ebaaeea286dc5cd15487c13ea" mandatory="false" core="libretro/opera" note="Sanyo IMP-21J TRY" />
+    <bios path="3do/3do_arcade_saot.bin"         md5="8970fc987ab89a7f64da9f8a8c4333ff" mandatory="false" core="libretro/opera" note="Shootout At Old Tucson" />
+    <bios path="3do/panafz1-kanji.bin"           md5="b8dc97f778a6245c58e064b0312e8281" mandatory="false" core="libretro/opera" note="Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games" />
+    <bios path="3do/panafz1j-kanji.bin"          md5="c23fb5d5e6bb1c240d02cf968972be37" mandatory="false" core="libretro/opera" note="Panasonic FZ-1 (J) Kanji ROM. Useful for some Japanese games" />
+    <bios path="3do/panafz10ja-anvil-kanji.bin"  md5="428577250f43edc902ea239c50d2240d" mandatory="false" core="libretro/opera" note="Panasonic FZ-10 (J) w/ ANVIL Kanji ROM. Useful for some Japanese games" />
+    <bios path="opera-boot.bin" md5="ad43f7905ba53da48c0b8d9643fb8cec" core="libretro/opera" mandatory="false" />
+  </system>
+  <system fullname="Sharp X68000" platform="x68000">
+    <bios path="keropi/iplrom.dat"   md5="7fd4caabac1d9169e289f0f7bbf71d8e" core="libretro/px68k" />
+    <bios path="keropi/cgrom.dat"    md5="cb0a5cfcf7247a7eab74bb2716260269" core="libretro/px68k" />
+    <bios path="keropi/iplrom30.dat" md5="f373003710ab4322642f527f567e020a" core="libretro/px68k" mandatory="false" />
+    <bios path="keropi/iplromco.dat" md5="cc78d4f4900f622bd6de1aed7f52592f" core="libretro/px68k" mandatory="false" />
+    <bios path="keropi/iplromxv.dat" md5="0617321daa182c3f3d6f41fd02fb3275" core="libretro/px68k" mandatory="false" />
+  </system>
+  <system fullname="Sharp X1" platform="x1">
+    <bios path="xmil/IPLROM.X1" md5="eeeea1cd29c6e0e8b094790ae969bfa7,59074727a953fe965109b7dbe3298e30" core="libretro/xmil" mandatory="false" />
+    <bios path="xmil/IPLROM.X1T" md5="56c28adcf1f3a2f87cf3d57c378013f5" core="libretro/xmil" mandatory="false" />
+  </system>
+  <system fullname="Sony Playstation" platform="psx">
+    <bios path="scph5500.bin" md5="8dd7d5296a650fac7319bce665a6a53c" core="libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
+    <bios path="scph5501.bin" md5="490f666e1afb15b7362b406ed1cea246" core="libretro/pcsx_rearmed,libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
+    <bios path="scph5502.bin" md5="32736f17079d0b2b7024407c39bd3050" core="libretro/mednafen_psx,libretro/mednafen_psx_hw,libretro/swanstation,duckstation" />
+    <bios path="scph101.bin" md5="6e3735ff4c7dc899ee98981385f6f3d0" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
+    <bios path="scph7001.bin" md5="1e68c231d0896b7eadcad1d7d8e76129" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
+    <bios path="scph1001.bin" md5="924e392ed05558ffdb115408c263dccf,dc2b9bf8da62ec93e868cfd29f0d067d" core="libretro/pcsx_rearmed" mandatory="false" note="Recommended for better compatibility." />
+    <bios path="ps1_rom.bin"  md5="81bbe60ba7a3d1cea1d48c14cbcc647b" core="libretro/swanstation,duckstation" mandatory="false" note="Bios you can grab in PS3 firmware upgrade. Compatible with all regions, can replace all others bios." />
+    <bios path="scph5000.bin" md5="57a06303dfa9cf9351222dfcbb4a29d9" core="duckstation" mandatory="false" />
+    <bios path="scph1002a.bin" md5="54847e693405ffeb0359c6287434cbef" core="duckstation" mandatory="false" />
+    <bios path="scph1002b.bin" md5="417b34706319da7cf001e76e40136c23" core="duckstation" mandatory="false" />
+    <bios path="scph1002c.bin" md5="e2110b8a2b97a8e0b857a45d32f7e187" core="duckstation" mandatory="false" />
+    <bios path="scph3000.bin" md5="849515939161e62f6b866f6853006780" core="duckstation" mandatory="false" />
+    <bios path="scph1001_v20.bin" md5="dc2b9bf8da62ec93e868cfd29f0d067d" core="duckstation" mandatory="false" />
+    <bios path="scph3500.bin" md5="cba733ceeff5aef5c32254f1d617fa62" core="duckstation" mandatory="false" />
+    <bios path="scph1001_v21.bin" md5="da27e8b6dab242d8f91a9b25d80c63b8" core="duckstation" mandatory="false" />
+    <bios path="scph7000.bin" md5="8e4c14f567745eff2f0408c8129f72a6" core="duckstation" mandatory="false" />
+    <bios path="scph7000w.bin" md5="b84be139db3ee6cbd075630aa20a6553" core="duckstation" mandatory="false" />
+    <bios path="scph7002.bin" md5="b9d9a0286c33dc6b7237bb13cd46fdee" core="duckstation" mandatory="false" />
+    <bios path="scph100.bin" md5="8abc1b549a4a80954addc48ef02c4521" core="duckstation" mandatory="false" />
+    <bios path="scph101_v44.bin" md5="9a09ab7e49b422c007e6d54d7c49b965" core="duckstation" mandatory="false" />
+    <bios path="scph1000r.bin" md5="476d68a94ccec3b9c8303bbd1daf2810" core="duckstation" mandatory="false" />
+    <bios path="dtlh1100.bin" md5="ca5cfc321f916756e3f0effbfaeba13b" core="duckstation" mandatory="false" />
+    <bios path="scph102_v44.bin" md5="b10f5e0e3d9eb60e5159690680b1e774" core="duckstation" mandatory="false" />
+    <bios path="scph102_v45.bin" md5="de93caec13d1a141a40a79f5c86168d6" core="duckstation" mandatory="false" />
+    <bios path="scph1000.bin" md5="239665b1a3dade1b5a52c06338011044" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph18000.bin" md5="d8f485717a5237285e4d7c5f881b7f32" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh10000_0117.bin" md5="32f2e4d5ff5ee11072a6bc45530f5765" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph10000_0117.bin" md5="acf4730ceb38ac9d8c7d8e21f2614600" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh10000_0217.bin" md5="acf9968c8f596d2b15f42272082513d1" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph10000_15000.bin" md5="b1459d7446c69e3e97e6ace3ae23dd1c" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh10000_0224.bin" md5="d3f1853a16c2ec18f3cd1ae655213308" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30001.bin" md5="63e6fd9b3c72e0d7b920e80cf76645cd" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001_0727.bin" md5="a20c97c02210f16678ca3010127caf36" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001_0902.bin" md5="8db2fbbac7413bf3e7154c1e0715e565" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30002_0902.bin" md5="b7fa11e87d51752a98b38e3e691cbf17" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph18000_gh003.bin" md5="f63bc530bd7ad7c026fcd6f7bd0d9525" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph18000_gh008.bin" md5="cee06bd68c333fc5768244eae77e4495" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30101.bin" md5="0bf988e9c7aaa4c051805b0fa6eb3387" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001_35001.bin" md5="8accc3c49ac45f5ae2c5db0adc854633" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30002_1228.bin" md5="838544f12de9b0abc90811279ee223c8" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30000.bin" md5="bb6bbc850458fff08af30e969ffd0175" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30000_35000.bin" md5="815ac991d8bc3b364696bead3457de7d" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001r_0427.bin" md5="b107b5710042abe887c0f6175f6e94bb" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30000_0427.bin" md5="ab55cceea548303c22c72570cfd4dd71" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001r_0704.bin" md5="18bcaadb9ff74ed3add26cdf709fff2e" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30002r_0704.bin" md5="491209dd815ceee9de02dbbc408c06d6" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30001r_1004.bin" md5="7200a03d51cacc4c14fcdfdbc4898431" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30002r_1004.bin" md5="8359638e857c8bc18c3c18ac17d9cc3c" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30005r.bin" md5="352d2ff9b3f68be7e6fa7e6dd8389346" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph39001.bin" md5="d5ce2c7d119f563ce04bc04dbc3a323e" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph39002.bin" md5="0d2228e6fd4fb639c9c39d077a9ec10c" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph37000_39000.bin" md5="72da56fccb8fcd77bba16d1b6f479914" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph39005.bin" md5="315a4003535dfda689752cb25f24785c" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh50000.bin" md5="54ecde087258557e2ddb5c3ddb004028" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50000_55000.bin" md5="312ad4816c232a9606e56f946bc0678a" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50002_0227.bin" md5="6e69920fa6eef8522a1d688a11e41bc6" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh50001_0325.bin" md5="eb960de68f0c0f7f9fa083e9f79d0360" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50001_0325.bin" md5="8aa12ce243210128c5074552d3b86251" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh50009.bin" md5="240d4c5ddd4b54069bdc4a3cd2faf99d" core="duckstation" mandatory="false" />
+    <bios path="ps2_desr5000.bin" md5="1c6cd089e6c83da618fbf2a081eb4888" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph55000_0623.bin" md5="463d87789c555a4a7604e97d7db545d1" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh50001_0623.bin" md5="ab9d49ad40ae49f19856ad187777b1b3" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50001_0623.bin" md5="35461cecaa51712b300b2d6798825048" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50002_0623.bin" md5="bd6415094e1ce9e05daabe85de807666" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50006.bin" md5="2e70ad008d4ec8549aada8002fdf42fb" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50005.bin" md5="50d5b97b57d8c9b6534adcb46c2027d4" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50009.bin" md5="1b6e631b536247756287b916f9396872" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50000_0822.bin" md5="00da1b177096cfd2532c8fa22b43e667" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50011.bin" md5="81f4336c1de607dd0865011c0447052e" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph70000.bin" md5="0eee5d1c779aa50e94edd168b4ebf42e" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph70001.bin" md5="d333558cc14561c1fdc334c75d5f37b7" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph70002.bin" md5="dc752f160044f2ed5fc1f4964db2a095" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph70005.bin" md5="3e3e030c0f600442fa05b94f87a1e238" core="duckstation" mandatory="false" />
+    <bios path="ps2_desr5500.bin" md5="1ad977bb539fc9448a08ab276a836bbc" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh75000.bin" md5="bf0078ba5e19d57eae18047407f3b6e5" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph75000.bin" md5="eb4f40fcf4911ede39c1bbfe91e7a89a" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh75000a.bin" md5="9959ad7a8685cad66206e7752ca23f8b" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph75001.bin" md5="929a14baca1776b00869f983aa6e14d2" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph75002.bin" md5="573f7d4a430c32b3cc0fd0c41e104bbd" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph75006.bin" md5="df63a604e8bff5b0599bd1a6c2721bd0" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph77000.bin" md5="5b1ba4bb914406fae75ab8e38901684d" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph77001.bin" md5="cb801b7920a7d536ba07b6534d2433ca" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph77002.bin" md5="af60e6d1a939019d55e5b330d24b1c25" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph77006.bin" md5="549a66d0c698635ca9fa3ab012da7129" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh90000_j.bin" md5="5e2014472c88f74f7547d8c2c60eca45" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph79000_90000.bin" md5="5de9d0d730ff1e7ad122806335332524" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh90000_a.bin" md5="21fe4cad111f7dc0f9af29477057f88d" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph79001_90001.bin" md5="40c11c063b3b9409aa5e4058e984e30c" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph79002_90002.bin" md5="80bbb237a6af9c611df43b16b930b683" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph79006_90006.bin" md5="c37bce95d32b2be480f87dd32704e664" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph90000_0220.bin" md5="80ac46fa7e77b8ab4366e86948e54f83" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph90001_0220.bin" md5="21038400dc633070a78ad53090c53017" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph90002_0220.bin" md5="dc69f0643a3030aaa4797501b483d6c4" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph90005_0220.bin" md5="30d56e79d89fbddf10938fa67fe3f34e" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph30003.bin" md5="71f50ef4f4e17c163c78908e16244f7d" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30002.bin" md5="91c87cb2f2eb6ce529a2360f80ce2457" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30102_0902.bin" md5="3016b3dd42148a67e2c048595ca4d7ce" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh30102_1228.bin" md5="6f9a6feb749f0533aaae2cc45090b0ed" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph39008.bin" md5="5b1f47fbeb277c6be2fccdd6344ff2fd" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh50002.bin" md5="666018ffec65c5c7e04796081295c6c7" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50008.bin" md5="b53d51edc7fc086685e31b811dc32aad" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph50004_0822.bin" md5="afde410bd026c16be605a1ae4bd651fd" core="duckstation" mandatory="false" />
+    <bios path="ps2_scph70002_alt.bin" md5="7ebb4fc5eab6f79a27d76ac9aad392b2" core="duckstation" mandatory="false" />
+    <bios path="ps2_dtlh70002.bin" md5="63ead1d74893bf7f36880af81f68a82d" core="duckstation" mandatory="false" />
+    <bios path="ps2_kdl22px300.bin" md5="93ea3bcee4252627919175ff1b16a1d9" core="duckstation" mandatory="false" />
+    <bios path="scph5903.bin" md5="81328b966e6dcf7ea1e32e55e1c104bb" core="libretro/mednafen_psx" mandatory="false" />
+    <bios path="psxonpsp660.bin" md5="c53ca5908936d412331790f4426c6c33" core="libretro/mednafen_psx,libretro/pcsx_rearmed,libretro/swanstation" mandatory="false" />
+  </system>
+  <system fullname="Sony Playstation 2" platform="ps2">
+    <bios path="ps2/ps2-0230a-20080220.bin" md5="21038400dc633070a78ad53090c53017" core="libretro/pcsx2,pcsx2" note="Recommended for better compatibility." />
+    <bios path="ps2/ps2-0230e-20080220.bin" md5="dc69f0643a3030aaa4797501b483d6c4" core="libretro/pcsx2,pcsx2" />
+    <bios path="ps2/ps2-0230h-20080220.bin" md5="30d56e79d89fbddf10938fa67fe3f34e" core="libretro/pcsx2,pcsx2" />
+    <bios path="ps2/ps2-0230j-20080220.bin" md5="80ac46fa7e77b8ab4366e86948e54f83" core="libretro/pcsx2,pcsx2" />
+    <bios path="resources/GameIndex.yaml" md5="fc3c14208a929c386445635b19baa3f2" core="pcsx2" mandatory="false" />
+    <bios path="resources/RedumpDatabase.yaml" md5="0525ad1f1381152f20bfb05775cf39cd" core="pcsx2" mandatory="false" />
+  </system>
+  <system fullname="Fairchild Channel-F" platform="channelf">
+    <bios path="channelf/sl31254.bin" md5="da98f4bb3242ab80d76629021bb27585" core="libretro/freechaf" />
+    <bios path="channelf/sl31253.bin" md5="ac9804d4c0e9d07e33472e3726ed15c3" core="libretro/freechaf" />
+    <bios path="channelf/sl90025.bin" md5="95d339631d867c8f1d15a5f2ec26069d" core="libretro/freechaf" mandatory="false" note="Optional replacement for sl31254.bin"/>
+  </system>
+  <system fullname="Mattel Intellivision" platform="intellivision">
+    <bios path="intellivision/exec.bin" md5="62e761035cb657903761800f4437b8af" core="libretro/freeintv" />
+    <bios path="intellivision/grom.bin" md5="0cd5946c6473e42e8e4c2137785e427f" core="libretro/freeintv" />
+  </system>
+  <system fullname="Nintendo Pokémon Mini" platform="pokemini">
+    <bios path="pokemini/bios.min" md5="1e4fb124a3a886865acb574f388c803d" mandatory="false" core="libretro/pokemini" />
+  </system>
+  <system fullname="Nintendo DS" platform="nds">
+    <bios path="nds/bios7.bin" md5="df692a80a5b1bc90728bc3dfc76cd948" core="libretro/melonds,libretro/desmume" mandatory="false" />
+    <bios path="nds/bios9.bin" md5="a392174eb3e572fed6447e956bde4b25" core="libretro/melonds,libretro/desmume" mandatory="false" />
+    <bios path="nds/firmware.bin" md5="145eaef5bd3037cbc247c213bb3da1b3,e45033d9b0fa6b0de071292bba7c9d13,3ad72b2c9a736b24953f2d391da4bfcc" core="libretro/melonds,libretro/desmume" mandatory="false" />
+  </system>
+  <system fullname="Palm Pilot" platform="palm">
+    <bios path="palm/palmos41-en-m515.rom"   md5="83cb1d1c76e568b916dc2e7c0bf669f6" core="libretro/mu" />
+    <bios path="palm/bootloader-dbvz.rom"    md5="9da101cd2317830649a31f8fa46debec" core="libretro/mu" mandatory="false" />
+  </system>
+  <system fullname="Tangerine Oric/Atmos" platform="oricatmos">
+    <bios path="oricutron/basic11b.rom" md5="a330779c42ad7d0c4ac6ef9e92788ec6" core="oricutron" />
+    <bios path="oricutron/basic10.rom"  md5="ebe418ec8a6c85d5ac32956c9a96c179" core="oricutron" />
+    <bios path="oricutron/bd500.rom"    md5="2b6498fd29a0adbf1c529762c02c33ab" core="oricutron" mandatory="false" />
+    <bios path="oricutron/jasmin.rom" md5="5136f764a7dbd1352519351fbb53a9f3" core="oricutron" mandatory="false" />
+    <bios path="oricutron/microdis.rom" md5="df864344d2a2091c3f952bd1c5ce1707" core="oricutron" mandatory="false" />
+    <bios path="oricutron/pravetzt.rom" md5="8712a22e7e078de3343667d9fc1f2390" core="oricutron" />
+    <bios path="oricutron/8dos2.rom"    md5="5f3cd5a4307fed7a9dfe8faa4c044273" core="oricutron" mandatory="false" />
+    <bios path="oricutron/teleass.rom"  md5="2324c9cc227c1327a72a667c97ed2990" core="oricutron" />
+    <bios path="oricutron/hyperbas.rom" md5="364bf095e0dc4222d75354d50b8cddfc" core="oricutron" />
+    <bios path="oricutron/telmon24.rom" md5="9a432244d9ee4a49e8ddcde64af94e05" core="oricutron" />
+  </system>
+  <system fullname="Spectravideo" platform="spectravideo">
+    <bios path="Machines/SVI - Spectravideo SVI-318/svi318.rom"              md5="ee6ad7ea29e791b03a28a9443e622648" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 80 Column/svi328a.rom"   md5="352f054ab09605070bdff49d73f335cc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 80 Column/svi806.rom"    md5="82f7bc9c08f43db1d79bcb565a0de12b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 80 Swedish/svi328a.rom"  md5="352f054ab09605070bdff49d73f335cc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 80 Swedish/svi806se.rom" md5="6a5536c1eb4f0477c4f76488cd8ca3ad" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom"         md5="352f054ab09605070bdff49d73f335cc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328 MK2/svi806.rom"          md5="82f7bc9c08f43db1d79bcb565a0de12b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SVI - Spectravideo SVI-328/svi328.rom"              md5="2cebd1db9dda475a011b7bce65c984a2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+  </system>
+  <system fullname="Colecovision" platform="colecovision">
+    <bios path="Machines/COL - Bit Corporation Dina/czz50-1.rom"                     md5="1de922acdd742d31349c2801e9768c35" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/COL - Bit Corporation Dina/czz50-2.rom"                     md5="72b089dc55b7fe7ffb5028f365e8c045" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/COL - ColecoVision with Opcode Memory Extension/coleco.rom" md5="2c66f5911e5b42b8ebe113403548eee7" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/COL - ColecoVision/coleco.rom"                              md5="2c66f5911e5b42b8ebe113403548eee7" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/COL - Spectravideo SVI-603 Coleco/SVI603.ROM"               md5="c60a2e85572c0ccb69505a7646d5c1b6" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="coleco/boot.rom"                                                     md5="2c66f5911e5b42b8ebe113403548eee7" core="libretro/gearcoleco" mandatory="true" />
+  </system>
+  <system fullname="MSX and MSX2 Series" platform="msx1,msx2,msxturbor">
+    <bios path="Machines/Forte II Games - Pesadelo/pesadelo.rom" md5="ba53d700ec25bcb08020ce693319cd28" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX - C-BIOS/cbios_logo_msx1.rom" md5="25b5cdea5040883a206b89845cdf55f1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX - C-BIOS/cbios_main_msx1.rom" md5="87b27f48cc25e2b6f749c019587d5f23" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom" md5="659db9142e62c51f2f75fd52fac78e44" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_main_msx2.rom" md5="98b94c2d99066f272bb5de07778f7fd1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2 - C-BIOS/cbios_sub.rom" md5="9dd9a69432cc116d0f1d4ec7a51053e0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom" md5="462d6ecb52a8c35dd7d48c2d46687f14" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom" md5="0a34c660614ead31dab78638ce7745e9" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_music.rom" md5="e09783c4ec6d4770c5395c42bb0e1d91" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - C-BIOS/cbios_sub.rom"           md5="9dd9a69432cc116d0f1d4ec7a51053e0" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/KANJI.rom"             md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/MSX2PMUS.rom"          md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/MSXKANJI.rom"          md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/Msx2pe.rom"            md5="277fd57c13f301fb4b366845a32d673a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/Msx2pexte.rom"         md5="f78ab735aaad7045badbda8f4c8ac751" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/PANASONICDISK.rom"     md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/MSX2+ - European/XBASIC2.rom"           md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/SEGA - SF-7000/sf7000.rom"              md5="561b362f9aa4cbcb240461abf83c2e0d" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/ARAB1.ROM" md5="7fa0558bcec9dba310579521623d9f6a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/ARABIC.rom" md5="20c4b5d1d9469c201b145f082ec32658" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/BEERIDE.ROM" md5="b32279f2700652a5ce0a809318626763" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/FMPAC.rom" md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/GCVMX80.ROM" md5="fd0b8f1766dc6dcc03a43d9c79dc4e37" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/HANGUL.rom" md5="9baf17b190f631405b6b0eeeeb162b87" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/KANJI.rom" md5="acf53887c2d2783dc059a9b442c86b90" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MICROSOLDISK.ROM" md5="02e8b1f96049f09d6d3a735647cbbb2a" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MOONSOUND.rom" md5="42af93619160ef2116416f74a6cb12f2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX.rom" md5="aa95aea2563cd5ec0a0919b44cc17d47" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2.rom"                   md5="ec3a01c91f24fbddcbcab0ad301bc9ef" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2AR.ROM" md5="91764e84f977671ac7caa50b36273fd2" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2AREXT.ROM" md5="be5d1ec8001d945ca1432285722e9d16" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2BR.rom" md5="d3df424728a225b301510f5384cae583" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2BREXT.rom" md5="355c6d5ee31da441d485cd89ca906413" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2EXT.rom"                md5="2183c2aff17cf4297bdb496de78c2e8a" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2FR.rom" md5="7af9e84da1520a8a7fb82e73703e5075" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2FREXT.rom" md5="6ffe789cca2eca9d2e71ca7b69b97e6b" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2G.rom" md5="b6c33b7b3508d691d7872589c778f808" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2GEXT.rom" md5="4047ce143a8bf391e21991835aa65b59" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2HAN.rom" md5="7b9466546009d419ebd0dc27db90c30e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2J.rom" md5="53bec1c22b30c0a15263e04b91a7814f" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2JEXT.rom" md5="8aabde714a42256bef36ea9b04f6ef59" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2KR.rom" md5="6819a1533502261bfdd52436b8346073" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2KREXT.rom" md5="30a0b3402a0a13b516af76d39f45a365" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2P.rom" md5="6d8c0ca64e726c82a4b726e9b01cdf1e" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2PEXT.rom"               md5="7c8243c71d8f143b2531f01afa6a05dc" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2PMUS.rom"               md5="f877f32e6d8687474ac5ee83e40de23b" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2R.rom" md5="db56360c85ef8410dc4bcf8e8602f61e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2R2.ROM" md5="96ac231b718e88ce64d5a9b4a5e9ae12" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2REXT.rom" md5="8e4af1124e2b82fbdc74a7bc5f20dc6e" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2SE.rom" md5="fb8f7ab15e32a91147204bd7f7a1b451" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2SP.rom" md5="79caefa20a0d056fb42eaeca856c6f82" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSX2SPEXT.rom" md5="d71842ce8f559a8aed2721766bc15f2b" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXAR.ROM" md5="793e3b833c33be7aaf834beacb8fb926" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXBR.rom" md5="d13c1fc9ad4897c322f51aab3ad3b30d" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXDOS23.ROM"               md5="56bf5b02fed377b7bb9d91f914965431" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXFR.rom" md5="6f43d28ac4a69182c860c2db0e18ee6d" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXG.rom" md5="4655329d3f37bf1a655d05f2abd1aa62" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXHAN.rom" md5="394efbc50fb7df1151130d8c162f85c3" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXJ.rom" md5="f005e55c680ba6e7b19f6d4dc8f73ce5" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXKANJI.rom" md5="9dfdebfaa6b547222a40aab8bb2e29f8" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXKR.rom" md5="c84f362c44192659273d45ae97462362" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXR.rom" md5="0db9592930488259fc1a5c127215e784" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXR2.ROM" md5="704bdd980fa56c6be5c680358458eeeb" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXSE.ROM" md5="161cb768c52a13f5b38ba46e721b68c1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXSP.rom" md5="51af5b19aeccf94eb8e03bce0b5d33c4" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXTR.ROM"                  md5="fd9513736823e470965949f2a3ec6a43" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXTREXT.ROM"               md5="824b1c4475a3bd3b91c5ae81ea940aa2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXTRMUS.ROM"               md5="c688a229f834f95f8c64df7d33188cd8" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/MSXTROPT.ROM"               md5="2cba0d812ec445cfe63ffa2cac8d42c2" core="libretro/bluemsx" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/NATIONALDISK.rom" md5="86269da485e852d9f581ac27f4ba32ff" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/NOVAXIS.rom" md5="20989124671593ab04eeb01d52a1e25c" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/PAINT.rom" md5="41db0d7b37be479296ffd59fcd6775f0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/PANASONICDISK.rom" md5="00aa02b6077de40a0b51d71a3c3e1d5f" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/PHILIPSDISK.rom" md5="01dd1d72ed9bb6afe8a9b441c198a1cd" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/RS232.ROM" md5="55cca200bbbdd0a1ec5c9d70966c05c0" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/SUNRISEIDE.rom" md5="7b564497beb2c0de0847f107dec00ddf" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/SWP.rom" md5="490db04e2a3c1c993a2a9d3611949c76" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/XBASIC2.rom" md5="0b6120f289336538bc564548109f97c6" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/nowindDos1.rom" md5="8c294a75f14fc30fce0c8642d28ccec1" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+    <bios path="Machines/Shared Roms/nowindDos2.rom" md5="1847398c014384b833868c64f149f338" core="libretro/bluemsx" mandatory="false" note="Get from http://bluemsx.msxblue.com/rel_download/blueMSXv282full.zip" />
+  </system>
+  <system fullname="Sega GameGear" platform="gamegear">
+    <bios path="gamegear/bios.gg" md5="672e104c3be3a238301aceffc3b23fd6" mandatory="false" core="libretro/genesisplusgx,libretro/gearsystem" />
+  </system>
+  <system fullname="Sega MasterSystem" platform="mastersystem">
+    <bios path="mastersystem/bios_E.sms" md5="840481177270d5642a14ca71ee72844c,4187d96beaf36385e681a3cf3bd1663d,
+                                              e8b26871629b938887757a64798df6dc,02cbb2e348945c9ac41e37502a58ca76,
+                                              5cd8f62cd8786af0226e6d2248279338,08b81aa6be18b92daef1b875deecf824,
+                                              bdb34f2c471e5d0c358eeec621f9d029" mandatory="false" core="libretro/genesisplusgx" />
+    <bios path="mastersystem/bios_U.sms" md5="840481177270d5642a14ca71ee72844c,b264bef9bda264ffe83afcebac21b81f,
+                                              e8b26871629b938887757a64798df6dc,02cbb2e348945c9ac41e37502a58ca76,
+                                              5cd8f62cd8786af0226e6d2248279338,08b81aa6be18b92daef1b875deecf824" mandatory="false" core="libretro/genesisplusgx,libretro/gearsystem" />
+    <bios path="mastersystem/bios_J.sms" md5="24a519c53f67b00640d0048ef7089105" mandatory="false" core="libretro/genesisplusgx" />
+  </system>
+  <system fullname="Sega Megadrive/Genesis" platform="megadrive">
+    <bios path="megadrive/bios_MD.bin" md5="45e298905a08f9cfb38fd504cd6dbc84" mandatory="false" core="libretro/genesisplusgx,libretro/genesisplusgxwide" />
+    <bios path="segacd/bios_CD_E.bin" md5="e66fa1dc5820d254611fdcdba0662372" core="libretro/genesisplusgx" />
+    <bios path="segacd/bios_CD_U.bin" md5="2efd74e3232ff260e371b99f84024f7f" core="libretro/genesisplusgx" />
+    <bios path="segacd/bios_CD_J.bin" md5="278a9397d192149e84e820ac621a8edd,bdeb4c47da613946d422d97d98b21cda" core="libretro/genesisplusgx" />
+  </system>
+  <system fullname="Nintendo Gameboy" platform="gb">
+    <bios path="gb/gb_bios.bin" md5="32fbbd84168d3482956eb3c5051637f5" mandatory="false" core="libretro/mgba,libretro/gambatte,libretro/mesen_s" />
+    <bios path="gb/dmg_boot.bin" md5="57f6a79fb41d6b2c8987fa529c3a90f2,60f1d849a435e9053b8ac0fd5776804a,6344d08bbbcbedbbaef9ddbdf7632c74" mandatory="false" core="libretro/sameboy,libretro/mesen_s" />
+    <bios path="gb/mgb_boot.bin" md5="df79723ee8093b0580496f3df436e4c4" mandatory="false" core="libretro/sameboy" />
+  </system>
+  <system fullname="Nintendo Super Gameboy" platform="gb,gbc">
+    <bios path="sgb/sgb_bios.bin" md5="d574d4f9c12f305074798f54c091a8b4" mandatory="false" core="libretro/mgba,libretro/mesen_s" />
+    <bios path="sgb/sgb_boot.bin" md5="be77bbd03f8675478f6e3d2176f3cb56,a43cbd0ab271990f434412fc5c500eff" mandatory="false" core="libretro/mesen_s,libretro/sameboy" />
+    <bios path="sgb/sgb2_boot.bin" md5="b4331a9e612b4738867a30af9c96df52,6d507dcf3b61ce45a5717421cdd0ae95" mandatory="false" core="libretro/mesen_s,libretro/sameboy" />
+    <bios path="sgb/SGB1.sfc" md5="b15ddb15721c657d82c5bab6db982ee9" core="libretro/bsnes,libretro/mesen_s" mandatory="false" />
+    <bios path="sgb/SGB2.sfc" md5="8ecd73eb4edf7ed7e81aef1be80031d5" core="libretro/bsnes,libretro/mesen_s" mandatory="false" />
+  </system>
+  <system fullname="Nintendo Gameboy Color" platform="gbc">
+    <bios path="gbc/gbc_bios.bin" md5="dbfce9db9deaa2567f6a84fde55f9680" mandatory="false" core="libretro/mgba,libretro/gambatte,libretro/mesen_s" />
+    <bios path="gbc/cgb_boot.bin" md5="b560efd759d87634a03b243f22bba27a,6b68be48dab6a7298a8c07e00c136b4e,62cfda90d22405cdff59700c388a57f6" mandatory="false" core="libretro/sameboy,libretro/mesen_s" />
+    <bios path="gbc/agb_boot.bin" md5="8e29ae4f331830d54ae764f3e10cebae" mandatory="false" core="libretro/sameboy" />
+  </system>
+  <system fullname="Pentagon 128/512/1024 (ZX Spectrum clone)" platform="zxspectrum">
+    <bios path="fuse/128p-0.rom" md5="a249565f03b98d004ee7f019570069cd" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/128p-1.rom" md5="6e09e5d3c4aef166601669feaaadc01c" mandatory="false" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/gluck.rom" md5="d5869034604dbfd2c1d54170e874fd0a" core="libretro/fuse" note="Only required if you want to emulate Pentagon 512/1024 machine" />
+    <bios path="fuse/trdos.rom" md5="b6d8db853c24621cbd5fef3c892c976c,5c097b0fb75bb7147104d6e77db0300a,dd70541ed6a6e8176e8dace64f9344ad,b08fa49b5de8448e94936a9d061dc0f5,4a3e2b04982ac6c594adb6793be4d6e7,4123fd0b5c218ef704770596dc6533e1,6459c606ff23a610e504d0387383148a,aa9f9acf05382aff569dfdadde4ef8f2,48b5da4079ff8394852429e53cfc607f,14399030d8228ca1b16872ed426a5835,7031f2610845d39c54c97097afa8fa03,4da473775c4badcc83ab5d86dc8231de,3f8a2a239a10b6694ec79148a292cfb4,62cbbdca554c8c23676618d4c83ef40e,c511eaa8fcc968cc13baf7ad80f3aea3,a92db09c9aa3cfda478a9bf1eec7ff90,0da70a5d2a0e733398e005b96b7e4ba6,a701f54355b53fa93fb8599933d518b7,0c42e3b9ab8dd91ea096f1d0c07c55e5,b4c9634312b796063015450daef13dfa,d6f43c70c003f07d0a694f81ff55db95,a3242d31a0624a64a56f3a6cb5484e7c,cc46c7bacbbaf528a864113c76d9b9c9,53e2f417c6996df9af170e147df8e369" core="libretro/fuse" note="Only required if you want to emulate Pentagon machines" />
+    <bios path="fuse/48.rom" md5="4c42a2f075212361c3117015b107ff68" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/128-0.rom" md5="b4d2692115a9f2924df92a3cbfb358fb" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus2-0.rom" md5="4ed7af4636308b8a48d7a35e6c5b546b" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus2-1.rom" md5="b3db95931cc844efaeb82db9c171b9f3" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3-0.rom" md5="9833b8b73384dd5fa3678377ff00a2bb" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3-1.rom" md5="0f711ceb5ab801b4701989982e0f334c" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3-2.rom" md5="3b6dd659d5e4ec97f0e2f7878152c987" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3-3.rom" md5="a148bcc575e51389e84fdf5d555c3196" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3e-0.rom" md5="bc123f625e245c225f92ef05933ed134" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3e-1.rom" md5="617364264c587d20c9fc4746c29679f2" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3e-2.rom" md5="c363e95dcd0a90e6e7f847e6e47e0179" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plus3e-3.rom" md5="a148bcc575e51389e84fdf5d555c3196" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/se-0.rom" md5="fb3f86eb1e5a695d9c50c124e7cfb875" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/se-1.rom" md5="88de4a3129086f34bb9ca559acc51e6c" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/tc2048.rom" md5="9dd7ecf784a6c04265c073c236f5fadb" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/tc2068-0.rom" md5="55d462fccc6c536037404ef4ced08bec" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/tc2068-1.rom" md5="575d203c6e15e679fba0b73f854ec7a2" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/disciple.rom" md5="78e61a2a02121873c1756b21fd1398b1" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/plusd.rom" md5="42e5de16fb5e50082bb954ec7ce45851" core="libretro/fuse" mandatory="false" />
+    <bios path="fuse/speccyboot-1.4.rom" md5="c54aa8f374b0971f51546c29d5d1eba1" core="libretro/fuse" mandatory="false" />
+  </system>
+  <system fullname="Scorpion 256K (ZX Spectrum clone)" platform="zxspectrum">
+    <bios path="fuse/256s-0.rom" md5="b9fda5b6a747ff037365b0e2d8c4379a" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-1.rom" md5="643861ad34831b255bf2eb64e8b6ecb8" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-2.rom" md5="d8ad507b1c915a9acfe0d73957082926" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+    <bios path="fuse/256s-3.rom" md5="ce0723f9bc02f4948c15d3b3230ae831" core="libretro/fuse" note="Only required if you want to emulate Scorpion 256K machine" />
+  </system>
+  <system fullname="Nintendo Gamecube" platform="gamecube">
+    <bios path="gamecube/EUR/IPL.bin" md5="0cdda509e2da83c85bfe423dd87346cc" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the European Gamecube menu and the boot animation" />
+    <bios path="gamecube/JAP/IPL.bin" md5="fc924a7c879b661abc37cec4f018fdf3" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the Japanese Gamecube menu and the boot animation" />
+    <bios path="gamecube/USA/IPL.bin" md5="339848a0b7c2124cf155276c1e79cbd0" mandatory="false" core="libretro/dolphin,dolphin" note="Only required if you want the US Gamecube menu and the boot animation" />
+    <bios path="codehandler.bin" md5="1f118b8735fcf40c20b38c3184eebfd9" core="dolphin" mandatory="false" />
+  </system>
+  <system fullname="Nintendo 64DD" platform="64dd">
+    <bios path="Mupen64plus/IPL.n64" md5="8d3d9f294b6e174bc7b1d2fd1c727530" core="libretro/mupen64plus_next,libretro/parallel_n64" mandatory="false" note="IPL.n64 (64DD_IPL.bin renamed) - Required for Nintendo 64 DD" />
+  </system>
+  <system fullname="Super Cassette Vision" platform="scv">
+    <bios path="scv/upd7801g.s01" md5="635A978FD40DB9A18EE44EFF449FC126" mandatory="true" core="libretro/emuscv" />
+  </system>
+  <system fullname="Sega Saturn" platform="saturn">
+    <bios path="saturn/saturn_bios.bin"  md5="af5828fdff51384f99b3c4926be27762" hashMatchMandatory="false" mandatory="true" core="libretro/yabause,libretro/yabasanshiro,libretro/kronos" />
+    <bios path="saturn/sega_101.bin"     md5="85ec9ca47d8f6807718151cbcca8b964" core="libretro/mednafen_saturn" note="Saturn JP BIOS - Required for JP games" />
+    <bios path="saturn/mpr-17933.bin"    md5="3240872c70984b6cbfda1586cab68dbe" core="libretro/mednafen_saturn" note="Saturn US/EU BIOS - Required for US/EU games" />
+    <bios path="saturn/mpr-18811-mx.ic1" md5="255113ba943c92a54facd25a10fd780c" core="libretro/mednafen_saturn,libretro/kronos" mandatory="false" note="Required for The King of Fighters '95 ROM Cartridge" />
+    <bios path="saturn/mpr-19367-mx.ic1" md5="1cd19988d1d72a3e7caa0b73234c96b4" core="libretro/mednafen_saturn,libretro/kronos" mandatory="false" note="Required for Ultraman: Hikari no Kyojin Densetsu ROM Cartridge" />
+  </system>
+  <system fullname="SNK Neo-Geo" platform="neogeo">
+    <bios path="neogeo.zip|/recalbox/share/roms/neogeo/neogeo.zip" md5="e023d0a4b5249fdff2a4620c28963944,8cbdff53661f41ddbe486a98915e1ec9,
+                                                                        42e359e394f0be1d61b94ddca0efbe6c,c1e0a738d266926f604186aa9d63e4db,
+                                                                        d12bba59121229ff13702878b415cb7c,2b4ffdf24d5d4f24c4b116c50c4bafc3,
+                                                                        005b843b6e70b939c2cca41887cbc371,42e359e394f0be1d61b94ddca0efbe6c,
+                                                                        4b9432a4571d03cc8bae9d24d8d6eb40,4cd64313e26537c04cdb561b8f84b0e4,
+                                                                        50bbfd6bf297038b085e29265c65723a,76ee7390ccd537cddea1018025ca29a8,
+                                                                        84d6c35aad790a77ba3cfc1b319e1061,912c0a56bafe0fba39d0c668b139b250,
+                                                                        94748719c0ef31e7375b0c357d82fc89,ab25b9e25052a6064901a7a221037eb6,
+                                                                        ae9e5825cde82c58e39dfd48534f7060,b18f83feef474b8a1306ef199cd810a2,
+                                                                        b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,
+                                                                        ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,
+                                                                        a3b2c9a69c28ad0bd4ea07877b744bbe,00dad01abdbf8ea9e79ad2fe11bdb182" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/ mame2003-plus,libretro/mame2010,libretro/mame2015" />
+    <bios path="geolith/aes.zip" md5="ad9585c72130c56f04ae26aae87c289d,7a4dcd56b3924215aac7f903ff907339" mandatory="true" hashMatchMandatory="false" core="libretro/geolith" />
+    <bios path="geolith/neogeo.zip" md5="00dad01abdbf8ea9e79ad2fe11bdb182,912c0a56bafe0fba39d0c668b139b250,
+                                         b2c8175567ab9e0bd72d4e2633f2c650" mandatory="true" hashMatchMandatory="false" core="libretro/geolith" />
+  </system>
+  <system fullname="SNK Neo-Geo CD" platform="neogeocd">
+    <bios path="neogeo.zip" md5="00dad01abdbf8ea9e79ad2fe11bdb182,e023d0a4b5249fdff2a4620c28963944,8cbdff53661f41ddbe486a98915e1ec9,42e359e394f0be1d61b94ddca0efbe6c,c1e0a738d266926f604186aa9d63e4db,d12bba59121229ff13702878b415cb7c,2b4ffdf24d5d4f24c4b116c50c4bafc3,005b843b6e70b939c2cca41887cbc371,42e359e394f0be1d61b94ddca0efbe6c,4b9432a4571d03cc8bae9d24d8d6eb40,4cd64313e26537c04cdb561b8f84b0e4,50bbfd6bf297038b085e29265c65723a,76ee7390ccd537cddea1018025ca29a8,84d6c35aad790a77ba3cfc1b319e1061,912c0a56bafe0fba39d0c668b139b250,94748719c0ef31e7375b0c357d82fc89,ab25b9e25052a6064901a7a221037eb6,ae9e5825cde82c58e39dfd48534f7060,b18f83feef474b8a1306ef199cd810a2,b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,a3b2c9a69c28ad0bd4ea07877b744bbe" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" hashMatchMandatory="false" />
+    <bios path="neocdz.zip" md5="b31a246b69493c35194fe0bac120dc37" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" hashMatchMandatory="false" />
+    <bios path="neocd/neocd.bin" md5="f39572af7584cb5b3f70ae8cc848aba2" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (MAME)" />
+    <bios path="neocd/uni-bioscd.rom"            md5="08ca8b2dba6662e8024f9e789711c6fc" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Universe BIOS CD 3.3" />
+    <bios path="neocd/top-sp1.bin"               md5="122aee210324c72e8a11116e6ef9c0d0" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Top Loader BIOS (MAME)" />
+    <bios path="neocd/front-sp1.bin"             md5="5c2366f25ff92d71788468ca492ebeca" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS (MAME)" />
+    <bios path="neocd/neocd_sz.rom"              md5="971ee8a36fb72da57aed01758f0a37f5" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (SMKDAN 0.7b DEC 2010)" />
+    <bios path="neocd/neocd_z.rom"               md5="11526d58d4c524daef7d5d677dc6b004" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS" />
+    <bios path="neocd/neocd_st.rom"              md5="f6325a33c6d63ea4b9162a3fa8c32727" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Top Loader BIOS (SMKDAN 0.7b DEC 2010)" />
+    <bios path="neocd/neocd_t.rom"               md5="de3cf45d227ad44645b22aa83b49f450" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Top Loader BIOS" />
+    <bios path="neocd/neocd_sf.rom"              md5="043d76d5f0ef836500700c34faef774d" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS (SMKDAN 0.7b DEC 2010)" />
+    <bios path="neocd/neocd_f.rom"               md5="8834880c33164ccbe6476b559f3e37de" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS" />
+    <bios path="neocd/000-lo.lo"                 md5="fc7599f3f871578fe9a0453662d1c966" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
+    <bios path="neocd/ng-lo.rom"                 md5="e255264d85d5765013b1b2fa8109dd53" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
+    <bios path="geolith/neocd.zip" md5="006a881532f2caffc3fe9fb5593f2ed5" core="libretro/geolith" mandatory="false" hashMatchMandatory="false" note="Neo-Geo CD Bios" />
+    <bios path="geolith/neocdz.zip"              md5="724bc64e63d073cf81f986adfb1f1b78" core="libretro/geolith" mandatory="true" hashMatchMandatory="false" note="Neo-Geo CDZ Bios" />
+  </system>
+  <system fullname="Texas Instrument TI-99/4A" platform="ti994a">
+    <bios path="ti994a/TI-994A.ctg" md5="fb1ca5c58357896a0be5d6725894845d" core="ti99sim" mandatory="true" hashMatchMandatory="false" note="System cartridge" />
+    <bios path="ti994a/spchrom.bin" md5="7adcaf64272248f7a7161cfc02fd5b3f" core="ti99sim" mandatory="false" hashMatchMandatory="false" note="Speech synthesis" />
+    <bios path="ti994a/ti-disk.ctg" md5="0281841b5ea4227526e7612c0bb55cbb" core="ti99sim" mandatory="false" hashMatchMandatory="false" note="Disk Operating System" />
+    <bios path="Gram Kracker.ctg" md5="7551f1d578a32cccd97efd1adff15252" core="ti99sim" mandatory="false" />
+    <bios path="ti-pcard.ctg" md5="63f161f0d634e6092a1729b97efb00d1" core="ti99sim" mandatory="false" />
+    <bios path="cf7+.ctg" md5="d3fd9bc1fcaf48e5ed681c5ac31bc194" core="ti99sim" mandatory="false" />
+  </system>
+  <system fullname="Dragon 32/64" platform="dragon">
+    <bios path="dragon/d32.rom" md5="3420b96031078a4ef408cad7bf21a33f" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Dragon32 system rom" />
+    <bios path="dragon/d64rom1.rom"    md5="5f0bee59710e55f5880e74890912ed78" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Dragon64 system rom #1" />
+    <bios path="dragon/d64rom2.rom" md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon64 system rom #2" />
+    <bios path="dragon/d64tano.rom"    md5="be9bc86ee5eb401d0a40d0377f65fefa" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Tano system rom #1" />
+    <bios path="dragon/d64tano2.rom"   md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="true"  hashMatchMandatory="false" note="Tano system rom #2" />
+    <bios path="dragon/d200rom1.rom" md5="be9bc86ee5eb401d0a40d0377f65fefa" core="xroar" hashMatchMandatory="false" note="Dragon 200e system rom #1" />
+    <bios path="dragon/d200rom2.rom"   md5="fd91edce7be5e7c2d88e46b76956a8aa" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon 200e system rom #2" />
+    <bios path="dragon/ddos10.rom"     md5="1c965da49b6c5459b8353630aa1482e7" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 1.0" />
+    <bios path="dragon/ddos11c.rom"    md5="d8429af1a12f7438a4bf88a5b934cb3a" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 1.1" />
+    <bios path="dragon/ddos12a.rom"    md5="55e2535dbbed7f1a26b5f263d7c72c63" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 1.2" />
+    <bios path="dragon/ddos40.rom"     md5="9ddc388632cd3c376b164ba5cfc64329" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 4.0" />
+    <bios path="dragon/ddos42.rom"     md5="c956a854cbc4b9d1e69c000f78368668" core="xroar" mandatory="false" hashMatchMandatory="false" note="Dragon DOS 4.2" />
+    <bios path="dragon/deltados.rom"   md5="024eac3db20f1b5cf98c30a0e4743201" core="xroar" mandatory="false" hashMatchMandatory="false" note="Delta DOS" />
+    <bios path="dragon/dplus48.rom"    md5="ee6f24d893a52b8efea9f787855456b5" core="xroar" mandatory="false" hashMatchMandatory="false" note="DOS Plus 4.8" />
+    <bios path="dragon/dplus49b.rom"   md5="56f1b97314e4ca82491c465bb887059e" core="xroar" mandatory="false" hashMatchMandatory="false" note="DOS Plus 4.9" />
+    <bios path="dragon/dplus50.rom"    md5="35de5d28da507ebb213a26e04241d940" core="xroar" mandatory="false" hashMatchMandatory="false" note="DOS Plus 5.0" />
+    <bios path="dragon/sdose6.rom"     md5="9d85e6b7133f915c021156f4b9cdb512" core="xroar" mandatory="false" hashMatchMandatory="false" note="Super DOS E6" />
+    <bios path="dragon/sdose8.rom"     md5="167f409b7a4b992faabb784b061ab4c6" core="xroar" mandatory="false" hashMatchMandatory="false" note="Super DOS E8" />
+    <bios path="d200e_1.rom" md5="03f25edd487df4c98a79b2d504469653" core="xroar" />
+    <bios path="d200e_2.rom" md5="b5f63a88710fbe6e22579fbc8d72393a" core="xroar" mandatory="false" />
+    <bios path="d200e_26.rom" md5="eef971f21318759f15cc9f0328557140" core="xroar" mandatory="false" />
+    <bios path="alpha-boot-v1.0.rom" md5="283726f0f22603d3e60c27865babccf4" core="xroar" />
+    <bios path="alpha-boot-v0.4.rom" md5="01e5577ef5dd9eac00bba3698e046afb" core="xroar" mandatory="false" />
+  </system>
+  <system fullname="TRS-80 Color Computer 1/2" platform="trs80coco">
+    <bios path="trs80coco/bas10.rom"     md5="a74f3d95b395dad7cdca19d560eeea74" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 BASIC" />
+    <bios path="trs80coco/bas11.rom" md5="c73fb4bff9621c5ab17f6220b20db82f" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 BASIC" />
+    <bios path="trs80coco/bas12.rom"     md5="c933316c7d939532a13648850c1c2aa6" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 2 BASIC" />
+    <bios path="trs80coco/bas13.rom"     md5="c2fc43556eb6b7b25bdf5955bd9df825" core="xroar" mandatory="true"  hashMatchMandatory="false" note="CoCo 2 BASIC" />
+    <bios path="trs80coco/extbas10.rom" md5="fda72f415afe99b36f953bb9bc1253da" core="xroar" mandatory="false" hashMatchMandatory="false" note="CoCo 1 Extended BASIC" />
+    <bios path="trs80coco/extbas11.rom"  md5="21070aa0496142b886c562bf76d7c113" core="xroar" mandatory="true"  hashMatchMandatory="false" note="CoCo 2 Extended BASIC" />
+    <bios path="trs80coco/mx1600bas.rom" md5="88d1504e93366f498105a846cdbf7fb7" core="xroar" hashMatchMandatory="false" note="MX1600 BASIC" />
+    <bios path="trs80coco/disk10.rom"    md5="a64b3ef9efcc066b18d35b134068d1cc" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos 1.0" />
+    <bios path="trs80coco/disk11.rom"    md5="8cab28f4b7311b8df63c07bb3b59bfd5" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos 1.1" />
+    <bios path="trs80coco/hdbdw3bck.rom" md5="ef750d93d24d7bc87a8ecd6e5a15a845" core="xroar" mandatory="false" hashMatchMandatory="false" note="RSDos Becker" />
+    <bios path="trs80coco/mc10.rom" md5="f29e94ff36577ffb6a787959e45bfe85" core="xroar" hashMatchMandatory="false" note="MC-10" />
+    <bios path="trs80coco/coco3.rom" md5="7233c6c429f3ce1c7392f28a933e0b6f" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
+    <bios path="trs80coco/coco3p.rom" md5="4ae57e5a8e7494e5485446fefedb580b" core="xroar" hashMatchMandatory="false" note="Coco 3 Basic" />
+    <bios path="trs80coco/alice32.rom"   md5="79ea46603d716578d5f2b52eb4c33ca2" core="xroar" mandatory="false" hashMatchMandatory="false" note="Alice" />
+    <bios path="trs80coco/alice4k.rom"   md5="78af465c2f31cf4e05dec1efda77da01" core="xroar" mandatory="false" hashMatchMandatory="false" note="Alice" />
+    <bios path="deluxe.rom" md5="e27c02fd766e8710240c59ef5424a6ef" core="xroar" />
+    <bios path="mx1600extbas.rom" md5="6fc82178ae8abe07fa8f6939062291dc" core="xroar" />
+    <bios path="cp400bas.rom" md5="f73da4d73d6db5cdb8b3cb6a50415e38" core="xroar" />
+    <bios path="cp400ext.rom" md5="091581001577b4a83ccfd511829de0f1" core="xroar" />
+    <bios path="orch90.rom" md5="171fb7a5d3b808565295b45c773abaaf" core="xroar" mandatory="false" />
+  </system>
+  <system fullname="Philips CD-I" platform="cdi">
+    <bios path="cdi/cdimono1.zip"     md5="ce590c4787460161359f2b680136cb60,bbe6636ac11d3744f0710e8e820187e7,1a7c3c98c46555ff5fc93ee3feae4b47" core="libretro/cdi2015,libretro/same_cdi" mandatory="true" hashMatchMandatory="false" />
+    <bios path="cdi/cdibios.zip" md5="9fd6b277cd877d51426427a33d1d19bb" core="libretro/same_cdi" hashMatchMandatory="false" />
+    <bios path="cdi/cdimono2.zip"     md5="2ac8cd5bb23287e022ca17d616949255" core="libretro/same_cdi" mandatory="false" hashMatchMandatory="false" />
+  </system>
+  <system fullname="Sega Naomi 2" platform="naomi2">
+    <bios path="dc/naomi2.zip" md5="34f9c1acdaf53d6a50dd8de052e506ca" core="libretro/flycast" />
+  </system>
+  <system fullname="Microsoft Xbox" platform="xbox">
+    <bios path="xbox/Complex_4627.bin" md5="39cee882148a87f93cb440b99dde3ceb" core="xemu" mandatory="true" hashMatchMandatory="true" />
+    <bios path="xbox/mcpx_1.0.bin" md5="d49c52a4102f6df7bcf8d0617ac475ed" core="xemu" mandatory="true" hashMatchMandatory="true" />
+  </system>
+  <system fullname="ScummVM" platform="scummvm">
+    <bios path="scummvm/MT32_CONTROL.ROM" md5="5626206284b22c2734f3e9efefcd2675" mandatory="false" hashMatchMandatory="true" core="libretro/scummvm,scummvm" />
+    <bios path="scummvm/MT32_PCM.ROM" md5="89e42e386e82e0cacb4a2704a03706ca" mandatory="false" hashMatchMandatory="true" core="libretro/scummvm,scummvm" />
+    <bios path="scummvm/extra/MT32_CONTROL.ROM" md5="c5233e4594f9b7bc4f773ae6ba5aa87d" core="libretro/dosbox,libretro/dosbox_pure,libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/scummmodern.zip" md5="ee71d6cd464c618c632e6fd62b430d2c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/scummclassic.zip" md5="8f37bd19dd51be456ac8f005fd5669a8" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/scummremastered.zip" md5="0d990484d0dfc1680b20cfabcae373cd" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/residualvm.zip" md5="b2811fa9b209733b61cd49ddb21e1e95" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/gui-icons.dat" md5="9c59e0e9875434456ec1b7eb8e51666f" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/shaders.dat" md5="f073f17187d0bfa3e7ebb7f328847969" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/theme/translations.dat" md5="a206e54bac1af13559ac8b2d9e550577" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/achievements.dat" md5="73cf5bd61896442a990e363f284a0bc2" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/classicmacfonts.dat" md5="d4264d4573f22d290e033e1d834d7221" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/encoding.dat" md5="f2e88b2faec499a4914c3a0bcffc7db1" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/helpdialog.zip" md5="a9584a928c0f52ef28b33d8702983c35" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/macgui.dat" md5="d97f2965013b343dd3d4fdbbc7192f15" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/access.dat" md5="4f9dd40b455876d5c54b5ebd93aec88c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/bagel.dat" md5="f6d90885f6962f89de02e34031111599" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/cryo.dat" md5="fc5886ea5388f20eae299bb408da5bcc" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/cryomni3d.dat" md5="7224c7a94074addeb69015b1346695d2" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/darkseed.dat" md5="9a9cfe40dcca517f130d4430bd1af643" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/drascula.dat" md5="b304979ed642a6dcaf26f43f8a37a1de" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/freescape.dat" md5="71697f90fb0c7747616dbb0799ce966b" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/got.aud" md5="d13cc3c481e84e787ec8aa86dffc565f" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/got.gfx" md5="a29f591769bd731df0d9ddd3a191fe8c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/hadesch_translations.dat" md5="7857da7e56a11e0749fb45100c323b3c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/hugo.dat" md5="a865e70f1b0998a500f522dab441c8fc" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/kyra.dat" md5="ebddd7bbd97135a427083db5daf6f9fc" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/lure.dat" md5="6f90cf73f36453d332d5c9cee311f81c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/macventure.dat" md5="3b1faf40e685b955372e02f54ed70263" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/mm.dat" md5="01f074a6ac34dd86fcc6d1e8090614f0" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/mort.dat" md5="3cfb16d7bab4d77606b3b1274b8ae870" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/myst3.dat" md5="54e9056211f2fff255b6f66a3fe39a8d" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/nancy.dat" md5="eb7cfdb3f74972beb8f43196e4e44001" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/neverhood.dat" md5="dfaab12ffb265646f31f51b6904246d1" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/prince_translation.dat" md5="993adab2fd44277d5fd7aa5971e7099c" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/queen.tbl" md5="93c6d6379eb0290ce93854a6888ec3f4" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/sky.cpt" md5="9d00157b1cebd6368cbf88135c098f40" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/supernova.dat" md5="89664136c503a30894d5c713be5bfe90" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/teenagent.dat" md5="4594620989a0bfd8b120da2de7ac30de" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/titanic.dat" md5="4b2fb71201dc3795cff45df6200a1918" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/tony.dat" md5="891022a4e2917bb54b5cdc9a46f5b3df" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/toon.dat" md5="2b71a5d9aa19219d46711e8a77451f0f" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/ultima.dat" md5="e359fb7f14c4cb072b6e9300a23a6d62" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/ultima8.dat" md5="e5b95811b05b9f0f593b49c860391200" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/wintermute.zip" md5="9783248899f9cb531f0a3e0a711ab8b3" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/fonts.dat" md5="6df29d218962e155d0a2114006af45c0" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/fonts-cjk.dat" md5="18b8811c1bbc297be45f38c3bd6a0728" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/fonts-imgui.dat" md5="9eb64ec7aa31dc2f5b55541415ecdf8b" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/grim-patch.lab" md5="32b777b824f02b1e1259903740964058" core="libretro/scummvm" mandatory="false" />
+    <bios path="scummvm/extra/monkey4-patch.m4b" md5="9eb7b7e7cc7dad1fe08be6e73d749abe" core="libretro/scummvm" mandatory="false" />
+  </system>
+  <system fullname="ST-V" platform="stv">
+    <bios path="stv/epr-20091.ic8" md5="34175c7ad31acbe44f2baccc7ea065c7" mandatory="true" core="libretro/mednafen_stv" note="Required for Japan-region ST-V games." />
+    <bios path="stv/epr-17952a.ic8" md5="249b67334cfae53810c1d1e3b93957a3" mandatory="true" core="libretro/mednafen_stv" note="Required for North America/US-region ST-V games." />
+    <bios path="stv/epr-17954a.ic8" md5="ba2cb634c15e59d7ea5552729306f2ef" mandatory="true" core="libretro/mednafen_stv" note="Required for Europe-region ST-V games." />
+    <bios path="stv/stvbios.zip"      md5="2b99d9dcecde22db4371580b6bb33f32,53a094ad3a188f86de4e64624fe9b3ca,
+                                              17116d2aea72454096b3f80ab714bfba,2b99d9dcecde22db4371580b6bb33f32,
+                                              4cb34733b741ada074f11e3abcdc56d8,6b6d422a6c392eaec178b64b92987e99,
+                                              88b9da6cda268ba1d9e37dd82d038801,8c34608cc140e1bfbf9c945a12fed0e8,
+                                              b876d86e244d00b336980b4e26e94132" hashMatchMandatory="false" mandatory="true" core="libretro/kronos" />
+    <bios path="hiscore.dat" md5="2490bad5079ec0991c23c579092cca19" core="advancemame" mandatory="false" />
+    <bios path="mame2003/cheat.dat" md5="69c6bbe7194e4bc62d53764dd6c6d890" core="advancemame,libretro/mame2003,libretro/mame2003_plus" mandatory="false" />
+    <bios path="event.dat" md5="ee99bb541116967f8785a5bc09932475" core="advancemame" mandatory="false" />
+    <bios path="mame2003/hiscore.dat" md5="c6f35123264db9cdfb216e8fdb673679" core="libretro/mame2003" mandatory="false" />
+    <bios path="mame2003-plus/hiscore.dat" md5="2f60c1ed69c152dea95e734979ca2ecb" core="libretro/mame2003_plus" mandatory="false" />
+  </system>
+</biosList>

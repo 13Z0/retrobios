@@ -42,6 +42,8 @@ MAX_NAMES = 6
 _MODULE_ID = re.compile(r'rp_module_id="([^"]+)"')
 _MODULE_HELP = re.compile(r'rp_module_help="((?:[^"\\]|\\.)*)"')
 _FILENAME = re.compile(r"[A-Za-z0-9][\w.+-]*\.[A-Za-z0-9]{1,5}\b")
+# fs-uae's help reads "(e.g, kick13.rom)": e.g and i.e have a file name's shape.
+_ABBREVIATION = re.compile(r"[a-z]\.[a-z]", re.I)
 # RetroPie words the instruction several ways ("Copy the required BIOS files
 # a.bin and b.bin to $biosdir", "The Sega CD requires the BIOS files a.bin,
 # b.bin copied to $biosdir"), so the clause is found by the word BIOS rather
@@ -131,7 +133,7 @@ class Exporter(BaseExporter):
         found: list[re.Match[str]] = []
         for match in _FILENAME.finditer(text):
             before = text[match.start() - 1 : match.start()]
-            if before in (".", "/", "\\"):
+            if before in (".", "/", "\\") or _ABBREVIATION.fullmatch(match.group(0)):
                 continue
             found.append(match)
         return found
@@ -369,8 +371,8 @@ class Exporter(BaseExporter):
             shown = ", ".join(sorted(modules)[:4])
             if len(modules) > 4:
                 shown += f" and {len(modules) - 4} more"
-            parts.append(f"{len(modules)} {reason} ({shown})")
-        return "; ".join(parts)
+            parts.append(f"{shown}: {reason}")
+        return ". ".join(parts)
 
     def validate(
         self,

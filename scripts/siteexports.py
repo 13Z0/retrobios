@@ -77,6 +77,11 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
         "so a maintainer can diff it against theirs and take the changes "
         "line by line.",
         "",
+        "A file the emulators read and the list lacks is added only when the "
+        "format can carry it. Most platforms check an md5, so a file whose "
+        "source states no md5 is left out, and so is one filed under a system "
+        "the platform's checker never reads. Those are counted as left out.",
+        "",
     ]
     if not reports:
         lines.extend([

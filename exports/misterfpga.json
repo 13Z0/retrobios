@@ -1,0 +1,18 @@
+{
+  "platform": "misterfpga",
+  "originals": {
+    "bios_db.json.zip": "https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/7cfa7a3e84af078d0efba74fa46c50357c4f567c/bios_db.json.zip"
+  },
+  "files": [
+    "bios_db.json"
+  ],
+  "summary": "81 kept, 0 added, 0 hashes corrected, 0 requirements corrected",
+  "hashes_corrected": [],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

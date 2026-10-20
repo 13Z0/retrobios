@@ -1,0 +1,27 @@
+{
+  "platform": "recalbox",
+  "originals": {
+    "es_bios.xml": "https://gitlab.com/recalbox/recalbox/-/raw/10.1.1/board/recalbox/fsoverlay/recalbox/share_init/system/.emulationstation/es_bios.xml",
+    "es_bios.xsd": "https://gitlab.com/recalbox/recalbox/-/raw/10.1.1/board/recalbox/fsoverlay/recalbox/share_init/system/.emulationstation/es_bios.xsd"
+  },
+  "files": [
+    "es_bios.xml"
+  ],
+  "summary": "357 kept, 221 added, 7 hashes corrected, 129 requirements corrected, 566 additions left out",
+  "hashes_corrected": [
+    "atari800/ATARIOSB.ROM md5",
+    "msx1,msx2,msxturbor/MSX.rom md5",
+    "msx1,msx2,msxturbor/MSX2P.rom md5",
+    "neogeocd/neocdz.zip md5",
+    "neogeocd/neocd.zip md5",
+    "ti994a/TI-994A.ctg md5",
+    "ti994a/ti-disk.ctg md5"
+  ],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 129,
+  "withheld": [],
+  "invalid": []
+}

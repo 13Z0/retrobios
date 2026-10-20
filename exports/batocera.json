@@ -1,0 +1,25 @@
+{
+  "platform": "batocera",
+  "originals": {
+    "batocera-systems": "https://raw.githubusercontent.com/batocera-linux/batocera.linux/batocera-43.1/package/batocera/core/batocera-scripts/scripts/batocera-systems"
+  },
+  "files": [
+    "batocera-systems"
+  ],
+  "summary": "692 kept, 232 added, 6 hashes corrected, 0 requirements corrected, 1479 additions left out",
+  "hashes_corrected": [
+    "psx/scph1001.bin md5",
+    "nds/dsi_bios7.bin md5",
+    "nds/dsi_bios9.bin md5",
+    "msx/MSX.ROM md5",
+    "pc98/BIOS.ROM md5",
+    "scummvm/MT32_CONTROL.ROM md5"
+  ],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

@@ -1,0 +1,40 @@
+{
+  "platform": "retrobat",
+  "originals": {
+    "batocera-systems.json": "https://raw.githubusercontent.com/RetroBat-Official/emulatorlauncher/48cdc61623c5943bb17647b80a60d32d395c3725/batocera-systems/Resources/batocera-systems.json"
+  },
+  "files": [
+    "batocera-systems.json"
+  ],
+  "summary": "360 kept, 338 added, 7 hashes corrected, 0 requirements corrected, 13 hashes filled, 1368 additions left out",
+  "hashes_corrected": [
+    "bk/BASIC10.ROM md5",
+    "colecovision/coleco.rom md5",
+    "dragon32/d64_1.rom md5",
+    "msx/MSX.ROM md5",
+    "neogeocd/neogeo.zip md5",
+    "neogeocd/neocdz.zip md5",
+    "scummvm/MT32_CONTROL.ROM md5"
+  ],
+  "hashes_filled": [
+    "apple2/AppleIIe_DiskII.rom md5",
+    "apple2/AppleIIe.rom md5",
+    "atari7800/A78_highscore.bin md5",
+    "chihiro/chihiro_xbox_bios.bin md5",
+    "mastersystem/[BIOS] Sega Master System (USA, Europe) (v1.3).sms md5",
+    "mastersystem/[BIOS] Sega Master System (Japan) (v2.1).sms md5",
+    "nds/dsi_bios9.bin md5",
+    "nds/dsi_bios7.bin md5",
+    "pcfx/fx-scsi.rom md5",
+    "sega32x/32X_G_BIOS.BIN md5",
+    "sega32x/32X_M_BIOS.BIN md5",
+    "sega32x/32X_S_BIOS.BIN md5",
+    "vectrex/Vectrex_Bios.bin md5"
+  ],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}

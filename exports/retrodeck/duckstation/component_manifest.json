@@ -1,0 +1,911 @@
+{
+  "duckstation": {
+    "name": "Duckstation (Legacy)",
+    "description": "Duckstation is a Playstation 1 (psx) emulator.",
+    "component_type": "Emulator",
+    "url_rdwiki": "https://retrodeck.readthedocs.io/en/latest/wiki_emulator_guides/duckstation/duckstation-guide/",
+    "url_donation_purchase": "",
+    "system_friendly_name": "Playstation 1 (PSX)",
+    "system": "psx",
+    "compatible_presets": {
+      "cheevos": [
+        "false",
+        "true"
+      ],
+      "cheevos_hardcore": [
+        "false",
+        "true"
+      ],
+      "ask_to_exit": [
+        "false",
+        "true"
+      ],
+      "savestate_on_exit": [
+        "false",
+        "true"
+      ]
+    },
+    "preset_actions": {
+      "config_file_format": "duckstation",
+      "cheevos": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Enabled",
+          "action": "change",
+          "new_setting_value": "true",
+          "section": "Cheevos",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        },
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Username",
+          "action": "change",
+          "new_setting_value": "$cheevos_username",
+          "section": "Cheevos",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        },
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Token",
+          "action": "change",
+          "new_setting_value": "$cheevos_token",
+          "section": "Cheevos",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        },
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "LoginTimestamp",
+          "action": "change",
+          "new_setting_value": "$cheevos_login_timestamp",
+          "section": "Cheevos",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        }
+      ],
+      "cheevos_hardcore": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "ChallengeMode",
+          "action": "change",
+          "new_setting_value": "true",
+          "section": "Cheevos",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        }
+      ],
+      "savestate_on_exit": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "SaveStateOnExit",
+          "action": "change",
+          "new_setting_value": "true",
+          "section": "Main",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        }
+      ],
+      "ask_to_exit": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "ConfirmPowerOff",
+          "action": "change",
+          "new_setting_value": "true",
+          "section": "Main",
+          "target_file": "$duckstation_config",
+          "defaults_file": "$duckstation_rd_config_dir/settings.ini"
+        }
+      ],
+      "bios": [
+        {
+          "filename": "psxonpsp660.bin",
+          "md5": "c53ca5908936d412331790f4426c6c33",
+          "system": "psx",
+          "description": "PlayStation BIOS extracted from PSP - Japan",
+          "required": "At least one BIOS file required",
+          "sha256": "cbe758e1c8ece593c8e14ce1e8b3436428a01c608032a02613b3a4b442b4d712"
+        },
+        {
+          "filename": "scph5500.bin",
+          "md5": "8dd7d5296a650fac7319bce665a6a53c",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-5500 - Japan",
+          "required": "At least one BIOS file required",
+          "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb"
+        },
+        {
+          "filename": "scph5501.bin",
+          "md5": "490f666e1afb15b7362b406ed1cea246",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-5501  - USA",
+          "required": "At least one BIOS file required",
+          "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
+        },
+        {
+          "filename": "scph5502.bin",
+          "md5": "32736f17079d0b2b7024407c39bd3050",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-5502 - Europe)",
+          "required": "At least one BIOS file required",
+          "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09"
+        },
+        {
+          "filename": "scph7001.bin",
+          "md5": "1e68c231d0896b7eadcad1d7d8e76129",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-7001 - Japan",
+          "required": "At least one BIOS file required",
+          "sha256": "39dcc1a0717036c9b6ac52fefd1ee7a57d3808e8cfbc755879fa685a0a738278"
+        },
+        {
+          "filename": "scph7002.bin",
+          "md5": "b9d9a0286c33dc6b7237bb13cd46fdee",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-7002 - USA)",
+          "required": "At least one BIOS file required",
+          "sha256": "5e84a94818cf5282f4217591fefd88be36b9b174b3cc7cb0bcd75199beb450f1"
+        },
+        {
+          "filename": "scph7003.bin",
+          "md5": "490f666e1afb15b7362b406ed1cea246",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-7003 - Europe",
+          "required": "At least one BIOS file required"
+        },
+        {
+          "filename": "scph7502.bin",
+          "md5": "b9d9a0286c33dc6b7237bb13cd46fdee",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-7502 - Europe",
+          "required": "At least one BIOS file required"
+        },
+        {
+          "filename": "scph9002(7502).bin",
+          "md5": "b9d9a0286c33dc6b7237bb13cd46fdee",
+          "system": "psx",
+          "description": "PlayStation BIOS - SCPH-9002 - Europe",
+          "required": "At least one BIOS file required"
+        },
+        {
+          "filename": "ps1_rom.bin",
+          "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b",
+          "system": "psx",
+          "description": "Generic PlayStation BIOS from the Playstation 3",
+          "required": "At least one BIOS file required",
+          "sha256": "ab05d7bed4980fe1ddde6828b10b4968ab63d3f75dee3ef1deda16391ec29fb5"
+        },
+        {
+          "filename": "scph1000.bin",
+          "md5": "239665b1a3dade1b5a52c06338011044",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - USA",
+          "required": "At least one BIOS file required",
+          "sha256": "cfc1fc38eb442f6f80781452119e931bcae28100c1c97e7e6c5f2725bbb0f8bb"
+        },
+        {
+          "filename": "scph1001.bin",
+          "md5": "924e392ed05558ffdb115408c263dccf",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - EUROPE",
+          "required": "At least one BIOS file required",
+          "sha256": "71af94d1e47a68c11e8fdb9f8368040601514a42a5a399cda48c7d3bff1e99d3"
+        },
+        {
+          "filename": "scph1002.bin",
+          "md5": "54847e693405ffeb0359c6287434cbef",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - JAPAN",
+          "required": "At least one BIOS file required",
+          "sha256": "0af2be3468d30b6018b3c3b0d98b8b64347e255e16d874d55f0363648973dbf0"
+        },
+        {
+          "filename": "scph100.bin",
+          "md5": "8abc1b549a4a80954addc48ef02c4521",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS",
+          "required": "At least one BIOS file required",
+          "sha256": "b29b4b5fcddef369bd6640acacda0865e0366fcf7ea54e40b2f1a8178004f89a"
+        },
+        {
+          "filename": "scph101.bin",
+          "md5": "6e3735ff4c7dc899ee98981385f6f3d0",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - USA",
+          "required": "At least one BIOS file required",
+          "sha256": "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8"
+        },
+        {
+          "filename": "scph102A.bin",
+          "md5": "b10f5e0e3d9eb60e5159690680b1e774",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - EUROPE",
+          "required": "At least one BIOS file required",
+          "sha256": "5c0166da24e27deaa82246de8ff0108267fe4bb59f6df0fdec50e05e62448ca4"
+        },
+        {
+          "filename": "scph102B.bin",
+          "md5": "de93caec13d1a141a40a79f5c86168d6",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS - JAPAN",
+          "required": "At least one BIOS file required",
+          "sha256": "42244b0c650821519751b7e77ad1d3222a0125e75586df2b4e84ba693b9809dc"
+        },
+        {
+          "filename": "scph102C.bin",
+          "md5": "de93caec13d1a141a40a79f5c86168d6",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS",
+          "required": "At least one BIOS file required"
+        },
+        {
+          "filename": "scph3000.bin",
+          "md5": "849515939161e62f6b866f6853006780",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS",
+          "required": "At least one BIOS file required",
+          "sha256": "5eb3aee495937558312b83b54323d76a4a015190decd4051214f1b6df06ac34b"
+        },
+        {
+          "filename": "scph3500.bin",
+          "md5": "cba733ceeff5aef5c32254f1d617fa62",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS",
+          "required": "At least one BIOS file required",
+          "sha256": "6f71ca1e716da761dc53187bd39e00c213f566e55090708fd3e2b4b425c8c989"
+        },
+        {
+          "filename": "scph5000.bin",
+          "md5": "57a06303dfa9cf9351222dfcbb4a29d9",
+          "system": "psx",
+          "description": "PlayStation 1 BIOS",
+          "required": "At least one BIOS file required",
+          "sha256": "0c8359870cbac0ea091f1c87f188cd332dcc709753b91cafd9fd44a4a6188197"
+        },
+        {
+          "filename": "scph1002b.bin",
+          "md5": "417b34706319da7cf001e76e40136c23",
+          "sha256": "1efb0cfc5db8a8751a884c5312e9c6265ca1bc580dc0c2663eb2dea3bde9fcf7",
+          "system": "psx",
+          "description": "SCPH-1002, DTL-H1102 (v2.1 07-17-95 E)"
+        },
+        {
+          "filename": "scph1002c.bin",
+          "md5": "e2110b8a2b97a8e0b857a45d32f7e187",
+          "sha256": "3d06d2c469313c2a2128d24fe2e0c71ff99bc2032be89a829a62337187f500b7",
+          "system": "psx",
+          "description": "SCPH-1002, DTL-H1202, H3002 (v2.2 12-04-95 E)"
+        },
+        {
+          "filename": "scph1001_v20.bin",
+          "md5": "dc2b9bf8da62ec93e868cfd29f0d067d",
+          "sha256": "42e4124be7623e2e28b1db0d8d426539646faee49d74b71166d8ba5bd7c472ed",
+          "system": "psx",
+          "description": "SCPH-1001, DTL-H1001 (v2.0 05-07-95 A)"
+        },
+        {
+          "filename": "scph1001_v21.bin",
+          "md5": "da27e8b6dab242d8f91a9b25d80c63b8",
+          "sha256": "6ad5521d105a6b86741f1af8da2e6ea1c732d34459940618c70305a105e8ec10",
+          "system": "psx",
+          "description": "SCPH-1001, DTL-H1101 (v2.1 07-17-95 A)"
+        },
+        {
+          "filename": "scph7000.bin",
+          "md5": "8e4c14f567745eff2f0408c8129f72a6",
+          "sha256": "e900504d1755f021f861b82c8258c5e6658c7b592f800cccd91f5d32ea380d28",
+          "system": "psx",
+          "description": "SCPH-7000, 7500, 9000 (v4.0 08-18-97 J)"
+        },
+        {
+          "filename": "scph7000w.bin",
+          "md5": "b84be139db3ee6cbd075630aa20a6553",
+          "sha256": "b3aa63cf30c81e0a40641740f4a43e25fda0b21b792fa9aaef60ce1675761479",
+          "system": "psx",
+          "description": "SCPH-7000W (v4.1 11-14-97 A)"
+        },
+        {
+          "filename": "scph101_v44.bin",
+          "md5": "9a09ab7e49b422c007e6d54d7c49b965",
+          "sha256": "8434528690df0d444dfe4e931eb5501be53df70497e63f4c9a21184631cdbb87",
+          "system": "psx",
+          "description": "SCPH-101 (v4.4 03-24-00 A)"
+        },
+        {
+          "filename": "scph1000r.bin",
+          "md5": "476d68a94ccec3b9c8303bbd1daf2810",
+          "sha256": "f597f4a8811c1207256f871a8b551be5fce7144051bb0baa9f9c21e94f79307f",
+          "system": "psx",
+          "description": "SCPH-1000R (v4.5 05-25-00 J)"
+        },
+        {
+          "filename": "dtlh1100.bin",
+          "md5": "ca5cfc321f916756e3f0effbfaeba13b",
+          "sha256": "4018749b3698b8694387beebcbabfb48470513066840f9441459ee4c9f0f39bc",
+          "system": "psx",
+          "description": "DTL-H1100 (v2.2 03-06-96 D)"
+        },
+        {
+          "filename": "ps2_scph18000.bin",
+          "md5": "d8f485717a5237285e4d7c5f881b7f32",
+          "sha256": "51019af1a7928c90470bb9cbc724a5679873af85dc897c07ec27d4e8c0478b03",
+          "system": "psx",
+          "description": "PS2, SCPH-18000 (v5.0 10-27-00 J)"
+        },
+        {
+          "filename": "ps2_dtlh10000_0117.bin",
+          "md5": "32f2e4d5ff5ee11072a6bc45530f5765",
+          "sha256": "76f465dc8961c3b905ac2882351c5c86bf5ff9ff03e7349775c65924e73fa3f0",
+          "system": "psx",
+          "description": "PS2, DTL-H10000 (v5.0 01/17/00 T)"
+        },
+        {
+          "filename": "ps2_scph10000_0117.bin",
+          "md5": "acf4730ceb38ac9d8c7d8e21f2614600",
+          "sha256": "c4dad3b5c6ad58bce70a47fc332602880f041c0338ac6be89061c928f6919ab1",
+          "system": "psx",
+          "description": "PS2, SCPH-10000 (v5.0 01/17/00 T)"
+        },
+        {
+          "filename": "ps2_dtlh10000_0217.bin",
+          "md5": "acf9968c8f596d2b15f42272082513d1",
+          "sha256": "a15fe29628a94b38efc8989bddd17ae243e510da080e711bb52e7d3b3ef34b55",
+          "system": "psx",
+          "description": "PS2, DTL-H10000 (v5.0 02/17/00 T)"
+        },
+        {
+          "filename": "ps2_scph10000_15000.bin",
+          "md5": "b1459d7446c69e3e97e6ace3ae23dd1c",
+          "sha256": "4aa33132cfc93d785c5b3f0541ef67725e02d9ded66ae1b6beb25f8c97736b84",
+          "system": "psx",
+          "description": "PS2, SCPH-10000/SCPH-15000 (v5.0 02/17/00 T)"
+        },
+        {
+          "filename": "ps2_dtlh10000_0224.bin",
+          "md5": "d3f1853a16c2ec18f3cd1ae655213308",
+          "sha256": "4737c76a87ff738aeeeb65096c39ce9d164dcaa1b48497bbf451cade3310e753",
+          "system": "psx",
+          "description": "PS2, DTL-H10000 (v5.0 02/24/00 T)"
+        },
+        {
+          "filename": "ps2_dtlh30001.bin",
+          "md5": "63e6fd9b3c72e0d7b920e80cf76645cd",
+          "sha256": "62d372752c6362883e1734fac06dd947af9bf3db2d626d379a89dace5434e9e3",
+          "system": "psx",
+          "description": "PS2, DTL-H30001 (v5.0 07/27/00 A)"
+        },
+        {
+          "filename": "ps2_scph30001_0727.bin",
+          "md5": "a20c97c02210f16678ca3010127caf36",
+          "sha256": "b0bf7184d50a209cf7ceb1ab0eb3a0c9b8c583f5f6b3c819e6536f282b93063b",
+          "system": "psx",
+          "description": "PS2, SCPH-30001 (v5.0 07/27/00 A)"
+        },
+        {
+          "filename": "ps2_scph30001_0902.bin",
+          "md5": "8db2fbbac7413bf3e7154c1e0715e565",
+          "sha256": "87f6b61cf51876f676f4962e94cf68c250b90a93b09d28a9b5d54d0a531f439f",
+          "system": "psx",
+          "description": "PS2, SCPH-30001 (v5.0 09/02/00 A)"
+        },
+        {
+          "filename": "ps2_scph30002_0902.bin",
+          "md5": "b7fa11e87d51752a98b38e3e691cbf17",
+          "sha256": "5a9e4aab4af2fa94ed0c1ac7ba9aa0544125b1792ca375a702437d850b5096d0",
+          "system": "psx",
+          "description": "PS2, SCPH-30002/SCPH-30003/SCPH-30004 (v5.0 09/02/00 E)"
+        },
+        {
+          "filename": "ps2_scph18000_gh003.bin",
+          "md5": "f63bc530bd7ad7c026fcd6f7bd0d9525",
+          "sha256": "fb05637eaa8f9528c6424780d7f603c847434e5c77d1f0ce7058c8cd8785d9d5",
+          "system": "psx",
+          "description": "PS2, SCPH-18000 (GH-003) (v5.0 10/27/00 J)"
+        },
+        {
+          "filename": "ps2_scph18000_gh008.bin",
+          "md5": "cee06bd68c333fc5768244eae77e4495",
+          "sha256": "5d6157bab61b40de134d5796af03284211eaab5120705b88e8bb4978d6387e71",
+          "system": "psx",
+          "description": "PS2, SCPH-18000 (GH-008) (v5.0 10/27/00 J)"
+        },
+        {
+          "filename": "ps2_dtlh30101.bin",
+          "md5": "0bf988e9c7aaa4c051805b0fa6eb3387",
+          "sha256": "79c55576524ee8aae590d85d7581b1b725e6519c427071392e36b3b1f7662856",
+          "system": "psx",
+          "description": "PS2, DTL-H30101 (v5.0 12/28/00 A)"
+        },
+        {
+          "filename": "ps2_scph30001_35001.bin",
+          "md5": "8accc3c49ac45f5ae2c5db0adc854633",
+          "sha256": "c641edbd8fcc1ef363639710795a670850b4549efa0de7dbadabc2b6eb363c4a",
+          "system": "psx",
+          "description": "PS2, SCPH-30001/SCPH-35001 (v5.0 12/28/00 A)"
+        },
+        {
+          "filename": "ps2_scph30002_1228.bin",
+          "md5": "838544f12de9b0abc90811279ee223c8",
+          "sha256": "ea635b3dad3eb90fedd8113134819d0af2a2f4d4797d1fb5d99b9c9062f41efd",
+          "system": "psx",
+          "description": "PS2, SCPH-30002/SCPH-30003/SCPH-30004/SCHP-35002/SCPH-35003/SCPH-35004 (v5.0 12/28/00 E)"
+        },
+        {
+          "filename": "ps2_dtlh30000.bin",
+          "md5": "bb6bbc850458fff08af30e969ffd0175",
+          "sha256": "01f0f761aaa69029e3509ed3404acfb529376e8a1830550f8ce7ed534813ffdd",
+          "system": "psx",
+          "description": "PS2, DTL-H30000 (v5.0 01/18/01 J)"
+        },
+        {
+          "filename": "ps2_scph30000_35000.bin",
+          "md5": "815ac991d8bc3b364696bead3457de7d",
+          "sha256": "6943d96a246f61ebc3d1af2b9dc4f4435283244c1d1d3334ed74065c0cd30947",
+          "system": "psx",
+          "description": "PS2, SCPH-30000/SCPH-35000 (v5.0 01/18/01 J)"
+        },
+        {
+          "filename": "ps2_scph30001r_0427.bin",
+          "md5": "b107b5710042abe887c0f6175f6e94bb",
+          "sha256": "868545167e795e7975628d0c5f41614cbe79e53ba5c2b2d2c7e6750208268482",
+          "system": "psx",
+          "description": "PS2, SCPH-30001R (v5.0 04/27/01 A)"
+        },
+        {
+          "filename": "ps2_scph30000_0427.bin",
+          "md5": "ab55cceea548303c22c72570cfd4dd71",
+          "sha256": "630a1ea45e214535d5dcd6db425ebd68c3e5ec11aa0e95b44782a5de3d4a74ca",
+          "system": "psx",
+          "description": "PS2, SCPH-30000 (v5.0 04/27/01 J)"
+        },
+        {
+          "filename": "ps2_scph30001r_0704.bin",
+          "md5": "18bcaadb9ff74ed3add26cdf709fff2e",
+          "sha256": "02211f5a70f9b8c29c87925a27c1daf1ad6607adb94d64c73a37c606d6b55ac1",
+          "system": "psx",
+          "description": "PS2, SCPH-30001R (v5.0 07/04/01 A)"
+        },
+        {
+          "filename": "ps2_scph30002r_0704.bin",
+          "md5": "491209dd815ceee9de02dbbc408c06d6",
+          "sha256": "9c076c04c345229d7f4150fd295193719a620a97d3e32ea9752ff951597cc96e",
+          "system": "psx",
+          "description": "PS2, SCPH-30002R/SCPH-30003R/SCPH-30004R (v5.0 07/04/01 E)"
+        },
+        {
+          "filename": "ps2_scph30001r_1004.bin",
+          "md5": "7200a03d51cacc4c14fcdfdbc4898431",
+          "sha256": "089c73b4dea8a181ba3ef7eaa5057a2ce3cd5521f036b713d3bd08937a8b2790",
+          "system": "psx",
+          "description": "PS2, SCPH-30001R (v5.0 10/04/01 A)"
+        },
+        {
+          "filename": "ps2_scph30002r_1004.bin",
+          "md5": "8359638e857c8bc18c3c18ac17d9cc3c",
+          "sha256": "b6e08640bce5ad6f75c5f503ad969e6c416dc0eb7393d203c4cbdf708938bae9",
+          "system": "psx",
+          "description": "PS2, SCPH-30002R/SCPH-30003R/SCPH-30004R (v5.0 10/04/01 E)"
+        },
+        {
+          "filename": "ps2_scph30005r.bin",
+          "md5": "352d2ff9b3f68be7e6fa7e6dd8389346",
+          "sha256": "8f3a9759d10cd75521af5631e7b89c3f57fd25d60d26ac835b79c2397f797f03",
+          "system": "psx",
+          "description": "PS2, SCPH-30005R/SCPH-30006R/SCPH-30007R (v5.0 07/30/01 J)"
+        },
+        {
+          "filename": "ps2_scph39001.bin",
+          "md5": "d5ce2c7d119f563ce04bc04dbc3a323e",
+          "sha256": "f4c948e61a291d4b3f92a141e550cf8357204287a31ff784caccbedaef910c9d",
+          "system": "psx",
+          "description": "PS2, SCPH-39001 (v5.0 02/07/02 A)"
+        },
+        {
+          "filename": "ps2_scph39002.bin",
+          "md5": "0d2228e6fd4fb639c9c39d077a9ec10c",
+          "sha256": "5b7cfc4dfdcf556d70ea975b754da6ec26542f6a0e3dfa43a6fcef2902e8f60d",
+          "system": "psx",
+          "description": "PS2, SCPH-39002/SCPH-39003/SCPH-39004 (v5.0 03/19/02 E)"
+        },
+        {
+          "filename": "ps2_scph37000_39000.bin",
+          "md5": "72da56fccb8fcd77bba16d1b6f479914",
+          "sha256": "51ed0afe0d806871e7fa7b9c87cc3f87cb0271915484832a3a8114c30f00b8f3",
+          "system": "psx",
+          "description": "PS2, SCPH-37000/SCPH-39000 (v5.0 04/26/02 J)"
+        },
+        {
+          "filename": "ps2_scph39005.bin",
+          "md5": "315a4003535dfda689752cb25f24785c",
+          "sha256": "9ea2c64c0d1df4208208e0aeb7aefbd5d24e9540029e7f4cf703b3d9b5662257",
+          "system": "psx",
+          "description": "PS2, SCPH-39005/SCPH-39006/SCPH-39007 (v5.0 04/26/02 J)"
+        },
+        {
+          "filename": "ps2_dtlh50000.bin",
+          "md5": "54ecde087258557e2ddb5c3ddb004028",
+          "sha256": "8c9468efa963e350a3b8836db2f5aaf835b52ff4bf358e797cea711b99ca04b0",
+          "system": "psx",
+          "description": "PS2, DTL-H50000 (v5.0 02/06/03 J)"
+        },
+        {
+          "filename": "ps2_scph50000_55000.bin",
+          "md5": "312ad4816c232a9606e56f946bc0678a",
+          "sha256": "6c003a0ca1beb501fba2063b12573521c9b3ec8cdcfb7f5e6a310771ebf166da",
+          "system": "psx",
+          "description": "PS2, SCPH-50000/SCPH-55000 (v5.0 02/06/03 J)"
+        },
+        {
+          "filename": "ps2_scph50002_0227.bin",
+          "md5": "6e69920fa6eef8522a1d688a11e41bc6",
+          "sha256": "3e5b57d30d703245edec4b9b504574f849139c61c497725e837427b5f3404647",
+          "system": "psx",
+          "description": "PS2, SCPH-50002/SCPH-50003/SCPH-50004 (v5.0 02/27/03 E)"
+        },
+        {
+          "filename": "ps2_dtlh50001_0325.bin",
+          "md5": "eb960de68f0c0f7f9fa083e9f79d0360",
+          "sha256": "4844a181b51032b772624f8d38eb0307645175f579d697a255ba27b63c62a4bf",
+          "system": "psx",
+          "description": "PS2, DTL-H50001 (v5.0 03/25/03 A)"
+        },
+        {
+          "filename": "ps2_scph50001_0325.bin",
+          "md5": "8aa12ce243210128c5074552d3b86251",
+          "sha256": "5b3832b97baa0886e7ceddd542bacef3237896eb9bd3f270581e274c2337fb2e",
+          "system": "psx",
+          "description": "PS2, SCPH-50001 (v5.0 03/25/03 A)"
+        },
+        {
+          "filename": "ps2_dtlh50009.bin",
+          "md5": "240d4c5ddd4b54069bdc4a3cd2faf99d",
+          "sha256": "6dafc33b4376f8da0c9865ffd4ace6ca90f522666b13f73f67c805b9406123e2",
+          "system": "psx",
+          "description": "PS2, DTL-H50009 (v5.0 02/24/03 J)"
+        },
+        {
+          "filename": "ps2_desr5000.bin",
+          "md5": "1c6cd089e6c83da618fbf2a081eb4888",
+          "sha256": "c6b51566ae5f2004c779f62bd5bf88ba837be6a47d3bced28a94471e760738b9",
+          "system": "psx",
+          "description": "PS2, DESR-5000/DESR-5100/DESR-7000/DESR-7100 (v5.0 10/28/03 J)"
+        },
+        {
+          "filename": "ps2_scph55000_0623.bin",
+          "md5": "463d87789c555a4a7604e97d7db545d1",
+          "sha256": "a8837d7aa51481593e6bd87b6ffe37682d33c017a3618793a69310b1ff21ee64",
+          "system": "psx",
+          "description": "PS2, SCPH-55000 (v5.0 06/23/03 J)"
+        },
+        {
+          "filename": "ps2_dtlh50001_0623.bin",
+          "md5": "ab9d49ad40ae49f19856ad187777b1b3",
+          "sha256": "ce5c3a6e62f815fc30d1d6689e368e07c238cb741919990a884adb84a2a39b0e",
+          "system": "psx",
+          "description": "PS2, DTL-H50001 (v5.0 06/23/03 A)"
+        },
+        {
+          "filename": "ps2_scph50001_0623.bin",
+          "md5": "35461cecaa51712b300b2d6798825048",
+          "sha256": "3eebdc1250c9737b8c9d5ed4c4ad3db7e454e5c69024b6b2bc5f783230cba517",
+          "system": "psx",
+          "description": "PS2, SCPH-50001/SCPH-50010 (v5.0 06/23/03 A)"
+        },
+        {
+          "filename": "ps2_scph50002_0623.bin",
+          "md5": "bd6415094e1ce9e05daabe85de807666",
+          "sha256": "0fcb0bd98a33e77a99f30d3b4095f43a219ea36f3506589dbba5189ff2b4c337",
+          "system": "psx",
+          "description": "PS2, SCPH-50002/SCPH-50003/SCPH-50004 (v5.0 06/23/03 E)"
+        },
+        {
+          "filename": "ps2_scph50006.bin",
+          "md5": "2e70ad008d4ec8549aada8002fdf42fb",
+          "sha256": "6b61e27861c288a99ee9b4878862ed824173a037ebaca2bef0581017a85241e1",
+          "system": "psx",
+          "description": "PS2, SCPH-50006/SCPH-50007 (v5.0 06/23/03 J)"
+        },
+        {
+          "filename": "ps2_scph50005.bin",
+          "md5": "50d5b97b57d8c9b6534adcb46c2027d4",
+          "sha256": "0330e785f2228d4f30ebc9f19efc102ac4c1466513ede0e2b51993821dcd8d83",
+          "system": "psx",
+          "description": "PS2, SCPH-50005 (v5.0 06/23/03 J)"
+        },
+        {
+          "filename": "ps2_scph50009.bin",
+          "md5": "1b6e631b536247756287b916f9396872",
+          "sha256": "a7af55393f114b2f7ee4eacfb4a9689224b2163bf28e89a76e8c7375daec6f3e",
+          "system": "psx",
+          "description": "PS2, SCPH-50009 (v5.0 06/23/03 J)"
+        },
+        {
+          "filename": "ps2_scph50000_0822.bin",
+          "md5": "00da1b177096cfd2532c8fa22b43e667",
+          "sha256": "8876e0d1f81edb0378b0e744d15a884f75cdf38969190499257ad7ae35d2a664",
+          "system": "psx",
+          "description": "PS2, SCPH-50000 (v5.0 08/22/03 J)"
+        },
+        {
+          "filename": "ps2_scph50011.bin",
+          "md5": "81f4336c1de607dd0865011c0447052e",
+          "sha256": "e6fe40f5add81143af683e767c0e9694b651bded2fbd25c6676321dd82fb0108",
+          "system": "psx",
+          "description": "PS2, SCPH-50011 (v5.0 03/29/04 A)"
+        },
+        {
+          "filename": "ps2_scph70000.bin",
+          "md5": "0eee5d1c779aa50e94edd168b4ebf42e",
+          "sha256": "3b377ce5f7bb8d880260851867a5452b59149aeb8bb189c5df41e3bace7b8e09",
+          "system": "psx",
+          "description": "PS2, SCPH-70000 (v5.0 06/14/04 J)"
+        },
+        {
+          "filename": "ps2_scph70001.bin",
+          "md5": "d333558cc14561c1fdc334c75d5f37b7",
+          "sha256": "6d23d001daf2a0fa8b381a5d49f51753c36e3622d0f04be46af1a0c548be4744",
+          "system": "psx",
+          "description": "PS2, SCPH-70001/SCPH-70011/SCPH-70012 (v5.0 06/14/04 A)"
+        },
+        {
+          "filename": "ps2_scph70002.bin",
+          "md5": "dc752f160044f2ed5fc1f4964db2a095",
+          "sha256": "d6653f4e93be2f6f9e9d690a934f26cf0f6ad4e348b69f41ef736732c3a6685b",
+          "system": "psx",
+          "description": "PS2, SCPH-70002/SCPH-70003/SCPH-70004/SCPH-70008 (v5.0 06/14/04 E)"
+        },
+        {
+          "filename": "ps2_scph70005.bin",
+          "md5": "3e3e030c0f600442fa05b94f87a1e238",
+          "sha256": "79b89a771d6f36fd96a0c4267df2559d034e5c96cd140e536a20f3c0c97efe16",
+          "system": "psx",
+          "description": "PS2, SCPH-70005/SCPH-70006/SCPH-70007 (v5.0 06/14/04 J)"
+        },
+        {
+          "filename": "ps2_desr5500.bin",
+          "md5": "1ad977bb539fc9448a08ab276a836bbc",
+          "sha256": "1065ca6d4b3d9753ec206f4f66ec411137c108b0bee86fe20be8007c8cb95a81",
+          "system": "psx",
+          "description": "PS2, DESR-5500/DESR-5700/DESR-7500/DESR-7700 (v5.0 09/17/04 J)"
+        },
+        {
+          "filename": "ps2_dtlh75000.bin",
+          "md5": "bf0078ba5e19d57eae18047407f3b6e5",
+          "sha256": "03c0a3798e588f081f24c23e9a14f78f13e8ddc471fbff270e902d7f37c87cd1",
+          "system": "psx",
+          "description": "PS2, DTL-H75000 (v5.0 06/20/05 J)"
+        },
+        {
+          "filename": "ps2_scph75000.bin",
+          "md5": "eb4f40fcf4911ede39c1bbfe91e7a89a",
+          "sha256": "5aff52ae270a519b52e3c7c50f780c63b771da4634d565c4f954b37ce250b620",
+          "system": "psx",
+          "description": "PS2, SCPH-75000 (v5.0 06/20/05 J)"
+        },
+        {
+          "filename": "ps2_dtlh75000a.bin",
+          "md5": "9959ad7a8685cad66206e7752ca23f8b",
+          "sha256": "0e216b4e1a9985452db34ba933eef9422a6138205a79b9fdc1eed7da06b39953",
+          "system": "psx",
+          "description": "PS2, DTL-H75000A (v5.0 06/20/05 A)"
+        },
+        {
+          "filename": "ps2_scph75001.bin",
+          "md5": "929a14baca1776b00869f983aa6e14d2",
+          "sha256": "040cadcc57760082fcd42bcaa9c7cfb627f6d40660b0986dcea133f5700f65b6",
+          "system": "psx",
+          "description": "PS2, SCPH-75001/SCPH-75010 (v5.0 06/20/05 A)"
+        },
+        {
+          "filename": "ps2_scph75002.bin",
+          "md5": "573f7d4a430c32b3cc0fd0c41e104bbd",
+          "sha256": "d8c41bc3b26a015840f10abaced57806bfa1e602dff166d929e961af12346321",
+          "system": "psx",
+          "description": "PS2, SCPH-75002/SCPH-75003/SCPH-75004/SCPH-75008 (v5.0 06/20/05 E)"
+        },
+        {
+          "filename": "ps2_scph75006.bin",
+          "md5": "df63a604e8bff5b0599bd1a6c2721bd0",
+          "sha256": "76c6c82491f9d123b254df0cd31d5515818e113205070ecbaf1c96cf0df28dc6",
+          "system": "psx",
+          "description": "PS2, SCPH-75006 (v5.0 06/20/05 J)"
+        },
+        {
+          "filename": "ps2_scph77000.bin",
+          "md5": "5b1ba4bb914406fae75ab8e38901684d",
+          "sha256": "ae5e5d6b9301d9c097fb693cabd1abb1b8e93a110f49c7046c35ae7cd19051a5",
+          "system": "psx",
+          "description": "PS2, SCPH-77000 (v5.0 02/10/06 J)"
+        },
+        {
+          "filename": "ps2_scph77001.bin",
+          "md5": "cb801b7920a7d536ba07b6534d2433ca",
+          "sha256": "c7628a01da23d7d38851aec8403e535581d0f2a781fee5b86b1c648b13a9970d",
+          "system": "psx",
+          "description": "PS2, SCPH-77001/SCPH-77010 (v5.0 02/10/06 A)"
+        },
+        {
+          "filename": "ps2_scph77002.bin",
+          "md5": "af60e6d1a939019d55e5b330d24b1c25",
+          "sha256": "8921e73006ac2c01922fcc7b76da6b9caed6b20fbd4e69f165635e18542de6ab",
+          "system": "psx",
+          "description": "PS2, SCPH-77002/SCPH-77003/SCPH-77004/SCPH-77008 (v5.0 02/10/06 E)"
+        },
+        {
+          "filename": "ps2_scph77006.bin",
+          "md5": "549a66d0c698635ca9fa3ab012da7129",
+          "sha256": "d1382662830786dd8b7e3f3931be7ad73420e5c2e7be0fd832d2ccf104f4be9f",
+          "system": "psx",
+          "description": "PS2, SCPH-77006/SCPH-77007 (v5.0 02/10/06 J)"
+        },
+        {
+          "filename": "ps2_dtlh90000_j.bin",
+          "md5": "5e2014472c88f74f7547d8c2c60eca45",
+          "sha256": "79614b495dcae4e6867f6aff40466a331c6408e966ffac1f2af0bf4dee94b027",
+          "system": "psx",
+          "description": "PS2, DTL-H90000 (v5.0 09/05/06 J)"
+        },
+        {
+          "filename": "ps2_scph79000_90000.bin",
+          "md5": "5de9d0d730ff1e7ad122806335332524",
+          "sha256": "e093ef89810ed826a86c0fdb9ccef5761bd69b48fdc8480c96cbf33cdaa970a3",
+          "system": "psx",
+          "description": "PS2, SCPH-79000/SCPH-90000 (v5.0 09/05/06 J)"
+        },
+        {
+          "filename": "ps2_dtlh90000_a.bin",
+          "md5": "21fe4cad111f7dc0f9af29477057f88d",
+          "sha256": "55c1380236cad07a6018784a1b3ba4ef1d073cc0a4de89826d9cda59000013fc",
+          "system": "psx",
+          "description": "PS2, DTL-H90000 (v5.0 09/05/06 A)"
+        },
+        {
+          "filename": "ps2_scph79001_90001.bin",
+          "md5": "40c11c063b3b9409aa5e4058e984e30c",
+          "sha256": "e76d9c8f4019041fb17f41fff25d57d608c1a3f205c99bda9eb47402c43e8c93",
+          "system": "psx",
+          "description": "PS2, SCPH-79001/SCPH-79010/SCPH-90001 (v5.0 09/05/06 A)"
+        },
+        {
+          "filename": "ps2_scph79002_90002.bin",
+          "md5": "80bbb237a6af9c611df43b16b930b683",
+          "sha256": "a4c762498379a722398efc9a7d392f1d5464bd6dc23601070548e91282c783f3",
+          "system": "psx",
+          "description": "PS2, SCPH-79002/SCPH-79003/SCPH-79004/SCPH-79008/SCPH-90002/SCPH-90003/SCPH-90004 (v5.0 09/05/06 E)"
+        },
+        {
+          "filename": "ps2_scph79006_90006.bin",
+          "md5": "c37bce95d32b2be480f87dd32704e664",
+          "sha256": "7d280652ed921d455a48fe9e4f6134a2c30e7bda1ee4af83ae24433efa3fd219",
+          "system": "psx",
+          "description": "PS2, SCPH-79006/SCPH-79007/SCPH-90006/SCPH-90007 (v5.0 09/05/06 J)"
+        },
+        {
+          "filename": "ps2_scph90000_0220.bin",
+          "md5": "80ac46fa7e77b8ab4366e86948e54f83",
+          "sha256": "9e9540f7ace6651a029942c1d29b6694a9b55a80becf40b92e2033d00da9de3b",
+          "system": "psx",
+          "description": "PS2, SCPH-90000 (v5.0 02/20/08 J)"
+        },
+        {
+          "filename": "ps2_scph90001_0220.bin",
+          "md5": "21038400dc633070a78ad53090c53017",
+          "sha256": "f609ed1ca62437519828cdd824b5ea79417fd756e71a4178443483e3781fedd2",
+          "system": "psx",
+          "description": "PS2, SCPH-90001/SCPH-90010 (v5.0 02/20/08 A)"
+        },
+        {
+          "filename": "ps2_scph90002_0220.bin",
+          "md5": "dc69f0643a3030aaa4797501b483d6c4",
+          "sha256": "cb5a91fda0e8e2b2a012c0b4d7db5831281c32a89cd659c6e8f64df1fe204e69",
+          "system": "psx",
+          "description": "PS2, SCPH-90002/SCPH-90003/SCPH-90004/SCPH-90008 (v5.0 02/20/08 E)"
+        },
+        {
+          "filename": "ps2_scph90005_0220.bin",
+          "md5": "30d56e79d89fbddf10938fa67fe3f34e",
+          "sha256": "ae052523f69be651770e21b700e2c195c4e97c41e5ed08580deaa5feaf4247c4",
+          "system": "psx",
+          "description": "PS2, SCPH-90005/SCPH-90006/SCPH-90007 (v5.0 02/20/08 J)"
+        },
+        {
+          "filename": "ps2_scph30003.bin",
+          "md5": "71f50ef4f4e17c163c78908e16244f7d",
+          "sha256": "a42c16a9be754f8f665c56611bd3a83eabb231c818b8de64744d0ea1a1d0e74d",
+          "system": "psx",
+          "description": "PS2, SCPH-30003 (v5.0 09-02-00 E)"
+        },
+        {
+          "filename": "ps2_dtlh30002.bin",
+          "md5": "91c87cb2f2eb6ce529a2360f80ce2457",
+          "sha256": "97362769363ad65f0432eb97f661a6912d51497f915f3fe312718bae470bc141",
+          "system": "psx",
+          "description": "PS2, DTL-H30002 (v5.0 09/02/00 E)"
+        },
+        {
+          "filename": "ps2_dtlh30102_0902.bin",
+          "md5": "3016b3dd42148a67e2c048595ca4d7ce",
+          "sha256": "936d408dc91230fe9715aedd7339c4d4aff279ef56ab4e2a2031d5c466e9f4af",
+          "system": "psx",
+          "description": "PS2, DTL-H30102 (v5.0 09/02/00 E)"
+        },
+        {
+          "filename": "ps2_dtlh30102_1228.bin",
+          "md5": "6f9a6feb749f0533aaae2cc45090b0ed",
+          "sha256": "e25227b01cda1f0ef4b56e8f85596f0e50cfc303026a23c3d55e161d9e346d8b",
+          "system": "psx",
+          "description": "PS2, DTL-H30102 (v5.0 12/28/00 E)"
+        },
+        {
+          "filename": "ps2_scph39008.bin",
+          "md5": "5b1f47fbeb277c6be2fccdd6344ff2fd",
+          "sha256": "7b5fdb035668e7241aad447dfaae6484865de923dc75192c9f3d837569a6cb30",
+          "system": "psx",
+          "description": "PS2, SCPH-39008 (v5.0 04/26/02 E)"
+        },
+        {
+          "filename": "ps2_dtlh50002.bin",
+          "md5": "666018ffec65c5c7e04796081295c6c7",
+          "sha256": "a9f7262f4ba8ac2523cdcf2765c40b326954b99c51b0c2d29f19296c5cf08277",
+          "system": "psx",
+          "description": "PS2, DTL-H50002 (v5.0 02/27/03 E)"
+        },
+        {
+          "filename": "ps2_scph50008.bin",
+          "md5": "b53d51edc7fc086685e31b811dc32aad",
+          "sha256": "e8eed9831c39fc298be087ba11d620673134bc683b97ccc909c555d29cc1b207",
+          "system": "psx",
+          "description": "PS2, SCPH-50008 (v5.0 06/23/03 E)"
+        },
+        {
+          "filename": "ps2_scph50004_0822.bin",
+          "md5": "afde410bd026c16be605a1ae4bd651fd",
+          "sha256": "cc7b333bf7dc7c77a7c8818b1d34be715bc85bd1c5ecd89d785cc879a935bc4e",
+          "system": "psx",
+          "description": "PS2, SCPH-50004 (v5.0 08/22/03 E)"
+        },
+        {
+          "filename": "ps2_scph70002_alt.bin",
+          "md5": "7ebb4fc5eab6f79a27d76ac9aad392b2",
+          "sha256": "7f7dd27cbddba7067fca250ef02b81dc5fe50083e8c20b83017343df6a34d411",
+          "system": "psx",
+          "description": "PS2, SCPH-70002 (v5.0 06/14/04 E)"
+        },
+        {
+          "filename": "ps2_dtlh70002.bin",
+          "md5": "63ead1d74893bf7f36880af81f68a82d",
+          "sha256": "c2eacbbf2538c64269411abc45eea706e657f943288ecfe9c66475793aa03b0d",
+          "system": "psx",
+          "description": "PS2, DTL-H70002 (v5.0 06/14/04 E)"
+        },
+        {
+          "filename": "ps2_kdl22px300.bin",
+          "md5": "93ea3bcee4252627919175ff1b16a1d9",
+          "sha256": "b384f663c0202794207659d5a4767e317a904bbbea63c93ed17f5ef205d33995",
+          "system": "psx",
+          "description": "PS2, KDL-22PX300 (v5.0 04/15/10 E)"
+        },
+        {
+          "filename": "openbios.bin",
+          "system": "psx",
+          "description": "OpenBIOS (open-source PS1 HLE BIOS, region-free override)"
+        }
+      ]
+    }
+  }
+}

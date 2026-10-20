@@ -1,0 +1,355 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+from hashlib import md5
+from os.path import isfile
+from collections import OrderedDict
+import sys
+import zipfile
+import xml.etree.ElementTree as elementTree
+
+systems = {
+    # ---------- Microsoft ---------- #
+    "xbox": { "name": "Microsoft Xbox", "biosFiles": [ { "md5": "d49c52a4102f6df7bcf8d0617ac475ed", "file": "bios/xemu/bios/mcpx_1.0.bin" },
+                                                       { "md5": "21445c6f28fca7285b0f167ea770d1e5", "file": "bios/xemu/bios/Complex_4627v1.03.bin" }] },
+
+    # ---------- Nintendo ---------- #
+    "gamecube": { "name": "Nintendo GameCube", "biosFiles": [
+        { "md5": "db92574caab77a7ec99d4605fd6f2450", "file": "bios/GC/EUR/IPL.bin" },
+        { "md5": "b17148254a5799684c7d783206504926", "file": "bios/GC/JAP/IPL.bin" },
+        { "md5": "b17148254a5799684c7d783206504926", "file": "bios/GC/USA/IPL.bin" },
+        { "md5": "1f118b8735fcf40c20b38c3184eebfd9", "file": "bios/codehandler.bin", "emulator": "dolphin", "core": "dolphin-qt-gc" }
+    ] },
+
+    "nds": { "name": "Nintendo DS", "biosFiles": [
+        { "md5": "94bc5094607c5e6598d50472c52f27f2", "file": "bios/firmware.bin" },
+        { "md5": "df692a80a5b1bc90728bc3dfc76cd948", "file": "bios/bios7.bin" },
+        { "md5": "a392174eb3e572fed6447e956bde4b25", "file": "bios/bios9.bin" },
+        { "md5": "559dae4ea78eb9d67702c56c1d791e81", "file": "bios/dsi_bios7.bin" },
+        { "md5": "87b665fce118f76251271c3732532777", "file": "bios/dsi_bios9.bin" },
+        { "md5": "74f23348012d7b3e1cc216c47192ffeb", "file": "bios/dsi_firmware.bin" },
+        { "md5": "d71edf897ddd06bf335feeb68edeb272", "file": "bios/dsi_nand.bin" },
+        { "md5": "4986e446825453695d2e0b22dca6affe", "file": "bios/drastic_logo_0.raw", "emulator": "drastic", "core": "drastic-sa" },
+        { "md5": "f590deaba5027125ff1fcfd8f0922503", "file": "bios/drastic_logo_1.raw", "emulator": "drastic", "core": "drastic-sa" }
+    ] },
+
+    "gb":         { "name": "Nintendo Gameboy", "biosFiles": [ { "md5": "32fbbd84168d3482956eb3c5051637f5", "file": "bios/gb_bios.bin" } ] },
+
+    "gba":        { "name": "Nintendo Gameboy Advance", "biosFiles": [ { "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6", "file": "bios/gba_bios.bin" } ] },
+
+    "gbc":        { "name": "Nintendo Gameboy Color", "biosFiles": [ { "md5": "dbfce9db9deaa2567f6a84fde55f9680", "file": "bios/gbc_bios.bin" } ] },
+
+    # ---------- Sega ---------- #
+    "dreamcast":    { "name": "Sega Dreamcast", "biosFiles": [ { "md5": "e10c53c2f8b90bab96ead2d368858623", "file": "bios/dc/dc_boot.bin" },
+                                                               { "md5": "0a93f7940c455905bea6e392dfde92a4", "file": "bios/dc/dc_flash.bin" },
+                                                               { "md5": "3bffafac42a7767d8dcecf771f5552ba", "file": "bios/dc/naomi_boot.bin" } ] },
+
+    "gamegear":     { "name": "Sega Game Gear", "biosFiles": [ { "md5": "672e104c3be3a238301aceffc3b23fd6", "file": "bios/bios.gg" } ] },
+
+    "mastersystem": { "name": "Sega Master System", "biosFiles": [ { "md5": "840481177270d5642a14ca71ee72844c", "file": "bios/bios.sms" } ] },
+
+    "segacd":       { "name": "Sega CD", "biosFiles": [ { "md5": "e66fa1dc5820d254611fdcdba0662372", "file": "bios/bios_CD_E.bin" },
+                                                        { "md5": "2efd74e3232ff260e371b99f84024f7f", "file": "bios/bios_CD_U.bin" },
+                                                        { "md5": "278a9397d192149e84e820ac621a8edd", "file": "bios/bios_CD_J.bin" } ] },
+
+    "saturn":       { "name": "Sega Saturn", "biosFiles": [ { "md5": "85ec9ca47d8f6807718151cbcca8b964", "file": "bios/sega_101.bin" },
+                                                            { "md5": "3240872c70984b6cbfda1586cab68dbe", "file": "bios/mpr-17933.bin" },
+                                                            { "md5": "255113ba943c92a54facd25a10fd780c", "file": "bios/mpr-18811-mx.ic1" },
+                                                            { "md5": "1cd19988d1d72a3e7caa0b73234c96b4", "file": "bios/mpr-19367-mx.ic1" },
+                                                            { "md5": "af5828fdff51384f99b3c4926be27762", "file": "bios/saturn_bios.bin" } ] },
+
+    # ---------- Sony ---------- #
+    "psx": { "name": "PSX", "biosFiles": [
+        { "md5": "c53ca5908936d412331790f4426c6c33", "file": "bios/psxonpsp660.bin" },
+        { "md5": "6e3735ff4c7dc899ee98981385f6f3d0", "file": "bios/scph101.bin" },
+        { "md5": "924e392ed05558ffdb115408c263dccf", "file": "bios/scph1001.bin" },
+        { "md5": "8dd7d5296a650fac7319bce665a6a53c", "file": "bios/scph5500.bin" },
+        { "md5": "490f666e1afb15b7362b406ed1cea246", "file": "bios/scph5501.bin" },
+        { "md5": "32736f17079d0b2b7024407c39bd3050", "file": "bios/scph5502.bin" },
+        { "md5": "1e68c231d0896b7eadcad1d7d8e76129", "file": "bios/scph7001.bin" },
+        { "md5": "57a06303dfa9cf9351222dfcbb4a29d9", "file": "bios/scph5000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "54847e693405ffeb0359c6287434cbef", "file": "bios/scph1002a.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "417b34706319da7cf001e76e40136c23", "file": "bios/scph1002b.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "e2110b8a2b97a8e0b857a45d32f7e187", "file": "bios/scph1002c.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "849515939161e62f6b866f6853006780", "file": "bios/scph3000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "dc2b9bf8da62ec93e868cfd29f0d067d", "file": "bios/scph1001_v20.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "cba733ceeff5aef5c32254f1d617fa62", "file": "bios/scph3500.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "da27e8b6dab242d8f91a9b25d80c63b8", "file": "bios/scph1001_v21.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8e4c14f567745eff2f0408c8129f72a6", "file": "bios/scph7000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b84be139db3ee6cbd075630aa20a6553", "file": "bios/scph7000w.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b9d9a0286c33dc6b7237bb13cd46fdee", "file": "bios/scph7002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8abc1b549a4a80954addc48ef02c4521", "file": "bios/scph100.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "9a09ab7e49b422c007e6d54d7c49b965", "file": "bios/scph101_v44.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "476d68a94ccec3b9c8303bbd1daf2810", "file": "bios/scph1000r.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "ca5cfc321f916756e3f0effbfaeba13b", "file": "bios/dtlh1100.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b10f5e0e3d9eb60e5159690680b1e774", "file": "bios/scph102_v44.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "de93caec13d1a141a40a79f5c86168d6", "file": "bios/scph102_v45.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "239665b1a3dade1b5a52c06338011044", "file": "bios/scph1000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "d8f485717a5237285e4d7c5f881b7f32", "file": "bios/ps2_scph18000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "32f2e4d5ff5ee11072a6bc45530f5765", "file": "bios/ps2_dtlh10000_0117.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "acf4730ceb38ac9d8c7d8e21f2614600", "file": "bios/ps2_scph10000_0117.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "acf9968c8f596d2b15f42272082513d1", "file": "bios/ps2_dtlh10000_0217.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b1459d7446c69e3e97e6ace3ae23dd1c", "file": "bios/ps2_scph10000_15000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "d3f1853a16c2ec18f3cd1ae655213308", "file": "bios/ps2_dtlh10000_0224.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "63e6fd9b3c72e0d7b920e80cf76645cd", "file": "bios/ps2_dtlh30001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "a20c97c02210f16678ca3010127caf36", "file": "bios/ps2_scph30001_0727.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8db2fbbac7413bf3e7154c1e0715e565", "file": "bios/ps2_scph30001_0902.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b7fa11e87d51752a98b38e3e691cbf17", "file": "bios/ps2_scph30002_0902.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "f63bc530bd7ad7c026fcd6f7bd0d9525", "file": "bios/ps2_scph18000_gh003.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "cee06bd68c333fc5768244eae77e4495", "file": "bios/ps2_scph18000_gh008.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "0bf988e9c7aaa4c051805b0fa6eb3387", "file": "bios/ps2_dtlh30101.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8accc3c49ac45f5ae2c5db0adc854633", "file": "bios/ps2_scph30001_35001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "838544f12de9b0abc90811279ee223c8", "file": "bios/ps2_scph30002_1228.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "bb6bbc850458fff08af30e969ffd0175", "file": "bios/ps2_dtlh30000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "815ac991d8bc3b364696bead3457de7d", "file": "bios/ps2_scph30000_35000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b107b5710042abe887c0f6175f6e94bb", "file": "bios/ps2_scph30001r_0427.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "ab55cceea548303c22c72570cfd4dd71", "file": "bios/ps2_scph30000_0427.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "18bcaadb9ff74ed3add26cdf709fff2e", "file": "bios/ps2_scph30001r_0704.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "491209dd815ceee9de02dbbc408c06d6", "file": "bios/ps2_scph30002r_0704.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "7200a03d51cacc4c14fcdfdbc4898431", "file": "bios/ps2_scph30001r_1004.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8359638e857c8bc18c3c18ac17d9cc3c", "file": "bios/ps2_scph30002r_1004.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "352d2ff9b3f68be7e6fa7e6dd8389346", "file": "bios/ps2_scph30005r.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "d5ce2c7d119f563ce04bc04dbc3a323e", "file": "bios/ps2_scph39001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "0d2228e6fd4fb639c9c39d077a9ec10c", "file": "bios/ps2_scph39002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "72da56fccb8fcd77bba16d1b6f479914", "file": "bios/ps2_scph37000_39000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "315a4003535dfda689752cb25f24785c", "file": "bios/ps2_scph39005.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "54ecde087258557e2ddb5c3ddb004028", "file": "bios/ps2_dtlh50000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "312ad4816c232a9606e56f946bc0678a", "file": "bios/ps2_scph50000_55000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "6e69920fa6eef8522a1d688a11e41bc6", "file": "bios/ps2_scph50002_0227.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "eb960de68f0c0f7f9fa083e9f79d0360", "file": "bios/ps2_dtlh50001_0325.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "8aa12ce243210128c5074552d3b86251", "file": "bios/ps2_scph50001_0325.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "240d4c5ddd4b54069bdc4a3cd2faf99d", "file": "bios/ps2_dtlh50009.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "1c6cd089e6c83da618fbf2a081eb4888", "file": "bios/ps2_desr5000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "463d87789c555a4a7604e97d7db545d1", "file": "bios/ps2_scph55000_0623.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "ab9d49ad40ae49f19856ad187777b1b3", "file": "bios/ps2_dtlh50001_0623.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "35461cecaa51712b300b2d6798825048", "file": "bios/ps2_scph50001_0623.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "bd6415094e1ce9e05daabe85de807666", "file": "bios/ps2_scph50002_0623.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "2e70ad008d4ec8549aada8002fdf42fb", "file": "bios/ps2_scph50006.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "50d5b97b57d8c9b6534adcb46c2027d4", "file": "bios/ps2_scph50005.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "1b6e631b536247756287b916f9396872", "file": "bios/ps2_scph50009.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "00da1b177096cfd2532c8fa22b43e667", "file": "bios/ps2_scph50000_0822.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "81f4336c1de607dd0865011c0447052e", "file": "bios/ps2_scph50011.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "0eee5d1c779aa50e94edd168b4ebf42e", "file": "bios/ps2_scph70000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "d333558cc14561c1fdc334c75d5f37b7", "file": "bios/ps2_scph70001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "dc752f160044f2ed5fc1f4964db2a095", "file": "bios/ps2_scph70002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "3e3e030c0f600442fa05b94f87a1e238", "file": "bios/ps2_scph70005.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "1ad977bb539fc9448a08ab276a836bbc", "file": "bios/ps2_desr5500.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "bf0078ba5e19d57eae18047407f3b6e5", "file": "bios/ps2_dtlh75000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "eb4f40fcf4911ede39c1bbfe91e7a89a", "file": "bios/ps2_scph75000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "9959ad7a8685cad66206e7752ca23f8b", "file": "bios/ps2_dtlh75000a.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "929a14baca1776b00869f983aa6e14d2", "file": "bios/ps2_scph75001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "573f7d4a430c32b3cc0fd0c41e104bbd", "file": "bios/ps2_scph75002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "df63a604e8bff5b0599bd1a6c2721bd0", "file": "bios/ps2_scph75006.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "5b1ba4bb914406fae75ab8e38901684d", "file": "bios/ps2_scph77000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "cb801b7920a7d536ba07b6534d2433ca", "file": "bios/ps2_scph77001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "af60e6d1a939019d55e5b330d24b1c25", "file": "bios/ps2_scph77002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "549a66d0c698635ca9fa3ab012da7129", "file": "bios/ps2_scph77006.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "5e2014472c88f74f7547d8c2c60eca45", "file": "bios/ps2_dtlh90000_j.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "5de9d0d730ff1e7ad122806335332524", "file": "bios/ps2_scph79000_90000.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "21fe4cad111f7dc0f9af29477057f88d", "file": "bios/ps2_dtlh90000_a.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "40c11c063b3b9409aa5e4058e984e30c", "file": "bios/ps2_scph79001_90001.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "80bbb237a6af9c611df43b16b930b683", "file": "bios/ps2_scph79002_90002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "c37bce95d32b2be480f87dd32704e664", "file": "bios/ps2_scph79006_90006.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "80ac46fa7e77b8ab4366e86948e54f83", "file": "bios/ps2_scph90000_0220.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "21038400dc633070a78ad53090c53017", "file": "bios/ps2_scph90001_0220.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "dc69f0643a3030aaa4797501b483d6c4", "file": "bios/ps2_scph90002_0220.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "30d56e79d89fbddf10938fa67fe3f34e", "file": "bios/ps2_scph90005_0220.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "71f50ef4f4e17c163c78908e16244f7d", "file": "bios/ps2_scph30003.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "91c87cb2f2eb6ce529a2360f80ce2457", "file": "bios/ps2_dtlh30002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "3016b3dd42148a67e2c048595ca4d7ce", "file": "bios/ps2_dtlh30102_0902.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "6f9a6feb749f0533aaae2cc45090b0ed", "file": "bios/ps2_dtlh30102_1228.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "5b1f47fbeb277c6be2fccdd6344ff2fd", "file": "bios/ps2_scph39008.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "666018ffec65c5c7e04796081295c6c7", "file": "bios/ps2_dtlh50002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "b53d51edc7fc086685e31b811dc32aad", "file": "bios/ps2_scph50008.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "afde410bd026c16be605a1ae4bd651fd", "file": "bios/ps2_scph50004_0822.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "7ebb4fc5eab6f79a27d76ac9aad392b2", "file": "bios/ps2_scph70002_alt.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "63ead1d74893bf7f36880af81f68a82d", "file": "bios/ps2_dtlh70002.bin", "emulator": "duckstation", "core": "duckstation-sa" },
+        { "md5": "93ea3bcee4252627919175ff1b16a1d9", "file": "bios/ps2_kdl22px300.bin", "emulator": "duckstation", "core": "duckstation-sa" }
+    ] },
+
+    "ps2": { "name": "PS2", "biosFiles": [
+        { "md5": "21038400dc633070a78ad53090c53017", "file": "bios/pcsx2/bios/ps2-0230a-20080220.bin" },
+        { "md5": "21038400dc633070a78ad53090c53017", "file": "bios/aethersx2/bios/ps2-0230a-20080220.bin" },
+        { "md5": "ec65dbfe7379cfac816b4d02259c0ca5", "file": "bios/pcsx2/resources/GameIndex.yaml", "emulator": "armsx2", "core": "armsx2-sa" },
+        { "md5": "0525ad1f1381152f20bfb05775cf39cd", "file": "bios/pcsx2/resources/RedumpDatabase.yaml", "emulator": "armsx2", "core": "armsx2-sa" },
+        { "md5": "809868f006eebec4e4615dd8bc397ef7", "file": "bios/pcsx2/resources/patches.zip", "emulator": "armsx2", "core": "armsx2-sa" },
+        { "md5": "deb7394a31184990c78c9753a293ff60", "file": "bios/pcsx2/resources/shaders/vulkan/cas.glsl", "emulator": "armsx2", "core": "armsx2-sa" },
+        { "md5": "d5a884f20ade826001ea9fd93be86345", "file": "bios/pcsx2/resources/sounds/achievements/unlock.wav", "emulator": "armsx2", "core": "armsx2-sa" }
+    ] },
+
+    "ps3": { "name": "PS3", "biosFiles": [ { "md5": "a2b60b6ac1d2e49e230144345616927c", "file": "bios/PS3UPDAT.PUP" } ] }, #4.93
+
+    #"psvita":   { "name": "PS Vita", "biosFiles": [ { "md5": "59dcf059d3328fb67be7e51f8aa33418", "file": "bios/psvita/PSP2UPDAT.PUP" },
+    #                                                { "md5": "f2c7b12fe85496ec88a0391b514d6e3b", "file": "bios/psvita/PSVUPDAT.PUP"} ] },
+}
+
+class BiosStatus:
+    MISSING = "MISSING"
+    UNTESTED = "UNTESTED"
+
+def md5sum(filename, blocksize=65536):
+    hash = md5()
+    with open(filename, "rb") as f:
+        for block in iter(lambda: f.read(blocksize), b""):
+            hash.update(block)
+    return hash.hexdigest()
+
+def checkInsideZip(container, fileName, md5sum):
+    # Check inside Zip files
+    try:
+        archive = zipfile.ZipFile(container)
+    except Exception as e:
+        print ('Error opening file {}: {}.'.format(container, e))
+        return False
+    blocksize = 1024**2  #1M chunks
+    for fname in archive.namelist():
+        # Only check if the file matches
+        if fname.casefold() == fileName.casefold():
+            if md5sum == "":
+                return True
+            archive = zipfile.ZipFile(container)
+            blocksize = 1024**2  #1M chunks
+            for fname in archive.namelist():
+                if fname == fileName:
+                    entry = archive.open(fname)
+                    zippedHash = md5()
+                    while True:
+                        block = entry.read(blocksize)
+                        if not block:
+                            break
+                        zippedHash.update(block)
+                    if zippedHash.hexdigest() == md5sum:
+                        return True
+                    else:
+                        print('Mismatch inside .zip: File {} in {} has MD5 {} (expected {})'.format(fileName, container, zippedHash.hexdigest(), md5sum))
+                        return False
+    # File was not found in zip.
+    print('Missing file inside .zip: File {} not found in {}'.format(fileName, container))
+    return False
+
+def coreExists(checkMe, emuDict):
+    if "emulator" in checkMe:
+        if checkMe["emulator"] in emuDict.keys():
+            hasEmu = True
+        else:
+            hasEmu = False
+    else:
+        # Emulator not defined, check BIOS
+        hasEmu = True
+    if hasEmu and "core" in checkMe:
+        if checkMe["core"] in emuDict[checkMe["emulator"]]:
+            hasCore = True
+        else:
+            hasCore = False
+    else:
+        # Either core is undefined or emulator is not installed.
+        # Set core presence to emulator presence, we'll assume there's only one core or it applies to all.
+        hasCore = hasEmu
+    return hasCore
+
+def checkBios(systems, prefix, filterROMs):
+    systemDict = {}
+    emuDict = {}
+    systemName = ""
+    configFile = "/storage/.config/emulationstation/es_systems.cfg"
+    configData = elementTree.parse(configFile)
+    configRoot = configData.getroot()
+
+    if filterROMs:
+        # Load systems & emulators from es_systems.cfg
+        # System full name stored but not currently used, may be useful for the readme function.
+        for activeSystem in configRoot:
+            for systemTag in activeSystem:
+                if systemTag.tag == "fullname":
+                    systemName = systemTag.text
+                elif systemTag.tag == "name":
+                    systemDict[systemTag.text] = systemName
+                    systemName = ""
+                elif systemTag.tag == "emulators":
+                    for emulatorTag in systemTag:
+                        emulatorName = emulatorTag.attrib['name']
+                        for coreTag in emulatorTag[0]:
+                            if emulatorName in emuDict.keys():
+                                if not coreTag.text in emuDict[emulatorName]:
+                                    emuDict[emulatorName].append(coreTag.text)
+                            else:
+                                emuDict[emulatorName] = [coreTag.text]
+    else:
+        for system in systems.keys():
+            systemDict[system] = systems[system]['name']
+
+    missingBios = {}
+    for system in systems.keys():
+        if system in systemDict.keys():
+            if coreExists(systems[system], emuDict) or filterROMs == False:
+                for file in systems[system]["biosFiles"]:
+                    if coreExists(file, emuDict) or filterROMs == False:
+                        filepath = prefix + "/" + file["file"]
+                        if isfile(filepath):
+                            if not "zippedFile" in file:
+                                md5 = md5sum(filepath)
+                                if md5 != file["md5"] and file["md5"] != "":
+                                    if system not in missingBios:
+                                        missingBios[system] = {}
+                                    missingBios[system][file["file"]] = { "status": BiosStatus.UNTESTED, "md5": file["md5"], "file": file["file"] }
+                            else:
+                                if 'altmd5' in file:
+                                    if not checkInsideZip(filepath, file["zippedFile"], file["md5"], file["altmd5"]):
+                                        if system not in missingBios:
+                                            missingBios[system] = {}
+                                        missingBios[system][file["file"]] = { "status": BiosStatus.UNTESTED, "md5": file["md5"], "file": file["file"] }
+                                else:
+                                    if not checkInsideZip(filepath, file["zippedFile"], file["md5"]):
+                                        if system not in missingBios:
+                                            missingBios[system] = {}
+                                        missingBios[system][file["file"]] = { "status": BiosStatus.UNTESTED, "md5": file["md5"], "file": file["file"] }
+                        else:
+                            if system not in missingBios:
+                                missingBios[system] = {}
+                            missingBios[system][file["file"]] = { "status": BiosStatus.MISSING, "md5": file["md5"], "file": file["file"] }
+    return missingBios
+
+def displayMissingBios(systems, missingBios):
+    sortedMissingBios = OrderedDict(sorted(missingBios.items()))
+    if sortedMissingBios:
+        for system in sortedMissingBios:
+            print("> {}".format(system))
+            for file in sortedMissingBios[system].keys():
+                md5str = "-"
+                if sortedMissingBios[system][file]["md5"] != "":
+                    md5str = sortedMissingBios[system][file]["md5"]
+                print("{} {} {}".format(sortedMissingBios[system][file]["status"], md5str, sortedMissingBios[system][file]["file"]))
+    else:
+        print("No missing bios")
+
+def createReadme(systems):
+    for system in sorted(systems):
+        print("{}:".format(systems[system]["name"]))
+        for bios in systems[system]["biosFiles"]:
+            print("{} {}".format(bios["md5"], bios["file"]))
+        print("")
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        prefix = "/storage/roms"
+        displayMissingBios(systems, checkBios(systems, prefix, True))
+    elif sys.argv[1] == "--noFilter":
+        prefix = "/storage/roms"
+        displayMissingBios(systems, checkBios(systems, prefix, False))
+    elif sys.argv[1] == "--createReadme":
+        createReadme(systems)
+    elif len(sys.argv) == 3 and sys.argv[1] == "--filter":
+        prefix = "/storage/roms"
+        lowered_name = sys.argv[2].lower()
+
+        filtered_systems = {}
+        for system in systems:
+            if lowered_name in system.lower() or lowered_name in systems[system]['name'].lower():
+                filtered_systems[system] = systems[system]
+
+        if len(filtered_systems) == 0:
+            print("No system named {} found".format(sys.argv[2]))
+            exit(1)
+
+        displayMissingBios(filtered_systems, checkBios(filtered_systems, prefix, True))

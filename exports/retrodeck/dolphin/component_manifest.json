@@ -1,0 +1,341 @@
+{
+  "dolphin": {
+    "name": "Dolphin",
+    "description": "Dolphin is a Nintendo Wii (wii) and Gamecube (gc) emulator.",
+    "component_type": "Emulator",
+    "url_rdwiki": "https://retrodeck.readthedocs.io/en/latest/wiki_emulator_guides/dolphin-primehack/dolphin-primehack-guide/",
+    "url_webpage": "https://dolphin-emu.org",
+    "url_donation_purchase": "",
+    "url_source": "https://github.com/dolphin-emu/dolphin",
+    "system": [
+      "gc",
+      "wii"
+    ],
+    "system_friendly_name": [
+      "GameCube",
+      "Wii"
+    ],
+    "compatible_presets": {
+      "ask_to_exit": [
+        "false",
+        "true"
+      ],
+      "cheevos": [
+        "false",
+        "true"
+      ],
+      "cheevos_hardcore": [
+        "false",
+        "true"
+      ],
+      "universal_dyn_input": [
+        "false",
+        "true"
+      ]
+    },
+    "preset_actions": {
+      "config_file_format": "dolphin",
+      "ask_to_exit": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "ConfirmStop",
+          "action": "change",
+          "new_setting_value": "True",
+          "section": "Interface",
+          "target_file": "$dolphin_config",
+          "defaults_file": "$dolphin_rd_config_dir/Dolphin.ini"
+        }
+      ],
+      "cheevos": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Enabled",
+          "action": "change",
+          "new_setting_value": "True",
+          "section": "Achievements",
+          "target_file": "$dolphin_config_RetroAchievements",
+          "defaults_file": "$dolphin_rd_config_dir/RetroAchievements.ini"
+        },
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Username",
+          "action": "change",
+          "new_setting_value": "$cheevos_username",
+          "section": "Achievements",
+          "target_file": "$dolphin_config_RetroAchievements",
+          "defaults_file": "$dolphin_rd_config_dir/RetroAchievements.ini"
+        },
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "ApiToken",
+          "action": "change",
+          "new_setting_value": "$cheevos_token",
+          "section": "Achievements",
+          "target_file": "$dolphin_config_RetroAchievements",
+          "defaults_file": "$dolphin_rd_config_dir/RetroAchievements.ini"
+        }
+      ],
+      "cheevos_hardcore": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "HardcoreEnabled",
+          "action": "change",
+          "new_setting_value": "True",
+          "section": "Achievements",
+          "target_file": "$dolphin_config_RetroAchievements",
+          "defaults_file": "$dolphin_rd_config_dir/RetroAchievements.ini"
+        }
+      ],
+      "universal_dyn_input": [
+        {
+          "enabled_states": [
+            "true"
+          ],
+          "setting_name": "Universal Dynamic Input",
+          "action": "install",
+          "source": "/app/retrodeck/components/shared-data/DynamicInputTextures/",
+          "destination": "$XDG_DATA_HOME/dolphin-emu/Load/DynamicInputTextures/",
+          "cleanup_type": "purge"
+        }
+      ],
+      "bios": [
+        {
+          "filename": "gc-dvd-20010608.bin",
+          "md5": "561532ad496f644897952d2cef5bb431",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/EU",
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube DVD BIOS",
+          "required": "Optional"
+        },
+        {
+          "filename": "gc-dvd-20010831.bin",
+          "md5": "b953eb1a8fc9922b3f7051c1cdc451f1",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/EU",
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube DVD BIOS",
+          "required": "Optional"
+        },
+        {
+          "filename": "gc-dvd-20020402.bin",
+          "md5": "413154dd0e2c824c9b18b807fd03ec4e",
+          "system": "gc",
+          "paths": [
+            "$saves_paths_path/gc/dolphin/EU",
+            "$saves_paths_paths_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube DVD BIOS",
+          "required": "Optional"
+        },
+        {
+          "filename": "gc-dvd-20020823.bin",
+          "md5": "c03f6bbaf644eb9b3ee261dbe199eb42",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/EU",
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube DVD BIOS",
+          "required": "Optional"
+        },
+        {
+          "filename": "gc-ntsc-10.bin",
+          "md5": "fc924a7c879b661abc37cec4f018fdf3",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube USA BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "gc-ntsc-11.bin",
+          "md5": "019e39822a9ca3029124f74dd4d55ac4",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube USA BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "gc-ntsc-12.bin",
+          "md5": "b17148254a5799684c7d783206504926",
+          "system": "gc",
+          "paths": [
+            "$saves_path/gc/dolphin/US",
+            "$saves_path/gc/dolphin/JP"
+          ],
+          "description": "GameCube USA BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "gc-pal-10.bin",
+          "md5": "0cdda509e2da83c85bfe423dd87346cc",
+          "system": "gc",
+          "paths": "$saves_path/gc/dolphin/EU",
+          "description": "GameCube EU BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "gc-pal-11.bin",
+          "md5": "339848a0b7c2124cf155276c1e79cbd0",
+          "system": "gc",
+          "paths": "$saves_path/gc/dolphin/EU",
+          "description": "GameCube EU BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "gc-pal-12.bin",
+          "md5": "db92574caab77a7ec99d4605fd6f2450",
+          "system": "gc",
+          "paths": "$saves_path/gc/dolphin/EU",
+          "description": "GameCube EU BIOS",
+          "required": "Optional, for boot logo"
+        },
+        {
+          "filename": "segaboot.gcm",
+          "md5": "e35756db213e6521cd72dbaa68202f42",
+          "system": "triforce",
+          "paths": "$bios_path/Triforce",
+          "description": "Triforce BIOS",
+          "required": "Required"
+        },
+        {
+          "filename": "gba_bios.bin",
+          "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
+          "system": "gba",
+          "description": "Game Boy Advance BIOS",
+          "required": "Optional, for boot logo",
+          "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570"
+        },
+        {
+          "filename": "dsp_rom.bin",
+          "system": "triforce",
+          "paths": "$bios_path/dolphin-emu/Sys/GC"
+        },
+        {
+          "filename": "dsp_coef.bin",
+          "system": "triforce",
+          "paths": "$bios_path/dolphin-emu/Sys/GC"
+        },
+        {
+          "filename": "font_western.bin",
+          "system": "triforce",
+          "paths": "$bios_path/dolphin-emu/Sys/GC"
+        },
+        {
+          "filename": "font_japanese.bin",
+          "system": "triforce",
+          "paths": "$bios_path/dolphin-emu/Sys/GC"
+        },
+        {
+          "filename": "keys.bin",
+          "system": "triforce"
+        },
+        {
+          "filename": "codehandler.bin",
+          "md5": "1f118b8735fcf40c20b38c3184eebfd9",
+          "sha256": "2b2ff0716aeb9b806cc61181e559041312957f25f04c435bd7da80a78917b33b",
+          "system": "triforce"
+        },
+        {
+          "filename": "rtl8723a_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8723b_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8723d_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8761a_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8761bu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8821a_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8821c_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8822b_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8822cu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8851bu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8852au_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8852bu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8852cu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8852btu_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        },
+        {
+          "filename": "rtl8922au_fw.bin",
+          "system": "triforce",
+          "paths": "$bios_path/Load/Firmware/rtl_bt"
+        }
+      ]
+    }
+  }
+}

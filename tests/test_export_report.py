@@ -104,5 +104,25 @@ class CorrectedFilesPage(unittest.TestCase):
         self.assertIn('"exports/**"', workflow)
 
 
+class SummariesReadAsSentences(unittest.TestCase):
+    """The page shows each run's summary. RetroPie's joined its parts with
+    semicolons and read fs-uae's "(e.g, kick13.rom)" as two file names."""
+
+    def test_an_abbreviation_is_not_a_file_name(self):
+        from exporter.retropie_exporter import Exporter as RetroPieExporter
+
+        names = RetroPieExporter._listed("BIOS files (e.g, kick13.rom) i.e. Kickstart")
+        self.assertEqual(names, {"kick13.rom"})
+
+    def test_retropie_outcome_has_no_semicolon(self):
+        from exporter.retropie_exporter import Exporter as RetroPieExporter
+
+        exporter = RetroPieExporter()
+        exporter._skipped = {"names no file to extend": ["fs-uae", "amiberry"]}
+        text = exporter.outcome({}, {"a.sh": ""})
+        self.assertNotIn(";", text)
+        self.assertIn("amiberry, fs-uae: names no file to extend", text)
+
+
 if __name__ == "__main__":
     unittest.main()

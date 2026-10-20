@@ -1,0 +1,21 @@
+{
+  "platform": "rocknix",
+  "originals": {
+    "rocknix-systems": "https://raw.githubusercontent.com/ROCKNIX/distribution/20261001/projects/ROCKNIX/packages/rocknix/sources/scripts/rocknix-systems",
+    "emulators/package.mk": "https://raw.githubusercontent.com/ROCKNIX/distribution/20261001/projects/ROCKNIX/packages/virtual/emulators/package.mk"
+  },
+  "files": [
+    "rocknix-systems"
+  ],
+  "summary": "38 kept, 106 added, 1 hash corrected, 0 requirements corrected, 1338 additions left out",
+  "hashes_corrected": [
+    "psx/scph1001.bin md5"
+  ],
+  "hashes_filled": [],
+  "sizes_corrected": [],
+  "sizes_removed": [],
+  "hashes_cleared": [],
+  "requirements_corrected": 0,
+  "withheld": [],
+  "invalid": []
+}
