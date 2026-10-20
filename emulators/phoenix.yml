@@ -1,0 +1,71 @@
+emulator: Phoenix
+type: standalone
+core_classification: other
+source: "http://www.arts-union.ru"
+upstream: "http://www.arts-union.ru"
+profiled_date: "2026-10-20"
+core_version: "2.8.JAG"
+display_name: "3DO, Atari Jaguar (Phoenix)"
+mode: standalone
+cores:
+  - phoenix
+systems:
+  - 3do
+  - atari-jaguar
+
+notes: |
+  Closed-source 3DO and Atari Jaguar emulator by Altmer (Arts-Union), the
+  author of FreeDO. This profile reads the build RetroBat installs,
+  PhoenixEmuProject.exe 2.8.JAG (x86-64, dated 2023-01-05), with objdump and
+  the strings it carries.
+
+  Phoenix names no BIOS file. Every dump is registered in phoenix.config.xml
+  under a platform and a dump type: BIOS, CD-ROM, FMV-ROM, FONT-ROM and NVRAM
+  for 3DO, BIOS and CARTRIDGE for Jaguar. emulatorlauncher rewrites that file
+  before each launch, registering the game and, as the BIOS, panafz10.bin for
+  3DO or "[BIOS] Atari Jaguar (World).j64" for Jaguar from the RetroBat bios
+  folder (emulatorLauncher Generators/Phoenix.Generator.cs:23-95).
+
+  The 3DO machine is emulated at hardware level (MADAM, CLIO, the CEL engine
+  and the ARM CPU) and starts from the BIOS dump. Its md5 is compared with
+  two values, the PAL Anvil BIOS a48e6746 and the same image with RSA
+  disabled cf11bbb5 (function at 0x4a10d0, strings at 0xb03a38 and
+  0xb03a60), which the 2.8.J changelog lists as PAL BIOS support. FMV-ROM is
+  the video module ROM, which the 1.2 changelog describes as viewable only,
+  and FONT-ROM the kanji font of Japanese consoles. Two further md5 values
+  (0xb03bd0, 0xb03bf8) are compared against the CD-ROM dump and set per game
+  video parameters.
+
+  Jaguar cartridges run through the boot ROM, and the File menu offers to add
+  a header, or a generic header, to a headerless cartridge
+  dump so that the boot ROM accepts it.
+
+files:
+  - name: panafz10.bin
+    system: 3do
+    required: true
+    description: "3DO BIOS"
+    note: >-
+      Any BIOS dump is accepted, registered as the 3DO BIOS. The name is the
+      one RetroBat registers.
+
+  - name: panafz10e-anvil.bin
+    system: 3do
+    required: false
+    md5: "a48e6746bd7edec0f40cff078f0bb19f"
+    description: "PAL Anvil BIOS"
+    note: "Recognized by md5 for PAL operation (0xb03a38, compared at 0x4a1144)."
+
+  - name: panafz10e-anvil-norsa.bin
+    system: 3do
+    required: false
+    md5: "cf11bbb5a16d7af9875cca9de9a15e09"
+    description: "PAL Anvil BIOS, RSA check disabled"
+    note: "Recognized by md5 for PAL operation (0xb03a60, compared at 0x4a120d)."
+
+  - name: "[BIOS] Atari Jaguar (World).j64"
+    system: atari-jaguar
+    required: true
+    description: "Jaguar boot ROM"
+    note: >-
+      Registered as the Jaguar BIOS. The name is the one RetroBat registers.

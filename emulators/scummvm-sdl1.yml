@@ -1,0 +1,553 @@
+emulator: ScummVM (SDL1)
+type: standalone
+core_classification: game_engine
+source: "https://github.com/scummvm/scummvm"
+upstream: "https://github.com/scummvm/scummvm"
+logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.svg"
+profiled_date: "2026-10-20"
+source_commit: "fed42f2068dcafc6aafa1c28c77e4c88def74b66"
+core_version: "2026.3.0"
+display_name: "ScummVM (SDL1)"
+cores: [scummvm-sdl1]
+systems: [scummvm]
+verification: existence
+
+notes: |
+  Standalone ScummVM at tag v2026.3.0, as RetroPie's scummvm-sdl1 package
+  builds it: ./configure --enable-release --enable-vkeybd with SDL1
+  (SDL_CONFIG=sdl-config), and --opengl-mode=none on the Raspberry Pi. The
+  package then runs make install with --prefix set to its install
+  directory. RetroPie's scummvm package builds the same tag the same way
+  against SDL2 and reads the same files.
+
+  Paths below are relative to that install prefix. configure sets datadir
+  to ${datarootdir}/scummvm and passes it to the code as DATA_PATH
+  (configure:391, configure:7462). OSystem_SDL::addSysArchivesToSearchSet
+  adds DATA_PATH to the search set, four levels deep, then the current
+  directory (backends/platform/sdl/sdl.cpp:639-652). base/main.cpp:281-291
+  also adds the extrapath. RetroPie's launch script passes
+  --extrapath=<prefix>/extra unless scummvm.ini already sets one, and
+  copies the virtual keyboard packs there. Every file is opened by name
+  through this search set, so any of these directories, or the game
+  directory, serves it.
+
+  make install copies DIST_FILES_THEMES, DIST_FILES_VKEYBD,
+  DIST_FILES_ENGINEDATA, DIST_FILES_ENGINEDATA_BIG and
+  DIST_FILES_SOUNDFONTS to datadir (ports.mk:8-26, Makefile.common:400-471).
+  The engine data list depends on the engines configure enables. A release
+  build enables the engines marked yes in their configure.engine. Hashes
+  below are those of the files in the tagged tree.
+
+  Files the build does not read at this configuration: cryo.dat,
+  macventure.dat and monkey4-patch.m4b belong to engines that default to
+  off. fonts-imgui.dat needs ImGui, which RetroPie disables. wwwroot.zip
+  needs SDL_net, which RetroPie's dependencies do not install. The engine
+  GLSL shaders are installed only with USE_OPENGL_SHADERS.
+
+  The MT-32 emulator reads the CM-32L pair first, then the MT-32 pair
+  (audio/softsynth/mt32.cpp:286-301). ScummVM does not ship them.
+  Without them MT-32 music is not available. Path extra/ is where
+  RetroPie points the extrapath.
+
+  An engine data file marked required is one whose engine refuses to start
+  a game without it. Other engines and the launcher run without it.
+
+files:
+  # MT-32 and CM-32L ROMs, not shipped with ScummVM.
+  - name: "CM32L_CONTROL.ROM"
+    path: "extra/CM32L_CONTROL.ROM"
+    required: false
+    source_ref: "audio/softsynth/mt32.cpp:293"
+    note: "Roland CM-32L control ROM, tried before the MT-32 pair. Must be paired with CM32L_PCM.ROM."
+
+  - name: "CM32L_PCM.ROM"
+    path: "extra/CM32L_PCM.ROM"
+    required: false
+    source_ref: "audio/softsynth/mt32.cpp:293"
+    note: "Roland CM-32L PCM sample ROM."
+
+  - name: "MT32_CONTROL.ROM"
+    path: "extra/MT32_CONTROL.ROM"
+    required: false
+    source_ref: "audio/softsynth/mt32.cpp:298-301, audio/softsynth/mt32.cpp:581-584"
+    note: "Roland MT-32 control ROM. Must be paired with MT32_PCM.ROM."
+
+  - name: "MT32_PCM.ROM"
+    path: "extra/MT32_PCM.ROM"
+    required: false
+    source_ref: "audio/softsynth/mt32.cpp:298-301, audio/softsynth/mt32.cpp:581-584"
+    note: "Roland MT-32 PCM sample ROM."
+
+  # GUI themes and launcher data.
+  - name: "scummremastered.zip"
+    path: "share/scummvm/scummremastered.zip"
+    required: false
+    bundled: true
+    size: 96612
+    sha1: "6bb54dde77f7c2968f1fcfb9f1de0eeebfda0dec"
+    md5: "e5232366f07efcd7a9f5358812addbd1"
+    source_ref: "gui/gui-manager.cpp:87-100, gui/ThemeEngine.cpp:2003-2017"
+    note: "Default GUI theme (gui_theme defaults to scummremastered). Without it the launcher falls back to the built-in theme."
+
+  - name: "scummmodern.zip"
+    path: "share/scummvm/scummmodern.zip"
+    required: false
+    bundled: true
+    size: 68063
+    sha1: "e09657fec585c1b7fb1c4ce0fcdbf7e4dd13d121"
+    md5: "20549cceb5c91e0c7900965777052b77"
+    source_ref: "gui/ThemeEngine.cpp:2003-2017"
+    note: "Modern GUI theme, listed by listUsableThemes from the search path."
+
+  - name: "scummclassic.zip"
+    path: "share/scummvm/scummclassic.zip"
+    required: false
+    bundled: true
+    size: 16342
+    sha1: "f987edf629a10e020c228714067dad9b7ca2fe1f"
+    md5: "247382a8001da6a71e1e34d23bbe7de1"
+    source_ref: "gui/ThemeEngine.cpp:2003-2017"
+    note: "Classic GUI theme."
+
+  - name: "residualvm.zip"
+    path: "share/scummvm/residualvm.zip"
+    required: false
+    bundled: true
+    size: 97266
+    sha1: "fda75a8f762fe93b5da33bc61a236d69530365cb"
+    md5: "53ce2b27f1ec22efb72328f96f70e30a"
+    source_ref: "gui/ThemeEngine.cpp:2003-2017"
+    note: "ResidualVM GUI theme."
+
+  - name: "gui-icons.dat"
+    path: "share/scummvm/gui-icons.dat"
+    required: false
+    bundled: true
+    size: 3315855
+    sha1: "38e74e6994924781487a0d39cc53dc4708a90c1c"
+    md5: "9c59e0e9875434456ec1b7eb8e51666f"
+    source_ref: "gui/gui-manager.cpp:118"
+    note: "Game icons shown in the launcher grid view."
+
+  - name: "shaders.dat"
+    path: "share/scummvm/shaders.dat"
+    required: false
+    bundled: true
+    size: 657234
+    sha1: "c67ec35c3f6e2ba7f09b8f61a78df7f713ff040c"
+    md5: "f073f17187d0bfa3e7ebb7f328847969"
+    source_ref: "gui/shaderbrowser-dialog.cpp:88, backends/graphics/opengl/opengl-graphics.cpp:423"
+    note: "Scaler shader pack, read by the OpenGL graphics manager only."
+
+  - name: "translations.dat"
+    path: "share/scummvm/translations.dat"
+    required: false
+    bundled: true
+    size: 3693914
+    sha1: "e5b6f6d6473e2d6aa0a250fd9983b573ebf6fbe4"
+    md5: "a206e54bac1af13559ac8b2d9e550577"
+    source_ref: "common/translation.cpp:282-300"
+    note: "GUI translations. Installed because the build keeps USE_TRANSLATION. Without it the GUI stays in English."
+
+  - name: "pred.dic"
+    path: "share/scummvm/pred.dic"
+    required: false
+    bundled: true
+    size: 126481
+    sha1: "20f9a6a9838e3189774ea7ac6b8e62d6720dc683"
+    md5: "5e4442498b8c6a0f815b4030b2a52acb"
+    source_ref: "gui/predictivedialog.cpp:119-127"
+    note: "Dictionary of the predictive text input dialog. The dialog runs without it, with no word prediction."
+
+  - name: "vkeybd_default.zip"
+    path: "share/scummvm/vkeybd_default.zip"
+    required: false
+    bundled: true
+    size: 184946
+    sha1: "4d787bd5a071c729c4f374e6e7c7d7b06d7f9f63"
+    md5: "bf51a61f07625ea20e891058afaa892c"
+    source_ref: "backends/events/default/default-events.cpp:74-77, backends/vkeybd/virtual-keyboard.cpp:118-128"
+    note: "Default virtual keyboard pack, built in because RetroPie passes --enable-vkeybd. RetroPie also copies it to extra/."
+
+  - name: "vkeybd_small.zip"
+    path: "share/scummvm/vkeybd_small.zip"
+    required: false
+    bundled: true
+    size: 86470
+    sha1: "e813795cbc79e87facf7d1560c1f5946eab72167"
+    md5: "95a179198a8fa032c751e476042c8849"
+    source_ref: "backends/events/default/default-events.cpp:74-77"
+    note: "Smaller virtual keyboard pack, loaded when vkeybd_pack_name selects it. RetroPie also copies it to extra/."
+
+  - name: "Roland_SC-55.sf2"
+    path: "share/scummvm/Roland_SC-55.sf2"
+    required: false
+    bundled: true
+    size: 3283278
+    sha1: "9dba9212f2e34446ab034595665809f09f303d63"
+    md5: "dbb97c34404b753724a66fe0108a32e1"
+    source_ref: "base/commandLine.cpp:349-351, audio/softsynth/fluidsynth.cpp:284-310"
+    note: "Default FluidSynth soundfont. Installed because RetroPie pulls libfluidsynth-dev in. FluidSynth music is off when no soundfont is found."
+
+  # Engine data shared by every engine.
+  - name: "achievements.dat"
+    path: "share/scummvm/achievements.dat"
+    required: false
+    bundled: true
+    size: 249239
+    sha1: "379f9def6d0de4b4bad18b0177df81783a51f17b"
+    md5: "73cf5bd61896442a990e363f284a0bc2"
+    source_ref: "engines/achievements.cpp:100-115"
+    note: "Achievement messages. Missing file disables achievement messages with a warning."
+
+  - name: "classicmacfonts.dat"
+    path: "share/scummvm/classicmacfonts.dat"
+    required: false
+    bundled: true
+    size: 626103
+    sha1: "768b6231c6068e3d9b4f2cc6b1b1e5485578fde1"
+    md5: "d4264d4573f22d290e033e1d834d7221"
+    source_ref: "graphics/macgui/macfontmanager.cpp:218-228"
+    note: "Classic Macintosh bitmap fonts. Missing file falls back to built-in fonts."
+
+  - name: "encoding.dat"
+    path: "share/scummvm/encoding.dat"
+    required: false
+    bundled: true
+    size: 179670
+    sha1: "11d3873337827195bc16c3d3175ad00f1777ed95"
+    md5: "f2e88b2faec499a4914c3a0bcffc7db1"
+    source_ref: "common/str-enc.cpp:142-145"
+    note: "CJK code page tables. Missing file disables CJK text conversion with a warning."
+
+  - name: "helpdialog.zip"
+    path: "share/scummvm/helpdialog.zip"
+    required: false
+    bundled: true
+    size: 207764
+    sha1: "386d8a89e180f8abab53e5d5926b6a81ee4b31dd"
+    md5: "a9584a928c0f52ef28b33d8702983c35"
+    source_ref: "gui/helpdialog.cpp:69"
+    note: "Images for the in-app help dialog."
+
+  - name: "macgui.dat"
+    path: "share/scummvm/macgui.dat"
+    required: false
+    bundled: true
+    size: 65656
+    sha1: "1eed577281b8819367d1ee99b1a76ff3e1920735"
+    md5: "d97f2965013b343dd3d4fdbbc7192f15"
+    source_ref: "graphics/macgui/datafiles.cpp:81-84"
+    note: "Macintosh window borders for the MacGUI engines. Missing file logs a warning."
+
+  # Per-engine data. Each engine refuses to start a game without its file.
+  - name: "access.dat"
+    path: "share/scummvm/access.dat"
+    required: true
+    bundled: true
+    size: 520352
+    sha1: "775b12b7e787bbaaeb73aa45b1ad3bb383e041ef"
+    md5: "4f9dd40b455876d5c54b5ebd93aec88c"
+    source_ref: "engines/access/resources.cpp:42-48"
+    note: "Access engine (Amazon: Guardians of Eden, Martian Memorandum)."
+
+  - name: "bagel.dat"
+    path: "share/scummvm/bagel.dat"
+    required: true
+    bundled: true
+    size: 20584
+    sha1: "f83084c72b1ff8e16f9c013e5ef7cfbb5f3cc835"
+    md5: "f6d90885f6962f89de02e34031111599"
+    source_ref: "engines/bagel/spacebar/baglib/bagel.cpp:111-118"
+    note: "BAGEL engine (The Space Bar)."
+
+  - name: "cryomni3d.dat"
+    path: "share/scummvm/cryomni3d.dat"
+    required: true
+    bundled: true
+    size: 70416
+    sha1: "3971847e26be0abad8196caf03e5852a81ddbdea"
+    md5: "7224c7a94074addeb69015b1346695d2"
+    source_ref: "engines/cryomni3d/cryomni3d.cpp:79-86"
+    note: "Cryo Omni3D engine (Versailles 1685)."
+
+  - name: "darkseed.dat"
+    path: "share/scummvm/darkseed.dat"
+    required: false
+    bundled: true
+    size: 37183
+    sha1: "343172f1bfff8cb8c4abefa95e211379f39583b7"
+    md5: "9a9cfe40dcca517f130d4430bd1af643"
+    source_ref: "engines/darkseed/darkseed.cpp:62-71"
+    note: "Darkseed engine. Read only for the Chinese release, which does not start without it."
+
+  - name: "drascula.dat"
+    path: "share/scummvm/drascula.dat"
+    required: true
+    bundled: true
+    size: 259625
+    sha1: "05c97e92439b67aea8f6eb7fc96db023edf62124"
+    md5: "b304979ed642a6dcaf26f43f8a37a1de"
+    source_ref: "engines/drascula/drascula.cpp:985-1000"
+    note: "Drascula: The Vampire Strikes Back."
+
+  - name: "got.gfx"
+    path: "share/scummvm/got.gfx"
+    required: false
+    bundled: true
+    size: 288199
+    sha1: "0c9603da78b980bcf391bbf5f9103a5a642c4ee8"
+    md5: "a29f591769bd731df0d9ddd3a191fe8c"
+    source_ref: "engines/got/gfx/gfx_chunks.cpp:120-130"
+    note: "God of Thunder graphics. Without it the engine extracts them from got.exe."
+
+  - name: "got.aud"
+    path: "share/scummvm/got.aud"
+    required: false
+    bundled: true
+    size: 11313
+    sha1: "209ab6d86a7c44f241689c5511b2027f7ad2c7c4"
+    md5: "d13cc3c481e84e787ec8aa86dffc565f"
+    source_ref: "engines/got/sound.cpp:38, engines/got/sound.cpp:194-198"
+    note: "God of Thunder menu music (GOT.AUD). Missing file logs a warning."
+
+  - name: "hadesch_translations.dat"
+    path: "share/scummvm/hadesch_translations.dat"
+    required: false
+    bundled: true
+    size: 431
+    sha1: "17aae444b3010e72e092635d25d3b93c104b0ad2"
+    md5: "7857da7e56a11e0749fb45100c323b3c"
+    source_ref: "engines/hadesch/hadesch.cpp:475-477"
+    note: "Hades Challenge string translations."
+
+  - name: "hugo.dat"
+    path: "share/scummvm/hugo.dat"
+    required: true
+    bundled: true
+    size: 186866
+    sha1: "74a5fa172f5327fedc145cb9eccc8fd050b9cfb9"
+    md5: "a865e70f1b0998a500f522dab441c8fc"
+    source_ref: "engines/hugo/hugo.cpp:455-466"
+    note: "Hugo trilogy."
+
+  - name: "kyra.dat"
+    path: "share/scummvm/kyra.dat"
+    required: true
+    bundled: true
+    size: 2026288
+    sha1: "1a754b9e73fd06b0ad40b5ccb246f3ad7d5b68d3"
+    md5: "325ee8f363f38d7f6449bbf64a7f6f10"
+    source_ref: "engines/kyra/resource/staticres.cpp:147-198, engines/kyra/resource/resource.h:1252"
+    note: "Kyrandia, Lands of Lore and Eye of the Beholder engines. Opened as KYRA.DAT."
+
+  - name: "lure.dat"
+    path: "share/scummvm/lure.dat"
+    required: true
+    bundled: true
+    size: 768832
+    sha1: "516347ec0ec2a397265d1b2fb053aa3758382e09"
+    md5: "6f90cf73f36453d332d5c9cee311f81c"
+    source_ref: "engines/lure/lure.cpp:56-58"
+    note: "Lure of the Temptress."
+
+  - name: "mort.dat"
+    path: "share/scummvm/mort.dat"
+    required: true
+    bundled: true
+    size: 76302
+    sha1: "0b9d0fa2a18eadf61aeddc19128ef90898ab7206"
+    md5: "3cfb16d7bab4d77606b3b1274b8ae870"
+    source_ref: "engines/mortevielle/mortevielle.cpp:299-301"
+    note: "Mortevielle."
+
+  - name: "nancy.dat"
+    path: "share/scummvm/nancy.dat"
+    required: true
+    bundled: true
+    size: 254950
+    sha1: "198e3dbf47cf8c0ffc65d92094f7d78ec5e6a4ed"
+    md5: "575504ef7071c7fbfa2e3e1609f6bfc5"
+    source_ref: "engines/nancy/nancy.cpp:661-668"
+    note: "Nancy Drew engine."
+
+  - name: "neverhood.dat"
+    path: "share/scummvm/neverhood.dat"
+    required: true
+    bundled: true
+    size: 23804
+    sha1: "490012c996ba0c56dd8d077e1418ee53b1e96397"
+    md5: "dfaab12ffb265646f31f51b6904246d1"
+    source_ref: "engines/neverhood/neverhood.cpp:91, engines/neverhood/staticdata.cpp:44-49"
+    note: "The Neverhood."
+
+  - name: "prince_translation.dat"
+    path: "share/scummvm/prince_translation.dat"
+    required: false
+    bundled: true
+    size: 168060
+    sha1: "57403a286c4d251384442a507d285b2dc5ce330e"
+    md5: "993adab2fd44277d5fd7aa5971e7099c"
+    source_ref: "engines/prince/prince.cpp:336-342"
+    note: "The Prince and the Coward. Read only for the fan translated releases, which do not start without it."
+
+  - name: "queen.tbl"
+    path: "share/scummvm/queen.tbl"
+    required: true
+    bundled: true
+    size: 1100505
+    sha1: "7bafa28dfd9b3be17430d467d8787d8204437ba0"
+    md5: "93c6d6379eb0290ce93854a6888ec3f4"
+    source_ref: "engines/queen/resource.cpp:147-166"
+    note: "Flight of the Amazon Queen resource table. Only the English floppy release (PEM10) has a built-in table."
+
+  - name: "sky.cpt"
+    path: "share/scummvm/sky.cpt"
+    required: true
+    bundled: true
+    size: 419427
+    sha1: "fa03ede717223eaf011491d2066e37eb112e735b"
+    md5: "9d00157b1cebd6368cbf88135c098f40"
+    source_ref: "engines/sky/compact.cpp:125-140"
+    note: "Beneath a Steel Sky. The engine also checks the file size against SKY_CPT_SIZE."
+
+  - name: "supernova.dat"
+    path: "share/scummvm/supernova.dat"
+    required: true
+    bundled: true
+    size: 523211
+    sha1: "8a571cfc431b5fe794f0262f0e55f72927ab27b4"
+    md5: "89664136c503a30894d5c713be5bfe90"
+    source_ref: "engines/supernova/supernova.cpp:464-482"
+    note: "Mission Supernova."
+
+  - name: "teenagent.dat"
+    path: "share/scummvm/teenagent.dat"
+    required: true
+    bundled: true
+    size: 403315
+    sha1: "0d488164930332bae3aa1ad38cef44abbe3d00a6"
+    md5: "4594620989a0bfd8b120da2de7ac30de"
+    source_ref: "engines/teenagent/resources.cpp:306-316"
+    note: "Teen Agent."
+
+  - name: "titanic.dat"
+    path: "share/scummvm/titanic.dat"
+    required: true
+    bundled: true
+    size: 3197968
+    sha1: "15f51828f08fdbe01b56123e96312b5859a968c0"
+    md5: "4b2fb71201dc3795cff45df6200a1918"
+    source_ref: "engines/titanic/support/files_manager.cpp:39-43"
+    note: "Starship Titanic."
+
+  - name: "tony.dat"
+    path: "share/scummvm/tony.dat"
+    required: true
+    bundled: true
+    size: 24584
+    sha1: "a5e19f364bda6a0d2330495114c9ad665bb79ad0"
+    md5: "891022a4e2917bb54b5cdc9a46f5b3df"
+    source_ref: "engines/tony/tony.cpp:180-190"
+    note: "Tony Tough and the Night of Roasted Moths."
+
+  - name: "toon.dat"
+    path: "share/scummvm/toon.dat"
+    required: true
+    bundled: true
+    size: 20996
+    sha1: "85bb688125d66f2797a41f153ce1fa177027a83f"
+    md5: "2b71a5d9aa19219d46711e8a77451f0f"
+    source_ref: "engines/toon/toon.cpp:5417-5428"
+    note: "Toonstruck."
+
+  - name: "ultima.dat"
+    path: "share/scummvm/ultima.dat"
+    required: true
+    bundled: true
+    size: 15981464
+    sha1: "e049932518390257f4d49b1691cad229e6060079"
+    md5: "e359fb7f14c4cb072b6e9300a23a6d62"
+    source_ref: "engines/ultima/shared/engine/data_archive.cpp:84-90, engines/ultima/ultima4/ultima4.cpp:128, engines/ultima/nuvie/nuvie.cpp:99"
+    note: "Ultima engines (Ultima I, IV, VI and the Nuvie games)."
+
+  - name: "ultima8.dat"
+    path: "share/scummvm/ultima8.dat"
+    required: true
+    bundled: true
+    size: 238149
+    sha1: "6319d3a245297697c1e4def78dc231a3f30708bb"
+    md5: "e5b95811b05b9f0f593b49c860391200"
+    source_ref: "engines/ultima/ultima8/ultima8.cpp:177-182"
+    note: "Ultima VIII and Crusader."
+
+  - name: "wintermute.zip"
+    path: "share/scummvm/wintermute.zip"
+    required: true
+    bundled: true
+    size: 4520
+    sha1: "5302f543384b21fb55466118a6966e5ef46b85f6"
+    md5: "9783248899f9cb531f0a3e0a711ab8b3"
+    source_ref: "engines/wintermute/base/base_file_manager.cpp:396-400"
+    note: "Wintermute engine system font and placeholder images."
+
+  - name: "mm.dat"
+    path: "share/scummvm/mm.dat"
+    required: true
+    bundled: true
+    size: 268022
+    sha1: "ccbbd746d0413b4183aaf72e2b45c453978aa7b0"
+    md5: "e4ff5ad05afe5d1591678df2001e639c"
+    source_ref: "engines/mm/mm1/globals.cpp:60-64, engines/mm/xeen/files.cpp:70-75"
+    note: "Might and Magic 1 and the Xeen games."
+
+  - name: "freescape.dat"
+    path: "share/scummvm/freescape.dat"
+    required: true
+    bundled: true
+    size: 30124
+    sha1: "c6b3d3152e4e2ff4c9bf55e103bb39ed7faca2bd"
+    md5: "71697f90fb0c7747616dbb0799ce966b"
+    source_ref: "engines/freescape/assets.cpp:115-121"
+    note: "Freescape engine (Driller, Dark Side, Total Eclipse, Castle Master)."
+
+  - name: "myst3.dat"
+    path: "share/scummvm/myst3.dat"
+    required: true
+    bundled: true
+    size: 358287
+    sha1: "5fbf7b1a596219f0daab60a8ceb2f1e59e042243"
+    md5: "54e9056211f2fff255b6f66a3fe39a8d"
+    source_ref: "engines/myst3/database.cpp:460-463"
+    note: "Myst III: Exile."
+
+  - name: "grim-patch.lab"
+    path: "share/scummvm/grim-patch.lab"
+    required: true
+    bundled: true
+    size: 9341
+    sha1: "3c43b7a0125f88a9f83ae4307dca57867ffd637c"
+    md5: "32b777b824f02b1e1259903740964058"
+    source_ref: "engines/grim/resource.cpp:126-129"
+    note: "Grim Fandango. The full game does not start without it, the demo does not read it."
+
+  - name: "fonts.dat"
+    path: "share/scummvm/fonts.dat"
+    required: true
+    bundled: true
+    size: 6449829
+    sha1: "1eaef39122559500fbbc705c9425500311d23e03"
+    md5: "6df29d218962e155d0a2114006af45c0"
+    source_ref: "engines/glk/screen.cpp:72-73, engines/scumm/he/font_he.cpp:267-274, engines/zvision/zvision.cpp:296"
+    note: "TrueType fonts. The Glk engine does not start without it, SCUMM HE and ZVision fall back to other fonts."
+
+  - name: "fonts-cjk.dat"
+    path: "share/scummvm/fonts-cjk.dat"
+    required: false
+    bundled: true
+    size: 38277312
+    sha1: "b46f5a744387d1991d66a06292811f217ae063e2"
+    md5: "18b8811c1bbc297be45f38c3bd6a0728"
+    source_ref: "graphics/fonts/ttf.cpp:965-976"
+    note: "CJK TrueType fonts, a fallback when a game asks for a font the other bundles lack."
+

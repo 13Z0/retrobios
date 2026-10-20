@@ -1,0 +1,148 @@
+emulator: Kega Fusion
+type: standalone
+core_classification: other
+source: "https://www.carpeludum.com/kega-fusion/"
+upstream: closed-source
+author: "Steve Snake"
+profiled_date: "2026-10-20"
+core_version: "3.64"
+display_name: "Sega - Master System / Mega Drive / Mega CD / 32X (Kega Fusion)"
+cores:
+  - kega-fusion
+systems:
+  - sega-megadrive
+  - sega-megacd
+  - sega-32x
+  - sega-mastersystem
+  - sega-gamegear
+  - sega-sg1000
+  - sega-sf7000
+mode: standalone
+
+notes: |
+  Sega 8 and 16-bit emulator by Steve Snake, distributed as a closed Windows
+  binary. The build read is Fusion.exe 3.64 (NOMAPLE), dated 6 March 2010,
+  sha1 4842ddbfbdfeb909b134f28ce25f02ab59b38453, the copy RetroBat installs as
+  kega-fusion (version 0.10.03.06). The executable is not packed, offsets
+  below are virtual addresses in it.
+
+  Every system ROM is a path stored in Fusion.ini, kept in a settings table
+  of key name, buffer and type (0x5b16a8-0x5b1d10): SMSUSABIOS, SMSJAPBIOS,
+  SMSEURBIOS, GGBIOS, SF7000IPL, GenesisBIOS, SCDUSABIOS, SCDJAPBIOS,
+  SCDEURBIOS, 32XM68KBIOS, 32XMSH2BIOS and 32XSSH2BIOS. Before the ini is
+  read the 8-bit, SF-7000 and Genesis paths are cleared (0x44b3ed-0x44b40b)
+  and the Mega CD and 32X ones get defaults: C:\SegaCDBIOS\us_scd1_9210.bin,
+  jp_mcd1_9111.bin and eu_mcd1_9210.bin, and c:\32XBios\32X_G_BIOS.bin,
+  32X_M_BIOS.bin and 32X_S_BIOS.bin (0x44b662-0x44b74d). Those are the only
+  file names the binary fixes. Each file is opened with fopen "rb" and read
+  with a fixed count, no length, checksum or header is compared.
+
+  RetroBat's generator writes SCDEURBIOS, SCDUSABIOS and SCDJAPBIOS as
+  bios_CD_E.bin, bios_CD_U.bin and bios_CD_J.bin, and the three 32X keys as
+  32X_G_BIOS.BIN, 32X_M_BIOS.BIN and 32X_S_BIOS.BIN in its bios folder, each
+  only when the file exists. GenesisBIOS receives the bios folder itself, so
+  the fopen fails and no TMSS ROM is loaded. The 8-bit keys are not written.
+  ref: emulatorlauncher Generators/KegaFusion.Generator.cs:99-128
+
+  CDTray.raw, Cursor_8.raw, STATIC_8.RAW and gg_nor.all are looked up by name
+  in an archive embedded in the executable (0x47a530), not on disk. Plugins
+  (*.rpi) and the KGV1 video codec ship with the program. Fusion.ini, battery
+  saves (.srm, .brm, .crm) and states are written by the program.
+
+files:
+  - name: us_scd1_9210.bin
+    aliases: [bios_CD_U.bin]
+    system: sega-megacd
+    region: [north-america]
+    required: true
+    description: "Sega CD (USA) boot ROM"
+    note: "Opened from SCDUSABIOS when a disc starts in the USA region and read as 128 KB. A failed open shows \"Please configure USA BIOS in OPTIONS->SET CONFIG->SEGA CD\" under the title \"BIOS Not Found\" and writes 60 FE, a branch to itself, at the reset vector, so nothing boots."
+    source_ref: "Fusion.exe 0x44b662-0x44b670 (default path), 0x478877-0x4788d6 (open, message, fread 0x20000)"
+
+  - name: jp_mcd1_9111.bin
+    aliases: [bios_CD_J.bin]
+    system: sega-megacd
+    region: [japan]
+    required: true
+    description: "Mega CD (Japan) boot ROM"
+    note: "Opened from SCDJAPBIOS for the Japanese region, same 128 KB read and same lock when it is missing, with the JAP message."
+    source_ref: "Fusion.exe 0x44b676 (default path), 0x4788f9-0x478959 (open, message, fread 0x20000)"
+
+  - name: eu_mcd1_9210.bin
+    aliases: [bios_CD_E.bin]
+    system: sega-megacd
+    region: [europe]
+    required: true
+    description: "Mega CD (Europe) boot ROM"
+    note: "Opened from SCDEURBIOS for the European region, same 128 KB read and same lock when it is missing, with the EUR message."
+    source_ref: "Fusion.exe 0x44b68a (default path), 0x478979-0x4789d6 (open, message, fread 0x20000)"
+
+  - name: 32X_G_BIOS.bin
+    system: sega-32x
+    required: false
+    hle_fallback: true
+    description: "32X 68000 BIOS"
+    note: "First 256 bytes read from 32XM68KBIOS. When any of the three 32X files fails to open, the loaded images are discarded and replacement code held in the executable is copied over all three areas."
+    source_ref: "Fusion.exe 0x44b718-0x44b724 (default path), 0x4c81ae-0x4c81ed (fread 0x100), 0x4c8287-0x4c833c (built-in replacement)"
+
+  - name: 32X_M_BIOS.bin
+    system: sega-32x
+    required: false
+    hle_fallback: true
+    description: "32X master SH-2 BIOS"
+    note: "2 KB read from 32XMSH2BIOS. Same all-or-nothing replacement as the 68000 BIOS."
+    source_ref: "Fusion.exe 0x44b730-0x44b73c (default path), 0x4c81f1-0x4c8238 (fread 0x800), 0x4c8287-0x4c833c"
+
+  - name: 32X_S_BIOS.bin
+    system: sega-32x
+    required: false
+    hle_fallback: true
+    description: "32X slave SH-2 BIOS"
+    note: "1 KB read from 32XSSH2BIOS. Same all-or-nothing replacement as the 68000 BIOS."
+    source_ref: "Fusion.exe 0x44b743-0x44b74d (default path), 0x4c823c-0x4c8283 (fread 0x400), 0x4c8287-0x4c833c"
+
+  - name: bios_MD.bin
+    system: sega-megadrive
+    required: false
+    description: "Mega Drive TMSS boot ROM"
+    note: "Read as 2 KB from GenesisBIOS when that path is set, and skipped when the open fails. The code fixes no file name, the user picks it in the Genesis settings."
+    source_ref: "Fusion.exe 0x46eaf3-0x46eb4c"
+
+  - name: bios_U.sms
+    system: sega-mastersystem
+    region: [north-america]
+    required: false
+    description: "Master System (USA) boot ROM"
+    note: "Read from SMSUSABIOS, up to 512 KB, for the USA region unless SMSBIOSDisable is set. A missing file leaves the cartridge to start directly. No file name is fixed by the code."
+    source_ref: "Fusion.exe 0x47d541-0x47d5b9"
+
+  - name: bios_J.sms
+    system: sega-mastersystem
+    region: [japan]
+    required: false
+    description: "Master System (Japan) boot ROM"
+    note: "Read from SMSJAPBIOS for the Japanese region, same rules as the USA image."
+    source_ref: "Fusion.exe 0x47d5bb-0x47d60a"
+
+  - name: bios_E.sms
+    system: sega-mastersystem
+    region: [europe]
+    required: false
+    description: "Master System (Europe) boot ROM"
+    note: "Read from SMSEURBIOS for the European region, same rules as the USA image."
+    source_ref: "Fusion.exe 0x47d60c-0x47d659"
+
+  - name: bios.gg
+    system: sega-gamegear
+    required: false
+    description: "Game Gear boot ROM"
+    note: "Read from GGBIOS, up to 512 KB, in Game Gear mode unless SMSBIOSDisable is set, and skipped when the open fails. No file name is fixed by the code."
+    source_ref: "Fusion.exe 0x47d65b-0x47d6a8"
+
+  - name: SF7000.ROM
+    system: sega-sf7000
+    required: false
+    size: 8192
+    description: "Sega SF-7000 IPL"
+    note: "Read as 8 KB from SF7000IPL when the SF-7000 is emulated and mirrored to fill 16 KB. A missing file is skipped without a message. No file name is fixed by the code."
+    source_ref: "Fusion.exe 0x47d4c8-0x47d52f"

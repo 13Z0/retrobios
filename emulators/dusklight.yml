@@ -1,0 +1,101 @@
+emulator: Dusklight
+type: standalone
+core_classification: game_engine
+source: "https://github.com/TwilitRealm/dusklight"
+upstream: "https://github.com/TwilitRealm/dusklight"
+source_commit: "40457c6adb381928e4b5fef6ed459ed291edd5e2"
+profiled_date: "2026-10-20"
+core_version: "v2.0.3"
+display_name: "The Legend of Zelda: Twilight Princess (Dusklight)"
+cores: [dusklight]
+systems: [dusklight]
+
+notes: |
+  PC port of The Legend of Zelda: Twilight Princess built on the zeldaret/tp
+  decompilation, on the Aurora runtime. The game reads its data straight from
+  the user's disc image at run time, there is no extraction step.
+
+  RetroBat installs v2.0.3: dusklight.exe in its dusklight.7z carries
+  "Revision: 40457c6adb381928e4b5fef6ed459ed291edd5e2" and the version
+  string v2.0.3, the commit the v2.0.3 tag points to. The launcher passes the
+  image (or the first line of an .m3u) as the positional argument, writes it
+  to backend.isoPath in data/config.json and forces portable mode through
+  data_location.json.
+  ref: emulatorLauncher Generators/PortsLauncher.Configuration.cs:580-640
+
+  Disc check. The positional argument is the dvd option. Its header is
+  inspected (platform magic, game ID, disc number, revision) against the
+  accepted catalog. A match opens the image and starts the game, anything
+  else falls back to the prelaunch screen, where the user can pick another
+  image. Booting without an image that passes the check is fatal.
+  ref: src/m_Do/m_Do_main.cpp:561-571, 792-817, 885-899,
+       src/dusk/iso_validate.cpp:30-63, 126-131
+
+  The full check is optional and runs from the prelaunch screen: an XXH3-128
+  over the reconstructed logical image, whatever the container format, must
+  equal the catalog value. A mismatch is reported, not fatal. Accepted
+  values: GZ2E01 14e886f08e548a000afde98a3195e788, GZ2J01
+  5967dc7a6a553652f4d2050aeef6f368, GZ2P01 9ef597588b0035ca9e91b333fa9a8a7e,
+  RZDE01 rev 0 b3d91fbea59e5c66934d04c01566728e, RZDE01 rev 2
+  c3ec420921a1b36d6ae43f576491d25c, RZDJ01 d3866821c7fc6999e6e8bbef8b6875aa,
+  RZDP01 6095a924a57e5fb4294ac96fb85a09a1. RZDK01 (Wii, Korea) is recognised
+  and refused as an unsupported version. Revision is 0 unless stated.
+  ref: src/dusk/iso_validate.cpp:30-63, 119-124, src/dusk/ui/prelaunch.cpp:143-147,
+       borealis src/disc.cpp:140-151, 163-220, 261-340
+
+  The res/ tree (fonts and RmlUi documents), the SDL3, Dawn and nod
+  libraries and initial_pipeline_cache.db are program components of the
+  release. Borealis is a submodule pinned at v2.0.3 to
+  4ac5e7052a8c49a122f8d57f626b5c75c5ca6968, its citation is at that
+  revision.
+
+files:
+  - name: "GZ2E01.iso"
+    category: game_data
+    system: dusklight
+    required: true
+    description: "The Legend of Zelda: Twilight Princess (USA) GameCube disc image"
+    source_ref: "src/dusk/iso_validate.cpp:31-34, src/m_Do/m_Do_main.cpp:795-817"
+    note: "No file name is fixed. Any image the nod library opens. The GameCube discs of Japan (GZ2J01) and Europe (GZ2P01) are accepted the same way."
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "GZ2J01.iso"
+    category: game_data
+    system: dusklight
+    required: false
+    description: "The Legend of Zelda: Twilight Princess (Japan) GameCube disc image"
+    source_ref: "src/dusk/iso_validate.cpp:35-38"
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "GZ2P01.iso"
+    category: game_data
+    system: dusklight
+    required: false
+    description: "The Legend of Zelda: Twilight Princess (Europe) GameCube disc image"
+    source_ref: "src/dusk/iso_validate.cpp:39-42"
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "RZDE01.iso"
+    category: game_data
+    system: dusklight
+    required: false
+    description: "The Legend of Zelda: Twilight Princess (USA) Wii disc image, revision 0 or 2"
+    source_ref: "src/dusk/iso_validate.cpp:43-52"
+    note: "Played with the GameCube HUD and behaviour, the decompilation matching only the GameCube build."
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "RZDJ01.iso"
+    category: game_data
+    system: dusklight
+    required: false
+    description: "The Legend of Zelda: Twilight Princess (Japan) Wii disc image"
+    source_ref: "src/dusk/iso_validate.cpp:53-56"
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "RZDP01.iso"
+    category: game_data
+    system: dusklight
+    required: false
+    description: "The Legend of Zelda: Twilight Princess (Europe) Wii disc image"
+    source_ref: "src/dusk/iso_validate.cpp:57-60"
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"

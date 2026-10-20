@@ -1,0 +1,297 @@
+emulator: Aleph One
+type: standalone
+core_classification: game_engine
+source: "https://github.com/Aleph-One-Marathon/alephone"
+upstream: "https://github.com/Aleph-One-Marathon/alephone"
+profiled_date: "2026-10-20"
+source_commit: "07a9c36aff403d143a0608815f725631a01e382c"
+core_version: "1.11 (20250829)"
+display_name: "Marathon (Aleph One)"
+cores:
+  - alephone
+systems: [marathon, marathon-2, marathon-infinity]
+mode: standalone
+
+notes: |
+  Engine of Bungie's Marathon trilogy, developed from the Marathon 2 source
+  release. Profiled at tag release-20250829 (A1_DATE_VERSION,
+  Source_Files/Misc/alephversion.h:27-29), the release RetroPie builds on
+  Debian 11 and later. Older systems get release-20250302
+  (scriptmodules/ports/alephone.sh, _get_version_alephone). RetroPie
+  downloads the three scenario archives of the same release into
+  $romdir/ports/alephone and starts `alephone <scenario folder>`.
+
+  The folder given on the command line goes on the data search path
+  (Source_Files/shell.cpp:405-411). Every MML file under its Scripts/ is
+  parsed at start (Source_Files/shell.cpp:1600-1610), and string set 129
+  there renames the data files the engine looks up. Without it the engine
+  searches for files literally named Map, Shapes, Sounds and Images
+  (Source_Files/Misc/DefaultStringSets.cpp:86-101). A scenario counts as
+  present when Map, Shapes, and Images or the external resources file are
+  found. Otherwise the engine asks for another folder
+  (Source_Files/Files/preprocess_map_sdl.cpp:68-74,
+  Source_Files/shell.cpp:463-480). A missing Sounds or Physics file is
+  ignored (Source_Files/Files/preprocess_map_sdl.cpp:87-103).
+
+  Music/NN.ogg holds the level music of the Marathon 1 data, played when a
+  level names a song index (Source_Files/Sound/Music.cpp:260-275). Plugins/
+  carries HUD plugins listed in the plugin menu
+  (Source_Files/XML/Plugins.cpp:509-512). Demos/*.filA are replays played
+  from the title screen (Source_Files/Misc/vbl.cpp:1380-1395). Fonts,
+  the base MML and the default theme are installed with the engine from its
+  own data/ folder. No file is hashed.
+
+  The files below are the release-20250829 scenario archives
+  (Marathon-20250829-Data.zip, Marathon2-20250829-Data.zip,
+  MarathonInfinity-20250829-Data.zip), distributed freely by the Aleph One
+  project.
+
+files:
+  # Marathon (Marathon/)
+  - name: Marathon.mml
+    category: game_data
+    system: marathon
+    path: "Marathon/Scripts/Marathon.mml"
+    required: true
+    sha1: f40d598d451df36f123a0e4d04bf5d5896d2eb6b
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+    note: "Names Map.scen, Shapes.shps, Sounds.sndz, Physics.phys and Marathon.appl through string set 129."
+  - name: Default Preferences.xml
+    category: game_data
+    system: marathon
+    path: "Marathon/Scripts/Default Preferences.xml"
+    required: false
+    sha1: 7f91cdd48f7acc66221c5fac671ea353a7d80c85
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+  - name: Map.scen
+    category: game_data
+    system: marathon
+    path: "Marathon/Map.scen"
+    required: true
+    size: 3864064
+    sha1: 37f97bb2482a9bec3016100f93756707af087dcb
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
+  - name: Shapes.shps
+    category: game_data
+    system: marathon
+    path: "Marathon/Shapes.shps"
+    required: true
+    size: 6481664
+    sha1: 0a32105b48c117a2182440d7236f1ee91fb40e59
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
+  - name: Marathon.appl
+    category: game_data
+    system: marathon
+    path: "Marathon/Marathon.appl"
+    required: true
+    size: 948096
+    sha1: a7abadf86280a87c82a203af9f2ecc9aff87ccf3
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-79, Source_Files/RenderOther/images.cpp:1040-1050"
+    note: "External resources file standing in for Images, which the Marathon 1 data does not have."
+  - name: Sounds.sndz
+    category: game_data
+    system: marathon
+    path: "Marathon/Sounds.sndz"
+    required: false
+    size: 1021824
+    sha1: 0f4c1f1c0d1103ca79c83d862d4f50226380ce99
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
+  - name: Physics.phys
+    category: game_data
+    system: marathon
+    path: "Marathon/Physics.phys"
+    required: false
+    size: 7848
+    sha1: e5ed815c253a2e6bb70b46924d38ba13f73ef484
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
+    note: "Marathon 1 physics. Without it the engine runs the level with its built-in Marathon 2 physics."
+  - name: "Music/"
+    type: directory
+    category: game_data
+    system: marathon
+    path: "Marathon/Music/"
+    required: false
+    source_ref: "Source_Files/Sound/Music.cpp:260-275"
+    note: "Level music, 00.ogg to 15.ogg."
+  - name: "Plugins/"
+    type: directory
+    category: game_data
+    system: marathon
+    path: "Marathon/Plugins/"
+    required: false
+    source_ref: "Source_Files/XML/Plugins.cpp:509-512"
+    note: "Basic M1 HUD and Enhanced HUD plugins."
+
+  # Marathon 2: Durandal (Marathon 2/)
+  - name: Filenames.mml
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Scripts/Filenames.mml"
+    required: true
+    sha1: b2d1fa9a65b2be0d5a647f694eb32f54101b5b37
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+    note: "Names Shapes.shpA, Sounds.sndA, Map.sceA, Physics Models/Standard.phyA, Music.ogg and Images.imgA through string set 129."
+  - name: Marathon 2.mml
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Scripts/Marathon 2.mml"
+    required: false
+    sha1: ed7726736ebc7540a396612b929f026b1005a752
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+  - name: Default Preferences.xml
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Scripts/Default Preferences.xml"
+    required: false
+    sha1: 9848f63dd8a8c66c593f4c95e04cb66078d5b0a7
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+  - name: Map.sceA
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Map.sceA"
+    required: true
+    size: 20478336
+    sha1: 8bd51b5734013ac659c699484471baaf916ab5d9
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
+  - name: Shapes.shpA
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Shapes.shpA"
+    required: true
+    size: 10016800
+    sha1: 1950a0b08cf18e6ee8d82e17d9300c8109ee7288
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
+  - name: Images.imgA
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Images.imgA"
+    required: true
+    size: 4060032
+    sha1: 1deedb05e0db70c88e32f213df4c601fb393fa3e
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, Source_Files/RenderOther/images.cpp:990-1000"
+  - name: Sounds.sndA
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Sounds.sndA"
+    required: false
+    size: 14183536
+    sha1: 965423878c7a73d893bc17793206edbfe820a3c3
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
+  - name: Standard.phyA
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Physics Models/Standard.phyA"
+    required: false
+    size: 11102
+    sha1: 64b794d5b1cef3f5eb6b8886ef720a244335bc11
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
+  - name: Music.ogg
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Music.ogg"
+    required: false
+    size: 763501
+    sha1: afcef78a0ff02fa96bf63f904610a5abc173fb5e
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:105-108"
+    note: "Title screen music."
+  - name: "Demos/"
+    type: directory
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Demos/"
+    required: false
+    source_ref: "Source_Files/Misc/vbl.cpp:1380-1395"
+  - name: "Plugins/"
+    type: directory
+    category: game_data
+    system: marathon-2
+    path: "Marathon 2/Plugins/"
+    required: false
+    source_ref: "Source_Files/XML/Plugins.cpp:509-512"
+
+  # Marathon Infinity (Marathon Infinity/)
+  - name: Filenames.mml
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Scripts/Filenames.mml"
+    required: true
+    sha1: 2595e19a67a467a06b357220a34694bf412db603
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+    note: "Names Shapes.shpA, Sounds.sndA, Map.sceA, Physics Models/Standard.phyA, Music.ogg and Images.imgA through string set 129."
+  - name: Marathon Infinity.mml
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Scripts/Marathon Infinity.mml"
+    required: false
+    sha1: 1f93c9e3f42c8e4b97d770ffb66e18e3ce444e5b
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+  - name: Default Preferences.xml
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Scripts/Default Preferences.xml"
+    required: false
+    sha1: 4814e1b516a4a8fc4240a599c60884e4e136b293
+    source_ref: "Source_Files/shell.cpp:1600-1610"
+  - name: Map.sceA
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Map.sceA"
+    required: true
+    size: 20753920
+    sha1: 9cc6bc8796102637ecdf151020a247d54dc6a3ce
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-85"
+  - name: Shapes.shpA
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Shapes.shpA"
+    required: true
+    size: 11383292
+    sha1: 11398892f9d7df0c5e5bf88d71954911229b5c3e
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, 93-97"
+  - name: Images.imgA
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Images.imgA"
+    required: true
+    size: 4783360
+    sha1: e76cc2063a1dacf28bee759bb3d1a9cb41b2def8
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:68-74, Source_Files/RenderOther/images.cpp:990-1000"
+  - name: Sounds.sndA
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Sounds.sndA"
+    required: false
+    size: 18507212
+    sha1: fc1c72d7dcfe957755e9f919e9e0c224fca2d4bc
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:99-103"
+  - name: Standard.phyA
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Physics Models/Standard.phyA"
+    required: false
+    size: 11102
+    sha1: 64b794d5b1cef3f5eb6b8886ef720a244335bc11
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:87-91"
+  - name: Music.ogg
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Music.ogg"
+    required: false
+    size: 834960
+    sha1: aa8a88d760a4472081823a47dc83c19444a280ce
+    source_ref: "Source_Files/Files/preprocess_map_sdl.cpp:105-108"
+    note: "Title screen music."
+  - name: "Demos/"
+    type: directory
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Demos/"
+    required: false
+    source_ref: "Source_Files/Misc/vbl.cpp:1380-1395"
+  - name: "Plugins/"
+    type: directory
+    category: game_data
+    system: marathon-infinity
+    path: "Marathon Infinity/Plugins/"
+    required: false
+    source_ref: "Source_Files/XML/Plugins.cpp:509-512"

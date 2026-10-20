@@ -1,0 +1,39 @@
+emulator: DGen/SDL
+type: standalone
+core_classification: other
+source: "https://sourceforge.net/p/dgen/dgen"
+profiled_date: "2026-10-20"
+source_commit: "1c196e63d3e35704a97a2cef60def9df3c9fd1ce"
+core_version: "1.33"
+display_name: "Sega - Mega Drive - Genesis (DGen/SDL)"
+mode: standalone
+cores:
+  - dgen
+systems:
+  - sega-megadrive
+  - sega-genesis
+
+notes: |
+  Mega Drive emulator for SDL by Joe Groff and Phil K. Hornung, carried on by
+  zamaz. Release 1.33 is the v1.33 tag of the project's git tree. It emulates
+  the 68000, the Z80, the VDP, the YM2612 and the SN76489 and nothing more: the
+  tree holds no SH-2, no Sega CD hardware and no TMSS boot ROM.
+
+  A cartridge is opened as given, then under the roms subdirectory of the DGen
+  home ($HOME/.dgen), or under str_rom_path when the configuration sets one. It
+  is unpacked through libarchive when compressed, de-interleaved when it is an
+  SMD dump, and refused unless "SEGA" stands at offset 0x100.
+  ref: romload.c:14-19,47-124, system.c:293-340, system.h:23-24, rc.cpp:554-560
+
+  The only other files read are dgenrc, save states, battery RAM and demos,
+  all written by the emulator itself under the DGen home.
+  ref: main.cpp:132-196,352-366, system.h:45-47
+
+exclusion_note: >
+  Nothing to obtain. No BIOS or firmware is opened. The RetroPie scriptmodule
+  help asks for bios_CD_U.bin, bios_CD_E.bin and bios_CD_J.bin, but no code
+  path of this release names them, and a Sega CD image is refused by the
+  "SEGA" header test.
+  ref: romload.c:83-115
+
+files: []

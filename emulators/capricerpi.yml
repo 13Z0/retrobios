@@ -1,0 +1,63 @@
+emulator: CapriceRPI
+type: standalone
+core_classification: community_fork
+source: "https://github.com/KaosOverride/CapriceRPI"
+upstream: "https://sourceforge.net/projects/caprice32/"
+source_commit: "7d86ebdc6a5e645220c6f30cf407ac57c3256054"
+profiled_date: "2026-10-20"
+core_version: "1.3c"
+display_name: "Amstrad - CPC (CapriceRPI)"
+cores:
+  - capricerpi
+systems:
+  - amstrad-cpc
+mode: standalone
+
+notes: |
+  Raspberry Pi port by KaosOverride of Ulrich Doewich's Caprice32 4.1.0,
+  the SDL 1.2 code base, not the later ColinPitrat line the libretro core
+  follows. RetroPie builds src/ with RELEASE=TRUE and launches
+  capriceRPI %ROM% with no other option.
+
+  The CPC 464, 664 and 6128 firmware and AMSDOS are compiled in from
+  src/roms/*.h (bin2c output). setup_builtin_roms copies the model's 32 KB
+  image into the lower ROM (src/roms/builtin_roms.h:9-27), and the
+  fopen of cpc464.rom, cpc664.rom and cpc6128.rom that Caprice32 had is
+  commented out in emulator_patch_ROM (src/cap32.cpp:2805-2822) and in the
+  model switch (src/cap32.cpp:1474-1479). AMSDOS is copied into slot 7 from
+  amsdos_rom for the 664 and 6128, or for a 464 when a disk forces it
+  (src/cap32.cpp:2973-2979). The embedded images hash to md5
+  a993f85b88ac4350cf4d41554e87fe4f (464), 5a384a2310f472c7857888371c00ed66
+  (664), b96280dc6c95a48857b4b8eb931533ae (6128) and
+  25629dfe870d097469c217b95fdc1c95 (AMSDOS).
+
+  cap32.cfg is never read. getConfigValueInt and getConfigValueString have
+  their file parsing commented out and return the default
+  (src/cap32.cpp:4060-4122), so expansion slots 2 to 15, the Multiface II
+  ROM and every path keep their built-in defaults. The ROM path is
+  <cwd>/rom (src/cap32.cpp:4342-4344), chAppPath being getcwd() despite
+  the comment (src/cap32.cpp:4799).
+
+  The only external ROM is ParaDOS. The --parados option, with an optional
+  drive layout 1 to 4, names parados.rom in slot 7 (src/cap32.cpp:2982-2984,
+  4751-4757). The loader reads 16 KB and keeps it when the first byte is
+  0x01 or 0x02, retrying past a 128-byte header, and otherwise clears the
+  slot and carries on (src/cap32.cpp:2986-3016). With a drive layout the
+  last two bytes of the image are rewritten as ParaDOS's configuration
+  byte and checksum (src/cap32.cpp:3021-3052).
+
+  Disks, tapes and snapshots are user content. printer.dat and screen.png
+  are written beside the working directory (src/cap32.cpp:4329-4340).
+
+files:
+  - name: parados.rom
+    system: amstrad-cpc
+    path: "rom/parados.rom"
+    required: false
+    size: 16384
+    description: "ParaDOS disc ROM, loaded into expansion slot 7 with --parados"
+    source_ref: "src/cap32.cpp:2982-3016, 4342-4344, 4751-4757"
+    note: >-
+      Read from the rom directory under the working directory, only when
+      --parados is given. RetroPie's launch line does not pass it. A missing
+      or invalid file leaves AMSDOS in slot 7.

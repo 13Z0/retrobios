@@ -1,0 +1,123 @@
+emulator: MAME4ALL-Pi
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/RetroPie/mame4all-pi"
+upstream: "https://sourceforge.net/projects/mame4allpi/"
+profiled_date: "2026-10-20"
+source_commit: "c6bfd2aef331b5a5e157c15d8bf8a77393c85689"
+core_version: "0.37b5"
+display_name: "Arcade (MAME4ALL-Pi)"
+mode: standalone
+cores:
+  - mame4all
+systems:
+  - arcade
+  - snk-neogeo-mvs
+
+notes: |
+  Raspberry Pi port by Squid of Franxis' MAME4ALL, itself MAME 0.37b5
+  (readme.txt:5, src/version.cpp:1). RetroPie builds the tree with make,
+  installs mame, mame.cfg.template, hiscore.dat, cheat.dat, clrmame.dat,
+  folders/ and skins/ to its own directory, and launches mame with the
+  game's base name. Its mame.cfg sets rompath to the mame-mame4all and
+  arcade ROM directories and samplepath to their samples/ folders.
+
+  main() moves to the directory holding the binary before anything is
+  opened, so every relative path below is read from there. mame.cfg comes
+  from that directory.
+  ref: src/rpi/rpi.cpp:123-126, src/rpi/config.cpp:93
+
+  ROMs and samples are looked up in each rompath or samplepath entry as a
+  <game>/ folder, then <game>.zip. A clone also searches its parent's set,
+  and every Neo Geo game names neogeo as parent so that the BIOS does not
+  have to sit in each archive. rompath defaults to ".;roms", samplepath to
+  ".;samples".
+  ref: src/rpi/fileio.cpp:349-446, src/common.cpp:140-162, src/rpi/config.cpp:273-274,
+       src/drivers/neogeo.cpp:4580-4586
+
+  hiscore.dat is opened for every game, history.dat and mameinfo.dat when
+  the game information screen is shown, cheat.dat only with cheat=yes. All
+  four are opened by bare name from the binary's directory: the cheat
+  branch builds a path from the cheat directory option and then opens the
+  bare name instead.
+  ref: src/rpi/fileio.cpp:950-971, src/cpuintrf.cpp:626-628,
+       src/usrintrf.cpp:2546, src/mame.cpp:621-623
+
+  Paths below are written under mame4all/, which stands for the binary's
+  directory. clrmame.dat is installed beside them and never opened. The
+  skins/ bitmaps and folders/Favorites.ini belong to the game list front
+  end.
+  ref: src/rpi/gp2x_frontend.cpp:85,107,131
+
+files:
+  - name: neogeo.zip
+    system: snk-neogeo-mvs
+    required: true
+    category: bios_zip
+    description: "Neo Geo BIOS set, parent of every Neo Geo game"
+    note: >-
+      Opened from rompath as the parent set. neo-geo.rom, ng-sm1.rom and
+      ng-sfix.rom are declared in every Neo Geo game through the
+      NEO_BIOS_SOUND and NEO_SFIX macros, so a game cannot load without
+      them. The Irritating Maze carries its own im_bios.rom in its set.
+    source_ref: "src/drivers/neogeo.cpp:1137-1173, src/drivers/neogeo.cpp:4501-4510, src/drivers/neogeo.cpp:4586"
+    contents:
+      - name: neo-geo.rom
+        description: 68K BIOS
+        size: 131072
+        crc32: "9036d879"
+      - name: ng-sm1.rom
+        description: Z80 sound BIOS
+        size: 131072
+        crc32: "97cf998b"
+      - name: ng-sfix.rom
+        description: fix layer tiles
+        size: 131072
+        crc32: "354029fc"
+
+  - name: hiscore.dat
+    path: "mame4all/hiscore.dat"
+    required: false
+    category: game_data
+    bundled: true
+    size: 50821
+    md5: "5567b18ff76cf4406c915d9d5deac2f4"
+    sha1: "830660c510bb185c3278320b2ccbf5f536a1a649"
+    crc32: "158abd35"
+    description: "High score memory ranges, HISCORE.DAT version 7.0"
+    note: >-
+      Read with every game. Without it no score is saved. The values are
+      those of the file the repository installs.
+    source_ref: "src/hiscore.cpp:18, src/hiscore.cpp:253-255, src/cpuintrf.cpp:626-628, src/rpi/fileio.cpp:950-962"
+
+  - name: cheat.dat
+    path: "mame4all/cheat.dat"
+    required: false
+    category: game_data
+    bundled: true
+    size: 1522317
+    md5: "c5b456237958c7a7c120a8ad710786a0"
+    sha1: "c0f20911b6f929ecd8302863d9ced3e5ba9c6b97"
+    crc32: "ae2b9dbb"
+    description: "Pugsy's cheat database of 18 May 2000"
+    note: >-
+      Read only when the cheat option is on (cheat=no in the installed
+      mame.cfg). The cheatfile option renames it. The values are those of
+      the file the repository installs.
+    source_ref: "src/cheat.cpp:210, src/cheat.cpp:616-618, src/rpi/config.cpp:379-382, src/rpi/fileio.cpp:965-971"
+
+  - name: history.dat
+    path: "mame4all/history.dat"
+    required: false
+    category: game_data
+    description: "Game history database"
+    note: "Read for the game information screen. Not installed."
+    source_ref: "src/datafile.cpp:52, src/datafile.cpp:541, src/rpi/config.cpp:384"
+
+  - name: mameinfo.dat
+    path: "mame4all/mameinfo.dat"
+    required: false
+    category: game_data
+    description: "Driver information database"
+    note: "Read with history.dat for the game information screen. Not installed."
+    source_ref: "src/datafile.cpp:53, src/datafile.cpp:568, src/rpi/config.cpp:386"

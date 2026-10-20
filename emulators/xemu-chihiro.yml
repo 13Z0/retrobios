@@ -1,0 +1,125 @@
+emulator: xemu Chihiro
+type: standalone
+core_classification: community_fork
+source: "https://github.com/Tovarichtch/xemu"
+source_branch: perf-experimental
+upstream: "https://github.com/xemu-project/xemu"
+profiled_date: "2026-10-20"
+source_commit: "0d44d803b2ad22c26c907844fe81d40fbd6ffdfa"
+core_version: "0.8.134-406-g0d44d803b2"
+display_name: "Sega - Chihiro (xemu Chihiro)"
+cores:
+  - xemu-chihiro
+systems:
+  - sega-chihiro
+mode: standalone
+
+notes: |
+  Tovarichtch's fork of xemu that adds the Sega Chihiro machine: the media
+  board, the AN2131 and its 8051 firmware, JVS, the drive boards, the card
+  readers and the network board. RetroBat ships the build whose version string
+  is 0.8.134-406-g0d44d803b2, the "Source code release and playtest v2" commit
+  this profile is pinned to, on the perf-experimental branch
+  (the one with the fork's NV2A and CPU work). Batocera builds the same fork at a later commit.
+
+  RetroBat runs this emulator only as a Chihiro: the launcher sets the Chihiro
+  path whenever the emulator is xemu-chihiro. It writes chihiro.roms.bios_path
+  as bios/chihiro/chihiro_xbox_bios.bin, else bios/chihiro_xbox_bios.bin, and
+  clears the media board and EEPROM paths so the emulator takes them from the
+  folder of the BIOS.
+  ref: emulatorLauncher Generators/Xemu.Generator.cs:48, 413-444
+
+  A Chihiro boots its own BIOS only, never the Xbox flash or MCPX boot ROM set
+  for the Xbox machine: the Chihiro BIOS is an MCPX X2 image with its boot ROM
+  built in. The BIOS must be 512 KiB with the SHA-1 MAME lists, else the
+  machine stays paused with an error.
+  ref: system/vl.c:3110-3135, 3169-3190, hw/xbox/chihiro/chihiro.c:2280-2292
+
+  The media board flash and the three serial EEPROMs come from the settings
+  when set, else from the folder of the BIOS. The flash is tried as
+  fpr21042_m29w160et.bin, fpr-23887_29lv160te.ic4, then fpr-23887.bin, each in
+  that folder and then in its parent, and any size up to 4 MiB is read. The
+  EEPROMs must have their exact size or they count as absent. Any of the five
+  files missing keeps the machine paused with a message naming it.
+  ref: hw/xbox/chihiro/chihiro.c:2259-2401, system/vl.c:3195-3241
+
+  The Xbox EEPROM is not a file to supply for a Chihiro: chihiro_eeprom.bin is
+  generated with the debug key in the data directory and written back. The VM
+  snapshots, the per game saves, the DIMM system area and the card images are
+  written by the emulator too. Booting an Xbox disc with this build reads the
+  same files as upstream xemu (emulators/xemu.yml), which RetroBat never asks
+  it to do.
+  ref: system/vl.c:2978-3001
+
+  The network firmware of the DIMM board is read only from the setting
+  chihiro.roms.net_firmware_path, which RetroBat does not write. Without it the
+  board reports version 3.17. Linked cabinets need it to run the network board,
+  and network titles check the version it reports (OutRun 2 SP, Gundam).
+  ref: hw/xbox/chihiro/chihiro.c:363-400, 491-513, config_spec.yml:908-915
+
+files:
+  - name: chihiro_xbox_bios.bin
+    path: "chihiro/chihiro_xbox_bios.bin"
+    system: sega-chihiro
+    required: true
+    size: 524288
+    sha1: "b700b0041af8f84835e45d1d1250247bf7077188"
+    validation: [size, sha1]
+    description: "Chihiro BIOS"
+    note: "RetroBat also looks for it at the root of the bios folder. The other Chihiro files are then read from the same folder."
+    source_ref: "hw/xbox/chihiro/chihiro.c:2280-2292, system/vl.c:3169-3190"
+
+  - name: fpr21042_m29w160et.bin
+    path: "chihiro/fpr21042_m29w160et.bin"
+    system: sega-chihiro
+    required: true
+    max_size: 4194304
+    validation: [size]
+    description: "Media board flash ROM (SEGABOOT)"
+    note: "First of the three names tried. The SEGABOOT version is read from the second megabyte and the board serial from the MBDT header at 0xFFE00."
+    source_ref: "hw/xbox/chihiro/chihiro.c:2259-2333, 485-489, system/vl.c:3201-3214"
+
+  - name: fpr-23887_29lv160te.ic4
+    path: "chihiro/fpr-23887_29lv160te.ic4"
+    system: sega-chihiro
+    required: false
+    max_size: 4194304
+    validation: [size]
+    aliases: [fpr-23887.bin]
+    description: "Media board flash ROM, later revision"
+    note: "Read in place of fpr21042_m29w160et.bin when that one is absent, under either name."
+    source_ref: "hw/xbox/chihiro/chihiro.c:2320-2332"
+
+  - name: ic10_g24lc64.bin
+    path: "chihiro/ic10_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Base board QC EEPROM"
+    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3215-3217"
+
+  - name: pc20_g24lc64.bin
+    path: "chihiro/pc20_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Base board SC EEPROM"
+    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3218-3220"
+
+  - name: ic11_24lc024.bin
+    path: "chihiro/ic11_24lc024.bin"
+    system: sega-chihiro
+    required: true
+    size: 128
+    validation: [size]
+    description: "Base board configuration EEPROM"
+    source_ref: "hw/xbox/chihiro/chihiro.c:2336-2401, system/vl.c:3221-3223"
+
+  - name: ver1305.bin
+    system: sega-chihiro
+    required: false
+    description: "DIMM board network firmware 13.05"
+    note: "Opened only from the path set in the settings. Its version is the word after the FIRM_VERSION is here! mark."
+    source_ref: "hw/xbox/chihiro/chihiro.c:363-400, 491-513, hw/xbox/chihiro/chihiro-netboard.c:1257-1270"

@@ -1,0 +1,82 @@
+emulator: ti99sim-sdl1
+display_name: "TI-99/Sim 0.15.0 (SDL1)"
+type: standalone
+core_classification: frozen_snapshot
+source: "https://files.retropie.org.uk/archives/ti99sim-0.15.0.src.tar.gz"
+upstream: "https://www.mrousseau.org/programs/ti99sim/"
+profiled_date: "2026-10-20"
+core_version: "0.15.0"
+cores:
+  - ti99sim-sdl1
+systems:
+  - ti99
+mode: standalone
+
+notes: |
+  Marc Rousseau's TI-99/4A simulator at release 0.15.0, the last one with an
+  SDL 1.2 front end. RetroPie's ti99sim-sdl1 package builds it from the source
+  tarball it mirrors (sha256
+  c156674dcb3e40448e84dcfecfe4a16c2bae9df020a79da519d0603cd8ee3b92), adds one
+  missing include and runs bin/ti99sim-sdl from its install directory, where
+  it links TI-994A.ctg from the BIOS directory.
+
+  LocateFile (src/core/support.cpp:392-435) tries the bare name in the working
+  directory first, then <directory>/<name> under ~/.ti99sim and under the
+  install root. The install root is the parent of the bin/ directory holding
+  the executable, read from /proc/self/exe, with /opt/ti99sim as the fallback
+  (src/core/support.cpp:64-136). LocateFiles (src/core/support.cpp:437-507)
+  lists *.ctg in <install root>/console, ~/.ti99sim/console and the working
+  directory itself.
+
+  The console cartridge is looked up by name first and only then by content
+  among every *.ctg in console/ (src/core/support.cpp:509-544). The two
+  accepted content signatures, 0264512c7d9e7fa091a48e5c8734782ea031a52d and
+  16e275faae427465ba4dd4c2bf8569f6546d32dd for console version 2.2
+  (src/sdl/main.cpp:533-537), are SHA-1 digests of the ROM and GROM banks
+  that cCartridge::sha1 assembles in memory (src/core/cartridge.cpp:248-273),
+  not of the .ctg file. A file found by name is used without that check.
+
+  Device cartridges are picked up by name from that listing: cf7+.ctg and
+  ti-disk.ctg are loaded automatically, ti-pcard.ctg only with --ucsd, and
+  --no-cf7 skips cf7+.ctg (src/sdl/main.cpp:328-371, 601-604). The .ctg format
+  read here is the one 0.16.0 writes: the loaders in src/core/cartridge.cpp are
+  unchanged between the two releases.
+
+files:
+  - name: TI-994A.ctg
+    required: true
+    description: "Console ROM cartridge: CPU ROM, system GROMs and RAM layout"
+    source_ref: "src/sdl/main.cpp:533-543, src/core/support.cpp:509-544"
+    note: "Without it main prints \"Unable to locate console ROMs!\" and returns -1."
+
+  - name: spchrom.bin
+    required: false
+    min_size: 32768
+    description: "TMS6100 speech synthesizer vocabulary ROM"
+    source_ref: "src/core/tms5220.cpp:190-214"
+    validation: [size]
+    hle_fallback: true
+    note: "Read as one 0x8000 byte block from console/, so a shorter file is refused and bytes past it are ignored. The first byte must be 0xAA, otherwise an empty speech ROM is used."
+
+  - name: ti-disk.ctg
+    required: false
+    description: "TI Disk Controller DSR ROM"
+    source_ref: "src/sdl/main.cpp:328-371"
+    note: "Disk emulation is unavailable without it."
+
+  - name: cf7+.ctg
+    required: false
+    description: "CF7+ CompactFlash interface DSR ROM"
+    source_ref: "src/sdl/main.cpp:328-371, 601"
+
+  - name: ti-pcard.ctg
+    required: false
+    description: "TI P-Code Card (UCSD p-System) DSR ROM"
+    source_ref: "src/sdl/main.cpp:328-371, 602"
+    note: "Loaded only when --ucsd is passed."
+
+  - name: "Gram Kracker.ctg"
+    required: false
+    description: "Miller Graphics Gram Kracker ROMs"
+    source_ref: "src/core/ti994a-gk.cpp:56-70, src/sdl/ti994a-sdl.cpp:49"
+    note: "Found by name in console/ or by content signature a3bd5257c63e190800921b52dbe3ffa91ad91113. The SDL front end derives its computer from cTI994AGK, so the lookup runs on every start."

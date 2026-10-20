@@ -1,0 +1,146 @@
+emulator: Starship
+type: standalone
+core_classification: game_engine
+source: "https://github.com/HarbourMasters/Starship"
+upstream: "https://github.com/HarbourMasters/Starship"
+source_commit: "cb19785b51698185a688e17ba1a34c7889195bdb"
+profiled_date: "2026-10-20"
+core_version: "2.0.0"
+display_name: "Star Fox 64 (Starship)"
+cores: [starship]
+systems: [starship]
+
+notes: |
+  PC port of Star Fox 64 built on the decompilation, by HarbourMasters. The
+  game runs from assets extracted out of the user's N64 ROM into sf64.o2r,
+  plus the port's own archive starship.o2r, on the libultraship runtime.
+  Torch (tools/Torch) performs the extraction inside the executable.
+
+  RetroBat installs the v2.0.0 release: its starship.7z carries the
+  Starship.exe, starship.o2r, config.yml and gamecontrollerdb.txt of
+  Starship-Barnard-Alfa-Windows.zip byte for byte. The profile is pinned to
+  the v2.0.0 tag for that reason. RetroBat's launcher copies the ROM from
+  roms/starship into the Starship folder when no other .o2r than
+  starship.o2r is there, then starts Starship.exe.
+
+  Startup (GameEngine::GameEngine, src/port/Engine.cpp:65-127):
+    1. sf64.o2r next to the executable is loaded when present (:72, :88-89).
+    2. Otherwise the user is asked for a ROM. A refusal, a cancelled file
+       dialog or a ROM whose SHA-1 is not in mGameList exits (:90-106,
+       :272-292). An accepted ROM is extracted by Torch, then the user may
+       extract a second ROM for the JP, EU or CN voice archive.
+    3. starship.o2r is added when it exists (:109-111).
+    4. Every .otr, .o2r and .zip under mods/ is added (:113-126).
+
+  The ROM SHA-1 is computed by Torch over the whole file
+  (Torch src/n64/Cartridge.cpp:17, Torch src/Companion.cpp:1535-1537).
+  Torch then reads config.yml from the working directory, which maps each
+  accepted hash to an asset tree under assets/yaml/ and to an output
+  archive: sf64.o2r for the two US revisions, mods/sf64jp.o2r,
+  mods/sf64eu.o2r and mods/sf64cn.o2r for the others. A compressed dump is
+  first decompressed to the uncompressed image and processed again. Without
+  config.yml Torch logs "No config file found" and writes nothing
+  (Torch src/Companion.cpp:956-960). config.yml and the 103 assets/yaml
+  files ship with the release.
+
+  The renderer loads its default shader from the archives and aborts when
+  it is missing
+  (libultraship src/graphic/Fast3D/backends/gfx_direct3d11.cpp:1325-1331).
+  The shaders are only in starship.o2r, packed from port/ by "torch pack
+  port starship.o2r o2r" (CMakeLists.txt:631-635). starship.o2r also
+  carries the HUD boost gauge textures.
+
+  Torch and libultraship are submodules of the repository, pinned at v2.0.0
+  to f75facb20883570ed091e8ae733ec0539f606e57 and
+  45c4f8d6c19c6176f5e0918917c655ea09ecc212. Their citations above are at
+  those revisions.
+
+files:
+  - name: "baserom.us.rev1.z64"
+    category: game_data
+    system: starship
+    required: true
+    sha1:
+      - "09f0d105f476b00efa5303a3ebc42e60a7753b7a"
+      - "f7475fb11e7e6830f82883412638e8390791ab87"
+      - "d8b1088520f7c5f81433292a9258c1184afa1457"
+      - "63b69f0ef36306257481afc250f9bc304c7162b2"
+    validation: [sha1]
+    description: "Star Fox 64 (USA) ROM, revision 1.1 or 1.0, as dumped or uncompressed"
+    source_ref: "src/port/extractor/GameExtractor.cpp:12-23, 25-54, src/port/Engine.cpp:88-106, 272-292, config.yml:3-62"
+    note: "Picked through a file dialog filtered on *.z64 on Windows, Linux and macOS. Switch, Android and iOS read baserom.us.rev1.z64 next to the executable. Only a US ROM produces sf64.o2r, the archive the game runs from, and it is not read again once sf64.o2r exists."
+
+  - name: "baserom.jp.z64"
+    category: game_data
+    system: starship
+    required: false
+    sha1:
+      - "9bd71afbecf4d0a43146e4e7a893395e19bf3220"
+      - "d064229a32cc05ab85e2381ce07744eb3ffaf530"
+    validation: [sha1]
+    description: "Star Fox 64 (Japan) ROM, extracted to mods/sf64jp.o2r for Japanese voices"
+    source_ref: "src/port/extractor/GameExtractor.cpp:17-18, config.yml:63-92"
+    note: "Offered after the US extraction. The file name is whatever the user picks in the dialog."
+
+  - name: "baserom.eu.z64"
+    category: game_data
+    system: starship
+    required: false
+    sha1:
+      - "05b307b8804f992af1a1e2fbafbd588501fdf799"
+      - "09f5d5c14219fc77a36c5a6ad5e63f7abd8b3385"
+    validation: [sha1]
+    description: "Lylat Wars (Europe) ROM, extracted to mods/sf64eu.o2r for European voices"
+    source_ref: "src/port/extractor/GameExtractor.cpp:19-20, config.yml:93-122"
+    note: "Offered after the US extraction. The file name is whatever the user picks in the dialog."
+
+  - name: "baserom.cn.z64"
+    category: game_data
+    system: starship
+    required: false
+    sha1:
+      - "c8a10699dea52f4bb2e2311935c1376dfb352e7a"
+      - "3a05aba5549fa71e8b16a0c6e2c8481b070818a9"
+    validation: [sha1]
+    description: "Star Fox 64 (China, iQue) ROM, extracted to mods/sf64cn.o2r"
+    source_ref: "src/port/extractor/GameExtractor.cpp:21-22, config.yml:123-149"
+    note: "Offered after the US extraction. The file name is whatever the user picks in the dialog."
+
+  - name: "starship.o2r"
+    path: "starship/starship.o2r"
+    category: game_data
+    system: starship
+    required: true
+    bundled: true
+    size: 10733
+    sha1: "95a8b0460576158da39a51b53091eae2c6880aad"
+    md5: "1885560b5d69899530bf3ab7af210f8b"
+    description: "Port archive packed from port/: Direct3D, OpenGL and Metal default shaders and the HUD boost gauge textures"
+    source_ref: "src/port/Engine.cpp:73-77, 109-111, libultraship src/graphic/Fast3D/backends/gfx_direct3d11.cpp:1325-1331"
+    note: "Linux reads it from the application bundle, other systems from the executable directory. Loaded only when present, but the renderer aborts without the default shader it carries. Hash of the copy in Starship-Barnard-Alfa-Windows.zip, whose shaders have CRLF line endings."
+
+  - name: "config.yml"
+    path: "starship/config.yml"
+    category: game_data
+    system: starship
+    required: false
+    bundled: true
+    size: 3910
+    sha1: "fedb99b9622ed8df8ab46b85e51998f911345cb6"
+    md5: "0dab932eb5e59572294c1ea623d8f8e2"
+    description: "Torch extraction table: accepted ROM hashes, their asset tree under assets/yaml/ and their output archive"
+    source_ref: "Torch src/Companion.cpp:956-981"
+    note: "Read from the working directory during an extraction only, together with the assets/yaml tree. Without it no archive is written. Hash of the copy in Starship-Barnard-Alfa-Windows.zip."
+
+  - name: "gamecontrollerdb.txt"
+    path: "starship/gamecontrollerdb.txt"
+    category: game_data
+    system: starship
+    required: false
+    bundled: true
+    size: 566042
+    sha1: "b3d2b29fe4fdfdc0a74f5b8e200c506d33637d9c"
+    md5: "06d6a7b5856d6a44e835b7e3dc41e6f6"
+    description: "SDL game controller mapping database"
+    source_ref: "libultraship src/public/libultra/os.cpp:18-24"
+    note: "A load failure is logged and SDL keeps its built-in mappings. The build downloads it from gabomdq/SDL_GameControllerDB. Hash of the copy in Starship-Barnard-Alfa-Windows.zip."

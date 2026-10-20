@@ -69,6 +69,14 @@ retrobat:
         - glide64mk2
         - gliden64
         - rice
+        - windows # ExeLauncherGenerator: starts .exe, .lnk and store .url shortcuts
+        - zaccariapinball # starts the Zaccaria Pinball game, Steam app 444930 or ZaccariaPinball.exe
+        - pinballfx # starts the Pinball FX game, Steam app 2328760 or PinballFX.exe, with -Table <id>
+        - quiverlauncher # starts the PC port a .lnk shortcut points to, or the QuiverLauncher front end
+        - powerbomberman # the Power Bomberman fan game, its data ships inside the install
+        - exodos # runs the eXoDOS collection's own game shortcut, which starts the DOSBox shipped inside the collection
+        - amigaforever # starts Cloanto's AmigaForever.exe player on an RP9 package, with the emulator and ROMs of that paid install
+        - mugen # ExeLauncherGenerator: runs the mugen.exe each M.U.G.E.N game folder ships, RetroBat installs no engine
 
 retroarch:
   targets:
@@ -126,8 +134,23 @@ lakka:
 retropie:
   targets:
     _default:
-      # Homebrew game scriptmodule, not an emulator.
-      remove_cores: [superflappybirds]
+      # Games that read only what their package installs, and programs that
+      # emulate nothing. The libretro cores still resolve through `retroarch`
+      # in the platform's own cores list, which this file does not touch.
+      remove_cores:
+        - superflappybirds # homebrew game
+        - kodi # Kodi media center, installed from apt (ports/kodi.sh)
+        - steamlink # Valve's game streaming client, installed from apt (ports/steamlink.sh)
+        - retroarch # the frontend the lr-* packages run in (emulators/retroarch.sh)
+        - smw # Super Mario War, a game whose own data/ tree is installed with it (ports/smw.sh)
+        - supertux # platform game installed from apt with its data package (ports/supertux.sh)
+        - giana # Giana's Return, a prebuilt freeware game unpacked whole (ports/giana.sh)
+        - lincity-ng # city building game installed from apt (ports/lincity-ng.sh)
+        - micropolis # city building game installed from apt (ports/micropolis.sh)
+        - minecraft # Minecraft Pi Edition, installed from apt as minecraft-pi (ports/minecraft.sh)
+        - mysticmine # rail game whose data its setup.py installs (ports/mysticmine.sh)
+        - openblok # falling block game whose data make install puts beside it (ports/openblok.sh)
+        - openpht # OpenPHT media center, a Plex Home Theater fork installed from a .deb (ports/openpht.sh)
 
 rocknix:
   targets:

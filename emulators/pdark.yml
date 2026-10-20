@@ -1,0 +1,89 @@
+emulator: Perfect Dark (PC port)
+type: standalone
+core_classification: game_engine
+source: "https://github.com/fgsfdsfgs/perfect_dark"
+upstream: "https://github.com/fgsfdsfgs/perfect_dark"
+source_branch: port
+source_commit: "618a1f33865cc98c6fff95c9a5df8162443a643c"
+profiled_date: "2026-10-20"
+core_version: "port 2025-06-14"
+display_name: "Perfect Dark (PC port)"
+cores: [pdark]
+systems: [pdark]
+
+notes: |
+  PC port of Perfect Dark built on the decompilation, by fgsfds. Each build
+  plays one ROM revision, chosen at configure time (CMakeLists.txt:35,
+  86-97): pd.x86_64.exe for ntsc-final, pd.pal.x86_64.exe for pal-final and
+  pd.jpn.x86_64.exe for jpn-final. Game data is read out of that ROM at
+  run time, nothing is extracted ahead.
+
+  RetroBat installs the three executables, built on 2025-06-14 at 10:06, a
+  few minutes after the last commit of the port branch that day, which is
+  the pin. Its launcher picks the executable from the pdark_region option or
+  from the ROM file name, and copies the ROM to data/pd.<romid>.z64 in the
+  install folder when that file is missing.
+  ref: emulatorLauncher Generators/PortsLauncher.Generator.cs:107-130,
+       emulatorLauncher Generators/PortsLauncher.Configuration.cs:1257-1290
+
+  Files are read from the base directory: --basedir, else data beside the
+  executable in portable mode, else ./data when it exists, else data under
+  the home path (port/src/fs.c:18, 96-121). At this revision the home path
+  test reads a failed size lookup as success, so data beside the executable
+  is not reached outside portable mode. RetroBat starts the port from its
+  install folder, where ./data exists. The ROM is pd.<romid>.z64 there unless
+  --rom-file names another path. A missing ROM, an archive, a size other
+  than 33554432 bytes, or a header whose game code and title do not match
+  the build ends the program with an error. No hash is checked.
+  ref: port/src/romdata.c:26-50, 186-209, 382-401
+
+  pd.gbc, the Game Boy Color Perfect Dark, is checked at startup for its
+  size, title, licensee and checksum bytes. When it passes, the game acts
+  as if the cartridge sat in a Transfer Pak, which unlocks the cheats tied
+  to it (port/src/romdata.c:53-54, 404-448, port/src/main.c:112,
+  src/game/pak.c:5992-6007, src/game/cheats.c:406, 436).
+
+files:
+  - name: "pd.ntsc-final.z64"
+    path: "data/pd.ntsc-final.z64"
+    category: game_data
+    system: pdark
+    required: true
+    size: 33554432
+    description: "Perfect Dark (USA) (Rev 1) N64 ROM, game code NPDE"
+    source_ref: "port/src/romdata.c:26-33, 191-209, 382-391"
+    note: "Read by pd.x86_64.exe, the NTSC v1.1 build."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "pd.pal-final.z64"
+    path: "data/pd.pal-final.z64"
+    category: game_data
+    system: pdark
+    required: false
+    size: 33554432
+    description: "Perfect Dark (Europe) N64 ROM, game code NPDP"
+    source_ref: "port/src/romdata.c:26-27, 34-39, 191-209, 382-391"
+    note: "Read only by pd.pal.x86_64.exe."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "pd.jpn-final.z64"
+    path: "data/pd.jpn-final.z64"
+    category: game_data
+    system: pdark
+    required: false
+    size: 33554432
+    description: "Perfect Dark (Japan) N64 ROM, game code NPDJ"
+    source_ref: "port/src/romdata.c:26-27, 40-45, 191-209, 382-391"
+    note: "Read only by pd.jpn.x86_64.exe."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "pd.gbc"
+    path: "data/pd.gbc"
+    category: game_data
+    system: pdark
+    required: false
+    size: 4194304
+    description: "Perfect Dark (Game Boy Color) ROM"
+    source_ref: "port/src/romdata.c:53-54, 404-448"
+    note: "Optional. Its presence unlocks the Transfer Pak cheats."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"

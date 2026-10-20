@@ -1,0 +1,81 @@
+emulator: DarkPlaces
+type: standalone
+core_classification: game_engine
+source: "https://github.com/xonotic/darkplaces"
+upstream: "https://github.com/xonotic/darkplaces"
+source_branch: div0-stable
+profiled_date: "2026-10-20"
+source_commit: "ddabe55ae766087df0b82d214ca4b6d79a443345"
+core_version: "div0-stable"
+display_name: "Quake (DarkPlaces)"
+cores:
+  - darkplaces-quake
+systems: [quake]
+mode: standalone
+
+notes: |
+  Quake engine by LadyHavoc, maintained by the Xonotic project. RetroPie
+  builds the div0-stable branch with two patches touching gl_textures.c
+  and makefile.inc only (scriptmodules/ports/darkplaces-quake.sh). It runs
+  `darkplaces-sdl -basedir $romdir/ports/quake -game <dir>`, where <dir> is
+  the folder of the pak0.pak picked in the ports menu (runcommand.sh
+  %QUAKEDIR%). The menu lists id1, hipnotic, rogue and dopa when their
+  pak0.pak exists, and the install drops the shareware id1/pak0.pak of
+  quake106.zip (scriptmodules/libretrocores/lr-tyrquake.sh,
+  game_data_lr-tyrquake, _add_games_lr-tyrquake).
+
+  The default game mode reads id1 under the base directory
+  (common.c:1450). -game hipnotic and -game rogue switch to the mission
+  pack modes, which add their own folder after id1 (common.c:1451-1452,
+  1515-1540, fs.c:1433-1446). Any other -game folder is added on top as a
+  mod (fs.c:1448-1462, 2154-2168). FS_AddGameDirectory mounts every .pak
+  in a folder in sorted order, then every .pk3, so names past pak9.pak are
+  accepted (fs.c:1266-1308). gfx/pop.lmp, present only in the registered
+  id1/pak1.pak, sets the registered cvar (fs.c:1484-1505). No pak is
+  hashed or checked against a file count.
+
+  gfx.wad is read from the mounted paks (wad.c:125-131), and a missing
+  gfx/palette.lmp falls back to the internal palette (palette.c:301-306).
+  quake.rc, default.cfg and progs.dat also come from the paks, so a base
+  folder without them leaves the engine at its console.
+
+files:
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "id1/pak0.pak"
+    required: true
+    source_ref: "fs.c:1266-1308, 1433-1434; common.c:1450"
+    note: "Shareware and registered Quake data, one file in both releases. RetroPie installs the shareware copy from quake106.zip."
+  - name: "pak1.pak"
+    category: game_data
+    system: quake
+    path: "id1/pak1.pak"
+    required: false
+    source_ref: "fs.c:1266-1308, 1484-1505"
+    note: "Registered episodes 2 to 4."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "hipnotic/pak0.pak"
+    required: false
+    source_ref: "common.c:1451, 1515-1540; fs.c:1440-1446"
+    note: "Scourge of Armagon data. Loaded with -game hipnotic."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "rogue/pak0.pak"
+    required: false
+    source_ref: "common.c:1452, 1515-1540; fs.c:1440-1446"
+    note: "Dissolution of Eternity data. Loaded with -game rogue."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "dopa/pak0.pak"
+    required: false
+    source_ref: "fs.c:1448-1462, 2154-2168"
+    note: "Dimension of the Past data, added on top of id1 with -game dopa."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"

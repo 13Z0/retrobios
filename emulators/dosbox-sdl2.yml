@@ -1,0 +1,34 @@
+emulator: DOSBox (SDL2 fork)
+type: standalone
+core_classification: other
+source: "https://github.com/duganchen/dosbox"
+upstream: "https://sourceforge.net/projects/dosbox/"
+profiled_date: "2026-10-20"
+source_commit: "e6b88ad03202d1f74e329f54f213d3b070bd6202"
+core_version: "0.74-2"
+display_name: "DOS (DOSBox SDL2)"
+cores: [dosbox-sdl2]
+systems: [dos]
+
+notes: |
+  Dugan Chen's port of DOSBox SVN to SDL2, kept in sync with SVN revision
+  4250 (README.md:3), with a FluidSynth MIDI driver added
+  (src/gui/midi_fluidsynth.h). RetroPie builds the master branch, renames the
+  configuration directory to ~/.dosbox-sdl2 and points fluid.soundfont at the
+  FluidR3_GM.sf2 that the distribution's fluid-soundfont-gm package installs.
+
+  No BIOS or ROM is read. The machine BIOS is emulated in code. Keyboard
+  layouts and EGA code pages are looked up as files first, through the
+  mounted drive and then the host path (keyboard.sys, keybrd2.sys,
+  keybrd3.sys, <layout>.kl, EGA*.CPI), and fall back to the copies compiled
+  into the binary (src/dos/dos_keyboard_layout.cpp:40-58,271-304,759-783,
+  src/dos/dos_codepages.h). The PCjr cartridge loader reads system.rom from
+  the drive of the cartridge being booted, which is user content
+  (src/dos/dos_programs.cpp:803-811).
+
+  The FluidSynth driver loads the soundfont named by fluid.soundfont, any
+  path, and starts without one when it is empty or fails to load
+  (src/gui/midi_fluidsynth.h:116-136). A MIDI device that fails to open is
+  replaced by the first handler that opens (src/gui/midi.cpp:189-213).
+
+files: []

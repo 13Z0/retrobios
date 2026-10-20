@@ -1,0 +1,41 @@
+emulator: PiSNES
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/RetroPie/pisnes"
+upstream: "https://sourceforge.net/projects/pisnes/"
+profiled_date: "2026-10-20"
+source_commit: "a5b427f255f922cfa65e29c4285b3d565a4c9044"
+core_version: "1.39"
+display_name: "Nintendo - SNES (PiSNES)"
+mode: standalone
+cores:
+  - pisnes
+systems:
+  - nintendo-snes
+
+notes: |
+  Raspberry Pi port by Squid of Snes9x 1.39 (readme.txt:1-7,
+  snes9x.h:44). RetroPie builds the tree with make, installs snes9x,
+  snes9x.gui, snes9x.cfg.template and skins/, and launches snes9x with
+  the ROM.
+
+  main() moves to the binary's directory and reads snes9x.cfg there.
+  ref: unix/unix.cpp:232, unix/unix.cpp:260-272
+
+  The object list builds dsp1.o and leaves out the Super FX, C4, SA-1 and
+  SPC7110 sources, which is why the readme names Star Fox and Yoshi's
+  Island as not working. The SPC7110 graphics pack folders spc7110.cpp
+  would read (SPL4-SP7, SMHT-SP7, FEOEZSP7, SJUMPSP7, MISC-SP7) are
+  therefore never opened. S9xLoadSDD1Data, the S-DD1 graphics pack reader,
+  is compiled and never called. No BS-X or Sufami Turbo BIOS is loaded by
+  this version.
+  ref: Makefile:33-39, readme.txt:9, spc7110.cpp:178-210, unix/unix.cpp:1239-1350
+
+  The ROM is read as a file or from a zip archive. The <rom>.srm battery
+  save and a <rom>.pat Game Genie or Pro Action Replay list beside the
+  ROM are user files. skins/rpimenu16.bmp is the game list front end
+  background.
+  ref: unix/unix.cpp:376, snes9x.cpp:515-545, unix/frontend.cpp:169
+
+exclusion_note: "no BIOS or coprocessor ROM is read, the SPC7110 pack reader is not built and the S-DD1 one is never called"
+files: []

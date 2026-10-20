@@ -1,0 +1,88 @@
+emulator: jzIntv
+type: standalone
+core_classification: other
+source: "http://spatula-city.org/~im14u2c/intv/"
+upstream: "http://spatula-city.org/~im14u2c/intv/"
+version_source:
+  url: "http://spatula-city.org/~im14u2c/intv/"
+  pattern: 'jzintv-(\d{8})-src\.zip'
+profiled_date: "2026-10-20"
+core_version: "20200712"
+display_name: "Mattel - Intellivision (jzIntv)"
+cores:
+  - jzintv
+systems:
+  - intellivision
+mode: standalone
+
+notes: |
+  Intellivision emulator by Joe Zbiciak, published as dated archives on
+  the author's site rather than a public repository. Profiled from
+  jzintv-20200712-src.zip (release notes for SVN r2110). RetroPie builds
+  that archive from its own mirror (scriptmodules/emulators/jzintv.sh).
+  RetroBat ships jzintv.exe from the official jzintv-20200712-win32-sdl1.zip,
+  byte for byte (sha1 e666df50), which reports SVN revision 2108.
+
+  The EXEC, GROM and ECS names default to exec.bin, grom.bin and ecs.bin
+  (cfg/cfg.c:625-628) and are overridden by -e, -g and -E
+  (cfg/cfg.c:687-689). Each is opened through path_fopen on the ROM search
+  path, built from --rom-path, then JZINTV_ROM_PATH, then DEFAULT_ROM_PATH
+  (cfg/cfg.c:870, 917-920), which is the current directory and ../rom on
+  Windows and Linux (config.h:239, 288). RetroPie passes
+  --rom-path=$biosdir. RetroBat passes the full path of exec.bin and
+  grom.bin in its bios folder with -e and -g, refuses to start when either
+  is missing, and adds -E with ecs.bin only when the jzintv_useECS option
+  is set and the file exists (emulatorLauncher/Generators/Jzintv.Generator.cs).
+
+  No hash is checked on any of the three images. The read length is the
+  only gate, and the size of exec.bin picks the machine: 8192 bytes is the
+  original EXEC, 8704 bytes the Intellivision II EXEC2 with its extra 256
+  words at $0400, 16384 bytes the INTV88 / TutorVision WBEXEC
+  (cfg/cfg.c:1114-1150).
+
+  The Intellivoice SP0256-012 mask ROM is compiled in (ivoice/ivoice.c:511,
+  1958). ivoice_init also tries sp0256_0.bin to sp0256_F.bin in the current
+  directory for extra speech ROM pages (ivoice/ivoice.c:1498-1539,
+  2005-2012). No released hardware needs one, and a missing page is
+  skipped silently.
+
+  Palette files (--gfx-palette, cfg/cfg.c:965-985) and keyboard hack files
+  (--kbdhackfile, cfg/cfg.c:135-140) are user configuration. RetroBat
+  writes its own keyboard hack file from the controller mapping. Cartridge
+  metadata is matched against a compiled-in table by CRC32 of the game
+  (cfg/cfg.c:1280-1295).
+
+files:
+  - name: exec.bin
+    system: intellivision
+    required: true
+    min_size: 8192
+    validation: [size]
+    description: "Executive ROM, 4K 16-bit words at $1000"
+    source_ref: "cfg/cfg.c:625, 688, 1114-1150"
+    note: >-
+      A missing file or fewer than 8192 bytes stops the emulator. 8704 and
+      16384 byte images select the Intellivision II and TutorVision
+      variants.
+
+  - name: grom.bin
+    system: intellivision
+    required: true
+    min_size: 2048
+    validation: [size]
+    description: "Graphics ROM, 2K bytes at $3000"
+    source_ref: "cfg/cfg.c:626, 689, 1152-1161"
+    note: "A missing file or fewer than 2048 bytes stops the emulator."
+
+  - name: ecs.bin
+    system: intellivision
+    required: false
+    min_size: 24576
+    validation: [size]
+    description: "Entertainment Computer System ROM, 12K 16-bit words"
+    source_ref: "cfg/cfg.c:628, 687, 1312-1318, 1356-1385"
+    note: >-
+      Read only when ECS support is on, from -s1 or from cartridge metadata
+      that marks the game as using the ECS. For a game merely enhanced by
+      the ECS a missing file turns ECS support off. For a game that requires
+      it, or with -s1, the emulator stops.

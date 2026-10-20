@@ -1,0 +1,55 @@
+emulator: PCSX-ReARMed (standalone)
+type: standalone
+core_classification: embedded_hle
+source: "https://github.com/notaz/pcsx_rearmed"
+profiled_date: "2026-10-20"
+source_commit: "8b6c163575e6ce9a0537553e0d4ed4225315955e"
+core_version: "r26"
+display_name: "Sony - PlayStation (PCSX-ReARMed standalone)"
+mode: standalone
+cores:
+  - pcsx-rearmed
+systems:
+  - sony-playstation
+
+notes: |
+  notaz's own SDL front end of PCSX-ReARMed, the pcsx binary built by the
+  repository's configure and make, not the libretro core. RetroPie
+  builds it from master, creates a bios folder in its install directory,
+  links SCPH1001.BIN from its BIOS directory into that folder and runs
+  ./pcsx -cdfile <image> from the install directory.
+
+  The BIOS folder is <home>/.pcsx/bios/. home is "." when a .pcsx folder
+  exists in the working directory, which RetroPie provides, and the bios
+  folder of the working directory then replaces it.
+  ref: frontend/main.c:85-102, frontend/main.c:505-520, frontend/main.h:25-37
+
+  The front end names no BIOS file. At start it lists every regular file
+  or link of exactly 512 KiB or 4 MiB in that folder, the menu offers them
+  beside HLE, and the choice is saved in the configuration. Until a
+  configuration has been saved the menu selects the first file the
+  directory listing returns, and a launch with -cdfile that never opens
+  the menu runs with HLE. psxMemReset reads the first 0x80000 bytes of
+  the selected file and falls back to HLE when it cannot be read whole.
+  ref: frontend/menu.c:2581-2632, frontend/menu.c:2535-2550,
+       frontend/menu.c:1655-1661, frontend/main.c:452,
+       libpcsxcore/psxmem.c:291-333
+
+  cheatpops.db, a cwcheat list read from the working directory when a disc
+  is inserted, is optional and not installed by RetroPie.
+  ref: frontend/main.c:312-321, frontend/main.c:398-401
+
+files:
+  - name: "SCPH1001.BIN"
+    system: sony-playstation
+    description: "PlayStation BIOS, any 512 KiB image, named as RetroPie links it"
+    size: 524288
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: >-
+      The code accepts any file name. SCPH1001.BIN is the one name RetroPie
+      links into the bios folder, so it is the only image this install can
+      list. A 4 MiB file is also listed, and only its first 512 KiB are
+      loaded.
+    source_ref: "frontend/menu.c:2619-2628, libpcsxcore/psxmem.c:314-327"

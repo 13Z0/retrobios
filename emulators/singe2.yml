@@ -1,0 +1,44 @@
+emulator: Singe 2
+type: standalone
+core_classification: game_engine
+source: "https://singeengine.com"
+upstream: "https://singeengine.com"
+profiled_date: "2026-10-20"
+core_version: "2.10"
+display_name: "Laserdisc (Singe 2)"
+mode: standalone
+cores:
+  - singe2
+systems:
+  - arcade-laserdisc
+
+notes: |
+  Somewhat Interactive Nostalgic Game Engine by Scott Duensing, the Lua
+  laserdisc game engine, released as v2.10 on 2024-03-26 (CHANGELOG). The
+  program is GPLv3 but no public source tree was reachable, so this profile
+  reads the Windows binary RetroBat installs, Singe-v2.10-Windows-x86_64.exe
+  (sha1 5a4883ff55da7d4690a8763e6f3ff443ec1d5293).
+
+  emulatorlauncher links the game folder next to the executable and runs
+  `Singe-v2.10-Windows-x86_64.exe -k -w|-x -y [-z] [-n] -v <video> <script>`,
+  taking the video and the .singe script from the game's .dat, .game or
+  folder layout. Its ActionMax mode looks for an ActionMax folder in the
+  package (emulatorLauncher Generators/Singe2.Generator.cs:24-150).
+
+  The video and the script arrive on the command line and the program stops
+  with "Unable to locate video." or "Unable to locate script." when either is
+  absent. Everything else it opens it carries itself. Framework.singe,
+  Menu.singe, FreeSansBold.ttf, menuBackground.mkv and controls.cfg.example
+  are byte arrays in the executable (Framework_singe, Menu_singe and so on in
+  its symbol table), written out to Singe/ with ">>> Created File:" when
+  missing. The framework is run with dofile("Singe/Framework.singe") and
+  sets SINGE_FRAMEWORK_VERSION 2.10.
+
+  controls.cfg is looked up in the script's folder and in the folder above
+  it, and when neither holds one the built-in mappings apply ("Loading default control
+  mappings"). Files the engine writes go to the data directory given by -d.
+  The KarisFramework, KimmyScript and Blank folders RetroBat ships are Lua
+  libraries and a sample game that game scripts load by path, not files the
+  engine opens.
+
+files: []

@@ -1,0 +1,237 @@
+emulator: dsda-doom
+type: standalone
+core_classification: game_engine
+source: "https://github.com/kraflab/dsda-doom"
+profiled_date: "2026-10-20"
+source_commit: "e443ff7a3e6090a1ff92ad7a426916c4fd35ecc5"
+core_version: "0.29.4"
+display_name: "Doom (dsda-doom)"
+cores: [dsda-doom]
+systems: [doom, heretic, hexen, chex]
+
+notes: |
+  Doom source port derived from PrBoom+, by Ryan Krafnick (kraflab). Plays
+  Doom, Doom II, Final Doom, Heretic, Hexen, Chex Quest, Hacx, REKKR and the
+  Freedoom IWADs from one binary. The profiled tag is v0.29.4. v0.29.3 reads
+  the same files: between the two tags d_main.c, m_misc.c and
+  MUSIC/flplayer.c are unchanged in what they open, and SDL/i_system.c only
+  switches to a bounded snprintf in the path search.
+
+  dsda-doom.wad holds the engine's own lumps (the WAD_DATA name,
+  prboom2/CMakeLists.txt:29). M_LoadDefaults requires it through
+  I_RequireFile, which aborts with "Unable to find required file" when the
+  search fails (prboom2/src/m_misc.c:817-818,
+  prboom2/src/SDL/i_system.c:622-629). D_DoomMainSetup then adds it as an
+  autoload source ahead of the IWAD (prboom2/src/d_main.c:2021), and its
+  lumps are tagged LUMP_PRBOOM so a PWAD can override them
+  (prboom2/src/w_wad.c:170-178). The tree ships the inputs, not the file:
+  data/CMakeLists.txt builds it with the dsda_rdatawad tool from the raw
+  palette, lumps, PPM graphics and WAV sounds under data/.
+
+  Every file is located by I_FindFileInternal, which tries in order the
+  executable directory, the config directory, the working directory,
+  $DOOMWADDIR, the build-time DOOMWADDIR, the build-time path of
+  dsda-doom.wad, the SDL base path and ../share/games/doom under it,
+  $HOME/doom, $HOME, $XDG_DATA_HOME/games/doom, every $XDG_DATA_DIRS entry
+  under games/doom then doom, and last every entry of $DOOMWADPATH. Existence
+  is the only test, and the requested extension is appended only when the
+  name as written is missing (prboom2/src/SDL/i_system.c:471-620).
+
+  The IWAD is -iwad when given, else the first name of standard_iwads found
+  on that path (prboom2/src/d_main.c:163-191, 1152-1189). A GAMEINFO lump in
+  a loaded PWAD can name the IWAD instead, and a PWAD with Doom 1 maps
+  switches the search to episode_iwads (prboom2/src/d_main.c:195-209,
+  1850-1904). Nothing found stops startup with "IdentifyVersion: IWAD not
+  found" (prboom2/src/d_main.c:1906-1910). CheckIWAD reads the lump
+  directory and sets the game mode from the map lumps it counts, so a WAD
+  under any name plays (prboom2/src/d_main.c:933-1043). AddIWAD takes the
+  game from the file name: heretic.wad and heretic1.wad select Heretic,
+  hexen.wad selects Hexen, and the Chex, REKKR, Hacx, TNT, Plutonia, French
+  Doom II and Freedoom missions are keyed on their names too
+  (prboom2/src/d_main.c:1048-1130). No hash of any IWAD is read.
+
+  Hexen needs the v1.1 IWAD: a hexen.wad without MAP05 is refused as the
+  shareware release, one without CLUS1MSG as v1.0
+  (prboom2/src/d_main.c:2046-2057). nerve.wad is a PWAD loaded with -file,
+  and its name alone switches the mission to No Rest for the Living
+  (prboom2/src/d_main.c:899-902).
+
+  MIDI music goes through the fluidsynth player by default
+  (prboom2/src/dsda/configuration.c:742-745, prboom2/src/SDL/i_sound.c:1059-1070).
+  It loads snd_soundfont when that setting names one, empty by default,
+  and otherwise the SNDFONT lump, which dsda-doom.wad carries from
+  data/lumps/soundfont/sndfont.lmp (prboom2/src/MUSIC/flplayer.c:275-303,
+  prboom2/src/dsda/configuration.c:750-752, prboom2/data/CMakeLists.txt:59).
+  No soundfont file is read in the default configuration. The OPL player
+  takes its instruments from the GENMIDI lump of the IWAD.
+
+  RetroPie installs dsda-doom.wad beside the binary, the first directory
+  searched, and launches "dsda-doom -iwad <file>" with DOOMWADDIR set to its
+  ports/doom directory.
+
+files:
+  - name: "dsda-doom.wad"
+    category: game_data
+    description: "dsda-doom engine data WAD"
+    required: true
+    size: 3674257
+    sha1: "d527dd01b1e572ce017537ca1f2f6d35f4af90ce"
+    md5: "88c577edc68096f26a31a4f03777ada8"
+    crc32: "53e51c09"
+    source_ref: "prboom2/src/m_misc.c:817-818, prboom2/src/SDL/i_system.c:622-629, prboom2/src/d_main.c:2021, prboom2/CMakeLists.txt:29"
+    note: >
+      Existence is the only test. Hashes are those of the file dsda_rdatawad
+      builds from data/ at this tag on Linux, which matches the copy in the
+      v0.29.4 macOS release archive byte for byte. The copy in the Windows
+      archive differs (3674386 bytes). Other versions carry different lumps.
+
+  # ================================================================
+  # IWADs (user-supplied). One is needed to start a game.
+  # ================================================================
+
+  # ---- Doom ----
+
+  - name: "doom.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:170, 197, 974-985, 1034-1039"
+    note: "Registered and Ultimate Doom share the name and are told apart by the E4 maps."
+
+  - name: "doom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:171, 198"
+    note: "Shareware Doom."
+
+  - name: "doomu.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:172, 199"
+
+  - name: "doom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:166, 1102-1103"
+
+  - name: "doom2f.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:165, 1104-1105"
+    note: "French Doom II. The name selects the French language."
+
+  - name: "plutonia.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:167, 1108-1109"
+
+  - name: "tnt.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:168, 1106-1107"
+
+  - name: "bfgdoom.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:186, 1017-1020"
+    note: "BFG Edition of Doom, recognised by its DMENUPIC lump."
+
+  - name: "bfgdoom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:185, 1017-1020"
+    note: "BFG Edition of Doom II, recognised by its DMENUPIC lump."
+
+  - name: "nerve.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:899-902"
+    note: "No Rest for the Living. A PWAD given with -file on top of Doom II."
+
+  # ---- Freedoom (free) ----
+
+  - name: "freedoom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:175, 201, 1099-1100"
+
+  - name: "freedoom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:174, 1114-1116"
+
+  - name: "freedm.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:176, 1114-1116"
+
+  # ---- Heretic ----
+
+  - name: "heretic.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "prboom2/src/d_main.c:188, 206, 1064-1068"
+
+  - name: "heretic1.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "prboom2/src/d_main.c:191, 208, 1079-1085"
+    note: "Shareware Heretic."
+
+  # ---- Hexen ----
+
+  - name: "hexen.wad"
+    category: game_data
+    system: hexen
+    required: false
+    source_ref: "prboom2/src/d_main.c:189, 1070-1077, 2046-2057"
+    note: "v1.1 only. The shareware and v1.0 IWADs are refused."
+
+  # ---- Chex Quest ----
+
+  - name: "chex.wad"
+    category: game_data
+    system: chex
+    required: false
+    source_ref: "prboom2/src/d_main.c:178, 203, 1093-1094"
+
+  - name: "chex3v.wad"
+    category: game_data
+    system: chex
+    required: false
+    source_ref: "prboom2/src/d_main.c:179, 1095-1096"
+
+  - name: "chex3d2.wad"
+    category: game_data
+    system: chex
+    required: false
+    source_ref: "prboom2/src/d_main.c:180, 1110-1111"
+
+  # ---- Standalone IWADs ----
+
+  - name: "hacx.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:182, 1112-1113"
+
+  - name: "rekkrsa.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "prboom2/src/d_main.c:183, 204, 1097-1098"
+    note: "REKKR: Sunken Land."

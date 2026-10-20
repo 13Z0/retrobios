@@ -1,0 +1,192 @@
+emulator: np2pi
+type: standalone
+core_classification: community_fork
+source: "https://github.com/eagle0wl/np2pi"
+upstream: "https://np2.yui.ne.jp"
+profiled_date: "2026-10-20"
+source_commit: "2e995768b55e97acfaac32d45fbb8351645cba62"
+core_version: "0.83"
+display_name: "NEC - PC-98 (np2pi)"
+mode: standalone
+cores:
+  - np2pi
+systems:
+  - nec-pc-98
+
+notes: |
+  Raspberry Pi build by eagle0wl of Yui's Neko Project II 0.83
+  (np2ver.h:1), the SDL front end compiled with sdl/makefile.rpi and
+  sdl/raspberrypi/compiler.h. That header defines SUPPORT_SASI and
+  SUPPORT_SCSI but not SUPPORT_PC9821, and bios/bios.c defines
+  BIOS_SIMULATE, so bios9821.rom and itf.rom are never opened: the ITF
+  image is the itfrom.res table compiled into the binary.
+  ref: sdl/raspberrypi/compiler.h:136-139, bios/bios.c:16-21,
+       bios/bios.c:257-268, bios/bios.c:302-318
+
+  Every file below is opened from the working directory. datadir is "./",
+  file_setcd(datadir) makes it the base of file_getcd, and getbiospath
+  falls back to file_getcd while the biospath key of np2.cfg is empty, as
+  it is by default. np2.cfg itself is read and written there.
+  ref: sdl/np2.c:48, sdl/np2.c:152, sdl/dosio.c:180-195, pccore.c:98-111,
+       sdl/ini.c:318, sdl/ini.c:412-416
+
+  RetroPie launches np2 from its pc98 configuration directory, where it
+  links 2608_bd.wav, 2608_hh.wav, 2608_rim.wav, 2608_sd.wav,
+  2608_tom.wav, 2608_top.wav, bios.rom, FONT.ROM and sound.rom from the
+  pc98 folder of its BIOS directory, and TakaoGothic as default.ttf. The
+  paths below follow that folder. The other files are read only when
+  placed in the working directory itself.
+
+  Fonts are filled in order and each source only supplies the glyphs still
+  missing: the fontfile key of np2.cfg (empty by default), FONT.BMP,
+  FONT.ROM, then the PC-8801 KANJI1.ROM, KANJI2.ROM and PC88.FNT. Glyphs
+  still missing after that are drawn from default.ttf through SDL_ttf into
+  font.tmp, which is reused on later runs. default.ttf is a desktop font,
+  not a machine ROM.
+  ref: pccore.c:251, font/font.c:113-188, font/fontdata.c:8-12,
+       font/fontpc88.c:81-193, sdl/fontmng.c:12-16
+
+files:
+  - name: "bios.rom"
+    path: "pc98/bios.rom"
+    system: nec-pc-98
+    description: "PC-9801 system BIOS, E8000h-FFFFFh"
+    min_size: 98304
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: >-
+      The first 0x18000 bytes are read to E8000h. A shorter file, or no
+      file, leaves the built-in BIOS simulation in place.
+    source_ref: "bios/bios.c:226-256, common/strres.c:53"
+
+  - name: "FONT.BMP"
+    path: "pc98/FONT.BMP"
+    system: nec-pc-98
+    description: "PC-98 character generator as a 2048x2048 monochrome bitmap"
+    required: false
+    hle_fallback: true
+    note: "First font source tried from the working directory."
+    source_ref: "font/font.c:179, font/fontdata.c:11, font/fontpc98.c:11-16"
+
+  - name: "FONT.ROM"
+    path: "pc98/FONT.ROM"
+    system: nec-pc-98
+    description: "PC-98 character generator in the Virtual98 layout"
+    min_size: 288768
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read when glyphs are still missing after FONT.BMP. 0x46800 bytes are read, a shorter file is ignored."
+    source_ref: "font/font.c:180, font/fontdata.c:12, font/fontv98.c:8, font/fontv98.c:30-51"
+
+  - name: "KANJI1.ROM"
+    path: "pc98/KANJI1.ROM"
+    system: nec-pc-98
+    description: "PC-8801 first level kanji ROM"
+    min_size: 131072
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read after FONT.ROM for the ANK and first level kanji glyphs still missing, 0x20000 bytes."
+    source_ref: "font/font.c:181, font/fontdata.c:9, font/fontpc88.c:94-133"
+
+  - name: "KANJI2.ROM"
+    path: "pc98/KANJI2.ROM"
+    system: nec-pc-98
+    description: "PC-8801 second level kanji ROM"
+    min_size: 131072
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read for the second level kanji glyphs still missing, 0x20000 bytes."
+    source_ref: "font/font.c:181, font/fontdata.c:10, font/fontpc88.c:135-152"
+
+  - name: "PC88.FNT"
+    path: "pc98/PC88.FNT"
+    system: nec-pc-98
+    description: "PC-8801 ANK font"
+    min_size: 6144
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read for the ANK glyphs still missing, 0x1800 bytes."
+    source_ref: "font/font.c:181, font/fontdata.c:8, font/fontpc88.c:154-187"
+
+  - name: "sound.rom"
+    path: "pc98/sound.rom"
+    system: nec-pc-98
+    description: "FM sound board BIOS"
+    min_size: 16384
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: >-
+      Each board first tries its own image, sound14.rom, sound26.rom,
+      sound86.rom, sound118.rom or soundSPB.rom, then sound.rom, reading
+      0x4000 bytes. Without one a 9-byte stub is written to the ROM window.
+    source_ref: "sound/soundrom.c:11-16, sound/soundrom.c:19-81, cbus/board26k.c:87, cbus/board86.c:178"
+
+  - name: "2608_bd.wav"
+    path: "pc98/2608_bd.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, bass drum"
+    required: false
+    source_ref: "sound/rhythmc.c:8, sound/rhythmc.c:57-68"
+
+  - name: "2608_sd.wav"
+    path: "pc98/2608_sd.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, snare drum"
+    required: false
+    source_ref: "sound/rhythmc.c:9, sound/rhythmc.c:57-68"
+
+  - name: "2608_top.wav"
+    path: "pc98/2608_top.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, top cymbal"
+    required: false
+    source_ref: "sound/rhythmc.c:10, sound/rhythmc.c:57-68"
+
+  - name: "2608_hh.wav"
+    path: "pc98/2608_hh.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, hi-hat"
+    required: false
+    source_ref: "sound/rhythmc.c:11, sound/rhythmc.c:57-68"
+
+  - name: "2608_tom.wav"
+    path: "pc98/2608_tom.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, tom"
+    required: false
+    source_ref: "sound/rhythmc.c:12, sound/rhythmc.c:57-68"
+
+  - name: "2608_rim.wav"
+    path: "pc98/2608_rim.wav"
+    system: nec-pc-98
+    description: "YM2608 rhythm sample, rim shot"
+    required: false
+    source_ref: "sound/rhythmc.c:13, sound/rhythmc.c:57-68"
+
+  - name: "sasi.rom"
+    path: "pc98/sasi.rom"
+    system: nec-pc-98
+    description: "SASI controller BIOS"
+    min_size: 4096
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read when a SASI disk is attached, 0x1000 bytes. Otherwise the built-in stub is copied."
+    source_ref: "cbus/sasiio.c:442-465"
+
+  - name: "scsi.rom"
+    path: "pc98/scsi.rom"
+    system: nec-pc-98
+    description: "SCSI controller BIOS"
+    min_size: 16384
+    validation: [size]
+    required: false
+    hle_fallback: true
+    note: "Read when a SCSI disk is attached, 0x4000 bytes. Otherwise the built-in stub is copied."
+    source_ref: "cbus/scsiio.c:208-233"

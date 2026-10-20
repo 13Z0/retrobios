@@ -57,6 +57,11 @@ NODEDUP_DIRS = {
     "Ikemen GO",
     "Theme Hospital",
     "TheXTech",
+    # Aleph One opens each scenario's Physics Models and the Splitwolf mod
+    # tree its sounds and maps by path: Marathon 2 and Infinity share one
+    # Standard.phyA, lwmp/ repeats 182 files across its levels.
+    "Bungie",
+    "splitwolf",
     # CatacombGL reads each game's folder by name and compares sizes only:
     # the Armageddon and Apocalypse intro shapes SHP1, SHP9 to SHP13 are the
     # Abyss shareware bytes under the retail names, and each game opens

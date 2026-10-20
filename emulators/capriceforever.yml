@@ -1,0 +1,126 @@
+emulator: CaPriCe Forever
+type: standalone
+core_classification: other
+source: "https://www.retrobat.org/repo/win64/stable/emulators/capriceforever.7z"
+upstream: closed-source
+profiled_date: "2026-10-20"
+core_version: "26.4"
+display_name: "Amstrad - CPC / PLUS (CaPriCe Forever)"
+cores:
+  - capriceforever
+systems:
+  - amstrad-cpc
+mode: standalone
+
+notes: |
+  Closed source Amstrad CPC and PLUS emulator for Windows. The build read here
+  is the one RetroBat installs, capriceforever.7z sha256
+  54c9f7f3df96011bdbd09e72413fed798a395c241e8c2d05eb6af075a15b79b4, release
+  26.4 of 1 April 2026 (History.txt, version resource 26.4.0.0). Caprice.exe
+  md5 a33e841c80e9fd9067a1c373492cd53b is a 32-bit Delphi program, cited by
+  file offset.
+
+  The machine ROMs are compiled into the executable as named defaults. The
+  464, 664 and 6128 OS and BASIC, AMSDOS and the Multiface Two ROM sit in the
+  data section byte for byte equal to the usual dumps (os464.rom at 0x7f5348,
+  basic464.rom at 0x7f9348, os6128.rom at 0x80d348, basic6128.rom at 0x811348,
+  os664.rom at 0x815348, basic664.rom at 0x819348, amsdos.rom at 0x7e1348,
+  the first 8 KiB of MF2.rom at 0x821348). A slot left blank in a device file
+  takes the built-in image, and the names "Default OS", "Default BASIC",
+  "Default AMSDOS", "Default Multiface Two", "Default Silicon Disc 1.3" and
+  "Default DK'Tronics Speech" select them explicitly.
+  ref: Caprice.exe 0x75d82c, 0x7314ad, 0x75d864, 0x75d884, 0x75d8a0
+
+  RetroBat writes Device.ini on every launch: CPC_6128_UK, or PLUS_6128_UK for
+  the gx4000 system, LowerROM and UpperROM0 blank, UpperROM7 "Default
+  AMSDOS", UpperROM1 a built-in Silicon Disc or DK'Tronics image or Empty, and
+  CartridgeFilename the launched .cpr. No slot it writes names a file, so
+  nothing outside the program is read for a RetroBat launch.
+  ref: emulatorLauncher Generators/CapriceForever.Generator.cs:277-405
+
+  Files in Roms\ (16512 bytes, a 128 byte AMSDOS header then the 16 KiB
+  image) are offered by name for the lower and upper ROM slots, and .cpr
+  files in Cartridges\ for the cartridge port. The package ships four ROMs
+  and three PLUS system cartridges there. Only the bundled device template
+  "PLUS 6128 UK.ini" names one of them (the UK cartridge), and RetroBat
+  replaces that choice with the launched game.
+  ref: Caprice.exe 0x72fb01, 0x7332cb, 0x726d86
+
+files:
+  - name: "Burnin' Rubber + BASIC (UK).cpr"
+    path: "Cartridges/Burnin' Rubber + BASIC (UK).cpr"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 131156
+    sha1: "405e341437fab8db477606238af0c20eca2e39ee"
+    md5: "39b565e648172980aa552293e667070f"
+    description: "Amstrad PLUS system cartridge, English"
+    source_ref: "Caprice.exe 0x7332cb, 0x726d86"
+    note: "Named by the bundled Settings/PLUS 6128 UK.ini template."
+
+  - name: "Burnin' Rubber + BASIC (FR).cpr"
+    path: "Cartridges/Burnin' Rubber + BASIC (FR).cpr"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 131148
+    sha1: "958437ad6292ecd368e8c6c963cb3ae7d48b9406"
+    md5: "2adf22a2046a18bd39de90ad01c15998"
+    description: "Amstrad PLUS system cartridge, French"
+    source_ref: "Caprice.exe 0x7332cb, 0x726d86"
+
+  - name: "Burnin' Rubber + BASIC (SP).cpr"
+    path: "Cartridges/Burnin' Rubber + BASIC (SP).cpr"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 131148
+    sha1: "076939a2cd7593b5e56c775d7a4752f2d138ff6c"
+    md5: "75632137fcbe51eaec1f47a22e55d6a3"
+    description: "Amstrad PLUS system cartridge, Spanish"
+    source_ref: "Caprice.exe 0x7332cb, 0x726d86"
+
+  - name: "albireo.rom"
+    path: "Roms/albireo.rom"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 16512
+    sha1: "9dd652574638682876a55febe3dca7b5bb3ad222"
+    md5: "9afe71e4c38040864576358a71474ab6"
+    description: "Albireo ROM (AMSDOS header, title ALBIREO ROM)"
+    source_ref: "Caprice.exe 0x72fb01, 0x720ff1"
+
+  - name: "unidos.rom"
+    path: "Roms/unidos.rom"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 16512
+    sha1: "e78a94ab8de917270179b80b071d3e90d98ea5dc"
+    md5: "a9d1b46e49701c85d9a3a66ff725c6e6"
+    description: "UniDOS ROM"
+    source_ref: "Caprice.exe 0x72fb01, 0x720ff1"
+
+  - name: "unitools.rom"
+    path: "Roms/unitools.rom"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 16512
+    sha1: "982e523b2d5b5c9873526a7363fcac4cbc1b6dfd"
+    md5: "83c6ecbf655b8f3c65e46a46c6bc7161"
+    description: "UniTools ROM for UniDOS"
+    source_ref: "Caprice.exe 0x72fb01, 0x720ff1"
+
+  - name: "fw-v3-u5.rom"
+    path: "Roms/fw-v3-u5.rom"
+    system: amstrad-cpc
+    required: false
+    bundled: true
+    size: 16512
+    sha1: "bb9b4c487fa6e338d6b8f78b6fc10a3912263e22"
+    md5: "96c5c16e8db2f5c7d6c3c160d686725a"
+    description: "Firmware V3-U5 ROM (AMSDOS header title V3-U5 ROM)"
+    source_ref: "Caprice.exe 0x72fb01, 0x720fd8"

@@ -1,0 +1,277 @@
+emulator: RAINE
+type: standalone
+core_classification: other
+source: "https://github.com/zelurker/raine"
+upstream: "https://github.com/zelurker/raine"
+profiled_date: "2026-10-20"
+source_commit: "8e25d5d8907ae459181610912b0030c955683015"
+core_version: "0.97.5"
+display_name: "Arcade (RAINE)"
+mode: standalone
+cores:
+  - raine
+systems:
+  - arcade
+  - snk-neogeo-mvs
+  - snk-neogeo-cd
+
+notes: |
+  Multi-system arcade emulator by Emmanuel Anne, built on SDL2. RetroBat
+  installs a package whose raine.exe reports 0.97.5 and carries the joystick
+  dead zone setting added on 2025-03-15, one day before the build date, so the
+  pin is the last commit before that build. Its hiscore.dat, command.dat and
+  history.dat are byte for byte the ones at that commit.
+
+  emulatorlauncher runs `raine.exe -n -fs 0|1 <set>` from the package folder
+  and rewrites config/raine32_sdl.cfg first: rom_dir_0 is the folder of the
+  game, rom_dir_1 the RetroBat bios folder, neocd_bios points at
+  bios/neocdz.zip, emudx and artwork stay under the package, and the Neo-Geo
+  BIOS selection defaults to 25
+  (emulatorLauncher Generators/Raine.Generator.cs:76-142).
+
+  A set is loaded from each rom_dir in turn as <set>.zip, <set>.7z or a
+  <set>/ folder (source/loadroms.c:258-275). Inside an archive a ROM is found
+  by CRC32 first and by name second (source/files.c:370-403). A ROM missing
+  from the set and its parents ends the load with a fatal error
+  (source/loadroms.c:1301-1316). The Windows build has curl and, before
+  giving up, offers to download a missing archive from archive.org, neogeo.zip
+  included (source/loadroms.c:1200-1240).
+
+  Files read from the shared folder go through get_shared, which tries the
+  current directory, then the share path, then share path config/
+  (source/files.c:50-95). On Windows the share path is the folder of the
+  executable (source/raine.c:378).
+
+files:
+  - name: "neogeo.zip"
+    system: snk-neogeo-mvs
+    required: true
+    category: bios_zip
+    description: "Neo-Geo BIOS set"
+    note: >-
+      Parent of every MVS set (ROMOF("neogeo") in the drivers). The board ROMs
+      come from rom_neogeo and the 68K BIOS from the rom_bios list, picked by
+      the [neogeo] bios index (source/neocd/neocd.c:159-161). Index 0 is
+      sp-s2.sp1, RetroBat writes 25 by default, uni-bios_3_2.rom. The
+      selected BIOS, sm1.sm1, 000-lo.lo and sfix.sfix are read for every MVS
+      game, and a missing one ends the load. Members are matched by CRC32,
+      so sp-s3.sp1 answers for asia-s3.rom.
+    source_ref: "source/games/neogeo.c:22-61, source/games/neogeo.c:65-74, source/games/neogeo.c:224-229"
+    contents:
+      - name: "sp-s2.sp1"
+        size: 131072
+        crc32: "9036d879"
+      - name: "sp-s.sp1"
+        size: 131072
+        crc32: "c7f2fa45"
+      - name: "sp-u2.sp1"
+        size: 131072
+        crc32: "e72943de"
+      - name: "sp-e.sp1"
+        size: 131072
+        crc32: "2723a5b5"
+      - name: "asia-s3.rom"
+        size: 131072
+        crc32: "91b64be3"
+      - name: "vs-bios.rom"
+        size: 131072
+        crc32: "f0e8f27d"
+      - name: "sp-j2.sp1"
+        size: 131072
+        crc32: "acede59c"
+      - name: "sp1.jipan.1024"
+        size: 131072
+        crc32: "9fb0abe4"
+      - name: "sp-45.sp1"
+        size: 524288
+        crc32: "03cc9f6a"
+      - name: "japan-j3.bin"
+        size: 131072
+        crc32: "dff6d41f"
+      - name: "sp-1v1_3db8c.bin"
+        size: 131072
+        crc32: "162f0ebe"
+      - name: "uni-bios_3_1.rom"
+        size: 131072
+        crc32: "0c58093f"
+      - name: "uni-bios_3_0.rom"
+        size: 131072
+        crc32: "a97c89a9"
+      - name: "uni-bios_2_3.rom"
+        size: 131072
+        crc32: "27664eb5"
+      - name: "uni-bios_2_2.rom"
+        size: 131072
+        crc32: "2d50996a"
+      - name: "uni-bios_2_1.rom"
+        size: 131072
+        crc32: "8dabf76b"
+      - name: "uni-bios_2_0.rom"
+        size: 131072
+        crc32: "0c12c2ad"
+      - name: "uni-bios_1_3.rom"
+        size: 131072
+        crc32: "b24b44a0"
+      - name: "uni-bios_1_2.rom"
+        size: 131072
+        crc32: "4fa698e9"
+      - name: "uni-bios_1_1.rom"
+        size: 131072
+        crc32: "5dda0d84"
+      - name: "uni-bios_1_0.rom"
+        size: 131072
+        crc32: "0ce453a0"
+      - name: "neodebug.rom"
+        size: 131072
+        crc32: "698ebb7d"
+      - name: "neo-epo.sp1"
+        size: 131072
+        crc32: "d27a71f1"
+      - name: "neo-po.sp1"
+        size: 131072
+        crc32: "16d0c132"
+      - name: "236-bios.sp1"
+        size: 131072
+        crc32: "853e6b96"
+      - name: "uni-bios_3_2.rom"
+        size: 131072
+        crc32: "a4e8b9b3"
+      - name: "uni-bios_3_3.rom"
+        size: 131072
+        crc32: "24858466"
+      - name: "uni-bios_4_0.rom"
+        size: 131072
+        crc32: "a7aab458"
+      - name: "sm1.sm1"
+        size: 131072
+        crc32: "94416d67"
+      - name: "000-lo.lo"
+        size: 131072
+        crc32: "5a86cff2"
+      - name: "sfix.sfix"
+        size: 131072
+        crc32: "c2ea0cfd"
+
+  - name: "neocd.bin"
+    system: snk-neogeo-cd
+    required: true
+    size: 524288
+    description: "Neo-Geo CD BIOS"
+    note: >-
+      Path from [neocd] neocd_bios (source/raine.c:571). Left empty, neocd.bin
+      then neocd.zip are looked up through get_shared. A path ending in zip is
+      opened and its neocd.bin member read by name, anything else is read raw,
+      0x80000 bytes. Nothing found opens a file dialog once, then the program
+      exits. The image is byte swapped when the word at 0x582 reads f94e and
+      rejected unless it then reads 4ef9. RetroBat sets neocd_bios to
+      neocdz.zip in its bios folder, which must hold a neocd.bin member.
+    source_ref: "source/neocd/neocd.c:335-385"
+
+  - name: "hiscore.dat"
+    category: game_data
+    required: false
+    bundled: true
+    size: 82413
+    sha1: "4c1d58f7c1830694933e472ec1289060f7083fa9"
+    md5: "c996961db77b48b54a2daa3cda12da0d"
+    description: "High score save definitions"
+    source_ref: "source/hiscore.c:23, source/hiscore.c:302"
+
+  - name: "history.dat"
+    category: game_data
+    required: false
+    bundled: true
+    size: 1991177
+    sha1: "ce810602b74214726059bbd12e8010dc077aef3d"
+    md5: "4941042df918f0f1370e2b70d0f7d0de"
+    description: "Game history text"
+    source_ref: "source/history.c:56, source/emumain.c:640-645"
+
+  - name: "command.dat"
+    category: game_data
+    required: false
+    bundled: true
+    size: 1479437
+    sha1: "0b358f637e01b10f7a4d45b774ebf7950fcec466"
+    md5: "0ed03c88b93b036f2f0035f32b200f27"
+    description: "Move lists"
+    source_ref: "source/history.c:56, source/emumain.c:640-645"
+
+  - name: "gamecontrollerdb.txt"
+    category: game_data
+    required: false
+    bundled: true
+    size: 504115
+    sha1: "9963636d2f9decc72e36bb3c5a9f568ad6a74710"
+    md5: "0727c8530c51fbd030c710d2af4389cb"
+    description: "SDL gamepad mappings"
+    note: >-
+      Added to SDL when present, followed by config/userdb.txt. The RetroBat
+      package carries a different revision of this file.
+    source_ref: "source/sdl/control.c:2373-2382"
+
+  - name: "dkongm.dx2"
+    path: "emudx/dkongm.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX sound pack, Donkey Kong"
+    note: "Without it dkong and dkongjp run with no sound and a warning."
+    source_ref: "source/emudx.c:29-46, source/games/dkong.c:832-837"
+
+  - name: "dkongg.dx2"
+    path: "emudx/dkongg.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX graphics pack, Donkey Kong"
+    source_ref: "source/games/dkong.c:839-860"
+
+  - name: "froggerm.dx2"
+    path: "emudx/froggerm.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX sound pack, Frogger"
+    note: "Without it the EmuDX Frogger runs with no sound and a warning."
+    source_ref: "source/games/frogger.c:1444-1449"
+
+  - name: "froggerg.dx2"
+    path: "emudx/froggerg.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX graphics pack, Frogger"
+    source_ref: "source/games/frogger.c:1451-1458"
+
+  - name: "galdxm.dx2"
+    path: "emudx/galdxm.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX sound pack, Galaxian"
+    source_ref: "source/games/frogger.c:1263, source/games/galaga.c:1082"
+
+  - name: "galdxg.dx2"
+    path: "emudx/galdxg.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX graphics pack, Galaxian"
+    source_ref: "source/games/frogger.c:1466-1473"
+
+  - name: "pacmang.dx2"
+    path: "emudx/pacmang.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX graphics pack, Pac-Man"
+    source_ref: "source/games/pengo.c:1853-1860"
+
+  - name: "mspacmang.dx2"
+    path: "emudx/mspacmang.dx2"
+    system: arcade
+    category: game_data
+    required: false
+    description: "EmuDX graphics pack, Ms. Pac-Man bootleg"
+    source_ref: "source/games/pengo.c:1853-1860"

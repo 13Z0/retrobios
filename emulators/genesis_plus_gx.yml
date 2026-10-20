@@ -10,7 +10,6 @@ display_name: "Sega - MS/GG/MD/CD (Genesis Plus GX)"
 cores:
   - genesis_plus_gx
   - genesisplusgx
-  - genesisplusgx-expanded
   - genplus
   - "genesisplusgx_ex"
 systems:

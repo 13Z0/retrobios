@@ -1,0 +1,128 @@
+emulator: Ghostship
+type: standalone
+core_classification: game_engine
+source: "https://github.com/HarbourMasters/Ghostship"
+upstream: "https://github.com/HarbourMasters/Ghostship"
+source_commit: "deb091c29caff57dd986398087b058f16b11911e"
+profiled_date: "2026-10-20"
+core_version: "3.0.0"
+display_name: "Super Mario 64 (Ghostship)"
+cores: [ghostship]
+systems: [ghostship]
+
+notes: |
+  PC port of Super Mario 64 built on the decompilation, by HarbourMasters.
+  The game runs from assets extracted out of the user's N64 ROM into
+  sm64.o2r, plus the port's own archive ghostship.o2r, on the libultraship
+  runtime. Torch (submodule Torch) performs the extraction inside the
+  executable.
+
+  RetroBat installs the 3.0.0 release: its ghostship.7z carries the
+  Ghostship.exe, ghostship.o2r, config.yml, gamecontrollerdb.txt and
+  assets/ymls tree of Nautilus-Alfa-Win64.zip byte for byte, so the profile
+  is pinned to the 3.0.0 tag. Its launcher passes the ROM on the command line
+  when sm64.o2r is absent (only a .z64 file), and deletes sm64.o2r first
+  when the portVersion inside it names another major.minor than the
+  executable, so the archive is regenerated from the ROM.
+
+  Startup:
+    1. ghostship.o2r is located in the application directories and handed to
+       the resource manager (src/port/Engine.cpp:229-230, 250-255).
+    2. RunExtract checks sm64.o2r. It is regenerated when its portVersion
+       differs from the build in major or minor, or when its version file
+       holds neither ROM revision (src/port/Engine.cpp:673-682, 170-192).
+    3. Without sm64.o2r a ROM given on the command line is extracted.
+       Otherwise .z64 files next to the executable are offered, then a file
+       dialog filtered on *.z64. A file whose SHA-1 is not in mGameList is
+       refused, and with no sm64.o2r at the end the port shows an error and
+       exits (src/port/GameExtractor.cpp:37-40, 114, src/port/Engine.cpp:1056-1088).
+    4. LoadResourceFiles adds sm64.o2r, then every .otr, .o2r and .zip under
+       mods/ and every directory there (src/port/Engine.cpp:488-518).
+
+  The ROM SHA-1 is computed by Torch over the whole file with no byte order
+  conversion, so only big-endian .z64 dumps match
+  (Torch src/n64/Cartridge.cpp:21, Torch src/Companion.cpp:2491-2493). Torch then
+  reads config.yml from the application bundle path, which maps each
+  accepted hash to an asset tree under assets/ymls/ and to sm64.o2r. Without
+  config.yml Torch logs "No config file found" and writes nothing
+  (src/port/GameExtractor.cpp:295-299, Torch src/Companion.cpp:1350-1354).
+  config.yml and the 842 assets/ymls files ship with the release.
+
+  The renderer loads its shader from the archives and aborts when it is
+  missing (libultraship src/fast/backends/gfx_direct3d11.cpp:1586-1598).
+  The shaders are only in ghostship.o2r, packed from port/ by "torch pack port
+  ghostship.o2r o2r" (CMakeLists.txt:990-996).
+
+  tcc.dll and the .tcc tree serve the script mod compiler, and
+  shaderc_shared.dll the Vulkan shader compiler. Both are program components
+  of the release.
+
+  Torch and libultraship are submodules of the repository, pinned at 3.0.0
+  to 106621f0f0f9731b8739bec95227c2c5887492df and
+  6b861a64d29d9fe95d100be228eb6d190231cc0d. Their citations above are at
+  those revisions.
+
+files:
+  - name: "baserom.us.z64"
+    category: game_data
+    system: ghostship
+    required: true
+    sha1: "9bef1128717f958171a4afac3ed78ee2bb4e86ce"
+    validation: [sha1]
+    description: "Super Mario 64 (USA) ROM in big-endian .z64 order"
+    source_ref: "src/port/GameExtractor.cpp:37-40, 114, 122-129, config.yml:42-48"
+    note: "Picked through a file dialog filtered on *.z64 or passed on the command line on Windows, Linux and macOS. Android and iOS read baserom.us.z64 from the application directory. Either ROM produces sm64.o2r, and the ROM is not read again once sm64.o2r exists."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "baserom.jp.z64"
+    category: game_data
+    system: ghostship
+    required: false
+    sha1: "8a20a5c83d6ceb0f0506cfc9fa20d8f438cafe51"
+    validation: [sha1]
+    description: "Super Mario 64 (Japan) ROM in big-endian .z64 order"
+    source_ref: "src/port/GameExtractor.cpp:37-40, config.yml:4-10"
+    note: "Accepted in place of the US ROM and extracted to the same sm64.o2r. The file name is whatever the user picks."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "ghostship.o2r"
+    path: "ghostship/ghostship.o2r"
+    category: game_data
+    system: ghostship
+    required: true
+    bundled: true
+    size: 384109
+    sha1: "95300becccd0660d606c71dab5b457d52098dbe7"
+    md5: "ad8f2494ce4bb346485f03903b611464"
+    description: "Port archive packed from port/: Direct3D, OpenGL, Vulkan and Metal shaders and the menu textures"
+    source_ref: "src/port/Engine.cpp:229-230, 250-255, libultraship src/fast/backends/gfx_direct3d11.cpp:1586-1598"
+    note: "Located across the application directories. No version check runs on it at this tag, but the renderer aborts without the shader it carries. Hash of the copy in Nautilus-Alfa-Win64.zip."
+    unsourceable: "ships inside the Ghostship release, and the collection does not hold it"
+
+  - name: "config.yml"
+    path: "ghostship/config.yml"
+    category: game_data
+    system: ghostship
+    required: true
+    bundled: true
+    size: 1396
+    sha1: "29a8661b29923bc329459ff2ec9ea43e6e0c6bdb"
+    md5: "a196a1b5beb1ac9e0ef5fc9047a8f789"
+    description: "Torch extraction table: accepted ROM hashes, their asset tree under assets/ymls/ and the output archive"
+    source_ref: "src/port/GameExtractor.cpp:295-299, Torch src/Companion.cpp:1350-1354"
+    note: "Read from the application bundle path during an extraction only, together with the assets/ymls tree. Without it no sm64.o2r is written and the port exits. Hash of the copy in Nautilus-Alfa-Win64.zip."
+    unsourceable: "ships inside the Ghostship release, and a same-named file of another port must not stand in"
+
+  - name: "gamecontrollerdb.txt"
+    path: "ghostship/gamecontrollerdb.txt"
+    category: game_data
+    system: ghostship
+    required: false
+    bundled: true
+    size: 607874
+    sha1: "48e5b33c476ad7a93d41e33b9d2ffcb82009dad2"
+    md5: "2cccea5a3f80fbcbe7e8fb6d29e22a03"
+    description: "SDL game controller mapping database"
+    source_ref: "libultraship src/libultraship/libultra/os.cpp:21-27, CMakeLists.txt:998-999"
+    note: "A load failure is logged and SDL keeps its built-in mappings. The build downloads it from gabomdq/SDL_GameControllerDB. Hash of the copy in Nautilus-Alfa-Win64.zip."
+    unsourceable: "ships inside the Ghostship release, and other revisions under the same name must not stand in"

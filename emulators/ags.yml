@@ -1,0 +1,44 @@
+emulator: Adventure Game Studio
+type: standalone
+core_classification: game_engine
+source: "https://github.com/adventuregamestudio/ags"
+source_branch: release-3.6.0
+source_commit: "6802bad8dc3189462003d4a169fc591f64cfb9b6"
+profiled_date: "2026-10-20"
+core_version: "3.6.0.60"
+display_name: "Adventure Game Studio (AGS)"
+cores:
+  - ags
+systems:
+  - ags
+mode: standalone
+
+notes: |
+  Runtime engine of Adventure Game Studio, ACI_VERSION_STR 3.6.0.60
+  (Common/core/def_version.h:4). RetroPie builds Engine/ from the
+  release-3.6.0 branch and passes either the game's .exe or the sibling
+  directory of the same name.
+
+  Everything the engine opens belongs to the game. The data file is found by
+  scanning the given directory for *.ags, ac2game.dat or *.exe
+  (Common/game/main_game_file.cpp:130-140). Beside it the engine reads
+  audio.vox, or music.vox for games older than 3.2
+  (Common/ac/gamesetupstructbase.h:188-192), speech.vox or sp_<name>.vox
+  (Engine/ac/speech.cpp:102), <name>.tra translations
+  (Engine/ac/translation.cpp:57), sprindex.dat (Common/ac/spritefile.cpp:33)
+  and agsfnt<n>.ttf or agsfnt<n>.wfn fonts (Common/font/ttffontrenderer.cpp:114,
+  Common/font/wfnfontrenderer.cpp:147-152), all shipped inside or next to
+  the game. acsetup.cfg (Engine/main/config.cpp:47) is the user's
+  configuration.
+
+  MIDI goes through SDL_sound's Timidity decoder, fetched at commit
+  253b00ca with SDLSOUND_DECODER_MIDI on (CMake/FetchSDL_Sound.cmake) since
+  RetroPie sets AGS_USE_LOCAL_SDL2_SOUND=OFF. MIDI_init tries $TIMIDITY_CFG,
+  then /etc/timidity.cfg, /etc/timidity/freepats.cfg and finally
+  timidity.cfg in the working directory (SDL_sound src/SDL_sound_midi.c:23-51).
+  That is the host's GUS patch set, and without it MIDI tracks stay silent
+  while the game runs. RetroPie also writes the Allegro DIGMID set
+  digmid.dat as bin/patches.dat, but the 3.6 engine no longer links the
+  Allegro MIDI driver and nothing in Engine/ or Common/ opens patches.dat.
+
+files: []

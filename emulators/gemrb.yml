@@ -1,0 +1,61 @@
+emulator: GemRB
+type: standalone
+core_classification: game_engine
+source: "https://github.com/gemrb/gemrb"
+upstream: "https://github.com/gemrb/gemrb"
+profiled_date: "2026-10-20"
+source_commit: "ef32a9a8b837ddf4f3a9508b23710146ada2d5fe"
+core_version: "0.9.2"
+display_name: "Infinity Engine (GemRB)"
+cores:
+  - gemrb
+systems: []
+mode: standalone
+
+notes: |
+  Reimplementation of BioWare's Infinity Engine, running Baldur's Gate,
+  Baldur's Gate II, Icewind Dale, Icewind Dale II and Planescape: Torment
+  from their original data. Profiled at tag v0.9.2, the build RetroBat ships
+  (gemrb_core.dll reports GemRB v0.9.2). RetroBat writes GemRB.cfg with
+  GamePath set to the game folder and GameType taken from its extension,
+  then runs gemrb.exe -c GemRB.cfg
+  (emulatorLauncher/Generators/GemRB.Generator.cs). RetroPie builds tag
+  v0.8.6 and writes one GemRB.cfg per game, GamePath under
+  $romdir/ports/<game>/ (scriptmodules/ports/gemrb.sh). v0.8.6 reads the
+  same two files from GamePath, chitin.key at gemrb/core/Interface.cpp:1570
+  and dialog.tlk at 1679 of that tag.
+
+  GamePath defaults to the current directory, and when it holds no
+  chitin.key the engine tries .. and ../.. before falling back to the demo
+  game it installs under its own data directory
+  (gemrb/core/Interface.cpp:886-912). The game's resources are then
+  indexed through chitin.key, which names the BIF archives under data/ and
+  the CD folders (gemrb/core/Interface.cpp:1081-1090, 1106-1115). Every game
+  ships its own chitin.key and dialog.tlk, so both entries below stand for
+  the copy in the folder of the game being run.
+
+  GUIScripts, unhardcoded/ and override/ are the engine's own Python and
+  table data, installed with the program and read from GemRBPath
+  (gemrb/core/Interface.cpp:1048-1058, 1094-1102). No file is hashed.
+
+files:
+  - name: chitin.key
+    category: game_data
+    required: true
+    source_ref: "gemrb/core/Interface.cpp:886-912, 1106-1115"
+    note: "Resource index of the game in GamePath. GemRB stops when it cannot open it."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: dialog.tlk
+    category: game_data
+    required: true
+    source_ref: "gemrb/core/Interface.cpp:1233-1246"
+    note: "String table, read from GamePath, then from the language folder of Enhanced Edition installs. GemRB stops when neither opens."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: dialogf.tlk
+    category: game_data
+    required: false
+    source_ref: "gemrb/core/Interface.cpp:1248-1266"
+    note: "Female string table, read only when dialog.tlk declares one. Without it the engine falls back to dialog.tlk."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"

@@ -11,6 +11,7 @@ cores:
   - rosalies-mupen-gui
   - RMG
   - com.github.Rosalie241.RMG
+  - mupen64
 systems:
   - nintendo-64
   - nintendo-64dd

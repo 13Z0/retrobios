@@ -1,0 +1,256 @@
+emulator: Ship of Harkinian
+type: standalone
+core_classification: game_engine
+source: "https://github.com/HarbourMasters/Shipwright"
+upstream: "https://github.com/HarbourMasters/Shipwright"
+source_commit: "cb71e22a79bc5d1f688fa881795bbd93094895fc"
+profiled_date: "2026-10-20"
+core_version: "9.2.3"
+display_name: "The Legend of Zelda: Ocarina of Time (Ship of Harkinian)"
+cores: [soh]
+systems: [soh]
+
+notes: |
+  PC port of The Legend of Zelda: Ocarina of Time built on the decompilation,
+  by HarbourMasters. The game runs from assets extracted out of the user's
+  ROM into oot.o2r (oot-mq.o2r for Master Quest), plus the port's own archive
+  soh.o2r, on the libultraship runtime. ZAPDTR and OTRExporter perform the
+  extraction inside the executable.
+
+  RetroBat installs the 9.2.3 release ("Ackbar Delta"): its soh.7z carries
+  the soh.exe, soh.o2r and gamecontrollerdb.txt of SoH-Ackbar-Delta-Win64.zip
+  byte for byte, so the profile is pinned to the 9.2.3 tag. Its launcher
+  passes the ROM on the command line when neither archive exists (only a
+  .z64, .n64 or .v64 file, else it copies the ROM beside the executable), and
+  deletes both archives first when the major version stored in them differs
+  from the one in soh.o2r.
+  ref: emulatorLauncher Generators/PortsLauncher.Configuration.cs:1685-1724
+
+  Startup:
+    1. soh.o2r is located in the application directories and its stored
+       port version must match the build. A missing or outdated soh.o2r
+       shows an error and exits (soh/soh/OTRGlobals.cpp:273-274, 465-483).
+    2. oot.o2r and oot-mq.o2r are checked for the version they were built
+       with. Without an assets/ folder beside the executable nothing can be
+       regenerated and the port exits (soh/soh/OTRGlobals.cpp:397-398,
+       433-443).
+    3. Without either archive a ROM given on the command line is extracted.
+       Otherwise .z64, .n64 and .v64 files in the search folder are offered,
+       then a file dialog (soh/soh/Extractor/Extract.cpp:229-280, 488-559).
+
+  ROM check: the size must be 32, 54 or 64 MiB, the data is converted to
+  big-endian order whatever the dump format, the word at 0x10 picks the
+  version from a table of known values, and a CRC-32C of the whole
+  converted image must be one of 21 values, which include the debug ROM
+  overdumps. Compressed files are refused. One supported ROM is needed to
+  build the first archive.
+  ref: soh/soh/Extractor/Extract.cpp:54-103, 335-354, 376-401
+
+  The SHA-1 values below are those the repository publishes for the .z64
+  forms of the accepted ROMs (docs/supportedHashes.json). The code itself
+  only checks the CRC-32C, so .n64 and .v64 dumps of the same ROMs are
+  accepted too.
+
+  libultraship is a submodule pinned at 9.2.3 to
+  fdcaf6336776d24a6408d016b0a52243f108f250. Its citations are at that
+  revision.
+
+files:
+  - name: "oot.pal.10.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "328a1f1beba30ce5e178f031662019eb32c5f3b5"
+    description: "The Legend of Zelda: Ocarina of Time, PAL N64 1.0 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:2-5"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.11.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "cfbb98d392e4a9d39da8285d10cbef3974c2f012"
+    description: "The Legend of Zelda: Ocarina of Time, PAL N64 1.1 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:6-9"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.gc.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "0227d7c0074f2d0ac935631990da8ec5914597b4"
+    description: "The Legend of Zelda: Ocarina of Time, PAL GameCube ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:10-13"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.mq.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "f46239439f59a2a594ef83cf68ef65043b1bffe2"
+    description: "The Legend of Zelda: Ocarina of Time, PAL Master Quest ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:14-17"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.gc.dbg.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "cee6bc3c2a634b41728f2af8da54d9bf8cc14099"
+    description: "The Legend of Zelda: Ocarina of Time, PAL GameCube debug ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:18-21"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.mq.dbg1.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "079b855b943d6ad8bd1eb026c0ed169ecbdac7da"
+    description: "The Legend of Zelda: Ocarina of Time, PAL Master Quest debug, dump 1 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:22-25"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.mq.dbg2.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "50bebedad9e0f10746a52b07239e47fa6c284d03"
+    description: "The Legend of Zelda: Ocarina of Time, PAL Master Quest debug, dump 2 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:26-29"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.pal.mq.dbg3.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "cfecfdc58d650e71a200c81f033de4e6d617a9f6"
+    description: "The Legend of Zelda: Ocarina of Time, PAL Master Quest debug, dump 3 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:30-33"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.us.10.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "ad69c91157f6705e8ab06c79fe08aad47bb57ba7"
+    description: "The Legend of Zelda: Ocarina of Time, USA N64 1.0 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:34-37"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.us.11.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "d3ecb253776cd847a5aa63d859d8c89a2f37b364"
+    description: "The Legend of Zelda: Ocarina of Time, USA N64 1.1 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:38-41"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.us.12.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "41b3bdc48d98c48529219919015a1af22f5057c2"
+    description: "The Legend of Zelda: Ocarina of Time, USA N64 1.2 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:42-45"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.10.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "c892bbda3993e66bd0d56a10ecd30b1ee612210f"
+    description: "The Legend of Zelda: Ocarina of Time, Japan N64 1.0 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:46-49"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.11.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "dbfc81f655187dc6fefd93fa6798face770d579d"
+    description: "The Legend of Zelda: Ocarina of Time, Japan N64 1.1 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:50-53"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.12.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "fa5f5942b27480d60243c2d52c0e93e26b9e6b86"
+    description: "The Legend of Zelda: Ocarina of Time, Japan N64 1.2 ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:54-57"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.us.gc.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "b82710ba2bd3b4c6ee8aa1a7e9acf787dfc72e9b"
+    description: "The Legend of Zelda: Ocarina of Time, USA GameCube ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:58-61"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.us.mq.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "8b5d13aac69bfbf989861cfdc50b1d840945fc1d"
+    description: "The Legend of Zelda: Ocarina of Time, USA Master Quest ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:62-65"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.gc.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "0769c84615422d60f16925cd859593cdfa597f84"
+    description: "The Legend of Zelda: Ocarina of Time, Japan GameCube ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:66-69"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.gc.ce.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "2ce2d1a9f0534c9cd9fa04ea5317b80da21e5e73"
+    description: "The Legend of Zelda: Ocarina of Time, Japan GameCube Collector's Edition ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:70-73"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "oot.jp.mq.z64"
+    category: game_data
+    system: soh
+    required: false
+    sha1: "dd14e143c4275861fe93ea79d0c02e36ae8c6c2f"
+    description: "The Legend of Zelda: Ocarina of Time, Japan Master Quest ROM"
+    source_ref: "soh/soh/Extractor/Extract.cpp:81-103, docs/supportedHashes.json:74-77"
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "soh.o2r"
+    path: "soh/soh.o2r"
+    category: game_data
+    system: soh
+    required: true
+    bundled: true
+    size: 4551359
+    sha1: "313c3251edc2b345f04a34f80e09e7b27f0660ee"
+    md5: "d3701e7ce3e1f27572f697430212224e"
+    description: "Port archive: shaders, textures and data added by the port"
+    source_ref: "soh/soh/OTRGlobals.cpp:273-274, 465-483"
+    note: "Its stored version must match the executable's, so only the copy from the same release works. Hash of the copy in SoH-Ackbar-Delta-Win64.zip."
+    unsourceable: "ships inside the Ship of Harkinian release, and the collection does not hold it"
+
+  - name: "gamecontrollerdb.txt"
+    path: "soh/gamecontrollerdb.txt"
+    category: game_data
+    system: soh
+    required: false
+    bundled: true
+    size: 592371
+    sha1: "155097429a2c74f9d8ac0ee30e6ee225f5917be5"
+    md5: "7d7b338604d8da35cbd28638f0a134c3"
+    description: "SDL game controller mapping database"
+    source_ref: "libultraship src/libultraship/libultra/os.cpp:18-24, libultraship src/ship/Context.cpp:510-525"
+    note: "A load failure is logged and SDL keeps its built-in mappings. Hash of the copy in SoH-Ackbar-Delta-Win64.zip."
+    unsourceable: "ships inside the Ship of Harkinian release, and other revisions under the same name must not stand in"

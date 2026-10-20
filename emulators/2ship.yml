@@ -1,0 +1,111 @@
+emulator: 2 Ship 2 Harkinian
+type: standalone
+core_classification: game_engine
+source: "https://github.com/HarbourMasters/2ship2harkinian"
+upstream: "https://github.com/HarbourMasters/2ship2harkinian"
+source_commit: "8a24047fbce8915993804e7819f4df4fa591551f"
+profiled_date: "2026-10-20"
+core_version: "5.0.1"
+display_name: "The Legend of Zelda: Majora's Mask (2 Ship 2 Harkinian)"
+cores: [2ship]
+systems: [2ship]
+
+notes: |
+  PC port of The Legend of Zelda: Majora's Mask built on the decompilation,
+  by HarbourMasters. The game runs from assets extracted out of the user's
+  N64 or GameCube Collector's Edition ROM into mm.o2r, plus the port's own
+  archive 2ship.o2r, on the libultraship runtime. ZAPDTR and OTRExporter
+  perform the extraction inside the executable.
+
+  RetroBat installs the 5.0.1 release ("Battler Bravo"): its 2ship.7z carries
+  the 2ship.exe, 2ship.o2r, gamecontrollerdb.txt and assets tree of
+  2Ship-Battler-Bravo-Win64.zip byte for byte, so the profile is pinned to the
+  5.0.1 tag. Its launcher passes the ROM on the command line when mm.o2r is
+  absent (only a .z64, .n64 or .v64 file, else it copies the ROM beside the
+  executable), and deletes mm.o2r first when the major version stored in it
+  differs from the one in 2ship.o2r, so the archive is regenerated.
+  ref: emulatorLauncher Generators/PortsLauncher.Configuration.cs:1528-1564
+
+  Startup:
+    1. 2ship.o2r is located in the application directories and its stored
+       port version must equal the build in major, minor and patch. A
+       missing or outdated 2ship.o2r shows an error and exits
+       (mm/2s2h/BenPort.cpp:149-153, 345-370).
+    2. mm.o2r is regenerated when its stored major version differs from the
+       build (mm/2s2h/BenPort.cpp:282, 958-960).
+    3. Without mm.o2r a ROM given on the command line is extracted.
+       Otherwise .z64, .n64 and .v64 files in the install and data folders
+       are offered, then a file dialog. With no mm.o2r at the end the port
+       shows an error and exits (mm/2s2h/BenPort.cpp:447-540).
+    4. mm.o2r is added to the archive manager (mm/2s2h/BenPort.cpp:612-616).
+       A mods folder is created beside it when absent
+       (mm/2s2h/BenPort.cpp:256-262).
+
+  ROM check: the size must be 32, 54 or 64 MiB, the data is converted to
+  big-endian order whatever the dump format, the word at 0x10 picks the
+  version (0x5354631C US 1.0, 0xB443EB08 US GC), and a CRC-32C of the whole
+  converted image must be 0x96F49400 or 0xBB434787. Compressed files are
+  refused. The extraction reads assets/xml/<version>, assets/filelists and
+  assets/Config_<version>.xml from the install folder, which ship with the
+  release (1329 files).
+  ref: mm/2s2h/Extractor/Extract.cpp:54-66, 298-299, 307-357, 580-616,
+       mm/2s2h/Extractor/Extract.h:19-21
+
+  The two SHA-1 values below are those the repository publishes for the
+  .z64 forms of the two accepted ROMs (docs/supportedHashes.json). The code
+  itself only checks the CRC-32C, so .n64 and .v64 dumps of the same ROMs
+  are accepted too.
+
+  libultraship is a submodule pinned at 5.0.1 to
+  7cb10226e7875ec48ceec2f841d00afd84eef964. Its citations are at that
+  revision.
+
+files:
+  - name: "mm.us.rev1.rom.z64"
+    category: game_data
+    system: 2ship
+    required: true
+    size: 33554432
+    sha1: "d6133ace5afaa0882cf214cf88daba39e266c078"
+    description: "The Legend of Zelda: Majora's Mask (USA) N64 ROM"
+    source_ref: "mm/2s2h/Extractor/Extract.cpp:54, 63-66, 307-317, docs/supportedHashes.json:2-5"
+    note: "No file name is fixed. Picked from the install folder, a file dialog or the command line. Read only to build mm.o2r, which is used from then on."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "mm.us.gc.rom.z64"
+    category: game_data
+    system: 2ship
+    required: false
+    sha1: "9743aa026e9269b339eb0e3044cd5830a440c1fd"
+    description: "The Legend of Zelda: Majora's Mask (USA) ROM from the GameCube Collector's Edition"
+    source_ref: "mm/2s2h/Extractor/Extract.cpp:55, 63-66, 307-317, docs/supportedHashes.json:6-9"
+    note: "Accepted in place of the N64 ROM and extracted to the same mm.o2r with the GC_US asset tables."
+    unsourceable: "retail ROM the collection does not hold, and a same-named dump of another game must not stand in"
+
+  - name: "2ship.o2r"
+    path: "2ship/2ship.o2r"
+    category: game_data
+    system: 2ship
+    required: true
+    bundled: true
+    size: 1139531
+    sha1: "f9baf625f5fbedf98470a0acee4958ceb0d55f41"
+    md5: "1e05eb39b5d76e1b5476ab7c2456f979"
+    description: "Port archive: shaders, textures and data added by the port"
+    source_ref: "mm/2s2h/BenPort.cpp:149-153, 345-370"
+    note: "Its stored version must equal the executable's, so only the copy from the same release works. Hash of the copy in 2Ship-Battler-Bravo-Win64.zip."
+    unsourceable: "ships inside the 2 Ship 2 Harkinian release, and the collection does not hold it"
+
+  - name: "gamecontrollerdb.txt"
+    path: "2ship/gamecontrollerdb.txt"
+    category: game_data
+    system: 2ship
+    required: false
+    bundled: true
+    size: 603494
+    sha1: "cb03bd16cd6cf008478681e5c9fc5a2689b1e5e4"
+    md5: "3155b5fd0be37137f422c3c0f032c13f"
+    description: "SDL game controller mapping database"
+    source_ref: "libultraship src/ship/Context.cpp:277-283"
+    note: "A load failure is logged and SDL keeps its built-in mappings. Hash of the copy in 2Ship-Battler-Bravo-Win64.zip."
+    unsourceable: "ships inside the 2 Ship 2 Harkinian release, and other revisions under the same name must not stand in"

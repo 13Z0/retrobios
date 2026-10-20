@@ -1,0 +1,59 @@
+emulator: Sudachi
+type: standalone
+core_classification: community_fork
+source: "https://github.com/emuplace/sudachi.emuplace.app"
+upstream_gone: "The emuplace GitHub account answers 404 and sudachi.emuplace.app no longer serves. The 1.0.15 source archive (latest.zip, sha256 e2b98c4c2670407342db9f37feb6d2d5af39ff58acf42bbb348010fd8dc23f89) is kept by the Wayback Machine at its release URL, and its zip comment names the commit below. Observed 2026-10-20."
+profiled_date: "2026-10-20"
+source_commit: "c7431bd420d66c54df277ba0a0b71de42cf0a5bf"
+core_version: "1.0.15"
+display_name: "Sudachi (Nintendo Switch)"
+cores:
+  - sudachi
+systems: [nintendo-switch]
+mode: standalone
+
+notes: |
+  Sudachi is a standalone Nintendo Switch emulator forked from yuzu early
+  access 4176 (README.md:1-4). Keys are read from the keys directory of the user data
+  directory (src/common/fs/fs_paths.h:8-9, 18). On Windows the portable
+  build uses a user folder next to sudachi.exe when it exists, otherwise
+  %APPDATA%/sudachi (src/common/fs/path_util.cpp:90-96, CMakeLists.txt:68).
+  RetroBat creates that user folder before launching sudachi.exe -g <rom>
+  and never copies keys itself.
+  Key loading stops when neither prod.keys nor title.keys exists
+  (src/core/crypto/key_manager.cpp:649-652).
+  Firmware (system NCAs) is installed through the UI (Tools, Install
+  Firmware, src/sudachi/main.cpp:4130), not read as loose files.
+  Commercial games need the keys. Homebrew (.nro, .nso) runs without keys or firmware.
+
+files:
+  - name: "prod.keys"
+    required: true
+    path: "switch/prod.keys"
+    note: "Production keys for NCA decryption (master, key area, header, titlekek)"
+    source_ref: "src/core/crypto/key_manager.cpp:660-661"
+
+  - name: "dev.keys"
+    required: false
+    path: "switch/dev.keys"
+    note: "Development-unit keys, read instead of prod.keys when use_dev_keys is set"
+    source_ref: "src/core/crypto/key_manager.cpp:654-657"
+
+  - name: "title.keys"
+    required: false
+    path: "switch/title.keys"
+    note: "Per-title encryption keys (rights_id to titlekey mappings)"
+    source_ref: "src/core/crypto/key_manager.cpp:664-665"
+
+  - name: "console.keys"
+    required: false
+    path: "switch/console.keys"
+    note: "Console-specific keys (BIS, SD seed)"
+    source_ref: "src/core/crypto/key_manager.cpp:666-667"
+
+  - name: "key_retail.bin"
+    required: false
+    path: "switch/key_retail.bin"
+    size: 160
+    note: "Amiibo decryption keys (two InternalKey structs, 0x50 bytes each)"
+    source_ref: "src/core/hle/service/nfc/common/amiibo_crypto.cpp:273-295"

@@ -8,6 +8,7 @@ core_version: "1.0"
 display_name: "Apple - Macintosh 68k (Basilisk II)"
 cores:
   - basiliskii
+  - basilisk
 systems:
   - apple-macintosh
   - macintosh-ii

@@ -10,6 +10,7 @@ display_name: "Xenia Canary (Xbox 360)"
 cores:
   - xenia
   - xenia-canary
+  - xenia-manager
   - xenianative
 systems:
   - microsoft-xbox-360
@@ -27,6 +28,11 @@ notes: |
 
   EmuDeck installs xenia_canary.exe into the xbox360 ROMs folder. Config via
   xenia-canary.config.toml. Game patches downloaded separately into patches/.
+
+  RetroBat's xenia-manager emulator does not start Xenia Manager itself. Its
+  generator runs xenia_canary.exe from the Emulators/Xenia Canary folder that
+  Xenia Manager installs, or the Mousehook and Netplay Canary builds from their
+  own folders (emulatorlauncher Xenia.Generator.cs:48-73).
 
 files: []
 

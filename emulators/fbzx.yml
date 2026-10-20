@@ -1,0 +1,200 @@
+emulator: FBZX
+type: standalone
+core_classification: other
+source: "https://github.com/rastersoft/fbzx"
+profiled_date: "2026-10-20"
+source_commit: "8d6b4cbe5fec121015e98cf545e9b3b811de2a71"
+core_version: "3.9.1"
+display_name: "Sinclair - ZX Spectrum (FBZX)"
+mode: standalone
+cores:
+  - fbzx
+systems:
+  - sinclair-zxspectrum
+
+notes: |
+  ZX Spectrum emulator for SDL by Sergio Costas. Emulates the 48K, the 128K,
+  the Amstrad +2, the +2A/+3 and the Spanish 128K, with Interface 1 and
+  microdrives. The GitHub tree stops at 3.9.1 plus two commits, the last one
+  pointing at the project's move to GitLab. RetroPie builds this head on x86
+  and the 2.11.1 tag (fc1da080a17c400d8f9fdc316cbe8c1362a371c9) elsewhere.
+  2.11.1 is the C code base that 3.x rewrote in C++, and its ROM loader opens
+  the same names in the same order with the same fallbacks.
+  ref: src/emulator.cpp:49-160, and lines 63-195 of the tag's emulator.c
+
+  Every ROM is opened through myfopen, which tries the relative path from the
+  working directory, then under /usr/share, then under /usr/local/share.
+  make install copies the ROMs the project ships to share/spectrum-roms, and
+  RetroPie starts the emulator from inside $md_inst/share so the relative path
+  resolves there.
+  ref: src/llscreen.cpp:113-133, Makefile:30-34
+
+  A reset loads the ROM set of the current model, read in 16 KiB pages, and a
+  missing page ends the program with "Can't load file". The model is the 48K
+  unless the configuration file or the machine menu picks another one, and a
+  snapshot can switch it too. The Interface 1 ROM is loaded after every model
+  and its absence also ends the program.
+  ref: src/computer.cpp:53,186, src/emulator.cpp:68-158,308-326, src/cargador.cpp:593-599
+
+  The +2A/+3 model tries plus3-41-0.rom to plus3-41-3.rom (ROM 4.1) first,
+  then plus3-40-0.rom to plus3-40-3.rom (ROM 4.0), then the legacy names
+  plus3-0.rom to plus3-3.rom. The project ships only the legacy names, holding
+  the 4.0 ROM.
+  ref: src/emulator.cpp:103-134
+
+  fbzx/keymap.bmp, installed to share/fbzx, is the keyboard picture shown from
+  the help menu, and its absence only shows "Keymap picture not found".
+  ref: src/menus.cpp:1761, src/llscreen.cpp:486-498
+
+files:
+  - name: "48.rom"
+    path: "spectrum-roms/48.rom"
+    system: sinclair-zxspectrum
+    required: true
+    bundled: true
+    size: 16384
+    crc32: "ddee531f"
+    md5: "4c42a2f075212361c3117015b107ff68"
+    sha1: "5ea7c2b824672e914525d1d5c419d71b84a426a2"
+    description: "ZX Spectrum 48K ROM"
+    note: "Default model, loaded at the first reset."
+    source_ref: "src/emulator.cpp:74-82, src/computer.cpp:53,186"
+
+  - name: "128-0.rom"
+    path: "spectrum-roms/128-0.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "e76799d2"
+    md5: "b4d2692115a9f2924df92a3cbfb358fb"
+    sha1: "4f4b11ec22326280bdb96e3baf9db4b4cb1d02c5"
+    description: "ZX Spectrum 128K ROM 0"
+    source_ref: "src/emulator.cpp:83-92"
+
+  - name: "128-1.rom"
+    path: "spectrum-roms/128-1.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "b96a36be"
+    md5: "6e09e5d3c4aef166601669feaaadc01c"
+    sha1: "80080644289ed93d71a1103992a154cc9802b2fa"
+    description: "ZX Spectrum 128K ROM 1"
+    source_ref: "src/emulator.cpp:83-92"
+
+  - name: "plus2-0.rom"
+    path: "spectrum-roms/plus2-0.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "5d2e8c66"
+    md5: "4ed7af4636308b8a48d7a35e6c5b546b"
+    sha1: "72703f9a3e734f3c23ec34c0727aae4ccbef9a91"
+    description: "Amstrad +2 ROM 0"
+    source_ref: "src/emulator.cpp:93-102"
+
+  - name: "plus2-1.rom"
+    path: "spectrum-roms/plus2-1.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "98b1320b"
+    md5: "b3db95931cc844efaeb82db9c171b9f3"
+    sha1: "de8b0d2d0379cfe7c39322a086ca6da68c7f23cb"
+    description: "Amstrad +2 ROM 1"
+    source_ref: "src/emulator.cpp:93-102"
+
+  - name: "plus3-0.rom"
+    path: "spectrum-roms/plus3-0.rom"
+    aliases: ["plus3-40-0.rom"]
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "17373da2"
+    md5: "9833b8b73384dd5fa3678377ff00a2bb"
+    sha1: "e319ed08b4d53a5e421a75ea00ea02039ba6555b"
+    description: "Spectrum +3 ROM 4.0, page 0"
+    note: "Read under plus3-40-0.rom before the legacy name."
+    source_ref: "src/emulator.cpp:113-125"
+
+  - name: "plus3-1.rom"
+    path: "spectrum-roms/plus3-1.rom"
+    aliases: ["plus3-40-1.rom"]
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "f1d1d99e"
+    md5: "0f711ceb5ab801b4701989982e0f334c"
+    sha1: "c9969fc36095a59787554026a9adc3b87678c794"
+    description: "Spectrum +3 ROM 4.0, page 1"
+    source_ref: "src/emulator.cpp:113-125"
+
+  - name: "plus3-2.rom"
+    path: "spectrum-roms/plus3-2.rom"
+    aliases: ["plus3-40-2.rom"]
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "3dbf351d"
+    md5: "3b6dd659d5e4ec97f0e2f7878152c987"
+    sha1: "22e50c6ba4157a3f6a821bd9937cd26e292775c6"
+    description: "Spectrum +3 ROM 4.0, page 2"
+    source_ref: "src/emulator.cpp:113-125"
+
+  - name: "plus3-3.rom"
+    path: "spectrum-roms/plus3-3.rom"
+    aliases: ["plus3-40-3.rom"]
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "04448eaa"
+    md5: "a148bcc575e51389e84fdf5d555c3196"
+    sha1: "65f031caa8148a5493afe42c41f4929deab26b4e"
+    description: "Spectrum +3 ROM 4.0, page 3"
+    source_ref: "src/emulator.cpp:113-125"
+
+  - name: "128-spanish-0.rom"
+    path: "spectrum-roms/128-spanish-0.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "453d86b2"
+    md5: "c1231a70b8129311216acb7479b031d5"
+    sha1: "968937b1c750f0ef6205f01c6db4148da4cca4e3"
+    description: "Spanish 128K ROM 0"
+    source_ref: "src/emulator.cpp:135-144"
+
+  - name: "128-spanish-1.rom"
+    path: "spectrum-roms/128-spanish-1.rom"
+    system: sinclair-zxspectrum
+    required: false
+    bundled: true
+    size: 16384
+    crc32: "6010e796"
+    md5: "4f341936594cbcab75cfa62ce96e3682"
+    sha1: "bea3f397cc705eafee995ea629f4a82550562f90"
+    description: "Spanish 128K ROM 1"
+    source_ref: "src/emulator.cpp:135-144"
+
+  - name: "if1-2.rom"
+    path: "spectrum-roms/if1-2.rom"
+    aliases: ["if1-v2.rom"]
+    system: sinclair-zxspectrum
+    required: true
+    bundled: true
+    size: 8192
+    crc32: "bb66dd1e"
+    md5: "31b704ae925305e74f50699271fddd9a"
+    sha1: "5cfb6bca4177c45fefd571734576b55e3a127c08"
+    description: "Interface 1 ROM, second edition"
+    note: "Loaded after every model, if1-v2.rom being the legacy name tried next."
+    source_ref: "src/emulator.cpp:147-158"

@@ -1,0 +1,39 @@
+emulator: Zelda Classic 2.55 Prototype
+type: libretro
+core_classification: game_engine
+source: "https://www.retrobat.ovh/repo/win64/stable/emulators/cores/zc255_libretro.dll.zip"
+upstream: closed-source
+profiled_date: "2026-10-20"
+core_version: "2.55.16"
+display_name: "Zelda Classic 2.55 (ZC255)"
+cores: [zc255]
+systems: [zeldaclassic]
+
+notes: |
+  Libretro core that hosts the ZQuest Classic 2.55 player engine, offered by
+  RetroBat for its zeldaclassic system next to the ZQuest Classic standalone
+  (es_systems.cfg, emulatorLauncher LibRetro.CoreOptions.cs:303 names it
+  "Zelda Classic 2.55 Prototype"). It loads .qst quest files only
+  (emulatorLauncher Common/Generator.cs:350, 390-392). No source is
+  published: the profile reads zc255_libretro.dll as RetroBat serves it
+  (coreversions.xml version 2.55.16.0, DLL 45709824 bytes, sha1
+  d8b049ca8d196069609fd1cf67abd6346304f7a0). The binary identifies itself
+  as "2.55.16-core-prototype" and "0.14 embedded gameplay core".
+
+  Every engine file the standalone reads from disk is compiled into the DLL
+  as an RCDATA resource: allegro5.cfg, base_config/zc.cfg and zscript.cfg,
+  modules/classic.zmod, the packed classic_fonts.dat and the encoded engine
+  datafile it names, the default quest, zelda.nsf, the seven title, dungeon,
+  overworld, level 9, triforce, game over and ending MIDIs, the default.sf2
+  SoundFont (32319396 bytes) and an SDL gamecontrollerdb.txt. At start the
+  core writes them into a zc255-assets cache and verifies the copy, failing
+  with "Cannot locate embedded core resources" or "Embedded asset cache
+  verification failed" otherwise. RetroBat's ConfigureZc255
+  (emulatorLauncher LibRetro.CoreOptions.cs:6372-6377) states the same:
+  "Engine data, soundfont and sound effects are embedded in the DLL: nothing
+  is needed in the bios folder".
+
+  Nothing is read from the system directory. Quests and their saves are the
+  only files on disk.
+
+files: []

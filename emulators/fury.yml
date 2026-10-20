@@ -10,7 +10,7 @@ profiled_date: "2026-10-04"
 source_commit: "ec5824db81817866f70da326d3811bb0f52b3517"
 core_version: "20260807-10669-ec5824db8"
 display_name: "Ion Fury"
-cores: [fury]
+cores: [fury, ionfury]
 systems: [fury]
 
 notes: |

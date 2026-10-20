@@ -1,0 +1,99 @@
+emulator: Cxbx-Reloaded (31ff15b)
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/Cxbx-Reloaded/Cxbx-Reloaded"
+profiled_date: "2026-10-20"
+source_commit: "31ff15ba1d91a9a00221546c665efb133889f53a"
+core_version: "CI-31ff15b"
+display_name: "Microsoft - Xbox / Sega Chihiro (Cxbx-Reloaded 31ff15b)"
+cores:
+  - chihiro
+systems:
+  - sega-chihiro
+  - microsoft-xbox
+mode: standalone
+
+notes: |
+  The Cxbx-Reloaded build RetroBat installs as its "chihiro" emulator
+  (chihiro.7z sha256
+  bff3c1c75a1ccaa3019ee628172f8ebca21795d770d46d206090b36043e85c71). Its
+  cxbx.exe, cxbxr-emu.dll and cxbxr-ldr.exe all carry the version string
+  "31ff15b (Dec 21 2023)", the merge of pull request 2440 on the develop
+  branch. RetroBat launches it from emulators\chihiro with /load and the XBE,
+  or the default.xbe of a title directory.
+  ref: emulatorLauncher Generators/Cxbx.Generator.cs:99-110, 122-243
+
+  At this revision the Chihiro support sits behind CHIHIRO_WORK, which no
+  project file defines, so the release build has none of it: no JVS base
+  board, no boot.id detection, no media board ROM extraction, and an XBE
+  detected as Chihiro ends the run with "Emulating Chihiro mode does not work
+  yet". The binary holds that message and none of the media board or base
+  board file names the later builds read. Titles run here only as Xbox or
+  debug XBEs.
+  ref: src/core/kernel/init/CxbxKrnl.cpp:573-639, 668-699, 721-731
+
+  The kernel is reimplemented and XBE code executes natively, so no flash ROM
+  or MCPX image is read. Every path below is relative to the data directory.
+  RetroBat's settings.ini template sets DataStorageToggle to 1, the folder
+  holding cxbx.exe. EmuDisk and EmuMu are created under it at startup, and
+  the hard disk partitions inside EmuDisk are created and formatted by the
+  emulator.
+  ref: src/common/Settings.cpp:880-915, src/common/FilePaths.cpp:82-109
+
+  The media board names Chihiro\fpr21042_m29w160et.bin and
+  Chihiro\SEGABOOT_MBROM0.XBE / SEGABOOT_MBROM1.XBE stay in the file layer,
+  reached on a reboot to firmware when the system is Chihiro or when a title
+  opens the mbrom0: or mbrom1: devices. Neither happens once Chihiro mode is
+  refused, so they are not listed.
+  ref: src/core/kernel/support/EmuFile.cpp:355-357, 555-566,
+       src/core/kernel/exports/EmuKrnlHal.cpp:546-556
+
+files:
+  - name: EEPROM.bin
+    path: "EEPROM.bin"
+    system: microsoft-xbox
+    required: false
+    has_builtin: true
+    size: 256
+    validation: [size]
+    description: "Xbox EEPROM image"
+    note: >-
+      Opened at startup and mapped read/write, created and filled with
+      defaults when absent. A file that is not 256 bytes ends the run. Section
+      CRCs are recomputed on every load, the hard disk key and game region are
+      taken from it, and the stored checksum is compared with the HMAC of the
+      confounder and hard disk key keyed with the EEPROM key of keys.bin. A
+      mismatch only logs a warning and sets the LED sequence.
+    source_ref: "src/common/EmuEEPROM.cpp:93-193, src/common/FilePaths.cpp:106, src/core/kernel/init/CxbxKrnl.cpp:1080"
+
+  - name: keys.bin
+    path: "keys.bin"
+    system: microsoft-xbox
+    required: false
+    size: 32
+    validation: [size]
+    description: "Xbox EEPROM and certificate keys"
+    note: >-
+      Two 16 byte keys, the EEPROM key then the certificate key, as written by
+      dump-xbox. Any other length is refused with a warning, and an absent
+      file only costs reading save data from a real console.
+    source_ref: "src/common/FilePaths.cpp:111-144, src/core/kernel/init/CxbxKrnl.cpp:1078"
+
+  - name: xboxdash.xbe
+    path: "EmuDisk/Partition2/xboxdash.xbe"
+    system: microsoft-xbox
+    required: false
+    description: "Xbox dashboard executable"
+    note: >-
+      Launched when a title reboots with an empty launch path and by the Open
+      Dashboard menu entry. When it is missing the console's unrecoverable
+      error screen is shown. Titles run without it.
+    source_ref: "src/core/kernel/exports/EmuKrnlHal.cpp:546-556, src/gui/WndMain.cpp:2107-2112, src/common/xbe/Xbe.cpp:62-96"
+
+exclusion_note: >
+  ntdll.dll and the XInput libraries tried in turn (xinput1_4, xinput1_3,
+  xinput9_1_0) are Windows components, and cxbxr-emu.dll is the emulator's own
+  build output. Partition0.bin to Partition7.bin under EmuDisk are created and
+  formatted by the emulator. default.xbe belongs to the title.
+  ref: src/common/input/XInputPad.cpp:100-120,
+       src/core/kernel/support/EmuFile.cpp:228-246

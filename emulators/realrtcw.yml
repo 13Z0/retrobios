@@ -1,0 +1,91 @@
+emulator: RealRTCW
+type: standalone
+core_classification: enhanced_fork
+source: "https://github.com/wolfETPlayer/RealRTCW"
+upstream: "https://github.com/wolfETPlayer/RealRTCW"
+profiled_date: "2026-10-20"
+source_commit: "ad529d588e4dec717aff0779f9d1555eddc1e2be"
+core_version: "5.2"
+display_name: "RealRTCW"
+mode: standalone
+cores:
+  - rtcw
+systems: [return-to-castle-wolfenstein]
+
+notes: |
+  Single-player overhaul of Return to Castle Wolfenstein built on the iortcw
+  SP engine. RetroBat installs RealRTCW.x64.exe with its renderer and game
+  module DLLs, which report RealRTCW 5.2, the tag dated the same day as the
+  package build. emulatorlauncher runs it with fs_homepath set to roms/rtcw
+  and fs_game set to the folder of the .rtcw file, and refuses to start
+  unless roms/rtcw/Main holds z_zrealrtcw_ui.pk3, pak0.pk3 and
+  sp_pak1.pk3 to sp_pak4.pk3
+  (emulatorLauncher Generators/PortsLauncher.Configuration.cs:1362-1420).
+
+  BASEGAME is "main" and the Windows home path is RealRTCW\5.1. On Windows the
+  Steam install of RTCW (app 9010) is added as a search path, found through
+  its Main\pak0.pk3.
+  ref: code/qcommon/q_shared.h:58-72, code/sys/sys_win32.c:157-163
+
+  The engine stops with a fatal error when main/pak0.pk3 is missing, or
+  present with a checksum other than 1886207346. A demo pak0 under demomain/
+  (checksum 2985661941) is accepted with a warning and skips the point-release
+  check. Otherwise the four point-release paks are required: a missing one is
+  fatal, a checksum outside the five language tables only prints a warning.
+  ref: code/qcommon/files.c:180-225, code/qcommon/files.c:3782-3889,
+       code/qcommon/files.c:3904-4034
+
+  The mod's own assets ship as further pk3 archives that the engine loads
+  from main/ in name order like any other pak, without naming or checking
+  them.
+
+files:
+  - name: "pak0.pk3"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "main/pak0.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:183-185, 3927-3949, 4011-4029"
+    note: "RTCW retail base. Checksum 1886207346, fatal when missing or when the checksum differs."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "sp_pak1.pk3"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "main/sp_pak1.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:188, 196, 204, 212, 220, 3782-3889"
+    note: "Fatal when missing. One checksum per language (en/fr/gm/it/sp), and a mismatch prints a warning."
+
+  - name: "sp_pak2.pk3"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "main/sp_pak2.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:189, 197, 205, 213, 221, 3782-3889"
+    note: "Fatal when missing."
+
+  - name: "sp_pak3.pk3"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "main/sp_pak3.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:190, 198, 206, 214, 222, 3782-3889"
+    note: "Fatal when missing."
+
+  - name: "sp_pak4.pk3"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "main/sp_pak4.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:191-192, 199-200, 207-208, 215-216, 223-224, 3782-3889"
+    note: "Fatal when missing. GOTY edition pak, one checksum (4131017020) for every language."
+
+  - name: "pak0.pk3"
+    description: "Single-player demo"
+    category: game_data
+    system: return-to-castle-wolfenstein
+    path: "demomain/pak0.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:181, 3920-3925, 3993-4008, 4032-4033"
+    note: "Checksum 2985661941. Stands in for main/pak0.pk3 with a warning, and the point-release check is skipped."

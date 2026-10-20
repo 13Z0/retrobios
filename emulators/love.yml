@@ -1,0 +1,35 @@
+emulator: LOVE
+type: standalone
+core_classification: game_engine
+source: "https://github.com/love2d/love"
+upstream: "https://github.com/love2d/love"
+profiled_date: "2026-10-20"
+source_commit: "6eb8d546736d5915a8b5af30b2cf33456dfdcb1a"
+core_version: "11.5"
+display_name: "LOVE 2D game framework"
+cores:
+  - love
+systems: []
+mode: standalone
+
+notes: |
+  Lua 2D game framework. A game is a .love archive or a directory holding
+  main.lua, passed on the command line. RetroPie builds tag 11.5
+  (scriptmodules/ports/love.sh) and runs `love %ROM%`. RetroBat ships the
+  11.4 Windows build (love.7z, changes.txt and love.dll name 11.4) and runs
+  love.exe with the game path, or the game itself when it is a fused .exe
+  (emulatorLauncher/Generators/Love.Generator.cs). Between 11.4 and 11.5
+  boot.lua is unchanged and the filesystem module only gains PhysfsIo, a
+  stream wrapper for archive I/O.
+
+  boot.lua first tries the executable itself as a fused archive, then the
+  path given on the command line (src/modules/love/boot.lua:50-94), and
+  stops with "No code to run" when neither holds main.lua
+  (src/modules/love/boot.lua:322-328). conf.lua and every asset come from
+  the game. The boot, callbacks and no-game scripts are compiled in as Lua
+  headers, and the default font is Vera.ttf compiled in
+  (src/modules/font/Font.cpp:34-42). Nothing is read from a BIOS or system
+  directory. The save directory is created by the engine under the user's
+  data folder.
+
+files: []

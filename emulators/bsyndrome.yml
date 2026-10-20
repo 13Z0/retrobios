@@ -1,0 +1,204 @@
+emulator: Bermuda Syndrome
+type: standalone
+core_classification: game_engine
+source: "https://github.com/cyxx/bermuda"
+upstream: "https://github.com/cyxx/bermuda"
+source_commit: "c3aaa0337daca116eab5804456673bd01396bbb4"
+profiled_date: "2026-10-20"
+core_version: "0.1.7"
+display_name: "Bermuda Syndrome (bs)"
+cores: [bsyndrome]
+systems: [bsyndrome]
+
+notes: |
+  Rewrite of the engine of Bermuda Syndrome (Century Interactive, BMG, 1995)
+  by Gregory Montoir, from the reversing of the original Windows executable.
+  It runs the original data files, retail or demo. RetroBat installs bs.exe
+  with the 0.1.7 README beside it, the release the 0.1.7 tag builds.
+
+  RetroBat starts bs.exe with --datapath=<rom folder>/DATA,
+  --savepath=<saves>/bsyndrome and --musicpath=<bios>/bsyndrome/MUSIC, and
+  stops when the DATA folder is missing.
+  ref: emulatorLauncher Generators/PortsLauncher.Configuration.cs:131-166
+
+  Data path (default DATA): either a directory, listed once and searched by
+  name without regard to case, or a single romfs image ("-rom1fs-"
+  signature). Scene files are looked up under SCN/, every name the scripts
+  give with a leading "..\" is taken from the data root, so the expected
+  tree is the game folder itself: SCN/, WGP/, MENU/, MIDI/, DATA/ for the
+  videos, and the bermuda.* files at its root.
+  ref: main.cpp:13-28, fs.cpp:230-305
+
+  Version detection: SCN/-00.SCN marks the demo, otherwise SCN/-01.SCN
+  (German) or SCN/_01.SCN (English and French) is the startup scene, and
+  with none of them the engine stops with "Unable to find startup scene
+  file". bermuda.wgp and bermuda.spr are loaded at startup, bermuda.ovr only
+  for the full game.
+  ref: game.cpp:33-51, resource.cpp:44-60
+
+  Music path (default MUSIC): when a scene asks for one of the game's MIDI
+  tracks, trackNN.ogg is tried first, NN being the CD audio track that
+  replaces it (title.mid 01 through complete.mid 12, musik.mid of the demo
+  03). Without the .ogg the MIDI file of the data tree is played. The tracks
+  are rips of the retail CD soundtrack, 22 kHz stereo Vorbis per the README.
+  ref: game.cpp:1074-1119, mixer_sdl.cpp:64-76, README.TXT:21-23
+
+  gamecontrollerdb.txt is read from the working directory when present
+  (systemstub_sdl.cpp:168). RetroBat ships none.
+
+files:
+  - name: "_01.SCN"
+    path: "DATA/SCN/_01.SCN"
+    category: game_data
+    system: bsyndrome
+    required: true
+    description: "Startup scene of the English and French releases"
+    source_ref: "game.cpp:33-51"
+    note: "The German release has -01.SCN instead and the demo -00.SCN. The rest of the SCN, WGP, MENU and MIDI trees is opened by name as scenes call for it."
+    unsourceable: "retail game data the collection does not hold, and a same-named file of another release must not stand in"
+
+  - name: "bermuda.wgp"
+    path: "DATA/bermuda.wgp"
+    category: game_data
+    system: bsyndrome
+    required: true
+    description: "Bag background image"
+    source_ref: "resource.cpp:51"
+    unsourceable: "retail game data the collection does not hold, and a same-named file of another release must not stand in"
+
+  - name: "bermuda.spr"
+    path: "DATA/bermuda.spr"
+    category: game_data
+    system: bsyndrome
+    required: true
+    description: "Common sprites"
+    source_ref: "resource.cpp:60"
+    unsourceable: "retail game data the collection does not hold, and a same-named file of another release must not stand in"
+
+  - name: "bermuda.ovr"
+    path: "DATA/bermuda.ovr"
+    category: game_data
+    system: bsyndrome
+    required: true
+    description: "Overlay data of the full game"
+    source_ref: "resource.cpp:45-49"
+    note: "Not read by the demo."
+    unsourceable: "retail game data the collection does not hold, and a same-named file of another release must not stand in"
+
+  - name: "LOGO.AVI"
+    path: "DATA/DATA/LOGO.AVI"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "Logo video"
+    source_ref: "game.cpp:138, 1043-1058"
+    note: "INTRO.AVI and FINAL.AVI sit beside it. A missing video is skipped."
+    unsourceable: "retail game data the collection does not hold, and a same-named file of another release must not stand in"
+
+  - name: "track01.ogg"
+    path: "MUSIC/track01.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 01, played in place of title.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track02.ogg"
+    path: "MUSIC/track02.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 02, played in place of flyaway.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track03.ogg"
+    path: "MUSIC/track03.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 03, played in place of jungle1.mid and of the demo musik.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track04.ogg"
+    path: "MUSIC/track04.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 04, played in place of sadialog.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track05.ogg"
+    path: "MUSIC/track05.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 05, played in place of caves.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track06.ogg"
+    path: "MUSIC/track06.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 06, played in place of jungle2.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track07.ogg"
+    path: "MUSIC/track07.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 07, played in place of darkcave.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track08.ogg"
+    path: "MUSIC/track08.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 08, played in place of waterdiv.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track09.ogg"
+    path: "MUSIC/track09.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 09, played in place of merian1.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track10.ogg"
+    path: "MUSIC/track10.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 10, played in place of telquad.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track11.ogg"
+    path: "MUSIC/track11.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 11, played in place of gameover.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"
+
+  - name: "track12.ogg"
+    path: "MUSIC/track12.ogg"
+    category: game_data
+    system: bsyndrome
+    required: false
+    description: "CD audio track 12, played in place of complete.mid"
+    source_ref: "game.cpp:1078-1112"
+    unsourceable: "rip of the retail CD soundtrack the collection does not hold, and a same-named track of another game must not stand in"

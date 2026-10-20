@@ -1,0 +1,38 @@
+emulator: Osmose (RetroPie)
+type: standalone
+core_classification: community_fork
+source: "https://github.com/RetroPie/osmose-rpi"
+profiled_date: "2026-10-20"
+source_commit: "7775add582ad2595e876ca38d4675510f2df866e"
+core_version: "0.8.1+rpi20130302"
+display_name: "Sega - Master System / Game Gear (Osmose)"
+mode: standalone
+cores:
+  - osmose
+systems:
+  - sega-master-system
+  - sega-game-gear
+
+notes: |
+  Bruno Vedder's OsmOse 0.8.1 as ported to the Raspberry Pi by palerider,
+  with badman12345's joystick quit option (readme.rpi:1-13,
+  Version.h:3). RetroPie builds the tree with make and launches
+  osmose with the ROM and -tv -fs.
+
+  The cartridge is mapped directly at reset. No BIOS image is loaded:
+  the memory control port handler only prints whether the program
+  enables or disables the BIOS ROM.
+  ref: IOMapper.cpp:124-131
+
+  The ROM is read as a plain file or as the first entry of a zip
+  archive. Battery RAM comes from ./osmose_files/bbr/<rom>.bbr when
+  present, and save states, screenshots, tile dumps and sound captures
+  are written under ./osmose_files/. The configuration is
+  ~/.osmose/osmose.ini, written with defaults when absent. The on
+  screen font is the bitmap compiled into TextWriter.cpp.
+  ref: MemoryMapper.cpp:120-140, MemoryMapper.cpp:545-553,
+       MemoryMapper.cpp:705-712, OsmoseConfiguration.cpp:26-58,
+       OsmoseConfiguration.cpp:145, TextWriter.cpp:48
+
+exclusion_note: "no BIOS or system file, the cartridge runs directly"
+files: []

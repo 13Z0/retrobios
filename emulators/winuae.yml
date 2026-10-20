@@ -1,0 +1,174 @@
+emulator: WinUAE
+type: standalone
+core_classification: other
+source: "https://github.com/tonioni/WinUAE"
+source_commit: "7ee16ec5e94f9d065121ce9f40fecc605ac0fb08"
+profiled_date: "2026-10-20"
+core_version: "6.1.0 beta 19"
+display_name: "Commodore - Amiga (WinUAE)"
+cores:
+  - winuae
+systems:
+  - commodore-amiga
+  - commodore-cd32
+  - commodore-cdtv
+mode: standalone
+
+notes: |
+  Amiga emulator for Windows by Toni Wilen. The Kickstart is the file named by
+  kickstart_rom_file in the configuration. When it is absent the loader tries
+  roms/kick.rom, kick.rom, ../shared/rom/kick.rom and ../System/rom/kick.rom
+  under the data path, then guesses from the scanned ROM list
+  (memory.cpp:2038-2071). When nothing loads it reports the missing ROM and
+  boots the built-in AROS replacement (memory.cpp:3058-3063). Loaded ROMs are
+  matched against the ROM table only to name them and check the CPU they need.
+  An unknown ROM is still used (memory.cpp:3064-3101).
+
+  RetroBat writes a .uae file per launch with kickstart_rom_file and, for CD32
+  and CDTV, kickstart_ext_rom_file. It looks the files up by name in bios/,
+  bios/amiga/ and bios/Amiga/, first match wins, and aborts the launch when
+  none of the names is found
+  (retrobat emulatorLauncher/Generators/Uae.Generator.cs:192-216,1043-1111).
+  The Amiga 500 system takes the 2.04 Kickstart instead of 1.3 when its
+  a500_machine option is set to amiga500+. It also points KickstartPath at
+  bios/ in winuae.ini
+  (retrobat emulatorLauncher/Generators/Uae.Generator.cs:155-156). A .uae or
+  .ags game file skips this and runs as written.
+
+  For .lha games RetroBat unpacks its own WHDBoot.zip next to the emulator and
+  copies the A500, A600, A1200 and A4000 Kickstarts it finds into
+  WHDBoot/Devs/Kickstarts for WHDLoad, skipping any that are missing
+  (retrobat emulatorLauncher/Generators/Uae.Generator.cs:979-1032).
+
+  CDTV and A600/A1200 internal devices are enabled with :ENABLED, which needs
+  no ROM file. Cloanto encrypted ROMs are decoded with rom.key, searched in the
+  configured key path, the ROM path, roms/, the data path, ../shared/rom/ and
+  next to the Kickstart file (rommgr.cpp:1459-1535). Without it an encrypted
+  ROM fails to load (rommgr.cpp:1724-1732).
+
+files:
+  - name: "kick34005.A500"
+    system: commodore-amiga
+    required: true
+    hle_fallback: true
+    size: 262144
+    crc32: "c4f0f55f"
+    sha1: "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
+    aliases:
+      - "kick34005.A500.rom"
+      - "amiga-os-130.rom"
+      - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+      - "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+      - "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+    note: "Kickstart 1.3 r34.5. Amiga 500 and CDTV Kickstart. Also copied to WHDBoot as kick34005.A500."
+    source_ref: "rommgr.cpp:150-151"
+
+  - name: "kick37175.A500"
+    system: commodore-amiga
+    required: false
+    hle_fallback: true
+    size: 524288
+    crc32: "c3bdb240"
+    sha1: "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+    aliases:
+      - "kick37175.A500.rom"
+      - "amiga-os-204.rom"
+      - "Kickstart v2.04 r37.175 (1991-05)(Commodore)(A500+)[!].rom"
+      - "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom"
+    note: "Kickstart 2.04 r37.175. Amiga 500 system with the A500+ machine option."
+    source_ref: "rommgr.cpp:158-159"
+
+  - name: "kick40063.A600"
+    system: commodore-amiga
+    required: false
+    hle_fallback: true
+    size: 524288
+    crc32: "fc24ae0d"
+    sha1: "3b7f1493b27e212830f989f26ca76c02049f09ca"
+    aliases:
+      - "kick40063.A600.rom"
+      - "amiga-os-310-a600.rom"
+      - "Kickstart v3.1 r40.063 (1993-10)(Commodore)(A600HD)[!].rom"
+    note: "Kickstart 3.1 r40.63. Only copied to WHDBoot/Devs/Kickstarts for WHDLoad."
+    source_ref: "rommgr.cpp:183-184"
+
+  - name: "kick40068.A1200"
+    system: commodore-amiga
+    required: true
+    hle_fallback: true
+    size: 524288
+    crc32: "1483a091"
+    sha1: "e21545723fe8374e91342617604f1b3d703094f1"
+    aliases:
+      - "kick40068.A1200.rom"
+      - "amiga-os-310-a1200.rom"
+      - "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A1200)[!].rom"
+      - "Kickstart - 391774-01 (USA, Europe) (v3.1 Rev 40.068) (A1200).rom"
+    note: "Kickstart 3.1 r40.68. Amiga 1200 Kickstart. Also copied to WHDBoot."
+    source_ref: "rommgr.cpp:185-186"
+
+  - name: "kick40068.A4000"
+    system: commodore-amiga
+    required: true
+    hle_fallback: true
+    size: 524288
+    crc32: "d6bae334"
+    sha1: "5fe04842d04a489720f0f4bb0e46948199406f49"
+    aliases:
+      - "kick40068.A4000.rom"
+      - "amiga-os-310-a4000.rom"
+      - "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A4000)[!].rom"
+    note: "Kickstart 3.1 r40.68. Amiga 4000 Kickstart. Also copied to WHDBoot."
+    source_ref: "rommgr.cpp:195-196"
+
+  - name: "kick40060.CD32"
+    system: commodore-cd32
+    required: true
+    hle_fallback: true
+    size: 524288
+    crc32: "1e62d4a5"
+    sha1: "3525be8887f79b5929e017b42380a79edfee542d"
+    aliases:
+      - "kick40060.CD32.rom"
+      - "amiga-os-310-cd32.rom"
+      - "Kickstart v3.1 r40.060 (1993-05)(Commodore)(CD32)[!].rom"
+      - "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom"
+    note: "CD32 Kickstart 3.1 r40.60."
+    source_ref: "rommgr.cpp:323-324"
+
+  - name: "kick40060.CD32.ext"
+    system: commodore-cd32
+    required: true
+    size: 524288
+    crc32: "87746be2"
+    sha1: "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
+    aliases:
+      - "kick40060.CD32.ext.rom"
+      - "amiga-os-310-cd32-ext.rom"
+      - "CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
+    note: "CD32 extended ROM, passed as kickstart_ext_rom_file."
+    source_ref: "rommgr.cpp:325-326"
+
+  - name: "kick34005.CDTV"
+    system: commodore-cdtv
+    required: true
+    hle_fallback: true
+    size: 262144
+    crc32: "42baa124"
+    sha1: "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
+    aliases:
+      - "kick34005.CDTV.rom"
+      - "amiga-os-130-cdtv-ext.rom"
+      - "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+      - "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom"
+    note: "CDTV extended ROM v1.0, passed as kickstart_ext_rom_file with the 1.3 Kickstart."
+    source_ref: "rommgr.cpp:339-340"
+
+  - name: "rom.key"
+    system: commodore-amiga
+    required: false
+    size: 2069
+    crc32: "869ae1b1"
+    sha1: "801bbab32e3d37386dd1636d4f1d6fa7e21d5874"
+    note: "Cloanto Amiga Forever ROM key. Read next to the Kickstart file, needed only for encrypted ROMs."
+    source_ref: "rommgr.cpp:119-120, rommgr.cpp:1513-1527"

@@ -12,6 +12,7 @@ display_name: "DOS (DOSBox Pure Unleashed)"
 cores:
   - dosbox-pure-unleashed
   - dosboxpure
+  - dosbox-pure
 systems:
   - dos
 mode: standalone

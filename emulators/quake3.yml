@@ -1,0 +1,113 @@
+emulator: Quake 3 (Raspberry Pi)
+type: standalone
+core_classification: game_engine
+source: "https://github.com/raspberrypi/quake3"
+upstream: "https://github.com/ioquake/ioq3"
+profiled_date: "2026-10-20"
+source_commit: "8d89a2a3c1707bf0f75b2ea26645b872e97c0b95"
+core_version: "1.35"
+display_name: "Quake III Arena (Raspberry Pi port)"
+cores: [quake3]
+systems: [quake3]
+verification: existence
+
+notes: |
+  The Raspberry Pi Foundation's ioquake3 1.35 snapshot with an OpenGL ES
+  renderer for the VideoCore GPU (VERSION=1.35, Makefile:194). RetroPie
+  builds it with build_rpi_raspbian.sh and installs ioquake3.arm and
+  ioq3ded.arm, then links $md_inst/baseq3 to $romdir/ports/quake3.
+
+  BASEGAME = "baseq3" (code/qcommon/q_shared.h:37). fs_basepath defaults to
+  the directory of the binary (code/sys/sys_main.c:474-479, 574), and
+  FS_Startup mounts baseq3 under fs_basepath and fs_homepath (~/.q3a),
+  then fs_game when set (code/qcommon/files.c:2762-2773, 2785-2787).
+
+  FS_CheckPak0 compares the pak checksum of baseq3/pak0.pk3 through
+  pak8.pk3 to pak_checksums[] (code/qcommon/files.c:178-188, 2886-2910).
+  This snapshot predates the Team Arena checksums: missionpack is only
+  an ordinary mod directory here. A mismatch prints a warning and the pak
+  stays mounted. A missing pak prints a message too, but the fatal error
+  that follows is commented out (code/qcommon/files.c:2918-2943), so the
+  point release paks are optional. What stops the engine is a missing
+  default.cfg (code/qcommon/files.c:3328-3329), which only pak0.pk3
+  carries.
+
+  demoq3/pak0.pk3 with DEMO_PAK0_CHECKSUM is recognised and printed as a
+  demo pak (code/qcommon/files.c:177, 2870-2884). RetroPie instead
+  extracts its Q3DemoPaks.zip, the demo pak0.pk3 with the 1.32 point
+  release paks, flat into baseq3/. The demo pak then fails the pak0
+  checksum with a warning and runs.
+
+files:
+  - name: "pak0.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak0.pk3"
+    required: true
+    source_ref: "code/qcommon/files.c:179 (pak_checksums[0]=1566731103u), 2890 (per-index checksum compare), 3328-3329 (fatal without default.cfg)"
+    note: "Retail Quake III Arena base pak. Engine prints a warning on checksum mismatch, does not refuse the file."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "pak1.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak1.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:180 (pak_checksums[1]=298122907u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak2.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak2.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:181 (pak_checksums[2]=412165236u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak3.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak3.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:182 (pak_checksums[3]=2991495316u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak4.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak4.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:183 (pak_checksums[4]=1197932710u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak5.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak5.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:184 (pak_checksums[5]=4087071573u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak6.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak6.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:185 (pak_checksums[6]=3709064859u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak7.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak7.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:186 (pak_checksums[7]=908855077u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak8.pk3"
+    category: game_data
+    system: quake3
+    path: "baseq3/pak8.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:187 (pak_checksums[8]=977125798u), 2918-2943 (absence reported, not fatal)"
+
+  - name: "pak0.pk3"
+    category: game_data
+    system: quake3
+    path: "demoq3/pak0.pk3"
+    required: false
+    source_ref: "code/qcommon/files.c:177 (DEMO_PAK0_CHECKSUM=2985612116u), 2870-2884 (demoq3 pak0 checksum compare)"
+    note: "Demo pak, recognised under demoq3/ by this checksum and counted as baseq3/pak0.pk3."

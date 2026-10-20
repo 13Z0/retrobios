@@ -1,0 +1,54 @@
+emulator: Solarus 2.0.0
+type: standalone
+core_classification: game_engine
+source: "https://gitlab.com/solarus-games/solarus"
+upstream: "https://gitlab.com/solarus-games/solarus"
+profiled_date: "2026-10-20"
+source_commit: "1c69f3d7ec133eaff28c22d756170eba69a520b0"
+core_version: "2.0.0"
+display_name: "Solarus Game Engine (2.0.0)"
+cores:
+  - solarus2
+systems:
+  - solarus
+mode: standalone
+
+notes: |
+  Solarus engine at tag v2.0.0, which RetroBat installs as solarus2 beside its
+  older solarus package. libsolarus.dll in that package reports 2.0.0 and its
+  gamecontrollerdb.txt is the one the v2.0.0 tree carries. emulatorlauncher
+  runs `solarus-run.exe -fullscreen=yes|no <rom>` from the package folder on a
+  .solarus or .zip quest (emulatorLauncher Generators/Solarus.Generator.cs:20-48).
+
+  The quest arrives as the last non-option argument, and otherwise falls back
+  to SOLARUS_DEFAULT_QUEST, "." by default (src/core/MainLoop.cpp:108-121,
+  cmake/AddOptions.cmake:8). open_quest mounts that path through PhysFS
+  directly, then tries <path>/data, <path>/data.solarus and
+  <path>/data.solarus.zip, each both relative and under PHYSFS_getBaseDir
+  (src/core/QuestFiles.cpp:151-165). The quest counts as found once quest.dat
+  resolves (src/core/QuestFiles.cpp:230-234). Everything else the game uses
+  comes out of that mount.
+
+  Startup reads one file from outside the quest. System::initialize probes
+  SDL_GetBasePath() then SOLARUS_DATADIR_PATH for gamecontrollerdb.txt and
+  hands whichever it finds to SDL through SDL_HINT_GAMECONTROLLERCONFIG_FILE
+  (src/core/System.cpp:70-98). At this tag the file is installed into the data
+  directory without a build option to turn it off
+  (cmake/AddInstallTargets.cmake:22-26).
+
+files:
+  - name: gamecontrollerdb.txt
+    system: solarus
+    category: game_data
+    required: false
+    bundled: true
+    size: 564391
+    sha1: "24cb6032438d26d9fa7d4ba3775b0f1088b58e4c"
+    md5: "bdd985f10866d9eeb5cf4f1dc01a5d2c"
+    description: "SDL gamepad mappings applied on top of the built-in table"
+    source_ref: "src/core/System.cpp:70-98, cmake/AddDefines.cmake:44, cmake/AddInstallTargets.cmake:22-26"
+    note: >-
+      Looked up next to the executable first, then under SOLARUS_DATADIR_PATH,
+      share/solarus by default (cmake/AddInstallDirs.cmake:14). Both probes are
+      guarded by an existence test, and neither hitting leaves SDL on its
+      built-in mappings.

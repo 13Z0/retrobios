@@ -1,0 +1,132 @@
+emulator: ZiNc
+type: standalone
+core_classification: other
+source: "https://www.retrobat.ovh/repo/win64/stable/emulators/zinc.7z"
+upstream: closed-source
+author: "Drunken Muppets"
+profiled_date: "2026-10-20"
+core_version: "1.1"
+display_name: "Arcade - Sony ZN-1/ZN-2, Namco System 11, Konami GV (ZiNc)"
+cores:
+  - zinc
+systems:
+  - capcom-zn1
+  - capcom-zn2
+  - tecmo-tps
+  - taito-fx1
+  - eighting-zn1
+  - atlus-zn1
+  - videosystem-zn1
+  - konami-gv
+mode: standalone
+
+notes: |
+  Arcade emulator for the PlayStation based boards: Sony ZN-1 and ZN-2 (Capcom,
+  Tecmo, Taito FX-1, Raizing/Eighting, Atlus, Video System), Namco System 11 and
+  Konami GV. Closed source, last release 1.1 of 2005 ("ZiNc 1.1 (C)1997-2005
+  Drunken Muppets"). The build read here is the one RetroBat installs, zinc.7z
+  sha256 7bd2e86b38db36c5876b2c7a67840bf930d248f30aacc68db309b89058f21562, whose
+  ZiNc.exe (md5 5f3bf0fac64f76c08b12b6cd05e6b159, 2005-01-25, not packed) is
+  cited by virtual address. The renderer, controller and sound plugins
+  (*.znc, s11player.dll) ship beside it.
+  ref: ZiNc.exe 0x493f60
+
+  Games are picked by number on the command line, not by set name. Each of the
+  79 driver records holds the description, parent, set name, a pointer to its
+  ROM list and the name of the BIOS set, then the list gives name, region,
+  load offset and CRC32 of every ROM, the BIOS ROM first. RetroBat maps the
+  set name to that number in zincGameNumber.
+  ref: ZiNc.exe 0x496404 (glpracr record),
+       emulatorlauncher emulatorLauncher/Generators/Zinc.Generator.cs:136-209
+
+  ROMs are read from the directory given by -roms-directory (default roms),
+  which RetroBat writes into zinc.cfg as the folder of the launched game. A ROM
+  is looked up in <set>.zip, then in the parent's zip, then in the BIOS set's
+  zip, each also as a plain directory. A missing ROM stops the load with
+  "ERROR: missing rom file", and every ROM is checked against the CRC32 of its
+  record ("ERROR: BAD CRC ... expected").
+  ref: ZiNc.exe 0x494134, 0x49fdfc, 0x4a018c, 0x49fe24, 0x49fe48,
+       emulatorlauncher emulatorLauncher/Generators/Zinc.Generator.cs:109-114
+
+  The Namco System 11 records name no BIOS set: the first ROM of each list is
+  the game's own program ROM. sncwgltd (Video System) names none either and
+  lists coh-1002v.353 inside its own set. The seven BIOS sets below are the
+  only files read outside a game's own set.
+
+files:
+  - name: cpzn1.zip
+    required: true
+    category: bios_zip
+    system: capcom-zn1
+    description: "Capcom ZN-1 BIOS"
+    note: "BIOS set of starglad, sfex, sfexa, sfexj, sfexp, sfexpu1, sfexpj, ts2, ts2j and glpracr."
+    source_ref: "ZiNc.exe 0x49926c, ZiNc.exe 0x496404"
+    contents:
+      - name: "coh-1000c.353"
+        crc32: "50033af6"
+
+  - name: cpzn2.zip
+    required: true
+    category: bios_zip
+    system: capcom-zn2
+    description: "Capcom ZN-2 BIOS"
+    note: "BIOS set of tgmj, stargld2, plsmaswd, sfex2, sfex2j, sfex2p, sfex2pa, sfex2pj, shiryu2, strider2, kikaioh, techromn, rvschool, rvschola and jgakuen."
+    source_ref: "ZiNc.exe 0x499054"
+    contents:
+      - name: "coh-3002c.353"
+        crc32: "e860ea8b"
+
+  - name: tps.zip
+    required: true
+    category: bios_zip
+    system: tecmo-tps
+    description: "Tecmo TPS BIOS"
+    note: "BIOS set of glpracr2, glpracr3, shngmtkb, mfjump, cbaj, tondemo, doapp and brvblade."
+    source_ref: "ZiNc.exe 0x496dec"
+    contents:
+      - name: "coh-1002m.353"
+        crc32: "69ffbcb4"
+
+  - name: taitofx1.zip
+    required: true
+    category: bios_zip
+    system: taito-fx1
+    description: "Taito FX-1 BIOS"
+    note: "BIOS set of psyforce, psyforcj, psyfrcex, mgcldate, mgcldtex, sfchamp, gdarius, gdarius2, raystorm, raystorj and ftimpcta."
+    source_ref: "ZiNc.exe 0x49cb98"
+    contents:
+      - name: "coh-1000t.353"
+        crc32: "e3f23b6e"
+
+  - name: psarc95.zip
+    required: true
+    category: bios_zip
+    system: eighting-zn1
+    description: "Raizing/Eighting PS Arcade 95 BIOS"
+    note: "BIOS set of beastrzr, beastrzb and bldyror2."
+    source_ref: "ZiNc.exe 0x49c3ac"
+    contents:
+      - name: "coh-1002e.353"
+        crc32: "910f3a8b"
+
+  - name: atluspsx.zip
+    required: true
+    category: bios_zip
+    system: atlus-zn1
+    description: "Atlus PSX BIOS"
+    note: "BIOS set of hvnsgate."
+    source_ref: "ZiNc.exe 0x49ed34"
+    contents:
+      - name: "coh-1001l.353"
+        crc32: "6721146b"
+
+  - name: konamigv.zip
+    required: true
+    category: bios_zip
+    system: konami-gv
+    description: "Konami GV BIOS"
+    note: "BIOS set of weddingr, hyperath, btchamp, pbball96 and susume."
+    source_ref: "ZiNc.exe 0x49f0e4"
+    contents:
+      - name: "999a01.7e"
+        crc32: "ad498d2d"

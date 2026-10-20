@@ -1,0 +1,40 @@
+emulator: CoolCV
+type: standalone
+core_classification: other
+source: "https://files.retropie.org.uk/archives/coolcv.tar.gz"
+upstream: "http://nanochess.org/"
+profiled_date: "2026-10-20"
+core_version: "0.6.2"
+display_name: "Coleco - ColecoVision / Adam (CoolCV)"
+cores:
+  - coolcv
+systems:
+  - coleco-colecovision
+  - coleco-adam
+  - sega-sg1000
+mode: standalone
+
+notes: |
+  ColecoVision emulator by Oscar Toledo G., closed source. RetroPie installs
+  the Raspberry Pi build coolcv_pi from its own archive (coolcv.tar.gz, sha1
+  ac7f040106411a406de8a3cc66115e11cc778de4), an unstripped ARM ELF (sha1
+  4ddb4ff9c2b6375c6dbeb8a29ebbd19121a8f715) whose coolcv.txt names v0.6.2
+  of Nov 27 2015. The binary is the only reference read here.
+
+  The three system ROMs are compiled into the binary as .data objects and
+  no code path opens a ROM file for them. coleco_bios at 0x562e0 (8192
+  bytes, md5 2c66f5911e5b42b8ebe113403548eee7) is the ColecoVision OS7 BIOS,
+  eos_rom at 0x582e0 (8192 bytes, md5 01df3140909f09aa9aac4f88890f676c) is
+  the Adam EOS and wp_rom at 0x5a2e0 (32768 bytes, md5
+  4fe4f6800076ea3d897d4285653447bd) is the Adam SmartWriter. The changelog
+  in coolcv.txt records the change in v0.3 ("Now coleco.rom is
+  integrated"), and the string table carries no BIOS file name.
+
+  Every other file is user content or written by the emulator: cartridges
+  (.rom, .col, .bin, or a .zip holding one, through the bundled minizip),
+  Adam .dsk and .ddp images, coolcv_mapping.txt created on the first run,
+  /var/tmp/coolcv_snapshot.bin for snapshots, the cartridge EEPROM save
+  named by eeprom_filename, and video%03d.avi, audio%03d.wav and
+  image%03d.png captures.
+
+files: []

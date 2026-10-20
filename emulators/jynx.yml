@@ -1,0 +1,82 @@
+emulator: Jynx
+type: standalone
+core_classification: other
+source: "https://github.com/jonathan-markland/Jynx"
+profiled_date: "2026-10-20"
+source_commit: "c1247f2c957b78d3ca6f2b814ee346a298f3573c"
+core_version: "1.0.8"
+display_name: "Camputers - Lynx (Jynx)"
+cores:
+  - jynx
+systems:
+  - camplynx
+mode: standalone
+
+notes: |
+  Camputers Lynx 48K and 96K emulator for Windows by Jonathan Markland.
+  RetroBat installs Jynx-Windows-64bit.exe with file version 1.0.8.0 and a PE
+  link time of 2014-09-16 20:11 UTC, twenty minutes after the commit that sets
+  the version to 1.0.8 (c1247f2). The v1.0.8a tag two days later only changes
+  6845 port handling.
+
+  At startup LoadROMS reads all six chip images, whichever model is selected
+  (Portable/LynxEmulatorGuest.cpp:166-177). The Windows host opens each one by
+  its fixed leaf name in the folder of the executable
+  (ForWindows/MainForm.cpp:719-742). Load8KBChipFile accepts a file only when
+  it is exactly 8192 bytes, and a missing or differently sized file throws "One
+  or more of the ROM files are missing", which ends the program
+  (Portable/LynxEmulatorGuest.cpp:181-209). No checksum is computed.
+
+  The 96K third ROM is a 4 KB chip on the board (lynx9644.ic44), so the 8192
+  byte lynx96-3.rom is that dump followed by 4 KB of padding.
+  JynxEmulatorSettings.config is written by the program and read back,
+  snapshots and TAP files are user content.
+
+files:
+  - name: lynx48-1.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Lynx 48K ROM 1, at 0x0000"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:171, 181-209"
+
+  - name: lynx48-2.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Lynx 48K ROM 2, at 0x2000"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:172, 181-209"
+
+  - name: lynx96-1.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Lynx 96K ROM 1, at 0x0000"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:173, 181-209"
+
+  - name: lynx96-2.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Lynx 96K ROM 2, at 0x2000"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:174, 181-209"
+
+  - name: lynx96-3.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Lynx 96K ROM 3, at 0x4000"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:175, 181-209"
+
+  - name: lynx96-3-scorpion.rom
+    system: camplynx
+    required: true
+    size: 8192
+    validation: [size]
+    description: "Scorpion ROM v2.1 for the Lynx 96K, replaces ROM 3"
+    source_ref: "ForWindows/MainForm.cpp:719-742, Portable/LynxEmulatorGuest.cpp:176, 181-209"

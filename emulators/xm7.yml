@@ -1,0 +1,153 @@
+emulator: XM7
+display_name: "Fujitsu - FM-7 (XM7/SDL)"
+type: standalone
+core_classification: other
+source: "https://github.com/nakatamaho/XM7-for-SDL"
+upstream: "http://retropc.net/ryu/xm7/"
+profiled_date: "2026-10-20"
+source_commit: "2a48dceaf8a3a0de92cf369b039ac5fab2bb351a"
+core_version: "V3.4 L61a SDL/Agar 0.3.2pre2"
+cores:
+  - xm7
+systems:
+  - fm7
+  - fm77av
+mode: standalone
+
+notes: |
+  K.Ohta's SDL and Agar port of PI.'s XM7, an FM-7, FM-77 and FM77AV series
+  emulator. The CMake build sets XM7_VERSION 3 (linux-sdl/CMakeLists.txt:23,
+  linux-sdl/cmake/config_xm7.cmake:20), the FM77AV40EX/SX level, so every ROM
+  path below is the XM7_VER >= 3 branch. RetroPie builds this repository with
+  OpenGL and OpenCL off.
+
+  ROMs are read by file_load (linux-sdl/sdl/sdl_file.c:21-59), which prepends
+  ModuleDir and reads a fixed byte count. A file shorter than that count is
+  refused and anything past it is ignored. main sets ModuleDir to $HOME/.xm7/,
+  or ./.xm7/ when HOME is unset (linux-sdl/sdl/windows_main.cpp:79-94). No hash
+  or checksum of any ROM is computed.
+
+  system_init stops at the first device whose init returns FALSE
+  (linux-sdl/vm/system.c:124-127, 171, 203). MainLoop then sets error code 1
+  and shows "Error init VM. Please check ROMS and system-memory."
+  (linux-sdl/ui-agar/agar_main.cpp:166-168, 546-548), and no machine runs. A
+  ROM whose absence makes its init return FALSE is required below.
+
+  The three drive sound effects are read with SDL_LoadWAV from RSSDIR, which
+  defaults to SHAREDIR, /usr/local/share/xm7/ (linux-sdl/sdl/build_config.h:76-86,
+  linux-sdl/sdl/api_snd2.cpp:660). The name is appended to that directory
+  without a separator, and each name is tried in lower case, upper case,
+  capitalized and as written (linux-sdl/sdl/api_snd2.cpp:213-267). A missing
+  WAV leaves its slot silent. HEADUP.WAV and HEADDOWN.WAV are compiled out
+  (linux-sdl/sdl/api_snd2.cpp:160-163).
+
+  USERDIC.DAT is the FM77-211 learning RAM. It is filled with 0xFF when absent
+  and written back by the emulator (linux-sdl/vm/jcard.c:77-82), so it is not
+  listed. JSUBMON.ROM, SUBSYS_8.ROM, SUBSYSL4.ROM, ANKCG16.ROM, the FM-8 and
+  FM-7 boot ROMs and FBASIC10.ROM are only read when XM7_VER is 1.
+
+files:
+  - name: FBASIC30.ROM
+    description: "F-BASIC V3.0 ROM"
+    required: true
+    min_size: 31744
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:240, linux-sdl/vm/mainmem.c:211-217"
+
+  - name: INITIATE.ROM
+    description: "FM77AV initiator ROM"
+    required: true
+    min_size: 8192
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:241, linux-sdl/vm/mainmem.c:225-227"
+    note: "Patched in memory after loading to skip the boot delay of the old and new boot sequences (linux-sdl/vm/mainmem.c:229-262)."
+
+  - name: BOOT_MMR.ROM
+    description: "FM-77 MMR boot ROM"
+    required: false
+    min_size: 512
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:246, linux-sdl/vm/mainmem.c:287-290, linux-sdl/vm/jcard.c:100-108"
+    note: "Without it the hidden boot area of the extended ROM is filled from INITIATE.ROM offset 0x1a00."
+
+  - name: SUBSYS_C.ROM
+    description: "FM-7 sub system ROM"
+    required: true
+    min_size: 10240
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:252, linux-sdl/vm/submem.c:212-218"
+
+  - name: SUBSYS_A.ROM
+    description: "FM77AV type A sub system ROM"
+    required: true
+    min_size: 8192
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:255, linux-sdl/vm/submem.c:220-222"
+
+  - name: SUBSYS_B.ROM
+    description: "FM77AV type B sub system ROM"
+    required: true
+    min_size: 8192
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:256, linux-sdl/vm/submem.c:223-225"
+
+  - name: SUBSYSCG.ROM
+    description: "FM77AV character generator and sub system ROM"
+    required: true
+    min_size: 8192
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:257, linux-sdl/vm/submem.c:226-228"
+
+  - name: KANJI1.ROM
+    description: "JIS83 first standard kanji ROM"
+    required: true
+    min_size: 131072
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:259, linux-sdl/vm/kanji.c:85-87"
+    unsourceable: "XM7 checks no hash and its upstream distributes no dump. The KANJI1.ROM the collection holds is the PC-88 kanji ROM, another machine's font."
+
+  - name: KANJI2.ROM
+    description: "JIS83 second standard kanji ROM"
+    required: true
+    min_size: 131072
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:263, linux-sdl/vm/kanji.c:98-102"
+    unsourceable: "XM7 checks no hash and its upstream distributes no dump. The KANJI2.ROM the collection holds is the PC-88 second level kanji ROM, another machine's font."
+
+  - name: KANJI.ROM
+    description: "JIS78 first standard kanji ROM"
+    required: false
+    min_size: 131072
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:260, linux-sdl/vm/kanji.c:71-81, 128-133"
+    unsourceable: "XM7 checks no hash and its upstream distributes no dump. The KANJI.ROM files the collection holds are MSX and FPseNG fonts, not the Fujitsu ROM."
+    note: "Without it a JIS78 table is generated from KANJI1.ROM."
+
+  - name: DICROM.ROM
+    description: "FM77-101/FM77-211 dictionary ROM"
+    required: true
+    min_size: 262144
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:264, linux-sdl/vm/jcard.c:66-68"
+
+  - name: EXTSUB.ROM
+    description: "FM77AV40EX/SX extended sub system ROM"
+    required: true
+    min_size: 49152
+    validation: [size]
+    source_ref: "linux-sdl/vm/xm7.h:266, linux-sdl/vm/jcard.c:92-94"
+
+  - name: relay_on.wav
+    description: "Cassette relay on sound"
+    required: false
+    source_ref: "linux-sdl/sdl/api_snd2.cpp:155-157, 213-267, 660"
+
+  - name: relayoff.wav
+    description: "Cassette relay off sound"
+    required: false
+    source_ref: "linux-sdl/sdl/api_snd2.cpp:155-158, 213-267, 660"
+
+  - name: fddseek.wav
+    description: "Floppy drive seek sound"
+    required: false
+    source_ref: "linux-sdl/sdl/api_snd2.cpp:155-159, 213-267, 660"

@@ -1,0 +1,284 @@
+emulator: TeknoParrot
+type: standalone
+core_classification: other
+source: "https://github.com/teknogods/TeknoParrotUI"
+upstream: closed-source
+author: "TeknoGods"
+profiled_date: "2026-10-20"
+source_commit: "7ffcdf1c003ff322f2d8db659ab6fd7c4f982ade"
+core_version: "TeknoParrotUI 7ffcdf1"
+display_name: "Arcade - PC-based and Sega/Namco boards (TeknoParrot)"
+cores:
+  - teknoparrot
+systems:
+  - sega-naomi
+  - sega-naomi2
+  - sega-naomigd
+  - sammy-atomiswave
+  - sega-hikaru
+  - sega-chihiro
+  - sega-triforce
+  - sega-lindbergh
+  - namco-system246
+  - namco-system256
+  - namco-system357
+mode: standalone
+
+notes: |
+  Launcher and emulator suite for arcade boards. TeknoParrotUI is open source
+  and read here at its pinned commit. It runs a game through one of the
+  components its updater installs from the releases of teknogods/TeknoParrot,
+  every one of them closed source: the TeknoParrot and ElfLdr2 loaders for
+  PC-based and Lindbergh boards, forks of Dolphin (Triforce), Play! and PCSX2x6
+  (Namco System 246/256), RPCS3 (Namco System 357/369) and Cxbx-Reloaded
+  (Chihiro), and a family of board emulators named Tekno* (TeknoNaomi,
+  TeknoMVS, TeknoCPS, TeknoModel2 and others).
+  ref: TeknoParrotUi/MainWindow.xaml.cs:509-669,
+       TeknoParrotUi.Common/EmulatorType.cs:9-67
+
+  RetroBat starts TeknoParrotUi.exe and picks the component by the core name:
+  triforce, pcsx2x6, play, namco2x6, namco3xx, chihiro, or none for the
+  loaders. For Triforce, System 2x6 and Chihiro the game image itself is
+  written as the profile's game path.
+  ref: emulatorlauncher emulatorLauncher/Generators/TeknoParrot.generator.cs:177-201,
+       emulatorlauncher emulatorLauncher/Generators/TeknoParrot.generator.cs:266-270
+
+  The components read here are the release assets of 2026-10: TeknoNaomi
+  0.1.0.5, pcsx2x6 1.0.0.11, RPCS3 1.0.0.7, cxbxr 1.0.0.20, CrediarDolphin
+  1.0.0.10, Play 1.0.0.34 and TeknoParrotElfLdr2Core 1.0.0.1472. TeknoNaomi,
+  TeknoMVS, TeknoModel2 and TeknoS11 are protected with VMProtect
+  (release-manifest.json "protected": true) and expose no ROM name, size or
+  hash to a static read. The TeknoParrot and ElfLdr2 loaders name no
+  firmware either.
+
+  TeknoNaomi takes --set, --rom-root (the folder of the selected game ZIP) and
+  --chd-root. Its catalog, exported into TeknoParrotUI, gives each of the 349
+  sets the ordered list of romsets it opens under the ROM root: the set, its
+  parent, then a BIOS set. Nine BIOS sets close those lists. Their members and
+  hashes live only inside the protected binary.
+  ref: TeknoParrotUi.Common/TeknoNaomiCatalog.cs:17-372,
+       TeknoParrotUi.Common/TeknoNaomiLaunch.cs:56-77,
+       TeknoParrotUi.Common/TeknoNaomiLaunch.cs:90-98
+
+  The pcsx2x6 component is ReaverTeknoGods/pcsx2x6 at
+  c6e731ac0b9859011d358c021b7e2c9c95296a93 (the build reports
+  v0.0.22-24-gc6e731ac0), a fork of PS2Homebrew-arcade/pcsx2x6 whose merge
+  base with it is 956d4c66b0ac2eaefe7591a763f7b3cc80d1eae1. The release ships
+  portable.txt, and an empty portable.txt puts the data root in a TeknoParrot
+  folder beside the executable, so the BIOS folder is pcsx2x6/TeknoParrot/bios.
+  ref: pcsx2x6 pcsx2/Pcsx2Config.cpp:2196-2202, pcsx2x6 pcsx2/Pcsx2Config.cpp:2311
+
+  Play! runs System 246/256 games from its arcadedefs (dongle, CD or HDD image)
+  with HLE and loads no BIOS. CrediarDolphin ships Sys/Triforce/segaboot.gcm,
+  which it opens for the test menus, and the free DSP ROMs in Sys/GC. The
+  RPCS3 fork refuses to boot without installed PS3 firmware ("PS3 firmware is
+  not installed or the installed firmware is invalid."). The cxbxr fork keeps
+  the Chihiro media board files of Cxbx-Reloaded under EmuMediaBoard.
+
+  Not documented: the BIOS sets of TeknoMVS, TeknoCPS, TeknoSS32 and the other
+  Tekno* board emulators. TeknoParrotUI names only the game ZIP for them
+  (ExecutableName in GameProfiles) and the binaries are protected.
+
+files:
+  # TeknoNaomi BIOS sets, read from the ROM root beside the game ZIP
+  - name: naomi.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi
+    description: "NAOMI BIOS"
+    note: "Last media directory of 160 catalog sets."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:22, TeknoParrotUi.Common/TeknoNaomiLaunch.cs:56-77"
+
+  - name: naomi2.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi2
+    description: "NAOMI 2 BIOS"
+    note: "Last media directory of 45 catalog sets."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:42"
+
+  - name: naomigd.zip
+    required: true
+    category: bios_zip
+    system: sega-naomigd
+    description: "NAOMI GD-ROM BIOS"
+    note: "Last media directory of 92 catalog sets, the GD-ROM games whose disk images are read from --chd-root."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:38"
+
+  - name: awbios.zip
+    required: true
+    category: bios_zip
+    system: sammy-atomiswave
+    description: "Atomiswave BIOS"
+    note: "Last media directory of 34 catalog sets."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:31"
+
+  - name: hikaru.zip
+    required: true
+    category: bios_zip
+    system: sega-hikaru
+    description: "Hikaru BIOS"
+    note: "Last media directory of 8 catalog sets."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:363"
+
+  - name: hod2bios.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi
+    description: "The House of the Dead 2 BIOS"
+    note: "Last media directory of hotd2, hotd2e, hotd2o and hotd2p."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:123-126"
+
+  - name: f355bios.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi
+    description: "Ferrari F355 Challenge twin BIOS"
+    note: "Last media directory of f355twin, f355twinp and f355twn2."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:100-102"
+
+  - name: f355dlx.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi
+    description: "Ferrari F355 Challenge deluxe BIOS"
+    note: "Last media directory of f355 and f355p."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:98-99"
+
+  - name: airlbios.zip
+    required: true
+    category: bios_zip
+    system: sega-naomi
+    description: "Airline Pilots deluxe BIOS"
+    note: "Last media directory of alpilot."
+    source_ref: "TeknoParrotUi.Common/TeknoNaomiCatalog.cs:29"
+
+  # pcsx2x6 component, System 246/256 (RetroBat core pcsx2x6)
+  - name: COH-H31100.rom0
+    path: "pcsx2x6/TeknoParrot/bios/COH-H31100.rom0"
+    system: namco-system246
+    required: true
+    min_size: 4194304
+    max_size: 8388608
+    validation: [size]
+    description: "COH-H arcade board BIOS"
+    aliases:
+      - COH-H31000.BIN
+      - 246C.bin
+      - 256.BIN
+    note: >-
+      Found by content: the BIOS folder is listed with a * mask, files outside 4
+      to 8 MB are skipped, and the first whose romdir holds RESET and a readable
+      ROMVER is used. The boot stops when none loads. The name is the one the
+      board dumper writes. The aliases are the three board dumps held here.
+    source_ref: "pcsx2x6 pcsx2/ps2/BiosTools.cpp:16-17, pcsx2x6 pcsx2/ps2/BiosTools.cpp:80-206, pcsx2x6 pcsx2/ps2/BiosTools.cpp:267-291, pcsx2x6 pcsx2/VMManager.cpp:1663-1676"
+
+  - name: COH-H31100.rom1
+    path: "pcsx2x6/TeknoParrot/bios/COH-H31100.rom1"
+    system: namco-system246
+    required: false
+    max_size: 4194304
+    description: "ROM1 board region"
+    note: "Tried as {bios}.rom1 then {biosbase}.rom1, read into the 4 MB ROM1 region. Skipped when absent."
+    source_ref: "pcsx2x6 pcsx2/ps2/BiosTools.cpp:223-250, pcsx2x6 pcsx2/ps2/BiosTools.cpp:375"
+
+  - name: COH-H31100.rom2
+    path: "pcsx2x6/TeknoParrot/bios/COH-H31100.rom2"
+    system: namco-system246
+    required: false
+    max_size: 4194304
+    description: "ROM2 board region"
+    note: "Tried as {bios}.rom2 then {biosbase}.rom2, read into the 4 MB ROM2 region. Skipped when absent."
+    source_ref: "pcsx2x6 pcsx2/ps2/BiosTools.cpp:223-250, pcsx2x6 pcsx2/ps2/BiosTools.cpp:376"
+
+  - name: COH-H31100.nvm
+    path: "pcsx2x6/TeknoParrot/bios/COH-H31100.nvm"
+    aliases:
+      - COH-H31000.NVM
+      - 246C.nvm
+      - 256.NVM
+    system: namco-system246
+    required: false
+    hle_fallback: true
+    size: 1024
+    description: "Board NVRAM"
+    note: "The BIOS path with its extension replaced by nvm. A default image is built when it cannot be read, and a hardcoded iLinkId stands in when the file carries none."
+    source_ref: "pcsx2x6 pcsx2/CDVD/CDVD.cpp:164-167, pcsx2x6 pcsx2/CDVD/CDVD.cpp:169-196"
+
+  - name: COH-H31100.mec
+    path: "pcsx2x6/TeknoParrot/bios/COH-H31100.mec"
+    aliases:
+      - COH-H31000.MEC
+      - 246C.mec
+      - 256.MEC
+    system: namco-system246
+    required: false
+    hle_fallback: true
+    size: 4
+    description: "Mechacon version"
+    note: "The BIOS path with its extension replaced by mec. Written with the default mechacon version when absent."
+    source_ref: "pcsx2x6 pcsx2/CDVD/CDVD.cpp:196-211"
+
+  # RPCS3 component, System 357/369 (RetroBat core namco3xx)
+  - name: PS3UPDAT.PUP
+    system: namco-system357
+    required: true
+    storage: large_file
+    description: "PlayStation 3 system software update"
+    note: "Installed into dev_flash through Install firmware from PS3UPDAT.PUP. Without installed firmware the fork stops with \"PS3 firmware is not installed or the installed firmware is invalid.\""
+    source_ref: "RPCS3 rpcs3.exe, release RPCS3_1.0.0.7"
+
+  # cxbxr component, Chihiro (RetroBat core chihiro)
+  - name: fpr21042_m29w160et.bin
+    path: "EmuMediaBoard/fpr21042_m29w160et.bin"
+    system: sega-chihiro
+    required: true
+    size: 2097152
+    description: "Chihiro media board flash ROM"
+    note: "Read to write out the two SEGABOOT halves when they are absent."
+    source_ref: "cxbxr cxbxr-emu.dll, release cxbxr_1.0.0.20"
+
+  - name: ic10_g24lc64.bin
+    path: "EmuMediaBoard/Chihiro/ic10_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    description: "Base board QC microcontroller firmware"
+    note: "\"Failed to load base board qc firmware\" when it cannot be opened."
+    source_ref: "cxbxr cxbxr-emu.dll, release cxbxr_1.0.0.20"
+
+  - name: pc20_g24lc64.bin
+    path: "EmuMediaBoard/Chihiro/pc20_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    description: "Base board SC microcontroller firmware"
+    note: "\"Failed to load base board firmware\" when it cannot be opened."
+    source_ref: "cxbxr cxbxr-emu.dll, release cxbxr_1.0.0.20"
+
+  - name: ic11_24lc024.bin
+    path: "EmuMediaBoard/Chihiro/ic11_24lc024.bin"
+    system: sega-chihiro
+    required: true
+    description: "Base board configuration EEPROM"
+    note: "\"Failed to load base board EEPROM\" when it cannot be opened."
+    source_ref: "cxbxr cxbxr-emu.dll, release cxbxr_1.0.0.20"
+
+  - name: backup_ram.bin
+    path: "EmuMediaBoard/Chihiro/backup_ram.bin"
+    system: sega-chihiro
+    required: false
+    has_builtin: true
+    description: "Base board backup memory"
+    note: "Created by the emulator when absent (\"Could not create Backup File\" on failure)."
+    source_ref: "cxbxr cxbxr-emu.dll, release cxbxr_1.0.0.20"
+
+  # CrediarDolphin component, Triforce (RetroBat core triforce)
+  - name: segaboot.gcm
+    path: "CrediarDolphin/Sys/Triforce/segaboot.gcm"
+    system: sega-triforce
+    required: false
+    bundled: true
+    size: 2097152
+    sha1: "87918619c632ac9de270d4fdf396a57eb57fc620"
+    description: "Triforce boot program"
+    note: "Shipped in the CrediarDolphin 1.0.0.10 release. Opened for the test menus, \"Failed to open segaboot.gcm, which is required for test menus\" otherwise."
+    source_ref: "CrediarDolphin Dolphin.exe, release CrediarDolphin_1.0.0.10"

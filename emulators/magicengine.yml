@@ -1,0 +1,95 @@
+emulator: MagicEngine
+type: standalone
+core_classification: other
+source: "https://www.magicengine.com/"
+upstream: closed-source
+author: "David Michel, Cedric Michel"
+profiled_date: "2026-10-20"
+core_version: "1.1.3"
+display_name: "NEC - PC Engine / CD-ROM / SuperGrafx (MagicEngine)"
+cores:
+  - magicengine
+systems:
+  - nec-pc-engine
+  - nec-pc-engine-cd
+  - nec-supergrafx
+mode: standalone
+
+notes: |
+  PC Engine emulator by David and Cedric Michel, distributed as a closed
+  Windows binary. The build read is pce.exe 1.1.3, dated 17 June 2008, sha1
+  b58461eca2614326bd776d12b01c4ab2e7d0f579, the copy RetroBat installs as
+  magicengine (version 0.08.06.17).
+
+  RetroBat starts it as pce.exe "<rom>" with the emulator folder as working
+  directory and runs it only for the pcengine and supergrafx HuCard systems.
+  The generator writes pce.ini (paths for cheats, screenshots and
+  saved_games, video, language) and the controller section, and sets no
+  system ROM. A HuCard carries its whole program, so this route reads the
+  game file, pce.ini and the games.idx index the program keeps in its own
+  folder, nothing else.
+  ref: emulatorlauncher Generators/MagicEngine.Generator.cs:20-83,
+       retrobat system/templates/emulationstation/es_systems.cfg (pcengine,
+       supergrafx)
+
+  pce.exe is a loader. 0x426ec0, called from 0x401712, decrypts about
+  1.2 MB held in .data at 0x4484c0 (0x2491e eight-byte blocks of a SAFER
+  style cipher whose exp and log tables sit at 0x448220 and 0x448320),
+  inflates it with 0x426b00 into a 0x1f8d50-byte buffer, applies the
+  relocation list that follows and jumps to offset 0x1000. That routine was
+  run under an x86 emulator to obtain the program image, and the addresses
+  below are addresses in that image relocated to base 0x10000000. The pce.cfg RetroBat ships is the binary keyboard and
+  gamepad layout (ME10CONFIG) and names no file.
+
+  System cards are four paths of the [pce] section, system_card_1 to
+  system_card_4, defaulting to syscard1.pce, syscard2.pce, syscard3.pce and
+  ge.pce (0x100118a7-0x10011910, setter 0x100094e0, getter 0x10008b00).
+  default_system_card picks the card a CD boots with: 0 automatic, 1 to 4
+  one of the four files, 5 to 7 Magic System 1.0, 2.0 or 3.0, a system card
+  BIOS built into the program. Automatic means the third path, syscard3.pce.
+  The chosen file goes through the HuCard loader (0x10082630, 0x10082250)
+  with no size or hash check, and when it cannot be opened the boot falls
+  back to Magic System 3.0 (0x10007752-0x10007f79, 0x100826b0). A card
+  named on the command line after -cd is loaded the same way without that
+  fallback. The internal HuCard database names the dumps it recognises as
+  system cards by CRC32: 3f9f95a4 (1.0), 52520bc6 (2.0), 283b74e0 (2.1),
+  6d9a73ef and 2b5b75fe (3.0), 51a12d90 (Game Express), which drives the
+  title shown and not the boot (0x10142e40-0x10143c20). arcade_card only
+  turns the Arcade Card hardware on and loads no file. CD saves go to
+  backup.dat and backup.idx, written by the program.
+  RetroBat does not route pcenginecd to MagicEngine today, so these files
+  only matter when it is run on a CD by hand.
+
+files:
+  - name: syscard3.pce
+    system: nec-pc-engine-cd
+    required: false
+    hle_fallback: true
+    description: "Super CD-ROM2 System Card 3.0"
+    note: "system_card_3, the card an automatic CD boot loads. Opened by the relative name unless the ini sets a path, read through the HuCard loader without a size or hash check. When it cannot be opened the boot uses the built-in Magic System 3.0."
+    source_ref: "pce.exe image 0x100118e7-0x100118f3 (default), 0x10007752-0x10007f65 (automatic choice and fallback), 0x10082630"
+
+  - name: syscard2.pce
+    system: nec-pc-engine-cd
+    required: false
+    hle_fallback: true
+    description: "CD-ROM2 System Card 2.x"
+    note: "system_card_2, loaded when default_system_card is 2 or the card is picked in the boot menu. Falls back to Magic System 3.0 when it cannot be opened."
+    source_ref: "pce.exe image 0x100118b8-0x100118de (default), 0x10007f2c-0x10007f65"
+
+  - name: syscard1.pce
+    system: nec-pc-engine-cd
+    required: false
+    hle_fallback: true
+    description: "CD-ROM2 System Card 1.0"
+    note: "system_card_1, loaded when default_system_card is 1 or the card is picked in the boot menu. Falls back to Magic System 3.0 when it cannot be opened."
+    source_ref: "pce.exe image 0x100118a7-0x100118c1 (default), 0x10007f2c-0x10007f65"
+
+  - name: ge.pce
+    aliases: [gexpress.pce]
+    system: nec-pc-engine-cd
+    required: false
+    hle_fallback: true
+    description: "Games Express System Card"
+    note: "system_card_4, loaded when default_system_card is 4 or the card is picked in the boot menu. Falls back to Magic System 3.0 when it cannot be opened."
+    source_ref: "pce.exe image 0x100118f8-0x10011910 (default), 0x10007f2c-0x10007f65"

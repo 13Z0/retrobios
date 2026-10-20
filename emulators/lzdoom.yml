@@ -1,0 +1,416 @@
+emulator: LZDoom
+type: standalone
+core_classification: game_engine
+source: "https://github.com/drfrag666/gzdoom"
+profiled_date: "2026-10-20"
+source_commit: "4ce19a12164ebd6802b7fb2f94d700a6e736d0fb"
+core_version: "3.88b"
+display_name: "LZDoom"
+cores: [lzdoom]
+systems: [doom, heretic, hexen, strife, chex]
+
+notes: |
+  Legacy branch of GZDoom 3.x maintained by drfrag for older GPUs and
+  OpenGL 2 hardware, built as lzdoom. The profiled revision is tag 3.88b,
+  the one RetroPie builds. version.h names the engine resources: BASEWAD
+  lzdoom.pk3 and OPTIONALWAD game_support.pk3 (src/version.h:90-91).
+
+  Engine resources (built from the wadsrc directories by add_pk3):
+    lzdoom.pk3        searched first in the program directory, fatal
+                      "Cannot find lzdoom.pk3" when absent
+                      ref: src/d_main.cpp:2530-2534, wadsrc/CMakeLists.txt:3
+    game_support.pk3  loaded after lzdoom.pk3 when found
+                      ref: src/d_main.cpp:2537, src/d_iwad.cpp:757-763
+    lights.pk3        autoloadlights, false by default
+    brightmaps.pk3    autoloadbrightmaps, false by default
+                      ref: src/d_main.cpp:228-229, 2164-2178
+  A GAMEINFO lump can switch the last two on. Neither is read for a
+  shareware IWAD. game_widescreen_gfx.pk3 and game_conpics_gfx.pk3 are
+  looked up too, both on by default (src/d_main.cpp:230-231, 2179-2190),
+  but no wadsrc directory of this tree builds them.
+
+  BaseFileSearch tries the program directory first for these files, then
+  the name as given, then the FileSearch.Directories of the configuration
+  (src/d_main.cpp:1793-1830). On Linux those default to $HOME/.config/lzdoom,
+  SHARE_DIR, /usr/local/share/doom, /usr/local/share/games/doom,
+  /usr/share/doom, /usr/share/games/doom and $DOOMWADDIR
+  (src/gameconfigfile.cpp:153-172).
+
+  Game data is a user-supplied IWAD. iwadinfo.txt declares each known IWAD
+  with the lumps it must contain, its file name and the support files it
+  loads. Each IWADSearch directory (".", $DOOMWADDIR, $HOME/.config/lzdoom
+  and the four share directories on Linux, src/gameconfigfile.cpp:126-149)
+  is scanned for the names of the Names block and for any .iwad, .ipk3 or
+  .ipk7 file, and each candidate is identified by its lumps, not by its name
+  (src/d_iwad.cpp:319-367, 466-499, 509-527). The Names block also lists
+  doomu.wad, bfgdoom2.wad, doom2bfg.wad, bfgdoom.wad, doombfg.wad,
+  doomxbox.wad, doom2xbox.wad, tntunity.wad, plutoniaunity.wad,
+  freedoomu.wad, freedoom.wad, hereticsr.wad, hexendemo.wad, hexdemo.wad,
+  strife0.wad, strife.wad and blasphem.wad
+  (wadsrc_extra/static/iwadinfo.txt:568-618). -iwad adds the named file,
+  trying .wad, .pk3, .iwad, .ipk3 and .ipk7 when it has no extension, and
+  the first usable one wins (src/d_iwad.cpp:566-602, 638-650). An IWAD that
+  declares Required is dropped unless the IWAD it names was found, and Load
+  files are read from the IWAD's own directory (src/d_iwad.cpp:610-635,
+  772-788). Startup stops with "Cannot find a game IWAD" when nothing is
+  identified (src/d_iwad.cpp:693-696). No hash is read.
+
+  MIDI music goes through FluidSynth with fluid_patchset "lzdoom"
+  (src/sound/music/music_config.cpp:118). The soundfont manager reads every
+  file of SoundfontSearch.Directories, keeping SF2, WOPL, WOPN and zipped
+  GUS patch sets by their header, and falls back to
+  $PROGDIR/soundfonts/lzdoom.sf2 when it found none
+  (src/gameconfigfile.cpp:175-202, src/sound/music/i_soundfont.cpp:330-380,
+  428-431). The OPL and OPN banks are read only with adl_use_custom_bank or
+  opn_use_custom_bank, off by default (src/sound/music/music_config.cpp:92-99,
+  253-260).
+
+  RetroPie installs lzdoom.pk3, game_support.pk3, lights.pk3, brightmaps.pk3
+  and soundfonts/ beside the binary and launches "lzdoom -iwad <file>" with
+  DOOMWADDIR set to its ports/doom directory.
+
+files:
+  # ================================================================
+  # Engine resources
+  # ================================================================
+
+  - name: "lzdoom.pk3"
+    category: game_data
+    required: true
+    size: 1267891
+    sha1: "195596bcfc97eee8ffaa049a912c8cb54a539416"
+    md5: "fa846e2dc4663d262cc52daff5bdd69a"
+    crc32: "1d2b3316"
+    source_ref: "src/version.h:90, src/d_main.cpp:2530-2534, wadsrc/CMakeLists.txt:3"
+    note: >
+      Fonts, menus, ZScript, textures. Fatal if absent. Existence is the only
+      test. The pk3s are zipped at build time and their bytes change from one
+      build to the next: the hashes are those of the copy in the 3.88b Linux
+      release package (lzdoom_3.88b_amd64.deb).
+
+  - name: "game_support.pk3"
+    category: game_data
+    required: false
+    size: 223259
+    sha1: "f645d7a3a00321c84490243690caa4415b3803f2"
+    md5: "e11fb785ff8d616092a85154a6a19535"
+    crc32: "4c14b502"
+    source_ref: "src/version.h:91, src/d_main.cpp:2537, src/d_iwad.cpp:757-763, wadsrc_extra/CMakeLists.txt:3"
+    note: "Holds iwadinfo.txt and the per-game filters. Copy from the 3.88b Linux release package."
+
+  - name: "lights.pk3"
+    category: game_data
+    required: false
+    size: 22679
+    sha1: "7f64f0d306c05e7c1740da1b9e565f041449a934"
+    md5: "199fa1fac48ab6be2249fb33e1190a32"
+    crc32: "4a8b1d81"
+    source_ref: "src/d_main.cpp:229, 2167-2172, wadsrc_lights/CMakeLists.txt:3"
+    note: "Dynamic light definitions, read when autoloadlights is set. Copy from the 3.88b Linux release package."
+
+  - name: "brightmaps.pk3"
+    category: game_data
+    required: false
+    size: 245255
+    sha1: "e33baca425c3087b973cc87cdedb051482e7a606"
+    md5: "19c17b0ccbe5568aacb4ed517524c5de"
+    crc32: "a0d2703c"
+    source_ref: "src/d_main.cpp:228, 2173-2178, wadsrc_bm/CMakeLists.txt:3"
+    note: "Brightmap textures, read when autoloadbrightmaps is set. Copy from the 3.88b Linux release package."
+
+  - name: "game_widescreen_gfx.pk3"
+    category: game_data
+    required: false
+    size: 5041332
+    sha1: "31e1ee26c1213207ebaddd15475315c8c9193dc9"
+    md5: "094baa608b85fbe636933b4098e7e1f1"
+    crc32: "b6a6ff19"
+    source_ref: "src/d_main.cpp:230, 2179-2184"
+    note: >
+      Widescreen HUD and menu graphics, read by default when present. Not
+      built from this tree. The 3.88b Windows release archive
+      (LZDoom_3.88b_x64.zip) ships this copy.
+
+  - name: "game_conpics_gfx.pk3"
+    category: game_data
+    required: false
+    source_ref: "src/d_main.cpp:231, 2185-2190"
+    note: "Looked up by default when present. Neither this tree nor any 3.88b release package ships it."
+
+  - name: "lzdoom.sf2"
+    category: game_data
+    path: "soundfonts/lzdoom.sf2"
+    required: false
+    size: 3283278
+    sha1: "9dba9212f2e34446ab034595665809f09f303d63"
+    source_ref: "src/sound/music/i_soundfont.cpp:428-431, src/sound/music/music_config.cpp:118, src/CMakeLists.txt:1223"
+    note: "Default soundfont, used when the soundfont directories hold none. Committed in the tree as soundfont/lzdoom.sf2 and copied next to the executable."
+
+  - name: "GENMIDI.GS.wopl"
+    category: game_data
+    path: "fm_banks/GENMIDI.GS.wopl"
+    required: false
+    size: 118767
+    sha1: "538d220d87b86b997f539265eb12a6c319e17a1c"
+    source_ref: "src/CMakeLists.txt:1225, src/gameconfigfile.cpp:175-202, src/sound/music/i_soundfont.cpp:352-356"
+    note: "OPL3 bank copied next to the executable, read only with adl_use_custom_bank."
+
+  - name: "gs-by-papiezak-and-sneakernets.wopn"
+    category: game_data
+    path: "fm_banks/gs-by-papiezak-and-sneakernets.wopn"
+    required: false
+    size: 274864
+    sha1: "12e77c61ae107b7dbcebb230fe45ec7791a07877"
+    source_ref: "src/CMakeLists.txt:1227, src/gameconfigfile.cpp:175-202, src/sound/music/i_soundfont.cpp:357-361"
+    note: "OPN2 bank copied next to the executable, read only with opn_use_custom_bank."
+
+  # ================================================================
+  # IWADs (user-supplied). One is needed to start a game.
+  # All source refs point to wadsrc_extra/static/iwadinfo.txt.
+  # ================================================================
+
+  # ---- Doom ----
+
+  - name: "doom.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:315, 363, 378, 393, 576"
+    note: "The Ultimate DOOM, DOOM Registered, the BFG and XBox editions all use this name and are told apart by their lumps."
+
+  - name: "doom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:402-412, 577"
+    note: "DOOM Shareware."
+
+  - name: "doom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:489, 518, 545, 571"
+
+  - name: "doom2f.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:532, 572"
+
+  - name: "nerve.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:494, 523, 558, 562, 617"
+    note: "No Rest for the Living, which requires DOOM 2. Also loaded from the IWAD directory by the BFG and XBox editions of DOOM 2."
+
+  - name: "doomunity.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:331, 584"
+
+  - name: "doom2unity.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:503, 585"
+
+  - name: "nerveunity.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:508"
+    note: "Loaded from the IWAD directory by DOOM 2: Unity Edition."
+
+  - name: "extras.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:338, 508"
+    note: "Loaded from the IWAD directory by the Unity editions."
+
+  - name: "soundtrack"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:338, 508"
+    note: "Loaded from the IWAD directory by the Unity editions."
+
+  - name: "doom_complete.pk3"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:350, 570"
+    note: "WadSmoosh merge of the Doom IWADs."
+
+  - name: "plutonia.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:447, 461, 573"
+
+  - name: "tnt.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:420, 434, 574"
+
+  - name: "sigil_v1_21.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:468-478, 616"
+    note: "Sigil, which requires The Ultimate DOOM."
+
+  - name: "sigil_shreds.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:473"
+    note: "Loaded from the IWAD directory by Sigil."
+
+  # ---- Freedoom (free) ----
+
+  - name: "freedoom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:292, 589"
+
+  - name: "freedoom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:280, 590"
+
+  - name: "freedm.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:268, 593"
+
+  # ---- Heretic ----
+
+  - name: "heretic.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:231, 243, 594"
+    note: "Heretic and Shadow of the Serpent Riders share the name and are told apart by their lumps."
+
+  - name: "heretic1.wad"
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:250-260, 596"
+    note: "Heretic Shareware."
+
+  - name: "blasphemer.wad"
+    aliases: ["blasphem.wad"]
+    category: game_data
+    system: heretic
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:219, 605-606"
+
+  # ---- Hexen ----
+
+  - name: "hexen.wad"
+    category: game_data
+    system: hexen
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:181, 597"
+
+  - name: "hexdd.wad"
+    category: game_data
+    system: hexen
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:188-199, 598"
+    note: "Deathkings expansion, which requires hexen.wad."
+
+  # ---- Strife ----
+
+  - name: "strife1.wad"
+    category: game_data
+    system: strife
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:144, 601"
+
+  - name: "sve.wad"
+    category: game_data
+    system: strife
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:130, 134, 602"
+    note: "Veteran Edition, which requires Strife: Quest for the Sigil."
+
+  - name: "voices.wad"
+    category: game_data
+    system: strife
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:135, 148"
+    note: "Loaded from the IWAD directory by Strife."
+
+  # ---- Chex Quest ----
+
+  - name: "chex.wad"
+    category: game_data
+    system: chex
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:118, 607"
+
+  - name: "chex3.wad"
+    category: game_data
+    system: chex
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:105, 608"
+
+  # ---- Standalone commercial and community IWADs ----
+
+  - name: "hacx.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:81, 611"
+
+  - name: "hacx2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:69, 612"
+
+  - name: "action2.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:93, 609"
+
+  - name: "harm1.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:57, 610"
+
+  - name: "square.pk3"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:33"
+    note: "Absent from the Names block: picked up only when named with -iwad."
+
+  - name: "square1.pk3"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:45, 613"
+
+  - name: "delaweare.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:22, 614"
+
+  - name: "rotwb.wad"
+    category: game_data
+    system: doom
+    required: false
+    source_ref: "wadsrc_extra/static/iwadinfo.txt:9, 615"

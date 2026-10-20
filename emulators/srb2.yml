@@ -1,0 +1,89 @@
+emulator: Sonic Robo Blast 2
+type: standalone
+core_classification: game_engine
+source: "https://github.com/STJr/SRB2"
+upstream: "https://git.do.srb2.org/STJr/SRB2"
+profiled_date: "2026-10-20"
+source_commit: "8701ef41f617c06e23a7b8ccd2199c160c5d1dd1"
+core_version: "2.2.15"
+display_name: "Sonic Robo Blast 2"
+cores: [srb2]
+systems: []
+verification: existence
+
+notes: |
+  Sonic fan game by Sonic Team Junior, built on a modified Doom Legacy
+  engine. The pin is tag SRB2_release_2.2.15, the revision RetroPie builds
+  (ports/srb2.sh, _version_srb2). The GitHub repository mirrors the
+  project's GitLab and carries the same tag commit.
+
+  The game assets are not in the source tree. They ship in the release
+  archive SRB2-v2215-Full.zip, which RetroPie unpacks and installs next to
+  the binary. The hashes below are those of the files in that archive.
+
+  IdentifyVersion() (src/d_main.c:1126-1205) finds the asset directory
+  through I_LocateWad(), which tries SRB2WADDIR, the working directory,
+  the default install paths, $HOME/.srb2 and the search paths in that
+  order (src/sdl/i_system.c:3019-3072), and chdirs there. The first
+  directory holding srb2.pk3 wins. RetroPie launches the binary from its
+  install directory. srb2/ below stands for that directory.
+
+  srb2.pk3, zones.pk3 and characters.pk3 are main files: W_InitFile with
+  startup set ends in I_Error when one is missing (src/w_wad.c:805-817).
+  A build without DEVELOP then checks their MD5 against ASSET_HASH_*
+  (src/config.h.in:46-48, src/d_main.c:1447-1449) and W_VerifyFileMD5
+  stops on a mismatch (src/w_wad.c:2550-2590). The CMake option
+  SRB2_CONFIG_DEV_BUILD, off by default, is what defines DEVELOP
+  (src/CMakeLists.txt:149, 383-384). patch.pk3 is loaded only when
+  USE_PATCH_DTA is defined, which it is not in this release
+  (src/doomdef.h:171).
+
+  music.pk3 is not hashed. MUSICTEST adds it only when it holds music and
+  sound lumps alone, rejects it with an error when it holds anything else,
+  and skips it when it cannot be opened (src/d_main.c:1189-1203,
+  src/w_wad.c:2810, 2840).
+
+files:
+  - name: "srb2.pk3"
+    path: "srb2/srb2.pk3"
+    category: game_data
+    description: "Main game assets"
+    required: true
+    size: 50115266
+    md5: "3182ce524acc2072ddaa81acf4b6a9aa"
+    sha1: "f53394ceabded0a307330d81a4ae4db59e269ecb"
+    validation: [md5]
+    source_ref: "src/d_main.c:1161-1171, src/d_main.c:1447, src/config.h.in:46"
+
+  - name: "zones.pk3"
+    path: "srb2/zones.pk3"
+    category: game_data
+    description: "Level data"
+    required: true
+    size: 18503511
+    md5: "88ff4c300851ccdb0406698eadd89907"
+    sha1: "de0e5d630c1f93472be22f981f68033107f059a2"
+    validation: [md5]
+    source_ref: "src/d_main.c:1180, src/d_main.c:1448, src/config.h.in:47"
+
+  - name: "characters.pk3"
+    path: "srb2/characters.pk3"
+    category: game_data
+    description: "Playable character data"
+    required: true
+    size: 2044315
+    md5: "5c5936b8a690e007c0939bd0785a41fb"
+    sha1: "c070cd568f6579a94372e70f6c789fc479247d5c"
+    validation: [md5]
+    source_ref: "src/d_main.c:1183, src/d_main.c:1449, src/config.h.in:48"
+
+  - name: "music.pk3"
+    path: "srb2/music.pk3"
+    category: game_data
+    description: "Music and sound effects"
+    required: false
+    size: 99639560
+    md5: "b8763719b66716dbd5c0f9982269be69"
+    sha1: "84095f245c724899f52d4912f2c01e0fc9d42dc0"
+    source_ref: "src/d_main.c:1189-1203, src/d_main.c:1453"
+    note: "Hashes are those of the 2.2.15 release archive. The engine does not check them."

@@ -1,0 +1,405 @@
+emulator: PPSSPP 1.5.4
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/hrydgard/ppsspp"
+profiled_date: "2026-10-20"
+source_commit: "a1e74d0d4f89ba3fa2d4fe64bac7a0fa16fc146f"
+core_version: "v1.5.4"
+display_name: "Sony - PlayStation Portable (PPSSPP 1.5.4)"
+mode: standalone
+cores:
+  - ppsspp-1.5.4
+systems:
+  - sony-psp
+
+notes: |
+  PPSSPP at the v1.5.4 tag, offered by RetroPie on VideoCore Raspberry Pi
+  systems only. The package reuses the ppsspp build steps: cmake
+  builds PPSSPPSDL and copies assets/ beside it, both are installed to
+  the package directory, and PPSSPPSDL is launched from there with the
+  ROM. ~/.config/ppsspp, the memory stick root, is moved into the psp
+  configuration directory.
+
+  The PSP kernel is high level emulated, so no firmware image is read.
+
+  On Linux, assets are read through the VFS from <binary dir>/assets/,
+  then the binary directory, /usr/share/ppsspp/assets/ and ./assets/.
+  flash0: is <binary dir>/assets/flash0/. Paths below are written under
+  ppsspp-1.5.4/, which stands for the binary's directory.
+  ref: UI/NativeApp.cpp:329-335, UI/NativeApp.cpp:356-363
+
+  The 19 font slots of the sceFont registry are filled from the game's
+  USRDIR, then ms0:/PSP/flash0/font/ on the memory stick, then flash0:.
+  The repository ships open replacements for jpn0.pgf, kr0.pgf and
+  ltn0.pgf to ltn15.pgf. zh_gb.pgf, the Chinese font, is marked
+  ignoreIfMissing and is not shipped. A Sony font placed under the memory
+  stick override path takes precedence over the replacement.
+  ref: Core/HLE/sceFont.cpp:88-108, Core/HLE/sceFont.cpp:638-698
+
+  The PPGe atlas draws the emulated system dialogs. The UI atlas,
+  langregion.ini and gamecontrollerdb.txt serve the host program, as do
+  the translations under assets/lang and the post processing shaders
+  under assets/shaders.
+  ref: Core/Util/PPGeDraw.cpp:186-190, UI/NativeApp.cpp:630-633,
+       Core/Config.cpp:270-280, SDL/SDLJoystick.cpp:23-36,
+       ext/native/i18n/i18n.cpp:67, GPU/Common/PostShader.cpp:38
+
+files:
+  - name: "ppge_atlas.zim"
+    path: "ppsspp-1.5.4/assets/ppge_atlas.zim"
+    system: sony-psp
+    description: "PPGe texture atlas for the emulated system dialogs"
+    required: false
+    bundled: true
+    size: 867257
+    md5: "f46570c34bcf6a01cf20b93add725c3b"
+    sha1: "f907477c2527028449310f21bb5fdb4c756f673f"
+    crc32: "9317d985"
+    note: >-
+      Without it PanicAlert reports the file missing and PPGe draws
+      nothing, while emulation goes on.
+    source_ref: "Core/Util/PPGeDraw.cpp:186-190, ext/native/image/zim_load.cpp:124-135"
+
+  - name: "jpn0.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/jpn0.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Japanese font, FTT-NewRodin Pro DB slot"
+    required: false
+    bundled: true
+    size: 4367080
+    md5: "a9c9e37be81056c4ff16f97c5ea8a149"
+    sha1: "8b0b4b978e647856cc2e441b60774746223b4949"
+    crc32: "bd8cde31"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:91, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn0.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn0.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 0"
+    required: false
+    bundled: true
+    size: 67660
+    md5: "d9dad4b1e7c365a2136d3469e46e8cd8"
+    sha1: "834245b3aa53fa2aed62751890268371f0d92eb8"
+    crc32: "192668bf"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:92, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn1.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn1.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 1"
+    required: false
+    bundled: true
+    size: 63504
+    md5: "8b875d8686e59808fc343f5facabcd5d"
+    sha1: "d02bcde33ab32d425aec47fdc9bc95c5c98c5e16"
+    crc32: "a83f7c44"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:93, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn2.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn2.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 2"
+    required: false
+    bundled: true
+    size: 76692
+    md5: "97c1849edee2142c5f93af694f6ecd8e"
+    sha1: "0f562d1e5ea3b3d56be45b528541ef418020ba0f"
+    crc32: "bbeab2b8"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:94, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn3.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn3.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 3"
+    required: false
+    bundled: true
+    size: 71900
+    md5: "c0b6d1ce4b089142f1b9214d0a1f6d23"
+    sha1: "dcc285d1a6fb8235af5108f37387fee756e309a8"
+    crc32: "d1ec59b5"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:95, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn4.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn4.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 4"
+    required: false
+    bundled: true
+    size: 78920
+    md5: "056e25c9f8a91408e60b27424488eec2"
+    sha1: "c88737077233918442fdc8102a52590ca0a23d6f"
+    crc32: "3bea67ea"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:96, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn5.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn5.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 5"
+    required: false
+    bundled: true
+    size: 76216
+    md5: "7fe820db034066902ed20b0e2b23aa52"
+    sha1: "8b92f492049f9a0792a8ddcece54cc780a17403a"
+    crc32: "6ef95466"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:97, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn6.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn6.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 6"
+    required: false
+    bundled: true
+    size: 88716
+    md5: "00de7bc98fd827834155aeaa52a6ff50"
+    sha1: "6392abaf7bc864d10a36742e4a024e7713e7fa12"
+    crc32: "b86d8513"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:98, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn7.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn7.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 7"
+    required: false
+    bundled: true
+    size: 84860
+    md5: "60837a1f537774e2513777ed441579fb"
+    sha1: "b32c3cae7c8d4139606038988b4b4b12f78185d8"
+    crc32: "1ad81696"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:99, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn8.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn8.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 8"
+    required: false
+    bundled: true
+    size: 51432
+    md5: "83c3ac2c5f3eb1f29c50509d5fac12db"
+    sha1: "01626c31bec0587fbda5860f50b5e3a2aa55fc12"
+    crc32: "293fc32a"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:100, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn9.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn9.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 9"
+    required: false
+    bundled: true
+    size: 50116
+    md5: "88edad985862a859c1e3fb2ac8a5def3"
+    sha1: "326be7cfe61cbddaaa9549563554971b6292f6aa"
+    crc32: "cf796bad"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:101, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn10.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn10.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 10"
+    required: false
+    bundled: true
+    size: 55788
+    md5: "1860058c8bf459230c070f2551b694fb"
+    sha1: "a9f99612b599a4ce08ae2f83fe136a1e82fccc34"
+    crc32: "4d2b37ef"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:102, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn11.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn11.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 11"
+    required: false
+    bundled: true
+    size: 54572
+    md5: "6787304ff1b6e408bf087895f27a8fd8"
+    sha1: "4ce3fd3d22106831d1f758929da384f2b51934a8"
+    crc32: "3e1802bc"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:103, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn12.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn12.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 12"
+    required: false
+    bundled: true
+    size: 58352
+    md5: "3137ec03ad4ccb0bee2ef063570a53e9"
+    sha1: "8082f8cb91fcd5f17af7dc6312cdb90f0f3887f7"
+    crc32: "ee171181"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:104, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn13.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn13.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 13"
+    required: false
+    bundled: true
+    size: 57660
+    md5: "8aa1799e6dc507fd81ba8e4e0a1ac8ec"
+    sha1: "ab3ee89579a6755a965e45919f4d771c80f62657"
+    crc32: "a02763c5"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:105, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn14.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn14.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 14"
+    required: false
+    bundled: true
+    size: 63388
+    md5: "41e32b026f85db942e2e10bdf3d2694e"
+    sha1: "f7818e4560ad459fcb64b9bd17414816af5ed058"
+    crc32: "f64e87aa"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:106, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "ltn15.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/ltn15.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Latin font slot 15"
+    required: false
+    bundled: true
+    size: 62364
+    md5: "93ea5b6541d131cb582ca609e918f0a9"
+    sha1: "95285a9b90ee0375d843a07dd718d287f8733547"
+    crc32: "32fa42cc"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:107, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "kr0.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/kr0.pgf"
+    system: sony-psp
+    description: "Open replacement PGF font, Korean font, AsiaNHH slot"
+    required: false
+    bundled: true
+    size: 883164
+    md5: "7e2a70c5ff07e4d8859d64798ffbb499"
+    sha1: "b7ab295d15bd8c103c42eab7fb7c7ec447915b40"
+    crc32: "73473af5"
+    note: >-
+      Read from flash0: when neither the game nor the memory stick
+      provides the font.
+    source_ref: "Core/HLE/sceFont.cpp:108, Core/HLE/sceFont.cpp:667-698"
+
+  - name: "compat.ini"
+    path: "ppsspp-1.5.4/assets/compat.ini"
+    system: sony-psp
+    category: game_data
+    description: "Per game compatibility settings"
+    required: false
+    bundled: true
+    size: 8886
+    md5: "501d056e79b455ba53fe72c3be70aeab"
+    sha1: "47a8b96012b525c896d1d054585853ebf827a55d"
+    crc32: "6c897d98"
+    note: >-
+      Read for every game, then the user copy in the memory stick SYSTEM
+      folder overrides it.
+    source_ref: "Core/Compatibility.cpp:24-40"
+
+  - name: "langregion.ini"
+    path: "ppsspp-1.5.4/assets/langregion.ini"
+    system: sony-psp
+    description: "Language and region name mapping"
+    required: false
+    bundled: true
+    size: 1212
+    md5: "2c7ed57910d8f31715feb8f215080d3b"
+    sha1: "9ba05906cd40659f339bbcd5ae2e8badc21dd69d"
+    crc32: "d0bf8c07"
+    unsourceable: "host configuration installed with the binary"
+    note: >-
+      Read when the system locale has no translation file of its own.
+    source_ref: "Core/Config.cpp:270-280"
+
+  - name: "ui_atlas.zim"
+    path: "ppsspp-1.5.4/assets/ui_atlas.zim"
+    system: sony-psp
+    description: "Texture atlas of the PPSSPP user interface"
+    required: false
+    bundled: true
+    size: 1684804
+    md5: "cf54479fffd1980c9fb01aed532f2220"
+    sha1: "991424050a2e361b8b4ceb5aba0540bb00505e6a"
+    crc32: "3f2d4e98"
+    unsourceable: "host user interface installed with the binary"
+    note: >-
+      PanicAlert when missing. Only the Windows build exits, the others
+      continue without the UI texture.
+    source_ref: "UI/NativeApp.cpp:630-633"
+
+  - name: "gamecontrollerdb.txt"
+    path: "ppsspp-1.5.4/assets/gamecontrollerdb.txt"
+    system: sony-psp
+    description: "SDL game controller mappings"
+    required: false
+    bundled: true
+    size: 50682
+    md5: "65ccdaac2c2cffbc3b8f84d334daa17c"
+    sha1: "b992498c1bf643060190ee74a0821b98aaee1f5c"
+    crc32: "93896085"
+    unsourceable: "host controller database installed with the binary"
+    note: >-
+      Read by the SDL front end at start. A missing file only drops the
+      mappings.
+    source_ref: "SDL/SDLJoystick.cpp:23-36"
+
+  - name: "zh_gb.pgf"
+    path: "ppsspp-1.5.4/assets/flash0/font/zh_gb.pgf"
+    system: sony-psp
+    description: "Chinese PGF font, FTT-NewRodin Pro DB"
+    required: false
+    note: >-
+      First registry slot, flagged ignoreIfMissing and not shipped. Read
+      from the game's USRDIR, the memory stick override path or flash0:
+      when present.
+    source_ref: "Core/HLE/sceFont.cpp:88-90, Core/HLE/sceFont.cpp:667-698"

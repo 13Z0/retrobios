@@ -1,0 +1,84 @@
+emulator: OpenGOAL
+type: standalone
+core_classification: game_engine
+source: "https://github.com/open-goal/jak-project"
+upstream: "https://github.com/open-goal/jak-project"
+source_commit: "6445b4a50a7540df512e3c82c62216521421410c"
+profiled_date: "2026-10-20"
+core_version: "v0.3.8"
+display_name: "Jak and Daxter (OpenGOAL)"
+cores: [opengoal]
+systems: [opengoal]
+
+notes: |
+  Native port of the Jak and Daxter games built from the decompiled GOAL
+  code. gk runs the game, goalc compiles GOAL source, and extractor turns the
+  user's PS2 ISO into the data gk loads.
+
+  RetroBat installs v0.3.8: the gk.exe, goalc.exe and extractor.exe of its
+  opengoal.7z are byte identical to opengoal-windows-v0.3.8.zip, and its data
+  tree has the same files, so the profile is pinned to that tag. The
+  launcher reads the game name (jak1, jak2 or jak3) from the first line of
+  the ROM file, then checks data/out/<game>/iso. When that folder is missing
+  it runs "extractor.exe -g <game> -e -d -c <iso>" with the ISO path set in
+  the system options, and refuses to start without one. It then starts
+  gk.exe -g <game> with its own config folder.
+
+  extractor (decompiler/extractor/main.cpp):
+    1. -e takes a file whose extension is .iso and which is larger than
+       1000000000 bytes, unpacks it into iso_data/_temp and computes an XXH64
+       over the hashes of all its files (decompiler/extractor/extractor_util.cpp:278-304,
+       decompiler/extractor/main.cpp:295-317).
+    2. validate needs a DGO folder in the extraction. It reads the serial
+       from the boot ELF name (SCUS_971.24 gives SCUS-97124) and hashes that
+       ELF with XXH64, then looks both up in extractor_iso_database
+       (decompiler/extractor/main.cpp:35-110, decompiler/extractor/extractor_util.cpp:30-166, 229-251). A missing DGO
+       folder stops extraction. Any other mismatch only fails the run under
+       -v, which RetroBat does not pass, and leaves the data in
+       iso_data/_temp instead of iso_data/<game> (decompiler/extractor/main.cpp:318-335).
+    3. -d decompiles with the config of the detected release, -c compiles
+       goal_src into data/out/<game>.
+
+  The database knows Jak 1 as SCUS-97124 (Black Label and Greatest Hits),
+  SCES-50361, SCPS-15021 and SCPS-56003, Jak 2 as SCUS-97265, SCES-51608,
+  SCPS-15057 and SCKA-20010, and Jak 3 as SCUS-97330, SCUS-97516,
+  SCKA-20040 and SCES-52460. The contents hashes it stores are XXH64
+  values over per file hashes, not hashes of the ISO file, so no entry
+  below carries one.
+
+  At run time gk reads only what the extractor and compiler built:
+  out/<game>/iso, listed by the fake ISO file system, and out/<game>/fr3
+  for the renderer (game/overlord/common/fake_iso.cpp:57-71,
+  game/graphics/pipelines/opengl.cpp:90). The data folder of the release
+  (goal_src, decompiler/config, custom_assets, game/assets, launcher) is
+  program source and configuration the compiler reads, shipped with every
+  build. goal_src/jakx is present, but the extractor accepts only jak1, jak2
+  and jak3 at this tag (decompiler/extractor/main.cpp:16-18, 289-292).
+
+files:
+  - name: "jak1.iso"
+    category: game_data
+    system: opengoal
+    required: true
+    description: "Jak and Daxter: The Precursor Legacy PS2 disc image"
+    source_ref: "decompiler/extractor/main.cpp:295-335, decompiler/extractor/extractor_util.cpp:30-79, 278-294"
+    note: "No file name is fixed. Accepted serials SCUS-97124, SCES-50361, SCPS-15021 and SCPS-56003, identified by the boot ELF name and its XXH64. Read once by the extractor, which builds out/jak1 for gk."
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "jak2.iso"
+    category: game_data
+    system: opengoal
+    required: true
+    description: "Jak II PS2 disc image"
+    source_ref: "decompiler/extractor/main.cpp:295-335, decompiler/extractor/extractor_util.cpp:80-123, 278-294"
+    note: "No file name is fixed. Accepted serials SCUS-97265, SCES-51608, SCPS-15057 and SCKA-20010, identified by the boot ELF name and its XXH64. Read once by the extractor, which builds out/jak2 for gk."
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"
+
+  - name: "jak3.iso"
+    category: game_data
+    system: opengoal
+    required: true
+    description: "Jak 3 PS2 disc image"
+    source_ref: "decompiler/extractor/main.cpp:295-335, decompiler/extractor/extractor_util.cpp:124-163, 278-294"
+    note: "No file name is fixed. Accepted serials SCUS-97330, SCUS-97516, SCKA-20040 and SCES-52460, identified by the boot ELF name and its XXH64. Read once by the extractor, which builds out/jak3 for gk."
+    unsourceable: "retail disc image the collection does not hold, and a same-named image of another game must not stand in"

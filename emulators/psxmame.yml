@@ -1,0 +1,191 @@
+emulator: pSxMAME
+type: standalone
+core_classification: enhanced_fork
+source: "https://github.com/mamedev/mame"
+upstream: "https://github.com/mamedev/mame"
+profiled_date: "2026-10-20"
+source_commit: "0fdce58484202265b0794a77652bb5e3da9c56af"
+core_version: "0.133"
+display_name: "Arcade PSX boards (pSxMAME)"
+mode: standalone
+cores:
+  - psxmame
+systems:
+  - arcade
+
+notes: |
+  MAME build reduced to the PlayStation based arcade boards, with the ZiNc
+  GPU and SPU plugins added. RetroBat installs it for its zinc system. The
+  mame.exe in that package announces itself as "pSxMAME 20090903" and no
+  source tree for that build is published, so this profile reads the
+  binary and checks it against MAME 0.133, the release whose ROM
+  definitions it carries: every BIOS root set below sits in the binary with
+  the same names and the same "c:<crc32>#s:<sha1>#" hash strings, those of
+  the mame0133 tag.
+
+  The binary keeps 12 of the 36 BIOS root sets of that release: the nine of
+  zn.c, plus taitogn.c, ksys573.c and konamigv.c. emulatorlauncher runs
+  `mame.exe -skip_gameinfo -rompath <bios>/psxmame/bios;<game folder>
+  ... <set>` (emulatorLauncher Generators/PSXMame.Generator.cs:20-110).
+
+  A ROM missing from its set is fatal unless it is optional or has no good
+  dump (src/emu/romload.c:427-449, src/emu/romload.c:594). Of a set with
+  BIOS options only the selected option is read, the first one by default
+  (src/emu/romload.c:330-380, src/emu/romload.c:933). The archive is never
+  hashed, its members are, so the hashes sit in contents.
+
+files:
+  - name: "cpzn1.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "ZN1"
+    source_ref: "src/mame/drivers/zn.c:4362, src/mame/drivers/zn.c:2773-2775"
+    contents:
+      - name: "coh-1000c.353"
+        size: 524288
+        crc32: "50033af6"
+        sha1: "486d92ff6c7f1e54f8e0ef41cd9116eca0e10e1a"
+
+  - name: "cpzn2.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "ZN2"
+    source_ref: "src/mame/drivers/zn.c:4381, src/mame/drivers/zn.c:3032-3034"
+    contents:
+      - name: "coh-3002c.353"
+        size: 524288
+        crc32: "e860ea8b"
+        sha1: "66e7e1d4e426466b8f48a2ba055a91b475569504"
+
+  - name: "atpsx.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Atari PSX"
+    source_ref: "src/mame/drivers/zn.c:4408, src/mame/drivers/zn.c:4243-4245"
+    contents:
+      - name: "coh-1000w.353"
+        size: 524288
+        crc32: "45e8a4b4"
+        sha1: "815488d8563c85f97fbc3384ff21f08e4c88b7b7"
+
+  - name: "acpsx.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Acclaim PSX"
+    source_ref: "src/mame/drivers/zn.c:4417, src/mame/drivers/zn.c:4266-4268"
+    contents:
+      - name: "coh-1000a.353"
+        size: 524288
+        crc32: "8d8d0764"
+        sha1: "7ee83d317190bb1cef2f8f01c81eaaae47150ebb"
+
+  - name: "tps.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "TPS"
+    source_ref: "src/mame/drivers/zn.c:4428, src/mame/drivers/zn.c:3476-3478"
+    contents:
+      - name: "coh-1002m.353"
+        size: 524288
+        crc32: "69ffbcb4"
+        sha1: "03eb2febfab3fcde716defff291babd9392de965"
+
+  - name: "vspsx.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Video System PSX"
+    source_ref: "src/mame/drivers/zn.c:4450, src/mame/drivers/zn.c:3713-3715"
+    contents:
+      - name: "coh-1002v.353"
+        size: 524288
+        crc32: "5ff165f3"
+        sha1: "8f59314c1093446b9bcb06d232244da6df78e206"
+
+  - name: "taitofx1.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Taito FX1"
+    source_ref: "src/mame/drivers/zn.c:4460, src/mame/drivers/zn.c:3762-3764"
+    contents:
+      - name: "coh-1000t.353"
+        size: 524288
+        crc32: "e3f23b6e"
+        sha1: "e18907cf8c6ba54d96edba0a9a00487a90219e0d"
+
+  - name: "psarc95.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "PS Arcade 95"
+    source_ref: "src/mame/drivers/zn.c:4483, src/mame/drivers/zn.c:4039-4041"
+    contents:
+      - name: "coh-1002e.353"
+        size: 524288
+        crc32: "910f3a8b"
+        sha1: "cd68532967a25f476a6d73473ec6b6f4df2e1689"
+
+  - name: "atluspsx.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Atlus PSX"
+    source_ref: "src/mame/drivers/zn.c:4502, src/mame/drivers/zn.c:4328-4330"
+    contents:
+      - name: "coh-1001l.353"
+        size: 524288
+        crc32: "6721146b"
+        sha1: "9511d24bfe25eb180fb2db0835b131cb4a12730e"
+
+  - name: "taitogn.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Taito GNET"
+    source_ref: "src/mame/drivers/taitogn.c:1286, src/mame/drivers/taitogn.c:1070-1081"
+    note: >-
+      flash.u30 is G-NET BIOS v1, the default option, and flashv2.u30 is v2,
+      read only when that option is chosen.
+    contents:
+      - name: "coh-3002t.353"
+        size: 524288
+        crc32: "03967fa7"
+        sha1: "0e17fec2286e4e25deb23d40e41ce0986f373d49"
+      - name: "flash.u30"
+        size: 2097152
+        crc32: "c48c8236"
+        sha1: "c6dad60266ce2ff635696bc0d91903c543273559"
+      - name: "flashv2.u30"
+        size: 2097152
+        crc32: "cae462d3"
+        sha1: "f1b10846a8423d9fe021191c5876190857c3d2a4"
+
+  - name: "sys573.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "System 573 BIOS"
+    source_ref: "src/mame/drivers/ksys573.c:4697, src/mame/drivers/ksys573.c:3186"
+    contents:
+      - name: "700a01.22g"
+        size: 524288
+        crc32: "11812ef8"
+        sha1: "e1284add4aaddd5337bd7f4e27614460d52b5b48"
+
+  - name: "konamigv.zip"
+    system: arcade
+    required: true
+    category: bios_zip
+    description: "Baby Phoenix/GV System"
+    source_ref: "src/mame/drivers/konamigv.c:895, src/mame/drivers/konamigv.c:785-787"
+    contents:
+      - name: "999a01.7e"
+        size: 524288
+        crc32: "ad498d2d"
+        sha1: "02a82a2fe1fba0404517c3602324bfa64e23e478"

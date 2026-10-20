@@ -1,0 +1,107 @@
+emulator: UAE4All2
+type: standalone
+core_classification: community_fork
+source: "https://github.com/RetroPie/uae4all2"
+source_branch: retropie
+upstream: "https://github.com/lubomyr/uae4all2"
+profiled_date: "2026-10-20"
+source_commit: "5c514dd6d8bb374bd22e2ee423bad99539207cbd"
+upstream_commit: "0f919a32b6d41a04cbc766c0e6076cda9fa7a63b"
+core_version: "2.3.6.2"
+display_name: "Commodore - Amiga (UAE4All2)"
+cores: [uae4all]
+systems: [commodore-amiga]
+verification: existence
+
+notes: |
+  UAE4All2 is Lubomyr's Android and Pandora Amiga emulator. RetroPie builds
+  its own branch (retropie) with Makefile.pi, which defines GP2X, PANDORA,
+  RASPBERRY and USE_GUICHAN but not ANDROIDSDL (Makefile.pi:31-34, 109). The
+  Amiga Forever lookup under com.cloanto.amigaforever.essentials is therefore
+  compiled out. AndroidAppSettings.cfg:178 names the version 2.3.6.2.
+
+  The emulator runs from its install directory and takes it as launchDir
+  (src/main.cpp:219). Kickstarts are read from launchDir/kickstarts/, which
+  RetroPie links to the BIOS directory's amiga/ folder
+  (scriptmodules/emulators/uae4all.sh, configure_uae4all).
+
+  The kickstart choice indexes kickstarts_rom_names and extended_rom_names
+  (src/memory.cpp:34-35): 0 kick12.rom, 1 kick13.rom, 2 kick20.rom,
+  3 kick31.rom, 4 the AROS pair. The default is 1 (src/main.cpp:1). A missing
+  file falls back to kick.rom in the working directory (src/main.cpp:95-103).
+  The menu refuses to start or reset the machine until the selected file
+  exists (src/menu_guichan/menu_guichan.cpp:74-101, 210-214, 489-493), so one
+  of the five ROMs has to be present. The AROS pair ships in the source tree
+  (AndroidData/aros20140110.zip) and RetroPie unpacks it into the BIOS
+  folder, which lets the emulator start without a Commodore ROM.
+
+  read_kickstart (src/memory.cpp:795-830) accepts 8 KB (A1000 bootstrap),
+  half the ROM space (mirrored) or the full size. A Kickstart checksum
+  mismatch only writes a log line (src/memory.cpp:778-793). No hash is
+  checked. A ROM starting with AMIROMTYPE1 is decoded with rom.key
+  (src/memory.cpp:732-776).
+
+  The data/ folder (GUI fonts, keyboard and menu images, click.wav) is
+  unpacked by RetroPie from AndroidData/data.zip and
+  AndroidData/guichan26032014.zip in the source tree. It belongs to the
+  program and is not listed.
+
+files:
+  - name: "kick13.rom"
+    path: "amiga/kick13.rom"
+    system: commodore-amiga
+    description: "Kickstart 1.3, the default selection"
+    required: false
+    source_ref: "src/memory.cpp:34, src/main.cpp:1, src/main.cpp:95-103"
+
+  - name: "kick12.rom"
+    path: "amiga/kick12.rom"
+    system: commodore-amiga
+    description: "Kickstart 1.2"
+    required: false
+    source_ref: "src/memory.cpp:34"
+
+  - name: "kick20.rom"
+    path: "amiga/kick20.rom"
+    system: commodore-amiga
+    description: "Kickstart 2.0"
+    required: false
+    source_ref: "src/memory.cpp:34"
+
+  - name: "kick31.rom"
+    path: "amiga/kick31.rom"
+    system: commodore-amiga
+    description: "Kickstart 3.1"
+    required: false
+    source_ref: "src/memory.cpp:34"
+
+  - name: "aros-amiga-m68k-rom.bin"
+    path: "amiga/aros-amiga-m68k-rom.bin"
+    system: commodore-amiga
+    description: "AROS Kickstart replacement, main ROM (build of 2014-01-10)"
+    required: false
+    size: 524288
+    sha1: "f930eb22ab62fb3c6990e95c6ae2bf4d700c849f"
+    md5: "8c9e0e3b3686c362ccf2dfd8a86669b2"
+    crc32: "69bf6f2b"
+    source_ref: "src/memory.cpp:34"
+    note: "Hashes are of the file in AndroidData/aros20140110.zip in the source tree."
+
+  - name: "aros-amiga-m68k-ext.bin"
+    path: "amiga/aros-amiga-m68k-ext.bin"
+    system: commodore-amiga
+    description: "AROS Kickstart replacement, extended ROM (build of 2014-01-10)"
+    required: false
+    size: 524288
+    sha1: "cc5404e22099ca4064622bb836db439589e378b4"
+    md5: "272c1306032674b4fa120d56a0b1b99a"
+    crc32: "6aa2b4d2"
+    source_ref: "src/memory.cpp:35, src/memory.cpp:832-878"
+    note: "Loaded with the AROS main ROM only. Hashes are of the file in AndroidData/aros20140110.zip in the source tree."
+
+  - name: "rom.key"
+    path: "amiga/rom.key"
+    system: commodore-amiga
+    description: "Cloanto key for AMIROMTYPE1 encrypted Kickstarts"
+    required: false
+    source_ref: "src/main.cpp:106-111, src/memory.cpp:732-776"

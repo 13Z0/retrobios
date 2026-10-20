@@ -1,0 +1,206 @@
+emulator: Chihiro-DS
+type: standalone
+core_classification: community_fork
+source: "https://www.retrobat.org/repo/win64/stable/emulators/chihiro-ds.7z"
+upstream: closed-source
+profiled_date: "2026-10-20"
+core_version: "1.0 (Mar 14 2025)"
+display_name: "Sega - Chihiro (Chihiro-DS)"
+cores:
+  - chihiro-gun
+  - chihiro-ds
+systems:
+  - sega-chihiro
+  - microsoft-xbox
+mode: standalone
+
+notes: |
+  Cxbx-Reloaded derivative built for the Chihiro light gun games, used by
+  RetroBat as its "chihiro-gun" emulator from emulators\chihiro-ds and paired
+  with DemulShooter. No source is published. The build read here is the one
+  RetroBat installs, chihiro-ds.7z sha256
+  d20a9ffc6822c719f25d9b46c66249bf7efc9729cfddd10bda4f8629c96d48a5, whose
+  binaries carry "Chihiro-DS 1.0 (Mar 14 2025)". cxbxr-ldr.exe md5
+  d3675f7bb270072f33d9106497dd9bbc is the print DemulShooter lists for
+  "Chihiro-DS 1.0". cxbxr-emu.dll (md5 62f492f14b2af4bef7329ef269355a78) is
+  cited by virtual address.
+  ref: emulatorLauncher Generators/Cxbx.Generator.cs:104-110, 202-214,
+       emulatorLauncher Installer.cs:46
+
+  Every file name, path and error message in cxbxr-emu.dll that concerns a
+  file matches Cxbx-Reloaded develop with CHIHIRO_WORK enabled, as it stood
+  between CI-6f32d89 (6f32d89545cf0ad5a7d44ecedaf963005d7f84dc, December
+  2024) and CI-ec9934a (April 2025), which agree on every file loading path. That source is cited below with the CI-6f32d89
+  prefix as the reading of the logic the strings belong to. The only file the
+  fork adds is wm2_loader.dll.
+
+  Every path below is relative to the data directory. RetroBat's settings.ini
+  template sets DataStorageToggle to 1, the folder holding cxbx.exe. EmuDisk
+  and EmuMu are created there at startup, and the Chihiro files live in
+  EmuDisk\Chihiro (this build predates the EmuMediaBoard folder).
+  ref: CI-6f32d89 src/common/Settings.cpp:880-915,
+       CI-6f32d89 src/common/FilePaths.cpp:82-109,
+       cxbxr-emu.dll 0x1061c648
+
+  A title is Chihiro when its XBE type says so or a boot.id sits beside it.
+  Launched directly, such a title needs the media board ROM: a missing file,
+  an unreadable one or one that is not 2 MB ends the run. When either SEGABOOT
+  file is missing both are rewritten from the two 1 MB halves of the ROM, then
+  SEGABOOT_MBROM1.XBE is launched and boots the title. boot.id is read again by
+  the media board for the region flags, and its absence ends the run.
+  ref: CI-6f32d89 src/core/kernel/init/CxbxKrnl.cpp:517-586,
+       CI-6f32d89 src/devices/chihiro/MediaBoard.cpp:46-57,
+       cxbxr-emu.dll 0x10623190, 0x1062b60c, 0x1062b618
+
+  The four JVS base board images are memory mapped read/write when the
+  system is Chihiro. Byte 0x1F00 of the QC firmware holds the board region and
+  is rewritten in place to one the title's boot.id accepts, which is why the
+  copy RetroBat ships differs from the dump by that byte.
+  ref: CI-6f32d89 src/core/hle/JVS/JVS.cpp:127-142,
+       CI-6f32d89 src/core/hle/JVS/JVS.cpp:169-210,
+       CI-6f32d89 src/core/hle/JVS/JVS.cpp:246-262
+
+  The package also carries chihiro_xbox_bios.bin, ver1305.bin, 315-6215.bin,
+  sp5001.bin, sp5001-b.bin and sp5002-a.bin in EmuDisk\chihiro, plus a
+  "chihiro (old)" copy of the folder. No string in the binaries names any of
+  them and nothing opens them.
+
+files:
+  - name: fpr21042_m29w160et.bin
+    path: "EmuDisk/Chihiro/fpr21042_m29w160et.bin"
+    system: sega-chihiro
+    required: true
+    size: 2097152
+    validation: [size]
+    description: "Chihiro media board flash ROM"
+    note: >-
+      Checked for existence, opened and size checked before a Chihiro title is
+      started, each failure ending the run. Read to write out the two SEGABOOT
+      files when either is missing, and launched when a Chihiro title reboots
+      with an empty launch path.
+    source_ref: "cxbxr-emu.dll 0x10624bb4, 0x10623190"
+
+  - name: SEGABOOT_MBROM0.XBE
+    path: "EmuDisk/Chihiro/SEGABOOT_MBROM0.XBE"
+    system: sega-chihiro
+    required: false
+    size: 1048576
+    sha1: "2f7ac75e738e2e4f83ffb0cbc06127195a7e8336"
+    md5: "853d40e7a80d659613885d93abbec463"
+    description: "SEGABOOT, old revision"
+    note: >-
+      Mounted as the mbrom0 device. Written from the first megabyte of the media
+      board ROM when either SEGABOOT file is missing. The copy RetroBat ships is
+      that first megabyte.
+    source_ref: "cxbxr-emu.dll 0x10624b98"
+
+  - name: SEGABOOT_MBROM1.XBE
+    path: "EmuDisk/Chihiro/SEGABOOT_MBROM1.XBE"
+    system: sega-chihiro
+    required: false
+    bundled: true
+    size: 1048576
+    sha1: "463486813206ca44f1d90eb0ef372ef2661b4dfe"
+    md5: "aff2008c8404b9661dc2f52d34c494e0"
+    description: "SEGABOOT, current revision"
+    note: >-
+      Mounted as the mbrom1 device and launched as the XBE that boots a Chihiro
+      title. Written from the second megabyte of the media board ROM when either
+      SEGABOOT file is missing. The copy RetroBat ships is not that half: it
+      differs in about 660000 bytes from the second megabyte of the ROM it ships
+      beside it. Hashes are those of the shipped copy.
+    source_ref: "cxbxr-emu.dll 0x10624b7c"
+
+  - name: ic10_g24lc64.bin
+    path: "EmuDisk/Chihiro/ic10_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    min_size: 7937
+    description: "Base board QC microcontroller firmware"
+    note: >-
+      Memory mapped read/write at JVS setup, the run ends when it cannot be
+      opened. Byte 0x1F00 is dereferenced right after and rewritten to USA,
+      export or Japan when the title's boot.id rejects the stored region.
+    source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c620"
+
+  - name: pc20_g24lc64.bin
+    path: "EmuDisk/Chihiro/pc20_g24lc64.bin"
+    system: sega-chihiro
+    required: true
+    description: "Base board SC microcontroller firmware"
+    note: "Memory mapped read/write at JVS setup, the run ends when it cannot be opened."
+    source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c634"
+
+  - name: ic11_24lc024.bin
+    path: "EmuDisk/Chihiro/ic11_24lc024.bin"
+    system: sega-chihiro
+    required: true
+    description: "Base board configuration EEPROM"
+    note: >-
+      Memory mapped read/write at JVS setup, the run ends when it cannot be
+      opened. Writes from JvsEEPROM_Write are synced to disk at once.
+    source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c688"
+
+  - name: backup_ram.bin
+    path: "EmuDisk/Chihiro/backup_ram.bin"
+    system: sega-chihiro
+    required: false
+    has_builtin: true
+    size_note: "Created as 128 KB of zeros when absent, then memory mapped"
+    description: "Base board backup memory"
+    source_ref: "cxbxr-emu.dll 0x1061c648, 0x1061c69c"
+
+  - name: xboxdash.xbe
+    path: "EmuDisk/Partition2/xboxdash.xbe"
+    system: microsoft-xbox
+    required: false
+    description: "Xbox dashboard executable"
+    note: >-
+      Launched when an Xbox title reboots with an empty launch path and by the
+      Open Dashboard menu entry. When it is missing the console's unrecoverable
+      error screen is shown.
+    source_ref: "cxbxr-emu.dll 0x105f8c60"
+
+  - name: EEPROM.bin
+    path: "EEPROM.bin"
+    system: microsoft-xbox
+    required: false
+    has_builtin: true
+    size: 256
+    validation: [size]
+    description: "Xbox EEPROM image"
+    note: >-
+      Opened at startup and mapped read/write, created with defaults when
+      absent, and a file that is not 256 bytes ends the run. RetroBat ships one
+      in the package and writes the language into it only for the xbox system.
+    source_ref: "cxbxr-emu.dll 0x105f6084, 0x105f5d84"
+
+  - name: keys.bin
+    path: "keys.bin"
+    system: microsoft-xbox
+    required: false
+    size: 32
+    validation: [size]
+    description: "Xbox EEPROM and certificate keys"
+    note: "Two 16 byte keys, the EEPROM key then the certificate key. Any other length is refused with a warning."
+    source_ref: "cxbxr-emu.dll 0x105f6094, 0x105f60a4"
+
+  - name: wm2_loader.dll
+    path: "wm2_loader.dll"
+    required: false
+    bundled: true
+    unsourceable: "Host library shipped inside the Chihiro-DS package, not emulation data"
+    size: 121856
+    description: "Chihiro-DS loader library"
+    note: >-
+      Loaded with LoadLibraryW("./wm2_loader.dll") just before the XBE entry
+      point is called, on every launch. A failure logs a warning and the title
+      starts anyway.
+    source_ref: "cxbxr-emu.dll 0x103e0260, 0x10622b38"
+
+exclusion_note: >
+  ntdll.dll and the XInput libraries tried in turn (xinput1_4, xinput1_3,
+  xinput9_1_0) are Windows components, and cxbxr-emu.dll is the emulator's own
+  build output. boot.id and default.xbe belong to the title. The Partition0.bin
+  to Partition7.bin images under EmuDisk are created and formatted by the
+  emulator.

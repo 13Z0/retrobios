@@ -1,0 +1,247 @@
+emulator: ZQuest Classic
+type: standalone
+core_classification: game_engine
+source: "https://github.com/ZQuestClassic/ZQuestClassic"
+upstream: "https://github.com/ZQuestClassic/ZQuestClassic"
+source_commit: "4ef771c64666812a1359b8f34fe4d7803868ba13"
+profiled_date: "2026-10-20"
+core_version: "2.55.17"
+display_name: "Zelda Classic (ZQuest Classic)"
+cores: [zquestclassic]
+systems: [zeldaclassic]
+
+notes: |
+  ZQuest Classic, the continuation of Zelda Classic: a quest player
+  (zplayer), an editor (zeditor) and a ZScript compiler. Quests are .qst
+  files. RetroBat installs the upstream 2.55.17-windows-x64.zip unchanged
+  (its zquestclassic.7z holds the same zplayer.exe and data files byte for
+  byte) and launches zplayer.exe with -standalone and the quest, the
+  working directory set to the install folder. The profile is pinned to the
+  2.55.17 tag.
+
+  Every engine file is opened by a path relative to the working directory.
+  At startup the player reads the module file named in zc.cfg, the GUI
+  palette, the fonts datafile, sfx.dat, the cursor and the seven built-in
+  MIDI tunes, and stops with a fatal error when any of them is missing. The
+  title graphics come from modules/classic/title_gfx.dat. The module file
+  also names classic_zelda.dat, classic_zquest.dat and a base NSF. The
+  player opens none of them: classic_zquest.dat is the editor's datafile
+  (src/zq/zquest.cpp:25820), and the release ships no classic_zelda.dat.
+
+  Settings are read from base_config/zc.cfg, then overridden by zc.cfg
+  (src/zconfig.cpp:12-74). Both are user configuration.
+  modules/classic/default.qst and classic_zquest.dat serve the editor
+  (src/qst.cpp:1104-1117, src/zq/zquest.cpp:3255-3323). The quests under
+  quests/ and tilesets/ are content.
+
+  Hashes are those of the files in 2.55.17-windows-x64.zip. The text files
+  there have CRLF line endings.
+
+files:
+  - name: "sfx.dat"
+    path: "zquestclassic/sfx.dat"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 1249133
+    sha1: "9dc80df9fc244efa5f68d8aafa2b2c44abb8d2dd"
+    md5: "3d99a4f1bcde6b2dbff07fedf019dad8"
+    description: "Sound effect datafile, signature \"SFX.Dat\" of version 0x0211"
+    source_ref: "src/zc/zelda.cpp:4604-4614"
+    note: "Loaded from the working directory. The engine stops when it cannot be read, when its first entry does not carry the expected signature, or when the Z35 entry is not a sample. The module file names no other sound datafile: sfx.dat is hardcoded (src/zc/zc_module.cpp:136-137)."
+
+  - name: "classic_fonts.dat"
+    path: "zquestclassic/modules/classic/classic_fonts.dat"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 102765
+    sha1: "c6ef009c8c4fdac0da650dd6e92814eac4e7f957"
+    md5: "4748dc89481f22bba22fb441aad563f7"
+    description: "Packed font datafile, signature \"Fonts.Dat\" of version 0x0253"
+    source_ref: "src/zc/zelda.cpp:4583-4597"
+    note: "Read with the datafile password. The engine stops when the file is missing, when it does not hold FONTSDAT_CNT entries or when the signature differs."
+
+  - name: "classic.zmod"
+    path: "zquestclassic/modules/classic.zmod"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 14616
+    sha1: "6ea0e5c06445e2b61e745e6a29cd7083bc8f5dfc"
+    md5: "adf6be948ae46b60072356701f3b7b80"
+    description: "Classic module definition: datafile names, NSF tracks, name entry tiles, enemy and item tables"
+    source_ref: "src/zc/zelda.cpp:4429-4432, src/zc/zc_module.cpp:86-91"
+    note: "Path taken from current_module under [ZCMODULE] in zc.cfg, modules/classic.zmod by default. A missing module stops the engine."
+
+  - name: "title_gfx.dat"
+    path: "zquestclassic/modules/classic/title_gfx.dat"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 139056
+    sha1: "e6f5f4dcab2dd9a22a1d74545cfa401ffda93e42"
+    md5: "6cef0bd515190528fe19d9fe5eef5a56"
+    description: "Quest-format file holding the title screen tiles and color sets"
+    source_ref: "src/zc/zc_sys.cpp:559-570, src/zc/title.cpp:116"
+    note: "Loaded as a quest with every section but tiles and csets skipped, before the title screen and after the ending. The load result is not checked."
+
+  - name: "cursor.bmp"
+    path: "zquestclassic/assets/cursor.bmp"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 1334
+    sha1: "c7c325a4367c4d1fd620208c06f74d5aa3b77c0d"
+    md5: "ff2c577a0c82e0fdfad2a60147e2bd2e"
+    description: "Mouse cursor bitmap"
+    source_ref: "src/zc/zc_sys.cpp:484-489"
+    note: "A missing file stops the engine with \"Missing required file\"."
+
+  - name: "gui_pal.bmp"
+    path: "zquestclassic/assets/gui_pal.bmp"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 1334
+    sha1: "15eed11eb58424bf30e0611ef8d569e353cf1d2d"
+    md5: "6b1e7abab5e64cd308cddd872c9fc92d"
+    description: "Bitmap whose palette becomes the GUI palette"
+    source_ref: "src/zc/zelda.cpp:2073-2077"
+    note: "A missing file stops the engine with \"Missing required file\"."
+
+  - name: "dungeon.mid"
+    path: "zquestclassic/assets/dungeon.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 2506
+    sha1: "3491fbaeea804845a892c5767316eb62ff655780"
+    md5: "a42eb4b1baf0264669af2eacaf4fdfa5"
+    description: "Built-in dungeon MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "ending.mid"
+    path: "zquestclassic/assets/ending.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 12073
+    sha1: "58c35d0171d7eb887dfc29795e019087bf8d62ff"
+    md5: "c006fef045caa68eac7199e7e142dd50"
+    description: "Built-in ending MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "gameover.mid"
+    path: "zquestclassic/assets/gameover.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 685
+    sha1: "a07d5d2b3d9eeeacd743aa3670b933d12a212943"
+    md5: "065f0448f3cc7cbd0fd596a6a021809a"
+    description: "Built-in gameover MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "level9.mid"
+    path: "zquestclassic/assets/level9.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 3357
+    sha1: "0896077d1f5684b56728c03d893b56497e27cbb9"
+    md5: "91d08c55cbdcfaf9e5d495ff731fb643"
+    description: "Built-in level9 MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "overworld.mid"
+    path: "zquestclassic/assets/overworld.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 8404
+    sha1: "3b33a9daf54d343fabcece898525f81675d372df"
+    md5: "c1fc74de30e66e25851814570b2a454f"
+    description: "Built-in overworld MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "title.mid"
+    path: "zquestclassic/assets/title.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 8601
+    sha1: "2f1112a93064b5ff594f20632be5d8f6d98697d7"
+    md5: "bdf775e13441cb9313e3dd92d8affdda"
+    description: "Built-in title MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "triforce.mid"
+    path: "zquestclassic/assets/triforce.mid"
+    category: game_data
+    system: zeldaclassic
+    required: true
+    bundled: true
+    size: 658
+    sha1: "d2ec59d8621b500cbd4d1cdaee2e2fd70c7c9a82"
+    md5: "13d52761144e1aa1db12e1127ef24746"
+    description: "Built-in triforce MIDI tune"
+    source_ref: "src/zc/zc_sys.cpp:7231-7243"
+    note: "The seven built-in tunes are loaded at sound init and a missing one stops the engine."
+
+  - name: "190_tiles.qst"
+    path: "zquestclassic/assets/190_tiles.qst"
+    category: game_data
+    system: zeldaclassic
+    required: false
+    bundled: true
+    size: 162657
+    sha1: "fede7b0c747de2fbafd4942ed298b21a1d87ae7e"
+    md5: "e6a7e7cb51ffe8f5013972afd546f981"
+    description: "Tile sheet given to old quests whose header declares no tile section"
+    source_ref: "src/qst.cpp:1099-1102, 18926-18930"
+    note: "Read only for such quests. A failure is logged and the quest keeps empty tiles."
+
+  - name: "zelda.nsf"
+    path: "zquestclassic/music/zelda.nsf"
+    category: game_data
+    system: zeldaclassic
+    required: false
+    bundled: true
+    size: 4932
+    sha1: "004accfbd5332216d5e11dc3c69fb69db4b3a06e"
+    md5: "27e1c58870428c812602295a0109c180"
+    description: "NSF used for the ending and triforce music"
+    source_ref: "src/zc/ending.cpp:356, src/zc/hero.cpp:31533, src/sound/zcmusic.cpp:105-128"
+    note: "Searched next to the executable, next to the quest, then in their music folders. When it is not found the built-in MIDI plays."
+
+  - name: "gamecontrollerdb.txt"
+    path: "zquestclassic/gamecontrollerdb.txt"
+    category: game_data
+    system: zeldaclassic
+    required: false
+    bundled: true
+    size: 610778
+    sha1: "90008fe0f95ef5bf891ceb81a743738f2fbaf526"
+    md5: "0436bf6e822b020a4925e0f66cfd28e3"
+    description: "SDL game controller mapping database"
+    source_ref: "src/zc/zelda.cpp:4458-4462"
+    note: "Read from the working directory before the joystick is installed, only when present."

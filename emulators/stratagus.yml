@@ -1,0 +1,40 @@
+emulator: Stratagus
+type: standalone
+core_classification: game_engine
+source: "https://github.com/Wargus/stratagus"
+profiled_date: "2026-10-20"
+source_commit: "6b309817027618a12e26e4cf314ad09654495e28"
+core_version: "2.4.3"
+display_name: "Stratagus"
+cores: [stratagus]
+systems: []
+verification: existence
+
+notes: |
+  Real time strategy engine. A game is a data set written for it: Wargus
+  (Warcraft II), War1gus (Warcraft), Stargus (StarCraft) and free games
+  such as Aleona's Tales. Each ships its Lua scripts and an extractor that
+  converts the graphics, sounds and music of the original discs into the
+  engine's formats. The pin is tag v2.4.3, the revision RetroPie builds
+  (emulators/stratagus.sh).
+
+  RetroPie launches `stratagus -F -d %ROM%`, the ROM being the game's data
+  directory. -d sets StratagusLibPath, "." by default
+  (src/stratagus/stratagus.cpp:542-545, 725). The engine then runs the
+  start script, scripts/stratagus.lua unless -c names another
+  (src/stratagus/parameters.cpp:44, src/stratagus/stratagus.cpp:535-539,
+  765), and scripts/guichan.lua for the menus
+  (src/stratagus/stratagus.cpp:301). LibraryFileName resolves every
+  relative name against the map directory, the user directory of the
+  game, the data path and its graphics/, sounds/ and scripts/
+  subdirectories (src/stratagus/iolib.cpp:543-630).
+
+  Every file the engine opens is named by the game's scripts or sits in
+  the game's directory. The SF2 soundfont FluidSynth loads is
+  Preference.SF2Soundfont, which only the game's Lua sets
+  (src/sound/fluidsynth.cpp:222-230, src/include/unit.h:459). The engine
+  names no file of its own. The game data is either the free game's own
+  release or the output of the game's extractor run on the original disc,
+  so nothing is listed here.
+
+files: []

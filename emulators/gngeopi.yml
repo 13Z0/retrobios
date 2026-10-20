@@ -1,0 +1,198 @@
+emulator: GnGeo-Pi
+type: standalone
+core_classification: community_fork
+source: "https://github.com/ymartel06/GnGeo-Pi"
+profiled_date: "2026-10-20"
+source_commit: "b94571c6097b67cfc9db5eaffb98cdc8bcb55c6e"
+core_version: "0.85"
+display_name: "SNK - Neo Geo (GnGeo-Pi)"
+mode: standalone
+cores:
+  - gngeopi
+systems:
+  - snk-neogeo-mvs
+  - snk-neogeo-aes
+
+notes: |
+  Raspberry Pi build of Gngeo by Yannick Martel, imported as the Gngeo 0.8
+  tree of Mathieu Peponas (gngeo/configure.in:3) and released as 0.85. The
+  repository is not a git fork of any Gngeo history. RetroPie builds
+  gngeo/, installs it to its own prefix and launches it with
+  "-i $romdir/neogeo -B <prefix>/neogeobios".
+
+  -B sets biospath, an option the code defines and never reads. The BIOS
+  archive is opened from rompath, the -i directory, as neogeo.zip. The same
+  archive is opened as the parent of every game whose definition names
+  neogeo as parent, and a missing parent ends the load.
+  ref: gngeo/src/conf.c:416-425, gngeo/src/roms.c:1217-1235,1364-1375
+
+  Members of neogeo.zip are found by exact name only, dr_load_bios passing no
+  CRC. 000-lo.lo is read for every game. The board fix layer is read as
+  sfix.sfx then sfix.sfix, unless the game's definition loads it itself. The
+  68K BIOS follows the system option (arcade by default) and the country
+  option (europe by default): unibios reads uni-bios.rom from the archive or
+  loose from rompath, home reads aes-bios.bin, and arcade reads vs-bios.rom,
+  usa_2slt.bin, asia-s3.rom or sp-s2.sp1 for japan, usa, asia and any other
+  country. A member that is not found ends the load.
+  ref: gngeo/src/roms.c:1237-1308, gngeo/src/unzip.c:186-215,
+       gngeo/src/conf.c:119-142, gngeo/src/emu.h:34-43
+
+  Game definitions come from gngeo_data.zip, the datafile installed to the
+  package data directory, as rom/<game>.drv: 237 definitions, each giving the
+  parent and every member with its region, size and CRC32. A game member is
+  looked up by name or CRC32 in the game archive, then in the parent. A miss
+  in the audio BIOS, fix BIOS or 68K BIOS regions is tolerated, any other miss
+  ends the load. 58 definitions name a BIOS member: sfix.sfix (CRC32
+  c2ea0cfd) in the fix BIOS region, sm1.sm1 (CRC32 94416d67) in the audio
+  BIOS region for neogeo, irrmaze and the svc bootlegs, and board BIOS images
+  that live in the game's own archive (236-bios.bin for irrmaze, 271-bios.bin
+  for kf2k3pcb, sp-4x.sp1 for ms5pcb and svcpcb).
+  ref: gngeo/src/resfile.c:70-117, gngeo/src/roms.c:1347-1362,1428-1460,
+       gngeo/src/roms.h:8-17,25-40
+
+  The CMC42 and CMC50 key tables are read from the same datafile, the older
+  direct reads from the author's home directory being commented out. The
+  datafile also holds the menu skin.
+  ref: gngeo/src/neocrypt.c:618-656, gngeo/src/menu.c:535-537
+
+files:
+  - name: "neogeo.zip"
+    system: snk-neogeo-mvs
+    required: true
+    category: bios_zip
+    description: "Neo Geo system ROMs"
+    note: >-
+      Opened from rompath, the ROM directory, for the BIOS and again as the
+      parent archive of most games. Its absence ends the load with "Can't open
+      BIOS". The container is never hashed.
+    source_ref: "gngeo/src/roms.c:1224-1235,1364-1375"
+
+  - name: "000-lo.lo"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: true
+    description: "Zoom lookup table"
+    note: "Read by name for every game, and a miss ends the load."
+    source_ref: "gngeo/src/roms.c:1237-1241"
+
+  - name: "sfix.sfx"
+    aliases: ["sfix.sfix"]
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: true
+    size: 131072
+    crc32: "c2ea0cfd"
+    description: "Board fix layer tiles"
+    note: >-
+      Read as sfix.sfx then sfix.sfix, 0x20000 bytes converted. Skipped when the
+      game definition lists sfix.sfix itself, which it then finds by name or by
+      CRC32 c2ea0cfd. The CRC is the one the shipped definitions carry.
+    source_ref: "gngeo/src/roms.c:1243-1258,1424-1428"
+
+  - name: "sp-s2.sp1"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: true
+    description: "MVS 68K BIOS, Europe"
+    note: >-
+      Default selection, arcade system with country europe or any value other
+      than japan, usa and asia.
+    source_ref: "gngeo/src/roms.c:1286-1307, gngeo/src/conf.c:416-417"
+
+  - name: "vs-bios.rom"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: false
+    description: "MVS 68K BIOS, Japan"
+    note: "Read when the system is arcade and the country japan."
+    source_ref: "gngeo/src/roms.c:1287-1290"
+
+  - name: "usa_2slt.bin"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: false
+    description: "MVS 68K BIOS, USA"
+    note: "Read when the system is arcade and the country usa."
+    source_ref: "gngeo/src/roms.c:1291-1293"
+
+  - name: "asia-s3.rom"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: false
+    description: "MVS 68K BIOS, Asia"
+    note: "Read when the system is arcade and the country asia."
+    source_ref: "gngeo/src/roms.c:1294-1296"
+
+  - name: "aes-bios.bin"
+    archive: neogeo.zip
+    system: snk-neogeo-aes
+    required: false
+    description: "AES 68K BIOS"
+    note: "Read when the system option is home."
+    source_ref: "gngeo/src/roms.c:1284-1285"
+
+  - name: "uni-bios.rom"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: false
+    size: 131072
+    description: "Universe BIOS"
+    note: >-
+      Read when the system option is unibios, first from neogeo.zip, then as a
+      loose file in rompath of which 0x20000 bytes are read. Any Universe BIOS
+      release renamed to uni-bios.rom is accepted.
+    source_ref: "gngeo/src/roms.c:1261-1281"
+
+  - name: "sm1.sm1"
+    archive: neogeo.zip
+    system: snk-neogeo-mvs
+    required: false
+    size: 131072
+    crc32: "94416d67"
+    description: "Audio board BIOS"
+    note: >-
+      Listed in the audio BIOS region by the neogeo, irrmaze, svcboot,
+      svcplus, svcplusa and svcsplus definitions. A miss in that region is
+      tolerated.
+    source_ref: "gngeo/src/roms.c:1438-1456, gngeo/src/roms.h:8"
+
+  - name: "gngeo_data.zip"
+    system: snk-neogeo-mvs
+    required: true
+    bundled: true
+    category: game_data
+    size: 220778
+    sha1: "91575955d0ac81735064256d0f5ac1850387bd71"
+    md5: "60f938bb73e1512c2904924c1971fc56"
+    description: "Romset definitions, CMC key tables and menu skin"
+    note: >-
+      Installed to the package data directory by make install and named by the
+      datafile option. Without a definition for the game the load ends with
+      "Can't find rom driver".
+    source_ref: "gngeo/src/conf.c:425, gngeo/src/resfile.c:70-117, gngeo/src/roms.c:1355-1360, gngeo/gngeo.dat/Makefile.am:1-2"
+
+  - name: "cmc42.xor"
+    path: "rom/cmc42.xor"
+    archive: gngeo_data.zip
+    system: snk-neogeo-mvs
+    required: true
+    bundled: true
+    category: game_data
+    size: 2304
+    crc32: "86af55af"
+    sha1: "4b1b4ba452735c55b39d215d926a5d9a55fec754"
+    description: "CMC42 graphics decryption key tables"
+    source_ref: "gngeo/src/neocrypt.c:618-636"
+
+  - name: "cmc50.xor"
+    path: "rom/cmc50.xor"
+    archive: gngeo_data.zip
+    system: snk-neogeo-mvs
+    required: true
+    bundled: true
+    category: game_data
+    size: 2816
+    crc32: "eb67fc2d"
+    sha1: "e947c634549a63a746725a1330df7ae778dde305"
+    description: "CMC50 graphics and M1 decryption key tables"
+    source_ref: "gngeo/src/neocrypt.c:637-656"
