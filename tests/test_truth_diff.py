@@ -19,7 +19,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from exporter.baseline import pair_truth_entry  # noqa: E402
+from exporter.baseline import pair_entries  # noqa: E402
 from truth import (  # noqa: E402
     _diff_system,
     _merge_file_into_system,
@@ -136,8 +136,8 @@ class RenameMatching(unittest.TestCase):
     a shared hash pairs the two names, through the rule export_native uses."""
 
     @staticmethod
-    def _pair(truth, scraped, claimed=None):
-        return pair_truth_entry(truth, scraped, claimed or set())
+    def _pair(truth, scraped):
+        return pair_entries([truth], scraped).get(0)
 
     def test_a_shared_sha1_pairs_the_two_names(self):
         self.assertEqual(
@@ -180,7 +180,8 @@ class RenameMatching(unittest.TestCase):
 
     def test_a_claimed_entry_never_answers_twice(self):
         scraped = [_entry("b.bin", sha1="a" * 40)]
-        self.assertIsNone(self._pair(_entry("a.bin", sha1="a" * 40), scraped, {0}))
+        truth = [_entry("a.bin", sha1="a" * 40), _entry("c.bin", sha1="a" * 40)]
+        self.assertEqual(pair_entries(truth, scraped), {0: 0})
 
     def test_the_diff_reads_no_gap_for_a_rename(self):
         truth = {"files": [_entry("a.bin", sha1="a" * 40)]}
@@ -208,7 +209,7 @@ class PlatformMultiHash(unittest.TestCase):
     def test_a_rename_is_found_through_the_list(self):
         truth = [_entry("scph1001.bin", md5=self.TRUTH)]
         scraped = {"psx.bin": _entry("psx.bin", md5=self.SCRAPED)}
-        self.assertEqual(pair_truth_entry(truth[0], list(scraped.values()), set()), 0)
+        self.assertEqual(pair_entries(truth, list(scraped.values())), {0: 0})
 
 
 class OnlySystemDirectoryEntries(unittest.TestCase):

@@ -14,6 +14,7 @@ grouping is rebuilt from the per-file native_system the scrapers record.
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -317,26 +318,64 @@ def by_hash(truth_entry: dict, platform_entry: dict) -> bool:
     return bool(ours & {v for f in HASH_FIELDS for v in _hash_values(platform_entry, f)})
 
 
-def pair_truth_entry(
-    truth_entry: dict, candidates: list[dict], claimed: set[int]
-) -> int | None:
-    """Which platform entry a truth entry describes, by index, or None.
+def _contradicts(truth_entry: dict, platform_entry: dict) -> bool:
+    """A hash both entries declare, without a value in common."""
+    return any(
+        (ours := set(_hash_values(truth_entry, f)))
+        and (theirs := set(_hash_values(platform_entry, f)))
+        and not ours & theirs
+        for f in HASH_FIELDS
+    )
 
-    The one rule export_native and diff_truth read. Each test is tried
-    across every candidate before the next: with three IPL.bin under one
-    system, separated only by their path, a first-match-wins scan attached
-    the truth to whichever came first. An entry never answers for two.
+
+def _agreeing(test: Callable[[dict, dict], bool]) -> Callable[[dict, dict], bool]:
+    def agrees(truth_entry: dict, platform_entry: dict) -> bool:
+        return test(truth_entry, platform_entry) and not _contradicts(
+            truth_entry, platform_entry
+        )
+    return agrees
+
+
+_PAIRING_TESTS = (
+    _agreeing(by_destination),
+    _agreeing(by_name),
+    by_hash,
+    by_destination,
+    by_name,
+)
+
+
+def pair_entries(truth_entries: list[dict], candidates: list[dict]) -> dict[int, int]:
+    """Which platform entry each truth entry describes, as index -> index.
+
+    The one rule export_native and diff_truth read. Each test runs over
+    every truth entry and every candidate before the next one does:
+    claimed entry by entry, dosbox-x's system.rom took np2kai/BIOS.ROM by
+    its alias before np2kai's own np2kai/bios.rom was tried, and wrote an
+    IBM PCjr md5 on it. A path or a name that contradicts a hash comes
+    after the hash: the truth's MSX.rom carries bluemsx's path and fmsx's
+    md5, and fmsx's own line holds that md5. An entry never answers for two.
     """
-    for test in (by_destination, by_name, by_hash):
-        for index, candidate in enumerate(candidates):
-            if index not in claimed and test(truth_entry, candidate):
-                return index
-    return None
+    pairs: dict[int, int] = {}
+    claimed: set[int] = set()
+    for test in _PAIRING_TESTS:
+        for t_index, truth_entry in enumerate(truth_entries):
+            if t_index in pairs:
+                continue
+            for index, candidate in enumerate(candidates):
+                if index not in claimed and test(truth_entry, candidate):
+                    pairs[t_index] = index
+                    claimed.add(index)
+                    break
+    return pairs
 
 
 def platform_declares(truth_entry: dict, candidates: list[dict]) -> bool:
     """A file another truth entry already claimed is still the platform's
-    file, not one it lacks: scph101.bin, declared by two PSX cores."""
+    file, not one it lacks: scph101.bin, declared by two PSX cores. The
+    same content under another name is not: fuse opens fuse/128-1.rom by
+    name, and Recalbox's fuse/128p-1.rom holding that dump does not serve
+    it."""
     return any(
         by_destination(truth_entry, c) or by_name(truth_entry, c) for c in candidates
     )
@@ -432,23 +471,22 @@ def build_native_model(
             continue
 
         target_ids = _target_native_ids(truth_sid)
+        truth_files = [
+            entry for entry in truth_files
+            if (name := str(entry.get("name", "")))
+            and not name.startswith("_") and not _is_placeholder(name)
+        ]
+        candidates = [
+            candidate
+            for native_id in target_ids
+            for candidate in systems.get(native_id, NativeSystem(native_id)).files
+            if candidate.truth is None
+        ]
+        pairs = pair_entries(truth_files, [c.platform or {} for c in candidates])
 
-        for truth_entry in truth_files:
-            name = str(truth_entry.get("name", ""))
-            if not name or name.startswith("_") or _is_placeholder(name):
-                continue
-
-            candidates = [
-                candidate
-                for native_id in target_ids
-                for candidate in systems.get(
-                    native_id, NativeSystem(native_id)
-                ).files
-                if candidate.truth is None
-            ]
-            index = pair_truth_entry(
-                truth_entry, [c.platform or {} for c in candidates], set()
-            )
+        for t_index, truth_entry in enumerate(truth_files):
+            name = str(truth_entry["name"])
+            index = pairs.get(t_index)
             matched = candidates[index] if index is not None else None
 
             if matched is not None:

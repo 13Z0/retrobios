@@ -199,6 +199,78 @@ class Reconciliation(unittest.TestCase):
         names = {fe.name for fe in systems["psx"].files}
         self.assertNotIn("<user-selected>.bin", names)
 
+    def test_a_name_match_does_not_take_a_later_entrys_destination(self):
+        """dosbox-x's system.rom (alias bios.rom, no path) came before
+        np2kai's np2kai/bios.rom in the truth, took Batocera's
+        np2kai/BIOS.ROM by name and wrote an IBM PCjr md5 on it."""
+        truth = {"systems": {"nec-pc-98": {"files": [
+            {"name": "system.rom", "aliases": ["bios.rom"], "md5": "c" * 32},
+            {"name": "bios.rom", "path": "np2kai/bios.rom"},
+        ]}}}
+        scraped = {"systems": {"nec-pc-98": {"native_id": "pc98", "files": [
+            {"name": "BIOS.ROM", "destination": "np2kai/BIOS.ROM",
+             "native_system": "pc98", "md5": "e" * 32},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        entry = systems["pc98"].files[0]
+        self.assertEqual(entry.truth["path"], "np2kai/bios.rom")
+        self.assertEqual(entry.hash("md5"), "e" * 32)
+        self.assertEqual(report.hashes_corrected, [])
+        self.assertEqual(report.files_added, 0)
+
+    def test_a_path_does_not_outrank_the_hash_another_line_carries(self):
+        """The truth's MSX.rom joins bluemsx's path and fmsx's md5. Paired by
+        path, fmsx's md5 replaced the blueMSX dump on Recalbox's
+        Machines/Shared Roms/MSX.rom line while fmsx's own line held it."""
+        truth = {"systems": {"microsoft-msx": {"files": [
+            {"name": "MSX.rom", "path": "Machines/Shared Roms/MSX.rom",
+             "md5": "a" * 32},
+        ]}}}
+        scraped = {"systems": {"microsoft-msx": {"native_id": "msx", "files": [
+            {"name": "MSX.rom", "destination": "Machines/Shared Roms/MSX.rom",
+             "native_system": "msx", "md5": "b" * 32},
+            {"name": "MSX.ROM", "destination": "MSX.ROM",
+             "native_system": "msx", "md5": "a" * 32},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        bluemsx, fmsx = systems["msx"].files
+        self.assertIsNone(bluemsx.truth)
+        self.assertEqual(bluemsx.hash("md5"), "b" * 32)
+        self.assertIs(fmsx.truth, truth["systems"]["microsoft-msx"]["files"][0])
+        self.assertEqual(report.hashes_corrected, [])
+
+    def test_a_name_the_core_opens_is_added_beside_its_content(self):
+        """fuse opens fuse/128-1.rom and fuse/128p-1.rom, one dump. Recalbox
+        declares only 128p-1.rom. Paired entry by entry, 128-1.rom took that
+        line by hash and was never added. A core that opens a name is not
+        served by the same bytes under another one."""
+        truth = {"systems": {"sinclair-zx-spectrum": {"files": [
+            {"name": "128p-1.rom", "path": "fuse/128p-1.rom", "md5": "d" * 32},
+            {"name": "128-1.rom", "path": "fuse/128-1.rom", "md5": "d" * 32},
+        ]}}}
+        scraped = {"systems": {"sinclair-zx-spectrum": {"native_id": "zx", "files": [
+            {"name": "128p-1.rom", "destination": "fuse/128p-1.rom",
+             "native_system": "zx", "md5": "d" * 32},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        own, added = systems["zx"].files
+        self.assertEqual(own.truth["name"], "128p-1.rom")
+        self.assertEqual(added.destination, "fuse/128-1.rom")
+        self.assertEqual(report.files_added, 1)
+
+    def test_the_diff_pairs_by_the_same_rule(self):
+        """diff_truth reads the same pairing, or it names a mismatch the
+        export does not correct."""
+        from truth import _diff_system
+        truth_sys = {"files": [
+            {"name": "system.rom", "aliases": ["bios.rom"], "md5": "c" * 32},
+            {"name": "bios.rom", "path": "np2kai/bios.rom"},
+        ]}
+        scraped_sys = {"files": [
+            {"name": "BIOS.ROM", "destination": "np2kai/BIOS.ROM", "md5": "e" * 32},
+        ]}
+        self.assertNotIn("hash_mismatch", _diff_system(truth_sys, scraped_sys))
+
     def test_systems_are_keyed_by_the_name_the_platform_uses(self):
         systems, _ = model()
         self.assertEqual(sorted(systems), ["psx"])

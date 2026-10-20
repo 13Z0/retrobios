@@ -618,13 +618,12 @@ def _hash_mismatch(t_entry: dict, s_entry: dict) -> dict | None:
 def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
     """Compare files between truth and scraped for a single system.
 
-    Entries are paired by pair_truth_entry, the rule export_native applies:
-    destination, then name or alias in the same directory at the same size,
-    then any hash in common. Two rules had diverged, and diff_truth flagged
-    a hash the export did not correct while the export corrected hashes the
-    diff never named. An entry never answers for two.
+    Entries are paired by pair_entries, the rule export_native applies. Two
+    rules had diverged, and diff_truth flagged a hash the export did not
+    correct while the export corrected hashes the diff never named. An entry
+    never answers for two.
     """
-    from exporter.baseline import _is_placeholder, pair_truth_entry, platform_declares
+    from exporter.baseline import _is_placeholder, pair_entries, platform_declares
 
     truth_files = [
         fe for fe in truth_sys.get("files", [])
@@ -639,9 +638,10 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
     extra_phantom: list[dict] = []
     extra_unprofiled: list[dict] = []
 
-    claimed: set[int] = set()
-    for t_entry in truth_files:
-        s_position = pair_truth_entry(t_entry, scraped_files, claimed)
+    pairs = pair_entries(truth_files, scraped_files)
+    claimed = set(pairs.values())
+    for t_index, t_entry in enumerate(truth_files):
+        s_position = pairs.get(t_index)
         if s_position is None:
             if not platform_declares(t_entry, scraped_files):
                 missing.append(
@@ -652,7 +652,6 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
                     }
                 )
             continue
-        claimed.add(s_position)
         s_entry = scraped_files[s_position]
         mismatch = _hash_mismatch(t_entry, s_entry)
         if mismatch:
