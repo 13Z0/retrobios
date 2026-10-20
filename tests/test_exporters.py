@@ -1420,6 +1420,42 @@ class BizhawkExport(unittest.TestCase):
         self.assertFalse(exporter.states(entry, "sha1"))
 
 
+class RecalboxPatchesAttributesNotElements(unittest.TestCase):
+    """A changed element was rendered again, losing its alignment and the
+    place of its attributes, and an element whose md5 list was only
+    reordered (neogeo.zip, the same 24 digests) was rewritten too."""
+
+    def test_an_empty_truth_hands_back_the_file(self):
+        path = UPSTREAM_CACHE / "recalbox" / "es_bios.xml"
+        if not path.exists():
+            self.skipTest("upstream cache not populated")
+        original = path.read_text(encoding="utf-8")
+        exporter = discover_exporters()["recalbox"]()
+        config = native_layer(load_platform_config("recalbox", str(REPO_ROOT / "platforms")))
+        systems, report = build_native_model({"systems": {}}, config)
+        produced = exporter.render(systems, report, {"es_bios.xml": original}, config)
+        self.assertEqual(produced["es_bios.xml"], original)
+
+    def test_a_reordered_md5_list_states_the_same(self):
+        from exporter.recalbox_exporter import _stated  # noqa: PLC0415
+
+        self.assertEqual(_stated('<bios path="a" md5="1,2" />'),
+                         _stated('<bios path="a" md5="2,1" />'))
+
+    def test_one_attribute_changes_in_place(self):
+        from exporter.recalbox_exporter import patch_element  # noqa: PLC0415
+
+        kept = '    <bios path="kick.rom"          md5="aa" core="libretro/puae" />'
+        mine = '    <bios path="kick.rom" md5="aa" core="libretro/puae" mandatory="false" />'
+        self.assertEqual(patch_element(kept, mine),
+                         '    <bios path="kick.rom"          md5="aa" core="libretro/puae"'
+                         ' mandatory="false" />')
+        dropped = patch_element(
+            '    <bios path="x"   md5="aa" mandatory="false" core="c" />',
+            '    <bios path="x" md5="bb" core="c" />')
+        self.assertEqual(dropped, '    <bios path="x"   md5="bb" core="c" />')
+
+
 class RetrobatListComesBackAsWritten(unittest.TestCase):
     """RetroBat separates each system with a blank line. json.dumps dropped
     all 100 of them, 100 hunks of noise in a diff meant to show

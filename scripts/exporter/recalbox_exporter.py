@@ -45,8 +45,55 @@ def _stated(text: str) -> dict[str, str]:
     line breaks inside a value and the case of a digest are not content."""
     attrs = {k: " ".join(html.unescape(v).split()) for k, v in _ATTRIBUTE.findall(text)}
     if "md5" in attrs:
-        attrs["md5"] = ",".join(h.strip().lower() for h in attrs["md5"].split(","))
+        # Recalbox accepts any digest of the list (Bios.cpp:109-130): the
+        # order is not content, and neogeo.zip's 24, reordered, were
+        # written again.
+        attrs["md5"] = ",".join(sorted({h.strip().lower() for h in attrs["md5"].split(",")}))
     return attrs
+
+
+_SPACED_ATTRIBUTE = re.compile(r'(\s+)([A-Za-z][A-Za-z0-9]*)(\s*=\s*")([^"]*)(")')
+
+
+def patch_element(kept: str, mine: str) -> str:
+    """Recalbox's element with only the attributes that changed rewritten.
+
+    Rendered again, a corrected element lost its alignment and the place
+    of its attributes. A changed value is replaced where it stands, an
+    attribute ours drops goes with the space before it, and one ours adds
+    goes before the closing />.
+    """
+    target = dict(_ATTRIBUTE.findall(mine))
+    target_stated = _stated(mine)
+    present: set[str] = set()
+
+    def rewrite(match: re.Match[str]) -> str:
+        name = match.group(2)
+        present.add(name)
+        if name not in target:
+            return ""
+        if _stated(f'<x {name}="{match.group(4)}"/>') == {name: target_stated[name]}:
+            return match.group(0)
+        return match.group(1) + name + match.group(3) + target[name] + match.group(5)
+
+    patched = _SPACED_ATTRIBUTE.sub(rewrite, kept)
+    added = "".join(f' {name}="{value}"' for name, value in target.items() if name not in present)
+    if added:
+        close = re.search(r"\s*/>\s*$", patched)
+        if close is None:
+            return mine
+        patched = patched[:close.start()] + added + patched[close.start():]
+    return patched
+
+
+def _original_openings(original: str) -> list[str]:
+    """Each system block's opening tag as written, its indentation included:
+    cdi's is indented four spaces where the others take two (l.604)."""
+    openings = []
+    for block in _SYSTEM_BLOCK.finditer(original):
+        line_start = original.rfind("\n", 0, block.start()) + 1
+        openings.append(original[line_start:block.start()] + block.group(0).split(">", 1)[0] + ">")
+    return openings
 
 
 def _original_elements(original: str) -> list[dict[str, str]]:
@@ -200,10 +247,14 @@ class Exporter(BaseExporter):
             rendered = " ".join(f"{k}={quoteattr(v)}" for k, v in attrs.items())
             return f"    <bios {rendered} />"
 
-        def emit(platform: str, fullname: str, body: list[str]) -> None:
-            lines.append(
-                f"  <system fullname={quoteattr(fullname)} platform={quoteattr(platform)}>"
-            )
+        def emit(platform: str, fullname: str, body: list[str], opening: str = "") -> None:
+            stated = _stated(opening) if opening else {}
+            if stated.get("platform") == platform and stated.get("fullname") == fullname:
+                lines.append(opening)
+            else:
+                lines.append(
+                    f"  <system fullname={quoteattr(fullname)} platform={quoteattr(platform)}>"
+                )
             lines.extend(body)
             lines.append("  </system>")
 
@@ -211,6 +262,7 @@ class Exporter(BaseExporter):
         # states what Recalbox wrote keeps Recalbox's text: re-rendered, 222
         # unchanged elements made 180 lines of diff the report never named.
         written = _original_elements(original) if original else []
+        openings = _original_openings(original) if original else []
         blocks: list[tuple[str, str, list[str]]] = []
         for index, (platform, fullname, children) in enumerate(theirs):
             elements = ours.get(platform, (None, {}))[1]
@@ -225,6 +277,10 @@ class Exporter(BaseExporter):
                 kept = raw.get(" ".join(path.split()))
                 if kept is not None and (mine is None or _stated(mine[1]) == _stated(kept)):
                     body.append(kept)
+                elif kept is not None and mine is not None and _stated(
+                    patched := patch_element(kept, mine[1])
+                ) == _stated(mine[1]):
+                    body.append(patched)
                 else:
                     body.append(mine[1] if mine else element(child))
             blocks.append((platform, fullname, body))
@@ -242,8 +298,8 @@ class Exporter(BaseExporter):
                 key = (platform, str(fe.native("native_name", "")))
                 blocks[named.get(key, first[platform])][2].append(rendered)
 
-        for platform, fullname, body in blocks:
-            emit(platform, fullname, body)
+        for index, (platform, fullname, body) in enumerate(blocks):
+            emit(platform, fullname, body, openings[index] if index < len(openings) else "")
         for platform in sorted(ours):
             system, elements = ours[platform]
             emit(platform, self.display_name(system), [r for _, r in elements.values()])
