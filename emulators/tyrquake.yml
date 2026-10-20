@@ -11,16 +11,90 @@ cores: [tyrquake]
 systems: [quake]
 notes: >
   Quake engine source port by Kevin Shanahan (Tyrann). Plays Quake (id1), mission
-  packs Scourge of Armagon (hipnotic) and Dissolution of Eternity (rogue), Quoth
-  mod, and custom mods via -game parameter. Content is loaded directly from the
-  PAK file path: the directory containing the PAK becomes basedir
-  (libretro.c:988,1050). The engine auto-detects game variant by checking the
-  content path for id1, hipnotic, rogue, or quoth substrings
-  (common/libretro.c:1313-1377). All engine assets (gfx/palette.lmp, gfx/colormap.lmp,
-  gfx.wad, textures, models, sounds) are loaded from within PAK files via
-  COM_AddGameDirectory (common.c:1709), which tries pak0.pak through pak9.pak in
-  both lowercase and uppercase. The core never calls
-  RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. BGM as OGG tracks in music/ subfolder
-  of each game directory.
+  packs Scourge of Armagon (hipnotic) and Dissolution of Eternity (rogue), the Quoth
+  mod, and custom mods. Content is a PAK file. When its path contains id1,
+  hipnotic, rogue or quoth, the parent of the PAK's directory becomes basedir and
+  the matching -rogue, -hipnotic or -quoth switch is set. Any other directory is
+  passed as -game <dir> with its parent as basedir (common/libretro.c:1313-1325,
+  common/libretro.c:1331, common/libretro.c:1363-1390). COM_InitFilesystem always
+  adds basedir/id1 first, then rogue, hipnotic or quoth, then the -game directory
+  (common/common.c:1717-1734), so every game reads id1/pak0.pak beside its own
+  folder. COM_AddGameDirectory opens pak0.pak, pak1.pak and so on, lowercase then
+  uppercase, and stops at the first index that opens neither
+  (common/common.c:1668-1686). gfx.wad, gfx/palette.lmp and gfx/colormap.lmp come
+  from those PAKs and a missing one stops the engine with Sys_Error
+  (common/host.c:711-712, common/host.c:728-760, common/wad.c:78-81).
+  gfx/pop.lmp, present only in the registered id1/pak1.pak, sets the registered
+  cvar (common/common.c:938-953). The PAK directory is compared to the id1/pak0.pak
+  file count and CRC, but com_modified is never read, so any PAK is accepted
+  (common/common.c:1580-1593). The core never calls
+  RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. Background music is streamed from
+  music/trackNN.<ext> in each game directory, ogg, opus, mp3, flac, wav, it, s3m,
+  xm or mod, when present (common/bgmusic.c:35, common/bgmusic.c:63-71,
+  common/bgmusic.c:314-338).
 
-files: []
+files:
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "id1/pak0.pak"
+    required: true
+    source_ref: "common/common.c:1668-1686, common/common.c:1718, common/host.c:711-712, common/libretro.c:1313-1331"
+    note: "Shareware and registered Quake data, one file in both releases. Read for every game, mission packs and mods included."
+
+  - name: "pak1.pak"
+    category: game_data
+    system: quake
+    path: "id1/pak1.pak"
+    required: false
+    source_ref: "common/common.c:1668-1686, common/common.c:938-953"
+    note: "Registered episodes 2 to 4. Read only after pak0.pak opens."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "hipnotic/pak0.pak"
+    required: false
+    source_ref: "common/common.c:1722-1723, common/libretro.c:1368-1371"
+    note: "Scourge of Armagon data. Loaded when the content path contains hipnotic."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "rogue/pak0.pak"
+    required: false
+    source_ref: "common/common.c:1720-1721, common/libretro.c:1363-1366"
+    note: "Dissolution of Eternity data. Loaded when the content path contains rogue."
+    unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "pak0.pak"
+    category: game_data
+    system: quake
+    path: "quoth/pak0.pak"
+    required: false
+    size: 48226771
+    sha1: be18095be10b1c45afb0f51cfaa7341fae639d0f
+    source_ref: "common/common.c:1017-1020, common/common.c:1724-1725, common/libretro.c:1373-1376"
+    note: "Quoth 2.2 data. Loaded when the content path contains quoth, with the Scourge of Armagon HUD."
+
+  - name: "pak1.pak"
+    category: game_data
+    system: quake
+    path: "quoth/pak1.pak"
+    required: false
+    size: 84961704
+    sha1: a14f1351e38c9df3eb03ef7e47f7aae9c29b8df2
+    source_ref: "common/common.c:1668-1686, common/common.c:1724-1725"
+    note: "Quoth 2.2 data, read after quoth/pak0.pak."
+
+  - name: "pak2.pak"
+    category: game_data
+    system: quake
+    path: "quoth/pak2.pak"
+    required: false
+    size: 8021749
+    sha1: c022a1062e9f8f99d8071c2fde297458499d302e
+    source_ref: "common/common.c:1668-1686, common/common.c:1724-1725"
+    note: "Quoth 2.2 data, read after quoth/pak1.pak opens."
