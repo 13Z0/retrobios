@@ -1,9 +1,10 @@
 emulator: x16emu
 type: standalone
+source: "https://github.com/X16Community/x16-emulator"
 upstream: "https://github.com/X16Community/x16-emulator"
-profiled_date: "2026-03-26"
-source_commit: "77f2bab332e24c5456f9844a6c7ddd203f6198e6"
-core_version: "r50"
+profiled_date: "2026-10-20"
+source_commit: "af1024080ced455ea098b007aed43142c99e93da"
+core_version: "r49"
 display_name: "Commander X16 (x16emu)"
 cores:
   - x16emu
@@ -20,6 +21,9 @@ notes: |
   Batocera configgen (x16emuGenerator.py) passes -rom /userdata/bios/commanderx16/rom.bin.
   Also sets -ram 2048, -rtc, and scale/quality/widescreen per user config.
 
+  The pin is the r49 release tag (src/version.h VER "49"). The tree after it
+  carries VER "50" with no emulator or ROM release behind it.
+
 files:
   - name: rom.bin
     path: commanderx16/rom.bin
@@ -35,5 +39,5 @@ files:
       ROM_SIZE = NUM_ROM_BANKS(32) * 16384 = 524288 bytes. exit(1) if file not found.
       Built from x16-rom repo (open source, derived from C64 KERNAL/BASIC).
       Shipped beside the executable in every release zip. The hashes are those of
-      the r49 release, whose rom.bin is 262144 bytes: the loader reads up to
+      the rom.bin in the r49 release zips, 262144 bytes: the loader reads up to
       ROM_SIZE and does not check the length.
