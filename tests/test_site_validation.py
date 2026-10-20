@@ -202,6 +202,22 @@ class EveryTestDependencyIsInstalledInCi(unittest.TestCase):
         )
         self.assertEqual(missing, [])
 
+    def test_a_contributor_installs_what_ci_installs(self):
+        # The contributing page installed pyyaml and jsonschema only, so the
+        # markdown test skipped on a contributor's machine and ran in CI.
+        from generate_readme import generate_contributing
+
+        command = next(
+            line for line in generate_contributing().splitlines() if "pip install" in line
+        )
+        guide = (Path(__file__).resolve().parents[1] / "wiki" / "testing-guide.md").read_text(
+            encoding="utf-8"
+        )
+        for package in self.PACKAGES.values():
+            with self.subTest(package=package):
+                self.assertIn(package, command)
+                self.assertIn(package, guide)
+
 
 
 class TheTestingGuideNamesEveryModule(unittest.TestCase):

@@ -44,7 +44,7 @@ Full walkthrough: [profiling guide](https://abdess.github.io/retrobios/wiki/prof
 The checks CI runs on a pull request (Python 3.12 or newer):
 
 ```bash
-pip install pyyaml "jsonschema[format-nongpl]"
+pip install pyyaml "jsonschema[format-nongpl]" markdown
 python scripts/validate_pr.py --changed          # the BIOS files the branch adds
 python scripts/validate_schemas.py --source-only # profiles and platform files
 python scripts/profile_sync.py --emulator NAME --strict  # each profile the branch adds
