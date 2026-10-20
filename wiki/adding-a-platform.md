@@ -258,6 +258,13 @@ seven BIOS paths on every device but AMD64, where the keys are left empty:
 An extractor that no longer recognises the shape of the code raises: an
 empty list would read as a launcher that looks for nothing.
 
+A libretro frontend that picks the system directory per core records each
+choice as a `passes_path` entry with no `names`. Recalbox gives gpsp
+`bios/gba` and geargrafx `bios/pcenginecd`, so a core that opens `gba_bios.bin`
+reads it from there. `emulator: libretro` stands for every core Recalbox runs,
+for the default directory and for the per-system overrides applied after the
+per-core choice, and `<system>` in `search_dir` is the system's own name.
+
 ### Inheritance
 
 If the new platform inherits from an existing one (e.g. Lakka inherits RetroArch),

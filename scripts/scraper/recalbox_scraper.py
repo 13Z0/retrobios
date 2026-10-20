@@ -18,6 +18,8 @@ from __future__ import annotations
 from common import parse_untrusted_xml
 
 from .base_scraper import BaseScraper, BiosRequirement, fetch_bytes, requirement_entry
+from .recalbox_launchers import SOURCE_FILES as LAUNCHER_FILES
+from .recalbox_launchers import LauncherShapeError, extract_launchers
 
 PLATFORM_NAME = "recalbox"
 
@@ -218,9 +220,14 @@ class Scraper(BaseScraper):
 
     def _system_inis(self, systems: list[str]) -> list[str]:
         """Every system's system.ini at the tag, read in batches."""
+        paths = [f"{SYSTEMS_DIR}/{system}/system.ini" for system in systems]
+        texts = self._blobs(paths)
+        return [texts[path] for path in paths]
+
+    def _blobs(self, paths: list[str]) -> dict[str, str]:
+        """The files at `paths` at the tag, read in batches."""
         import json
 
-        paths = [f"{SYSTEMS_DIR}/{system}/system.ini" for system in systems]
         texts: dict[str, str] = {}
         for start in range(0, len(paths), BLOBS_PER_QUERY):
             batch = paths[start:start + BLOBS_PER_QUERY]
@@ -236,8 +243,19 @@ class Scraper(BaseScraper):
             texts.update({n["path"]: n["rawBlob"] for n in nodes if n.get("rawBlob")})
         missing = [path for path in paths if path not in texts]
         if missing:
-            raise RuntimeError(f"no system.ini at {self.tag} for {', '.join(missing[:5])}")
-        return [texts[path] for path in paths]
+            raise RuntimeError(f"nothing at {self.tag} for {', '.join(missing[:5])}")
+        return texts
+
+    def _fetch_launchers(self) -> list[dict]:
+        """Launcher records read from configgen at the scraped tag."""
+        texts = self._blobs(list(LAUNCHER_FILES))
+
+        def read(path: str) -> str:
+            if path not in texts:
+                raise LauncherShapeError(f"{path} is read but not in SOURCE_FILES")
+            return texts[path]
+
+        return extract_launchers(read)
 
     def _fetch_cores(self) -> tuple[list[str], list[str], list[str]]:
         """Every core Recalbox's systems offer, those it runs standalone, and
@@ -379,6 +397,7 @@ class Scraper(BaseScraper):
             # Launched both ways: each layout gets its files.
             **({"dual_mode_cores": dual} if dual else {}),
             "systems": systems,
+            "launchers": self._fetch_launchers(),
         }
 
 
