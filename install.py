@@ -2765,11 +2765,21 @@ def _report_outcome(
         print("Run the same command again to carry on from here. Nothing is lost.")
         sys.exit(130)
 
-    refused = any(reason == NOT_WRITABLE for _dest, reason in failures or [])
+    # A standalone copy fails by absolute path, in an emulator's folder
+    # rather than the BIOS folder: that folder is where the write went.
+    elsewhere = sorted({Path(dest).parent for dest, _reason in failures or []
+                        if Path(dest).is_absolute()})
+    refused = any(reason == NOT_WRITABLE for dest, reason in failures or []
+                  if not Path(dest).is_absolute())
     advice = [
         _write_advice(path, path in (assumed or set()), (platform_of or {}).get(path, ""))
         for path in paths
     ] if refused else []
+    advice += [_write_advice(folder, False) for folder in sorted({
+        Path(dest).parent for dest, reason in failures or []
+        if Path(dest).is_absolute() and reason == NOT_WRITABLE
+    })]
+    paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
@@ -3110,6 +3120,7 @@ def select_data_directories(manifest: dict, files: list[dict], narrowed: bool) -
 def do_standalone_copies(
     manifest: dict, bios_path: Path, os_type: str,
     extra_dirs: dict[str, Path] | None = None,
+    failures: list[tuple[str, str]] | None = None,
 ) -> tuple[int, int, int]:
     """Copy BIOS files to standalone emulator directories.
 
@@ -3126,6 +3137,8 @@ def do_standalone_copies(
     Returns (copied, skipped, failed): skipped is a target directory that
     does not exist, failed a copy the system refused (permission, disk
     full, read-only mount), which used to be counted as "dir not found".
+    Each failure is also appended to failures, by absolute path, for the
+    summary to name.
     """
     from fnmatch import fnmatch
 
@@ -3200,6 +3213,10 @@ def do_standalone_copies(
                 except OSError as exc:
                     print(f"  ERROR: {dest}: {exc.strerror or exc}")
                     failed += 1
+                    if failures is not None:
+                        reason = NOT_WRITABLE if _write_refused(exc) else str(
+                            exc.strerror or exc)
+                        failures.append((str(dest), reason))
 
     return copied, skipped, failed
 
@@ -4135,7 +4152,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             lb_root = launchbox_root(os_type)
             extra_dirs = launchbox_bios_dirs(lb_root) if lb_root else None
             copied, skipped, copy_failed = do_standalone_copies(
-                manifest, bios_path, os_type, extra_dirs
+                manifest, bios_path, os_type, extra_dirs, failures
             )
             if copied or skipped or copy_failed:
                 print(

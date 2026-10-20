@@ -2852,6 +2852,43 @@ class ACheckNamesWhatTheCollectionLacks(unittest.TestCase):
 
 
 
+class ARefusedStandaloneCopyIsNamed(unittest.TestCase):
+    """A standalone copy refused by a read-only emulator folder counted as
+    an error with no failures entry: the summary named no file, pointed at
+    the BIOS folder and gave no advice."""
+
+    def test_the_file_and_its_folder_reach_the_summary(self):
+        import contextlib  # noqa: PLC0415
+
+        if os.name == "nt" or os.geteuid() == 0:
+            self.skipTest("a read-only folder needs POSIX modes and a non-root user")
+        bios = Path(_tempdir(self))
+        (bios / "scph5501.bin").write_bytes(b"x")
+        target = Path(_tempdir(self)) / "pcsx2-bios"
+        target.mkdir()
+        target.chmod(0o500)
+        self.addCleanup(target.chmod, 0o700)
+        manifest = {"standalone_copies": [
+            {"file": "scph5501.bin", "emulator": "pcsx2",
+             "targets": {"linux": [str(target)]}},
+        ]}
+        failures: list = []
+        with contextlib.redirect_stdout(io.StringIO()):
+            _copied, _skipped, failed = install.do_standalone_copies(
+                manifest, bios, "linux", None, failures)
+        self.assertEqual(failed, 1)
+        self.assertEqual(failures, [(str(target / "scph5501.bin"), install.NOT_WRITABLE)])
+
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
+            install._report_outcome([bios], 0, 1, failed, 0, False, failures=failures)
+        text = out.getvalue()
+        self.assertIn(str(target / "scph5501.bin"), text)
+        self.assertIn(str(target), text.split("Location")[1])
+        self.assertIn("cannot write there", text)
+
+
+
 class ThePagesQuoteTheBootstrapsOwnWords(unittest.TestCase):
     """The installer page and the FAQ quoted "install.py SHA-256 mismatch",
     a message the bootstraps no longer print."""
