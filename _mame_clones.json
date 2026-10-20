@@ -166,6 +166,13 @@
     "sha1": "95346a0e57675eacfd157bed94e233d54657115b",
     "total_copies": 1
   },
+  "at_mb.zip": {
+    "clones": [
+      "at_keybc.zip"
+    ],
+    "sha1": "010e3c7b17b4339fce7770f6f9b2e030e0437939",
+    "total_copies": 1
+  },
   "atom_econet.zip": {
     "clones": [
       "acorn_econet.zip"
@@ -321,6 +328,13 @@
     "sha1": "d0a347bbf8d3d6996a025054fe84f16719cc871f",
     "total_copies": 1
   },
+  "hardbox.zip": {
+    "clones": [
+      "gpib_hardbox.zip"
+    ],
+    "sha1": "88ff6b7bb658a625289183213c382f82483b4fe3",
+    "total_copies": 1
+  },
   "imi7000.zip": {
     "clones": [
       "imi5000h.zip"
@@ -463,6 +477,13 @@
     "sha1": "afcc9c605420a2029b66e97e9f719f15ebb53d64",
     "total_copies": 1
   },
+  "sb16.zip": {
+    "clones": [
+      "ct1741.zip"
+    ],
+    "sha1": "087bf455a1f05741a4a88d2046457d497a81d2d2",
+    "total_copies": 1
+  },
   "sed1200da.zip": {
     "clones": [
       "sed1200fa.zip"
@@ -530,6 +551,26 @@
     "sha1": "bbf1cb3e776129524d54d1f885c54d0f1b8d489c",
     "total_copies": 10
   },
+  "sys68k_cpu21.zip": {
+    "clones": [
+      "sys68k_cpu21a.zip",
+      "sys68k_cpu21b.zip",
+      "sys68k_cpu21s.zip",
+      "sys68k_cpu21ya.zip",
+      "sys68k_cpu21yb.zip"
+    ],
+    "sha1": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
+    "total_copies": 5
+  },
+  "sys68k_cpu30x.zip": {
+    "clones": [
+      "sys68k_cpu30be.zip",
+      "sys68k_cpu30xa.zip",
+      "sys68k_cpu30za.zip"
+    ],
+    "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
+    "total_copies": 3
+  },
   "tms32030.zip": {
     "clones": [
       "tms320c30.zip"
@@ -539,10 +580,11 @@
   },
   "tms32031.zip": {
     "clones": [
-      "tms320c31.zip"
+      "tms320c31.zip",
+      "tms320vc33.zip"
     ],
     "sha1": "ddadaf48004421e04838506d9c07bb9cfd3625c0",
-    "total_copies": 1
+    "total_copies": 2
   },
   "tms32032.zip": {
     "clones": [
@@ -574,10 +616,11 @@
   },
   "voicebox.zip": {
     "clones": [
-      "einstein_speech.zip"
+      "bbc_detalker.zip",
+      "bbc_voicebox.zip"
     ],
     "sha1": "82aeaace3231022fc158e96c9042745f6482aa93",
-    "total_copies": 1
+    "total_copies": 2
   },
   "votrax.zip": {
     "clones": [
@@ -591,6 +634,20 @@
       "vp700.zip"
     ],
     "sha1": "9139c00e5986b7a86c7e8dcbce39986126ab7db4",
+    "total_copies": 1
+  },
+  "x820kb.zip": {
+    "clones": [
+      "x820iikb.zip"
+    ],
+    "sha1": "88f5ba796c632317071f3dd60f180188a3cbf669",
+    "total_copies": 1
+  },
+  "xerox820_emii_rgd5.zip": {
+    "clones": [
+      "xerox820_emii_flpy5.zip"
+    ],
+    "sha1": "1338b5fc0e1cae248c0dad71494bdb0a9bb2d332",
     "total_copies": 1
   }
 }
