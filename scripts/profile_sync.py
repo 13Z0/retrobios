@@ -1996,6 +1996,12 @@ def _rendered_part(part: PartResult) -> str:
     if not raw:
         return span
     located = _trim_prose(_ANNOTATION_RE.sub("", raw).strip())
+    # `stella src/emucore/Cart.cxx:120` names the repository the lines are
+    # in. The path was read without that word, and a recale wrote it back
+    # without it: the attribution went with the old line numbers.
+    word, _, rest = located.partition(" ")
+    if rest.startswith(f"{part.part.path}:") and word and "/" not in word:
+        span = f"{word} {span}"
     if located and located in raw:
         return raw.replace(located, span, 1)
     return span

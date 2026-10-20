@@ -4268,5 +4268,25 @@ class AnOffForgeProfileWatchesItsReleasePage(unittest.TestCase):
             self.assertEqual(profile_sync.page_version(profile, "cache", False), "4.50")
 
 
+class ARecaleKeepsTheRepositoryWord(unittest.TestCase):
+    """`stella src/a.c:120` says the lines are in the stella repository. The
+    path is read without the word, and a recale wrote it back without it."""
+
+    def test_the_word_stays_in_front_of_the_new_span(self):
+        from sourceref import split_source_ref
+
+        for raw, expected in (
+            ("stella src/a.c:120-130", "stella src/a.c:140-150"),
+            ("stella src/a.c:120 (the table)", "stella src/a.c:140-150 (the table)"),
+            ("src/a.c:120", "src/a.c:140-150"),
+        ):
+            with self.subTest(raw=raw):
+                p = split_source_ref(raw)[0]
+                part = profile_sync.RefPart(
+                    profile_sync.strip_repo_word(p.path, {"stella"}), p.start, p.end, p.raw)
+                result = profile_sync.PartResult(part, "SHIFTED", None, 140, 150, [], "")
+                self.assertEqual(profile_sync._rendered_part(result), expected)
+
+
 if __name__ == "__main__":
     unittest.main()
