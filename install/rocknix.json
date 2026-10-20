@@ -5,7 +5,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-20T01:30:36Z",
+  "generated": "2026-10-20T02:57:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,10 +19,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 6141,
-  "total_size": 7918048697,
-  "pack_files": 6143,
-  "pack_size": 7918048697,
+  "total_files": 6142,
+  "total_size": 7918179769,
+  "pack_files": 6144,
+  "pack_size": 7918179769,
   "total_omitted": 48,
   "omitted_files": [
     {
@@ -48761,7 +48761,8 @@
       "size": 262144,
       "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar CD (World).j64",
       "cores": [
-        "virtualjaguar"
+        "virtualjaguar",
+        "bigpemu"
       ]
     },
     {
@@ -49355,6 +49356,16 @@
       ],
       "systems": [
         "sega-saturn"
+      ]
+    },
+    {
+      "dest": "[BIOS] Atari Jaguar (World).j64",
+      "sha1": "f8991b0c385f4e5002fa2a7e2f5e61e8c5213356",
+      "sha256": "d3f8eb881e2560cdce00738c716b9ad679128cb827493c267594f26c1c0ac744",
+      "size": 131072,
+      "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar (World).j64",
+      "cores": [
+        "bigpemu"
       ]
     },
     {

@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-20T01:30:36Z",
+  "generated": "2026-10-20T02:57:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -278,10 +278,10 @@
       }
     }
   ],
-  "total_files": 6011,
-  "total_size": 7045894479,
-  "pack_files": 6013,
-  "pack_size": 7045894479,
+  "total_files": 6012,
+  "total_size": 7046025551,
+  "pack_files": 6014,
+  "pack_size": 7046025551,
   "total_omitted": 8,
   "omitted_files": [
     {
@@ -48517,7 +48517,8 @@
       "size": 262144,
       "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar CD (World).j64",
       "cores": [
-        "virtualjaguar"
+        "virtualjaguar",
+        "bigpemu"
       ]
     },
     {
@@ -49163,6 +49164,16 @@
       ],
       "systems": [
         "sega-saturn"
+      ]
+    },
+    {
+      "dest": "[BIOS] Atari Jaguar (World).j64",
+      "sha1": "f8991b0c385f4e5002fa2a7e2f5e61e8c5213356",
+      "sha256": "d3f8eb881e2560cdce00738c716b9ad679128cb827493c267594f26c1c0ac744",
+      "size": 131072,
+      "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar (World).j64",
+      "cores": [
+        "bigpemu"
       ]
     },
     {

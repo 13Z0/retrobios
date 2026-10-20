@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T01:30:36Z",
+  "generated": "2026-10-20T02:57:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -3612,6 +3612,17 @@
       "cores": null,
       "systems": [
         "atari-jaguar"
+      ],
+      "alternatives": [
+        {
+          "sha1": "f8991b0c385f4e5002fa2a7e2f5e61e8c5213356",
+          "sha256": "d3f8eb881e2560cdce00738c716b9ad679128cb827493c267594f26c1c0ac744",
+          "size": 131072,
+          "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar (World).j64",
+          "cores": [
+            "bigpemu"
+          ]
+        }
       ]
     },
     {
@@ -70603,7 +70614,8 @@
       "size": 262144,
       "repo_path": "bios/Atari/Jaguar/[BIOS] Atari Jaguar CD (World).j64",
       "cores": [
-        "virtualjaguar"
+        "virtualjaguar",
+        "bigpemu"
       ],
       "systems": [
         "atari-jaguar"
@@ -83514,11 +83526,53 @@
       ]
     },
     {
+      "dest": "d200e_2.rom",
+      "sha1": "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d",
+      "sha256": "6596444b7e50cdb50a67887d9fb35f64f8bcf56336098d592b827dce700f014a",
+      "size": 16384,
+      "repo_path": "bios/Dragon/Dragon/d200e_2.rom",
+      "cores": [
+        "xroar"
+      ],
+      "regions": [
+        "spain"
+      ],
+      "region_groups": [
+        "dragon64"
+      ]
+    },
+    {
+      "dest": "d200e_26.rom",
+      "sha1": "da5b756ba2a9c9ecebaa7daa8ba8bfd984d56a6f",
+      "sha256": "aa3ea353b019f0ce4ca2ae1baa1e0a9e8b2fe701079958d9d9b7622cd3455697",
+      "size": 4096,
+      "repo_path": "bios/Dragon/Dragon/d200e_26.rom",
+      "cores": [
+        "xroar"
+      ],
+      "regions": [
+        "spain"
+      ],
+      "region_groups": [
+        "dragon64"
+      ]
+    },
+    {
       "dest": "alpha-boot-v1.0.rom",
       "sha1": "4a5851aa66eb426e9bb0bba196f1e02d48156068",
       "sha256": "dd236210b88447c8f185fd4ed72df9879cd9d2c2077ce68d935e45a7559c2e17",
       "size": 8192,
       "repo_path": "bios/Dragon/Dragon/alpha-boot-v1.0.rom",
+      "cores": [
+        "xroar"
+      ]
+    },
+    {
+      "dest": "alpha-boot-v0.4.rom",
+      "sha1": "69ea376dbc7418f69e9e809b448d22a4de012344",
+      "sha256": "411de6824f154f82d49e56c43630fb250b3720ab06daa96a618e16cbf314ec35",
+      "size": 8192,
+      "repo_path": "bios/Other/xroar/alpha-boot-v0.4.rom",
       "cores": [
         "xroar"
       ]
@@ -83622,6 +83676,16 @@
       ]
     },
     {
+      "dest": "coco3p.rom",
+      "sha1": "631e383068b1f52a8f419f4114b69501b21cf379",
+      "sha256": "c89c9df29cf93351ad5056dfe1bf861d533ad4382b0e5a98e9043aff0a4480d6",
+      "size": 32768,
+      "repo_path": "bios/Tandy/CoCo/coco3p.rom",
+      "cores": [
+        "xroar"
+      ]
+    },
+    {
       "dest": "mc10.rom",
       "sha1": "4afff2b4c120334481aab7b02c3552bf76f1bc43",
       "sha256": "6fb9edf040a30f92d53dfe91461fca74e4c026d074fec5345878633adce18616",
@@ -83705,6 +83769,62 @@
       "sha256": "c086f74e0e4388b3d8bb3dc3bab0c8ea1497dcd37b0ecd6ad9fa778bafe78a53",
       "size": 8192,
       "repo_path": "bios/Tandy/CoCo/cp400ext.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "coco"
+      ]
+    },
+    {
+      "dest": "disk11.rom",
+      "sha1": "10bdc5aa2d7d7f205f67b47b19003a4bd89defd1",
+      "sha256": "1c40c5a74e72edaeecc2511fee1aab347eae2c3d5fc6778cb622e3df14d63157",
+      "size": 8192,
+      "repo_path": "bios/Tandy/CoCo/disk11.rom",
+      "cores": [
+        "xroar"
+      ],
+      "systems": [
+        "coco"
+      ]
+    },
+    {
+      "dest": "dplus49b.rom",
+      "sha1": "73ae74978a78ec2b97ebb1b0c808238779529bfa",
+      "sha256": "a36d5534851140b48642ea1fa37a2865bb6e598a84bcd4c1610bed0207948cd8",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/dplus49b.rom",
+      "cores": [
+        "xroar"
+      ]
+    },
+    {
+      "dest": "sdose6.rom",
+      "sha1": "ef157016386ed463374de6bac84d1f8ce654ed80",
+      "sha256": "09e8573e31effc16e9f1a177f46514ed9f332a6c5e4e46a550574bd969319c11",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/sdose6.rom",
+      "cores": [
+        "xroar"
+      ]
+    },
+    {
+      "dest": "delta2.rom",
+      "sha1": "686ebb5f39dd4fc907a0b748867d0a022d2f1a60",
+      "sha256": "10ada56bf876e15d5e9324a84a4e8f150eee8175c5f7faed20a1a5851b016f41",
+      "size": 8192,
+      "repo_path": "bios/Dragon/Dragon/delta2.rom",
+      "cores": [
+        "xroar"
+      ]
+    },
+    {
+      "dest": "orch90.rom",
+      "sha1": "6a20fee9c70b36a6435ac8378f31d5b626017df0",
+      "sha256": "1a5a3e95522296f66a192e9a7ca0725ecc88862f9bb31f50ef37ae789404692f",
+      "size": 8192,
+      "repo_path": "bios/Tandy/CoCo/orch90.rom",
       "cores": [
         "xroar"
       ],
@@ -99792,58 +99912,6 @@
       ]
     },
     {
-      "dest": "d200e_2.rom",
-      "sha1": "c25632f3c2cfd1af3ee26b2f233a1ce1eccc365d",
-      "sha256": "6596444b7e50cdb50a67887d9fb35f64f8bcf56336098d592b827dce700f014a",
-      "size": 16384,
-      "repo_path": "bios/Dragon/Dragon/d200e_2.rom",
-      "cores": [
-        "xroar"
-      ],
-      "regions": [
-        "spain"
-      ],
-      "region_groups": [
-        "dragon64"
-      ]
-    },
-    {
-      "dest": "d200e_26.rom",
-      "sha1": "da5b756ba2a9c9ecebaa7daa8ba8bfd984d56a6f",
-      "sha256": "aa3ea353b019f0ce4ca2ae1baa1e0a9e8b2fe701079958d9d9b7622cd3455697",
-      "size": 4096,
-      "repo_path": "bios/Dragon/Dragon/d200e_26.rom",
-      "cores": [
-        "xroar"
-      ],
-      "regions": [
-        "spain"
-      ],
-      "region_groups": [
-        "dragon64"
-      ]
-    },
-    {
-      "dest": "alpha-boot-v0.4.rom",
-      "sha1": "69ea376dbc7418f69e9e809b448d22a4de012344",
-      "sha256": "411de6824f154f82d49e56c43630fb250b3720ab06daa96a618e16cbf314ec35",
-      "size": 8192,
-      "repo_path": "bios/Other/xroar/alpha-boot-v0.4.rom",
-      "cores": [
-        "xroar"
-      ]
-    },
-    {
-      "dest": "coco3p.rom",
-      "sha1": "631e383068b1f52a8f419f4114b69501b21cf379",
-      "sha256": "c89c9df29cf93351ad5056dfe1bf861d533ad4382b0e5a98e9043aff0a4480d6",
-      "size": 32768,
-      "repo_path": "bios/Tandy/CoCo/coco3p.rom",
-      "cores": [
-        "xroar"
-      ]
-    },
-    {
       "dest": "adv071_u24.rom",
       "sha1": "2f3d67efd80c36533d0220324c254fbeea364aaa",
       "sha256": "fedd90bfc17e960a1f69525d3939bde4b5154cdf167061a8b5fb9946e69dd233",
@@ -99883,19 +99951,6 @@
       ]
     },
     {
-      "dest": "disk11.rom",
-      "sha1": "10bdc5aa2d7d7f205f67b47b19003a4bd89defd1",
-      "sha256": "1c40c5a74e72edaeecc2511fee1aab347eae2c3d5fc6778cb622e3df14d63157",
-      "size": 8192,
-      "repo_path": "bios/Tandy/CoCo/disk11.rom",
-      "cores": [
-        "xroar"
-      ],
-      "systems": [
-        "coco"
-      ]
-    },
-    {
       "dest": "hdbdw3bck.rom",
       "sha1": "8fd64f1c246489e0bf2b3743ae76332ff324716a",
       "sha256": "ae0c32bf1c4c7eda9682acaaf1cf693ff890305263b69dda18150d779d043b19",
@@ -99919,26 +99974,6 @@
       ]
     },
     {
-      "dest": "dplus49b.rom",
-      "sha1": "73ae74978a78ec2b97ebb1b0c808238779529bfa",
-      "sha256": "a36d5534851140b48642ea1fa37a2865bb6e598a84bcd4c1610bed0207948cd8",
-      "size": 8192,
-      "repo_path": "bios/Dragon/Dragon/dplus49b.rom",
-      "cores": [
-        "xroar"
-      ]
-    },
-    {
-      "dest": "sdose6.rom",
-      "sha1": "ef157016386ed463374de6bac84d1f8ce654ed80",
-      "sha256": "09e8573e31effc16e9f1a177f46514ed9f332a6c5e4e46a550574bd969319c11",
-      "size": 8192,
-      "repo_path": "bios/Dragon/Dragon/sdose6.rom",
-      "cores": [
-        "xroar"
-      ]
-    },
-    {
       "dest": "cdos20.rom",
       "sha1": "9513091f37adf330f66a0c08f4e200344ad2e082",
       "sha256": "916a3f714783b4770446c85d903015ca9bb763261859778f24e83945db09e76b",
@@ -99949,34 +99984,11 @@
       ]
     },
     {
-      "dest": "delta2.rom",
-      "sha1": "686ebb5f39dd4fc907a0b748867d0a022d2f1a60",
-      "sha256": "10ada56bf876e15d5e9324a84a4e8f150eee8175c5f7faed20a1a5851b016f41",
-      "size": 8192,
-      "repo_path": "bios/Dragon/Dragon/delta2.rom",
-      "cores": [
-        "xroar"
-      ]
-    },
-    {
       "dest": "cp450dsk.rom",
       "sha1": "827697fa5b755f5dc1efb054cdbbeb04e405405b",
       "sha256": "b4d7f1e07af8d348bacab4f9744cc62106517273f390a11935fc9c992a924c9d",
       "size": 8192,
       "repo_path": "bios/Tandy/CoCo/cp400dsk.rom",
-      "cores": [
-        "xroar"
-      ],
-      "systems": [
-        "coco"
-      ]
-    },
-    {
-      "dest": "orch90.rom",
-      "sha1": "6a20fee9c70b36a6435ac8378f31d5b626017df0",
-      "sha256": "1a5a3e95522296f66a192e9a7ca0725ecc88862f9bb31f50ef37ae789404692f",
-      "size": 8192,
-      "repo_path": "bios/Tandy/CoCo/orch90.rom",
       "cores": [
         "xroar"
       ],
