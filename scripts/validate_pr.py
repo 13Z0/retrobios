@@ -7,7 +7,7 @@ Usage:
 
 Multi-layer validation:
 1. Hash verified against known databases (System.dat, batocera-systems)
-2. File size matches expected value
+2. File size within limits and within the sizes declared for its name
 3. File referenced in ≥1 platform config
 4. Duplicate detection against database.json
 5. Security checks (no executables, reasonable sizes)
@@ -110,6 +110,25 @@ class ValidationResult:
         return "\n".join(lines)
 
 
+def _note_sizes(sizes: dict[str, list], names: list[str], entry: dict) -> None:
+    """Record the sizes an entry accepts under each of its names.
+
+    An entry that declares no size says nothing about it, so a name is
+    judged only by the declarations that do.
+    """
+    size = entry.get("size")
+    accepted = []
+    if isinstance(size, list):
+        accepted = [(int(v), int(v)) for v in size]
+    elif isinstance(size, int) and size > 0:
+        accepted = [(size, size)]
+    if entry.get("min_size") or entry.get("max_size"):
+        accepted.append((int(entry.get("min_size") or 0),
+                         int(entry.get("max_size") or 2 ** 63)))
+    for name in names if accepted else []:
+        sizes.setdefault(name, []).extend(accepted)
+
+
 def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
     """Load all known hashes from platform configs.
 
@@ -117,7 +136,7 @@ def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
     bios/<Manufacturer>/<Console>/ folders the collection files its system
     under, read from the other files of that system it holds.
     """
-    known = {"sha1": set(), "md5": set(), "names": set(), "folders": {}}
+    known = {"sha1": set(), "md5": set(), "names": set(), "folders": {}, "sizes": {}}
     systems_of: dict[str, set[str]] = {}
     folders_of: dict[str, dict[str, int]] = {}
     files = (db or {}).get("files", {})
@@ -145,6 +164,7 @@ def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
                 known["md5"].update(md5s)
                 if "name" in file_entry:
                     known["names"].add(file_entry["name"])
+                    _note_sizes(known["sizes"], [file_entry["name"]], file_entry)
                 for value in (*sha1s, *md5s):
                     systems_of.setdefault(value, set()).add(system_id)
                 held = next((s for s in sha1s if s in files), None) or next(
@@ -177,11 +197,13 @@ def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
     engine's data) is in no platform list: the review called every such
     contribution "not referenced, needs manual review".
     """
-    known: dict[str, dict] = {"sha1": {}, "sha256": {}, "md5": {}, "crc32": {}}
+    known: dict[str, dict] = {"sha1": {}, "sha256": {}, "md5": {}, "crc32": {}, "sizes": {}}
     for emulator, profile in load_emulator_profiles(emulators_dir).items():
         for entry in profile.get("files") or []:
             if not isinstance(entry, dict):
                 continue
+            names = [entry.get("name"), *(entry.get("aliases") or [])]
+            _note_sizes(known["sizes"], [n for n in names if isinstance(n, str)], entry)
             # The resolver's reading: comma lists split (mesence's four
             # sha256), and a crc32 counts only where no stronger hash is
             # declared, bounded by the declared size (626 entries name a
@@ -244,7 +266,7 @@ def validate_file(
     elif result.size == 0:
         result.add_check(False, "File is empty (0 bytes)")
     else:
-        result.add_check(True, f"File size OK ({result.size:,} bytes)")
+        result.add_check(True, f"File size within limits ({result.size:,} bytes)")
 
     # Paths are compared as the database writes them, relative to the
     # checkout: an absolute path to the file itself read as its duplicate.
@@ -330,18 +352,49 @@ def validate_file(
             "File is not under bios/ yet. Its system's files are in "
             + " or ".join(f"`{f}`" for f in expected_folders)
         )
+    elif _variant_home(db, result.filename):
+        result.add_warning(
+            "File is not under bios/ yet. The collection keeps this name in "
+            f"`{_variant_home(db, result.filename)}`"
+        )
     else:
         result.add_warning(
             "File is not under bios/ yet. Place it in bios/Manufacturer/Console/"
         )
 
-    if name_known and not sha1_known and not md5_known:
+    declared = [
+        *platform_hashes.get("sizes", {}).get(result.filename, []),
+        *profile_hashes.get("sizes", {}).get(result.filename, []),
+    ]
+    size_fits = not declared or any(lo <= result.size <= hi for lo, hi in declared)
+    if not size_fits:
+        expected = sorted({lo if lo == hi else f"{lo:,} to {hi:,}" for lo, hi in declared},
+                          key=str)
+        shown = ", ".join(f"{v:,}" if isinstance(v, int) else v for v in expected)
+        result.add_warning(
+            f"Every declaration of {result.filename} expects {shown} bytes, "
+            f"this file has {result.size:,}: truncated or another file"
+        )
+
+    if name_known and not sha1_known and not md5_known and not by_profile and size_fits:
+        home = _variant_home(db, result.filename)
         result.add_info(
             "This may be a valid variant. If accepted, it will be placed in "
-            f"`.variants/{result.filename}.{result.sha1[:8]}`"
+            f"`{home}.variants/{result.filename}.{result.sha1[:8]}`"
         )
 
     return result
+
+
+def _variant_home(db: dict | None, name: str) -> str:
+    """The folder the collection keeps a name in, for its variants beside it."""
+    files = (db or {}).get("files", {})
+    for sha1 in (db or {}).get("indexes", {}).get("by_name", {}).get(name, []):
+        path = str(files.get(sha1, {}).get("path", ""))
+        folder = path.rsplit("/", 1)[0] + "/" if "/" in path else ""
+        if folder and "/.variants" not in "/" + folder:
+            return folder
+    return ""
 
 
 def _git_lines(*args: str) -> list[str] | None:

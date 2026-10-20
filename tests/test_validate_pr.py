@@ -100,6 +100,32 @@ class AFileOnlyACoreReadsIsKnown(_Fixture):
         self.assertFalse(any("not referenced" in message for _s, message in result.checks))
 
 
+class ASizeEveryDeclarationRulesOutIsNotAVariant(_Fixture):
+    """1024 random bytes named scph5501.bin, a name every declaration sizes
+    at 524288, were told "File size OK" and offered a .variants slot at the
+    repository root."""
+
+    DB = {
+        "files": {"a" * 40: {"path": "bios/Sony/PlayStation/scph5501.bin"}},
+        "indexes": {"by_name": {"scph5501.bin": ["a" * 40]}},
+    }
+    PLATFORM = {"sha1": set(), "md5": set(), "names": {"scph5501.bin"},
+                "folders": {}, "sizes": {"scph5501.bin": [(524288, 524288)]}}
+
+    def test_a_truncated_file_is_warned_and_not_offered_a_slot(self):
+        rel = self._bios_file("scph5501.bin", b"x" * 1024)
+        text = validate_pr.validate_file(rel, self.DB, self.PLATFORM).to_markdown()
+        self.assertIn("expects 524,288 bytes", text)
+        self.assertNotIn(".variants/", text)
+        self.assertNotIn("File size OK", text)
+
+    def test_a_right_sized_variant_goes_beside_its_name(self):
+        rel = self._bios_file("scph5501.bin", b"y" * 524288)
+        text = validate_pr.validate_file(rel, self.DB, self.PLATFORM).to_markdown()
+        self.assertIn("bios/Sony/PlayStation/.variants/scph5501.bin.", text)
+        self.assertNotIn("expects", text)
+
+
 class SymlinksAreRefusedBeforeReading(_Fixture):
     """A symlink must be rejected without its target being read.
 
@@ -274,7 +300,7 @@ class Reporting(_Fixture):
 class PlatformHashLoading(_Fixture):
     def test_missing_directory_yields_empty_sets(self):
         known = validate_pr.load_platform_hashes(str(self.tmp / "absent"))
-        self.assertEqual(known, {"sha1": set(), "md5": set(), "names": set(), "folders": {}})
+        self.assertEqual(known, {"sha1": set(), "md5": set(), "names": set(), "folders": {}, "sizes": {}})
 
     def test_declared_hashes_and_names_are_collected(self):
         platforms = self.tmp / "platforms"
