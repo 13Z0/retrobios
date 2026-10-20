@@ -9,8 +9,8 @@ cores:
 systems: []
 
 notes: |
-  Phantom .info: declared in libretro-core-info since 2017 but no source code,
-  build recipe, or compiled binary exists anywhere in the libretro organization.
+  Declared in libretro-core-info since 2017. No source code, build recipe or
+  compiled binary for it could be found in the libretro organization.
   Not on the buildbot. The .info has empty authors, license, and extensions.
 
   No system files required.

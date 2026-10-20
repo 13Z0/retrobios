@@ -40,7 +40,7 @@ systems:
 #
 # font.rom divergence: libretro.c:566-571 loads 0x1000 bytes then
 # overwrites the buffer with kanji ROM + built-in graph. The font.rom
-# data is not actually used (bug). Upstream memory.c:427 loads FONT_SZ
+# data ends up unused. Upstream memory.c:427 loads FONT_SZ
 # (2048) and keeps the font data in the first half.
 #
 # OPNA rhythm samples (2608_BD.WAV etc.): loaded by upstream via

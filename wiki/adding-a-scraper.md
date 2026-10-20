@@ -209,7 +209,7 @@ System ID consistency matters for cross-platform operations. The same console mu
 - Batocera uses 29-character truncated MD5 hashes in some entries. The resolution
   layer handles prefix matching, but the scraper should store the hash as-is.
 
-Scraped data reflects what the upstream declares, which may not match reality. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper detects an obviously wrong hash or filename, log a warning but still include the upstream value. The divergence will surface during truth diffing.
+Scraped data reflects what the upstream declares, which may not match reality. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper meets a hash or filename that differs from the emulator source, log a warning and still include the upstream value. The divergence will surface during truth diffing.
 
 ## Creating a target scraper
 

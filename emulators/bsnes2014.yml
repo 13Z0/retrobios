@@ -26,9 +26,9 @@ notes: |
   database (ananke/database/). All DSP1 games use DSP1B filenames via
   heuristic fallback. The database dsp1.program.rom / dsp1.data.rom names
   are only in the standalone build (target-ethos via ananke).
-  .info accuracy/balanced: firmware_count=18 (overcounts by 2, includes
-  phantom dsp1.* from unused database). Performance .info: firmware_count=17
-  (also missing cx4.data.rom).
+  .info accuracy/balanced: firmware_count=18, which counts the two dsp1.*
+  names of the database this build does not use. Performance .info:
+  firmware_count=17, without cx4.data.rom.
   Upstream v094 source is contained within the libretro repo (sfc/, ananke/).
   bsnes-emu/bsnes is the modern rewrite (v115+).
 

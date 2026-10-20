@@ -47,12 +47,13 @@ hashed with MD5, and compared case-insensitively against the expected value.
 If the `resolve_local_file` step already confirmed the MD5 match (status `md5_exact`),
 `verify.py` skips re-hashing and returns OK directly.
 
-### Truncated MD5 (Batocera bug)
+### Truncated MD5 (Batocera)
 
-Some entries in Batocera's system data contain 29-character MD5 strings instead of
-the standard 32. This is a known upstream bug. `verify.py` handles it by prefix matching:
-if the expected hash is shorter than 32 characters, the actual hash is compared against
-only its first N characters.
+Some entries in Batocera's system data carry 29-character MD5 strings instead of
+the usual 32. Batocera's script compares the full string (`batocera-systems:1088`), so
+those entries report the file as untested. `verify.py` compares the prefix instead, to
+find the file the entry designates: if the expected hash is shorter than 32 characters,
+the actual hash is compared against only its first N characters.
 
 ### md5_composite (Recalbox ZIP verification)
 
@@ -255,8 +256,8 @@ What the pack does with a `hash_mismatch` follows the platform's own mode. An
 MD5 or SHA1 platform would reject those bytes, so the file is left out and
 counted as an unsafe exclusion, distinct from a file the collection does not
 have. An existence platform reads no bytes at all, so the file is packed and
-the divergence is printed as a discrepancy: an error in an upstream BIOS list
-must not remove a file the frontend would have loaded.
+the divergence is printed as a discrepancy: a value in an upstream BIOS list that
+differs from the emulator source must not remove a file the frontend would load.
 
 
 ## Discrepancy detection

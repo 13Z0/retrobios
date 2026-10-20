@@ -29,7 +29,7 @@ notes: |
 
   Y-ZOOM ROM (ng-lo.rom / 000-lo.lo) listed in .info but generated
   algorithmically, never loaded from file (src/memory.cpp:223-253
-  generateYZoomData, CRC32 E09E253C). These are phantom .info entries.
+  generateYZoomData, CRC32 E09E253C), so the core never opens these files.
 
   .info firmware_count=12 but 2 are phantoms (Y-ZOOM), effective count=10.
   .info lists uni-bioscd.rom as "Universe BIOS 3.2" but SHA1 matches
