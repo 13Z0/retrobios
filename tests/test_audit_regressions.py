@@ -5526,5 +5526,32 @@ class AScraperThatCannotStartSaysWhy(unittest.TestCase):
         self.assertNotIn("GITHUB_TOKEN", err)
 
 
+class AStepThatCannotFailTheRunIsNotShownFailed(unittest.TestCase):
+    """check_buildbot leaves all_ok alone, and the summary printed it FAILED
+    right above "Pipeline COMPLETE". The total also missed the duration
+    column by fourteen characters."""
+
+    def test_every_step_outside_all_ok_is_declared_non_blocking(self):
+        import pipeline
+
+        lines = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8").splitlines()
+        loose = set()
+        for number, line in enumerate(lines):
+            found = re.search(r'results\["(\w+)"\] = ok$', line.strip())
+            if not found:
+                continue
+            after = " ".join(lines[number + 1:number + 4])
+            if "all_ok" not in after and "sys.exit" not in after:
+                loose.add(found.group(1))
+        self.assertEqual(loose, set(pipeline.NON_BLOCKING))
+
+    def test_the_total_sits_under_the_durations(self):
+        step = f"  {'x':.<40} {'OK':<7}{1.0:>8.1f}s"
+        total = f"  {'total':.<40} {'':<7}{12.5:>8.1f}s"
+        self.assertEqual(len(step), len(total))
+        self.assertIn("{'':<7}{total_elapsed:>8.1f}s",
+                      (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()

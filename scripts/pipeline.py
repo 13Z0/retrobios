@@ -83,6 +83,10 @@ class StepResults(dict):
         super().__setitem__(step, outcome)
 
 
+
+# Steps that report without failing the run.
+NON_BLOCKING = frozenset({"check_buildbot"})
+
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
     """Run a command, echoing its output as it comes. Returns (success, output).
 
@@ -784,15 +788,23 @@ def main() -> None:
     # Summary
     total_elapsed = time.monotonic() - total_start
     print(f"\n{'=' * 60}")
+    warned = []
     for step, outcome in results.items():
         if outcome is SKIPPED:
             print(f"  {step:.<40} SKIPPED")
             continue
         label = "OK" if outcome else "FAILED"
+        if not outcome and step in NON_BLOCKING:
+            # Printed FAILED right above "Pipeline COMPLETE", it read as a
+            # contradiction: the step reports, it does not stop the run.
+            label = "WARN"
+            warned.append(step)
         print(f"  {step:.<40} {label:<7}{results.seconds[step]:>8.1f}s")
-    print(f"  {'total':.<40} {total_elapsed:.1f}s")
+    print(f"  {'total':.<40} {'':<7}{total_elapsed:>8.1f}s")
     print(f"{'=' * 60}")
     print(f"  Pipeline {'COMPLETE' if all_ok else 'FINISHED WITH ERRORS'}")
+    if warned:
+        print(f"  {', '.join(warned)} reported a difference, which does not fail the run")
     print(f"{'=' * 60}")
     held.close()
     sys.exit(0 if all_ok else 1)
