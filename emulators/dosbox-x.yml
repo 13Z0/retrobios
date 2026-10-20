@@ -135,6 +135,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v1.04"
     required: false
+    system: dos
     size: 65536
     sha1: "5a5cb5a77d7d55ee69657c2f870416daed52dea7"
     validation: [sha1, size]
@@ -144,6 +145,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v1.05"
     required: false
+    system: dos
     size: 65536
     sha1: "e17a3a6d265bf1fa150312061134293d2b58288c"
     validation: [sha1, size]
@@ -153,6 +155,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v1.06"
     required: false
+    system: dos
     size: 65536
     sha1: "a553481f4e2794c10cfe597fef154eef0d8257de"
     validation: [sha1, size]
@@ -162,6 +165,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v1.07"
     required: false
+    system: dos
     size: 65536
     sha1: "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
     validation: [sha1, size]
@@ -171,6 +175,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control BlueRidge"
     required: false
+    system: dos
     size: 65536
     sha1: "7b8c2a5ddb42fd0732e2f22b3340dcf5360edf92"
     validation: [sha1, size]
@@ -180,6 +185,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v2.03"
     required: false
+    system: dos
     size: 131072
     sha1: "5837064c9df4741a55f7c4d8787ac158dff2d3ce"
     validation: [sha1, size]
@@ -189,6 +195,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v2.04"
     required: false
+    system: dos
     size: 131072
     sha1: "2c16432b6c73dd2a3947cba950a0f4c19d6180eb"
     validation: [sha1, size]
@@ -198,6 +205,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v2.06"
     required: false
+    system: dos
     size: 131072
     sha1: "2869cf4c235d671668cfcb62415e2ce8323ad4ed"
     validation: [sha1, size]
@@ -207,6 +215,7 @@ files:
   - name: "MT32_CONTROL.ROM"
     description: "MT-32 Control v2.07"
     required: false
+    system: dos
     size: 131072
     sha1: "47b52adefedaec475c925e54340e37673c11707c"
     validation: [sha1, size]
@@ -216,6 +225,7 @@ files:
   - name: "CM32L_CONTROL.ROM"
     description: "CM-32L/LAPC-I Control v1.00"
     required: false
+    system: dos
     size: 65536
     sha1: "73683d585cd6948cc19547942ca0e14a0319456d"
     validation: [sha1, size]
@@ -225,6 +235,7 @@ files:
   - name: "CM32L_CONTROL.ROM"
     description: "CM-32L/LAPC-I Control v1.02"
     required: false
+    system: dos
     size: 65536
     sha1: "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
     validation: [sha1, size]
@@ -234,6 +245,7 @@ files:
   - name: "CM32L_CONTROL.ROM"
     description: "CM-32LN/CM-500/LAPC-N Control v1.00"
     required: false
+    system: dos
     size: 65536
     sha1: "dc1c5b1b90a4646d00f7daf3679733c7badc7077"
     validation: [sha1, size]
@@ -247,6 +259,7 @@ files:
   - name: "MT32_PCM.ROM"
     description: "MT-32 PCM ROM"
     required: false
+    system: dos
     size: 524288
     sha1: "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
     validation: [sha1, size]
@@ -256,6 +269,7 @@ files:
   - name: "CM32L_PCM.ROM"
     description: "CM-32L/CM-64/LAPC-I PCM ROM"
     required: false
+    system: dos
     size: 1048576
     sha1: "289cc298ad532b702461bfc738009d9ebe8025ea"
     validation: [sha1, size]
@@ -267,6 +281,7 @@ files:
   - name: "default.sf2"
     description: "SoundFont the operating system installs as FluidSynth default"
     required: false
+    system: dos
     unsourceable: "a link the operating system creates to the SoundFont it installs as default, FluidR3_GM.sf2 on Fedora. No file of this name is distributed, and a same-named file of another program must not stand in"
     note: >
       first probe when fluid.soundfont is empty:
@@ -280,6 +295,7 @@ files:
   - name: "FluidR3_GM.sf2"
     description: "Fluid R3 GM SoundFont by Frank Wen"
     required: false
+    system: dos
     note: >
       second probe when fluid.soundfont is empty:
       /usr/share/sounds/sf2/FluidR3_GM.sf2, or C:\DOSBox-X\FluidR3_GM.sf2 on
@@ -290,6 +306,7 @@ files:
   - name: "GeneralUser_GS.sf2"
     description: "GeneralUser GS SoundFont by S. Christian Collins"
     required: false
+    system: dos
     note: >
       third probe when fluid.soundfont is empty:
       /usr/share/sounds/sf2/GeneralUser_GS.sf2, or
@@ -303,6 +320,7 @@ files:
   - name: "FONT.ROM"
     description: "PC-98 character generator ROM, T98Tools layout"
     required: false
+    system: pc-98
     hle_fallback: true
     size: 288768
     validation: [size]
@@ -315,6 +333,7 @@ files:
   - name: "ANEX86.BMP"
     description: "PC-98 character generator, Anex86 bitmap"
     required: false
+    system: pc-98
     hle_fallback: true
     note: >
       2048 by 2048 monochrome Windows bitmap, biSize 40, one plane, one bit per
@@ -326,6 +345,7 @@ files:
   - name: "FREECG98.BMP"
     description: "PC-98 character generator, free generated bitmap"
     required: false
+    system: pc-98
     bundled: true
     sha1: "e00b77cabd5960646abc5dbce5568f121d37ae48"
     md5: "268affbc64edb845b5e4f3c8200629d6"
@@ -343,6 +363,7 @@ files:
   - name: "wqy_12pt.bdf"
     description: "WenQuanYi 16-pixel bitmap font"
     required: false
+    system: dos
     bundled: true
     sha1: ["fefcb49cb13ea191d2c87b406c141a957020432c", "2f7b4de77e5d768f979989e2d127b1fded207cf8"]
     md5: ["77b5b2d0c1c3a4200a9cda047f74f957", "fa0dfab6dd87e09060e5d6a44d43fef3"]
@@ -353,6 +374,7 @@ files:
   - name: "wqy_11pt.bdf"
     description: "WenQuanYi 14-pixel bitmap font"
     required: false
+    system: dos
     bundled: true
     sha1: ["723b0c61428321b0aca4c43fcd91406807d4f815", "ac0c9c68c3528ea039d4cd081a3754a500c67317"]
     md5: ["4e10a27e6b3ceac0b3e2df4fadc48bb4", "0f5f6d27dc657538e1f566fe55d507f5"]
@@ -363,6 +385,7 @@ files:
   - name: "SarasaGothicFixed.ttf"
     description: "CJK fixed-width TrueType font"
     required: false
+    system: dos
     bundled: true
     sha1: "2a15dfa682df1ff841e2092348aa6a2460e40810"
     md5: "5b5dd2bc68764c7204dc4fe69118f2a4"
@@ -376,6 +399,7 @@ files:
   - name: "Nouveau_IBM.ttf"
     description: "IBM VGA style TrueType font"
     required: false
+    system: dos
     bundled: true
     sha1: "5f91e42aed6cbc7db7197181a378b4e4e2a41b6f"
     md5: "af3bd30eb752a50f47811c699aded99f"
@@ -398,6 +422,7 @@ files:
     path: "FONTS/roman.ttf"
     description: "Printer Roman typeface"
     required: false
+    system: dos
     note: "also the fallback typeface for any unmapped LQ selection"
     source_ref: "src/hardware/parport/printer.cpp:320-321, src/hardware/parport/printer.cpp:336-337, src/dosbox.cpp:4691-4693"
 
@@ -405,24 +430,28 @@ files:
     path: "FONTS/sansserif.ttf"
     description: "Printer Sans Serif typeface"
     required: false
+    system: dos
     source_ref: "src/hardware/parport/printer.cpp:323-324, src/dosbox.cpp:4691-4693"
 
   - name: "courier.ttf"
     path: "FONTS/courier.ttf"
     description: "Printer Courier typeface"
     required: false
+    system: dos
     source_ref: "src/hardware/parport/printer.cpp:326-327, src/dosbox.cpp:4691-4693"
 
   - name: "script.ttf"
     path: "FONTS/script.ttf"
     description: "Printer Script typeface"
     required: false
+    system: dos
     source_ref: "src/hardware/parport/printer.cpp:329-330, src/dosbox.cpp:4691-4693"
 
   - name: "ocra.ttf"
     path: "FONTS/ocra.ttf"
     description: "Printer OCR-A typeface"
     required: false
+    system: dos
     note: "serves both the OCR-A and OCR-B selections"
     source_ref: "src/hardware/parport/printer.cpp:332-334, src/dosbox.cpp:4691-4693"
 
@@ -431,6 +460,7 @@ files:
   - name: "SOUND.ROM"
     description: "PC-9801-26K/86 FM board BIOS"
     required: false
+    system: pc-98
     hle_fallback: true
     min_size: 16384
     validation: [size]
@@ -447,6 +477,7 @@ files:
   - name: "et4000.bin"
     description: "Tseng ET4000 video BIOS"
     required: false
+    system: ibm-pc
     min_size: 1024
     max_size: 65536
     validation: [size]
@@ -457,6 +488,7 @@ files:
     description: "S3 Trio64 video BIOS"
     sha1: "a308b15f93da34961c0141ec95b98c211557e2d5"
     required: false
+    system: ibm-pc
     aliases: ["86c764x1.bin"]
     min_size: 1024
     max_size: 65536
@@ -468,6 +500,7 @@ files:
     description: "IBM VGA option ROM of 10/27/86, laid out as mapped at C000:0"
     sha1: "dce6491424f1726203776dfae9a967a98a4ba7b5"
     required: false
+    system: ibm-pc
     min_size: 16384
     max_size: 32768
     validation: [size]
@@ -484,6 +517,7 @@ files:
     aliases: ["ibm-basic-1.10.rom"]
     sha1: "07449ebca18f979b9ab748582b736e402f2bf940"
     required: false
+    system: ibm-pc
     min_size: 32768
     max_size: 65536
     validation: [size]
@@ -500,14 +534,15 @@ files:
     description: "IBM PCjr system ROM"
     sha1: "1f5f7013f18c08ff50d7942e76c4fbd782412414"
     required: false
+    system: ibm-pcjr
     aliases: ["bios.rom"]
     min_size: 57344
     validation: [size]
     note: >
-      read during PCjr cartridge boot, and bytes 0x3000 to 0xDFFF are copied to
-      physical F3000. A short read leaves the region untouched and the cartridge
-      still boots
-    source_ref: "src/dos/dos_programs.cpp:3079-3088"
+      read during PCjr cartridge boot, which runs when machine is pcjr, and bytes
+      0x3000 to 0xDFFF are copied to physical F3000. A short read leaves the
+      region untouched and the cartridge still boots
+    source_ref: "src/dos/dos_programs.cpp:2995-2996, src/dos/dos_programs.cpp:3079-3088"
 
   # -- Whole system BIOS images --
 
@@ -523,6 +558,7 @@ files:
   - name: "ITF.ROM"
     description: "PC-98 Initial Firmware Test BIOS"
     required: false
+    system: pc-98
     max_size: 32768
     validation: [size]
     note: >
