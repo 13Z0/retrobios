@@ -5355,5 +5355,24 @@ class ThePackCheckAppliesTheFrontendRule(unittest.TestCase):
                 self.assertIsNotNone(_check_member_hash(zf, "bios/x.bin", entry, "md5"))
 
 
+class ABrokenRegistryIsNotAnEmptyOne(unittest.TestCase):
+    """A registered platform whose YAML was renamed was skipped without a
+    word, and a missing registry read as no platforms: verify --all --strict
+    and every --all build passed having checked nothing."""
+
+    def test_both_raise(self):
+        from scripts.common import list_registered_platforms
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            with self.assertRaises(FileNotFoundError):
+                list_registered_platforms(tmp)
+            Path(tmp, "_registry.yml").write_text(
+                "platforms:\n  rocknix:\n    config: rocknix.yml\n", encoding="utf-8"
+            )
+            with self.assertRaises(FileNotFoundError) as caught:
+                list_registered_platforms(tmp)
+            self.assertIn("rocknix", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

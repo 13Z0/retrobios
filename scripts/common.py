@@ -411,10 +411,14 @@ def list_registered_platforms(
 
     Only registered platforms generate packs and appear in CI.
     Unregistered YAMLs (e.g., emulatorjs.yml) are base configs for inheritance.
+
+    A missing registry, or a registered platform whose file is gone, raises:
+    left out quietly, verify --all --strict and every --all build passed
+    having checked none of it, and install.py kept serving its last manifest.
     """
     registry_path = os.path.join(platforms_dir, "_registry.yml")
     if not os.path.exists(registry_path):
-        return []
+        raise FileNotFoundError(f"no platform registry at {registry_path}")
     with open(registry_path) as f:
         registry = yaml_load(f) or {}
     platforms = []
@@ -423,8 +427,11 @@ def list_registered_platforms(
         if status == "archived" and not include_archived:
             continue
         config_path = os.path.join(platforms_dir, meta.get("config", f"{name}.yml"))
-        if os.path.exists(config_path):
-            platforms.append(name)
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(
+                f"{name} is registered in {registry_path} but {config_path} does not exist"
+            )
+        platforms.append(name)
     return platforms
 
 
