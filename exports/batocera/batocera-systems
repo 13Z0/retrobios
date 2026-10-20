@@ -400,7 +400,7 @@ systems = {
     "scv":   { "name": "Super Cassette Vision", "biosFiles":  [ { "md5": "635a978fd40db9a18ee44eff449fc126", "file": "bios/upd7801g.s01"  } ] },
 
     # ---------- Apple 2 GS ---------- #
-    "gsplus": { "name": "Apple 2 GS", "biosFiles": [ { "md5": "20a0334c447cb069a040ae5be1d938df", "file": "bios/ROM1" }, { "md5": "ba89edf2729a28a17cd9e0f7a0ac9a39", "file": "bios/AppleIIgs/apple2gs.rom2", "emulator": "clk" } ] },
+    "gsplus": { "name": "Apple 2 GS", "biosFiles": [ { "md5": "20a0334c447cb069a040ae5be1d938df", "file": "bios/ROM1" }, { "md5": "20a0334c447cb069a040ae5be1d938df", "file": "bios/AppleIIgs/apple2gs.rom", "emulator": "clk" }, { "md5": "ba89edf2729a28a17cd9e0f7a0ac9a39", "file": "bios/AppleIIgs/apple2gs.rom2", "emulator": "clk" } ] },
 
     # ---------- Zelda Classic ---------- #
     "zc210":   { "name": "Zelda Classic", "biosFiles":  [ { "md5": "033d7392985841027909c4c32b9f2076", "file": "bios/zc210/zcdata.dat"  },

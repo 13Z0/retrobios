@@ -6,11 +6,11 @@
   "files": [
     "batocera-systems.json"
   ],
-  "summary": "360 kept, 193 added, 2 hashes corrected, 0 requirements corrected, 13 hashes filled, 1532 additions left out, 248 entries found by content not listed",
+  "summary": "360 kept, 193 added, 2 hashes corrected, 0 requirements corrected, 13 hashes filled, 1535 additions left out, 248 entries found by content not listed",
   "counts": {
     "kept": 360,
     "added": 193,
-    "not_added": 1532,
+    "not_added": 1535,
     "not_kept": 0
   },
   "hashes_corrected": [
