@@ -250,11 +250,13 @@ class Exporter(BaseExporter):
         return core in required_by
 
     @staticmethod
-    def _join(names: list[str]) -> str:
-        """RetroPie's own idiom: a, b and c."""
+    def _join(names: list[str], serial: bool = False) -> str:
+        """RetroPie's own idiom: a, b and c, or a, b, and c where the
+        sentence already writes the comma before its final and."""
         if len(names) == 1:
             return names[0]
-        return ", ".join(names[:-1]) + " and " + names[-1]
+        last = ", and " if serial and len(names) > 2 else " and "
+        return ", ".join(names[:-1]) + last + names[-1]
 
     @classmethod
     def _extended(
@@ -269,7 +271,8 @@ class Exporter(BaseExporter):
         name: appending ", c and d" after "a and b" read "a and b, c and d".
         """
         start, end, written = enumeration
-        return help_text[:start] + cls._join([*written, *missing]) + help_text[end:]
+        serial = ", and " in help_text[start:end]
+        return help_text[:start] + cls._join([*written, *missing], serial) + help_text[end:]
 
     def modules(self, originals: dict[str, str]) -> dict[str, tuple[str, str]]:
         """Module id and help string of every script that mentions BIOS."""

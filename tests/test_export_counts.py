@@ -700,6 +700,16 @@ class RetroPieProposals(unittest.TestCase):
         self.assertIn("gexpress.pce", text)
         self.assertNotIn("pac-n1.bin", text)
 
+    def test_an_extended_list_keeps_its_own_final_comma(self):
+        """quasi88 writes "N88KNJ2.ROM, and N88SUB.ROM": the list came back
+        without its comma before the final and."""
+        help_text = "Copy bios files A.ROM, B.ROM, and C.ROM to $biosdir/pc88"
+        enumeration = RetroPie._enumeration(help_text)
+        self.assertEqual(
+            RetroPie._extended(help_text, enumeration, ["D.ROM"]),
+            "Copy bios files A.ROM, B.ROM, C.ROM, and D.ROM to $biosdir/pc88",
+        )
+
     def test_a_list_of_alternatives_is_not_extended(self):
         alternatives = "Copy the required BIOS file a.rom or b.rom to $biosdir"
         enumeration = "Copy the required BIOS files a.rom and b.rom to $biosdir"
