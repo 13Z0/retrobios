@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://play.google.com/store/apps/details?id=it.dbtecno.pizzaboyscpro"
 upstream: closed-source
+version_source:
+  url: "https://play.google.com/store/apps/details?id=it.dbtecno.pizzaboyscpro&hl=en"
+  pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
 author: "Pizza Emulators"
 profiled_date: "2026-08-12"
 core_version: "1.2.4"

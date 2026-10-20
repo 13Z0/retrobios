@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://www.epsxe.com/download.php"
 upstream: closed-source
+version_source:
+  url: "https://www.epsxe.com/download.php"
+  pattern: 'ePSXe v(\d+\.\d+\.\d+) Windows'
 author: "calb, _Demo_, Galtor (ePSXe Software S.L.)"
 profiled_date: "2026-08-11"
 core_version: "2.0.18"

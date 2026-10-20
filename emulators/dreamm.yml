@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://dreamm.aarongiles.com/"
 upstream: "https://dreamm.aarongiles.com/"
+version_source:
+  url: "https://dreamm.aarongiles.com/"
+  pattern: 'Latest Release: ([0-9.]+)'
 profiled_date: "2026-08-08"
 core_version: "4.0"
 display_name: "LucasArts (DREAMM)"

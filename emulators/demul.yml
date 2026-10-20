@@ -1,6 +1,9 @@
 emulator: Demul
 type: standalone
 upstream: "https://demul.emulation64.com"
+version_source:
+  url: "http://demul.emulation64.com/"
+  pattern: '<div class="normaltext">\[[^\]]*\] DEmul (\d+\.\d+)'
 profiled_date: "2026-03-26"
 core_version: "0.7"
 display_name: "Sega - Dreamcast/NAOMI/Hikaru (Demul)"

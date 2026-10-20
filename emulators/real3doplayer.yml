@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "http://www.arts-union.ru/node/23"
 upstream: closed-source
+version_source:
+  url: "http://www.arts-union.ru/node/23"
+  pattern: 'real3DOPlayer_free_(\d+(?:\.\d+)+)\.zip'
 author: "AltmerSoft (Maxim Grishin)"
 profiled_date: "2026-08-12"
 core_version: "1.0.32"

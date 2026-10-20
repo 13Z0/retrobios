@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://mednafen.github.io/"
 upstream: "https://mednafen.github.io/"
+version_source:
+  url: "https://mednafen.github.io/releases/"
+  pattern: '<li><b>Mednafen (\d+(?:\.\d+)+)</b>'
 profiled_date: "2026-08-08"
 core_version: "1.32.1"
 display_name: "Mednafen"

@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://www.zsnes.com"
 upstream: "https://www.zsnes.com"
+version_source:
+  url: "https://www.zsnes.com/"
+  pattern: 'Latest Release Notes \((v[0-9.]+[a-z]?)\)'
 profiled_date: "2026-08-08"
 core_version: "v0.230b"
 display_name: "Nintendo - SNES / SFC (SUPER ZSNES)"

@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://play.google.com/store/apps/details?id=com.emulator.fpse64"
 upstream: closed-source
+version_source:
+  url: "https://play.google.com/store/apps/details?id=com.emulator.fpse64&hl=en"
+  pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
 author: "Schtruck & LDchen"
 profiled_date: "2026-08-11"
 core_version: "1.13"

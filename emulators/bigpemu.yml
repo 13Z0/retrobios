@@ -2,6 +2,9 @@ emulator: BigPEmu
 type: standalone
 source: "https://www.richwhitehouse.com/jaguar/"
 upstream: "https://www.richwhitehouse.com/jaguar/"
+version_source:
+  url: "https://www.richwhitehouse.com/jaguar/index.php?content=download"
+  pattern: 'Current Version: <strong>([0-9.]+)</strong>'
 profiled_date: "2026-03-26"
 core_version: "1.12"
 display_name: "BigPEmu (Atari Jaguar)"

@@ -3,6 +3,9 @@ type: standalone
 core_classification: embedded_hle
 source: "https://amigan.1emu.net/releases/"
 upstream: "https://amigan.1emu.net/releases/"
+version_source:
+  url: "https://amigan.1emu.net/releases/"
+  pattern: 'Download DroidArcadia ([0-9.]+) for Android'
 author: "James Jacobs (Amigan Software)"
 profiled_date: "2026-08-11"
 core_version: "4.60"

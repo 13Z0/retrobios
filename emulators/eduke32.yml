@@ -3,9 +3,12 @@ type: standalone
 core_classification: game_engine
 source: "https://voidpoint.io/terminx/eduke32"
 upstream: "https://voidpoint.io/terminx/eduke32"
+version_source:
+  url: "https://dukeworld.com/eduke32/synthesis/latest/"
+  pattern: 'eduke32_src_(\d{8}-\d+-[0-9a-f]+)\.tar'
 profiled_date: "2026-10-04"
 source_commit: "ec5824db81817866f70da326d3811bb0f52b3517"
-core_version: "r11007"
+core_version: "20260807-10669-ec5824db8"
 display_name: "EDuke32"
 cores: [eduke32]
 systems: [duke3d, nam, napalm, ww2gi]

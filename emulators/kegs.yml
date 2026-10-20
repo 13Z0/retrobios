@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://kegs.sourceforge.net/"
 upstream: "https://kegs.sourceforge.net/"
+version_source:
+  url: "https://kegs.sourceforge.net/"
+  pattern: 'Download the KEGS v(\d+\.\d+) zip'
 profiled_date: "2026-08-08"
 core_version: "1.38"
 display_name: "Apple - Apple IIGS (KEGS)"

@@ -3,6 +3,9 @@ type: standalone
 core_classification: enhanced_fork
 source: "http://retropc.net/pi/xm6/index.html"
 upstream: closed-source
+version_source:
+  url: "http://retropc.net/pi/xm6/index.html"
+  pattern: '\(version [0-9.]+ \S+ version ([0-9.]+)\)'
 based_on: "XM6 v2.06 by PI."
 profiled_date: "2026-08-10"
 core_version: "3.38"

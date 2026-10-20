@@ -2,6 +2,9 @@ emulator: XRoar
 type: standalone
 source: "https://www.6809.org.uk/git/xroar.git"
 upstream: "https://www.6809.org.uk/xroar/"
+version_source:
+  url: "https://www.6809.org.uk/xroar/"
+  pattern: 'version\s*<strong>([0-9.]+)</strong>, released'
 profiled_date: "2026-03-26"
 core_version: "1.10"
 display_name: "Dragon / CoCo / MC-10 (XRoar)"

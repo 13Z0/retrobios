@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://fms.komkon.org/ColEm/"
 upstream: "https://fms.komkon.org/ColEm/"
+version_source:
+  url: "https://fms.komkon.org/ColEm/"
+  pattern: 'The Latest Version of ColEm is (\d+(?:\.\d+)+)'
 profiled_date: "2026-08-08"
 core_version: "5.6"
 display_name: "Coleco - ColecoVision / Adam (ColEm)"

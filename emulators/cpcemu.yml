@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "https://www.cpc-emu.org/"
 upstream: "https://www.cpc-emu.org/"
+version_source:
+  url: "https://www.cpc-emu.org/"
+  pattern: 'CPCemu (\d+(?:\.\d+)+) released'
 profiled_date: "2026-08-08"
 core_version: "3.0.2"
 display_name: "Amstrad - CPC (CPCemu)"

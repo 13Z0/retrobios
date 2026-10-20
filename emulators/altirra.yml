@@ -3,6 +3,9 @@ type: standalone
 core_classification: embedded_hle
 source: "https://www.virtualdub.org/altirra.html"
 upstream: "https://www.virtualdub.org/altirra.html"
+version_source:
+  url: "https://www.virtualdub.org/altirra.html"
+  pattern: '<h3>Current version</h3>\s*<p>\s*Altirra (\d+\.\d+)'
 profiled_date: "2026-08-11"
 core_version: "4.40"
 display_name: "Atari - 400/800/1200XL/XL/XE/XEGS/5200 (Altirra)"

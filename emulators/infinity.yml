@@ -4,6 +4,9 @@ core_classification: community_fork
 based_on: "fake-08 by jtothebell"
 source: "https://play.google.com/store/apps/details?id=me.dt2dev.infinity"
 upstream: closed-source
+version_source:
+  url: "https://play.google.com/store/apps/details?id=me.dt2dev.infinity&hl=en"
+  pattern: '\[\[\["([^"]+)"\]\],\[\[\[\d+'
 author: "GuoPing He"
 profiled_date: "2026-08-11"
 core_version: "5"

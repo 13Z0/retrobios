@@ -3,6 +3,9 @@ type: standalone
 core_classification: community_fork
 source: "https://roudoudou.com/ACE-DL/"
 upstream: "http://ace.cpcscene.net"
+version_source:
+  url: "https://roudoudou.com/ACE-DL/"
+  pattern: 'New release <i>[^<]*</i> - (\d{4}/\d{2}/\d{2})'
 profiled_date: "2026-08-08"
 core_version: "2026-06-03"
 display_name: "Amstrad - CPC/Plus (ACE-DL)"

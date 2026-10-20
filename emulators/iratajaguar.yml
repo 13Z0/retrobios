@@ -3,6 +3,9 @@ type: standalone
 core_classification: other
 source: "http://www.arts-union.ru/node/23"
 upstream: closed-source
+version_source:
+  url: "http://www.arts-union.ru/node/23"
+  pattern: 'IrataJaguar_free_(\d+(?:\.\d+)+)\.zip'
 author: "Maxim Grishin (Altmer)"
 profiled_date: "2026-08-11"
 core_version: "1.0.7"
