@@ -261,13 +261,16 @@ to the way the project writes:
 - None of the marketing vocabulary the test lists, and no superlatives. A
   number with its criterion says more.
 - Headings in sentence case, never repeating the site name.
+- In emulator profiles, no verdict on another project's file: "phantom",
+  "misleading", "bogus", "typo", "has errors", "incorrectly says". The note
+  states what that file declares and what the code reads.
 
 Formatting stays: bold labels, lists, tables and admonitions make a page
 easier to use. When markup shows raw on the site, the rendering is fixed and
 the formatting kept.
 
-What the test cannot read is tone. Text that names another project says what
-changes, not who erred: "hash updated to the emulator source", "files added",
+Beyond those words the test cannot read tone. Text that names another
+project says what changes, not who erred: "hash updated to the emulator source", "files added",
 "required flags aligned with the code". No "wrong", "bogus" or "phantom" about
 someone else's work. Notes in a profile say what the core does, nothing about
 what it is not. A reply on an issue or a pull request thanks once, gives the
