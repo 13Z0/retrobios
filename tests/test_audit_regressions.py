@@ -1893,6 +1893,23 @@ class CheckoutCompletenessRegressions(unittest.TestCase):
                 os.chdir(cwd)
 
 
+def _git_paths(*args: str, stdin: list[str] | None = None) -> set[str] | None:
+    """The NUL-separated paths a git command prints, or None outside a
+    checkout. check-ignore exits 1 when it matches nothing, an answer."""
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            input="".join(f"{p}\0" for p in stdin or []),
+            capture_output=True, text=True, cwd=ROOT, check=False,
+        )
+    except FileNotFoundError:
+        return None
+    answered = (0, 1) if args[0] == "check-ignore" else (0,)
+    if result.returncode not in answered:
+        return None
+    return {p for p in result.stdout.split("\0") if p}
+
+
 class EveryManifestEntryIsFetchable(unittest.TestCase):
     """An install manifest may not list a file the installer cannot get.
 
@@ -1980,28 +1997,50 @@ class EveryManifestEntryIsFetchable(unittest.TestCase):
         the large-files release. Marking a committed file as a release asset
         sends the installer to an asset nobody uploaded (sdlpal/5.avi, 83 MB
         in git, was announced as release asset `5.avi`). Marking a gitignored
-        file as a repo file sends it to a raw URL that has no content.
+        file as a repo file sends it to a raw URL that has no content. A
+        file neither committed nor ignored is a commit nobody made, and is
+        named as such rather than as a release asset.
         """
-        tracked = set(
-            subprocess.run(
-                ["git", "ls-files", "-z", "--", "bios"],
-                capture_output=True, text=True, cwd=ROOT, check=True,
-            ).stdout.split("\0")
-        )
-        if not tracked:
+        tracked = _git_paths("ls-files", "-z", "--", "bios")
+        if tracked is None:
             self.skipTest("not a git checkout")
+        manifests: dict[str, list[dict]] = {}
         for path in self._manifests():
-            with self.subTest(manifest=path.name):
-                data = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8"))
+            manifests[path.name] = [
+                entry
+                for entry in data.get("files", []) + data.get("case_variants", [])
+                if entry.get("repo_path")
+            ]
+        outside = sorted(
+            {e["repo_path"] for group in manifests.values() for e in group} - tracked
+        )
+        ignored = _git_paths("check-ignore", "-z", "--no-index", "--stdin", stdin=outside)
+        if ignored is None:
+            self.skipTest("not a git checkout")
+        for name, group in manifests.items():
+            with self.subTest(manifest=name):
                 wrong = []
-                for entry in data.get("files", []) + data.get("case_variants", []):
-                    repo_path = entry.get("repo_path")
-                    if not repo_path:
-                        continue
-                    committed = repo_path in tracked
-                    if bool(entry.get("release_asset")) == committed:
-                        wrong.append((entry["dest"], repo_path, "committed" if committed else "gitignored"))
-                self.assertEqual(wrong, [], f"{path.name} picks the wrong source: {wrong[:3]}")
+                for entry in group:
+                    repo_path = entry["repo_path"]
+                    state = (
+                        "committed" if repo_path in tracked
+                        else "gitignored" if repo_path in ignored
+                        else "untracked, never committed"
+                    )
+                    if bool(entry.get("release_asset")) != (state == "gitignored"):
+                        wrong.append((entry["dest"], repo_path, state))
+                self.assertEqual(wrong, [], f"{name} picks the wrong source: {wrong[:3]}")
+
+    def test_no_collected_file_is_left_uncommitted(self):
+        """157 files of the 17 September campaign sat in bios/ untracked:
+        the database indexed them, the manifests gave them a repo_path and
+        the installer got a 404. A file under bios/ is either committed or
+        listed in .gitignore as a release asset, nothing in between."""
+        untracked = _git_paths("ls-files", "-z", "--others", "--exclude-standard", "--", "bios")
+        if untracked is None:
+            self.skipTest("not a git checkout")
+        self.assertEqual(sorted(untracked)[:20], [], f"{len(untracked)} untracked files under bios/")
 
 
 class ReleaseAssetCriterion(unittest.TestCase):
