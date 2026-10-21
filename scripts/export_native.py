@@ -685,36 +685,45 @@ def export_platform(
     own_summary = exporter.outcome(systems, produced)
     summary = own_summary
     if summary is None:
-        summary = (
-            f"{report.files_kept} kept, {landed} added, "
-            f"{_count(len(applied), 'hash')} corrected, "
-            f"{_count(requirements, 'requirement')} corrected"
+        # What the written file carries, in the terms the exports page uses.
+        # What it does not carry is counted on a line of its own below.
+        parts = [f"{report.files_kept} kept"]
+        landed_counts = (
+            (landed, "file", "", "added"),
+            (len(applied), "hash", "", "updated to the emulator source"),
+            (requirements, "required flag", "", "aligned with the code"),
+            (len(filled), "hash", "", "added to an existing entry"),
+            (len(resized), "size", "", "updated to the emulator source"),
+            (len(unsized), "size", "", "removed"),
+            (len(cleared), "hash", "", "removed"),
+            (lost, "entry", "entries", "removed, the format cannot state them"),
         )
-        if filled:
-            summary += f", {_count(len(filled), 'hash')} filled"
-        if resized:
-            summary += f", {_count(len(resized), 'size')} corrected"
-        if unsized:
-            summary += f", {_count(len(unsized), 'size')} removed"
-        if cleared:
-            summary += f", {_count(len(cleared), 'hash')} cleared"
-        if refused:
-            summary += f", {_count(refused, 'addition')} left out"
-        if lost:
-            summary += f", {_count(lost, 'platform entry', 'platform entries')} the format cannot keep"
+        parts += [
+            f"{_count(number, noun, plural)} {verb}"
+            for number, noun, plural, verb in landed_counts
+            if number
+        ]
+        summary = ", ".join(parts)
     withheld = exporter.withheld()
-    if withheld:
-        summary += f", {_count(len(withheld), 'correction')} withheld"
-    if report.labels:
-        # A content-scanning core's names are labels: a list checked by path
-        # cannot hold them.
-        summary += f", {_count(report.labels, 'entry', 'entries')} found by content not listed"
+    unwritten = [
+        f"{_count(number, noun, plural)} {what}"
+        for number, noun, plural, what in (
+            (refused, "file", "", "the format or its checker cannot carry"),
+            (len(withheld), "update", "", "withheld"),
+            # A content-scanning core's names are labels: a list checked
+            # by path cannot hold them.
+            (report.labels, "entry", "entries", "found by content"),
+        )
+        if number
+    ]
     # Reported, never removed: the platform's file keeps every entry.
     candidates = removal_candidates(
         systems, scraped, load_emulator_profiles("emulators"),
         load_data_dir_registry(platforms_dir),
     )
     messages.append(summary)
+    if unwritten:
+        messages.append("not in the file: " + ", ".join(unwritten))
     if candidates:
         open_question = sum(c["verdict"] == "undetermined" for c in candidates)
         messages.append(
@@ -723,26 +732,16 @@ def export_platform(
             + ", listed in the report"
         )
     messages.extend(f"withheld: {reason}" for reason in withheld)
-    for correction in applied[:5]:
-        messages.append(f"hash corrected: {correction}")
-    if len(applied) > 5:
-        messages.append(f"and {_count(len(applied) - 5, 'more hash correction')}")
-    for fill in filled[:5]:
-        messages.append(f"hash filled: {fill}")
-    if len(filled) > 5:
-        messages.append(f"and {_count(len(filled) - 5, 'more hash fill')}")
-    for label in resized[:5]:
-        messages.append(f"size corrected: {label}")
-    if len(resized) > 5:
-        messages.append(f"and {_count(len(resized) - 5, 'more size correction')}")
-    for label in unsized[:5]:
-        messages.append(f"size removed: {label}")
-    if len(unsized) > 5:
-        messages.append(f"and {len(unsized) - 5} more removed")
-    for clear in cleared[:5]:
-        messages.append(f"hash cleared: {clear}")
-    if len(cleared) > 5:
-        messages.append(f"and {len(cleared) - 5} more cleared")
+    for heading, labels in (
+        ("hash updated", applied),
+        ("hash added", filled),
+        ("size updated", resized),
+        ("size removed", unsized),
+        ("hash removed", cleared),
+    ):
+        messages.extend(f"{heading}: {label}" for label in labels[:5])
+        if len(labels) > 5:
+            messages.append(f"and {len(labels) - 5} more")
 
     write_report(output_dir / f"{platform}.json", {
         "platform": platform,

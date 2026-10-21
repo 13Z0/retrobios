@@ -26,7 +26,7 @@ def _report(platform: str, files: list[str], **changes: object) -> dict:
         "platform": platform,
         "originals": {f: f"https://example.org/{platform}/{f}" for f in files},
         "files": files,
-        "summary": "3 kept, 1 added, 7 hashes corrected, 0 requirements corrected",
+        "summary": "3 kept, 1 file added, 7 hashes updated to the emulator source",
         "hashes_corrected": [], "hashes_filled": [], "sizes_corrected": [],
         "sizes_removed": [], "hashes_cleared": [], "requirements_corrected": 0,
         "withheld": [], "invalid": [],
@@ -155,6 +155,75 @@ class ThePageAddressesMaintainersAsPeers(unittest.TestCase):
         page = generate_exports_page([report], {}).lower()
         for word in ("their file", "theirs", "corrected", "wrong", "drift", "left out"):
             self.assertNotIn(word, page)
+
+
+class TheRunReportStatesWhatTheFileCarries(unittest.TestCase):
+    """exports/<platform>.json, the report beside the file offered to a
+    maintainer, said "82 hashes corrected" and "854 additions left out":
+    the words the exports page avoids, and counts of things not in the file
+    mixed into the summary of what is."""
+
+    JUDGING = ("their", "corrected", "wrong", "drift", "left out", "never seen")
+
+    def test_summary_and_messages(self):
+        import json  # noqa: PLC0415
+        from unittest import mock  # noqa: PLC0415
+
+        from exporter.base_exporter import BaseExporter  # noqa: PLC0415
+
+        class Plain(BaseExporter):
+            @staticmethod
+            def platform_name() -> str:
+                return "plat"
+
+            @staticmethod
+            def native_filename() -> str:
+                return "list.json"
+
+            @staticmethod
+            def requires() -> str:
+                return "md5"
+
+            def render(self, systems, report, originals, scraped=None):
+                return {"list.json": json.dumps(sorted(
+                    fe.name for system in systems.values()
+                    for fe in system.files if self.writable(fe)
+                ))}
+
+            def validate(self, systems, produced):
+                return []
+
+        truth = {"systems": {"psx": {"files": [
+            {"name": "a.bin", "md5": "b" * 32, "validation": ["md5"]},
+            {"name": "new.bin", "md5": "c" * 32},
+            {"name": "nohash.bin", "size": 16},
+        ]}}}
+        scraped = {"systems": {"psx": {"native_id": "psx", "files": [
+            {"name": "a.bin", "destination": "a.bin", "native_system": "psx",
+             "md5": "a" * 32},
+        ]}}}
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as scratch, \
+                mock.patch.object(export_native, "load_inputs",
+                                  return_value=(truth, scraped)), \
+                mock.patch.object(export_native, "unpinned", return_value=[]), \
+                mock.patch.object(export_native, "removal_candidates", return_value=[]):
+            ok, messages = export_native.export_platform(
+                "plat", Plain, Path(scratch), Path(scratch) / "out",
+                str(ROOT / "platforms"), Path(scratch) / "cache", False,
+            )
+            self.assertTrue(ok, messages)
+            report = json.loads((Path(scratch) / "out" / "plat.json").read_text())
+        self.assertEqual(
+            report["summary"],
+            "1 kept, 1 file added, 1 hash updated to the emulator source",
+        )
+        self.assertIn(
+            "not in the file: 1 file the format or its checker cannot carry", messages
+        )
+        self.assertIn("hash updated: psx/a.bin md5", messages)
+        for text in [report["summary"], *messages]:
+            for word in self.JUDGING:
+                self.assertNotIn(word, text.lower())
 
 
 UPSTREAM_CACHE = ROOT / ".cache" / "upstream-native"
