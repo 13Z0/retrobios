@@ -198,51 +198,69 @@ files:
     category: bios_zip
     system: snk-neogeo-mvs
     note: "MVS/AES BIOS, 15 variants including Universe BIOS 4.0"
-    source_ref: "src/drivers/neogeo.c:1677-1714"
+    source_ref: "src/drivers/neogeo.c:1677-1714, 1726-1734, 1803"
     contents:
       # 68K BIOS variants (one active at a time via dipswitch)
       - name: sp-s2.sp1
         description: Europe MVS v2, default
+        crc32: "9036d879"
       - name: sp-s.sp1
         description: Europe MVS v1
+        crc32: "c7f2fa45"
       - name: usa_2slt.bin
         description: US MVS v2
+        crc32: "e72943de"
       - name: sp-e.sp1
         description: US MVS v1
+        crc32: "2723a5b5"
       - name: asia-s3.rom
         description: Asia MVS v3
+        crc32: "91b64be3"
       - name: vs-bios.rom
         description: Japan MVS v6
+        crc32: "f0e8f27d"
       - name: sp-j2.sp1
         description: Japan MVS v2
+        crc32: "acede59c"
       - name: uni-bios_4_0.rom
         description: Universe BIOS 4.0, hack
+        crc32: "a7aab458"
       - name: uni-bios_3_3.rom
         description: Universe BIOS 3.3, hack
+        crc32: "24858466"
       - name: uni-bios_2_0.rom
         description: Universe BIOS 2.0, hack
+        crc32: "0c12c2ad"
       - name: uni-bios_1_3.rom
         description: Universe BIOS 1.3, hack
+        crc32: "b24b44a0"
       - name: uni-bios_1_1.rom
         description: Universe BIOS 1.1, hack
+        crc32: "5dda0d84"
       - name: uni-bios_1_0.rom
         description: Universe BIOS 1.0, hack
+        crc32: "0ce453a0"
       - name: neodebug.rom
         description: Debug MVS
+        crc32: "698ebb7d"
       - name: neo-epo.bin
         description: Asia AES
+        crc32: "d27a71f1"
       # Z80 sound BIOS (always required)
       - name: mame.sm1
         description: Z80 sound BIOS
         size: 131072
+        crc32: "97cf998b"
       # Fix tiles (always required)
       - name: sfix.sfx
         description: fix layer tiles
         size: 131072
+        crc32: "354029fc"
       # Zoom table (always required)
       - name: mamelo.lo
         description: Y zoom control
         size: 65536
+        crc32: "e09e253c"
 
   # ---------------------------------------------------------
   # IGS PGM (pgm.zip)
@@ -257,12 +275,15 @@ files:
       - name: pgm_p01s.rom
         description: 68K BIOS
         size: 131072
+        crc32: "e42b166e"
       - name: pgm_t01s.rom
         description: text tiles
         size: 2097152
+        crc32: "1a7123a0"
       - name: pgm_m01s.rom
         description: samples
         size: 2097152
+        crc32: "45ae7159"
 
   # ---------------------------------------------------------
   # Sega ST-V (stvbios.zip)
@@ -276,16 +297,22 @@ files:
     contents:
       - name: epr19730.ic8
         description: Japan
+        crc32: "d0e0889d"
       - name: mp17951a.s
         description: Japan alt
+        crc32: "2672f9d8"
       - name: mp17952a.s
         description: USA
+        crc32: "d1be2adf"
       - name: 20091.bin
         description: Japan alt 2
+        crc32: "59ed40f4"
       - name: mp17953a.ic8
         description: Taiwan
+        crc32: "a4c47570"
       - name: mp17954a.s
         description: Europe
+        crc32: "f7722da3"
 
   # ---------------------------------------------------------
   # Sega Mega Play (megaplay.zip)
@@ -299,8 +326,10 @@ files:
     contents:
       - name: ep15294.ic2
         description: Mega Play BIOS v1
+        crc32: "aa8dc2d8"
       - name: megaplay.bin
         description: Mega Play BIOS v2
+        crc32: "f97c68aa"
 
   # ---------------------------------------------------------
   # Sega Mega Tech (megatech.zip)
@@ -315,6 +344,7 @@ files:
       - name: epr12664.20
         description: Mega Tech BIOS
         size: 32768
+        crc32: "f71e9526"
 
   # ---------------------------------------------------------
   # DECO Cassette (decocass.zip)
@@ -328,20 +358,27 @@ files:
     contents:
       - name: v0a-.7e
         description: 6502 BIOS variant A
+        crc32: "3d33ac34"
       - name: rms8.cpu
         description: 6502 BIOS variant B
+        crc32: "23d929b7"
       - name: rms8.snd
         description: audio CPU
         size: 2048
+        crc32: "b66b2c2a"
       - name: cass8041.bin
         description: MCU
         size: 1024
+        crc32: "a6df18fd"
       - name: dsp8.3m
         description: PROM
+        crc32: "238fdb40"
       - name: dsp8.10d
         description: PROM
+        crc32: "3b5836b4"
       - name: rms8.j3
         description: DRAM banking PROM
+        crc32: "51eef657"
 
   # ---------------------------------------------------------
   # Nintendo PlayChoice-10 (playch10.zip)
@@ -356,18 +393,25 @@ files:
       - name: pch1-c.8t
         description: Z80 BIOS
         size: 16384
+        crc32: "d52fa07a"
       - name: pch1-c.8p
         description: character ROM
+        crc32: "30c15e23"
       - name: pch1-c.8m
         description: character ROM
+        crc32: "c1232eee"
       - name: pch1-c.8k
         description: character ROM
+        crc32: "9acffb30"
       - name: 82s129.6f
         description: color PROM
+        crc32: "e5414ca3"
       - name: 82s129.6e
         description: color PROM
+        crc32: "a2625c6e"
       - name: 82s129.6d
         description: color PROM
+        crc32: "1213ebd4"
 
   # ---------------------------------------------------------
   # Nintendo Super System (nss.zip)
@@ -382,12 +426,15 @@ files:
       - name: spc700.rom
         description: SPC700 boot ROM
         size: 64
+        crc32: "38000b6b"
       - name: nss-c.dat
         description: NSS BIOS CPU
         size: 32768
+        crc32: "a8e202b3"
       - name: nss-ic14.02
         description: NSS BIOS CPU alt
         size: 32768
+        crc32: "e06cb58f"
 
   # ---------------------------------------------------------
   # Super Kaneko Nova System (skns.zip)
@@ -402,15 +449,19 @@ files:
       - name: sknsj1.u10
         description: Japan BIOS
         size: 524288
+        crc32: "7e2b836c"
       - name: sknse1.u10
         description: Europe BIOS
         size: 524288
+        crc32: "e2b9d7d1"
       - name: sknsa1.u10
         description: Asia BIOS
         size: 524288
+        crc32: "745e5212"
       - name: sknsu1.u10
         description: USA BIOS
         size: 524288
+        crc32: "384d21ec"
 
   # ---------------------------------------------------------
   # Konami GX (konamigx.zip)
@@ -425,6 +476,7 @@ files:
       - name: 300a01.34k
         description: GX BIOS
         size: 131072
+        crc32: "d5fa95f5"
 
   # ---------------------------------------------------------
   # ZN-1/ZN-2 PlayStation-based arcade boards
@@ -443,6 +495,7 @@ files:
       - name: coh1002c.bin
         description: Capcom ZN-1 BIOS
         size: 524288
+        crc32: "50033af6"
 
   # Capcom ZN-2
   - name: cpzn2.zip
@@ -455,6 +508,7 @@ files:
       - name: coh3002c.bin
         description: Capcom ZN-2 BIOS
         size: 524288
+        crc32: "e860ea8b"
 
   # Taito FX-1
   - name: taitofx1.zip
@@ -467,6 +521,7 @@ files:
       - name: coh1002t.bin
         description: Taito FX-1 BIOS
         size: 524288
+        crc32: "e3f23b6e"
 
   # Tecmo TPS
   - name: tps.zip
@@ -479,6 +534,7 @@ files:
       - name: coh1002m.bin
         description: Tecmo TPS BIOS
         size: 524288
+        crc32: "69ffbcb4"
 
   # Video System / Taito KN
   - name: sncwgltd.zip
@@ -491,6 +547,7 @@ files:
       - name: coh1002v.bin
         description: KN BIOS
         size: 524288
+        crc32: "5ff165f3"
 
   # Acclaim PSX
   - name: acpsx.zip
@@ -503,6 +560,7 @@ files:
       - name: coh1000a.bin
         description: Acclaim PSX BIOS
         size: 524288
+        crc32: "8d8d0764"
 
   # Century Electronics CVS
   - name: cvs.zip

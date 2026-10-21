@@ -1094,6 +1094,10 @@ def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
 
     scores = {path: held(path) for path in paths}
     best = max(scores.values(), default=(0, 0))
+    if best == (0, 0):
+        # Not one declared member in any copy: the name is all that matches,
+        # and galgames.zip holding only an assembler listing is not the set.
+        return []
     return [path for path in paths if scores[path] == best]
 
 
