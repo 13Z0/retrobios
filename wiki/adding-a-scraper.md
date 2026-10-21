@@ -396,11 +396,14 @@ manipulation rather than load-dump to maintain human-readable formatting.
    python -m scripts.scraper.myplatform_scraper --json | python -m json.tool | head -50
    ```
 
-3. **Compare with existing YAML** if updating a scraper:
+3. **Compare with existing YAML** if updating a scraper. The output goes to the
+   repository's `tmp/`, listed in `.gitignore`, because `/tmp` is a RAM disk on
+   many systems:
 
    ```bash
-   python -m scripts.scraper.myplatform_scraper --output /tmp/test.yml
-   diff platforms/myplatform.yml /tmp/test.yml
+   mkdir -p tmp
+   python -m scripts.scraper.myplatform_scraper --output tmp/test.yml
+   diff platforms/myplatform.yml tmp/test.yml
    ```
 
 4. **Run verification** after generating:

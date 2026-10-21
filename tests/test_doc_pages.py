@@ -600,5 +600,32 @@ class CiTriggersPointToTheirLists(unittest.TestCase):
             self.assertIn(f"`{named.rstrip('*')}`", section)
 
 
+class ScratchFilesGoToRepoTmp(unittest.TestCase):
+    """adding-a-scraper.md wrote its comparison to /tmp while two other
+    pages say /tmp is a RAM disk and send scratch files to the repo's tmp/."""
+
+    @staticmethod
+    def _code_lines(text: str) -> list[str]:
+        lines, inside = [], False
+        for line in text.splitlines():
+            if line.strip().startswith("```"):
+                inside = not inside
+            elif inside:
+                lines.append(line)
+        return lines
+
+    def test_no_command_writes_to_slash_tmp(self):
+        offenders = [
+            f"{page.name}: {line.strip()}"
+            for page in PUBLISHED
+            for line in self._code_lines(page.read_text(encoding="utf-8"))
+            if re.search(r"(?<![\w.])/tmp/", line)
+        ]
+        self.assertEqual(offenders, [])
+        old = "   ```bash\n   python x.py --output /tmp/test.yml\n   ```\n"
+        self.assertEqual(self._code_lines(old), ["   python x.py --output /tmp/test.yml"])
+        self.assertIn("tmp/", (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines())
+
+
 if __name__ == "__main__":
     unittest.main()
