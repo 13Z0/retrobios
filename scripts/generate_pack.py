@@ -2632,16 +2632,15 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         # A group pack and a pack built for the platform alone can both be
         # present, and each one is a pack of this platform.
         for pack_name in found:
-            if _narrows_contents(pack_name):
-                # Only reached after an --all-variants build, whose stage 1
-                # re-hashed every member against the collection above. The
-                # platform's list describes the full pack, so a narrowed one
-                # is not compared to it.
+            variant = _pack_variant(pack_name)
+            if variant is None:
+                # One BIOS per slot: the slot choice is not replayed here.
                 print(
                     f"  {platform_name} [{pack_name}]: hashes checked during the build; "
-                    "narrowed by design, so not compared to the platform's full list"
+                    "one per slot by design, so not compared to the platform's full list"
                 )
                 continue
+            source, required_only = variant
             zip_path = os.path.join(args.output_dir, pack_name)
             result = verify_pack_against_platform(
                 zip_path,
@@ -2653,6 +2652,8 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 regions=verify_regions,
                 data_registry=verify_data_registry,
                 target_cores=tc,
+                source=source,
+                required_only=required_only,
             )
             (ok, _checked, _present, errors, bl_checked, bl_present,
              core_checked, core_present, bl_excluded) = result
@@ -4730,6 +4731,30 @@ def _narrows_contents(pack_name: str) -> bool:
     a hardware target is passed the same way.
     """
     return any(f"{tag}_" in pack_name for tag in _CONTENT_NARROWING_TAGS)
+
+
+def _pack_variant(pack_name: str) -> tuple[str, bool] | None:
+    """The (source, required_only) a pack was built as, read from its name.
+
+    None for a one-per-slot pack, whose slot choice the check does not
+    replay. The tags come from the name builder, as for _narrows_contents.
+    """
+    def tagged(**dimension: object) -> bool:
+        tags = [
+            tag for tag, _label in _narrowings(
+                str(dimension.get("source", "full")), None, None,
+                bool(dimension.get("one_per_slot", False)),
+                bool(dimension.get("required_only", False)),
+            )
+        ]
+        return all(f"{tag}_" in pack_name for tag in tags)
+
+    if tagged(one_per_slot=True):
+        return None
+    source = next(
+        (s for s in ("platform", "truth") if tagged(source=s)), "full"
+    )
+    return source, tagged(required_only=True)
 
 
 def _pack_archives(output_dir: str) -> list[str]:

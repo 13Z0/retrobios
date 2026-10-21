@@ -226,6 +226,8 @@ def hidden_extras(
     resolver: ExtraResolver | None = None,
     placed_kind: dict[str, str] | None = None,
     placed_local: dict[str, str] | None = None,
+    include_all: bool = False,
+    required_only: bool = False,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -247,7 +249,9 @@ def hidden_extras(
     report entry names. ``placed_local`` receives the local copy the builder
     writes at each of those destinations, for the pack integrity check.
     ``resolver`` is the builder's lookup. An extra it cannot resolve is
-    skipped and takes no path, as the builder skips it.
+    skipped and takes no path, as the builder skips it. ``include_all`` and
+    ``required_only`` are the builder's for a --source truth or a
+    --required-only pack: an optional extra is skipped before it takes a path.
     """
     from packpaths import _register_path, placement_block
 
@@ -267,8 +271,10 @@ def hidden_extras(
     hidden: dict[tuple[str, str, str], str] = {}
     for fe in _collect_emulator_extras(
         config, emulators_dir, db, set(shipped), base_dest, profiles,
-        target_cores=target_cores, undeclared=report,
+        target_cores=target_cores, include_all=include_all, undeclared=report,
     ):
+        if required_only and fe.get("required") is False:
+            continue
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
             continue

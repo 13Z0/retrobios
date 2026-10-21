@@ -535,6 +535,8 @@ def _builder_extras(
     target_cores: set[str] | None,
     region_drops: set[str],
     data_registry: dict | None,
+    include_all: bool = False,
+    required_only: bool = False,
 ) -> dict[str, str]:
     """{full destination: local copy} of each core extra the builder writes.
 
@@ -584,6 +586,8 @@ def _builder_extras(
             destination_owners(platform_profiles), True, profiles=emu_profiles,
         ),
         placed_local=placed_local,
+        include_all=include_all,
+        required_only=required_only,
     )
     return placed_local
 
@@ -607,13 +611,18 @@ def verify_pack_against_platform(
     regions: list[str] | None = None,
     data_registry: dict | None = None,
     target_cores: set[str] | None = None,
+    source: str = "full",
+    required_only: bool = False,
 ) -> tuple[bool, int, int, list[str], int, int, int, int, int]:
     """Verify a pack ZIP against its platform config and core requirements.
 
     A region priority list narrows the expectation to what the builder would
     have packed, using the same selection function. A hardware target narrows
     it the same way and for the same reason: the systems it removes are not
-    missing from the pack, they were never asked for.
+    missing from the pack, they were never asked for. ``source`` and
+    ``required_only`` are the variant the pack was built as: a platform-only
+    pack is held to the platform's list alone, a truth pack to the cores'
+    files alone, and a required-only pack to the required entries of both.
 
     Checks:
     1. Every baseline file declared by the platform exists in the ZIP
@@ -659,6 +668,9 @@ def verify_pack_against_platform(
             base_dest,
             emu_profiles,
             target_cores=target_cores,
+            include_extras=(source != "platform"),
+            include_all=(source == "truth"),
+            required_only=required_only,
             held_out=held,
         )
         region_drops = region_mod.resolve_region_drops(
@@ -700,8 +712,10 @@ def verify_pack_against_platform(
             for i in range(1, len(parts)):
                 zip_parents.add("/".join(parts[:i]))
         baseline_groups: dict[str, list[dict]] = {}
-        for _sys_id, system in expected_systems.items():
+        for _sys_id, system in (expected_systems if source != "truth" else {}).items():
             for fe in system.get("files", []):
+                if required_only and fe.get("required") is False:
+                    continue
                 dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
                 if not dest:
                     continue
@@ -787,11 +801,12 @@ def verify_pack_against_platform(
         #    holds the platform's other dump.
         core_checked = 0
         core_present = 0
-        if db is not None:
+        if db is not None and source != "platform":
             placed_local = _builder_extras(
                 config, emulators_dir, db, emu_profiles, baseline_groups,
                 base_dest, is_flat, zip_set, zip_lower, target_cores,
                 region_drops, data_registry,
+                include_all=(source == "truth"), required_only=required_only,
             )
             for full, local in sorted(placed_local.items()):
                 core_checked += 1
