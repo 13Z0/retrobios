@@ -105,6 +105,22 @@ DEFAULT_BIOS_DIR = "bios"
 
 
 
+# Formats that are already compressed: deflating them again took 28 s of the
+# RetroArch build for 2.1 GB of members and saved 9.6 MB (0.45 %), 16 GB and
+# about 72 MB across all packs. Measured per extension on the 2026-10-20
+# packs; .pk3 (3 %), .jpg (6 %), .avi (44 %) and .jar (60 %) still shrink
+# and stay deflated. Chosen by name alone, so a pack stays a function of its
+# inputs.
+_STORED_EXTENSIONS = frozenset({".7z", ".chd", ".ogg", ".pk4", ".png", ".zip"})
+
+
+def _member_compression(arcname: str) -> int:
+    """ZIP_STORED for a member whose format is already compressed."""
+    if os.path.splitext(arcname)[1].lower() in _STORED_EXTENSIONS:
+        return zipfile.ZIP_STORED
+    return zipfile.ZIP_DEFLATED
+
+
 def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> None:
     """Add a file to the pack with metadata that does not depend on the build.
 
@@ -117,7 +133,7 @@ def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> Non
     because some members are firmware images of several hundred megabytes.
     """
     info = zipfile.ZipInfo(filename=arcname, date_time=_FIXED_DATE_TIME)
-    info.compress_type = zipfile.ZIP_DEFLATED
+    info.compress_type = _member_compression(arcname)
     # The executable bit is the one permission worth carrying: the RetroDECK
     # pack ships the two Voxatron engine binaries, and a user who extracts
     # them at 644 cannot run them. Git records the bit, so reading it from
@@ -383,6 +399,7 @@ def _data_directory_members(
     seen_lower: set,
     seen_parents: set,
     refs_out: dict | None = None,
+    required_only: bool = False,
 ) -> Iterator[tuple[str, str]]:
     """Yield (source, destination) for the cached data directories a
     platform's systems declare.
@@ -394,12 +411,16 @@ def _data_directory_members(
     trees an emulator reads, refreshed from upstream, so what ships is
     whatever the cache holds. The pack and the install manifest both read
     this, the first to write the files and the second to count them.
+    ``required_only`` leaves out a tree declared ``required: false``, one the
+    core runs without, as it leaves out such a file.
     """
     # Data directories from _data_dirs.yml
     for sys_id, system in sorted(pack_systems.items()):
         for dd in system.get("data_directories", []):
             ref_key = dd.get("ref", "")
             if not ref_key or not data_registry or ref_key not in data_registry:
+                continue
+            if required_only and dd.get("required") is False:
                 continue
             if ref_key in installed_data_refs(platform_name):
                 continue
@@ -455,12 +476,14 @@ def _pack_data_directories(
     seen_destinations: set,
     seen_lower: set,
     seen_parents: set,
+    required_only: bool = False,
 ) -> int:
     """Add the data directories to the pack. Returns how many files went in."""
     added = 0
     for src, full in _data_directory_members(
         pack_systems, data_registry, platform_name, base_dest,
         case_insensitive, seen_destinations, seen_lower, seen_parents,
+        required_only=required_only,
     ):
         _add_pack_member(zf, src, _flat(full, base_dest, flatten))
         added += 1
@@ -523,6 +546,7 @@ def _select_variants(
     regions: list[str] | None,
     one_per_slot: bool,
     required_only: bool = False,
+    undeclared: list[dict] | None = None,
 ) -> tuple[set, list, list]:
     """Which regional and slot alternatives this pack leaves out.
 
@@ -551,6 +575,7 @@ def _select_variants(
             include_all=(source == "truth"),
             required_only=required_only,
             held_out=held,
+            undeclared=undeclared,
         )
     if regions:
         region_index = region_mod.platform_region_index(
@@ -744,10 +769,14 @@ def generate_pack(
             if sid in system_filter or _norm_system_id(sid) in norm_filter
         }
         if not filtered:
-            available = sorted(pack_systems.keys())[:10]
+            hint = suggest_names(
+                system_filter,
+                sorted(pack_systems),
+                f"--platform {platform_name} --list-systems",
+            )
             print(
-                f"  WARNING: no systems matched filter {system_filter} "
-                f"(available: {', '.join(available)})"
+                f"  WARNING: {platform_name} has no system matching "
+                f"{', '.join(system_filter)}. {hint}"
             )
             return None
         pack_systems = filtered
@@ -773,9 +802,20 @@ def generate_pack(
     # dedicated extras pass with an empty seen set: it only needs group
     # membership, never destinations, and a superset of members is the safe
     # direction. Runs only when --region is given.
+    # The gap report both extras passes read, computed once: the region
+    # grouping and the core complement below ask it the same question.
+    undeclared = (
+        undeclared_report(
+            config, emulators_dir, db, emu_profiles, target_cores,
+            include_all=(source == "truth"),
+        )
+        if source != "platform" and precomputed_extras is None
+        else None
+    )
     region_drops, region_fallbacks, slot_undecidable = _select_variants(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
         target_cores, source, regions, one_per_slot, required_only,
+        undeclared=undeclared,
     )
 
     with _writing_pack(zip_path) as zf:
@@ -1037,6 +1077,7 @@ def generate_pack(
               _collect_emulator_extras(
                   config, emulators_dir, db, set(), base_dest, emu_profiles,
                   target_cores=target_cores, include_all=(source == "truth"),
+                  undeclared=undeclared,
               ),
               system_filter,
           )
@@ -1050,6 +1091,7 @@ def generate_pack(
               emu_profiles,
               target_cores=target_cores,
               include_all=(source == "truth"),
+              undeclared=undeclared,
           )
 
       core_count = 0
@@ -1142,7 +1184,7 @@ def generate_pack(
       total_files += _pack_data_directories(
           zf, pack_systems, data_registry, platform_name, base_dest,
           flatten, case_insensitive, seen_destinations, seen_lower,
-          seen_parents,
+          seen_parents, required_only=required_only,
       )
 
       # README.txt for users: personalized step-by-step per platform
@@ -1211,7 +1253,7 @@ def _extract_zip_to_archive(
             member = zipfile.ZipInfo(
                 filename=target_path, date_time=_FIXED_DATE_TIME
             )
-            member.compress_type = zipfile.ZIP_DEFLATED
+            member.compress_type = _member_compression(target_path)
             member.external_attr = 0o100644 << 16
             target_zf.writestr(member, data)
 
@@ -1676,6 +1718,8 @@ def generate_emulator_pack(
             for dd in deliverable(
                 profile.get("data_directories", []), standalone
             ):
+                if required_only and dd.get("required") is False:
+                    continue
                 ref_key = dd.get("ref", "")
                 if not ref_key or not data_registry or ref_key not in data_registry:
                     if ref_key:
@@ -2031,8 +2075,6 @@ def generate_md5_pack(
 ) -> str | None:
     """Build a pack from an explicit list of hashes with layout context."""
     files_db = db.get("files", {})
-    by_md5 = db.get("indexes", {}).get("by_md5", {})
-    by_crc32 = db.get("indexes", {}).get("by_crc32", {})
     if zip_contents is None:
         zip_contents = {}
 
@@ -2093,15 +2135,8 @@ def generate_md5_pack(
 
     with _writing_pack(zip_path) as zf:
         for hash_type, hash_val in hashes:
-            sha1 = None
-            if hash_type == "sha1" and hash_val in files_db:
-                sha1 = hash_val
-            elif hash_type == "md5":
-                sha1 = by_md5.get(hash_val)
-            elif hash_type == "crc32":
-                sha1 = by_crc32.get(hash_val)
-
-            if not sha1 or sha1 not in files_db:
+            sha1 = sha1_for_hash(hash_type, hash_val, db)
+            if not sha1:
                 not_in_db.append(hash_val)
                 continue
 
@@ -2164,6 +2199,53 @@ def generate_md5_pack(
             os.unlink(zip_path)
         return None
     return zip_path
+
+
+def _json_artifact_kind(path: Path) -> str | None:
+    """"manifest" for an install manifest, "targets" for a per-target core
+    list, None for anything else. The two share their file names: install.py
+    fetches install/<platform>.json and install/targets/<platform>.json."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict) or not data:
+        return None
+    if "manifest_version" in data:
+        return "manifest"
+    if all(v is None or isinstance(v, list) for v in data.values()):
+        return "targets"
+    return None
+
+
+def _refuse_mixed_output(output_dir: str, writing: str) -> None:
+    """Stop before one kind of installer JSON overwrites the other.
+
+    Both are named <platform>.json, so --manifest-targets aimed at install/
+    replaced install/retroarch.json, the file every installer downloads, with
+    a target table, and the reverse replaced a target list by a manifest.
+    """
+    directory = Path(output_dir)
+    if not directory.is_dir():
+        return
+    other = "targets" if writing == "manifest" else "manifest"
+    held = sorted(
+        p.name for p in directory.glob("*.json") if _json_artifact_kind(p) == other
+    )
+    if not held:
+        return
+    what = {
+        "manifest": "install manifests (install/ in the repository)",
+        "targets": "per-target core lists (install/targets/ in the repository)",
+    }
+    flag = "--manifest" if writing == "manifest" else "--manifest-targets"
+    print(
+        f"ERROR: {output_dir} holds {what[other]}: {', '.join(held[:3])}"
+        f"{', ...' if len(held) > 3 else ''}. {flag} writes {what[writing]} under the "
+        f"same file names; pass the --output-dir that holds those instead.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
 
 def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
@@ -2386,14 +2468,7 @@ def _run_manifest_mode(
         with open(registry_path) as _rf:
             registry = yaml_load(_rf) or {}
 
-    if args.all_variants:
-        variants = [
-            ("full", False), ("full", True),
-            ("platform", False), ("platform", True),
-            ("truth", False), ("truth", True),
-        ]
-    else:
-        variants = [(args.source, args.required_only)]
+    variants = ALL_VARIANTS if args.all_variants else ((args.source, args.required_only),)
 
     failed: list[str] = []
     for source, required_only in variants:
@@ -2466,13 +2541,13 @@ def _run_manifest_mode(
                         _write_manifest_if_changed(alias_path, alias_manifest)
                         print(f"  {alias_path}: alias of {representative}")
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
-                print(f"  ERROR: {e}")
+                print(f"  ERROR: {e}", file=sys.stderr)
                 failed.append(representative)
 
     # A platform whose manifest could not be built has none, and install.py
     # serves whatever an older run left there: that is a failed run.
     if failed:
-        print(f"ERROR: no manifest for {', '.join(sorted(set(failed)))}")
+        print(f"ERROR: no manifest for {', '.join(sorted(set(failed)))}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -2483,7 +2558,7 @@ def _pack_output_lock(output_dir: str, exclusive: bool = True) -> Iterator[None]
         with artifact_lock(output_dir, exclusive=exclusive):
             yield
     except ArtifactLockBusy as exc:
-        print(f"ERROR: {exc}")
+        print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -2510,8 +2585,14 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     verify_regions = getattr(args, "regions", None)
     verify_profiles = load_emulator_profiles(args.emulators_dir)
     verify_data_registry = load_data_dir_registry(args.platforms_dir)
+    # After an --all-variants build every variant is named, so none of the
+    # six packs the run wrote passes unmentioned.
     expected = _expected_pack_names(
-        platforms, args.platforms_dir, verify_regions, args.target
+        platforms,
+        args.platforms_dir,
+        verify_regions,
+        args.target,
+        ALL_VARIANTS if args.all_variants else (("full", False),),
     )
     on_disk = (
         set(os.listdir(args.output_dir)) if os.path.isdir(args.output_dir) else set()
@@ -2538,6 +2619,16 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         # A group pack and a pack built for the platform alone can both be
         # present, and each one is a pack of this platform.
         for pack_name in found:
+            if _narrows_contents(pack_name):
+                # Only reached after an --all-variants build, whose stage 1
+                # re-hashed every member against the collection above. The
+                # platform's list describes the full pack, so a narrowed one
+                # is not compared to it.
+                print(
+                    f"  {platform_name} [{pack_name}]: hashes checked during the build; "
+                    "narrowed by design, so not compared to the platform's full list"
+                )
+                continue
             zip_path = os.path.join(args.output_dir, pack_name)
             result = verify_pack_against_platform(
                 zip_path,
@@ -2570,10 +2661,18 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     if not verified:
         # Every platform skipped is no check at all: a mistyped or purged
         # output directory read as a passed integrity check.
-        print(f"ERROR: no pack to verify in {args.output_dir}")
+        print(f"ERROR: no pack to verify in {args.output_dir}", file=sys.stderr)
         all_ok = False
     if not all_ok:
         sys.exit(1)
+
+
+# The source x required combinations --all-variants builds, in build order.
+ALL_VARIANTS: tuple[tuple[str, bool], ...] = (
+    ("full", False), ("full", True),
+    ("platform", False), ("platform", True),
+    ("truth", False), ("truth", True),
+)
 
 
 def _pack_label(source: str, required_only: bool) -> str:
@@ -2634,14 +2733,7 @@ def _run_platform_packs(
     system_filter: list[str] | None,
 ) -> None:
     """Generate ZIP packs for platform groups and verify."""
-    if args.all_variants:
-        variants = [
-            ("full", False), ("full", True),
-            ("platform", False), ("platform", True),
-            ("truth", False), ("truth", True),
-        ]
-    else:
-        variants = [(args.source, args.required_only)]
+    variants = ALL_VARIANTS if args.all_variants else ((args.source, args.required_only),)
 
     failed: list[str] = []
     for source, required_only in variants:
@@ -2731,7 +2823,7 @@ def _run_platform_packs(
                         pack_name=group_name,
                     )
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
-                print(f"  ERROR: {e}")
+                print(f"  ERROR: {e}", file=sys.stderr)
                 failed.append(representative)
             else:
                 # A builder that declined (no system left under the target)
@@ -2769,7 +2861,7 @@ def _run_platform_packs(
     if failed:
         # Verification only sees the ZIPs that exist, so a pack that was never
         # written does not fail it.
-        print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}")
+        print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}", file=sys.stderr)
         sys.exit(1)
     if not all_ok:
         sys.exit(1)
@@ -3039,9 +3131,13 @@ def _main(held: contextlib.ExitStack) -> None:
         help="List available targets for the platform",
     )
     parser.add_argument(
-        "--from-md5", help="Hash(es) to look up or pack (comma-separated)"
+        "--from-md5",
+        help="Hash(es) to look up or pack, comma-separated: CRC32, MD5, SHA-1 or SHA-256",
     )
-    parser.add_argument("--from-md5-file", help="File with hashes (one per line)")
+    parser.add_argument(
+        "--from-md5-file",
+        help="File with hashes, one per line, alone or beside a file name as md5sum writes it",
+    )
     parser.add_argument(
         "--manifest",
         action="store_true",
@@ -3058,6 +3154,12 @@ def _main(held: contextlib.ExitStack) -> None:
         help="Extract and verify pack integrity (path + hash)",
     )
     args = parser.parse_args()
+    from verify import work_from_repo_root
+
+    work_from_repo_root(
+        args, parser,
+        ["db", "platforms_dir", "bios_dir", "output_dir", "emulators_dir", "from_md5_file"],
+    )
     packresolve.set_offline(bool(args.offline))
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
@@ -3075,6 +3177,7 @@ def _main(held: contextlib.ExitStack) -> None:
             _run_verify_packs(args)
         return
     if args.manifest_targets:
+        _refuse_mixed_output(args.output_dir, "targets")
         with _pack_output_lock(args.output_dir):
             generate_target_manifests(
                 os.path.join(args.platforms_dir, "targets"), args.output_dir
@@ -3117,13 +3220,20 @@ def _main(held: contextlib.ExitStack) -> None:
         hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
     has_from_md5 = bool(args.from_md5 or getattr(args, "from_md5_file", None))
     if has_from_md5:
-        hashes = (
-            parse_hash_input(args.from_md5)
-            if args.from_md5
-            else parse_hash_file(args.from_md5_file)
-        )
+        try:
+            hashes = (
+                parse_hash_input(args.from_md5)
+                if args.from_md5
+                else parse_hash_file(args.from_md5_file)
+            )
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
         if not hashes:
-            print("No valid hashes found in input", file=sys.stderr)
+            print(
+                f"ERROR: no hash in the input. Accepted: {ACCEPTED_HASHES}",
+                file=sys.stderr,
+            )
             sys.exit(1)
         db = load_database(args.db)
         if not args.platform and not args.emulator:
@@ -3257,6 +3367,7 @@ def _main(held: contextlib.ExitStack) -> None:
         )
 
         if args.manifest:
+            _refuse_mixed_output(args.output_dir, "manifest")
             _run_manifest_mode(
                 args, groups, db, zip_contents, emu_profiles, target_cores_cache
             )
@@ -3398,7 +3509,9 @@ def _stable_hashes(local_path: str, db: dict) -> dict:
         if expected is None or hashes["sha1"] == expected:
             _STABLE_HASHES[key] = hashes
             return hashes
-        hashes = compute_hashes(local_path, _MANIFEST_HASHES)
+        # Read from disk again: the cached digest is the one in doubt, and a
+        # retry through the cache answered with it without a second read.
+        hashes = compute_hashes(local_path, _MANIFEST_HASHES, cache=False)
     raise RuntimeError(
         f"{local_path}: sha1 {hashes['sha1']} contradicts the database scan "
         f"({expected}). Rehash the file or regenerate database.json"
@@ -3800,6 +3913,7 @@ def _manifest_selection(
     source: str,
     required_only: bool,
     regions: list[str] | None,
+    undeclared: list[dict] | None = None,
 ) -> tuple[set[str], SelectionIndex]:
     """Destinations a region list removes, and the groups the installer replays.
 
@@ -3821,6 +3935,7 @@ def _manifest_selection(
         required_only=required_only,
         extras_out=extras,
         held_out=held,
+        undeclared=undeclared,
     )
     region_index = region_mod.platform_region_index(
         config, emu_profiles, target_cores
@@ -4012,9 +4127,18 @@ def generate_manifest(
             ),
         }
 
+    # Read by the region grouping and by phase 2 with the same arguments.
+    undeclared = (
+        undeclared_report(
+            config, emulators_dir, db, emu_profiles, target_cores,
+            include_all=(source == "truth"),
+        )
+        if source != "platform"
+        else None
+    )
     region_drops, selection = _manifest_selection(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
-        target_cores, source, required_only, regions,
+        target_cores, source, required_only, regions, undeclared=undeclared,
     )
 
     # Phase 1: baseline files
@@ -4208,6 +4332,7 @@ def generate_manifest(
             unplaceable=unplaceable,
             baseline_claims=baseline_claims,
             absent=absent,
+            undeclared=undeclared,
         )
     else:
         core_files = []
@@ -4252,7 +4377,7 @@ def generate_manifest(
     data_members = list(_data_directory_members(
         pack_systems, data_registry, platform_name, base_dest,
         case_insensitive, seen_destinations, seen_lower, seen_parents,
-        data_refs,
+        data_refs, required_only=required_only,
     ))
     data_sizes = pack_only_sizes + [os.path.getsize(src) for src, _dest in data_members]
     data_directories = _manifest_data_directories(
@@ -4483,22 +4608,31 @@ def _expected_pack_names(
     platforms_dir: str,
     regions: list[str] | None,
     target_name: str | None,
+    variants: tuple[tuple[str, bool], ...] = (("full", False),),
 ) -> dict[str, set[str]]:
     """Exact pack file names --verify-packs may check, per platform.
 
     Rebuilt from the name builder, never matched by substring: a substring
     picks the full pack when a regional or targeted one was asked for, or a
     narrowed pack when the full one was. A platform answers to its own name
-    and to the name of the group it shares a pack with.
+    and to the name of the group it shares a pack with. ``variants`` lists
+    the (source, required_only) combinations the run built.
     """
-    def narrow_tags(platform_name: str) -> str:
+    def narrow_tags(platform_name: str) -> list[str]:
         named = _platform_target(platform_name, target_name, platforms_dir)
-        return "".join(
-            tag for tag, _label in _narrowings("full", regions, named, False, False)
-        )
+        return [
+            "".join(
+                tag
+                for tag, _label in _narrowings(source, regions, named, False, required)
+            )
+            for source, required in variants
+        ]
 
     names: dict[str, set[str]] = {
-        p: {f"{_platform_pack_stem([p], p, platforms_dir)}{narrow_tags(p)}_BIOS_Pack.zip"}
+        p: {
+            f"{_platform_pack_stem([p], p, platforms_dir)}{tags}_BIOS_Pack.zip"
+            for tags in narrow_tags(p)
+        }
         for p in platforms
     }
     # Groups depend on which platforms a run built: --all alone or with
@@ -4521,13 +4655,11 @@ def _expected_pack_names(
         ):
             if len(group) < 2:
                 continue
-            name = (
-                f"{_platform_pack_stem(group, representative, platforms_dir)}"
-                f"{narrow_tags(representative)}_BIOS_Pack.zip"
-            )
-            for p in group:
-                if p in names:
-                    names[p].add(name)
+            stem = _platform_pack_stem(group, representative, platforms_dir)
+            for tags in narrow_tags(representative):
+                for p in group:
+                    if p in names:
+                        names[p].add(f"{stem}{tags}_BIOS_Pack.zip")
     return names
 
 
@@ -4707,6 +4839,7 @@ from packextras import (  # noqa: E402,F401
     emulator_region_drops,
     _emulator_region_group,
     expand_agnostic_entries,
+    undeclared_report,
 )
 
 
@@ -4728,7 +4861,9 @@ from packverify import (  # noqa: E402,F401
 # _OFFLINE is deliberately not re-exported: importing a value copies it, so a
 # facade name would keep saying False after set_offline() changed the flag.
 from packresolve import (  # noqa: E402,F401
+    ACCEPTED_HASHES,
     _detect_hash_type,
+    sha1_for_hash,
     preferred_entries as _preferred_entries,
     parse_hash_input,
     parse_hash_file,

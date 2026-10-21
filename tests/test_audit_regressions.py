@@ -108,7 +108,41 @@ class ReadmeRegressions(unittest.TestCase):
             cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
         )
         self.assertEqual(proc.returncode, 1)
-        self.assertIn("needs Python 3.12", proc.stderr)
+        self.assertIn("needs Python 3.9", proc.stderr)
+
+    def test_the_floor_interpreter_compiles_every_script(self):
+        """The floor said 3.12 for a reason the code no longer carried: every
+        script compiled under 3.9, and only the guard refused it. Checked
+        with a real interpreter of the floor version, as the installer's 3.8
+        floor is."""
+        import shutil  # noqa: PLC0415
+
+        floor = re.search(
+            r"sys\.version_info < \((\d+), (\d+)\)",
+            (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8"),
+        )
+        name = f"python{floor.group(1)}.{floor.group(2)}"
+        interpreter = shutil.which(name)
+        if interpreter is None:
+            if os.environ.get("CI"):
+                self.fail(f"CI must provide {name}")
+            self.skipTest(f"no {name} on PATH")
+        check = (
+            "import pathlib, sys\n"
+            "bad = []\n"
+            "for p in sorted(pathlib.Path('scripts').rglob('*.py')):\n"
+            "    try:\n"
+            "        compile(p.read_text(encoding='utf-8'), str(p), 'exec')\n"
+            "    except SyntaxError as e:\n"
+            "        bad.append(f'{p}:{e.lineno}')\n"
+            "print(bad)\n"
+            "sys.exit(1 if bad else 0)\n"
+        )
+        proc = subprocess.run(
+            [interpreter, "-I", "-c", check], cwd=ROOT, capture_output=True,
+            text=True, timeout=300, check=False,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
 
 class ReleaseSigningRegressions(unittest.TestCase):
@@ -5233,7 +5267,7 @@ class ANamedPackThatIsAbsentFails(unittest.TestCase):
                 cwd=ROOT, capture_output=True, text=True, timeout=600,
             )
         self.assertEqual(result.returncode, 1)
-        self.assertIn("no pack to verify", result.stdout)
+        self.assertIn("no pack to verify", result.stderr)
 
 
 
@@ -5833,6 +5867,257 @@ class AFileTheLauncherNeverOpens(unittest.TestCase):
     def test_the_gap_report_reads_it(self):
         source = (ROOT / "scripts" / "verify.py").read_text(encoding="utf-8")
         self.assertIn('unread_on(f, config.get("_key", ""))', source)
+
+
+class RequiredOnlyReachesDataDirectories(unittest.TestCase):
+    """--required-only filtered files and packed every data tree anyway: the
+    Required RetroArch pack still carried the 90 FreeIntv overlays, which the
+    core reads only with its multi-screen option and replaces by a drawn
+    keypad when absent (FreeIntv src/libretro.c:294-296, 350-369)."""
+
+    def _members(self, required_only: bool) -> list[str]:
+        from scripts import generate_pack as gp
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            for key in ("needed", "optional"):
+                Path(tmp, key).mkdir()
+                Path(tmp, key, f"{key}.bin").write_bytes(b"x")
+            registry = {
+                key: {"local_cache": str(Path(tmp, key))}
+                for key in ("needed", "optional")
+            }
+            systems = {
+                "sys": {
+                    "data_directories": [
+                        {"ref": "needed", "destination": "a"},
+                        {"ref": "optional", "destination": "b", "required": False},
+                    ]
+                }
+            }
+            return [
+                dest
+                for _src, dest in gp._data_directory_members(
+                    systems, registry, "retroarch", "", False, set(), set(), set(),
+                    required_only=required_only,
+                )
+            ]
+
+    def test_an_optional_tree_leaves_the_required_pack(self):
+        self.assertEqual(self._members(False), ["a/needed.bin", "b/optional.bin"])
+        self.assertEqual(self._members(True), ["a/needed.bin"])
+
+    def test_every_tree_walk_reads_the_flag(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertEqual(
+            source.count('if required_only and dd.get("required") is False:'), 2
+        )
+        self.assertIn("seen_parents, required_only=required_only,", source)
+        self.assertIn("data_refs, required_only=required_only,", source)
+
+    def test_the_overlays_are_declared_optional(self):
+        retroarch = yaml.safe_load((ROOT / "platforms" / "retroarch.yml").read_text())
+        trees = retroarch["systems"]["mattel-intellivision"]["data_directories"]
+        self.assertEqual(trees, [
+            {"ref": "freeintv-overlays", "destination": "freeintv_overlays",
+             "required": False},
+        ])
+
+
+class InstallerJsonKindsNeverOverwriteEachOther(unittest.TestCase):
+    """Install manifests and target core lists are both <platform>.json.
+    --manifest-targets aimed at install/ replaced install/retroarch.json, the
+    file every installer downloads, with a target table, exit 0."""
+
+    def _run(self, *flags: str, held: str) -> tuple:
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            target = Path(tmp, "retroarch.json")
+            before = (ROOT / held).read_text(encoding="utf-8")
+            target.write_text(before, encoding="utf-8")
+            proc = subprocess.run(
+                [sys.executable, "scripts/generate_pack.py", *flags,
+                 "--offline", "--output-dir", tmp],
+                cwd=ROOT, capture_output=True, text=True, timeout=600,
+            )
+            return proc, before, target.read_text(encoding="utf-8")
+
+    def test_target_lists_refuse_a_manifest_directory(self):
+        proc, before, after = self._run(
+            "--manifest-targets", held="install/retroarch.json"
+        )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("holds install manifests", proc.stderr)
+        self.assertIn("--output-dir", proc.stderr)
+        self.assertEqual(after, before)
+
+    def test_manifests_refuse_a_target_list_directory(self):
+        proc, before, after = self._run(
+            "--manifest", "--platform", "retroarch",
+            held="install/targets/retroarch.json",
+        )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("holds per-target core lists", proc.stderr)
+        self.assertEqual(after, before)
+
+
+class PlatformSystemTypoGetsTheClosestNames(unittest.TestCase):
+    """--platform retroarch --system sony-playstaton listed the first ten
+    systems of the alphabet, 3do to coleco-colecovision."""
+
+    def test_the_hint_names_the_close_systems(self):
+        from scripts import generate_pack as gp
+
+        out = io.StringIO()
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp, \
+                contextlib.redirect_stdout(out):
+            result = gp.generate_pack(
+                "retroarch", str(ROOT / "platforms"), {"files": {}, "indexes": {}},
+                str(ROOT / "bios"), tmp, emulators_dir=str(ROOT / "emulators"),
+                system_filter=["sony-playstaton"], offline=True,
+            )
+        self.assertIsNone(result)
+        printed = out.getvalue()
+        self.assertIn("Did you mean: sony-playstation", printed)
+        self.assertIn("--platform retroarch --list-systems", printed)
+        self.assertNotIn("3do", printed)
+
+
+class HashInputNamesWhatItAccepts(unittest.TestCase):
+    """A 12-digit value was looked up as an MD5 and reported NOT FOUND, a
+    SHA-256 vanished from the input, and the run said only "No valid hashes
+    found in input"."""
+
+    def test_digests_are_read_by_length(self):
+        from scripts.packresolve import parse_hash_input
+
+        sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        self.assertEqual(parse_hash_input(f"0x1A2B3C4D,{sha256}"), [
+            ("crc32", "1a2b3c4d"), ("sha256", sha256),
+        ])
+        self.assertEqual(parse_hash_input("a" * 29), [("md5", "a" * 29)])
+
+    def test_anything_else_is_refused_with_the_formats(self):
+        from scripts.packresolve import parse_hash_file, parse_hash_input
+
+        for raw in ("1234567890ab", "zz", "490f666e1afb15b7362b406ed1cea246,zz"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError) as ctx:
+                parse_hash_input(raw)
+            self.assertIn("SHA-256 (64)", str(ctx.exception))
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            listing = Path(tmp, "hashes.txt")
+            listing.write_text("# list\n490f666e1afb15b7362b406ed1cea246  a.bin\nb.bin\n")
+            with self.assertRaises(ValueError) as ctx:
+                parse_hash_file(str(listing))
+        self.assertIn("line 3 (b.bin)", str(ctx.exception))
+
+    def test_a_sha256_finds_its_file(self):
+        from scripts.packresolve import sha1_for_hash
+
+        db = json.loads((ROOT / "database.json").read_text(encoding="utf-8"))
+        sha1, entry = next(
+            (k, e) for k, e in db["files"].items() if e.get("sha256")
+        )
+        self.assertEqual(sha1_for_hash("sha256", entry["sha256"], db), sha1)
+        self.assertEqual(sha1_for_hash("md5", entry["md5"][:29], db), sha1)
+
+
+class ErrorsGoToStderr(unittest.TestCase):
+    """The lock refusal and "no pack for" went to stdout: a run redirected to
+    a log showed nothing on the terminal and exited 1."""
+
+    @staticmethod
+    def _leading_text(node: ast.expr) -> str:
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return node.value
+        if isinstance(node, ast.JoinedStr) and node.values:
+            return ErrorsGoToStderr._leading_text(node.values[0])
+        return ""
+
+    def test_no_error_line_is_printed_to_stdout(self):
+        for script in ("generate_pack.py", "pipeline.py"):
+            tree = ast.parse((ROOT / "scripts" / script).read_text(encoding="utf-8"))
+            seen = 0
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Call) and getattr(node.func, "id", "") == "print"
+                        and node.args):
+                    continue
+                text = self._leading_text(node.args[0])
+                # Detail lines under a pack's own verdict stay with it.
+                if not text.lstrip().startswith("ERROR") or text.startswith("    "):
+                    continue
+                seen += 1
+                with self.subTest(script=script, line=node.lineno):
+                    self.assertIn("file", [k.arg for k in node.keywords])
+            self.assertGreater(seen, 0, script)
+
+
+class PipelineOutputDirIsTheOneItWrites(unittest.TestCase):
+    """Started from scripts/, the pipeline locked and purged scripts/dist/
+    while every step, run from the repository root, wrote to dist/."""
+
+    def test_the_default_is_the_root_dist_wherever_the_run_starts(self):
+        previous = os.getcwd()
+        self.addCleanup(os.chdir, previous)
+        os.chdir(ROOT / "scripts")
+        self.assertEqual(pipeline._output_dir(None), str(ROOT / "dist"))
+        self.assertEqual(pipeline._output_dir("out"), str(ROOT / "scripts" / "out"))
+
+    def test_main_resolves_it_before_the_lock(self):
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        body = source[source.index("def main("):]
+        self.assertLess(
+            body.index("args.output_dir = _output_dir(args.output_dir)"),
+            body.index("hold_artifact_lock(args.output_dir)"),
+        )
+
+
+class ToolsRunFromAnyDirectory(unittest.TestCase):
+    """From scripts/, verify.py and generate_pack.py ended on a
+    FileNotFoundError traceback about platforms/_registry.yml."""
+
+    def _run(self, cwd: Path, *argv: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, *argv], cwd=cwd, capture_output=True, text=True,
+            timeout=600,
+        )
+
+    def test_listing_works_from_scripts(self):
+        for script in ("verify.py", "generate_pack.py"):
+            with self.subTest(script=script):
+                proc = self._run(
+                    ROOT / "scripts", str(ROOT / "scripts" / script),
+                    "--platform", "RetroArch", "--list-systems",
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertIn("sony-playstation", proc.stdout)
+
+    def test_a_typed_path_is_read_from_where_it_was_typed(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            proc = self._run(
+                Path(tmp), str(ROOT / "scripts" / "generate_pack.py"),
+                "--manifest-targets", "--output-dir", "lists",
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertTrue(Path(tmp, "lists", "retroarch.json").is_file())
+
+
+class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
+    """--help said "Only regenerate DB and verify" while the run went on to
+    rewrite derivable.json, README.md and docs/."""
+
+    def test_the_help_names_the_steps_that_still_run(self):
+        proc = subprocess.run(
+            [sys.executable, "scripts/pipeline.py", "--help"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60, check=True,
+        )
+        text = " ".join(proc.stdout.split())
+        self.assertNotIn("Only regenerate DB and verify", text)
+        self.assertIn("Steps 7 and 8 still rewrite README.md and docs/", text)
+
+    def test_every_step_it_names_is_one_it_skips(self):
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        skipped = set(re.findall(r"--- (\w+)/8 [^\n]*SKIPPED \(--skip-packs\)", source))
+        self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
 if __name__ == "__main__":

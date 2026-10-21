@@ -33,6 +33,7 @@ bios_identical_to: freeintv
 data_directories:
   - ref: freeintv-overlays
     destination: freeintv_overlays
+    required: false
 
 files:
   - name: "exec.bin"

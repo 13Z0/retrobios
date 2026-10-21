@@ -1,6 +1,6 @@
 # Tools
 
-All tools are Python scripts in `scripts/`. They need Python 3.12 and `pyyaml`,
+All tools are Python scripts in `scripts/`. They need Python 3.9 or newer and `pyyaml`,
 and only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`
 alone runs on Python 3.8.
 
@@ -53,7 +53,7 @@ Pipeline flags:
 | Flag | Effect |
 |------|--------|
 | `--offline` | skip every step that needs the network (2, 2a, 2a2, 2b, 2b2) |
-| `--skip-packs` | skip steps 4, 4b, 4c, 6 and the consistency check |
+| `--skip-packs` | skip steps 4, 4b, 4c, 6 and the consistency check. README and site are still rewritten unless `--skip-docs` is given too |
 | `--skip-docs` | skip steps 7 and 8 |
 | `--include-archived` | include archived platforms in verify, packs, truth and export |
 | `--target TARGET` | filter verify, packs and truth by hardware target |
@@ -209,13 +209,18 @@ own verification mode ([discrepancy detection](verification-modes.md#discrepancy
 ### Granular options
 
 - `--system` with `--platform`: filter to specific systems within a platform pack
-- `--required-only`: exclude optional files, keep only required
+- `--required-only`: exclude optional files and the data directories declared
+  `required: false`, keep only required
 - `--split`: generate one ZIP per system instead of one big pack
 - `--split --group-by manufacturer`: group split packs by manufacturer (Sony, Nintendo, Sega...)
-- `--from-md5`: look up a hash in the database, or build a custom pack with `--platform`/`--emulator`
-- `--from-md5-file`: same, reading hashes from a file: one MD5, SHA-1 or CRC32
-  per line, alone or beside a file name as `md5sum` writes it, `#` for comments.
-  A lookup exits 1 when a hash is not in the database
+- `--from-md5`: look up a hash in the database, or build a custom pack with
+  `--platform`/`--emulator`. Any digest is read by its length: CRC32 (8 hex
+  digits), MD5 (32, or the 29 Batocera writes), SHA-1 (40), SHA-256 (64).
+  Anything else is refused with the value that is not a hash
+- `--from-md5-file`: same, reading hashes from a file: one per line, alone or
+  beside a file name as `md5sum` writes it, `#` for comments. A line with no
+  hash is refused with its number. A lookup exits 1 when a hash is not in the
+  database
 - `--target`: filter by hardware target (e.g. `switch`, `rpi4`, `x86_64`)
 - `--region`: ordered priority list, best first. Regions nest, a system with no
   regional split keeps everything, and a group with no candidate in any named
@@ -225,7 +230,9 @@ own verification mode ([discrepancy detection](verification-modes.md#discrepancy
 - `--db`, `--platforms-dir`, `--emulators-dir`: read another database or source
   tree instead of the repository's
 - `--source {platform,truth,full}`: select file source (platform YAML only, emulator profiles only, or both)
-- `--all-variants`: generate all 6 combinations of source x required_only
+- `--all-variants`: generate all 6 combinations of source x required_only. With
+  `--verify-packs`, the full pack is compared to the platform's list and each
+  narrowed variant is named with the hash check the build ran on its members
 - `--refresh-data`: force re-download all data directories before packing
 - `--no-refresh-data`: pack the data directories as cached, still fetching release assets (what `pipeline.py` does after its own refresh step)
 

@@ -492,7 +492,7 @@ the releases page is the way to install
 ([first install](first-install.md#error-python-38-or-newer-is-required)).
 Tests refuse any 3.9 syntax or API, and one runs the installer end to end under
 a real 3.8 interpreter, which CI installs beside 3.12 so the check cannot skip.
-The build scripts need 3.12 and are not bound by this.
+The build scripts need 3.9 and are not bound by this.
 
 Every change to `install.py` recomputes the SHA-256 pinned in `install.sh` and
 `install.ps1` in the same commit. The tests compare the pins with the file.

@@ -1234,6 +1234,7 @@ systems:
     data_directories:
     - ref: freeintv-overlays
       destination: freeintv_overlays
+      required: false
   microsoft-msx:
     files:
     - name: CARTS.SHA

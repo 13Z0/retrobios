@@ -85,17 +85,17 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| Batocera | 353/353 | 13,923/15,010 | MD5 hash |
+| Batocera | 353/353 | 13,921/15,008 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,038/8,112 | MD5 hash |
+| EmuDeck | 168/168 | 8,040/8,114 | MD5 hash |
 | Lakka | 532/532 | 7,473/7,531 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 6,966/8,235 | MD5 hash |
+| ROCKNIX | 38/38 | 6,963/8,232 | MD5 hash |
 | Recalbox | 351/351 | 2,748/2,910 | MD5 hash |
 | RetroArch | 526/526 | 7,502/7,543 | file presence |
-| RetroBat | 348/348 | 4,700/9,166 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,241/6,491 | MD5 hash |
-| RetroPie * | 532/532 | 7,750/12,266 | file presence |
+| RetroBat | 348/348 | 4,736/9,204 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,240/6,490 | MD5 hash |
+| RetroPie * | 532/532 | 7,748/12,264 | file presence |
 | RomM | 383/383 | 83/842 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
@@ -131,7 +131,7 @@ python scripts/verify.py --emulator flycast
 python scripts/verify.py --platform retroarch --verbose  # emulator ground truth
 ```
 
-Requires Python 3.12 and `pyyaml`. The one-line installer alone runs on Python 3.8.
+Requires Python 3.9 or newer and `pyyaml`. The one-line installer alone runs on Python 3.8.
 
 ## Documentation site
 
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-21T02:26:05Z*
+*Auto-generated on 2026-10-21T03:50:53Z*

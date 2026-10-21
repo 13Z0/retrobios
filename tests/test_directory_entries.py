@@ -14,6 +14,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 from pathlib import Path
 
@@ -246,6 +247,36 @@ class PackCarriesADirectory(DirectoryFixture):
         dests = {entry["dest"] for entry in manifest["files"]}
         self.assertTrue(self.EXPECTED <= dests, sorted(dests))
         json.dumps(manifest)
+
+    def test_the_gap_report_is_computed_once_per_build(self):
+        """The region grouping and phase 2 each ran find_undeclared_files with
+        the same arguments: 30 reports for 15 manifests."""
+        import verify
+
+        real = verify.find_undeclared_files
+        calls: list[int] = []
+
+        def counted(*a, **kw):
+            calls.append(1)
+            return real(*a, **kw)
+
+        profiles = self._profiles()
+        out = self.root / "counted"
+        out.mkdir()
+        with mock.patch.object(verify, "find_undeclared_files", counted):
+            builder.generate_manifest(
+                "demo", str(self.platforms), self._db(), str(self.bios),
+                str(self.platforms / "_registry.yml"),
+                emulators_dir=str(self.emulators), emu_profiles=profiles,
+                offline=True,
+            )
+            self.assertEqual(len(calls), 1)
+            builder.generate_pack(
+                "demo", str(self.platforms), self._db(), str(self.bios), str(out),
+                emulators_dir=str(self.emulators), emu_profiles=profiles,
+                offline=True, regions=["north-america"],
+            )
+        self.assertEqual(len(calls), 2)
 
     def test_an_emulator_pack_ships_the_tree(self):
         self._profiles()

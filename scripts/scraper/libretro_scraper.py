@@ -495,8 +495,15 @@ class Scraper(BaseScraper):
             # so final path is system/freeintv_overlays/FreeIntvTS_Overlays/<rom>.png
             # but core expects system/freeintv_overlays/<rom>.png
             # fix: point destination into the subfolder
+            # Optional: read only with the multi-screen option on, and a
+            # missing PNG falls back to a drawn placeholder keypad
+            # (FreeIntv/src/libretro.c:294-296, 350-369).
             "mattel-intellivision": [
-                {"ref": "freeintv-overlays", "destination": "freeintv_overlays"},
+                {
+                    "ref": "freeintv-overlays",
+                    "destination": "freeintv_overlays",
+                    "required": False,
+                },
             ],
         }
         for sys_id, data_dirs in SYSTEM_DATA_DIRS.items():

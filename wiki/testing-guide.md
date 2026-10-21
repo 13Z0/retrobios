@@ -22,7 +22,7 @@ python -m unittest tests.test_install tests.test_install_cores -v
 
 The table below says which module covers what.
 
-Running the build needs Python 3.12 and `pyyaml` alone, and so does most of the suite. The
+Running the build needs Python 3.9 or newer and `pyyaml` alone. CI runs the suite on 3.12. The
 schema contract tests also need `jsonschema[format-nongpl]`, and one site test
 renders a wiki line with `markdown`. The CI installs both: without them those
 tests are reported as skipped, so install them before a pull request

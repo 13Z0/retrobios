@@ -108,7 +108,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
     def test_a_held_output_is_refused_before_the_data_refresh(self):
         """The refresh waits for every run holding a data tree, and a
@@ -183,7 +183,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
     def test_pipeline_refuses_locked_output(self):
         with artifact_lock(self.dir):
@@ -197,7 +197,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
 
 class HeldLockTest(unittest.TestCase):

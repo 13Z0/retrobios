@@ -33,7 +33,7 @@ come from .cache/large/ only.
 Usage:
     python scripts/pipeline.py                    # active platforms
     python scripts/pipeline.py --include-archived # all platforms
-    python scripts/pipeline.py --skip-packs       # steps 1 to 3b, then 7 and 8
+    python scripts/pipeline.py --skip-packs       # steps 0 to 3b, 4d, 7 and 8
     python scripts/pipeline.py --skip-docs        # skip steps 7 and 8
     python scripts/pipeline.py --offline          # no network, see above
 """
@@ -51,11 +51,13 @@ import sys
 import time
 from pathlib import Path
 
-# The build scripts use syntax CPython 3.12 introduced (generate_readme's
-# f-strings, generate_pack's parenthesized context managers). On an older
-# interpreter the run got through the packs and failed hours in, at step 7.
-if sys.version_info < (3, 12):
-    sys.exit(f"pipeline.py needs Python 3.12 or newer, this is {sys.version.split()[0]}")
+# generate_pack's parenthesized context managers do not compile before
+# CPython 3.9, which builds the same database, manifests and packs as 3.12.
+# On an older interpreter the run got through the first steps and failed in
+# the packs, so it stops before step 0. A test compiles every script under
+# this floor.
+if sys.version_info < (3, 9):
+    sys.exit(f"pipeline.py needs Python 3.9 or newer, this is {sys.version.split()[0]}")
 
 sys.path.insert(0, str(Path(__file__).parent))
 from common import (
@@ -148,6 +150,19 @@ def skip_notice(key: str, reason: str = "") -> None:
     """The line a step that does not run prints in place of its output."""
     because = f" ({reason})" if reason else ""
     print(f"\n--- {step_title(STEP_LABELS[key])}: SKIPPED{because} ---")
+
+def _output_dir(typed: str | None) -> str:
+    """The pack directory as an absolute path.
+
+    Every step runs from the repository root, while the lock and the purge
+    of stale packs ran here, against the caller's directory: started from
+    scripts/, the run locked and purged scripts/dist/ and wrote its packs to
+    dist/. A directory the caller typed is read from where they typed it.
+    """
+    if typed is None:
+        return str(Path(__file__).resolve().parent.parent / "dist")
+    return str(Path(typed).resolve())
+
 
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
     """Run a command, echoing its output as it comes. Returns (success, output).
@@ -472,7 +487,9 @@ def main() -> None:
     parser.add_argument(
         "--skip-packs",
         action="store_true",
-        help="Only regenerate DB and verify, skip pack generation",
+        help="Skip steps 4 to 6 except 4d: packs, manifests and their checks. "
+        "Steps 7 and 8 still rewrite README.md and docs/, add --skip-docs to "
+        "stop after verify",
     )
     parser.add_argument(
         "--skip-docs", action="store_true", help="Skip README and site generation"
@@ -483,7 +500,8 @@ def main() -> None:
         "assets already in .cache/large/"
     )
     parser.add_argument(
-        "--output-dir", default="dist", help="Pack output directory (default: dist/)"
+        "--output-dir",
+        help="Pack output directory (default: dist/ at the repository root)",
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument(
@@ -518,6 +536,7 @@ def main() -> None:
         # scrapers and refresh_data_dirs went anonymous unless the user had
         # exported GITHUB_TOKEN by hand, though gh was logged in.
         github_token()
+    args.output_dir = _output_dir(args.output_dir)
 
     # A second run on the same output directory is refused before any work:
     # the database rebuild alone takes minutes, and the reader holding the
@@ -530,7 +549,7 @@ def main() -> None:
         try:
             held.enter_context(hold_artifact_lock(args.output_dir))
         except ArtifactLockBusy as exc:
-            print(f"ERROR: {exc}")
+            print(f"ERROR: {exc}", file=sys.stderr)
             sys.exit(1)
 
     all_ok = True
@@ -720,7 +739,7 @@ def main() -> None:
                     if stale:
                         print(f"Purged {len(stale)} stale pack file(s) from {out_dir}/")
             except ArtifactLockBusy as exc:
-                print(f"ERROR: {exc}")
+                print(f"ERROR: {exc}", file=sys.stderr)
                 sys.exit(1)
 
         pack_cmd = [

@@ -606,7 +606,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "python scripts/verify.py --platform retroarch --verbose  # emulator ground truth",
             "```",
             "",
-            "Requires Python 3.12 and `pyyaml`. The one-line installer alone runs on Python 3.8.",
+            "Requires Python 3.9 or newer and `pyyaml`. The one-line installer alone runs on Python 3.8.",
             "",
             "## Documentation site",
             "",
