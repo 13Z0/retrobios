@@ -889,6 +889,8 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("ace-dl", ["france"], "private/firmware/Amstrad_s4.cpr"),
         ("duckstation", ["brazil"], "scph5501.bin"),
         ("duckstation", ["south-korea"], "scph5500.bin"),
+        ("pcsx_rearmed", ["brazil", "japan"], "scph5501.bin"),
+        ("pcsx_rearmed", ["brazil", "japan"], "scph1001.bin"),
         ("blastem", ["australia", "north-america"], "bios_CD_E.bin"),
         ("kega-fusion", ["australia", "north-america"], "eu_mcd1_9210.bin"),
     )
@@ -1116,6 +1118,24 @@ class MegaCdEuropeServesOceania(unittest.TestCase):
                         and "oceania" not in regions:
                     narrow.append(f"{path.stem}: {entry.get('name')}")
         self.assertEqual(narrow, [])
+
+
+class PcsxRearmedUsSlotIsTheDefault(unittest.TestCase):
+    """CheckCdrom sets PSX_REGION_US before reading the licence and only
+    "Inc." or "Euro pe" move it (libpcsxcore/misc.c:422-453): a disc of any
+    other market boots the US slot."""
+
+    def test_every_us_slot_bios_includes_latin_america(self):
+        from common import load_emulator_profiles
+
+        tagged = [
+            f for f in load_emulator_profiles("emulators")["pcsx_rearmed"]["files"]
+            if "north-america" in (f.get("region") or [])
+        ]
+        self.assertEqual(len(tagged), 4)
+        for entry in tagged:
+            with self.subTest(name=entry["name"]):
+                self.assertIn("latin-america", entry["region"])
 
 
 class FusionSmsExportBiosFollowsTheSetting(unittest.TestCase):
