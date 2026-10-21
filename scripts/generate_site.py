@@ -5106,7 +5106,7 @@ ZIP: extract them all into the same folder.
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
 | [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators, adds each game to the Steam library | [EmuDeck]({rel}) | `~/Emulation/bios/` |
-| [RetroDECK](https://retrodeck.net/) | Single Flatpak app, all emulators bundled, one-click install from Discover | [RetroDECK]({rel}) | `~/retrodeck/` (the pack carries its own `bios/`) |
+| [RetroDECK](https://retrodeck.net/) | Single Flatpak app with its emulators bundled, installed from Flathub or Discover | [RetroDECK]({rel}) | `~/retrodeck/` (the pack carries its own `bios/`) |
 | RetroArch standalone | Installed from Discover, Steam, or Flatpak | [RetroArch]({rel}) | Open RetroArch > Settings > Directory > System, that is the folder |
 
 ### Windows
@@ -5115,7 +5115,7 @@ ZIP: extract them all into the same folder.
 |-------|-----------|------|-----------|
 | [RetroArch](https://www.retroarch.com/) | Multi-system emulator, loads different cores for each console | [RetroArch]({rel}) | The `system` folder next to `retroarch.exe` |
 | [RetroBat](https://www.retrobat.org/) | Windows frontend with EmulationStation, includes RetroArch and standalone emulators | [RetroBat]({rel}) | The `bios` folder inside the RetroBat installation |
-| [BizHawk](https://tasvideos.org/BizHawk) | Accuracy-focused multi-system emulator, popular for speedruns and TAS | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
+| [BizHawk](https://tasvideos.org/BizHawk) | Multi-system emulator with rerecording and debugging tools, hosted by TASVideos | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
 | [LaunchBox](https://www.launchbox-app.com/) | Game library manager and launcher, uses RetroArch or standalone emulators behind the scenes | [RetroArch]({rel}) | Open RetroArch (via LaunchBox) > Settings > Directory > System |
 
 ### Linux
@@ -5137,24 +5137,24 @@ ZIP: extract them all into the same folder.
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| [RetroPie](https://retropie.org.uk/) | The classic Pi emulation setup, largest community, most online guides | [RetroPie]({rel}) | `~/RetroPie/BIOS/` |
-| [Lakka](https://www.lakka.tv/) | Lightweight RetroArch OS, minimal config, boots straight into the UI | [Lakka]({rel}) | `/storage/system/` |
-| [Batocera](https://batocera.org/) | Easy setup, works on Pi 3/4/5 and many other boards (Odroid, etc.) | [Batocera]({rel}) | `/userdata/bios/` |
-| [Recalbox](https://www.recalbox.com/) | Plug-and-play experience, good for a first build | [Recalbox]({rel}) | `/recalbox/share/bios/` |
+| [RetroPie](https://retropie.org.uk/) | Scripts that install RetroArch and standalone emulators on Raspberry Pi OS | [RetroPie]({rel}) | `~/RetroPie/BIOS/` |
+| [Lakka](https://www.lakka.tv/) | Operating system built around RetroArch, boots into its menu | [Lakka]({rel}) | `/storage/system/` |
+| [Batocera](https://batocera.org/) | Bootable OS, with images for Raspberry Pi 3, 4 and 5 and other boards (Odroid XU4 among them) | [Batocera]({rel}) | `/userdata/bios/` |
+| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming that configures its emulators itself | [Recalbox]({rel}) | `/recalbox/share/bios/` |
 
 ### Handhelds
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| Android (Retroid Pocket, Odin, etc.) | Most Android handhelds run RetroArch | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
-| [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds (RG35XX, RG552, Deck) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
-| [Batocera](https://batocera.org/) | Also images many handhelds | [Batocera]({rel}) | `/userdata/bios/` |
+| Android (Retroid Pocket, Odin, etc.) | RetroArch for Android | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
+| [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds, among them the RG35XX (H700) and the RG552 (RK3399) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
+| [Batocera](https://batocera.org/) | Also has images for handheld chips, among them H700 and RK3326 | [Batocera]({rel}) | `/userdata/bios/` |
 
 ### FPGA
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) | Hardware-level recreation of consoles on a DE10-Nano board | [MiSTer FPGA]({rel}) | `/media/fat/games/`, one subfolder per core |
+| [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) | FPGA cores that reimplement console hardware on a DE10-Nano board | [MiSTer FPGA]({rel}) | `/media/fat/games/`, one subfolder per core |
 
 ### Self-hosted ROM manager
 

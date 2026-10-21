@@ -899,6 +899,28 @@ class TheGapPageOpensOnCounts(unittest.TestCase):
         self.assertNotIn("Unified view of BIOS verification", source)
 
 
+class WhichPackDescribesNoPlatformByOpinion(unittest.TestCase):
+    """The page called RetroPie the largest community with the most guides,
+    Batocera an easy setup and Recalbox good for a first build: claims
+    nothing in the repository measures, ranking platforms against each
+    other."""
+
+    def test_no_ranking_words(self):
+        import re
+
+        import generate_site  # noqa: PLC0415
+
+        page = generate_site.generate_which_pack()
+        rows = [line for line in page.splitlines() if line.startswith("| ")]
+        found = [
+            row for row in rows
+            if re.search(r"\b(largest|most|popular|easy|best|classic|lightweight|"
+                         r"one-click|plug-and-play|first build|accuracy-focused)\b",
+                         row, re.IGNORECASE)
+        ]
+        self.assertEqual(found, [])
+
+
 class EveryPageLinksItsOwnData(unittest.TestCase):
     """An emulator page linked its YAML and JSON. A platform page linked
     nothing, and a tool had to download platforms.json (2.8 MB) and filter
