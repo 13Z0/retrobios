@@ -546,6 +546,7 @@ def _select_variants(
     regions: list[str] | None,
     one_per_slot: bool,
     required_only: bool = False,
+    undeclared: list[dict] | None = None,
 ) -> tuple[set, list, list]:
     """Which regional and slot alternatives this pack leaves out.
 
@@ -574,6 +575,7 @@ def _select_variants(
             include_all=(source == "truth"),
             required_only=required_only,
             held_out=held,
+            undeclared=undeclared,
         )
     if regions:
         region_index = region_mod.platform_region_index(
@@ -796,9 +798,20 @@ def generate_pack(
     # dedicated extras pass with an empty seen set: it only needs group
     # membership, never destinations, and a superset of members is the safe
     # direction. Runs only when --region is given.
+    # The gap report both extras passes read, computed once: the region
+    # grouping and the core complement below ask it the same question.
+    undeclared = (
+        undeclared_report(
+            config, emulators_dir, db, emu_profiles, target_cores,
+            include_all=(source == "truth"),
+        )
+        if source != "platform" and precomputed_extras is None
+        else None
+    )
     region_drops, region_fallbacks, slot_undecidable = _select_variants(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
         target_cores, source, regions, one_per_slot, required_only,
+        undeclared=undeclared,
     )
 
     with _writing_pack(zip_path) as zf:
@@ -1060,6 +1073,7 @@ def generate_pack(
               _collect_emulator_extras(
                   config, emulators_dir, db, set(), base_dest, emu_profiles,
                   target_cores=target_cores, include_all=(source == "truth"),
+                  undeclared=undeclared,
               ),
               system_filter,
           )
@@ -1073,6 +1087,7 @@ def generate_pack(
               emu_profiles,
               target_cores=target_cores,
               include_all=(source == "truth"),
+              undeclared=undeclared,
           )
 
       core_count = 0
@@ -3888,6 +3903,7 @@ def _manifest_selection(
     source: str,
     required_only: bool,
     regions: list[str] | None,
+    undeclared: list[dict] | None = None,
 ) -> tuple[set[str], SelectionIndex]:
     """Destinations a region list removes, and the groups the installer replays.
 
@@ -3909,6 +3925,7 @@ def _manifest_selection(
         required_only=required_only,
         extras_out=extras,
         held_out=held,
+        undeclared=undeclared,
     )
     region_index = region_mod.platform_region_index(
         config, emu_profiles, target_cores
@@ -4100,9 +4117,18 @@ def generate_manifest(
             ),
         }
 
+    # Read by the region grouping and by phase 2 with the same arguments.
+    undeclared = (
+        undeclared_report(
+            config, emulators_dir, db, emu_profiles, target_cores,
+            include_all=(source == "truth"),
+        )
+        if source != "platform"
+        else None
+    )
     region_drops, selection = _manifest_selection(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
-        target_cores, source, required_only, regions,
+        target_cores, source, required_only, regions, undeclared=undeclared,
     )
 
     # Phase 1: baseline files
@@ -4296,6 +4322,7 @@ def generate_manifest(
             unplaceable=unplaceable,
             baseline_claims=baseline_claims,
             absent=absent,
+            undeclared=undeclared,
         )
     else:
         core_files = []
@@ -4802,6 +4829,7 @@ from packextras import (  # noqa: E402,F401
     emulator_region_drops,
     _emulator_region_group,
     expand_agnostic_entries,
+    undeclared_report,
 )
 
 

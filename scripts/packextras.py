@@ -793,6 +793,26 @@ class ExtraPlacement:
         return self.slug_based and self.flat and "/" in dest
 
 
+def undeclared_report(
+    config: dict,
+    emulators_dir: str,
+    db: dict,
+    emu_profiles: dict | None,
+    target_cores: set[str] | None = None,
+    include_all: bool = False,
+) -> list[dict]:
+    """The gap report _collect_emulator_extras reads, for a caller that
+    collects the extras more than once with these arguments: the region
+    grouping and the pack or manifest phase 2 each computed it in full."""
+    from verify import find_undeclared_files
+
+    return find_undeclared_files(
+        config, emulators_dir, db, emu_profiles, target_cores=target_cores,
+        include_all=include_all,
+        declared_names=platform_declarations(config, db, enrich=False),
+    )
+
+
 def _collect_emulator_extras(
     config: dict,
     emulators_dir: str,
@@ -840,8 +860,6 @@ def _collect_emulator_extras(
 
     Works for ANY platform (RetroArch, Batocera, Recalbox, etc.)
     """
-    from verify import find_undeclared_files
-
     profiles = (
         emu_profiles
         if emu_profiles is not None
@@ -858,9 +876,8 @@ def _collect_emulator_extras(
     yaml_names = platform_declarations(config, db, enrich=False)
 
     if undeclared is None:
-        undeclared = find_undeclared_files(
-            config, emulators_dir, db, emu_profiles, target_cores=target_cores,
-            include_all=include_all, declared_names=yaml_names,
+        undeclared = undeclared_report(
+            config, emulators_dir, db, emu_profiles, target_cores, include_all
         )
     # A destination two cores claim goes to the one that names its content:
     # hypseus-singe asks for gamecontrollerdb.txt by name alone and took the
@@ -1153,6 +1170,7 @@ def platform_region_groups(
     required_only: bool = False,
     extras_out: list[dict] | None = None,
     held_out: set[str] | None = None,
+    undeclared: list[dict] | None = None,
 ) -> tuple[dict[str, list[tuple[str, str]]], dict[tuple[str, str, str], str]]:
     """Group a platform's pack candidates the way region filtering reads them.
 
@@ -1165,7 +1183,9 @@ def platform_region_groups(
     withdraw from its report exactly what the builder withdraws from the pack:
     grouping the declared files here and the core extras there would let the
     two answer differently on the same request.  `extras_out` receives the
-    core extras that were grouped, for the install manifest.
+    core extras that were grouped, for the install manifest. ``undeclared``
+    is the gap report when the caller holds it (undeclared_report, with the
+    same target_cores and include_all).
     """
     groups: dict[str, list[tuple[str, str]]] = {}
     for sys_id, system in systems.items():
@@ -1199,6 +1219,7 @@ def platform_region_groups(
         include_all=include_all,
         claimants=extra_dests,
         absent=absent,
+        undeclared=undeclared,
     )
     held = {id(extra) for extra in extras}
     spellings = system_spellings(systems)
