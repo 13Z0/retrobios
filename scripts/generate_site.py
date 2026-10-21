@@ -15,10 +15,12 @@ from siterender import WIKI_SRC_DIR
 import argparse
 import csv
 import hashlib
+import html
 import io
 import json
 import os
 import re
+import shlex
 import shutil
 import sqlite3
 import sys
@@ -48,7 +50,7 @@ from common import (
     yaml_load,
 )
 from artifacts import ArtifactLockBusy, artifact_lock
-from cross_reference import FileConsumers
+from cross_reference import FileConsumers, held_copy
 from nativemode import reads_file_contents
 
 
@@ -125,24 +127,126 @@ CLS_LABELS = {
 }
 
 
+def _copy_places(db: dict) -> dict[str, set[tuple[str, str, str]]]:
+    """sha1 -> every (manufacturer, console, file name) holding a copy.
+
+    The database keeps one path per content, deduplication having left one
+    copy. by_path_suffix still records the other folders a copy is filed in,
+    under the name that folder gives it.
+    """
+    files = db.get("files", {})
+    bios_dir = Path(str(db.get("bios_dir") or "bios"))
+    places: dict[str, set[tuple[str, str, str]]] = {}
+    for sha1, entry in files.items():
+        parts = str(entry.get("path", "")).split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
+            places.setdefault(sha1, set()).add((parts[1], parts[2], parts[-1]))
+    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
+        parts = tail.split("/")
+        if len(parts) < 3 or parts[1].startswith(".") or len(sha1s) != 1:
+            continue
+        if sha1s[0] in files and (bios_dir / tail).is_file():
+            places.setdefault(sha1s[0], set()).add((parts[0], parts[1], parts[-1]))
+    return places
+
+
+# bios/Other/<emulator> and bios/Arcade/<emulator or board> file a copy by
+# who loads it, not by machine. A copy also filed under a machine's maker
+# places the system there.
+_BUCKET_FOLDERS = frozenset({"Other", "Arcade"})
+
+
+def _slug(manufacturer: str) -> str:
+    return manufacturer.lower().replace(" ", "-")
+
+
+def _names_manufacturer(sys_id: str, manufacturer: str) -> bool:
+    slug = _slug(manufacturer)
+    return sys_id == slug or sys_id.startswith(f"{slug}-")
+
+
+def _copies_by_path(db: dict) -> dict[str, set[tuple[str, str, str]]]:
+    """The copy places of each content, keyed by the path the database keeps."""
+    files = db.get("files", {})
+    return {
+        str(files[sha1].get("path", "")): where
+        for sha1, where in _copy_places(db).items()
+    }
+
+
 def _system_folder(
-    files: list[dict], db: dict, name_consoles: dict[str, set[tuple[str, str]]]
+    files: list[dict],
+    db: dict,
+    name_consoles: dict[str, set[tuple[str, str]]],
+    sys_id: str = "",
+    copies: dict[str, set[tuple[str, str, str]]] | None = None,
 ) -> tuple[str, str] | None:
-    """The bios/<manufacturer>/<console> folder a system's files live in."""
+    """The bios/<manufacturer>/<console> folder a system's files live in.
+
+    A content votes for every folder holding a copy under the name the system
+    declares, not only the one deduplication kept: disksys.rom is kept as
+    Arcade/FBNeo/fdsbios.nes and filed again under Nintendo/Famicom Disk
+    System. A copy filed under another name, outside the manufacturer the id
+    names, is another machine's file and votes only when no copy carries the
+    declared name. An id that names its manufacturer (nintendo-fds) keeps the
+    votes cast inside that manufacturer when there are any, and a maker's
+    folder outranks the folders that file copies by emulator.
+    """
+    if copies is None:
+        copies = _copies_by_path(db)
     votes: dict[tuple[str, str], int] = {}
     for fe in files:
         local, status = resolve_local_file(fe, db)
-        parts = (local or "").split("/")
-        if len(parts) >= 4 and parts[0] == "bios" and resolution_is_hash_exact(status):
-            place = (parts[1], parts[2])
+        if not local or not resolution_is_hash_exact(status):
+            continue
+        held = copies.get(local, set())
+        if not held:
+            parts = local.split("/")
+            if len(parts) >= 4 and parts[0] == "bios":
+                held = {(parts[1], parts[2], parts[-1])}
+        declared = str(fe.get("name", "")).casefold()
+        named = {
+            (m, c) for m, c, base in held
+            if base.casefold() == declared or _names_manufacturer(sys_id, m)
+        }
+        for place in named or {(m, c) for m, c, _ in held}:
             votes[place] = votes.get(place, 0) + 1
     if votes:
-        return max(sorted(votes), key=lambda place: votes[place])
+        own = [place for place in votes if _names_manufacturer(sys_id, place[0])]
+        makers = [place for place in votes if place[0] not in _BUCKET_FOLDERS]
+        candidates = own or makers or list(votes)
+        return max(sorted(candidates), key=lambda place: votes[place])
     for fe in files:
         places = name_consoles.get(fe.get("name", ""), set())
         if len(places) == 1:
             return next(iter(places))
     return None
+
+
+def _folders_by_name(manufacturers: dict) -> dict[str, set[tuple[str, str]]]:
+    """Normalized system name -> the console folders that spell it.
+
+    nintendo-nes, nes and the NES folder normalize alike, as do
+    sega-mastersystem and Sega/Master System.
+    """
+    from common import _norm_system_id
+
+    index: dict[str, set[tuple[str, str]]] = {}
+    for mfr, consoles in manufacturers.items():
+        for console in consoles:
+            spelled = console.lower().replace(" ", "-")
+            for key in {
+                _norm_system_id(f"{_slug(mfr)}-{spelled}"), _norm_system_id(spelled)
+            }:
+                index.setdefault(key, set()).add((mfr, console))
+    return index
+
+
+def _folder_named(sys_id: str, by_name: dict[str, set[tuple[str, str]]]) -> tuple[str, str] | None:
+    from common import _norm_system_id
+
+    places = by_name.get(_norm_system_id(sys_id), set())
+    return next(iter(places)) if len(places) == 1 else None
 
 
 def _system_pages_from_data(
@@ -189,21 +293,28 @@ def _system_pages_from_data(
                 console_norm[key] = entry
 
     # Map system_id -> (manufacturer, console) via platform file entries
+    copies = _copies_by_path(db)
+    folders_by_name = _folders_by_name(manufacturers)
     pages: dict[str, tuple[str, str]] = {}
     for cov in coverages.values():
         config = cov["config"]
         for sys_id, system in config.get("systems", {}).items():
             if sys_id in pages:
                 continue
-            # Strategy 1: the folder holding the files the system declares,
+            # Strategy 1: the one console folder the id spells (nintendo-nes,
+            # NES). A copy of the disk system BIOS in the NES list does not
+            # move the NES to the folder that copy sits in.
+            # Strategy 2: the folder holding the files the system declares,
             # found by content, and most votes win. A bare name stands in only
             # where the collection files it in a single console.
-            place = _system_folder(system.get("files", []), db, name_consoles)
+            place = _folder_named(sys_id, folders_by_name) or _system_folder(
+                system.get("files", []), db, name_consoles, sys_id, copies
+            )
             if place is not None:
                 mfr, console = place
                 pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
                 continue
-            # Strategy 2: fuzzy match system_id against console directory names
+            # Strategy 3: fuzzy match system_id against console directory names
             if sys_id in console_norm:
                 pages[sys_id] = console_norm[sys_id]
             else:
@@ -228,7 +339,9 @@ def _system_pages_from_data(
                 if isinstance(entry, dict)
                 and (entry.get("system") == sys_id or len(systems) == 1)
             ]
-            place = _system_folder(files, db, name_consoles)
+            place = _folder_named(sys_id, folders_by_name) or _system_folder(
+                files, db, name_consoles, sys_id, copies
+            )
             if place is not None:
                 mfr, console = place
                 pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
@@ -948,6 +1061,35 @@ def _write_sqlite_export(
     os.replace(temp_path, destination)
 
 
+def write_single_item(path: Path, kind: str, item: dict, generated_at: str) -> None:
+    """One item in the envelope of its collection, for a page to link."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_if_changed(
+        str(path),
+        json.dumps(
+            {"schema_version": 1, "generated_at": generated_at, "kind": kind,
+             "count": 1, "items": [item]},
+            indent=2, sort_keys=True, ensure_ascii=False, default=str,
+        ) + "\n",
+    )
+
+
+def system_export_item(slug: str, manufacturer: str, consoles: dict[str, list]) -> dict:
+    """A system page's files by console, with the hashes its cards show."""
+    fields = ("name", "path", "size", "sha1", "md5", "sha256", "crc32")
+    return {
+        "id": slug,
+        "name": manufacturer,
+        "consoles": {
+            console: [
+                {field: entry[field] for field in fields if entry.get(field) is not None}
+                for entry in sorted(entries, key=lambda e: (e.get("name", ""), e.get("sha1", "")))
+            ]
+            for console, entries in sorted(consoles.items())
+        },
+    }
+
+
 def generate_data_exports(
     docs: Path,
     db: dict,
@@ -988,6 +1130,11 @@ def generate_data_exports(
             str(api / filename),
             json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         )
+    # One platform without the others, as api/v1/emulators/<id>.json is one
+    # profile: platforms.json is 2.8 MB for twelve platforms.
+    for item in platform_items:
+        write_single_item(api / "platforms" / f"{item['id']}.json",
+                          "platforms", item, generated_at)
     write_if_changed(str(api / "stats.json"), generate_stats(stats))
     write_if_changed(
         str(api / "database.json"),
@@ -1168,7 +1315,9 @@ def generate_data_page(exports: list[dict]) -> str:
         "`api/v1/emulators/<id>.json`, the envelope of `emulators.json` holding "
         "that one item, its `profile` valid against "
         "[`emulator.schema.json`](api/v1/schemas/emulator.schema.json). Each "
-        "emulator page links its own.",
+        "emulator page links its own. `api/v1/platforms/<id>.json` holds one "
+        "platform of `platforms.json`, and `api/v1/systems/<slug>.json` the files "
+        "of one system page by console. Each platform and system page links its own.",
         "",
         "## Bulk downloads",
         "",
@@ -1261,8 +1410,24 @@ def _plain_markdown(text: str) -> str:
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"!\[([^]]*)\]\([^)]*\)", r"\1", text)
     text = re.sub(r"\[([^]]+)\]\([^)]*\)", r"\1", text)
-    text = re.sub(r"[`*_~]", "", text)
+    # Code spans keep their text whole: validate_schemas.py read
+    # validateschemas.py once every underscore was taken for emphasis.
+    pieces = re.split(r"(`[^`]*`)", text)
+    text = "".join(
+        piece.strip("`") if piece.startswith("`")
+        else re.sub(r"(?<!\w)_+|_+(?!\w)", "", re.sub(r"[*~]", "", piece))
+        for piece in pieces
+    )
     return re.sub(r"\s+", " ", text).strip()
+
+
+def _shorten(plain: str, limit: int = 157) -> str:
+    """A description cut at a word, never inside one: six snippets ended
+    in "op..." or "Fo..."."""
+    if len(plain) <= limit:
+        return plain
+    cut = plain[: limit + 1].rsplit(" ", 1)[0] if " " in plain[:limit] else plain[:limit]
+    return cut.rstrip(" ,;:-(.") + "..."
 
 
 def _page_description(markdown: str, relative: Path, title: str) -> str:
@@ -1286,6 +1451,12 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         about = PAGE_DATA.get(key, {}).get("about", {})
         pinned = any(a.get("version") for a in (about if isinstance(about, list) else [about]))
         kind = "source-pinned emulator firmware profile" if pinned else "emulator firmware profile"
+        if not PAGE_DATA.get(key, {}).get("hasPart"):
+            # 152 cores that load no file announced paths and hashes.
+            kind = kind.replace(" firmware", "")
+            trees = (" The data directories it reads are listed."
+                     if "\n## Data directories\n" in markdown else "")
+            return f"{title}: {kind}. No BIOS or firmware file is required.{trees}"
         return f"{title}: {kind} with paths, hashes, requirements and validation behavior."
     if key.startswith("systems/") and relative.stem != "index":
         return f"{title}: indexed firmware files, hashes, variants, provenance and platform or emulator usage."
@@ -1300,7 +1471,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
             continue
         plain = _plain_markdown(stripped)
         if len(plain) >= 35:
-            return plain[:157].rstrip(" ,;:-") + ("..." if len(plain) > 157 else "")
+            return _shorten(plain)
     return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
 
 
@@ -1481,11 +1652,14 @@ def dataset_structured_data(exports: list[dict], db: dict) -> dict:
 def emulator_file_anchors(files: list[dict]) -> list[str]:
     """The id of each file card on an emulator page, in profile order.
 
-    A path declared once keeps its plain anchor. One declared for several
-    versions (raze's nine DUKE3D.GRP) takes what tells the version apart:
-    its hash, else its size, else, when even the size is shared, its
-    description. The page and its JSON-LD both read this, so a structured
-    part links to its card.
+    An entry that declares a hash is addressed by it: its anchor depends on
+    its own content, never on the entries beside it, and a second version
+    added under the same path moves nothing. An entry without one keeps
+    its plain anchor when its path is declared once, and otherwise takes
+    its size, else, when even the size is shared, its description. The
+    page and its JSON-LD both read this, so a structured part links to its
+    card. The plain anchor of a hashed card stays reachable through
+    emulator_file_aliases.
     """
     bases = [
         "file-" + (
@@ -1504,12 +1678,15 @@ def emulator_file_anchors(files: list[dict]) -> list[str]:
             return digest[:8]
         return f"{f['size']}b" if f.get("size") else ""
 
-    keys = [(b, _version_key(f)) if b in repeated else (b, "") for f, b in zip(files, bases)]
+    keys = [
+        (b, _version_key(f)) if b in repeated or _first_hash_value(f) else (b, "")
+        for f, b in zip(files, bases)
+    ]
     used: dict[str, int] = {}
     anchors = []
     for f, (base, key) in zip(files, keys):
         anchor = f"{base}-{key}" if key else base
-        if base in repeated and keys.count((base, key)) > 1 and f.get("description"):
+        if keys.count((base, key)) > 1 and f.get("description"):
             described = re.sub(r"[^a-z0-9]+", "-", str(f["description"]).lower()).strip("-")
             anchor = f"{anchor}-{described[:40].strip('-')}"
         used[anchor] = used.get(anchor, 0) + 1
@@ -1517,6 +1694,30 @@ def emulator_file_anchors(files: list[dict]) -> list[str]:
             anchor = f"{anchor}-{used[anchor]}"
         anchors.append(anchor)
     return anchors
+
+
+def emulator_file_aliases(files: list[dict], anchors: list[str]) -> list[str]:
+    """The plain file-<path> id each card also answers to, or "".
+
+    A link cited as emulators/raze/#file-duke3d-grp must still land once the
+    card is addressed by its hash: the first card of that path keeps the
+    plain id, unless another card already is it.
+    """
+    taken = set(anchors)
+    aliases = []
+    for f, anchor in zip(files, anchors):
+        base = "file-" + (
+            re.sub(
+                r"[^a-z0-9]+", "-",
+                str(f.get("path") or f.get("standalone_path") or f.get("name", "")).lower(),
+            ).strip("-") or "entry"
+        )
+        if base in taken or anchor == base:
+            aliases.append("")
+        else:
+            taken.add(base)
+            aliases.append(base)
+    return aliases
 
 
 def emulator_structured_data(profile: dict) -> dict:
@@ -1621,7 +1822,9 @@ def decorate_markdown_pages(docs: Path) -> None:
             page_path = "" if len(relative.parts) == 1 else "/".join(relative.parts[:-1]) + "/"
         else:
             page_path = relative.with_suffix("").as_posix() + "/"
-        canonical = urllib.parse.urljoin(SITE_URL, page_path)
+        # Encoded as mkdocs encodes the canonical link and the sitemap:
+        # idtech4a++ named .../idtech4a++/ here and .../idtech4a%2B%2B/ there.
+        canonical = urllib.parse.urljoin(SITE_URL, urllib.parse.quote(page_path))
         schema_type = "WebSite" if relative.as_posix() == "index.md" else "TechArticle"
         if relative.as_posix() == "data.md":
             schema_type = "Dataset"
@@ -1834,6 +2037,22 @@ def _render_platform_systems(
 _EXPORTED: set[str] = set()
 
 
+def _platform_data_links(name: str) -> str:
+    """The platform's own data, machine-readable: the YAML transcribed from
+    its upstream list, this page's JSON and the manifest the installer reads.
+
+    An emulator page linked its YAML and JSON, a platform page nothing: a
+    tool had to download all twelve platforms in platforms.json and filter.
+    """
+    links = [
+        f"[YAML]({REPO_URL}/blob/main/platforms/{name}.yml)",
+        f"[JSON](../api/v1/platforms/{name}.json)",
+    ]
+    if (_REPO_ROOT / "install" / f"{name}.json").is_file():
+        links.append(f"[install manifest]({REPO_URL}/blob/main/install/{name}.json)")
+    return ", ".join(links)
+
+
 def generate_platform_page(
     name: str,
     cov: dict,
@@ -1927,6 +2146,7 @@ def generate_platform_page(
         lines.append(f"| Transcribed from | <{transcribed}>{note} |")
     if name in _EXPORTED:
         lines.append(f"| Updated file | [Download it and see the changes](../exports.md#{name}) |")
+    lines.append(f"| Data | {_platform_data_links(name)} |")
     contrib_list = (registry or {}).get(name, {}).get("contributed_by", [])
     if contrib_list:
         for cb in contrib_list:
@@ -1935,9 +2155,10 @@ def generate_platform_page(
             pr = cb.get("pr")
             pr_link = f" ([#{pr}]({REPO_URL}/pull/{pr}))" if pr else ""
             lines.append(
-                f"| Contributed by | [@{username}](https://github.com/{username})"
-                f" - {contribution}{pr_link} |"
+                f"| Contributed by | [@{username}](https://github.com/{username}):"
+                f" {contribution}{pr_link} |"
             )
+    lines.extend(["", *_platform_install_block(name, display)])
     lines.extend(
         [
             "",
@@ -2151,21 +2372,9 @@ def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
     read from the full paths by_path_suffix records.
     """
     files = db.get("files", {})
-    bios_dir = Path(str(db.get("bios_dir") or "bios"))
-    places: dict[str, set[tuple[str, str]]] = {}
-    for sha1, entry in files.items():
-        parts = str(entry.get("path", "")).split("/")
-        if len(parts) >= 3 and parts[0] == "bios":
-            places.setdefault(sha1, set()).add((parts[1], parts[2]))
-    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
-        parts = tail.split("/")
-        if len(parts) < 3 or parts[1].startswith(".") or len(sha1s) != 1:
-            continue
-        if sha1s[0] in files and (bios_dir / tail).is_file():
-            places.setdefault(sha1s[0], set()).add((parts[0], parts[1]))
     manufacturers: dict[str, dict[str, list]] = {}
-    for sha1, where in places.items():
-        for manufacturer, console in sorted(where):
+    for sha1, where in _copy_places(db).items():
+        for manufacturer, console in sorted({(m, c) for m, c, _ in where}):
             manufacturers.setdefault(manufacturer, {}).setdefault(console, []).append(files[sha1])
     return manufacturers
 
@@ -2635,14 +2844,52 @@ def _card_title(text: str, anchor: str) -> str:
     return f"#### {text} {{ {attributes} }}"
 
 
+def system_install_choices(coverages: dict) -> dict[str, dict[str, list[tuple[str, str]]]]:
+    """slug -> console -> the (platform, system id) pairs linked to it.
+
+    Read through the same table as every system link, so a command sits in
+    the section the platform's system links to. Only a system the
+    platform's install manifest records is offered: --system refuses any
+    other name.
+    """
+    from siterender import _page_by_norm  # noqa: PLC0415
+
+    choices: dict[str, dict[str, list[tuple[str, str]]]] = {}
+    for name, cov in sorted(coverages.items()):
+        manifest = _REPO_ROOT / "install" / f"{name}.json"
+        if not manifest.is_file():
+            continue
+        document = json.loads(manifest.read_text(encoding="utf-8"))
+        recorded = {
+            str(system)
+            for entry in (document.get("files") or []) + (document.get("omitted_files") or [])
+            for system in entry.get("systems") or []
+        }
+        for sys_id in sorted(set(cov["config"].get("systems") or {}) & recorded):
+            page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
+            if page:
+                slug, console = page
+                choices.setdefault(slug, {}).setdefault(console, []).append((name, sys_id))
+    return choices
+
+
 def generate_system_page(
     manufacturer: str,
     consoles: dict[str, list],
     consumers: FileConsumers,
+    installs: dict[str, list[tuple[str, str]]] | None = None,
 ) -> str:
-    manufacturer.lower().replace(" ", "-")
+    """One manufacturer's page, a section per console.
+
+    ``installs`` gives, per console, the (platform, system id) pairs whose
+    install command the section offers.
+    """
+    slug = manufacturer.lower().replace(" ", "-")
     lines = [
         f"# {manufacturer}",
+        "",
+        f"The files below by console, with every hash, are also published as "
+        f"[JSON](../api/v1/systems/{urllib.parse.quote(slug)}.json).",
         "",
     ]
     anchored: set[str] = set()
@@ -2652,6 +2899,7 @@ def generate_system_page(
         icon_md = system_icon_markdown(manufacturer, console_name)
         lines.append(f"## {icon_md}{console_name}")
         lines.append("")
+        lines.extend(_console_install_block(console_name, (installs or {}).get(console_name, [])))
         main_files = [f for f in files if "/.variants/" not in f["path"]]
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
@@ -2878,6 +3126,83 @@ def _first_hash_value(entry: dict) -> str:
     return ""
 
 
+_LOAD_FROM = {
+    "system_dir": "the system (BIOS) directory",
+    "save_dir": "the save directory, not the BIOS directory",
+    "content_dir": "the folder of the loaded content, not the BIOS directory",
+    "working_directory": "the working directory, not the BIOS directory",
+    "data_dir": "the emulator's data directory, not the BIOS directory",
+    "hdd_image": "inside the emulated hard disk image, not the BIOS directory",
+    "internal_storage": "the app's internal storage, not the BIOS directory",
+}
+
+
+def _by_build(value: object, words: Callable[[str], str]) -> str:
+    """A field keyed by build, said per build, or a plain value said once."""
+    if isinstance(value, dict):
+        return ", ".join(f"{words(str(v))} ({mode} build)" for mode, v in value.items() if v)
+    return words(str(value)) if value else ""
+
+
+def _load_from_text(value: object) -> str:
+    """Where the code reads a file, in words.
+
+    The card showed the Path alone: Dolphin's libretro core reads
+    gba_bios.bin from its save directory, and a reader put it under system/.
+    """
+    if value in (None, "", "system_dir"):
+        return ""
+    return _by_build(value, lambda v: _LOAD_FROM.get(v, _code(v)))
+
+
+def _found_by_text(value: object) -> str:
+    """How the code finds a file: by the name it opens, or by content."""
+    words = {
+        "name": "file name (the code opens this name)",
+        "content": "content (the code scans the folder and identifies the file "
+                   "by its hash, any file name works)",
+    }
+    return _by_build(value, lambda v: words.get(v, _code(v)))
+
+
+def _on_mismatch_lines(value: object) -> list[str]:
+    """What the code does when a declared check fails, where it is not reject."""
+    said = {"warn": "warns and runs with the file", "reject": "rejects the file"}
+    if value == "warn":
+        return [f"On a failed check: {said['warn']}"]
+    if isinstance(value, dict):
+        return [f"On a failed {check} check: {said.get(str(how), _code(str(how)))}"
+                for check, how in value.items()]
+    return []
+
+
+def _build_rows(profile: dict) -> list[str]:
+    """Meta card rows for who ships the build, how its files are found, why
+    its revision is held and where its releases are announced."""
+    rows = []
+    built_by = profile.get("built_by") or []
+    if built_by:
+        names = ", ".join(f"[{p}](../platforms/{p}.md)" for p in map(str, built_by))
+        rows.append(f"| Built by | {names}, under its core name. The libretro "
+                    "buildbot does not publish this build. |")
+    found = _found_by_text(profile.get("found_by"))
+    if found:
+        rows.append(f"| Files found by | {found} |")
+    frozen = profile.get("pin_frozen")
+    if frozen:
+        held = _escape_tags(' '.join(str(frozen).split())).replace('|', r'\|')
+        rows.append(f"| Revision held | {held} |")
+    announced = profile.get("version_source")
+    if isinstance(announced, dict) and announced.get("url"):
+        url = str(announced["url"])
+        row = f"| Releases announced at | [{url}]({url})"
+        if announced.get("no_genuine_copy"):
+            row += (f" (version {_escape_tags(str(announced['no_genuine_copy']))} "
+                    "announced there, found only as rebuilt copies)")
+        rows.append(row + " |")
+    return rows
+
+
 def _render_emulator_file(
     f: dict,
     profile: dict,
@@ -2886,10 +3211,12 @@ def _render_emulator_file(
     _file_available: Callable[[dict], bool],
     anchor: str = "",
     owner: str = "",
+    alias: str = "",
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
 
-    `anchor` is the card's id on the page, so one file can be cited by URL.
+    `anchor` is the card's id on the page, so one file can be cited by URL,
+    and `alias` a second id it answers to.
 
     Split out of generate_emulator_page, where it was a 228-line loop body
     carrying most of that function's branching: thirty-odd optional fields,
@@ -2927,7 +3254,8 @@ def _render_emulator_file(
     badge_str = " ".join(badges)
     lines.append('<div class="rb-file-entry" markdown>')
     lines.append("")
-    lines.append(_card_title(f"{_code(fname)} {badge_str}", anchor))
+    marker = f'<span id="{alias}"></span>' if alias else ""
+    lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor))
     lines.append("")
     if desc:
         lines.extend([_escape_tags(str(desc)), ""])
@@ -2942,6 +3270,12 @@ def _render_emulator_file(
         # under Firmware/, and a page naming only the core's path sent its
         # users to the wrong folder.
         details.append(f"Standalone path: `{standalone_path}`")
+    read_from = _load_from_text(f.get("load_from"))
+    if read_from:
+        details.append(f"Read from: {read_from}")
+    found = _found_by_text(f.get("found_by"))
+    if found:
+        details.append(f"Found by: {found}")
     if fsystem:
         details.append(f"System: {_system_link(fsystem, '../')}")
     if size:
@@ -2999,6 +3333,7 @@ def _render_emulator_file(
         elif isinstance(validation, dict):
             for scope, checks in validation.items():
                 details.append(f"Validation ({scope}): {', '.join(checks)}")
+    details.extend(_on_mismatch_lines(f.get("on_mismatch")))
     if f.get("installed_on"):
         details.append("Installed by the platform's own package on: "
                        + ", ".join(sorted(f["installed_on"])))
@@ -3022,18 +3357,21 @@ def _render_emulator_file(
         details.extend(_directory_copies(f, consumers))
     if consumers:
         sha1 = consumers.sha1_of(f, f.get("path") or "", owner=owner)
-        if sha1 and in_repo:
+        held = consumers.path_of(sha1) if sha1 and in_repo else ""
+        parts = held.split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
             # Which copy answers this entry, linked to its collection card
             # (provenance, every hash, download): an entry declaring no hash
             # said "in repo" without naming the file.
-            held = consumers.path_of(sha1)
-            parts = held.split("/")
-            if len(parts) >= 3 and parts[0] == "bios":
-                page = parts[1].lower().replace(" ", "-")
-                details.append(
-                    f"Collection copy: [{_code(held)}]"
-                    f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
-                )
+            page = parts[1].lower().replace(" ", "-")
+            details.append(
+                f"Collection copy: [{_code(held)}]"
+                f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
+            )
+        elif in_repo and not any(d.startswith("Collection copies:") for d in details):
+            copy = held_copy(f)
+            if copy:
+                details.append(_held_copy_line(copy, consumers))
         plat_links = _platform_links(sha1, consumers) if sha1 else []
         if plat_links:
             details.append(f"Platforms: {', '.join(plat_links)}")
@@ -3088,6 +3426,33 @@ def _render_emulator_file(
     lines.append("</div>")
     lines.append("")
     return lines
+
+
+def _held_copy_line(copy: tuple[str, str], consumers: FileConsumers) -> str:
+    """Where a copy the database does not index sits: a ZIP member under
+    bios/, or a file or tree of a data directory the packs fetch."""
+    path, member = copy
+    parts = path.rstrip("/").split("/")
+    if member:
+        archive = _code(path)
+        zsha1 = consumers.sha1_at(path)
+        if zsha1 and len(parts) >= 3 and parts[0] == "bios":
+            page = urllib.parse.quote(parts[1].lower().replace(" ", "-"))
+            archive = f"[{archive}](../systems/{page}.md#sha1-{zsha1[:12]})"
+        return f"Collection copy: member {_code(member)} of {archive}"
+    if parts[0] == "data" and len(parts) >= 2:
+        ref, inside = parts[1], "/".join(parts[2:])
+        if path.endswith("/"):
+            where = _code(inside + "/") if inside else "the tree"
+            return f"Collection copy: {where} in the {_code(ref)} data directory"
+        info = (_DATA_MEMBERS.get(ref) or {}).get(inside) or {}
+        shown = _code(inside)
+        if info.get("sha1"):
+            shown = (f'<a href="../../files/?sha1={info["sha1"]}">'
+                     f"<code>{html.escape(inside)}</code></a>")
+        return f"Collection copy: {shown} in the {_code(ref)} data directory"
+    tree = f"{REPO_URL}/tree/main/{urllib.parse.quote(path.rstrip('/'))}"
+    return f"Collection copy: [{_code(path)}]({tree})"
 
 
 def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
@@ -3150,6 +3515,37 @@ def _render_metadata_rows(profile: dict) -> list[str]:
     return lines
 
 
+INSTALL_BASE = "https://raw.githubusercontent.com/Abdess/retrobios/main"
+
+
+def install_command(shell: str, args: str = "") -> str:
+    """The one-liner for a shell, with installer options when given.
+
+    PowerShell passes options only through a scriptblock: `irm ... | iex`
+    takes none.
+    """
+    if shell == "sh":
+        return f"curl -fsSL {INSTALL_BASE}/install.sh | sh" + (f" -s -- {args}" if args else "")
+    if args:
+        return f"&([scriptblock]::Create((irm {INSTALL_BASE}/install.ps1))) {args}"
+    return f"irm {INSTALL_BASE}/install.ps1 | iex"
+
+
+def install_commands(args: str = "", indent: str = "") -> list[str]:
+    """The same install for each place a user runs it: one generator for the
+    download page and the platform, system and emulator pages, so none of
+    them loses the Android or Windows form."""
+    lines = []
+    for label, shell in (
+        ("Linux, macOS, Steam Deck:", "sh"),
+        ("Windows (PowerShell):", "powershell"),
+        ("Android (Termux, after `pkg install python` and `termux-setup-storage`):", "sh"),
+    ):
+        lines += [f"{indent}{label}", "", f"{indent}```{shell}",
+                  f"{indent}{install_command(shell, args)}", f"{indent}```", ""]
+    return lines
+
+
 def _install_block(name: str, profile: dict) -> list[str]:
     """One command that installs this emulator's files where it reads them.
 
@@ -3159,26 +3555,49 @@ def _install_block(name: str, profile: dict) -> list[str]:
     """
     if profile.get("type") in ("alias", "launcher", "test"):
         return []
-    base = "https://raw.githubusercontent.com/Abdess/retrobios/main"
     return [
         '??? tip "Install this emulator\'s files"',
         "",
         "    The installer finds your platform and its BIOS folder, then downloads "
         "only the files this emulator reads there and checks each one.",
         "",
-        "    Linux, macOS, Steam Deck:",
+        *install_commands(f"--emulator {name}", "    "),
+    ]
+
+
+def _platform_install_block(name: str, display: str) -> list[str]:
+    """The platform's pack, installed file by file: what the ZIP holds, with
+    resume, verification and only what is missing."""
+    return [
+        '???+ tip "Install with one command"',
+        "",
+        f"    The installer downloads the files of the {display} pack that are "
+        "missing or differ from it, checks each one, and resumes where it "
+        "stopped. Add `--system` with the ids of the systems overview below "
+        "to install fewer systems.",
+        "",
+        *install_commands(f"--platform {name}", "    "),
+    ]
+
+
+def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
+    """Each platform's command for one console, by the system id it gives it."""
+    if not declared:
+        return []
+    lines = [
+        f'??? tip "Install the {console} files"',
+        "",
+        "    Each platform names the system its own way. On Windows, run the "
+        "same options through `&([scriptblock]::Create((irm "
+        f"{INSTALL_BASE}/install.ps1)))`.",
         "",
         "    ```sh",
-        f"    curl -fsSL {base}/install.sh | sh -s -- --emulator {name}",
-        "    ```",
-        "",
-        "    Windows (PowerShell):",
-        "",
-        "    ```powershell",
-        f"    &([scriptblock]::Create((irm {base}/install.ps1))) --emulator {name}",
-        "    ```",
-        "",
     ]
+    lines += [
+        f"    {install_command('sh', f'--platform {platform} --system {shlex.quote(system)}')}"
+        for platform, system in declared
+    ]
+    return lines + ["    ```", ""]
 
 
 def _render_platform_details(profile: dict) -> list[str]:
@@ -3326,8 +3745,6 @@ def _availability_check(
         # under the name belongs to another game or release.
         if not f.get("name") or f.get("unsourceable"):
             return False
-        if f.get("storage", "") in ("release", "large_file"):
-            return True
         return entry_source(f, index) is not None
 
     return _file_available
@@ -3494,6 +3911,7 @@ def generate_emulator_page(
     revision = revision_markdown(profile)
     if revision:
         lines.append(f"| Revision | {revision} |")
+    lines.extend(_build_rows(profile))
     lines.append(f"| Profiled | {profiled} |")
     # The YAML is the reusable document this site renders, and the JSON is the
     # same profile for a program.
@@ -3545,10 +3963,12 @@ def generate_emulator_page(
 
         lines.extend(_emulator_file_summary(files, _file_available))
 
-        for f, anchor in zip(files, emulator_file_anchors(files)):
+        anchors = emulator_file_anchors(files)
+        for f, anchor, alias in zip(files, anchors, emulator_file_aliases(files, anchors)):
             lines.extend(
                 _render_emulator_file(
-                    f, profile, consumers, files, _file_available, anchor, name
+                    f, profile, consumers, files, _file_available, anchor, name,
+                    alias,
                 )
             )
 
@@ -3636,6 +4056,48 @@ def _held_accepted(discrepancy: str, db: dict | None) -> str:
     return ""
 
 
+_PROBLEM_HASHES = ("sha1", "md5", "sha256", "crc32")
+
+
+def _declared_hashes(config: dict, detail: dict) -> dict[str, list[str]]:
+    """The hashes the platform declares for a reported file, by algorithm.
+
+    The untested table said "declared hash contradicted by the local file"
+    and named neither: the reader could not look for the dump RetroDECK asks
+    for, nor report the difference.
+    """
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    system = (config.get("systems") or {}).get(detail.get("system", "")) or {}
+    for entry in system.get("files") or []:
+        if isinstance(entry, dict) and entry.get("name") == detail.get("name"):
+            return {
+                algo: parse_hash_list(entry.get(algo))
+                for algo in _PROBLEM_HASHES if parse_hash_list(entry.get(algo))
+            }
+    return {}
+
+
+def _hash_cell(hashes: dict[str, list[str]]) -> str:
+    return "<br>".join(
+        f"{algo} " + ", ".join(_code(v) for v in values) for algo, values in hashes.items()
+    )
+
+
+def _copy_cell(path: str, algos: list[str], db: dict | None) -> str:
+    """The file a path holds, with its hashes in the algorithms declared."""
+    if not path:
+        return "-"
+    record = next(
+        (rec | {"sha1": sha1} for sha1, rec in (db or {}).get("files", {}).items()
+         if rec.get("path") == path),
+        {},
+    )
+    hashes = {algo: [str(record[algo]).lower()] for algo in algos if record.get(algo)}
+    shown = f"[{_code(path)}]({_fetch_url(path)})"
+    return f"{shown}<br>{_hash_cell(hashes)}" if hashes else shown
+
+
 def _render_problem_files(
     platform_problems: list, settled: list | None = None, db: dict | None = None
 ) -> list[str]:
@@ -3664,9 +4126,14 @@ def _render_problem_files(
             if p["required"]:
                 entry["required"] = True
         elif p["status"] == "untested":
-            entry = untested_files.setdefault(fname, {
+            # Keyed by what is declared and what is held: two platforms
+            # asking two dumps under one name are two rows.
+            declared = p.get("declared") or {}
+            key = f"{fname}\0{sorted(declared.items())}\0{p.get('path', '')}"
+            entry = untested_files.setdefault(key, {
                 "name": fname, "required": p["required"],
                 "platforms": [], "reason": p["reason"],
+                "declared": declared, "path": p.get("path", ""),
             })
             entry["platforms"].append(p["platform"])
         if p.get("discrepancy"):
@@ -3707,15 +4174,21 @@ def _render_problem_files(
                 f'### Untested <span class="rb-badge rb-badge-warning">'
                 f"{_count(len(untested_files), 'file')}</span>",
                 "",
-                "Present but hash not verified.",
+                "Present but hash not verified. Declared is what the platform "
+                "asks for, the collection copy is what the path holds.",
                 "",
-                "| File | Platforms | Reason |",
-                "|------|----------|--------|",
+                "| File | Platforms | Reason | Declared | Collection copy |",
+                "|------|----------|--------|----------|-----------------|",
             ])
-            for fname in sorted(untested_files):
-                f = untested_files[fname]
+            for key in sorted(untested_files):
+                f = untested_files[key]
                 plats = ", ".join(sorted(set(f["platforms"])))
-                lines.append(f"| `{fname}` | {plats} | {f['reason']} |")
+                declared = f["declared"]
+                lines.append(
+                    f"| {_code(f['name'])} | {plats} | {f['reason']} "
+                    f"| {_hash_cell(declared) or '-'} "
+                    f"| {_copy_cell(f['path'], list(declared) or ['md5'], db)} |"
+                )
             lines.append("")
 
         if mismatch_files:
@@ -3755,6 +4228,30 @@ def _render_problem_files(
         lines.append("")
 
     return lines
+
+
+def _platform_lists_sentence(total: int, verified: int, untested: int, missing: int) -> str:
+    """The platforms' own lists in one sentence, every count said.
+
+    Four tiles opened the page: "Verified (100%)" for 5,437 of 5,438 and
+    "Missing 0", above a table of red cells, on the page about what is
+    missing. The gaps are in the files the emulators load, and the sentence
+    says so.
+    """
+    def _is(count: int) -> str:
+        return "is" if count == 1 else "are"
+
+    parts = [f"{verified:,} {_is(verified)} held and pass the platform's own check"]
+    if untested:
+        parts.append(f"{untested:,} {_is(untested)} held but not verified "
+                     "(listed under Untested below)")
+    parts.append(f"{missing:,} {_is(missing)} missing")
+    listed = ", ".join(parts[:-1]) + f" and {parts[-1]}"
+    return (
+        f"Of the {total:,} files on the platforms' own BIOS lists, {listed}. "
+        "The files the emulators load beyond those lists are counted per "
+        "platform in the table below."
+    )
 
 
 def generate_gap_analysis(
@@ -3813,46 +4310,23 @@ def generate_gap_analysis(
                     "reason": d.get("reason", ""),
                     "discrepancy": d.get("discrepancy", ""),
                     "system": d.get("system", ""),
+                    "declared": _declared_hashes(cov.get("config") or {}, d),
+                    "path": d.get("path") or "",
                 })
-
-    pct_verified = (
-        f"{total_verified / total_files_verify * 100:.0f}%"
-        if total_files_verify
-        else "0%"
-    )
 
     lines = [
         "# Gap analysis",
         "",
-        "Unified view of BIOS verification, file provenance, and coverage gaps.",
+        "What each platform and its emulators still lack, and where the "
+        "collection's copies come from.",
         "",
         "[Download gaps CSV](downloads/gaps.csv){ .md-button } "
         "[Open gaps API](api/v1/gaps.json){ .md-button } "
         "[All data exports](data.md){ .md-button }",
         "",
-        '<div class="rb-stats" markdown>',
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_files_verify:,}</span>',
-        '<span class="rb-stat-label">Total files (all platforms)</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_verified:,}</span>',
-        f'<span class="rb-stat-label">Verified ({pct_verified})</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_untested:,}</span>',
-        '<span class="rb-stat-label">Untested</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_missing_verify:,}</span>',
-        '<span class="rb-stat-label">Missing</span>',
-        "</div>",
-        "",
-        "</div>",
+        _platform_lists_sentence(
+            total_files_verify, total_verified, total_untested, total_missing_verify
+        ),
         "",
     ]
 
@@ -4663,6 +5137,10 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 def generate_which_pack() -> str:
     """Generate the 'Which pack?' decision page."""
     rel = RELEASE_URL
+    quick = "\n".join(install_commands())
+    check_sh, check_ps = install_command("sh", "--check"), install_command("powershell", "--check")
+    sd_card = install_command(
+        "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")
     return _link_pack_cells(f"""\
 # Download
 
@@ -4681,18 +5159,7 @@ incorrect files, verifies their hashes, and installs them atomically. The small
 bootstrap checks the Python installer against an embedded SHA-256 before running
 it, and the installer reads its file list from that same revision.
 
-**Linux / Mac / Steam Deck:**
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
-```
-
-**Windows (PowerShell):**
-
-```powershell
-irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
-```
-
+{quick}
 That is the complete default flow. Extra copies into detected standalone
 emulator directories are deliberately opt-in with `--standalone-copies`, so
 automatic setup never writes outside the selected platform tree unexpectedly.
@@ -4700,7 +5167,19 @@ Adding `--check` reads the BIOS folder, hashes what is there and writes
 nothing:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+{check_sh}
+```
+
+```powershell
+{check_ps}
+```
+
+An SD card mounted on a PC is installed with `--platform` and `--dest`, the
+BIOS folder on the card (RetroArch on Switch: `retroarch/cores/system`, on
+Android: `RetroArch/system`):
+
+```sh
+{sd_card}
 ```
 
 Options, environment overrides, how each platform is detected and what the
@@ -4724,7 +5203,7 @@ ZIP: extract them all into the same folder.
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
 | [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators, adds each game to the Steam library | [EmuDeck]({rel}) | `~/Emulation/bios/` |
-| [RetroDECK](https://retrodeck.net/) | Single Flatpak app, all emulators bundled, one-click install from Discover | [RetroDECK]({rel}) | `~/retrodeck/` (the pack carries its own `bios/`) |
+| [RetroDECK](https://retrodeck.net/) | Single Flatpak app with its emulators bundled, installed from Flathub or Discover | [RetroDECK]({rel}) | `~/retrodeck/` (the pack carries its own `bios/`) |
 | RetroArch standalone | Installed from Discover, Steam, or Flatpak | [RetroArch]({rel}) | Open RetroArch > Settings > Directory > System, that is the folder |
 
 ### Windows
@@ -4733,7 +5212,7 @@ ZIP: extract them all into the same folder.
 |-------|-----------|------|-----------|
 | [RetroArch](https://www.retroarch.com/) | Multi-system emulator, loads different cores for each console | [RetroArch]({rel}) | The `system` folder next to `retroarch.exe` |
 | [RetroBat](https://www.retrobat.org/) | Windows frontend with EmulationStation, includes RetroArch and standalone emulators | [RetroBat]({rel}) | The `bios` folder inside the RetroBat installation |
-| [BizHawk](https://tasvideos.org/BizHawk) | Accuracy-focused multi-system emulator, popular for speedruns and TAS | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
+| [BizHawk](https://tasvideos.org/BizHawk) | Multi-system emulator with rerecording and debugging tools, hosted by TASVideos | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
 | [LaunchBox](https://www.launchbox-app.com/) | Game library manager and launcher, uses RetroArch or standalone emulators behind the scenes | [RetroArch]({rel}) | Open RetroArch (via LaunchBox) > Settings > Directory > System |
 | [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators with ES-DE | [EmuDeck]({rel}) | `bios` in the Emulation folder chosen in EmuDeck, `C:\\Emulation\\bios\\` by default |
 
@@ -4757,24 +5236,24 @@ ZIP: extract them all into the same folder.
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| [RetroPie](https://retropie.org.uk/) | The classic Pi emulation setup, largest community, most online guides | [RetroPie]({rel}) | `~/RetroPie/BIOS/` |
-| [Lakka](https://www.lakka.tv/) | Lightweight RetroArch OS, minimal config, boots straight into the UI | [Lakka]({rel}) | `/storage/system/` |
-| [Batocera](https://batocera.org/) | Easy setup, works on Pi 3/4/5 and many other boards (Odroid, etc.) | [Batocera]({rel}) | `/userdata/bios/` |
-| [Recalbox](https://www.recalbox.com/) | Plug-and-play experience, good for a first build | [Recalbox]({rel}) | `/recalbox/share/bios/` |
+| [RetroPie](https://retropie.org.uk/) | Scripts that install RetroArch and standalone emulators on Raspberry Pi OS | [RetroPie]({rel}) | `~/RetroPie/BIOS/` |
+| [Lakka](https://www.lakka.tv/) | Operating system built around RetroArch, boots into its menu | [Lakka]({rel}) | `/storage/system/` |
+| [Batocera](https://batocera.org/) | Bootable OS, with images for Raspberry Pi 3, 4 and 5 and other boards (Odroid XU4 among them) | [Batocera]({rel}) | `/userdata/bios/` |
+| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming that configures its emulators itself | [Recalbox]({rel}) | `/recalbox/share/bios/` |
 
 ### Handhelds
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| Android (Retroid Pocket, Odin, etc.) | Most Android handhelds run RetroArch | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
-| [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds (RG35XX, RG552, Deck) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
-| [Batocera](https://batocera.org/) | Also images many handhelds | [Batocera]({rel}) | `/userdata/bios/` |
+| Android (Retroid Pocket, Odin, etc.) | RetroArch for Android | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
+| [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds, among them the RG35XX (H700) and the RG552 (RK3399) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
+| [Batocera](https://batocera.org/) | Also has images for handheld chips, among them H700 and RK3326 | [Batocera]({rel}) | `/userdata/bios/` |
 
 ### FPGA
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) | Hardware-level recreation of consoles on a DE10-Nano board | [MiSTer FPGA]({rel}) | `/media/fat/games/`, one subfolder per core |
+| [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) | FPGA cores that reimplement console hardware on a DE10-Nano board | [MiSTer FPGA]({rel}) | `/media/fat/games/`, one subfolder per core |
 
 ### Self-hosted ROM manager
 
@@ -5108,12 +5587,18 @@ def _generate(args: argparse.Namespace) -> None:
     write_if_changed(
         str(docs / "systems" / "index.md"), generate_systems_index(manufacturers)
     )
+    console_installs = system_install_choices(coverages)
     (docs / "files").mkdir(parents=True, exist_ok=True)
     write_if_changed(str(docs / "files" / "index.md"), generate_files_page())
     for mfr, consoles in manufacturers.items():
         slug = mfr.lower().replace(" ", "-")
-        page = generate_system_page(mfr, consoles, consumers)
+        page = generate_system_page(mfr, consoles, consumers, console_installs.get(slug))
         PAGE_DATA[f"systems/{slug}.md"] = system_structured_data(slug, consoles)
+        write_single_item(
+            docs / "api" / "v1" / "systems" / f"{slug}.json", "systems",
+            system_export_item(slug, mfr, consoles),
+            str(db.get("generated_at") or _timestamp()),
+        )
         write_if_changed(str(docs / "systems" / f"{slug}.md"), page)
 
     print("Generating emulator pages...")

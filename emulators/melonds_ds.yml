@@ -6,6 +6,7 @@ source: "https://github.com/JesseTG/melonds-ds"
 upstream: "https://github.com/melonDS-emu/melonDS"
 profiled_date: "2026-10-04"
 source_commit: "f394adbacb5722ee97c1b37c8064da9a25818310"
+upstream_commit: "906e9ebb27da8c6a715cd7abab4abfe8a8d29427"
 core_version: "1.4.0"
 display_name: "Nintendo - DS (melonDS DS)"
 systems:

@@ -5,6 +5,7 @@ source: "https://github.com/libretro/81-libretro"
 upstream: "https://github.com/charlierobson/EightyOne"
 profiled_date: "2026-03-22"
 source_commit: "fa7094910d040baa5fd8b11dbf6a1a618330ecd9"
+upstream_commit: "4de3cdb8cff0060ad03e43ae2681b0628a9c5f5d"
 core_version: "1.0a"
 display_name: "Sinclair - ZX 81 (EightyOne)"
 cores: ["81"]
@@ -23,10 +24,10 @@ systems:
 notes: |
   Libretro port embeds zx81.rom and dkchr.rom as C arrays (xxd -i).
   Core never accesses filesystem for ROMs. Hardcodes MACHINEZX81.
-  ref: 81-libretro/81/zx81/snap.c:487-508, src/libretro.cpp:393
+  ref: source 81/zx81/snap.c:487-508, source src/libretro.cpp:393
 
   Original EightyOne supports 15+ machines, loads ROMs from ROM/ directory.
-  ref: EightyOne/Source/zx81/zx81.cpp:309, EightyOne/Source/HW_.cpp:2734
+  ref: upstream Source/zx81/zx81.cpp:309, upstream Source/HW_.cpp:2734
 
   .info has no firmware declarations (firmware_count absent).
 
@@ -270,7 +271,7 @@ files:
     mode: standalone
     size: 8192
     md5: 5c11c61a2dd2ca4bf39328d9ff42d289
-    source_ref: "upstream EightyOne/Source/ROMs/FDCs/interface1.edition1.rom"
+    source_ref: "upstream Source/ROMs/FDCs/interface1.edition1.rom"
   - name: "+d.g+dos.v1-a.rom"
     system: sinclair-zx-spectrum
     required: false
@@ -482,7 +483,7 @@ files:
     mode: standalone
     size: 16384
     md5: 9f6f56003307b9d55be96f406fdbf2b1
-    source_ref: "upstream EightyOne/Source/ROMs/spectrum48.arabic.rom"
+    source_ref: "upstream Source/ROMs/spectrum48.arabic.rom"
   - name: spectrum48.arabic.version1.rom
     system: sinclair-zx-spectrum
     required: false
@@ -599,7 +600,7 @@ files:
     size: 16384
     md5: b7893ad25728fbf6410f08eddd4a1cad
     note: "Microdigital TK90X (Spectrum clone)."
-    source_ref: "upstream EightyOne/Source/ROMs/tk90.rom"
+    source_ref: "upstream Source/ROMs/tk90.rom"
   - name: tk95.rom
     system: sinclair-zx-spectrum
     required: false
@@ -608,4 +609,4 @@ files:
     size: 16384
     md5: b7893ad25728fbf6410f08eddd4a1cad
     note: "Microdigital TK95 (Spectrum clone)."
-    source_ref: "upstream EightyOne/Source/ROMs/tk95.rom"
+    source_ref: "upstream Source/ROMs/tk95.rom"

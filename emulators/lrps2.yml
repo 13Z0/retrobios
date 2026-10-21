@@ -57,7 +57,7 @@ files:
     required: false
     max_size: 4194304
     description: "DVD player ROM"
-    source_ref: "upstream pcsx2/ps2/BiosTools.cpp:189-229, 339"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-229, 339"
     note: >
       DVD player ROM. Tries <biospath>.rom1 (appended) then <biosbase>.rom1
       (extension replaced). Silently skipped if not found.
@@ -67,7 +67,7 @@ files:
     required: false
     max_size: 524288
     description: "Chinese ROM extension"
-    source_ref: "upstream pcsx2/ps2/BiosTools.cpp:189-229, 340"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-229, 340"
     note: >
       Chinese region ROM extension. Same naming convention as rom1.
       Only present on Chinese region consoles.
@@ -78,7 +78,7 @@ files:
     hle_fallback: true
     size: 1024
     description: "NVRAM / EEPROM data"
-    source_ref: "upstream pcsx2/CDVD/CDVD.cpp:196-227"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:196-227"
     note: >
       Console EEPROM data (language, timezone, region, iLink ID, OSD settings).
       Path derived from BIOS path with extension replaced to .nvm.
@@ -90,7 +90,7 @@ files:
     hle_fallback: true
     size: 4
     description: "Mechacon version"
-    source_ref: "upstream pcsx2/CDVD/CDVD.cpp:229-245"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:229-245"
     note: >
       Mechacon (disc drive controller) version as u32.
       Auto-created with default 0x00020603 if missing.

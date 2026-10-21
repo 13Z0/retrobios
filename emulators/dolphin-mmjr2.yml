@@ -5,6 +5,7 @@ source: "https://github.com/nachoverdon/Dolphin-MMJR2"
 upstream: "https://github.com/dolphin-emu/dolphin"
 profiled_date: "2026-08-11"
 source_commit: "4d0fdb8eea616320e967408cf5547c72a95196f3"
+upstream_commit: "4ff214cdd26f135251d2266d676ed72dc1c2f8c9"
 core_version: "2.0-18025"
 display_name: "Nintendo - GameCube / Wii (Dolphin MMJR2)"
 cores:
@@ -22,7 +23,8 @@ notes: |
   selective merge of Dolphin Official carrying that label rather than a
   checkout of it: at Dolphin 5.0-18025 the memory subsystem has already moved
   behind Core::System, and here it has not, so no single Dolphin revision
-  matches and no upstream pin is declared.
+  matches the tree. upstream_commit is the Dolphin revision the upstream
+  citations were read at, not a base of this tree.
   ref: Source/Android/app/build.gradle:32, Source/Android/app/build.gradle:135
 
   Two roots. The user directory is mmjr-revamp at the root of external storage.

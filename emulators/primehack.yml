@@ -5,6 +5,7 @@ source: "https://github.com/shiiion/dolphin"
 upstream: "https://github.com/dolphin-emu/dolphin"
 profiled_date: "2026-03-26"
 source_commit: "53f53e0f5bad27ad62a807cb93b136d84f68777f"
+upstream_commit: "d8558142ead21b3fa39809c4aedb982fbfc85feb"
 core_version: "1.0.8"
 display_name: "PrimeHack (Dolphin fork for Metroid Prime)"
 cores:
@@ -41,7 +42,7 @@ files:
     required: false
     hle_fallback: true
     note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts. Discs with the Brazilian country code B and SYSCONF countries of the Americas map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:198-199, 249-251)."
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:138, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-110"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:139, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-110"
 
   - name: "IPL.bin"
     path: "GC/EUR/IPL.bin"
@@ -78,7 +79,7 @@ files:
     adler32_pairs_with: "dsp_coef.bin"
     adler32_pairs: [["0x66f334fe", "0xf3b93527"], ["0xe789b5a5", "0xa4a575f5"]]
     note: "DSP instruction ROM for LLE audio. Free replacement (v0.4) included"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:135, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-117, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:136, source Source/Core/Core/HW/DSPLLE/DSPLLE.cpp:87-117, source Source/Core/Core/DSP/DSPCore.cpp:28-102"
 
   - name: "dsp_coef.bin"
     path: "GC/dsp_coef.bin"
@@ -106,7 +107,7 @@ files:
     sha1: "483a17ff25b68a8f18cae691da99f16beefbe370"
     md5: "9bef639b7426ef6948602a12b33522a8"
     note: "Windows-1252 font for GC/Wii text rendering. The free alternative ships in Sys/GC/ of the 1.0.8 Windows and macOS releases, and the real one from an IPL dump is preferred"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:132, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131, 203-218"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:133, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:131, 203-218"
 
   - name: "font_japanese.bin"
     path: "GC/font_japanese.bin"
@@ -127,7 +128,7 @@ files:
     required: false
     hle_fallback: true
     note: "GBA BIOS for GC-GBA link feature (uses integrated mGBA). Path configurable in settings"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:144, source Source/Core/Core/HW/GBACore.cpp:344-361"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:145, source Source/Core/Core/HW/GBACore.cpp:344-361"
 
   # -- Wii System Files --
   - name: "SYSCONF"
@@ -143,7 +144,7 @@ files:
     required: false
     hle_fallback: true
     note: "Wii region/language settings. Auto-generated during Wii boot emulation"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:152, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:377-454"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:153, source Source/Core/Core/Boot/Boot_BS2Emu.cpp:377-454"
 
   # -- Wii NAND Backup (BootMii) --
   - name: "nand.bin"
@@ -167,7 +168,7 @@ files:
     required: false
     hle_fallback: true
     note: "Virtual SD card image for Wii homebrew. Auto-created, supports SD/SDHC up to 4GB"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:149"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:150"
 
   # -- Gecko Code Handler --
   - name: "codehandler.bin"
@@ -179,7 +180,7 @@ files:
     sha1: "e6c0050b3c67ee26198488fbbe4a5d019c15b628"
     md5: "1f118b8735fcf40c20b38c3184eebfd9"
     note: "Gecko/Ocarina cheat code handler. Shipped in Sys/ of the 1.0.8 Windows and macOS releases"
-    source_ref: "upstream Source/Core/Common/CommonPaths.h:154, source Source/Core/Core/GeckoCode.cpp:121"
+    source_ref: "upstream Source/Core/Common/CommonPaths.h:155, source Source/Core/Core/GeckoCode.cpp:121"
 
   # -- Wii System Menu (WAD) --
   - name: "Wii System Menu"

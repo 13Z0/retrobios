@@ -44,5 +44,31 @@ class EachRowItsDeclaration(unittest.TestCase):
         self.assertNotIn(A, saturn)
 
 
+class AnUntestedRowNamesBothHashes(unittest.TestCase):
+    """The gaps page said "declared hash contradicted by the local file" for
+    RetroDECK's dsifirmware.bin and named neither the dump RetroDECK asks for
+    nor the one the collection holds."""
+
+    def test_declared_and_held(self):
+        import generate_site as gs
+
+        path = "bios/Nintendo/Nintendo DS/dsifirmware.bin"
+        declared, held = "1" * 64, "2" * 64
+        config = {"systems": {"nintendo-ds": {"files": [
+            {"name": "dsifirmware.bin", "sha256": declared}]}}}
+        detail = {"name": "dsifirmware.bin", "system": "nintendo-ds"}
+        problem = {
+            "platform": "RetroDECK", "name": "dsifirmware.bin", "status": "untested",
+            "required": True, "reason": "declared hash contradicted by the local file",
+            "declared": gs._declared_hashes(config, detail), "path": path,
+        }
+        db = {"files": {"f" * 40: {"path": path, "sha256": held}}}
+        table = "\n".join(gs._render_problem_files([problem], db=db))
+        row = next(line for line in table.splitlines() if "dsifirmware" in line)
+        self.assertIn(f"sha256 `{declared}`", row)
+        self.assertIn(f"sha256 `{held}`", row)
+        self.assertIn(f"`{path}`", row)
+
+
 if __name__ == "__main__":
     unittest.main()

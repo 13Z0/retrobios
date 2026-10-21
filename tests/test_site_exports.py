@@ -882,5 +882,125 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
         self.assertIn("name: a.bin, size: 2", html)
 
 
+class TheOneLinerIsWhereUsersLand(unittest.TestCase):
+    """The download page had no Android line and no Windows form with
+    options, and the platform and system pages offered only ZIP parts."""
+
+    def test_download_page(self):
+        import generate_site  # noqa: PLC0415
+
+        page = generate_site.generate_which_pack()
+        self.assertIn("Android (Termux", page)
+        self.assertIn("install.ps1))) --check", page)
+        self.assertIn("--platform retroarch --dest", page)
+
+    def test_platform_and_system_pages(self):
+        import generate_site  # noqa: PLC0415
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        cov = {"platform": "Batocera", "mode": "md5", "present": 0, "total": 0,
+               "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
+        page = generate_site.generate_platform_page("batocera", cov)
+        self.assertIn("install.sh | sh -s -- --platform batocera", page)
+        self.assertIn("install.ps1))) --platform batocera", page)
+        self.assertLess(page.index("--platform batocera"), page.index("md-button"))
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
+                 "path": "bios/Recalbox/MSX/a.bin"}
+        page = generate_site.generate_system_page(
+            "Microsoft", {"MSX": [entry]}, FileConsumers({"files": {}}),
+            {"MSX": [("recalbox", "msx1,msx2,msxturbor"), ("batocera", "msx1")]})
+        self.assertIn("--platform recalbox --system msx1,msx2,msxturbor\n", page)
+        self.assertIn("--platform batocera --system msx1", page)
+
+    def test_a_system_is_offered_only_where_the_manifest_records_it(self):
+        import generate_site  # noqa: PLC0415
+        import siterender  # noqa: PLC0415
+
+        saved = dict(siterender._system_page_map)
+        self.addCleanup(siterender.set_system_page_map, saved)
+        siterender.set_system_page_map({"sony-playstation": ("sony", "PlayStation"),
+                                        "nowhere": ("sony", "PlayStation")})
+        cov = {"retroarch": {"config": {"systems": {"sony-playstation": {}, "nowhere": {}}}}}
+        choices = generate_site.system_install_choices(cov)
+        self.assertEqual(choices["sony"]["PlayStation"], [("retroarch", "sony-playstation")])
+
+
+class TheGapPageOpensOnCounts(unittest.TestCase):
+    """The page opened on a slogan and on tiles reading "Verified (100%)"
+    for 5,437 of 5,438 files and "Missing 0", above a table of red cells."""
+
+    def test_every_count_is_said(self):
+        import generate_site  # noqa: PLC0415
+
+        text = generate_site._platform_lists_sentence(5438, 5437, 1, 0)
+        self.assertIn("Of the 5,438 files", text)
+        self.assertIn("5,437 are held", text)
+        self.assertIn("1 is held but not verified", text)
+        self.assertIn("0 are missing", text)
+        self.assertNotIn("%", text)
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "generate_site.py").read_text()
+        self.assertNotIn("Unified view of BIOS verification", source)
+
+
+class WhichPackDescribesNoPlatformByOpinion(unittest.TestCase):
+    """The page called RetroPie the largest community with the most guides,
+    Batocera an easy setup and Recalbox good for a first build: claims
+    nothing in the repository measures, ranking platforms against each
+    other."""
+
+    def test_no_ranking_words(self):
+        import re
+
+        import generate_site  # noqa: PLC0415
+
+        page = generate_site.generate_which_pack()
+        rows = [line for line in page.splitlines() if line.startswith("| ")]
+        found = [
+            row for row in rows
+            if re.search(r"\b(largest|most|popular|easy|best|classic|lightweight|"
+                         r"one-click|plug-and-play|first build|accuracy-focused)\b",
+                         row, re.IGNORECASE)
+        ]
+        self.assertEqual(found, [])
+
+
+class EveryPageLinksItsOwnData(unittest.TestCase):
+    """An emulator page linked its YAML and JSON. A platform page linked
+    nothing, and a tool had to download platforms.json (2.8 MB) and filter
+    it. A system page linked nothing either."""
+
+    def test_platform_and_system_documents(self):
+        import generate_site  # noqa: PLC0415
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        cov = {"platform": "Batocera", "mode": "md5", "present": 0, "total": 0,
+               "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
+        page = generate_site.generate_platform_page("batocera", cov)
+        self.assertIn("[JSON](../api/v1/platforms/batocera.json)", page)
+        self.assertIn("/blob/main/platforms/batocera.yml)", page)
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
+                 "path": "bios/Sony/PlayStation/a.bin"}
+        page = generate_site.generate_system_page(
+            "Sony", {"PlayStation": [entry]}, FileConsumers({"files": {}}))
+        self.assertIn("[JSON](../api/v1/systems/sony.json)", page)
+
+        item = generate_site.system_export_item("sony", "Sony", {"PlayStation": [entry]})
+        self.assertEqual(item["consoles"]["PlayStation"][0]["sha1"], "a" * 40)
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / "tmp") as tmp:
+            path = Path(tmp) / "sony.json"
+            generate_site.write_single_item(path, "systems", item, "2026-10-21T00:00:00Z")
+            document = json.loads(path.read_text())
+        self.assertEqual(document["count"], 1)
+        try:
+            import jsonschema  # noqa: PLC0415
+        except ImportError:
+            return
+        root = Path(__file__).resolve().parents[1]
+        envelope = json.loads((root / "schemas" / "site-api-envelope.schema.json").read_text())
+        jsonschema.validate(document, envelope)
+
+
 if __name__ == "__main__":
     unittest.main()

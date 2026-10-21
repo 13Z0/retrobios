@@ -5,6 +5,7 @@ source: "https://github.com/REG-Linux/dolphin-triforce"
 upstream: "https://github.com/dolphin-emu/dolphin"
 profiled_date: "2026-08-08"
 source_commit: "5c456e8ff0da0235be2cf1d55ba7bb2115b0cae2"
+upstream_commit: "b92e354389bb7c0bd114a8631b8af110d3cb3a14"
 core_version: "2407"
 display_name: "Namco / Sega / Nintendo - Triforce (Dolphin Triforce)"
 cores:

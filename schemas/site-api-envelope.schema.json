@@ -25,6 +25,7 @@
         "catalog",
         "platforms",
         "emulators",
+        "systems",
         "verification-and-coverage-gaps",
         "file-locations"
       ]
@@ -255,6 +256,76 @@
                 },
                 "url": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "systems"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "consoles",
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "consoles": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "path",
+                        "sha1"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "sha1": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{40}$"
+                        },
+                        "md5": {
+                          "type": "string"
+                        },
+                        "sha256": {
+                          "type": "string"
+                        },
+                        "crc32": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
