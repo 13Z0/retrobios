@@ -231,7 +231,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # docs/ is gitignored, and the tests that read the rendered pages fail
+      # in CI without it. The suite runs whatever this step returned, so a
+      # generator that stops still leaves every other test reporting.
+      - name: Generate the site
+        run: python scripts/generate_site.py
+
       - name: Run test suite
+        if: ${{ !cancelled() }}
         # No test downloads a release asset: 252 MB files fetched into the
         # shared cache filled the runner's disk and changed what later tests
         # resolved. The download tests mock the network and clear it.
@@ -246,7 +253,6 @@ jobs:
       - name: Build the site
         if: ${{ !cancelled() }}
         run: |
-          python scripts/generate_site.py
           mkdocs build --strict
           python scripts/validate_site.py
 

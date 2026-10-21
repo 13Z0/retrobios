@@ -4866,6 +4866,8 @@ class NullReadsAsNone(unittest.TestCase):
     def test_the_rendered_site_has_no_python_none(self):
         docs = ROOT / "docs"
         if not docs.is_dir():
+            if os.environ.get("CI"):
+                self.fail("CI generates docs/ before the suite")
             self.skipTest("docs/ not generated")
         pattern = re.compile(r"\| None \||: None$|: None \|", re.M)
         from scripts.generate_site import LOCAL_NOTE_DIRS

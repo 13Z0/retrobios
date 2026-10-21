@@ -10,6 +10,7 @@ place one comes back.
 from __future__ import annotations
 
 import io
+import os
 import re
 import subprocess
 import tokenize
@@ -317,6 +318,8 @@ class GeneratedSiteProse(unittest.TestCase):
             and "specs" not in p.parts
         ] if docs.is_dir() else []
         if not pages:
+            if os.environ.get("CI"):
+                self.fail("CI generates docs/ before the suite")
             self.skipTest("docs/ not generated (python scripts/generate_site.py)")
         offenders = []
         for page in pages:

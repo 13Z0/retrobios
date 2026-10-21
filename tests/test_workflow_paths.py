@@ -133,6 +133,18 @@ class ThePullRequestBuildsTheSite(unittest.TestCase):
             with self.subTest(package=package):
                 self.assertIn(package, runs)
 
+    def test_the_pages_exist_before_the_suite_reads_them(self):
+        """docs/ is gitignored. Built after the suite, the tests that read
+        the rendered pages found none and skipped on every CI run."""
+        steps = self._workflow("validate.yml")["jobs"]["run-tests"]["steps"]
+        runs = [str(step.get("run", "")) for step in steps]
+        generate = next(
+            i for i, run in enumerate(runs) if "scripts/generate_site.py" in run
+        )
+        suite = next(i for i, run in enumerate(runs) if "unittest discover" in run)
+        self.assertLess(generate, suite)
+        self.assertEqual(steps[suite].get("if"), "${{ !cancelled() }}")
+
     def test_every_site_input_triggers_validation(self):
         deploy = self._workflow("deploy-site.yml")
         validate = self._workflow("validate.yml")
