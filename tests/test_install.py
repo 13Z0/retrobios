@@ -3863,6 +3863,34 @@ class ACompletePartialIsHandedOffOnWindows(unittest.TestCase):
         self.assertTrue(install._write_refused(PermissionError(13, "denied")))
 
 
+class StandaloneFoldersAreNamedWhenThereAreAny(unittest.TestCase, _LoopbackRun):
+    """'Standalone copies skipped' closed every install, on a machine with
+    no standalone emulator as on one whose DuckStation lacked its BIOS."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def _run(self) -> str:
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest",
+                            str(self.home / "system"), "--system", "atari-lynx",
+                            "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        return proc.stdout
+
+    def test_nothing_is_said_without_an_emulator_folder(self):
+        out = self._run()
+        self.assertNotIn("skipped", out)
+        self.assertNotIn("--standalone-copies", out)
+
+    def test_a_found_folder_is_named(self):
+        duckstation = self.home / ".local" / "share" / "duckstation" / "bios"
+        duckstation.mkdir(parents=True)
+        out = self._run()
+        self.assertIn("Standalone emulator folders found here:", out)
+        self.assertIn(str(duckstation), out)
+        self.assertIn("--standalone-copies", out)
+
+
 class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):
     """--emulator nope said "--list-cores lists all 441" and --list-cores
     printed 189: the buildbot names --emulator accepts were listed nowhere."""

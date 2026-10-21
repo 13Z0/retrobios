@@ -421,6 +421,8 @@ that is not installed. A destination that is already a symbolic link is
 replaced by the file rather than written through: a write through the link
 would land outside the folder the user opted into. The summary counts each
 copy as copied, skipped (folder absent) or failed, and names every failure.
+A run without the flag lists the emulator folders of this list that exist on
+the machine, and says nothing when there are none.
 
 ## RomM firmware layout
 

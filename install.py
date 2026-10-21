@@ -3755,6 +3755,42 @@ def select_data_directories(manifest: dict, files: list[dict], narrowed: bool) -
     return [e for e in entries if kept & set(e.get("systems") or [])]
 
 
+def _copy_targets(
+    entry: dict, os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[Path]:
+    """The emulator folders a standalone copy entry names on this OS.
+
+    WSL falls back to the Linux ones, and extra_dirs adds the folder a
+    frontend such as LaunchBox keeps the emulator in.
+    """
+    targets = entry.get("targets", {}).get(os_type, [])
+    if not targets and os_type == "wsl":
+        targets = entry.get("targets", {}).get("linux", [])
+    target_dirs = [Path(os.path.expandvars(os.path.expanduser(t))) for t in targets]
+    extra_root = (extra_dirs or {}).get(entry.get("emulator", ""))
+    if extra_root is not None:
+        subdir = PurePosixPath(entry.get("file", "")).parent
+        extra = extra_root if str(subdir) == "." else extra_root / subdir
+        if extra not in target_dirs:
+            target_dirs.append(extra)
+    return target_dirs
+
+
+def standalone_folders_here(
+    manifest: dict, os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[Path]:
+    """The emulator folders of the manifest's standalone copies that exist
+    on this machine: the ones --standalone-copies would write to."""
+    found: list[Path] = []
+    for entry in manifest.get("standalone_copies", []):
+        if "note" in entry:
+            continue
+        for folder in _copy_targets(entry, os_type, extra_dirs):
+            if folder not in found and folder.is_dir():
+                found.append(folder)
+    return found
+
+
 def do_standalone_copies(
     manifest: dict, bios_path: Path, os_type: str,
     extra_dirs: dict[str, Path] | None = None,
@@ -3819,22 +3855,7 @@ def do_standalone_copies(
         if not sources:
             continue
 
-        # Resolve target directories with WSL fallback
-        targets = entry.get("targets", {}).get(os_type, [])
-        if not targets and os_type == "wsl":
-            targets = entry.get("targets", {}).get("linux", [])
-
-        target_dirs = [
-            Path(os.path.expandvars(os.path.expanduser(t))) for t in targets
-        ]
-        extra_root = (extra_dirs or {}).get(entry.get("emulator", ""))
-        if extra_root is not None:
-            subdir = PurePosixPath(entry.get("file", "")).parent
-            extra = extra_root if str(subdir) == "." else extra_root / subdir
-            if extra not in target_dirs:
-                target_dirs.append(extra)
-
-        for target_dir in target_dirs:
+        for target_dir in _copy_targets(entry, os_type, extra_dirs):
             if not target_dir.is_dir():
                 skipped += len(sources)
                 continue
@@ -5213,10 +5234,18 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 )
             total_errors += copy_failed
         elif manifest.get("standalone_copies") and not args.check:
-            print(
-                "\nStandalone copies skipped "
-                "(use --standalone-copies to opt in)."
+            # Said only where it concerns this machine: "skipped" printed on
+            # every run read as an incident, and named no emulator.
+            lb_root = launchbox_root(os_type)
+            folders = standalone_folders_here(
+                manifest, os_type, launchbox_bios_dirs(lb_root) if lb_root else None
             )
+            if folders:
+                print("\nStandalone emulator folders found here:")
+                for folder in folders:
+                    print(f"  {folder}")
+                print("  --standalone-copies also copies the BIOS files and keys "
+                      "they read into them.")
 
     sys.stdout = real_stdout
     # A check scripted as `--check && launch` reads the exit code only.
