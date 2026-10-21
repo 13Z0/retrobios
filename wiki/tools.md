@@ -866,6 +866,16 @@ go under the `Device ROM sets (generated from MAME -listxml)` comment at the end
 of `files:` with `required: false`. A set the profile already lists keeps every
 field a reader wrote and only gets its contents refreshed.
 
+Each generated set is filed under the systems of the machines that can load
+it. A machine takes the `system:` of the first set on its `romof` chain that a
+written entry lists (a clone reaches its parent, a parent its BIOS root set),
+and passes it to every device in its `device_ref` list and every card its
+slots offer (`slotoption`), followed through those devices' own links and
+their parent ROM devices. A set loaded by machines of one system gets
+`system:`, of several `systems:`, of none neither field, and then serves every
+system of the profile. The driver file is never used: `neogeo.cpp` declares
+the MVS and the AES. The output counts the sets in each case.
+
 A plain run (pipeline step 2a) that moves `mame.yml` to a new release
 downloads that release's `-listxml` into `.cache/dats/` and runs the device
 merge itself, so the BIOS root sets and the device sets name one release.

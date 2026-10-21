@@ -59,6 +59,7 @@ def _validate_yaml_directory(
         out.extend(_unreachable_citations(path, data))
         if schema_name == "emulator.schema.json":
             out.extend(_checks_without_values(path, data))
+            out.extend(_systems_outside_profile(path, data))
             out.extend(_doubled_paths(path))
     return out
 
@@ -70,6 +71,28 @@ _CHECK_FIELDS = {
     "sha256": ("sha256",),
     "size": ("size", "min_size", "max_size"),
 }
+
+
+def _systems_outside_profile(path: Path, document: object) -> list[str]:
+    """An entry's systems: naming a system its profile does not list.
+
+    A --system pick selects the profile by its systems: and then the entry
+    by its own, so a name the profile lacks is one no pick ever reaches.
+    """
+    if not isinstance(document, dict):
+        return []
+    listed = {str(s) for s in document.get("systems") or []}
+    out: list[str] = []
+    for index, entry in enumerate(document.get("files") or []):
+        if not isinstance(entry, dict):
+            continue
+        unknown = [str(s) for s in entry.get("systems") or [] if str(s) not in listed]
+        if unknown:
+            out.append(
+                f"{path.relative_to(ROOT)}: files[{index}] ({entry.get('name')}) "
+                f"systems {', '.join(unknown)} not in the profile's systems"
+            )
+    return out
 
 
 def _checks_without_values(path: Path, document: object) -> list[str]:

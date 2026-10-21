@@ -411,6 +411,15 @@
           "system": {
             "type": "string"
           },
+          "systems": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "The systems of the profile this entry serves, when it serves several and not all: a MAME device set the machines of two systems load. One system is written as system:."
+          },
           "path": {
             "type": [
               "string",
@@ -800,6 +809,14 @@
           }
         },
         "allOf": [
+          {
+            "not": {
+              "required": [
+                "system",
+                "systems"
+              ]
+            }
+          },
           {
             "if": {
               "properties": {

@@ -110,6 +110,13 @@ and merged into a profile, on an inline listxml and driver source. Covers:
   entry's contents refreshed with its manual fields kept, BIOS root sets left
   as written, a second run changing nothing, a new BIOS root placed before the
   section
+- Systems: the links the scan keeps (`romof`, `device_ref`, `slotoption`, a
+  device's parent ROM device), a set reached through a clone, its parent and
+  a slot card, one set under two systems, a machine no entry lists placing
+  nothing, seeds read above the generated section only, `system:` or
+  `systems:` written and rewritten by a refresh, a written entry's system
+  kept, and a `--system` pick reading the entry's own systems through the gap
+  report and the core extras
 
 **test_fbneo_parser.** Tests the FBNeo C source parser that identifies
 `BDF_BOARDROM` sets. Same inline fixture approach.

@@ -3,7 +3,8 @@
 Synthetic listxml and driver source, no network: the scan keeps only device
 sets with dumped ROMs, the source line is the ROM_START block holding them,
 and the merge adds sets, refreshes the contents of written ones without
-touching what a reader wrote, and leaves BIOS root sets alone.
+touching what a reader wrote, and leaves BIOS root sets alone. Each set is
+filed under the systems of the machines that can load it, never guessed.
 """
 
 from __future__ import annotations
@@ -25,10 +26,14 @@ from scripts.scraper.mame_devices import (
     ABSENT,
     AMBIGUOUS,
     NO_FILE,
+    MachineLinks,
+    attribute_systems,
     find_rom_block,
     locate_sources,
     open_listxml,
+    profile_seeds,
     scan_device_sets,
+    scan_release,
     source_path,
 )
 
@@ -357,6 +362,267 @@ class RefRole(unittest.TestCase):
 
     def test_a_profile_with_one_tree_cites_it_bare(self):
         self.assertEqual(mame_ref_role({"emulator": "MAME"}), "")
+
+
+GRAPH_LISTXML = b"""<?xml version="1.0"?>
+<mame build="0.289 (mame0289)" debug="no" mameconfig="10">
+\t<machine name="neogeo" sourcefile="snk/neogeo.cpp" isbios="yes">
+\t\t<device_ref tag=":ymsnd" name="ym2610"/>
+\t</machine>
+\t<machine name="mslug" sourcefile="snk/neogeo.cpp" romof="neogeo">
+\t\t<device_ref tag=":ymsnd" name="ym2610"/>
+\t\t<device_ref tag=":ng_memcard" name="ng_memcard"/>
+\t</machine>
+\t<machine name="mslugj" sourcefile="snk/neogeo.cpp" cloneof="mslug" romof="mslug">
+\t\t<device_ref tag=":cart" name="cart_dev"/>
+\t</machine>
+\t<machine name="aes" sourcefile="snk/neogeo.cpp" isbios="yes">
+\t\t<device_ref tag=":ymsnd" name="ym2610"/>
+\t</machine>
+\t<machine name="apple2gs" sourcefile="apple/apple2gs.cpp">
+\t\t<slot name="sl1">
+\t\t\t<slotoption name="disk2" devname="a2diskii"/>
+\t\t\t<slotoption name="ser" devname="a2ssc" default="yes"/>
+\t\t</slot>
+\t</machine>
+\t<machine name="a2diskii" sourcefile="devices/bus/a2bus/a2diskii.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="341-0027.bin" size="256" crc="ce7144f6" sha1="d4181c9f046aafc3fb326b381baac809d9e38d16" region="diskii_rom" offset="0"/>
+\t\t<device_ref tag=":fdc" name="diskii_fdc"/>
+\t</machine>
+\t<machine name="diskii_fdc" sourcefile="devices/machine/wozfdc.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="341-0028.bin" size="256" crc="b72a2c70" sha1="bc39fbd5b9a8d2287ac5d0a42e639fc4d3c2f9d4" region="p6" offset="0"/>
+\t</machine>
+\t<machine name="a2ssc" sourcefile="devices/bus/a2bus/ssc.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="341-0065-a.bin" size="2048" crc="67dcf3f0" sha1="8d4ed4ee4d8fc2b8b0c09e7b23b7c1f4e1d4aa51" region="ssc_rom" offset="0"/>
+\t</machine>
+\t<machine name="ym2610" sourcefile="devices/sound/ymopn.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="ym2610.bin" size="16" crc="00000001" sha1="0000000000000000000000000000000000000001" region="r" offset="0"/>
+\t</machine>
+\t<machine name="ng_memcard" sourcefile="devices/machine/ng_memcard.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="mc.bin" size="16" crc="00000002" sha1="0000000000000000000000000000000000000002" region="r" offset="0"/>
+\t</machine>
+\t<machine name="cart_dev" sourcefile="devices/bus/neogeo/cart.cpp" isdevice="yes" runnable="no" romof="cart_base">
+\t\t<rom name="c.bin" size="16" crc="00000003" sha1="0000000000000000000000000000000000000003" region="r" offset="0"/>
+\t</machine>
+\t<machine name="cart_base" sourcefile="devices/bus/neogeo/cart.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="b.bin" size="16" crc="00000004" sha1="0000000000000000000000000000000000000004" region="r" offset="0"/>
+\t</machine>
+\t<machine name="pc_kbd" sourcefile="devices/bus/pc_kbd/kbd.cpp" isdevice="yes" runnable="no">
+\t\t<rom name="k.bin" size="16" crc="00000005" sha1="0000000000000000000000000000000000000005" region="r" offset="0"/>
+\t</machine>
+\t<machine name="ibm5150" sourcefile="ibm/ibmpc.cpp">
+\t\t<device_ref tag=":kbd" name="pc_kbd"/>
+\t</machine>
+</mame>
+"""
+
+SEEDS = {"neogeo": "snk-neogeo-mvs", "apple2gs": "apple2gs"}
+
+
+def _release():
+    return scan_release(io.BytesIO(GRAPH_LISTXML))
+
+
+class TheListxmlSaysWhoLoadsASet(unittest.TestCase):
+    """infoxml.cpp writes romof, device_ref and slotoption: the scan keeps
+    them for every element, device or machine."""
+
+    def test_links(self):
+        machines = _release().machines
+        self.assertEqual(machines["mslugj"], MachineLinks("mslug", False, ("cart_dev",)))
+        self.assertEqual(machines["apple2gs"].uses, ("a2diskii", "a2ssc"))
+        # A device's ROMs are searched in its parent ROM device's set too.
+        self.assertEqual(machines["cart_dev"].uses, ("cart_base",))
+        self.assertTrue(machines["cart_dev"].isdevice)
+
+    def test_scan_device_sets_is_the_same_scan(self):
+        release = _release()
+        self.assertEqual(
+            scan_device_sets(io.BytesIO(GRAPH_LISTXML)), (release.tag, release.devices)
+        )
+
+
+class DeviceSetsFollowTheMachinesThatLoadThem(unittest.TestCase):
+
+    def setUp(self):
+        self.systems = attribute_systems(_release().machines, SEEDS)
+
+    def test_a_clone_reaches_the_bios_through_its_parent(self):
+        self.assertEqual(self.systems["cart_dev"], ["snk-neogeo-mvs"])
+        self.assertEqual(self.systems["ng_memcard"], ["snk-neogeo-mvs"])
+
+    def test_a_parent_rom_device_goes_with_its_child(self):
+        self.assertEqual(self.systems["cart_base"], ["snk-neogeo-mvs"])
+
+    def test_slot_cards_and_their_own_devices(self):
+        self.assertEqual(self.systems["a2ssc"], ["apple2gs"])
+        self.assertEqual(self.systems["a2diskii"], ["apple2gs"])
+        self.assertEqual(self.systems["diskii_fdc"], ["apple2gs"])
+
+    def test_a_machine_no_entry_places_files_nothing(self):
+        # aes shares neogeo.cpp with the MVS but no entry lists it: the
+        # driver file is not a system, so ym2610 gets the MVS only through
+        # the MVS machines, and pc_kbd nothing at all.
+        self.assertEqual(self.systems["ym2610"], ["snk-neogeo-mvs"])
+        self.assertNotIn("pc_kbd", self.systems)
+
+    def test_several_systems(self):
+        systems = attribute_systems(_release().machines, {**SEEDS, "aes": "snk-neogeo-aes"})
+        self.assertEqual(systems["ym2610"], ["snk-neogeo-aes", "snk-neogeo-mvs"])
+        self.assertEqual(systems["ng_memcard"], ["snk-neogeo-mvs"])
+
+    def test_a_device_seed_passes_to_what_it_uses_never_up_its_romof(self):
+        systems = attribute_systems(
+            _release().machines, {"a2diskii": "apple2gs", "cart_base": "x-system"}
+        )
+        self.assertEqual(systems["diskii_fdc"], ["apple2gs"])
+        self.assertNotIn("cart_dev", systems)
+
+    def test_seeds_are_the_written_entries_only(self):
+        text = (
+            PROFILE + "\n" + DEVICE_SECTION + "\n  - name: ym2610.zip\n"
+            "    required: false\n    category: bios_zip\n    system: snk-neogeo-mvs\n"
+        )
+        self.assertEqual(
+            profile_seeds(text), {"neogeo": "snk-neogeo-mvs", "qsound": "capcom-cps2"}
+        )
+
+
+class TheMergeWritesTheSystems(unittest.TestCase):
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self._tmp.name) / "mame.yml"
+        self.path.write_text(PROFILE, encoding="utf-8")
+        self.devices = _release().devices
+        self.devices["qsound"] = _devices()["qsound"]
+        systems = attribute_systems(_release().machines, SEEDS)
+        for name, device in self.devices.items():
+            device["systems"] = systems.get(name, [])
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _merge(self) -> dict[str, list[str]]:
+        return merge_mame_devices(str(self.path), self.devices, write=True)
+
+    def _entries(self) -> dict[str, dict]:
+        data = yaml_load(self.path.read_text(encoding="utf-8"))
+        return {f["name"]: f for f in data["files"]}
+
+    def test_one_system_several_or_none(self):
+        self.devices["ym2610"]["systems"] = ["snk-neogeo-aes", "snk-neogeo-mvs"]
+        self._merge()
+        entries = self._entries()
+        self.assertEqual(entries["a2diskii.zip"]["system"], "apple2gs")
+        self.assertNotIn("systems", entries["a2diskii.zip"])
+        self.assertEqual(entries["ym2610.zip"]["systems"], ["snk-neogeo-aes", "snk-neogeo-mvs"])
+        self.assertNotIn("system", entries["ym2610.zip"])
+        self.assertNotIn("system", entries["pc_kbd.zip"])
+        self.assertNotIn("systems", entries["pc_kbd.zip"])
+        text = self.path.read_text(encoding="utf-8")
+        block = text[text.index("- name: a2diskii.zip"):]
+        self.assertLess(block.index("category: bios_zip"), block.index("system: apple2gs"))
+
+    def test_a_written_entry_keeps_its_system(self):
+        self.devices["qsound"]["systems"] = ["apple2gs"]
+        self._merge()
+        self.assertEqual(self._entries()["qsound.zip"]["system"], "capcom-cps2")
+
+    def test_a_refresh_rewrites_the_generated_systems(self):
+        self._merge()
+        self.devices["a2diskii"]["systems"] = ["apple2gs", "coco"]
+        self.devices["cart_dev"]["systems"] = []
+        report = self._merge()
+        self.assertIn("a2diskii", report["updated"])
+        entries = self._entries()
+        self.assertEqual(entries["a2diskii.zip"]["systems"], ["apple2gs", "coco"])
+        self.assertNotIn("system", entries["cart_dev.zip"])
+        self.devices["a2diskii"]["systems"] = ["coco"]
+        self._merge()
+        entries = self._entries()
+        self.assertEqual(entries["a2diskii.zip"]["system"], "coco")
+        self.assertNotIn("systems", entries["a2diskii.zip"])
+        # The list items of systems: went with it, the member list did not.
+        self.assertEqual(entries["a2diskii.zip"]["contents"][0]["name"], "341-0027.bin")
+
+    def test_a_second_run_changes_nothing(self):
+        self._merge()
+        first = self.path.read_text(encoding="utf-8")
+        report = self._merge()
+        self.assertEqual(report["updated"], [])
+        self.assertEqual(self.path.read_text(encoding="utf-8"), first)
+
+
+class APickReadsTheEntrySystems(unittest.TestCase):
+    """--system on a pack and on the installer selects by the entry's own
+    systems: before the profile's."""
+
+    SYSTEMS = ["apple2gs", "coco", "snk-neogeo-mvs"]
+
+    def test_entry_system_ids(self):
+        from scripts.common import entry_system_ids
+
+        profile = {"systems": self.SYSTEMS}
+        self.assertEqual(entry_system_ids({"system": "coco"}, profile), ["coco"])
+        self.assertEqual(
+            entry_system_ids({"systems": ["apple2gs", "coco"]}, profile), ["apple2gs", "coco"]
+        )
+        self.assertEqual(entry_system_ids({}, profile), self.SYSTEMS)
+
+    def test_entry_serves_systems(self):
+        from scripts.common import entry_serves_systems
+
+        profile = {"systems": self.SYSTEMS}
+        entry = {"systems": ["apple2gs", "coco"]}
+        self.assertTrue(entry_serves_systems(entry, profile, ["coco"]))
+        self.assertFalse(entry_serves_systems(entry, profile, ["snk-neogeo-mvs"]))
+        self.assertTrue(entry_serves_systems({}, profile, ["snk-neogeo-mvs"]))
+
+    def test_the_gap_report_and_the_extras_carry_them(self):
+        import sys
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        from packextras import _collect_emulator_extras, _extra_system_ids
+        from verify import find_undeclared_files
+
+        profile = {
+            "emulator": "MAME", "type": "libretro", "systems": self.SYSTEMS,
+            "files": [{"name": "a2diskii.zip", "category": "bios_zip",
+                       "systems": ["apple2gs", "coco"]}],
+        }
+        config = {"cores": ["mame"], "systems": {}}
+        db = {
+            "files": {"s1": {"name": "a2diskii.zip", "path": "bios/Apple/a2diskii.zip",
+                             "size": 10, "sha1": "s1", "md5": "m1", "crc32": "12345678"}},
+            "indexes": {"by_name": {"a2diskii.zip": ["s1"]}, "by_md5": {"m1": "s1"},
+                        "by_crc32": {"12345678": "s1"}},
+        }
+        (gap,) = find_undeclared_files(config, "emulators", db, emu_profiles={"mame": profile})
+        self.assertEqual(gap["systems"], ["apple2gs", "coco"])
+        (extra,) = _collect_emulator_extras(
+            config, "emulators", db, set(), "", {"mame": profile}, include_all=True
+        )
+        self.assertEqual(_extra_system_ids(extra), ["apple2gs", "coco"])
+
+    def test_the_schema_and_the_profile_list(self):
+        try:
+            from scripts import validate_schemas
+        except ImportError as exc:
+            self.skipTest(f"validate_schemas needs jsonschema: {exc}")
+        validator = validate_schemas._validator("emulator.schema.json")
+        root = Path(__file__).resolve().parents[1]
+        base = {"emulator": "x", "type": "libretro", "systems": ["a", "b"]}
+        both = {**base, "files": [{"name": "x.zip", "system": "a", "systems": ["a", "b"]}]}
+        self.assertTrue(list(validator.iter_errors(both)))
+        one = {**base, "files": [{"name": "x.zip", "systems": ["a"]}]}
+        self.assertTrue(list(validator.iter_errors(one)))
+        fine = {**base, "files": [{"name": "x.zip", "systems": ["a", "b"]}]}
+        self.assertEqual(list(validator.iter_errors(fine)), [])
+        outside = {**base, "files": [{"name": "x.zip", "systems": ["a", "c"]}]}
+        found = validate_schemas._systems_outside_profile(root / "emulators" / "x.yml", outside)
+        self.assertEqual(len(found), 1)
+        self.assertIn("systems c", found[0])
 
 
 class Cli(unittest.TestCase):

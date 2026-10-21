@@ -595,12 +595,82 @@ def _zip_scalar(name: str) -> str:
     return name if re.fullmatch(r"[a-z0-9_]+\.zip", name) else _yaml_scalar(name)
 
 
+_PLAIN_SYSTEM = re.compile(r"^[a-z][a-z0-9-]*$")
+
+
+def _system_lines(systems: list[str]) -> list[str]:
+    """`system:` for one system, `systems:` for several, nothing for none."""
+    def scalar(value: str) -> str:
+        return value if _PLAIN_SYSTEM.match(value) else _yaml_scalar(value)
+
+    if not systems:
+        return []
+    if len(systems) == 1:
+        return [f"    system: {scalar(systems[0])}"]
+    return ["    systems:", *(f"      - {scalar(s)}" for s in systems)]
+
+
+def _entry_systems(entry: dict) -> list[str]:
+    """The systems an entry states, in the shape _system_lines writes."""
+    if entry.get("system"):
+        return [str(entry["system"])]
+    return [str(s) for s in entry.get("systems") or []]
+
+
+def _section_names(text: str) -> set[str]:
+    """Entry names inside the generated device section."""
+    start = _device_section_start(text)
+    if start is None:
+        return set()
+    end = _FILES_END.search(text, text.index("\n", start) + 1)
+    section = text[start : end.start() if end else len(text)]
+    return {
+        m.group(1).strip('"').strip("'")
+        for m in re.finditer(r"^  - name:\s*(.+?)\s*$", section, re.M)
+    }
+
+
+def _set_section_systems(text: str, systems: dict[str, list[str]]) -> str:
+    """Rewrite the system fields of the named entries of the device section.
+
+    Any `system:` or `systems:` the entry holds is dropped and the new one
+    written right after its category, where a written entry keeps it.
+    """
+    if not systems:
+        return text
+    start = _device_section_start(text)
+    if start is None:
+        return text
+    head, section = text[:start], text[start:]
+    out: list[str] = []
+    current = ""
+    in_list = False
+    for line in section.split("\n"):
+        entry_head = re.match(r"^  - name:\s*(.+?)\s*$", line)
+        if entry_head:
+            current = entry_head.group(1).strip('"').strip("'")
+        if current in systems:
+            if in_list and line.startswith("      - "):
+                continue
+            in_list = False
+            if re.match(r"^    system:", line):
+                continue
+            if re.match(r"^    systems:\s*$", line):
+                in_list = True
+                continue
+        out.append(line)
+        if current in systems and re.match(r"^    category:", line):
+            out.extend(_system_lines(systems[current]))
+    return head + "\n".join(out)
+
+
 def _format_device_entry(name: str, device: dict, role: str) -> str:
     """One generated device entry, in the field order of the written ones."""
     lines = [
         f"  - name: {_zip_scalar(name)}",
         "    required: false",
         "    category: bios_zip",
+        *_system_lines(device.get("systems") or []),
     ]
     if device.get("source_line"):
         lines.append(f'    source_ref: "{_build_source_ref(device, role)}"')
@@ -632,6 +702,11 @@ def merge_mame_devices(
     has none. A set it lacks is written under the generated section, in name
     order, with required false. An entry of another category under a device
     name is reported, never touched.
+
+    A device carrying `systems` (attribute_systems) has them written on its
+    entry when the entry is in the generated section: `system:` for one,
+    `systems:` for several, neither for none. An entry above the section
+    keeps the system a reader gave it.
     """
     path = Path(profile_path)
     text = path.read_text(encoding="utf-8")
@@ -646,7 +721,9 @@ def merge_mame_devices(
     }
     contents_patches: list[dict] = []
     ref_patches: dict[str, str] = {}
+    system_patches: dict[str, list[str]] = {}
     new_blocks: dict[str, str] = {}
+    generated = _section_names(text)
     for set_name, device in sorted(devices.items()):
         name = f"{set_name}.zip"
         existing = entries.get(name)
@@ -666,10 +743,18 @@ def merge_mame_devices(
         if not old.get("source_ref") and device.get("source_line"):
             ref_patches[name] = _build_source_ref(device, role)
             changed = True
+        if (
+            "systems" in device
+            and name in generated
+            and _entry_systems(old) != list(device["systems"])
+        ):
+            system_patches[name] = list(device["systems"])
+            changed = True
         report["updated" if changed else "unchanged"].append(set_name)
 
-    if write and (contents_patches or ref_patches or new_blocks):
+    if write and (contents_patches or ref_patches or system_patches or new_blocks):
         patched = _add_source_refs(text, ref_patches)
+        patched = _set_section_systems(patched, system_patches)
         patched = _patch_bios_entries(patched, contents_patches)
         patched = _insert_device_entries(patched, new_blocks)
         shutil.copy2(path, path.with_suffix(PROFILE_BACKUP_SUFFIX))
