@@ -2877,12 +2877,41 @@ def _scalar_values(document: dict) -> dict[str, str]:
     }
 
 
-def _pin_of(document: dict, field: str, mode: str = "") -> str | None:
-    """A pin as the profile records it, read for one build mode when keyed."""
+def _pin_of(
+    document: dict, field: str, mode: str = "",
+    repo: upstream.Repo | None = None,
+) -> str | None:
+    """A pin as the profile records it, read for one build mode when keyed.
+
+    With `repo`, a pin the document declares for another repository under
+    the field and mode does not count. A past revision can pin another
+    repository under the same field: xenia-edge's source_commit named the
+    has207/xenia-edge sha until the field became a dict keyed by mode, and
+    read for the libretro mode that old string passed for a pin of the
+    GitLab port that moved under unchanged prose.
+    """
     value = document.get(field)
     if isinstance(value, dict):
         value = value.get(mode) if mode else None
-    return value if isinstance(value, str) and value else None
+    if not (isinstance(value, str) and value):
+        return None
+    if repo is not None:
+        url_field = field.removesuffix("_commit")
+        declared = {
+            (mode_key, url)
+            for name, mode_key, url in declared_repositories(document)
+            if name == url_field
+        }
+        url = next(
+            (u for m, u in declared if m == mode),
+            next((u for m, u in declared if not m), None),
+        )
+        owner = upstream.parse_repo(url) if url else None
+        if owner is not None and (owner.host, owner.slug.lower()) != (
+            repo.host, repo.slug.lower()
+        ):
+            return None
+    return value
 
 
 _CITATION_RUN_RE = re.compile(
@@ -2906,7 +2935,8 @@ def _scalar_citations(text: str | None) -> tuple[str, ...] | None:
 
 
 def _writing_pins(
-    revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = ""
+    revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = "",
+    repo: upstream.Repo | None = None,
 ) -> list[str]:
     """Distinct pins committed while the scalar held its current text.
 
@@ -2925,7 +2955,7 @@ def _writing_pins(
         return []
     pins: list[str] = []
     for position in range(index, -1, -1):
-        value = _pin_of(revisions[position][1], field, mode)
+        value = _pin_of(revisions[position][1], field, mode, repo)
         if value and value not in pins:
             pins.append(value)
     return pins
@@ -3038,7 +3068,9 @@ def _writing_pairs(
         current = _pin_of(document, f"{pin_field}_commit", mode)
         if not current:
             continue
-        written = _writing_pins(revisions, intro_sha, f"{pin_field}_commit", mode)
+        written = _writing_pins(
+            revisions, intro_sha, f"{pin_field}_commit", mode, repo
+        )
         if attested in written:
             written = [attested]
         if len(written) > 1:

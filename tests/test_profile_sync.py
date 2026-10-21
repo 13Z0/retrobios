@@ -2473,6 +2473,28 @@ class TestWriteDryRun(unittest.TestCase):
         )
         self.assertIn([(repo, "old", "new")], readings)
 
+    def test_a_pin_of_another_repository_is_no_writing_pin(self):
+        """xenia-edge: source_commit named the has207/xenia-edge sha until it
+        became a dict whose libretro key pins a GitLab port. Read for that
+        mode, the old string passed for a pin of the port that moved under
+        unchanged prose, and the bump stayed refused for good."""
+        edge = "https://github.com/has207/xenia-edge"
+        port = "https://gitlab.com/x/xenia-libretro"
+        modes = {"standalone": edge, "libretro": port}
+        revisions = [
+            ("c2", {"source": modes, "notes": "x",
+                    "source_commit": {"standalone": "e1", "libretro": "p1"}}),
+            ("c1", {"source": edge, "notes": "x", "source_commit": "e1"}),
+        ]
+        document = dict(revisions[0][1])
+        repos = [("source", mode, profile_sync.upstream.parse_repo(url))
+                 for mode, url in modes.items()]
+        readings, ambiguous = profile_sync._writing_pairs(
+            document, repos, revisions, "c1"
+        )
+        self.assertEqual(readings, [[]])
+        self.assertEqual(ambiguous, [])
+
     def test_stale_prose_holds_the_pin(self):
         """boom3: a note written at an older pin is not anchored from this one."""
         before = self.path.read_text()
