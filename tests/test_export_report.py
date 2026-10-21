@@ -7,7 +7,6 @@ file from and no list to check the diff against.
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 import tempfile
