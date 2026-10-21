@@ -37,11 +37,11 @@ files:
     path: "dolphin-emu/Sys/GC/USA/IPL.bin"
     standalone_path: "GC/USA/IPL.bin"
     system: nintendo-gamecube
-    region: [north-america]
+    region: [north-america, latin-america]
     size: 2097152
     required: false
     hle_fallback: true
-    note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts"
+    note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts. Discs with the Brazilian country code B map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:162-166)."
     source_ref: "source Source/Core/Core/ConfigManager.cpp:876-883, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105"
 
   - name: "IPL.bin"

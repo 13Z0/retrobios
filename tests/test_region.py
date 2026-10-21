@@ -923,6 +923,13 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("genesis_plus_gx", ["brazil", "japan"], "bios_U.sms"),
         ("genesis_plus_gx_wide", ["australia", "japan"], "bios_U.sms"),
         ("genesis_plus_gx_expanded", ["brazil", "japan"], "bios_U.sms"),
+        ("dolphin", ["brazil", "europe"], "dolphin-emu/Sys/GC/USA/IPL.bin"),
+        ("ishiiruka", ["brazil", "europe"], "dolphin-emu/Sys/GC/USA/IPL.bin"),
+        ("dolphin-mmjr", ["brazil", "europe"], "GC/USA/IPL.bin"),
+        ("dolphin-mmjr2", ["brazil", "europe"], "GC/USA/IPL.bin"),
+        ("primehack", ["brazil", "europe"], "GC/USA/IPL.bin"),
+        ("triforce", ["brazil", "europe"], "GC/USA/IPL.bin"),
+        ("triforce", ["brazil", "europe"], "GC/USA/IPL_TRI.bin"),
     )
 
     def test_each_request_keeps_its_file(self):
