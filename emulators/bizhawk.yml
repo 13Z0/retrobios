@@ -154,8 +154,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (Japan)"
+    region: [japan]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:405, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_JPN has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_JPN has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "DSi_Nand_EUR.bin"
     system: nintendo-ds
@@ -163,8 +164,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (Europe)"
+    region: [europe]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:406, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_EUR has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_EUR has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "DSi_Nand_USA.bin"
     system: nintendo-ds
@@ -172,8 +174,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (USA)"
+    region: [north-america]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:407, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_USA has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_USA has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "DSi_Nand_AUS.bin"
     system: nintendo-ds
@@ -181,8 +184,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (Australia)"
+    region: [oceania]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:408, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_AUS has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_AUS has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "DSi_Nand_CHN.bin"
     system: nintendo-ds
@@ -190,8 +194,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (China)"
+    region: [china]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:409, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_CHN has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_CHN has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "DSi_Nand_KOR.bin"
     system: nintendo-ds
@@ -199,8 +204,9 @@ files:
     size: 251658304
     storage: large_file
     description: "DSi NAND (Korea)"
+    region: [south-korea]
     source_ref: "src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs:410, src/BizHawk.Emulation.Cores/Consoles/Nintendo/NDS/MelonDS.cs:484, 684-706"
-    note: "Slot NDS+NAND_KOR has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. The size includes the 64-byte nocash footer."
+    note: "Slot NDS+NAND_KOR has a placeholder hash, so the scan never finds it. Only a user specification reaches it. Read in DSi mode. A title whose ID upper word is 0x000300xx (DSi) gets only the NAND of a region its header byte 0x1B0 allows, any other title the first held in the order JPN, USA, EUR, AUS, CHN, KOR. The size includes the 64-byte nocash footer."
 
   - name: "32X_G_BIOS.BIN"
     system: sega-32x

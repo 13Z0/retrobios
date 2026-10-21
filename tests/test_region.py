@@ -916,6 +916,9 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("duckstation", ["brazil", "japan"], "scph5501.bin"),
         ("duckstation", ["brazil", "japan"], "scph7001.bin"),
         ("duckstation", ["brazil", "japan"], "ps2_scph39001.bin"),
+        ("bizhawk", ["north-america"], "DSi_Nand_USA.bin"),
+        ("bizhawk", ["oceania"], "DSi_Nand_AUS.bin"),
+        ("bizhawk", ["china", "japan"], "DSi_Nand_CHN.bin"),
     )
 
     def test_each_request_keeps_its_file(self):
@@ -927,6 +930,40 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
                 drops = emulator_region_drops([(name, profiles[name])], False, regions)
                 self.assertNotIn(kept, drops)
 
+
+
+class DsiNandFollowsTheHeaderRegion(unittest.TestCase):
+    """BizHawk's DecideNAND keeps, for a DSi title, only the NAND slots whose
+    bit is set in header byte 0x1B0 (MelonDS.cs:684-706): JPN, USA, EUR, AUS,
+    CHN, KOR. The six DSi_Nand_<REGION>.bin entries carried no region, so a
+    --region request kept all six 240 MB images."""
+
+    SLOTS = {
+        "JPN": ["japan"],
+        "USA": ["north-america"],
+        "EUR": ["europe"],
+        "AUS": ["oceania"],
+        "CHN": ["china"],
+        "KOR": ["south-korea"],
+    }
+
+    def _profile(self) -> dict:
+        return common.load_emulator_profiles(
+            os.path.join(os.path.dirname(__file__), "..", "emulators")
+        )["bizhawk"]
+
+    def test_each_slot_carries_its_territory(self):
+        files = {f["name"]: f for f in self._profile()["files"]}
+        for slot, expected in self.SLOTS.items():
+            with self.subTest(slot=slot):
+                declared = files[f"DSi_Nand_{slot}.bin"].get("region")
+                self.assertEqual(declared, expected)
+                self.assertTrue(set(declared) <= region.REGIONS)
+
+    def test_a_request_keeps_its_nand_and_withdraws_the_others(self):
+        nands = {f"DSi_Nand_{slot}.bin" for slot in self.SLOTS}
+        drops = emulator_region_drops([("bizhawk", self._profile())], False, ["north-america"])
+        self.assertEqual(nands & drops, nands - {"DSi_Nand_USA.bin"})
 
 
 class FontRomsCarryNoTerritory(unittest.TestCase):
