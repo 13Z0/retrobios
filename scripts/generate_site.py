@@ -3055,6 +3055,22 @@ def _plain_value(value: object) -> str:
     return _escape_tags(str(value))
 
 
+def _structured_field_text(profile: dict) -> Callable[[object, object], str]:
+    """Scalars of a structured block, citations linked at the profile's pin.
+
+    The file entries and platform details linked their source_ref, and the
+    analysis and firmware blocks printed 186 of them as plain code.
+    """
+    def text(key: object, value: object) -> str:
+        if key == "source_ref" and isinstance(value, str):
+            return _source_ref_markdown(profile, value)
+        if isinstance(value, str):
+            return link_prose_citations(profile, _field_text(key, value))
+        return _field_text(key, value)
+
+    return text
+
+
 def _render_structured_blocks(profile: dict) -> list[str]:
     """Every remaining structured field, as a collapsible section."""
     lines: list[str] = []
@@ -3090,7 +3106,8 @@ def _render_structured_blocks(profile: dict) -> list[str]:
         lines.append(f'???+ abstract "{label}"')
         lines.append("")
         start = len(lines)
-        _render_yaml_value(lines, val, indent=4)
+        _render_yaml_value(lines, val, indent=4,
+                           field_text=_structured_field_text(profile))
         lines[start:] = [_escape_tags(line) for line in lines[start:]]
         lines.append("")
 
@@ -5168,6 +5185,7 @@ from sitesources import (  # noqa: E402,F401
 from siterender import (  # noqa: E402,F401
     _by_mode,
     _count,
+    _field_text,
     _render_yaml_value,
     _slugify_anchor,
     _system_page_map,

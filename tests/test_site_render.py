@@ -139,5 +139,47 @@ class BundledFilesAreNotToSource(unittest.TestCase):
                       '<span class="rb-badge rb-badge-danger">1</span> |', page)
 
 
+class StructuredBlocks(unittest.TestCase):
+    PIN = "1e0de94dc7e669c0925a22c0fccf6cdc837af0a0"
+
+    def profile(self, block: str, value: object) -> dict:
+        return {"source": "https://github.com/libretro/blastem",
+                "source_commit": self.PIN, block: value}
+
+    def render(self, profile: dict) -> str:
+        import generate_site
+
+        return "\n".join(generate_site._render_structured_blocks(profile))
+
+    def test_a_source_ref_in_a_block_is_a_pinned_link(self):
+        """186 citations in analysis and firmware blocks were plain code."""
+        page = self.render(self.profile("analysis", {"tmss": {
+            "source_ref": "libblastem.c:355-359"}}))
+        self.assertIn(
+            f"[`libblastem.c:355-359`](https://github.com/libretro/blastem/blob/"
+            f"{self.PIN}/libblastem.c#L355-L359)", page)
+
+    def test_a_list_inside_a_list_item_is_shown(self):
+        """cemu's firmware titles lost the files each title carries."""
+        page = self.render(self.profile("firmware_titles", [
+            {"id": "0005001b-10042400", "name": "Shared fonts",
+             "content": ["CafeCn.ttf", "CafeKr.ttf"]}]))
+        self.assertIn("    - id: 0005001b-10042400, name: Shared fonts\n", page)
+        self.assertIn("        - **content:**", page)
+        self.assertIn("            - CafeKr.ttf", page)
+
+    def test_a_folded_note_stays_inside_its_block(self):
+        page = self.render(self.profile("analysis", {"tmss": {
+            "note": "The core points\nsystem/tmss_path at the system directory."}}))
+        self.assertIn("- **note:** The core points system/tmss_path at the", page)
+        body = page.split("\n")[1:]
+        self.assertEqual([line for line in body if line and not line.startswith("    ")], [])
+
+    def test_a_long_note_is_not_cut(self):
+        note = "word " * 80 + "end."
+        page = self.render(self.profile("analysis", {"x": {"note": note}}))
+        self.assertIn("end.", page)
+
+
 if __name__ == "__main__":
     unittest.main()

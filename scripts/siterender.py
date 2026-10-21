@@ -8,6 +8,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -212,9 +213,10 @@ def _field_text(key: object, value: object) -> str:
     elif value is None:
         text = "none"
     else:
-        text = str(value)
-        if len(text) > 200:
-            text = text[:200] + "..."
+        # One line: a folded note's second line started at column 0 and
+        # left the admonition it was written in. Never cut: 34 notes lost
+        # their end, and a cut citation links to another line.
+        text = " ".join(str(value).split())
     return f"`{text}`" if key == "source_ref" else text
 
 
@@ -223,12 +225,19 @@ def _field_label(key: object) -> str:
     return str(key).replace("_", " ")
 
 
-def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
+FieldText = Callable[[object, object], str]
+
+
+def _render_yaml_value(
+    lines: list[str], val: object, indent: int = 4,
+    field_text: FieldText = _field_text,
+) -> None:
     """Render any YAML value as a nested markdown list.
 
     Every level is a list item and its children a sublist four spaces in.
     A key written as a paragraph with its children indented below it read as
     an indented code block: the clownmdemu page showed the raw asterisks.
+    ``field_text`` renders each scalar, so a page can link a source_ref.
     """
     pad = " " * indent
     if isinstance(val, dict):
@@ -236,27 +245,32 @@ def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
             if isinstance(v, (dict, list)) and v:
                 lines.append(f"{pad}- **{_field_label(k)}:**")
                 lines.append("")
-                _render_yaml_value(lines, v, indent + 4)
+                _render_yaml_value(lines, v, indent + 4, field_text)
             else:
-                lines.append(f"{pad}- **{_field_label(k)}:** {_field_text(k, v)}")
+                lines.append(f"{pad}- **{_field_label(k)}:** {field_text(k, v)}")
         lines.append("")
     elif isinstance(val, list):
         for item in val:
             if isinstance(item, dict):
-                parts = [
-                    f"{_field_label(ik)}: {_field_text(ik, iv)}"
-                    for ik, iv in item.items()
-                    if not isinstance(iv, (dict, list))
-                ]
-                lines.append(f"{pad}- {', '.join(parts)}")
+                # Scalars on the item's line, lists and maps as its children:
+                # cemu's firmware titles lost the files each title carries.
+                scalars = {ik: iv for ik, iv in item.items()
+                           if not (isinstance(iv, (dict, list)) and iv)}
+                nested = {ik: iv for ik, iv in item.items() if ik not in scalars}
+                parts = [f"{_field_label(ik)}: {field_text(ik, iv)}"
+                         for ik, iv in scalars.items()]
+                lines.append(f"{pad}- {', '.join(parts)}".rstrip())
+                if nested:
+                    lines.append("")
+                    _render_yaml_value(lines, nested, indent + 4, field_text)
             else:
-                lines.append(f"{pad}- {_field_text(None, item)}")
+                lines.append(f"{pad}- {field_text(None, item)}")
         lines.append("")
     elif isinstance(val, str) and "\n" in val:
         for line in val.split("\n"):
             lines.append(f"{pad}{line}")
     else:
-        lines.append(f"{pad}{_field_text(None, val)}")
+        lines.append(f"{pad}{field_text(None, val)}")
 
 
 def _platform_link(name: str, display: str, prefix: str = "") -> str:
