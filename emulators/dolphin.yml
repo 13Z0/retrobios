@@ -6,6 +6,7 @@ upstream: "https://github.com/dolphin-emu/dolphin"
 logo: "https://raw.githubusercontent.com/dolphin-emu/dolphin/master/Data/dolphin-emu.svg"
 profiled_date: "2026-03-23"
 source_commit: "4d23cf151640eb810cb1b8e9d9fc922cf59c0b87"
+upstream_commit: "f5dfb7e3d36ce24551ed0bb886b79f3f192dac9d"
 core_version: "Git"
 display_name: "Nintendo - GameCube / Wii (Dolphin)"
 cores:

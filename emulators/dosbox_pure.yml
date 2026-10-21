@@ -6,6 +6,7 @@ upstream: "https://codeberg.org/schelling/dosbox-pure"
 logo: "https://raw.githubusercontent.com/schellingb/dosbox-pure/main/images/logo.png"
 profiled_date: "2026-03-23"
 source_commit: "cdaea10ce8cac231bc341ca05d4c5e4e5fe0fbd5"
+upstream_commit: "cdaea10ce8cac231bc341ca05d4c5e4e5fe0fbd5"
 core_version: "1.0-preview7"
 display_name: "DOS (DOSBox-Pure)"
 cores: [dosbox_pure]

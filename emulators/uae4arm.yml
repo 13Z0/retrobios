@@ -6,6 +6,7 @@ source: "https://github.com/libretro/uae4arm-libretro"
 upstream: "https://github.com/PandTomB/uae4arm"
 profiled_date: "2026-03-25"
 source_commit: "26f444f01771f0dfa2fa652906ff8222e92e476e"
+upstream_commit: "161ddbaafe90a9747e9fb9c65ee4f38c163f335e"
 core_version: "v0.5"
 display_name: "Commodore - Amiga (UAE4ARM)"
 systems:
