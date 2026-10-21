@@ -26,6 +26,7 @@ import platform
 import re
 import shlex
 import shutil
+import socket
 import stat
 import subprocess
 import sys
@@ -2711,6 +2712,8 @@ def _download_one(
             reason = f"HTTP {exc.code}"
             if exc.code in (403, 429):
                 reason += " (GitHub rate limit or access refused)"
+            if exc.code >= 500 or exc.code == 429:
+                reason = NetworkReason(reason)
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
             if tmp_path is not None and partial is None and tmp_path.exists():
@@ -2731,6 +2734,8 @@ def _download_one(
                 # place is not a folder this user cannot write.
                 reason = READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
                 refused = True
+            elif _transfer_failure(exc):
+                reason = NetworkReason(getattr(exc, "reason", "") or exc)
             else:
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
@@ -3071,6 +3076,34 @@ def _plural(count: int, word: str) -> str:
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
 
 
+class NetworkReason(str):
+    """A failure the connection caused: cut, timed out, refused by a server
+    or a proxy. The summary names the network instead of the folder."""
+
+
+def _transfer_failure(exc: BaseException) -> bool:
+    """Whether a download error came from the connection, not the disk."""
+    # urlopen raises URLError for the name lookup, the connection and TLS.
+    # A cut read surfaces as a timeout (socket.timeout is no TimeoutError
+    # before 3.10), a reset, an SSL error or a size that does not add up.
+    ssl_error = getattr(sys.modules.get("ssl"), "SSLError", ())
+    if isinstance(exc, (urllib.error.URLError, http.client.HTTPException, ValueError,
+                        ConnectionError, TimeoutError, socket.timeout)):
+        return True
+    if ssl_error and isinstance(exc, ssl_error):
+        return True
+    return isinstance(exc, OSError) and exc.errno in (
+        errno.ECONNRESET, errno.ECONNREFUSED, errno.ECONNABORTED, errno.ETIMEDOUT,
+        errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ENETDOWN, errno.EPIPE,
+    )
+
+
+NETWORK_FAILURE_ADVICE = (
+    "  The transfers were cut or refused on the way: check the connection, and "
+    "HTTPS_PROXY if this network needs a proxy.\n"
+    f"  More help: {TROUBLESHOOTING_PAGE}")
+
+
 def _report_outcome(
     paths: list[Path],
     downloaded: int,
@@ -3132,11 +3165,18 @@ def _report_outcome(
     if any(reason == READ_ONLY for _dest, reason in failures or []):
         advice.append("  Files marked read-only are in the way: clear that attribute "
                       "(or delete them), then run again.")
+    if any(isinstance(reason, NetworkReason) for _dest, reason in failures or []):
+        advice.append(NETWORK_FAILURE_ADVICE)
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
-        print(f"Location that was being written to: {_locations(paths)}")
+        if failures and all(isinstance(r, NetworkReason) for _d, r in failures):
+            # The folder was never the problem: naming it as the place being
+            # written to sent people looking at their disk.
+            print(f"Destination: {_locations(paths)}")
+        else:
+            print(f"Location that was being written to: {_locations(paths)}")
         for line in advice:
             print(line)
         print("Run the same command again once that is resolved. "

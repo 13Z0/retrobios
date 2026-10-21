@@ -19,6 +19,7 @@ import threading
 import unittest
 from types import SimpleNamespace
 import unittest.mock
+import urllib.error
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -3745,6 +3746,58 @@ class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):
                                  "pcsx_rearmed": "pcsx_rearmed"})
         self.assertEqual(install.resolve_choices(["MEDNAFEN_PSX"], sorted(names), "emulator"),
                          ["mednafen_psx"])
+
+
+class ANetworkFailureNamesTheNetwork(unittest.TestCase):
+    """Every transfer cut by the connection ended on "Location that was being
+    written to" and "once that is resolved", naming the folder and nothing
+    about the connection or the proxy."""
+
+    def _fail(self, error: BaseException) -> str:
+        def urlopen(*_args, **_kwargs):
+            raise error
+
+        entry = {"dest": "a.bin", "repo_path": "bios/a.bin", "size": 10,
+                 "sha256": "0" * 64}
+        with unittest.mock.patch.object(install.urllib.request, "urlopen", urlopen), \
+                unittest.mock.patch.object(install, "_retry_delay", return_value=0):
+            _dest, ok, reason = install._download_one(entry, Path(_tempdir(self)))
+        self.assertFalse(ok)
+        return reason
+
+    def test_cuts_and_refusals_are_network_failures(self):
+        import http.client
+        import socket
+
+        for error in (
+            urllib.error.URLError(socket.gaierror(-2, "Name or service not known")),
+            http.client.IncompleteRead(b"abc", 10),
+            ConnectionResetError(104, "Connection reset by peer"),
+            socket.timeout("timed out"),
+            urllib.error.HTTPError("u", 503, "Service Unavailable", None, None),
+        ):
+            with self.subTest(error=error):
+                self.assertIsInstance(self._fail(error), install.NetworkReason)
+
+    def test_a_full_disk_and_a_missing_file_are_not(self):
+        import errno
+
+        for error in (OSError(errno.ENOSPC, "No space left on device"),
+                      urllib.error.HTTPError("u", 404, "Not Found", None, None)):
+            with self.subTest(error=error):
+                self.assertNotIsInstance(self._fail(error), install.NetworkReason)
+
+    def test_the_summary_points_at_the_connection(self):
+        failures = [("a.bin", install.NetworkReason("timed out")),
+                    ("b.bin", install.NetworkReason("Connection reset by peer"))]
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit) as raised:
+            install._report_outcome([Path("/bios")], 0, 0, 2, 0, False, failures=failures)
+        self.assertEqual(raised.exception.code, 2)
+        text = out.getvalue()
+        self.assertIn("HTTPS_PROXY", text)
+        self.assertIn("Destination: /bios", text)
+        self.assertNotIn("being written to", text)
 
 
 if __name__ == "__main__":
