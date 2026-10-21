@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "system",
   "detect": [
     {
@@ -3501,17 +3501,6 @@
       "cores": null,
       "systems": [
         "commodore-c128"
-      ],
-      "alternatives": [
-        {
-          "sha1": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
-          "sha256": "2de4d06b4aa2a1b1129cc641a01cbac7e631de362dbd6fe2129eec7336afad53",
-          "size": 16384,
-          "repo_path": "bios/Commodore/C128/JiffyDOS_1541-II.bin",
-          "cores": [
-            "vice"
-          ]
-        }
       ]
     },
     {
@@ -3523,17 +3512,6 @@
       "cores": null,
       "systems": [
         "commodore-c128"
-      ],
-      "alternatives": [
-        {
-          "sha1": "d4b79b60cf1eaa399d0932200eb7811e00455249",
-          "sha256": "4c0277542ec3d4cc93ece8a5c5dcc2a3fedafd3521a3be06f5d2d9ffbde85355",
-          "size": 32768,
-          "repo_path": "bios/Commodore/C128/JiffyDOS_1571_repl310654.bin",
-          "cores": [
-            "vice"
-          ]
-        }
       ]
     },
     {
@@ -3545,17 +3523,6 @@
       "cores": null,
       "systems": [
         "commodore-c128"
-      ],
-      "alternatives": [
-        {
-          "sha1": "65bbf2be7bcd5bdcbff609d6c66471ffb9d04bfe",
-          "sha256": "ed5fd5b75b204c7134b6294584b80cd2b68611393549f68d0b21c5b9d1818525",
-          "size": 32768,
-          "repo_path": "bios/Commodore/C128/JiffyDOS_1581.bin",
-          "cores": [
-            "vice"
-          ]
-        }
       ]
     },
     {
@@ -3567,17 +3534,6 @@
       "cores": null,
       "systems": [
         "commodore-c128"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7d1898f32beae4b2ae610d469ce578a588efaa7c",
-          "sha256": "1c60cff72b21c63509c2de8fb0cbab3568f3b71b70f910e0f31af92ba45696ae",
-          "size": 16384,
-          "repo_path": "bios/Commodore/C128/JiffyDOS_C128.bin",
-          "cores": [
-            "vice"
-          ]
-        }
       ]
     },
     {
@@ -3589,17 +3545,6 @@
       "cores": null,
       "systems": [
         "commodore-c128"
-      ],
-      "alternatives": [
-        {
-          "sha1": "31e73e66eccb28732daea8ec3ad1addd9b39a017",
-          "sha256": "29f21fb4060c7a21ff3da5e6c89d42f9de82baf89d16b6c3ab56cc1bf7365cae",
-          "size": 8192,
-          "repo_path": "bios/Commodore/C128/JiffyDOS_C64.bin",
-          "cores": [
-            "vice"
-          ]
-        }
       ]
     },
     {
@@ -10615,17 +10560,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "d07fcdeca892ee80494d286ea9ea5bf3928a1aca",
-          "sha256": "633343620691a592c706d18c927fd539b7069a5d0fb7011bcd3bfc94be418681",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/128p-0.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10637,17 +10571,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "80080644289ed93d71a1103992a154cc9802b2fa",
-          "sha256": "8d93c3342321e9d1e51d60afcd7d15f6a7afd978c231b43435a7c0757c60b9a3",
-          "size": 16384,
-          "repo_path": "bios/Arcade/FBNeo/zx128_1.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10659,17 +10582,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "477114ff0fe1388e0979df1423602b21248164e5",
-          "sha256": "c7ba1b5a4895b9ffba4499a40f227f955bc147092532f95023afe3a393bba602",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/256s-0.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10681,17 +10593,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "367b5a102fb663beee8e7930b8c4acc219c1f7b3",
-          "sha256": "e8b8ec052e5e7283a59173326a954773583fc282ccdf1dfff1724c30fdbc86f8",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/256s-1.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10703,17 +10604,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "07783ee295274d8ff15d935bfd787c8ac1d54900",
-          "sha256": "9f7571982a90268ef567bb6a8523d7c96db1d9644c85fee83c0ef0fa8a8900e1",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/256s-2.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10725,17 +10615,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "33703e97cc93b7edfcc0334b64233cf81b7930db",
-          "sha256": "31eda65b203179f466e5fcea8741ecb7c14d3c8f022e622585103e903969eadd",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/256s-3.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10747,17 +10626,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "015eb96dafb273d4f4512c467e9b43c305fd1bc4",
-          "sha256": "7e0d59753fc1bc1f659baf0a1d982fe36d3a56a4de6c5a21f4023acd00371313",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/gluck.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -10769,17 +10637,6 @@
       "cores": null,
       "systems": [
         "sinclair-zx-spectrum"
-      ],
-      "alternatives": [
-        {
-          "sha1": "21695e3f2a8f796386ce66eea8a246b0ac44810c",
-          "sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
-          "size": 16384,
-          "repo_path": "bios/Sinclair/ZX Spectrum/beta128.trdos.v5-03.rom",
-          "cores": [
-            "fuse"
-          ]
-        }
       ]
     },
     {
@@ -13479,17 +13336,6 @@
       "cores": null,
       "systems": [
         "xrick"
-      ],
-      "alternatives": [
-        {
-          "sha1": "ecfc092fe6371dbf38e238a8ba5f90785b5db52d",
-          "sha256": "2a86458696e83eb924fc6c6fda3ca5d320ca90885bd6c2f32d121757ade389bb",
-          "size": 1457440,
-          "repo_path": "bios/Other/xrick/data.zip",
-          "cores": [
-            "xrick"
-          ]
-        }
       ]
     },
     {
@@ -79674,13 +79520,8 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
+        "fbneo",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "epoch-scv",
-        "philips-cdi"
       ],
       "alternatives": [
         {
@@ -79711,15 +79552,6 @@
           "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
           "cores": [
             "ume2015"
-          ]
-        },
-        {
-          "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-          "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-          "size": 57375,
-          "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -80164,9 +79996,9 @@
       "size": 6800,
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
+        "fbneo",
         "mame",
-        "mamemess",
-        "fbneo"
+        "mamemess"
       ]
     },
     {
@@ -101832,8 +101664,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/NES/StudyBox.bin",
       "cores": [
-        "mesen",
-        "mesence"
+        "mesence",
+        "mesen"
       ],
       "systems": [
         "nintendo-nes"

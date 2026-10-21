@@ -5,7 +5,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "",
   "detect": [
     {
@@ -286,9 +286,9 @@
     }
   ],
   "total_files": 8560,
-  "total_size": 8649951793,
+  "total_size": 8649665517,
   "pack_files": 8562,
-  "pack_size": 8649951793,
+  "pack_size": 8649665517,
   "total_omitted": 32,
   "omitted_files": [
     {
@@ -100124,11 +100124,8 @@
       "size": 6478,
       "repo_path": "bios/Other/dolphin-mmjr/font_western.bin",
       "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "triforce"
+        "primehack",
+        "dolphin"
       ]
     },
     {
@@ -100138,11 +100135,8 @@
       "size": 259626,
       "repo_path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "cores": [
-        "dolphin",
-        "primehack"
-      ],
-      "systems": [
-        "triforce"
+        "primehack",
+        "dolphin"
       ]
     },
     {
@@ -100698,27 +100692,17 @@
     },
     {
       "dest": "bios/hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "size": 36182,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
       "cores": [
-        "fbalpha2012",
-        "fbalpha2012_cps3"
+        "mame2000"
       ],
       "systems": [
         "arcade"
       ],
       "alternatives": [
-        {
-          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-          "size": 36182,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-          "cores": [
-            "mame2000"
-          ]
-        },
         {
           "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
           "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
@@ -100726,6 +100710,16 @@
           "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
           "cores": [
             "mame2015"
+          ]
+        },
+        {
+          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+          "size": 322458,
+          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+          "cores": [
+            "fbalpha2012",
+            "fbalpha2012_cps3"
           ]
         }
       ]
@@ -100860,8 +100854,8 @@
       "size": 193854,
       "repo_path": "bios/Arcade/Arcade/msx.zip",
       "cores": [
-        "fbalpha2019",
-        "fbneo"
+        "fbneo",
+        "fbalpha2019"
       ],
       "systems": [
         "microsoft-msx"
@@ -102222,9 +102216,9 @@
       "size": 6800,
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
+        "fbneo",
         "mame",
-        "mamemess",
-        "fbneo"
+        "mamemess"
       ]
     },
     {
@@ -106879,8 +106873,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/NES/StudyBox.bin",
       "cores": [
-        "mesen",
-        "mesence"
+        "mesence",
+        "mesen"
       ],
       "systems": [
         "nintendo-nes"

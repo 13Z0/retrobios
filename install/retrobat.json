@@ -5,7 +5,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -271,9 +271,9 @@
     }
   ],
   "total_files": 5112,
-  "total_size": 8194952341,
+  "total_size": 8194666065,
   "pack_files": 5114,
-  "pack_size": 8194952341,
+  "pack_size": 8194666065,
   "total_omitted": 154,
   "omitted_files": [
     {
@@ -7599,13 +7599,35 @@
     },
     {
       "dest": "firmware.bin",
-      "sha1": "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b",
-      "sha256": "b5f5913048244b60f67a58eeac13ca48c1878dcb2aed3ab4fc874b098438ab34",
+      "sha1": "ede9add041614eaa232059c63d8613b83fe4e954",
+      "sha256": "23250a16807e891e900004956139cebb6cb0bb66bbf5cea1cd598672a47195f6",
       "size": 262144,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsfirmware.bin",
+      "repo_path": "bios/Nintendo/DS/NDS_Firmware_1.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "ede9add041614eaa232059c63d8613b83fe4e954",
+          "sha256": "23250a16807e891e900004956139cebb6cb0bb66bbf5cea1cd598672a47195f6",
+          "size": 262144,
+          "repo_path": "bios/Nintendo/DS/NDS_Firmware_1.bin",
+          "cores": [
+            "bizhawk"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b",
+          "sha256": "b5f5913048244b60f67a58eeac13ca48c1878dcb2aed3ab4fc874b098438ab34",
+          "size": 262144,
+          "repo_path": "bios/Nintendo/Nintendo DS/dsfirmware.bin",
+          "systems": [
+            "nintendo-ds"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -7693,6 +7715,30 @@
       "systems": [
         "nintendo-ds"
       ],
+      "slot_choices": [
+        {
+          "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
+          "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "cores": [
+            "bizhawk",
+            "melonds",
+            "melonds_ds"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
+          "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "systems": [
+            "nintendo-ds"
+          ]
+        }
+      ],
       "alternatives": [
         {
           "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
@@ -7716,6 +7762,30 @@
       "cores": null,
       "systems": [
         "nintendo-ds"
+      ],
+      "slot_choices": [
+        {
+          "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
+          "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "cores": [
+            "bizhawk",
+            "melonds",
+            "melonds_ds"
+          ]
+        }
+      ],
+      "declared_choices": [
+        {
+          "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
+          "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
+          "size": 65536,
+          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "systems": [
+            "nintendo-ds"
+          ]
+        }
       ],
       "alternatives": [
         {
@@ -10896,8 +10966,8 @@
         "bizhawk",
         "duckstation",
         "mednafen",
-        "pcsx_rearmed",
-        "swanstation"
+        "swanstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -10915,8 +10985,8 @@
         "bizhawk",
         "duckstation",
         "mednafen",
-        "pcsx_rearmed",
-        "swanstation"
+        "swanstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -10934,8 +11004,8 @@
         "bizhawk",
         "duckstation",
         "mednafen",
-        "pcsx_rearmed",
-        "swanstation"
+        "swanstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -37099,9 +37169,9 @@
       "size": 2069,
       "repo_path": "bios/Commodore/Amiga/rom.key",
       "cores": [
+        "winuae",
         "amiberry",
-        "puae",
-        "winuae"
+        "puae"
       ],
       "systems": [
         "commodore-amiga"
@@ -38353,8 +38423,8 @@
       "size": 1961984,
       "repo_path": "bios/Other/cxbx-reloaded/EmuDisk/Partition2/xboxdash.xbe",
       "cores": [
-        "chihiro-ds",
         "cxbx-reloaded",
+        "chihiro-ds",
         "cxbx-reloaded-2023"
       ],
       "systems": [
@@ -39860,13 +39930,12 @@
     },
     {
       "dest": "hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "size": 36182,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
       "cores": [
-        "fbalpha2012",
-        "fbalpha2012_cps3"
+        "mame2000"
       ],
       "alternatives": [
         {
@@ -39876,15 +39945,6 @@
           "repo_path": "bios/Other/mame4droid-2024/plugins/hiscore/hiscore.dat",
           "cores": [
             "groovymame"
-          ]
-        },
-        {
-          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-          "size": 36182,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-          "cores": [
-            "mame2000"
           ]
         },
         {
@@ -39911,6 +39971,8 @@
           "size": 322458,
           "repo_path": "bios/Arcade/Arcade/hiscore.dat",
           "cores": [
+            "fbalpha2012",
+            "fbalpha2012_cps3",
             "visual-pinball"
           ]
         }
@@ -40417,6 +40479,7 @@
       "size": 2240738,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
+        "fbneo",
         "groovymame"
       ],
       "alternatives": [
@@ -40439,8 +40502,7 @@
             "mame2003_plus",
             "mame2010",
             "mame2014",
-            "mame2016",
-            "fbneo"
+            "mame2016"
           ]
         }
       ]
@@ -40649,6 +40711,7 @@
       "size": 10207,
       "repo_path": "bios/Arcade/Arcade/isgsm.zip",
       "cores": [
+        "fbneo",
         "groovymame"
       ],
       "alternatives": [
@@ -40668,8 +40731,7 @@
           "repo_path": "bios/Arcade/Arcade/isgsm.zip",
           "cores": [
             "mame2014",
-            "mame2016",
-            "fbneo"
+            "mame2016"
           ]
         }
       ]
@@ -40692,6 +40754,7 @@
       "size": 22379,
       "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
+        "fbneo",
         "groovymame",
         "mame",
         "mame2000",
@@ -40699,8 +40762,7 @@
         "mame2003_plus",
         "mame2010",
         "mame2014",
-        "mame2016",
-        "fbneo"
+        "mame2016"
       ]
     },
     {
@@ -41027,11 +41089,11 @@
       "size": 7950,
       "repo_path": "bios/Arcade/Arcade/bubsys.zip",
       "cores": [
+        "fbneo",
         "groovymame",
         "mame",
         "mame2014",
-        "mame2016",
-        "fbneo"
+        "mame2016"
       ]
     },
     {
@@ -41159,6 +41221,7 @@
       "size": 924762,
       "repo_path": "bios/Arcade/Arcade/skns.zip",
       "cores": [
+        "fbneo",
         "groovymame"
       ],
       "alternatives": [
@@ -41197,8 +41260,7 @@
           "cores": [
             "mame2010",
             "mame2014",
-            "mame2016",
-            "fbneo"
+            "mame2016"
           ]
         }
       ]
@@ -41335,6 +41397,7 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
+        "fbneo",
         "groovymame",
         "mame"
       ],
@@ -41348,15 +41411,6 @@
             "mame2010",
             "mame2014",
             "mame2016"
-          ]
-        },
-        {
-          "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-          "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-          "size": 57375,
-          "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -42193,6 +42247,7 @@
       "size": 7609,
       "repo_path": "bios/Arcade/Arcade/ym2608.zip",
       "cores": [
+        "fbneo",
         "groovymame"
       ],
       "alternatives": [
@@ -42203,15 +42258,6 @@
           "repo_path": "bios/Arcade/MAME/ym2608.zip",
           "cores": [
             "mame"
-          ]
-        },
-        {
-          "sha1": "06fc753d015b43ca1787f4cfd9331b1674202e64",
-          "sha256": "187ede0f57d1439092a7ac50ea923533871ab7ee65e29baabc4dcdfa7ad4823f",
-          "size": 7609,
-          "repo_path": "bios/Arcade/Arcade/ym2608.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -60687,42 +60733,8 @@
       "size": 2700,
       "repo_path": "bios/Arcade/Arcade/cchip.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -76044,42 +76056,8 @@
       "size": 163,
       "repo_path": "bios/Arcade/Arcade/midssio.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -79917,42 +79895,8 @@
       "size": 7771,
       "repo_path": "bios/Arcade/Arcade/namcoc69.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -79962,42 +79906,8 @@
       "size": 7822,
       "repo_path": "bios/Arcade/Arcade/namcoc70.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -80095,42 +80005,8 @@
       "size": 8709,
       "repo_path": "bios/Arcade/Arcade/namcoc75.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -81284,42 +81160,8 @@
       "size": 3556,
       "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -99771,8 +99613,8 @@
       "size": 524288,
       "repo_path": "bios/Commodore/Amiga/kick31.rom",
       "cores": [
-        "puae",
-        "winuae"
+        "winuae",
+        "puae"
       ],
       "systems": [
         "commodore-amiga"

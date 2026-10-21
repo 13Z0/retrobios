@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -273,9 +273,9 @@
     }
   ],
   "total_files": 14483,
-  "total_size": 9772313890,
+  "total_size": 9772027658,
   "pack_files": 14485,
-  "pack_size": 9772313890,
+  "pack_size": 9772027658,
   "total_omitted": 399,
   "omitted_files": [
     {
@@ -168343,8 +168343,8 @@
       "size": 3455065,
       "repo_path": "bios/Arcade/Arcade/stvbios.zip",
       "cores": [
-        "beetle_saturn",
         "kronos",
+        "beetle_saturn",
         "mame",
         "mame2003_plus"
       ]
@@ -169708,8 +169708,8 @@
       "size": 131072,
       "repo_path": "bios/Sega/Dreamcast/dc_flash.bin",
       "cores": [
-        "demul",
-        "redream"
+        "redream",
+        "demul"
       ],
       "systems": [
         "sega-dreamcast"
@@ -171019,6 +171019,7 @@
       "size": 2240738,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
+        "fbneo",
         "fba2x"
       ],
       "alternatives": [
@@ -171037,37 +171038,28 @@
           "size": 2240738,
           "repo_path": "bios/Arcade/Arcade/pgm.zip",
           "cores": [
-            "mame2003_plus",
-            "fbneo"
+            "mame2003_plus"
           ]
         }
       ]
     },
     {
       "dest": "hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "size": 36182,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
       "cores": [
-        "fbalpha2012"
+        "mame2000"
       ],
       "alternatives": [
-        {
-          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-          "size": 36182,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-          "cores": [
-            "mame2000"
-          ]
-        },
         {
           "sha1": "7381472bf046126257e51a0124e4553282f020e5",
           "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
           "size": 322458,
           "repo_path": "bios/Arcade/Arcade/hiscore.dat",
           "cores": [
+            "fbalpha2012",
             "visual-pinball"
           ]
         }
@@ -173870,62 +173862,21 @@
     },
     {
       "dest": "isgsm.zip",
-      "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
-      "sha256": "2a7a1a7ee15b322356bcdfd46dd3592bcf6a9bf6cb04f4cd2cf27ea54dbb6665",
-      "size": 10185,
-      "repo_path": "bios/Arcade/MAME/isgsm.zip",
+      "sha1": "f590ccf688b4c05fa1da5c5dd92c224545170c3b",
+      "sha256": "c481bfde0ae68e5fbe70a406af1698fcba5b76d7e23c860c2715cacf019efad4",
+      "size": 10207,
+      "repo_path": "bios/Arcade/Arcade/isgsm.zip",
       "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo"
       ],
       "alternatives": [
         {
-          "sha1": "f590ccf688b4c05fa1da5c5dd92c224545170c3b",
-          "sha256": "c481bfde0ae68e5fbe70a406af1698fcba5b76d7e23c860c2715cacf019efad4",
-          "size": 10207,
-          "repo_path": "bios/Arcade/Arcade/isgsm.zip",
+          "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
+          "sha256": "2a7a1a7ee15b322356bcdfd46dd3592bcf6a9bf6cb04f4cd2cf27ea54dbb6665",
+          "size": 10185,
+          "repo_path": "bios/Arcade/MAME/isgsm.zip",
           "cores": [
-            "fbneo"
+            "mame"
           ]
         }
       ]
@@ -173988,10 +173939,10 @@
       "size": 22379,
       "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
+        "fbneo",
         "mame",
         "mame2000",
-        "mame2003_plus",
-        "fbneo"
+        "mame2003_plus"
       ]
     },
     {
@@ -174290,49 +174241,8 @@
       "size": 7950,
       "repo_path": "bios/Arcade/Arcade/bubsys.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -175020,14 +174930,23 @@
     },
     {
       "dest": "skns.zip",
-      "sha1": "a8238391ddca35f9e59e5ca7f4f4491ae281b77f",
-      "sha256": "51b5ed3a802b10d599c9e2e00ef38ed1e3caa534067aa810fe0cad094324add8",
-      "size": 924740,
-      "repo_path": "bios/Arcade/MAME/skns.zip",
+      "sha1": "4257bd14b541fafbd555cb98ba079a3416a45934",
+      "sha256": "6edf22c68e70be06c9b32741e0d1df1aa38cf6fc162c1027c15d6c1d882f621b",
+      "size": 924762,
+      "repo_path": "bios/Arcade/Arcade/skns.zip",
       "cores": [
-        "mame"
+        "fbneo"
       ],
       "alternatives": [
+        {
+          "sha1": "a8238391ddca35f9e59e5ca7f4f4491ae281b77f",
+          "sha256": "51b5ed3a802b10d599c9e2e00ef38ed1e3caa534067aa810fe0cad094324add8",
+          "size": 924740,
+          "repo_path": "bios/Arcade/MAME/skns.zip",
+          "cores": [
+            "mame"
+          ]
+        },
         {
           "sha1": "aabedfebe2cd8cfede8c2a3cb9ff33166f0ef953",
           "sha256": "190c5fd9d68619eda986d32d03114a5c9239ab5c29e6e0676afe18612e9cd052",
@@ -175035,15 +174954,6 @@
           "repo_path": "bios/Arcade/Arcade/.variants/skns.zip.aabedfeb",
           "cores": [
             "mame2003_plus"
-          ]
-        },
-        {
-          "sha1": "4257bd14b541fafbd555cb98ba079a3416a45934",
-          "sha256": "6edf22c68e70be06c9b32741e0d1df1aa38cf6fc162c1027c15d6c1d882f621b",
-          "size": 924762,
-          "repo_path": "bios/Arcade/Arcade/skns.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -175333,49 +175243,8 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -195766,49 +195635,8 @@
       "size": 2700,
       "repo_path": "bios/Arcade/Arcade/cchip.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -213566,49 +213394,8 @@
       "size": 163,
       "repo_path": "bios/Arcade/Arcade/midssio.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -218055,49 +217842,8 @@
       "size": 7771,
       "repo_path": "bios/Arcade/Arcade/namcoc69.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -218107,49 +217853,8 @@
       "size": 7822,
       "repo_path": "bios/Arcade/Arcade/namcoc70.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -218261,49 +217966,8 @@
       "size": 8709,
       "repo_path": "bios/Arcade/Arcade/namcoc75.zip",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {
@@ -219690,49 +219354,8 @@
       "size": 3556,
       "repo_path": "bios/Arcade/Arcade/.variants/nmk004.zip.f70b6562",
       "cores": [
-        "mame",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
+        "fbneo",
+        "mame"
       ]
     },
     {

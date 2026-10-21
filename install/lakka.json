@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "system",
   "detect": [
     {
@@ -78836,13 +78836,8 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
+        "fbneo",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "epoch-scv",
-        "philips-cdi"
       ],
       "alternatives": [
         {
@@ -78873,15 +78868,6 @@
           "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
           "cores": [
             "ume2015"
-          ]
-        },
-        {
-          "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-          "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-          "size": 57375,
-          "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -79326,9 +79312,9 @@
       "size": 6800,
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
+        "fbneo",
         "mame",
-        "mamemess",
-        "fbneo"
+        "mamemess"
       ]
     },
     {
@@ -100968,8 +100954,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/NES/StudyBox.bin",
       "cores": [
-        "mesen",
-        "mesence"
+        "mesence",
+        "mesen"
       ],
       "systems": [
         "nintendo-nes"
