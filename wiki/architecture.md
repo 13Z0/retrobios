@@ -66,6 +66,16 @@ dist/                    generated packs (gitignored)
 `platforms/`, `emulators/`, `database.json`, and the `wiki/` sources.
 Documentation changes belong in `wiki/` or in the generator.
 
+The site search splits each page at its headings and sends a result to the
+heading above the match. Every file card is therefore a level 4 heading with
+the card's anchor, and every platform system a heading of its own: a hash
+pasted in the search opens that card or that system, not the top of the page.
+Level 4 stays out of the table of contents (`toc_depth: 3`). The lines that
+list other pages (platforms, packs, source citations, collection paths) sit
+in a `data-search-exclude` block, since the browser downloads and indexes the
+whole search index before it shows a first result. File names, hashes, the
+paths an emulator reads and the notes stay searchable.
+
 ## Data flow
 
 ```

@@ -1728,16 +1728,19 @@ def _render_platform_systems(
         sys_link = _system_link(sys_id, "../")
 
         anchor = sys_id.replace(" ", "-")
+        # Every system is a heading with the same anchor in both layouts:
+        # emulator cards link here, and the site search splits a page at its
+        # headings. Folded into blocks under one heading, every hash pasted
+        # in the search led to the systems overview of a 100-block page.
         if use_collapsible:
             status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
-            lines.append(f'<a id="{anchor}"></a>')
-            lines.append(f'??? note "{sys_id} ({ok_count}/{total} - {status_tag})"')
+            lines.append(f"### {sys_link} {{ #{anchor} }}")
+            lines.append("")
+            lines.append(f'??? note "{_count(total, "file")} ({status_tag})"')
             lines.append("")
             pad = "    "
         else:
-            # The same anchor in both layouts: emulator cards link here.
-            lines.append(f'<a id="{anchor}"></a>')
-            lines.append(f"## {sys_link}")
+            lines.append(f"## {sys_link} {{ #{anchor} }}")
             lines.append("")
             pad = ""
 
@@ -2528,22 +2531,18 @@ def _system_file_card(
             anchor = ""
         else:
             anchored.add(anchor)
-    id_attr = f' id="{anchor}"' if anchor else ""
-    lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
-    # The anchor is this page's, the second link is the file's own address,
-    # resolved by content wherever its card moves.
+    lines = ['<div class="rb-sys-file" markdown>', ""]
+    # The heading's own link is this page's, the second link is the file's
+    # own address, resolved by content wherever its card moves.
     permalink = (
-        f' <a class="rb-permalink" href="#{anchor}" title="Link to this card">#</a>'
         f' <a class="rb-permalink" href="../../files/?sha1={sha1_full}" '
         f'title="Permanent link, by content">permalink</a>'
     ) if anchor else ""
-    lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>{permalink}')
+    lines.append(_card_title(
+        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{permalink}',
+        anchor,
+    ))
     lines.append("")
-    if f.get("path"):
-        # The card named a file, its hashes and provenance, but not where to
-        # get it: a user missing scph5501.bin found the reference and no way
-        # to the bytes.
-        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
     # Every hash in full: the site search indexes text, not a title
     # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
     # emulator log prints) found nothing behind a 12-character prefix.
@@ -2551,6 +2550,16 @@ def _system_file_card(
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
             lines.append(f'- {label}: <span class="rb-hash">{_code(value)}</span>')
+    if emus:
+        lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
+    provenance = f.get("provenance", {})
+    if provenance:
+        lines.extend(_provenance_lines(provenance, "../"))
+    if f.get("path"):
+        # The card named a file, its hashes and provenance, but not where to
+        # get it: a user missing scph5501.bin found the reference and no way
+        # to the bytes.
+        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
     if plats:
         # Each link lands on the platform's system section, and says where
         # that platform puts the file: from the card, retrodeck sent the
@@ -2562,13 +2571,51 @@ def _system_file_card(
         # looking up scph5501.bin found every platform but RetroBat, whose
         # pack installs it for six cores.
         lines.append(f"- Also installed by: {', '.join(installed)}")
-    if emus:
-        lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
-    provenance = f.get("provenance", {})
-    if provenance:
-        lines.extend(_provenance_lines(provenance, "../"))
+    lines[2:] = _search_skipped_apart(lines[2:])
     lines.extend(["", "</div>", ""])
     return lines
+
+
+# Card lines the site search leaves out. They list where a file goes and
+# who cites it, links to other pages that index the same names, and they
+# were 6.6 of the 24.7 MB the browser downloads and indexes before the first
+# result. The name, the hashes, the entry's path and the notes stay
+# searchable.
+SEARCH_SKIPPED = (
+    "- Platforms:", "- Also installed by:", "- Source:", "- Asked for by:",
+    "- Collection path:", "- Collection copy:", "- Collection copies:",
+    "- Installed by the platform's own package on:",
+    "- Not in the platform's package", "- Never opened on these platforms",
+)
+
+
+def _search_skipped_apart(lines: list[str]) -> list[str]:
+    """Card list lines, each run the search skips in a block of its own."""
+    out: list[str] = []
+    skipping = False
+    for line in lines:
+        skip = line.startswith(SEARCH_SKIPPED) or (skipping and line.startswith("    "))
+        if skip and not skipping:
+            out.extend(["", '<div class="rb-search-skip" data-search-exclude markdown>', ""])
+        elif skipping and not skip:
+            out.extend(["", "</div>", ""])
+        skipping = skip
+        out.append(line)
+    if skipping:
+        out.extend(["", "</div>", ""])
+    return out
+
+
+def _card_title(text: str, anchor: str) -> str:
+    """A file card's heading, so the site search lands on the card.
+
+    The search splits a page at its headings: a card titled in bold sent a
+    pasted md5 to the top of a page of a hundred cards. Level 4 stays out
+    of the table of contents (toc_depth 3), and a card without an anchor
+    keeps the id the toc gives it.
+    """
+    attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
+    return f"#### {text} {{ {attributes} }}"
 
 
 def generate_system_page(
@@ -2863,14 +2910,13 @@ def _render_emulator_file(
 
     badges = _file_badges(f, in_repo)
     badge_str = " ".join(badges)
-    id_attr = f' id="{anchor}"' if anchor else ""
-    lines.append(f'<div class="rb-file-entry"{id_attr} markdown>')
+    lines.append('<div class="rb-file-entry" markdown>')
     lines.append("")
-    permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
-    lines.append(f"**`{fname}`** {badge_str}{permalink}")
+    lines.append(_card_title(f"{_code(fname)} {badge_str}", anchor))
+    lines.append("")
     if desc:
-        lines.append(f"<br>{_escape_tags(str(desc))}")
-    lines.append("")
+        lines.extend([_escape_tags(str(desc)), ""])
+    body_start = len(lines)
 
     details = []
     if fpath and fpath != fname:
@@ -3022,6 +3068,7 @@ def _render_emulator_file(
                 lines.append(f"    - `{c.get('name', '')}`{extra}")
             else:
                 lines.append(f"    - {c}")
+    lines[body_start:] = _search_skipped_apart(lines[body_start:])
     lines.append("")
     lines.append("</div>")
     lines.append("")
@@ -5224,6 +5271,9 @@ markdown_extensions:
 - tables
 - toc:
     permalink: true
+    # File cards are level 4 headings: the search lands on them, and a
+    # page of a hundred cards keeps a readable table of contents.
+    toc_depth: 3
 - pymdownx.details
 - pymdownx.highlight:
     anchor_linenums: true

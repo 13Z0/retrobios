@@ -337,5 +337,79 @@ class TheDatHoldsEveryCopy(unittest.TestCase):
         self.assertEqual(dat.count("<rom "), 2)
 
 
+class TheSearchLandsOnTheCard(unittest.TestCase):
+    """The site search splits a page at its headings. Emulator cards were
+    titled in bold and platform systems folded into blocks under one
+    heading, so a pasted hash led to the page top or to the systems
+    overview of a 100-block page."""
+
+    def test_a_platform_system_is_a_heading(self):
+        import generate_site
+
+        by_system = {f"system-{i:02d}": [{"name": f"f{i}.bin", "status": "ok"}]
+                     for i in range(11)}
+        lines = generate_site._render_platform_systems(by_system, {}, {})
+        headings = [line for line in lines if line.startswith("### ")]
+        self.assertEqual(len(headings), 11)
+        self.assertTrue(headings[0].endswith("{ #system-00 }"))
+        self.assertNotIn('<a id="system-00"></a>', lines)
+        self.assertIn('??? note "1 file (OK)"', lines)
+
+    def test_an_emulator_card_is_a_heading_with_its_anchor(self):
+        import generate_site
+
+        entry = {"name": "scph5501.bin", "required": True}
+        lines = generate_site._render_emulator_file(
+            entry, {"files": [entry]}, None, [entry], lambda f: True, "file-scph5501-bin")
+        self.assertTrue(lines[2].startswith("#### `scph5501.bin` "))
+        self.assertTrue(lines[2].endswith("{ #file-scph5501-bin .rb-file-title }"))
+
+    def test_a_system_card_is_a_heading_with_its_anchor(self):
+        import generate_site
+        from cross_reference import FileConsumers
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3}
+        lines = generate_site._system_file_card(entry, FileConsumers({"files": {}}))
+        self.assertTrue(lines[2].startswith("#### `a.bin` "))
+        self.assertTrue(lines[2].endswith("{ #sha1-aaaaaaaaaaaa .rb-file-title }"))
+
+
+class TheSearchSkipsLinkLists(unittest.TestCase):
+    """The search index was 24.7 MB, read and indexed before the first
+    result. Lists of platforms, copies and source citations on every card
+    made 6.6 MB of it, names already indexed on their own pages."""
+
+    def test_a_system_card_keeps_its_hashes_and_skips_its_platforms(self):
+        import generate_site
+        from cross_reference import FileConsumers
+
+        consumers = FileConsumers({"files": {}})
+        sha1 = "a" * 40
+        consumers.platforms = {sha1: {"retroarch"}}
+        consumers.installed = {sha1: {"batocera": {"bios/a.bin"}}}
+        consumers.emulators = {sha1: {"duckstation"}}
+        entry = {"name": "a.bin", "sha1": sha1, "md5": "b" * 32, "size": 3}
+        text = "\n".join(generate_site._system_file_card(entry, consumers))
+        searched, skipped = text.split('<div class="rb-search-skip" data-search-exclude markdown>')
+        self.assertIn("- MD5:", searched)
+        self.assertIn("- Emulators:", searched)
+        self.assertIn("- Platforms:", skipped)
+        self.assertIn("- Also installed by:", skipped)
+        self.assertEqual(text.count("</div>"), 2)
+
+    def test_runs_alternate_in_card_order(self):
+        import generate_site
+
+        lines = ["- SHA1: x", "- Source: `a.c:1`", "- Platforms: p",
+                 "- Destination: `d`", "- Contents (1 members):", "    - `m`"]
+        out = [line for line in generate_site._search_skipped_apart(lines) if line]
+        self.assertEqual(out, [
+            "- SHA1: x",
+            '<div class="rb-search-skip" data-search-exclude markdown>',
+            "- Source: `a.c:1`", "- Platforms: p", "</div>",
+            "- Destination: `d`", "- Contents (1 members):", "    - `m`",
+        ])
+
+
 if __name__ == "__main__":
     unittest.main()

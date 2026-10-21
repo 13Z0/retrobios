@@ -4098,8 +4098,9 @@ class AFileCardSaysAllItKnows(unittest.TestCase):
         text = "\n".join(_render_emulator_file(
             entry, {"files": [entry]}, None, [entry], lambda f: True, "file-neogeo-zip",
         ))
-        self.assertIn('id="file-neogeo-zip"', text)
-        self.assertIn('href="#file-neogeo-zip"', text)
+        # The card is a heading with this id, linked by the heading's own
+        # permalink.
+        self.assertIn("{ #file-neogeo-zip .rb-file-title }", text)
         self.assertIn("Standalone path: `Firmware/neogeo.zip`", text)
         self.assertIn("`m11.bin`", text)
         self.assertIn("CRC32 `0000000b`", text)
@@ -4819,7 +4820,7 @@ class VersionAnchorsFollowContent(unittest.TestCase):
             "raze", {"emulator": "Raze", "type": "standalone", "files": files},
             {"files": {}, "indexes": {}},
         )
-        return re.findall(r'id="(file-[^"]+)"', page)
+        return re.findall(r"\{ #(file-[^ ]+) \.rb-file-title \}", page)
 
     def test_inserting_a_version_keeps_the_others(self):
         a = {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "crc32": "bbc9ce44"}
