@@ -1207,7 +1207,7 @@ class OneBaselineVerdict(unittest.TestCase):
             )
 
     def test_a_release_asset_keeps_its_answer(self):
-        from scripts.slots import apply_override
+        from scripts.packresolve import apply_override
 
         self.assertEqual(
             apply_override("bios/x.bin", "/cache/big.bin", "release_asset"),
@@ -1229,8 +1229,48 @@ class OneBaselineVerdict(unittest.TestCase):
             body = ast.get_source_segment(source, function) or ""
             with self.subTest(function=name):
                 self.assertIn("baseline_verdict(", body)
-                self.assertIn("slots.apply_override(", body)
+                self.assertIn("resolve_declaration(", body)
                 self.assertNotIn('"slot_arbitrated"', body)
+
+    def test_verify_and_the_region_pass_resolve_as_the_builder(self):
+        """verify called common.resolve_local_file and put the slot override
+        first, the region pass passed a destination hint the builder never
+        gives: a gitignored file absent from bios/ read as missing in verify
+        while the pack shipped its cached release asset."""
+        for module, name in (("verify.py", "_resolve_for_platform"),
+                             ("packextras.py", "_ships")):
+            source = (ROOT / "scripts" / module).read_text(encoding="utf-8")
+            function = next(
+                node for node in ast.parse(source).body
+                if isinstance(node, ast.FunctionDef) and node.name == name
+            )
+            body = ast.get_source_segment(source, function) or ""
+            with self.subTest(function=name):
+                self.assertIn("resolve_declaration(", body)
+                self.assertNotIn("resolve_local_file(", body)
+                self.assertNotIn('"slot_arbitrated"', body)
+
+    def test_verify_finds_the_cached_release_asset(self):
+        # verify imports the scripts directory's modules by their bare names.
+        import packresolve
+        from scripts.verify import _resolve_for_platform
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            cached = Path(directory) / "BIG.PUP"
+            cached.write_bytes(b"large firmware")
+            sha1 = hashlib.sha1(cached.read_bytes()).hexdigest()
+            db = {"files": {sha1: {"path": f"{directory}/absent/BIG.PUP",
+                                   "name": "BIG.PUP", "sha1": sha1}},
+                  "indexes": {"by_name": {"BIG.PUP": [sha1]}}}
+            entry = {"name": "BIG.PUP", "sha1": sha1, "destination": "BIG.PUP"}
+            with mock.patch.object(
+                packresolve, "fetch_large_file", return_value=str(cached)
+            ):
+                found = _resolve_for_platform(
+                    entry, "sys", db, {}, None, {"BIG.PUP": "bios/other.bin"},
+                    "md5", {},
+                )
+        self.assertEqual(found, (str(cached), "release_asset"))
 
 
 class PackExclusionRegressions(unittest.TestCase):

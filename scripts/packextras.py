@@ -1229,14 +1229,18 @@ def _kept(entries: list[dict], required_only: bool) -> list[dict]:
     return [e for e in entries if e.get("required") is not False]
 
 
-def _ships(config: dict, file_entry: dict, db: dict, dest: str) -> bool:
+def _ships(config: dict, file_entry: dict, db: dict) -> bool:
     """Whether the builder packs this declaration: resolved, and not refused
     by a hash frontend. A dump whose md5 Recalbox would reject is left out
     of the pack, so it cannot win a regional slot over a file that ships.
     """
+    from packresolve import resolve_declaration
     from validation import baseline_verdict
 
-    path, status = resolve_local_file(file_entry, db, dest_hint=dest)
+    # The builder's resolution: no destination hint, release assets included.
+    path, status = resolve_declaration(
+        file_entry, db, "bios", None, None, None, offline=True,
+    )
     if not path:
         return False
     return baseline_verdict(
@@ -1288,7 +1292,7 @@ def platform_region_groups(
             if dest:
                 members.append((dest, file_entry.get("name", "")))
                 if held_out is not None and db is not None and _ships(
-                    config, file_entry, db, dest
+                    config, file_entry, db
                 ):
                     held_out.add(dest)
 

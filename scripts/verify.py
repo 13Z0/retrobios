@@ -1047,18 +1047,20 @@ def _resolve_for_platform(
 ) -> tuple[str | None, str]:
     """Resolve one platform entry the way the pack builder does.
 
-    A slot the arbitration decided wins over the resolver, and a frontend that
+    The builder's own resolution (packresolve.resolve_declaration), read from
+    disk and the large-file cache: verify never downloads. A frontend that
     never reads the bytes takes the filename-free core's own image.
     """
+    from packresolve import resolve_declaration
+
     override = slot_overrides.get(
         sanitize_pack_path(file_entry.get("destination", file_entry.get("name", "")))
     )
-    if override:
-        return override, "slot_arbitrated"
-    local_path, status = resolve_local_file(
-        file_entry, db, zip_contents, data_dir_registry=data_dir_registry
+    local_path, status = resolve_declaration(
+        file_entry, db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry,
+        override, offline=True,
     )
-    if local_path is None and not reads_file_contents(mode):
+    if status == "not_found" and not reads_file_contents(mode):
         found = agnostic_substitute(file_entry, sys_id, db, platform_profiles)
         if found:
             return found[0], "agnostic_fallback"

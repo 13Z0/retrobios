@@ -41,9 +41,9 @@ class ARefusedDumpHoldsNothing(unittest.TestCase):
                         "by_path_suffix": {}},
         }
         entry = {"name": "us.bin", "md5": "0" * 32}
-        self.assertFalse(_ships({"verification_mode": "md5"}, entry, db, "us.bin"))
-        self.assertTrue(_ships({"verification_mode": "existence"}, entry, db, "us.bin"))
-        self.assertTrue(_ships({"verification_mode": "md5"}, {"name": "us.bin"}, db, "us.bin"))
+        self.assertFalse(_ships({"verification_mode": "md5"}, entry, db))
+        self.assertTrue(_ships({"verification_mode": "existence"}, entry, db))
+        self.assertTrue(_ships({"verification_mode": "md5"}, {"name": "us.bin"}, db))
 
 
 if __name__ == "__main__":
