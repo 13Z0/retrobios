@@ -398,7 +398,7 @@ def generate_home(
             "",
             "    Platform lists are checked against emulator source code, file "
             "by file where a profile exists ([how far that reaches](gaps.md)). "
-            "Documentation and metadata can drift from actual runtime behavior, "
+            "Documentation and metadata can differ from actual runtime behavior, "
             "so the source is the primary reference.",
             "",
             "    1. **Upstream emulator source**: what the original project "
@@ -1805,7 +1805,7 @@ def _render_platform_systems(
     return lines
 
 
-# Platforms with a corrected file published by export_native.py.
+# Platforms with an updated file published by export_native.py.
 _EXPORTED: set[str] = set()
 
 
@@ -2219,7 +2219,7 @@ def generate_provenance_page(
         'orange (<span class="rb-badge rb-badge-warning">TOSEC</span>) where '
         "TOSEC flags the dump as bad, overdumped, hacked, cracked or fixed. "
         "Arcade ROM sets and engine data "
-        "sit outside what those catalogs index, so they are left out of the "
+        "sit outside what those catalogs index, so they are excluded from the "
         "ratio rather than counted as failures.",
         "",
         "## What the badge means",
@@ -2861,7 +2861,7 @@ def _render_emulator_file(
         details.append("Installed by the platform's own package on: "
                        + ", ".join(sorted(f["installed_on"])))
     if f.get("not_bundled_on"):
-        details.append("Left out by the platform's package, so the pack brings it, on: "
+        details.append("Not in the platform's package, so the pack brings it, on: "
                        + ", ".join(sorted(f["not_bundled_on"])))
     if f.get("unread_on"):
         details.append("Never opened on these platforms, whose launcher names other files: "
@@ -3805,8 +3805,9 @@ def generate_gap_analysis(
         "only authority for its files.",
         "",
         "The same comparison drives `scripts/exporter/`: each platform's "
-        "corrected list can be regenerated in its native format "
-        "(System.dat, es_bios.xml, batocera-systems.json, ...).",
+        "own file can be regenerated in its native format with these "
+        "differences applied (System.dat, es_bios.xml, "
+        "batocera-systems.json, ...).",
         "",
     ])
 

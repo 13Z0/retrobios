@@ -80,5 +80,36 @@ class IconCacheIsReplacedWhole(unittest.TestCase):
         atomic.assert_called_once()
 
 
+class EveryPageAddressesPlatformsAsPeers(unittest.TestCase):
+    """The exports page was held to neutral wording, and the gaps page next
+    to it still called each platform's file a "corrected list". Reads the
+    text every site generator writes, docstrings and bare identifiers aside."""
+
+    WORDS = ("their file", "theirs", "of ours", "corrected", "left out", "drift")
+    SOURCES = ("generate_site.py", "siterender.py", "sitesources.py", "siteexports.py")
+
+    def test_no_page_text_judges_another_project(self):
+        import ast
+        import re
+
+        found = []
+        for name in self.SOURCES:
+            tree = ast.parse((REPO_ROOT / "scripts" / name).read_text(encoding="utf-8"))
+            docstrings = {
+                id(node.body[0].value) for node in ast.walk(tree)
+                if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef,
+                                     ast.AsyncFunctionDef))
+                and ast.get_docstring(node, clean=False) is not None
+            }
+            for node in ast.walk(tree):
+                if (not isinstance(node, ast.Constant) or not isinstance(node.value, str)
+                        or id(node) in docstrings or re.fullmatch(r"\w+", node.value)):
+                    continue
+                text = node.value.lower()
+                found += [f"{name}:{node.lineno} {word!r}"
+                          for word in self.WORDS if word in text]
+        self.assertEqual(found, [])
+
+
 if __name__ == "__main__":
     unittest.main()
