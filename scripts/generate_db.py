@@ -27,6 +27,7 @@ from common import (
     list_registered_platforms,
     load_provenance_snapshots,
     require_yaml,
+    set_plain_mode,
     source_yaml_paths,
     variant_base_name,
     write_if_changed,
@@ -309,6 +310,7 @@ def _restore(cached: str, path: str) -> None:
     os.close(fd)
     try:
         shutil.copy2(cached, scratch)
+        set_plain_mode(scratch)
         os.replace(scratch, path)
     finally:
         if os.path.exists(scratch):

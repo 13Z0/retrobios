@@ -50,6 +50,25 @@ def write_if_changed(
     return True
 
 
+def plain_file_mode() -> int:
+    """The mode open() gives a new file: 0o666 less the process umask."""
+    # Reading the umask sets it, so it is put back at once.
+    umask = os.umask(0)
+    os.umask(umask)
+    return 0o666 & ~umask
+
+
+def set_plain_mode(path: str | os.PathLike) -> None:
+    """Give a scratch file the mode a plain open() would have.
+
+    mkstemp creates its file 0600 so no other user reads it while it is
+    written. Renamed into place, that mode stayed: database.json, the
+    manifests, the packs and the recipe snapshots came out unreadable to
+    every other account on the machine and to a web server serving them.
+    """
+    os.chmod(path, plain_file_mode())
+
+
 def write_text_atomic(path: str, content: str) -> None:
     """Write a whole file or nothing.
 
@@ -65,6 +84,7 @@ def write_text_atomic(path: str, content: str) -> None:
     try:
         with os.fdopen(handle, "w", encoding="utf-8") as f:
             f.write(content)
+        set_plain_mode(scratch)
         os.replace(scratch, path)
     except BaseException:
         with contextlib.suppress(OSError):
@@ -81,6 +101,7 @@ def write_bytes_atomic(path: str, content: bytes) -> None:
     try:
         with os.fdopen(handle, "wb") as f:
             f.write(content)
+        set_plain_mode(scratch)
         os.replace(scratch, path)
     except BaseException:
         with contextlib.suppress(OSError):

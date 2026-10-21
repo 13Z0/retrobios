@@ -19,6 +19,7 @@ from collections import Counter
 from collections.abc import Iterable
 from pathlib import Path
 
+from artifacts import set_plain_mode
 from hashing import compute_hashes
 
 
@@ -219,6 +220,7 @@ def _fetch_asset(
             compute_hashes(tmp_path), expected_sha1, expected_md5
         ):
             return None
+        set_plain_mode(tmp_path)
         os.replace(tmp_path, cached)
         return cached
     finally:
