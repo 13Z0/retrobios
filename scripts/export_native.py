@@ -375,7 +375,8 @@ def current_truth(platform: str, config: dict, platforms_dir: str) -> dict:
     """The truth model generate_truth would write now, as YAML reads it back."""
     registry, profiles, db = _truth_sources(platforms_dir)
     model = generate_platform_truth(
-        platform, config, registry.get(platform, {}), profiles, db=db
+        platform, config, registry.get(platform, {}), profiles, db=db,
+        data_registry=load_data_dir_registry(platforms_dir),
     )
     return yaml_load(yaml.dump(model, default_flow_style=False, sort_keys=False,
                                allow_unicode=True)) or {}

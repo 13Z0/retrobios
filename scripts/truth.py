@@ -7,15 +7,18 @@ and diffs truth against scraped platform data to find divergences.
 from __future__ import annotations
 
 import copy
+import os
 import sys
+from pathlib import Path
 
 from common import (
     _norm_system_id,
+    load_data_dir_registry,
     platform_layouts,
     resolve_platform_cores,
     standalone_set as platform_standalone_set,
 )
-from hashing import parse_md5_list
+from hashing import compute_hashes, parse_md5_list
 from validation import (
     filter_files_by_mode,
     installed_with_emulator,
@@ -508,6 +511,90 @@ def _declaration_verdict(entry: dict, declaration: dict, db: dict | None) -> str
     return "undecided"
 
 
+_REPO_PLATFORMS = Path(__file__).resolve().parent.parent / "platforms"
+
+
+def _fold_data_directory_readers(
+    systems: dict,
+    profiles: dict,
+    cores: list[str],
+    standalone_set: set[str],
+    platform_name: str,
+    data_registry: dict,
+) -> None:
+    """Count a core that reads a data directory among the readers of its files.
+
+    LRPS2 reads pcsx2/resources/GameIndex.yaml from its data directory and
+    declares no file entry for it, so the entry other cores build for that
+    path named armsx2 and yaps2 alone: RetroArch's System.dat line, which
+    describes LRPS2's copy, was paired with armsx2's revision and nothing
+    said the cores disagree. The copy in the directory's cache is what the
+    reader reads, so its hashes fold in as that core's declaration and a
+    different value marks hash_conflict. Only entries other cores already
+    build are touched: a directory's other files are not BIOS entries.
+    """
+    by_path: dict[str, list[dict]] = {}
+    for sys_data in systems.values():
+        for entry in sys_data.get("files", []):
+            by_path.setdefault(entry.get("path") or entry.get("name", ""), []).append(entry)
+    if not by_path:
+        return
+    for emu_name in cores:
+        for view, standalone in platform_layouts(
+            emu_name, profiles[emu_name], standalone_set
+        ):
+            trees = [
+                tree for tree in filter_files_by_mode(
+                    [t for t in view.get("data_directories") or [] if isinstance(t, dict)],
+                    standalone,
+                )
+                if tree.get("ref") in data_registry
+            ]
+            for tree in trees:
+                cache = data_registry[tree["ref"]].get("local_cache", "")
+                if not cache or not os.path.isdir(cache):
+                    continue
+                # Below the build's own folder, as the emulator pack lays the
+                # tree out: PPSSPP's assets sit under PPSSPP/, not at the root.
+                structure = (profiles[emu_name].get("pack_structure") or {}).get(
+                    "standalone" if standalone else "libretro", ""
+                )
+                prefix = "/".join(
+                    part.strip("/") for part in (structure, str(tree.get("destination") or ""))
+                    if part and part.strip("/")
+                )
+                prefix = f"{prefix}/" if prefix else ""
+                if prefix and any(
+                    str(f.get("path") or "").startswith(prefix)
+                    for f in view.get("files") or [] if isinstance(f, dict)
+                ):
+                    # The profile names what it reads in the tree: yaps2
+                    # lists its resources, pcee2 lists patches.zip alone
+                    # (its build compiles GameIndex.yaml and the shaders in).
+                    continue
+                installed = platform_name in (tree.get("installed_on") or [])
+                for path, entries in by_path.items():
+                    if not path.startswith(prefix):
+                        continue
+                    copy_path = os.path.join(cache, path[len(prefix):])
+                    if not os.path.isfile(copy_path):
+                        continue
+                    held = compute_hashes(copy_path, frozenset({"sha1", "md5", "crc32"}))
+                    declaration = {
+                        "name": os.path.basename(path),
+                        "required": bool(tree.get("required", False)),
+                        "source_ref": tree.get("source_ref"),
+                        **held,
+                        "_opens_by_name": True,
+                        "_brought": None if installed else (
+                            f"{emu_name}:{'standalone' if standalone else 'libretro'}"
+                        ),
+                    }
+                    for entry in entries:
+                        if emu_name not in entry.get("_cores", set()):
+                            _fold_into(entry, dict(declaration), emu_name)
+
+
 def generate_platform_truth(
     platform_name: str,
     config: dict,
@@ -515,6 +602,7 @@ def generate_platform_truth(
     profiles: dict[str, dict],
     db: dict | None = None,
     target_cores: set[str] | None = None,
+    data_registry: dict | None = None,
 ) -> dict:
     """Generate ground-truth system data for a platform from emulator profiles.
 
@@ -526,6 +614,8 @@ def generate_platform_truth(
         profiles: all loaded emulator profiles
         db: optional database for hash enrichment
         target_cores: optional hardware target core filter
+        data_registry: the data directory registry (_data_dirs.yml), read
+                from the repository's platforms/ when not given
 
     Returns a dict with platform metadata, systems, and per-file details
     including which cores reference each file.
@@ -701,6 +791,12 @@ def generate_platform_truth(
                 },
             )
             sys_cov["unprofiled"].add(emu_name)
+
+    _fold_data_directory_readers(
+        systems, profiles, sorted(cores_profiled), standalone_set, platform_name,
+        load_data_dir_registry(str(_REPO_PLATFORMS)) if data_registry is None
+        else data_registry,
+    )
 
     for sys_data in systems.values():
         _require_by_slot(sys_data.get("files", []))

@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     platform_arg,
     list_registered_platforms,
+    load_data_dir_registry,
     load_database,
     load_emulator_profiles,
     load_platform_config,
@@ -77,6 +78,7 @@ def main(argv: list[str] | None = None) -> None:
         registry = (yaml_load(f) or {}).get("platforms", {})
 
     profiles = load_emulator_profiles(args.emulators_dir)
+    data_registry = load_data_dir_registry(args.platforms_dir)
 
     # Load database (optional)
     # The default may be absent, but a --db that was named must exist.
@@ -132,6 +134,7 @@ def main(argv: list[str] | None = None) -> None:
             profiles,
             db=db,
             target_cores=target_cores,
+            data_registry=data_registry,
         )
 
         out_path = os.path.join(output_dir, f"{name}.yml")
