@@ -30,8 +30,15 @@ class GitThatCannotAnswer(unittest.TestCase):
             # TMPDIR may lie inside this repository (the audit gate puts it in
             # tmp/): git must not find the enclosing work tree from there.
             env = dict(os.environ, GIT_CEILING_DIRECTORIES=str(Path(tmp).parent))
+            # The script moves to its own checkout first: kept here, it stands
+            # for a copy of scripts/ that no repository holds.
             proc = subprocess.run(
-                [sys.executable, str(REPO_ROOT / "scripts" / "validate_pr.py"), "--changed"],
+                [sys.executable, "-c", (
+                    f"import sys; sys.path.insert(0, {str(REPO_ROOT / 'scripts')!r}); "
+                    "import verify; verify.work_from_repo_root = lambda *a: None; "
+                    "import validate_pr; sys.argv = ['validate_pr.py', '--changed']; "
+                    "validate_pr.main()"
+                )],
                 cwd=tmp, env=env, capture_output=True, text=True, timeout=60, check=False,
             )
         self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)

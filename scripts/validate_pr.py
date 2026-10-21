@@ -512,6 +512,16 @@ def main() -> None:
     output.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
+    # The database, platforms and profiles are read from the repository
+    # root. Run from elsewhere, every file read as referenced by no platform
+    # and placed outside bios/. The files named are read from where they
+    # were typed.
+    from verify import REPO_ROOT, work_from_repo_root
+
+    if os.path.realpath(os.getcwd()) != os.path.realpath(REPO_ROOT):
+        args.files = [os.path.abspath(f) for f in args.files]
+    work_from_repo_root(args, parser, ["db", "platforms_dir", "emulators_dir"])
+
     files = _files_to_validate(args, parser)
     if not files:
         if args.json:
