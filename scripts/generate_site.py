@@ -143,13 +143,13 @@ def _system_folder(
     return None
 
 
-def _build_system_page_map_from_data(
+def _system_pages_from_data(
     manufacturers: dict,
     coverages: dict,
     db: dict,
     profiles: dict | None = None,
-) -> None:
-    """Build system_id -> (manufacturer_slug, console_name) mapping.
+) -> dict[str, tuple[str, str]]:
+    """The system_id -> (manufacturer_slug, console_name) table.
 
     Uses platform file paths to trace system_id -> bios directory -> manufacturer page.
     """
@@ -187,10 +187,11 @@ def _build_system_page_map_from_data(
                 console_norm[key] = entry
 
     # Map system_id -> (manufacturer, console) via platform file entries
+    pages: dict[str, tuple[str, str]] = {}
     for cov in coverages.values():
         config = cov["config"]
         for sys_id, system in config.get("systems", {}).items():
-            if sys_id in _system_page_map:
+            if sys_id in pages:
                 continue
             # Strategy 1: the folder holding the files the system declares,
             # found by content, and most votes win. A bare name stands in only
@@ -198,18 +199,18 @@ def _build_system_page_map_from_data(
             place = _system_folder(system.get("files", []), db, name_consoles)
             if place is not None:
                 mfr, console = place
-                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
+                pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
                 continue
             # Strategy 2: fuzzy match system_id against console directory names
             if sys_id in console_norm:
-                _system_page_map[sys_id] = console_norm[sys_id]
+                pages[sys_id] = console_norm[sys_id]
             else:
                 # Try partial match: "nintendo-wii" matches "Wii" under "Nintendo"
                 parts = sys_id.split("-")
                 for i in range(len(parts)):
                     suffix = "-".join(parts[i:])
                     if suffix in console_norm:
-                        _system_page_map[sys_id] = console_norm[suffix]
+                        pages[sys_id] = console_norm[suffix]
                         break
 
     # Systems only emulator profiles name (sega-naomi, commodore-pet): placed
@@ -218,7 +219,7 @@ def _build_system_page_map_from_data(
     for profile in (profiles or {}).values():
         systems = [str(sid) for sid in profile.get("systems") or []]
         for sys_id in systems:
-            if sys_id in _system_page_map:
+            if sys_id in pages:
                 continue
             files = [
                 entry for entry in profile.get("files") or []
@@ -228,9 +229,10 @@ def _build_system_page_map_from_data(
             place = _system_folder(files, db, name_consoles)
             if place is not None:
                 mfr, console = place
-                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
+                pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
             elif sys_id in console_norm:
-                _system_page_map[sys_id] = console_norm[sys_id]
+                pages[sys_id] = console_norm[sys_id]
+    return pages
 
 
 
@@ -4833,7 +4835,9 @@ def _generate(args: argparse.Namespace) -> None:
     # Build system_id -> manufacturer page map (needed by all generators)
     print("Building system cross-reference map...")
     manufacturers = _group_by_manufacturer(db)
-    _build_system_page_map_from_data(manufacturers, coverages, db, profiles)
+    set_system_page_map(
+        _system_pages_from_data(manufacturers, coverages, db, profiles)
+    )
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
 
     export_reports = load_export_reports()
@@ -5129,6 +5133,7 @@ from siterender import (  # noqa: E402,F401
     _slugify_anchor,
     _system_page_map,
     _system_link,
+    set_system_page_map,
     _platform_link,
     _emulator_link,
     _fmt_size,

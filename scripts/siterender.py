@@ -161,8 +161,27 @@ def _slugify_anchor(text: str) -> str:
     slug = slug.strip("-")
     return slug
 
-_norm_page_cache: dict[str, tuple[str, str] | None] = {}
-_norm_page_size = -1
+_norm_page_map: dict[str, tuple[str, str] | None] = {}
+
+
+def set_system_page_map(mapping: dict[str, tuple[str, str]]) -> None:
+    """Install the system id -> page table every link on the site reads.
+
+    The table replaces the previous one, and the index of other spellings is
+    derived from it here. Kept anywhere else, it outlived a table of the same
+    size and linked to the pages of the previous one.
+    """
+    from common import _norm_system_id
+
+    _system_page_map.clear()
+    _system_page_map.update(mapping)
+    _norm_page_map.clear()
+    for known, page in _system_page_map.items():
+        key = _norm_system_id(known)
+        if _norm_page_map.get(key, page) != page:
+            _norm_page_map[key] = None
+        else:
+            _norm_page_map[key] = page
 
 
 def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
@@ -172,19 +191,9 @@ def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
     keyed by the platforms' spellings: 2,431 of 4,195 cards had no link. A
     spelling two pages share leads nowhere rather than to either.
     """
-    global _norm_page_size
     from common import _norm_system_id
 
-    if _norm_page_size != len(_system_page_map):
-        _norm_page_cache.clear()
-        for known, page in _system_page_map.items():
-            key = _norm_system_id(known)
-            if _norm_page_cache.get(key, page) != page:
-                _norm_page_cache[key] = None
-            else:
-                _norm_page_cache[key] = page
-        _norm_page_size = len(_system_page_map)
-    return _norm_page_cache.get(_norm_system_id(sys_id))
+    return _norm_page_map.get(_norm_system_id(sys_id))
 
 
 def _system_link(sys_id: str, prefix: str = "") -> str:
