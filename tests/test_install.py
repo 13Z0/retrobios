@@ -1461,25 +1461,40 @@ class TargetFlagIsAppliedOrRefused(unittest.TestCase):
         overrides: Batocera x86_64 lacked citron and xenia, which the pack
         for that target ships, and carried the Amiga machine variants and
         the launchers the builder drops.
+
+        Both ways: a target the builder knows and the installer lacks answers
+        "unknown target" on one side only, and a published null left behind
+        once the builder filters a target makes the installer serve every core.
         """
         import sys as _sys
 
         _sys.path.insert(0, str(REPO_ROOT / "scripts"))
-        from common import load_target_config
+        from common import list_available_targets, load_target_config
 
-        manifests = sorted((REPO_ROOT / "install" / "targets").glob("*.json"))
+        platforms = str(REPO_ROOT / "platforms")
+        sources = sorted(
+            path.stem for path in (REPO_ROOT / "platforms" / "targets").glob("*.yml")
+            if not path.name.startswith("_")
+        )
+        manifests = {
+            path.stem: path for path in (REPO_ROOT / "install" / "targets").glob("*.json")
+        }
         if not manifests:
             self.skipTest("no target manifest generated yet")
-        for path in manifests:
-            targets = json.loads(path.read_text())
+        self.assertEqual(sorted(manifests), sources)
+        for platform in sources:
+            targets = json.loads(manifests[platform].read_text())
+            known = {
+                name
+                for target in list_available_targets(platform, platforms)
+                for name in (target["name"], *target["aliases"])
+            }
+            with self.subTest(platform=platform):
+                self.assertEqual(sorted(targets), sorted(known))
             for target, cores in targets.items():
-                if cores is None:
-                    continue
-                with self.subTest(platform=path.stem, target=target):
-                    resolved = load_target_config(
-                        path.stem, target, str(REPO_ROOT / "platforms")
-                    )
-                    self.assertEqual(cores, sorted(resolved))
+                with self.subTest(platform=platform, target=target):
+                    resolved = load_target_config(platform, target, platforms)
+                    self.assertEqual(cores, None if resolved is None else sorted(resolved))
 
 
 class TestBaseUrlScheme(unittest.TestCase):
