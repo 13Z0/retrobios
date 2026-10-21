@@ -237,6 +237,33 @@ class ManifestHashesMatchTheScan(unittest.TestCase):
                 generate_pack._stable_hashes(str(path), bad)
             self.assertEqual(generate_pack._stable_hashes(str(path), {"files": {}})["sha1"], real)
 
+    def test_a_wrong_first_reading_is_read_again_from_disk(self):
+        """The retries went through the hash cache and got the first, wrong
+        value back: one read of the file, then a refusal a second read would
+        have avoided."""
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack
+        import hashing
+
+        real_compute = hashing._compute_hashes
+        reads: list[str] = []
+
+        def flaky(filepath, algos):
+            reads.append(str(filepath))
+            result = real_compute(filepath, algos)
+            if len(reads) == 1:
+                result = {**result, "sha1": "0" * 40}
+            return result
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "nand.bin"
+            path.write_bytes(b"flaky")
+            real = hashlib.sha1(b"flaky").hexdigest()
+            db = {"files": {real: {"path": str(path)}}}
+            with mock.patch.object(hashing, "_compute_hashes", flaky):
+                self.assertEqual(generate_pack._stable_hashes(str(path), db)["sha1"], real)
+        self.assertEqual(len(reads), 2)
+
     def test_the_cache_is_keyed_by_what_was_checked(self):
         """Keyed by id(db), a database freed and replaced at the same address
         got hashes verified against the first one back, unchecked."""

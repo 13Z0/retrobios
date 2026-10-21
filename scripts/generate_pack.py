@@ -3468,7 +3468,9 @@ def _stable_hashes(local_path: str, db: dict) -> dict:
         if expected is None or hashes["sha1"] == expected:
             _STABLE_HASHES[key] = hashes
             return hashes
-        hashes = compute_hashes(local_path, _MANIFEST_HASHES)
+        # Read from disk again: the cached digest is the one in doubt, and a
+        # retry through the cache answered with it without a second read.
+        hashes = compute_hashes(local_path, _MANIFEST_HASHES, cache=False)
     raise RuntimeError(
         f"{local_path}: sha1 {hashes['sha1']} contradicts the database scan "
         f"({expected}). Rehash the file or regenerate database.json"
