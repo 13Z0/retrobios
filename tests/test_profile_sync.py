@@ -4158,11 +4158,38 @@ class TestReconcilePerFile(unittest.TestCase):
         result = profile_sync.reconcile_self_check([anchored, same, other])
         self.assertEqual([p.status for p in result], ["ANCHORED", "ANCHORED", "AMBIGUOUS"])
 
+    def test_a_settled_part_keeps_the_repository_of_its_anchor(self):
+        anchored = PartResult(RefPart("mt32emu.h", 5112, 5112, "5112"), "ANCHORED",
+                              None, None, None, [], repo="schelling/dosbox-pure")
+        same = PartResult(RefPart("mt32emu.h", 5129, 5129, "5129"), "MOVED",
+                          None, 5112, 5112, [5112])
+        result = profile_sync.reconcile_self_check([anchored, same])
+        self.assertEqual(result[1].status, "ANCHORED")
+        self.assertEqual(result[1].repo, "schelling/dosbox-pure")
+
     def test_a_compared_part_is_never_rewritten(self):
         anchored = PartResult(RefPart("a.c", 5, 5, "5"), "ANCHORED", None, None, None, [])
         shifted = PartResult(RefPart("a.c", 9, 9, "9"), "SHIFTED", None, 12, 12, [])
         result = profile_sync.reconcile_self_check([anchored, shifted], [True, False])
         self.assertEqual(result[1].status, "SHIFTED")
+
+
+class TestCollapsingMoves(unittest.TestCase):
+    """A recale never folds two parts of one ref onto the same line."""
+
+    def test_a_move_onto_a_sibling_part_goes_to_review(self):
+        sha = PartResult(RefPart("mt32emu.h", 5112, 5112, "upstream mt32emu.h:5112", "upstream"),
+                         "ANCHORED", None, None, None, [])
+        info = PartResult(RefPart("mt32emu.h", 5129, 5129, "source mt32emu.h:5129", "source"),
+                          "MOVED", None, 5112, 5112, [5112])
+        result = profile_sync.refuse_collapsing_moves([sha, info])
+        self.assertEqual([p.status for p in result], ["ANCHORED", "AMBIGUOUS"])
+
+    def test_a_move_to_a_free_line_is_kept(self):
+        first = PartResult(RefPart("a.c", 5, 5, "a.c:5"), "ANCHORED", None, None, None, [])
+        moved = PartResult(RefPart("a.c", 9, 9, "a.c:9"), "MOVED", None, 12, 12, [12])
+        result = profile_sync.refuse_collapsing_moves([first, moved])
+        self.assertEqual(result[1].status, "MOVED")
 
 
 class TestRealignFlagMatrix(unittest.TestCase):

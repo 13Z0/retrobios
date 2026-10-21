@@ -902,6 +902,33 @@ def resolve_by_shift(part: PartResult, shifts: dict[str, int]) -> PartResult:
     )
 
 
+def refuse_collapsing_moves(parts: list[PartResult]) -> list[PartResult]:
+    """Hold back a recale that would land on another part of the same ref.
+
+    Two parts of one source_ref cite two places on purpose. dosbox_pure cited
+    the SHA-1 line of mt32emu.h and the ROMInfo line that ties it to a file
+    name, under two repository words: the second was self-checked alone,
+    found the hash once, and read MOVED onto the first line. Recaling it
+    would drop the ROMInfo citation without a word, so the part goes to
+    review instead.
+    """
+    cited = {
+        (p.part.path, p.part.start, p.part.last)
+        for p in parts if p.part.start is not None
+    }
+    held = []
+    for part in parts:
+        target = (part.new_path or part.part.path, part.start, part.end or part.start)
+        own = (part.part.path, part.part.start, part.part.last)
+        if part.status in REBASE_STATUSES and target != own and target in cited:
+            part = replace(
+                part, status="AMBIGUOUS", candidates=[part.start],
+                reason="lands on a line another part of this ref already cites",
+            )
+        held.append(part)
+    return held
+
+
 @dataclass
 class EntryReport:
     name: str
@@ -1246,14 +1273,19 @@ def reconcile_self_check(
     against HEAD rather than self-checked is never rewritten.
     """
     eligible = eligible if eligible is not None else [True] * len(parts)
-    anchored_files = {
-        part.part.path
-        for part, ok in zip(parts, eligible)
-        if ok and part.status == "ANCHORED"
-    }
+    # The settled part lies in the tree its anchor was found in: without the
+    # repository, attribution wrote dosbox-pure-unleashed's ROMInfo line
+    # under `source`, a repository that carries no mt32emu.h.
+    anchored_files: dict[str, str | None] = {}
+    for part, ok in zip(parts, eligible):
+        if ok and part.status == "ANCHORED":
+            anchored_files.setdefault(part.part.path, part.repo)
     kept = ("ANCHORED", "GONE", "EXTERNAL", "BINARY")
     return [
-        PartResult(part.part, "ANCHORED", None, None, None, [])
+        PartResult(
+            part.part, "ANCHORED", None, None, None, [],
+            repo=anchored_files[part.part.path],
+        )
         if ok and part.status not in kept and part.part.path in anchored_files
         else part
         for part, ok in zip(parts, eligible)
@@ -1918,7 +1950,7 @@ def build_report(
 
     shifts = dominant_shifts([p for _, _, _, parts in staged for p in parts])
     for entry_name, ref, citation, parts in staged:
-        parts = [resolve_by_shift(p, shifts) for p in parts]
+        parts = refuse_collapsing_moves([resolve_by_shift(p, shifts) for p in parts])
         status = worst_status([p.status for p in parts])
         report.entries.append(EntryReport(
             entry_name, ref, status, parts, citation.kind, citation.field
