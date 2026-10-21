@@ -420,7 +420,7 @@ def _launcher_citations(profile: dict) -> list[str]:
 
 class BizHawkFindsFirmwareByHash(unittest.TestCase):
     """DoScanAndResolve hashes every file of a known firmware size under
-    the firmware folder and binds each slot to the best present option; a
+    the firmware folder and binds each slot to the best present option. A
     user specification names any file (FirmwareManager.cs:143-222 at
     bdddf4a5). No file name is opened by the code, so every entry is a
     label. 38 entries carried the names RetroBat's Bizhawk.Generator.cs
