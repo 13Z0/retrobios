@@ -1670,6 +1670,31 @@ class MisterDatabaseComesBackAsWritten(unittest.TestCase):
             export_native._write_produced(Path(tmp), {"a.zip": b"PK\x03\x04\xff"}, {})
             self.assertEqual((Path(tmp) / "a.zip").read_bytes(), b"PK\x03\x04\xff")
 
+    def test_a_new_hash_without_a_size_leaves_the_entry_whole(self):
+        """The Downloader checks each entry by size (fetch_file_worker.py:127):
+        the old size beside the new hash described no file, and the report
+        announced a size removal the database did not carry."""
+        from export_native import landed_changes  # noqa: PLC0415
+
+        database = {"db_id": "bios_db", "files": {
+            "games/X/boot.rom": {"hash": "a" * 32, "size": 100, "url": "u"},
+        }}
+        original = json.dumps(database)
+        scraped = {"systems": {"x": {"files": [{
+            "name": "boot.rom", "destination": "X/boot.rom",
+            "md5": "a" * 32, "size": 100,
+        }]}}}
+        truth = {"systems": {"x": {"files": [{
+            "name": "boot.rom", "path": "X/boot.rom", "md5": "b" * 32, "_cores": ["x"],
+        }]}}}
+        exporter = discover_exporters()["misterfpga"]()
+        systems, report = build_native_model(truth, scraped)
+        produced = exporter.render(systems, report, {"bios_db.json": original}, scraped)
+        self.assertEqual(produced["bios_db.json"], original)
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
+        self.assertEqual(exporter.validate(systems, produced), [])
+
     def test_an_empty_truth_hands_back_the_database(self):
         archive = UPSTREAM_CACHE / "misterfpga" / "bios_db.json.zip"
         if not archive.exists():

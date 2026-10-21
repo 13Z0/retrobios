@@ -113,6 +113,7 @@ class Exporter(BaseExporter):
         database = json.loads(original, object_pairs_hook=OrderedDict)
         indexed = self._by_path(systems)
         self._written = set()
+        self._unsized: list[str] = []
 
         for path, entry in database.get("files", {}).items():
             fe = indexed.get(path)
@@ -124,9 +125,17 @@ class Exporter(BaseExporter):
                 # entry without one, a new size beside the old hash describes
                 # no file, and the entry is left as MiSTer wrote it.
                 continue
+            size = fe.size()
+            if md5 != entry.get("hash") and not size:
+                # Downloader refuses an entry without an integer size
+                # (db_entity.py:187) and compares it after each fetch
+                # (fetch_file_worker.py:127). The old size beside the new
+                # hash describes the dump the truth rejects, so the entry
+                # stays as MiSTer wrote it.
+                self._unsized.append(path)
+                continue
             self._written.add(id(fe))
             entry["hash"] = md5
-            size = fe.size()
             if size:
                 entry["size"] = size
 
@@ -142,6 +151,14 @@ class Exporter(BaseExporter):
             unchanged = text == originals.get(_DB_NAME)
             produced[_ARCHIVE] = archive if unchanged else rebuild_archive(archive, _DB_NAME, text)
         return produced
+
+    def withheld(self) -> list[str]:
+        """Each hash correction left out for want of the new dump's size."""
+        return [
+            f"{path} keeps its hash: the truth states no size for the new "
+            "dump, and the Downloader checks every entry by size"
+            for path in getattr(self, "_unsized", [])
+        ]
 
     def validate(
         self,
@@ -169,6 +186,9 @@ class Exporter(BaseExporter):
         for path, fe in indexed.items():
             declared = files.get(path)
             md5 = fe.hash("md5")
-            if declared is not None and md5 and declared.get("hash") != md5:
+            if (
+                declared is not None and md5 and declared.get("hash") != md5
+                and path not in getattr(self, "_unsized", [])
+            ):
                 issues.append(f"hash not applied: {path}")
         return issues
