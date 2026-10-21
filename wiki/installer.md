@@ -510,7 +510,9 @@ fields, the installer refuses to narrow rather than install everything.
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
-would close the PowerShell window). Its body runs in a script block of its own,
+would close the PowerShell window). It declares no parameter of its own, so
+every argument reaches `install.py` as typed, short forms such as `-v`
+included. Its body runs in a script block of its own,
 so `irm \| iex` leaves neither its variables nor its `$ErrorActionPreference`
 in the session.
 

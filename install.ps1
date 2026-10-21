@@ -3,12 +3,11 @@
 # Everything runs in a script block of its own: piped into iex, the script
 # would otherwise leave its variables and $ErrorActionPreference = "Stop"
 # in the user's session, where every later error would stop their commands.
+# Neither the script nor the block declares a parameter: one [Parameter()]
+# attribute makes it an advanced one, whose common parameters took -v
+# (-Verbose), -vb, -d (-Debug) and -ea before install.py could see them.
 & {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [string[]]$InstallerArguments
-    )
+    $InstallerArguments = @($args)
 
     $ErrorActionPreference = "Stop"
     $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"

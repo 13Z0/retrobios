@@ -2276,6 +2276,29 @@ class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
                 self.assertNotIn("installer failed", proc.stdout + proc.stderr)
 
 
+class ThePowerShellWrapperPassesEveryArgument(unittest.TestCase):
+    """A [Parameter()] attribute made install.ps1 an advanced script, whose
+    common parameters took -v (as -Verbose), -vb, -d and -ea: the documented
+    `-v` never reached install.py."""
+
+    @unittest.skipUnless(shutil.which("pwsh"), "needs PowerShell")
+    def test_short_flags_reach_the_installer(self):
+        folder = Path(_tempdir(self))
+        shutil.copy(REPO_ROOT / "install.ps1", folder / "install.ps1")
+        (folder / "install.py").write_text(
+            "import json, sys\nprint(json.dumps(sys.argv[1:]))\n"
+        )
+        for args in (["-v", "--check"], ["-vb"], ["-Verbose"], ["-d", "-ea", "x"],
+                     ["--platform", "a b"], []):
+            with self.subTest(args=args):
+                proc = subprocess.run(
+                    ["pwsh", "-NoProfile", "-File", str(folder / "install.ps1"), *args],
+                    capture_output=True, text=True, timeout=120,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertEqual(json.loads(proc.stdout), args)
+
+
 @unittest.skipIf(os.name == "nt" or os.geteuid() == 0, "needs a folder this user cannot write")
 class AnUnwritableFolderIsCodeTwo(unittest.TestCase):
     """A BIOS folder that could not be created ended with 1, while the same
