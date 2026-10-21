@@ -465,11 +465,25 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
     )
 
 
+def case_folded_slots(
+    config: dict, declarations: Mapping[str, list[tuple[int | None, str]]],
+) -> frozenset[str]:
+    """The slots a platform whose filesystem folds case fills, any spelling.
+
+    On RetroBat the 32X_G_BIOS.BIN it declares is the file BlastEm opens as
+    32X_G_BIOS.bin. On Lakka bios.col and BIOS.col are two files: nothing.
+    """
+    if not config.get("case_insensitive_fs", False):
+        return frozenset()
+    return frozenset(where for places in declarations.values() for _size, where in places)
+
+
 def declaration_settles(
     file_entry: dict,
     fname: str,
     declared_names: Mapping[str, list[tuple[int | None, str]]] | set[str],
     dest: str = "",
+    folded_slots: frozenset[str] = frozenset(),
 ) -> bool:
     """Whether a platform declaration meets a core's requirement.
 
@@ -486,12 +500,16 @@ def declaration_settles(
     carries no slot or size and answers by name.
 
     Read by verify and by the gap report, which settled on the name alone
-    and left DOSBox's SC-55 ROMs off the gaps page.
+    and left DOSBox's SC-55 ROMs off the gaps page. ``folded_slots``
+    (case_folded_slots) are slots a declaration fills in another spelling on
+    a filesystem that folds case: the core opens that file there.
     """
     if file_entry.get("archive") in declared_names:
         return True
     slot = sanitize_pack_path(dest or fname).lower()
     directory = slot if dest.endswith("/") else slot.rpartition("/")[0]
+    if not dest.endswith("/") and slot in folded_slots:
+        return True
     for name in (fname, *file_entry.get("aliases", [])):
         if name not in declared_names:
             continue

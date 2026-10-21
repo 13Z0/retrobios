@@ -44,7 +44,7 @@ from common import (
     select_emulator_profiles,
 )
 from hashing import parse_hash_list
-from validation import declaration_settles, outside_gap_scope
+from validation import case_folded_slots, declaration_settles, outside_gap_scope
 
 yaml = require_yaml()
 
@@ -103,6 +103,25 @@ def declared_names(
         ],
         db,
     )
+
+
+def folded_declared_slots(
+    platforms_dir: str, platforms: list[str] | None, db: dict
+) -> frozenset[str]:
+    """The slots platforms whose filesystem folds case fill, any spelling.
+
+    RetroBat's 32X_G_BIOS.BIN is the file BlastEm opens as 32X_G_BIOS.bin,
+    and the exact-case name test called it undeclared.
+    """
+    from common import platform_declarations
+
+    slots: set[str] = set()
+    for platform_name in platforms or list_registered_platforms(
+        platforms_dir, include_archived=True
+    ):
+        config = load_platform_config(platform_name, platforms_dir)
+        slots |= case_folded_slots(config, platform_declarations(config, db))
+    return frozenset(slots)
 
 
 def _build_supplemental_index(
@@ -631,7 +650,9 @@ def _cross_reference_profile(
         # Check platform declaration: by name, by an alias the core answers
         # to (RetroArch lists amiberry's cd32.rom as kick40060.CD32), or by
         # archive.
-        in_platform = declaration_settles(f, fname, platform_names, effective_path)
+        in_platform = declaration_settles(
+            f, fname, platform_names, effective_path, index.get("folded_slots", frozenset())
+        )
 
         if in_platform:
             seen_files.add(seen_key)
@@ -738,6 +759,7 @@ def cross_reference(
     data_names: set[str] | None = None,
     all_declared: dict[str, list[tuple[int | None, str]]] | None = None,
     standalone_cores: set[str] | None = None,
+    folded_slots: frozenset[str] = frozenset(),
 ) -> dict:
     """Compare emulator profiles against platform declarations.
 
@@ -774,6 +796,7 @@ def cross_reference(
         "db_files": db_files,
         "data_names": data_names,
         "all_declared": all_declared,
+        "folded_slots": folded_slots,
         "bios_dir": db.get("bios_dir"),
     }
     for emu_name, profile in profiles.items():
@@ -958,6 +981,7 @@ def main() -> None:
         profiles, declared, db, plat_data_dirs, data_names,
         all_declared=declared_names(args.platforms_dir, selected, db),
         standalone_cores=standalone_cores,
+        folded_slots=folded_declared_slots(args.platforms_dir, selected, db),
     )
 
     if args.json:

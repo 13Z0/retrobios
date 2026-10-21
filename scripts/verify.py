@@ -86,6 +86,7 @@ from nativemode import (
 )
 from validation import (
     baseline_verdict,
+    case_folded_slots,
     declaration_settles,
     frontend_digest_matches,
     existence_discrepancy,
@@ -420,6 +421,7 @@ def _candidate_verdict(
     include_all: bool,
     declared_names: Mapping[str, list[tuple[int | None, str]]] | set[str],
     dest: str = "",
+    folded_slots: frozenset[str] = frozenset(),
 ) -> str:
     """Whether a profile entry can be a gap, and whether it is settled.
 
@@ -435,7 +437,7 @@ def _candidate_verdict(
     if outside_gap_scope(file_entry, is_standalone):
         return "skip"
     if not include_all and declaration_settles(
-        file_entry, fname, declared_names, dest
+        file_entry, fname, declared_names, dest, folded_slots
     ):
         return "settled"
     return "keep"
@@ -479,6 +481,7 @@ def find_undeclared_files(
     """
     if declared_names is None:
         declared_names = platform_declarations(config, db)
+    folded_slots = case_folded_slots(config, declared_names)
 
     # Whether the builder drops a file whose local copy contradicts its
     # declared hash, which decides if such a copy counts as held here.
@@ -568,7 +571,8 @@ def find_undeclared_files(
                 if duplicate and (first is None or first["profile"] == emu_name):
                     continue
                 verdict = _candidate_verdict(
-                    f, fname, is_standalone, include_all, declared_names, dest
+                    f, fname, is_standalone, include_all, declared_names, dest,
+                    folded_slots,
                 )
                 if verdict == "settled":
                     seen_files.add(seen_key)

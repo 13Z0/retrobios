@@ -98,7 +98,7 @@ class TheReportSaysSo(unittest.TestCase):
                 name: verify_platform(
                     load_platform_config(name, "platforms"), db, "emulators", profiles
                 )
-                for name in ("retroarch", "retrobat")
+                for name in ("retroarch", "retrobat", "lakka")
             }
         finally:
             os.chdir(previous)
@@ -109,16 +109,28 @@ class TheReportSaysSo(unittest.TestCase):
                 return u
         self.skipTest(f"{emulator} {path} is not in the cross-reference")
 
-    def test_a_case_twin_with_other_bytes_is_left_out(self):
-        entry = self._entry("NP2kai", "np2kai/bios.rom", "retrobat")
-        self.assertIs(entry.get("in_pack"), False)
-        self.assertIn("another case", entry.get("omitted", ""))
+    def _listed(self, emulator: str, path: str, platform: str) -> bool:
+        return any(
+            u.get("emulator") == emulator and (u.get("path") or u.get("name")) == path
+            for u in self.results[platform]["undeclared_files"]
+        )
 
-    def test_a_twin_with_the_same_bytes_serves_the_core(self):
-        # MesenCE opens bios.col, and RetroArch's pack folds it onto BIOS.col,
-        # the same bytes, which serves the core on a folding filesystem.
-        entry = self._entry("MesenCE", "bios.col")
-        self.assertIsNot(entry.get("in_pack"), False)
+    def test_a_declaration_in_another_case_settles_the_slot(self):
+        """On a filesystem that folds case the platform's file at the slot is
+        the one the core opens, whatever its spelling, and the slot
+        arbitration judges its bytes. Listed as a core file, RetroBat's
+        32X_G_BIOS.BIN counted BlastEm's 32X_G_BIOS.bin in the pack twice."""
+        for platform, emulator, path in (
+            ("retrobat", "NP2kai", "np2kai/bios.rom"),
+            ("retrobat", "BlastEm", "32X_G_BIOS.bin"),
+            ("retroarch", "MesenCE", "bios.col"),
+        ):
+            with self.subTest(platform=platform, path=path):
+                self.assertFalse(self._listed(emulator, path, platform))
+
+    def test_a_filesystem_keeping_both_names_reports_the_other(self):
+        """Lakka runs on Linux, where bios.col and BIOS.col are two files."""
+        self.assertTrue(self._listed("MesenCE", "bios.col", "lakka"))
 
     def test_a_directory_under_a_packed_file_is_left_out(self):
         entry = self._entry("nSide (SFC Balanced)", "SGB1.sfc/lr35902.boot.rom")
