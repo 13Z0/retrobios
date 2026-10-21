@@ -467,7 +467,7 @@ def main() -> None:
         try:
             held.enter_context(hold_artifact_lock(args.output_dir))
         except ArtifactLockBusy as exc:
-            print(f"ERROR: {exc}")
+            print(f"ERROR: {exc}", file=sys.stderr)
             sys.exit(1)
 
     all_ok = True
@@ -655,7 +655,7 @@ def main() -> None:
                     if stale:
                         print(f"Purged {len(stale)} stale pack file(s) from {out_dir}/")
             except ArtifactLockBusy as exc:
-                print(f"ERROR: {exc}")
+                print(f"ERROR: {exc}", file=sys.stderr)
                 sys.exit(1)
 
         pack_cmd = [

@@ -5192,7 +5192,7 @@ class ANamedPackThatIsAbsentFails(unittest.TestCase):
                 cwd=ROOT, capture_output=True, text=True, timeout=600,
             )
         self.assertEqual(result.returncode, 1)
-        self.assertIn("no pack to verify", result.stdout)
+        self.assertIn("no pack to verify", result.stderr)
 
 
 
@@ -5943,6 +5943,36 @@ class HashInputNamesWhatItAccepts(unittest.TestCase):
         )
         self.assertEqual(sha1_for_hash("sha256", entry["sha256"], db), sha1)
         self.assertEqual(sha1_for_hash("md5", entry["md5"][:29], db), sha1)
+
+
+class ErrorsGoToStderr(unittest.TestCase):
+    """The lock refusal and "no pack for" went to stdout: a run redirected to
+    a log showed nothing on the terminal and exited 1."""
+
+    @staticmethod
+    def _leading_text(node: ast.expr) -> str:
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return node.value
+        if isinstance(node, ast.JoinedStr) and node.values:
+            return ErrorsGoToStderr._leading_text(node.values[0])
+        return ""
+
+    def test_no_error_line_is_printed_to_stdout(self):
+        for script in ("generate_pack.py", "pipeline.py"):
+            tree = ast.parse((ROOT / "scripts" / script).read_text(encoding="utf-8"))
+            seen = 0
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Call) and getattr(node.func, "id", "") == "print"
+                        and node.args):
+                    continue
+                text = self._leading_text(node.args[0])
+                # Detail lines under a pack's own verdict stay with it.
+                if not text.lstrip().startswith("ERROR") or text.startswith("    "):
+                    continue
+                seen += 1
+                with self.subTest(script=script, line=node.lineno):
+                    self.assertIn("file", [k.arg for k in node.keywords])
+            self.assertGreater(seen, 0, script)
 
 
 if __name__ == "__main__":

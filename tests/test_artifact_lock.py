@@ -108,7 +108,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
     def test_every_writing_mode_refuses_a_locked_output(self):
         """Two of seven modes took the lock, and five wrote straight into it.
@@ -153,7 +153,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
     def test_pipeline_refuses_locked_output(self):
         with artifact_lock(self.dir):
@@ -167,7 +167,7 @@ class PackLockCliTest(unittest.TestCase):
                 ]
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("is in use by another run", proc.stdout)
+        self.assertIn("is in use by another run", proc.stderr)
 
 
 class HeldLockTest(unittest.TestCase):

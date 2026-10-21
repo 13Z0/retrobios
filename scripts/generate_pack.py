@@ -2547,13 +2547,13 @@ def _run_manifest_mode(
                         _write_manifest_if_changed(alias_path, alias_manifest)
                         print(f"  {alias_path}: alias of {representative}")
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
-                print(f"  ERROR: {e}")
+                print(f"  ERROR: {e}", file=sys.stderr)
                 failed.append(representative)
 
     # A platform whose manifest could not be built has none, and install.py
     # serves whatever an older run left there: that is a failed run.
     if failed:
-        print(f"ERROR: no manifest for {', '.join(sorted(set(failed)))}")
+        print(f"ERROR: no manifest for {', '.join(sorted(set(failed)))}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -2564,7 +2564,7 @@ def _pack_output_lock(output_dir: str, exclusive: bool = True) -> Iterator[None]
         with artifact_lock(output_dir, exclusive=exclusive):
             yield
     except ArtifactLockBusy as exc:
-        print(f"ERROR: {exc}")
+        print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -2667,7 +2667,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     if not verified:
         # Every platform skipped is no check at all: a mistyped or purged
         # output directory read as a passed integrity check.
-        print(f"ERROR: no pack to verify in {args.output_dir}")
+        print(f"ERROR: no pack to verify in {args.output_dir}", file=sys.stderr)
         all_ok = False
     if not all_ok:
         sys.exit(1)
@@ -2829,7 +2829,7 @@ def _run_platform_packs(
                         pack_name=group_name,
                     )
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
-                print(f"  ERROR: {e}")
+                print(f"  ERROR: {e}", file=sys.stderr)
                 failed.append(representative)
             else:
                 # A builder that declined (no system left under the target)
@@ -2867,7 +2867,7 @@ def _run_platform_packs(
     if failed:
         # Verification only sees the ZIPs that exist, so a pack that was never
         # written does not fail it.
-        print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}")
+        print(f"ERROR: no pack for {', '.join(sorted(set(failed)))}", file=sys.stderr)
         sys.exit(1)
     if not all_ok:
         sys.exit(1)
