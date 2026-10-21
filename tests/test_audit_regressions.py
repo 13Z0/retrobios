@@ -6147,5 +6147,23 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
+class AmigaCdDriversLiveInTheExtendedRom(unittest.TestCase):
+    """WinUAE starts without the CD32 or CDTV extended ROM, but cd.device,
+    cdtv.device, cdfs.library and cdstrap are resident modules of those ROMs
+    and the Kickstarts carry none. Its AROS replacement stands in only for a
+    missing Kickstart (memory.cpp:3055-3063), so the CDTV ROM has no
+    fallback to downgrade its absence."""
+
+    def test_both_extended_roms_are_required_without_fallback(self):
+        profile = yaml.safe_load(
+            (ROOT / "emulators" / "winuae.yml").read_text(encoding="utf-8")
+        )
+        entries = {f["name"]: f for f in profile["files"]}
+        for name in ("amiga-ext-310-cd32.rom", "amiga-ext-130-cdtv.rom"):
+            with self.subTest(name=name):
+                self.assertIs(entries[name]["required"], True)
+                self.assertNotIn("hle_fallback", entries[name])
+
+
 if __name__ == "__main__":
     unittest.main()
