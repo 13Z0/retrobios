@@ -6277,5 +6277,24 @@ class ExternalDownloadsFollowTheRunPolicy(unittest.TestCase):
             self.assertIn("dir=", call)
 
 
+class ATargetTypoIsAnErrorInEveryTool(unittest.TestCase):
+    """cross_reference.py ended a mistyped --target in a traceback, and the
+    hint sent cross_reference and slots users to a flag they do not have."""
+
+    def test_each_tool_names_the_closest_target(self):
+        for script in ("cross_reference.py", "slots.py", "verify.py"):
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--platform", "retroarch",
+                     "--target", "swich"],
+                    cwd=ROOT, capture_output=True, text=True, timeout=300,
+                )
+                output = proc.stdout + proc.stderr
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", output)
+                self.assertIn("Did you mean: switch?", output)
+                self.assertIn("verify.py --platform retroarch --list-targets", output)
+
+
 if __name__ == "__main__":
     unittest.main()
