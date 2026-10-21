@@ -1100,6 +1100,9 @@ _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("linux", "emudeck", "$HOME/Emulation/bios", None),
     ("linux", "retrodeck", "$HOME/.var/app/net.retrodeck.retrodeck", "$HOME/retrodeck"),
     ("linux", "romm", "/romm/library/bios", None),
+    # A library laid out as {platform}/bios has no library/bios: RomM's
+    # config folder is the evidence (config_manager.py:264-265).
+    ("linux", "romm", "/romm/config/config.yml", "/romm/library/bios"),
     ("linux", "retropie", "$HOME/RetroPie/BIOS", None),
     ("windows", "bizhawk", "%USERPROFILE%\\BizHawk\\Firmware", None),
     ("linux", "misterfpga", "/media/fat/MiSTer", "/media/fat/games"),
@@ -4127,6 +4130,111 @@ def _print_emulators(plat: str, manifest: dict, files: list[dict], omitted: list
         print(f"  {name:<{width}}  {'' if profile == name else 'same as ' + profile}".rstrip())
 
 
+# RomM 5.4 places each platform's firmware by `filesystem.structure.firmware`
+# in config.yml, "bios/{platform}" by default, relative to the library
+# (rommapp/romm 5.4.0 68f71259, backend/config/config_manager.py:58,101-109,
+# 205-225,564-568). The library and config.yml both sit under the RomM base
+# folder (config/__init__.py:46-48, config_manager.py:264-265). A library
+# laid out as {platform}/roms makes RomM stop until config.yml declares its
+# templates, and RomM suggests firmware: "{platform}/bios" there
+# (config_manager.py:1105-1124).
+
+
+def parse_romm_firmware(template: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """The literal folders before and after {platform}, as RomM parses them."""
+    sections = [section for section in template.strip().split("/") if section]
+    if not sections:
+        raise ValueError("the RomM firmware template is empty")
+
+    def macro(section: str) -> str | None:
+        if section.startswith("{") and section.endswith("}"):
+            return section[1:-1].strip()
+        return None
+
+    if any(section in (".", "..") for section in sections):
+        raise ValueError(f"the RomM firmware template {template!r} climbs out of the library")
+    platform_at = [i for i, section in enumerate(sections) if macro(section) == "platform"]
+    if len(platform_at) != 1:
+        raise ValueError(f"the RomM firmware template {template!r} needs one '{{platform}}'")
+    before, after = sections[:platform_at[0]], sections[platform_at[0] + 1:]
+    if any(macro(section) is not None for section in before + after):
+        raise ValueError(f"the RomM firmware template {template!r} takes literal folder "
+                         "names around '{platform}'")
+    return tuple(before), tuple(after)
+
+
+def _romm_configured_firmware(config: Path) -> str | None:
+    """filesystem.structure.firmware from RomM's config.yml, read without a
+    YAML library: only that nested scalar is needed."""
+    try:
+        lines = config.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    path: list[tuple[int, str]] = []
+    for line in lines:
+        stripped = line.split(" #", 1)[0].rstrip()
+        if not stripped.strip() or stripped.lstrip().startswith(("#", "-")):
+            continue
+        indent = len(stripped) - len(stripped.lstrip())
+        key, sep, value = stripped.strip().partition(":")
+        if not sep:
+            continue
+        while path and path[-1][0] >= indent:
+            path.pop()
+        keys = [name for _indent, name in path] + [key.strip().strip("'\"")]
+        if keys == ["filesystem", "structure", "firmware"] and value.strip():
+            return value.strip().strip("'\"")
+        path.append((indent, key.strip().strip("'\"")))
+    return None
+
+
+def romm_firmware_layout(
+    bios_path: Path, template: str | None
+) -> tuple[tuple[str, ...], tuple[str, ...]] | None:
+    """Where RomM reads each platform's firmware, relative to its library.
+
+    bios_path is the folder the default template names, so its parent is the
+    library. The template comes from --romm-firmware, else from config.yml
+    beside the library. None keeps the pack's own bios/<platform> layout.
+    """
+    library = bios_path.parent
+    if template is None:
+        template = _romm_configured_firmware(library.parent / "config" / "config.yml")
+    if template is not None:
+        return parse_romm_firmware(template)
+    platform_first = not (library / "roms").is_dir() and any(
+        path.is_dir() for path in library.glob("*/roms")
+    )
+    if platform_first:
+        raise ValueError(
+            f"{library} keeps its roms inside each platform folder, and RomM then "
+            "reads firmware where filesystem.structure.firmware in its config.yml "
+            "says, which was not found here. RomM suggests \"{platform}/bios\" for "
+            "this layout: run again with --romm-firmware \"{platform}/bios\", or "
+            "with the value config.yml holds."
+        )
+    return None
+
+
+def romm_relayout(
+    files: list[dict], bios_path: Path,
+    before: tuple[str, ...], after: tuple[str, ...],
+) -> tuple[list[dict], Path]:
+    """The manifest's bios/<platform>/<file> entries under RomM's template,
+    with the library as the root they are relative to."""
+    if (before, after) == (("bios",), ()):
+        return files, bios_path
+    moved = []
+    for entry in files:
+        slug, _, rest = str(entry["dest"]).partition("/")
+        if not rest:
+            # Firmware of no platform: RomM lists none, the default place stays.
+            moved.append({**entry, "dest": f"bios/{slug}"})
+            continue
+        moved.append({**entry, "dest": "/".join((*before, slug, *after, rest))})
+    return moved, bios_path.parent
+
+
 def _older_list_advice() -> str:
     """How to reach a file list that records what an option needs.
 
@@ -4337,6 +4445,13 @@ def main() -> None:
         "--list-cores",
         action="store_true",
         help="list the cores whose extra files a platform installs and exit",
+    )
+    parser.add_argument(
+        "--romm-firmware",
+        metavar="TEMPLATE",
+        help="RomM: where each platform's firmware goes in the library, as "
+             "filesystem.structure.firmware in its config.yml (default: read "
+             "from config.yml, else bios/{platform})",
     )
     parser.add_argument(
         "--list-emulators",
@@ -4595,6 +4710,18 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                           "--platform to install it alone.", file=sys.stderr)
                 sys.exit(1)
 
+    if args.romm_firmware is not None:
+        # Applied or refused, never ignored.
+        if not any(name == "romm" for name, _path in platforms):
+            print("Error: --romm-firmware applies to RomM, which this run does not "
+                  "install for.", file=sys.stderr)
+            sys.exit(1)
+        try:
+            parse_romm_firmware(args.romm_firmware)
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            sys.exit(1)
+
     # Every check --installed-cores makes before anything is written: a
     # refusal for the second platform must not follow an install of the first.
     cores_found: dict[tuple[str, Path], list[str]] = {}
@@ -4784,6 +4911,20 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             total_omitted += len(omitted_files)
             omitted_seen.extend(omitted_files)
+
+        if plat_name == "romm":
+            try:
+                layout = romm_firmware_layout(bios_path, args.romm_firmware)
+            except ValueError as exc:
+                print(f"Error: {exc}", file=sys.stderr)
+                sys.exit(1)
+            if layout is not None:
+                files, library = romm_relayout(files, bios_path, *layout)
+                if library != bios_path:
+                    installed_paths[installed_paths.index(bios_path)] = library
+                    print(f"  Firmware laid out as {'/'.join(layout[0] + ('{platform}',) + layout[1])} "
+                          f"under {library}")
+                    bios_path = library
 
         print("\nChecking existing files...")
         to_download, up_to_date, mismatched = check_local(

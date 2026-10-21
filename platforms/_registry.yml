@@ -511,6 +511,14 @@ platforms:
       - os: linux
         method: path_exists
         path: /romm/library/bios
+      # RomM 5.4 places firmware by filesystem.structure.firmware in this
+      # file, relative to /romm/library (rommapp/romm 5.4.0,
+      # backend/config/config_manager.py:58,101-109,264-265,564-568): a
+      # {platform}/bios library has no library/bios to find.
+      - os: linux
+        method: path_exists
+        path: /romm/config/config.yml
+        bios_path: /romm/library/bios
     cores:
     - atari800
     - clk

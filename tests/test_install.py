@@ -3991,5 +3991,100 @@ class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):
         self.assertIn("derivative_board(plat_name)", block)
 
 
+class RomMFirmwareFollowsItsTemplate(unittest.TestCase):
+    """RomM 5.4 reads firmware where filesystem.structure.firmware says, and
+    a {platform}/roms library is told to declare "{platform}/bios". The
+    installer only wrote bios/<platform>/, where such a library lists none."""
+
+    CONFIG = (
+        "# RomM\n"
+        "exclude:\n"
+        "  platforms: []\n"
+        "filesystem:\n"
+        "  structure:\n"
+        "    default: \"{platform}/roms/{game}\"\n"
+        "    firmware: \"{platform}/bios\"  # as RomM suggests\n"
+        "system:\n"
+        "  firmware: elsewhere\n"
+    )
+
+    def _romm(self, config: str | None) -> Path:
+        base = Path(_tempdir(self))
+        library = base / "library"
+        (library / "psx" / "roms").mkdir(parents=True)
+        if config is not None:
+            (base / "config").mkdir()
+            (base / "config" / "config.yml").write_text(config)
+        return library / "bios"
+
+    def test_templates_parse_as_romm_parses_them(self):
+        self.assertEqual(install.parse_romm_firmware("bios/{platform}"), (("bios",), ()))
+        self.assertEqual(install.parse_romm_firmware("{platform}/bios"), ((), ("bios",)))
+        self.assertEqual(install.parse_romm_firmware("/a/{platform}/b/c/"),
+                         (("a",), ("b", "c")))
+        for bad in ("", "bios", "{platform}/{game}", "{region}/{platform}",
+                    "../{platform}", "{platform}/{platform}"):
+            with self.subTest(template=bad), self.assertRaises(ValueError):
+                install.parse_romm_firmware(bad)
+
+    def test_the_template_is_read_from_config_yml(self):
+        bios = self._romm(self.CONFIG)
+        layout = install.romm_firmware_layout(bios, None)
+        self.assertEqual(layout, ((), ("bios",)))
+        files = [{"dest": "psx/scph5501.bin"}, {"dest": "3do/panafz1.bin"}]
+        moved, root = install.romm_relayout(files, bios, *layout)
+        self.assertEqual(root, bios.parent)
+        self.assertEqual([f["dest"] for f in moved],
+                         ["psx/bios/scph5501.bin", "3do/bios/panafz1.bin"])
+
+    def test_the_default_keeps_the_pack_layout(self):
+        bios = self._romm("filesystem:\n  structure:\n    firmware: bios/{platform}\n")
+        files = [{"dest": "psx/scph5501.bin"}]
+        self.assertEqual(install.romm_relayout(files, bios, *install.romm_firmware_layout(
+            bios, None)), (files, bios))
+
+    def test_a_platform_first_library_without_a_template_is_refused(self):
+        bios = self._romm(None)
+        with self.assertRaises(ValueError) as raised:
+            install.romm_firmware_layout(bios, None)
+        self.assertIn('--romm-firmware "{platform}/bios"', str(raised.exception))
+        self.assertEqual(install.romm_firmware_layout(bios, "{platform}/bios"),
+                         ((), ("bios",)))
+
+    def test_the_option_is_refused_where_romm_is_not_installed(self):
+        err = io.StringIO()
+        with unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch("sys.argv", [
+                    "install.py", "--platform", "batocera", "--dest", _tempdir(self),
+                    "--romm-firmware", "{platform}/bios", "--no-input"]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as caught:
+            install.main()
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn("--romm-firmware applies to RomM", err.getvalue())
+
+
+class RomMFirmwareInstallsUnderItsTemplate(unittest.TestCase, _LoopbackRun):
+    """The whole run, over loopback: config.yml beside the library decides."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def test_lynx_lands_in_its_platform_folder(self):
+        base = self.home / "romm"
+        (base / "library" / "lynx" / "roms").mkdir(parents=True)
+        (base / "config").mkdir()
+        (base / "config" / "config.yml").write_text(
+            "filesystem:\n  structure:\n    default: \"{platform}/roms/{game}\"\n"
+            "    firmware: \"{platform}/bios\"\n")
+        proc = _install_run(self.env, "--platform", "romm", "--dest",
+                            str(base / "library" / "bios"), "--system", "atari-lynx",
+                            "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertTrue((base / "library" / "lynx" / "bios" / "lynxboot.img").is_file())
+        self.assertFalse((base / "library" / "bios").exists())
+        self.assertIn("{platform}/bios", proc.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

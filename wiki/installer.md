@@ -235,6 +235,7 @@ what the options name, everything by default.
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |
 | `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
+| `--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
 | `--no-input` | Never ask a question, even at a terminal |
 | `--check` | Report and exit without writing |
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
@@ -306,6 +307,7 @@ not already found that way.
 | `~/Emulation/bios` | EmuDeck | the same |
 | `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
 | `/romm/library/bios` | RomM | the same |
+| `/romm/config/config.yml` | RomM | `/romm/library/bios`, laid out by its firmware template |
 | `~/RetroPie/BIOS` | RetroPie | the same |
 | `%USERPROFILE%\BizHawk\Firmware` | BizHawk | the same |
 | `EmuHawk.exe` or `EmuHawkMono.sh` in a `BizHawk*` folder of the home folder or one level down (`~/Games/BizHawk-2.11.1`), the newest | BizHawk | `Firmware` beside it |
@@ -414,6 +416,23 @@ that is not installed. A destination that is already a symbolic link is
 replaced by the file rather than written through: a write through the link
 would land outside the folder the user opted into. The summary counts each
 copy as copied, skipped (folder absent) or failed, and names every failure.
+
+## RomM firmware layout
+
+RomM 5.4 places each platform's firmware where `filesystem.structure.firmware`
+in its `config.yml` says, relative to the library: `bios/{platform}` by
+default, the layout of the pack. A library laid out as `{platform}/roms` makes
+RomM stop until `config.yml` declares its templates, and RomM suggests
+`firmware: "{platform}/bios"` for it.
+
+The installer reads that value from `config.yml` in the `config` folder beside
+the library, `/romm/config/config.yml` inside the container, and places each
+file accordingly: with `{platform}/bios`, `psx/scph5501.bin` goes to
+`library/psx/bios/scph5501.bin`. `--dest` still names the library's `bios`
+folder, whose parent is the library. Run from the host of a container, where
+`config.yml` sits elsewhere, `--romm-firmware` gives the same value. A
+library laid out as `{platform}/roms` with no template found is refused
+rather than filled in the wrong place, and the message gives the command.
 
 ## Android
 
