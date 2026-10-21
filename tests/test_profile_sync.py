@@ -1163,6 +1163,13 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
+            profile_sync.upstream.current_slug,
+        )
+        self.current_slugs: dict[str, str] = {}
+        profile_sync.upstream.current_slug = (
+            lambda repo, cache_dir, offline=False: self.current_slugs.get(
+                repo.slug, repo.slug
+            )
         )
         self.tags: list[str] = []
         self.gitlinks: dict[str, dict[str, str]] = {}
@@ -1218,6 +1225,7 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
+            profile_sync.upstream.current_slug,
         ) = self._orig
         self.tmp.cleanup()
 
@@ -1231,6 +1239,25 @@ class TestBuildReport(unittest.TestCase):
                 for i, ref in enumerate(refs)
             ],
         }
+
+    def test_a_renamed_repository_is_review_work(self):
+        """AloysHF/NicaiEmu answers as AloysHF/CoolbarEmu: the redirect was
+        followed in silence and the profile read as up to date."""
+        self.files[("pinsha", "a.c")] = ["x", "y"]
+        self.files[("headsha", "a.c")] = ["x", "y"]
+        self.current_slugs["o/n"] = "o/renamed"
+        report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        self.assertEqual(len(report.moved_repos), 1)
+        self.assertIn("o/renamed", report.moved_repos[0])
+        self.assertGreaterEqual(report.needs_review(), 1)
+        self.assertIn("moved repository", profile_sync.format_report(report))
+
+    def test_a_repository_under_its_own_name_is_not_moved(self):
+        self.files[("pinsha", "a.c")] = ["x", "y"]
+        self.files[("headsha", "a.c")] = ["x", "y"]
+        self.current_slugs["o/n"] = "O/N"
+        report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        self.assertEqual(report.moved_repos, [])
 
     def test_a_refusing_forge_reads_as_unread_not_gone(self):
         """git.eden-emu.dev answers 403 to scripts: the muted repository's

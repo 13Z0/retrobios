@@ -939,6 +939,10 @@ class ProfileReport:
     # Repositories whose pin is no ancestor of the branch the profile
     # tracks: history was rewritten, or the pin lies on another branch.
     orphaned: list[str] = field(default_factory=list)
+    # Repositories the forge answers under another owner/name: renamed or
+    # transferred. The redirect is followed in silence, so the move is named
+    # and counted as review work, since a renamed project is re-profiled.
+    moved_repos: list[str] = field(default_factory=list)
     # A profile off any forge names the page announcing its releases
     # (version_source): the version read there, beside the one declared.
     declared_version: str | None = None
@@ -976,6 +980,7 @@ class ProfileReport:
             sum(counts.get(status, 0) for status in REVIEW_STATUSES)
             + len(self.orphaned)
             + len(self.stale_prose or ())
+            + len(self.moved_repos)
         )
 
 
@@ -1332,6 +1337,25 @@ def _path_roles(refs: list) -> dict[str, set[str]]:
     return roles
 
 
+def moved_repositories(
+    views: list[RepoView], cache_dir: str, offline: bool
+) -> list[str]:
+    """Declared repositories the forge now answers under another name."""
+    moved = []
+    seen: set[tuple[str, str]] = set()
+    for view in views:
+        key = (view.repo.host, view.repo.slug)
+        if key in seen:
+            continue
+        seen.add(key)
+        current = upstream.current_slug(view.repo, cache_dir, offline)
+        if current and current.lower() != view.repo.slug.lower():
+            moved.append(
+                f"{view.repo.slug} answers as {current} (renamed or transferred)"
+            )
+    return moved
+
+
 def build_report(
     name: str, profile: dict, cache_dir: str, offline: bool = False,
     text: str | None = None,
@@ -1451,6 +1475,7 @@ def build_report(
             report.upstream_pin = view.pin
             report.upstream_head = view.head
             report.upstream_origin = view.origin
+    report.moved_repos = moved_repositories(views, cache_dir, offline)
     # A profile can hold its pin on purpose, documenting a build that is that
     # revision. Comparing it to HEAD says nothing and recaling would repoint
     # its refs at code the build never had, so it is judged like a frozen tag:
@@ -1954,6 +1979,8 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         lines.append(f"  not read (unsupported host): {url}")
     for line in report.orphaned:
         lines.append(f"  orphaned pin: {line}")
+    for line in report.moved_repos:
+        lines.append(f"  moved repository: {line}")
     if report.declared_version or report.page_version:
         lines.append(
             f"  version page: declared {report.declared_version or '-'}, "
@@ -3509,9 +3536,9 @@ def _check_quota(count: int, offline: bool) -> None:
     """Refuse a run the anonymous quota cannot carry to completion."""
     if offline or github_token():
         return
-    if count * 4 > ANON_QUOTA:
+    if count * 5 > ANON_QUOTA:
         print(
-            f"{count} profiles need roughly {count * 4} API calls, the anonymous "
+            f"{count} profiles need roughly {count * 5} API calls, the anonymous "
             f"quota is {ANON_QUOTA} per hour. Log in with `gh auth login`, set "
             "GITHUB_TOKEN, or use --offline.",
             file=sys.stderr,

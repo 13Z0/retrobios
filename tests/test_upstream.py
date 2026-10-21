@@ -805,5 +805,29 @@ class TestGiteaCommitAt(unittest.TestCase):
         )
 
 
+
+class TestCurrentSlug(unittest.TestCase):
+    """The name a forge answers under, read from the repository payload."""
+
+    def test_github_and_gitlab_payloads(self):
+        answers = {
+            "https://api.github.com/repos/AloysHF/NicaiEmu": {
+                "full_name": "AloysHF/CoolbarEmu"
+            },
+            "https://gitlab.com/api/v4/projects/g%2Fsub%2Fp": {
+                "path_with_namespace": "g/sub/p"
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(upstream, "_http_json", side_effect=answers.get):
+            github = parse_repo("https://github.com/AloysHF/NicaiEmu")
+            gitlab = parse_repo("https://gitlab.com/g/sub/p")
+            self.assertEqual(upstream.current_slug(github, tmp), "AloysHF/CoolbarEmu")
+            self.assertEqual(upstream.current_slug(gitlab, tmp), "g/sub/p")
+            self.assertIsNone(
+                upstream.current_slug(parse_repo("https://github.com/a/b"), tmp)
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
