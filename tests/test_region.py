@@ -1223,5 +1223,63 @@ class NoMarketStopsAtAustralia(unittest.TestCase):
         self.assertEqual(tagged, [])
 
 
+class ARefusedRegionalFileHoldsNoSlot(unittest.TestCase):
+    """rg_us.bin is held but its md5 contradicts the one the core checks, so
+    the emulator pack refuses it. Counted held, it won the region and the
+    Japanese BIOS was withdrawn: --emulator --region us shipped no BIOS for
+    the system, and verify, reading the same drops, did not see it."""
+
+    def test_the_fallback_stays_in_pack_and_report(self):
+        import hashlib
+        import shutil
+        import tempfile
+        import zipfile
+
+        import yaml
+
+        from generate_pack import generate_emulator_pack
+        from verify import verify_emulator
+
+        common._emulator_profiles_cache.clear()
+        repo = Path(__file__).resolve().parents[1]
+        (repo / "tmp").mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=repo / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        previous = os.getcwd()
+        os.chdir(root)
+        self.addCleanup(os.chdir, previous)
+        files, by_name = {}, {}
+        for name, data in (("rg_us.bin", b"NOT THE US DUMP"), ("rg_jp.bin", b"JP DUMP")):
+            path = Path("bios") / name
+            path.parent.mkdir(exist_ok=True)
+            path.write_bytes(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            files[sha1] = {"path": str(path), "name": name, "size": len(data),
+                           "md5": hashlib.md5(data).hexdigest()}
+            by_name[name] = [sha1]
+        db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                          "by_crc32": {}, "by_path_suffix": {}}}
+        Path("emulators").mkdir()
+        Path("emulators/rgemu.yml").write_text(yaml.safe_dump({
+            "emulator": "RgEmu", "type": "libretro", "systems": ["sys"],
+            "files": [
+                {"name": "rg_us.bin", "region": ["north-america"], "required": True,
+                 "md5": hashlib.md5(b"THE US DUMP").hexdigest(), "validation": ["md5"]},
+                {"name": "rg_jp.bin", "region": ["japan"], "required": True},
+            ],
+        }))
+        with contextlib.redirect_stdout(io.StringIO()):
+            zip_path = generate_emulator_pack(
+                ["rgemu"], "emulators", db, "bios", "out", regions=["north-america"],
+                offline=True, platforms_dir="platforms",
+            )
+        with zipfile.ZipFile(zip_path) as zf:
+            self.assertIn("rg_jp.bin", zf.namelist())
+        report = verify_emulator(
+            ["rgemu"], "emulators", db, regions=["north-america"], platforms_dir="platforms",
+        )
+        self.assertIn("rg_jp.bin", report["pack_destinations"])
+
+
 if __name__ == "__main__":
     unittest.main()

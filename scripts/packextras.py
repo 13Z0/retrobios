@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from common import PROFILE_IDENTITY_FIELDS, _norm_system_id
-from common import archive_members
+from common import archive_members, holds_required_members
 from common import declared_root, expand_platform_declared_names, platform_declarations
 from common import load_emulator_profiles
 from common import resolution_is_hash_exact
@@ -209,7 +209,7 @@ def hidden_extras(
     emulators_dir: str,
     db: dict,
     profiles: dict,
-    shipped: dict[str, str],
+    shipped: dict[str, str | None],
     target_cores: set[str] | None = None,
     region_drops: set[str] | None = None,
     placed: set[str] | None = None,
@@ -229,7 +229,8 @@ def hidden_extras(
     while the report counted it in the pack. A twin carrying the same bytes
     serves the core on the filesystem that folds the names, so it is not a
     file left out. ``shipped`` maps the full destination of each platform
-    file the pack carries to its local copy. ``placed``, when given,
+    file the pack carries to its local copy, or to None for a slot it keeps
+    without one (user_provided, external). ``placed``, when given,
     receives the full destination of each held extra the pack carries.
     ``resolver`` is the builder's lookup. An extra it cannot resolve is
     skipped and takes no path, as the builder skips it.
@@ -879,11 +880,17 @@ def _collect_emulator_extras(
         undeclared = undeclared_report(
             config, emulators_dir, db, emu_profiles, target_cores, include_all
         )
-    # A destination two cores claim goes to the one that names its content:
+    # A destination two cores claim goes to the strongest proof of what the
+    # collection holds for it, then to the one that names its content:
     # hypseus-singe asks for gamecontrollerdb.txt by name alone and took the
-    # BIOS root before Solarus, which pins its own by sha1. Profile order
-    # still decides between claims of the same kind.
+    # BIOS root before Solarus, which pins its own by sha1, and fbalpha2012's
+    # hashless hiscore.dat took RetroDECK's over mame2015's sha1. Profile
+    # order decides only between claims of equal proof.
     undeclared = sorted(undeclared, key=lambda u: not _names_content(u))
+    rank = _ClaimRanks(
+        undeclared, placement, db, bool(config.get("case_insensitive_fs", False))
+    )
+    undeclared = rank.ordered(undeclared)
     extras = []
     seen_dests: set[str] = set(seen)
     # Destination -> the extra that took it, to record later claimants on.
@@ -922,12 +929,18 @@ def _collect_emulator_extras(
             claimants[(u.get("emulator", ""), u.get("name", ""), u.get("path") or "")] = (
                 sanitize_pack_path(dest)
             )
-        extra = _report_extra(u, name, dest)
-        claims = [_report_extra(c, name, dest) for c in u.get("other_claims", [])]
-        # Where the builder meets each claim: the report lists the profiles in
-        # order, archives after the loose files.
-        for item in (extra, *claims):
-            item["claim_order"] = (1, 1 if u.get("archive") else 0, item["source_profile"])
+        candidates = [
+            _report_extra(c, name, dest) for c in (u, *u.get("other_claims", []))
+        ]
+        # Where the builder meets each claim: the strongest proof first, the
+        # report's profile order between equals, archives after loose files.
+        for item in candidates:
+            item["claim_order"] = (
+                1, 1 if u.get("archive") else 0, -rank.of_extra(item, full_dest),
+                item["source_profile"],
+            )
+        candidates.sort(key=lambda item: item["claim_order"])
+        extra, claims = candidates[0], candidates[1:]
         if not _take(extra, full_dest, seen_dests, taken):
             for claim in claims:
                 _another_claim(taken.get(full_dest), claim)
@@ -1051,6 +1064,82 @@ def _collect_emulator_extras(
     )
 
     return extras
+
+class _ClaimRanks:
+    """How strongly each claim on a contested destination proves its file.
+
+    2 a declared hash the collection holds, 1 a path or every member the
+    core requires inside an archive, 0 a name, -1 a copy
+    contradicting the hash the claim declares, -2 nothing held. Resolved only
+    where two claims meet: a destination one core asks for has no contest.
+    """
+
+    def __init__(
+        self, undeclared: list[dict], placement: ExtraPlacement, db: dict, fold: bool,
+    ) -> None:
+        self._db = db
+        # Two spellings of one path are one file where the filesystem folds case.
+        self._key = (lambda dest: dest.lower()) if fold else (lambda dest: dest)
+        self._placed: dict[int, tuple[str, str] | None] = {}
+        counts: dict[str, int] = {}
+        for u in undeclared:
+            placed = (
+                placement.place(u, _extra_dest(u))
+                if u.get("in_repo") and not u.get("bundled") else None
+            )
+            self._placed[id(u)] = placed
+            if placed is not None:
+                key = self._key(placed[1])
+                counts[key] = counts.get(key, 0) + 1 + len(u.get("other_claims", []))
+        self._contested = {dest for dest, n in counts.items() if n > 1}
+        self._cache: dict[tuple, int] = {}
+
+    def of_extra(self, extra: dict, full_dest: str) -> int:
+        if self._key(full_dest) not in self._contested:
+            return 0
+        key = (extra.get("source_profile"), extra.get("source_name"),
+               extra.get("source_path"), full_dest)
+        if key not in self._cache:
+            path, status = resolve_local_file(
+                extra, self._db, dest_hint=extra.get("destination", "")
+            )
+            self._cache[key] = (
+                -2 if not path
+                else -1 if status == "hash_mismatch"
+                else 2 if resolution_is_hash_exact(status)
+                else 1 if status == "path_exact" or (
+                    extra.get("members") and holds_required_members(path, extra["members"])
+                )
+                else 0
+            )
+        return self._cache[key]
+
+    def ordered(self, undeclared: list[dict]) -> list[dict]:
+        """The entries in their order, the claims on one contested path
+        reordered among themselves by proof. Nothing else moves, so the
+        pack and the manifest keep their order."""
+        first: dict[str, int] = {}
+        keys: list[tuple[int, int, int]] = []
+        for position, u in enumerate(undeclared):
+            placed = self._placed.get(id(u))
+            if placed is None or self._key(placed[1]) not in self._contested:
+                keys.append((position, 0, position))
+                continue
+            group = first.setdefault(self._key(placed[1]), position)
+            keys.append((group, -self.of_entry(u), position))
+        order = sorted(range(len(undeclared)), key=keys.__getitem__)
+        return [undeclared[i] for i in order]
+
+    def of_entry(self, u: dict) -> int:
+        placed = self._placed.get(id(u))
+        if placed is None or self._key(placed[1]) not in self._contested:
+            return 0
+        name = u.get("archive") or u["name"]
+        return max(
+            self.of_extra(_report_extra(c, name, placed[0]), placed[1])
+            for c in (u, *u.get("other_claims", []))
+        )
+
 
 def _names_content(entry: dict) -> bool:
     """Whether a report entry declares the bytes it wants, not only a name."""
@@ -1316,11 +1405,12 @@ def emulator_region_drops(
     """
     import region as region_mod
     from packpaths import _resolve_destination
-    from validation import filter_files_by_mode
+    from validation import _build_validation_index, filter_files_by_mode
 
     region_index = region_mod.build_region_index(dict(selected))
     region_groups: dict[str, list[tuple[str, str]]] = {}
     held: set[str] | None = set() if db is not None else None
+    validation_index = _build_validation_index(dict(selected)) if db is not None else {}
     for emu_name, profile in sorted(selected):
         # Decided over what the pack keeps, as on the platform side: an
         # optional winner removed afterwards left its slot empty.
@@ -1332,11 +1422,33 @@ def emulator_region_drops(
                 region_groups.setdefault(group_id, []).append(
                     (dest, fe.get("name", ""))
                 )
-                if held is not None and resolve_local_file(
-                    dict(fe, source_profile=emu_name), db, dest_hint=dest
-                )[0]:
+                if held is not None and _emulator_ships(
+                    fe, emu_name, profile, db, dest, validation_index
+                ):
                     held.add(dest)
     return region_mod.resolve_region_drops(region_groups, region_index, regions, held)
+
+
+def _emulator_ships(
+    file_entry: dict, emu_name: str, profile: dict, db: dict, dest: str,
+    validation_index: dict,
+) -> bool:
+    """Whether the emulator pack ships this entry: held, and not refused by
+    the core's own check, the test _ships applies on the platform side.
+    """
+    from validation import validated_choice, with_archive_members
+
+    local, _status = resolve_local_file(
+        {**with_archive_members(file_entry, profile.get("files", [])),
+         "source_profile": emu_name},
+        db, dest_hint=dest,
+    )
+    if not local:
+        return False
+    _chosen, disagreement = validated_choice(
+        file_entry, local, db, validation_index, "bios", None, emulators={emu_name},
+    )
+    return disagreement is None
 
 
 def _emulator_region_group(

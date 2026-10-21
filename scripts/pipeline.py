@@ -21,7 +21,7 @@ Steps, numbered as the run prints them:
   4b   generate_pack.py --manifest  install manifests
   4c   --manifest-targets           per-target core lists
   4d   bundled_only.py --strict     copies only an emulator install provides
-  5    consistency check            verify counts == pack counts
+  5    consistency check            verify == pack: counts, paths, every emulator pack
   6    --verify-packs               pack integrity, extraction and hashes
   7    generate_readme.py           README.md and CONTRIBUTING.md
   8    generate_site.py             MkDocs pages
@@ -41,13 +41,16 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import atexit
 import contextlib
 import importlib.util
+import io
 import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -382,6 +385,159 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
     return all_ok
 
 
+def parse_pack_paths(output: str) -> dict[str, str]:
+    """The archive each full pack was written to, per pack label."""
+    paths: dict[str, str] = {}
+    current_label = ""
+    for line in output.splitlines():
+        m = re.match(r"Generating (?:shared )?pack for (.+)\.\.\.", line)
+        if m:
+            current_label = _full_pack_label(m.group(1).strip())
+            continue
+        written = re.match(r"^\s+(\S.*?\.zip): \d+ files packed", line)
+        if current_label and written:
+            paths[current_label] = written.group(1)
+    return paths
+
+
+# Members the builder writes for the reader rather than for a core.
+_PACK_NOTES = re.compile(r"(^README\.txt$|^manifest\.json$|(^|/)(INSTRUCTIONS|RENAMED)_[^/]*\.txt$)")
+
+
+def _tree_members(platform: str, platforms_dir: str) -> dict[str, int]:
+    """Archive path -> size of every file the platform's data trees can add."""
+    import generate_pack  # noqa: PLC0415
+    from common import load_platform_config  # noqa: PLC0415
+    from packpaths import _flat  # noqa: PLC0415
+
+    config = load_platform_config(platform, platforms_dir)
+    base_dest = config.get("base_destination", "")
+    members: dict[str, int] = {}
+    with contextlib.redirect_stdout(io.StringIO()):
+        for src, full in generate_pack._data_directory_members(
+            config.get("systems", {}), load_data_dir_registry(platforms_dir),
+            platform, base_dest, False, set(), set(), set(),
+        ):
+            members[_flat(full, base_dest, True)] = os.path.getsize(src)
+    return members
+
+
+def _set_difference_lines(label: str, credited: set[str], written: set[str]) -> list[str]:
+    """The paths one side has and the other lacks, ten of each at most."""
+    lines = []
+    for side, paths in (("verify only", credited - written), ("pack only", written - credited)):
+        if paths:
+            shown = ", ".join(sorted(paths)[:10])
+            more = f" (+{len(paths) - 10})" if len(paths) > 10 else ""
+            lines.append(f"  {label}: {side} {len(paths)}: {shown}{more}")
+    return lines
+
+
+def check_pack_destinations(
+    destinations_file: str, pack_output: str, platforms_dir: str = "platforms",
+) -> bool:
+    """Compare the paths verify credits with the members of each archive.
+
+    Equal counts hid a file credited on one side and another written on the
+    other. The trees and the notes are the archive's own: a tree member is
+    set aside when its path and size are the cached file's and verify does
+    not credit the path.
+    """
+    import json  # noqa: PLC0415
+    import zipfile  # noqa: PLC0415
+
+    print("\n--- 5/8 consistency check: destinations ---")
+    try:
+        credited_by = json.loads(Path(destinations_file).read_text())
+    except (OSError, ValueError) as exc:
+        print(f"  no destinations from verify ({exc})")
+        return False
+    paths = parse_pack_paths(pack_output)
+    if not paths:
+        print("  no archive named in the pack output")
+        return False
+    all_ok = True
+    for label, zip_path in sorted(paths.items()):
+        names = [n for n in credited_by if _match_key(n) & _match_key(label)]
+        if not names:
+            print(f"  {label}: no verify destinations")
+            all_ok = False
+            continue
+        entry = credited_by[names[0]]
+        credited = set(entry["pack_destinations"])
+        trees = _tree_members(entry["platform"], platforms_dir)
+        with zipfile.ZipFile(zip_path) as zf:
+            written = {
+                info.filename for info in zf.infolist()
+                if not info.is_dir()
+                and not _PACK_NOTES.search(info.filename)
+                and not (
+                    trees.get(info.filename) == info.file_size
+                    and info.filename not in credited
+                )
+            }
+        lines = _set_difference_lines(label, credited, written)
+        if lines:
+            print("\n".join(lines))
+            all_ok = False
+        else:
+            print(f"  {label}: {len(credited)} paths, the same on both sides")
+    return all_ok
+
+
+def check_emulator_packs(
+    emulators_dir: str = "emulators", platforms_dir: str = "platforms",
+    db_path: str = "database.json",
+) -> bool:
+    """Build every emulator pack in memory and compare it with verify --emulator.
+
+    Each profile in each build it has (libretro, standalone): the paths the
+    pack fills with the profile's files against the ones verify credits. No
+    archive is written and no file read, so all of them take seconds.
+    """
+    import generate_pack  # noqa: PLC0415
+    import verify  # noqa: PLC0415
+    from common import (  # noqa: PLC0415
+        ProfileSelectionError,
+        build_zip_contents_index,
+        load_database,
+        load_emulator_profiles,
+        select_emulator_profiles,
+    )
+
+    print("\n--- 5/8 consistency check: emulator packs ---")
+    db = load_database(db_path)
+    zip_contents = build_zip_contents_index(db)
+    profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
+    all_ok = True
+    compared = 0
+    for name in sorted(profiles):
+        for standalone in (False, True):
+            try:
+                select_emulator_profiles([name], profiles, standalone)
+            except ProfileSelectionError:
+                continue
+            record = generate_pack.PackRecord()
+            with contextlib.redirect_stdout(io.StringIO()):
+                generate_pack.generate_emulator_pack(
+                    [name], emulators_dir, db, "bios", "", standalone, zip_contents,
+                    offline=True, platforms_dir=platforms_dir, record=record,
+                )
+                report = verify.verify_emulator(
+                    [name], emulators_dir, db, standalone, platforms_dir=platforms_dir,
+                )
+            compared += 1
+            label = f"{name}{' --standalone' if standalone else ''}"
+            lines = _set_difference_lines(
+                label, set(report["pack_destinations"]), set(record.files)
+            )
+            if lines:
+                print("\n".join(lines))
+                all_ok = False
+    print(f"  {compared} emulator packs compared, {'all equal' if all_ok else 'differences above'}")
+    return all_ok
+
+
 class _Skipped:
     """A step that did not run. Truthy, so it never fails the pipeline, and
     distinct, so the summary does not report it as work that was done."""
@@ -681,8 +837,19 @@ def main() -> None:
     # exclusive.
     hold_data_dirs(held, load_data_dir_registry("platforms"))
 
-    # Step 3: Verify
-    verify_cmd = [sys.executable, "scripts/verify.py", "--all", "--strict"]
+    # Step 3: Verify. The paths each pack holds by this report go to a file
+    # step 5 compares with the archives.
+    scratch = Path(__file__).resolve().parent.parent / "tmp"
+    scratch.mkdir(exist_ok=True)
+    fd, destinations_file = tempfile.mkstemp(
+        prefix="verify-destinations.", suffix=".json", dir=scratch
+    )
+    os.close(fd)
+    atexit.register(Path(destinations_file).unlink, missing_ok=True)
+    verify_cmd = [
+        sys.executable, "scripts/verify.py", "--all", "--strict",
+        "--destinations", destinations_file,
+    ]
     if args.include_archived:
         verify_cmd.append("--include-archived")
     if args.target:
@@ -833,6 +1000,10 @@ def main() -> None:
         results["consistency"] = SKIPPED
     elif pack_output and verify_output:
         ok = check_consistency(verify_output, pack_output)
+        # Counts can agree while the paths differ, both ways at once.
+        ok = check_pack_destinations(destinations_file, pack_output) and ok
+        ok = check_emulator_packs() and ok
+        print(f"--- 5/8 consistency check, counts and paths: {'OK' if ok else 'FAILED'} ---")
         results["consistency"] = ok
         all_ok = all_ok and ok
     else:

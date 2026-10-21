@@ -148,5 +148,43 @@ class ExistenceReportsWhatThePackReports(unittest.TestCase):
         self.assertEqual(result["status"], verify.Status.OK)
         self.assertIn("declared hash 9d2ff233", result["discrepancy"])
 
+
+class TheDestinationsFlagNeedsAPack(unittest.TestCase):
+    """--destinations describes a platform's full pack: another mode refuses it."""
+
+    def test_refused_outside_platform_modes(self):
+        for mode in (("--emulator", "handy"), ("--platform", "retroarch", "--region", "us")):
+            with self.subTest(mode=mode):
+                result = _run("scripts/verify.py", *mode, "--destinations", "tmp/never.json")
+                self.assertEqual(result.returncode, 2, result.stdout[-300:])
+                self.assertIn("--destinations", result.stderr)
+
+
+class EveryGapCountedIsNamed(unittest.TestCase):
+    """verify --platform batocera --verbose counted 3 optional core files and
+    427 game data files missing and named none of them."""
+
+    def test_verbose_names_them_and_the_summary_says_how(self):
+        import contextlib
+        import io
+
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import verify  # noqa: PLC0415
+
+        result = {"undeclared_files": [
+            {"name": "opt.rom", "emulator": "core", "required": False, "in_repo": False},
+            {"name": "level.dat", "emulator": "engine", "required": True, "in_repo": False,
+             "category": "game_data"},
+        ]}
+        with contextlib.redirect_stdout(io.StringIO()) as quiet:
+            verify._print_undeclared_section(result, verbose=False)
+        self.assertIn("1 optional missing (--verbose lists them)", quiet.getvalue())
+        self.assertIn("1 missing (--verbose lists them)", quiet.getvalue())
+        with contextlib.redirect_stdout(io.StringIO()) as verbose:
+            verify._print_undeclared_section(result, verbose=True)
+        self.assertIn("MISSING (optional): core needs opt.rom", verbose.getvalue())
+        self.assertIn("MISSING (game data): engine needs level.dat", verbose.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

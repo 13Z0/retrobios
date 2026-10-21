@@ -13,6 +13,7 @@ from collections.abc import Callable, Iterator, Mapping
 
 from common import (
     adler32_of,
+    archive_members,
     compute_hashes,
     name_match_size_ok,
     sanitize_pack_path,
@@ -464,11 +465,25 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
     )
 
 
+def case_folded_slots(
+    config: dict, declarations: Mapping[str, list[tuple[int | None, str]]],
+) -> frozenset[str]:
+    """The slots a platform whose filesystem folds case fills, any spelling.
+
+    On RetroBat the 32X_G_BIOS.BIN it declares is the file BlastEm opens as
+    32X_G_BIOS.bin. On Lakka bios.col and BIOS.col are two files: nothing.
+    """
+    if not config.get("case_insensitive_fs", False):
+        return frozenset()
+    return frozenset(where for places in declarations.values() for _size, where in places)
+
+
 def declaration_settles(
     file_entry: dict,
     fname: str,
     declared_names: Mapping[str, list[tuple[int | None, str]]] | set[str],
     dest: str = "",
+    folded_slots: frozenset[str] = frozenset(),
 ) -> bool:
     """Whether a platform declaration meets a core's requirement.
 
@@ -485,12 +500,16 @@ def declaration_settles(
     carries no slot or size and answers by name.
 
     Read by verify and by the gap report, which settled on the name alone
-    and left DOSBox's SC-55 ROMs off the gaps page.
+    and left DOSBox's SC-55 ROMs off the gaps page. ``folded_slots``
+    (case_folded_slots) are slots a declaration fills in another spelling on
+    a filesystem that folds case: the core opens that file there.
     """
     if file_entry.get("archive") in declared_names:
         return True
     slot = sanitize_pack_path(dest or fname).lower()
     directory = slot if dest.endswith("/") else slot.rpartition("/")[0]
+    if not dest.endswith("/") and slot in folded_slots:
+        return True
     for name in (fname, *file_entry.get("aliases", [])):
         if name not in declared_names:
             continue
@@ -510,6 +529,20 @@ def declaration_settles(
         ):
             return True
     return False
+
+
+def with_archive_members(entry: dict, files: list[dict]) -> dict:
+    """A loose entry resolved as the archive its profile reads members from.
+
+    gngeopi declares neogeo.zip and, apart, the ROMs it opens inside it. The
+    members decide which same-named copy is the archive: resolved by name
+    alone, the loose entry took another copy than the archive pass and the
+    profile blocked its own archive.
+    """
+    if entry.get("archive"):
+        return entry
+    members = archive_members(entry.get("name", ""), files)
+    return {**entry, "members": members} if members else entry
 
 
 def opens_by_name(file_entry: dict, profile: dict, standalone: bool = False) -> bool:

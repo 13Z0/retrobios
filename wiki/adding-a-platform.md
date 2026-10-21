@@ -510,7 +510,7 @@ This executes in sequence:
 2. `refresh_data_dirs.py` - update data directories (skipped with `--offline`)
 3. `verify.py --all` - verify all platforms including the new one
 4. `generate_pack.py --all` - build ZIP packs + install and target manifests
-5. Consistency check - verify counts match between verify and pack
+5. Consistency check: verify and the pack agree on counts and on the paths each archive holds
 6. Pack integrity - extract ZIPs and verify hashes per platform mode
 7. `generate_readme.py` - regenerate README and CONTRIBUTING
 8. `generate_site.py` - regenerate documentation site and `mkdocs.yml`
@@ -527,7 +527,7 @@ Check the output for:
 - Pack generation succeeds and includes the expected files
 - Consistency check passes (verify file counts match pack file counts)
 
-Verification is not optional. A platform that passes `pipeline.py` today may break tomorrow if upstream changes its data format. Run the full pipeline on every change, even if the modification seems trivial. The consistency check (verify counts must match pack counts) catches subtle issues where files resolve during verification but fail during pack generation, or vice versa.
+Verification is not optional. A platform that passes `pipeline.py` today may break tomorrow if upstream changes its data format. Run the full pipeline on every change, even if the modification seems trivial. The consistency check (verify and the pack must agree on counts and paths) catches subtle issues where files resolve during verification but fail during pack generation, or vice versa.
 
 ## Checklist
 

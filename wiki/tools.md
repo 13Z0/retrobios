@@ -42,7 +42,7 @@ Pipeline steps:
 | 4b | Generate install manifests | `--skip-packs` |
 | 4c | Generate target manifests | `--skip-packs` |
 | 4d | Collected copies only an emulator install provides (`bundled_only.py --strict`, gates the run) | - |
-| 5 | Consistency check | if verify or pack skipped |
+| 5 | Consistency check: counts, paths per archive, every emulator pack | if verify or pack skipped |
 | 6 | Pack integrity (extract + hash) | `--skip-packs` |
 | 7 | Generate README | `--skip-docs` |
 | 8 | Generate site | `--skip-docs` |
@@ -78,9 +78,12 @@ alone, run `python scripts/check_buildbot_system.py`.
   and manifest names. `--manifest --target switch` once overwrote the
   manifest every installer downloads with a narrowed one.
 - **A step that did not run says SKIPPED**, never OK.
-- **verify.py and generate_pack.py read the same functions.** A count that
-  differs between the report and the pack is a defect, which is what step 5
-  checks.
+- **verify.py and generate_pack.py read the same functions.** A count or a
+  path that differs between the report and the pack is a defect, which is
+  what step 5 checks: the counts, the paths each archive holds against the
+  ones verify credits (`--destinations`), and every emulator pack, each
+  profile in each build, built in memory against `verify --emulator`.
+  Equal counts once hid four RetroArch paths credited and never written.
 - **Generators write through `write_if_changed()`.** A new timestamp alone
   rewrites nothing, so a diff on a generated file always means content.
 - **One run per output directory.** Pack generation takes a lock on
@@ -118,6 +121,7 @@ python scripts/verify.py --emulator handy --strict  # exit 1 on a required file 
 python scripts/verify.py --system atari-lynx       # single system
 python scripts/verify.py --platform retroarch --target switch  # filter by hardware
 python scripts/verify.py --platform recalbox --region us   # regional priority list
+python scripts/verify.py --all --destinations tmp/paths.json  # also write the paths each pack holds
 python scripts/verify.py --list-emulators          # list all emulators
 python scripts/verify.py --list-systems            # list all systems
 python scripts/verify.py --platform retroarch --list-targets  # list available targets

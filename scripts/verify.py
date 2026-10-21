@@ -30,6 +30,7 @@ import json
 import os
 import sys
 from collections.abc import Mapping
+from pathlib import Path
 
 import slots
 
@@ -85,6 +86,7 @@ from nativemode import (
 )
 from validation import (
     baseline_verdict,
+    case_folded_slots,
     declaration_settles,
     frontend_digest_matches,
     existence_discrepancy,
@@ -100,6 +102,7 @@ from validation import (
     installed_with_emulator,
     unread_on,
     outside_gap_scope,
+    with_archive_members,
 )
 
 DEFAULT_DB = "database.json"
@@ -442,6 +445,7 @@ def _candidate_verdict(
     include_all: bool,
     declared_names: Mapping[str, list[tuple[int | None, str]]] | set[str],
     dest: str = "",
+    folded_slots: frozenset[str] = frozenset(),
 ) -> str:
     """Whether a profile entry can be a gap, and whether it is settled.
 
@@ -457,7 +461,7 @@ def _candidate_verdict(
     if outside_gap_scope(file_entry, is_standalone):
         return "skip"
     if not include_all and declaration_settles(
-        file_entry, fname, declared_names, dest
+        file_entry, fname, declared_names, dest, folded_slots
     ):
         return "settled"
     return "keep"
@@ -501,6 +505,7 @@ def find_undeclared_files(
     """
     if declared_names is None:
         declared_names = platform_declarations(config, db)
+    folded_slots = case_folded_slots(config, declared_names)
 
     # Whether the builder drops a file whose local copy contradicts its
     # declared hash, which decides if such a copy counts as held here.
@@ -590,7 +595,8 @@ def find_undeclared_files(
                 if duplicate and (first is None or first["profile"] == emu_name):
                     continue
                 verdict = _candidate_verdict(
-                    f, fname, is_standalone, include_all, declared_names, dest
+                    f, fname, is_standalone, include_all, declared_names, dest,
+                    folded_slots,
                 )
                 if verdict == "settled":
                     seen_files.add(seen_key)
@@ -707,6 +713,9 @@ def find_undeclared_files(
                 }
                 if f.get("contents"):
                     entry["contents"] = f["contents"]
+                members = with_archive_members(f, profile.get("files", [])).get("members")
+                if members:
+                    entry["members"] = members
                 if launcher_layer:
                     launcher_candidates.append((emu_name, is_standalone, f, entry))
                 if duplicate:
@@ -879,7 +888,7 @@ def _mark_hidden(
     emulators_dir: str,
     db: dict,
     emu_profiles: dict | None,
-    shipped: dict[str, str],
+    shipped: dict[str, str | None],
     target_cores: set[str] | None,
     region_drops: set[str] | None = None,
     report: list[dict] | None = None,
@@ -909,6 +918,44 @@ def _mark_hidden(
             u["in_pack"] = False
             u["omitted"] = _HIDDEN_REASONS[reason]
     return placed
+
+
+def _builder_placement(
+    packed_order: list[tuple[str, str, str | None]], case_insensitive: bool,
+) -> tuple[dict[str, str], dict[str, str | None]]:
+    """The platform files the builder writes, and every path it keeps.
+
+    The builder walks the systems in name order and skips a path that a
+    written file blocks as a directory, or the reverse: RetroArch declares
+    SGB1.sfc and SGB1.sfc/program.rom, and only the first is in the pack.
+    An entry without a destination (EmuDeck's system:md5 whitelist) is
+    judged but takes no path. Returns (path -> local copy written there,
+    path -> copy or None for each slot kept, a user_provided or external one
+    included).
+    """
+    from packpaths import _has_path_conflict, _register_path
+
+    shipped: dict[str, str] = {}
+    occupied: dict[str, str | None] = {}
+    seen: set[str] = set()
+    folded: set[str] = set()
+    parents: set[str] = set()
+    for _sys_id, full, local in sorted(packed_order, key=lambda item: item[0]):
+        # EmuDeck's system:md5 entries name no file: the builder writes none.
+        if not full or full.endswith("/"):
+            continue
+        if (
+            full in occupied
+            or (case_insensitive and full.lower() in folded)
+            or _has_path_conflict(full, seen, parents)
+        ):
+            continue
+        _register_path(full, seen, parents)
+        folded.add(full.lower())
+        occupied[full] = local
+        if local is not None:
+            shipped[full] = local
+    return shipped, occupied
 
 
 def _dest_key(file_entry: dict, sys_id: str) -> str:
@@ -1148,7 +1195,10 @@ def verify_platform(
         verify_systems, db, base_dest, zip_contents
     )
 
-    shipped: dict[str, str] = {}
+    # (system, full destination, local copy) of each declaration the builder
+    # writes, and None for one whose slot it keeps without a file from the
+    # collection (user_provided, external). Placed below in the builder's order.
+    packed_order: list[tuple[str, str, str | None]] = []
     shipped_keys: set[str] = set()
     results_at: dict[str, list[dict]] = {}
     for sys_id, system in verify_systems.items():
@@ -1172,6 +1222,12 @@ def verify_platform(
             if stored is not None:
                 result = stored
                 local_path = None
+                # The builder keeps the slot: instructions for a user_provided
+                # file, the download for an external one, whether it arrives
+                # or not. No core file goes there.
+                packed_order.append((
+                    sys_id, f"{base_dest}/{destination}" if base_dest else destination, None,
+                ))
             elif not reads_file_contents(mode):
                 result = verify_entry_existence(
                     file_entry,
@@ -1216,10 +1272,11 @@ def verify_platform(
                     file_entry, local_path, resolve_status, mode, config.get("hash_rule", "")
                 )[1] is None
             ):
-                shipped.setdefault(
+                packed_order.append((
+                    sys_id,
                     f"{base_dest}/{destination}" if base_dest else destination,
                     local_path,
-                )
+                ))
                 shipped_keys.add(_dest_key(file_entry, sys_id))
             if _twin_unmet(
                 result, held_by, file_entry, sys_id,
@@ -1252,6 +1309,10 @@ def verify_platform(
             ):
                 file_severity[dest] = sev
 
+    shipped, occupied = _builder_placement(
+        packed_order, bool(config.get("case_insensitive_fs", False))
+    )
+
     # Cross-reference undeclared files, called exactly as the builder calls
     # it: its declarations, not the enriched ones (a core file the platform
     # also declares under another name is packed at the core's own path, 21
@@ -1283,7 +1344,7 @@ def verify_platform(
 
     placed_by: dict[str, tuple[str, str, str]] = {}
     placed = _mark_hidden(
-        config, undeclared, emulators_dir, db, emu_profiles, shipped, target_cores,
+        config, undeclared, emulators_dir, db, emu_profiles, occupied, target_cores,
         region_drops, report_for_builder,
         ExtraResolver(
             db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
@@ -1363,10 +1424,23 @@ def verify_platform(
     )
     total = len(file_status)
 
+    # The paths a pack built from this report holds, as written in the ZIP
+    # (base_destination stripped, as the builder flattens it). The pipeline
+    # compares this set with the archive: equal counts can hide one file
+    # credited here and another written there.
+    from packpaths import _flat
+
+    pack_destinations = sorted(
+        {_flat(dest, base_dest, True) for dest in shipped} | {
+            _flat(dest, base_dest, True) for dest in placed
+        }
+    )
+
     return {
         "platform": platform,
         "verification_mode": mode,
         "total_files": total,
+        "pack_destinations": pack_destinations,
         "severity_counts": counts,
         "status_counts": status_counts,
         "excluded_files": excluded,
@@ -1590,8 +1664,11 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
     core_missing_req = len(req_not_in_repo) + len(req_hle_not_in_repo)
     core_missing_opt = len(opt_not_in_repo)
 
+    # Required gaps are always named below, the optional ones on request.
+    listed = "" if verbose or not core_missing_opt else " (--verbose lists them)"
     print(
-        f"  Core files: {core_in_pack} in pack, {core_missing_req} required missing, {core_missing_opt} optional missing"
+        f"  Core files: {core_in_pack} in pack, {core_missing_req} required missing, "
+        f"{core_missing_opt} optional missing{listed}"
     )
     if bundled:
         names = ", ".join(sorted({u["name"] for u in bundled}))
@@ -1603,6 +1680,9 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
         _print_undeclared_entry(u, "MISSING (required)", verbose)
     for u in req_hle_not_in_repo:
         _print_undeclared_entry(u, "MISSING (required, HLE fallback)", verbose)
+    if verbose:
+        for u in opt_not_in_repo:
+            _print_undeclared_entry(u, "MISSING (optional)", verbose)
 
     if game_data:
         gd_missing = [u for u in game_data if not u["in_repo"]]
@@ -1612,7 +1692,11 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
         )
         gd_unplaced = [u for u in game_data if u["in_repo"] and not u.get("in_pack", True)]
         if gd_missing or gd_packed or gd_unplaced:
-            print(f"  Game data: {gd_packed} in pack, {len(gd_missing)} missing")
+            listed = "" if verbose or not gd_missing else " (--verbose lists them)"
+            print(f"  Game data: {gd_packed} in pack, {len(gd_missing)} missing{listed}")
+        if verbose:
+            for u in gd_missing:
+                _print_undeclared_entry(u, "MISSING (game data)", verbose)
         if gd_unplaced:
             print(
                 f"  Game data held but not packed: {len(gd_unplaced)} "
@@ -1951,7 +2035,7 @@ def verify_emulator(
 
             dest_hint = file_entry.get("path", "")
             local_path, resolve_status = resolve_local_file(
-                {**file_entry, "source_profile": emu_name},
+                {**with_archive_members(file_entry, files), "source_profile": emu_name},
                 db,
                 zip_contents,
                 dest_hint=dest_hint,
@@ -2151,6 +2235,11 @@ def verify_emulator(
         "emulators": [n for n, _ in selected],
         "verification_mode": label,
         "total_files": total,
+        # The paths the emulator pack fills with the profile's files, for the
+        # pipeline's comparison with the pack built in memory.
+        "pack_destinations": sorted(
+            dest for dest, status in file_status.items() if status == Status.OK
+        ),
         "severity_counts": counts,
         "status_counts": status_counts,
         "details": details,
@@ -2331,6 +2420,7 @@ def _refuse_listing_narrowings(
         ("--json", args.json),
         ("--strict", args.strict),
         ("--verbose", args.verbose),
+        ("--destinations", args.destinations),
     ):
         if on:
             parser.error(f"{flag} is incompatible with {listing}")
@@ -2346,6 +2436,10 @@ def _refuse_mode_flags(args: argparse.Namespace, parser: argparse.ArgumentParser
          "--target requires --platform or --all"),
         (args.target and (args.emulator or args.system),
          "--target is incompatible with --emulator and --system"),
+        (args.destinations and not (args.platform or args.all),
+         "--destinations requires --platform or --all"),
+        (args.destinations and getattr(args, "region", None),
+         "--destinations describes the full pack and is incompatible with --region"),
     ):
         if refused:
             parser.error(message)
@@ -2423,6 +2517,11 @@ def _main(held: contextlib.ExitStack) -> None:
         help="Show emulator ground truth details",
     )
     parser.add_argument("--json", action="store_true", help="JSON output")
+    parser.add_argument(
+        "--destinations", metavar="FILE",
+        help="With --platform or --all, also write the paths each pack holds "
+        "according to this report to FILE (JSON), for comparison with the archive",
+    )
     parser.add_argument(
         "--strict",
         action="store_true",
@@ -2554,6 +2653,15 @@ def _main(held: contextlib.ExitStack) -> None:
             print()
         if len(group_results) > 1:
             print(_overall_summary(group_results))
+
+    if args.destinations:
+        held = {}
+        for (result, names), (group, _rep) in zip(group_results, groups):
+            for name, key in zip(names, group):
+                held[name] = {
+                    "platform": key, "pack_destinations": result["pack_destinations"],
+                }
+        Path(args.destinations).write_text(json.dumps(held, indent=1, sort_keys=True))
 
     if args.json:
         for r in all_results.values():

@@ -1,8 +1,8 @@
 """Who decides what goes at a destination.
 
 A destination is a slot. Two layers can claim it: the platform YAML, scraped
-from what the frontend declares and therefore able to carry an upstream error,
-and the emulator profile, read from the emulator's own source. Until this
+from what the frontend declares, which can pin another file than the emulator
+reads, and the emulator profile, read from the emulator's own source. Until this
 module existed nothing compared the two: the builder resolves the platform
 entry first and drops the profile entry on a bare filename match, so a profile
 that names the right file for a slot could never win and never even be heard.
@@ -37,7 +37,7 @@ from common import (
     variant_base_name,
 )
 from packresolve import preferred_entries
-from validation import outside_gap_scope
+from validation import outside_gap_scope, with_archive_members
 
 if TYPE_CHECKING:
     from packextras import ExtraPlacement
@@ -241,7 +241,10 @@ def profile_claims(
                     full = placed[1]
                 # The owner's own copy is the one the builder ships.
                 local, status = resolve_local_file(
-                    {**entry, "source_profile": emu_name},
+                    {
+                        **with_archive_members(entry, profile.get("files") or []),
+                        "source_profile": emu_name,
+                    },
                     db,
                     zip_contents,
                     dest_hint=dest,
@@ -326,6 +329,29 @@ def _archive_claims(
     return claims
 
 
+def checked_by_path(mode: str, entry: dict, rule: str = "") -> bool:
+    """Whether the frontend checks this declaration by its path alone.
+
+    Whether a frontend reads the bytes is a property of the platform, but
+    what it compares them with is the entry's: Batocera skips an empty md5
+    (batocera-systems:1088), and EmuDeck declares neocdz.zip with no hash at
+    all. Such an entry is a path, in an md5 platform as in an existence one.
+    A member pinned inside an archive is content.
+    """
+    if not nativemode.reads_file_contents(mode):
+        return True
+    if entry.get("zipped_file"):
+        return False
+    if rule == nativemode.SIZE_AND_ANY_HASH:
+        fields: tuple[str, ...] = ("md5", "sha1", "crc32")
+    else:
+        fields = (nativemode.digest_algorithm(mode) or "",)
+    return not any(
+        parse_md5_list(entry.get(name)) if name == "md5" else entry.get(name)
+        for name in fields
+    )
+
+
 def _claim_rank(claim: Claim) -> int:
     """How strongly a platform claim speaks for what the pack ships."""
     if resolution_is_hash_exact(claim.status):
@@ -379,10 +405,10 @@ def _slot_claims(
     # matches, asserts nothing about content. Where the frontend never reads
     # the bytes, a proven profile claim then decides: RetroArch's neocdz.zip
     # pins an md5 nobody holds, and the primary shipped without the 000-lo.lo
-    # geolith and FBNeo read inside it.
-    path_only = not nativemode.reads_file_contents(
-        config.get("verification_mode", "existence")
-    )
+    # geolith and FBNeo read inside it. Decided per entry: EmuDeck, an md5
+    # platform, declares the same archive with no hash.
+    mode = config.get("verification_mode", "existence")
+    rule = config.get("hash_rule", "")
     by_slot: dict[str, list[Claim]] = {}
     for claim in profile_claims(
         profiles, db, base_dest, standalone_cores, zip_contents, data_dir_registry,
@@ -398,7 +424,9 @@ def _slot_claims(
         ):
             # A size proves a claim only against a file of another size.
             continue
-        if not platform.is_proven and not (path_only and platform.local_path):
+        if not platform.is_proven and not (
+            platform.local_path and checked_by_path(mode, platform.entry, rule)
+        ):
             continue
         by_slot.setdefault(key, []).append(claim)
 
@@ -515,8 +543,8 @@ def slot_choices(
     recorded whole in the install manifest, so a target narrowed from the
     full manifest gets the bytes the target's own pack carries.
     """
-    if nativemode.reads_file_contents(config.get("verification_mode", "existence")):
-        return {}
+    mode = config.get("verification_mode", "existence")
+    rule = config.get("hash_rule", "")
     platform_profiles = {
         name: profiles[name] for name in resolve_platform_cores(config, profiles)
     }
@@ -532,6 +560,9 @@ def slot_choices(
     choices: dict[str, list[tuple[str, str | None]]] = {}
     for key, claims in sorted(by_slot.items()):
         platform = by_dest[key]
+        # Where the frontend compares a hash, the platform's file stays.
+        if not checked_by_path(mode, platform.entry, rule):
+            continue
         agree = [_satisfies(c, platform, db) for c in claims]
         agreeing = [c for c, ok in zip(claims, agree) if ok]
         others = sorted(
@@ -570,7 +601,9 @@ def _strongest(claims: list[Claim]) -> Claim:
     return max(claims, key=lambda claim: (_claim_rank(claim), -claims.index(claim)))
 
 
-def arbitrate(conflict: Conflict, mode: str, addressee: str = "platform") -> Decision:
+def arbitrate(
+    conflict: Conflict, mode: str, addressee: str = "platform", rule: str = "",
+) -> Decision:
     """Decide a contested destination for the pack being built.
 
     A pack answers to whoever asked for it. A platform pack must leave the
@@ -581,13 +614,13 @@ def arbitrate(conflict: Conflict, mode: str, addressee: str = "platform") -> Dec
     In ``existence`` mode the frontend only looks for a path, so the emulator's
     file satisfies both sides at once and there is nothing to trade away. In a
     content-checking mode the two answers cannot share one path, and the pack's
-    addressee decides. The loss is reported rather than absorbed, because the
-    cause is an upstream declaration that needs fixing at its source.
+    addressee decides. The loss is reported rather than absorbed: only the
+    platform's own list can change what its frontend accepts there.
     """
     profile = _strongest(conflict.profile_claims)
     if addressee == "emulator":
         return Decision(conflict, profile, ADDRESSEE)
-    if not nativemode.reads_file_contents(mode):
+    if checked_by_path(mode, conflict.platform_claim.entry, rule):
         return Decision(conflict, profile, SERVES_BOTH)
     return Decision(conflict, conflict.platform_claim, FRONTEND_CHECKS_CONTENT)
 
@@ -626,10 +659,11 @@ def format_decision(decision: Decision) -> str:
             f"{conflict.destination}: serve {decision.winner.local_path}, "
             "the pack answers to the emulator"
         )
+    expected = ", ".join(conflict.emulators) or "the profile"
     return (
         f"{conflict.destination}: keep {decision.winner.local_path}, the frontend "
         f"verifies content and would reject "
-        f"{conflict.profile_claims[0].local_path}; upstream declaration is wrong"
+        f"{conflict.profile_claims[0].local_path}, the file {expected} reads"
     )
 
 
@@ -659,8 +693,8 @@ def find_collisions(
     One path holds one file, so whichever declaration the builder reaches
     first decides in silence. Declaring an archive several times to name its
     inner ROMs is the documented zipped_file pattern and resolves to one
-    archive. Two declarations landing on two files is a contradiction the
-    upstream list carries. RetroDECK aims a PC-88 disk subsystem ROM and a
+    archive. Two declarations landing on two files name two files for one
+    path. RetroDECK aims a PC-88 disk subsystem ROM and a
     CoCo disk ROM at one bios/disk.rom.
     """
     fold = bool(config.get("case_insensitive_fs", False))
@@ -974,7 +1008,7 @@ def main() -> int:
             mode = config.get("verification_mode", "existence")
             print(f"{platform}: {len(conflicts)} contradicted [{mode}]")
             for conflict in conflicts:
-                decision = arbitrate(conflict, mode)
+                decision = arbitrate(conflict, mode, rule=config.get("hash_rule", ""))
                 fixable += decision.serves_both
                 print(f"  {format_decision(decision)}")
         total = sum(len(c) for c in found.values())
@@ -987,13 +1021,13 @@ def main() -> int:
         doubled = sum(len(c) for c in collided.values())
         print(
             f"\n{total} contested destinations. {fixable} the pack settles on "
-            f"its own, {total - fixable} rest on an upstream declaration. "
+            f"its own, {total - fixable} follow the platform's list. "
             f"{doubled} destinations declared twice."
         )
         if not args.strict and (total or doubled):
             print(
-                "Reported, not failed: the remainder needs the upstream list "
-                "corrected, which no build can do. Use --strict to gate on them."
+                "Reported, not failed: the remainder changes when the platform's "
+                "list does, which no build can do. Use --strict to gate on them."
             )
 
     return 1 if ((found or collided) and args.strict) else 0

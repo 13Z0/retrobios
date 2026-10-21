@@ -15,7 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from cross_reference import cross_reference  # noqa: E402
-from validation import declaration_settles  # noqa: E402
+from validation import case_folded_slots, declaration_settles  # noqa: E402
 
 SC55 = {"name": "ROM1.BIN", "path": "SC-55/ROM1.BIN", "size": 32768,
         "validation": ["size"], "required": True}
@@ -43,6 +43,33 @@ class OneRule(unittest.TestCase):
         for module in ("verify.py", "cross_reference.py"):
             source = (REPO_ROOT / "scripts" / module).read_text(encoding="utf-8")
             self.assertIn("declaration_settles(", source, module)
+
+
+class ACaseFoldingFilesystem(unittest.TestCase):
+    """RetroBat declares 32X_G_BIOS.BIN, BlastEm opens 32X_G_BIOS.bin at the
+    same place. The exact-case name test reported it undeclared before the
+    slot was ever compared."""
+
+    declared = {"32X_G_BIOS.BIN": [(256, "32x_g_bios.bin")]}
+    entry = {"name": "32X_G_BIOS.bin"}
+
+    def test_the_slot_settles_it_where_case_folds(self):
+        folded = case_folded_slots({"case_insensitive_fs": True}, self.declared)
+        self.assertTrue(
+            declaration_settles(self.entry, "32X_G_BIOS.bin", self.declared, "", folded)
+        )
+
+    def test_two_spellings_are_two_files_elsewhere(self):
+        folded = case_folded_slots({"case_insensitive_fs": False}, self.declared)
+        self.assertFalse(
+            declaration_settles(self.entry, "32X_G_BIOS.bin", self.declared, "", folded)
+        )
+
+    def test_another_place_settles_nothing(self):
+        folded = case_folded_slots({"case_insensitive_fs": True}, self.declared)
+        self.assertFalse(declaration_settles(
+            self.entry, "32X_G_BIOS.bin", self.declared, "blastem/32X_G_BIOS.bin", folded
+        ))
 
 
 class TheRunningBuildPlacesTheGap(unittest.TestCase):

@@ -21,6 +21,7 @@ from cross_reference import (  # noqa: E402
     _build_supplemental_index,
     cross_reference,
     entry_source,
+    print_report,
 )
 
 
@@ -37,6 +38,44 @@ class GapReportSources(unittest.TestCase):
     def test_a_sha256_alone_finds_the_file(self):
         entry = {"name": "wave1.bin", "sha256": "AB" * 32}
         self.assertEqual(entry_source(entry, _index(by_sha256={"ab" * 32: "s"})), "bios")
+
+    def test_a_name_never_wins_over_a_declared_hash(self):
+        """zquestclassic pins ending.mid by sha1, the collection holds only
+        Hydra Castle Labyrinth's ending.mid: the report called it held."""
+        other = "9" * 40
+        index = _index(
+            by_name={"ending.mid": [other]}, by_name_lower={"ending.mid": "ending.mid"},
+            by_path_suffix={"data/midi/ending.mid": [other]},
+            db_files={other: {"path": "bios/hcl/ending.mid", "md5": "1" * 32, "size": 9}},
+        )
+        pinned = {"name": "ending.mid", "sha1": "5" * 40}
+        self.assertIsNone(entry_source(pinned, index))
+        self.assertIsNone(entry_source({**pinned, "path": "data/midi/ending.mid"}, index))
+        self.assertEqual(entry_source({"name": "ending.mid"}, index), "bios")
+        self.assertEqual(entry_source({"name": "ending.mid", "sha1": other}, index), "bios")
+        self.assertEqual(entry_source({"name": "ending.mid", "md5": "1" * 32}, index), "bios")
+
+    def test_the_heading_and_the_total_count_bundled_files_alike(self):
+        """abuse printed "Gaps: 3 missing" above three [BUNDLED] files and
+        "0 missing (need to be sourced)" below."""
+        import contextlib
+        import io
+
+        report = {"abuse": {
+            "emulator": "Abuse", "systems": [], "gaps": 3, "total_files": 3,
+            "platform_covered": 0, "gap_missing": 3,
+            "gap_details": [
+                {"name": f"f{i}", "required": True, "source": "missing", "bundled": True,
+                 "note": ""}
+                for i in range(3)
+            ],
+        }}
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            print_report(report)
+        text = out.getvalue()
+        self.assertIn("Gaps: 3 bundled", text)
+        self.assertNotIn("3 missing", text)
+        self.assertIn("0 missing (need to be sourced)", text)
 
     def test_a_directory_does_not_stand_for_a_file(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
